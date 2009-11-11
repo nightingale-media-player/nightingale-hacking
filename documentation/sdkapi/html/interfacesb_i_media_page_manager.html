@@ -85,12 +85,12 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_page_manager.html#ee5875014d322d175a339af793dc7470">unregisterPage</a> (in <a class="el" href="interfacesb_i_media_page_info.html">sbIMediaPageInfo</a> aPageInfo)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Unregister a medialist page.  <a href="#ee5875014d322d175a339af793dc7470"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">nsISimpleEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_page_manager.html#5869ba37f805051bbf09ccc5f7f83533">getAvailablePages</a> ([optional] in <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a> aList)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">nsISimpleEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_page_manager.html#b711220ad683fc8459f7bb96ae170f72">getAvailablePages</a> ([optional] in <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a> aList,[optional] in <a class="el" href="interfacesb_i_library_constraint.html">sbILibraryConstraint</a> aConstraint)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the list of available pages. The list parameter is optional, if not specified, the entire list of registered pages is returned.  <a href="#5869ba37f805051bbf09ccc5f7f83533"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_media_page_info.html">sbIMediaPageInfo</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_page_manager.html#7b5bf3bf48c088d0f6a618ec326548c2">getPage</a> (in <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a> aList)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the list of available pages. The list parameter is optional, if not specified, the entire list of registered pages is returned.  <a href="#b711220ad683fc8459f7bb96ae170f72"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_media_page_info.html">sbIMediaPageInfo</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_page_manager.html#921d06b1d7cca2d9b62f3426b9a7dcb9">getPage</a> (in <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a> aList,[optional] in <a class="el" href="interfacesb_i_library_constraint.html">sbILibraryConstraint</a> aConstraint)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the active page for a medialist.  <a href="#7b5bf3bf48c088d0f6a618ec326548c2"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the active page for a medialist.  <a href="#921d06b1d7cca2d9b62f3426b9a7dcb9"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_page_manager.html#9ec7b0a91b3a5c7fafa3466cd1e693a0">setPage</a> (in <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a> aList, in <a class="el" href="interfacesb_i_media_page_info.html">sbIMediaPageInfo</a> aPageInfo)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set the active page for a medialist.  <a href="#9ec7b0a91b3a5c7fafa3466cd1e693a0"></a><br></td></tr>
@@ -100,7 +100,7 @@ The medialist page manager, used to register, unregister, enumerate, set and ret
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_media_page_manager_8idl-source.html#l00040">40</a> of file <a class="el" href="sb_i_media_page_manager_8idl-source.html">sbIMediaPageManager.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_media_page_manager_8idl-source.html#l00041">41</a> of file <a class="el" href="sb_i_media_page_manager_8idl-source.html">sbIMediaPageManager.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="b0da2b8351dacdffa79b8af35bc5cbc0"></a><!-- doxytag: member="sbIMediaPageManager::registerPage" ref="b0da2b8351dacdffa79b8af35bc5cbc0" args="(in AString aName, in AString aURL, in sbIMediaListMatch aMatch)" -->
 <div class="memitem">
 <div class="memproto">
@@ -173,7 +173,7 @@ Unregister a medialist page.
 
 </div>
 </div><p>
-<a class="anchor" name="5869ba37f805051bbf09ccc5f7f83533"></a><!-- doxytag: member="sbIMediaPageManager::getAvailablePages" ref="5869ba37f805051bbf09ccc5f7f83533" args="([optional] in sbIMediaList aList)" -->
+<a class="anchor" name="b711220ad683fc8459f7bb96ae170f72"></a><!-- doxytag: member="sbIMediaPageManager::getAvailablePages" ref="b711220ad683fc8459f7bb96ae170f72" args="([optional] in sbIMediaList aList,[optional] in sbILibraryConstraint aConstraint)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -181,9 +181,18 @@ Unregister a medialist page.
           <td class="memname">nsISimpleEnumerator sbIMediaPageManager::getAvailablePages           </td>
           <td>(</td>
           <td class="paramtype">[optional] in <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a>&nbsp;</td>
-          <td class="paramname"> <em>aList</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"></td>
+          <td class="paramname"> <em>aList</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[optional] in <a class="el" href="interfacesb_i_library_constraint.html">sbILibraryConstraint</a>&nbsp;</td>
+          <td class="paramname"> <em>aConstraint</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
         </tr>
       </table>
 </div>
@@ -195,13 +204,14 @@ Get the list of available pages. The list parameter is optional, if not specifie
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aList</em>&nbsp;</td><td>(optional) The medialist for which the list of available matching pages is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aConstraint</em>&nbsp;</td><td>(optional) A library constrain used as an additional matching criteria </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>An nsISimpleEnumerator containing a list of <a class="el" href="interfacesb_i_media_page_info.html" title="This interface is used to describe a medialist page.">sbIMediaPageInfo</a> interfaces </dd></dl>
 
 </div>
 </div><p>
-<a class="anchor" name="7b5bf3bf48c088d0f6a618ec326548c2"></a><!-- doxytag: member="sbIMediaPageManager::getPage" ref="7b5bf3bf48c088d0f6a618ec326548c2" args="(in sbIMediaList aList)" -->
+<a class="anchor" name="921d06b1d7cca2d9b62f3426b9a7dcb9"></a><!-- doxytag: member="sbIMediaPageManager::getPage" ref="921d06b1d7cca2d9b62f3426b9a7dcb9" args="(in sbIMediaList aList,[optional] in sbILibraryConstraint aConstraint)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -209,9 +219,18 @@ Get the list of available pages. The list parameter is optional, if not specifie
           <td class="memname"><a class="el" href="interfacesb_i_media_page_info.html">sbIMediaPageInfo</a> sbIMediaPageManager::getPage           </td>
           <td>(</td>
           <td class="paramtype">in <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a>&nbsp;</td>
-          <td class="paramname"> <em>aList</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"></td>
+          <td class="paramname"> <em>aList</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[optional] in <a class="el" href="interfacesb_i_library_constraint.html">sbILibraryConstraint</a>&nbsp;</td>
+          <td class="paramname"> <em>aConstraint</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
         </tr>
       </table>
 </div>
@@ -226,6 +245,7 @@ If a medialist has a defaultMediaPageURL property set to a particular page, and 
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aList</em>&nbsp;</td><td>The medialist for which the active page is being requested </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aConstraint</em>&nbsp;</td><td>(optional) A library constrain used as an additional matching criteria </td></tr>
   </table>
 </dl>
 
@@ -270,7 +290,7 @@ Set the active page for a medialist.
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/mediapages/public/<a class="el" href="sb_i_media_page_manager_8idl-source.html">sbIMediaPageManager.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:44 2009 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:49 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

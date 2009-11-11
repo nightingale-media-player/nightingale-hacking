@@ -198,6 +198,24 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="112"/>
       </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_library_listener_120aa6d3dbb07a03aca8082b5d9895621" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIDeviceLibraryListener::onBeforeListCleared</definition>
+        <argsstring>(in sbIMediaList aMediaList)</argsstring>
+        <name>onBeforeListCleared</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+          <declname>aMediaList</declname>
+        </param>
+        <briefdescription>
+<para>Called before a media list is cleared. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="see"><para>sbIMediaList::Clear </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="117"/>
+      </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_library_listener_1af196555ec5f6de6d2e48b506efadbf0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
         <definition>boolean sbIDeviceLibraryListener::onListCleared</definition>
@@ -222,7 +240,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="121"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="126"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_library_listener_1dc7ca83326b5d30382878b6834225f4d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -270,7 +288,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="135"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="140"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_library_listener_14f179bd58a33c66f12d9d543af709b2e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -318,7 +336,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="148"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="153"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_library_listener_1dac4f49e75bc91b0a19e715f5fd0056e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -354,7 +372,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="156"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="161"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_library_listener_1c9aaf6405babbf50ffa5394b16602ae2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -382,7 +400,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="170"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="175"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_library_listener_161e4cffdc4a1070e26fd417317bf8fcf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -405,7 +423,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="177"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="182"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_library_listener_1a584a906cb96105d3544ee76d585e4c5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -423,7 +441,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="183"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="188"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_library_listener_1a7bb55f899a4fd37a505e7f9afafa5e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -441,7 +459,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="189"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="194"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_library_listener_1c988c76aaf465704dd225134036bd095" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -459,7 +477,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="195"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="200"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_library_listener_11d017b7fc9c011f18a6bdf8eabfc9baa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -473,7 +491,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="201"/>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="206"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -482,7 +500,7 @@
 <para><simplesect kind="note"><para>Implementations of this interface must be threadsafe.</para></simplesect>
 <simplesect kind="see"><para><ref refid="interfacesb_i_device_library" kindref="compound">sbIDeviceLibrary</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="46" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" bodystart="45" bodyend="203"/>
+    <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" line="46" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceLibrary.idl" bodystart="45" bodyend="208"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_library_listener_139a00080f2bd4a7bbb44eba3eb7e7324" prot="public" virt="non-virtual"><scope>sbIDeviceLibraryListener</scope><name>onAfterItemRemoved</name></member>
       <member refid="interfacesb_i_device_library_listener_1235fd93a559b7e9a1045d274859f524f" prot="public" virt="non-virtual"><scope>sbIDeviceLibraryListener</scope><name>onBatchBegin</name></member>
@@ -494,6 +512,7 @@
       <member refid="interfacesb_i_device_library_listener_1c9aaf6405babbf50ffa5394b16602ae2" prot="public" virt="non-virtual"><scope>sbIDeviceLibraryListener</scope><name>onBeforeCreateMediaItem</name></member>
       <member refid="interfacesb_i_device_library_listener_161e4cffdc4a1070e26fd417317bf8fcf" prot="public" virt="non-virtual"><scope>sbIDeviceLibraryListener</scope><name>onBeforeCreateMediaList</name></member>
       <member refid="interfacesb_i_device_library_listener_1b381a34a3470003d720e0d73e778f03d" prot="public" virt="non-virtual"><scope>sbIDeviceLibraryListener</scope><name>onBeforeItemRemoved</name></member>
+      <member refid="interfacesb_i_device_library_listener_120aa6d3dbb07a03aca8082b5d9895621" prot="public" virt="non-virtual"><scope>sbIDeviceLibraryListener</scope><name>onBeforeListCleared</name></member>
       <member refid="interfacesb_i_device_library_listener_1375bbc3f3383052ae31761849d29797d" prot="public" virt="non-virtual"><scope>sbIDeviceLibraryListener</scope><name>onItemAdded</name></member>
       <member refid="interfacesb_i_device_library_listener_1dac4f49e75bc91b0a19e715f5fd0056e" prot="public" virt="non-virtual"><scope>sbIDeviceLibraryListener</scope><name>onItemCopied</name></member>
       <member refid="interfacesb_i_device_library_listener_14f179bd58a33c66f12d9d543af709b2e" prot="public" virt="non-virtual"><scope>sbIDeviceLibraryListener</scope><name>onItemMoved</name></member>

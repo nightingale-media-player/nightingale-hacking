@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreSimpleEqualizer.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="462">
+      <node id="517">
         <label>components/mediacore/base/public/sbIMediacoreSimpleEqualizer.idl</label>
         <link refid="sbIMediacoreSimpleEqualizer.idl"/>
-        <childnode refid="463" relation="include">
+        <childnode refid="518" relation="include">
         </childnode>
       </node>
-      <node id="463">
+      <node id="518">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -48,7 +48,7 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal">[scriptable,<sp/>uuid(31e3c3e3-3b9f-4c5c-b6fe-0f18f209282c)]</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(31e3c3e3-3b9f-4c5c-b6fe-0f18f209282c)]</highlight></codeline>
 <codeline lineno="30" refid="interfacesb_i_mediacore_simple_equalizer" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_simple_equalizer" kindref="compound">sbIMediacoreSimpleEqualizer</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="31"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="32"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>in<sp/>dB.</highlight><highlight class="normal"></highlight></codeline>

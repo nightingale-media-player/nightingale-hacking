@@ -4,13 +4,13 @@
     <compoundname>sbIFileSystemWatcher.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="201">
+      <node id="235">
         <label>components/filesystemevents/base/public/sbIFileSystemWatcher.idl</label>
         <link refid="sbIFileSystemWatcher.idl"/>
-        <childnode refid="202" relation="include">
+        <childnode refid="236" relation="include">
         </childnode>
       </node>
-      <node id="202">
+      <node id="236">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -56,7 +56,7 @@
 <codeline lineno="34"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>path<sp/>of<sp/>the<sp/>fileystem<sp/>resources<sp/>that<sp/>need<sp/>to<sp/>be<sp/>monitored.<sp/>Callbacks</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>will<sp/>begin<sp/>once<sp/>|startWatching()|<sp/>has<sp/>been<sp/>called.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="37"><highlight class="normal">[scriptable,<sp/>uuid(61D13E2E-4927-4BAB-A327-23607AC4872F)]</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(61D13E2E-4927-4BAB-A327-23607AC4872F)]</highlight></codeline>
 <codeline lineno="38" refid="interfacesb_i_file_system_watcher" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_file_system_watcher" kindref="compound">sbIFileSystemWatcher</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="39"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="40"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>

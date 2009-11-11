@@ -81,14 +81,14 @@
 <a href="interfacesb_i_album_art_service-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">nsIArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_service.html#00cb8b5ca59e60f2fe5ce88cdee7ffa0">getFetcherList</a> (in boolean aLocalOnly)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">nsIArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_service.html#20cafe54cb595df4a075824e673f88cb">getFetcherList</a> (in unsigned long type,[optional] in boolean includeDisabled)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_service.html#c02f281e797186164ea83102027c90d6">imageIsValidAlbumArt</a> (in AUTF8String aMimeType,[const, array, size_is(aDataLen)] in octet aData, in unsigned long aDataLen)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Determine whether the image specified by aData and aDataLen of type specified by aMimeType is a valid album art image. Return true if so.  <a href="#c02f281e797186164ea83102027c90d6"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">nsIFileURL&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_service.html#debef4d7ec6f68c9d80f671d8c8f1102">cacheImage</a> (in AUTF8String aMimeType,[const, array, size_is(aDataLen)] in octet aData, in unsigned long aDataLen)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">nsIURI&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_service.html#2bdf8e6af0caf699666cfa937b04b0dc">cacheImage</a> (in AUTF8String aMimeType,[const, array, size_is(aDataLen)] in octet aData, in unsigned long aDataLen)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write the album art image specified by aData and aDataLen of type specified by aMimeType to a cache file and return the cache file URL.  <a href="#debef4d7ec6f68c9d80f671d8c8f1102"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Write the album art image specified by aData and aDataLen of type specified by aMimeType to a cache file and return the cache file URL.  <a href="#2bdf8e6af0caf699666cfa937b04b0dc"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_service.html#800472d94058acada677926a67685d92">cacheTemporaryData</a> (in AString aKey, in nsISupports aData)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add arbitrary data to a temporary cache.  <a href="#800472d94058acada677926a67685d92"></a><br></td></tr>
@@ -104,27 +104,37 @@ Interface for the album art service. Instantiate as a component service.
 
 <p>
 Definition at line <a class="el" href="sb_i_album_art_service_8idl-source.html#l00051">51</a> of file <a class="el" href="sb_i_album_art_service_8idl-source.html">sbIAlbumArtService.idl</a>.<hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="00cb8b5ca59e60f2fe5ce88cdee7ffa0"></a><!-- doxytag: member="sbIAlbumArtService::getFetcherList" ref="00cb8b5ca59e60f2fe5ce88cdee7ffa0" args="(in boolean aLocalOnly)" -->
+<a class="anchor" name="20cafe54cb595df4a075824e673f88cb"></a><!-- doxytag: member="sbIAlbumArtService::getFetcherList" ref="20cafe54cb595df4a075824e673f88cb" args="(in unsigned long type,[optional] in boolean includeDisabled)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">nsIArray sbIAlbumArtService::getFetcherList           </td>
           <td>(</td>
-          <td class="paramtype">in boolean&nbsp;</td>
-          <td class="paramname"> <em>aLocalOnly</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"></td>
+          <td class="paramtype">in unsigned long&nbsp;</td>
+          <td class="paramname"> <em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[optional] in boolean&nbsp;</td>
+          <td class="paramname"> <em>includeDisabled</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-Return a list of album art fetcher contract ID's as an array of nsIVariant's of type ACString. If aLocalOnly is true, return only local album art fetchers.<p>
+Return a list of album art fetcher contract ID's as an array of nsIVariant ACStrings. Use type to specify if local, remote, or all fetchers.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>aLocalOnly</em>&nbsp;</td><td>If true, only return local album art fetchers.</td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>type</em>&nbsp;</td><td><a class="el" href="interfacesb_i_album_art_fetcher_set.html#5505adb833c0a79e8503eb3ee849cc48">sbIAlbumArtFetcherSet.TYPE_LOCAL</a>, etc. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>includeDisabled</em>&nbsp;</td><td>Includes fetchers that are disabled. (defaults to false)</td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>List of album art fetcher contract ID's. </dd></dl>
@@ -176,12 +186,12 @@ Determine whether the image specified by aData and aDataLen of type specified by
 
 </div>
 </div><p>
-<a class="anchor" name="debef4d7ec6f68c9d80f671d8c8f1102"></a><!-- doxytag: member="sbIAlbumArtService::cacheImage" ref="debef4d7ec6f68c9d80f671d8c8f1102" args="(in AUTF8String aMimeType,[const, array, size_is(aDataLen)] in octet aData, in unsigned long aDataLen)" -->
+<a class="anchor" name="2bdf8e6af0caf699666cfa937b04b0dc"></a><!-- doxytag: member="sbIAlbumArtService::cacheImage" ref="2bdf8e6af0caf699666cfa937b04b0dc" args="(in AUTF8String aMimeType,[const, array, size_is(aDataLen)] in octet aData, in unsigned long aDataLen)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">nsIFileURL sbIAlbumArtService::cacheImage           </td>
+          <td class="memname">nsIURI sbIAlbumArtService::cacheImage           </td>
           <td>(</td>
           <td class="paramtype">in AUTF8String&nbsp;</td>
           <td class="paramname"> <em>aMimeType</em>, </td>
@@ -295,7 +305,7 @@ Get data previously placed into the temporary cache.
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/albumart/public/<a class="el" href="sb_i_album_art_service_8idl-source.html">sbIAlbumArtService.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:40 2009 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:46 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_g_streamer_pipeline" kind="interface" prot="public">
+    <compoundname>sbIGStreamerPipeline</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_g_streamer_pipeline_1a7342dc455e58c4ffb852cf506d8110e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIGStreamerPipeline::stopPipeline</definition>
+        <argsstring>()</argsstring>
+        <name>stopPipeline</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerPipeline.idl" line="39"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_g_streamer_pipeline_129b7bf7c901329cb6602acf032348be4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIGStreamerPipeline::pausePipeline</definition>
+        <argsstring>()</argsstring>
+        <name>pausePipeline</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerPipeline.idl" line="42"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_g_streamer_pipeline_185428ca4b2c7b5e5c0e5235b98ee0d8c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIGStreamerPipeline::playPipeline</definition>
+        <argsstring>()</argsstring>
+        <name>playPipeline</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerPipeline.idl" line="45"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerPipeline.idl" line="37" bodyfile="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerPipeline.idl" bodystart="36" bodyend="46"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_g_streamer_pipeline_129b7bf7c901329cb6602acf032348be4" prot="public" virt="non-virtual"><scope>sbIGStreamerPipeline</scope><name>pausePipeline</name></member>
+      <member refid="interfacesb_i_g_streamer_pipeline_185428ca4b2c7b5e5c0e5235b98ee0d8c" prot="public" virt="non-virtual"><scope>sbIGStreamerPipeline</scope><name>playPipeline</name></member>
+      <member refid="interfacesb_i_g_streamer_pipeline_1a7342dc455e58c4ffb852cf506d8110e" prot="public" virt="non-virtual"><scope>sbIGStreamerPipeline</scope><name>stopPipeline</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

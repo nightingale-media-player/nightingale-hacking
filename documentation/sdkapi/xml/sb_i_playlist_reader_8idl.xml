@@ -5,18 +5,18 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes local="yes">nsIWebProgressListener.idl</includes>
     <incdepgraph>
-      <node id="553">
+      <node id="691">
         <label>components/mediaimport/playlist/public/sbIPlaylistReader.idl</label>
         <link refid="sbIPlaylistReader.idl"/>
-        <childnode refid="554" relation="include">
+        <childnode refid="692" relation="include">
         </childnode>
-        <childnode refid="555" relation="include">
+        <childnode refid="693" relation="include">
         </childnode>
       </node>
-      <node id="554">
+      <node id="692">
         <label>nsISupports.idl</label>
       </node>
-      <node id="555">
+      <node id="693">
         <label>nsIWebProgressListener.idl</label>
       </node>
     </incdepgraph>
@@ -62,7 +62,7 @@
 <codeline lineno="38"><highlight class="normal">interface<sp/>nsIFile;</highlight></codeline>
 <codeline lineno="39"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref>;</highlight></codeline>
 <codeline lineno="40"><highlight class="normal"></highlight></codeline>
-<codeline lineno="47"><highlight class="normal">[scriptable,<sp/>uuid(a1fd4697-6459-473f-a660-1915f91cd469)]</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(a1fd4697-6459-473f-a660-1915f91cd469)]</highlight></codeline>
 <codeline lineno="48" refid="interfacesb_i_playlist_reader_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_reader_listener" kindref="compound" tooltip="A listener interface for use with sbIPlaylistReader interfaces.">sbIPlaylistReaderListener</ref><sp/>:<sp/>nsIWebProgressListener</highlight></codeline>
 <codeline lineno="49"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="55" refid="interfacesb_i_playlist_reader_listener_1559a9c2f01ff8522d32c28bf2e93508c" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>nsIURI<sp/>originalURI;</highlight></codeline>
@@ -82,7 +82,7 @@
 <codeline lineno="99" refid="interfacesb_i_playlist_reader_listener_17be28aecf118eeca510489fc4db2fd4c" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>state;</highlight></codeline>
 <codeline lineno="100"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="101"><highlight class="normal"></highlight></codeline>
-<codeline lineno="108"><highlight class="normal">[scriptable,<sp/>uuid(8be3a732-f081-47e8-ac21-4d97d769260f)]</highlight></codeline>
+<codeline lineno="108"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(8be3a732-f081-47e8-ac21-4d97d769260f)]</highlight></codeline>
 <codeline lineno="109" refid="interfacesb_i_playlist_reader" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_reader" kindref="compound" tooltip="A subclass from which one may derive instances to read specific playlist types.">sbIPlaylistReader</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="110"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="116" refid="interfacesb_i_playlist_reader_12f503eec9feb86fd94eab42be4e6aaf2" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>nsIURI<sp/>originalURI;</highlight></codeline>
@@ -104,7 +104,7 @@
 <codeline lineno="162"><highlight class="normal"><sp/><sp/><sp/><sp/>[array,<sp/>size_is<sp/>(aExtCount),<sp/>retval]<sp/>out<sp/>wstring<sp/>aExts);</highlight></codeline>
 <codeline lineno="163"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="164"><highlight class="normal"></highlight></codeline>
-<codeline lineno="172"><highlight class="normal">[scriptable,<sp/>uuid(127d0f73-295b-4270-9c64-941c20d444e5)]</highlight></codeline>
+<codeline lineno="172"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(127d0f73-295b-4270-9c64-941c20d444e5)]</highlight></codeline>
 <codeline lineno="173" refid="interfacesb_i_playlist_reader_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_reader_manager" kindref="compound" tooltip="An interface to be used to read playlists. It will try to find the proper sbIPlaylistReader...">sbIPlaylistReaderManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="174"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="180" refid="interfacesb_i_playlist_reader_manager_1eb430ecd664df3f04fab6b6e9033230f" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>nsIURI<sp/>originalURI;</highlight></codeline>

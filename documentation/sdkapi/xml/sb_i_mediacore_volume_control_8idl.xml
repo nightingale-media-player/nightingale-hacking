@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreVolumeControl.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="477">
+      <node id="532">
         <label>components/mediacore/base/public/sbIMediacoreVolumeControl.idl</label>
         <link refid="sbIMediacoreVolumeControl.idl"/>
-        <childnode refid="478" relation="include">
+        <childnode refid="533" relation="include">
         </childnode>
       </node>
-      <node id="478">
+      <node id="533">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -48,7 +48,7 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal">[scriptable,<sp/>uuid(afb4d9dd-f215-4190-9cec-59387204992c)]</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(afb4d9dd-f215-4190-9cec-59387204992c)]</highlight></codeline>
 <codeline lineno="30" refid="interfacesb_i_mediacore_volume_control" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_volume_control" kindref="compound">sbIMediacoreVolumeControl</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="31"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="32"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>true<sp/>=<sp/>muted</highlight><highlight class="normal"></highlight></codeline>

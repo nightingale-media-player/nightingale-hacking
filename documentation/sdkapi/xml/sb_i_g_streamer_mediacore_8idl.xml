@@ -4,13 +4,13 @@
     <compoundname>sbIGStreamerMediacore.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="492">
+      <node id="550">
         <label>components/mediacore/gstreamer/public/sbIGStreamerMediacore.idl</label>
         <link refid="sbIGStreamerMediacore.idl"/>
-        <childnode refid="493" relation="include">
+        <childnode refid="551" relation="include">
         </childnode>
       </node>
-      <node id="493">
+      <node id="551">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -48,7 +48,7 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="38"><highlight class="normal">[scriptable,<sp/>uuid(e2fc194e-15fb-4f16-be36-80b7ee5ad0c9)]</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(e2fc194e-15fb-4f16-be36-80b7ee5ad0c9)]</highlight></codeline>
 <codeline lineno="39" refid="interfacesb_i_g_streamer_mediacore" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_g_streamer_mediacore" kindref="compound">sbIGStreamerMediacore</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="40"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="44" refid="interfacesb_i_g_streamer_mediacore_11d349323237f21fda61c052bda5c4564" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>gstreamerVersion;</highlight></codeline>

@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_dynamic_media_list" kind="interface" prot="public">
+    <compoundname>sbIDynamicMediaList</compoundname>
+    <includes refid="sb_i_dynamic_media_list_8idl" local="no">sbIDynamicMediaList.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_dynamic_media_list_1469378db3179ac89a2017da2de9605e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDynamicMediaList::update</definition>
+        <argsstring>()</argsstring>
+        <name>update</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Force an update of the dynamic media list. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIDynamicMediaList.idl" line="45"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>This interface provides support for dynamic media lists. These may be created with <ref refid="interfacesb_i_library_162f2e88db6d62e1778ee96fbffc7dd1c" kindref="member">sbILibrary.createMediaList</ref>(&quot;dynamic&quot;). </para>    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/library/base/public/sbIDynamicMediaList.idl" line="40" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIDynamicMediaList.idl" bodystart="39" bodyend="46"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_dynamic_media_list_1469378db3179ac89a2017da2de9605e5" prot="public" virt="non-virtual"><scope>sbIDynamicMediaList</scope><name>update</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

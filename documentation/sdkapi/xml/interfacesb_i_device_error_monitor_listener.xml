@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_device_error_monitor_listener" kind="interface" prot="public">
+    <compoundname>sbIDeviceErrorMonitorListener</compoundname>
+    <includes refid="sb_i_device_error_monitor_8idl" local="no">sbIDeviceErrorMonitor.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_device_error_monitor_listener_101e6debb8b90f8d4c0c3fe103888af2d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceErrorMonitorListener::onDeviceError</definition>
+        <argsstring>(in sbIDevice aDevice)</argsstring>
+        <name>onDeviceError</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
+          <declname>aDevice</declname>
+        </param>
+        <briefdescription>
+<para>Called when a device error is logged for the device specified by aDevice. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDevice</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>device for which error was logged. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/device/public/sbIDeviceErrorMonitor.idl" line="97"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>This interface is used to notify device error listeners of new errors. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/devices/device/public/sbIDeviceErrorMonitor.idl" line="90" bodyfile="c:/builds/songbird/trunk/components/devices/device/public/sbIDeviceErrorMonitor.idl" bodystart="90" bodyend="98"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_device_error_monitor_listener_101e6debb8b90f8d4c0c3fe103888af2d" prot="public" virt="non-virtual"><scope>sbIDeviceErrorMonitorListener</scope><name>onDeviceError</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -4,13 +4,13 @@
     <compoundname>sbIProxiedServices.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="591">
+      <node id="739">
         <label>components/moz/proxy/public/sbIProxiedServices.idl</label>
         <link refid="sbIProxiedServices.idl"/>
-        <childnode refid="592" relation="include">
+        <childnode refid="740" relation="include">
         </childnode>
       </node>
-      <node id="592">
+      <node id="740">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,7 +50,7 @@
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
 <codeline lineno="29"><highlight class="normal">interface<sp/>nsIUTF8ConverterService;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
-<codeline lineno="31"><highlight class="normal">[scriptable,<sp/>uuid(371b5487-e08c-43be-863c-5697e073945b)]</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(371b5487-e08c-43be-863c-5697e073945b)]</highlight></codeline>
 <codeline lineno="32" refid="interfacesb_i_proxied_services" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_proxied_services" kindref="compound">sbIProxiedServices</ref>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="33"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="34" refid="interfacesb_i_proxied_services_1918813b5112b1d83e4f86cd4c7c8b2de" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIUTF8ConverterService<sp/>utf8ConverterService;</highlight></codeline>

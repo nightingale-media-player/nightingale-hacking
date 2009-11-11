@@ -4,13 +4,13 @@
     <compoundname>sbIPlaybackHistoryEntry.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="535">
+      <node id="623">
         <label>components/mediacore/playback/history/public/sbIPlaybackHistoryEntry.idl</label>
         <link refid="sbIPlaybackHistoryEntry.idl"/>
-        <childnode refid="536" relation="include">
+        <childnode refid="624" relation="include">
         </childnode>
       </node>
-      <node id="536">
+      <node id="624">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -102,7 +102,7 @@
 <codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref>;</highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight></codeline>
-<codeline lineno="35"><highlight class="normal">[scriptable,<sp/>uuid(3e2733de-9e30-4bde-99f0-274bacdd0b20)]</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(3e2733de-9e30-4bde-99f0-274bacdd0b20)]</highlight></codeline>
 <codeline lineno="36" refid="interfacesb_i_playback_history_entry" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playback_history_entry" kindref="compound">sbIPlaybackHistoryEntry</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="37"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="42" refid="interfacesb_i_playback_history_entry_1fb1b7223914bc43104d748969cf61711" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>entryId;</highlight></codeline>

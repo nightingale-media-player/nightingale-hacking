@@ -5,21 +5,21 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_job_progress_8idl" local="yes">sbIJobProgress.idl</includes>
     <incdepgraph>
-      <node id="387">
+      <node id="439">
         <label>sbIJobProgress.idl</label>
         <link refid="sb_i_job_progress_8idl-source"/>
-        <childnode refid="386" relation="include">
+        <childnode refid="438" relation="include">
         </childnode>
       </node>
-      <node id="385">
+      <node id="437">
         <label>components/library/localdatabase/public/sbILocalDatabaseMigrationHandler.idl</label>
         <link refid="sbILocalDatabaseMigrationHandler.idl"/>
-        <childnode refid="386" relation="include">
+        <childnode refid="438" relation="include">
         </childnode>
-        <childnode refid="387" relation="include">
+        <childnode refid="439" relation="include">
         </childnode>
       </node>
-      <node id="386">
+      <node id="438">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -60,7 +60,7 @@
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_library" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseLibrary</ref>;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="42"><highlight class="normal">[scriptable,<sp/>uuid(f88bff10-0dfc-416e-9dcb-630a9d27b8c7)]</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(f88bff10-0dfc-416e-9dcb-630a9d27b8c7)]</highlight></codeline>
 <codeline lineno="43" refid="interfacesb_i_local_database_migration_handler" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_migration_handler" kindref="compound">sbILocalDatabaseMigrationHandler</ref><sp/>:<sp/><ref refid="interfacesb_i_job_progress" kindref="compound" tooltip="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</ref></highlight></codeline>
 <codeline lineno="44"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="48" refid="interfacesb_i_local_database_migration_handler_1753fdf15e75452e7960bbbf0348cc5b4" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>fromVersion;</highlight></codeline>

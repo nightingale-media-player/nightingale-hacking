@@ -4,13 +4,13 @@
     <compoundname>sbIPlaybackHistoryListener.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="538">
+      <node id="626">
         <label>components/mediacore/playback/history/public/sbIPlaybackHistoryListener.idl</label>
         <link refid="sbIPlaybackHistoryListener.idl"/>
-        <childnode refid="539" relation="include">
+        <childnode refid="627" relation="include">
         </childnode>
       </node>
-      <node id="539">
+      <node id="627">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,7 +50,7 @@
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
 <codeline lineno="29"><highlight class="normal">interface<sp/>nsIArray;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal">[scriptable,<sp/>uuid(9d96b030-eb8c-4899-898c-9890f575e67b)]</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(9d96b030-eb8c-4899-898c-9890f575e67b)]</highlight></codeline>
 <codeline lineno="35" refid="interfacesb_i_playback_history_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playback_history_listener" kindref="compound">sbIPlaybackHistoryListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="40"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onEntriesAdded(in<sp/>nsIArray<sp/>aEntries);</highlight></codeline>

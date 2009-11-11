@@ -73,7 +73,7 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul>
 </div>
-<h1>sbIPlaylistWriter Interface Reference</h1><!-- doxytag: class="sbIPlaylistWriter" -->[UNIMPLEMENTED UNTIL AFTER 0.3]  
+<h1>sbIPlaylistWriter Interface Reference</h1><!-- doxytag: class="sbIPlaylistWriter" -->Write a playlist file.  
 <a href="#_details">More...</a>
 <p>
 <code>import &quot;<a class="el" href="sb_i_playlist_writer_8idl-source.html">sbIPlaylistWriter.idl</a>&quot;;</code>
@@ -81,98 +81,53 @@
 <a href="interfacesb_i_playlist_writer-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer.html#6c5c2916d3d3808bf0c3f8fe3f298d07">write</a> (in AString aGUID, in AString aSourcePlaylist, in AString aOutputURL, in AString aOutputContentType, out PRInt32 aErrorCode)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer.html#73ddefaf60602d7b1b4fb6acf493f14c">write</a> (in nsIFile aFile, in <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a> aMediaList, in AString aContentType)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em></em>&nbsp;</td><td></td></tr>
-  </table>
-</dl>
- <a href="#6c5c2916d3d3808bf0c3f8fe3f298d07"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">PRInt32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer.html#93bdf5a267467fb9b3ef581339612de9">vote</a> (in AString aURL)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em></em>&nbsp;</td><td></td></tr>
-  </table>
-</dl>
- <a href="#93bdf5a267467fb9b3ef581339612de9"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The function which actually outputs the file.  <a href="#73ddefaf60602d7b1b4fb6acf493f14c"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer.html#dd16799af17404cf1f53b3bd4d603846">name</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em></em>&nbsp;</td><td></td></tr>
-  </table>
-</dl>
- <a href="#dd16799af17404cf1f53b3bd4d603846"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A name for this playlist writer.  <a href="#dd16799af17404cf1f53b3bd4d603846"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer.html#54fb8fabdd3d3dd98b3f6aaf207ad3b3">description</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em></em>&nbsp;</td><td></td></tr>
-  </table>
-</dl>
- <a href="#54fb8fabdd3d3dd98b3f6aaf207ad3b3"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">A description of the type of playlists it outputs.  <a href="#54fb8fabdd3d3dd98b3f6aaf207ad3b3"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer.html#0a3790bd97bf000be6d8f8661bdf7ab7">supportedMIMETypes</a> (out PRUint32 aMIMECount,[array, size_is(aMIMECount), retval] out wstring aMIMETypes)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em></em>&nbsp;</td><td></td></tr>
-  </table>
-</dl>
- <a href="#0a3790bd97bf000be6d8f8661bdf7ab7"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Mimetypes recognized by this writer.  <a href="#0a3790bd97bf000be6d8f8661bdf7ab7"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer.html#9fa8fada5cae500f460f7a6e9db7e850">supportedFileExtensions</a> (out PRUint32 aExtCount,[array, size_is(aExtCount), retval] out wstring aExts)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em></em>&nbsp;</td><td></td></tr>
-  </table>
-</dl>
- <a href="#9fa8fada5cae500f460f7a6e9db7e850"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">File extensions recognized by this writer.  <a href="#9fa8fada5cae500f460f7a6e9db7e850"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f5cdf7f32be328351c79ffd954a91c89"></a><!-- doxytag: member="sbIPlaylistWriter::writerListener" ref="f5cdf7f32be328351c79ffd954a91c89" args="" -->
 attribute <a class="el" href="interfacesb_i_playlist_writer_listener.html">sbIPlaylistWriterListener</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer.html#f5cdf7f32be328351c79ffd954a91c89">writerListener</a></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-[UNIMPLEMENTED UNTIL AFTER 0.3] 
+Write a playlist file. 
 <p>
 
 <p>
 Definition at line <a class="el" href="sb_i_playlist_writer_8idl-source.html#l00047">47</a> of file <a class="el" href="sb_i_playlist_writer_8idl-source.html">sbIPlaylistWriter.idl</a>.<hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="6c5c2916d3d3808bf0c3f8fe3f298d07"></a><!-- doxytag: member="sbIPlaylistWriter::write" ref="6c5c2916d3d3808bf0c3f8fe3f298d07" args="(in AString aGUID, in AString aSourcePlaylist, in AString aOutputURL, in AString aOutputContentType, out PRInt32 aErrorCode)" -->
+<a class="anchor" name="73ddefaf60602d7b1b4fb6acf493f14c"></a><!-- doxytag: member="sbIPlaylistWriter::write" ref="73ddefaf60602d7b1b4fb6acf493f14c" args="(in nsIFile aFile, in sbIMediaList aMediaList, in AString aContentType)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">PRBool sbIPlaylistWriter::write           </td>
+          <td class="memname">void sbIPlaylistWriter::write           </td>
           <td>(</td>
-          <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>aGUID</em>, </td>
+          <td class="paramtype">in nsIFile&nbsp;</td>
+          <td class="paramname"> <em>aFile</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a>&nbsp;</td>
+          <td class="paramname"> <em>aMediaList</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>aSourcePlaylist</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>aOutputURL</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>aOutputContentType</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">out PRInt32&nbsp;</td>
-          <td class="paramname"> <em>aErrorCode</em></td><td>&nbsp;</td>
+          <td class="paramname"> <em>aContentType</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -184,42 +139,13 @@ Definition at line <a class="el" href="sb_i_playlist_writer_8idl-source.html#l00
 <div class="memdoc">
 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em></em>&nbsp;</td><td></td></tr>
-  </table>
-</dl>
-
-<p>
-<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html" title="An object responsible for executing SQL queries on the database.">sbIDatabaseQuery</a> </dd></dl>
-
-</div>
-</div><p>
-<a class="anchor" name="93bdf5a267467fb9b3ef581339612de9"></a><!-- doxytag: member="sbIPlaylistWriter::vote" ref="93bdf5a267467fb9b3ef581339612de9" args="(in AString aURL)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">PRInt32 sbIPlaylistWriter::vote           </td>
-          <td>(</td>
-          <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>aURL</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
+The function which actually outputs the file. 
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em></em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html" title="An object responsible for executing SQL queries on the database.">sbIDatabaseQuery</a> </td></tr>
   </table>
 </dl>
-
-<p>
-<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html" title="An object responsible for executing SQL queries on the database.">sbIDatabaseQuery</a> </dd></dl>
 
 </div>
 </div><p>
@@ -239,14 +165,13 @@ Definition at line <a class="el" href="sb_i_playlist_writer_8idl-source.html#l00
 <div class="memdoc">
 
 <p>
+A name for this playlist writer. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em></em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html" title="An object responsible for executing SQL queries on the database.">sbIDatabaseQuery</a> </td></tr>
   </table>
 </dl>
-
-<p>
-<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html" title="An object responsible for executing SQL queries on the database.">sbIDatabaseQuery</a> </dd></dl>
 
 </div>
 </div><p>
@@ -266,14 +191,13 @@ Definition at line <a class="el" href="sb_i_playlist_writer_8idl-source.html#l00
 <div class="memdoc">
 
 <p>
+A description of the type of playlists it outputs. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em></em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html" title="An object responsible for executing SQL queries on the database.">sbIDatabaseQuery</a> </td></tr>
   </table>
 </dl>
-
-<p>
-<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html" title="An object responsible for executing SQL queries on the database.">sbIDatabaseQuery</a> </dd></dl>
 
 </div>
 </div><p>
@@ -303,14 +227,13 @@ Definition at line <a class="el" href="sb_i_playlist_writer_8idl-source.html#l00
 <div class="memdoc">
 
 <p>
+Mimetypes recognized by this writer. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em></em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html" title="An object responsible for executing SQL queries on the database.">sbIDatabaseQuery</a> </td></tr>
   </table>
 </dl>
-
-<p>
-<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html" title="An object responsible for executing SQL queries on the database.">sbIDatabaseQuery</a> </dd></dl>
 
 </div>
 </div><p>
@@ -340,20 +263,19 @@ Definition at line <a class="el" href="sb_i_playlist_writer_8idl-source.html#l00
 <div class="memdoc">
 
 <p>
+File extensions recognized by this writer. 
+<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em></em>&nbsp;</td><td></td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>\sa</em>&nbsp;</td><td><a class="el" href="interfacesb_i_database_query.html" title="An object responsible for executing SQL queries on the database.">sbIDatabaseQuery</a> </td></tr>
   </table>
 </dl>
-
-<p>
-<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html" title="An object responsible for executing SQL queries on the database.">sbIDatabaseQuery</a> </dd></dl>
 
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
-<li>components/mediaimport/playlist/public/<a class="el" href="sb_i_playlist_writer_8idl-source.html">sbIPlaylistWriter.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:45 2009 for Songbird by&nbsp;
+<li>components/mediaexport/playlist/public/<a class="el" href="sb_i_playlist_writer_8idl-source.html">sbIPlaylistWriter.idl</a></ul>
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:50 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

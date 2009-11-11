@@ -4,13 +4,13 @@
     <compoundname>sbIOrderableMediaList.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="353">
+      <node id="408">
         <label>components/library/base/public/sbIOrderableMediaList.idl</label>
         <link refid="sbIOrderableMediaList.idl"/>
-        <childnode refid="354" relation="include">
+        <childnode refid="409" relation="include">
         </childnode>
       </node>
-      <node id="354">
+      <node id="409">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -53,7 +53,7 @@
 <codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref>;</highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight></codeline>
-<codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(d14dd760-3e10-4114-be30-6f4887279214)]</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(d14dd760-3e10-4114-be30-6f4887279214)]</highlight></codeline>
 <codeline lineno="45" refid="interfacesb_i_orderable_media_list" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_orderable_media_list" kindref="compound" tooltip="Media lists that implement this interface support custom ordering.">sbIOrderableMediaList</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="52"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>insertBefore(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex,</highlight></codeline>

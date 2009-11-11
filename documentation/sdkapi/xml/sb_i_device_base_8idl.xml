@@ -4,34 +4,27 @@
     <compoundname>sbIDeviceBase.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <includedby refid="sb_i_download_device_8idl" local="yes">components/devicesobsolete/download/public/sbIDownloadDevice.idl</includedby>
-    <includedby refid="sb_i_w_m_device_8idl" local="yes">components/devicesobsolete/wm/public/sbIWMDevice.idl</includedby>
     <incdepgraph>
-      <node id="158">
+      <node id="197">
         <label>components/devicesobsolete/base/public/sbIDeviceBase.idl</label>
         <link refid="sbIDeviceBase.idl"/>
-        <childnode refid="159" relation="include">
+        <childnode refid="198" relation="include">
         </childnode>
       </node>
-      <node id="159">
+      <node id="198">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="160">
+      <node id="199">
         <label>components/devicesobsolete/base/public/sbIDeviceBase.idl</label>
         <link refid="sbIDeviceBase.idl"/>
-        <childnode refid="161" relation="include">
-        </childnode>
-        <childnode refid="162" relation="include">
+        <childnode refid="200" relation="include">
         </childnode>
       </node>
-      <node id="161">
+      <node id="200">
         <label>components/devicesobsolete/download/public/sbIDownloadDevice.idl</label>
         <link refid="sb_i_download_device_8idl"/>
-      </node>
-      <node id="162">
-        <label>components/devicesobsolete/wm/public/sbIWMDevice.idl</label>
-        <link refid="sb_i_w_m_device_8idl"/>
       </node>
     </invincdepgraph>
     <innerclass refid="interfacesb_i_device_base_callback" prot="public">sbIDeviceBaseCallback</innerclass>
@@ -200,7 +193,7 @@
 <codeline lineno="43"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
 <codeline lineno="44"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref>;</highlight></codeline>
 <codeline lineno="45"><highlight class="normal"></highlight></codeline>
-<codeline lineno="53"><highlight class="normal">[scriptable,<sp/>uuid(c52a5f0f-fd6e-4f41-a681-3ed88c9e5a9f)]</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(c52a5f0f-fd6e-4f41-a681-3ed88c9e5a9f)]</highlight></codeline>
 <codeline lineno="54" refid="interfacesb_i_device_base_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_base_callback" kindref="compound" tooltip="[SOON TO BE DEPRECATED AFTER 0.3] The callback class for sbIDeviceBase">sbIDeviceBaseCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="55"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDeviceConnect(in<sp/>AString<sp/>aDeviceIdentifier);</highlight></codeline>
@@ -217,7 +210,7 @@
 <codeline lineno="102"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="103"><highlight class="normal"></highlight></codeline>
 <codeline lineno="104"><highlight class="normal"></highlight></codeline>
-<codeline lineno="126"><highlight class="normal">[scriptable,<sp/>uuid(2964c3bf-18d6-4a72-8ccf-f08b732b4bab)]</highlight></codeline>
+<codeline lineno="126"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(2964c3bf-18d6-4a72-8ccf-f08b732b4bab)]</highlight></codeline>
 <codeline lineno="127" refid="interfacesb_i_device_base" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_base" kindref="compound" tooltip="[SOON TO BE DEPRECATED AFTER 0.3] Base interface for all supported devices.">sbIDeviceBase</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="128"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="137" refid="interfacesb_i_device_base_1d8e1c0a343f0a9949218dd87e4bc0b9b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FILE_FORMAT_UNDEFINED<sp/>=<sp/>9999;</highlight></codeline>

@@ -80,6 +80,8 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_marshall.html#083ff7ba8aa9ab48f2b568dcde2216fd">stopMonitoring</a> ()</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_marshall.html#112eacf820fd75fe3b5f91f16de40a7d">removeDevice</a> (in <a class="el" href="interfacesb_i_device.html">sbIDevice</a> aDevice)</td></tr>
+
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute nsIDPtr&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_marshall.html#32c4bf166e25f130824aa191d824726f">id</a></td></tr>
 
@@ -91,7 +93,7 @@
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_device_marshall_8idl-source.html#l00035">35</a> of file <a class="el" href="sb_i_device_marshall_8idl-source.html">sbIDeviceMarshall.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_device_marshall_8idl-source.html#l00036">36</a> of file <a class="el" href="sb_i_device_marshall_8idl-source.html">sbIDeviceMarshall.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="2fcb40179dfe31a3f033d1cd4f8b7a62"></a><!-- doxytag: member="sbIDeviceMarshall::loadControllers" ref="2fcb40179dfe31a3f033d1cd4f8b7a62" args="(in sbIDeviceControllerRegistrar aRegistrar)" -->
 <div class="memitem">
 <div class="memproto">
@@ -131,6 +133,26 @@ Loads all controllers registered with this marshall's category. Registers each o
 After calling this method, the marshall will stop monitoring for any new devices. 
 </div>
 </div><p>
+<a class="anchor" name="112eacf820fd75fe3b5f91f16de40a7d"></a><!-- doxytag: member="sbIDeviceMarshall::removeDevice" ref="112eacf820fd75fe3b5f91f16de40a7d" args="(in sbIDevice aDevice)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIDeviceMarshall::removeDevice           </td>
+          <td>(</td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_device.html">sbIDevice</a>&nbsp;</td>
+          <td class="paramname"> <em>aDevice</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Remove the given device. 
+</div>
+</div><p>
 <hr><h2>Member Data Documentation</h2>
 <a class="anchor" name="32c4bf166e25f130824aa191d824726f"></a><!-- doxytag: member="sbIDeviceMarshall::id" ref="32c4bf166e25f130824aa191d824726f" args="" -->
 <div class="memitem">
@@ -146,7 +168,7 @@ After calling this method, the marshall will stop monitoring for any new devices
 <p>
 Gets the unique id associated with this marshall. 
 <p>
-Definition at line <a class="el" href="sb_i_device_marshall_8idl-source.html#l00040">40</a> of file <a class="el" href="sb_i_device_marshall_8idl-source.html">sbIDeviceMarshall.idl</a>.
+Definition at line <a class="el" href="sb_i_device_marshall_8idl-source.html#l00041">41</a> of file <a class="el" href="sb_i_device_marshall_8idl-source.html">sbIDeviceMarshall.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="2290672628976f05e437019f16d73845"></a><!-- doxytag: member="sbIDeviceMarshall::name" ref="2290672628976f05e437019f16d73845" args="" -->
@@ -163,12 +185,12 @@ Definition at line <a class="el" href="sb_i_device_marshall_8idl-source.html#l00
 <p>
 A human-readable name for the marshall. Optional. 
 <p>
-Definition at line <a class="el" href="sb_i_device_marshall_8idl-source.html#l00045">45</a> of file <a class="el" href="sb_i_device_marshall_8idl-source.html">sbIDeviceMarshall.idl</a>.
+Definition at line <a class="el" href="sb_i_device_marshall_8idl-source.html#l00046">46</a> of file <a class="el" href="sb_i_device_marshall_8idl-source.html">sbIDeviceMarshall.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/devices/marshall/public/<a class="el" href="sb_i_device_marshall_8idl-source.html">sbIDeviceMarshall.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:42 2009 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:47 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

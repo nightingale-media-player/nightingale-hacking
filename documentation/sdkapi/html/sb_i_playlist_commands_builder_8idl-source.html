@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -107,7 +113,7 @@
 <a name="l00039"></a>00039 
 <a name="l00044"></a>00044 <span class="comment">// ----------------------------------------------------------------------------</span>
 <a name="l00045"></a>00045 
-<a name="l00114"></a>00114 [scriptable, uuid(5a4b21df-afc7-4270-a9b9-fc70565ca309)]
+<a name="l00114"></a>00114 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(5a4b21df-afc7-4270-a9b9-fc70565ca309)]
 <a name="l00115"></a><a class="code" href="interfacesb_i_playlist_commands_builder.html">00115</a> interface <a class="code" href="interfacesb_i_playlist_commands_builder.html" title="A helper used to construct sbIPlaylistCommands interfaces.">sbIPlaylistCommandsBuilder</a> : <a class="code" href="interfacesb_i_playlist_commands.html" title="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</a> 
 <a name="l00116"></a>00116 {
 <a name="l00127"></a>00127   <span class="keywordtype">void</span> appendSubmenu(in AString aParentSubMenuId, 
@@ -324,13 +330,13 @@
 <a name="l00674"></a>00674 
 <a name="l00675"></a>00675 <span class="comment">// ----------------------------------------------------------------------------</span>
 <a name="l00676"></a>00676 
-<a name="l00682"></a>00682 [scriptable, uuid(c68a8813-7df9-41f4-888c-30f8a63cef60)]
+<a name="l00682"></a>00682 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(c68a8813-7df9-41f4-888c-30f8a63cef60)]
 <a name="l00683"></a><a class="code" href="interfacesb_i_playlist_commands_builder_context.html">00683</a> interface <a class="code" href="interfacesb_i_playlist_commands_builder_context.html" title="The interface for giving context to playlist builder callbacks.">sbIPlaylistCommandsBuilderContext</a> : <a class="code" href="interfacesb_i_playlist_commands_context.html" title="The interface for giving context to a playlistcommands object.">sbIPlaylistCommandsContext</a>
 <a name="l00684"></a>00684 {
 <a name="l00688"></a><a class="code" href="interfacesb_i_playlist_commands_builder_context.html#7b532de30f9236707fa827804a62775f">00688</a>   attribute nsISupports implementorContext;
 <a name="l00689"></a>00689 };
 <a name="l00690"></a>00690 
-<a name="l00700"></a>00700 [scriptable, function, uuid(d93a113b-348a-4050-8c03-3806228f9293)]
+<a name="l00700"></a>00700 [scriptable, function, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(d93a113b-348a-4050-8c03-3806228f9293)]
 <a name="l00701"></a><a class="code" href="interfacesb_i_playlist_commands_builder_simple_callback.html">00701</a> interface <a class="code" href="interfacesb_i_playlist_commands_builder_simple_callback.html" title="An interface used to receive generic callbacks from an sbIPlaylistCommandsBuilder...">sbIPlaylistCommandsBuilderSimpleCallback</a> : nsISupports
 <a name="l00702"></a>00702 {
 <a name="l00711"></a>00711   <span class="keywordtype">void</span> handleCallback(in <a class="code" href="interfacesb_i_playlist_commands_builder_context.html" title="The interface for giving context to playlist builder callbacks.">sbIPlaylistCommandsBuilderContext</a> aContext,
@@ -339,7 +345,7 @@
 <a name="l00714"></a>00714                       in AString aHost);
 <a name="l00715"></a>00715 };
 <a name="l00716"></a>00716 
-<a name="l00726"></a>00726 [scriptable, function, uuid(2474bfcf-bf50-4f27-b76e-b2472a126c08)]
+<a name="l00726"></a>00726 [scriptable, function, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(2474bfcf-bf50-4f27-b76e-b2472a126c08)]
 <a name="l00727"></a><a class="code" href="interfacesb_i_playlist_commands_builder_get_string_callback.html">00727</a> interface <a class="code" href="interfacesb_i_playlist_commands_builder_get_string_callback.html" title="An interface used to receive callbacks from an sbIPlaylistCommandsBuilder object...">sbIPlaylistCommandsBuilderGetStringCallback</a> : nsISupports
 <a name="l00728"></a>00728 {
 <a name="l00739"></a>00739   AString handleCallback(in <a class="code" href="interfacesb_i_playlist_commands_builder_context.html" title="The interface for giving context to playlist builder callbacks.">sbIPlaylistCommandsBuilderContext</a> aContext,
@@ -349,7 +355,7 @@
 <a name="l00743"></a>00743                          in AString aData);
 <a name="l00744"></a>00744 };
 <a name="l00745"></a>00745 
-<a name="l00755"></a>00755 [scriptable, function, uuid(68dde54c-5157-4650-addd-79ad331cf9ee)]
+<a name="l00755"></a>00755 [scriptable, function, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(68dde54c-5157-4650-addd-79ad331cf9ee)]
 <a name="l00756"></a><a class="code" href="interfacesb_i_playlist_commands_builder_get_bool_callback.html">00756</a> interface <a class="code" href="interfacesb_i_playlist_commands_builder_get_bool_callback.html" title="An interface used to receive callbacks from an sbIPlaylistCommandsBuilder object...">sbIPlaylistCommandsBuilderGetBoolCallback</a> : nsISupports
 <a name="l00757"></a>00757 {
 <a name="l00768"></a>00768   PRBool handleCallback(in <a class="code" href="interfacesb_i_playlist_commands_builder_context.html" title="The interface for giving context to playlist builder callbacks.">sbIPlaylistCommandsBuilderContext</a> aContext,
@@ -359,7 +365,7 @@
 <a name="l00772"></a>00772                         in AString aData);
 <a name="l00773"></a>00773 };
 <a name="l00774"></a>00774 
-<a name="l00784"></a>00784 [scriptable, function, uuid(24b5f0d8-424f-43ee-8f97-4efbfad6500f)]
+<a name="l00784"></a>00784 [scriptable, function, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(24b5f0d8-424f-43ee-8f97-4efbfad6500f)]
 <a name="l00785"></a><a class="code" href="interfacesb_i_playlist_commands_builder_set_value_callback.html">00785</a> interface <a class="code" href="interfacesb_i_playlist_commands_builder_set_value_callback.html" title="A callback interface used to receive a string value from an sbIPlaylistCommandsBuilder...">sbIPlaylistCommandsBuilderSetValueCallback</a> : nsISupports
 <a name="l00786"></a>00786 {
 <a name="l00796"></a>00796   <span class="keywordtype">void</span> handleCallback(in <a class="code" href="interfacesb_i_playlist_commands_builder_context.html" title="The interface for giving context to playlist builder callbacks.">sbIPlaylistCommandsBuilderContext</a> aContext,
@@ -369,7 +375,7 @@
 <a name="l00800"></a>00800                       in AString aValue);
 <a name="l00801"></a>00801 };
 <a name="l00802"></a>00802 
-<a name="l00812"></a>00812 [scriptable, function, uuid(fb4694de-ba89-4097-843b-a00091cc430b)]
+<a name="l00812"></a>00812 [scriptable, function, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(fb4694de-ba89-4097-843b-a00091cc430b)]
 <a name="l00813"></a><a class="code" href="interfacesb_i_playlist_commands_builder_instantiation_callback.html">00813</a> interface <a class="code" href="interfacesb_i_playlist_commands_builder_instantiation_callback.html" title="A callback interface used to instantiate a custom command DOM element for sbIPlaylistCommandsBuilder...">sbIPlaylistCommandsBuilderInstantiationCallback</a> : nsISupports
 <a name="l00814"></a>00814 {
 <a name="l00825"></a>00825   nsIDOMNode handleCallback(in <a class="code" href="interfacesb_i_playlist_commands_builder_context.html" title="The interface for giving context to playlist builder callbacks.">sbIPlaylistCommandsBuilderContext</a> aContext,
@@ -379,7 +385,7 @@
 <a name="l00829"></a>00829                                in nsIDOMDocument aParentDocument);
 <a name="l00830"></a>00830 };
 <a name="l00831"></a>00831 
-<a name="l00841"></a>00841 [scriptable, function, uuid(d5f091e8-9b14-47f5-bf48-0f64c9d23a0a)]
+<a name="l00841"></a>00841 [scriptable, function, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(d5f091e8-9b14-47f5-bf48-0f64c9d23a0a)]
 <a name="l00842"></a><a class="code" href="interfacesb_i_playlist_commands_builder_refresh_callback.html">00842</a> interface <a class="code" href="interfacesb_i_playlist_commands_builder_refresh_callback.html" title="A callback interface used to refresh a custom command DOM element for sbIPlaylistCommandsBuilder...">sbIPlaylistCommandsBuilderRefreshCallback</a> : nsISupports
 <a name="l00843"></a>00843 {
 <a name="l00853"></a>00853   <span class="keywordtype">void</span> handleCallback(in <a class="code" href="interfacesb_i_playlist_commands_builder_context.html" title="The interface for giving context to playlist builder callbacks.">sbIPlaylistCommandsBuilderContext</a> aContext,
@@ -389,7 +395,7 @@
 <a name="l00857"></a>00857                                in nsIDOMNode aElement);
 <a name="l00858"></a>00858 };
 <a name="l00859"></a>00859 
-<a name="l00869"></a>00869 [scriptable, function, uuid(9f578767-7f92-486d-b0a9-f760ff6e22d0)]
+<a name="l00869"></a>00869 [scriptable, function, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(9f578767-7f92-486d-b0a9-f760ff6e22d0)]
 <a name="l00870"></a><a class="code" href="interfacesb_i_playlist_commands_builder_p_c_callback.html">00870</a> interface <a class="code" href="interfacesb_i_playlist_commands_builder_p_c_callback.html" title="A callback interface used to receive callbacks from an sbIPlaylistCommandsBuilder...">sbIPlaylistCommandsBuilderPCCallback</a> : nsISupports
 <a name="l00871"></a>00871 {
 <a name="l00880"></a>00880   PRBool handleCallback(in <a class="code" href="interfacesb_i_playlist_commands_builder_context.html" title="The interface for giving context to playlist builder callbacks.">sbIPlaylistCommandsBuilderContext</a> aContext,
@@ -400,7 +406,7 @@
 <a name="l00885"></a>00885  <span class="comment">// end of playlistcommands group</span>
 <a name="l00887"></a>00887 
 <a name="l00888"></a>00888 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

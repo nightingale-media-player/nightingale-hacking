@@ -2,8 +2,12 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_job_progress" kind="interface" prot="public">
     <compoundname>sbIJobProgress</compoundname>
+    <derivedcompoundref refid="interfacesb_i_job_progress_time" prot="public" virt="non-virtual">sbIJobProgressTime</derivedcompoundref>
     <derivedcompoundref refid="interfacesb_i_job_progress_u_i" prot="public" virt="non-virtual">sbIJobProgressUI</derivedcompoundref>
     <derivedcompoundref refid="interfacesb_i_local_database_migration_handler" prot="public" virt="non-virtual">sbILocalDatabaseMigrationHandler</derivedcompoundref>
+    <derivedcompoundref refid="interfacesb_i_media_management_job" prot="public" virt="non-virtual">sbIMediaManagementJob</derivedcompoundref>
+    <derivedcompoundref refid="interfacesb_i_metadata_lookup_job" prot="public" virt="non-virtual">sbIMetadataLookupJob</derivedcompoundref>
+    <derivedcompoundref refid="interfacesb_i_shutdown_job" prot="public" virt="non-virtual">sbIShutdownJob</derivedcompoundref>
     <includes refid="sb_i_job_progress_8idl" local="no">sbIJobProgress.idl</includes>
       <sectiondef kind="public-attrib">
       <memberdef kind="variable" id="interfacesb_i_job_progress_1b4cebecf25f9537638b93f613a08a399" prot="public" static="no" mutable="no">
@@ -201,20 +205,44 @@
 <para>This is a first-stab at a generic way to expose job progress to the UI. This interface should be used for things like file importing, copying to devices and metadata syncing.</para><para><simplesect kind="note"><para>This interface is likely to change before 1.0 </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="314">
+      <node id="348">
         <label>sbILocalDatabaseMigrationHandler</label>
         <link refid="interfacesb_i_local_database_migration_handler"/>
-        <childnode refid="312" relation="public-inheritance">
+        <childnode refid="345" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="312">
+      <node id="345">
         <label>sbIJobProgress</label>
         <link refid="interfacesb_i_job_progress"/>
       </node>
-      <node id="313">
+      <node id="349">
+        <label>sbIMediaManagementJob</label>
+        <link refid="interfacesb_i_media_management_job"/>
+        <childnode refid="345" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="350">
+        <label>sbIMetadataLookupJob</label>
+        <link refid="interfacesb_i_metadata_lookup_job"/>
+        <childnode refid="345" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="347">
         <label>sbIJobProgressUI</label>
         <link refid="interfacesb_i_job_progress_u_i"/>
-        <childnode refid="312" relation="public-inheritance">
+        <childnode refid="345" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="351">
+        <label>sbIShutdownJob</label>
+        <link refid="interfacesb_i_shutdown_job"/>
+        <childnode refid="345" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="346">
+        <label>sbIJobProgressTime</label>
+        <link refid="interfacesb_i_job_progress_time"/>
+        <childnode refid="345" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>

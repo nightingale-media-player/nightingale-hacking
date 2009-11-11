@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_metadata_album_detail" kind="interface" prot="public">
+    <compoundname>sbIMetadataAlbumDetail</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_metadata_album_detail_1d51ceaac9683d5b9fd42d3216ebc57b6" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_mutable_property_array" kindref="compound">sbIMutablePropertyArray</ref></type>
+        <definition>readonly attribute sbIMutablePropertyArray sbIMetadataAlbumDetail::properties</definition>
+        <argsstring></argsstring>
+        <name>properties</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupData.idl" line="44" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupData.idl" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_album_detail_19d28ee9f71f5b6e5afacfb97bf2f20c0" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIArray</type>
+        <definition>readonly attribute nsIArray sbIMetadataAlbumDetail::tracks</definition>
+        <argsstring></argsstring>
+        <name>tracks</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupData.idl" line="47" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupData.idl" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="828">
+        <label>sbIPropertyArray</label>
+        <link refid="interfacesb_i_property_array"/>
+      </node>
+      <node id="827">
+        <label>sbIMutablePropertyArray</label>
+        <link refid="interfacesb_i_mutable_property_array"/>
+        <childnode refid="828" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="826">
+        <label>sbIMetadataAlbumDetail</label>
+        <link refid="interfacesb_i_metadata_album_detail"/>
+        <childnode refid="827" relation="usage">
+          <edgelabel>properties</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="c:/builds/songbird/trunk/components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupData.idl" line="39" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupData.idl" bodystart="38" bodyend="48"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_metadata_album_detail_1d51ceaac9683d5b9fd42d3216ebc57b6" prot="public" virt="non-virtual"><scope>sbIMetadataAlbumDetail</scope><name>properties</name></member>
+      <member refid="interfacesb_i_metadata_album_detail_19d28ee9f71f5b6e5afacfb97bf2f20c0" prot="public" virt="non-virtual"><scope>sbIMetadataAlbumDetail</scope><name>tracks</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

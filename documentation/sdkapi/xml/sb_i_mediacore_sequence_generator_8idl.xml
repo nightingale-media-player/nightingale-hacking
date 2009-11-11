@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreSequenceGenerator.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="456">
+      <node id="511">
         <label>components/mediacore/base/public/sbIMediacoreSequenceGenerator.idl</label>
         <link refid="sbIMediacoreSequenceGenerator.idl"/>
-        <childnode refid="457" relation="include">
+        <childnode refid="512" relation="include">
         </childnode>
       </node>
-      <node id="457">
+      <node id="512">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -51,7 +51,7 @@
 <codeline lineno="29"><highlight class="normal">interface<sp/>nsIArray;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref>;</highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight></codeline>
-<codeline lineno="32"><highlight class="normal">[scriptable,<sp/>uuid(be20d7ef-9795-4609-a126-bfe142206aca)]</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(be20d7ef-9795-4609-a126-bfe142206aca)]</highlight></codeline>
 <codeline lineno="33" refid="interfacesb_i_mediacore_sequence_generator" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_sequence_generator" kindref="compound">sbIMediacoreSequenceGenerator</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="34"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onGenerateSequence(in<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref><sp/>aView,<sp/></highlight></codeline>

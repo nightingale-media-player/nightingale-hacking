@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/albumart/public/sbIAlbumArtScanner.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */</span>
 <a name="l00002"></a>00002 <span class="comment">/* vim: set sw=2 :miv */</span>
 <a name="l00003"></a>00003 <span class="comment">/*</span>
@@ -106,18 +112,19 @@
 <a name="l00038"></a>00038 
 <a name="l00045"></a>00045 interface <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a>;
 <a name="l00046"></a>00046 
-<a name="l00057"></a>00057 [scriptable, uuid(425be366-9652-4567-bd18-ec2014106e31)]
+<a name="l00057"></a>00057 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(f191a970-2e62-4b51-b495-1875ef7991ef)]
 <a name="l00058"></a><a class="code" href="interfacesb_i_album_art_scanner.html">00058</a> interface <a class="code" href="interfacesb_i_album_art_scanner.html" title="Interface for an album art scanner. Instantiate as a component instance. It also...">sbIAlbumArtScanner</a> : nsISupports
 <a name="l00059"></a>00059 {
-<a name="l00060"></a>00060 
-<a name="l00061"></a>00061   <span class="comment">/* \brief Try to fetch album art for items in the given Media List.</span>
-<a name="l00062"></a>00062 <span class="comment">   * \param aMediaList the list we should scan, null will default to the main</span>
-<a name="l00063"></a>00063 <span class="comment">   *        library.</span>
-<a name="l00064"></a>00064 <span class="comment">   */</span>
-<a name="l00065"></a>00065   <span class="keywordtype">void</span> scanListForArtwork(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList);
-<a name="l00066"></a>00066 
-<a name="l00067"></a>00067 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:38 2009 for Songbird by&nbsp;
+<a name="l00063"></a><a class="code" href="interfacesb_i_album_art_scanner.html#a37824b5dd1a352940fc55fb5a91aa59">00063</a>   attribute <span class="keywordtype">boolean</span> updateArtwork;
+<a name="l00064"></a>00064 
+<a name="l00065"></a>00065   <span class="comment">/* \brief Try to fetch album art for items in the given Media List.</span>
+<a name="l00066"></a>00066 <span class="comment">   * \param aMediaList the list we should scan, null will default to the main</span>
+<a name="l00067"></a>00067 <span class="comment">   *        library.</span>
+<a name="l00068"></a>00068 <span class="comment">   */</span>
+<a name="l00069"></a>00069   <span class="keywordtype">void</span> scanListForArtwork(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList);
+<a name="l00070"></a>00070 
+<a name="l00071"></a>00071 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:44 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

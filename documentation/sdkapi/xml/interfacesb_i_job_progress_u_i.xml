@@ -25,26 +25,26 @@
     <detaileddescription>
 <para>This interfaces exists as a hint to how a <ref refid="interfacesb_i_job_progress" kindref="compound">sbIJobProgress</ref> should be displayed. Actual UI may choose to ignore any hints. </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="321">
+      <node id="362">
         <label>sbIJobProgress</label>
         <link refid="interfacesb_i_job_progress"/>
       </node>
-      <node id="320">
+      <node id="361">
         <label>sbIJobProgressUI</label>
         <link refid="interfacesb_i_job_progress_u_i"/>
-        <childnode refid="321" relation="public-inheritance">
+        <childnode refid="362" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="323">
+      <node id="364">
         <label>sbIJobProgress</label>
         <link refid="interfacesb_i_job_progress"/>
       </node>
-      <node id="322">
+      <node id="363">
         <label>sbIJobProgressUI</label>
         <link refid="interfacesb_i_job_progress_u_i"/>
-        <childnode refid="323" relation="public-inheritance">
+        <childnode refid="364" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

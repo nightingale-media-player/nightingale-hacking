@@ -96,6 +96,8 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list_listener.html#c4589c62e7f7412c100dcb90897a8838">onItemMoved</a> (in <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a> aMediaList, in unsigned long aFromIndex, in unsigned long aToIndex)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when a media item is moved.  <a href="#c4589c62e7f7412c100dcb90897a8838"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list_listener.html#1406bf88be46518807cafd943c0a8ddf">onBeforeListCleared</a> (in <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a> aMediaList)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list_listener.html#b6bc46918b149e08265d2820da4fa71e">onListCleared</a> (in <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a> aMediaList)</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_media_list_listener.html#cbd1e38650a4440186a42c6b965bfe6b">onBatchBegin</a> (in <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a> aMediaList)</td></tr>
@@ -340,6 +342,27 @@ Called when a media item is moved.
 
 </div>
 </div><p>
+<a class="anchor" name="1406bf88be46518807cafd943c0a8ddf"></a><!-- doxytag: member="sbIMediaListListener::onBeforeListCleared" ref="1406bf88be46518807cafd943c0a8ddf" args="(in sbIMediaList aMediaList)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIMediaListListener::onBeforeListCleared           </td>
+          <td>(</td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a>&nbsp;</td>
+          <td class="paramname"> <em>aMediaList</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Called before a media list is cleared. <dl class="return" compact><dt><b>Returns:</b></dt><dd>True if you do not want any further onBeforeListCleared notifications for the current batch. If there is no current batch, the return value is ignored. </dd></dl>
+
+</div>
+</div><p>
 <a class="anchor" name="b6bc46918b149e08265d2820da4fa71e"></a><!-- doxytag: member="sbIMediaListListener::onListCleared" ref="b6bc46918b149e08265d2820da4fa71e" args="(in sbIMediaList aMediaList)" -->
 <div class="memitem">
 <div class="memproto">
@@ -419,7 +442,7 @@ This notification can be used to optimize behavior. The consumer may choose to s
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/library/base/public/<a class="el" href="sb_i_media_list_listener_8idl-source.html">sbIMediaListListener.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:44 2009 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:49 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

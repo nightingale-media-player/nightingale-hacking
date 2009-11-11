@@ -111,7 +111,7 @@
 <codeline lineno="89"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;http://developer.mozilla.org/en/docs/DOM:element.addEventListener&gt;</highlight></codeline>
 <codeline lineno="90"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="91"><highlight class="normal"></highlight></codeline>
-<codeline lineno="97"><highlight class="normal">[scriptable,<sp/>uuid(83b06ce0-b364-4861-afff-9b8de773cd75)]</highlight></codeline>
+<codeline lineno="97"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(83b06ce0-b364-4861-afff-9b8de773cd75)]</highlight></codeline>
 <codeline lineno="98" refid="interfacesb_i_playlist_click_event" refkind="compound"><highlight class="normal"><sp/>interface<sp/><ref refid="interfacesb_i_playlist_click_event" kindref="compound" tooltip="an interface to maintain information about the last event that occurred">sbIPlaylistClickEvent</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="99"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="100"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>

@@ -5,18 +5,60 @@
     <basecompoundref refid="interfacesb_i_album_art_fetcher" prot="public" virt="non-virtual">sbIAlbumArtFetcher</basecompoundref>
     <includes refid="sb_i_album_art_fetcher_set_8idl" local="no">sbIAlbumArtFetcherSet.idl</includes>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="interfacesb_i_album_art_fetcher_set_1d6272d19a9919d7f3eb1b9681668d4d1" prot="public" static="no" mutable="no">
-        <type>attribute boolean</type>
-        <definition>attribute boolean sbIAlbumArtFetcherSet::localOnly</definition>
+      <memberdef kind="variable" id="interfacesb_i_album_art_fetcher_set_1d8732cad3234b0bd23bae8a3bdc2919d" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIAlbumArtFetcherSet::TYPE_ALL</definition>
         <argsstring></argsstring>
-        <name>localOnly</name>
+        <name>TYPE_ALL</name>
+        <initializer> 0x00</initializer>
         <briefdescription>
-<para>If true, only attempt to fetch album art from local sources. </para>        </briefdescription>
+        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcherSet.idl" line="60" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcherSet.idl" bodystart="60" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcherSet.idl" line="56" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcherSet.idl" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_album_art_fetcher_set_1eac45ea76065344dcbb3a103adb3e1ea" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIAlbumArtFetcherSet::TYPE_REMOTE</definition>
+        <argsstring></argsstring>
+        <name>TYPE_REMOTE</name>
+        <initializer> 0x01</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcherSet.idl" line="57" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcherSet.idl" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_album_art_fetcher_set_15505adb833c0a79e8503eb3ee849cc48" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIAlbumArtFetcherSet::TYPE_LOCAL</definition>
+        <argsstring></argsstring>
+        <name>TYPE_LOCAL</name>
+        <initializer> 0x02</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcherSet.idl" line="58" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcherSet.idl" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_album_art_fetcher_set_142de1da24d66751338dfbe4334bd0e17" prot="public" static="no" mutable="no">
+        <type>attribute unsigned long</type>
+        <definition>attribute unsigned long sbIAlbumArtFetcherSet::fetcherType</definition>
+        <argsstring></argsstring>
+        <name>fetcherType</name>
+        <briefdescription>
+<para>Type of fetchers in the set (local, remote, both). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcherSet.idl" line="63" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcherSet.idl" bodystart="63" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -25,41 +67,45 @@
 <para>An album art fetcher set may be used to fetch album art from multiple sources. This interface will obtain an ordered set of album art fetchers and call each fetcher in succession until one successfully fetches album art.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_album_art_fetcher" kindref="compound">sbIAlbumArtFetcher</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="14">
+      <node id="6">
         <label>sbIAlbumArtFetcher</label>
         <link refid="interfacesb_i_album_art_fetcher"/>
       </node>
-      <node id="13">
+      <node id="5">
         <label>sbIAlbumArtFetcherSet</label>
         <link refid="interfacesb_i_album_art_fetcher_set"/>
-        <childnode refid="14" relation="public-inheritance">
+        <childnode refid="6" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="16">
+      <node id="8">
         <label>sbIAlbumArtFetcher</label>
         <link refid="interfacesb_i_album_art_fetcher"/>
       </node>
-      <node id="15">
+      <node id="7">
         <label>sbIAlbumArtFetcherSet</label>
         <link refid="interfacesb_i_album_art_fetcher_set"/>
-        <childnode refid="16" relation="public-inheritance">
+        <childnode refid="8" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcherSet.idl" line="55" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcherSet.idl" bodystart="54" bodyend="61"/>
+    <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcherSet.idl" line="55" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcherSet.idl" bodystart="54" bodyend="64"/>
     <listofallmembers>
       <member refid="interfacesb_i_album_art_fetcher_12e7aa9a9a21e080e84ee372a384ff3a1" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>albumArtSourceList</name></member>
       <member refid="interfacesb_i_album_art_fetcher_1af76c37775392e96621dd55dde3c00e2" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>description</name></member>
       <member refid="interfacesb_i_album_art_fetcher_1e473a55326d08aea0533d88124dae70f" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>fetchAlbumArtForAlbum</name></member>
+      <member refid="interfacesb_i_album_art_fetcher_105760a70291728c4402c094f1eda4cd4" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>fetchAlbumArtForTrack</name></member>
+      <member refid="interfacesb_i_album_art_fetcher_set_142de1da24d66751338dfbe4334bd0e17" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>fetcherType</name></member>
       <member refid="interfacesb_i_album_art_fetcher_1c9205bd18be39e369a6563873b41ef80" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>isEnabled</name></member>
       <member refid="interfacesb_i_album_art_fetcher_1f0e116558c99df98213df5925fabddf7" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>isLocal</name></member>
-      <member refid="interfacesb_i_album_art_fetcher_set_1d6272d19a9919d7f3eb1b9681668d4d1" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>localOnly</name></member>
       <member refid="interfacesb_i_album_art_fetcher_1a7de9e782a7485aa19f4689d86b8e1cb" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>name</name></member>
       <member refid="interfacesb_i_album_art_fetcher_1f0fb64cdfe322e7bee03ce72215e7085" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>priority</name></member>
       <member refid="interfacesb_i_album_art_fetcher_11746f3709c9cac9c1f49e9d7f1c1cf71" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>shortName</name></member>
       <member refid="interfacesb_i_album_art_fetcher_1a891fa93236b58c6b9eded65572bb877" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>shutdown</name></member>
+      <member refid="interfacesb_i_album_art_fetcher_set_1d8732cad3234b0bd23bae8a3bdc2919d" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>TYPE_ALL</name></member>
+      <member refid="interfacesb_i_album_art_fetcher_set_15505adb833c0a79e8503eb3ee849cc48" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>TYPE_LOCAL</name></member>
+      <member refid="interfacesb_i_album_art_fetcher_set_1eac45ea76065344dcbb3a103adb3e1ea" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>TYPE_REMOTE</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

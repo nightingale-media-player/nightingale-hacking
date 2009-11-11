@@ -82,7 +82,7 @@
 <codeline lineno="60"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;http://developer.mozilla.org/en/docs/DOM:element.addEventListener&gt;</highlight></codeline>
 <codeline lineno="61"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="62"><highlight class="normal"></highlight></codeline>
-<codeline lineno="68"><highlight class="normal">[scriptable,<sp/>uuid(0140514d-50d5-4f0b-8445-c1f18846ca3a)]</highlight></codeline>
+<codeline lineno="68"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(0140514d-50d5-4f0b-8445-c1f18846ca3a)]</highlight></codeline>
 <codeline lineno="69" refid="interfacesb_i_media_item_status_event" refkind="compound"><highlight class="normal"><sp/>interface<sp/><ref refid="interfacesb_i_media_item_status_event" kindref="compound" tooltip="an interface to maintain information about the last event that occurred">sbIMediaItemStatusEvent</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="70"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="71"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>

@@ -1,0 +1,193 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_transcode_job" kind="interface" prot="public">
+    <compoundname>sbITranscodeJob</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_transcode_job_14cec5c4f17d874770103fe285bc5f09e" prot="public" static="no" mutable="no">
+        <type>attribute <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
+        <definition>attribute sbIPropertyArray sbITranscodeJob::metadata</definition>
+        <argsstring></argsstring>
+        <name>metadata</name>
+        <briefdescription>
+<para>An array of metadata properties. </para>        </briefdescription>
+        <detaileddescription>
+<para>Metadata properties to be written into the destination file. Metadata items in this property array should be used to replace those in the source file (where present), and add them otherwise. Metadata items present in the source stream but not in this array should be preserved where possible. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeJob.idl" line="64" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeJob.idl" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_job_133301c8ad2584a0157a0d76bf7de62b1" prot="public" static="no" mutable="no">
+        <type>attribute nsIInputStream</type>
+        <definition>attribute nsIInputStream sbITranscodeJob::metadataImage</definition>
+        <argsstring></argsstring>
+        <name>metadataImage</name>
+        <briefdescription>
+<para>An input stream for the encoded image. </para>        </briefdescription>
+        <detaileddescription>
+<para>If an image is desired in the encoded file (e.g. album art cover), set this to an input stream that the encoded image can be read from. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeJob.idl" line="72" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeJob.idl" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_job_14a9db394df75e08d269725123040f096" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbITranscodeJob::sourceURI</definition>
+        <argsstring></argsstring>
+        <name>sourceURI</name>
+        <briefdescription>
+<para>The source URI to transcode from. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeJob.idl" line="79" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeJob.idl" bodystart="79" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_job_1538b91aeac7c500094031fffd1c4d973" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbITranscodeJob::destURI</definition>
+        <argsstring></argsstring>
+        <name>destURI</name>
+        <briefdescription>
+<para>The destination URI to transcode to. </para>        </briefdescription>
+        <detaileddescription>
+<para>Note that, in general, only file URIs will be supported for destination URI. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeJob.idl" line="87" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeJob.idl" bodystart="87" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_job_16a767abbdc575e31b15325eb21055320" prot="public" static="no" mutable="no">
+        <type>attribute <ref refid="interfacesb_i_transcode_profile" kindref="compound">sbITranscodeProfile</ref></type>
+        <definition>attribute sbITranscodeProfile sbITranscodeJob::profile</definition>
+        <argsstring></argsstring>
+        <name>profile</name>
+        <briefdescription>
+<para>The encoding profile to use. </para>        </briefdescription>
+        <detaileddescription>
+<para>A profile description for the transcode. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeJob.idl" line="95" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeJob.idl" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_job_1f00a988cdf7ea61e9e5d7f77cc96e237" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIArray</type>
+        <definition>readonly attribute nsIArray sbITranscodeJob::availableProfiles</definition>
+        <argsstring></argsstring>
+        <name>availableProfiles</name>
+        <briefdescription>
+<para>Get an array of all sbITranscodeProfiles that can be used with this job. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeJob.idl" line="101" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeJob.idl" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_transcode_job_1a53fd47421f0f346aee8d48fcae77047" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt32</type>
+        <definition>PRInt32 sbITranscodeJob::vote</definition>
+        <argsstring>(in sbIMediaItem aMediaItem, in sbITranscodeProfile aProfile)</argsstring>
+        <name>vote</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+          <declname>aMediaItem</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_transcode_profile" kindref="compound">sbITranscodeProfile</ref></type>
+          <declname>aProfile</declname>
+        </param>
+        <briefdescription>
+<para>Vote to be the handler returned for the given url. </para>        </briefdescription>
+        <detaileddescription>
+<para>The <ref refid="interfacesb_i_transcode_manager" kindref="compound">sbITranscodeManager</ref> will instantiate one of every <ref refid="interfacesb_i_transcode_job" kindref="compound">sbITranscodeJob</ref> subclass and ask it to vote on whether it can support transcoding a given media item with a given transcoding profile. The highest vote will be used as the handler for the media item.</para><para>Values less than zero cause that handler to be ignored.</para><para>At the moment, our handlers return -1, 0, or 1 (for &quot;no,&quot; &quot;maybe,&quot; and &quot;yes&quot;).</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaItem</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The media item on which to vote </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aProfile</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The transcoding profile to be used </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The vote </para></simplesect>
+<simplesect kind="see"><para><ref refid="interfacesb_i_transcode_manager" kindref="compound">sbITranscodeManager</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeJob.idl" line="121"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_transcode_job_19430d26eeb0b850815cb2cda2b73d35a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>PRInt64</type>
+        <definition>PRInt64 sbITranscodeJob::estimateOutputSize</definition>
+        <argsstring>(in PRInt32 inputDuration)</argsstring>
+        <name>estimateOutputSize</name>
+        <param>
+          <type>in PRInt32</type>
+          <declname>inputDuration</declname>
+        </param>
+        <briefdescription>
+<para>Conservatively estimate the output size in bytes, given an input duration in milliseconds, and the currently-set profile. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeJob.idl" line="127"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_transcode_job_1d397a4112d3fe20699d8e669a3c96b8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbITranscodeJob::transcode</definition>
+        <argsstring>()</argsstring>
+        <name>transcode</name>
+        <briefdescription>
+<para>Start the transcoding operation. </para>        </briefdescription>
+        <detaileddescription>
+<para>Caller should monitor progress via <ref refid="interfacesb_i_job_progress" kindref="compound">sbIJobProgress</ref> </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeJob.idl" line="134"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An object capable of transcoding a source URI to a destination file. </para>    </briefdescription>
+    <detaileddescription>
+<para>User code should request an instance using sbITranscodeManager::getTranscoder()</para><para>Implementations should also implement <ref refid="interfacesb_i_job_progress" kindref="compound">sbIJobProgress</ref>, and usually <ref refid="interfacesb_i_job_cancelable" kindref="compound">sbIJobCancelable</ref>.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_transcode_manager" kindref="compound">sbITranscodeManager</ref> </para><para><ref refid="interfacesb_i_job_progress" kindref="compound">sbIJobProgress</ref> </para><para><ref refid="interfacesb_i_job_cancelable" kindref="compound">sbIJobCancelable</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <collaborationgraph>
+      <node id="1250">
+        <label>sbITranscodeProfile</label>
+        <link refid="interfacesb_i_transcode_profile"/>
+      </node>
+      <node id="1251">
+        <label>sbIPropertyArray</label>
+        <link refid="interfacesb_i_property_array"/>
+      </node>
+      <node id="1249">
+        <label>sbITranscodeJob</label>
+        <link refid="interfacesb_i_transcode_job"/>
+        <childnode refid="1250" relation="usage">
+          <edgelabel>profile</edgelabel>
+        </childnode>
+        <childnode refid="1251" relation="usage">
+          <edgelabel>metadata</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeJob.idl" line="54" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeJob.idl" bodystart="53" bodyend="135"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_transcode_job_1f00a988cdf7ea61e9e5d7f77cc96e237" prot="public" virt="non-virtual"><scope>sbITranscodeJob</scope><name>availableProfiles</name></member>
+      <member refid="interfacesb_i_transcode_job_1538b91aeac7c500094031fffd1c4d973" prot="public" virt="non-virtual"><scope>sbITranscodeJob</scope><name>destURI</name></member>
+      <member refid="interfacesb_i_transcode_job_19430d26eeb0b850815cb2cda2b73d35a" prot="public" virt="non-virtual"><scope>sbITranscodeJob</scope><name>estimateOutputSize</name></member>
+      <member refid="interfacesb_i_transcode_job_14cec5c4f17d874770103fe285bc5f09e" prot="public" virt="non-virtual"><scope>sbITranscodeJob</scope><name>metadata</name></member>
+      <member refid="interfacesb_i_transcode_job_133301c8ad2584a0157a0d76bf7de62b1" prot="public" virt="non-virtual"><scope>sbITranscodeJob</scope><name>metadataImage</name></member>
+      <member refid="interfacesb_i_transcode_job_16a767abbdc575e31b15325eb21055320" prot="public" virt="non-virtual"><scope>sbITranscodeJob</scope><name>profile</name></member>
+      <member refid="interfacesb_i_transcode_job_14a9db394df75e08d269725123040f096" prot="public" virt="non-virtual"><scope>sbITranscodeJob</scope><name>sourceURI</name></member>
+      <member refid="interfacesb_i_transcode_job_1d397a4112d3fe20699d8e669a3c96b8f" prot="public" virt="non-virtual"><scope>sbITranscodeJob</scope><name>transcode</name></member>
+      <member refid="interfacesb_i_transcode_job_1a53fd47421f0f346aee8d48fcae77047" prot="public" virt="non-virtual"><scope>sbITranscodeJob</scope><name>vote</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

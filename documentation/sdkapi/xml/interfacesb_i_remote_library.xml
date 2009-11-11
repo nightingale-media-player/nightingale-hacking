@@ -214,13 +214,13 @@
     <detaileddescription>
 <para>The remote library interface allows websites to create media items in a manner more web-like than the internal <ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref> interface. Access to the main or web libraries is controlled through permissions set by the user. Some or all calls made to objects that implement this interface may fail based on the permissions set by the user. </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="990">
+      <node id="1064">
         <label>sbIRemoteSiteLibrary</label>
         <link refid="interfacesb_i_remote_site_library"/>
-        <childnode refid="989" relation="public-inheritance">
+        <childnode refid="1063" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="989">
+      <node id="1063">
         <label>sbIRemoteLibrary</label>
         <link refid="interfacesb_i_remote_library"/>
       </node>

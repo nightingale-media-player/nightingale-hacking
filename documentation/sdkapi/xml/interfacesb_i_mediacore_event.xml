@@ -168,6 +168,36 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="99" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="99" bodyend="-1"/>
       </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_mediacore_event_120e1196e0607b2bb162063462e616bc0" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIMediacoreEvent::SEQUENCE_CHANGE</definition>
+        <argsstring></argsstring>
+        <name>SEQUENCE_CHANGE</name>
+        <initializer> 0x00001505</initializer>
+        <briefdescription>
+<para>Sequence recalculated. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This event should only be fired by the sequencer. </para><para>data is the new sequence. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="105" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_mediacore_event_1f0d4f7425cb8eb777df6c260a0477049" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIMediacoreEvent::SEQUENCE_END</definition>
+        <argsstring></argsstring>
+        <name>SEQUENCE_END</name>
+        <initializer> 0x00001507</initializer>
+        <briefdescription>
+<para>Sequence end. </para>        </briefdescription>
+        <detaileddescription>
+<para>This event will be fired by the sequencer when it runs out of items to play from it&apos;s sequence. This event will not be fired when the sequence repeats because of repeat one or repeat all being turned on.</para><para><simplesect kind="note"><para>This event should only be fired by the sequencer. </para><para>data is null for this event. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="117" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="117" bodyend="-1"/>
+      </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_event_182137adca2784b92c8da6409b3d63803" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
         <definition>const unsigned long sbIMediacoreEvent::STREAM_FOUND</definition>
@@ -181,7 +211,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="107" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="107" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="125" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="125" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_event_17664413f0c93a902767f2dc33bb2a5d3" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -196,7 +226,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="113" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="113" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="131" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="131" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_event_17528331ffe2b1e77ecdd474434221de4" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -211,7 +241,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="119" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="119" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="137" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="137" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_event_17e5d37b50bbd0b62fccc9df48a088f7d" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -226,7 +256,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="125" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="125" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="143" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="143" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_event_173f7e981701789874ba2c84bef822a61" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -241,7 +271,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="131" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="131" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="149" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="149" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_event_14e9433c55978e9cf73197f58051dbf2f" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -256,7 +286,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="136" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="136" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="154" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="154" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_event_11c312a9c7f8aa67257c4e1c6302c609f" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -271,7 +301,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="141" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="141" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="159" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="159" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_event_15f193b1dd252377be152719cb078a9e6" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -286,7 +316,23 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="146" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="146" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="164" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="164" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_mediacore_event_16242b2ae9825b764c2d55652652642ec" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIMediacoreEvent::VIDEO_SIZE_CHANGED</definition>
+        <argsstring></argsstring>
+        <name>VIDEO_SIZE_CHANGED</name>
+        <initializer> 0x00005000</initializer>
+        <briefdescription>
+<para>Video size has changed. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>data is an sbIVideoSize object. </para></simplesect>
+<simplesect kind="see"><para>sbIVideoSize </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="173" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="173" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_event_146cba5951aa1eda0de7469a636cebdea" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -301,7 +347,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="152" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="152" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="181" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="181" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_event_18ce36c300d96d1e1983999684fb22cbc" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -315,7 +361,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="157" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="157" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="186" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="186" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_event_122713ea935a89237840432fc9c26eaf2" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -329,7 +375,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="162" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="162" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="191" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="191" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_event_1bb4815805c1091855b2361188cbf74b8" prot="public" static="no" mutable="no">
         <type>readonly attribute unsigned long</type>
@@ -342,7 +388,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="167" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="167" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="196" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="196" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_event_1c4697c0c2a6afcdbb46de9b81c2035b0" prot="public" static="no" mutable="no">
         <type>readonly attribute <ref refid="interfacesb_i_mediacore_error" kindref="compound">sbIMediacoreError</ref></type>
@@ -355,7 +401,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="171" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="171" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="200" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="200" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_event_1e1368996e866ea8951fc21845e8a19c8" prot="public" static="no" mutable="no">
         <type>readonly attribute nsIVariant</type>
@@ -368,7 +414,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="176" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="176" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="205" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="205" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_event_147b7e2f65dc05671bb96082b5b0ee0bc" prot="public" static="no" mutable="no">
         <type>readonly attribute <ref refid="interfacesb_i_mediacore" kindref="compound">sbIMediacore</ref></type>
@@ -381,7 +427,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="181" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="181" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="210" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="210" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_event_1f622909ff49188414189398ac83962f2" prot="public" static="no" mutable="no">
         <type>readonly attribute <ref refid="interfacesb_i_mediacore_event_target" kindref="compound">sbIMediacoreEventTarget</ref></type>
@@ -394,7 +440,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="185" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="185" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="214" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="214" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -402,168 +448,161 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="541">
+      <node id="577">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="538" relation="public-inheritance">
+        <childnode refid="574" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="549">
+      <node id="584">
         <label>sbIMediaListView</label>
         <link refid="interfacesb_i_media_list_view"/>
-        <childnode refid="541" relation="usage">
+        <childnode refid="577" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
-        <childnode refid="550" relation="usage">
+        <childnode refid="585" relation="usage">
           <edgelabel>selection</edgelabel>
         </childnode>
-        <childnode refid="551" relation="usage">
+        <childnode refid="586" relation="usage">
           <edgelabel>cascadeFilterSet</edgelabel>
         </childnode>
       </node>
-      <node id="536">
+      <node id="572">
         <label>sbIMediacoreCapabilities</label>
         <link refid="interfacesb_i_mediacore_capabilities"/>
       </node>
-      <node id="550">
+      <node id="585">
         <label>sbIMediaListViewSelection</label>
         <link refid="interfacesb_i_media_list_view_selection"/>
-        <childnode refid="538" relation="usage">
+        <childnode refid="574" relation="usage">
           <edgelabel>currentMediaItem</edgelabel>
         </childnode>
       </node>
-      <node id="545">
+      <node id="581">
         <label>sbIDeviceStatus</label>
         <link refid="interfacesb_i_device_status"/>
-        <childnode refid="538" relation="usage">
+        <childnode refid="574" relation="usage">
           <edgelabel>mediaItem</edgelabel>
         </childnode>
-        <childnode refid="541" relation="usage">
+        <childnode refid="577" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
-      <node id="546">
-        <label>sbIDeviceCapabilities</label>
-        <link refid="interfacesb_i_device_capabilities"/>
-      </node>
-      <node id="537">
+      <node id="573">
         <label>sbIMediacoreSequencer</label>
         <link refid="interfacesb_i_mediacore_sequencer"/>
-        <childnode refid="538" relation="usage">
+        <childnode refid="574" relation="usage">
           <edgelabel>nextItem
 currentItem</edgelabel>
         </childnode>
-        <childnode refid="548" relation="usage">
+        <childnode refid="583" relation="usage">
           <edgelabel>customGenerator</edgelabel>
         </childnode>
-        <childnode refid="549" relation="usage">
+        <childnode refid="584" relation="usage">
           <edgelabel>view</edgelabel>
         </childnode>
       </node>
-      <node id="542">
+      <node id="578">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="543" relation="usage">
+        <childnode refid="579" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="545" relation="usage">
+        <childnode refid="581" relation="usage">
           <edgelabel>currentStatus</edgelabel>
         </childnode>
-        <childnode refid="546" relation="usage">
-          <edgelabel>capabilities</edgelabel>
-        </childnode>
-        <childnode refid="547" relation="usage">
+        <childnode refid="582" relation="usage">
           <edgelabel>properties</edgelabel>
         </childnode>
       </node>
-      <node id="534">
+      <node id="570">
         <label>sbIMediacore</label>
         <link refid="interfacesb_i_mediacore"/>
-        <childnode refid="535" relation="usage">
+        <childnode refid="571" relation="usage">
           <edgelabel>status</edgelabel>
         </childnode>
-        <childnode refid="536" relation="usage">
+        <childnode refid="572" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
-        <childnode refid="537" relation="usage">
+        <childnode refid="573" relation="usage">
           <edgelabel>sequencer</edgelabel>
         </childnode>
       </node>
-      <node id="552">
+      <node id="587">
         <label>sbIMediacoreEventTarget</label>
         <link refid="interfacesb_i_mediacore_event_target"/>
       </node>
-      <node id="540">
+      <node id="576">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="541" relation="public-inheritance">
+        <childnode refid="577" relation="public-inheritance">
         </childnode>
-        <childnode refid="542" relation="usage">
+        <childnode refid="578" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="544" relation="usage">
+        <childnode refid="580" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="551">
+      <node id="586">
         <label>sbICascadeFilterSet</label>
         <link refid="interfacesb_i_cascade_filter_set"/>
       </node>
-      <node id="539">
+      <node id="575">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="538">
+      <node id="574">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="539" relation="public-inheritance">
+        <childnode refid="575" relation="public-inheritance">
         </childnode>
-        <childnode refid="540" relation="usage">
+        <childnode refid="576" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="548">
+      <node id="583">
         <label>sbIMediacoreSequenceGenerator</label>
         <link refid="interfacesb_i_mediacore_sequence_generator"/>
       </node>
-      <node id="543">
+      <node id="579">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="544" relation="usage">
+        <childnode refid="580" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="544">
+      <node id="580">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
-      <node id="533">
+      <node id="569">
         <label>sbIMediacoreError</label>
         <link refid="interfacesb_i_mediacore_error"/>
       </node>
-      <node id="532">
+      <node id="568">
         <label>sbIMediacoreEvent</label>
         <link refid="interfacesb_i_mediacore_event"/>
-        <childnode refid="533" relation="usage">
+        <childnode refid="569" relation="usage">
           <edgelabel>error</edgelabel>
         </childnode>
-        <childnode refid="534" relation="usage">
+        <childnode refid="570" relation="usage">
           <edgelabel>origin</edgelabel>
         </childnode>
-        <childnode refid="552" relation="usage">
+        <childnode refid="587" relation="usage">
           <edgelabel>target</edgelabel>
         </childnode>
       </node>
-      <node id="535">
+      <node id="571">
         <label>sbIMediacoreStatus</label>
         <link refid="interfacesb_i_mediacore_status"/>
       </node>
-      <node id="547">
+      <node id="582">
         <label>sbIDeviceProperties</label>
         <link refid="interfacesb_i_device_properties"/>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="41" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="40" bodyend="186"/>
+    <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" line="41" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreEvent.idl" bodystart="40" bodyend="215"/>
     <listofallmembers>
       <member refid="interfacesb_i_mediacore_event_15753902ac5a272f1f769c58372958501" prot="public" virt="non-virtual"><scope>sbIMediacoreEvent</scope><name>BEFORE_TRACK_CHANGE</name></member>
       <member refid="interfacesb_i_mediacore_event_180a8ee2621dbb6e0e35e5db748313f54" prot="public" virt="non-virtual"><scope>sbIMediacoreEvent</scope><name>BEFORE_VIEW_CHANGE</name></member>
@@ -578,6 +617,8 @@ currentItem</edgelabel>
       <member refid="interfacesb_i_mediacore_event_1486862701bfd87eb236d77575ec9eed3" prot="public" virt="non-virtual"><scope>sbIMediacoreEvent</scope><name>MUTE_CHANGE</name></member>
       <member refid="interfacesb_i_mediacore_event_147b7e2f65dc05671bb96082b5b0ee0bc" prot="public" virt="non-virtual"><scope>sbIMediacoreEvent</scope><name>origin</name></member>
       <member refid="interfacesb_i_mediacore_event_146cba5951aa1eda0de7469a636cebdea" prot="public" virt="non-virtual"><scope>sbIMediacoreEvent</scope><name>PLUGIN_MISSING</name></member>
+      <member refid="interfacesb_i_mediacore_event_120e1196e0607b2bb162063462e616bc0" prot="public" virt="non-virtual"><scope>sbIMediacoreEvent</scope><name>SEQUENCE_CHANGE</name></member>
+      <member refid="interfacesb_i_mediacore_event_1f0d4f7425cb8eb777df6c260a0477049" prot="public" virt="non-virtual"><scope>sbIMediacoreEvent</scope><name>SEQUENCE_END</name></member>
       <member refid="interfacesb_i_mediacore_event_11c312a9c7f8aa67257c4e1c6302c609f" prot="public" virt="non-virtual"><scope>sbIMediacoreEvent</scope><name>STREAM_END</name></member>
       <member refid="interfacesb_i_mediacore_event_182137adca2784b92c8da6409b3d63803" prot="public" virt="non-virtual"><scope>sbIMediacoreEvent</scope><name>STREAM_FOUND</name></member>
       <member refid="interfacesb_i_mediacore_event_17664413f0c93a902767f2dc33bb2a5d3" prot="public" virt="non-virtual"><scope>sbIMediacoreEvent</scope><name>STREAM_HAS_VIDEO</name></member>
@@ -590,6 +631,7 @@ currentItem</edgelabel>
       <member refid="interfacesb_i_mediacore_event_1bb4815805c1091855b2361188cbf74b8" prot="public" virt="non-virtual"><scope>sbIMediacoreEvent</scope><name>type</name></member>
       <member refid="interfacesb_i_mediacore_event_1f6a03365c64d89abc6054395f1c35823" prot="public" virt="non-virtual"><scope>sbIMediacoreEvent</scope><name>UNINTIALIZED</name></member>
       <member refid="interfacesb_i_mediacore_event_1cdb50d03a72d614487a52d000f4f46ee" prot="public" virt="non-virtual"><scope>sbIMediacoreEvent</scope><name>URI_CHANGE</name></member>
+      <member refid="interfacesb_i_mediacore_event_16242b2ae9825b764c2d55652652642ec" prot="public" virt="non-virtual"><scope>sbIMediacoreEvent</scope><name>VIDEO_SIZE_CHANGED</name></member>
       <member refid="interfacesb_i_mediacore_event_1a69515b89e7a8d3343542b30b3cfe487" prot="public" virt="non-virtual"><scope>sbIMediacoreEvent</scope><name>VIEW_CHANGE</name></member>
       <member refid="interfacesb_i_mediacore_event_11c67921f3cefbea3774ed00aff0fc289" prot="public" virt="non-virtual"><scope>sbIMediacoreEvent</scope><name>VOLUME_CHANGE</name></member>
     </listofallmembers>

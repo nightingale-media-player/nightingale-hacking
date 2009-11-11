@@ -4,13 +4,13 @@
     <compoundname>sbIMediaPage.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="566">
+      <node id="711">
         <label>components/mediapages/public/sbIMediaPage.idl</label>
         <link refid="sbIMediaPage.idl"/>
-        <childnode refid="567" relation="include">
+        <childnode refid="712" relation="include">
         </childnode>
       </node>
-      <node id="567">
+      <node id="712">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -51,20 +51,22 @@
 <codeline lineno="29"><highlight class="normal">interface<sp/>nsIDOMEvent;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal">interface<sp/>nsIDragSession;</highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight></codeline>
-<codeline lineno="48"><highlight class="normal">[scriptable,<sp/>uuid(b9e3c190-d35e-11dc-95ff-0800200c9a66)]</highlight></codeline>
+<codeline lineno="48"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(0f1e6280-bed3-11de-8a39-0800200c9a66)]</highlight></codeline>
 <codeline lineno="49" refid="interfacesb_i_media_page" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_page" kindref="compound" tooltip="A generic interface for UI that renders a media list view.">sbIMediaPage</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="50"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="51"><highlight class="normal"></highlight></codeline>
 <codeline lineno="62" refid="interfacesb_i_media_page_1ff03bd008eb9d3740585ec3241dc62b3" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref><sp/>mediaListView;</highlight></codeline>
 <codeline lineno="63"><highlight class="normal"></highlight></codeline>
-<codeline lineno="70"><highlight class="normal"><sp/><sp/>PRBool<sp/>highlightItem(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aViewIndex);</highlight></codeline>
-<codeline lineno="71"><highlight class="normal"></highlight></codeline>
-<codeline lineno="78"><highlight class="normal"><sp/><sp/>PRBool<sp/>canDrop(in<sp/>nsIDOMEvent<sp/>aEvent,<sp/>in<sp/>nsIDragSession<sp/>aSession);</highlight></codeline>
-<codeline lineno="79"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/>PRBool<sp/>onDrop(in<sp/>nsIDOMEvent<sp/>aEvent,<sp/>in<sp/>nsIDragSession<sp/>aSession);</highlight></codeline>
-<codeline lineno="87"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="88"><highlight class="normal"></highlight></codeline>
-<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68" refid="interfacesb_i_media_page_173ddf27f4422d5b0b2bff5e0bfd763e5" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>PRBool<sp/>isOnlyView;</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/>PRBool<sp/>highlightItem(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aViewIndex);</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/>PRBool<sp/>canDrop(in<sp/>nsIDOMEvent<sp/>aEvent,<sp/>in<sp/>nsIDragSession<sp/>aSession);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/>PRBool<sp/>onDrop(in<sp/>nsIDOMEvent<sp/>aEvent,<sp/>in<sp/>nsIDragSession<sp/>aSession);</highlight></codeline>
+<codeline lineno="93"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPage.idl"/>
   </compounddef>

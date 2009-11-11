@@ -4,17 +4,488 @@
     <compoundname>sbIDeviceCapabilities.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="83">
+      <node id="81">
         <label>components/devices/base/public/sbIDeviceCapabilities.idl</label>
         <link refid="sbIDeviceCapabilities.idl"/>
-        <childnode refid="84" relation="include">
+        <childnode refid="82" relation="include">
         </childnode>
       </node>
-      <node id="84">
+      <node id="82">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
-    <innerclass refid="interfacesb_i_device_capabilities" prot="public">sbIDeviceCapabilities</innerclass>
+    <innerclass refid="interfacesb_i_image_size" prot="public">sbIImageSize</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_12dc3836f6f3c085afd166df5db7cb4f9" prot="public" static="no">
+        <name>SB_IMAGESIZE_DESCRIPTION</name>
+        <initializer>&quot;Songbird Device Capabilities Image Size Component&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="52"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_15753fcb73ad44d66ed59d91ff530ff65" prot="public" static="no">
+        <name>SB_IMAGESIZE_CONTRACTID</name>
+        <initializer>&quot;@songbirdnest.com/Songbird/Device/sbimagesize;1&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="54"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_1322355b5a98edbc9bdb0574ca2510591" prot="public" static="no">
+        <name>SB_IMAGESIZE_CLASSNAME</name>
+        <initializer>&quot;Songbird Device Capabilities Image Size&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="56"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_1389bea82acb28a1ec774986af809b472" prot="public" static="no">
+        <name>SB_IMAGESIZE_CID</name>
+        <initializer>{ 0xf2915d0, 0xf43, 0x46fd, { 0x90, 0xbd, 0x84, 0x22, 0x48, 0x43, 0xb, 0xf } }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="58"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_15505ea543f918108d46f5c40e9093933" prot="public" static="no">
+        <name>SB_IDEVCAPRANGE_DESCRIPTION</name>
+        <initializer>&quot;Songbird Device Capabilities Range Component&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="108"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_14d7668066604418b553132f3b6131338" prot="public" static="no">
+        <name>SB_IDEVCAPRANGE_CONTRACTID</name>
+        <initializer>&quot;@songbirdnest.com/Songbird/Device/sbrange;1&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="110"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_1627794d6854c7754ed3b64c894720a0c" prot="public" static="no">
+        <name>SB_IDEVCAPRANGE_CLASSNAME</name>
+        <initializer>&quot;Songbird Device Capabilities Range&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="112"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_18595b1fda525eab3ea2467a00dd0ec0f" prot="public" static="no">
+        <name>SB_IDEVCAPRANGE_CID</name>
+        <initializer>{ 0x491604ba, 0x51e1, 0x45e4, { 0x9d, 0x11, 0xce, 0x1e, 0xc6, 0x3d, 0xe, 0xae } }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="114"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_142edb59df3583f178ced3f4e6850b5e9" prot="public" static="no">
+        <name>SB_IFORMATTYPECONSTRAINT_DESCRIPTION</name>
+        <initializer>&quot;Songbird Device Capabilities Format Type Constraint Component&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="140"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_17c6cfe0a448b3ea0472215f02df5a0c0" prot="public" static="no">
+        <name>SB_IFORMATTYPECONSTRAINT_CONTRACTID</name>
+        <initializer>&quot;@songbirdnest.com/Songbird/Device/sbformattypeconstraint;1&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="142"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_1afb45fa51ec52364f2f05317dbe121f9" prot="public" static="no">
+        <name>SB_IFORMATTYPECONSTRAINT_CLASSNAME</name>
+        <initializer>&quot;Songbird Device Capabilities Format Type Constraint&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="144"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_1225ae1e54cf055069c1fa9dc6524df29" prot="public" static="no">
+        <name>SB_IFORMATTYPECONSTRAINT_CID</name>
+        <initializer>{ 0x5d73ba28, 0xf460, 0x48bd, { 0x92, 0x3b, 0x68, 0xd4, 0xa8, 0x8e, 0x92, 0xda } }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="146"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_186394a4d960fccbf8b44cd7cb6b2f93a" prot="public" static="no">
+        <name>SB_IIMAGEFORMATTYPE_DESCRIPTION</name>
+        <initializer>&quot;Songbird Device Capabilities Image Format Type Component&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="191"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_12ac9c1ae71da33829b0d75f9eec9df46" prot="public" static="no">
+        <name>SB_IIMAGEFORMATTYPE_CONTRACTID</name>
+        <initializer>&quot;@songbirdnest.com/Songbird/Device/sbimageformattype;1&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="193"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_163abe125104ef12584c4fbeb0e2a99cb" prot="public" static="no">
+        <name>SB_IIMAGEFORMATTYPE_CLASSNAME</name>
+        <initializer>&quot;Songbird Device Capabilities Image Format Type&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="195"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_12209bdd3f97ad71ca6e6662f755412f7" prot="public" static="no">
+        <name>SB_IIMAGEFORMATTYPE_CID</name>
+        <initializer>{ 0x496881cb, 0xed03, 0x435f, { 0x9d, 0xa5, 0xdf, 0x99, 0x63, 0x6f, 0x9e, 0xe3 } }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="197"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_14e7f45fe63e6dc63facb1a47e8454186" prot="public" static="no">
+        <name>SB_IAUDIOFORMATTYPE_DESCRIPTION</name>
+        <initializer>&quot;Songbird Device Capabilities Audio Format Type Component&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="248"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_103f3625cee960bcedcd64196877d5529" prot="public" static="no">
+        <name>SB_IAUDIOFORMATTYPE_CONTRACTID</name>
+        <initializer>&quot;@songbirdnest.com/Songbird/Device/sbaudioformattype;1&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="250"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_10c5e19ee95497943fb4ba7c93e1020e8" prot="public" static="no">
+        <name>SB_IAUDIOFORMATTYPE_CLASSNAME</name>
+        <initializer>&quot;Songbird Device Capabilities Audio Format Type&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="252"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_16d044cffe7aa7e5d232031c2e9626e50" prot="public" static="no">
+        <name>SB_IAUDIOFORMATTYPE_CID</name>
+        <initializer>{ 0xfbfadb32, 0xb95b, 0x49cb, { 0xb5, 0xf0, 0x8, 0xf9, 0xa8, 0x70, 0x57, 0xe5 } }</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="254"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_10436de6e5f5c8e18c33d953f7e065f65" prot="public" static="no">
+        <name>SONGBIRD_DEVICECAPABILITIES_DESCRIPTION</name>
+        <initializer>&quot;Songbird Device Capabilities Component&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="400"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_1616dfb3f1db13359971752ffbf43adf8" prot="public" static="no">
+        <name>SONGBIRD_DEVICECAPABILITIES_CONTRACTID</name>
+        <initializer>&quot;@songbirdnest.com/Songbird/Device/DeviceCapabilities;1&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="402"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_1a6aa4cde4d8f2007d38a2f79ea6d56a5" prot="public" static="no">
+        <name>SONGBIRD_DEVICECAPABILITIES_CLASSNAME</name>
+        <initializer>&quot;Songbird Device Capabilities&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="404"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_device_capabilities_8idl_10febb6c876cb651b1aac87860a63da33" prot="public" static="no">
+        <name>SONGBIRD_DEVICECAPABILITIES_CID</name>
+        <initializer>{ /* 54d42a87-9031-4928-991e-e66f4916a90b */              \
+  0x54d42a87,                                             \
+  0x9031,                                                 \
+  0x4928,                                                 \
+  {0x99, 0x1e, 0xe6, 0x6f, 0x49, 0x16, 0xa9, 0x0b}        \
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="411"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="sb_i_device_capabilities_8idl_1998dea05e56765f3bed8b74fa4c6f7a4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>uuid</definition>
+        <argsstring>(8A62D336-9489-46f3-BB16-AED90DA7F775)] interface sbIDevCapRange</argsstring>
+        <name>uuid</name>
+        <param>
+          <type>8A62D336-9489-46f3-BB16-</type>
+          <declname>AED90DA7F775</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>The values permitted. If this array is non-empty, then only these values are permitted. If it is empty, instead, the min/max/step values should be used</para><para>Returns the value of a given index <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aIndex</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the index of the value to return</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+Adds a value to the range <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aValue</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The value to append</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+The number of values in the range </para>        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="68" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="66" bodyend="104"/>
+      </memberdef>
+      <memberdef kind="function" id="sb_i_device_capabilities_8idl_1a7c07940fac4604c16e467c4c8b68fca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>uuid</definition>
+        <argsstring>(eb46c4ab-1842-4e0b-ba69-e60b3dd9c792)] interface sbIFormatTypeConstraint</argsstring>
+        <name>uuid</name>
+        <param>
+          <type>eb46c4ab-1842-4e0b-ba69-</type>
+          <declname>e60b3dd9c792</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="126" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="124" bodyend="136"/>
+      </memberdef>
+      <memberdef kind="function" id="sb_i_device_capabilities_8idl_16e49c3ae6b45c38dbd91e5859770033f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>uuid</definition>
+        <argsstring>(3dac965e-be7b-4792-ba4d-2af3f683caad)] interface sbIImageFormatType</argsstring>
+        <name>uuid</name>
+        <param>
+          <type>3dac965e-be7b-4792-ba4d-</type>
+          <declname>2af3f683caad</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>The mime-type of the image format.</para><para>e.g. image/jpeg, image/png, image/x-my-private-format </para>        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="156" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="154" bodyend="187"/>
+      </memberdef>
+      <memberdef kind="function" id="sb_i_device_capabilities_8idl_17b2d7119838c0f826a3297abf1c4e62e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>uuid</definition>
+        <argsstring>(5ec50372-7137-4671-8e75-e8f8dc237dd7)] interface sbIAudioFormatType</argsstring>
+        <name>uuid</name>
+        <param>
+          <type>5ec50372-7137-4671-8e75-</type>
+          <declname>e8f8dc237dd7</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="207" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="205" bodyend="244"/>
+      </memberdef>
+      <memberdef kind="function" id="sb_i_device_capabilities_8idl_1b32e184ea40619fc2bfe69c410fff5aa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>uuid</definition>
+        <argsstring>(cc7e84be-5c15-416d-b3dd-ce35de33e497)] interface sbIDeviceCapabilities</argsstring>
+        <name>uuid</name>
+        <param>
+          <type>cc7e84be-5c15-416d-b3dd-</type>
+          <declname>ce35de33e497</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+<para>Sets an array of function types <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aFunctionTypes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>and array of function types </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aFunctionTypesCount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>length of aFunctionTypes array</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+Sets an array of event types <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aEventTypes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>an array of event types </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aEventCount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>length of aEventTypes array</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+Add an array of content types for a function type <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aFunctionType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Function type these content types fall under </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aContentTypes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>an array of content types for aFunctionType </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aContentTypesCount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>length of aContentTypes array</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+Add an array of formats for a content type <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aContentType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Content type these formats fall under </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aFormats</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>an array of formats for aContentType </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aFormatsCount</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>length of aFormats array</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+Add a constraint to a format <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aFormat</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the format we&apos;re adding a constraint for. This must correspond to a format previously added by addFormats </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aFormatType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the object describing the format type. For example it it could be a sbIAudioFormatType or a sbIImageFormatType</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+Add the capabilities specified by aCapabilities <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aCapabilities</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set of capabilities to add</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+Indicates that the initialization is complete, the add and set functions above will no longer affect the data.</para><para>An array of nsISupportsPRUint32 values defined above.</para><para>An array of nsISupportsPRUint32 values defined above.</para><para>Returns an array of format types</para><para>Returns the list of constraints for the format</para><para>Returns an array of nsISupportsPRUint32 values defined in <ref refid="sb_i_device_event_8idl-source" kindref="compound">sbIDeviceEvent.idl</ref> </para>        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" line="264" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl" bodystart="262" bodyend="396"/>
+      </memberdef>
+      </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
@@ -50,72 +521,271 @@
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
 <codeline lineno="29"><highlight class="normal">interface<sp/>nsIArray;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref>;</highlight></codeline>
-<codeline lineno="31"><highlight class="normal"></highlight></codeline>
-<codeline lineno="37"><highlight class="normal">[scriptable,<sp/>uuid(54d42a87-9031-4928-991e-e66f4916a90b)]</highlight></codeline>
-<codeline lineno="38" refid="interfacesb_i_device_capabilities" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_capabilities" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceCapabilities</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="39"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="40"><highlight class="normal"></highlight></codeline>
-<codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setFunctionTypes([array,<sp/>size_is(aFunctionTypesCount)]</highlight></codeline>
-<codeline lineno="47"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>PRUint32<sp/>aFunctionTypes,</highlight></codeline>
-<codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aFunctionTypesCount);</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">interface<sp/>nsIVariant;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(3d8c5686-26b7-47a9-a18d-2254b77a6c9a)]</highlight></codeline>
+<codeline lineno="39" refid="interfacesb_i_image_size" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_image_size" kindref="compound">sbIImageSize</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="40"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Initialize(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>width,<sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>height);</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>The<sp/>supported<sp/>width<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44" refid="interfacesb_i_image_size_11f4d131adfd69d988e12558850603e85" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>width;</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>The<sp/>supported<sp/>height<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47" refid="interfacesb_i_image_size_160827eae9aa431ea3874f194829de13e" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>height;</highlight></codeline>
+<codeline lineno="48"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="49"><highlight class="normal"></highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setEventTypes([array,<sp/>size_is(aEventTypesCount)]</highlight></codeline>
-<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aEventTypes,</highlight></codeline>
-<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aEventTypesCount);</highlight></codeline>
-<codeline lineno="58"><highlight class="normal"></highlight></codeline>
-<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addContentTypes(in<sp/>PRUint32<sp/>aFunctionType,</highlight></codeline>
-<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,<sp/>size_is(aContentTypesCount)]<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aContentTypes,</highlight></codeline>
-<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aContentTypesCount);</highlight></codeline>
-<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addFormats(in<sp/>PRUint32<sp/>aContentType,</highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,<sp/>size_is(aFormatsCount)]<sp/>in<sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>aFormats,</highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aFormatsCount);</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"></highlight></codeline>
-<codeline lineno="83"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initDone();</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"></highlight></codeline>
-<codeline lineno="85"><highlight class="normal"></highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="90" refid="interfacesb_i_device_capabilities_190169ce9a7d625939d042e4f3e80931a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_UNKNOWN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x00;</highlight></codeline>
-<codeline lineno="91" refid="interfacesb_i_device_capabilities_1db96af2563c0c7ff017ae379db1bb93b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_DEVICE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x01;</highlight></codeline>
-<codeline lineno="92" refid="interfacesb_i_device_capabilities_1e6dc5822d32abf01f9a54d45a53b9972" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_AUDIO_PLAYBACK<sp/>=<sp/>0x02;</highlight></codeline>
-<codeline lineno="93" refid="interfacesb_i_device_capabilities_1b71d156f1786e79a7fd3d9fa4189bce1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_AUDIO_CAPTURE<sp/><sp/>=<sp/>0x03;</highlight></codeline>
-<codeline lineno="94" refid="interfacesb_i_device_capabilities_17048b66215ac2465b3981f373fbed783" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_IMAGE_DISPLAY<sp/><sp/>=<sp/>0x04;</highlight></codeline>
-<codeline lineno="95" refid="interfacesb_i_device_capabilities_1cc62135a3ef12c7dbb5030b2507f6097" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_IMAGE_CAPTURE<sp/><sp/>=<sp/>0x05;</highlight></codeline>
-<codeline lineno="96" refid="interfacesb_i_device_capabilities_1e410779678c7eb44936af821c5b68369" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_VIDEO_PLAYBACK<sp/>=<sp/>0x06;</highlight></codeline>
-<codeline lineno="97" refid="interfacesb_i_device_capabilities_1a001147360de4e0db463f18f6e1a49a1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_VIDEO_CAPTURE<sp/><sp/>=<sp/>0x07;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal">%{C++</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SB_IMAGESIZE_DESCRIPTION<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="52"><highlight class="preprocessor"><sp/><sp/>&quot;Songbird<sp/>Device<sp/>Capabilities<sp/>Image<sp/>Size<sp/>Component&quot;</highlight></codeline>
+<codeline lineno="53"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_IMAGESIZE_CONTRACTID<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="54"><highlight class="preprocessor"><sp/><sp/>&quot;@songbirdnest.com/Songbird/Device/sbimagesize;1&quot;</highlight></codeline>
+<codeline lineno="55"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_IMAGESIZE_CLASSNAME<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="56"><highlight class="preprocessor"><sp/><sp/>&quot;Songbird<sp/>Device<sp/>Capabilities<sp/>Image<sp/>Size&quot;</highlight></codeline>
+<codeline lineno="57"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_IMAGESIZE_CID<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="58"><highlight class="preprocessor">{<sp/>0xf2915d0,<sp/>0xf43,<sp/>0x46fd,<sp/>{<sp/>0x90,<sp/>0xbd,<sp/>0x84,<sp/>0x22,<sp/>0x48,<sp/>0x43,<sp/>0xb,<sp/>0xf<sp/>}<sp/>}</highlight></codeline>
+<codeline lineno="59"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(8A62D336-9489-46f3-BB16-AED90DA7F775)]</highlight></codeline>
+<codeline lineno="67"><highlight class="normal">interface<sp/>sbIDevCapRange<sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="68"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Initialize(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aMin,</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aMax,</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aStep);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>GetValue(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>AddValue(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aValue);</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>valueCount;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>The<sp/>minimum<sp/>supported<sp/>value<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>min;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>The<sp/>maximum<sp/>supported<sp/>value<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>max;</highlight></codeline>
 <codeline lineno="98"><highlight class="normal"></highlight></codeline>
-<codeline lineno="102" refid="interfacesb_i_device_capabilities_1264a755317ef2988c10f31951e8b575c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_CLIENT_DEFINED<sp/>=<sp/>0x80000000;</highlight></codeline>
-<codeline lineno="103"><highlight class="normal"></highlight></codeline>
-<codeline lineno="107"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/></highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="108"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getSupportedFunctionTypes(out<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aArrayCount,</highlight></codeline>
-<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[retval,<sp/>array,<sp/>size_is(aArrayCount)]</highlight></codeline>
-<codeline lineno="110"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/>PRUint32<sp/>aFunctionTypes);</highlight></codeline>
-<codeline lineno="111"><highlight class="normal"></highlight></codeline>
-<codeline lineno="115" refid="interfacesb_i_device_capabilities_1fcf744ed74e6e3f153c7224d866afb5a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_UNKNOWN<sp/><sp/>=<sp/>0x00;</highlight></codeline>
-<codeline lineno="116" refid="interfacesb_i_device_capabilities_1d50c6c34efa315316df71282618495ed" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_FILE<sp/><sp/><sp/><sp/><sp/>=<sp/>0x01;</highlight></codeline>
-<codeline lineno="117" refid="interfacesb_i_device_capabilities_1552bbe81c7dbac935953fe65cab1b742" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_FOLDER<sp/><sp/><sp/>=<sp/>0x02;</highlight></codeline>
-<codeline lineno="118" refid="interfacesb_i_device_capabilities_139111b3bb501e0f9418dded121ec6048" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_AUDIO<sp/><sp/><sp/><sp/>=<sp/>0x03;</highlight></codeline>
-<codeline lineno="119" refid="interfacesb_i_device_capabilities_1715b0a5b47395dc8b2475a08cf959745" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_IMAGE<sp/><sp/><sp/><sp/>=<sp/>0x04;</highlight></codeline>
-<codeline lineno="120" refid="interfacesb_i_device_capabilities_143a55b41f0de584e454e2e144a4c731c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_VIDEO<sp/><sp/><sp/><sp/>=<sp/>0x05;</highlight></codeline>
-<codeline lineno="121" refid="interfacesb_i_device_capabilities_11528ffc998bbb5c07d2e3501bb468074" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_PLAYLIST<sp/>=<sp/>0x06;</highlight></codeline>
-<codeline lineno="122" refid="interfacesb_i_device_capabilities_1a295b2493363335748270a9925480eb2" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_ALBUM<sp/><sp/><sp/><sp/>=<sp/>0x07;</highlight></codeline>
-<codeline lineno="123"><highlight class="normal"></highlight></codeline>
-<codeline lineno="127" refid="interfacesb_i_device_capabilities_1a7e8d6f144bfb21342b20f275f5dce6f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_CLIENT_DEFINED<sp/>=<sp/>0x80000000;</highlight></codeline>
-<codeline lineno="128"><highlight class="normal"></highlight></codeline>
-<codeline lineno="132"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getSupportedContentTypes(in<sp/>PRUint32<sp/>aFunctionType,</highlight></codeline>
-<codeline lineno="133"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aArrayCount,</highlight></codeline>
-<codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[retval,<sp/>array,<sp/>size_is(aArrayCount)]</highlight></codeline>
-<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/>PRUint32<sp/>aContentTypes);</highlight></codeline>
-<codeline lineno="136"><highlight class="normal"></highlight></codeline>
-<codeline lineno="140"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getSupportedFormats(in<sp/>PRUint32<sp/>aContentType,</highlight></codeline>
-<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aArrayCount,</highlight></codeline>
-<codeline lineno="142"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[retval,<sp/>array,<sp/>size_is(aArrayCount)]</highlight></codeline>
-<codeline lineno="143"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>aSupportedFormats);</highlight></codeline>
-<codeline lineno="144"><highlight class="normal"></highlight></codeline>
-<codeline lineno="148"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getSupportedEvents(out<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aArrayCount,</highlight></codeline>
-<codeline lineno="149"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[retval,<sp/>array,<sp/>size_is(aArrayCount)]</highlight></codeline>
-<codeline lineno="150"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aSupportedEvents);</highlight></codeline>
-<codeline lineno="151"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>If<sp/>non-zero,<sp/>the<sp/>range<sp/>is<sp/>not<sp/>continuous,<sp/>but<sp/>instead<sp/>only</highlight></codeline>
+<codeline lineno="100"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>increments<sp/>of<sp/>&apos;step&apos;<sp/>are<sp/>permitted<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>step;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>IsValueInRange(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aValue);</highlight></codeline>
+<codeline lineno="104"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106"><highlight class="normal">%{C++</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SB_IDEVCAPRANGE_DESCRIPTION<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="108"><highlight class="preprocessor"><sp/><sp/>&quot;Songbird<sp/>Device<sp/>Capabilities<sp/>Range<sp/>Component&quot;</highlight></codeline>
+<codeline lineno="109"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_IDEVCAPRANGE_CONTRACTID<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="110"><highlight class="preprocessor"><sp/><sp/>&quot;@songbirdnest.com/Songbird/Device/sbrange;1&quot;</highlight></codeline>
+<codeline lineno="111"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_IDEVCAPRANGE_CLASSNAME<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="112"><highlight class="preprocessor"><sp/><sp/>&quot;Songbird<sp/>Device<sp/>Capabilities<sp/>Range&quot;</highlight></codeline>
+<codeline lineno="113"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_IDEVCAPRANGE_CID<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="114"><highlight class="preprocessor">{<sp/>0x491604ba,<sp/>0x51e1,<sp/>0x45e4,<sp/>{<sp/>0x9d,<sp/>0x11,<sp/>0xce,<sp/>0x1e,<sp/>0xc6,<sp/>0x3d,<sp/>0xe,<sp/>0xae<sp/>}<sp/>}</highlight></codeline>
+<codeline lineno="115"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(eb46c4ab-1842-4e0b-ba69-e60b3dd9c792)]</highlight></codeline>
+<codeline lineno="125"><highlight class="normal">interface<sp/>sbIFormatTypeConstraint<sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="126"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Initialize(in<sp/>AString<sp/>aConstraintName,</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIVariant<sp/>aMinValue,</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIVariant<sp/>aMaxValue);</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>constraintName;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIVariant<sp/>constraintMinValue;</highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIVariant<sp/>constraintMaxValue;</highlight></codeline>
+<codeline lineno="136"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="137"><highlight class="normal"></highlight></codeline>
+<codeline lineno="138"><highlight class="normal">%{C++</highlight></codeline>
+<codeline lineno="139"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SB_IFORMATTYPECONSTRAINT_DESCRIPTION<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="140"><highlight class="preprocessor"><sp/><sp/>&quot;Songbird<sp/>Device<sp/>Capabilities<sp/>Format<sp/>Type<sp/>Constraint<sp/>Component&quot;</highlight></codeline>
+<codeline lineno="141"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_IFORMATTYPECONSTRAINT_CONTRACTID<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="142"><highlight class="preprocessor"><sp/><sp/>&quot;@songbirdnest.com/Songbird/Device/sbformattypeconstraint;1&quot;</highlight></codeline>
+<codeline lineno="143"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_IFORMATTYPECONSTRAINT_CLASSNAME<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="144"><highlight class="preprocessor"><sp/><sp/>&quot;Songbird<sp/>Device<sp/>Capabilities<sp/>Format<sp/>Type<sp/>Constraint&quot;</highlight></codeline>
+<codeline lineno="145"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_IFORMATTYPECONSTRAINT_CID<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="146"><highlight class="preprocessor">{<sp/>0x5d73ba28,<sp/>0xf460,<sp/>0x48bd,<sp/>{<sp/>0x92,<sp/>0x3b,<sp/>0x68,<sp/>0xd4,<sp/>0xa8,<sp/>0x8e,<sp/>0x92,<sp/>0xda<sp/>}<sp/>}</highlight></codeline>
+<codeline lineno="147"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(3dac965e-be7b-4792-ba4d-2af3f683caad)]</highlight></codeline>
+<codeline lineno="155"><highlight class="normal">interface<sp/>sbIImageFormatType<sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="156"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="157"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Initialize(in<sp/>ACString<sp/>aImageFormat,<sp/></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIArray<sp/>aSupportedExplicitSizes,</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>sbIDevCapRange<sp/>aSupportedWidths,</highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>sbIDevCapRange<sp/>aSupportedHeights);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>ACString<sp/>imageFormat;</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"></highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>Array<sp/>of<sp/>supported<sp/>sizes.<sp/>Each<sp/>item<sp/>in<sp/>the<sp/>array<sp/>is<sp/>an<sp/>sbIImageSize<sp/>giving</highlight></codeline>
+<codeline lineno="169"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>an<sp/>explicit<sp/>width<sp/>and<sp/>height.</highlight></codeline>
+<codeline lineno="170"><highlight class="comment"></highlight></codeline>
+<codeline lineno="171"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>The<sp/>array<sp/>MUST<sp/>NOT<sp/>be<sp/>empty;<sp/>if<sp/>arbitrary<sp/>dimensions<sp/>are<sp/>supported<sp/>then</highlight></codeline>
+<codeline lineno="172"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>this<sp/>array<sp/>should<sp/>contain<sp/>a<sp/>single<sp/>&apos;recommended&apos;<sp/>size</highlight></codeline>
+<codeline lineno="173"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIArray<sp/>supportedExplicitSizes;</highlight></codeline>
+<codeline lineno="175"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>Range<sp/>of<sp/>supported<sp/>widths.</highlight></codeline>
+<codeline lineno="177"><highlight class="comment"></highlight></codeline>
+<codeline lineno="178"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>May<sp/>be<sp/>null,<sp/>in<sp/>which<sp/>case<sp/>only<sp/>the<sp/>explicit<sp/>sizes<sp/>are<sp/>permitted.</highlight></codeline>
+<codeline lineno="179"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>sbIDevCapRange<sp/>supportedWidths;</highlight></codeline>
+<codeline lineno="181"><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>Range<sp/>of<sp/>supported<sp/>heights.</highlight></codeline>
+<codeline lineno="183"><highlight class="comment"></highlight></codeline>
+<codeline lineno="184"><highlight class="comment"><sp/><sp/><sp/><sp/><sp/>May<sp/>be<sp/>null,<sp/>in<sp/>which<sp/>case<sp/>only<sp/>the<sp/>explicit<sp/>sizes<sp/>are<sp/>permitted.</highlight></codeline>
+<codeline lineno="185"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>sbIDevCapRange<sp/>supportedHeights;</highlight></codeline>
+<codeline lineno="187"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="188"><highlight class="normal"></highlight></codeline>
+<codeline lineno="189"><highlight class="normal">%{C++</highlight></codeline>
+<codeline lineno="190"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SB_IIMAGEFORMATTYPE_DESCRIPTION<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="191"><highlight class="preprocessor"><sp/><sp/>&quot;Songbird<sp/>Device<sp/>Capabilities<sp/>Image<sp/>Format<sp/>Type<sp/>Component&quot;</highlight></codeline>
+<codeline lineno="192"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_IIMAGEFORMATTYPE_CONTRACTID<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="193"><highlight class="preprocessor"><sp/><sp/>&quot;@songbirdnest.com/Songbird/Device/sbimageformattype;1&quot;</highlight></codeline>
+<codeline lineno="194"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_IIMAGEFORMATTYPE_CLASSNAME<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="195"><highlight class="preprocessor"><sp/><sp/>&quot;Songbird<sp/>Device<sp/>Capabilities<sp/>Image<sp/>Format<sp/>Type&quot;</highlight></codeline>
+<codeline lineno="196"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_IIMAGEFORMATTYPE_CID<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="197"><highlight class="preprocessor">{<sp/>0x496881cb,<sp/>0xed03,<sp/>0x435f,<sp/>{<sp/>0x9d,<sp/>0xa5,<sp/>0xdf,<sp/>0x99,<sp/>0x63,<sp/>0x6f,<sp/>0x9e,<sp/>0xe3<sp/>}<sp/>}</highlight></codeline>
+<codeline lineno="198"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"></highlight></codeline>
+<codeline lineno="205"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(5ec50372-7137-4671-8e75-e8f8dc237dd7)]</highlight></codeline>
+<codeline lineno="206"><highlight class="normal">interface<sp/>sbIAudioFormatType<sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="207"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="208"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>Initialize(in<sp/>ACString<sp/>aFormat,</highlight></codeline>
+<codeline lineno="209"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>ACString<sp/>aCodec,</highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>sbIDevCapRange<sp/>aBitRates,</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>sbIDevCapRange<sp/>aSampleRates,</highlight></codeline>
+<codeline lineno="212"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>sbIDevCapRange<sp/>aChannels,</highlight></codeline>
+<codeline lineno="213"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIArray<sp/>aFormatSpecificConstraints);</highlight></codeline>
+<codeline lineno="214"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>Mime<sp/>type<sp/>of<sp/>the<sp/>container<sp/>format.</highlight></codeline>
+<codeline lineno="215"><highlight class="comment"><sp/><sp/><sp/>*</highlight></codeline>
+<codeline lineno="216"><highlight class="comment"><sp/><sp/><sp/>*<sp/>May<sp/>be<sp/>empty<sp/>if<sp/>there<sp/>is<sp/>no<sp/>container<sp/>format<sp/>(e.g.<sp/>a<sp/>raw<sp/>FLAC<sp/>bitstream)</highlight></codeline>
+<codeline lineno="217"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="218"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>ACString<sp/>containerFormat;</highlight></codeline>
+<codeline lineno="219"><highlight class="normal"></highlight></codeline>
+<codeline lineno="220"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>Mime<sp/>type<sp/>of<sp/>the<sp/>audio<sp/>codec<sp/>in<sp/>use.</highlight></codeline>
+<codeline lineno="221"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="222"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>ACString<sp/>audioCodec;</highlight></codeline>
+<codeline lineno="223"><highlight class="normal"></highlight></codeline>
+<codeline lineno="224"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>The<sp/>supported<sp/>bitrates.</highlight></codeline>
+<codeline lineno="225"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="226"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>sbIDevCapRange<sp/>supportedBitrates;</highlight></codeline>
+<codeline lineno="227"><highlight class="normal"></highlight></codeline>
+<codeline lineno="228"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>The<sp/>supported<sp/>sample<sp/>rates.</highlight></codeline>
+<codeline lineno="229"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="230"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>sbIDevCapRange<sp/>supportedSampleRates;</highlight></codeline>
+<codeline lineno="231"><highlight class="normal"></highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>The<sp/>supported<sp/>numbers<sp/>of<sp/>channels</highlight></codeline>
+<codeline lineno="233"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="234"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>sbIDevCapRange<sp/>supportedChannels;</highlight></codeline>
+<codeline lineno="235"><highlight class="normal"></highlight></codeline>
+<codeline lineno="236"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>An<sp/>array<sp/>of<sp/>sbIFormatTypeConstraint<sp/>specific<sp/>to<sp/>this<sp/>content<sp/>type.</highlight></codeline>
+<codeline lineno="237"><highlight class="comment"><sp/><sp/><sp/>*</highlight></codeline>
+<codeline lineno="238"><highlight class="comment"><sp/><sp/><sp/>*<sp/>For<sp/>example,<sp/>if<sp/>audioCodec<sp/>is<sp/>audio/aac,<sp/>this<sp/>might<sp/>have<sp/>a<sp/>constraint<sp/></highlight></codeline>
+<codeline lineno="239"><highlight class="comment"><sp/><sp/><sp/>*<sp/><sp/><sp/>profile=LC</highlight></codeline>
+<codeline lineno="240"><highlight class="comment"><sp/><sp/><sp/>*<sp/>to<sp/>indicate<sp/>that<sp/>only<sp/>the<sp/>low<sp/>complexity<sp/>profile<sp/>is<sp/>supported<sp/>(as<sp/>is<sp/>the</highlight></codeline>
+<codeline lineno="241"><highlight class="comment"><sp/><sp/><sp/>*<sp/>case<sp/>for<sp/>ipods,<sp/>for<sp/>example).</highlight></codeline>
+<codeline lineno="242"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIArray<sp/>formatSpecificConstraints;</highlight></codeline>
+<codeline lineno="244"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="245"><highlight class="normal"></highlight></codeline>
+<codeline lineno="246"><highlight class="normal">%{C++</highlight></codeline>
+<codeline lineno="247"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SB_IAUDIOFORMATTYPE_DESCRIPTION<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="248"><highlight class="preprocessor"><sp/><sp/>&quot;Songbird<sp/>Device<sp/>Capabilities<sp/>Audio<sp/>Format<sp/>Type<sp/>Component&quot;</highlight></codeline>
+<codeline lineno="249"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_IAUDIOFORMATTYPE_CONTRACTID<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="250"><highlight class="preprocessor"><sp/><sp/>&quot;@songbirdnest.com/Songbird/Device/sbaudioformattype;1&quot;</highlight></codeline>
+<codeline lineno="251"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_IAUDIOFORMATTYPE_CLASSNAME<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="252"><highlight class="preprocessor"><sp/><sp/>&quot;Songbird<sp/>Device<sp/>Capabilities<sp/>Audio<sp/>Format<sp/>Type&quot;</highlight></codeline>
+<codeline lineno="253"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_IAUDIOFORMATTYPE_CID<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="254"><highlight class="preprocessor">{<sp/>0xfbfadb32,<sp/>0xb95b,<sp/>0x49cb,<sp/>{<sp/>0xb5,<sp/>0xf0,<sp/>0x8,<sp/>0xf9,<sp/>0xa8,<sp/>0x70,<sp/>0x57,<sp/>0xe5<sp/>}<sp/>}</highlight></codeline>
+<codeline lineno="255"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
+<codeline lineno="256"><highlight class="normal"></highlight></codeline>
+<codeline lineno="262"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(cc7e84be-5c15-416d-b3dd-ce35de33e497)]</highlight></codeline>
+<codeline lineno="263"><highlight class="normal">interface<sp/>sbIDeviceCapabilities<sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="264"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="265"><highlight class="normal"></highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setFunctionTypes([array,<sp/>size_is(aFunctionTypesCount)]</highlight></codeline>
+<codeline lineno="272"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>PRUint32<sp/>aFunctionTypes,</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aFunctionTypesCount);</highlight></codeline>
+<codeline lineno="274"><highlight class="normal"></highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setEventTypes([array,<sp/>size_is(aEventTypesCount)]</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aEventTypes,</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aEventTypesCount);</highlight></codeline>
+<codeline lineno="283"><highlight class="normal"></highlight></codeline>
+<codeline lineno="290"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addContentTypes(in<sp/>PRUint32<sp/>aFunctionType,</highlight></codeline>
+<codeline lineno="291"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,<sp/>size_is(aContentTypesCount)]<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aContentTypes,</highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aContentTypesCount);</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="300"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addFormats(in<sp/>PRUint32<sp/>aContentType,</highlight></codeline>
+<codeline lineno="301"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[array,<sp/>size_is(aFormatsCount)]<sp/>in<sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>aFormats,</highlight></codeline>
+<codeline lineno="302"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aFormatsCount);</highlight></codeline>
+<codeline lineno="303"><highlight class="normal"></highlight></codeline>
+<codeline lineno="311"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>AddFormatType(in<sp/>AString<sp/>aFormat,<sp/></highlight></codeline>
+<codeline lineno="312"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsISupports<sp/>aFormatType);</highlight></codeline>
+<codeline lineno="313"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="318"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addCapabilities(in<sp/>sbIDeviceCapabilities<sp/>aCapabilities);</highlight></codeline>
+<codeline lineno="319"><highlight class="normal"></highlight></codeline>
+<codeline lineno="324"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initDone();</highlight></codeline>
+<codeline lineno="325"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="329"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_UNKNOWN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x00;</highlight></codeline>
+<codeline lineno="330"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_DEVICE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x01;</highlight></codeline>
+<codeline lineno="331"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_AUDIO_PLAYBACK<sp/>=<sp/>0x02;</highlight></codeline>
+<codeline lineno="332"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_AUDIO_CAPTURE<sp/><sp/>=<sp/>0x03;</highlight></codeline>
+<codeline lineno="333"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_IMAGE_DISPLAY<sp/><sp/>=<sp/>0x04;</highlight></codeline>
+<codeline lineno="334"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_IMAGE_CAPTURE<sp/><sp/>=<sp/>0x05;</highlight></codeline>
+<codeline lineno="335"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_VIDEO_PLAYBACK<sp/>=<sp/>0x06;</highlight></codeline>
+<codeline lineno="336"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_VIDEO_CAPTURE<sp/><sp/>=<sp/>0x07;</highlight></codeline>
+<codeline lineno="337"><highlight class="normal"></highlight></codeline>
+<codeline lineno="341"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>FUNCTION_CLIENT_DEFINED<sp/>=<sp/>0x80000000;</highlight></codeline>
+<codeline lineno="342"><highlight class="normal"></highlight></codeline>
+<codeline lineno="346"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="347"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getSupportedFunctionTypes(out<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aArrayCount,</highlight></codeline>
+<codeline lineno="348"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[retval,<sp/>array,<sp/>size_is(aArrayCount)]</highlight></codeline>
+<codeline lineno="349"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/>PRUint32<sp/>aFunctionTypes);</highlight></codeline>
+<codeline lineno="350"><highlight class="normal"></highlight></codeline>
+<codeline lineno="354"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_UNKNOWN<sp/><sp/>=<sp/>0x00;</highlight></codeline>
+<codeline lineno="355"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_FILE<sp/><sp/><sp/><sp/><sp/>=<sp/>0x01;</highlight></codeline>
+<codeline lineno="356"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_FOLDER<sp/><sp/><sp/>=<sp/>0x02;</highlight></codeline>
+<codeline lineno="357"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_AUDIO<sp/><sp/><sp/><sp/>=<sp/>0x03;</highlight></codeline>
+<codeline lineno="358"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_IMAGE<sp/><sp/><sp/><sp/>=<sp/>0x04;</highlight></codeline>
+<codeline lineno="359"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_VIDEO<sp/><sp/><sp/><sp/>=<sp/>0x05;</highlight></codeline>
+<codeline lineno="360"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_PLAYLIST<sp/>=<sp/>0x06;</highlight></codeline>
+<codeline lineno="361"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_ALBUM<sp/><sp/><sp/><sp/>=<sp/>0x07;</highlight></codeline>
+<codeline lineno="362"><highlight class="normal"></highlight></codeline>
+<codeline lineno="366"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>CONTENT_CLIENT_DEFINED<sp/>=<sp/>0x80000000;</highlight></codeline>
+<codeline lineno="367"><highlight class="normal"></highlight></codeline>
+<codeline lineno="371"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getSupportedContentTypes(in<sp/>PRUint32<sp/>aFunctionType,</highlight></codeline>
+<codeline lineno="372"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aArrayCount,</highlight></codeline>
+<codeline lineno="373"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[retval,<sp/>array,<sp/>size_is(aArrayCount)]</highlight></codeline>
+<codeline lineno="374"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/>PRUint32<sp/>aContentTypes);</highlight></codeline>
+<codeline lineno="375"><highlight class="normal"></highlight></codeline>
+<codeline lineno="379"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getSupportedFormats(in<sp/>PRUint32<sp/>aContentType,</highlight></codeline>
+<codeline lineno="380"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aArrayCount,</highlight></codeline>
+<codeline lineno="381"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[retval,<sp/>array,<sp/>size_is(aArrayCount)]</highlight></codeline>
+<codeline lineno="382"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>aSupportedFormats);</highlight></codeline>
+<codeline lineno="383"><highlight class="normal"></highlight></codeline>
+<codeline lineno="387"><highlight class="normal"><sp/><sp/>nsISupports<sp/>getFormatType(in<sp/>AString<sp/>aFormat);</highlight></codeline>
+<codeline lineno="388"><highlight class="normal"><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="393"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>getSupportedEvents(out<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aArrayCount,</highlight></codeline>
+<codeline lineno="394"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[retval,<sp/>array,<sp/>size_is(aArrayCount)]</highlight></codeline>
+<codeline lineno="395"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aSupportedEvents);</highlight></codeline>
+<codeline lineno="396"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="397"><highlight class="normal"></highlight></codeline>
+<codeline lineno="398"><highlight class="normal">%{C++</highlight></codeline>
+<codeline lineno="399"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SONGBIRD_DEVICECAPABILITIES_DESCRIPTION<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="400"><highlight class="preprocessor"><sp/><sp/>&quot;Songbird<sp/>Device<sp/>Capabilities<sp/>Component&quot;</highlight></codeline>
+<codeline lineno="401"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SONGBIRD_DEVICECAPABILITIES_CONTRACTID<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="402"><highlight class="preprocessor"><sp/><sp/>&quot;@songbirdnest.com/Songbird/Device/DeviceCapabilities;1&quot;</highlight></codeline>
+<codeline lineno="403"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SONGBIRD_DEVICECAPABILITIES_CLASSNAME<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="404"><highlight class="preprocessor"><sp/><sp/>&quot;Songbird<sp/>Device<sp/>Capabilities&quot;</highlight></codeline>
+<codeline lineno="405"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SONGBIRD_DEVICECAPABILITIES_CID<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="406"><highlight class="preprocessor">{<sp/></highlight><highlight class="comment">/*<sp/>54d42a87-9031-4928-991e-e66f4916a90b<sp/>*/</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="407"><highlight class="normal"><sp/><sp/>0x54d42a87,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="408"><highlight class="normal"><sp/><sp/>0x9031,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="409"><highlight class="normal"><sp/><sp/>0x4928,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="410"><highlight class="normal"><sp/><sp/>{0x99,<sp/>0x1e,<sp/>0xe6,<sp/>0x6f,<sp/>0x49,<sp/>0x16,<sp/>0xa9,<sp/>0x0b}<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="411"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="412"><highlight class="normal">%}</highlight></codeline>
+<codeline lineno="413"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceCapabilities.idl"/>
   </compounddef>

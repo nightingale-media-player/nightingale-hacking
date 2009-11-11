@@ -15,7 +15,7 @@
 <para>The parent window type. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/moz/prompter/public/sbIPrompter.idl" line="64" bodyfile="c:/builds/songbird/trunk/components/moz/prompter/public/sbIPrompter.idl" bodystart="64" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/moz/prompter/public/sbIPrompter.idl" line="69" bodyfile="c:/builds/songbird/trunk/components/moz/prompter/public/sbIPrompter.idl" bodystart="69" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_prompter_1d3f08ed089133b07b4fbfd9f13cb5889" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -28,7 +28,7 @@
 <para>If true, wait for a parent window of the configured type to be available before prompting. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/moz/prompter/public/sbIPrompter.idl" line="70" bodyfile="c:/builds/songbird/trunk/components/moz/prompter/public/sbIPrompter.idl" bodystart="70" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/moz/prompter/public/sbIPrompter.idl" line="75" bodyfile="c:/builds/songbird/trunk/components/moz/prompter/public/sbIPrompter.idl" bodystart="75" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -60,7 +60,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Open a dialog window with with the chrome URL specified by aUrl and parent specified by aParent. The window name is specified by aName and the window options are specified by aOptions. Additional window arguments may be provided in aExtraArguments.</para><para><parameterlist kind="param"><parameteritem>
+<para>Open a dialog window with the chrome URL specified by aUrl and parent specified by aParent. The window name is specified by aName and the window options are specified by aOptions. Additional window arguments may be provided in aExtraArguments.</para><para>Default window options for openDialog are the following: &quot;centerscreen,chrome,modal,titlebar&quot;.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>aParent</parametername>
 </parameternamelist>
@@ -99,16 +99,86 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/moz/prompter/public/sbIPrompter.idl" line="89"/>
+        <location file="c:/builds/songbird/trunk/components/moz/prompter/public/sbIPrompter.idl" line="97"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_prompter_1d1b065b77ded8e6cd77cb39974b5b800" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsIDOMWindow</type>
+        <definition>nsIDOMWindow sbIPrompter::openWindow</definition>
+        <argsstring>(in nsIDOMWindow aParent, in DOMString aUrl, in DOMString aName, in DOMString aOptions, in nsISupports aExtraArgument)</argsstring>
+        <name>openWindow</name>
+        <param>
+          <type>in nsIDOMWindow</type>
+          <declname>aParent</declname>
+        </param>
+        <param>
+          <type>in DOMString</type>
+          <declname>aUrl</declname>
+        </param>
+        <param>
+          <type>in DOMString</type>
+          <declname>aName</declname>
+        </param>
+        <param>
+          <type>in DOMString</type>
+          <declname>aOptions</declname>
+        </param>
+        <param>
+          <type>in nsISupports</type>
+          <declname>aExtraArgument</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Open a window with the chrome URL specified by aUrl and parent specified by aParent. The window name is specified by aName and the window options are specified by aOptions. Additional window arguments may be provided in aExtraArguments.</para><para>There are no default options for openWindow.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aParent</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parent window. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aUrl</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>URL of window chrome. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Window name. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aOptions</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Window options. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aExtraArguments</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Extra window arguments. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/moz/prompter/public/sbIPrompter.idl" line="117"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
-<para>The <ref refid="interfacesb_i_prompter" kindref="compound">sbIPrompter</ref> interface provides an nsIPromptService to environments without a default window (e.g., XPCOM components). For all methods that take a parent window as an argument, the parent may be set to null. This interface allows a parent window type to be set to be used as the parent window in these cases. In addition, the <ref refid="interfacesb_i_prompter" kindref="compound">sbIPrompter</ref> interface can be set to wait for a parent window to be available before calling the nsIPromptService methods. If the parent window type is not available and wait for window is false, dialogs are opened with the currently active window as the parent. A window is not considered to be available until after its overlays have loaded. If a method is called from a non-main thread, and wait for window is set, and a window is not available, the method will wait for a window to become available. If a method is called from the main thread, and wait for window is set, and a window is not available, the method will return NS_ERROR_NOT_AVAILABLE. If any error occurs, the method will return NS_ERROR_FAILURE.</para><para>&quot;@songbirdnest.com/Songbird/Prompter;1&quot; Use create instance with this component. No default parent window type is set and the default waitForWindow is false. </para>    </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/moz/prompter/public/sbIPrompter.idl" line="60" bodyfile="c:/builds/songbird/trunk/components/moz/prompter/public/sbIPrompter.idl" bodystart="59" bodyend="90"/>
+<para>The <ref refid="interfacesb_i_prompter" kindref="compound">sbIPrompter</ref> interface provides an nsIPromptService to environments without a default window (e.g., XPCOM components). For all methods that take a parent window as an argument, the parent may be set to null. If a parent window is set to null, this interface will use a window of the type specified by parentWindowType. If no parent window type is specified, this interface uses a default type (e.g., &quot;Songbird:Main&quot;). If a window of the specified type is not available, this interface finds an appropriate default window to use. This interface allows a parent window type to be set to be used as the parent window in these cases. In addition, the <ref refid="interfacesb_i_prompter" kindref="compound">sbIPrompter</ref> interface can be set to wait for a parent window to be available before calling the nsIPromptService methods. If the parent window type is not available and wait for window is false, dialogs are opened with the currently active window as the parent. A window is not considered to be available until after its overlays have loaded. If a method is called from a non-main thread, and wait for window is set, and a window is not available, the method will wait for a window to become available. If a method is called from the main thread, and wait for window is set, and a window is not available, the method will return NS_ERROR_NOT_AVAILABLE. If any error occurs, the method will return NS_ERROR_FAILURE.</para><para>&quot;@songbirdnest.com/Songbird/Prompter;1&quot; Use create instance with this component. No default parent window type is set and the default waitForWindow is false. </para>    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/moz/prompter/public/sbIPrompter.idl" line="65" bodyfile="c:/builds/songbird/trunk/components/moz/prompter/public/sbIPrompter.idl" bodystart="64" bodyend="118"/>
     <listofallmembers>
       <member refid="interfacesb_i_prompter_17ab68cf57dbb49968e75657a2e37474d" prot="public" virt="non-virtual"><scope>sbIPrompter</scope><name>openDialog</name></member>
+      <member refid="interfacesb_i_prompter_1d1b065b77ded8e6cd77cb39974b5b800" prot="public" virt="non-virtual"><scope>sbIPrompter</scope><name>openWindow</name></member>
       <member refid="interfacesb_i_prompter_1b6816f8538f6a57468f0f6331dd6a560" prot="public" virt="non-virtual"><scope>sbIPrompter</scope><name>parentWindowType</name></member>
       <member refid="interfacesb_i_prompter_1d3f08ed089133b07b4fbfd9f13cb5889" prot="public" virt="non-virtual"><scope>sbIPrompter</scope><name>waitForWindow</name></member>
     </listofallmembers>

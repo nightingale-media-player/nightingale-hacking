@@ -23,7 +23,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" line="53"/>
+        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" line="54"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_library_service_pane_service_1e4451b3b36f3cf9f09a1d7c19332d861" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref></type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" line="65"/>
+        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" line="70"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_library_service_pane_service_1a0de5432009fa0b571333bf8dc043d47" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref></type>
@@ -57,7 +57,33 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" line="72"/>
+        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" line="80"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_library_service_pane_service_1f9abfece80b06ee276b3f321c158b579" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_service_pane_node" kindref="compound">sbIServicePaneNode</ref></type>
+        <definition>sbIServicePaneNode sbILibraryServicePaneService::getNodeFromMediaListView</definition>
+        <argsstring>(in sbIMediaListView aMediaListView)</argsstring>
+        <name>getNodeFromMediaListView</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref></type>
+          <declname>aMediaListView</declname>
+        </param>
+        <briefdescription>
+<para>Attempt to get a service pane node for the given media list view. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaListView</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the view for which to get the service pane node </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>a service pane node that represents the given media list view or null if the node cannot be found </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" line="89"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_library_service_pane_service_1f1c145f1d519db096811ea5fd04b4f03" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_library_resource" kindref="compound">sbILibraryResource</ref></type>
@@ -74,7 +100,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" line="83"/>
+        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" line="99"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_library_service_pane_service_1c1ee7b078ddff8eea59d1a51fabbb08d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -95,18 +121,19 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" line="91"/>
+        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" line="107"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Provides information about libraries and medialists needed by the service pane. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" line="43" bodyfile="c:/builds/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" bodystart="43" bodyend="92"/>
+    <location file="c:/builds/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" line="44" bodyfile="c:/builds/songbird/trunk/components/servicepane/public/sbILibraryServicePaneService.idl" bodystart="44" bodyend="108"/>
     <listofallmembers>
       <member refid="interfacesb_i_library_service_pane_service_1e4451b3b36f3cf9f09a1d7c19332d861" prot="public" virt="non-virtual"><scope>sbILibraryServicePaneService</scope><name>createNodeForLibrary</name></member>
       <member refid="interfacesb_i_library_service_pane_service_1f1c145f1d519db096811ea5fd04b4f03" prot="public" virt="non-virtual"><scope>sbILibraryServicePaneService</scope><name>getLibraryResourceForNode</name></member>
       <member refid="interfacesb_i_library_service_pane_service_1a0de5432009fa0b571333bf8dc043d47" prot="public" virt="non-virtual"><scope>sbILibraryServicePaneService</scope><name>getNodeForLibraryResource</name></member>
+      <member refid="interfacesb_i_library_service_pane_service_1f9abfece80b06ee276b3f321c158b579" prot="public" virt="non-virtual"><scope>sbILibraryServicePaneService</scope><name>getNodeFromMediaListView</name></member>
       <member refid="interfacesb_i_library_service_pane_service_1c1ee7b078ddff8eea59d1a51fabbb08d" prot="public" virt="non-virtual"><scope>sbILibraryServicePaneService</scope><name>setNodeReadOnly</name></member>
       <member refid="interfacesb_i_library_service_pane_service_14c1ecd7837c0614171076ecbba3da6f2" prot="public" virt="non-virtual"><scope>sbILibraryServicePaneService</scope><name>suggestLibraryForNewList</name></member>
     </listofallmembers>

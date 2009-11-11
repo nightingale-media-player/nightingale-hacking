@@ -57,7 +57,7 @@
 <codeline lineno="40"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
 <codeline lineno="41"><highlight class="comment"><sp/>Class<sp/>PlaylistWidget</highlight></codeline>
 <codeline lineno="42"><highlight class="comment"><sp/>*/</highlight></codeline>
-<codeline lineno="47"><highlight class="normal">[scriptable,<sp/>uuid(7660f28b-6b55-40b8-8660-353aad8df5a3)]</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(7660f28b-6b55-40b8-8660-353aad8df5a3)]</highlight></codeline>
 <codeline lineno="48" refid="interfacesb_i_playlist_widget" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_widget" kindref="compound">sbIPlaylistWidget</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="49"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>rescanCommands();</highlight></codeline>

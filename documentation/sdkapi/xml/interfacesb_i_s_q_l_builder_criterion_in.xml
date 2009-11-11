@@ -99,26 +99,26 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="1070">
+      <node id="1150">
         <label>sbISQLBuilderCriterion</label>
         <link refid="interfacesb_i_s_q_l_builder_criterion"/>
       </node>
-      <node id="1069">
+      <node id="1149">
         <label>sbISQLBuilderCriterionIn</label>
         <link refid="interfacesb_i_s_q_l_builder_criterion_in"/>
-        <childnode refid="1070" relation="public-inheritance">
+        <childnode refid="1150" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="1072">
+      <node id="1152">
         <label>sbISQLBuilderCriterion</label>
         <link refid="interfacesb_i_s_q_l_builder_criterion"/>
       </node>
-      <node id="1071">
+      <node id="1151">
         <label>sbISQLBuilderCriterionIn</label>
         <link refid="interfacesb_i_s_q_l_builder_criterion_in"/>
-        <childnode refid="1072" relation="public-inheritance">
+        <childnode refid="1152" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

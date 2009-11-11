@@ -4,13 +4,13 @@
     <compoundname>sbILocalDatabaseLibraryCopyListener.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="380">
+      <node id="432">
         <label>nsISupports.idl</label>
       </node>
-      <node id="379">
+      <node id="431">
         <label>components/library/localdatabase/public/sbILocalDatabaseLibraryCopyListener.idl</label>
         <link refid="sbILocalDatabaseLibraryCopyListener.idl"/>
-        <childnode refid="380" relation="include">
+        <childnode refid="432" relation="include">
         </childnode>
       </node>
     </incdepgraph>
@@ -53,7 +53,7 @@
 <codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref>;</highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight></codeline>
-<codeline lineno="47"><highlight class="normal">[scriptable,<sp/>uuid(1eeea812-3b3b-48a3-9da6-f426938fc1a1)]</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(1eeea812-3b3b-48a3-9da6-f426938fc1a1)]</highlight></codeline>
 <codeline lineno="48" refid="interfacesb_i_local_database_library_copy_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_library_copy_listener" kindref="compound" tooltip="Interface used to listen for items being copied _from_ a library.">sbILocalDatabaseLibraryCopyListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="49"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="50"><highlight class="normal"><sp/><sp/>[function]<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onItemCopied(in<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>aSourceItem,<sp/></highlight></codeline>

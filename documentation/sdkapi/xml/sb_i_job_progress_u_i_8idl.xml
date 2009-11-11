@@ -4,19 +4,19 @@
     <compoundname>sbIJobProgressUI.idl</compoundname>
     <includes refid="sb_i_job_progress_8idl" local="yes">sbIJobProgress.idl</includes>
     <incdepgraph>
-      <node id="249">
+      <node id="294">
         <label>components/job/public/sbIJobProgressUI.idl</label>
         <link refid="sbIJobProgressUI.idl"/>
-        <childnode refid="250" relation="include">
+        <childnode refid="295" relation="include">
         </childnode>
       </node>
-      <node id="250">
+      <node id="295">
         <label>sbIJobProgress.idl</label>
         <link refid="sb_i_job_progress_8idl-source"/>
-        <childnode refid="251" relation="include">
+        <childnode refid="296" relation="include">
         </childnode>
       </node>
-      <node id="251">
+      <node id="296">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -54,7 +54,7 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;sbIJobProgress.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="37"><highlight class="normal">[scriptable,<sp/>uuid(e64fe9c2-1dd1-11b2-9b78-8f28c8fea870)]</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(e64fe9c2-1dd1-11b2-9b78-8f28c8fea870)]</highlight></codeline>
 <codeline lineno="38" refid="interfacesb_i_job_progress_u_i" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_job_progress_u_i" kindref="compound" tooltip="Interface to control UI aspects of sbIJobProgress.">sbIJobProgressUI</ref><sp/>:<sp/><ref refid="interfacesb_i_job_progress" kindref="compound" tooltip="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</ref></highlight></codeline>
 <codeline lineno="39"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="43" refid="interfacesb_i_job_progress_u_i_139af322c286cf17bbfde121e7db49aa5" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>DOMString<sp/>crop;</highlight></codeline>

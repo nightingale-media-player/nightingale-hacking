@@ -126,14 +126,49 @@
 <parametername>aListener</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>the listener to inform of success or failure</para></parameterdescription>
+<para>the listener to inform of success or failure </para></parameterdescription>
 </parameteritem>
 </parameterlist>
-<simplesect kind="note"><para>A call to aListener will be done for each item in the list. </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="106"/>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="104"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_album_art_fetcher_105760a70291728c4402c094f1eda4cd4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIAlbumArtFetcher::fetchAlbumArtForTrack</definition>
+        <argsstring>(in sbIMediaItem aMediaItem, in sbIAlbumArtListener aListener)</argsstring>
+        <name>fetchAlbumArtForTrack</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+          <declname>aMediaItem</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_album_art_listener" kindref="compound">sbIAlbumArtListener</ref></type>
+          <declname>aListener</declname>
+        </param>
+        <briefdescription>
+<para>Try to fetch album art for a single track. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaItem</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>is an <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref> to scan for artwork. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aListener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the listener to inform of success or failure </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="113"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_album_art_fetcher_1a891fa93236b58c6b9eded65572bb877" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -146,7 +181,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="110"/>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="117"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -155,22 +190,23 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_album_art_listener" kindref="compound">sbIAlbumArtListener</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="10">
+      <node id="2">
         <label>sbIAlbumArtFetcher</label>
         <link refid="interfacesb_i_album_art_fetcher"/>
       </node>
-      <node id="11">
+      <node id="3">
         <label>sbIAlbumArtFetcherSet</label>
         <link refid="interfacesb_i_album_art_fetcher_set"/>
-        <childnode refid="10" relation="public-inheritance">
+        <childnode refid="2" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
-    <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="54" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" bodystart="53" bodyend="111"/>
+    <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="54" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" bodystart="53" bodyend="118"/>
     <listofallmembers>
       <member refid="interfacesb_i_album_art_fetcher_12e7aa9a9a21e080e84ee372a384ff3a1" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcher</scope><name>albumArtSourceList</name></member>
       <member refid="interfacesb_i_album_art_fetcher_1af76c37775392e96621dd55dde3c00e2" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcher</scope><name>description</name></member>
       <member refid="interfacesb_i_album_art_fetcher_1e473a55326d08aea0533d88124dae70f" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcher</scope><name>fetchAlbumArtForAlbum</name></member>
+      <member refid="interfacesb_i_album_art_fetcher_105760a70291728c4402c094f1eda4cd4" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcher</scope><name>fetchAlbumArtForTrack</name></member>
       <member refid="interfacesb_i_album_art_fetcher_1c9205bd18be39e369a6563873b41ef80" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcher</scope><name>isEnabled</name></member>
       <member refid="interfacesb_i_album_art_fetcher_1f0e116558c99df98213df5925fabddf7" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcher</scope><name>isLocal</name></member>
       <member refid="interfacesb_i_album_art_fetcher_1a7de9e782a7485aa19f4689d86b8e1cb" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcher</scope><name>name</name></member>

@@ -4,13 +4,13 @@
     <compoundname>sbIDeviceHelper.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="138">
+      <node id="185">
         <label>components/devices/device/public/sbIDeviceHelper.idl</label>
         <link refid="sbIDeviceHelper.idl"/>
-        <childnode refid="139" relation="include">
+        <childnode refid="186" relation="include">
         </childnode>
       </node>
-      <node id="139">
+      <node id="186">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -52,7 +52,7 @@
 <codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref>;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_library" kindref="compound">sbIDeviceLibrary</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
-<codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(02e33a75-be25-4bd1-bf9d-030d0ee0346c)]</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(50670cd2-b060-4be9-975e-602c7665e5f0)]</highlight></codeline>
 <codeline lineno="45" refid="interfacesb_i_device_helper" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_helper" kindref="compound">sbIDeviceHelper</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="58"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>hasSpaceForWrite(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aSpaceNeeded,</highlight></codeline>
@@ -62,10 +62,11 @@
 <codeline lineno="62"><highlight class="normal"></highlight></codeline>
 <codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>queryUserSpaceExceeded(in<sp/>nsIDOMWindow<sp/><sp/><sp/><sp/><sp/><sp/><sp/>aParent,</highlight></codeline>
 <codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aDevice,</highlight></codeline>
-<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>aSyncDeviceOperation,</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_device_library" kindref="compound">sbIDeviceLibrary</ref><sp/><sp/><sp/>aLibrary,</highlight></codeline>
 <codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aSpaceNeeded,</highlight></codeline>
 <codeline lineno="82"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aSpaceAvailable);</highlight></codeline>
 <codeline lineno="83"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/devices/device/public/sbIDeviceHelper.idl"/>
   </compounddef>

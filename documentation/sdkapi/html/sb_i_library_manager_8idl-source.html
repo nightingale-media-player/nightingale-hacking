@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/library/base/public/sbILibraryManager.idl</h1><a href="sb_i_library_manager_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -100,7 +106,7 @@
 <a name="l00038"></a>00038 interface <a class="code" href="interfacesb_i_library_factory.html" title="Factory for new library instances.">sbILibraryFactory</a>;
 <a name="l00039"></a>00039 interface <a class="code" href="interfacesb_i_library_manager_listener.html" title="Manages the lifecycle of libraries in the system.">sbILibraryManagerListener</a>;
 <a name="l00040"></a>00040 
-<a name="l00046"></a>00046 [scriptable, uuid(c299b8fc-7aab-4247-a2f8-0ef88b06958f)]
+<a name="l00046"></a>00046 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(c299b8fc-7aab-4247-a2f8-0ef88b06958f)]
 <a name="l00047"></a><a class="code" href="interfacesb_i_library_manager.html">00047</a> interface <a class="code" href="interfacesb_i_library_manager.html" title="Manages the lifecycle of libraries in the system.">sbILibraryManager</a> : nsISupports
 <a name="l00048"></a>00048 {
 <a name="l00052"></a><a class="code" href="interfacesb_i_library_manager.html#9e697bdbbcd586f47fbaf0bf3dbd2801">00052</a>   readonly attribute <a class="code" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a> mainLibrary;
@@ -149,7 +155,7 @@
 <a name="l00136"></a>00136 <span class="preprocessor">#define SB_LIBRARY_MANAGER_AFTER_SHUTDOWN_TOPIC "songbird-library-manager-after-shutdown"</span>
 <a name="l00137"></a>00137 <span class="preprocessor"></span>
 <a name="l00138"></a>00138 %}
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

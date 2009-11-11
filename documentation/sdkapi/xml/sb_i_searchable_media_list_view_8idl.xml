@@ -4,13 +4,13 @@
     <compoundname>sbISearchableMediaListView.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="356">
+      <node id="411">
         <label>components/library/base/public/sbISearchableMediaListView.idl</label>
         <link refid="sbISearchableMediaListView.idl"/>
-        <childnode refid="357" relation="include">
+        <childnode refid="412" relation="include">
         </childnode>
       </node>
-      <node id="357">
+      <node id="412">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -51,7 +51,7 @@
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_constraint" kindref="compound">sbILibraryConstraint</ref>;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="46"><highlight class="normal">[scriptable,<sp/>uuid(39af55eb-da6f-4ee8-9df2-5d5dd777c459)]</highlight></codeline>
+<codeline lineno="46"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(39af55eb-da6f-4ee8-9df2-5d5dd777c459)]</highlight></codeline>
 <codeline lineno="47" refid="interfacesb_i_searchable_media_list_view" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_searchable_media_list_view" kindref="compound" tooltip="Control the search settings on a media list.">sbISearchableMediaListView</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="48"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="52" refid="interfacesb_i_searchable_media_list_view_19040d8c37c9591d2313659bd369f26b0" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_library_constraint" kindref="compound">sbILibraryConstraint</ref><sp/>searchConstraint;</highlight></codeline>

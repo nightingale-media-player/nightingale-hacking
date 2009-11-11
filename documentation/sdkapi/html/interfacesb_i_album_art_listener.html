@@ -84,15 +84,15 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_listener.html#5998b476a73bf3ec5dd78f999c79cfdc">onChangeFetcher</a> (in <a class="el" href="interfacesb_i_album_art_fetcher.html">sbIAlbumArtFetcher</a> aFetcher)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">onChangeFetcher - Notifies the listener when the fetcher being used has changed. This is used from the <a class="el" href="interfacesb_i_album_art_fetcher_set.html" title="Interface for an album art fetcher set. Instantiate as a component instance.">sbIAlbumArtFetcherSet</a> component.  <a href="#5998b476a73bf3ec5dd78f999c79cfdc"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_listener.html#71c365c60618e93526728bd75de639ca">onResult</a> (in nsIURI aImageLocation, in <a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a> aMediaItem)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_listener.html#67189e4f7321407c85168dedb22ff81d">onTrackResult</a> (in nsIURI aImageLocation, in <a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a> aMediaItem)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">onResult - Notifies the listener when either an image has or has not been found. aImageLocation will be null if the operation failed to get artwork.  <a href="#71c365c60618e93526728bd75de639ca"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">onTrackResult - Notifies the listener when either an image has or has not been found. aImageLocation will be null if the operation failed to get artwork.  <a href="#67189e4f7321407c85168dedb22ff81d"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_listener.html#570dccf5cc1a6b27bf8ff56d9b1654fd">onAlbumResult</a> (in nsIURI aImageLocation, in nsIArray aMediaItems)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">onAlbumResult - Notifies the listener when either an image has or has not been found for a list of items. aImageLocation will be null if the operation failed to get artwork.  <a href="#570dccf5cc1a6b27bf8ff56d9b1654fd"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_listener.html#e99729a790dc66e018e4962590b20a96">onAlbumComplete</a> (in nsIArray aMediaItems)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_listener.html#2488e1703602fd27f357372bbcf47714">onSearchComplete</a> (in nsIArray aMediaItems)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">onAlbumComplete - Notifies the listener that the search for artwork for an album has been completed. This is fired even if there is only one item in the list.  <a href="#e99729a790dc66e018e4962590b20a96"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">onSearchComplete - Notifies the listener that the search for artwork has been completed.  <a href="#2488e1703602fd27f357372bbcf47714"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 A component which is interested in the result of an album art fetch request. 
@@ -131,12 +131,12 @@ onChangeFetcher - Notifies the listener when the fetcher being used has changed.
 
 </div>
 </div><p>
-<a class="anchor" name="71c365c60618e93526728bd75de639ca"></a><!-- doxytag: member="sbIAlbumArtListener::onResult" ref="71c365c60618e93526728bd75de639ca" args="(in nsIURI aImageLocation, in sbIMediaItem aMediaItem)" -->
+<a class="anchor" name="67189e4f7321407c85168dedb22ff81d"></a><!-- doxytag: member="sbIAlbumArtListener::onTrackResult" ref="67189e4f7321407c85168dedb22ff81d" args="(in nsIURI aImageLocation, in sbIMediaItem aMediaItem)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void sbIAlbumArtListener::onResult           </td>
+          <td class="memname">void sbIAlbumArtListener::onTrackResult           </td>
           <td>(</td>
           <td class="paramtype">in nsIURI&nbsp;</td>
           <td class="paramname"> <em>aImageLocation</em>, </td>
@@ -157,7 +157,7 @@ onChangeFetcher - Notifies the listener when the fetcher being used has changed.
 <div class="memdoc">
 
 <p>
-onResult - Notifies the listener when either an image has or has not been found. aImageLocation will be null if the operation failed to get artwork. 
+onTrackResult - Notifies the listener when either an image has or has not been found. aImageLocation will be null if the operation failed to get artwork. 
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -205,12 +205,12 @@ onAlbumResult - Notifies the listener when either an image has or has not been f
 
 </div>
 </div><p>
-<a class="anchor" name="e99729a790dc66e018e4962590b20a96"></a><!-- doxytag: member="sbIAlbumArtListener::onAlbumComplete" ref="e99729a790dc66e018e4962590b20a96" args="(in nsIArray aMediaItems)" -->
+<a class="anchor" name="2488e1703602fd27f357372bbcf47714"></a><!-- doxytag: member="sbIAlbumArtListener::onSearchComplete" ref="2488e1703602fd27f357372bbcf47714" args="(in nsIArray aMediaItems)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void sbIAlbumArtListener::onAlbumComplete           </td>
+          <td class="memname">void sbIAlbumArtListener::onSearchComplete           </td>
           <td>(</td>
           <td class="paramtype">in nsIArray&nbsp;</td>
           <td class="paramname"> <em>aMediaItems</em>          </td>
@@ -222,7 +222,7 @@ onAlbumResult - Notifies the listener when either an image has or has not been f
 <div class="memdoc">
 
 <p>
-onAlbumComplete - Notifies the listener that the search for artwork for an album has been completed. This is fired even if there is only one item in the list. 
+onSearchComplete - Notifies the listener that the search for artwork has been completed. 
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
@@ -234,7 +234,7 @@ onAlbumComplete - Notifies the listener that the search for artwork for an album
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/albumart/public/<a class="el" href="sb_i_album_art_listener_8idl-source.html">sbIAlbumArtListener.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:40 2009 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:46 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

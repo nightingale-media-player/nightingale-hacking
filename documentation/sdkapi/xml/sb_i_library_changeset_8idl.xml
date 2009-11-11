@@ -4,13 +4,13 @@
     <compoundname>sbILibraryChangeset.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="266">
+      <node id="321">
         <label>components/library/base/public/sbILibraryChangeset.idl</label>
         <link refid="sbILibraryChangeset.idl"/>
-        <childnode refid="267" relation="include">
+        <childnode refid="322" relation="include">
         </childnode>
       </node>
-      <node id="267">
+      <node id="322">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -56,7 +56,7 @@
 <codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
-<codeline lineno="42"><highlight class="normal">[scriptable,<sp/>uuid(17c6e702-ea9d-46ed-98ed-0bd57d84b25c)]</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(17c6e702-ea9d-46ed-98ed-0bd57d84b25c)]</highlight></codeline>
 <codeline lineno="43" refid="interfacesb_i_change_operation" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_change_operation" kindref="compound">sbIChangeOperation</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="44"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="48" refid="interfacesb_i_change_operation_12249f3e37cac324dff572b559be21d6b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>UNKNOWN<sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
@@ -72,7 +72,7 @@
 <codeline lineno="73" refid="interfacesb_i_change_operation_17c1f91b55f7bc2a8e0b19cc1117c6ce6" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><sp/>operation;</highlight></codeline>
 <codeline lineno="74"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="75"><highlight class="normal"></highlight></codeline>
-<codeline lineno="80"><highlight class="normal">[scriptable,<sp/>uuid(182106d3-a5eb-4c59-a161-766940c7c1da)]</highlight></codeline>
+<codeline lineno="80"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(182106d3-a5eb-4c59-a161-766940c7c1da)]</highlight></codeline>
 <codeline lineno="81" refid="interfacesb_i_property_change" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_change" kindref="compound">sbIPropertyChange</ref><sp/>:<sp/><ref refid="interfacesb_i_change_operation" kindref="compound">sbIChangeOperation</ref></highlight></codeline>
 <codeline lineno="82"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="89" refid="interfacesb_i_property_change_17508bf8204a4d37d9acf976e409dd77b" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>id;</highlight></codeline>
@@ -82,7 +82,7 @@
 <codeline lineno="99" refid="interfacesb_i_property_change_1afc38f8ab6dc6ef2657b6fa4b04b1d1d" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>newValue;</highlight></codeline>
 <codeline lineno="100"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="101"><highlight class="normal"></highlight></codeline>
-<codeline lineno="106"><highlight class="normal">[scriptable,<sp/>uuid(e8db7394-2256-45b1-b079-28fbbcb7f5b9)]</highlight></codeline>
+<codeline lineno="106"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(e8db7394-2256-45b1-b079-28fbbcb7f5b9)]</highlight></codeline>
 <codeline lineno="107" refid="interfacesb_i_library_change" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_change" kindref="compound">sbILibraryChange</ref><sp/>:<sp/><ref refid="interfacesb_i_change_operation" kindref="compound">sbIChangeOperation</ref></highlight></codeline>
 <codeline lineno="108"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="114" refid="interfacesb_i_library_change_120cdfaad0cb2adb2ec466ea53e2816e6" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>timestamp;</highlight></codeline>
@@ -97,7 +97,7 @@
 <codeline lineno="156"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="157"><highlight class="normal"></highlight></codeline>
 <codeline lineno="158"><highlight class="normal"></highlight></codeline>
-<codeline lineno="163"><highlight class="normal">[scriptable,<sp/>uuid(15ce0b86-4285-481b-8af4-751fc2357f7b)]</highlight></codeline>
+<codeline lineno="163"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(15ce0b86-4285-481b-8af4-751fc2357f7b)]</highlight></codeline>
 <codeline lineno="164" refid="interfacesb_i_library_changeset" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_changeset" kindref="compound">sbILibraryChangeset</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="165"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="171" refid="interfacesb_i_library_changeset_14995ee5e845e0919e6c344ee94dfa943" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIArray<sp/><sp/><sp/><sp/><sp/><sp/>sourceLists;</highlight></codeline>

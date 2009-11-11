@@ -5,42 +5,42 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_metadata_handler_8idl" local="yes">sbIMetadataHandler.idl</includes>
     <incdepgraph>
-      <node id="532">
+      <node id="620">
         <label>nsIArray.idl</label>
       </node>
-      <node id="533">
+      <node id="621">
         <label>nsIMutableArray.idl</label>
       </node>
-      <node id="527">
+      <node id="615">
         <label>components/mediacore/metadata/manager/public/sbIMetadataManager.idl</label>
         <link refid="sbIMetadataManager.idl"/>
-        <childnode refid="528" relation="include">
+        <childnode refid="616" relation="include">
         </childnode>
-        <childnode refid="529" relation="include">
+        <childnode refid="617" relation="include">
         </childnode>
       </node>
-      <node id="531">
+      <node id="619">
         <label>sbIPropertyArray.idl</label>
         <link refid="sb_i_property_array_8idl"/>
-        <childnode refid="532" relation="include">
+        <childnode refid="620" relation="include">
         </childnode>
-        <childnode refid="533" relation="include">
+        <childnode refid="621" relation="include">
         </childnode>
       </node>
-      <node id="529">
+      <node id="617">
         <label>sbIMetadataHandler.idl</label>
         <link refid="sb_i_metadata_handler_8idl"/>
-        <childnode refid="528" relation="include">
+        <childnode refid="616" relation="include">
         </childnode>
-        <childnode refid="530" relation="include">
+        <childnode refid="618" relation="include">
         </childnode>
-        <childnode refid="531" relation="include">
+        <childnode refid="619" relation="include">
         </childnode>
       </node>
-      <node id="528">
+      <node id="616">
         <label>nsISupports.idl</label>
       </node>
-      <node id="530">
+      <node id="618">
         <label>nsIChannel.idl</label>
       </node>
     </incdepgraph>
@@ -80,7 +80,7 @@
 <codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_metadata_handler_8idl" kindref="compound" tooltip="An interface for reading/writing file metadata tags.">sbIMetadataHandler.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="47"><highlight class="normal">[scriptable,<sp/>uuid(3EBC067F-E52D-4041-A5E4-5C217D4A5FBE)]</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(3EBC067F-E52D-4041-A5E4-5C217D4A5FBE)]</highlight></codeline>
 <codeline lineno="48" refid="interfacesb_i_metadata_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_manager" kindref="compound" tooltip="The manager from which to request a metadata handler.">sbIMetadataManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="49"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="62"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_metadata_handler" kindref="compound" tooltip="An object capable of manipulating the metadata tags for a media file.">sbIMetadataHandler</ref><sp/>getHandlerForMediaURL(in<sp/>AString<sp/>aUrl);</highlight></codeline>

@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/albumart/public/sbIAlbumArtFetcherSet.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */</span>
 <a name="l00002"></a>00002 <span class="comment">/* vim: set sw=2 :miv */</span>
 <a name="l00003"></a>00003 <span class="comment">/*</span>
@@ -106,23 +112,27 @@
 <a name="l00038"></a>00038 <span class="preprocessor">#include "sbIAlbumArtFetcher.idl"</span>
 <a name="l00039"></a>00039 
 <a name="l00040"></a>00040 
-<a name="l00053"></a>00053 [scriptable, uuid(6014f2e0-2da7-460a-bd5b-7c1fda7c65cd)]
+<a name="l00053"></a>00053 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(f6f030ba-1dd1-11b2-8764-ad0493676ed0)]
 <a name="l00054"></a><a class="code" href="interfacesb_i_album_art_fetcher_set.html">00054</a> interface <a class="code" href="interfacesb_i_album_art_fetcher_set.html" title="Interface for an album art fetcher set. Instantiate as a component instance.">sbIAlbumArtFetcherSet</a> : <a class="code" href="interfacesb_i_album_art_fetcher.html" title="Interface for an album art fetcher. Instantiate as a component instance.">sbIAlbumArtFetcher</a>
 <a name="l00055"></a>00055 {
-<a name="l00060"></a><a class="code" href="interfacesb_i_album_art_fetcher_set.html#d6272d19a9919d7f3eb1b9681668d4d1">00060</a>   attribute <span class="keywordtype">boolean</span> localOnly;
-<a name="l00061"></a>00061 };
-<a name="l00062"></a>00062 
-<a name="l00063"></a>00063 
-<a name="l00064"></a>00064 <span class="comment">//</span>
-<a name="l00065"></a>00065 <span class="comment">// C++ defs.</span>
-<a name="l00066"></a>00066 <span class="comment">//</span>
-<a name="l00067"></a>00067 
-<a name="l00068"></a>00068 %{C++
-<a name="l00069"></a>00069 <span class="preprocessor">#define SB_ALBUMARTFETCHERSET_CONTRACTID \</span>
-<a name="l00070"></a>00070 <span class="preprocessor">          "@songbirdnest.com/Songbird/album-art-fetcher-set;1"</span>
-<a name="l00071"></a>00071 <span class="preprocessor"></span>%}C++
-<a name="l00072"></a>00072 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:38 2009 for Songbird by&nbsp;
+<a name="l00056"></a><a class="code" href="interfacesb_i_album_art_fetcher_set.html#d8732cad3234b0bd23bae8a3bdc2919d">00056</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> TYPE_ALL              = 0x00;
+<a name="l00057"></a><a class="code" href="interfacesb_i_album_art_fetcher_set.html#eac45ea76065344dcbb3a103adb3e1ea">00057</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> TYPE_REMOTE           = 0x01;
+<a name="l00058"></a><a class="code" href="interfacesb_i_album_art_fetcher_set.html#5505adb833c0a79e8503eb3ee849cc48">00058</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> TYPE_LOCAL            = 0x02;
+<a name="l00059"></a>00059 
+<a name="l00063"></a><a class="code" href="interfacesb_i_album_art_fetcher_set.html#42de1da24d66751338dfbe4334bd0e17">00063</a>   attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> fetcherType;
+<a name="l00064"></a>00064 };
+<a name="l00065"></a>00065 
+<a name="l00066"></a>00066 
+<a name="l00067"></a>00067 <span class="comment">//</span>
+<a name="l00068"></a>00068 <span class="comment">// C++ defs.</span>
+<a name="l00069"></a>00069 <span class="comment">//</span>
+<a name="l00070"></a>00070 
+<a name="l00071"></a>00071 %{C++
+<a name="l00072"></a>00072 <span class="preprocessor">#define SB_ALBUMARTFETCHERSET_CONTRACTID \</span>
+<a name="l00073"></a>00073 <span class="preprocessor">          "@songbirdnest.com/Songbird/album-art-fetcher-set;1"</span>
+<a name="l00074"></a>00074 <span class="preprocessor"></span>%}C++
+<a name="l00075"></a>00075 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:44 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

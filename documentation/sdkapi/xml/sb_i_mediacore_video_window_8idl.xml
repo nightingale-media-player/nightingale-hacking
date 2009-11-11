@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreVideoWindow.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="474">
+      <node id="529">
         <label>components/mediacore/base/public/sbIMediacoreVideoWindow.idl</label>
         <link refid="sbIMediacoreVideoWindow.idl"/>
-        <childnode refid="475" relation="include">
+        <childnode refid="530" relation="include">
         </childnode>
       </node>
-      <node id="475">
+      <node id="530">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -51,12 +51,13 @@
 <codeline lineno="29"><highlight class="normal">interface<sp/>nsIDOMXULElement;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal">interface<sp/>sbIMediacoreChain;</highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight></codeline>
-<codeline lineno="32"><highlight class="normal">[scriptable,<sp/>uuid(970e737c-fc22-4fb4-be64-42ac2db36d30)]</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(970e737c-fc22-4fb4-be64-42ac2db36d30)]</highlight></codeline>
 <codeline lineno="33" refid="interfacesb_i_mediacore_video_window" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_video_window" kindref="compound">sbIMediacoreVideoWindow</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="34"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="35" refid="interfacesb_i_mediacore_video_window_1f67b9613991a9479fb91cd53c011198b" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>fullscreen;</highlight></codeline>
-<codeline lineno="36" refid="interfacesb_i_mediacore_video_window_191996a3181689378e0437aca910d0b66" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>nsIDOMXULElement<sp/>videoWindow;</highlight></codeline>
-<codeline lineno="37"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="42" refid="interfacesb_i_mediacore_video_window_1f67b9613991a9479fb91cd53c011198b" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>fullscreen;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="interfacesb_i_mediacore_video_window_191996a3181689378e0437aca910d0b66" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>nsIDOMXULElement<sp/>videoWindow;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreVideoWindow.idl"/>
   </compounddef>

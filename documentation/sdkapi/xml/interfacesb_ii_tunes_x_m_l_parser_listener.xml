@@ -1,0 +1,182 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_ii_tunes_x_m_l_parser_listener" kind="interface" prot="public">
+    <compoundname>sbIiTunesXMLParserListener</compoundname>
+    <includes refid="sb_ii_tunes_x_m_l_parser_listener_8idl" local="no">sbIiTunesXMLParserListener.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_ii_tunes_x_m_l_parser_listener_135bdcb9fc76ccf9daebc708a4bf104ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIiTunesXMLParserListener::onTopLevelProperties</definition>
+        <argsstring>(in sbIStringMap aProperties)</argsstring>
+        <name>onTopLevelProperties</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_string_map" kindref="compound">sbIStringMap</ref></type>
+          <declname>aProperties</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Called when the top level properties have been processed <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aProperties</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the collection of top level properties. These properties are read-only, QI&apos;ing to sbIStringMapWritable is not permitted. And the properties object should not be used beyond this call. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediaimport/library/itunes/public/sbIiTunesXMLParserListener.idl" line="47"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_ii_tunes_x_m_l_parser_listener_10baf13c036c65cd1f3003923e2903a58" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIiTunesXMLParserListener::onTrack</definition>
+        <argsstring>(in sbIStringMap aProperties)</argsstring>
+        <name>onTrack</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_string_map" kindref="compound">sbIStringMap</ref></type>
+          <declname>aProperties</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Called when a track has been processed <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aProperties</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the collection of properties for the track. These properties are read-only, QI&apos;ing to sbIStringMapWritable is not permitted. And the properties object should not be used beyond this call. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediaimport/library/itunes/public/sbIiTunesXMLParserListener.idl" line="55"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_ii_tunes_x_m_l_parser_listener_12de9e1c66449a03ddf3e9c12837a08e9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIiTunesXMLParserListener::onTracksComplete</definition>
+        <argsstring>()</argsstring>
+        <name>onTracksComplete</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Called when all the tracks have been read </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediaimport/library/itunes/public/sbIiTunesXMLParserListener.idl" line="59"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_ii_tunes_x_m_l_parser_listener_164667131972cc016229280ce05e0bb5a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIiTunesXMLParserListener::onPlaylist</definition>
+        <argsstring>(in sbIStringMap aProperties,[array, size_is(aTrackIdsCount)] in long aTrackIds, in unsigned long aTrackIdsCount)</argsstring>
+        <name>onPlaylist</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_string_map" kindref="compound">sbIStringMap</ref></type>
+          <declname>aProperties</declname>
+        </param>
+        <param>
+          <attributes>[array, size_is(aTrackIdsCount)]</attributes>
+          <type>in long</type>
+          <declname>aTrackIds</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aTrackIdsCount</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Called when a playlist has been processed <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Properties the collection of properties for the playlist </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aTrackIds</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>is the list of track ID&apos;s for the playlist. These properties are read-only, QI&apos;ing to sbIStringMapWritable is not permitted. And the properties object should not be used beyond this call. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediaimport/library/itunes/public/sbIiTunesXMLParserListener.idl" line="70"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_ii_tunes_x_m_l_parser_listener_1fd50da06dd2d1ce00a6c1b5c16407bd1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIiTunesXMLParserListener::onError</definition>
+        <argsstring>(in AString aErrorMessage)</argsstring>
+        <name>onError</name>
+        <param>
+          <type>in AString</type>
+          <declname>aErrorMessage</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Called when an error is encountered <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aErrorMessage</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Description of the error where it occured @RETURN return true if processing should continue or false to stop </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediaimport/library/itunes/public/sbIiTunesXMLParserListener.idl" line="76"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_ii_tunes_x_m_l_parser_listener_187652e39a572a26a669f2152888c558d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIiTunesXMLParserListener::onPlaylistsComplete</definition>
+        <argsstring>()</argsstring>
+        <name>onPlaylistsComplete</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Called when all the playlists have been read </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediaimport/library/itunes/public/sbIiTunesXMLParserListener.idl" line="80"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_ii_tunes_x_m_l_parser_listener_1fa803e7afd952bc27b76f1a8f0525371" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIiTunesXMLParserListener::onProgress</definition>
+        <argsstring>(in PRInt64 aBytesRead)</argsstring>
+        <name>onProgress</name>
+        <param>
+          <type>in PRInt64</type>
+          <declname>aBytesRead</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Called for progress through the XML stream </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediaimport/library/itunes/public/sbIiTunesXMLParserListener.idl" line="84"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>This interface is called by <ref refid="interfacesb_ii_tunes_x_m_l_parser" kindref="compound">sbIiTunesXMLParser</ref> as it discoveres interesting pieces in the iTunes XML file. You implement this interface in order to handle getting data from the iTunes XML file </para>    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/mediaimport/library/itunes/public/sbIiTunesXMLParserListener.idl" line="39" bodyfile="c:/builds/songbird/trunk/components/mediaimport/library/itunes/public/sbIiTunesXMLParserListener.idl" bodystart="39" bodyend="85"/>
+    <listofallmembers>
+      <member refid="interfacesb_ii_tunes_x_m_l_parser_listener_1fd50da06dd2d1ce00a6c1b5c16407bd1" prot="public" virt="non-virtual"><scope>sbIiTunesXMLParserListener</scope><name>onError</name></member>
+      <member refid="interfacesb_ii_tunes_x_m_l_parser_listener_164667131972cc016229280ce05e0bb5a" prot="public" virt="non-virtual"><scope>sbIiTunesXMLParserListener</scope><name>onPlaylist</name></member>
+      <member refid="interfacesb_ii_tunes_x_m_l_parser_listener_187652e39a572a26a669f2152888c558d" prot="public" virt="non-virtual"><scope>sbIiTunesXMLParserListener</scope><name>onPlaylistsComplete</name></member>
+      <member refid="interfacesb_ii_tunes_x_m_l_parser_listener_1fa803e7afd952bc27b76f1a8f0525371" prot="public" virt="non-virtual"><scope>sbIiTunesXMLParserListener</scope><name>onProgress</name></member>
+      <member refid="interfacesb_ii_tunes_x_m_l_parser_listener_135bdcb9fc76ccf9daebc708a4bf104ca" prot="public" virt="non-virtual"><scope>sbIiTunesXMLParserListener</scope><name>onTopLevelProperties</name></member>
+      <member refid="interfacesb_ii_tunes_x_m_l_parser_listener_10baf13c036c65cd1f3003923e2903a58" prot="public" virt="non-virtual"><scope>sbIiTunesXMLParserListener</scope><name>onTrack</name></member>
+      <member refid="interfacesb_ii_tunes_x_m_l_parser_listener_12de9e1c66449a03ddf3e9c12837a08e9" prot="public" virt="non-virtual"><scope>sbIiTunesXMLParserListener</scope><name>onTracksComplete</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

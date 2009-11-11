@@ -37,86 +37,79 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_playlist_widget" kindref="compound">sbIPlaylistWidget</ref> </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="831">
+      <node id="909">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="828" relation="public-inheritance">
+        <childnode refid="906" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="835">
+      <node id="913">
         <label>sbIDeviceStatus</label>
         <link refid="interfacesb_i_device_status"/>
-        <childnode refid="828" relation="usage">
+        <childnode refid="906" relation="usage">
           <edgelabel>mediaItem</edgelabel>
         </childnode>
-        <childnode refid="831" relation="usage">
+        <childnode refid="909" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
-      <node id="836">
-        <label>sbIDeviceCapabilities</label>
-        <link refid="interfacesb_i_device_capabilities"/>
-      </node>
-      <node id="832">
+      <node id="910">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="833" relation="usage">
+        <childnode refid="911" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="835" relation="usage">
+        <childnode refid="913" relation="usage">
           <edgelabel>currentStatus</edgelabel>
         </childnode>
-        <childnode refid="836" relation="usage">
-          <edgelabel>capabilities</edgelabel>
-        </childnode>
-        <childnode refid="837" relation="usage">
+        <childnode refid="914" relation="usage">
           <edgelabel>properties</edgelabel>
         </childnode>
       </node>
-      <node id="830">
+      <node id="908">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="831" relation="public-inheritance">
+        <childnode refid="909" relation="public-inheritance">
         </childnode>
-        <childnode refid="832" relation="usage">
+        <childnode refid="910" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="834" relation="usage">
+        <childnode refid="912" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="829">
+      <node id="907">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="828">
+      <node id="906">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="829" relation="public-inheritance">
+        <childnode refid="907" relation="public-inheritance">
         </childnode>
-        <childnode refid="830" relation="usage">
+        <childnode refid="908" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="833">
+      <node id="911">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="834" relation="usage">
+        <childnode refid="912" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="834">
+      <node id="912">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
-      <node id="827">
+      <node id="905">
         <label>sbIPlaylistClickEvent</label>
         <link refid="interfacesb_i_playlist_click_event"/>
-        <childnode refid="828" relation="usage">
+        <childnode refid="906" relation="usage">
           <edgelabel>item</edgelabel>
         </childnode>
       </node>
-      <node id="837">
+      <node id="914">
         <label>sbIDeviceProperties</label>
         <link refid="interfacesb_i_device_properties"/>
       </node>

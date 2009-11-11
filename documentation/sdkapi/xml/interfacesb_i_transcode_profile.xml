@@ -1,0 +1,291 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_transcode_profile" kind="interface" prot="public">
+    <compoundname>sbITranscodeProfile</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_transcode_profile_1ec3385d18c8fbc1f47acca82097915c6" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbITranscodeProfile::TRANSCODE_TYPE_UNKNOWN</definition>
+        <argsstring></argsstring>
+        <name>TRANSCODE_TYPE_UNKNOWN</name>
+        <initializer> 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" line="47" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_profile_1d0df93b10774cfcf3a3de9cacb67a907" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbITranscodeProfile::TRANSCODE_TYPE_AUDIO</definition>
+        <argsstring></argsstring>
+        <name>TRANSCODE_TYPE_AUDIO</name>
+        <initializer> 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" line="48" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_profile_146cea78cdd8038a2247bef89e5d62680" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbITranscodeProfile::TRANSCODE_TYPE_VIDEO</definition>
+        <argsstring></argsstring>
+        <name>TRANSCODE_TYPE_VIDEO</name>
+        <initializer> 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" line="49" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" bodystart="49" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_profile_186e994e58a3a7d811945056fc9df0234" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO</definition>
+        <argsstring></argsstring>
+        <name>TRANSCODE_TYPE_AUDIO_VIDEO</name>
+        <initializer> 3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" line="50" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_profile_1a3899d6286603c428805575aee2a656c" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbITranscodeProfile::TRANSCODE_PRIORITY_LOWEST</definition>
+        <argsstring></argsstring>
+        <name>TRANSCODE_PRIORITY_LOWEST</name>
+        <initializer> 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" line="52" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_profile_188680fb3baabb9a3dd53016915620000" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbITranscodeProfile::TRANSCODE_PRIORITY_LOW</definition>
+        <argsstring></argsstring>
+        <name>TRANSCODE_PRIORITY_LOW</name>
+        <initializer> 1000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" line="53" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_profile_1389780aef790b9d1e817cfaae3cf1510" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbITranscodeProfile::TRANSCODE_PRIORITY_MEDIUM</definition>
+        <argsstring></argsstring>
+        <name>TRANSCODE_PRIORITY_MEDIUM</name>
+        <initializer> 2000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" line="54" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_profile_1098f6703b8e777b1e84d90282e515625" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbITranscodeProfile::TRANSCODE_PRIORITY_HIGH</definition>
+        <argsstring></argsstring>
+        <name>TRANSCODE_PRIORITY_HIGH</name>
+        <initializer> 3000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" line="55" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_profile_1393bc8d9c80064325e5aeebfa82438c0" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbITranscodeProfile::TRANSCODE_PRIORITY_HIGHEST</definition>
+        <argsstring></argsstring>
+        <name>TRANSCODE_PRIORITY_HIGHEST</name>
+        <initializer> 4000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" line="56" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_profile_1e3246a5c80ca3402eb6e7fd628f71d12" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbITranscodeProfile::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" line="64" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" bodystart="64" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_profile_157463dd80ea7dddc2dc18aad11c71048" prot="public" static="no" mutable="no">
+        <type>attribute unsigned long</type>
+        <definition>attribute unsigned long sbITranscodeProfile::priority</definition>
+        <argsstring></argsstring>
+        <name>priority</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" line="75" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_profile_18f0fe008e4d8cdcbcff148dba3caf1dc" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbITranscodeProfile::description</definition>
+        <argsstring></argsstring>
+        <name>description</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" line="81" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_profile_1f1fa058010a8eca13a58bc22c5296a2f" prot="public" static="no" mutable="no">
+        <type>attribute unsigned long</type>
+        <definition>attribute unsigned long sbITranscodeProfile::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" line="86" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" bodystart="86" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_profile_11d721a3808eabe4c2fbde087b7c4adbc" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbITranscodeProfile::containerFormat</definition>
+        <argsstring></argsstring>
+        <name>containerFormat</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" line="98" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_profile_1d58816c9676fd61e462a4ed78a8a6f8e" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbITranscodeProfile::audioCodec</definition>
+        <argsstring></argsstring>
+        <name>audioCodec</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" line="107" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_profile_1f0bcf9d599ae4bb2d23d4936290abaf1" prot="public" static="no" mutable="no">
+        <type>attribute AString</type>
+        <definition>attribute AString sbITranscodeProfile::videoCodec</definition>
+        <argsstring></argsstring>
+        <name>videoCodec</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" line="111" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_profile_1fad3b9de23dc136ad47f07bc445eddc1" prot="public" static="no" mutable="no">
+        <type>attribute nsIArray</type>
+        <definition>attribute nsIArray sbITranscodeProfile::audioProperties</definition>
+        <argsstring></argsstring>
+        <name>audioProperties</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" line="113" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_profile_19adf9edcd024c5844b02c1008129482d" prot="public" static="no" mutable="no">
+        <type>attribute nsIArray</type>
+        <definition>attribute nsIArray sbITranscodeProfile::videoProperties</definition>
+        <argsstring></argsstring>
+        <name>videoProperties</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" line="114" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_profile_1f2efec495e58451e4773cc834d0bc57f" prot="public" static="no" mutable="no">
+        <type>attribute nsIArray</type>
+        <definition>attribute nsIArray sbITranscodeProfile::containerProperties</definition>
+        <argsstring></argsstring>
+        <name>containerProperties</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" line="116" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An object defining a transcoding profile. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_transcode_job" kindref="compound">sbITranscodeJob</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" line="45" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeProfile.idl" bodystart="44" bodyend="117"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_transcode_profile_1d58816c9676fd61e462a4ed78a8a6f8e" prot="public" virt="non-virtual"><scope>sbITranscodeProfile</scope><name>audioCodec</name></member>
+      <member refid="interfacesb_i_transcode_profile_1fad3b9de23dc136ad47f07bc445eddc1" prot="public" virt="non-virtual"><scope>sbITranscodeProfile</scope><name>audioProperties</name></member>
+      <member refid="interfacesb_i_transcode_profile_11d721a3808eabe4c2fbde087b7c4adbc" prot="public" virt="non-virtual"><scope>sbITranscodeProfile</scope><name>containerFormat</name></member>
+      <member refid="interfacesb_i_transcode_profile_1f2efec495e58451e4773cc834d0bc57f" prot="public" virt="non-virtual"><scope>sbITranscodeProfile</scope><name>containerProperties</name></member>
+      <member refid="interfacesb_i_transcode_profile_18f0fe008e4d8cdcbcff148dba3caf1dc" prot="public" virt="non-virtual"><scope>sbITranscodeProfile</scope><name>description</name></member>
+      <member refid="interfacesb_i_transcode_profile_1e3246a5c80ca3402eb6e7fd628f71d12" prot="public" virt="non-virtual"><scope>sbITranscodeProfile</scope><name>id</name></member>
+      <member refid="interfacesb_i_transcode_profile_157463dd80ea7dddc2dc18aad11c71048" prot="public" virt="non-virtual"><scope>sbITranscodeProfile</scope><name>priority</name></member>
+      <member refid="interfacesb_i_transcode_profile_1098f6703b8e777b1e84d90282e515625" prot="public" virt="non-virtual"><scope>sbITranscodeProfile</scope><name>TRANSCODE_PRIORITY_HIGH</name></member>
+      <member refid="interfacesb_i_transcode_profile_1393bc8d9c80064325e5aeebfa82438c0" prot="public" virt="non-virtual"><scope>sbITranscodeProfile</scope><name>TRANSCODE_PRIORITY_HIGHEST</name></member>
+      <member refid="interfacesb_i_transcode_profile_188680fb3baabb9a3dd53016915620000" prot="public" virt="non-virtual"><scope>sbITranscodeProfile</scope><name>TRANSCODE_PRIORITY_LOW</name></member>
+      <member refid="interfacesb_i_transcode_profile_1a3899d6286603c428805575aee2a656c" prot="public" virt="non-virtual"><scope>sbITranscodeProfile</scope><name>TRANSCODE_PRIORITY_LOWEST</name></member>
+      <member refid="interfacesb_i_transcode_profile_1389780aef790b9d1e817cfaae3cf1510" prot="public" virt="non-virtual"><scope>sbITranscodeProfile</scope><name>TRANSCODE_PRIORITY_MEDIUM</name></member>
+      <member refid="interfacesb_i_transcode_profile_1d0df93b10774cfcf3a3de9cacb67a907" prot="public" virt="non-virtual"><scope>sbITranscodeProfile</scope><name>TRANSCODE_TYPE_AUDIO</name></member>
+      <member refid="interfacesb_i_transcode_profile_186e994e58a3a7d811945056fc9df0234" prot="public" virt="non-virtual"><scope>sbITranscodeProfile</scope><name>TRANSCODE_TYPE_AUDIO_VIDEO</name></member>
+      <member refid="interfacesb_i_transcode_profile_1ec3385d18c8fbc1f47acca82097915c6" prot="public" virt="non-virtual"><scope>sbITranscodeProfile</scope><name>TRANSCODE_TYPE_UNKNOWN</name></member>
+      <member refid="interfacesb_i_transcode_profile_146cea78cdd8038a2247bef89e5d62680" prot="public" virt="non-virtual"><scope>sbITranscodeProfile</scope><name>TRANSCODE_TYPE_VIDEO</name></member>
+      <member refid="interfacesb_i_transcode_profile_1f1fa058010a8eca13a58bc22c5296a2f" prot="public" virt="non-virtual"><scope>sbITranscodeProfile</scope><name>type</name></member>
+      <member refid="interfacesb_i_transcode_profile_1f0bcf9d599ae4bb2d23d4936290abaf1" prot="public" virt="non-virtual"><scope>sbITranscodeProfile</scope><name>videoCodec</name></member>
+      <member refid="interfacesb_i_transcode_profile_19adf9edcd024c5844b02c1008129482d" prot="public" virt="non-virtual"><scope>sbITranscodeProfile</scope><name>videoProperties</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

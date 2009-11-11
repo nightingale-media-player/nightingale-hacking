@@ -75,9 +75,22 @@
 </div>
 <h1>sbIWatchFolderService Interface Reference</h1><!-- doxytag: class="sbIWatchFolderService" --><a href="interfacesb_i_watch_folder_service-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_watch_folder_service.html#050a8e2762914b9087898a70af7e7aa6">addIgnorePath</a> (in AString aFilePath)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a absolute file path to be ignored by the watch folder service. This path will be ignored until it is removed via a call to |removeIgnorePath()|. Each call to |addIgnorePath()| should be balanced by a call to |removeIgnorePath()|. When used in conjunction with |addIgnoreCount()|, the count will be decremented as normal when the path is ignored. The path will continue to be ignored when the count reaches zero.  <a href="#050a8e2762914b9087898a70af7e7aa6"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_watch_folder_service.html#72ec3722f9e690b759255eb77750495d">removeIgnorePath</a> (in AString aFilePath)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove an absolute file path from the ignored paths list of the watch folder service. All future events at the specified path will be processed by the watch folders service. When used in conjunction with |addIgnoreCount()|, any remaining events specified by the count will still be ignored.  <a href="#72ec3722f9e690b759255eb77750495d"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_watch_folder_service.html#895d4416241d522a6794ea4b3bba9623">addIgnoreCount</a> (in AString aFilePath, in long aCount)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add an absolute file path to be ignore by the watch folder service. This path will be ignored for the given number of events, which includes file addition, deletion, or change. When used in conjunction with |addIgnorePath()| and |removeIgnorPath()|, the counter will be decremented as events are ignored. The path may continue to be ignored after the count reaches zero if any calls to |addIgnorePath()| are not balanced by calls to |removeIgnorePath()|.  <a href="#895d4416241d522a6794ea4b3bba9623"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d89d29b1f806e0d5a90db9f2e6cc8da4"></a><!-- doxytag: member="sbIWatchFolderService::isSupported" ref="d89d29b1f806e0d5a90db9f2e6cc8da4" args="" -->
 readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_watch_folder_service.html#d89d29b1f806e0d5a90db9f2e6cc8da4">isSupported</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="4127ceedef1b0260d079a6c1c31f5e82"></a><!-- doxytag: member="sbIWatchFolderService::isRunning" ref="4127ceedef1b0260d079a6c1c31f5e82" args="" -->
+readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_watch_folder_service.html#4127ceedef1b0260d079a6c1c31f5e82">isRunning</a></td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -85,9 +98,101 @@ readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_watch_folder_service_8idl-source.html#l00030">30</a> of file <a class="el" href="sb_i_watch_folder_service_8idl-source.html">sbIWatchFolderService.idl</a>.<hr>The documentation for this interface was generated from the following file:<ul>
+Definition at line <a class="el" href="sb_i_watch_folder_service_8idl-source.html#l00030">30</a> of file <a class="el" href="sb_i_watch_folder_service_8idl-source.html">sbIWatchFolderService.idl</a>.<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="050a8e2762914b9087898a70af7e7aa6"></a><!-- doxytag: member="sbIWatchFolderService::addIgnorePath" ref="050a8e2762914b9087898a70af7e7aa6" args="(in AString aFilePath)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIWatchFolderService::addIgnorePath           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aFilePath</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Add a absolute file path to be ignored by the watch folder service. This path will be ignored until it is removed via a call to |removeIgnorePath()|. Each call to |addIgnorePath()| should be balanced by a call to |removeIgnorePath()|. When used in conjunction with |addIgnoreCount()|, the count will be decremented as normal when the path is ignored. The path will continue to be ignored when the count reaches zero. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aFilePath</em>&nbsp;</td><td>The absolute path to start ignoring. </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="72ec3722f9e690b759255eb77750495d"></a><!-- doxytag: member="sbIWatchFolderService::removeIgnorePath" ref="72ec3722f9e690b759255eb77750495d" args="(in AString aFilePath)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIWatchFolderService::removeIgnorePath           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aFilePath</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Remove an absolute file path from the ignored paths list of the watch folder service. All future events at the specified path will be processed by the watch folders service. When used in conjunction with |addIgnoreCount()|, any remaining events specified by the count will still be ignored. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aFilePath</em>&nbsp;</td><td>The absolute path to stop ignoring. </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="895d4416241d522a6794ea4b3bba9623"></a><!-- doxytag: member="sbIWatchFolderService::addIgnoreCount" ref="895d4416241d522a6794ea4b3bba9623" args="(in AString aFilePath, in long aCount)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIWatchFolderService::addIgnoreCount           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aFilePath</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in long&nbsp;</td>
+          <td class="paramname"> <em>aCount</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Add an absolute file path to be ignore by the watch folder service. This path will be ignored for the given number of events, which includes file addition, deletion, or change. When used in conjunction with |addIgnorePath()| and |removeIgnorPath()|, the counter will be decremented as events are ignored. The path may continue to be ignored after the count reaches zero if any calls to |addIgnorePath()| are not balanced by calls to |removeIgnorePath()|. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aFilePath</em>&nbsp;</td><td>The absolute path to ignore. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aCount</em>&nbsp;</td><td>The number of times to ignore events for the given path. Passing in zero will have no effect. Passing in a negative number will decrement the previously recorded count. Attempts to decrement the count below zero will be silently clamped to zero. </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/watchfolder/public/<a class="el" href="sb_i_watch_folder_service_8idl-source.html">sbIWatchFolderService.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:46 2009 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:51 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

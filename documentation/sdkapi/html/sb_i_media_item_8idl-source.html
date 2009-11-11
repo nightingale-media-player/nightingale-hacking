@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/library/base/public/sbIMediaItem.idl</h1><a href="sb_i_media_item_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -102,7 +108,7 @@
 <a name="l00040"></a>00040 interface nsIOutputStream;
 <a name="l00041"></a>00041 interface <a class="code" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a>;
 <a name="l00042"></a>00042 
-<a name="l00053"></a>00053 [scriptable, uuid(1c1c9f2a-75c0-4741-aac1-3254b08287ae)]
+<a name="l00053"></a>00053 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(1c1c9f2a-75c0-4741-aac1-3254b08287ae)]
 <a name="l00054"></a><a class="code" href="interfacesb_i_media_item.html">00054</a> interface <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> : <a class="code" href="interfacesb_i_library_resource.html" title="General interface to data resources.">sbILibraryResource</a>
 <a name="l00055"></a>00055 {
 <a name="l00056"></a>00056   <span class="comment">/*</span>
@@ -190,14 +196,14 @@
 <a name="l00196"></a>00196   AString toString();
 <a name="l00197"></a>00197 };
 <a name="l00198"></a>00198 
-<a name="l00203"></a>00203 [scriptable, uuid(691f4342-4dcb-471f-a0f4-c4ac94cbd805)]
+<a name="l00203"></a>00203 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(691f4342-4dcb-471f-a0f4-c4ac94cbd805)]
 <a name="l00204"></a><a class="code" href="interfacesb_i_indexed_media_item.html">00204</a> interface <a class="code" href="interfacesb_i_indexed_media_item.html" title="A container for a media item and its index.">sbIIndexedMediaItem</a> : nsISupports
 <a name="l00205"></a>00205 {
 <a name="l00206"></a><a class="code" href="interfacesb_i_indexed_media_item.html#4ae9e36d39863face1346d4a21f5c35d">00206</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> index;
 <a name="l00207"></a><a class="code" href="interfacesb_i_indexed_media_item.html#71a61e92b2950718ac1b50876e6447c7">00207</a>   readonly attribute <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> mediaItem;
 <a name="l00208"></a>00208 };
 <a name="l00209"></a>00209 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

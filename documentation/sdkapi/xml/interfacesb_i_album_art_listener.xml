@@ -29,11 +29,11 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtListener.idl" line="61"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_album_art_listener_171c365c60618e93526728bd75de639ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_album_art_listener_167189e4f7321407c85168dedb22ff81d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void sbIAlbumArtListener::onResult</definition>
+        <definition>void sbIAlbumArtListener::onTrackResult</definition>
         <argsstring>(in nsIURI aImageLocation, in sbIMediaItem aMediaItem)</argsstring>
-        <name>onResult</name>
+        <name>onTrackResult</name>
         <param>
           <type>in nsIURI</type>
           <declname>aImageLocation</declname>
@@ -43,7 +43,7 @@
           <declname>aMediaItem</declname>
         </param>
         <briefdescription>
-<para>onResult - Notifies the listener when either an image has or has not been found. aImageLocation will be null if the operation failed to get artwork. </para>        </briefdescription>
+<para>onTrackResult - Notifies the listener when either an image has or has not been found. aImageLocation will be null if the operation failed to get artwork. </para>        </briefdescription>
         <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
@@ -101,17 +101,17 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtListener.idl" line="83"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_album_art_listener_1e99729a790dc66e018e4962590b20a96" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_album_art_listener_12488e1703602fd27f357372bbcf47714" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void sbIAlbumArtListener::onAlbumComplete</definition>
+        <definition>void sbIAlbumArtListener::onSearchComplete</definition>
         <argsstring>(in nsIArray aMediaItems)</argsstring>
-        <name>onAlbumComplete</name>
+        <name>onSearchComplete</name>
         <param>
           <type>in nsIArray</type>
           <declname>aMediaItems</declname>
         </param>
         <briefdescription>
-<para>onAlbumComplete - Notifies the listener that the search for artwork for an album has been completed. This is fired even if there is only one item in the list. </para>        </briefdescription>
+<para>onSearchComplete - Notifies the listener that the search for artwork has been completed. </para>        </briefdescription>
         <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
@@ -124,7 +124,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtListener.idl" line="91"/>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtListener.idl" line="90"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -132,12 +132,12 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_album_art_fetcher" kindref="compound">sbIAlbumArtFetcher</ref> </para><para><ref refid="interfacesb_i_album_art_fetcher_set" kindref="compound">sbIAlbumArtFetcherSet</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtListener.idl" line="54" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtListener.idl" bodystart="53" bodyend="92"/>
+    <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtListener.idl" line="54" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtListener.idl" bodystart="53" bodyend="91"/>
     <listofallmembers>
-      <member refid="interfacesb_i_album_art_listener_1e99729a790dc66e018e4962590b20a96" prot="public" virt="non-virtual"><scope>sbIAlbumArtListener</scope><name>onAlbumComplete</name></member>
       <member refid="interfacesb_i_album_art_listener_1570dccf5cc1a6b27bf8ff56d9b1654fd" prot="public" virt="non-virtual"><scope>sbIAlbumArtListener</scope><name>onAlbumResult</name></member>
       <member refid="interfacesb_i_album_art_listener_15998b476a73bf3ec5dd78f999c79cfdc" prot="public" virt="non-virtual"><scope>sbIAlbumArtListener</scope><name>onChangeFetcher</name></member>
-      <member refid="interfacesb_i_album_art_listener_171c365c60618e93526728bd75de639ca" prot="public" virt="non-virtual"><scope>sbIAlbumArtListener</scope><name>onResult</name></member>
+      <member refid="interfacesb_i_album_art_listener_12488e1703602fd27f357372bbcf47714" prot="public" virt="non-virtual"><scope>sbIAlbumArtListener</scope><name>onSearchComplete</name></member>
+      <member refid="interfacesb_i_album_art_listener_167189e4f7321407c85168dedb22ff81d" prot="public" virt="non-virtual"><scope>sbIAlbumArtListener</scope><name>onTrackResult</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

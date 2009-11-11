@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_video_box" kind="interface" prot="public">
+    <compoundname>sbIVideoBox</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_video_box_11fda43efff2a6d5c579a6dd964d7a2d6" prot="public" static="no" mutable="no">
+        <type>readonly attribute PRUint32</type>
+        <definition>readonly attribute PRUint32 sbIVideoBox::parNumerator</definition>
+        <argsstring></argsstring>
+        <name>parNumerator</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pixel aspect ratio numerator. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIVideoBox.idl" line="33" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIVideoBox.idl" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_video_box_1c62fd26095ef54fb6cb23bde8c53cab7" prot="public" static="no" mutable="no">
+        <type>readonly attribute PRUint32</type>
+        <definition>readonly attribute PRUint32 sbIVideoBox::parDenominator</definition>
+        <argsstring></argsstring>
+        <name>parDenominator</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Pixel aspect ratio denominator. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIVideoBox.idl" line="37" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIVideoBox.idl" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_video_box_1cab1e6216914b06962d0193c1cab9a9a" prot="public" static="no" mutable="no">
+        <type>readonly attribute PRUint32</type>
+        <definition>readonly attribute PRUint32 sbIVideoBox::width</definition>
+        <argsstring></argsstring>
+        <name>width</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Width of the video box in pixels (aspect ratio of pixels needs to be taken into account when calculating actual size on display in square pixels). </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIVideoBox.idl" line="43" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIVideoBox.idl" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_video_box_15328af677c71f9a5c6f3b9fb3961cd62" prot="public" static="no" mutable="no">
+        <type>readonly attribute PRUint32</type>
+        <definition>readonly attribute PRUint32 sbIVideoBox::height</definition>
+        <argsstring></argsstring>
+        <name>height</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Height of the video box in pixels (aspect ratio of pixels needs to be taken into account when calculating actual size on display in square pixels). </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIVideoBox.idl" line="48" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIVideoBox.idl" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIVideoBox.idl" line="29" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIVideoBox.idl" bodystart="28" bodyend="49"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_video_box_15328af677c71f9a5c6f3b9fb3961cd62" prot="public" virt="non-virtual"><scope>sbIVideoBox</scope><name>height</name></member>
+      <member refid="interfacesb_i_video_box_1c62fd26095ef54fb6cb23bde8c53cab7" prot="public" virt="non-virtual"><scope>sbIVideoBox</scope><name>parDenominator</name></member>
+      <member refid="interfacesb_i_video_box_11fda43efff2a6d5c579a6dd964d7a2d6" prot="public" virt="non-virtual"><scope>sbIVideoBox</scope><name>parNumerator</name></member>
+      <member refid="interfacesb_i_video_box_1cab1e6216914b06962d0193c1cab9a9a" prot="public" virt="non-virtual"><scope>sbIVideoBox</scope><name>width</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

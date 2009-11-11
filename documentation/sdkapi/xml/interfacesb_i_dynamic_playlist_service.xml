@@ -1,0 +1,239 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_dynamic_playlist_service" kind="interface" prot="public">
+    <compoundname>sbIDynamicPlaylistService</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_dynamic_playlist_service_15c21ad561536d4df32abce542a94d36b" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsISimpleEnumerator</type>
+        <definition>readonly attribute nsISimpleEnumerator sbIDynamicPlaylistService::scheduledLists</definition>
+        <argsstring></argsstring>
+        <name>scheduledLists</name>
+        <briefdescription>
+<para>Returns an enumerator of all dynamic playlists as |sbIMediaList|s. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIDynamicPlaylistService.idl" line="101" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIDynamicPlaylistService.idl" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_dynamic_playlist_service_1153711daf4403845e39813ea2ed89a16" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+        <definition>sbIMediaList sbIDynamicPlaylistService::createList</definition>
+        <argsstring>(in sbILibrary aLibrary, in nsIURI aUri, in unsigned long aIntervalSeconds, in nsILocalFile aDestinationDirectory)</argsstring>
+        <name>createList</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref></type>
+          <declname>aLibrary</declname>
+        </param>
+        <param>
+          <type>in nsIURI</type>
+          <declname>aUri</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aIntervalSeconds</declname>
+        </param>
+        <param>
+          <type>in nsILocalFile</type>
+          <declname>aDestinationDirectory</declname>
+        </param>
+        <briefdescription>
+<para>Create a new dynamnic playlist. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aLibrary</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The library in which to create the new list </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aUri</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The URL that will be read to gather tracks for the list </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aIntervalSeconds</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interval between updates, in seconds </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aDestinationDirectory</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Directory that the downloaded files will be saved in. If null, the default download directory is used. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> The new dynamic playlist </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIDynamicPlaylistService.idl" line="60"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_dynamic_playlist_service_170f088731afc105856cf254f63f001ff" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+        <definition>sbIMediaList sbIDynamicPlaylistService::createPodcast</definition>
+        <argsstring>(in sbILibrary aLibrary, in nsIURI aUri,[optional] in sbIPropertyArray aProperties)</argsstring>
+        <name>createPodcast</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref></type>
+          <declname>aLibrary</declname>
+        </param>
+        <param>
+          <type>in nsIURI</type>
+          <declname>aUri</declname>
+        </param>
+        <param>
+          <attributes>[optional]</attributes>
+          <type>in <ref refid="interfacesb_i_property_array" kindref="compound">sbIPropertyArray</ref></type>
+          <declname>aProperties</declname>
+        </param>
+        <briefdescription>
+<para>Create a new podcast. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aLibrary</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The library in which to create the new podcast </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aUri</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The URL of the podcast feed </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aProperties</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional initial properties for this new podcast </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIDynamicPlaylistService.idl" line="71"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_dynamic_playlist_service_1c7b2d1262f426c34b704f6ccdb4b8eb1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDynamicPlaylistService::updateList</definition>
+        <argsstring>(in sbIMediaList aMediaList, in nsIURI aUri, in unsigned long aIntervalSeconds, in nsILocalFile aDestinationDirectory)</argsstring>
+        <name>updateList</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+          <declname>aMediaList</declname>
+        </param>
+        <param>
+          <type>in nsIURI</type>
+          <declname>aUri</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aIntervalSeconds</declname>
+        </param>
+        <param>
+          <type>in nsILocalFile</type>
+          <declname>aDestinationDirectory</declname>
+        </param>
+        <briefdescription>
+<para>Update a new dynamnic playlist. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaList</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The dynamic playlist to update </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aUri</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The URL that will be read to gather tracks for the list </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aIntervalSeconds</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interval between updates, in seconds </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aDestinationDirectory</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Directory that the downloaded files will be saved in. If null, the default download directory is used. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIDynamicPlaylistService.idl" line="85"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_dynamic_playlist_service_18c667e8b94f9768fa32a4c61850ce9fc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDynamicPlaylistService::updateAllNow</definition>
+        <argsstring>()</argsstring>
+        <name>updateAllNow</name>
+        <briefdescription>
+<para>Force an update of all dynamic playlists. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIDynamicPlaylistService.idl" line="90"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_dynamic_playlist_service_15140c80e453e6690a0a262d349f4d8c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDynamicPlaylistService::updateNow</definition>
+        <argsstring>(in sbIMediaList aMediaList)</argsstring>
+        <name>updateNow</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+          <declname>aMediaList</declname>
+        </param>
+        <briefdescription>
+<para>Force an update of a specified dynamic playlist. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaList</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The dynamic playlist to update </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIDynamicPlaylistService.idl" line="96"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/library/base/public/sbIDynamicPlaylistService.idl" line="46" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIDynamicPlaylistService.idl" bodystart="45" bodyend="102"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_dynamic_playlist_service_1153711daf4403845e39813ea2ed89a16" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylistService</scope><name>createList</name></member>
+      <member refid="interfacesb_i_dynamic_playlist_service_170f088731afc105856cf254f63f001ff" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylistService</scope><name>createPodcast</name></member>
+      <member refid="interfacesb_i_dynamic_playlist_service_15c21ad561536d4df32abce542a94d36b" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylistService</scope><name>scheduledLists</name></member>
+      <member refid="interfacesb_i_dynamic_playlist_service_18c667e8b94f9768fa32a4c61850ce9fc" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylistService</scope><name>updateAllNow</name></member>
+      <member refid="interfacesb_i_dynamic_playlist_service_1c7b2d1262f426c34b704f6ccdb4b8eb1" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylistService</scope><name>updateList</name></member>
+      <member refid="interfacesb_i_dynamic_playlist_service_15140c80e453e6690a0a262d349f4d8c6" prot="public" virt="non-virtual"><scope>sbIDynamicPlaylistService</scope><name>updateNow</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

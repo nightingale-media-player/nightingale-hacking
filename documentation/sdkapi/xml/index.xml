@@ -1,34 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
 <doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.5.2">
-  <compound refid="interfacens_i_http_request_handler" kind="interface"><name>nsIHttpRequestHandler</name>
-    <member refid="interfacens_i_http_request_handler_131d05b4e927e44dea1875c420364faae" kind="function"><name>handle</name></member>
-  </compound>
-  <compound refid="interfacens_i_http_request_metadata" kind="interface"><name>nsIHttpRequestMetadata</name>
-    <member refid="interfacens_i_http_request_metadata_14632959e1f434521d67ede765aeeb0c7" kind="variable"><name>method</name></member>
-    <member refid="interfacens_i_http_request_metadata_1b506c4ca676904b02fcc53ffe234c0d0" kind="variable"><name>host</name></member>
-    <member refid="interfacens_i_http_request_metadata_1b92290e3606856f1e4f4408e4939015f" kind="variable"><name>port</name></member>
-    <member refid="interfacens_i_http_request_metadata_194799613ea43b992c9e77413330ad9a2" kind="variable"><name>path</name></member>
-    <member refid="interfacens_i_http_request_metadata_1bba9381df6833faaf422e8eb7efe2193" kind="variable"><name>queryString</name></member>
-    <member refid="interfacens_i_http_request_metadata_1f5140947a19ec5957de10e121be28213" kind="variable"><name>httpVersion</name></member>
-    <member refid="interfacens_i_http_request_metadata_175b4ddb79c439774ec39c4ef149f6ccb" kind="variable"><name>headers</name></member>
-    <member refid="interfacens_i_http_request_metadata_127b89fa6edfe7fcdbdb1821ccc16c934" kind="function"><name>getHeader</name></member>
-    <member refid="interfacens_i_http_request_metadata_1fa0027a86b80d01cfb6e59fe63c13713" kind="function"><name>hasHeader</name></member>
-  </compound>
-  <compound refid="interfacens_i_http_response" kind="interface"><name>nsIHttpResponse</name>
-    <member refid="interfacens_i_http_response_17e432f5378ed7041c8f741d9f8976a59" kind="variable"><name>bodyOutputStream</name></member>
-    <member refid="interfacens_i_http_response_12d2d769391fb223e5b05ea3968b4e372" kind="function"><name>setStatusLine</name></member>
-    <member refid="interfacens_i_http_response_17530484b77036cb56db757c34702c094" kind="function"><name>setHeader</name></member>
-    <member refid="interfacens_i_http_response_17ce4287cfa4a67db6c78c82e802dd586" kind="function"><name>write</name></member>
-  </compound>
-  <compound refid="interfacens_i_http_server" kind="interface"><name>nsIHttpServer</name>
-    <member refid="interfacens_i_http_server_146ea1853a6f4407e3dea33d2533df2fe" kind="function"><name>start</name></member>
-    <member refid="interfacens_i_http_server_17b4bcc5fc21dd816c55e3ec269c0607d" kind="function"><name>stop</name></member>
-    <member refid="interfacens_i_http_server_121b8c9c096d20aa0260e4bc78add207c" kind="function"><name>registerFile</name></member>
-    <member refid="interfacens_i_http_server_181fc7e7e29d82aac5ce7d56d0bedfb3a" kind="function"><name>registerPathHandler</name></member>
-    <member refid="interfacens_i_http_server_1cf0bafe1ec3b320e1042b4cfbc8ca453" kind="function"><name>registerErrorHandler</name></member>
-    <member refid="interfacens_i_http_server_1f246cfd2ee2a08aa002e1e06d3258c53" kind="function"><name>registerDirectory</name></member>
-    <member refid="interfacens_i_http_server_19f927a8539ccb50040a9ee9ac3f5a353" kind="function"><name>setIndexHandler</name></member>
-  </compound>
   <compound refid="interfacesb_i_add_on_bundle_update_service" kind="interface"><name>sbIAddOnBundleUpdateService</name>
     <member refid="interfacesb_i_add_on_bundle_update_service_1b5f46665218a7941dd1cb56d707abc5a" kind="variable"><name>restartRequired</name></member>
     <member refid="interfacesb_i_add_on_bundle_update_service_173bed72537fc6a16f46bcd5a359e8708" kind="function"><name>checkForUpdates</name></member>
@@ -42,26 +13,31 @@
     <member refid="interfacesb_i_album_art_fetcher_1f0fb64cdfe322e7bee03ce72215e7085" kind="variable"><name>priority</name></member>
     <member refid="interfacesb_i_album_art_fetcher_12e7aa9a9a21e080e84ee372a384ff3a1" kind="variable"><name>albumArtSourceList</name></member>
     <member refid="interfacesb_i_album_art_fetcher_1e473a55326d08aea0533d88124dae70f" kind="function"><name>fetchAlbumArtForAlbum</name></member>
+    <member refid="interfacesb_i_album_art_fetcher_105760a70291728c4402c094f1eda4cd4" kind="function"><name>fetchAlbumArtForTrack</name></member>
     <member refid="interfacesb_i_album_art_fetcher_1a891fa93236b58c6b9eded65572bb877" kind="function"><name>shutdown</name></member>
   </compound>
   <compound refid="interfacesb_i_album_art_fetcher_set" kind="interface"><name>sbIAlbumArtFetcherSet</name>
-    <member refid="interfacesb_i_album_art_fetcher_set_1d6272d19a9919d7f3eb1b9681668d4d1" kind="variable"><name>localOnly</name></member>
+    <member refid="interfacesb_i_album_art_fetcher_set_1d8732cad3234b0bd23bae8a3bdc2919d" kind="variable"><name>TYPE_ALL</name></member>
+    <member refid="interfacesb_i_album_art_fetcher_set_1eac45ea76065344dcbb3a103adb3e1ea" kind="variable"><name>TYPE_REMOTE</name></member>
+    <member refid="interfacesb_i_album_art_fetcher_set_15505adb833c0a79e8503eb3ee849cc48" kind="variable"><name>TYPE_LOCAL</name></member>
+    <member refid="interfacesb_i_album_art_fetcher_set_142de1da24d66751338dfbe4334bd0e17" kind="variable"><name>fetcherType</name></member>
   </compound>
   <compound refid="interfacesb_i_album_art_listener" kind="interface"><name>sbIAlbumArtListener</name>
     <member refid="interfacesb_i_album_art_listener_15998b476a73bf3ec5dd78f999c79cfdc" kind="function"><name>onChangeFetcher</name></member>
-    <member refid="interfacesb_i_album_art_listener_171c365c60618e93526728bd75de639ca" kind="function"><name>onResult</name></member>
+    <member refid="interfacesb_i_album_art_listener_167189e4f7321407c85168dedb22ff81d" kind="function"><name>onTrackResult</name></member>
     <member refid="interfacesb_i_album_art_listener_1570dccf5cc1a6b27bf8ff56d9b1654fd" kind="function"><name>onAlbumResult</name></member>
-    <member refid="interfacesb_i_album_art_listener_1e99729a790dc66e018e4962590b20a96" kind="function"><name>onAlbumComplete</name></member>
+    <member refid="interfacesb_i_album_art_listener_12488e1703602fd27f357372bbcf47714" kind="function"><name>onSearchComplete</name></member>
   </compound>
   <compound refid="interfacesb_i_album_art_scanner" kind="interface"><name>sbIAlbumArtScanner</name>
+    <member refid="interfacesb_i_album_art_scanner_1a37824b5dd1a352940fc55fb5a91aa59" kind="variable"><name>updateArtwork</name></member>
     <member refid="interfacesb_i_album_art_scanner_1da8c717d25eb2a3f3bf89c1a6175d9a0" kind="function"><name>scanListForArtwork</name></member>
   </compound>
   <compound refid="interfacesb_i_album_art_scanner_listener" kind="interface"><name>sbIAlbumArtScannerListener</name>
   </compound>
   <compound refid="interfacesb_i_album_art_service" kind="interface"><name>sbIAlbumArtService</name>
-    <member refid="interfacesb_i_album_art_service_100cb8b5ca59e60f2fe5ce88cdee7ffa0" kind="function"><name>getFetcherList</name></member>
+    <member refid="interfacesb_i_album_art_service_120cafe54cb595df4a075824e673f88cb" kind="function"><name>getFetcherList</name></member>
     <member refid="interfacesb_i_album_art_service_1c02f281e797186164ea83102027c90d6" kind="function"><name>imageIsValidAlbumArt</name></member>
-    <member refid="interfacesb_i_album_art_service_1debef4d7ec6f68c9d80f671d8c8f1102" kind="function"><name>cacheImage</name></member>
+    <member refid="interfacesb_i_album_art_service_12bdf8e6af0caf699666cfa937b04b0dc" kind="function"><name>cacheImage</name></member>
     <member refid="interfacesb_i_album_art_service_1800472d94058acada677926a67685d92" kind="function"><name>cacheTemporaryData</name></member>
     <member refid="interfacesb_i_album_art_service_1ebaa57739ba74a2d1afee4dadb08d232" kind="function"><name>retrieveTemporaryData</name></member>
   </compound>
@@ -150,6 +126,59 @@
     <member refid="interfacesb_i_cascade_filter_set_listener_1e215eaa7d97b715041b80c3c61b0c7bd" kind="function"><name>onChange</name></member>
     <member refid="interfacesb_i_cascade_filter_set_listener_1abf1f4b671d10f3a108228d11b1d9d8b" kind="function"><name>onValuesChanged</name></member>
   </compound>
+  <compound refid="interfacesb_i_c_d_device" kind="interface"><name>sbICDDevice</name>
+    <member refid="interfacesb_i_c_d_device_1b931d580355b145a69a82f66e4ff0d07" kind="variable"><name>AUDIO_DISC_TYPE</name></member>
+    <member refid="interfacesb_i_c_d_device_110a768706fd56e08615ccb995783db5f" kind="variable"><name>DATA_DISC_TYPE</name></member>
+    <member refid="interfacesb_i_c_d_device_1daaeea883f0c1645dfcf873c3ea7054d" kind="variable"><name>name</name></member>
+    <member refid="interfacesb_i_c_d_device_1bd3789b95565619864963593b0544e74" kind="variable"><name>readable</name></member>
+    <member refid="interfacesb_i_c_d_device_15946113d5eb99c6f57aaae437055f043" kind="variable"><name>writeable</name></member>
+    <member refid="interfacesb_i_c_d_device_1f2cdde8b2a8e1fcc2bc017a5322ca204" kind="variable"><name>isDiscInserted</name></member>
+    <member refid="interfacesb_i_c_d_device_16f21402439b175df2d9a9e2880d2ba8f" kind="variable"><name>identifier</name></member>
+    <member refid="interfacesb_i_c_d_device_18cfad0b56b8cdfc9ba2ec7a7bd039d2f" kind="variable"><name>discTOC</name></member>
+    <member refid="interfacesb_i_c_d_device_17791c102e3cae3a42bbf855808d247ff" kind="variable"><name>discType</name></member>
+    <member refid="interfacesb_i_c_d_device_1f95ba01a416fa42db2b46318668bf0a0" kind="variable"><name>isDeviceLocked</name></member>
+    <member refid="interfacesb_i_c_d_device_1ff14f65f0e90dff72c8a9ee23c2d001d" kind="function"><name>eject</name></member>
+    <member refid="interfacesb_i_c_d_device_19f5b8c3d21ad2ce128831d29096c0934" kind="function"><name>lockDevice</name></member>
+    <member refid="interfacesb_i_c_d_device_10682f59a0d14c5aa2228788ceb1bc3aa" kind="function"><name>unlockDevice</name></member>
+  </compound>
+  <compound refid="interfacesb_i_c_d_device_event" kind="interface"><name>sbICDDeviceEvent</name>
+    <member refid="interfacesb_i_c_d_device_event_15177b87557801412afeb5582d44f83e8" kind="variable"><name>EVENT_CDLOOKUP_INITIATED</name></member>
+    <member refid="interfacesb_i_c_d_device_event_1aca3645172fc8ed601adb46e758113ac" kind="variable"><name>EVENT_CDLOOKUP_COMPLETED</name></member>
+    <member refid="interfacesb_i_c_d_device_event_140998cfef1526cb25dda74eb42c4962e" kind="variable"><name>EVENT_CDLOOKUP_METADATA_COMPLETE</name></member>
+    <member refid="interfacesb_i_c_d_device_event_1f50b040baffc93206f0b548573294efa" kind="variable"><name>EVENT_CDRIP_COMPLETED</name></member>
+    <member refid="interfacesb_i_c_d_device_event_1328974cd05e17c1dffc1bd9ce2d2a4c1" kind="variable"><name>REQUEST_CDLOOKUP</name></member>
+    <member refid="interfacesb_i_c_d_device_event_1c815230f11f632c40848f3c4deb33feb" kind="variable"><name>STATE_LOOKINGUPCD</name></member>
+  </compound>
+  <compound refid="interfacesb_i_c_d_device_listener" kind="interface"><name>sbICDDeviceListener</name>
+    <member refid="interfacesb_i_c_d_device_listener_1119a79ce8173633f892167be7412ce0a" kind="function"><name>onDeviceRemoved</name></member>
+    <member refid="interfacesb_i_c_d_device_listener_1add2e07a68eae02991d500acccd85556" kind="function"><name>onMediaInserted</name></member>
+    <member refid="interfacesb_i_c_d_device_listener_1b22cda7f44345f8f0b9167e47bc1b30a" kind="function"><name>onMediaEjected</name></member>
+  </compound>
+  <compound refid="interfacesb_i_c_d_device_service" kind="interface"><name>sbICDDeviceService</name>
+    <member refid="interfacesb_i_c_d_device_service_1ee04d2acbdcce8d5417e8c912ca415b0" kind="variable"><name>weight</name></member>
+    <member refid="interfacesb_i_c_d_device_service_1e757489d06a469b9de912cc62b8bc1e6" kind="variable"><name>nbDevices</name></member>
+    <member refid="interfacesb_i_c_d_device_service_1ec58d885c0339d4582d703b928c06490" kind="function"><name>getDevice</name></member>
+    <member refid="interfacesb_i_c_d_device_service_1bbb1a8b056a1b3e3540ecebcad34e9c7" kind="function"><name>getDeviceFromIdentifier</name></member>
+    <member refid="interfacesb_i_c_d_device_service_1d967d6ea87e65854d41a25c5485c5965" kind="function"><name>getCDDevices</name></member>
+    <member refid="interfacesb_i_c_d_device_service_16a5c7b1eb847f822cc756576dd8afa11" kind="function"><name>registerListener</name></member>
+    <member refid="interfacesb_i_c_d_device_service_117072a080b24bf23193734452199d513" kind="function"><name>removeListener</name></member>
+  </compound>
+  <compound refid="interfacesb_i_c_d_t_o_c" kind="interface"><name>sbICDTOC</name>
+    <member refid="interfacesb_i_c_d_t_o_c_120ce8e48e8330e533c26ad4f9885a976" kind="variable"><name>firstTrackIndex</name></member>
+    <member refid="interfacesb_i_c_d_t_o_c_1b227424543701d26fe113c6f06c1520f" kind="variable"><name>lastTrackIndex</name></member>
+    <member refid="interfacesb_i_c_d_t_o_c_1444f3891562d6df11c12970cd0164fcf" kind="variable"><name>leadOutTrackOffset</name></member>
+    <member refid="interfacesb_i_c_d_t_o_c_1c4dcfc29ff7fa6e0262518b3fcc7c365" kind="variable"><name>tracks</name></member>
+  </compound>
+  <compound refid="interfacesb_i_c_d_t_o_c_entry" kind="interface"><name>sbICDTOCEntry</name>
+    <member refid="interfacesb_i_c_d_t_o_c_entry_1192cf40ef307875242955d8b5d30a607" kind="variable"><name>TRACKMODE_AUDIO</name></member>
+    <member refid="interfacesb_i_c_d_t_o_c_entry_15daa2ba55b9a7a3f825a788cdc4e8758" kind="variable"><name>TRACKMODE_DATA</name></member>
+    <member refid="interfacesb_i_c_d_t_o_c_entry_16419511ed309bc0a70a5bb2d122691c9" kind="variable"><name>TRACKMODE_OTHER</name></member>
+    <member refid="interfacesb_i_c_d_t_o_c_entry_14a0cc094035274e44addbdc472321638" kind="variable"><name>frameOffset</name></member>
+    <member refid="interfacesb_i_c_d_t_o_c_entry_144d212d6230f5e488e33d7c20279f225" kind="variable"><name>length</name></member>
+    <member refid="interfacesb_i_c_d_t_o_c_entry_1c648cde93413ba0579a432456a0bbde5" kind="variable"><name>trackNumber</name></member>
+    <member refid="interfacesb_i_c_d_t_o_c_entry_1f005b105566a8b4d823fba8183ca60e5" kind="variable"><name>trackURI</name></member>
+    <member refid="interfacesb_i_c_d_t_o_c_entry_16057b54f457d013e2e0d650272926770" kind="variable"><name>trackMode</name></member>
+  </compound>
   <compound refid="interfacesb_i_change_operation" kind="interface"><name>sbIChangeOperation</name>
     <member refid="interfacesb_i_change_operation_12249f3e37cac324dff572b559be21d6b" kind="variable"><name>UNKNOWN</name></member>
     <member refid="interfacesb_i_change_operation_11447841d4a31a4f332660404f797c53d" kind="variable"><name>ADDED</name></member>
@@ -159,7 +188,7 @@
     <member refid="interfacesb_i_change_operation_17c1f91b55f7bc2a8e0b19cc1117c6ce6" kind="variable"><name>operation</name></member>
   </compound>
   <compound refid="interfacesb_i_clickable_property_info" kind="interface"><name>sbIClickablePropertyInfo</name>
-    <member refid="interfacesb_i_clickable_property_info_172c807b26f126227b4609b12fa043e19" kind="variable"><name>suppressSelect</name></member>
+    <member refid="interfacesb_i_clickable_property_info_1f2117917c768c2a8c1e843fca8b64ab4" kind="variable"><name>suppressSelect</name></member>
     <member refid="interfacesb_i_clickable_property_info_1fb8ff701c95bc01aca7a1d56975d5b8f" kind="function"><name>isDisabled</name></member>
     <member refid="interfacesb_i_clickable_property_info_1c017715d79b8755c70194a37be9bf1a7" kind="function"><name>hitTest</name></member>
     <member refid="interfacesb_i_clickable_property_info_14661b9394d57a3f3d91b4dc1373da5a1" kind="function"><name>getValueForClick</name></member>
@@ -181,22 +210,21 @@
     <member refid="interfacesb_i_command_line_manager_1283c0549898e8d45f9d02794f833aac3" kind="function"><name>addFlagHandler</name></member>
     <member refid="interfacesb_i_command_line_manager_118b8f18b939b1de0cff8dda01a3c3615" kind="function"><name>removeFlagHandler</name></member>
   </compound>
-  <compound refid="interfacesb_i_content_type_format" kind="interface"><name>sbIContentTypeFormat</name>
-    <member refid="interfacesb_i_content_type_format_1774593c5f79562b87a71574f9b2291b0" kind="variable"><name>containerFormat</name></member>
-    <member refid="interfacesb_i_content_type_format_1574a05d98fcb042e5fb7bb5747e8e5fc" kind="variable"><name>encodingFormats</name></member>
-    <member refid="interfacesb_i_content_type_format_150777698da7105b62f16e80fca8e1c3c" kind="variable"><name>decodingFormats</name></member>
-    <member refid="interfacesb_i_content_type_format_1611d655f45394157871826517a8d377b" kind="function"><name>init</name></member>
-  </compound>
   <compound refid="interfacesb_i_create_media_list_callback" kind="interface"><name>sbICreateMediaListCallback</name>
     <member refid="interfacesb_i_create_media_list_callback_17189d87fd56f5b5faa279c686385619b" kind="function"><name>onCreated</name></member>
   </compound>
   <compound refid="interfacesb_i_database_engine" kind="interface"><name>sbIDatabaseEngine</name>
+    <member refid="interfacesb_i_database_engine_1fe6f18b89a75072071f581cc581a56e4" kind="variable"><name>DATABASE_MEMORYUSED</name></member>
+    <member refid="interfacesb_i_database_engine_10648e5327dd9002ad68d3378d189bfcf" kind="variable"><name>DATABASE_PAGECACHEUSED</name></member>
+    <member refid="interfacesb_i_database_engine_1b03d86645692d95e7f31f163090ab748" kind="variable"><name>DATABASE_PAGECACHEOVERFLOW</name></member>
     <member refid="interfacesb_i_database_engine_1d862fd8232fa8e6b0bfa1606a0744d01" kind="variable"><name>localeCollationEnabled</name></member>
     <member refid="interfacesb_i_database_engine_1bc24b94b63b9ebd163bafc1fe4d3c45f" kind="variable"><name>localeCollationID</name></member>
     <member refid="interfacesb_i_database_engine_12f9b566a7505cff7691aec08fc524b96" kind="function"><name>SubmitQuery</name></member>
     <member refid="interfacesb_i_database_engine_1745f1c624054c268259c1d7b123ef045" kind="function"><name>closeDatabase</name></member>
     <member refid="interfacesb_i_database_engine_15ca813fb9abea6e2e67f4be44b0b880f" kind="function"><name>dumpDatabase</name></member>
     <member refid="interfacesb_i_database_engine_1a9da663808d99f37c1622f0211543115" kind="function"><name>dumpMemoryStatistics</name></member>
+    <member refid="interfacesb_i_database_engine_14dd997690e0b12bb45eac5d39f42a287" kind="function"><name>getCurrentMemoryUsage</name></member>
+    <member refid="interfacesb_i_database_engine_1f7ec0298888f64fafe251c1205c87650" kind="function"><name>getHighWaterMemoryUsage</name></member>
     <member refid="interfacesb_i_database_engine_13441f4a8e6c85394a06bbe1f59bae3b8" kind="function"><name>releaseMemory</name></member>
   </compound>
   <compound refid="interfacesb_i_database_prepared_statement" kind="interface"><name>sbIDatabasePreparedStatement</name>
@@ -286,6 +314,7 @@
   </compound>
   <compound refid="interfacesb_i_device" kind="interface"><name>sbIDevice</name>
     <member refid="interfacesb_i_device_10ec1721b04be6d0dff919299f9928a7d" kind="variable"><name>name</name></member>
+    <member refid="interfacesb_i_device_15a9c3f838c5cc7fd34e6627f212aa0ff" kind="variable"><name>productName</name></member>
     <member refid="interfacesb_i_device_16bb1c045b9053154ee58591336941f14" kind="variable"><name>controllerId</name></member>
     <member refid="interfacesb_i_device_10cd836f1f07248e5ccc3f804eed029a5" kind="variable"><name>id</name></member>
     <member refid="interfacesb_i_device_17371a0d264e88bb584112b3657569aa5" kind="variable"><name>connected</name></member>
@@ -297,7 +326,9 @@
     <member refid="interfacesb_i_device_1341d9584055d95cac5d77bc70bcde161" kind="variable"><name>isBusy</name></member>
     <member refid="interfacesb_i_device_1de85c8bedcf5cfba4aec0d352b2f2342" kind="variable"><name>canDisconnect</name></member>
     <member refid="interfacesb_i_device_1a97398f8a665f9e50aeb6157e7677289" kind="variable"><name>currentStatus</name></member>
+    <member refid="interfacesb_i_device_107ab3d84622c9841a3f32ba839f49fca" kind="variable"><name>supportsReformat</name></member>
     <member refid="interfacesb_i_device_1370f6a73c7b74ec3e5f1c8f0b1331259" kind="variable"><name>state</name></member>
+    <member refid="interfacesb_i_device_141ac34358cc745b32525727905370d27" kind="variable"><name>previousState</name></member>
     <member refid="interfacesb_i_device_1784fc50900edf1c33d9f2192bdc42251" kind="variable"><name>STATE_IDLE</name></member>
     <member refid="interfacesb_i_device_1b6f7c830fe66955dadb3605136f94a7e" kind="variable"><name>STATE_SYNCING</name></member>
     <member refid="interfacesb_i_device_179429e9e6ccdbea50c51a2e657b65a46" kind="variable"><name>STATE_COPYING</name></member>
@@ -311,6 +342,9 @@
     <member refid="interfacesb_i_device_182415f809b8ed9fc614c805052d71d96" kind="variable"><name>STATE_DISCONNECTED</name></member>
     <member refid="interfacesb_i_device_1ed865ab71492a22c3eedf6cc75564b12" kind="variable"><name>STATE_BUSY</name></member>
     <member refid="interfacesb_i_device_1d1c7f6dee6325ec03221d4c97eaff02d" kind="variable"><name>STATE_CANCEL</name></member>
+    <member refid="interfacesb_i_device_1153e2edeaf77f04e53e73443f7ffee1c" kind="variable"><name>STATE_TRANSCODE</name></member>
+    <member refid="interfacesb_i_device_18492158dfc50c7ab650b76770a65549a" kind="variable"><name>STATE_FORMATTING</name></member>
+    <member refid="interfacesb_i_device_1cc1f0b6a8e0bf6b8efb95f133e0d02dd" kind="variable"><name>STATE_SYNC_PREPARING</name></member>
     <member refid="interfacesb_i_device_17ca6215de6573ed9b87f456a44ceaec6" kind="variable"><name>STATE_USER</name></member>
     <member refid="interfacesb_i_device_11f6bcc64dd814a074fc44692531bbac8" kind="variable"><name>REQUEST_FLAG_USER</name></member>
     <member refid="interfacesb_i_device_177332d2cfbbd3a1b605267277baa8a14" kind="variable"><name>REQUEST_FLAG_WRITE</name></member>
@@ -326,6 +360,7 @@
     <member refid="interfacesb_i_device_16bbd136600b5da03bc45ba01420fdfcc" kind="variable"><name>REQUEST_UPDATE</name></member>
     <member refid="interfacesb_i_device_12128ccc1c913d021f8a3bd1ee85e1c95" kind="variable"><name>REQUEST_NEW_PLAYLIST</name></member>
     <member refid="interfacesb_i_device_1a961e3c28fb9821ce2e3414cf3f84d88" kind="variable"><name>REQUEST_FACTORY_RESET</name></member>
+    <member refid="interfacesb_i_device_1d6db4855f5450f072ca7e392c274ce76" kind="variable"><name>REQUEST_FORMAT</name></member>
     <member refid="interfacesb_i_device_181a26acbf3b748a9076294ec8a6880b4" kind="function"><name>connect</name></member>
     <member refid="interfacesb_i_device_1873b30e727370e23050285116c9566de" kind="function"><name>disconnect</name></member>
     <member refid="interfacesb_i_device_1ff64a942e51a477c31cc7a906e8d7182" kind="function"><name>getPreference</name></member>
@@ -333,7 +368,9 @@
     <member refid="interfacesb_i_device_17ed9284aac5a16769d652bf02bc4ec22" kind="function"><name>submitRequest</name></member>
     <member refid="interfacesb_i_device_162c36e19acfc5e13e08c3925607dd12a" kind="function"><name>cancelRequests</name></member>
     <member refid="interfacesb_i_device_19b88aee67110a5ed1fe252973cc3259d" kind="function"><name>syncLibraries</name></member>
+    <member refid="interfacesb_i_device_119762991769540ea52c785822a2b5e43" kind="function"><name>supportsMediaItem</name></member>
     <member refid="interfacesb_i_device_190ef2e85d63890e85cb45ff7792128d0" kind="function"><name>eject</name></member>
+    <member refid="interfacesb_i_device_1a2acf30f1f7b5e7a597b4024702098df" kind="function"><name>format</name></member>
     <member refid="interfacesb_i_device_1ef825f6756ec97eddadb327a1d285156" kind="function"><name>setWarningDialogEnabled</name></member>
     <member refid="interfacesb_i_device_11686d1c902e03da2964d15eb4dc55f8e" kind="function"><name>getWarningDialogEnabled</name></member>
     <member refid="interfacesb_i_device_1681c6e92cb04d41233d5851f5f260740" kind="function"><name>resetWarningDialogs</name></member>
@@ -395,34 +432,14 @@
     <member refid="interfacesb_i_device_base_callback_13c4af743fdc2f5474d24b5034e6b3e8c" kind="function"><name>onTransferComplete</name></member>
     <member refid="interfacesb_i_device_base_callback_142e1b7d04a47ec8d59691e73503d5e23" kind="function"><name>onStateChanged</name></member>
   </compound>
-  <compound refid="interfacesb_i_device_capabilities" kind="interface"><name>sbIDeviceCapabilities</name>
-    <member refid="interfacesb_i_device_capabilities_190169ce9a7d625939d042e4f3e80931a" kind="variable"><name>FUNCTION_UNKNOWN</name></member>
-    <member refid="interfacesb_i_device_capabilities_1db96af2563c0c7ff017ae379db1bb93b" kind="variable"><name>FUNCTION_DEVICE</name></member>
-    <member refid="interfacesb_i_device_capabilities_1e6dc5822d32abf01f9a54d45a53b9972" kind="variable"><name>FUNCTION_AUDIO_PLAYBACK</name></member>
-    <member refid="interfacesb_i_device_capabilities_1b71d156f1786e79a7fd3d9fa4189bce1" kind="variable"><name>FUNCTION_AUDIO_CAPTURE</name></member>
-    <member refid="interfacesb_i_device_capabilities_17048b66215ac2465b3981f373fbed783" kind="variable"><name>FUNCTION_IMAGE_DISPLAY</name></member>
-    <member refid="interfacesb_i_device_capabilities_1cc62135a3ef12c7dbb5030b2507f6097" kind="variable"><name>FUNCTION_IMAGE_CAPTURE</name></member>
-    <member refid="interfacesb_i_device_capabilities_1e410779678c7eb44936af821c5b68369" kind="variable"><name>FUNCTION_VIDEO_PLAYBACK</name></member>
-    <member refid="interfacesb_i_device_capabilities_1a001147360de4e0db463f18f6e1a49a1" kind="variable"><name>FUNCTION_VIDEO_CAPTURE</name></member>
-    <member refid="interfacesb_i_device_capabilities_1264a755317ef2988c10f31951e8b575c" kind="variable"><name>FUNCTION_CLIENT_DEFINED</name></member>
-    <member refid="interfacesb_i_device_capabilities_1fcf744ed74e6e3f153c7224d866afb5a" kind="variable"><name>CONTENT_UNKNOWN</name></member>
-    <member refid="interfacesb_i_device_capabilities_1d50c6c34efa315316df71282618495ed" kind="variable"><name>CONTENT_FILE</name></member>
-    <member refid="interfacesb_i_device_capabilities_1552bbe81c7dbac935953fe65cab1b742" kind="variable"><name>CONTENT_FOLDER</name></member>
-    <member refid="interfacesb_i_device_capabilities_139111b3bb501e0f9418dded121ec6048" kind="variable"><name>CONTENT_AUDIO</name></member>
-    <member refid="interfacesb_i_device_capabilities_1715b0a5b47395dc8b2475a08cf959745" kind="variable"><name>CONTENT_IMAGE</name></member>
-    <member refid="interfacesb_i_device_capabilities_143a55b41f0de584e454e2e144a4c731c" kind="variable"><name>CONTENT_VIDEO</name></member>
-    <member refid="interfacesb_i_device_capabilities_11528ffc998bbb5c07d2e3501bb468074" kind="variable"><name>CONTENT_PLAYLIST</name></member>
-    <member refid="interfacesb_i_device_capabilities_1a295b2493363335748270a9925480eb2" kind="variable"><name>CONTENT_ALBUM</name></member>
-    <member refid="interfacesb_i_device_capabilities_1a7e8d6f144bfb21342b20f275f5dce6f" kind="variable"><name>CONTENT_CLIENT_DEFINED</name></member>
-    <member refid="interfacesb_i_device_capabilities_165da6bde450e0bcc882f93a8373f0760" kind="function"><name>setFunctionTypes</name></member>
-    <member refid="interfacesb_i_device_capabilities_1aabbda5466a5586827cace5706350fd9" kind="function"><name>setEventTypes</name></member>
-    <member refid="interfacesb_i_device_capabilities_1e974724d380b6fa462d0786da3c22604" kind="function"><name>addContentTypes</name></member>
-    <member refid="interfacesb_i_device_capabilities_19e4ff93c47203ce86544167667a18bfe" kind="function"><name>addFormats</name></member>
-    <member refid="interfacesb_i_device_capabilities_16d26ef734b6a0e5efbcad762524b8f87" kind="function"><name>initDone</name></member>
-    <member refid="interfacesb_i_device_capabilities_152d636956f340d8f10459f7673b9a834" kind="function"><name>getSupportedFunctionTypes</name></member>
-    <member refid="interfacesb_i_device_capabilities_105e367726283198718a583e3b58685ce" kind="function"><name>getSupportedContentTypes</name></member>
-    <member refid="interfacesb_i_device_capabilities_1a612ac3ce3075022e17b64c3f4aeaad9" kind="function"><name>getSupportedFormats</name></member>
-    <member refid="interfacesb_i_device_capabilities_148f39c26a7c927218ab3323d42fd31cf" kind="function"><name>getSupportedEvents</name></member>
+  <compound refid="interfacesb_i_device_capabilities_registrar" kind="interface"><name>sbIDeviceCapabilitiesRegistrar</name>
+    <member refid="interfacesb_i_device_capabilities_registrar_1879163b2512a72f66ef54fb629264603" kind="variable"><name>NONE</name></member>
+    <member refid="interfacesb_i_device_capabilities_registrar_1e81bc59d6e5f531f60089d828a28d531" kind="variable"><name>DEFAULT</name></member>
+    <member refid="interfacesb_i_device_capabilities_registrar_11e11d367e8e068017bb73f42ec984fe2" kind="variable"><name>GENERIC</name></member>
+    <member refid="interfacesb_i_device_capabilities_registrar_14d4718b3c7b6f698b6d8d58a1372c334" kind="variable"><name>DEVICE_SPECIFIC</name></member>
+    <member refid="interfacesb_i_device_capabilities_registrar_199d8f26be279d930fc37f011f451e63e" kind="variable"><name>type</name></member>
+    <member refid="interfacesb_i_device_capabilities_registrar_147967a441a1699a3353e004843f897b4" kind="function"><name>AddCapabilities</name></member>
+    <member refid="interfacesb_i_device_capabilities_registrar_14efc9c92fd2a21ecb144b699274d8880" kind="function"><name>InterestedInDevice</name></member>
   </compound>
   <compound refid="interfacesb_i_device_compatibility" kind="interface"><name>sbIDeviceCompatibility</name>
     <member refid="interfacesb_i_device_compatibility_17fc87a6e6673e6cc0b91aaa7568d65a9" kind="variable"><name>INCOMPATIBLE</name></member>
@@ -471,6 +488,11 @@
     <member refid="interfacesb_i_device_error_monitor_14a17413c0fc401d8036ceef9299e8640" kind="function"><name>deviceHasErrors</name></member>
     <member refid="interfacesb_i_device_error_monitor_132ff87201b4d17d6598c3cec7126bf32" kind="function"><name>getErrorsForDevice</name></member>
     <member refid="interfacesb_i_device_error_monitor_16723d5afadb97100c16df9ccd7c4c2a2" kind="function"><name>clearErrorsForDevice</name></member>
+    <member refid="interfacesb_i_device_error_monitor_12f8047a7f0303e85b71c6b468a63c323" kind="function"><name>addListener</name></member>
+    <member refid="interfacesb_i_device_error_monitor_1b992491c5bde4fa8482e4d3d7f44149e" kind="function"><name>removeListener</name></member>
+  </compound>
+  <compound refid="interfacesb_i_device_error_monitor_listener" kind="interface"><name>sbIDeviceErrorMonitorListener</name>
+    <member refid="interfacesb_i_device_error_monitor_listener_101e6debb8b90f8d4c0c3fe103888af2d" kind="function"><name>onDeviceError</name></member>
   </compound>
   <compound refid="interfacesb_i_device_event" kind="interface"><name>sbIDeviceEvent</name>
     <member refid="interfacesb_i_device_event_1a3e6c8fb430675ca5f3aa4ae51642836" kind="variable"><name>COMMAND_DEVICE_BASE</name></member>
@@ -514,9 +536,41 @@
     <member refid="interfacesb_i_device_event_118971da08fedeba93ff9655bcff41d23" kind="variable"><name>EVENT_DEVICE_ERROR_UNEXPECTED</name></member>
     <member refid="interfacesb_i_device_event_1eff8c61f5561f8655fd6a569021fab93" kind="variable"><name>EVENT_DEVICE_STATE_CHANGED</name></member>
     <member refid="interfacesb_i_device_event_16693a6cfe6e255b496ad1bbcd9d04917" kind="variable"><name>EVENT_DEVICE_PREFS_CHANGED</name></member>
+    <member refid="interfacesb_i_device_event_15ba7fb6d33a3f5cb891860bf6bc14c22" kind="variable"><name>EVENT_DEVICE_TRANSCODE_START</name></member>
+    <member refid="interfacesb_i_device_event_1e8640db5d7eeca9adf99f9947d826a98" kind="variable"><name>EVENT_DEVICE_TRANSCODE_PROGRESS</name></member>
+    <member refid="interfacesb_i_device_event_1459867e204e41e45c7385b18cc79fe6a" kind="variable"><name>EVENT_DEVICE_TRANSCODE_END</name></member>
+    <member refid="interfacesb_i_device_event_1579bb65b2b5b5a6fee5a01fb9543bb90" kind="variable"><name>EVENT_DEVICE_TRANSCODE_ERROR</name></member>
+    <member refid="interfacesb_i_device_event_1da676ef79472701684400fdce7a6f1fa" kind="variable"><name>EVENT_DEVICE_LIBRARY_ADDED</name></member>
+    <member refid="interfacesb_i_device_event_1d95475129764fcbce8125938a9aa72c6" kind="variable"><name>EVENT_DEVICE_LIBRARY_REMOVED</name></member>
+    <member refid="interfacesb_i_device_event_111cdf17a1bac8d548b9365d482fd2db6" kind="variable"><name>EVENT_DEVICE_FORMATTING_START</name></member>
+    <member refid="interfacesb_i_device_event_165483a0428d42632a1531a0378e5a512" kind="variable"><name>EVENT_DEVICE_FORMATTING_PROGRESS</name></member>
+    <member refid="interfacesb_i_device_event_1b04db3ec4eb9c207e3f9bc8dcdc7d455" kind="variable"><name>EVENT_DEVICE_FORMATTING_END</name></member>
+    <member refid="interfacesb_i_device_event_11f94bd93428fbffdfa19d6a7eceb1cda" kind="variable"><name>EVENT_DEVICE_FILE_MISSING</name></member>
+    <member refid="interfacesb_i_device_event_115c8b68d78eb4cf8a9fa38f9ba3d14a7" kind="variable"><name>EVENT_DEVICE_SCAN_START</name></member>
+    <member refid="interfacesb_i_device_event_1dfcef420f5babf00933e5d233a2fab21" kind="variable"><name>EVENT_DEVICE_SCAN_END</name></member>
     <member refid="interfacesb_i_device_event_1cb6bb266781dbcb22e4483ce400770e2" kind="variable"><name>EVENT_CONTROLLER_BASE</name></member>
     <member refid="interfacesb_i_device_event_1d0cb2fa10c2fbd9a903280b281d34713" kind="variable"><name>EVENT_MARSHALL_BASE</name></member>
     <member refid="interfacesb_i_device_event_1beb207b4c5548d656dc09351b4f9010c" kind="variable"><name>EVENT_MANAGER_BASE</name></member>
+    <member refid="interfacesb_i_device_event_1a46fa40a0a1327708e0a7e5110df4145" kind="variable"><name>EVENT_FIRMWARE_BASE</name></member>
+    <member refid="interfacesb_i_device_event_1106314a7e757276cdc988cf9020988e8" kind="variable"><name>EVENT_FIRMWARE_CFU_START</name></member>
+    <member refid="interfacesb_i_device_event_1bb09d645bf5c940e4f1588c57a414bad" kind="variable"><name>EVENT_FIRMWARE_CFU_END</name></member>
+    <member refid="interfacesb_i_device_event_1d683ed11241b760e46ad5b0657a39a82" kind="variable"><name>EVENT_FIRMWARE_DOWNLOAD_START</name></member>
+    <member refid="interfacesb_i_device_event_1661ffd9599cc30b4ae0b21dcf7ef82a5" kind="variable"><name>EVENT_FIRMWARE_DOWNLOAD_PROGRESS</name></member>
+    <member refid="interfacesb_i_device_event_15fd887661d652bf791df80af06139a55" kind="variable"><name>EVENT_FIRMWARE_DOWNLOAD_END</name></member>
+    <member refid="interfacesb_i_device_event_12a438d1fd067d9c43d8bd078151d0afe" kind="variable"><name>EVENT_FIRMWARE_UPDATE_START</name></member>
+    <member refid="interfacesb_i_device_event_19ee68409aa5a7ebd8ee814b88084ea1a" kind="variable"><name>EVENT_FIRMWARE_UPDATE_END</name></member>
+    <member refid="interfacesb_i_device_event_1cd98326d1c12d90396e3c0b0158f4aa3" kind="variable"><name>EVENT_FIRMWARE_WRITE_START</name></member>
+    <member refid="interfacesb_i_device_event_1bbf63bc4361c18cb0667b25832082fb2" kind="variable"><name>EVENT_FIRMWARE_WRITE_PROGRESS</name></member>
+    <member refid="interfacesb_i_device_event_1f34bff227b37aec139f7d9356f558dc7" kind="variable"><name>EVENT_FIRMWARE_WRITE_END</name></member>
+    <member refid="interfacesb_i_device_event_12f340a7d1d70be945fa358d23d7da057" kind="variable"><name>EVENT_FIRMWARE_VERIFY_START</name></member>
+    <member refid="interfacesb_i_device_event_1e96ec95f544731586f9b5c41a6432fb5" kind="variable"><name>EVENT_FIRMWARE_VERIFY_PROGRESS</name></member>
+    <member refid="interfacesb_i_device_event_1c700a0f6cfb7510f7c31c4fce9326357" kind="variable"><name>EVENT_FIRMWARE_VERIFY_END</name></member>
+    <member refid="interfacesb_i_device_event_1fad8865b92f7ca216f6b35b8eac18b0d" kind="variable"><name>EVENT_FIRMWARE_ERROR_BASE</name></member>
+    <member refid="interfacesb_i_device_event_114e7188ec209d42470b1e4972c0d8f32" kind="variable"><name>EVENT_FIRMWARE_ERROR_UNKNOWN</name></member>
+    <member refid="interfacesb_i_device_event_1ac7ec2ce52e0a6cf78787403fe919061" kind="variable"><name>EVENT_FIRMWARE_CFU_ERROR</name></member>
+    <member refid="interfacesb_i_device_event_1c63f59660882383831738798446f630b" kind="variable"><name>EVENT_FIRMWARE_DOWNLOAD_ERROR</name></member>
+    <member refid="interfacesb_i_device_event_1519281fb00111138739f7f2db19694e6" kind="variable"><name>EVENT_FIRMWARE_UPDATE_ERROR</name></member>
+    <member refid="interfacesb_i_device_event_1a33a1c3c2fba4d274cd4349df8a6c897" kind="variable"><name>EVENT_FIRMWARE_WRITE_ERROR</name></member>
     <member refid="interfacesb_i_device_event_1ecdb97c08ac5f027a7bf08698584015a" kind="variable"><name>EVENT_CLIENT_DEFINED</name></member>
     <member refid="interfacesb_i_device_event_1f69e2495267db9ed5d9ffcdf7cd6fb78" kind="variable"><name>type</name></member>
     <member refid="interfacesb_i_device_event_199e5f65469f988f927910b9e939ee910" kind="variable"><name>data</name></member>
@@ -531,9 +585,59 @@
     <member refid="interfacesb_i_device_event_target_10b98a373909bd311cacb6ec831011062" kind="function"><name>addEventListener</name></member>
     <member refid="interfacesb_i_device_event_target_194b22f4f570ec97a251dd31a1f44759d" kind="function"><name>removeEventListener</name></member>
   </compound>
+  <compound refid="interfacesb_i_device_firmware_handler" kind="interface"><name>sbIDeviceFirmwareHandler</name>
+    <member refid="interfacesb_i_device_firmware_handler_1f504a1818c41518f5b40df683bbd9ae3" kind="variable"><name>contractId</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_1b020f95bc729ea078ae08562443d6ac5" kind="variable"><name>latestFirmwareLocation</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_166aa0116e0c56335fc918e11c9a90b53" kind="variable"><name>latestFirmwareVersion</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_13cd18cbb7cab0eff1705a7dbb89fd9ef" kind="variable"><name>latestFirmwareReadableVersion</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_1a5b913c8d23dcd1d51ae7bb58bf7e28e" kind="variable"><name>currentFirmwareVersion</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_10262a5fb9e35164c27484dbab5d427a6" kind="variable"><name>currentFirmwareReadableVersion</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_1ab3335ba0276e485849ec7fbe4392224" kind="variable"><name>releaseNotesLocation</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_1ecf236a718269e630ecd656133216ca6" kind="variable"><name>resetInstructionsLocation</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_1e21224a425fc63048b944100a4e7a312" kind="variable"><name>customerSupportLocation</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_1e4baa66d90ddd51c375777eded290151" kind="variable"><name>registerLocation</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_1534726c028240f0051e937355b8ae055" kind="variable"><name>needsRecoveryMode</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_1dbd4c7eb9a88471ad2eddaac40004311" kind="variable"><name>recoveryMode</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_1ca56d3a3752e7fb3d1250563ac695216" kind="variable"><name>defaultFirmwareUpdate</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_13cdeddb04a35be60022cb84feec1ca42" kind="variable"><name>boundDevice</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_143c07f534e764e08bc81ddb0d38e76d2" kind="function"><name>canHandleDevice</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_156601b57d30b562d1acb7200d4974421" kind="function"><name>canUpdate</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_110c0a5b9bda91fe00ee0fa86057915b1" kind="function"><name>bind</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_146aa3a6c0803f1becc3f5698a7f5a8c4" kind="function"><name>rebind</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_153b5cdb1d3c7f30cf66fff0f048cf48c" kind="function"><name>unbind</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_179b163deae0780432c8670234c9a9545" kind="function"><name>cancel</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_13846381716f0659c09027ccfdf6fcbb8" kind="function"><name>refreshInfo</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_198f987fcfdc32d1e0fb681bbff2030c8" kind="function"><name>update</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_1501f2648bdcdb53ab1aa08e792b469d7" kind="function"><name>recover</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_1c73482618e093f76ad82a95ca6da3426" kind="function"><name>verifyDevice</name></member>
+    <member refid="interfacesb_i_device_firmware_handler_1db91ae019c1faaa9907711ba7ddafc57" kind="function"><name>verifyUpdate</name></member>
+  </compound>
+  <compound refid="interfacesb_i_device_firmware_update" kind="interface"><name>sbIDeviceFirmwareUpdate</name>
+    <member refid="interfacesb_i_device_firmware_update_14ecd9bd95d029bc772d69493a664c576" kind="variable"><name>firmwareImageFile</name></member>
+    <member refid="interfacesb_i_device_firmware_update_165a24395d720b01635e0b7f895b6b7a9" kind="variable"><name>firmwareReadableVersion</name></member>
+    <member refid="interfacesb_i_device_firmware_update_1007aafea4a85cf80c5fc609e707f1a5c" kind="variable"><name>firmwareVersion</name></member>
+    <member refid="interfacesb_i_device_firmware_update_1a00d27c97a3d2c2d7073b400063ba452" kind="function"><name>init</name></member>
+  </compound>
+  <compound refid="interfacesb_i_device_firmware_updater" kind="interface"><name>sbIDeviceFirmwareUpdater</name>
+    <member refid="interfacesb_i_device_firmware_updater_1ab37bd25b8111dc41e46afc36e40602b" kind="function"><name>checkForUpdate</name></member>
+    <member refid="interfacesb_i_device_firmware_updater_152ee6dd67c421357b88512b2f0e9f334" kind="function"><name>downloadUpdate</name></member>
+    <member refid="interfacesb_i_device_firmware_updater_1652c771c9f3d651d3808bc95bb6f1bb5" kind="function"><name>verifyUpdate</name></member>
+    <member refid="interfacesb_i_device_firmware_updater_1dd74283d96e1da72862458b7885bb43b" kind="function"><name>applyUpdate</name></member>
+    <member refid="interfacesb_i_device_firmware_updater_126fa7e7e4c02974ae1ebba22d3737421" kind="function"><name>recoveryUpdate</name></member>
+    <member refid="interfacesb_i_device_firmware_updater_15eb6d17bf41dcd661c0b800a1687aa0f" kind="function"><name>continueUpdate</name></member>
+    <member refid="interfacesb_i_device_firmware_updater_187ba591181342234cf126fc52da904a9" kind="function"><name>finalizeUpdate</name></member>
+    <member refid="interfacesb_i_device_firmware_updater_1f25e859217fb8f807260677dcc5c870d" kind="function"><name>verifyDevice</name></member>
+    <member refid="interfacesb_i_device_firmware_updater_1d545c0d7a8a2a044470324db0b117948" kind="function"><name>registerHandler</name></member>
+    <member refid="interfacesb_i_device_firmware_updater_1505d73a24fe78f9c51966e06c7ffeb8b" kind="function"><name>unregisterHandler</name></member>
+    <member refid="interfacesb_i_device_firmware_updater_1064b988507011879122335103d873d48" kind="function"><name>hasHandler</name></member>
+    <member refid="interfacesb_i_device_firmware_updater_12108f6893fa20dc22897281ab7b0b5c2" kind="function"><name>getHandler</name></member>
+    <member refid="interfacesb_i_device_firmware_updater_180861b26e138fe27fa2b4b6c766ebc9d" kind="function"><name>getActiveHandler</name></member>
+    <member refid="interfacesb_i_device_firmware_updater_183bae39fc53a3f733e490ce644fa0e2b" kind="function"><name>cancel</name></member>
+    <member refid="interfacesb_i_device_firmware_updater_1dd0907385a614b96ca14a4c10b9b9d77" kind="function"><name>requireRecovery</name></member>
+  </compound>
   <compound refid="interfacesb_i_device_helper" kind="interface"><name>sbIDeviceHelper</name>
     <member refid="interfacesb_i_device_helper_1854f0facfeba97707176d557c9136d28" kind="function"><name>hasSpaceForWrite</name></member>
-    <member refid="interfacesb_i_device_helper_123b922086848891da8764db95c61dbcb" kind="function"><name>queryUserSpaceExceeded</name></member>
+    <member refid="interfacesb_i_device_helper_1b068e1b7484d26e7f827b847cda77587" kind="function"><name>queryUserSpaceExceeded</name></member>
   </compound>
   <compound refid="interfacesb_i_device_identification" kind="interface"><name>sbIDeviceIdentification</name>
   </compound>
@@ -557,6 +661,7 @@
     <member refid="interfacesb_i_device_library_listener_1375bbc3f3383052ae31761849d29797d" kind="function"><name>onItemAdded</name></member>
     <member refid="interfacesb_i_device_library_listener_1b381a34a3470003d720e0d73e778f03d" kind="function"><name>onBeforeItemRemoved</name></member>
     <member refid="interfacesb_i_device_library_listener_139a00080f2bd4a7bbb44eba3eb7e7324" kind="function"><name>onAfterItemRemoved</name></member>
+    <member refid="interfacesb_i_device_library_listener_120aa6d3dbb07a03aca8082b5d9895621" kind="function"><name>onBeforeListCleared</name></member>
     <member refid="interfacesb_i_device_library_listener_1af196555ec5f6de6d2e48b506efadbf0" kind="function"><name>onListCleared</name></member>
     <member refid="interfacesb_i_device_library_listener_1dc7ca83326b5d30382878b6834225f4d" kind="function"><name>onItemUpdated</name></member>
     <member refid="interfacesb_i_device_library_listener_14f179bd58a33c66f12d9d543af709b2e" kind="function"><name>onItemMoved</name></member>
@@ -589,12 +694,14 @@
     <member refid="interfacesb_i_device_marshall_12fcb40179dfe31a3f033d1cd4f8b7a62" kind="function"><name>loadControllers</name></member>
     <member refid="interfacesb_i_device_marshall_1adda14db80c13c4f6827768a6abf3b05" kind="function"><name>beginMonitoring</name></member>
     <member refid="interfacesb_i_device_marshall_1083ff7ba8aa9ab48f2b568dcde2216fd" kind="function"><name>stopMonitoring</name></member>
+    <member refid="interfacesb_i_device_marshall_1112eacf820fd75fe3b5f91f16de40a7d" kind="function"><name>removeDevice</name></member>
   </compound>
   <compound refid="interfacesb_i_device_properties" kind="interface"><name>sbIDeviceProperties</name>
     <member refid="interfacesb_i_device_properties_1da2d248e1a60baaa9e4422d29683c455" kind="variable"><name>friendlyName</name></member>
     <member refid="interfacesb_i_device_properties_1213e831e6844ba14c009f9a5d9cf8c6e" kind="variable"><name>vendorName</name></member>
     <member refid="interfacesb_i_device_properties_1d4091612e24a45fafe489a616e2d5b90" kind="variable"><name>modelNumber</name></member>
     <member refid="interfacesb_i_device_properties_129275faf10a59977a4cc3c4b6451d139" kind="variable"><name>serialNumber</name></member>
+    <member refid="interfacesb_i_device_properties_196b419c48b4174533f936bba4254d455" kind="variable"><name>firmwareVersion</name></member>
     <member refid="interfacesb_i_device_properties_19fee155b80798f207321d7c9caf6d2ec" kind="variable"><name>uri</name></member>
     <member refid="interfacesb_i_device_properties_1fb81d0dc5c243f6499129c068160e6db" kind="variable"><name>iconUri</name></member>
     <member refid="interfacesb_i_device_properties_1921e37c4912c740fe73360e362d9191c" kind="variable"><name>properties</name></member>
@@ -602,6 +709,7 @@
     <member refid="interfacesb_i_device_properties_129754cf2e03905120920db091b0f1e11" kind="function"><name>initVendorName</name></member>
     <member refid="interfacesb_i_device_properties_19a5aecc51fa561a7468770097a5be1b7" kind="function"><name>initModelNumber</name></member>
     <member refid="interfacesb_i_device_properties_1f33ead6004dbb73bc594e58c595f4037" kind="function"><name>initSerialNumber</name></member>
+    <member refid="interfacesb_i_device_properties_1e52c7d95cf29743c0a3f5fe0f01c0d6d" kind="function"><name>initFirmwareVersion</name></member>
     <member refid="interfacesb_i_device_properties_198ccbe786608b2f4998ac2a5e8638784" kind="function"><name>initDeviceLocation</name></member>
     <member refid="interfacesb_i_device_properties_10bdefa5c5023c419a896e58d0d2c25fc" kind="function"><name>initDeviceIcon</name></member>
     <member refid="interfacesb_i_device_properties_1f4801ed2862c6646386fdecdbc31a540" kind="function"><name>initDeviceProperties</name></member>
@@ -629,8 +737,18 @@
     <member refid="interfacesb_i_device_status_10ef1b415edb412282e891c5447cbe931" kind="variable"><name>workItemProgress</name></member>
     <member refid="interfacesb_i_device_status_14361e4fb92453a1898457c3384f855a8" kind="variable"><name>workItemProgressEndCount</name></member>
     <member refid="interfacesb_i_device_status_10a8461627863499c55ed7797c1954310" kind="variable"><name>mediaItem</name></member>
+    <member refid="interfacesb_i_device_status_184babbaf74efe1366df22f6041731d98" kind="variable"><name>elapsedTime</name></member>
+    <member refid="interfacesb_i_device_status_1d58ef02dacae35e93c42d77d334806f6" kind="variable"><name>remainingTime</name></member>
     <member refid="interfacesb_i_device_status_112228779b15826100b39dacf3bd7a51e" kind="variable"><name>mediaList</name></member>
     <member refid="interfacesb_i_device_status_117a06c156ff0f52d366f9d89b919e9da" kind="function"><name>init</name></member>
+  </compound>
+  <compound refid="interfacesb_i_directory_enumerator" kind="interface"><name>sbIDirectoryEnumerator</name>
+    <member refid="interfacesb_i_directory_enumerator_178ff92c5f73a0361f3c7be3210d7ce1e" kind="variable"><name>maxDepth</name></member>
+    <member refid="interfacesb_i_directory_enumerator_155571edc81bd35730faaa98136084586" kind="variable"><name>directoriesOnly</name></member>
+    <member refid="interfacesb_i_directory_enumerator_15ef7df4d553a80c92f64c93a702492cd" kind="variable"><name>filesOnly</name></member>
+    <member refid="interfacesb_i_directory_enumerator_1dfc2f84b935dcaaaf7443f9beb8c05b3" kind="function"><name>enumerate</name></member>
+    <member refid="interfacesb_i_directory_enumerator_168f6fbdd29bbde085fbd3f47ab9292c2" kind="function"><name>hasMoreElements</name></member>
+    <member refid="interfacesb_i_directory_enumerator_199ff0ce82f568c23363c821dc84235d8" kind="function"><name>getNext</name></member>
   </compound>
   <compound refid="interfacesb_i_directory_import_job" kind="interface"><name>sbIDirectoryImportJob</name>
     <member refid="interfacesb_i_directory_import_job_124d3dac3243f040987693f124a935f50" kind="variable"><name>totalAddedToMediaList</name></member>
@@ -721,6 +839,17 @@
     <member refid="interfacesb_i_duration_property_info_15519a4049a4b780c68a1223d7a70cbcf" kind="variable"><name>durationInverse</name></member>
     <member refid="interfacesb_i_duration_property_info_1e2da45fda8285ec5738b81612fa3603e" kind="variable"><name>durationWithMilliseconds</name></member>
   </compound>
+  <compound refid="interfacesb_i_dynamic_media_list" kind="interface"><name>sbIDynamicMediaList</name>
+    <member refid="interfacesb_i_dynamic_media_list_1469378db3179ac89a2017da2de9605e5" kind="function"><name>update</name></member>
+  </compound>
+  <compound refid="interfacesb_i_dynamic_playlist_service" kind="interface"><name>sbIDynamicPlaylistService</name>
+    <member refid="interfacesb_i_dynamic_playlist_service_15c21ad561536d4df32abce542a94d36b" kind="variable"><name>scheduledLists</name></member>
+    <member refid="interfacesb_i_dynamic_playlist_service_1153711daf4403845e39813ea2ed89a16" kind="function"><name>createList</name></member>
+    <member refid="interfacesb_i_dynamic_playlist_service_170f088731afc105856cf254f63f001ff" kind="function"><name>createPodcast</name></member>
+    <member refid="interfacesb_i_dynamic_playlist_service_1c7b2d1262f426c34b704f6ccdb4b8eb1" kind="function"><name>updateList</name></member>
+    <member refid="interfacesb_i_dynamic_playlist_service_18c667e8b94f9768fa32a4c61850ce9fc" kind="function"><name>updateAllNow</name></member>
+    <member refid="interfacesb_i_dynamic_playlist_service_15140c80e453e6690a0a262d349f4d8c6" kind="function"><name>updateNow</name></member>
+  </compound>
   <compound refid="interfacesb_i_faceplate_manager" kind="interface"><name>sbIFaceplateManager</name>
     <member refid="interfacesb_i_faceplate_manager_105e4bc17ebe97cf1476ccc0c91e0727a" kind="variable"><name>paneCount</name></member>
     <member refid="interfacesb_i_faceplate_manager_1545cf70bbb71ce151fd93679f93b6316" kind="function"><name>showPane</name></member>
@@ -792,6 +921,7 @@
     <member refid="interfacesb_i_file_downloader_1f30acde6d5f1063dd7cfe4395d4e3b19" kind="variable"><name>sourceURISpec</name></member>
     <member refid="interfacesb_i_file_downloader_1a93c1ddcf18e7bef56929be88d76c41f" kind="variable"><name>destinationFile</name></member>
     <member refid="interfacesb_i_file_downloader_1c143f08256d355bb31c00a623d839a1d" kind="variable"><name>destinationFileExtension</name></member>
+    <member refid="interfacesb_i_file_downloader_1d2ccd045a8468a7403d5513550d92c62" kind="variable"><name>request</name></member>
     <member refid="interfacesb_i_file_downloader_14d6925a0bec57ab2350df4ca051c03e2" kind="function"><name>start</name></member>
     <member refid="interfacesb_i_file_downloader_14e94676cc15b713e932f6d42c055a316" kind="function"><name>cancel</name></member>
   </compound>
@@ -834,9 +964,12 @@
     <member refid="interfacesb_i_file_scan_query_1435818abd81b45e710d869a6c2190904" kind="function"><name>isCancelled</name></member>
   </compound>
   <compound refid="interfacesb_i_file_system_listener" kind="interface"><name>sbIFileSystemListener</name>
+    <member refid="interfacesb_i_file_system_listener_170c7a51a3bbd38cdbd604a8edbd66007" kind="variable"><name>ROOT_PATH_MISSING</name></member>
+    <member refid="interfacesb_i_file_system_listener_1a82e9cf99d742871d2aab92e910cdcc3" kind="variable"><name>INVALID_DIRECTORY</name></member>
+    <member refid="interfacesb_i_file_system_listener_163e204a7f69d33940381375cba75b376" kind="variable"><name>SESSION_LOAD_ERROR</name></member>
     <member refid="interfacesb_i_file_system_listener_1a01b95a1adf4efe98fb39a0134881635" kind="function"><name>onWatcherStarted</name></member>
     <member refid="interfacesb_i_file_system_listener_10cb4c5c05ff8ab7d1355beb9c2575f90" kind="function"><name>onWatcherStopped</name></member>
-    <member refid="interfacesb_i_file_system_listener_10287d8ff30e6062d8b714d437ae0bb41" kind="function"><name>onSessionLoadError</name></member>
+    <member refid="interfacesb_i_file_system_listener_1b6337c534cfab92f9d5180d5829aa290" kind="function"><name>onWatcherError</name></member>
     <member refid="interfacesb_i_file_system_listener_1ad5391c9ca2c94e8d610c7310a6919f4" kind="function"><name>onFileSystemChanged</name></member>
     <member refid="interfacesb_i_file_system_listener_179e19bde1ef5f3f84af923d5bacdf348" kind="function"><name>onFileSystemRemoved</name></member>
     <member refid="interfacesb_i_file_system_listener_1a8d3b830460cc31c125c025ffdf7f2bc" kind="function"><name>onFileSystemAdded</name></member>
@@ -876,6 +1009,17 @@
   <compound refid="interfacesb_i_g_streamer_mediacore" kind="interface"><name>sbIGStreamerMediacore</name>
     <member refid="interfacesb_i_g_streamer_mediacore_11d349323237f21fda61c052bda5c4564" kind="variable"><name>gstreamerVersion</name></member>
   </compound>
+  <compound refid="interfacesb_i_g_streamer_pipeline" kind="interface"><name>sbIGStreamerPipeline</name>
+    <member refid="interfacesb_i_g_streamer_pipeline_1a7342dc455e58c4ffb852cf506d8110e" kind="function"><name>stopPipeline</name></member>
+    <member refid="interfacesb_i_g_streamer_pipeline_129b7bf7c901329cb6602acf032348be4" kind="function"><name>pausePipeline</name></member>
+    <member refid="interfacesb_i_g_streamer_pipeline_185428ca4b2c7b5e5c0e5235b98ee0d8c" kind="function"><name>playPipeline</name></member>
+  </compound>
+  <compound refid="interfacesb_i_g_streamer_r_t_p_streamer" kind="interface"><name>sbIGStreamerRTPStreamer</name>
+    <member refid="interfacesb_i_g_streamer_r_t_p_streamer_1bb379214b9b129bb1a8789c3ee42115f" kind="variable"><name>EVENT_SDP_AVAILABLE</name></member>
+    <member refid="interfacesb_i_g_streamer_r_t_p_streamer_157aeeaa88b12848c7a608843c0b386fe" kind="variable"><name>sourceURI</name></member>
+    <member refid="interfacesb_i_g_streamer_r_t_p_streamer_1ca69283591d6f17390b86c5f327a2603" kind="variable"><name>destHost</name></member>
+    <member refid="interfacesb_i_g_streamer_r_t_p_streamer_1c813a2de34f202e6686d3028b965fe7c" kind="variable"><name>destPort</name></member>
+  </compound>
   <compound refid="interfacesb_i_g_streamer_service" kind="interface"><name>sbIGStreamerService</name>
     <member refid="interfacesb_i_g_streamer_service_14aade25de74c1ff6bb3e486e369446a1" kind="variable"><name>PAD_DIRECTION_UNKNOWN</name></member>
     <member refid="interfacesb_i_g_streamer_service_1beb715363cf06a28e74775c4de15be08" kind="variable"><name>PAD_DIRECTION_SRC</name></member>
@@ -903,9 +1047,27 @@
   </compound>
   <compound refid="interfacesb_i_image_property_builder" kind="interface"><name>sbIImagePropertyBuilder</name>
   </compound>
+  <compound refid="interfacesb_i_image_size" kind="interface"><name>sbIImageSize</name>
+    <member refid="interfacesb_i_image_size_11f4d131adfd69d988e12558850603e85" kind="variable"><name>width</name></member>
+    <member refid="interfacesb_i_image_size_160827eae9aa431ea3874f194829de13e" kind="variable"><name>height</name></member>
+    <member refid="interfacesb_i_image_size_1eb9b1d67af01d2fe1f599fab35afbc02" kind="function"><name>Initialize</name></member>
+  </compound>
   <compound refid="interfacesb_i_indexed_media_item" kind="interface"><name>sbIIndexedMediaItem</name>
     <member refid="interfacesb_i_indexed_media_item_14ae9e36d39863face1346d4a21f5c35d" kind="variable"><name>index</name></member>
     <member refid="interfacesb_i_indexed_media_item_171a61e92b2950718ac1b50876e6447c7" kind="variable"><name>mediaItem</name></member>
+  </compound>
+  <compound refid="interfacesb_ii_tunes_x_m_l_parser" kind="interface"><name>sbIiTunesXMLParser</name>
+    <member refid="interfacesb_ii_tunes_x_m_l_parser_14bd5274792c3f66bd34d0c3c6f7adb50" kind="function"><name>parse</name></member>
+    <member refid="interfacesb_ii_tunes_x_m_l_parser_16a5d968dfc66c764ae6cd80db4813e46" kind="function"><name>finalize</name></member>
+  </compound>
+  <compound refid="interfacesb_ii_tunes_x_m_l_parser_listener" kind="interface"><name>sbIiTunesXMLParserListener</name>
+    <member refid="interfacesb_ii_tunes_x_m_l_parser_listener_135bdcb9fc76ccf9daebc708a4bf104ca" kind="function"><name>onTopLevelProperties</name></member>
+    <member refid="interfacesb_ii_tunes_x_m_l_parser_listener_10baf13c036c65cd1f3003923e2903a58" kind="function"><name>onTrack</name></member>
+    <member refid="interfacesb_ii_tunes_x_m_l_parser_listener_12de9e1c66449a03ddf3e9c12837a08e9" kind="function"><name>onTracksComplete</name></member>
+    <member refid="interfacesb_ii_tunes_x_m_l_parser_listener_164667131972cc016229280ce05e0bb5a" kind="function"><name>onPlaylist</name></member>
+    <member refid="interfacesb_ii_tunes_x_m_l_parser_listener_1fd50da06dd2d1ce00a6c1b5c16407bd1" kind="function"><name>onError</name></member>
+    <member refid="interfacesb_ii_tunes_x_m_l_parser_listener_187652e39a572a26a669f2152888c558d" kind="function"><name>onPlaylistsComplete</name></member>
+    <member refid="interfacesb_ii_tunes_x_m_l_parser_listener_1fa803e7afd952bc27b76f1a8f0525371" kind="function"><name>onProgress</name></member>
   </compound>
   <compound refid="interfacesb_i_job_cancelable" kind="interface"><name>sbIJobCancelable</name>
     <member refid="interfacesb_i_job_cancelable_1dabc9c28478b7782ed4465906735839f" kind="variable"><name>canCancel</name></member>
@@ -930,6 +1092,10 @@
   </compound>
   <compound refid="interfacesb_i_job_progress_service" kind="interface"><name>sbIJobProgressService</name>
     <member refid="interfacesb_i_job_progress_service_156abeb610c713f3c9426dd5e89efcddc" kind="function"><name>showProgressDialog</name></member>
+  </compound>
+  <compound refid="interfacesb_i_job_progress_time" kind="interface"><name>sbIJobProgressTime</name>
+    <member refid="interfacesb_i_job_progress_time_114a1ee882db2335a256a1d873c752315" kind="variable"><name>elapsedTime</name></member>
+    <member refid="interfacesb_i_job_progress_time_1d83eb590a7ff6810687ac450f1ebdb80" kind="variable"><name>remainingTime</name></member>
   </compound>
   <compound refid="interfacesb_i_job_progress_u_i" kind="interface"><name>sbIJobProgressUI</name>
     <member refid="interfacesb_i_job_progress_u_i_139af322c286cf17bbfde121e7db49aa5" kind="variable"><name>crop</name></member>
@@ -959,10 +1125,12 @@
     <member refid="interfacesb_i_library_12d06325f48acd0eb7bd1d3da8d51dda5" kind="function"><name>copyMediaList</name></member>
     <member refid="interfacesb_i_library_18618c5edb57160383e123241856a181d" kind="function"><name>getMediaItem</name></member>
     <member refid="interfacesb_i_library_1c32c418bb3e15bb67250a836aba063c0" kind="function"><name>getDuplicate</name></member>
+    <member refid="interfacesb_i_library_106128d059bd1a24fb499dadd4b8bea4a" kind="function"><name>clearItems</name></member>
     <member refid="interfacesb_i_library_1f87abee5d36302272e3d842af0bc9125" kind="function"><name>registerMediaListFactory</name></member>
     <member refid="interfacesb_i_library_1103b68674687a92cdb798c8e481aa2f7" kind="function"><name>optimize</name></member>
     <member refid="interfacesb_i_library_104b2f426aecb73455a3b1245451f4af5" kind="function"><name>flush</name></member>
     <member refid="interfacesb_i_library_15d4add99176f0b5a9d03948d2f0eee3b" kind="function"><name>batchCreateMediaItems</name></member>
+    <member refid="interfacesb_i_library_1e1f6bac067056817c98716f9192ad744" kind="function"><name>batchCreateMediaItemsIfNotExist</name></member>
     <member refid="interfacesb_i_library_15236e2cf65e133dff8618b6196817a39" kind="function"><name>batchCreateMediaItemsAsync</name></member>
   </compound>
   <compound refid="interfacesb_i_library_change" kind="interface"><name>sbILibraryChange</name>
@@ -985,6 +1153,7 @@
     <member refid="interfacesb_i_library_constraint_1a6d023983e65e39f38890b8140523e3e" kind="function"><name>toString</name></member>
   </compound>
   <compound refid="interfacesb_i_library_constraint_builder" kind="interface"><name>sbILibraryConstraintBuilder</name>
+    <member refid="interfacesb_i_library_constraint_builder_17f620ea6fa0d592fed819bc698e67035" kind="function"><name>parseFromString</name></member>
     <member refid="interfacesb_i_library_constraint_builder_19cf883b2096eeacaa9707eb3b9a3dfdd" kind="function"><name>includeConstraint</name></member>
     <member refid="interfacesb_i_library_constraint_builder_19824b5f7a6bc7bc9060b89e39db94c54" kind="function"><name>include</name></member>
     <member refid="interfacesb_i_library_constraint_builder_183cfaa878379e393ace815217d25355d" kind="function"><name>includeList</name></member>
@@ -1077,6 +1246,7 @@
     <member refid="interfacesb_i_library_service_pane_service_14c1ecd7837c0614171076ecbba3da6f2" kind="function"><name>suggestLibraryForNewList</name></member>
     <member refid="interfacesb_i_library_service_pane_service_1e4451b3b36f3cf9f09a1d7c19332d861" kind="function"><name>createNodeForLibrary</name></member>
     <member refid="interfacesb_i_library_service_pane_service_1a0de5432009fa0b571333bf8dc043d47" kind="function"><name>getNodeForLibraryResource</name></member>
+    <member refid="interfacesb_i_library_service_pane_service_1f9abfece80b06ee276b3f321c158b579" kind="function"><name>getNodeFromMediaListView</name></member>
     <member refid="interfacesb_i_library_service_pane_service_1f1c145f1d519db096811ea5fd04b4f03" kind="function"><name>getLibraryResourceForNode</name></member>
     <member refid="interfacesb_i_library_service_pane_service_1c1ee7b078ddff8eea59d1a51fabbb08d" kind="function"><name>setNodeReadOnly</name></member>
   </compound>
@@ -1116,13 +1286,6 @@
     <member refid="interfacesb_i_local_database_async_g_u_i_d_array_listener_13b16b583a8ebade4268fc5ceaf9f1a13" kind="function"><name>onGetMediaItemIdByIndex</name></member>
     <member refid="interfacesb_i_local_database_async_g_u_i_d_array_listener_19b667fa665a26d86ad69eb04d8794904" kind="function"><name>onStateChange</name></member>
   </compound>
-  <compound refid="interfacesb_i_local_database_dynamic_playlist_service" kind="interface"><name>sbILocalDatabaseDynamicPlaylistService</name>
-    <member refid="interfacesb_i_local_database_dynamic_playlist_service_1e0f955411e1597efa081ec2341f32ea6" kind="variable"><name>scheduledLists</name></member>
-    <member refid="interfacesb_i_local_database_dynamic_playlist_service_13c4ec163c794bd9ff3b0e33fc8b77163" kind="function"><name>createList</name></member>
-    <member refid="interfacesb_i_local_database_dynamic_playlist_service_1eaa3f9ad75f7003345a9b27fd8d20cd7" kind="function"><name>updateList</name></member>
-    <member refid="interfacesb_i_local_database_dynamic_playlist_service_16e150f4be03b67a7488a20f710577758" kind="function"><name>updateAllNow</name></member>
-    <member refid="interfacesb_i_local_database_dynamic_playlist_service_18e4fe3799d8c1952e6cccd0f1ba6cd54" kind="function"><name>updateNow</name></member>
-  </compound>
   <compound refid="interfacesb_i_local_database_g_u_i_d_array" kind="interface"><name>sbILocalDatabaseGUIDArray</name>
     <member refid="interfacesb_i_local_database_g_u_i_d_array_1a1b3275e4f100ac58569ae09201e0c47" kind="variable"><name>databaseGUID</name></member>
     <member refid="interfacesb_i_local_database_g_u_i_d_array_1bdacc34062adbb85068599a45a440d0b" kind="variable"><name>databaseLocation</name></member>
@@ -1131,6 +1294,8 @@
     <member refid="interfacesb_i_local_database_g_u_i_d_array_1418b057e55c49b4750bd4721ac671f9b" kind="variable"><name>baseConstraintValue</name></member>
     <member refid="interfacesb_i_local_database_g_u_i_d_array_1bbbd1837051c5ce70c8bea1e9bcee4ce" kind="variable"><name>fetchSize</name></member>
     <member refid="interfacesb_i_local_database_g_u_i_d_array_11b793cfac37c5c63458f7355b8773d8f" kind="variable"><name>isDistinct</name></member>
+    <member refid="interfacesb_i_local_database_g_u_i_d_array_15ed606eacb06b51ebf0f454901197c20" kind="variable"><name>isValid</name></member>
+    <member refid="interfacesb_i_local_database_g_u_i_d_array_17eb3907b2b7bf1e27ecfc6499eb80d2c" kind="variable"><name>distinctWithSortableValues</name></member>
     <member refid="interfacesb_i_local_database_g_u_i_d_array_1b86ce778048b83e60a82076cb8369b25" kind="variable"><name>length</name></member>
     <member refid="interfacesb_i_local_database_g_u_i_d_array_1e88a5acc480536103d80e8af04638f7b" kind="variable"><name>listener</name></member>
     <member refid="interfacesb_i_local_database_g_u_i_d_array_1d5430041b126e51f9cfdbde4cac60f04" kind="variable"><name>propertyCache</name></member>
@@ -1156,6 +1321,7 @@
   </compound>
   <compound refid="interfacesb_i_local_database_g_u_i_d_array_listener" kind="interface"><name>sbILocalDatabaseGUIDArrayListener</name>
     <member refid="interfacesb_i_local_database_g_u_i_d_array_listener_172e1f575e0c89993fc73e9b529e6ce71" kind="function"><name>onBeforeInvalidate</name></member>
+    <member refid="interfacesb_i_local_database_g_u_i_d_array_listener_157adbc3f916459a21172d8025ab08aa9" kind="function"><name>onAfterInvalidate</name></member>
   </compound>
   <compound refid="interfacesb_i_local_database_library" kind="interface"><name>sbILocalDatabaseLibrary</name>
     <member refid="interfacesb_i_local_database_library_127b7e647416d05c9c7cedd830ac78836" kind="variable"><name>databaseGuid</name></member>
@@ -1201,6 +1367,8 @@
     <member refid="interfacesb_i_local_database_property_cache_183886b5e17362d0b73056824a7fd7140" kind="function"><name>write</name></member>
     <member refid="interfacesb_i_local_database_property_cache_1aebf5dcbbb6ec91b9d846dcdc80b776b" kind="function"><name>getPropertyDBID</name></member>
     <member refid="interfacesb_i_local_database_property_cache_14138dccf04bc49deb3b951f830a154af" kind="function"><name>invalidateSortData</name></member>
+    <member refid="interfacesb_i_local_database_property_cache_14e83226e9ea5280cde722e5ed287b3ec" kind="function"><name>addDependentGUIDArray</name></member>
+    <member refid="interfacesb_i_local_database_property_cache_1d7012fe7c8329c7d343cdd65883773a8" kind="function"><name>removeDependentGUIDArray</name></member>
   </compound>
   <compound refid="interfacesb_i_local_database_resource_property" kind="interface"><name>sbILocalDatabaseResourceProperty</name>
     <member refid="interfacesb_i_local_database_resource_property_16b3d4a5d5c96ea2e2a1b69f966261aca" kind="function"><name>initResourceProperty</name></member>
@@ -1223,6 +1391,7 @@
     <member refid="interfacesb_i_local_database_simple_media_list_1ed13c1f0f31d2db8e7647f37e651bbbe" kind="function"><name>notifyListenersItemUpdated</name></member>
     <member refid="interfacesb_i_local_database_simple_media_list_12efde8d922f064050bd08dec04c91d42" kind="function"><name>notifyListenersBeforeItemRemoved</name></member>
     <member refid="interfacesb_i_local_database_simple_media_list_14402aad4d7c861dc14bb5f0919136227" kind="function"><name>notifyListenersAfterItemRemoved</name></member>
+    <member refid="interfacesb_i_local_database_simple_media_list_182367e23f7b774c5ff3db2e5273a0daf" kind="function"><name>notifyListenersBeforeListCleared</name></member>
     <member refid="interfacesb_i_local_database_simple_media_list_1703c262b9951487bca0308d2de2c20c7" kind="function"><name>notifyListenersListCleared</name></member>
     <member refid="interfacesb_i_local_database_simple_media_list_10d722dac772c9960eade1c51a769b571" kind="function"><name>notifyListenersBatchBegin</name></member>
     <member refid="interfacesb_i_local_database_simple_media_list_10e7193fba06eca8b337efcbd276b9591" kind="function"><name>notifyListenersBatchEnd</name></member>
@@ -1297,10 +1466,38 @@
     <member refid="interfacesb_i_mediacore_capabilities_1c9f2d85264a52d1f8b021a00eeb5023c" kind="variable"><name>supportsVideoTranscode</name></member>
     <member refid="interfacesb_i_mediacore_capabilities_1c5a2b7656e178bffa694d53b26e08ed1" kind="variable"><name>supportsImageTranscode</name></member>
   </compound>
+  <compound refid="interfacesb_i_mediacore_equalizer_band" kind="interface"><name>sbIMediacoreEqualizerBand</name>
+    <member refid="interfacesb_i_mediacore_equalizer_band_1d785c0cbd98a30e322676e57aaa436dd" kind="variable"><name>index</name></member>
+    <member refid="interfacesb_i_mediacore_equalizer_band_12b1541a5911851d78aa83769838f4c78" kind="variable"><name>frequency</name></member>
+    <member refid="interfacesb_i_mediacore_equalizer_band_18aae90ca090353faf4003138b9230d83" kind="variable"><name>gain</name></member>
+    <member refid="interfacesb_i_mediacore_equalizer_band_199cbbceadc88bc80a7cdcb3fdad953fb" kind="function"><name>init</name></member>
+    <member refid="interfacesb_i_mediacore_equalizer_band_19f82c97ca32c01f78c9c30195258486b" kind="function"><name>getValues</name></member>
+    <member refid="interfacesb_i_mediacore_equalizer_band_17a1190f27271b7cd13dc7c8aaa812e20" kind="function"><name>setValues</name></member>
+  </compound>
   <compound refid="interfacesb_i_mediacore_error" kind="interface"><name>sbIMediacoreError</name>
     <member refid="interfacesb_i_mediacore_error_18a6caf1c93a747c2a6228b2d137d9d44" kind="variable"><name>UNINITIALIZED</name></member>
+    <member refid="interfacesb_i_mediacore_error_1e91a54d67ba88cd1154d8ba09016fea3" kind="variable"><name>FAILED</name></member>
+    <member refid="interfacesb_i_mediacore_error_13430445818640bcbee4ff63bfa650a27" kind="variable"><name>SB_RESOURCE_NOT_FOUND</name></member>
+    <member refid="interfacesb_i_mediacore_error_17060abd1cb202f4e6ef76e859cdf0bb9" kind="variable"><name>SB_RESOURCE_READ</name></member>
+    <member refid="interfacesb_i_mediacore_error_17be5021e6344b2df89e6bb5347b7462e" kind="variable"><name>SB_RESOURCE_WRITE</name></member>
+    <member refid="interfacesb_i_mediacore_error_1e1d4a73e2487aabc1d946010539b4f07" kind="variable"><name>SB_RESOURCE_OPEN_READ</name></member>
+    <member refid="interfacesb_i_mediacore_error_1dbcca1d615de43acfe0cb8bcb457b3ab" kind="variable"><name>SB_RESOURCE_OPEN_WRITE</name></member>
+    <member refid="interfacesb_i_mediacore_error_1c669a62cb7ef9a94d3f0437f0e2ed7ce" kind="variable"><name>SB_RESOURCE_OPEN_READ_WRITE</name></member>
+    <member refid="interfacesb_i_mediacore_error_1d07085f8a002613265463a698aad1cbf" kind="variable"><name>SB_RESOURCE_CLOSE</name></member>
+    <member refid="interfacesb_i_mediacore_error_1ff62cbb689cd6c4456f51c92bdba742a" kind="variable"><name>SB_RESOURCE_SEEK</name></member>
+    <member refid="interfacesb_i_mediacore_error_18ae3810a381babdfa6b2e85de32f916a" kind="variable"><name>SB_RESOURCE_NO_SPACE_LEFT</name></member>
+    <member refid="interfacesb_i_mediacore_error_12e4d2375f76a55dcbca14c2545100abd" kind="variable"><name>SB_STREAM_TYPE_NOT_FOUND</name></member>
+    <member refid="interfacesb_i_mediacore_error_15a7d993f6088a2654d50fb8d287eb6ad" kind="variable"><name>SB_STREAM_WRONG_TYPE</name></member>
+    <member refid="interfacesb_i_mediacore_error_15a74cc7a30a91effa772a479c3ef4c0b" kind="variable"><name>SB_STREAM_CODEC_NOT_FOUND</name></member>
+    <member refid="interfacesb_i_mediacore_error_190c2d79543bb1618b2f15ba0c4b924e9" kind="variable"><name>SB_STREAM_DECODE</name></member>
+    <member refid="interfacesb_i_mediacore_error_1b026e27f93de9332a9d074e5379aa06c" kind="variable"><name>SB_STREAM_ENCODE</name></member>
+    <member refid="interfacesb_i_mediacore_error_111e72c90d2814a0f40c08bad51fdff26" kind="variable"><name>SB_STREAM_DRM_PROTECTED</name></member>
+    <member refid="interfacesb_i_mediacore_error_15f4f09abac21043467de5664ed457e87" kind="variable"><name>SB_STREAM_FAILURE</name></member>
     <member refid="interfacesb_i_mediacore_error_1cb57f1ce56498819e42001d447810eda" kind="variable"><name>code</name></member>
     <member refid="interfacesb_i_mediacore_error_1c6a67e7deeec981be0203a5d2f4bb5e4" kind="variable"><name>message</name></member>
+  </compound>
+  <compound refid="interfacesb_i_mediacore_error_handler" kind="interface"><name>sbIMediacoreErrorHandler</name>
+    <member refid="interfacesb_i_mediacore_error_handler_1347efbbaadb0682c3934b30fc5502837" kind="function"><name>processError</name></member>
   </compound>
   <compound refid="interfacesb_i_mediacore_event" kind="interface"><name>sbIMediacoreEvent</name>
     <member refid="interfacesb_i_mediacore_event_1f6a03365c64d89abc6054395f1c35823" kind="variable"><name>UNINTIALIZED</name></member>
@@ -1314,6 +1511,8 @@
     <member refid="interfacesb_i_mediacore_event_11bbcabd7f3ee80c909e1a1d81e47a90a" kind="variable"><name>TRACK_INDEX_CHANGE</name></member>
     <member refid="interfacesb_i_mediacore_event_180a8ee2621dbb6e0e35e5db748313f54" kind="variable"><name>BEFORE_VIEW_CHANGE</name></member>
     <member refid="interfacesb_i_mediacore_event_1a69515b89e7a8d3343542b30b3cfe487" kind="variable"><name>VIEW_CHANGE</name></member>
+    <member refid="interfacesb_i_mediacore_event_120e1196e0607b2bb162063462e616bc0" kind="variable"><name>SEQUENCE_CHANGE</name></member>
+    <member refid="interfacesb_i_mediacore_event_1f0d4f7425cb8eb777df6c260a0477049" kind="variable"><name>SEQUENCE_END</name></member>
     <member refid="interfacesb_i_mediacore_event_182137adca2784b92c8da6409b3d63803" kind="variable"><name>STREAM_FOUND</name></member>
     <member refid="interfacesb_i_mediacore_event_17664413f0c93a902767f2dc33bb2a5d3" kind="variable"><name>STREAM_HAS_VIDEO</name></member>
     <member refid="interfacesb_i_mediacore_event_17528331ffe2b1e77ecdd474434221de4" kind="variable"><name>BUFFERING</name></member>
@@ -1322,6 +1521,7 @@
     <member refid="interfacesb_i_mediacore_event_14e9433c55978e9cf73197f58051dbf2f" kind="variable"><name>STREAM_PAUSE</name></member>
     <member refid="interfacesb_i_mediacore_event_11c312a9c7f8aa67257c4e1c6302c609f" kind="variable"><name>STREAM_END</name></member>
     <member refid="interfacesb_i_mediacore_event_15f193b1dd252377be152719cb078a9e6" kind="variable"><name>STREAM_STOP</name></member>
+    <member refid="interfacesb_i_mediacore_event_16242b2ae9825b764c2d55652652642ec" kind="variable"><name>VIDEO_SIZE_CHANGED</name></member>
     <member refid="interfacesb_i_mediacore_event_146cba5951aa1eda0de7469a636cebdea" kind="variable"><name>PLUGIN_MISSING</name></member>
     <member refid="interfacesb_i_mediacore_event_18ce36c300d96d1e1983999684fb22cbc" kind="variable"><name>CUSTOM_EVENT_BASE</name></member>
     <member refid="interfacesb_i_mediacore_event_122713ea935a89237840432fc9c26eaf2" kind="variable"><name>ERROR_EVENT</name></member>
@@ -1359,13 +1559,21 @@
     <member refid="interfacesb_i_mediacore_manager_16c6ac5478e54513f76a1d12cdba83d3f" kind="variable"><name>primaryCore</name></member>
     <member refid="interfacesb_i_mediacore_manager_14b31b46aa055273e00f0f4877c6af93f" kind="variable"><name>balanceControl</name></member>
     <member refid="interfacesb_i_mediacore_manager_1e6059c54ad6eea4849a03942f2f2f156" kind="variable"><name>volumeControl</name></member>
-    <member refid="interfacesb_i_mediacore_manager_14101ecec65c0b809d0178c3c4ded7c01" kind="variable"><name>equalizer</name></member>
+    <member refid="interfacesb_i_mediacore_manager_14e024127c997556feff582b15eb51823" kind="variable"><name>equalizer</name></member>
     <member refid="interfacesb_i_mediacore_manager_14d710e46b0d1218f791d05989f29d8f5" kind="variable"><name>playbackControl</name></member>
     <member refid="interfacesb_i_mediacore_manager_15316f957dcb5c1821740f41aa3ca2871" kind="variable"><name>capabilities</name></member>
     <member refid="interfacesb_i_mediacore_manager_15aa4d0a2e956e27f66d1e6d710742581" kind="variable"><name>status</name></member>
-    <member refid="interfacesb_i_mediacore_manager_1689507ad9e06653da8c4ba66bf06063d" kind="variable"><name>sequencer</name></member>
     <member refid="interfacesb_i_mediacore_manager_16d833e34bd175091a3364856761376b2" kind="variable"><name>video</name></member>
+    <member refid="interfacesb_i_mediacore_manager_1689507ad9e06653da8c4ba66bf06063d" kind="variable"><name>sequencer</name></member>
+    <member refid="interfacesb_i_mediacore_manager_1ab3c2c0e856fca0bb25ef249c8e19181" kind="function"><name>getPrimaryVideoWindow</name></member>
     <member refid="interfacesb_i_mediacore_manager_12b6cfeb6020f3286aaa3e893a63a2e74" kind="function"><name>createEvent</name></member>
+  </compound>
+  <compound refid="interfacesb_i_mediacore_multiband_equalizer" kind="interface"><name>sbIMediacoreMultibandEqualizer</name>
+    <member refid="interfacesb_i_mediacore_multiband_equalizer_18eadbf1f4b3098f85b7f4a426c9a825c" kind="variable"><name>eqEnabled</name></member>
+    <member refid="interfacesb_i_mediacore_multiband_equalizer_1df54555eb40f68642fa92c4b7fdb25f9" kind="variable"><name>bands</name></member>
+    <member refid="interfacesb_i_mediacore_multiband_equalizer_1c608e1bd9bbb19ea87a0213425915aa9" kind="variable"><name>bandCount</name></member>
+    <member refid="interfacesb_i_mediacore_multiband_equalizer_14a7a66c86758915a8a7575556c999f36" kind="function"><name>getBand</name></member>
+    <member refid="interfacesb_i_mediacore_multiband_equalizer_12cb59e0dcff53fbaa4e5cfea60df3323" kind="function"><name>setBand</name></member>
   </compound>
   <compound refid="interfacesb_i_mediacore_playback_control" kind="interface"><name>sbIMediacorePlaybackControl</name>
     <member refid="interfacesb_i_mediacore_playback_control_118a3fb6a3e9e637fc9176de5f0e73103" kind="variable"><name>uri</name></member>
@@ -1425,7 +1633,9 @@
     <member refid="interfacesb_i_mediacore_type_sniffer_198c807da1bf157222ec3f929e0667827" kind="variable"><name>playlistFileExtensions</name></member>
     <member refid="interfacesb_i_mediacore_type_sniffer_1d70bcf1ec82aaf810010805f915735c4" kind="variable"><name>mediaFileExtensions</name></member>
     <member refid="interfacesb_i_mediacore_type_sniffer_1303f6d0e42fa3c03c5f76ceed3380d07" kind="function"><name>isValidMediaURL</name></member>
+    <member refid="interfacesb_i_mediacore_type_sniffer_183209eb344b7aed43c8600ea99cbc2dc" kind="function"><name>isValidAudioURL</name></member>
     <member refid="interfacesb_i_mediacore_type_sniffer_1802d1e7968cfacec55ad58607e906fba" kind="function"><name>isValidVideoURL</name></member>
+    <member refid="interfacesb_i_mediacore_type_sniffer_1ef635ae0df83151370522ddf9c5c72e6" kind="function"><name>isValidImageURL</name></member>
     <member refid="interfacesb_i_mediacore_type_sniffer_1c49e93ff600fd41b2bb735e3b683cbdc" kind="function"><name>isValidPlaylistURL</name></member>
     <member refid="interfacesb_i_mediacore_type_sniffer_1b7e9193d553d7a50f87ed2763665166d" kind="function"><name>isValidWebSafePlaylistURL</name></member>
   </compound>
@@ -1449,6 +1659,15 @@
   <compound refid="interfacesb_i_mediacore_voting_participant" kind="interface"><name>sbIMediacoreVotingParticipant</name>
     <member refid="interfacesb_i_mediacore_voting_participant_1560e7d739ca15b4591c539233f02d48d" kind="function"><name>voteWithURI</name></member>
     <member refid="interfacesb_i_mediacore_voting_participant_15510fbbb351efae7ddb36bf0441680d5" kind="function"><name>voteWithChannel</name></member>
+  </compound>
+  <compound refid="interfacesb_i_media_file_manager" kind="interface"><name>sbIMediaFileManager</name>
+    <member refid="interfacesb_i_media_file_manager_1796cb945d9209547503f0b2437825e9d" kind="variable"><name>MANAGE_RENAME</name></member>
+    <member refid="interfacesb_i_media_file_manager_1aa316ddef503a073c622a91a49cf4d8c" kind="variable"><name>MANAGE_DELETE</name></member>
+    <member refid="interfacesb_i_media_file_manager_16e294d428b9e6be81fbdd0bc6921f070" kind="variable"><name>MANAGE_COPY</name></member>
+    <member refid="interfacesb_i_media_file_manager_1e8a7344d457496d9984e0579a908e58f" kind="variable"><name>MANAGE_MOVE</name></member>
+    <member refid="interfacesb_i_media_file_manager_1ff1c4db162c882b492ee4396ade3a7d6" kind="function"><name>init</name></member>
+    <member refid="interfacesb_i_media_file_manager_1df27d89260dc79b19c57d0d5ce4e1a30" kind="function"><name>organizeItem</name></member>
+    <member refid="interfacesb_i_media_file_manager_159f752b1c3ac679f6d5070b3c1ac7295" kind="function"><name>getManagedPath</name></member>
   </compound>
   <compound refid="interfacesb_i_media_item" kind="interface"><name>sbIMediaItem</name>
     <member refid="interfacesb_i_media_item_119762d6d72170ace737a639575712ff1" kind="variable"><name>library</name></member>
@@ -1493,6 +1712,7 @@
     <member refid="interfacesb_i_media_list_1ebd887a26980780de64ddf4af9cf430a" kind="variable"><name>LISTENER_FLAGS_BEFOREITEMREMOVED</name></member>
     <member refid="interfacesb_i_media_list_1cdecf4b09dd4e75a52e9be77d378e6f3" kind="variable"><name>LISTENER_FLAGS_AFTERITEMREMOVED</name></member>
     <member refid="interfacesb_i_media_list_134e744de3ce3931f387c6ab405c3a968" kind="variable"><name>LISTENER_FLAGS_ITEMUPDATED</name></member>
+    <member refid="interfacesb_i_media_list_19db5641f8058c3e4b81711df8cf3653a" kind="variable"><name>LISTENER_FLAGS_BEFORELISTCLEARED</name></member>
     <member refid="interfacesb_i_media_list_110cf8a4549906ace13097775e484c2b3" kind="variable"><name>LISTENER_FLAGS_LISTCLEARED</name></member>
     <member refid="interfacesb_i_media_list_1c038790117b70fcca91a4a6f6c5a3f4b" kind="variable"><name>LISTENER_FLAGS_BATCHBEGIN</name></member>
     <member refid="interfacesb_i_media_list_1536109c8e3dc6da8d732ad92a226337b" kind="variable"><name>LISTENER_FLAGS_BATCHEND</name></member>
@@ -1542,12 +1762,13 @@
     <member refid="interfacesb_i_media_list_listener_118e53f46c5e17e290cb0cb5bea04ba28" kind="function"><name>onAfterItemRemoved</name></member>
     <member refid="interfacesb_i_media_list_listener_1dffb6c551f4e1461e00ebfd8efb86f75" kind="function"><name>onItemUpdated</name></member>
     <member refid="interfacesb_i_media_list_listener_1c4589c62e7f7412c100dcb90897a8838" kind="function"><name>onItemMoved</name></member>
+    <member refid="interfacesb_i_media_list_listener_11406bf88be46518807cafd943c0a8ddf" kind="function"><name>onBeforeListCleared</name></member>
     <member refid="interfacesb_i_media_list_listener_1b6bc46918b149e08265d2820da4fa71e" kind="function"><name>onListCleared</name></member>
     <member refid="interfacesb_i_media_list_listener_1cbd1e38650a4440186a42c6b965bfe6b" kind="function"><name>onBatchBegin</name></member>
     <member refid="interfacesb_i_media_list_listener_1f1003ed7359698fd43a83d2ef139d9ce" kind="function"><name>onBatchEnd</name></member>
   </compound>
   <compound refid="interfacesb_i_media_list_match" kind="interface"><name>sbIMediaListMatch</name>
-    <member refid="interfacesb_i_media_list_match_104cee51c63318c2c094dc71aa0b48fd3" kind="function"><name>match</name></member>
+    <member refid="interfacesb_i_media_list_match_12aa6c2ca427da1cb1ea526558cd02ab6" kind="function"><name>match</name></member>
   </compound>
   <compound refid="interfacesb_i_media_list_transfer_context" kind="interface"><name>sbIMediaListTransferContext</name>
     <member refid="interfacesb_i_media_list_transfer_context_1e3856721d4e3e3fc00ffef4636467f06" kind="variable"><name>list</name></member>
@@ -1590,6 +1811,7 @@
     <member refid="interfacesb_i_media_list_view_selection_18506341daf226e087b354f79de46a821" kind="function"><name>isIndexSelected</name></member>
     <member refid="interfacesb_i_media_list_view_selection_1910695d47f815bb408f0ebd4346bb9ff" kind="function"><name>select</name></member>
     <member refid="interfacesb_i_media_list_view_selection_174c6fb37b3de3f36b046b16b53bcae26" kind="function"><name>selectOnly</name></member>
+    <member refid="interfacesb_i_media_list_view_selection_19171da0550c9598fb9b550a369bd1320" kind="function"><name>timedSelectOnly</name></member>
     <member refid="interfacesb_i_media_list_view_selection_1da9932015ef0aa56d4ec53830a8cbc83" kind="function"><name>toggle</name></member>
     <member refid="interfacesb_i_media_list_view_selection_186a4f4abcaeb6275f4d2c9c0bff3638c" kind="function"><name>clear</name></member>
     <member refid="interfacesb_i_media_list_view_selection_1232e421b82277a448009575111fbf6d1" kind="function"><name>selectRange</name></member>
@@ -1619,8 +1841,24 @@
     <member refid="interfacesb_i_media_list_view_tree_view_observer_1f3c18c4c2c180ccb4fa64376a191e8da" kind="function"><name>cycleHeader</name></member>
     <member refid="interfacesb_i_media_list_view_tree_view_observer_17565e41da3444980a6b7d603609ed8f0" kind="function"><name>onCellEdited</name></member>
   </compound>
+  <compound refid="interfacesb_i_media_management_job" kind="interface"><name>sbIMediaManagementJob</name>
+    <member refid="interfacesb_i_media_management_job_194f8f2ce882d0b418bc69cb04c1582da" kind="function"><name>init</name></member>
+    <member refid="interfacesb_i_media_management_job_1beae5eb61ed92e8c0aee71283fc91a78" kind="function"><name>organizeMediaList</name></member>
+  </compound>
+  <compound refid="interfacesb_i_media_management_job_item" kind="interface"><name>sbIMediaManagementJobItem</name>
+    <member refid="interfacesb_i_media_management_job_item_173097a6d05cd79b8c6fe193a23e60a6c" kind="variable"><name>item</name></member>
+    <member refid="interfacesb_i_media_management_job_item_1b3f50790052bbeab4eb9c3876af174cd" kind="variable"><name>targetPath</name></member>
+    <member refid="interfacesb_i_media_management_job_item_1bd4d980b534ed498e86656eb54cc2c11" kind="variable"><name>action</name></member>
+  </compound>
+  <compound refid="interfacesb_i_media_management_service" kind="interface"><name>sbIMediaManagementService</name>
+    <member refid="interfacesb_i_media_management_service_18e498fc1236cf77b298365f45093b5e3" kind="variable"><name>managedLibrary</name></member>
+    <member refid="interfacesb_i_media_management_service_17b75a5c0c1206febf198072e0fbc1368" kind="variable"><name>isEnabled</name></member>
+    <member refid="interfacesb_i_media_management_service_1e275ae14cb4540a03aef3cae2dc524b1" kind="variable"><name>isScanning</name></member>
+    <member refid="interfacesb_i_media_management_service_155fbb120c2cd5515feeb525e3be7af21" kind="variable"><name>managedFolder</name></member>
+  </compound>
   <compound refid="interfacesb_i_media_page" kind="interface"><name>sbIMediaPage</name>
     <member refid="interfacesb_i_media_page_1ff03bd008eb9d3740585ec3241dc62b3" kind="variable"><name>mediaListView</name></member>
+    <member refid="interfacesb_i_media_page_173ddf27f4422d5b0b2bff5e0bfd763e5" kind="variable"><name>isOnlyView</name></member>
     <member refid="interfacesb_i_media_page_1af8610b434e3c61fa34dcaaa64ac5f6b" kind="function"><name>highlightItem</name></member>
     <member refid="interfacesb_i_media_page_142687e6b3ea0fa106693e50d91e87618" kind="function"><name>canDrop</name></member>
     <member refid="interfacesb_i_media_page_1b7618a1c8c77269b0eca439ce5b78b54" kind="function"><name>onDrop</name></member>
@@ -1633,9 +1871,13 @@
   <compound refid="interfacesb_i_media_page_manager" kind="interface"><name>sbIMediaPageManager</name>
     <member refid="interfacesb_i_media_page_manager_1b0da2b8351dacdffa79b8af35bc5cbc0" kind="function"><name>registerPage</name></member>
     <member refid="interfacesb_i_media_page_manager_1ee5875014d322d175a339af793dc7470" kind="function"><name>unregisterPage</name></member>
-    <member refid="interfacesb_i_media_page_manager_15869ba37f805051bbf09ccc5f7f83533" kind="function"><name>getAvailablePages</name></member>
-    <member refid="interfacesb_i_media_page_manager_17b5bf3bf48c088d0f6a618ec326548c2" kind="function"><name>getPage</name></member>
+    <member refid="interfacesb_i_media_page_manager_1b711220ad683fc8459f7bb96ae170f72" kind="function"><name>getAvailablePages</name></member>
+    <member refid="interfacesb_i_media_page_manager_1921d06b1d7cca2d9b62f3426b9a7dcb9" kind="function"><name>getPage</name></member>
     <member refid="interfacesb_i_media_page_manager_19ec7b0a91b3a5c7fafa3466cd1e693a0" kind="function"><name>setPage</name></member>
+  </compound>
+  <compound refid="interfacesb_i_metadata_album_detail" kind="interface"><name>sbIMetadataAlbumDetail</name>
+    <member refid="interfacesb_i_metadata_album_detail_1d51ceaac9683d5b9fd42d3216ebc57b6" kind="variable"><name>properties</name></member>
+    <member refid="interfacesb_i_metadata_album_detail_19d28ee9f71f5b6e5afacfb97bf2f20c0" kind="variable"><name>tracks</name></member>
   </compound>
   <compound refid="interfacesb_i_metadata_channel" kind="interface"><name>sbIMetadataChannel</name>
     <member refid="interfacesb_i_metadata_channel_17ab89a2563f897b7311a856067956809" kind="variable"><name>pos</name></member>
@@ -1685,6 +1927,34 @@
     <member refid="interfacesb_i_metadata_handler_1420316e8648548ba5172a4c4544d7333" kind="function"><name>onChannelData</name></member>
     <member refid="interfacesb_i_metadata_handler_1761c2ace034fbc0f6e4ace75968b224a" kind="function"><name>close</name></member>
   </compound>
+  <compound refid="interfacesb_i_metadata_handler_w_m_a" kind="interface"><name>sbIMetadataHandlerWMA</name>
+    <member refid="interfacesb_i_metadata_handler_w_m_a_11ed19b6a20616c666d33c536e3331244" kind="function"><name>isDRMProtected</name></member>
+  </compound>
+  <compound refid="interfacesb_i_metadata_lookup_job" kind="interface"><name>sbIMetadataLookupJob</name>
+    <member refid="interfacesb_i_metadata_lookup_job_1c8ed8148a111d37c267141ae745bb3c3" kind="variable"><name>JOB_DISC_LOOKUP</name></member>
+    <member refid="interfacesb_i_metadata_lookup_job_168ff82902eedd8a71cc17eb5ff005cc9" kind="variable"><name>JOB_ALBUM_DETAIL_LOOKUP</name></member>
+    <member refid="interfacesb_i_metadata_lookup_job_177f81a657e26d85d1f4cecc7350ac859" kind="variable"><name>mlJobType</name></member>
+    <member refid="interfacesb_i_metadata_lookup_job_1519aff573199d7ab544ce967858a158c" kind="variable"><name>mlNumResults</name></member>
+    <member refid="interfacesb_i_metadata_lookup_job_1ffceec28b3533f78ba7ae39052f6cb1e" kind="function"><name>init</name></member>
+    <member refid="interfacesb_i_metadata_lookup_job_11513cb873fb6343acc8c6ff29c1f1c20" kind="function"><name>appendResult</name></member>
+    <member refid="interfacesb_i_metadata_lookup_job_19fb89d141a57d7c4a819af0521d37b1a" kind="function"><name>changeStatus</name></member>
+    <member refid="interfacesb_i_metadata_lookup_job_1b2db348fcf47a95eefe6426992535a4f" kind="function"><name>getMetadataResults</name></member>
+  </compound>
+  <compound refid="interfacesb_i_metadata_lookup_manager" kind="interface"><name>sbIMetadataLookupManager</name>
+    <member refid="interfacesb_i_metadata_lookup_manager_11b1f6fbab38538f28470454b1f52db87" kind="variable"><name>numProviders</name></member>
+    <member refid="interfacesb_i_metadata_lookup_manager_150342a6b09903e487288de20f52ca306" kind="variable"><name>defaultProvider</name></member>
+    <member refid="interfacesb_i_metadata_lookup_manager_1a856573fb3dbba94e4a7a07d68b1385c" kind="function"><name>getProviders</name></member>
+    <member refid="interfacesb_i_metadata_lookup_manager_12c0b14482c21d5c802269648c64436fb" kind="function"><name>getProvider</name></member>
+  </compound>
+  <compound refid="interfacesb_i_metadata_lookup_provider" kind="interface"><name>sbIMetadataLookupProvider</name>
+    <member refid="interfacesb_i_metadata_lookup_provider_172c10763705411770f1a17cc216d76c3" kind="variable"><name>name</name></member>
+    <member refid="interfacesb_i_metadata_lookup_provider_194608ec0c42584050d767c30a826cd66" kind="variable"><name>description</name></member>
+    <member refid="interfacesb_i_metadata_lookup_provider_1e8fd56d1ff80cefb2b804cbd3f5cbb6f" kind="variable"><name>logoURL</name></member>
+    <member refid="interfacesb_i_metadata_lookup_provider_1893647c74f5265f1a4a65682df56b0b1" kind="variable"><name>infoURL</name></member>
+    <member refid="interfacesb_i_metadata_lookup_provider_1ae79e1b4fb064014a2227051669b5768" kind="variable"><name>weight</name></member>
+    <member refid="interfacesb_i_metadata_lookup_provider_1c66d000ebf979e4ac1238a221e01e35d" kind="function"><name>queryDisc</name></member>
+    <member refid="interfacesb_i_metadata_lookup_provider_12a493d84be7e1c5d0e139b32e133c75d" kind="function"><name>getAlbumDetail</name></member>
+  </compound>
   <compound refid="interfacesb_i_metadata_manager" kind="interface"><name>sbIMetadataManager</name>
     <member refid="interfacesb_i_metadata_manager_1ae19d169e02736347d183bf89ae8ffa6" kind="function"><name>getHandlerForMediaURL</name></member>
   </compound>
@@ -1692,6 +1962,25 @@
     <member refid="interfacesb_i_metrics_12d9bf4ea51ecd1a24cc9217cddc909bc" kind="function"><name>checkUploadMetrics</name></member>
     <member refid="interfacesb_i_metrics_19be521ae50b0f4b8ec15fe470f800a30" kind="function"><name>metricsInc</name></member>
     <member refid="interfacesb_i_metrics_1afd697b13697ec48768a27cc104bd860" kind="function"><name>metricsAdd</name></member>
+  </compound>
+  <compound refid="interfacesb_i_mock_c_d_device" kind="interface"><name>sbIMockCDDevice</name>
+    <member refid="interfacesb_i_mock_c_d_device_194517d3674198d23aa32a71b3e58f235" kind="variable"><name>ejected</name></member>
+    <member refid="interfacesb_i_mock_c_d_device_15ceabe8f82525f9ae56571514135f3e4" kind="function"><name>initialize</name></member>
+    <member refid="interfacesb_i_mock_c_d_device_1f49ff84b0a2f5aeaf47eb1257a09da86" kind="function"><name>setDiscTOC</name></member>
+  </compound>
+  <compound refid="interfacesb_i_mock_c_d_device_controller" kind="interface"><name>sbIMockCDDeviceController</name>
+    <member refid="interfacesb_i_mock_c_d_device_controller_11d69d751d26d7eb2cfe53c2891ef6496" kind="variable"><name>MOCK_MEDIA_DISC_MIDNIGHT_ROCK</name></member>
+    <member refid="interfacesb_i_mock_c_d_device_controller_1614a35489f7de90f1c1a377f6eb3cdb1" kind="variable"><name>MOCK_MEDIA_DISC_BABY_ONE_MORE_TIME</name></member>
+    <member refid="interfacesb_i_mock_c_d_device_controller_15096c67eb30df140c8e8903e3b09af2e" kind="variable"><name>MOCK_MEDIA_DISC_U2</name></member>
+    <member refid="interfacesb_i_mock_c_d_device_controller_1f94d5bc419221d4a3ba0ed7127a418ce" kind="variable"><name>MOCK_MEDIA_DISC_INCREDIBAD</name></member>
+    <member refid="interfacesb_i_mock_c_d_device_controller_1bf3c168e61bb2f24d19615f9b4f36b5e" kind="variable"><name>MOCK_MEDIA_DISC_INSTANT_JUNK</name></member>
+    <member refid="interfacesb_i_mock_c_d_device_controller_1eb7a08cb7be228236f8bebef92f21910" kind="function"><name>insertMedia</name></member>
+    <member refid="interfacesb_i_mock_c_d_device_controller_100fefc25506cd640cd93330963748d15" kind="function"><name>ejectMedia</name></member>
+    <member refid="interfacesb_i_mock_c_d_device_controller_11b452af422e42c3f39893bdbb91016ae" kind="function"><name>notifyEject</name></member>
+  </compound>
+  <compound refid="interfacesb_i_mock_c_d_t_o_c" kind="interface"><name>sbIMockCDTOC</name>
+    <member refid="interfacesb_i_mock_c_d_t_o_c_121b14cb0cbbd4d07e7b9a9e31ac1b1e3" kind="function"><name>addTocEntry</name></member>
+    <member refid="interfacesb_i_mock_c_d_t_o_c_15652791876b7124bb2ca8a010513e89d" kind="function"><name>initialize</name></member>
   </compound>
   <compound refid="interfacesb_i_mock_device" kind="interface"><name>sbIMockDevice</name>
     <member refid="interfacesb_i_mock_device_10be29f002c9b1be9298cda3ceefef73f" kind="function"><name>popRequest</name></member>
@@ -1703,6 +1992,10 @@
   </compound>
   <compound refid="interfacesb_i_mutable_remote_security_event" kind="interface"><name>sbIMutableRemoteSecurityEvent</name>
     <member refid="interfacesb_i_mutable_remote_security_event_1afed5fd57dea18b302dba1a9720bf4f4" kind="function"><name>initSecurityEvent</name></member>
+  </compound>
+  <compound refid="interfacesb_i_mutable_string_map" kind="interface"><name>sbIMutableStringMap</name>
+    <member refid="interfacesb_i_mutable_string_map_177d283cac197497bfe468549e19cfcb3" kind="function"><name>set</name></member>
+    <member refid="interfacesb_i_mutable_string_map_15be37e4f3e281499aae28acfa59cc8dd" kind="function"><name>clear</name></member>
   </compound>
   <compound refid="interfacesb_i_native_window_manager" kind="interface"><name>sbINativeWindowManager</name>
     <member refid="interfacesb_i_native_window_manager_1636299c8aedeed68323fb94a826aca56" kind="variable"><name>DIRECTION_NORTH_WEST</name></member>
@@ -1934,8 +2227,7 @@
   </compound>
   <compound refid="interfacesb_i_playlist_writer" kind="interface"><name>sbIPlaylistWriter</name>
     <member refid="interfacesb_i_playlist_writer_1f5cdf7f32be328351c79ffd954a91c89" kind="variable"><name>writerListener</name></member>
-    <member refid="interfacesb_i_playlist_writer_16c5c2916d3d3808bf0c3f8fe3f298d07" kind="function"><name>write</name></member>
-    <member refid="interfacesb_i_playlist_writer_193bdf5a267467fb9b3ef581339612de9" kind="function"><name>vote</name></member>
+    <member refid="interfacesb_i_playlist_writer_173ddefaf60602d7b1b4fb6acf493f14c" kind="function"><name>write</name></member>
     <member refid="interfacesb_i_playlist_writer_1dd16799af17404cf1f53b3bd4d603846" kind="function"><name>name</name></member>
     <member refid="interfacesb_i_playlist_writer_154fb8fabdd3d3dd98b3f6aaf207ad3b3" kind="function"><name>description</name></member>
     <member refid="interfacesb_i_playlist_writer_10a3790bd97bf000be6d8f8661bdf7ab7" kind="function"><name>supportedMIMETypes</name></member>
@@ -1944,7 +2236,7 @@
   <compound refid="interfacesb_i_playlist_writer_listener" kind="interface"><name>sbIPlaylistWriterListener</name>
   </compound>
   <compound refid="interfacesb_i_playlist_writer_manager" kind="interface"><name>sbIPlaylistWriterManager</name>
-    <member refid="interfacesb_i_playlist_writer_manager_1b74f690cc8f115296d5b7cc60d8f47b7" kind="function"><name>write</name></member>
+    <member refid="interfacesb_i_playlist_writer_manager_15b89b57bc53ace4d66a02e78cf1ace59" kind="function"><name>write</name></member>
     <member refid="interfacesb_i_playlist_writer_manager_169a3b383ebf69f6440ccd9fccdb2fff1" kind="function"><name>supportedMIMETypes</name></member>
     <member refid="interfacesb_i_playlist_writer_manager_1394bed219a53ea5f530a363df966f5ee" kind="function"><name>supportedFileExtensions</name></member>
   </compound>
@@ -1955,6 +2247,7 @@
     <member refid="interfacesb_i_prompter_1b6816f8538f6a57468f0f6331dd6a560" kind="variable"><name>parentWindowType</name></member>
     <member refid="interfacesb_i_prompter_1d3f08ed089133b07b4fbfd9f13cb5889" kind="variable"><name>waitForWindow</name></member>
     <member refid="interfacesb_i_prompter_17ab68cf57dbb49968e75657a2e37474d" kind="function"><name>openDialog</name></member>
+    <member refid="interfacesb_i_prompter_1d1b065b77ded8e6cd77cb39974b5b800" kind="function"><name>openWindow</name></member>
   </compound>
   <compound refid="interfacesb_i_property" kind="interface"><name>sbIProperty</name>
     <member refid="interfacesb_i_property_1dcfebe0a8bc2c4c35a63f2bcea1f0b6d" kind="variable"><name>id</name></member>
@@ -2009,6 +2302,7 @@
     <member refid="interfacesb_i_property_info_161817d7ea202ecab4269758576035d40" kind="variable"><name>id</name></member>
     <member refid="interfacesb_i_property_info_137e83ba1df687703b9006504d58239fe" kind="variable"><name>type</name></member>
     <member refid="interfacesb_i_property_info_1a21698c5223efc9ab97e4b0f1070d7ef" kind="variable"><name>displayName</name></member>
+    <member refid="interfacesb_i_property_info_1a0f1c15785555520220f0df8ce5eaaf4" kind="variable"><name>localizationKey</name></member>
     <member refid="interfacesb_i_property_info_10fa3d1fb01bd4fd2ab06eaa63465ed7d" kind="variable"><name>userViewable</name></member>
     <member refid="interfacesb_i_property_info_10933e00d6494945c02b977671da28bea" kind="variable"><name>userEditable</name></member>
     <member refid="interfacesb_i_property_info_1f7b23f6f5b5c360f74359799880180b8" kind="variable"><name>remoteReadable</name></member>
@@ -2143,8 +2437,11 @@
     <member refid="interfacesb_i_remote_web_playlist_14eb7065850d6e04a9b1d287cd7956261" kind="function"><name>setSelectionByIndex</name></member>
   </compound>
   <compound refid="interfacesb_i_r_u_i_import_listener" kind="interface"><name>sbIRUIImportListener</name>
-    <member refid="interfacesb_i_r_u_i_import_listener_17876486bca885043c155ecb95845f31f" kind="function"><name>onImportComplete</name></member>
+    <member refid="interfacesb_i_r_u_i_import_listener_1c8cd992d192b96a337b13117f4a4af90" kind="function"><name>onImportComplete</name></member>
     <member refid="interfacesb_i_r_u_i_import_listener_1804d50bab8ea3bd296461411981e1ef8" kind="function"><name>onFirstMediaItem</name></member>
+  </compound>
+  <compound refid="interfacesb_i_screen_saver_suppressor" kind="interface"><name>sbIScreenSaverSuppressor</name>
+    <member refid="interfacesb_i_screen_saver_suppressor_129981d0d39b8e25fed334bea92eeb1e7" kind="function"><name>suppress</name></member>
   </compound>
   <compound refid="interfacesb_i_scriptable_filter_result" kind="interface"><name>sbIScriptableFilterResult</name>
     <member refid="interfacesb_i_scriptable_filter_result_105a8cb52e1a0c595ecaec0c1bed16252" kind="variable"><name>artists</name></member>
@@ -2203,6 +2500,7 @@
     <member refid="interfacesb_i_service_pane_node_1160cce8fd0232c67f445fb6ca68ecfdf" kind="variable"><name>url</name></member>
     <member refid="interfacesb_i_service_pane_node_129cecc15d9956df0a88a69f5bbf3b97c" kind="variable"><name>image</name></member>
     <member refid="interfacesb_i_service_pane_node_1874a27b70f98039ff326125d7b61b9d1" kind="variable"><name>name</name></member>
+    <member refid="interfacesb_i_service_pane_node_14d6b756742049749781184c0d5979492" kind="variable"><name>displayName</name></member>
     <member refid="interfacesb_i_service_pane_node_1fbfb809e3534411d9504ade6a3f365e2" kind="variable"><name>tooltip</name></member>
     <member refid="interfacesb_i_service_pane_node_1202f87879d782a75542aa58deefd3e19" kind="variable"><name>hidden</name></member>
     <member refid="interfacesb_i_service_pane_node_14709ccf77f08f9c74a36a80a8be7bb88" kind="variable"><name>editable</name></member>
@@ -2252,6 +2550,10 @@
     <member refid="interfacesb_i_service_pane_service_10bac0c26d2ff5758a3cb72c1495099f5" kind="function"><name>onRename</name></member>
     <member refid="interfacesb_i_service_pane_service_1cf676ef8a64de8ba123df7699afcbd67" kind="function"><name>addListener</name></member>
     <member refid="interfacesb_i_service_pane_service_1f04605e444742f0c984e48e4b844fb90" kind="function"><name>removeListener</name></member>
+  </compound>
+  <compound refid="interfacesb_i_shutdown_job" kind="interface"><name>sbIShutdownJob</name>
+    <member refid="interfacesb_i_shutdown_job_1fe1f7380b6fb67f6f61d586dc489c3ee" kind="variable"><name>needsToRunTask</name></member>
+    <member refid="interfacesb_i_shutdown_job_175d1a6a9060bfaa143e9692ce9354d96" kind="function"><name>startTask</name></member>
   </compound>
   <compound refid="interfacesb_i_simple_button_property_builder" kind="interface"><name>sbISimpleButtonPropertyBuilder</name>
     <member refid="interfacesb_i_simple_button_property_builder_164f1d4142a5d1ce718903f3febcb978c" kind="variable"><name>label</name></member>
@@ -2352,10 +2654,20 @@
     <member refid="interfacesb_i_s_q_l_where_builder_1f443ed1a70948a0f897aa029ce29ebc8" kind="function"><name>createAndCriterion</name></member>
     <member refid="interfacesb_i_s_q_l_where_builder_1608f8c174fc98a44c694fbfd7bc67199" kind="function"><name>createOrCriterion</name></member>
   </compound>
+  <compound refid="interfacesb_i_status_property_builder" kind="interface"><name>sbIStatusPropertyBuilder</name>
+    <member refid="interfacesb_i_status_property_builder_1ca4f92099169b4e66107d5ecc2c5c3f0" kind="variable"><name>label</name></member>
+    <member refid="interfacesb_i_status_property_builder_1ca2516a670afdaf4996cc114a93714f3" kind="variable"><name>completedLabel</name></member>
+    <member refid="interfacesb_i_status_property_builder_1bbe7832a092829db6e6aa2dae98a56a8" kind="variable"><name>failedLabel</name></member>
+    <member refid="interfacesb_i_status_property_builder_11271e45e34b8b67bf864bf0d861cc33b" kind="variable"><name>labelKey</name></member>
+    <member refid="interfacesb_i_status_property_builder_1a56b2f6133623d340bf671d8811e01f3" kind="variable"><name>completedLabelKey</name></member>
+    <member refid="interfacesb_i_status_property_builder_15fb008a219ed3a5bfc3a85db08cff4fe" kind="variable"><name>failedLabelKey</name></member>
+  </compound>
   <compound refid="interfacesb_i_string_bundle_service" kind="interface"><name>sbIStringBundleService</name>
     <member refid="interfacesb_i_string_bundle_service_1d6048369cf857aa5b022032a4c4ca32a" kind="variable"><name>bundle</name></member>
     <member refid="interfacesb_i_string_bundle_service_18c341b3d4087ab535b3409c97d417c96" kind="variable"><name>brandBundle</name></member>
-    <member refid="interfacesb_i_string_bundle_service_11d2e36aa0dc91543229e6e3971a9db5f" kind="function"><name>createBundle</name></member>
+  </compound>
+  <compound refid="interfacesb_i_string_map" kind="interface"><name>sbIStringMap</name>
+    <member refid="interfacesb_i_string_map_127f81b889ed897bc7703c29d25f937d6" kind="function"><name>get</name></member>
   </compound>
   <compound refid="interfacesb_i_string_transform" kind="interface"><name>sbIStringTransform</name>
     <member refid="interfacesb_i_string_transform_1c11f6d3dbcf06e6b6b0d5082a282bc8b" kind="variable"><name>TRANSFORM_MAP_HIRAGANA</name></member>
@@ -2368,7 +2680,9 @@
     <member refid="interfacesb_i_string_transform_172da2cb3d96fd3a9e8ef511c93db07b8" kind="variable"><name>TRANSFORM_IGNORE_NONSPACE</name></member>
     <member refid="interfacesb_i_string_transform_151009a08d1b398406d25fe8436326d38" kind="variable"><name>TRANSFORM_REVERSE_BYTES</name></member>
     <member refid="interfacesb_i_string_transform_1f26dc80fe40ff6f0f7a671f50054968b" kind="variable"><name>TRANSFORM_IGNORE_NONALPHANUM</name></member>
+    <member refid="interfacesb_i_string_transform_1797e46a0f97ec85585ad054145ca9ef8" kind="variable"><name>TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE</name></member>
     <member refid="interfacesb_i_string_transform_1548883bd24f51453de7afcfd16bd509a" kind="variable"><name>TRANSFORM_IGNORE_LEADING</name></member>
+    <member refid="interfacesb_i_string_transform_18d1594bd0b36c4e0d9f79a238482dbf4" kind="variable"><name>TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS</name></member>
     <member refid="interfacesb_i_string_transform_1250033da92893ce36fc430a8f115d963" kind="function"><name>normalizeString</name></member>
     <member refid="interfacesb_i_string_transform_126415c94cf8057d896d75c4cdbeec666" kind="function"><name>convertToCharset</name></member>
     <member refid="interfacesb_i_string_transform_19c157820ff2206fb3c16dac5564e65c0" kind="function"><name>guessCharset</name></member>
@@ -2428,6 +2742,65 @@
     <member refid="interfacesb_i_timing_service_timer_1b1efc2f8ce2f2ef277caab0ca07d37ba" kind="variable"><name>stopTime</name></member>
     <member refid="interfacesb_i_timing_service_timer_1f0bbb8ca79e6faa4e064900bdbcb167e" kind="variable"><name>totalTime</name></member>
   </compound>
+  <compound refid="interfacesb_i_transcode_album_art" kind="interface"><name>sbITranscodeAlbumArt</name>
+    <member refid="interfacesb_i_transcode_album_art_179092262ba2502e5a160e82a653100bf" kind="variable"><name>needsAlbumArtConversion</name></member>
+    <member refid="interfacesb_i_transcode_album_art_1e74c5d8d292dd3db4ab0b8c5e2494f0e" kind="function"><name>Init</name></member>
+    <member refid="interfacesb_i_transcode_album_art_14aeaf1fa21725293dcd58b1276166b6b" kind="function"><name>ConvertArt</name></member>
+    <member refid="interfacesb_i_transcode_album_art_1e8a3acd1166d70514b108b47499d1f22" kind="function"><name>GetTranscodedArt</name></member>
+    <member refid="interfacesb_i_transcode_album_art_1c24fe97336f417c49d20d5442ec0465c" kind="function"><name>GetTargetFormat</name></member>
+  </compound>
+  <compound refid="interfacesb_i_transcode_batch_job_item" kind="interface"><name>sbITranscodeBatchJobItem</name>
+    <member refid="interfacesb_i_transcode_batch_job_item_1a80ae797c2b7db9eb0663ccc515630dc" kind="variable"><name>mediaItem</name></member>
+    <member refid="interfacesb_i_transcode_batch_job_item_111d9add82e05e0f6b845eb7fcc83c941" kind="variable"><name>destinationFile</name></member>
+  </compound>
+  <compound refid="interfacesb_i_transcode_image" kind="interface"><name>sbITranscodeImage</name>
+    <member refid="interfacesb_i_transcode_image_1a3878b731d90b3f035383250c726fa4b" kind="function"><name>transcodeImage</name></member>
+  </compound>
+  <compound refid="interfacesb_i_transcode_image_profile" kind="interface"><name>sbITranscodeImageProfile</name>
+    <member refid="interfacesb_i_transcode_image_profile_1e727a90126ec0accd44bcad79e14e274" kind="variable"><name>mimetype</name></member>
+    <member refid="interfacesb_i_transcode_image_profile_1c51a3dccc7873b9758c8053b1f01d066" kind="variable"><name>width</name></member>
+    <member refid="interfacesb_i_transcode_image_profile_10faa4e9a1c8027b7c1b36ff08d428853" kind="variable"><name>height</name></member>
+    <member refid="interfacesb_i_transcode_image_profile_18ab319e21780e108861260217d77ef87" kind="function"><name>Init</name></member>
+  </compound>
+  <compound refid="interfacesb_i_transcode_job" kind="interface"><name>sbITranscodeJob</name>
+    <member refid="interfacesb_i_transcode_job_14cec5c4f17d874770103fe285bc5f09e" kind="variable"><name>metadata</name></member>
+    <member refid="interfacesb_i_transcode_job_133301c8ad2584a0157a0d76bf7de62b1" kind="variable"><name>metadataImage</name></member>
+    <member refid="interfacesb_i_transcode_job_14a9db394df75e08d269725123040f096" kind="variable"><name>sourceURI</name></member>
+    <member refid="interfacesb_i_transcode_job_1538b91aeac7c500094031fffd1c4d973" kind="variable"><name>destURI</name></member>
+    <member refid="interfacesb_i_transcode_job_16a767abbdc575e31b15325eb21055320" kind="variable"><name>profile</name></member>
+    <member refid="interfacesb_i_transcode_job_1f00a988cdf7ea61e9e5d7f77cc96e237" kind="variable"><name>availableProfiles</name></member>
+    <member refid="interfacesb_i_transcode_job_1a53fd47421f0f346aee8d48fcae77047" kind="function"><name>vote</name></member>
+    <member refid="interfacesb_i_transcode_job_19430d26eeb0b850815cb2cda2b73d35a" kind="function"><name>estimateOutputSize</name></member>
+    <member refid="interfacesb_i_transcode_job_1d397a4112d3fe20699d8e669a3c96b8f" kind="function"><name>transcode</name></member>
+  </compound>
+  <compound refid="interfacesb_i_transcode_manager" kind="interface"><name>sbITranscodeManager</name>
+    <member refid="interfacesb_i_transcode_manager_18ffc064df96e3b63cb276673318a87ea" kind="function"><name>getTranscoderForMediaItem</name></member>
+    <member refid="interfacesb_i_transcode_manager_161092db1ca33b4e4a29b76b0eb839b3b" kind="function"><name>getTranscodeProfiles</name></member>
+  </compound>
+  <compound refid="interfacesb_i_transcode_profile" kind="interface"><name>sbITranscodeProfile</name>
+    <member refid="interfacesb_i_transcode_profile_1ec3385d18c8fbc1f47acca82097915c6" kind="variable"><name>TRANSCODE_TYPE_UNKNOWN</name></member>
+    <member refid="interfacesb_i_transcode_profile_1d0df93b10774cfcf3a3de9cacb67a907" kind="variable"><name>TRANSCODE_TYPE_AUDIO</name></member>
+    <member refid="interfacesb_i_transcode_profile_146cea78cdd8038a2247bef89e5d62680" kind="variable"><name>TRANSCODE_TYPE_VIDEO</name></member>
+    <member refid="interfacesb_i_transcode_profile_186e994e58a3a7d811945056fc9df0234" kind="variable"><name>TRANSCODE_TYPE_AUDIO_VIDEO</name></member>
+    <member refid="interfacesb_i_transcode_profile_1a3899d6286603c428805575aee2a656c" kind="variable"><name>TRANSCODE_PRIORITY_LOWEST</name></member>
+    <member refid="interfacesb_i_transcode_profile_188680fb3baabb9a3dd53016915620000" kind="variable"><name>TRANSCODE_PRIORITY_LOW</name></member>
+    <member refid="interfacesb_i_transcode_profile_1389780aef790b9d1e817cfaae3cf1510" kind="variable"><name>TRANSCODE_PRIORITY_MEDIUM</name></member>
+    <member refid="interfacesb_i_transcode_profile_1098f6703b8e777b1e84d90282e515625" kind="variable"><name>TRANSCODE_PRIORITY_HIGH</name></member>
+    <member refid="interfacesb_i_transcode_profile_1393bc8d9c80064325e5aeebfa82438c0" kind="variable"><name>TRANSCODE_PRIORITY_HIGHEST</name></member>
+    <member refid="interfacesb_i_transcode_profile_1e3246a5c80ca3402eb6e7fd628f71d12" kind="variable"><name>id</name></member>
+    <member refid="interfacesb_i_transcode_profile_157463dd80ea7dddc2dc18aad11c71048" kind="variable"><name>priority</name></member>
+    <member refid="interfacesb_i_transcode_profile_18f0fe008e4d8cdcbcff148dba3caf1dc" kind="variable"><name>description</name></member>
+    <member refid="interfacesb_i_transcode_profile_1f1fa058010a8eca13a58bc22c5296a2f" kind="variable"><name>type</name></member>
+    <member refid="interfacesb_i_transcode_profile_11d721a3808eabe4c2fbde087b7c4adbc" kind="variable"><name>containerFormat</name></member>
+    <member refid="interfacesb_i_transcode_profile_1d58816c9676fd61e462a4ed78a8a6f8e" kind="variable"><name>audioCodec</name></member>
+    <member refid="interfacesb_i_transcode_profile_1f0bcf9d599ae4bb2d23d4936290abaf1" kind="variable"><name>videoCodec</name></member>
+    <member refid="interfacesb_i_transcode_profile_1fad3b9de23dc136ad47f07bc445eddc1" kind="variable"><name>audioProperties</name></member>
+    <member refid="interfacesb_i_transcode_profile_19adf9edcd024c5844b02c1008129482d" kind="variable"><name>videoProperties</name></member>
+    <member refid="interfacesb_i_transcode_profile_1f2efec495e58451e4773cc834d0bc57f" kind="variable"><name>containerProperties</name></member>
+  </compound>
+  <compound refid="interfacesb_i_transcode_profile_loader" kind="interface"><name>sbITranscodeProfileLoader</name>
+    <member refid="interfacesb_i_transcode_profile_loader_16a1256c90850ecc1d68d64a28fa51a4e" kind="function"><name>loadProfile</name></member>
+  </compound>
   <compound refid="interfacesb_i_tree_view_property_info" kind="interface"><name>sbITreeViewPropertyInfo</name>
     <member refid="interfacesb_i_tree_view_property_info_1905d0aa95122f0331479b9aa338b842c" kind="variable"><name>columnType</name></member>
     <member refid="interfacesb_i_tree_view_property_info_1244aba007fa5d839687896a1ecb16784" kind="function"><name>getImageSrc</name></member>
@@ -2447,8 +2820,24 @@
     <member refid="interfacesb_i_u_r_l_formatter_1bfa94af707522524860c81587444df0f" kind="function"><name>formatURL</name></member>
     <member refid="interfacesb_i_u_r_l_formatter_13f743809506d3f6f4a0c18935bc4b9d4" kind="function"><name>formatURLPref</name></member>
   </compound>
+  <compound refid="interfacesb_i_video_box" kind="interface"><name>sbIVideoBox</name>
+    <member refid="interfacesb_i_video_box_11fda43efff2a6d5c579a6dd964d7a2d6" kind="variable"><name>parNumerator</name></member>
+    <member refid="interfacesb_i_video_box_1c62fd26095ef54fb6cb23bde8c53cab7" kind="variable"><name>parDenominator</name></member>
+    <member refid="interfacesb_i_video_box_1cab1e6216914b06962d0193c1cab9a9a" kind="variable"><name>width</name></member>
+    <member refid="interfacesb_i_video_box_15328af677c71f9a5c6f3b9fb3961cd62" kind="variable"><name>height</name></member>
+  </compound>
   <compound refid="interfacesb_i_watch_folder_service" kind="interface"><name>sbIWatchFolderService</name>
     <member refid="interfacesb_i_watch_folder_service_1d89d29b1f806e0d5a90db9f2e6cc8da4" kind="variable"><name>isSupported</name></member>
+    <member refid="interfacesb_i_watch_folder_service_14127ceedef1b0260d079a6c1c31f5e82" kind="variable"><name>isRunning</name></member>
+    <member refid="interfacesb_i_watch_folder_service_1050a8e2762914b9087898a70af7e7aa6" kind="function"><name>addIgnorePath</name></member>
+    <member refid="interfacesb_i_watch_folder_service_172ec3722f9e690b759255eb77750495d" kind="function"><name>removeIgnorePath</name></member>
+    <member refid="interfacesb_i_watch_folder_service_1895d4416241d522a6794ea4b3bba9623" kind="function"><name>addIgnoreCount</name></member>
+  </compound>
+  <compound refid="interfacesb_i_w_f_move_rename_helper9000" kind="interface"><name>sbIWFMoveRenameHelper9000</name>
+    <member refid="interfacesb_i_w_f_move_rename_helper9000_14148d03526d4ec416a590fb96d3d336d" kind="function"><name>process</name></member>
+  </compound>
+  <compound refid="interfacesb_i_w_f_remove_helper9001" kind="interface"><name>sbIWFRemoveHelper9001</name>
+    <member refid="interfacesb_i_w_f_remove_helper9001_11732cb5f4917e21491152aeac78e13e9" kind="function"><name>remove</name></member>
   </compound>
   <compound refid="interfacesb_i_window_cloak" kind="interface"><name>sbIWindowCloak</name>
     <member refid="interfacesb_i_window_cloak_12f4b2b5d1edaeb31fde782de9c69ee99" kind="function"><name>cloak</name></member>
@@ -2470,6 +2859,14 @@
     <member refid="interfacesb_i_window_min_max_callback_180f733338d9de3eb25caf8dd47ccd626" kind="function"><name>GetMaxHeight</name></member>
     <member refid="interfacesb_i_window_min_max_callback_1f94d093c8f5a5739a717aaef1974f6ad" kind="function"><name>OnWindowClose</name></member>
   </compound>
+  <compound refid="interfacesb_i_window_move_listener" kind="interface"><name>sbIWindowMoveListener</name>
+    <member refid="interfacesb_i_window_move_listener_1429367ddb138096a713b3794171ba4d7" kind="function"><name>onMoveStarted</name></member>
+    <member refid="interfacesb_i_window_move_listener_17ecc4ff08222c88a09db267a79e6368b" kind="function"><name>onMoveStopped</name></member>
+  </compound>
+  <compound refid="interfacesb_i_window_move_service" kind="interface"><name>sbIWindowMoveService</name>
+    <member refid="interfacesb_i_window_move_service_1be3d7a05ae3ce50b337be9b88634155f" kind="function"><name>startWatchingWindow</name></member>
+    <member refid="interfacesb_i_window_move_service_154d597463d80c6cf35c74677f14fde5f" kind="function"><name>stopWatchingWindow</name></member>
+  </compound>
   <compound refid="interfacesb_i_window_region" kind="interface"><name>sbIWindowRegion</name>
     <member refid="interfacesb_i_window_region_1a63cb6ca732f696d3ad56424480afcc0" kind="function"><name>setWindowRegion</name></member>
   </compound>
@@ -2480,13 +2877,20 @@
   <compound refid="interfacesb_i_window_resize_hook_callback" kind="interface"><name>sbIWindowResizeHookCallback</name>
     <member refid="interfacesb_i_window_resize_hook_callback_1e8e9d7ebebb4b3e9b6d66ce52e1e61d6" kind="function"><name>onResize</name></member>
   </compound>
+  <compound refid="interfacesb_i_windows_auto_play_action_handler" kind="interface"><name>sbIWindowsAutoPlayActionHandler</name>
+    <member refid="interfacesb_i_windows_auto_play_action_handler_1a29b72acd0c820d42ff455c4b2aa2dfa" kind="function"><name>handleAction</name></member>
+  </compound>
+  <compound refid="interfacesb_i_windows_auto_play_service" kind="interface"><name>sbIWindowsAutoPlayService</name>
+    <member refid="interfacesb_i_windows_auto_play_service_1d620a02050da07a8a1b6a5f4f14699c2" kind="variable"><name>ACTION_MANAGE_VOLUME_DEVICE</name></member>
+    <member refid="interfacesb_i_windows_auto_play_service_1ad54679ec24d30a68245c2bb26e43eb1" kind="variable"><name>ACTION_CD_RIP</name></member>
+    <member refid="interfacesb_i_windows_auto_play_service_196d0d644a766ab04cef4a5100fab7298" kind="function"><name>addActionHandler</name></member>
+    <member refid="interfacesb_i_windows_auto_play_service_151d97ff5674eb8226dcdb1d9f674d95a" kind="function"><name>removeActionHandler</name></member>
+  </compound>
   <compound refid="interfacesb_i_window_watcher" kind="interface"><name>sbIWindowWatcher</name>
     <member refid="interfacesb_i_window_watcher_1334158ade89d8d97fa82e742ee6696b4" kind="variable"><name>isShuttingDown</name></member>
     <member refid="interfacesb_i_window_watcher_1a349ea1484c3c284bdee71bc5d89ef08" kind="function"><name>callWithWindow</name></member>
     <member refid="interfacesb_i_window_watcher_16069cfc9e7bd832eb4f2e9095ae7949f" kind="function"><name>getWindow</name></member>
     <member refid="interfacesb_i_window_watcher_1ea3e572ade3000f72d79f76b92114397" kind="function"><name>waitForWindow</name></member>
-  </compound>
-  <compound refid="interfacesb_i_w_m_device" kind="interface"><name>sbIWMDevice</name>
   </compound>
   <compound refid="interfacesb_p_i_bundle" kind="interface"><name>sbPIBundle</name>
     <member refid="interfacesb_p_i_bundle_17e87bbb6ccba2d392bdb841d390aafc6" kind="variable"><name>installListenerCount</name></member>
@@ -2520,7 +2924,6 @@
     <member refid="sb_i_album_art_fetcher_8idl_132cc285284b85b8bb4433a0d7acdd0fd" kind="define"><name>SB_ALBUM_ART_FETCHER_CATEGORY</name></member>
     <member refid="sb_i_album_art_fetcher_8idl_14c6c767f944a79fda4bb61911660aeb0" kind="define"><name>SB_FILEALBUMARTFETCHER_CONTRACTID</name></member>
     <member refid="sb_i_album_art_fetcher_8idl_1885da086d0b4ee56b61ef1429ab6d59e" kind="define"><name>SB_METADATAALBUMARTFETCHER_CONTRACTID</name></member>
-    <member refid="sb_i_album_art_fetcher_8idl_157386875bc7bd09a70790b8e6121ef90" kind="define"><name>SB_LASTFMALBUMARTFETCHER_CONTRACTID</name></member>
   </compound>
   <compound refid="sb_i_album_art_fetcher_set_8idl" kind="file"><name>sbIAlbumArtFetcherSet.idl</name>
     <member refid="sb_i_album_art_fetcher_set_8idl_13e2209195dc5006f9592f3a0776206cf" kind="define"><name>SB_ALBUMARTFETCHERSET_CONTRACTID</name></member>
@@ -2562,11 +2965,43 @@
   </compound>
   <compound refid="sb_i_database_result_8idl" kind="file"><name>sbIDatabaseResult.idl</name>
   </compound>
-  <compound refid="sb_i_content_type_format_8idl" kind="file"><name>sbIContentTypeFormat.idl</name>
-  </compound>
   <compound refid="sb_i_device_8idl" kind="file"><name>sbIDevice.idl</name>
   </compound>
   <compound refid="sb_i_device_capabilities_8idl" kind="file"><name>sbIDeviceCapabilities.idl</name>
+    <member refid="sb_i_device_capabilities_8idl_12dc3836f6f3c085afd166df5db7cb4f9" kind="define"><name>SB_IMAGESIZE_DESCRIPTION</name></member>
+    <member refid="sb_i_device_capabilities_8idl_15753fcb73ad44d66ed59d91ff530ff65" kind="define"><name>SB_IMAGESIZE_CONTRACTID</name></member>
+    <member refid="sb_i_device_capabilities_8idl_1322355b5a98edbc9bdb0574ca2510591" kind="define"><name>SB_IMAGESIZE_CLASSNAME</name></member>
+    <member refid="sb_i_device_capabilities_8idl_1389bea82acb28a1ec774986af809b472" kind="define"><name>SB_IMAGESIZE_CID</name></member>
+    <member refid="sb_i_device_capabilities_8idl_15505ea543f918108d46f5c40e9093933" kind="define"><name>SB_IDEVCAPRANGE_DESCRIPTION</name></member>
+    <member refid="sb_i_device_capabilities_8idl_14d7668066604418b553132f3b6131338" kind="define"><name>SB_IDEVCAPRANGE_CONTRACTID</name></member>
+    <member refid="sb_i_device_capabilities_8idl_1627794d6854c7754ed3b64c894720a0c" kind="define"><name>SB_IDEVCAPRANGE_CLASSNAME</name></member>
+    <member refid="sb_i_device_capabilities_8idl_18595b1fda525eab3ea2467a00dd0ec0f" kind="define"><name>SB_IDEVCAPRANGE_CID</name></member>
+    <member refid="sb_i_device_capabilities_8idl_142edb59df3583f178ced3f4e6850b5e9" kind="define"><name>SB_IFORMATTYPECONSTRAINT_DESCRIPTION</name></member>
+    <member refid="sb_i_device_capabilities_8idl_17c6cfe0a448b3ea0472215f02df5a0c0" kind="define"><name>SB_IFORMATTYPECONSTRAINT_CONTRACTID</name></member>
+    <member refid="sb_i_device_capabilities_8idl_1afb45fa51ec52364f2f05317dbe121f9" kind="define"><name>SB_IFORMATTYPECONSTRAINT_CLASSNAME</name></member>
+    <member refid="sb_i_device_capabilities_8idl_1225ae1e54cf055069c1fa9dc6524df29" kind="define"><name>SB_IFORMATTYPECONSTRAINT_CID</name></member>
+    <member refid="sb_i_device_capabilities_8idl_186394a4d960fccbf8b44cd7cb6b2f93a" kind="define"><name>SB_IIMAGEFORMATTYPE_DESCRIPTION</name></member>
+    <member refid="sb_i_device_capabilities_8idl_12ac9c1ae71da33829b0d75f9eec9df46" kind="define"><name>SB_IIMAGEFORMATTYPE_CONTRACTID</name></member>
+    <member refid="sb_i_device_capabilities_8idl_163abe125104ef12584c4fbeb0e2a99cb" kind="define"><name>SB_IIMAGEFORMATTYPE_CLASSNAME</name></member>
+    <member refid="sb_i_device_capabilities_8idl_12209bdd3f97ad71ca6e6662f755412f7" kind="define"><name>SB_IIMAGEFORMATTYPE_CID</name></member>
+    <member refid="sb_i_device_capabilities_8idl_14e7f45fe63e6dc63facb1a47e8454186" kind="define"><name>SB_IAUDIOFORMATTYPE_DESCRIPTION</name></member>
+    <member refid="sb_i_device_capabilities_8idl_103f3625cee960bcedcd64196877d5529" kind="define"><name>SB_IAUDIOFORMATTYPE_CONTRACTID</name></member>
+    <member refid="sb_i_device_capabilities_8idl_10c5e19ee95497943fb4ba7c93e1020e8" kind="define"><name>SB_IAUDIOFORMATTYPE_CLASSNAME</name></member>
+    <member refid="sb_i_device_capabilities_8idl_16d044cffe7aa7e5d232031c2e9626e50" kind="define"><name>SB_IAUDIOFORMATTYPE_CID</name></member>
+    <member refid="sb_i_device_capabilities_8idl_10436de6e5f5c8e18c33d953f7e065f65" kind="define"><name>SONGBIRD_DEVICECAPABILITIES_DESCRIPTION</name></member>
+    <member refid="sb_i_device_capabilities_8idl_1616dfb3f1db13359971752ffbf43adf8" kind="define"><name>SONGBIRD_DEVICECAPABILITIES_CONTRACTID</name></member>
+    <member refid="sb_i_device_capabilities_8idl_1a6aa4cde4d8f2007d38a2f79ea6d56a5" kind="define"><name>SONGBIRD_DEVICECAPABILITIES_CLASSNAME</name></member>
+    <member refid="sb_i_device_capabilities_8idl_10febb6c876cb651b1aac87860a63da33" kind="define"><name>SONGBIRD_DEVICECAPABILITIES_CID</name></member>
+    <member refid="sb_i_device_capabilities_8idl_1998dea05e56765f3bed8b74fa4c6f7a4" kind="function"><name>uuid</name></member>
+    <member refid="sb_i_device_capabilities_8idl_1a7c07940fac4604c16e467c4c8b68fca" kind="function"><name>uuid</name></member>
+    <member refid="sb_i_device_capabilities_8idl_16e49c3ae6b45c38dbd91e5859770033f" kind="function"><name>uuid</name></member>
+    <member refid="sb_i_device_capabilities_8idl_17b2d7119838c0f826a3297abf1c4e62e" kind="function"><name>uuid</name></member>
+    <member refid="sb_i_device_capabilities_8idl_1b32e184ea40619fc2bfe69c410fff5aa" kind="function"><name>uuid</name></member>
+  </compound>
+  <compound refid="sb_i_device_capabilities_registrar_8idl" kind="file"><name>sbIDeviceCapabilitiesRegistrar.idl</name>
+    <member refid="sb_i_device_capabilities_registrar_8idl_16b804293cec05c5edabb5c2f6c3662ec" kind="define"><name>SB_DEVICE_CAPABILITIES_REGISTRAR_CATEGORY</name></member>
+    <member refid="sb_i_device_capabilities_registrar_8idl_152e3e8e44fb8476fb6fbeea5f07722eb" kind="define"><name>SB_DEVICE_CAPABILITIES_REGISTRAR_REGISTERSELF</name></member>
+    <member refid="sb_i_device_capabilities_registrar_8idl_18a125f317dafaaaf7dfc11c1ecd96689" kind="define"><name>SB_DEVICE_CAPABILITIES_REGISTRAR_REGISTERSELF_IMPL</name></member>
   </compound>
   <compound refid="sb_i_device_compatibility_8idl" kind="file"><name>sbIDeviceCompatibility.idl</name>
   </compound>
@@ -2579,6 +3014,15 @@
   <compound refid="sb_i_device_event_listener_8idl" kind="file"><name>sbIDeviceEventListener.idl</name>
   </compound>
   <compound refid="sb_i_device_event_target_8idl" kind="file"><name>sbIDeviceEventTarget.idl</name>
+  </compound>
+  <compound refid="sb_i_device_firmware_handler_8idl" kind="file"><name>sbIDeviceFirmwareHandler.idl</name>
+    <member refid="sb_i_device_firmware_handler_8idl_13539bcabae7266134a6ef5893a89ebf7" kind="define"><name>SB_DEVICE_FIRMWARE_HANDLER_CATEGORY</name></member>
+    <member refid="sb_i_device_firmware_handler_8idl_1bbcd86c33000ca7470d91bd50b0838ef" kind="define"><name>SB_DEVICE_FIRMWARE_HANDLER_REGISTERSELF</name></member>
+    <member refid="sb_i_device_firmware_handler_8idl_1155aa89bedea67863658877d6bd7058f" kind="define"><name>SB_DEVICE_FIRMWARE_HANLDER_REGISTERSELF_IMPL</name></member>
+  </compound>
+  <compound refid="sb_i_device_firmware_update_8idl" kind="file"><name>sbIDeviceFirmwareUpdate.idl</name>
+  </compound>
+  <compound refid="sb_i_device_firmware_updater_8idl" kind="file"><name>sbIDeviceFirmwareUpdater.idl</name>
   </compound>
   <compound refid="sb_i_device_library_8idl" kind="file"><name>sbIDeviceLibrary.idl</name>
   </compound>
@@ -2593,18 +3037,35 @@
   </compound>
   <compound refid="sb_i_device_status_8idl" kind="file"><name>sbIDeviceStatus.idl</name>
   </compound>
+  <compound refid="sb_i_mock_c_d_device_8idl" kind="file"><name>sbIMockCDDevice.idl</name>
+    <member refid="sb_i_mock_c_d_device_8idl_170d6491a80eee2852d0a7f2c5513573e" kind="define"><name>SB_MOCK_CDDEVICE_CLASSNAME</name></member>
+    <member refid="sb_i_mock_c_d_device_8idl_1bf119e17c81a4b4fa948aa45a20aa372" kind="define"><name>SB_MOCK_CDDEVICE_CID</name></member>
+    <member refid="sb_i_mock_c_d_device_8idl_1e2f45a9ef40930afc4662d0b412e8549" kind="define"><name>SB_MOCK_CDDEVICE_CONTRACTID</name></member>
+    <member refid="sb_i_mock_c_d_device_8idl_1fab25cb1066a18e1fb0adaa1e3fe634c" kind="define"><name>SB_MOCK_CDTOC_CLASSNAME</name></member>
+    <member refid="sb_i_mock_c_d_device_8idl_121add9d12b3a7402611aa447c6402390" kind="define"><name>SB_MOCK_CDTOC_CID</name></member>
+    <member refid="sb_i_mock_c_d_device_8idl_19408d78e429a031c6abb6121c95f9540" kind="define"><name>SB_MOCK_CDTOC_CONTRACTID</name></member>
+    <member refid="sb_i_mock_c_d_device_8idl_1acfd8b030bebbbf11be8a6267f10cf65" kind="define"><name>SB_MOCK_CDTOCENTRY_CLASSNAME</name></member>
+    <member refid="sb_i_mock_c_d_device_8idl_1803157ed600384e9a2dcea3d14f39909" kind="define"><name>SB_MOCK_CDTOCENTRY_CID</name></member>
+    <member refid="sb_i_mock_c_d_device_8idl_102c07da145e9e18f141bc5763aeb7810" kind="define"><name>SB_MOCK_CDTOCENTRY_CONTRACTID</name></member>
+  </compound>
+  <compound refid="sb_i_mock_c_d_device_controller_8idl" kind="file"><name>sbIMockCDDeviceController.idl</name>
+  </compound>
+  <compound refid="sb_i_c_d_device_8idl" kind="file"><name>sbICDDevice.idl</name>
+  </compound>
+  <compound refid="sb_i_c_d_device_service_8idl" kind="file"><name>sbICDDeviceService.idl</name>
+  </compound>
   <compound refid="sb_i_device_controller_8idl" kind="file"><name>sbIDeviceController.idl</name>
     <member refid="sb_i_device_controller_8idl_1d688cf293cfdba3fedb8ad1cdbc139a5" kind="define"><name>SB_DEVICE_CONTROLLER_CATEGORY</name></member>
     <member refid="sb_i_device_controller_8idl_12be89c6024a0cfcd556fa0bc6b308f8d" kind="define"><name>SB_DEVICE_CONTROLLER_REGISTERSELF</name></member>
     <member refid="sb_i_device_controller_8idl_1823d5aa1747c521c2d626b9ea2ddd1f9" kind="define"><name>SB_DEVICE_CONTROLLER_REGISTERSELF_IMPL</name></member>
   </compound>
-  <compound refid="sb_i_device_error_monitor_8idl" kind="file"><name>sbIDeviceErrorMonitor.idl</name>
-  </compound>
-  <compound refid="sb_i_device_helper_8idl" kind="file"><name>sbIDeviceHelper.idl</name>
-  </compound>
   <compound refid="sb_device_device_tester_interfaces_8idl" kind="file"><name>sbDeviceDeviceTesterInterfaces.idl</name>
   </compound>
   <compound refid="sb_i_mock_device_8idl" kind="file"><name>sbIMockDevice.idl</name>
+  </compound>
+  <compound refid="sb_i_device_error_monitor_8idl" kind="file"><name>sbIDeviceErrorMonitor.idl</name>
+  </compound>
+  <compound refid="sb_i_device_helper_8idl" kind="file"><name>sbIDeviceHelper.idl</name>
   </compound>
   <compound refid="sb_i_device_marshall_8idl" kind="file"><name>sbIDeviceMarshall.idl</name>
     <member refid="sb_i_device_marshall_8idl_1064e0905eb3e92f31acaf6c273e8dab7" kind="define"><name>SB_DEVICE_MARSHALL_CATEGORY</name></member>
@@ -2625,8 +3086,6 @@
     <member refid="sb_i_device_base_8idl_185b72d78c79f1491dd70d1709db0371a" kind="define"><name>kSB_DEVICE_STATE_DELETING</name></member>
   </compound>
   <compound refid="sb_i_download_device_8idl" kind="file"><name>sbIDownloadDevice.idl</name>
-  </compound>
-  <compound refid="sb_i_w_m_device_8idl" kind="file"><name>sbIWMDevice.idl</name>
   </compound>
   <compound refid="sb_i_display_panes_8idl" kind="file"><name>sbIDisplayPanes.idl</name>
   </compound>
@@ -2670,6 +3129,10 @@
   </compound>
   <compound refid="sb_i_native_window_manager_8idl" kind="file"><name>sbINativeWindowManager.idl</name>
   </compound>
+  <compound refid="sb_i_screen_saver_suppressor_8idl" kind="file"><name>sbIScreenSaverSuppressor.idl</name>
+  </compound>
+  <compound refid="sb_i_window_move_service_8idl" kind="file"><name>sbIWindowMoveService.idl</name>
+  </compound>
   <compound refid="sb_i_string_transform_8idl" kind="file"><name>sbIStringTransform.idl</name>
     <member refid="sb_i_string_transform_8idl_1a0ce99049f887b24cee33656d8ca2ab0" kind="define"><name>SB_STRINGTRANSFORM_DESCRIPTION</name></member>
     <member refid="sb_i_string_transform_8idl_1daf40ae33eedb4d78943db59b67c6e92" kind="define"><name>SB_STRINGTRANSFORM_CONTRACTID</name></member>
@@ -2684,7 +3147,13 @@
   </compound>
   <compound refid="sb_i_job_progress_u_i_8idl" kind="file"><name>sbIJobProgressUI.idl</name>
   </compound>
+  <compound refid="sb_i_shutdown_job_8idl" kind="file"><name>sbIShutdownJob.idl</name>
+  </compound>
   <compound refid="sb_i_cascade_filter_set_8idl" kind="file"><name>sbICascadeFilterSet.idl</name>
+  </compound>
+  <compound refid="sb_i_dynamic_media_list_8idl" kind="file"><name>sbIDynamicMediaList.idl</name>
+  </compound>
+  <compound refid="sb_i_dynamic_playlist_service_8idl" kind="file"><name>sbIDynamicPlaylistService.idl</name>
   </compound>
   <compound refid="sb_i_filterable_media_list_view_8idl" kind="file"><name>sbIFilterableMediaListView.idl</name>
   </compound>
@@ -2750,8 +3219,6 @@
   </compound>
   <compound refid="sb_i_local_database_async_g_u_i_d_array_8idl" kind="file"><name>sbILocalDatabaseAsyncGUIDArray.idl</name>
   </compound>
-  <compound refid="sb_i_local_database_dynamic_playlist_service_8idl" kind="file"><name>sbILocalDatabaseDynamicPlaylistService.idl</name>
-  </compound>
   <compound refid="sb_i_local_database_g_u_i_d_array_8idl" kind="file"><name>sbILocalDatabaseGUIDArray.idl</name>
   </compound>
   <compound refid="sb_i_local_database_library_8idl" kind="file"><name>sbILocalDatabaseLibrary.idl</name>
@@ -2803,6 +3270,8 @@
     <member refid="sb_i_mediacore_manager_8idl_1618d36250a1c8257df70cc0719f550a8" kind="define"><name>SB_MEDIACOREMANAGER_CLASSNAME</name></member>
     <member refid="sb_i_mediacore_manager_8idl_1aee3e4769374266e29375df82867d751" kind="define"><name>SB_MEDIACOREMANAGER_CID</name></member>
   </compound>
+  <compound refid="sb_i_mediacore_multiband_equalizer_8idl" kind="file"><name>sbIMediacoreMultibandEqualizer.idl</name>
+  </compound>
   <compound refid="sb_i_mediacore_playback_control_8idl" kind="file"><name>sbIMediacorePlaybackControl.idl</name>
   </compound>
   <compound refid="sb_i_mediacore_sequence_generator_8idl" kind="file"><name>sbIMediacoreSequenceGenerator.idl</name>
@@ -2831,26 +3300,45 @@
   </compound>
   <compound refid="sb_i_mediacore_voting_participant_8idl" kind="file"><name>sbIMediacoreVotingParticipant.idl</name>
   </compound>
+  <compound refid="sb_i_video_box_8idl" kind="file"><name>sbIVideoBox.idl</name>
+  </compound>
   <compound refid="sb_i_test_mediacore_event_creator_8idl" kind="file"><name>sbITestMediacoreEventCreator.idl</name>
   </compound>
   <compound refid="sb_i_g_streamer_mediacore_8idl" kind="file"><name>sbIGStreamerMediacore.idl</name>
+  </compound>
+  <compound refid="sb_i_g_streamer_pipeline_8idl" kind="file"><name>sbIGStreamerPipeline.idl</name>
+  </compound>
+  <compound refid="sb_i_g_streamer_r_t_p_streamer_8idl" kind="file"><name>sbIGStreamerRTPStreamer.idl</name>
+    <member refid="sb_i_g_streamer_r_t_p_streamer_8idl_14cd3af297096022dbe6cecf2a77deed6" kind="define"><name>SB_GSTREAMERRTPSTREAMER_CID</name></member>
+    <member refid="sb_i_g_streamer_r_t_p_streamer_8idl_1067936599c0a12b43f1300dd24a12a4b" kind="define"><name>SB_GSTREAMERRTPSTREAMER_CONTRACTID</name></member>
+    <member refid="sb_i_g_streamer_r_t_p_streamer_8idl_18827b8c715cade880d4bf9b7abcd7b9f" kind="define"><name>SB_GSTREAMERRTPSTREAMER_CLASSNAME</name></member>
   </compound>
   <compound refid="sb_i_g_streamer_service_8idl" kind="file"><name>sbIGStreamerService.idl</name>
     <member refid="sb_i_g_streamer_service_8idl_118bbde7b8c871ab291be3462307d1733" kind="define"><name>SBGSTREAMERSERVICE_CID</name></member>
     <member refid="sb_i_g_streamer_service_8idl_13bb23ef4af1ef9ea6c4452beb0abd40e" kind="define"><name>SBGSTREAMERSERVICE_CONTRACTID</name></member>
     <member refid="sb_i_g_streamer_service_8idl_1fddc0abf67ebf94b0b5a89df319cf818" kind="define"><name>SBGSTREAMERSERVICE_CLASSNAME</name></member>
   </compound>
+  <compound refid="sb_i_g_streamer_transcode_8idl" kind="file"><name>sbIGStreamerTranscode.idl</name>
+  </compound>
+  <compound refid="sb_i_mediacore_error_handler_8idl" kind="file"><name>sbIMediacoreErrorHandler.idl</name>
+  </compound>
   <compound refid="sb_i_seekable_channel_8idl" kind="file"><name>sbISeekableChannel.idl</name>
   </compound>
   <compound refid="sb_i_tag_lib_channel_file_i_o_manager_8idl" kind="file"><name>sbITagLibChannelFileIOManager.idl</name>
+  </compound>
+  <compound refid="sb_i_metadata_handler_w_m_a_8idl" kind="file"><name>sbIMetadataHandlerWMA.idl</name>
+  </compound>
+  <compound refid="sb_i_metadata_lookup_data_8idl" kind="file"><name>sbIMetadataLookupData.idl</name>
+  </compound>
+  <compound refid="sb_i_metadata_lookup_manager_8idl" kind="file"><name>sbIMetadataLookupManager.idl</name>
+  </compound>
+  <compound refid="sb_i_metadata_lookup_provider_8idl" kind="file"><name>sbIMetadataLookupProvider.idl</name>
   </compound>
   <compound refid="sb_i_file_metadata_service_8idl" kind="file"><name>sbIFileMetadataService.idl</name>
   </compound>
   <compound refid="sb_i_metadata_channel_8idl" kind="file"><name>sbIMetadataChannel.idl</name>
   </compound>
   <compound refid="sb_i_metadata_handler_8idl" kind="file"><name>sbIMetadataHandler.idl</name>
-  </compound>
-  <compound refid="sb_i_metadata_image_scanner_8idl" kind="file"><name>sbIMetadataImageScanner.idl</name>
   </compound>
   <compound refid="sb_i_metadata_manager_8idl" kind="file"><name>sbIMetadataManager.idl</name>
   </compound>
@@ -2868,17 +3356,70 @@
     <member refid="sb_i_playback_history_service_8idl_19993d899c347780ea94f07420db70f95" kind="define"><name>SB_PLAYBACKHISTORYSERVICE_CLASSNAME</name></member>
     <member refid="sb_i_playback_history_service_8idl_1aaa871ec0952c909d53940250f23d5c8" kind="define"><name>SB_PLAYBACKHISTORYSERVICE_CID</name></member>
   </compound>
+  <compound refid="sb_i_transcode_album_art_8idl" kind="file"><name>sbITranscodeAlbumArt.idl</name>
+    <member refid="sb_i_transcode_album_art_8idl_15079d2d4e4833e385d10225800fd3b82" kind="define"><name>SONGBIRD_TRANSCODEALBUMART_CONTRACTID</name></member>
+    <member refid="sb_i_transcode_album_art_8idl_1fef8837deca729a2786dcc55eae3a60e" kind="define"><name>SONGBIRD_TRANSCODEALBUMART_CLASSNAME</name></member>
+    <member refid="sb_i_transcode_album_art_8idl_1a4b2ecb50e79b8a091f34e5029c91f06" kind="define"><name>SONGBIRD_TRANSCODEALBUMART_CID</name></member>
+  </compound>
+  <compound refid="sb_i_transcode_batch_job_8idl" kind="file"><name>sbITranscodeBatchJob.idl</name>
+    <member refid="sb_i_transcode_batch_job_8idl_19af36ecda0b236348764829fa238bddd" kind="define"><name>SONGBIRD_TRANSCODEBATCHJOBITEM_DESCRIPTION</name></member>
+    <member refid="sb_i_transcode_batch_job_8idl_16a7dcab28e88512e6f70bb76b121850c" kind="define"><name>SONGBIRD_TRANSCODEBATCHJOBITEM_CONTRACTID</name></member>
+    <member refid="sb_i_transcode_batch_job_8idl_179d6ed59141d9ae0b9c532bbda605f57" kind="define"><name>SONGBIRD_TRANSCODEBATCHJOBITEM_CLASSNAME</name></member>
+    <member refid="sb_i_transcode_batch_job_8idl_16929d91bc686089a10d67a8b7bf2f203" kind="define"><name>SONGBIRD_TRANSCODEBATCHJOBITEM_CID</name></member>
+    <member refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kind="function"><name>uuid</name></member>
+  </compound>
+  <compound refid="sb_i_transcode_image_8idl" kind="file"><name>sbITranscodeImage.idl</name>
+  </compound>
+  <compound refid="sb_i_transcode_job_8idl" kind="file"><name>sbITranscodeJob.idl</name>
+  </compound>
+  <compound refid="sb_i_transcode_manager_8idl" kind="file"><name>sbITranscodeManager.idl</name>
+    <member refid="sb_i_transcode_manager_8idl_10bd9a9b36d9cdac5f5e9a213e633aee3" kind="define"><name>SONGBIRD_TRANSCODEMANAGER_CONTRACTID</name></member>
+    <member refid="sb_i_transcode_manager_8idl_175c1eb99d249a46172a3254a901e9dd3" kind="define"><name>SONGBIRD_TRANSCODEMANAGER_CLASSNAME</name></member>
+    <member refid="sb_i_transcode_manager_8idl_1e406ebbd4e0634d7c61a667ba684503a" kind="define"><name>SONGBIRD_TRANSCODEMANAGER_CID</name></member>
+  </compound>
+  <compound refid="sb_i_transcode_profile_8idl" kind="file"><name>sbITranscodeProfile.idl</name>
+    <member refid="sb_i_transcode_profile_8idl_18bf98b05ab5108f9c088bd94449f3b58" kind="define"><name>SONGBIRD_TRANSCODEPROFILE_DESCRIPTION</name></member>
+    <member refid="sb_i_transcode_profile_8idl_12f6557f215375509295420e60bf81042" kind="define"><name>SONGBIRD_TRANSCODEPROFILE_CONTRACTID</name></member>
+    <member refid="sb_i_transcode_profile_8idl_1a30b2209647b23ac4c4702ec341cdd1b" kind="define"><name>SONGBIRD_TRANSCODEPROFILE_CLASSNAME</name></member>
+    <member refid="sb_i_transcode_profile_8idl_19ce7553ac41a163782ad9f35bce2426b" kind="define"><name>SONGBIRD_TRANSCODEPROFILE_CID</name></member>
+    <member refid="sb_i_transcode_profile_8idl_1fb1ec84062a0b0561f84f227431112ca" kind="function"><name>uuid</name></member>
+  </compound>
+  <compound refid="sb_i_playlist_writer_8idl" kind="file"><name>sbIPlaylistWriter.idl</name>
+  </compound>
+  <compound refid="sb_i_media_export_agent_service_8idl" kind="file"><name>sbIMediaExportAgentService.idl</name>
+    <member refid="sb_i_media_export_agent_service_8idl_10318f415286101dd382e46427bea9c0a" kind="define"><name>SB_MEDIAEXPORTAGENTSERVICE_CONTRACTID</name></member>
+    <member refid="sb_i_media_export_agent_service_8idl_10f7d53d1d4b4c049ad4632fcc85f7026" kind="define"><name>SB_MEDIAEXPORTAGENTSERVICE_CLASSNAME</name></member>
+    <member refid="sb_i_media_export_agent_service_8idl_1811ad41fd7e983ff6f0eff5aa205d1dc" kind="function"><name>uuid</name></member>
+  </compound>
+  <compound refid="sb_i_media_export_service_8idl" kind="file"><name>sbIMediaExportService.idl</name>
+    <member refid="sb_i_media_export_service_8idl_110b4dda0d1b8c11843e5b97fc08e107f" kind="define"><name>SB_MEDIAEXPORTSERVICE_CONTRACTID</name></member>
+    <member refid="sb_i_media_export_service_8idl_18ce8a3154d76ab4b2676313a18ddf50d" kind="define"><name>SB_MEDIAEXPORTSERVICE_CLASSNAME</name></member>
+    <member refid="sb_i_media_export_service_8idl_1ffe61a2770df419bbc2c60f7771cf984" kind="function"><name>uuid</name></member>
+  </compound>
   <compound refid="sb_i_directory_import_service_8idl" kind="file"><name>sbIDirectoryImportService.idl</name>
   </compound>
   <compound refid="sb_i_file_scan_8idl" kind="file"><name>sbIFileScan.idl</name>
   </compound>
   <compound refid="sb_i_library_importer_8idl" kind="file"><name>sbILibraryImporter.idl</name>
   </compound>
+  <compound refid="sb_ii_tunes_x_m_l_parser_8idl" kind="file"><name>sbIiTunesXMLParser.idl</name>
+  </compound>
+  <compound refid="sb_ii_tunes_x_m_l_parser_listener_8idl" kind="file"><name>sbIiTunesXMLParserListener.idl</name>
+  </compound>
   <compound refid="sb_i_playlist_reader_8idl" kind="file"><name>sbIPlaylistReader.idl</name>
   </compound>
-  <compound refid="sb_i_playlist_writer_8idl" kind="file"><name>sbIPlaylistWriter.idl</name>
-  </compound>
   <compound refid="sb_i_u_r_i_import_service_8idl" kind="file"><name>sbIURIImportService.idl</name>
+  </compound>
+  <compound refid="sb_i_media_file_manager_8idl" kind="file"><name>sbIMediaFileManager.idl</name>
+    <member refid="sb_i_media_file_manager_8idl_1ce039e92419131ff96c7dccd4f38ac2a" kind="define"><name>SB_MEDIAFILEMANAGER_CONTRACTID</name></member>
+  </compound>
+  <compound refid="sb_i_media_management_job_8idl" kind="file"><name>sbIMediaManagementJob.idl</name>
+    <member refid="sb_i_media_management_job_8idl_1574248bca45f61e0ded5b7e7b97d3033" kind="define"><name>SB_MEDIAMANAGEMENTJOB_CONTRACTID</name></member>
+  </compound>
+  <compound refid="sb_i_media_management_job_item_8idl" kind="file"><name>sbIMediaManagementJobItem.idl</name>
+  </compound>
+  <compound refid="sb_i_media_management_service_8idl" kind="file"><name>sbIMediaManagementService.idl</name>
+    <member refid="sb_i_media_management_service_8idl_17cfb969effc64e75295a0ed9d7f33b5b" kind="define"><name>SB_MEDIAMANAGEMENTSERVICE_CONTRACTID</name></member>
   </compound>
   <compound refid="sb_i_media_page_8idl" kind="file"><name>sbIMediaPage.idl</name>
   </compound>
@@ -2893,6 +3434,9 @@
   <compound refid="sb_i_file_downloader_8idl" kind="file"><name>sbIFileDownloader.idl</name>
     <member refid="sb_i_file_downloader_8idl_146bd0b0cbedae434a68239fc505a696f" kind="define"><name>SB_FILEDOWNLOADER_CONTRACTID</name></member>
   </compound>
+  <compound refid="sb_i_directory_enumerator_8idl" kind="file"><name>sbIDirectoryEnumerator.idl</name>
+    <member refid="sb_i_directory_enumerator_8idl_165e927ed45c4f7909a0077ea1355fc08" kind="define"><name>SB_DIRECTORYENUMERATOR_CONTRACTID</name></member>
+  </compound>
   <compound refid="sb_i_prompter_8idl" kind="file"><name>sbIPrompter.idl</name>
     <member refid="sb_i_prompter_8idl_188ac2e25a2d29e31b961a6e96d7d9e14" kind="define"><name>SONGBIRD_PROMPTER_CONTRACTID</name></member>
   </compound>
@@ -2900,6 +3444,12 @@
   </compound>
   <compound refid="sb_i_string_bundle_service_8idl" kind="file"><name>sbIStringBundleService.idl</name>
     <member refid="sb_i_string_bundle_service_8idl_14d2296286e7c02c24742602cd213cf7c" kind="define"><name>SB_STRINGBUNDLESERVICE_CONTRACTID</name></member>
+  </compound>
+  <compound refid="sb_i_string_map_8idl" kind="file"><name>sbIStringMap.idl</name>
+    <member refid="sb_i_string_map_8idl_155479f5dfe8a40a95a7eb64f264d6578" kind="define"><name>SB_STRINGMAP_CONTRACTID</name></member>
+  </compound>
+  <compound refid="sb_i_windows_auto_play_service_8idl" kind="file"><name>sbIWindowsAutoPlayService.idl</name>
+    <member refid="sb_i_windows_auto_play_service_8idl_1114b0a565abe72a6960c675942ca46f7" kind="define"><name>SB_WINDOWSAUTOPLAYSERVICE_CONTRACTID</name></member>
   </compound>
   <compound refid="sb_i_temporary_file_service_8idl" kind="file"><name>sbITemporaryFileService.idl</name>
     <member refid="sb_i_temporary_file_service_8idl_1aad03187fc1a36cebea69ae644f375a0" kind="define"><name>SB_TEMPORARYFILESERVICE_CONTRACTID</name></member>
@@ -2965,8 +3515,6 @@
   </compound>
   <compound refid="sb_i_s_q_l_builder_8idl" kind="file"><name>sbISQLBuilder.idl</name>
   </compound>
-  <compound refid="ns_i_http_server_8idl" kind="file"><name>nsIHttpServer.idl</name>
-  </compound>
   <compound refid="sb_i_leak_canary_8idl" kind="file"><name>sbILeakCanary.idl</name>
   </compound>
   <compound refid="sb_i_test_harness_8idl" kind="file"><name>sbITestHarness.idl</name>
@@ -2976,6 +3524,10 @@
   <compound refid="sb_i_add_on_bundle_update_service_8idl" kind="file"><name>sbIAddOnBundleUpdateService.idl</name>
   </compound>
   <compound refid="sb_i_watch_folder_service_8idl" kind="file"><name>sbIWatchFolderService.idl</name>
+  </compound>
+  <compound refid="sb_i_w_f_move_rename_helper9000_8idl" kind="file"><name>sbIWFMoveRenameHelper9000.idl</name>
+  </compound>
+  <compound refid="sb_i_w_f_remove_helper9001_8idl" kind="file"><name>sbIWFRemoveHelper9001.idl</name>
   </compound>
   <compound refid="sb_i_last_fm_web_services_8idl" kind="file"><name>sbILastFmWebServices.idl</name>
   </compound>
@@ -3000,6 +3552,8 @@
   <compound refid="dir_d2404e444d13569c3c72c7307ab29d16" kind="dir"><name>bindings/</name>
   </compound>
   <compound refid="dir_702e6a3ef746f1a3ba0716782de44c7e" kind="dir"><name>components/bundle/</name>
+  </compound>
+  <compound refid="dir_3673754ec566fe0f769d7c3428d8eb6c" kind="dir"><name>components/devices/cd/</name>
   </compound>
   <compound refid="dir_b3c24fabdaf7b1d0f198b2e7be8bd4f6" kind="dir"><name>components/moz/clipboard/</name>
   </compound>
@@ -3043,6 +3597,8 @@
   </compound>
   <compound refid="dir_a30c147e6bdcca1303a0a3c5bfd5f1d4" kind="dir"><name>components/filesystemevents/</name>
   </compound>
+  <compound refid="dir_dad82be9a4dd286a5a7ef18a60f0f6c6" kind="dir"><name>components/moz/fileutils/</name>
+  </compound>
   <compound refid="dir_4b94cd67fb887a39cffcb056798f772f" kind="dir"><name>components/mediacore/gstreamer/</name>
   </compound>
   <compound refid="dir_f23b9c1236afedbcf88026a06d9b4624" kind="dir"><name>components/mediacore/metadata/handler/</name>
@@ -3052,6 +3608,8 @@
   <compound refid="dir_ae4688a8fd9da3c810d39499bdeacdbe" kind="dir"><name>components/integration/</name>
   </compound>
   <compound refid="dir_9aeceb26a370faa5031e4d3a76b5d105" kind="dir"><name>components/intl/</name>
+  </compound>
+  <compound refid="dir_3032c8962faea6003d38d2a5da5fb085" kind="dir"><name>components/mediaimport/library/itunes/</name>
   </compound>
   <compound refid="dir_e0ea701694015a3cbb95943fe4ed8b4d" kind="dir"><name>components/job/</name>
   </compound>
@@ -3063,7 +3621,13 @@
   </compound>
   <compound refid="dir_42d93664abe1958db3d8b14aaabe108b" kind="dir"><name>components/library/localdatabase/</name>
   </compound>
+  <compound refid="dir_4a78ec7382da8b795f93e1b4e585a6d9" kind="dir"><name>components/mediacore/metadata/lookup/</name>
+  </compound>
   <compound refid="dir_6dc694955c463c5fc16a0ae0a39ff8d8" kind="dir"><name>components/mediacore/metadata/manager/</name>
+  </compound>
+  <compound refid="dir_8c5afe43a06aadfa2390f107bb9d2be0" kind="dir"><name>components/mediacore/metadata/lookup/manager/</name>
+  </compound>
+  <compound refid="dir_b5354740b22d3e6113790980a497077f" kind="dir"><name>components/mediacore/manager/</name>
   </compound>
   <compound refid="dir_f32359674dfea1ee7e87072cb7e7e19f" kind="dir"><name>components/devicesobsolete/manager/</name>
   </compound>
@@ -3071,7 +3635,11 @@
   </compound>
   <compound refid="dir_d1fe40f6e3c5f33b19b450ac06b6b55e" kind="dir"><name>components/mediacore/</name>
   </compound>
+  <compound refid="dir_1f55c6fa37e49c115dbf91547c56cff1" kind="dir"><name>components/mediaexport/</name>
+  </compound>
   <compound refid="dir_63c524d31d46ea92f417bb2678194971" kind="dir"><name>components/mediaimport/</name>
+  </compound>
+  <compound refid="dir_218ce52ffaa8b7e58c5a7aebc653b805" kind="dir"><name>components/mediamanager/</name>
   </compound>
   <compound refid="dir_f02c69372313485c1f8832da12f6c9d0" kind="dir"><name>components/mediapages/</name>
   </compound>
@@ -3079,11 +3647,17 @@
   </compound>
   <compound refid="dir_e67e392e6e7f164c2d88391f914ae64c" kind="dir"><name>components/metrics/</name>
   </compound>
+  <compound refid="dir_33684fe1eedb8d832628de0fb25a2ea3" kind="dir"><name>components/devices/device/mock/</name>
+  </compound>
+  <compound refid="dir_b3ce1794867ee9834836fcc54ae8ac4f" kind="dir"><name>components/devices/cd/mock/</name>
+  </compound>
   <compound refid="dir_48d1dc0bc59c53a789e068e9b4a473e6" kind="dir"><name>components/moz/</name>
   </compound>
   <compound refid="dir_5dba2bf3c1c5c17ae0243a4a0fcf6014" kind="dir"><name>components/mediacore/playback/</name>
   </compound>
   <compound refid="dir_99777cd7b4a922aafd27b2ddc63cb7b1" kind="dir"><name>components/mediaimport/playlist/</name>
+  </compound>
+  <compound refid="dir_85412ce549403a22e5d5e8caa0b9975a" kind="dir"><name>components/mediaexport/playlist/</name>
   </compound>
   <compound refid="dir_46386344f0956e805e3072caae07e668" kind="dir"><name>components/playlistcommands/</name>
   </compound>
@@ -3117,11 +3691,15 @@
   </compound>
   <compound refid="dir_03f2c9b3989e30d445fb1fdcd40e2186" kind="dir"><name>components/moz/temporaryfileservice/public/</name>
   </compound>
+  <compound refid="dir_8d14456177b03a69d8f431afedc95381" kind="dir"><name>components/moz/system/windows/public/</name>
+  </compound>
   <compound refid="dir_cb8d6649291c973a82a6bc665c710d42" kind="dir"><name>components/moz/strings/components/public/</name>
   </compound>
   <compound refid="dir_fbdbbbe5f7b00e50e33aa2493da5f22c" kind="dir"><name>components/moz/proxy/public/</name>
   </compound>
   <compound refid="dir_92a93fda99303836edbb4a149c903026" kind="dir"><name>components/moz/prompter/public/</name>
+  </compound>
+  <compound refid="dir_15bbfcd535d0d0e5726f386f4a571789" kind="dir"><name>components/moz/fileutils/public/</name>
   </compound>
   <compound refid="dir_4a9eb62fe73998546bb9efc57981a3f3" kind="dir"><name>components/moz/filedownloader/public/</name>
   </compound>
@@ -3133,9 +3711,13 @@
   </compound>
   <compound refid="dir_180f5d5a9c89cfe2bd9f2a8a4a7370de" kind="dir"><name>components/mediapages/public/</name>
   </compound>
+  <compound refid="dir_4f435a35ef5d657fd5a3a9212334117d" kind="dir"><name>components/mediamanager/public/</name>
+  </compound>
   <compound refid="dir_f4ce86436642eaa302dbd8166b1c6e3c" kind="dir"><name>components/mediaimport/uri/public/</name>
   </compound>
   <compound refid="dir_690481971b2bf573a885055e1c673354" kind="dir"><name>components/mediaimport/playlist/public/</name>
+  </compound>
+  <compound refid="dir_f01eaaeae3abd435aa88d4b5b72bd04b" kind="dir"><name>components/mediaimport/library/itunes/public/</name>
   </compound>
   <compound refid="dir_c0f2479e4d607b10953aae8e3ca337a4" kind="dir"><name>components/mediaimport/library/base/public/</name>
   </compound>
@@ -3143,11 +3725,23 @@
   </compound>
   <compound refid="dir_ad02eb1fe7e8896955c2fbbb1c3fe88c" kind="dir"><name>components/mediaimport/directory/public/</name>
   </compound>
+  <compound refid="dir_e2570ff52c1121165b757364458ad1e5" kind="dir"><name>components/mediaexport/public/</name>
+  </compound>
+  <compound refid="dir_1365680b85fce3d1b2799d5d5222e208" kind="dir"><name>components/mediaexport/playlist/public/</name>
+  </compound>
+  <compound refid="dir_abdc7f863b1534a7adc03a5134c011da" kind="dir"><name>components/mediacore/transcode/public/</name>
+  </compound>
   <compound refid="dir_a249c13b9b5f78e6a5d8f41eb6ca0d0f" kind="dir"><name>components/mediacore/playback/history/public/</name>
   </compound>
   <compound refid="dir_cbbff54b5606717ae44122b55c27ded9" kind="dir"><name>components/mediacore/metadata/manager/public/</name>
   </compound>
+  <compound refid="dir_86efc8575b9239b75b62e891b9d49d91" kind="dir"><name>components/mediacore/metadata/lookup/manager/public/</name>
+  </compound>
+  <compound refid="dir_de2bbcd61122404bf56beb32d8753c2e" kind="dir"><name>components/mediacore/metadata/handler/wma/public/</name>
+  </compound>
   <compound refid="dir_3ce5567149aace006234715b00720419" kind="dir"><name>components/mediacore/metadata/handler/taglib/public/</name>
+  </compound>
+  <compound refid="dir_ebce047629bb5bdb4f3e8858b886835c" kind="dir"><name>components/mediacore/manager/public/</name>
   </compound>
   <compound refid="dir_acd3253dc9e70ec2cb66ac8fb8305b0c" kind="dir"><name>components/mediacore/gstreamer/public/</name>
   </compound>
@@ -3173,8 +3767,6 @@
   </compound>
   <compound refid="dir_1445853c1fc08eb2f164f781ebb8d37c" kind="dir"><name>components/displaypanes/public/</name>
   </compound>
-  <compound refid="dir_3abf5a0576eee3fb28bf8bc3a2788bd7" kind="dir"><name>components/devicesobsolete/wm/public/</name>
-  </compound>
   <compound refid="dir_7fe3f5bc0a263c2e9379098ff1be9fdf" kind="dir"><name>components/devicesobsolete/download/public/</name>
   </compound>
   <compound refid="dir_0cf0934c00b9ce195efa36e32be2616a" kind="dir"><name>components/devicesobsolete/base/public/</name>
@@ -3183,7 +3775,13 @@
   </compound>
   <compound refid="dir_03290a511f7172a2c0d8642909494256" kind="dir"><name>components/devices/device/public/</name>
   </compound>
+  <compound refid="dir_95844cca502a77165bb9200cc8197093" kind="dir"><name>components/devices/device/mock/public/</name>
+  </compound>
   <compound refid="dir_d3d0239d4d1776dd9d62c3dcf96efb4b" kind="dir"><name>components/devices/controller/public/</name>
+  </compound>
+  <compound refid="dir_2248fe5e660229234f3681851d04bbf1" kind="dir"><name>components/devices/cd/public/</name>
+  </compound>
+  <compound refid="dir_f0e83011e35bb6e0504a8ebe9648d22c" kind="dir"><name>components/devices/cd/mock/public/</name>
   </compound>
   <compound refid="dir_ec67273ea46c5db9f198385fec690c1b" kind="dir"><name>components/devicesobsolete/manager/public/</name>
   </compound>
@@ -3211,15 +3809,17 @@
   </compound>
   <compound refid="dir_ab0c06f428774de09be311a0b77a6853" kind="dir"><name>components/moz/strings/</name>
   </compound>
+  <compound refid="dir_54dc7339df60b400886db8293478768e" kind="dir"><name>components/moz/system/</name>
+  </compound>
   <compound refid="dir_80f6c3dd8eeafa8cdb86be2defe21e6f" kind="dir"><name>components/mediacore/metadata/handler/taglib/</name>
   </compound>
   <compound refid="dir_580f410a134451007402e9a8802aa88e" kind="dir"><name>components/moz/temporaryfileservice/</name>
   </compound>
   <compound refid="dir_959ed60f4310272675d5814dd4ccd8e2" kind="dir"><name>components/mediacore/base/test/</name>
   </compound>
-  <compound refid="dir_c92c8ea946da2aa25c1860fb9492a68e" kind="dir"><name>components/devices/device/test/</name>
-  </compound>
   <compound refid="dir_f1e1eba70f57fcab25403769937a8ff8" kind="dir"><name>components/testharness/</name>
+  </compound>
+  <compound refid="dir_a44722cd5a6ac4a299119cf1f04cca9e" kind="dir"><name>components/mediacore/transcode/</name>
   </compound>
   <compound refid="dir_e9a99a0bca1a468e521ef0a27a24b70d" kind="dir"><name>components/update/</name>
   </compound>
@@ -3231,9 +3831,11 @@
   </compound>
   <compound refid="dir_931e07945a4f253e80ef304efdf2657e" kind="dir"><name>components/webservices/</name>
   </compound>
+  <compound refid="dir_263aa23e933173c84f5be0f0c1bb21c7" kind="dir"><name>components/moz/system/windows/</name>
+  </compound>
   <compound refid="dir_85a3718fe84534b357883159d476c7d0" kind="dir"><name>components/moz/windowwatcher/</name>
   </compound>
-  <compound refid="dir_ada4e7442f94af0d207f45276cb7eb65" kind="dir"><name>components/devicesobsolete/wm/</name>
+  <compound refid="dir_2cbd3872fbe4850c359790a43232eaf3" kind="dir"><name>components/mediacore/metadata/handler/wma/</name>
   </compound>
   <compound refid="c_1_2builds_2songbird_2trunk_2components_2mediacore_2metadata_2manager_2public_2sb_i_file_metadata_service_8idl-example" kind="example"><name>c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIFileMetadataService.idl</name>
   </compound>

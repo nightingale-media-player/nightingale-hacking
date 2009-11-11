@@ -4,10 +4,10 @@
     <compoundname>sbIPlaylistWriterListener</compoundname>
     <includes refid="sb_i_playlist_writer_8idl" local="no">sbIPlaylistWriter.idl</includes>
     <briefdescription>
-<para>[UNIMPLEMENTED UNTIL AFTER 0.3] </para>    </briefdescription>
+<para>Implements playlist writing logic for a particular format. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/mediaimport/playlist/public/sbIPlaylistWriter.idl" line="39" bodyfile="c:/builds/songbird/trunk/components/mediaimport/playlist/public/sbIPlaylistWriter.idl" bodystart="38" bodyend="40"/>
+    <location file="c:/builds/songbird/trunk/components/mediaexport/playlist/public/sbIPlaylistWriter.idl" line="39" bodyfile="c:/builds/songbird/trunk/components/mediaexport/playlist/public/sbIPlaylistWriter.idl" bodystart="38" bodyend="40"/>
     <listofallmembers>
     </listofallmembers>
   </compounddef>

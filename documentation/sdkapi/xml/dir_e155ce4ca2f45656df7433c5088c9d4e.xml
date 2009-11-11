@@ -2,8 +2,8 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="dir_e155ce4ca2f45656df7433c5088c9d4e" kind="dir">
     <compoundname>components/devices/device/</compoundname>
+    <innerdir refid="dir_33684fe1eedb8d832628de0fb25a2ea3">components/devices/device/mock/</innerdir>
     <innerdir refid="dir_03290a511f7172a2c0d8642909494256">components/devices/device/public/</innerdir>
-    <innerdir refid="dir_c92c8ea946da2aa25c1860fb9492a68e">components/devices/device/test/</innerdir>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

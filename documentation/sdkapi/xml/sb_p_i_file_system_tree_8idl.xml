@@ -4,13 +4,13 @@
     <compoundname>sbPIFileSystemTree.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="204">
+      <node id="238">
         <label>components/filesystemevents/base/public/sbPIFileSystemTree.idl</label>
         <link refid="sbPIFileSystemTree.idl"/>
-        <childnode refid="205" relation="include">
+        <childnode refid="239" relation="include">
         </childnode>
       </node>
-      <node id="205">
+      <node id="239">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -54,7 +54,7 @@
 <codeline lineno="32"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>is<sp/>used<sp/>to<sp/>proxy<sp/>sbFileSystemTree<sp/>to<sp/>the<sp/>main<sp/>thread.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="35"><highlight class="normal">[uuid(6b689262-1dd2-11b2-ae97-f1d603474856)]</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">[<ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(6b689262-1dd2-11b2-ae97-f1d603474856)]</highlight></codeline>
 <codeline lineno="36" refid="interfacesb_p_i_file_system_tree" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_p_i_file_system_tree" kindref="compound">sbPIFileSystemTree</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="37"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="38"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>

@@ -114,6 +114,12 @@ const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class=
 <tr><td class="memItemLeft" nowrap align="right" valign="top">const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_event.html#a69515b89e7a8d3343542b30b3cfe487">VIEW_CHANGE</a> = 0x00001504</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sequencer view changed.  <a href="#a69515b89e7a8d3343542b30b3cfe487"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_event.html#20e1196e0607b2bb162063462e616bc0">SEQUENCE_CHANGE</a> = 0x00001505</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sequence recalculated.  <a href="#20e1196e0607b2bb162063462e616bc0"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_event.html#f0d4f7425cb8eb777df6c260a0477049">SEQUENCE_END</a> = 0x00001507</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sequence end.  <a href="#f0d4f7425cb8eb777df6c260a0477049"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_event.html#82137adca2784b92c8da6409b3d63803">STREAM_FOUND</a> = 0x00002000</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Stream found.  <a href="#82137adca2784b92c8da6409b3d63803"></a><br></td></tr>
@@ -138,6 +144,9 @@ const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class=
 <tr><td class="memItemLeft" nowrap align="right" valign="top">const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_event.html#5f193b1dd252377be152719cb078a9e6">STREAM_STOP</a> = 0x00004003</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Stream was stopped.  <a href="#5f193b1dd252377be152719cb078a9e6"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_event.html#6242b2ae9825b764c2d55652652642ec">VIDEO_SIZE_CHANGED</a> = 0x00005000</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Video size has changed.  <a href="#6242b2ae9825b764c2d55652652642ec"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_event.html#46cba5951aa1eda0de7469a636cebdea">PLUGIN_MISSING</a> = 0x00008000</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Plugin missing for requested format.  <a href="#46cba5951aa1eda0de7469a636cebdea"></a><br></td></tr>
@@ -380,6 +389,49 @@ Sequencer view changed.
 Definition at line <a class="el" href="sb_i_mediacore_event_8idl-source.html#l00099">99</a> of file <a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a>.
 </div>
 </div><p>
+<a class="anchor" name="20e1196e0607b2bb162063462e616bc0"></a><!-- doxytag: member="sbIMediacoreEvent::SEQUENCE_CHANGE" ref="20e1196e0607b2bb162063462e616bc0" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const unsigned long <a class="el" href="interfacesb_i_mediacore_event.html#20e1196e0607b2bb162063462e616bc0">sbIMediacoreEvent::SEQUENCE_CHANGE</a> = 0x00001505          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Sequence recalculated. 
+<p>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>This event should only be fired by the sequencer. <p>
+data is the new sequence. </dd></dl>
+
+<p>
+Definition at line <a class="el" href="sb_i_mediacore_event_8idl-source.html#l00105">105</a> of file <a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a>.
+</div>
+</div><p>
+<a class="anchor" name="f0d4f7425cb8eb777df6c260a0477049"></a><!-- doxytag: member="sbIMediacoreEvent::SEQUENCE_END" ref="f0d4f7425cb8eb777df6c260a0477049" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const unsigned long <a class="el" href="interfacesb_i_mediacore_event.html#f0d4f7425cb8eb777df6c260a0477049">sbIMediacoreEvent::SEQUENCE_END</a> = 0x00001507          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Sequence end. 
+<p>
+This event will be fired by the sequencer when it runs out of items to play from it's sequence. This event will not be fired when the sequence repeats because of repeat one or repeat all being turned on.<p>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>This event should only be fired by the sequencer. <p>
+data is null for this event. </dd></dl>
+
+<p>
+Definition at line <a class="el" href="sb_i_mediacore_event_8idl-source.html#l00117">117</a> of file <a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a>.
+</div>
+</div><p>
 <a class="anchor" name="82137adca2784b92c8da6409b3d63803"></a><!-- doxytag: member="sbIMediacoreEvent::STREAM_FOUND" ref="82137adca2784b92c8da6409b3d63803" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -397,7 +449,7 @@ Stream found.
 <dl class="note" compact><dt><b>Note:</b></dt><dd>Reserved for later use. </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_mediacore_event_8idl-source.html#l00107">107</a> of file <a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a>.
+Definition at line <a class="el" href="sb_i_mediacore_event_8idl-source.html#l00125">125</a> of file <a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="7664413f0c93a902767f2dc33bb2a5d3"></a><!-- doxytag: member="sbIMediacoreEvent::STREAM_HAS_VIDEO" ref="7664413f0c93a902767f2dc33bb2a5d3" args="" -->
@@ -417,7 +469,7 @@ Stream has video.
 <dl class="note" compact><dt><b>Note:</b></dt><dd>data is null. </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_mediacore_event_8idl-source.html#l00113">113</a> of file <a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a>.
+Definition at line <a class="el" href="sb_i_mediacore_event_8idl-source.html#l00131">131</a> of file <a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="7528331ffe2b1e77ecdd474434221de4"></a><!-- doxytag: member="sbIMediacoreEvent::BUFFERING" ref="7528331ffe2b1e77ecdd474434221de4" args="" -->
@@ -437,7 +489,7 @@ Buffering.
 <dl class="note" compact><dt><b>Note:</b></dt><dd>data is the buffering progress as a double (from 0 to 1). </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_mediacore_event_8idl-source.html#l00119">119</a> of file <a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a>.
+Definition at line <a class="el" href="sb_i_mediacore_event_8idl-source.html#l00137">137</a> of file <a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="7e5d37b50bbd0b62fccc9df48a088f7d"></a><!-- doxytag: member="sbIMediacoreEvent::BUFFER_UNDERRUN" ref="7e5d37b50bbd0b62fccc9df48a088f7d" args="" -->
@@ -458,7 +510,7 @@ Buffer underrun, operation is likely to halt.
 data is null. </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_mediacore_event_8idl-source.html#l00125">125</a> of file <a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a>.
+Definition at line <a class="el" href="sb_i_mediacore_event_8idl-source.html#l00143">143</a> of file <a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="73f7e981701789874ba2c84bef822a61"></a><!-- doxytag: member="sbIMediacoreEvent::STREAM_START" ref="73f7e981701789874ba2c84bef822a61" args="" -->
@@ -478,7 +530,7 @@ Stream has started.
 <dl class="note" compact><dt><b>Note:</b></dt><dd>data is null. </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_mediacore_event_8idl-source.html#l00131">131</a> of file <a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a>.
+Definition at line <a class="el" href="sb_i_mediacore_event_8idl-source.html#l00149">149</a> of file <a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="4e9433c55978e9cf73197f58051dbf2f"></a><!-- doxytag: member="sbIMediacoreEvent::STREAM_PAUSE" ref="4e9433c55978e9cf73197f58051dbf2f" args="" -->
@@ -498,7 +550,7 @@ Stream is now paused.
 <dl class="note" compact><dt><b>Note:</b></dt><dd>data is null. </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_mediacore_event_8idl-source.html#l00136">136</a> of file <a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a>.
+Definition at line <a class="el" href="sb_i_mediacore_event_8idl-source.html#l00154">154</a> of file <a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="1c312a9c7f8aa67257c4e1c6302c609f"></a><!-- doxytag: member="sbIMediacoreEvent::STREAM_END" ref="1c312a9c7f8aa67257c4e1c6302c609f" args="" -->
@@ -518,7 +570,7 @@ End of stream.
 <dl class="note" compact><dt><b>Note:</b></dt><dd>data is null. </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_mediacore_event_8idl-source.html#l00141">141</a> of file <a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a>.
+Definition at line <a class="el" href="sb_i_mediacore_event_8idl-source.html#l00159">159</a> of file <a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="5f193b1dd252377be152719cb078a9e6"></a><!-- doxytag: member="sbIMediacoreEvent::STREAM_STOP" ref="5f193b1dd252377be152719cb078a9e6" args="" -->
@@ -538,7 +590,28 @@ Stream was stopped.
 <dl class="note" compact><dt><b>Note:</b></dt><dd>data is null. </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_mediacore_event_8idl-source.html#l00146">146</a> of file <a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a>.
+Definition at line <a class="el" href="sb_i_mediacore_event_8idl-source.html#l00164">164</a> of file <a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a>.
+</div>
+</div><p>
+<a class="anchor" name="6242b2ae9825b764c2d55652652642ec"></a><!-- doxytag: member="sbIMediacoreEvent::VIDEO_SIZE_CHANGED" ref="6242b2ae9825b764c2d55652652642ec" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const unsigned long <a class="el" href="interfacesb_i_mediacore_event.html#6242b2ae9825b764c2d55652652642ec">sbIMediacoreEvent::VIDEO_SIZE_CHANGED</a> = 0x00005000          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Video size has changed. 
+<p>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>data is an sbIVideoSize object. </dd></dl>
+<dl class="see" compact><dt><b>See also:</b></dt><dd>sbIVideoSize </dd></dl>
+
+<p>
+Definition at line <a class="el" href="sb_i_mediacore_event_8idl-source.html#l00173">173</a> of file <a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="46cba5951aa1eda0de7469a636cebdea"></a><!-- doxytag: member="sbIMediacoreEvent::PLUGIN_MISSING" ref="46cba5951aa1eda0de7469a636cebdea" args="" -->
@@ -558,12 +631,12 @@ Plugin missing for requested format.
 <dl class="note" compact><dt><b>Note:</b></dt><dd>Reserved for later use. </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_mediacore_event_8idl-source.html#l00152">152</a> of file <a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a>.
+Definition at line <a class="el" href="sb_i_mediacore_event_8idl-source.html#l00181">181</a> of file <a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/mediacore/base/public/<a class="el" href="sb_i_mediacore_event_8idl-source.html">sbIMediacoreEvent.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:43 2009 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:48 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

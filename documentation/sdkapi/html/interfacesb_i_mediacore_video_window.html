@@ -76,21 +76,71 @@
 <h1>sbIMediacoreVideoWindow Interface Reference</h1><!-- doxytag: class="sbIMediacoreVideoWindow" --><a href="interfacesb_i_mediacore_video_window-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f67b9613991a9479fb91cd53c011198b"></a><!-- doxytag: member="sbIMediacoreVideoWindow::fullscreen" ref="f67b9613991a9479fb91cd53c011198b" args="" -->
-attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_video_window.html#f67b9613991a9479fb91cd53c011198b">fullscreen</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_video_window.html#f67b9613991a9479fb91cd53c011198b">fullscreen</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="91996a3181689378e0437aca910d0b66"></a><!-- doxytag: member="sbIMediacoreVideoWindow::videoWindow" ref="91996a3181689378e0437aca910d0b66" args="" -->
-attribute nsIDOMXULElement&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_video_window.html#91996a3181689378e0437aca910d0b66">videoWindow</a></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Video window fullscreen attribute.  <a href="#f67b9613991a9479fb91cd53c011198b"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">attribute nsIDOMXULElement&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_video_window.html#91996a3181689378e0437aca910d0b66">videoWindow</a></td></tr>
 
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">DOM XUL Element used as the video box.  <a href="#91996a3181689378e0437aca910d0b66"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_mediacore_video_window_8idl-source.html#l00033">33</a> of file <a class="el" href="sb_i_mediacore_video_window_8idl-source.html">sbIMediacoreVideoWindow.idl</a>.<hr>The documentation for this interface was generated from the following file:<ul>
+Definition at line <a class="el" href="sb_i_mediacore_video_window_8idl-source.html#l00033">33</a> of file <a class="el" href="sb_i_mediacore_video_window_8idl-source.html">sbIMediacoreVideoWindow.idl</a>.<hr><h2>Member Data Documentation</h2>
+<a class="anchor" name="f67b9613991a9479fb91cd53c011198b"></a><!-- doxytag: member="sbIMediacoreVideoWindow::fullscreen" ref="f67b9613991a9479fb91cd53c011198b" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">attribute boolean <a class="el" href="interfacesb_i_mediacore_video_window.html#f67b9613991a9479fb91cd53c011198b">sbIMediacoreVideoWindow::fullscreen</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Video window fullscreen attribute. 
+<p>
+This attribute can be used to determine if the video window is currently in fullscreen mode. It can also be used to set the video window to fullscreen mode. 
+<p>
+Definition at line <a class="el" href="sb_i_mediacore_video_window_8idl-source.html#l00042">42</a> of file <a class="el" href="sb_i_mediacore_video_window_8idl-source.html">sbIMediacoreVideoWindow.idl</a>.
+</div>
+</div><p>
+<a class="anchor" name="91996a3181689378e0437aca910d0b66"></a><!-- doxytag: member="sbIMediacoreVideoWindow::videoWindow" ref="91996a3181689378e0437aca910d0b66" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">attribute nsIDOMXULElement <a class="el" href="interfacesb_i_mediacore_video_window.html#91996a3181689378e0437aca910d0b66">sbIMediacoreVideoWindow::videoWindow</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+DOM XUL Element used as the video box. 
+<p>
+Setting this attribute will bind the video window to the box for the element. This means that the size of the actual video window will be determined by the size of the box of the element.<p>
+If you ever hide or set the visibility on this element to false, you must send a resize event to it so that the underlying video window will redraw correctly. Otherwise, the behavior of the video is undefined.<p>
+You can send this event from JavaScript using the following code:<p>
+<div class="fragment"><pre class="fragment"> var resizeEvent = document.createEvent(<span class="stringliteral">"UIEvents"</span>);
+ resizeEvent.initUIEvent(<span class="stringliteral">"resize"</span>, <span class="keyword">true</span>, <span class="keyword">true</span>, window, 1);
+
+ var mm = Components.classes[<span class="stringliteral">"@songbirdnest.com/Songbird/Mediacore/Manager;1"</span>]
+                    .getService(Components.interfaces.sbIMediacoreManager);
+ mm.video.videoWindow.hidden = <span class="keyword">false</span>;
+ mm.video.videoWindow.dispatchEvent(resizeEvent);
+</pre></div><p>
+Implementors of the video window must respond to the following DOM events: 'unload', 'hide', 'resize' 
+<p>
+Definition at line <a class="el" href="sb_i_mediacore_video_window_8idl-source.html#l00070">70</a> of file <a class="el" href="sb_i_mediacore_video_window_8idl-source.html">sbIMediacoreVideoWindow.idl</a>.
+</div>
+</div><p>
+<hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/mediacore/base/public/<a class="el" href="sb_i_mediacore_video_window_8idl-source.html">sbIMediacoreVideoWindow.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:44 2009 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:49 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

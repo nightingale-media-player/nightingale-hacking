@@ -48,7 +48,7 @@
 <codeline lineno="25"><highlight class="comment"><sp/>*/</highlight></codeline>
 <codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="42"><highlight class="normal">[scriptable,<sp/>uuid(9a5fcaf6-4441-11db-9651-00e08161165f)]</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(9a5fcaf6-4441-11db-9651-00e08161165f)]</highlight></codeline>
 <codeline lineno="43" refid="interfacesb_i_database_result" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_result" kindref="compound" tooltip="An object containing the results of a database SELECT query.">sbIDatabaseResult</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="44"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="51"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>getColumnCount();</highlight></codeline>

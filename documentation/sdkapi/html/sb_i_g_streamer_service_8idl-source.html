@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/mediacore/gstreamer/public/sbIGStreamerService.idl</h1><a href="sb_i_g_streamer_service_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -94,7 +100,7 @@
 <a name="l00026"></a>00026 
 <a name="l00031"></a>00031 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00032"></a>00032 
-<a name="l00033"></a>00033 [scriptable, uuid(880347ab-710f-426f-a57c-56e81fff3ee6)]
+<a name="l00033"></a>00033 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(880347ab-710f-426f-a57c-56e81fff3ee6)]
 <a name="l00034"></a><a class="code" href="interfacesb_i_g_streamer_inspect_handler.html">00034</a> interface <a class="code" href="interfacesb_i_g_streamer_inspect_handler.html">sbIGStreamerInspectHandler</a> : nsISupports
 <a name="l00035"></a>00035 {
 <a name="l00036"></a>00036   <span class="keywordtype">void</span> beginInspect();
@@ -127,7 +133,7 @@
 <a name="l00063"></a>00063   <span class="keywordtype">void</span> endPadTemplateInfo();
 <a name="l00064"></a>00064 };
 <a name="l00065"></a>00065 
-<a name="l00069"></a>00069 [scriptable, uuid(5be9dcac-c60a-46c9-90f5-cc9533d84179)]
+<a name="l00069"></a>00069 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(5be9dcac-c60a-46c9-90f5-cc9533d84179)]
 <a name="l00070"></a><a class="code" href="interfacesb_i_g_streamer_service.html">00070</a> interface <a class="code" href="interfacesb_i_g_streamer_service.html">sbIGStreamerService</a> : nsISupports
 <a name="l00071"></a>00071 {
 <a name="l00072"></a><a class="code" href="interfacesb_i_g_streamer_service.html#4aade25de74c1ff6bb3e486e369446a1">00072</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> PAD_DIRECTION_UNKNOWN = 0;
@@ -150,7 +156,7 @@
 <a name="l00089"></a>00089 <span class="preprocessor">#define SBGSTREAMERSERVICE_CONTRACTID "@songbirdnest.com/Songbird/Mediacore/GStreamer/Service;1"</span>
 <a name="l00090"></a>00090 <span class="preprocessor"></span><span class="preprocessor">#define SBGSTREAMERSERVICE_CLASSNAME  "GStreamerService"</span>
 <a name="l00091"></a>00091 <span class="preprocessor"></span>%}
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

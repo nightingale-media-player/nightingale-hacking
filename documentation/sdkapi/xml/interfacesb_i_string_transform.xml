@@ -147,19 +147,47 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="83" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="83" bodyend="-1"/>
       </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_string_transform_1797e46a0f97ec85585ad054145ca9ef8" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE</definition>
+        <argsstring></argsstring>
+        <name>TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE</name>
+        <initializer> 1 &lt;&lt; 13</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="84" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="84" bodyend="-1"/>
+      </memberdef>
       <memberdef kind="variable" id="interfacesb_i_string_transform_1548883bd24f51453de7afcfd16bd509a" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
         <definition>const unsigned long sbIStringTransform::TRANSFORM_IGNORE_LEADING</definition>
         <argsstring></argsstring>
         <name>TRANSFORM_IGNORE_LEADING</name>
-        <initializer> 1 &lt;&lt; 13</initializer>
+        <initializer> 1 &lt;&lt; 14</initializer>
         <briefdescription>
 <para>TRANSFORM_IGNORE_* operates on leading characters and stops as soon as a non-ignored character is found, at which point the rest of the string is copied as-is. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="90" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="90" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="91" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_string_transform_18d1594bd0b36c4e0d9f79a238482dbf4" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIStringTransform::TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS</definition>
+        <argsstring></argsstring>
+        <name>TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS</name>
+        <initializer> 1 &lt;&lt; 15</initializer>
+        <briefdescription>
+<para>TRANSFORM_IGNORE_* keeps number symbols in. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="96" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="96" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -186,7 +214,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="94"/>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="100"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_string_transform_126415c94cf8057d896d75c4cdbeec666" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -207,7 +235,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="97"/>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="103"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_string_transform_19c157820ff2206fb3c16dac5564e65c0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -224,7 +252,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="99"/>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="105"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_string_transform_16ab2a56f1e67fee4459e15b2fb3b1a60" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -246,21 +274,23 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="101"/>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="107"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="34" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="33" bodyend="102"/>
+    <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="34" bodyfile="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" bodystart="33" bodyend="108"/>
     <listofallmembers>
       <member refid="interfacesb_i_string_transform_126415c94cf8057d896d75c4cdbeec666" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>convertToCharset</name></member>
       <member refid="interfacesb_i_string_transform_19c157820ff2206fb3c16dac5564e65c0" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>guessCharset</name></member>
       <member refid="interfacesb_i_string_transform_1250033da92893ce36fc430a8f115d963" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>normalizeString</name></member>
       <member refid="interfacesb_i_string_transform_16ab2a56f1e67fee4459e15b2fb3b1a60" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>removeArticles</name></member>
+      <member refid="interfacesb_i_string_transform_18d1594bd0b36c4e0d9f79a238482dbf4" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS</name></member>
       <member refid="interfacesb_i_string_transform_1548883bd24f51453de7afcfd16bd509a" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>TRANSFORM_IGNORE_LEADING</name></member>
       <member refid="interfacesb_i_string_transform_1f26dc80fe40ff6f0f7a671f50054968b" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>TRANSFORM_IGNORE_NONALPHANUM</name></member>
+      <member refid="interfacesb_i_string_transform_1797e46a0f97ec85585ad054145ca9ef8" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE</name></member>
       <member refid="interfacesb_i_string_transform_172da2cb3d96fd3a9e8ef511c93db07b8" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>TRANSFORM_IGNORE_NONSPACE</name></member>
       <member refid="interfacesb_i_string_transform_1ac2bb070671e1b513205ce7973335c28" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>TRANSFORM_IGNORE_SYMBOLS</name></member>
       <member refid="interfacesb_i_string_transform_109a96b7b8d16d6a2ebc9fc9484580be1" prot="public" virt="non-virtual"><scope>sbIStringTransform</scope><name>TRANSFORM_LOWERCASE</name></member>

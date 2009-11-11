@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="108" bodyfile="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" bodystart="108" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="113" bodyfile="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" bodystart="113" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_media_page_info_1f7b96bfdc57fa2805fc078a17a3d4e79" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="113" bodyfile="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" bodystart="113" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="118" bodyfile="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" bodystart="118" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_media_page_info_1831f7dc4675aeaacd59ce84081568a6c" prot="public" static="no" mutable="no">
         <type>readonly attribute <ref refid="interfacesb_i_media_list_match" kindref="compound">sbIMediaListMatch</ref></type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="118" bodyfile="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" bodystart="118" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="123" bodyfile="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" bodystart="123" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -48,19 +48,19 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="766">
+      <node id="821">
         <label>sbIMediaPageInfo</label>
         <link refid="interfacesb_i_media_page_info"/>
-        <childnode refid="767" relation="usage">
+        <childnode refid="822" relation="usage">
           <edgelabel>matchInterface</edgelabel>
         </childnode>
       </node>
-      <node id="767">
+      <node id="822">
         <label>sbIMediaListMatch</label>
         <link refid="interfacesb_i_media_list_match"/>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="104" bodyfile="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" bodystart="103" bodyend="119"/>
+    <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="109" bodyfile="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" bodystart="108" bodyend="124"/>
     <listofallmembers>
       <member refid="interfacesb_i_media_page_info_149a7644d4247b38e7deacfba28683833" prot="public" virt="non-virtual"><scope>sbIMediaPageInfo</scope><name>contentTitle</name></member>
       <member refid="interfacesb_i_media_page_info_1f7b96bfdc57fa2805fc078a17a3d4e79" prot="public" virt="non-virtual"><scope>sbIMediaPageInfo</scope><name>contentUrl</name></member>

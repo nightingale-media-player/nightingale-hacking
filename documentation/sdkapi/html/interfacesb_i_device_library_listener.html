@@ -96,6 +96,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_library_listener.html#39a00080f2bd4a7bbb44eba3eb7e7324">onAfterItemRemoved</a> (in <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a> aMediaList, in <a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a> aMediaItem, in unsigned long aIndex)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called after a media item has been removed from a list, through remove, removeAll or removeByIndex.  <a href="#39a00080f2bd4a7bbb44eba3eb7e7324"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_library_listener.html#20aa6d3dbb07a03aca8082b5d9895621">onBeforeListCleared</a> (in <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a> aMediaList)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called before a media list is cleared.  <a href="#20aa6d3dbb07a03aca8082b5d9895621"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_library_listener.html#af196555ec5f6de6d2e48b506efadbf0">onListCleared</a> (in <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a> aMediaList)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Called when a media list is cleared.  <a href="#af196555ec5f6de6d2e48b506efadbf0"></a><br></td></tr>
@@ -325,6 +328,29 @@ Called after a media item has been removed from a list, through remove, removeAl
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>True if you do not want any further onItemRemoved for the current batch. If there is no current batch, the return value is ignored. </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="20aa6d3dbb07a03aca8082b5d9895621"></a><!-- doxytag: member="sbIDeviceLibraryListener::onBeforeListCleared" ref="20aa6d3dbb07a03aca8082b5d9895621" args="(in sbIMediaList aMediaList)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIDeviceLibraryListener::onBeforeListCleared           </td>
+          <td>(</td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a>&nbsp;</td>
+          <td class="paramname"> <em>aMediaList</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Called before a media list is cleared. 
+<p>
+<dl class="see" compact><dt><b>See also:</b></dt><dd>sbIMediaList::Clear </dd></dl>
 
 </div>
 </div><p>
@@ -646,7 +672,7 @@ Called before the device is cleared.
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/devices/base/public/<a class="el" href="sb_i_device_library_8idl-source.html">sbIDeviceLibrary.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:42 2009 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:47 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

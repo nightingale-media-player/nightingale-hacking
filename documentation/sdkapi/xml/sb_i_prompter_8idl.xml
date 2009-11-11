@@ -5,18 +5,18 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes local="yes">nsIPromptService.idl</includes>
     <incdepgraph>
-      <node id="587">
+      <node id="735">
         <label>components/moz/prompter/public/sbIPrompter.idl</label>
         <link refid="sbIPrompter.idl"/>
-        <childnode refid="588" relation="include">
+        <childnode refid="736" relation="include">
         </childnode>
-        <childnode refid="589" relation="include">
+        <childnode refid="737" relation="include">
         </childnode>
       </node>
-      <node id="589">
+      <node id="737">
         <label>nsIPromptService.idl</label>
       </node>
-      <node id="588">
+      <node id="736">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -31,7 +31,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/moz/prompter/public/sbIPrompter.idl" line="93"/>
+        <location file="c:/builds/songbird/trunk/components/moz/prompter/public/sbIPrompter.idl" line="121"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -70,23 +70,29 @@
 <codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIPromptService.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight></codeline>
-<codeline lineno="58"><highlight class="normal">[scriptable,<sp/>uuid(b3369b4b-83d6-4dca-bab8-2ac0c706f7c0)]</highlight></codeline>
-<codeline lineno="59" refid="interfacesb_i_prompter" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_prompter" kindref="compound">sbIPrompter</ref><sp/>:<sp/>nsIPromptService</highlight></codeline>
-<codeline lineno="60"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="64" refid="interfacesb_i_prompter_1b6816f8538f6a57468f0f6331dd6a560" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>parentWindowType;</highlight></codeline>
-<codeline lineno="65"><highlight class="normal"></highlight></codeline>
-<codeline lineno="70" refid="interfacesb_i_prompter_1d3f08ed089133b07b4fbfd9f13cb5889" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>waitForWindow;</highlight></codeline>
-<codeline lineno="71"><highlight class="normal"></highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/>nsIDOMWindow<sp/>openDialog(in<sp/>nsIDOMWindow<sp/>aParent,</highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>DOMString<sp/><sp/><sp/><sp/>aUrl,</highlight></codeline>
-<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>DOMString<sp/><sp/><sp/><sp/>aName,</highlight></codeline>
-<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>DOMString<sp/><sp/><sp/><sp/>aOptions,</highlight></codeline>
-<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsISupports<sp/><sp/>aExtraArgument);</highlight></codeline>
-<codeline lineno="90"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="91"><highlight class="normal"></highlight></codeline>
-<codeline lineno="92"><highlight class="normal">%{C++</highlight></codeline>
-<codeline lineno="93"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SONGBIRD_PROMPTER_CONTRACTID<sp/>&quot;@songbirdnest.com/Songbird/Prompter;1&quot;</highlight></codeline>
-<codeline lineno="94"><highlight class="preprocessor"></highlight><highlight class="normal">%}C++</highlight></codeline>
+<codeline lineno="63"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(ec7e9f72-3386-421b-99c6-5f149fd79950)]</highlight></codeline>
+<codeline lineno="64" refid="interfacesb_i_prompter" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_prompter" kindref="compound">sbIPrompter</ref><sp/>:<sp/>nsIPromptService</highlight></codeline>
+<codeline lineno="65"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="69" refid="interfacesb_i_prompter_1b6816f8538f6a57468f0f6331dd6a560" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>parentWindowType;</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="interfacesb_i_prompter_1d3f08ed089133b07b4fbfd9f13cb5889" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>waitForWindow;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/>nsIDOMWindow<sp/>openDialog(in<sp/>nsIDOMWindow<sp/>aParent,</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>DOMString<sp/><sp/><sp/><sp/>aUrl,</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>DOMString<sp/><sp/><sp/><sp/>aName,</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>DOMString<sp/><sp/><sp/><sp/>aOptions,</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsISupports<sp/><sp/>aExtraArgument);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/>nsIDOMWindow<sp/>openWindow(in<sp/>nsIDOMWindow<sp/>aParent,</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>DOMString<sp/><sp/><sp/><sp/>aUrl,</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>DOMString<sp/><sp/><sp/><sp/>aName,</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>DOMString<sp/><sp/><sp/><sp/>aOptions,</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsISupports<sp/><sp/>aExtraArgument);</highlight></codeline>
+<codeline lineno="118"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal">%{C++</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SONGBIRD_PROMPTER_CONTRACTID<sp/>&quot;@songbirdnest.com/Songbird/Prompter;1&quot;</highlight></codeline>
+<codeline lineno="122"><highlight class="preprocessor"></highlight><highlight class="normal">%}C++</highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/moz/prompter/public/sbIPrompter.idl"/>
   </compounddef>

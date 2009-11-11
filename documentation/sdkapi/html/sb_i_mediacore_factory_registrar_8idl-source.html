@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/mediacore/base/public/sbIMediacoreFactoryRegistrar.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment"> //</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -99,7 +105,7 @@
 <a name="l00031"></a>00031 interface <a class="code" href="interfacesb_i_mediacore.html">sbIMediacore</a>;
 <a name="l00032"></a>00032 interface <a class="code" href="interfacesb_i_mediacore_factory.html">sbIMediacoreFactory</a>;
 <a name="l00033"></a>00033 
-<a name="l00034"></a>00034 [scriptable, uuid(da09f47f-8307-4af4-8b8d-9e3ae81d6aae)]
+<a name="l00034"></a>00034 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(da09f47f-8307-4af4-8b8d-9e3ae81d6aae)]
 <a name="l00035"></a><a class="code" href="interfacesb_i_mediacore_factory_registrar.html">00035</a> interface <a class="code" href="interfacesb_i_mediacore_factory_registrar.html">sbIMediacoreFactoryRegistrar</a> : nsISupports
 <a name="l00036"></a>00036 {
 <a name="l00037"></a><a class="code" href="interfacesb_i_mediacore_factory_registrar.html#da6747b1781966c082188285cddbe51b">00037</a>   readonly attribute nsIArray factories;
@@ -116,7 +122,7 @@
 <a name="l00048"></a>00048   <span class="keywordtype">void</span> registerFactory(in <a class="code" href="interfacesb_i_mediacore_factory.html">sbIMediacoreFactory</a> aFactory);
 <a name="l00049"></a>00049   <span class="keywordtype">void</span> unregisterFactory(in <a class="code" href="interfacesb_i_mediacore_factory.html">sbIMediacoreFactory</a> aFactory);
 <a name="l00050"></a>00050 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

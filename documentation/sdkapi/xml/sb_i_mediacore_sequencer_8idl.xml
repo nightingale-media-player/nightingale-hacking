@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreSequencer.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="459">
+      <node id="514">
         <label>components/mediacore/base/public/sbIMediacoreSequencer.idl</label>
         <link refid="sbIMediacoreSequencer.idl"/>
-        <childnode refid="460" relation="include">
+        <childnode refid="515" relation="include">
         </childnode>
       </node>
-      <node id="460">
+      <node id="515">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -57,7 +57,7 @@
 <codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
-<codeline lineno="38"><highlight class="normal">[scriptable,<sp/>uuid(5dd7abe3-e872-4f69-8d9d-125806dbd580)]</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(5dd7abe3-e872-4f69-8d9d-125806dbd580)]</highlight></codeline>
 <codeline lineno="39" refid="interfacesb_i_mediacore_sequencer" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_sequencer" kindref="compound">sbIMediacoreSequencer</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="40"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="41" refid="interfacesb_i_mediacore_sequencer_1ee6f8e965e48cd93230265df13cb457b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>MODE_FORWARD<sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>

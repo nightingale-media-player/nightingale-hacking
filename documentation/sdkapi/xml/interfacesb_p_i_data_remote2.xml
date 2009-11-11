@@ -102,26 +102,26 @@
 <para>This entire system should be scrapped, per bug 8703.</para><para><simplesect kind="see"><para><ulink url="https://bugzilla.mozilla.org/show_bug.cgi?id=304048">https://bugzilla.mozilla.org/show_bug.cgi?id=304048</ulink> <ulink url="http://bugzilla.songbirdnest.com/show_bug.cgi?id=10806">http://bugzilla.songbirdnest.com/show_bug.cgi?id=10806</ulink> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="1182">
+      <node id="1305">
         <label>sbIDataRemote</label>
         <link refid="interfacesb_i_data_remote"/>
       </node>
-      <node id="1181">
+      <node id="1304">
         <label>sbPIDataRemote2</label>
         <link refid="interfacesb_p_i_data_remote2"/>
-        <childnode refid="1182" relation="public-inheritance">
+        <childnode refid="1305" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="1184">
+      <node id="1307">
         <label>sbIDataRemote</label>
         <link refid="interfacesb_i_data_remote"/>
       </node>
-      <node id="1183">
+      <node id="1306">
         <label>sbPIDataRemote2</label>
         <link refid="interfacesb_p_i_data_remote2"/>
-        <childnode refid="1184" relation="public-inheritance">
+        <childnode refid="1307" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

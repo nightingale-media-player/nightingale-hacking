@@ -4,13 +4,13 @@
     <compoundname>sbIMediaListFactory.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="335">
+      <node id="390">
         <label>nsISupports.idl</label>
       </node>
-      <node id="334">
+      <node id="389">
         <label>components/library/base/public/sbIMediaListFactory.idl</label>
         <link refid="sbIMediaListFactory.idl"/>
-        <childnode refid="335" relation="include">
+        <childnode refid="390" relation="include">
         </childnode>
       </node>
     </incdepgraph>
@@ -52,7 +52,7 @@
 <codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
-<codeline lineno="46"><highlight class="normal">[scriptable,<sp/>uuid(c3e4bb1e-1051-4027-913b-f57c31039b97)]</highlight></codeline>
+<codeline lineno="46"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(c3e4bb1e-1051-4027-913b-f57c31039b97)]</highlight></codeline>
 <codeline lineno="47" refid="interfacesb_i_media_list_factory" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_factory" kindref="compound" tooltip="Factory for new media list instances.">sbIMediaListFactory</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="48"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="53" refid="interfacesb_i_media_list_factory_162954d41e48bc47cd362da6e0813dc52" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>type;</highlight></codeline>

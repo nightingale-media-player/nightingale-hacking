@@ -4,13 +4,13 @@
     <compoundname>sbILocalDatabaseLibrary.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="376">
+      <node id="428">
         <label>components/library/localdatabase/public/sbILocalDatabaseLibrary.idl</label>
         <link refid="sbILocalDatabaseLibrary.idl"/>
-        <childnode refid="377" relation="include">
+        <childnode refid="429" relation="include">
         </childnode>
       </node>
-      <node id="377">
+      <node id="429">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -65,7 +65,7 @@
 <codeline lineno="48"><highlight class="normal"></highlight></codeline>
 <codeline lineno="49"><highlight class="normal">[ptr]<sp/>native<sp/>sbLocalDatabaseLibrary(sbLocalDatabaseLibrary);</highlight></codeline>
 <codeline lineno="50"><highlight class="normal"></highlight></codeline>
-<codeline lineno="55"><highlight class="normal">[scriptable,<sp/>uuid(c73c2057-e0bf-4caa-8f48-9b4582909b51)]</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(c73c2057-e0bf-4caa-8f48-9b4582909b51)]</highlight></codeline>
 <codeline lineno="56" refid="interfacesb_i_local_database_library" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_library" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseLibrary</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="57"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="58" refid="interfacesb_i_local_database_library_127b7e647416d05c9c7cedd830ac78836" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>databaseGuid;</highlight></codeline>

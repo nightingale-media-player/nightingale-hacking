@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/job/public/sbIJobProgress.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -99,7 +105,7 @@
 <a name="l00031"></a>00031 
 <a name="l00032"></a>00032 
 <a name="l00033"></a>00033 
-<a name="l00044"></a>00044 [scriptable, uuid(72287c30-1173-11dd-bd0b-0800200c9b66)]
+<a name="l00044"></a>00044 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(72287c30-1173-11dd-bd0b-0800200c9b66)]
 <a name="l00045"></a><a class="code" href="interfacesb_i_job_progress.html">00045</a> interface <a class="code" href="interfacesb_i_job_progress.html" title="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</a> : nsISupports
 <a name="l00046"></a>00046 {
 <a name="l00050"></a><a class="code" href="interfacesb_i_job_progress.html#b4cebecf25f9537638b93f613a08a399">00050</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> STATUS_FAILED = 0x00;
@@ -133,13 +139,22 @@
 <a name="l00117"></a>00117 
 <a name="l00118"></a>00118 
 <a name="l00119"></a>00119 
-<a name="l00124"></a>00124 [scriptable, function, uuid(75302170-1174-11dd-bd0b-0200200c9a66)]
+<a name="l00124"></a>00124 [scriptable, function, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(75302170-1174-11dd-bd0b-0200200c9a66)]
 <a name="l00125"></a><a class="code" href="interfacesb_i_job_progress_listener.html">00125</a> interface <a class="code" href="interfacesb_i_job_progress_listener.html" title="Implemented to receive notifications from sbIJobProgress interfaces.">sbIJobProgressListener</a> : nsISupports
 <a name="l00126"></a>00126 {
 <a name="l00132"></a>00132   <span class="keywordtype">void</span> onJobProgress(in <a class="code" href="interfacesb_i_job_progress.html" title="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</a> aJobProgress);
 <a name="l00133"></a>00133 };
 <a name="l00134"></a>00134 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+<a name="l00141"></a>00141 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(2693a1e5-7e07-4730-bf3b-68e76dd95f90)]
+<a name="l00142"></a><a class="code" href="interfacesb_i_job_progress_time.html">00142</a> interface <a class="code" href="interfacesb_i_job_progress_time.html" title="Generic interface extending sbIJobProgress that can track expected time, etc in addition...">sbIJobProgressTime</a> : <a class="code" href="interfacesb_i_job_progress.html" title="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</a>
+<a name="l00143"></a>00143 {
+<a name="l00147"></a><a class="code" href="interfacesb_i_job_progress_time.html#14a1ee882db2335a256a1d873c752315">00147</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> elapsedTime;
+<a name="l00148"></a>00148 
+<a name="l00153"></a><a class="code" href="interfacesb_i_job_progress_time.html#d83eb590a7ff6810687ac450f1ebdb80">00153</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> remainingTime;
+<a name="l00154"></a>00154 
+<a name="l00155"></a>00155 };
+<a name="l00156"></a>00156 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

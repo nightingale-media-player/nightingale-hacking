@@ -4,19 +4,20 @@
     <compoundname>sbIPropertyBuilder.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="627">
+      <node id="783">
         <label>components/property/public/sbIPropertyBuilder.idl</label>
         <link refid="sbIPropertyBuilder.idl"/>
-        <childnode refid="628" relation="include">
+        <childnode refid="784" relation="include">
         </childnode>
       </node>
-      <node id="628">
+      <node id="784">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_property_builder" prot="public">sbIPropertyBuilder</innerclass>
     <innerclass refid="interfacesb_i_simple_button_property_builder" prot="public">sbISimpleButtonPropertyBuilder</innerclass>
     <innerclass refid="interfacesb_i_download_button_property_builder" prot="public">sbIDownloadButtonPropertyBuilder</innerclass>
+    <innerclass refid="interfacesb_i_status_property_builder" prot="public">sbIStatusPropertyBuilder</innerclass>
     <innerclass refid="interfacesb_i_image_property_builder" prot="public">sbIImagePropertyBuilder</innerclass>
     <innerclass refid="interfacesb_i_rating_property_builder" prot="public">sbIRatingPropertyBuilder</innerclass>
     <briefdescription>
@@ -57,7 +58,7 @@
 <codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_info" kindref="compound" tooltip="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal">interface<sp/>nsIStringBundle;</highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(9b1026c6-3896-49c6-a72f-4f4a2b21a6be)]</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(9b1026c6-3896-49c6-a72f-4f4a2b21a6be)]</highlight></codeline>
 <codeline lineno="44" refid="interfacesb_i_property_builder" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_builder" kindref="compound">sbIPropertyBuilder</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="46" refid="interfacesb_i_property_builder_1bdc8752e28f39e553eca2d130126b112" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>propertyID;</highlight></codeline>
@@ -77,7 +78,7 @@
 <codeline lineno="60"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_property_info" kindref="compound" tooltip="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</ref><sp/></highlight><highlight class="keyword">get</highlight><highlight class="normal">();</highlight></codeline>
 <codeline lineno="61"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="62"><highlight class="normal"></highlight></codeline>
-<codeline lineno="67"><highlight class="normal">[scriptable,<sp/>uuid(bd71935f-697f-424d-9721-6477f4e34556)]</highlight></codeline>
+<codeline lineno="67"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(bd71935f-697f-424d-9721-6477f4e34556)]</highlight></codeline>
 <codeline lineno="68" refid="interfacesb_i_simple_button_property_builder" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_simple_button_property_builder" kindref="compound">sbISimpleButtonPropertyBuilder</ref><sp/>:<sp/><ref refid="interfacesb_i_property_builder" kindref="compound">sbIPropertyBuilder</ref></highlight></codeline>
 <codeline lineno="69"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="70" refid="interfacesb_i_simple_button_property_builder_164f1d4142a5d1ce718903f3febcb978c" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>label;</highlight></codeline>
@@ -85,7 +86,7 @@
 <codeline lineno="72" refid="interfacesb_i_simple_button_property_builder_111df9b29a667e52891a2fb76f7417222" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>labelKey;</highlight></codeline>
 <codeline lineno="73"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="74"><highlight class="normal"></highlight></codeline>
-<codeline lineno="79"><highlight class="normal">[scriptable,<sp/>uuid(9ab2e249-e8ef-477b-88a4-790c08a47a54)]</highlight></codeline>
+<codeline lineno="79"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(9ab2e249-e8ef-477b-88a4-790c08a47a54)]</highlight></codeline>
 <codeline lineno="80" refid="interfacesb_i_download_button_property_builder" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_download_button_property_builder" kindref="compound">sbIDownloadButtonPropertyBuilder</ref><sp/>:<sp/><ref refid="interfacesb_i_property_builder" kindref="compound">sbIPropertyBuilder</ref></highlight></codeline>
 <codeline lineno="81"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="82" refid="interfacesb_i_download_button_property_builder_1ae1fba82bad46f7ddcc9c9a7ca770062" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>label;</highlight></codeline>
@@ -97,16 +98,33 @@
 <codeline lineno="88" refid="interfacesb_i_download_button_property_builder_16478b04b50f99fce49c8b220da687ba2" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>retryLabelKey;</highlight></codeline>
 <codeline lineno="89"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="90"><highlight class="normal"></highlight></codeline>
-<codeline lineno="95"><highlight class="normal">[scriptable,<sp/>uuid(7b68af5c-3443-4c5b-9c65-44efe3781510)]</highlight></codeline>
-<codeline lineno="96" refid="interfacesb_i_image_property_builder" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_image_property_builder" kindref="compound">sbIImagePropertyBuilder</ref><sp/>:<sp/><ref refid="interfacesb_i_property_builder" kindref="compound">sbIPropertyBuilder</ref></highlight></codeline>
-<codeline lineno="97"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="98"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="99"><highlight class="normal"></highlight></codeline>
-<codeline lineno="104"><highlight class="normal">[scriptable,<sp/>uuid(10f69629-3e74-448a-b627-7ea734644715)]</highlight></codeline>
-<codeline lineno="105" refid="interfacesb_i_rating_property_builder" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_rating_property_builder" kindref="compound">sbIRatingPropertyBuilder</ref><sp/>:<sp/><ref refid="interfacesb_i_property_builder" kindref="compound">sbIPropertyBuilder</ref></highlight></codeline>
-<codeline lineno="106"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="107"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(6c5495d2-5b26-45f0-9117-b9f775502bae)]</highlight></codeline>
+<codeline lineno="98" refid="interfacesb_i_status_property_builder" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_status_property_builder" kindref="compound">sbIStatusPropertyBuilder</ref><sp/>:<sp/><ref refid="interfacesb_i_property_builder" kindref="compound">sbIPropertyBuilder</ref></highlight></codeline>
+<codeline lineno="99"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="100" refid="interfacesb_i_status_property_builder_1ca4f92099169b4e66107d5ecc2c5c3f0" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>label;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="102" refid="interfacesb_i_status_property_builder_1ca2516a670afdaf4996cc114a93714f3" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>completedLabel;</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="104" refid="interfacesb_i_status_property_builder_1bbe7832a092829db6e6aa2dae98a56a8" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>failedLabel;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"></highlight></codeline>
+<codeline lineno="106" refid="interfacesb_i_status_property_builder_11271e45e34b8b67bf864bf0d861cc33b" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>labelKey;</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108" refid="interfacesb_i_status_property_builder_1a56b2f6133623d340bf671d8811e01f3" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>completedLabelKey;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="110" refid="interfacesb_i_status_property_builder_15fb008a219ed3a5bfc3a85db08cff4fe" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>failedLabelKey;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(7b68af5c-3443-4c5b-9c65-44efe3781510)]</highlight></codeline>
+<codeline lineno="118" refid="interfacesb_i_image_property_builder" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_image_property_builder" kindref="compound">sbIImagePropertyBuilder</ref><sp/>:<sp/><ref refid="interfacesb_i_property_builder" kindref="compound">sbIPropertyBuilder</ref></highlight></codeline>
+<codeline lineno="119"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="120"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(10f69629-3e74-448a-b627-7ea734644715)]</highlight></codeline>
+<codeline lineno="127" refid="interfacesb_i_rating_property_builder" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_rating_property_builder" kindref="compound">sbIRatingPropertyBuilder</ref><sp/>:<sp/><ref refid="interfacesb_i_property_builder" kindref="compound">sbIPropertyBuilder</ref></highlight></codeline>
+<codeline lineno="128"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="129"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyBuilder.idl"/>
   </compounddef>

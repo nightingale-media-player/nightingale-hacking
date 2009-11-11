@@ -67,7 +67,7 @@
 <codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIObserver.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_data_remote_8idl" kindref="compound" tooltip="Definition of the sbIDataRemote Interface.">sbIDataRemote.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
-<codeline lineno="46"><highlight class="normal">[scriptable,<sp/>uuid(5a263930-e9c0-11dd-ba2f-0800200c9a66)]</highlight></codeline>
+<codeline lineno="46"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(5a263930-e9c0-11dd-ba2f-0800200c9a66)]</highlight></codeline>
 <codeline lineno="47" refid="interfacesb_p_i_data_remote2" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_p_i_data_remote2" kindref="compound" tooltip="An additional interface for accessing dataremote values. Adds the ability to access...">sbPIDataRemote2</ref><sp/>:<sp/><ref refid="interfacesb_i_data_remote" kindref="compound" tooltip="An interface for accessing, and binding to, stored data.">sbIDataRemote</ref></highlight></codeline>
 <codeline lineno="48"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="49"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setAsString(in<sp/>AString<sp/>aValue);</highlight></codeline>

@@ -83,6 +83,12 @@
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_job_progress.html">sbIJobProgress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_property_cache.html#4138dccf04bc49deb3b951f830a154af">invalidateSortData</a> ()</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_property_cache.html#4e83226e9ea5280cde722e5ed287b3ec">addDependentGUIDArray</a> (in sbLocalDatabaseGUIDArrayPtr aGUIDArray)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Add a dependent GUID Array.  <a href="#4e83226e9ea5280cde722e5ed287b3ec"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_property_cache.html#d7012fe7c8329c7d343cdd65883773a8">removeDependentGUIDArray</a> (in sbLocalDatabaseGUIDArrayPtr aGUIDArray)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Remove a dependent GUID Array.  <a href="#d7012fe7c8329c7d343cdd65883773a8"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5a6b9b8aa317b65ff06098b795fbcd81"></a><!-- doxytag: member="sbILocalDatabasePropertyCache::writePending" ref="5a6b9b8aa317b65ff06098b795fbcd81" args="" -->
 readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_property_cache.html#5a6b9b8aa317b65ff06098b795fbcd81">writePending</a></td></tr>
@@ -93,7 +99,7 @@ readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_local_database_property_cache_8idl-source.html#l00042">42</a> of file <a class="el" href="sb_i_local_database_property_cache_8idl-source.html">sbILocalDatabasePropertyCache.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_local_database_property_cache_8idl-source.html#l00048">48</a> of file <a class="el" href="sb_i_local_database_property_cache_8idl-source.html">sbILocalDatabasePropertyCache.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="4138dccf04bc49deb3b951f830a154af"></a><!-- doxytag: member="sbILocalDatabasePropertyCache::invalidateSortData" ref="4138dccf04bc49deb3b951f830a154af" args="()" -->
 <div class="memitem">
 <div class="memproto">
@@ -115,9 +121,55 @@ See Bug 12677 – "[sorting] cached sortable values should auto-invalidate when 
 Example: var mainLibrary = Cc["@songbirdnest.com/Songbird/library/Manager;1"] .getService(Ci.sbILibraryManager).mainLibrary; var cache = mainLibrary.QueryInterface(Ci.sbILocalDatabaseLibrary) .propertyCache; Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm"); SBJobUtils.showProgressDialog(cache.invalidateSortData(), null, 0); 
 </div>
 </div><p>
+<a class="anchor" name="4e83226e9ea5280cde722e5ed287b3ec"></a><!-- doxytag: member="sbILocalDatabasePropertyCache::addDependentGUIDArray" ref="4e83226e9ea5280cde722e5ed287b3ec" args="(in sbLocalDatabaseGUIDArrayPtr aGUIDArray)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbILocalDatabasePropertyCache::addDependentGUIDArray           </td>
+          <td>(</td>
+          <td class="paramtype">in sbLocalDatabaseGUIDArrayPtr&nbsp;</td>
+          <td class="paramname"> <em>aGUIDArray</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Add a dependent GUID Array. 
+<p>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>[USER CODE SHOULD NEVER USE THIS METHOD] </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="d7012fe7c8329c7d343cdd65883773a8"></a><!-- doxytag: member="sbILocalDatabasePropertyCache::removeDependentGUIDArray" ref="d7012fe7c8329c7d343cdd65883773a8" args="(in sbLocalDatabaseGUIDArrayPtr aGUIDArray)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbILocalDatabasePropertyCache::removeDependentGUIDArray           </td>
+          <td>(</td>
+          <td class="paramtype">in sbLocalDatabaseGUIDArrayPtr&nbsp;</td>
+          <td class="paramname"> <em>aGUIDArray</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Remove a dependent GUID Array. 
+<p>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>[USER CODE SHOULD NEVER USE THIS METHOD] </dd></dl>
+
+</div>
+</div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/library/localdatabase/public/<a class="el" href="sb_i_local_database_property_cache_8idl-source.html">sbILocalDatabasePropertyCache.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:43 2009 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:48 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

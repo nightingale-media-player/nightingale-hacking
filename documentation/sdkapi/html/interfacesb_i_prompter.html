@@ -80,6 +80,8 @@
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">nsIDOMWindow&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_prompter.html#7ab68cf57dbb49968e75657a2e37474d">openDialog</a> (in nsIDOMWindow aParent, in DOMString aUrl, in DOMString aName, in DOMString aOptions, in nsISupports aExtraArgument)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">nsIDOMWindow&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_prompter.html#d1b065b77ded8e6cd77cb39974b5b800">openWindow</a> (in nsIDOMWindow aParent, in DOMString aUrl, in DOMString aName, in DOMString aOptions, in nsISupports aExtraArgument)</td></tr>
+
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_prompter.html#b6816f8538f6a57468f0f6331dd6a560">parentWindowType</a></td></tr>
 
@@ -87,12 +89,12 @@
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-The <a class="el" href="interfacesb_i_prompter.html">sbIPrompter</a> interface provides an nsIPromptService to environments without a default window (e.g., XPCOM components). For all methods that take a parent window as an argument, the parent may be set to null. This interface allows a parent window type to be set to be used as the parent window in these cases. In addition, the <a class="el" href="interfacesb_i_prompter.html">sbIPrompter</a> interface can be set to wait for a parent window to be available before calling the nsIPromptService methods. If the parent window type is not available and wait for window is false, dialogs are opened with the currently active window as the parent. A window is not considered to be available until after its overlays have loaded. If a method is called from a non-main thread, and wait for window is set, and a window is not available, the method will wait for a window to become available. If a method is called from the main thread, and wait for window is set, and a window is not available, the method will return NS_ERROR_NOT_AVAILABLE. If any error occurs, the method will return NS_ERROR_FAILURE.<p>
+The <a class="el" href="interfacesb_i_prompter.html">sbIPrompter</a> interface provides an nsIPromptService to environments without a default window (e.g., XPCOM components). For all methods that take a parent window as an argument, the parent may be set to null. If a parent window is set to null, this interface will use a window of the type specified by parentWindowType. If no parent window type is specified, this interface uses a default type (e.g., "Songbird:Main"). If a window of the specified type is not available, this interface finds an appropriate default window to use. This interface allows a parent window type to be set to be used as the parent window in these cases. In addition, the <a class="el" href="interfacesb_i_prompter.html">sbIPrompter</a> interface can be set to wait for a parent window to be available before calling the nsIPromptService methods. If the parent window type is not available and wait for window is false, dialogs are opened with the currently active window as the parent. A window is not considered to be available until after its overlays have loaded. If a method is called from a non-main thread, and wait for window is set, and a window is not available, the method will wait for a window to become available. If a method is called from the main thread, and wait for window is set, and a window is not available, the method will return NS_ERROR_NOT_AVAILABLE. If any error occurs, the method will return NS_ERROR_FAILURE.<p>
 "@songbirdnest.com/Songbird/Prompter;1" Use create instance with this component. No default parent window type is set and the default waitForWindow is false. 
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_prompter_8idl-source.html#l00059">59</a> of file <a class="el" href="sb_i_prompter_8idl-source.html">sbIPrompter.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_prompter_8idl-source.html#l00064">64</a> of file <a class="el" href="sb_i_prompter_8idl-source.html">sbIPrompter.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="7ab68cf57dbb49968e75657a2e37474d"></a><!-- doxytag: member="sbIPrompter::openDialog" ref="7ab68cf57dbb49968e75657a2e37474d" args="(in nsIDOMWindow aParent, in DOMString aUrl, in DOMString aName, in DOMString aOptions, in nsISupports aExtraArgument)" -->
 <div class="memitem">
 <div class="memproto">
@@ -137,7 +139,66 @@ Definition at line <a class="el" href="sb_i_prompter_8idl-source.html#l00059">59
 <div class="memdoc">
 
 <p>
-Open a dialog window with with the chrome URL specified by aUrl and parent specified by aParent. The window name is specified by aName and the window options are specified by aOptions. Additional window arguments may be provided in aExtraArguments.<p>
+Open a dialog window with the chrome URL specified by aUrl and parent specified by aParent. The window name is specified by aName and the window options are specified by aOptions. Additional window arguments may be provided in aExtraArguments.<p>
+Default window options for openDialog are the following: "centerscreen,chrome,modal,titlebar".<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aParent</em>&nbsp;</td><td>Parent window. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aUrl</em>&nbsp;</td><td>URL of window chrome. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aName</em>&nbsp;</td><td>Window name. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aOptions</em>&nbsp;</td><td>Window options. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aExtraArguments</em>&nbsp;</td><td>Extra window arguments. </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="d1b065b77ded8e6cd77cb39974b5b800"></a><!-- doxytag: member="sbIPrompter::openWindow" ref="d1b065b77ded8e6cd77cb39974b5b800" args="(in nsIDOMWindow aParent, in DOMString aUrl, in DOMString aName, in DOMString aOptions, in nsISupports aExtraArgument)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">nsIDOMWindow sbIPrompter::openWindow           </td>
+          <td>(</td>
+          <td class="paramtype">in nsIDOMWindow&nbsp;</td>
+          <td class="paramname"> <em>aParent</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in DOMString&nbsp;</td>
+          <td class="paramname"> <em>aUrl</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in DOMString&nbsp;</td>
+          <td class="paramname"> <em>aName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in DOMString&nbsp;</td>
+          <td class="paramname"> <em>aOptions</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in nsISupports&nbsp;</td>
+          <td class="paramname"> <em>aExtraArgument</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Open a window with the chrome URL specified by aUrl and parent specified by aParent. The window name is specified by aName and the window options are specified by aOptions. Additional window arguments may be provided in aExtraArguments.<p>
+There are no default options for openWindow.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aParent</em>&nbsp;</td><td>Parent window. </td></tr>
@@ -165,7 +226,7 @@ Open a dialog window with with the chrome URL specified by aUrl and parent speci
 <p>
 The parent window type. 
 <p>
-Definition at line <a class="el" href="sb_i_prompter_8idl-source.html#l00064">64</a> of file <a class="el" href="sb_i_prompter_8idl-source.html">sbIPrompter.idl</a>.
+Definition at line <a class="el" href="sb_i_prompter_8idl-source.html#l00069">69</a> of file <a class="el" href="sb_i_prompter_8idl-source.html">sbIPrompter.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="d3f08ed089133b07b4fbfd9f13cb5889"></a><!-- doxytag: member="sbIPrompter::waitForWindow" ref="d3f08ed089133b07b4fbfd9f13cb5889" args="" -->
@@ -182,12 +243,12 @@ Definition at line <a class="el" href="sb_i_prompter_8idl-source.html#l00064">64
 <p>
 If true, wait for a parent window of the configured type to be available before prompting. 
 <p>
-Definition at line <a class="el" href="sb_i_prompter_8idl-source.html#l00070">70</a> of file <a class="el" href="sb_i_prompter_8idl-source.html">sbIPrompter.idl</a>.
+Definition at line <a class="el" href="sb_i_prompter_8idl-source.html#l00075">75</a> of file <a class="el" href="sb_i_prompter_8idl-source.html">sbIPrompter.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/moz/prompter/public/<a class="el" href="sb_i_prompter_8idl-source.html">sbIPrompter.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:45 2009 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:50 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -5,21 +5,21 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_remote_media_list_8idl" local="yes">sbIRemoteMediaList.idl</includes>
     <incdepgraph>
-      <node id="674">
+      <node id="830">
         <label>sbIRemoteMediaList.idl</label>
         <link refid="sb_i_remote_media_list_8idl"/>
-        <childnode refid="673" relation="include">
+        <childnode refid="829" relation="include">
         </childnode>
       </node>
-      <node id="672">
+      <node id="828">
         <label>components/remoteapi/public/sbIScriptableFilterResult.idl</label>
         <link refid="sbIScriptableFilterResult.idl"/>
-        <childnode refid="673" relation="include">
+        <childnode refid="829" relation="include">
         </childnode>
-        <childnode refid="674" relation="include">
+        <childnode refid="830" relation="include">
         </childnode>
       </node>
-      <node id="673">
+      <node id="829">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -67,7 +67,7 @@
 <codeline lineno="41"><highlight class="comment"></highlight></codeline>
 <codeline lineno="42"><highlight class="comment">A<sp/>&lt;FilterResult&gt;<sp/>is<sp/>the<sp/>object<sp/>that<sp/>results<sp/>from<sp/>a<sp/>library<sp/>filtering<sp/>operation.</highlight></codeline>
 <codeline lineno="43"><highlight class="comment">*/</highlight></codeline>
-<codeline lineno="53"><highlight class="normal">[scriptable,<sp/>uuid(4a1ebcf3-a68a-4fb9-bda0-8cbeb62d6cf2)]</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(4a1ebcf3-a68a-4fb9-bda0-8cbeb62d6cf2)]</highlight></codeline>
 <codeline lineno="54" refid="interfacesb_i_scriptable_filter_result" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_scriptable_filter_result" kindref="compound" tooltip="The result of a filtering expression in a library.">sbIScriptableFilterResult</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="55"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>

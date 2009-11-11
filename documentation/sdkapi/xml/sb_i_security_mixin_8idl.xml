@@ -5,21 +5,21 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_security_aggregator_8idl" local="yes">sbISecurityAggregator.idl</includes>
     <incdepgraph>
-      <node id="680">
+      <node id="836">
         <label>components/remoteapi/public/sbISecurityMixin.idl</label>
         <link refid="sbISecurityMixin.idl"/>
-        <childnode refid="681" relation="include">
+        <childnode refid="837" relation="include">
         </childnode>
-        <childnode refid="682" relation="include">
+        <childnode refid="838" relation="include">
         </childnode>
       </node>
-      <node id="681">
+      <node id="837">
         <label>nsISupports.idl</label>
       </node>
-      <node id="682">
+      <node id="838">
         <label>sbISecurityAggregator.idl</label>
         <link refid="sb_i_security_aggregator_8idl"/>
-        <childnode refid="681" relation="include">
+        <childnode refid="837" relation="include">
         </childnode>
       </node>
     </incdepgraph>
@@ -63,7 +63,7 @@
 <codeline lineno="39"><highlight class="normal">interface<sp/>nsIURI;</highlight></codeline>
 <codeline lineno="40"><highlight class="normal">interface<sp/>nsIDOMDocument;</highlight></codeline>
 <codeline lineno="41"><highlight class="normal"></highlight></codeline>
-<codeline lineno="52"><highlight class="normal">[scriptable,<sp/>uuid(5cec48db-adc8-477f-b919-120b4d378378)]</highlight></codeline>
+<codeline lineno="52"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(5cec48db-adc8-477f-b919-120b4d378378)]</highlight></codeline>
 <codeline lineno="53" refid="interfacesb_i_security_mixin" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_security_mixin" kindref="compound" tooltip="An interface for setting up nsISecurityCheckedComponent security checks.">sbISecurityMixin</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="54"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="58"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>init(in<sp/><ref refid="interfacesb_i_security_aggregator" kindref="compound" tooltip="A marker interface for objects that aggregate the security mixin.">sbISecurityAggregator</ref><sp/>aOuter,</highlight></codeline>

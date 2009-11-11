@@ -4,13 +4,13 @@
     <compoundname>sbITreeViewPropertyInfo.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="642">
+      <node id="798">
         <label>components/property/public/sbITreeViewPropertyInfo.idl</label>
         <link refid="sbITreeViewPropertyInfo.idl"/>
-        <childnode refid="643" relation="include">
+        <childnode refid="799" relation="include">
         </childnode>
       </node>
-      <node id="643">
+      <node id="799">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -49,7 +49,7 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="39"><highlight class="normal">[scriptable,<sp/>uuid(c846f7ce-fcac-4d6a-a1d7-615d63c04c5e)]</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(c846f7ce-fcac-4d6a-a1d7-615d63c04c5e)]</highlight></codeline>
 <codeline lineno="40" refid="interfacesb_i_tree_view_property_info" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_tree_view_property_info" kindref="compound">sbITreeViewPropertyInfo</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="41"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="42" refid="interfacesb_i_tree_view_property_info_1905d0aa95122f0331479b9aa338b842c" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>columnType;</highlight></codeline>

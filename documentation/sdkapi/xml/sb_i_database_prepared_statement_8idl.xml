@@ -48,7 +48,7 @@
 <codeline lineno="25"><highlight class="comment"><sp/>*/</highlight></codeline>
 <codeline lineno="35"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(71917e73-47eb-4c96-9a31-a421c5ff0e83)]</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(71917e73-47eb-4c96-9a31-a421c5ff0e83)]</highlight></codeline>
 <codeline lineno="44" refid="interfacesb_i_database_prepared_statement" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_prepared_statement" kindref="compound" tooltip="A prepared database statement.">sbIDatabasePreparedStatement</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>The<sp/>Query<sp/>String<sp/>for<sp/>the<sp/>prepared<sp/>statement.</highlight></codeline>

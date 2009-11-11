@@ -4,13 +4,13 @@
     <compoundname>sbIFileScan.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="547">
+      <node id="679">
         <label>components/mediaimport/filescan/public/sbIFileScan.idl</label>
         <link refid="sbIFileScan.idl"/>
-        <childnode refid="548" relation="include">
+        <childnode refid="680" relation="include">
         </childnode>
       </node>
-      <node id="548">
+      <node id="680">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -51,7 +51,7 @@
 <codeline lineno="39"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="40"><highlight class="normal">interface<sp/>nsIArray;</highlight></codeline>
 <codeline lineno="41"><highlight class="normal"></highlight></codeline>
-<codeline lineno="56"><highlight class="normal">[scriptable,<sp/>uuid(5224b8f1-34bf-4c88-8742-1c54b6d20c0a)]</highlight></codeline>
+<codeline lineno="56"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(5224b8f1-34bf-4c88-8742-1c54b6d20c0a)]</highlight></codeline>
 <codeline lineno="57" refid="interfacesb_i_file_scan_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_file_scan_callback" kindref="compound" tooltip="The callback to the sbIFileScanQuery interface.">sbIFileScanCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="58"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onFileScanStart();<sp/></highlight></codeline>
@@ -62,7 +62,7 @@
 <codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onFileScanEnd();<sp/></highlight></codeline>
 <codeline lineno="82"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="83"><highlight class="normal"></highlight></codeline>
-<codeline lineno="116"><highlight class="normal">[scriptable,<sp/>uuid(db7d7cda-a6fd-4f32-98d1-32ed746eb13d)]</highlight></codeline>
+<codeline lineno="116"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(db7d7cda-a6fd-4f32-98d1-32ed746eb13d)]</highlight></codeline>
 <codeline lineno="117" refid="interfacesb_i_file_scan_query" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_file_scan_query" kindref="compound" tooltip="An object to scan through the files of a folder (and optionally subfolders).">sbIFileScanQuery</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="118"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="119" refid="interfacesb_i_file_scan_query_1fcc736deb7bea39e3229b84f4c68feed" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>searchHidden;</highlight></codeline>
@@ -105,7 +105,7 @@
 <codeline lineno="248"><highlight class="normal"><sp/><sp/>PRBool<sp/>isCancelled();</highlight></codeline>
 <codeline lineno="249"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="250"><highlight class="normal"></highlight></codeline>
-<codeline lineno="264"><highlight class="normal">[scriptable,<sp/>uuid(411DD545-EAD0-41c4-8BA1-697DBE5C67EA)]</highlight></codeline>
+<codeline lineno="264"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(411DD545-EAD0-41c4-8BA1-697DBE5C67EA)]</highlight></codeline>
 <codeline lineno="265" refid="interfacesb_i_file_scan" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_file_scan" kindref="compound" tooltip="The engine in which to execute sbIFileScanQuery objects.">sbIFileScan</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="266"><highlight class="normal">{<sp/></highlight></codeline>
 <codeline lineno="273"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>submitQuery(in<sp/><ref refid="interfacesb_i_file_scan_query" kindref="compound" tooltip="An object to scan through the files of a folder (and optionally subfolders).">sbIFileScanQuery</ref><sp/>pQuery);</highlight></codeline>

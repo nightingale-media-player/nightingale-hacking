@@ -1,0 +1,246 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="sb_i_c_d_device_8idl" kind="file">
+    <compoundname>sbICDDevice.idl</compoundname>
+    <includes refid="sb_i_device_8idl" local="yes">sbIDevice.idl</includes>
+    <includes refid="sb_i_device_event_8idl" local="yes">sbIDeviceEvent.idl</includes>
+    <includes local="yes">nsISupports.idl</includes>
+    <incdepgraph>
+      <node id="157">
+        <label>components/devices/cd/public/sbICDDevice.idl</label>
+        <link refid="sbICDDevice.idl"/>
+        <childnode refid="158" relation="include">
+        </childnode>
+        <childnode refid="160" relation="include">
+        </childnode>
+        <childnode refid="159" relation="include">
+        </childnode>
+      </node>
+      <node id="158">
+        <label>sbIDevice.idl</label>
+        <link refid="sb_i_device_8idl"/>
+        <childnode refid="159" relation="include">
+        </childnode>
+      </node>
+      <node id="160">
+        <label>sbIDeviceEvent.idl</label>
+        <link refid="sb_i_device_event_8idl-source"/>
+        <childnode refid="159" relation="include">
+        </childnode>
+      </node>
+      <node id="159">
+        <label>nsISupports.idl</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="interfacesb_i_c_d_t_o_c_entry" prot="public">sbICDTOCEntry</innerclass>
+    <innerclass refid="interfacesb_i_c_d_t_o_c" prot="public">sbICDTOC</innerclass>
+    <innerclass refid="interfacesb_i_c_d_device_event" prot="public">sbICDDeviceEvent</innerclass>
+    <innerclass refid="interfacesb_i_c_d_device" prot="public">sbICDDevice</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="3"><highlight class="comment">//<sp/>BEGIN<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="4"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="5"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
+<codeline lineno="6"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2009<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="8"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
+<codeline lineno="9"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="10"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>
+<codeline lineno="11"><highlight class="comment">//<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>Version<sp/>2<sp/>(the<sp/>&quot;GPL&quot;).</highlight></codeline>
+<codeline lineno="12"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="13"><highlight class="comment">//<sp/>Software<sp/>distributed<sp/>under<sp/>the<sp/>License<sp/>is<sp/>distributed</highlight></codeline>
+<codeline lineno="14"><highlight class="comment">//<sp/>on<sp/>an<sp/>&quot;AS<sp/>IS&quot;<sp/>basis,<sp/>WITHOUT<sp/>WARRANTY<sp/>OF<sp/>ANY<sp/>KIND,<sp/>either</highlight></codeline>
+<codeline lineno="15"><highlight class="comment">//<sp/>express<sp/>or<sp/>implied.<sp/>See<sp/>the<sp/>GPL<sp/>for<sp/>the<sp/>specific<sp/>language</highlight></codeline>
+<codeline lineno="16"><highlight class="comment">//<sp/>governing<sp/>rights<sp/>and<sp/>limitations.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="18"><highlight class="comment">//<sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GPL<sp/>along<sp/>with<sp/>this</highlight></codeline>
+<codeline lineno="19"><highlight class="comment">//<sp/>program.<sp/>If<sp/>not,<sp/>go<sp/>to<sp/>http://www.gnu.org/licenses/gpl.html</highlight></codeline>
+<codeline lineno="20"><highlight class="comment">//<sp/>or<sp/>write<sp/>to<sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>Inc.,</highlight></codeline>
+<codeline lineno="21"><highlight class="comment">//<sp/>51<sp/>Franklin<sp/>Street,<sp/>Fifth<sp/>Floor,<sp/>Boston,<sp/>MA<sp/>02110-1301,<sp/>USA.</highlight></codeline>
+<codeline lineno="22"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="23"><highlight class="comment">//<sp/>END<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="24"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="25"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_device_8idl" kindref="compound">sbIDevice.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;sbIDeviceEvent.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal">interface<sp/>nsIArray;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="comment">//------------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="comment">//<sp/>@interface<sp/>sbICDTOCEntry</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight><highlight class="comment">//<sp/>@brief<sp/>This<sp/>interface<sp/>represents<sp/>a<sp/>track<sp/>entry<sp/>in<sp/>the<sp/>CD<sp/>table<sp/>of<sp/>contents.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight><highlight class="comment">//------------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(2e06760a-1dd2-11b2-bdee-fcb2b291e86e)]</highlight></codeline>
+<codeline lineno="41" refid="interfacesb_i_c_d_t_o_c_entry" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_c_d_t_o_c_entry" kindref="compound">sbICDTOCEntry</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/>Track<sp/>mode<sp/>type<sp/>constants</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46" refid="interfacesb_i_c_d_t_o_c_entry_1192cf40ef307875242955d8b5d30a607" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">short</highlight><highlight class="normal"><sp/>TRACKMODE_AUDIO<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="47" refid="interfacesb_i_c_d_t_o_c_entry_15daa2ba55b9a7a3f825a788cdc4e8758" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">short</highlight><highlight class="normal"><sp/>TRACKMODE_DATA<sp/><sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="48" refid="interfacesb_i_c_d_t_o_c_entry_16419511ed309bc0a70a5bb2d122691c9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">short</highlight><highlight class="normal"><sp/>TRACKMODE_OTHER<sp/>=<sp/>3;</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50" refid="interfacesb_i_c_d_t_o_c_entry_14a0cc094035274e44addbdc472321638" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>frameOffset;</highlight></codeline>
+<codeline lineno="51" refid="interfacesb_i_c_d_t_o_c_entry_144d212d6230f5e488e33d7c20279f225" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>PRTime<sp/><sp/>length;</highlight></codeline>
+<codeline lineno="52" refid="interfacesb_i_c_d_t_o_c_entry_1c648cde93413ba0579a432456a0bbde5" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/><sp/><sp/><sp/>trackNumber;</highlight></codeline>
+<codeline lineno="53" refid="interfacesb_i_c_d_t_o_c_entry_1f005b105566a8b4d823fba8183ca60e5" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>trackURI;</highlight></codeline>
+<codeline lineno="54" refid="interfacesb_i_c_d_t_o_c_entry_16057b54f457d013e2e0d650272926770" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">short</highlight><highlight class="normal"><sp/><sp/><sp/>trackMode;</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"></highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight><highlight class="comment">//------------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight><highlight class="comment">//<sp/>@interface<sp/>sbICDTOC</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight><highlight class="comment">//<sp/>@brief<sp/>This<sp/>interface<sp/>represents<sp/>a<sp/>CD<sp/>table<sp/>of<sp/>contents.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight><highlight class="comment">//------------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(3b3b290a-1dd2-11b2-aabc-9439b224f085)]</highlight></codeline>
+<codeline lineno="65" refid="interfacesb_i_c_d_t_o_c" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_c_d_t_o_c" kindref="compound">sbICDTOC</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="66"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/>First<sp/>track<sp/>index<sp/>(this<sp/>value<sp/>is<sp/>used<sp/>for<sp/>CD<sp/>database<sp/>lookup)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="interfacesb_i_c_d_t_o_c_120ce8e48e8330e533c26ad4f9885a976" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>firstTrackIndex;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/>Last<sp/>track<sp/>index<sp/>(this<sp/>value<sp/>is<sp/>used<sp/>for<sp/>CD<sp/>database<sp/>lookup)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75" refid="interfacesb_i_c_d_t_o_c_1b227424543701d26fe113c6f06c1520f" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>lastTrackIndex;</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/>Lead-out<sp/>track<sp/>offset<sp/>(this<sp/>value<sp/>is<sp/>used<sp/>for<sp/>CD<sp/>database<sp/>lookup)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80" refid="interfacesb_i_c_d_t_o_c_1444f3891562d6df11c12970cd0164fcf" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>leadOutTrackOffset;</highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/>tracks<sp/>contains<sp/>an<sp/>array<sp/>of<sp/>sbICDTOCEntry<sp/>values</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="interfacesb_i_c_d_t_o_c_1c4dcfc29ff7fa6e0262518b3fcc7c365" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIArray<sp/>tracks;</highlight></codeline>
+<codeline lineno="86"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight><highlight class="comment">//------------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"></highlight><highlight class="comment">//<sp/>@interface<sp/>sbICDDeviceEvent</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight><highlight class="comment">//<sp/>@brief<sp/>Base<sp/>CD<sp/>device<sp/>event<sp/>interface.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight><highlight class="comment">//------------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(052861b6-1dd2-11b2-b2bc-d05cabd40402)]</highlight></codeline>
+<codeline lineno="95" refid="interfacesb_i_c_d_device_event" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_c_d_device_event" kindref="compound">sbICDDeviceEvent</ref><sp/>:<sp/><ref refid="interfacesb_i_device_event" kindref="compound">sbIDeviceEvent</ref></highlight></codeline>
+<codeline lineno="96"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/><sp/>CD<sp/>metadata<sp/>lookup<sp/>query<sp/>started<sp/>event.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="100" refid="interfacesb_i_c_d_device_event_15177b87557801412afeb5582d44f83e8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>EVENT_CDLOOKUP_INITIATED<sp/>=<sp/>EVENT_CLIENT_DEFINED<sp/>+<sp/>1;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/>CD<sp/>metadata<sp/>lookup<sp/>query<sp/>completed<sp/>event.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="105" refid="interfacesb_i_c_d_device_event_1aca3645172fc8ed601adb46e758113ac" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>EVENT_CDLOOKUP_COMPLETED<sp/>=<sp/>EVENT_CLIENT_DEFINED<sp/>+<sp/>2;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/>CD<sp/>metadata<sp/>has<sp/>been<sp/>applied<sp/>to<sp/>the<sp/>device&apos;s<sp/>items.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="110" refid="interfacesb_i_c_d_device_event_140998cfef1526cb25dda74eb42c4962e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>EVENT_CDLOOKUP_METADATA_COMPLETE<sp/>=<sp/>EVENT_CLIENT_DEFINED<sp/>+<sp/>3;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/>CD<sp/>rip<sp/>has<sp/>completed.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="115" refid="interfacesb_i_c_d_device_event_1f50b040baffc93206f0b548573294efa" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>EVENT_CDRIP_COMPLETED<sp/>=<sp/>EVENT_CLIENT_DEFINED<sp/>+<sp/>4;</highlight></codeline>
+<codeline lineno="116"><highlight class="normal"></highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/>Request<sp/>constants</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="120" refid="interfacesb_i_c_d_device_event_1328974cd05e17c1dffc1bd9ce2d2a4c1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>REQUEST_CDLOOKUP<sp/>=<sp/><ref refid="interfacesb_i_device_11f6bcc64dd814a074fc44692531bbac8" kindref="member">sbIDevice::REQUEST_FLAG_USER</ref><sp/>+<sp/>1;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/>State<sp/>constants</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="125" refid="interfacesb_i_c_d_device_event_1c815230f11f632c40848f3c4deb33feb" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>STATE_LOOKINGUPCD<sp/>=<sp/><ref refid="interfacesb_i_device_17ca6215de6573ed9b87f456a44ceaec6" kindref="member">sbIDevice::STATE_USER</ref><sp/>+<sp/>1;</highlight></codeline>
+<codeline lineno="126"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight><highlight class="comment">//------------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="130"><highlight class="normal"></highlight><highlight class="comment">//<sp/>@interface<sp/>sbICDDevice</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"></highlight><highlight class="comment">//<sp/>@brief<sp/>This<sp/>interface<sp/>represents<sp/>one<sp/>CD<sp/>device.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight><highlight class="comment">//------------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="135"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(9D51DC46-3038-430A-94C5-C98C0C3301E2)]</highlight></codeline>
+<codeline lineno="136" refid="interfacesb_i_c_d_device" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_c_d_device" kindref="compound">sbICDDevice</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="137"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="138"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/>Disc<sp/>type<sp/>contants</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="141" refid="interfacesb_i_c_d_device_1b931d580355b145a69a82f66e4ff0d07" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>AUDIO_DISC_TYPE<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="142" refid="interfacesb_i_c_d_device_110a768706fd56e08615ccb995783db5f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>DATA_DISC_TYPE<sp/><sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="143"><highlight class="normal"></highlight></codeline>
+<codeline lineno="144"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="145"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/>name<sp/>of<sp/>the<sp/>device<sp/>(usually<sp/>contains<sp/>manufacturer&apos;s<sp/>name)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="146"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="147" refid="interfacesb_i_c_d_device_1daaeea883f0c1645dfcf873c3ea7054d" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>name;</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="149"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="150"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/>can<sp/>we<sp/>read<sp/>(rip)<sp/>data<sp/>off<sp/>this<sp/>device?</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="151"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="152" refid="interfacesb_i_c_d_device_1bd3789b95565619864963593b0544e74" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>readable;</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/>can<sp/>we<sp/>write<sp/>(burn)<sp/>data<sp/>to<sp/>this<sp/>device?</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="156"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="157" refid="interfacesb_i_c_d_device_15946113d5eb99c6f57aaae437055f043" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>writeable;</highlight></codeline>
+<codeline lineno="158"><highlight class="normal"></highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="160"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/>returns<sp/>true<sp/>if<sp/>a<sp/>CD<sp/>is<sp/>currently<sp/>in<sp/>the<sp/>drive</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="161"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="162" refid="interfacesb_i_c_d_device_1f2cdde8b2a8e1fcc2bc017a5322ca204" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>isDiscInserted;</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="164"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/>Unique<sp/>identifier<sp/>for<sp/>this<sp/>CD<sp/>device.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@note<sp/>String<sp/>varies<sp/>on<sp/>implementor.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="168" refid="interfacesb_i_c_d_device_16f21402439b175df2d9a9e2880d2ba8f" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>ACString<sp/>identifier;</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"></highlight></codeline>
+<codeline lineno="170"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/>returns<sp/>the<sp/>table<sp/>of<sp/>contents<sp/>of<sp/>the<sp/>current<sp/>CD<sp/>in<sp/>the<sp/>drive</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="173" refid="interfacesb_i_c_d_device_18cfad0b56b8cdfc9ba2ec7a7bd039d2f" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_c_d_t_o_c" kindref="compound">sbICDTOC</ref><sp/>discTOC;</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"></highlight></codeline>
+<codeline lineno="175"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="176"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/>returns<sp/>the<sp/>disc<sp/>type<sp/>of<sp/>the<sp/>CD<sp/>in<sp/>the<sp/>drive<sp/>(&quot;audio&quot;<sp/>or<sp/>&quot;data&quot;)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="178" refid="interfacesb_i_c_d_device_17791c102e3cae3a42bbf855808d247ff" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>discType;</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight></codeline>
+<codeline lineno="180"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="181"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/>ejects<sp/>the<sp/>CD<sp/>from<sp/>the<sp/>drive</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="183"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>eject();</highlight></codeline>
+<codeline lineno="184"><highlight class="normal"></highlight></codeline>
+<codeline lineno="185"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="186"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/>Return<sp/>the<sp/>locked<sp/>state<sp/>of<sp/>the<sp/>device.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="188" refid="interfacesb_i_c_d_device_1f95ba01a416fa42db2b46318668bf0a0" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>isDeviceLocked;</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="190"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="191"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/>Lock<sp/>the<sp/>CD<sp/>drive<sp/>(prevent<sp/>the<sp/>tray<sp/>from<sp/>being<sp/>opened)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="192"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="193"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>lockDevice();</highlight></codeline>
+<codeline lineno="194"><highlight class="normal"></highlight></codeline>
+<codeline lineno="195"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>@brief<sp/>Unlock<sp/>the<sp/>CD<sp/>drive<sp/>(allow<sp/>the<sp/>tray<sp/>from<sp/>being<sp/>opened)</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="198"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>unlockDevice();</highlight></codeline>
+<codeline lineno="199"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="c:/builds/songbird/trunk/components/devices/cd/public/sbICDDevice.idl"/>
+  </compounddef>
+</doxygen>

@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/integration/public/IWindowResizeHook.idl</h1><a href="_i_window_resize_hook_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -93,13 +99,13 @@
 <a name="l00025"></a>00025 <span class="comment"> */</span>
 <a name="l00026"></a>00026 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00027"></a>00027 
-<a name="l00042"></a>00042 [scriptable, uuid(4D11C61E-8623-4b1b-B7CB-094B5E774609)]
+<a name="l00042"></a>00042 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(4D11C61E-8623-4b1b-B7CB-094B5E774609)]
 <a name="l00043"></a><a class="code" href="interfacesb_i_window_resize_hook_callback.html">00043</a> interface <a class="code" href="interfacesb_i_window_resize_hook_callback.html" title="WindowResizeHook callback interface This interface describes a callback for the WindowResizeHook...">sbIWindowResizeHookCallback</a> : nsISupports
 <a name="l00044"></a>00044 {
 <a name="l00054"></a>00054   <span class="keywordtype">void</span> onResize( in PRInt32 x, in PRInt32 y, in PRInt32 w, in PRInt32 h);
 <a name="l00055"></a>00055 };
 <a name="l00056"></a>00056 
-<a name="l00064"></a>00064 [scriptable, uuid(D44A410E-70A1-4932-8F5A-B1D644356401)]
+<a name="l00064"></a>00064 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(D44A410E-70A1-4932-8F5A-B1D644356401)]
 <a name="l00065"></a><a class="code" href="interfacesb_i_window_resize_hook.html">00065</a> interface <a class="code" href="interfacesb_i_window_resize_hook.html" title="WindowResizeHook service interface This is an interface to the WindowResizeHook service...">sbIWindowResizeHook</a> : nsISupports
 <a name="l00066"></a>00066 {
 <a name="l00075"></a>00075   <span class="keywordtype">void</span> setCallback( in nsISupports window, in <a class="code" href="interfacesb_i_window_resize_hook_callback.html" title="WindowResizeHook callback interface This interface describes a callback for the WindowResizeHook...">sbIWindowResizeHookCallback</a> cb );
@@ -107,7 +113,7 @@
 <a name="l00084"></a>00084   <span class="keywordtype">void</span> resetCallback( in <a class="code" href="interfacesb_i_window_resize_hook_callback.html" title="WindowResizeHook callback interface This interface describes a callback for the WindowResizeHook...">sbIWindowResizeHookCallback</a> cb);
 <a name="l00085"></a>00085 };
 <a name="l00086"></a>00086 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

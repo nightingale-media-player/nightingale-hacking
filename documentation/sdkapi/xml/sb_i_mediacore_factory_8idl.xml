@@ -12,53 +12,53 @@
     <includes local="no">nsStringGlue.h</includes>
     <includes local="no">nsXPCOMCID.h</includes>
     <incdepgraph>
-      <node id="443">
+      <node id="495">
         <label>nsServiceManagerUtils.h</label>
       </node>
-      <node id="440">
+      <node id="492">
         <label>nsIGenericFactory.h</label>
       </node>
-      <node id="444">
+      <node id="496">
         <label>nsStringGlue.h</label>
       </node>
-      <node id="439">
+      <node id="491">
         <label>nsICategoryManager.h</label>
       </node>
-      <node id="441">
+      <node id="493">
         <label>nsIServiceManager.h</label>
       </node>
-      <node id="442">
+      <node id="494">
         <label>nsCOMPtr.h</label>
       </node>
-      <node id="438">
+      <node id="490">
         <label>nsIComponentManager.h</label>
       </node>
-      <node id="436">
+      <node id="488">
         <label>components/mediacore/base/public/sbIMediacoreFactory.idl</label>
         <link refid="sbIMediacoreFactory.idl"/>
-        <childnode refid="437" relation="include">
+        <childnode refid="489" relation="include">
         </childnode>
-        <childnode refid="438" relation="include">
+        <childnode refid="490" relation="include">
         </childnode>
-        <childnode refid="439" relation="include">
+        <childnode refid="491" relation="include">
         </childnode>
-        <childnode refid="440" relation="include">
+        <childnode refid="492" relation="include">
         </childnode>
-        <childnode refid="441" relation="include">
+        <childnode refid="493" relation="include">
         </childnode>
-        <childnode refid="442" relation="include">
+        <childnode refid="494" relation="include">
         </childnode>
-        <childnode refid="443" relation="include">
+        <childnode refid="495" relation="include">
         </childnode>
-        <childnode refid="444" relation="include">
+        <childnode refid="496" relation="include">
         </childnode>
-        <childnode refid="445" relation="include">
+        <childnode refid="497" relation="include">
         </childnode>
       </node>
-      <node id="437">
+      <node id="489">
         <label>nsISupports.idl</label>
       </node>
-      <node id="445">
+      <node id="497">
         <label>nsXPCOMCID.h</label>
       </node>
     </incdepgraph>
@@ -146,7 +146,7 @@
 <codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore" kindref="compound">sbIMediacore</ref>;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_capabilities" kindref="compound">sbIMediacoreCapabilities</ref>;</highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight></codeline>
-<codeline lineno="32"><highlight class="normal">[scriptable,<sp/>uuid(20a5b0ee-1869-4717-bbe4-c5d9db37c6fa)]</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(20a5b0ee-1869-4717-bbe4-c5d9db37c6fa)]</highlight></codeline>
 <codeline lineno="33" refid="interfacesb_i_mediacore_factory" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_factory" kindref="compound">sbIMediacoreFactory</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="34"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="35" refid="interfacesb_i_mediacore_factory_1bd8196a6a49e1d685e31075baaccfb5a" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>contractID;</highlight></codeline>

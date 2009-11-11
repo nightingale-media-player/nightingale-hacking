@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreVotingChain.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="483">
+      <node id="538">
         <label>components/mediacore/base/public/sbIMediacoreVotingChain.idl</label>
         <link refid="sbIMediacoreVotingChain.idl"/>
-        <childnode refid="484" relation="include">
+        <childnode refid="539" relation="include">
         </childnode>
       </node>
-      <node id="484">
+      <node id="539">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -52,7 +52,7 @@
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
 <codeline lineno="31"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore" kindref="compound">sbIMediacore</ref>;</highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal">[scriptable,<sp/>uuid(4cf9bef7-6131-4681-b905-f7cdc48805d1)]</highlight></codeline>
+<codeline lineno="33"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(4cf9bef7-6131-4681-b905-f7cdc48805d1)]</highlight></codeline>
 <codeline lineno="34" refid="interfacesb_i_mediacore_voting_chain" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_voting_chain" kindref="compound">sbIMediacoreVotingChain</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="35"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="40" refid="interfacesb_i_mediacore_voting_chain_158905a490a26d8921b74b884627c1d27" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>valid;</highlight></codeline>

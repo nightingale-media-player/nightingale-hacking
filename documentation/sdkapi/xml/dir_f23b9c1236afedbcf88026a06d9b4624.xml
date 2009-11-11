@@ -3,6 +3,7 @@
   <compounddef id="dir_f23b9c1236afedbcf88026a06d9b4624" kind="dir">
     <compoundname>components/mediacore/metadata/handler/</compoundname>
     <innerdir refid="dir_80f6c3dd8eeafa8cdb86be2defe21e6f">components/mediacore/metadata/handler/taglib/</innerdir>
+    <innerdir refid="dir_2cbd3872fbe4850c359790a43232eaf3">components/mediacore/metadata/handler/wma/</innerdir>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

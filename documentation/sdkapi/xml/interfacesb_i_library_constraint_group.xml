@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="105" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" bodystart="105" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="114" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" bodystart="114" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -33,7 +33,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="106"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="115"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_library_constraint_group_1b4cecd122bf246ab820f4691eb1539df" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -50,7 +50,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="107"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="116"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_library_constraint_group_1392da5e639885728adc6a00f74eb83d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -67,7 +67,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="108"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="117"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_library_constraint_group_1886522f8a2daa5aab0b794da37f1e44d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>AString</type>
@@ -80,14 +80,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="109"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="118"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="104" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" bodystart="103" bodyend="110"/>
+    <location file="c:/builds/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" line="113" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbILibraryConstraints.idl" bodystart="112" bodyend="119"/>
     <listofallmembers>
       <member refid="interfacesb_i_library_constraint_group_1392da5e639885728adc6a00f74eb83d7" prot="public" virt="non-virtual"><scope>sbILibraryConstraintGroup</scope><name>equals</name></member>
       <member refid="interfacesb_i_library_constraint_group_15bdd16c6646dd31a5f899de13980b054" prot="public" virt="non-virtual"><scope>sbILibraryConstraintGroup</scope><name>getValues</name></member>

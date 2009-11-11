@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreEventTarget.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="433">
+      <node id="485">
         <label>components/mediacore/base/public/sbIMediacoreEventTarget.idl</label>
         <link refid="sbIMediacoreEventTarget.idl"/>
-        <childnode refid="434" relation="include">
+        <childnode refid="486" relation="include">
         </childnode>
       </node>
-      <node id="434">
+      <node id="486">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -51,7 +51,7 @@
 <codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_event" kindref="compound" tooltip="Definition of the sbIMediacoreEvent interface.">sbIMediacoreEvent</ref>;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_event_listener" kindref="compound">sbIMediacoreEventListener</ref>;</highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight></codeline>
-<codeline lineno="32"><highlight class="normal">[scriptable,<sp/>uuid(35f8debd-1a55-4df2-8e53-65949941e22f)]</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(35f8debd-1a55-4df2-8e53-65949941e22f)]</highlight></codeline>
 <codeline lineno="33" refid="interfacesb_i_mediacore_event_target" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_event_target" kindref="compound">sbIMediacoreEventTarget</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="34"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addListener(in<sp/><ref refid="interfacesb_i_mediacore_event_listener" kindref="compound">sbIMediacoreEventListener</ref><sp/>aListener);</highlight></codeline>

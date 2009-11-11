@@ -6,55 +6,55 @@
     <includedby refid="sb_i_media_item_8idl" local="yes">components/library/base/public/sbIMediaItem.idl</includedby>
     <includedby refid="sb_i_local_database_resource_property_8idl" local="yes">components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl</includedby>
     <incdepgraph>
-      <node id="298">
+      <node id="353">
         <label>nsISupports.idl</label>
       </node>
-      <node id="297">
+      <node id="352">
         <label>components/library/base/public/sbILibraryResource.idl</label>
         <link refid="sbILibraryResource.idl"/>
-        <childnode refid="298" relation="include">
+        <childnode refid="353" relation="include">
         </childnode>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="305">
+      <node id="360">
         <label>components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl</label>
         <link refid="sb_i_local_database_resource_property_8idl"/>
       </node>
-      <node id="304">
+      <node id="359">
         <label>components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</label>
         <link refid="sb_i_local_database_smart_media_list_8idl"/>
       </node>
-      <node id="303">
+      <node id="358">
         <label>components/devices/base/public/sbIDeviceLibrary.idl</label>
         <link refid="sb_i_device_library_8idl-source"/>
       </node>
-      <node id="301">
+      <node id="356">
         <label>components/library/base/public/sbIMediaList.idl</label>
         <link refid="sb_i_media_list_8idl"/>
-        <childnode refid="302" relation="include">
+        <childnode refid="357" relation="include">
         </childnode>
-        <childnode refid="304" relation="include">
+        <childnode refid="359" relation="include">
         </childnode>
       </node>
-      <node id="300">
+      <node id="355">
         <label>components/library/base/public/sbIMediaItem.idl</label>
         <link refid="sb_i_media_item_8idl"/>
-        <childnode refid="301" relation="include">
+        <childnode refid="356" relation="include">
         </childnode>
       </node>
-      <node id="302">
+      <node id="357">
         <label>components/library/base/public/sbILibrary.idl</label>
         <link refid="sb_i_library_8idl"/>
-        <childnode refid="303" relation="include">
+        <childnode refid="358" relation="include">
         </childnode>
       </node>
-      <node id="299">
+      <node id="354">
         <label>components/library/base/public/sbILibraryResource.idl</label>
         <link refid="sbILibraryResource.idl"/>
-        <childnode refid="300" relation="include">
+        <childnode refid="355" relation="include">
         </childnode>
-        <childnode refid="305" relation="include">
+        <childnode refid="360" relation="include">
         </childnode>
       </node>
     </invincdepgraph>
@@ -96,7 +96,7 @@
 <codeline lineno="35"><highlight class="normal">interface<sp/>nsIURI;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
-<codeline lineno="47"><highlight class="normal">[scriptable,<sp/>uuid(d0ed8ac0-1a2a-11dd-bd0b-0800200c9a66)]</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(d0ed8ac0-1a2a-11dd-bd0b-0800200c9a66)]</highlight></codeline>
 <codeline lineno="48" refid="interfacesb_i_library_resource" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_resource" kindref="compound" tooltip="General interface to data resources.">sbILibraryResource</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="49"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>

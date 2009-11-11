@@ -22,14 +22,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/devices/device/test/sbDeviceDeviceTesterInterfaces.idl" line="39"/>
+        <location file="c:/builds/songbird/trunk/components/devices/device/mock/public/sbDeviceDeviceTesterInterfaces.idl" line="39"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/devices/device/test/sbDeviceDeviceTesterInterfaces.idl" line="38" bodyfile="c:/builds/songbird/trunk/components/devices/device/test/sbDeviceDeviceTesterInterfaces.idl" bodystart="38" bodyend="40"/>
+    <location file="c:/builds/songbird/trunk/components/devices/device/mock/public/sbDeviceDeviceTesterInterfaces.idl" line="38" bodyfile="c:/builds/songbird/trunk/components/devices/device/mock/public/sbDeviceDeviceTesterInterfaces.idl" bodystart="38" bodyend="40"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_device_tester_utils_17bb66e8424a0773a743cef1081cf8699" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterUtils</scope><name>GetOrganizedPath</name></member>
     </listofallmembers>

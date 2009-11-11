@@ -4,13 +4,13 @@
     <compoundname>sbISmartPlaylistPropertyRegistrar.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="639">
+      <node id="795">
         <label>components/property/public/sbISmartPlaylistPropertyRegistrar.idl</label>
         <link refid="sbISmartPlaylistPropertyRegistrar.idl"/>
-        <childnode refid="640" relation="include">
+        <childnode refid="796" relation="include">
         </childnode>
       </node>
-      <node id="640">
+      <node id="796">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,7 +50,7 @@
 <codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="35"><highlight class="normal">[scriptable,<sp/>uuid(3813e226-4465-4a4a-90e3-b890e2271e2c)]</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(3813e226-4465-4a4a-90e3-b890e2271e2c)]</highlight></codeline>
 <codeline lineno="36" refid="interfacesb_i_smart_playlist_property" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_smart_playlist_property" kindref="compound">sbISmartPlaylistProperty</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="37"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="41" refid="interfacesb_i_smart_playlist_property_197ef2e3039767b3ac9a5c5c513f1699c" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>propertyID;</highlight></codeline>
@@ -60,7 +60,7 @@
 <codeline lineno="51" refid="interfacesb_i_smart_playlist_property_1dc3b1e00d38f9d6bb4cc2669040c4225" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>defaultSortDirection;<sp/></highlight></codeline>
 <codeline lineno="52"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"></highlight></codeline>
-<codeline lineno="62"><highlight class="normal">[scriptable,<sp/>uuid(177dff4d-c845-4d7d-b1e8-533591908526)]</highlight></codeline>
+<codeline lineno="62"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(177dff4d-c845-4d7d-b1e8-533591908526)]</highlight></codeline>
 <codeline lineno="63" refid="interfacesb_i_smart_playlist_property_registrar" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_smart_playlist_property_registrar" kindref="compound" tooltip="Registrar for smart playlists properties.">sbISmartPlaylistPropertyRegistrar</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="64"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="71"><highlight class="normal"><sp/><sp/>nsISimpleEnumerator<sp/>getPropertiesForContext(in<sp/>AString<sp/>aContextID);</highlight></codeline>

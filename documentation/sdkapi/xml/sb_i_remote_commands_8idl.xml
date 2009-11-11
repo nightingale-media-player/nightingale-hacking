@@ -4,13 +4,13 @@
     <compoundname>sbIRemoteCommands.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="648">
+      <node id="804">
         <label>components/remoteapi/public/sbIRemoteCommands.idl</label>
         <link refid="sbIRemoteCommands.idl"/>
-        <childnode refid="649" relation="include">
+        <childnode refid="805" relation="include">
         </childnode>
       </node>
-      <node id="649">
+      <node id="805">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -57,7 +57,7 @@
 <codeline lineno="40"><highlight class="comment">The<sp/>Commands<sp/>Object<sp/>is<sp/>associated<sp/>with<sp/>a<sp/>&lt;MediaList&gt;.<sp/>This<sp/>means<sp/>that<sp/></highlight></codeline>
 <codeline lineno="41"><highlight class="comment">when<sp/>&lt;Commands&gt;<sp/>are<sp/>modified,<sp/>the<sp/>modifications<sp/>are<sp/>scoped<sp/>to<sp/>the<sp/>media<sp/>list.</highlight></codeline>
 <codeline lineno="42"><highlight class="comment">*/</highlight></codeline>
-<codeline lineno="50"><highlight class="normal">[scriptable,<sp/>uuid(cff760df-5fe0-4657-8eb5-1d5d3ca12369)]</highlight></codeline>
+<codeline lineno="50"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(cff760df-5fe0-4657-8eb5-1d5d3ca12369)]</highlight></codeline>
 <codeline lineno="51" refid="interfacesb_i_remote_commands" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_remote_commands" kindref="compound" tooltip="An interface to specify playlist commands from remote web pages.">sbIRemoteCommands</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="52"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>

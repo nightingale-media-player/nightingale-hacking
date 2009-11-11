@@ -8,102 +8,95 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="121">
+      <node id="125">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
       </node>
-      <node id="120">
+      <node id="124">
         <label>sbIDeviceDeviceTesterBase</label>
         <link refid="interfacesb_i_device_device_tester_base"/>
-        <childnode refid="121" relation="public-inheritance">
+        <childnode refid="125" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="130">
+      <node id="134">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="127" relation="public-inheritance">
+        <childnode refid="131" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="126">
+      <node id="130">
         <label>sbIDeviceStatus</label>
         <link refid="interfacesb_i_device_status"/>
-        <childnode refid="127" relation="usage">
+        <childnode refid="131" relation="usage">
           <edgelabel>mediaItem</edgelabel>
         </childnode>
-        <childnode refid="130" relation="usage">
+        <childnode refid="134" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
-      <node id="131">
-        <label>sbIDeviceCapabilities</label>
-        <link refid="interfacesb_i_device_capabilities"/>
-      </node>
-      <node id="123">
+      <node id="127">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="124" relation="usage">
+        <childnode refid="128" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="126" relation="usage">
+        <childnode refid="130" relation="usage">
           <edgelabel>currentStatus</edgelabel>
         </childnode>
-        <childnode refid="131" relation="usage">
-          <edgelabel>capabilities</edgelabel>
-        </childnode>
-        <childnode refid="132" relation="usage">
+        <childnode refid="135" relation="usage">
           <edgelabel>properties</edgelabel>
         </childnode>
       </node>
-      <node id="129">
+      <node id="133">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="130" relation="public-inheritance">
+        <childnode refid="134" relation="public-inheritance">
         </childnode>
-        <childnode refid="123" relation="usage">
+        <childnode refid="127" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="125" relation="usage">
+        <childnode refid="129" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="128">
+      <node id="132">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="127">
+      <node id="131">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="128" relation="public-inheritance">
+        <childnode refid="132" relation="public-inheritance">
         </childnode>
-        <childnode refid="129" relation="usage">
+        <childnode refid="133" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="122">
+      <node id="126">
         <label>sbIDeviceDeviceTesterBase</label>
         <link refid="interfacesb_i_device_device_tester_base"/>
-        <childnode refid="123" relation="public-inheritance">
+        <childnode refid="127" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="124">
+      <node id="128">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="125" relation="usage">
+        <childnode refid="129" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="125">
+      <node id="129">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
-      <node id="132">
+      <node id="135">
         <label>sbIDeviceProperties</label>
         <link refid="interfacesb_i_device_properties"/>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/devices/device/test/sbDeviceDeviceTesterInterfaces.idl" line="43" bodyfile="c:/builds/songbird/trunk/components/devices/device/test/sbDeviceDeviceTesterInterfaces.idl" bodystart="43" bodyend="45"/>
+    <location file="c:/builds/songbird/trunk/components/devices/device/mock/public/sbDeviceDeviceTesterInterfaces.idl" line="43" bodyfile="c:/builds/songbird/trunk/components/devices/device/mock/public/sbDeviceDeviceTesterInterfaces.idl" bodystart="43" bodyend="45"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_162c36e19acfc5e13e08c3925607dd12a" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>cancelRequests</name></member>
       <member refid="interfacesb_i_device_1de85c8bedcf5cfba4aec0d352b2f2342" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>canDisconnect</name></member>
@@ -115,18 +108,22 @@
       <member refid="interfacesb_i_device_1a97398f8a665f9e50aeb6157e7677289" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>currentStatus</name></member>
       <member refid="interfacesb_i_device_1873b30e727370e23050285116c9566de" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>disconnect</name></member>
       <member refid="interfacesb_i_device_190ef2e85d63890e85cb45ff7792128d0" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>eject</name></member>
+      <member refid="interfacesb_i_device_1a2acf30f1f7b5e7a597b4024702098df" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>format</name></member>
       <member refid="interfacesb_i_device_1ff64a942e51a477c31cc7a906e8d7182" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>getPreference</name></member>
       <member refid="interfacesb_i_device_11686d1c902e03da2964d15eb4dc55f8e" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>getWarningDialogEnabled</name></member>
       <member refid="interfacesb_i_device_10cd836f1f07248e5ccc3f804eed029a5" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>id</name></member>
       <member refid="interfacesb_i_device_1341d9584055d95cac5d77bc70bcde161" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>isBusy</name></member>
       <member refid="interfacesb_i_device_10ec1721b04be6d0dff919299f9928a7d" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>name</name></member>
       <member refid="interfacesb_i_device_1f724198a8fa131e7d805b20d59f0fd72" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>parameters</name></member>
+      <member refid="interfacesb_i_device_141ac34358cc745b32525727905370d27" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>previousState</name></member>
+      <member refid="interfacesb_i_device_15a9c3f838c5cc7fd34e6627f212aa0ff" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>productName</name></member>
       <member refid="interfacesb_i_device_12289e53792b087edb742e505b502bfda" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>properties</name></member>
       <member refid="interfacesb_i_device_1f3a7780304ecc4366547b218da84ca5a" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>REQUEST_DELETE</name></member>
       <member refid="interfacesb_i_device_1f974626ddd15a6be25974a798633d5d0" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>REQUEST_EJECT</name></member>
       <member refid="interfacesb_i_device_1a961e3c28fb9821ce2e3414cf3f84d88" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>REQUEST_FACTORY_RESET</name></member>
       <member refid="interfacesb_i_device_11f6bcc64dd814a074fc44692531bbac8" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>REQUEST_FLAG_USER</name></member>
       <member refid="interfacesb_i_device_177332d2cfbbd3a1b605267277baa8a14" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>REQUEST_FLAG_WRITE</name></member>
+      <member refid="interfacesb_i_device_1d6db4855f5450f072ca7e392c274ce76" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>REQUEST_FORMAT</name></member>
       <member refid="interfacesb_i_device_1d88218696c137c33a26c8862aac35aee" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>REQUEST_MOUNT</name></member>
       <member refid="interfacesb_i_device_17dabc4f52477dcb082e319f486dbbf5e" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>REQUEST_MOVE</name></member>
       <member refid="interfacesb_i_device_12128ccc1c913d021f8a3bd1ee85e1c95" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>REQUEST_NEW_PLAYLIST</name></member>
@@ -147,14 +144,19 @@
       <member refid="interfacesb_i_device_182415f809b8ed9fc614c805052d71d96" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>STATE_DISCONNECTED</name></member>
       <member refid="interfacesb_i_device_1d8e6795f7bd3fed2ced6cd2489b95615" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>STATE_DOWNLOAD_PAUSED</name></member>
       <member refid="interfacesb_i_device_171a811d2eadc546a5f6b11d7c6c82010" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>STATE_DOWNLOADING</name></member>
+      <member refid="interfacesb_i_device_18492158dfc50c7ab650b76770a65549a" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>STATE_FORMATTING</name></member>
       <member refid="interfacesb_i_device_1784fc50900edf1c33d9f2192bdc42251" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>STATE_IDLE</name></member>
       <member refid="interfacesb_i_device_17fc65fb760ae2516f600c42dbd887311" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>STATE_MOUNTING</name></member>
+      <member refid="interfacesb_i_device_1cc1f0b6a8e0bf6b8efb95f133e0d02dd" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>STATE_SYNC_PREPARING</name></member>
       <member refid="interfacesb_i_device_1b6f7c830fe66955dadb3605136f94a7e" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>STATE_SYNCING</name></member>
+      <member refid="interfacesb_i_device_1153e2edeaf77f04e53e73443f7ffee1c" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>STATE_TRANSCODE</name></member>
       <member refid="interfacesb_i_device_12a88cb08981d6935eb4ef93b88075a9a" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>STATE_UPDATING</name></member>
       <member refid="interfacesb_i_device_147b034c619c9a76d577374d37c8ff363" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>STATE_UPLOAD_PAUSED</name></member>
       <member refid="interfacesb_i_device_1f8a164426c7da85a68034a6237f275ac" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>STATE_UPLOADING</name></member>
       <member refid="interfacesb_i_device_17ca6215de6573ed9b87f456a44ceaec6" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>STATE_USER</name></member>
       <member refid="interfacesb_i_device_17ed9284aac5a16769d652bf02bc4ec22" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>submitRequest</name></member>
+      <member refid="interfacesb_i_device_119762991769540ea52c785822a2b5e43" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>supportsMediaItem</name></member>
+      <member refid="interfacesb_i_device_107ab3d84622c9841a3f32ba839f49fca" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>supportsReformat</name></member>
       <member refid="interfacesb_i_device_19b88aee67110a5ed1fe252973cc3259d" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>syncLibraries</name></member>
       <member refid="interfacesb_i_device_1892f35dfa1739941fc1aa5b8d8fef433" prot="public" virt="non-virtual"><scope>sbIDeviceDeviceTesterBase</scope><name>threaded</name></member>
     </listofallmembers>

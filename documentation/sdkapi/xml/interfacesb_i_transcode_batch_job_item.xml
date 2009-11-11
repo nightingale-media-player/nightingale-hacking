@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_transcode_batch_job_item" kind="interface" prot="public">
+    <compoundname>sbITranscodeBatchJobItem</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_transcode_batch_job_item_1a80ae797c2b7db9eb0663ccc515630dc" prot="public" static="no" mutable="no">
+        <type>attribute <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+        <definition>attribute sbIMediaItem sbITranscodeBatchJobItem::mediaItem</definition>
+        <argsstring></argsstring>
+        <name>mediaItem</name>
+        <briefdescription>
+<para>The <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref> to transcode. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeBatchJob.idl" line="42" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeBatchJob.idl" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_transcode_batch_job_item_111d9add82e05e0f6b845eb7fcc83c941" prot="public" static="no" mutable="no">
+        <type>attribute nsIFile</type>
+        <definition>attribute nsIFile sbITranscodeBatchJobItem::destinationFile</definition>
+        <argsstring></argsstring>
+        <name>destinationFile</name>
+        <briefdescription>
+<para>The file to write the transcoded media to. </para>        </briefdescription>
+        <detaileddescription>
+<para>Note: The directory that this file is in must exist. The file MAY exist; it&apos;ll be overwritten if it does. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeBatchJob.idl" line="50" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeBatchJob.idl" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1238">
+        <label>sbIMediaList</label>
+        <link refid="interfacesb_i_media_list"/>
+        <childnode refid="1235" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1242">
+        <label>sbIDeviceStatus</label>
+        <link refid="interfacesb_i_device_status"/>
+        <childnode refid="1235" relation="usage">
+          <edgelabel>mediaItem</edgelabel>
+        </childnode>
+        <childnode refid="1238" relation="usage">
+          <edgelabel>mediaList</edgelabel>
+        </childnode>
+      </node>
+      <node id="1239">
+        <label>sbIDevice</label>
+        <link refid="interfacesb_i_device"/>
+        <childnode refid="1240" relation="usage">
+          <edgelabel>content</edgelabel>
+        </childnode>
+        <childnode refid="1242" relation="usage">
+          <edgelabel>currentStatus</edgelabel>
+        </childnode>
+        <childnode refid="1243" relation="usage">
+          <edgelabel>properties</edgelabel>
+        </childnode>
+      </node>
+      <node id="1237">
+        <label>sbILibrary</label>
+        <link refid="interfacesb_i_library"/>
+        <childnode refid="1238" relation="public-inheritance">
+        </childnode>
+        <childnode refid="1239" relation="usage">
+          <edgelabel>device</edgelabel>
+        </childnode>
+        <childnode refid="1241" relation="usage">
+          <edgelabel>factory</edgelabel>
+        </childnode>
+      </node>
+      <node id="1236">
+        <label>sbILibraryResource</label>
+        <link refid="interfacesb_i_library_resource"/>
+      </node>
+      <node id="1235">
+        <label>sbIMediaItem</label>
+        <link refid="interfacesb_i_media_item"/>
+        <childnode refid="1236" relation="public-inheritance">
+        </childnode>
+        <childnode refid="1237" relation="usage">
+          <edgelabel>library</edgelabel>
+        </childnode>
+      </node>
+      <node id="1234">
+        <label>sbITranscodeBatchJobItem</label>
+        <link refid="interfacesb_i_transcode_batch_job_item"/>
+        <childnode refid="1235" relation="usage">
+          <edgelabel>mediaItem</edgelabel>
+        </childnode>
+      </node>
+      <node id="1240">
+        <label>sbIDeviceContent</label>
+        <link refid="interfacesb_i_device_content"/>
+        <childnode refid="1241" relation="usage">
+          <edgelabel>libraryFactory</edgelabel>
+        </childnode>
+      </node>
+      <node id="1241">
+        <label>sbILibraryFactory</label>
+        <link refid="interfacesb_i_library_factory"/>
+      </node>
+      <node id="1243">
+        <label>sbIDeviceProperties</label>
+        <link refid="interfacesb_i_device_properties"/>
+      </node>
+    </collaborationgraph>
+    <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeBatchJob.idl" line="38" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeBatchJob.idl" bodystart="37" bodyend="51"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_transcode_batch_job_item_111d9add82e05e0f6b845eb7fcc83c941" prot="public" virt="non-virtual"><scope>sbITranscodeBatchJobItem</scope><name>destinationFile</name></member>
+      <member refid="interfacesb_i_transcode_batch_job_item_1a80ae797c2b7db9eb0663ccc515630dc" prot="public" virt="non-virtual"><scope>sbITranscodeBatchJobItem</scope><name>mediaItem</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

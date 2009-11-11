@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/dbengine/public/sbIDatabaseEngine.idl</h1><a href="sb_i_database_engine_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment"> //</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -100,7 +106,7 @@
 <a name="l00038"></a>00038 [ptr] native CDatabaseQueryPtr(CDatabaseQuery);
 <a name="l00039"></a>00039 [ref] native stlCStringRef(std::string);
 <a name="l00040"></a>00040 
-<a name="l00049"></a>00049 [scriptable, uuid(4661378b-addc-4d1e-aece-0a49cd169b8d)]
+<a name="l00049"></a>00049 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(2fbdee94-afa1-4fd3-abec-c87e5c340681)]
 <a name="l00050"></a><a class="code" href="interfacesb_i_database_engine.html">00050</a> interface <a class="code" href="interfacesb_i_database_engine.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbIDatabaseEngine</a> : nsISupports
 <a name="l00051"></a>00051 {
 <a name="l00058"></a>00058   [noscript] PRInt32 SubmitQuery(in CDatabaseQueryPtr aDBQuery);
@@ -111,14 +117,22 @@
 <a name="l00073"></a>00073   
 <a name="l00078"></a>00078   <span class="keywordtype">void</span> dumpMemoryStatistics();
 <a name="l00079"></a>00079 
-<a name="l00086"></a>00086   <span class="keywordtype">void</span> releaseMemory();
-<a name="l00087"></a>00087   
-<a name="l00093"></a><a class="code" href="interfacesb_i_database_engine.html#d862fd8232fa8e6b0bfa1606a0744d01">00093</a>   attribute <span class="keywordtype">boolean</span> localeCollationEnabled;
-<a name="l00094"></a>00094   
-<a name="l00098"></a><a class="code" href="interfacesb_i_database_engine.html#bc24b94b63b9ebd163bafc1fe4d3c45f">00098</a>   readonly attribute AString localeCollationID;
-<a name="l00099"></a>00099    
-<a name="l00100"></a>00100 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:38 2009 for Songbird by&nbsp;
+<a name="l00083"></a>00083   <span class="keywordtype">long</span> getCurrentMemoryUsage(in <span class="keywordtype">long</span> flag);
+<a name="l00084"></a>00084 
+<a name="l00088"></a>00088   <span class="keywordtype">long</span> getHighWaterMemoryUsage(in <span class="keywordtype">long</span> flag);
+<a name="l00089"></a>00089 
+<a name="l00099"></a><a class="code" href="interfacesb_i_database_engine.html#fe6f18b89a75072071f581cc581a56e4">00099</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> DATABASE_MEMORYUSED = 0;
+<a name="l00100"></a><a class="code" href="interfacesb_i_database_engine.html#0648e5327dd9002ad68d3378d189bfcf">00100</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> DATABASE_PAGECACHEUSED = 1;
+<a name="l00101"></a><a class="code" href="interfacesb_i_database_engine.html#b03d86645692d95e7f31f163090ab748">00101</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> DATABASE_PAGECACHEOVERFLOW = 2;
+<a name="l00102"></a>00102 
+<a name="l00109"></a>00109   <span class="keywordtype">void</span> releaseMemory();
+<a name="l00110"></a>00110   
+<a name="l00116"></a><a class="code" href="interfacesb_i_database_engine.html#d862fd8232fa8e6b0bfa1606a0744d01">00116</a>   attribute <span class="keywordtype">boolean</span> localeCollationEnabled;
+<a name="l00117"></a>00117   
+<a name="l00121"></a><a class="code" href="interfacesb_i_database_engine.html#bc24b94b63b9ebd163bafc1fe4d3c45f">00121</a>   readonly attribute AString localeCollationID;
+<a name="l00122"></a>00122    
+<a name="l00123"></a>00123 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:44 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

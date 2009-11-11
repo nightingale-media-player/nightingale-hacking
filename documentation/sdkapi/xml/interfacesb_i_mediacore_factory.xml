@@ -67,14 +67,14 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="559">
+      <node id="594">
         <label>sbIMediacoreCapabilities</label>
         <link refid="interfacesb_i_mediacore_capabilities"/>
       </node>
-      <node id="558">
+      <node id="593">
         <label>sbIMediacoreFactory</label>
         <link refid="interfacesb_i_mediacore_factory"/>
-        <childnode refid="559" relation="usage">
+        <childnode refid="594" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
       </node>

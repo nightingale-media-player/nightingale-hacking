@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_w_f_remove_helper9001" kind="interface" prot="public">
+    <compoundname>sbIWFRemoveHelper9001</compoundname>
+    <includes refid="sb_i_w_f_remove_helper9001_8idl" local="no">sbIWFRemoveHelper9001.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_w_f_remove_helper9001_11732cb5f4917e21491152aeac78e13e9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIWFRemoveHelper9001::remove</definition>
+        <argsstring>(in nsIArray aMediaItems)</argsstring>
+        <name>remove</name>
+        <param>
+          <type>in nsIArray</type>
+          <declname>aMediaItems</declname>
+        </param>
+        <briefdescription>
+<para>remove media items based on changes to the watch folder. This method will block, processing events until all updates are complete. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaItems</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>an array media items that may have been removed. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/watchfolder/public/sbIWFRemoveHelper9001.idl" line="47"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A hackish helper that helps the watch folder component gracefully handle file removal. Songbird is frozen if removing a big chunk of files from the watch folder. A remove progress dialog to improve the user experience. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/watchfolder/public/sbIWFRemoveHelper9001.idl" line="39" bodyfile="c:/builds/songbird/trunk/components/watchfolder/public/sbIWFRemoveHelper9001.idl" bodystart="38" bodyend="48"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_w_f_remove_helper9001_11732cb5f4917e21491152aeac78e13e9" prot="public" virt="non-virtual"><scope>sbIWFRemoveHelper9001</scope><name>remove</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

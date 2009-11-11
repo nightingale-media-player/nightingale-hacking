@@ -4,13 +4,13 @@
     <compoundname>sbISkinDescription.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="195">
+      <node id="229">
         <label>components/feathers/public/sbISkinDescription.idl</label>
         <link refid="sbISkinDescription.idl"/>
-        <childnode refid="196" relation="include">
+        <childnode refid="230" relation="include">
         </childnode>
       </node>
-      <node id="196">
+      <node id="230">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -49,7 +49,7 @@
 <codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="40"><highlight class="normal">[scriptable,<sp/>uuid(1f46254a-0746-4a73-956e-263780b5d954)]</highlight></codeline>
+<codeline lineno="40"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(1f46254a-0746-4a73-956e-263780b5d954)]</highlight></codeline>
 <codeline lineno="41" refid="interfacesb_i_skin_description" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_skin_description" kindref="compound" tooltip="Struct describing the properties of a skin.">sbISkinDescription</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="42"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="43"><highlight class="normal"></highlight></codeline>

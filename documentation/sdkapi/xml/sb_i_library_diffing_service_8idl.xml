@@ -4,13 +4,13 @@
     <compoundname>sbILibraryDiffingService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="272">
+      <node id="327">
         <label>components/library/base/public/sbILibraryDiffingService.idl</label>
         <link refid="sbILibraryDiffingService.idl"/>
-        <childnode refid="273" relation="include">
+        <childnode refid="328" relation="include">
         </childnode>
       </node>
-      <node id="273">
+      <node id="328">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -67,7 +67,7 @@
 <codeline lineno="37"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref>;</highlight></codeline>
 <codeline lineno="38"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_changeset" kindref="compound">sbILibraryChangeset</ref>;</highlight></codeline>
 <codeline lineno="39"><highlight class="normal"></highlight></codeline>
-<codeline lineno="53"><highlight class="normal">[scriptable,<sp/>uuid(0a230a2b-219e-48dd-ba54-4f879147b930)]</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(0a230a2b-219e-48dd-ba54-4f879147b930)]</highlight></codeline>
 <codeline lineno="54" refid="interfacesb_i_library_diffing_service" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_diffing_service" kindref="compound" tooltip="Library and media list diffing service.">sbILibraryDiffingService</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="55"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="70"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_library_changeset" kindref="compound">sbILibraryChangeset</ref><sp/>createChangeset(in<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>aSource,<sp/></highlight></codeline>

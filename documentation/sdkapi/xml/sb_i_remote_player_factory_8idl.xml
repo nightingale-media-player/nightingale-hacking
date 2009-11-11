@@ -4,13 +4,13 @@
     <compoundname>sbIRemotePlayerFactory.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="663">
+      <node id="819">
         <label>components/remoteapi/public/sbIRemotePlayerFactory.idl</label>
         <link refid="sbIRemotePlayerFactory.idl"/>
-        <childnode refid="664" relation="include">
+        <childnode refid="820" relation="include">
         </childnode>
       </node>
-      <node id="664">
+      <node id="820">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -52,7 +52,7 @@
 <codeline lineno="30"><highlight class="normal">interface<sp/>nsIURI;</highlight></codeline>
 <codeline lineno="31"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_remote_player" kindref="compound" tooltip="This interface is a composition of many of our other interfaces with the goal of...">sbIRemotePlayer</ref>;</highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal">[scriptable,<sp/>uuid(dd9cb712-277f-43d5-9341-174e417300d4)]</highlight></codeline>
+<codeline lineno="33"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(dd9cb712-277f-43d5-9341-174e417300d4)]</highlight></codeline>
 <codeline lineno="34" refid="interfacesb_i_remote_player_factory" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_remote_player_factory" kindref="compound">sbIRemotePlayerFactory</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="35"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_remote_player" kindref="compound" tooltip="This interface is a composition of many of our other interfaces with the goal of...">sbIRemotePlayer</ref><sp/>createPrivileged(in<sp/>nsIURI<sp/>aCodebase,</highlight></codeline>

@@ -5,18 +5,18 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes local="yes">nsITreeView.idl</includes>
     <incdepgraph>
-      <node id="351">
+      <node id="406">
         <label>nsITreeView.idl</label>
       </node>
-      <node id="349">
+      <node id="404">
         <label>components/library/base/public/sbIMediaListViewTreeView.idl</label>
         <link refid="sbIMediaListViewTreeView.idl"/>
-        <childnode refid="350" relation="include">
+        <childnode refid="405" relation="include">
         </childnode>
-        <childnode refid="351" relation="include">
+        <childnode refid="406" relation="include">
         </childnode>
       </node>
-      <node id="350">
+      <node id="405">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -60,7 +60,7 @@
 <codeline lineno="35"><highlight class="normal">interface<sp/>nsITreeColumn;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(d34060ad-5aff-46b1-8029-b446e57b59df)]</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(d34060ad-5aff-46b1-8029-b446e57b59df)]</highlight></codeline>
 <codeline lineno="44" refid="interfacesb_i_media_list_view_tree_view_observer" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view_tree_view_observer" kindref="compound" tooltip="Observer to implement the nsITreeView methods that a sbIMediaListViewTreeView does...">sbIMediaListViewTreeViewObserver</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="46" refid="interfacesb_i_media_list_view_tree_view_observer_1bd177db3a4cf9b97cff746533f3d386e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>DROP_BEFORE<sp/>=<sp/>-1;</highlight></codeline>
@@ -76,7 +76,7 @@
 <codeline lineno="63"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>oldValue);</highlight></codeline>
 <codeline lineno="64"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="65"><highlight class="normal"></highlight></codeline>
-<codeline lineno="70"><highlight class="normal">[scriptable,<sp/>uuid(b5ad98fa-15a8-40dd-a3e2-9170a983ffc3)]</highlight></codeline>
+<codeline lineno="70"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(b5ad98fa-15a8-40dd-a3e2-9170a983ffc3)]</highlight></codeline>
 <codeline lineno="71" refid="interfacesb_i_media_list_view_tree_view" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view_tree_view" kindref="compound" tooltip="A tree view that views a media list view.">sbIMediaListViewTreeView</ref><sp/>:<sp/>nsITreeView</highlight></codeline>
 <codeline lineno="72"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>getNextRowIndexForKeyNavigation(in<sp/>AString<sp/>aKeyString,</highlight></codeline>

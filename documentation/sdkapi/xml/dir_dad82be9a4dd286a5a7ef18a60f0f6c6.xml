@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_dad82be9a4dd286a5a7ef18a60f0f6c6" kind="dir">
+    <compoundname>components/moz/fileutils/</compoundname>
+    <innerdir refid="dir_15bbfcd535d0d0e5726f386f4a571789">components/moz/fileutils/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/moz/fileutils/"/>
+  </compounddef>
+</doxygen>

@@ -49,7 +49,7 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="37"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight></codeline>
-<codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(c17916d1-c2a1-47cb-ae87-2eb03c0760db)]</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(c17916d1-c2a1-47cb-ae87-2eb03c0760db)]</highlight></codeline>
 <codeline lineno="45" refid="interfacesb_i_command_line_flag_handler" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_command_line_flag_handler" kindref="compound" tooltip="Songbird Command line flag handler Interface.">sbICommandLineFlagHandler</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="55"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>handleFlag(in<sp/>AString<sp/>aFlag,<sp/>in<sp/>AString<sp/>aParam);</highlight></codeline>

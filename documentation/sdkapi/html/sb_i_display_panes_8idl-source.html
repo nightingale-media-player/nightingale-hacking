@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/displaypanes/public/sbIDisplayPanes.idl</h1><a href="sb_i_display_panes_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -97,7 +103,7 @@
 <a name="l00029"></a>00029 interface nsIDOMXULElement;
 <a name="l00030"></a>00030 interface nsISimpleEnumerator;
 <a name="l00031"></a>00031 
-<a name="l00051"></a>00051 [scriptable, uuid(4032b416-9bca-48b0-b95a-cd8a14c48ea0)]
+<a name="l00051"></a>00051 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(4032b416-9bca-48b0-b95a-cd8a14c48ea0)]
 <a name="l00052"></a><a class="code" href="interfacesb_i_display_pane_content_info.html">00052</a> interface <a class="code" href="interfacesb_i_display_pane_content_info.html" title="Information needed for a display pane to be instantiated.">sbIDisplayPaneContentInfo</a> : nsISupports
 <a name="l00053"></a>00053 {
 <a name="l00057"></a><a class="code" href="interfacesb_i_display_pane_content_info.html#02b9a18bc67263a7060ae83070405d95">00057</a>   readonly attribute AString contentUrl;
@@ -108,7 +114,7 @@
 <a name="l00078"></a><a class="code" href="interfacesb_i_display_pane_content_info.html#431cbeac0d92f744e08a448e144d71d5">00078</a>   readonly attribute AString suggestedContentGroups; 
 <a name="l00079"></a>00079 };
 <a name="l00080"></a>00080 
-<a name="l00086"></a>00086 [scriptable, uuid(316ba9ab-5fda-4bc3-b4de-dbb8211a4785)]
+<a name="l00086"></a>00086 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(316ba9ab-5fda-4bc3-b4de-dbb8211a4785)]
 <a name="l00087"></a><a class="code" href="interfacesb_i_display_pane_instantiator.html">00087</a> interface <a class="code" href="interfacesb_i_display_pane_instantiator.html">sbIDisplayPaneInstantiator</a> : nsISupports
 <a name="l00088"></a>00088 {
 <a name="l00092"></a><a class="code" href="interfacesb_i_display_pane_instantiator.html#8b392a5a78ed6882580e271cd27f4519">00092</a>   readonly attribute AString contentGroup;
@@ -124,7 +130,7 @@
 <a name="l00126"></a><a class="code" href="interfacesb_i_display_pane_instantiator.html#83507dfdfbdd7719fb886a3031031002">00126</a>   attribute PRBool collapsed;
 <a name="l00127"></a>00127 };
 <a name="l00128"></a>00128 
-<a name="l00134"></a>00134 [scriptable, uuid(1028919e-de26-45ed-ac12-5343972498a6)]
+<a name="l00134"></a>00134 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(1028919e-de26-45ed-ac12-5343972498a6)]
 <a name="l00135"></a><a class="code" href="interfacesb_i_display_pane_listener.html">00135</a> interface <a class="code" href="interfacesb_i_display_pane_listener.html">sbIDisplayPaneListener</a> : nsISupports
 <a name="l00136"></a>00136 {
 <a name="l00137"></a>00137   <span class="keywordtype">void</span> onRegisterContent(in <a class="code" href="interfacesb_i_display_pane_content_info.html" title="Information needed for a display pane to be instantiated.">sbIDisplayPaneContentInfo</a> aPane);
@@ -134,7 +140,7 @@
 <a name="l00141"></a>00141   <span class="keywordtype">void</span> onPaneInfoChanged(in <a class="code" href="interfacesb_i_display_pane_content_info.html" title="Information needed for a display pane to be instantiated.">sbIDisplayPaneContentInfo</a> aPane);
 <a name="l00142"></a>00142 };
 <a name="l00143"></a>00143 
-<a name="l00156"></a>00156 [scriptable, uuid(2b7dbb26-f429-4dff-b537-29c0e8a1d0a8)]
+<a name="l00156"></a>00156 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(2b7dbb26-f429-4dff-b537-29c0e8a1d0a8)]
 <a name="l00157"></a><a class="code" href="interfacesb_i_display_pane_manager.html">00157</a> interface <a class="code" href="interfacesb_i_display_pane_manager.html" title="Songbird Display Panes Interface This is the main display panes management interface...">sbIDisplayPaneManager</a> : nsISupports
 <a name="l00158"></a>00158 {
 <a name="l00163"></a>00163   <span class="keywordtype">void</span> registerInstantiator(in <a class="code" href="interfacesb_i_display_pane_instantiator.html">sbIDisplayPaneInstantiator</a> aInstantiator);
@@ -170,7 +176,7 @@
 <a name="l00228"></a>00228 };
 <a name="l00229"></a>00229 
 <a name="l00230"></a>00230 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

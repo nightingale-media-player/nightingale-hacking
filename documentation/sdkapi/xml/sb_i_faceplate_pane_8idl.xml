@@ -4,13 +4,13 @@
     <compoundname>sbIFaceplatePane.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="183">
+      <node id="217">
         <label>components/faceplate/public/sbIFaceplatePane.idl</label>
         <link refid="sbIFaceplatePane.idl"/>
-        <childnode refid="184" relation="include">
+        <childnode refid="218" relation="include">
         </childnode>
       </node>
-      <node id="184">
+      <node id="218">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -52,7 +52,7 @@
 <codeline lineno="37"><highlight class="normal">interface<sp/>nsIVariant;</highlight></codeline>
 <codeline lineno="38"><highlight class="normal">interface<sp/>nsIObserver;</highlight></codeline>
 <codeline lineno="39"><highlight class="normal"></highlight></codeline>
-<codeline lineno="58"><highlight class="normal">[scriptable,<sp/>uuid(2133d54e-ff78-11db-8314-0800200c9a46)]</highlight></codeline>
+<codeline lineno="58"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(2133d54e-ff78-11db-8314-0800200c9a46)]</highlight></codeline>
 <codeline lineno="59" refid="interfacesb_i_faceplate_pane" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_faceplate_pane" kindref="compound" tooltip="Interface used to communicate with faceplate pane binding instances.">sbIFaceplatePane</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="60"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="64" refid="interfacesb_i_faceplate_pane_1c1675e51741bc525fde69a1f94cb172e" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>name;</highlight></codeline>

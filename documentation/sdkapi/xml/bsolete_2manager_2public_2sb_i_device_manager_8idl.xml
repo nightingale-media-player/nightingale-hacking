@@ -4,13 +4,13 @@
     <compoundname>sbIDeviceManager.idl</compoundname>
     <includes local="yes">nsIObserver.idl</includes>
     <incdepgraph>
-      <node id="114">
+      <node id="139">
         <label>components/devicesobsolete/manager/public/sbIDeviceManager.idl</label>
         <link refid="bsolete/manager/public/sbIDeviceManager.idl"/>
-        <childnode refid="115" relation="include">
+        <childnode refid="140" relation="include">
         </childnode>
       </node>
-      <node id="115">
+      <node id="140">
         <label>nsIObserver.idl</label>
       </node>
     </incdepgraph>
@@ -63,7 +63,7 @@
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
 <codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_base" kindref="compound" tooltip="[SOON TO BE DEPRECATED AFTER 0.3] Base interface for all supported devices.">sbIDeviceBase</ref>;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
-<codeline lineno="35"><highlight class="normal">[scriptable,<sp/>uuid(d0b017c4-f388-4e78-abf3-5f48ca616a94)]</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(d0b017c4-f388-4e78-abf3-5f48ca616a94)]</highlight></codeline>
 <codeline lineno="36" refid="interfacesb_i_device_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_manager" kindref="compound">sbIDeviceManager</ref><sp/>:<sp/>nsIObserver</highlight></codeline>
 <codeline lineno="37"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="41" refid="interfacesb_i_device_manager_12c0f42d75db8a848b3f5352cc0901531" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>readonly<sp/>attribute<sp/>PRUint32<sp/>deviceCount;</highlight></codeline>

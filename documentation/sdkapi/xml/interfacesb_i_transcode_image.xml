@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_transcode_image" kind="interface" prot="public">
+    <compoundname>sbITranscodeImage</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_transcode_image_1a3878b731d90b3f035383250c726fa4b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsIInputStream</type>
+        <definition>nsIInputStream sbITranscodeImage::transcodeImage</definition>
+        <argsstring>(in nsIFile aInputFile, in ACString aInputMimeType, in ACString aOutputMimeType, in long aWidth, in long aHeight)</argsstring>
+        <name>transcodeImage</name>
+        <param>
+          <type>in nsIFile</type>
+          <declname>aInputFile</declname>
+        </param>
+        <param>
+          <type>in ACString</type>
+          <declname>aInputMimeType</declname>
+        </param>
+        <param>
+          <type>in ACString</type>
+          <declname>aOutputMimeType</declname>
+        </param>
+        <param>
+          <type>in long</type>
+          <declname>aWidth</declname>
+        </param>
+        <param>
+          <type>in long</type>
+          <declname>aHeight</declname>
+        </param>
+        <briefdescription>
+<para>Transcode from input file to output stream, given chosen mime types and target size. </para>        </briefdescription>
+        <detaileddescription>
+<para>Transcode the image found in aInputFile (of type aInputMimeType) to type aOutputMimeType (e.g. &quot;image/jpeg&quot;), and write the encoded output to a stream that is returned. aOutputFile.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aInputFile</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The input image file </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aInputMimeType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The mime type of the image (e.g. image/png) </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aOutputMimeType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The mime type of the output image (e.g. image/jpeg) </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aWidth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The width of the destination file in pixels. May be 0 to use the original width of the input. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aHeight</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The height of the destination file in pixels. May be 0 to use the original height of the input. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>aEncodedStream The input stream that the encoded data can be read from </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeImage.idl" line="67"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>An object capable of transcoding a source still image to a destination format, possibly scaling. </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeImage.idl" line="43" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeImage.idl" bodystart="42" bodyend="68"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_transcode_image_1a3878b731d90b3f035383250c726fa4b" prot="public" virt="non-virtual"><scope>sbITranscodeImage</scope><name>transcodeImage</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

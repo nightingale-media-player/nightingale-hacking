@@ -4,13 +4,13 @@
     <compoundname>sbIRemoteAPIService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="645">
+      <node id="801">
         <label>components/remoteapi/public/sbIRemoteAPIService.idl</label>
         <link refid="sbIRemoteAPIService.idl"/>
-        <childnode refid="646" relation="include">
+        <childnode refid="802" relation="include">
         </childnode>
       </node>
-      <node id="646">
+      <node id="802">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,7 +50,7 @@
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/>nsIURI;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="37"><highlight class="normal">[scriptable,<sp/>uuid(f8a5a9bb-210c-49ae-8550-7f0389eed0ed)]</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(f8a5a9bb-210c-49ae-8550-7f0389eed0ed)]</highlight></codeline>
 <codeline lineno="38" refid="interfacesb_i_remote_a_p_i_service" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_remote_a_p_i_service" kindref="compound">sbIRemoteAPIService</ref>:<sp/>nsISupports<sp/>{</highlight></codeline>
 <codeline lineno="44"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>hasPlaybackControl(<sp/>in<sp/>nsIURI<sp/>aURI<sp/>);</highlight></codeline>
 <codeline lineno="45"><highlight class="normal"><sp/><sp/></highlight></codeline>

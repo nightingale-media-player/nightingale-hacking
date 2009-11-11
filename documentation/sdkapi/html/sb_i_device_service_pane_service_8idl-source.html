@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/servicepane/public/sbIDeviceServicePaneService.idl</h1><a href="sb_i_device_service_pane_service_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* vim: ts=2 sw=2 expandtab</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -99,7 +105,7 @@
 <a name="l00036"></a>00036 interface <a class="code" href="interfacesb_i_device.html">sbIDevice</a>;
 <a name="l00037"></a>00037 interface <a class="code" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a>;
 <a name="l00038"></a>00038 
-<a name="l00043"></a>00043 [scriptable, uuid(7d066a7f-c463-4fa3-84fd-d779ddbf0643)]
+<a name="l00043"></a>00043 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(7d066a7f-c463-4fa3-84fd-d779ddbf0643)]
 <a name="l00044"></a><a class="code" href="interfacesb_i_device_service_pane_service.html">00044</a> interface <a class="code" href="interfacesb_i_device_service_pane_service.html" title="Provides information about devices needed by the service pane.">sbIDeviceServicePaneService</a> : nsISupports {
 <a name="l00053"></a>00053   <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> createNodeForDevice (in <a class="code" href="interfacesb_i_device_base.html" title="[SOON TO BE DEPRECATED AFTER 0.3] Base interface for all supported devices.">sbIDeviceBase</a> aDevice,
 <a name="l00054"></a>00054                                           in AString aDeviceIdentifier);
@@ -115,7 +121,7 @@
 <a name="l00094"></a>00094                                    in <span class="keywordtype">boolean</span>            aEnabled);
 <a name="l00095"></a>00095 };
 <a name="l00096"></a>00096 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

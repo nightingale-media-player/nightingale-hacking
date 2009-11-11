@@ -4,13 +4,13 @@
     <compoundname>sbIClickablePropertyInfo.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="614">
+      <node id="768">
         <label>components/property/public/sbIClickablePropertyInfo.idl</label>
         <link refid="sbIClickablePropertyInfo.idl"/>
-        <childnode refid="615" relation="include">
+        <childnode refid="769" relation="include">
         </childnode>
       </node>
-      <node id="615">
+      <node id="769">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -49,10 +49,10 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(159bd7ea-3e2c-4241-9e02-51733e83e8c7)]</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(159bd7ea-3e2c-4241-9e02-51733e83e8c7)]</highlight></codeline>
 <codeline lineno="45" refid="interfacesb_i_clickable_property_info" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_clickable_property_info" kindref="compound" tooltip="The property information specific to clickable properties.">sbIClickablePropertyInfo</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="47" refid="interfacesb_i_clickable_property_info_172c807b26f126227b4609b12fa043e19" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>suppressSelect;</highlight></codeline>
+<codeline lineno="47" refid="interfacesb_i_clickable_property_info_1f2117917c768c2a8c1e843fca8b64ab4" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>suppressSelect;</highlight></codeline>
 <codeline lineno="48"><highlight class="normal"></highlight></codeline>
 <codeline lineno="49"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>isDisabled(in<sp/>AString<sp/>aCurrentValue);</highlight></codeline>
 <codeline lineno="50"><highlight class="normal"></highlight></codeline>

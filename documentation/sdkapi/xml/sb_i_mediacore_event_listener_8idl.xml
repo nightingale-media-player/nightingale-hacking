@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreEventListener.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="430">
+      <node id="482">
         <label>components/mediacore/base/public/sbIMediacoreEventListener.idl</label>
         <link refid="sbIMediacoreEventListener.idl"/>
-        <childnode refid="431" relation="include">
+        <childnode refid="483" relation="include">
         </childnode>
       </node>
-      <node id="431">
+      <node id="483">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,7 +50,7 @@
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
 <codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_event" kindref="compound" tooltip="Definition of the sbIMediacoreEvent interface.">sbIMediacoreEvent</ref>;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
-<codeline lineno="31"><highlight class="normal">[scriptable,<sp/>uuid(46298bab-7f82-408d-929c-981ed2e8ce5b)]</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(46298bab-7f82-408d-929c-981ed2e8ce5b)]</highlight></codeline>
 <codeline lineno="32" refid="interfacesb_i_mediacore_event_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_event_listener" kindref="compound">sbIMediacoreEventListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="33"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="34"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onMediacoreEvent(in<sp/><ref refid="interfacesb_i_mediacore_event" kindref="compound" tooltip="Definition of the sbIMediacoreEvent interface.">sbIMediacoreEvent</ref><sp/>aEvent);</highlight></codeline>

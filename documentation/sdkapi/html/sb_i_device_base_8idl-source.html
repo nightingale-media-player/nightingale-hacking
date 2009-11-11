@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/devicesobsolete/base/public/sbIDeviceBase.idl</h1><a href="sb_i_device_base_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -102,7 +108,7 @@
 <a name="l00043"></a>00043 interface <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>;
 <a name="l00044"></a>00044 interface <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a>;
 <a name="l00045"></a>00045 
-<a name="l00053"></a>00053 [scriptable, uuid(c52a5f0f-fd6e-4f41-a681-3ed88c9e5a9f)]
+<a name="l00053"></a>00053 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(c52a5f0f-fd6e-4f41-a681-3ed88c9e5a9f)]
 <a name="l00054"></a><a class="code" href="interfacesb_i_device_base_callback.html">00054</a> interface <a class="code" href="interfacesb_i_device_base_callback.html" title="[SOON TO BE DEPRECATED AFTER 0.3] The callback class for sbIDeviceBase">sbIDeviceBaseCallback</a> : nsISupports
 <a name="l00055"></a>00055 {
 <a name="l00063"></a>00063   <span class="keywordtype">void</span> onDeviceConnect(in AString aDeviceIdentifier);
@@ -119,7 +125,7 @@
 <a name="l00102"></a>00102 };
 <a name="l00103"></a>00103 
 <a name="l00104"></a>00104 
-<a name="l00126"></a>00126 [scriptable, uuid(2964c3bf-18d6-4a72-8ccf-f08b732b4bab)]
+<a name="l00126"></a>00126 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(2964c3bf-18d6-4a72-8ccf-f08b732b4bab)]
 <a name="l00127"></a><a class="code" href="interfacesb_i_device_base.html">00127</a> interface <a class="code" href="interfacesb_i_device_base.html" title="[SOON TO BE DEPRECATED AFTER 0.3] Base interface for all supported devices.">sbIDeviceBase</a> : nsISupports
 <a name="l00128"></a>00128 {
 <a name="l00137"></a><a class="code" href="interfacesb_i_device_base.html#d8e1c0a343f0a9949218dd87e4bc0b9b">00137</a>   <span class="keyword">const</span> PRUint32 FILE_FORMAT_UNDEFINED = 9999;
@@ -247,7 +253,7 @@
 <a name="l00468"></a>00468 <span class="preprocessor"></span><span class="preprocessor">#define kSB_DEVICE_STATE_DELETING         6</span>
 <a name="l00469"></a>00469 <span class="preprocessor"></span>%}
 <a name="l00470"></a>00470 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

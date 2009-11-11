@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_e2570ff52c1121165b757364458ad1e5" kind="dir">
+    <compoundname>components/mediaexport/public/</compoundname>
+    <innerfile refid="sb_i_media_export_agent_service_8idl">sbIMediaExportAgentService.idl</innerfile>
+    <innerfile refid="sb_i_media_export_service_8idl">sbIMediaExportService.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/mediaexport/public/"/>
+  </compounddef>
+</doxygen>

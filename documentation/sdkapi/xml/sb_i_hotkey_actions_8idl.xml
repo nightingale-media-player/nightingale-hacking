@@ -4,13 +4,13 @@
     <compoundname>sbIHotkeyActions.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="227">
+      <node id="261">
         <label>components/integration/public/sbIHotkeyActions.idl</label>
         <link refid="sbIHotkeyActions.idl"/>
-        <childnode refid="228" relation="include">
+        <childnode refid="262" relation="include">
         </childnode>
       </node>
-      <node id="228">
+      <node id="262">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,7 +50,7 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="46"><highlight class="normal">[scriptable,<sp/>uuid(3C278280-C452-4d4e-9AA6-330370501A45)]</highlight></codeline>
+<codeline lineno="46"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(3C278280-C452-4d4e-9AA6-330370501A45)]</highlight></codeline>
 <codeline lineno="47" refid="interfacesb_i_hotkey_action_bundle" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_hotkey_action_bundle" kindref="compound" tooltip="Songbird hotkey action bundle interface This interface describes a bundle of hotkey...">sbIHotkeyActionBundle</ref>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="48"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="49" refid="interfacesb_i_hotkey_action_bundle_1ae0e85d107a34c751a11cac1e457a6a9" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>actionCount;<sp/></highlight></codeline>
@@ -59,7 +59,7 @@
 <codeline lineno="52"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onAction(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>idx);<sp/></highlight></codeline>
 <codeline lineno="53"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="62"><highlight class="normal">[scriptable,<sp/>uuid(C24FBC6E-4007-43e2-86B3-FBFDD6231DBB)]</highlight></codeline>
+<codeline lineno="62"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(C24FBC6E-4007-43e2-86B3-FBFDD6231DBB)]</highlight></codeline>
 <codeline lineno="63" refid="interfacesb_i_hotkey_actions" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_hotkey_actions" kindref="compound" tooltip="Songbird Hotkey Actions Interface This is the interface used to register hotkey action...">sbIHotkeyActions</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="64"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerHotkeyActionBundle(in<sp/><ref refid="interfacesb_i_hotkey_action_bundle" kindref="compound" tooltip="Songbird hotkey action bundle interface This interface describes a bundle of hotkey...">sbIHotkeyActionBundle</ref><sp/>bundle);</highlight></codeline>

@@ -96,10 +96,16 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#9b88aee67110a5ed1fe252973cc3259d">syncLibraries</a> ()</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#19762991769540ea52c785822a2b5e43">supportsMediaItem</a> (in <a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a> aMediaItem,[optional] in boolean aReportErrors)</td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#90ef2e85d63890e85cb45ff7792128d0">eject</a> ()</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#a2acf30f1f7b5e7a597b4024702098df">format</a> ()</td></tr>
 
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#0ec1721b04be6d0dff919299f9928a7d">name</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#5a9c3f838c5cc7fd34e6627f212aa0ff">productName</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute nsIDPtr&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#6bb1c045b9053154ee58591336941f14">controllerId</a></td></tr>
 
@@ -109,7 +115,7 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#892f35dfa1739941fc1aa5b8d8fef433">threaded</a></td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute <a class="el" href="interfacesb_i_device_capabilities.html">sbIDeviceCapabilities</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#8a10e26718e7a6721465c37dd79c4b41">capabilities</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute sbIDeviceCapabilities&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#8a10e26718e7a6721465c37dd79c4b41">capabilities</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute <a class="el" href="interfacesb_i_device_content.html">sbIDeviceContent</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#56499f28980a000b9a0bbd7f3150566f">content</a></td></tr>
 
@@ -123,8 +129,14 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute <a class="el" href="interfacesb_i_device_status.html">sbIDeviceStatus</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#a97398f8a665f9e50aeb6157e7677289">currentStatus</a></td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#07ab3d84622c9841a3f32ba839f49fca">supportsReformat</a></td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute unsigned <br>
 long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#370f6a73c7b74ec3e5f1c8f0b1331259">state</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="41ac34358cc745b32525727905370d27"></a><!-- doxytag: member="sbIDevice::previousState" ref="41ac34358cc745b32525727905370d27" args="" -->
+readonly attribute unsigned <br>
+long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#41ac34358cc745b32525727905370d27">previousState</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="784fc50900edf1c33d9f2192bdc42251"></a><!-- doxytag: member="sbIDevice::STATE_IDLE" ref="784fc50900edf1c33d9f2192bdc42251" args="" -->
 const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#784fc50900edf1c33d9f2192bdc42251">STATE_IDLE</a> = 0</td></tr>
@@ -164,6 +176,15 @@ const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class=
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d1c7f6dee6325ec03221d4c97eaff02d"></a><!-- doxytag: member="sbIDevice::STATE_CANCEL" ref="d1c7f6dee6325ec03221d4c97eaff02d" args="" -->
 const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#d1c7f6dee6325ec03221d4c97eaff02d">STATE_CANCEL</a> = 12</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="153e2edeaf77f04e53e73443f7ffee1c"></a><!-- doxytag: member="sbIDevice::STATE_TRANSCODE" ref="153e2edeaf77f04e53e73443f7ffee1c" args="" -->
+const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#153e2edeaf77f04e53e73443f7ffee1c">STATE_TRANSCODE</a> = 13</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="8492158dfc50c7ab650b76770a65549a"></a><!-- doxytag: member="sbIDevice::STATE_FORMATTING" ref="8492158dfc50c7ab650b76770a65549a" args="" -->
+const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#8492158dfc50c7ab650b76770a65549a">STATE_FORMATTING</a> = 14</td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="cc1f0b6a8e0bf6b8efb95f133e0d02dd"></a><!-- doxytag: member="sbIDevice::STATE_SYNC_PREPARING" ref="cc1f0b6a8e0bf6b8efb95f133e0d02dd" args="" -->
+const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#cc1f0b6a8e0bf6b8efb95f133e0d02dd">STATE_SYNC_PREPARING</a> = 15</td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7ca6215de6573ed9b87f456a44ceaec6"></a><!-- doxytag: member="sbIDevice::STATE_USER" ref="7ca6215de6573ed9b87f456a44ceaec6" args="" -->
 const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#7ca6215de6573ed9b87f456a44ceaec6">STATE_USER</a> = 0x20000000</td></tr>
@@ -210,6 +231,9 @@ const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class=
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="a961e3c28fb9821ce2e3414cf3f84d88"></a><!-- doxytag: member="sbIDevice::REQUEST_FACTORY_RESET" ref="a961e3c28fb9821ce2e3414cf3f84d88" args="" -->
 const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#a961e3c28fb9821ce2e3414cf3f84d88">REQUEST_FACTORY_RESET</a> = <a class="el" href="interfacesb_i_device.html#77332d2cfbbd3a1b605267277baa8a14">REQUEST_FLAG_WRITE</a> + 8</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d6db4855f5450f072ca7e392c274ce76"></a><!-- doxytag: member="sbIDevice::REQUEST_FORMAT" ref="d6db4855f5450f072ca7e392c274ce76" args="" -->
+const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device.html#d6db4855f5450f072ca7e392c274ce76">REQUEST_FORMAT</a> = <a class="el" href="interfacesb_i_device.html#77332d2cfbbd3a1b605267277baa8a14">REQUEST_FLAG_WRITE</a> + 9</td></tr>
+
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 <dl class="note" compact><dt><b>Note:</b></dt><dd>Implementations of this interface must be threadsafe.</dd></dl>
@@ -217,7 +241,7 @@ The main interface to all device objects
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00049">49</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00050">50</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="81a26acbf3b748a9076294ec8a6880b4"></a><!-- doxytag: member="sbIDevice::connect" ref="81a26acbf3b748a9076294ec8a6880b4" args="()" -->
 <div class="memitem">
 <div class="memproto">
@@ -344,6 +368,37 @@ Cancel all current pending requests
 Call sync() on all libraries attached to this device 
 </div>
 </div><p>
+<a class="anchor" name="19762991769540ea52c785822a2b5e43"></a><!-- doxytag: member="sbIDevice::supportsMediaItem" ref="19762991769540ea52c785822a2b5e43" args="(in sbIMediaItem aMediaItem,[optional] in boolean aReportErrors)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIDevice::supportsMediaItem           </td>
+          <td>(</td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a>&nbsp;</td>
+          <td class="paramname"> <em>aMediaItem</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[optional] in boolean&nbsp;</td>
+          <td class="paramname"> <em>aReportErrors</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Can this media item be stored on this device?<p>
+A supported file is either a) natively supported, or b) transcodable into one, and is either a) not DRM protected, or b) is DRM protected and supported by the device<p>
+If a media item cannot be stored on the device and aReportErrors is true, report an unsupported media item as a device error. 
+</div>
+</div><p>
 <a class="anchor" name="90ef2e85d63890e85cb45ff7792128d0"></a><!-- doxytag: member="sbIDevice::eject" ref="90ef2e85d63890e85cb45ff7792128d0" args="()" -->
 <div class="memitem">
 <div class="memproto">
@@ -363,6 +418,25 @@ Call sync() on all libraries attached to this device
 Eject device. 
 </div>
 </div><p>
+<a class="anchor" name="a2acf30f1f7b5e7a597b4024702098df"></a><!-- doxytag: member="sbIDevice::format" ref="a2acf30f1f7b5e7a597b4024702098df" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIDevice::format           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Format device. 
+</div>
+</div><p>
 <hr><h2>Member Data Documentation</h2>
 <a class="anchor" name="0ec1721b04be6d0dff919299f9928a7d"></a><!-- doxytag: member="sbIDevice::name" ref="0ec1721b04be6d0dff919299f9928a7d" args="" -->
 <div class="memitem">
@@ -378,7 +452,24 @@ Eject device.
 <p>
 A human-readable name identifying the device. Optional. 
 <p>
-Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00054">54</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
+Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00055">55</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
+</div>
+</div><p>
+<a class="anchor" name="5a9c3f838c5cc7fd34e6627f212aa0ff"></a><!-- doxytag: member="sbIDevice::productName" ref="5a9c3f838c5cc7fd34e6627f212aa0ff" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">readonly attribute AString <a class="el" href="interfacesb_i_device.html#5a9c3f838c5cc7fd34e6627f212aa0ff">sbIDevice::productName</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+A human-readable name identifying the device product (e.g., vendor and model number). Optional. 
+<p>
+Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00061">61</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="6bb1c045b9053154ee58591336941f14"></a><!-- doxytag: member="sbIDevice::controllerId" ref="6bb1c045b9053154ee58591336941f14" args="" -->
@@ -395,7 +486,7 @@ Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00054">54</
 <p>
 The id of the controller that created the device. 
 <p>
-Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00059">59</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
+Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00066">66</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="0cd836f1f07248e5ccc3f804eed029a5"></a><!-- doxytag: member="sbIDevice::id" ref="0cd836f1f07248e5ccc3f804eed029a5" args="" -->
@@ -412,7 +503,7 @@ Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00059">59</
 <p>
 The id of the device 
 <p>
-Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00064">64</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
+Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00071">71</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="7371a0d264e88bb584112b3657569aa5"></a><!-- doxytag: member="sbIDevice::connected" ref="7371a0d264e88bb584112b3657569aa5" args="" -->
@@ -429,7 +520,7 @@ Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00064">64</
 <p>
 Whether or not the device is currently connected. 
 <p>
-Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00081">81</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
+Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00088">88</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="892f35dfa1739941fc1aa5b8d8fef433"></a><!-- doxytag: member="sbIDevice::threaded" ref="892f35dfa1739941fc1aa5b8d8fef433" args="" -->
@@ -446,7 +537,7 @@ Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00081">81</
 <p>
 Whether or not the device's events are being processed in additional threads (i.e. off the main UI thread). 
 <p>
-Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00087">87</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
+Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00094">94</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="8a10e26718e7a6721465c37dd79c4b41"></a><!-- doxytag: member="sbIDevice::capabilities" ref="8a10e26718e7a6721465c37dd79c4b41" args="" -->
@@ -454,7 +545,7 @@ Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00087">87</
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">readonly attribute <a class="el" href="interfacesb_i_device_capabilities.html">sbIDeviceCapabilities</a> <a class="el" href="interfacesb_i_device.html#8a10e26718e7a6721465c37dd79c4b41">sbIDevice::capabilities</a>          </td>
+          <td class="memname">readonly attribute sbIDeviceCapabilities <a class="el" href="interfacesb_i_device.html#8a10e26718e7a6721465c37dd79c4b41">sbIDevice::capabilities</a>          </td>
         </tr>
       </table>
 </div>
@@ -463,7 +554,7 @@ Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00087">87</
 <p>
 Get the capabilities of the device. 
 <p>
-Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00103">103</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
+Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00110">110</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="56499f28980a000b9a0bbd7f3150566f"></a><!-- doxytag: member="sbIDevice::content" ref="56499f28980a000b9a0bbd7f3150566f" args="" -->
@@ -480,7 +571,7 @@ Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00103">103<
 <p>
 All the device's content. 
 <p>
-Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00108">108</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
+Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00115">115</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="f724198a8fa131e7d805b20d59f0fd72"></a><!-- doxytag: member="sbIDevice::parameters" ref="f724198a8fa131e7d805b20d59f0fd72" args="" -->
@@ -497,7 +588,7 @@ Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00108">108<
 <p>
 The parameters with which the device was created 
 <p>
-Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00113">113</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
+Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00120">120</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="2289e53792b087edb742e505b502bfda"></a><!-- doxytag: member="sbIDevice::properties" ref="2289e53792b087edb742e505b502bfda" args="" -->
@@ -514,7 +605,7 @@ Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00113">113<
 <p>
 The device's properties. 
 <p>
-Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00118">118</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
+Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00125">125</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="341d9584055d95cac5d77bc70bcde161"></a><!-- doxytag: member="sbIDevice::isBusy" ref="341d9584055d95cac5d77bc70bcde161" args="" -->
@@ -531,7 +622,7 @@ Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00118">118<
 <p>
 Whether the device is currently performing a busy operation, like copying or deleting. This is defined by the device as to what states determine the device is busy. 
 <p>
-Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00125">125</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
+Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00132">132</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="de85c8bedcf5cfba4aec0d352b2f2342"></a><!-- doxytag: member="sbIDevice::canDisconnect" ref="de85c8bedcf5cfba4aec0d352b2f2342" args="" -->
@@ -548,7 +639,7 @@ Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00125">125<
 <p>
 Whether it is safe to disconnect the device, generally this is when it is not performing a critical operation like copying a file to/from the device. This is also defined by the device as to what states determine the device can be disconnected. Usefull for when the user wants to shutdown the application. 
 <p>
-Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00134">134</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
+Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00141">141</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="a97398f8a665f9e50aeb6157e7677289"></a><!-- doxytag: member="sbIDevice::currentStatus" ref="a97398f8a665f9e50aeb6157e7677289" args="" -->
@@ -566,7 +657,24 @@ Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00134">134<
 A more detailed state of the device, with information on what item/list it is currently being worked on and includes possible substates for more complicated states. <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_device_status.html">sbIDeviceStatus</a> </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00142">142</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
+Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00149">149</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
+</div>
+</div><p>
+<a class="anchor" name="07ab3d84622c9841a3f32ba839f49fca"></a><!-- doxytag: member="sbIDevice::supportsReformat" ref="07ab3d84622c9841a3f32ba839f49fca" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">readonly attribute boolean <a class="el" href="interfacesb_i_device.html#07ab3d84622c9841a3f32ba839f49fca">sbIDevice::supportsReformat</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Does the implementation of this <a class="el" href="interfacesb_i_device.html">sbIDevice</a> provide support for reformatting the current device? 
+<p>
+Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00155">155</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="370f6a73c7b74ec3e5f1c8f0b1331259"></a><!-- doxytag: member="sbIDevice::state" ref="370f6a73c7b74ec3e5f1c8f0b1331259" args="" -->
@@ -586,12 +694,12 @@ sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_* <p>
 STATE_* </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00150">150</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
+Definition at line <a class="el" href="sb_i_device_8idl-source.html#l00163">163</a> of file <a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/devices/base/public/<a class="el" href="sb_i_device_8idl-source.html">sbIDevice.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:41 2009 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:47 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

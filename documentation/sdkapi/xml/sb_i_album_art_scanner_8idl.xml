@@ -60,17 +60,18 @@
 <codeline lineno="38"><highlight class="normal"></highlight></codeline>
 <codeline lineno="45"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref>;</highlight></codeline>
 <codeline lineno="46"><highlight class="normal"></highlight></codeline>
-<codeline lineno="57"><highlight class="normal">[scriptable,<sp/>uuid(425be366-9652-4567-bd18-ec2014106e31)]</highlight></codeline>
+<codeline lineno="57"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(f191a970-2e62-4b51-b495-1875ef7991ef)]</highlight></codeline>
 <codeline lineno="58" refid="interfacesb_i_album_art_scanner" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_album_art_scanner" kindref="compound" tooltip="Interface for an album art scanner. Instantiate as a component instance. It also...">sbIAlbumArtScanner</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="59"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="60"><highlight class="normal"></highlight></codeline>
-<codeline lineno="61"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Try<sp/>to<sp/>fetch<sp/>album<sp/>art<sp/>for<sp/>items<sp/>in<sp/>the<sp/>given<sp/>Media<sp/>List.</highlight></codeline>
-<codeline lineno="62"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aMediaList<sp/>the<sp/>list<sp/>we<sp/>should<sp/>scan,<sp/>null<sp/>will<sp/>default<sp/>to<sp/>the<sp/>main</highlight></codeline>
-<codeline lineno="63"><highlight class="comment"><sp/><sp/><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>library.</highlight></codeline>
-<codeline lineno="64"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>scanListForArtwork(in<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>aMediaList);</highlight></codeline>
-<codeline lineno="66"><highlight class="normal"></highlight></codeline>
-<codeline lineno="67"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="63" refid="interfacesb_i_album_art_scanner_1a37824b5dd1a352940fc55fb5a91aa59" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>updateArtwork;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Try<sp/>to<sp/>fetch<sp/>album<sp/>art<sp/>for<sp/>items<sp/>in<sp/>the<sp/>given<sp/>Media<sp/>List.</highlight></codeline>
+<codeline lineno="66"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aMediaList<sp/>the<sp/>list<sp/>we<sp/>should<sp/>scan,<sp/>null<sp/>will<sp/>default<sp/>to<sp/>the<sp/>main</highlight></codeline>
+<codeline lineno="67"><highlight class="comment"><sp/><sp/><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>library.</highlight></codeline>
+<codeline lineno="68"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>scanListForArtwork(in<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>aMediaList);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtScanner.idl"/>
   </compounddef>

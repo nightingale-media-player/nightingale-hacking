@@ -130,6 +130,9 @@ attribute nsIFile&nbsp;</td><td class="memItemRight" valign="bottom"><a class="e
 attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_file_downloader.html#c143f08256d355bb31c00a623d839a1d">destinationFileExtension</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Destination file extension. If a temporary file is created, set its file extension to destinationFileExtension. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute nsIRequest&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_file_downloader.html#d2ccd045a8468a7403d5513550d92c62">request</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The request object used during the file download.  <a href="#d2ccd045a8468a7403d5513550d92c62"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 This interface provides support for downloading files.<p>
@@ -137,9 +140,30 @@ This interface provides support for downloading files.<p>
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_file_downloader_8idl-source.html#l00045">45</a> of file <a class="el" href="sb_i_file_downloader_8idl-source.html">sbIFileDownloader.idl</a>.<hr>The documentation for this interface was generated from the following file:<ul>
+Definition at line <a class="el" href="sb_i_file_downloader_8idl-source.html#l00046">46</a> of file <a class="el" href="sb_i_file_downloader_8idl-source.html">sbIFileDownloader.idl</a>.<hr><h2>Member Data Documentation</h2>
+<a class="anchor" name="d2ccd045a8468a7403d5513550d92c62"></a><!-- doxytag: member="sbIFileDownloader::request" ref="d2ccd045a8468a7403d5513550d92c62" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">readonly attribute nsIRequest <a class="el" href="interfacesb_i_file_downloader.html#d2ccd045a8468a7403d5513550d92c62">sbIFileDownloader::request</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+The request object used during the file download. 
+<p>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>The object is only available after calling start and becomes invalid when calling cancel. </dd></dl>
+
+<p>
+Definition at line <a class="el" href="sb_i_file_downloader_8idl-source.html#l00141">141</a> of file <a class="el" href="sb_i_file_downloader_8idl-source.html">sbIFileDownloader.idl</a>.
+</div>
+</div><p>
+<hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/moz/filedownloader/public/<a class="el" href="sb_i_file_downloader_8idl-source.html">sbIFileDownloader.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:42 2009 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:48 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

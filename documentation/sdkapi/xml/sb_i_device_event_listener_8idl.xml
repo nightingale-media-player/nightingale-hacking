@@ -4,13 +4,13 @@
     <compoundname>sbIDeviceEventListener.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="98">
+      <node id="106">
         <label>components/devices/base/public/sbIDeviceEventListener.idl</label>
         <link refid="sbIDeviceEventListener.idl"/>
-        <childnode refid="99" relation="include">
+        <childnode refid="107" relation="include">
         </childnode>
       </node>
-      <node id="99">
+      <node id="107">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,7 +50,7 @@
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
 <codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_event" kindref="compound">sbIDeviceEvent</ref>;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
-<codeline lineno="39"><highlight class="normal">[scriptable,<sp/>function,<sp/>uuid(a8c5b212-2b04-497e-978a-56493f1f2dda)]</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">[scriptable,<sp/>function,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(a8c5b212-2b04-497e-978a-56493f1f2dda)]</highlight></codeline>
 <codeline lineno="40" refid="interfacesb_i_device_event_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_event_listener" kindref="compound">sbIDeviceEventListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="41"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="45"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDeviceEvent(in<sp/><ref refid="interfacesb_i_device_event" kindref="compound">sbIDeviceEvent</ref><sp/>aEvent);</highlight></codeline>

@@ -11,6 +11,8 @@
     <innerfile refid="_i_window_resize_hook_8idl">IWindowResizeHook.idl</innerfile>
     <innerfile refid="sb_i_hotkey_actions_8idl">sbIHotkeyActions.idl</innerfile>
     <innerfile refid="sb_i_native_window_manager_8idl">sbINativeWindowManager.idl</innerfile>
+    <innerfile refid="sb_i_screen_saver_suppressor_8idl">sbIScreenSaverSuppressor.idl</innerfile>
+    <innerfile refid="sb_i_window_move_service_8idl">sbIWindowMoveService.idl</innerfile>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

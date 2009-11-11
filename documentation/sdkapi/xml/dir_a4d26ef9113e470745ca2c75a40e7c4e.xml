@@ -3,6 +3,8 @@
   <compounddef id="dir_a4d26ef9113e470745ca2c75a40e7c4e" kind="dir">
     <compoundname>components/watchfolder/public/</compoundname>
     <innerfile refid="sb_i_watch_folder_service_8idl">sbIWatchFolderService.idl</innerfile>
+    <innerfile refid="sb_i_w_f_move_rename_helper9000_8idl">sbIWFMoveRenameHelper9000.idl</innerfile>
+    <innerfile refid="sb_i_w_f_remove_helper9001_8idl">sbIWFRemoveHelper9001.idl</innerfile>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

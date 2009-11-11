@@ -12,6 +12,7 @@
     <innerfile refid="sb_i_mediacore_factory_8idl">sbIMediacoreFactory.idl</innerfile>
     <innerfile refid="sb_i_mediacore_factory_registrar_8idl">sbIMediacoreFactoryRegistrar.idl</innerfile>
     <innerfile refid="sb_i_mediacore_manager_8idl">sbIMediacoreManager.idl</innerfile>
+    <innerfile refid="sb_i_mediacore_multiband_equalizer_8idl">sbIMediacoreMultibandEqualizer.idl</innerfile>
     <innerfile refid="sb_i_mediacore_playback_control_8idl">sbIMediacorePlaybackControl.idl</innerfile>
     <innerfile refid="sb_i_mediacore_sequence_generator_8idl">sbIMediacoreSequenceGenerator.idl</innerfile>
     <innerfile refid="sb_i_mediacore_sequencer_8idl">sbIMediacoreSequencer.idl</innerfile>
@@ -24,6 +25,7 @@
     <innerfile refid="sb_i_mediacore_voting_8idl">sbIMediacoreVoting.idl</innerfile>
     <innerfile refid="sb_i_mediacore_voting_chain_8idl">sbIMediacoreVotingChain.idl</innerfile>
     <innerfile refid="sb_i_mediacore_voting_participant_8idl">sbIMediacoreVotingParticipant.idl</innerfile>
+    <innerfile refid="sb_i_video_box_8idl">sbIVideoBox.idl</innerfile>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

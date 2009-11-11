@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreBalanceControl.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="418">
+      <node id="470">
         <label>components/mediacore/base/public/sbIMediacoreBalanceControl.idl</label>
         <link refid="sbIMediacoreBalanceControl.idl"/>
-        <childnode refid="419" relation="include">
+        <childnode refid="471" relation="include">
         </childnode>
       </node>
-      <node id="419">
+      <node id="471">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -48,7 +48,7 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal">[scriptable,<sp/>uuid(12f5db9c-1834-457d-90f7-1512d8da9eb2)]</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(12f5db9c-1834-457d-90f7-1512d8da9eb2)]</highlight></codeline>
 <codeline lineno="30" refid="interfacesb_i_mediacore_balance_control" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_balance_control" kindref="compound">sbIMediacoreBalanceControl</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="31"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="32"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//Between<sp/>-1<sp/>and<sp/>1.<sp/>0<sp/>is<sp/>centered.</highlight><highlight class="normal"></highlight></codeline>

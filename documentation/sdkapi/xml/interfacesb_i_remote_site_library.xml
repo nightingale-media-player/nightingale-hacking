@@ -62,25 +62,25 @@
     <detaileddescription>
 <para>This interface is used by the player to connect a library to a specific library for a website. The library serves as an area a website can use to create the media items and lists needed to populate web playlists and to transfer into the user&apos;s main library. The restrictions on the site library are lighter allowing a website to do more with the limited scope of the site library. </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="1004">
+      <node id="1078">
         <label>sbIRemoteSiteLibrary</label>
         <link refid="interfacesb_i_remote_site_library"/>
-        <childnode refid="1005" relation="public-inheritance">
+        <childnode refid="1079" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1005">
+      <node id="1079">
         <label>sbIRemoteLibrary</label>
         <link refid="interfacesb_i_remote_library"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="1006">
+      <node id="1080">
         <label>sbIRemoteSiteLibrary</label>
         <link refid="interfacesb_i_remote_site_library"/>
-        <childnode refid="1007" relation="public-inheritance">
+        <childnode refid="1081" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1007">
+      <node id="1081">
         <label>sbIRemoteLibrary</label>
         <link refid="interfacesb_i_remote_library"/>
       </node>

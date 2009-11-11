@@ -8,52 +8,52 @@
     <includedby refid="sb_i_metadata_channel_8idl" local="yes">components/mediacore/metadata/manager/public/sbIMetadataChannel.idl</includedby>
     <includedby refid="sb_i_metadata_manager_8idl" local="yes">components/mediacore/metadata/manager/public/sbIMetadataManager.idl</includedby>
     <incdepgraph>
-      <node id="520">
+      <node id="610">
         <label>nsIArray.idl</label>
       </node>
-      <node id="521">
+      <node id="611">
         <label>nsIMutableArray.idl</label>
       </node>
-      <node id="519">
+      <node id="609">
         <label>sbIPropertyArray.idl</label>
         <link refid="sb_i_property_array_8idl"/>
-        <childnode refid="520" relation="include">
+        <childnode refid="610" relation="include">
         </childnode>
-        <childnode refid="521" relation="include">
+        <childnode refid="611" relation="include">
         </childnode>
       </node>
-      <node id="516">
+      <node id="606">
         <label>components/mediacore/metadata/manager/public/sbIMetadataHandler.idl</label>
         <link refid="sbIMetadataHandler.idl"/>
-        <childnode refid="517" relation="include">
+        <childnode refid="607" relation="include">
         </childnode>
-        <childnode refid="518" relation="include">
+        <childnode refid="608" relation="include">
         </childnode>
-        <childnode refid="519" relation="include">
+        <childnode refid="609" relation="include">
         </childnode>
       </node>
-      <node id="517">
+      <node id="607">
         <label>nsISupports.idl</label>
       </node>
-      <node id="518">
+      <node id="608">
         <label>nsIChannel.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="523">
+      <node id="613">
         <label>components/mediacore/metadata/manager/public/sbIMetadataChannel.idl</label>
         <link refid="sb_i_metadata_channel_8idl"/>
       </node>
-      <node id="524">
+      <node id="614">
         <label>components/mediacore/metadata/manager/public/sbIMetadataManager.idl</label>
         <link refid="sb_i_metadata_manager_8idl"/>
       </node>
-      <node id="522">
+      <node id="612">
         <label>components/mediacore/metadata/manager/public/sbIMetadataHandler.idl</label>
         <link refid="sbIMetadataHandler.idl"/>
-        <childnode refid="523" relation="include">
+        <childnode refid="613" relation="include">
         </childnode>
-        <childnode refid="524" relation="include">
+        <childnode refid="614" relation="include">
         </childnode>
       </node>
     </invincdepgraph>
@@ -93,7 +93,7 @@
 <codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIChannel.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_property_array_8idl" kindref="compound" tooltip="Definition of the sbIPropertyArray interface.">sbIPropertyArray.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(4a858410-52e7-11dd-ae16-0800200c9a66)]</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(4a858410-52e7-11dd-ae16-0800200c9a66)]</highlight></codeline>
 <codeline lineno="45" refid="interfacesb_i_metadata_handler" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_handler" kindref="compound" tooltip="An object capable of manipulating the metadata tags for a media file.">sbIMetadataHandler</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="51" refid="interfacesb_i_metadata_handler_11a1be28d93bd9e9dcf125ea81f8d3b6e" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>PRUint32<sp/>METADATA_IMAGE_TYPE_OTHER<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x00;</highlight></codeline>

@@ -4,13 +4,13 @@
     <compoundname>sbIRemotePlayer.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="660">
+      <node id="816">
         <label>components/remoteapi/public/sbIRemotePlayer.idl</label>
         <link refid="sbIRemotePlayer.idl"/>
-        <childnode refid="661" relation="include">
+        <childnode refid="817" relation="include">
         </childnode>
       </node>
-      <node id="661">
+      <node id="817">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -122,7 +122,7 @@
 <codeline lineno="106"><highlight class="comment"><sp/><sp/>For<sp/>more<sp/>information<sp/>about<sp/>the<sp/>&lt;MediaList&gt;<sp/>object,<sp/>see<sp/>the<sp/>&lt;MediaList&gt;<sp/>reference.</highlight></codeline>
 <codeline lineno="107"><highlight class="comment"><sp/><sp/>For<sp/>more<sp/>information<sp/>about<sp/>the<sp/>&lt;WebPlaylist&gt;<sp/>object,<sp/>see<sp/>the<sp/>&lt;WebPlaylist&gt;<sp/>reference.</highlight></codeline>
 <codeline lineno="108"><highlight class="comment">*/</highlight></codeline>
-<codeline lineno="116"><highlight class="normal">[scriptable,<sp/>uuid(d2caab8d-35fd-41f8-9716-62ed422c244b)]</highlight></codeline>
+<codeline lineno="116"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(d2caab8d-35fd-41f8-9716-62ed422c244b)]</highlight></codeline>
 <codeline lineno="117" refid="interfacesb_i_remote_player" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_remote_player" kindref="compound" tooltip="This interface is a composition of many of our other interfaces with the goal of...">sbIRemotePlayer</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="118"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="119"><highlight class="normal"></highlight></codeline>

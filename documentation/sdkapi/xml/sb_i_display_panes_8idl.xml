@@ -4,13 +4,13 @@
     <compoundname>sbIDisplayPanes.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="171">
+      <node id="205">
         <label>components/displaypanes/public/sbIDisplayPanes.idl</label>
         <link refid="sbIDisplayPanes.idl"/>
-        <childnode refid="172" relation="include">
+        <childnode refid="206" relation="include">
         </childnode>
       </node>
-      <node id="172">
+      <node id="206">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -55,7 +55,7 @@
 <codeline lineno="29"><highlight class="normal">interface<sp/>nsIDOMXULElement;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight></codeline>
-<codeline lineno="51"><highlight class="normal">[scriptable,<sp/>uuid(4032b416-9bca-48b0-b95a-cd8a14c48ea0)]</highlight></codeline>
+<codeline lineno="51"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(4032b416-9bca-48b0-b95a-cd8a14c48ea0)]</highlight></codeline>
 <codeline lineno="52" refid="interfacesb_i_display_pane_content_info" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_display_pane_content_info" kindref="compound" tooltip="Information needed for a display pane to be instantiated.">sbIDisplayPaneContentInfo</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="53"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="57" refid="interfacesb_i_display_pane_content_info_102b9a18bc67263a7060ae83070405d95" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>contentUrl;</highlight></codeline>
@@ -66,7 +66,7 @@
 <codeline lineno="78" refid="interfacesb_i_display_pane_content_info_1431cbeac0d92f744e08a448e144d71d5" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>suggestedContentGroups;<sp/></highlight></codeline>
 <codeline lineno="79"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="80"><highlight class="normal"></highlight></codeline>
-<codeline lineno="86"><highlight class="normal">[scriptable,<sp/>uuid(316ba9ab-5fda-4bc3-b4de-dbb8211a4785)]</highlight></codeline>
+<codeline lineno="86"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(316ba9ab-5fda-4bc3-b4de-dbb8211a4785)]</highlight></codeline>
 <codeline lineno="87" refid="interfacesb_i_display_pane_instantiator" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_display_pane_instantiator" kindref="compound">sbIDisplayPaneInstantiator</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="88"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="92" refid="interfacesb_i_display_pane_instantiator_18b392a5a78ed6882580e271cd27f4519" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>contentGroup;</highlight></codeline>
@@ -82,7 +82,7 @@
 <codeline lineno="126" refid="interfacesb_i_display_pane_instantiator_183507dfdfbdd7719fb886a3031031002" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>PRBool<sp/>collapsed;</highlight></codeline>
 <codeline lineno="127"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="128"><highlight class="normal"></highlight></codeline>
-<codeline lineno="134"><highlight class="normal">[scriptable,<sp/>uuid(1028919e-de26-45ed-ac12-5343972498a6)]</highlight></codeline>
+<codeline lineno="134"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(1028919e-de26-45ed-ac12-5343972498a6)]</highlight></codeline>
 <codeline lineno="135" refid="interfacesb_i_display_pane_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_display_pane_listener" kindref="compound">sbIDisplayPaneListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="136"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="137"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onRegisterContent(in<sp/><ref refid="interfacesb_i_display_pane_content_info" kindref="compound" tooltip="Information needed for a display pane to be instantiated.">sbIDisplayPaneContentInfo</ref><sp/>aPane);</highlight></codeline>
@@ -92,7 +92,7 @@
 <codeline lineno="141"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onPaneInfoChanged(in<sp/><ref refid="interfacesb_i_display_pane_content_info" kindref="compound" tooltip="Information needed for a display pane to be instantiated.">sbIDisplayPaneContentInfo</ref><sp/>aPane);</highlight></codeline>
 <codeline lineno="142"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="143"><highlight class="normal"></highlight></codeline>
-<codeline lineno="156"><highlight class="normal">[scriptable,<sp/>uuid(2b7dbb26-f429-4dff-b537-29c0e8a1d0a8)]</highlight></codeline>
+<codeline lineno="156"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(2b7dbb26-f429-4dff-b537-29c0e8a1d0a8)]</highlight></codeline>
 <codeline lineno="157" refid="interfacesb_i_display_pane_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_display_pane_manager" kindref="compound" tooltip="Songbird Display Panes Interface This is the main display panes management interface...">sbIDisplayPaneManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="158"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="163"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerInstantiator(in<sp/><ref refid="interfacesb_i_display_pane_instantiator" kindref="compound">sbIDisplayPaneInstantiator</ref><sp/>aInstantiator);</highlight></codeline>

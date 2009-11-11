@@ -4,13 +4,13 @@
     <compoundname>sbIMediaItemListener.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="320">
+      <node id="375">
         <label>components/library/base/public/sbIMediaItemListener.idl</label>
         <link refid="sbIMediaItemListener.idl"/>
-        <childnode refid="321" relation="include">
+        <childnode refid="376" relation="include">
         </childnode>
       </node>
-      <node id="321">
+      <node id="376">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -61,7 +61,7 @@
 <codeline lineno="39"><highlight class="normal"></highlight></codeline>
 <codeline lineno="45"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
 <codeline lineno="46"><highlight class="normal"></highlight></codeline>
-<codeline lineno="47"><highlight class="normal">[scriptable,<sp/>uuid(4e9fb7a4-c28e-47a4-8bc0-61f83ccfea34)]</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(4e9fb7a4-c28e-47a4-8bc0-61f83ccfea34)]</highlight></codeline>
 <codeline lineno="48" refid="interfacesb_i_media_item_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item_listener" kindref="compound" tooltip="Interface for media item listeners.">sbIMediaItemListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="49"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onItemRemoved(in<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>aMediaItem);</highlight></codeline>

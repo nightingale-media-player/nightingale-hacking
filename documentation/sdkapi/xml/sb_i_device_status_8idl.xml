@@ -4,13 +4,13 @@
     <compoundname>sbIDeviceStatus.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="123">
+      <node id="148">
         <label>components/devices/base/public/sbIDeviceStatus.idl</label>
         <link refid="sbIDeviceStatus.idl"/>
-        <childnode refid="124" relation="include">
+        <childnode refid="149" relation="include">
         </childnode>
       </node>
-      <node id="124">
+      <node id="149">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -51,7 +51,7 @@
 <codeline lineno="33"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
 <codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref>;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(7b2026c4-9193-4cbd-818a-0d07abaec854)]</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(48cb3191-0687-45cc-b47f-8463ebf77bcb)]</highlight></codeline>
 <codeline lineno="44" refid="interfacesb_i_device_status" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_status" kindref="compound">sbIDeviceStatus</ref>:<sp/>nsISupports<sp/>{</highlight></codeline>
 <codeline lineno="49" refid="interfacesb_i_device_status_149f6338b3405bdfd3edff6919e1cb5c7" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>currentState;</highlight></codeline>
 <codeline lineno="50"><highlight class="normal"></highlight></codeline>
@@ -69,11 +69,15 @@
 <codeline lineno="82"><highlight class="normal"></highlight></codeline>
 <codeline lineno="86" refid="interfacesb_i_device_status_10a8461627863499c55ed7797c1954310" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>mediaItem;</highlight></codeline>
 <codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="91" refid="interfacesb_i_device_status_112228779b15826100b39dacf3bd7a51e" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>mediaList;</highlight></codeline>
-<codeline lineno="92"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="96"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>init(in<sp/>AString<sp/>aDeviceID);</highlight></codeline>
-<codeline lineno="97"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="97" refid="interfacesb_i_device_status_184babbaf74efe1366df22f6041731d98" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>elapsedTime;</highlight></codeline>
 <codeline lineno="98"><highlight class="normal"></highlight></codeline>
+<codeline lineno="103" refid="interfacesb_i_device_status_1d58ef02dacae35e93c42d77d334806f6" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>remainingTime;</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="108" refid="interfacesb_i_device_status_112228779b15826100b39dacf3bd7a51e" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>mediaList;</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>init(in<sp/>AString<sp/>aDeviceID);</highlight></codeline>
+<codeline lineno="114"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceStatus.idl"/>
   </compounddef>

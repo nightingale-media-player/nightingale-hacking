@@ -244,6 +244,24 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListListener.idl" line="114"/>
       </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_list_listener_11406bf88be46518807cafd943c0a8ddf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIMediaListListener::onBeforeListCleared</definition>
+        <argsstring>(in sbIMediaList aMediaList)</argsstring>
+        <name>onBeforeListCleared</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+          <declname>aMediaList</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Called before a media list is cleared. <simplesect kind="return"><para>True if you do not want any further onBeforeListCleared notifications for the current batch. If there is no current batch, the return value is ignored. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListListener.idl" line="122"/>
+      </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_listener_1b6bc46918b149e08265d2820da4fa71e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
         <definition>boolean sbIMediaListListener::onListCleared</definition>
@@ -260,7 +278,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListListener.idl" line="122"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListListener.idl" line="130"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_listener_1cbd1e38650a4440186a42c6b965bfe6b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -285,7 +303,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListListener.idl" line="134"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListListener.idl" line="142"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_listener_1f1003ed7359698fd43a83d2ef139d9ce" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -310,7 +328,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListListener.idl" line="146"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListListener.idl" line="154"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -318,12 +336,13 @@
     <detaileddescription>
 <para>Implementors of this interface can listen to changes in a media list.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListListener.idl" line="49" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListListener.idl" bodystart="48" bodyend="147"/>
+    <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListListener.idl" line="49" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListListener.idl" bodystart="48" bodyend="155"/>
     <listofallmembers>
       <member refid="interfacesb_i_media_list_listener_118e53f46c5e17e290cb0cb5bea04ba28" prot="public" virt="non-virtual"><scope>sbIMediaListListener</scope><name>onAfterItemRemoved</name></member>
       <member refid="interfacesb_i_media_list_listener_1cbd1e38650a4440186a42c6b965bfe6b" prot="public" virt="non-virtual"><scope>sbIMediaListListener</scope><name>onBatchBegin</name></member>
       <member refid="interfacesb_i_media_list_listener_1f1003ed7359698fd43a83d2ef139d9ce" prot="public" virt="non-virtual"><scope>sbIMediaListListener</scope><name>onBatchEnd</name></member>
       <member refid="interfacesb_i_media_list_listener_1b6035125768eaf67829cdbde1c1198ef" prot="public" virt="non-virtual"><scope>sbIMediaListListener</scope><name>onBeforeItemRemoved</name></member>
+      <member refid="interfacesb_i_media_list_listener_11406bf88be46518807cafd943c0a8ddf" prot="public" virt="non-virtual"><scope>sbIMediaListListener</scope><name>onBeforeListCleared</name></member>
       <member refid="interfacesb_i_media_list_listener_1bcf2a0f400275ca079008b625385a18a" prot="public" virt="non-virtual"><scope>sbIMediaListListener</scope><name>onItemAdded</name></member>
       <member refid="interfacesb_i_media_list_listener_1c4589c62e7f7412c100dcb90897a8838" prot="public" virt="non-virtual"><scope>sbIMediaListListener</scope><name>onItemMoved</name></member>
       <member refid="interfacesb_i_media_list_listener_1dffb6c551f4e1461e00ebfd8efb86f75" prot="public" virt="non-virtual"><scope>sbIMediaListListener</scope><name>onItemUpdated</name></member>

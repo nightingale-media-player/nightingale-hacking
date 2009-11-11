@@ -51,7 +51,7 @@
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
 <codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_bundle" kindref="compound" tooltip="Songbird Bundle Interface This is the main bundle management interface, used to get...">sbIBundle</ref>;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(7449a0fc-aeff-11db-96e1-005056c00008)]</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(7449a0fc-aeff-11db-96e1-005056c00008)]</highlight></codeline>
 <codeline lineno="44" refid="interfacesb_i_bundle_data_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_bundle_data_listener" kindref="compound" tooltip="Songbird Bundle Data Listener Interface.">sbIBundleDataListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="52"><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDownloadComplete(in<sp/><ref refid="interfacesb_i_bundle" kindref="compound" tooltip="Songbird Bundle Interface This is the main bundle management interface, used to get...">sbIBundle</ref><sp/>aBundle);<sp/></highlight></codeline>

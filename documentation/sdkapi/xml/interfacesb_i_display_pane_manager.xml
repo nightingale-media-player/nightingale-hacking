@@ -254,14 +254,14 @@
 <para><simplesect kind="see"><para><ulink url="http://publicsvn.songbirdnest.com/browser/extensions/wikipedia">http://publicsvn.songbirdnest.com/browser/extensions/wikipedia</ulink> </para><para>app/content/bindings/displayPane.xml </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="210">
+      <node id="231">
         <label>sbIDisplayPaneManager</label>
         <link refid="interfacesb_i_display_pane_manager"/>
-        <childnode refid="211" relation="usage">
+        <childnode refid="232" relation="usage">
           <edgelabel>defaultPaneInfo</edgelabel>
         </childnode>
       </node>
-      <node id="211">
+      <node id="232">
         <label>sbIDisplayPaneContentInfo</label>
         <link refid="interfacesb_i_display_pane_content_info"/>
       </node>

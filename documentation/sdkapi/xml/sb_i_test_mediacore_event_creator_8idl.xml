@@ -4,13 +4,13 @@
     <compoundname>sbITestMediacoreEventCreator.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="489">
+      <node id="547">
         <label>components/mediacore/base/test/sbITestMediacoreEventCreator.idl</label>
         <link refid="sbITestMediacoreEventCreator.idl"/>
-        <childnode refid="490" relation="include">
+        <childnode refid="548" relation="include">
         </childnode>
       </node>
-      <node id="490">
+      <node id="548">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -53,7 +53,7 @@
 <codeline lineno="31"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_event" kindref="compound" tooltip="Definition of the sbIMediacoreEvent interface.">sbIMediacoreEvent</ref>;</highlight></codeline>
 <codeline lineno="32"><highlight class="normal">interface<sp/>nsIVariant;</highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal">[scriptable,<sp/>uuid(6629B299-4A44-4cae-9015-1D5639981DD2)]</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(6629B299-4A44-4cae-9015-1D5639981DD2)]</highlight></codeline>
 <codeline lineno="35" refid="interfacesb_i_test_mediacore_event_creator" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_test_mediacore_event_creator" kindref="compound">sbITestMediacoreEventCreator</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_mediacore_event" kindref="compound" tooltip="Definition of the sbIMediacoreEvent interface.">sbIMediacoreEvent</ref><sp/>create(in<sp/>PRUint32<sp/>aType,</highlight></codeline>

@@ -4,13 +4,13 @@
     <compoundname>sbIURLFormatter.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="600">
+      <node id="754">
         <label>components/moz/urlformatter/public/sbIURLFormatter.idl</label>
         <link refid="sbIURLFormatter.idl"/>
-        <childnode refid="601" relation="include">
+        <childnode refid="755" relation="include">
         </childnode>
       </node>
-      <node id="601">
+      <node id="755">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -65,7 +65,7 @@
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
 <codeline lineno="70"><highlight class="normal">interface<sp/>nsIPropertyBag;</highlight></codeline>
 <codeline lineno="71"><highlight class="normal"></highlight></codeline>
-<codeline lineno="72"><highlight class="normal">[scriptable,<sp/>uuid(b4487e9b-6c4f-49ce-9255-057c4e88c3c4)]</highlight></codeline>
+<codeline lineno="72"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(b4487e9b-6c4f-49ce-9255-057c4e88c3c4)]</highlight></codeline>
 <codeline lineno="73" refid="interfacesb_i_u_r_l_formatter" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_u_r_l_formatter" kindref="compound">sbIURLFormatter</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="74"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="82"><highlight class="normal"><sp/><sp/>AString<sp/>formatURL(in<sp/>AString<sp/>aFormat,<sp/>[optional]<sp/>in<sp/>nsIPropertyBag<sp/>aMappings);</highlight></codeline>

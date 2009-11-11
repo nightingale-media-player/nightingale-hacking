@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_media_management_job_item" kind="interface" prot="public">
+    <compoundname>sbIMediaManagementJobItem</compoundname>
+    <includes refid="sb_i_media_management_job_item_8idl" local="no">sbIMediaManagementJobItem.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_media_management_job_item_173097a6d05cd79b8c6fe193a23e60a6c" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+        <definition>readonly attribute sbIMediaItem sbIMediaManagementJobItem::item</definition>
+        <argsstring></argsstring>
+        <name>item</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>the media item that would be managed </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediamanager/public/sbIMediaManagementJobItem.idl" line="46" bodyfile="c:/builds/songbird/trunk/components/mediamanager/public/sbIMediaManagementJobItem.idl" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_media_management_job_item_1b3f50790052bbeab4eb9c3876af174cd" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIFile</type>
+        <definition>readonly attribute nsIFile sbIMediaManagementJobItem::targetPath</definition>
+        <argsstring></argsstring>
+        <name>targetPath</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>the path that the item would be copied or moved to </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediamanager/public/sbIMediaManagementJobItem.idl" line="51" bodyfile="c:/builds/songbird/trunk/components/mediamanager/public/sbIMediaManagementJobItem.idl" bodystart="51" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_media_management_job_item_1bd4d980b534ed498e86656eb54cc2c11" prot="public" static="no" mutable="no">
+        <type>readonly attribute unsigned short</type>
+        <definition>readonly attribute unsigned short sbIMediaManagementJobItem::action</definition>
+        <argsstring></argsstring>
+        <name>action</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>the action that would be taken to manage the item; the value is a combination of the MANAGE_* constants in <ref refid="interfacesb_i_media_file_manager" kindref="compound">sbIMediaFileManager</ref> <simplesect kind="see"><para><ref refid="interfacesb_i_media_file_manager" kindref="compound">sbIMediaFileManager</ref> </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediamanager/public/sbIMediaManagementJobItem.idl" line="58" bodyfile="c:/builds/songbird/trunk/components/mediamanager/public/sbIMediaManagementJobItem.idl" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>an item that would be organized by a <ref refid="interfacesb_i_media_management_job" kindref="compound">sbIMediaManagementJob</ref> </para>    </detaileddescription>
+    <collaborationgraph>
+      <node id="789">
+        <label>sbIMediaList</label>
+        <link refid="interfacesb_i_media_list"/>
+        <childnode refid="786" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="785">
+        <label>sbIMediaManagementJobItem</label>
+        <link refid="interfacesb_i_media_management_job_item"/>
+        <childnode refid="786" relation="usage">
+          <edgelabel>item</edgelabel>
+        </childnode>
+      </node>
+      <node id="793">
+        <label>sbIDeviceStatus</label>
+        <link refid="interfacesb_i_device_status"/>
+        <childnode refid="786" relation="usage">
+          <edgelabel>mediaItem</edgelabel>
+        </childnode>
+        <childnode refid="789" relation="usage">
+          <edgelabel>mediaList</edgelabel>
+        </childnode>
+      </node>
+      <node id="790">
+        <label>sbIDevice</label>
+        <link refid="interfacesb_i_device"/>
+        <childnode refid="791" relation="usage">
+          <edgelabel>content</edgelabel>
+        </childnode>
+        <childnode refid="793" relation="usage">
+          <edgelabel>currentStatus</edgelabel>
+        </childnode>
+        <childnode refid="794" relation="usage">
+          <edgelabel>properties</edgelabel>
+        </childnode>
+      </node>
+      <node id="788">
+        <label>sbILibrary</label>
+        <link refid="interfacesb_i_library"/>
+        <childnode refid="789" relation="public-inheritance">
+        </childnode>
+        <childnode refid="790" relation="usage">
+          <edgelabel>device</edgelabel>
+        </childnode>
+        <childnode refid="792" relation="usage">
+          <edgelabel>factory</edgelabel>
+        </childnode>
+      </node>
+      <node id="787">
+        <label>sbILibraryResource</label>
+        <link refid="interfacesb_i_library_resource"/>
+      </node>
+      <node id="786">
+        <label>sbIMediaItem</label>
+        <link refid="interfacesb_i_media_item"/>
+        <childnode refid="787" relation="public-inheritance">
+        </childnode>
+        <childnode refid="788" relation="usage">
+          <edgelabel>library</edgelabel>
+        </childnode>
+      </node>
+      <node id="791">
+        <label>sbIDeviceContent</label>
+        <link refid="interfacesb_i_device_content"/>
+        <childnode refid="792" relation="usage">
+          <edgelabel>libraryFactory</edgelabel>
+        </childnode>
+      </node>
+      <node id="792">
+        <label>sbILibraryFactory</label>
+        <link refid="interfacesb_i_library_factory"/>
+      </node>
+      <node id="794">
+        <label>sbIDeviceProperties</label>
+        <link refid="interfacesb_i_device_properties"/>
+      </node>
+    </collaborationgraph>
+    <location file="c:/builds/songbird/trunk/components/mediamanager/public/sbIMediaManagementJobItem.idl" line="42" bodyfile="c:/builds/songbird/trunk/components/mediamanager/public/sbIMediaManagementJobItem.idl" bodystart="41" bodyend="59"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_media_management_job_item_1bd4d980b534ed498e86656eb54cc2c11" prot="public" virt="non-virtual"><scope>sbIMediaManagementJobItem</scope><name>action</name></member>
+      <member refid="interfacesb_i_media_management_job_item_173097a6d05cd79b8c6fe193a23e60a6c" prot="public" virt="non-virtual"><scope>sbIMediaManagementJobItem</scope><name>item</name></member>
+      <member refid="interfacesb_i_media_management_job_item_1b3f50790052bbeab4eb9c3876af174cd" prot="public" virt="non-virtual"><scope>sbIMediaManagementJobItem</scope><name>targetPath</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

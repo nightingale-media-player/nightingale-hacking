@@ -38,14 +38,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="166"/>
+        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="168"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Listen for changes on service pane nodes. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="160" bodyfile="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" bodystart="160" bodyend="167"/>
+    <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="162" bodyfile="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" bodystart="162" bodyend="169"/>
     <listofallmembers>
       <member refid="interfacesb_i_service_pane_listener_1deee76cf32ffddac8b5615aeb0af2f7a" prot="public" virt="non-virtual"><scope>sbIServicePaneListener</scope><name>nodePropertyChanged</name></member>
     </listofallmembers>

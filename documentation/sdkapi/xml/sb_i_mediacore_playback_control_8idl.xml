@@ -4,13 +4,13 @@
     <compoundname>sbIMediacorePlaybackControl.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="453">
+      <node id="508">
         <label>components/mediacore/base/public/sbIMediacorePlaybackControl.idl</label>
         <link refid="sbIMediacorePlaybackControl.idl"/>
-        <childnode refid="454" relation="include">
+        <childnode refid="509" relation="include">
         </childnode>
       </node>
-      <node id="454">
+      <node id="509">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -51,7 +51,7 @@
 <codeline lineno="29"><highlight class="normal">interface<sp/>nsIURI;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_status" kindref="compound">sbIMediacoreStatus</ref>;</highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight></codeline>
-<codeline lineno="32"><highlight class="normal">[scriptable,<sp/>uuid(5ac88a1d-83a1-4b62-b440-ac656c61c010)]</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(5ac88a1d-83a1-4b62-b440-ac656c61c010)]</highlight></codeline>
 <codeline lineno="33" refid="interfacesb_i_mediacore_playback_control" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_playback_control" kindref="compound">sbIMediacorePlaybackControl</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="34"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="35" refid="interfacesb_i_mediacore_playback_control_118a3fb6a3e9e637fc9176de5f0e73103" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>nsIURI<sp/>uri;</highlight></codeline>

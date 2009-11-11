@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/moz/strings/components/public/sbIStringBundleService.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */</span>
 <a name="l00002"></a>00002 <span class="comment">/* vim: set sw=2 :miv */</span>
 <a name="l00003"></a>00003 <span class="comment">/*</span>
@@ -107,29 +113,26 @@
 <a name="l00039"></a>00039 
 <a name="l00048"></a>00048 interface nsIStringBundle;
 <a name="l00049"></a>00049 
-<a name="l00050"></a>00050 [scriptable, uuid(27f23743-59e4-47f4-a6e4-4338c104cb12)]
+<a name="l00050"></a>00050 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(fd613e37-5cd0-43ed-af74-f18191f634f8)]
 <a name="l00051"></a><a class="code" href="interfacesb_i_string_bundle_service.html">00051</a> interface <a class="code" href="interfacesb_i_string_bundle_service.html" title="Interface for the Songbird string bundle service. Instantiate as a component service...">sbIStringBundleService</a> : nsISupports
 <a name="l00052"></a>00052 {
 <a name="l00057"></a><a class="code" href="interfacesb_i_string_bundle_service.html#d6048369cf857aa5b022032a4c4ca32a">00057</a>   readonly attribute nsIStringBundle bundle;
 <a name="l00058"></a>00058 
 <a name="l00059"></a>00059 
 <a name="l00064"></a><a class="code" href="interfacesb_i_string_bundle_service.html#8c341b3d4087ab535b3409c97d417c96">00064</a>   readonly attribute nsIStringBundle brandBundle;
-<a name="l00065"></a>00065 
+<a name="l00065"></a>00065 };
 <a name="l00066"></a>00066 
-<a name="l00076"></a>00076   nsIStringBundle createBundle(in <span class="keywordtype">string</span> aURLSpec);
-<a name="l00077"></a>00077 };
-<a name="l00078"></a>00078 
-<a name="l00079"></a>00079 
-<a name="l00080"></a>00080 <span class="comment">//</span>
-<a name="l00081"></a>00081 <span class="comment">// C++ defs.</span>
-<a name="l00082"></a>00082 <span class="comment">//</span>
-<a name="l00083"></a>00083 
-<a name="l00084"></a>00084 %{C++
-<a name="l00085"></a>00085 <span class="preprocessor">#define SB_STRINGBUNDLESERVICE_CONTRACTID \</span>
-<a name="l00086"></a>00086 <span class="preprocessor">          "@songbirdnest.com/Songbird/stringbundle;1"</span>
-<a name="l00087"></a>00087 <span class="preprocessor"></span>%}C++
-<a name="l00088"></a>00088 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+<a name="l00067"></a>00067 
+<a name="l00068"></a>00068 <span class="comment">//</span>
+<a name="l00069"></a>00069 <span class="comment">// C++ defs.</span>
+<a name="l00070"></a>00070 <span class="comment">//</span>
+<a name="l00071"></a>00071 
+<a name="l00072"></a>00072 %{C++
+<a name="l00073"></a>00073 <span class="preprocessor">#define SB_STRINGBUNDLESERVICE_CONTRACTID \</span>
+<a name="l00074"></a>00074 <span class="preprocessor">          "@songbirdnest.com/Songbird/stringbundle;1"</span>
+<a name="l00075"></a>00075 <span class="preprocessor"></span>%}C++
+<a name="l00076"></a>00076 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

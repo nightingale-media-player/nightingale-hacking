@@ -4,13 +4,13 @@
     <compoundname>sbIFeathersManagerListener.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="189">
+      <node id="223">
         <label>components/feathers/public/sbIFeathersManagerListener.idl</label>
         <link refid="sbIFeathersManagerListener.idl"/>
-        <childnode refid="190" relation="include">
+        <childnode refid="224" relation="include">
         </childnode>
       </node>
-      <node id="190">
+      <node id="224">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -51,7 +51,7 @@
 <codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_layout_description" kindref="compound" tooltip="Struct describing the properties of a XUL window layout.">sbILayoutDescription</ref>;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_skin_description" kindref="compound" tooltip="Struct describing the properties of a skin.">sbISkinDescription</ref>;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(441f3fae-8276-4cf2-ab83-6f32e2a8eb92)]</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(441f3fae-8276-4cf2-ab83-6f32e2a8eb92)]</highlight></codeline>
 <codeline lineno="44" refid="interfacesb_i_feathers_manager_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_feathers_manager_listener" kindref="compound" tooltip="Callback interface used to listen to Feathers Manager changes.">sbIFeathersManagerListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="49"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onFeathersUpdate();</highlight></codeline>

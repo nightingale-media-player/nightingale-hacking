@@ -4,13 +4,13 @@
     <compoundname>sbIStringBundleService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="594">
+      <node id="742">
         <label>components/moz/strings/components/public/sbIStringBundleService.idl</label>
         <link refid="sbIStringBundleService.idl"/>
-        <childnode refid="595" relation="include">
+        <childnode refid="743" relation="include">
         </childnode>
       </node>
-      <node id="595">
+      <node id="743">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -25,7 +25,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/moz/strings/components/public/sbIStringBundleService.idl" line="86"/>
+        <location file="c:/builds/songbird/trunk/components/moz/strings/components/public/sbIStringBundleService.idl" line="74"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -74,28 +74,25 @@
 <codeline lineno="39"><highlight class="normal"></highlight></codeline>
 <codeline lineno="48"><highlight class="normal">interface<sp/>nsIStringBundle;</highlight></codeline>
 <codeline lineno="49"><highlight class="normal"></highlight></codeline>
-<codeline lineno="50"><highlight class="normal">[scriptable,<sp/>uuid(27f23743-59e4-47f4-a6e4-4338c104cb12)]</highlight></codeline>
+<codeline lineno="50"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(fd613e37-5cd0-43ed-af74-f18191f634f8)]</highlight></codeline>
 <codeline lineno="51" refid="interfacesb_i_string_bundle_service" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_string_bundle_service" kindref="compound" tooltip="Interface for the Songbird string bundle service. Instantiate as a component service...">sbIStringBundleService</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="52"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="57" refid="interfacesb_i_string_bundle_service_1d6048369cf857aa5b022032a4c4ca32a" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIStringBundle<sp/>bundle;</highlight></codeline>
 <codeline lineno="58"><highlight class="normal"></highlight></codeline>
 <codeline lineno="59"><highlight class="normal"></highlight></codeline>
 <codeline lineno="64" refid="interfacesb_i_string_bundle_service_18c341b3d4087ab535b3409c97d417c96" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIStringBundle<sp/>brandBundle;</highlight></codeline>
-<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="65"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="66"><highlight class="normal"></highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/>nsIStringBundle<sp/>createBundle(in<sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>aURLSpec);</highlight></codeline>
-<codeline lineno="77"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"></highlight></codeline>
-<codeline lineno="79"><highlight class="normal"></highlight></codeline>
-<codeline lineno="80"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="81"><highlight class="normal"></highlight><highlight class="comment">//<sp/>C++<sp/>defs.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="82"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="83"><highlight class="normal"></highlight></codeline>
-<codeline lineno="84"><highlight class="normal">%{C++</highlight></codeline>
-<codeline lineno="85"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SB_STRINGBUNDLESERVICE_CONTRACTID<sp/>\</highlight></codeline>
-<codeline lineno="86"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;@songbirdnest.com/Songbird/stringbundle;1&quot;</highlight></codeline>
-<codeline lineno="87"><highlight class="preprocessor"></highlight><highlight class="normal">%}C++</highlight></codeline>
-<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="comment">//<sp/>C++<sp/>defs.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal">%{C++</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SB_STRINGBUNDLESERVICE_CONTRACTID<sp/>\</highlight></codeline>
+<codeline lineno="74"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;@songbirdnest.com/Songbird/stringbundle;1&quot;</highlight></codeline>
+<codeline lineno="75"><highlight class="preprocessor"></highlight><highlight class="normal">%}C++</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/moz/strings/components/public/sbIStringBundleService.idl"/>
   </compounddef>

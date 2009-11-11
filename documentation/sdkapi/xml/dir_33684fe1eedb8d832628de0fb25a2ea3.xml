@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_33684fe1eedb8d832628de0fb25a2ea3" kind="dir">
+    <compoundname>components/devices/device/mock/</compoundname>
+    <innerdir refid="dir_95844cca502a77165bb9200cc8197093">components/devices/device/mock/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/devices/device/mock/"/>
+  </compounddef>
+</doxygen>

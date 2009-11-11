@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreFactoryRegistrar.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="447">
+      <node id="499">
         <label>components/mediacore/base/public/sbIMediacoreFactoryRegistrar.idl</label>
         <link refid="sbIMediacoreFactoryRegistrar.idl"/>
-        <childnode refid="448" relation="include">
+        <childnode refid="500" relation="include">
         </childnode>
       </node>
-      <node id="448">
+      <node id="500">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -53,7 +53,7 @@
 <codeline lineno="31"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore" kindref="compound">sbIMediacore</ref>;</highlight></codeline>
 <codeline lineno="32"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_factory" kindref="compound">sbIMediacoreFactory</ref>;</highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal">[scriptable,<sp/>uuid(da09f47f-8307-4af4-8b8d-9e3ae81d6aae)]</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(da09f47f-8307-4af4-8b8d-9e3ae81d6aae)]</highlight></codeline>
 <codeline lineno="35" refid="interfacesb_i_mediacore_factory_registrar" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_factory_registrar" kindref="compound">sbIMediacoreFactoryRegistrar</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="37" refid="interfacesb_i_mediacore_factory_registrar_1da6747b1781966c082188285cddbe51b" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIArray<sp/>factories;</highlight></codeline>

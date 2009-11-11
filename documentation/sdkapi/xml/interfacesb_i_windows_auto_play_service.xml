@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_windows_auto_play_service" kind="interface" prot="public">
+    <compoundname>sbIWindowsAutoPlayService</compoundname>
+    <includes refid="sb_i_windows_auto_play_service_8idl" local="no">sbIWindowsAutoPlayService.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_windows_auto_play_service_1d620a02050da07a8a1b6a5f4f14699c2" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIWindowsAutoPlayService::ACTION_MANAGE_VOLUME_DEVICE</definition>
+        <argsstring></argsstring>
+        <name>ACTION_MANAGE_VOLUME_DEVICE</name>
+        <initializer> 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/moz/system/windows/public/sbIWindowsAutoPlayService.idl" line="54" bodyfile="c:/builds/songbird/trunk/components/moz/system/windows/public/sbIWindowsAutoPlayService.idl" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_windows_auto_play_service_1ad54679ec24d30a68245c2bb26e43eb1" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIWindowsAutoPlayService::ACTION_CD_RIP</definition>
+        <argsstring></argsstring>
+        <name>ACTION_CD_RIP</name>
+        <initializer> 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/moz/system/windows/public/sbIWindowsAutoPlayService.idl" line="55" bodyfile="c:/builds/songbird/trunk/components/moz/system/windows/public/sbIWindowsAutoPlayService.idl" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_windows_auto_play_service_196d0d644a766ab04cef4a5100fab7298" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIWindowsAutoPlayService::addActionHandler</definition>
+        <argsstring>(in sbIWindowsAutoPlayActionHandler aHandler, in unsigned long aAction)</argsstring>
+        <name>addActionHandler</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_windows_auto_play_action_handler" kindref="compound">sbIWindowsAutoPlayActionHandler</ref></type>
+          <declname>aHandler</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aAction</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Add the action handler specified by aHandler as a handler for the AutoPlay action specified by aAction.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aHandler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>AutoPlay action handler. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aAction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Action to handle. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/moz/system/windows/public/sbIWindowsAutoPlayService.idl" line="66"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_windows_auto_play_service_151d97ff5674eb8226dcdb1d9f674d95a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIWindowsAutoPlayService::removeActionHandler</definition>
+        <argsstring>(in sbIWindowsAutoPlayActionHandler aHandler, in unsigned long aAction)</argsstring>
+        <name>removeActionHandler</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_windows_auto_play_action_handler" kindref="compound">sbIWindowsAutoPlayActionHandler</ref></type>
+          <declname>aHandler</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aAction</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Remove the action handler specified by aHandler as a handler for the AutoPlay action specified by aAction.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aHandler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>AutoPlay action handler. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aAction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Action to handle. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/moz/system/windows/public/sbIWindowsAutoPlayService.idl" line="78"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>This interface provides support for interacting with the Windows AutoPlay service. This interface allows clients to add handlers for various Windows AutoPlay actions. Clients should add handlers before the main application window is presented (&quot;songbird-main-window-presented&quot;) in order to receive all actions.</para><para>&quot;@songbirdnest.com/Songbird/WindowsAutoPlayService;1&quot; Use get service with this component. </para>    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/moz/system/windows/public/sbIWindowsAutoPlayService.idl" line="49" bodyfile="c:/builds/songbird/trunk/components/moz/system/windows/public/sbIWindowsAutoPlayService.idl" bodystart="48" bodyend="79"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_windows_auto_play_service_1ad54679ec24d30a68245c2bb26e43eb1" prot="public" virt="non-virtual"><scope>sbIWindowsAutoPlayService</scope><name>ACTION_CD_RIP</name></member>
+      <member refid="interfacesb_i_windows_auto_play_service_1d620a02050da07a8a1b6a5f4f14699c2" prot="public" virt="non-virtual"><scope>sbIWindowsAutoPlayService</scope><name>ACTION_MANAGE_VOLUME_DEVICE</name></member>
+      <member refid="interfacesb_i_windows_auto_play_service_196d0d644a766ab04cef4a5100fab7298" prot="public" virt="non-virtual"><scope>sbIWindowsAutoPlayService</scope><name>addActionHandler</name></member>
+      <member refid="interfacesb_i_windows_auto_play_service_151d97ff5674eb8226dcdb1d9f674d95a" prot="public" virt="non-virtual"><scope>sbIWindowsAutoPlayService</scope><name>removeActionHandler</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

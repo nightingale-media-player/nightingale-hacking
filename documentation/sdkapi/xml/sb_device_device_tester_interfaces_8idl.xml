@@ -5,21 +5,21 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_device_8idl" local="yes">sbIDevice.idl</includes>
     <incdepgraph>
-      <node id="141">
-        <label>components/devices/device/test/sbDeviceDeviceTesterInterfaces.idl</label>
-        <link refid="sbDeviceDeviceTesterInterfaces.idl"/>
-        <childnode refid="142" relation="include">
-        </childnode>
-        <childnode refid="143" relation="include">
-        </childnode>
-      </node>
-      <node id="143">
+      <node id="176">
         <label>sbIDevice.idl</label>
         <link refid="sb_i_device_8idl"/>
-        <childnode refid="142" relation="include">
+        <childnode refid="175" relation="include">
         </childnode>
       </node>
-      <node id="142">
+      <node id="174">
+        <label>components/devices/device/mock/public/sbDeviceDeviceTesterInterfaces.idl</label>
+        <link refid="sbDeviceDeviceTesterInterfaces.idl"/>
+        <childnode refid="175" relation="include">
+        </childnode>
+        <childnode refid="176" relation="include">
+        </childnode>
+      </node>
+      <node id="175">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -66,16 +66,16 @@
 <codeline lineno="34"><highlight class="normal"></highlight><highlight class="comment">/*<sp/>Devices/Device<sp/>Testing<sp/>Interfaces</highlight></codeline>
 <codeline lineno="35"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="37"><highlight class="normal">[scriptable,<sp/>uuid(b30b198f-03b3-4660-a842-ec7b3569120e)]</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(b30b198f-03b3-4660-a842-ec7b3569120e)]</highlight></codeline>
 <codeline lineno="38" refid="interfacesb_i_device_device_tester_utils" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_device_tester_utils" kindref="compound">sbIDeviceDeviceTesterUtils</ref><sp/>:<sp/>nsISupports<sp/>{</highlight></codeline>
 <codeline lineno="39"><highlight class="normal"><sp/><sp/>nsIFile<sp/>GetOrganizedPath(in<sp/>nsIFile<sp/>aParent,<sp/>in<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>aItem);</highlight></codeline>
 <codeline lineno="40"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="41"><highlight class="normal"></highlight></codeline>
-<codeline lineno="42"><highlight class="normal">[scriptable,<sp/>uuid(187d4370-b1d2-459c-8fa4-0b0187bb6d17)]</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(187d4370-b1d2-459c-8fa4-0b0187bb6d17)]</highlight></codeline>
 <codeline lineno="43" refid="interfacesb_i_device_device_tester_base" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_device_tester_base" kindref="compound">sbIDeviceDeviceTesterBase</ref><sp/>:<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>{</highlight></codeline>
 <codeline lineno="44"><highlight class="normal"><sp/><sp/></highlight></codeline>
 <codeline lineno="45"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="c:/builds/songbird/trunk/components/devices/device/test/sbDeviceDeviceTesterInterfaces.idl"/>
+    <location file="c:/builds/songbird/trunk/components/devices/device/mock/public/sbDeviceDeviceTesterInterfaces.idl"/>
   </compounddef>
 </doxygen>

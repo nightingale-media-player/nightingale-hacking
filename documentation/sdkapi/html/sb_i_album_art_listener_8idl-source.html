@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/albumart/public/sbIAlbumArtListener.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */</span>
 <a name="l00002"></a>00002 <span class="comment">/* vim: set sw=2 :miv */</span>
 <a name="l00003"></a>00003 <span class="comment">/*</span>
@@ -109,21 +115,21 @@
 <a name="l00041"></a>00041 interface <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>;
 <a name="l00042"></a>00042 interface nsIArray;
 <a name="l00043"></a>00043 
-<a name="l00052"></a>00052 [scriptable, uuid(1337cbf6-0e46-49b9-89ce-8e9207b92511)]
+<a name="l00052"></a>00052 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(3683db2c-1796-4fe5-b2c2-a9b8466a4a47)]
 <a name="l00053"></a><a class="code" href="interfacesb_i_album_art_listener.html">00053</a> interface <a class="code" href="interfacesb_i_album_art_listener.html" title="A component which is interested in the result of an album art fetch request.">sbIAlbumArtListener</a> : nsISupports
 <a name="l00054"></a>00054 {
 <a name="l00061"></a>00061   <span class="keywordtype">void</span> onChangeFetcher(in <a class="code" href="interfacesb_i_album_art_fetcher.html" title="Interface for an album art fetcher. Instantiate as a component instance.">sbIAlbumArtFetcher</a> aFetcher);
 <a name="l00062"></a>00062 
-<a name="l00071"></a>00071   <span class="keywordtype">void</span> onResult(in nsIURI aImageLocation,
-<a name="l00072"></a>00072                 in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem);
+<a name="l00071"></a>00071   <span class="keywordtype">void</span> onTrackResult(in nsIURI aImageLocation,
+<a name="l00072"></a>00072                      in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem);
 <a name="l00073"></a>00073 
 <a name="l00082"></a>00082   <span class="keywordtype">void</span> onAlbumResult(in nsIURI aImageLocation,
 <a name="l00083"></a>00083                      in nsIArray aMediaItems);
 <a name="l00084"></a>00084   
-<a name="l00091"></a>00091   <span class="keywordtype">void</span> onAlbumComplete(in nsIArray aMediaItems);
-<a name="l00092"></a>00092 };
-<a name="l00093"></a>00093 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:38 2009 for Songbird by&nbsp;
+<a name="l00090"></a>00090   <span class="keywordtype">void</span> onSearchComplete(in nsIArray aMediaItems);
+<a name="l00091"></a>00091 };
+<a name="l00092"></a>00092 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:44 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

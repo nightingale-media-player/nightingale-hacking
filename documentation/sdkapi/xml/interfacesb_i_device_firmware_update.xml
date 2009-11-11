@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_device_firmware_update" kind="interface" prot="public">
+    <compoundname>sbIDeviceFirmwareUpdate</compoundname>
+    <includes refid="sb_i_device_firmware_update_8idl" local="no">sbIDeviceFirmwareUpdate.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_device_firmware_update_14ecd9bd95d029bc772d69493a664c576" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIFile</type>
+        <definition>readonly attribute nsIFile sbIDeviceFirmwareUpdate::firmwareImageFile</definition>
+        <argsstring></argsstring>
+        <name>firmwareImageFile</name>
+        <briefdescription>
+<para>The firmware image file. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Uninitialized until Init is called. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdate.idl" line="42" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdate.idl" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_firmware_update_165a24395d720b01635e0b7f895b6b7a9" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIDeviceFirmwareUpdate::firmwareReadableVersion</definition>
+        <argsstring></argsstring>
+        <name>firmwareReadableVersion</name>
+        <briefdescription>
+<para>The human readable version of this firmware. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Uninitialized until Init is called. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdate.idl" line="48" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdate.idl" bodystart="48" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_device_firmware_update_1007aafea4a85cf80c5fc609e707f1a5c" prot="public" static="no" mutable="no">
+        <type>readonly attribute unsigned long</type>
+        <definition>readonly attribute unsigned long sbIDeviceFirmwareUpdate::firmwareVersion</definition>
+        <argsstring></argsstring>
+        <name>firmwareVersion</name>
+        <briefdescription>
+<para>Machine friendly firmware version. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Uninitialized until Init is called. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdate.idl" line="54" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdate.idl" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_device_firmware_update_1a00d27c97a3d2c2d7073b400063ba452" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceFirmwareUpdate::init</definition>
+        <argsstring>(in nsIFile aFirmwareImageFile, in AString aFirmwareReadableVersion, in unsigned long aFirmwareVersion)</argsstring>
+        <name>init</name>
+        <param>
+          <type>in nsIFile</type>
+          <declname>aFirmwareImageFile</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aFirmwareReadableVersion</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aFirmwareVersion</declname>
+        </param>
+        <briefdescription>
+<para>Initialize the firmware update object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aFirmwareImageFile</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The firmware file </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aFirmwareReadableVersion</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The human readable version of the firmware file </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aFirmwareVersion</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The machine friendly version of the firmware file </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdate.idl" line="64"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="note"><para>The default implementation of this interface is threadsafe. </para></simplesect>
+</para>    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdate.idl" line="37" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdate.idl" bodystart="36" bodyend="65"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_device_firmware_update_14ecd9bd95d029bc772d69493a664c576" prot="public" virt="non-virtual"><scope>sbIDeviceFirmwareUpdate</scope><name>firmwareImageFile</name></member>
+      <member refid="interfacesb_i_device_firmware_update_165a24395d720b01635e0b7f895b6b7a9" prot="public" virt="non-virtual"><scope>sbIDeviceFirmwareUpdate</scope><name>firmwareReadableVersion</name></member>
+      <member refid="interfacesb_i_device_firmware_update_1007aafea4a85cf80c5fc609e707f1a5c" prot="public" virt="non-virtual"><scope>sbIDeviceFirmwareUpdate</scope><name>firmwareVersion</name></member>
+      <member refid="interfacesb_i_device_firmware_update_1a00d27c97a3d2c2d7073b400063ba452" prot="public" virt="non-virtual"><scope>sbIDeviceFirmwareUpdate</scope><name>init</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

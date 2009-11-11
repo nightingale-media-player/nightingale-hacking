@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="51" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="51" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="52" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="52" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_file_downloader_12d2f167e4d23d6b83f7548006a3333f7" prot="public" static="no" mutable="no">
         <type>readonly attribute unsigned long long</type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="58" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="58" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="59" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="59" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_file_downloader_110dbbd6bb0c58c9e4cec05028501943a" prot="public" static="no" mutable="no">
         <type>readonly attribute unsigned long</type>
@@ -41,7 +41,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="65" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="65" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="66" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="66" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_file_downloader_1deafee61a84f903a94ecaf7c020a271e" prot="public" static="no" mutable="no">
         <type>readonly attribute boolean</type>
@@ -54,7 +54,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="72" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="72" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="73" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="73" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_file_downloader_1ee7c32fb9c8436dd5a9ecb1d5f5830fc" prot="public" static="no" mutable="no">
         <type>readonly attribute boolean</type>
@@ -67,7 +67,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="80" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="80" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="81" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="81" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_file_downloader_1d05981c53c659411b385113d7c2dcf20" prot="public" static="no" mutable="no">
         <type>attribute <ref refid="interfacesb_i_file_downloader_listener" kindref="compound">sbIFileDownloaderListener</ref></type>
@@ -80,7 +80,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="87" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="87" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="88" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="88" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_file_downloader_1c3518e8c99aec00d4f69cd2cdcf5e836" prot="public" static="no" mutable="no">
         <type>attribute nsIURI</type>
@@ -93,7 +93,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="94" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="94" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="95" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="95" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_file_downloader_1f30acde6d5f1063dd7cfe4395d4e3b19" prot="public" static="no" mutable="no">
         <type>attribute AString</type>
@@ -106,7 +106,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="101" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="101" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="102" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="102" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_file_downloader_1a93c1ddcf18e7bef56929be88d76c41f" prot="public" static="no" mutable="no">
         <type>attribute nsIFile</type>
@@ -119,7 +119,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="109" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="109" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="110" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="110" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_file_downloader_1c143f08256d355bb31c00a623d839a1d" prot="public" static="no" mutable="no">
         <type>attribute AString</type>
@@ -132,7 +132,21 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="117" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="117" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="118" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_file_downloader_1d2ccd045a8468a7403d5513550d92c62" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsIRequest</type>
+        <definition>readonly attribute nsIRequest sbIFileDownloader::request</definition>
+        <argsstring></argsstring>
+        <name>request</name>
+        <briefdescription>
+<para>The request object used during the file download. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>The object is only available after calling start and becomes invalid when calling cancel. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="141" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="141" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -147,7 +161,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="126"/>
+        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="127"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_downloader_14e94676cc15b713e932f6d42c055a316" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -160,7 +174,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="133"/>
+        <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="134"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -168,19 +182,19 @@
     <detaileddescription>
 <para>This interface provides support for downloading files.</para><para>&quot;@songbirdnest.com/Songbird/FileDownloader;1&quot; Use create instance with this component. </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="259">
+      <node id="283">
         <label>sbIFileDownloader</label>
         <link refid="interfacesb_i_file_downloader"/>
-        <childnode refid="260" relation="usage">
+        <childnode refid="284" relation="usage">
           <edgelabel>listener</edgelabel>
         </childnode>
       </node>
-      <node id="260">
+      <node id="284">
         <label>sbIFileDownloaderListener</label>
         <link refid="interfacesb_i_file_downloader_listener"/>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="46" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="45" bodyend="134"/>
+    <location file="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" line="47" bodyfile="c:/builds/songbird/trunk/components/moz/filedownloader/public/sbIFileDownloader.idl" bodystart="46" bodyend="142"/>
     <listofallmembers>
       <member refid="interfacesb_i_file_downloader_12d2f167e4d23d6b83f7548006a3333f7" prot="public" virt="non-virtual"><scope>sbIFileDownloader</scope><name>bytesDownloaded</name></member>
       <member refid="interfacesb_i_file_downloader_1655f80c155079001dfa89dfc32482a11" prot="public" virt="non-virtual"><scope>sbIFileDownloader</scope><name>bytesToDownload</name></member>
@@ -190,6 +204,7 @@
       <member refid="interfacesb_i_file_downloader_1c143f08256d355bb31c00a623d839a1d" prot="public" virt="non-virtual"><scope>sbIFileDownloader</scope><name>destinationFileExtension</name></member>
       <member refid="interfacesb_i_file_downloader_1d05981c53c659411b385113d7c2dcf20" prot="public" virt="non-virtual"><scope>sbIFileDownloader</scope><name>listener</name></member>
       <member refid="interfacesb_i_file_downloader_110dbbd6bb0c58c9e4cec05028501943a" prot="public" virt="non-virtual"><scope>sbIFileDownloader</scope><name>percentComplete</name></member>
+      <member refid="interfacesb_i_file_downloader_1d2ccd045a8468a7403d5513550d92c62" prot="public" virt="non-virtual"><scope>sbIFileDownloader</scope><name>request</name></member>
       <member refid="interfacesb_i_file_downloader_1c3518e8c99aec00d4f69cd2cdcf5e836" prot="public" virt="non-virtual"><scope>sbIFileDownloader</scope><name>sourceURI</name></member>
       <member refid="interfacesb_i_file_downloader_1f30acde6d5f1063dd7cfe4395d4e3b19" prot="public" virt="non-virtual"><scope>sbIFileDownloader</scope><name>sourceURISpec</name></member>
       <member refid="interfacesb_i_file_downloader_14d6925a0bec57ab2350df4ca051c03e2" prot="public" virt="non-virtual"><scope>sbIFileDownloader</scope><name>start</name></member>

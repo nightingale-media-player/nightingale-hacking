@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/library/base/public/sbIMediaListView.idl</h1><a href="sb_i_media_list_view_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -102,15 +108,15 @@
 <a name="l00040"></a>00040 interface <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a>;
 <a name="l00041"></a>00041 interface <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a>;
 <a name="l00042"></a>00042 interface <a class="code" href="interfacesb_i_mutable_property_array.html" title="An interface to carry around arrays of nsIProperty instances Note that implementations...">sbIMutablePropertyArray</a>;
-<a name="l00043"></a>00043 interface <a class="code" href="interfacesb_i_media_list_view_selection.html" title="Manage the selection of items within a view. This interface is a subset of nsITreeView...">sbIMediaListViewSelection</a>;
+<a name="l00043"></a>00043 interface <a class="code" href="interfacesb_i_media_list_view_selection.html" title="Manage the selection of items within a view. This interface is a subset of nsITreeViewSelection...">sbIMediaListViewSelection</a>;
 <a name="l00044"></a>00044 
-<a name="l00051"></a>00051 [scriptable, uuid(bb26d18e-8387-4512-9d99-8ce9b18f929b)]
+<a name="l00051"></a>00051 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(bb26d18e-8387-4512-9d99-8ce9b18f929b)]
 <a name="l00052"></a><a class="code" href="interfacesb_i_media_list_view_state.html">00052</a> interface <a class="code" href="interfacesb_i_media_list_view_state.html" title="Saved state of a media list view.">sbIMediaListViewState</a> : nsISupports
 <a name="l00053"></a>00053 {
 <a name="l00054"></a>00054   AString toString();
 <a name="l00055"></a>00055 };
 <a name="l00056"></a>00056 
-<a name="l00063"></a>00063 [scriptable, uuid(378fc540-9592-43df-908c-ed84ac0e1221)]
+<a name="l00063"></a>00063 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(378fc540-9592-43df-908c-ed84ac0e1221)]
 <a name="l00064"></a><a class="code" href="interfacesb_i_media_list_view_listener.html">00064</a> interface <a class="code" href="interfacesb_i_media_list_view_listener.html" title="Saved state of a media list view.">sbIMediaListViewListener</a> : nsISupports
 <a name="l00065"></a>00065 {
 <a name="l00069"></a>00069   <span class="keywordtype">void</span> onFilterChanged(in <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> aChangedView);
@@ -120,7 +126,7 @@
 <a name="l00079"></a>00079   <span class="keywordtype">void</span> onSortChanged(in <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> aChangedView);
 <a name="l00080"></a>00080 };
 <a name="l00081"></a>00081 
-<a name="l00088"></a>00088 [scriptable, uuid(53cefc7c-0967-4cab-84bd-11b52b1bf081)]
+<a name="l00088"></a>00088 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(53cefc7c-0967-4cab-84bd-11b52b1bf081)]
 <a name="l00089"></a><a class="code" href="interfacesb_i_media_list_view.html">00089</a> interface <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> : nsISupports
 <a name="l00090"></a>00090 {
 <a name="l00094"></a><a class="code" href="interfacesb_i_media_list_view.html#0c728825b5bc85265d000a68d22d56a9">00094</a>   readonly attribute <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> mediaList;
@@ -157,11 +163,11 @@
 <a name="l00193"></a>00193 
 <a name="l00207"></a>00207   <span class="keywordtype">void</span> removeListener(in <a class="code" href="interfacesb_i_media_list_view_listener.html" title="Saved state of a media list view.">sbIMediaListViewListener</a> aListener);
 <a name="l00208"></a>00208 
-<a name="l00212"></a><a class="code" href="interfacesb_i_media_list_view.html#fb1ed8f2da0b28b41be435d0f6c51c12">00212</a>   readonly attribute <a class="code" href="interfacesb_i_media_list_view_selection.html" title="Manage the selection of items within a view. This interface is a subset of nsITreeView...">sbIMediaListViewSelection</a> selection;
+<a name="l00212"></a><a class="code" href="interfacesb_i_media_list_view.html#fb1ed8f2da0b28b41be435d0f6c51c12">00212</a>   readonly attribute <a class="code" href="interfacesb_i_media_list_view_selection.html" title="Manage the selection of items within a view. This interface is a subset of nsITreeViewSelection...">sbIMediaListViewSelection</a> selection;
 <a name="l00213"></a>00213 
 <a name="l00217"></a>00217   <span class="keywordtype">void</span> removeSelectedMediaItems();
 <a name="l00218"></a>00218 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

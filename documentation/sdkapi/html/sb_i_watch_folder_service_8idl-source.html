@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/watchfolder/public/sbIWatchFolderService.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -94,7 +100,7 @@
 <a name="l00026"></a>00026 
 <a name="l00027"></a>00027 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00028"></a>00028 
-<a name="l00029"></a>00029 [scriptable, uuid(75BDCA4E-2F4D-4E03-9ACD-694FAB28ADF8)]
+<a name="l00029"></a>00029 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(a33307c2-1dd1-11b2-ad85-c03a5b21f0a3)]
 <a name="l00030"></a><a class="code" href="interfacesb_i_watch_folder_service.html">00030</a> interface <a class="code" href="interfacesb_i_watch_folder_service.html">sbIWatchFolderService</a> : nsISupports
 <a name="l00031"></a>00031 {
 <a name="l00032"></a>00032   <span class="comment">//</span>
@@ -103,9 +109,21 @@
 <a name="l00035"></a>00035   <span class="comment">// \return True if watch folder is supported, false if not.</span>
 <a name="l00036"></a>00036   <span class="comment">//</span>
 <a name="l00037"></a><a class="code" href="interfacesb_i_watch_folder_service.html#d89d29b1f806e0d5a90db9f2e6cc8da4">00037</a>   readonly attribute <span class="keywordtype">boolean</span> isSupported;
-<a name="l00038"></a>00038 };
-<a name="l00039"></a>00039 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+<a name="l00038"></a>00038 
+<a name="l00039"></a>00039   <span class="comment">//</span>
+<a name="l00040"></a>00040   <span class="comment">// \brief Find out if the watch folder services are currently running and</span>
+<a name="l00041"></a>00041   <span class="comment">//        actively updating the users library.</span>
+<a name="l00042"></a>00042   <span class="comment">// \return True if the watch folder is running, false if not.</span>
+<a name="l00043"></a>00043   <span class="comment">//</span>
+<a name="l00044"></a><a class="code" href="interfacesb_i_watch_folder_service.html#4127ceedef1b0260d079a6c1c31f5e82">00044</a>   readonly attribute <span class="keywordtype">boolean</span> isRunning;
+<a name="l00045"></a>00045 
+<a name="l00056"></a>00056   <span class="keywordtype">void</span> addIgnorePath(in AString aFilePath);
+<a name="l00057"></a>00057 
+<a name="l00066"></a>00066   <span class="keywordtype">void</span> removeIgnorePath(in AString aFilePath);
+<a name="l00067"></a>00067   
+<a name="l00085"></a>00085   <span class="keywordtype">void</span> addIgnoreCount(in AString aFilePath, in <span class="keywordtype">long</span> aCount);
+<a name="l00086"></a>00086 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

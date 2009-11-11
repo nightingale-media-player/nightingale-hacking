@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/mediacore/base/public/sbIMediacoreManager.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment"> //</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -99,7 +105,7 @@
 <a name="l00031"></a>00031 interface <a class="code" href="interfacesb_i_mediacore.html">sbIMediacore</a>;
 <a name="l00032"></a>00032 interface <a class="code" href="interfacesb_i_mediacore_error.html">sbIMediacoreError</a>;
 <a name="l00033"></a>00033 interface <a class="code" href="interfacesb_i_mediacore_event.html" title="Definition of the sbIMediacoreEvent interface.">sbIMediacoreEvent</a>;
-<a name="l00034"></a>00034 interface <a class="code" href="interfacesb_i_mediacore_simple_equalizer.html">sbIMediacoreSimpleEqualizer</a>;
+<a name="l00034"></a>00034 interface <a class="code" href="interfacesb_i_mediacore_multiband_equalizer.html">sbIMediacoreMultibandEqualizer</a>;
 <a name="l00035"></a>00035 interface <a class="code" href="interfacesb_i_mediacore_balance_control.html">sbIMediacoreBalanceControl</a>;
 <a name="l00036"></a>00036 
 <a name="l00037"></a>00037 interface <a class="code" href="interfacesb_i_mediacore_playback_control.html">sbIMediacorePlaybackControl</a>;
@@ -112,7 +118,7 @@
 <a name="l00044"></a>00044 
 <a name="l00045"></a>00045 interface <a class="code" href="interfacesb_i_mediacore_video_window.html">sbIMediacoreVideoWindow</a>;
 <a name="l00046"></a>00046 
-<a name="l00047"></a>00047 [scriptable, uuid(83373eeb-72c7-4612-93eb-3ea6a0a84eb6)]
+<a name="l00047"></a>00047 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(404c03dc-6553-4cf5-a356-fcee07ee0ab3)]
 <a name="l00048"></a><a class="code" href="interfacesb_i_mediacore_manager.html">00048</a> interface <a class="code" href="interfacesb_i_mediacore_manager.html">sbIMediacoreManager</a> : nsISupports
 <a name="l00049"></a>00049 {
 <a name="l00056"></a><a class="code" href="interfacesb_i_mediacore_manager.html#6c6ac5478e54513f76a1d12cdba83d3f">00056</a>   readonly attribute <a class="code" href="interfacesb_i_mediacore.html">sbIMediacore</a> primaryCore;
@@ -120,46 +126,51 @@
 <a name="l00058"></a><a class="code" href="interfacesb_i_mediacore_manager.html#4b31b46aa055273e00f0f4877c6af93f">00058</a>   readonly attribute <a class="code" href="interfacesb_i_mediacore_balance_control.html">sbIMediacoreBalanceControl</a>  balanceControl;
 <a name="l00059"></a><a class="code" href="interfacesb_i_mediacore_manager.html#e6059c54ad6eea4849a03942f2f2f156">00059</a>   readonly attribute <a class="code" href="interfacesb_i_mediacore_volume_control.html">sbIMediacoreVolumeControl</a>   volumeControl;
 <a name="l00060"></a>00060 
-<a name="l00061"></a><a class="code" href="interfacesb_i_mediacore_manager.html#4101ecec65c0b809d0178c3c4ded7c01">00061</a>   readonly attribute <a class="code" href="interfacesb_i_mediacore_simple_equalizer.html">sbIMediacoreSimpleEqualizer</a> equalizer;
-<a name="l00062"></a><a class="code" href="interfacesb_i_mediacore_manager.html#4d710e46b0d1218f791d05989f29d8f5">00062</a>   readonly attribute <a class="code" href="interfacesb_i_mediacore_playback_control.html">sbIMediacorePlaybackControl</a> playbackControl;
+<a name="l00061"></a><a class="code" href="interfacesb_i_mediacore_manager.html#4e024127c997556feff582b15eb51823">00061</a>   readonly attribute <a class="code" href="interfacesb_i_mediacore_multiband_equalizer.html">sbIMediacoreMultibandEqualizer</a> equalizer;
+<a name="l00062"></a><a class="code" href="interfacesb_i_mediacore_manager.html#4d710e46b0d1218f791d05989f29d8f5">00062</a>   readonly attribute <a class="code" href="interfacesb_i_mediacore_playback_control.html">sbIMediacorePlaybackControl</a>    playbackControl;
 <a name="l00063"></a>00063 
 <a name="l00064"></a><a class="code" href="interfacesb_i_mediacore_manager.html#5316f957dcb5c1821740f41aa3ca2871">00064</a>   readonly attribute <a class="code" href="interfacesb_i_mediacore_capabilities.html">sbIMediacoreCapabilities</a>    capabilities;
 <a name="l00065"></a><a class="code" href="interfacesb_i_mediacore_manager.html#5aa4d0a2e956e27f66d1e6d710742581">00065</a>   readonly attribute <a class="code" href="interfacesb_i_mediacore_status.html">sbIMediacoreStatus</a>          status;
-<a name="l00066"></a>00066 
-<a name="l00076"></a><a class="code" href="interfacesb_i_mediacore_manager.html#689507ad9e06653da8c4ba66bf06063d">00076</a>   attribute <a class="code" href="interfacesb_i_mediacore_sequencer.html">sbIMediacoreSequencer</a> sequencer;
-<a name="l00077"></a>00077 
-<a name="l00082"></a><a class="code" href="interfacesb_i_mediacore_manager.html#6d833e34bd175091a3364856761376b2">00082</a>   readonly attribute <a class="code" href="interfacesb_i_mediacore_video_window.html">sbIMediacoreVideoWindow</a> video;
-<a name="l00083"></a>00083 
-<a name="l00101"></a>00101   <a class="code" href="interfacesb_i_mediacore_event.html" title="Definition of the sbIMediacoreEvent interface.">sbIMediacoreEvent</a> createEvent(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aType,
-<a name="l00102"></a>00102                                 in <a class="code" href="interfacesb_i_mediacore.html">sbIMediacore</a> aOrigin,
-<a name="l00103"></a>00103                                 [optional] in nsIVariant aData,
-<a name="l00104"></a>00104                                 [optional] in <a class="code" href="interfacesb_i_mediacore_error.html">sbIMediacoreError</a> aError);
-<a name="l00105"></a>00105 };
-<a name="l00106"></a>00106 
-<a name="l00107"></a>00107 [uuid(f1a8315a-d745-49e4-bea7-01d66e914f43)]
-<a name="l00108"></a><a class="code" href="interfacesb_p_i_mediacore_manager.html">00108</a> interface <a class="code" href="interfacesb_p_i_mediacore_manager.html">sbPIMediacoreManager</a> : nsISupports
-<a name="l00109"></a>00109 {
-<a name="l00110"></a>00110   <span class="keywordtype">void</span> setPrimaryCore(in <a class="code" href="interfacesb_i_mediacore.html">sbIMediacore</a> aMediacore);
-<a name="l00111"></a>00111 };
-<a name="l00112"></a>00112 
-<a name="l00113"></a>00113 %{C++
-<a name="l00114"></a>00114 
-<a name="l00115"></a>00115 <span class="preprocessor">#define SB_MEDIACOREMANAGER_DESCRIPTION    \</span>
-<a name="l00116"></a>00116 <span class="preprocessor">  "Songbird Mediacore Manager"</span>
-<a name="l00117"></a>00117 <span class="preprocessor"></span><span class="preprocessor">#define SB_MEDIACOREMANAGER_CONTRACTID     \</span>
-<a name="l00118"></a>00118 <span class="preprocessor">  "@songbirdnest.com/Songbird/Mediacore/Manager;1"</span>
-<a name="l00119"></a>00119 <span class="preprocessor"></span><span class="preprocessor">#define SB_MEDIACOREMANAGER_CLASSNAME      \</span>
-<a name="l00120"></a>00120 <span class="preprocessor">  "sbMediacoreManager"</span>
-<a name="l00121"></a>00121 <span class="preprocessor"></span><span class="preprocessor">#define SB_MEDIACOREMANAGER_CID               \</span>
-<a name="l00122"></a>00122 <span class="preprocessor">{ </span><span class="comment">/*{47bb93c8-dba7-464b-8f93-8d71659ab127}*/</span>  \
-<a name="l00123"></a>00123   0x47bb93c8,                                 \
-<a name="l00124"></a>00124   0xdba7,                                     \
-<a name="l00125"></a>00125   0x464b,                                     \
-<a name="l00126"></a>00126   { 0x8f, 0x93, 0x8d, 0x71, 0x65, 0x9a, 0xb1, 0x27 } \
-<a name="l00127"></a>00127 }
+<a name="l00066"></a>00066   
+<a name="l00067"></a><a class="code" href="interfacesb_i_mediacore_manager.html#6d833e34bd175091a3364856761376b2">00067</a>   readonly attribute <a class="code" href="interfacesb_i_mediacore_video_window.html">sbIMediacoreVideoWindow</a>     video;
+<a name="l00068"></a>00068 
+<a name="l00078"></a><a class="code" href="interfacesb_i_mediacore_manager.html#689507ad9e06653da8c4ba66bf06063d">00078</a>   attribute <a class="code" href="interfacesb_i_mediacore_sequencer.html">sbIMediacoreSequencer</a> sequencer;
+<a name="l00079"></a>00079 
+<a name="l00093"></a>00093   <a class="code" href="interfacesb_i_mediacore_video_window.html">sbIMediacoreVideoWindow</a> 
+<a name="l00094"></a>00094       getPrimaryVideoWindow(in <span class="keywordtype">boolean</span> aCreate,
+<a name="l00095"></a>00095                             [optional] in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aWidthHint,
+<a name="l00096"></a>00096                             [optional] in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aHeightHint);
+<a name="l00097"></a>00097 
+<a name="l00115"></a>00115   <a class="code" href="interfacesb_i_mediacore_event.html" title="Definition of the sbIMediacoreEvent interface.">sbIMediacoreEvent</a> createEvent(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aType,
+<a name="l00116"></a>00116                                 in <a class="code" href="interfacesb_i_mediacore.html">sbIMediacore</a> aOrigin,
+<a name="l00117"></a>00117                                 [optional] in nsIVariant aData,
+<a name="l00118"></a>00118                                 [optional] in <a class="code" href="interfacesb_i_mediacore_error.html">sbIMediacoreError</a> aError);
+<a name="l00119"></a>00119 };
+<a name="l00120"></a>00120 
+<a name="l00121"></a>00121 [<a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(f1a8315a-d745-49e4-bea7-01d66e914f43)]
+<a name="l00122"></a><a class="code" href="interfacesb_p_i_mediacore_manager.html">00122</a> interface <a class="code" href="interfacesb_p_i_mediacore_manager.html">sbPIMediacoreManager</a> : nsISupports
+<a name="l00123"></a>00123 {
+<a name="l00124"></a>00124   <span class="keywordtype">void</span> setPrimaryCore(in <a class="code" href="interfacesb_i_mediacore.html">sbIMediacore</a> aMediacore);
+<a name="l00125"></a>00125 };
+<a name="l00126"></a>00126 
+<a name="l00127"></a>00127 %{C++
 <a name="l00128"></a>00128 
-<a name="l00129"></a>00129 %}
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+<a name="l00129"></a>00129 <span class="preprocessor">#define SB_MEDIACOREMANAGER_DESCRIPTION    \</span>
+<a name="l00130"></a>00130 <span class="preprocessor">  "Songbird Mediacore Manager"</span>
+<a name="l00131"></a>00131 <span class="preprocessor"></span><span class="preprocessor">#define SB_MEDIACOREMANAGER_CONTRACTID     \</span>
+<a name="l00132"></a>00132 <span class="preprocessor">  "@songbirdnest.com/Songbird/Mediacore/Manager;1"</span>
+<a name="l00133"></a>00133 <span class="preprocessor"></span><span class="preprocessor">#define SB_MEDIACOREMANAGER_CLASSNAME      \</span>
+<a name="l00134"></a>00134 <span class="preprocessor">  "sbMediacoreManager"</span>
+<a name="l00135"></a>00135 <span class="preprocessor"></span><span class="preprocessor">#define SB_MEDIACOREMANAGER_CID               \</span>
+<a name="l00136"></a>00136 <span class="preprocessor">{ </span><span class="comment">/*{47bb93c8-dba7-464b-8f93-8d71659ab127}*/</span>  \
+<a name="l00137"></a>00137   0x47bb93c8,                                 \
+<a name="l00138"></a>00138   0xdba7,                                     \
+<a name="l00139"></a>00139   0x464b,                                     \
+<a name="l00140"></a>00140   { 0x8f, 0x93, 0x8d, 0x71, 0x65, 0x9a, 0xb1, 0x27 } \
+<a name="l00141"></a>00141 }
+<a name="l00142"></a>00142 
+<a name="l00143"></a>00143 %}
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

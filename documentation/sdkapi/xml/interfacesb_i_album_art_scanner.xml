@@ -3,6 +3,21 @@
   <compounddef id="interfacesb_i_album_art_scanner" kind="interface" prot="public">
     <compoundname>sbIAlbumArtScanner</compoundname>
     <includes refid="sb_i_album_art_scanner_8idl" local="no">sbIAlbumArtScanner.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_album_art_scanner_1a37824b5dd1a352940fc55fb5a91aa59" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIAlbumArtScanner::updateArtwork</definition>
+        <argsstring></argsstring>
+        <name>updateArtwork</name>
+        <briefdescription>
+<para>If true, update any artwork already present in media items. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtScanner.idl" line="63" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtScanner.idl" bodystart="63" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="interfacesb_i_album_art_scanner_1da8c717d25eb2a3f3bf89c1a6175d9a0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -19,7 +34,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtScanner.idl" line="65"/>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtScanner.idl" line="69"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -27,9 +42,10 @@
     <detaileddescription>
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_album_art_scanner_listener" kindref="compound">sbIAlbumArtScannerListener</ref> </para><para><ref refid="interfacesb_i_job_progress" kindref="compound">sbIJobProgress</ref> </para><para><ref refid="interfacesb_i_job_cancelable" kindref="compound">sbIJobCancelable</ref> </para></simplesect>
 </para>    </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtScanner.idl" line="59" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtScanner.idl" bodystart="58" bodyend="67"/>
+    <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtScanner.idl" line="59" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtScanner.idl" bodystart="58" bodyend="71"/>
     <listofallmembers>
       <member refid="interfacesb_i_album_art_scanner_1da8c717d25eb2a3f3bf89c1a6175d9a0" prot="public" virt="non-virtual"><scope>sbIAlbumArtScanner</scope><name>scanListForArtwork</name></member>
+      <member refid="interfacesb_i_album_art_scanner_1a37824b5dd1a352940fc55fb5a91aa59" prot="public" virt="non-virtual"><scope>sbIAlbumArtScanner</scope><name>updateArtwork</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

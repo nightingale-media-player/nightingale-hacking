@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/moz/windowwatcher/public/sbIWindowWatcher.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */</span>
 <a name="l00002"></a>00002 <span class="comment">/* vim: set sw=2 :miv */</span>
 <a name="l00003"></a>00003 <span class="comment">/*</span>
@@ -100,7 +106,7 @@
 <a name="l00032"></a>00032 
 <a name="l00049"></a>00049 interface <a class="code" href="interfacesb_i_call_with_window_callback.html" title="A callback interface that is called with a window.">sbICallWithWindowCallback</a>;
 <a name="l00050"></a>00050 
-<a name="l00051"></a>00051 [scriptable, uuid(93cf33df-770f-49ec-afb7-20db242dd366)]
+<a name="l00051"></a>00051 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(93cf33df-770f-49ec-afb7-20db242dd366)]
 <a name="l00052"></a><a class="code" href="interfacesb_i_window_watcher.html">00052</a> interface <a class="code" href="interfacesb_i_window_watcher.html">sbIWindowWatcher</a> : nsISupports
 <a name="l00053"></a>00053 {
 <a name="l00059"></a><a class="code" href="interfacesb_i_window_watcher.html#334158ade89d8d97fa82e742ee6696b4">00059</a>   readonly attribute <span class="keywordtype">boolean</span> isShuttingDown;
@@ -120,7 +126,7 @@
 <a name="l00107"></a>00107 };
 <a name="l00108"></a>00108 
 <a name="l00109"></a>00109 
-<a name="l00117"></a>00117 [scriptable, function, uuid(4052eb5e-fe52-4e31-abca-1263c2cfd009)]
+<a name="l00117"></a>00117 [scriptable, function, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(4052eb5e-fe52-4e31-abca-1263c2cfd009)]
 <a name="l00118"></a><a class="code" href="interfacesb_i_call_with_window_callback.html">00118</a> interface <a class="code" href="interfacesb_i_call_with_window_callback.html" title="A callback interface that is called with a window.">sbICallWithWindowCallback</a> : nsISupports
 <a name="l00119"></a>00119 {
 <a name="l00126"></a>00126   <span class="keywordtype">void</span> handleWindowCallback(in nsIDOMWindow aWindow);
@@ -136,7 +142,7 @@
 <a name="l00136"></a>00136 <span class="preprocessor">          "@songbirdnest.com/Songbird/window-watcher;1"</span>
 <a name="l00137"></a>00137 <span class="preprocessor"></span>%}C++
 <a name="l00138"></a>00138 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

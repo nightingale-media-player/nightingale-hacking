@@ -5,49 +5,49 @@
     <includes refid="sb_i_library_resource_8idl" local="yes">sbILibraryResource.idl</includes>
     <includedby refid="sb_i_media_list_8idl" local="yes">components/library/base/public/sbIMediaList.idl</includedby>
     <incdepgraph>
-      <node id="312">
+      <node id="367">
         <label>components/library/base/public/sbIMediaItem.idl</label>
         <link refid="sbIMediaItem.idl"/>
-        <childnode refid="313" relation="include">
+        <childnode refid="368" relation="include">
         </childnode>
       </node>
-      <node id="314">
+      <node id="369">
         <label>nsISupports.idl</label>
       </node>
-      <node id="313">
+      <node id="368">
         <label>sbILibraryResource.idl</label>
         <link refid="sb_i_library_resource_8idl"/>
-        <childnode refid="314" relation="include">
+        <childnode refid="369" relation="include">
         </childnode>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="319">
+      <node id="374">
         <label>components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</label>
         <link refid="sb_i_local_database_smart_media_list_8idl"/>
       </node>
-      <node id="318">
+      <node id="373">
         <label>components/devices/base/public/sbIDeviceLibrary.idl</label>
         <link refid="sb_i_device_library_8idl-source"/>
       </node>
-      <node id="316">
+      <node id="371">
         <label>components/library/base/public/sbIMediaList.idl</label>
         <link refid="sb_i_media_list_8idl"/>
-        <childnode refid="317" relation="include">
+        <childnode refid="372" relation="include">
         </childnode>
-        <childnode refid="319" relation="include">
+        <childnode refid="374" relation="include">
         </childnode>
       </node>
-      <node id="315">
+      <node id="370">
         <label>components/library/base/public/sbIMediaItem.idl</label>
         <link refid="sbIMediaItem.idl"/>
-        <childnode refid="316" relation="include">
+        <childnode refid="371" relation="include">
         </childnode>
       </node>
-      <node id="317">
+      <node id="372">
         <label>components/library/base/public/sbILibrary.idl</label>
         <link refid="sb_i_library_8idl"/>
-        <childnode refid="318" relation="include">
+        <childnode refid="373" relation="include">
         </childnode>
       </node>
     </invincdepgraph>
@@ -95,7 +95,7 @@
 <codeline lineno="40"><highlight class="normal">interface<sp/>nsIOutputStream;</highlight></codeline>
 <codeline lineno="41"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref>;</highlight></codeline>
 <codeline lineno="42"><highlight class="normal"></highlight></codeline>
-<codeline lineno="53"><highlight class="normal">[scriptable,<sp/>uuid(1c1c9f2a-75c0-4741-aac1-3254b08287ae)]</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(1c1c9f2a-75c0-4741-aac1-3254b08287ae)]</highlight></codeline>
 <codeline lineno="54" refid="interfacesb_i_media_item" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>:<sp/><ref refid="interfacesb_i_library_resource" kindref="compound" tooltip="General interface to data resources.">sbILibraryResource</ref></highlight></codeline>
 <codeline lineno="55"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
@@ -183,7 +183,7 @@
 <codeline lineno="196"><highlight class="normal"><sp/><sp/>AString<sp/>toString();</highlight></codeline>
 <codeline lineno="197"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="198"><highlight class="normal"></highlight></codeline>
-<codeline lineno="203"><highlight class="normal">[scriptable,<sp/>uuid(691f4342-4dcb-471f-a0f4-c4ac94cbd805)]</highlight></codeline>
+<codeline lineno="203"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(691f4342-4dcb-471f-a0f4-c4ac94cbd805)]</highlight></codeline>
 <codeline lineno="204" refid="interfacesb_i_indexed_media_item" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_indexed_media_item" kindref="compound" tooltip="A container for a media item and its index.">sbIIndexedMediaItem</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="205"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="206" refid="interfacesb_i_indexed_media_item_14ae9e36d39863face1346d4a21f5c35d" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>index;</highlight></codeline>

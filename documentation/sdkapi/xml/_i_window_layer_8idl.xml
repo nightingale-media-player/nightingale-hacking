@@ -4,13 +4,13 @@
     <compoundname>IWindowLayer.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="215">
+      <node id="249">
         <label>components/integration/public/IWindowLayer.idl</label>
         <link refid="IWindowLayer.idl"/>
-        <childnode refid="216" relation="include">
+        <childnode refid="250" relation="include">
         </childnode>
       </node>
-      <node id="216">
+      <node id="250">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,7 +50,7 @@
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
 <codeline lineno="36"><highlight class="normal">interface<sp/>nsIDOMWindow;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
-<codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(4243fe6c-741d-11db-9694-00e08161165f)]</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(4243fe6c-741d-11db-9694-00e08161165f)]</highlight></codeline>
 <codeline lineno="45" refid="interfacesb_i_window_layer" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_window_layer" kindref="compound" tooltip="Window layering service interface This is an interface to the window layering service...">sbIWindowLayer</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setOpacity(in<sp/>nsISupports<sp/>aWindow,<sp/>in<sp/>PRUInt32<sp/>alpha);</highlight></codeline>

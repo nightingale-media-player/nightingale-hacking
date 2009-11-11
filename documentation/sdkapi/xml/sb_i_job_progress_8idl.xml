@@ -4,45 +4,79 @@
     <compoundname>sbIJobProgress.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <includedby refid="sb_i_job_progress_u_i_8idl" local="yes">components/job/public/sbIJobProgressUI.idl</includedby>
+    <includedby refid="sb_i_shutdown_job_8idl" local="yes">components/job/public/sbIShutdownJob.idl</includedby>
     <includedby refid="sb_i_local_database_migration_handler_8idl" local="yes">components/library/localdatabase/public/sbILocalDatabaseMigrationHandler.idl</includedby>
     <includedby refid="sb_i_local_database_migration_helper_8idl" local="yes">components/library/localdatabase/public/sbILocalDatabaseMigrationHelper.idl</includedby>
+    <includedby refid="sb_i_metadata_lookup_data_8idl" local="yes">components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupData.idl</includedby>
+    <includedby refid="sb_i_media_management_job_8idl" local="yes">components/mediamanager/public/sbIMediaManagementJob.idl</includedby>
     <incdepgraph>
-      <node id="240">
+      <node id="280">
         <label>components/job/public/sbIJobProgress.idl</label>
         <link refid="sbIJobProgress.idl"/>
-        <childnode refid="241" relation="include">
+        <childnode refid="281" relation="include">
         </childnode>
       </node>
-      <node id="241">
+      <node id="281">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="243">
+      <node id="283">
         <label>components/job/public/sbIJobProgressUI.idl</label>
         <link refid="sb_i_job_progress_u_i_8idl-source"/>
       </node>
-      <node id="245">
+      <node id="289">
+        <label>components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupManager.idl</label>
+        <link refid="sb_i_metadata_lookup_manager_8idl"/>
+      </node>
+      <node id="286">
         <label>components/library/localdatabase/public/sbILocalDatabaseMigrationHelper.idl</label>
         <link refid="sb_i_local_database_migration_helper_8idl-source"/>
       </node>
-      <node id="242">
+      <node id="282">
         <label>components/job/public/sbIJobProgress.idl</label>
         <link refid="sbIJobProgress.idl"/>
-        <childnode refid="243" relation="include">
+        <childnode refid="283" relation="include">
         </childnode>
-        <childnode refid="244" relation="include">
+        <childnode refid="284" relation="include">
         </childnode>
-        <childnode refid="245" relation="include">
+        <childnode refid="285" relation="include">
+        </childnode>
+        <childnode refid="286" relation="include">
+        </childnode>
+        <childnode refid="287" relation="include">
+        </childnode>
+        <childnode refid="290" relation="include">
         </childnode>
       </node>
-      <node id="244">
+      <node id="287">
+        <label>components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupData.idl</label>
+        <link refid="sb_i_metadata_lookup_data_8idl"/>
+        <childnode refid="288" relation="include">
+        </childnode>
+      </node>
+      <node id="285">
         <label>components/library/localdatabase/public/sbILocalDatabaseMigrationHandler.idl</label>
         <link refid="sb_i_local_database_migration_handler_8idl-source"/>
+      </node>
+      <node id="288">
+        <label>components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupProvider.idl</label>
+        <link refid="sb_i_metadata_lookup_provider_8idl"/>
+        <childnode refid="289" relation="include">
+        </childnode>
+      </node>
+      <node id="284">
+        <label>components/job/public/sbIShutdownJob.idl</label>
+        <link refid="sb_i_shutdown_job_8idl-source"/>
+      </node>
+      <node id="290">
+        <label>components/mediamanager/public/sbIMediaManagementJob.idl</label>
+        <link refid="sb_i_media_management_job_8idl"/>
       </node>
     </invincdepgraph>
     <innerclass refid="interfacesb_i_job_progress" prot="public">sbIJobProgress</innerclass>
     <innerclass refid="interfacesb_i_job_progress_listener" prot="public">sbIJobProgressListener</innerclass>
+    <innerclass refid="interfacesb_i_job_progress_time" prot="public">sbIJobProgressTime</innerclass>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
@@ -81,7 +115,7 @@
 <codeline lineno="31"><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(72287c30-1173-11dd-bd0b-0800200c9b66)]</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(72287c30-1173-11dd-bd0b-0800200c9b66)]</highlight></codeline>
 <codeline lineno="45" refid="interfacesb_i_job_progress" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_job_progress" kindref="compound" tooltip="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="50" refid="interfacesb_i_job_progress_1b4cebecf25f9537638b93f613a08a399" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">short</highlight><highlight class="normal"><sp/>STATUS_FAILED<sp/>=<sp/>0x00;</highlight></codeline>
@@ -115,12 +149,21 @@
 <codeline lineno="117"><highlight class="normal"></highlight></codeline>
 <codeline lineno="118"><highlight class="normal"></highlight></codeline>
 <codeline lineno="119"><highlight class="normal"></highlight></codeline>
-<codeline lineno="124"><highlight class="normal">[scriptable,<sp/>function,<sp/>uuid(75302170-1174-11dd-bd0b-0200200c9a66)]</highlight></codeline>
+<codeline lineno="124"><highlight class="normal">[scriptable,<sp/>function,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(75302170-1174-11dd-bd0b-0200200c9a66)]</highlight></codeline>
 <codeline lineno="125" refid="interfacesb_i_job_progress_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_job_progress_listener" kindref="compound" tooltip="Implemented to receive notifications from sbIJobProgress interfaces.">sbIJobProgressListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="126"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="132"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onJobProgress(in<sp/><ref refid="interfacesb_i_job_progress" kindref="compound" tooltip="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</ref><sp/>aJobProgress);</highlight></codeline>
 <codeline lineno="133"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="134"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(2693a1e5-7e07-4730-bf3b-68e76dd95f90)]</highlight></codeline>
+<codeline lineno="142" refid="interfacesb_i_job_progress_time" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_job_progress_time" kindref="compound" tooltip="Generic interface extending sbIJobProgress that can track expected time, etc in addition...">sbIJobProgressTime</ref><sp/>:<sp/><ref refid="interfacesb_i_job_progress" kindref="compound" tooltip="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</ref></highlight></codeline>
+<codeline lineno="143"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="147" refid="interfacesb_i_job_progress_time_114a1ee882db2335a256a1d873c752315" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>elapsedTime;</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153" refid="interfacesb_i_job_progress_time_1d83eb590a7ff6810687ac450f1ebdb80" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>remainingTime;</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="155"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="156"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/job/public/sbIJobProgress.idl"/>
   </compounddef>

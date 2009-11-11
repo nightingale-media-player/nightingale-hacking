@@ -4,13 +4,13 @@
     <compoundname>sbIRemoteWebPlaylist.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="669">
+      <node id="825">
         <label>components/remoteapi/public/sbIRemoteWebPlaylist.idl</label>
         <link refid="sbIRemoteWebPlaylist.idl"/>
-        <childnode refid="670" relation="include">
+        <childnode refid="826" relation="include">
         </childnode>
       </node>
-      <node id="670">
+      <node id="826">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -79,7 +79,7 @@
 <codeline lineno="62"><highlight class="comment">http://publicsvn.songbirdnest.com/browser/trunk/components/property/src/sbStandardProperties.h</highlight></codeline>
 <codeline lineno="63"><highlight class="comment"></highlight></codeline>
 <codeline lineno="64"><highlight class="comment">*/</highlight></codeline>
-<codeline lineno="72"><highlight class="normal">[scriptable,<sp/>uuid(fb29d038-9c71-40ab-9362-c5e728766d0d)]</highlight></codeline>
+<codeline lineno="72"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(fb29d038-9c71-40ab-9362-c5e728766d0d)]</highlight></codeline>
 <codeline lineno="73" refid="interfacesb_i_remote_web_playlist" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_remote_web_playlist" kindref="compound" tooltip="An interface to control a media list from remote web pages.">sbIRemoteWebPlaylist</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="74"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>

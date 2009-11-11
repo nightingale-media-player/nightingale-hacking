@@ -5,18 +5,18 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes local="yes">nsIDOMEvent.idl</includes>
     <incdepgraph>
-      <node id="582">
+      <node id="727">
         <label>nsIDOMEvent.idl</label>
       </node>
-      <node id="580">
+      <node id="725">
         <label>components/moz/domevents/public/sbIDOMEventWrapper.idl</label>
         <link refid="sbIDOMEventWrapper.idl"/>
-        <childnode refid="581" relation="include">
+        <childnode refid="726" relation="include">
         </childnode>
-        <childnode refid="582" relation="include">
+        <childnode refid="727" relation="include">
         </childnode>
       </node>
-      <node id="581">
+      <node id="726">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -56,7 +56,7 @@
 <codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIDOMEvent.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
-<codeline lineno="36"><highlight class="normal">[scriptable,<sp/>uuid(5d2580ee-a154-4276-a070-640456d8f789)]</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(5d2580ee-a154-4276-a070-640456d8f789)]</highlight></codeline>
 <codeline lineno="37" refid="interfacesb_i_d_o_m_event_wrapper" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_d_o_m_event_wrapper" kindref="compound">sbIDOMEventWrapper</ref>:<sp/>nsIDOMEvent<sp/>{</highlight></codeline>
 <codeline lineno="38"><highlight class="normal"><sp/><sp/></highlight></codeline>
 <codeline lineno="45"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>init(in<sp/>nsIDOMEvent<sp/>aBaseEvent,<sp/>in<sp/>nsISupports<sp/>aData);</highlight></codeline>

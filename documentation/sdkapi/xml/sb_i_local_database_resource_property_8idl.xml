@@ -5,21 +5,21 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_library_resource_8idl" local="yes">sbILibraryResource.idl</includes>
     <incdepgraph>
-      <node id="396">
+      <node id="448">
         <label>components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl</label>
         <link refid="sbILocalDatabaseResourceProperty.idl"/>
-        <childnode refid="397" relation="include">
+        <childnode refid="449" relation="include">
         </childnode>
-        <childnode refid="398" relation="include">
+        <childnode refid="450" relation="include">
         </childnode>
       </node>
-      <node id="397">
+      <node id="449">
         <label>nsISupports.idl</label>
       </node>
-      <node id="398">
+      <node id="450">
         <label>sbILibraryResource.idl</label>
         <link refid="sb_i_library_resource_8idl"/>
-        <childnode refid="397" relation="include">
+        <childnode refid="449" relation="include">
         </childnode>
       </node>
     </incdepgraph>
@@ -60,7 +60,7 @@
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_property_cache" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabasePropertyCache</ref>;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="41"><highlight class="normal">[scriptable,<sp/>uuid(64BCF7AC-099B-4d26-A019-674449AB7C35)]</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(64BCF7AC-099B-4d26-A019-674449AB7C35)]</highlight></codeline>
 <codeline lineno="42" refid="interfacesb_i_local_database_resource_property" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_resource_property" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseResourceProperty</ref><sp/>:<sp/><ref refid="interfacesb_i_library_resource" kindref="compound" tooltip="General interface to data resources.">sbILibraryResource</ref></highlight></codeline>
 <codeline lineno="43"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="44"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initResourceProperty(in<sp/><ref refid="interfacesb_i_local_database_property_cache" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabasePropertyCache</ref><sp/>aPropertyCache,</highlight></codeline>

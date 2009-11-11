@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/library/base/public/sbIMediaListViewTreeView.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -99,7 +105,7 @@
 <a name="l00035"></a>00035 interface nsITreeColumn;
 <a name="l00036"></a>00036 interface <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>;
 <a name="l00037"></a>00037 
-<a name="l00043"></a>00043 [scriptable, uuid(d34060ad-5aff-46b1-8029-b446e57b59df)]
+<a name="l00043"></a>00043 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(d34060ad-5aff-46b1-8029-b446e57b59df)]
 <a name="l00044"></a><a class="code" href="interfacesb_i_media_list_view_tree_view_observer.html">00044</a> interface <a class="code" href="interfacesb_i_media_list_view_tree_view_observer.html" title="Observer to implement the nsITreeView methods that a sbIMediaListViewTreeView does...">sbIMediaListViewTreeViewObserver</a> : nsISupports
 <a name="l00045"></a>00045 {
 <a name="l00046"></a><a class="code" href="interfacesb_i_media_list_view_tree_view_observer.html#bd177db3a4cf9b97cff746533f3d386e">00046</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> DROP_BEFORE = -1;
@@ -115,7 +121,7 @@
 <a name="l00063"></a>00063                     in AString oldValue);
 <a name="l00064"></a>00064 };
 <a name="l00065"></a>00065 
-<a name="l00070"></a>00070 [scriptable, uuid(b5ad98fa-15a8-40dd-a3e2-9170a983ffc3)]
+<a name="l00070"></a>00070 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(b5ad98fa-15a8-40dd-a3e2-9170a983ffc3)]
 <a name="l00071"></a><a class="code" href="interfacesb_i_media_list_view_tree_view.html">00071</a> interface <a class="code" href="interfacesb_i_media_list_view_tree_view.html" title="A tree view that views a media list view.">sbIMediaListViewTreeView</a> : nsITreeView
 <a name="l00072"></a>00072 {
 <a name="l00087"></a>00087   <span class="keywordtype">long</span> getNextRowIndexForKeyNavigation(in AString aKeyString,
@@ -123,7 +129,7 @@
 <a name="l00089"></a>00089 
 <a name="l00094"></a><a class="code" href="interfacesb_i_media_list_view_tree_view.html#b316c18c48998564603a239d58719553">00094</a>   attribute <a class="code" href="interfacesb_i_media_list_view_tree_view_observer.html" title="Observer to implement the nsITreeView methods that a sbIMediaListViewTreeView does...">sbIMediaListViewTreeViewObserver</a> observer;
 <a name="l00095"></a>00095 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_218ce52ffaa8b7e58c5a7aebc653b805" kind="dir">
+    <compoundname>components/mediamanager/</compoundname>
+    <innerdir refid="dir_4f435a35ef5d657fd5a3a9212334117d">components/mediamanager/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/mediamanager/"/>
+  </compounddef>
+</doxygen>

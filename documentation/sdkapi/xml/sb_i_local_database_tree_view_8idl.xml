@@ -4,13 +4,13 @@
     <compoundname>sbILocalDatabaseTreeView.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="412">
+      <node id="464">
         <label>components/library/localdatabase/public/sbILocalDatabaseTreeView.idl</label>
         <link refid="sbILocalDatabaseTreeView.idl"/>
-        <childnode refid="413" relation="include">
+        <childnode refid="465" relation="include">
         </childnode>
       </node>
-      <node id="413">
+      <node id="465">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -51,7 +51,7 @@
 <codeline lineno="34"><highlight class="normal">interface<sp/>nsIStringEnumerator;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/>nsITreeColumn;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="41"><highlight class="normal">[scriptable,<sp/>uuid(bc5e40f7-a042-4603-a4b4-10f7dafcc139)]</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(bc5e40f7-a042-4603-a4b4-10f7dafcc139)]</highlight></codeline>
 <codeline lineno="42" refid="interfacesb_i_local_database_tree_view" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_tree_view" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseTreeView</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="43"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="44" refid="interfacesb_i_local_database_tree_view_1a4c891555bff25005b7fbeb8b9db6746" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>MOUSE_STATE_NONE<sp/><sp/>=<sp/>0;</highlight></codeline>

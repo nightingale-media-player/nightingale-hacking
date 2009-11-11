@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/devices/base/public/sbIDeviceStatus.idl</h1><a href="sb_i_device_status_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -97,7 +103,7 @@
 <a name="l00033"></a>00033 interface <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>;
 <a name="l00034"></a>00034 interface <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a>;
 <a name="l00035"></a>00035 
-<a name="l00043"></a>00043 [scriptable, uuid(7b2026c4-9193-4cbd-818a-0d07abaec854)]
+<a name="l00043"></a>00043 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(48cb3191-0687-45cc-b47f-8463ebf77bcb)]
 <a name="l00044"></a><a class="code" href="interfacesb_i_device_status.html">00044</a> interface <a class="code" href="interfacesb_i_device_status.html">sbIDeviceStatus</a>: nsISupports {
 <a name="l00049"></a><a class="code" href="interfacesb_i_device_status.html#49f6338b3405bdfd3edff6919e1cb5c7">00049</a>   attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> currentState;
 <a name="l00050"></a>00050 
@@ -115,12 +121,16 @@
 <a name="l00082"></a>00082 
 <a name="l00086"></a><a class="code" href="interfacesb_i_device_status.html#0a8461627863499c55ed7797c1954310">00086</a>   attribute <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> mediaItem;
 <a name="l00087"></a>00087   
-<a name="l00091"></a><a class="code" href="interfacesb_i_device_status.html#12228779b15826100b39dacf3bd7a51e">00091</a>   attribute <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> mediaList;
-<a name="l00092"></a>00092   
-<a name="l00096"></a>00096   <span class="keywordtype">void</span> init(in AString aDeviceID);
-<a name="l00097"></a>00097 };
+<a name="l00097"></a><a class="code" href="interfacesb_i_device_status.html#84babbaf74efe1366df22f6041731d98">00097</a>   attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> elapsedTime;
 <a name="l00098"></a>00098 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:38 2009 for Songbird by&nbsp;
+<a name="l00103"></a><a class="code" href="interfacesb_i_device_status.html#d58ef02dacae35e93c42d77d334806f6">00103</a>   attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> remainingTime;
+<a name="l00104"></a>00104   
+<a name="l00108"></a><a class="code" href="interfacesb_i_device_status.html#12228779b15826100b39dacf3bd7a51e">00108</a>   attribute <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> mediaList;
+<a name="l00109"></a>00109   
+<a name="l00113"></a>00113   <span class="keywordtype">void</span> init(in AString aDeviceID);
+<a name="l00114"></a>00114 };
+<a name="l00115"></a>00115 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

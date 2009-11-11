@@ -42,9 +42,9 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" line="59" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" bodystart="59" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_mediacore_manager_14101ecec65c0b809d0178c3c4ded7c01" prot="public" static="no" mutable="no">
-        <type>readonly attribute <ref refid="interfacesb_i_mediacore_simple_equalizer" kindref="compound">sbIMediacoreSimpleEqualizer</ref></type>
-        <definition>readonly attribute sbIMediacoreSimpleEqualizer sbIMediacoreManager::equalizer</definition>
+      <memberdef kind="variable" id="interfacesb_i_mediacore_manager_14e024127c997556feff582b15eb51823" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_mediacore_multiband_equalizer" kindref="compound">sbIMediacoreMultibandEqualizer</ref></type>
+        <definition>readonly attribute sbIMediacoreMultibandEqualizer sbIMediacoreManager::equalizer</definition>
         <argsstring></argsstring>
         <name>equalizer</name>
         <briefdescription>
@@ -94,6 +94,19 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" line="65" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" bodystart="65" bodyend="-1"/>
       </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_mediacore_manager_16d833e34bd175091a3364856761376b2" prot="public" static="no" mutable="no">
+        <type>readonly attribute <ref refid="interfacesb_i_mediacore_video_window" kindref="compound">sbIMediacoreVideoWindow</ref></type>
+        <definition>readonly attribute sbIMediacoreVideoWindow sbIMediacoreManager::video</definition>
+        <argsstring></argsstring>
+        <name>video</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" line="67" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" bodystart="67" bodyend="-1"/>
+      </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_manager_1689507ad9e06653da8c4ba66bf06063d" prot="public" static="no" mutable="no">
         <type>attribute <ref refid="interfacesb_i_mediacore_sequencer" kindref="compound">sbIMediacoreSequencer</ref></type>
         <definition>attribute sbIMediacoreSequencer sbIMediacoreManager::sequencer</definition>
@@ -105,23 +118,60 @@
 <para>The current sequencer used to generate and manage playback sequences.</para><para>Setting the sequencer will have the following effect:</para><para>1. Current sequences remain unaffected. 2. When playback of current sequences is complete, the new sequencer is used to generate the next sequence. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" line="76" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" bodystart="76" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_mediacore_manager_16d833e34bd175091a3364856761376b2" prot="public" static="no" mutable="no">
-        <type>readonly attribute <ref refid="interfacesb_i_mediacore_video_window" kindref="compound">sbIMediacoreVideoWindow</ref></type>
-        <definition>readonly attribute sbIMediacoreVideoWindow sbIMediacoreManager::video</definition>
-        <argsstring></argsstring>
-        <name>video</name>
-        <briefdescription>
-<para>The primary video window that will be used by all cores to display video when it&apos;s available. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" line="82" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" bodystart="82" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" line="78" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" bodystart="78" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_mediacore_manager_1ab3c2c0e856fca0bb25ef249c8e19181" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_mediacore_video_window" kindref="compound">sbIMediacoreVideoWindow</ref></type>
+        <definition>sbIMediacoreVideoWindow sbIMediacoreManager::getPrimaryVideoWindow</definition>
+        <argsstring>(in boolean aCreate,[optional] in unsigned long aWidthHint,[optional] in unsigned long aHeightHint)</argsstring>
+        <name>getPrimaryVideoWindow</name>
+        <param>
+          <type>in boolean</type>
+          <declname>aCreate</declname>
+        </param>
+        <param>
+          <attributes>[optional]</attributes>
+          <type>in unsigned long</type>
+          <declname>aWidthHint</declname>
+        </param>
+        <param>
+          <attributes>[optional]</attributes>
+          <type>in unsigned long</type>
+          <declname>aHeightHint</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get (or create) the primary video window</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aCreate</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Create the window if it does not exist. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aWidthHint</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(Optional) Width of the video that will be shown </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aHeightHint</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(Optional) Height of the video that will be shown </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>Both width and height hints have to be non-zero if you wish them to be used to size the video window upon creation. If you do not use the hints, the video window will rely on a VIDEO_SIZE_CHANGED event to size itself properly. </para><para>This method will return null if aCreate is false and there is no video window available. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" line="96"/>
+      </memberdef>
       <memberdef kind="function" id="interfacesb_i_mediacore_manager_12b6cfeb6020f3286aaa3e893a63a2e74" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_mediacore_event" kindref="compound">sbIMediacoreEvent</ref></type>
         <definition>sbIMediacoreEvent sbIMediacoreManager::createEvent</definition>
@@ -181,7 +231,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" line="104"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" line="118"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -189,203 +239,197 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="575">
+      <node id="609">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="572" relation="public-inheritance">
+        <childnode refid="606" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="583">
+      <node id="616">
         <label>sbIMediaListView</label>
         <link refid="interfacesb_i_media_list_view"/>
-        <childnode refid="575" relation="usage">
+        <childnode refid="609" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
-        <childnode refid="584" relation="usage">
+        <childnode refid="617" relation="usage">
           <edgelabel>selection</edgelabel>
         </childnode>
-        <childnode refid="585" relation="usage">
+        <childnode refid="618" relation="usage">
           <edgelabel>cascadeFilterSet</edgelabel>
         </childnode>
       </node>
-      <node id="570">
+      <node id="604">
         <label>sbIMediacoreCapabilities</label>
         <link refid="interfacesb_i_mediacore_capabilities"/>
       </node>
-      <node id="586">
+      <node id="620">
         <label>sbIMediacoreBalanceControl</label>
         <link refid="interfacesb_i_mediacore_balance_control"/>
       </node>
-      <node id="584">
+      <node id="617">
         <label>sbIMediaListViewSelection</label>
         <link refid="interfacesb_i_media_list_view_selection"/>
-        <childnode refid="572" relation="usage">
+        <childnode refid="606" relation="usage">
           <edgelabel>currentMediaItem</edgelabel>
         </childnode>
       </node>
-      <node id="579">
+      <node id="613">
         <label>sbIDeviceStatus</label>
         <link refid="interfacesb_i_device_status"/>
-        <childnode refid="572" relation="usage">
+        <childnode refid="606" relation="usage">
           <edgelabel>mediaItem</edgelabel>
         </childnode>
-        <childnode refid="575" relation="usage">
+        <childnode refid="609" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
-      <node id="580">
-        <label>sbIDeviceCapabilities</label>
-        <link refid="interfacesb_i_device_capabilities"/>
+      <node id="619">
+        <label>sbIMediacoreMultibandEqualizer</label>
+        <link refid="interfacesb_i_mediacore_multiband_equalizer"/>
       </node>
-      <node id="571">
+      <node id="605">
         <label>sbIMediacoreSequencer</label>
         <link refid="interfacesb_i_mediacore_sequencer"/>
-        <childnode refid="572" relation="usage">
+        <childnode refid="606" relation="usage">
           <edgelabel>nextItem
 currentItem</edgelabel>
         </childnode>
-        <childnode refid="582" relation="usage">
+        <childnode refid="615" relation="usage">
           <edgelabel>customGenerator</edgelabel>
         </childnode>
-        <childnode refid="583" relation="usage">
+        <childnode refid="616" relation="usage">
           <edgelabel>view</edgelabel>
         </childnode>
       </node>
-      <node id="576">
+      <node id="610">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="577" relation="usage">
+        <childnode refid="611" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="579" relation="usage">
+        <childnode refid="613" relation="usage">
           <edgelabel>currentStatus</edgelabel>
         </childnode>
-        <childnode refid="580" relation="usage">
-          <edgelabel>capabilities</edgelabel>
-        </childnode>
-        <childnode refid="581" relation="usage">
+        <childnode refid="614" relation="usage">
           <edgelabel>properties</edgelabel>
         </childnode>
       </node>
-      <node id="568">
+      <node id="602">
         <label>sbIMediacore</label>
         <link refid="interfacesb_i_mediacore"/>
-        <childnode refid="569" relation="usage">
+        <childnode refid="603" relation="usage">
           <edgelabel>status</edgelabel>
         </childnode>
-        <childnode refid="570" relation="usage">
+        <childnode refid="604" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
-        <childnode refid="571" relation="usage">
+        <childnode refid="605" relation="usage">
           <edgelabel>sequencer</edgelabel>
         </childnode>
       </node>
-      <node id="566">
-        <label>sbIMediacoreSimpleEqualizer</label>
-        <link refid="interfacesb_i_mediacore_simple_equalizer"/>
-      </node>
-      <node id="574">
+      <node id="608">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="575" relation="public-inheritance">
+        <childnode refid="609" relation="public-inheritance">
         </childnode>
-        <childnode refid="576" relation="usage">
+        <childnode refid="610" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="578" relation="usage">
+        <childnode refid="612" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="585">
+      <node id="618">
         <label>sbICascadeFilterSet</label>
         <link refid="interfacesb_i_cascade_filter_set"/>
       </node>
-      <node id="565">
+      <node id="600">
         <label>sbIMediacorePlaybackControl</label>
         <link refid="interfacesb_i_mediacore_playback_control"/>
       </node>
-      <node id="563">
+      <node id="598">
         <label>sbIMediacoreManager</label>
         <link refid="interfacesb_i_mediacore_manager"/>
-        <childnode refid="564" relation="usage">
+        <childnode refid="599" relation="usage">
           <edgelabel>video</edgelabel>
         </childnode>
-        <childnode refid="565" relation="usage">
+        <childnode refid="600" relation="usage">
           <edgelabel>playbackControl</edgelabel>
         </childnode>
-        <childnode refid="566" relation="usage">
-          <edgelabel>equalizer</edgelabel>
-        </childnode>
-        <childnode refid="567" relation="usage">
+        <childnode refid="601" relation="usage">
           <edgelabel>volumeControl</edgelabel>
         </childnode>
-        <childnode refid="568" relation="usage">
+        <childnode refid="602" relation="usage">
           <edgelabel>primaryCore</edgelabel>
         </childnode>
-        <childnode refid="569" relation="usage">
+        <childnode refid="603" relation="usage">
           <edgelabel>status</edgelabel>
         </childnode>
-        <childnode refid="570" relation="usage">
+        <childnode refid="619" relation="usage">
+          <edgelabel>equalizer</edgelabel>
+        </childnode>
+        <childnode refid="604" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
-        <childnode refid="571" relation="usage">
+        <childnode refid="605" relation="usage">
           <edgelabel>sequencer</edgelabel>
         </childnode>
-        <childnode refid="586" relation="usage">
+        <childnode refid="620" relation="usage">
           <edgelabel>balanceControl</edgelabel>
         </childnode>
       </node>
-      <node id="573">
+      <node id="607">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="572">
+      <node id="606">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="573" relation="public-inheritance">
+        <childnode refid="607" relation="public-inheritance">
         </childnode>
-        <childnode refid="574" relation="usage">
+        <childnode refid="608" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="582">
+      <node id="615">
         <label>sbIMediacoreSequenceGenerator</label>
         <link refid="interfacesb_i_mediacore_sequence_generator"/>
       </node>
-      <node id="577">
+      <node id="611">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="578" relation="usage">
+        <childnode refid="612" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="578">
+      <node id="612">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
-      <node id="569">
+      <node id="603">
         <label>sbIMediacoreStatus</label>
         <link refid="interfacesb_i_mediacore_status"/>
       </node>
-      <node id="564">
+      <node id="599">
         <label>sbIMediacoreVideoWindow</label>
         <link refid="interfacesb_i_mediacore_video_window"/>
       </node>
-      <node id="567">
+      <node id="601">
         <label>sbIMediacoreVolumeControl</label>
         <link refid="interfacesb_i_mediacore_volume_control"/>
       </node>
-      <node id="581">
+      <node id="614">
         <label>sbIDeviceProperties</label>
         <link refid="interfacesb_i_device_properties"/>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" line="49" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" bodystart="48" bodyend="105"/>
+    <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" line="49" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" bodystart="48" bodyend="119"/>
     <listofallmembers>
       <member refid="interfacesb_i_mediacore_manager_14b31b46aa055273e00f0f4877c6af93f" prot="public" virt="non-virtual"><scope>sbIMediacoreManager</scope><name>balanceControl</name></member>
       <member refid="interfacesb_i_mediacore_manager_15316f957dcb5c1821740f41aa3ca2871" prot="public" virt="non-virtual"><scope>sbIMediacoreManager</scope><name>capabilities</name></member>
       <member refid="interfacesb_i_mediacore_manager_12b6cfeb6020f3286aaa3e893a63a2e74" prot="public" virt="non-virtual"><scope>sbIMediacoreManager</scope><name>createEvent</name></member>
-      <member refid="interfacesb_i_mediacore_manager_14101ecec65c0b809d0178c3c4ded7c01" prot="public" virt="non-virtual"><scope>sbIMediacoreManager</scope><name>equalizer</name></member>
+      <member refid="interfacesb_i_mediacore_manager_14e024127c997556feff582b15eb51823" prot="public" virt="non-virtual"><scope>sbIMediacoreManager</scope><name>equalizer</name></member>
+      <member refid="interfacesb_i_mediacore_manager_1ab3c2c0e856fca0bb25ef249c8e19181" prot="public" virt="non-virtual"><scope>sbIMediacoreManager</scope><name>getPrimaryVideoWindow</name></member>
       <member refid="interfacesb_i_mediacore_manager_14d710e46b0d1218f791d05989f29d8f5" prot="public" virt="non-virtual"><scope>sbIMediacoreManager</scope><name>playbackControl</name></member>
       <member refid="interfacesb_i_mediacore_manager_16c6ac5478e54513f76a1d12cdba83d3f" prot="public" virt="non-virtual"><scope>sbIMediacoreManager</scope><name>primaryCore</name></member>
       <member refid="interfacesb_i_mediacore_manager_1689507ad9e06653da8c4ba66bf06063d" prot="public" virt="non-virtual"><scope>sbIMediacoreManager</scope><name>sequencer</name></member>

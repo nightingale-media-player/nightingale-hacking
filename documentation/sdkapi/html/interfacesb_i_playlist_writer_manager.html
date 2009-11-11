@@ -73,7 +73,7 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul>
 </div>
-<h1>sbIPlaylistWriterManager Interface Reference</h1><!-- doxytag: class="sbIPlaylistWriterManager" -->[UNIMPLEMENTED UNTIL AFTER 0.3]  
+<h1>sbIPlaylistWriterManager Interface Reference</h1><!-- doxytag: class="sbIPlaylistWriterManager" -->Write a file using an appropriate registered playlist writer. Playlist writers are registered by adding them to the playlist-writer category at startup and are not enumerated again.  
 <a href="#_details">More...</a>
 <p>
 <code>import &quot;<a class="el" href="sb_i_playlist_writer_8idl-source.html">sbIPlaylistWriter.idl</a>&quot;;</code>
@@ -81,14 +81,15 @@
 <a href="interfacesb_i_playlist_writer_manager-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">PRInt32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer_manager.html#b74f690cc8f115296d5b7cc60d8f47b7">write</a> (in AString aGUID, in AString aName, in AString aOutputURL, in AString aOutputContentType, in <a class="el" href="interfacesb_i_playlist_writer_listener.html">sbIPlaylistWriterListener</a> aWriterListener)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5b89b57bc53ace4d66a02e78cf1ace59"></a><!-- doxytag: member="sbIPlaylistWriterManager::write" ref="5b89b57bc53ace4d66a02e78cf1ace59" args="(in nsIFile aFile, in sbIMediaList aMediaList, in AString aContentType)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer_manager.html#5b89b57bc53ace4d66a02e78cf1ace59">write</a> (in nsIFile aFile, in <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a> aMediaList, in AString aContentType)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em></em>&nbsp;</td><td></td></tr>
   </table>
 </dl>
- <a href="#b74f690cc8f115296d5b7cc60d8f47b7"></a><br></td></tr>
+<br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_playlist_writer_manager.html#69a3b383ebf69f6440ccd9fccdb2fff1">supportedMIMETypes</a> (out PRUint32 aMIMECount,[array, size_is(aMIMECount), retval] out wstring aMIMETypes)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight"><dl compact><dt><b>Parameters:</b></dt><dd>
@@ -107,66 +108,11 @@
  <a href="#394bed219a53ea5f530a363df966f5ee"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-[UNIMPLEMENTED UNTIL AFTER 0.3] 
+Write a file using an appropriate registered playlist writer. Playlist writers are registered by adding them to the playlist-writer category at startup and are not enumerated again. 
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_playlist_writer_8idl-source.html#l00111">111</a> of file <a class="el" href="sb_i_playlist_writer_8idl-source.html">sbIPlaylistWriter.idl</a>.<hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="b74f690cc8f115296d5b7cc60d8f47b7"></a><!-- doxytag: member="sbIPlaylistWriterManager::write" ref="b74f690cc8f115296d5b7cc60d8f47b7" args="(in AString aGUID, in AString aName, in AString aOutputURL, in AString aOutputContentType, in sbIPlaylistWriterListener aWriterListener)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">PRInt32 sbIPlaylistWriterManager::write           </td>
-          <td>(</td>
-          <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>aGUID</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>aName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>aOutputURL</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>aOutputContentType</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">in <a class="el" href="interfacesb_i_playlist_writer_listener.html">sbIPlaylistWriterListener</a>&nbsp;</td>
-          <td class="paramname"> <em>aWriterListener</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td width="100%"></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em></em>&nbsp;</td><td></td></tr>
-  </table>
-</dl>
-
-<p>
-<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_query.html" title="An object responsible for executing SQL queries on the database.">sbIDatabaseQuery</a> </dd></dl>
-
-</div>
-</div><p>
+Definition at line <a class="el" href="sb_i_playlist_writer_8idl-source.html#l00103">103</a> of file <a class="el" href="sb_i_playlist_writer_8idl-source.html">sbIPlaylistWriter.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="69a3b383ebf69f6440ccd9fccdb2fff1"></a><!-- doxytag: member="sbIPlaylistWriterManager::supportedMIMETypes" ref="69a3b383ebf69f6440ccd9fccdb2fff1" args="(out PRUint32 aMIMECount,[array, size_is(aMIMECount), retval] out wstring aMIMETypes)" -->
 <div class="memitem">
 <div class="memproto">
@@ -242,8 +188,8 @@ Definition at line <a class="el" href="sb_i_playlist_writer_8idl-source.html#l00
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
-<li>components/mediaimport/playlist/public/<a class="el" href="sb_i_playlist_writer_8idl-source.html">sbIPlaylistWriter.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:45 2009 for Songbird by&nbsp;
+<li>components/mediaexport/playlist/public/<a class="el" href="sb_i_playlist_writer_8idl-source.html">sbIPlaylistWriter.idl</a></ul>
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:50 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

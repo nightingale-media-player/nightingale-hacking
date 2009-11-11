@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreCapabilities.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="421">
+      <node id="473">
         <label>components/mediacore/base/public/sbIMediacoreCapabilities.idl</label>
         <link refid="sbIMediacoreCapabilities.idl"/>
-        <childnode refid="422" relation="include">
+        <childnode refid="474" relation="include">
         </childnode>
       </node>
-      <node id="422">
+      <node id="474">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,7 +50,7 @@
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
 <codeline lineno="29"><highlight class="normal">interface<sp/>nsIStringEnumerator;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
-<codeline lineno="31"><highlight class="normal">[scriptable,<sp/>uuid(937f3e19-f9ef-4d7c-9afa-7e388338954e)]</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(937f3e19-f9ef-4d7c-9afa-7e388338954e)]</highlight></codeline>
 <codeline lineno="32" refid="interfacesb_i_mediacore_capabilities" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_capabilities" kindref="compound">sbIMediacoreCapabilities</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="33"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="37" refid="interfacesb_i_mediacore_capabilities_1e0c5ffcd70811225027f84b29848b0dd" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIStringEnumerator<sp/>audioExtensions;</highlight></codeline>

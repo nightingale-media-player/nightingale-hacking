@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/albumart/public/sbIAlbumArtFetcher.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */</span>
 <a name="l00002"></a>00002 <span class="comment">/* vim: set sw=2 :miv */</span>
 <a name="l00003"></a>00003 <span class="comment">/*</span>
@@ -110,7 +116,7 @@
 <a name="l00049"></a>00049 interface <a class="code" href="interfacesb_i_album_art_listener.html" title="A component which is interested in the result of an album art fetch request.">sbIAlbumArtListener</a>;
 <a name="l00050"></a>00050 interface <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>;
 <a name="l00051"></a>00051 
-<a name="l00052"></a>00052 [scriptable, uuid(55cf9123-343b-4012-9f99-11f114bc2f1b)]
+<a name="l00052"></a>00052 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(cb90f244-e008-47c5-a3a1-519e01eb91a7)]
 <a name="l00053"></a><a class="code" href="interfacesb_i_album_art_fetcher.html">00053</a> interface <a class="code" href="interfacesb_i_album_art_fetcher.html" title="Interface for an album art fetcher. Instantiate as a component instance.">sbIAlbumArtFetcher</a> : nsISupports
 <a name="l00054"></a>00054 {
 <a name="l00058"></a><a class="code" href="interfacesb_i_album_art_fetcher.html#1746f3709c9cac9c1f49e9d7f1c1cf71">00058</a>   readonly attribute AString shortName;
@@ -127,33 +133,34 @@
 <a name="l00090"></a>00090 
 <a name="l00094"></a><a class="code" href="interfacesb_i_album_art_fetcher.html#2e7aa9a9a21e080e84ee372a384ff3a1">00094</a>   attribute nsIArray albumArtSourceList;
 <a name="l00095"></a>00095 
-<a name="l00105"></a>00105   <span class="keywordtype">void</span> fetchAlbumArtForAlbum(in nsIArray            aMediaItems,
-<a name="l00106"></a>00106                              in <a class="code" href="interfacesb_i_album_art_listener.html" title="A component which is interested in the result of an album art fetch request.">sbIAlbumArtListener</a> aListener);
-<a name="l00107"></a>00107 
-<a name="l00108"></a>00108   <span class="comment">/* \brief shut down the fetcher</span>
-<a name="l00109"></a>00109 <span class="comment">   */</span>
-<a name="l00110"></a>00110   <span class="keywordtype">void</span> shutdown();
-<a name="l00111"></a>00111 };
-<a name="l00112"></a>00112 
-<a name="l00113"></a>00113 
-<a name="l00114"></a>00114 <span class="comment">//</span>
-<a name="l00115"></a>00115 <span class="comment">// C++ defs.</span>
-<a name="l00116"></a>00116 <span class="comment">//</span>
-<a name="l00117"></a>00117 
-<a name="l00118"></a>00118 %{C++
-<a name="l00119"></a>00119 <span class="preprocessor">#define SB_ALBUM_ART_FETCHER_CATEGORY "songbird-album-art-fetcher"</span>
-<a name="l00120"></a>00120 <span class="preprocessor"></span>
-<a name="l00121"></a>00121 <span class="preprocessor">#define SB_FILEALBUMARTFETCHER_CONTRACTID \</span>
-<a name="l00122"></a>00122 <span class="preprocessor">          "@songbirdnest.com/Songbird/album-art/file-fetcher;1"</span>
-<a name="l00123"></a>00123 <span class="preprocessor"></span>
-<a name="l00124"></a>00124 <span class="preprocessor">#define SB_METADATAALBUMARTFETCHER_CONTRACTID \</span>
-<a name="l00125"></a>00125 <span class="preprocessor">          "@songbirdnest.com/Songbird/album-art/metadata-fetcher;1"</span>
-<a name="l00126"></a>00126 <span class="preprocessor"></span>
-<a name="l00127"></a>00127 <span class="preprocessor">#define SB_LASTFMALBUMARTFETCHER_CONTRACTID \</span>
-<a name="l00128"></a>00128 <span class="preprocessor">          "@songbirdnest.com/Songbird/album-art/lastfm-fetcher;1"</span>
-<a name="l00129"></a>00129 <span class="preprocessor"></span>%}C++
-<a name="l00130"></a>00130 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:38 2009 for Songbird by&nbsp;
+<a name="l00103"></a>00103   <span class="keywordtype">void</span> fetchAlbumArtForAlbum(in nsIArray            aMediaItems,
+<a name="l00104"></a>00104                              in <a class="code" href="interfacesb_i_album_art_listener.html" title="A component which is interested in the result of an album art fetch request.">sbIAlbumArtListener</a> aListener);
+<a name="l00105"></a>00105 
+<a name="l00106"></a>00106 
+<a name="l00112"></a>00112   <span class="keywordtype">void</span> fetchAlbumArtForTrack(in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>         aMediaItem,
+<a name="l00113"></a>00113                              in <a class="code" href="interfacesb_i_album_art_listener.html" title="A component which is interested in the result of an album art fetch request.">sbIAlbumArtListener</a>  aListener);
+<a name="l00114"></a>00114   
+<a name="l00115"></a>00115   <span class="comment">/* \brief shut down the fetcher</span>
+<a name="l00116"></a>00116 <span class="comment">   */</span>
+<a name="l00117"></a>00117   <span class="keywordtype">void</span> shutdown();
+<a name="l00118"></a>00118 };
+<a name="l00119"></a>00119 
+<a name="l00120"></a>00120 
+<a name="l00121"></a>00121 <span class="comment">//</span>
+<a name="l00122"></a>00122 <span class="comment">// C++ defs.</span>
+<a name="l00123"></a>00123 <span class="comment">//</span>
+<a name="l00124"></a>00124 
+<a name="l00125"></a>00125 %{C++
+<a name="l00126"></a>00126 <span class="preprocessor">#define SB_ALBUM_ART_FETCHER_CATEGORY "songbird-album-art-fetcher"</span>
+<a name="l00127"></a>00127 <span class="preprocessor"></span>
+<a name="l00128"></a>00128 <span class="preprocessor">#define SB_FILEALBUMARTFETCHER_CONTRACTID \</span>
+<a name="l00129"></a>00129 <span class="preprocessor">          "@songbirdnest.com/Songbird/album-art/file-fetcher;1"</span>
+<a name="l00130"></a>00130 <span class="preprocessor"></span>
+<a name="l00131"></a>00131 <span class="preprocessor">#define SB_METADATAALBUMARTFETCHER_CONTRACTID \</span>
+<a name="l00132"></a>00132 <span class="preprocessor">          "@songbirdnest.com/Songbird/album-art/metadata-fetcher;1"</span>
+<a name="l00133"></a>00133 <span class="preprocessor"></span>%}C++
+<a name="l00134"></a>00134 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:44 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

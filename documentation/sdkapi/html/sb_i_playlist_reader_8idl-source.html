@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/mediaimport/playlist/public/sbIPlaylistReader.idl</h1><a href="sb_i_playlist_reader_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment"> //</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -99,7 +105,7 @@
 <a name="l00038"></a>00038 interface nsIFile;
 <a name="l00039"></a>00039 interface <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a>;
 <a name="l00040"></a>00040 
-<a name="l00047"></a>00047 [scriptable, uuid(a1fd4697-6459-473f-a660-1915f91cd469)]
+<a name="l00047"></a>00047 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(a1fd4697-6459-473f-a660-1915f91cd469)]
 <a name="l00048"></a><a class="code" href="interfacesb_i_playlist_reader_listener.html">00048</a> interface <a class="code" href="interfacesb_i_playlist_reader_listener.html" title="A listener interface for use with sbIPlaylistReader interfaces.">sbIPlaylistReaderListener</a> : nsIWebProgressListener
 <a name="l00049"></a>00049 {
 <a name="l00055"></a><a class="code" href="interfacesb_i_playlist_reader_listener.html#559a9c2f01ff8522d32c28bf2e93508c">00055</a>   attribute nsIURI originalURI;
@@ -119,7 +125,7 @@
 <a name="l00099"></a><a class="code" href="interfacesb_i_playlist_reader_listener.html#7be28aecf118eeca510489fc4db2fd4c">00099</a>   attribute AString state;
 <a name="l00100"></a>00100 };
 <a name="l00101"></a>00101 
-<a name="l00108"></a>00108 [scriptable, uuid(8be3a732-f081-47e8-ac21-4d97d769260f)]
+<a name="l00108"></a>00108 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(8be3a732-f081-47e8-ac21-4d97d769260f)]
 <a name="l00109"></a><a class="code" href="interfacesb_i_playlist_reader.html">00109</a> interface <a class="code" href="interfacesb_i_playlist_reader.html" title="A subclass from which one may derive instances to read specific playlist types.">sbIPlaylistReader</a> : nsISupports
 <a name="l00110"></a>00110 {
 <a name="l00116"></a><a class="code" href="interfacesb_i_playlist_reader.html#2f503eec9feb86fd94eab42be4e6aaf2">00116</a>   attribute nsIURI originalURI;
@@ -141,7 +147,7 @@
 <a name="l00162"></a>00162     [array, size_is (aExtCount), retval] out wstring aExts);
 <a name="l00163"></a>00163 };
 <a name="l00164"></a>00164 
-<a name="l00172"></a>00172 [scriptable, uuid(127d0f73-295b-4270-9c64-941c20d444e5)]
+<a name="l00172"></a>00172 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(127d0f73-295b-4270-9c64-941c20d444e5)]
 <a name="l00173"></a><a class="code" href="interfacesb_i_playlist_reader_manager.html">00173</a> interface <a class="code" href="interfacesb_i_playlist_reader_manager.html" title="An interface to be used to read playlists. It will try to find the proper sbIPlaylistReader...">sbIPlaylistReaderManager</a> : nsISupports
 <a name="l00174"></a>00174 {
 <a name="l00180"></a><a class="code" href="interfacesb_i_playlist_reader_manager.html#eb430ecd664df3f04fab6b6e9033230f">00180</a>   attribute nsIURI originalURI;
@@ -165,7 +171,7 @@
 <a name="l00218"></a>00218 };
 <a name="l00219"></a>00219 
 <a name="l00220"></a>00220 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/servicepane/public/sbILibraryServicePaneService.idl</h1><a href="sb_i_library_service_pane_service_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* vim: ts=2 sw=2 expandtab</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -97,59 +103,68 @@
 <a name="l00034"></a>00034 interface <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a>;
 <a name="l00035"></a>00035 interface <a class="code" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a>;
 <a name="l00036"></a>00036 interface <a class="code" href="interfacesb_i_library_resource.html" title="General interface to data resources.">sbILibraryResource</a>;
-<a name="l00037"></a>00037 
-<a name="l00042"></a>00042 [scriptable, uuid(15928572-66fc-4eb8-a430-a5bac5bf350e)]
-<a name="l00043"></a><a class="code" href="interfacesb_i_library_service_pane_service.html">00043</a> interface <a class="code" href="interfacesb_i_library_service_pane_service.html" title="Provides information about libraries and medialists needed by the service pane.">sbILibraryServicePaneService</a> : nsISupports {
-<a name="l00044"></a>00044 
-<a name="l00045"></a>00045   <span class="comment">/* \brief Suggest a library for creating a new media list</span>
-<a name="l00046"></a>00046 <span class="comment">   *</span>
-<a name="l00047"></a>00047 <span class="comment">   * \param aMediaListType string identifying a media list type, eg "simple"</span>
-<a name="l00048"></a>00048 <span class="comment">   * \param aNode A service pane node to provide context for new list creation</span>
-<a name="l00049"></a>00049 <span class="comment">   * \return a library, or null if this service can't suggest anything based on</span>
-<a name="l00050"></a>00050 <span class="comment">   *         the given context and type.</span>
-<a name="l00051"></a>00051 <span class="comment">   */</span>
-<a name="l00052"></a>00052   <a class="code" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a> suggestLibraryForNewList (in AString aMediaListType,
-<a name="l00053"></a>00053                                        in <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> aNode);
-<a name="l00054"></a>00054 
-<a name="l00055"></a>00055   <span class="comment">/* \brief Attempts to create a service pane node for a given library.</span>
-<a name="l00056"></a>00056 <span class="comment">   *</span>
-<a name="l00057"></a>00057 <span class="comment">   * The node is created hidden. After you have parented or positioned your</span>
-<a name="l00058"></a>00058 <span class="comment">   * node appropriately, show it by changing the hidden attribute to false</span>
-<a name="l00059"></a>00059 <span class="comment">   * (node.hidden = false).</span>
-<a name="l00060"></a>00060 <span class="comment">   *</span>
-<a name="l00061"></a>00061 <span class="comment">   * \param aLibrary an sbILibrary.</span>
-<a name="l00062"></a>00062 <span class="comment">   * \return a service pane node that represents the given library, null</span>
-<a name="l00063"></a>00063 <span class="comment">   *         if aLibrary is not an sbILibrary.</span>
-<a name="l00064"></a>00064 <span class="comment">   */</span>
-<a name="l00065"></a>00065   <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> createNodeForLibrary (in <a class="code" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a> aLibrary);
-<a name="l00066"></a>00066 
-<a name="l00067"></a>00067   <span class="comment">/* \brief Attempt to get a service pane node for the given library resource</span>
-<a name="l00068"></a>00068 <span class="comment">   *</span>
-<a name="l00069"></a>00069 <span class="comment">   * \param aResource an sbIMediaItem, sbIMediaItem, or sbILibrary</span>
-<a name="l00070"></a>00070 <span class="comment">   * \return a service pane node that represents the given resource, if one exists</span>
-<a name="l00071"></a>00071 <span class="comment">   */</span>
-<a name="l00072"></a>00072   <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> getNodeForLibraryResource (in <a class="code" href="interfacesb_i_library_resource.html" title="General interface to data resources.">sbILibraryResource</a> aResource);
-<a name="l00073"></a>00073 
-<a name="l00074"></a>00074 
-<a name="l00075"></a>00075   <span class="comment">/* \brief Attempt to get a library resource for the given service pane node.</span>
-<a name="l00076"></a>00076 <span class="comment">   *</span>
-<a name="l00077"></a>00077 <span class="comment">   * Note that there is no guarantee that hidden service pane nodes</span>
-<a name="l00078"></a>00078 <span class="comment">   * will have corresponding library resources</span>
-<a name="l00079"></a>00079 <span class="comment">   *</span>
-<a name="l00080"></a>00080 <span class="comment">   * \param aNode</span>
-<a name="l00081"></a>00081 <span class="comment">   * \return a sbIMediaItem, sbIMediaItem, sbILibrary, or null</span>
-<a name="l00082"></a>00082 <span class="comment">   */</span>
-<a name="l00083"></a>00083   <a class="code" href="interfacesb_i_library_resource.html" title="General interface to data resources.">sbILibraryResource</a> getLibraryResourceForNode (in <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> aNode);
-<a name="l00084"></a>00084 
-<a name="l00085"></a>00085   <span class="comment">/* \brief Set node read-only property.</span>
-<a name="l00086"></a>00086 <span class="comment">   *</span>
-<a name="l00087"></a>00087 <span class="comment">   * \param aNode Node to set.</span>
-<a name="l00088"></a>00088 <span class="comment">   * \param aReadOnly If true, node is read-only.</span>
-<a name="l00089"></a>00089 <span class="comment">   */</span>
-<a name="l00090"></a>00090   <span class="keywordtype">void</span> setNodeReadOnly(in <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> aNode,
-<a name="l00091"></a>00091                        in <span class="keywordtype">boolean</span> aReadOnly);
-<a name="l00092"></a>00092 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+<a name="l00037"></a>00037 interface <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a>;
+<a name="l00038"></a>00038 
+<a name="l00043"></a>00043 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(03a32d24-edc2-4d26-99a3-b16859193a42)]
+<a name="l00044"></a><a class="code" href="interfacesb_i_library_service_pane_service.html">00044</a> interface <a class="code" href="interfacesb_i_library_service_pane_service.html" title="Provides information about libraries and medialists needed by the service pane.">sbILibraryServicePaneService</a> : nsISupports {
+<a name="l00045"></a>00045 
+<a name="l00046"></a>00046   <span class="comment">/* \brief Suggest a library for creating a new media list</span>
+<a name="l00047"></a>00047 <span class="comment">   *</span>
+<a name="l00048"></a>00048 <span class="comment">   * \param aMediaListType string identifying a media list type, eg "simple"</span>
+<a name="l00049"></a>00049 <span class="comment">   * \param aNode A service pane node to provide context for new list creation</span>
+<a name="l00050"></a>00050 <span class="comment">   * \return a library, or null if this service can't suggest anything based on</span>
+<a name="l00051"></a>00051 <span class="comment">   *         the given context and type.</span>
+<a name="l00052"></a>00052 <span class="comment">   */</span>
+<a name="l00053"></a>00053   <a class="code" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a> suggestLibraryForNewList (in AString aMediaListType,
+<a name="l00054"></a>00054                                        in <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> aNode);
+<a name="l00055"></a>00055 
+<a name="l00056"></a>00056   <span class="comment">/* \brief Attempts to create a service pane node for a given library.</span>
+<a name="l00057"></a>00057 <span class="comment">   *</span>
+<a name="l00058"></a>00058 <span class="comment">   * The node is created hidden. After you have parented or positioned your</span>
+<a name="l00059"></a>00059 <span class="comment">   * node appropriately, show it by changing the hidden attribute to false</span>
+<a name="l00060"></a>00060 <span class="comment">   * (node.hidden = false).</span>
+<a name="l00061"></a>00061 <span class="comment">   *</span>
+<a name="l00062"></a>00062 <span class="comment">   * The result is a service pane folder node, containing video, music, etc.</span>
+<a name="l00063"></a>00063 <span class="comment">   * sub-nodes.  You may wish to hide irrelevant nodes before showing the parent</span>
+<a name="l00064"></a>00064 <span class="comment">   * node.</span>
+<a name="l00065"></a>00065 <span class="comment">   *</span>
+<a name="l00066"></a>00066 <span class="comment">   * \param aLibrary an sbILibrary.</span>
+<a name="l00067"></a>00067 <span class="comment">   * \return a service pane node that represents the given library, null</span>
+<a name="l00068"></a>00068 <span class="comment">   *         if aLibrary is not an sbILibrary.</span>
+<a name="l00069"></a>00069 <span class="comment">   */</span>
+<a name="l00070"></a>00070   <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> createNodeForLibrary (in <a class="code" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a> aLibrary);
+<a name="l00071"></a>00071 
+<a name="l00072"></a>00072   <span class="comment">/* \brief Attempt to get a service pane node for the given library resource</span>
+<a name="l00073"></a>00073 <span class="comment">   *</span>
+<a name="l00074"></a>00074 <span class="comment">   * \param aResource an sbIMediaItem, sbIMediaItem, or sbILibrary</span>
+<a name="l00075"></a>00075 <span class="comment">   * \return a service pane node that represents the given resource, if one</span>
+<a name="l00076"></a>00076 <span class="comment">   *         exists. Note that in the case that more than one node related to a</span>
+<a name="l00077"></a>00077 <span class="comment">   *         given library exists, it is not specified which node will be</span>
+<a name="l00078"></a>00078 <span class="comment">   *         returned. However, nodes that are not hidden will be preferred.</span>
+<a name="l00079"></a>00079 <span class="comment">   */</span>
+<a name="l00080"></a>00080   <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> getNodeForLibraryResource (in <a class="code" href="interfacesb_i_library_resource.html" title="General interface to data resources.">sbILibraryResource</a> aResource);
+<a name="l00081"></a>00081 
+<a name="l00089"></a>00089   <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> getNodeFromMediaListView (in <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> aMediaListView);
+<a name="l00090"></a>00090 
+<a name="l00091"></a>00091   <span class="comment">/* \brief Attempt to get a library resource for the given service pane node.</span>
+<a name="l00092"></a>00092 <span class="comment">   *</span>
+<a name="l00093"></a>00093 <span class="comment">   * Note that there is no guarantee that hidden service pane nodes</span>
+<a name="l00094"></a>00094 <span class="comment">   * will have corresponding library resources</span>
+<a name="l00095"></a>00095 <span class="comment">   *</span>
+<a name="l00096"></a>00096 <span class="comment">   * \param aNode</span>
+<a name="l00097"></a>00097 <span class="comment">   * \return a sbIMediaItem, sbIMediaItem, sbILibrary, or null</span>
+<a name="l00098"></a>00098 <span class="comment">   */</span>
+<a name="l00099"></a>00099   <a class="code" href="interfacesb_i_library_resource.html" title="General interface to data resources.">sbILibraryResource</a> getLibraryResourceForNode (in <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> aNode);
+<a name="l00100"></a>00100 
+<a name="l00101"></a>00101   <span class="comment">/* \brief Set node read-only property.</span>
+<a name="l00102"></a>00102 <span class="comment">   *</span>
+<a name="l00103"></a>00103 <span class="comment">   * \param aNode Node to set.</span>
+<a name="l00104"></a>00104 <span class="comment">   * \param aReadOnly If true, node is read-only.</span>
+<a name="l00105"></a>00105 <span class="comment">   */</span>
+<a name="l00106"></a>00106   <span class="keywordtype">void</span> setNodeReadOnly(in <a class="code" href="interfacesb_i_service_pane_node.html" title="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</a> aNode,
+<a name="l00107"></a>00107                        in <span class="keywordtype">boolean</span> aReadOnly);
+<a name="l00108"></a>00108 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -143,120 +143,113 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="1114">
+      <node id="1201">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="1115" relation="public-inheritance">
+        <childnode refid="1202" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1113">
+      <node id="1200">
         <label>sbIMediaListView</label>
         <link refid="interfacesb_i_media_list_view"/>
-        <childnode refid="1114" relation="usage">
+        <childnode refid="1201" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
-        <childnode refid="1124" relation="usage">
+        <childnode refid="1210" relation="usage">
           <edgelabel>selection</edgelabel>
         </childnode>
-        <childnode refid="1125" relation="usage">
+        <childnode refid="1211" relation="usage">
           <edgelabel>cascadeFilterSet</edgelabel>
         </childnode>
       </node>
-      <node id="1124">
+      <node id="1210">
         <label>sbIMediaListViewSelection</label>
         <link refid="interfacesb_i_media_list_view_selection"/>
-        <childnode refid="1115" relation="usage">
+        <childnode refid="1202" relation="usage">
           <edgelabel>currentMediaItem</edgelabel>
         </childnode>
       </node>
-      <node id="1121">
+      <node id="1208">
         <label>sbIDeviceStatus</label>
         <link refid="interfacesb_i_device_status"/>
-        <childnode refid="1115" relation="usage">
+        <childnode refid="1202" relation="usage">
           <edgelabel>mediaItem</edgelabel>
         </childnode>
-        <childnode refid="1114" relation="usage">
+        <childnode refid="1201" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
-      <node id="1122">
-        <label>sbIDeviceCapabilities</label>
-        <link refid="interfacesb_i_device_capabilities"/>
-      </node>
-      <node id="1112">
+      <node id="1199">
         <label>sbIMediaPage</label>
         <link refid="interfacesb_i_media_page"/>
-        <childnode refid="1113" relation="usage">
+        <childnode refid="1200" relation="usage">
           <edgelabel>mediaListView</edgelabel>
         </childnode>
       </node>
-      <node id="1118">
+      <node id="1205">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="1119" relation="usage">
+        <childnode refid="1206" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="1121" relation="usage">
+        <childnode refid="1208" relation="usage">
           <edgelabel>currentStatus</edgelabel>
         </childnode>
-        <childnode refid="1122" relation="usage">
-          <edgelabel>capabilities</edgelabel>
-        </childnode>
-        <childnode refid="1123" relation="usage">
+        <childnode refid="1209" relation="usage">
           <edgelabel>properties</edgelabel>
         </childnode>
       </node>
-      <node id="1117">
+      <node id="1204">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="1114" relation="public-inheritance">
+        <childnode refid="1201" relation="public-inheritance">
         </childnode>
-        <childnode refid="1118" relation="usage">
+        <childnode refid="1205" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="1120" relation="usage">
+        <childnode refid="1207" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="1125">
+      <node id="1211">
         <label>sbICascadeFilterSet</label>
         <link refid="interfacesb_i_cascade_filter_set"/>
       </node>
-      <node id="1116">
+      <node id="1203">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="1115">
+      <node id="1202">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="1116" relation="public-inheritance">
+        <childnode refid="1203" relation="public-inheritance">
         </childnode>
-        <childnode refid="1117" relation="usage">
+        <childnode refid="1204" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="1111">
+      <node id="1198">
         <label>sbITabBrowserTab</label>
         <link refid="interfacesb_i_tab_browser_tab"/>
-        <childnode refid="1112" relation="usage">
+        <childnode refid="1199" relation="usage">
           <edgelabel>mediaPage</edgelabel>
         </childnode>
-        <childnode refid="1113" relation="usage">
+        <childnode refid="1200" relation="usage">
           <edgelabel>mediaListView</edgelabel>
         </childnode>
       </node>
-      <node id="1119">
+      <node id="1206">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="1120" relation="usage">
+        <childnode refid="1207" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="1120">
+      <node id="1207">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
-      <node id="1123">
+      <node id="1209">
         <label>sbIDeviceProperties</label>
         <link refid="interfacesb_i_device_properties"/>
       </node>

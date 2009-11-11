@@ -34,7 +34,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcherSet.idl" line="70"/>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcherSet.idl" line="73"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -82,22 +82,26 @@
 <codeline lineno="38"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;sbIAlbumArtFetcher.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="39"><highlight class="normal"></highlight></codeline>
 <codeline lineno="40"><highlight class="normal"></highlight></codeline>
-<codeline lineno="53"><highlight class="normal">[scriptable,<sp/>uuid(6014f2e0-2da7-460a-bd5b-7c1fda7c65cd)]</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(f6f030ba-1dd1-11b2-8764-ad0493676ed0)]</highlight></codeline>
 <codeline lineno="54" refid="interfacesb_i_album_art_fetcher_set" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_album_art_fetcher_set" kindref="compound" tooltip="Interface for an album art fetcher set. Instantiate as a component instance.">sbIAlbumArtFetcherSet</ref><sp/>:<sp/><ref refid="interfacesb_i_album_art_fetcher" kindref="compound" tooltip="Interface for an album art fetcher. Instantiate as a component instance.">sbIAlbumArtFetcher</ref></highlight></codeline>
 <codeline lineno="55"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="60" refid="interfacesb_i_album_art_fetcher_set_1d6272d19a9919d7f3eb1b9681668d4d1" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>localOnly;</highlight></codeline>
-<codeline lineno="61"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"></highlight></codeline>
-<codeline lineno="63"><highlight class="normal"></highlight></codeline>
-<codeline lineno="64"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="65"><highlight class="normal"></highlight><highlight class="comment">//<sp/>C++<sp/>defs.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="66"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="67"><highlight class="normal"></highlight></codeline>
-<codeline lineno="68"><highlight class="normal">%{C++</highlight></codeline>
-<codeline lineno="69"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SB_ALBUMARTFETCHERSET_CONTRACTID<sp/>\</highlight></codeline>
-<codeline lineno="70"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;@songbirdnest.com/Songbird/album-art-fetcher-set;1&quot;</highlight></codeline>
-<codeline lineno="71"><highlight class="preprocessor"></highlight><highlight class="normal">%}C++</highlight></codeline>
-<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="interfacesb_i_album_art_fetcher_set_1d8732cad3234b0bd23bae8a3bdc2919d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>TYPE_ALL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x00;</highlight></codeline>
+<codeline lineno="57" refid="interfacesb_i_album_art_fetcher_set_1eac45ea76065344dcbb3a103adb3e1ea" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>TYPE_REMOTE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x01;</highlight></codeline>
+<codeline lineno="58" refid="interfacesb_i_album_art_fetcher_set_15505adb833c0a79e8503eb3ee849cc48" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>TYPE_LOCAL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0x02;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63" refid="interfacesb_i_album_art_fetcher_set_142de1da24d66751338dfbe4334bd0e17" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>fetcherType;</highlight></codeline>
+<codeline lineno="64"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight><highlight class="comment">//<sp/>C++<sp/>defs.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal">%{C++</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SB_ALBUMARTFETCHERSET_CONTRACTID<sp/>\</highlight></codeline>
+<codeline lineno="73"><highlight class="preprocessor"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&quot;@songbirdnest.com/Songbird/album-art-fetcher-set;1&quot;</highlight></codeline>
+<codeline lineno="74"><highlight class="preprocessor"></highlight><highlight class="normal">%}C++</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcherSet.idl"/>
   </compounddef>

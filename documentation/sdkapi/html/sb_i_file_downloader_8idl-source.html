@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/moz/filedownloader/public/sbIFileDownloader.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */</span>
 <a name="l00002"></a>00002 <span class="comment">/* vim: set sw=2 :miv */</span>
 <a name="l00003"></a>00003 <span class="comment">/*</span>
@@ -97,69 +103,72 @@
 <a name="l00029"></a>00029 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00030"></a>00030 
 <a name="l00040"></a>00040 interface nsIFile;
-<a name="l00041"></a>00041 interface nsIURI;
-<a name="l00042"></a>00042 interface <a class="code" href="interfacesb_i_file_downloader_listener.html">sbIFileDownloaderListener</a>;
-<a name="l00043"></a>00043 
-<a name="l00044"></a>00044 [scriptable, uuid(743a7901-baec-4da3-ad92-08ba975effd5)]
-<a name="l00045"></a><a class="code" href="interfacesb_i_file_downloader.html">00045</a> interface <a class="code" href="interfacesb_i_file_downloader.html">sbIFileDownloader</a> : nsISupports
-<a name="l00046"></a>00046 {
-<a name="l00051"></a><a class="code" href="interfacesb_i_file_downloader.html#655f80c155079001dfa89dfc32482a11">00051</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> bytesToDownload;
-<a name="l00052"></a>00052 
+<a name="l00041"></a>00041 interface nsIRequest;
+<a name="l00042"></a>00042 interface nsIURI;
+<a name="l00043"></a>00043 interface <a class="code" href="interfacesb_i_file_downloader_listener.html">sbIFileDownloaderListener</a>;
+<a name="l00044"></a>00044 
+<a name="l00045"></a>00045 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(eb164d3f-cc1a-43a9-a8aa-d47486767bf7)]
+<a name="l00046"></a><a class="code" href="interfacesb_i_file_downloader.html">00046</a> interface <a class="code" href="interfacesb_i_file_downloader.html">sbIFileDownloader</a> : nsISupports
+<a name="l00047"></a>00047 {
+<a name="l00052"></a><a class="code" href="interfacesb_i_file_downloader.html#655f80c155079001dfa89dfc32482a11">00052</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> bytesToDownload;
 <a name="l00053"></a>00053 
-<a name="l00058"></a><a class="code" href="interfacesb_i_file_downloader.html#2d2f167e4d23d6b83f7548006a3333f7">00058</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> bytesDownloaded;
-<a name="l00059"></a>00059 
+<a name="l00054"></a>00054 
+<a name="l00059"></a><a class="code" href="interfacesb_i_file_downloader.html#2d2f167e4d23d6b83f7548006a3333f7">00059</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> bytesDownloaded;
 <a name="l00060"></a>00060 
-<a name="l00065"></a><a class="code" href="interfacesb_i_file_downloader.html#10dbbd6bb0c58c9e4cec05028501943a">00065</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> percentComplete;
-<a name="l00066"></a>00066 
+<a name="l00061"></a>00061 
+<a name="l00066"></a><a class="code" href="interfacesb_i_file_downloader.html#10dbbd6bb0c58c9e4cec05028501943a">00066</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> percentComplete;
 <a name="l00067"></a>00067 
-<a name="l00072"></a><a class="code" href="interfacesb_i_file_downloader.html#deafee61a84f903a94ecaf7c020a271e">00072</a>   readonly attribute <span class="keywordtype">boolean</span> complete;
-<a name="l00073"></a>00073 
+<a name="l00068"></a>00068 
+<a name="l00073"></a><a class="code" href="interfacesb_i_file_downloader.html#deafee61a84f903a94ecaf7c020a271e">00073</a>   readonly attribute <span class="keywordtype">boolean</span> complete;
 <a name="l00074"></a>00074 
-<a name="l00080"></a><a class="code" href="interfacesb_i_file_downloader.html#ee7c32fb9c8436dd5a9ecb1d5f5830fc">00080</a>   readonly attribute <span class="keywordtype">boolean</span> succeeded;
-<a name="l00081"></a>00081 
+<a name="l00075"></a>00075 
+<a name="l00081"></a><a class="code" href="interfacesb_i_file_downloader.html#ee7c32fb9c8436dd5a9ecb1d5f5830fc">00081</a>   readonly attribute <span class="keywordtype">boolean</span> succeeded;
 <a name="l00082"></a>00082 
-<a name="l00087"></a><a class="code" href="interfacesb_i_file_downloader.html#d05981c53c659411b385113d7c2dcf20">00087</a>   attribute <a class="code" href="interfacesb_i_file_downloader_listener.html">sbIFileDownloaderListener</a> listener;
-<a name="l00088"></a>00088 
+<a name="l00083"></a>00083 
+<a name="l00088"></a><a class="code" href="interfacesb_i_file_downloader.html#d05981c53c659411b385113d7c2dcf20">00088</a>   attribute <a class="code" href="interfacesb_i_file_downloader_listener.html">sbIFileDownloaderListener</a> listener;
 <a name="l00089"></a>00089 
-<a name="l00094"></a><a class="code" href="interfacesb_i_file_downloader.html#c3518e8c99aec00d4f69cd2cdcf5e836">00094</a>   attribute nsIURI sourceURI;
-<a name="l00095"></a>00095 
+<a name="l00090"></a>00090 
+<a name="l00095"></a><a class="code" href="interfacesb_i_file_downloader.html#c3518e8c99aec00d4f69cd2cdcf5e836">00095</a>   attribute nsIURI sourceURI;
 <a name="l00096"></a>00096 
-<a name="l00101"></a><a class="code" href="interfacesb_i_file_downloader.html#f30acde6d5f1063dd7cfe4395d4e3b19">00101</a>   attribute AString sourceURISpec;
-<a name="l00102"></a>00102 
+<a name="l00097"></a>00097 
+<a name="l00102"></a><a class="code" href="interfacesb_i_file_downloader.html#f30acde6d5f1063dd7cfe4395d4e3b19">00102</a>   attribute AString sourceURISpec;
 <a name="l00103"></a>00103 
-<a name="l00109"></a><a class="code" href="interfacesb_i_file_downloader.html#a93c1ddcf18e7bef56929be88d76c41f">00109</a>   attribute nsIFile destinationFile;
-<a name="l00110"></a>00110 
+<a name="l00104"></a>00104 
+<a name="l00110"></a><a class="code" href="interfacesb_i_file_downloader.html#a93c1ddcf18e7bef56929be88d76c41f">00110</a>   attribute nsIFile destinationFile;
 <a name="l00111"></a>00111 
-<a name="l00117"></a><a class="code" href="interfacesb_i_file_downloader.html#c143f08256d355bb31c00a623d839a1d">00117</a>   attribute AString destinationFileExtension;
-<a name="l00118"></a>00118 
+<a name="l00112"></a>00112 
+<a name="l00118"></a><a class="code" href="interfacesb_i_file_downloader.html#c143f08256d355bb31c00a623d839a1d">00118</a>   attribute AString destinationFileExtension;
 <a name="l00119"></a>00119 
-<a name="l00126"></a>00126   <span class="keywordtype">void</span> start();
-<a name="l00127"></a>00127 
+<a name="l00120"></a>00120 
+<a name="l00127"></a>00127   <span class="keywordtype">void</span> start();
 <a name="l00128"></a>00128 
-<a name="l00133"></a>00133   <span class="keywordtype">void</span> cancel();
-<a name="l00134"></a>00134 };
+<a name="l00129"></a>00129 
+<a name="l00134"></a>00134   <span class="keywordtype">void</span> cancel();
 <a name="l00135"></a>00135 
-<a name="l00136"></a>00136 
-<a name="l00143"></a>00143 [scriptable, uuid(3267334a-a1ef-4bf3-b6e5-8c8ae5f19f44)]
-<a name="l00144"></a><a class="code" href="interfacesb_i_file_downloader_listener.html">00144</a> interface <a class="code" href="interfacesb_i_file_downloader_listener.html">sbIFileDownloaderListener</a> : nsISupports
-<a name="l00145"></a>00145 {
-<a name="l00150"></a>00150   <span class="keywordtype">void</span> onProgress();
-<a name="l00151"></a>00151 
-<a name="l00152"></a>00152 
-<a name="l00157"></a>00157   <span class="keywordtype">void</span> onComplete();
-<a name="l00158"></a>00158 };
+<a name="l00141"></a><a class="code" href="interfacesb_i_file_downloader.html#d2ccd045a8468a7403d5513550d92c62">00141</a>   readonly attribute nsIRequest request;
+<a name="l00142"></a>00142 };
+<a name="l00143"></a>00143 
+<a name="l00144"></a>00144 
+<a name="l00151"></a>00151 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(3267334a-a1ef-4bf3-b6e5-8c8ae5f19f44)]
+<a name="l00152"></a><a class="code" href="interfacesb_i_file_downloader_listener.html">00152</a> interface <a class="code" href="interfacesb_i_file_downloader_listener.html">sbIFileDownloaderListener</a> : nsISupports
+<a name="l00153"></a>00153 {
+<a name="l00158"></a>00158   <span class="keywordtype">void</span> onProgress();
 <a name="l00159"></a>00159 
 <a name="l00160"></a>00160 
-<a name="l00161"></a>00161 <span class="comment">//</span>
-<a name="l00162"></a>00162 <span class="comment">// C++ defs.</span>
-<a name="l00163"></a>00163 <span class="comment">//</span>
-<a name="l00164"></a>00164 
-<a name="l00165"></a>00165 %{C++
-<a name="l00166"></a>00166 <span class="preprocessor">#define SB_FILEDOWNLOADER_CONTRACTID \</span>
-<a name="l00167"></a>00167 <span class="preprocessor">          "@songbirdnest.com/Songbird/FileDownloader;1"</span>
-<a name="l00168"></a>00168 <span class="preprocessor"></span>%}C++
-<a name="l00169"></a>00169 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+<a name="l00165"></a>00165   <span class="keywordtype">void</span> onComplete();
+<a name="l00166"></a>00166 };
+<a name="l00167"></a>00167 
+<a name="l00168"></a>00168 
+<a name="l00169"></a>00169 <span class="comment">//</span>
+<a name="l00170"></a>00170 <span class="comment">// C++ defs.</span>
+<a name="l00171"></a>00171 <span class="comment">//</span>
+<a name="l00172"></a>00172 
+<a name="l00173"></a>00173 %{C++
+<a name="l00174"></a>00174 <span class="preprocessor">#define SB_FILEDOWNLOADER_CONTRACTID \</span>
+<a name="l00175"></a>00175 <span class="preprocessor">          "@songbirdnest.com/Songbird/FileDownloader;1"</span>
+<a name="l00176"></a>00176 <span class="preprocessor"></span>%}C++
+<a name="l00177"></a>00177 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

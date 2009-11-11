@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_windows_auto_play_action_handler" kind="interface" prot="public">
+    <compoundname>sbIWindowsAutoPlayActionHandler</compoundname>
+    <includes refid="sb_i_windows_auto_play_service_8idl" local="no">sbIWindowsAutoPlayService.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_windows_auto_play_action_handler_1a29b72acd0c820d42ff455c4b2aa2dfa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIWindowsAutoPlayActionHandler::handleAction</definition>
+        <argsstring>(in unsigned long aAction, in nsIVariant aActionArg)</argsstring>
+        <name>handleAction</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aAction</declname>
+        </param>
+        <param>
+          <type>in nsIVariant</type>
+          <declname>aActionArg</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handle the Windows AutoPlay action specified by aAction with the argument specified by aActionArg. Return true if the action is handled.</para><para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aAction</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>AutoPlay action to handle. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aActionArg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Action argument.</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true Action was handled. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/moz/system/windows/public/sbIWindowsAutoPlayService.idl" line="106"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>A handler for AutoPlay actions.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_windows_auto_play_service" kindref="compound">sbIWindowsAutoPlayService</ref> </para></simplesect>
+</para>    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/moz/system/windows/public/sbIWindowsAutoPlayService.idl" line="94" bodyfile="c:/builds/songbird/trunk/components/moz/system/windows/public/sbIWindowsAutoPlayService.idl" bodystart="93" bodyend="107"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_windows_auto_play_action_handler_1a29b72acd0c820d42ff455c4b2aa2dfa" prot="public" virt="non-virtual"><scope>sbIWindowsAutoPlayActionHandler</scope><name>handleAction</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

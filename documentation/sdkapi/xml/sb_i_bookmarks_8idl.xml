@@ -4,13 +4,13 @@
     <compoundname>sbIBookmarks.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="684">
+      <node id="840">
         <label>components/servicepane/public/sbIBookmarks.idl</label>
         <link refid="sbIBookmarks.idl"/>
-        <childnode refid="685" relation="include">
+        <childnode refid="841" relation="include">
         </childnode>
       </node>
-      <node id="685">
+      <node id="841">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,7 +50,7 @@
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref>;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(12526a6a-3edd-4853-97a9-2a729d883178)]</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(12526a6a-3edd-4853-97a9-2a729d883178)]</highlight></codeline>
 <codeline lineno="44"><highlight class="normal"></highlight></codeline>
 <codeline lineno="45" refid="interfacesb_i_bookmarks" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_bookmarks" kindref="compound" tooltip="Definition of the sbIBookmarks interface.">sbIBookmarks</ref><sp/>:<sp/>nsISupports<sp/>{</highlight></codeline>
 <codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>Add<sp/>a<sp/>bookmark</highlight></codeline>

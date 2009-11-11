@@ -2,15 +2,18 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="dir_45e625c2cceeb31856d832e04fc1354c" kind="dir">
     <compoundname>components/devices/base/public/</compoundname>
-    <innerfile refid="sb_i_content_type_format_8idl">sbIContentTypeFormat.idl</innerfile>
     <innerfile refid="sb_i_device_8idl">sbIDevice.idl</innerfile>
     <innerfile refid="sb_i_device_capabilities_8idl">sbIDeviceCapabilities.idl</innerfile>
+    <innerfile refid="sb_i_device_capabilities_registrar_8idl">sbIDeviceCapabilitiesRegistrar.idl</innerfile>
     <innerfile refid="sb_i_device_compatibility_8idl">sbIDeviceCompatibility.idl</innerfile>
     <innerfile refid="sb_i_device_content_8idl">sbIDeviceContent.idl</innerfile>
     <innerfile refid="sb_i_device_controller_registrar_8idl">sbIDeviceControllerRegistrar.idl</innerfile>
     <innerfile refid="sb_i_device_event_8idl">sbIDeviceEvent.idl</innerfile>
     <innerfile refid="sb_i_device_event_listener_8idl">sbIDeviceEventListener.idl</innerfile>
     <innerfile refid="sb_i_device_event_target_8idl">sbIDeviceEventTarget.idl</innerfile>
+    <innerfile refid="sb_i_device_firmware_handler_8idl">sbIDeviceFirmwareHandler.idl</innerfile>
+    <innerfile refid="sb_i_device_firmware_update_8idl">sbIDeviceFirmwareUpdate.idl</innerfile>
+    <innerfile refid="sb_i_device_firmware_updater_8idl">sbIDeviceFirmwareUpdater.idl</innerfile>
     <innerfile refid="sb_i_device_library_8idl">sbIDeviceLibrary.idl</innerfile>
     <innerfile refid="base_2public_2sb_i_device_manager_8idl">sbIDeviceManager.idl</innerfile>
     <innerfile refid="sb_i_device_properties_8idl">sbIDeviceProperties.idl</innerfile>

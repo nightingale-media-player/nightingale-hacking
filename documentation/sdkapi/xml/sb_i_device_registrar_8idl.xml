@@ -4,13 +4,13 @@
     <compoundname>sbIDeviceRegistrar.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="120">
+      <node id="145">
         <label>components/devices/base/public/sbIDeviceRegistrar.idl</label>
         <link refid="sbIDeviceRegistrar.idl"/>
-        <childnode refid="121" relation="include">
+        <childnode refid="146" relation="include">
         </childnode>
       </node>
-      <node id="121">
+      <node id="146">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -52,7 +52,7 @@
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
 <codeline lineno="31"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref>;</highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
-<codeline lineno="38"><highlight class="normal">[scriptable,<sp/>uuid(eba35eee-89e8-4d7f-bc54-755cd28a4a57)]</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(eba35eee-89e8-4d7f-bc54-755cd28a4a57)]</highlight></codeline>
 <codeline lineno="39" refid="interfacesb_i_device_registrar" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_registrar" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceRegistrar</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="40"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="45" refid="interfacesb_i_device_registrar_15381c93672e78fa490ac631417b0b41f" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIArray<sp/>devices;</highlight></codeline>

@@ -31,43 +31,14 @@
         <location file="c:/builds/songbird/trunk/components/moz/strings/components/public/sbIStringBundleService.idl" line="64" bodyfile="c:/builds/songbird/trunk/components/moz/strings/components/public/sbIStringBundleService.idl" bodystart="64" bodyend="-1"/>
       </memberdef>
       </sectiondef>
-      <sectiondef kind="public-func">
-      <memberdef kind="function" id="interfacesb_i_string_bundle_service_11d2e36aa0dc91543229e6e3971a9db5f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>nsIStringBundle</type>
-        <definition>nsIStringBundle sbIStringBundleService::createBundle</definition>
-        <argsstring>(in string aURLSpec)</argsstring>
-        <name>createBundle</name>
-        <param>
-          <type>in string</type>
-          <declname>aURLSpec</declname>
-        </param>
-        <briefdescription>
-<para>Create a thread-safe string bundle for the bundle with the URL spec specified by aURLSpec. </para>        </briefdescription>
-        <detaileddescription>
-<para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>aURLSpec</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>URL spec of string bundle.</para></parameterdescription>
-</parameteritem>
-</parameterlist>
-<simplesect kind="return"><para>Thread-safe string bundle. </para></simplesect>
-</para>        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/moz/strings/components/public/sbIStringBundleService.idl" line="76"/>
-      </memberdef>
-      </sectiondef>
     <briefdescription>
 <para>Interface for the Songbird string bundle service. Instantiate as a component service. </para>    </briefdescription>
     <detaileddescription>
 <para>&quot;@songbirdnest.com/Songbird/stringbundle;1&quot; </para>    </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/moz/strings/components/public/sbIStringBundleService.idl" line="52" bodyfile="c:/builds/songbird/trunk/components/moz/strings/components/public/sbIStringBundleService.idl" bodystart="51" bodyend="77"/>
+    <location file="c:/builds/songbird/trunk/components/moz/strings/components/public/sbIStringBundleService.idl" line="52" bodyfile="c:/builds/songbird/trunk/components/moz/strings/components/public/sbIStringBundleService.idl" bodystart="51" bodyend="65"/>
     <listofallmembers>
       <member refid="interfacesb_i_string_bundle_service_18c341b3d4087ab535b3409c97d417c96" prot="public" virt="non-virtual"><scope>sbIStringBundleService</scope><name>brandBundle</name></member>
       <member refid="interfacesb_i_string_bundle_service_1d6048369cf857aa5b022032a4c4ca32a" prot="public" virt="non-virtual"><scope>sbIStringBundleService</scope><name>bundle</name></member>
-      <member refid="interfacesb_i_string_bundle_service_11d2e36aa0dc91543229e6e3971a9db5f" prot="public" virt="non-virtual"><scope>sbIStringBundleService</scope><name>createBundle</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

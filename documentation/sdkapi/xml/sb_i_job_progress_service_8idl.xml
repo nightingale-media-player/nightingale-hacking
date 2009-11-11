@@ -4,13 +4,13 @@
     <compoundname>sbIJobProgressService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="246">
+      <node id="291">
         <label>components/job/public/sbIJobProgressService.idl</label>
         <link refid="sbIJobProgressService.idl"/>
-        <childnode refid="247" relation="include">
+        <childnode refid="292" relation="include">
         </childnode>
       </node>
-      <node id="247">
+      <node id="292">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -52,7 +52,7 @@
 <codeline lineno="30"><highlight class="normal">interface<sp/>nsIDOMWindow;</highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
-<codeline lineno="49"><highlight class="normal">[scriptable,<sp/>uuid(00aae850-90d4-11dd-ad8b-0800200c9a66)]</highlight></codeline>
+<codeline lineno="49"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(00aae850-90d4-11dd-ad8b-0800200c9a66)]</highlight></codeline>
 <codeline lineno="50" refid="interfacesb_i_job_progress_service" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_job_progress_service" kindref="compound" tooltip="The beginnings of a service to track all background tasks.">sbIJobProgressService</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="51"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="52"><highlight class="normal"></highlight></codeline>

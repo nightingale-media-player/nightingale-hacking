@@ -4,13 +4,13 @@
     <compoundname>sbIFileSystemListener.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="198">
+      <node id="232">
         <label>components/filesystemevents/base/public/sbIFileSystemListener.idl</label>
         <link refid="sbIFileSystemListener.idl"/>
-        <childnode refid="199" relation="include">
+        <childnode refid="233" relation="include">
         </childnode>
       </node>
-      <node id="199">
+      <node id="233">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -53,48 +53,72 @@
 <codeline lineno="31"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>events.<sp/>Pass<sp/>in<sp/>an<sp/>instance<sp/>of<sp/>this<sp/>interface<sp/>when<sp/>creating<sp/>a<sp/></highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|sbIFileSystemWatcher|<sp/>instance.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal">[scriptable,<sp/>uuid(9629A5A4-82E7-434F-9684-043A778695AF)]</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(44cec493-c59e-45ca-bc9f-b053e17a519f)]</highlight></codeline>
 <codeline lineno="35" refid="interfacesb_i_file_system_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_file_system_listener" kindref="compound">sbIFileSystemListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="38"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>\brief<sp/>Callback<sp/>when<sp/>the<sp/>|sbIFileSystemWatcher|<sp/>has<sp/>initialized<sp/>and<sp/>has</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="39"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>started<sp/>listening<sp/>to<sp/>events.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="40"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="41"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onWatcherStarted();</highlight></codeline>
-<codeline lineno="42"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="44"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>\brief<sp/>Callback<sp/>when<sp/>the<sp/>|sbIFileSystemWatcher|<sp/>has<sp/>stopped<sp/>listening</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="45"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>to<sp/>file<sp/>system<sp/>events.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="47"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onWatcherStopped();</highlight></codeline>
-<codeline lineno="48"><highlight class="normal"></highlight></codeline>
-<codeline lineno="49"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="50"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>\brief<sp/>Callback<sp/>when<sp/>the<sp/>|sbIFileSystemWatcher|<sp/>could<sp/>not<sp/>load<sp/>a<sp/>session.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="51"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>NOTE:<sp/>If<sp/>a<sp/>listener<sp/>receives<sp/>this<sp/>callback,<sp/>the<sp/>watcher<sp/>should<sp/>be</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="52"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>re-initialized<sp/>via<sp/>|init()|<sp/>in<sp/>order<sp/>to<sp/>receive<sp/>callbacks<sp/></highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="53"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>about<sp/>changes<sp/>to<sp/>the<sp/>watched<sp/>path.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onSessionLoadError();</highlight></codeline>
-<codeline lineno="56"><highlight class="normal"></highlight></codeline>
-<codeline lineno="57"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="58"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>\brief<sp/>Callback<sp/>when<sp/>something<sp/>has<sp/>change<sp/>in<sp/>the<sp/>filesystem.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>\param<sp/>aFilePath<sp/>The<sp/>event<sp/>path<sp/>of<sp/>the<sp/>file<sp/>change.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>\brief<sp/>Watcher<sp/>Error<sp/>Types</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>ROOT_PATH_MISSING<sp/>-<sp/>The<sp/>root<sp/>watch<sp/>path<sp/>is<sp/>missing</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>NOTE:<sp/>This<sp/>event<sp/>is<sp/>posted<sp/>when<sp/>the<sp/>root<sp/>watch<sp/>path<sp/>is<sp/>missing.<sp/>Posting</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>can<sp/>happen<sp/>before<sp/>startup<sp/>or<sp/>after.<sp/>Once<sp/>the<sp/>watcher<sp/>notices</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>that<sp/>the<sp/>root<sp/>watch<sp/>path<sp/>is<sp/>missing,<sp/>it<sp/>will<sp/>automatically<sp/>stop</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>watching<sp/>and<sp/>notify<sp/>via<sp/>|onWatcherStopped()|.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>INVALID_DIRECTORY<sp/>-<sp/>A<sp/>directory<sp/>was<sp/>encountered<sp/>that<sp/>could<sp/>not<sp/>be<sp/>watched.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>NOTE:<sp/>This<sp/>event<sp/>is<sp/>posted<sp/>when<sp/>the<sp/>native<sp/>file-system<sp/>event<sp/>hooks</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>cannot<sp/>add<sp/>a<sp/>hook<sp/>for<sp/>a<sp/>specified<sp/>directory.<sp/>Check<sp/>the</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>|aDescription|<sp/>field<sp/>to<sp/>find<sp/>what<sp/>the<sp/>invalid<sp/>directory<sp/>is.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>SESSION_LOAD_ERROR<sp/>-<sp/>The<sp/>watcher<sp/>could<sp/>not<sp/>load<sp/>a<sp/>saved<sp/>session.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>NOTE:<sp/>If<sp/>a<sp/>listener<sp/>receives<sp/>this<sp/>callback,<sp/>the<sp/>watcher<sp/>should<sp/>be</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>re-initialized<sp/>via<sp/>|init()|<sp/>in<sp/>order<sp/>to<sp/>receive<sp/>callbacks<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>about<sp/>changes<sp/>to<sp/>the<sp/>watched<sp/>path.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="56" refid="interfacesb_i_file_system_listener_170c7a51a3bbd38cdbd604a8edbd66007" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>ROOT_PATH_MISSING<sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="57" refid="interfacesb_i_file_system_listener_1a82e9cf99d742871d2aab92e910cdcc3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>INVALID_DIRECTORY<sp/><sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="58" refid="interfacesb_i_file_system_listener_163e204a7f69d33940381375cba75b376" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>SESSION_LOAD_ERROR<sp/>=<sp/>2;</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
 <codeline lineno="60"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="61"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onFileSystemChanged(in<sp/>AString<sp/>aFilePath);</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>\brief<sp/>Callback<sp/>when<sp/>the<sp/>|sbIFileSystemWatcher|<sp/>has<sp/>initialized<sp/>and<sp/>has</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>started<sp/>listening<sp/>to<sp/>events.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>\brief<sp/>Callback<sp/>when<sp/>something<sp/>was<sp/>removed<sp/>in<sp/>the<sp/>filesystem.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>\param<sp/>aFilePath<sp/>The<sp/>event<sp/>path<sp/>of<sp/>the<sp/>file<sp/>removal.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onWatcherStarted();</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
 <codeline lineno="66"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="67"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onFileSystemRemoved(in<sp/>AString<sp/>aFilePath);</highlight></codeline>
-<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>\brief<sp/>Callback<sp/>when<sp/>the<sp/>|sbIFileSystemWatcher|<sp/>has<sp/>stopped<sp/>listening</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>to<sp/>file<sp/>system<sp/>events.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>\brief<sp/>Callback<sp/>when<sp/>something<sp/>was<sp/>added<sp/>in<sp/>the<sp/>filesystem.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="71"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>\param<sp/>aFilePath<sp/>The<sp/>event<sp/>path<sp/>of<sp/>the<sp/>file<sp/>addition.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onWatcherStopped();</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
 <codeline lineno="72"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="73"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onFileSystemAdded(in<sp/>AString<sp/>aFilePath);</highlight></codeline>
-<codeline lineno="74"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>\brief<sp/>Callback<sp/>when<sp/>the<sp/>watcher<sp/>has<sp/>encountered<sp/>an<sp/>error.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>\param<sp/>aErrorType<sp/>The<sp/>error<sp/>type<sp/>the<sp/>watcher<sp/>encountered.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>SEE:<sp/>The<sp/>constants<sp/>defined<sp/>above.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>\param<sp/>aDescription<sp/>Additional<sp/>information<sp/>about<sp/>the<sp/>received<sp/>error.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onWatcherError(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aErrorType,</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aDescription);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>\brief<sp/>Callback<sp/>when<sp/>something<sp/>has<sp/>change<sp/>in<sp/>the<sp/>filesystem.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>\param<sp/>aFilePath<sp/>The<sp/>event<sp/>path<sp/>of<sp/>the<sp/>file<sp/>change.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onFileSystemChanged(in<sp/>AString<sp/>aFilePath);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>\brief<sp/>Callback<sp/>when<sp/>something<sp/>was<sp/>removed<sp/>in<sp/>the<sp/>filesystem.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>\param<sp/>aFilePath<sp/>The<sp/>event<sp/>path<sp/>of<sp/>the<sp/>file<sp/>removal.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onFileSystemRemoved(in<sp/>AString<sp/>aFilePath);</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>\brief<sp/>Callback<sp/>when<sp/>something<sp/>was<sp/>added<sp/>in<sp/>the<sp/>filesystem.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>\param<sp/>aFilePath<sp/>The<sp/>event<sp/>path<sp/>of<sp/>the<sp/>file<sp/>addition.</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onFileSystemAdded(in<sp/>AString<sp/>aFilePath);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl"/>
   </compounddef>

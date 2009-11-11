@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/devices/base/public/sbIDeviceControllerRegistrar.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -98,7 +104,7 @@
 <a name="l00030"></a>00030 
 <a name="l00031"></a>00031 interface <a class="code" href="interfacesb_i_device_controller.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceController</a>;
 <a name="l00032"></a>00032 
-<a name="l00038"></a>00038 [scriptable, uuid(d4db083c-3d1f-494a-9740-e1ba3851790d)]
+<a name="l00038"></a>00038 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(d4db083c-3d1f-494a-9740-e1ba3851790d)]
 <a name="l00039"></a><a class="code" href="interfacesb_i_device_controller_registrar.html">00039</a> interface <a class="code" href="interfacesb_i_device_controller_registrar.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceControllerRegistrar</a> : nsISupports
 <a name="l00040"></a>00040 {
 <a name="l00045"></a><a class="code" href="interfacesb_i_device_controller_registrar.html#2a923d203dd9c7d8fb2299351b0e3dd2">00045</a>   readonly attribute nsIArray controllers;
@@ -109,7 +115,7 @@
 <a name="l00056"></a>00056 
 <a name="l00060"></a>00060   <a class="code" href="interfacesb_i_device_controller.html" title="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceController</a> getController(in nsIDPtr aControllerId);
 <a name="l00061"></a>00061 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:38 2009 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

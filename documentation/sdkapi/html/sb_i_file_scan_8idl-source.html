@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/mediaimport/filescan/public/sbIFileScan.idl</h1><a href="sb_i_file_scan_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -95,7 +101,7 @@
 <a name="l00039"></a>00039 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00040"></a>00040 interface nsIArray;
 <a name="l00041"></a>00041 
-<a name="l00056"></a>00056 [scriptable, uuid(5224b8f1-34bf-4c88-8742-1c54b6d20c0a)]
+<a name="l00056"></a>00056 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(5224b8f1-34bf-4c88-8742-1c54b6d20c0a)]
 <a name="l00057"></a><a class="code" href="interfacesb_i_file_scan_callback.html">00057</a> interface <a class="code" href="interfacesb_i_file_scan_callback.html" title="The callback to the sbIFileScanQuery interface.">sbIFileScanCallback</a> : nsISupports
 <a name="l00058"></a>00058 {
 <a name="l00064"></a>00064   <span class="keywordtype">void</span> onFileScanStart(); 
@@ -106,7 +112,7 @@
 <a name="l00081"></a>00081   <span class="keywordtype">void</span> onFileScanEnd(); 
 <a name="l00082"></a>00082 };
 <a name="l00083"></a>00083 
-<a name="l00116"></a>00116 [scriptable, uuid(db7d7cda-a6fd-4f32-98d1-32ed746eb13d)]
+<a name="l00116"></a>00116 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(db7d7cda-a6fd-4f32-98d1-32ed746eb13d)]
 <a name="l00117"></a><a class="code" href="interfacesb_i_file_scan_query.html">00117</a> interface <a class="code" href="interfacesb_i_file_scan_query.html" title="An object to scan through the files of a folder (and optionally subfolders).">sbIFileScanQuery</a> : nsISupports
 <a name="l00118"></a>00118 {
 <a name="l00119"></a><a class="code" href="interfacesb_i_file_scan_query.html#fcc736deb7bea39e3229b84f4c68feed">00119</a>   attribute <span class="keywordtype">boolean</span> searchHidden;
@@ -149,7 +155,7 @@
 <a name="l00248"></a>00248   PRBool isCancelled();
 <a name="l00249"></a>00249 };
 <a name="l00250"></a>00250 
-<a name="l00264"></a>00264 [scriptable, uuid(411DD545-EAD0-41c4-8BA1-697DBE5C67EA)]
+<a name="l00264"></a>00264 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(411DD545-EAD0-41c4-8BA1-697DBE5C67EA)]
 <a name="l00265"></a><a class="code" href="interfacesb_i_file_scan.html">00265</a> interface <a class="code" href="interfacesb_i_file_scan.html" title="The engine in which to execute sbIFileScanQuery objects.">sbIFileScan</a> : nsISupports
 <a name="l00266"></a>00266 { 
 <a name="l00273"></a>00273   <span class="keywordtype">void</span> submitQuery(in <a class="code" href="interfacesb_i_file_scan_query.html" title="An object to scan through the files of a folder (and optionally subfolders).">sbIFileScanQuery</a> pQuery);
@@ -158,7 +164,7 @@
 <a name="l00284"></a>00284     in PRBool bRecurse, 
 <a name="l00285"></a>00285     in <a class="code" href="interfacesb_i_file_scan_callback.html" title="The callback to the sbIFileScanQuery interface.">sbIFileScanCallback</a> pCallback);
 <a name="l00286"></a>00286 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

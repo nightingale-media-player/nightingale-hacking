@@ -5,21 +5,21 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_remote_media_list_8idl" local="yes">sbIRemoteMediaList.idl</includes>
     <incdepgraph>
-      <node id="653">
+      <node id="809">
         <label>sbIRemoteMediaList.idl</label>
         <link refid="sb_i_remote_media_list_8idl"/>
-        <childnode refid="652" relation="include">
+        <childnode refid="808" relation="include">
         </childnode>
       </node>
-      <node id="651">
+      <node id="807">
         <label>components/remoteapi/public/sbIRemoteLibrary.idl</label>
         <link refid="sbIRemoteLibrary.idl"/>
-        <childnode refid="652" relation="include">
+        <childnode refid="808" relation="include">
         </childnode>
-        <childnode refid="653" relation="include">
+        <childnode refid="809" relation="include">
         </childnode>
       </node>
-      <node id="652">
+      <node id="808">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -66,7 +66,7 @@
 <codeline lineno="38"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref>;</highlight></codeline>
 <codeline lineno="39"><highlight class="normal">interface<sp/>nsIVariant;</highlight></codeline>
 <codeline lineno="40"><highlight class="normal"></highlight></codeline>
-<codeline lineno="41"><highlight class="normal">[scriptable,<sp/>function,<sp/>uuid(27bfbb84-ac22-46bd-b1bb-cf3baf6f3b3c)]</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">[scriptable,<sp/>function,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(27bfbb84-ac22-46bd-b1bb-cf3baf6f3b3c)]</highlight></codeline>
 <codeline lineno="42" refid="interfacesb_i_create_media_list_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_create_media_list_callback" kindref="compound">sbICreateMediaListCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="43"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="44"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onCreated(in<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>aMediaList);</highlight></codeline>
@@ -124,7 +124,7 @@
 <codeline lineno="96"><highlight class="comment"><sp/><sp/>&lt;MediaList&gt;</highlight></codeline>
 <codeline lineno="97"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="98"><highlight class="normal"></highlight></codeline>
-<codeline lineno="110"><highlight class="normal">[scriptable,<sp/>uuid(a8193c8e-4f9a-4b31-ae7b-4f4ee07f4efb)]</highlight></codeline>
+<codeline lineno="110"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(a8193c8e-4f9a-4b31-ae7b-4f4ee07f4efb)]</highlight></codeline>
 <codeline lineno="111" refid="interfacesb_i_remote_library" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_remote_library" kindref="compound" tooltip="An interface to control a media library from remote web pages.">sbIRemoteLibrary</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="112"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="124"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
@@ -377,7 +377,7 @@
 <codeline lineno="424" refid="interfacesb_i_remote_library_1362cc3f43053ac2c95b159fe172fe527" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIVariant<sp/>mostPlayedArtists;</highlight></codeline>
 <codeline lineno="425"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="426"><highlight class="normal"></highlight></codeline>
-<codeline lineno="438"><highlight class="normal">[scriptable,<sp/>uuid(023734d0-0ba2-4c19-9fe6-58646282b586)]</highlight></codeline>
+<codeline lineno="438"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(023734d0-0ba2-4c19-9fe6-58646282b586)]</highlight></codeline>
 <codeline lineno="439" refid="interfacesb_i_remote_site_library" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_remote_site_library" kindref="compound" tooltip="An interface for a sandbox library created by the website.">sbIRemoteSiteLibrary</ref><sp/>:<sp/><ref refid="interfacesb_i_remote_library" kindref="compound" tooltip="An interface to control a media library from remote web pages.">sbIRemoteLibrary</ref></highlight></codeline>
 <codeline lineno="440"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="445" refid="interfacesb_i_remote_site_library_18418b4b73c9f73bf2ff32d192fb8ba04" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>filename;</highlight></codeline>

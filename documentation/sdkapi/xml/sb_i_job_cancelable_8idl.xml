@@ -4,13 +4,13 @@
     <compoundname>sbIJobCancelable.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="237">
+      <node id="277">
         <label>components/job/public/sbIJobCancelable.idl</label>
         <link refid="sbIJobCancelable.idl"/>
-        <childnode refid="238" relation="include">
+        <childnode refid="278" relation="include">
         </childnode>
       </node>
-      <node id="238">
+      <node id="278">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -48,7 +48,7 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal">[scriptable,<sp/>uuid(fba55d60-1174-11dd-bd0b-0800100c9a66)]</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(fba55d60-1174-11dd-bd0b-0800100c9a66)]</highlight></codeline>
 <codeline lineno="30" refid="interfacesb_i_job_cancelable" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_job_cancelable" kindref="compound">sbIJobCancelable</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="31"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="35" refid="interfacesb_i_job_cancelable_1dabc9c28478b7782ed4465906735839f" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>canCancel;</highlight></codeline>

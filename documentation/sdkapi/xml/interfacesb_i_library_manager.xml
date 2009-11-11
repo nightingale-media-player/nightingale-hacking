@@ -241,86 +241,79 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref> </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="397">
+      <node id="435">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="398" relation="public-inheritance">
+        <childnode refid="436" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="403">
+      <node id="441">
         <label>sbIDeviceStatus</label>
         <link refid="interfacesb_i_device_status"/>
-        <childnode refid="398" relation="usage">
+        <childnode refid="436" relation="usage">
           <edgelabel>mediaItem</edgelabel>
         </childnode>
-        <childnode refid="397" relation="usage">
+        <childnode refid="435" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
-      <node id="404">
-        <label>sbIDeviceCapabilities</label>
-        <link refid="interfacesb_i_device_capabilities"/>
-      </node>
-      <node id="400">
+      <node id="438">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="401" relation="usage">
+        <childnode refid="439" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="403" relation="usage">
+        <childnode refid="441" relation="usage">
           <edgelabel>currentStatus</edgelabel>
         </childnode>
-        <childnode refid="404" relation="usage">
-          <edgelabel>capabilities</edgelabel>
-        </childnode>
-        <childnode refid="405" relation="usage">
+        <childnode refid="442" relation="usage">
           <edgelabel>properties</edgelabel>
         </childnode>
       </node>
-      <node id="396">
+      <node id="434">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="397" relation="public-inheritance">
+        <childnode refid="435" relation="public-inheritance">
         </childnode>
-        <childnode refid="400" relation="usage">
+        <childnode refid="438" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="402" relation="usage">
+        <childnode refid="440" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="399">
+      <node id="437">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="398">
+      <node id="436">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="399" relation="public-inheritance">
+        <childnode refid="437" relation="public-inheritance">
         </childnode>
-        <childnode refid="396" relation="usage">
+        <childnode refid="434" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="395">
+      <node id="433">
         <label>sbILibraryManager</label>
         <link refid="interfacesb_i_library_manager"/>
-        <childnode refid="396" relation="usage">
+        <childnode refid="434" relation="usage">
           <edgelabel>mainLibrary</edgelabel>
         </childnode>
       </node>
-      <node id="401">
+      <node id="439">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="402" relation="usage">
+        <childnode refid="440" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="402">
+      <node id="440">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
-      <node id="405">
+      <node id="442">
         <label>sbIDeviceProperties</label>
         <link refid="interfacesb_i_device_properties"/>
       </node>

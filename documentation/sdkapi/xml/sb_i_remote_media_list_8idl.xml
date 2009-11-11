@@ -6,30 +6,30 @@
     <includedby refid="sb_i_remote_library_8idl" local="yes">components/remoteapi/public/sbIRemoteLibrary.idl</includedby>
     <includedby refid="sb_i_scriptable_filter_result_8idl" local="yes">components/remoteapi/public/sbIScriptableFilterResult.idl</includedby>
     <incdepgraph>
-      <node id="655">
+      <node id="811">
         <label>components/remoteapi/public/sbIRemoteMediaList.idl</label>
         <link refid="sbIRemoteMediaList.idl"/>
-        <childnode refid="656" relation="include">
+        <childnode refid="812" relation="include">
         </childnode>
       </node>
-      <node id="656">
+      <node id="812">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="657">
+      <node id="813">
         <label>components/remoteapi/public/sbIRemoteMediaList.idl</label>
         <link refid="sbIRemoteMediaList.idl"/>
-        <childnode refid="658" relation="include">
+        <childnode refid="814" relation="include">
         </childnode>
-        <childnode refid="659" relation="include">
+        <childnode refid="815" relation="include">
         </childnode>
       </node>
-      <node id="659">
+      <node id="815">
         <label>components/remoteapi/public/sbIScriptableFilterResult.idl</label>
         <link refid="sb_i_scriptable_filter_result_8idl"/>
       </node>
-      <node id="658">
+      <node id="814">
         <label>components/remoteapi/public/sbIRemoteLibrary.idl</label>
         <link refid="sb_i_remote_library_8idl-source"/>
       </node>
@@ -95,7 +95,7 @@
 <codeline lineno="45"><highlight class="comment"></highlight></codeline>
 <codeline lineno="46"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="47"><highlight class="normal"></highlight></codeline>
-<codeline lineno="55"><highlight class="normal">[scriptable,<sp/>uuid(30644bad-4d6b-4e01-ab62-17ee4d775413)]</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(30644bad-4d6b-4e01-ab62-17ee4d775413)]</highlight></codeline>
 <codeline lineno="56" refid="interfacesb_i_remote_media_list" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_remote_media_list" kindref="compound" tooltip="An interface to control a media list from remote web pages.">sbIRemoteMediaList</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="57"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="58"><highlight class="normal"><sp/><sp/>[noscript]<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref><sp/>getView();</highlight></codeline>

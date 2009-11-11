@@ -5,33 +5,33 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_media_list_8idl" local="yes">sbIMediaList.idl</includes>
     <incdepgraph>
-      <node id="406">
+      <node id="458">
         <label>components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</label>
         <link refid="sbILocalDatabaseSmartMediaList.idl"/>
-        <childnode refid="407" relation="include">
+        <childnode refid="459" relation="include">
         </childnode>
-        <childnode refid="408" relation="include">
+        <childnode refid="460" relation="include">
         </childnode>
       </node>
-      <node id="408">
+      <node id="460">
         <label>sbIMediaList.idl</label>
         <link refid="sb_i_media_list_8idl"/>
-        <childnode refid="409" relation="include">
+        <childnode refid="461" relation="include">
         </childnode>
       </node>
-      <node id="409">
+      <node id="461">
         <label>sbIMediaItem.idl</label>
         <link refid="sb_i_media_item_8idl"/>
-        <childnode refid="410" relation="include">
+        <childnode refid="462" relation="include">
         </childnode>
       </node>
-      <node id="407">
+      <node id="459">
         <label>nsISupports.idl</label>
       </node>
-      <node id="410">
+      <node id="462">
         <label>sbILibraryResource.idl</label>
         <link refid="sb_i_library_resource_8idl"/>
-        <childnode refid="407" relation="include">
+        <childnode refid="459" relation="include">
         </childnode>
       </node>
     </incdepgraph>
@@ -76,7 +76,7 @@
 <codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_operator" kindref="compound" tooltip="An interface to represent an operator that may act upon a property.">sbIPropertyOperator</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_smart_media_list" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseSmartMediaList</ref>;</highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(39b60b98-1b65-4e6e-866c-25b88127f8ad)]</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(39b60b98-1b65-4e6e-866c-25b88127f8ad)]</highlight></codeline>
 <codeline lineno="44" refid="interfacesb_i_local_database_smart_media_list_condition" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_smart_media_list_condition" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseSmartMediaListCondition</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="49" refid="interfacesb_i_local_database_smart_media_list_condition_183e0f6a31085373aa20c37dd99e6b0bd" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>propertyID;</highlight></codeline>
@@ -90,14 +90,14 @@
 <codeline lineno="78" refid="interfacesb_i_local_database_smart_media_list_condition_190fc35b1680598e7c305af47d4fa489b" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>displayUnit;</highlight></codeline>
 <codeline lineno="79"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="80"><highlight class="normal"></highlight></codeline>
-<codeline lineno="81"><highlight class="normal">[scriptable,<sp/>function,<sp/>uuid(4b3f9a5b-44d5-4384-8f4d-6f953013f877)]</highlight></codeline>
+<codeline lineno="81"><highlight class="normal">[scriptable,<sp/>function,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(4b3f9a5b-44d5-4384-8f4d-6f953013f877)]</highlight></codeline>
 <codeline lineno="82" refid="interfacesb_i_local_database_smart_media_list_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_smart_media_list_listener" kindref="compound">sbILocalDatabaseSmartMediaListListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="83"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onRebuild(in<sp/><ref refid="interfacesb_i_local_database_smart_media_list" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseSmartMediaList</ref><sp/>aSmartMediaList);</highlight></codeline>
 <codeline lineno="85"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="86"><highlight class="normal"></highlight></codeline>
 <codeline lineno="87"><highlight class="normal"></highlight></codeline>
-<codeline lineno="97"><highlight class="normal">[scriptable,<sp/>uuid(908211a1-2466-4642-bab9-75b228ff1532)]</highlight></codeline>
+<codeline lineno="97"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(908211a1-2466-4642-bab9-75b228ff1532)]</highlight></codeline>
 <codeline lineno="98" refid="interfacesb_i_local_database_smart_media_list" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_smart_media_list" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseSmartMediaList</ref><sp/>:<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref></highlight></codeline>
 <codeline lineno="99"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="100" refid="interfacesb_i_local_database_smart_media_list_15bbe1321375bf1a864036fb4cb0c18f6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>MATCH_TYPE_ANY<sp/><sp/>=<sp/>0;</highlight></codeline>

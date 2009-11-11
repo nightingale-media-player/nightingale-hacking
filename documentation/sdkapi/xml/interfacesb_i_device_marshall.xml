@@ -14,7 +14,7 @@
 <para>Gets the unique id associated with this marshall. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="40" bodyfile="c:/builds/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" bodystart="40" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="41" bodyfile="c:/builds/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" bodystart="41" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_device_marshall_12290672628976f05e437019f16d73845" prot="public" static="no" mutable="no">
         <type>readonly attribute AString</type>
@@ -27,7 +27,7 @@
 <para>A human-readable name for the marshall. Optional. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="45" bodyfile="c:/builds/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" bodystart="45" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="46" bodyfile="c:/builds/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" bodystart="46" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -46,7 +46,7 @@
 <para>Loads all controllers registered with this marshall&apos;s category. Registers each one with the registrar given. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="51"/>
+        <location file="c:/builds/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="52"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_marshall_1adda14db80c13c4f6827768a6abf3b05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -59,7 +59,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="53"/>
+        <location file="c:/builds/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="54"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_device_marshall_1083ff7ba8aa9ab48f2b568dcde2216fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -72,19 +72,37 @@
 <para>After calling this method, the marshall will stop monitoring for any new devices. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="59"/>
+        <location file="c:/builds/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="60"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_marshall_1112eacf820fd75fe3b5f91f16de40a7d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceMarshall::removeDevice</definition>
+        <argsstring>(in sbIDevice aDevice)</argsstring>
+        <name>removeDevice</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
+          <declname>aDevice</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Remove the given device. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="65"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="36" bodyfile="c:/builds/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" bodystart="35" bodyend="60"/>
+    <location file="c:/builds/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" line="37" bodyfile="c:/builds/songbird/trunk/components/devices/marshall/public/sbIDeviceMarshall.idl" bodystart="36" bodyend="66"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_marshall_1adda14db80c13c4f6827768a6abf3b05" prot="public" virt="non-virtual"><scope>sbIDeviceMarshall</scope><name>beginMonitoring</name></member>
       <member refid="interfacesb_i_device_marshall_132c4bf166e25f130824aa191d824726f" prot="public" virt="non-virtual"><scope>sbIDeviceMarshall</scope><name>id</name></member>
       <member refid="interfacesb_i_device_marshall_12fcb40179dfe31a3f033d1cd4f8b7a62" prot="public" virt="non-virtual"><scope>sbIDeviceMarshall</scope><name>loadControllers</name></member>
       <member refid="interfacesb_i_device_marshall_12290672628976f05e437019f16d73845" prot="public" virt="non-virtual"><scope>sbIDeviceMarshall</scope><name>name</name></member>
+      <member refid="interfacesb_i_device_marshall_1112eacf820fd75fe3b5f91f16de40a7d" prot="public" virt="non-virtual"><scope>sbIDeviceMarshall</scope><name>removeDevice</name></member>
       <member refid="interfacesb_i_device_marshall_1083ff7ba8aa9ab48f2b568dcde2216fd" prot="public" virt="non-virtual"><scope>sbIDeviceMarshall</scope><name>stopMonitoring</name></member>
     </listofallmembers>
   </compounddef>

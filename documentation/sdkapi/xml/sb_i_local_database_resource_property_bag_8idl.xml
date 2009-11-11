@@ -4,13 +4,13 @@
     <compoundname>sbILocalDatabaseResourcePropertyBag.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="400">
+      <node id="452">
         <label>components/library/localdatabase/public/sbILocalDatabaseResourcePropertyBag.idl</label>
         <link refid="sbILocalDatabaseResourcePropertyBag.idl"/>
-        <childnode refid="401" relation="include">
+        <childnode refid="453" relation="include">
         </childnode>
       </node>
-      <node id="401">
+      <node id="453">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,7 +50,7 @@
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal">interface<sp/>nsIStringEnumerator;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
-<codeline lineno="40"><highlight class="normal">[scriptable,<sp/>uuid(758e5a56-0f5f-4e00-816f-189bf11ebe1f)]</highlight></codeline>
+<codeline lineno="40"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(758e5a56-0f5f-4e00-816f-189bf11ebe1f)]</highlight></codeline>
 <codeline lineno="41" refid="interfacesb_i_local_database_resource_property_bag" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_resource_property_bag" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseResourcePropertyBag</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="42"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="43" refid="interfacesb_i_local_database_resource_property_bag_133793561e76ad9d5c9b03b514e454f14" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>guid;</highlight></codeline>

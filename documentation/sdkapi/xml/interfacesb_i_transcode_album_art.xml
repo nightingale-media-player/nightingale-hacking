@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_transcode_album_art" kind="interface" prot="public">
+    <compoundname>sbITranscodeAlbumArt</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_transcode_album_art_179092262ba2502e5a160e82a653100bf" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbITranscodeAlbumArt::needsAlbumArtConversion</definition>
+        <argsstring></argsstring>
+        <name>needsAlbumArtConversion</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeAlbumArt.idl" line="55" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeAlbumArt.idl" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_transcode_album_art_1e74c5d8d292dd3db4ab0b8c5e2494f0e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbITranscodeAlbumArt::Init</definition>
+        <argsstring>(in sbIMediaItem aItem, in nsIArray aSupportedFormats)</argsstring>
+        <name>Init</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
+          <declname>aItem</declname>
+        </param>
+        <param>
+          <type>in nsIArray</type>
+          <declname>aSupportedFormats</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeAlbumArt.idl" line="52"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_transcode_album_art_14aeaf1fa21725293dcd58b1276166b6b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbITranscodeAlbumArt::ConvertArt</definition>
+        <argsstring>()</argsstring>
+        <name>ConvertArt</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeAlbumArt.idl" line="58"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_transcode_album_art_1e8a3acd1166d70514b108b47499d1f22" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsIInputStream</type>
+        <definition>nsIInputStream sbITranscodeAlbumArt::GetTranscodedArt</definition>
+        <argsstring>()</argsstring>
+        <name>GetTranscodedArt</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeAlbumArt.idl" line="61"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_transcode_album_art_1c24fe97336f417c49d20d5442ec0465c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbITranscodeAlbumArt::GetTargetFormat</definition>
+        <argsstring>(out AUTF8String mimeType, out long width, out long height)</argsstring>
+        <name>GetTargetFormat</name>
+        <param>
+          <type>out AUTF8String</type>
+          <declname>mimeType</declname>
+        </param>
+        <param>
+          <type>out long</type>
+          <declname>width</declname>
+        </param>
+        <param>
+          <type>out long</type>
+          <declname>height</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeAlbumArt.idl" line="66"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeAlbumArt.idl" line="43" bodyfile="c:/builds/songbird/trunk/components/mediacore/transcode/public/sbITranscodeAlbumArt.idl" bodystart="42" bodyend="67"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_transcode_album_art_14aeaf1fa21725293dcd58b1276166b6b" prot="public" virt="non-virtual"><scope>sbITranscodeAlbumArt</scope><name>ConvertArt</name></member>
+      <member refid="interfacesb_i_transcode_album_art_1c24fe97336f417c49d20d5442ec0465c" prot="public" virt="non-virtual"><scope>sbITranscodeAlbumArt</scope><name>GetTargetFormat</name></member>
+      <member refid="interfacesb_i_transcode_album_art_1e8a3acd1166d70514b108b47499d1f22" prot="public" virt="non-virtual"><scope>sbITranscodeAlbumArt</scope><name>GetTranscodedArt</name></member>
+      <member refid="interfacesb_i_transcode_album_art_1e74c5d8d292dd3db4ab0b8c5e2494f0e" prot="public" virt="non-virtual"><scope>sbITranscodeAlbumArt</scope><name>Init</name></member>
+      <member refid="interfacesb_i_transcode_album_art_179092262ba2502e5a160e82a653100bf" prot="public" virt="non-virtual"><scope>sbITranscodeAlbumArt</scope><name>needsAlbumArtConversion</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

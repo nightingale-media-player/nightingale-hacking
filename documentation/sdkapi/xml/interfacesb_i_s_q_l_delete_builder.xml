@@ -24,37 +24,37 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="1074">
+      <node id="1154">
         <label>sbISQLWhereBuilder</label>
         <link refid="interfacesb_i_s_q_l_where_builder"/>
-        <childnode refid="1075" relation="public-inheritance">
+        <childnode refid="1155" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1073">
+      <node id="1153">
         <label>sbISQLDeleteBuilder</label>
         <link refid="interfacesb_i_s_q_l_delete_builder"/>
-        <childnode refid="1074" relation="public-inheritance">
+        <childnode refid="1154" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1075">
+      <node id="1155">
         <label>sbISQLBuilder</label>
         <link refid="interfacesb_i_s_q_l_builder"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="1077">
+      <node id="1157">
         <label>sbISQLWhereBuilder</label>
         <link refid="interfacesb_i_s_q_l_where_builder"/>
-        <childnode refid="1078" relation="public-inheritance">
+        <childnode refid="1158" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1076">
+      <node id="1156">
         <label>sbISQLDeleteBuilder</label>
         <link refid="interfacesb_i_s_q_l_delete_builder"/>
-        <childnode refid="1077" relation="public-inheritance">
+        <childnode refid="1157" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1078">
+      <node id="1158">
         <label>sbISQLBuilder</label>
         <link refid="interfacesb_i_s_q_l_builder"/>
       </node>

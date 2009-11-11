@@ -4,13 +4,13 @@
     <compoundname>sbILeakCanary.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="703">
+      <node id="855">
         <label>components/testharness/public/sbILeakCanary.idl</label>
         <link refid="sbILeakCanary.idl"/>
-        <childnode refid="704" relation="include">
+        <childnode refid="856" relation="include">
         </childnode>
       </node>
-      <node id="704">
+      <node id="856">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -47,7 +47,7 @@
 <codeline lineno="25"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight></codeline>
-<codeline lineno="28"><highlight class="normal">[scriptable,<sp/>uuid(97b56eb5-8e51-4c53-8210-a641eb73ac54)]</highlight></codeline>
+<codeline lineno="28"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(97b56eb5-8e51-4c53-8210-a641eb73ac54)]</highlight></codeline>
 <codeline lineno="29" refid="interfacesb_i_leak_canary" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_leak_canary" kindref="compound">sbILeakCanary</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="30"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="31"><highlight class="normal">};</highlight></codeline>

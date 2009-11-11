@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreTranscodeControl.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="468">
+      <node id="523">
         <label>components/mediacore/base/public/sbIMediacoreTranscodeControl.idl</label>
         <link refid="sbIMediacoreTranscodeControl.idl"/>
-        <childnode refid="469" relation="include">
+        <childnode refid="524" relation="include">
         </childnode>
       </node>
-      <node id="469">
+      <node id="524">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -48,7 +48,7 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal">[scriptable,<sp/>uuid(e06108ed-e300-41b5-9550-9012f0301b47)]</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(e06108ed-e300-41b5-9550-9012f0301b47)]</highlight></codeline>
 <codeline lineno="30" refid="interfacesb_i_mediacore_transcode_control" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_transcode_control" kindref="compound">sbIMediacoreTranscodeControl</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="31"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>

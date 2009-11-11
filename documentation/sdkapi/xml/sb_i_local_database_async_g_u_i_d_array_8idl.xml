@@ -5,21 +5,21 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_local_database_g_u_i_d_array_8idl" local="yes">sbILocalDatabaseGUIDArray.idl</includes>
     <incdepgraph>
-      <node id="365">
+      <node id="420">
         <label>components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl</label>
         <link refid="sbILocalDatabaseAsyncGUIDArray.idl"/>
-        <childnode refid="366" relation="include">
+        <childnode refid="421" relation="include">
         </childnode>
-        <childnode refid="367" relation="include">
+        <childnode refid="422" relation="include">
         </childnode>
       </node>
-      <node id="367">
+      <node id="422">
         <label>sbILocalDatabaseGUIDArray.idl</label>
         <link refid="sb_i_local_database_g_u_i_d_array_8idl"/>
-        <childnode refid="366" relation="include">
+        <childnode refid="421" relation="include">
         </childnode>
       </node>
-      <node id="366">
+      <node id="421">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -59,7 +59,7 @@
 <codeline lineno="31"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="sb_i_local_database_g_u_i_d_array_8idl" kindref="compound" tooltip="Definition of the sbILocalDatabaseGUIDArray interfaces.">sbILocalDatabaseGUIDArray.idl</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="38"><highlight class="normal">[scriptable,<sp/>uuid(08af2324-3aa1-4162-9da3-caa4169247ca)]</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(08af2324-3aa1-4162-9da3-caa4169247ca)]</highlight></codeline>
 <codeline lineno="39" refid="interfacesb_i_local_database_async_g_u_i_d_array_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_async_g_u_i_d_array_listener" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseAsyncGUIDArrayListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="40"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="41"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onGetLength(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aLength,</highlight></codeline>
@@ -83,7 +83,7 @@
 <codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onStateChange(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aState);</highlight></codeline>
 <codeline lineno="60"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="61"><highlight class="normal"></highlight></codeline>
-<codeline lineno="68"><highlight class="normal">[scriptable,<sp/>uuid(b1e017b3-6417-4f37-9685-3d3a09efbe99)]</highlight></codeline>
+<codeline lineno="68"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(b1e017b3-6417-4f37-9685-3d3a09efbe99)]</highlight></codeline>
 <codeline lineno="69" refid="interfacesb_i_local_database_async_g_u_i_d_array" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_async_g_u_i_d_array" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseAsyncGUIDArray</ref><sp/>:<sp/><ref refid="interfacesb_i_local_database_g_u_i_d_array" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseGUIDArray</ref></highlight></codeline>
 <codeline lineno="70"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="71"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addAsyncListener(in<sp/><ref refid="interfacesb_i_local_database_async_g_u_i_d_array_listener" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseAsyncGUIDArrayListener</ref><sp/>aListener);</highlight></codeline>

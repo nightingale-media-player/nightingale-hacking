@@ -4,13 +4,13 @@
     <compoundname>sbITagLibChannelFileIOManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="501">
+      <node id="570">
         <label>components/mediacore/metadata/handler/taglib/public/sbITagLibChannelFileIOManager.idl</label>
         <link refid="sbITagLibChannelFileIOManager.idl"/>
-        <childnode refid="502" relation="include">
+        <childnode refid="571" relation="include">
         </childnode>
       </node>
-      <node id="502">
+      <node id="571">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,7 +50,7 @@
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_seekable_channel" kindref="compound" tooltip="A seekable wrapper for an nsIChannel.">sbISeekableChannel</ref>;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal">[uuid(BE6B6802-122A-4DA9-A49E-3D2A614F4F18)]</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">[<ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(BE6B6802-122A-4DA9-A49E-3D2A614F4F18)]</highlight></codeline>
 <codeline lineno="44"><highlight class="normal"></highlight></codeline>
 <codeline lineno="45" refid="interfacesb_i_tag_lib_channel_file_i_o_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_tag_lib_channel_file_i_o_manager" kindref="compound" tooltip="A service for providing sbISeekableChannel file IO support in TagLib.">sbITagLibChannelFileIOManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>

@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/library/base/public/sbIMediaList.idl</h1><a href="sb_i_media_list_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -108,7 +114,7 @@
 <a name="l00046"></a>00046 interface <a class="code" href="interfacesb_i_media_list_view_state.html" title="Saved state of a media list view.">sbIMediaListViewState</a>;
 <a name="l00047"></a>00047 interface <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a>;
 <a name="l00048"></a>00048 
-<a name="l00057"></a>00057 [scriptable, uuid(7007a3dd-e298-4fbf-aee1-263a0a42b8ba)]
+<a name="l00057"></a>00057 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(b980ef53-c00e-45db-9ce6-70326a2641b5)]
 <a name="l00058"></a><a class="code" href="interfacesb_i_media_list.html">00058</a> interface <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> : <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>
 <a name="l00059"></a>00059 {
 <a name="l00060"></a>00060   <span class="comment">/*</span>
@@ -838,65 +844,66 @@
 <a name="l00944"></a><a class="code" href="interfacesb_i_media_list.html#ebd887a26980780de64ddf4af9cf430a">00944</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_BEFOREITEMREMOVED = 1 &lt;&lt; 1;
 <a name="l00945"></a><a class="code" href="interfacesb_i_media_list.html#cdecf4b09dd4e75a52e9be77d378e6f3">00945</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_AFTERITEMREMOVED  = 1 &lt;&lt; 2;
 <a name="l00946"></a><a class="code" href="interfacesb_i_media_list.html#34e744de3ce3931f387c6ab405c3a968">00946</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_ITEMUPDATED       = 1 &lt;&lt; 3;
-<a name="l00947"></a><a class="code" href="interfacesb_i_media_list.html#10cf8a4549906ace13097775e484c2b3">00947</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_LISTCLEARED       = 1 &lt;&lt; 4;
-<a name="l00948"></a><a class="code" href="interfacesb_i_media_list.html#c038790117b70fcca91a4a6f6c5a3f4b">00948</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_BATCHBEGIN        = 1 &lt;&lt; 5;
-<a name="l00949"></a><a class="code" href="interfacesb_i_media_list.html#536109c8e3dc6da8d732ad92a226337b">00949</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_BATCHEND          = 1 &lt;&lt; 6;
-<a name="l00950"></a><a class="code" href="interfacesb_i_media_list.html#9900bddb359408a49158687dfcb6f20d">00950</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_ITEMMOVED         = 1 &lt;&lt; 7;
-<a name="l00951"></a><a class="code" href="interfacesb_i_media_list.html#6e0542725b8ace2f19f7556d3192ed5f">00951</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_ALL               = 0xffffffff;
-<a name="l00952"></a>00952 
-<a name="l00969"></a>00969   <span class="keywordtype">void</span> addListener(in <a class="code" href="interfacesb_i_media_list_listener.html" title="Interface used to listen to changes to a media list.">sbIMediaListListener</a> aListener,
-<a name="l00970"></a>00970                    [optional] in <span class="keywordtype">boolean</span> aOwnsWeak,
-<a name="l00971"></a>00971                    [optional] in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aFlags,
-<a name="l00972"></a>00972                    [optional] in <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a> aPropertyFilter);
-<a name="l00973"></a>00973 
-<a name="l00978"></a>00978   <span class="keywordtype">void</span> removeListener(in <a class="code" href="interfacesb_i_media_list_listener.html" title="Interface used to listen to changes to a media list.">sbIMediaListListener</a> aListener);
-<a name="l00979"></a>00979 
-<a name="l00985"></a>00985   <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> createView([optional] in <a class="code" href="interfacesb_i_media_list_view_state.html" title="Saved state of a media list view.">sbIMediaListViewState</a> aState);
-<a name="l00986"></a>00986 
-<a name="l00992"></a>00992   <span class="keywordtype">void</span> runInBatchMode(in <a class="code" href="interfacesb_i_media_list_batch_callback.html">sbIMediaListBatchCallback</a> aCallback,
-<a name="l00993"></a>00993                       [optional] in nsISupports aUserData);
-<a name="l00994"></a>00994 
-<a name="l00995"></a>00995   <span class="comment">/*</span>
-<a name="l00996"></a>00996 <span class="comment">   * \brief Return the distinct values in the list for a given property</span>
-<a name="l00997"></a>00997 <span class="comment">   * \param aPropertyID Propery ID to get distinct values for</span>
-<a name="l00998"></a>00998 <span class="comment">   * \return String enumerator of distinct values for the given property</span>
-<a name="l00999"></a>00999 <span class="comment">   */</span>
-<a name="l01000"></a>01000 
-<a name="l01001"></a>01001   <span class="comment">/*</span>
-<a name="l01002"></a>01002 <span class="comment">  Method: getDistinctValuesForProperty()</span>
-<a name="l01003"></a>01003 <span class="comment"></span>
-<a name="l01004"></a>01004 <span class="comment">  Get all distinct (unique) values in this &lt;MediaList&gt; for a given property.</span>
-<a name="l01005"></a>01005 <span class="comment"></span>
-<a name="l01006"></a>01006 <span class="comment">  This function is useful if you want to know all the unique artistName property</span>
-<a name="l01007"></a>01007 <span class="comment">  values for example.</span>
-<a name="l01008"></a>01008 <span class="comment"></span>
-<a name="l01009"></a>01009 <span class="comment">  Prototype:</span>
-<a name="l01010"></a>01010 <span class="comment">    Enumerator getDistinctValuesForProperty(String id)</span>
-<a name="l01011"></a>01011 <span class="comment"></span>
-<a name="l01012"></a>01012 <span class="comment">  Parameters:</span>
-<a name="l01013"></a>01013 <span class="comment">    id - The ID of the property for which all distinct values are desired.</span>
-<a name="l01014"></a>01014 <span class="comment"></span>
-<a name="l01015"></a>01015 <span class="comment">  Returns:</span>
-<a name="l01016"></a>01016 <span class="comment">    Enumerator, contains Strings.</span>
-<a name="l01017"></a>01017 <span class="comment"></span>
-<a name="l01018"></a>01018 <span class="comment">  Example:</span>
-<a name="l01019"></a>01019 <span class="comment">    (start code)</span>
-<a name="l01020"></a>01020 <span class="comment">    (end)</span>
-<a name="l01021"></a>01021 <span class="comment"></span>
-<a name="l01022"></a>01022 <span class="comment">  See Also:</span>
-<a name="l01023"></a>01023 <span class="comment">    &lt;enumerateItemsByProperty()&gt;</span>
-<a name="l01024"></a>01024 <span class="comment"></span>
-<a name="l01025"></a>01025 <span class="comment">    &lt;getProperty()&gt;</span>
-<a name="l01026"></a>01026 <span class="comment">  */</span>
-<a name="l01027"></a>01027   nsIStringEnumerator getDistinctValuesForProperty(in AString aPropertyID);
-<a name="l01028"></a>01028 };
-<a name="l01029"></a>01029 
-<a name="l01034"></a>01034 [scriptable, function, uuid(02e86553-31e9-4564-b2db-2756b6d5e52f)]
-<a name="l01035"></a><a class="code" href="interfacesb_i_media_list_batch_callback.html">01035</a> interface <a class="code" href="interfacesb_i_media_list_batch_callback.html">sbIMediaListBatchCallback</a> : nsISupports
-<a name="l01036"></a>01036 {
-<a name="l01037"></a>01037   <span class="keywordtype">void</span> runBatched([optional] in nsISupports aUserData);
-<a name="l01038"></a>01038 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+<a name="l00947"></a><a class="code" href="interfacesb_i_media_list.html#9db5641f8058c3e4b81711df8cf3653a">00947</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_BEFORELISTCLEARED = 1 &lt;&lt; 4;
+<a name="l00948"></a><a class="code" href="interfacesb_i_media_list.html#10cf8a4549906ace13097775e484c2b3">00948</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_LISTCLEARED       = 1 &lt;&lt; 5;
+<a name="l00949"></a><a class="code" href="interfacesb_i_media_list.html#c038790117b70fcca91a4a6f6c5a3f4b">00949</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_BATCHBEGIN        = 1 &lt;&lt; 6;
+<a name="l00950"></a><a class="code" href="interfacesb_i_media_list.html#536109c8e3dc6da8d732ad92a226337b">00950</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_BATCHEND          = 1 &lt;&lt; 7;
+<a name="l00951"></a><a class="code" href="interfacesb_i_media_list.html#9900bddb359408a49158687dfcb6f20d">00951</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_ITEMMOVED         = 1 &lt;&lt; 8;
+<a name="l00952"></a><a class="code" href="interfacesb_i_media_list.html#6e0542725b8ace2f19f7556d3192ed5f">00952</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> LISTENER_FLAGS_ALL               = 0xffffffff;
+<a name="l00953"></a>00953 
+<a name="l00970"></a>00970   <span class="keywordtype">void</span> addListener(in <a class="code" href="interfacesb_i_media_list_listener.html" title="Interface used to listen to changes to a media list.">sbIMediaListListener</a> aListener,
+<a name="l00971"></a>00971                    [optional] in <span class="keywordtype">boolean</span> aOwnsWeak,
+<a name="l00972"></a>00972                    [optional] in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aFlags,
+<a name="l00973"></a>00973                    [optional] in <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a> aPropertyFilter);
+<a name="l00974"></a>00974 
+<a name="l00979"></a>00979   <span class="keywordtype">void</span> removeListener(in <a class="code" href="interfacesb_i_media_list_listener.html" title="Interface used to listen to changes to a media list.">sbIMediaListListener</a> aListener);
+<a name="l00980"></a>00980 
+<a name="l00986"></a>00986   <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> createView([optional] in <a class="code" href="interfacesb_i_media_list_view_state.html" title="Saved state of a media list view.">sbIMediaListViewState</a> aState);
+<a name="l00987"></a>00987 
+<a name="l00993"></a>00993   <span class="keywordtype">void</span> runInBatchMode(in <a class="code" href="interfacesb_i_media_list_batch_callback.html">sbIMediaListBatchCallback</a> aCallback,
+<a name="l00994"></a>00994                       [optional] in nsISupports aUserData);
+<a name="l00995"></a>00995 
+<a name="l00996"></a>00996   <span class="comment">/*</span>
+<a name="l00997"></a>00997 <span class="comment">   * \brief Return the distinct values in the list for a given property</span>
+<a name="l00998"></a>00998 <span class="comment">   * \param aPropertyID Propery ID to get distinct values for</span>
+<a name="l00999"></a>00999 <span class="comment">   * \return String enumerator of distinct values for the given property</span>
+<a name="l01000"></a>01000 <span class="comment">   */</span>
+<a name="l01001"></a>01001 
+<a name="l01002"></a>01002   <span class="comment">/*</span>
+<a name="l01003"></a>01003 <span class="comment">  Method: getDistinctValuesForProperty()</span>
+<a name="l01004"></a>01004 <span class="comment"></span>
+<a name="l01005"></a>01005 <span class="comment">  Get all distinct (unique) values in this &lt;MediaList&gt; for a given property.</span>
+<a name="l01006"></a>01006 <span class="comment"></span>
+<a name="l01007"></a>01007 <span class="comment">  This function is useful if you want to know all the unique artistName property</span>
+<a name="l01008"></a>01008 <span class="comment">  values for example.</span>
+<a name="l01009"></a>01009 <span class="comment"></span>
+<a name="l01010"></a>01010 <span class="comment">  Prototype:</span>
+<a name="l01011"></a>01011 <span class="comment">    Enumerator getDistinctValuesForProperty(String id)</span>
+<a name="l01012"></a>01012 <span class="comment"></span>
+<a name="l01013"></a>01013 <span class="comment">  Parameters:</span>
+<a name="l01014"></a>01014 <span class="comment">    id - The ID of the property for which all distinct values are desired.</span>
+<a name="l01015"></a>01015 <span class="comment"></span>
+<a name="l01016"></a>01016 <span class="comment">  Returns:</span>
+<a name="l01017"></a>01017 <span class="comment">    Enumerator, contains Strings.</span>
+<a name="l01018"></a>01018 <span class="comment"></span>
+<a name="l01019"></a>01019 <span class="comment">  Example:</span>
+<a name="l01020"></a>01020 <span class="comment">    (start code)</span>
+<a name="l01021"></a>01021 <span class="comment">    (end)</span>
+<a name="l01022"></a>01022 <span class="comment"></span>
+<a name="l01023"></a>01023 <span class="comment">  See Also:</span>
+<a name="l01024"></a>01024 <span class="comment">    &lt;enumerateItemsByProperty()&gt;</span>
+<a name="l01025"></a>01025 <span class="comment"></span>
+<a name="l01026"></a>01026 <span class="comment">    &lt;getProperty()&gt;</span>
+<a name="l01027"></a>01027 <span class="comment">  */</span>
+<a name="l01028"></a>01028   nsIStringEnumerator getDistinctValuesForProperty(in AString aPropertyID);
+<a name="l01029"></a>01029 };
+<a name="l01030"></a>01030 
+<a name="l01035"></a>01035 [scriptable, function, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(02e86553-31e9-4564-b2db-2756b6d5e52f)]
+<a name="l01036"></a><a class="code" href="interfacesb_i_media_list_batch_callback.html">01036</a> interface <a class="code" href="interfacesb_i_media_list_batch_callback.html">sbIMediaListBatchCallback</a> : nsISupports
+<a name="l01037"></a>01037 {
+<a name="l01038"></a>01038   <span class="keywordtype">void</span> runBatched([optional] in nsISupports aUserData);
+<a name="l01039"></a>01039 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

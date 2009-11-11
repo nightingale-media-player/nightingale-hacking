@@ -6,6 +6,7 @@
     <innerfile refid="sb_i_job_progress_8idl">sbIJobProgress.idl</innerfile>
     <innerfile refid="sb_i_job_progress_service_8idl">sbIJobProgressService.idl</innerfile>
     <innerfile refid="sb_i_job_progress_u_i_8idl">sbIJobProgressUI.idl</innerfile>
+    <innerfile refid="sb_i_shutdown_job_8idl">sbIShutdownJob.idl</innerfile>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

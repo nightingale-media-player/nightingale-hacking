@@ -5,25 +5,25 @@
     <includes local="yes">nsISupports.idl</includes>
     <includedby refid="sb_i_security_mixin_8idl" local="yes">components/remoteapi/public/sbISecurityMixin.idl</includedby>
     <incdepgraph>
-      <node id="677">
+      <node id="833">
         <label>nsISupports.idl</label>
       </node>
-      <node id="676">
+      <node id="832">
         <label>components/remoteapi/public/sbISecurityAggregator.idl</label>
         <link refid="sbISecurityAggregator.idl"/>
-        <childnode refid="677" relation="include">
+        <childnode refid="833" relation="include">
         </childnode>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="679">
+      <node id="835">
         <label>components/remoteapi/public/sbISecurityMixin.idl</label>
         <link refid="sb_i_security_mixin_8idl"/>
       </node>
-      <node id="678">
+      <node id="834">
         <label>components/remoteapi/public/sbISecurityAggregator.idl</label>
         <link refid="sbISecurityAggregator.idl"/>
-        <childnode refid="679" relation="include">
+        <childnode refid="835" relation="include">
         </childnode>
       </node>
     </invincdepgraph>
@@ -64,7 +64,7 @@
 <codeline lineno="41"><highlight class="normal"></highlight></codeline>
 <codeline lineno="42"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_remote_player" kindref="compound" tooltip="This interface is a composition of many of our other interfaces with the goal of...">sbIRemotePlayer</ref>;</highlight></codeline>
 <codeline lineno="43"><highlight class="normal"></highlight></codeline>
-<codeline lineno="53"><highlight class="normal">[scriptable,<sp/>uuid(efc0f85a-b4d7-4405-aed8-8b0542ec67c5)]</highlight></codeline>
+<codeline lineno="53"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(efc0f85a-b4d7-4405-aed8-8b0542ec67c5)]</highlight></codeline>
 <codeline lineno="54" refid="interfacesb_i_security_aggregator" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_security_aggregator" kindref="compound" tooltip="A marker interface for objects that aggregate the security mixin.">sbISecurityAggregator</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="55"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="56" refid="interfacesb_i_security_aggregator_17f6744e71a54a90025f2461a57123648" refkind="member"><highlight class="normal"><sp/><sp/>[noscript]<sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_remote_player" kindref="compound" tooltip="This interface is a composition of many of our other interfaces with the goal of...">sbIRemotePlayer</ref><sp/>remotePlayer;</highlight></codeline>

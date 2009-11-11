@@ -502,21 +502,21 @@
 <para>User code requests a handler by calling <ref refid="interfacesb_i_metadata_manager_1ae19d169e02736347d183bf89ae8ffa6" kindref="member">sbIMetadataManager::getHandlerForMediaURL</ref> that then returns one of these.</para><para><simplesect kind="see"><para><ref refid="interfacesb_i_metadata_manager" kindref="compound">sbIMetadataManager</ref> </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="773">
+      <node id="832">
         <label>sbIMetadataHandler</label>
         <link refid="interfacesb_i_metadata_handler"/>
-        <childnode refid="774" relation="usage">
+        <childnode refid="833" relation="usage">
           <edgelabel>props</edgelabel>
         </childnode>
       </node>
-      <node id="775">
+      <node id="834">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="774">
+      <node id="833">
         <label>sbIMutablePropertyArray</label>
         <link refid="interfacesb_i_mutable_property_array"/>
-        <childnode refid="775" relation="public-inheritance">
+        <childnode refid="834" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

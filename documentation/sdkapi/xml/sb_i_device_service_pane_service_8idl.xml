@@ -4,13 +4,13 @@
     <compoundname>sbIDeviceServicePaneService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="687">
+      <node id="843">
         <label>components/servicepane/public/sbIDeviceServicePaneService.idl</label>
         <link refid="sbIDeviceServicePaneService.idl"/>
-        <childnode refid="688" relation="include">
+        <childnode refid="844" relation="include">
         </childnode>
       </node>
-      <node id="688">
+      <node id="844">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -53,7 +53,7 @@
 <codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref>;</highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(7d066a7f-c463-4fa3-84fd-d779ddbf0643)]</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(7d066a7f-c463-4fa3-84fd-d779ddbf0643)]</highlight></codeline>
 <codeline lineno="44" refid="interfacesb_i_device_service_pane_service" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_service_pane_service" kindref="compound" tooltip="Provides information about devices needed by the service pane.">sbIDeviceServicePaneService</ref><sp/>:<sp/>nsISupports<sp/>{</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_service_pane_node" kindref="compound" tooltip="The interface to interact with a particular node in the service pane.">sbIServicePaneNode</ref><sp/>createNodeForDevice<sp/>(in<sp/><ref refid="interfacesb_i_device_base" kindref="compound" tooltip="[SOON TO BE DEPRECATED AFTER 0.3] Base interface for all supported devices.">sbIDeviceBase</ref><sp/>aDevice,</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aDeviceIdentifier);</highlight></codeline>

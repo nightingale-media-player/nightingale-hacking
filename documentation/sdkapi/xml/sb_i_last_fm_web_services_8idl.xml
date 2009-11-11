@@ -4,13 +4,13 @@
     <compoundname>sbILastFmWebServices.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="719">
+      <node id="877">
         <label>components/webservices/lastfm/public/sbILastFmWebServices.idl</label>
         <link refid="sbILastFmWebServices.idl"/>
-        <childnode refid="720" relation="include">
+        <childnode refid="878" relation="include">
         </childnode>
       </node>
-      <node id="720">
+      <node id="878">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -54,12 +54,12 @@
 <codeline lineno="31"><highlight class="normal">interface<sp/>nsIDOMDocument;</highlight></codeline>
 <codeline lineno="32"><highlight class="normal">interface<sp/>nsIPropertyBag;</highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal">[scriptable,<sp/>function,<sp/>uuid(6c6bf386-5e02-4f05-8bff-3edeae9750a5)]</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">[scriptable,<sp/>function,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(6c6bf386-5e02-4f05-8bff-3edeae9750a5)]</highlight></codeline>
 <codeline lineno="35" refid="interfacesb_i_last_fm_web_services_response" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_last_fm_web_services_response" kindref="compound">sbILastFmWebServicesResponse</ref><sp/>:<sp/>nsISupports<sp/>{</highlight></codeline>
 <codeline lineno="45"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>responseReceived(in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aSucceeded,<sp/>in<sp/>nsIDOMDocument<sp/>aResponse);</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="47"><highlight class="normal"></highlight></codeline>
-<codeline lineno="48"><highlight class="normal">[scriptable,<sp/>uuid(4ac919d7-7fe1-44ed-8190-5da7fb407691)]</highlight></codeline>
+<codeline lineno="48"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(4ac919d7-7fe1-44ed-8190-5da7fb407691)]</highlight></codeline>
 <codeline lineno="49" refid="interfacesb_i_last_fm_web_services" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_last_fm_web_services" kindref="compound">sbILastFmWebServices</ref><sp/>:<sp/>nsISupports<sp/>{</highlight></codeline>
 <codeline lineno="71"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>apiCall(in<sp/></highlight><highlight class="keywordtype">string</highlight><highlight class="normal"><sp/>aMethod,</highlight></codeline>
 <codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIPropertyBag<sp/>aArguments,</highlight></codeline>

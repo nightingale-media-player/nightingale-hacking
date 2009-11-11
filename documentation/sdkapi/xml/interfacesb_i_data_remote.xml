@@ -350,14 +350,14 @@
 <para>This interface defines the ability to set key-value pairs into a global data-store, and to observe changes in the value of the data. The observer can be bound to the data in one of three different ways. A callback object can be bound as an nsIObserver, or a DOM element can bind the value of an attribute or a property to the value of the data.</para><para>The attribute and property bindings can be done as string, integer or boolean, and in the case of boolean binding the value can be the inverse of the data value. In addition the actual value for the attribute or property can be defined by additional script executed in the notification step.</para><para><simplesect kind="see"><para>DataRemote </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="81">
+      <node id="87">
         <label>sbIDataRemote</label>
         <link refid="interfacesb_i_data_remote"/>
       </node>
-      <node id="82">
+      <node id="88">
         <label>sbPIDataRemote2</label>
         <link refid="interfacesb_p_i_data_remote2"/>
-        <childnode refid="81" relation="public-inheritance">
+        <childnode refid="87" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>

@@ -5,21 +5,21 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_playlist_commands_8idl" local="yes">sbIPlaylistCommands.idl</includes>
     <incdepgraph>
-      <node id="610">
+      <node id="764">
         <label>components/playlistcommands/public/sbIPlaylistCommandsBuilder.idl</label>
         <link refid="sbIPlaylistCommandsBuilder.idl"/>
-        <childnode refid="611" relation="include">
+        <childnode refid="765" relation="include">
         </childnode>
-        <childnode refid="612" relation="include">
+        <childnode refid="766" relation="include">
         </childnode>
       </node>
-      <node id="612">
+      <node id="766">
         <label>sbIPlaylistCommands.idl</label>
         <link refid="sb_i_playlist_commands_8idl-source"/>
-        <childnode refid="611" relation="include">
+        <childnode refid="765" relation="include">
         </childnode>
       </node>
-      <node id="611">
+      <node id="765">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -78,7 +78,7 @@
 <codeline lineno="39"><highlight class="normal"></highlight></codeline>
 <codeline lineno="44"><highlight class="comment">//<sp/>----------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="45"><highlight class="normal"></highlight></codeline>
-<codeline lineno="114"><highlight class="normal">[scriptable,<sp/>uuid(5a4b21df-afc7-4270-a9b9-fc70565ca309)]</highlight></codeline>
+<codeline lineno="114"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(5a4b21df-afc7-4270-a9b9-fc70565ca309)]</highlight></codeline>
 <codeline lineno="115" refid="interfacesb_i_playlist_commands_builder" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_commands_builder" kindref="compound" tooltip="A helper used to construct sbIPlaylistCommands interfaces.">sbIPlaylistCommandsBuilder</ref><sp/>:<sp/><ref refid="interfacesb_i_playlist_commands" kindref="compound" tooltip="An interface that represents the set of command buttons and context menu items available...">sbIPlaylistCommands</ref><sp/></highlight></codeline>
 <codeline lineno="116"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="127"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>appendSubmenu(in<sp/>AString<sp/>aParentSubMenuId,<sp/></highlight></codeline>
@@ -295,13 +295,13 @@
 <codeline lineno="674"><highlight class="normal"></highlight></codeline>
 <codeline lineno="675"><highlight class="normal"></highlight><highlight class="comment">//<sp/>----------------------------------------------------------------------------</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="676"><highlight class="normal"></highlight></codeline>
-<codeline lineno="682"><highlight class="normal">[scriptable,<sp/>uuid(c68a8813-7df9-41f4-888c-30f8a63cef60)]</highlight></codeline>
+<codeline lineno="682"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(c68a8813-7df9-41f4-888c-30f8a63cef60)]</highlight></codeline>
 <codeline lineno="683" refid="interfacesb_i_playlist_commands_builder_context" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_commands_builder_context" kindref="compound" tooltip="The interface for giving context to playlist builder callbacks.">sbIPlaylistCommandsBuilderContext</ref><sp/>:<sp/><ref refid="interfacesb_i_playlist_commands_context" kindref="compound" tooltip="The interface for giving context to a playlistcommands object.">sbIPlaylistCommandsContext</ref></highlight></codeline>
 <codeline lineno="684"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="688" refid="interfacesb_i_playlist_commands_builder_context_17b532de30f9236707fa827804a62775f" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>nsISupports<sp/>implementorContext;</highlight></codeline>
 <codeline lineno="689"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="690"><highlight class="normal"></highlight></codeline>
-<codeline lineno="700"><highlight class="normal">[scriptable,<sp/>function,<sp/>uuid(d93a113b-348a-4050-8c03-3806228f9293)]</highlight></codeline>
+<codeline lineno="700"><highlight class="normal">[scriptable,<sp/>function,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(d93a113b-348a-4050-8c03-3806228f9293)]</highlight></codeline>
 <codeline lineno="701" refid="interfacesb_i_playlist_commands_builder_simple_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_commands_builder_simple_callback" kindref="compound" tooltip="An interface used to receive generic callbacks from an sbIPlaylistCommandsBuilder...">sbIPlaylistCommandsBuilderSimpleCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="702"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="711"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>handleCallback(in<sp/><ref refid="interfacesb_i_playlist_commands_builder_context" kindref="compound" tooltip="The interface for giving context to playlist builder callbacks.">sbIPlaylistCommandsBuilderContext</ref><sp/>aContext,</highlight></codeline>
@@ -310,7 +310,7 @@
 <codeline lineno="714"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aHost);</highlight></codeline>
 <codeline lineno="715"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="716"><highlight class="normal"></highlight></codeline>
-<codeline lineno="726"><highlight class="normal">[scriptable,<sp/>function,<sp/>uuid(2474bfcf-bf50-4f27-b76e-b2472a126c08)]</highlight></codeline>
+<codeline lineno="726"><highlight class="normal">[scriptable,<sp/>function,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(2474bfcf-bf50-4f27-b76e-b2472a126c08)]</highlight></codeline>
 <codeline lineno="727" refid="interfacesb_i_playlist_commands_builder_get_string_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_commands_builder_get_string_callback" kindref="compound" tooltip="An interface used to receive callbacks from an sbIPlaylistCommandsBuilder object...">sbIPlaylistCommandsBuilderGetStringCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="728"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="739"><highlight class="normal"><sp/><sp/>AString<sp/>handleCallback(in<sp/><ref refid="interfacesb_i_playlist_commands_builder_context" kindref="compound" tooltip="The interface for giving context to playlist builder callbacks.">sbIPlaylistCommandsBuilderContext</ref><sp/>aContext,</highlight></codeline>
@@ -320,7 +320,7 @@
 <codeline lineno="743"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aData);</highlight></codeline>
 <codeline lineno="744"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="745"><highlight class="normal"></highlight></codeline>
-<codeline lineno="755"><highlight class="normal">[scriptable,<sp/>function,<sp/>uuid(68dde54c-5157-4650-addd-79ad331cf9ee)]</highlight></codeline>
+<codeline lineno="755"><highlight class="normal">[scriptable,<sp/>function,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(68dde54c-5157-4650-addd-79ad331cf9ee)]</highlight></codeline>
 <codeline lineno="756" refid="interfacesb_i_playlist_commands_builder_get_bool_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_commands_builder_get_bool_callback" kindref="compound" tooltip="An interface used to receive callbacks from an sbIPlaylistCommandsBuilder object...">sbIPlaylistCommandsBuilderGetBoolCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="757"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="768"><highlight class="normal"><sp/><sp/>PRBool<sp/>handleCallback(in<sp/><ref refid="interfacesb_i_playlist_commands_builder_context" kindref="compound" tooltip="The interface for giving context to playlist builder callbacks.">sbIPlaylistCommandsBuilderContext</ref><sp/>aContext,</highlight></codeline>
@@ -330,7 +330,7 @@
 <codeline lineno="772"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aData);</highlight></codeline>
 <codeline lineno="773"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="774"><highlight class="normal"></highlight></codeline>
-<codeline lineno="784"><highlight class="normal">[scriptable,<sp/>function,<sp/>uuid(24b5f0d8-424f-43ee-8f97-4efbfad6500f)]</highlight></codeline>
+<codeline lineno="784"><highlight class="normal">[scriptable,<sp/>function,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(24b5f0d8-424f-43ee-8f97-4efbfad6500f)]</highlight></codeline>
 <codeline lineno="785" refid="interfacesb_i_playlist_commands_builder_set_value_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_commands_builder_set_value_callback" kindref="compound" tooltip="A callback interface used to receive a string value from an sbIPlaylistCommandsBuilder...">sbIPlaylistCommandsBuilderSetValueCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="786"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="796"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>handleCallback(in<sp/><ref refid="interfacesb_i_playlist_commands_builder_context" kindref="compound" tooltip="The interface for giving context to playlist builder callbacks.">sbIPlaylistCommandsBuilderContext</ref><sp/>aContext,</highlight></codeline>
@@ -340,7 +340,7 @@
 <codeline lineno="800"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aValue);</highlight></codeline>
 <codeline lineno="801"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="802"><highlight class="normal"></highlight></codeline>
-<codeline lineno="812"><highlight class="normal">[scriptable,<sp/>function,<sp/>uuid(fb4694de-ba89-4097-843b-a00091cc430b)]</highlight></codeline>
+<codeline lineno="812"><highlight class="normal">[scriptable,<sp/>function,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(fb4694de-ba89-4097-843b-a00091cc430b)]</highlight></codeline>
 <codeline lineno="813" refid="interfacesb_i_playlist_commands_builder_instantiation_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_commands_builder_instantiation_callback" kindref="compound" tooltip="A callback interface used to instantiate a custom command DOM element for sbIPlaylistCommandsBuilder...">sbIPlaylistCommandsBuilderInstantiationCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="814"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="825"><highlight class="normal"><sp/><sp/>nsIDOMNode<sp/>handleCallback(in<sp/><ref refid="interfacesb_i_playlist_commands_builder_context" kindref="compound" tooltip="The interface for giving context to playlist builder callbacks.">sbIPlaylistCommandsBuilderContext</ref><sp/>aContext,</highlight></codeline>
@@ -350,7 +350,7 @@
 <codeline lineno="829"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMDocument<sp/>aParentDocument);</highlight></codeline>
 <codeline lineno="830"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="831"><highlight class="normal"></highlight></codeline>
-<codeline lineno="841"><highlight class="normal">[scriptable,<sp/>function,<sp/>uuid(d5f091e8-9b14-47f5-bf48-0f64c9d23a0a)]</highlight></codeline>
+<codeline lineno="841"><highlight class="normal">[scriptable,<sp/>function,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(d5f091e8-9b14-47f5-bf48-0f64c9d23a0a)]</highlight></codeline>
 <codeline lineno="842" refid="interfacesb_i_playlist_commands_builder_refresh_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_commands_builder_refresh_callback" kindref="compound" tooltip="A callback interface used to refresh a custom command DOM element for sbIPlaylistCommandsBuilder...">sbIPlaylistCommandsBuilderRefreshCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="843"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="853"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>handleCallback(in<sp/><ref refid="interfacesb_i_playlist_commands_builder_context" kindref="compound" tooltip="The interface for giving context to playlist builder callbacks.">sbIPlaylistCommandsBuilderContext</ref><sp/>aContext,</highlight></codeline>
@@ -360,7 +360,7 @@
 <codeline lineno="857"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIDOMNode<sp/>aElement);</highlight></codeline>
 <codeline lineno="858"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="859"><highlight class="normal"></highlight></codeline>
-<codeline lineno="869"><highlight class="normal">[scriptable,<sp/>function,<sp/>uuid(9f578767-7f92-486d-b0a9-f760ff6e22d0)]</highlight></codeline>
+<codeline lineno="869"><highlight class="normal">[scriptable,<sp/>function,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(9f578767-7f92-486d-b0a9-f760ff6e22d0)]</highlight></codeline>
 <codeline lineno="870" refid="interfacesb_i_playlist_commands_builder_p_c_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_commands_builder_p_c_callback" kindref="compound" tooltip="A callback interface used to receive callbacks from an sbIPlaylistCommandsBuilder...">sbIPlaylistCommandsBuilderPCCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="871"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="880"><highlight class="normal"><sp/><sp/>PRBool<sp/>handleCallback(in<sp/><ref refid="interfacesb_i_playlist_commands_builder_context" kindref="compound" tooltip="The interface for giving context to playlist builder callbacks.">sbIPlaylistCommandsBuilderContext</ref><sp/>aContext,</highlight></codeline>

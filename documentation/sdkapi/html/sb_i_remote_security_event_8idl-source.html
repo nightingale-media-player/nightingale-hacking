@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/remoteapi/public/sbIRemoteSecurityEvent.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -216,7 +222,7 @@
 <a name="l00148"></a>00148 <span class="comment">    &lt;http://developer.mozilla.org/en/docs/DOM:element.addEventListener&gt;</span>
 <a name="l00149"></a>00149 <span class="comment">*/</span>
 <a name="l00150"></a>00150 
-<a name="l00156"></a>00156 [scriptable, uuid(2faa8d0f-b3b0-4545-b06b-2ce92d53e7e3)]
+<a name="l00156"></a>00156 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(2faa8d0f-b3b0-4545-b06b-2ce92d53e7e3)]
 <a name="l00157"></a><a class="code" href="interfacesb_i_remote_security_event.html">00157</a>  interface <a class="code" href="interfacesb_i_remote_security_event.html" title="An interface to maintain information about the last security event that occurred...">sbIRemoteSecurityEvent</a> : nsISupports
 <a name="l00158"></a>00158 {
 <a name="l00159"></a>00159   <span class="comment">/*</span>
@@ -260,12 +266,12 @@
 <a name="l00197"></a><a class="code" href="interfacesb_i_remote_security_event.html#b0fb56a6b901e69ecd47ef94d6d14439">00197</a>   readonly attribute <span class="keywordtype">boolean</span> hasAccess;
 <a name="l00198"></a>00198 };
 <a name="l00199"></a>00199 
-<a name="l00200"></a>00200 [scriptable, uuid(422A0C68-C4A3-40c6-974D-37D1E71BAE8C)]
+<a name="l00200"></a>00200 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(422A0C68-C4A3-40c6-974D-37D1E71BAE8C)]
 <a name="l00201"></a><a class="code" href="interfacesb_i_mutable_remote_security_event.html">00201</a> interface <a class="code" href="interfacesb_i_mutable_remote_security_event.html">sbIMutableRemoteSecurityEvent</a> : nsISupports
 <a name="l00202"></a>00202 {
 <a name="l00203"></a>00203   <span class="keywordtype">void</span> initSecurityEvent(in nsIDOMDocument aDoc, in nsIURI aSiteScope, in AString aCategory, in AString aCategoryID, in <span class="keywordtype">boolean</span> aHasAccess);
 <a name="l00204"></a>00204 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

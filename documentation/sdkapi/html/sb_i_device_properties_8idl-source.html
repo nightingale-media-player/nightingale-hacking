@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/devices/base/public/sbIDeviceProperties.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -98,7 +104,7 @@
 <a name="l00030"></a>00030 interface nsIURI;
 <a name="l00031"></a><a class="code" href="interfacesb_i_device_identification.html">00031</a> interface nsIVariant;
 <a name="l00032"></a>00032 
-<a name="l00038"></a>00038 [scriptable, uuid(1b7449fe-86d1-4668-85fb-9d75591e48cd)]
+<a name="l00038"></a>00038 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(a637356d-a89d-4a2a-b0cd-858d24aa347a)]
 <a name="l00039"></a><a class="code" href="interfacesb_i_device_properties.html">00039</a> interface <a class="code" href="interfacesb_i_device_properties.html">sbIDeviceProperties</a> : nsISupports
 <a name="l00040"></a>00040 {
 <a name="l00044"></a>00044   <span class="keywordtype">void</span> initFriendlyName(in AString aFriendlyName);
@@ -109,30 +115,34 @@
 <a name="l00055"></a>00055 
 <a name="l00059"></a>00059   <span class="keywordtype">void</span> initSerialNumber(in nsIVariant aSerialNumber);
 <a name="l00060"></a>00060 
-<a name="l00064"></a>00064   <span class="keywordtype">void</span> initDeviceLocation(in nsIURI aDeviceLocationUri);
+<a name="l00064"></a>00064   <span class="keywordtype">void</span> initFirmwareVersion(in AString aFirmwareVersion);
 <a name="l00065"></a>00065 
-<a name="l00069"></a>00069   <span class="keywordtype">void</span> initDeviceIcon(in nsIURI aDeviceIconUri);
+<a name="l00069"></a>00069   <span class="keywordtype">void</span> initDeviceLocation(in nsIURI aDeviceLocationUri);
 <a name="l00070"></a>00070 
-<a name="l00074"></a>00074   <span class="keywordtype">void</span> initDeviceProperties(in nsIPropertyBag2 aProperties);
+<a name="l00074"></a>00074   <span class="keywordtype">void</span> initDeviceIcon(in nsIURI aDeviceIconUri);
 <a name="l00075"></a>00075 
-<a name="l00080"></a>00080   <span class="keywordtype">void</span> initDone();
-<a name="l00081"></a>00081 
-<a name="l00082"></a>00082 
-<a name="l00088"></a><a class="code" href="interfacesb_i_device_properties.html#da2d248e1a60baaa9e4422d29683c455">00088</a>   attribute AString friendlyName;
-<a name="l00089"></a>00089   
-<a name="l00093"></a><a class="code" href="interfacesb_i_device_properties.html#213e831e6844ba14c009f9a5d9cf8c6e">00093</a>   readonly attribute AString vendorName;
+<a name="l00079"></a>00079   <span class="keywordtype">void</span> initDeviceProperties(in nsIPropertyBag2 aProperties);
+<a name="l00080"></a>00080 
+<a name="l00085"></a>00085   <span class="keywordtype">void</span> initDone();
+<a name="l00086"></a>00086 
+<a name="l00087"></a>00087 
+<a name="l00093"></a><a class="code" href="interfacesb_i_device_properties.html#da2d248e1a60baaa9e4422d29683c455">00093</a>   attribute AString friendlyName;
 <a name="l00094"></a>00094   
-<a name="l00099"></a><a class="code" href="interfacesb_i_device_properties.html#d4091612e24a45fafe489a616e2d5b90">00099</a>   readonly attribute nsIVariant modelNumber;
-<a name="l00100"></a>00100   
-<a name="l00105"></a><a class="code" href="interfacesb_i_device_properties.html#29275faf10a59977a4cc3c4b6451d139">00105</a>   readonly attribute nsIVariant serialNumber;
-<a name="l00106"></a>00106   
-<a name="l00111"></a><a class="code" href="interfacesb_i_device_properties.html#9fee155b80798f207321d7c9caf6d2ec">00111</a>   readonly attribute nsIURI uri;
-<a name="l00112"></a>00112   
-<a name="l00117"></a><a class="code" href="interfacesb_i_device_properties.html#fb81d0dc5c243f6499129c068160e6db">00117</a>   readonly attribute nsIURI iconUri;
-<a name="l00118"></a>00118   
-<a name="l00123"></a><a class="code" href="interfacesb_i_device_properties.html#921e37c4912c740fe73360e362d9191c">00123</a>   readonly attribute nsIPropertyBag2 properties;
-<a name="l00124"></a>00124 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:38 2009 for Songbird by&nbsp;
+<a name="l00098"></a><a class="code" href="interfacesb_i_device_properties.html#213e831e6844ba14c009f9a5d9cf8c6e">00098</a>   readonly attribute AString vendorName;
+<a name="l00099"></a>00099   
+<a name="l00104"></a><a class="code" href="interfacesb_i_device_properties.html#d4091612e24a45fafe489a616e2d5b90">00104</a>   readonly attribute nsIVariant modelNumber;
+<a name="l00105"></a>00105   
+<a name="l00110"></a><a class="code" href="interfacesb_i_device_properties.html#29275faf10a59977a4cc3c4b6451d139">00110</a>   readonly attribute nsIVariant serialNumber;
+<a name="l00111"></a>00111   
+<a name="l00116"></a><a class="code" href="interfacesb_i_device_properties.html#96b419c48b4174533f936bba4254d455">00116</a>   readonly attribute AString firmwareVersion;
+<a name="l00117"></a>00117 
+<a name="l00122"></a><a class="code" href="interfacesb_i_device_properties.html#9fee155b80798f207321d7c9caf6d2ec">00122</a>   readonly attribute nsIURI uri;
+<a name="l00123"></a>00123   
+<a name="l00128"></a><a class="code" href="interfacesb_i_device_properties.html#fb81d0dc5c243f6499129c068160e6db">00128</a>   readonly attribute nsIURI iconUri;
+<a name="l00129"></a>00129   
+<a name="l00134"></a><a class="code" href="interfacesb_i_device_properties.html#921e37c4912c740fe73360e362d9191c">00134</a>   readonly attribute nsIPropertyBag2 properties;
+<a name="l00135"></a>00135 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -4,13 +4,13 @@
     <compoundname>sbIMediaListViewMap.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="343">
+      <node id="398">
         <label>components/library/base/public/sbIMediaListViewMap.idl</label>
         <link refid="sbIMediaListViewMap.idl"/>
-        <childnode refid="344" relation="include">
+        <childnode refid="399" relation="include">
         </childnode>
       </node>
-      <node id="344">
+      <node id="399">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -51,7 +51,7 @@
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref>;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(16ea057c-d4c2-4921-9984-13ac421a5f8d)]</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(16ea057c-d4c2-4921-9984-13ac421a5f8d)]</highlight></codeline>
 <codeline lineno="44" refid="interfacesb_i_media_list_view_map" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view_map" kindref="compound" tooltip="A mapping from nsISupports objects to save sbIMediaListView states.">sbIMediaListViewMap</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="52"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref><sp/>getView(<sp/>in<sp/>nsISupports<sp/>aParentKey,<sp/>in<sp/>nsISupports<sp/>aPageKey<sp/>);</highlight></codeline>

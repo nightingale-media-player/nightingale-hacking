@@ -4,13 +4,13 @@
     <compoundname>sbILibraryImporter.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="550">
+      <node id="682">
         <label>components/mediaimport/library/base/public/sbILibraryImporter.idl</label>
         <link refid="sbILibraryImporter.idl"/>
-        <childnode refid="551" relation="include">
+        <childnode refid="683" relation="include">
         </childnode>
       </node>
-      <node id="551">
+      <node id="683">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -61,7 +61,7 @@
 <codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight></codeline>
 <codeline lineno="39"><highlight class="normal"></highlight></codeline>
-<codeline lineno="47"><highlight class="normal">[scriptable,<sp/>uuid(D2CC37F4-A5DB-4226-966F-C51A9AE5686F)]</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(D2CC37F4-A5DB-4226-966F-C51A9AE5686F)]</highlight></codeline>
 <codeline lineno="48" refid="interfacesb_i_library_importer_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_importer_listener" kindref="compound" tooltip="Interface for listening to library importer events.">sbILibraryImporterListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="49"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onLibraryChanged(</highlight></codeline>
@@ -88,7 +88,7 @@
 <codeline lineno="113"><highlight class="normal"></highlight></codeline>
 <codeline lineno="121"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_job_progress" kindref="compound" tooltip="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</ref>;</highlight></codeline>
 <codeline lineno="122"><highlight class="normal"></highlight></codeline>
-<codeline lineno="123"><highlight class="normal">[scriptable,<sp/>uuid(04E3F8E9-70F4-4129-9A74-CEC88A8AEE93)]</highlight></codeline>
+<codeline lineno="123"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(04E3F8E9-70F4-4129-9A74-CEC88A8AEE93)]</highlight></codeline>
 <codeline lineno="124" refid="interfacesb_i_library_importer" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_importer" kindref="compound" tooltip="Interface for importing external libraries.">sbILibraryImporter</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="125"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
@@ -131,7 +131,7 @@
 <codeline lineno="188"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="189"><highlight class="normal"></highlight></codeline>
 <codeline lineno="190"><highlight class="normal"></highlight></codeline>
-<codeline lineno="203"><highlight class="normal">[scriptable,<sp/>uuid(81c027cd-1c4d-42d7-8b70-134cba5175a1)]</highlight></codeline>
+<codeline lineno="203"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(81c027cd-1c4d-42d7-8b70-134cba5175a1)]</highlight></codeline>
 <codeline lineno="204" refid="interfacesb_i_library_importer_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_importer_manager" kindref="compound">sbILibraryImporterManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="205"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="210" refid="interfacesb_i_library_importer_manager_125a6d07e15cf09b528c5bebbf21e0232" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_library_importer" kindref="compound" tooltip="Interface for importing external libraries.">sbILibraryImporter</ref><sp/>defaultLibraryImporter;</highlight></codeline>

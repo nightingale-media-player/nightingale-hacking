@@ -71,7 +71,7 @@
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
 <codeline lineno="36"><highlight class="normal">interface<sp/>nsIDOMElement;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
-<codeline lineno="57"><highlight class="normal">[scriptable,<sp/>uuid(80f8c597-2050-48a0-8efa-c9482547220e)]</highlight></codeline>
+<codeline lineno="57"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(80f8c597-2050-48a0-8efa-c9482547220e)]</highlight></codeline>
 <codeline lineno="58" refid="interfacesb_i_data_remote" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_data_remote" kindref="compound" tooltip="An interface for accessing, and binding to, stored data.">sbIDataRemote</ref><sp/>:<sp/>nsIObserver</highlight></codeline>
 <codeline lineno="59"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="60"><highlight class="normal"></highlight></codeline>

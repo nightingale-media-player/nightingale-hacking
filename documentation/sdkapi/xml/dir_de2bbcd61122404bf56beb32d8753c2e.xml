@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_de2bbcd61122404bf56beb32d8753c2e" kind="dir">
+    <compoundname>components/mediacore/metadata/handler/wma/public/</compoundname>
+    <innerfile refid="sb_i_metadata_handler_w_m_a_8idl">sbIMetadataHandlerWMA.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/mediacore/metadata/handler/wma/public/"/>
+  </compounddef>
+</doxygen>

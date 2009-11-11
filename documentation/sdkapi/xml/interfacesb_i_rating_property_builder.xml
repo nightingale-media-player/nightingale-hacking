@@ -10,30 +10,30 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_builder" kindref="compound">sbIPropertyBuilder</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="978">
+      <node id="1052">
         <label>sbIPropertyBuilder</label>
         <link refid="interfacesb_i_property_builder"/>
       </node>
-      <node id="977">
+      <node id="1051">
         <label>sbIRatingPropertyBuilder</label>
         <link refid="interfacesb_i_rating_property_builder"/>
-        <childnode refid="978" relation="public-inheritance">
+        <childnode refid="1052" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="980">
+      <node id="1054">
         <label>sbIPropertyBuilder</label>
         <link refid="interfacesb_i_property_builder"/>
       </node>
-      <node id="979">
+      <node id="1053">
         <label>sbIRatingPropertyBuilder</label>
         <link refid="interfacesb_i_rating_property_builder"/>
-        <childnode refid="980" relation="public-inheritance">
+        <childnode refid="1054" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="106" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" bodystart="105" bodyend="107"/>
+    <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="128" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" bodystart="127" bodyend="129"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_builder_12ea4dfd872cdd763d5202428b2048701" prot="public" virt="non-virtual"><scope>sbIRatingPropertyBuilder</scope><name>displayName</name></member>
       <member refid="interfacesb_i_property_builder_12c18bb192ca734fd2b393b200c848fc9" prot="public" virt="non-virtual"><scope>sbIRatingPropertyBuilder</scope><name>displayNameKey</name></member>

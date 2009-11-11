@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/library/base/public/sbILibraryChangeset.idl</h1><a href="sb_i_library_changeset_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -98,7 +104,7 @@
 <a name="l00035"></a>00035 interface <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>;
 <a name="l00036"></a>00036 interface <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a>;
 <a name="l00037"></a>00037 
-<a name="l00042"></a>00042 [scriptable, uuid(17c6e702-ea9d-46ed-98ed-0bd57d84b25c)]
+<a name="l00042"></a>00042 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(17c6e702-ea9d-46ed-98ed-0bd57d84b25c)]
 <a name="l00043"></a><a class="code" href="interfacesb_i_change_operation.html">00043</a> interface <a class="code" href="interfacesb_i_change_operation.html">sbIChangeOperation</a> : nsISupports
 <a name="l00044"></a>00044 {
 <a name="l00048"></a><a class="code" href="interfacesb_i_change_operation.html#2249f3e37cac324dff572b559be21d6b">00048</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> UNKNOWN   = 0;
@@ -114,7 +120,7 @@
 <a name="l00073"></a><a class="code" href="interfacesb_i_change_operation.html#7c1f91b55f7bc2a8e0b19cc1117c6ce6">00073</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span>  operation;
 <a name="l00074"></a>00074 };
 <a name="l00075"></a>00075 
-<a name="l00080"></a>00080 [scriptable, uuid(182106d3-a5eb-4c59-a161-766940c7c1da)]
+<a name="l00080"></a>00080 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(182106d3-a5eb-4c59-a161-766940c7c1da)]
 <a name="l00081"></a><a class="code" href="interfacesb_i_property_change.html">00081</a> interface <a class="code" href="interfacesb_i_property_change.html">sbIPropertyChange</a> : <a class="code" href="interfacesb_i_change_operation.html">sbIChangeOperation</a>
 <a name="l00082"></a>00082 {
 <a name="l00089"></a><a class="code" href="interfacesb_i_property_change.html#7508bf8204a4d37d9acf976e409dd77b">00089</a>   readonly attribute AString        id;
@@ -124,7 +130,7 @@
 <a name="l00099"></a><a class="code" href="interfacesb_i_property_change.html#afc38f8ab6dc6ef2657b6fa4b04b1d1d">00099</a>   readonly attribute AString        newValue;
 <a name="l00100"></a>00100 };
 <a name="l00101"></a>00101 
-<a name="l00106"></a>00106 [scriptable, uuid(e8db7394-2256-45b1-b079-28fbbcb7f5b9)]
+<a name="l00106"></a>00106 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(e8db7394-2256-45b1-b079-28fbbcb7f5b9)]
 <a name="l00107"></a><a class="code" href="interfacesb_i_library_change.html">00107</a> interface <a class="code" href="interfacesb_i_library_change.html">sbILibraryChange</a> : <a class="code" href="interfacesb_i_change_operation.html">sbIChangeOperation</a>
 <a name="l00108"></a>00108 {
 <a name="l00114"></a><a class="code" href="interfacesb_i_library_change.html#20cdfaad0cb2adb2ec466ea53e2816e6">00114</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> timestamp;
@@ -139,7 +145,7 @@
 <a name="l00156"></a>00156 };
 <a name="l00157"></a>00157 
 <a name="l00158"></a>00158 
-<a name="l00163"></a>00163 [scriptable, uuid(15ce0b86-4285-481b-8af4-751fc2357f7b)]
+<a name="l00163"></a>00163 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(15ce0b86-4285-481b-8af4-751fc2357f7b)]
 <a name="l00164"></a><a class="code" href="interfacesb_i_library_changeset.html">00164</a> interface <a class="code" href="interfacesb_i_library_changeset.html">sbILibraryChangeset</a> : nsISupports
 <a name="l00165"></a>00165 {
 <a name="l00171"></a><a class="code" href="interfacesb_i_library_changeset.html#4995ee5e845e0919e6c344ee94dfa943">00171</a>   readonly attribute nsIArray      sourceLists;
@@ -148,7 +154,7 @@
 <a name="l00183"></a>00183 
 <a name="l00192"></a><a class="code" href="interfacesb_i_library_changeset.html#7a381866b3081d5708cbf34b84ad1ec3">00192</a>   readonly attribute nsIArray        changes;
 <a name="l00193"></a>00193 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

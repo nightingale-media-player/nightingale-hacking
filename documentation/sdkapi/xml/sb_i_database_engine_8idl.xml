@@ -89,7 +89,7 @@
 <codeline lineno="38"><highlight class="normal">[ptr]<sp/>native<sp/>CDatabaseQueryPtr(CDatabaseQuery);</highlight></codeline>
 <codeline lineno="39"><highlight class="normal">[ref]<sp/>native<sp/>stlCStringRef(std::string);</highlight></codeline>
 <codeline lineno="40"><highlight class="normal"></highlight></codeline>
-<codeline lineno="49"><highlight class="normal">[scriptable,<sp/>uuid(4661378b-addc-4d1e-aece-0a49cd169b8d)]</highlight></codeline>
+<codeline lineno="49"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(2fbdee94-afa1-4fd3-abec-c87e5c340681)]</highlight></codeline>
 <codeline lineno="50" refid="interfacesb_i_database_engine" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_engine" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbIDatabaseEngine</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="51"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="58"><highlight class="normal"><sp/><sp/>[noscript]<sp/>PRInt32<sp/>SubmitQuery(in<sp/>CDatabaseQueryPtr<sp/>aDBQuery);</highlight></codeline>
@@ -100,13 +100,21 @@
 <codeline lineno="73"><highlight class="normal"><sp/><sp/></highlight></codeline>
 <codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>dumpMemoryStatistics();</highlight></codeline>
 <codeline lineno="79"><highlight class="normal"></highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>releaseMemory();</highlight></codeline>
-<codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="93" refid="interfacesb_i_database_engine_1d862fd8232fa8e6b0bfa1606a0744d01" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>localeCollationEnabled;</highlight></codeline>
-<codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="98" refid="interfacesb_i_database_engine_1bc24b94b63b9ebd163bafc1fe4d3c45f" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>localeCollationID;</highlight></codeline>
-<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/></highlight></codeline>
-<codeline lineno="100"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>getCurrentMemoryUsage(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>flag);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>getHighWaterMemoryUsage(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>flag);</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99" refid="interfacesb_i_database_engine_1fe6f18b89a75072071f581cc581a56e4" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>DATABASE_MEMORYUSED<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="100" refid="interfacesb_i_database_engine_10648e5327dd9002ad68d3378d189bfcf" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>DATABASE_PAGECACHEUSED<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="101" refid="interfacesb_i_database_engine_1b03d86645692d95e7f31f163090ab748" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>DATABASE_PAGECACHEOVERFLOW<sp/>=<sp/>2;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="109"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>releaseMemory();</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="116" refid="interfacesb_i_database_engine_1d862fd8232fa8e6b0bfa1606a0744d01" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>localeCollationEnabled;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="121" refid="interfacesb_i_database_engine_1bc24b94b63b9ebd163bafc1fe4d3c45f" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>localeCollationID;</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="123"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/dbengine/public/sbIDatabaseEngine.idl"/>
   </compounddef>

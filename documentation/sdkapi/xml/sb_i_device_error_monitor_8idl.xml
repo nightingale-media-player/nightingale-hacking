@@ -4,17 +4,18 @@
     <compoundname>sbIDeviceErrorMonitor.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="135">
+      <node id="182">
         <label>components/devices/device/public/sbIDeviceErrorMonitor.idl</label>
         <link refid="sbIDeviceErrorMonitor.idl"/>
-        <childnode refid="136" relation="include">
+        <childnode refid="183" relation="include">
         </childnode>
       </node>
-      <node id="136">
+      <node id="183">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_device_error_monitor" prot="public">sbIDeviceErrorMonitor</innerclass>
+    <innerclass refid="interfacesb_i_device_error_monitor_listener" prot="public">sbIDeviceErrorMonitorListener</innerclass>
     <briefdescription>
 <para>Interface to the device service pane provider. </para>    </briefdescription>
     <detaileddescription>
@@ -50,17 +51,27 @@
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref>;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/>nsIArray;</highlight></codeline>
-<codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="42"><highlight class="normal">[scriptable,<sp/>uuid(7a2a55d1-0270-4789-bc7c-12ffaa19b4cd)]</highlight></codeline>
-<codeline lineno="43" refid="interfacesb_i_device_error_monitor" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_error_monitor" kindref="compound" tooltip="This service monitors devices for errors and stores them for easy access later.">sbIDeviceErrorMonitor</ref><sp/>:<sp/>nsISupports<sp/>{</highlight></codeline>
-<codeline lineno="44"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="51"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>deviceHasErrors(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice);</highlight></codeline>
-<codeline lineno="52"><highlight class="normal"></highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/>nsIArray<sp/>getErrorsForDevice(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice);</highlight></codeline>
-<codeline lineno="61"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="67"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>clearErrorsForDevice(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice);</highlight></codeline>
-<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="69"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_error_monitor_listener" kindref="compound" tooltip="This interface is used to notify device error listeners of new errors.">sbIDeviceErrorMonitorListener</ref>;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(99444d12-1dd1-11b2-aac3-e1cd25ffc309)]</highlight></codeline>
+<codeline lineno="44" refid="interfacesb_i_device_error_monitor" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_error_monitor" kindref="compound" tooltip="This service monitors devices for errors and stores them for easy access later.">sbIDeviceErrorMonitor</ref><sp/>:<sp/>nsISupports<sp/>{</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>deviceHasErrors(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/>nsIArray<sp/>getErrorsForDevice(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>clearErrorsForDevice(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addListener(in<sp/><ref refid="interfacesb_i_device_error_monitor_listener" kindref="compound" tooltip="This interface is used to notify device error listeners of new errors.">sbIDeviceErrorMonitorListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeListener(in<sp/><ref refid="interfacesb_i_device_error_monitor_listener" kindref="compound" tooltip="This interface is used to notify device error listeners of new errors.">sbIDeviceErrorMonitorListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal">[scriptable,<sp/>function,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(a34659d6-1dd1-11b2-8659-af363aaf72c0)]</highlight></codeline>
+<codeline lineno="90" refid="interfacesb_i_device_error_monitor_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_error_monitor_listener" kindref="compound" tooltip="This interface is used to notify device error listeners of new errors.">sbIDeviceErrorMonitorListener</ref><sp/>:<sp/>nsISupports<sp/>{</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onDeviceError(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice);</highlight></codeline>
+<codeline lineno="98"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/devices/device/public/sbIDeviceErrorMonitor.idl"/>
   </compounddef>

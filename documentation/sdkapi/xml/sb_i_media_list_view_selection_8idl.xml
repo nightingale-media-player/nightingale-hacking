@@ -4,13 +4,13 @@
     <compoundname>sbIMediaListViewSelection.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="346">
+      <node id="401">
         <label>components/library/base/public/sbIMediaListViewSelection.idl</label>
         <link refid="sbIMediaListViewSelection.idl"/>
-        <childnode refid="347" relation="include">
+        <childnode refid="402" relation="include">
         </childnode>
       </node>
-      <node id="347">
+      <node id="402">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -52,7 +52,7 @@
 <codeline lineno="33"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
 <codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
-<codeline lineno="40"><highlight class="normal">[scriptable,<sp/>uuid(8e4e9f65-9c90-4381-a8ed-b8aa2d1ad028)]</highlight></codeline>
+<codeline lineno="40"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(8e4e9f65-9c90-4381-a8ed-b8aa2d1ad028)]</highlight></codeline>
 <codeline lineno="41" refid="interfacesb_i_media_list_view_selection_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view_selection_listener" kindref="compound" tooltip="Listener interface that gets notified on selection changes.">sbIMediaListViewSelectionListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="42"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onSelectionChanged();</highlight></codeline>
@@ -60,43 +60,45 @@
 <codeline lineno="52"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onCurrentIndexChanged();</highlight></codeline>
 <codeline lineno="53"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"></highlight></codeline>
-<codeline lineno="60"><highlight class="normal">[scriptable,<sp/>uuid(ea5d0e88-6b5b-4c22-a753-7274ab774d8a)]</highlight></codeline>
-<codeline lineno="61" refid="interfacesb_i_media_list_view_selection" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view_selection" kindref="compound" tooltip="Manage the selection of items within a view. This interface is a subset of nsITreeView...">sbIMediaListViewSelection</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="62"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="66" refid="interfacesb_i_media_list_view_selection_190d52082831a7450003b5b5a8e62d0ce" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>count;</highlight></codeline>
-<codeline lineno="67"><highlight class="normal"></highlight></codeline>
-<codeline lineno="71" refid="interfacesb_i_media_list_view_selection_163dbda6a90dad503bedf0cfb3b6911a1" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>currentIndex;</highlight></codeline>
-<codeline lineno="72"><highlight class="normal"></highlight></codeline>
-<codeline lineno="76" refid="interfacesb_i_media_list_view_selection_105718acc03ced22c1f7e0e268f06f021" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>currentMediaItem;</highlight></codeline>
-<codeline lineno="77"><highlight class="normal"></highlight></codeline>
-<codeline lineno="83"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>isIndexSelected(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"></highlight></codeline>
-<codeline lineno="91" refid="interfacesb_i_media_list_view_selection_16018342e4f7ac53e288bdcd6d7474483" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISimpleEnumerator<sp/>selectedIndexedMediaItems;</highlight></codeline>
-<codeline lineno="92"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="98" refid="interfacesb_i_media_list_view_selection_1183d7ed2ca944b91a6c08ba4b6cb9ba9" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISimpleEnumerator<sp/>selectedMediaItems;</highlight></codeline>
-<codeline lineno="99"><highlight class="normal"></highlight></codeline>
-<codeline lineno="104"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>select(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
-<codeline lineno="105"><highlight class="normal"></highlight></codeline>
-<codeline lineno="111"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>selectOnly(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
-<codeline lineno="112"><highlight class="normal"></highlight></codeline>
-<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>toggle(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
-<codeline lineno="118"><highlight class="normal"></highlight></codeline>
-<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>clear(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
-<codeline lineno="124"><highlight class="normal"></highlight></codeline>
-<codeline lineno="130"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>selectRange(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aStartIndex,<sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aEndIndex);</highlight></codeline>
-<codeline lineno="131"><highlight class="normal"></highlight></codeline>
-<codeline lineno="137"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>clearRange(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aStartIndex,<sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aEndIndex);</highlight></codeline>
-<codeline lineno="138"><highlight class="normal"></highlight></codeline>
-<codeline lineno="142"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>selectNone();</highlight></codeline>
-<codeline lineno="143"><highlight class="normal"></highlight></codeline>
-<codeline lineno="147"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>selectAll();</highlight></codeline>
-<codeline lineno="148"><highlight class="normal"></highlight></codeline>
-<codeline lineno="154"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addListener(in<sp/><ref refid="interfacesb_i_media_list_view_selection_listener" kindref="compound" tooltip="Listener interface that gets notified on selection changes.">sbIMediaListViewSelectionListener</ref><sp/>aListener);</highlight></codeline>
-<codeline lineno="155"><highlight class="normal"></highlight></codeline>
-<codeline lineno="160"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeListener(in<sp/><ref refid="interfacesb_i_media_list_view_selection_listener" kindref="compound" tooltip="Listener interface that gets notified on selection changes.">sbIMediaListViewSelectionListener</ref><sp/>aListener);</highlight></codeline>
-<codeline lineno="161"><highlight class="normal"></highlight></codeline>
-<codeline lineno="165" refid="interfacesb_i_media_list_view_selection_12bb3b38fee48e8de18e7c9592aad5481" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>selectionNotificationsSuppressed;</highlight></codeline>
-<codeline lineno="166"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="63"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(ea5d0e88-6b5b-4c22-a753-7274ab774d8a)]</highlight></codeline>
+<codeline lineno="64" refid="interfacesb_i_media_list_view_selection" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view_selection" kindref="compound" tooltip="Manage the selection of items within a view. This interface is a subset of nsITreeViewSelection...">sbIMediaListViewSelection</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="65"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="69" refid="interfacesb_i_media_list_view_selection_190d52082831a7450003b5b5a8e62d0ce" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>count;</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74" refid="interfacesb_i_media_list_view_selection_163dbda6a90dad503bedf0cfb3b6911a1" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>currentIndex;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="interfacesb_i_media_list_view_selection_105718acc03ced22c1f7e0e268f06f021" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>currentMediaItem;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>isIndexSelected(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="94" refid="interfacesb_i_media_list_view_selection_16018342e4f7ac53e288bdcd6d7474483" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISimpleEnumerator<sp/>selectedIndexedMediaItems;</highlight></codeline>
+<codeline lineno="95"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="101" refid="interfacesb_i_media_list_view_selection_1183d7ed2ca944b91a6c08ba4b6cb9ba9" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsISimpleEnumerator<sp/>selectedMediaItems;</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>select(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="114"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>selectOnly(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>timedSelectOnly(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex,<sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aDelay);</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>toggle(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="134"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>clear(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"></highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>selectRange(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aStartIndex,<sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aEndIndex);</highlight></codeline>
+<codeline lineno="142"><highlight class="normal"></highlight></codeline>
+<codeline lineno="148"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>clearRange(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aStartIndex,<sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aEndIndex);</highlight></codeline>
+<codeline lineno="149"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>selectNone();</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="158"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>selectAll();</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"></highlight></codeline>
+<codeline lineno="165"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addListener(in<sp/><ref refid="interfacesb_i_media_list_view_selection_listener" kindref="compound" tooltip="Listener interface that gets notified on selection changes.">sbIMediaListViewSelectionListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeListener(in<sp/><ref refid="interfacesb_i_media_list_view_selection_listener" kindref="compound" tooltip="Listener interface that gets notified on selection changes.">sbIMediaListViewSelectionListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="176" refid="interfacesb_i_media_list_view_selection_12bb3b38fee48e8de18e7c9592aad5481" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>selectionNotificationsSuppressed;</highlight></codeline>
+<codeline lineno="177"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl"/>
   </compounddef>

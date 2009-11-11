@@ -4,31 +4,43 @@
     <compoundname>sbIAlbumArtService</compoundname>
     <includes refid="sb_i_album_art_service_8idl" local="no">sbIAlbumArtService.idl</includes>
       <sectiondef kind="public-func">
-      <memberdef kind="function" id="interfacesb_i_album_art_service_100cb8b5ca59e60f2fe5ce88cdee7ffa0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_album_art_service_120cafe54cb595df4a075824e673f88cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIArray</type>
         <definition>nsIArray sbIAlbumArtService::getFetcherList</definition>
-        <argsstring>(in boolean aLocalOnly)</argsstring>
+        <argsstring>(in unsigned long type,[optional] in boolean includeDisabled)</argsstring>
         <name>getFetcherList</name>
         <param>
+          <type>in unsigned long</type>
+          <declname>type</declname>
+        </param>
+        <param>
+          <attributes>[optional]</attributes>
           <type>in boolean</type>
-          <declname>aLocalOnly</declname>
+          <declname>includeDisabled</declname>
         </param>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Return a list of album art fetcher contract ID&apos;s as an array of nsIVariant&apos;s of type ACString. If aLocalOnly is true, return only local album art fetchers.</para><para><parameterlist kind="param"><parameteritem>
+<para>Return a list of album art fetcher contract ID&apos;s as an array of nsIVariant ACStrings. Use type to specify if local, remote, or all fetchers.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>aLocalOnly</parametername>
+<parametername>type</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>If true, only return local album art fetchers.</para></parameterdescription>
+<para><ref refid="interfacesb_i_album_art_fetcher_set_15505adb833c0a79e8503eb3ee849cc48" kindref="member">sbIAlbumArtFetcherSet.TYPE_LOCAL</ref>, etc. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>includeDisabled</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Includes fetchers that are disabled. (defaults to false)</para></parameterdescription>
 </parameteritem>
 </parameterlist>
 <simplesect kind="return"><para>List of album art fetcher contract ID&apos;s. </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="63"/>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="65"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_album_art_service_1c02f281e797186164ea83102027c90d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -77,11 +89,11 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="81"/>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="83"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_album_art_service_1debef4d7ec6f68c9d80f671d8c8f1102" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>nsIFileURL</type>
-        <definition>nsIFileURL sbIAlbumArtService::cacheImage</definition>
+      <memberdef kind="function" id="interfacesb_i_album_art_service_12bdf8e6af0caf699666cfa937b04b0dc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsIURI</type>
+        <definition>nsIURI sbIAlbumArtService::cacheImage</definition>
         <argsstring>(in AUTF8String aMimeType,[const, array, size_is(aDataLen)] in octet aData, in unsigned long aDataLen)</argsstring>
         <name>cacheImage</name>
         <param>
@@ -126,7 +138,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="98"/>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="100"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_album_art_service_1800472d94058acada677926a67685d92" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -162,7 +174,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="114"/>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="116"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_album_art_service_1ebaa57739ba74a2d1afee4dadb08d232" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsISupports</type>
@@ -196,18 +208,18 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="125"/>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="127"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Interface for the album art service. Instantiate as a component service. </para>    </briefdescription>
     <detaileddescription>
 <para>&quot;@songbirdnest.com/Songbird/album-art-service;1&quot; </para>    </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="52" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" bodystart="51" bodyend="126"/>
+    <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="52" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" bodystart="51" bodyend="128"/>
     <listofallmembers>
-      <member refid="interfacesb_i_album_art_service_1debef4d7ec6f68c9d80f671d8c8f1102" prot="public" virt="non-virtual"><scope>sbIAlbumArtService</scope><name>cacheImage</name></member>
+      <member refid="interfacesb_i_album_art_service_12bdf8e6af0caf699666cfa937b04b0dc" prot="public" virt="non-virtual"><scope>sbIAlbumArtService</scope><name>cacheImage</name></member>
       <member refid="interfacesb_i_album_art_service_1800472d94058acada677926a67685d92" prot="public" virt="non-virtual"><scope>sbIAlbumArtService</scope><name>cacheTemporaryData</name></member>
-      <member refid="interfacesb_i_album_art_service_100cb8b5ca59e60f2fe5ce88cdee7ffa0" prot="public" virt="non-virtual"><scope>sbIAlbumArtService</scope><name>getFetcherList</name></member>
+      <member refid="interfacesb_i_album_art_service_120cafe54cb595df4a075824e673f88cb" prot="public" virt="non-virtual"><scope>sbIAlbumArtService</scope><name>getFetcherList</name></member>
       <member refid="interfacesb_i_album_art_service_1c02f281e797186164ea83102027c90d6" prot="public" virt="non-virtual"><scope>sbIAlbumArtService</scope><name>imageIsValidAlbumArt</name></member>
       <member refid="interfacesb_i_album_art_service_1ebaa57739ba74a2d1afee4dadb08d232" prot="public" virt="non-virtual"><scope>sbIAlbumArtService</scope><name>retrieveTemporaryData</name></member>
     </listofallmembers>

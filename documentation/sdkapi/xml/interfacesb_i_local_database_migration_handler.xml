@@ -57,25 +57,25 @@
 <para><simplesect kind="note"><para>For your migration handler to be picked up by the LocalDatabaseMigration Component, it must have a contract id that begins with the following: &quot;@songbirdnest.com/Songbird/Library/LocalDatabase/Migration/Handler/&quot; </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="467">
+      <node id="501">
         <label>sbILocalDatabaseMigrationHandler</label>
         <link refid="interfacesb_i_local_database_migration_handler"/>
-        <childnode refid="468" relation="public-inheritance">
+        <childnode refid="502" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="468">
+      <node id="502">
         <label>sbIJobProgress</label>
         <link refid="interfacesb_i_job_progress"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="469">
+      <node id="503">
         <label>sbILocalDatabaseMigrationHandler</label>
         <link refid="interfacesb_i_local_database_migration_handler"/>
-        <childnode refid="470" relation="public-inheritance">
+        <childnode refid="504" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="470">
+      <node id="504">
         <label>sbIJobProgress</label>
         <link refid="interfacesb_i_job_progress"/>
       </node>

@@ -80,7 +80,9 @@
   <tr class="memlist"><td><a class="el" href="interfacesb_i_media_list.html#3437b5aa10efd05b309d9f71868057b7">addSome</a>(in nsISimpleEnumerator aMediaItems)</td><td><a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_library.html#5d4add99176f0b5a9d03948d2f0eee3b">batchCreateMediaItems</a>(in nsIArray aURIArray,[optional] in nsIArray aPropertyArrayArray,[optional] in boolean aAllowDuplicates)</td><td><a class="el" href="interfacesb_i_library.html">sbILibrary</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_library.html#5236e2cf65e133dff8618b6196817a39">batchCreateMediaItemsAsync</a>(in sbIBatchCreateMediaItemsListener aListener, in nsIArray aURIArray,[optional] in nsIArray aPropertyArrayArray,[optional] in boolean aAllowDuplicates)</td><td><a class="el" href="interfacesb_i_library.html">sbILibrary</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="interfacesb_i_library.html#e1f6bac067056817c98716f9192ad744">batchCreateMediaItemsIfNotExist</a>(in nsIArray aURIArray,[optional] in nsIArray aPropertyArrayArray,[optional] out nsIArray aResultItemArray)</td><td><a class="el" href="interfacesb_i_library.html">sbILibrary</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_media_list.html#5b727b02e89e57a15b7f78778722c4a6">clear</a>()</td><td><a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="interfacesb_i_library.html#06128d059bd1a24fb499dadd4b8bea4a">clearItems</a>()</td><td><a class="el" href="interfacesb_i_library.html">sbILibrary</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_media_list.html#cb4bbfe64589e3bd1d973632b39b3116">contains</a>(in sbIMediaItem aMediaItem)</td><td><a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_media_item.html#49d00fe6e35d8d24dc468b97d43d8075">contentLength</a></td><td><a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_media_item.html#574db3949d138422afdbd6ecffd88aa2">contentSrc</a></td><td><a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a></td><td></td></tr>
@@ -121,6 +123,7 @@
   <tr class="memlist"><td><a class="el" href="interfacesb_i_media_list.html#c038790117b70fcca91a4a6f6c5a3f4b">LISTENER_FLAGS_BATCHBEGIN</a></td><td><a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_media_list.html#536109c8e3dc6da8d732ad92a226337b">LISTENER_FLAGS_BATCHEND</a></td><td><a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_media_list.html#ebd887a26980780de64ddf4af9cf430a">LISTENER_FLAGS_BEFOREITEMREMOVED</a></td><td><a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="interfacesb_i_media_list.html#9db5641f8058c3e4b81711df8cf3653a">LISTENER_FLAGS_BEFORELISTCLEARED</a></td><td><a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_media_list.html#b34ff623969f79f3dab95304e42f34b3">LISTENER_FLAGS_ITEMADDED</a></td><td><a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_media_list.html#9900bddb359408a49158687dfcb6f20d">LISTENER_FLAGS_ITEMMOVED</a></td><td><a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_media_list.html#34e744de3ce3931f387c6ab405c3a968">LISTENER_FLAGS_ITEMUPDATED</a></td><td><a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a></td><td></td></tr>
@@ -150,7 +153,7 @@
   <tr class="memlist"><td><a class="el" href="interfacesb_i_library_resource.html#377285cd148468c9550954df62ecad13">updated</a></td><td><a class="el" href="interfacesb_i_library_resource.html">sbILibraryResource</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_library_resource.html#faa01b7805181fabba68fd9a721e7d3d">userEditable</a></td><td><a class="el" href="interfacesb_i_library_resource.html">sbILibraryResource</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="interfacesb_i_media_list.html#d79e1478f69e0d8ba8bed29364d5fb13">userEditableContent</a></td><td><a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a></td><td></td></tr>
-</table><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:43 2009 for Songbird by&nbsp;
+</table><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:48 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

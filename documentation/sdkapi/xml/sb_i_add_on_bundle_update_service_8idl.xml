@@ -4,13 +4,13 @@
     <compoundname>sbIAddOnBundleUpdateService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="713">
+      <node id="865">
         <label>components/update/public/sbIAddOnBundleUpdateService.idl</label>
         <link refid="sbIAddOnBundleUpdateService.idl"/>
-        <childnode refid="714" relation="include">
+        <childnode refid="866" relation="include">
         </childnode>
       </node>
-      <node id="714">
+      <node id="866">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -59,7 +59,7 @@
 <codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight></codeline>
 <codeline lineno="39"><highlight class="normal"></highlight></codeline>
-<codeline lineno="48"><highlight class="normal">[scriptable,<sp/>uuid(46EE669F-D6B5-409E-B4B2-CC6240237A54)]</highlight></codeline>
+<codeline lineno="48"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(46EE669F-D6B5-409E-B4B2-CC6240237A54)]</highlight></codeline>
 <codeline lineno="49" refid="interfacesb_i_add_on_bundle_update_service" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_add_on_bundle_update_service" kindref="compound" tooltip="Interface for the add-on bundle update service.">sbIAddOnBundleUpdateService</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="50"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="55" refid="interfacesb_i_add_on_bundle_update_service_1b5f46665218a7941dd1cb56d707abc5a" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>restartRequired;</highlight></codeline>

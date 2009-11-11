@@ -122,47 +122,47 @@
     <detaileddescription>
 <para>An asynchronous wrapper around an existing GUID array. </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="439">
+      <node id="475">
         <label>sbILocalDatabaseGUIDArray</label>
         <link refid="interfacesb_i_local_database_g_u_i_d_array"/>
       </node>
-      <node id="438">
+      <node id="474">
         <label>sbILocalDatabaseAsyncGUIDArray</label>
         <link refid="interfacesb_i_local_database_async_g_u_i_d_array"/>
-        <childnode refid="439" relation="public-inheritance">
+        <childnode refid="475" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="441">
+      <node id="477">
         <label>sbILocalDatabaseGUIDArray</label>
         <link refid="interfacesb_i_local_database_g_u_i_d_array"/>
-        <childnode refid="442" relation="usage">
+        <childnode refid="478" relation="usage">
           <edgelabel>propertyCache</edgelabel>
         </childnode>
-        <childnode refid="443" relation="usage">
+        <childnode refid="479" relation="usage">
           <edgelabel>listener</edgelabel>
         </childnode>
-        <childnode refid="444" relation="usage">
+        <childnode refid="480" relation="usage">
           <edgelabel>currentSort</edgelabel>
         </childnode>
       </node>
-      <node id="444">
+      <node id="480">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="443">
+      <node id="479">
         <label>sbILocalDatabaseGUIDArrayListener</label>
         <link refid="interfacesb_i_local_database_g_u_i_d_array_listener"/>
       </node>
-      <node id="442">
+      <node id="478">
         <label>sbILocalDatabasePropertyCache</label>
         <link refid="interfacesb_i_local_database_property_cache"/>
       </node>
-      <node id="440">
+      <node id="476">
         <label>sbILocalDatabaseAsyncGUIDArray</label>
         <link refid="interfacesb_i_local_database_async_g_u_i_d_array"/>
-        <childnode refid="441" relation="public-inheritance">
+        <childnode refid="477" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
@@ -183,6 +183,7 @@
       <member refid="interfacesb_i_local_database_g_u_i_d_array_129a9562b17ef691daa5dccd01aec23bd" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>currentSort</name></member>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_1a1b3275e4f100ac58569ae09201e0c47" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>databaseGUID</name></member>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_1bdacc34062adbb85068599a45a440d0b" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>databaseLocation</name></member>
+      <member refid="interfacesb_i_local_database_g_u_i_d_array_17eb3907b2b7bf1e27ecfc6499eb80d2c" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>distinctWithSortableValues</name></member>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_1bbbd1837051c5ce70c8bea1e9bcee4ce" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>fetchSize</name></member>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_1bba3b93d54588f2a440627a56c0ee0e3" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>getFirstIndexByGuid</name></member>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_1939ca7e8368ef220828919ad35715cf8" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>getFirstIndexByPrefix</name></member>
@@ -199,6 +200,7 @@
       <member refid="interfacesb_i_local_database_g_u_i_d_array_19d1b1a66f01199944308cf4d4347163e" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>invalidate</name></member>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_11b793cfac37c5c63458f7355b8773d8f" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>isDistinct</name></member>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_12ebfd90bc16599a8dbf027040492ea2f" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>isIndexCached</name></member>
+      <member refid="interfacesb_i_local_database_g_u_i_d_array_15ed606eacb06b51ebf0f454901197c20" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>isValid</name></member>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_1b86ce778048b83e60a82076cb8369b25" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>length</name></member>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_1e88a5acc480536103d80e8af04638f7b" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>listener</name></member>
       <member refid="interfacesb_i_local_database_g_u_i_d_array_1d5430041b126e51f9cfdbde4cac60f04" prot="public" virt="non-virtual"><scope>sbILocalDatabaseAsyncGUIDArray</scope><name>propertyCache</name></member>

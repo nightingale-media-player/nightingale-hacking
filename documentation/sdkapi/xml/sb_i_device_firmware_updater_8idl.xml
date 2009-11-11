@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="sb_i_device_firmware_updater_8idl" kind="file">
+    <compoundname>sbIDeviceFirmwareUpdater.idl</compoundname>
+    <includes local="yes">nsISupports.idl</includes>
+    <incdepgraph>
+      <node id="127">
+        <label>nsISupports.idl</label>
+      </node>
+      <node id="126">
+        <label>components/devices/base/public/sbIDeviceFirmwareUpdater.idl</label>
+        <link refid="sbIDeviceFirmwareUpdater.idl"/>
+        <childnode refid="127" relation="include">
+        </childnode>
+      </node>
+    </incdepgraph>
+    <innerclass refid="interfacesb_i_device_firmware_updater" prot="public">sbIDeviceFirmwareUpdater</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="3"><highlight class="comment">//<sp/>BEGIN<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="4"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="5"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
+<codeline lineno="6"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2009<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="8"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
+<codeline lineno="9"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="10"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>
+<codeline lineno="11"><highlight class="comment">//<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>Version<sp/>2<sp/>(the<sp/>&quot;GPL&quot;).</highlight></codeline>
+<codeline lineno="12"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="13"><highlight class="comment">//<sp/>Software<sp/>distributed<sp/>under<sp/>the<sp/>License<sp/>is<sp/>distributed<sp/></highlight></codeline>
+<codeline lineno="14"><highlight class="comment">//<sp/>on<sp/>an<sp/>&quot;AS<sp/>IS&quot;<sp/>basis,<sp/>WITHOUT<sp/>WARRANTY<sp/>OF<sp/>ANY<sp/>KIND,<sp/>either<sp/></highlight></codeline>
+<codeline lineno="15"><highlight class="comment">//<sp/>express<sp/>or<sp/>implied.<sp/>See<sp/>the<sp/>GPL<sp/>for<sp/>the<sp/>specific<sp/>language<sp/></highlight></codeline>
+<codeline lineno="16"><highlight class="comment">//<sp/>governing<sp/>rights<sp/>and<sp/>limitations.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="18"><highlight class="comment">//<sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GPL<sp/>along<sp/>with<sp/>this<sp/></highlight></codeline>
+<codeline lineno="19"><highlight class="comment">//<sp/>program.<sp/>If<sp/>not,<sp/>go<sp/>to<sp/>http://www.gnu.org/licenses/gpl.html</highlight></codeline>
+<codeline lineno="20"><highlight class="comment">//<sp/>or<sp/>write<sp/>to<sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>Inc.,<sp/></highlight></codeline>
+<codeline lineno="21"><highlight class="comment">//<sp/>51<sp/>Franklin<sp/>Street,<sp/>Fifth<sp/>Floor,<sp/>Boston,<sp/>MA<sp/>02110-1301,<sp/>USA.</highlight></codeline>
+<codeline lineno="22"><highlight class="comment">//<sp/></highlight></codeline>
+<codeline lineno="23"><highlight class="comment">//<sp/>END<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="24"><highlight class="comment">//</highlight></codeline>
+<codeline lineno="25"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref>;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_event_listener" kindref="compound">sbIDeviceEventListener</ref>;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_firmware_handler" kindref="compound">sbIDeviceFirmwareHandler</ref>;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_firmware_update" kindref="compound">sbIDeviceFirmwareUpdate</ref>;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight></codeline>
+<codeline lineno="44"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(1561bc1c-c1a9-484e-b86c-585534dfa86b)]</highlight></codeline>
+<codeline lineno="45" refid="interfacesb_i_device_firmware_updater" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_firmware_updater" kindref="compound">sbIDeviceFirmwareUpdater</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="46"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>checkForUpdate(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice,<sp/></highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_device_event_listener" kindref="compound">sbIDeviceEventListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>downloadUpdate(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice,<sp/></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aVerifyFirmwareUpdate,</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_device_event_listener" kindref="compound">sbIDeviceEventListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>verifyUpdate(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice,</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_device_firmware_update" kindref="compound">sbIDeviceFirmwareUpdate</ref><sp/>aFirmwareUpdate,</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_device_event_listener" kindref="compound">sbIDeviceEventListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>applyUpdate(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice,</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_device_firmware_update" kindref="compound">sbIDeviceFirmwareUpdate</ref><sp/>aFirmwareUpdate,</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_device_event_listener" kindref="compound">sbIDeviceEventListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>recoveryUpdate(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice,</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_device_event_listener" kindref="compound">sbIDeviceEventListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>continueUpdate(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice,<sp/></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_device_event_listener" kindref="compound">sbIDeviceEventListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="128"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>finalizeUpdate(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice);</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"></highlight></codeline>
+<codeline lineno="139"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>verifyDevice(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice,</highlight></codeline>
+<codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_device_event_listener" kindref="compound">sbIDeviceEventListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="147"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>registerHandler(in<sp/><ref refid="interfacesb_i_device_firmware_handler" kindref="compound">sbIDeviceFirmwareHandler</ref><sp/>aFirmwareHandler);</highlight></codeline>
+<codeline lineno="148"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>unregisterHandler(in<sp/><ref refid="interfacesb_i_device_firmware_handler" kindref="compound">sbIDeviceFirmwareHandler</ref><sp/>aFirmwareHandler);</highlight></codeline>
+<codeline lineno="155"><highlight class="normal"></highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>hasHandler(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice);</highlight></codeline>
+<codeline lineno="163"><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_device_firmware_handler" kindref="compound">sbIDeviceFirmwareHandler</ref><sp/>getHandler(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice);</highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
+<codeline lineno="177"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_device_firmware_handler" kindref="compound">sbIDeviceFirmwareHandler</ref><sp/>getActiveHandler(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice);</highlight></codeline>
+<codeline lineno="178"><highlight class="normal"></highlight></codeline>
+<codeline lineno="182"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>cancel(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice);</highlight></codeline>
+<codeline lineno="183"><highlight class="normal"></highlight></codeline>
+<codeline lineno="187"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>requireRecovery(in<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref><sp/>aDevice);</highlight></codeline>
+<codeline lineno="188"><highlight class="normal">};</highlight></codeline>
+    </programlisting>
+    <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdater.idl"/>
+  </compounddef>
+</doxygen>

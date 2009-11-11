@@ -4,13 +4,13 @@
     <compoundname>sbIRemoteSecurityEvent.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="666">
+      <node id="822">
         <label>components/remoteapi/public/sbIRemoteSecurityEvent.idl</label>
         <link refid="sbIRemoteSecurityEvent.idl"/>
-        <childnode refid="667" relation="include">
+        <childnode refid="823" relation="include">
         </childnode>
       </node>
-      <node id="667">
+      <node id="823">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -171,7 +171,7 @@
 <codeline lineno="148"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;http://developer.mozilla.org/en/docs/DOM:element.addEventListener&gt;</highlight></codeline>
 <codeline lineno="149"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="150"><highlight class="normal"></highlight></codeline>
-<codeline lineno="156"><highlight class="normal">[scriptable,<sp/>uuid(2faa8d0f-b3b0-4545-b06b-2ce92d53e7e3)]</highlight></codeline>
+<codeline lineno="156"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(2faa8d0f-b3b0-4545-b06b-2ce92d53e7e3)]</highlight></codeline>
 <codeline lineno="157" refid="interfacesb_i_remote_security_event" refkind="compound"><highlight class="normal"><sp/>interface<sp/><ref refid="interfacesb_i_remote_security_event" kindref="compound" tooltip="An interface to maintain information about the last security event that occurred...">sbIRemoteSecurityEvent</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="158"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="159"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
@@ -215,7 +215,7 @@
 <codeline lineno="197" refid="interfacesb_i_remote_security_event_1b0fb56a6b901e69ecd47ef94d6d14439" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>hasAccess;</highlight></codeline>
 <codeline lineno="198"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="199"><highlight class="normal"></highlight></codeline>
-<codeline lineno="200"><highlight class="normal">[scriptable,<sp/>uuid(422A0C68-C4A3-40c6-974D-37D1E71BAE8C)]</highlight></codeline>
+<codeline lineno="200"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(422A0C68-C4A3-40c6-974D-37D1E71BAE8C)]</highlight></codeline>
 <codeline lineno="201" refid="interfacesb_i_mutable_remote_security_event" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mutable_remote_security_event" kindref="compound">sbIMutableRemoteSecurityEvent</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="202"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="203"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initSecurityEvent(in<sp/>nsIDOMDocument<sp/>aDoc,<sp/>in<sp/>nsIURI<sp/>aSiteScope,<sp/>in<sp/>AString<sp/>aCategory,<sp/>in<sp/>AString<sp/>aCategoryID,<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aHasAccess);</highlight></codeline>

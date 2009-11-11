@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_window_move_service" kind="interface" prot="public">
+    <compoundname>sbIWindowMoveService</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_window_move_service_1be3d7a05ae3ce50b337be9b88634155f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIWindowMoveService::startWatchingWindow</definition>
+        <argsstring>(in nsISupports aWindow, in sbIWindowMoveListener aListener)</argsstring>
+        <name>startWatchingWindow</name>
+        <param>
+          <type>in nsISupports</type>
+          <declname>aWindow</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_window_move_listener" kindref="compound">sbIWindowMoveListener</ref></type>
+          <declname>aListener</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbIWindowMoveService.idl" line="69"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_window_move_service_154d597463d80c6cf35c74677f14fde5f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIWindowMoveService::stopWatchingWindow</definition>
+        <argsstring>(in nsISupports aWindow, in sbIWindowMoveListener aListener)</argsstring>
+        <name>stopWatchingWindow</name>
+        <param>
+          <type>in nsISupports</type>
+          <declname>aWindow</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_window_move_listener" kindref="compound">sbIWindowMoveListener</ref></type>
+          <declname>aListener</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbIWindowMoveService.idl" line="77"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/integration/public/sbIWindowMoveService.idl" line="62" bodyfile="c:/builds/songbird/trunk/components/integration/public/sbIWindowMoveService.idl" bodystart="61" bodyend="78"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_window_move_service_1be3d7a05ae3ce50b337be9b88634155f" prot="public" virt="non-virtual"><scope>sbIWindowMoveService</scope><name>startWatchingWindow</name></member>
+      <member refid="interfacesb_i_window_move_service_154d597463d80c6cf35c74677f14fde5f" prot="public" virt="non-virtual"><scope>sbIWindowMoveService</scope><name>stopWatchingWindow</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

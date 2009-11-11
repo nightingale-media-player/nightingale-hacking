@@ -4,7 +4,6 @@
     <compoundname>components/library/localdatabase/public/</compoundname>
     <innerfile refid="sb_i_library_statistics_8idl">sbILibraryStatistics.idl</innerfile>
     <innerfile refid="sb_i_local_database_async_g_u_i_d_array_8idl">sbILocalDatabaseAsyncGUIDArray.idl</innerfile>
-    <innerfile refid="sb_i_local_database_dynamic_playlist_service_8idl">sbILocalDatabaseDynamicPlaylistService.idl</innerfile>
     <innerfile refid="sb_i_local_database_g_u_i_d_array_8idl">sbILocalDatabaseGUIDArray.idl</innerfile>
     <innerfile refid="sb_i_local_database_library_8idl">sbILocalDatabaseLibrary.idl</innerfile>
     <innerfile refid="sb_i_local_database_library_copy_listener_8idl">sbILocalDatabaseLibraryCopyListener.idl</innerfile>

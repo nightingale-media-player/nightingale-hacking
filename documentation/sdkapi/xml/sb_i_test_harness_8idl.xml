@@ -4,13 +4,13 @@
     <compoundname>sbITestHarness.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="706">
+      <node id="858">
         <label>components/testharness/public/sbITestHarness.idl</label>
         <link refid="sbITestHarness.idl"/>
-        <childnode refid="707" relation="include">
+        <childnode refid="859" relation="include">
         </childnode>
       </node>
-      <node id="707">
+      <node id="859">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -49,7 +49,7 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="39"><highlight class="normal">[scriptable,<sp/>uuid(5b11ad26-8f01-46a8-8263-1de16be960eb)]</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(5b11ad26-8f01-46a8-8263-1de16be960eb)]</highlight></codeline>
 <codeline lineno="40" refid="interfacesb_i_test_harness" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_test_harness" kindref="compound" tooltip="An interface for launching unit tests from XULRunner apps.">sbITestHarness</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="41"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="51"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>init(<sp/>in<sp/>AString<sp/>aComponentList<sp/>);</highlight></codeline>

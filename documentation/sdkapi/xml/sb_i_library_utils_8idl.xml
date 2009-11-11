@@ -4,13 +4,13 @@
     <compoundname>sbILibraryUtils.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="309">
+      <node id="364">
         <label>components/library/base/public/sbILibraryUtils.idl</label>
         <link refid="sbILibraryUtils.idl"/>
-        <childnode refid="310" relation="include">
+        <childnode refid="365" relation="include">
         </childnode>
       </node>
-      <node id="310">
+      <node id="365">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -51,7 +51,7 @@
 <codeline lineno="34"><highlight class="normal">interface<sp/>nsIFile;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/>nsIURI;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="42"><highlight class="normal">[scriptable,<sp/>uuid(DFCA744B-691F-4360-9F68-37F553C7F301)]</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(DFCA744B-691F-4360-9F68-37F553C7F301)]</highlight></codeline>
 <codeline lineno="43" refid="interfacesb_i_library_utils" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_utils" kindref="compound" tooltip="Set of library utilities.">sbILibraryUtils</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="44"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="58"><highlight class="normal"><sp/><sp/>nsIURI<sp/>getContentURI(in<sp/>nsIURI<sp/>aURI);</highlight></codeline>

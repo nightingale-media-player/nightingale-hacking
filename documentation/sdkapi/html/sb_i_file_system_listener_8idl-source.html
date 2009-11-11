@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/filesystemevents/base/public/sbIFileSystemListener.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -99,49 +105,73 @@
 <a name="l00031"></a>00031 <span class="comment">//        events. Pass in an instance of this interface when creating a </span>
 <a name="l00032"></a>00032 <span class="comment">//        |sbIFileSystemWatcher| instance.</span>
 <a name="l00033"></a>00033 <span class="comment">//</span>
-<a name="l00034"></a>00034 [scriptable, uuid(9629A5A4-82E7-434F-9684-043A778695AF)]
+<a name="l00034"></a>00034 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(44cec493-c59e-45ca-bc9f-b053e17a519f)]
 <a name="l00035"></a><a class="code" href="interfacesb_i_file_system_listener.html">00035</a> interface <a class="code" href="interfacesb_i_file_system_listener.html">sbIFileSystemListener</a> : nsISupports
 <a name="l00036"></a>00036 {
 <a name="l00037"></a>00037   <span class="comment">//</span>
-<a name="l00038"></a>00038   <span class="comment">// \brief Callback when the |sbIFileSystemWatcher| has initialized and has</span>
-<a name="l00039"></a>00039   <span class="comment">//        started listening to events.</span>
-<a name="l00040"></a>00040   <span class="comment">//</span>
-<a name="l00041"></a>00041   <span class="keywordtype">void</span> onWatcherStarted();
-<a name="l00042"></a>00042 
-<a name="l00043"></a>00043   <span class="comment">//</span>
-<a name="l00044"></a>00044   <span class="comment">// \brief Callback when the |sbIFileSystemWatcher| has stopped listening</span>
-<a name="l00045"></a>00045   <span class="comment">//        to file system events.</span>
-<a name="l00046"></a>00046   <span class="comment">//</span>
-<a name="l00047"></a>00047   <span class="keywordtype">void</span> onWatcherStopped();
-<a name="l00048"></a>00048 
-<a name="l00049"></a>00049   <span class="comment">//</span>
-<a name="l00050"></a>00050   <span class="comment">// \brief Callback when the |sbIFileSystemWatcher| could not load a session.</span>
-<a name="l00051"></a>00051   <span class="comment">//        NOTE: If a listener receives this callback, the watcher should be</span>
-<a name="l00052"></a>00052   <span class="comment">//              re-initialized via |init()| in order to receive callbacks </span>
-<a name="l00053"></a>00053   <span class="comment">//              about changes to the watched path.</span>
-<a name="l00054"></a>00054   <span class="comment">//</span>
-<a name="l00055"></a>00055   <span class="keywordtype">void</span> onSessionLoadError();
-<a name="l00056"></a>00056 
-<a name="l00057"></a>00057   <span class="comment">//</span>
-<a name="l00058"></a>00058   <span class="comment">// \brief Callback when something has change in the filesystem.</span>
-<a name="l00059"></a>00059   <span class="comment">// \param aFilePath The event path of the file change.</span>
+<a name="l00038"></a>00038   <span class="comment">// \brief Watcher Error Types</span>
+<a name="l00039"></a>00039   <span class="comment">//</span>
+<a name="l00040"></a>00040   <span class="comment">// ROOT_PATH_MISSING - The root watch path is missing</span>
+<a name="l00041"></a>00041   <span class="comment">//   NOTE: This event is posted when the root watch path is missing. Posting</span>
+<a name="l00042"></a>00042   <span class="comment">//         can happen before startup or after. Once the watcher notices</span>
+<a name="l00043"></a>00043   <span class="comment">//         that the root watch path is missing, it will automatically stop</span>
+<a name="l00044"></a>00044   <span class="comment">//         watching and notify via |onWatcherStopped()|.</span>
+<a name="l00045"></a>00045   <span class="comment">//</span>
+<a name="l00046"></a>00046   <span class="comment">// INVALID_DIRECTORY - A directory was encountered that could not be watched.</span>
+<a name="l00047"></a>00047   <span class="comment">//   NOTE: This event is posted when the native file-system event hooks</span>
+<a name="l00048"></a>00048   <span class="comment">//         cannot add a hook for a specified directory. Check the</span>
+<a name="l00049"></a>00049   <span class="comment">//         |aDescription| field to find what the invalid directory is.</span>
+<a name="l00050"></a>00050   <span class="comment">//</span>
+<a name="l00051"></a>00051   <span class="comment">// SESSION_LOAD_ERROR - The watcher could not load a saved session.</span>
+<a name="l00052"></a>00052   <span class="comment">//   NOTE: If a listener receives this callback, the watcher should be</span>
+<a name="l00053"></a>00053   <span class="comment">//         re-initialized via |init()| in order to receive callbacks </span>
+<a name="l00054"></a>00054   <span class="comment">//         about changes to the watched path.</span>
+<a name="l00055"></a>00055   <span class="comment">//</span>
+<a name="l00056"></a><a class="code" href="interfacesb_i_file_system_listener.html#70c7a51a3bbd38cdbd604a8edbd66007">00056</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> ROOT_PATH_MISSING  = 0;
+<a name="l00057"></a><a class="code" href="interfacesb_i_file_system_listener.html#a82e9cf99d742871d2aab92e910cdcc3">00057</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> INVALID_DIRECTORY  = 1;
+<a name="l00058"></a><a class="code" href="interfacesb_i_file_system_listener.html#63e204a7f69d33940381375cba75b376">00058</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> SESSION_LOAD_ERROR = 2;
+<a name="l00059"></a>00059 
 <a name="l00060"></a>00060   <span class="comment">//</span>
-<a name="l00061"></a>00061   <span class="keywordtype">void</span> onFileSystemChanged(in AString aFilePath);
-<a name="l00062"></a>00062   
+<a name="l00061"></a>00061   <span class="comment">// \brief Callback when the |sbIFileSystemWatcher| has initialized and has</span>
+<a name="l00062"></a>00062   <span class="comment">//        started listening to events.</span>
 <a name="l00063"></a>00063   <span class="comment">//</span>
-<a name="l00064"></a>00064   <span class="comment">// \brief Callback when something was removed in the filesystem.</span>
-<a name="l00065"></a>00065   <span class="comment">// \param aFilePath The event path of the file removal.</span>
+<a name="l00064"></a>00064   <span class="keywordtype">void</span> onWatcherStarted();
+<a name="l00065"></a>00065 
 <a name="l00066"></a>00066   <span class="comment">//</span>
-<a name="l00067"></a>00067   <span class="keywordtype">void</span> onFileSystemRemoved(in AString aFilePath);
-<a name="l00068"></a>00068   
+<a name="l00067"></a>00067   <span class="comment">// \brief Callback when the |sbIFileSystemWatcher| has stopped listening</span>
+<a name="l00068"></a>00068   <span class="comment">//        to file system events.</span>
 <a name="l00069"></a>00069   <span class="comment">//</span>
-<a name="l00070"></a>00070   <span class="comment">// \brief Callback when something was added in the filesystem.</span>
-<a name="l00071"></a>00071   <span class="comment">// \param aFilePath The event path of the file addition.</span>
+<a name="l00070"></a>00070   <span class="keywordtype">void</span> onWatcherStopped();
+<a name="l00071"></a>00071 
 <a name="l00072"></a>00072   <span class="comment">//</span>
-<a name="l00073"></a>00073   <span class="keywordtype">void</span> onFileSystemAdded(in AString aFilePath);
-<a name="l00074"></a>00074 };
-<a name="l00075"></a>00075 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+<a name="l00073"></a>00073   <span class="comment">// \brief Callback when the watcher has encountered an error.</span>
+<a name="l00074"></a>00074   <span class="comment">// \param aErrorType The error type the watcher encountered.</span>
+<a name="l00075"></a>00075   <span class="comment">//                   SEE: The constants defined above.</span>
+<a name="l00076"></a>00076   <span class="comment">// \param aDescription Additional information about the received error.</span>
+<a name="l00077"></a>00077   <span class="comment">//</span>
+<a name="l00078"></a>00078   <span class="keywordtype">void</span> onWatcherError(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aErrorType,
+<a name="l00079"></a>00079                       in AString aDescription);
+<a name="l00080"></a>00080 
+<a name="l00081"></a>00081   <span class="comment">//</span>
+<a name="l00082"></a>00082   <span class="comment">// \brief Callback when something has change in the filesystem.</span>
+<a name="l00083"></a>00083   <span class="comment">// \param aFilePath The event path of the file change.</span>
+<a name="l00084"></a>00084   <span class="comment">//</span>
+<a name="l00085"></a>00085   <span class="keywordtype">void</span> onFileSystemChanged(in AString aFilePath);
+<a name="l00086"></a>00086   
+<a name="l00087"></a>00087   <span class="comment">//</span>
+<a name="l00088"></a>00088   <span class="comment">// \brief Callback when something was removed in the filesystem.</span>
+<a name="l00089"></a>00089   <span class="comment">// \param aFilePath The event path of the file removal.</span>
+<a name="l00090"></a>00090   <span class="comment">//</span>
+<a name="l00091"></a>00091   <span class="keywordtype">void</span> onFileSystemRemoved(in AString aFilePath);
+<a name="l00092"></a>00092   
+<a name="l00093"></a>00093   <span class="comment">//</span>
+<a name="l00094"></a>00094   <span class="comment">// \brief Callback when something was added in the filesystem.</span>
+<a name="l00095"></a>00095   <span class="comment">// \param aFilePath The event path of the file addition.</span>
+<a name="l00096"></a>00096   <span class="comment">//</span>
+<a name="l00097"></a>00097   <span class="keywordtype">void</span> onFileSystemAdded(in AString aFilePath);
+<a name="l00098"></a>00098 };
+<a name="l00099"></a>00099 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

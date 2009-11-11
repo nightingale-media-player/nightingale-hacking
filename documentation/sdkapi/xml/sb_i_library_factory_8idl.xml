@@ -4,13 +4,13 @@
     <compoundname>sbILibraryFactory.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="275">
+      <node id="330">
         <label>components/library/base/public/sbILibraryFactory.idl</label>
         <link refid="sbILibraryFactory.idl"/>
-        <childnode refid="276" relation="include">
+        <childnode refid="331" relation="include">
         </childnode>
       </node>
-      <node id="276">
+      <node id="331">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -52,7 +52,7 @@
 <codeline lineno="35"><highlight class="normal">interface<sp/>nsIPropertyBag2;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
-<codeline lineno="46"><highlight class="normal">[scriptable,<sp/>uuid(3818fff4-b908-4bf2-9eb1-cf4d02eb446a)]</highlight></codeline>
+<codeline lineno="46"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(3818fff4-b908-4bf2-9eb1-cf4d02eb446a)]</highlight></codeline>
 <codeline lineno="47" refid="interfacesb_i_library_factory" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_factory" kindref="compound" tooltip="Factory for new library instances.">sbILibraryFactory</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="48"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="53" refid="interfacesb_i_library_factory_143059ced1a47dc3348362f961879bb71" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>type;</highlight></codeline>

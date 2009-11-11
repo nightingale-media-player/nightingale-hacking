@@ -4,13 +4,13 @@
     <compoundname>sbIFaceplateManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="177">
+      <node id="211">
         <label>components/faceplate/public/sbIFaceplateManager.idl</label>
         <link refid="sbIFaceplateManager.idl"/>
-        <childnode refid="178" relation="include">
+        <childnode refid="212" relation="include">
         </childnode>
       </node>
-      <node id="178">
+      <node id="212">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -52,7 +52,7 @@
 <codeline lineno="37"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_faceplate_manager_listener" kindref="compound" tooltip="Callback interface for faceplate event notification.">sbIFaceplateManagerListener</ref>;</highlight></codeline>
 <codeline lineno="38"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
 <codeline lineno="39"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="83"><highlight class="normal">[scriptable,<sp/>uuid(17dbf13e-ff78-11db-8314-0800200c9a66)]</highlight></codeline>
+<codeline lineno="83"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(17dbf13e-ff78-11db-8314-0800200c9a66)]</highlight></codeline>
 <codeline lineno="84" refid="interfacesb_i_faceplate_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_faceplate_manager" kindref="compound" tooltip="Manages the panes that are displayed in faceplate widgets.">sbIFaceplateManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="85"><highlight class="normal">{<sp/><sp/></highlight></codeline>
 <codeline lineno="89" refid="interfacesb_i_faceplate_manager_105e4bc17ebe97cf1476ccc0c91e0727a" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>paneCount;</highlight></codeline>

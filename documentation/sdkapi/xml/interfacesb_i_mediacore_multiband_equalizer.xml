@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_mediacore_multiband_equalizer" kind="interface" prot="public">
+    <compoundname>sbIMediacoreMultibandEqualizer</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_mediacore_multiband_equalizer_18eadbf1f4b3098f85b7f4a426c9a825c" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIMediacoreMultibandEqualizer::eqEnabled</definition>
+        <argsstring></argsstring>
+        <name>eqEnabled</name>
+        <briefdescription>
+<para>Whether the EQ is enabled or not. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreMultibandEqualizer.idl" line="72" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreMultibandEqualizer.idl" bodystart="72" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_mediacore_multiband_equalizer_1df54555eb40f68642fa92c4b7fdb25f9" prot="public" static="no" mutable="no">
+        <type>attribute nsISimpleEnumerator</type>
+        <definition>attribute nsISimpleEnumerator sbIMediacoreMultibandEqualizer::bands</definition>
+        <argsstring></argsstring>
+        <name>bands</name>
+        <briefdescription>
+<para>Enumerator containing all available bands. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>Enumerator contains <ref refid="interfacesb_i_mediacore_equalizer_band" kindref="compound">sbIMediacoreEqualizerBand</ref> objects. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreMultibandEqualizer.idl" line="77" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreMultibandEqualizer.idl" bodystart="77" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_mediacore_multiband_equalizer_1c608e1bd9bbb19ea87a0213425915aa9" prot="public" static="no" mutable="no">
+        <type>readonly attribute unsigned long</type>
+        <definition>readonly attribute unsigned long sbIMediacoreMultibandEqualizer::bandCount</definition>
+        <argsstring></argsstring>
+        <name>bandCount</name>
+        <briefdescription>
+<para>The number of bands available. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreMultibandEqualizer.idl" line="81" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreMultibandEqualizer.idl" bodystart="81" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_mediacore_multiband_equalizer_14a7a66c86758915a8a7575556c999f36" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_mediacore_equalizer_band" kindref="compound">sbIMediacoreEqualizerBand</ref></type>
+        <definition>sbIMediacoreEqualizerBand sbIMediacoreMultibandEqualizer::getBand</definition>
+        <argsstring>(in unsigned long aBandIndex)</argsstring>
+        <name>getBand</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aBandIndex</declname>
+        </param>
+        <briefdescription>
+<para>Get a band. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreMultibandEqualizer.idl" line="85"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_mediacore_multiband_equalizer_12cb59e0dcff53fbaa4e5cfea60df3323" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediacoreMultibandEqualizer::setBand</definition>
+        <argsstring>(in sbIMediacoreEqualizerBand aBand)</argsstring>
+        <name>setBand</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_mediacore_equalizer_band" kindref="compound">sbIMediacoreEqualizerBand</ref></type>
+          <declname>aBand</declname>
+        </param>
+        <briefdescription>
+<para>Set a band. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreMultibandEqualizer.idl" line="89"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreMultibandEqualizer.idl" line="68" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreMultibandEqualizer.idl" bodystart="67" bodyend="90"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_mediacore_multiband_equalizer_1c608e1bd9bbb19ea87a0213425915aa9" prot="public" virt="non-virtual"><scope>sbIMediacoreMultibandEqualizer</scope><name>bandCount</name></member>
+      <member refid="interfacesb_i_mediacore_multiband_equalizer_1df54555eb40f68642fa92c4b7fdb25f9" prot="public" virt="non-virtual"><scope>sbIMediacoreMultibandEqualizer</scope><name>bands</name></member>
+      <member refid="interfacesb_i_mediacore_multiband_equalizer_18eadbf1f4b3098f85b7f4a426c9a825c" prot="public" virt="non-virtual"><scope>sbIMediacoreMultibandEqualizer</scope><name>eqEnabled</name></member>
+      <member refid="interfacesb_i_mediacore_multiband_equalizer_14a7a66c86758915a8a7575556c999f36" prot="public" virt="non-virtual"><scope>sbIMediacoreMultibandEqualizer</scope><name>getBand</name></member>
+      <member refid="interfacesb_i_mediacore_multiband_equalizer_12cb59e0dcff53fbaa4e5cfea60df3323" prot="public" virt="non-virtual"><scope>sbIMediacoreMultibandEqualizer</scope><name>setBand</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

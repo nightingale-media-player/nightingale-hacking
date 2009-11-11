@@ -92,6 +92,10 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="inte
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_properties.html#f33ead6004dbb73bc594e58c595f4037">initSerialNumber</a> (in nsIVariant aSerialNumber)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Initialize Serial Number propery for a device. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="e52c7d95cf29743c0a3f5fe0f01c0d6d"></a><!-- doxytag: member="sbIDeviceProperties::initFirmwareVersion" ref="e52c7d95cf29743c0a3f5fe0f01c0d6d" args="(in AString aFirmwareVersion)" -->
+void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_properties.html#e52c7d95cf29743c0a3f5fe0f01c0d6d">initFirmwareVersion</a> (in AString aFirmwareVersion)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Initialize Firmware Version property for a device. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="98ccbe786608b2f4998ac2a5e8638784"></a><!-- doxytag: member="sbIDeviceProperties::initDeviceLocation" ref="98ccbe786608b2f4998ac2a5e8638784" args="(in nsIURI aDeviceLocationUri)" -->
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_properties.html#98ccbe786608b2f4998ac2a5e8638784">initDeviceLocation</a> (in nsIURI aDeviceLocationUri)</td></tr>
 
@@ -116,6 +120,8 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="inte
 <tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute nsIVariant&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_properties.html#d4091612e24a45fafe489a616e2d5b90">modelNumber</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute nsIVariant&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_properties.html#29275faf10a59977a4cc3c4b6451d139">serialNumber</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_properties.html#96b419c48b4174533f936bba4254d455">firmwareVersion</a></td></tr>
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute nsIURI&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_properties.html#9fee155b80798f207321d7c9caf6d2ec">uri</a></td></tr>
 
@@ -144,7 +150,7 @@ Definition at line <a class="el" href="sb_i_device_properties_8idl-source.html#l
 <p>
 A human readable name. Not included in the hash code and therefore optional. This name can be written to by the user and should be reflected back to the device. 
 <p>
-Definition at line <a class="el" href="sb_i_device_properties_8idl-source.html#l00088">88</a> of file <a class="el" href="sb_i_device_properties_8idl-source.html">sbIDeviceProperties.idl</a>.
+Definition at line <a class="el" href="sb_i_device_properties_8idl-source.html#l00093">93</a> of file <a class="el" href="sb_i_device_properties_8idl-source.html">sbIDeviceProperties.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="213e831e6844ba14c009f9a5d9cf8c6e"></a><!-- doxytag: member="sbIDeviceProperties::vendorName" ref="213e831e6844ba14c009f9a5d9cf8c6e" args="" -->
@@ -161,7 +167,7 @@ Definition at line <a class="el" href="sb_i_device_properties_8idl-source.html#l
 <p>
 A string identifying the vendor of a device. Included in the hash code. 
 <p>
-Definition at line <a class="el" href="sb_i_device_properties_8idl-source.html#l00093">93</a> of file <a class="el" href="sb_i_device_properties_8idl-source.html">sbIDeviceProperties.idl</a>.
+Definition at line <a class="el" href="sb_i_device_properties_8idl-source.html#l00098">98</a> of file <a class="el" href="sb_i_device_properties_8idl-source.html">sbIDeviceProperties.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="d4091612e24a45fafe489a616e2d5b90"></a><!-- doxytag: member="sbIDeviceProperties::modelNumber" ref="d4091612e24a45fafe489a616e2d5b90" args="" -->
@@ -178,7 +184,7 @@ Definition at line <a class="el" href="sb_i_device_properties_8idl-source.html#l
 <p>
 Model number for the device. Can be set in any appropriate format, but will be converted to a string and included in the hash code. 
 <p>
-Definition at line <a class="el" href="sb_i_device_properties_8idl-source.html#l00099">99</a> of file <a class="el" href="sb_i_device_properties_8idl-source.html">sbIDeviceProperties.idl</a>.
+Definition at line <a class="el" href="sb_i_device_properties_8idl-source.html#l00104">104</a> of file <a class="el" href="sb_i_device_properties_8idl-source.html">sbIDeviceProperties.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="29275faf10a59977a4cc3c4b6451d139"></a><!-- doxytag: member="sbIDeviceProperties::serialNumber" ref="29275faf10a59977a4cc3c4b6451d139" args="" -->
@@ -195,7 +201,25 @@ Definition at line <a class="el" href="sb_i_device_properties_8idl-source.html#l
 <p>
 Serial number for the device. Can be set in any appropriate format, but will be converted to a string and included in the hash code. 
 <p>
-Definition at line <a class="el" href="sb_i_device_properties_8idl-source.html#l00105">105</a> of file <a class="el" href="sb_i_device_properties_8idl-source.html">sbIDeviceProperties.idl</a>.
+Definition at line <a class="el" href="sb_i_device_properties_8idl-source.html#l00110">110</a> of file <a class="el" href="sb_i_device_properties_8idl-source.html">sbIDeviceProperties.idl</a>.
+</div>
+</div><p>
+<a class="anchor" name="96b419c48b4174533f936bba4254d455"></a><!-- doxytag: member="sbIDeviceProperties::firmwareVersion" ref="96b419c48b4174533f936bba4254d455" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">readonly attribute AString <a class="el" href="interfacesb_i_device_properties.html#96b419c48b4174533f936bba4254d455">sbIDeviceProperties::firmwareVersion</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Firmware version for the device. In human readable format. <dl class="note" compact><dt><b>Note:</b></dt><dd>Optional, may be empty. </dd></dl>
+
+<p>
+Definition at line <a class="el" href="sb_i_device_properties_8idl-source.html#l00116">116</a> of file <a class="el" href="sb_i_device_properties_8idl-source.html">sbIDeviceProperties.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="9fee155b80798f207321d7c9caf6d2ec"></a><!-- doxytag: member="sbIDeviceProperties::uri" ref="9fee155b80798f207321d7c9caf6d2ec" args="" -->
@@ -212,7 +236,7 @@ Definition at line <a class="el" href="sb_i_device_properties_8idl-source.html#l
 <p>
 A URI representing the location of the device. Not included in the hash code and therefore optional. 
 <p>
-Definition at line <a class="el" href="sb_i_device_properties_8idl-source.html#l00111">111</a> of file <a class="el" href="sb_i_device_properties_8idl-source.html">sbIDeviceProperties.idl</a>.
+Definition at line <a class="el" href="sb_i_device_properties_8idl-source.html#l00122">122</a> of file <a class="el" href="sb_i_device_properties_8idl-source.html">sbIDeviceProperties.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="fb81d0dc5c243f6499129c068160e6db"></a><!-- doxytag: member="sbIDeviceProperties::iconUri" ref="fb81d0dc5c243f6499129c068160e6db" args="" -->
@@ -229,7 +253,7 @@ Definition at line <a class="el" href="sb_i_device_properties_8idl-source.html#l
 <p>
 The preferred icon to be displayed to the user. The user may be able to specify a custom icon for the device in the future. 
 <p>
-Definition at line <a class="el" href="sb_i_device_properties_8idl-source.html#l00117">117</a> of file <a class="el" href="sb_i_device_properties_8idl-source.html">sbIDeviceProperties.idl</a>.
+Definition at line <a class="el" href="sb_i_device_properties_8idl-source.html#l00128">128</a> of file <a class="el" href="sb_i_device_properties_8idl-source.html">sbIDeviceProperties.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="921e37c4912c740fe73360e362d9191c"></a><!-- doxytag: member="sbIDeviceProperties::properties" ref="921e37c4912c740fe73360e362d9191c" args="" -->
@@ -246,12 +270,12 @@ Definition at line <a class="el" href="sb_i_device_properties_8idl-source.html#l
 <p>
 All of the properties available for a device. Should only contain objects that implement nsIProperty! 
 <p>
-Definition at line <a class="el" href="sb_i_device_properties_8idl-source.html#l00123">123</a> of file <a class="el" href="sb_i_device_properties_8idl-source.html">sbIDeviceProperties.idl</a>.
+Definition at line <a class="el" href="sb_i_device_properties_8idl-source.html#l00134">134</a> of file <a class="el" href="sb_i_device_properties_8idl-source.html">sbIDeviceProperties.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/devices/base/public/<a class="el" href="sb_i_device_properties_8idl-source.html">sbIDeviceProperties.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:42 2009 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:47 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

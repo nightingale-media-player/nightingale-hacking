@@ -4,13 +4,13 @@
     <compoundname>sbIDeviceContent.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="89">
+      <node id="96">
         <label>components/devices/base/public/sbIDeviceContent.idl</label>
         <link refid="sbIDeviceContent.idl"/>
-        <childnode refid="90" relation="include">
+        <childnode refid="97" relation="include">
         </childnode>
       </node>
-      <node id="90">
+      <node id="97">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -53,7 +53,7 @@
 <codeline lineno="31"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_library" kindref="compound">sbIDeviceLibrary</ref>;</highlight></codeline>
 <codeline lineno="32"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_factory" kindref="compound" tooltip="Factory for new library instances.">sbILibraryFactory</ref>;</highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="39"><highlight class="normal">[scriptable,<sp/>uuid(7386c33a-df60-4ffd-9747-ed8e218a966e)]</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(7386c33a-df60-4ffd-9747-ed8e218a966e)]</highlight></codeline>
 <codeline lineno="40" refid="interfacesb_i_device_content" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_content" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceContent</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="41"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="45" refid="interfacesb_i_device_content_1fdc0c37bb6ff3e2f54a1361686d99110" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIArray<sp/>libraries;</highlight></codeline>

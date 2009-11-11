@@ -65,10 +65,10 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/devices/device/public/sbIDeviceHelper.idl" line="61"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_device_helper_123b922086848891da8764db95c61dbcb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_device_helper_1b068e1b7484d26e7f827b847cda77587" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
         <definition>boolean sbIDeviceHelper::queryUserSpaceExceeded</definition>
-        <argsstring>(in nsIDOMWindow aParent, in sbIDevice aDevice, in boolean aSyncDeviceOperation, in unsigned long long aSpaceNeeded, in unsigned long long aSpaceAvailable)</argsstring>
+        <argsstring>(in nsIDOMWindow aParent, in sbIDevice aDevice, in sbIDeviceLibrary aLibrary, in unsigned long long aSpaceNeeded, in unsigned long long aSpaceAvailable)</argsstring>
         <name>queryUserSpaceExceeded</name>
         <param>
           <type>in nsIDOMWindow</type>
@@ -79,8 +79,8 @@
           <declname>aDevice</declname>
         </param>
         <param>
-          <type>in boolean</type>
-          <declname>aSyncDeviceOperation</declname>
+          <type>in <ref refid="interfacesb_i_device_library" kindref="compound">sbIDeviceLibrary</ref></type>
+          <declname>aLibrary</declname>
         </param>
         <param>
           <type>in unsigned long long</type>
@@ -93,7 +93,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Ask the user what action to take in response to an operation space exceeded event for the device specified by aDevice. Use the window specified by aParent as a dialog parent. If aSync is true, the operation is a sync device operation. The amount of space needed for the operation is specified by aSpaceNeeded and the amount available by aSpaceAvailable. Return true if user chooses to proceed with operation.</para><para><parameterlist kind="param"><parameteritem>
+<para>Ask the user what action to take in response to an operation space exceeded event for the device specified by aDevice and device library specified by aLibrary. Use the window specified by aParent as a dialog parent. The amount of space needed for the operation is specified by aSpaceNeeded and the amount available by aSpaceAvailable. Return true if user chooses to proceed with operation.</para><para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>aParent</parametername>
 </parameternamelist>
@@ -109,10 +109,10 @@
 </parameteritem>
 <parameteritem>
 <parameternamelist>
-<parametername>aSync</parametername>
+<parametername>aLibrary</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>True if operation is a sync device operation </para></parameterdescription>
+<para>target device library of operation </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -144,7 +144,7 @@ Helper routines for device implementations </para>    </detaileddescription>
     <location file="c:/builds/songbird/trunk/components/devices/device/public/sbIDeviceHelper.idl" line="46" bodyfile="c:/builds/songbird/trunk/components/devices/device/public/sbIDeviceHelper.idl" bodystart="45" bodyend="83"/>
     <listofallmembers>
       <member refid="interfacesb_i_device_helper_1854f0facfeba97707176d557c9136d28" prot="public" virt="non-virtual"><scope>sbIDeviceHelper</scope><name>hasSpaceForWrite</name></member>
-      <member refid="interfacesb_i_device_helper_123b922086848891da8764db95c61dbcb" prot="public" virt="non-virtual"><scope>sbIDeviceHelper</scope><name>queryUserSpaceExceeded</name></member>
+      <member refid="interfacesb_i_device_helper_1b068e1b7484d26e7f827b847cda77587" prot="public" virt="non-virtual"><scope>sbIDeviceHelper</scope><name>queryUserSpaceExceeded</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

@@ -4,13 +4,13 @@
     <compoundname>IWindowCloak.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="210">
+      <node id="244">
         <label>components/integration/public/IWindowCloak.idl</label>
         <link refid="IWindowCloak.idl"/>
-        <childnode refid="211" relation="include">
+        <childnode refid="245" relation="include">
         </childnode>
       </node>
-      <node id="211">
+      <node id="245">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,7 +50,7 @@
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
 <codeline lineno="36"><highlight class="normal">interface<sp/>nsIDOMWindow;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
-<codeline lineno="44"><highlight class="normal">[scriptable,<sp/>uuid(749e0809-e4a7-4c88-abb2-39c1440f1a2d)]</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(749e0809-e4a7-4c88-abb2-39c1440f1a2d)]</highlight></codeline>
 <codeline lineno="45" refid="interfacesb_i_window_cloak" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_window_cloak" kindref="compound" tooltip="Window cloaking service interface This is an interface to the window cloaking service...">sbIWindowCloak</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>cloak(in<sp/>nsIDOMWindow<sp/>aDOMWindow);</highlight></codeline>

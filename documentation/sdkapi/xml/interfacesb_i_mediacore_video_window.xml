@@ -9,12 +9,12 @@
         <argsstring></argsstring>
         <name>fullscreen</name>
         <briefdescription>
-        </briefdescription>
+<para>Video window fullscreen attribute. </para>        </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para>This attribute can be used to determine if the video window is currently in fullscreen mode. It can also be used to set the video window to fullscreen mode. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreVideoWindow.idl" line="35" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreVideoWindow.idl" bodystart="35" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreVideoWindow.idl" line="42" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreVideoWindow.idl" bodystart="42" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_video_window_191996a3181689378e0437aca910d0b66" prot="public" static="no" mutable="no">
         <type>attribute nsIDOMXULElement</type>
@@ -22,19 +22,26 @@
         <argsstring></argsstring>
         <name>videoWindow</name>
         <briefdescription>
-        </briefdescription>
+<para>DOM XUL Element used as the video box. </para>        </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para>Setting this attribute will bind the video window to the box for the element. This means that the size of the actual video window will be determined by the size of the box of the element.</para><para>If you ever hide or set the visibility on this element to false, you must send a resize event to it so that the underlying video window will redraw correctly. Otherwise, the behavior of the video is undefined.</para><para>You can send this event from JavaScript using the following code:</para><para><programlisting><codeline><highlight class="normal"><sp/>var<sp/>resizeEvent<sp/>=<sp/>document.createEvent(</highlight><highlight class="stringliteral">&quot;UIEvents&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"><sp/>resizeEvent.initUIEvent(</highlight><highlight class="stringliteral">&quot;resize&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>window,<sp/>1);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/>var<sp/>mm<sp/>=<sp/>Components.classes[</highlight><highlight class="stringliteral">&quot;@songbirdnest.com/Songbird/Mediacore/Manager;1&quot;</highlight><highlight class="normal">]</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>.getService(Components.interfaces.sbIMediacoreManager);</highlight></codeline>
+<codeline><highlight class="normal"><sp/>mm.video.videoWindow.hidden<sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"><sp/>mm.video.videoWindow.dispatchEvent(resizeEvent);</highlight></codeline>
+</programlisting></para><para>Implementors of the video window must respond to the following DOM events: &apos;unload&apos;, &apos;hide&apos;, &apos;resize&apos; </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreVideoWindow.idl" line="36" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreVideoWindow.idl" bodystart="36" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreVideoWindow.idl" line="70" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreVideoWindow.idl" bodystart="70" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreVideoWindow.idl" line="34" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreVideoWindow.idl" bodystart="33" bodyend="37"/>
+    <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreVideoWindow.idl" line="34" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreVideoWindow.idl" bodystart="33" bodyend="71"/>
     <listofallmembers>
       <member refid="interfacesb_i_mediacore_video_window_1f67b9613991a9479fb91cd53c011198b" prot="public" virt="non-virtual"><scope>sbIMediacoreVideoWindow</scope><name>fullscreen</name></member>
       <member refid="interfacesb_i_mediacore_video_window_191996a3181689378e0437aca910d0b66" prot="public" virt="non-virtual"><scope>sbIMediacoreVideoWindow</scope><name>videoWindow</name></member>

@@ -90,13 +90,19 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_error_monitor.html#6723d5afadb97100c16df9ccd7c4c2a2">clearErrorsForDevice</a> (in <a class="el" href="interfacesb_i_device.html">sbIDevice</a> aDevice)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Clears the array of error strings for a device.  <a href="#6723d5afadb97100c16df9ccd7c4c2a2"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_error_monitor.html#2f8047a7f0303e85b71c6b468a63c323">addListener</a> (in <a class="el" href="interfacesb_i_device_error_monitor_listener.html">sbIDeviceErrorMonitorListener</a> aListener)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Adds a listener for new device errors.  <a href="#2f8047a7f0303e85b71c6b468a63c323"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_error_monitor.html#b992491c5bde4fa8482e4d3d7f44149e">removeListener</a> (in <a class="el" href="interfacesb_i_device_error_monitor_listener.html">sbIDeviceErrorMonitorListener</a> aListener)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Removes a listener for new device errors.  <a href="#b992491c5bde4fa8482e4d3d7f44149e"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 This service monitors devices for errors and stores them for easy access later. 
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_device_error_monitor_8idl-source.html#l00043">43</a> of file <a class="el" href="sb_i_device_error_monitor_8idl-source.html">sbIDeviceErrorMonitor.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_device_error_monitor_8idl-source.html#l00044">44</a> of file <a class="el" href="sb_i_device_error_monitor_8idl-source.html">sbIDeviceErrorMonitor.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="4a17413c0fc401d8036ceef9299e8640"></a><!-- doxytag: member="sbIDeviceErrorMonitor::deviceHasErrors" ref="4a17413c0fc401d8036ceef9299e8640" args="(in sbIDevice aDevice)" -->
 <div class="memitem">
 <div class="memproto">
@@ -180,9 +186,63 @@ Clears the array of error strings for a device.
 
 </div>
 </div><p>
+<a class="anchor" name="2f8047a7f0303e85b71c6b468a63c323"></a><!-- doxytag: member="sbIDeviceErrorMonitor::addListener" ref="2f8047a7f0303e85b71c6b468a63c323" args="(in sbIDeviceErrorMonitorListener aListener)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIDeviceErrorMonitor::addListener           </td>
+          <td>(</td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_device_error_monitor_listener.html">sbIDeviceErrorMonitorListener</a>&nbsp;</td>
+          <td class="paramname"> <em>aListener</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Adds a listener for new device errors. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aListener</em>&nbsp;</td><td>listener to call when a device error is logged. </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
+<a class="anchor" name="b992491c5bde4fa8482e4d3d7f44149e"></a><!-- doxytag: member="sbIDeviceErrorMonitor::removeListener" ref="b992491c5bde4fa8482e4d3d7f44149e" args="(in sbIDeviceErrorMonitorListener aListener)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIDeviceErrorMonitor::removeListener           </td>
+          <td>(</td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_device_error_monitor_listener.html">sbIDeviceErrorMonitorListener</a>&nbsp;</td>
+          <td class="paramname"> <em>aListener</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Removes a listener for new device errors. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aListener</em>&nbsp;</td><td>listener to remove. </td></tr>
+  </table>
+</dl>
+
+</div>
+</div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/devices/device/public/<a class="el" href="sb_i_device_error_monitor_8idl-source.html">sbIDeviceErrorMonitor.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:41 2009 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:47 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -3,6 +3,7 @@
   <compounddef id="dir_69a39679f5f8bd8d1fbaf0a028c274fe" kind="dir">
     <compoundname>components/devices/</compoundname>
     <innerdir refid="dir_c7b0ee44d70aa632bb20ac79a405aa84">components/devices/base/</innerdir>
+    <innerdir refid="dir_3673754ec566fe0f769d7c3428d8eb6c">components/devices/cd/</innerdir>
     <innerdir refid="dir_bd3ed22b1229d6f34ec5fedb027be1f2">components/devices/controller/</innerdir>
     <innerdir refid="dir_e155ce4ca2f45656df7433c5088c9d4e">components/devices/device/</innerdir>
     <innerdir refid="dir_5660fbc0030b6c0f65300b7e3622622c">components/devices/marshall/</innerdir>

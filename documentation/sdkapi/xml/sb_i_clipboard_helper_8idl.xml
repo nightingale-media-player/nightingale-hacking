@@ -5,18 +5,18 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes local="yes">nsILocalFile.idl</includes>
     <incdepgraph>
-      <node id="576">
+      <node id="721">
         <label>components/moz/clipboard/public/sbIClipboardHelper.idl</label>
         <link refid="sbIClipboardHelper.idl"/>
-        <childnode refid="577" relation="include">
+        <childnode refid="722" relation="include">
         </childnode>
-        <childnode refid="578" relation="include">
+        <childnode refid="723" relation="include">
         </childnode>
       </node>
-      <node id="578">
+      <node id="723">
         <label>nsILocalFile.idl</label>
       </node>
-      <node id="577">
+      <node id="722">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -55,7 +55,7 @@
 <codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsILocalFile.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
-<codeline lineno="36"><highlight class="normal">[scriptable,<sp/>uuid(6063116b-2b98-44d5-8f6e-0a7043f01fc3)]</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(6063116b-2b98-44d5-8f6e-0a7043f01fc3)]</highlight></codeline>
 <codeline lineno="37" refid="interfacesb_i_clipboard_helper" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_clipboard_helper" kindref="compound">sbIClipboardHelper</ref>:<sp/>nsISupports<sp/>{</highlight></codeline>
 <codeline lineno="38"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>copyImageFromClipboard(out<sp/>AString<sp/>aMimeType,</highlight></codeline>
 <codeline lineno="39"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aDataLen,</highlight></codeline>

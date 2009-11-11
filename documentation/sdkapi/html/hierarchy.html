@@ -74,10 +74,6 @@
   </ul>
 </div>
 <h1>Songbird Class Hierarchy</h1>This inheritance list is sorted roughly, but not completely, alphabetically:<ul>
-<li><a class="el" href="interfacens_i_http_request_handler.html">nsIHttpRequestHandler</a>
-<li><a class="el" href="interfacens_i_http_request_metadata.html">nsIHttpRequestMetadata</a>
-<li><a class="el" href="interfacens_i_http_response.html">nsIHttpResponse</a>
-<li><a class="el" href="interfacens_i_http_server.html">nsIHttpServer</a>
 <li><a class="el" href="interfacesb_i_add_on_bundle_update_service.html">sbIAddOnBundleUpdateService</a>
 <li><a class="el" href="interfacesb_i_album_art_fetcher.html">sbIAlbumArtFetcher</a>
 <ul>
@@ -97,6 +93,11 @@
 <li><a class="el" href="interfacesb_i_call_with_window_callback.html">sbICallWithWindowCallback</a>
 <li><a class="el" href="interfacesb_i_cascade_filter_set.html">sbICascadeFilterSet</a>
 <li><a class="el" href="interfacesb_i_cascade_filter_set_listener.html">sbICascadeFilterSetListener</a>
+<li><a class="el" href="interfacesb_i_c_d_device.html">sbICDDevice</a>
+<li><a class="el" href="interfacesb_i_c_d_device_listener.html">sbICDDeviceListener</a>
+<li><a class="el" href="interfacesb_i_c_d_device_service.html">sbICDDeviceService</a>
+<li><a class="el" href="interfacesb_i_c_d_t_o_c.html">sbICDTOC</a>
+<li><a class="el" href="interfacesb_i_c_d_t_o_c_entry.html">sbICDTOCEntry</a>
 <li><a class="el" href="interfacesb_i_change_operation.html">sbIChangeOperation</a>
 <ul>
 <li><a class="el" href="interfacesb_i_library_change.html">sbILibraryChange</a>
@@ -107,7 +108,6 @@
 <li><a class="el" href="interfacesb_i_command_line_flag_handler.html">sbICommandLineFlagHandler</a>
 <li><a class="el" href="interfacesb_i_command_line_item_handler.html">sbICommandLineItemHandler</a>
 <li><a class="el" href="interfacesb_i_command_line_manager.html">sbICommandLineManager</a>
-<li><a class="el" href="interfacesb_i_content_type_format.html">sbIContentTypeFormat</a>
 <li><a class="el" href="interfacesb_i_create_media_list_callback.html">sbICreateMediaListCallback</a>
 <li><a class="el" href="interfacesb_i_database_engine.html">sbIDatabaseEngine</a>
 <li><a class="el" href="interfacesb_i_database_prepared_statement.html">sbIDatabasePreparedStatement</a>
@@ -127,19 +127,25 @@
 <li><a class="el" href="interfacesb_i_device_base.html">sbIDeviceBase</a>
 <ul>
 <li><a class="el" href="interfacesb_i_download_device.html">sbIDownloadDevice</a>
-<li><a class="el" href="interfacesb_i_w_m_device.html">sbIWMDevice</a>
 </ul>
 <li><a class="el" href="interfacesb_i_device_base_callback.html">sbIDeviceBaseCallback</a>
-<li><a class="el" href="interfacesb_i_device_capabilities.html">sbIDeviceCapabilities</a>
+<li><a class="el" href="interfacesb_i_device_capabilities_registrar.html">sbIDeviceCapabilitiesRegistrar</a>
 <li><a class="el" href="interfacesb_i_device_compatibility.html">sbIDeviceCompatibility</a>
 <li><a class="el" href="interfacesb_i_device_content.html">sbIDeviceContent</a>
 <li><a class="el" href="interfacesb_i_device_controller.html">sbIDeviceController</a>
 <li><a class="el" href="interfacesb_i_device_controller_registrar.html">sbIDeviceControllerRegistrar</a>
 <li><a class="el" href="interfacesb_i_device_device_tester_utils.html">sbIDeviceDeviceTesterUtils</a>
 <li><a class="el" href="interfacesb_i_device_error_monitor.html">sbIDeviceErrorMonitor</a>
+<li><a class="el" href="interfacesb_i_device_error_monitor_listener.html">sbIDeviceErrorMonitorListener</a>
 <li><a class="el" href="interfacesb_i_device_event.html">sbIDeviceEvent</a>
+<ul>
+<li><a class="el" href="interfacesb_i_c_d_device_event.html">sbICDDeviceEvent</a>
+</ul>
 <li><a class="el" href="interfacesb_i_device_event_listener.html">sbIDeviceEventListener</a>
 <li><a class="el" href="interfacesb_i_device_event_target.html">sbIDeviceEventTarget</a>
+<li><a class="el" href="interfacesb_i_device_firmware_handler.html">sbIDeviceFirmwareHandler</a>
+<li><a class="el" href="interfacesb_i_device_firmware_update.html">sbIDeviceFirmwareUpdate</a>
+<li><a class="el" href="interfacesb_i_device_firmware_updater.html">sbIDeviceFirmwareUpdater</a>
 <li><a class="el" href="interfacesb_i_device_helper.html">sbIDeviceHelper</a>
 <li><a class="el" href="interfacesb_i_device_identification.html">sbIDeviceIdentification</a>
 <li><a class="el" href="interfacesb_i_device_library_listener.html">sbIDeviceLibraryListener</a>
@@ -150,6 +156,7 @@
 <li><a class="el" href="interfacesb_i_device_registrar.html">sbIDeviceRegistrar</a>
 <li><a class="el" href="interfacesb_i_device_service_pane_service.html">sbIDeviceServicePaneService</a>
 <li><a class="el" href="interfacesb_i_device_status.html">sbIDeviceStatus</a>
+<li><a class="el" href="interfacesb_i_directory_enumerator.html">sbIDirectoryEnumerator</a>
 <li><a class="el" href="interfacesb_i_directory_import_job.html">sbIDirectoryImportJob</a>
 <li><a class="el" href="interfacesb_i_directory_import_service.html">sbIDirectoryImportService</a>
 <li><a class="el" href="interfacesb_i_display_pane_content_info.html">sbIDisplayPaneContentInfo</a>
@@ -159,6 +166,8 @@
 <li><a class="el" href="interfacesb_i_dnd_source_tracker.html">sbIDndSourceTracker</a>
 <li><a class="el" href="interfacesb_i_d_o_m_event_wrapper.html">sbIDOMEventWrapper</a>
 <li><a class="el" href="interfacesb_i_download_device_helper.html">sbIDownloadDeviceHelper</a>
+<li><a class="el" href="interfacesb_i_dynamic_media_list.html">sbIDynamicMediaList</a>
+<li><a class="el" href="interfacesb_i_dynamic_playlist_service.html">sbIDynamicPlaylistService</a>
 <li><a class="el" href="interfacesb_i_faceplate_manager.html">sbIFaceplateManager</a>
 <li><a class="el" href="interfacesb_i_faceplate_manager_listener.html">sbIFaceplateManagerListener</a>
 <li><a class="el" href="interfacesb_i_faceplate_pane.html">sbIFaceplatePane</a>
@@ -177,16 +186,25 @@
 <li><a class="el" href="interfacesb_i_global_hotkeys.html">sbIGlobalHotkeys</a>
 <li><a class="el" href="interfacesb_i_g_streamer_inspect_handler.html">sbIGStreamerInspectHandler</a>
 <li><a class="el" href="interfacesb_i_g_streamer_mediacore.html">sbIGStreamerMediacore</a>
+<li><a class="el" href="interfacesb_i_g_streamer_pipeline.html">sbIGStreamerPipeline</a>
+<li><a class="el" href="interfacesb_i_g_streamer_r_t_p_streamer.html">sbIGStreamerRTPStreamer</a>
 <li><a class="el" href="interfacesb_i_g_streamer_service.html">sbIGStreamerService</a>
 <li><a class="el" href="interfacesb_i_hotkey_action_bundle.html">sbIHotkeyActionBundle</a>
 <li><a class="el" href="interfacesb_i_hotkey_actions.html">sbIHotkeyActions</a>
 <li><a class="el" href="interfacesb_i_image_link_property_info.html">sbIImageLinkPropertyInfo</a>
+<li><a class="el" href="interfacesb_i_image_size.html">sbIImageSize</a>
 <li><a class="el" href="interfacesb_i_indexed_media_item.html">sbIIndexedMediaItem</a>
+<li><a class="el" href="interfacesb_ii_tunes_x_m_l_parser.html">sbIiTunesXMLParser</a>
+<li><a class="el" href="interfacesb_ii_tunes_x_m_l_parser_listener.html">sbIiTunesXMLParserListener</a>
 <li><a class="el" href="interfacesb_i_job_cancelable.html">sbIJobCancelable</a>
 <li><a class="el" href="interfacesb_i_job_progress.html">sbIJobProgress</a>
 <ul>
+<li><a class="el" href="interfacesb_i_job_progress_time.html">sbIJobProgressTime</a>
 <li><a class="el" href="interfacesb_i_job_progress_u_i.html">sbIJobProgressUI</a>
 <li><a class="el" href="interfacesb_i_local_database_migration_handler.html">sbILocalDatabaseMigrationHandler</a>
+<li><a class="el" href="interfacesb_i_media_management_job.html">sbIMediaManagementJob</a>
+<li><a class="el" href="interfacesb_i_metadata_lookup_job.html">sbIMetadataLookupJob</a>
+<li><a class="el" href="interfacesb_i_shutdown_job.html">sbIShutdownJob</a>
 </ul>
 <li><a class="el" href="interfacesb_i_job_progress_listener.html">sbIJobProgressListener</a>
 <li><a class="el" href="interfacesb_i_job_progress_service.html">sbIJobProgressService</a>
@@ -232,7 +250,6 @@
 </ul>
 <li><a class="el" href="interfacesb_i_library_utils.html">sbILibraryUtils</a>
 <li><a class="el" href="interfacesb_i_local_database_async_g_u_i_d_array_listener.html">sbILocalDatabaseAsyncGUIDArrayListener</a>
-<li><a class="el" href="interfacesb_i_local_database_dynamic_playlist_service.html">sbILocalDatabaseDynamicPlaylistService</a>
 <li><a class="el" href="interfacesb_i_local_database_g_u_i_d_array.html">sbILocalDatabaseGUIDArray</a>
 <ul>
 <li><a class="el" href="interfacesb_i_local_database_async_g_u_i_d_array.html">sbILocalDatabaseAsyncGUIDArray</a>
@@ -252,13 +269,16 @@
 <li><a class="el" href="interfacesb_i_mediacore.html">sbIMediacore</a>
 <li><a class="el" href="interfacesb_i_mediacore_balance_control.html">sbIMediacoreBalanceControl</a>
 <li><a class="el" href="interfacesb_i_mediacore_capabilities.html">sbIMediacoreCapabilities</a>
+<li><a class="el" href="interfacesb_i_mediacore_equalizer_band.html">sbIMediacoreEqualizerBand</a>
 <li><a class="el" href="interfacesb_i_mediacore_error.html">sbIMediacoreError</a>
+<li><a class="el" href="interfacesb_i_mediacore_error_handler.html">sbIMediacoreErrorHandler</a>
 <li><a class="el" href="interfacesb_i_mediacore_event.html">sbIMediacoreEvent</a>
 <li><a class="el" href="interfacesb_i_mediacore_event_listener.html">sbIMediacoreEventListener</a>
 <li><a class="el" href="interfacesb_i_mediacore_event_target.html">sbIMediacoreEventTarget</a>
 <li><a class="el" href="interfacesb_i_mediacore_factory.html">sbIMediacoreFactory</a>
 <li><a class="el" href="interfacesb_i_mediacore_factory_registrar.html">sbIMediacoreFactoryRegistrar</a>
 <li><a class="el" href="interfacesb_i_mediacore_manager.html">sbIMediacoreManager</a>
+<li><a class="el" href="interfacesb_i_mediacore_multiband_equalizer.html">sbIMediacoreMultibandEqualizer</a>
 <li><a class="el" href="interfacesb_i_mediacore_playback_control.html">sbIMediacorePlaybackControl</a>
 <li><a class="el" href="interfacesb_i_mediacore_sequence_generator.html">sbIMediacoreSequenceGenerator</a>
 <li><a class="el" href="interfacesb_i_mediacore_sequencer.html">sbIMediacoreSequencer</a>
@@ -271,6 +291,7 @@
 <li><a class="el" href="interfacesb_i_mediacore_voting.html">sbIMediacoreVoting</a>
 <li><a class="el" href="interfacesb_i_mediacore_voting_chain.html">sbIMediacoreVotingChain</a>
 <li><a class="el" href="interfacesb_i_mediacore_voting_participant.html">sbIMediacoreVotingParticipant</a>
+<li><a class="el" href="interfacesb_i_media_file_manager.html">sbIMediaFileManager</a>
 <li><a class="el" href="interfacesb_i_media_item_listener.html">sbIMediaItemListener</a>
 <li><a class="el" href="interfacesb_i_media_item_status_event.html">sbIMediaItemStatusEvent</a>
 <li><a class="el" href="interfacesb_i_media_item_watcher.html">sbIMediaItemWatcher</a>
@@ -287,13 +308,22 @@
 <li><a class="el" href="interfacesb_i_media_list_view_state.html">sbIMediaListViewState</a>
 <li><a class="el" href="interfacesb_i_media_list_view_tree_view.html">sbIMediaListViewTreeView</a>
 <li><a class="el" href="interfacesb_i_media_list_view_tree_view_observer.html">sbIMediaListViewTreeViewObserver</a>
+<li><a class="el" href="interfacesb_i_media_management_job_item.html">sbIMediaManagementJobItem</a>
+<li><a class="el" href="interfacesb_i_media_management_service.html">sbIMediaManagementService</a>
 <li><a class="el" href="interfacesb_i_media_page.html">sbIMediaPage</a>
 <li><a class="el" href="interfacesb_i_media_page_info.html">sbIMediaPageInfo</a>
 <li><a class="el" href="interfacesb_i_media_page_manager.html">sbIMediaPageManager</a>
+<li><a class="el" href="interfacesb_i_metadata_album_detail.html">sbIMetadataAlbumDetail</a>
 <li><a class="el" href="interfacesb_i_metadata_channel.html">sbIMetadataChannel</a>
 <li><a class="el" href="interfacesb_i_metadata_handler.html">sbIMetadataHandler</a>
+<li><a class="el" href="interfacesb_i_metadata_handler_w_m_a.html">sbIMetadataHandlerWMA</a>
+<li><a class="el" href="interfacesb_i_metadata_lookup_manager.html">sbIMetadataLookupManager</a>
+<li><a class="el" href="interfacesb_i_metadata_lookup_provider.html">sbIMetadataLookupProvider</a>
 <li><a class="el" href="interfacesb_i_metadata_manager.html">sbIMetadataManager</a>
 <li><a class="el" href="interfacesb_i_metrics.html">sbIMetrics</a>
+<li><a class="el" href="interfacesb_i_mock_c_d_device.html">sbIMockCDDevice</a>
+<li><a class="el" href="interfacesb_i_mock_c_d_device_controller.html">sbIMockCDDeviceController</a>
+<li><a class="el" href="interfacesb_i_mock_c_d_t_o_c.html">sbIMockCDTOC</a>
 <li><a class="el" href="interfacesb_i_mutable_remote_security_event.html">sbIMutableRemoteSecurityEvent</a>
 <li><a class="el" href="interfacesb_i_native_window_manager.html">sbINativeWindowManager</a>
 <li><a class="el" href="interfacesb_i_orderable_media_list.html">sbIOrderableMediaList</a>
@@ -336,6 +366,7 @@
 <li><a class="el" href="interfacesb_i_image_property_builder.html">sbIImagePropertyBuilder</a>
 <li><a class="el" href="interfacesb_i_rating_property_builder.html">sbIRatingPropertyBuilder</a>
 <li><a class="el" href="interfacesb_i_simple_button_property_builder.html">sbISimpleButtonPropertyBuilder</a>
+<li><a class="el" href="interfacesb_i_status_property_builder.html">sbIStatusPropertyBuilder</a>
 </ul>
 <li><a class="el" href="interfacesb_i_property_factory.html">sbIPropertyFactory</a>
 <li><a class="el" href="interfacesb_i_property_info.html">sbIPropertyInfo</a>
@@ -368,6 +399,7 @@
 <li><a class="el" href="interfacesb_i_remote_security_event.html">sbIRemoteSecurityEvent</a>
 <li><a class="el" href="interfacesb_i_remote_web_playlist.html">sbIRemoteWebPlaylist</a>
 <li><a class="el" href="interfacesb_i_r_u_i_import_listener.html">sbIRUIImportListener</a>
+<li><a class="el" href="interfacesb_i_screen_saver_suppressor.html">sbIScreenSaverSuppressor</a>
 <li><a class="el" href="interfacesb_i_scriptable_filter_result.html">sbIScriptableFilterResult</a>
 <li><a class="el" href="interfacesb_i_searchable_media_list_view.html">sbISearchableMediaListView</a>
 <li><a class="el" href="interfacesb_i_security_aggregator.html">sbISecurityAggregator</a>
@@ -400,6 +432,10 @@
 <li><a class="el" href="interfacesb_i_s_q_l_builder_criterion_in.html">sbISQLBuilderCriterionIn</a>
 </ul>
 <li><a class="el" href="interfacesb_i_string_bundle_service.html">sbIStringBundleService</a>
+<li><a class="el" href="interfacesb_i_string_map.html">sbIStringMap</a>
+<ul>
+<li><a class="el" href="interfacesb_i_mutable_string_map.html">sbIMutableStringMap</a>
+</ul>
 <li><a class="el" href="interfacesb_i_string_transform.html">sbIStringTransform</a>
 <li><a class="el" href="interfacesb_i_tab_browser.html">sbITabBrowser</a>
 <li><a class="el" href="interfacesb_i_tab_browser_tab.html">sbITabBrowserTab</a>
@@ -409,23 +445,38 @@
 <li><a class="el" href="interfacesb_i_test_mediacore_event_creator.html">sbITestMediacoreEventCreator</a>
 <li><a class="el" href="interfacesb_i_timing_service.html">sbITimingService</a>
 <li><a class="el" href="interfacesb_i_timing_service_timer.html">sbITimingServiceTimer</a>
+<li><a class="el" href="interfacesb_i_transcode_album_art.html">sbITranscodeAlbumArt</a>
+<li><a class="el" href="interfacesb_i_transcode_batch_job_item.html">sbITranscodeBatchJobItem</a>
+<li><a class="el" href="interfacesb_i_transcode_image.html">sbITranscodeImage</a>
+<li><a class="el" href="interfacesb_i_transcode_image_profile.html">sbITranscodeImageProfile</a>
+<li><a class="el" href="interfacesb_i_transcode_job.html">sbITranscodeJob</a>
+<li><a class="el" href="interfacesb_i_transcode_manager.html">sbITranscodeManager</a>
+<li><a class="el" href="interfacesb_i_transcode_profile.html">sbITranscodeProfile</a>
+<li><a class="el" href="interfacesb_i_transcode_profile_loader.html">sbITranscodeProfileLoader</a>
 <li><a class="el" href="interfacesb_i_tree_view_property_info.html">sbITreeViewPropertyInfo</a>
 <li><a class="el" href="interfacesb_i_u_r_i_import_service.html">sbIURIImportService</a>
 <li><a class="el" href="interfacesb_i_u_r_l_formatter.html">sbIURLFormatter</a>
+<li><a class="el" href="interfacesb_i_video_box.html">sbIVideoBox</a>
 <li><a class="el" href="interfacesb_i_watch_folder_service.html">sbIWatchFolderService</a>
+<li><a class="el" href="interfacesb_i_w_f_move_rename_helper9000.html">sbIWFMoveRenameHelper9000</a>
+<li><a class="el" href="interfacesb_i_w_f_remove_helper9001.html">sbIWFRemoveHelper9001</a>
 <li><a class="el" href="interfacesb_i_window_cloak.html">sbIWindowCloak</a>
 <li><a class="el" href="interfacesb_i_window_layer.html">sbIWindowLayer</a>
 <li><a class="el" href="interfacesb_i_window_min_max.html">sbIWindowMinMax</a>
 <li><a class="el" href="interfacesb_i_window_min_max_callback.html">sbIWindowMinMaxCallback</a>
+<li><a class="el" href="interfacesb_i_window_move_listener.html">sbIWindowMoveListener</a>
+<li><a class="el" href="interfacesb_i_window_move_service.html">sbIWindowMoveService</a>
 <li><a class="el" href="interfacesb_i_window_region.html">sbIWindowRegion</a>
 <li><a class="el" href="interfacesb_i_window_resize_hook.html">sbIWindowResizeHook</a>
 <li><a class="el" href="interfacesb_i_window_resize_hook_callback.html">sbIWindowResizeHookCallback</a>
+<li><a class="el" href="interfacesb_i_windows_auto_play_action_handler.html">sbIWindowsAutoPlayActionHandler</a>
+<li><a class="el" href="interfacesb_i_windows_auto_play_service.html">sbIWindowsAutoPlayService</a>
 <li><a class="el" href="interfacesb_i_window_watcher.html">sbIWindowWatcher</a>
 <li><a class="el" href="interfacesb_p_i_bundle.html">sbPIBundle</a>
 <li><a class="el" href="interfacesb_p_i_file_system_tree.html">sbPIFileSystemTree</a>
 <li><a class="el" href="interfacesb_p_i_mediacore_manager.html">sbPIMediacoreManager</a>
 </ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:40 2009 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:46 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

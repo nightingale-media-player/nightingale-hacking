@@ -4,13 +4,13 @@
     <compoundname>sbIMediaListView.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="340">
+      <node id="395">
         <label>components/library/base/public/sbIMediaListView.idl</label>
         <link refid="sbIMediaListView.idl"/>
-        <childnode refid="341" relation="include">
+        <childnode refid="396" relation="include">
         </childnode>
       </node>
-      <node id="341">
+      <node id="396">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -59,15 +59,15 @@
 <codeline lineno="40"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref>;</highlight></codeline>
 <codeline lineno="41"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref>;</highlight></codeline>
 <codeline lineno="42"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mutable_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances Note that implementations...">sbIMutablePropertyArray</ref>;</highlight></codeline>
-<codeline lineno="43"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view_selection" kindref="compound" tooltip="Manage the selection of items within a view. This interface is a subset of nsITreeView...">sbIMediaListViewSelection</ref>;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view_selection" kindref="compound" tooltip="Manage the selection of items within a view. This interface is a subset of nsITreeViewSelection...">sbIMediaListViewSelection</ref>;</highlight></codeline>
 <codeline lineno="44"><highlight class="normal"></highlight></codeline>
-<codeline lineno="51"><highlight class="normal">[scriptable,<sp/>uuid(bb26d18e-8387-4512-9d99-8ce9b18f929b)]</highlight></codeline>
+<codeline lineno="51"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(bb26d18e-8387-4512-9d99-8ce9b18f929b)]</highlight></codeline>
 <codeline lineno="52" refid="interfacesb_i_media_list_view_state" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view_state" kindref="compound" tooltip="Saved state of a media list view.">sbIMediaListViewState</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="53"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"><sp/><sp/>AString<sp/>toString();</highlight></codeline>
 <codeline lineno="55"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="56"><highlight class="normal"></highlight></codeline>
-<codeline lineno="63"><highlight class="normal">[scriptable,<sp/>uuid(378fc540-9592-43df-908c-ed84ac0e1221)]</highlight></codeline>
+<codeline lineno="63"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(378fc540-9592-43df-908c-ed84ac0e1221)]</highlight></codeline>
 <codeline lineno="64" refid="interfacesb_i_media_list_view_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view_listener" kindref="compound" tooltip="Saved state of a media list view.">sbIMediaListViewListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="65"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onFilterChanged(in<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref><sp/>aChangedView);</highlight></codeline>
@@ -77,7 +77,7 @@
 <codeline lineno="79"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onSortChanged(in<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref><sp/>aChangedView);</highlight></codeline>
 <codeline lineno="80"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="81"><highlight class="normal"></highlight></codeline>
-<codeline lineno="88"><highlight class="normal">[scriptable,<sp/>uuid(53cefc7c-0967-4cab-84bd-11b52b1bf081)]</highlight></codeline>
+<codeline lineno="88"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(53cefc7c-0967-4cab-84bd-11b52b1bf081)]</highlight></codeline>
 <codeline lineno="89" refid="interfacesb_i_media_list_view" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="90"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="94" refid="interfacesb_i_media_list_view_10c728825b5bc85265d000a68d22d56a9" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>mediaList;</highlight></codeline>
@@ -114,7 +114,7 @@
 <codeline lineno="193"><highlight class="normal"></highlight></codeline>
 <codeline lineno="207"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeListener(in<sp/><ref refid="interfacesb_i_media_list_view_listener" kindref="compound" tooltip="Saved state of a media list view.">sbIMediaListViewListener</ref><sp/>aListener);</highlight></codeline>
 <codeline lineno="208"><highlight class="normal"></highlight></codeline>
-<codeline lineno="212" refid="interfacesb_i_media_list_view_1fb1ed8f2da0b28b41be435d0f6c51c12" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_list_view_selection" kindref="compound" tooltip="Manage the selection of items within a view. This interface is a subset of nsITreeView...">sbIMediaListViewSelection</ref><sp/>selection;</highlight></codeline>
+<codeline lineno="212" refid="interfacesb_i_media_list_view_1fb1ed8f2da0b28b41be435d0f6c51c12" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_list_view_selection" kindref="compound" tooltip="Manage the selection of items within a view. This interface is a subset of nsITreeViewSelection...">sbIMediaListViewSelection</ref><sp/>selection;</highlight></codeline>
 <codeline lineno="213"><highlight class="normal"></highlight></codeline>
 <codeline lineno="217"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeSelectedMediaItems();</highlight></codeline>
 <codeline lineno="218"><highlight class="normal">};</highlight></codeline>

@@ -4,13 +4,13 @@
     <compoundname>sbIStringTransform.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="235">
+      <node id="275">
         <label>nsISupports.idl</label>
       </node>
-      <node id="234">
+      <node id="274">
         <label>components/intl/public/sbIStringTransform.idl</label>
         <link refid="sbIStringTransform.idl"/>
-        <childnode refid="235" relation="include">
+        <childnode refid="275" relation="include">
         </childnode>
       </node>
     </incdepgraph>
@@ -25,7 +25,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="107"/>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="113"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_string_transform_8idl_1daf40ae33eedb4d78943db59b67c6e92" prot="public" static="no">
         <name>SB_STRINGTRANSFORM_CONTRACTID</name>
@@ -36,7 +36,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="109"/>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="115"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_string_transform_8idl_19283a93020f643ea1cb5e1e7c17e8797" prot="public" static="no">
         <name>SB_STRINGTRANSFORM_CLASSNAME</name>
@@ -47,7 +47,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="111"/>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="117"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_string_transform_8idl_1576aa14ae8e523acc71ef0df2e153619" prot="public" static="no">
         <name>SB_STRINGTRANSFORM_CID</name>
@@ -63,7 +63,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="118"/>
+        <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl" line="124"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -99,7 +99,7 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="32"><highlight class="normal">[scriptable,<sp/>uuid(711cd060-dce8-4264-807a-b8d118265abd)]</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(4b9a60a0-76e8-47ed-b701-b297d45ab95e)]</highlight></codeline>
 <codeline lineno="33" refid="interfacesb_i_string_transform" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_string_transform" kindref="compound">sbIStringTransform</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="34"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="39" refid="interfacesb_i_string_transform_1c11f6d3dbcf06e6b6b0d5082a282bc8b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>TRANSFORM_MAP_HIRAGANA<sp/>=<sp/>1;</highlight></codeline>
@@ -118,38 +118,41 @@
 <codeline lineno="78" refid="interfacesb_i_string_transform_151009a08d1b398406d25fe8436326d38" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>TRANSFORM_REVERSE_BYTES<sp/>=<sp/>1<sp/>&lt;&lt;<sp/>11;<sp/></highlight></codeline>
 <codeline lineno="79"><highlight class="normal"></highlight></codeline>
 <codeline lineno="83" refid="interfacesb_i_string_transform_1f26dc80fe40ff6f0f7a671f50054968b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>TRANSFORM_IGNORE_NONALPHANUM<sp/>=<sp/>1<sp/>&lt;&lt;<sp/>12;</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"></highlight></codeline>
-<codeline lineno="90" refid="interfacesb_i_string_transform_1548883bd24f51453de7afcfd16bd509a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>TRANSFORM_IGNORE_LEADING<sp/>=<sp/>1<sp/>&lt;&lt;<sp/>13;</highlight></codeline>
-<codeline lineno="91"><highlight class="normal"></highlight></codeline>
-<codeline lineno="92"><highlight class="normal"><sp/><sp/>AString<sp/>normalizeString(in<sp/>AString<sp/>aCharset,</highlight></codeline>
-<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aTransformFlags,</highlight></codeline>
-<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aInput);</highlight></codeline>
-<codeline lineno="95"><highlight class="normal"></highlight></codeline>
-<codeline lineno="96"><highlight class="normal"><sp/><sp/>AString<sp/>convertToCharset(in<sp/>AString<sp/>aDestCharset,</highlight></codeline>
-<codeline lineno="97"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aInput);</highlight></codeline>
-<codeline lineno="98"><highlight class="normal"></highlight></codeline>
-<codeline lineno="99"><highlight class="normal"><sp/><sp/>AString<sp/>guessCharset(in<sp/>AString<sp/>aInput);</highlight></codeline>
-<codeline lineno="100"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="101"><highlight class="normal"><sp/><sp/>AString<sp/>removeArticles(in<sp/>AString<sp/>aInput,<sp/>[optional]<sp/>in<sp/>AString<sp/>aLanguage);</highlight></codeline>
-<codeline lineno="102"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="103"><highlight class="normal"></highlight></codeline>
-<codeline lineno="104"><highlight class="normal">%{C++</highlight></codeline>
-<codeline lineno="105"><highlight class="normal"></highlight></codeline>
-<codeline lineno="106"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SB_STRINGTRANSFORM_DESCRIPTION<sp/><sp/><sp/><sp/>\</highlight></codeline>
-<codeline lineno="107"><highlight class="preprocessor"><sp/><sp/>&quot;Songbird<sp/>String<sp/>Transform&quot;</highlight></codeline>
-<codeline lineno="108"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_STRINGTRANSFORM_CONTRACTID<sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
-<codeline lineno="109"><highlight class="preprocessor"><sp/><sp/>&quot;@songbirdnest.com/Songbird/Intl/StringTransform;1&quot;</highlight></codeline>
-<codeline lineno="110"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_STRINGTRANSFORM_CLASSNAME<sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
-<codeline lineno="111"><highlight class="preprocessor"><sp/><sp/>&quot;sbStringTransform&quot;</highlight></codeline>
-<codeline lineno="112"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_STRINGTRANSFORM_CID<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
-<codeline lineno="113"><highlight class="preprocessor">{<sp/></highlight><highlight class="comment">/*{0a8d2a48-2947-4ee4-bf36-32e7777358db}*/</highlight><highlight class="normal"><sp/>\</highlight></codeline>
-<codeline lineno="114"><highlight class="normal"><sp/><sp/>0xa8d2a48,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
-<codeline lineno="115"><highlight class="normal"><sp/><sp/>0x2947,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
-<codeline lineno="116"><highlight class="normal"><sp/><sp/>0x4ee4,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
-<codeline lineno="117"><highlight class="normal"><sp/><sp/>{<sp/>0xbf,<sp/>0x36,<sp/>0x32,<sp/>0xe7,<sp/>0x77,<sp/>0x73,<sp/>0x58,<sp/>0xdb<sp/>}<sp/>\</highlight></codeline>
-<codeline lineno="118"><highlight class="normal">}</highlight></codeline>
-<codeline lineno="119"><highlight class="normal"></highlight></codeline>
-<codeline lineno="120"><highlight class="normal">%}</highlight></codeline>
+<codeline lineno="84" refid="interfacesb_i_string_transform_1797e46a0f97ec85585ad054145ca9ef8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE<sp/>=<sp/>1<sp/>&lt;&lt;<sp/>13;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="91" refid="interfacesb_i_string_transform_1548883bd24f51453de7afcfd16bd509a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>TRANSFORM_IGNORE_LEADING<sp/>=<sp/>1<sp/>&lt;&lt;<sp/>14;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"></highlight></codeline>
+<codeline lineno="96" refid="interfacesb_i_string_transform_18d1594bd0b36c4e0d9f79a238482dbf4" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS<sp/>=<sp/>1<sp/>&lt;&lt;<sp/>15;</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/>AString<sp/>normalizeString(in<sp/>AString<sp/>aCharset,</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aTransformFlags,</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aInput);</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"></highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/>AString<sp/>convertToCharset(in<sp/>AString<sp/>aDestCharset,</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aInput);</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/>AString<sp/>guessCharset(in<sp/>AString<sp/>aInput);</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/>AString<sp/>removeArticles(in<sp/>AString<sp/>aInput,<sp/>[optional]<sp/>in<sp/>AString<sp/>aLanguage);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="109"><highlight class="normal"></highlight></codeline>
+<codeline lineno="110"><highlight class="normal">%{C++</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"></highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SB_STRINGTRANSFORM_DESCRIPTION<sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="113"><highlight class="preprocessor"><sp/><sp/>&quot;Songbird<sp/>String<sp/>Transform&quot;</highlight></codeline>
+<codeline lineno="114"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_STRINGTRANSFORM_CONTRACTID<sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="115"><highlight class="preprocessor"><sp/><sp/>&quot;@songbirdnest.com/Songbird/Intl/StringTransform;1&quot;</highlight></codeline>
+<codeline lineno="116"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_STRINGTRANSFORM_CLASSNAME<sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="117"><highlight class="preprocessor"><sp/><sp/>&quot;sbStringTransform&quot;</highlight></codeline>
+<codeline lineno="118"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_STRINGTRANSFORM_CID<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="119"><highlight class="preprocessor">{<sp/></highlight><highlight class="comment">/*{0a8d2a48-2947-4ee4-bf36-32e7777358db}*/</highlight><highlight class="normal"><sp/>\</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/>0xa8d2a48,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/>0x2947,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/>0x4ee4,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/>{<sp/>0xbf,<sp/>0x36,<sp/>0x32,<sp/>0xe7,<sp/>0x77,<sp/>0x73,<sp/>0x58,<sp/>0xdb<sp/>}<sp/>\</highlight></codeline>
+<codeline lineno="124"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"></highlight></codeline>
+<codeline lineno="126"><highlight class="normal">%}</highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/intl/public/sbIStringTransform.idl"/>
   </compounddef>

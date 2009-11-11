@@ -184,7 +184,7 @@ The basic loop for using a query is as follows:<p>
 1) Object Initialization - <a class="el" href="interfacesb_i_database_query.html#e23fc826898b53ffb1912491072f0657" title="Set the database to be queried.">setDatabaseGUID()</a>, optionally <a class="el" href="interfacesb_i_database_query.html#3010be8388a4dcf2026e62b081b96def" title="Set the query to run asynchronously (ie: execute() does not block).">setAsyncQuery()</a>, set callbacks, etc<p>
 2) Query Construction - <a class="el" href="interfacesb_i_database_query.html#188d8ac26b0b452e3b58a6fb3d20b4fa" title="Add a SQL query string to the queue.">addQuery()</a>, or calls to the helper objects<p>
 3) Execution - <a class="el" href="interfacesb_i_database_query.html#5af54f347459563a8f1cf694672e71d4" title="Execute the queries enqueued in the object.">execute()</a>, optionally <a class="el" href="interfacesb_i_database_query.html#ac0eabdbdbe51f8ee09e6e4955358e2d" title="Wait until the query has finished executing asynchronously.">waitForCompletion()</a><p>
-4) Get Results - <a class="el" href="interfacesb_i_database_query.html#6dda54df53ed7d5a702d009ad1831315" title="Get the results object for the query that has executed.">getResultObject()</a><p>
+4) Get Results - <a class="el" href="interfacesb_i_database_query.html#6dda54df53ed7d5a702d009ad1831315" title="Get the results object for the query that has executed.">getResultObject()</a>, the returned object may be null if there was an error. You should always check the value returned by execute.<p>
 5) Reset - optionally <a class="el" href="interfacesb_i_database_query.html#919882c633a1ac5da38942d05470f334" title="Clear out the query and make it all sparkly new.">resetQuery()</a>, if you're going to reuse the object with a new set of query strings<p>
 Multiple queries may be added to the object via multiple calls to addQuery, or multiple calls to the helper interfaces. The queries will execute sequentially and the result object will be for the last query executed.<p>
 <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_database_simple_query_callback.html" title="A callback object used to inform client code that a query has completed.">sbIDatabaseSimpleQueryCallback</a>, <a class="el" href="interfacesb_i_database_query_callback.html" title="A more complex callback object that can be used to read each row of the results in...">sbIDatabaseQueryCallback</a> </dd></dl>
@@ -192,7 +192,7 @@ Multiple queries may be added to the object via multiple calls to addQuery, or m
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l00167">167</a> of file <a class="el" href="sb_i_database_query_8idl-source.html">sbIDatabaseQuery.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l00169">169</a> of file <a class="el" href="sb_i_database_query_8idl-source.html">sbIDatabaseQuery.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="3010be8388a4dcf2026e62b081b96def"></a><!-- doxytag: member="sbIDatabaseQuery::setAsyncQuery" ref="3010be8388a4dcf2026e62b081b96def" args="(in PRBool bAsyncQuery)" -->
 <div class="memitem">
 <div class="memproto">
@@ -528,6 +528,7 @@ Get the results object for the query that has executed.
 <p>
 Don't get this object unless you know the query has completed executing.<p>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>The results object </dd></dl>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>The result object may be null if there was an error during query execution. </dd></dl>
 
 </div>
 </div><p>
@@ -601,6 +602,12 @@ The database engine calls this. Don't.<p>
 Execute the queries enqueued in the object. 
 <p>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>The error value if synchronous, or 0 if async </dd></dl>
+<dl compact><dt><b>Return values:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>0</em>&nbsp;</td><td>- No error </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>&gt;</em>&nbsp;</td><td>0 - Error. </td></tr>
+  </table>
+</dl>
 
 </div>
 </div><p>
@@ -924,7 +931,7 @@ Set a specific folder/directory URI for the database.
 Set a specific folder URI where you wish your database to reside. For example, you could set the location to be the following: 'file:///C:/MyDB/'<p>
 Note that the directory is not created for you and must exist by the time <a class="el" href="interfacesb_i_database_query.html#5af54f347459563a8f1cf694672e71d4" title="Execute the queries enqueued in the object.">execute()</a> is called on the query. 
 <p>
-Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l00179">179</a> of file <a class="el" href="sb_i_database_query_8idl-source.html">sbIDatabaseQuery.idl</a>.
+Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l00181">181</a> of file <a class="el" href="sb_i_database_query_8idl-source.html">sbIDatabaseQuery.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="73c479ffe53dd7fb140c6cfcd5351237"></a><!-- doxytag: member="sbIDatabaseQuery::rollingLimit" ref="73c479ffe53dd7fb140c6cfcd5351237" args="" -->
@@ -943,12 +950,12 @@ Set the rolling limit for this query.
 <p>
 If set, this query will be a rolling limit query. Rather than return the full result of the query, a rolling limit query will add up the values of the column specified in rollingLimitColumnIndex and stop running once the limit set in rollingLimit is reached. The query result will be a single row containing the row that met or exceeded the limit. The row number of this row will be set in rollingLimitResult. If the limit is not reach, no rows are returned. 
 <p>
-Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l00371">371</a> of file <a class="el" href="sb_i_database_query_8idl-source.html">sbIDatabaseQuery.idl</a>.
+Definition at line <a class="el" href="sb_i_database_query_8idl-source.html#l00377">377</a> of file <a class="el" href="sb_i_database_query_8idl-source.html">sbIDatabaseQuery.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/dbengine/public/<a class="el" href="sb_i_database_query_8idl-source.html">sbIDatabaseQuery.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:41 2009 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:47 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

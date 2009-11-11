@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/library/base/public/sbIMediaListViewSelection.idl</h1><a href="sb_i_media_list_view_selection_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -97,7 +103,7 @@
 <a name="l00033"></a>00033 interface nsISimpleEnumerator;
 <a name="l00034"></a>00034 interface <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>;
 <a name="l00035"></a>00035 
-<a name="l00040"></a>00040 [scriptable, uuid(8e4e9f65-9c90-4381-a8ed-b8aa2d1ad028)]
+<a name="l00040"></a>00040 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(8e4e9f65-9c90-4381-a8ed-b8aa2d1ad028)]
 <a name="l00041"></a><a class="code" href="interfacesb_i_media_list_view_selection_listener.html">00041</a> interface <a class="code" href="interfacesb_i_media_list_view_selection_listener.html" title="Listener interface that gets notified on selection changes.">sbIMediaListViewSelectionListener</a> : nsISupports
 <a name="l00042"></a>00042 {
 <a name="l00046"></a>00046   <span class="keywordtype">void</span> onSelectionChanged();
@@ -105,44 +111,46 @@
 <a name="l00052"></a>00052   <span class="keywordtype">void</span> onCurrentIndexChanged();
 <a name="l00053"></a>00053 };
 <a name="l00054"></a>00054 
-<a name="l00060"></a>00060 [scriptable, uuid(ea5d0e88-6b5b-4c22-a753-7274ab774d8a)]
-<a name="l00061"></a><a class="code" href="interfacesb_i_media_list_view_selection.html">00061</a> interface <a class="code" href="interfacesb_i_media_list_view_selection.html" title="Manage the selection of items within a view. This interface is a subset of nsITreeView...">sbIMediaListViewSelection</a> : nsISupports
-<a name="l00062"></a>00062 {
-<a name="l00066"></a><a class="code" href="interfacesb_i_media_list_view_selection.html#90d52082831a7450003b5b5a8e62d0ce">00066</a>   readonly attribute <span class="keywordtype">long</span> count;
-<a name="l00067"></a>00067 
-<a name="l00071"></a><a class="code" href="interfacesb_i_media_list_view_selection.html#63dbda6a90dad503bedf0cfb3b6911a1">00071</a>   attribute <span class="keywordtype">long</span> currentIndex;
-<a name="l00072"></a>00072 
-<a name="l00076"></a><a class="code" href="interfacesb_i_media_list_view_selection.html#05718acc03ced22c1f7e0e268f06f021">00076</a>   readonly attribute <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> currentMediaItem;
-<a name="l00077"></a>00077 
-<a name="l00083"></a>00083   <span class="keywordtype">boolean</span> isIndexSelected(in <span class="keywordtype">long</span> aIndex);
-<a name="l00084"></a>00084 
-<a name="l00091"></a><a class="code" href="interfacesb_i_media_list_view_selection.html#6018342e4f7ac53e288bdcd6d7474483">00091</a>   readonly attribute nsISimpleEnumerator selectedIndexedMediaItems;
-<a name="l00092"></a>00092   
-<a name="l00098"></a><a class="code" href="interfacesb_i_media_list_view_selection.html#183d7ed2ca944b91a6c08ba4b6cb9ba9">00098</a>   readonly attribute nsISimpleEnumerator selectedMediaItems;
-<a name="l00099"></a>00099 
-<a name="l00104"></a>00104   <span class="keywordtype">void</span> select(in <span class="keywordtype">long</span> aIndex);
-<a name="l00105"></a>00105 
-<a name="l00111"></a>00111   <span class="keywordtype">void</span> selectOnly(in <span class="keywordtype">long</span> aIndex);
-<a name="l00112"></a>00112 
-<a name="l00117"></a>00117   <span class="keywordtype">void</span> toggle(in <span class="keywordtype">long</span> aIndex);
-<a name="l00118"></a>00118 
-<a name="l00123"></a>00123   <span class="keywordtype">void</span> clear(in <span class="keywordtype">long</span> aIndex);
-<a name="l00124"></a>00124 
-<a name="l00130"></a>00130   <span class="keywordtype">void</span> selectRange(in <span class="keywordtype">long</span> aStartIndex, in <span class="keywordtype">long</span> aEndIndex);
-<a name="l00131"></a>00131 
-<a name="l00137"></a>00137   <span class="keywordtype">void</span> clearRange(in <span class="keywordtype">long</span> aStartIndex, in <span class="keywordtype">long</span> aEndIndex);
-<a name="l00138"></a>00138 
-<a name="l00142"></a>00142   <span class="keywordtype">void</span> selectNone();
-<a name="l00143"></a>00143 
-<a name="l00147"></a>00147   <span class="keywordtype">void</span> selectAll();
-<a name="l00148"></a>00148 
-<a name="l00154"></a>00154   <span class="keywordtype">void</span> addListener(in <a class="code" href="interfacesb_i_media_list_view_selection_listener.html" title="Listener interface that gets notified on selection changes.">sbIMediaListViewSelectionListener</a> aListener);
-<a name="l00155"></a>00155 
-<a name="l00160"></a>00160   <span class="keywordtype">void</span> removeListener(in <a class="code" href="interfacesb_i_media_list_view_selection_listener.html" title="Listener interface that gets notified on selection changes.">sbIMediaListViewSelectionListener</a> aListener);
-<a name="l00161"></a>00161 
-<a name="l00165"></a><a class="code" href="interfacesb_i_media_list_view_selection.html#2bb3b38fee48e8de18e7c9592aad5481">00165</a>   attribute <span class="keywordtype">boolean</span> selectionNotificationsSuppressed;
-<a name="l00166"></a>00166 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+<a name="l00063"></a>00063 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(ea5d0e88-6b5b-4c22-a753-7274ab774d8a)]
+<a name="l00064"></a><a class="code" href="interfacesb_i_media_list_view_selection.html">00064</a> interface <a class="code" href="interfacesb_i_media_list_view_selection.html" title="Manage the selection of items within a view. This interface is a subset of nsITreeViewSelection...">sbIMediaListViewSelection</a> : nsISupports
+<a name="l00065"></a>00065 {
+<a name="l00069"></a><a class="code" href="interfacesb_i_media_list_view_selection.html#90d52082831a7450003b5b5a8e62d0ce">00069</a>   readonly attribute <span class="keywordtype">long</span> count;
+<a name="l00070"></a>00070 
+<a name="l00074"></a><a class="code" href="interfacesb_i_media_list_view_selection.html#63dbda6a90dad503bedf0cfb3b6911a1">00074</a>   attribute <span class="keywordtype">long</span> currentIndex;
+<a name="l00075"></a>00075 
+<a name="l00079"></a><a class="code" href="interfacesb_i_media_list_view_selection.html#05718acc03ced22c1f7e0e268f06f021">00079</a>   readonly attribute <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> currentMediaItem;
+<a name="l00080"></a>00080 
+<a name="l00086"></a>00086   <span class="keywordtype">boolean</span> isIndexSelected(in <span class="keywordtype">long</span> aIndex);
+<a name="l00087"></a>00087 
+<a name="l00094"></a><a class="code" href="interfacesb_i_media_list_view_selection.html#6018342e4f7ac53e288bdcd6d7474483">00094</a>   readonly attribute nsISimpleEnumerator selectedIndexedMediaItems;
+<a name="l00095"></a>00095   
+<a name="l00101"></a><a class="code" href="interfacesb_i_media_list_view_selection.html#183d7ed2ca944b91a6c08ba4b6cb9ba9">00101</a>   readonly attribute nsISimpleEnumerator selectedMediaItems;
+<a name="l00102"></a>00102 
+<a name="l00107"></a>00107   <span class="keywordtype">void</span> select(in <span class="keywordtype">long</span> aIndex);
+<a name="l00108"></a>00108 
+<a name="l00114"></a>00114   <span class="keywordtype">void</span> selectOnly(in <span class="keywordtype">long</span> aIndex);
+<a name="l00115"></a>00115 
+<a name="l00122"></a>00122   <span class="keywordtype">void</span> timedSelectOnly(in <span class="keywordtype">long</span> aIndex, in <span class="keywordtype">long</span> aDelay);
+<a name="l00123"></a>00123 
+<a name="l00128"></a>00128   <span class="keywordtype">void</span> toggle(in <span class="keywordtype">long</span> aIndex);
+<a name="l00129"></a>00129 
+<a name="l00134"></a>00134   <span class="keywordtype">void</span> clear(in <span class="keywordtype">long</span> aIndex);
+<a name="l00135"></a>00135 
+<a name="l00141"></a>00141   <span class="keywordtype">void</span> selectRange(in <span class="keywordtype">long</span> aStartIndex, in <span class="keywordtype">long</span> aEndIndex);
+<a name="l00142"></a>00142 
+<a name="l00148"></a>00148   <span class="keywordtype">void</span> clearRange(in <span class="keywordtype">long</span> aStartIndex, in <span class="keywordtype">long</span> aEndIndex);
+<a name="l00149"></a>00149 
+<a name="l00153"></a>00153   <span class="keywordtype">void</span> selectNone();
+<a name="l00154"></a>00154 
+<a name="l00158"></a>00158   <span class="keywordtype">void</span> selectAll();
+<a name="l00159"></a>00159 
+<a name="l00165"></a>00165   <span class="keywordtype">void</span> addListener(in <a class="code" href="interfacesb_i_media_list_view_selection_listener.html" title="Listener interface that gets notified on selection changes.">sbIMediaListViewSelectionListener</a> aListener);
+<a name="l00166"></a>00166 
+<a name="l00171"></a>00171   <span class="keywordtype">void</span> removeListener(in <a class="code" href="interfacesb_i_media_list_view_selection_listener.html" title="Listener interface that gets notified on selection changes.">sbIMediaListViewSelectionListener</a> aListener);
+<a name="l00172"></a>00172 
+<a name="l00176"></a><a class="code" href="interfacesb_i_media_list_view_selection.html#2bb3b38fee48e8de18e7c9592aad5481">00176</a>   attribute <span class="keywordtype">boolean</span> selectionNotificationsSuppressed;
+<a name="l00177"></a>00177 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

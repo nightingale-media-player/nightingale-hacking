@@ -4,13 +4,13 @@
     <compoundname>sbIDirectoryImportService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="544">
+      <node id="676">
         <label>components/mediaimport/directory/public/sbIDirectoryImportService.idl</label>
         <link refid="sbIDirectoryImportService.idl"/>
-        <childnode refid="545" relation="include">
+        <childnode refid="677" relation="include">
         </childnode>
       </node>
-      <node id="545">
+      <node id="677">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -55,7 +55,7 @@
 <codeline lineno="32"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
 <codeline lineno="33"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_job_progress" kindref="compound" tooltip="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</ref>;</highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="42"><highlight class="normal">[scriptable,<sp/>uuid(6b029f20-cadd-11dd-ad8b-0800200c9a66)]</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(6b029f20-cadd-11dd-ad8b-0800200c9a66)]</highlight></codeline>
 <codeline lineno="43" refid="interfacesb_i_directory_import_job" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_directory_import_job" kindref="compound" tooltip="Represents a recursive directory import operation. Use sbIDirectoryImportService...">sbIDirectoryImportJob</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="44"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="50" refid="interfacesb_i_directory_import_job_124d3dac3243f040987693f124a935f50" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>totalAddedToMediaList;</highlight></codeline>
@@ -72,7 +72,7 @@
 <codeline lineno="77"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="78"><highlight class="normal"></highlight></codeline>
 <codeline lineno="79"><highlight class="normal"></highlight></codeline>
-<codeline lineno="85"><highlight class="normal">[scriptable,<sp/>uuid(13ab5520-449e-11dd-ae16-0800200c9a66)]</highlight></codeline>
+<codeline lineno="85"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(13ab5520-449e-11dd-ae16-0800200c9a66)]</highlight></codeline>
 <codeline lineno="86" refid="interfacesb_i_directory_import_service" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_directory_import_service" kindref="compound" tooltip="Handles finding media files in directories and adding them to a library or list.">sbIDirectoryImportService</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="87"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="88"><highlight class="normal"></highlight></codeline>

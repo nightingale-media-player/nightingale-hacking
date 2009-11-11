@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_mock_c_d_device_controller" kind="interface" prot="public">
+    <compoundname>sbIMockCDDeviceController</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_mock_c_d_device_controller_11d69d751d26d7eb2cfe53c2891ef6496" prot="public" static="no" mutable="no">
+        <type>const unsigned short</type>
+        <definition>const unsigned short sbIMockCDDeviceController::MOCK_MEDIA_DISC_MIDNIGHT_ROCK</definition>
+        <argsstring></argsstring>
+        <name>MOCK_MEDIA_DISC_MIDNIGHT_ROCK</name>
+        <initializer> 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/cd/mock/public/sbIMockCDDeviceController.idl" line="43" bodyfile="c:/builds/songbird/trunk/components/devices/cd/mock/public/sbIMockCDDeviceController.idl" bodystart="43" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_mock_c_d_device_controller_1614a35489f7de90f1c1a377f6eb3cdb1" prot="public" static="no" mutable="no">
+        <type>const unsigned short</type>
+        <definition>const unsigned short sbIMockCDDeviceController::MOCK_MEDIA_DISC_BABY_ONE_MORE_TIME</definition>
+        <argsstring></argsstring>
+        <name>MOCK_MEDIA_DISC_BABY_ONE_MORE_TIME</name>
+        <initializer> 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/cd/mock/public/sbIMockCDDeviceController.idl" line="44" bodyfile="c:/builds/songbird/trunk/components/devices/cd/mock/public/sbIMockCDDeviceController.idl" bodystart="44" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_mock_c_d_device_controller_15096c67eb30df140c8e8903e3b09af2e" prot="public" static="no" mutable="no">
+        <type>const unsigned short</type>
+        <definition>const unsigned short sbIMockCDDeviceController::MOCK_MEDIA_DISC_U2</definition>
+        <argsstring></argsstring>
+        <name>MOCK_MEDIA_DISC_U2</name>
+        <initializer> 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/cd/mock/public/sbIMockCDDeviceController.idl" line="45" bodyfile="c:/builds/songbird/trunk/components/devices/cd/mock/public/sbIMockCDDeviceController.idl" bodystart="45" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_mock_c_d_device_controller_1f94d5bc419221d4a3ba0ed7127a418ce" prot="public" static="no" mutable="no">
+        <type>const unsigned short</type>
+        <definition>const unsigned short sbIMockCDDeviceController::MOCK_MEDIA_DISC_INCREDIBAD</definition>
+        <argsstring></argsstring>
+        <name>MOCK_MEDIA_DISC_INCREDIBAD</name>
+        <initializer> 3</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/cd/mock/public/sbIMockCDDeviceController.idl" line="46" bodyfile="c:/builds/songbird/trunk/components/devices/cd/mock/public/sbIMockCDDeviceController.idl" bodystart="46" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_mock_c_d_device_controller_1bf3c168e61bb2f24d19615f9b4f36b5e" prot="public" static="no" mutable="no">
+        <type>const unsigned short</type>
+        <definition>const unsigned short sbIMockCDDeviceController::MOCK_MEDIA_DISC_INSTANT_JUNK</definition>
+        <argsstring></argsstring>
+        <name>MOCK_MEDIA_DISC_INSTANT_JUNK</name>
+        <initializer> 4</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/cd/mock/public/sbIMockCDDeviceController.idl" line="47" bodyfile="c:/builds/songbird/trunk/components/devices/cd/mock/public/sbIMockCDDeviceController.idl" bodystart="47" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_mock_c_d_device_controller_1eb7a08cb7be228236f8bebef92f21910" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMockCDDeviceController::insertMedia</definition>
+        <argsstring>(in sbICDDevice aCDDevice, in unsigned short aMediaDisc)</argsstring>
+        <name>insertMedia</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_c_d_device" kindref="compound">sbICDDevice</ref></type>
+          <declname>aCDDevice</declname>
+        </param>
+        <param>
+          <type>in unsigned short</type>
+          <declname>aMediaDisc</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/cd/mock/public/sbIMockCDDeviceController.idl" line="54"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_mock_c_d_device_controller_100fefc25506cd640cd93330963748d15" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMockCDDeviceController::ejectMedia</definition>
+        <argsstring>(in sbICDDevice aCDDevice)</argsstring>
+        <name>ejectMedia</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_c_d_device" kindref="compound">sbICDDevice</ref></type>
+          <declname>aCDDevice</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/cd/mock/public/sbIMockCDDeviceController.idl" line="59"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_mock_c_d_device_controller_11b452af422e42c3f39893bdbb91016ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMockCDDeviceController::notifyEject</definition>
+        <argsstring>(in sbICDDevice aCDDevice)</argsstring>
+        <name>notifyEject</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_c_d_device" kindref="compound">sbICDDevice</ref></type>
+          <declname>aCDDevice</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/cd/mock/public/sbIMockCDDeviceController.idl" line="64"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/devices/cd/mock/public/sbIMockCDDeviceController.idl" line="39" bodyfile="c:/builds/songbird/trunk/components/devices/cd/mock/public/sbIMockCDDeviceController.idl" bodystart="38" bodyend="65"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_mock_c_d_device_controller_100fefc25506cd640cd93330963748d15" prot="public" virt="non-virtual"><scope>sbIMockCDDeviceController</scope><name>ejectMedia</name></member>
+      <member refid="interfacesb_i_mock_c_d_device_controller_1eb7a08cb7be228236f8bebef92f21910" prot="public" virt="non-virtual"><scope>sbIMockCDDeviceController</scope><name>insertMedia</name></member>
+      <member refid="interfacesb_i_mock_c_d_device_controller_1614a35489f7de90f1c1a377f6eb3cdb1" prot="public" virt="non-virtual"><scope>sbIMockCDDeviceController</scope><name>MOCK_MEDIA_DISC_BABY_ONE_MORE_TIME</name></member>
+      <member refid="interfacesb_i_mock_c_d_device_controller_1f94d5bc419221d4a3ba0ed7127a418ce" prot="public" virt="non-virtual"><scope>sbIMockCDDeviceController</scope><name>MOCK_MEDIA_DISC_INCREDIBAD</name></member>
+      <member refid="interfacesb_i_mock_c_d_device_controller_1bf3c168e61bb2f24d19615f9b4f36b5e" prot="public" virt="non-virtual"><scope>sbIMockCDDeviceController</scope><name>MOCK_MEDIA_DISC_INSTANT_JUNK</name></member>
+      <member refid="interfacesb_i_mock_c_d_device_controller_11d69d751d26d7eb2cfe53c2891ef6496" prot="public" virt="non-virtual"><scope>sbIMockCDDeviceController</scope><name>MOCK_MEDIA_DISC_MIDNIGHT_ROCK</name></member>
+      <member refid="interfacesb_i_mock_c_d_device_controller_15096c67eb30df140c8e8903e3b09af2e" prot="public" virt="non-virtual"><scope>sbIMockCDDeviceController</scope><name>MOCK_MEDIA_DISC_U2</name></member>
+      <member refid="interfacesb_i_mock_c_d_device_controller_11b452af422e42c3f39893bdbb91016ae" prot="public" virt="non-virtual"><scope>sbIMockCDDeviceController</scope><name>notifyEject</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

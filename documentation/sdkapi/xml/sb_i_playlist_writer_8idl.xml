@@ -7,28 +7,28 @@
     <includes local="yes">nsIPrompt.idl</includes>
     <includes local="yes">nsIAuthPrompt.idl</includes>
     <incdepgraph>
-      <node id="557">
-        <label>components/mediaimport/playlist/public/sbIPlaylistWriter.idl</label>
+      <node id="664">
+        <label>components/mediaexport/playlist/public/sbIPlaylistWriter.idl</label>
         <link refid="sbIPlaylistWriter.idl"/>
-        <childnode refid="558" relation="include">
+        <childnode refid="665" relation="include">
         </childnode>
-        <childnode refid="559" relation="include">
+        <childnode refid="666" relation="include">
         </childnode>
-        <childnode refid="560" relation="include">
+        <childnode refid="667" relation="include">
         </childnode>
-        <childnode refid="561" relation="include">
+        <childnode refid="668" relation="include">
         </childnode>
       </node>
-      <node id="559">
+      <node id="666">
         <label>nsIProgressEventSink.idl</label>
       </node>
-      <node id="561">
+      <node id="668">
         <label>nsIAuthPrompt.idl</label>
       </node>
-      <node id="558">
+      <node id="665">
         <label>nsISupports.idl</label>
       </node>
-      <node id="560">
+      <node id="667">
         <label>nsIPrompt.idl</label>
       </node>
     </incdepgraph>
@@ -41,82 +41,77 @@
     </detaileddescription>
     <programlisting>
 <codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="2"><highlight class="comment"><sp/>//</highlight></codeline>
-<codeline lineno="3"><highlight class="comment">//<sp/>BEGIN<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
-<codeline lineno="4"><highlight class="comment">//<sp/></highlight></codeline>
-<codeline lineno="5"><highlight class="comment">//<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
-<codeline lineno="6"><highlight class="comment">//</highlight></codeline>
-<codeline lineno="7"><highlight class="comment">//<sp/>Copyright(c)<sp/>2005-2008<sp/>POTI,<sp/>Inc.</highlight></codeline>
-<codeline lineno="8"><highlight class="comment">//<sp/>http://songbirdnest.com</highlight></codeline>
-<codeline lineno="9"><highlight class="comment">//<sp/></highlight></codeline>
-<codeline lineno="10"><highlight class="comment">//<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>
-<codeline lineno="11"><highlight class="comment">//<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>Version<sp/>2<sp/>(the<sp/>&quot;GPL&quot;).</highlight></codeline>
-<codeline lineno="12"><highlight class="comment">//<sp/></highlight></codeline>
-<codeline lineno="13"><highlight class="comment">//<sp/>Software<sp/>distributed<sp/>under<sp/>the<sp/>License<sp/>is<sp/>distributed<sp/></highlight></codeline>
-<codeline lineno="14"><highlight class="comment">//<sp/>on<sp/>an<sp/>&quot;AS<sp/>IS&quot;<sp/>basis,<sp/>WITHOUT<sp/>WARRANTY<sp/>OF<sp/>ANY<sp/>KIND,<sp/>either<sp/></highlight></codeline>
-<codeline lineno="15"><highlight class="comment">//<sp/>express<sp/>or<sp/>implied.<sp/>See<sp/>the<sp/>GPL<sp/>for<sp/>the<sp/>specific<sp/>language<sp/></highlight></codeline>
-<codeline lineno="16"><highlight class="comment">//<sp/>governing<sp/>rights<sp/>and<sp/>limitations.</highlight></codeline>
-<codeline lineno="17"><highlight class="comment">//</highlight></codeline>
-<codeline lineno="18"><highlight class="comment">//<sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GPL<sp/>along<sp/>with<sp/>this<sp/></highlight></codeline>
-<codeline lineno="19"><highlight class="comment">//<sp/>program.<sp/>If<sp/>not,<sp/>go<sp/>to<sp/>http://www.gnu.org/licenses/gpl.html</highlight></codeline>
-<codeline lineno="20"><highlight class="comment">//<sp/>or<sp/>write<sp/>to<sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>Inc.,<sp/></highlight></codeline>
-<codeline lineno="21"><highlight class="comment">//<sp/>51<sp/>Franklin<sp/>Street,<sp/>Fifth<sp/>Floor,<sp/>Boston,<sp/>MA<sp/>02110-1301,<sp/>USA.</highlight></codeline>
-<codeline lineno="22"><highlight class="comment">//<sp/></highlight></codeline>
-<codeline lineno="23"><highlight class="comment">//<sp/>END<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
-<codeline lineno="24"><highlight class="comment">//</highlight></codeline>
-<codeline lineno="25"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*=BEGIN<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>the<sp/>Songbird<sp/>web<sp/>player.</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="6"><highlight class="comment"><sp/>*<sp/>Copyright(c)<sp/>2005-2009<sp/>POTI,<sp/>Inc.</highlight></codeline>
+<codeline lineno="7"><highlight class="comment"><sp/>*<sp/>http://www.songbirdnest.com</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="9"><highlight class="comment"><sp/>*<sp/>This<sp/>file<sp/>may<sp/>be<sp/>licensed<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>of<sp/>the</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>Version<sp/>2<sp/>(the<sp/>``GPL&apos;&apos;).</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*<sp/>Software<sp/>distributed<sp/>under<sp/>the<sp/>License<sp/>is<sp/>distributed</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*<sp/>on<sp/>an<sp/>``AS<sp/>IS&apos;&apos;<sp/>basis,<sp/>WITHOUT<sp/>WARRANTY<sp/>OF<sp/>ANY<sp/>KIND,<sp/>either</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*<sp/>express<sp/>or<sp/>implied.<sp/>See<sp/>the<sp/>GPL<sp/>for<sp/>the<sp/>specific<sp/>language</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*<sp/>governing<sp/>rights<sp/>and<sp/>limitations.</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*<sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GPL<sp/>along<sp/>with<sp/>this</highlight></codeline>
+<codeline lineno="18"><highlight class="comment"><sp/>*<sp/>program.<sp/>If<sp/>not,<sp/>go<sp/>to<sp/>http://www.gnu.org/licenses/gpl.html</highlight></codeline>
+<codeline lineno="19"><highlight class="comment"><sp/>*<sp/>or<sp/>write<sp/>to<sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>Inc.,</highlight></codeline>
+<codeline lineno="20"><highlight class="comment"><sp/>*<sp/>51<sp/>Franklin<sp/>Street,<sp/>Fifth<sp/>Floor,<sp/>Boston,<sp/>MA<sp/>02110-1301,<sp/>USA.</highlight></codeline>
+<codeline lineno="21"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="22"><highlight class="comment"><sp/>*=END<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
+<codeline lineno="23"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
-<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIProgressEventSink.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIPrompt.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIAuthPrompt.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="32"><highlight class="normal"></highlight></codeline>
-<codeline lineno="37"><highlight class="normal">[scriptable,<sp/>uuid(3FE9E285-F0F8-4154-9C21-8B6E4B8EFA93)]</highlight></codeline>
-<codeline lineno="38" refid="interfacesb_i_playlist_writer_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_writer_listener" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIPlaylistWriterListener</ref><sp/>:<sp/>nsIProgressEventSink</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIProgressEventSink.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIPrompt.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIAuthPrompt.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref>;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">interface<sp/>nsIFile;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(69140b92-1dd2-11b2-8028-8e852c70b55a)]</highlight></codeline>
+<codeline lineno="38" refid="interfacesb_i_playlist_writer_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_writer_listener" kindref="compound" tooltip="Implements playlist writing logic for a particular format.">sbIPlaylistWriterListener</ref><sp/>:<sp/>nsIProgressEventSink</highlight></codeline>
 <codeline lineno="39"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="40"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="41"><highlight class="normal"></highlight></codeline>
-<codeline lineno="46"><highlight class="normal">[scriptable,<sp/>uuid(27B68B9B-E471-4367-B159-63B65C581847)]</highlight></codeline>
-<codeline lineno="47" refid="interfacesb_i_playlist_writer" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_writer" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIPlaylistWriter</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="46"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(6113467e-1dd2-11b2-8997-ef68657448f0)]</highlight></codeline>
+<codeline lineno="47" refid="interfacesb_i_playlist_writer" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_writer" kindref="compound" tooltip="Write a playlist file.">sbIPlaylistWriter</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="48"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="49" refid="interfacesb_i_playlist_writer_1f5cdf7f32be328351c79ffd954a91c89" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_playlist_writer_listener" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIPlaylistWriterListener</ref><sp/>writerListener;</highlight></codeline>
+<codeline lineno="49" refid="interfacesb_i_playlist_writer_1f5cdf7f32be328351c79ffd954a91c89" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_playlist_writer_listener" kindref="compound" tooltip="Implements playlist writing logic for a particular format.">sbIPlaylistWriterListener</ref><sp/>writerListener;</highlight></codeline>
 <codeline lineno="50"><highlight class="normal"></highlight></codeline>
-<codeline lineno="57"><highlight class="normal"><sp/><sp/>PRBool<sp/>write(in<sp/>AString<sp/>aGUID,<sp/></highlight></codeline>
-<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aSourcePlaylist,</highlight></codeline>
-<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aOutputURL,</highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aOutputContentType,</highlight></codeline>
-<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>out<sp/>PRInt32<sp/>aErrorCode);</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"></highlight></codeline>
-<codeline lineno="69"><highlight class="normal"><sp/><sp/>PRInt32<sp/>vote(in<sp/>AString<sp/>aURL);</highlight></codeline>
-<codeline lineno="70"><highlight class="normal"></highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/>AString<sp/>name();</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"></highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/>AString<sp/>description();</highlight></codeline>
-<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="93"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>supportedMIMETypes(out<sp/>PRUint32<sp/>aMIMECount,<sp/></highlight></codeline>
-<codeline lineno="94"><highlight class="normal"><sp/><sp/><sp/><sp/>[array,<sp/>size_is<sp/>(aMIMECount),<sp/>retval]<sp/>out<sp/>wstring<sp/>aMIMETypes);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>write(in<sp/>nsIFile<sp/>aFile,</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>aMediaList,</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aContentType);</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/>AString<sp/>name();</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/>AString<sp/>description();</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>supportedMIMETypes(out<sp/>PRUint32<sp/>aMIMECount,</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>[array,<sp/>size_is<sp/>(aMIMECount),<sp/>retval]<sp/>out<sp/>wstring<sp/>aMIMETypes);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>supportedFileExtensions(out<sp/>PRUint32<sp/>aExtCount,</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/><sp/><sp/>[array,<sp/>size_is<sp/>(aExtCount),<sp/>retval]<sp/>out<sp/>wstring<sp/>aExts);</highlight></codeline>
+<codeline lineno="94"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="95"><highlight class="normal"></highlight></codeline>
-<codeline lineno="102"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>supportedFileExtensions(out<sp/>PRUint32<sp/>aExtCount,<sp/></highlight></codeline>
-<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/>[array,<sp/>size_is<sp/>(aExtCount),<sp/>retval]<sp/>out<sp/>wstring<sp/>aExts);</highlight></codeline>
-<codeline lineno="104"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="105"><highlight class="normal"></highlight></codeline>
-<codeline lineno="110"><highlight class="normal">[scriptable,<sp/>uuid(CB6A505E-D8CB-4711-A50F-38439561C6D0)]</highlight></codeline>
-<codeline lineno="111" refid="interfacesb_i_playlist_writer_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_writer_manager" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIPlaylistWriterManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="112"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="119"><highlight class="normal"><sp/><sp/>PRInt32<sp/>write(in<sp/>AString<sp/>aGUID,<sp/></highlight></codeline>
-<codeline lineno="120"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aName,</highlight></codeline>
-<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aOutputURL,</highlight></codeline>
-<codeline lineno="122"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aOutputContentType,</highlight></codeline>
-<codeline lineno="123"><highlight class="normal"><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_playlist_writer_listener" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIPlaylistWriterListener</ref><sp/>aWriterListener);</highlight></codeline>
-<codeline lineno="124"><highlight class="normal"></highlight></codeline>
-<codeline lineno="131"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>supportedMIMETypes(out<sp/>PRUint32<sp/>aMIMECount,<sp/></highlight></codeline>
-<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/>[array,<sp/>size_is<sp/>(aMIMECount),<sp/>retval]<sp/>out<sp/>wstring<sp/>aMIMETypes);</highlight></codeline>
-<codeline lineno="133"><highlight class="normal"></highlight></codeline>
-<codeline lineno="140"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>supportedFileExtensions(out<sp/>PRUint32<sp/>aExtCount,<sp/></highlight></codeline>
-<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/>[array,<sp/>size_is<sp/>(aExtCount),<sp/>retval]<sp/>out<sp/>wstring<sp/>aExts);</highlight></codeline>
-<codeline lineno="142"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="102"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(CB6A505E-D8CB-4711-A50F-38439561C6D0)]</highlight></codeline>
+<codeline lineno="103" refid="interfacesb_i_playlist_writer_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_playlist_writer_manager" kindref="compound" tooltip="Write a file using an appropriate registered playlist writer. Playlist writers are...">sbIPlaylistWriterManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="104"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>write(in<sp/>nsIFile<sp/>aFile,</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>aMediaList,</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aContentType);</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"></highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>supportedMIMETypes(out<sp/>PRUint32<sp/>aMIMECount,</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/><sp/><sp/>[array,<sp/>size_is<sp/>(aMIMECount),<sp/>retval]<sp/>out<sp/>wstring<sp/>aMIMETypes);</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>supportedFileExtensions(out<sp/>PRUint32<sp/>aExtCount,</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/>[array,<sp/>size_is<sp/>(aExtCount),<sp/>retval]<sp/>out<sp/>wstring<sp/>aExts);</highlight></codeline>
+<codeline lineno="131"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="c:/builds/songbird/trunk/components/mediaimport/playlist/public/sbIPlaylistWriter.idl"/>
+    <location file="c:/builds/songbird/trunk/components/mediaexport/playlist/public/sbIPlaylistWriter.idl"/>
   </compounddef>
 </doxygen>

@@ -4,19 +4,19 @@
     <compoundname>sbIMockDevice.idl</compoundname>
     <includes refid="sb_i_device_8idl" local="yes">sbIDevice.idl</includes>
     <incdepgraph>
-      <node id="145">
-        <label>components/devices/device/test/sbIMockDevice.idl</label>
+      <node id="178">
+        <label>components/devices/device/mock/public/sbIMockDevice.idl</label>
         <link refid="sbIMockDevice.idl"/>
-        <childnode refid="146" relation="include">
+        <childnode refid="179" relation="include">
         </childnode>
       </node>
-      <node id="146">
+      <node id="179">
         <label>sbIDevice.idl</label>
         <link refid="sb_i_device_8idl"/>
-        <childnode refid="147" relation="include">
+        <childnode refid="180" relation="include">
         </childnode>
       </node>
-      <node id="147">
+      <node id="180">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -57,13 +57,13 @@
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/>nsIPropertyBag2;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="37"><highlight class="normal">[scriptable,<sp/>uuid(e24047c5-62d5-4bb7-9b88-81f85a7fe2f9)]</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(e24047c5-62d5-4bb7-9b88-81f85a7fe2f9)]</highlight></codeline>
 <codeline lineno="38" refid="interfacesb_i_mock_device" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mock_device" kindref="compound">sbIMockDevice</ref><sp/>:<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></highlight></codeline>
 <codeline lineno="39"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="43"><highlight class="normal"><sp/><sp/>nsIPropertyBag2<sp/>popRequest();</highlight></codeline>
 <codeline lineno="44"><highlight class="normal"><sp/><sp/>nsIPropertyBag2<sp/>peekRequest();</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">};</highlight></codeline>
     </programlisting>
-    <location file="c:/builds/songbird/trunk/components/devices/device/test/sbIMockDevice.idl"/>
+    <location file="c:/builds/songbird/trunk/components/devices/device/mock/public/sbIMockDevice.idl"/>
   </compounddef>
 </doxygen>

@@ -110,6 +110,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#c32c418bb3e15bb67250a836aba063c0">getDuplicate</a> (in <a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a> aMediaItem)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Search for and return a duplicate of the media item specified by aMediaItem.  <a href="#c32c418bb3e15bb67250a836aba063c0"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#06128d059bd1a24fb499dadd4b8bea4a">clearItems</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Clear all media items (excluding medialists) from the library.  <a href="#06128d059bd1a24fb499dadd4b8bea4a"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#f87abee5d36302272e3d842af0bc9125">registerMediaListFactory</a> (in <a class="el" href="interfacesb_i_media_list_factory.html">sbIMediaListFactory</a> aFactory)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Register a new media list type at run time.  <a href="#f87abee5d36302272e3d842af0bc9125"></a><br></td></tr>
@@ -124,6 +127,9 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="inte
 <tr><td class="memItemLeft" nowrap align="right" valign="top">nsIArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#5d4add99176f0b5a9d03948d2f0eee3b">batchCreateMediaItems</a> (in nsIArray aURIArray,[optional] in nsIArray aPropertyArrayArray,[optional] in boolean aAllowDuplicates)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create many media items from a list of URIs, and notify their addition.  <a href="#5d4add99176f0b5a9d03948d2f0eee3b"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">nsIArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#e1f6bac067056817c98716f9192ad744">batchCreateMediaItemsIfNotExist</a> (in nsIArray aURIArray,[optional] in nsIArray aPropertyArrayArray,[optional] out nsIArray aResultItemArray)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create many media items from a list of URIs, disallowing duplicates, and return which items were created.  <a href="#e1f6bac067056817c98716f9192ad744"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_library.html#5236e2cf65e133dff8618b6196817a39">batchCreateMediaItemsAsync</a> (in <a class="el" href="interfacesb_i_batch_create_media_items_listener.html">sbIBatchCreateMediaItemsListener</a> aListener, in nsIArray aURIArray,[optional] in nsIArray aPropertyArrayArray,[optional] in boolean aAllowDuplicates)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Asychronously create many media items from a list of URIs.  <a href="#5236e2cf65e133dff8618b6196817a39"></a><br></td></tr>
@@ -407,6 +413,28 @@ Search for and return a duplicate of the media item specified by aMediaItem.
 
 </div>
 </div><p>
+<a class="anchor" name="06128d059bd1a24fb499dadd4b8bea4a"></a><!-- doxytag: member="sbILibrary::clearItems" ref="06128d059bd1a24fb499dadd4b8bea4a" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbILibrary::clearItems           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Clear all media items (excluding medialists) from the library. 
+<p>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>If you wish to clear the entire library (including medialists) use <a class="el" href="interfacesb_i_media_list.html#5b727b02e89e57a15b7f78778722c4a6" title="Clear the list.">clear()</a> instead. </dd></dl>
+
+</div>
+</div><p>
 <a class="anchor" name="f87abee5d36302272e3d842af0bc9125"></a><!-- doxytag: member="sbILibrary::registerMediaListFactory" ref="f87abee5d36302272e3d842af0bc9125" args="(in sbIMediaListFactory aFactory)" -->
 <div class="memitem">
 <div class="memproto">
@@ -479,6 +507,51 @@ Create many media items from a list of URIs, and notify their addition.
 
 </div>
 </div><p>
+<a class="anchor" name="e1f6bac067056817c98716f9192ad744"></a><!-- doxytag: member="sbILibrary::batchCreateMediaItemsIfNotExist" ref="e1f6bac067056817c98716f9192ad744" args="(in nsIArray aURIArray,[optional] in nsIArray aPropertyArrayArray,[optional] out nsIArray aResultItemArray)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">nsIArray sbILibrary::batchCreateMediaItemsIfNotExist           </td>
+          <td>(</td>
+          <td class="paramtype">in nsIArray&nbsp;</td>
+          <td class="paramname"> <em>aURIArray</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[optional] in nsIArray&nbsp;</td>
+          <td class="paramname"> <em>aPropertyArrayArray</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">[optional] out nsIArray&nbsp;</td>
+          <td class="paramname"> <em>aResultItemArray</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Create many media items from a list of URIs, disallowing duplicates, and return which items were created. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aURIArray</em>&nbsp;</td><td>nsIArray of nsIURI objects </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aPropertyArrayArray</em>&nbsp;</td><td>Optional array of <a class="el" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a>. If specified, the properties specified at each array index will be used in the creation of the new media item at the same array index. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aResultItemArray</em>&nbsp;</td><td>nsIArray of <a class="el" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> objects that were created (or found). </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>nsIArray of nsIVariant objects of type VTYPE_BOOL indicating which items were newly created. </dd></dl>
+
+</div>
+</div><p>
 <a class="anchor" name="5236e2cf65e133dff8618b6196817a39"></a><!-- doxytag: member="sbILibrary::batchCreateMediaItemsAsync" ref="5236e2cf65e133dff8618b6196817a39" args="(in sbIBatchCreateMediaItemsListener aListener, in nsIArray aURIArray,[optional] in nsIArray aPropertyArrayArray,[optional] in boolean aAllowDuplicates)" -->
 <div class="memitem">
 <div class="memproto">
@@ -532,7 +605,7 @@ Asychronously create many media items from a list of URIs.
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/library/base/public/<a class="el" href="sb_i_library_8idl-source.html">sbILibrary.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:43 2009 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:48 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

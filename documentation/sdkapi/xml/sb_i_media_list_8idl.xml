@@ -6,49 +6,49 @@
     <includedby refid="sb_i_library_8idl" local="yes">components/library/base/public/sbILibrary.idl</includedby>
     <includedby refid="sb_i_local_database_smart_media_list_8idl" local="yes">components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</includedby>
     <incdepgraph>
-      <node id="326">
+      <node id="381">
         <label>components/library/base/public/sbIMediaList.idl</label>
         <link refid="sbIMediaList.idl"/>
-        <childnode refid="327" relation="include">
+        <childnode refid="382" relation="include">
         </childnode>
       </node>
-      <node id="327">
+      <node id="382">
         <label>sbIMediaItem.idl</label>
         <link refid="sb_i_media_item_8idl"/>
-        <childnode refid="328" relation="include">
+        <childnode refid="383" relation="include">
         </childnode>
       </node>
-      <node id="329">
+      <node id="384">
         <label>nsISupports.idl</label>
       </node>
-      <node id="328">
+      <node id="383">
         <label>sbILibraryResource.idl</label>
         <link refid="sb_i_library_resource_8idl"/>
-        <childnode refid="329" relation="include">
+        <childnode refid="384" relation="include">
         </childnode>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="333">
+      <node id="388">
         <label>components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</label>
         <link refid="sb_i_local_database_smart_media_list_8idl"/>
       </node>
-      <node id="332">
+      <node id="387">
         <label>components/devices/base/public/sbIDeviceLibrary.idl</label>
         <link refid="sb_i_device_library_8idl-source"/>
       </node>
-      <node id="330">
+      <node id="385">
         <label>components/library/base/public/sbIMediaList.idl</label>
         <link refid="sbIMediaList.idl"/>
-        <childnode refid="331" relation="include">
+        <childnode refid="386" relation="include">
         </childnode>
-        <childnode refid="333" relation="include">
+        <childnode refid="388" relation="include">
         </childnode>
       </node>
-      <node id="331">
+      <node id="386">
         <label>components/library/base/public/sbILibrary.idl</label>
         <link refid="sb_i_library_8idl"/>
-        <childnode refid="332" relation="include">
+        <childnode refid="387" relation="include">
         </childnode>
       </node>
     </invincdepgraph>
@@ -102,7 +102,7 @@
 <codeline lineno="46"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_view_state" kindref="compound" tooltip="Saved state of a media list view.">sbIMediaListViewState</ref>;</highlight></codeline>
 <codeline lineno="47"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref>;</highlight></codeline>
 <codeline lineno="48"><highlight class="normal"></highlight></codeline>
-<codeline lineno="57"><highlight class="normal">[scriptable,<sp/>uuid(7007a3dd-e298-4fbf-aee1-263a0a42b8ba)]</highlight></codeline>
+<codeline lineno="57"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(b980ef53-c00e-45db-9ce6-70326a2641b5)]</highlight></codeline>
 <codeline lineno="58" refid="interfacesb_i_media_list" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>:<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref></highlight></codeline>
 <codeline lineno="59"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="60"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
@@ -832,64 +832,65 @@
 <codeline lineno="944" refid="interfacesb_i_media_list_1ebd887a26980780de64ddf4af9cf430a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>LISTENER_FLAGS_BEFOREITEMREMOVED<sp/>=<sp/>1<sp/>&lt;&lt;<sp/>1;</highlight></codeline>
 <codeline lineno="945" refid="interfacesb_i_media_list_1cdecf4b09dd4e75a52e9be77d378e6f3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>LISTENER_FLAGS_AFTERITEMREMOVED<sp/><sp/>=<sp/>1<sp/>&lt;&lt;<sp/>2;</highlight></codeline>
 <codeline lineno="946" refid="interfacesb_i_media_list_134e744de3ce3931f387c6ab405c3a968" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>LISTENER_FLAGS_ITEMUPDATED<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>1<sp/>&lt;&lt;<sp/>3;</highlight></codeline>
-<codeline lineno="947" refid="interfacesb_i_media_list_110cf8a4549906ace13097775e484c2b3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>LISTENER_FLAGS_LISTCLEARED<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>1<sp/>&lt;&lt;<sp/>4;</highlight></codeline>
-<codeline lineno="948" refid="interfacesb_i_media_list_1c038790117b70fcca91a4a6f6c5a3f4b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>LISTENER_FLAGS_BATCHBEGIN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>1<sp/>&lt;&lt;<sp/>5;</highlight></codeline>
-<codeline lineno="949" refid="interfacesb_i_media_list_1536109c8e3dc6da8d732ad92a226337b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>LISTENER_FLAGS_BATCHEND<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>1<sp/>&lt;&lt;<sp/>6;</highlight></codeline>
-<codeline lineno="950" refid="interfacesb_i_media_list_19900bddb359408a49158687dfcb6f20d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>LISTENER_FLAGS_ITEMMOVED<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>1<sp/>&lt;&lt;<sp/>7;</highlight></codeline>
-<codeline lineno="951" refid="interfacesb_i_media_list_16e0542725b8ace2f19f7556d3192ed5f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>LISTENER_FLAGS_ALL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0xffffffff;</highlight></codeline>
-<codeline lineno="952"><highlight class="normal"></highlight></codeline>
-<codeline lineno="969"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addListener(in<sp/><ref refid="interfacesb_i_media_list_listener" kindref="compound" tooltip="Interface used to listen to changes to a media list.">sbIMediaListListener</ref><sp/>aListener,</highlight></codeline>
-<codeline lineno="970"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aOwnsWeak,</highlight></codeline>
-<codeline lineno="971"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aFlags,</highlight></codeline>
-<codeline lineno="972"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>aPropertyFilter);</highlight></codeline>
-<codeline lineno="973"><highlight class="normal"></highlight></codeline>
-<codeline lineno="978"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeListener(in<sp/><ref refid="interfacesb_i_media_list_listener" kindref="compound" tooltip="Interface used to listen to changes to a media list.">sbIMediaListListener</ref><sp/>aListener);</highlight></codeline>
-<codeline lineno="979"><highlight class="normal"></highlight></codeline>
-<codeline lineno="985"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref><sp/>createView([optional]<sp/>in<sp/><ref refid="interfacesb_i_media_list_view_state" kindref="compound" tooltip="Saved state of a media list view.">sbIMediaListViewState</ref><sp/>aState);</highlight></codeline>
-<codeline lineno="986"><highlight class="normal"></highlight></codeline>
-<codeline lineno="992"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>runInBatchMode(in<sp/><ref refid="interfacesb_i_media_list_batch_callback" kindref="compound">sbIMediaListBatchCallback</ref><sp/>aCallback,</highlight></codeline>
-<codeline lineno="993"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>nsISupports<sp/>aUserData);</highlight></codeline>
-<codeline lineno="994"><highlight class="normal"></highlight></codeline>
-<codeline lineno="995"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="996"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\brief<sp/>Return<sp/>the<sp/>distinct<sp/>values<sp/>in<sp/>the<sp/>list<sp/>for<sp/>a<sp/>given<sp/>property</highlight></codeline>
-<codeline lineno="997"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aPropertyID<sp/>Propery<sp/>ID<sp/>to<sp/>get<sp/>distinct<sp/>values<sp/>for</highlight></codeline>
-<codeline lineno="998"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\return<sp/>String<sp/>enumerator<sp/>of<sp/>distinct<sp/>values<sp/>for<sp/>the<sp/>given<sp/>property</highlight></codeline>
-<codeline lineno="999"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="1000"><highlight class="normal"></highlight></codeline>
-<codeline lineno="1001"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
-<codeline lineno="1002"><highlight class="comment"><sp/><sp/>Method:<sp/>getDistinctValuesForProperty()</highlight></codeline>
-<codeline lineno="1003"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1004"><highlight class="comment"><sp/><sp/>Get<sp/>all<sp/>distinct<sp/>(unique)<sp/>values<sp/>in<sp/>this<sp/>&lt;MediaList&gt;<sp/>for<sp/>a<sp/>given<sp/>property.</highlight></codeline>
-<codeline lineno="1005"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1006"><highlight class="comment"><sp/><sp/>This<sp/>function<sp/>is<sp/>useful<sp/>if<sp/>you<sp/>want<sp/>to<sp/>know<sp/>all<sp/>the<sp/>unique<sp/>artistName<sp/>property</highlight></codeline>
-<codeline lineno="1007"><highlight class="comment"><sp/><sp/>values<sp/>for<sp/>example.</highlight></codeline>
-<codeline lineno="1008"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1009"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
-<codeline lineno="1010"><highlight class="comment"><sp/><sp/><sp/><sp/>Enumerator<sp/>getDistinctValuesForProperty(String<sp/>id)</highlight></codeline>
-<codeline lineno="1011"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1012"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
-<codeline lineno="1013"><highlight class="comment"><sp/><sp/><sp/><sp/>id<sp/>-<sp/>The<sp/>ID<sp/>of<sp/>the<sp/>property<sp/>for<sp/>which<sp/>all<sp/>distinct<sp/>values<sp/>are<sp/>desired.</highlight></codeline>
-<codeline lineno="1014"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1015"><highlight class="comment"><sp/><sp/>Returns:</highlight></codeline>
-<codeline lineno="1016"><highlight class="comment"><sp/><sp/><sp/><sp/>Enumerator,<sp/>contains<sp/>Strings.</highlight></codeline>
-<codeline lineno="1017"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1018"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
-<codeline lineno="1019"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
-<codeline lineno="1020"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
-<codeline lineno="1021"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1022"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
-<codeline lineno="1023"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;enumerateItemsByProperty()&gt;</highlight></codeline>
-<codeline lineno="1024"><highlight class="comment"></highlight></codeline>
-<codeline lineno="1025"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getProperty()&gt;</highlight></codeline>
-<codeline lineno="1026"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="1027"><highlight class="normal"><sp/><sp/>nsIStringEnumerator<sp/>getDistinctValuesForProperty(in<sp/>AString<sp/>aPropertyID);</highlight></codeline>
-<codeline lineno="1028"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="1029"><highlight class="normal"></highlight></codeline>
-<codeline lineno="1034"><highlight class="normal">[scriptable,<sp/>function,<sp/>uuid(02e86553-31e9-4564-b2db-2756b6d5e52f)]</highlight></codeline>
-<codeline lineno="1035" refid="interfacesb_i_media_list_batch_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_batch_callback" kindref="compound">sbIMediaListBatchCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="1036"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="1037"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>runBatched([optional]<sp/>in<sp/>nsISupports<sp/>aUserData);</highlight></codeline>
-<codeline lineno="1038"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="947" refid="interfacesb_i_media_list_19db5641f8058c3e4b81711df8cf3653a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>LISTENER_FLAGS_BEFORELISTCLEARED<sp/>=<sp/>1<sp/>&lt;&lt;<sp/>4;</highlight></codeline>
+<codeline lineno="948" refid="interfacesb_i_media_list_110cf8a4549906ace13097775e484c2b3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>LISTENER_FLAGS_LISTCLEARED<sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>1<sp/>&lt;&lt;<sp/>5;</highlight></codeline>
+<codeline lineno="949" refid="interfacesb_i_media_list_1c038790117b70fcca91a4a6f6c5a3f4b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>LISTENER_FLAGS_BATCHBEGIN<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>1<sp/>&lt;&lt;<sp/>6;</highlight></codeline>
+<codeline lineno="950" refid="interfacesb_i_media_list_1536109c8e3dc6da8d732ad92a226337b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>LISTENER_FLAGS_BATCHEND<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>1<sp/>&lt;&lt;<sp/>7;</highlight></codeline>
+<codeline lineno="951" refid="interfacesb_i_media_list_19900bddb359408a49158687dfcb6f20d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>LISTENER_FLAGS_ITEMMOVED<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>1<sp/>&lt;&lt;<sp/>8;</highlight></codeline>
+<codeline lineno="952" refid="interfacesb_i_media_list_16e0542725b8ace2f19f7556d3192ed5f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>LISTENER_FLAGS_ALL<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0xffffffff;</highlight></codeline>
+<codeline lineno="953"><highlight class="normal"></highlight></codeline>
+<codeline lineno="970"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addListener(in<sp/><ref refid="interfacesb_i_media_list_listener" kindref="compound" tooltip="Interface used to listen to changes to a media list.">sbIMediaListListener</ref><sp/>aListener,</highlight></codeline>
+<codeline lineno="971"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aOwnsWeak,</highlight></codeline>
+<codeline lineno="972"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aFlags,</highlight></codeline>
+<codeline lineno="973"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref><sp/>aPropertyFilter);</highlight></codeline>
+<codeline lineno="974"><highlight class="normal"></highlight></codeline>
+<codeline lineno="979"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeListener(in<sp/><ref refid="interfacesb_i_media_list_listener" kindref="compound" tooltip="Interface used to listen to changes to a media list.">sbIMediaListListener</ref><sp/>aListener);</highlight></codeline>
+<codeline lineno="980"><highlight class="normal"></highlight></codeline>
+<codeline lineno="986"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_media_list_view" kindref="compound" tooltip="A distinct view on a given media list.">sbIMediaListView</ref><sp/>createView([optional]<sp/>in<sp/><ref refid="interfacesb_i_media_list_view_state" kindref="compound" tooltip="Saved state of a media list view.">sbIMediaListViewState</ref><sp/>aState);</highlight></codeline>
+<codeline lineno="987"><highlight class="normal"></highlight></codeline>
+<codeline lineno="993"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>runInBatchMode(in<sp/><ref refid="interfacesb_i_media_list_batch_callback" kindref="compound">sbIMediaListBatchCallback</ref><sp/>aCallback,</highlight></codeline>
+<codeline lineno="994"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>nsISupports<sp/>aUserData);</highlight></codeline>
+<codeline lineno="995"><highlight class="normal"></highlight></codeline>
+<codeline lineno="996"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="997"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\brief<sp/>Return<sp/>the<sp/>distinct<sp/>values<sp/>in<sp/>the<sp/>list<sp/>for<sp/>a<sp/>given<sp/>property</highlight></codeline>
+<codeline lineno="998"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\param<sp/>aPropertyID<sp/>Propery<sp/>ID<sp/>to<sp/>get<sp/>distinct<sp/>values<sp/>for</highlight></codeline>
+<codeline lineno="999"><highlight class="comment"><sp/><sp/><sp/>*<sp/>\return<sp/>String<sp/>enumerator<sp/>of<sp/>distinct<sp/>values<sp/>for<sp/>the<sp/>given<sp/>property</highlight></codeline>
+<codeline lineno="1000"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1001"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1002"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="1003"><highlight class="comment"><sp/><sp/>Method:<sp/>getDistinctValuesForProperty()</highlight></codeline>
+<codeline lineno="1004"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1005"><highlight class="comment"><sp/><sp/>Get<sp/>all<sp/>distinct<sp/>(unique)<sp/>values<sp/>in<sp/>this<sp/>&lt;MediaList&gt;<sp/>for<sp/>a<sp/>given<sp/>property.</highlight></codeline>
+<codeline lineno="1006"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1007"><highlight class="comment"><sp/><sp/>This<sp/>function<sp/>is<sp/>useful<sp/>if<sp/>you<sp/>want<sp/>to<sp/>know<sp/>all<sp/>the<sp/>unique<sp/>artistName<sp/>property</highlight></codeline>
+<codeline lineno="1008"><highlight class="comment"><sp/><sp/>values<sp/>for<sp/>example.</highlight></codeline>
+<codeline lineno="1009"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1010"><highlight class="comment"><sp/><sp/>Prototype:</highlight></codeline>
+<codeline lineno="1011"><highlight class="comment"><sp/><sp/><sp/><sp/>Enumerator<sp/>getDistinctValuesForProperty(String<sp/>id)</highlight></codeline>
+<codeline lineno="1012"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1013"><highlight class="comment"><sp/><sp/>Parameters:</highlight></codeline>
+<codeline lineno="1014"><highlight class="comment"><sp/><sp/><sp/><sp/>id<sp/>-<sp/>The<sp/>ID<sp/>of<sp/>the<sp/>property<sp/>for<sp/>which<sp/>all<sp/>distinct<sp/>values<sp/>are<sp/>desired.</highlight></codeline>
+<codeline lineno="1015"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1016"><highlight class="comment"><sp/><sp/>Returns:</highlight></codeline>
+<codeline lineno="1017"><highlight class="comment"><sp/><sp/><sp/><sp/>Enumerator,<sp/>contains<sp/>Strings.</highlight></codeline>
+<codeline lineno="1018"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1019"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="1020"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="1021"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="1022"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1023"><highlight class="comment"><sp/><sp/>See<sp/>Also:</highlight></codeline>
+<codeline lineno="1024"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;enumerateItemsByProperty()&gt;</highlight></codeline>
+<codeline lineno="1025"><highlight class="comment"></highlight></codeline>
+<codeline lineno="1026"><highlight class="comment"><sp/><sp/><sp/><sp/>&lt;getProperty()&gt;</highlight></codeline>
+<codeline lineno="1027"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="1028"><highlight class="normal"><sp/><sp/>nsIStringEnumerator<sp/>getDistinctValuesForProperty(in<sp/>AString<sp/>aPropertyID);</highlight></codeline>
+<codeline lineno="1029"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="1030"><highlight class="normal"></highlight></codeline>
+<codeline lineno="1035"><highlight class="normal">[scriptable,<sp/>function,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(02e86553-31e9-4564-b2db-2756b6d5e52f)]</highlight></codeline>
+<codeline lineno="1036" refid="interfacesb_i_media_list_batch_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list_batch_callback" kindref="compound">sbIMediaListBatchCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="1037"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="1038"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>runBatched([optional]<sp/>in<sp/>nsISupports<sp/>aUserData);</highlight></codeline>
+<codeline lineno="1039"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaList.idl"/>
   </compounddef>

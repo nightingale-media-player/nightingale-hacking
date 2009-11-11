@@ -4,9 +4,9 @@
     <compoundname>sbIClickablePropertyInfo</compoundname>
     <includes refid="sb_i_clickable_property_info_8idl" local="no">sbIClickablePropertyInfo.idl</includes>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="interfacesb_i_clickable_property_info_172c807b26f126227b4609b12fa043e19" prot="public" static="no" mutable="no">
-        <type>readonly attribute boolean</type>
-        <definition>readonly attribute boolean sbIClickablePropertyInfo::suppressSelect</definition>
+      <memberdef kind="variable" id="interfacesb_i_clickable_property_info_1f2117917c768c2a8c1e843fca8b64ab4" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIClickablePropertyInfo::suppressSelect</definition>
         <argsstring></argsstring>
         <name>suppressSelect</name>
         <briefdescription>
@@ -154,7 +154,7 @@
       <member refid="interfacesb_i_clickable_property_info_14661b9394d57a3f3d91b4dc1373da5a1" prot="public" virt="non-virtual"><scope>sbIClickablePropertyInfo</scope><name>getValueForClick</name></member>
       <member refid="interfacesb_i_clickable_property_info_1c017715d79b8755c70194a37be9bf1a7" prot="public" virt="non-virtual"><scope>sbIClickablePropertyInfo</scope><name>hitTest</name></member>
       <member refid="interfacesb_i_clickable_property_info_1fb8ff701c95bc01aca7a1d56975d5b8f" prot="public" virt="non-virtual"><scope>sbIClickablePropertyInfo</scope><name>isDisabled</name></member>
-      <member refid="interfacesb_i_clickable_property_info_172c807b26f126227b4609b12fa043e19" prot="public" virt="non-virtual"><scope>sbIClickablePropertyInfo</scope><name>suppressSelect</name></member>
+      <member refid="interfacesb_i_clickable_property_info_1f2117917c768c2a8c1e843fca8b64ab4" prot="public" virt="non-virtual"><scope>sbIClickablePropertyInfo</scope><name>suppressSelect</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

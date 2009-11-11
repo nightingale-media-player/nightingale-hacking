@@ -34,14 +34,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediaimport/uri/public/sbIURIImportService.idl" line="90"/>
+        <location file="c:/builds/songbird/trunk/components/mediaimport/uri/public/sbIURIImportService.idl" line="92"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/mediaimport/uri/public/sbIURIImportService.idl" line="74" bodyfile="c:/builds/songbird/trunk/components/mediaimport/uri/public/sbIURIImportService.idl" bodystart="73" bodyend="91"/>
+    <location file="c:/builds/songbird/trunk/components/mediaimport/uri/public/sbIURIImportService.idl" line="76" bodyfile="c:/builds/songbird/trunk/components/mediaimport/uri/public/sbIURIImportService.idl" bodystart="75" bodyend="93"/>
     <listofallmembers>
       <member refid="interfacesb_i_u_r_i_import_service_1bd1874cbfe0fc1d80755ff09982d0fc6" prot="public" virt="non-virtual"><scope>sbIURIImportService</scope><name>importURIArray</name></member>
     </listofallmembers>

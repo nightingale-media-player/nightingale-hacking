@@ -6,47 +6,47 @@
     <includes local="yes">nsIStreamListener.idl</includes>
     <includes refid="sb_i_metadata_handler_8idl" local="yes">sbIMetadataHandler.idl</includes>
     <incdepgraph>
-      <node id="507">
+      <node id="597">
         <label>components/mediacore/metadata/manager/public/sbIMetadataChannel.idl</label>
         <link refid="sbIMetadataChannel.idl"/>
-        <childnode refid="508" relation="include">
+        <childnode refid="598" relation="include">
         </childnode>
-        <childnode refid="509" relation="include">
+        <childnode refid="599" relation="include">
         </childnode>
-        <childnode refid="510" relation="include">
+        <childnode refid="600" relation="include">
         </childnode>
       </node>
-      <node id="513">
+      <node id="603">
         <label>nsIArray.idl</label>
       </node>
-      <node id="514">
+      <node id="604">
         <label>nsIMutableArray.idl</label>
       </node>
-      <node id="509">
+      <node id="599">
         <label>nsIStreamListener.idl</label>
       </node>
-      <node id="512">
+      <node id="602">
         <label>sbIPropertyArray.idl</label>
         <link refid="sb_i_property_array_8idl"/>
-        <childnode refid="513" relation="include">
+        <childnode refid="603" relation="include">
         </childnode>
-        <childnode refid="514" relation="include">
+        <childnode refid="604" relation="include">
         </childnode>
       </node>
-      <node id="510">
+      <node id="600">
         <label>sbIMetadataHandler.idl</label>
         <link refid="sb_i_metadata_handler_8idl"/>
-        <childnode refid="508" relation="include">
+        <childnode refid="598" relation="include">
         </childnode>
-        <childnode refid="511" relation="include">
+        <childnode refid="601" relation="include">
         </childnode>
-        <childnode refid="512" relation="include">
+        <childnode refid="602" relation="include">
         </childnode>
       </node>
-      <node id="508">
+      <node id="598">
         <label>nsISupports.idl</label>
       </node>
-      <node id="511">
+      <node id="601">
         <label>nsIChannel.idl</label>
       </node>
     </incdepgraph>
@@ -88,7 +88,7 @@
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/>nsIChannel;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="48"><highlight class="normal">[uuid(6CB7F8A0-29ED-424b-AEF6-B491A8784AF4)]</highlight></codeline>
+<codeline lineno="48"><highlight class="normal">[<ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(6CB7F8A0-29ED-424b-AEF6-B491A8784AF4)]</highlight></codeline>
 <codeline lineno="49" refid="interfacesb_i_metadata_channel" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_metadata_channel" kindref="compound" tooltip="A wrapper for an nsIChannel that buffers the incoming data.">sbIMetadataChannel</ref><sp/>:<sp/>nsIStreamListener</highlight></codeline>
 <codeline lineno="50"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="55" refid="interfacesb_i_metadata_channel_17ab89a2563f897b7311a856067956809" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>PRUInt64<sp/>pos;</highlight></codeline>

@@ -79,9 +79,15 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_type_sniffer.html#303f6d0e42fa3c03c5f76ceed3380d07">isValidMediaURL</a> (in nsIURI aURL)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Check to see if an url points to media content This checks for a number of known file extensions and prefixes to see if the URL contains them and is therefore media.  <a href="#303f6d0e42fa3c03c5f76ceed3380d07"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_type_sniffer.html#83209eb344b7aed43c8600ea99cbc2dc">isValidAudioURL</a> (in nsIURI aURL)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Check to see if an url points to audio content This checks for a number of known file extensions to see if the URL contains them and is therefore audio.  <a href="#83209eb344b7aed43c8600ea99cbc2dc"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_type_sniffer.html#802d1e7968cfacec55ad58607e906fba">isValidVideoURL</a> (in nsIURI aURL)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Check to see if an url points to video content This checks for a number of known file extensions to see if the URL contains them and is therefore video.  <a href="#802d1e7968cfacec55ad58607e906fba"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_type_sniffer.html#ef635ae0df83151370522ddf9c5c72e6">isValidImageURL</a> (in nsIURI aURL)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Check to see if an url points to image content This checks for a number of known file extensions to see if the URL contains them and is therefore image.  <a href="#ef635ae0df83151370522ddf9c5c72e6"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_type_sniffer.html#c49e93ff600fd41b2bb735e3b683cbdc">isValidPlaylistURL</a> (in nsIURI aURL)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Check to see if an url points to a playlist This checks for a number of known file extensions to see if the URL contains them and is therefore a playlist.  <a href="#c49e93ff600fd41b2bb735e3b683cbdc"></a><br></td></tr>
@@ -141,6 +147,35 @@ false if the URL does not point to media content </dd></dl>
 
 </div>
 </div><p>
+<a class="anchor" name="83209eb344b7aed43c8600ea99cbc2dc"></a><!-- doxytag: member="sbIMediacoreTypeSniffer::isValidAudioURL" ref="83209eb344b7aed43c8600ea99cbc2dc" args="(in nsIURI aURL)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIMediacoreTypeSniffer::isValidAudioURL           </td>
+          <td>(</td>
+          <td class="paramtype">in nsIURI&nbsp;</td>
+          <td class="paramname"> <em>aURL</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Check to see if an url points to audio content This checks for a number of known file extensions to see if the URL contains them and is therefore audio. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aURL</em>&nbsp;</td><td>- the URL to check </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>true if the URL points to audio content <p>
+false if the URL does not point to audio content </dd></dl>
+
+</div>
+</div><p>
 <a class="anchor" name="802d1e7968cfacec55ad58607e906fba"></a><!-- doxytag: member="sbIMediacoreTypeSniffer::isValidVideoURL" ref="802d1e7968cfacec55ad58607e906fba" args="(in nsIURI aURL)" -->
 <div class="memitem">
 <div class="memproto">
@@ -167,6 +202,35 @@ Check to see if an url points to video content This checks for a number of known
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>true if the URL points to video content <p>
 false if the URL does not point to video content </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="ef635ae0df83151370522ddf9c5c72e6"></a><!-- doxytag: member="sbIMediacoreTypeSniffer::isValidImageURL" ref="ef635ae0df83151370522ddf9c5c72e6" args="(in nsIURI aURL)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">boolean sbIMediacoreTypeSniffer::isValidImageURL           </td>
+          <td>(</td>
+          <td class="paramtype">in nsIURI&nbsp;</td>
+          <td class="paramname"> <em>aURL</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Check to see if an url points to image content This checks for a number of known file extensions to see if the URL contains them and is therefore image. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aURL</em>&nbsp;</td><td>- the URL to check </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>true if the URL points to image content <p>
+false if the URL does not point to image content </dd></dl>
 
 </div>
 </div><p>
@@ -224,7 +288,7 @@ Check to see if an url points to a playlist.
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/mediacore/base/public/<a class="el" href="sb_i_mediacore_type_sniffer_8idl-source.html">sbIMediacoreTypeSniffer.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:44 2009 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:49 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

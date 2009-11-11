@@ -80,7 +80,7 @@
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_helper.html#854f0facfeba97707176d557c9136d28">hasSpaceForWrite</a> (in unsigned long long aSpaceNeeded, in <a class="el" href="interfacesb_i_device_library.html">sbIDeviceLibrary</a> aLibrary,[optional] in <a class="el" href="interfacesb_i_device.html">sbIDevice</a> aDevice,[optional] out unsigned long long aSpaceRemaining)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_helper.html#23b922086848891da8764db95c61dbcb">queryUserSpaceExceeded</a> (in nsIDOMWindow aParent, in <a class="el" href="interfacesb_i_device.html">sbIDevice</a> aDevice, in boolean aSyncDeviceOperation, in unsigned long long aSpaceNeeded, in unsigned long long aSpaceAvailable)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_device_helper.html#b068e1b7484d26e7f827b847cda77587">queryUserSpaceExceeded</a> (in nsIDOMWindow aParent, in <a class="el" href="interfacesb_i_device.html">sbIDevice</a> aDevice, in <a class="el" href="interfacesb_i_device_library.html">sbIDeviceLibrary</a> aLibrary, in unsigned long long aSpaceNeeded, in unsigned long long aSpaceAvailable)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -141,7 +141,7 @@ Check if a given device library has space for a write request Will prompt the us
 
 </div>
 </div><p>
-<a class="anchor" name="23b922086848891da8764db95c61dbcb"></a><!-- doxytag: member="sbIDeviceHelper::queryUserSpaceExceeded" ref="23b922086848891da8764db95c61dbcb" args="(in nsIDOMWindow aParent, in sbIDevice aDevice, in boolean aSyncDeviceOperation, in unsigned long long aSpaceNeeded, in unsigned long long aSpaceAvailable)" -->
+<a class="anchor" name="b068e1b7484d26e7f827b847cda77587"></a><!-- doxytag: member="sbIDeviceHelper::queryUserSpaceExceeded" ref="b068e1b7484d26e7f827b847cda77587" args="(in nsIDOMWindow aParent, in sbIDevice aDevice, in sbIDeviceLibrary aLibrary, in unsigned long long aSpaceNeeded, in unsigned long long aSpaceAvailable)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -160,8 +160,8 @@ Check if a given device library has space for a write request Will prompt the us
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">in boolean&nbsp;</td>
-          <td class="paramname"> <em>aSyncDeviceOperation</em>, </td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_device_library.html">sbIDeviceLibrary</a>&nbsp;</td>
+          <td class="paramname"> <em>aLibrary</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -185,12 +185,12 @@ Check if a given device library has space for a write request Will prompt the us
 <div class="memdoc">
 
 <p>
-Ask the user what action to take in response to an operation space exceeded event for the device specified by aDevice. Use the window specified by aParent as a dialog parent. If aSync is true, the operation is a sync device operation. The amount of space needed for the operation is specified by aSpaceNeeded and the amount available by aSpaceAvailable. Return true if user chooses to proceed with operation.<p>
+Ask the user what action to take in response to an operation space exceeded event for the device specified by aDevice and device library specified by aLibrary. Use the window specified by aParent as a dialog parent. The amount of space needed for the operation is specified by aSpaceNeeded and the amount available by aSpaceAvailable. Return true if user chooses to proceed with operation.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aParent</em>&nbsp;</td><td>the parent window for dialogs </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aDevice</em>&nbsp;</td><td>target device of operation </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>aSync</em>&nbsp;</td><td>True if operation is a sync device operation </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aLibrary</em>&nbsp;</td><td>target device library of operation </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aSpaceNeeded</em>&nbsp;</td><td>Space needed by operation </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>aSpaceAvailable</em>&nbsp;</td><td>Space available to operation </td></tr>
   </table>
@@ -201,7 +201,7 @@ Ask the user what action to take in response to an operation space exceeded even
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/devices/device/public/<a class="el" href="sb_i_device_helper_8idl-source.html">sbIDeviceHelper.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:42 2009 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:47 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

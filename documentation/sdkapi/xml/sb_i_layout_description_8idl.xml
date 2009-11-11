@@ -4,13 +4,13 @@
     <compoundname>sbILayoutDescription.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="192">
+      <node id="226">
         <label>components/feathers/public/sbILayoutDescription.idl</label>
         <link refid="sbILayoutDescription.idl"/>
-        <childnode refid="193" relation="include">
+        <childnode refid="227" relation="include">
         </childnode>
       </node>
-      <node id="193">
+      <node id="227">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -49,7 +49,7 @@
 <codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(8a687b2c-002f-4750-a29f-dd1b4b55b6f0)]</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(8a687b2c-002f-4750-a29f-dd1b4b55b6f0)]</highlight></codeline>
 <codeline lineno="44" refid="interfacesb_i_layout_description" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_layout_description" kindref="compound" tooltip="Struct describing the properties of a XUL window layout.">sbILayoutDescription</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="50" refid="interfacesb_i_layout_description_1a8366dd34ca25b01c67dc216071a1460" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>url;</highlight></codeline>

@@ -4,13 +4,13 @@
     <compoundname>sbIDeviceCompatibility.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="86">
+      <node id="93">
         <label>components/devices/base/public/sbIDeviceCompatibility.idl</label>
         <link refid="sbIDeviceCompatibility.idl"/>
-        <childnode refid="87" relation="include">
+        <childnode refid="94" relation="include">
         </childnode>
       </node>
-      <node id="87">
+      <node id="94">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -48,7 +48,7 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal">[scriptable,<sp/>uuid(374fb2c4-387f-4d17-be67-b5a0353c1fea)]</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(374fb2c4-387f-4d17-be67-b5a0353c1fea)]</highlight></codeline>
 <codeline lineno="35" refid="interfacesb_i_device_compatibility" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_compatibility" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceCompatibility</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="40" refid="interfacesb_i_device_compatibility_17fc87a6e6673e6cc0b91aaa7568d65a9" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>INCOMPATIBLE<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>

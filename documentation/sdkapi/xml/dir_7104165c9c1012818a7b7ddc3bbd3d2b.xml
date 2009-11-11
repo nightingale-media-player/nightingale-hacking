@@ -20,7 +20,9 @@
     <innerdir refid="dir_e0ea701694015a3cbb95943fe4ed8b4d">components/job/</innerdir>
     <innerdir refid="dir_93fbe674aa5974b89ef733c5a31a65fe">components/library/</innerdir>
     <innerdir refid="dir_d1fe40f6e3c5f33b19b450ac06b6b55e">components/mediacore/</innerdir>
+    <innerdir refid="dir_1f55c6fa37e49c115dbf91547c56cff1">components/mediaexport/</innerdir>
     <innerdir refid="dir_63c524d31d46ea92f417bb2678194971">components/mediaimport/</innerdir>
+    <innerdir refid="dir_218ce52ffaa8b7e58c5a7aebc653b805">components/mediamanager/</innerdir>
     <innerdir refid="dir_f02c69372313485c1f8832da12f6c9d0">components/mediapages/</innerdir>
     <innerdir refid="dir_e67e392e6e7f164c2d88391f914ae64c">components/metrics/</innerdir>
     <innerdir refid="dir_48d1dc0bc59c53a789e068e9b4a473e6">components/moz/</innerdir>

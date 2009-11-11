@@ -4,13 +4,13 @@
     <compoundname>sbIMediacore.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="415">
+      <node id="467">
         <label>components/mediacore/base/public/sbIMediacore.idl</label>
         <link refid="sbIMediacore.idl"/>
-        <childnode refid="416" relation="include">
+        <childnode refid="468" relation="include">
         </childnode>
       </node>
-      <node id="416">
+      <node id="468">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -52,7 +52,7 @@
 <codeline lineno="30"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_sequencer" kindref="compound">sbIMediacoreSequencer</ref>;</highlight></codeline>
 <codeline lineno="31"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_status" kindref="compound">sbIMediacoreStatus</ref>;</highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal">[scriptable,<sp/>uuid(b22e7f79-c036-4d8e-bfe1-6bcc13d02d5b)]</highlight></codeline>
+<codeline lineno="33"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(b22e7f79-c036-4d8e-bfe1-6bcc13d02d5b)]</highlight></codeline>
 <codeline lineno="34" refid="interfacesb_i_mediacore" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore" kindref="compound">sbIMediacore</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="35"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="36" refid="interfacesb_i_mediacore_146c2dcdf9bc4fa6e259ff9b68533f247" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>instanceName;</highlight></codeline>

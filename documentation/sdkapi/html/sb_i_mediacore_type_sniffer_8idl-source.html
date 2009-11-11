@@ -66,13 +66,19 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/mediacore/base/public/sbIMediacoreTypeSniffer.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 
 <a name="l00027"></a>00027 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00028"></a>00028 
 <a name="l00029"></a>00029 interface nsIURI;
 <a name="l00030"></a>00030 interface nsIStringEnumerator;
 <a name="l00031"></a>00031 
-<a name="l00032"></a>00032 [scriptable, uuid(413f558f-b580-431b-98c2-7b18fd0e1e0f)]
+<a name="l00032"></a>00032 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(37A33F1D-42D3-4A25-BF28-EF5ED8B461C4)]
 <a name="l00033"></a><a class="code" href="interfacesb_i_mediacore_type_sniffer.html">00033</a> interface <a class="code" href="interfacesb_i_mediacore_type_sniffer.html">sbIMediacoreTypeSniffer</a> : nsISupports
 <a name="l00034"></a>00034 {
 <a name="l00038"></a><a class="code" href="interfacesb_i_mediacore_type_sniffer.html#579234ef441f1552b1fe3d3f923aa6d5">00038</a>   readonly attribute nsIStringEnumerator audioFileExtensions;
@@ -84,32 +90,36 @@
 <a name="l00054"></a><a class="code" href="interfacesb_i_mediacore_type_sniffer.html#d70bcf1ec82aaf810010805f915735c4">00054</a>   readonly attribute nsIStringEnumerator mediaFileExtensions;
 <a name="l00055"></a>00055 
 <a name="l00065"></a>00065   <span class="keywordtype">boolean</span> isValidMediaURL(in nsIURI aURL);
-<a name="l00066"></a>00066  
-<a name="l00076"></a>00076   <span class="keywordtype">boolean</span> isValidVideoURL(in nsIURI aURL);
-<a name="l00077"></a>00077  
-<a name="l00087"></a>00087   <span class="keywordtype">boolean</span> isValidPlaylistURL(in nsIURI aURL);
+<a name="l00066"></a>00066 
+<a name="l00076"></a>00076   <span class="keywordtype">boolean</span> isValidAudioURL(in nsIURI aURL);
+<a name="l00077"></a>00077 
+<a name="l00087"></a>00087   <span class="keywordtype">boolean</span> isValidVideoURL(in nsIURI aURL);
 <a name="l00088"></a>00088 
-<a name="l00095"></a>00095   <span class="keywordtype">boolean</span> isValidWebSafePlaylistURL(in nsIURI aURL);
-<a name="l00096"></a>00096 };
-<a name="l00097"></a>00097 
-<a name="l00098"></a>00098 %{C++
+<a name="l00098"></a>00098   <span class="keywordtype">boolean</span> isValidImageURL(in nsIURI aURL);
 <a name="l00099"></a>00099 
-<a name="l00100"></a>00100 <span class="preprocessor">#define SB_MEDIACORETYPESNIFFER_DESCRIPTION         \</span>
-<a name="l00101"></a>00101 <span class="preprocessor">  "Songbird Mediacore Type Sniffer"</span>
-<a name="l00102"></a>00102 <span class="preprocessor"></span><span class="preprocessor">#define SB_MEDIACORETYPESNIFFER_CONTRACTID          \</span>
-<a name="l00103"></a>00103 <span class="preprocessor">  "@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"</span>
-<a name="l00104"></a>00104 <span class="preprocessor"></span><span class="preprocessor">#define SB_MEDIACORETYPESNIFFER_CLASSNAME           \</span>
-<a name="l00105"></a>00105 <span class="preprocessor">  "sbMediacoreTypeSniffer"</span>
-<a name="l00106"></a>00106 <span class="preprocessor"></span><span class="preprocessor">#define SB_MEDIACORETYPESNIFFER_CID                 \</span>
-<a name="l00107"></a>00107 <span class="preprocessor">{ </span><span class="comment">/* {eba99588-f058-4b6e-9706-9f9bb293dac0} */</span>      \
-<a name="l00108"></a>00108   0xeba99588,                                       \
-<a name="l00109"></a>00109   0xf058,                                           \
-<a name="l00110"></a>00110   0x4b6e,                                           \
-<a name="l00111"></a>00111   { 0x97, 0x6, 0x9f, 0x9b, 0xb2, 0x93, 0xda, 0xc0 } \
-<a name="l00112"></a>00112 }
-<a name="l00113"></a>00113 
-<a name="l00114"></a>00114 %}
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+<a name="l00109"></a>00109   <span class="keywordtype">boolean</span> isValidPlaylistURL(in nsIURI aURL);
+<a name="l00110"></a>00110 
+<a name="l00117"></a>00117   <span class="keywordtype">boolean</span> isValidWebSafePlaylistURL(in nsIURI aURL);
+<a name="l00118"></a>00118 };
+<a name="l00119"></a>00119 
+<a name="l00120"></a>00120 %{C++
+<a name="l00121"></a>00121 
+<a name="l00122"></a>00122 <span class="preprocessor">#define SB_MEDIACORETYPESNIFFER_DESCRIPTION         \</span>
+<a name="l00123"></a>00123 <span class="preprocessor">  "Songbird Mediacore Type Sniffer"</span>
+<a name="l00124"></a>00124 <span class="preprocessor"></span><span class="preprocessor">#define SB_MEDIACORETYPESNIFFER_CONTRACTID          \</span>
+<a name="l00125"></a>00125 <span class="preprocessor">  "@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"</span>
+<a name="l00126"></a>00126 <span class="preprocessor"></span><span class="preprocessor">#define SB_MEDIACORETYPESNIFFER_CLASSNAME           \</span>
+<a name="l00127"></a>00127 <span class="preprocessor">  "sbMediacoreTypeSniffer"</span>
+<a name="l00128"></a>00128 <span class="preprocessor"></span><span class="preprocessor">#define SB_MEDIACORETYPESNIFFER_CID                 \</span>
+<a name="l00129"></a>00129 <span class="preprocessor">{ </span><span class="comment">/* {eba99588-f058-4b6e-9706-9f9bb293dac0} */</span>      \
+<a name="l00130"></a>00130   0xeba99588,                                       \
+<a name="l00131"></a>00131   0xf058,                                           \
+<a name="l00132"></a>00132   0x4b6e,                                           \
+<a name="l00133"></a>00133   { 0x97, 0x6, 0x9f, 0x9b, 0xb2, 0x93, 0xda, 0xc0 } \
+<a name="l00134"></a>00134 }
+<a name="l00135"></a>00135 
+<a name="l00136"></a>00136 %}
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

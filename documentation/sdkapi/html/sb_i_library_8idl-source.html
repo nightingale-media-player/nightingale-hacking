@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/library/base/public/sbILibrary.idl</h1><a href="sb_i_library_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -104,7 +110,7 @@
 <a name="l00042"></a>00042 interface <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>;
 <a name="l00043"></a>00043 interface <a class="code" href="interfacesb_i_media_list_factory.html" title="Factory for new media list instances.">sbIMediaListFactory</a>;
 <a name="l00044"></a>00044 
-<a name="l00049"></a>00049 [scriptable, uuid(923514f0-0845-431f-86d4-3a073c6a0a98)]
+<a name="l00049"></a>00049 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(923514f0-0845-431f-86d4-3a073c6a0a98)]
 <a name="l00050"></a><a class="code" href="interfacesb_i_batch_create_media_items_listener.html">00050</a> interface <a class="code" href="interfacesb_i_batch_create_media_items_listener.html" title="Callback for batch media create items.">sbIBatchCreateMediaItemsListener</a> : nsISupports
 <a name="l00051"></a>00051 {
 <a name="l00058"></a>00058   <span class="keywordtype">void</span> onProgress(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
@@ -113,7 +119,7 @@
 <a name="l00068"></a>00068                   in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aResult);
 <a name="l00069"></a>00069 };
 <a name="l00070"></a>00070 
-<a name="l00081"></a>00081 [scriptable, uuid(9153d1d0-ed79-4bc2-a3a6-259cf13781c4)]
+<a name="l00081"></a>00081 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(99cf6e50-1dd1-11b2-8a31-97c1942f84e4)]
 <a name="l00082"></a><a class="code" href="interfacesb_i_library.html">00082</a> interface <a class="code" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a> : <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a>
 <a name="l00083"></a>00083 {
 <a name="l00087"></a><a class="code" href="interfacesb_i_library.html#219c7f4ce3a62c36c374df24cb267d61">00087</a>   readonly attribute <a class="code" href="interfacesb_i_device.html">sbIDevice</a> device;
@@ -144,29 +150,36 @@
 <a name="l00167"></a>00167 
 <a name="l00175"></a>00175   <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> getDuplicate(in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem);
 <a name="l00176"></a>00176 
-<a name="l00180"></a><a class="code" href="interfacesb_i_library.html#7554ccb1c5ea11775ce4d38160492041">00180</a>   readonly attribute nsIStringEnumerator mediaListTypes;
-<a name="l00181"></a>00181 
-<a name="l00187"></a>00187   <span class="keywordtype">void</span> registerMediaListFactory(in <a class="code" href="interfacesb_i_media_list_factory.html" title="Factory for new media list instances.">sbIMediaListFactory</a> aFactory);
+<a name="l00182"></a>00182   <span class="keywordtype">void</span> clearItems();
+<a name="l00183"></a>00183 
+<a name="l00187"></a><a class="code" href="interfacesb_i_library.html#7554ccb1c5ea11775ce4d38160492041">00187</a>   readonly attribute nsIStringEnumerator mediaListTypes;
 <a name="l00188"></a>00188 
-<a name="l00192"></a>00192 <span class="comment">/*</span>
-<a name="l00193"></a>00193 <span class="comment">  AString getPreferedAudioMimeType();</span>
-<a name="l00194"></a>00194 <span class="comment">  AString getPreferedVideoMimeType();</span>
-<a name="l00195"></a>00195 <span class="comment">*/</span>
-<a name="l00196"></a>00196 
-<a name="l00202"></a>00202   <span class="keywordtype">void</span> optimize();
+<a name="l00194"></a>00194   <span class="keywordtype">void</span> registerMediaListFactory(in <a class="code" href="interfacesb_i_media_list_factory.html" title="Factory for new media list instances.">sbIMediaListFactory</a> aFactory);
+<a name="l00195"></a>00195 
+<a name="l00199"></a>00199 <span class="comment">/*</span>
+<a name="l00200"></a>00200 <span class="comment">  AString getPreferedAudioMimeType();</span>
+<a name="l00201"></a>00201 <span class="comment">  AString getPreferedVideoMimeType();</span>
+<a name="l00202"></a>00202 <span class="comment">*/</span>
 <a name="l00203"></a>00203 
-<a name="l00207"></a>00207   <span class="keywordtype">void</span> flush();
-<a name="l00208"></a>00208 
-<a name="l00222"></a>00222   nsIArray batchCreateMediaItems(in nsIArray aURIArray,
-<a name="l00223"></a>00223                                  [optional] in nsIArray aPropertyArrayArray,
-<a name="l00224"></a>00224                                  [optional] in <span class="keywordtype">boolean</span> aAllowDuplicates);
-<a name="l00225"></a>00225 
-<a name="l00238"></a>00238   <span class="keywordtype">void</span> batchCreateMediaItemsAsync(in <a class="code" href="interfacesb_i_batch_create_media_items_listener.html" title="Callback for batch media create items.">sbIBatchCreateMediaItemsListener</a> aListener,
-<a name="l00239"></a>00239                                   in nsIArray aURIArray,
-<a name="l00240"></a>00240                                   [optional] in nsIArray aPropertyArrayArray,
-<a name="l00241"></a>00241                                   [optional] in <span class="keywordtype">boolean</span> aAllowDuplicates);
-<a name="l00242"></a>00242 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+<a name="l00209"></a>00209   <span class="keywordtype">void</span> optimize();
+<a name="l00210"></a>00210 
+<a name="l00214"></a>00214   <span class="keywordtype">void</span> flush();
+<a name="l00215"></a>00215 
+<a name="l00229"></a>00229   nsIArray batchCreateMediaItems(in nsIArray aURIArray,
+<a name="l00230"></a>00230                                  [optional] in nsIArray aPropertyArrayArray,
+<a name="l00231"></a>00231                                  [optional] in <span class="keywordtype">boolean</span> aAllowDuplicates);
+<a name="l00232"></a>00232 
+<a name="l00245"></a>00245   nsIArray batchCreateMediaItemsIfNotExist
+<a name="l00246"></a>00246              (in nsIArray aURIArray,
+<a name="l00247"></a>00247               [optional] in nsIArray aPropertyArrayArray,
+<a name="l00248"></a>00248               [optional] out nsIArray aResultItemArray);
+<a name="l00249"></a>00249 
+<a name="l00262"></a>00262   <span class="keywordtype">void</span> batchCreateMediaItemsAsync(in <a class="code" href="interfacesb_i_batch_create_media_items_listener.html" title="Callback for batch media create items.">sbIBatchCreateMediaItemsListener</a> aListener,
+<a name="l00263"></a>00263                                   in nsIArray aURIArray,
+<a name="l00264"></a>00264                                   [optional] in nsIArray aPropertyArrayArray,
+<a name="l00265"></a>00265                                   [optional] in <span class="keywordtype">boolean</span> aAllowDuplicates);
+<a name="l00266"></a>00266 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

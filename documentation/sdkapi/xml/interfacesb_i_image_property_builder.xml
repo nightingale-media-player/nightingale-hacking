@@ -10,30 +10,30 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_builder" kindref="compound">sbIPropertyBuilder</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="295">
+      <node id="323">
         <label>sbIPropertyBuilder</label>
         <link refid="interfacesb_i_property_builder"/>
       </node>
-      <node id="294">
+      <node id="322">
         <label>sbIImagePropertyBuilder</label>
         <link refid="interfacesb_i_image_property_builder"/>
-        <childnode refid="295" relation="public-inheritance">
+        <childnode refid="323" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="297">
+      <node id="325">
         <label>sbIPropertyBuilder</label>
         <link refid="interfacesb_i_property_builder"/>
       </node>
-      <node id="296">
+      <node id="324">
         <label>sbIImagePropertyBuilder</label>
         <link refid="interfacesb_i_image_property_builder"/>
-        <childnode refid="297" relation="public-inheritance">
+        <childnode refid="325" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="97" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" bodystart="96" bodyend="98"/>
+    <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" line="119" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyBuilder.idl" bodystart="118" bodyend="120"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_builder_12ea4dfd872cdd763d5202428b2048701" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>displayName</name></member>
       <member refid="interfacesb_i_property_builder_12c18bb192ca734fd2b393b200c848fc9" prot="public" virt="non-virtual"><scope>sbIImagePropertyBuilder</scope><name>displayNameKey</name></member>

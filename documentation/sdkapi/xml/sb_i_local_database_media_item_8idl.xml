@@ -4,13 +4,13 @@
     <compoundname>sbILocalDatabaseMediaItem.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="382">
+      <node id="434">
         <label>components/library/localdatabase/public/sbILocalDatabaseMediaItem.idl</label>
         <link refid="sbILocalDatabaseMediaItem.idl"/>
-        <childnode refid="383" relation="include">
+        <childnode refid="435" relation="include">
         </childnode>
       </node>
-      <node id="383">
+      <node id="435">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -49,7 +49,7 @@
 <codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_resource_property_bag" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseResourcePropertyBag</ref>;</highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="39"><highlight class="normal">[scriptable,<sp/>uuid(8a477686-216c-4dfa-9515-282ff685d69f)]</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(8a477686-216c-4dfa-9515-282ff685d69f)]</highlight></codeline>
 <codeline lineno="40" refid="interfacesb_i_local_database_media_item" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_media_item" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseMediaItem</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="41"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="42" refid="interfacesb_i_local_database_media_item_12bb36f7b468488cc4be7564aab03571a" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>mediaItemId;</highlight></codeline>

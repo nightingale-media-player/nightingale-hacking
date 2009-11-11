@@ -4,13 +4,13 @@
     <compoundname>sbIDeviceManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="111">
+      <node id="136">
         <label>components/devices/base/public/sbIDeviceManager.idl</label>
         <link refid="base/public/sbIDeviceManager.idl"/>
-        <childnode refid="112" relation="include">
+        <childnode refid="137" relation="include">
         </childnode>
       </node>
-      <node id="112">
+      <node id="137">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -59,7 +59,7 @@
 <codeline lineno="44"><highlight class="comment"><sp/>*<sp/>XXXMook:<sp/>rename<sp/>this<sp/>to<sp/>sbIDeviceManager<sp/>once<sp/>the<sp/>old<sp/>interface<sp/>has<sp/>been</highlight></codeline>
 <codeline lineno="45"><highlight class="comment"><sp/>*<sp/>properly<sp/>removed</highlight></codeline>
 <codeline lineno="46"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="47"><highlight class="normal">[scriptable,<sp/>uuid(2685D258-FFE3-4E78-AA0E-D15838416CED)]</highlight></codeline>
+<codeline lineno="47"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(2685D258-FFE3-4E78-AA0E-D15838416CED)]</highlight></codeline>
 <codeline lineno="48" refid="interfacesb_i_device_manager2" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_manager2" kindref="compound">sbIDeviceManager2</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="49"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="54" refid="interfacesb_i_device_manager2_1a2a3cfae7846ecf48c9706db208dd248" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIArray<sp/>marshalls;</highlight></codeline>

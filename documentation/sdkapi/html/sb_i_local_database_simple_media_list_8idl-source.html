@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/library/localdatabase/public/sbILocalDatabaseSimpleMediaList.idl</h1><a href="sb_i_local_database_simple_media_list_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -99,14 +105,14 @@
 <a name="l00037"></a>00037 interface <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a>;
 <a name="l00038"></a>00038 interface <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a>;
 <a name="l00039"></a>00039 
-<a name="l00044"></a>00044 [scriptable, uuid(feca42a6-f060-4041-8f97-5b750074432f)]
+<a name="l00044"></a>00044 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(deee7fde-ddd4-4a23-9d13-ded73807b060)]
 <a name="l00045"></a><a class="code" href="interfacesb_i_local_database_media_list_copy_listener.html">00045</a> interface <a class="code" href="interfacesb_i_local_database_media_list_copy_listener.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseMediaListCopyListener</a> : nsISupports
 <a name="l00046"></a>00046 {
 <a name="l00047"></a>00047   <span class="keywordtype">void</span> onItemCopied(in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aSourceItem, 
 <a name="l00048"></a>00048                     in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aDestItem);
 <a name="l00049"></a>00049 };
 <a name="l00050"></a>00050 
-<a name="l00060"></a>00060 [scriptable, uuid(a9045766-28a3-455f-a5fc-2a2eb7c863a3)]
+<a name="l00060"></a>00060 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(a9045766-28a3-455f-a5fc-2a2eb7c863a3)]
 <a name="l00061"></a><a class="code" href="interfacesb_i_local_database_simple_media_list.html">00061</a> interface <a class="code" href="interfacesb_i_local_database_simple_media_list.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseSimpleMediaList</a> : nsISupports
 <a name="l00062"></a>00062 {
 <a name="l00063"></a><a class="code" href="interfacesb_i_local_database_simple_media_list.html#9ab4500c07ac7424d962babcdf3a8364">00063</a>   attribute <a class="code" href="interfacesb_i_local_database_media_list_copy_listener.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseMediaListCopyListener</a> copyListener;
@@ -127,16 +133,18 @@
 <a name="l00098"></a>00098                                        in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aItem,
 <a name="l00099"></a>00099                                        in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aIndex);
 <a name="l00100"></a>00100 
-<a name="l00104"></a>00104   <span class="keywordtype">void</span> notifyListenersListCleared(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aList);
-<a name="l00105"></a>00105 
-<a name="l00109"></a>00109   <span class="keywordtype">void</span> notifyListenersBatchBegin(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aList);
-<a name="l00110"></a>00110 
-<a name="l00114"></a>00114   <span class="keywordtype">void</span> notifyListenersBatchEnd(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aList);
-<a name="l00115"></a>00115 
-<a name="l00120"></a>00120   <span class="keywordtype">void</span> notifyContentChanged();
-<a name="l00121"></a>00121 };
-<a name="l00122"></a>00122 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+<a name="l00105"></a>00105   <span class="keywordtype">void</span> notifyListenersBeforeListCleared(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aList);
+<a name="l00106"></a>00106 
+<a name="l00110"></a>00110   <span class="keywordtype">void</span> notifyListenersListCleared(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aList);
+<a name="l00111"></a>00111 
+<a name="l00115"></a>00115   <span class="keywordtype">void</span> notifyListenersBatchBegin(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aList);
+<a name="l00116"></a>00116 
+<a name="l00120"></a>00120   <span class="keywordtype">void</span> notifyListenersBatchEnd(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aList);
+<a name="l00121"></a>00121 
+<a name="l00126"></a>00126   <span class="keywordtype">void</span> notifyContentChanged();
+<a name="l00127"></a>00127 };
+<a name="l00128"></a>00128 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

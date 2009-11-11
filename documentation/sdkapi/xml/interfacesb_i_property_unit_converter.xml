@@ -121,24 +121,24 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="973">
+      <node id="1047">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
-        <childnode refid="974" relation="usage">
+        <childnode refid="1048" relation="usage">
           <edgelabel>secondarySort</edgelabel>
         </childnode>
-        <childnode refid="972" relation="usage">
+        <childnode refid="1046" relation="usage">
           <edgelabel>unitConverter</edgelabel>
         </childnode>
       </node>
-      <node id="972">
+      <node id="1046">
         <label>sbIPropertyUnitConverter</label>
         <link refid="interfacesb_i_property_unit_converter"/>
-        <childnode refid="973" relation="usage">
+        <childnode refid="1047" relation="usage">
           <edgelabel>propertyInfo</edgelabel>
         </childnode>
       </node>
-      <node id="974">
+      <node id="1048">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>

@@ -3,7 +3,10 @@
   <compounddef id="dir_acd3253dc9e70ec2cb66ac8fb8305b0c" kind="dir">
     <compoundname>components/mediacore/gstreamer/public/</compoundname>
     <innerfile refid="sb_i_g_streamer_mediacore_8idl">sbIGStreamerMediacore.idl</innerfile>
+    <innerfile refid="sb_i_g_streamer_pipeline_8idl">sbIGStreamerPipeline.idl</innerfile>
+    <innerfile refid="sb_i_g_streamer_r_t_p_streamer_8idl">sbIGStreamerRTPStreamer.idl</innerfile>
     <innerfile refid="sb_i_g_streamer_service_8idl">sbIGStreamerService.idl</innerfile>
+    <innerfile refid="sb_i_g_streamer_transcode_8idl">sbIGStreamerTranscode.idl</innerfile>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

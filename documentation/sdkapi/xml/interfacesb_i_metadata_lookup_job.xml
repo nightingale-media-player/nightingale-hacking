@@ -1,0 +1,185 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_metadata_lookup_job" kind="interface" prot="public">
+    <compoundname>sbIMetadataLookupJob</compoundname>
+    <basecompoundref refid="interfacesb_i_job_progress" prot="public" virt="non-virtual">sbIJobProgress</basecompoundref>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_metadata_lookup_job_1c8ed8148a111d37c267141ae745bb3c3" prot="public" static="no" mutable="no">
+        <type>const unsigned short</type>
+        <definition>const unsigned short sbIMetadataLookupJob::JOB_DISC_LOOKUP</definition>
+        <argsstring></argsstring>
+        <name>JOB_DISC_LOOKUP</name>
+        <initializer> 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupData.idl" line="59" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupData.idl" bodystart="59" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_lookup_job_168ff82902eedd8a71cc17eb5ff005cc9" prot="public" static="no" mutable="no">
+        <type>const unsigned short</type>
+        <definition>const unsigned short sbIMetadataLookupJob::JOB_ALBUM_DETAIL_LOOKUP</definition>
+        <argsstring></argsstring>
+        <name>JOB_ALBUM_DETAIL_LOOKUP</name>
+        <initializer> 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupData.idl" line="60" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupData.idl" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_lookup_job_177f81a657e26d85d1f4cecc7350ac859" prot="public" static="no" mutable="no">
+        <type>readonly attribute unsigned short</type>
+        <definition>readonly attribute unsigned short sbIMetadataLookupJob::mlJobType</definition>
+        <argsstring></argsstring>
+        <name>mlJobType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupData.idl" line="65" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupData.idl" bodystart="65" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_metadata_lookup_job_1519aff573199d7ab544ce967858a158c" prot="public" static="no" mutable="no">
+        <type>readonly attribute unsigned short</type>
+        <definition>readonly attribute unsigned short sbIMetadataLookupJob::mlNumResults</definition>
+        <argsstring></argsstring>
+        <name>mlNumResults</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupData.idl" line="68" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupData.idl" bodystart="68" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_metadata_lookup_job_1ffceec28b3533f78ba7ae39052f6cb1e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMetadataLookupJob::init</definition>
+        <argsstring>(in unsigned short jobType, in unsigned short status)</argsstring>
+        <name>init</name>
+        <param>
+          <type>in unsigned short</type>
+          <declname>jobType</declname>
+        </param>
+        <param>
+          <type>in unsigned short</type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+<para>Initialise the job type and state of the job. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupData.idl" line="73"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_metadata_lookup_job_11513cb873fb6343acc8c6ff29c1f1c20" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMetadataLookupJob::appendResult</definition>
+        <argsstring>(in sbIMetadataAlbumDetail aAlbum)</argsstring>
+        <name>appendResult</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_metadata_album_detail" kindref="compound">sbIMetadataAlbumDetail</ref></type>
+          <declname>aAlbum</declname>
+        </param>
+        <briefdescription>
+<para>Append a result. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupData.idl" line="78"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_metadata_lookup_job_19fb89d141a57d7c4a819af0521d37b1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMetadataLookupJob::changeStatus</definition>
+        <argsstring>(in unsigned short status)</argsstring>
+        <name>changeStatus</name>
+        <param>
+          <type>in unsigned short</type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+<para>Change the status of the job and notify listeners. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupData.idl" line="83"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_metadata_lookup_job_1b2db348fcf47a95eefe6426992535a4f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>nsISimpleEnumerator</type>
+        <definition>nsISimpleEnumerator sbIMetadataLookupJob::getMetadataResults</definition>
+        <argsstring>()</argsstring>
+        <name>getMetadataResults</name>
+        <briefdescription>
+<para>Returns an enumerator of all results found by this lookup job. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Enumerator of <ref refid="interfacesb_i_metadata_album_detail" kindref="compound">sbIMetadataAlbumDetail</ref> items </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupData.idl" line="89"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="838">
+        <label>sbIJobProgress</label>
+        <link refid="interfacesb_i_job_progress"/>
+      </node>
+      <node id="837">
+        <label>sbIMetadataLookupJob</label>
+        <link refid="interfacesb_i_metadata_lookup_job"/>
+        <childnode refid="838" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="840">
+        <label>sbIJobProgress</label>
+        <link refid="interfacesb_i_job_progress"/>
+      </node>
+      <node id="839">
+        <label>sbIMetadataLookupJob</label>
+        <link refid="interfacesb_i_metadata_lookup_job"/>
+        <childnode refid="840" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="c:/builds/songbird/trunk/components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupData.idl" line="58" bodyfile="c:/builds/songbird/trunk/components/mediacore/metadata/lookup/manager/public/sbIMetadataLookupData.idl" bodystart="57" bodyend="90"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_job_progress_16a80a1a34775105f108f6bd88c756dfb" prot="public" virt="non-virtual"><scope>sbIMetadataLookupJob</scope><name>addJobProgressListener</name></member>
+      <member refid="interfacesb_i_metadata_lookup_job_11513cb873fb6343acc8c6ff29c1f1c20" prot="public" virt="non-virtual"><scope>sbIMetadataLookupJob</scope><name>appendResult</name></member>
+      <member refid="interfacesb_i_metadata_lookup_job_19fb89d141a57d7c4a819af0521d37b1a" prot="public" virt="non-virtual"><scope>sbIMetadataLookupJob</scope><name>changeStatus</name></member>
+      <member refid="interfacesb_i_job_progress_1027d9c149848bf4478b0456e908132d7" prot="public" virt="non-virtual"><scope>sbIMetadataLookupJob</scope><name>errorCount</name></member>
+      <member refid="interfacesb_i_job_progress_125f57afba4c2bc26d823f6b4ccd4c768" prot="public" virt="non-virtual"><scope>sbIMetadataLookupJob</scope><name>getErrorMessages</name></member>
+      <member refid="interfacesb_i_metadata_lookup_job_1b2db348fcf47a95eefe6426992535a4f" prot="public" virt="non-virtual"><scope>sbIMetadataLookupJob</scope><name>getMetadataResults</name></member>
+      <member refid="interfacesb_i_metadata_lookup_job_1ffceec28b3533f78ba7ae39052f6cb1e" prot="public" virt="non-virtual"><scope>sbIMetadataLookupJob</scope><name>init</name></member>
+      <member refid="interfacesb_i_metadata_lookup_job_168ff82902eedd8a71cc17eb5ff005cc9" prot="public" virt="non-virtual"><scope>sbIMetadataLookupJob</scope><name>JOB_ALBUM_DETAIL_LOOKUP</name></member>
+      <member refid="interfacesb_i_metadata_lookup_job_1c8ed8148a111d37c267141ae745bb3c3" prot="public" virt="non-virtual"><scope>sbIMetadataLookupJob</scope><name>JOB_DISC_LOOKUP</name></member>
+      <member refid="interfacesb_i_metadata_lookup_job_177f81a657e26d85d1f4cecc7350ac859" prot="public" virt="non-virtual"><scope>sbIMetadataLookupJob</scope><name>mlJobType</name></member>
+      <member refid="interfacesb_i_metadata_lookup_job_1519aff573199d7ab544ce967858a158c" prot="public" virt="non-virtual"><scope>sbIMetadataLookupJob</scope><name>mlNumResults</name></member>
+      <member refid="interfacesb_i_job_progress_1462e97d90f7869b092a9cb31ce5241d7" prot="public" virt="non-virtual"><scope>sbIMetadataLookupJob</scope><name>progress</name></member>
+      <member refid="interfacesb_i_job_progress_16975c6117729ce76498e677485b78a45" prot="public" virt="non-virtual"><scope>sbIMetadataLookupJob</scope><name>removeJobProgressListener</name></member>
+      <member refid="interfacesb_i_job_progress_1b2f2c6ac3a21d6e94d56e68e1204deae" prot="public" virt="non-virtual"><scope>sbIMetadataLookupJob</scope><name>status</name></member>
+      <member refid="interfacesb_i_job_progress_1b4cebecf25f9537638b93f613a08a399" prot="public" virt="non-virtual"><scope>sbIMetadataLookupJob</scope><name>STATUS_FAILED</name></member>
+      <member refid="interfacesb_i_job_progress_14c958bd7134338a4b664fd694e52d00f" prot="public" virt="non-virtual"><scope>sbIMetadataLookupJob</scope><name>STATUS_RUNNING</name></member>
+      <member refid="interfacesb_i_job_progress_1f8533869de154c683bef9ffe4ae14281" prot="public" virt="non-virtual"><scope>sbIMetadataLookupJob</scope><name>STATUS_SUCCEEDED</name></member>
+      <member refid="interfacesb_i_job_progress_184a0305f04450bfc0fbca836a5698f2b" prot="public" virt="non-virtual"><scope>sbIMetadataLookupJob</scope><name>statusText</name></member>
+      <member refid="interfacesb_i_job_progress_1f7778cabda828a9cbe8ae0b3b6c9f1a7" prot="public" virt="non-virtual"><scope>sbIMetadataLookupJob</scope><name>titleText</name></member>
+      <member refid="interfacesb_i_job_progress_1fe4c7d72c80eba3e52b90b078f08f7e1" prot="public" virt="non-virtual"><scope>sbIMetadataLookupJob</scope><name>total</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

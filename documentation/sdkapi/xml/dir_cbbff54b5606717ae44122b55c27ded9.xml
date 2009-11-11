@@ -5,7 +5,6 @@
     <innerfile refid="sb_i_file_metadata_service_8idl">sbIFileMetadataService.idl</innerfile>
     <innerfile refid="sb_i_metadata_channel_8idl">sbIMetadataChannel.idl</innerfile>
     <innerfile refid="sb_i_metadata_handler_8idl">sbIMetadataHandler.idl</innerfile>
-    <innerfile refid="sb_i_metadata_image_scanner_8idl">sbIMetadataImageScanner.idl</innerfile>
     <innerfile refid="sb_i_metadata_manager_8idl">sbIMetadataManager.idl</innerfile>
     <briefdescription>
     </briefdescription>

@@ -4,13 +4,13 @@
     <compoundname>sbIDeviceProperties.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="117">
+      <node id="142">
         <label>components/devices/base/public/sbIDeviceProperties.idl</label>
         <link refid="sbIDeviceProperties.idl"/>
-        <childnode refid="118" relation="include">
+        <childnode refid="143" relation="include">
         </childnode>
       </node>
-      <node id="118">
+      <node id="143">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -52,7 +52,7 @@
 <codeline lineno="30"><highlight class="normal">interface<sp/>nsIURI;</highlight></codeline>
 <codeline lineno="31" refid="interfacesb_i_device_identification" refkind="compound"><highlight class="normal">interface<sp/>nsIVariant;</highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
-<codeline lineno="38"><highlight class="normal">[scriptable,<sp/>uuid(1b7449fe-86d1-4668-85fb-9d75591e48cd)]</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(a637356d-a89d-4a2a-b0cd-858d24aa347a)]</highlight></codeline>
 <codeline lineno="39" refid="interfacesb_i_device_properties" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_properties" kindref="compound">sbIDeviceProperties</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="40"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="44"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initFriendlyName(in<sp/>AString<sp/>aFriendlyName);</highlight></codeline>
@@ -63,29 +63,33 @@
 <codeline lineno="55"><highlight class="normal"></highlight></codeline>
 <codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initSerialNumber(in<sp/>nsIVariant<sp/>aSerialNumber);</highlight></codeline>
 <codeline lineno="60"><highlight class="normal"></highlight></codeline>
-<codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initDeviceLocation(in<sp/>nsIURI<sp/>aDeviceLocationUri);</highlight></codeline>
+<codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initFirmwareVersion(in<sp/>AString<sp/>aFirmwareVersion);</highlight></codeline>
 <codeline lineno="65"><highlight class="normal"></highlight></codeline>
-<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initDeviceIcon(in<sp/>nsIURI<sp/>aDeviceIconUri);</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initDeviceLocation(in<sp/>nsIURI<sp/>aDeviceLocationUri);</highlight></codeline>
 <codeline lineno="70"><highlight class="normal"></highlight></codeline>
-<codeline lineno="74"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initDeviceProperties(in<sp/>nsIPropertyBag2<sp/>aProperties);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initDeviceIcon(in<sp/>nsIURI<sp/>aDeviceIconUri);</highlight></codeline>
 <codeline lineno="75"><highlight class="normal"></highlight></codeline>
-<codeline lineno="80"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initDone();</highlight></codeline>
-<codeline lineno="81"><highlight class="normal"></highlight></codeline>
-<codeline lineno="82"><highlight class="normal"></highlight></codeline>
-<codeline lineno="88" refid="interfacesb_i_device_properties_1da2d248e1a60baaa9e4422d29683c455" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>friendlyName;</highlight></codeline>
-<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="93" refid="interfacesb_i_device_properties_1213e831e6844ba14c009f9a5d9cf8c6e" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>vendorName;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initDeviceProperties(in<sp/>nsIPropertyBag2<sp/>aProperties);</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>initDone();</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"></highlight></codeline>
+<codeline lineno="93" refid="interfacesb_i_device_properties_1da2d248e1a60baaa9e4422d29683c455" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>friendlyName;</highlight></codeline>
 <codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="99" refid="interfacesb_i_device_properties_1d4091612e24a45fafe489a616e2d5b90" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIVariant<sp/>modelNumber;</highlight></codeline>
-<codeline lineno="100"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="105" refid="interfacesb_i_device_properties_129275faf10a59977a4cc3c4b6451d139" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIVariant<sp/>serialNumber;</highlight></codeline>
-<codeline lineno="106"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="111" refid="interfacesb_i_device_properties_19fee155b80798f207321d7c9caf6d2ec" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIURI<sp/>uri;</highlight></codeline>
-<codeline lineno="112"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="117" refid="interfacesb_i_device_properties_1fb81d0dc5c243f6499129c068160e6db" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIURI<sp/>iconUri;</highlight></codeline>
-<codeline lineno="118"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="123" refid="interfacesb_i_device_properties_1921e37c4912c740fe73360e362d9191c" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIPropertyBag2<sp/>properties;</highlight></codeline>
-<codeline lineno="124"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="98" refid="interfacesb_i_device_properties_1213e831e6844ba14c009f9a5d9cf8c6e" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>vendorName;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="104" refid="interfacesb_i_device_properties_1d4091612e24a45fafe489a616e2d5b90" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIVariant<sp/>modelNumber;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="110" refid="interfacesb_i_device_properties_129275faf10a59977a4cc3c4b6451d139" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIVariant<sp/>serialNumber;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="116" refid="interfacesb_i_device_properties_196b419c48b4174533f936bba4254d455" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>firmwareVersion;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"></highlight></codeline>
+<codeline lineno="122" refid="interfacesb_i_device_properties_19fee155b80798f207321d7c9caf6d2ec" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIURI<sp/>uri;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="128" refid="interfacesb_i_device_properties_1fb81d0dc5c243f6499129c068160e6db" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIURI<sp/>iconUri;</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="134" refid="interfacesb_i_device_properties_1921e37c4912c740fe73360e362d9191c" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIPropertyBag2<sp/>properties;</highlight></codeline>
+<codeline lineno="135"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceProperties.idl"/>
   </compounddef>

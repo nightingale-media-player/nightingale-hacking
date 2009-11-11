@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl</h1><a href="sb_i_local_database_async_g_u_i_d_array_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -95,7 +101,7 @@
 <a name="l00031"></a>00031 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00032"></a>00032 <span class="preprocessor">#include "<a class="code" href="sb_i_local_database_g_u_i_d_array_8idl.html" title="Definition of the sbILocalDatabaseGUIDArray interfaces.">sbILocalDatabaseGUIDArray.idl</a>"</span>
 <a name="l00033"></a>00033 
-<a name="l00038"></a>00038 [scriptable, uuid(08af2324-3aa1-4162-9da3-caa4169247ca)]
+<a name="l00038"></a>00038 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(08af2324-3aa1-4162-9da3-caa4169247ca)]
 <a name="l00039"></a><a class="code" href="interfacesb_i_local_database_async_g_u_i_d_array_listener.html">00039</a> interface <a class="code" href="interfacesb_i_local_database_async_g_u_i_d_array_listener.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseAsyncGUIDArrayListener</a> : nsISupports
 <a name="l00040"></a>00040 {
 <a name="l00041"></a>00041   <span class="keywordtype">void</span> onGetLength(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aLength,
@@ -119,7 +125,7 @@
 <a name="l00059"></a>00059   <span class="keywordtype">void</span> onStateChange(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aState);
 <a name="l00060"></a>00060 };
 <a name="l00061"></a>00061 
-<a name="l00068"></a>00068 [scriptable, uuid(b1e017b3-6417-4f37-9685-3d3a09efbe99)]
+<a name="l00068"></a>00068 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(b1e017b3-6417-4f37-9685-3d3a09efbe99)]
 <a name="l00069"></a><a class="code" href="interfacesb_i_local_database_async_g_u_i_d_array.html">00069</a> interface <a class="code" href="interfacesb_i_local_database_async_g_u_i_d_array.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseAsyncGUIDArray</a> : <a class="code" href="interfacesb_i_local_database_g_u_i_d_array.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseGUIDArray</a>
 <a name="l00070"></a>00070 {
 <a name="l00071"></a>00071   <span class="keywordtype">void</span> addAsyncListener(in <a class="code" href="interfacesb_i_local_database_async_g_u_i_d_array_listener.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseAsyncGUIDArrayListener</a> aListener);
@@ -137,7 +143,7 @@
 <a name="l00083"></a>00083   <a class="code" href="interfacesb_i_local_database_async_g_u_i_d_array.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseAsyncGUIDArray</a> cloneAsyncArray();
 <a name="l00084"></a>00084 };
 <a name="l00085"></a>00085 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

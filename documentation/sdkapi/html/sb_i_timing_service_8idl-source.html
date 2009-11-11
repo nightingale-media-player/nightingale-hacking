@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/testharness/public/sbITimingService.idl</h1><a href="sb_i_timing_service_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001                           <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -97,7 +103,7 @@
 <a name="l00034"></a>00034 
 <a name="l00035"></a>00035 interface nsIFile;
 <a name="l00036"></a>00036 
-<a name="l00041"></a>00041 [scriptable, uuid(b13a1c2c-6c62-422e-a478-a08f0ff9dbd9)]
+<a name="l00041"></a>00041 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(b13a1c2c-6c62-422e-a478-a08f0ff9dbd9)]
 <a name="l00042"></a><a class="code" href="interfacesb_i_timing_service.html">00042</a> interface <a class="code" href="interfacesb_i_timing_service.html" title="An interface for running simple, time based, profiling.">sbITimingService</a> : nsISupports
 <a name="l00043"></a>00043 {
 <a name="l00048"></a><a class="code" href="interfacesb_i_timing_service.html#acc2f01c91c1105be95eb82cef869a22">00048</a>   attribute <span class="keywordtype">boolean</span> enabled;
@@ -109,7 +115,7 @@
 <a name="l00073"></a>00073   <span class="keywordtype">long</span> <span class="keywordtype">long</span> stopPerfTimer(in AString aTimerName);
 <a name="l00074"></a>00074 };
 <a name="l00075"></a>00075 
-<a name="l00076"></a>00076 [scriptable, uuid(5b61947d-111c-4060-b53b-fcd7d0617845)]
+<a name="l00076"></a>00076 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(5b61947d-111c-4060-b53b-fcd7d0617845)]
 <a name="l00077"></a><a class="code" href="interfacesb_i_timing_service_timer.html">00077</a> interface <a class="code" href="interfacesb_i_timing_service_timer.html">sbITimingServiceTimer</a> : nsISupports
 <a name="l00078"></a>00078 {
 <a name="l00079"></a><a class="code" href="interfacesb_i_timing_service_timer.html#4a4a901ceff60f92cfb0833b1d8c2ee0">00079</a>   readonly attribute AString name;
@@ -119,7 +125,7 @@
 <a name="l00083"></a>00083 
 <a name="l00084"></a><a class="code" href="interfacesb_i_timing_service_timer.html#f0bbb8ca79e6faa4e064900bdbcb167e">00084</a>   readonly attribute <span class="keywordtype">long</span> <span class="keywordtype">long</span> totalTime;
 <a name="l00085"></a>00085 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

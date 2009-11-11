@@ -2,6 +2,50 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_file_system_listener" kind="interface" prot="public">
     <compoundname>sbIFileSystemListener</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_file_system_listener_170c7a51a3bbd38cdbd604a8edbd66007" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIFileSystemListener::ROOT_PATH_MISSING</definition>
+        <argsstring></argsstring>
+        <name>ROOT_PATH_MISSING</name>
+        <initializer> 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl" line="56" bodyfile="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_file_system_listener_1a82e9cf99d742871d2aab92e910cdcc3" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIFileSystemListener::INVALID_DIRECTORY</definition>
+        <argsstring></argsstring>
+        <name>INVALID_DIRECTORY</name>
+        <initializer> 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl" line="57" bodyfile="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_file_system_listener_163e204a7f69d33940381375cba75b376" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIFileSystemListener::SESSION_LOAD_ERROR</definition>
+        <argsstring></argsstring>
+        <name>SESSION_LOAD_ERROR</name>
+        <initializer> 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl" line="58" bodyfile="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="interfacesb_i_file_system_listener_1a01b95a1adf4efe98fb39a0134881635" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -14,7 +58,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl" line="41"/>
+        <location file="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl" line="64"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_system_listener_10cb4c5c05ff8ab7d1355beb9c2575f90" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -27,20 +71,28 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl" line="47"/>
+        <location file="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl" line="70"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_file_system_listener_10287d8ff30e6062d8b714d437ae0bb41" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_file_system_listener_1b6337c534cfab92f9d5180d5829aa290" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void sbIFileSystemListener::onSessionLoadError</definition>
-        <argsstring>()</argsstring>
-        <name>onSessionLoadError</name>
+        <definition>void sbIFileSystemListener::onWatcherError</definition>
+        <argsstring>(in unsigned long aErrorType, in AString aDescription)</argsstring>
+        <name>onWatcherError</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aErrorType</declname>
+        </param>
+        <param>
+          <type>in AString</type>
+          <declname>aDescription</declname>
+        </param>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl" line="55"/>
+        <location file="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl" line="79"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_system_listener_1ad5391c9ca2c94e8d610c7310a6919f4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -57,7 +109,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl" line="61"/>
+        <location file="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl" line="85"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_system_listener_179e19bde1ef5f3f84af923d5bacdf348" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -74,7 +126,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl" line="67"/>
+        <location file="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl" line="91"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_file_system_listener_1a8d3b830460cc31c125c025ffdf7f2bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -91,21 +143,24 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl" line="73"/>
+        <location file="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl" line="97"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl" line="36" bodyfile="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl" bodystart="35" bodyend="74"/>
+    <location file="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl" line="36" bodyfile="c:/builds/songbird/trunk/components/filesystemevents/base/public/sbIFileSystemListener.idl" bodystart="35" bodyend="98"/>
     <listofallmembers>
+      <member refid="interfacesb_i_file_system_listener_1a82e9cf99d742871d2aab92e910cdcc3" prot="public" virt="non-virtual"><scope>sbIFileSystemListener</scope><name>INVALID_DIRECTORY</name></member>
       <member refid="interfacesb_i_file_system_listener_1a8d3b830460cc31c125c025ffdf7f2bc" prot="public" virt="non-virtual"><scope>sbIFileSystemListener</scope><name>onFileSystemAdded</name></member>
       <member refid="interfacesb_i_file_system_listener_1ad5391c9ca2c94e8d610c7310a6919f4" prot="public" virt="non-virtual"><scope>sbIFileSystemListener</scope><name>onFileSystemChanged</name></member>
       <member refid="interfacesb_i_file_system_listener_179e19bde1ef5f3f84af923d5bacdf348" prot="public" virt="non-virtual"><scope>sbIFileSystemListener</scope><name>onFileSystemRemoved</name></member>
-      <member refid="interfacesb_i_file_system_listener_10287d8ff30e6062d8b714d437ae0bb41" prot="public" virt="non-virtual"><scope>sbIFileSystemListener</scope><name>onSessionLoadError</name></member>
+      <member refid="interfacesb_i_file_system_listener_1b6337c534cfab92f9d5180d5829aa290" prot="public" virt="non-virtual"><scope>sbIFileSystemListener</scope><name>onWatcherError</name></member>
       <member refid="interfacesb_i_file_system_listener_1a01b95a1adf4efe98fb39a0134881635" prot="public" virt="non-virtual"><scope>sbIFileSystemListener</scope><name>onWatcherStarted</name></member>
       <member refid="interfacesb_i_file_system_listener_10cb4c5c05ff8ab7d1355beb9c2575f90" prot="public" virt="non-virtual"><scope>sbIFileSystemListener</scope><name>onWatcherStopped</name></member>
+      <member refid="interfacesb_i_file_system_listener_170c7a51a3bbd38cdbd604a8edbd66007" prot="public" virt="non-virtual"><scope>sbIFileSystemListener</scope><name>ROOT_PATH_MISSING</name></member>
+      <member refid="interfacesb_i_file_system_listener_163e204a7f69d33940381375cba75b376" prot="public" virt="non-virtual"><scope>sbIFileSystemListener</scope><name>SESSION_LOAD_ERROR</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

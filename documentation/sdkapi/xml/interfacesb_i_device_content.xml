@@ -99,14 +99,14 @@
 <para><simplesect kind="note"><para>Implementations of this interface must be threadsafe. </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="114">
+      <node id="118">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="115" relation="usage">
+        <childnode refid="119" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="115">
+      <node id="119">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>

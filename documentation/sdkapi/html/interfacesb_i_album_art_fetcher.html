@@ -89,6 +89,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_fetcher.html#e473a55326d08aea0533d88124dae70f">fetchAlbumArtForAlbum</a> (in nsIArray aMediaItems, in <a class="el" href="interfacesb_i_album_art_listener.html">sbIAlbumArtListener</a> aListener)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Try to fetch album art for a list of items that belong to the same album. This function infers that all items in the list are from the same album.  <a href="#e473a55326d08aea0533d88124dae70f"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_fetcher.html#05760a70291728c4402c094f1eda4cd4">fetchAlbumArtForTrack</a> (in <a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a> aMediaItem, in <a class="el" href="interfacesb_i_album_art_listener.html">sbIAlbumArtListener</a> aListener)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Try to fetch album art for a single track.  <a href="#05760a70291728c4402c094f1eda4cd4"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1746f3709c9cac9c1f49e9d7f1c1cf71"></a><!-- doxytag: member="sbIAlbumArtFetcher::shortName" ref="1746f3709c9cac9c1f49e9d7f1c1cf71" args="" -->
 readonly attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_fetcher.html#1746f3709c9cac9c1f49e9d7f1c1cf71">shortName</a></td></tr>
@@ -159,16 +162,52 @@ Try to fetch album art for a list of items that belong to the same album. This f
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aMediaItems</em>&nbsp;</td><td>is an array of sbIMediaItems from the same album </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>aListener</em>&nbsp;</td><td>the listener to inform of success or failure</td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aListener</em>&nbsp;</td><td>the listener to inform of success or failure </td></tr>
   </table>
 </dl>
-<dl class="note" compact><dt><b>Note:</b></dt><dd>A call to aListener will be done for each item in the list. </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="05760a70291728c4402c094f1eda4cd4"></a><!-- doxytag: member="sbIAlbumArtFetcher::fetchAlbumArtForTrack" ref="05760a70291728c4402c094f1eda4cd4" args="(in sbIMediaItem aMediaItem, in sbIAlbumArtListener aListener)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIAlbumArtFetcher::fetchAlbumArtForTrack           </td>
+          <td>(</td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a>&nbsp;</td>
+          <td class="paramname"> <em>aMediaItem</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_album_art_listener.html">sbIAlbumArtListener</a>&nbsp;</td>
+          <td class="paramname"> <em>aListener</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Try to fetch album art for a single track. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aMediaItem</em>&nbsp;</td><td>is an <a class="el" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> to scan for artwork. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aListener</em>&nbsp;</td><td>the listener to inform of success or failure </td></tr>
+  </table>
+</dl>
 
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/albumart/public/<a class="el" href="sb_i_album_art_fetcher_8idl-source.html">sbIAlbumArtFetcher.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:40 2009 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:46 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

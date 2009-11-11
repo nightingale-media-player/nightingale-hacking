@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/devicesobsolete/download/public/sbIDownloadDevice.idl</h1><a href="sb_i_download_device_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -100,7 +106,7 @@
 <a name="l00038"></a>00038 interface nsIFile;
 <a name="l00039"></a>00039 interface nsISimpleEnumerator;
 <a name="l00040"></a>00040 
-<a name="l00050"></a>00050 [scriptable, uuid(bf8a7663-0c07-4fc6-8d89-aa3024b42e9a)]
+<a name="l00050"></a>00050 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(bf8a7663-0c07-4fc6-8d89-aa3024b42e9a)]
 <a name="l00051"></a><a class="code" href="interfacesb_i_download_device.html">00051</a> interface <a class="code" href="interfacesb_i_download_device.html" title="Songbird DownloadDevice Interface.">sbIDownloadDevice</a> : <a class="code" href="interfacesb_i_device_base.html" title="[SOON TO BE DEPRECATED AFTER 0.3] Base interface for all supported devices.">sbIDeviceBase</a>
 <a name="l00052"></a>00052 {
 <a name="l00056"></a><a class="code" href="interfacesb_i_download_device.html#c0735875642e9ce9ced23209641da2df">00056</a>   readonly attribute <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> downloadMediaList;
@@ -110,7 +116,7 @@
 <a name="l00066"></a>00066   <span class="keywordtype">void</span> clearCompletedItems();
 <a name="l00067"></a>00067 };
 <a name="l00068"></a>00068 
-<a name="l00069"></a>00069 [scriptable, uuid(28ebcce9-7ce4-4e92-8c23-c0a23d3a3bd4)]
+<a name="l00069"></a>00069 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(28ebcce9-7ce4-4e92-8c23-c0a23d3a3bd4)]
 <a name="l00070"></a><a class="code" href="interfacesb_i_download_device_helper.html">00070</a> interface <a class="code" href="interfacesb_i_download_device_helper.html">sbIDownloadDeviceHelper</a> : nsISupports
 <a name="l00071"></a>00071 {
 <a name="l00076"></a>00076   <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> getDownloadMediaList();
@@ -123,7 +129,7 @@
 <a name="l00083"></a>00083 
 <a name="l00084"></a>00084   <span class="keywordtype">void</span> downloadAll(in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aMediaList);
 <a name="l00085"></a>00085 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

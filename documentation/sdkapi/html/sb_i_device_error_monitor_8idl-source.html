@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/devices/device/public/sbIDeviceErrorMonitor.idl</h1><a href="sb_i_device_error_monitor_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* vim: ts=2 sw=2 expandtab</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -96,18 +102,28 @@
 <a name="l00033"></a>00033 
 <a name="l00034"></a>00034 interface <a class="code" href="interfacesb_i_device.html">sbIDevice</a>;
 <a name="l00035"></a>00035 interface nsIArray;
-<a name="l00036"></a>00036 
-<a name="l00042"></a>00042 [scriptable, uuid(7a2a55d1-0270-4789-bc7c-12ffaa19b4cd)]
-<a name="l00043"></a><a class="code" href="interfacesb_i_device_error_monitor.html">00043</a> interface <a class="code" href="interfacesb_i_device_error_monitor.html" title="This service monitors devices for errors and stores them for easy access later.">sbIDeviceErrorMonitor</a> : nsISupports {
-<a name="l00044"></a>00044   
-<a name="l00051"></a>00051   <span class="keywordtype">boolean</span> deviceHasErrors(in <a class="code" href="interfacesb_i_device.html">sbIDevice</a> aDevice);
-<a name="l00052"></a>00052 
-<a name="l00060"></a>00060   nsIArray getErrorsForDevice(in <a class="code" href="interfacesb_i_device.html">sbIDevice</a> aDevice);
-<a name="l00061"></a>00061   
-<a name="l00067"></a>00067   <span class="keywordtype">void</span> clearErrorsForDevice(in <a class="code" href="interfacesb_i_device.html">sbIDevice</a> aDevice);
-<a name="l00068"></a>00068   
-<a name="l00069"></a>00069 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:38 2009 for Songbird by&nbsp;
+<a name="l00036"></a>00036 interface <a class="code" href="interfacesb_i_device_error_monitor_listener.html" title="This interface is used to notify device error listeners of new errors.">sbIDeviceErrorMonitorListener</a>;
+<a name="l00037"></a>00037 
+<a name="l00043"></a>00043 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(99444d12-1dd1-11b2-aac3-e1cd25ffc309)]
+<a name="l00044"></a><a class="code" href="interfacesb_i_device_error_monitor.html">00044</a> interface <a class="code" href="interfacesb_i_device_error_monitor.html" title="This service monitors devices for errors and stores them for easy access later.">sbIDeviceErrorMonitor</a> : nsISupports {
+<a name="l00045"></a>00045 
+<a name="l00052"></a>00052   <span class="keywordtype">boolean</span> deviceHasErrors(in <a class="code" href="interfacesb_i_device.html">sbIDevice</a> aDevice);
+<a name="l00053"></a>00053 
+<a name="l00061"></a>00061   nsIArray getErrorsForDevice(in <a class="code" href="interfacesb_i_device.html">sbIDevice</a> aDevice);
+<a name="l00062"></a>00062 
+<a name="l00068"></a>00068   <span class="keywordtype">void</span> clearErrorsForDevice(in <a class="code" href="interfacesb_i_device.html">sbIDevice</a> aDevice);
+<a name="l00069"></a>00069 
+<a name="l00075"></a>00075   <span class="keywordtype">void</span> addListener(in <a class="code" href="interfacesb_i_device_error_monitor_listener.html" title="This interface is used to notify device error listeners of new errors.">sbIDeviceErrorMonitorListener</a> aListener);
+<a name="l00076"></a>00076 
+<a name="l00082"></a>00082   <span class="keywordtype">void</span> removeListener(in <a class="code" href="interfacesb_i_device_error_monitor_listener.html" title="This interface is used to notify device error listeners of new errors.">sbIDeviceErrorMonitorListener</a> aListener);
+<a name="l00083"></a>00083 };
+<a name="l00084"></a>00084 
+<a name="l00089"></a>00089 [scriptable, function, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(a34659d6-1dd1-11b2-8659-af363aaf72c0)]
+<a name="l00090"></a><a class="code" href="interfacesb_i_device_error_monitor_listener.html">00090</a> interface <a class="code" href="interfacesb_i_device_error_monitor_listener.html" title="This interface is used to notify device error listeners of new errors.">sbIDeviceErrorMonitorListener</a> : nsISupports {
+<a name="l00097"></a>00097   <span class="keywordtype">void</span> onDeviceError(in <a class="code" href="interfacesb_i_device.html">sbIDevice</a> aDevice);
+<a name="l00098"></a>00098 };
+<a name="l00099"></a>00099 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

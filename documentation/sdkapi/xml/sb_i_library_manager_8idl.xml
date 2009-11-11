@@ -4,13 +4,13 @@
     <compoundname>sbILibraryManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="291">
+      <node id="346">
         <label>components/library/base/public/sbILibraryManager.idl</label>
         <link refid="sbILibraryManager.idl"/>
-        <childnode refid="292" relation="include">
+        <childnode refid="347" relation="include">
         </childnode>
       </node>
-      <node id="292">
+      <node id="347">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -101,7 +101,7 @@
 <codeline lineno="38"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_factory" kindref="compound" tooltip="Factory for new library instances.">sbILibraryFactory</ref>;</highlight></codeline>
 <codeline lineno="39"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_manager_listener" kindref="compound" tooltip="Manages the lifecycle of libraries in the system.">sbILibraryManagerListener</ref>;</highlight></codeline>
 <codeline lineno="40"><highlight class="normal"></highlight></codeline>
-<codeline lineno="46"><highlight class="normal">[scriptable,<sp/>uuid(c299b8fc-7aab-4247-a2f8-0ef88b06958f)]</highlight></codeline>
+<codeline lineno="46"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(c299b8fc-7aab-4247-a2f8-0ef88b06958f)]</highlight></codeline>
 <codeline lineno="47" refid="interfacesb_i_library_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_manager" kindref="compound" tooltip="Manages the lifecycle of libraries in the system.">sbILibraryManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="48"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="52" refid="interfacesb_i_library_manager_19e697bdbbcd586f47fbaf0bf3dbd2801" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref><sp/>mainLibrary;</highlight></codeline>

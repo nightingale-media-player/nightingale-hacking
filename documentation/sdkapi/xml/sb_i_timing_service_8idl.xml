@@ -5,18 +5,18 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes local="yes">nsIStringEnumerator.idl</includes>
     <incdepgraph>
-      <node id="711">
+      <node id="863">
         <label>nsIStringEnumerator.idl</label>
       </node>
-      <node id="709">
+      <node id="861">
         <label>components/testharness/public/sbITimingService.idl</label>
         <link refid="sbITimingService.idl"/>
-        <childnode refid="710" relation="include">
+        <childnode refid="862" relation="include">
         </childnode>
-        <childnode refid="711" relation="include">
+        <childnode refid="863" relation="include">
         </childnode>
       </node>
-      <node id="710">
+      <node id="862">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -58,7 +58,7 @@
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/>nsIFile;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="41"><highlight class="normal">[scriptable,<sp/>uuid(b13a1c2c-6c62-422e-a478-a08f0ff9dbd9)]</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(b13a1c2c-6c62-422e-a478-a08f0ff9dbd9)]</highlight></codeline>
 <codeline lineno="42" refid="interfacesb_i_timing_service" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_timing_service" kindref="compound" tooltip="An interface for running simple, time based, profiling.">sbITimingService</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="43"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="48" refid="interfacesb_i_timing_service_1acc2f01c91c1105be95eb82cef869a22" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>enabled;</highlight></codeline>
@@ -70,7 +70,7 @@
 <codeline lineno="73"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>stopPerfTimer(in<sp/>AString<sp/>aTimerName);</highlight></codeline>
 <codeline lineno="74"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="75"><highlight class="normal"></highlight></codeline>
-<codeline lineno="76"><highlight class="normal">[scriptable,<sp/>uuid(5b61947d-111c-4060-b53b-fcd7d0617845)]</highlight></codeline>
+<codeline lineno="76"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(5b61947d-111c-4060-b53b-fcd7d0617845)]</highlight></codeline>
 <codeline lineno="77" refid="interfacesb_i_timing_service_timer" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_timing_service_timer" kindref="compound">sbITimingServiceTimer</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="78"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="79" refid="interfacesb_i_timing_service_timer_14a4a901ceff60f92cfb0833b1d8c2ee0" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>name;</highlight></codeline>

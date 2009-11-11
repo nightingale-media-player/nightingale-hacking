@@ -49,7 +49,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="50"/>
+        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="51"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_page_manager_1ee5875014d322d175a339af793dc7470" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -74,17 +74,22 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="57"/>
+        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="58"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_media_page_manager_15869ba37f805051bbf09ccc5f7f83533" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_media_page_manager_1b711220ad683fc8459f7bb96ae170f72" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsISimpleEnumerator</type>
         <definition>nsISimpleEnumerator sbIMediaPageManager::getAvailablePages</definition>
-        <argsstring>([optional] in sbIMediaList aList)</argsstring>
+        <argsstring>([optional] in sbIMediaList aList,[optional] in sbILibraryConstraint aConstraint)</argsstring>
         <name>getAvailablePages</name>
         <param>
           <attributes>[optional]</attributes>
           <type>in <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
           <declname>aList</declname>
+        </param>
+        <param>
+          <attributes>[optional]</attributes>
+          <type>in <ref refid="interfacesb_i_library_constraint" kindref="compound">sbILibraryConstraint</ref></type>
+          <declname>aConstraint</declname>
         </param>
         <briefdescription>
 <para>Get the list of available pages. The list parameter is optional, if not specified, the entire list of registered pages is returned. </para>        </briefdescription>
@@ -96,21 +101,33 @@
 <parameterdescription>
 <para>(optional) The medialist for which the list of available matching pages is being requested </para></parameterdescription>
 </parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aConstraint</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(optional) A library constrain used as an additional matching criteria </para></parameterdescription>
+</parameteritem>
 </parameterlist>
 <simplesect kind="return"><para>An nsISimpleEnumerator containing a list of <ref refid="interfacesb_i_media_page_info" kindref="compound">sbIMediaPageInfo</ref> interfaces </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="66"/>
+        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="69"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_media_page_manager_17b5bf3bf48c088d0f6a618ec326548c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_media_page_manager_1921d06b1d7cca2d9b62f3426b9a7dcb9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type><ref refid="interfacesb_i_media_page_info" kindref="compound">sbIMediaPageInfo</ref></type>
         <definition>sbIMediaPageInfo sbIMediaPageManager::getPage</definition>
-        <argsstring>(in sbIMediaList aList)</argsstring>
+        <argsstring>(in sbIMediaList aList,[optional] in sbILibraryConstraint aConstraint)</argsstring>
         <name>getPage</name>
         <param>
           <type>in <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
           <declname>aList</declname>
+        </param>
+        <param>
+          <attributes>[optional]</attributes>
+          <type>in <ref refid="interfacesb_i_library_constraint" kindref="compound">sbILibraryConstraint</ref></type>
+          <declname>aConstraint</declname>
         </param>
         <briefdescription>
 <para>Get the active page for a medialist. </para>        </briefdescription>
@@ -122,11 +139,18 @@
 <parameterdescription>
 <para>The medialist for which the active page is being requested </para></parameterdescription>
 </parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aConstraint</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>(optional) A library constrain used as an additional matching criteria </para></parameterdescription>
+</parameteritem>
 </parameterlist>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="86"/>
+        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="91"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_page_manager_19ec7b0a91b3a5c7fafa3466cd1e693a0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -162,17 +186,17 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="94"/>
+        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="99"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>The medialist page manager, used to register, unregister, enumerate, set and retrieve page/medialists associations. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="41" bodyfile="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" bodystart="40" bodyend="95"/>
+    <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" line="42" bodyfile="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPageManager.idl" bodystart="41" bodyend="100"/>
     <listofallmembers>
-      <member refid="interfacesb_i_media_page_manager_15869ba37f805051bbf09ccc5f7f83533" prot="public" virt="non-virtual"><scope>sbIMediaPageManager</scope><name>getAvailablePages</name></member>
-      <member refid="interfacesb_i_media_page_manager_17b5bf3bf48c088d0f6a618ec326548c2" prot="public" virt="non-virtual"><scope>sbIMediaPageManager</scope><name>getPage</name></member>
+      <member refid="interfacesb_i_media_page_manager_1b711220ad683fc8459f7bb96ae170f72" prot="public" virt="non-virtual"><scope>sbIMediaPageManager</scope><name>getAvailablePages</name></member>
+      <member refid="interfacesb_i_media_page_manager_1921d06b1d7cca2d9b62f3426b9a7dcb9" prot="public" virt="non-virtual"><scope>sbIMediaPageManager</scope><name>getPage</name></member>
       <member refid="interfacesb_i_media_page_manager_1b0da2b8351dacdffa79b8af35bc5cbc0" prot="public" virt="non-virtual"><scope>sbIMediaPageManager</scope><name>registerPage</name></member>
       <member refid="interfacesb_i_media_page_manager_19ec7b0a91b3a5c7fafa3466cd1e693a0" prot="public" virt="non-virtual"><scope>sbIMediaPageManager</scope><name>setPage</name></member>
       <member refid="interfacesb_i_media_page_manager_1ee5875014d322d175a339af793dc7470" prot="public" virt="non-virtual"><scope>sbIMediaPageManager</scope><name>unregisterPage</name></member>

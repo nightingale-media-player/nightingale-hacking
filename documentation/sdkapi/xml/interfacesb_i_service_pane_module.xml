@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="375" bodyfile="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" bodystart="375" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="377" bodyfile="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" bodystart="377" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -34,7 +34,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="330"/>
+        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="332"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_service_pane_module_131f7a8b144e645c09ea7a2efd8088ab1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -59,7 +59,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="339"/>
+        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="341"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_service_pane_module_1b521a8cefb8e74c8b3a59b5e44f7145d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -84,7 +84,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="343"/>
+        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="345"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_service_pane_module_100bec908e078fbe3fb4acffe916afa5d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -109,7 +109,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="351"/>
+        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="353"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_service_pane_module_1ff291b1ebfd509ba2229b8399aefc14a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRBool</type>
@@ -138,7 +138,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="356"/>
+        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="358"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_service_pane_module_145db40a3b6d364077d7703cc89d04fc7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -167,7 +167,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="360"/>
+        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="362"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_service_pane_module_1129e1153d6c7d4342a0089df8c7d8494" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRBool</type>
@@ -188,7 +188,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="362"/>
+        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="364"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_service_pane_module_17a31be4084e323a735f636dbc805d97e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -209,7 +209,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="371"/>
+        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="373"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_service_pane_module_1f36b1f350f38f141286b44a211f3263b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -222,14 +222,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="379"/>
+        <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="381"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>The interface exposed by the service pane backends. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="324" bodyfile="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" bodystart="323" bodyend="380"/>
+    <location file="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" line="326" bodyfile="c:/builds/songbird/trunk/components/servicepane/public/sbIServicePaneService.idl" bodystart="325" bodyend="382"/>
     <listofallmembers>
       <member refid="interfacesb_i_service_pane_module_1ff291b1ebfd509ba2229b8399aefc14a" prot="public" virt="non-virtual"><scope>sbIServicePaneModule</scope><name>canDrop</name></member>
       <member refid="interfacesb_i_service_pane_module_131f7a8b144e645c09ea7a2efd8088ab1" prot="public" virt="non-virtual"><scope>sbIServicePaneModule</scope><name>fillContextMenu</name></member>

@@ -50,7 +50,7 @@
 <codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal">interface<sp/>nsIDOMWindow;</highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="56"><highlight class="normal">[scriptable,<sp/>uuid(e4836af0-ab89-11dd-ad8b-0800200c9a66)]</highlight></codeline>
+<codeline lineno="56"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(e4836af0-ab89-11dd-ad8b-0800200c9a66)]</highlight></codeline>
 <codeline lineno="57" refid="interfacesb_i_application_controller" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_application_controller" kindref="compound" tooltip="Global root controller for the Songbird application.">sbIApplicationController</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="58"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="59"><highlight class="normal"></highlight></codeline>

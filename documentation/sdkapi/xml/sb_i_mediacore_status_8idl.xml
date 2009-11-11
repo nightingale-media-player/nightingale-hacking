@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreStatus.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="465">
+      <node id="520">
         <label>components/mediacore/base/public/sbIMediacoreStatus.idl</label>
         <link refid="sbIMediacoreStatus.idl"/>
-        <childnode refid="466" relation="include">
+        <childnode refid="521" relation="include">
         </childnode>
       </node>
-      <node id="466">
+      <node id="521">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -48,7 +48,7 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal">[scriptable,<sp/>uuid(1142a5f8-2b1d-4bb6-95fb-00a420e45526)]</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(1142a5f8-2b1d-4bb6-95fb-00a420e45526)]</highlight></codeline>
 <codeline lineno="30" refid="interfacesb_i_mediacore_status" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_status" kindref="compound">sbIMediacoreStatus</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="31"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="32" refid="interfacesb_i_mediacore_status_16503b7534a98333a6dbd6335b6591bbd" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>STATUS_UNKNOWN<sp/>=<sp/>0;</highlight></codeline>

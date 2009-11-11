@@ -11,48 +11,48 @@
     <includes local="no">nsStringGlue.h</includes>
     <includes local="no">nsXPCOMCID.h</includes>
     <incdepgraph>
-      <node id="284">
+      <node id="339">
         <label>nsServiceManagerUtils.h</label>
       </node>
-      <node id="285">
+      <node id="340">
         <label>nsStringGlue.h</label>
       </node>
-      <node id="280">
+      <node id="335">
         <label>nsICategoryManager.h</label>
       </node>
-      <node id="278">
+      <node id="333">
         <label>components/library/base/public/sbILibraryLoader.idl</label>
         <link refid="sbILibraryLoader.idl"/>
-        <childnode refid="279" relation="include">
+        <childnode refid="334" relation="include">
         </childnode>
-        <childnode refid="280" relation="include">
+        <childnode refid="335" relation="include">
         </childnode>
-        <childnode refid="281" relation="include">
+        <childnode refid="336" relation="include">
         </childnode>
-        <childnode refid="282" relation="include">
+        <childnode refid="337" relation="include">
         </childnode>
-        <childnode refid="283" relation="include">
+        <childnode refid="338" relation="include">
         </childnode>
-        <childnode refid="284" relation="include">
+        <childnode refid="339" relation="include">
         </childnode>
-        <childnode refid="285" relation="include">
+        <childnode refid="340" relation="include">
         </childnode>
-        <childnode refid="286" relation="include">
+        <childnode refid="341" relation="include">
         </childnode>
       </node>
-      <node id="282">
+      <node id="337">
         <label>nsIFile.h</label>
       </node>
-      <node id="283">
+      <node id="338">
         <label>nsCOMPtr.h</label>
       </node>
-      <node id="281">
+      <node id="336">
         <label>nsIComponentManager.h</label>
       </node>
-      <node id="279">
+      <node id="334">
         <label>nsISupports.idl</label>
       </node>
-      <node id="286">
+      <node id="341">
         <label>nsXPCOMCID.h</label>
       </node>
     </incdepgraph>
@@ -119,7 +119,7 @@
 <codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library" kindref="compound" tooltip="Media library abstraction.">sbILibrary</ref>;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_manager" kindref="compound" tooltip="Manages the lifecycle of libraries in the system.">sbILibraryManager</ref>;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(816e9cbe-e635-4abc-944f-aa4fa5ec918a)]</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(816e9cbe-e635-4abc-944f-aa4fa5ec918a)]</highlight></codeline>
 <codeline lineno="44" refid="interfacesb_i_library_loader" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_loader" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILibraryLoader</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="52"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onRegisterStartupLibraries(in<sp/><ref refid="interfacesb_i_library_manager" kindref="compound" tooltip="Manages the lifecycle of libraries in the system.">sbILibraryManager</ref><sp/>aLibraryManager);</highlight></codeline>

@@ -4,13 +4,13 @@
     <compoundname>sbIMediaItemWatcher.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="323">
+      <node id="378">
         <label>components/library/base/public/sbIMediaItemWatcher.idl</label>
         <link refid="sbIMediaItemWatcher.idl"/>
-        <childnode refid="324" relation="include">
+        <childnode refid="379" relation="include">
         </childnode>
       </node>
-      <node id="324">
+      <node id="379">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -76,7 +76,7 @@
 <codeline lineno="52"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item_listener" kindref="compound" tooltip="Interface for media item listeners.">sbIMediaItemListener</ref>;</highlight></codeline>
 <codeline lineno="53"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_property_array" kindref="compound" tooltip="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</ref>;</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"></highlight></codeline>
-<codeline lineno="55"><highlight class="normal">[scriptable,<sp/>uuid(bac56d2b-0ea8-46b8-ac35-1051986fc3f4)]</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(bac56d2b-0ea8-46b8-ac35-1051986fc3f4)]</highlight></codeline>
 <codeline lineno="56" refid="interfacesb_i_media_item_watcher" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item_watcher" kindref="compound" tooltip="Interface for the media item watcher. The media item watcher may be used to watch...">sbIMediaItemWatcher</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="57"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="58"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*XXXeps<sp/>Should<sp/>add<sp/>watchSome<sp/>to<sp/>watch<sp/>multiple<sp/>media<sp/>items.<sp/>*/</highlight><highlight class="normal"></highlight></codeline>

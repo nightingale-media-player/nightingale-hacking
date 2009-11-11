@@ -1,0 +1,518 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_device_firmware_updater" kind="interface" prot="public">
+    <compoundname>sbIDeviceFirmwareUpdater</compoundname>
+    <includes refid="sb_i_device_firmware_updater_8idl" local="no">sbIDeviceFirmwareUpdater.idl</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_device_firmware_updater_1ab37bd25b8111dc41e46afc36e40602b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceFirmwareUpdater::checkForUpdate</definition>
+        <argsstring>(in sbIDevice aDevice, in sbIDeviceEventListener aListener)</argsstring>
+        <name>checkForUpdate</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
+          <declname>aDevice</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_device_event_listener" kindref="compound">sbIDeviceEventListener</ref></type>
+          <declname>aListener</declname>
+        </param>
+        <briefdescription>
+<para>Check for an update. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDevice</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Device for which to check for an update </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aListener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>[optional] - Device listener to recieve events </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>The flow of events for this method is the following: firmware check for update start, firmware check for update end. </para><para>The end event will contain an boolean as it&apos;s data, it will either be true (update available) or false (no update for you). </para><para>Any error event that occurs will cancel this operation. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdater.idl" line="58"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_firmware_updater_152ee6dd67c421357b88512b2f0e9f334" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceFirmwareUpdater::downloadUpdate</definition>
+        <argsstring>(in sbIDevice aDevice, in boolean aVerifyFirmwareUpdate, in sbIDeviceEventListener aListener)</argsstring>
+        <name>downloadUpdate</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
+          <declname>aDevice</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aVerifyFirmwareUpdate</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_device_event_listener" kindref="compound">sbIDeviceEventListener</ref></type>
+          <declname>aListener</declname>
+        </param>
+        <briefdescription>
+<para>Download an update for a device. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDevice</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Device for which to download an update </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aVerifyFirmwareUpdate</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Verify firmware update after it&apos;s downloaded </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aListener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>[optional] - Device listener to recieve events </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>The flow of events for this method is the following: firmware download start, N * firmware download progress, firmware download end. </para><para>The end event will contain an <ref refid="interfacesb_i_device_firmware_update" kindref="compound">sbIDeviceFirmwareUpdate</ref>, or null if there is no update available. </para><para>Any error event that occurs will cancel this operation. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdater.idl" line="74"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_firmware_updater_1652c771c9f3d651d3808bc95bb6f1bb5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceFirmwareUpdater::verifyUpdate</definition>
+        <argsstring>(in sbIDevice aDevice, in sbIDeviceFirmwareUpdate aFirmwareUpdate, in sbIDeviceEventListener aListener)</argsstring>
+        <name>verifyUpdate</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
+          <declname>aDevice</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_device_firmware_update" kindref="compound">sbIDeviceFirmwareUpdate</ref></type>
+          <declname>aFirmwareUpdate</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_device_event_listener" kindref="compound">sbIDeviceEventListener</ref></type>
+          <declname>aListener</declname>
+        </param>
+        <briefdescription>
+<para>Verify a firmware update that was previously downloaded. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDevice</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The device associated with the firmware update </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aFirmwareUpdate</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The firmware update to verify </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aListener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>[optional] - Device listener to recieve events </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>The flow of events for this method is the following: firmware image verify start, N * firmware image verify progress, firmware image verify end. </para><para>Any error event that occurs will cancel this operation. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdater.idl" line="88"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_firmware_updater_1dd74283d96e1da72862458b7885bb43b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceFirmwareUpdater::applyUpdate</definition>
+        <argsstring>(in sbIDevice aDevice, in sbIDeviceFirmwareUpdate aFirmwareUpdate, in sbIDeviceEventListener aListener)</argsstring>
+        <name>applyUpdate</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
+          <declname>aDevice</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_device_firmware_update" kindref="compound">sbIDeviceFirmwareUpdate</ref></type>
+          <declname>aFirmwareUpdate</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_device_event_listener" kindref="compound">sbIDeviceEventListener</ref></type>
+          <declname>aListener</declname>
+        </param>
+        <briefdescription>
+<para>Apply firmware update to device. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDevice</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The device to update </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aFirmwareUpdate</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The firmware update to apply </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aListener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>[optional] - Device listener to receive events </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>The flow of events for this method is the following: firmware update start, firmware write start, N * firmware write progress, firmware write end, firmware verify start, N * firmware verify progress, firmware verify end, firmware update finished. </para><para>Any error event that occurs will cancel this operation. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdater.idl" line="103"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_firmware_updater_126fa7e7e4c02974ae1ebba22d3737421" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceFirmwareUpdater::recoveryUpdate</definition>
+        <argsstring>(in sbIDevice aDevice, in sbIDeviceEventListener aListener)</argsstring>
+        <name>recoveryUpdate</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
+          <declname>aDevice</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_device_event_listener" kindref="compound">sbIDeviceEventListener</ref></type>
+          <declname>aListener</declname>
+        </param>
+        <briefdescription>
+<para>Recovery the device restoring it to factory state. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDevice</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The device to restore to factory state </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aListener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>[optional] - Device listener to receive events </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdater.idl" line="111"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_firmware_updater_15eb6d17bf41dcd661c0b800a1687aa0f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIDeviceFirmwareUpdater::continueUpdate</definition>
+        <argsstring>(in sbIDevice aDevice, in sbIDeviceEventListener aListener)</argsstring>
+        <name>continueUpdate</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
+          <declname>aDevice</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_device_event_listener" kindref="compound">sbIDeviceEventListener</ref></type>
+          <declname>aListener</declname>
+        </param>
+        <briefdescription>
+<para>Continue the auto-update process. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDevice</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The device to update </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aListener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>[optional] - Device listener to recieve events </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdater.idl" line="119"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_firmware_updater_187ba591181342234cf126fc52da904a9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceFirmwareUpdater::finalizeUpdate</definition>
+        <argsstring>(in sbIDevice aDevice)</argsstring>
+        <name>finalizeUpdate</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
+          <declname>aDevice</declname>
+        </param>
+        <briefdescription>
+<para>Finalize the auto-update process. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This method needs to be called regardless of if the update process succeeds or not. If you do not call this method you will leak the firmware handler associated with the device. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdater.idl" line="128"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_firmware_updater_1f25e859217fb8f807260677dcc5c870d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceFirmwareUpdater::verifyDevice</definition>
+        <argsstring>(in sbIDevice aDevice, in sbIDeviceEventListener aListener)</argsstring>
+        <name>verifyDevice</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
+          <declname>aDevice</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_device_event_listener" kindref="compound">sbIDeviceEventListener</ref></type>
+          <declname>aListener</declname>
+        </param>
+        <briefdescription>
+<para>Verify the firmware on the specified device. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDevice</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The device to verify </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aListener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>[optional] - Device listener to recieve events </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>The flow of events for this method is the following: firmware verify start, N * firmware verify start, firmware verify end. </para><para>Any error event that occurs will cancel this operation. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdater.idl" line="140"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_firmware_updater_1d545c0d7a8a2a044470324db0b117948" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceFirmwareUpdater::registerHandler</definition>
+        <argsstring>(in sbIDeviceFirmwareHandler aFirmwareHandler)</argsstring>
+        <name>registerHandler</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device_firmware_handler" kindref="compound">sbIDeviceFirmwareHandler</ref></type>
+          <declname>aFirmwareHandler</declname>
+        </param>
+        <briefdescription>
+<para>Register a firmware update handler. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aFirmwareHandler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The firmware handler to register </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>This is only necessary if you wish to register a handler at runtime. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdater.idl" line="147"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_firmware_updater_1505d73a24fe78f9c51966e06c7ffeb8b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceFirmwareUpdater::unregisterHandler</definition>
+        <argsstring>(in sbIDeviceFirmwareHandler aFirmwareHandler)</argsstring>
+        <name>unregisterHandler</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device_firmware_handler" kindref="compound">sbIDeviceFirmwareHandler</ref></type>
+          <declname>aFirmwareHandler</declname>
+        </param>
+        <briefdescription>
+<para>Unregister a firmware update handler. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aFirmwareHandler</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The firmware handler to unregister </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>This is only necessary if you wish to unregister a handler at runtime. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdater.idl" line="154"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_firmware_updater_1064b988507011879122335103d873d48" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>boolean</type>
+        <definition>boolean sbIDeviceFirmwareUpdater::hasHandler</definition>
+        <argsstring>(in sbIDevice aDevice)</argsstring>
+        <name>hasHandler</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
+          <declname>aDevice</declname>
+        </param>
+        <briefdescription>
+<para>Is there a handler availabe for the specified device. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDevice</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The device </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>True</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- Firmware Handler is available for specified device </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>False</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- No firmware handler available for specified device </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdater.idl" line="162"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_firmware_updater_12108f6893fa20dc22897281ab7b0b5c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_device_firmware_handler" kindref="compound">sbIDeviceFirmwareHandler</ref></type>
+        <definition>sbIDeviceFirmwareHandler sbIDeviceFirmwareUpdater::getHandler</definition>
+        <argsstring>(in sbIDevice aDevice)</argsstring>
+        <name>getHandler</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
+          <declname>aDevice</declname>
+        </param>
+        <briefdescription>
+<para>Get the firmware handler for the specified device. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aDevice</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>- The device </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The device firmware handler </para></simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>NS_ERROR_NOT_AVAILABLE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>when there is no firmware handler available for the specified device </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>This returns a new instance of a handler. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdater.idl" line="172"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_firmware_updater_180861b26e138fe27fa2b4b6c766ebc9d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="interfacesb_i_device_firmware_handler" kindref="compound">sbIDeviceFirmwareHandler</ref></type>
+        <definition>sbIDeviceFirmwareHandler sbIDeviceFirmwareUpdater::getActiveHandler</definition>
+        <argsstring>(in sbIDevice aDevice)</argsstring>
+        <name>getActiveHandler</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
+          <declname>aDevice</declname>
+        </param>
+        <briefdescription>
+<para>Get the running firmware handler for the specified device. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdater.idl" line="177"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_firmware_updater_183bae39fc53a3f733e490ce644fa0e2b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceFirmwareUpdater::cancel</definition>
+        <argsstring>(in sbIDevice aDevice)</argsstring>
+        <name>cancel</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
+          <declname>aDevice</declname>
+        </param>
+        <briefdescription>
+<para>Cancel the current operation. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdater.idl" line="182"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_device_firmware_updater_1dd0907385a614b96ca14a4c10b9b9d77" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIDeviceFirmwareUpdater::requireRecovery</definition>
+        <argsstring>(in sbIDevice aDevice)</argsstring>
+        <name>requireRecovery</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref></type>
+          <declname>aDevice</declname>
+        </param>
+        <briefdescription>
+<para>Force a device to go through recovery mode. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdater.idl" line="187"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="note"><para>The default implementation of this interface is threadsafe. </para><para>The default implementation is a service and should Only be used as such. </para><para>The methods which take an <ref refid="interfacesb_i_device_event_listener" kindref="compound">sbIDeviceEventListener</ref> will also send events to the registered device listeners. You only need to use your own listener if you do not have a listener registered with the device. </para></simplesect>
+</para>    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdater.idl" line="46" bodyfile="c:/builds/songbird/trunk/components/devices/base/public/sbIDeviceFirmwareUpdater.idl" bodystart="45" bodyend="188"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_device_firmware_updater_1dd74283d96e1da72862458b7885bb43b" prot="public" virt="non-virtual"><scope>sbIDeviceFirmwareUpdater</scope><name>applyUpdate</name></member>
+      <member refid="interfacesb_i_device_firmware_updater_183bae39fc53a3f733e490ce644fa0e2b" prot="public" virt="non-virtual"><scope>sbIDeviceFirmwareUpdater</scope><name>cancel</name></member>
+      <member refid="interfacesb_i_device_firmware_updater_1ab37bd25b8111dc41e46afc36e40602b" prot="public" virt="non-virtual"><scope>sbIDeviceFirmwareUpdater</scope><name>checkForUpdate</name></member>
+      <member refid="interfacesb_i_device_firmware_updater_15eb6d17bf41dcd661c0b800a1687aa0f" prot="public" virt="non-virtual"><scope>sbIDeviceFirmwareUpdater</scope><name>continueUpdate</name></member>
+      <member refid="interfacesb_i_device_firmware_updater_152ee6dd67c421357b88512b2f0e9f334" prot="public" virt="non-virtual"><scope>sbIDeviceFirmwareUpdater</scope><name>downloadUpdate</name></member>
+      <member refid="interfacesb_i_device_firmware_updater_187ba591181342234cf126fc52da904a9" prot="public" virt="non-virtual"><scope>sbIDeviceFirmwareUpdater</scope><name>finalizeUpdate</name></member>
+      <member refid="interfacesb_i_device_firmware_updater_180861b26e138fe27fa2b4b6c766ebc9d" prot="public" virt="non-virtual"><scope>sbIDeviceFirmwareUpdater</scope><name>getActiveHandler</name></member>
+      <member refid="interfacesb_i_device_firmware_updater_12108f6893fa20dc22897281ab7b0b5c2" prot="public" virt="non-virtual"><scope>sbIDeviceFirmwareUpdater</scope><name>getHandler</name></member>
+      <member refid="interfacesb_i_device_firmware_updater_1064b988507011879122335103d873d48" prot="public" virt="non-virtual"><scope>sbIDeviceFirmwareUpdater</scope><name>hasHandler</name></member>
+      <member refid="interfacesb_i_device_firmware_updater_126fa7e7e4c02974ae1ebba22d3737421" prot="public" virt="non-virtual"><scope>sbIDeviceFirmwareUpdater</scope><name>recoveryUpdate</name></member>
+      <member refid="interfacesb_i_device_firmware_updater_1d545c0d7a8a2a044470324db0b117948" prot="public" virt="non-virtual"><scope>sbIDeviceFirmwareUpdater</scope><name>registerHandler</name></member>
+      <member refid="interfacesb_i_device_firmware_updater_1dd0907385a614b96ca14a4c10b9b9d77" prot="public" virt="non-virtual"><scope>sbIDeviceFirmwareUpdater</scope><name>requireRecovery</name></member>
+      <member refid="interfacesb_i_device_firmware_updater_1505d73a24fe78f9c51966e06c7ffeb8b" prot="public" virt="non-virtual"><scope>sbIDeviceFirmwareUpdater</scope><name>unregisterHandler</name></member>
+      <member refid="interfacesb_i_device_firmware_updater_1f25e859217fb8f807260677dcc5c870d" prot="public" virt="non-virtual"><scope>sbIDeviceFirmwareUpdater</scope><name>verifyDevice</name></member>
+      <member refid="interfacesb_i_device_firmware_updater_1652c771c9f3d651d3808bc95bb6f1bb5" prot="public" virt="non-virtual"><scope>sbIDeviceFirmwareUpdater</scope><name>verifyUpdate</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

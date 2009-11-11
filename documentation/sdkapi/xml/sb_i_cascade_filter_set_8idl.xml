@@ -4,13 +4,13 @@
     <compoundname>sbICascadeFilterSet.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="253">
+      <node id="302">
         <label>components/library/base/public/sbICascadeFilterSet.idl</label>
         <link refid="sbICascadeFilterSet.idl"/>
-        <childnode refid="254" relation="include">
+        <childnode refid="303" relation="include">
         </childnode>
       </node>
-      <node id="254">
+      <node id="303">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -54,7 +54,7 @@
 <codeline lineno="36"><highlight class="normal">interface<sp/>nsIArray;</highlight></codeline>
 <codeline lineno="37"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref>;</highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight></codeline>
-<codeline lineno="45"><highlight class="normal">[scriptable,<sp/>uuid(6b0f6a50-07c9-40e1-9392-2714b9bf2fa3)]</highlight></codeline>
+<codeline lineno="45"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(6b0f6a50-07c9-40e1-9392-2714b9bf2fa3)]</highlight></codeline>
 <codeline lineno="46" refid="interfacesb_i_cascade_filter_set_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_cascade_filter_set_listener" kindref="compound" tooltip="Listener interface for sbICascadeFilterSet.">sbICascadeFilterSetListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="47"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onChange();</highlight></codeline>
@@ -62,7 +62,7 @@
 <codeline lineno="50"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onValuesChanged(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">short</highlight><highlight class="normal"><sp/>aIndex);</highlight></codeline>
 <codeline lineno="51"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="52"><highlight class="normal"></highlight></codeline>
-<codeline lineno="59"><highlight class="normal">[scriptable,<sp/>uuid(3ef6dd65-aa7f-4e05-b6db-f355dfeff7f3)]</highlight></codeline>
+<codeline lineno="59"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(3ef6dd65-aa7f-4e05-b6db-f355dfeff7f3)]</highlight></codeline>
 <codeline lineno="60" refid="interfacesb_i_cascade_filter_set" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_cascade_filter_set" kindref="compound" tooltip="Cascade filter management for a media list.">sbICascadeFilterSet</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="61"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="65" refid="interfacesb_i_cascade_filter_set_15c6a7e2239bf4aab77d400eb8771cc70" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">short</highlight><highlight class="normal"><sp/>length;</highlight></codeline>

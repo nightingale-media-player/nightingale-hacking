@@ -4,13 +4,13 @@
     <compoundname>sbIGStreamerService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="495">
+      <node id="559">
         <label>components/mediacore/gstreamer/public/sbIGStreamerService.idl</label>
         <link refid="sbIGStreamerService.idl"/>
-        <childnode refid="496" relation="include">
+        <childnode refid="560" relation="include">
         </childnode>
       </node>
-      <node id="496">
+      <node id="560">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -85,7 +85,7 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="31"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal">[scriptable,<sp/>uuid(880347ab-710f-426f-a57c-56e81fff3ee6)]</highlight></codeline>
+<codeline lineno="33"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(880347ab-710f-426f-a57c-56e81fff3ee6)]</highlight></codeline>
 <codeline lineno="34" refid="interfacesb_i_g_streamer_inspect_handler" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_g_streamer_inspect_handler" kindref="compound">sbIGStreamerInspectHandler</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="35"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>beginInspect();</highlight></codeline>
@@ -118,7 +118,7 @@
 <codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>endPadTemplateInfo();</highlight></codeline>
 <codeline lineno="64"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="65"><highlight class="normal"></highlight></codeline>
-<codeline lineno="69"><highlight class="normal">[scriptable,<sp/>uuid(5be9dcac-c60a-46c9-90f5-cc9533d84179)]</highlight></codeline>
+<codeline lineno="69"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(5be9dcac-c60a-46c9-90f5-cc9533d84179)]</highlight></codeline>
 <codeline lineno="70" refid="interfacesb_i_g_streamer_service" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_g_streamer_service" kindref="compound">sbIGStreamerService</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="71"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="72" refid="interfacesb_i_g_streamer_service_14aade25de74c1ff6bb3e486e369446a1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>PAD_DIRECTION_UNKNOWN<sp/>=<sp/>0;</highlight></codeline>

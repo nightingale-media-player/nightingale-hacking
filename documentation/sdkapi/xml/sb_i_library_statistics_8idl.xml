@@ -4,13 +4,13 @@
     <compoundname>sbILibraryStatistics.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="362">
+      <node id="417">
         <label>components/library/localdatabase/public/sbILibraryStatistics.idl</label>
         <link refid="sbILibraryStatistics.idl"/>
-        <childnode refid="363" relation="include">
+        <childnode refid="418" relation="include">
         </childnode>
       </node>
-      <node id="363">
+      <node id="418">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,7 +50,7 @@
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal">interface<sp/>nsIArray;</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"></highlight></codeline>
-<codeline lineno="40"><highlight class="normal">[scriptable,<sp/>uuid(05bf2a32-81f6-4828-aa7c-b08a2a3ccf85)]</highlight></codeline>
+<codeline lineno="40"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(05bf2a32-81f6-4828-aa7c-b08a2a3ccf85)]</highlight></codeline>
 <codeline lineno="41" refid="interfacesb_i_library_statistics" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_library_statistics" kindref="compound" tooltip="Extract statistics from a media library.">sbILibraryStatistics</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="42"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="43"><highlight class="normal"></highlight></codeline>

@@ -1,0 +1,150 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_mock_c_d_device" kind="interface" prot="public">
+    <compoundname>sbIMockCDDevice</compoundname>
+    <includes refid="sb_i_mock_c_d_device_8idl" local="no">sbIMockCDDevice.idl</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_mock_c_d_device_194517d3674198d23aa32a71b3e58f235" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIMockCDDevice::ejected</definition>
+        <argsstring></argsstring>
+        <name>ejected</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>denotes whether the disc has been ejected </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/cd/mock/public/sbIMockCDDevice.idl" line="92" bodyfile="c:/builds/songbird/trunk/components/devices/cd/mock/public/sbIMockCDDevice.idl" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_mock_c_d_device_15ceabe8f82525f9ae56571514135f3e4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMockCDDevice::initialize</definition>
+        <argsstring>(in AString aName, in boolean aReadable, in boolean aWritable, in boolean aDiscInserted, in unsigned long aDiscType, in boolean aEjected, in sbIMockCDDeviceController aController)</argsstring>
+        <name>initialize</name>
+        <param>
+          <type>in AString</type>
+          <declname>aName</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aReadable</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aWritable</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aDiscInserted</declname>
+        </param>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aDiscType</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aEjected</declname>
+        </param>
+        <param>
+          <type>in <ref refid="interfacesb_i_mock_c_d_device_controller" kindref="compound">sbIMockCDDeviceController</ref></type>
+          <declname>aController</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initializes the device <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aName</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name of the device </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aReadable</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>whether the device is readable </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aWritable</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>whether the device is writable </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aDiscInserted</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether the device has a disc inserted </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aDiscType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of disc audio or data </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aEjected</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Whether the disc has been ejected </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aController</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The owning mock controller. Used for callbacks. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/cd/mock/public/sbIMockCDDevice.idl" line="88"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_mock_c_d_device_1f49ff84b0a2f5aeaf47eb1257a09da86" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMockCDDevice::setDiscTOC</definition>
+        <argsstring>(in sbICDTOC aTOC)</argsstring>
+        <name>setDiscTOC</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_c_d_t_o_c" kindref="compound">sbICDTOC</ref></type>
+          <declname>aTOC</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set the TOC of the mock device. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aTOC</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The TOC instance to assign to the mock device. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/devices/cd/mock/public/sbIMockCDDevice.idl" line="98"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>The Mock CD Device interface used to setup the Mock CD Device object </para>    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/devices/cd/mock/public/sbIMockCDDevice.idl" line="71" bodyfile="c:/builds/songbird/trunk/components/devices/cd/mock/public/sbIMockCDDevice.idl" bodystart="70" bodyend="99"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_mock_c_d_device_194517d3674198d23aa32a71b3e58f235" prot="public" virt="non-virtual"><scope>sbIMockCDDevice</scope><name>ejected</name></member>
+      <member refid="interfacesb_i_mock_c_d_device_15ceabe8f82525f9ae56571514135f3e4" prot="public" virt="non-virtual"><scope>sbIMockCDDevice</scope><name>initialize</name></member>
+      <member refid="interfacesb_i_mock_c_d_device_1f49ff84b0a2f5aeaf47eb1257a09da86" prot="public" virt="non-virtual"><scope>sbIMockCDDevice</scope><name>setDiscTOC</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

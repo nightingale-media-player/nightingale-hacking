@@ -10,43 +10,43 @@
     <includes local="yes">nsStringGlue.h</includes>
     <includes local="yes">nsXPCOMCID.h</includes>
     <incdepgraph>
-      <node id="126">
+      <node id="165">
         <label>components/devices/controller/public/sbIDeviceController.idl</label>
         <link refid="sbIDeviceController.idl"/>
-        <childnode refid="127" relation="include">
+        <childnode refid="166" relation="include">
         </childnode>
-        <childnode refid="128" relation="include">
+        <childnode refid="167" relation="include">
         </childnode>
-        <childnode refid="129" relation="include">
+        <childnode refid="168" relation="include">
         </childnode>
-        <childnode refid="130" relation="include">
+        <childnode refid="169" relation="include">
         </childnode>
-        <childnode refid="131" relation="include">
+        <childnode refid="170" relation="include">
         </childnode>
-        <childnode refid="132" relation="include">
+        <childnode refid="171" relation="include">
         </childnode>
-        <childnode refid="133" relation="include">
+        <childnode refid="172" relation="include">
         </childnode>
       </node>
-      <node id="132">
+      <node id="171">
         <label>nsStringGlue.h</label>
       </node>
-      <node id="130">
+      <node id="169">
         <label>nsICategoryManager.h</label>
       </node>
-      <node id="131">
+      <node id="170">
         <label>nsIServiceManager.h</label>
       </node>
-      <node id="128">
+      <node id="167">
         <label>nsCOMPtr.h</label>
       </node>
-      <node id="129">
+      <node id="168">
         <label>nsIComponentManager.h</label>
       </node>
-      <node id="127">
+      <node id="166">
         <label>nsISupports.idl</label>
       </node>
-      <node id="133">
+      <node id="172">
         <label>nsXPCOMCID.h</label>
       </node>
     </incdepgraph>
@@ -137,7 +137,7 @@
 <codeline lineno="32"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device" kindref="compound">sbIDevice</ref>;</highlight></codeline>
 <codeline lineno="33"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_compatibility" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceCompatibility</ref>;</highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="40"><highlight class="normal">[scriptable,<sp/>uuid(b4b7ed5d-85f2-4d0b-a7c6-f235acad3fc0)]</highlight></codeline>
+<codeline lineno="40"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(b4b7ed5d-85f2-4d0b-a7c6-f235acad3fc0)]</highlight></codeline>
 <codeline lineno="41" refid="interfacesb_i_device_controller" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_device_controller" kindref="compound" tooltip="[UNIMPLEMENTED UNTIL AFTER 0.3]">sbIDeviceController</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="42"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="46" refid="interfacesb_i_device_controller_1ddca5b46462c2e96ab2f9c3500a8f6e9" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIDPtr<sp/>id;</highlight></codeline>

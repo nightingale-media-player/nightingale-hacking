@@ -17,6 +17,19 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPage.idl" line="62" bodyfile="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPage.idl" bodystart="62" bodyend="-1"/>
       </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_media_page_173ddf27f4422d5b0b2bff5e0bfd763e5" prot="public" static="no" mutable="no">
+        <type>readonly attribute PRBool</type>
+        <definition>readonly attribute PRBool sbIMediaPage::isOnlyView</definition>
+        <argsstring></argsstring>
+        <name>isOnlyView</name>
+        <briefdescription>
+<para>Should be true if the media page is the only allowed view for the data. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPage.idl" line="68" bodyfile="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPage.idl" bodystart="68" bodyend="-1"/>
+      </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="interfacesb_i_media_page_1af8610b434e3c61fa34dcaaa64ac5f6b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
@@ -43,7 +56,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPage.idl" line="70"/>
+        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPage.idl" line="76"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_page_142687e6b3ea0fa106693e50d91e87618" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRBool</type>
@@ -80,7 +93,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPage.idl" line="78"/>
+        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPage.idl" line="84"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_page_1b7618a1c8c77269b0eca439ce5b78b54" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>PRBool</type>
@@ -117,7 +130,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPage.idl" line="86"/>
+        <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPage.idl" line="92"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -126,118 +139,112 @@
 <para>Pages that display libraries or other media lists must supply this interface in order for browser history, playback, find current track, and other external functionality to work as expected.</para><para>The primary purpose of the interface is to facilitate setting the <ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref> that the page is to display.</para><para>For sample code and more information, see <ulink url="http://developer.songbirdnest.com/add-on-api/">http://developer.songbirdnest.com/add-on-api/</ulink></para><para><simplesect kind="see"><para><ref refid="interfacesb_i_media_list_view" kindref="compound">sbIMediaListView</ref>, <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref>, playlistPage.xul </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="753">
+      <node id="809">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="754" relation="public-inheritance">
+        <childnode refid="810" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="752">
+      <node id="808">
         <label>sbIMediaListView</label>
         <link refid="interfacesb_i_media_list_view"/>
-        <childnode refid="753" relation="usage">
+        <childnode refid="809" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
-        <childnode refid="763" relation="usage">
+        <childnode refid="818" relation="usage">
           <edgelabel>selection</edgelabel>
         </childnode>
-        <childnode refid="764" relation="usage">
+        <childnode refid="819" relation="usage">
           <edgelabel>cascadeFilterSet</edgelabel>
         </childnode>
       </node>
-      <node id="763">
+      <node id="818">
         <label>sbIMediaListViewSelection</label>
         <link refid="interfacesb_i_media_list_view_selection"/>
-        <childnode refid="754" relation="usage">
+        <childnode refid="810" relation="usage">
           <edgelabel>currentMediaItem</edgelabel>
         </childnode>
       </node>
-      <node id="760">
+      <node id="816">
         <label>sbIDeviceStatus</label>
         <link refid="interfacesb_i_device_status"/>
-        <childnode refid="754" relation="usage">
+        <childnode refid="810" relation="usage">
           <edgelabel>mediaItem</edgelabel>
         </childnode>
-        <childnode refid="753" relation="usage">
+        <childnode refid="809" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
-      <node id="761">
-        <label>sbIDeviceCapabilities</label>
-        <link refid="interfacesb_i_device_capabilities"/>
-      </node>
-      <node id="751">
+      <node id="807">
         <label>sbIMediaPage</label>
         <link refid="interfacesb_i_media_page"/>
-        <childnode refid="752" relation="usage">
+        <childnode refid="808" relation="usage">
           <edgelabel>mediaListView</edgelabel>
         </childnode>
       </node>
-      <node id="757">
+      <node id="813">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="758" relation="usage">
+        <childnode refid="814" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="760" relation="usage">
+        <childnode refid="816" relation="usage">
           <edgelabel>currentStatus</edgelabel>
         </childnode>
-        <childnode refid="761" relation="usage">
-          <edgelabel>capabilities</edgelabel>
-        </childnode>
-        <childnode refid="762" relation="usage">
+        <childnode refid="817" relation="usage">
           <edgelabel>properties</edgelabel>
         </childnode>
       </node>
-      <node id="756">
+      <node id="812">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="753" relation="public-inheritance">
+        <childnode refid="809" relation="public-inheritance">
         </childnode>
-        <childnode refid="757" relation="usage">
+        <childnode refid="813" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="759" relation="usage">
+        <childnode refid="815" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="764">
+      <node id="819">
         <label>sbICascadeFilterSet</label>
         <link refid="interfacesb_i_cascade_filter_set"/>
       </node>
-      <node id="755">
+      <node id="811">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="754">
+      <node id="810">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="755" relation="public-inheritance">
+        <childnode refid="811" relation="public-inheritance">
         </childnode>
-        <childnode refid="756" relation="usage">
+        <childnode refid="812" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="758">
+      <node id="814">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="759" relation="usage">
+        <childnode refid="815" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="759">
+      <node id="815">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
-      <node id="762">
+      <node id="817">
         <label>sbIDeviceProperties</label>
         <link refid="interfacesb_i_device_properties"/>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPage.idl" line="50" bodyfile="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPage.idl" bodystart="49" bodyend="87"/>
+    <location file="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPage.idl" line="50" bodyfile="c:/builds/songbird/trunk/components/mediapages/public/sbIMediaPage.idl" bodystart="49" bodyend="93"/>
     <listofallmembers>
       <member refid="interfacesb_i_media_page_142687e6b3ea0fa106693e50d91e87618" prot="public" virt="non-virtual"><scope>sbIMediaPage</scope><name>canDrop</name></member>
       <member refid="interfacesb_i_media_page_1af8610b434e3c61fa34dcaaa64ac5f6b" prot="public" virt="non-virtual"><scope>sbIMediaPage</scope><name>highlightItem</name></member>
+      <member refid="interfacesb_i_media_page_173ddf27f4422d5b0b2bff5e0bfd763e5" prot="public" virt="non-virtual"><scope>sbIMediaPage</scope><name>isOnlyView</name></member>
       <member refid="interfacesb_i_media_page_1ff03bd008eb9d3740585ec3241dc62b3" prot="public" virt="non-virtual"><scope>sbIMediaPage</scope><name>mediaListView</name></member>
       <member refid="interfacesb_i_media_page_1b7618a1c8c77269b0eca439ce5b78b54" prot="public" virt="non-virtual"><scope>sbIMediaPage</scope><name>onDrop</name></member>
     </listofallmembers>

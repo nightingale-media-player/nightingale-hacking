@@ -4,13 +4,13 @@
     <compoundname>sbIImageLinkPropertyInfo.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="617">
+      <node id="771">
         <label>components/property/public/sbIImageLinkPropertyInfo.idl</label>
         <link refid="sbIImageLinkPropertyInfo.idl"/>
-        <childnode refid="618" relation="include">
+        <childnode refid="772" relation="include">
         </childnode>
       </node>
-      <node id="618">
+      <node id="772">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -48,7 +48,7 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(b3fd8e80-aad7-4d10-86af-22e348cd64fd)]</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(b3fd8e80-aad7-4d10-86af-22e348cd64fd)]</highlight></codeline>
 <codeline lineno="44" refid="interfacesb_i_image_link_property_info" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_image_link_property_info" kindref="compound" tooltip="The property information specific to image link properties.">sbIImageLinkPropertyInfo</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="49" refid="interfacesb_i_image_link_property_info_1e305a4d98420175076dc3f181fc1a1be" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>urlProperty;</highlight></codeline>

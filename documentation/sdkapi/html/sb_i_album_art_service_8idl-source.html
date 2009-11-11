@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/albumart/public/sbIAlbumArtService.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */</span>
 <a name="l00002"></a>00002 <span class="comment">/* vim: set sw=2 :miv */</span>
 <a name="l00003"></a>00003 <span class="comment">/*</span>
@@ -105,43 +111,44 @@
 <a name="l00037"></a>00037 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00038"></a>00038 
 <a name="l00039"></a>00039 interface nsIArray;
-<a name="l00040"></a>00040 interface nsIFileURL;
+<a name="l00040"></a>00040 interface nsIURI;
 <a name="l00041"></a>00041 
 <a name="l00042"></a>00042 
-<a name="l00050"></a>00050 [scriptable, uuid(9c101073-c3a4-4c8a-a967-32ff855cd748)]
+<a name="l00050"></a>00050 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(dcb6dd07-36a2-44e6-9ee2-8b22577204bf)]
 <a name="l00051"></a><a class="code" href="interfacesb_i_album_art_service.html">00051</a> interface <a class="code" href="interfacesb_i_album_art_service.html" title="Interface for the album art service. Instantiate as a component service.">sbIAlbumArtService</a> : nsISupports
 <a name="l00052"></a>00052 {
-<a name="l00063"></a>00063   nsIArray getFetcherList(in <span class="keywordtype">boolean</span> aLocalOnly);
-<a name="l00064"></a>00064 
-<a name="l00065"></a>00065 
-<a name="l00078"></a>00078   <span class="keywordtype">boolean</span> imageIsValidAlbumArt
-<a name="l00079"></a>00079             (in AUTF8String                             aMimeType,
-<a name="l00080"></a>00080              [<span class="keyword">const</span>, array, size_is(aDataLen)] in octet aData,
-<a name="l00081"></a>00081              in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span>                           aDataLen);
-<a name="l00082"></a>00082 
-<a name="l00083"></a>00083 
-<a name="l00096"></a>00096   nsIFileURL cacheImage(in AUTF8String                             aMimeType,
-<a name="l00097"></a>00097                         [<span class="keyword">const</span>, array, size_is(aDataLen)] in octet aData,
-<a name="l00098"></a>00098                         in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span>                           aDataLen);
-<a name="l00099"></a>00099 
-<a name="l00100"></a>00100   
-<a name="l00114"></a>00114   <span class="keywordtype">void</span> cacheTemporaryData(in AString aKey, in nsISupports aData);
-<a name="l00115"></a>00115 
-<a name="l00116"></a>00116 
-<a name="l00125"></a>00125   nsISupports retrieveTemporaryData(in AString aKey);
-<a name="l00126"></a>00126 };
-<a name="l00127"></a>00127 
-<a name="l00128"></a>00128 
-<a name="l00129"></a>00129 <span class="comment">//</span>
-<a name="l00130"></a>00130 <span class="comment">// C++ defs.</span>
+<a name="l00064"></a>00064   nsIArray getFetcherList(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> type,
+<a name="l00065"></a>00065                           [optional] in <span class="keywordtype">boolean</span> includeDisabled);
+<a name="l00066"></a>00066 
+<a name="l00067"></a>00067 
+<a name="l00080"></a>00080   <span class="keywordtype">boolean</span> imageIsValidAlbumArt
+<a name="l00081"></a>00081             (in AUTF8String                             aMimeType,
+<a name="l00082"></a>00082              [<span class="keyword">const</span>, array, size_is(aDataLen)] in octet aData,
+<a name="l00083"></a>00083              in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span>                           aDataLen);
+<a name="l00084"></a>00084 
+<a name="l00085"></a>00085 
+<a name="l00098"></a>00098   nsIURI cacheImage(in AUTF8String                             aMimeType,
+<a name="l00099"></a>00099                     [<span class="keyword">const</span>, array, size_is(aDataLen)] in octet aData,
+<a name="l00100"></a>00100                     in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span>                           aDataLen);
+<a name="l00101"></a>00101 
+<a name="l00102"></a>00102   
+<a name="l00116"></a>00116   <span class="keywordtype">void</span> cacheTemporaryData(in AString aKey, in nsISupports aData);
+<a name="l00117"></a>00117 
+<a name="l00118"></a>00118 
+<a name="l00127"></a>00127   nsISupports retrieveTemporaryData(in AString aKey);
+<a name="l00128"></a>00128 };
+<a name="l00129"></a>00129 
+<a name="l00130"></a>00130 
 <a name="l00131"></a>00131 <span class="comment">//</span>
-<a name="l00132"></a>00132 
-<a name="l00133"></a>00133 %{C++
-<a name="l00134"></a>00134 <span class="preprocessor">#define SB_ALBUMARTSERVICE_CONTRACTID \</span>
-<a name="l00135"></a>00135 <span class="preprocessor">          "@songbirdnest.com/Songbird/album-art-service;1"</span>
-<a name="l00136"></a>00136 <span class="preprocessor"></span>%}C++
-<a name="l00137"></a>00137 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:38 2009 for Songbird by&nbsp;
+<a name="l00132"></a>00132 <span class="comment">// C++ defs.</span>
+<a name="l00133"></a>00133 <span class="comment">//</span>
+<a name="l00134"></a>00134 
+<a name="l00135"></a>00135 %{C++
+<a name="l00136"></a>00136 <span class="preprocessor">#define SB_ALBUMARTSERVICE_CONTRACTID \</span>
+<a name="l00137"></a>00137 <span class="preprocessor">          "@songbirdnest.com/Songbird/album-art-service;1"</span>
+<a name="l00138"></a>00138 <span class="preprocessor"></span>%}C++
+<a name="l00139"></a>00139 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:44 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

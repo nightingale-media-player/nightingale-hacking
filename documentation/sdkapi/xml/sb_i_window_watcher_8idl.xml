@@ -4,13 +4,13 @@
     <compoundname>sbIWindowWatcher.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="603">
+      <node id="757">
         <label>components/moz/windowwatcher/public/sbIWindowWatcher.idl</label>
         <link refid="sbIWindowWatcher.idl"/>
-        <childnode refid="604" relation="include">
+        <childnode refid="758" relation="include">
         </childnode>
       </node>
-      <node id="604">
+      <node id="758">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -68,7 +68,7 @@
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
 <codeline lineno="49"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_call_with_window_callback" kindref="compound" tooltip="A callback interface that is called with a window.">sbICallWithWindowCallback</ref>;</highlight></codeline>
 <codeline lineno="50"><highlight class="normal"></highlight></codeline>
-<codeline lineno="51"><highlight class="normal">[scriptable,<sp/>uuid(93cf33df-770f-49ec-afb7-20db242dd366)]</highlight></codeline>
+<codeline lineno="51"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(93cf33df-770f-49ec-afb7-20db242dd366)]</highlight></codeline>
 <codeline lineno="52" refid="interfacesb_i_window_watcher" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_window_watcher" kindref="compound">sbIWindowWatcher</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="53"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="59" refid="interfacesb_i_window_watcher_1334158ade89d8d97fa82e742ee6696b4" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>isShuttingDown;</highlight></codeline>
@@ -88,7 +88,7 @@
 <codeline lineno="107"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="108"><highlight class="normal"></highlight></codeline>
 <codeline lineno="109"><highlight class="normal"></highlight></codeline>
-<codeline lineno="117"><highlight class="normal">[scriptable,<sp/>function,<sp/>uuid(4052eb5e-fe52-4e31-abca-1263c2cfd009)]</highlight></codeline>
+<codeline lineno="117"><highlight class="normal">[scriptable,<sp/>function,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(4052eb5e-fe52-4e31-abca-1263c2cfd009)]</highlight></codeline>
 <codeline lineno="118" refid="interfacesb_i_call_with_window_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_call_with_window_callback" kindref="compound" tooltip="A callback interface that is called with a window.">sbICallWithWindowCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="119"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="126"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>handleWindowCallback(in<sp/>nsIDOMWindow<sp/>aWindow);</highlight></codeline>

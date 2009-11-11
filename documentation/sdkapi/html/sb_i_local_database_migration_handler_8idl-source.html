@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/library/localdatabase/public/sbILocalDatabaseMigrationHandler.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -97,7 +103,7 @@
 <a name="l00034"></a>00034 
 <a name="l00035"></a>00035 interface <a class="code" href="interfacesb_i_local_database_library.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseLibrary</a>;
 <a name="l00036"></a>00036 
-<a name="l00042"></a>00042 [scriptable, uuid(f88bff10-0dfc-416e-9dcb-630a9d27b8c7)]
+<a name="l00042"></a>00042 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(f88bff10-0dfc-416e-9dcb-630a9d27b8c7)]
 <a name="l00043"></a><a class="code" href="interfacesb_i_local_database_migration_handler.html">00043</a> interface <a class="code" href="interfacesb_i_local_database_migration_handler.html">sbILocalDatabaseMigrationHandler</a> : <a class="code" href="interfacesb_i_job_progress.html" title="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</a>
 <a name="l00044"></a>00044 {
 <a name="l00048"></a><a class="code" href="interfacesb_i_local_database_migration_handler.html#753fdf15e75452e7960bbbf0348cc5b4">00048</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> fromVersion;
@@ -106,7 +112,7 @@
 <a name="l00054"></a>00054   
 <a name="l00058"></a>00058   <span class="keywordtype">void</span> migrate(in <a class="code" href="interfacesb_i_local_database_library.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseLibrary</a> aLibrary);
 <a name="l00059"></a>00059 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

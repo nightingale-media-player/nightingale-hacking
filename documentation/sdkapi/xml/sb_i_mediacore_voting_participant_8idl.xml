@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreVotingParticipant.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="486">
+      <node id="541">
         <label>components/mediacore/base/public/sbIMediacoreVotingParticipant.idl</label>
         <link refid="sbIMediacoreVotingParticipant.idl"/>
-        <childnode refid="487" relation="include">
+        <childnode refid="542" relation="include">
         </childnode>
       </node>
-      <node id="487">
+      <node id="542">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -51,7 +51,7 @@
 <codeline lineno="29"><highlight class="normal">interface<sp/>nsIURI;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal">interface<sp/>nsIChannel;</highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight></codeline>
-<codeline lineno="32"><highlight class="normal">[scriptable,<sp/>uuid(c3cd5272-7664-4b95-ba56-a62003f37ad1)]</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(c3cd5272-7664-4b95-ba56-a62003f37ad1)]</highlight></codeline>
 <codeline lineno="33" refid="interfacesb_i_mediacore_voting_participant" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_voting_participant" kindref="compound">sbIMediacoreVotingParticipant</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="34"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>voteWithURI(in<sp/>nsIURI<sp/>aURI);</highlight></codeline>

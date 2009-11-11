@@ -4,13 +4,13 @@
     <compoundname>sbIFaceplateManagerListener.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="180">
+      <node id="214">
         <label>components/faceplate/public/sbIFaceplateManagerListener.idl</label>
         <link refid="sbIFaceplateManagerListener.idl"/>
-        <childnode refid="181" relation="include">
+        <childnode refid="215" relation="include">
         </childnode>
       </node>
-      <node id="181">
+      <node id="215">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -52,7 +52,7 @@
 <codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_faceplate_pane" kindref="compound" tooltip="Interface used to communicate with faceplate pane binding instances.">sbIFaceplatePane</ref>;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(0fdd0108-ff78-11db-8314-0800200c9a66)]</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(0fdd0108-ff78-11db-8314-0800200c9a66)]</highlight></codeline>
 <codeline lineno="44" refid="interfacesb_i_faceplate_manager_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_faceplate_manager_listener" kindref="compound" tooltip="Callback interface for faceplate event notification.">sbIFaceplateManagerListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="50"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onCreatePane(in<sp/><ref refid="interfacesb_i_faceplate_pane" kindref="compound" tooltip="Interface used to communicate with faceplate pane binding instances.">sbIFaceplatePane</ref><sp/>aFaceplatePane);</highlight></codeline>

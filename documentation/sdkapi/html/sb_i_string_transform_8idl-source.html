@@ -66,6 +66,12 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
+<div class="tabs">
+  <ul>
+    <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+    <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+  </ul>
+</div>
 <h1>components/intl/public/sbIStringTransform.idl</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
@@ -94,7 +100,7 @@
 <a name="l00026"></a>00026 
 <a name="l00027"></a>00027 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00028"></a>00028 
-<a name="l00032"></a>00032 [scriptable, uuid(711cd060-dce8-4264-807a-b8d118265abd)]
+<a name="l00032"></a>00032 [scriptable, <a class="code" href="sb_i_transcode_batch_job_8idl.html#e4585e995415b71710cdc361a414ecb2">uuid</a>(4b9a60a0-76e8-47ed-b701-b297d45ab95e)]
 <a name="l00033"></a><a class="code" href="interfacesb_i_string_transform.html">00033</a> interface <a class="code" href="interfacesb_i_string_transform.html">sbIStringTransform</a> : nsISupports
 <a name="l00034"></a>00034 {
 <a name="l00039"></a><a class="code" href="interfacesb_i_string_transform.html#c11f6d3dbcf06e6b6b0d5082a282bc8b">00039</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> TRANSFORM_MAP_HIRAGANA = 1;
@@ -113,39 +119,42 @@
 <a name="l00078"></a><a class="code" href="interfacesb_i_string_transform.html#51009a08d1b398406d25fe8436326d38">00078</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> TRANSFORM_REVERSE_BYTES = 1 &lt;&lt; 11; 
 <a name="l00079"></a>00079 
 <a name="l00083"></a><a class="code" href="interfacesb_i_string_transform.html#f26dc80fe40ff6f0f7a671f50054968b">00083</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> TRANSFORM_IGNORE_NONALPHANUM = 1 &lt;&lt; 12;
-<a name="l00084"></a>00084 
-<a name="l00090"></a><a class="code" href="interfacesb_i_string_transform.html#548883bd24f51453de7afcfd16bd509a">00090</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> TRANSFORM_IGNORE_LEADING = 1 &lt;&lt; 13;
-<a name="l00091"></a>00091 
-<a name="l00092"></a>00092   AString normalizeString(in AString aCharset,
-<a name="l00093"></a>00093                           in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aTransformFlags,
-<a name="l00094"></a>00094                           in AString aInput);
-<a name="l00095"></a>00095 
-<a name="l00096"></a>00096   AString convertToCharset(in AString aDestCharset,
-<a name="l00097"></a>00097                            in AString aInput);
-<a name="l00098"></a>00098 
-<a name="l00099"></a>00099   AString guessCharset(in AString aInput);
-<a name="l00100"></a>00100   
-<a name="l00101"></a>00101   AString removeArticles(in AString aInput, [optional] in AString aLanguage);
-<a name="l00102"></a>00102 };
-<a name="l00103"></a>00103 
-<a name="l00104"></a>00104 %{C++
-<a name="l00105"></a>00105 
-<a name="l00106"></a>00106 <span class="preprocessor">#define SB_STRINGTRANSFORM_DESCRIPTION    \</span>
-<a name="l00107"></a>00107 <span class="preprocessor">  "Songbird String Transform"</span>
-<a name="l00108"></a>00108 <span class="preprocessor"></span><span class="preprocessor">#define SB_STRINGTRANSFORM_CONTRACTID     \</span>
-<a name="l00109"></a>00109 <span class="preprocessor">  "@songbirdnest.com/Songbird/Intl/StringTransform;1"</span>
-<a name="l00110"></a>00110 <span class="preprocessor"></span><span class="preprocessor">#define SB_STRINGTRANSFORM_CLASSNAME      \</span>
-<a name="l00111"></a>00111 <span class="preprocessor">  "sbStringTransform"</span>
-<a name="l00112"></a>00112 <span class="preprocessor"></span><span class="preprocessor">#define SB_STRINGTRANSFORM_CID            \</span>
-<a name="l00113"></a>00113 <span class="preprocessor">{ </span><span class="comment">/*{0a8d2a48-2947-4ee4-bf36-32e7777358db}*/</span> \
-<a name="l00114"></a>00114   0xa8d2a48,                                 \
-<a name="l00115"></a>00115   0x2947,                                    \
-<a name="l00116"></a>00116   0x4ee4,                                    \
-<a name="l00117"></a>00117   { 0xbf, 0x36, 0x32, 0xe7, 0x77, 0x73, 0x58, 0xdb } \
-<a name="l00118"></a>00118 }
-<a name="l00119"></a>00119 
-<a name="l00120"></a>00120 %}
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
+<a name="l00084"></a><a class="code" href="interfacesb_i_string_transform.html#797e46a0f97ec85585ad054145ca9ef8">00084</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE = 1 &lt;&lt; 13;
+<a name="l00085"></a>00085 
+<a name="l00091"></a><a class="code" href="interfacesb_i_string_transform.html#548883bd24f51453de7afcfd16bd509a">00091</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> TRANSFORM_IGNORE_LEADING = 1 &lt;&lt; 14;
+<a name="l00092"></a>00092 
+<a name="l00096"></a><a class="code" href="interfacesb_i_string_transform.html#8d1594bd0b36c4e0d9f79a238482dbf4">00096</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS = 1 &lt;&lt; 15;
+<a name="l00097"></a>00097 
+<a name="l00098"></a>00098   AString normalizeString(in AString aCharset,
+<a name="l00099"></a>00099                           in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aTransformFlags,
+<a name="l00100"></a>00100                           in AString aInput);
+<a name="l00101"></a>00101 
+<a name="l00102"></a>00102   AString convertToCharset(in AString aDestCharset,
+<a name="l00103"></a>00103                            in AString aInput);
+<a name="l00104"></a>00104 
+<a name="l00105"></a>00105   AString guessCharset(in AString aInput);
+<a name="l00106"></a>00106   
+<a name="l00107"></a>00107   AString removeArticles(in AString aInput, [optional] in AString aLanguage);
+<a name="l00108"></a>00108 };
+<a name="l00109"></a>00109 
+<a name="l00110"></a>00110 %{C++
+<a name="l00111"></a>00111 
+<a name="l00112"></a>00112 <span class="preprocessor">#define SB_STRINGTRANSFORM_DESCRIPTION    \</span>
+<a name="l00113"></a>00113 <span class="preprocessor">  "Songbird String Transform"</span>
+<a name="l00114"></a>00114 <span class="preprocessor"></span><span class="preprocessor">#define SB_STRINGTRANSFORM_CONTRACTID     \</span>
+<a name="l00115"></a>00115 <span class="preprocessor">  "@songbirdnest.com/Songbird/Intl/StringTransform;1"</span>
+<a name="l00116"></a>00116 <span class="preprocessor"></span><span class="preprocessor">#define SB_STRINGTRANSFORM_CLASSNAME      \</span>
+<a name="l00117"></a>00117 <span class="preprocessor">  "sbStringTransform"</span>
+<a name="l00118"></a>00118 <span class="preprocessor"></span><span class="preprocessor">#define SB_STRINGTRANSFORM_CID            \</span>
+<a name="l00119"></a>00119 <span class="preprocessor">{ </span><span class="comment">/*{0a8d2a48-2947-4ee4-bf36-32e7777358db}*/</span> \
+<a name="l00120"></a>00120   0xa8d2a48,                                 \
+<a name="l00121"></a>00121   0x2947,                                    \
+<a name="l00122"></a>00122   0x4ee4,                                    \
+<a name="l00123"></a>00123   { 0xbf, 0x36, 0x32, 0xe7, 0x77, 0x73, 0x58, 0xdb } \
+<a name="l00124"></a>00124 }
+<a name="l00125"></a>00125 
+<a name="l00126"></a>00126 %}
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Wed Nov 11 14:05:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

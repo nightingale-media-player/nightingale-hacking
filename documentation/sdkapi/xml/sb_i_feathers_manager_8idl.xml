@@ -4,13 +4,13 @@
     <compoundname>sbIFeathersManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="186">
+      <node id="220">
         <label>components/feathers/public/sbIFeathersManager.idl</label>
         <link refid="sbIFeathersManager.idl"/>
-        <childnode refid="187" relation="include">
+        <childnode refid="221" relation="include">
         </childnode>
       </node>
-      <node id="187">
+      <node id="221">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -55,7 +55,7 @@
 <codeline lineno="39"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_feathers_manager_listener" kindref="compound" tooltip="Callback interface used to listen to Feathers Manager changes.">sbIFeathersManagerListener</ref>;</highlight></codeline>
 <codeline lineno="40"><highlight class="normal"></highlight></codeline>
 <codeline lineno="41"><highlight class="normal"></highlight></codeline>
-<codeline lineno="51"><highlight class="normal">[scriptable,<sp/>uuid(61c28aec-66a6-49f2-85df-9629c7e3d84f)]</highlight></codeline>
+<codeline lineno="51"><highlight class="normal">[scriptable,<sp/><ref refid="sb_i_transcode_batch_job_8idl_1e4585e995415b71710cdc361a414ecb2" kindref="member">uuid</ref>(61c28aec-66a6-49f2-85df-9629c7e3d84f)]</highlight></codeline>
 <codeline lineno="52" refid="interfacesb_i_feathers_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_feathers_manager" kindref="compound" tooltip="Controls the appearance of the application.">sbIFeathersManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="53"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="57" refid="interfacesb_i_feathers_manager_12baaf5ce393f0ecfc798855cf68df318" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>currentLayoutURL;</highlight></codeline>

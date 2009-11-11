@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_media_management_job" kind="interface" prot="public">
+    <compoundname>sbIMediaManagementJob</compoundname>
+    <basecompoundref refid="interfacesb_i_job_progress" prot="public" virt="non-virtual">sbIJobProgress</basecompoundref>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_i_media_management_job_194f8f2ce882d0b418bc69cb04c1582da" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaManagementJob::init</definition>
+        <argsstring>(in sbIMediaList aMediaList,[optional] in nsIPropertyBag2 aProperties)</argsstring>
+        <name>init</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_media_list" kindref="compound">sbIMediaList</ref></type>
+          <declname>aMediaList</declname>
+        </param>
+        <param>
+          <attributes>[optional]</attributes>
+          <type>in nsIPropertyBag2</type>
+          <declname>aProperties</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initialze the media management job by preparing to act upon a particular media list <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaList</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the media list to organize </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aProperties</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>properties for the job; </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para><ref refid="interfacesb_i_media_file_manager" kindref="compound">sbIMediaFileManager</ref> </para></simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if there are no items </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="see"><para>sIMediaFileManager::init </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediamanager/public/sbIMediaManagementJob.idl" line="50"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_media_management_job_1beae5eb61ed92e8c0aee71283fc91a78" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediaManagementJob::organizeMediaList</definition>
+        <argsstring>()</argsstring>
+        <name>organizeMediaList</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>This will scan the list and organize the files based on the preferences, only if the file is already located in the media library folder. <simplesect kind="see"><para><ref refid="interfacesb_i_media_management_job_194f8f2ce882d0b418bc69cb04c1582da" kindref="member">init()</ref>; </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediamanager/public/sbIMediaManagementJob.idl" line="57"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="781">
+        <label>sbIJobProgress</label>
+        <link refid="interfacesb_i_job_progress"/>
+      </node>
+      <node id="780">
+        <label>sbIMediaManagementJob</label>
+        <link refid="interfacesb_i_media_management_job"/>
+        <childnode refid="781" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="783">
+        <label>sbIJobProgress</label>
+        <link refid="interfacesb_i_job_progress"/>
+      </node>
+      <node id="782">
+        <label>sbIMediaManagementJob</label>
+        <link refid="interfacesb_i_media_management_job"/>
+        <childnode refid="783" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="c:/builds/songbird/trunk/components/mediamanager/public/sbIMediaManagementJob.idl" line="40" bodyfile="c:/builds/songbird/trunk/components/mediamanager/public/sbIMediaManagementJob.idl" bodystart="39" bodyend="58"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_job_progress_16a80a1a34775105f108f6bd88c756dfb" prot="public" virt="non-virtual"><scope>sbIMediaManagementJob</scope><name>addJobProgressListener</name></member>
+      <member refid="interfacesb_i_job_progress_1027d9c149848bf4478b0456e908132d7" prot="public" virt="non-virtual"><scope>sbIMediaManagementJob</scope><name>errorCount</name></member>
+      <member refid="interfacesb_i_job_progress_125f57afba4c2bc26d823f6b4ccd4c768" prot="public" virt="non-virtual"><scope>sbIMediaManagementJob</scope><name>getErrorMessages</name></member>
+      <member refid="interfacesb_i_media_management_job_194f8f2ce882d0b418bc69cb04c1582da" prot="public" virt="non-virtual"><scope>sbIMediaManagementJob</scope><name>init</name></member>
+      <member refid="interfacesb_i_media_management_job_1beae5eb61ed92e8c0aee71283fc91a78" prot="public" virt="non-virtual"><scope>sbIMediaManagementJob</scope><name>organizeMediaList</name></member>
+      <member refid="interfacesb_i_job_progress_1462e97d90f7869b092a9cb31ce5241d7" prot="public" virt="non-virtual"><scope>sbIMediaManagementJob</scope><name>progress</name></member>
+      <member refid="interfacesb_i_job_progress_16975c6117729ce76498e677485b78a45" prot="public" virt="non-virtual"><scope>sbIMediaManagementJob</scope><name>removeJobProgressListener</name></member>
+      <member refid="interfacesb_i_job_progress_1b2f2c6ac3a21d6e94d56e68e1204deae" prot="public" virt="non-virtual"><scope>sbIMediaManagementJob</scope><name>status</name></member>
+      <member refid="interfacesb_i_job_progress_1b4cebecf25f9537638b93f613a08a399" prot="public" virt="non-virtual"><scope>sbIMediaManagementJob</scope><name>STATUS_FAILED</name></member>
+      <member refid="interfacesb_i_job_progress_14c958bd7134338a4b664fd694e52d00f" prot="public" virt="non-virtual"><scope>sbIMediaManagementJob</scope><name>STATUS_RUNNING</name></member>
+      <member refid="interfacesb_i_job_progress_1f8533869de154c683bef9ffe4ae14281" prot="public" virt="non-virtual"><scope>sbIMediaManagementJob</scope><name>STATUS_SUCCEEDED</name></member>
+      <member refid="interfacesb_i_job_progress_184a0305f04450bfc0fbca836a5698f2b" prot="public" virt="non-virtual"><scope>sbIMediaManagementJob</scope><name>statusText</name></member>
+      <member refid="interfacesb_i_job_progress_1f7778cabda828a9cbe8ae0b3b6c9f1a7" prot="public" virt="non-virtual"><scope>sbIMediaManagementJob</scope><name>titleText</name></member>
+      <member refid="interfacesb_i_job_progress_1fe4c7d72c80eba3e52b90b078f08f7e1" prot="public" virt="non-virtual"><scope>sbIMediaManagementJob</scope><name>total</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>
