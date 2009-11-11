@@ -44,6 +44,9 @@ public:
   GstElement * SetVideoSink (GstElement *aVideoSink);
   GstElement * SetAudioSink (GstElement *aAudioSink);
 
+  // Dummy override for ResizeToWindow in base class - NS_NEW_RUNNABLE_METHOD
+  // doesn't like being passed methods not defined on current class (bug 18744)
+  virtual void ResizeToWindow() {return BasePlatformInterface::ResizeToWindow();}
   virtual void PrepareVideoWindow(GstMessage *aMessage);
 
   // I'm a bad person

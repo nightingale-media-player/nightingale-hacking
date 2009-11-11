@@ -46,7 +46,7 @@ public:
 
   // Implementation of (some parts of) the sbIGstPlatformInterface interface
   //
-  void ResizeToWindow();
+  virtual void ResizeToWindow();
   bool GetFullscreen();
   void SetFullscreen(bool aFullscreen);
   void SetDisplayAspectRatio(int aNumerator, int aDenominator);
