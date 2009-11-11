@@ -124,27 +124,16 @@ window.cdripController =
     // Add our device listener to listen for lookup notification events
     this._device = this._getDevice();
 
-    // Go back to previous page and return if device is not available.
-    if (!this._device) {
+    // This will set this._deviceLibrary
+    this._getDeviceLibrary();
+
+    // Go back to previous page and return if device or device library are not
+    // available.
+    if (!this._device || !this._deviceLibrary) {
       var browser = SBGetBrowser();
       browser.getTabForDocument(document).backWithDefault();
       return;
     }
-
-    var servicePaneNode =
-      Cc["@songbirdnest.com/servicepane/library;1"]
-        .getService(Ci.sbILibraryServicePaneService)
-        .getNodeFromMediaListView(this._mediaListView);
-    if (servicePaneNode) {
-      document.title = servicePaneNode.displayName;
-    }
-    else {
-      // failed to find the node, stick with the media list name
-      document.title = this._mediaListView.mediaList.name;
-    }
-    
-    // This will set this._deviceLibrary
-    this._getDeviceLibrary();
 
     // Update the header information
     this._updateHeaderView();
@@ -164,6 +153,18 @@ window.cdripController =
     this._updateRipSettings();
     this._togglePlayerControls(true);
     this._loadPlaylist();
+
+    var servicePaneNode =
+      Cc["@songbirdnest.com/servicepane/library;1"]
+        .getService(Ci.sbILibraryServicePaneService)
+        .getNodeFromMediaListView(this._mediaListView);
+    if (servicePaneNode) {
+      document.title = servicePaneNode.displayName;
+    }
+    else {
+      // failed to find the node, stick with the media list name
+      document.title = this._mediaListView.mediaList.name;
+    }
 
     // Listen to transcoding pref changes.
     this._transcodePrefBranch = Cc["@mozilla.org/preferences-service;1"]
@@ -879,7 +880,7 @@ window.cdripController =
     var libraries = this._device.content.libraries;
     if (libraries.length < 1) {
       // Oh no, we have no libraries
-      Cu.reportError("Device " + aDevice.id + " has no libraries!");
+      Cu.reportError("Device " + this._device + " has no libraries!");
       return null;
     }
 
