@@ -187,7 +187,7 @@ OSXPlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
   // Now, we want to set this view as a subview of the NSView we have
   // as our window-for-displaying-video. Don't do this from a non-main
   // thread, though!
-  [parentView performSelectorOnMainThread:@selector(addSubview:) withObject:view waitUntilDone:NO];
+  [parentView performSelectorOnMainThread:@selector(addSubview:) withObject:view waitUntilDone:YES];
 
   nsCOMPtr<nsIRunnable> runnable = NS_NEW_RUNNABLE_METHOD(OSXPlatformInterface, this, ResizeToWindow);
   NS_DispatchToMainThread(runnable);

@@ -55,3 +55,12 @@ spacer {
   background-repeat:repeat-x;
   background-position:center top;
 }
+
+#video_window #video-box {
+  background-color: black;
+}
+
+#video_window:not([active="true"]) .inactive-box {
+  background-color: black !important;
+}
+
