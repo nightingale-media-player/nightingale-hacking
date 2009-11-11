@@ -348,11 +348,6 @@ var gSongbirdPlayerWindow = {
     {
       // Ignore errors
     }
-
-        // XXX kreeger HACK HACK HACK - use this for setting up the player controls.
-  setTimeout(function() {
-    window.openDialog("chrome://songbird/content/xul/videoWindowControls.xul"); 
-    }, 1000);
  },
 
 
