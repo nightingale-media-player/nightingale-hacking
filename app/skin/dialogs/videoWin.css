@@ -49,12 +49,6 @@ spacer {
 }
 
 /** TODO rm background image from this file **/
-#video_window sb-sys-titlebar {
-  min-height:22px;
-  background-image: url('chrome://songbird/skin/window/bg-title-bar.png');
-  background-repeat:repeat-x;
-  background-position:center top;
-}
 
 #video_window #video-box {
   background-color: black;

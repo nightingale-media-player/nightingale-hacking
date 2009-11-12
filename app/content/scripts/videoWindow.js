@@ -64,6 +64,8 @@ var videoWindowController = {
   
   _videoBox: null,
   _videoElement: null,
+
+  _osdService: null,
   
   //////////////////////////////////////////////////////////////////////////////
   // Getters/Setters
@@ -122,7 +124,12 @@ var videoWindowController = {
     this._mediacoreManager = 
       Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
         .getService(Ci.sbIMediacoreManager);
-    
+
+    // Inform the OSD control service that a video window is opening.
+    this._osdService = Cc["@songbirdnest.com/mediacore/osd-control-service;1"]
+                         .getService(Ci.sbIOSDControlService);
+    this._osdService.onVideoWindowOpened(window);
+
     this._mediacoreManager.addListener(this);
     
     try {
@@ -180,6 +187,9 @@ var videoWindowController = {
     this._contextMenuListener = null;
     
     this._actualSizeDataRemote.unbind();
+
+    this._osdService.onVideoWindowClosed();
+    this._osdService = null;
     
     this._mediacoreManager.removeListener(this);
     this._mediacoreManager = null;
@@ -331,10 +341,10 @@ var videoWindowController = {
 
     log("Final Delta Width (With aspect ratio compensation): " + deltaWidth);
     log("Final Delta Height (With aspect ratio compensation): " + deltaHeight);
-    
+
     // Resize it!
     window.resizeBy(deltaWidth, deltaHeight);
-    
+
     log("New Video Element Width: " + boxObject.width);
     log("New Video Element Height: " + boxObject.height);
   },
@@ -427,6 +437,9 @@ var videoWindowController = {
   },
   
   _onResize: function vwc__onResize(aEvent) {
+    // Inform the OSD service that we are resizing.
+    this._osdService.onVideoWindowResized();
+
     // Any resize by the user disables actual size except when the resize event
     // is sent because the window is being shown for the first time, or we are
     // attempting to size it using the sizing hint.

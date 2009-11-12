@@ -60,4 +60,7 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
 
 IS_COMPONENT = 1
 
+SONGBIRD_COMPONENTS = $(srcdir)/sbOSDControlService.js \
+                      $(NULL)
+
 include $(topsrcdir)/build/rules.mk

@@ -53,6 +53,7 @@ XPIDL_SRCS = sbIMediacore.idl \
              sbIMediacoreVotingChain.idl \
              sbIMediacoreVotingParticipant.idl \
              sbIVideoBox.idl \
+             sbIOSDControlService.idl \
              $(NULL)
 
 XPIDL_MODULE = sbMediacoreBase.xpt
