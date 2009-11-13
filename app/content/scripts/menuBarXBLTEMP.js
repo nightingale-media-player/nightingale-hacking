@@ -135,6 +135,9 @@ function doMenu( command, event ) {
     case "menuitem_control_repx":
       gMM.sequencer.repeatMode = gMM.sequencer.MODE_REPEAT_NONE;
     break;
+    case "menuitem_control_jumpto":
+      toggleJumpTo();
+    break;
     case "menuitem_control_stop":
       gMM.playbackControl.stop();
     break;

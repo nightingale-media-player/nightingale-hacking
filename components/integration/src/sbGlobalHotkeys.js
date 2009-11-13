@@ -371,15 +371,9 @@ sbDefaultGlobalHotkeyService.prototype =
     SBDataSetStringValue("globalhotkey.8.key.readable",    "stop");
     SBDataSetStringValue("globalhotkey.8.action",          "playback.stop");
 
-/*ZZZ*/
-if (0) {
-/*ZZZ*/
     SBDataSetStringValue("globalhotkey.9.key",            "meta-$74");
     SBDataSetStringValue("globalhotkey.9.key.readable",   metaKey + "-J");
     SBDataSetStringValue("globalhotkey.9.action",         "jumpto.open");
-/*ZZZ*/
-}
-/*ZZZ*/
   },
   
   /**
