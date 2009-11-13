@@ -26,7 +26,7 @@
 //
 */
 
-#import "SBiTunesLibrary.h"
+#import "sbiTunesLibrary.h"
 
 #import <Foundation/Foundation.h>
 #import "SBNSString+Utils.h"
