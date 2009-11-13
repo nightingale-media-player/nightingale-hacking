@@ -41,10 +41,10 @@ CMM_EXTRA_INCLUDES = $(DEPTH)/components/integration/public \
                      $(DEPTH)/components/mediacore/base/public \
                      $(DEPTH)/components/library/base/public \
                      $(topsrcdir)/components/property/src \
-                     $(topsrcdir)/components/integration/src/win32 \
                      $(topsrcdir)/components/devicesobsolete/base/src \
                      $(topsrcdir)/components/devicesobsolete/cd/src \
                      $(MOZSDK_INCLUDE_DIR)/dom \
+                     $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                      $(MOZSDK_INCLUDE_DIR)/gfx \
                      $(MOZSDK_INCLUDE_DIR)/intl \
                      $(MOZSDK_INCLUDE_DIR)/xultmpl \
@@ -61,8 +61,10 @@ CMM_SRCS = NativeWindowFromNode.mm \
            sbNativeWindowManager.mm \
            IntegrationComponent.mm \
            WindowCloak.mm \
+           sbBaseScreenSaverSuppressor.mm \
            sbMacAppDelegate.mm \
            sbMacWindowMoveService.mm \
+           sbScreenSaverSuppressor.mm \
            $(NULL)
 
 ifdef DEBUG

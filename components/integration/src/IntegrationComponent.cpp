@@ -40,6 +40,7 @@
 #include "macosx/sbNativeWindowManager.h"
 #include "macosx/sbMacAppDelegate.h"
 #include "macosx/sbMacWindowMoveService.h"
+#include "macosx/sbScreenSaverSuppressor.h"
 #else
 #include "linux/sbNativeWindowManager.h"
 #endif
@@ -84,6 +85,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbWindowMoveService, Init);
 #ifdef XP_MACOSX
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMacAppDelegateManager, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMacWindowMoveService, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbScreenSaverSuppressor, Init);
 #endif
 
 static nsModuleComponentInfo sbIntegration[] =
@@ -166,6 +168,13 @@ static nsModuleComponentInfo sbIntegration[] =
     SB_WINDOWMOVE_SERVICE_CID,
     SB_WINDOWMOVE_SERVICE_CONTRACTID,
     sbMacWindowMoveServiceConstructor
+  },
+  {
+    SB_BASE_SCREEN_SAVER_SUPPRESSOR_CLASSNAME,
+    SB_BASE_SCREEN_SAVER_SUPPRESSOR_CID,
+    SB_BASE_SCREEN_SAVER_SUPPRESSOR_CONTRACTID,
+    sbScreenSaverSuppressorConstructor,
+    sbScreenSaverSuppressor::RegisterSelf
   },
 #endif
 };
