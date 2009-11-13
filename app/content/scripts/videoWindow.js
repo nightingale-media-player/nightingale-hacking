@@ -1,27 +1,25 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 /**
@@ -157,17 +155,24 @@ var videoWindowController = {
     this._ignoreResize = true;
     
     var self = this;
+
+    // Resize hook:
     this._resizeListener = function(aEvent) {
       self._onResize(aEvent);
     };
-    
     window.addEventListener("resize", this._resizeListener, false);
+
+    // Mouse move hook:
+    this._mouseListener = function(aEvent) {
+      self._onMouseMoved(aEvent);
+    };
+    window.addEventListener("mousemove", this._mouseListener, false);
     
+    // Context menu hook:
     this._contextMenuListener = function(aEvent) {
     //  alert("Context menu requested");
       return self._onContextMenu(aEvent);
     };
-    
     window.addEventListener("contextmenu", this._contextMenuListener, false);
     
     this._contextMenu = document.getElementById("video-context-menu");
@@ -458,6 +463,10 @@ var videoWindowController = {
     
     // Actual size is now disabled.
     this._actualSizeDataRemote.boolValue = false;
+  },
+
+  _onMouseMoved: function vwc__onMouseMoved(aEvent) {
+    this._osdService.showOSDControls();
   },
   
   _onToggleActualSize: function vwc__onToggleActualSize() {

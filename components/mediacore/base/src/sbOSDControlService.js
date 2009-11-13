@@ -33,11 +33,13 @@ if (typeof(Cu) == "undefined")
 if (typeof(Cr) == "undefined")
   var Cr = Components.results;
 
+const SB_OSDHIDE_DELAY = 3000;
+
 
 //==============================================================================
 //
-// @interface
-// @brief
+// @interface sbOSDControlService
+// @brief Service to provide on-screen-display controls for video playback.
 //
 //==============================================================================
 
@@ -48,6 +50,8 @@ function sbOSDControlService()
   this._nativeWinMgr =
     Cc["@songbirdnest.com/integration/native-window-manager;1"]
       .getService(Ci.sbINativeWindowManager);
+
+  this._timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
 }
 
 sbOSDControlService.prototype =
@@ -56,6 +60,7 @@ sbOSDControlService.prototype =
   _osdWindow:    null,
   _cloakService: null,
   _nativeWinMgr: null,
+  _timer:        null,
 
 
   _recalcOSDPosition: function() {
@@ -126,6 +131,11 @@ sbOSDControlService.prototype =
     }
 
     this._recalcOSDPosition();
+
+    // Set the timer for hiding.
+    this._timer.initWithCallback(this,
+                                 SB_OSDHIDE_DELAY,
+                                 Ci.nsITimer.TYPE_ONE_SHOT);
   },
 
   //----------------------------------------------------------------------------
@@ -141,7 +151,14 @@ sbOSDControlService.prototype =
 
     this._recalcOSDPosition();
     this.showOSDControls();
-  }
+  },
+
+  //----------------------------------------------------------------------------
+  // nsITimerCallback
+
+  notify: function(aTimer) {
+    this.hideOSDControls();
+  },
 };
 
 //------------------------------------------------------------------------------
@@ -156,7 +173,9 @@ sbOSDControlService.prototype.classID =
 sbOSDControlService.prototype.contractID =
   "@songbirdnest.com/mediacore/osd-control-service;1";
 sbOSDControlService.prototype.QueryInterface =
-  XPCOMUtils.generateQI([Ci.sbIOSDControlService, Ci.sbIWindowMoveListener]);
+  XPCOMUtils.generateQI([Ci.sbIOSDControlService,
+                         Ci.sbIWindowMoveListener,
+                         Ci.nsITimerCallback]);
 
 function NSGetModule(compMgr, fileSpec)
 {
