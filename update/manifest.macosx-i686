@@ -167,6 +167,7 @@
 ./components/sbMockCDDeviceService.js
 ./components/sbMoveRenameHelper.js
 ./components/sbMozVariant.dylib
+./components/sbOSDControlService.js
 ./components/sbParserError.js
 ./components/sbPlaybackHistoryService.dylib
 ./components/sbPlaybackHistoryService.xpt

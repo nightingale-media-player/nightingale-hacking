@@ -170,6 +170,7 @@
 ./components/sbMockCDDevice.xpt
 ./components/sbMockCDDeviceService.js
 ./components/sbMoveRenameHelper.js
+./components/sbOSDControlService.js
 ./components/sbMozVariant.dll
 ./components/sbParserError.js
 ./components/sbPlaybackHistoryService.dll
