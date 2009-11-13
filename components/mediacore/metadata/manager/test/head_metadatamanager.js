@@ -203,7 +203,7 @@ function getTempFolder() {
  */
 function removeTempFolder() {
   if (gTempFolder && gTempFolder.exists()) {
-   // gTempFolder.remove(true);
+    gTempFolder.remove(true);
   } else {
     log("\n\n\nMetadata Manager Test may not have performed cleanup.  Temp files may exist.\n\n\n");
   }
