@@ -148,7 +148,7 @@ function testRead() {
                    "MPEG4_Audio_Apple_Lossless.m4a"];
   var noArtFiles = [ "MP3_NoTags.mp3",
                      "MPEG4_Audio_Apple_Lossless_NoArt.m4a",
-                     "Ogg_Vorbis.ogg",
+                     // "Ogg_Vorbis.ogg",
                      "TrueAudio.tta",
                      "FLAC.flac"];
 

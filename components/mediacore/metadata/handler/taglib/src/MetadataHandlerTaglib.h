@@ -90,7 +90,8 @@
 #include <mpegfile.h>
 #include <vorbisfile.h>
 #include <id3v2tag.h>
-#include <mp4itunestag.h>
+#include <mp4file.h>
+#include <mp4tag.h>
 #include <apetag.h>
 #include <tag.h>
 #include <tfile.h>

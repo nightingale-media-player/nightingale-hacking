@@ -86,6 +86,7 @@
 #include <mpegfile.h>
 #include <urllinkframe.h>
 #include <mp4file.h>
+#include <asffile.h>
 #include <vorbisfile.h>
 
 /* C++ std imports. */
@@ -213,21 +214,25 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Vote(
         || (_url.Find(".mp3", PR_TRUE) != -1)
         || (_url.Find(".m4a", PR_TRUE) != -1)
         || (_url.Find(".m4p", PR_TRUE) != -1)
+        || (_url.Find(".m4v", PR_TRUE) != -1)
+        || (_url.Find(".m4r", PR_TRUE) != -1)
+        || (_url.Find(".aac", PR_TRUE) != -1)
         || (_url.Find(".mp4", PR_TRUE) != -1)
         || (_url.Find(".wv", PR_TRUE) != -1)
         || (_url.Find(".spx", PR_TRUE) != -1)
         || (_url.Find(".tta", PR_TRUE) != -1)
         || (_url.Find(".oga", PR_TRUE) != -1)
-        || (_url.Find(".ogg", PR_TRUE) != -1))
+        || (_url.Find(".ogg", PR_TRUE) != -1)
+        || (_url.Find(".wma", PR_TRUE) != -1)
+        || (_url.Find(".wmv", PR_TRUE) != -1)
+        || (_url.Find(".wm", PR_TRUE)  != -1)
+        || (_url.Find(".asf", PR_TRUE) != -1))
     {
         vote = 100;
     }
 
     /* Check for unsupported files. */
     else if (   (_url.Find(".avi", PR_TRUE) != -1)
-             || (_url.Find(".wma", PR_TRUE) != -1)
-             || (_url.Find(".wmv", PR_TRUE) != -1)
-             || (_url.Find(".asf", PR_TRUE) != -1)
              || (_url.Find(".wav", PR_TRUE) != -1))
     {
         vote = -1;
@@ -709,7 +714,8 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
           WriteOGGImage(oggFile, imageType, imageSpec);
         }
       } else if (fileExt.EqualsLiteral("mp4") ||
-                 fileExt.EqualsLiteral("m4a")) {
+                 fileExt.EqualsLiteral("m4a") ||
+                 fileExt.EqualsLiteral("m4v")) {
         LOG(("Writing MPEG-4 specific metadata"));
         // Write MP4 specific metadata
         TagLib::MP4::File* oggFile = static_cast<TagLib::MP4::File*>(f.file());
@@ -724,7 +730,27 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
           PRInt32 imageType = METADATA_IMAGE_TYPE_FRONTCOVER;
           WriteMP4Image(oggFile, imageType, imageSpec);
         }
-      }
+      } else if (fileExt.EqualsLiteral("asf") ||
+                 fileExt.EqualsLiteral("wmv") ||
+                 fileExt.EqualsLiteral("wma")) {
+          LOG(("Writing ASF specific metadata"));
+          // Write MP4 specific metadata
+          TagLib::ASF::File* asfFile = static_cast<TagLib::ASF::File*>(f.file());
+
+/*          // Write Image Data
+          nsAutoString imageSpec;
+          result = mpMetadataPropertyArray->GetPropertyValue(
+            NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
+            imageSpec
+          );
+          if (NS_SUCCEEDED(result)) {
+            PRInt32 imageType = METADATA_IMAGE_TYPE_FRONTCOVER;
+            WriteMP4Image(oggFile, imageType, imageSpec);
+          }*/
+        }
+
+      
+      
       
       // Attempt to save the metadata
       if (f.save()) {
@@ -1316,8 +1342,15 @@ nsresult sbMetadataHandlerTaglib::WriteMP4Image(
     data.setData((const char*)imageData, imageDataSize);
   }
 
-  static_cast<TagLib::MP4::Tag*>(aMP4File->tag())->setCover(data);
-  
+  TagLib::MP4::Tag* tag = static_cast<TagLib::MP4::Tag*>(aMP4File->tag());
+
+  MP4::CoverArtList coverArtList;
+  /// XXXTODO: PNG/JPG determination
+  coverArtList.append(MP4::CoverArt(MP4::CoverArt::JPEG, data));
+  tag->itemListMap()["covr"] = coverArtList;
+
+  tag->save();
+    
   return NS_OK;
 }
 
@@ -1388,12 +1421,22 @@ nsresult sbMetadataHandlerTaglib::ReadImageITunes(TagLib::MP4::Tag  *aTag,
   /*
    * Extract the requested image from the metadata
    */
-  if (!aTag->cover().isNull()) {
-    *aDataLen = aTag->cover().size();
+  MP4::ItemListMap::Iterator itr = aTag->itemListMap().begin();
+        
+  if (aTag->itemListMap().contains("covr")) {
+    MP4::CoverArtList coverArtList = aTag->itemListMap()["covr"].toCoverArtList();
+
+    if (coverArtList.size() == 0) {
+      return NS_OK;
+    }    
+    
+    MP4::CoverArt ca = coverArtList[0];
+    
+    *aDataLen = coverArtList[0].data().size();
 
     sbAutoNSTypePtr<PRUint8> data =
-      static_cast<PRUint8 *>(nsMemory::Clone(aTag->cover().data(), *aDataLen));
-    NS_ENSURE_TRUE(data, NS_ERROR_OUT_OF_MEMORY);
+      static_cast<PRUint8 *>(nsMemory::Clone(coverArtList[0].data().data(), *aDataLen));
+    NS_ENSURE_TRUE(data, NS_ERROR_OUT_OF_MEMORY); 
 
     { // Scope for unlock
 
