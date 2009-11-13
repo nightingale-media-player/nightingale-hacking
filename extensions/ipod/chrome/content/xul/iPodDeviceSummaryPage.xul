@@ -212,6 +212,12 @@
             return;
         }
 
+        // Get the device node and set the tab title if available.
+        var node = this._getDeviceNode(this._device);
+        if (node) {
+          document.title = node.displayName;
+        }
+
         /* Get the device manager service and */
         /* listen for device manager events.  */
         this._deviceManagerSvc =
@@ -320,6 +326,26 @@
                               .getService(Ci.sbIDeviceManager2);
         try {
           return deviceManager.getDevice(Components.ID(aDeviceID));
+        } catch (ex) {
+          Cu.reportError(ex);
+        }
+
+        return null;
+      },
+
+      /**
+       * \brief Get the device node for the device specified by aDevice.
+       *
+       * \param aDevice       Device
+       *
+       * \return sbIServicePaneNode device node.
+       */
+
+      _getDeviceNode: function deviceSummary__getDeviceNode(aDevice) {
+        var deviceServicePane = Cc['@songbirdnest.com/servicepane/device;1']
+                            .getService(Ci.sbIDeviceServicePaneService);
+        try {
+          return deviceServicePane.getNodeForDevice(aDevice);
         } catch (ex) {
           Cu.reportError(ex);
         }

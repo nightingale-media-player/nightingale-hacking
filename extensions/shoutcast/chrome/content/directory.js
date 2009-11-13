@@ -60,6 +60,12 @@ var RadioDirectory = {
 	radioLib : null,
 
 	init : function() {
+		var servicePaneStrings = Cc["@mozilla.org/intl/stringbundle;1"]
+			.getService(Ci.nsIStringBundleService)
+			.createBundle("chrome://shoutcast-radio/locale/overlay.properties");
+			// Set the tab title
+		document.title = servicePaneStrings.GetStringFromName("radioTabTitle");
+
 		// the # of times the directory is loaded (corresponds to the # of
 		// times the servicepane is clicked, though also works if the user
 		// for some reason or another bookmarks it separately)
@@ -582,8 +588,8 @@ function findRadioNode(node) {
 	if (node.isContainer) {
 		var children = node.childNodes;
 		while (children.hasMoreElements()) {
-			var child =
-					children.getNext().QueryInterface(Ci.sbIServicePaneNode);
+			var child = children.getNext()
+				.QueryInterface(Ci.sbIServicePaneNode);
 			var result = findRadioNode(child);
 			if (result != null)
 				return result;

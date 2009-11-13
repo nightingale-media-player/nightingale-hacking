@@ -59,9 +59,12 @@ interface sbILibraryServicePaneService : nsISupports {
    * node appropriately, show it by changing the hidden attribute to false
    * (node.hidden = false).
    *
-   * The result is a service pane folder node, containing video, music, etc.
-   * sub-nodes.  You may wish to hide irrelevant nodes before showing the parent
-   * node.
+   * For the main library, the result is a service pane folder node, containing
+   * video, music, etc. sub-nodes.  You may wish to hide irrelevant nodes before
+   * showing the parent node.
+   *
+   * For other libraries, the result is the corresponding library node. No
+   * sub-nodes will be created.
    *
    * \param aLibrary an sbILibrary.
    * \return a service pane node that represents the given library, null

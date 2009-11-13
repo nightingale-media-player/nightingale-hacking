@@ -55,6 +55,12 @@ ConcertTicketing.unload = function() {
 }
 
 ConcertTicketing.init = function() {
+	// Set the tab title
+	var servicePaneStr = Cc["@mozilla.org/intl/stringbundle;1"]
+		.getService(Ci.nsIStringBundleService)
+		.createBundle("chrome://concerts/locale/overlay.properties");
+	document.title = servicePaneStr.GetStringFromName("servicePaneName");
+
 	var self = this;
 
 	if (typeof(Ci.sbIMediacoreManager) != "undefined")
