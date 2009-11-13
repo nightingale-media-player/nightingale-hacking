@@ -69,6 +69,23 @@ sbWatchFolderPrefMgr::Init(sbWatchFolderService *aWFService)
 }
 
 nsresult
+sbWatchFolderPrefMgr::GetIsUnitTestsRunning(PRBool *aOutIsRunning)
+{
+  NS_ENSURE_ARG_POINTER(aOutIsRunning);
+  *aOutIsRunning = PR_FALSE;
+
+  nsresult rv;
+  nsCOMPtr<nsIPrefBranch2> prefBranch =
+    do_GetService("@mozilla.org/preferences-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = prefBranch->GetBoolPref("songbird.__testmode__", aOutIsRunning);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
 sbWatchFolderPrefMgr::OnPrefChanged(const nsAString & aPrefName,
                                     nsIPrefBranch2 *aPrefBranch)
 {

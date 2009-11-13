@@ -561,10 +561,18 @@ sbWatchFolderService::HandleSessionLoadError()
       "HandleSessionLoadError() not called on main thread!");
   NS_ENSURE_STATE(mFileSystemWatcher);
 
+  // If the unit tests are running, don't show the dialog (Don't bother
+  // checking result of call too).
+  nsresult rv;
+  PRBool isUnitTestsRunning = PR_FALSE;
+  mPrefMgr->GetIsUnitTestsRunning(&isUnitTestsRunning);
+  if (isUnitTestsRunning) {
+    return NS_OK;
+  }
+
   // If this method gets called, than the watcher could not load the stored
   // session. The tree will need to be re-initialized, this time without
   // loading a session.
-  nsresult rv;
   if (!mFileSystemWatcherGUID.IsEmpty()) {
     // Attempt the remove the session data. Don't bother returning the result
     // if it fails, just warn about it.
@@ -662,6 +670,15 @@ sbWatchFolderService::HandleSessionLoadError()
 nsresult
 sbWatchFolderService::HandleRootPathMissing()
 {
+  // If the unit tests are running, don't show the dialog (Don't bother
+  // checking result of call too).
+  nsresult rv;
+  PRBool isUnitTestsRunning = PR_FALSE;
+  mPrefMgr->GetIsUnitTestsRunning(&isUnitTestsRunning);
+  if (isUnitTestsRunning) {
+    return NS_OK;
+  }
+
   sbStringBundle bundle;
   nsString dialogTitle = bundle.Get("watch_folder.root_path_missing.title");
 
@@ -670,7 +687,6 @@ sbWatchFolderService::HandleRootPathMissing()
   nsString dialogText =
     bundle.Format("watch_folder.root_path_missing.text", params);
 
-  nsresult rv;
   nsCOMPtr<nsIDOMWindow> songbirdWindow;
   rv = GetSongbirdWindow(getter_AddRefs(songbirdWindow));
   NS_ENSURE_SUCCESS(rv, rv);
