@@ -65,7 +65,7 @@
         >
           <xul:treecols sbid="treeColumns" 
                         type="sb-contextpicker" 
-                        xbl:inherits="class"/>
+                        xbl:inherits="class,filter-category-value"/>
           <xul:treechildren ondblclick="_onFilterListDblClick(event);" />
         </xul:tree>
       </xul:stack>
@@ -636,6 +636,11 @@
         <parameter name="aPopup"/>
         <body>
           <![CDATA[
+            const Cc = Components.classes;
+            const Ci = Components.interfaces;
+
+            Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm", this);
+
             while (aPopup.childNodes.length)
               aPopup.removeChild(aPopup.firstChild);
 
@@ -648,17 +653,43 @@
             var filterlist = node;
 
             // Get the property info for the property
-            var pm = Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
-                            .getService(Components.interfaces.sbIPropertyManager);
+            var pm = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                       .getService(Ci.sbIPropertyManager);
 
-            var cm = Components.classes["@mozilla.org/categorymanager;1"]
-                               .getService(Components.interfaces.nsICategoryManager);
-            var propEnumerator = cm.enumerateCategory("filter-list-picker-properties");
             var props = [];
-            while (propEnumerator.hasMoreElements()) {
-              var propertyID = propEnumerator.getNext()
-                                             .QueryInterface(Components.interfaces.nsISupportsCString);
-              props.push(pm.getPropertyInfo(propertyID));
+
+            if (this.parentNode.hasAttribute("filter-properties")) {
+              // there's an attribute of properties to use set, use that
+              // as an override
+              let propNames = this.parentNode.getAttribute("filter-properties").split(/\s+/);
+              for (let propertyId in Iterator(propNames)) {
+                props.push(pm.getPropertyInfo(propertyId));
+              }
+            }
+            else {
+              // look up via the category manager
+              let cm = Cc["@mozilla.org/categorymanager;1"]
+                         .getService(Ci.nsICategoryManager);
+              let propCategory = "filter-list-picker-properties";
+              if (this.parentNode.hasAttribute("filter-category")) {
+                propCategory = this.parentNode.getAttribute("filter-category");
+              }
+
+              let categoryValue = "1";
+              if (this.parentNode.hasAttribute("filter-category-value")) {
+                categoryValue = this.parentNode.getAttribute("filter-category-value");
+              }
+
+              let propEnumerator = cm.enumerateCategory(propCategory);
+              for (let propertyId in this.ArrayConverter.JSEnum(propEnumerator)) {
+                propertyId.QueryInterface(Ci.nsISupportsCString);
+                let types = cm.getCategoryEntry(propCategory, propertyId.data);
+                if (types == "1" || categoryValue == "1" ||
+                    types.split(/\s+/).indexOf(categoryValue) != -1)
+                {
+                  props.push(pm.getPropertyInfo(propertyId));
+                }
+              }
             }
 
             props.sort(function(a, b) {

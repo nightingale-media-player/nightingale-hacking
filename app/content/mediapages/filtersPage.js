@@ -25,14 +25,10 @@
  */
 
 
-if (typeof(Cc) == "undefined")
-  var Cc = Components.classes;
-if (typeof(Ci) == "undefined")
-  var Ci = Components.interfaces;
-if (typeof(Cu) == "undefined")
-  var Cu = Components.utils;
-if (typeof(Cr) == "undefined")
-  var Cr = Components.results;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cu = Components.utils;
+var Cr = Components.results;
 
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
@@ -289,6 +285,26 @@ window.mediaPage = {
       var filterlist = document.createElementNS(XUL_NS, "sb-filterlist");
       filterlist.setAttribute("enableColumnDrag", "false");
       filterlist.setAttribute("flex", "1");
+
+      if (this.mediaListView instanceof Ci.sbIFilterableMediaListView) {
+        let constraint = this.mediaListView.filterConstraint;
+        if (constraint) {
+          for (let group in ArrayConverter.JSEnum(constraint.groups)) {
+            if (!(group instanceof Ci.sbILibraryConstraintGroup )) {
+              continue;
+            }
+            if (!group.hasProperty(SBProperties.contentType)) {
+              continue;
+            }
+            let types =
+              ArrayConverter.JSArray(group.getValues(SBProperties.contentType));
+            if (types.length == 1) {
+              filterlist.setAttribute("filter-category-value", types[0]);
+              break;
+            }
+          }
+        }
+      }
 
       parent.appendChild(filterlist);
       

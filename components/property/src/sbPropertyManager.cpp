@@ -83,19 +83,23 @@ static PRLogModuleInfo* gPropManLog = nsnull;
   #define SB_STRING_BUNDLE_CHROME_URL "chrome://songbird/locale/songbird.properties"
 #endif
 
-const char* sFilterListPickerProperties[] = {
-  SB_PROPERTY_ALBUMNAME,
-  SB_PROPERTY_ALBUMARTISTNAME,
-  SB_PROPERTY_ARTISTNAME,
-  SB_PROPERTY_GENRE,
-  SB_PROPERTY_YEAR,
-  SB_PROPERTY_RATING,
-  SB_PROPERTY_COMPOSERNAME,
-  SB_PROPERTY_BITRATE,
-  SB_PROPERTY_SAMPLERATE,
-  SB_PROPERTY_BPM,
-};
 
+const struct {
+  const char* propName;
+  const char* types;
+} sFilterListPickerProperties[] = {
+  { SB_PROPERTY_ALBUMNAME,       "audio video" },
+  { SB_PROPERTY_ALBUMARTISTNAME, "audio video" },
+  { SB_PROPERTY_ARTISTNAME,      "audio video" },
+  { SB_PROPERTY_GENRE,           "audio video" },
+  { SB_PROPERTY_YEAR,            "audio video" },
+  { SB_PROPERTY_RATING,          "audio video" },
+  { SB_PROPERTY_COMPOSERNAME,    "audio      " },
+  { SB_PROPERTY_BITRATE,         "audio      " },
+  { SB_PROPERTY_SAMPLERATE,      "audio      " },
+  { SB_PROPERTY_BPM,             "audio      " },
+  { SB_PROPERTY_SHOWNAME,        "      video" },
+};
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyManager,
                               sbIPropertyManager)
@@ -1279,9 +1283,10 @@ sbPropertyManager::RegisterFilterListPickerProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 i = 0; i < NS_ARRAY_LENGTH(sFilterListPickerProperties); i++) {
+    // due to mozbug 364864 this never gets persisted in compreg.dat :(
     rv = cm->AddCategoryEntry("filter-list-picker-properties",
-                              sFilterListPickerProperties[i],
-                              "1",
+                              sFilterListPickerProperties[i].propName,
+                              sFilterListPickerProperties[i].types,
                               PR_FALSE,
                               PR_TRUE,
                               nsnull);
