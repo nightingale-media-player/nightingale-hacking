@@ -86,7 +86,13 @@ function SBInitialize()
     // See bug #5185.
     setTimeout("setMinMaxCallback()", 25);
 
+/*ZZZ*/
+if (0) {
+/*ZZZ*/
     initJumpToFileHotkey();
+/*ZZZ*/
+}
+/*ZZZ*/
 
     if (window.addEventListener)
       window.addEventListener("keydown", checkQuitKey, true);
@@ -109,8 +115,14 @@ function SBUninitialize()
   window.gServicePane = null;
   window.gBrowser = null;
 
+/*ZZZ*/
+if (0) {
+/*ZZZ*/
   resetJumpToFileHotkey();
   closeJumpTo();
+/*ZZZ*/
+}
+/*ZZZ*/
 
   resetMinMaxCallback();
 }

@@ -57,6 +57,9 @@ NOARCH_EXTENSIONS = shoutcast \
                     7digital \
                     albumartlastfm \
                     $(NULL)
+#ZZZ
+NOARCH_EXTENSIONS += jumpto
+#ZZZ
 
 # Right now, all of these addons are so-called "noarch" addons; because
 # of this, we only want to build them on one platform if we're an official
