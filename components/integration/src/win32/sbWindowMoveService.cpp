@@ -85,18 +85,20 @@ CallListenerMoveStopped(HWND aWnd,
 /*static*/ LRESULT CALLBACK 
 sbWindowMoveService::CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
+  // This is a message we shouldn't process. See SetWindowHookEx docs
+  // on MSDN for more information about how to process window hook
+  // messages.
+  if(nCode < 0) {
+    return CallNextHookEx(NULL, nCode, wParam, lParam);
+  }
+
   PCWPSTRUCT msg = reinterpret_cast<PCWPSTRUCT>(lParam);
   
   sbWindowMoveService *self = 
     reinterpret_cast<sbWindowMoveService *>(::GetPropW(msg->hwnd, PROP_WMS_INST));
-
-  HHOOK hookHandle = GetHookForWindow(msg->hwnd, self->mHooks);
-
-  // This isn't a message we shouldn't process. See SetWindowHookEx docs
-  // on MSDN for more information about how to process window hook
-  // messages.
-  if(nCode < 0) {
-    return CallNextHookEx(hookHandle, nCode, wParam, lParam);
+  if (!self) {
+    // This wasn't a window that we're interested in, don't do anything
+    return CallNextHookEx(NULL, nCode, wParam, lParam);
   }
 
   if(msg->message == WM_MOVING ||
@@ -125,7 +127,7 @@ sbWindowMoveService::CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
     }
   }
 
-  return CallNextHookEx(hookHandle, nCode, wParam, lParam);
+  return CallNextHookEx(NULL, nCode, wParam, lParam);
 }
 
 PRBool 
