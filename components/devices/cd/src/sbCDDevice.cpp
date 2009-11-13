@@ -486,6 +486,9 @@ sbCDDevice::ReqProcessingStop()
   // Set the abort requests flag.
   PR_AtomicSet(&mAbortRequests, 1);
 
+  // Clear requests.
+  ClearRequests();
+
   // Notify the request thread of the abort.
   {
     nsAutoMonitor monitor(mReqWaitMonitor);

@@ -720,6 +720,8 @@ nsresult sbDeviceManager::QuitApplicationGranted()
   }
 
   // Ok now we can shutdown
+  this->PrepareShutdown();
+
   return NS_OK;
 }
 
