@@ -362,8 +362,10 @@ sbMediacoreManager::Shutdown()
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mDataRemoteEqualizerBands.EnumerateRead(sbMediacoreManager::EnumerateIntoArrayUint32Key,
-                                          mutableArray.get());
+  if (mDataRemoteEqualizerBands.IsInitialized()) {
+    mDataRemoteEqualizerBands.EnumerateRead(sbMediacoreManager::EnumerateIntoArrayUint32Key,
+                                            mutableArray.get());
+  }
 
   PRUint32 length = 0;
   rv = mutableArray->GetLength(&length);
@@ -750,6 +752,7 @@ sbMediacoreManager::GetAndEnsureEQBandHasDataRemote(PRUint32 aBandIndex,
 {
   NS_ENSURE_ARG_RANGE(aBandIndex, 0, SB_EQUALIZER_DEFAULT_BAND_COUNT);
   NS_ENSURE_ARG_POINTER(aRemote);
+  NS_ENSURE_TRUE(mDataRemoteEqualizerBands.IsInitialized(), NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<sbIDataRemote> bandRemote;
@@ -769,6 +772,7 @@ nsresult
 sbMediacoreManager::SetAndEnsureEQBandHasDataRemote(sbIMediacoreEqualizerBand *aBand)
 {
   NS_ENSURE_ARG_POINTER(aBand);
+  NS_ENSURE_TRUE(mDataRemoteEqualizerBands.IsInitialized(), NS_ERROR_NOT_INITIALIZED);
 
   PRUint32 bandIndex = 0, bandFrequency = 0;
   double bandGain = 0.0;
@@ -800,6 +804,7 @@ sbMediacoreManager::CreateDataRemoteForEqualizerBand(PRUint32 aBandIndex,
 {
   NS_ENSURE_ARG_RANGE(aBandIndex, 0, SB_EQUALIZER_DEFAULT_BAND_COUNT);
   NS_ENSURE_ARG_POINTER(aRemote);
+  NS_ENSURE_TRUE(mDataRemoteEqualizerBands.IsInitialized(), NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
 
