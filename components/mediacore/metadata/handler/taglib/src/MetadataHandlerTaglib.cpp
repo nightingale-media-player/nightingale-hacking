@@ -44,7 +44,7 @@
  ******************************************************************************/
 #ifdef _WIN32
 // Temporary fix.
-extern "C" const double __HUGE = 12345678;
+extern "C" const double _HUGE = 12345678;
 #endif
 
 /* Local file imports. */
