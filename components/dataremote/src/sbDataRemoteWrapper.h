@@ -1,27 +1,25 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 #ifndef nsDataRemoteWrapper_h__
@@ -50,7 +48,8 @@
 #define NS_FORWARD_SOME_SBIDATAREMOTE_METHODS(_to) \
   NS_SCRIPTABLE NS_IMETHOD Init(const nsAString & aKey, const nsAString & aRoot) { return !_to ? NS_ERROR_NULL_POINTER : _to->Init(aKey, aRoot); } \
   NS_SCRIPTABLE NS_IMETHOD BindProperty(nsIDOMElement *aElement, const nsAString & aProperty, PRBool aIsBool, PRBool aIsNot, const nsAString & aEvalString) { return !_to ? NS_ERROR_NULL_POINTER : _to->BindProperty(aElement, aProperty, aIsBool, aIsNot, aEvalString); } \
-  NS_SCRIPTABLE NS_IMETHOD BindAttribute(nsIDOMElement *aElement, const nsAString & aProperty, PRBool aIsBool, PRBool aIsNot, const nsAString & aEvalString) { return !_to ? NS_ERROR_NULL_POINTER : _to->BindAttribute(aElement, aProperty, aIsBool, aIsNot, aEvalString); } 
+  NS_SCRIPTABLE NS_IMETHOD BindAttribute(nsIDOMElement *aElement, const nsAString & aProperty, PRBool aIsBool, PRBool aIsNot, const nsAString & aEvalString) { return !_to ? NS_ERROR_NULL_POINTER : _to->BindAttribute(aElement, aProperty, aIsBool, aIsNot, aEvalString); } \
+  NS_SCRIPTABLE NS_IMETHOD DeleteBranch() { return !_to ? NS_ERROR_NULL_POINTER : _to->DeleteBranch(); }
 
 
 /******************************************************************************

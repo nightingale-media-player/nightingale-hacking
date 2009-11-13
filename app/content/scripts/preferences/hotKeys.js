@@ -1,28 +1,26 @@
 /*
- //
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 var gHotkeysPane = {
 
@@ -43,10 +41,13 @@ var gHotkeysPane = {
   {
     var jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].getService(Components.interfaces.mozIJSSubScriptLoader);
     jsLoader.loadSubScript( "chrome://songbird/content/scripts/messageBox.js", this );
-    
+
     window.addEventListener("unload", onHotkeysUnload, true);
-    
-    this._binding_enabled = SBDataBindElementAttribute("globalhotkeys.enabled", "hotkeys.enabled", "checked", true);
+
+    this._hotkeyService = Cc["@songbirdnest.com/Songbird/HotkeyService;1"]
+                            .getService(Ci.sbIHotkeyService);
+
+    this._binding_enabled = SBDataBindElementAttribute(this._hotkeyService.hotkeysEnabledDRKey, "hotkeys.enabled", "checked", true);
 
     this._list = document.getElementById("hotkey.list");
     this._add = document.getElementById("hotkey.add");
@@ -63,27 +64,27 @@ var gHotkeysPane = {
     this.loadHotkeys();
     this.enableDisableElements();
   },
-  
+
   onUnload: function()
   {
     window.removeEventListener("unload", onHotkeysUnload, true);
     this._binding_enabled.unbind();
     this._binding_enabled = null;
   },
-  
-  loadActions: function() 
+
+  loadActions: function()
   {
     var menupopup = this._actionlist.firstChild;
     while (menupopup.childNodes.length>0) menupopup.removeChild(menupopup.childNodes[0]);
 
     var hotkeyActionsComponent = Components.classes["@songbirdnest.com/Songbird/HotkeyActions;1"];
     if (hotkeyActionsComponent) this._actions = hotkeyActionsComponent.getService(Components.interfaces.sbIHotkeyActions);
-    if (this._actions) 
+    if (this._actions)
     {
-      for (var i=0;i<this._actions.bundleCount;i++) 
+      for (var i=0;i<this._actions.bundleCount;i++)
       {
         var bundle = this._actions.enumBundle(i);
-        for (var j=0;j<bundle.actionCount;j++) 
+        for (var j=0;j<bundle.actionCount;j++)
         {
           var actionid = bundle.enumActionID(j);
           var actiondesc = bundle.enumActionLocaleDescription(j);
@@ -96,23 +97,24 @@ var gHotkeysPane = {
       this._actionlist.selectedItem = menupopup.childNodes[0];
     }
   },
- 
+
   loadHotkeys: function()
   {
-    var count = SBDataGetIntValue("globalhotkeys.count");
-    for (var i=0;i<count;i++) {
-      // Read hotkey binding from user preferences
-      var root = "globalhotkey." + i + ".";
-      var keycombo = SBDataGetStringValue(root + "key");
-      var keydisplay = SBDataGetStringValue(root + "key.readable");
-      var actionid = SBDataGetStringValue(root + "action");
+    var hotkeyConfigList = this._hotkeyService.getHotkeys();
+    for (var i = 0; i < hotkeyConfigList.length; i++) {
+      // Read hotkey config
+      var hotkeyConfig =
+            hotkeyConfigList.queryElementAt(i, Ci.sbIHotkeyConfiguration);
+      var keycombo = hotkeyConfig.key;
+      var keydisplay = hotkeyConfig.keyReadable;
+      var actionid = hotkeyConfig.action;
       var action = this._getLocalizedAction(actionid);
       // make list items accordingly
       this._addItem(keycombo, keydisplay, actionid, action, -1);
     }
     this.updateButtons();
   },
-  
+
   _getLocalizedAction: function(actionid)
   {
     var nodes = this._actionlist.firstChild.childNodes;
@@ -121,7 +123,7 @@ var gHotkeysPane = {
     }
     return actionid;
   },
-  
+
   _addItem: function(keycombo, keydisplay, actionid, action, replace)
   {
     this._tool.setHotkey(keycombo, keydisplay);
@@ -149,28 +151,31 @@ var gHotkeysPane = {
       this._list.appendChild(listitem);
     }
   },
-  
+
   saveHotkeys: function()
   {
-    // Save all hotkeys to prefs, extract them from the list itself
+    // Set all hotkeys, extract them from the list itself
+    var hotkeyConfigList = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                             .createInstance(Ci.nsIMutableArray);
     var n = this._list.getRowCount();
-    SBDataSetIntValue("globalhotkeys.count", n);
     for (var i=0;i<n;i++)
     {
-      var root = "globalhotkey." + i + ".";
+      var hotkeyConfig = Cc["@songbirdnest.com/Songbird/HotkeyConfiguration;1"]
+                           .createInstance(Ci.sbIHotkeyConfiguration);
       var item = this._list.getItemAtIndex(i);
       var keycombo = item.keycombo;
       var actionid = item.actionid;
       var actioncell = item.firstChild;
       var keydisplaycell = actioncell.nextSibling;
       var keydisplay = keydisplaycell.getAttribute("label");
-      SBDataSetStringValue(root + "key", keycombo);
-      SBDataSetStringValue(root + "key.readable", keydisplay);
-      SBDataSetStringValue(root + "action", actionid);
+      hotkeyConfig.key = keycombo;
+      hotkeyConfig.keyReadable = keydisplay;
+      hotkeyConfig.action = actionid;
+      hotkeyConfigList.appendElement(hotkeyConfig, false);
     }
-    SBDataFireEvent("globalhotkeys.changed");
+    this._hotkeyService.setHotkeys(hotkeyConfigList);
   },
-  
+
   onSelectHotkey: function()
   {
     this.updateButtons();
@@ -192,17 +197,17 @@ var gHotkeysPane = {
       this._hotkey.setHotkey(item.keycombo, keydisplaycell.getAttribute("label"));
     }
   },
-  
+
   updateButtons: function()
   {
     // disable set & remove when no item is selected
     var disabled = (this._list.selectedIndex== -1);
-    var alldisabled = !SBDataGetBoolValue("globalhotkeys.enabled");
+    var alldisabled = !this._hotkeyService.hotkeysEnabled;
     this._remove.setAttribute("disabled", (disabled||alldisabled));
     this._set.setAttribute("disabled", (disabled||alldisabled));
     this._add.setAttribute("disabled", alldisabled);
   },
-  
+
   addHotkey: function()
   {
     // add the hotkey to the list
@@ -217,7 +222,7 @@ var gHotkeysPane = {
     this._list.selectedIndex = this._list.getRowCount()-1;
     this.saveHotkeys();
   },
-  
+
   setHotkey: function()
   {
     // change the hotkey item that's currently selected
@@ -233,11 +238,11 @@ var gHotkeysPane = {
     this._list.selectedIndex = selected;
     this.saveHotkeys();
   },
-  
+
   _checkComboExists: function(keycombo, ignoreentry)
   {
     // checks wether the key combination already exists
-    for (var i=0;i<this._list.getRowCount();i++) 
+    for (var i=0;i<this._list.getRowCount();i++)
     {
       if (i == ignoreentry) continue;
       var item = this._list.getItemAtIndex(i);
@@ -248,7 +253,7 @@ var gHotkeysPane = {
     }
     return false;
   },
-  
+
   removeHotkey: function()
   {
     // remove the selected item from the list
@@ -260,15 +265,16 @@ var gHotkeysPane = {
     this._list.selectedIndex = index;
     this.saveHotkeys();
   },
-  
+
   onEnableDisable: function()
   {
-    SBDataSetBoolValue("globalhotkeys.enabled", (this._enabled.getAttribute("checked") == "true"));
+    this._hotkeyService.hotkeysEnabled =
+                          (this._enabled.getAttribute("checked") == "true");
     this.enableDisableElements();
   },
-  
+
   enableDisableElements: function() {
-    var enabled = SBDataGetBoolValue("globalhotkeys.enabled");
+    var enabled = this._hotkeyService.hotkeysEnabled;
     if (enabled) {
       this._actionlist.removeAttribute("disabled");
       this._list.removeAttribute("disabled");
@@ -289,10 +295,9 @@ var gHotkeysPane = {
     }
     this.updateButtons();
   }
-  
 };
 
-function onHotkeysUnload() 
+function onHotkeysUnload()
 {
   gHotkeysPane.onUnload();
 }

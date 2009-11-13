@@ -1,0 +1,124 @@
+/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+#include "nsISupports.idl"
+
+
+/**
+ * \interface sbIHotkeyConfiguration.
+ *
+ *   This interface provides configuration settings for a hotkey.
+ *
+ * "@songbirdnest.com/Songbird/HotkeyConfiguration;1";
+ * Use create instance with this component.
+ */
+
+[scriptable, uuid(b021d970-1dd1-11b2-9c4e-8c3e3cfe9b88)]
+interface sbIHotkeyConfiguration : nsISupports
+{
+  /**
+   * \brief Hotkey key.
+   */
+
+  attribute AString key;
+
+
+  /**
+   * \brief Human readable key name.
+   */
+
+  attribute AString keyReadable;
+
+
+  /**
+   * \brief Hotkey action string.
+   */
+
+  attribute AString action;
+};
+
+
+/**
+ * \interface sbIHotkeyService
+ *
+ *   This interface provides services for managing global hot key settings.
+ *
+ * "@songbirdnest.com/Songbird/HotkeyService;1"
+ * Use get service with this component.
+ */
+
+interface nsIArray;
+
+[scriptable, uuid(7c581506-1dd2-11b2-81c6-dc8ec2c82950)]
+interface sbIHotkeyService : nsISupports
+{
+  /**
+   * \brief If true, hotkeys are enabled.
+   */
+
+  attribute boolean hotkeysEnabled;
+
+
+  /**
+   * \brief Key string for data remote used to enable or disable hot keys.
+   */
+
+  readonly attribute AString hotkeysEnabledDRKey;
+
+
+  /**
+   * \brief Return the set of hot key configurations as an nsIArray of
+   *        sbIHotkeyConfiguration objects.
+   *
+   * \return Hot key configuration.
+   */
+
+  nsIArray getHotkeys();
+
+
+  /**
+   * \brief Set the hot key configuration to the nsIArray of
+   *        sbIHotkeyConfiguration objects specified by aHotkeyConfigList.
+   *
+   * \param aHotkeyConfigList   Hotkey configuration.
+   */
+
+  void setHotkeys(in nsIArray aHotkeyConfigList);
+};
+
+
+//
+// C++ defs.
+//
+
+%{C++
+#define SB_HOTKEY_SERVICE_CONTRACTID \
+          "@songbirdnest.com/Songbird/HotkeyService;1"
+
+#define SB_HOTKEY_CONFIGURATION_CONTRACTID \
+          "@songbirdnest.com/Songbird/HotkeyConfiguration;1"
+%}C++
+
+

@@ -21,23 +21,28 @@
  *
  *=END SONGBIRD GPL
  */
- 
+
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cu = Components.utils;
 const Cr = Components.results;
 
-const SB_DEFGLOBALHKSVC_CLASSNAME  = "sbDefaultGlobalHotkeys";
-const SB_DEFGLOBALHKSVC_DESC       = "Songbird Default Global Hotkeys Service";
-const SB_DEFGLOBALHKSVC_CONTRACTID = "@songbirdnest.com/Songbird/DefaultGlobalHotkeysService;1";
-const SB_DEFGLOBALHKSVC_CID        = "{3020e071-7199-4d1b-9d92-55bfb4d34801}";
+const SB_HOTKEY_SERVICE_CLASSNAME  = "sbHotkeyService"
+const SB_HOTKEY_SERVICE_DESC       = "Songbird Global Hotkey Service";
+const SB_HOTKEY_SERVICE_CONTRACTID = "@songbirdnest.com/Songbird/HotkeyService;1";
+const SB_HOTKEY_SERVICE_CID        = "{8264dc94-1dd2-11b2-ab4a-8b3dfb1072fb}";
 
 const SB_DEFGLOBALHKACTIONS_CLASSNAME  = "sbDefaultGlobalHotkeyActions";
 const SB_DEFGLOBALHKACTIONS_DESC       = "Songbird Default Global Hotkey Actions";
 const SB_DEFGLOBALHKACTIONS_CONTRACTID = "@songbirdnest.com/Songbird/DefaultGlobalHotkeyActions;1";
 const SB_DEFGLOBALHKACTIONS_CID        = "{76512c09-7f02-48f5-86c0-c3a8670ead3f}";
 
-const SB_HOTKEYSERVICE_CONTRACTID = "@songbirdnest.com/Songbird/GlobalHotkeys;1";
+const SB_HOTKEY_CONFIGURATION_CLASSNAME  = "sbHotkeyConfiguration";
+const SB_HOTKEY_CONFIGURATION_DESC       = "Songbird Hotkey Configuration";
+const SB_HOTKEY_CONFIGURATION_CONTRACTID = "@songbirdnest.com/Songbird/HotkeyConfiguration;1";
+const SB_HOTKEY_CONFIGURATION_CID        = "{5c6b204c-1dd2-11b2-8005-83725e03a0d0}";
+
+const SB_HOTKEYMANAGER_CONTRACTID = "@songbirdnest.com/Songbird/GlobalHotkeys;1";
 const SB_HOTKEYACTIONS_CONTRACTID = "@songbirdnest.com/Songbird/HotkeyActions;1";
 const SB_COMMANDLINE_CONTRACTID   = "@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird";
 
@@ -49,18 +54,18 @@ Cu.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
 Cu.import("resource://app/jsmodules/SBTimer.jsm");
 
 /**
- * Global getter for the Global Hotkey Service
+ * Global getter for the Global Hotkey Manager
  */
-__defineGetter__("HotkeyService", function() {
-  delete HotkeyService;
-  
-  if (Cc[SB_HOTKEYSERVICE_CONTRACTID]) {
-    HotkeyService = Cc[SB_HOTKEYSERVICE_CONTRACTID]
-                    .getService(Ci.sbIGlobalHotkeys);
-    return HotkeyService;
+__defineGetter__("HotkeyManager", function() {
+  delete HotkeyManager;
+
+  if (Cc[SB_HOTKEYMANAGER_CONTRACTID]) {
+    HotkeyManager = Cc[SB_HOTKEYMANAGER_CONTRACTID]
+                      .getService(Ci.sbIGlobalHotkeys);
+    return HotkeyManager;
   }
-  
-  return null;  
+
+  return null;
 });
 
 /**
@@ -73,7 +78,7 @@ __defineGetter__("HotkeyActions", function() {
                         .getService(Ci.sbIHotkeyActions);
     return HotkeyActions;
   }
-  
+
   return null;
 });
 
@@ -82,14 +87,14 @@ __defineGetter__("HotkeyActions", function() {
  */
  __defineGetter__("CommandLine", function() {
    delete CommandLine;
-   
+
    if (Cc[SB_COMMANDLINE_CONTRACTID]) {
     CommandLine = Cc[SB_COMMANDLINE_CONTRACTID]
                     .getService(Ci.nsICommandLineHandler)
                     .QueryInterface(Ci.sbICommandLineManager);
     return CommandLine;
    }
-   
+
    return null;
 });
 
@@ -105,11 +110,11 @@ __defineGetter__("ObserverService", function() {
 
 
 
-function sbDefaultGlobalHotkeyService() {
+function sbHotkeyService() {
   ObserverService.addObserver(this, STARTUP_TOPIC, false);
 }
 
-sbDefaultGlobalHotkeyService.prototype = 
+sbHotkeyService.prototype =
 {
   _dataRemoteHotkeysChanged: null,
   _dataRemoteHotkeysEnabled: null,
@@ -117,7 +122,7 @@ sbDefaultGlobalHotkeyService.prototype =
   _platform: null,
   _metaKeyString: null,
   _hotkeyHandler: null,
-  
+
   ///////////////////////////////////////////////////////////////////
   // nsIObserver
   ///////////////////////////////////////////////////////////////////
@@ -135,63 +140,112 @@ sbDefaultGlobalHotkeyService.prototype =
       break;
     }
   },
-  
+
+  ///////////////////////////////////////////////////////////////////
+  // sbIHotkeyService
+  ///////////////////////////////////////////////////////////////////
+  setHotkeys: function(aHotkeyConfigList) {
+    SBDataDeleteBranch("globalhotkey");
+    for (var i = 0; i < aHotkeyConfigList.length; i++) {
+      var hotkeyConfig =
+            aHotkeyConfigList.queryElementAt(i, Ci.sbIHotkeyConfiguration);
+
+      var keyBase = "globalhotkey." + i + ".";
+      SBDataSetStringValue(keyBase + "key", hotkeyConfig.key);
+      SBDataSetStringValue(keyBase + "key.readable", hotkeyConfig.keyReadable);
+      SBDataSetStringValue(keyBase + "action", hotkeyConfig.action);
+    }
+    SBDataSetIntValue("globalhotkeys.count", aHotkeyConfigList.length);
+    this._loadHotkeysFromPrefs();
+  },
+
+  getHotkeys: function() {
+    var count = SBDataGetIntValue("globalhotkeys.count");
+    var hotkeyConfigList = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                             .createInstance(Ci.nsIMutableArray);
+    for (var i = 0; i < count; i++) {
+      var hotkeyConfig = Cc[SB_HOTKEY_CONFIGURATION_CONTRACTID]
+                           .createInstance(Ci.sbIHotkeyConfiguration);
+
+      var keyBase = "globalhotkey." + i + ".";
+      hotkeyConfig.key = SBDataGetStringValue(keyBase + "key");
+      hotkeyConfig.keyReadable = SBDataGetStringValue(keyBase + "key.readable");
+      hotkeyConfig.action = SBDataGetStringValue(keyBase + "action");
+
+      hotkeyConfigList.appendElement(hotkeyConfig, false);
+    }
+
+    return hotkeyConfigList;
+  },
+
+  get hotkeysEnabled() {
+    return SBDataGetBoolValue("globalhotkeys.enabled");
+  },
+
+  set hotkeysEnabled(aEnabled) {
+    SBDataSetBoolValue("globalhotkeys.enabled", aEnabled);
+    this._loadHotkeysFromPrefs();
+  },
+
+  get hotkeysEnabledDRKey() {
+    return "globalhotkeys.enabled";
+  },
+
   ///////////////////////////////////////////////////////////////////
   // Internal Methods
   ///////////////////////////////////////////////////////////////////
   _init: function() {
-    if(!HotkeyService) {
-      Cu.reportError("Global Hotkey Service is not available.");
+    if(!HotkeyManager) {
+      Cu.reportError("Global Hotkey Manager is not available.");
       return;
     }
-    
+
     this._initPlatform();
     this._initMetaKeyString();
     this._initHotkeyHandler();
-        
-    this._startWatchingHotkeyDataRemotes();
+
+    this._loadDefaultHotkeys();
+
     this._loadHotkeysFromPrefs();
-    
+
     if(!HotkeyActions) {
       Cu.reportError("Global Hotkey Actions Service is not available.");
       return;
     }
-    
+
     this._initHotkeyHandler();
-    
+
     // Register the default set of actions.
     var defaultActions = Cc[SB_DEFGLOBALHKACTIONS_CONTRACTID]
                            .createInstance(Ci.sbIHotkeyActionBundle);
     HotkeyActions.registerHotkeyActionBundle(defaultActions);
-    
+
     // Register observer for application shutdown to clean up.
     ObserverService.addObserver(this, SHUTDOWN_TOPIC, false);
   },
-  
+
   _shutdown: function() {
     if (CommandLine) {
       CommandLine.removeFlagHandler(this._hotkeyHandler, "hotkey");
     }
-    
+
     this._hotkeyHandler = null;
-    
-    if (HotkeyService) {
-      HotkeyService.removeAllHotkeys();
+
+    if (HotkeyManager) {
+      HotkeyManager.removeAllHotkeys();
     }
-    
-    this._stopWatchingHotkeyDataRemotes();
   },
-  
+
   _initPlatform: function() {
     try {
       var sysInfo =
         Components.classes["@mozilla.org/system-info;1"]
                   .getService(Components.interfaces.nsIPropertyBag2);
-      this._platform = sysInfo.getProperty("name");                                          
+      this._platform = sysInfo.getProperty("name");
     }
     catch (e) {
       Cu.reportError(e);
-      
+
       var user_agent = navigator.userAgent;
       if (user_agent.indexOf("Windows") != -1)
         this._platform = "Windows_NT";
@@ -203,7 +257,7 @@ sbDefaultGlobalHotkeyService.prototype =
         this._platform = "SunOS";
     }
   },
-  
+
   _initMetaKeyString: function() {
     switch(this._platform) {
       case "Windows_NT": this._metaKeyString = "win"; break;
@@ -212,7 +266,7 @@ sbDefaultGlobalHotkeyService.prototype =
       default: this._metaKeyString = "meta";
     }
   },
-  
+
   _initHotkeyHandler: function() {
     if (!CommandLine) {
       Cu.reportError("Command Line Handler is not available.");
@@ -240,14 +294,14 @@ sbDefaultGlobalHotkeyService.prototype =
             }
           }
         },
-        
+
         handleFlag: function(aFlag, aParam)
         {
           var ids = aParam.split(",");
           for (var i = 0; i < ids.length; i++) {
-            this.onHotkey(ids[i]); 
+            this.onHotkey(ids[i]);
           }
-          
+
           return true;
         },
 
@@ -259,36 +313,36 @@ sbDefaultGlobalHotkeyService.prototype =
 
     CommandLine.addFlagHandler(this._hotkeyHandler, "hotkey");
   },
-  
+
   /**
    * \brief Load the hotkeys saved in the users prefs
    */
   _loadHotkeysFromPrefs: function() {
-    this._loadDefaultHotkeys();
-    
+    this._removeHotkeyBindings();
+
     var enabled = SBDataGetBoolValue("globalhotkeys.enabled");
-    
+
     if (!enabled) {
       return;
     }
-    
+
     var count = SBDataGetIntValue("globalhotkeys.count");
     for (var i = 0;i < count; i++) {
       // Read hotkey binding from user preferences
       let root = "globalhotkey." + i + ".";
       let keycombo = SBDataGetStringValue(root + "key");
       let action = SBDataGetStringValue(root + "action");
-      
+
       // Split key combination string
       let keys = keycombo.split("-");
-      
+
       // Parse its components
       let alt = false;
       let ctrl = false;
       let shift = false;
       let meta = false;
       let keyCode = 0;
-      
+
       for (var j = 0; j < keys.length; j++) {
         keys[j] = keys[j].toLowerCase();
         switch (keys[j]) {
@@ -299,21 +353,21 @@ sbDefaultGlobalHotkeyService.prototype =
           default: keyCode = this._stringToKeyCode(keys[j]);
         }
       }
-      
+
       // If we had a key code (and possibly modifiers), register the corresponding action for it
       if (keyCode != 0) {
-        HotkeyService.addHotkey(keyCode, 
-                                alt, 
-                                ctrl, 
-                                shift, 
-                                meta, 
-                                action, 
+        HotkeyManager.addHotkey(keyCode,
+                                alt,
+                                ctrl,
+                                shift,
+                                meta,
+                                action,
                                 this._hotkeyHandler);
       }
     }
 
   },
-  
+
   /**
    * \brief Load the default set of hotkeys
    */
@@ -322,144 +376,133 @@ sbDefaultGlobalHotkeyService.prototype =
     if (SBDataGetBoolValue("globalhotkeys.changed")) {
       return;
     }
-    
+
     // Indicate that the global hotkeys have changed and are enabled
     SBDataSetBoolValue("globalhotkeys.changed", true);
     SBDataSetBoolValue("globalhotkeys.enabled", true);
 
-    // 10 hotkeys by default
-    SBDataSetIntValue("globalhotkeys.count", 10);
-
-    // For convenience
+    // Hot key list
     var metaKey = this._metaKeyString;
-    
-    // Media keys  
-    SBDataSetStringValue("globalhotkey.0.key",             "$176");
-    SBDataSetStringValue("globalhotkey.0.key.readable",    "nexttrack");
-    SBDataSetStringValue("globalhotkey.0.action",          "playback.nexttrack");
-    
-    SBDataSetStringValue("globalhotkey.1.key",             "$177");
-    SBDataSetStringValue("globalhotkey.1.key.readable",    "prevtrack");
-    SBDataSetStringValue("globalhotkey.1.action",          "playback.previoustrack");
+    var hotkeyConfigList =
+    [
+      // Media keys
+      { key:         "$176",
+        keyReadable: "nexttrack",
+        action:      "playback.nexttrack" },
 
-    SBDataSetStringValue("globalhotkey.2.key",             "$179");
-    SBDataSetStringValue("globalhotkey.2.key.readable",    "playpause");
-    SBDataSetStringValue("globalhotkey.2.action",          "playback.playpause");
-    
-    // Regular keys
-    SBDataSetStringValue("globalhotkey.3.key",             "meta-$38");
-    SBDataSetStringValue("globalhotkey.3.key.readable",    metaKey + "-up");
-    SBDataSetStringValue("globalhotkey.3.action",          "playback.volumeup");
-    
-    SBDataSetStringValue("globalhotkey.4.key",             "meta-$40");
-    SBDataSetStringValue("globalhotkey.4.key.readable",    metaKey + "-down");
-    SBDataSetStringValue("globalhotkey.4.action",          "playback.volumedown");
-    
-    SBDataSetStringValue("globalhotkey.5.key",             "meta-$39");
-    SBDataSetStringValue("globalhotkey.5.key.readable",    metaKey + "-right");
-    SBDataSetStringValue("globalhotkey.5.action",          "playback.nexttrack");
-    
-    SBDataSetStringValue("globalhotkey.6.key",             "meta-$37");
-    SBDataSetStringValue("globalhotkey.6.key.readable",    metaKey + "-left");
-    SBDataSetStringValue("globalhotkey.6.action",          "playback.previoustrack");
-    
-    SBDataSetStringValue("globalhotkey.7.key",             "meta-$96");
-    SBDataSetStringValue("globalhotkey.7.key.readable",    metaKey + "-numpad0");
-    SBDataSetStringValue("globalhotkey.7.action",          "playback.playpause");
+      { key:         "$177",
+        keyReadable: "prevtrack",
+        action:      "playback.previoustrack" },
 
-    SBDataSetStringValue("globalhotkey.8.key",             "$178");
-    SBDataSetStringValue("globalhotkey.8.key.readable",    "stop");
-    SBDataSetStringValue("globalhotkey.8.action",          "playback.stop");
+      { key:         "$179",
+        keyReadable: "playpause",
+        action:      "playback.playpause" },
 
-    SBDataSetStringValue("globalhotkey.9.key",            "meta-$74");
-    SBDataSetStringValue("globalhotkey.9.key.readable",   metaKey + "-J");
-    SBDataSetStringValue("globalhotkey.9.action",         "jumpto.open");
+      // Regular keys
+      { key:         "meta-$38",
+        keyReadable: metaKey + "-up",
+        action:      "playback.volumeup" },
+
+      { key:         "meta-$40",
+        keyReadable: metaKey + "-down",
+        action:      "playback.volumedown" },
+
+      { key:         "meta-$39",
+        keyReadable: metaKey + "-right",
+        action:      "playback.nexttrack" },
+
+      { key:         "meta-$37",
+        keyReadable: metaKey + "-left",
+        action:      "playback.previoustrack" },
+
+      { key:         "meta-$96",
+        keyReadable: metaKey + "-numpad0",
+        action:      "playback.playpause" },
+
+      { key:         "$178",
+        keyReadable: "stop",
+        action:      "playback.stop" },
+
+      { key:         "meta-$74",
+        keyReadable: metaKey + "-J",
+        action:      "jumpto.open" }
+    ];
+
+    // Build an array of hot key configurations
+    var hotkeyConfigArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                              .createInstance(Ci.nsIMutableArray);
+    for (var i = 0; i < hotkeyConfigList.length; i++) {
+      var hotkeyConfiguration = Cc[SB_HOTKEY_CONFIGURATION_CONTRACTID]
+                                  .createInstance(Ci.sbIHotkeyConfiguration);
+      hotkeyConfiguration.key =         hotkeyConfigList[i].key;
+      hotkeyConfiguration.keyReadable = hotkeyConfigList[i].keyReadable;
+      hotkeyConfiguration.action =      hotkeyConfigList[i].action;
+      hotkeyConfigArray.appendElement(hotkeyConfiguration, false);
+    }
+
+    // Set the default hot keys
+    this.setHotkeys(hotkeyConfigArray);
   },
-  
+
   /**
    * \brief Remove all hotkeys currently bound
    */
   _removeHotkeyBindings: function() {
-    if (HotkeyService) {
-      HotkeyService.removeAllHotkeys();
+    if (HotkeyManager) {
+      HotkeyManager.removeAllHotkeys();
     }
   },
-  
-  _startWatchingHotkeyDataRemotes: function() {
-    if (!this._dataRemoteObserver) {
-      var self = this;
-      this._dataRemoteObserver = {
-        observe: function(aSubject, aTopic, aData) {
-          self._removeHotkeyBindings();
-          self._loadHotkeysFromPrefs();
-        }
-      };
-    }
-    
-    this._dataRemoteHotkeysChanged = 
-      SBNewDataRemote("globalhotkeys.changed", null);
-    this._dataRemoteHotkeysChanged.bindObserver(this._dataRemoteObserver, true);
 
-    this._dataRemoteHotkeysEnabled = 
-      SBNewDataRemote("globalhotkeys.enabled", null);
-    this._dataRemoteHotkeysEnabled.bindObserver(this._dataRemoteObserver, true);
-  },
-  
-  _stopWatchingHotkeyDataRemotes: function() {
-    if (this._dataRemoteHotkeysChanged) {
-      this._dataRemoteHotkeysChanged.unbind();
-      this._dataRemoteHotkeysChanged = null;
-    }
-    
-    if (this._dataRemoteHotkeysEnabled) {
-      this._dataRemoteHotkeysEnabled.unbind();
-      this._dataRemoteHotkeysEnabled = null;
-    }
-  },
-  
   _stringToKeyCode: function(aStr) {
     if (aStr.slice(0, 1) == '$') {
       return aStr.slice(1);
     }
-    
+
     return 0;
   },
-  
-  className: SB_DEFGLOBALHKSVC_CLASSNAME,
-  classDescription: SB_DEFGLOBALHKSVC_DESC,
-  classID: Components.ID(SB_DEFGLOBALHKSVC_CID),
-  contractID: SB_DEFGLOBALHKSVC_CONTRACTID,
-  QueryInterface: XPCOMUtils.generateQI([Ci.nsISupports])
-};
 
+  className: SB_HOTKEY_SERVICE_CLASSNAME,
+  classDescription: SB_HOTKEY_SERVICE_DESC,
+  classID: Components.ID(SB_HOTKEY_SERVICE_CID),
+  contractID: SB_HOTKEY_SERVICE_CONTRACTID,
+  _xpcom_categories: [
+    {
+      category: "app-startup",
+      entry:    SB_HOTKEY_SERVICE_DESC,
+      value:    "service," + SB_HOTKEY_SERVICE_CONTRACTID
+    }
+  ],
+  QueryInterface: XPCOMUtils.generateQI([Ci.nsISupports,
+                                         Ci.sbIHotkeyService])
+};
 
 
 function sbDefaultGlobalHotkeyActions() {
 }
 
-sbDefaultGlobalHotkeyActions.prototype = 
+sbDefaultGlobalHotkeyActions.prototype =
 {
   /**
-   * You should change these to match your own actions, strings, and 
-   * stringbundle (ie, you will need to ship your own translations with 
-   * your extension since the description string you use will probably 
+   * You should change these to match your own actions, strings, and
+   * stringbundle (ie, you will need to ship your own translations with
+   * your extension since the description string you use will probably
    * not be in the standard songbird string bundle)
    */
   _packagename: "playback",
-  
-  _actions: [ "volumeup", 
-              "volumedown", 
-              "nexttrack", 
-              "previoustrack", 
-              "playpause", 
-              "pause", 
+
+  _actions: [ "volumeup",
+              "volumedown",
+              "nexttrack",
+              "previoustrack",
+              "playpause",
+              "pause",
               "stop" ],
   /**
-   * The string bundle to use to get the localized strings 
-   * (ie, hotkeys.actions.playback, hotkeys.actions.playback.volumeup, 
+   * The string bundle to use to get the localized strings
+   * (ie, hotkeys.actions.playback, hotkeys.actions.playback.volumeup,
    * hotkeys.actions.playback.volumedown, etc).
    */
-  _stringbundle: "chrome://songbird/locale/songbird.properties", 
+  _stringbundle: "chrome://songbird/locale/songbird.properties",
 
   /**
    * Internal data
@@ -469,22 +512,22 @@ sbDefaultGlobalHotkeyActions.prototype =
   _songbirdStrings: null,
 
   /**
-   * This enumerates the actions, their localized display strings, 
+   * This enumerates the actions, their localized display strings,
    * and their internal ids, so that the hotkey action manager may list them
    * in the hotkeys preference pane.
    */
   get actionCount() {
     return this._actions.length;
   },
-  
-  enumActionLocaleDescription: function (aIndex) { 
-    return this._getLocalizedPackageName() + 
-           ": " + 
-           this._getLocalizedActionName(this._actions[aIndex]); 
+
+  enumActionLocaleDescription: function (aIndex) {
+    return this._getLocalizedPackageName() +
+           ": " +
+           this._getLocalizedActionName(this._actions[aIndex]);
   },
-  
-  enumActionID: function(aIndex) { 
-    return this._packagename + "." + this._actions[aIndex]; 
+
+  enumActionID: function(aIndex) {
+    return this._packagename + "." + this._actions[aIndex];
   },
 
   /**
@@ -506,7 +549,7 @@ sbDefaultGlobalHotkeyActions.prototype =
     return Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
              .getService(Ci.sbIMediacoreManager);
   },
-  
+
   _hotkey_volumeUp: function() {
     var volume = this._mm.volumeControl.volume + 0.03;
     if (volume > 1) volume = 1;
@@ -530,10 +573,10 @@ sbDefaultGlobalHotkeyActions.prototype =
   _hotkey_playPause: function() {
     try {
       // If we are already playing something just pause/unpause playback
-      if (this._mm.status.state == Ci.sbIMediacoreStatus.STATUS_PLAYING || 
+      if (this._mm.status.state == Ci.sbIMediacoreStatus.STATUS_PLAYING ||
           this._mm.status.state == Ci.sbIMediacoreStatus.STATUS_BUFFERING) {
           this._mm.playbackControl.pause();
-      } 
+      }
       else if(this._mm.status.state == Ci.sbIMediacoreStatus.STATUS_PAUSED) {
           this._mm.playbackControl.play();
       }
@@ -544,7 +587,7 @@ sbDefaultGlobalHotkeyActions.prototype =
         var app = Cc["@songbirdnest.com/Songbird/ApplicationController;1"]
                     .getService(Ci.sbIApplicationController);
         app.playDefault();
-      } 
+      }
     } catch (e) {
       Cu.reportError(e);
     }
@@ -571,32 +614,32 @@ sbDefaultGlobalHotkeyActions.prototype =
 
     return r;
   },
-  
+
   /**
-   * The local package name is taken from the specified string bundle, 
+   * The local package name is taken from the specified string bundle,
    * using the key "hotkeys.actions.package", where package is
    * the internal name of the package, as specified in this._packagename.
    */
   _getLocalizedPackageName: function() {
-    if (!this._localpackage) 
-      this._localpackage = this._getLocalizedString("hotkeys.actions." + 
-                                                    this._packagename, 
-                                                    this._packagename); 
+    if (!this._localpackage)
+      this._localpackage = this._getLocalizedString("hotkeys.actions." +
+                                                    this._packagename,
+                                                    this._packagename);
     return this._localpackage;
   },
-  
+
   /**
-   * the local action name is taken from the specified string bundle, using 
+   * the local action name is taken from the specified string bundle, using
    * the key "hotkeys.actions.package.action", where package
-   * is the internal name of the package, as specified in this._packagename, 
-   * and action is the internal name of the action, as specified in the 
+   * is the internal name of the package, as specified in this._packagename,
+   * and action is the internal name of the action, as specified in the
    * this._actions array.
    */
   _getLocalizedActionName: function(action) {
-    return this._getLocalizedString("hotkeys.actions." + 
-                                    this._packagename + 
-                                    "." + 
-                                    action, 
+    return this._getLocalizedString("hotkeys.actions." +
+                                    this._packagename +
+                                    "." +
+                                    action,
                                     action);
   },
 
@@ -609,20 +652,32 @@ sbDefaultGlobalHotkeyActions.prototype =
                                          Ci.nsISupports])
 };
 
+
+function sbHotkeyConfiguration() {
+}
+
+sbHotkeyConfiguration.prototype =
+{
+  key: null,
+  keyReadable: null,
+  action: null,
+
+  className: SB_HOTKEY_CONFIGURATION_CLASSNAME,
+  classDescription: SB_HOTKEY_CONFIGURATION_DESC,
+  classID: Components.ID(SB_HOTKEY_CONFIGURATION_CID),
+  contractID: SB_HOTKEY_CONFIGURATION_CONTRACTID,
+  QueryInterface: XPCOMUtils.generateQI([Ci.nsISupports,
+                                         Ci.sbIHotkeyConfiguration])
+};
+
+
 //------------------------------------------------------------------------------
 // XPCOM Registration
 
 function NSGetModule(compMgr, fileSpec)
 {
-  return XPCOMUtils.generateModule([sbDefaultGlobalHotkeyService, 
-                                    sbDefaultGlobalHotkeyActions],
-    function(aCompMgr, aFileSpec, aLocation) {
-      XPCOMUtils.categoryManager.addCategoryEntry("app-startup",
-                                                  SB_DEFGLOBALHKSVC_DESC,
-                                                  "service," +
-                                                  SB_DEFGLOBALHKSVC_CONTRACTID,
-                                                  true,
-                                                  true);
-    }
-  );
+  return XPCOMUtils.generateModule([sbHotkeyService,
+                                    sbDefaultGlobalHotkeyActions,
+                                    sbHotkeyConfiguration]);
 }
+
