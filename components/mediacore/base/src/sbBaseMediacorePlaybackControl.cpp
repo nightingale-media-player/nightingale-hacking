@@ -30,6 +30,13 @@
 */
 #include "sbBaseMediacorePlaybackControl.h"
 
+#include <nsIWritablePropertyBag2.h>
+
+#include <nsComponentManagerUtils.h>
+
+#include "sbMediacoreEvent.h"
+#include "sbVariantUtils.h"
+
 /**
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbBaseMediacorePlaybackControl:5
@@ -38,6 +45,9 @@
 static PRLogModuleInfo* gBaseMediacorePlaybackControl = nsnull;
 #define TRACE(args) PR_LOG(gBaseMediacorePlaybackControl , PR_LOG_DEBUG, args)
 #define LOG(args)   PR_LOG(gBaseMediacorePlaybackControl , PR_LOG_WARN, args)
+#ifdef __GNUC__
+#define __FUNCTION__ __PRETTY_FUNCTION__
+#endif
 #else
 #define TRACE(args) /* nothing */
 #define LOG(args)   /* nothing */
@@ -58,12 +68,12 @@ sbBaseMediacorePlaybackControl::sbBaseMediacorePlaybackControl()
     gBaseMediacorePlaybackControl= PR_NewLogModule("sbBaseMediacorePlaybackControl");
 #endif
 
-  TRACE(("sbBaseMediacorePlaybackControl[0x%x] - Created", this));
+  TRACE(("%s[%p]", __FUNCTION__, this));
 }
 
 sbBaseMediacorePlaybackControl::~sbBaseMediacorePlaybackControl()
 {
-  TRACE(("sbBaseMediacorePlaybackControl[0x%x] - Destroyed", this));
+  TRACE(("%s[%p]", __FUNCTION__, this));
 
   MOZ_COUNT_DTOR(sbBaseMediacorePlaybackControl);
 
@@ -75,7 +85,7 @@ sbBaseMediacorePlaybackControl::~sbBaseMediacorePlaybackControl()
 nsresult 
 sbBaseMediacorePlaybackControl::InitBaseMediacorePlaybackControl()
 {
-  TRACE(("sbBaseMediacorePlaybackControl[0x%x] - InitBaseMediacorePlaybackControl", this));
+  TRACE(("%s[%p]", __FUNCTION__, this));
 
   mMonitor = nsAutoMonitor::NewMonitor("sbBaseMediacorePlaybackControl::mMonitor");
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
@@ -86,7 +96,7 @@ sbBaseMediacorePlaybackControl::InitBaseMediacorePlaybackControl()
 NS_IMETHODIMP 
 sbBaseMediacorePlaybackControl::GetUri(nsIURI * *aUri)
 {
-  TRACE(("sbBaseMediacorePlaybackControl[0x%x] - GetUri", this));
+  TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aUri);
 
@@ -99,7 +109,7 @@ sbBaseMediacorePlaybackControl::GetUri(nsIURI * *aUri)
 NS_IMETHODIMP 
 sbBaseMediacorePlaybackControl::SetUri(nsIURI * aUri)
 {
-  TRACE(("sbBaseMediacorePlaybackControl[0x%x] - SetUri", this));
+  TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aUri);
 
@@ -115,7 +125,7 @@ sbBaseMediacorePlaybackControl::SetUri(nsIURI * aUri)
 NS_IMETHODIMP 
 sbBaseMediacorePlaybackControl::GetPosition(PRUint64 *aPosition)
 {
-  TRACE(("sbBaseMediacorePlaybackControl[0x%x] - GetPosition", this));
+  TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aPosition);
 
@@ -132,7 +142,7 @@ sbBaseMediacorePlaybackControl::GetPosition(PRUint64 *aPosition)
 NS_IMETHODIMP 
 sbBaseMediacorePlaybackControl::SetPosition(PRUint64 aPosition)
 {
-  TRACE(("sbBaseMediacorePlaybackControl[0x%x] - SetPosition", this));
+  TRACE(("%s[%p] (%llu)", __FUNCTION__, this, aPosition));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv = OnSetPosition(aPosition);
@@ -147,7 +157,7 @@ sbBaseMediacorePlaybackControl::SetPosition(PRUint64 aPosition)
 NS_IMETHODIMP 
 sbBaseMediacorePlaybackControl::GetDuration(PRUint64 *aDuration)
 {
-  TRACE(("sbBaseMediacorePlaybackControl[0x%x] - GetDuration", this));
+  TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aDuration);
 
@@ -164,8 +174,12 @@ sbBaseMediacorePlaybackControl::GetDuration(PRUint64 *aDuration)
 NS_IMETHODIMP 
 sbBaseMediacorePlaybackControl::Play()
 {
-  TRACE(("sbBaseMediacorePlaybackControl[0x%x] - Play", this));
+  TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv;
+  rv = DispatchPlaybackControlEvent(sbIMediacoreEvent::STREAM_BEFORE_START);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoMonitor mon(mMonitor);
   return OnPlay();
@@ -174,8 +188,12 @@ sbBaseMediacorePlaybackControl::Play()
 NS_IMETHODIMP 
 sbBaseMediacorePlaybackControl::Pause()
 {
-  TRACE(("sbBaseMediacorePlaybackControl[0x%x] - Pause", this));
+  TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv;
+  rv = DispatchPlaybackControlEvent(sbIMediacoreEvent::STREAM_BEFORE_PAUSE);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoMonitor mon(mMonitor);
   return OnPause();
@@ -184,8 +202,12 @@ sbBaseMediacorePlaybackControl::Pause()
 NS_IMETHODIMP 
 sbBaseMediacorePlaybackControl::Stop()
 {
-  TRACE(("sbBaseMediacorePlaybackControl[0x%x] - Stop", this));
+  TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv;
+  rv = DispatchPlaybackControlEvent(sbIMediacoreEvent::STREAM_BEFORE_STOP);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoMonitor mon(mMonitor);
   return OnStop();
@@ -299,6 +321,8 @@ sbBaseMediacorePlaybackControl::OnStop()
    *
    *  You are also responsible for firing any success events.
    *
+   *  You are not responsible for the STREAM_BEFORE_STOP event.
+   *
    *  Upon stopping, you are responsible for rewinding / setting the position
    *  to the beginning. Yes, you should also fire an event after you've reset
    *  the position :)
@@ -307,4 +331,58 @@ sbBaseMediacorePlaybackControl::OnStop()
    */
 
   return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+nsresult
+sbBaseMediacorePlaybackControl::DispatchPlaybackControlEvent(PRUint32 aType)
+{
+  TRACE(("%s[%p] (%08x)", __FUNCTION__, this, aType));
+
+  nsresult rv;
+
+  // it's not fatal if this fails
+  nsCOMPtr<sbIMediacore> core =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediacorePlaybackControl*, this));
+
+  nsCOMPtr<nsIWritablePropertyBag2> bag =
+    do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  switch (aType) {
+    case sbIMediacoreEvent::STREAM_BEFORE_PAUSE:
+    case sbIMediacoreEvent::STREAM_BEFORE_STOP:
+    {
+      PRUint64 number;
+      rv = GetPosition(&number);
+      if (NS_SUCCEEDED(rv)) {
+        rv = bag->SetPropertyAsUint64(NS_LITERAL_STRING("position"), number);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+
+      rv = GetDuration(&number);
+      if (NS_SUCCEEDED(rv)) {
+        rv = bag->SetPropertyAsUint64(NS_LITERAL_STRING("duration"), number);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+
+      rv = bag->SetPropertyAsInterface(NS_LITERAL_STRING("uri"), mUri);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  nsCOMPtr<nsIVariant> data = do_QueryInterface(sbNewVariant(bag), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediacoreEvent> event;
+  rv = sbMediacoreEvent::CreateEvent(aType,  // type
+                                     nsnull, // error
+                                     data,   // data
+                                     core,   // origin
+                                     getter_AddRefs(event));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = DispatchEvent(event, PR_TRUE, nsnull);
+  /* ignore the result */
+
+  return NS_OK;
 }

@@ -36,7 +36,7 @@ interface sbIMediacoreEventTarget;
  * \interface sbIMediacoreEvent
  * \brief Definition of the sbIMediacoreEvent interface.
  */
-[scriptable, uuid(6c2ca1a1-f626-4724-aa43-403534459631)]
+[scriptable, uuid(d08a046e-1dd1-11b2-a5b5-f18e37b22e47)]
 interface sbIMediacoreEvent : nsISupports
 {
   const unsigned long UNINTIALIZED    = 0x00000000;
@@ -141,27 +141,60 @@ interface sbIMediacoreEvent : nsISupports
    * \note data is null.
    */
   const unsigned long BUFFER_UNDERRUN = 0x00003001;
-  
+
+  /**
+   * \brief Stream is about to start.
+   * \note This event is a notification only, and may be dispatched
+   *       asynchronously.  By the time the event is received the playback
+   *       may have already started.
+   * \note data is an empty property bag
+   */
+  const unsigned long STREAM_BEFORE_START = 0x00004000;
   /**
    * \brief Stream has started.
    * \note data is null.
    */
-  const unsigned long STREAM_START    = 0x00004000;
+  const unsigned long STREAM_START        = 0x00004001;
+  /**
+   * \brief Stream is about to pause.
+   * \note This event is a notification only, and may be dispatched
+   *       asynchronously.  By the time the event is received playback may
+   *       already have paused.
+   * \note data is a property bag, containing
+   *       PRUint64 "position" - the position of the stream when pause was
+   *                             requested.
+   *       PRUint64 "duration" - the length of the stream
+   *       nsIURI "uri" - the URI that was playing when the pause started
+   */
+  const unsigned long STREAM_BEFORE_PAUSE = 0x00004002;
   /**
    * \brief Stream is now paused.
    * \note data is null.
    */
-  const unsigned long STREAM_PAUSE    = 0x00004001;
+  const unsigned long STREAM_PAUSE        = 0x00004003;
   /**
    * \brief End of stream.
    * \note data is null.
    */
-  const unsigned long STREAM_END      = 0x00004002;
+  const unsigned long STREAM_END          = 0x00004004;
+  /**
+   * \brief Stream is about to stop.
+   * \note This event is a notification only, and may be dispatched
+   *       asynchronously.  By the time the event is received playback may
+   *       already have stopped (and therefore querying the playback controller
+   *       may result in different values).
+   * \note data is a property bag, containing
+   *       PRUint64 "position" - the position of the stream when stopping of
+   *                             playback was requested.
+   *       PRUint64 "duration" - the length of the stream
+   *       nsIURI "uri" - the URI that was playing when the stop was requested.
+   */
+  const unsigned long STREAM_BEFORE_STOP  = 0x00004005;
   /**
    * \brief Stream was stopped.
    * \note data is null.
    */
-  const unsigned long STREAM_STOP     = 0x00004003;
+  const unsigned long STREAM_STOP         = 0x00004006;
 
   // Video specific events
 

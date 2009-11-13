@@ -282,6 +282,9 @@ pref("songbird.mediacore.playback.history.enabled", true);
 
 pref("songbird.mediascan.enableVideoImporting", true);
 
+// Whether to automatically restart video playback at the last stopped position
+pref("songbird.mediacore.resumePlaybackPosition", true);
+
 //
 // Metadata prefs
 //

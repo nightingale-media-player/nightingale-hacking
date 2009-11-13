@@ -149,6 +149,18 @@ protected:
 
   PRBool   CheckPropertiesInfluenceView(sbIPropertyArray *aProperties);
 
+  /**
+   * Update the "lastPosition" property on the item, to support resuming
+   * playback from where things left off
+   */
+  nsresult UpdateLastPositionProperty(sbIMediaItem* aItem,
+                                      nsIVariant*   aData);
+
+  /**
+   * Asynchronous callback to seek
+   */
+  nsresult SeekCallback(PRUint64 aPosition);
+
 protected:
   PRMonitor *mMonitor;
 
@@ -186,6 +198,7 @@ protected:
 
   nsCOMPtr<sbIPropertyManager> mPropertyManager;
 
+  // Data Remotes
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateBuffering;
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplatePaused;
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplatePlaying;
@@ -233,6 +246,7 @@ protected:
   PRPackedBool mNeedSearchPlayingItem;
   PRPackedBool mNeedsRecalculate;
   PRPackedBool mWatchingView;
+  PRPackedBool mResumePlaybackPosition;
 };
 
 class sbScopedBoolToggle

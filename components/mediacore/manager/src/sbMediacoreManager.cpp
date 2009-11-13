@@ -1581,7 +1581,8 @@ NS_IMETHODIMP
 sbMediacoreManager::GetMediacore(const nsAString & aInstanceName,
                                  sbIMediacore **_retval)
 {
-  TRACE(("sbMediacoreManager[0x%x] - GetMediacore", this));
+  TRACE(("%s[%p] (%s)", __FUNCTION__, this,
+         NS_ConvertUTF16toUTF8(aInstanceName).get()));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(_retval);
 

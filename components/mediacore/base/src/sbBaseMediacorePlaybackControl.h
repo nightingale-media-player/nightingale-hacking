@@ -33,13 +33,15 @@
 #define __SB_BASEMEDIACOREPLAYBACKCONTROL_H__
 
 #include <sbIMediacorePlaybackControl.h>
+#include <sbIMediacoreEventTarget.h>
 
 #include <nsIURI.h>
 
 #include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 
-class sbBaseMediacorePlaybackControl : public sbIMediacorePlaybackControl
+class sbBaseMediacorePlaybackControl : public sbIMediacorePlaybackControl,
+                                       public sbIMediacoreEventTarget
 {
 public:
   NS_DECL_ISUPPORTS
@@ -69,6 +71,8 @@ public:
 
 protected:
   virtual ~sbBaseMediacorePlaybackControl();
+
+  nsresult DispatchPlaybackControlEvent(PRUint32 aType);
 
   PRMonitor*  mMonitor;
 

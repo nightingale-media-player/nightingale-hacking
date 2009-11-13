@@ -725,6 +725,13 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                       PR_TRUE, PR_FALSE, NULL);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  //Playback position on last stop
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_LASTPLAYPOSITION),
+                      nsString(),
+                      stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, 0, PR_FALSE,
+                      PR_FALSE, PR_FALSE, NULL);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   //Last skipped time
   rv = RegisterDateTime(NS_LITERAL_STRING(SB_PROPERTY_LASTSKIPTIME),
                         NS_LITERAL_STRING("property.last_skip_time"),

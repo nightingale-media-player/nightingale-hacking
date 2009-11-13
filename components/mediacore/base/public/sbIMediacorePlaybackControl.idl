@@ -33,8 +33,17 @@ interface sbIMediacoreStatus;
 interface sbIMediacorePlaybackControl : nsISupports
 {
   attribute nsIURI uri;
+
+  /**
+   * The current position of the stream currently being played back, in
+   * milliseconds
+   */
   attribute unsigned long long position;
   
+  /**
+   * The total duration of the stream currently being played, in milliseconds
+   * @throws NS_ERROR_NOT_AVAILABLE if the duration is unknown
+   */
   readonly attribute unsigned long long duration;
   
   void play();

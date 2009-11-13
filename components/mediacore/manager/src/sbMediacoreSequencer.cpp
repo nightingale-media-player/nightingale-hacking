@@ -33,6 +33,7 @@
 #include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
 #include <nsIProgrammingLanguage.h>
+#include <nsIPropertyBag2.h>
 #include <nsISupportsPrimitives.h>
 #include <nsIURL.h>
 #include <nsIVariant.h>
@@ -72,11 +73,13 @@
 #include <sbBaseMediacoreVolumeControl.h>
 #include <sbMediacoreError.h>
 #include <sbMediacoreEvent.h>
+#include <sbMemoryUtils.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbStringBundle.h>
 #include <sbStringUtils.h>
 #include <sbTArrayStringEnumerator.h>
+#include <sbThreadUtils.h>
 #include <sbVariantUtils.h>
 
 #include "sbMediacoreDataRemotes.h"
@@ -197,6 +200,7 @@ sbMediacoreSequencer::sbMediacoreSequencer()
 , mNeedSearchPlayingItem(PR_FALSE)
 , mNeedsRecalculate(PR_FALSE)
 , mWatchingView(PR_FALSE)
+, mResumePlaybackPosition(PR_TRUE)
 {
 
 #ifdef PR_LOGGING
@@ -217,6 +221,8 @@ sbMediacoreSequencer::~sbMediacoreSequencer()
 nsresult
 sbMediacoreSequencer::Init()
 {
+  NS_ASSERTION(NS_IsMainThread(),
+               "sbMediacoreSequencer::Init expected to be on the main thread");
   mMonitor = nsAutoMonitor::NewMonitor("sbMediacoreSequencer::mMonitor");
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
@@ -260,6 +266,16 @@ sbMediacoreSequencer::Init()
   NS_ENSURE_ARG_RANGE(repeatMode, 0, 2);
 
   mRepeatMode = repeatMode;
+
+  nsCOMPtr<nsIPrefBranch> prefs = do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  PRBool doResume;
+  rv = prefs->GetBoolPref("songbird.mediacore.resumePlaybackPosition",
+                          &doResume);
+  if (NS_SUCCEEDED(rv)) {
+    // only set the member we actually check if the pref was retrieved
+    mResumePlaybackPosition = doResume ? PR_TRUE : PR_FALSE;
+  }
 
   return NS_OK;
 }
@@ -1468,6 +1484,7 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
 
   nsCOMPtr<nsIURI> uri;
   nsCOMPtr<sbIMediaItem> item;
+  nsCOMPtr<sbIMediaItem> lastItem = mCurrentItem;
 
   nsresult rv = NS_ERROR_UNEXPECTED;
 
@@ -1548,6 +1565,8 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
       // Grip.
       nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
       mon.Exit();
+
+      UpdateLastPositionProperty(lastItem, nsnull);
 
       rv = playbackControl->Stop();
       NS_ASSERTION(NS_SUCCEEDED(rv),
@@ -2119,6 +2138,100 @@ sbMediacoreSequencer::StartPlayback()
   // Start playback
   rv = mPlaybackControl->Play();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbMediacoreSequencer::UpdateLastPositionProperty(sbIMediaItem* aItem,
+                                                 nsIVariant* aData)
+{
+  TRACE(("%s: item(%p)", __FUNCTION__, aItem));
+  NS_ENSURE_ARG_POINTER(aItem);
+
+  nsresult rv;
+
+  PRBool hasVideo;
+  rv = mDataRemoteFaceplatePlayingVideo->GetBoolValue(&hasVideo);
+  if (NS_FAILED(rv) || !hasVideo) {
+    // we only track last position for video
+    return NS_OK;
+  }
+
+  PRUint64 position, duration;
+
+  if (aData) {
+    nsCOMPtr<nsISupports> supports;
+    nsIID *iid = nsnull;
+    rv = aData->GetAsInterface(&iid, getter_AddRefs(supports));
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<nsIPropertyBag2> bag = do_QueryInterface(supports, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = bag->GetPropertyAsUint64(NS_LITERAL_STRING("position"), &position);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = bag->GetPropertyAsUint64(NS_LITERAL_STRING("duration"), &duration);
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<nsIURI> expectedURI;
+    rv = bag->GetPropertyAsInterface(NS_LITERAL_STRING("uri"),
+                                     NS_GET_IID(nsIURI),
+                                     getter_AddRefs(expectedURI));
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsCString expectedSpec;
+    nsString actualSpec;
+    rv = expectedURI->GetSpec(expectedSpec);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL), actualSpec);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!expectedSpec.Equals(NS_ConvertUTF16toUTF8(actualSpec))) {
+      // this isn't a stop, it's a track change; since we're way too late now,
+      // don't set anything.  We would have caught it from
+      // sbMediacoreSequencer::Setup() anyway.
+      return NS_OK;
+    }
+  }
+  else {
+    rv = mPlaybackControl->GetPosition(&position);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mPlaybackControl->GetDuration(&duration);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  TRACE(("%s: position = %llu / %llu status %08x",
+         __FUNCTION__,  position, duration, mStatus));
+
+  #ifdef PR_LOGGING
+  do {
+    nsString actualSpec;
+    rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL), actualSpec);
+    if (NS_FAILED(rv)) break;
+    TRACE(("%s[%p]: actual uri %s",
+           __FUNCTION__, this,
+           NS_ConvertUTF16toUTF8(actualSpec).get()));
+  } while(0);
+  #endif
+
+  if (position == 0 || duration == 0) {
+    // this is invalid, probably means things have already stopped
+    return NS_OK;
+  }
+
+  /* the number of milliseconds before the end of the track where we will
+   * consider this track have to finished playing (so the next play of this
+   * track will not resume where we left off)
+   */
+  const PRUint64 TIME_BEFORE_END = 10 * PR_MSEC_PER_SEC;
+  NS_NAMED_LITERAL_STRING(PROPERTY_LAST_POSITION, SB_PROPERTY_LASTPLAYPOSITION);
+
+  if (position + TIME_BEFORE_END >= duration) {
+    // this is near the end, just clear the remembered position
+    rv = aItem->SetProperty(PROPERTY_LAST_POSITION, SBVoidString());
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    sbAutoString strPosition(position);
+    rv = aItem->SetProperty(PROPERTY_LAST_POSITION, strPosition);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -2870,7 +2983,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
   rv = core->GetInstanceName(coreName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  LOG(("[sbMediacoreSequencer] - Event from core '%s', type %d", 
+  LOG(("[sbMediacoreSequencer] - Event from core '%s', type %08x",
         NS_ConvertUTF16toUTF8(coreName).BeginReading(), eventType));
 #endif
 
@@ -2931,6 +3044,35 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
         rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_TRUE);
         NS_ENSURE_SUCCESS(rv, rv);
       }
+
+      // we may wish to restore the video position
+      if (mResumePlaybackPosition) {
+        NS_ENSURE_STATE(mCurrentItem);
+        NS_NAMED_LITERAL_STRING(PROPERTY_LAST_POSITION,
+                                SB_PROPERTY_LASTPLAYPOSITION);
+        nsString lastPositionStr;
+        rv = mCurrentItem->GetProperty(PROPERTY_LAST_POSITION, lastPositionStr);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = mCurrentItem->SetProperty(PROPERTY_LAST_POSITION, SBVoidString());
+        NS_ENSURE_SUCCESS(rv, rv);
+        PRUint64 lastPosition = nsString_ToUint64(lastPositionStr);
+        if (lastPosition > 0) {
+          TRACE(("%s[%p] - seeking to %llu (%s)",
+                 __FUNCTION__, this, lastPosition,
+                 NS_LossyConvertUTF16toASCII(lastPositionStr).get()));
+          nsRefPtr<sbRunnableMethod1<sbMediacoreSequencer, nsresult, PRUint64> > runnable;
+          rv = sbRunnableMethod1<sbMediacoreSequencer, nsresult, PRUint64>
+                                ::New(getter_AddRefs(runnable),
+                                      this,
+                                      &sbMediacoreSequencer::SeekCallback,
+                                      NS_ERROR_FAILURE,
+                                      lastPosition);
+          NS_ENSURE_SUCCESS(rv, rv);
+          rv = NS_DispatchToCurrentThread(runnable);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+      }
+
     }
     break;
 
@@ -2973,6 +3115,16 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
         LOG(("[sbMediacoreSequencer] - Was playing, stream ended, attempting to go to next track in sequence."));
       }
       mon.Exit();
+    }
+    break;
+
+    case sbIMediacoreEvent::STREAM_BEFORE_STOP: {
+      nsCOMPtr<nsIVariant> data;
+      rv = aEvent->GetData(getter_AddRefs(data));
+      NS_ENSURE_SUCCESS(rv, rv);
+      NS_ENSURE_STATE(data);
+      rv = UpdateLastPositionProperty(mCurrentItem, data);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
     break;
 
@@ -3079,6 +3231,26 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
     default:;
   }
 
+  return NS_OK;
+}
+
+nsresult
+sbMediacoreSequencer::SeekCallback(PRUint64 aPosition)
+{
+  TRACE(("%s[%p](%llu)", __FUNCTION__, this, aPosition));
+  nsresult rv;
+  #ifdef PR_LOGGING
+  {
+    nsString url;
+    rv = mDataRemoteMetadataURL->GetStringValue(url);
+    TRACE(("%s[%p] - url is %s", __FUNCTION__, this,
+           NS_SUCCEEDED(rv) ? NS_LossyConvertUTF16toASCII(url).get()
+                            : "<none>"));
+  }
+  #endif
+  NS_ENSURE_STATE(mPlaybackControl);
+  rv = mPlaybackControl->SetPosition(aPosition);
+  NS_ENSURE_SUCCESS(rv, rv);
   return NS_OK;
 }
 
