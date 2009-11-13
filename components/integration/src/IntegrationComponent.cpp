@@ -45,8 +45,8 @@
 #endif
 #else
 #include "win32/sbNativeWindowManager.h"
-// XXXAus: this will be in all platforms when they are implemented.
 #include "win32/sbScreenSaverSuppressor.h"
+#include "win32/sbWindowMoveService.h"
 #endif
 
 #ifdef XP_WIN
@@ -78,6 +78,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowRegion)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CGlobalHotkeys)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowLayer)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbScreenSaverSuppressor, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbWindowMoveService, Init);
 #endif
 
 #ifdef XP_MACOSX
@@ -143,6 +144,13 @@ static nsModuleComponentInfo sbIntegration[] =
     SB_BASE_SCREEN_SAVER_SUPPRESSOR_CONTRACTID,
     sbScreenSaverSuppressorConstructor,
     sbScreenSaverSuppressor::RegisterSelf
+  },
+
+  {
+    SB_WINDOWMOVE_SERVICE_CLASSNAME,
+    SB_WINDOWMOVE_SERVICE_CID,
+    SB_WINDOWMOVE_SERVICE_CONTRACTID,
+    sbWindowMoveServiceConstructor
   },
 #endif
 #ifdef XP_MACOSX

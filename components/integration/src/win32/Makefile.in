@@ -68,6 +68,7 @@ CPP_SRCS = MultiMonitor.cpp \
            GlobalHotkeys.cpp \
            sbNativeWindowManager.cpp \
            sbScreenSaverSuppressor.cpp \
+           sbWindowMoveService.cpp \
            $(NULL)
 
 # From ..

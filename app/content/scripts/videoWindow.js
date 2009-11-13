@@ -188,7 +188,7 @@ var videoWindowController = {
     
     this._actualSizeDataRemote.unbind();
 
-    this._osdService.onVideoWindowClosed();
+    this._osdService.onVideoWindowWillClose();
     this._osdService = null;
     
     this._mediacoreManager.removeListener(this);

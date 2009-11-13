@@ -105,19 +105,9 @@ NS_IMETHODIMP sbNativeWindowManager::SetShadowing(nsISupports *aWindow, PRBool a
 
   HWND window = NativeWindowFromNode::get(aWindow);
   HMODULE hDll = LoadLibraryW(L"dwmapi");
-    
+
+  // failure is not an error.
   if(!hDll) {
-    LONG dwStyle = GetClassLongW(window, GCL_STYLE);
-
-    if(aShadowing) {
-      dwStyle |= CS_DROPSHADOW;
-    }
-    else {
-      dwStyle &= ~CS_DROPSHADOW;
-    }
-
-    SetClassLongW(window, GCL_STYLE, dwStyle);
-
     return NS_OK;
   }
 

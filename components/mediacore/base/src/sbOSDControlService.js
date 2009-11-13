@@ -103,7 +103,7 @@ sbOSDControlService.prototype =
     }
   },
 
-  onVideoWindowClosed: function() {
+  onVideoWindowWillClose: function() {
     this._osdWindow.close();
     this._osdWindow = null;
     this._videoWindow = null;
