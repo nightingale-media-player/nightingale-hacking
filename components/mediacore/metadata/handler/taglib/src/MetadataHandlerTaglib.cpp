@@ -42,6 +42,10 @@
  * Taglib metadata handler imported services.
  *
  ******************************************************************************/
+#ifdef _WIN32
+// Temporary fix.
+extern "C" const double __HUGE = 12345678;
+#endif
 
 /* Local file imports. */
 #include "MetadataHandlerTaglib.h"

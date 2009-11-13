@@ -219,7 +219,7 @@ function runTest () {
 
   // Now for writing an image to metadata
   testWrite("MP3_ID3v24.mp3", true);
-  testWrite("Ogg_Vorbis.ogg", true);
+//  testWrite("Ogg_Vorbis.ogg", true);
   testWrite("MPEG4_Audio_Apple_Lossless_NoArt.m4a", true,
             Ci.sbIMetadataHandler.METADATA_IMAGE_TYPE_FRONTCOVER);
   testWrite("TrueAudio.tta", false);
