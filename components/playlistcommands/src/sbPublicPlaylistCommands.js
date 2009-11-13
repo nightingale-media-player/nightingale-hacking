@@ -370,13 +370,6 @@ PublicPlaylistCommands.prototype = {
                                            "&command.shortcut.modifiers.reveal",
                                            true);
 
-      function plCmd_isSelectionRevealable(aContext, aSubMenuId, aCommandId, aHost) {
-        var selection = unwrap(aContext.playlist).mediaListView.selection;
-        if (selection.count != 1) { return false; }
-        var items = selection.selectedIndexedMediaItems;
-        var item = items.getNext().QueryInterface(Ci.sbIIndexedMediaItem).mediaItem;
-        return (item.contentSrc.scheme == "file")
-      }
       this.m_cmd_Reveal.setCommandEnabledCallback(null,
                                                   "library_cmd_reveal",
                                                   plCmd_isSelectionRevealable);
@@ -1631,6 +1624,15 @@ function plCmd_IsRescanItemEnabled(aContext, aSubMenuId, aCommandId, aHost) {
     // nothing to do
   }
   return enabled;
+}
+
+// Returns true if the 'reveal' command is enabled
+function plCmd_isSelectionRevealable(aContext, aSubMenuId, aCommandId, aHost) {
+  var selection = unwrap(aContext.playlist).mediaListView.selection;
+  if (selection.count != 1) { return false; }
+  var items = selection.selectedIndexedMediaItems;
+  var item = items.getNext().QueryInterface(Ci.sbIIndexedMediaItem).mediaItem;
+  return (item.contentSrc.scheme == "file")
 }
 
 // Returns true if the host is the shortcuts instantiator
