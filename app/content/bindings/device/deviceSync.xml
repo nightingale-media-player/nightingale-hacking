@@ -63,36 +63,20 @@
             <xul:label class="device-tab-header-label"
                        value="&device.sync.header.label;"/>
             <xul:label sbid="content_management_header_info_label"
-                       class="device-tab-header-info"/>      
+                       class="device-tab-header-info"/>
           </xul:hbox>
 
           <xul:groupbox>
             <!-- Management preferences. -->
             <xul:vbox class="content-controls"
                       oncommand="DeviceSyncWidget.onUIPrefChange();">
-
-              <!-- Content management radio group. -->
-              <xul:radiogroup sbid="content_management_radio_group" flex="1">
-
-                <xul:radio sbid="content_auto_sync_radio"
-                           label="&device.sync.auto_sync.label;"/>
-                <xul:radiogroup sbid="content_auto_sync_type_radio_group">
-                  <xul:radio sbid="content_auto_sync_all_radio"
-                             label="&device.sync.sync_all.label;"/>
-                  <xul:radio
-                          sbid="content_auto_sync_selected_radio"
-                          label="&device.sync.sync_selected.label;"/>
-                  <xul:listbox sbid="content_auto_sync_playist_listbox"
-                               class="indent"
-                               rows="5"
-                               onkeyup="DeviceSyncWidget.onUIPrefChange();"
-                               onclick="DeviceSyncWidget.onUIPrefChange();"/>
-                </xul:radiogroup>
-                <xul:radio sbid="content_manual_radio"
-                           label="&device.sync.manual.label;"/>
-
-              </xul:radiogroup>
-              
+              <xul:checkbox sbid="content_auto_sync_checkbox"
+                            label="&device.sync.auto_sync.label;"/>
+              <xul:listbox sbid="content_auto_sync_playist_listbox"
+                           class="indent"
+                           rows="5"
+                           onkeyup="DeviceSyncWidget.onUIPrefChange();"
+                           onclick="DeviceSyncWidget.onUIPrefChange();"/>
             </xul:vbox>
 
           </xul:groupbox>

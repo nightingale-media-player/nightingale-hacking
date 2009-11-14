@@ -685,37 +685,31 @@ var DeviceSyncWidget = {
 
   musicPrefsApply: function DeviceSyncWidget_musicPrefsApply()
   {
-      var                         syncRadioGroup;
+      var                         syncCheckbox;
       var                         syncPlaylistListBox;
       var                         syncPlaylistList;
-      var                         cancelButton;
-      var                         saveButton;
       var                         listItem;
       var                         guid;
   
       /* Get the management type pref UI elements. */
-      syncRadioGroup = this._getElement("content_auto_sync_type_radio_group");
+      syncCheckbox = this._getElement("content_auto_sync_checkbox");
       syncPlaylistListBox= this._getElement("content_auto_sync_playist_listbox");
   
       /* Apply management type prefs. */
-      syncRadioGroup.disabled = true;
+      syncCheckbox.disabled = false;
+      syncCheckbox.checked = false;
       syncPlaylistListBox.disabled = true;
       switch (this._syncPrefs.mgmtType.value)
       {
           case Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL :
-              this._selectRadio("content_manual_radio");
+              syncCheckbox.disabled = true;
               break;
   
           case Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL :
-              this._selectRadio("content_auto_sync_radio");
-              this._selectRadio("content_auto_sync_all_radio");
-              syncRadioGroup.disabled = false;
               break;
   
           case Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_PLAYLISTS :
-              this._selectRadio("content_auto_sync_radio");
-              this._selectRadio("content_auto_sync_selected_radio");
-              syncRadioGroup.disabled = false;
+              syncCheckbox.checked = true;
               syncPlaylistListBox.disabled = false;
               break;
   
@@ -781,14 +775,10 @@ var DeviceSyncWidget = {
       var                         listItem;
   
       /* Extract the management type preference. */
-      if (this._getElement("content_auto_sync_radio").selected) {
-        if (this._getElement("content_auto_sync_all_radio").selected)
-            mgmtType = Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL;
-        else if (this._getElement("content_auto_sync_selected_radio").selected)
-            mgmtType = Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_PLAYLISTS;
-      } else {
-          mgmtType = Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL;
-      }
+      if (!this._getElement("content_auto_sync_checkbox").checked)
+        mgmtType = Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL;
+      else
+        mgmtType = Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_PLAYLISTS;
       this._syncPrefs.mgmtType.value = mgmtType;
       
       /* Extract the sync playlist list preferences. */
