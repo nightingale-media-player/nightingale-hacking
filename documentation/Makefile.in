@@ -31,11 +31,13 @@ include $(DEPTH)/build/autodefs.mk
 
 TOOLSDIR = $(topsrcdir)/tools/win32
 
+# The DOXYGEN_ variables need to be relative, because doxygen.exe doesn't
+# understand MSYS-style paths.
 DOXYGEN_INPUTDIRS = $(DEPTH)/../components \
                     $(DEPTH)/../bindings \
                     $(NULL)
                     
-DOXYGEN_OUTPUTDIR = $(DEPTH)/../documentation/sdkapi \
+DOXYGEN_OUTPUTDIR = sdkapi \
                     $(NULL)
 
 DOXYGEN_STRIP_TOPSRCDIR = $(DEPTH)/.. \
@@ -55,12 +57,26 @@ PPDEFINES += \
  $(NULL)
 
 SONGBIRD_PP_DIR = $(SONGBIRD_DOCUMENTATIONDIR)
-                         
+
+CREATEDIRS += $(CURDIR)/webpageapi \
+              $(CURDIR)/sdkapi \
+              $(NULL)
+
+GARBAGE += Docs.css \
+           header.html \
+           tmp \
+           $(CREATEDIRS) \
+           $(NULL)
+
 include $(topsrcdir)/build/rules.mk
 
 # preedTODO: nothing should be preventing this from working on all platforms...
 libs::
 ifeq (windows,$(SB_PLATFORM))
 	$(topsrcdir)/documentation/make-webpageapi-docs.sh $(topsrcdir)
-	$(topsrcdir)/documentation/make-sdkapi-docs.sh $(topsrcdir) $(TOOLSDIR)
+	$(TOOLSDIR)/doxygen/bin/doxygen songbird.dox
+	$(INSTALL_FILE) $(srcdir)/sb_logo_doc.gif $(CURDIR)/sdkapi/html/sb_logo_doc.gif
+	$(INSTALL_FILE) $(srcdir)/sb_logo_doc.gif $(CURDIR)/webpageapi/sb_logo_doc.gif
+else
+	$(error Documentation must be built on Win32 for now.)
 endif

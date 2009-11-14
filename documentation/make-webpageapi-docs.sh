@@ -1,5 +1,8 @@
 #!/bin/sh
 
+set -x
+set -e
+
 notice() {
   echo $* 1>&2
 }
@@ -31,7 +34,7 @@ bindingsdir="$topsrcdir/bindings/"
 docstempdir="$topsrcdir/compiled/documentation/tmp"
 
 # Documentation output directory
-docsoutputdir="$topsrcdir/documentation/webpageapi"
+docsoutputdir="$topsrcdir/compiled/documentation/webpageapi"
 
 # Natural Docs project directory
 ndprojectdir="$topsrcdir/documentation/naturaldocsconfig"
