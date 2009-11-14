@@ -34,7 +34,6 @@
 <window
   id="video_window"
   onload="videoWindowController._initialize();" 
-  onclose="return videoWindowController._close();" 
   onunload="videoWindowController._shutdown();" 
   hidechrome="true"
   title="&videowindow.title;"

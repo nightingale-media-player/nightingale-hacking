@@ -179,12 +179,9 @@ var videoWindowController = {
     this._videoElement = document.getElementById("video-box");
   },
   
-  _close: function vwc__close() {
-    this._mediacoreManager.sequencer.stop();
-    return true;
-  },
-  
   _shutdown: function vwc__shutdown() {
+    this._mediacoreManager.sequencer.stop();
+
     window.removeEventListener("resize", this._resizeListener, false);
     this._resizeListener = null;
     
