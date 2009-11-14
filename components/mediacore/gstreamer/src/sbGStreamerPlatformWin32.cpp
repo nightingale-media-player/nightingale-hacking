@@ -169,7 +169,7 @@ Win32PlatformInterface::FullScreen()
   HMONITOR monitor;
   MONITORINFO info;
 
-  monitor = ::MonitorFromWindow(mWindow, MONITOR_DEFAULTTOPRIMARY);
+  monitor = ::MonitorFromWindow(mWindow, MONITOR_DEFAULTTONEAREST);
   info.cbSize = sizeof (MONITORINFO);
   ::GetMonitorInfo(monitor, &info);
 
@@ -178,19 +178,26 @@ Win32PlatformInterface::FullScreen()
     SB_VIDEOWINDOW_CLASSNAME,
     L"Songbird Fullscreen Video Window",
     WS_POPUP,
-    info.rcMonitor.top, info.rcMonitor.left,
-    info.rcMonitor.bottom - info.rcMonitor.top, 
-    info.rcMonitor.right - info.rcMonitor.left,
+    info.rcMonitor.left, info.rcMonitor.top, 
+    abs(info.rcMonitor.right - info.rcMonitor.left), 
+    abs(info.rcMonitor.bottom - info.rcMonitor.top),
     NULL, NULL, NULL, NULL);
 
-  ::SetWindowLongPtr(mWindow, GWLP_USERDATA, (LONG)this);
+  ::SetWindowLongPtr(mFullscreenWindow, GWLP_USERDATA, (LONG)this);
 
   ::SetParent(mWindow, mFullscreenWindow);
   ::ShowWindow(mFullscreenWindow, SW_SHOWMAXIMIZED);
 
-  SetDisplayArea(info.rcMonitor.top, info.rcMonitor.left, 
-        info.rcMonitor.bottom - info.rcMonitor.top, 
-        info.rcMonitor.right - info.rcMonitor.left);
+  //
+  // When a window is MAXIMIZED on a monitor, it's coordinates are not
+  // in virtual screen space anymore but in actual display coordinates.
+  //
+  // e.g. Top left corner of display becomes 0,0 even if it's at virtual
+  // coordinate 1600,0. Because of this, we should always use 0,0 for x and y.
+  //
+  SetDisplayArea(0, 0, 
+                 abs(info.rcMonitor.right - info.rcMonitor.left),
+                 abs(info.rcMonitor.bottom - info.rcMonitor.top));
   ResizeVideo();
 
   ::ShowCursor(FALSE);
