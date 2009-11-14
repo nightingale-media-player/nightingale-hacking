@@ -1404,6 +1404,10 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary, aMove) {
     for each (let type in ["video", "audio"]) {
       node = makeNodeFromLibrary(aLibrary, type, parentNode);
       node.name = '&servicesource.library.' + type;
+      // read the localized display name and write it back in, to work around
+      // the fact that the translation wrapper for the RDF data source doesn't
+      // deal with ArcLabelsIn correctly
+      node.name = node.displayName;
       if (aMove || !node.parentNode) {
         this._insertNodeAfter(parentNode, node);
       }
