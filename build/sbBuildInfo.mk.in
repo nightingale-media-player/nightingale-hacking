@@ -5,8 +5,8 @@
 # this can be removed when we're not using the buildbots to building the 
 # 1.1-branch anymore.
 SB_APPNAME=Songbird
-SB_BUILD_ID=20091114013013
-BuildNumber=1364
+SB_BUILD_ID=20091115013012
+BuildNumber=1366
 SB_BUILD_NUMBER=$(BuildNumber)
 SB_MILESTONE=1.5.0a
 SB_MILESTONE_WINDOWS=1.5.0.0
