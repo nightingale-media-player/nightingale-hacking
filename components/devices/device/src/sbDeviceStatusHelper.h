@@ -85,6 +85,7 @@ public:
   void OperationStart(Operation     aOperationType,
                       PRInt32       aItemNum,
                       PRInt32       aItemCount,
+                      PRInt32       aItemType,
                       sbIMediaList* aMediaList = nsnull,
                       sbIMediaItem* aMediaItem = nsnull);
 
@@ -125,7 +126,8 @@ public:
                         const nsAString& aStateMessage,
                         PRInt32          aItemNum,
                         PRInt32          aItemCount,
-                        double           aProgress);
+                        double           aProgress,
+                        PRInt32          aItemType = 0);
 
   PRUint32 GetSubState() {
     PRUint32 subState;
@@ -152,6 +154,7 @@ private:
   //   mMediaItem               Current operation media item.
   //   mItemNum                 Current operation item number.
   //   mItemCount               Current operation item count.
+  //   mItemType                Current item type.
   //
 
   sbBaseDevice*                 mDevice;
@@ -161,6 +164,7 @@ private:
   nsCOMPtr<sbIMediaItem>        mMediaItem;
   PRInt32                       mItemNum;
   PRInt32                       mItemCount;
+  PRInt32                       mItemType;
 };
 
 
@@ -231,6 +235,7 @@ public:
     mStatus->OperationStart(mOperation,
                             mRequest->batchIndex,
                             mRequest->batchCount,
+                            mRequest->itemType,
                             IsItemOp(mOperation) ? mRequest->list : nsnull,
                             IsItemOp(mOperation) ? mRequest->item : nsnull);
 
@@ -258,6 +263,7 @@ public:
     mStatus->OperationStart(mOperation,
                             0,
                             aBatchCount,
+                            aRequest->itemType,
                             IsItemOp(mOperation) ? mRequest->list : nsnull,
                             IsItemOp(mOperation) ? mRequest->item : nsnull);
 

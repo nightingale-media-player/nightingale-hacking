@@ -124,7 +124,13 @@ public:
       REQUEST_UPDATE        = sbIDevice::REQUEST_UPDATE,
       REQUEST_NEW_PLAYLIST  = sbIDevice::REQUEST_NEW_PLAYLIST,
       REQUEST_FORMAT        = sbIDevice::REQUEST_FORMAT
-   };
+    };
+
+    enum {
+      REQUESTBATCH_UNKNOWN       = 0,
+      REQUESTBATCH_AUDIO         = 1,
+      REQUESTBATCH_VIDEO         = 2
+    };
 
     int type;                        /* one of the REQUEST_* constants,
                                           or a custom type */
@@ -151,6 +157,7 @@ public:
     PRInt64 timeStamp;               /* time stamp of when request was
                                           enqueued */
     PRUint32 batchID;                /* ID of request batch */
+    PRUint32 itemType;               /* Item type: Audio, Video... */
 
     /* Write request fields. */
     PRBool contentSrcSet;            /* if true, the content source URI for the
@@ -600,6 +607,8 @@ protected:
   PRLock*  mPreferenceLock;
   PRUint32 mMusicLimitPercent;
   nsCOMPtr<nsIArray> mTranscodeProfiles;
+
+  PRUint32 mVideoInsertedCount;
 
   //   mConnected               True if device is connected.
   //   mConnectLock             Connect lock.
@@ -1285,6 +1294,15 @@ protected:
     TransferRequestQueueMap::iterator & aMapIter,
     TransferRequestQueue::iterator & aQueueIter,
     bool aRemove);
+
+  /**
+   * Finds the last countable item with type contentType in the queue. If not
+   * found it returns end
+   */
+  nsresult SBFindLastMatchCountable(TransferRequestQueue::iterator begin,
+                                    TransferRequestQueue::iterator end,
+                                    TransferRequestQueue::iterator& out,
+                                    PRUint32 contentType);
 
   /**
    * Returns if the device pref to enable music space limiting is turned on.

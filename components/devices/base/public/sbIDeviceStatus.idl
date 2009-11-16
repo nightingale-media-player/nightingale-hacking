@@ -40,7 +40,7 @@ interface sbIMediaList;
  * Holds the current status of a device, idle, syncing, etc with all the
  * relevent information.
  */
-[scriptable, uuid(48cb3191-0687-45cc-b47f-8463ebf77bcb)]
+[scriptable, uuid(E40B7B62-5E4F-40d8-A989-749A71711967)]
 interface sbIDeviceStatus: nsISupports {
   /**
    * \brief The current overall state of the device.
@@ -74,6 +74,11 @@ interface sbIDeviceStatus: nsISupports {
    * Sets the current work item # for example processing multiple files
    */
   attribute PRInt64 workItemProgress;
+
+  /**
+   * Sets the current work item type
+   */
+  attribute PRInt32 workItemType;
 
   /**
    * Sets the end count for processing multiple items

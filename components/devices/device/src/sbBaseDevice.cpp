@@ -359,6 +359,7 @@ sbBaseDevice::sbBaseDevice() :
   mConnected(PR_FALSE),
   mReqWaitMonitor(nsnull),
   mReqStopProcessing(0),
+  mVideoInsertedCount(0),
   mIsHandlingRequests(PR_FALSE)
 {
 #ifdef PR_LOGGING
@@ -459,6 +460,38 @@ nsresult sbBaseDevice::PushRequest(const int aType,
   return PushRequest(req);
 }
 
+nsresult
+sbBaseDevice::SBFindLastMatchCountable(TransferRequestQueue::iterator begin,
+                                       TransferRequestQueue::iterator end,
+                                       TransferRequestQueue::iterator& out,
+                                       PRUint32 contentType)
+{
+  TransferRequestQueue::iterator const theEnd = end;
+
+  if (begin != end) {
+    // Start at the last item not "end" and find the first countable item
+    for (--end; end != begin; --end) {
+      // Skip the item that's not countable
+      if ((*end)->IsCountable()) {
+        // Match the content type if countable
+        if (contentType & (*(end))->itemType) {
+          out = end;
+          return NS_OK;
+        }
+      }
+    }
+
+    // We'll either be at begin or some point between begin and end
+    // If we're at the beginning then we may or may not have found a
+    // countable item. So we have to test it
+    //return (*end)->IsCountable() ? end : theEnd;
+    out = (*end)->IsCountable() ? end : theEnd;
+  }
+  // There are no items, so just return the "end"
+  out = theEnd;
+  return NS_OK;
+}
+
 /**
  * Finds the last countable item in the queue. If not found it returns
  * end
@@ -493,9 +526,8 @@ void SBUpdateBatchCounts(T        batchEnd,
 {
   // Reverse iterator from the end of the batch to the beginning and
   // bump the batch count, skipping the non-countable stuff
-  for (;(!(*batchEnd)->IsCountable() || (*batchEnd)->batchID == aBatchID);
-       --batchEnd) {
-    if ((*batchEnd)->IsCountable()) {
+  for (;((*batchEnd)->IsCountable());--batchEnd) {
+    if ((*batchEnd)->batchID == aBatchID) {
       (*batchEnd)->batchCount = aBatchCount;
     }
     // Bail at beginning
@@ -889,15 +921,36 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
     aRequest->batchIndex = 1;
     aRequest->batchCount = 1;
     aRequest->batchID = 0;
+    aRequest->itemType = TransferRequest::REQUESTBATCH_UNKNOWN;
     aRequest->timeStamp = PR_Now();
 
+    PRBool isAudio = PR_FALSE;
+    PRBool isVideo = PR_FALSE;
+    PRBool isWrite = PR_FALSE;
+    TransferRequestQueue::iterator const begin = queue.begin();
+    TransferRequestQueue::iterator const end = queue.end();
     // If this request isn't countable there's nothing to be done
     if (aRequest->IsCountable())
     {
+      nsString contentType;
+      if (aRequest->item) {
+        nsresult rv = aRequest->item->GetContentType(contentType);
+        NS_ENSURE_SUCCESS(rv, rv);
+        if (isAudio = contentType.Equals(NS_LITERAL_STRING("audio")))
+          aRequest->itemType = TransferRequest::REQUESTBATCH_AUDIO;
+        if (isVideo = contentType.Equals(NS_LITERAL_STRING("video")))
+          aRequest->itemType = TransferRequest::REQUESTBATCH_VIDEO;
+        // Only create two audio/video batches for WRITE
+        isWrite = aRequest->type == TransferRequest::REQUEST_WRITE;
+      }
+
       // Calculate the batch count
-      TransferRequestQueue::iterator const begin = queue.begin();
-      TransferRequestQueue::iterator const end = queue.end();
-      TransferRequestQueue::iterator lastCountable = SBFindLastCountable(begin, end);
+      TransferRequestQueue::iterator lastCountable;
+      if (isWrite && (isVideo || isAudio)) {
+        SBFindLastMatchCountable(begin, end, lastCountable, aRequest->itemType);
+      } else {
+        lastCountable = SBFindLastCountable(begin, end);
+      }
 
       // If there was a countable request found and it's the same type
       if (lastCountable != end && (*lastCountable)->type == aRequest->type) {
@@ -908,6 +961,11 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
         aRequest->batchID = last->batchID;
 
         SBUpdateBatchCounts(lastCountable, begin, aRequest->batchCount, aRequest->batchID);
+
+        if (isWrite && isVideo && mVideoInsertedCount > 0) {
+          // Get the video count so that we can insert audio in front later.
+          ++mVideoInsertedCount;
+        }
       } else {
         // start of a new batch.  allocate a new batch ID atomically, ensuring
         // its value is never 0 (assuming it's not incremented 2^32-1 times
@@ -917,10 +975,27 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
         if (!batchID)
           batchID = PR_AtomicIncrement(&mNextBatchID);
         aRequest->batchID = batchID;
+
+        if (isVideo) {
+          // start the counter for every new video batch.
+          mVideoInsertedCount = 1;
+        } else if (!isAudio) {
+          // Clear the counter if !isAudio && !isVideo.
+          mVideoInsertedCount = 0;
+        }
       }
     }
 
-    queue.push_back(aRequest);
+    if (mVideoInsertedCount && isAudio) {
+      // Insert audio in front of video so that audio can be handled first.
+      TransferRequestQueue::iterator it = end;
+      for (PRUint32 i = 0; i < mVideoInsertedCount && (--it != begin); ++i) ;
+      queue.insert(it, aRequest);
+      // Insert one in front is enough
+      mVideoInsertedCount = 0;
+    } else {
+      queue.push_back(aRequest);
+    }
 
     #if DEBUG
       CheckRequestBatch(queue.begin(), queue.end());

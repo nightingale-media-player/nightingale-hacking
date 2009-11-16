@@ -121,6 +121,7 @@ void
 sbDeviceStatusHelper::OperationStart(sbDeviceStatusHelper::Operation aOperationType,
                                      PRInt32  aItemNum,
                                      PRInt32  aItemCount,
+                                     PRInt32  aItemType,
                                      sbIMediaList* aMediaList,
                                      sbIMediaItem* aMediaItem)
 {
@@ -141,6 +142,7 @@ sbDeviceStatusHelper::OperationStart(sbDeviceStatusHelper::Operation aOperationT
 
   mItemNum = aItemNum;
   mItemCount = aItemCount;
+  mItemType = aItemType;
 
   // Dispatch operation dependent status processing.
   switch (mOperationType)
@@ -151,7 +153,8 @@ sbDeviceStatusHelper::OperationStart(sbDeviceStatusHelper::Operation aOperationT
                    NS_LITERAL_STRING("Starting"),
                    aItemNum,
                    aItemCount,
-                   0.0);
+                   0.0,
+                   aItemType);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_MOUNTING_START,
                   sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, mDevice)));
@@ -163,7 +166,8 @@ sbDeviceStatusHelper::OperationStart(sbDeviceStatusHelper::Operation aOperationT
                    NS_LITERAL_STRING("Starting"),
                    aItemNum,
                    aItemCount,
-                   0.0);
+                   0.0,
+                   aItemType);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_START,
                   sbNewVariant(mMediaItem));
@@ -175,7 +179,8 @@ sbDeviceStatusHelper::OperationStart(sbDeviceStatusHelper::Operation aOperationT
                    NS_LITERAL_STRING("Starting"),
                    aItemNum,
                    aItemCount,
-                   0.0);
+                   0.0,
+                   aItemType);
       break;
 
     case OPERATION_TYPE_DELETE :
@@ -184,7 +189,8 @@ sbDeviceStatusHelper::OperationStart(sbDeviceStatusHelper::Operation aOperationT
                    NS_LITERAL_STRING("Starting"),
                    aItemNum,
                    aItemCount,
-                   0.0);
+                   0.0,
+                   aItemType);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_TRANSFER_START,
                   sbNewVariant(mMediaItem));
@@ -196,7 +202,8 @@ sbDeviceStatusHelper::OperationStart(sbDeviceStatusHelper::Operation aOperationT
                    NS_LITERAL_STRING("Starting"),
                    aItemNum,
                    aItemCount,
-                   0.0);
+                   0.0,
+                   aItemType);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_MEDIA_READ_START,
                   sbNewVariant(mMediaItem));
@@ -208,7 +215,8 @@ sbDeviceStatusHelper::OperationStart(sbDeviceStatusHelper::Operation aOperationT
                    NS_LITERAL_STRING("Starting"),
                    0,
                    0,
-                   0.0);
+                   0.0,
+                   0);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_FORMATTING_START,
                   sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, mDevice)));
@@ -350,7 +358,8 @@ sbDeviceStatusHelper::ItemStart(PRInt32     aItemNum,
                    NS_LITERAL_STRING("InProgress"),
                    aItemNum,
                    aItemCount,
-                   0.0);
+                   0.0,
+                   mItemType);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_MOUNTING_PROGRESS,
                   sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, mDevice)));
@@ -362,7 +371,8 @@ sbDeviceStatusHelper::ItemStart(PRInt32     aItemNum,
                    NS_LITERAL_STRING("InProgress"),
                    aItemNum,
                    aItemCount,
-                   0.0);
+                   0.0,
+                   mItemType);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_TRANSFER_START,
                   sbNewVariant(mMediaItem));
@@ -373,7 +383,8 @@ sbDeviceStatusHelper::ItemStart(PRInt32     aItemNum,
                    NS_LITERAL_STRING("InProgress"),
                    aItemNum,
                    aItemCount,
-                   0.0);
+                   0.0,
+                   mItemType);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_TRANSFER_PROGRESS,
                   sbNewVariant(mMediaItem));
@@ -384,7 +395,8 @@ sbDeviceStatusHelper::ItemStart(PRInt32     aItemNum,
                    NS_LITERAL_STRING("Starting"),
                    aItemNum,
                    aItemCount,
-                   0.0);
+                   0.0,
+                   mItemType);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_TRANSFER_START,
                   sbNewVariant(mMediaItem));
@@ -396,7 +408,8 @@ sbDeviceStatusHelper::ItemStart(PRInt32     aItemNum,
                    NS_LITERAL_STRING("InProgress"),
                    aItemNum,
                    aItemCount,
-                   0.0);
+                   0.0,
+                   mItemType);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_TRANSFER_START,
                   sbNewVariant(mMediaItem));
@@ -462,7 +475,8 @@ sbDeviceStatusHelper::ItemProgress(double aProgress)
                    NS_LITERAL_STRING("InProgress"),
                    mItemNum,
                    mItemCount,
-                   0.0);
+                   0.0,
+                   mItemType);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_TRANSFER_PROGRESS,
                   sbNewVariant(mMediaItem));
@@ -474,7 +488,8 @@ sbDeviceStatusHelper::ItemProgress(double aProgress)
                    NS_LITERAL_STRING("InProgress"),
                    mItemNum,
                    mItemCount,
-                   aProgress);
+                   aProgress,
+                   mItemType);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_TRANSFER_PROGRESS,
                   sbNewVariant(mMediaItem));
@@ -486,7 +501,8 @@ sbDeviceStatusHelper::ItemProgress(double aProgress)
                    NS_LITERAL_STRING("InProgress"),
                    mItemNum,
                    mItemCount,
-                   aProgress);
+                   aProgress,
+                   mItemType);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_TRANSFER_PROGRESS,
                   sbNewVariant(mMediaItem));
@@ -683,21 +699,24 @@ sbDeviceStatusHelper::UpdateStatus(const nsAString& aOperation,
                                    const nsAString& aStateMessage,
                                    PRInt32          aItemNum,
                                    PRInt32          aItemCount,
-                                   double           aProgress)
+                                   double           aProgress,
+                                   PRInt32          aItemType)
 {
   nsresult rv;
 
   // Log progress.
-  LOG(("sbDeviceStatusHelper::UpdateStatus item: %d, count: %d, progress %f\n",
-       aItemNum, aItemCount, aProgress));
+  LOG(("sbDeviceStatusHelper::UpdateStatus item: %d, count: %d, progress %f, type %d\n",
+       aItemNum, aItemCount, aProgress, aItemType));
 
   NS_ENSURE_TRUE(mStatus, NS_ERROR_NOT_INITIALIZED);
 
-  // If the current operation has items, update the work item progress.
+  // If the current operation has items, update the work item progress and type.
   if (aItemCount > 0) {
     rv = mStatus->SetWorkItemProgress(aItemNum);
     NS_ENSURE_SUCCESS(rv, rv);
     rv = mStatus->SetWorkItemProgressEndCount(aItemCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mStatus->SetWorkItemType(aItemType);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

@@ -1,4 +1,4 @@
-/* vim: sw=2 : */
+/* vim: set sw=2 :miv */
 /*
 //
 // BEGIN SONGBIRD GPL
@@ -135,10 +135,11 @@ sbDeviceStatus::SetProgress(double aProgress)
   return NS_OK;
 }
 
-/* attribute PRUint32 workItemProgress; */
+/* attribute PRInt64 workItemProgress; */
 NS_IMETHODIMP
 sbDeviceStatus::GetWorkItemProgress(PRInt64 *aWorkItemProgress)
 {
+  NS_ENSURE_ARG_POINTER(aWorkItemProgress);
   return mWorkCurrentCountRemote->GetIntValue(aWorkItemProgress);
 }
 NS_IMETHODIMP
@@ -147,10 +148,26 @@ sbDeviceStatus::SetWorkItemProgress(PRInt64 aWorkItemProgress)
   return mWorkCurrentCountRemote->SetIntValue(aWorkItemProgress);
 }
 
-/* attribute PRUint32 workItemProgressEndCount; */
+/* attribute PRInt32 workItemType; */
+NS_IMETHODIMP
+sbDeviceStatus::GetWorkItemType(PRInt32 *aCurrentItemType)
+{
+  NS_ENSURE_ARG_POINTER(aCurrentItemType);
+  mWorkCurrentTypeRemote->GetIntValue((PRInt64 *)aCurrentItemType);
+  return NS_OK;
+}
+NS_IMETHODIMP
+sbDeviceStatus::SetWorkItemType(PRInt32 aCurrentItemType)
+{
+  mWorkCurrentTypeRemote->SetIntValue(aCurrentItemType);
+  return NS_OK;
+}
+
+/* attribute PRInt64 workItemProgressEndCount; */
 NS_IMETHODIMP
 sbDeviceStatus::GetWorkItemProgressEndCount(PRInt64 *aWorkItemProgressEndCount)
 {
+  NS_ENSURE_ARG_POINTER(aWorkItemProgressEndCount);
   return mWorkTotalCountRemote->GetIntValue(aWorkItemProgressEndCount);
 }
 NS_IMETHODIMP
@@ -229,6 +246,7 @@ NS_IMETHODIMP sbDeviceStatus::Init(const nsAString& aDeviceID)
   NS_NAMED_LITERAL_STRING(STATE, "status.state");
   NS_NAMED_LITERAL_STRING(OPERATION, "status.operation");
   NS_NAMED_LITERAL_STRING(PROGRESS, "status.progress");
+  NS_NAMED_LITERAL_STRING(WORK_CURRENT_TYPE, "status.type");
   NS_NAMED_LITERAL_STRING(WORK_CURRENT_COUNT, "status.workcount");
   NS_NAMED_LITERAL_STRING(WORK_TOTAL_COUNT, "status.totalcount");
 
@@ -253,6 +271,12 @@ NS_IMETHODIMP sbDeviceStatus::Init(const nsAString& aDeviceID)
                 PROGRESS,
                 mDeviceID,
                 getter_AddRefs(mProgressRemote));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetDataRemote(pom,
+                WORK_CURRENT_TYPE,
+                mDeviceID,
+                getter_AddRefs(mWorkCurrentTypeRemote));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = GetDataRemote(pom,

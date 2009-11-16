@@ -52,6 +52,7 @@ private:
   nsCOMPtr<sbIDataRemote> mStatusRemote;
   nsCOMPtr<sbIDataRemote> mOperationRemote;
   nsCOMPtr<sbIDataRemote> mProgressRemote;
+  nsCOMPtr<sbIDataRemote> mWorkCurrentTypeRemote;
   nsCOMPtr<sbIDataRemote> mWorkCurrentCountRemote;
   nsCOMPtr<sbIDataRemote> mWorkTotalCountRemote;
   nsCOMPtr<sbIMediaItem> mItem;
