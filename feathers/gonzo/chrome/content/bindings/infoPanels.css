@@ -64,6 +64,9 @@ sb-info-panelbar[starthidden="true"] {
 sb-info-panel[index="0"] .info-panel-separator {
   width: 0px;
 }
+sb-info-panel *[clickable] {
+  cursor: pointer;
+}
 
 /* Top section */
 .info-panel-content {

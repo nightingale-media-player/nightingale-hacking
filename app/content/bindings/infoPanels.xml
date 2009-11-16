@@ -95,7 +95,8 @@
           var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
           var panel = document.createElementNS(XULNS, "sb-info-panel");
           panel.setAttribute("label", aPanelLabel);
-          panel.setAttribute("icon", aPanelImage);
+          if (aPanelImage)
+            panel.setAttribute("icon", aPanelImage);
           this.panelRoot.appendChild(panel);
 
           // Make this active if specified or if it is the only one.
@@ -285,7 +286,10 @@
         <xul:hbox class="info-panel-content" sbid="sb-content-panel">
           <xul:spacer class="info-panel-spacer" />
           <xul:box class="info-panel-icon-box" align="center" pack="center">
-            <xul:image class="info-panel-icon" xbl:inherits="src=icon" />
+            <xul:image class="info-panel-icon"
+                       sbid="info-panel-icon"
+                       xbl:inherits="src=icon,clickable=icon-clickable"
+                       onclick="document.getBindingParent(this).onIconClick(event);"/>
           </xul:box>
           <xul:box class="info-panel-label-box" align="center">
             <xul:label class="info-panel-label" xbl:inherits="value=label" />
@@ -300,6 +304,18 @@
     </content>
 
     <implementation type="application/x-javascript" >
+
+      <method name="onIconClick">
+        <parameter name="aEvent" />
+        <body><![CDATA[
+          // Create a new event for primary mouse clicks on this icon
+          if (aEvent.button == 0) {
+            var newEvent = document.createEvent("Events");
+            newEvent.initEvent("sbInfoPanel-icon-click", false, true);
+            this.dispatchEvent(newEvent);
+          }
+        ]]></body>
+      </method>
 
       <!-- Index of this panel in the list of panels -->
       <property name="index">
