@@ -255,6 +255,59 @@ interface sbIAudioFormatType : nsISupports
 %}
 
 /**
+ * \interface sbIAudioContentType
+ * \note Implementations of this interface must be threadsafe.
+ *
+ */
+[scriptable, uuid(39fe77d1-f46d-4ca8-acff-435ccec8af1b)]
+interface sbIVideoFormatType : nsISupports
+{
+  void Initialize(in ACString aFormat,
+                  in ACString aCodec,
+                  in sbIDevCapRange aBitRates,
+                  in sbIDevCapRange aSampleRates,
+                  in sbIDevCapRange aChannels,
+                  in nsIArray aFormatSpecificConstraints);
+  /* Mime type of the container format.
+   *
+   * May be empty if there is no container format (e.g. a raw FLAC bitstream)
+   */
+  readonly attribute ACString containerFormat;
+
+  /* Mime type of the video codec in use.
+   */
+  readonly attribute ACString videoCodec;
+
+  /* The supported bitrates.
+   */
+  readonly attribute sbIDevCapRange supportedBitrates;
+
+  /* The supported sample rates.
+   */
+  readonly attribute sbIDevCapRange supportedSampleRates;
+
+  /* The supported numbers of channels
+   */
+  readonly attribute sbIDevCapRange supportedChannels;
+
+  /**
+   * An array of sbIFormatTypeConstraint specific to this content type.
+   */
+  readonly attribute nsIArray formatSpecificConstraints;
+};
+
+%{C++
+#define SB_IVIDEOORMATTYPE_DESCRIPTION             \
+  "Songbird Device Capabilities Video Format Type Component"
+#define SB_IVIDEOFORMATTYPE_CONTRACTID              \
+  "@songbirdnest.com/Songbird/Device/sbvideoformattype;1"
+#define SB_IVIDEOFORMATTYPE_CLASSNAME               \
+  "Songbird Device Capabilities Video Format Type"
+#define SB_IVIDEOFORMATTYPE_CID                     \
+  {0x87cced11, 0x258e, 0x4131, {0xae, 0x51, 0xa5, 0x2a, 0xf7, 0x6d, 0xaa, 0xbc}}
+%}
+
+/**
  * \interface sbIDeviceCapabilities
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \note Implementations of this interface must be threadsafe.

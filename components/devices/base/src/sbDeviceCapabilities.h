@@ -151,7 +151,7 @@ private:
 };
 
 /**
- * Implementation of @see sbAudioFormatType
+ * Implementation of @see sbIAudioFormatType
  */
 class sbAudioFormatType : public sbIAudioFormatType, nsIClassInfo
 {
@@ -170,6 +170,32 @@ private:
 
   nsCString mContainerFormat;
   nsCString mAudioCodec;
+  Bitrates mSupportedBitrates;
+  SampleRates mSupportedSampleRates;
+  SupportedChannels mSupportedChannels;
+  FormatConstraints mFormatSpecificConstraints;
+};
+
+/**
+ * Implementation of @see sbIVideoFormatType
+ */
+class sbVideoFormatType : public sbIVideoFormatType, nsIClassInfo
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIVIDEOFORMATTYPE
+  NS_DECL_NSICLASSINFO
+
+private:
+  ~sbVideoFormatType();
+
+  typedef nsCOMPtr<sbIDevCapRange> Bitrates;
+  typedef nsCOMPtr<sbIDevCapRange> SampleRates;
+  typedef nsCOMPtr<sbIDevCapRange> SupportedChannels;
+  typedef nsCOMPtr<nsIArray> FormatConstraints;
+
+  nsCString mContainerFormat;
+  nsCString mVideoCodec;
   Bitrates mSupportedBitrates;
   SampleRates mSupportedSampleRates;
   SupportedChannels mSupportedChannels;

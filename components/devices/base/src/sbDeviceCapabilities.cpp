@@ -768,3 +768,96 @@ sbAudioFormatType::GetFormatSpecificConstraints(nsIArray * *aFormatSpecificConst
   return NS_OK;
 }
 
+/*******************************************************************************
+ * Video format type
+ */
+
+/* Implementation file */
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbVideoFormatType,
+                              sbIVideoFormatType,
+                              nsIClassInfo)
+NS_IMPL_CI_INTERFACE_GETTER2(sbVideoFormatType,
+                             sbIVideoFormatType,
+                             nsIClassInfo)
+
+NS_DECL_CLASSINFO(sbVideoFormatType)
+NS_IMPL_THREADSAFE_CI(sbVideoFormatType)
+
+sbVideoFormatType::~sbVideoFormatType()
+{
+  /* destructor code */
+}
+
+NS_IMETHODIMP
+sbVideoFormatType::Initialize(nsACString const & aContainerFormat,
+                              nsACString const & aVideoCodec,
+                              sbIDevCapRange * aSupportedBitrates,
+                              sbIDevCapRange * aSupportedSampleRates,
+                              sbIDevCapRange * aSupportedChannels,
+                              nsIArray * aFormatSpecificConstraints) {
+  mContainerFormat = aContainerFormat;
+  mVideoCodec = aVideoCodec;
+  mSupportedBitrates = aSupportedBitrates;
+  mSupportedSampleRates = aSupportedSampleRates;
+  mSupportedChannels = aSupportedChannels;
+  mFormatSpecificConstraints = aFormatSpecificConstraints;
+
+  return NS_OK;
+}
+
+/* readonly attribute ACString containerFormat; */
+NS_IMETHODIMP
+sbVideoFormatType::GetContainerFormat(nsACString & aContainerFormat)
+{
+  aContainerFormat = mContainerFormat;
+  return NS_OK;
+}
+
+/* readonly attribute ACString VideoCodec; */
+NS_IMETHODIMP
+sbVideoFormatType::GetVideoCodec(nsACString & aVideoCodec)
+{
+  aVideoCodec = mVideoCodec;
+  return NS_OK;
+}
+
+/* readonly attribute sbIDevCapRange supportedBitrates; */
+NS_IMETHODIMP
+sbVideoFormatType::GetSupportedBitrates(sbIDevCapRange * *aSupportedBitrates)
+{
+  NS_ENSURE_ARG_POINTER(aSupportedBitrates);
+  *aSupportedBitrates = mSupportedBitrates;
+  NS_IF_ADDREF(*aSupportedBitrates);
+  return NS_OK;
+}
+
+/* readonly attribute sbIDevCapRange supportedSampleRates; */
+NS_IMETHODIMP
+sbVideoFormatType::GetSupportedSampleRates(sbIDevCapRange * *aSupportedSampleRates)
+{
+  NS_ENSURE_ARG_POINTER(aSupportedSampleRates);
+  *aSupportedSampleRates = mSupportedSampleRates;
+  NS_IF_ADDREF(*aSupportedSampleRates);
+  return NS_OK;
+}
+
+/* readonly attribute sbIDevCapRange supportedChannels; */
+NS_IMETHODIMP
+sbVideoFormatType::GetSupportedChannels(sbIDevCapRange * *aSupportedChannels)
+{
+  NS_ENSURE_ARG_POINTER(aSupportedChannels);
+  *aSupportedChannels = mSupportedChannels;
+  NS_IF_ADDREF(*aSupportedChannels);
+  return NS_OK;
+}
+
+/* readonly attribute nsIArray formatSpecificConstraints; */
+NS_IMETHODIMP
+sbVideoFormatType::GetFormatSpecificConstraints(nsIArray * *aFormatSpecificConstraints)
+{
+  NS_ENSURE_ARG_POINTER(aFormatSpecificConstraints);
+  *aFormatSpecificConstraints = mFormatSpecificConstraints;
+  NS_IF_ADDREF(*aFormatSpecificConstraints);
+  return NS_OK;
+}
+

@@ -456,10 +456,10 @@ nsresult sbDeviceUtils::QueryUserAbortRip(PRBool* aAbort)
   NS_ENSURE_ARG_POINTER(aAbort);
 
   nsresult rv;
-  
+
   // By default assume the user says yes.
   *aAbort = PR_TRUE;
-  
+
   // Get a prompter that does not wait for a window.
   nsCOMPtr<sbIPrompter> prompter =
                           do_CreateInstance(SONGBIRD_PROMPTER_CONTRACTID, &rv);
@@ -503,36 +503,36 @@ nsresult sbDeviceUtils::QueryUserViewErrors(sbIDevice* aDevice)
 {
   NS_ENSURE_ARG_POINTER(aDevice);
   nsresult rv;
-  
+
   nsCOMPtr<sbIDeviceErrorMonitor> errMonitor =
       do_GetService("@songbirdnest.com/device/error-monitor-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   PRBool hasErrors;
   rv = errMonitor->DeviceHasErrors(aDevice, &hasErrors);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   if (hasErrors) {
     // Query the user if they wish to see the errors
-    
+
     // Get a prompter that does not wait for a window.
     nsCOMPtr<sbIPrompter> prompter =
                             do_CreateInstance(SONGBIRD_PROMPTER_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     rv = prompter->SetWaitForWindow(PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
-  
+
     // Get the prompt title.
     nsAString const& title =
       SBLocalizedString("device.dialog.cddevice.viewerrors.title");
-  
+
     // Get the prompt message.
     nsAString const& message =
       SBLocalizedString("device.dialog.cddevice.viewerrors.msg");
-  
+
     // Configure the buttons.
     PRUint32 buttonFlags = nsIPromptService::STD_YES_NO_BUTTONS;
-  
+
     // Query the user if they wish to see the errors
     PRInt32 buttonPressed;
     rv = prompter->ConfirmEx(nsnull,
@@ -546,12 +546,12 @@ nsresult sbDeviceUtils::QueryUserViewErrors(sbIDevice* aDevice)
                              nsnull,                      // No check result.
                              &buttonPressed);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     if (buttonPressed == 0) {
       ShowDeviceErrors(aDevice);
     }
   }
-  
+
   return NS_OK;
 }
 
@@ -560,9 +560,9 @@ nsresult sbDeviceUtils::QueryUserViewErrors(sbIDevice* aDevice)
 nsresult sbDeviceUtils::ShowDeviceErrors(sbIDevice* aDevice)
 {
   NS_ENSURE_ARG_POINTER(aDevice);
-  
+
   nsresult rv;
-  
+
   // We have to send an comglmeration of stuff into the OpenWindow to get
   // all the parameters the dialog needs to display the errors.
   //  nsISupports = nsIDialogParamBlock =
@@ -571,12 +571,12 @@ nsresult sbDeviceUtils::ShowDeviceErrors(sbIDevice* aDevice)
   //    Objects = nsIMutableArray =
   //      [0] = sbIDevice
   //      [1] = nsIArray of nsISupportStrings for error messages.
-    
-  // Start with the DialogParamBlock and add strings/objects to it  
+
+  // Start with the DialogParamBlock and add strings/objects to it
   nsCOMPtr<nsIDialogParamBlock> dialogBlock =
     do_CreateInstance(NS_DIALOGPARAMBLOCK_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // First add strings
   // Options string
   rv = dialogBlock->SetString(0, NS_LITERAL_STRING("").get());
@@ -584,7 +584,7 @@ nsresult sbDeviceUtils::ShowDeviceErrors(sbIDevice* aDevice)
   // Operation string
   rv = dialogBlock->SetString(1, NS_LITERAL_STRING("ripping").get());
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Now add Objects (nsIMutableArray)
   nsCOMPtr<nsIMutableArray> objects =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
@@ -604,18 +604,18 @@ nsresult sbDeviceUtils::ShowDeviceErrors(sbIDevice* aDevice)
   // Append the objects to the dialogBlock
   rv = dialogBlock->SetObjects(objects);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Convert the DialogParamBlock to an nsISuports
   nsCOMPtr<nsISupports> arguments = do_QueryInterface(dialogBlock, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Get a prompter that does not wait for a window.
   nsCOMPtr<sbIPrompter> prompter =
                           do_CreateInstance(SONGBIRD_PROMPTER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = prompter->SetWaitForWindow(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Display the dialog.
   nsCOMPtr<nsIDOMWindow> dialogWindow;
   rv = prompter->OpenDialog(nsnull, // Default to parent window
@@ -625,8 +625,8 @@ nsresult sbDeviceUtils::ShowDeviceErrors(sbIDevice* aDevice)
                             arguments,
                             getter_AddRefs(dialogWindow));
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  return NS_OK; 
+
+  return NS_OK;
 }
 
 /* static */
@@ -905,13 +905,13 @@ MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
   { "aif",  "audio/x-aiff",    "aiff", "pcm-int",sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
 
   /* video */
-  { "mp4",  "video/mp4",       "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "mpg",  "video/mpeg",      "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "mpeg", "video/mpeg",      "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "wmv",  "video/x-ms-wmv",  "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "avi",  "video/x-msvideo", "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "3gp",  "video/3gpp",      "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "3g2",  "video/3gpp",      "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "mp4",  "video/mp4",       "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
+  { "mpg",  "video/mpeg",      "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
+  { "mpeg", "video/mpeg",      "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
+  { "wmv",  "video/x-ms-wmv",  "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
+  { "avi",  "video/x-msvideo", "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
+  { "3gp",  "video/3gpp",      "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
+  { "3g2",  "video/3gpp",      "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
 
   /* images */
   { "png",  "image/png",      "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
@@ -1370,7 +1370,7 @@ sbDeviceUtils::DoesItemNeedTranscoding(
   if (NS_SUCCEEDED(rv) && formatsLength > 0) {
     aNeedsTranscoding = true;
     for (PRUint32 formatIndex = 0;
-         formatIndex < formatsLength && NS_SUCCEEDED(rv);
+         formatIndex < formatsLength;
          ++formatIndex) {
 
       NS_ConvertASCIItoUTF16 format(formats[formatIndex]);
@@ -1390,10 +1390,12 @@ sbDeviceUtils::DoesItemNeedTranscoding(
                                         getter_AddRefs(bitRateRange),
                                         getter_AddRefs(sampleRateRange));
         if (NS_SUCCEEDED(rv)) {
+          // Compare the various attributes, if bit rate and sample rate are
+          // not specified then they always match
           if (containerFormat.Equals(itemContainerFormat) &&
               codec.Equals(itemCodec) &&
-              IsValueInRange(aBitRate, bitRateRange) &&
-              IsValueInRange(aSampleRate, sampleRateRange))
+              (!aBitRate || IsValueInRange(aBitRate, bitRateRange)) &&
+              (!aSampleRate || IsValueInRange(aSampleRate, sampleRateRange)))
           {
             TRACE(("%s: no transcoding needed, matches format %s "
                    "container %s codec %s",

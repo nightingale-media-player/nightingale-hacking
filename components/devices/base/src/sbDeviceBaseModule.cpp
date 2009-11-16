@@ -2,30 +2,30 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
 
-/** 
+/**
 * \file  sbDeviceManagerModule.cpp
 * \brief Songbird Device Manager Component Factory and Main Entry Point.
 */
@@ -41,6 +41,7 @@
 #include "sbDeviceStatus.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbAudioFormatType);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbVideoFormatType);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceCapabilities);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceProperties);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceStatus);
@@ -71,13 +72,21 @@ static nsModuleComponentInfo sbDeviceBaseComponents[] =
     SONGBIRD_DEVICESTATUS_CONTRACTID,
     sbDeviceStatusConstructor
   },
+
   {
     SB_IAUDIOFORMATTYPE_CLASSNAME,
     SB_IAUDIOFORMATTYPE_CID,
     SB_IAUDIOFORMATTYPE_CONTRACTID,
     sbAudioFormatTypeConstructor
   },
-  
+
+  {
+    SB_IVIDEOFORMATTYPE_CLASSNAME,
+    SB_IVIDEOFORMATTYPE_CID,
+    SB_IVIDEOFORMATTYPE_CONTRACTID,
+    sbVideoFormatTypeConstructor
+  },
+
   {
     SB_IFORMATTYPECONSTRAINT_CLASSNAME,
     SB_IFORMATTYPECONSTRAINT_CID,
