@@ -400,7 +400,12 @@ sbCDDeviceMarshall::CreateAndDispatchDeviceManagerEvent(PRUint32 aType,
 
   // Create the event.
   nsCOMPtr<sbIDeviceEvent> event;
-  rv = manager->CreateEvent(aType, aData, aOrigin, getter_AddRefs(event));
+  rv = manager->CreateEvent(aType,
+                            aData,
+                            aOrigin,
+                            sbIDevice::STATE_IDLE,
+                            sbIDevice::STATE_IDLE,
+                            getter_AddRefs(event));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Dispatch the event.

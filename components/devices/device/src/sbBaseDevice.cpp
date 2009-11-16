@@ -2162,7 +2162,11 @@ nsresult sbBaseDevice::CreateAndDispatchEvent(PRUint32 aType,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIDeviceEvent> deviceEvent;
-  rv = manager->CreateEvent(aType, aData, static_cast<sbIDevice*>(this),
+  rv = manager->CreateEvent(aType,
+                            aData,
+                            static_cast<sbIDevice*>(this),
+                            mState,
+                            sbIDevice::STATE_IDLE,
                             getter_AddRefs(deviceEvent));
   NS_ENSURE_SUCCESS(rv, rv);
 

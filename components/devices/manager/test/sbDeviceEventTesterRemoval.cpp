@@ -2,25 +2,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
@@ -60,9 +60,10 @@
 #include <nsServiceManagerUtils.h>
 #include <nsIGenericFactory.h>
 
-#include "sbIDeviceEvent.h"
-#include "sbIDeviceEventTarget.h"
-#include "sbIDeviceManager.h"
+#include <sbIDevice.h>
+#include <sbIDeviceEvent.h>
+#include <sbIDeviceEventTarget.h>
+#include <sbIDeviceManager.h>
 
 #include <stdio.h>
 
@@ -86,10 +87,10 @@ NS_IMETHODIMP sbDeviceEventTesterRemoval::Run()
   nsCOMPtr<sbIDeviceManager2> manager =
     do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<sbIDeviceEventTarget> target = do_QueryInterface(manager, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   /// allocate all the listeners at once
   nsRefPtr<sbDeviceEventTesterRemovalHelper> listenerA =
     new sbDeviceEventTesterRemovalHelper('A');
@@ -141,7 +142,7 @@ NS_IMETHODIMP sbDeviceEventTesterRemoval::Run()
                             PR_TRUE,
                             0, 1);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = listenerC->AddAction(sbDeviceEventTesterRemovalHelper::ACTION_CHECK_FLAG,
                             PR_FALSE,
                             0, 3);
@@ -175,11 +176,13 @@ NS_IMETHODIMP sbDeviceEventTesterRemoval::Run()
                             PR_TRUE,
                             0, 1);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<sbIDeviceEvent> event;
   rv = manager->CreateEvent(sbIDeviceEvent::EVENT_CLIENT_DEFINED,
                             nsnull,
                             nsnull,
+                            sbIDevice::STATE_IDLE,
+                            sbIDevice::STATE_IDLE,
                             getter_AddRefs(event));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -188,7 +191,7 @@ NS_IMETHODIMP sbDeviceEventTesterRemoval::Run()
 
   rv = target->DispatchEvent(event, PR_FALSE, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   return NS_OK;
 }
 
@@ -219,19 +222,19 @@ NS_IMETHODIMP sbDeviceEventTesterRemovalHelper::OnDeviceEvent(sbIDeviceEvent *aE
     // no actions left
     return NS_OK;
   }
-  
+
   nsresult rv;
   PRBool succeeded;
-  
+
   int length = mActions.Length();
-  
+
   nsCOMPtr<sbIDeviceEventTarget> target;
   rv = aEvent->GetTarget(getter_AddRefs(target));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   for (int index = 0; index < length; ++index) {
     printf("Removal event: %c#%i\n", mName, index);
-  
+
     switch (mActions[index].type) {
       case ACTION_ADDREMOVE:
         if (mActions[index].set) {
@@ -279,18 +282,20 @@ NS_IMETHODIMP sbDeviceEventTesterRemovalHelper::OnDeviceEvent(sbIDeviceEvent *aE
         rv = manager->CreateEvent(eventType,
                                   nsnull,
                                   nsnull,
+                                  sbIDevice::STATE_IDLE,
+                                  sbIDevice::STATE_IDLE,
                                   getter_AddRefs(event));
         NS_ENSURE_SUCCESS(rv, rv);
-  
+
         nsCOMPtr<sbIDeviceEventTarget> target;
         rv = aEvent->GetTarget(getter_AddRefs(target));
         NS_ENSURE_SUCCESS(rv, rv);
         rv = target->DispatchEvent(event, PR_FALSE, nsnull);
         NS_ENSURE_SUCCESS(rv, rv);
-        
+
         break;
     }
   }
-  
+
   return NS_OK;
 }

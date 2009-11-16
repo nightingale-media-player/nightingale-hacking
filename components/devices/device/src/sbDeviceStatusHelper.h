@@ -127,6 +127,12 @@ public:
                         PRInt32          aItemCount,
                         double           aProgress);
 
+  PRUint32 GetSubState() {
+    PRUint32 subState;
+    nsresult rv = mStatus->GetCurrentSubState(&subState);
+    NS_ENSURE_SUCCESS(rv, sbIDevice::STATE_IDLE);
+    return subState;
+  }
 
   //----------------------------------------------------------------------------
   //

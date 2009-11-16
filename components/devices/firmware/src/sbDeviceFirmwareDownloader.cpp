@@ -1,25 +1,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
@@ -46,6 +46,7 @@
 #include <nsXPCOM.h>
 #include <prmem.h>
 
+#include <sbIDevice.h>
 #include <sbIDeviceEventTarget.h>
 #include <sbIDeviceProperties.h>
 
@@ -59,7 +60,7 @@
 #define FIRMWARE_VERSION_PREF   "firmware.cache.version"
 #define FIRMWARE_READABLE_PREF  "firmware.cache.readableVersion"
 
-static PRInt32 
+static PRInt32
 codetovalue( unsigned char c )
 {
   if( (c >= (unsigned char)'A') && (c <= (unsigned char)'Z') ) {
@@ -81,7 +82,7 @@ codetovalue( unsigned char c )
   return -1;
 }
 
-static PRStatus 
+static PRStatus
 decode4to3( const unsigned char    *src,
             unsigned char          *dest )
 {
@@ -105,7 +106,7 @@ decode4to3( const unsigned char    *src,
   return PR_SUCCESS;
 }
 
-static PRStatus 
+static PRStatus
 decode3to2( const unsigned char    *src,
             unsigned char          *dest )
 {
@@ -143,7 +144,7 @@ decode3to2( const unsigned char    *src,
   return PR_SUCCESS;
 }
 
-static PRStatus 
+static PRStatus
 decode2to1( const unsigned char    *src,
             unsigned char          *dest )
 {
@@ -172,7 +173,7 @@ decode2to1( const unsigned char    *src,
   return PR_SUCCESS;
 }
 
-static PRStatus 
+static PRStatus
 decode( const unsigned char    *src,
         PRUint32                srclen,
         unsigned char          *dest )
@@ -210,7 +211,7 @@ decode( const unsigned char    *src,
   return rv;
 }
 
-static char * 
+static char *
 SB_Base64Decode( const char *src,
                  PRUint32    srclen,
                  char       *dest )
@@ -258,7 +259,7 @@ SB_Base64Decode( const char *src,
   return dest;
 }
 
-static nsCString 
+static nsCString
 GetContentDispositionFilename(const nsACString &contentDisposition)
 {
   NS_NAMED_LITERAL_CSTRING(DISPOSITION_ATTACHEMENT, "attachment");
@@ -364,8 +365,8 @@ GetContentDispositionFilename(const nsACString &contentDisposition)
     }
   }
 
-  nsCString_ReplaceChars(filename, 
-                         nsDependentCString(FILE_ILLEGAL_CHARACTERS), 
+  nsCString_ReplaceChars(filename,
+                         nsDependentCString(FILE_ILLEGAL_CHARACTERS),
                          '_');
 
   return filename;
@@ -397,7 +398,7 @@ static nsresult UnescapeFragment(const nsACString& aFragment, nsIURI* aURI,
   return rv;
 }
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceFirmwareDownloader, 
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceFirmwareDownloader,
                               sbIFileDownloaderListener)
 
 sbDeviceFirmwareDownloader::sbDeviceFirmwareDownloader()
@@ -409,8 +410,8 @@ sbDeviceFirmwareDownloader::~sbDeviceFirmwareDownloader()
 {
 }
 
-nsresult 
-sbDeviceFirmwareDownloader::Init(sbIDevice *aDevice, 
+nsresult
+sbDeviceFirmwareDownloader::Init(sbIDevice *aDevice,
                                  sbIDeviceEventListener *aListener,
                                  sbIDeviceFirmwareHandler *aHandler)
 {
@@ -435,15 +436,15 @@ sbDeviceFirmwareDownloader::Init(sbIDevice *aDevice,
   rv = CreateCacheRoot(getter_AddRefs(mCacheDir));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = CreateCacheDirForDevice(mDevice, 
-                               mCacheDir, 
+  rv = CreateCacheDirForDevice(mDevice,
+                               mCacheDir,
                                getter_AddRefs(mDeviceCacheDir));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
-/*static*/ nsresult 
+/*static*/ nsresult
 sbDeviceFirmwareDownloader::CreateCacheRoot(nsIFile **aCacheRoot)
 {
   // Initialize the cache
@@ -527,7 +528,7 @@ sbDeviceFirmwareDownloader::CreateCacheDirForDevice(sbIDevice *aDevice,
   nsString vendorName;
   rv = properties->GetVendorName(vendorName);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<nsIVariant> modelNumber;
   rv = properties->GetModelNumber(getter_AddRefs(modelNumber));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -538,7 +539,7 @@ sbDeviceFirmwareDownloader::CreateCacheDirForDevice(sbIDevice *aDevice,
 
   nsString str;
   nsString hashStr(vendorName);
-  
+
   rv = modelNumber->GetAsAString(str);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -594,8 +595,8 @@ sbDeviceFirmwareDownloader::CreateCacheDirForDevice(sbIDevice *aDevice,
   return NS_OK;
 }
 
-/*static*/ nsresult 
-sbDeviceFirmwareDownloader::CacheFirmwareUpdate(sbIDevice *aDevice, 
+/*static*/ nsresult
+sbDeviceFirmwareDownloader::CacheFirmwareUpdate(sbIDevice *aDevice,
                                                 sbIDeviceFirmwareUpdate *aFirmwareUpdate,
                                                 sbIDeviceFirmwareUpdate **aCachedFirmwareUpdate)
 {
@@ -656,13 +657,13 @@ sbDeviceFirmwareDownloader::CacheFirmwareUpdate(sbIDevice *aDevice,
   rv = newFirmwareFile->Append(leafName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIVariant> firmwareVersionVariant = 
+  nsCOMPtr<nsIVariant> firmwareVersionVariant =
     sbNewVariant(firmwareVersion).get();
-  rv = aDevice->SetPreference(NS_LITERAL_STRING(FIRMWARE_VERSION_PREF), 
+  rv = aDevice->SetPreference(NS_LITERAL_STRING(FIRMWARE_VERSION_PREF),
                               firmwareVersionVariant);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIVariant> firmwareReadableVariant = 
+  nsCOMPtr<nsIVariant> firmwareReadableVariant =
     sbNewVariant(firmwareReadableVersion).get();
   rv = aDevice->SetPreference(NS_LITERAL_STRING(FIRMWARE_READABLE_PREF),
                               firmwareReadableVariant);
@@ -671,19 +672,19 @@ sbDeviceFirmwareDownloader::CacheFirmwareUpdate(sbIDevice *aDevice,
   nsString newFirmwareFilePath;
   rv = newFirmwareFile->GetPath(newFirmwareFilePath);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  nsCOMPtr<nsIVariant> firmwareFileVariant = 
+
+  nsCOMPtr<nsIVariant> firmwareFileVariant =
     sbNewVariant(newFirmwareFilePath).get();
   rv = aDevice->SetPreference(NS_LITERAL_STRING(FIRMWARE_FILE_PREF),
                               firmwareFileVariant);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIDeviceFirmwareUpdate> firmwareUpdate = 
+  nsCOMPtr<sbIDeviceFirmwareUpdate> firmwareUpdate =
     do_CreateInstance(SB_DEVICEFIRMWAREUPDATE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = firmwareUpdate->Init(newFirmwareFile, 
-                            firmwareReadableVersion, 
+  rv = firmwareUpdate->Init(newFirmwareFile,
+                            firmwareReadableVersion,
                             firmwareVersion);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -692,7 +693,7 @@ sbDeviceFirmwareDownloader::CacheFirmwareUpdate(sbIDevice *aDevice,
   return NS_OK;
 }
 
-PRBool 
+PRBool
 sbDeviceFirmwareDownloader::IsAlreadyInCache()
 {
   NS_ENSURE_STATE(mDevice);
@@ -700,7 +701,7 @@ sbDeviceFirmwareDownloader::IsAlreadyInCache()
   NS_ENSURE_STATE(mHandler);
 
   nsCOMPtr<nsIVariant> firmwareVersion;
-  nsresult rv = 
+  nsresult rv =
     mDevice->GetPreference(NS_LITERAL_STRING(FIRMWARE_VERSION_PREF),
                            getter_AddRefs(firmwareVersion));
   NS_ENSURE_SUCCESS(rv, PR_FALSE);
@@ -740,7 +741,7 @@ sbDeviceFirmwareDownloader::IsAlreadyInCache()
   return PR_TRUE;
 }
 
-nsresult 
+nsresult
 sbDeviceFirmwareDownloader::GetCachedFile(nsIFile **aFile)
 {
   NS_ENSURE_ARG_POINTER(aFile);
@@ -765,12 +766,12 @@ sbDeviceFirmwareDownloader::GetCachedFile(nsIFile **aFile)
     return NS_ERROR_FAILURE;
   }
 
-  NS_ADDREF(*aFile = localFile);                            
+  NS_ADDREF(*aFile = localFile);
 
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbDeviceFirmwareDownloader::Start()
 {
   NS_ENSURE_STATE(mDownloader);
@@ -787,7 +788,7 @@ sbDeviceFirmwareDownloader::Start()
   if(!inCache) {
     // Not in cache, download.
     nsCOMPtr<nsIURI> firmwareURI;
-    rv = 
+    rv =
       mHandler->GetLatestFirmwareLocation(getter_AddRefs(firmwareURI));
     NS_ENSURE_TRUE(firmwareURI, NS_ERROR_UNEXPECTED);
 
@@ -798,7 +799,7 @@ sbDeviceFirmwareDownloader::Start()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_DOWNLOAD_START, 
+  rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_DOWNLOAD_START,
                        nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -807,7 +808,7 @@ sbDeviceFirmwareDownloader::Start()
     rv = GetCachedFile(getter_AddRefs(file));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<sbIDeviceFirmwareUpdate> firmwareUpdate = 
+    nsCOMPtr<sbIDeviceFirmwareUpdate> firmwareUpdate =
       do_CreateInstance(SB_DEVICEFIRMWAREUPDATE_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -820,8 +821,8 @@ sbDeviceFirmwareDownloader::Start()
     rv = mHandler->GetLatestFirmwareReadableVersion(firmwareReadableVersion);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = firmwareUpdate->Init(file, 
-                              firmwareReadableVersion, 
+    rv = firmwareUpdate->Init(file,
+                              firmwareReadableVersion,
                               firmwareVersion);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -830,7 +831,7 @@ sbDeviceFirmwareDownloader::Start()
                          progress);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<nsIVariant> firmwareUpdateVariant = 
+    nsCOMPtr<nsIVariant> firmwareUpdateVariant =
       sbNewVariant(firmwareUpdate).get();
     rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_DOWNLOAD_END,
                          firmwareUpdateVariant);
@@ -842,17 +843,17 @@ sbDeviceFirmwareDownloader::Start()
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbDeviceFirmwareDownloader::Cancel()
 {
   NS_ENSURE_STATE(mDownloader);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  
+
   if(mIsBusy) {
     rv = mDownloader->Cancel();
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Couldn't cancel download");
-    
+
     mIsBusy = PR_FALSE;
   }
 
@@ -863,7 +864,7 @@ sbDeviceFirmwareDownloader::Cancel()
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbDeviceFirmwareDownloader::HandleProgress()
 {
   NS_ENSURE_STATE(mDownloader);
@@ -873,17 +874,17 @@ sbDeviceFirmwareDownloader::HandleProgress()
   nsresult rv = mDownloader->GetPercentComplete(&percentComplete);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIVariant> data = 
+  nsCOMPtr<nsIVariant> data =
     sbNewVariant(percentComplete).get();
 
-  rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_DOWNLOAD_PROGRESS, 
+  rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_DOWNLOAD_PROGRESS,
                        data);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbDeviceFirmwareDownloader::HandleComplete()
 {
   NS_ENSURE_STATE(mDownloader);
@@ -894,10 +895,10 @@ sbDeviceFirmwareDownloader::HandleComplete()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Oops, looks like we didn't succeed downloading the firmware update.
-  // Signal the error and exit early (no need to actually return an error, 
+  // Signal the error and exit early (no need to actually return an error,
   // the event indicates the operation was aborted).
   if(!success) {
-    rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_DOWNLOAD_ERROR, 
+    rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_DOWNLOAD_ERROR,
                          nsnull);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -909,18 +910,18 @@ sbDeviceFirmwareDownloader::HandleComplete()
 
     return NS_OK;
   }
-  
+
   nsCOMPtr<nsIRequest> request;
   rv = mDownloader->GetRequest(getter_AddRefs(request));
   NS_ENSURE_TRUE(request, NS_ERROR_UNEXPECTED);
-  
-  nsCString contentDisposition;  
+
+  nsCString contentDisposition;
   nsCOMPtr<nsIHttpChannel> httpChannel(do_QueryInterface(request));
   if(httpChannel) {
     httpChannel->GetResponseHeader(NS_LITERAL_CSTRING("content-disposition"),
                                    contentDisposition);
   }
-  
+
   // Still Empty? Try with multipartChannel.
   if(contentDisposition.IsEmpty()) {
     nsCOMPtr<nsIMultiPartChannel> multipartChannel(do_QueryInterface(request));
@@ -935,7 +936,7 @@ sbDeviceFirmwareDownloader::HandleComplete()
   }
   else {
     nsCOMPtr<nsIURI> firmwareURI;
-    nsresult rv = 
+    nsresult rv =
       mHandler->GetLatestFirmwareLocation(getter_AddRefs(firmwareURI));
     NS_ENSURE_TRUE(firmwareURI, NS_ERROR_UNEXPECTED);
 
@@ -943,7 +944,7 @@ sbDeviceFirmwareDownloader::HandleComplete()
     if(url) {
       nsCString extension;
       url->GetFileExtension(extension);
-      
+
       rv = UnescapeFragment(extension, url, extension);
       extension.Trim(".", PR_FALSE);
 
@@ -952,7 +953,7 @@ sbDeviceFirmwareDownloader::HandleComplete()
 
       if(!leafName.IsEmpty()) {
         rv = UnescapeFragment(leafName, url, filename);
-        if(NS_FAILED(rv)) { 
+        if(NS_FAILED(rv)) {
           filename = leafName;
         }
       }
@@ -984,7 +985,7 @@ sbDeviceFirmwareDownloader::HandleComplete()
   rv = firmwareFile->Append(filename16);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIDeviceFirmwareUpdate> firmwareUpdate = 
+  nsCOMPtr<sbIDeviceFirmwareUpdate> firmwareUpdate =
     do_CreateInstance(SB_DEVICEFIRMWAREUPDATE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -997,25 +998,25 @@ sbDeviceFirmwareDownloader::HandleComplete()
   rv = mHandler->GetLatestFirmwareReadableVersion(firmwareReadableVersion);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = firmwareUpdate->Init(firmwareFile, 
-                            firmwareReadableVersion, 
+  rv = firmwareUpdate->Init(firmwareFile,
+                            firmwareReadableVersion,
                             firmwareVersion);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIVariant> data = 
+  nsCOMPtr<nsIVariant> data =
     sbNewVariant(firmwareUpdate).get();
 
-  rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_DOWNLOAD_END, 
+  rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_DOWNLOAD_END,
                        data);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIVariant> firmwareVersionVariant = 
+  nsCOMPtr<nsIVariant> firmwareVersionVariant =
     sbNewVariant(firmwareVersion).get();
-  rv = mDevice->SetPreference(NS_LITERAL_STRING(FIRMWARE_VERSION_PREF), 
+  rv = mDevice->SetPreference(NS_LITERAL_STRING(FIRMWARE_VERSION_PREF),
                               firmwareVersionVariant);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIVariant> firmwareReadableVariant = 
+  nsCOMPtr<nsIVariant> firmwareReadableVariant =
     sbNewVariant(firmwareReadableVersion).get();
   rv = mDevice->SetPreference(NS_LITERAL_STRING(FIRMWARE_READABLE_PREF),
                               firmwareReadableVariant);
@@ -1024,8 +1025,8 @@ sbDeviceFirmwareDownloader::HandleComplete()
   nsString firmwareFilePath;
   rv = firmwareFile->GetPath(firmwareFilePath);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  nsCOMPtr<nsIVariant> firmwareFileVariant = 
+
+  nsCOMPtr<nsIVariant> firmwareFileVariant =
     sbNewVariant(firmwareFilePath).get();
   rv = mDevice->SetPreference(NS_LITERAL_STRING(FIRMWARE_FILE_PREF),
                               firmwareFileVariant);
@@ -1040,27 +1041,32 @@ sbDeviceFirmwareDownloader::HandleComplete()
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbDeviceFirmwareDownloader::CreateDeviceEvent(PRUint32 aType,
-                                              nsIVariant *aData, 
+                                              nsIVariant *aData,
                                               sbIDeviceEvent **aEvent)
 {
   NS_ENSURE_STATE(mDevice);
   NS_ENSURE_ARG_POINTER(aEvent);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<sbIDeviceManager2> deviceManager = 
+  nsCOMPtr<sbIDeviceManager2> deviceManager =
     do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = deviceManager->CreateEvent(aType, aData, mDevice, aEvent);
+  rv = deviceManager->CreateEvent(aType,
+                                  aData,
+                                  mDevice,
+                                  sbIDevice::STATE_IDLE,
+                                  sbIDevice::STATE_IDLE,
+                                  aEvent);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
 nsresult
-sbDeviceFirmwareDownloader::SendDeviceEvent(sbIDeviceEvent *aEvent, 
+sbDeviceFirmwareDownloader::SendDeviceEvent(sbIDeviceEvent *aEvent,
                                             PRBool aAsync /*= PR_TRUE*/)
 {
   NS_ENSURE_STATE(mDevice);
@@ -1087,8 +1093,8 @@ sbDeviceFirmwareDownloader::SendDeviceEvent(sbIDeviceEvent *aEvent,
   return NS_OK;
 }
 
-nsresult 
-sbDeviceFirmwareDownloader::SendDeviceEvent(PRUint32 aType, 
+nsresult
+sbDeviceFirmwareDownloader::SendDeviceEvent(PRUint32 aType,
                                             nsIVariant *aData,
                                             PRBool aAsync /*= PR_TRUE*/)
 {
@@ -1107,7 +1113,7 @@ sbDeviceFirmwareDownloader::SendDeviceEvent(PRUint32 aType,
 // ----------------------------------------------------------------------------
 
 NS_IMETHODIMP
-sbDeviceFirmwareDownloader::OnProgress() 
+sbDeviceFirmwareDownloader::OnProgress()
 {
   nsresult rv = HandleProgress();
   NS_ENSURE_SUCCESS(rv, rv);

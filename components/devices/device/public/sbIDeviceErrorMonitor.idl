@@ -40,7 +40,7 @@ interface sbIDeviceErrorMonitorListener;
  * \brief This service monitors devices for errors and stores them for easy
  *        access later.
  */
-[scriptable, uuid(99444d12-1dd1-11b2-aac3-e1cd25ffc309)]
+[scriptable, uuid(7646a5a7-8594-48c9-a8f5-7223685132d2)]
 interface sbIDeviceErrorMonitor : nsISupports {
 
   /**
@@ -53,13 +53,26 @@ interface sbIDeviceErrorMonitor : nsISupports {
 
   /**
    * \brief Gets an array of strings (nsISupportsString) that indicate errors
-   *        that have happend on this device recently.
+   *        that have happened on this device recently. This is now deprecated
+   *        please use getDeviceErrors
    *
    * \param aDevice device to get error list from.
    * \returns array of error strings, empty if no errors exist yet.
    */
   nsIArray getErrorsForDevice(in sbIDevice aDevice);
-
+  
+  /**
+   * \brief Gets an array of property bags containing information about the
+   *        errors.
+   *
+   * \param aDevice The device to get the list of errors for
+   * \returns array of property bags that contain error information
+   *
+   * The property bag currently contains msg and state for the error message
+   * and device state respectively
+   */  
+  nsIArray getDeviceErrors(in sbIDevice aDevice, in AString aContenntType);
+  
   /**
    * \brief Clears the array of error strings for a device.
    *

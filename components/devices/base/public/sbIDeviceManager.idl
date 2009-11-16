@@ -44,7 +44,7 @@ interface sbIMediaItem;
  * XXXMook: rename this to sbIDeviceManager once the old interface has been
  * properly removed
  */
-[scriptable, uuid(2685D258-FFE3-4E78-AA0E-D15838416CED)]
+[scriptable, uuid(78132a47-1bd5-48ee-ab5b-9d0591272ccf)]
 interface sbIDeviceManager2 : nsISupports
 {
   /**
@@ -80,7 +80,9 @@ interface sbIDeviceManager2 : nsISupports
    */
   sbIDeviceEvent createEvent(in unsigned long aType,
                              [optional] in nsIVariant aData,
-                             [optional] in nsISupports aOrigin);
+                             [optional] in nsISupports aOrigin,
+                             [optional] in unsigned long aDeviceState,
+                             [optional] in unsigned long aDeviceSubState);
 
   /**
    * Return the device to which the media item specified by aItem belongs.  If

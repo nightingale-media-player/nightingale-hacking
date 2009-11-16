@@ -2,25 +2,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
@@ -45,7 +45,9 @@ public:
 
   nsresult InitEvent(PRUint32 aType,
                      nsIVariant *aData,
-                     nsISupports *aOrigin);
+                     nsISupports *aOrigin,
+                     PRUint32 aDeviceState,
+                     PRUint32 aDeviceSubState);
   static sbDeviceEvent* CreateEvent();
 
 protected:
@@ -57,13 +59,15 @@ public:
   virtual void Dispatch() { mWasDispatched = PR_TRUE; }
   virtual PRBool WasDispatched() { return mWasDispatched; }
   virtual nsresult SetTarget(sbIDeviceEventTarget* aTarget);
-  
+
   // XXXAus: This static CreateEvent method is necessary
   // to accommodate our static linking of the CRT. Otherwise
   // the event would get deallocated with the wrong allocator.
   static nsresult CreateEvent(PRUint32 aType,
                               nsIVariant *aData,
                               nsISupports *aOrigin,
+                              PRUint32 aDeviceState,
+                              PRUint32 aDeviceSubState,
                               sbIDeviceEvent **_retval);
 
 protected:
@@ -72,6 +76,8 @@ protected:
   nsCOMPtr<sbIDeviceEventTarget> mTarget;
   nsCOMPtr<nsISupports> mOrigin;
   PRBool mWasDispatched;
+  PRUint32 mDeviceState;
+  PRUint32 mDeviceSubState;
 };
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */

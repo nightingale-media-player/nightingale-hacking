@@ -181,9 +181,16 @@ NS_IMETHODIMP sbDeviceManager::UpdateDevices()
 NS_IMETHODIMP sbDeviceManager::CreateEvent(PRUint32 aType,
                                            nsIVariant *aData,
                                            nsISupports *aOrigin,
+                                           PRUint32 aDeviceState,
+                                           PRUint32 aDeviceSubState,
                                            sbIDeviceEvent **_retval)
 {
-  return sbDeviceEvent::CreateEvent(aType, aData, aOrigin, _retval);
+  return sbDeviceEvent::CreateEvent(aType,
+                                    aData,
+                                    aOrigin,
+                                    aDeviceState,
+                                    aDeviceSubState,
+                                    _retval);
 }
 
 /* sbIDevice sbIDeviceManager::getDeviceForItem(in sbIMediaItem aItem); */
@@ -240,7 +247,7 @@ NS_IMETHODIMP sbDeviceManager::GetControllers(nsIArray * *aControllers)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  nsCOMPtr<nsIMutableArray> array = 
+  nsCOMPtr<nsIMutableArray> array =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 

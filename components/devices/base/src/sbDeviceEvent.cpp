@@ -2,25 +2,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
@@ -29,6 +29,7 @@
 
 #include <nsIVariant.h>
 
+#include <sbIDevice.h>
 #include "sbIDeviceEventTarget.h"
 
 /* note that we have a "sbDeviceEvent" IID so we can get pointers to this
@@ -43,7 +44,9 @@ sbDeviceEvent* sbDeviceEvent::CreateEvent() {
 
 sbDeviceEvent::sbDeviceEvent()
  : mType(0),
-   mWasDispatched(PR_FALSE)
+   mWasDispatched(PR_FALSE),
+   mDeviceState(sbIDevice::STATE_IDLE),
+   mDeviceSubState(sbIDevice::STATE_IDLE)
 {
   /* member initializers and constructor code */
 }
@@ -55,12 +58,16 @@ sbDeviceEvent::~sbDeviceEvent()
 
 nsresult sbDeviceEvent::InitEvent(PRUint32 aType,
                                   nsIVariant *aData,
-                                  nsISupports *aOrigin)
+                                  nsISupports *aOrigin,
+                                  PRUint32 aDeviceState,
+                                  PRUint32 aDeviceSubState)
 {
   NS_ENSURE_FALSE(mWasDispatched, NS_ERROR_UNEXPECTED);
   mType = aType;
   mData = aData;
   mOrigin = aOrigin;
+  mDeviceState = aDeviceState;
+  mDeviceSubState = aDeviceSubState;
   return NS_OK;
 }
 
@@ -106,13 +113,33 @@ NS_IMETHODIMP sbDeviceEvent::GetOrigin(nsISupports * *aOrigin)
 nsresult sbDeviceEvent::CreateEvent(PRUint32 aType,
                                     nsIVariant *aData,
                                     nsISupports *aOrigin,
+                                    PRUint32 aDeviceState,
+                                    PRUint32 aDeviceSubState,
                                     sbIDeviceEvent **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   nsCOMPtr<sbDeviceEvent> event = new sbDeviceEvent();
   NS_ENSURE_TRUE(event, NS_ERROR_OUT_OF_MEMORY);
 
-  nsresult rv = event->InitEvent(aType, aData, aOrigin);
+  nsresult rv = event->InitEvent(aType,
+                                 aData,
+                                 aOrigin,
+                                 aDeviceState,
+                                 aDeviceSubState);
   NS_ENSURE_SUCCESS(rv, rv);
   return CallQueryInterface(event, _retval);
+}
+
+NS_IMETHODIMP sbDeviceEvent::GetDeviceState(PRUint32 * aDeviceState)
+{
+  NS_ENSURE_ARG_POINTER(aDeviceState);
+
+  *aDeviceState = mDeviceState;
+}
+
+NS_IMETHODIMP sbDeviceEvent::GetDeviceSubState(PRUint32 * aDeviceSubState)
+{
+  NS_ENSURE_ARG_POINTER(aDeviceSubState);
+
+  *aDeviceSubState = mDeviceSubState;
 }

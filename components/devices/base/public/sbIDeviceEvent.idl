@@ -34,7 +34,7 @@ interface sbIDeviceEventTarget;
  * \interface sbIDeviceEvent
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(d0f62a6e-1dd1-11b2-8346-f092d8707b42)]
+[scriptable, uuid(d2d00b3e-d0b7-4d2d-b1b8-17076d59d64c)]
 interface sbIDeviceEvent : nsISupports
 {
   /**
@@ -292,4 +292,14 @@ interface sbIDeviceEvent : nsISupports
    * Something that invoked this event
    */
   readonly attribute nsISupports origin;
+  
+  /**
+   * The device state at the time of the event
+   */
+   readonly attribute unsigned long deviceState;
+   
+  /**
+   * The device substate at the time of the event
+   */
+   readonly attribute unsigned long deviceSubState;
 };
