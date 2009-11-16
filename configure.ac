@@ -430,6 +430,8 @@ if test -z "$CP"; then AC_MSG_ERROR(Cp not found); fi
 
 AC_CHECK_PROGS(DIFF, ${DIFF} gdiff diff, "")
 
+AC_CHECK_PROGS(DOXYGEN, ${DOXYGEN} doxygen, "")
+
 AC_CHECK_PROG(GZIP, gzip, gzip)
 
 AC_CHECK_PROG(GUNZIP, gunzip, gunzip)

@@ -68,15 +68,22 @@ GARBAGE += Docs.css \
            $(CREATEDIRS) \
            $(NULL)
 
+# Locally found doxygen always trumps
+ifeq (windows,$(SB_PLATFORM))
+   OUR_DOXYGEN = $(TOOLSDIR)/doxygen/bin/doxygen
+endif
+ifneq (,$(DOXYGEN))
+   OUR_DOXYGEN = $(DOXYGEN)
+endif
+
 include $(topsrcdir)/build/rules.mk
 
-# preedTODO: nothing should be preventing this from working on all platforms...
 libs::
-ifeq (windows,$(SB_PLATFORM))
+ifeq (,$(OUR_DOXYGEN))
+	$(error Doxygen not found. Cannot build docs here. Bailing.)
+else
+	$(OUR_DOXYGEN) songbird.dox
+endif
 	$(topsrcdir)/documentation/make-webpageapi-docs.sh $(topsrcdir)
-	$(TOOLSDIR)/doxygen/bin/doxygen songbird.dox
 	$(INSTALL_FILE) $(srcdir)/sb_logo_doc.gif $(CURDIR)/sdkapi/html/sb_logo_doc.gif
 	$(INSTALL_FILE) $(srcdir)/sb_logo_doc.gif $(CURDIR)/webpageapi/sb_logo_doc.gif
-else
-	$(error Documentation must be built on Win32 for now.)
-endif
