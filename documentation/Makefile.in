@@ -45,6 +45,7 @@ DOXYGEN_STRIP_TOPSRCDIR = $(DEPTH)/.. \
 
 SONGBIRD_DOCUMENTATION = $(srcdir)/naturaldocsconfig/Docs.css \
                          $(srcdir)/doxygenconfig/header.html \
+                         $(srcdir)/doxygenconfig/footer.html \
                          $(NULL)
 
 SONGBIRD_PP_RESOURCES = $(srcdir)/songbird.dox.in \
