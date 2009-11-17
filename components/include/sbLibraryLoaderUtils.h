@@ -135,6 +135,22 @@ SB_LoadLibraries(nsIFile* aManifest)
       const struct mach_header* header = NSAddImage(filePath.get(),
                  NSADDIMAGE_OPTION_MATCH_FILENAME_BY_INSTALLNAME |
                  NSADDIMAGE_OPTION_WITH_SEARCHING);
+
+      if (!header) {
+        NSLinkEditErrors linkEditError;
+        int errorNum;
+        const char *errorString;
+        const char *fileName;
+
+        NSLinkEditError(&linkEditError, &errorNum, &fileName, &errorString);
+        char *message = PR_smprintf(
+            "SB_LoadLibraries: ERROR %d:%d for file %s\n%s",
+              linkEditError, errorNum, fileName, errorString);
+        
+        NS_WARNING(message);
+        PR_smprintf_free(message);
+      }
+
       success = (header != nsnull);
 #else
       PRLibrary* library;
