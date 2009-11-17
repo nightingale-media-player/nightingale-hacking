@@ -105,6 +105,10 @@ Win32PlatformInterface::SetVideoBox(nsIBoxObject *aBoxObject,
     mParentWindow = (HWND)aWidget->GetNativeData(NS_NATIVE_WIDGET);
     NS_ENSURE_TRUE(mParentWindow != NULL, NS_ERROR_FAILURE);
 
+    // There always be at least one child. If there isn't, we can
+    // parent ourselves directly to mParentWnd.
+    HWND actualParent = SelectParentWindow(mParentWindow);
+
     WNDCLASS WndClass;
 
     ::ZeroMemory(&WndClass, sizeof (WNDCLASS));
@@ -124,10 +128,10 @@ Win32PlatformInterface::SetVideoBox(nsIBoxObject *aBoxObject,
             0,                                  // extended window style
             SB_VIDEOWINDOW_CLASSNAME,           // Class name
             L"Songbird GStreamer Video Window", // Window name
-            WS_CHILD,                           // window style
+            WS_CHILD | WS_CLIPCHILDREN,         // window style
             0, 0,                               // X,Y offset
             0, 0,                               // Width, height
-            mParentWindow,                      // Parent window
+            actualParent,                       // Parent window
             NULL,                               // Menu, or child identifier
             WndClass.hInstance,                 // Module handle
             NULL);                              // Extra parameter
@@ -208,12 +212,25 @@ Win32PlatformInterface::UnFullScreen()
 {
   NS_ASSERTION(mFullscreenWindow, "Fullscreen window is null");
 
-  ::SetParent(mWindow, mParentWindow);
+  // Hide it before we reparent.
+  ::ShowWindow(mWindow, SW_HIDE);
+
+  // There always be at least one child. If there isn't, we can
+  // parent ourselves directly to mParentWnd.
+  HWND actualParent = SelectParentWindow(mParentWindow);
+
+  // Still no parent? Just use the video box window as the parent.
+  if(!actualParent) {
+    actualParent = mParentWindow;
+  }
+
+  // Reparent to video window box.
+  ::SetParent(mWindow, actualParent);
 
   // Our caller should call Resize() after this to make sure we get moved to
   // the correct location
   ::ShowWindow(mWindow, SW_SHOWNORMAL);
-  
+
   ::DestroyWindow(mFullscreenWindow);
   mFullscreenWindow = NULL;
 
@@ -309,4 +326,21 @@ Win32PlatformInterface::SetXOverlayWindowID(GstXOverlay *aXOverlay)
 
     LOG(("Set xoverlay %p to HWND %x\n", aXOverlay, mWindow));
   }
+}
+
+HWND 
+Win32PlatformInterface::SelectParentWindow(HWND hWnd)
+{
+  HWND retWnd = NULL;
+  HWND firstChildWnd = ::GetWindow(hWnd, GW_CHILD);
+
+  if(firstChildWnd != NULL) {
+    retWnd = ::GetWindow(firstChildWnd, GW_HWNDLAST);
+  }
+
+  if(!retWnd) {
+    retWnd = hWnd;
+  }
+
+  return retWnd;
 }

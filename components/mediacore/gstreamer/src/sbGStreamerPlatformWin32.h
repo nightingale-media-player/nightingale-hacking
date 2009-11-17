@@ -63,6 +63,8 @@ private:
 
   static LRESULT APIENTRY VideoWindowProc(HWND hWnd, UINT message, 
           WPARAM wParam, LPARAM lParam);
+
+  HWND SelectParentWindow(HWND hWnd);
 };
 
 #endif // _SB_GSTREAMER_PLATFORM_WIN32_H_
