@@ -455,7 +455,7 @@
 <!ENTITY device.firmware.wizard.needs_recovery_mode.description "The device must be connected in firmware mode to continue. Please follow the instructions below to set your device to firmware mode.">
 <!ENTITY device.firmware.wizard.download.title            "Downloading new firmware...">
 <!ENTITY device.firmware.wizard.repair.time.description   "Restoring the device should take less than 5 minutes.">
-<!ENTITY device.firmware.wizard.repair.warning            "Restoring your device to factory settings will erase all music and data on the device. Please back up all your files before proceeding.">
+<!ENTITY device.firmware.wizard.repair.warning            "Restoring your device to factory settings will erase all media on the device. Please back up all your files before proceeding.">
 <!ENTITY device.firmware.wizard.install.title             "Installing firmware...">
 
 <!ENTITY device.firmware.wizard.busy.description  "It appears that your device is busy. Firmware can only be installed when your device is idle.">
@@ -490,7 +490,7 @@
 
 <!ENTITY device.sync.header.label "Sync Settings">
 <!ENTITY device.sync.auto_sync.label "Sync">
-<!ENTITY device.sync.sync_all.label "All music, video and playlists">
+<!ENTITY device.sync.sync_all.label "All media">
 <!ENTITY device.sync.sync_selected.label "Selected playlists:">
 <!ENTITY device.sync.manual.label "Manually manage">
 
@@ -526,11 +526,11 @@
 <!ENTITY device.tools.update_firmware.current_firmware.title "Current firmware version:">
 
 <!ENTITY device.tools.repair_device.title "Repair Device">
-<!ENTITY device.tools.repair_device.description "Restoring your device to factory settings will erase all music and data on the device, as well as restoring the factory firmware and settings.">
+<!ENTITY device.tools.repair_device.description "Restoring your device to factory settings will erase all media on the device, as well as restoring the factory firmware and settings.">
 <!ENTITY device.tools.repair_device.label "Restore device to factory settings">
 
 <!ENTITY device.tools.format_device.title "Format Device">
-<!ENTITY device.tools.format_device.description "Formatting your device will erase all music and data on the device.">
+<!ENTITY device.tools.format_device.description "Formatting your device will erase all media on the device.">
 <!ENTITY device.tools.format_device.label "Format device">
 
 <!ENTITY device.tools.support.title "Support">
@@ -542,8 +542,8 @@
 <!ENTITY device.tools.reset_warnings.label "Reset warning messages">
 
 <!ENTITY device.dialog.setup.title "Device Setup">
-<!ENTITY device.dialog.setup.sync.checkbox.label "Automatically sync songs and playlists to this device">
-<!ENTITY device.dialog.setup.sync.checkbox.description "&brandShortName; will automatically transfer songs and playlists from your Library to the device everytime the device is connected or a change is made to your Library.">
+<!ENTITY device.dialog.setup.sync.checkbox.label "Automatically sync media to this device">
+<!ENTITY device.dialog.setup.sync.checkbox.description "&brandShortName; will automatically transfer media from your Library to the device everytime the device is connected or a change is made to your Library.">
 <!ENTITY device.dialog.setup.explainIgnore.beforeText "If you do not want &brandShortName; to manage this device, you can ">
 <!ENTITY device.dialog.setup.explainIgnore.linkText "ignore this device">
 <!ENTITY device.dialog.setup.explainIgnore.afterText ".">
