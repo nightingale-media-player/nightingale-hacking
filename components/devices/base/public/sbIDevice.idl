@@ -46,7 +46,7 @@ interface sbIMediaItem;
  *
  * The main interface to all device objects
  */
-[scriptable, uuid(374a66f2-1dd2-11b2-b97b-e8055d0d2466)]
+[scriptable, uuid(a17b31ef-0d0d-4b4f-97d8-e874ddb2db9d)]
 interface sbIDevice : nsISupports
 {
   /**
@@ -180,7 +180,8 @@ interface sbIDevice : nsISupports
   const unsigned long STATE_CANCEL          = 12; // In process of canceling operation
   const unsigned long STATE_TRANSCODE       = 13; // Transcoding a file.
   const unsigned long STATE_FORMATTING      = 14; // Formatting the device.
-  const unsigned long STATE_SYNC_PREPARING  = 15;  // Preparing to sync
+  const unsigned long STATE_SYNC_PREPARING  = 15; // Preparing to sync
+  const unsigned long STATE_SYNC_PLAYLIST   = 16; // Sync playlist
 
   const unsigned long STATE_USER            = 0x20000000;
 
