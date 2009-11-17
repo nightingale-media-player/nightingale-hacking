@@ -29,10 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-TOOLSDIR = $(topsrcdir)/tools/win32
-
-# The DOXYGEN_ variables need to be relative, because doxygen.exe doesn't
-# understand MSYS-style paths.
+# The DOXYGEN_ variables need to be relative, because doxygen.exe on Win32
+# doesn't understand MSYS-style paths.
 DOXYGEN_INPUTDIRS = $(DEPTH)/../components \
                     $(DEPTH)/../bindings \
                     $(NULL)
@@ -69,21 +67,13 @@ GARBAGE += Docs.css \
            $(CREATEDIRS) \
            $(NULL)
 
-# Locally found doxygen always trumps
-ifeq (windows,$(SB_PLATFORM))
-   OUR_DOXYGEN = $(TOOLSDIR)/doxygen/bin/doxygen
-endif
-ifneq (,$(DOXYGEN))
-   OUR_DOXYGEN = $(DOXYGEN)
-endif
-
 include $(topsrcdir)/build/rules.mk
 
 libs::
-ifeq (,$(OUR_DOXYGEN))
-	$(error Doxygen not found. Cannot build docs here. Bailing.)
+ifeq (,$(DOXYGEN))
+	$(error Doxygen not found. Cannot build docs here. Install doxygen. Bailing.)
 else
-	$(OUR_DOXYGEN) songbird.dox
+	$(DOXYGEN) songbird.dox
 endif
 	$(topsrcdir)/documentation/make-webpageapi-docs.sh $(topsrcdir)
 	$(INSTALL_FILE) $(srcdir)/sb_logo_doc.gif $(CURDIR)/sdkapi/html/sb_logo_doc.gif

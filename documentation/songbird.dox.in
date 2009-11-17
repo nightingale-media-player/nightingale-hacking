@@ -92,9 +92,7 @@ EXCLUDE                =
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
 EXCLUDE_SYMBOLS        = 
-# This is supposed to work, but segfaults the version of doxygen we use
-## EXCLUDE_PATH           = */.svn/*
-#
+EXCLUDE_PATH           = */.svn/*
 EXAMPLE_PATH           = 
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = NO
