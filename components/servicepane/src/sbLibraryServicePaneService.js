@@ -1385,19 +1385,19 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary, aMove) {
   // (see also below on the migration part)
   //parentNode.contractid = CONTRACTID;
 
+  // properties that should exist on the parent container node
+  const K_PARENT_PROPS = ["folder", "library-container"];
+
   parentNode.url = null;
   parentNode.editable = false;
   parentNode.setAttributeNS(SP, 'Weight', -4);
+  self._mergeProperties(parentNode, K_PARENT_PROPS);
   if (newNode) {
     // always create them as hidden
     parentNode.hidden = true;
   }
 
   if (aLibrary == this._libraryManager.mainLibrary) {
-    // properties that should exist on the parent container node
-    const K_PARENT_PROPS = ["folder", "library-container"];
-    self._mergeProperties(parentNode, K_PARENT_PROPS);
-
     var node = null;
     // note that |node| should be the audio node at the end of this loop,
     // for use by the migrate-from-before-split-views step
@@ -1444,19 +1444,22 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary, aMove) {
     if (fnode)
       fnode.hidden = false;
   }
-  else
-  {
-    // devices/playlists have no video/audio split
-    let node = makeNodeFromLibrary(aLibrary, null, this._servicePane.root);
+  else {
+    for each (let type in ["video", "audio"]) {
+      let node = makeNodeFromLibrary(aLibrary, type, parentNode);
+      node.name = '&servicesource.library.' + type;
+      if (aMove || !node.parentNode) {
+        this._insertNodeAfter(parentNode, node);
+      }
 
-    // other libraries store the playlists under them, but only
-    // assign the default value if they do not specifically tell
-    // us not to do so
+      // other libraries store the playlists under them, but only
+      // assign the default value if they do not specifically tell
+      // us not to do so
 
-    if (node.getAttributeNS(SP,'dndCustomAccept') != 'true')
-      node.dndAcceptIn = 'text/x-sb-playlist-'+aLibrary.guid;
-
-    return node;
+      if (node.getAttributeNS(SP,'dndCustomAccept') != 'true')
+        node.dndAcceptIn = 'text/x-sb-playlist-'+aLibrary.guid;
+    }
+    this._servicePane.sortNode(parentNode);
   }
 
   return parentNode;

@@ -40,7 +40,7 @@ const SP = "http://songbirdnest.com/rdf/servicepane#";
 const DEVICESP_NS = "http://songbirdnest.com/rdf/device-servicepane#";
 
 const URN_PREFIX_DEVICE = "urn:device:";
-const DEVICE_NODE_WEIGHT = -2;
+const DEVICE_NODE_WEIGHT = -2
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/DOMUtils.jsm");
@@ -255,27 +255,54 @@ function sbDeviceServicePane_createNodeForDevice2(aDevice) {
 sbDeviceServicePane.prototype.createLibraryNodeForDevice =
 function sbDeviceServicePane_createLibraryNodeForDevice(aDevice, aLibrary) {
 
-  // Create the library node.
-  var libraryNode = this._libraryServicePane.createNodeForLibrary(aLibrary);
-  if (!libraryNode)
-    return null;
-
-  // Set up the device library node info.
-  libraryNode.setAttributeNS(DEVICESP_NS, "device-id", aDevice.id);
-  libraryNode.setAttributeNS(DEVICESP_NS, "deviceNodeType", "library");
-
-  // Move the library node to be the first child of the device node.
   var deviceNode = this.getNodeForDevice(aDevice);
 
-  if (deviceNode) {
-    var firstChild = deviceNode.firstChild;
-    if (!firstChild)
-      deviceNode.appendChild(libraryNode);
-    else if (firstChild.id != libraryNode.id)
-      deviceNode.insertBefore(libraryNode, firstChild);
+  // Create the library nodes.
+  var parentNode = this._libraryServicePane.createNodeForLibrary(aLibrary);
+
+  // Move the library nodes to be the first child of the device node.
+  var functions = aDevice.capabilities.getSupportedFunctionTypes({});
+  const CAPS_MAP = {
+      "audio": Ci.sbIDeviceCapabilities.FUNCTION_AUDIO_PLAYBACK,
+      "video": Ci.sbIDeviceCapabilities.FUNCTION_VIDEO_PLAYBACK
+    };
+  function hasCaps(cap) {
+    return functions.indexOf(CAPS_MAP[cap]) != -1;
   }
 
-  return libraryNode;
+  var libraryNode = null, audioNode = null;
+  if (deviceNode) {
+    while (parentNode.lastChild) {
+      libraryNode = parentNode.lastChild;
+      let props = libraryNode.properties.split(/\s/);
+      props = props.filter(function(val) val in CAPS_MAP);
+      // there should only be one anyway...
+      // assert(props.length < 2);
+      if (!hasCaps(props[0])) {
+        parentNode.removeChild(libraryNode);
+        continue;
+      }
+      if (props[0] == "audio") {
+        audioNode = libraryNode;
+      }
+      libraryNode.hidden = (aLibrary.getProperty(SBProperties.hidden) == "1");
+      var firstChild = deviceNode.firstChild;
+      if (!firstChild) {
+        deviceNode.appendChild(libraryNode);
+      }
+      else {
+        deviceNode.insertBefore(libraryNode, firstChild);
+      }
+    }
+  }
+  else {
+    Components.utils.reportError("MISSING DEVICE for " + aDevice);
+  }
+  if (parentNode.parentNode) {
+    // remove the dummy container node
+    //parentNode.parentNode.removeChild(parentNode);
+  }
+  return audioNode;
 }
 
 sbDeviceServicePane.prototype.getNodeForDevice =
