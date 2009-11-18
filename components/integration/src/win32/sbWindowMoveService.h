@@ -32,6 +32,7 @@
 
 #include "sbIWindowMoveService.h"
 
+#include <nsITimer.h>
 #include <nsHashKeys.h>
 #include <nsInterfaceHashtable.h>
 
@@ -39,7 +40,8 @@
 
 #include <windows.h>
 
-class sbWindowMoveService : public sbIWindowMoveService
+class sbWindowMoveService : public sbIWindowMoveService,
+                            public nsITimerCallback
 {
 public:
   sbWindowMoveService();
@@ -50,10 +52,14 @@ protected:
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIWINDOWMOVESERVICE
+  NS_DECL_NSITIMERCALLBACK
 
   typedef std::map<HWND, nsCOMPtr<sbIWindowMoveListener> > listeners_t;
   typedef std::map<HWND, HHOOK> hooks_t;
   typedef std::map<HWND, bool> resizing_t;
+  
+  typedef std::map<HWND, nsCOMPtr<nsITimer> > timers_t;
+  typedef std::map<nsITimer *, HWND> timertohwnd_t;
 
   nsresult Init();
 
@@ -64,6 +70,9 @@ protected:
   listeners_t mListeners;
   hooks_t     mHooks;
   resizing_t  mResizing;
+
+  timers_t      mTimers;
+  timertohwnd_t mTimersToWnd;
 };
 
 #endif /*__SB_WINDOWMOVE_SERVICE_H__*/

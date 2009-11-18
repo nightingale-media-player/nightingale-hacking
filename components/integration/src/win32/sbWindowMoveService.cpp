@@ -25,13 +25,14 @@
 #include "sbWindowMoveService.h"
 #include "../NativeWindowFromNode.h"
 
+#include <nsComponentManagerUtils.h>
 #include <nsThreadUtils.h>
 
 #define PROP_WMS_INST L"WindowMoveServiceInstance"
 
 static const PRUint32 DEFAULT_HASHTABLE_SIZE = 1;
 
-NS_IMPL_ISUPPORTS1(sbWindowMoveService, sbIWindowMoveService)
+NS_IMPL_ISUPPORTS2(sbWindowMoveService, sbIWindowMoveService, nsITimerCallback)
 
 sbWindowMoveService::sbWindowMoveService() 
 {
@@ -122,8 +123,25 @@ sbWindowMoveService::CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 
     if(it != self->mResizing.end() &&
        it->second == true) {
-      self->mResizing.erase(it);
-      CallListenerMoveStopped(msg->hwnd, self->mListeners);
+      
+      nsCOMPtr<nsITimer> timer;
+      timers_t::iterator itTimer = self->mTimers.find(msg->hwnd);
+      if(itTimer == self->mTimers.end()) {
+        nsresult rv = NS_ERROR_UNEXPECTED;
+        
+        timer = do_CreateInstance("@mozilla.org/timer;1");
+        self->mTimers.insert(
+          std::make_pair<HWND, nsCOMPtr<nsITimer> >(msg->hwnd, timer));
+      }
+      else {
+        timer = itTimer->second;
+      }
+
+      if(timer) {
+        self->mTimersToWnd.insert(
+          std::make_pair<nsITimer*, HWND>(timer.get(), msg->hwnd));
+        timer->InitWithCallback(self, 1000, nsITimer::TYPE_ONE_SHOT);
+      }
     }
   }
 
@@ -211,6 +229,28 @@ sbWindowMoveService::StopWatchingWindow(nsISupports *aWindow,
 
   mHooks.erase(windowHandle);
   mListeners.erase(windowHandle);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbWindowMoveService::Notify(nsITimer *aTimer) 
+{
+  timertohwnd_t::iterator it = mTimersToWnd.find(aTimer);
+
+  if(it == mTimersToWnd.end()) {
+    return NS_OK;
+  }
+
+  HWND window = it->second;
+
+  CallListenerMoveStopped(window, mListeners);
+
+  nsCOMPtr<nsITimer> grip(aTimer);
+
+  mResizing.erase(window);
+  mTimers.erase(window);
+  mTimersToWnd.erase(aTimer);
 
   return NS_OK;
 }

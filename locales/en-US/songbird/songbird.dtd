@@ -786,6 +786,8 @@
 <!ENTITY videowindow.actualsize "Actual Size">
 <!ENTITY videowindow.fullscreen "Fullscreen">
 
+<!ENTITY videowindow.fullscreen.key "F">
+
 <!-- about:credits entities. -->
 <!ENTITY about.credits.intro "We would like to thank our contributors, whose efforts make Songbird what it is. These people have helped by writing code and documentation, and by testing. They have created and maintained this product, its associated development kits, our build tools and our web sites.  Names are followed by IRC nicks, come by #songbird on irc.mozilla.org and say hello!">
 <!ENTITY about.credits.footer.beforeLink "Of course, none of this would be possible without the hard work and efforts of">

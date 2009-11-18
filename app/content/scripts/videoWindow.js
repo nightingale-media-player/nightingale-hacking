@@ -56,6 +56,8 @@ var videoWindowController = {
   _contextMenu: null,
   _contextMenuListener: null,
   
+  _keydownListener: null,
+  
   _ignoreResize: false,
   _resizeListener: null,
   _showing: false,
@@ -175,6 +177,12 @@ var videoWindowController = {
     };
     window.addEventListener("contextmenu", this._contextMenuListener, false);
     
+    // Keydown hook:
+    this._keydownListener = function(aEvent) {
+      return self._onKeyDown(aEvent);
+    };
+    window.addEventListener("keypress", this._keydownListener, false);
+    
     this._contextMenu = document.getElementById("video-context-menu");
     this._videoElement = document.getElementById("video-box");
   },
@@ -187,6 +195,9 @@ var videoWindowController = {
     
     window.removeEventListener("contextmenu", this._contextMenuListener, false);
     this._contextMenuListener = null;
+    
+    window.removeEventListener("keypress", this._keydownListener, false);
+    this._keydownListener = null;
     
     this._actualSizeDataRemote.unbind();
 
@@ -464,6 +475,86 @@ var videoWindowController = {
 
   _onMouseMoved: function vwc__onMouseMoved(aEvent) {
     this._osdService.showOSDControls();
+  },
+  
+  _onKeyDown: function vwc__onKeyDown(aEvent) {
+    var keyCode = aEvent.keyCode;
+    
+    // Fallback to charCode if keyCode is not available.
+    if(!keyCode) {
+      keyCode = aEvent.charCode;
+    }
+  
+    // Get out of fullscreen
+    if(keyCode == KeyEvent.DOM_VK_ESCAPE &&
+       this._mediacoreManager.video.fullscreen) {
+      this._mediacoreManager.video.fullscreen = false;
+      return;
+    }
+    
+    // Pause/Play
+    if(keyCode == KeyEvent.DOM_VK_SPACE) {
+      let state = this._mediacoreManager.status.state;
+      if((state == Ci.sbIMediacoreStatus.STATUS_BUFFERING) ||
+         (state == Ci.sbIMediacoreStatus.STATUS_PLAYING)) {
+        this._mediacoreManager.playbackControl.pause();
+      }
+      else if(this._mediacoreManager.primaryCore) {
+        this._mediacoreManager.playbackControl.play();
+      }
+      return;
+    }
+    
+    // Next Item
+    if(aEvent.ctrlKey && keyCode == KeyEvent.DOM_VK_RIGHT) {
+      this._mediacoreManager.sequencer.next();
+      return;
+    }
+    
+    // Previous Item
+    if(aEvent.ctrlKey && keyCode == KeyEvent.DOM_VK_LEFT) {
+      this._mediacoreManager.sequencer.previous();
+    }
+    
+    // Volume Up
+    if(aEvent.ctrlKey && keyCode == KeyEvent.DOM_VK_UP) {
+      let vol = this._mediacoreManager.volumeControl.volume;
+      vol += 0.03;
+      
+      // Clamp.
+      if(vol > 1) {
+        vol = 1;
+      }
+      
+      this._mediacoreManager.volumeControl.volume = vol;
+      
+      return;   
+    }
+    
+    // Volume Down
+    if(aEvent.ctrlKey && keyCode == KeyEvent.DOM_VK_DOWN) {
+      let vol = this._mediacoreManager.volumeControl.volume;
+      vol -= 0.03;
+
+      // Clamp.
+      if(vol < 0) {
+        vol = 0;
+      }
+
+      this._mediacoreManager.volumeControl.volume = vol;
+
+      return;   
+    }
+    
+    // Toggle Mute
+    if(aEvent.ctrlKey && aEvent.altKey && 
+       (keyCode == KeyEvent.DOM_VK_UP ||
+        keyCode == KeyEvent.DOM_VK_DOWN)) {
+      let mute = this._mediacoreManager.volumeControl.mute;
+      this._mediacoreManager.volumeControl.mute = !mute;
+      
+      return;
+    }
   },
   
   _onToggleActualSize: function vwc__onToggleActualSize() {

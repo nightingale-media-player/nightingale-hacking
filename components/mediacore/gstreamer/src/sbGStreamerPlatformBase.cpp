@@ -28,6 +28,10 @@
 
 #include <prlog.h>
 #include <nsDebug.h>
+#include <nsStringGlue.h>
+
+#include <nsIDOMDocumentEvent.h>
+#include <nsIDOMEventTarget.h>
 
 /**
  * To log this class, set the following environment variable in a debug build:
@@ -96,7 +100,8 @@ BasePlatformInterface::SetFullscreen(bool aFullscreen)
     mFullscreen = false;
     UnFullScreen();
 
-    // Make sure we're in the right place 
+    // Make sure we're in the right place and the right size
+    ResizeToWindow();
     ResizeVideo();
   }
   // Otherwise, we're already in the right mode, so don't do anything.
@@ -213,6 +218,74 @@ BasePlatformInterface::SetVideoBox(nsIBoxObject *aVideoBox, nsIWidget *aWidget)
 {
   mVideoBox = aVideoBox;
   mWidget = aWidget;
+
+  return NS_OK;
+}
+
+/*virtual*/ nsresult 
+BasePlatformInterface::SetDocument(nsIDOMDocument *aDocument)
+{
+  NS_ENSURE_ARG_POINTER(aDocument);
+  mDocument = aDocument;
+  return NS_OK;
+}
+
+nsresult 
+BasePlatformInterface::CreateDOMMouseEvent(nsIDOMMouseEvent **aMouseEvent)
+{
+  NS_ENSURE_ARG_POINTER(aMouseEvent);
+  
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<nsIDOMDocumentEvent> docEvent = do_QueryInterface(mDocument, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIDOMEvent> event;
+  rv = docEvent->CreateEvent(NS_LITERAL_STRING("mouseevent"), 
+                             getter_AddRefs(event));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIDOMMouseEvent> mouseEvent = do_QueryInterface(event, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mouseEvent.forget(aMouseEvent);
+
+  return NS_OK;
+}
+
+nsresult 
+BasePlatformInterface::CreateDOMKeyEvent(nsIDOMKeyEvent **aKeyEvent)
+{
+  NS_ENSURE_ARG_POINTER(aKeyEvent);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<nsIDOMDocumentEvent> docEvent = do_QueryInterface(mDocument, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIDOMEvent> event;
+  rv = docEvent->CreateEvent(NS_LITERAL_STRING("keyevents"), 
+                             getter_AddRefs(event));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIDOMKeyEvent> keyEvent = do_QueryInterface(event, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  keyEvent.forget(aKeyEvent);
+
+  return NS_OK;
+}
+
+nsresult 
+BasePlatformInterface::DispatchDOMEvent(nsIDOMEvent *aEvent)
+{
+  NS_ENSURE_ARG_POINTER(aEvent);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<nsIDOMEventTarget> eventTarget(do_QueryInterface(mDocument, &rv ));
+  NS_ENSURE_SUCCESS( rv, rv );
+
+  PRBool dummy = PR_FALSE;
+  rv = eventTarget->DispatchEvent(aEvent, &dummy);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

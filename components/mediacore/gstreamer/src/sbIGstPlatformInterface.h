@@ -30,6 +30,9 @@
 #include <gst/gst.h>
 
 #include <nsIBoxObject.h>
+#include <nsIDOMDocument.h>
+#include <nsIDOMKeyEvent.h>
+#include <nsIDOMMouseEvent.h>
 #include <nsIWidget.h>
 
 /* Internal interface to platform-specific aspects.
@@ -73,6 +76,9 @@ public:
 
   /* Set the video box and the underlying video widget */
   virtual nsresult SetVideoBox(nsIBoxObject *aVideoBox, nsIWidget *aWidget) = 0;
+
+  /* set the owning document, useful for sending DOM events when required */
+  virtual nsresult SetDocument(nsIDOMDocument *aDocument) = 0;
 
 };
 

@@ -2085,6 +2085,9 @@ sbGStreamerMediacore::SetVideoWindow(nsIDOMXULElement *aVideoWindow)
   if (mPlatformInterface) {
     rv = mPlatformInterface->SetVideoBox(boxObject, widget);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mPlatformInterface->SetDocument(domDocument);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;

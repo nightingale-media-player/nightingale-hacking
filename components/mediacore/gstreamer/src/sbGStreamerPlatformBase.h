@@ -61,6 +61,16 @@ protected:
   // of the currently set display area.
   void ResizeVideo();
 
+  // Set the owning DOM document
+  virtual nsresult SetDocument(nsIDOMDocument *aDocument);
+
+  // Create a DOM mouse event
+  nsresult CreateDOMMouseEvent(nsIDOMMouseEvent **aMouseEvent);
+  // Create a DOM key event
+  nsresult CreateDOMKeyEvent(nsIDOMKeyEvent **aKeyEvent);
+  // Dispatch a DOM event
+  nsresult DispatchDOMEvent(nsIDOMEvent *aEvent);
+
   // Actually render the video window in this precise area, which has been
   // aspect-ratio corrected.
   virtual void MoveVideoWindow(int x, int y, int width, int height) = 0;
@@ -90,6 +100,8 @@ protected:
   nsCOMPtr<nsIBoxObject> mVideoBox; 
   // The widget corresponding to this box object, also main-thread only.
   nsCOMPtr<nsIWidget> mWidget;
+  // The owning document of the box object.
+  nsCOMPtr<nsIDOMDocument> mDocument;
 
   GstElement *mVideoSink;        // The GStreamer video sink we created
   GstElement *mAudioSink;        // The GStreamer audio sink we created

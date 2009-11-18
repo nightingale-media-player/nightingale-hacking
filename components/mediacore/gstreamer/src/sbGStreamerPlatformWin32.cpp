@@ -33,6 +33,8 @@
 #include <nsIThread.h>
 #include <nsThreadUtils.h>
 
+#include <sbVariantUtils.h>
+
 /**
  * To log this class, set the following environment variable in a debug build:
  *  
@@ -62,8 +64,16 @@ static PRLogModuleInfo* gGStreamerPlatformWin32 =
 
 #define SB_VIDEOWINDOW_CLASSNAME L"SBGStreamerVideoWindow"
 
-// TODO: This is a temporary bit of "UI" to get out of fullscreen mode.
-// We'll do this properly at some point in the future.
+// This is normally defined in a Windows header but this header is not
+// part of the free toolset provided by MS so we define our own if it's
+// not defined.
+#ifndef GET_X_LPARAM
+#define GET_X_LPARAM(lParam)  ((int)(short)LOWORD(lParam))
+#endif
+#ifndef GET_Y_LPARAM
+#define GET_Y_LPARAM(lParam)  ((int)(short)HIWORD(lParam))
+#endif
+
 /* static */ LRESULT APIENTRY
 Win32PlatformInterface::VideoWindowProc(HWND hWnd, UINT message, 
         WPARAM wParam, LPARAM lParam)
@@ -72,13 +82,130 @@ Win32PlatformInterface::VideoWindowProc(HWND hWnd, UINT message,
       (Win32PlatformInterface *)GetWindowLongPtr(hWnd, GWLP_USERDATA);
 
   switch (message) {
-    // If we're in full-screen mode, switch out on left-click
-    case WM_LBUTTONDOWN:
-      if (platform->mFullscreen) {
-        platform->SetFullscreen(false);
-        platform->ResizeToWindow();
+    case WM_KEYDOWN: {
+      nsCOMPtr<nsIDOMKeyEvent> keyEvent;
+      nsresult rv = platform->CreateDOMKeyEvent(getter_AddRefs(keyEvent));
+      if(NS_SUCCEEDED(rv)) {
+        PRBool shiftKeyState = HIBYTE(GetKeyState(VK_SHIFT)) > 0;
+        PRBool ctrlKeyState  = HIBYTE(GetKeyState(VK_CONTROL)) > 0;
+        PRBool altKeyState   = HIBYTE(GetKeyState(VK_MENU)) > 0;
+        PRBool winKeyStateL  = HIBYTE(GetKeyState(VK_LWIN)) > 0;
+        PRBool winKeyStateR  = HIBYTE(GetKeyState(VK_RWIN)) > 0;
+
+        PRInt32 keyCode = wParam;
+        PRInt32 charCode = LOWORD(MapVirtualKey(wParam, MAPVK_VK_TO_CHAR));
+
+        rv = keyEvent->InitKeyEvent(NS_LITERAL_STRING("keypress"),
+                                    PR_TRUE,
+                                    PR_TRUE,
+                                    nsnull,
+                                    ctrlKeyState,
+                                    altKeyState,
+                                    shiftKeyState,
+                                    winKeyStateL || winKeyStateR,
+                                    keyCode,
+                                    charCode);
+        if(NS_SUCCEEDED(rv)) {
+          nsCOMPtr<nsIDOMEvent> event(do_QueryInterface(keyEvent));
+          platform->DispatchDOMEvent(event);
+
+          return 0;
+        }
       }
-      break;
+    }
+    break;
+
+    case WM_CONTEXTMENU: {
+      nsCOMPtr<nsIDOMMouseEvent> mouseEvent;
+      nsresult rv = platform->CreateDOMMouseEvent(getter_AddRefs(mouseEvent));
+      if(NS_SUCCEEDED(rv)) {
+        PRBool shiftKeyState = HIBYTE(GetKeyState(VK_SHIFT)) > 0;
+        PRBool ctrlKeyState  = HIBYTE(GetKeyState(VK_CONTROL)) > 0;
+        PRBool altKeyState   = HIBYTE(GetKeyState(VK_MENU)) > 0;
+        PRBool winKeyStateL  = HIBYTE(GetKeyState(VK_LWIN)) > 0;
+        PRBool winKeyStateR  = HIBYTE(GetKeyState(VK_RWIN)) > 0;
+
+        PRInt32 screenX = GET_X_LPARAM(lParam);
+        PRInt32 screenY = GET_Y_LPARAM(lParam);
+
+        POINT point = {0};
+        point.x = screenX;
+        point.y = screenY;
+
+        BOOL success = ScreenToClient(hWnd, &point);
+        NS_WARN_IF_FALSE(success, 
+          "Failed to convert coordinates, popup menu will be positioned wrong");
+
+        rv = mouseEvent->InitMouseEvent(NS_LITERAL_STRING("contextmenu"), 
+                                        PR_TRUE,
+                                        PR_TRUE,
+                                        nsnull,
+                                        0,
+                                        screenX,
+                                        screenY,
+                                        point.x,
+                                        point.y,
+                                        ctrlKeyState,
+                                        altKeyState,
+                                        shiftKeyState,
+                                        winKeyStateL || winKeyStateR,
+                                        2,
+                                        nsnull);
+        if(NS_SUCCEEDED(rv)) {
+          nsCOMPtr<nsIDOMEvent> event(do_QueryInterface(mouseEvent));
+          platform->DispatchDOMEvent(event);
+
+          return 0;
+        } 
+      }
+    }
+    break;
+
+    case WM_MOUSEMOVE: {
+      nsCOMPtr<nsIDOMMouseEvent> mouseEvent;
+      nsresult rv = platform->CreateDOMMouseEvent(getter_AddRefs(mouseEvent));
+      if(NS_SUCCEEDED(rv)) {
+        PRBool shiftKeyState = HIBYTE(GetKeyState(VK_SHIFT)) > 0;
+        PRBool ctrlKeyState  = HIBYTE(GetKeyState(VK_CONTROL)) > 0;
+        PRBool altKeyState   = HIBYTE(GetKeyState(VK_MENU)) > 0;
+        PRBool winKeyStateL  = HIBYTE(GetKeyState(VK_LWIN)) > 0;
+        PRBool winKeyStateR  = HIBYTE(GetKeyState(VK_RWIN)) > 0;
+
+        PRInt32 clientX = GET_X_LPARAM(lParam);
+        PRInt32 clientY = GET_Y_LPARAM(lParam);
+
+        POINT point = {0};
+        point.x = clientX;
+        point.y = clientY;
+
+        BOOL success = ClientToScreen(hWnd, &point);
+        NS_WARN_IF_FALSE(success, 
+          "Failed to convert coords, mousemove will have wrong screen coords");
+
+        rv = mouseEvent->InitMouseEvent(NS_LITERAL_STRING("mousemove"), 
+                                        PR_TRUE,
+                                        PR_TRUE,
+                                        nsnull,
+                                        0,
+                                        point.x,
+                                        point.y,
+                                        clientX,
+                                        clientY,
+                                        ctrlKeyState,
+                                        altKeyState,
+                                        shiftKeyState,
+                                        winKeyStateL || winKeyStateR,
+                                        0,
+                                        nsnull);
+        if(NS_SUCCEEDED(rv)) {
+          nsCOMPtr<nsIDOMEvent> event(do_QueryInterface(mouseEvent));
+          platform->DispatchDOMEvent(event);
+
+          return 0;
+        } 
+      }
+    }
+    break;
   }
 
   return DefWindowProc(hWnd, message, wParam, lParam);
@@ -139,12 +266,13 @@ Win32PlatformInterface::SetVideoBox(nsIBoxObject *aBoxObject,
     ::SetWindowLongPtr(mWindow, GWLP_USERDATA, (LONG)this);
 
     // Display our normal window 
-    ::ShowWindow(mWindow, SW_SHOWNORMAL);
+    ::ShowWindow(mWindow, SW_SHOW);
   }
   else {
     // Hide, unparent, then destroy our video window
     ::ShowWindow(mWindow, SW_HIDE);
     ::SetParent(mWindow, NULL);
+
     ::DestroyWindow(mWindow);
 
     mWindow = NULL;
@@ -204,7 +332,9 @@ Win32PlatformInterface::FullScreen()
                  abs(info.rcMonitor.bottom - info.rcMonitor.top));
   ResizeVideo();
 
-  ::ShowCursor(FALSE);
+  // XXXAus: For now don't hide the cursor. We'll hide it using a timer later.
+  //         See bug 18834.
+  //::ShowCursor(FALSE);
 }
 
 void 
@@ -219,22 +349,19 @@ Win32PlatformInterface::UnFullScreen()
   // parent ourselves directly to mParentWnd.
   HWND actualParent = SelectParentWindow(mParentWindow);
 
-  // Still no parent? Just use the video box window as the parent.
-  if(!actualParent) {
-    actualParent = mParentWindow;
-  }
-
   // Reparent to video window box.
   ::SetParent(mWindow, actualParent);
 
   // Our caller should call Resize() after this to make sure we get moved to
   // the correct location
-  ::ShowWindow(mWindow, SW_SHOWNORMAL);
+  ::ShowWindow(mWindow, SW_SHOW);
 
   ::DestroyWindow(mFullscreenWindow);
   mFullscreenWindow = NULL;
 
-  ::ShowCursor(TRUE);
+  // XXXAus: We'll use a timer for this later. For now we don't hide it so
+  //         no need to show it. See bug 18834.
+  //::ShowCursor(TRUE);
 }
 
 
@@ -331,6 +458,10 @@ Win32PlatformInterface::SetXOverlayWindowID(GstXOverlay *aXOverlay)
 HWND 
 Win32PlatformInterface::SelectParentWindow(HWND hWnd)
 {
+  // Select Parent Window attempts to select the best parent for the video
+  // window so that all events get propagated through the various WindowProcs
+  // as expected. 
+
   HWND retWnd = NULL;
   HWND firstChildWnd = ::GetWindow(hWnd, GW_CHILD);
 

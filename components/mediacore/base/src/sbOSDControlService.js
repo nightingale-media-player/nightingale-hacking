@@ -61,7 +61,7 @@ sbOSDControlService.prototype =
   _cloakService: null,
   _nativeWinMgr: null,
   _timer:        null,
-
+  _OS:           null,
 
   _recalcOSDPosition: function() {
     this._osdWindow.moveTo(this._videoWindow.screenX,
@@ -92,23 +92,46 @@ sbOSDControlService.prototype =
     //  -- Remove on-top status when the video window loses focus!
     this._nativeWinMgr.setOnTop(this._osdWindow, true);
 
-    // Listen for window move events on the video window.
-    try {
-      // XXXkreeger Until the window move service is implemented on all
-      // platforms, wrap this call in a try/catch block.
-      var winMoveService =
-        Cc["@songbirdnest.com/integration/window-move-resize-service;1"]
-        .getService(Ci.sbIWindowMoveService);
+    this._OS = Cc["@mozilla.org/xre/app-info;1"]
+                 .getService(Components.interfaces.nsIXULRuntime)
+                 .OS;
 
-      winMoveService.startWatchingWindow(this._videoWindow, this);
-    }
-    catch (e) {
-      Cu.reportError(
-        "The sbIWindowMoveService is not implemented on this platform!");
+    // If we are not on Windows, listen for window move events 
+    // on the video window. Windows sends 'resize' events when the window is
+    // moved.
+    if(this._OS != "WINNT") {
+      try {
+        // Not all platforms have this service.
+        var winMoveService =
+          Cc["@songbirdnest.com/integration/window-move-resize-service;1"]
+          .getService(Ci.sbIWindowMoveService);
+
+        winMoveService.startWatchingWindow(this._videoWindow, this);
+      }
+      catch (e) {
+        Cu.reportError(
+          "The sbIWindowMoveService is not implemented on this platform!");
+      }
     }
   },
 
   onVideoWindowWillClose: function() {
+    // We don't use this service on Windows.
+    if(this._OS != "WINNT") {
+      try {
+        // Not all platforms have this service.
+        var winMoveService =
+          Cc["@songbirdnest.com/integration/window-move-resize-service;1"]
+          .getService(Ci.sbIWindowMoveService);
+
+        winMoveService.stopWatchingWindow(this._videoWindow, this);
+      }
+      catch (e) {
+        Cu.reportError(
+          "The sbIWindowMoveService is not implemented on this platform!");
+      }
+    }
+    
     this._timer.cancel();
     this._osdWindow.close();
     this._osdWindow = null;
@@ -129,6 +152,9 @@ sbOSDControlService.prototype =
     // Show the controls if they are currently hidden.
     if (this._cloakService.isCloaked(this._osdWindow)) {
       this._cloakService.uncloak(this._osdWindow);
+      // Uncloaking has the side effect of focusing the window so we have to
+      // refocus the video window after we unclock the osd controls.
+      this._videoWindow.focus();
     }
 
     this._recalcOSDPosition();
