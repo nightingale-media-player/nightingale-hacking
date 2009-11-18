@@ -300,6 +300,8 @@ var DPW = {
                     this._deviceID + ".status.workcount", null);
     this._itemProgress = createDataRemote(
                     this._deviceID + ".status.progress", null);
+    this._itemType = createDataRemote(
+                    this._deviceID + ".status.type", null);
                     
     // Update the last completed operation
     this._lastCompletedEventOperation = this._device.previousState;
@@ -418,6 +420,20 @@ var DPW = {
 
 
   /**
+   * \brief get the request item type
+   */
+
+  _getItemType: function DPW__getItemType() {
+    if (this._itemType.intValue == 1)
+      return "audio";
+    else if (this._itemType.intValue == 2)
+      return "video";
+    else
+      return null;
+  },
+
+
+  /**
    * \brief Update the progress UI for the busy state.
    */
 
@@ -457,44 +473,59 @@ var DPW = {
     }
 
     params = [ curItemIndex, totalItems ];
-    
+
+    var itemType = this._getItemType();
+
     // If we're preparing to sync (indicated by an idle sub)
     // then show the preparing label
     if (operationInfo.preparingOnIdle && (substate == Ci.sbIDevice.STATE_IDLE))
     {
-      localeKey = "device.status.progress_preparing_" + operationLocaleSuffix;
-    } else if (operation == Ci.sbIDevice.STATE_TRANSCODE) {
-      var progress = this._itemProgress.intValue;
-      if (progress < 0) {
-        // We use a negative value to indicate unknown progress
-        localeKey = "device.status.progress_header_transcoding_unknown";
-      }
-      else {
-        params[2] = SBFormattedString(
-	  "device.status.progress_header_transcoding_percent_complete",
-	  [this._itemProgress.intValue]);
-        localeKey = "device.status.progress_header_transcoding";
-      }
-    } else if (operation == Ci.sbIDevice.STATE_SYNCING && 
+      localeKey = "device.status.progress_header_" + operationLocaleSuffix;
+      if (itemType)
+        localeKey = localeKey + "." + itemType;
+      subLocaleKey = "device.status.progress_preparing_" + operationLocaleSuffix;
+    } else if (operation == Ci.sbIDevice.STATE_TRANSCODE ||
                substate == Ci.sbIDevice.STATE_TRANSCODE) {
       var progress = this._itemProgress.intValue;
+      localeKey = "device.status.progress_header_transcoding";
+      if (itemType)
+        localeKey = localeKey + "." + itemType;
+
       if (progress < 0) {
         // We use a negative value to indicate unknown progress
-        localeKey = "device.status.progress_header_transcoding_syncing_unknown";
+        subLocaleKey = "device.status.progress_item_index";
       }
       else {
         params[2] = SBFormattedString(
-	  "device.status.progress_header_transcoding_percent_complete",
-	  [this._itemProgress.intValue]);
-        localeKey = "device.status.progress_header_transcoding_syncing";
+          "device.status.progress_header_transcoding_percent_complete",
+          [this._itemProgress.intValue]);
+        subLocaleKey = "device.status.progress_detail";
       }
+    } else if (operation == Ci.sbIDevice.STATE_SYNCING &&
+               substate == Ci.sbIDevice.STATE_DELETING) {
+      localeKey = "device.status.progress_header_deleting";
+      subLocaleKey = "device.status.progress_item_index";
+    } else if (operation == Ci.sbIDevice.STATE_COPYING ||
+               substate == Ci.sbIDevice.STATE_COPYING) {
+      localeKey = "device.status.progress_header_copying";
+      if (itemType)
+        localeKey = localeKey + "." + itemType;
+      subLocaleKey = "device.status.progress_item_index";
     } else {
       localeKey = "device.status.progress_header_" + operationLocaleSuffix;
+      subLocaleKey = "device.status.progress_item_index";
     }
 
     // Update the operation progress text.
-    this._progressTextLabel.value =
-           SBFormattedString(localeKey, params , "");           
+    this._progressTextLabel.value = SBFormattedString(localeKey, "");           
+    if (curItemIndex > 0 && curItemIndex <= totalItems &&
+        operation != Ci.sbIDevice.STATE_MOUNTING &&
+        substate != Ci.sbIDevice.STATE_SYNC_PLAYLIST) {
+      this._subProgressTextLabel.value =
+             SBFormattedString(subLocaleKey, params, "");
+    } else {
+      this._subProgressTextLabel.value = null;
+    }
   },
 
   //----------------------------------------------------------------------------
