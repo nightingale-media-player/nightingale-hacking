@@ -33,7 +33,15 @@ if (typeof(Cu) == "undefined")
 if (typeof(Cr) == "undefined")
   var Cr = Components.results;
 
+
+//------------------------------------------------------------------------------
+// Constants
+
 const SB_OSDHIDE_DELAY = 3000;
+const SB_BLUREVENT_CHECK_DELAY = 1;
+
+const SB_LAST_BLUR_OSD_WINDOW = 0;
+const SB_LAST_BLUR_VIDEO_WINDOW = 1;
 
 
 //==============================================================================
@@ -52,16 +60,22 @@ function sbOSDControlService()
       .getService(Ci.sbINativeWindowManager);
 
   this._timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
+  this._blurTimer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
 }
 
 sbOSDControlService.prototype =
 {
-  _videoWindow:  null,
-  _osdWindow:    null,
-  _cloakService: null,
-  _nativeWinMgr: null,
-  _timer:        null,
-  _OS:           null,
+  _videoWindow:           null,
+  _osdWindow:             null,
+  _cloakService:          null,
+  _nativeWinMgr:          null,
+  _timer:                 null,
+  _OS:                    null,
+  _osdControlsShowing:    false,
+  _lastBlurWindow:        -1,
+  _videoWindowsLostFocus: false,
+  _blurTimer:             null,
+
 
   _recalcOSDPosition: function() {
     this._osdWindow.moveTo(this._videoWindow.screenX,
@@ -88,10 +102,6 @@ sbOSDControlService.prototype =
     // Cloak the window right now.
     this._cloakService.cloak(this._osdWindow);
 
-    // XXX KREEGER TODO:
-    //  -- Remove on-top status when the video window loses focus!
-    this._nativeWinMgr.setOnTop(this._osdWindow, true);
-
     this._OS = Cc["@mozilla.org/xre/app-info;1"]
                  .getService(Components.interfaces.nsIXULRuntime)
                  .OS;
@@ -99,7 +109,7 @@ sbOSDControlService.prototype =
     // If we are not on Windows, listen for window move events 
     // on the video window. Windows sends 'resize' events when the window is
     // moved.
-    if(this._OS != "WINNT") {
+    if (this._OS != "WINNT") {
       try {
         // Not all platforms have this service.
         var winMoveService =
@@ -113,11 +123,39 @@ sbOSDControlService.prototype =
           "The sbIWindowMoveService is not implemented on this platform!");
       }
     }
+
+    // Listen for blur and focus events for determing when both the video
+    // window and the OSD controls loose focus.
+    var self = this;
+    this._osdWinBlurListener = function(aEvent) {
+      self._onOSDWinBlur(aEvent);
+    };
+    this._videoWinBlurListener = function(aEvent) {
+      self._onVideoWinBlur(aEvent);
+    };
+    this._osdWinFocusListener = function(aEvent) {
+      self._onOSDWinFocus(aEvent);
+    };
+    this._videoWinFocusListener = function(aEvent) {
+      self._onVideoWinFocus(aEvent);
+    };
+    this._osdWindow.addEventListener("blur",
+                                     this._osdWinBlurListener,
+                                     false);
+    this._osdWindow.addEventListener("focus",
+                                     this._osdWinFocusListener,
+                                     false);
+    this._videoWindow.addEventListener("blur",
+                                       this._videoWinBlurListener,
+                                       false);
+    this._videoWindow.addEventListener("focus",
+                                       this._videoWinFocusListener,
+                                       false);
   },
 
   onVideoWindowWillClose: function() {
     // We don't use this service on Windows.
-    if(this._OS != "WINNT") {
+    if (this._OS != "WINNT") {
       try {
         // Not all platforms have this service.
         var winMoveService =
@@ -133,6 +171,19 @@ sbOSDControlService.prototype =
     }
     
     this._timer.cancel();
+    this._blurTimer.cancel();
+    this._osdWindow.removeEventListener("blur",
+                                        this._osdWinBlurListener,
+                                        false);
+    this._osdWindow.removeEventListener("focus",
+                                        this._osdWinFocusListener,
+                                        false);
+    this._videoWindow.removeEventListener("blur",
+                                          this._videoWinBlurListener,
+                                          false);
+    this._videoWindow.removeEventListener("focus",
+                                          this._videoWinFocusListener,
+                                          false);
     this._osdWindow.close();
     this._osdWindow = null;
     this._videoWindow = null;
@@ -145,24 +196,69 @@ sbOSDControlService.prototype =
   hideOSDControls: function() {
     if (!this._cloakService.isCloaked(this._osdWindow)) {
       this._cloakService.cloak(this._osdWindow);
+      this._nativeWinMgr.setOnTop(this._osdWindow, false);
     }
+
+    // The OSD controls are no longer showing
+    this._osdControlsShowing = false;
   },
 
   showOSDControls: function() {
+    this._recalcOSDPosition();
+
     // Show the controls if they are currently hidden.
     if (this._cloakService.isCloaked(this._osdWindow)) {
       this._cloakService.uncloak(this._osdWindow);
+      this._nativeWinMgr.setOnTop(this._osdWindow, true);
+      
       // Uncloaking has the side effect of focusing the window so we have to
       // refocus the video window after we unclock the osd controls.
       this._videoWindow.focus();
     }
 
-    this._recalcOSDPosition();
+    // Controls are showing
+    this._osdControlsShowing = true;
 
     // Set the timer for hiding.
     this._timer.initWithCallback(this,
                                  SB_OSDHIDE_DELAY,
                                  Ci.nsITimer.TYPE_ONE_SHOT);
+  },
+
+  _onOSDWinBlur: function(aEvent) {
+    // The OSD controls have blurred, set a timer to ensure that the focused
+    // window is the video window before hiding the OSD controls.
+    this._lastBlurWindow = SB_LAST_BLUR_OSD_WINDOW;
+    this._videoWindowsLostFocus = true;
+    this._blurTimer.initWithCallback(this,
+                                     SB_BLUREVENT_CHECK_DELAY,
+                                     Ci.nsITimer.TYPE_ONE_SHOT);
+  },
+
+  _onOSDWinFocus: function(aEvent) {
+    if (this._lastBlurWindow == SB_LAST_BLUR_VIDEO_WINDOW) {
+      // The OSD window gained focus when the video window blurred, toggle the
+      // flag to prevent the OSD controls from being hidden.
+      this._videoWindowsLostFocus = false;
+    }
+  },
+
+  _onVideoWinBlur: function(aEvent) {
+    // The video window has blurred, set a timer to ensure that the focused
+    // window is the OSD controls window before hiding the OSD controls.
+    this._lastBlurWindow = SB_LAST_BLUR_VIDEO_WINDOW;
+    this._videoWindowsLostFocus = true;
+    this._blurTimer.initWithCallback(this,
+                                     SB_BLUREVENT_CHECK_DELAY,
+                                     Ci.nsITimer.TYPE_ONE_SHOT);
+  },
+
+  _onVideoWinFocus: function(aEvent) {
+    if (this._lastBlurWindow == SB_LAST_BLUR_OSD_WINDOW) {
+      // The video window gained focus when the OSD controls blurred, toggle
+      // the flag to prevent the OSD controls from being hidden.
+      this._videoWindowsLostFocus = false;
+    }
   },
 
   //----------------------------------------------------------------------------
@@ -184,7 +280,23 @@ sbOSDControlService.prototype =
   // nsITimerCallback
 
   notify: function(aTimer) {
-    this.hideOSDControls();
+    if (aTimer == this._timer) {
+      this.hideOSDControls();
+    }
+    else if (aTimer == this._blurTimer) {
+      if (this._videoWindowsLostFocus) {
+        // When one of the video window elements (osd or video window) lost
+        // focus, the other window element did not gain focus. This means that
+        // another window in the OS gained focus. To prevent weird Z-ordering
+        // issues here, just hide the OSD controls now to prevent it from
+        // hovering above other windows in the OS.
+        this.hideOSDControls();
+      }
+
+      // Cleanup blur handling
+      this._videoWindowsLostFocus = false;
+      this._lastBlurWindow = -1;
+    }
   },
 };
 
