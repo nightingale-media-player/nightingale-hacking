@@ -213,6 +213,12 @@
             allFeathersPopup.appendChild(skinMenuItem);
           }
           this._appendGetMoreFeathers(allFeathersPopup);
+          
+          // Disable the Feathers menu when a Video Window is active
+          // as switching feathers will always close all windows.
+          if (SBDataGetBoolValue("faceplate.playingvideo")) {
+            allFeathers.setAttribute("disabled", true);
+          }
         ]]>
         </body>
       </method>
@@ -242,7 +248,7 @@
           
           if (this._currentSkin == skin.internalName)
             item.setAttribute("checked", "true"); 
-          
+                      
           item.setAttribute("name", "feathers.item");
           item.setAttribute("skinName", skin.internalName);
           item.setAttribute("layoutURL", layout.url);
@@ -288,10 +294,14 @@
             Components.interfaces.sbILayoutDescription
           );
           
+          var videoWindowActive = SBDataGetBoolValue("faceplate.playingvideo");
+
           // Attach a menuitem for each compatible layout
           for (var j = 0; j < layouts.length; j++) {
             var item = this._makeLayoutMenuItem(skin, layouts[j]);
             item.setAttribute("class", "feathers-menu-selected-skin");
+            item.setAttribute("disabled", videoWindowActive);
+
             this._addToMenu(item);
           }
         ]]>

@@ -1096,6 +1096,11 @@ function toggleNextFeatherLayout()
         .getService(Components.interfaces.sbIFeathersManager);
   }
 
+  // Disallow switching layouts when video window is active
+  // as it will close the video window and stop playback unexpectedly.
+  if (SBDataGetBoolValue("faceplate.playingvideo"))
+    return;
+
   gFeathersManager.switchToNextLayout();
 }
 
