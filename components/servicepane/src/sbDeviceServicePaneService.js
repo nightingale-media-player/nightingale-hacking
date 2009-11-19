@@ -40,7 +40,7 @@ const SP = "http://songbirdnest.com/rdf/servicepane#";
 const DEVICESP_NS = "http://songbirdnest.com/rdf/device-servicepane#";
 
 const URN_PREFIX_DEVICE = "urn:device:";
-const DEVICE_NODE_WEIGHT = -2
+const DEVICE_NODE_WEIGHT = -2;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/DOMUtils.jsm");
@@ -285,6 +285,11 @@ function sbDeviceServicePane_createLibraryNodeForDevice(aDevice, aLibrary) {
       if (props[0] == "audio") {
         audioNode = libraryNode;
       }
+
+      // Set up the device library node info.
+      libraryNode.setAttributeNS(DEVICESP_NS, "device-id", aDevice.id);
+      libraryNode.setAttributeNS(DEVICESP_NS, "deviceNodeType", "library");
+
       libraryNode.hidden = (aLibrary.getProperty(SBProperties.hidden) == "1");
       var firstChild = deviceNode.firstChild;
       if (!firstChild) {

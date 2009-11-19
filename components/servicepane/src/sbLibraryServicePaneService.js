@@ -841,7 +841,7 @@ function sbLibraryServicePane_getNodeForLibraryResource(aResource) {
   for each (let type in ["audio", "video", "podcast"]) {
     let constrainedURN = urn + ":constraint(" + type + ")";
     node = this._servicePane.getNode(urn);
-    if (!node.hidden) {
+    if (node && !node.hidden) {
       return node;
     }
     // this node is hidden; remember it if nothing better comes along
@@ -1448,6 +1448,10 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary, aMove) {
     for each (let type in ["video", "audio"]) {
       let node = makeNodeFromLibrary(aLibrary, type, parentNode);
       node.name = '&servicesource.library.' + type;
+      // read the localized display name and write it back in, to work around
+      // the fact that the translation wrapper for the RDF data source doesn't
+      // deal with ArcLabelsIn correctly
+      node.name = node.displayName;
       if (aMove || !node.parentNode) {
         this._insertNodeAfter(parentNode, node);
       }
