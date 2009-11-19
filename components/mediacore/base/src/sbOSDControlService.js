@@ -213,7 +213,9 @@ sbOSDControlService.prototype =
       
       // Uncloaking has the side effect of focusing the window so we have to
       // refocus the video window after we unclock the osd controls.
-      this._videoWindow.focus();
+      if (this._OS == "WINNT") {
+        this._videoWindow.focus();
+      }
     }
 
     // Controls are showing
