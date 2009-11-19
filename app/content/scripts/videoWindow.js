@@ -429,6 +429,9 @@ var videoWindowController = {
   //////////////////////////////////////////////////////////////////////////////
   
   _onContextMenu: function vwc__onContextMenu(aEvent) {
+    if(this._contextMenu.state == "open")
+      this._contextMenu.hidePopup();
+    
     for each (var node in this._contextMenu.childNodes) {
       switch(node.id) {
         case "actualsize": {

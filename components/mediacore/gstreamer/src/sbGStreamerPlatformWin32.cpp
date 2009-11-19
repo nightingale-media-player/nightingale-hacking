@@ -115,6 +115,53 @@ Win32PlatformInterface::VideoWindowProc(HWND hWnd, UINT message,
     }
     break;
 
+    case WM_LBUTTONDOWN: {
+      nsCOMPtr<nsIDOMMouseEvent> mouseEvent;
+      nsresult rv = platform->CreateDOMMouseEvent(getter_AddRefs(mouseEvent));
+      if(NS_SUCCEEDED(rv)) {
+        PRBool shiftKeyState = HIBYTE(GetKeyState(VK_SHIFT)) > 0;
+        PRBool ctrlKeyState  = HIBYTE(GetKeyState(VK_CONTROL)) > 0;
+        PRBool altKeyState   = HIBYTE(GetKeyState(VK_MENU)) > 0;
+        PRBool winKeyStateL  = HIBYTE(GetKeyState(VK_LWIN)) > 0;
+        PRBool winKeyStateR  = HIBYTE(GetKeyState(VK_RWIN)) > 0;
+
+        PRInt32 clientX = GET_X_LPARAM(lParam);
+        PRInt32 clientY = GET_Y_LPARAM(lParam);
+
+        POINT point = {0};
+        point.x = clientX;
+        point.y = clientY;
+
+        BOOL success = ClientToScreen(hWnd, &point);
+        NS_WARN_IF_FALSE(success, 
+          "Failed to convert coordinates, popup menu will be positioned wrong");
+
+        rv = mouseEvent->InitMouseEvent(NS_LITERAL_STRING("click"), 
+                                        PR_TRUE,
+                                        PR_TRUE,
+                                        nsnull,
+                                        0,
+                                        point.x,
+                                        point.y,
+                                        clientX,
+                                        clientY,
+                                        ctrlKeyState,
+                                        altKeyState,
+                                        shiftKeyState,
+                                        winKeyStateL || winKeyStateR,
+                                        0,
+                                        nsnull);
+        if(NS_SUCCEEDED(rv)) {
+          nsCOMPtr<nsIDOMEvent> event(do_QueryInterface(mouseEvent));
+          platform->DispatchDOMEvent(event);
+
+          return 0;
+        } 
+      }
+    }
+    break;
+
+    case WM_RBUTTONUP:
     case WM_CONTEXTMENU: {
       nsCOMPtr<nsIDOMMouseEvent> mouseEvent;
       nsresult rv = platform->CreateDOMMouseEvent(getter_AddRefs(mouseEvent));
@@ -128,11 +175,28 @@ Win32PlatformInterface::VideoWindowProc(HWND hWnd, UINT message,
         PRInt32 screenX = GET_X_LPARAM(lParam);
         PRInt32 screenY = GET_Y_LPARAM(lParam);
 
-        POINT point = {0};
-        point.x = screenX;
-        point.y = screenY;
+        PRInt32 clientX = screenX;
+        PRInt32 clientY = screenY;
 
-        BOOL success = ScreenToClient(hWnd, &point);
+        POINT point = {0};
+        BOOL success = FALSE;
+
+        if(message == WM_RBUTTONUP) {
+          point.x = clientX;
+          point.y = clientY;
+
+          success = ClientToScreen(hWnd, &point);
+
+          screenX = point.x;
+          screenY = point.y;
+        }
+        else {
+          point.x = screenX;
+          point.y = screenY;
+
+          success = ScreenToClient(hWnd, &point);
+        }
+
         NS_WARN_IF_FALSE(success, 
           "Failed to convert coordinates, popup menu will be positioned wrong");
 
@@ -143,8 +207,8 @@ Win32PlatformInterface::VideoWindowProc(HWND hWnd, UINT message,
                                         0,
                                         screenX,
                                         screenY,
-                                        point.x,
-                                        point.y,
+                                        clientX,
+                                        clientY,
                                         ctrlKeyState,
                                         altKeyState,
                                         shiftKeyState,
