@@ -176,7 +176,7 @@
       </menupopup>
     </menu>
 
-    <menu id="view-menu" label="&menu.view;" accesskey="&menu.view.accesskey;">
+    <menu id="view-menu" label="&menu.view;" accesskey="&menu.view.accesskey;" onpopupshowing="buildViewMenu();">
       <menupopup id="menu_viewPopup">
         <sb-feathers-menuitems id="menuitem_view_feathers"/>
         <menuseparator/>
@@ -198,6 +198,15 @@
         </menu>
         <sb-displaypane-menuitems id="menuitem_view_displaypanes"/>
         <sb-mediapages-menuitems id="menuitem_view_mediapages" hideGetMore="true"/>
+        <menuseparator/>
+        <menuitem id="menuitem-video-fullscreen"
+                  label="&menu.fullscreen;" 
+                  type="checkbox"
+                  observes="video.fullscreen"
+                  oncommand="toggleFullscreenVideo();"/>
+        <menuitem id="menuitem-video-to-front"
+                  label="&menu.videotofront;" 
+                  oncommand="bringVideoWindowToFront();"/>
       </menupopup>
     </menu>
 

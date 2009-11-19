@@ -39,6 +39,11 @@
 #define SB_MEDIACORE_DATAREMOTE_FACEPLATE_SEENPLAYING   "faceplate.seenplaying"
 
 /** 
+ * Video Specific DataRemotes
+ */
+#define SB_MEDIACORE_DATAREMOTE_VIDEO_FULLSCREEN        "video.fullscreen"
+
+/** 
  * Show remaining is special, when this data remote is set to true
  * it will cause the METADATA_LENGTH_STR dataremote to have it's value set
  * to the remaining amount of time left in the song.

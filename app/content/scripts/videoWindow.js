@@ -188,6 +188,7 @@ var videoWindowController = {
   },
   
   _shutdown: function vwc__shutdown() {
+    // Always stop playback when the window closes.
     this._mediacoreManager.sequencer.stop();
 
     window.removeEventListener("resize", this._resizeListener, false);
@@ -486,8 +487,7 @@ var videoWindowController = {
     }
   
     // Get out of fullscreen
-    if(keyCode == KeyEvent.DOM_VK_ESCAPE &&
-       this._mediacoreManager.video.fullscreen) {
+    if(keyCode == KeyEvent.DOM_VK_ESCAPE) {
       this._mediacoreManager.video.fullscreen = false;
       return;
     }
@@ -570,7 +570,10 @@ var videoWindowController = {
   _dismissSelf: function vwc__dismissSelf() {
     if (this._ssp) 
       this._ssp.suppress(false);
-    
+
+    // Always reset fullscreen to false when the window closes.
+    this._mediacoreManager.video.fullscreen = false;
+
     setTimeout(function() { window.close(); }, 0);
   },
 };

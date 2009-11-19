@@ -1130,6 +1130,20 @@ function buildHelpMenu()
   checkForUpdates.label = getStringWithUpdateName("updateCmd_" + key);
 }
 
+function buildViewMenu() {
+  var disabled = !SBDataGetBoolValue("faceplate.playingvideo");
+  
+  var fullscreenItem = document.getElementById("menuitem-video-fullscreen");
+  if(fullscreenItem) {
+    fullscreenItem.setAttribute("disabled", disabled);
+  }
+  
+  var videoToFrontItem = document.getElementById("menuitem-video-to-front");
+  if(videoToFrontItem) {
+    videoToFrontItem.setAttribute("disabled", disabled);                                 
+  }
+}
+
 function javascriptConsole() {
   window.open("chrome://global/content/console.xul", "global:console", "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar,titlebar");
 }
@@ -1292,6 +1306,23 @@ function getFirstItemByProperty(aMediaList, aProperty, aValue) {
   return listener.item;
 }
 
+function toggleFullscreenVideo() {
+  gMM.video.fullscreen = !gMM.video.fullscreen;
+}
+
+function bringVideoWindowToFront() {
+  var wm = Cc["@mozilla.org/appshell/window-mediator;1"]
+             .getService(Ci.nsIWindowMediator);
+             
+  var coreEnum = wm.getEnumerator("Songbird:Core");
+  while(coreEnum.hasMoreElements()) {
+    let win = coreEnum.getNext();
+    if(win.document.documentElement.getAttribute("id") == "video_window") {
+      win.focus();
+      break;
+    }
+  }
+}
 
 }
 catch (e)

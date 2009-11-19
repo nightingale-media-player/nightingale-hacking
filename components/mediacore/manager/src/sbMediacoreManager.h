@@ -104,6 +104,7 @@ public:
   nsresult CreateDataRemoteForEqualizerBand(PRUint32 aBandIndex, 
                                             sbIDataRemote **aRemote);
 
+  nsresult InitVideoDataRemotes();
   nsresult VideoWindowUnloaded();
 
 protected:
@@ -147,6 +148,7 @@ protected:
 
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateVolume;
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateMute;
+  nsCOMPtr<sbIDataRemote> mDataRemoteVideoFullscreen;
 
   PRPackedBool mFullscreen;
   

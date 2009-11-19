@@ -294,6 +294,9 @@ sbMediacoreManager::Init()
   rv = InitBaseMediacoreVolumeControl();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = InitVideoDataRemotes();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -825,6 +828,28 @@ sbMediacoreManager::CreateDataRemoteForEqualizerBand(PRUint32 aBandIndex,
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   bandRemote.forget(aRemote);
+
+  return NS_OK;
+}
+
+nsresult
+sbMediacoreManager::InitVideoDataRemotes()
+{
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  
+  nsString nullString;
+  nullString.SetIsVoid(PR_TRUE);
+
+  nsCOMPtr<sbIDataRemote> videoFSRemote = 
+    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = videoFSRemote->Init(
+    NS_LITERAL_STRING(SB_MEDIACORE_DATAREMOTE_VIDEO_FULLSCREEN), nullString);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = videoFSRemote->SetBoolValue(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -1687,10 +1712,10 @@ sbMediacoreManager::SetFullscreen(PRBool aFullscreen)
   TRACE(("sbMediacoreManager[0x%x] - SetFullscreen", this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
   nsAutoMonitor mon(mMonitor);
   if(mPrimaryCore) {
-    nsresult rv = NS_ERROR_UNEXPECTED;;
-
     nsCOMPtr<sbIMediacoreVideoWindow> videoWindow =
       do_QueryInterface(mPrimaryCore, &rv);
 
@@ -1701,6 +1726,9 @@ sbMediacoreManager::SetFullscreen(PRBool aFullscreen)
   }
 
   mFullscreen = aFullscreen;
+
+  rv = mDataRemoteVideoFullscreen->SetBoolValue(mFullscreen);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
