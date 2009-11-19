@@ -566,8 +566,8 @@ var videoWindowController = {
   },
   
   _onToggleFullscreen: function vwc__onToggleFullscreen() {
-    var video = this._mediacoreManager.video;
-    video.fullscreen = !video.fullscreen;
+    var toggle = !this._mediacoreManager.video.fullscreen;
+    this._mediacoreManager.video.fullscreen = toggle;
   },
   
   _dismissSelf: function vwc__dismissSelf() {

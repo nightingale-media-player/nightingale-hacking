@@ -361,6 +361,11 @@ sbMediacoreManager::Shutdown()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  if (mDataRemoteVideoFullscreen) {
+    rv = mDataRemoteVideoFullscreen->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   nsCOMPtr<nsIMutableArray> mutableArray =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -840,15 +845,15 @@ sbMediacoreManager::InitVideoDataRemotes()
   nsString nullString;
   nullString.SetIsVoid(PR_TRUE);
 
-  nsCOMPtr<sbIDataRemote> videoFSRemote = 
+  nsCOMPtr<sbIDataRemote> mDataRemoteVideoFullscreen = 
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = videoFSRemote->Init(
+  rv = mDataRemoteVideoFullscreen->Init(
     NS_LITERAL_STRING(SB_MEDIACORE_DATAREMOTE_VIDEO_FULLSCREEN), nullString);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = videoFSRemote->SetBoolValue(PR_FALSE);
+  rv = mDataRemoteVideoFullscreen->SetBoolValue(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -1697,11 +1702,20 @@ sbMediacoreManager::GetFullscreen(PRBool *aFullscreen)
     if(NS_SUCCEEDED(rv)) {
       rv = videoWindow->GetFullscreen(aFullscreen);
       NS_ENSURE_SUCCESS(rv, rv);
+
+      // If for some reason we get out of sync we should update now.
+      if(*aFullscreen != mFullscreen) {
+        mFullscreen = *aFullscreen;
+
+        rv = mDataRemoteVideoFullscreen->SetBoolValue(mFullscreen);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+
+      return NS_OK;
     }
   }
-  else {
-    *aFullscreen = mFullscreen;
-  }
+
+  *aFullscreen = mFullscreen;
 
   return NS_OK;
 }

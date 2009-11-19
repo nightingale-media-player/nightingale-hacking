@@ -202,7 +202,6 @@
         <menuitem id="menuitem-video-fullscreen"
                   label="&menu.fullscreen;"
                   type="checkbox"
-                  observes="video.fullscreen"
                   oncommand="toggleFullscreenVideo();"/>
         <menuitem id="menuitem-video-to-front"
                   key="video-window-to-front-key" 

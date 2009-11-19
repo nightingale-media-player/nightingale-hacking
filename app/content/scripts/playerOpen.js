@@ -1135,6 +1135,7 @@ function buildViewMenu() {
   
   var fullscreenItem = document.getElementById("menuitem-video-fullscreen");
   if(fullscreenItem) {
+    fullscreenItem.setAttribute("checked", gMM.video.fullscreen);
     fullscreenItem.setAttribute("disabled", disabled);
   }
   
