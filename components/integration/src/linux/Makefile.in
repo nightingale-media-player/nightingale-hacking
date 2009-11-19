@@ -50,6 +50,7 @@ DYNAMIC_LIB_EXTRA_FLAGS = $(GTK_LIBS) \
                           $(NULL)
 
 CPP_SRCS = sbNativeWindowManager.cpp \
+           sbGtkWindowMoveService.cpp \
            $(NULL)
 
 # From current_directory/..

@@ -35,22 +35,22 @@
 
 #include "sbNativeWindowManagerCID.h"
 
-#ifdef XP_UNIX
 #ifdef XP_MACOSX
 #include "macosx/sbNativeWindowManager.h"
 #include "macosx/sbMacAppDelegate.h"
 #include "macosx/sbMacWindowMoveService.h"
 #include "macosx/sbScreenSaverSuppressor.h"
-#else
-#include "linux/sbNativeWindowManager.h"
 #endif
-#else
-#include "win32/sbNativeWindowManager.h"
-#include "win32/sbScreenSaverSuppressor.h"
-#include "win32/sbWindowMoveService.h"
+
+#ifdef MOZ_WIDGET_GTK2 
+#include "linux/sbNativeWindowManager.h"
+#include "linux/sbGtkWindowMoveService.h"
 #endif
 
 #ifdef XP_WIN
+#include "win32/sbNativeWindowManager.h"
+#include "win32/sbScreenSaverSuppressor.h"
+#include "win32/sbWindowMoveService.h"
 #include "GlobalHotkeys.h"
 #include "WindowMinMax.h"
 #include "WindowResizeHook.h"
@@ -86,6 +86,10 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbWindowMoveService, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMacAppDelegateManager, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMacWindowMoveService, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbScreenSaverSuppressor, Init);
+#endif
+
+#ifdef MOZ_WIDGET_GTK2
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbGtkWindowMoveService)
 #endif
 
 static nsModuleComponentInfo sbIntegration[] =
@@ -175,6 +179,14 @@ static nsModuleComponentInfo sbIntegration[] =
     SB_BASE_SCREEN_SAVER_SUPPRESSOR_CONTRACTID,
     sbScreenSaverSuppressorConstructor,
     sbScreenSaverSuppressor::RegisterSelf
+  },
+#endif
+#ifdef MOZ_WIDGET_GTK2
+  {
+    SB_WINDOWMOVE_SERVICE_CLASSNAME,
+    SB_WINDOWMOVE_SERVICE_CID,
+    SB_WINDOWMOVE_SERVICE_CONTRACTID,
+    sbGtkWindowMoveServiceConstructor
   },
 #endif
 };
