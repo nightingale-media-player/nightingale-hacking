@@ -364,13 +364,9 @@ sbCommandLineHandler.prototype = {
   },
 
   removeFlagHandler: function(aHandler, aFlag) {
-    for (var i=this.flagHandlers.length-1;i>=0;i--) {
-      var entry = this.flagHandlers[i];
-      if (entry[0] == aHandler && entry[1] == aFlag) {
-        this.flagHandlers.splice(i, 1);
-        return;
-      }
-    }
+    this.flagHandlers = this.flagHandlers.filter(function(entry) {
+      return !(entry[0] == aHandler && entry[1] == aFlag);
+    });
   },
 
   dispatchFlagsToHandler: function(aHandlerEntry) {

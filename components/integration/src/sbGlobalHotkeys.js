@@ -59,13 +59,14 @@ Cu.import("resource://app/jsmodules/SBTimer.jsm");
 __defineGetter__("HotkeyManager", function() {
   delete HotkeyManager;
 
-  if (Cc[SB_HOTKEYMANAGER_CONTRACTID]) {
+  if (SB_HOTKEYMANAGER_CONTRACTID in Cc) {
     HotkeyManager = Cc[SB_HOTKEYMANAGER_CONTRACTID]
                       .getService(Ci.sbIGlobalHotkeys);
-    return HotkeyManager;
+  } else {
+    HotkeyManager = null;
   }
 
-  return null;
+  return HotkeyManager;
 });
 
 /**
@@ -73,13 +74,15 @@ __defineGetter__("HotkeyManager", function() {
  */
 __defineGetter__("HotkeyActions", function() {
   delete HotkeyActions;
-  if (Cc[SB_HOTKEYACTIONS_CONTRACTID]) {
+
+  if (SB_HOTKEYACTIONS_CONTRACTID in Cc) {
     HotkeyActions = Cc[SB_HOTKEYACTIONS_CONTRACTID]
-                        .getService(Ci.sbIHotkeyActions);
-    return HotkeyActions;
+                      .getService(Ci.sbIHotkeyActions);
+  } else {
+    HotkeyActions = null;
   }
 
-  return null;
+  return HotkeyActions;
 });
 
 /**
@@ -88,14 +91,15 @@ __defineGetter__("HotkeyActions", function() {
  __defineGetter__("CommandLine", function() {
    delete CommandLine;
 
-   if (Cc[SB_COMMANDLINE_CONTRACTID]) {
+   if (SB_COMMANDLINE_CONTRACTID in Cc) {
     CommandLine = Cc[SB_COMMANDLINE_CONTRACTID]
                     .getService(Ci.nsICommandLineHandler)
                     .QueryInterface(Ci.sbICommandLineManager);
-    return CommandLine;
+   } else {
+    CommandLine = null;
    }
 
-   return null;
+   return CommandLine;
 });
 
 /**
@@ -212,8 +216,6 @@ sbHotkeyService.prototype =
       Cu.reportError("Global Hotkey Actions Service is not available.");
       return;
     }
-
-    this._initHotkeyHandler();
 
     // Register the default set of actions.
     var defaultActions = Cc[SB_DEFGLOBALHKACTIONS_CONTRACTID]
