@@ -262,8 +262,8 @@
         for (var i = 0; i < errorItems.length; i++) {
           var errorDetail;
           try {
-            errorDetail = errorItems.queryElementAt(i, Ci.nsISupportsString)
-                                    .toString();
+            var bag = errorItems.queryElementAt(i, Ci.nsIPropertyBag2);
+            errorDetail = bag.getPropertyAsAString("msg").toString();
           } catch (err) {
             errorDetail = SBString("device.error.dialog.unknown_error");
           }

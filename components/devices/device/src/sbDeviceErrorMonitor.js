@@ -45,11 +45,11 @@ var deviceErrorMonitorConfig = {
   className:      "Songbird Device Error Monitor Service",
   cid:            Components.ID("{7a2a55d1-0270-4789-bc7c-12ffaa19b4cd}"),
   contractID:     "@songbirdnest.com/device/error-monitor-service;1",
-  
+
   ifList: [ Ci.sbIDeviceEventListener,
             Ci.sbIDeviceErrorMonitor,
             Ci.nsIObserver ],
-            
+
   categoryList:
   [
     {
@@ -83,7 +83,7 @@ deviceErrorMonitor.prototype = {
   _sbStrings: null,
   NONE : "none",
   // Internal functions
-  
+
   /**
    * \brief Initialize the deviceErrorMonitor service.
    */
@@ -126,7 +126,7 @@ deviceErrorMonitor.prototype = {
       this._deviceList.push(newDeviceObj);
     }
   },
-  
+
   /**
    * \brief Remove a device from the list of available devices to monitor for
    *        errors.
@@ -139,7 +139,7 @@ deviceErrorMonitor.prototype = {
       this._deviceList.splice(devIndex, 1);
     }
   },
-  
+
   /**
    * \brief Finds a device index in the device list.
    *
@@ -154,7 +154,7 @@ deviceErrorMonitor.prototype = {
     }
     return -1;
   },
-  
+
   /**
    * \brief Returns the media type given an event.
    *
@@ -162,24 +162,50 @@ deviceErrorMonitor.prototype = {
    * \return The content type of the item in the device event or "none" if
    *         the event isn't device related
    */
-  _getConentType : function deviceErrorMonitor__getMediaType(aDeviceEvent) {
+  _getContentType : function deviceErrorMonitor__getContentType(aDeviceEvent) {
     if (aDeviceEvent.data instanceof Ci.sbIMediaItem) {
-      return aDeviceEvent.Data.contentType;
+      return aDeviceEvent.data.contentType;
     }
-    return NONE;
+    return this.NONE;
   },
-  
-  _getErrorList : function deviceErrorMonitor__getErrorList(aDevIndex, 
+
+  /**
+   * \brief Returns a list of all the errors on a device.
+   *
+   * \param aDevIndex the device index in our array to get errors for.
+   * \return array of errors for a device.
+   */
+  _getAllErrors : function deviceErrorMonitor__getAllErrors(aDevIndex) {
+    var device = this._deviceList[aDevIndex];
+    var errorList = [];
+    if (!device)
+      return errorList;
+
+    // Concat all the error contentType arrays together.
+    for (var contentType in device.errorLists) {
+      errorList = errorList.concat(device.errorLists[contentType]);
+    }
+    return errorList;
+  },
+
+  /**
+   * \brief Returns a list of errors for a content type on a device.
+   *
+   * \param aDevIndex the device index in our array to get errors for.
+   * \param aContentType  the type of content we want errors for.
+   * \return array of errors for a device of a particular media type.
+   */
+  _getErrorList : function deviceErrorMonitor__getErrorList(aDevIndex,
                                                             aContentType) {
     var device = this._deviceList[aDevIndex];
-    var errorList = device.errorLists[contentType];
-     if (!errorList) {
-       errorList = [];
-       device.errorLists[contentType] = errorList;
-     }
-     return errorList;
+    var errorList = device.errorLists[aContentType];
+    if (!errorList) {
+      errorList = []
+      device.errorLists[aContentType] = errorList;
+    }
+    return errorList;
    },
-     
+
   /**
    * \brief Save an error in the list of errors for a device.
    *
@@ -212,18 +238,19 @@ deviceErrorMonitor.prototype = {
         } else {
           mediaURL = SBString("device.info.unknown");
         }
-        
-        var errorString =  Cc["@mozilla.org/supports-string;1"]
-                             .createInstance(Ci.nsISupportsString);
-        errorString.data = this._sbStrings.formatStringFromName(
+
+        // Format the error message
+        var errorString =  this._sbStrings.formatStringFromName(
                                                         "device.error.format",
                                                         [aErrorMsg, mediaURL],
                                                         2);
+        // Store the error information
         var errorInfo = {
-            msg : errorString,
-            item : mediaItem,
-            state : aDeviceEvent.deviceState
+          msg : errorString,
+          item : mediaItem,
+          state : aDeviceEvent.deviceState
         };
+        // Get the contentType and add the error information to the list.
         var contentType = this._getContentType(aDeviceEvent);
         // Get the error list, if one doesn't exists create it
         var errorList = this._getErrorList(devIndex, contentType);
@@ -247,33 +274,33 @@ deviceErrorMonitor.prototype = {
         this._listenerList[i].onDeviceError(aDevice);
       } catch (ex) {
         Cu.reportError(ex);
+        // Remove the listener since it probably does not exist anymore
+        this._listenerList.splice(i, 1);
       }
     }
   },
 
   // sbIDeviceErrorMonitor
-  
+
   /**
    * \brief Checks to see if a device has had any recent errors.
    *
    * \param aDevice device to check for errors on.
+   * \param aContentType type of content we want to check for errors on.
    * \returns true if any errors are currently registered for this device.
    */
-  deviceHasErrors: function deviceErrorMonitor_deviceHasErrors(aDevice, 
-                                                               contentType) {
-    var errorItems = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                            .createInstance(Ci.nsIMutableArray);
+  deviceHasErrors: function deviceErrorMonitor_deviceHasErrors(aDevice,
+                                                               aContentType) {
     var devIndex = this._findDeviceIndex(aDevice);
-    
     if (devIndex > -1) {
-      if (!contentType) {
-        contentType = NONE;
-      }
-      var errorList = this._getErrorList(devIndex, contentType);
-      
-      if (errorList.length > 0) {
-        return true;
-      }
+      var device = this._deviceList[devIndex];
+      var errorList;
+      if (!aContentType)
+        errorList = this._getAllErrors(devIndex);
+      else
+        errorList = this._getErrorList(devIndex, aContentType);
+
+      return (errorList ? (errorList.length > 0) : false);
     }
     return false;
   },
@@ -286,43 +313,65 @@ deviceErrorMonitor.prototype = {
    * \returns array of error strings, empty if no errors exist yet.
    */
   getErrorsForDevice: function deviceErrorMonitor_getErrorsForDevice(aDevice) {
-    var errorItems = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                            .createInstance(Ci.nsIMutableArray);
     var devIndex = this._findDeviceIndex(aDevice);
-    
-    if (devIndex > -1) {
-      for (var prop in this._deviceList[devIndex].errorLists) {
-        var errorList = this._deviceList[devIndex].errorLists[prop];
-        if (errorList) {
-          for(var i = 0; errorList.length; i++) {
-            var errorString = errorList[i].msg;
-            errorItems.appendElement(errorString, false);
-          }
-        }
-      }
+    var errorList = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                      .createInstance(Ci.nsIMutableArray);
+
+    if (devIndex == -1)
+      return errorList;
+
+    var jsErrorList = this._getAllErrors(devIndex);
+    for (var index = 0; index < jsErrorList.length; index++) {
+      errorList.appendElement(jsErrorList[index].msg, false);
     }
-    
-    return errorItems;
+
+    return errorList;
   },
 
-  getDeviceErrors: function deviceErrorMonitor_getDeviceErrors(aDevice, 
-                                                               contentType) {
-    var errorItems = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                        .createInstance(Ci.nsIMutableArray);
+  /**
+   * \brief Gets an array of property bags containing information about the
+   *        errors.
+   *
+   * \param aDevice The device to get the list of errors for.
+   * \param aContentType type of content we want errosr for.
+   * \returns array of property bags that contain error information
+   *
+   * The property bag currently contains
+   *  msg   - nsISupportsString of the message that occured.
+   *  item  - sbIMediaItem that the error occured with.
+   *  state - State of the device at the point of the error.
+   */
+  getDeviceErrors: function deviceErrorMonitor_getDeviceErrors(aDevice,
+                                                               aContentType) {
     var devIndex = this._findDeviceIndex(aDevice);
-    if (devIndex > -1) {
-      var errorList = this._getErroList(devIndex, contentType);
-      for (var i = 0; i < length; ++i) {
-        var errorProperties = Cc["@mozilla.org/hash-property-bag;1"]
-                                 .createInstance(Ci.nsIWritablePropertyBag);
-        var errorInfo = errorList[i];
-        for (var prop in errorInfo) {
-          errorProperties.setProperty(prop, errorInfo[prop]);
-        }
-        errorItems.appendElement(errorProperties);
-      }
+    var errorList = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                      .createInstance(Ci.nsIMutableArray);
+
+    if (devIndex == -1)
+      return errorList;
+
+    var jsErrorList;
+    if (!aContentType)
+      jsErrorList = this._getAllErrors(devIndex);
+    else
+      jsErrorList = this._getErrorList(devIndex, aContentType);
+
+    for (var index = 0; index < jsErrorList.length; index++) {
+      // Add the information to a property bag
+      var errorBag = Cc["@mozilla.org/hash-property-bag;1"]
+                       .createInstance(Ci.nsIWritablePropertyBag2);
+      errorBag.setPropertyAsAString("msg", jsErrorList[index].msg);
+      errorBag.setPropertyAsInterface("item",
+                                      jsErrorList[index].item,
+                                      Ci.sbIMediaItem);
+      errorBag.setPropertyAsUint32("state", jsErrorList[index].state);
+
+      errorList.appendElement(errorBag, false);
     }
+
+    return errorList;
   },
+
   /**
    * \brief Clears the array of error strings for a device.
    *
@@ -330,7 +379,7 @@ deviceErrorMonitor.prototype = {
    */
   clearErrorsForDevice: function deviceErrorMonitor_clearErrorsForDevice(aDevice) {
     var devIndex = this._findDeviceIndex(aDevice);
-    
+
     if (devIndex > -1) {
       this._deviceList[devIndex].errorLists = {};
     }
@@ -369,7 +418,7 @@ deviceErrorMonitor.prototype = {
         var device = aDeviceEvent.data.QueryInterface(Ci.sbIDevice);
         this._removeDevice(device);
       break;
-    
+
       // An error has occurred, we need to store it for later
       case Ci.sbIDeviceEvent.EVENT_DEVICE_ACCESS_DENIED:
         this._logError(aDeviceEvent,
@@ -395,7 +444,7 @@ deviceErrorMonitor.prototype = {
         this._logError(aDeviceEvent,
                        SBString("device.error.unsupported_type"));
       break;
-      
+
       case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSCODE_ERROR:
         // Grab the extended error info from the property bag
         var message = "";
@@ -430,7 +479,7 @@ deviceErrorMonitor.prototype = {
       break;
     }
   },
-  
+
   // nsISupports
   QueryInterface: XPCOMUtils.generateQI(deviceErrorMonitorConfig.ifList)
 };

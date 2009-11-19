@@ -166,7 +166,7 @@ var DPWCfg = {
       showProgress: true,
       updateBusy: true
     },
-    
+
     /* Transcode */
     {
       state: Ci.sbIDevice.STATE_TRANSCODE,
@@ -245,7 +245,6 @@ var DPW = {
   _idleErrorsLabel: null,
   _idleBox: null,
   _syncManualBox: null,
-  _deviceErrorMonitor : null,
 
 
   /**
@@ -284,11 +283,6 @@ var DPW = {
     // Initialize the device services.
     this._deviceInitialize();
 
-    this._deviceErrorMonitor =
-                          Cc["@songbirdnest.com/device/error-monitor-service;1"]
-                            .getService(Ci.sbIDeviceErrorMonitor);
-    // Start listening for new device errors.
-    this._deviceErrorMonitor.addListener(this);
     // Get the device operation total items and current item index data remotes.
     var createDataRemote = new Components.Constructor(
                                     "@songbirdnest.com/Songbird/DataRemote;1",
@@ -302,14 +296,13 @@ var DPW = {
                     this._deviceID + ".status.progress", null);
     this._itemType = createDataRemote(
                     this._deviceID + ".status.type", null);
-                    
+
     // Update the last completed operation
     this._lastCompletedEventOperation = this._device.previousState;
 
     // Simulate a device state changed event to initialize the operation state
     // and update the UI.
     this._handleStateChanged({ data: this._device.state });
-    this._checkForErrors(this._device);
     this._update();
   },
 
@@ -319,11 +312,6 @@ var DPW = {
    */
 
   finalize: function DPW_finalize() {
-    // Stop listening for device errors.
-    if (this._deviceErrorMonitor) {
-      this._deviceErrorMonitor.removeListener(this);
-      this._deviceErrorMonitor = null;
-    }
     // Finalize the device services.
     this._deviceFinalize();
 
@@ -406,9 +394,6 @@ var DPW = {
     var oInfo = this._getOperationInfo(this._lastCompletedEventOperation);
     if (oInfo.showIdleMessage) {
       var key = "device.status.progress_complete_" + oInfo.localeSuffix;
-      if (this._deviceErrorMonitor.deviceHasErrors(this._device)) {
-        key += "_errors";
-      }
       this._progressTextLabel.value = SBFormattedString(key,
                                                 [ this._totalItems.intValue ],
                                                 "");
@@ -517,7 +502,7 @@ var DPW = {
     }
 
     // Update the operation progress text.
-    this._progressTextLabel.value = SBFormattedString(localeKey, "");           
+    this._progressTextLabel.value = SBFormattedString(localeKey, "");
     if (curItemIndex > 0 && curItemIndex <= totalItems &&
         operation != Ci.sbIDevice.STATE_MOUNTING &&
         substate != Ci.sbIDevice.STATE_SYNC_PLAYLIST) {
@@ -546,10 +531,6 @@ var DPW = {
     switch (aEvent.target.getAttribute("action")) {
       case "finish" :
         this._finish();
-      break;
-
-      case "show_errors":
-        this._displayErrors();
       break;
 
       default :
@@ -619,29 +600,6 @@ var DPW = {
 
   //----------------------------------------------------------------------------
   //
-  // Device progress sbIDeviceErrorMonitorListener services.
-  //
-  //----------------------------------------------------------------------------
-
-  /**
-   * \brief Called when a device error is logged for the device specified by
-   *        aDevice.
-   *
-   * \param aDevice device for which error was logged.
-   */
-
-  onDeviceError: function DPW_onDeviceError(aDevice) {
-    // Ignore all but the bound device.
-    if (aDevice.id != this._deviceID)
-      return;
-
-    // Update the UI.
-    this._update();
-  },
-
-
-  //----------------------------------------------------------------------------
-  //
   // Internal device info services.
   //
   //----------------------------------------------------------------------------
@@ -651,15 +609,6 @@ var DPW = {
    */
 
   _finish: function DPW__finish() {
-    // Clear errors.
-    this._progressTextLabel.removeAttribute("error");
-    try {
-      this._clearDeviceErrors();
-      this._checkForErrors(this._device);
-    } catch (err) {
-      Cu.reportError(err);
-    }
-
     // Set to no longer show progress.
     this._showProgress = false;
 
@@ -682,40 +631,6 @@ var DPW = {
     if (!operationInfo)
       operationInfo = {};
     return operationInfo;
-  },
-
-
-  /**
-   * \brief Display errors that occured during device operations.
-   */
-
-  _displayErrors: function DPW__displayErrors() {
-    try {
-      if (this._deviceErrorMonitor.deviceHasErrors(this._device)) {
-        var errorItems = 
-          this._deviceErrorMonitor.getErrorsForDevice(this._device);
-        var oInfo = this._getOperationInfo(this._lastCompletedEventOperation);
-        // If the previous state is IDLE, we're probably in the middle of an
-        // operation
-        if (this._lastCompletedEventOperation == Ci.sbIDevice.STATE_IDLE) {
-          oInfo = this._getOperationInfo(this._lastEventOperation);
-        }
-        WindowUtils.openModalDialog
-          (window,
-           "chrome://songbird/content/xul/device/deviceErrorDialog.xul",
-           "device_error_dialog",
-           "chrome,centerscreen",
-           [ "", this._device, errorItems, oInfo.localeSuffix ],
-           null);
-
-        // Clear the errors and re-update the UI now that the user has seen them
-        this._clearDeviceErrors();
-        this._checkForErrors(this._device);
-        this._update();
-      }
-    } catch (err) {
-      Cu.reportError(err);
-    }
   },
 
 
@@ -785,28 +700,6 @@ var DPW = {
     }
   },
 
-  _checkForErrors: function DPW__checkForErrors() {
-    this._progressTextLabel.removeAttribute("error");
-    try {
-      var hasErrors = this._deviceErrorMonitor.deviceHasErrors(this._device);
-      this._progressTextLabel.setAttribute("error", hasErrors);
-      if (hasErrors) {
-        this._progressInfoBox.hidden = false;
-        this._idleBox.hidden = true;
-      }
-    } catch (err) {
-      Cu.reportError(err);
-    }
-  },
-
-  _clearDeviceErrors: function DPW__clearDeviceErrors() {
-    try {
-      this._deviceErrorMonitor.clearErrorsForDevice(this._device);
-    } catch (err) {
-      Cu.reportError(err);
-    }
-  },
-
   /**
    * \brief Listener for device events.
    *
@@ -868,5 +761,3 @@ var DPW = {
     return this._isSyncing;
   }
 };
-
-

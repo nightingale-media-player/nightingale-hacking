@@ -1037,7 +1037,7 @@ sbCDDevice::ProxyHandleRipEnd()
   NS_ENSURE_SUCCESS(rv, /* void */);
 
   PRBool hasErrors;
-  rv = errMonitor->DeviceHasErrors(this, &hasErrors);
+  rv = errMonitor->DeviceHasErrors(this, EmptyString(), &hasErrors);
   NS_ENSURE_SUCCESS(rv, /* void */);
 
   if (hasErrors) {
@@ -1169,4 +1169,3 @@ sbCDDevice::GetCDDiscHash(sbICDDevice* aCDDevice,
 
   return NS_OK;
 }
-

@@ -161,6 +161,9 @@ var DIPW = {
         // If we are syncing set up the panels for the types we are going to
         // sync.
 
+        // Clear any previous errors we have.
+        this._deviceErrorMonitor.clearErrorsForDevice(this._device);
+
         // Setup the panel
         this._panelBar.removeAllPanels();
         // "audio" will be changed to the contentType later on.
@@ -326,10 +329,8 @@ var DIPW = {
       if (target.hasAttribute("mediatype")) {
         var aMediaType = target.getAttribute("mediatype");
         if (this._checkForDeviceErrors(aMediaType)) {
-          // TODO: Update this with the new function in deviceErrorMonitor when
-          // it has been added.
           var errorItems =
-            this._deviceErrorMonitor.getErrorsForDevice(this._device);
+            this._deviceErrorMonitor.getDeviceErrors(this._device, aMediaType);
           WindowUtils.openDialog
             (window,
              "chrome://songbird/content/xul/device/deviceErrorDialog.xul",
@@ -417,14 +418,13 @@ var DIPW = {
 
   /**
    * \brief Check if the device has errors for a particular type of media
-   * TODO: Actually filter out the different types once we can in the
-   *      sbIDeviceErrorMonitor.
    */
 
   _checkForDeviceErrors: function DIPW__checkForDeviceErrors(aMediaType) {
     var hasErrors = false;
     try {
-      hasErrors = this._deviceErrorMonitor.deviceHasErrors(this._device);
+      hasErrors = this._deviceErrorMonitor.deviceHasErrors(this._device,
+                                                           aMediaType);
     } catch (err) {
       Cu.reportError(err);
     }
