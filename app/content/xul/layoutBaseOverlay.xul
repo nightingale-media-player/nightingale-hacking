@@ -200,11 +200,12 @@
         <sb-mediapages-menuitems id="menuitem_view_mediapages" hideGetMore="true"/>
         <menuseparator/>
         <menuitem id="menuitem-video-fullscreen"
-                  label="&menu.fullscreen;" 
+                  label="&menu.fullscreen;"
                   type="checkbox"
                   observes="video.fullscreen"
                   oncommand="toggleFullscreenVideo();"/>
         <menuitem id="menuitem-video-to-front"
+                  key="video-window-to-front-key" 
                   label="&menu.videotofront;" 
                   oncommand="bringVideoWindowToFront();"/>
       </menupopup>
@@ -410,6 +411,9 @@
       <!-- not using accel here because we want control on all platforms -->
       <key id="control-next-key" keycode="VK_RIGHT" modifiers="control" command="cmd_control_next"/>
       <key id="control-previous-key" keycode="VK_LEFT" modifiers="control" command="cmd_control_previous"/>
+      <!-- video related controls -->
+      <key id="video-window-to-front-key" modifiers="accel shift" key="&videowindow.bringtofront.key;" oncommand="bringVideoWindowToFront();"/>
+
     </keyset>
 
 
