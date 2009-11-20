@@ -36,8 +36,8 @@ Additional styles imported by the Cheesy Video Window
 */ 
 
 #video_window {
-  height: 600px;
   width: 800px;
+  height: 600px;
   min-width: 320px;
   min-height: 240px;
 }
@@ -64,8 +64,3 @@ spacer {
 #video_window #video-box {
   background-color: black;
 }
-
-#video_window:not([active="true"]) .inactive-box {
-  background-color: black !important;
-}
-

@@ -231,14 +231,6 @@ sbOSDControlService.prototype =
     if (this._cloakService.isCloaked(this._osdWindow)) {
       this._cloakService.uncloak(this._osdWindow);
       this._nativeWinMgr.setOnTop(this._osdWindow, true);
-      
-      if(!this._videoWindowFullscreen) {
-        // Uncloaking has the side effect of focusing the window so we have to
-        // refocus the video window after we unclock the osd controls.
-        if (this._OS == "WINNT") {
-          this._videoWindow.focus();
-        }
-      }
     }
 
     // Controls are showing

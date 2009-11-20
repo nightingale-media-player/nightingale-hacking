@@ -430,7 +430,8 @@ Win32PlatformInterface::FullScreen()
   ::GetMonitorInfo(monitor, &info);
 
   mFullscreenWindow = ::CreateWindowEx(
-    0,
+    WS_EX_NOACTIVATE, // This prevents the window from getting an entry in the
+                      // Taskbar.
     SB_VIDEOWINDOW_CLASSNAME,
     L"Songbird Fullscreen Video Window",
     WS_POPUP,
