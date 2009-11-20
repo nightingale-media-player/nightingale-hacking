@@ -122,7 +122,6 @@ var videoWindowController = {
       this._resizeFromVideoBox(this._videoBox);
     }
     else if(aTopic == this.VIDEO_FULLSCREEN_DR_KEY) {
-      Cu.reportError(this._videoFullscreenDataRemote.boolValue);
       this._osdService.onVideoWindowFullscreenChanged(
         this._videoFullscreenDataRemote.boolValue);
     }
@@ -475,8 +474,6 @@ var videoWindowController = {
   },
   
   _onResize: function vwc__onResize(aEvent) {
-    Cu.reportError('resize');
-    
     // Inform the OSD service that we are resizing.
     this._osdService.onVideoWindowResized();
 
@@ -501,7 +498,6 @@ var videoWindowController = {
   },
 
   _onMouseMoved: function vwc__onMouseMoved(aEvent) {
-    Cu.reportError('mouse moved');
     this._osdService.showOSDControls();
   },
   
