@@ -64,6 +64,8 @@ var videoWindowController = {
   
   _videoBox: null,
   _videoElement: null,
+  
+  _videoFullscreenDataRemote: null,
 
   _osdService: null,
   
@@ -73,6 +75,11 @@ var videoWindowController = {
 
   get ACTUAL_SIZE_DR_KEY() {
     const dataRemoteKey = "videowindow.actualsize";
+    return dataRemoteKey;
+  },
+  
+  get VIDEO_FULLSCREEN_DR_KEY() {
+    const dataRemoteKey = "video.fullscreen";
     return dataRemoteKey;
   },
   
@@ -114,6 +121,11 @@ var videoWindowController = {
        this._videoBox) {
       this._resizeFromVideoBox(this._videoBox);
     }
+    else if(aTopic == this.VIDEO_FULLSCREEN_DR_KEY) {
+      Cu.reportError(this._videoFullscreenDataRemote.boolValue);
+      this._osdService.onVideoWindowFullscreenChanged(
+        this._videoFullscreenDataRemote.boolValue);
+    }
   },
   
   //////////////////////////////////////////////////////////////////////////////
@@ -152,6 +164,11 @@ var videoWindowController = {
     }
 
     this._actualSizeDataRemote.bindObserver(this);
+    
+    this._videoFullscreenDataRemote = 
+      SBNewDataRemote(this.VIDEO_FULLSCREEN_DR_KEY);
+    this._videoFullscreenDataRemote.boolValue = false;
+    this._videoFullscreenDataRemote.bindObserver(this);
     
     // We need to ignore the first resize.
     this._ignoreResize = true;
@@ -201,6 +218,10 @@ var videoWindowController = {
     this._keydownListener = null;
     
     this._actualSizeDataRemote.unbind();
+    this._videoFullscreenDataRemote.unbind();
+    
+    this._actualSizeDataRemote = null;
+    this._videoFullscreenDataRemote = null;
 
     this._osdService.onVideoWindowWillClose();
     this._osdService = null;
@@ -454,6 +475,8 @@ var videoWindowController = {
   },
   
   _onResize: function vwc__onResize(aEvent) {
+    Cu.reportError('resize');
+    
     // Inform the OSD service that we are resizing.
     this._osdService.onVideoWindowResized();
 
@@ -478,6 +501,7 @@ var videoWindowController = {
   },
 
   _onMouseMoved: function vwc__onMouseMoved(aEvent) {
+    Cu.reportError('mouse moved');
     this._osdService.showOSDControls();
   },
   

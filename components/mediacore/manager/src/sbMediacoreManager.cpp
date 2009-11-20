@@ -845,7 +845,7 @@ sbMediacoreManager::InitVideoDataRemotes()
   nsString nullString;
   nullString.SetIsVoid(PR_TRUE);
 
-  nsCOMPtr<sbIDataRemote> mDataRemoteVideoFullscreen = 
+  mDataRemoteVideoFullscreen = 
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1182,7 +1182,7 @@ sbMediacoreManager::GetVideo(sbIMediacoreVideoWindow * *aVideo)
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<sbIMediacoreVideoWindow> videoWindow =
-    do_QueryInterface(mPrimaryCore, &rv);
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediacoreManager *, this), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   videoWindow.forget(aVideo);

@@ -34,7 +34,7 @@
 //
 //==============================================================================
 
-[scriptable, uuid(0F0C7744-CCDF-4F7F-A0A5-7A7C95FE96CA)]
+[scriptable, uuid(03efb9a5-5583-43a9-ad0f-24685cacde66)]
 interface sbIOSDControlService : nsISupports
 {
   //
@@ -56,6 +56,12 @@ interface sbIOSDControlService : nsISupports
   // @brief Inform the OSD service that the main video window has resized.
   //
   void onVideoWindowResized();
+
+  //
+  // @brief Inform the OSD service that the main video window has gone into
+  //        fullscreen mode.
+  //
+  void onVideoWindowFullscreenChanged(in boolean aFullscreen);
 
   //
   // @brief Hides the OSD controls from showing on top of the video window.

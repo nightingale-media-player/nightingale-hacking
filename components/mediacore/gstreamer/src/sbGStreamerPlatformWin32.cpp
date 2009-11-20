@@ -64,6 +64,9 @@ static PRLogModuleInfo* gGStreamerPlatformWin32 =
 
 #define SB_VIDEOWINDOW_CLASSNAME L"SBGStreamerVideoWindow"
 
+#define CURSOR_HIDE_ID    1    //timer id
+#define CURSOR_HIDE_DELAY 3000 //delay in milliseconds
+
 // This is normally defined in a Windows header but this header is not
 // part of the free toolset provided by MS so we define our own if it's
 // not defined.
@@ -226,47 +229,97 @@ Win32PlatformInterface::VideoWindowProc(HWND hWnd, UINT message,
     break;
 
     case WM_MOUSEMOVE: {
-      nsCOMPtr<nsIDOMMouseEvent> mouseEvent;
-      nsresult rv = platform->CreateDOMMouseEvent(getter_AddRefs(mouseEvent));
-      if(NS_SUCCEEDED(rv)) {
-        PRBool shiftKeyState = HIBYTE(GetKeyState(VK_SHIFT)) > 0;
-        PRBool ctrlKeyState  = HIBYTE(GetKeyState(VK_CONTROL)) > 0;
-        PRBool altKeyState   = HIBYTE(GetKeyState(VK_MENU)) > 0;
-        PRBool winKeyStateL  = HIBYTE(GetKeyState(VK_LWIN)) > 0;
-        PRBool winKeyStateR  = HIBYTE(GetKeyState(VK_RWIN)) > 0;
+      PRInt32 clientX = GET_X_LPARAM(lParam);
+      PRInt32 clientY = GET_Y_LPARAM(lParam);
 
-        PRInt32 clientX = GET_X_LPARAM(lParam);
-        PRInt32 clientY = GET_Y_LPARAM(lParam);
+      if(platform->HasMouseMoved(clientX, clientY)) {
 
-        POINT point = {0};
-        point.x = clientX;
-        point.y = clientY;
+        if(platform->mFullscreen) {
+          // setup tracking of mouse so that we know when it leaves
+          // the fullscreen window. This is extremely important
+          // for multi monitor setups so that we do not end up
+          // hiding the cursor when it should be shown!
+          TRACKMOUSEEVENT tme = {0};
+          tme.cbSize = sizeof(TRACKMOUSEEVENT);
+          tme.dwFlags = TME_LEAVE;
+          tme.hwndTrack = hWnd;
+          tme.dwHoverTime = HOVER_DEFAULT;
 
-        BOOL success = ClientToScreen(hWnd, &point);
-        NS_WARN_IF_FALSE(success, 
-          "Failed to convert coords, mousemove will have wrong screen coords");
+          // we don't really care if this fails as there's not much 
+          // we can do to recover other than try and call again
+          // which will happen on it's own as the user moves the mouse.
+          ::TrackMouseEvent(&tme);
 
-        rv = mouseEvent->InitMouseEvent(NS_LITERAL_STRING("mousemove"), 
-                                        PR_TRUE,
-                                        PR_TRUE,
-                                        nsnull,
-                                        0,
-                                        point.x,
-                                        point.y,
-                                        clientX,
-                                        clientY,
-                                        ctrlKeyState,
-                                        altKeyState,
-                                        shiftKeyState,
-                                        winKeyStateL || winKeyStateR,
-                                        0,
-                                        nsnull);
+          if(!platform->mCursorShowing) {
+            ::ShowCursor(TRUE);
+            platform->mCursorShowing = PR_TRUE;
+          }
+          ::SetTimer(hWnd, CURSOR_HIDE_ID, CURSOR_HIDE_DELAY, NULL);
+        }
+
+        nsCOMPtr<nsIDOMMouseEvent> mouseEvent;
+        nsresult rv = platform->CreateDOMMouseEvent(getter_AddRefs(mouseEvent));
         if(NS_SUCCEEDED(rv)) {
-          nsCOMPtr<nsIDOMEvent> event(do_QueryInterface(mouseEvent));
-          platform->DispatchDOMEvent(event);
+          PRBool shiftKeyState = HIBYTE(GetKeyState(VK_SHIFT)) > 0;
+          PRBool ctrlKeyState  = HIBYTE(GetKeyState(VK_CONTROL)) > 0;
+          PRBool altKeyState   = HIBYTE(GetKeyState(VK_MENU)) > 0;
+          PRBool winKeyStateL  = HIBYTE(GetKeyState(VK_LWIN)) > 0;
+          PRBool winKeyStateR  = HIBYTE(GetKeyState(VK_RWIN)) > 0;
 
-          return 0;
-        } 
+          POINT point = {0};
+          point.x = clientX;
+          point.y = clientY;
+
+          BOOL success = ClientToScreen(hWnd, &point);
+          NS_WARN_IF_FALSE(success, 
+            "Failed to convert coords, mousemove will have wrong screen coords");
+
+          rv = mouseEvent->InitMouseEvent(NS_LITERAL_STRING("mousemove"), 
+                                          PR_TRUE,
+                                          PR_TRUE,
+                                          nsnull,
+                                          0,
+                                          point.x,
+                                          point.y,
+                                          clientX,
+                                          clientY,
+                                          ctrlKeyState,
+                                          altKeyState,
+                                          shiftKeyState,
+                                          winKeyStateL || winKeyStateR,
+                                          0,
+                                          nsnull);
+          if(NS_SUCCEEDED(rv)) {
+            nsCOMPtr<nsIDOMEvent> event(do_QueryInterface(mouseEvent));
+            platform->DispatchDOMEvent(event);
+
+            return 0;
+          } 
+        }
+      }
+    }
+    break;
+
+    case WM_MOUSELEAVE: {
+      if(!platform->mCursorShowing) {
+        ::ShowCursor(TRUE);
+        platform->mCursorShowing = TRUE;
+      }
+
+      ::KillTimer(hWnd, CURSOR_HIDE_ID);
+    }
+    break;
+
+    case WM_TIMER: {
+      if(wParam == CURSOR_HIDE_ID && platform->mFullscreen) {
+        if(platform->mCursorShowing) {
+          ::ShowCursor(FALSE);
+          platform->mCursorShowing = PR_FALSE;
+        }
+
+        ::KillTimer(hWnd, CURSOR_HIDE_ID);
+
+        return 0;
       }
     }
     break;
@@ -280,6 +333,9 @@ Win32PlatformInterface::Win32PlatformInterface(sbGStreamerMediacore *aCore)
 , mWindow(NULL)
 , mFullscreenWindow(NULL)
 , mParentWindow(NULL)
+, mCursorShowing(PR_TRUE)
+, mLastMouseX(-1)
+, mLastMouseY(-1)
 {
 
 }
@@ -346,6 +402,10 @@ Win32PlatformInterface::SetVideoBox(nsIBoxObject *aBoxObject,
 
 Win32PlatformInterface::~Win32PlatformInterface ()
 {
+  if(mFullscreen) {
+    UnFullScreen();
+  }
+
   // Must free sink before destroying window.
   if (mVideoSink) {
     gst_object_unref(mVideoSink);
@@ -395,10 +455,6 @@ Win32PlatformInterface::FullScreen()
                  abs(info.rcMonitor.right - info.rcMonitor.left),
                  abs(info.rcMonitor.bottom - info.rcMonitor.top));
   ResizeVideo();
-
-  // XXXAus: For now don't hide the cursor. We'll hide it using a timer later.
-  //         See bug 18834.
-  //::ShowCursor(FALSE);
 }
 
 void 
@@ -423,9 +479,10 @@ Win32PlatformInterface::UnFullScreen()
   ::DestroyWindow(mFullscreenWindow);
   mFullscreenWindow = NULL;
 
-  // XXXAus: We'll use a timer for this later. For now we don't hide it so
-  //         no need to show it. See bug 18834.
-  //::ShowCursor(TRUE);
+  if(!mCursorShowing) {
+    ::ShowCursor(TRUE);
+    mCursorShowing = TRUE;
+  }
 }
 
 
@@ -538,4 +595,22 @@ Win32PlatformInterface::SelectParentWindow(HWND hWnd)
   }
 
   return retWnd;
+}
+
+PRBool
+Win32PlatformInterface::HasMouseMoved(PRInt32 aX, PRInt32 aY)
+{
+  PRBool hasMoved = PR_FALSE;
+
+  if(mLastMouseX != aX) {
+    mLastMouseX = aX;
+    hasMoved = PR_TRUE;
+  }
+
+  if(mLastMouseY != aY) {
+    mLastMouseY = aY;
+    hasMoved = PR_TRUE;
+  }
+
+  return hasMoved;
 }

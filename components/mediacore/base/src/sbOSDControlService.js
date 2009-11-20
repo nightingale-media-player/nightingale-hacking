@@ -66,6 +66,7 @@ function sbOSDControlService()
 sbOSDControlService.prototype =
 {
   _videoWindow:           null,
+  _videoWindowFullscreen: false,
   _osdWindow:             null,
   _cloakService:          null,
   _nativeWinMgr:          null,
@@ -78,10 +79,15 @@ sbOSDControlService.prototype =
 
 
   _recalcOSDPosition: function() {
-    this._osdWindow.moveTo(this._videoWindow.screenX,
-                           this._videoWindow.screenY);
-    this._osdWindow.resizeTo(this._videoWindow.innerWidth,
-                             this._videoWindow.outerHeight);
+    // This is only necessary when we are not in fullscreen.
+    // If we were to do this while in fullscreen, it would re-anchor
+    // the controls onto the wrong window.
+    if(!this._videoWindowFullscreen) {
+      this._osdWindow.moveTo(this._videoWindow.screenX,
+                             this._videoWindow.screenY);
+      this._osdWindow.resizeTo(this._videoWindow.innerWidth,
+                               this._videoWindow.outerHeight);
+    }
   },
 
   //----------------------------------------------------------------------------
@@ -119,8 +125,7 @@ sbOSDControlService.prototype =
         winMoveService.startWatchingWindow(this._videoWindow, this);
       }
       catch (e) {
-        Cu.reportError(
-          "The sbIWindowMoveService is not implemented on this platform!");
+        // No window move service on this platform.
       }
     }
 
@@ -165,8 +170,7 @@ sbOSDControlService.prototype =
         winMoveService.stopWatchingWindow(this._videoWindow, this);
       }
       catch (e) {
-        Cu.reportError(
-          "The sbIWindowMoveService is not implemented on this platform!");
+        // No window move service on this platform.
       }
     }
     
@@ -192,11 +196,28 @@ sbOSDControlService.prototype =
   onVideoWindowResized: function() {
     this._recalcOSDPosition();
   },
+  
+  onVideoWindowFullscreenChanged: function(aFullscreen) {
+    this._videoWindowFullscreen = aFullscreen;
+    this._osdWindow.fullScreen = aFullscreen;
+
+    var outterBox = 
+      this._osdWindow.document.getElementById("osd_wrapper_hbox");
+    
+    if(outterBox) {
+      if(aFullscreen) {
+        outterBox.setAttribute("fullscreen", true);
+      }
+      else {
+        outterBox.removeAttribute("fullscreen");
+      }
+    }
+  },
 
   hideOSDControls: function() {
     if (!this._cloakService.isCloaked(this._osdWindow)) {
-      this._cloakService.cloak(this._osdWindow);
       this._nativeWinMgr.setOnTop(this._osdWindow, false);
+      this._cloakService.cloak(this._osdWindow);
     }
 
     // The OSD controls are no longer showing
@@ -211,10 +232,12 @@ sbOSDControlService.prototype =
       this._cloakService.uncloak(this._osdWindow);
       this._nativeWinMgr.setOnTop(this._osdWindow, true);
       
-      // Uncloaking has the side effect of focusing the window so we have to
-      // refocus the video window after we unclock the osd controls.
-      if (this._OS == "WINNT") {
-        this._videoWindow.focus();
+      if(!this._videoWindowFullscreen) {
+        // Uncloaking has the side effect of focusing the window so we have to
+        // refocus the video window after we unclock the osd controls.
+        if (this._OS == "WINNT") {
+          this._videoWindow.focus();
+        }
       }
     }
 
@@ -286,12 +309,18 @@ sbOSDControlService.prototype =
       this.hideOSDControls();
     }
     else if (aTimer == this._blurTimer) {
-      if (this._videoWindowsLostFocus) {
+      if (this._videoWindowsLostFocus && !this._videoWindowFullscreen) {
+        //
         // When one of the video window elements (osd or video window) lost
         // focus, the other window element did not gain focus. This means that
         // another window in the OS gained focus. To prevent weird Z-ordering
         // issues here, just hide the OSD controls now to prevent it from
         // hovering above other windows in the OS.
+        // 
+        // We only do this when we are not in fullscreen since the blur
+        // tracking works on the video window, not the native fullscreen
+        // window used by the mediacores.
+        //
         this.hideOSDControls();
       }
 

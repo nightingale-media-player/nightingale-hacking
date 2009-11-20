@@ -39,7 +39,13 @@
 */
 
 #osd_wrapper_hbox {
-  padding-bottom: 12px;
+  padding-bottom: 14px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+#osd_wrapper_hbox[fullscreen] {
+  padding-bottom: 60px;
   padding-left: 10px;
   padding-right: 10px;
 }
