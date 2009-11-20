@@ -56,10 +56,10 @@
 
         <hbox id="osd_controls_hbox" flex="1">
 
-          <vbox flex="1" pack="center">
+          <vbox flex="1" pack="top">
             <hbox id="osd_controls_top_hbox" flex="1">
 
-              <stack flex="1">
+              <stack flex="1" id="osd_controls_top_stack">
                 <!-- Volume Control Widget -->
                 <hbox flex="1">
                   <vbox id="osd_vol_control_hbox" flex="0" pack="start">

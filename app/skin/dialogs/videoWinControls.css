@@ -75,6 +75,8 @@
 
 #osd_controls_top_hbox {
   max-height: 45px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 /*
@@ -178,7 +180,7 @@
 
 #osd_fullscreen_control_hbox {
   margin-top: 9px;
-  margin-right: 6px;
+  margin-right: 2px;
 }
 
 #full_screen_button {
@@ -218,8 +220,8 @@
 /** Seek bar Background *******************************************************/
 
 #osd_seekinfo_hbox {
-  padding-left: 8px;
-  padding-right: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 progressmeter,
@@ -290,8 +292,11 @@ sb-status-progressmeter {
 
 /** Elapsed Time Label ********************************************************/
 
-#sb-player-timeelapsed-label > label {
-  color:rgb(229, 229, 229);
-  font-size:11px !important;
+#osd_controls_bottom_hbox #sb-player-timeelapsed-label > label,
+#osd_controls_bottom_hbox #sb-player-totaltime-label > label {
+  color: rgb(229, 229, 229) !important;
+  font-size: 11px !important;
+  margin-top: 1px !important;
+  margin-left: 3px !important;
 }
 

@@ -636,7 +636,7 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 #sb-player-timeelapsed-label > label,
 #sb-player-totaltime-label > label {
   color:rgb(140,140,140);
-  font-size:9px !important;
+  font-size:9px;
 }
 
 
