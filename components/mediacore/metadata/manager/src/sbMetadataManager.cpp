@@ -51,15 +51,18 @@
 
 #include "prlog.h"
 #ifdef PR_LOGGING
-extern PRLogModuleInfo* gMetadataLog;
-#define LOG(args) \
-  PR_BEGIN_MACRO \
-  if (!gMetadataLog) \
-    gMetadataLog = PR_NewLogModule("metadata"); \
-  PR_LOG(gMetadataLog, PR_LOG_DEBUG, args); \
-  PR_END_MACRO
+  extern PRLogModuleInfo* gMetadataLog;
+  #define LOG(args) \
+    PR_BEGIN_MACRO \
+    if (!gMetadataLog) \
+      gMetadataLog = PR_NewLogModule("metadata"); \
+    PR_LOG(gMetadataLog, PR_LOG_DEBUG, args); \
+    PR_END_MACRO
+  #ifdef __GNUC__
+    #define __FUNCTION__ __PRETTY_FUNCTION__
+  #endif
 #else
-#define LOG(args) PR_BEGIN_MACRO /* nothing */ PR_END_MACRO
+  #define LOG(args) PR_BEGIN_MACRO /* nothing */ PR_END_MACRO
 #endif
 
 
@@ -257,6 +260,9 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, 
         sbMetadataHandlerItem item;
         item.m_Handler = handler;
         item.m_Vote = vote;
+        #if PR_LOGGING
+          item.m_ContractID = (*i);
+        #endif
         handlerlist.insert( item ); // Sorted list (std::set)
       }
     }
@@ -268,6 +274,8 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, 
     // The end of the list had the highest vote
     handlerlist_t::reverse_iterator i = handlerlist.rbegin();
     pHandler = (*i).m_Handler;
+    LOG(("%s[%p]: using handler %s",
+         __FUNCTION__, this, (*i).m_ContractID));
   }
 
   NS_ENSURE_TRUE(pHandler, NS_ERROR_UNEXPECTED);

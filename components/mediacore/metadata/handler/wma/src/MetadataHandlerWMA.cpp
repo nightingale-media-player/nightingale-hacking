@@ -59,12 +59,21 @@
 #include <wininet.h>
 
 #ifdef PR_LOGGING
-static PRLogModuleInfo* gLog = PR_NewLogModule("sbMetadataHandlerWMA");
-#define LOG(args)   if (gLog) PR_LOG(gLog, PR_LOG_WARN, args)
-#define TRACE(args) if (gLog) PR_LOG(gLog, PR_LOG_DEBUG, args)
+  static PRLogModuleInfo* gLog = PR_NewLogModule("sbMetadataHandlerWMA");
+  #define LOG(args)   \
+    PR_BEGIN_MACRO \
+      if (gLog) PR_LOG(gLog, PR_LOG_WARN, args); \
+    PR_END_MACRO
+  #define TRACE(args) \
+    PR_BEGIN_MACRO \
+      if (gLog) PR_LOG(gLog, PR_LOG_DEBUG, args); \
+    PR_END_MACRO
+  #ifdef __GNUC__
+    #define __FUNCTION__ __PRETTY_FUNCTION__
+  #endif
 #else
-#define LOG(args)   /* nothing */
-#define TRACE(args) /* nothing */
+  #define LOG(args)   /* nothing */
+  #define TRACE(args) /* nothing */
 #endif
 
 // DEFINES ====================================================================
@@ -260,8 +269,7 @@ sbMetadataHandlerWMA::Vote(const nsAString& aURL,
         ( strUrl.Find( ".wma", PR_TRUE ) != -1 ) || 
         ( strUrl.Find( ".wmv", PR_TRUE ) != -1 ) ||
         ( strUrl.Find( ".asf", PR_TRUE ) != -1 ) ||
-        ( strUrl.Find( ".asx", PR_TRUE ) != -1 ) ||
-        ( strUrl.Find( ".avi", PR_TRUE ) != -1 )
+        ( strUrl.Find( ".asx", PR_TRUE ) != -1 )
      )
     *_retval = 100;
   else
@@ -273,6 +281,7 @@ sbMetadataHandlerWMA::Vote(const nsAString& aURL,
 NS_IMETHODIMP
 sbMetadataHandlerWMA::Read(PRInt32* _retval)
 {
+  TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(_retval);
   sbCoInitializeWrapper coinit(::CoInitialize(0));
 
@@ -299,6 +308,7 @@ sbMetadataHandlerWMA::Read(PRInt32* _retval)
   if (NS_SUCCEEDED(rv))
     return rv;
 
+  TRACE(("%s[%p] - failed to read data", __FUNCTION__, this));
   return NS_ERROR_INVALID_ARG; // This will cause a useful warning in the metadata job.
 }
 
@@ -709,6 +719,8 @@ nsString
 sbMetadataHandlerWMA::ReadHeaderValue(IWMHeaderInfo3 *aHeaderInfo, 
                                       const nsAString &aKey)
 {
+  TRACE(("%s[%p]: reading %s",
+         __FUNCTION__, this, NS_ConvertUTF16toUTF8(aKey).get()));
   HRESULT hr;
   nsString value;
 
@@ -838,6 +850,11 @@ sbMetadataHandlerWMA::ReadHeaderValue(IWMHeaderInfo3 *aHeaderInfo,
         break;
   }
 
+  TRACE(("%s[%p]: %s -> %s",
+         __FUNCTION__,
+         this,
+         NS_ConvertUTF16toUTF8(aKey).get(),
+         NS_ConvertUTF16toUTF8(value).get()));
   return value;
 }
 

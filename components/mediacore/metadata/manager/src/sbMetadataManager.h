@@ -35,6 +35,7 @@
 // INCLUDES ===================================================================
 #include <nscore.h>
 #include <prlock.h>
+#include <prlog.h>
 #include "sbIMetadataManager.h"
 #include "sbIMetadataHandler.h"
 #include <nsCOMPtr.h>
@@ -81,6 +82,9 @@ class sbMetadataManager : public sbIMetadataManager
     {
       return m_Vote == T.m_Vote;
     }
+    #if PR_LOGGING
+      nsCString m_ContractID;
+    #endif
   };
   class handlerlist_t : public std::set< sbMetadataHandlerItem > {};
   class contractlist_t : public std::list< nsCString > {};
