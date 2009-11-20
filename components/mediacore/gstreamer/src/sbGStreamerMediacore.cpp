@@ -1352,6 +1352,9 @@ void sbGStreamerMediacore::RequestVideoWindow()
        is called on the platform interface, so it can then use that. */
     rv = SetVideoWindow(videoDOMElement);
     NS_ENSURE_SUCCESS(rv, /* void */);
+
+    DispatchMediacoreEvent(sbIMediacoreEvent::VIDEO_SIZE_CHANGED, 
+                           sbNewVariant(mVideoSize).get());
   }
 }
 
