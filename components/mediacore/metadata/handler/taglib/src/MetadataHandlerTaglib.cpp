@@ -222,6 +222,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Vote(
         || (_url.Find(".spx", PR_TRUE) != -1)
         || (_url.Find(".tta", PR_TRUE) != -1)
         || (_url.Find(".oga", PR_TRUE) != -1)
+        || (_url.Find(".ogm", PR_TRUE) != -1)
         || (_url.Find(".ogg", PR_TRUE) != -1)
         || (_url.Find(".wma", PR_TRUE) != -1)
         || (_url.Find(".wmv", PR_TRUE) != -1)
@@ -2063,22 +2064,25 @@ nsresult sbMetadataHandlerTaglib::ReadMetadata()
             isValid = ReadMPCFile();
         } else if (fileExt.Equals(NS_LITERAL_CSTRING("mp3"))) {
             isValid = ReadMPEGFile();
-        } else if (fileExt.Equals(NS_LITERAL_CSTRING("m4a"))) {
+        } else if (fileExt.Equals(NS_LITERAL_CSTRING("m4a")) ||
+                   fileExt.Equals(NS_LITERAL_CSTRING("m4r")) ||
+                   fileExt.Equals(NS_LITERAL_CSTRING("aac")) ||
+                   fileExt.Equals(NS_LITERAL_CSTRING("m4p"))) {
             isValid = ReadMP4File();
-        } else if (fileExt.Equals(NS_LITERAL_CSTRING("m4p"))) {
+        } else if (fileExt.Equals(NS_LITERAL_CSTRING("m4v")) ||
+                   fileExt.Equals(NS_LITERAL_CSTRING("mp4"))) {
             isValid = ReadMP4File();
-        } else if (fileExt.Equals(NS_LITERAL_CSTRING("mp4"))) {
-            isValid = ReadMP4File();
-        } else if (fileExt.Equals(NS_LITERAL_CSTRING("ogg"))) {
-            isValid = ReadOGGFile();
-        } else if (fileExt.Equals(NS_LITERAL_CSTRING("oga"))) {
+            // XXX Mook not always true for mp4, but good enough for now
+            AddMetadataValue(SB_PROPERTY_CONTENTTYPE, NS_LITERAL_STRING("video"));
+        } else if (fileExt.Equals(NS_LITERAL_CSTRING("ogg")) ||
+                   fileExt.Equals(NS_LITERAL_CSTRING("oga"))) {
             isValid = ReadOGAFile();
-        } else if (fileExt.Equals(NS_LITERAL_CSTRING("ogv"))) {
+        } else if (fileExt.Equals(NS_LITERAL_CSTRING("ogv")) ||
+                   fileExt.Equals(NS_LITERAL_CSTRING("ogm")) ||
+                   fileExt.Equals(NS_LITERAL_CSTRING("ogx"))) {
             isValid = ReadOGGFile();
-        } else if (fileExt.Equals(NS_LITERAL_CSTRING("ogm"))) {
-            isValid = ReadOGGFile();
-        } else if (fileExt.Equals(NS_LITERAL_CSTRING("ogx"))) {
-            isValid = ReadOGGFile();
+            // XXX Mook this is not always true for ogx, but we need something for now
+            AddMetadataValue(SB_PROPERTY_CONTENTTYPE, NS_LITERAL_STRING("video"));
         } else {
             decodedFileExt = PR_FALSE;
         }
