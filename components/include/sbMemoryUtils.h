@@ -49,6 +49,33 @@ private:
   T** mArray;
 };
 
+/**
+ * Auto class that automatically deallocates an external XPCOM
+ * array
+ */ 
+template<class T>
+class sbAutoFreeXPCOMArrayByRef
+{
+public:
+  sbAutoFreeXPCOMArrayByRef(PRUint32 & aCount, T & aArray)
+  : mCount(aCount),
+    mArray(aArray)
+  {
+    if (aCount) {
+      NS_ASSERTION(aArray, "Null pointer!");
+    }
+  }
+
+  ~sbAutoFreeXPCOMArrayByRef()
+  {
+    NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(mCount, mArray);
+  }
+
+private:
+  PRUint32 & mCount;
+  T & mArray;
+};
+
 template <class T>
 class sbAutoFreeXPCOMArray
 {
@@ -214,6 +241,19 @@ SB_AUTO_CLASS2(sbAutoNSArray,
                mValue = nsnull);
 
 
+template <class COMPtr, class ReturnType>
+inline
+nsresult sbReturnCOMPtr(COMPtr & aPtr, ReturnType ** aReturn)
+{
+  if (!aReturn) {
+    return NS_ERROR_INVALID_POINTER;
+  }
+
+  *aReturn = aPtr.get();
+  NS_IF_ADDREF(*aReturn);
+
+  return NS_OK;
+}
 
 #endif /* __SBMEMORYUTILS_H__ */
 

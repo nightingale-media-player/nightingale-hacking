@@ -255,45 +255,158 @@ interface sbIAudioFormatType : nsISupports
 %}
 
 /**
- * \interface sbIAudioContentType
+ * This interface describes the capabilities for the video streams
+ */
+ 
+[scriptable, uuid(7062120d-eb8b-469c-9606-bbe86502735c)]
+interface sbIDevCapVideoStream : nsISupports
+{
+  /**
+   * initializes the video stream capabilities
+   */
+  void initialize(in ACString aType,
+                  in nsIArray aExplicitSizes,
+                  in sbIDevCapRange aWidths,
+                  in sbIDevCapRange aHeights,
+                  in unsigned long aVideoPARsCount,
+                  [array, size_is(aVideoPARsCount)]in string aVideoPARs,
+                  in unsigned long aFrameRateCount,
+                  [array, size_is(aFrameRateCount)]in string aFrameRates,
+                  in sbIDevCapRange aBitRates);
+  
+  /**
+   * Container type
+   */
+  readonly attribute ACString type;
+  
+  /**
+   * Array of supported sizes. Each item in the array is an sbIImageSize giving
+   * an explicit width and height.
+   *
+   * The array MUST NOT be empty; if arbitrary dimensions are supported then
+   * this array should contain a single 'recommended' size
+   */
+  readonly attribute nsIArray supportedExplicitSizes;
+
+  /** 
+   * Range of supported widths.
+   *
+   * May be null, in which case only the explicit sizes are permitted.
+   */
+  readonly attribute sbIDevCapRange supportedWidths;
+
+  /**
+   * Range of supported heights.
+   *
+   * May be null, in which case only the explicit sizes are permitted.
+   */
+  readonly attribute sbIDevCapRange supportedHeights;
+
+  /**
+   * Returns the list of video PARs. These are strings which can be parsed
+   * using sbFraction
+   */
+  void getSupportedVideoPARs(out unsigned long aCount, 
+                             [array, size_is(aCount)]out string aVideoPARs); 
+  
+  /**
+   * Returns the list of video frame rates. These are string which can be parsed
+   * using sbFraction
+   */
+  void getSupportedFrameRates(out unsigned long aCount,
+                              [array, size_is(aCount)]out string aFrameRates);
+                     
+  /**
+   * Returns a range of bit rates
+   */
+  readonly attribute sbIDevCapRange supportedBitRates;
+};
+
+%{C++
+#define SB_IDEVCAPVIDEOSTREAM_DESCRIPTION             \
+  "Songbird Device Capabilities Video Stream Component"
+#define SB_IDEVCAPVIDEOSTREAM_CONTRACTID              \
+  "@songbirdnest.com/Songbird/Device/sbdevcapvideostream;1"
+#define SB_IDEVCAPVIDEOSTREAM_CLASSNAME               \
+  "Songbird Device Capabilities Video Stream"
+#define SB_IDEVCAPVIDEOSTREAM_CID                     \
+  {0x1eb66418, 0x11bd, 0x493c, {0x93, 0x29, 0x29, 0x0d, 0x0e, 0x4f, 0xb7, 0x8a}}
+%}
+
+[scriptable, uuid(5651ca06-284a-457f-8dd8-9e60da4471f0)]
+interface sbIDevCapAudioStream : nsISupports
+{
+  /**
+   * Initializes the audio stream object
+   *
+   * \param aType The audio stream type. This is a Songbird defined value.
+   * \param aBitRates A range of bit rates supported
+   * \param aSampleRates A range of sample rates supported
+   * \param aChannels The audio channels supported
+   */
+  void initialize(in ACString aType,
+                  in sbIDevCapRange aBitRates,
+                  in sbIDevCapRange aSampleRates,
+                  in sbIDevCapRange aChannels); 
+  /**
+   * Type of audio stream.
+   */
+  readonly attribute ACString type;
+
+  /**
+   * The supported bitrates.
+   */
+  readonly attribute sbIDevCapRange supportedBitRates;
+
+  /**
+   * The supported sample rates.
+   */
+  readonly attribute sbIDevCapRange supportedSampleRates;
+
+  /**
+   * The supported numbers of channels
+   */
+  readonly attribute sbIDevCapRange supportedChannels;
+};
+
+%{C++
+#define SB_IDEVCAPAUDIOSTREAM_DESCRIPTION             \
+  "Songbird Device Capabilities Audio Stream Component"
+#define SB_IDEVCAPAUDIOSTREAM_CONTRACTID              \
+  "@songbirdnest.com/Songbird/Device/sbdevcapaudiostream;1"
+#define SB_IDEVCAPAUDIOSTREAM_CLASSNAME               \
+  "Songbird Device Capabilities Audio Stream"
+#define SB_IDEVCAPAUDIOSTREAM_CID                     \
+  {0xa8e9d2f7, 0x6640, 0x41a1, {0x9b, 0xd7, 0xb6, 0xce, 0xf2, 0x84, 0xb9, 0x47}}
+%}
+
+/**
+ * This is interface is used to inspect video capabilities of a device
  * \note Implementations of this interface must be threadsafe.
- *
  */
 [scriptable, uuid(39fe77d1-f46d-4ca8-acff-435ccec8af1b)]
 interface sbIVideoFormatType : nsISupports
 {
-  void Initialize(in ACString aFormat,
-                  in ACString aCodec,
-                  in sbIDevCapRange aBitRates,
-                  in sbIDevCapRange aSampleRates,
-                  in sbIDevCapRange aChannels,
-                  in nsIArray aFormatSpecificConstraints);
-  /* Mime type of the container format.
-   *
-   * May be empty if there is no container format (e.g. a raw FLAC bitstream)
-   */
-  readonly attribute ACString containerFormat;
-
-  /* Mime type of the video codec in use.
-   */
-  readonly attribute ACString videoCodec;
-
-  /* The supported bitrates.
-   */
-  readonly attribute sbIDevCapRange supportedBitrates;
-
-  /* The supported sample rates.
-   */
-  readonly attribute sbIDevCapRange supportedSampleRates;
-
-  /* The supported numbers of channels
-   */
-  readonly attribute sbIDevCapRange supportedChannels;
-
   /**
-   * An array of sbIFormatTypeConstraint specific to this content type.
+   * Initializes the video format object
    */
-  readonly attribute nsIArray formatSpecificConstraints;
+  void initialize(in ACString aContainerType,
+                  in sbIDevCapVideoStream aVideoStream,
+                  in sbIDevCapAudioStream aAudioStream);
+  /**
+   * Container format, this may be a mime type or a songbird defined string
+   */
+  readonly attribute ACString containerType;
+  
+  /**
+   * video capabilities of this supported video format
+   */
+  readonly attribute sbIDevCapVideoStream videoStream;
+  
+  /**
+   * Audio capabilities of this supported video format
+   */
+  readonly attribute sbIDevCapAudioStream audioStream;
 };
 
 %{C++

@@ -37,9 +37,11 @@
 
 #include "sbMediacoreEqualizerBand.h"
 #include "sbMediacoreEvent.h"
+#include "sbMediaInspector.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediacoreEqualizerBand);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediacoreEvent);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaInspector);
 
 static nsModuleComponentInfo sbBaseMediacoreComponents[] =
 {
@@ -54,6 +56,12 @@ static nsModuleComponentInfo sbBaseMediacoreComponents[] =
     SB_MEDIACORE_EVENT_CID,
     SB_MEDIACORE_EVENT_CONTRACTID,
     sbMediacoreEventConstructor
+  },
+  {
+    SB_MEDIAINSPECTOR_CLASSNAME,
+    SB_MEDIAINSPECTOR_CID,
+    SB_MEDIAINSPECTOR_CONTRACTID,
+    sbMediaInspectorConstructor
   }
 };
 

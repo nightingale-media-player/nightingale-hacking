@@ -69,6 +69,8 @@ class sbIDeviceCapabilitiesRegistrar;
 class sbIDeviceLibrary;
 class sbITranscodeProfile;
 class sbITranscodeAlbumArt;
+class sbIMediaFormat;
+class sbIMediaInspector;
 
 /* Property used to force a sync diff. */
 #define DEVICE_PROPERTY_SYNC_FORCE_DIFF \
@@ -214,6 +216,8 @@ public:
                                PRBool        aReportErrors,
                                PRBool*       _retval);
 
+  nsresult GetMediaFormat(sbIMediaItem* aMediaItem,
+                          sbIMediaFormat** aMediaFormat);
 public:
   sbBaseDevice();
   ~sbBaseDevice();
@@ -627,6 +631,7 @@ protected:
   PRInt32 mReqStopProcessing;
   PRInt32 mIsHandlingRequests;
   nsCOMPtr<sbITranscodeManager> mTranscodeManager;
+  nsCOMPtr<sbIMediaInspector> mMediaInspector;
 
   // cache data for media management preferences
   struct OrganizeData {

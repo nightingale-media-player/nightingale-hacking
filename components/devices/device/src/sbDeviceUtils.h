@@ -38,9 +38,12 @@
 #include "sbBaseDevice.h"
 #include "sbIDeviceStatus.h"
 
+// Mozilla forwards
 class nsIFile;
 class nsIMutableArray;
 
+// Songbird forwards
+class sbIMediaFormat;
 /**
  * Map entry figuring out the container format and codec given an extension or
  * mime type
@@ -174,7 +177,7 @@ public:
    */
 
   static nsresult QueryUserAbortRip(PRBool*     aAbort);
-  
+
   /**
    * Ask the user if they wish to see the errors for a device before ejecting
    * if there are any errors.
@@ -182,14 +185,14 @@ public:
    * \param aDevice         [in] Target device of operation
    */
   static nsresult QueryUserViewErrors(sbIDevice* aDevice);
-  
+
   /**
    * Show the user any errors that occured for a device.
    *
    * \param aDevice         [in] Target device of operation
    */
   static nsresult ShowDeviceErrors(sbIDevice* aDevice);
-  
+
   /**
    * Check if the device specified by aDevice is linked to the local sync
    * partner.  If it is, return true in aIsLinkedLocally; otherwise, return
@@ -260,18 +263,32 @@ public:
   /**
    * \brief Determine if an item needs transcoding
    * \param aFormatType The format type mapping of the item
-   * \param aBitRate the bit rate of the item
+   * \param aBitRate the bit rate of the item in bps
+   * \param aSampleRate The sample rate of the item
    * \param aDevice The device we're transcoding to
    * \param aNeedsTranscoding where we put our flag denoting it needs or does
    *        not need transcoding
    */
-  static nsresult DoesItemNeedTranscoding(
-                    sbExtensionToContentFormatEntry_t & aFormatType,
-                    PRUint32 & aBitRate,
-                    PRUint32 & aSampleRate,
-                    sbIDevice * aDevice,
-                    bool & aNeedsTranscoding);
+  static  nsresult
+  DoesItemNeedTranscoding(sbExtensionToContentFormatEntry_t & aFormatType,
+                          PRUint32 & aBitRate,
+                          PRUint32 & aSampleRate,
+                          sbIDevice * aDevice,
+                          bool & aNeedsTranscoding);
 
+  /**
+    * \brief Determine if an item needs transcoding
+    * NOTE: This is deprecated, use other overload
+    * \param aTrascodeType The transcode type to use
+    * \param aMediaFormat The media format to check
+    * \param aDevice The device we're transcoding to
+    * \param aNeedsTranscoding where we put our flag denoting it needs or does
+    *        not need transcoding
+    */
+  static nsresult DoesItemNeedTranscoding(PRUint32 aTranscodeType,
+                                          sbIMediaFormat * aMediaFormat,
+                                          sbIDevice * aDevice,
+                                          bool & aNeedsTranscoding);
   /**
    * Returns a list of transcode profiles that the device supports
    * \param aDevice the device to retrieve the profiles for.
@@ -300,6 +317,27 @@ public:
   static nsresult GetCodecAndContainerForMimeType(nsCString aMimeType,
                                                   nsCString &aContainer,
                                                   nsCString &aCodec);
+
+  /**
+   * Returns true if the item is DRM protected
+   *
+   * \param aMediaItem The item to check
+   * \return true if the item is DRM protected otherwise false.
+   */
+  static bool
+  IsItemDRMProtected(sbIMediaItem * aMediaItem);
+
+  /**
+   * Returns the transcode type for the item
+   */
+  static PRUint32
+  GetTranscodeType(sbIMediaItem * aMediaItem);
+
+  /**
+   * Returns the device capabilities type for an item
+   */
+  static PRUint32
+  GetDeviceCapsMediaType(sbIMediaItem * aMediaItem) ;
 };
 
 extern sbExtensionToContentFormatEntry_t const

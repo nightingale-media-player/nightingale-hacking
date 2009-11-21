@@ -246,3 +246,16 @@ interface sbIMediacoreEvent : nsISupports
    */
   readonly attribute sbIMediacoreEventTarget target;
 };
+
+%{C++
+
+#define SB_MEDIACORE_EVENT_DESCRIPTION    \
+  "Songbird Mediacore Event"
+#define SB_MEDIACORE_EVENT_CONTRACTID     \
+  "@songbirdnest.com/Songbird/Mediacore/event;1"
+#define SB_MEDIACORE_EVENT_CLASSNAME      \
+  "sbMediacoreEvent"
+#define SB_MEDIACORE_EVENT_CID          \
+  {0xedf0959d, 0x21bf, 0x411f, {0x8d, 0x3d, 0x85, 0x9a, 0x76, 0xe7, 0x14, 0x12}}
+  
+%};

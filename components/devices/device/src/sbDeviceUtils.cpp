@@ -67,6 +67,7 @@
 #include <sbProxiedComponentManager.h>
 #include <sbMemoryUtils.h>
 #include <sbArray.h>
+#include <sbIMediaInspector.h>
 
 #include "prlog.h"
 #ifdef PR_LOGGING
@@ -1130,11 +1131,16 @@ static nsresult
 GetContainerFormatAndCodec(nsISupports * aFormatType,
                            PRUint32 aContentType,
                            nsAString & aContainerFormat,
+                           nsAString & aVideoType,
+                           nsAString & aAudioType,
                            nsAString & aCodec,
                            sbIDevCapRange ** aBitRateRange = nsnull,
                            sbIDevCapRange ** aSampleRateRange = nsnull)
 {
+  nsresult rv;
+
   TRACE(("%s", __FUNCTION__));
+
   switch (aContentType) {
     case sbIDeviceCapabilities::CONTENT_AUDIO: {
       nsCOMPtr<sbIAudioFormatType> audioFormat =
@@ -1170,15 +1176,37 @@ GetContainerFormatAndCodec(nsISupports * aFormatType,
       }
     }
     break;
-    case sbIDeviceCapabilities::CONTENT_VIDEO:
-      if (aBitRateRange) {
-        *aBitRateRange = nsnull;
+    case sbIDeviceCapabilities::CONTENT_VIDEO: {
+      nsCOMPtr<sbIVideoFormatType> videoFormat =
+        do_QueryInterface(aFormatType);
+      if (videoFormat) {
+
+        nsCOMPtr<sbIDevCapVideoStream> videoStream;
+        rv = videoFormat->GetVideoStream(getter_AddRefs(videoStream));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsCOMPtr<sbIDevCapAudioStream> audioStream;
+        rv = videoFormat->GetAudioStream(getter_AddRefs(audioStream));
+        nsCString videoType;
+        if (aBitRateRange && videoStream) {
+          videoStream->GetSupportedBitRates(aBitRateRange);
+          rv = videoStream->GetType(videoType);
+          NS_ENSURE_SUCCESS(rv, rv);
+          aVideoType = NS_ConvertASCIItoUTF16(videoType);
+        }
+        nsCString audioType;
+        if (aSampleRateRange && audioStream) {
+          audioStream->GetSupportedSampleRates(aSampleRateRange);
+          rv = audioStream->GetType(audioType);
+          NS_ENSURE_SUCCESS(rv, rv);
+          aAudioType = NS_ConvertASCIItoUTF16(audioType);
+        }
       }
       if (aSampleRateRange) {
         *aSampleRateRange = nsnull;
       }
-      // TODO: For when video format types are created
-      break;
+    }
+    break;
     default: {
       NS_WARNING("Unexpected content type in "
                  "sbDefaultBaseDeviceCapabilitiesRegistrar::"
@@ -1258,9 +1286,13 @@ sbDeviceUtils::GetSupportedTranscodeProfiles(sbIDevice * aDevice,
         devCaps->GetFormatType(format, getter_AddRefs(formatTypeSupports));
         nsString containerFormat;
         nsString codec;
+        nsString videoType; // Not used
+        nsString audioType; // Not used
         rv = GetContainerFormatAndCodec(formatTypeSupports,
                                         contentType,
                                         containerFormat,
+                                        videoType,
+                                        audioType,
                                         codec);
         NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1336,6 +1368,7 @@ bool IsValueInRange(PRInt32 aValue, sbIDevCapRange * aRange) {
 
 /**
  * Determine if an item needs transcoding
+ * NOTE: This is deprecated and will be replaced by the overloaded version below
  * \param aFormatType The format type mapping of the item
  * \param aBitRate the bit rate of the item
  * \param aDevice The device we're transcoding to
@@ -1344,11 +1377,11 @@ bool IsValueInRange(PRInt32 aValue, sbIDevCapRange * aRange) {
  */
 nsresult
 sbDeviceUtils::DoesItemNeedTranscoding(
-                 sbExtensionToContentFormatEntry_t & aFormatType,
-                 PRUint32 & aBitRate,
-                 PRUint32 & aSampleRate,
-                 sbIDevice * aDevice,
-                 bool & aNeedsTranscoding)
+                                sbExtensionToContentFormatEntry_t & aFormatType,
+                                PRUint32 & aBitRate,
+                                PRUint32 & aSampleRate,
+                                sbIDevice * aDevice,
+                                bool & aNeedsTranscoding)
 {
   TRACE(("%s", __FUNCTION__));
   nsCOMPtr<sbIDeviceCapabilities> devCaps;
@@ -1384,10 +1417,13 @@ sbDeviceUtils::DoesItemNeedTranscoding(
 
         nsCOMPtr<sbIDevCapRange> bitRateRange;
         nsCOMPtr<sbIDevCapRange> sampleRateRange;
-
+        nsString videoType; // Not used
+        nsString audioType; // Not used
         rv = GetContainerFormatAndCodec(formatType,
                                         devCapContentType,
                                         containerFormat,
+                                        videoType,
+                                        audioType,
                                         codec,
                                         getter_AddRefs(bitRateRange),
                                         getter_AddRefs(sampleRateRange));
@@ -1420,6 +1456,119 @@ sbDeviceUtils::DoesItemNeedTranscoding(
   TRACE(("%s: result %s", __FUNCTION__, aNeedsTranscoding ? "yes" : "no"));
   return NS_OK;
 }
+
+nsresult
+sbDeviceUtils::DoesItemNeedTranscoding(PRUint32 aTranscodeType,
+                                       sbIMediaFormat * aMediaFormat,
+                                       sbIDevice* aDevice,
+                                       bool & aNeedsTranscoding)
+{
+  TRACE(("%s", __FUNCTION__));
+  nsCOMPtr<sbIDeviceCapabilities> devCaps;
+  nsresult rv = aDevice->GetCapabilities(getter_AddRefs(devCaps));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 const devCapContentType =
+                  TranscodeToCapsContentTypeMap[aTranscodeType];
+
+  nsCOMPtr<sbIMediaFormatContainer> container;
+  rv =aMediaFormat->GetContainer(getter_AddRefs(container));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString containerType;
+  rv = container->GetContainerType(containerType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaFormatVideo> formatVideo;
+  rv = aMediaFormat->GetVideoStream(getter_AddRefs(formatVideo));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get bitrate and ignore errors
+  PRInt32 bitRate = 0;
+  formatVideo->GetBitRate(&bitRate);
+
+  nsCOMPtr<sbIMediaFormatAudio> formatAudio;
+  rv = aMediaFormat->GetAudioStream(getter_AddRefs(formatAudio));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get sample rate and ignore errors
+  PRInt32 sampleRate = 0;
+  formatAudio->GetSampleRate(&sampleRate);
+
+  nsString itemVideoType;
+  rv = formatVideo->GetVideoType(itemVideoType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+
+  nsString itemAudioType;
+  rv = formatAudio->GetAudioType(itemAudioType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 formatsLength;
+  char ** formats;
+  rv = devCaps->GetSupportedFormats(devCapContentType,
+                                    &formatsLength,
+                                    &formats);
+  // If we know of transcoding formats than check them
+  if (NS_SUCCEEDED(rv) && formatsLength > 0) {
+    aNeedsTranscoding = true;
+    for (PRUint32 formatIndex = 0;
+         formatIndex < formatsLength;
+         ++formatIndex) {
+
+      NS_ConvertASCIItoUTF16 format(formats[formatIndex]);
+      nsCOMPtr<nsISupports> formatType;
+      rv = devCaps->GetFormatType(format, getter_AddRefs(formatType));
+      if (NS_SUCCEEDED(rv)) {
+        nsString containerFormat;
+        nsString videoType;
+        nsString audioType;
+        nsString codec; // Not used
+
+        nsCOMPtr<sbIDevCapRange> bitRateRange;
+        nsCOMPtr<sbIDevCapRange> sampleRateRange;
+
+        // TODO: XXX This will need to be improved as we finish out the
+        // implementation of the media inspector
+        rv = GetContainerFormatAndCodec(formatType,
+                                        devCapContentType,
+                                        containerFormat,
+                                        videoType,
+                                        audioType,
+                                        codec,
+                                        getter_AddRefs(bitRateRange),
+                                        getter_AddRefs(sampleRateRange));
+        if (NS_SUCCEEDED(rv)) {
+          // Compare the various attributes, if bit rate and sample rate are
+          // not specified then they always match
+          if (containerFormat.Equals(containerType) &&
+              videoType.Equals(itemVideoType) &&
+              audioType.Equals(itemAudioType) &&
+              (!bitRate || IsValueInRange(bitRate, bitRateRange)) &&
+              (!sampleRate || IsValueInRange(sampleRate, sampleRateRange)))
+          {
+            TRACE(("%s: no transcoding needed, matches format %s "
+                   "container %s codec %s",
+                   __FUNCTION__, formats[formatIndex],
+                   NS_LossyConvertUTF16toASCII(containerFormat).get(),
+                   NS_LossyConvertUTF16toASCII(codec).get()));
+            aNeedsTranscoding = false;
+            break;
+          }
+        }
+      }
+    }
+    NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(formatsLength, formats);
+  }
+  else { // We don't know the transcoding formats of the device so just copy
+    TRACE(("%s: no information on device, assuming no transcoding needed",
+           __FUNCTION__));
+    aNeedsTranscoding = false;
+  }
+  TRACE(("%s: result %s", __FUNCTION__, aNeedsTranscoding ? "yes" : "no"));
+  return NS_OK;
+}
+
 
 nsresult
 sbDeviceUtils::ApplyPropertyPreferencesToProfile(sbIDevice* aDevice,
@@ -1520,3 +1669,63 @@ sbDeviceUtils::GetCodecAndContainerForMimeType(nsCString aMimeType,
 
   return NS_ERROR_NOT_AVAILABLE;
 }
+
+bool
+sbDeviceUtils::IsItemDRMProtected(sbIMediaItem * aMediaItem)
+{
+  nsresult rv;
+
+  nsString isDRMProtected;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISDRMPROTECTED),
+                               isDRMProtected);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv) || rv == NS_ERROR_NOT_AVAILABLE,
+             "sbDeviceUtils::IsItemDRMProtected Unexpected error, "
+             "returning false");
+  return NS_SUCCEEDED(rv) && isDRMProtected.EqualsLiteral("1");
+}
+
+PRUint32
+sbDeviceUtils::GetTranscodeType(sbIMediaItem * aMediaItem)
+{
+  nsresult rv;
+
+  nsString contentType;
+  rv = aMediaItem->GetContentType(contentType);
+  NS_ENSURE_SUCCESS(rv, sbITranscodeProfile::TRANSCODE_TYPE_UNKNOWN);
+
+  if (contentType.Equals(NS_LITERAL_STRING("audio"))) {
+    return sbITranscodeProfile::TRANSCODE_TYPE_AUDIO;
+  }
+  else if (contentType.Equals(NS_LITERAL_STRING("video"))) {
+    return sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO;
+  }
+  else if (contentType.Equals(NS_LITERAL_STRING("image"))) {
+    return sbITranscodeProfile::TRANSCODE_TYPE_VIDEO;
+  }
+  NS_WARNING("sbDeviceUtils::GetTranscodeType: "
+             "returning unknown transcoding type");
+  return sbITranscodeProfile::TRANSCODE_TYPE_UNKNOWN;
+}
+
+PRUint32
+sbDeviceUtils::GetDeviceCapsMediaType(sbIMediaItem * aMediaItem)
+{
+  nsresult rv;
+
+  nsString contentType;
+  rv = aMediaItem->GetContentType(contentType);
+  NS_ENSURE_SUCCESS(rv, sbIDeviceCapabilities::CONTENT_UNKNOWN);
+
+  if (contentType.Equals(NS_LITERAL_STRING("audio"))) {
+    return sbIDeviceCapabilities::CONTENT_AUDIO;
+  }
+  else if (contentType.Equals(NS_LITERAL_STRING("video"))) {
+    return sbIDeviceCapabilities::CONTENT_VIDEO;
+  }
+  else if (contentType.Equals(NS_LITERAL_STRING("image"))) {
+    return sbIDeviceCapabilities::CONTENT_IMAGE;
+  }
+  NS_WARNING("sbDeviceUtils::GetTranscodeType: "
+             "returning unknown transcoding type");
+  return sbIDeviceCapabilities::CONTENT_UNKNOWN;
+};

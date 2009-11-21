@@ -35,8 +35,10 @@
 #include <nsClassHashtable.h>
 #include <nsInterfaceHashtable.h>
 #include <nsTArray.h>
-#include "nsMemory.h"
+#include <nsMemory.h>
 #include <nsIVariant.h>
+
+#include <sbFraction.h>
 
 class sbDeviceCapabilities : public sbIDeviceCapabilities, nsIClassInfo
 {
@@ -177,7 +179,52 @@ private:
 };
 
 /**
- * Implementation of @see sbIVideoFormatType
+ * Implementation of @see sbIDevCapVideoStream
+ */
+class sbDevCapVideoStream : public sbIDevCapVideoStream, nsIClassInfo
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIDEVCAPVIDEOSTREAM
+  NS_DECL_NSICLASSINFO
+
+  sbDevCapVideoStream();
+
+private:
+  ~sbDevCapVideoStream();
+
+  nsCString mType;
+  nsCOMPtr<nsIArray> mExplicitSizes;
+  nsCOMPtr<sbIDevCapRange> mWidths;
+  nsCOMPtr<sbIDevCapRange> mHeights;
+  nsTArray<sbFraction> mVideoPARs;
+  nsTArray<sbFraction> mFrameRates;
+  nsCOMPtr<sbIDevCapRange> mBitRates;
+};
+
+/**
+ * Implementation of @see sbIDevCapAudioStream
+ */
+class sbDevCapAudioStream : public sbIDevCapAudioStream, nsIClassInfo
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIDEVCAPAUDIOSTREAM
+  NS_DECL_NSICLASSINFO
+
+  sbDevCapAudioStream();
+
+private:
+  ~sbDevCapAudioStream();
+
+  nsCString mType;
+  nsCOMPtr<sbIDevCapRange> mBitRates;
+  nsCOMPtr<sbIDevCapRange> mSampleRates;
+  nsCOMPtr<sbIDevCapRange> mChannels;
+};
+
+/**
+ * Implementation of @see sbIDevCapVideoFormatType
  */
 class sbVideoFormatType : public sbIVideoFormatType, nsIClassInfo
 {
@@ -186,20 +233,14 @@ public:
   NS_DECL_SBIVIDEOFORMATTYPE
   NS_DECL_NSICLASSINFO
 
+  sbVideoFormatType();
+
 private:
   ~sbVideoFormatType();
 
-  typedef nsCOMPtr<sbIDevCapRange> Bitrates;
-  typedef nsCOMPtr<sbIDevCapRange> SampleRates;
-  typedef nsCOMPtr<sbIDevCapRange> SupportedChannels;
-  typedef nsCOMPtr<nsIArray> FormatConstraints;
-
-  nsCString mContainerFormat;
-  nsCString mVideoCodec;
-  Bitrates mSupportedBitrates;
-  SampleRates mSupportedSampleRates;
-  SupportedChannels mSupportedChannels;
-  FormatConstraints mFormatSpecificConstraints;
+  nsCString mContainerType;
+  nsCOMPtr<sbIDevCapVideoStream> mVideoStream;
+  nsCOMPtr<sbIDevCapAudioStream> mAudioStream;
 };
 
 #endif /* __SBDEVICECAPABILITIES_H__ */

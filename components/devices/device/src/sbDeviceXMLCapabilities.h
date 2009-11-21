@@ -30,6 +30,9 @@
 #include <nsStringAPI.h>
 
 class sbIDeviceCapabilities;
+class sbIDevCapVideoStream;
+class sbIDevCapAudioStream;
+class sbIDevCapVideoFormatType;
 class nsIDOMDocument;
 class nsIDOMNode;
 class nsIMutableArray;
@@ -69,7 +72,7 @@ private:
    * \param aFunctionType the function type to add
    */
   nsresult AddFunctionType(PRUint32 aFunctionType);
-  
+
   /**
    * Adds the content type to the device capabilities
    * \param aFunctionType The function type associated with the content type
@@ -77,7 +80,7 @@ private:
    */
   nsresult AddContentType(PRUint32 aFunctionType,
                           PRUint32 aContentType);
-  
+
   /**
    * Associates a given format with a content type
    * \param aContentType the content type being associated to the format
@@ -88,10 +91,10 @@ private:
 
   /**
    * Processing the DOM document object populating the device capabilities
-   * with information it finds 
+   * with information it finds
    */
   nsresult ProcessDocument(nsIDOMDocument * aDocument);
-  
+
   /**
    * Process the devicecaps node in the DOM document
    * \param aDevCapNode The devicecaps DOM node
@@ -103,13 +106,13 @@ private:
    * \param aAudioNode The audio DOM node to process
    */
   nsresult ProcessAudio(nsIDOMNode * aAudioNode);
-  
+
   /**
    * Processes explicit-sizes node
    * \param aImageSizeNode the explicit-sizes node
    * \param aImageSizes The array to receive the image sizes
    */
-  nsresult ProcessImageSizes(nsIDOMNode * aImageSizeNode, 
+  nsresult ProcessImageSizes(nsIDOMNode * aImageSizeNode,
                              nsIMutableArray * aImageSizes);
 
   /**
@@ -117,7 +120,7 @@ private:
    * \param aImageNode The image DOM node to process
    */
   nsresult ProcessImage(nsIDOMNode * aImageNode);
-  
+
   /**
    * Processes video capabilities specified under the video node
    * \param aVideoNode The video DOM node to process
@@ -125,6 +128,33 @@ private:
   nsresult ProcessVideo(nsIDOMNode * aVideoNode);
 
   /**
+   * Process the video stream portion of the video format
+   * \param aVideoStreamNode The DOM node containing the video
+   *                         stream info
+   * \param aVideoStream The newly built video stream object
+   */
+  nsresult
+  ProcessVideoStream(nsIDOMNode* aVideoStreamNode,
+                     sbIDevCapVideoStream** aVideoStream);
+
+  /**
+   * Process the audio stream portion of the video format
+   * \param aAudioStreamNode The DOM node containing the audio
+   *                         stream info
+   * \param aAudioStream The newly built audio stream object
+   */
+  nsresult
+  ProcessAudioStream(nsIDOMNode* aAudioStreamNode,
+                     sbIDevCapAudioStream** aAudioStream);
+
+  /**
+   * Process the video format element
+   * \param aDOMNode the DOM node to start processing
+   */
+  nsresult
+  ProcessVideoFormat(nsIDOMNode* aDOMNode);
+
+    /**
    * Processes playlist capabilities specified under the playlist node
    * \param aPlaylistNode The playlist DOM node to process
    */

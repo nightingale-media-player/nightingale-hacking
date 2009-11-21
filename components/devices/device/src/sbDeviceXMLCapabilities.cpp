@@ -27,6 +27,7 @@
 
 // Songbird includes
 #include <sbIDeviceCapabilities.h>
+#include <sbMemoryUtils.h>
 
 // Mozilla includes
 #include <nsComponentManagerUtils.h>
@@ -36,6 +37,8 @@
 #include <nsIDOMNode.h>
 #include <nsIDOMNodeList.h>
 #include <nsIMutableArray.h>
+#include <nsMemory.h>
+#include <nsTArray.h>
 #include <nsThreadUtils.h>
 
 #define SB_DEVICE_CAPS_ELEMENT "devicecaps"
@@ -334,6 +337,59 @@ BuildRange(nsIDOMNode * aRangeNode, sbIDevCapRange ** aRange)
   return NS_OK;
 }
 
+static
+nsresult
+GetStringValues(nsIDOMNode * aDOMNode, char**& aValues, PRUint32 & aCount)
+{
+  NS_ENSURE_ARG_POINTER(aDOMNode);
+
+  nsCOMPtr<nsIDOMNodeList> domNodes;
+  nsresult rv = aDOMNode->GetChildNodes(getter_AddRefs(domNodes));
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!domNodes) {
+    return NS_OK;
+  }
+
+  PRUint32 nodeCount;
+  rv = domNodes->GetLength(&nodeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (nodeCount == 0) {
+    return NS_OK;
+  }
+
+  nsTArray<nsString> strings;
+  nsCOMPtr<nsIDOMNode> domNode;
+  for (PRUint32 nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
+    rv = domNodes->Item(nodeIndex, getter_AddRefs(domNode));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString name;
+    rv = domNode->GetNodeName(name);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!name.EqualsLiteral("value")) {
+      continue;
+    }
+
+    nsString value;
+    rv = GetNodeValue(domNode, value);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    NS_ENSURE_TRUE(strings.AppendElement(value), NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  aCount = strings.Length();
+  aValues = reinterpret_cast<char**>(nsMemory::Alloc(aCount * sizeof(char *)));
+  for (PRUint32 index = 0; index < aCount; ++index) {
+    nsString const & value = strings[index];
+    aValues[index] = reinterpret_cast<char*>(
+                                nsMemory::Alloc(value.Length() + 1));
+    strcpy(aValues[index], ::NS_LossyConvertUTF16toASCII(value).BeginReading());
+  }
+  return NS_OK;
+}
+
 nsresult
 sbDeviceXMLCapabilities::ProcessAudio(nsIDOMNode * aAudioNode)
 {
@@ -615,12 +671,288 @@ sbDeviceXMLCapabilities::ProcessImage(nsIDOMNode * aImageNode)
   return NS_OK;
 }
 
+
+typedef sbAutoFreeXPCOMArrayByRef<char**> sbAutoStringArray;
+
+nsresult
+sbDeviceXMLCapabilities::ProcessVideoStream(nsIDOMNode* aVideoStreamNode,
+                                            sbIDevCapVideoStream** aVideoStream)
+{
+  // Retrieve the child nodes for the video node
+  nsCOMPtr<nsIDOMNodeList> domNodes;
+  nsresult rv = aVideoStreamNode->GetChildNodes(getter_AddRefs(domNodes));
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!domNodes) {
+    return NS_OK;
+  }
+
+  // See if there are any child nodes, leave if not
+  PRUint32 nodeCount;
+  rv = domNodes->GetLength(&nodeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (nodeCount == 0) {
+    return NS_OK;
+  }
+
+  nsString type;
+  sbDOMNodeAttributes attributes(aVideoStreamNode);
+
+  // Failure is an option, leaves type blank
+  attributes.GetValue(NS_LITERAL_STRING("type"), type);
+
+  nsCOMPtr<nsIMutableArray> sizes =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1",
+                      &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIDevCapRange> widths;
+  nsCOMPtr<sbIDevCapRange> heights;
+  nsCOMPtr<sbIDevCapRange> bitRates;
+  char ** videoPARs = nsnull;
+  PRUint32 videoPARCount = 0;
+  sbAutoStringArray videPARAuto(videoPARCount, videoPARs);
+  char ** frameRates = nsnull;
+  PRUint32 frameRateCount = 0;
+  sbAutoStringArray frameRatesAuto(frameRateCount, frameRates);
+  nsCOMPtr<nsIDOMNode> domNode;
+  for (PRUint32 nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
+    rv = domNodes->Item(nodeIndex, getter_AddRefs(domNode));
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsString name;
+    rv = domNode->GetNodeName(name);
+    if (NS_FAILED(rv)) {
+      continue;
+    }
+    if (name.Equals(NS_LITERAL_STRING("explicit-sizes"))) {
+      rv = ProcessImageSizes(domNode, sizes);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else if (name.Equals(NS_LITERAL_STRING("widths"))) {
+      rv = BuildRange(domNode, getter_AddRefs(widths));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else if (name.Equals(NS_LITERAL_STRING("heights"))) {
+      rv = BuildRange(domNode, getter_AddRefs(heights));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else if (name.Equals(NS_LITERAL_STRING("videoPARs"))) {
+      if (videoPARs) {
+        nsMemory::Free(videoPARs);
+      }
+      rv = GetStringValues(domNode, videoPARs, videoPARCount);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else if (name.Equals(NS_LITERAL_STRING("frame-rates"))) {
+      if (frameRates) {
+        nsMemory::Free(frameRates);
+      }
+      rv = GetStringValues(domNode, frameRates, frameRateCount);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else if (name.Equals(NS_LITERAL_STRING("bit-rates"))) {
+      rv = BuildRange(domNode, getter_AddRefs(bitRates));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  nsCOMPtr<sbIDevCapVideoStream> videoStream =
+    do_CreateInstance(SB_IDEVCAPVIDEOSTREAM_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = videoStream->Initialize(NS_ConvertUTF16toUTF8(type),
+                               sizes,
+                               widths,
+                               heights,
+                               videoPARCount,
+                               const_cast<char const **>(videoPARs),
+                               frameRateCount,
+                               const_cast<char const **>(frameRates),
+                               bitRates);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  videoStream.forget(aVideoStream);
+
+  return NS_OK;
+}
+
+nsresult
+sbDeviceXMLCapabilities::ProcessAudioStream(nsIDOMNode* aAudioStreamNode,
+                                            sbIDevCapAudioStream** aAudioStream)
+{
+  // Retrieve the child nodes for the video node
+  nsCOMPtr<nsIDOMNodeList> domNodes;
+  nsresult rv = aAudioStreamNode->GetChildNodes(getter_AddRefs(domNodes));
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!domNodes) {
+    return NS_OK;
+  }
+
+  // See if there are any child nodes, leave if not
+  PRUint32 nodeCount;
+  rv = domNodes->GetLength(&nodeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (nodeCount == 0) {
+    return NS_OK;
+  }
+
+  nsString type;
+  sbDOMNodeAttributes attributes(aAudioStreamNode);
+
+  // Failure is an option, leaves type blank
+  attributes.GetValue(NS_LITERAL_STRING("type"), type);
+
+  nsCOMPtr<sbIDevCapRange> bitRates;
+  nsCOMPtr<sbIDevCapRange> sampleRates;
+  nsCOMPtr<sbIDevCapRange> channels;
+
+  nsCOMPtr<nsIDOMNode> domNode;
+  for (PRUint32 nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
+    rv = domNodes->Item(nodeIndex, getter_AddRefs(domNode));
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsString name;
+    rv = domNode->GetNodeName(name);
+    if (NS_FAILED(rv)) {
+      continue;
+    }
+    if (name.Equals(NS_LITERAL_STRING("bit-rates"))) {
+      rv = BuildRange(domNode, getter_AddRefs(bitRates));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else if (name.Equals(NS_LITERAL_STRING("sample-rates"))) {
+      rv = BuildRange(domNode, getter_AddRefs(sampleRates));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else if (name.Equals(NS_LITERAL_STRING("channels"))) {
+      rv = BuildRange(domNode, getter_AddRefs(channels));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  nsCOMPtr<sbIDevCapAudioStream> audioStream =
+    do_CreateInstance(SB_IDEVCAPAUDIOSTREAM_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = audioStream->Initialize(NS_ConvertUTF16toUTF8(type),
+                               bitRates,
+                               sampleRates,
+                               channels);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  audioStream.forget(aAudioStream);
+
+  return NS_OK;
+}
+
+nsresult
+sbDeviceXMLCapabilities::ProcessVideoFormat(nsIDOMNode* aVideoFormatNode)
+{
+  nsresult rv;
+
+  sbDOMNodeAttributes attributes(aVideoFormatNode);
+
+  nsString containerType;
+  rv = attributes.GetValue(NS_LITERAL_STRING("container-type"),
+                           containerType);
+  if (NS_FAILED(rv)) {
+    return NS_OK;
+  }
+
+  // Retrieve the child nodes for the video node
+  nsCOMPtr<nsIDOMNodeList> domNodes;
+  rv = aVideoFormatNode->GetChildNodes(getter_AddRefs(domNodes));
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!domNodes) {
+    return NS_OK;
+  }
+
+  // See if there are any child nodes, leave if not
+  PRUint32 nodeCount;
+  rv = domNodes->GetLength(&nodeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevCapVideoStream> videoStream;
+  nsCOMPtr<sbIDevCapAudioStream> audioStream;
+  nsCOMPtr<nsIDOMNode> domNode;
+  for (PRUint32 nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
+    rv = domNodes->Item(nodeIndex, getter_AddRefs(domNode));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString name;
+    rv = domNode->GetNodeName(name);
+    if (NS_FAILED(rv)) {
+      continue;
+    }
+    if (name.Equals(NS_LITERAL_STRING("video-stream"))) {
+      ProcessVideoStream(domNode, getter_AddRefs(videoStream));
+    }
+    else if (name.Equals(NS_LITERAL_STRING("audio-stream"))) {
+      ProcessAudioStream(domNode, getter_AddRefs(audioStream));
+    }
+  }
+
+  nsCOMPtr<sbIVideoFormatType> videoFormat =
+    do_CreateInstance(SB_IVIDEOFORMATTYPE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = videoFormat->Initialize(NS_ConvertUTF16toUTF8(containerType),
+                               videoStream,
+                               audioStream);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddFormat(sbIDeviceCapabilities::CONTENT_VIDEO, containerType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDeviceCaps->AddFormatType(containerType, videoFormat);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 nsresult
 sbDeviceXMLCapabilities::ProcessVideo(nsIDOMNode * aVideoNode)
 {
   NS_ENSURE_ARG_POINTER(aVideoNode);
 
-  // XXX TODO Implement once we do videos
+  // Retrieve the child nodes for the video node
+  nsCOMPtr<nsIDOMNodeList> domNodes;
+  nsresult rv = aVideoNode->GetChildNodes(getter_AddRefs(domNodes));
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!domNodes) {
+    return NS_OK;
+  }
+
+  // See if there are any child nodes, leave if not
+  PRUint32 nodeCount;
+  rv = domNodes->GetLength(&nodeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (nodeCount == 0) {
+    return NS_OK;
+  }
+
+  rv = AddFunctionType(sbIDeviceCapabilities::FUNCTION_VIDEO_PLAYBACK);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddContentType(sbIDeviceCapabilities::FUNCTION_VIDEO_PLAYBACK,
+                      sbIDeviceCapabilities::CONTENT_VIDEO);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIDOMNode> domNode;
+  for (PRUint32 nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
+    rv = domNodes->Item(nodeIndex, getter_AddRefs(domNode));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString name;
+    rv = domNode->GetNodeName(name);
+    if (NS_FAILED(rv)) {
+      continue;
+    }
+
+    // Ignore things we don't know about
+    if (!name.EqualsLiteral("format")) {
+      continue;
+    }
+
+    ProcessVideoFormat(domNode);
+  }
   return NS_OK;
 }
 

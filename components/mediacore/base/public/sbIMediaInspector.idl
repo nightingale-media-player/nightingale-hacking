@@ -1,0 +1,183 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+ 
+#include "nsISupports.idl"
+
+interface sbIMediaItem;
+interface nsIPropertyBag;
+interface sbIMediaItem;
+interface nsIArray;
+
+/**
+ * This interface describes the container format of the media
+ */
+[scriptable, uuid(dc0128a1-1f41-4d25-b1ad-6b5d2d608745)]
+interface sbIMediaFormatContainer : nsISupports {
+  /**
+   * The container type for this format. This is Songbird defined, but will
+   * probably be mime types or things like ogg and quicktime.
+   */
+  readonly attribute AString containerType;
+
+  /**
+   * List of properties for the container type
+   */
+  readonly attribute nsIPropertyBag properties;
+};
+
+/**
+ * This interface is used to describe a video format
+ */
+[scriptable, uuid(1ebcb142-0eea-40ae-a9eb-af98e58460aa)]
+interface sbIMediaFormatVideo : nsISupports {
+  /**
+   * The type of video format or codec. Examples: mpeg4, theora, h.264
+   */
+  readonly attribute AString videoType;
+
+  /**
+   * The width of the video frame
+   */
+  readonly attribute long videoWidth;
+  
+  /**
+   * The height of the video frame
+   */
+  readonly attribute long videoHeight;
+
+  /**
+   * The video pixel aspect ratio. It is returned as a fraction
+   * \param aNumerator The numerator portion of the aspect ratio
+   * \param aDenominator The denominator portion of the aspect ratio
+   */
+  void getVideoPAR(out unsigned long aNumerator, 
+                   out unsigned long aDenominator);
+  
+  /**
+   * The video frame rate in fps. It is returned as a fraction.
+   * \param aNumerator The numerator portion of the framerate
+   * \param aDenominator The denominator portion of the frame rate
+   */ 
+  void getVideoFrameRate(out unsigned long aNumerator,
+                         out unsigned long aDenominator);                       
+
+  /**
+   * This is the bit rate of the video streams in bits per second
+   */
+  readonly attribute long bitRate;
+
+  /**
+   * A list of optional properties that describe the video format
+   */
+  readonly attribute nsIPropertyBag properties;
+};
+
+/**
+ * This interface describes an audio format for the media inspection service
+ */
+[scriptable, uuid(ad62aa97-e20e-4f50-a48b-b707eda1e00d)]
+interface sbIMediaFormatAudio : nsISupports {
+
+  /**
+   * This is the audio format type name
+   */
+  readonly attribute AString audioType;
+
+  /**
+   * this is the bit rate of the audio format in bits per second
+   */
+  readonly attribute long bitRate;
+
+  /**
+   * this is the sample rate of the audio format
+   */
+  readonly attribute long sampleRate;
+  
+  /**
+   * This is the number of channels contained by the audio format
+   */ 
+  readonly attribute long channels;
+
+  /**
+   * Additional properties of the audio format
+   */
+  readonly attribute nsIPropertyBag properties;
+};
+
+/**
+ * This interface provides information about the format of a media item.
+ * It contains a list of fixed properties (currently there are none) and then
+ * provides a property bag for extended properties
+ */
+[scriptable, uuid(dbaeff49-72aa-4d94-b74f-0e3fb7990cba)]
+interface sbIMediaFormat : nsISupports
+{
+  /**
+   * This is the format container description
+   */
+  readonly attribute sbIMediaFormatContainer container;
+
+  /**
+   * This is the format for the video stream portion of the media
+   * This may be null
+   */
+  readonly attribute sbIMediaFormatVideo videoStream;
+
+  /**
+   * This is the form for the audio stream portion of the media
+   * This may be null
+   */
+   readonly attribute sbIMediaFormatAudio audioStream;
+};
+
+/**
+ * This is the interface to the media inspector service. It provides information
+ * on the format of a media item
+ */
+[scriptable, uuid(75b542d3-725c-4f68-b652-ef0d8f207cc7)]
+interface sbIMediaInspector : nsISupports
+{
+  /**
+   * This method is used to retrieve the media format information for a given
+   * Songbird media item
+   * \param aMediaItem The item to retrieve the media format
+   * \return the media format for the media item. If the service is unable to
+   * obtain the format NS_NOT_AVAILABLE exception is "thrown"
+   */
+  sbIMediaFormat inspectMedia(in sbIMediaItem aMediaItem);
+};
+
+%{C++
+
+#define SB_MEDIAINSPECTOR_DESCRIPTION    \
+  "Songbird Mediacore Media Inspector"
+#define SB_MEDIAINSPECTOR_CONTRACTID     \
+  "@songbirdnest.com/Songbird/Mediacore/mediainspector;1"
+#define SB_MEDIAINSPECTOR_CLASSNAME      \
+  "sbMediaInspector"
+#define SB_MEDIAINSPECTOR_CID               \
+  {0xd1c2b7d2, 0x7b3b, 0x40a5, {0xa1, 0x58, 0x4e, 0x8b, 0x90, 0x61, 0xb1, 0x0b}}
+
+%};

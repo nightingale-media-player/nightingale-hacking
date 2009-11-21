@@ -240,6 +240,9 @@ sbDeviceCapabilities::AddCapabilities(sbIDeviceCapabilities *aCapabilities)
       rv = aCapabilities->GetSupportedFormats(contentType,
                                               &formatsCount,
                                               &formats);
+      if (rv == NS_ERROR_NOT_AVAILABLE) {
+        continue;
+      }
       NS_ENSURE_SUCCESS(rv, rv);
       sbAutoNSArray<char*> autoFormats(formats, formatsCount);
 
@@ -769,10 +772,181 @@ sbAudioFormatType::GetFormatSpecificConstraints(nsIArray * *aFormatSpecificConst
 }
 
 /*******************************************************************************
+ * Video format video stream
+ */
+
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbDevCapVideoStream,
+                              sbIDevCapVideoStream,
+                              nsIClassInfo)
+NS_IMPL_CI_INTERFACE_GETTER2(sbDevCapVideoStream,
+                             sbIDevCapVideoStream,
+                             nsIClassInfo)
+
+NS_DECL_CLASSINFO(sbDevCapVideoStream)
+NS_IMPL_THREADSAFE_CI(sbDevCapVideoStream)
+
+sbDevCapVideoStream::sbDevCapVideoStream()
+{
+}
+
+sbDevCapVideoStream::~sbDevCapVideoStream()
+{
+}
+
+static nsresult
+CopyAndParseFractions(const char ** aStrings,
+                      PRUint32 aStringCount,
+                      nsTArray<sbFraction> & aFractions)
+{
+  nsresult rv;
+
+  for (PRUint32 index = 0; index < aStringCount; ++index)
+  {
+    sbFraction fraction;
+    rv = sbFractionFromString(NS_ConvertASCIItoUTF16(aStrings[index]),
+                              fraction);
+    if (NS_SUCCEEDED(rv)) {
+      aFractions.AppendElement(fraction);
+    }
+    else {
+      nsCString msg("CopyAndParseFractions: Unable to parse fraction ");
+      msg.Append(aStrings[index]);
+      NS_WARNING(msg.BeginReading());
+    }
+  }
+  return NS_OK;
+}
+
+/* void initialize (in ACString aType, in nsIArray aExplicitSizes, in sbIDevCapRange aWidths, in sbIDevCapRange aHeights, in unsigned long aVideoParsCount, [array, size_is (aVideoParsCount)] in string aVideoPars, in unsigned long aFrameRateCount, [array, size_is (aFrameRateCount)] in string aFrameRates, in sbIDevCapRange aBitRates); */
+NS_IMETHODIMP sbDevCapVideoStream::Initialize(const nsACString & aType,
+                                              nsIArray *aExplicitSizes,
+                                              sbIDevCapRange *aWidths,
+                                              sbIDevCapRange *aHeights,
+                                              PRUint32 aVideoPARCount,
+                                              const char **aVideoPARs,
+                                              PRUint32 aFrameRateCount,
+                                              const char **aFrameRates,
+                                              sbIDevCapRange *aBitRates)
+{
+  mType = aType;
+  mExplicitSizes = aExplicitSizes;
+  mWidths = aWidths;
+  mHeights = aHeights;
+  CopyAndParseFractions(aVideoPARs, aVideoPARCount, mVideoPARs);
+  CopyAndParseFractions(aFrameRates, aFrameRateCount, mFrameRates);
+  mBitRates = aBitRates;
+
+  return NS_OK;
+}
+
+/* readonly attribute ACString type; */
+NS_IMETHODIMP sbDevCapVideoStream::GetType(nsACString & aType)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* readonly attribute nsIArray supportedExplicitSizes; */
+NS_IMETHODIMP sbDevCapVideoStream::GetSupportedExplicitSizes(nsIArray * *aSupportedExplicitSizes)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* readonly attribute sbIDevCapRange supportedWidths; */
+NS_IMETHODIMP sbDevCapVideoStream::GetSupportedWidths(sbIDevCapRange * *aSupportedWidths)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* readonly attribute sbIDevCapRange supportedHeights; */
+NS_IMETHODIMP sbDevCapVideoStream::GetSupportedHeights(sbIDevCapRange * *aSupportedHeights)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void getSupportedVideoPARs (out unsigned long aCount, [array, size_is (aCount)] out string aVideoPARs); */
+NS_IMETHODIMP sbDevCapVideoStream::GetSupportedVideoPARs(PRUint32 *aCount, char ***aVideoPARs)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void getSupportedFrameRates (out unsigned long aCount, [array, size_is (aCount)] out string aFrameRates); */
+NS_IMETHODIMP sbDevCapVideoStream::GetSupportedFrameRates(PRUint32 *aCount, char ***aFrameRates)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* readonly attribute sbIDevCapRange supportedBitRates; */
+NS_IMETHODIMP sbDevCapVideoStream::GetSupportedBitRates(sbIDevCapRange * *aSupportedBitRates)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/*******************************************************************************
+ * Video format audio stream
+ */
+
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbDevCapAudioStream,
+                              sbIDevCapAudioStream,
+                              nsIClassInfo)
+NS_IMPL_CI_INTERFACE_GETTER2(sbDevCapAudioStream,
+                             sbIDevCapAudioStream,
+                             nsIClassInfo)
+
+NS_DECL_CLASSINFO(sbDevCapAudioStream)
+NS_IMPL_THREADSAFE_CI(sbDevCapAudioStream)
+
+sbDevCapAudioStream::sbDevCapAudioStream()
+{
+}
+
+sbDevCapAudioStream::~sbDevCapAudioStream()
+{
+}
+
+NS_IMETHODIMP
+sbDevCapAudioStream::Initialize(const nsACString & aType,
+                                sbIDevCapRange *aBitRates,
+                                sbIDevCapRange *aSampleRates,
+                                sbIDevCapRange *aChannels)
+{
+  mType = aType;
+  mBitRates = aBitRates;
+  mSampleRates = aSampleRates;
+  mChannels = aChannels;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbDevCapAudioStream::GetType(nsACString & aType)
+{
+  aType = mType;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDevCapAudioStream::GetSupportedBitRates(sbIDevCapRange * *aBitRates)
+{
+  return sbReturnCOMPtr(mBitRates, aBitRates);
+}
+
+/* readonly attribute sbIDevCapRange supportedSampleRates; */
+NS_IMETHODIMP
+sbDevCapAudioStream::GetSupportedSampleRates(sbIDevCapRange * *aSampleRates)
+{
+  return sbReturnCOMPtr(mSampleRates, aSampleRates);
+}
+
+/* readonly attribute sbIDevCapRange supportedChannels; */
+NS_IMETHODIMP
+sbDevCapAudioStream::GetSupportedChannels(sbIDevCapRange * *aChannels)
+{
+  return sbReturnCOMPtr(mChannels, aChannels);
+}
+
+/*******************************************************************************
  * Video format type
  */
 
-/* Implementation file */
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbVideoFormatType,
                               sbIVideoFormatType,
                               nsIClassInfo)
@@ -783,81 +957,43 @@ NS_IMPL_CI_INTERFACE_GETTER2(sbVideoFormatType,
 NS_DECL_CLASSINFO(sbVideoFormatType)
 NS_IMPL_THREADSAFE_CI(sbVideoFormatType)
 
+sbVideoFormatType::sbVideoFormatType()
+{
+  /* member initializers and constructor code */
+}
+
 sbVideoFormatType::~sbVideoFormatType()
 {
   /* destructor code */
 }
 
 NS_IMETHODIMP
-sbVideoFormatType::Initialize(nsACString const & aContainerFormat,
-                              nsACString const & aVideoCodec,
-                              sbIDevCapRange * aSupportedBitrates,
-                              sbIDevCapRange * aSupportedSampleRates,
-                              sbIDevCapRange * aSupportedChannels,
-                              nsIArray * aFormatSpecificConstraints) {
-  mContainerFormat = aContainerFormat;
-  mVideoCodec = aVideoCodec;
-  mSupportedBitrates = aSupportedBitrates;
-  mSupportedSampleRates = aSupportedSampleRates;
-  mSupportedChannels = aSupportedChannels;
-  mFormatSpecificConstraints = aFormatSpecificConstraints;
-
-  return NS_OK;
-}
-
-/* readonly attribute ACString containerFormat; */
-NS_IMETHODIMP
-sbVideoFormatType::GetContainerFormat(nsACString & aContainerFormat)
+sbVideoFormatType::Initialize(const nsACString & aContainerType,
+                                    sbIDevCapVideoStream *aVideoStream,
+                                    sbIDevCapAudioStream *aAudioStream)
 {
-  aContainerFormat = mContainerFormat;
+  mContainerType = aContainerType;
+  mVideoStream = aVideoStream;
+  mAudioStream = aAudioStream;
+
   return NS_OK;
 }
 
-/* readonly attribute ACString VideoCodec; */
 NS_IMETHODIMP
-sbVideoFormatType::GetVideoCodec(nsACString & aVideoCodec)
+sbVideoFormatType::GetContainerType(nsACString & aContainerType)
 {
-  aVideoCodec = mVideoCodec;
+  aContainerType = mContainerType;
   return NS_OK;
 }
 
-/* readonly attribute sbIDevCapRange supportedBitrates; */
 NS_IMETHODIMP
-sbVideoFormatType::GetSupportedBitrates(sbIDevCapRange * *aSupportedBitrates)
+sbVideoFormatType::GetVideoStream(sbIDevCapVideoStream * *aVideoStream)
 {
-  NS_ENSURE_ARG_POINTER(aSupportedBitrates);
-  *aSupportedBitrates = mSupportedBitrates;
-  NS_IF_ADDREF(*aSupportedBitrates);
-  return NS_OK;
+  return sbReturnCOMPtr(mVideoStream, aVideoStream);
 }
 
-/* readonly attribute sbIDevCapRange supportedSampleRates; */
 NS_IMETHODIMP
-sbVideoFormatType::GetSupportedSampleRates(sbIDevCapRange * *aSupportedSampleRates)
+sbVideoFormatType::GetAudioStream(sbIDevCapAudioStream * *aAudioStream)
 {
-  NS_ENSURE_ARG_POINTER(aSupportedSampleRates);
-  *aSupportedSampleRates = mSupportedSampleRates;
-  NS_IF_ADDREF(*aSupportedSampleRates);
-  return NS_OK;
+  return sbReturnCOMPtr(mAudioStream, aAudioStream);
 }
-
-/* readonly attribute sbIDevCapRange supportedChannels; */
-NS_IMETHODIMP
-sbVideoFormatType::GetSupportedChannels(sbIDevCapRange * *aSupportedChannels)
-{
-  NS_ENSURE_ARG_POINTER(aSupportedChannels);
-  *aSupportedChannels = mSupportedChannels;
-  NS_IF_ADDREF(*aSupportedChannels);
-  return NS_OK;
-}
-
-/* readonly attribute nsIArray formatSpecificConstraints; */
-NS_IMETHODIMP
-sbVideoFormatType::GetFormatSpecificConstraints(nsIArray * *aFormatSpecificConstraints)
-{
-  NS_ENSURE_ARG_POINTER(aFormatSpecificConstraints);
-  *aFormatSpecificConstraints = mFormatSpecificConstraints;
-  NS_IF_ADDREF(*aFormatSpecificConstraints);
-  return NS_OK;
-}
-
