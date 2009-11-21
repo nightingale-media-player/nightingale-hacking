@@ -54,6 +54,7 @@
 // Mozilla imports.
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
+#include <nsIObserver.h>
 #include <nsIStringBundle.h>
 
 
@@ -90,6 +91,7 @@
  */
 
 class sbStringBundleService : public nsIStringBundleService,
+                              public nsIObserver,
                               public sbIStringBundleService
 {
   //----------------------------------------------------------------------------
@@ -106,6 +108,7 @@ public:
 
   NS_DECL_ISUPPORTS
   NS_DECL_NSISTRINGBUNDLESERVICE
+  NS_DECL_NSIOBSERVER
   NS_DECL_SBISTRINGBUNDLESERVICE
 
 
@@ -118,6 +121,7 @@ public:
   virtual ~sbStringBundleService();
 
   nsresult Initialize();
+  nsresult ReloadBundles();
 
 
   //----------------------------------------------------------------------------

@@ -48,6 +48,9 @@
 // Self imports.
 #include "sbStringBundleService.h"
 
+// Mozilla interfaces
+#include <nsIObserverService.h>
+
 // Local imports.
 #include "sbStringUtils.h"
 
@@ -56,9 +59,9 @@
 
 // Mozilla imports.
 #include <nsAutoPtr.h>
+#include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
-
 
 //------------------------------------------------------------------------------
 //
@@ -66,8 +69,9 @@
 //
 //------------------------------------------------------------------------------
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbStringBundleService,
+NS_IMPL_THREADSAFE_ISUPPORTS3(sbStringBundleService,
                               nsIStringBundleService,
+                              nsIObserver,
                               sbIStringBundleService)
 
 
@@ -228,6 +232,36 @@ sbStringBundleService::FlushBundles()
 
 //------------------------------------------------------------------------------
 //
+// nsIObserver implementation.
+//
+//------------------------------------------------------------------------------
+
+NS_IMETHODIMP
+sbStringBundleService::Observe(nsISupports *aSubject,
+                               const char *aTopic,
+                               const PRUnichar *someData)
+{
+  nsresult rv;
+  if (!strcmp("chrome-flush-caches", aTopic)) {
+    // the selected locale may have changed, reload the bundles
+    rv = ReloadBundles();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else if (!strcmp("profile-change-teardown", aTopic)) {
+    nsCOMPtr<nsIObserverService> obssvc =
+      do_GetService("@mozilla.org/observer-service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = obssvc->RemoveObserver(this, "chrome-flush-caches");
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = obssvc->RemoveObserver(this, aTopic);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  return NS_OK;
+}
+
+
+//------------------------------------------------------------------------------
+//
 // Public services.
 //
 //------------------------------------------------------------------------------
@@ -253,9 +287,32 @@ sbStringBundleService::~sbStringBundleService()
 /**
  * Initialize the Songbird string bundle service.
  */
-
 nsresult
 sbStringBundleService::Initialize()
+{
+  nsresult rv;
+
+  // Hook up the observer to be notified when the locale needs to change
+  nsCOMPtr<nsIObserverService> obssvc =
+    do_GetService("@mozilla.org/observer-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = obssvc->AddObserver(this, "chrome-flush-caches", PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = obssvc->AddObserver(this, "profile-change-teardown", PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = ReloadBundles();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+
+/**
+ * Reload the bundles
+ */
+nsresult
+sbStringBundleService::ReloadBundles()
 {
   nsresult rv;
 
@@ -460,7 +517,6 @@ sbStringBundle::FormatStringFromName(const PRUnichar *aName,
   PRUint32     bundleCount = mStringBundleList.Count();
   for (PRUint32 i = 0; i < bundleCount; i++) {
     nsCOMPtr<nsIStringBundle> stringBundle = mStringBundleList[i];
-    rv = stringBundle->GetStringFromName(aName, getter_Copies(bundleString));
     rv = stringBundle->FormatStringFromName(aName,
                                             params,
                                             length,

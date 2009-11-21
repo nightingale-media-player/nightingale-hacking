@@ -84,9 +84,9 @@ sbStringBundleServiceRegister(nsIComponentManager*         aCompMgr,
                                                &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Add self to the app-startup category.
+  // Add self to the profile-after-change category (so that the locales are ready)
   rv = categoryManager->AddCategoryEntry
-                          ("app-startup",
+                          ("profile-after-change",
                            SB_STRINGBUNDLESERVICE_CLASSNAME,
                            "service," SB_STRINGBUNDLESERVICE_CONTRACTID,
                            PR_TRUE,
@@ -117,7 +117,7 @@ sbStringBundleServiceUnregister(nsIComponentManager*         aCompMgr,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Delete self from the app-startup category.
-  rv = categoryManager->DeleteCategoryEntry("app-startup",
+  rv = categoryManager->DeleteCategoryEntry("profile-after-change",
                                             SB_STRINGBUNDLESERVICE_CLASSNAME,
                                             PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
