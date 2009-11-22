@@ -218,7 +218,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Vote(
         || (_url.Find(".m4r", PR_TRUE) != -1)
         || (_url.Find(".aac", PR_TRUE) != -1)
         || (_url.Find(".mp4", PR_TRUE) != -1)
-        || (_url.Find(".wv", PR_TRUE) != -1)
+        || (_url.Find(".wv", PR_TRUE)  != -1)
         || (_url.Find(".spx", PR_TRUE) != -1)
         || (_url.Find(".tta", PR_TRUE) != -1)
         || (_url.Find(".oga", PR_TRUE) != -1)
@@ -586,6 +586,26 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       #endif
     }
 
+    nsCString                   fileExt;
+    result = mpURL->GetFileExtension(fileExt);
+    NS_ENSURE_SUCCESS(result, result);
+    ToLowerCase(fileExt);
+
+    // Ensure the file is not a video file. (Ultimately we would like
+    // to support writing video metadata, but not for LZ.)
+    if (fileExt.Equals(NS_LITERAL_CSTRING("m4v")) ||
+        fileExt.Equals(NS_LITERAL_CSTRING("mp4")) ||
+        fileExt.Equals(NS_LITERAL_CSTRING("asf")) ||
+        fileExt.Equals(NS_LITERAL_CSTRING("wmv")) ||
+        fileExt.Equals(NS_LITERAL_CSTRING("mov")) ||
+        fileExt.Equals(NS_LITERAL_CSTRING("wm"))  ||
+        fileExt.Equals(NS_LITERAL_CSTRING("ogx")) ||
+        fileExt.Equals(NS_LITERAL_CSTRING("ogm")) ||
+        fileExt.Equals(NS_LITERAL_CSTRING("ogv"))
+    ) {
+      return NS_ERROR_NOT_IMPLEMENTED;
+    }
+
     /* WRITE the metadata. */
     if (NS_SUCCEEDED(result)) {
       // on windows, we leave this as an nsAString
@@ -634,10 +654,6 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
 
       /* Write MP3 specific properties. */
       // TODO: write other files' metadata.
-      nsCString                   fileExt;
-      result = mpURL->GetFileExtension(fileExt);
-      NS_ENSURE_SUCCESS(result, result);
-      ToLowerCase(fileExt);
       if (fileExt.Equals(NS_LITERAL_CSTRING("mp3"))) {
         TagLib::MPEG::File* MPEGFile = static_cast<TagLib::MPEG::File*>(f.file());
         
