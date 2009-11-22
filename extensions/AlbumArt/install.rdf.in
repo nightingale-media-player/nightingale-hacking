@@ -33,9 +33,9 @@
     </em:targetApplication>
 
     <em:id>@EXTENSION_UUID@</em:id>
-    <em:name>Album Art Extras</em:name>
+    <em:name>Artwork Extras</em:name>
     <em:iconURL>chrome://albumart/skin/icon-albumart.png</em:iconURL>
-    <em:description>Album Art Extras for Songbird.</em:description>
+    <em:description>Artwork Extras for Songbird.</em:description>
     <em:creator>@SB_VENDOR@</em:creator>
     <em:version>@EXTENSION_VER@</em:version>
     <em:homepageURL>http://www.songbirdnest.com/</em:homepageURL>
@@ -43,7 +43,7 @@
     <songbird:displayPane>
         <Description>
             <songbird:contentUrl>chrome://albumart/content/albumArtPane.xul</songbird:contentUrl>
-            <songbird:contentTitle>Album Art</songbird:contentTitle>
+            <songbird:contentTitle>Artwork</songbird:contentTitle>
             <songbird:contentIcon>chrome://albumart/skin/icon-albumart.png</songbird:contentIcon>
             <songbird:defaultWidth>178</songbird:defaultWidth>
             <songbird:defaultHeight>197</songbird:defaultHeight>

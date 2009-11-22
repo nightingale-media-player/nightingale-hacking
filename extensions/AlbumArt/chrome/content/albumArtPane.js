@@ -39,6 +39,7 @@ Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Cu.import("resource://app/jsmodules/SBUtils.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 // Display pane constants
@@ -794,6 +795,12 @@ var AlbumArt = {
     var clearElem = document.getElementById("clearMenuItem");
     var pasteElem = document.getElementById("pasteMenuItem");
     var getArtworkElem = document.getElementById("getArtworkMenuItem");
+    var getArtworkSeparatorElem = document.getElementById("getArtworkSeparator");
+
+    // Hide the Get Artwork command if no "audio" is selected.
+    var shouldHideGetArtwork = AlbumArt.shouldHideGetArtworkCommand();
+    getArtworkSeparatorElem.hidden = shouldHideGetArtwork;
+    getArtworkElem.hidden = shouldHideGetArtwork;
 
     // Always enable get artwork
     getArtworkElem.disabled = false;
@@ -818,6 +825,28 @@ var AlbumArt = {
     // Enable the paste if a valid image is on the clipboard
     pasteElem.disabled = !validAlbumArt;
 
+  },
+  
+  shouldHideGetArtworkCommand: function AlbumArt_shouldHideGetArtworkCommand() {
+    if (AlbumArt._currentState == STATE_SELECTED) {
+      // Now Selected
+      var items = AlbumArt.getSelection().selectedMediaItems;
+      while (items.hasMoreElements()) {
+        var item = items.getNext().QueryInterface(Ci.sbIMediaItem);
+        if (item.getProperty(SBProperties.contentType) == "audio") {
+          return false;
+        }
+      }
+      return true;
+    }
+    else {
+      // Now playing
+      var item = AlbumArt.getNowPlayingItem();
+      if (item && item.getProperty(SBProperties.contentType == "audio")) {
+        return false;
+      }
+      return true;
+    }
   },
 
   /*********************************
@@ -949,13 +978,33 @@ var AlbumArt = {
     if (AlbumArt._currentState == STATE_SELECTED) {
       // Now Selected
       var library = AlbumArt._mediaListView.mediaList.library;
-      sbCoverHelper.getArtworkForItems(AlbumArt.getSelection()
-                                               .selectedMediaItems,
+
+      // Only look up artwork for audio items.
+      var isAudioItem = function(aElement) {
+        return aElement.getProperty(SBProperties.contentType) == "audio";
+      };
+      var selectedAudioItems = new SBFilteredEnumerator(
+          AlbumArt.getSelection().selectedMediaItems, 
+          isAudioItem);
+      
+      // We need to convert our JS object into an XPCOM object.
+      // Mook claims this is actually the best way to do this.
+      var sip = Cc["@mozilla.org/supports-interface-pointer;1"]
+                      .createInstance(Ci.nsISupportsInterfacePointer);
+      sip.data = selectedAudioItems;
+      selectedAudioItems = sip.data;
+
+      sbCoverHelper.getArtworkForItems(selectedAudioItems,
                                        window,
                                        library);
     } else {
       // Now playing
       var item = AlbumArt.getNowPlayingItem();
+      if (item.getProperty(SBProperties.contentType != "audio")) {
+        Components.utils.reportError("albumArtPane.js::onGetArtwork: \n"+
+         "shouldn't try to get album art for non-audio items.");
+        return;
+      }
       if (item) {
         // damn it I hate this whole stupid thing where each JS global gets a
         // completely _different_ set of global classes

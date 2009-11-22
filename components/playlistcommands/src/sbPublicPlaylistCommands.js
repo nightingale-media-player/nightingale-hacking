@@ -40,6 +40,7 @@ Cu.import("resource://app/jsmodules/sbAddToLibrary.jsm");
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Cu.import("resource://app/jsmodules/DropHelper.jsm");
 Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
+Cu.import("resource://app/jsmodules/SBUtils.jsm");
 Cu.import("resource://app/jsmodules/sbCoverHelper.jsm");
 
 const WEB_PLAYLIST_CONTEXT      = "webplaylist";
@@ -583,6 +584,10 @@ PublicPlaylistCommands.prototype = {
                                                "&command.shortcut.keycode.getartwork",
                                                "&command.shortcut.modifiers.getartwork",
                                                true);
+
+      this.m_cmd_GetArtwork.setCommandVisibleCallback(null,
+                                                      "library_cmd_getartwork",
+                                                      plCmd_IsAnyAudioSelected);
 
       this.m_cmd_GetArtwork.setCommandEnabledCallback(null,
                                                       "library_cmd_getartwork",
@@ -1397,9 +1402,23 @@ function plCmd_GetArtwork_TriggerCallback(aContext, aSubMenuId, aCommandId, aHos
   // Load up a fetcher set, create a list and start the fetch
   if (plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost)) {
     var playlist = unwrap(aContext.playlist);
-    sbCoverHelper.getArtworkForItems(playlist.mediaListView
-                                             .selection
-                                             .selectedMediaItems,
+
+    // Only look up artwork for audio items.
+    var isAudioItem = function(aElement) {
+      return aElement.getProperty(SBProperties.contentType) == "audio";
+    };
+    var selectedAudioItems = new SBFilteredEnumerator(
+        playlist.mediaListView.selection.selectedMediaItems, 
+        isAudioItem);
+
+    // We need to convert our JS object into an XPCOM object.
+    // Mook claims this is actually the best way to do this.
+    var sip = Cc["@mozilla.org/supports-interface-pointer;1"]
+                    .createInstance(Ci.nsISupportsInterfacePointer);
+    sip.data = selectedAudioItems;
+    selectedAudioItems = sip.data;
+
+    sbCoverHelper.getArtworkForItems(selectedAudioItems,
                                      null,
                                      playlist.library);
   }
@@ -1552,6 +1571,21 @@ function plCmd_EditSmartPlaylist_TriggerCallback(aContext, aSubMenuId, aCommandI
 // Returns true when at least one track is selected in the playlist
 function plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost) {
   return (unwrap(aContext.playlist).mediaListView.selection.count != 0);
+}
+
+
+// If we have any audio selected, show this command.
+function plCmd_IsAnyAudioSelected(aContext, aSubMenuId, aCommandId, aHost) {
+  var selection = unwrap(aContext.playlist).mediaListView.selection;
+  var items = selection.selectedMediaItems;
+  item = null;
+  while (items.hasMoreElements()) {
+    item = items.getNext().QueryInterface(Ci.sbIMediaItem)
+    if (item.getProperty(SBProperties.contentType) == "audio") {
+      return true;
+    }
+  }
+  return false;
 }
 
 // Returns true when the library is not read only.

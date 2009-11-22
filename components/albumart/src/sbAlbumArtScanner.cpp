@@ -195,6 +195,13 @@ sbAlbumArtScanner::ScanListForArtwork(sbIMediaList* aMediaList)
   rv = builder->Include(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
                         NS_LITERAL_STRING("0"),
                         nsnull);
+                        
+  // Only look up audio tracks, and not video / podcasts.
+  rv = builder->Intersect(nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = builder->Include(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                        NS_LITERAL_STRING("audio"),
+                        nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Now reset the constraint on the view

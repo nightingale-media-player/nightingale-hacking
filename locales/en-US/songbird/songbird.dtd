@@ -75,7 +75,7 @@
 <!ENTITY servicepane.title.label        "Service Pane">
 
 <!ENTITY menu.tools            "Tools" >
-<!ENTITY menu.tools.getartwork "Get Album Artwork...">
+<!ENTITY menu.tools.getartwork "Get Artwork...">
 <!ENTITY menu.tools.exportmedia "Export Library Changes">
 
 <!ENTITY menu.help          "Help" >
@@ -690,16 +690,16 @@
 <!-- Album Art display pane properties. -->
 <!ENTITY albumart.displaypane.not_playing_message  "Nothing playing" >
 <!ENTITY albumart.displaypane.not_selected_message  "Nothing selected" >
-<!ENTITY albumart.displaypane.drag_and_drop  "Drag album artwork here" >
+<!ENTITY albumart.displaypane.drag_and_drop  "Drag artwork here" >
 <!ENTITY albumart.displaypane.selected.menu.cut "Cut">
 <!ENTITY albumart.displaypane.selected.menu.copy "Copy">
 <!ENTITY albumart.displaypane.selected.menu.paste "Paste">
 <!ENTITY albumart.displaypane.selected.menu.clear "Clear">
-<!ENTITY albumart.coverpreview.title "Album Art">
+<!ENTITY albumart.coverpreview.title "Artwork">
 
 <!-- Album Art preferences pane entities. -->
-<!ENTITY albumartpreferences.prefpane.label "Album Artwork">
-<!ENTITY albumartpreferences.prefpane.enablewrite.label "Write Album Artwork to Meta Data">
+<!ENTITY albumartpreferences.prefpane.label "Artwork">
+<!ENTITY albumartpreferences.prefpane.enablewrite.label "Write Artwork to Meta Data">
 <!ENTITY albumartpreferences.prefpane.enablewrite.tooltip "This will allow &brandShortName; to embed artwork in compatible tags for media files.">
 
 <!ENTITY albumartpreferences.prefpane.search_file_names.label "Search file names:">
@@ -747,7 +747,7 @@
 <!ENTITY playback.prefpane.units.kilobytes  "kB">
 <!ENTITY playback.prefpane.units.ms         "ms">
 
-<!ENTITY fetch_album_art.dialog.title "Get Album Artwork">
+<!ENTITY fetch_album_art.dialog.title "Get Artwork">
 <!ENTITY fetch_album_art.dialog.message "Not currently implemented. (See Bug 14281)">
 
 <!-- CD Metadata/info lookup dialogs -->

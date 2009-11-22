@@ -51,7 +51,7 @@
       <menuitem id="pasteMenuItem"
                 label="&albumart.displaypane.selected.menu.paste;"
                 oncommand="AlbumArt.onPaste();"/>
-      <menuseparator />
+      <menuseparator id="getArtworkSeparator"/>
       <menuitem id="getArtworkMenuItem"
                 label="&menu.tools.getartwork;"
                 oncommand="AlbumArt.onGetArtwork();"/>
