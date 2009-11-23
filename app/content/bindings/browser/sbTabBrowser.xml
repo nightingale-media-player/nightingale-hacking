@@ -1302,7 +1302,7 @@
     </implementation>
 
     <handlers>
-      <handler event="click" phase="capturing" >
+      <handler event="click" phase="bubbling">
             <![CDATA[
         // inspired by contentAreaClick in ffox browser.js
         if (!event.isTrusted || event.getPreventDefault()) {
@@ -1404,14 +1404,10 @@
             event.preventDefault();
           } else {
             var where = this._checkTarget(target, event);
-            if (where == '_blank' || where == '_media' || where != target) {
-              if (this.loadURI(href, referrer, null, event, where)) {
-                event.stopPropagation();
-                event.preventDefault();
-              }
+            if (where && this.loadURI(href, referrer, null, event, where)) {
+              event.stopPropagation();
+              event.preventDefault();
             }
-            // if we get here, we're using the default target, which isn't to
-            // open a new tab.  let the normal browser mechanism handle it.
           }
         }
         return true;
