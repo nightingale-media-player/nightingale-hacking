@@ -603,7 +603,7 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
         fileExt.Equals(NS_LITERAL_CSTRING("ogm")) ||
         fileExt.Equals(NS_LITERAL_CSTRING("ogv"))
     ) {
-      return NS_ERROR_NOT_IMPLEMENTED;
+      return NS_OK; // don't write, don't warn.
     }
 
     /* WRITE the metadata. */
