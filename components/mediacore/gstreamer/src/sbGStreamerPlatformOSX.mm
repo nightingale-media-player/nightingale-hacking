@@ -70,6 +70,8 @@ static PRLogModuleInfo* gGStreamerPlatformOSX =
 
 - (void)lockAddSubview:(NSView *)aView;
 
+- (void)setFrameAsString:(NSString *)aString;
+
 @end
 
 @implementation NSView (GStreamerPlatformOSX)
@@ -83,6 +85,12 @@ static PRLogModuleInfo* gGStreamerPlatformOSX =
   else {
     NS_WARNING("XXX Could not lock focus of the video view!");
   }
+}
+
+- (void)setFrameAsString:(NSString *)aString
+{
+  NSRect newFrame = NSRectFromString(aString);
+  [self setFrame:newFrame];
 }
 
 @end
@@ -227,6 +235,8 @@ OSXPlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
 void
 OSXPlatformInterface::MoveVideoWindow (int x, int y, int width, int height)
 {
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
   NSView *view = (NSView *)mVideoView;
 
   if (view) {
@@ -238,8 +248,15 @@ OSXPlatformInterface::MoveVideoWindow (int x, int y, int width, int height)
     rect.size.width = width;
     rect.size.height = height;
 
-    [view setFrame:rect];
+    // A ObjC object is needed to simply perform a selector on the main thread.
+    // To do this, simply convert the calculated rect to a NSString.
+    NSString *frameStr = NSStringFromRect(rect);
+    [view performSelectorOnMainThread:@selector(setFrameAsString:)
+                           withObject:frameStr
+                        waitUntilDone:YES];
   }
+
+  [pool release];
 }
 
 void OSXPlatformInterface::RemoveView()
