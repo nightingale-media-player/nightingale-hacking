@@ -1276,7 +1276,7 @@ sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
   rv = prompter->OpenWindow(nsnull, 
                             NS_LITERAL_STRING(SB_PVW_CHROME_URL), 
                             windowName, 
-                            NS_LITERAL_STRING("chrome,centerscreen"), 
+                            NS_LITERAL_STRING("chrome,centerscreen,resizable"),
                             nsnull,
                             getter_AddRefs(domWindow));
   NS_ENSURE_SUCCESS(rv, rv);
