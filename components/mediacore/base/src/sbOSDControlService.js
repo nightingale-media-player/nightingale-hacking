@@ -76,6 +76,9 @@ sbOSDControlService.prototype =
   _lastBlurWindow:        -1,
   _videoWindowsLostFocus: false,
   _blurTimer:             null,
+  
+  _videoWinHasFocus:      false,
+  _osdWinHasFocus:        false,
 
 
   _recalcOSDPosition: function() {
@@ -218,6 +221,7 @@ sbOSDControlService.prototype =
     if (!this._cloakService.isCloaked(this._osdWindow)) {
       this._nativeWinMgr.setOnTop(this._osdWindow, false);
       this._cloakService.cloak(this._osdWindow);
+      this._osdWinHasFocus = false;
     }
 
     // The OSD controls are no longer showing
@@ -225,6 +229,16 @@ sbOSDControlService.prototype =
   },
 
   showOSDControls: function() {
+    if (!this._videoWinHasFocus &&
+        !this._osdWinHasFocus &&
+        !this._videoWindowFullscreen)
+    {
+      // Don't bother showing the controls if the video and the OSD window have
+      // lost focus. This prevents floating the OSD controls ontop of every
+      // other window in the OS.
+      return;
+    }
+
     this._recalcOSDPosition();
 
     // Show the controls if they are currently hidden.
@@ -250,6 +264,8 @@ sbOSDControlService.prototype =
     this._blurTimer.initWithCallback(this,
                                      SB_BLUREVENT_CHECK_DELAY,
                                      Ci.nsITimer.TYPE_ONE_SHOT);
+  
+    this._osdWinHasFocus = false;
   },
 
   _onOSDWinFocus: function(aEvent) {
@@ -258,6 +274,8 @@ sbOSDControlService.prototype =
       // flag to prevent the OSD controls from being hidden.
       this._videoWindowsLostFocus = false;
     }
+    
+    this._osdWinHasFocus = true;
   },
 
   _onVideoWinBlur: function(aEvent) {
@@ -268,6 +286,8 @@ sbOSDControlService.prototype =
     this._blurTimer.initWithCallback(this,
                                      SB_BLUREVENT_CHECK_DELAY,
                                      Ci.nsITimer.TYPE_ONE_SHOT);
+  
+    this._videoWinHasFocus = false;
   },
 
   _onVideoWinFocus: function(aEvent) {
@@ -276,6 +296,8 @@ sbOSDControlService.prototype =
       // the flag to prevent the OSD controls from being hidden.
       this._videoWindowsLostFocus = false;
     }
+    
+    this._videoWinHasFocus = true;
   },
 
   //----------------------------------------------------------------------------
