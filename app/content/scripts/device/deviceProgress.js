@@ -276,6 +276,9 @@ var DPW = {
     this._idleBox = this._getElement("progress_idle_box");
     this._syncManualBox = this._getElement("sync_manual_box");
 
+    this._finishButton.addEventListener("click", this._onButtonEvent, false);
+    this._finishButton.addEventListener("keypress", this._onButtonEvent, false);
+
     // Initialize object fields.
     this._deviceID = this._widget.deviceID;
     this._device = this._widget.device;
@@ -505,7 +508,11 @@ var DPW = {
     this._progressTextLabel.value = SBFormattedString(localeKey, "");
     if (curItemIndex > 0 && curItemIndex <= totalItems &&
         operation != Ci.sbIDevice.STATE_MOUNTING &&
-        substate != Ci.sbIDevice.STATE_SYNC_PLAYLIST) {
+        substate != Ci.sbIDevice.STATE_SYNC_PLAYLIST &&
+        substate != Ci.sbIDevice.STATE_SYNCING &&
+        substate != Ci.sbIDevice.STATE_COPY_PREPARING &&
+        substate != Ci.sbIDevice.STATE_UPDATING &&
+        substate != Ci.sbIDevice.STATE_SYNCING_TYPE) {
       this._subProgressTextLabel.value =
              SBFormattedString(subLocaleKey, params, "");
     } else {
@@ -535,6 +542,26 @@ var DPW = {
 
       default :
         break;
+    }
+  },
+
+
+  /**
+   * \brief Handle the button event specified by aEvent and dispatch
+   *        sbDeviceProgress-ok-button-enter
+   *
+   * \param aEvent              Event to handle.
+   */
+
+  _onButtonEvent: function DPW__onButtonEvent(aEvent) {
+    //Create a new event for mouse click and key press
+    if ((aEvent.type == "click" && aEvent.button == 0) ||
+        (aEvent.type == "keypress" &&
+         (aEvent.keyCode == KeyEvent.DOM_VK_ENTER ||
+          aEvent.keyCode == KeyEvent.DOM_VK_RETURN))) {
+      var newEvent = document.createEvent("Events");
+      newEvent.initEvent("sbDeviceProgress-ok-button-enter", false, true);
+      document.dispatchEvent(newEvent);
     }
   },
 

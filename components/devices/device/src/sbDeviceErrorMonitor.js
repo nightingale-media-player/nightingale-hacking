@@ -200,7 +200,7 @@ deviceErrorMonitor.prototype = {
     var device = this._deviceList[aDevIndex];
     var errorList = device.errorLists[aContentType];
     if (!errorList) {
-      errorList = []
+      errorList = [];
       device.errorLists[aContentType] = errorList;
     }
     return errorList;

@@ -613,6 +613,7 @@ protected:
   nsCOMPtr<nsIArray> mTranscodeProfiles;
 
   PRUint32 mVideoInsertedCount;
+  PRUint32 mSyncType;
 
   //   mConnected               True if device is connected.
   //   mConnectLock             Connect lock.

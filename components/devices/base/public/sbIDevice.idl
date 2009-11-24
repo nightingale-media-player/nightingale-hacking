@@ -46,7 +46,7 @@ interface sbIMediaItem;
  *
  * The main interface to all device objects
  */
-[scriptable, uuid(a17b31ef-0d0d-4b4f-97d8-e874ddb2db9d)]
+[scriptable, uuid(436c06a0-d4d1-11de-8a39-0800200c9a66)]
 interface sbIDevice : nsISupports
 {
   /**
@@ -182,6 +182,10 @@ interface sbIDevice : nsISupports
   const unsigned long STATE_FORMATTING      = 14; // Formatting the device.
   const unsigned long STATE_SYNC_PREPARING  = 15; // Preparing to sync
   const unsigned long STATE_SYNC_PLAYLIST   = 16; // Sync playlist
+  const unsigned long STATE_COPY_PREPARING  = 17; // Preparing to copy
+  const unsigned long STATE_SYNCING_TYPE    = 18; // Syncing types
+  const unsigned long STATE_COPYING_MUSIC   = 19; // Copying music
+  const unsigned long STATE_COPYING_VIDEO   = 20; // Copying video 
 
   const unsigned long STATE_USER            = 0x20000000;
 

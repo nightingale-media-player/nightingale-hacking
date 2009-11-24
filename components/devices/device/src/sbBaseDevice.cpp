@@ -361,6 +361,7 @@ sbBaseDevice::sbBaseDevice() :
   mReqWaitMonitor(nsnull),
   mReqStopProcessing(0),
   mVideoInsertedCount(0),
+  mSyncType(0),
   mIsHandlingRequests(PR_FALSE)
 {
 #ifdef PR_LOGGING
@@ -925,6 +926,11 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
     aRequest->itemType = TransferRequest::REQUESTBATCH_UNKNOWN;
     aRequest->timeStamp = PR_Now();
 
+    if (aRequest->type == TransferRequest::REQUEST_SYNC) {
+      // Set back to zero when syncing starts.
+      mSyncType = 0;
+    }
+
     PRBool isAudio = PR_FALSE;
     PRBool isVideo = PR_FALSE;
     PRBool isWrite = PR_FALSE;
@@ -937,10 +943,16 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
       if (aRequest->item) {
         nsresult rv = aRequest->item->GetContentType(contentType);
         NS_ENSURE_SUCCESS(rv, rv);
-        if (isAudio = contentType.Equals(NS_LITERAL_STRING("audio")))
+        if (isAudio = contentType.Equals(NS_LITERAL_STRING("audio"))) {
           aRequest->itemType = TransferRequest::REQUESTBATCH_AUDIO;
-        if (isVideo = contentType.Equals(NS_LITERAL_STRING("video")))
+          // The syncing contains audio
+          mSyncType |= TransferRequest::REQUESTBATCH_AUDIO;
+        }
+        if (isVideo = contentType.Equals(NS_LITERAL_STRING("video"))) {
           aRequest->itemType = TransferRequest::REQUESTBATCH_VIDEO;
+          // The syncing contains video
+          mSyncType |= TransferRequest::REQUESTBATCH_VIDEO;
+        }
         // Only create two audio/video batches for WRITE
         isWrite = aRequest->type == TransferRequest::REQUEST_WRITE;
       }
@@ -3620,6 +3632,9 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
 
   rv = SyncApplyChanges(dstLib, changeset);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Update the sync types (audio/video/photo) after queuing requests
+  aRequest->itemType = mSyncType;
 
   return NS_OK;
 }

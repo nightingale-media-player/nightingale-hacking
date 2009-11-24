@@ -254,7 +254,7 @@ var gSongbirdWindowController =
         return playing && document.commandDispatcher.focusedWindow == window;
       case "cmd_delete": {
         var node = gServicePane.getSelectedNode();
-        if(node.editable == false) {
+        if(node && node.editable == false) {
           return false;
         }
       }

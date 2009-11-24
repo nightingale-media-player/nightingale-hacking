@@ -260,12 +260,14 @@
       <method name="animateIn">
         <body><![CDATA[
           this._animate(true);
+          this._shown = true;
         ]]></body>
       </method>
 
       <method name="animateOut">
         <body><![CDATA[
           this._animate(false);
+          this._shown = false;
         ]]></body>
       </method>
     </implementation>

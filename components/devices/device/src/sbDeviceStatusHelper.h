@@ -97,12 +97,14 @@ public:
   //
 
   void ItemStart(PRInt32     aItemNum,
-                 PRInt32     aItemCount);
+                 PRInt32     aItemCount,
+                 PRInt32     aItemType);
 
   void ItemStart(sbIMediaList* aMediaList,
                  sbIMediaItem* aMediaItem,
                  PRInt32       aItemNum,
-                 PRInt32       aItemCount);
+                 PRInt32       aItemCount,
+                 PRInt32       aItemType = 0);
 
   void ItemProgress(double aProgress);
 
@@ -244,7 +246,8 @@ public:
       mStatus->ItemStart(aRequest->list,
                          aRequest->item,
                          aRequest->batchIndex,
-                         aRequest->batchCount);
+                         aRequest->batchCount,
+                         aRequest->itemType);
     }
   }
   /**
@@ -272,7 +275,8 @@ public:
       mStatus->ItemStart(aRequest->list,
                          aRequest->item,
                          0,
-                         aBatchCount);
+                         aBatchCount,
+                         aRequest->itemType);
     }
   }
 
