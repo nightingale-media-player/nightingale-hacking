@@ -528,12 +528,18 @@ deviceControlWidget.prototype = {
     if (!this._deviceLibrary)
       return true;
 
-    // Set to read-only if not in manual management mode.
-    if (this._deviceLibrary.mgmtType == Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL)
-      readOnly = false;
-    else
+    // This is just preventative measure in case the library is being
+    // destroyed or bad state, we'll just treat as readOnly
+    try {
+      // Set to read-only if not in manual management mode.
+      if (this._deviceLibrary.mgmtType == Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL)
+        readOnly = false;
+      else
+        readOnly = true;
+    }
+    catch (e) {
       readOnly = true;
-
+    }
     return readOnly;
   },
 
@@ -559,11 +565,18 @@ deviceControlWidget.prototype = {
     var supportsPlaylist = this._supportsPlaylist();
     var msc = (this._device.parameters.getProperty("DeviceType") == "MSCUSB");
 
-    // Get the management type for the device library.  Default to manual if no
-    // device library.
-    var mgmtType = (this._deviceLibrary ? this._deviceLibrary.mgmtType
+    var mgmtType;
+    // This is just preventative measure in case the library is being
+    // destroyed, we'll just treat as readOnly
+    try {
+      // Get the management type for the device library.  Default to manual if no
+      // device library.
+      mgmtType = (this._deviceLibrary ? this._deviceLibrary.mgmtType
                                         : Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL);
-
+    }
+    catch (e) {
+      return;
+    }
     // Do nothing if no device state changed and update is not forced.
     if (!aForce &&
         (this._currentState == state) &&

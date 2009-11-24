@@ -155,7 +155,6 @@ IPD_SPS.prototype = {
   //   _libServicePaneSvc       Library service pane service object.
   //   _libMgr                  Library manager object.
   //   _devInfoList             List of device information.
-  //   _devLibMap               Map between device libraries and device IDs.
   //
 
   classDescription: IPD_SPSCfg.className,
@@ -172,7 +171,6 @@ IPD_SPS.prototype = {
   _libServicePaneSvc: null,
   _libMgr: null,
   _devInfoList: null,
-  _devLibMap: null,
 
 
   //----------------------------------------------------------------------------
@@ -587,7 +585,6 @@ IPD_SPS.prototype = {
   _initialize: function IPD_SPS__initialize() {
     // Initialize the device lists and maps.
     this._devInfoList = {};
-    this._devLibMap = {};
 
     // Get the locale string bundle.
     var stringBundleSvc = Cc["@mozilla.org/intl/stringbundle;1"]
@@ -645,9 +642,8 @@ IPD_SPS.prototype = {
     // Remove all device nodes.
     this._removeDevNodes(this._servicePaneSvc.root);
 
-    // Clear the device lists and maps.
+    // Clear the device lists
     this._devInfoList = null;
-    this._devLibMap = null;
 
     // Clear object references.
     this._observerSvc = null;
@@ -656,7 +652,21 @@ IPD_SPS.prototype = {
     this._libServicePaneSvc = null;
   },
 
-
+  /**
+   * \brief Return the device info object for a given device library ID
+   *
+   * \param aDevLibid The device library ID to search for
+   */
+  _findDevInfoForDevLib : function sbMSC_SPS_servicePaneInit(aDevLibId) {
+    for (prop in this._devInfoList) {
+      var devInfo = this._devInfoList[prop];
+      if (devInfo && devInfo.devLibId == aDevLibId) {
+        return devInfo;
+      }
+    }
+    return null;
+  },
+  
   /**
    * \brief Add the device specified by aDevice to the service pane.
    *
@@ -722,18 +732,20 @@ IPD_SPS.prototype = {
 
   _removeDevice: function IPD_SPS__removeDevice(aDevice) {
     // Get the device info.  Do nothing if no device info available.
-    var deviceID = aDevice.id;
+    var device = aDevice.QueryInterface(Ci.sbIDevice);
+    var deviceID = device.id;
     var devInfo = this._devInfoList[deviceID];
     if (!devInfo)
       return;
 
     // Remove the device library.
-    var devLib = devInfo.devLib;
-    if (devLib)
-      this._removeDevLib(devLib);
+    if (devInfo.devLibId)
+      this._removeDevLib(aDevInfo);
 
     // Remove the device node.
-    this._servicePaneSvc.removeNode(devInfo.svcPaneNode);
+    if (devInfo.svcPaneNode) {
+      this._servicePaneSvc.removeNode(devInfo.svcPaneNode);
+    }
 
     // Remove device info list entry.
     delete this._devInfoList[deviceID];
@@ -799,9 +811,8 @@ IPD_SPS.prototype = {
     // Get the device ID.
     var deviceID = aDevice.id;
 
-    // Add the device library to the device library map.
-    this._devLibMap[aLibrary.guid] = deviceID;
-    this._devInfoList[deviceID].devLib = aLibrary;
+    // Save of the device library's ID.
+    this._devInfoList[deviceID].devLibId = aLibrary.guid;
 
     // Create the device library service pane node.
     var devLibNode = this._devServicePaneSvc
@@ -829,21 +840,18 @@ IPD_SPS.prototype = {
    * \param aLibrary            Device library to remove.
    */
 
-  _removeDevLib: function IPD_SPS__removeDevLib(aLibrary) {
-    // Get the library GUID.  This may fail if the library has already been
-    // removed.  In that case, just return.
-    var libraryGUID;
+  _removeDevLib: function IPD_SPS__removeDevLib(aDevInfo) {
+
+    // Get library from GUID.  It may not be available if it's already been
+    // removed.
+    var library;
     try {
-      libraryGUID = aLibrary.guid;
-    } catch (ex) {
-      return;
-    }
-
-    // Remove the device library from the device library map.
-    delete this._devLibMap[libraryGUID];
-
-    // Remove the device library listener.
-    aLibrary.removeListener(this);
+      library = this._libMgr.getLibrary(aDevInfo.devLibId);
+      // Remove the device library listener
+      if (library) {
+        library.removeListener(this);
+      }
+    } catch (ex) {}
   },
 
 
@@ -855,12 +863,10 @@ IPD_SPS.prototype = {
    */
 
   _addDevPlaylist: function IPD_SPS__addDevPlaylist(aMediaList) {
-    // Get the media list device ID and playlist URN.
-    var deviceID = this._devLibMap[aMediaList.library.guid];
+    // Get the device info and playlist URN.
+    var devInfo = this._findDevInfoForDevLib(aMediaList.library.guid);
     var playlistURN = this._cfg.itemURNPrefix + aMediaList.guid;
 
-    // Get the device info record.
-    var devInfo = this._devInfoList[deviceID];
     var device = devInfo.device;
 
     // Do nothing if playlist already added.
@@ -897,9 +903,9 @@ IPD_SPS.prototype = {
 
   _removeDevPlaylist: function IPD_SPS__removeDevPlaylist(aMediaList) {
     // Remove the playlist from the device playlist list.
-    var deviceID = this._devLibMap[aMediaList.library.guid];
+    var devInfo = this._findDevInfoForDevLib(aMediaList.library.guid);
     var playlistURN = this._cfg.itemURNPrefix + aMediaList.guid;
-    delete this._devInfoList[deviceID].playlistList[playlistURN];
+    delete devInfo.playlistList[playlistURN];
   },
 
 
