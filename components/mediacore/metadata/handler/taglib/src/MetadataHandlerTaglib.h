@@ -88,6 +88,7 @@
 /* TagLib imports. */
 #include <fileref.h>
 #include <mpegfile.h>
+#include <asffile.h>
 #include <vorbisfile.h>
 #include <id3v2tag.h>
 #include <mp4file.h>
@@ -366,6 +367,8 @@ private:
         const char                  *aCharset = 0);
 
     PRBool ReadMPEGFile();
+
+    PRBool ReadASFFile();
 
     PRBool ReadMP4File();
 

@@ -2099,6 +2099,8 @@ nsresult sbMetadataHandlerTaglib::ReadMetadata()
             isValid = ReadOGGFile();
             // XXX Mook this is not always true for ogx, but we need something for now
             AddMetadataValue(SB_PROPERTY_CONTENTTYPE, NS_LITERAL_STRING("video"));
+        } else if (fileExt.Equals(NS_LITERAL_CSTRING("wma"))) {
+            isValid = ReadASFFile();
         } else {
             decodedFileExt = PR_FALSE;
         }
@@ -2643,6 +2645,41 @@ PRBool sbMetadataHandlerTaglib::ReadMPEGFile()
     return (isValid);
 }
 
+
+/*
+ * ReadASFFile
+ *   <--                        True if file has valid ASF metadata.
+ *
+ *   This function reads metadata from the ASF file with the file path
+ * specified by mMetadataPath.
+ */
+
+PRBool sbMetadataHandlerTaglib::ReadASFFile()
+{
+    nsAutoPtr<TagLib::ASF::File>    pTagFile;
+    PRBool                          isValid = PR_TRUE;
+    nsresult                        result = NS_OK;
+
+    pTagFile = new TagLib::ASF::File();
+    if (!pTagFile)
+        result = NS_ERROR_OUT_OF_MEMORY;
+    if (NS_SUCCEEDED(result))
+        result = OpenTagFile(pTagFile);
+    if (NS_SUCCEEDED(result))
+        pTagFile->read();
+    if (NS_SUCCEEDED(result))
+        result = CheckChannelRestart();
+    
+    /* Read the base file metadata. */
+    if (NS_SUCCEEDED(result) && isValid)
+        isValid = ReadFile(pTagFile, "");
+
+    /* File is invalid on any error. */
+    if (NS_FAILED(result))
+        isValid = PR_FALSE;
+
+    return (isValid);
+}
 
 /*
  * ReadMP4File
