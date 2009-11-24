@@ -1,25 +1,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
@@ -157,7 +157,7 @@ interface sbIDeviceLibraryListener : nsISupports
    * \param sbIMediaItem aSourceItem The item that was copied from.
    * \param sbIMediaItem aDestItem The item that was copied to.
    */
-  void onItemCopied(in sbIMediaItem aSourceItem, 
+  void onItemCopied(in sbIMediaItem aSourceItem,
                     in sbIMediaItem aDestItem);
 
 
@@ -206,12 +206,12 @@ interface sbIDeviceLibraryListener : nsISupports
   boolean onBeforeClear();
 
 };
- 
+
 /**
  * \interface sbIDeviceLibrary
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(c477d296-f25b-42a4-98bf-0b5d77dcebb4)]
+[scriptable, uuid(7e132c5a-f5a2-4147-b208-648fe14fc8f6)]
 interface sbIDeviceLibrary : sbILibrary
 {
   /**
@@ -231,15 +231,33 @@ interface sbIDeviceLibrary : sbILibrary
 
   /** \brief Manually manage device.
     */
-  const unsigned long MGMT_TYPE_MANUAL            = 0;
+  const unsigned long MGMT_TYPE_MANUAL                  = 0x0;
 
-  /** \brief Automatically synchronize all of library to device.
+  /** \brief Automatically synchronize all of audio library to device.
     */
-  const unsigned long MGMT_TYPE_SYNC_ALL          = 1;
+  const unsigned long MGMT_TYPE_SYNC_ALL                = 0x01;
 
-  /** \brief Automatically synchronize a list of playlsits to device.
+  /** \brief Automatically synchronize a list of audio playlsits to device.
     */
-  const unsigned long MGMT_TYPE_SYNC_PLAYLISTS    = 2;
+  const unsigned long MGMT_TYPE_SYNC_PLAYLISTS          = 0x02;
+
+  /** \brief Automatically synchronize all of video library to device.
+    */
+  const unsigned long MGMT_TYPE_VIDEO_SYNC_ALL          = 0x04;
+
+  /** \brief Automatically synchronize a list of video playlsits to device.
+    */
+  const unsigned long MGMT_TYPE_VIDEO_SYNC_PLAYLISTS    = 0x08;
+
+  /** \brief This is the maximum logical value we can have for the MGMT_TYPE.
+   * Since we can only have either SYNC(ALL or PLAYLIST) on each type or MANUAL.
+   */
+  const unsigned long MGMT_TYPE_MAX_VALUE               = 0x0A;
+
+  // Masks for helping determine if any playlists are to be sync'd
+  const unsigned long MGMT_TYPE_PLAYLISTS_MASK          = 0x0A;
+  const unsigned long MGMT_TYPE_ALL_MASK                = 0x05;
+
 
   /**
    * \brief The currently configured device management type preference
@@ -278,14 +296,23 @@ interface sbIDeviceLibrary : sbILibrary
    */
 
   void addToSyncPlaylistList(in sbIMediaList aPlaylist);
-  
+
+  /**
+   * \brief Remove a playlist from the list of playlists the user wants to sync
+   *        from the main library to the device
+   *
+   * \param aPlaylist The playlist to remove.
+   */
+
+  void removeFromSyncPlaylistList(in sbIMediaList aPlaylist);
+
   /**
    * \brief Initiates a sync operation on this library
    *
    * This is a no-op if this library is in manual management mode.
    *
    */
-  
+
   void sync();
 
 

@@ -493,9 +493,12 @@
 
 <!ENTITY device.sync.header.label "Sync Settings">
 <!ENTITY device.sync.auto_sync.label "Sync">
-<!ENTITY device.sync.sync_all.label "All media">
+<!ENTITY device.sync.sync_all.label "Sync all media">
 <!ENTITY device.sync.sync_selected.label "Selected playlists:">
 <!ENTITY device.sync.manual.label "Manually manage">
+<!ENTITY device.sync.playlist.title "Title">
+<!ENTITY device.sync.playlist.video.duration "Video Duration">
+
 
 <!ENTITY device.settings.header.label "Settings">
 <!ENTITY device.settings.general.label "General">
@@ -516,6 +519,7 @@
 <!ENTITY device.settings.music.transcoding.bitrate.units "kbps">
 
 <!ENTITY device.management.tabs.music.label "Music">
+<!ENTITY device.management.tabs.video.label "Video">
 <!ENTITY device.management.tabs.tools.label "Tools">
 <!ENTITY device.management.tabs.settings.label "Settings">
 

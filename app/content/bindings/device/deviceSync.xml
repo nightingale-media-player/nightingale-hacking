@@ -61,43 +61,61 @@
           <xul:hbox class="device-tab-header-box">
             <!-- Header label and info. -->
             <xul:label class="device-tab-header-label"
+                       sbid="content_management_header_label"
                        value="&device.sync.header.label;"/>
             <xul:label sbid="content_management_header_info_label"
                        class="device-tab-header-info"/>
           </xul:hbox>
 
           <xul:groupbox>
+
             <!-- Management preferences. -->
             <xul:vbox class="content-controls"
-                      oncommand="DeviceSyncWidget.onUIPrefChange();">
-              <xul:checkbox sbid="content_auto_sync_checkbox"
-                            label="&device.sync.auto_sync.label;"/>
-              <xul:listbox sbid="content_auto_sync_playist_listbox"
-                           class="indent"
-                           rows="5"
-                           onkeyup="DeviceSyncWidget.onUIPrefChange();"
-                           onclick="DeviceSyncWidget.onUIPrefChange();"/>
+                      oncommand="_onUIPrefChange();">
+
+              <!-- Content management radio group. -->
+              <xul:radiogroup sbid="content_auto_sync_type_radio_group">
+                <xul:radio sbid="content_auto_sync_all_radio"
+                           label="&device.sync.sync_all.label;"/>
+                <xul:radio
+                        sbid="content_auto_sync_selected_radio"
+                        label="&device.sync.sync_selected.label;"/>
+                <xul:tree sbid="content_auto_sync_playlist_tree"
+                          hidecolumnpicker="true"
+                          enableColumnDrag="false"
+                          editable="true"
+                          seltype="single"
+                          rows="5"
+                          onkeyup="_onUIPrefChange();"
+                          onclick="_onUIPrefChange();">
+                  <xul:treecols>
+                    <xul:treecol sbid="content_auto_sync_playlist_check"
+                                 type="checkbox"
+                                 editable="true"
+                                 class="content-auto-sync-playlist-check"/>
+                    <xul:treecol sbid="content_auto_sync_playlist_title"
+                                 label="&device.sync.playlist.title;"
+                                 editable="false"
+                                 class="content-auto-sync-playlist-title"
+                                 flex="1"/>
+                    <xul:splitter class="tree-splitter" />
+                    <xul:treecol sbid="content_auto_sync_playlist_duration"
+                                 hidden="true"
+                                 editable="false"
+                                 class="content-auto-sync-playlist-duration"
+                                 label="&device.sync.playlist.video.duration;"/>
+                  </xul:treecols>
+
+                  <xul:treechildren sbid="content_auto_sync_playlist_children"
+                                    alternatingbackground="true"/>
+                </xul:tree>
+
+              </xul:radiogroup>
             </xul:vbox>
 
           </xul:groupbox>
 
         </xul:vbox>
-
-        <xul:hbox class="device-tab-button-box" align="baseline" >
-
-          <xul:spacer flex="1"/>
-
-          <!-- Cancel and save buttons. -->
-          <xul:button sbid="cancel_button"
-                      label="&window.cancel;"
-                      action="cancel"
-                      oncommand="DeviceSyncWidget.onAction(event);"/>
-          <xul:button sbid="save_button"
-                      label="&window.save;"
-                      action="save"
-                      oncommand="DeviceSyncWidget.onAction(event);"/>
-
-        </xul:hbox>
 
       </xul:vbox>
 
@@ -134,15 +152,40 @@
 
       <destructor> <![CDATA[
       {
-        /* Finalize the iPod music management services. */
-        DeviceSyncWidget.finalize(this);
+        /* Finalize the sync management services. */
+        this.DeviceSyncWidget.finalize(this);
       }
       ]]></destructor>
 
+      <!--
+       * \brief Handle changes to the UI.
+       *
+       * \param aEvent          UI event.
+       -->
+
+      <method name="_onUIPrefChange">
+        <parameter name="aEvent"/>
+        <body><![CDATA[
+          this.DeviceSyncWidget.onUIPrefChange();
+        ]]></body>
+      </method>
+
+      <!--
+       * \brief Handle action events.
+       *
+       * \param aEvent          Action event.
+       -->
+
+      <method name="_onActionEvent">
+        <parameter name="aEvent"/>
+        <body><![CDATA[
+          this.DeviceSyncWidget.onAction(aEvent);
+        ]]></body>
+      </method>
 
       <!-- *********************************************************************
        *
-       * Internal music management panel services.
+       * Internal sync management panel services.
        *
        ********************************************************************* -->
 
@@ -155,18 +198,18 @@
       <method name="importExternalServices"><body><![CDATA[
       {
         /* Import the device sync services. */
-        if (typeof(DeviceSyncWidget) == "undefined") {
+        if (typeof(this.DeviceSyncWidget) == "undefined") {
           var jsLoader;
-  
+
           /* Get the Javascript sub-script loader services. */
           jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
                                .getService
                                   (Components.interfaces.mozIJSSubScriptLoader);
           jsLoader.loadSubScript
                   ("chrome://songbird/content/scripts/device/deviceSync.js",
-                   null);
+                   this);
         }
-        
+
       }
       ]]></body></method>
 
@@ -181,9 +224,9 @@
 
     <handlers>
       <handler event="deviceBound"><![CDATA[
-        /* Re-initialize the device music management services. */
-        DeviceSyncWidget.finalize(this);
-        DeviceSyncWidget.initialize(this);
+        /* Re-initialize the device sync management services. */
+        this.DeviceSyncWidget.finalize(this);
+        this.DeviceSyncWidget.initialize(this);
         ]]></handler>
     </handlers>
 

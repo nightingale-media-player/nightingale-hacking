@@ -3,30 +3,30 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
 
-/** 
+/**
 * \file  deviceSync.js
 * \brief Javascript source for the device sync widget.
 */
@@ -55,11 +55,9 @@ if (typeof(Cr) == "undefined")
 if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
 
-if (typeof(LibraryUtils) == "undefined")
-  Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
-
-if (typeof(SBProperties) == "undefined")
-  Cu.import("resource://app/jsmodules/sbProperties.jsm");
+Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Cu.import("resource://app/jsmodules/sbProperties.jsm");
+Cu.import("resource://app/jsmodules/StringUtils.jsm");
 
 if (typeof(XUL_NS) == "undefined")
   var XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
@@ -71,11 +69,13 @@ var DeviceSyncWidget = {
   //   _widget                  Device sync widget.
   //   _deviceLibrary           Device library we are working with.
   //   _isIdle                  Flag for state of device.
+  //   _mediaType               Media Type this sync widget represents.
   //
 
   _widget: null,
   _deviceLibrary: null,
   _isIdle: true,
+  _mediaType: null,
 
   /**
    * \brief Initialize the device progress services for the device progress
@@ -87,7 +87,17 @@ var DeviceSyncWidget = {
   initialize: function DeviceSyncWidget__initialize(aWidget) {
     // Get the sync widget.
     this._widget = aWidget;
-    
+
+    this._mediaType = this._widget.getAttribute("contentType") || "audio";
+
+    // Set up some variable UI labels (these depend on the contentType)
+    var syncAllLabel = this._getElement("content_auto_sync_all_radio");
+    syncAllLabel.label = SBString("device.sync.sync_all.label." +
+                                  this._mediaType);
+    var syncHeaderLabel = this._getElement("content_management_header_label");
+    syncHeaderLabel.value = SBString("device.sync.header.label." +
+                                     this._mediaType);
+
     // Initialize object fields.
     this._device = this._widget.device;
 
@@ -99,10 +109,10 @@ var DeviceSyncWidget = {
     this._deviceLibrary = this._device.content.libraries
                               .queryElementAt(0, Ci.sbIDeviceLibrary);
 
-    // Initialize, read, and apply the music preferences.
-    this.musicPrefsInitialize();
-    this.musicPrefsRead();
-    this.musicPrefsApply();
+    // Initialize, read, and apply the sync preferences.
+    this.syncPrefsInitialize();
+    this.syncPrefsRead();
+    this.syncPrefsApply();
 
     // Listen for device events.
     var deviceEventTarget =
@@ -149,44 +159,20 @@ var DeviceSyncWidget = {
   //----------------------------------------------------------------------------
 
   /**
-   * \brief Handle the event specified by aEvent for elements with defined
-   *        actions.
-   *
-   * \param aEvent              Event to handle.
+   * \brief Update the settings for syncing when the user makes changes and
+   * save these to the preferences.
    */
 
-  onAction: function DeviceSyncWidget_onAction(aEvent) {
-    // Dispatch processing of action.
-    switch (aEvent.target.getAttribute("action")) {
-      case "cancel" :
-        // Re-read and apply the music preferences.
-        this.musicPrefsRead();
-        this.musicPrefsApply();
-        break;
-
-      case "save" :
-        // Extract and write the preferences.
-        this.musicPrefsExtract();
-        this.musicPrefsWrite();
-
-        // Re-read and apply the preferences in case the user cancels a switch
-        // to sync mode.
-        this.musicPrefsRead();
-        this.musicPrefsApply();
-
-        break;
-
-      default :
-        break;
-    }
-  },
-  
   onUIPrefChange: function DeviceSyncWidget_onUIPrefChange() {
-    /* Extract and reapply the preferences. */
-    this.musicPrefsExtract();
-    this.musicPrefsApply();
-  },
+    // Extract and write the preferences.
+    this.syncPrefsExtract();
+    this.syncPrefsWrite();
 
+    // Re-read and apply the preferences in case the user cancels a switch
+    // to sync mode.
+    this.syncPrefsRead();
+    this.syncPrefsApply();
+  },
 
   /**
    * \brief Handle changes to the library playlists.
@@ -195,17 +181,17 @@ var DeviceSyncWidget = {
   _onPlaylistChange: function DeviceSyncWidget_onPlaylistChange() {
     // Make a copy of the current sync preferences.
     var prevSyncPrefs = {};
-    this.musicPrefsCopy(this._syncPrefs, prevSyncPrefs);
+    this.syncPrefsCopy(this._syncPrefs, prevSyncPrefs);
 
     // Re-initialize the sync preferences.
-    this.musicPrefsInitialize();
+    this.syncPrefsInitialize();
 
     // Re-read the preferences to update the stored preference set.
-    this.musicPrefsRead();
+    this.syncPrefsRead();
 
     // Copy previous preference values and apply them.
-    this.musicPrefsCopyValues(prevSyncPrefs, this._syncPrefs);
-    this.musicPrefsApply();
+    this.syncPrefsCopyValues(prevSyncPrefs, this._syncPrefs);
+    this.syncPrefsApply();
   },
 
 
@@ -229,12 +215,13 @@ var DeviceSyncWidget = {
         // If any sync preferences changed, re-read and apply the preferences.
         var prevSyncPrefs = {};
         var curSyncPrefs = {};
-        this.musicPrefsCopy(this._storedSyncPrefs, prevSyncPrefs);
-        this.musicPrefsCopy(this._storedSyncPrefs, curSyncPrefs);
-        this.musicPrefsRead(curSyncPrefs);
-        if (this.musicPrefsChanged(prevSyncPrefs, curSyncPrefs)) {
-          this.musicPrefsRead();
-          this.musicPrefsApply();
+        this.syncPrefsCopy(this._storedSyncPrefs, prevSyncPrefs);
+        this.syncPrefsCopy(this._storedSyncPrefs, curSyncPrefs);
+        this.syncPrefsRead(curSyncPrefs);
+        if (this.syncPrefsChanged(prevSyncPrefs, curSyncPrefs)) {
+          // We need to update the playlists as well.
+          this.syncPrefsRead();
+          this.syncPrefsApply();
         }
         break;
 
@@ -302,7 +289,7 @@ var DeviceSyncWidget = {
                                   aIndex) {
     // Handle playlist changes.
     if (aMediaItem.getProperty(SBProperties.isList))
-        this._onPlaylistChange();
+      this._onPlaylistChange();
 
     return false;
   },
@@ -325,7 +312,7 @@ var DeviceSyncWidget = {
                                                          aProperties) {
     // Handle playlist changes.
     if (aMediaItem.getProperty(SBProperties.isList))
-        this._onPlaylistChange();
+      this._onPlaylistChange();
 
     return false;
   },
@@ -337,7 +324,8 @@ var DeviceSyncWidget = {
    *         value is ignored.
    */
 
-  onBeforeListCleared: function DeviceSyncWidget_onBeforeListCleared(aMediaList) {
+  onBeforeListCleared:
+    function DeviceSyncWidget_onBeforeListCleared(aMediaList) {
     return true;
   },
 
@@ -411,191 +399,313 @@ var DeviceSyncWidget = {
    * \param aRadioID               ID of radio to select.
    *
    */
-  
+
   _selectRadio : function DeviceSyncWidget__selectRadio(aRadioID)
   {
-      var radioElem;
-  
-      /* Get the radio element. */
-      radioElem = this._getElement(aRadioID);
-  
-      /* Select the radio. */
-      radioElem.radioGroup.selectedItem = radioElem;
+    var radioElem;
+
+    /* Get the radio element. */
+    radioElem = this._getElement(aRadioID);
+
+    /* Select the radio. */
+    radioElem.radioGroup.selectedItem = radioElem;
   },
 
-  /* *****************************************************************************
+  /* ***************************************************************************
    *
    * device sync preference services.
    *
-   ******************************************************************************/
-  
+   ****************************************************************************/
+
   /*
-   * _syncPrefs                  Working music preferences.
-   * _storedSyncPrefs            Stored music preferences.
+   * _syncPrefs                  Working sync preferences.
+   * _storedSyncPrefs            Stored sync preferences.
    *
-   *   The current working set of music preferences are maintained in _syncPrefs.
+   *   The current working set of sync preferences are maintained in _syncPrefs.
    * These are the preferences that the user has set and that is represented by
    * the UI but has not neccessarily been written to the preference storage.
-   *   The set of music preferences in the preference storage is maintained in
+   *   The set of sync preferences in the preference storage is maintained in
    * _storedSyncPrefs.  This is used to determine whether any preferences have
    * been changed and need to be written to the preference storage.
    */
-  
+
   _syncPrefs : null,
   _storedSyncPrefs : null,
 
 
   /*
-   * musicPrefsInitialize
+   * syncPrefsInitialize
    *
-   * \breif This function initializes the music preference services.
+   * \brief This function initializes the sync preference services.
    */
 
-  musicPrefsInitialize: function DeviceSyncWidget_musicPrefsInitialize()
+  syncPrefsInitialize: function DeviceSyncWidget_syncPrefsInitialize()
   {
+    /* Initialize the working preference set. */
+    this.syncPrefsInitPrefs();
 
-      /* Initialize the working preference set. */
-      this.musicPrefsInitPrefs();
-  
-      /* Initialize the preference UI. */
-      this.musicPrefsInitUI();
+    /* Initialize the preference UI. */
+    this.syncPrefsInitUI();
   },
 
 
   /*
-   * musicPrefsFinalize
+   * syncPrefsFinalize
    *
-   * \breif This function finalizes the music preference services.
+   * \brief This function finalizes the sync preference services.
    */
 
-  musicPrefsFinalize: function DeviceSyncWidget_musicPrefsFinalize()
+  syncPrefsFinalize: function DeviceSyncWidget_syncPrefsFinalize()
   {
-      /* Clear object fields. */
-      this._syncPrefs = null;
-      this._storedSyncPrefs = null;
+    /* Clear object fields. */
+    this._syncPrefs = null;
+    this._storedSyncPrefs = null;
   },
 
-
   /*
-   * musicPrefsInitPrefs
+   * syncPrefsGetListInfo
    *
-   * \brief This function initializes the working music preference set.  It sets up the
-   * working music preference object with all of the preference fields and sets
-   * default values.  It does not read the preferences from the preference
-   * storage.
+   * \brief This function gets the information from a media list required to
+   * place it under the correct tabs.
    */
 
-  musicPrefsInitPrefs: function DeviceSyncWidget_musicPrefsInitPrefs()
-  {
-      var                         mediaListList;
-      var                         mediaList;
-      var                         mediaListArray;
-      var                         guid;
-      var                         readableName;
-      var                         pref;
-      var                         i;
+  syncPrefsGetListInfo:
+    function DeviceSyncWidget_syncPrefsGetListInfo(aMediaList) {
+    var listInfo = {
+      belongsInTab: true,     // If this list belongs in this tab
+      contentType: "audio",   // Content type of this list (audio/video/mix)
+      isMix: false,           // If it is a mix different content (audio/video)
+      contentCount: 0,        // Count of items of main content type
+      contentDuration: -1     // Duration of items of main content type
+    };
 
-      /* Clear the music preferences. */
-      this._syncPrefs = {};
-  
-      /* Create and initialize the management type preference. */
-      this._syncPrefs.mgmtType = {};
-      this._syncPrefs.mgmtType.value = Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL;
-  
-      /* Create the sync playlist list preference. */
-      this._syncPrefs.syncPlaylistList = {};
-  
-      /* Get the list of library media lists. */
-      mediaListArray = new LibraryUtils.MediaListEnumeratorToArray();
-      LibraryUtils.mainLibrary.enumerateItemsByProperty
-                                      (SBProperties.isList,
-                                       "1",
-                                       mediaListArray,
-                                       1);
-      mediaListList = mediaListArray.array;
+    // Do some quick check on some types of lists
+    // These lists do not belong in any tabs but could not be filtered out
+    var mCustomType = aMediaList.getProperty(SBProperties.customType);
+    if (mCustomType == "download") {
+      listInfo.belongsInTab = false;
+      return listInfo;
+    }
 
-      /* Fill in the sync playlist list preferences. */
-      for (i = 0; i < mediaListList.length; i++)
-      {
-          /* Get the media list info. */
-          mediaList = mediaListList[i];
-          
-          // Skip if it's a hidden playlist
-          if (mediaList.getProperty(SBProperties.hidden) == "1")
-            continue;
-            
-          var mCustomType = mediaList.getProperty(SBProperties.customType);
-          if (mCustomType != "download") {
-            guid = mediaList.guid;
-            readableName = mediaList.name;
-  
-            /* Set up the sync playlist preference. */
-            pref = {};
-            pref.guid = guid;
-            pref.readableName = readableName;
-            pref.value = false;
-  
-            /* Add the preference to the sync playlist list preference. */
-            this._syncPrefs.syncPlaylistList[guid] = pref;
-          }
+    // Lists that have no items default to the Music tab.
+    if (aMediaList.isEmpty) {
+      listInfo.belongsInTab = (this._mediaType == "audio");
+      return listInfo;
+    }
+
+    // sbIMediaListEnumerationListener
+    // This gives us a count and duration of items of contentType
+    var contentCounter = {
+      onEnumerationBegin : function(aMediaList) {
+        return Ci.sbIMediaListEnumerationListener.CONTINUE;
+      },
+      onEnumeratedItem : function(aMediaList, aMediaItem) {
+        listInfo.contentCount++;
+        if (aMediaItem.getProperty(SBProperties.duration) != null) {
+          listInfo.contentDuration +=
+            parseFloat(aMediaItem.getProperty(SBProperties.duration));
+        }
+        return Ci.sbIMediaListEnumerationListener.CONTINUE;
+      },
+      onEnumerationEnd : function(aMediaList, aStatusCode) {
       }
+    };
+
+    aMediaList.enumerateItemsByProperty(SBProperties.contentType,
+                                        this._mediaType,
+                                        contentCounter,
+                                        Ci.sbIMediaList
+                                          .ENUMERATIONTYPE_SNAPSHOT);
+
+    // Check if this is a mix of content
+    if (listInfo.contentCount > 0 && listInfo.contentCount < aMediaList.length)
+      listInfo.isMix = true;
+
+    // Set the content type of the media list and belongs in the current tyab
+    if (listInfo.isMix){
+      listInfo.contentType = "mix";
+    }
+    else if (listInfo.contentCount > 0) {
+      listInfo.contentType = this._mediaType;
+    }
+    else {
+      // We don't need to set the content type since this list does not belong
+      // in the tab.
+      listInfo.belongsInTab = false;
+    }
+
+    return listInfo;
   },
 
-
   /*
-   * musicPrefsInitUI
+   * syncPrefsInitPrefs
    *
-   * \breif This function initializes the music preference UI elements to match the
-   * set of working music preference fields.  It does not apply the preference
-   * values to the UI.
+   * \brief This function initializes the working sync preference set. It sets
+   * up the working sync preference object with all of the preference fields
+   * and sets default values.  It does not read the preferences from the
+   * preference storage.
    */
 
-  musicPrefsInitUI: function DeviceSyncWidget_musicPrefsInitUI()
+  syncPrefsInitPrefs: function DeviceSyncWidget_syncPrefsInitPrefs()
   {
-      var                         syncPlaylistListBox;
-      var                         syncPlaylistList;
-      var                         listItem;
-      var                         guid;
-      var                         readableName;
-  
-      /* Get the sync playlist list box and prefs. */
-      syncPlaylistListBox = this._getElement("content_auto_sync_playist_listbox");
-      syncPlaylistList = this._syncPrefs.syncPlaylistList;
-  
-      /* Clear the sync playlist list box. */
-      while (syncPlaylistListBox.firstChild)
-          syncPlaylistListBox.removeChild(syncPlaylistListBox.firstChild);
-  
-      /* Fill in the sync playlist list box. */
-      for (guid in syncPlaylistList)
-      {
-          /* Get the sync playlist info. */
-          readableName = syncPlaylistList[guid].readableName;
-  
-          /* Create a new list item. */
-          listItem = document.createElementNS(XUL_NS, "listitem");
-          listItem.value = guid;
-          listItem.setAttribute("sbid", "content_sync_playlist." + guid);
-          listItem.setAttribute("label", readableName);
-          listItem.setAttribute("type", "checkbox");
-  
-          /* Add the list item to the list. */
-          syncPlaylistListBox.appendChild(listItem);
+    var                         mediaListList;
+    var                         mediaList;
+    var                         mediaListArray;
+    var                         guid;
+    var                         readableName;
+    var                         pref;
+    var                         i;
+
+    /* Clear the sync preferences. */
+    this._syncPrefs = {};
+
+    /* Create and initialize the management type preference. */
+    this._syncPrefs.mgmtType = {};
+    this._syncPrefs.mgmtType.value = Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL;
+
+    /* Create the sync playlist list preference. */
+    this._syncPrefs.syncPlaylistList = {};
+
+    /* Get the list of library media lists. */
+    mediaListArray = new LibraryUtils.MediaListEnumeratorToArray();
+    var propArray =
+      Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+        .createInstance(Ci.sbIMutablePropertyArray);;
+    propArray.appendProperty(SBProperties.isList, "1");
+    propArray.appendProperty(SBProperties.hidden, "0");
+    LibraryUtils.mainLibrary.enumerateItemsByProperties
+                                    (propArray,
+                                     mediaListArray,
+                                     Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+    mediaListList = mediaListArray.array;
+
+    /* Fill in the sync playlist list preferences. */
+    for (i = 0; i < mediaListList.length; i++)
+    {
+      /* Get the media list info. */
+      mediaList = mediaListList[i];
+
+      // Get the information for this media list we need
+      var listInfo = this.syncPrefsGetListInfo(mediaList);
+      if (listInfo.belongsInTab) {
+        guid = mediaList.guid;
+        readableName = mediaList.name;
+        if (listInfo.isMix)
+          readableName = SBFormattedString("device.sync.mix." + this._mediaType,
+                                           [ readableName ]);
+
+        /* Set up the sync playlist preference. */
+        pref = {};
+        pref.guid = guid;
+        pref.readableName = readableName;
+        pref.duration = listInfo.contentDuration;
+        pref.contentType = listInfo.contentType;
+        pref.value = false;
+
+        /* Add the preference to the sync playlist list preference. */
+        this._syncPrefs.syncPlaylistList[guid] = pref;
       }
+    }
   },
 
 
   /*
-   * musicPrefsRead
+   * syncPrefsInitUI
    *
-   * \brief This function reads the music preferences from the preference
+   * \brief This function initializes the sync preference UI elements to match
+   * the set of working sync preference fields.  It does not apply the
+   * preference values to the UI.
+   */
+
+  syncPrefsInitUI: function DeviceSyncWidget_syncPrefsInitUI()
+  {
+    var                         syncPlaylistList;
+    var                         syncPlaylistTree;
+    var                         syncPlaylistListVideoHeader;
+    var                         guid;
+    var                         readableName;
+    var                         duration;
+    var                         durationInfo;
+
+    durationInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Duration;1"]
+                     .createInstance(Ci.sbIDurationPropertyInfo);
+
+    /* Get the sync playlist tree and prefs. */
+    syncPlaylistTree = this._getElement("content_auto_sync_playlist_children");
+    syncPlaylistList = this._syncPrefs.syncPlaylistList;
+
+    // Show the video duration column only for the Video tab.
+    syncPlaylistListVideoHeader =
+      this._getElement("content_auto_sync_playlist_duration");
+    syncPlaylistListVideoHeader.hidden = (this._mediaType != "video");
+
+    /* Clear the sync playlist tree. */
+    while (syncPlaylistTree.firstChild)
+        syncPlaylistTree.removeChild(syncPlaylistTree.firstChild);
+
+    /* Fill in the sync playlist list box. */
+    for (guid in syncPlaylistList)
+    {
+      // Don't add playlists that have been removed
+      if (!syncPlaylistList[guid])
+        continue;
+
+      /* Get the sync playlist info. */
+      readableName = syncPlaylistList[guid].readableName;
+
+      /* Get the properly formated duration */
+      if (syncPlaylistList[guid].duration >= 0)
+        duration = durationInfo.format(syncPlaylistList[guid].duration);
+      else
+        duration = SBString("device.sync.duration.unavailable");
+
+      /* Create our tree row */
+      var treeItem = document.createElementNS(XUL_NS, "treeitem");
+      var treeRow = document.createElementNS(XUL_NS, "treerow");
+      var treeCellCheck = document.createElementNS(XUL_NS, "treecell");
+      var treeCellTitle = document.createElementNS(XUL_NS, "treecell");
+      var treeCellDuration = document.createElementNS(XUL_NS, "treecell");
+
+      treeRow.value = guid;
+      treeRow.setAttribute("sbid", "content_sync_playlist_row." + guid);
+
+      /* Setup the cells */
+      /* Check box (only editable cell) */
+      treeCellCheck.value = false;
+      treeCellCheck.setAttribute("sbid",
+                                 "content_sync_playlist_checkcell." + guid);
+
+      /* Title of the playlist */
+      treeCellTitle.setAttribute("label", readableName);
+
+      /* Duration of all the _mediaType conent in the playlist */
+      treeCellDuration.setAttribute("label", duration);
+
+      /* Append the cells to the row */
+      treeRow.appendChild(treeCellCheck);
+      treeRow.appendChild(treeCellTitle);
+      treeRow.appendChild(treeCellDuration);
+
+      /* Append the row to the tree item */
+      treeItem.appendChild(treeRow);
+
+      /* Add the row to the tree. */
+      syncPlaylistTree.appendChild(treeItem);
+    }
+  },
+
+
+  /*
+   * syncPrefsRead
+   *
+   * \brief This function reads the sync preferences from the preference
    *        storage into the preferences object specified by aPrefs.  If a
    *        preferences object is not specified, this function reads the
-   *        preferences into the working music preferences.  In addition, this
-   *        function updates the stored music preferences object.
+   *        preferences into the working sync preferences.  In addition, this
+   *        function updates the stored sync preferences object.
    */
 
-  musicPrefsRead: function DeviceSyncWidget_musicPrefsRead(aPrefs)
+  syncPrefsRead: function DeviceSyncWidget_syncPrefsRead(aPrefs)
   {
       var                         readPrefs;
       var                         storedSyncPlaylistList;
@@ -613,7 +723,7 @@ var DeviceSyncWidget = {
 
       /* Read the management type preference. */
       readPrefs.mgmtType.value = this._deviceLibrary.mgmtType;
-      
+
       /* Read the stored sync playlist list preferences. */
       storedSyncPlaylistList = this._deviceLibrary.getSyncPlaylistList();
 
@@ -628,168 +738,190 @@ var DeviceSyncWidget = {
           if (syncPlaylistML.guid in syncPlaylistList)
               syncPlaylistList[syncPlaylistML.guid].value = true;
       }
-  
-      /* Make a copy of the stored music prefs. */
+
+      /* Make a copy of the stored sync prefs. */
       this._storedSyncPrefs = {};
-      this.musicPrefsCopy(readPrefs, this._storedSyncPrefs);
+      this.syncPrefsCopy(readPrefs, this._storedSyncPrefs);
   },
 
 
   /*
-   * musicPrefsWrite
+   * syncPrefsWrite
    *
-   * \brief This function writes the working music preferences to the preference
+   * \brief This function writes the working sync preferences to the preference
    * storage.
    */
 
-  musicPrefsWrite: function DeviceSyncWidget_musicPrefsWrite()
+  syncPrefsWrite: function DeviceSyncWidget_syncPrefsWrite()
   {
-      var                         storePlaylistList;
-      var                         syncPlaylistList;
-      var                         mediaList;
-      var                         guid;
+    var                         syncPlaylistList;
+    var                         mediaList;
+    var                         guid;
 
-      /* we must read only the playlist list preference array before writing
-       * anything to the prefs, otherwise the act of writing will go and clobber
-       * our changes.
-       */
-      /* Set up the store playlist list preference array. */
-      storePlaylistList =
-                  Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
-      syncPlaylistList = this._syncPrefs.syncPlaylistList;
-      for (guid in syncPlaylistList)
-      {
-          if (syncPlaylistList[guid].value)
-          {
-              /* Get the playlist media list.  If it */
-              /* no longer exists, don't store it.   */
-              mediaList = LibraryUtils.mainLibrary.getMediaItem(guid);
-              if (mediaList)
-                  storePlaylistList.appendElement(mediaList, false);
-          }
+    /* we must read only the playlist list preference array before writing
+     * anything to the prefs, otherwise the act of writing will go and clobber
+     * our changes.
+     */
+    syncPlaylistList = this._syncPrefs.syncPlaylistList;
+    for (guid in syncPlaylistList)
+    {
+      mediaList = LibraryUtils.mainLibrary.getMediaItem(guid);
+      if (mediaList) {
+        if (syncPlaylistList[guid].value)
+          this._deviceLibrary.addToSyncPlaylistList(mediaList);
+        else
+          this._deviceLibrary.removeFromSyncPlaylistList(mediaList);
       }
+    }
 
-      /* Write the management type preference. */
-      this._deviceLibrary.mgmtType = this._syncPrefs.mgmtType.value;
-  
-      /* Write the sync playlist list preferences. */
-      this._deviceLibrary.setSyncPlaylistList(storePlaylistList);
+    /* Write the management type preference. */
+    this._deviceLibrary.mgmtType = this._syncPrefs.mgmtType.value;
   },
 
-
   /*
-   * musicPrefsApply
+   * syncPrefsMgmtTypeIsAll
    *
-   * \brief This function applies the working preference set to the preference UI.
+   * \brief Checks if the management type for this contentType is ALL
+   * \returns true if the MGMT_TYPE_ is set to ALL for the contentType
    */
 
-  musicPrefsApply: function DeviceSyncWidget_musicPrefsApply()
+  syncPrefsMgmtTypeIsAll: function DeviceSyncWidget_syncPrefsMgmtTypeIsAll()
   {
-      var                         syncCheckbox;
-      var                         syncPlaylistListBox;
-      var                         syncPlaylistList;
-      var                         listItem;
-      var                         guid;
-  
-      /* Get the management type pref UI elements. */
-      syncCheckbox = this._getElement("content_auto_sync_checkbox");
-      syncPlaylistListBox= this._getElement("content_auto_sync_playist_listbox");
-  
-      /* Apply management type prefs. */
-      syncCheckbox.disabled = false;
-      syncCheckbox.checked = false;
-      syncPlaylistListBox.disabled = true;
-      switch (this._syncPrefs.mgmtType.value)
-      {
-          case Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL :
-              syncCheckbox.disabled = true;
-              break;
-  
-          case Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL :
-              break;
-  
-          case Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_PLAYLISTS :
-              syncCheckbox.checked = true;
-              syncPlaylistListBox.disabled = false;
-              break;
-  
-          default :
-              break;
-      }
-  
-      /* Apply the sync playlist list prefs. */
-      syncPlaylistList = this._syncPrefs.syncPlaylistList;
-      for (guid in syncPlaylistList)
-      {
-          /* Get the sync playlist list item. */
-          listItem = this._getElement("content_sync_playlist." + guid);
-          if (!listItem)
-              continue;
-  
-          /* Apply the preference. */
-          if (syncPlaylistList[guid].value)
-              listItem.setAttribute("checked", "true");
-          else
-              listItem.setAttribute("checked", "false");
-      }
-      
-      this.musicPrefsUpdateButtons();
+    var mgmtType = this._syncPrefs.mgmtType.value;
+    var mgmtAllType = Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL;
+
+    if (this._mediaType == "video") {
+      mgmtAllType = Ci.sbIDeviceLibrary.MGMT_TYPE_VIDEO_SYNC_ALL;
+    }
+
+    return ((mgmtType & mgmtAllType) == mgmtAllType);
   },
 
   /*
-   * musicPrefsUpdateButtons
+   * syncPrefsApply
    *
-   * \brief This function updates the cancel and save buttons to the proper
-   *        states.
+   * \brief This function applies the working preference set to the preference
+   * UI.
    */
 
-  musicPrefsUpdateButtons: function DeviceSyncWidget_musicPrefsUpdateButtons()
+  syncPrefsApply: function DeviceSyncWidget_syncPrefsApply()
   {
-    /* Show the save and cancel buttons if the      */
-    /* prefs have changed; otherwise, disable them. */
-    var cancelButton = this._getElement("cancel_button");
-    var saveButton = this._getElement("save_button");
-    if (this.musicPrefsChanged(this._syncPrefs, this._storedSyncPrefs))
-    {
-        cancelButton.disabled = false;
-        saveButton.disabled = false;
+    var                         syncRadioGroup;
+    var                         syncPlaylistTree;
+    var                         syncPlaylistTreeCell;
+    var                         syncPlaylistList;
+    var                         guid;
+
+    /* Get the management type pref UI elements. */
+    syncRadioGroup = this._getElement("content_auto_sync_type_radio_group");
+    syncPlaylistTree= this._getElement("content_auto_sync_playlist_tree");
+
+    /* Apply management type prefs. */
+    // Manual applies to all content type so it will never need a bit compare
+    if (this._syncPrefs.mgmtType.value ==
+        Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL) {
+      // Manual manage mode
+      // We make sure the tree is not disabled first so it does not look odd
+      syncPlaylistTree.disabled = false;
+      // Disable the whole widget
+      this._widget.setAttribute("disabled", true);
     }
-    else
-    {
-        cancelButton.disabled = true;
-        saveButton.disabled = true;
+    else if (this.syncPrefsMgmtTypeIsAll()) {
+      // SYNC_ALL for this type
+      // Select the Sync All radio button
+      // Disable the playlist
+      this._widget.removeAttribute("disabled");
+      syncPlaylistTree.disabled = true;
+      this._selectRadio("content_auto_sync_all_radio");
     }
+    else {
+      // SYNC_PLAYLISTS for this type
+      // Select the Sync Playlist radio button
+      // Enable the playlist
+      this._widget.removeAttribute("disabled");
+      syncPlaylistTree.disabled = false;
+      this._selectRadio("content_auto_sync_selected_radio");
+    }
+
+    /* Apply the sync playlist list prefs. */
+    syncPlaylistList = this._syncPrefs.syncPlaylistList;
+    for (guid in syncPlaylistList)
+    {
+      /* Get the sync playlist tree checkbox cell */
+      syncPlaylistTreeCell =
+        this._getElement("content_sync_playlist_checkcell." + guid);
+      if (!syncPlaylistTreeCell)
+        continue;
+
+      /* Apply the preference. */
+      syncPlaylistTreeCell.setAttribute("value", syncPlaylistList[guid].value);
+    }
+
   },
 
   /*
-   * musicPrefsExtract
+   * syncPrefsSetMgmtType
+   *
+   * \brief This function sets the correct mgmt type for the content, without
+   * affecting the other ones.
+   */
+
+  syncPrefsSetMgmtType:
+    function DeviceSyncWidget_syncPrefsSetMgmtType(isSyncAll)
+  {
+    var mgmtType = this._syncPrefs.mgmtType.value;
+    if (this._mediaType == "video") {
+      // Remove the VIDEO types
+      var mask = ~(Ci.sbIDeviceLibrary.MGMT_TYPE_VIDEO_SYNC_ALL |
+                   Ci.sbIDeviceLibrary.MGMT_TYPE_VIDEO_SYNC_PLAYLISTS);
+      mgmtType &= mask;
+
+      if (isSyncAll)
+        mgmtType |= Ci.sbIDeviceLibrary.MGMT_TYPE_VIDEO_SYNC_ALL;
+      else
+        mgmtType |= Ci.sbIDeviceLibrary.MGMT_TYPE_VIDEO_SYNC_PLAYLISTS;
+    }
+    else {
+      // Remove the AUDIO types
+      var mask = ~(Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL |
+                   Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_PLAYLISTS);
+      mgmtType &= mask;
+
+      if (isSyncAll)
+        mgmtType |= Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL;
+      else
+        mgmtType |= Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_PLAYLISTS;
+    }
+    this._syncPrefs.mgmtType.value = mgmtType;
+  },
+
+  /*
+   * syncPrefsExtract
    *
    * \brief This function extracts the preference settings from the preference
    *        UI and writes them to the working preference set.
    */
 
-  musicPrefsExtract: function DeviceSyncWidget_musicPrefsExtract()
+  syncPrefsExtract: function DeviceSyncWidget_syncPrefsExtract()
   {
-      var                         mgmtType;
       var                         syncPlaylistList;
-      var                         listItem;
-  
-      /* Extract the management type preference. */
-      if (!this._getElement("content_auto_sync_checkbox").checked)
-        mgmtType = Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL;
-      else
-        mgmtType = Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_PLAYLISTS;
-      this._syncPrefs.mgmtType.value = mgmtType;
-      
+      var                         syncPlaylistTreeCell;
+      var                         mgmtAll;
+
+      mgmtAll = this._getElement("content_auto_sync_all_radio").selected;
+      this.syncPrefsSetMgmtType(mgmtAll);
+
       /* Extract the sync playlist list preferences. */
       syncPlaylistList = this._syncPrefs.syncPlaylistList;
       for (guid in syncPlaylistList)
       {
           /* Get the sync playlist list item. */
-          listItem = this._getElement("content_sync_playlist." + guid);
-  
+          syncPlaylistTreeCell =
+            this._getElement("content_sync_playlist_checkcell." + guid);
+
           /* Extract the preference. */
-          if (listItem && (listItem.getAttribute("checked") == "true"))
+          if (syncPlaylistTreeCell &&
+              (syncPlaylistTreeCell.getAttribute("value") == "true"))
               syncPlaylistList[guid].value = true;
           else
               syncPlaylistList[guid].value = false;
@@ -798,34 +930,34 @@ var DeviceSyncWidget = {
 
 
   /*
-   * musicPrefsChanged
+   * syncPrefsChanged
    *
    * \param aPrefs1,               Preferences to compare.
    * \param aPrefs2
    *
    * \return                       True if any preference value changed.
    *
-   * \brief This function compares the set of preferences specified by aPrefs1 and
-   * aPrefs2 to determine whether any preference values changed.  If any
+   * \brief This function compares the set of preferences specified by aPrefs1
+   * and aPrefs2 to determine whether any preference values changed.  If any
    * preference value changed, this function returns true; otherwise, it returns
    * false.
    */
 
-  musicPrefsChanged: function DeviceSyncWidget_musicPrefsChanged(aPrefs1, aPrefs2)
+  syncPrefsChanged: function DeviceSyncWidget_syncPrefsChanged(aPrefs1, aPrefs2)
   {
       var                         guid;
-  
+
       /* Check for changes to management type. */
       if (aPrefs1.mgmtType.value != aPrefs2.mgmtType.value)
           return true;
-  
+
       /* Check for changes to the sync playlist list preferences. */
       for (guid in aPrefs1.syncPlaylistList)
       {
           /* Ignore differences if one of the playlist prefs doesn't exist. */
           if (!aPrefs2.syncPlaylistList[guid])
               continue;
-  
+
           /* Check if playlist sync preference changed. */
           if (aPrefs1.syncPlaylistList[guid].value !=
               aPrefs2.syncPlaylistList[guid].value)
@@ -833,33 +965,33 @@ var DeviceSyncWidget = {
               return true;
           }
       }
-  
+
       return false;
   },
 
 
   /*
-   * musicPrefsCopy
+   * syncPrefsCopy
    *
    * \param aSrcPrefs              Copy source preferences.
    * \param aDstPrefs              Copy destination preferences.
    *
-   * \brief This function copies the preference set specified by aSrcPrefs to the
-   * preference set specified by aDstPrefs.  This function copies the preference
-   * values as well as all other preference fields.
+   * \brief This function copies the preference set specified by aSrcPrefs to
+   * the preference set specified by aDstPrefs.  This function copies the
+   * preference values as well as all other preference fields.
    */
 
-  musicPrefsCopy: function DeviceSyncWidget_musicPrefsCopy(aSrcPrefs, aDstPrefs)
+  syncPrefsCopy: function DeviceSyncWidget_syncPrefsCopy(aSrcPrefs, aDstPrefs)
   {
       var                         field;
-  
+
       /* Copy each preference field. */
       for (field in aSrcPrefs)
       {
           if (aSrcPrefs[field] instanceof Object)
           {
               aDstPrefs[field] = {};
-              this.musicPrefsCopy(aSrcPrefs[field], aDstPrefs[field]);
+              this.syncPrefsCopy(aSrcPrefs[field], aDstPrefs[field]);
           }
           else
           {
@@ -870,7 +1002,7 @@ var DeviceSyncWidget = {
 
 
   /*
-   * musicPrefsCopyValues
+   * syncPrefsCopyValues
    *
    * \param aSrcPrefs              Copy source preferences.
    * \param aDstPrefs              Copy destination preferences.
@@ -882,17 +1014,18 @@ var DeviceSyncWidget = {
    * source, the preference value is not copied.
    */
 
-  musicPrefsCopyValues: function DeviceSyncWidget_musicPrefsCopyValues(aSrcPrefs, aDstPrefs)
+  syncPrefsCopyValues: function DeviceSyncWidget_syncPrefsCopyValues(aSrcPrefs,
+                                                                     aDstPrefs)
   {
       var                         field;
-  
+
       /* Copy each preference field. */
       for (field in aSrcPrefs)
       {
           if (aSrcPrefs[field] instanceof Object)
           {
               if (typeof(aDstPrefs[field]) != "undefined")
-                  this.musicPrefsCopyValues(aSrcPrefs[field], aDstPrefs[field]);
+                  this.syncPrefsCopyValues(aSrcPrefs[field], aDstPrefs[field]);
           }
           else
           {

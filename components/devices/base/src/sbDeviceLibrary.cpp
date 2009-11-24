@@ -460,7 +460,7 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIArray> syncPlaylists;
-  if (mgmtType == sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS) {
+  if (mgmtType & sbIDeviceLibrary::MGMT_TYPE_PLAYLISTS_MASK) {
     rv = GetSyncPlaylistList(getter_AddRefs(syncPlaylists));
     NS_ENSURE_SUCCESS(rv,rv);
   }
@@ -899,7 +899,7 @@ sbDeviceLibrary::GetMgmtType(PRUint32 *aMgmtType)
     // Double check that it is a valid number
     NS_ENSURE_ARG_RANGE(mgmtType,
                         sbIDeviceLibrary::MGMT_TYPE_MANUAL,
-                        sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS);
+                        sbIDeviceLibrary::MGMT_TYPE_MAX_VALUE);
 
     *aMgmtType = mgmtType;
   }
@@ -917,7 +917,7 @@ sbDeviceLibrary::SetMgmtType(PRUint32 aMgmtType)
   // Check we are setting to a valid number
   NS_ENSURE_ARG_RANGE(aMgmtType,
                       sbIDeviceLibrary::MGMT_TYPE_MANUAL,
-                      sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS);
+                      sbIDeviceLibrary::MGMT_TYPE_MAX_VALUE);
 
   // figure out the old pref first
   rv = GetMgmtType(&origMgmtType);
@@ -926,8 +926,7 @@ sbDeviceLibrary::SetMgmtType(PRUint32 aMgmtType)
   // If switching from manual management mode to sync mode, confirm with user
   // before proceeding.  Do nothing more if switch is cancelled.
   if ((origMgmtType == sbIDeviceLibrary::MGMT_TYPE_MANUAL) &&
-      ((aMgmtType == sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL) ||
-       (aMgmtType == sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS))) {
+      ((aMgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL))) {
     // Check if device is linked to a local sync partner.
     PRBool isLinkedLocally;
     rv = sbDeviceUtils::SyncCheckLinkedPartner(mDevice,
@@ -963,12 +962,6 @@ sbDeviceLibrary::SetMgmtType(PRUint32 aMgmtType)
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (origMgmtType != aMgmtType) {
-    if (aMgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL) {
-      // sync
-      rv = mDevice->SyncLibraries();
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
     // update the library is read-only property
     rv = UpdateIsReadOnly();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1092,6 +1085,44 @@ sbDeviceLibrary::AddToSyncPlaylistList(sbIMediaList *aPlaylist)
     if (listGuidsCSV.Length() > 0)
       listGuidsCSV.AppendLiteral(",");
     listGuidsCSV.Append(guid);
+    rv = mDevice->SetPreference(prefKey, sbNewVariant(listGuidsCSV));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceLibrary::RemoveFromSyncPlaylistList(sbIMediaList *aPlaylist)
+{
+  NS_ENSURE_ARG_POINTER(aPlaylist);
+  nsresult rv;
+
+  // Get the preference key
+  nsString prefKey;
+  rv = GetSyncListsPrefKey(prefKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the preference variant
+  nsCOMPtr<nsIVariant> var;
+  rv = mDevice->GetPreference(prefKey, getter_AddRefs(var));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the preference string
+  nsAutoString listGuidsCSV;
+  rv = var->GetAsAString(listGuidsCSV);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the guid of the list to remove
+  nsString guid;
+  rv = aPlaylist->GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Remove from the playlist if it exists
+  PRUint32 guidPos = listGuidsCSV.Find(guid);
+  if (guidPos >= 0) {
+    listGuidsCSV.Cut(guidPos, guid.Length() + 1); // Add 1 for any ","
+    listGuidsCSV.Trim(",", PR_TRUE, PR_TRUE); // Remove extra ","s
     rv = mDevice->SetPreference(prefKey, sbNewVariant(listGuidsCSV));
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -1607,4 +1638,3 @@ sbDeviceLibrary::Clear(void)
     return NS_OK;
   }
 }
-

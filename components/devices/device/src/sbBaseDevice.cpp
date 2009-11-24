@@ -3999,6 +3999,7 @@ sbBaseDevice::SyncGetSyncList(sbILibrary*       aSrcLib,
   switch (syncMode)
   {
     case sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL:
+    case sbIDeviceLibrary::MGMT_TYPE_VIDEO_SYNC_ALL:
     {
       // Create a sync all array containing the entire source library.
       nsCOMPtr<nsIMutableArray>
@@ -4017,6 +4018,7 @@ sbBaseDevice::SyncGetSyncList(sbILibrary*       aSrcLib,
     } break;
 
     case sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS:
+    case sbIDeviceLibrary::MGMT_TYPE_VIDEO_SYNC_PLAYLISTS:
       rv = aDstLib->GetSyncPlaylistList(getter_AddRefs(syncList));
       NS_ENSURE_SUCCESS(rv, rv);
       break;

@@ -1,24 +1,24 @@
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 
@@ -76,11 +76,11 @@ BaseDeviceHelper.prototype = {
     if (aSpaceRemaining) {
       aSpaceRemaining.value = spaceRemaining;
     }
-    
+
     // if we have enough space, no need to look at anything else
     if (aSpaceNeeded < spaceRemaining)
       return true;
-    
+
     // need to ask the user
     var messageKeyPrefix = this._getMessageKeyPrefix(aLibrary);
 
@@ -91,7 +91,7 @@ BaseDeviceHelper.prototype = {
     ];
     var message = SBFormattedString(messageKeyPrefix + ".message",
                                     messageParams);
-    
+
     const prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
                        .getService(Ci.sbIPrompter);
     var neverPromptAgain = { value: false };
@@ -155,10 +155,12 @@ BaseDeviceHelper.prototype = {
     switch (aLibrary.mgmtType)
     {
       case Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL :
+      case Ci.sbIDeviceLibrary.MGMT_TYPE_VIDEO_SYNC_ALL :
         messageKeyPrefix += "sync";
         break;
 
       case Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_PLAYLISTS :
+      case Ci.sbIDeviceLibrary.MGMT_TYPE_VIDEO_SYNC_PLAYLISTS :
         messageKeyPrefix += "sync_playlists";
         break;
 

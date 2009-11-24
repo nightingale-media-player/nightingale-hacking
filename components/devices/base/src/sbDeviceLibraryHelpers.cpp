@@ -60,11 +60,12 @@ sbLibraryUpdateListener::sbLibraryUpdateListener(sbILibrary * aTargetLibrary,
 
 void sbLibraryUpdateListener::SetSyncMode(PRUint32 aMgmtType,
                                           nsIArray * aPlaylistsList) {
-  NS_ASSERTION(aMgmtType != sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS &&
-                 aPlaylistsList == nsnull,
+  PRUint32 isSyncPlaylists;
+  isSyncPlaylists = aMgmtType & sbIDeviceLibrary::MGMT_TYPE_PLAYLISTS_MASK;
+
+  NS_ASSERTION(!isSyncPlaylists && aPlaylistsList != nsnull,
                "Sync Management type isn't playlists but playlists were supplied");
-  NS_ASSERTION(aMgmtType != sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS ||
-                 aPlaylistsList == nsnull,
+  NS_ASSERTION(isSyncPlaylists && aPlaylistsList == nsnull,
                "Sync Management type is playlists but no playlists were supplied");
   mPlaylistsList = aPlaylistsList;
   mMgmtType = aMgmtType;
@@ -96,7 +97,7 @@ nsresult sbLibraryUpdateListener::ShouldListenToPlaylist(sbIMediaList * aMainLis
   // If we're supposed to be listening and only interested in certain playlists
   // check that list
   if (listenToChanges &&
-    mMgmtType != sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL) {
+    (mMgmtType & sbIDeviceLibrary::MGMT_TYPE_PLAYLISTS_MASK)) {
 
     listenToChanges = PR_FALSE;
 
@@ -709,4 +710,3 @@ GetSyncItemInLibrary(sbIMediaItem*  aMediaItem,
 
   return NS_OK;
 }
-
