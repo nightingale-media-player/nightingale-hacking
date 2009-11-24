@@ -268,6 +268,7 @@ sbMetadataHandlerWMA::Vote(const nsAString& aURL,
   if ( 
         ( strUrl.Find( ".wma", PR_TRUE ) != -1 ) || 
         ( strUrl.Find( ".wmv", PR_TRUE ) != -1 ) ||
+        ( strUrl.Find( ".wm",  PR_TRUE ) != -1 ) ||
         ( strUrl.Find( ".asf", PR_TRUE ) != -1 ) ||
         ( strUrl.Find( ".asx", PR_TRUE ) != -1 )
      )
