@@ -225,10 +225,6 @@ OSXPlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
   [parentView performSelectorOnMainThread:@selector(lockAddSubview:)
                                withObject:view
                             waitUntilDone:YES];
-
-  nsCOMPtr<nsIRunnable> runnable = NS_NEW_RUNNABLE_METHOD(OSXPlatformInterface, this, ResizeToWindow);
-  NS_DispatchToMainThread(runnable);
-
   [pool release];
 }
 

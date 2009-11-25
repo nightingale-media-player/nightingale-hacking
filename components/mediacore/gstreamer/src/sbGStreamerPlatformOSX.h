@@ -49,10 +49,6 @@ public:
   virtual void ResizeToWindow() {return BasePlatformInterface::ResizeToWindow();}
   virtual void PrepareVideoWindow(GstMessage *aMessage);
 
-  // I'm a bad person
-  void AddRef() {}
-  void Release() {}
-
 protected:
   // Implement virtual methods in BasePlatformInterface
   void MoveVideoWindow (int x, int y, int width, int height);
