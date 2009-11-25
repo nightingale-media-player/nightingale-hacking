@@ -1057,6 +1057,35 @@ sbMetadataHandlerWMA::ReadMetadataWMP(const nsAString& aFilePath,
     }
   }
 
+  // Simply check the file extension to determine if this is a video file.
+  nsString value(NS_LITERAL_STRING("audio"));  // assume audio
+
+  nsCOMPtr<nsILocalFile> localFile =
+    do_CreateInstance("@mozilla.org/file/local;1", &rv);
+  if (NS_SUCCEEDED(rv) && localFile) {
+    rv = localFile->InitWithPath(aFilePath);
+    if (NS_SUCCEEDED(rv)) {
+      nsString leafName;
+      rv = localFile->GetLeafName(leafName);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRInt32 index = leafName.RFindChar('.');
+      if (index >= 0) {
+        nsString extension(StringTail(leafName, leafName.Length() -1 - index));
+
+        if (extension.EqualsLiteral("wmv") ||
+            extension.EqualsLiteral("wm"))
+        {
+          value.AssignLiteral("video");
+        }
+      }
+    }
+  }
+
+  rv = m_PropertyArray->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                                       value);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
