@@ -63,6 +63,10 @@ public:
   // Override me, see cpp file for implementation notes.
   virtual nsresult OnSetPosition(PRUint64 aPosition);
   // Override me, see cpp file for implementation notes.
+  virtual nsresult OnGetIsPlayingAudio(PRBool *aIsPlayingAudio);
+  // Override me, see cpp file for implementation notes.
+  virtual nsresult OnGetIsPlayingVideo(PRBool *aIsPlayingVideo);
+  // Override me, see cpp file for implementation notes.
   virtual nsresult OnPlay();
   // Override me, see cpp file for implementation notes.
   virtual nsresult OnPause();

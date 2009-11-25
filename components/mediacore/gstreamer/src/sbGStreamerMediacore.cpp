@@ -187,7 +187,9 @@ sbGStreamerMediacore::sbGStreamerMediacore() :
     mAbortingPlayback(PR_FALSE),
     mHasReachedPlaying(PR_FALSE),
     mCurrentAudioCaps(NULL),
-    mAudioBinGhostPad(NULL)
+    mAudioBinGhostPad(NULL),
+    mHasVideo(PR_FALSE),
+    mHasAudio(PR_FALSE)
 {
   NS_WARN_IF_FALSE(mBaseEventTarget, 
           "mBaseEventTarget is null, may be out of memory");
@@ -538,6 +540,9 @@ sbGStreamerMediacore::currentAudioSetHelper(GObject* obj, GParamSpec* pspec,
   int current_audio;
   GstPad *pad;
 
+  // If a current audio stream has been selected, then we're playing audio
+  core->mHasAudio = PR_TRUE;
+
   /* Which audio stream has been activated? */
   g_object_get(obj, "current-audio", &current_audio, NULL);
   NS_ASSERTION(current_audio >= 0, "current audio is negative");
@@ -579,6 +584,9 @@ sbGStreamerMediacore::currentVideoSetHelper(GObject* obj, GParamSpec* pspec,
 {
   int current_video;
   GstPad *pad;
+
+  // If a current video stream has been selected, then we're playing video
+  core->mHasVideo = PR_TRUE;
 
   /* Which video stream has been activated? */
   g_object_get(obj, "current-video", &current_video, NULL);
@@ -680,6 +688,8 @@ sbGStreamerMediacore::DestroyPipeline()
   mAbortingPlayback = PR_FALSE;
   mHasReachedPlaying = PR_FALSE;
   mVideoSize = NULL;
+  mHasVideo = PR_FALSE;
+  mHasAudio = PR_FALSE;
 
   return NS_OK;
 }
@@ -1827,6 +1837,32 @@ sbGStreamerMediacore::OnSetPosition(PRUint64 aPosition)
   NS_ENSURE_SUCCESS (rv, rv);
 
   return rv;
+}
+
+/*virtual*/ nsresult
+sbGStreamerMediacore::OnGetIsPlayingAudio(PRBool *aIsPlayingAudio)
+{
+  if (mTargetState == GST_STATE_NULL) {
+    *aIsPlayingAudio = PR_FALSE;
+  }
+  else {
+    *aIsPlayingAudio = mHasAudio;
+  }
+
+  return NS_OK;
+}
+
+/*virtual*/ nsresult
+sbGStreamerMediacore::OnGetIsPlayingVideo(PRBool *aIsPlayingVideo)
+{
+  if (mTargetState == GST_STATE_NULL) {
+    *aIsPlayingVideo = PR_FALSE;
+  }
+  else {
+    *aIsPlayingVideo = mHasVideo;
+  }
+
+  return NS_OK;
 }
 
 /*virtual*/ nsresult 

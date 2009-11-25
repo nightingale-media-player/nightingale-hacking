@@ -172,6 +172,40 @@ sbBaseMediacorePlaybackControl::GetDuration(PRUint64 *aDuration)
 }
 
 NS_IMETHODIMP 
+sbBaseMediacorePlaybackControl::GetIsPlayingAudio(PRBool *aIsPlayingAudio)
+{
+  TRACE(("%s[%p]", __FUNCTION__, this));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aIsPlayingAudio);
+
+  nsAutoMonitor mon(mMonitor);  
+  nsresult rv = OnGetIsPlayingAudio(aIsPlayingAudio);
+
+  if(NS_FAILED(rv)) {
+    *aIsPlayingAudio = PR_FALSE;
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbBaseMediacorePlaybackControl::GetIsPlayingVideo(PRBool *aIsPlayingVideo)
+{
+  TRACE(("%s[%p]", __FUNCTION__, this));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aIsPlayingVideo);
+
+  nsAutoMonitor mon(mMonitor);  
+  nsresult rv = OnGetIsPlayingVideo(aIsPlayingVideo);
+
+  if(NS_FAILED(rv)) {
+    *aIsPlayingVideo = PR_FALSE;
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
 sbBaseMediacorePlaybackControl::Play()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
@@ -262,6 +296,26 @@ sbBaseMediacorePlaybackControl::OnSetPosition(PRUint64 aPosition)
   /**
    *  This is where you'll want to seek to aPosition in the currently 
    *  set source. The position is in milliseconds.
+   */
+
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/*virtual*/ nsresult 
+sbBaseMediacorePlaybackControl::OnGetIsPlayingAudio(PRBool *aIsPlayingAudio)
+{
+  /**
+   *  This is where you'll want to report on whether you're playing audio.
+   */
+
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/*virtual*/ nsresult 
+sbBaseMediacorePlaybackControl::OnGetIsPlayingVideo(PRBool *aIsPlayingVideo)
+{
+  /**
+   *  This is where you'll want to report on whether you're playing video.
    */
 
   return NS_ERROR_NOT_IMPLEMENTED;

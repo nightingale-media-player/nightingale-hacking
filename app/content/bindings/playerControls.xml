@@ -926,19 +926,12 @@
         this.scrubbingPosition = false;
         this.seekInProgress = false;
         this.wasPlayingBeforeSeek = false;
-        this.hasVideo = false;
 
         this.eventListener = {
           that: this,
           onMediacoreEvent: function(aEvent) {
             if (aEvent.type == aEvent.STREAM_PAUSE) {
               this.that.seekInProgress = false;
-            }
-            else if (aEvent.type == aEvent.STREAM_HAS_VIDEO) {
-              this.that.hasVideo = true;
-            }
-            else if (aEvent.type == aEvent.TRACK_CHANGE) {
-              this.that.hasVideo = false;
             }
           }
         }
@@ -970,7 +963,7 @@
             this.trackingPosition = 1;
 
             // We do scrubbing for video only.
-            if (this.hasVideo) {
+            if (this.mm.playbackControl.isPlayingVideo) {
               this.scrubbingPosition = true;
               if (this.mm.status.state ==
                   Components.interfaces.sbIMediacoreStatus.STATUS_PLAYING) {

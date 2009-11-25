@@ -107,6 +107,8 @@ public:
   virtual nsresult OnGetDuration(PRUint64 *aDuration);
   virtual nsresult OnGetPosition(PRUint64 *aPosition);
   virtual nsresult OnSetPosition(PRUint64 aPosition);
+  virtual nsresult OnGetIsPlayingAudio(PRBool *aIsPlayingAudio);
+  virtual nsresult OnGetIsPlayingVideo(PRBool *aIsPlayingVideo);
   virtual nsresult OnPlay();
   virtual nsresult OnPause();
   virtual nsresult OnStop();
@@ -254,6 +256,9 @@ protected:
   GstCaps *mCurrentAudioCaps; // Caps of currently playing audio, or NULL
 
   GstGhostPad *mAudioBinGhostPad;
+
+  PRBool mHasVideo;          // True if we're playing video currently.
+  PRBool mHasAudio;          // True if we're playing audio currently.
 };
 
 #endif /* __SB_GSTREAMERMEDIACORE_H__ */

@@ -29,7 +29,7 @@
 interface nsIURI;
 interface sbIMediacoreStatus;
 
-[scriptable, uuid(5ac88a1d-83a1-4b62-b440-ac656c61c010)]
+[scriptable, uuid(d20d5810-763a-44d0-97f9-dd780a1ed042)]
 interface sbIMediacorePlaybackControl : nsISupports
 {
   attribute nsIURI uri;
@@ -45,6 +45,12 @@ interface sbIMediacorePlaybackControl : nsISupports
    * @throws NS_ERROR_NOT_AVAILABLE if the duration is unknown
    */
   readonly attribute unsigned long long duration;
+
+  /* True if we are currently playing audio */
+  readonly attribute boolean isPlayingAudio;
+
+  /* True if we are currently playing video */
+  readonly attribute boolean isPlayingVideo;
   
   void play();
   void pause();
