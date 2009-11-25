@@ -94,7 +94,12 @@ protected:
   PRBool mCompleted;
   
   // the lock should be held when calling these methods
-  nsresult FinalizeTags();
+  
+  /**
+   * Prepare the tags for reporting to the caller
+   * \param aSucceeded true if metadata scanning had succeded
+   */
+  nsresult FinalizeTags(PRBool aSucceeded);
 };
 
 #define SB_GSTREAMER_METADATA_HANDLER_CLASSNAME \

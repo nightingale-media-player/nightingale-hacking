@@ -503,7 +503,7 @@ sbGStreamerMetadataHandler::HandleMessage(GstMessage *message)
                gst_element_state_get_name(pendingState)));
         if (newState == GST_STATE_PAUSED) {
           TRACE(("%s: Successfully paused", __FUNCTION__));
-          rv = FinalizeTags();
+          rv = FinalizeTags(PR_TRUE);
           // don't hold the lock around Close()
           nsresult rv2;
           {
@@ -526,14 +526,16 @@ sbGStreamerMetadataHandler::HandleMessage(GstMessage *message)
       g_free (debugMessage);
       nsAutoLock lock(mLock);
       if (!mCompleted) {
+        rv = FinalizeTags(PR_FALSE);
         // don't hold the lock around Close()
+        nsresult rv2;
         {
           nsAutoUnlock unlock(mLock);
-          rv = Close();
+          rv2 = Close();
         }
-        mProperties = nsnull;
         mCompleted = PR_TRUE;
         NS_ENSURE_SUCCESS(rv, /* void */);
+        NS_ENSURE_SUCCESS(rv2, /* void */);
       }
       break;
     }
@@ -707,7 +709,7 @@ sbGStreamerMetadataHandler::HandleTagMessage(GstMessage *message)
 }
 
 nsresult
-sbGStreamerMetadataHandler::FinalizeTags()
+sbGStreamerMetadataHandler::FinalizeTags(PRBool aSucceeded)
 {
   TRACE((__FUNCTION__));
   nsresult rv;
@@ -719,7 +721,7 @@ sbGStreamerMetadataHandler::FinalizeTags()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  if (mTags) {
+  if (aSucceeded && mTags) {
     nsCOMPtr<sbIPropertyArray> propArray;
     rv = ConvertTagListToPropertyArray(mTags, getter_AddRefs(propArray));
     NS_ENSURE_SUCCESS(rv, rv );
@@ -751,6 +753,25 @@ sbGStreamerMetadataHandler::FinalizeTags()
   }
   else if (mHasAudio) {
     contentType = NS_LITERAL_STRING("audio");
+  }
+  else if (!aSucceeded) {
+    // actually constructing the pipeline had failed; fall back to
+    // file extension based detection of whether this file was likely to
+    // have contained some sort of video.
+    nsCOMPtr<sbIMediacoreCapabilities> caps;
+    rv = mFactory->GetCapabilities(getter_AddRefs(caps));
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    nsCOMPtr<nsIStringEnumerator> strings;
+    PRBool found = PR_FALSE;
+    rv = caps->GetVideoExtensions(getter_AddRefs(strings));
+    if (NS_SUCCEEDED(rv) && strings) {
+      found = HasExtensionInEnumerator(NS_ConvertUTF8toUTF16(mSpec), strings);
+    }
+    if (found) {
+      // this is a file with a video extension
+      contentType = NS_LITERAL_STRING("video");
+    }
   }
 
   if (!contentType.IsEmpty()) {
