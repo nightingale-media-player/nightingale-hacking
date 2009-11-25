@@ -207,9 +207,9 @@ protected:
   // Track if we are using a live pipeline
   PRBool mIsLive;
 
-  // If we've seen an error for the current mediacore, suppress further
-  // error messages.
-  PRBool mHasSeenError;
+  // If we've seen an error for the current file being played.
+  // To be dispatched when we've shut down the pipeline.
+  nsCOMPtr<sbIMediacoreError> mMediacoreError;
 
   // The GstState we want to reach (not necessarily the current pipeline
   // pending state)

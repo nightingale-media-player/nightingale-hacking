@@ -173,7 +173,7 @@ sbGStreamerMediacore::sbGStreamerMediacore() :
     mStopped(PR_FALSE),
     mBuffering(PR_FALSE),
     mIsLive(PR_FALSE),
-    mHasSeenError(PR_FALSE),
+    mMediacoreError(NULL),
     mTargetState(GST_STATE_NULL),
     mVideoDisabled(PR_FALSE),
     mVideoSinkDescription(),
@@ -673,7 +673,7 @@ sbGStreamerMediacore::DestroyPipeline()
   mStopped = PR_FALSE;
   mBuffering = PR_FALSE;
   mIsLive = PR_FALSE;
-  mHasSeenError = PR_FALSE;
+  mMediacoreError = NULL;
   mTargetState = GST_STATE_NULL;
   mGaplessDisabled = PR_FALSE;
   mPlayingGaplessly = PR_FALSE;
@@ -878,8 +878,10 @@ void sbGStreamerMediacore::HandleAboutToFinishSignal()
 
   // Never try to handle the next file if we've seen an error, or if gapless
   // is disabled for this resource
-  if (mHasSeenError || mGaplessDisabled)
+  if (mMediacoreError || mGaplessDisabled) {
+    LOG(("Ignoring about-to-finish signal"));
     return;
+  }
 
   nsCOMPtr<sbIMediacoreSequencer> sequencer = mSequencer;
   mon.Exit();
@@ -926,6 +928,7 @@ void sbGStreamerMediacore::HandleAboutToFinishSignal()
     NS_ENSURE_TRUE(mPipeline, /*void*/);
     g_object_set (G_OBJECT (mPipeline), "uri", uri.BeginReading(), NULL);
     mCurrentUri = uri;
+    mUri = itemuri;
 
     mPlayingGaplessly = PR_TRUE;
   }
@@ -984,10 +987,18 @@ void sbGStreamerMediacore::HandleStateChangedMessage(GstMessage *message)
       {
         // Distinguish between 'stopped via API' and 'stopped due to error or
         // reaching EOS'
-        if (mStopped)
+        if (mStopped) {
           DispatchMediacoreEvent (sbIMediacoreEvent::STREAM_STOP);
-        else
+        }
+        else {
+          // If we stopped due to an error, send the actual error event now.
+          if (mMediacoreError) {
+            DispatchMediacoreEvent(sbIMediacoreEvent::ERROR_EVENT, nsnull,
+                    mMediacoreError);
+            mMediacoreError = NULL;
+          }
           DispatchMediacoreEvent (sbIMediacoreEvent::STREAM_END);
+        }
       }
     }
     // We've reached our current pending state, but not our target state.
@@ -1177,8 +1188,8 @@ void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
 
   gst_message_parse_error(message, &gerror, &debugMessage);
   
-  if (!mHasSeenError) {
-    // Create and dispatch an error event. 
+  if (!mMediacoreError) {
+    // Create an error for later dispatch. 
     nsCOMPtr<nsIURI> uri;
     rv = GetUri(getter_AddRefs(uri));
     NS_ENSURE_SUCCESS(rv, /* void */);
@@ -1215,8 +1226,12 @@ void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
 
     NS_ENSURE_SUCCESS(rv, /* void */);
 
-    DispatchMediacoreEvent(sbIMediacoreEvent::ERROR_EVENT, nsnull, error);
-    mHasSeenError = PR_TRUE;
+    // We don't actually send the error right now. If we did, the sequencer
+    // might tell us to continue on to the next file before we've finished
+    // processing shutdown for this stream.
+    // Instead, we just cache it here, and actually process it once shutdown
+    // is complete.
+    mMediacoreError = error;
   }
 
   // Build an error message to output to the console 
@@ -1231,7 +1246,8 @@ void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
   g_free (debugMessage);
 
   // Then, shut down the pipeline, which will cause
-  // a STREAM_END event to be fired.
+  // a STREAM_END event to be fired. Immediately before firing that, we'll
+  // send our error message.
   nsAutoMonitor lock(mMonitor);
   mTargetState = GST_STATE_NULL;
   GstElement *pipeline = (GstElement *)g_object_ref (mPipeline);
