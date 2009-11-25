@@ -82,6 +82,7 @@ function sbDeviceServicePane() {
 //////////////////////////
 sbDeviceServicePane.prototype.QueryInterface =
   XPCOMUtils.generateQI([Ci.sbIServicePaneModule,
+                         Ci.sbIServicePaneListener,
                          Ci.sbIDeviceServicePaneService]);
 sbDeviceServicePane.prototype.classDescription =
   "Songbird Device Service Pane Service";
@@ -109,18 +110,26 @@ function sbDeviceServicePane_servicePaneInit(sps) {
   this._libraryServicePane = Cc["@songbirdnest.com/servicepane/library;1"]
                                .getService(Ci.sbILibraryServicePaneService);
 
+  sps.addListener(this);
+
   // load the device context menu document
   this._deviceContextMenuDoc =
         DOMUtils.loadDocument
           ("chrome://songbird/content/xul/device/deviceContextMenu.xul");
+
+  // cache the device manager
+  this._deviceMgr = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                      .getService(Ci.sbIDeviceManager2);
 }
 
 sbDeviceServicePane.prototype.shutdown =
 function sbDeviceServicePane_shutdown() {
   // release object references
+  this._servicePane.removeListener(this);
   this._servicePane = null;
   this._libraryServicePane = null;
   this._deviceContextMenuDoc = null;
+  this._deviceMgr = null;
 }
 
 sbDeviceServicePane.prototype.fillContextMenu =
@@ -326,6 +335,40 @@ function sbDeviceServicePane_setFillDefaultContxtMenu(aNode,
     aNode.setAttributeNS(DEVICESP_NS, "fillDefaultContextMenu", "false");
   }
 }
+
+////////////////////////////
+// sbIServicePaneListener //
+////////////////////////////
+sbDeviceServicePane.prototype.nodePropertyChanged =
+function sbDeviceServicePane_nodePropertyChanged(aNodeId, aAttrName) {
+  // we only care about poking things as they get unhidden
+  if (aAttrName != SP + "Hidden") {
+    return;
+  }
+  var node = this._servicePane.getNode(aNodeId);
+  if (!node) {
+    return;
+  }
+  var resource = this._libraryServicePane.getLibraryResourceForNode(node);
+  if (!resource) {
+    return;
+  }
+  if (!(resource instanceof Ci.sbIMediaList) ||
+      (resource instanceof Ci.sbILibrary)) {
+    // not a media list, we don't care
+    return;
+  }
+  var device = this._deviceMgr.getDeviceForItem(resource);
+  if (!device) {
+    // not a device playlist
+    return;
+  }
+  var deviceNode = this.getNodeForDevice(device);
+  if (deviceNode && node.parentNode != deviceNode) {
+    deviceNode.appendChild(node);
+  }
+};
+
 
 /////////////////////
 // Private Methods //
