@@ -147,11 +147,17 @@ sbOSDControlService.prototype =
     this._videoWinFocusListener = function(aEvent) {
       self._onVideoWinFocus(aEvent);
     };
+    this._osdWinMousemoveListener = function(aEvent) {
+      self._onOSDWinMousemove(aEvent);
+    };
     this._osdWindow.addEventListener("blur",
                                      this._osdWinBlurListener,
                                      false);
     this._osdWindow.addEventListener("focus",
                                      this._osdWinFocusListener,
+                                     false);
+    this._osdWindow.addEventListener("mousemove",
+                                     this._osdWinMousemoveListener,
                                      false);
     this._videoWindow.addEventListener("blur",
                                        this._videoWinBlurListener,
@@ -191,6 +197,9 @@ sbOSDControlService.prototype =
     this._videoWindow.removeEventListener("focus",
                                           this._videoWinFocusListener,
                                           false);
+    this._osdWindow.removeEventListener("mousemove",
+                                        this._osdWinMousemoveListener,
+                                        false);
     this._osdWindow.close();
     this._osdWindow = null;
     this._videoWindow = null;
@@ -298,6 +307,12 @@ sbOSDControlService.prototype =
     }
     
     this._videoWinHasFocus = true;
+  },
+
+  _onOSDWinMousemove: function(aEvent) {
+    // The user has the mouse over the OSD controls, ensure that the controls
+    // are visible.
+    this.showOSDControls();
   },
 
   //----------------------------------------------------------------------------
