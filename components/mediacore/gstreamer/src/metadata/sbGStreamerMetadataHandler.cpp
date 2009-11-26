@@ -711,7 +711,7 @@ sbGStreamerMetadataHandler::HandleTagMessage(GstMessage *message)
 nsresult
 sbGStreamerMetadataHandler::FinalizeTags(PRBool aSucceeded)
 {
-  TRACE((__FUNCTION__));
+  TRACE(("%s[%p]", __FUNCTION__, this));
   nsresult rv;
   
   // the caller is responsible for holding the lock :(
@@ -749,15 +749,19 @@ sbGStreamerMetadataHandler::FinalizeTags(PRBool aSucceeded)
 
   nsString contentType;
   if (mHasVideo) {
+    TRACE(("%s[%p]: file %s is video",
+           __FUNCTION__, this, mSpec.get()));
     contentType = NS_LITERAL_STRING("video");
   }
   else if (mHasAudio) {
+    TRACE(("%s[%p]: file %s is audio",
+           __FUNCTION__, this, mSpec.get()));
     contentType = NS_LITERAL_STRING("audio");
   }
-  else if (!aSucceeded) {
-    // actually constructing the pipeline had failed; fall back to
-    // file extension based detection of whether this file was likely to
-    // have contained some sort of video.
+  else {
+    // we didn't find either video or audio; fall back to file extension based
+    // detection of whether this file was likely to have contained some sort of
+    // video.
     nsCOMPtr<sbIMediacoreCapabilities> caps;
     rv = mFactory->GetCapabilities(getter_AddRefs(caps));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -769,8 +773,14 @@ sbGStreamerMetadataHandler::FinalizeTags(PRBool aSucceeded)
       found = HasExtensionInEnumerator(NS_ConvertUTF8toUTF16(mSpec), strings);
     }
     if (found) {
+      TRACE(("%s[%p]: file %s found via fallback to be video",
+             __FUNCTION__, this, mSpec.get()));
       // this is a file with a video extension
       contentType = NS_LITERAL_STRING("video");
+    }
+    else {
+      TRACE(("%s[%p]: file %s found via fallback to be not video",
+             __FUNCTION__, this, mSpec.get()));
     }
   }
 
