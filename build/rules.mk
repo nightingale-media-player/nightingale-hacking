@@ -41,6 +41,14 @@ include $(topsrcdir)/build/config.mk
 # define the tiers of the application
 include $(topsrcdir)/build/tiers.mk
 
+# This is a weird function that merely echos a command and then calls it; 
+# it's useful for bash shell loops that we don't want to echo the entire 
+# loop for, but we still want make-like behavior (print the command, then run
+# it); admittedly, it only works for relatively simple constructs
+define sh_make
+echo $1; $1
+endef
+
 # Provide working dependencies for the Mac vendor-binaries bits we use in the
 # build
 ifeq (macosx,$(SB_PLATFORM))
@@ -872,8 +880,7 @@ $(OUR_SIMPLE_PROGRAM): $(OUR_SIMPLE_PROGRAM_OBJS)
 	$(LD) $(OUR_SIMPLE_PROGRAM_OUT) $(OUR_SIMPLE_PROGRAM_FLAGS) $(OUR_SIMPLE_PROGRAM_LINKER_PATHS) $(OUR_SIMPLE_PROGRAM_OBJS) $(OUR_LINKER_IMPORTS)
 ifneq (,$(MSMANIFEST_TOOL))
 	@if test -f $(srcdir)/$@.manifest ; then \
-      echo $(MSMANIFEST_TOOL) -NOLOGO -MANIFEST "$(srcdir)/$@.manifest" -OUTPUTRESOURCE:$@\;1 ; \
-      $(MSMANIFEST_TOOL) -NOLOGO -MANIFEST "$(srcdir)/$@.manifest" -OUTPUTRESOURCE:$@\;1 ; \
+      $(call sh_make,$(MSMANIFEST_TOOL) -NOLOGO -MANIFEST "$(srcdir)/$@.manifest" -OUTPUTRESOURCE:$@\;1 ); \
    fi
 endif
 
