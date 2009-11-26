@@ -632,7 +632,8 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       WRITE_PROPERTY(result, SB_PROPERTY_COMMENT, Comment);
       WRITE_PROPERTY(result, SB_PROPERTY_LYRICS, Lyrics);
       WRITE_PROPERTY(result, SB_PROPERTY_GENRE, Genre);
-      WRITE_PROPERTY(result, SB_PROPERTY_PRODUCERNAME, Producer);
+// Disable writing producer.
+//      WRITE_PROPERTY(result, SB_PROPERTY_PRODUCERNAME, Producer);
       WRITE_PROPERTY(result, SB_PROPERTY_COMPOSERNAME, Composer);
       WRITE_PROPERTY(result, SB_PROPERTY_CONDUCTORNAME, Conductor);
       WRITE_PROPERTY(result, SB_PROPERTY_LYRICISTNAME, Lyricist);
@@ -2182,7 +2183,8 @@ PRBool sbMetadataHandlerTaglib::ReadFile(
     AddMetadataValue(SB_PROPERTY_COMMENT,         pTag->comment(), aCharset);
     AddMetadataValue(SB_PROPERTY_LYRICS,          pTag->lyrics(), aCharset);
     AddMetadataValue(SB_PROPERTY_GENRE,           pTag->genre(), aCharset);
-    AddMetadataValue(SB_PROPERTY_PRODUCERNAME,    pTag->producer(), aCharset);
+// Disabling producer: it's not exposed anywhere in the UI anyway.
+//    AddMetadataValue(SB_PROPERTY_PRODUCERNAME,    pTag->producer(), aCharset);
     AddMetadataValue(SB_PROPERTY_COMPOSERNAME,    pTag->composer(), aCharset);
     AddMetadataValue(SB_PROPERTY_CONDUCTORNAME,   pTag->conductor(), aCharset);
     AddMetadataValue(SB_PROPERTY_LYRICISTNAME,    pTag->lyricist(), aCharset);
