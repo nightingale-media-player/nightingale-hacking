@@ -48,6 +48,7 @@ var videoWindowController = {
 
   _mediacoreManager: null,
   _shouldDismissSelf: false,
+  _playbackStopped: false,
   _ssp: null,
   
   _actualSizeDataRemote: null,
@@ -204,8 +205,10 @@ var videoWindowController = {
   },
   
   _shutdown: function vwc__shutdown() {
-    // Always stop playback when the window closes.
-    this._mediacoreManager.sequencer.stop();
+    // Stop playback when the window closes unless it is closing because
+    // playback stopped.
+    if (!this._playbackStopped)
+      this._mediacoreManager.sequencer.stop();
 
     window.removeEventListener("resize", this._resizeListener, false);
     this._resizeListener = null;
@@ -597,6 +600,7 @@ var videoWindowController = {
     // Always reset fullscreen to false when the window closes.
     this._mediacoreManager.video.fullscreen = false;
 
+    this._playbackStopped = true;
     setTimeout(function() { window.close(); }, 0);
   },
 };
