@@ -1232,6 +1232,11 @@ endif
 # Utilities
 #------------------------------------------------------------------------------
 
+# This function produces the relative path of the first parameter relative to
+# the second.  If the paths are the same, this function evaluates to an empty
+# string.
+relativepath = $(if $(filter $(1),$(2)),,$(1:$(2)/%=%))
+
 # from mozilla/config/rules.mk (the Java rules section)
 # note that an extra slash was added between root-path and non-root-path to
 # account for non-standard mount points in msys
