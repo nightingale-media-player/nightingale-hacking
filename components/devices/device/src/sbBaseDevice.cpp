@@ -488,6 +488,7 @@ sbBaseDevice::SBFindLastMatchCountable(TransferRequestQueue::iterator begin,
     // countable item. So we have to test it
     //return (*end)->IsCountable() ? end : theEnd;
     out = (*end)->IsCountable() ? end : theEnd;
+    return NS_OK;
   }
   // There are no items, so just return the "end"
   out = theEnd;
@@ -973,7 +974,10 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
         aRequest->batchIndex = aRequest->batchCount;
         aRequest->batchID = last->batchID;
 
-        SBUpdateBatchCounts(lastCountable, begin, aRequest->batchCount, aRequest->batchID);
+        SBUpdateBatchCounts(lastCountable,
+                            begin,
+                            aRequest->batchCount,
+                            aRequest->batchID);
 
         if (isWrite && isVideo && mVideoInsertedCount > 0) {
           // Get the video count so that we can insert audio in front later.
@@ -3734,7 +3738,10 @@ sbBaseDevice::SyncCreateAndSyncToList
   NS_ENSURE_SUCCESS(rv, rv);
   rv = aDstLib->SetSyncPlaylistList(emptySyncPlaylistList);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = aDstLib->SetMgmtType(sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS);
+  // TODO: Probably need to figure out what type we are creating a random list
+  // for and set that instead of both.
+  rv = aDstLib->SetMgmtType(sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS |
+                            sbIDeviceLibrary::MGMT_TYPE_VIDEO_SYNC_PLAYLISTS);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Create a shuffled sync item list that will fit in the available space.
@@ -3884,7 +3891,10 @@ sbBaseDevice::SyncToMediaList(sbIDeviceLibrary* aDstLib,
   // Set to sync to the sync media list.
   rv = aDstLib->SetSyncPlaylistList(syncPlaylistList);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = aDstLib->SetMgmtType(sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS);
+  // TODO: Probably should check what the content type of the list is then
+  // set the flag for that type.
+  rv = aDstLib->SetMgmtType(sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS |
+                            sbIDeviceLibrary::MGMT_TYPE_VIDEO_SYNC_PLAYLISTS);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -4011,11 +4021,8 @@ sbBaseDevice::SyncGetSyncList(sbILibrary*       aSrcLib,
   PRUint32           syncMode;
   rv = aDstLib->GetMgmtType(&syncMode);
   NS_ENSURE_SUCCESS(rv, rv);
-  switch (syncMode)
-  {
-    case sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL:
-    case sbIDeviceLibrary::MGMT_TYPE_VIDEO_SYNC_ALL:
-    {
+
+  if ((syncMode & sbIDeviceLibrary::MGMT_TYPE_ALL_MASK) > 0) {
       // Create a sync all array containing the entire source library.
       nsCOMPtr<nsIMutableArray>
         syncAllList =
@@ -4030,17 +4037,13 @@ sbBaseDevice::SyncGetSyncList(sbILibrary*       aSrcLib,
       // Set the sync list.
       syncList = do_QueryInterface(syncAllList, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
-    } break;
-
-    case sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS:
-    case sbIDeviceLibrary::MGMT_TYPE_VIDEO_SYNC_PLAYLISTS:
+  }
+  else if ((syncMode & sbIDeviceLibrary::MGMT_TYPE_PLAYLISTS_MASK) > 0) {
       rv = aDstLib->GetSyncPlaylistList(getter_AddRefs(syncList));
       NS_ENSURE_SUCCESS(rv, rv);
-      break;
-
-    default:
+  }
+  else {
       NS_ENSURE_SUCCESS(NS_ERROR_ILLEGAL_VALUE, NS_ERROR_ILLEGAL_VALUE);
-      break;
   }
 
   // Return results.
@@ -4130,10 +4133,7 @@ sbBaseDevice::SyncProduceChangeset(TransferRequest*      aRequest,
   PRUint32           syncMode;
   rv = dstLib->GetMgmtType(&syncMode);
   NS_ENSURE_SUCCESS(rv, rv);
-  switch (syncMode)
-  {
-    case sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL:
-    {
+  if ((syncMode & sbIDeviceLibrary::MGMT_TYPE_ALL_MASK) > 0) {
       // Create a sync all array containing the entire source library.
       nsCOMPtr<nsIMutableArray>
         syncAllList =
@@ -4146,16 +4146,13 @@ sbBaseDevice::SyncProduceChangeset(TransferRequest*      aRequest,
       // Set the sync list.
       syncList = do_QueryInterface(syncAllList, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
-    } break;
-
-    case sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS:
+  }
+  else if ((syncMode & sbIDeviceLibrary::MGMT_TYPE_PLAYLISTS_MASK) > 0) {
       rv = dstLib->GetSyncPlaylistList(getter_AddRefs(syncList));
       NS_ENSURE_SUCCESS(rv, rv);
-      break;
-
-    default:
+  }
+  else {
       NS_ENSURE_SUCCESS(NS_ERROR_ILLEGAL_VALUE, NS_ERROR_ILLEGAL_VALUE);
-      break;
   }
 
   // Get the diffing service.

@@ -631,7 +631,7 @@ sbDeviceLibrary::UpdateMainLibraryListeners()
                               mMainLibraryListenerFilter);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (mgmtType == sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL) {
+    if ((mgmtType & sbIDeviceLibrary::MGMT_TYPE_ALL_MASK) > 0) {
       mMainLibraryListener->SetSyncMode(mgmtType, nsnull);
 
       // hook up the media list listeners to the existing lists
