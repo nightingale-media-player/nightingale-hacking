@@ -213,7 +213,7 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
     }
 
     const char *extraAudioExtensions[] = {"m4r", "m4p", "mp4", "oga"};
-    const char *extraVideoExtensions[] = {"vob"};
+    const char *extraVideoExtensions[] = {"ogv", "vob"};
     
     // XXX Mook: we currently assume anything not known to be video is audio :|
     nsCString knownVideoExtensions;
