@@ -35,6 +35,7 @@
         windowtype="Songbird:Core"
         onload="videoControlsController._initialize();" 
         onunload="videoControlsController._shutdown();" 
+        onclose="return false;"
         hidechrome="true"
         xmlns:html="http://www.w3.org/1999/xhtml"
         xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
