@@ -501,6 +501,12 @@ var videoWindowController = {
   },
 
   _onMouseMoved: function vwc__onMouseMoved(aEvent) {
+    // Ignore any events outside the video element. Note that mouse move events
+    // over the video itself are dispatched to the document, these are allowed.
+    var target = aEvent.target;
+    if (target instanceof XULElement && target != this._videoElement)
+      return;
+
     this._osdService.showOSDControls();
   },
   

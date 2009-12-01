@@ -71,7 +71,6 @@ sbOSDControlService.prototype =
   _cloakService:          null,
   _nativeWinMgr:          null,
   _timer:                 null,
-  _OS:                    null,
   _osdControlsShowing:    false,
   _lastBlurWindow:        -1,
   _videoWindowsLostFocus: false,
@@ -111,25 +110,16 @@ sbOSDControlService.prototype =
     // Cloak the window right now.
     this._cloakService.cloak(this._osdWindow);
 
-    this._OS = Cc["@mozilla.org/xre/app-info;1"]
-                 .getService(Components.interfaces.nsIXULRuntime)
-                 .OS;
+    try {
+      // Not all platforms have this service.
+      var winMoveService =
+        Cc["@songbirdnest.com/integration/window-move-resize-service;1"]
+        .getService(Ci.sbIWindowMoveService);
 
-    // If we are not on Windows, listen for window move events 
-    // on the video window. Windows sends 'resize' events when the window is
-    // moved.
-    if (this._OS != "WINNT") {
-      try {
-        // Not all platforms have this service.
-        var winMoveService =
-          Cc["@songbirdnest.com/integration/window-move-resize-service;1"]
-          .getService(Ci.sbIWindowMoveService);
-
-        winMoveService.startWatchingWindow(this._videoWindow, this);
-      }
-      catch (e) {
-        // No window move service on this platform.
-      }
+      winMoveService.startWatchingWindow(this._videoWindow, this);
+    }
+    catch (e) {
+      // No window move service on this platform.
     }
 
     // Listen for blur and focus events for determing when both the video
@@ -168,19 +158,16 @@ sbOSDControlService.prototype =
   },
 
   onVideoWindowWillClose: function() {
-    // We don't use this service on Windows.
-    if (this._OS != "WINNT") {
-      try {
-        // Not all platforms have this service.
-        var winMoveService =
-          Cc["@songbirdnest.com/integration/window-move-resize-service;1"]
-          .getService(Ci.sbIWindowMoveService);
+    try {
+      // Not all platforms have this service.
+      var winMoveService =
+        Cc["@songbirdnest.com/integration/window-move-resize-service;1"]
+        .getService(Ci.sbIWindowMoveService);
 
-        winMoveService.stopWatchingWindow(this._videoWindow, this);
-      }
-      catch (e) {
-        // No window move service on this platform.
-      }
+      winMoveService.stopWatchingWindow(this._videoWindow, this);
+    }
+    catch (e) {
+      // No window move service on this platform.
     }
     
     this._timer.cancel();
@@ -323,9 +310,6 @@ sbOSDControlService.prototype =
   },
 
   onMoveStopped: function() {
-    // XXX KREEGER - Use a timeout here instead of showing right away! //
-    // See bug 18150.
-
     this._recalcOSDPosition();
     this.showOSDControls();
   },
