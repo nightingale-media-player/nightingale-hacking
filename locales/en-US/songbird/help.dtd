@@ -15,6 +15,7 @@
 <!ENTITY help.keyboard.section.browser    "Browser" >
 <!ENTITY help.keyboard.section.windows    "Windows and Tabs" >
 <!ENTITY help.keyboard.section.search     "Search" >
+<!ENTITY help.keyboard.section.video      "Video" >
 <!ENTITY help.keyboard.section.cdrip      "CD Rip" >
 <!ENTITY help.keyboard.section.misc       "Miscellaneous" >
 
@@ -119,6 +120,9 @@
 <!ENTITY help.keyboard.name.find.text           "Find As You Type Text" >
 <!ENTITY help.keyboard.name.find.link           "Find As You Type Link" >
 <!ENTITY help.keyboard.name.search.focus        "Focus Search Box" >
+<!ENTITY help.keyboard.name.video.fullscreen    "Full Screen" >
+<!ENTITY help.keyboard.name.video.bringtofront  "Video on Top" >
+<!ENTITY help.keyboard.name.video.escape        "Escape from Full Screen" >
 <!ENTITY help.keyboard.name.cdrip.start         "Rip CD" >
 <!ENTITY help.keyboard.name.cdrip.stop          "Stop Rip CD" >
 <!ENTITY help.keyboard.name.cdrip.eject         "Eject CD" >
