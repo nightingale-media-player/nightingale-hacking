@@ -1040,15 +1040,26 @@ FeathersManager.prototype = {
     this._previousLayoutDataRemote.stringValue = this.currentLayoutURL;
     this._previousSkinDataRemote.stringValue = this.currentSkinName;
 
-    // close the player window *before* changing the skin
-    // otherwise Gecko tries to load an image that will go away right after and crashes
-    // (songbird bug 3965)
-    this._closePlayerWindow();
-    
-    var timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
-    var callback = new FeathersManager_switchFeathers_callback(this, layoutURL, internalName);
-    this._switching = true;
-    timer.initWithCallback(callback, 0, Ci.nsITimer.TYPE_ONE_SHOT);
+    // Make sure the application doesn't exit because we closed the last window
+    var appStartup = Cc["@mozilla.org/toolkit/app-startup;1"]
+                       .getService(Ci.nsIAppStartup);
+    appStartup.enterLastWindowClosingSurvivalArea();
+
+    try {
+      // close the player window *before* changing the skin
+      // otherwise Gecko tries to load an image that will go away right after and crashes
+      // (songbird bug 3965)
+      this._closePlayerWindow();
+      
+      var timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
+      var callback = new FeathersManager_switchFeathers_callback(this, layoutURL, internalName);
+      this._switching = true;
+      timer.initWithCallback(callback, 0, Ci.nsITimer.TYPE_ONE_SHOT);
+    } catch (e) {
+      // If we failed make sure to allow the application to quit again
+      appStartup.exitLastWindowClosingSurvivalArea();
+      throw e;
+    }
   },
   
   /**
@@ -1397,15 +1408,22 @@ FeathersManager_switchFeathers_callback.prototype = {
    * \sa nsITimerCallback
    */
   notify: function FeathersManager_switchFeathers_callback_notify() {
-    // Set new values
-    this.feathersManager._layoutDataRemote.stringValue = this.layoutURL;
-    this.feathersManager._skinDataRemote.stringValue = this.internalName;
-
-    this.feathersManager._flushXULPrototypeCache();
-    this.feathersManager.openPlayerWindow();
-    this.feathersManager._switching = false;
-    this.feathersManager._onSelectComplete();
-    this.feathersManager = null;
+    try {
+      // Set new values
+      this.feathersManager._layoutDataRemote.stringValue = this.layoutURL;
+      this.feathersManager._skinDataRemote.stringValue = this.internalName;
+  
+      this.feathersManager._flushXULPrototypeCache();
+      this.feathersManager.openPlayerWindow();
+      this.feathersManager._switching = false;
+      this.feathersManager._onSelectComplete();
+      this.feathersManager = null;
+    } finally {
+      // After the callback the application should always be able to quit again
+      var appStartup = Cc["@mozilla.org/toolkit/app-startup;1"]
+                         .getService(Ci.nsIAppStartup);
+      appStartup.exitLastWindowClosingSurvivalArea();
+    }
   }
 }; // FeathersManager_switchFeathers_callback.prototype
 
