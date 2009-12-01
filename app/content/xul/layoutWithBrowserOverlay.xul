@@ -270,8 +270,7 @@
       <!-- filled via overlay -->
       <popup id="contentAreaContextMenu"
             onpopupshowing="if (event.target != this) return true; return gBrowser.onContextPopupShowing(this, event)"
-            onpopuphiding="if (event.target == this) gBrowser.onContextPopupHiding(this)"
-            oncommand="gBrowser.onHTMLContextMenu(event.target)">
+            onpopuphiding="if (event.target == this) gBrowser.onContextPopupHiding(this)">
       </popup>
 
       <!-- EDIT POPUP FOR THE MAIN PANE PLAYLIST -->

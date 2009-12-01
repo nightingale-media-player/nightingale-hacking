@@ -845,8 +845,6 @@
         <parameter name="aURL" />
         <parameter name="aShouldBeginPlayback" />
         <parameter name="forcePlaylist" />
-        <parameter name="target" />
-        <parameter name="referrer" />
         <body>
                       <![CDATA[
           var retval = false;
@@ -1083,97 +1081,6 @@
         </getter>
       </property>
       
-      <!-- context menu handler -->
-      <field name="_urlForHTMLContextMenu">null</field>
-      <method name="onHTMLContextMenu">
-        <parameter name="target" />
-        <body><![CDATA[
-          if ( this._urlForHTMLContextMenu ) {
-            var v = target.getAttribute( "id" );
-            switch ( v ) {
-              case "html.context.open":
-                // can be track or playlist
-                // try dealing with media, might just be web content.
-                if ( !this.handleMediaURL(this._urlForHTMLContextMenu, true, false, null, this.currentURI.spec) )
-                {
-                  this.loadURI(this._urlForHTMLContextMenu, this.currentURI.spec, null);
-                }
-              break;
-              case "html.context.opentab":
-                // can be track or playlist
-                // try dealing with media, might just be web content.
-                if ( !this.handleMediaURL(this._urlForHTMLContextMenu, true, false, '_blank', this.currentURI.spec) )
-                {
-                  this.loadOneTab(this._urlForHTMLContextMenu, this.currentURI, null, null, null, null);
-                }
-                break;
-              case "html.context.openexternal":
-                  var externalLoader = (Components
-                           .classes["@mozilla.org/uriloader/external-protocol-service;1"]
-                          .getService(Components.interfaces.nsIExternalProtocolService));
-                  var nsURI = (Components
-                          .classes["@mozilla.org/network/io-service;1"]
-                          .getService(Components.interfaces.nsIIOService)
-                          .newURI(this._urlForHTMLContextMenu, null, null));
-                  externalLoader.loadURI(nsURI, null);
-              break;
-              case "html.context.play":
-                // can be track or playlist
-                this.handleMediaURL(this._urlForHTMLContextMenu, true, false);
-              break;
-              case "html.context.download":
-                // figure out the media item for the url
-                var currentPlaylist = this.currentOuterPlaylist;
-                if (currentPlaylist)
-                {
-                  var currentView = currentPlaylist.getListView();
-                  // Try to see if we've already found and scanned this url
-                  var listener = {
-                    item: null,
-                    onEnumerationBegin: function onEnumerationBegin() {
-                      if (this.item) {
-                        return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
-                      }
-                      else {
-                        return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
-                      }
-                    },
-                    onEnumeratedItem: function onEnumeratedItem(list, item) {
-                      this.item = item;
-                      return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
-                    },
-                    onEnumerationEnd: function onEnumerationEnd() {
-                    }
-                  };
-
-                  var currentMediaList = currentView.mediaList;
-                  
-                  currentMediaList.enumerateItemsByProperty(SBProperties.originURL, this._urlForHTMLContextMenu, listener );
-                  if (!listener.item)
-                    currentMediaList.enumerateItemsByProperty(SBProperties.contentURL, this._urlForHTMLContextMenu, listener );
-
-                  if (listener.item) {
-                    var ddh =
-                      Components.classes["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
-                                .getService(Components.interfaces.sbIDownloadDeviceHelper);
-                    ddh.downloadItem(listener.item);
-                  }
-                }
-              break;
-              case "html.context.playlist":
-                // Add playlists to the service pane (force it as a playlist)
-                this.handleMediaURL(this._urlForHTMLContextMenu, false, true);
-              break;
-              case "html.context.copytoclipboard":
-                var clipboard = Components.classes["@mozilla.org/widget/clipboardhelper;1"].getService(Components.interfaces.nsIClipboardHelper);
-                clipboard.copyString(this._urlForHTMLContextMenu);
-              break;
-            }
-            this._urlForHTMLContextMenu = null; // clear it because now we're done.
-          }
-        ]]></body>
-      </method>
-
       <field name="_popupShowing">false</field>
       <method name="onContextPopupShowing">
         <parameter name="popup" />
@@ -1394,18 +1301,12 @@
           // get the referrer if we can
           var referrer = doc ? doc.documentURIObject : null;
 
-          var uri = ioService.newURI(href, null, null);
-
           // we need to handle playlists and media items specially
-          if ( this.typeSniffer.isValidWebSafePlaylistURL(uri) ||
-               this.typeSniffer.isValidMediaURL(uri) ) {
-            this.handleMediaURL(href, false, false, target, referrer);
-            event.stopPropagation();
+          if (this.handleMediaURL(href, false, false)) {
             event.preventDefault();
           } else {
             var where = this._checkTarget(target, event);
             if (where && this.loadURI(href, referrer, null, event, where)) {
-              event.stopPropagation();
               event.preventDefault();
             }
           }

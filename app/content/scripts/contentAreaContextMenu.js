@@ -682,7 +682,9 @@ ContentAreaContextMenu.prototype = {
 
   // Open linked-to URL in a new tab.
   openLinkInTab: function() {
-    openNewTabWith(this.linkURL, this.target.ownerDocument, null, null, false);
+    // Try special handling for playlists and media items before opening a tab
+    if (!gBrowser.handleMediaURL(this.linkURL, false, false))
+      openNewTabWith(this.linkURL, this.target.ownerDocument, null, null, false);
   },
 
   // Open frame in a new tab.
@@ -1388,7 +1390,7 @@ ContentAreaContextMenu.prototype = {
   },
   
   playMedia: function CM_playMedia() {
-    gBrowser.handleMediaURL(this.linkURL, true, false, null, gBrowser.currentURI.spec);
+    gBrowser.handleMediaURL(this.linkURL, true, false);
   },
   
   subscribeMediaPage: function CM_subscribeToPage() {
