@@ -612,8 +612,10 @@ protected:
   PRUint32 mMusicLimitPercent;
   nsCOMPtr<nsIArray> mTranscodeProfiles;
 
-  PRUint32 mVideoInsertedCount;
-  PRUint32 mSyncType;
+  bool mVideoInserted; // Flag on whether video is inserted
+  PRUint32 mSyncType; // syncing type to pass to the UI
+  // Iterator points to the first video request
+  TransferRequestQueue::iterator mFirstVideoIterator;
 
   //   mConnected               True if device is connected.
   //   mConnectLock             Connect lock.
@@ -1300,15 +1302,6 @@ protected:
     TransferRequestQueueMap::iterator & aMapIter,
     TransferRequestQueue::iterator & aQueueIter,
     bool aRemove);
-
-  /**
-   * Finds the last countable item with type contentType in the queue. If not
-   * found it returns end
-   */
-  nsresult SBFindLastMatchCountable(TransferRequestQueue::iterator begin,
-                                    TransferRequestQueue::iterator end,
-                                    TransferRequestQueue::iterator& out,
-                                    PRUint32 contentType);
 
   /**
    * Returns if the device pref to enable music space limiting is turned on.

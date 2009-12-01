@@ -444,7 +444,7 @@ var DPW = {
       // Compute the progress from 0-100.
       var progress = 100;
       if ((totalItems > 0) &&
-          (curItemIndex >= 0) &&
+          (curItemIndex > 0) &&
           (curItemIndex < totalItems)) {
         progress = Math.round((curItemIndex / totalItems) * 100);
       }
