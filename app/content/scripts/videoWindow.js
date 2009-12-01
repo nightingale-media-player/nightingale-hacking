@@ -586,11 +586,17 @@ var videoWindowController = {
   _onToggleActualSize: function vwc__onToggleActualSize() {
     var toggle = !this._actualSizeDataRemote.boolValue;
     this._actualSizeDataRemote.boolValue = toggle;
+    if (toggle) {
+      this._mediacoreManager.video.fullscreen = false;
+    }
   },
   
   _onToggleFullscreen: function vwc__onToggleFullscreen() {
     var toggle = !this._mediacoreManager.video.fullscreen;
     this._mediacoreManager.video.fullscreen = toggle;
+    if (toggle) {
+      this._actualSizeDataRemote.boolValue = false;
+    }
   },
   
   _dismissSelf: function vwc__dismissSelf() {
