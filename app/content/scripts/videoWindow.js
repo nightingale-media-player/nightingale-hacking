@@ -501,6 +501,10 @@ var videoWindowController = {
   },
 
   _onMouseMoved: function vwc__onMouseMoved(aEvent) {
+    // Ignore mouse events while context menu is open.
+    if (this._contextMenu.state != "closed")
+      return;
+
     // Ignore any events outside the video element. Note that mouse move events
     // over the video itself are dispatched to the document, these are allowed.
     var target = aEvent.target;
