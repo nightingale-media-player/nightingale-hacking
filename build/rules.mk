@@ -41,14 +41,6 @@ include $(topsrcdir)/build/config.mk
 # define the tiers of the application
 include $(topsrcdir)/build/tiers.mk
 
-# This is a weird function that merely echos a command and then calls it; 
-# it's useful for bash shell loops that we don't want to echo the entire 
-# loop for, but we still want make-like behavior (print the command, then run
-# it); admittedly, it only works for relatively simple constructs
-define sh_make
-echo $1; $1
-endef
-
 # Provide working dependencies for the Mac vendor-binaries bits we use in the
 # build
 ifeq (macosx,$(SB_PLATFORM))
@@ -1229,8 +1221,16 @@ ifdef IS_EXTENSION
 endif
 
 #------------------------------------------------------------------------------
-# Utilities
+# Utilities targets and functions
 #------------------------------------------------------------------------------
+
+# This is a weird function that merely echos a command and then calls it; 
+# it's useful for bash shell loops that we don't want to echo the entire 
+# loop for, but we still want make-like behavior (print the command, then run
+# it); admittedly, it only works for relatively simple constructs
+define sh_make
+echo $1; $1
+endef
 
 # This function produces the relative path of the first parameter relative to
 # the second.  If the paths are the same, this function evaluates to an empty
@@ -1255,9 +1255,6 @@ ifeq (windows,$(SB_PLATFORM))
 else
    normalizepath = $(1)
 endif
-
-
-#########################
 
 echo-variable-%:
 	@echo $($*)
