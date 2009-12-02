@@ -5602,7 +5602,8 @@ sbBaseDevice::GetProductNameBase(char const * aDefaultModelNumberString,
   }
 
   // Produce the product name.
-  if (!vendorName.IsEmpty()) {
+  if (!vendorName.IsEmpty() &&
+      !StringBeginsWith(modelNumber, vendorName)) {
     nsTArray<nsString> params;
     NS_ENSURE_TRUE(params.AppendElement(vendorName), NS_ERROR_OUT_OF_MEMORY);
     NS_ENSURE_TRUE(params.AppendElement(modelNumber), NS_ERROR_OUT_OF_MEMORY);

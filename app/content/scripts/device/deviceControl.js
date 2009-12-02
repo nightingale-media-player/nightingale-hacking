@@ -490,17 +490,11 @@ deviceControlWidget.prototype = {
    */
 
   _getDeviceModelCap: function deviceControlWidget__getDeviceModelCap() {
-    // Get the device vendor name.
-    var vendorName = "";
-    try {
-      vendorName = this._device.properties.vendorName;
-    } catch (ex) {};
-
-    // Get the device model number.
-    var modelNumber = "";
-    try {
-      modelNumber = this._device.properties.modelNumber;
-    } catch (ex) {};
+    // Get the device product name.
+    var productName = null;
+    try { productName = this._device.productName; } catch(err) {}
+    if (productName == null)
+      productName = SBString("device.info.unknown");
 
     // Get the device capacity.
     var capacity = "";
@@ -511,7 +505,7 @@ deviceControlWidget.prototype = {
     } catch (ex) {};
 
     return SBFormattedString("device.info.model_cap",
-                             [ vendorName, modelNumber, capacity ]);
+                             [ productName, capacity ]);
   },
 
 
