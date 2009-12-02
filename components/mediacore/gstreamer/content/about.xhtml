@@ -13,11 +13,13 @@ function parseClass(klass) {
   var a = klass.split("/");
 
   var c = {
-    encoder: a.indexOf("Encoder") >= 0,
-    decoder: a.indexOf("Decoder") >= 0,
-    demuxer: a.indexOf("Demuxer") >= 0,
-    audio:   a.indexOf("Audio") >= 0,
-    video:   a.indexOf("Video") >= 0
+    encoder:   a.indexOf("Encoder") >= 0,
+    decoder:   a.indexOf("Decoder") >= 0,
+    demuxer:   a.indexOf("Demuxer") >= 0,
+    muxer:     a.indexOf("Muxer") >= 0,
+    audio:     a.indexOf("Audio") >= 0,
+    video:     a.indexOf("Video") >= 0,
+    formatter: a.indexOf("Formatter") >= 0,
   }
 
   return c;
@@ -35,6 +37,7 @@ function onLoad() {
   var videoDecoders = [];
   var videoEncoders = [];
   var demuxers = [];
+  var muxers = [];
 
   var handler = {
     _currentPlugin: null,
@@ -86,6 +89,10 @@ function onLoad() {
         }
         if (c.demuxer) {
           demuxers.push(o);
+        }
+        if (c.muxer || c.formatter) {
+          // we treat formatters as muxers, since we use them the same way
+          muxers.push(o);
         }
       }
     },
@@ -155,6 +162,7 @@ function onLoad() {
   writeList("Video Decoders", videoDecoders);
   writeList("Video Encoders", videoEncoders);
   writeList("Demuxers", demuxers);
+  writeList("Muxers", muxers);
 }
 
 ]]>
