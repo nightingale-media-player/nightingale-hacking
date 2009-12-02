@@ -78,6 +78,7 @@ sbOSDControlService.prototype =
   
   _videoWinHasFocus:      false,
   _osdWinHasFocus:        false,
+  _mouseDownOnOSD:        false,
 
 
   _recalcOSDPosition: function() {
@@ -140,6 +141,12 @@ sbOSDControlService.prototype =
     this._osdWinMousemoveListener = function(aEvent) {
       self._onOSDWinMousemove(aEvent);
     };
+    this._osdWinMousedownListener = function(aEvent) {
+      self._onOSDWinMousedown(aEvent);
+    };
+    this._osdWinMouseupListener = function(aEvent) {
+      self._onOSDWinMouseup(aEvent);
+    };
     this._osdWindow.addEventListener("blur",
                                      this._osdWinBlurListener,
                                      false);
@@ -148,6 +155,12 @@ sbOSDControlService.prototype =
                                      false);
     this._osdWindow.addEventListener("mousemove",
                                      this._osdWinMousemoveListener,
+                                     false);
+    this._osdWindow.addEventListener("mousedown",
+                                     this._osdWinMousedownListener,
+                                     false);
+    this._osdWindow.addEventListener("mouseup",
+                                     this._osdWinMouseupListener,
                                      false);
     this._videoWindow.addEventListener("blur",
                                        this._videoWinBlurListener,
@@ -178,15 +191,21 @@ sbOSDControlService.prototype =
     this._osdWindow.removeEventListener("focus",
                                         this._osdWinFocusListener,
                                         false);
+    this._osdWindow.removeEventListener("mousemove",
+                                        this._osdWinMousemoveListener,
+                                        false);
+    this._osdWindow.removeEventListener("mousedown",
+                                        this._osdWinMousedownListener,
+                                        false);
+    this._osdWindow.removeEventListener("mouseup",
+                                        this._osdWinMouseupListener,
+                                        false);
     this._videoWindow.removeEventListener("blur",
                                           this._videoWinBlurListener,
                                           false);
     this._videoWindow.removeEventListener("focus",
                                           this._videoWinFocusListener,
                                           false);
-    this._osdWindow.removeEventListener("mousemove",
-                                        this._osdWinMousemoveListener,
-                                        false);
     this._osdWindow.close();
     this._osdWindow = null;
     this._videoWindow = null;
@@ -214,6 +233,10 @@ sbOSDControlService.prototype =
   },
 
   hideOSDControls: function() {
+    // Don't hide the window while the user is dragging
+    if (this._mouseDownOnOSD)
+      return;
+
     if (!this._cloakService.isCloaked(this._osdWindow)) {
       this._nativeWinMgr.setOnTop(this._osdWindow, false);
       this._cloakService.cloak(this._osdWindow);
@@ -300,6 +323,20 @@ sbOSDControlService.prototype =
     // The user has the mouse over the OSD controls, ensure that the controls
     // are visible.
     this.showOSDControls();
+  },
+
+  _onOSDWinMousedown: function(aEvent) {
+    if (aEvent.button == 0)
+      this._mouseDownOnOSD = true;
+  },
+
+  _onOSDWinMouseup: function(aEvent) {
+    if (aEvent.button == 0)
+    {
+      // User released the mouse button, reset the timer
+      this._mouseDownOnOSD = false;
+      this.showOSDControls();
+    }
   },
 
   //----------------------------------------------------------------------------
