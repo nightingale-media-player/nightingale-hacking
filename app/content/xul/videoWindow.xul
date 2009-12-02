@@ -38,8 +38,8 @@
   hidechrome="true"
   title="&videowindow.title;"
   windowtype="Songbird:Core"
-  xmlns:html="http://www.w3.org/1999/xhtml"
-  xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
+  minwidth="320"
+  minheight="240"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 >
   <keyset id="video-window-keyset">
