@@ -301,6 +301,7 @@
 ./gst-plugins/libgstplaybin.so
 ./gst-plugins/libgstqtaudiowrapper.so
 ./gst-plugins/libgstqtdemux.so
+./gst-plugins/libgstqtmux.so
 ./gst-plugins/libgstqtvideowrapper.so
 ./gst-plugins/libgstqueue2.so
 ./gst-plugins/libgstreplaygain.so

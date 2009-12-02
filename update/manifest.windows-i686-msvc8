@@ -334,6 +334,7 @@
 ./gst-plugins/gstplaybin.dll
 ./gst-plugins/gstqtaudiowrapper.dll
 ./gst-plugins/gstqtdemux.dll
+./gst-plugins/gstqtmux.dll
 ./gst-plugins/gstqtvideowrapper.dll
 ./gst-plugins/gstqueue2.dll
 ./gst-plugins/gstreplaygain.dll
