@@ -887,8 +887,8 @@ sbCDDevice::Mount()
   }
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Clear the library out if the CD disc hash is changing.
   if (!cdDiscHash.Equals(prevCDDiscHash)) {
+    // Clear the library out if the CD disc hash is changing.
     rv = mDeviceLibrary->Clear();
     NS_ENSURE_SUCCESS(rv, rv);
     rv = mDeviceLibrary->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
@@ -897,6 +897,14 @@ sbCDDevice::Mount()
     rv = mDeviceLibrary->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CDDISCHASH),
                                      SBVoidString());
     NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    // Reset status if same disk was inserted again
+    sbDeviceUtils::BulkSetProperty(mDeviceLibrary,
+                                   NS_LITERAL_STRING(SB_PROPERTY_CDRIP_STATUS),
+                                   SBVoidString(),
+                                   nsnull,
+                                   nsnull);
   }
 
   // hide the device library.
