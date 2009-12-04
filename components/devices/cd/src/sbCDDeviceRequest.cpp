@@ -692,7 +692,7 @@ sbCDDevice::ShowMetadataLookupDialog(const char *aLookupDialogURI,
   sbCDAutoDeviceLocker cdDeviceLocker(mCDDevice);
 
   // Build out the dialog arguments.
-  nsCOMPtr<nsIMutableArray> args = 
+  nsCOMPtr<nsIMutableArray> args =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1019,11 +1019,6 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
 
   // Ensure that the device is locked during a read operation.
   sbCDAutoDeviceLocker autoDeviceLocker(mCDDevice);
-
-  mStatus.ItemStart(aRequest->list,
-                    aRequest->item,
-                    aRequest->batchIndex,
-                    aRequest->batchCount);
 
   nsCOMPtr<sbIMediaItem> source = do_QueryInterface(aRequest->data, &rv);
   NS_ENSURE_SUCCESS(rv, rv);

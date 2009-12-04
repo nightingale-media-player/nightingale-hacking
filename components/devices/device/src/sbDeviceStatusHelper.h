@@ -234,13 +234,16 @@ public:
                                      mStatus(aStatus),
                                      mResult(NS_ERROR_FAILURE),
                                      mOperation(aOperation) {
-    mStatus->OperationStart(mOperation,
-                            mRequest->batchIndex,
-                            mRequest->batchCount,
-                            mRequest->itemType,
-                            IsItemOp(mOperation) ? mRequest->list : nsnull,
-                            IsItemOp(mOperation) ? mRequest->item : nsnull);
-
+    // If this is the start of a batch or is not a batch thingy do start op
+    if (mRequest->index == 0 ||
+        mRequest->index == PR_UINT32_MAX) {
+      mStatus->OperationStart(mOperation,
+                              mRequest->batchIndex,
+                              mRequest->batchCount,
+                              mRequest->itemType,
+                              IsItemOp(mOperation) ? mRequest->list : nsnull,
+                              IsItemOp(mOperation) ? mRequest->item : nsnull);
+    }
     if (IsItemOp(mOperation)) {
       // Update item status
       mStatus->ItemStart(aRequest->list,
@@ -263,13 +266,15 @@ public:
                                      mStatus(aStatus),
                                      mResult(NS_ERROR_FAILURE),
                                      mOperation(aOperation) {
-    mStatus->OperationStart(mOperation,
-                            0,
-                            aBatchCount,
-                            aRequest->itemType,
-                            IsItemOp(mOperation) ? mRequest->list : nsnull,
-                            IsItemOp(mOperation) ? mRequest->item : nsnull);
-
+    // If this is the start of a batch or is not a batch thingy do start op
+    if (mRequest->index == 0 || mRequest->index == PR_UINT32_MAX) {
+      mStatus->OperationStart(mOperation,
+                              0,
+                              aBatchCount,
+                              aRequest->itemType,
+                              IsItemOp(mOperation) ? mRequest->list : nsnull,
+                              IsItemOp(mOperation) ? mRequest->item : nsnull);
+    }
     if (IsItemOp(mOperation)) {
       // Update item status
       mStatus->ItemStart(aRequest->list,

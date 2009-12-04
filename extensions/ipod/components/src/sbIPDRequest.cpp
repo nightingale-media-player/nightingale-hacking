@@ -411,11 +411,6 @@ sbIPDDevice::ReqHandleWriteTrack(TransferRequest* aRequest)
     autoOperationStatus.Set(mIPDStatus, NS_OK);
   }
 
-  // Update item status and set for auto-failure.
-  mIPDStatus->ItemStart(aRequest->list,
-                        aRequest->item,
-                        aRequest->batchIndex,
-                        aRequest->batchCount);
   sbAutoStatusItemFailure autoItemStatus(mIPDStatus);
 
   // Remove unsupported media items and report errors.
@@ -567,11 +562,6 @@ sbIPDDevice::ReqHandleDeleteTrack(TransferRequest* aRequest)
     autoOperationStatus.Set(mIPDStatus, NS_OK);
   }
 
-  // Update item status and set for auto-failure.
-  mIPDStatus->ItemStart(aRequest->list,
-                        aRequest->item,
-                        aRequest->batchIndex,
-                        aRequest->batchCount);
   sbAutoStatusItemFailure autoItemStatus(mIPDStatus);
 
   // Delete track.

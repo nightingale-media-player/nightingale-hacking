@@ -2230,12 +2230,22 @@ nsresult sbBaseDevice::CreateAndDispatchEvent(PRUint32 aType,
     do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<sbIDeviceStatus> status;
+  rv = GetCurrentStatus(getter_AddRefs(status));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 subState = sbIDevice::STATE_IDLE;
+  if (status) {
+    rv = status->GetCurrentSubState(&subState);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   nsCOMPtr<sbIDeviceEvent> deviceEvent;
   rv = manager->CreateEvent(aType,
                             aData,
                             static_cast<sbIDevice*>(this),
                             mState,
-                            sbIDevice::STATE_IDLE,
+                            subState,
                             getter_AddRefs(deviceEvent));
   NS_ENSURE_SUCCESS(rv, rv);
 
