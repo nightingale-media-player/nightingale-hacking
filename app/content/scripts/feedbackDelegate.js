@@ -38,6 +38,9 @@ const PREF_TOTAL_RUNTIME = "feedback.total_runtime";
 const PREF_SURVEY_DATE = "feedback.survey_date";
 const PREF_DISABLE_FEEDBACK = "feedback.disabled";
 const PREF_DENIED_FEEDBACK = "feedback.denied";
+const PREF_NEXT_FEEDBACK_MONTH_LAG = "feedback.next_feedback_month_lag";
+const PREF_MIN_APP_SESSIONS = "feedback.min_app_sessions";
+const PREF_MIN_TOTAL_RUNTIME = "feedback.min_total_runtime";
 
 /**
  * Misc. constants:
@@ -50,11 +53,15 @@ const NEXT_FEEDBACK_MONTH_LAG = 6;
 
 /**
  * Global vars:
- */ 
+ */
 var gObserverService = Components.classes["@mozilla.org/observer-service;1"]
                        .getService(Components.interfaces.nsIObserverService);
 var gAppPrefs = Application.prefs;
 
+function getIntPrefValue(name, value)
+{
+  return parseInt(gAppPrefs.getValue(name, value || 0).toString(), 10);
+}
 
 /**
  * Feedback survey controller:
@@ -65,13 +72,13 @@ function FeedbackDelegate()
   setTimeout(function() { self._init(); }, STARTUP_DELAY);
 }
 
-FeedbackDelegate.prototype = 
+FeedbackDelegate.prototype =
 {
   _mAppStartTimespec: 0,
   _mSavedTotalRuntime: 0,
   _mHasSessionRequirements: false,
   _mHasRuntimeRequirements: false,
-  
+
   _init: function()
   {
     // If feedback has been disabled (i.e. debug build), just exit.
@@ -79,57 +86,59 @@ FeedbackDelegate.prototype =
     if (disablePrefs != null && disablePrefs.value) {
       return;
     }
-    
+
     // Don't show the feedback dialog again if the user turned down feedback.
     if (gAppPrefs.has(PREF_DENIED_FEEDBACK)) {
-      return; 
+      return;
     }
-    
+
     // Don't show the feedback dialog if we don't know where to send the survey
     if ("false" == SBString(SURVEY_URL_KEY, "false", SBStringGetBrandBundle())) {
       return;
     }
-    
+
     var curDate = new Date();
     this._mAppStartTimespec = curDate.getTime();
     var hasDateRequirements = true;
-    
+
     // If the user has already taken the survey, only procede showing it again
     // after six months.
     if (gAppPrefs.has(PREF_SURVEY_DATE)) {
-      var surveyTakenTime = 
+      var surveyTakenTime =
         parseInt(gAppPrefs.get(PREF_SURVEY_DATE).value);
-      
+
       var surveyTakenDate = new Date();
       surveyTakenDate.setTime(surveyTakenTime);
-      
+
       var futureDate = new Date();
       futureDate = new Date();
       futureDate.setTime(surveyTakenTime);
-      
+
       // JS Date range is 0-11
-      var futureMonthLag = surveyTakenDate.getUTCMonth() + NEXT_FEEDBACK_MONTH_LAG;
+      var futureMonthLag = surveyTakenDate.getUTCMonth() +
+                           getPrefValue(PREF_NEXT_FEEDBACK_MONTH_LAG,
+                                        NEXT_FEEDBACK_MONTH_LAG);
       if (futureMonthLag >= 12) {
         futureMonthLag -= 12;
         // Since this is roll over, bump the year
         futureDate.setUTCFullYear(futureDate.getUTCFullYear() + 1);
       }
       futureDate.setUTCMonth(futureMonthLag);
-      
+
       // If the timeframe has not passed the 6 month mark, bail.
       if (curDate.getTime() <= futureDate.getTime()) {
         return;
       }
     }
-    
+
     // Check to see if we are not on the same day we first opened the app.
     if (gAppPrefs.has(PREF_FIRST_OPENED_DATE)) {
-      var firstSessionTime = 
+      var firstSessionTime =
         parseInt(gAppPrefs.get(PREF_FIRST_OPENED_DATE).value);
-      
+
       var firstSessionDate = new Date();
       firstSessionDate.setTime(firstSessionTime);
-      
+
       if (curDate.getUTCDate() == firstSessionDate.getUTCDate() &&
           curDate.getUTCMonth() == firstSessionDate.getUTCMonth() &&
           curDate.getUTCFullYear() == firstSessionDate.getUTCFullYear())
@@ -141,26 +150,26 @@ FeedbackDelegate.prototype =
       // First time application was launched, we need to save the current date.
       gAppPrefs.setValue(PREF_FIRST_OPENED_DATE, "" + curDate.getTime());
     }
-    
-    var numSessions = 
-      parseInt(gAppPrefs.getValue(PREF_APP_SESSIONS, 0).toString());
-    if (numSessions >= MIN_APP_SESSIONS) {
+
+    var numSessions = getIntPrefValue(PREF_APP_SESSIONS);
+    if (numSessions >= getIntPrefValue(PREF_MIN_APP_SESSIONS, MIN_APP_SESSIONS))
+    {
       this._mHasSessionRequirements = true;
     }
-    
-    this._mSavedTotalRuntime = 
-      parseInt(gAppPrefs.getValue(PREF_TOTAL_RUNTIME, 0).toString());
-    
-    if (this._mSavedTotalRuntime >= MIN_TOTAL_RUNTIME) {
+
+    this._mSavedTotalRuntime = getIntPrefValue(PREF_TOTAL_RUNTIME);
+    if (this._mSavedTotalRuntime >= getIntPrefValue(PREF_MIN_TOTAL_RUNTIME,
+                                                    MIN_TOTAL_RUNTIME))
+    {
       this._mHasRuntimeRequirements = true;
     }
-    
-    if (this._mHasSessionRequirements && 
-        this._mHasRuntimeRequirements) 
+
+    if (this._mHasSessionRequirements &&
+        this._mHasRuntimeRequirements)
     {
       // Only show the survey if we met the date requirments. If not, we'll
       // have to wait until the next day the app is started.
-      // 
+      //
       // To work around a scenario where the only window in th window registry
       // is the hidden window, wait 10 seconds to show the dialog.
       // @see bug 9887
@@ -173,25 +182,25 @@ FeedbackDelegate.prototype =
       gObserverService.addObserver(this, "quit-application-granted", false);
     }
   },
-  
+
   _showSurvey: function()
   {
     var retVal = { shouldLoadSurvey: false};
-    
-    var winMediator = 
+
+    var winMediator =
       Components.classes["@mozilla.org/appshell/window-mediator;1"]
       .getService(Components.interfaces.nsIWindowMediator);
-    
+
     var mainWin = winMediator.getMostRecentWindow("Songbird:Main");
     if (mainWin && mainWin.window && mainWin.window.gBrowser) {
       mainWin.openDialog("chrome://songbird/content/xul/feedbackDialog.xul",
                          "feedback-dialog",
-                         "chrome,modal=yes,centerscreen,resizable=false", 
+                         "chrome,modal=yes,centerscreen,resizable=false",
                          retVal);
-      
+
       // Mark the survey date
       gAppPrefs.setValue(PREF_SURVEY_DATE, "" + new Date().getTime());
-      
+
       if (retVal.shouldLoadSurvey) {
         var surveyURL = SBString(SURVEY_URL_KEY, "false", SBStringGetBrandBundle());
         mainWin.window.gBrowser.loadURI(surveyURL, null, null, null, "_blank");
@@ -199,26 +208,26 @@ FeedbackDelegate.prototype =
       }
       else {
         gAppPrefs.setValue(PREF_DENIED_FEEDBACK, true);
-        
+
         // Flush to disk to make sure the dialog won't be shown again in the
         // event of a crash. See bug 11857.
-        var prefService = 
+        var prefService =
           Components.classes["@mozilla.org/preferences-service;1"]
                     .getService(Components.interfaces.nsIPrefService);
         if (prefService) {
           // Passing null uses the currently loaded pref file.
           // (usually 'prefs.js')
-          prefService.savePrefFile(null); 
+          prefService.savePrefFile(null);
         }
       }
     }
   },
-  
+
   observe: function(aSubject, aTopic, aData)
   {
     if (aTopic != "quit-application-granted")
       return;
-    
+
     // We are shutting down - it's now time to save the elapsed time to our
     // runtime variable and increment the session count. Note that we only
     // should update these prefs if the requirements have not been met when
@@ -226,28 +235,27 @@ FeedbackDelegate.prototype =
     if (!this._mHasRuntimeRequirements) {
       var curTimespec = new Date().getTime();
       var elapsedTime = curTimespec - this._mAppStartTimespec;
-      
-      gAppPrefs.setValue(PREF_TOTAL_RUNTIME, 
+
+      gAppPrefs.setValue(PREF_TOTAL_RUNTIME,
                          "" + (this._mSavedTotalRuntime + elapsedTime));
     }
-    
+
     if (!this._mHasSessionRequirements) {
-      var curSessionCount = 
-        parseInt(gAppPrefs.getValue(PREF_APP_SESSIONS, 0).toString());
+      var curSessionCount = getIntPrefValue(PREF_APP_SESSIONS);
       gAppPrefs.setValue(PREF_APP_SESSIONS, (curSessionCount + 1));
     }
-    
+
     gObserverService.removeObserver(this, "quit-application-granted");
   },
-  
+
   QueryInterface: function(iid)
   {
     if (!iid.equals(Components.interfaces.nsIObserver) &&
-        !iid.equals(Components.interfaces.nsISupports)) 
+        !iid.equals(Components.interfaces.nsISupports))
     {
       throw Components.results.NS_ERROR_NO_INTERFACE;
     }
-    
+
     return this;
   }
 };
