@@ -139,6 +139,9 @@ ifdef MEDIA_CORE_GST #{
    FLAC_NAMES = FLAC \
                 $(NULL)
 
+   JPEG_NAMES = jpeg \
+                $(NULL)
+
    GST_PLUGINS_CORE_NAMES = gstcoreelements \
                             gstcoreindexers \
                             $(NULL)
@@ -179,6 +182,7 @@ ifdef MEDIA_CORE_GST #{
                             gstgoom \
                             gsticydemux \
                             gstid3demux \
+                            gstjpeg \
                             gstlevel \
                             gstmatroska \
                             gstmulaw \
@@ -270,6 +274,10 @@ ifdef MEDIA_CORE_GST #{
       FLAC = $(addprefix $(DEPS_DIR)/flac/$(SB_CONFIGURATION)/bin/, \
              $(addsuffix $(DLL_SUFFIX), $(FLAC_VERSIONED_NAMES)))
 
+      JPEG_VERSIONED_NAMES = $(join $(JPEG_NAMES), -7)
+      JPEG = $(addprefix $(DEPS_DIR)/libjpeg/$(SB_CONFIGURATION)/bin/, \
+             $(addsuffix $(DLL_SUFFIX), $(JPEG_VERSIONED_NAMES)))
+
       GST_PLUGINS_CORE = \
        $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib/gstreamer-0.10/, \
        $(addsuffix $(DLL_SUFFIX), $(GST_PLUGINS_CORE_NAMES)))
@@ -299,6 +307,7 @@ ifdef MEDIA_CORE_GST #{
                       $(VORBIS) \
                       $(THEORA) \
                       $(FLAC) \
+                      $(JPEG) \
                       $(NULL)
 
       SONGBIRD_GST_PLUGINS += $(GST_PLUGINS_CORE) \
@@ -349,6 +358,9 @@ ifdef MEDIA_CORE_GST #{
       FLAC = $(addprefix $(DEPS_DIR)/flac/$(SB_CONFIGURATION)/lib/lib, \
        $(addsuffix $(DLL_SUFFIX), $(FLAC_NAMES)))
 
+      JPEG = $(addprefix $(DEPS_DIR)/libjpeg/$(SB_CONFIGURATION)/lib/lib, \
+       $(addsuffix $(DLL_SUFFIX), $(JPEG_NAMES)))
+
       GST_PLUGINS_CORE = \
        $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
        $(addsuffix .so, $(GST_PLUGINS_CORE_NAMES)))
@@ -378,6 +390,7 @@ ifdef MEDIA_CORE_GST #{
                       $(VORBIS) \
                       $(THEORA) \
                       $(FLAC) \
+                      $(JPEG) \
                       $(NULL)
 
    endif #}macosx
@@ -411,6 +424,9 @@ ifdef MEDIA_CORE_GST #{
       FLAC = $(addprefix $(DEPS_DIR)/flac/$(SB_CONFIGURATION)/lib/lib, \
              $(addsuffix $(DLL_SUFFIX), $(FLAC_NAMES)))
 
+      JPEG = $(addprefix $(DEPS_DIR)/libjpeg/$(SB_CONFIGURATION)/lib/lib, \
+             $(addsuffix $(DLL_SUFFIX), $(JPEG_NAMES)))
+
       GST_PLUGINS_CORE = \
        $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
        $(addsuffix .so, $(GST_PLUGINS_CORE_NAMES)))
@@ -437,6 +453,7 @@ ifdef MEDIA_CORE_GST #{
                       $(VORBIS) \
                       $(THEORA) \
                       $(FLAC) \
+                      $(JPEG) \
                       $(NULL)
 
       ifdef HAVE_FLUENDO_MP3

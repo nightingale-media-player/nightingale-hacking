@@ -12,6 +12,7 @@
 @lib\vorbisenc-2.dll
 @lib\vorbisfile-3.dll
 @lib\FLAC-8.dll
+@lib\jpeg-7.dll
 @lib\gstreamer-0.10-0.dll
 @lib\gstbase-0.10-0.dll
 @lib\gstdataprotocol-0.10-0.dll
