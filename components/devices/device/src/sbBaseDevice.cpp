@@ -969,14 +969,16 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
           // Set the flag so iterator can be set later
           mVideoInserted = true;
         }
-        // Skip when isWrite && isAudio
+        // Skip when isWrite || isDelete || isAudio. Iterator will be set for
+        // isVideo later.
         else if (!isAudio) {
           mFirstVideoIterator = queue.end();
         }
       }
     }
 
-    if (isAudio && mFirstVideoIterator != queue.end()) {
+    // Guarding against empty queue.
+    if (isAudio && !queue.empty() && mFirstVideoIterator != queue.end()) {
       // Insert audio in front of video so that audio can be handled first.
       queue.insert(mFirstVideoIterator, aRequest);
     } else {
