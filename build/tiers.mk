@@ -91,6 +91,7 @@ tier_componentsall_dirs = \
    components/webservices \
    components/mediaexport \
    components/appstartup \
+   components/networkproxy \
    $(NULL)
 
 tier_appbase_dirs = \

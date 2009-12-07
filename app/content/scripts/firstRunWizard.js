@@ -215,7 +215,76 @@ var firstRunWizard = {
     // Update the UI.
     this.update();
   },
-
+  
+  /**
+   * Return the next proxy source that we can try to import from.
+   * \return                    The id of the next proxy import source or null.
+   */
+  
+  _getNextProxyImport: function 
+    firstRunWizard_getNextProxyImport(aProxyImport, aLastImportId) {
+    var importSources = aProxyImport.importSources.enumerate();
+    while (importSources.hasMoreElements()) {
+      var id = importSources.getNext()
+                            .QueryInterface(Ci.nsISupportsString) + '';
+      if (!aLastImportId)
+        return id;
+      if (id == aLastImportId) {
+        if (importSources.hasMoreElements())
+          return importSources.getNext()
+                 .QueryInterface(Ci.nsISupportsString) + '';
+        return null;
+      }
+    }
+    return null;
+  },
+  
+  /**
+   * Try to import the proxy settings from the next available source
+   * \return                    True if a new set of proxy settings was loaded.
+   */
+  
+  _tryNextProxyImport: function firstRunWizard_tryNextProxyImport() {
+    var proxyImport = Cc["@songbirdnest.com/Songbird/NetworkProxyImport;1"]
+                        .getService(Ci.sbINetworkProxyImport);
+    var lastImportId = this._lastProxyImport;
+    var importId;
+    var success = false;
+    while (!success) {
+      importId = this._getNextProxyImport(proxyImport, lastImportId);
+      if (!importId)
+        return false;
+      success = proxyImport.importProxySettings(importId);
+    }
+    this._lastProxyImport = importId;
+    return true;
+  },
+  
+  /**
+   * Reset the proxy settings
+   */
+  
+  _resetProxySettings: function firstRunWizard_resetProxySettings() {
+    var proxyData = [
+      ["network.proxy.autoconfig_url", ""],
+      ["network.proxy.type", 0],
+      ["network.proxy.ftp", ""],
+      ["network.proxy.ftp_port", 0],
+      ["network.proxy.gopher", ""],
+      ["network.proxy.gopher_port", 0],
+      ["network.proxy.http", ""],
+      ["network.proxy.http_port", 0],
+      ["network.proxy.ssl", ""],
+      ["network.proxy.ssl_port", 0],
+      ["network.proxy.socks", ""],
+      ["network.proxy.socks_port", 0],
+      ["network.proxy.share_proxy_settings", false],
+      ["network.proxy.no_proxies_on", "127.0.0.1;localhost"]
+    ];
+    for (var i in proxyData) {
+      Application.prefs.setValue(proxyData[i][0], proxyData[i][1]);
+    }
+  },
 
   /**
    * Handle internet connection errors.
@@ -242,6 +311,15 @@ var firstRunWizard = {
     // Only handle connection errors once.
     if (this._connectionErrorHandled)
       return;
+
+    if (this._tryNextProxyImport()) {
+     // reload the same page
+      this.wizardElem.goTo(this.wizardElem.currentPage.pageid);
+      return;
+    } else {
+      this._resetProxySettings();
+    }
+    
     this._connectionErrorHandled = true;
 
     // Suppress the wizard page advanced event sent when advancing to the
