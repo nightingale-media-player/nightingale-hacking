@@ -171,6 +171,8 @@
 ./components/sbMockCDDeviceService.js
 ./components/sbMoveRenameHelper.js
 ./components/sbMozVariant.dll
+./components/sbNetworkProxy.dll
+./components/sbNetworkProxyImport.xpt
 ./components/sbOSDControlService.js
 ./components/sbParserError.js
 ./components/sbPlaybackHistoryService.dll
