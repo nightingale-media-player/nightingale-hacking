@@ -38,10 +38,6 @@ if (typeof(Cr) == "undefined")
 // Constants
 
 const SB_OSDHIDE_DELAY = 3000;
-const SB_BLUREVENT_CHECK_DELAY = 1;
-
-const SB_LAST_BLUR_OSD_WINDOW = 0;
-const SB_LAST_BLUR_VIDEO_WINDOW = 1;
 
 
 //==============================================================================
@@ -55,12 +51,7 @@ function sbOSDControlService()
 {
   this._cloakService = Cc["@songbirdnest.com/Songbird/WindowCloak;1"]
                          .getService(Ci.sbIWindowCloak);
-  this._nativeWinMgr =
-    Cc["@songbirdnest.com/integration/native-window-manager;1"]
-      .getService(Ci.sbINativeWindowManager);
-
   this._timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
-  this._blurTimer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
 }
 
 sbOSDControlService.prototype =
@@ -69,12 +60,8 @@ sbOSDControlService.prototype =
   _videoWindowFullscreen: false,
   _osdWindow:             null,
   _cloakService:          null,
-  _nativeWinMgr:          null,
   _timer:                 null,
   _osdControlsShowing:    false,
-  _lastBlurWindow:        -1,
-  _videoWindowsLostFocus: false,
-  _blurTimer:             null,
   
   _videoWinHasFocus:      false,
   _osdWinHasFocus:        false,
@@ -104,7 +91,7 @@ sbOSDControlService.prototype =
     this._osdWindow = this._videoWindow.openDialog(
         "chrome://songbird/content/xul/videoWindowControls.xul",
         "Songbird OSD Control Window",
-        "chrome,modal=no,titlebar=no",
+        "chrome,dependent,modal=no,titlebar=no",
         null);
     this._osdWindow.QueryInterface(Ci.nsIDOMWindowInternal);
 
@@ -184,7 +171,6 @@ sbOSDControlService.prototype =
     }
     
     this._timer.cancel();
-    this._blurTimer.cancel();
     this._osdWindow.removeEventListener("blur",
                                         this._osdWinBlurListener,
                                         false);
@@ -240,7 +226,6 @@ sbOSDControlService.prototype =
     if (!this._cloakService.isCloaked(this._osdWindow)) {
       if (this._osdWinHasFocus)
         this._videoWindow.focus();
-      this._nativeWinMgr.setOnTop(this._osdWindow, false);
       this._cloakService.cloak(this._osdWindow);
     }
 
@@ -264,7 +249,6 @@ sbOSDControlService.prototype =
     // Show the controls if they are currently hidden.
     if (this._cloakService.isCloaked(this._osdWindow)) {
       this._cloakService.uncloak(this._osdWindow);
-      this._nativeWinMgr.setOnTop(this._osdWindow, true);
     }
 
     // Controls are showing
@@ -277,46 +261,18 @@ sbOSDControlService.prototype =
   },
 
   _onOSDWinBlur: function(aEvent) {
-    // The OSD controls have blurred, set a timer to ensure that the focused
-    // window is the video window before hiding the OSD controls.
-    this._lastBlurWindow = SB_LAST_BLUR_OSD_WINDOW;
-    this._videoWindowsLostFocus = true;
-    this._blurTimer.initWithCallback(this,
-                                     SB_BLUREVENT_CHECK_DELAY,
-                                     Ci.nsITimer.TYPE_ONE_SHOT);
-  
     this._osdWinHasFocus = false;
   },
 
   _onOSDWinFocus: function(aEvent) {
-    if (this._lastBlurWindow == SB_LAST_BLUR_VIDEO_WINDOW) {
-      // The OSD window gained focus when the video window blurred, toggle the
-      // flag to prevent the OSD controls from being hidden.
-      this._videoWindowsLostFocus = false;
-    }
-    
     this._osdWinHasFocus = true;
   },
 
   _onVideoWinBlur: function(aEvent) {
-    // The video window has blurred, set a timer to ensure that the focused
-    // window is the OSD controls window before hiding the OSD controls.
-    this._lastBlurWindow = SB_LAST_BLUR_VIDEO_WINDOW;
-    this._videoWindowsLostFocus = true;
-    this._blurTimer.initWithCallback(this,
-                                     SB_BLUREVENT_CHECK_DELAY,
-                                     Ci.nsITimer.TYPE_ONE_SHOT);
-  
     this._videoWinHasFocus = false;
   },
 
   _onVideoWinFocus: function(aEvent) {
-    if (this._lastBlurWindow == SB_LAST_BLUR_OSD_WINDOW) {
-      // The video window gained focus when the OSD controls blurred, toggle
-      // the flag to prevent the OSD controls from being hidden.
-      this._videoWindowsLostFocus = false;
-    }
-    
     this._videoWinHasFocus = true;
   },
 
@@ -358,26 +314,6 @@ sbOSDControlService.prototype =
   notify: function(aTimer) {
     if (aTimer == this._timer) {
       this.hideOSDControls();
-    }
-    else if (aTimer == this._blurTimer) {
-      if (this._videoWindowsLostFocus && !this._videoWindowFullscreen) {
-        //
-        // When one of the video window elements (osd or video window) lost
-        // focus, the other window element did not gain focus. This means that
-        // another window in the OS gained focus. To prevent weird Z-ordering
-        // issues here, just hide the OSD controls now to prevent it from
-        // hovering above other windows in the OS.
-        // 
-        // We only do this when we are not in fullscreen since the blur
-        // tracking works on the video window, not the native fullscreen
-        // window used by the mediacores.
-        //
-        this.hideOSDControls();
-      }
-
-      // Cleanup blur handling
-      this._videoWindowsLostFocus = false;
-      this._lastBlurWindow = -1;
     }
   },
 };
