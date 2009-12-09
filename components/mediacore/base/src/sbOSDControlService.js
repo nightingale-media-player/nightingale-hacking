@@ -238,9 +238,10 @@ sbOSDControlService.prototype =
       return;
 
     if (!this._cloakService.isCloaked(this._osdWindow)) {
+      if (this._osdWinHasFocus)
+        this._videoWindow.focus();
       this._nativeWinMgr.setOnTop(this._osdWindow, false);
       this._cloakService.cloak(this._osdWindow);
-      this._osdWinHasFocus = false;
     }
 
     // The OSD controls are no longer showing
