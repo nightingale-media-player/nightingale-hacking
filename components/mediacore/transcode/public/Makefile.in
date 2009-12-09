@@ -35,6 +35,7 @@ XPIDL_SRCS = sbITranscodeAlbumArt.idl \
              sbITranscodeImage.idl \
              sbITranscodeProfile.idl \
              sbITranscodeManager.idl \
+             sbITranscodeVideoJob.idl \
              $(NULL)
 
 XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/property/public \

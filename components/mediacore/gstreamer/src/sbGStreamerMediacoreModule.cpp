@@ -36,6 +36,7 @@
 #include "sbGStreamerService.h"
 #include "sbGStreamerRTPStreamer.h"
 #include "sbGStreamerTranscode.h"
+#include "sbGStreamerVideoTranscode.h"
 #include "metadata/sbGStreamerMetadataHandler.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbGStreamerService, Init)
@@ -47,6 +48,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbGStreamerMetadataHandler, Init)
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbGStreamerRTPStreamer, Init)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbGStreamerTranscode, Init)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbGStreamerVideoTranscoder, Init)
 
 static const nsModuleComponentInfo components[] =
 {
@@ -81,6 +83,12 @@ static const nsModuleComponentInfo components[] =
     SB_GSTREAMER_TRANSCODE_CID,
     SB_GSTREAMER_TRANSCODE_CONTRACTID,
     sbGStreamerTranscodeConstructor
+  },
+  {
+    SB_GSTREAMER_VIDEO_TRANSCODE_CLASSNAME,
+    SB_GSTREAMER_VIDEO_TRANSCODE_CID,
+    SB_GSTREAMER_VIDEO_TRANSCODE_CONTRACTID,
+    sbGStreamerVideoTranscoderConstructor
   }
 };
 
