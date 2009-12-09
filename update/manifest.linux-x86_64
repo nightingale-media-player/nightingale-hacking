@@ -293,6 +293,7 @@
 ./gst-plugins/libgsticydemux.so
 ./gst-plugins/libgstid3demux.so
 ./gst-plugins/libgstid3tag.so
+./gst-plugins/libgstjpeg.so
 ./gst-plugins/libgstlevel.so
 ./gst-plugins/libgstmatroska.so
 ./gst-plugins/libgstmozillasrc.so
@@ -384,6 +385,7 @@
 ./lib/libgstsdp-0.10.so
 ./lib/libgsttag-0.10.so
 ./lib/libgstvideo-0.10.so
+./lib/libjpeg.so
 ./lib/libogg.so
 ./lib/libtheora.so
 ./lib/libtheoradec.so

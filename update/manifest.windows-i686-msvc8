@@ -325,6 +325,7 @@
 ./gst-plugins/gsticydemux.dll
 ./gst-plugins/gstid3demux.dll
 ./gst-plugins/gstid3tag.dll
+./gst-plugins/gstjpeg.dll
 ./gst-plugins/gstlevel.dll
 ./gst-plugins/gstmatroska.dll
 ./gst-plugins/gstmozillasrc.dll
@@ -421,6 +422,7 @@
 ./lib/gstvideo-0.10-0.dll
 ./lib/iconv.dll
 ./lib/intl.dll
+./lib/jpeg-7.dll
 ./lib/libglib-2.0-0.dll
 ./lib/libgmodule-2.0-0.dll
 ./lib/libgobject-2.0-0.dll
