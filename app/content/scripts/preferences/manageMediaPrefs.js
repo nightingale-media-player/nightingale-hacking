@@ -408,18 +408,21 @@ var manageMediaPrefsPane = {
       }
 
       // Try to create a test file so we can be sure it can be written to
-      try {
-        var testFile = dir.clone();
-        testFile.append(MMPREF_WRITE_TEST_FILE);
-        if (!testFile.exists()) {
-          testFile.create(Ci.nsILocalFile.NORMAL_FILE_TYPE, PERMS_FILE);
-          testFile.remove(false);
+      // (unless it's the default, in which case creating the directory is bad)
+      if (!(missingDefault && aSilent)) {
+        try {
+          var testFile = dir.clone();
+          testFile.append(MMPREF_WRITE_TEST_FILE);
+          if (!testFile.exists()) {
+            testFile.create(Ci.nsILocalFile.NORMAL_FILE_TYPE, PERMS_FILE);
+            testFile.remove(false);
+          }
+        } catch (ex) {
+          showErrorNotification(
+              SBFormattedString("prefs.media_management.error.not_writable",
+                                [dir.path]));
+          return false;
         }
-      } catch (ex) {
-        showErrorNotification(
-            SBFormattedString("prefs.media_management.error.not_writable",
-                              [dir.path]));
-        return false;
       }
 
       if (document.getElementById("watch_folder_enable_pref").value)
