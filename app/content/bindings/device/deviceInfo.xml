@@ -223,7 +223,8 @@
               </xul:row>
 
               <!-- Firmware version row. -->
-              <xul:row devicespec="firmware_version">
+              <xul:row devicespec="firmware_version"
+                       class="device-spec-row-hide-no-value">
                 <xul:label sbid="firmware_version_label"
                            class="device-specs-grid-label"
                            value="&device.info.firmware_version.label;"/>

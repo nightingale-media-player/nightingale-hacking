@@ -200,3 +200,9 @@ sb-properties-formatter > hbox > vbox > textbox
 {
   width: 1em;
 }
+
+.device-spec-row-hide-no-value[novalue="true"]
+{
+  display: none;
+}
+

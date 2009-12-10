@@ -62,7 +62,7 @@
   <!-- Device info. -->
   <sb-device-info
     id="device_info"
-    devicespecs="friendly_name,serial_number,vendor,model,capacity,playback_formats,firmware_version"
+    devicespecs="friendly_name,vendor,model,capacity,playback_formats,firmware_version"
     flex="1"/>
 
 

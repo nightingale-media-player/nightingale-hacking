@@ -260,54 +260,62 @@ var DIW = {
     var deviceSpec = aRow.getAttribute("devicespec");
     switch (deviceSpec) {
       case "model" :
-        this._deviceSpecUpdateValue("model_value_label",
+        this._deviceSpecUpdateValue(aRow,
+                                    "model_value_label",
                                     this._getDeviceModel());
         break;
 
       case "capacity" :
-        this._deviceSpecUpdateValue("capacity_value_label",
+        this._deviceSpecUpdateValue(aRow,
+                                    "capacity_value_label",
                                     this._getDeviceModelSize());
         break;
 
       case "model_capacity" :
-        this._deviceSpecUpdateModelCapacity();
+        this._deviceSpecUpdateModelCapacity(aRow);
         break;
 
       case "product_capacity" :
-        this._deviceSpecUpdateProductCapacity();
+        this._deviceSpecUpdateProductCapacity(aRow);
         break;
 
       case "friendly_name" :
-        this._deviceSpecUpdateValue("friendly_name_value_label",
+        this._deviceSpecUpdateValue(aRow,
+                                    "friendly_name_value_label",
                                     this._getDeviceFriendlyName());
         break;
 
       case "serial_number" :
-        this._deviceSpecUpdateValue("serial_number_value_label",
+        this._deviceSpecUpdateValue(aRow,
+                                    "serial_number_value_label",
                                     this._getDeviceSerialNumber());
         break;
 
       case "vendor" :
-        this._deviceSpecUpdateValue("vendor_value_label",
+        this._deviceSpecUpdateValue(aRow,
+                                    "vendor_value_label",
                                     this._getDeviceVendor());
         break;
 
       case "access" :
-        this._deviceSpecUpdateValue("access_value_label",
+        this._deviceSpecUpdateValue(aRow,
+                                    "access_value_label",
                                     this._getDeviceAccessCompatibilityDesc());
         break;
 
       case "playback_formats" :
-        this._deviceSpecUpdateDesc("playback_formats_value_label",
+        this._deviceSpecUpdateDesc(aRow,
+                                   "playback_formats_value_label",
                                    this._getDevicePlaybackFormats());
         break;
 
       case "battery" :
-        this._deviceSpecUpdateBattery();
+        this._deviceSpecUpdateBattery(aRow);
         break;
 
       case "firmware_version":
-        this._deviceSpecUpdateValue("firmware_version_value_label",
+        this._deviceSpecUpdateValue(aRow,
+                                    "firmware_version_value_label",
                                     this._getDeviceFirmwareVersion());
         break;
 
@@ -319,14 +327,23 @@ var DIW = {
 
   /**
    * \brief Update the device spec value of the label specified by aLabelID with
-   *        the value specified by aValue.
+   *        the value specified by aValue in the device spec row specified by
+   *        aRow.
    *
+   * \param aRow                Device spec row to update.
    * \param aLabelID            ID of label to update.
    * \param aValue              Value with which to update label.
    */
 
-  _deviceSpecUpdateValue: function DIW__deviceSpecUpdateValue(aLabelID,
+  _deviceSpecUpdateValue: function DIW__deviceSpecUpdateValue(aRow,
+                                                              aLabelID,
                                                               aValue) {
+    // Set the row no value attribute.
+    if (aValue && aRow.hasAttribute("novalue"))
+      aRow.removeAttribute("novalue");
+    else if (!aValue && (aRow.getAttribute("novalue") != "true"))
+      aRow.setAttribute("novalue", true);
+
     // Set the value label.
     var labelElem = this._getElement(aLabelID);
     if (labelElem.getAttribute("value") != aValue)
@@ -336,14 +353,24 @@ var DIW = {
 
   /**
    * \brief Update the device spec text of the description specified by aDescID
-   *        with the text specified by aText.  Assume that the first child node
-   *        of the description exists and is a text node.
+   *        with the text specified by aText in the row specified by aRow.
+   *        Assume that the first child node of the description exists and is a
+   *        text node.
    *
+   * \param aRow                Device spec row to update.
    * \param aDescID             ID of description to update.
    * \param aText               Text with which to update description.
    */
 
-  _deviceSpecUpdateDesc: function DIW__deviceSpecUpdateDesc(aDescID, aText) {
+  _deviceSpecUpdateDesc: function DIW__deviceSpecUpdateDesc(aRow,
+                                                            aDescID,
+                                                            aText) {
+    // Set the row no value attribute.
+    if (aText && aRow.hasAttribute("novalue"))
+      aRow.removeAttribute("novalue");
+    else if (!aText && (aRow.getAttribute("novalue") != "true"))
+      aRow.setAttribute("novalue", true);
+
     // Set the description text.
     var descElem = this._getElement(aDescID);
     if (descElem.firstChild.data != aText)
@@ -352,27 +379,33 @@ var DIW = {
 
 
   /**
-   * \brief Update the device spec model/capacity row.
+   * \brief Update the device spec model/capacity row specified by aRow.
+   *
+   * \param aRow                Device spec row to update.
    */
 
   _deviceSpecUpdateModelCapacity: function
-                                    DIW__deviceSpecUpdateModelCapacity() {
+                                    DIW__deviceSpecUpdateModelCapacity(aRow) {
     // Get the device model and model capacity.
     var devModelValue = this._getDeviceModel();
     var devCapValue = this._getDeviceModelSize();
     var devModelCapValue = devModelValue + " (" + devCapValue + ")";
 
     // Upate the device model/capacity.
-    this._deviceSpecUpdateValue("model_capacity_value_label", devModelCapValue);
+    this._deviceSpecUpdateValue(aRow,
+                                "model_capacity_value_label",
+                                devModelCapValue);
   },
 
 
   /**
-   * \brief Update the device spec product/capacity row.
+   * \brief Update the device spec product/capacity row specified by aRow.
+   *
+   * \param aRow                Device spec row to update.
    */
 
   _deviceSpecUpdateProductCapacity: function
-                                    DIW__deviceSpecUpdateProductCapacity() {
+                                    DIW__deviceSpecUpdateProductCapacity(aRow) {
     // Get the device product name
     var devProductValue = this._getDeviceProduct();
 
@@ -388,16 +421,19 @@ var DIW = {
                              [ devProductValue, capacity ]);
  
     // Upate the device model/capacity.
-    this._deviceSpecUpdateValue("product_capacity_value_label",
+    this._deviceSpecUpdateValue(aRow,
+                                "product_capacity_value_label",
                                 devProductCapValue);
   },
 
 
   /**
-   * \brief Update the device spec battery row.
+   * \brief Update the device spec battery row specified by aRow.
+   *
+   * \param aRow                Device spec row to update.
    */
 
-  _deviceSpecUpdateBattery: function DIW__deviceSpecUpdateBattery() {
+  _deviceSpecUpdateBattery: function DIW__deviceSpecUpdateBattery(aRow) {
     // Get the battery status.
     var batteryLevel = {};
     var onBatteryPower = {};
@@ -815,8 +851,9 @@ var DIW = {
         .getService(Ci.sbIDeviceFirmwareUpdater);
     
     // If we have a firmware handler for the device, use it to read
-    // the device firmware version instead of using the one provided
-    // by the device properties.
+    // the device firmware version.  Don't use the device properties firmware
+    // version as it will generally not match the version displayed in the
+    // device UI.
     if(deviceFirmwareUpdater.hasHandler(this._device)) {
       var handler = deviceFirmwareUpdater.getHandler(this._device);
       handler.bind(this._device, null);
@@ -827,16 +864,13 @@ var DIW = {
       catch(err) {}
       
       handler.unbind();
+
+      if (firmwareVersion == null) {
+        firmwareVersion = SBString("device.info.unknown");
+      }
     }
     else {
-      try { 
-        firmwareVersion = this._deviceProperties.firmwareVersion; 
-      }
-      catch(err) {}
-    }
-
-    if (firmwareVersion == null) {
-      firmwareVersion = SBString("device.info.unknown");
+      firmwareVersion = "";
     }
 
     return firmwareVersion;
