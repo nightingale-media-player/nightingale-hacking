@@ -97,7 +97,7 @@ Imported by bindings.css or directly into feathers.
 
 
 .device-capacity-legend-label-box {
-
+  min-width: 50px;
 }
 
 
