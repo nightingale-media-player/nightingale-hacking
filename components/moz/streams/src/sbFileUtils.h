@@ -28,6 +28,7 @@
 #define SBFILEUTILS_H_
 
 #include <nsCOMPtr.h>
+#include <nsCRT.h>
 #include <nsIFile.h>
 #include <nsIInputStream.h>
 #include <nsIOutputStream.h>
@@ -85,6 +86,19 @@ sbConsumeStream(nsIInputStream *aSource, PRUint32 aMaxCount,
 nsresult sbNewFileURI(nsIFile* aFile,
                       nsIURI** aURI);
 
+/**
+ * Remove all bad file name characters from the file name specified by
+ * aFileName.  If aAllPlatforms is true, remove characters that are bad on any
+ * platform; otherwise, only remove characters that are bad on the current
+ * platform.
+ *
+ * \param aFileName File name from which to remove bad characters.
+ * \param aAllPlatforms If true, remove characters that are bad on any platform.
+ */
+void RemoveBadFileNameCharacters(nsAString& aFileName,
+                                 PRBool     aAllPlatforms);
+
+
 //
 // Auto-disposal class wrappers.
 //
@@ -104,11 +118,26 @@ SB_AUTO_NULL_CLASS(sbAutoRemoveFile,
                    mValue->Remove(PR_FALSE));
 
 
-/**
- * Default file permissions.
- */
+//
+// Default file permissions.
+//
 
 #define SB_DEFAULT_FILE_PERMISSIONS 0644
 
 
+//
+// Bad file name characters.
+//
+//   SB_FILE_BAD_CHARACTERS     Bad file name characters, including file path
+//                              separators.
+//   SB_FILE_BAD_CHARACTERS_ALL_PLATFORMS
+//                              Bad file name characters for all platforms,
+//                              including file path separators for all
+//                              platforms.
+//
+
+#define SB_FILE_BAD_CHARACTERS FILE_ILLEGAL_CHARACTERS FILE_PATH_SEPARATOR
+#define SB_FILE_BAD_CHARACTERS_ALL_PLATFORMS CONTROL_CHARACTERS "/\\:*?\"<>|"
+
 #endif /* SBFILEUTILS_H_ */
+

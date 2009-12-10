@@ -262,3 +262,24 @@ sbNewFileURI(nsIFile* aFile,
   return NS_OK;
 }
 
+void
+RemoveBadFileNameCharacters(nsAString& aFileName,
+                            PRBool     aAllPlatforms)
+{
+  // Get the list of bad characters.
+  const char* badCharacters;
+  if (aAllPlatforms)
+    badCharacters = SB_FILE_BAD_CHARACTERS_ALL_PLATFORMS;
+  else
+    badCharacters = SB_FILE_BAD_CHARACTERS;
+
+  // Remove all bad characters from the file name.
+  aFileName.StripChars(badCharacters);
+
+  // Windows does not like spaces at the begining or end of a file/folder name.
+  // Windows also does not like dots at the begining or end of the file/folder
+  // name and dots are bad as well on some other operating systems as they
+  // represent a hidden file.
+  aFileName.Trim(" .", PR_TRUE, PR_TRUE);
+}
+
