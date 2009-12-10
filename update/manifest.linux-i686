@@ -445,6 +445,7 @@
 ./testharness/filesystemevents/test_filesystemevents.js
 ./testharness/filesystemevents/test_filesystemsession.js
 ./testharness/fileutils/test_directory_enumerator.js
+./testharness/fileutils/test_file_utils.js
 ./testharness/gstreamer/head_gstreamer.js
 ./testharness/gstreamer/test_plugins.js
 ./testharness/intl/test_stringtransform.js
