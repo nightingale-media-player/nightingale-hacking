@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+<devicecaps xmlns="http://songbirdnest.com/devicecaps/1.0">
+  <audio>
+    <format mime="audio/mpeg" container="id3" codec="mp3">
+      <bitrates>
+        <range min="8000" max="320000" step="1" />
+      </bitrates>
+      <samplerates>
+        <value>8000</value>
+        <value>11025</value>
+        <value>12000</value>
+        <value>16000</value>
+        <value>22050</value>
+        <value>24000</value>
+        <value>32000</value>
+        <value>44100</value>
+        <value>48000</value>
+      </samplerates>
+      <channels>
+        <range min="1" max="2" step="1" />
+      </channels>
+    </format>
+  </audio>
+  <image>
+    <format mime="image/jpeg">
+      <explicit-sizes>
+        <size width="200" height="200" />
+      </explicit-sizes>
+      <widths>
+        <range min="16" max="2048" step="1" />
+      </widths>
+      <heights>
+        <range min="16" max="2048" step="1" />
+      </heights>
+    </format>
+  </image>
+</devicecaps>
+

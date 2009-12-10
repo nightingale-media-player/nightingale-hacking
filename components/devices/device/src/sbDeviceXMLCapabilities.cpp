@@ -28,6 +28,7 @@
 // Songbird includes
 #include <sbIDeviceCapabilities.h>
 #include <sbMemoryUtils.h>
+#include <sbStringUtils.h>
 
 // Mozilla includes
 #include <nsComponentManagerUtils.h>
@@ -37,7 +38,10 @@
 #include <nsIDOMNode.h>
 #include <nsIDOMNodeList.h>
 #include <nsIMutableArray.h>
+#include <nsIScriptSecurityManager.h>
+#include <nsIXMLHttpRequest.h>
 #include <nsMemory.h>
+#include <nsServiceManagerUtils.h>
 #include <nsTArray.h>
 #include <nsThreadUtils.h>
 
@@ -90,6 +94,65 @@ sbDeviceXMLCapabilities::Read(sbIDeviceCapabilities * aCapabilities) {
 
   rv = ProcessDocument(mDocument);
   NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
+}
+
+/* static */ nsresult
+sbDeviceXMLCapabilities::AddCapabilities
+                           (sbIDeviceCapabilities* aCapabilities,
+                            const char*            aXMLCapabilitiesSpec)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aCapabilities);
+  NS_ENSURE_ARG_POINTER(aXMLCapabilitiesSpec);
+
+  // Function variables.
+  nsresult rv;
+
+  // Create an XMLHttpRequest object.
+  nsCOMPtr<nsIXMLHttpRequest>
+    xmlHttpRequest = do_CreateInstance(NS_XMLHTTPREQUEST_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIScriptSecurityManager> ssm =
+    do_GetService(NS_SCRIPTSECURITYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIPrincipal> principal;
+  rv = ssm->GetSystemPrincipal(getter_AddRefs(principal));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = xmlHttpRequest->Init(principal, nsnull, nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Read the device capabilities file.
+  rv = xmlHttpRequest->OpenRequest(NS_LITERAL_CSTRING("GET"),
+                                   nsCString(aXMLCapabilitiesSpec),
+                                   PR_FALSE,                  // async
+                                   SBVoidString(),            // user
+                                   SBVoidString());           // password
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = xmlHttpRequest->Send(nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the device capabilities document.
+  nsCOMPtr<nsIDOMDocument> deviceCapabilitiesDocument;
+  rv = xmlHttpRequest->GetResponseXML
+                         (getter_AddRefs(deviceCapabilitiesDocument));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Read the device capabilities.
+  nsCOMPtr<sbIDeviceCapabilities> deviceCapabilities =
+    do_CreateInstance(SONGBIRD_DEVICECAPABILITIES_CONTRACTID);
+  sbDeviceXMLCapabilities xmlCapabilities(deviceCapabilitiesDocument);
+  rv = xmlCapabilities.Read(deviceCapabilities);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = deviceCapabilities->InitDone();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Add any device capabilities from the device capabilities document.
+  if (xmlCapabilities.HasCapabilities()) {
+    rv = aCapabilities->AddCapabilities(deviceCapabilities);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   return NS_OK;
 }
 

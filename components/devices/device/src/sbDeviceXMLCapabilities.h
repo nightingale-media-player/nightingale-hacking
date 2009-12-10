@@ -62,6 +62,16 @@ public:
    * \return true if DOM document contains device capabilities.
    */
   PRBool HasCapabilities() { return mHasCapabilities; }
+  /**
+   * Read the capabilities from the file with the URI spec specified by
+   * aXMLCapabilitiesSpec and add them to the device capabilities object
+   * specified by aCapabilities.
+   * \param aCapabilities The capabilities object to which to add capabilities.
+   * \param aXMLCapabilitiesSpec URI spec of capabilities file.
+   */
+  static nsresult AddCapabilities
+                    (sbIDeviceCapabilities* aCapabilities,
+                     const char*            aXMLCapabilitiesSpec);
 private:
   nsCOMPtr<nsIDOMDocument> mDocument;
   sbIDeviceCapabilities * mDeviceCaps;  // Non-owning reference

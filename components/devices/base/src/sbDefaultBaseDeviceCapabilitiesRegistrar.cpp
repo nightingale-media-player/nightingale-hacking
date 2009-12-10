@@ -35,6 +35,7 @@
 #include <prlog.h>
 
 // Songbird includes
+#include <sbDeviceXMLCapabilities.h>
 #include <sbIDevice.h>
 #include <sbIDeviceCapabilities.h>
 #include <sbIDeviceEvent.h>
@@ -62,8 +63,6 @@ static PRLogModuleInfo* gDefaultBaseDeviceCapabilitiesRegistrarLog = nsnull;
 #define TRACE(args) /* nothing */
 #define LOG(args)   /* nothing */
 #endif
-
-PRInt32 const K = 1000;
 
 sbDefaultBaseDeviceCapabilitiesRegistrar::
   sbDefaultBaseDeviceCapabilitiesRegistrar()
@@ -125,168 +124,10 @@ sbDefaultBaseDeviceCapabilitiesRegistrar::
     }
   }
 
-  // Nothing in the capabilities preferences, so use defaults
-  static PRUint32 functionTypes[] = {
-    sbIDeviceCapabilities::FUNCTION_AUDIO_PLAYBACK,
-    sbIDeviceCapabilities::FUNCTION_IMAGE_DISPLAY
-  };
-
-  rv = aCapabilities->SetFunctionTypes(functionTypes,
-                                       NS_ARRAY_LENGTH(functionTypes));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  static PRUint32 audioContentTypes[] = {
-    sbIDeviceCapabilities::CONTENT_AUDIO
-  };
-
-  rv = aCapabilities->AddContentTypes(sbIDeviceCapabilities::FUNCTION_AUDIO_PLAYBACK,
-                                      audioContentTypes,
-                                      NS_ARRAY_LENGTH(audioContentTypes));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  static PRUint32 imageContentTypes[] = {
-    sbIDeviceCapabilities::CONTENT_IMAGE,
-  };
-
-  rv = aCapabilities->AddContentTypes(sbIDeviceCapabilities::FUNCTION_IMAGE_DISPLAY,
-                                      imageContentTypes,
-                                      NS_ARRAY_LENGTH(imageContentTypes));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  static char const * audioFormats[] = {
-    "audio/mpeg",
-  };
-
-  rv = aCapabilities->AddFormats(sbIDeviceCapabilities::CONTENT_AUDIO,
-                                 audioFormats,
-                                 NS_ARRAY_LENGTH(audioFormats));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  static char const * imageFormats[] = {
-    "image/jpeg"
-  };
-  rv = aCapabilities->AddFormats(sbIDeviceCapabilities::CONTENT_IMAGE,
-                                 imageFormats,
-                                 NS_ARRAY_LENGTH(imageFormats));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  /**
-   * Default MP3 bit rates
-   */
-  static PRInt32 DefaultMinMP3BitRate = 8 * K;
-  static PRInt32 DefaultMaxMP3BitRate = 320 * K;
-
-  struct sbSampleRates
-  {
-    PRUint32 const Rate;
-    char const * const TextValue;
-  };
-  /**
-   * Default MP3 sample rates
-   */
-  static PRUint32 DefaultMP3SampleRates[] =
-  {
-    8000,
-    11025,
-    12000,
-    16000,
-    22050,
-    24000,
-    32000,
-    44100,
-    48000
-  };
-  // Build the MP3 bit rate range
-  nsCOMPtr<sbIDevCapRange> bitRateRange =
-    do_CreateInstance(SB_IDEVCAPRANGE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = bitRateRange->Initialize(DefaultMinMP3BitRate, DefaultMaxMP3BitRate, 1);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Build the MP3 sample rate range
-  nsCOMPtr<sbIDevCapRange> sampleRateRange =
-    do_CreateInstance(SB_IDEVCAPRANGE_CONTRACTID, &rv);
-  for (PRUint32 index = 0;
-       index < NS_ARRAY_LENGTH(DefaultMP3SampleRates);
-       ++index) {
-    rv = sampleRateRange->AddValue(DefaultMP3SampleRates[index]);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  // Build the MP3 Channel range
-  nsCOMPtr<sbIDevCapRange> channelRange =
-    do_CreateInstance(SB_IDEVCAPRANGE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = channelRange->Initialize(1, 2, 1);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIAudioFormatType> audioFormatType =
-    do_CreateInstance(SB_IAUDIOFORMATTYPE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = audioFormatType->Initialize(NS_LITERAL_CSTRING("id3"),  // container type
-                                   NS_LITERAL_CSTRING("mp3"),  // codec
-                                   bitRateRange,
-                                   sampleRateRange,
-                                   channelRange,
-                                   nsnull);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = aCapabilities->AddFormatType(NS_LITERAL_STRING("audio/mpeg"),
-                                    audioFormatType);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  /* We also specify a wide-ranging JPEG support type. This is used for album
-     art. Devices that don't do album art at all aren't hurt by this, and every
-     device that DOES do album art is capable of handling JPEG. */
-  nsCOMPtr<sbIImageFormatType> imageFormatType =
-    do_CreateInstance(SB_IIMAGEFORMATTYPE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Assume by default that anything from 16x16 to 2048x2048 is supported,
-  // and have a default size of 200x200 
-  // These are pretty arbitrary choices!
-
-  /* Minimum and maximum width/height we permit for album art images */
-  const PRInt32 defaultMinImageDimension = 16;
-  const PRInt32 defaultMaxImageDimension = 2048;
-
-  /* Default width/height for images if we have to transcode */
-  const PRInt32 defaultImageWidth = 200;
-  const PRInt32 defaultImageHeight = 200;
-
-  nsCOMPtr<sbIDevCapRange> imageRange =
-    do_CreateInstance(SB_IDEVCAPRANGE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = imageRange->Initialize(defaultMinImageDimension,
-                              defaultMaxImageDimension,
-                              1);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIMutableArray> imageSizes =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIImageSize> defaultImageSize =
-    do_CreateInstance(SB_IMAGESIZE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = defaultImageSize->Initialize(defaultImageWidth, defaultImageHeight);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = imageSizes->AppendElement(defaultImageSize, PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = imageFormatType->Initialize(NS_LITERAL_CSTRING("image/jpeg"),
-                                   imageSizes,
-                                   imageRange,
-                                   imageRange);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = aCapabilities->AddFormatType(NS_LITERAL_STRING("image/jpeg"),
-                                    imageFormatType);
+  // Add capabilities from the default device capabilities document.
+  rv = sbDeviceXMLCapabilities::AddCapabilities
+         (aCapabilities,
+          "chrome://songbird/content/devices/sbDefaultDeviceCapabilities.xml");
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
