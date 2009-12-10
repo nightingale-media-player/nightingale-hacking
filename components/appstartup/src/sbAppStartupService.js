@@ -211,6 +211,14 @@ sbAppStartupService.prototype =
     }
     
     try {
+      // Handle app startup command line parameters
+      this._initStartupCmdLine();
+    }
+    catch( e ) {
+      Cu.reportError(e);
+    }
+
+    try {
       // On Windows and Linux, register the songbird:// protocol.
       // (Mac is in the info.plist)
       var platform = Cc["@mozilla.org/system-info;1"]
@@ -232,6 +240,9 @@ sbAppStartupService.prototype =
    * \brief Main Application Shutdown
    */
   _shutdownApplication: function () {
+    // Shutdown app startup commandline handler
+    this._cleanupStartupCmdLine();
+
     // Shutdown dataremote commandline handler
     this._cleanupDataRemoteCmdLine();
     
@@ -459,7 +470,55 @@ sbAppStartupService.prototype =
       
     cmdLineManager.removeFlagHandler(this._dataRemoteCmdLineHandler, "data");
   }, 
-   
+
+  /**
+   * \brief Initialize the DataRemote used to propagate the command line
+   *        parameters.
+   */
+  _initStartupCmdLine: function () {
+    var cmdLine = Cc
+      ["@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird"];
+    if (!cmdLine)
+      return;
+
+    var cmdLineService = cmdLine.getService(Ci.nsICommandLineHandler);
+    if (!cmdLineService)
+      return;
+
+    var cmdLineManager =
+      cmdLineService.QueryInterface(Ci.sbICommandLineManager);
+    if (!cmdLineManager)
+      return;
+
+    // Add the start in application directory command line flag handler.
+    cmdLineManager.addFlagHandler(startupCmdLineHandler,
+                                  "start-in-app-directory");
+  },
+
+  /**
+   * \brief Cleanup the DataRemote used to propagate the command line
+   *        parameters.
+   */
+  _resetStartupCmdLine: function () {
+    var cmdLine = Cc
+      ["@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird"];
+    if (!cmdLine)
+      return;
+
+    var cmdLineService = cmdLine.getService(Ci.nsICommandLineHandler);
+    if (!cmdLineService)
+      return;
+
+    var cmdLineManager =
+      cmdLineService.QueryInterface(Ci.sbICommandLineManager);
+    if (!cmdLineManager)
+      return;
+
+    // Remove the start in application directory command line flag handler.
+    commandLineManager.removeFlagHandler(startupCmdLineHandler,
+                                         "start-in-app-directory");
+  },
+
   /**
    * \brief Register the songbird:// protocol handler on Windows
    */
@@ -864,4 +923,38 @@ function NSGetModule(compMgr, fileSpec)
     }
   );
 }
+
+//------------------------------------------------------------------------------
+// Startup command line handler
+
+var startupCmdLineHandler = {
+  handleFlag: function startupCmdLineHandler_handleFlag(aFlag, aParam) {
+    switch (aFlag)
+    {
+      case "start-in-app-directory" :
+        this._handleStartInAppDirectory();
+        break;
+
+      default :
+        return false;
+    }
+
+    return true;
+  },
+
+  _handleStartInAppDirectory:
+    function startupCmdLineHandler__handleStartInAppDirectory() {
+    // Get the application directory.
+    var directoryService = Cc["@mozilla.org/file/directory_service;1"]
+                             .getService(Ci.nsIProperties);
+    var appDirectory = directoryService.get("resource:app", Ci.nsIFile);
+
+    // Set the current working directory to the application directory.
+    var fileUtils = Cc["@songbirdnest.com/Songbird/FileUtils;1"]
+                      .getService(Ci.sbIFileUtils);
+    fileUtils.currentDir = appDirectory;
+  },
+
+  QueryInterface: XPCOMUtils.generateQI([ Ci.sbICommandLineFlagHandler ])
+};
 

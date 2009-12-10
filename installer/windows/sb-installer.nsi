@@ -168,9 +168,12 @@ Function InstallBrandingRegistryKeys
    ; in "http://msdn.microsoft.com/en-us/magazine/cc301341.aspx".
    ;
 
-   ; Register a manage volume device ProgID to launch Songbird.
+   ; Register a manage volume device ProgID to launch Songbird.  By default,
+   ; Songbird will be launched with the volume mount point as the current
+   ; working directory.  This prevents the volume from being ejected.  To avoid
+   ; this, Songbird is directed to start in the Songbird application directory.
    StrCpy $0 "Software\Classes\${AutoPlayManageVolumeDeviceProgID}\shell\manage\command"
-   WriteRegStr HKLM $0 "" "$INSTDIR\${FileMainEXE} -autoplay-manage-volume-device"
+   WriteRegStr HKLM $0 "" "$INSTDIR\${FileMainEXE} -autoplay-manage-volume-device -start-in-app-directory"
 
    ; Register a volume device arrival handler to invoke the manage volume
    ; device ProgID.

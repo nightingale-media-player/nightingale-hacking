@@ -1,7 +1,7 @@
 #filter substitution
 [steps:update]
 0001=exec $APPDIR$cdriphelper.exe upgrade
-0002=exec REG ADD "HKLM\Software\Classes\@SB_APPNAME@.ManageVolumeDevice\shell\manage\command" /ve /t REG_SZ /d "$APPDIR$Songbird.exe -autoplay-manage-volume-device" /f
+0002=exec REG ADD "HKLM\Software\Classes\@SB_APPNAME@.ManageVolumeDevice\shell\manage\command" /ve /t REG_SZ /d "$APPDIR$Songbird.exe -autoplay-manage-volume-device -start-in-app-directory" /f
 0003=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageVolumeDeviceOnArrival" /v "Action" /t REG_SZ /d "Manage device" /f
 0004=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageVolumeDeviceOnArrival" /v "DefaultIcon" /t REG_SZ /d "$APPDIR$Songbird.exe" /f
 0005=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageVolumeDeviceOnArrival" /v "InvokeProgID" /t REG_SZ /d "@SB_APPNAME@.ManageVolumeDevice" /f

@@ -24,79 +24,90 @@
  *=END SONGBIRD GPL
  */
 
+#ifndef _SB_FILE_UTILS_H_
+#define _SB_FILE_UTILS_H_
+
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird file utilities module services.
+// Songbird file utilities defs.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
- * \file  sbFileUtilsModule.cpp
- * \brief Songbird File Utilities Component Factory and Main Entry Point.
+ * \file  sbFileUtils.h
+ * \brief Songbird File Utilities Definitions.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird file utilities module imported services.
+// Songbird file utilities imported services.
 //
 //------------------------------------------------------------------------------
 
-// Local imports.
-#include "sbDirectoryEnumerator.h"
-#include "sbFileUtils.h"
-
-// Mozilla imports.
-#include <nsIGenericFactory.h>
+// Songbird imports.
+#include <sbIFileUtils.h>
 
 
 //------------------------------------------------------------------------------
 //
-// Songbird file utilities module directory enumerator services.
+// Songbird file utilities definitions.
 //
 //------------------------------------------------------------------------------
 
-// Songbird directory enumerator defs.
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDirectoryEnumerator, Initialize)
+//
+// Songbird file utilities XPCOM component definitions.
+//
+
+#define SB_FILEUTILS_CLASSNAME "sbFileUtils"
+#define SB_FILEUTILS_DESCRIPTION "Songbird File Utilities"
+#define SB_FILEUTILS_CID                                                       \
+{                                                                              \
+  0x88d4bc8a,                                                                  \
+  0x1dd2,                                                                      \
+  0x11b2,                                                                      \
+  { 0xa2, 0x27, 0xd7, 0x46, 0xb1, 0xd0, 0x04, 0x58 }                           \
+}
 
 
 //------------------------------------------------------------------------------
 //
-// Songbird file utilities module file utilities services.
+// Songbird file utilities classes.
 //
 //------------------------------------------------------------------------------
 
-// Songbird file utilities defs.
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbFileUtils)
+/**
+ * This class provides various file utilities.
+ */
 
-
-//------------------------------------------------------------------------------
-//
-// Songbird file utilities module registration services.
-//
-//------------------------------------------------------------------------------
-
-// Module component information.
-static nsModuleComponentInfo sbFileUtilsComponents[] =
+class sbFileUtils : public sbIFileUtils
 {
-  // Songbird directory enumerator component info.
-  {
-    SB_DIRECTORYENUMERATOR_CLASSNAME,
-    SB_DIRECTORYENUMERATOR_CID,
-    SB_DIRECTORYENUMERATOR_CONTRACTID,
-    sbDirectoryEnumeratorConstructor
-  },
+  //----------------------------------------------------------------------------
+  //
+  // Public interface.
+  //
+  //----------------------------------------------------------------------------
 
-  // Songbird file utilities component info.
-  {
-    SB_FILEUTILS_CLASSNAME,
-    SB_FILEUTILS_CID,
-    SB_FILEUTILS_CONTRACTID,
-    sbFileUtilsConstructor
-  }
+public:
+
+  //
+  // Implemented interfaces.
+  //
+
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIFILEUTILS
+
+
+  //
+  // Public services.
+  //
+
+  sbFileUtils();
+
+  virtual ~sbFileUtils();
 };
 
-// NSGetModule
-NS_IMPL_NSGETMODULE(sbFileUtilsModule, sbFileUtilsComponents)
+
+#endif /* _SB_FILE_UTILS_H_ */
 
