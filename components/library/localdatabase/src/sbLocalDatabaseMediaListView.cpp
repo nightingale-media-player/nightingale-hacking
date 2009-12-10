@@ -1590,6 +1590,7 @@ sbLocalDatabaseMediaListView::OnItemMoved(sbIMediaList* aMediaList,
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnBeforeListCleared(sbIMediaList* aMediaList,
+                                                  PRBool aExcludeLists,
                                                   PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
@@ -1603,6 +1604,7 @@ sbLocalDatabaseMediaListView::OnBeforeListCleared(sbIMediaList* aMediaList,
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnListCleared(sbIMediaList* aMediaList,
+                                            PRBool aExcludeLists,
                                             PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);

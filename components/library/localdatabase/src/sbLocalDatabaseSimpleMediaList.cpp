@@ -1186,7 +1186,8 @@ sbLocalDatabaseSimpleMediaList::Clear()
     do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, this), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  sbLocalDatabaseMediaListListener::NotifyListenersBeforeListCleared(mediaList);
+  sbLocalDatabaseMediaListListener::NotifyListenersBeforeListCleared(mediaList,
+                                                                     PR_FALSE);
 
   nsCOMPtr<sbIDatabaseQuery> query;
   rv = MakeStandardQuery(getter_AddRefs(query));
@@ -1203,7 +1204,8 @@ sbLocalDatabaseSimpleMediaList::Clear()
   rv = GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  sbLocalDatabaseMediaListListener::NotifyListenersListCleared(mediaList);
+  sbLocalDatabaseMediaListListener::NotifyListenersListCleared(mediaList,
+                                                               PR_FALSE);
 
   return NS_OK;
 }
@@ -1237,8 +1239,10 @@ sbLocalDatabaseSimpleMediaList::NotifyContentChanged()
     sbAutoBatchHelper batchHelper(*this);
 
     // First, notify listeners that the list has been cleared
-    sbLocalDatabaseMediaListListener::NotifyListenersBeforeListCleared(mediaList);
-    sbLocalDatabaseMediaListListener::NotifyListenersListCleared(mediaList);
+    sbLocalDatabaseMediaListListener::NotifyListenersBeforeListCleared
+                                        (mediaList, PR_FALSE);
+    sbLocalDatabaseMediaListListener::NotifyListenersListCleared
+                                        (mediaList, PR_FALSE);
 
     // Then send an ITEMADDED notification for each item that we now have in the list
     PRUint32 length;
@@ -1423,20 +1427,26 @@ sbLocalDatabaseSimpleMediaList::NotifyListenersAfterItemRemoved(sbIMediaList* aL
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseSimpleMediaList::NotifyListenersBeforeListCleared(sbIMediaList* aList)
+sbLocalDatabaseSimpleMediaList::NotifyListenersBeforeListCleared
+                                  (sbIMediaList* aList,
+                                   PRBool        aExcludeLists)
 {
   NS_ENSURE_ARG_POINTER(aList);
 
-  sbLocalDatabaseMediaListListener::NotifyListenersBeforeListCleared(aList);
+  sbLocalDatabaseMediaListListener::NotifyListenersBeforeListCleared
+                                      (aList, aExcludeLists);
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseSimpleMediaList::NotifyListenersListCleared(sbIMediaList* aList)
+sbLocalDatabaseSimpleMediaList::NotifyListenersListCleared
+                                  (sbIMediaList* aList,
+                                   PRBool        aExcludeLists)
 {
   NS_ENSURE_ARG_POINTER(aList);
 
-  sbLocalDatabaseMediaListListener::NotifyListenersListCleared(aList);
+  sbLocalDatabaseMediaListListener::NotifyListenersListCleared(aList,
+                                                               aExcludeLists);
   return NS_OK;
 }
 

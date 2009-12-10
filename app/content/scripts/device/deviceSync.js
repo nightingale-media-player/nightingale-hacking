@@ -318,25 +318,33 @@ var DeviceSyncWidget = {
   },
 
   /**
-   * \brief Called before a media list is cleared.
-   * \return True if you do not want any further onListCleared notifications
+   * \Brief Called before a media list is cleared.
+   * \param sbIMediaList aMediaList The list that is about to be cleared.
+   * \param aExcludeLists If true, only media items, not media lists, are being
+   *                      cleared.
+   * \return True if you do not want any further onBeforeListCleared notifications
    *         for the current batch.  If there is no current batch, the return
    *         value is ignored.
    */
 
   onBeforeListCleared:
-    function DeviceSyncWidget_onBeforeListCleared(aMediaList) {
+    function DeviceSyncWidget_onBeforeListCleared(aMediaList,
+                                                  aExcludeLists) {
     return true;
   },
 
   /**
-   * \brief Called when a media list is cleared.
+   * \Brief Called when a media list is cleared.
+   * \param sbIMediaList aMediaList The list that was cleared.
+   * \param aExcludeLists If true, only media items, not media lists, were
+   *                      cleared.
    * \return True if you do not want any further onListCleared notifications
    *         for the current batch.  If there is no current batch, the return
    *         value is ignored.
    */
 
-  onListCleared: function DeviceSyncWidget_onListCleared(aMediaList) {
+  onListCleared: function DeviceSyncWidget_onListCleared(aMediaList,
+                                                         aExcludeLists) {
     // Handle playlist changes.
     this.onPlaylistChange();
 

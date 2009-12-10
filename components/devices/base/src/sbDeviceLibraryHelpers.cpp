@@ -373,6 +373,7 @@ sbLibraryUpdateListener::OnItemMoved(sbIMediaList *aMediaList,
 
 NS_IMETHODIMP
 sbLibraryUpdateListener::OnListCleared(sbIMediaList *aMediaList,
+                                       PRBool aExcludeLists,
                                        PRBool *_retval)
 {
   NS_NOTREACHED("Why are we here?");
@@ -384,6 +385,7 @@ sbLibraryUpdateListener::OnListCleared(sbIMediaList *aMediaList,
 
 NS_IMETHODIMP
 sbLibraryUpdateListener::OnBeforeListCleared(sbIMediaList *aMediaList,
+                                             PRBool aExcludeLists,
                                              PRBool *_retval)
 {
   NS_NOTREACHED("Why are we here?");
@@ -583,6 +585,7 @@ sbPlaylistSyncListener::OnItemMoved(sbIMediaList *aMediaList,
 
 NS_IMETHODIMP
 sbPlaylistSyncListener::OnBeforeListCleared(sbIMediaList *aMediaList,
+                                            PRBool aExcludeLists,
                                             PRBool *_retval)
 {
   if (_retval) {
@@ -593,6 +596,7 @@ sbPlaylistSyncListener::OnBeforeListCleared(sbIMediaList *aMediaList,
 
 NS_IMETHODIMP
 sbPlaylistSyncListener::OnListCleared(sbIMediaList *aMediaList,
+                                      PRBool aExcludeLists,
                                       PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);

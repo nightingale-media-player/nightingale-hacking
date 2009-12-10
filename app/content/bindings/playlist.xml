@@ -554,8 +554,8 @@
     onBeforeItemRemoved: function(list, item, index) {},
     onAfterItemRemoved: function(list, item, index) {},
     onItemMoved: function(list, item, index) {},
-    onBeforeListCleared: function(list) {},
-    onListCleared: function(list) {},
+    onBeforeListCleared: function(list, excludeLists) {},
+    onListCleared: function(list, excludeLists) {},
     onBatchBegin: function(list) {},
     onBatchEnd: function(list) {},
     onItemUpdated: 

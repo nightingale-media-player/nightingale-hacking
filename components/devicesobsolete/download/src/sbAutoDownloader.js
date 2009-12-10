@@ -216,11 +216,11 @@ function sbAutoDownloader_onItemMoved(aMediaList, aFromIndex, aToIndex) {
   DEBUG();
 }
 sbAutoDownloader.prototype.onBeforeListCleared =
-function sbAutoDownloader_onBeforeListCleared(aMediaList) {
+function sbAutoDownloader_onBeforeListCleared(aMediaList, aExcludeLists) {
   DEBUG();
 }
 sbAutoDownloader.prototype.onListCleared =
-function sbAutoDownloader_onListCleared(aMediaList) {
+function sbAutoDownloader_onListCleared(aMediaList, aExcludeLists) {
   DEBUG();
 }
 sbAutoDownloader.prototype.onBatchBegin =

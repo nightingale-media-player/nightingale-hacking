@@ -1410,22 +1410,26 @@ sbDeviceLibrary::OnItemMoved(sbIMediaList *aMediaList,
 
 NS_IMETHODIMP
 sbDeviceLibrary::OnBeforeListCleared(sbIMediaList *aMediaList,
+                                     PRBool aExcludeLists,
                                      PRBool* aNoMoreForBatch)
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnListCleared", this));
 
   SB_NOTIFY_LISTENERS(OnBeforeListCleared(aMediaList,
-                                    aNoMoreForBatch));
+                                          aExcludeLists,
+                                          aNoMoreForBatch));
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbDeviceLibrary::OnListCleared(sbIMediaList *aMediaList,
+                               PRBool aExcludeLists,
                                PRBool* aNoMoreForBatch)
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnListCleared", this));
 
   SB_NOTIFY_LISTENERS(OnListCleared(aMediaList,
+                                    aExcludeLists,
                                     aNoMoreForBatch));
   return NS_OK;
 }

@@ -57,7 +57,7 @@ interface sbILocalDatabaseMediaListCopyListener : nsISupports
  *
  * \sa sbIMediaList
  */
-[scriptable, uuid(a9045766-28a3-455f-a5fc-2a2eb7c863a3)]
+[scriptable, uuid(5f046c4a-1dd2-11b2-bfe8-a62a32a20705)]
 interface sbILocalDatabaseSimpleMediaList : nsISupports
 {
   attribute sbILocalDatabaseMediaListCopyListener copyListener;
@@ -102,12 +102,14 @@ interface sbILocalDatabaseSimpleMediaList : nsISupports
    * \brief Notify the simple media list's listeners that it has about to be
    *        cleared
    */
-  void notifyListenersBeforeListCleared(in sbIMediaList aList);
+  void notifyListenersBeforeListCleared(in sbIMediaList aList,
+                                        in boolean      aExcludeLists);
 
   /**
    * \brief Notify the simple media list's listeners that it has been cleared
    */
-  void notifyListenersListCleared(in sbIMediaList aList);
+  void notifyListenersListCleared(in sbIMediaList aList,
+                                  in boolean      aExcludeLists);
 
   /**
    * \brief Notify the simple media list's listeners that a batch has begun

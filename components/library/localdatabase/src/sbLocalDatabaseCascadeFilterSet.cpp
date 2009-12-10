@@ -1334,6 +1334,7 @@ sbLocalDatabaseCascadeFilterSet::OnItemMoved(sbIMediaList* aMediaList,
 
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::OnBeforeListCleared(sbIMediaList* aMediaList,
+                                                     PRBool aExcludeLists,
                                                      PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
@@ -1347,6 +1348,7 @@ sbLocalDatabaseCascadeFilterSet::OnBeforeListCleared(sbIMediaList* aMediaList,
 
 NS_IMETHODIMP
 sbLocalDatabaseCascadeFilterSet::OnListCleared(sbIMediaList* aMediaList,
+                                               PRBool aExcludeLists,
                                                PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);

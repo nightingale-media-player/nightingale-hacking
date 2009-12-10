@@ -2118,10 +2118,12 @@ function sbLibraryServicePane_onItemMoved(aMediaList,
                                           aToIndex) {
 }
 sbLibraryServicePane.prototype.onBeforeListCleared =
-function sbLibraryServicePane_onBeforeListCleared(aMediaList) {
+function sbLibraryServicePane_onBeforeListCleared(aMediaList,
+                                                  aExcludeLists) {
 }
 sbLibraryServicePane.prototype.onListCleared =
-function sbLibraryServicePane_onListCleared(aMediaList) {
+function sbLibraryServicePane_onListCleared(aMediaList,
+                                            aExcludeLists) {
   if (this._batch[aMediaList.guid] && this._batch[aMediaList.guid].isActive()) {
     // We are going to refresh all the nodes once we exit the batch so
     // we don't need any more of these notifications

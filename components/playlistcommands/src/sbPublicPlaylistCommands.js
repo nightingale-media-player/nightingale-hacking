@@ -1925,11 +1925,11 @@ function plCmd_DownloadInit(aContext, aHost) {
       return this.onMediaListChanged();
     },
 
-    onBeforeListCleared: function(aMediaList) {
+    onBeforeListCleared: function(aMediaList, aExcludeLists) {
       return true;
     },
 
-    onListCleared: function(aMediaList) {
+    onListCleared: function(aMediaList, aExcludeLists) {
       return this.onMediaListChanged();
     },
 

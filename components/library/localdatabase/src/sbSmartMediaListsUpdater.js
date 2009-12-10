@@ -323,7 +323,7 @@ SmartMediaListsUpdater.prototype = {
   // list was cleared, add the list to the playlist update table
   // then cause the corresponding smart playlists to update
   // --------------------------------------------------------------------------
-  onListCleared: function(list) {
+  onListCleared: function(list, excludeLists) {
     // record the fact that this playlist changed
     this.recordUpdateProperty(list.guid);
     if (this._batchCount > 0) 
@@ -336,7 +336,7 @@ SmartMediaListsUpdater.prototype = {
   // These do not get called since we don't ask for them, but still implement
   // the complete interface
   // --------------------------------------------------------------------------
-  onBeforeListCleared: function(list) {},
+  onBeforeListCleared: function(list, excludeLists) {},
   onBeforeItemRemoved: function(list, item, index) {},
   onItemMoved: function(list, item, index) {},
   

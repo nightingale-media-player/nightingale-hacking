@@ -37,6 +37,7 @@
 #include "sbLibraryUtils.h"
 
 #include <nsIURI.h>
+#include <nsNetUtil.h>
 
 //
 // To log this module, set the following environment variable:
@@ -160,12 +161,26 @@ MediaItemContentSrcArrayCreator::OnEnumeratedItem(sbIMediaList*,
 
   nsresult rv;
 
+  // If the item is a media list, get the playlist URL property.  Otherwise,
+  // get the media item content source.
   nsCOMPtr<nsIURI> uri;
-  rv = aItem->GetContentSrc(getter_AddRefs(uri));
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(aItem, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    nsAutoString playlistURL;
+    rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_PLAYLISTURL),
+                            playlistURL);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = NS_NewURI(getter_AddRefs(uri), NS_ConvertUTF16toUTF8(playlistURL));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = aItem->GetContentSrc(getter_AddRefs(uri));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
+  // Add the URI.
   rv = mURIs->AppendElement(uri, PR_FALSE);
-  NS_ENSURE_TRUE(rv, rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   *_retval = sbIMediaListEnumerationListener::CONTINUE;
   return NS_OK;
@@ -326,6 +341,7 @@ sbBaseDeviceLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
 
 NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnListCleared(sbIMediaList *aMediaList,
+                                           PRBool aExcludeLists,
                                            PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
@@ -338,6 +354,7 @@ sbBaseDeviceLibraryListener::OnListCleared(sbIMediaList *aMediaList,
 }
 NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnBeforeListCleared(sbIMediaList *aMediaList,
+                                                 PRBool aExcludeLists,
                                                  PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
@@ -360,11 +377,19 @@ sbBaseDeviceLibraryListener::OnBeforeListCleared(sbIMediaList *aMediaList,
 
   nsRefPtr<MediaItemContentSrcArrayCreator> creator =
                                   new MediaItemContentSrcArrayCreator(uris);
-  rv = aMediaList->EnumerateItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
-                                            NS_LITERAL_STRING("0"),
-                                            creator,
-                                            sbIMediaList::ENUMERATIONTYPE_LOCKING);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (aExcludeLists) {
+    rv = aMediaList->EnumerateItemsByProperty
+                       (NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                        NS_LITERAL_STRING("0"),
+                        creator,
+                        sbIMediaList::ENUMERATIONTYPE_LOCKING);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = aMediaList->EnumerateAllItems(creator,
+                                       sbIMediaList::ENUMERATIONTYPE_LOCKING);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   nsRefPtr<sbBaseDevice::TransferRequest> req = sbBaseDevice::TransferRequest::New();
   NS_ENSURE_TRUE(req, NS_ERROR_OUT_OF_MEMORY);
@@ -707,6 +732,7 @@ sbBaseDeviceMediaListListener::OnItemMoved(sbIMediaList *aMediaList,
 
 NS_IMETHODIMP
 sbBaseDeviceMediaListListener::OnBeforeListCleared(sbIMediaList *aMediaList,
+                                                   PRBool aExcludeLists,
                                                    PRBool *_retval)
 {
   return NS_OK;
@@ -714,6 +740,7 @@ sbBaseDeviceMediaListListener::OnBeforeListCleared(sbIMediaList *aMediaList,
 
 NS_IMETHODIMP
 sbBaseDeviceMediaListListener::OnListCleared(sbIMediaList *aMediaList,
+                                             PRBool aExcludeLists,
                                              PRBool * /* aNoMoreForBatch */)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);

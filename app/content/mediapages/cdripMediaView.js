@@ -1008,11 +1008,11 @@ CDRipLibraryListener.prototype =
     return true;  // ignore.
   },
 
-  onBeforeListCleared: function(aMediaList) {
+  onBeforeListCleared: function(aMediaList, aExcludeLists) {
     return true;  // ignore.
   },
 
-  onListCleared: function(aMediaList) {
+  onListCleared: function(aMediaList, aExcludeLists) {
    return true;  // ignore
   },
 

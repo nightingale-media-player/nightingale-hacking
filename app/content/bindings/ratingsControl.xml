@@ -263,10 +263,10 @@
             onItemMoved: function(aMediaList, aFromIndex, aToIndex) {
             },
 
-            onBeforeListCleared: function(aMediaList) {
+            onBeforeListCleared: function(aMediaList, aExcludeLists) {
             },
             
-            onListCleared: function(aMediaList) {
+            onListCleared: function(aMediaList, aExcludeLists) {
             },
             
             onBatchBegin: function(aMediaList) {

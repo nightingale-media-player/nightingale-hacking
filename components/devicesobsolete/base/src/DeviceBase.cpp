@@ -518,6 +518,7 @@ sbDeviceBaseLibraryListener::OnItemMoved(sbIMediaList *aMediaList,
 
 NS_IMETHODIMP 
 sbDeviceBaseLibraryListener::OnBeforeListCleared(sbIMediaList *aMediaList,
+                                                 PRBool aExcludeLists,
                                                  PRBool* aNoMoreForBatch)
 {
   /* Validate parameters. */
@@ -529,6 +530,7 @@ sbDeviceBaseLibraryListener::OnBeforeListCleared(sbIMediaList *aMediaList,
 
 NS_IMETHODIMP 
 sbDeviceBaseLibraryListener::OnListCleared(sbIMediaList *aMediaList,
+                                           PRBool aExcludeLists,
                                            PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);

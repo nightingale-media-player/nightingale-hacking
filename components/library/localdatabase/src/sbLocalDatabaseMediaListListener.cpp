@@ -541,12 +541,14 @@ sbLocalDatabaseMediaListListener::NotifyListenersItemMoved(sbIMediaList* aList,
  * \brief Notifies all listeners before the list has been cleared.
  */
 void
-sbLocalDatabaseMediaListListener::NotifyListenersBeforeListCleared(sbIMediaList* aList)
+sbLocalDatabaseMediaListListener::NotifyListenersBeforeListCleared
+                                    (sbIMediaList* aList,
+                                     PRBool        aExcludeLists)
 {
   SB_ENSURE_TRUE_VOID(aList);
 
   SB_NOTIFY_LISTENERS(NotifyListenersBeforeListCleared,
-                      OnBeforeListCleared(aList, &noMoreForBatch),
+                      OnBeforeListCleared(aList, aExcludeLists, &noMoreForBatch),
                       LISTENER_FLAGS_BEFORELISTCLEARED);
 }
 
@@ -554,12 +556,14 @@ sbLocalDatabaseMediaListListener::NotifyListenersBeforeListCleared(sbIMediaList*
  * \brief Notifies all listeners that the list has been cleared.
  */
 void
-sbLocalDatabaseMediaListListener::NotifyListenersListCleared(sbIMediaList* aList)
+sbLocalDatabaseMediaListListener::NotifyListenersListCleared
+                                    (sbIMediaList* aList,
+                                     PRBool        aExcludeLists)
 {
   SB_ENSURE_TRUE_VOID(aList);
 
   SB_NOTIFY_LISTENERS(NotifyListenersListCleared,
-                      OnListCleared(aList, &noMoreForBatch),
+                      OnListCleared(aList, aExcludeLists, &noMoreForBatch),
                       LISTENER_FLAGS_LISTCLEARED);
 }
 
@@ -923,16 +927,18 @@ sbWeakMediaListListenerWrapper::OnItemMoved(sbIMediaList* aMediaList,
 
 NS_IMETHODIMP
 sbWeakMediaListListenerWrapper::OnBeforeListCleared(sbIMediaList* aMediaList,
+                                                    PRBool aExcludeLists,
                                                     PRBool* aNoMoreForBatch)
 {
-  SB_TRY_NOTIFY(OnListCleared(aMediaList, aNoMoreForBatch))
+  SB_TRY_NOTIFY(OnBeforeListCleared(aMediaList, aExcludeLists, aNoMoreForBatch))
 }
 
 NS_IMETHODIMP
 sbWeakMediaListListenerWrapper::OnListCleared(sbIMediaList* aMediaList,
+                                              PRBool aExcludeLists,
                                               PRBool* aNoMoreForBatch)
 {
-  SB_TRY_NOTIFY(OnListCleared(aMediaList, aNoMoreForBatch))
+  SB_TRY_NOTIFY(OnListCleared(aMediaList, aExcludeLists, aNoMoreForBatch))
 }
 
 NS_IMETHODIMP

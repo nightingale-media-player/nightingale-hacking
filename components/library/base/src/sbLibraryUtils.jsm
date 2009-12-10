@@ -413,13 +413,16 @@ LibraryUtils.RemovalMonitor.prototype = {
 
     return false;
   },
-  onBeforeListCleared: function RemovalMonitor_onBeforeListCleared(aMediaList)
+  onBeforeListCleared: function RemovalMonitor_onBeforeListCleared
+                                  (aMediaList,
+                                   aExcludeLists)
   {
     //dump("RemovalMonitor: RemovalMonitor.onBeforeListCleared()\n");
 
     return true;
   },
-  onListCleared: function RemovalMonitor_onListCleared(aMediaList)
+  onListCleared: function RemovalMonitor_onListCleared(aMediaList,
+                                                       aExcludeLists)
   {
     //dump("RemovalMonitor: RemovalMonitor.onListCleared()\n");
 
@@ -627,11 +630,11 @@ LibraryUtils.GlobalMediaListListener = function(aListener,
     onItemMoved: function(aMediaList, aFromIndex, aToIndex) { 
       return this.cb.listener.onItemMoved(aMediaList, aFromIndex, aToIndex); 
     },
-    onBeforeListCleared: function(aMediaList) { 
-      return this.cb.listener.onBeforeListCleared(aMediaList); 
+    onBeforeListCleared: function(aMediaList, aExcludeLists) {
+      return this.cb.listener.onBeforeListCleared(aMediaList, aExcludeLists);
     },
-    onListCleared: function(aMediaList) { 
-      return this.cb.listener.onListCleared(aMediaList); 
+    onListCleared: function(aMediaList, aExcludeLists) {
+      return this.cb.listener.onListCleared(aMediaList, aExcludeLists);
     },
     onBatchBegin: function(aMediaList) {
       this.onitemadded_stack.push(this.onitemadded_skipbatch);

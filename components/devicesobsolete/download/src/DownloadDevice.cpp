@@ -1676,7 +1676,10 @@ NS_IMETHODIMP sbDownloadDevice::OnItemMoved(
 }
 
 /**
- * \brief Called when a media list is cleared.
+ * \Brief Called when a media list is cleared.
+ * \param sbIMediaList aMediaList The list that was cleared.
+ * \param aExcludeLists If true, only media items, not media lists, were
+ *                      cleared.
  * \return True if you do not want any further onListCleared notifications
  *         for the current batch.  If there is no current batch, the return
  *         value is ignored.
@@ -1684,6 +1687,7 @@ NS_IMETHODIMP sbDownloadDevice::OnItemMoved(
 
 NS_IMETHODIMP sbDownloadDevice::OnListCleared(
     sbIMediaList                *aMediaList,
+    PRBool                      aExcludeLists,
     PRBool                      *_retval)
 {
     /* Validate parameters. */
@@ -1697,14 +1701,18 @@ NS_IMETHODIMP sbDownloadDevice::OnListCleared(
 }
 
 /**
- * \brief Called before a media list is cleared.
- * \return True if you do not want any further onListCleared notifications
+ * \Brief Called before a media list is cleared.
+ * \param sbIMediaList aMediaList The list that is about to be cleared.
+ * \param aExcludeLists If true, only media items, not media lists, are being
+ *                      cleared.
+ * \return True if you do not want any further onBeforeListCleared notifications
  *         for the current batch.  If there is no current batch, the return
  *         value is ignored.
  */
 
 NS_IMETHODIMP sbDownloadDevice::OnBeforeListCleared(
     sbIMediaList                *aMediaList,
+    PRBool                      aExcludeLists,
     PRBool                      *_retval)
 {
     /* Validate parameters. */

@@ -119,8 +119,8 @@ var gSongbirdSanitizeOverlay = {
   onAfterItemRemoved: function(aMediaList, aMediaItem, aIndex) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); return true; },
   onItemUpdated: function(aMediaList, aMediaItem, aProperties) { return true; },
   onItemMoved: function(aMediaList, aFromIndex, aToIndex) { return true; },
-  onBeforeListCleared: function(aMediaList) { return true; },
-  onListCleared: function(aMediaList) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); return true; },
+  onBeforeListCleared: function(aMediaList, aExcludeLists) { return true; },
+  onListCleared: function(aMediaList, aExcludeLists) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); return true; },
   onBatchBegin: function(aMediaList) {},
   onBatchEnd: function(aMediaList) { gSongbirdSanitizeOverlay.onWebHistoryChanged(); },
   

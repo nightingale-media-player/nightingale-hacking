@@ -570,12 +570,14 @@ function sbDynamicPlaylistService_onItemMoved(aMediaList,
 
 
 sbDynamicPlaylistService.prototype.onBeforeListCleared =
-function sbDynamicPlaylistService_onBeforeListCleared(aMediaList)
+function sbDynamicPlaylistService_onBeforeListCleared(aMediaList,
+                                                      aExcludeLists)
 {
 }
 
 sbDynamicPlaylistService.prototype.onListCleared =
-function sbDynamicPlaylistService_onListCleared(aMediaList)
+function sbDynamicPlaylistService_onListCleared(aMediaList,
+                                                aExcludeLists)
 {
   if (this._ignore(aMediaList.library))
     return;

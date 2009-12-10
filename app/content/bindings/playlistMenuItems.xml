@@ -69,8 +69,8 @@
             onAfterItemRemoved: function(aMediaList, aMediaItem, aIndex) { this._deferredUpdate(); return true; },
             onItemUpdated: function(aMediaList, aMediaItem, aProperties) { this._deferredUpdate(); return true; },
             onItemMoved: function(aMediaList, aFromIndex, aToIndex) { return true; },
-            onBeforeListCleared: function(aMediaList) { return true; },
-            onListCleared: function(aMediaList) { this._deferredUpdate(); return true; },
+            onBeforeListCleared: function(aMediaList, aExcludeLists) { return true; },
+            onListCleared: function(aMediaList, aExcludeLists) { this._deferredUpdate(); return true; },
             onBatchBegin: function(aMediaList) {},
             onBatchEnd: function(aMediaList) { this._deferredUpdate(); },
             QueryInterface: function(iid) {

@@ -41,7 +41,7 @@ interface nsIURI;
  *
  * \sa sbIDeviceLibrary
  */
-[scriptable, uuid(49c9f941-cf71-47cf-ab2f-7f6f97eba3ee)]
+[scriptable, uuid(b994a7d4-1dd1-11b2-8461-bbc392226cb8)]
 interface sbIDeviceLibraryListener : nsISupports
 {
   /**
@@ -110,20 +110,30 @@ interface sbIDeviceLibraryListener : nsISupports
   boolean onAfterItemRemoved(in sbIMediaList aMediaList,
                              in sbIMediaItem aMediaItem,
                              in unsigned long aIndex);
-  /**
-   * \brief Called before a media list is cleared.
-   * \sa sbIMediaList::Clear
-   */
-  boolean onBeforeListCleared(in sbIMediaList aMediaList);
 
   /**
-   * \brief Called when a media list is cleared.
-   * \param sbIMediaList aMediaList The list that has been cleared.
+   * \Brief Called before a media list is cleared.
+   * \param sbIMediaList aMediaList The list that is about to be cleared.
+   * \param aExcludeLists If true, only media items, not media lists, are being
+   *                      cleared.
+   * \return True if you do not want any further onBeforeListCleared notifications
+   *         for the current batch.  If there is no current batch, the return
+   *         value is ignored.
+   */
+  boolean onBeforeListCleared(in sbIMediaList aMediaList,
+                              in boolean      aExcludeLists);
+
+  /**
+   * \Brief Called when a media list is cleared.
+   * \param sbIMediaList aMediaList The list that was cleared.
+   * \param aExcludeLists If true, only media items, not media lists, were
+   *                      cleared.
    * \return True if you do not want any further onListCleared notifications
    *         for the current batch.  If there is no current batch, the return
    *         value is ignored.
    */
-  boolean onListCleared(in sbIMediaList aMediaList);
+  boolean onListCleared(in sbIMediaList aMediaList,
+                        in boolean      aExcludeLists);
 
   /**
    * \brief Called when a media item is changed.

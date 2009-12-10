@@ -178,10 +178,12 @@ protected:
                                 PRUint32 aToIndex);
 
   // Enumerate listeners and call OnBeforeListCleared
-  void NotifyListenersBeforeListCleared(sbIMediaList* aList);
+  void NotifyListenersBeforeListCleared(sbIMediaList* aList,
+                                        PRBool        aExcludeLists);
 
   // Enumerate listeners and call OnListCleared
-  void NotifyListenersListCleared(sbIMediaList* aList);
+  void NotifyListenersListCleared(sbIMediaList* aList,
+                                  PRBool        aExcludeLists);
 
   // Enumerate listeners and call OnBatchBegin
   void NotifyListenersBatchBegin(sbIMediaList* aList);

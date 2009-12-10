@@ -3039,7 +3039,8 @@ sbLocalDatabaseSmartMediaList::OnItemMoved(sbIMediaList* aMediaList,
 
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::OnBeforeListCleared(sbIMediaList* aMediaList,
-                                             PRBool* aNoMoreForBatch)
+                                                   PRBool aExcludeLists,
+                                                   PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
@@ -3051,6 +3052,7 @@ sbLocalDatabaseSmartMediaList::OnBeforeListCleared(sbIMediaList* aMediaList,
 
 NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::OnListCleared(sbIMediaList* aMediaList,
+                                             PRBool aExcludeLists,
                                              PRBool* aNoMoreForBatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);

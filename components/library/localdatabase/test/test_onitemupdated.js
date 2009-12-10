@@ -43,8 +43,8 @@ function runTest () {
       this.properties = properties;
     },
     onItemMoved: function(list, fromIndex, toIndex) {},
-    onBeforeListCleared: function(list) {},
-    onListCleared: function(list) {},
+    onBeforeListCleared: function(list, excludeLists) {},
+    onListCleared: function(list, excludeLists) {},
     onBatchBegin: function(list) {},
     onBatchEnd: function(list) {}
   };

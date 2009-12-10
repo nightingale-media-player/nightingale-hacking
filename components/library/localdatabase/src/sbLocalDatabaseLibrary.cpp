@@ -3367,7 +3367,7 @@ sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/)
   sbAutoBatchHelper batchHelper(*this);
 
   // Notify the library's listeners that the library is about to be cleared
-  NotifyListenersBeforeListCleared(SB_IMEDIALIST_CAST(this));
+  NotifyListenersBeforeListCleared(SB_IMEDIALIST_CAST(this), aExcludeLists);
 
   nsresult rv = mPropertyCache->Write();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -3386,10 +3386,10 @@ sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/)
       do_QueryInterface(lists[i], &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = simple->NotifyListenersBeforeListCleared(lists[i]);
+    rv = simple->NotifyListenersBeforeListCleared(lists[i], aExcludeLists);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = simple->NotifyListenersListCleared(lists[i]);
+    rv = simple->NotifyListenersListCleared(lists[i], aExcludeLists);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -3431,11 +3431,11 @@ sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/)
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Notify the list's listeners that the list was cleared
-    NotifyListenersListCleared(lists[i]);
+    NotifyListenersListCleared(lists[i], aExcludeLists);
   }
 
   // Notify the library's listeners that the library was cleared
-  NotifyListenersListCleared(SB_IMEDIALIST_CAST(this));
+  NotifyListenersListCleared(SB_IMEDIALIST_CAST(this), aExcludeLists);
 
   return NS_OK;
 }

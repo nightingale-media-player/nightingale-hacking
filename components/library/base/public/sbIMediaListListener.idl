@@ -44,7 +44,7 @@ interface sbIPropertyArray;
 *
 * \sa sbIMediaList
 */
-[scriptable, uuid(9a692dd8-7711-43d1-a9d9-a7a87bdc918e)]
+[scriptable, uuid(c5e933cc-1dd1-11b2-b51a-fab53acecdc4)]
 interface sbIMediaListListener : nsISupports
 {
   /**
@@ -115,19 +115,27 @@ interface sbIMediaListListener : nsISupports
 
   /**
    * \Brief Called before a media list is cleared.
-   * \return True if you do not want any further onBeforeListCleared notifications
-   *         for the current batch.  If there is no current batch, the return
-   *         value is ignored.
+   * \param sbIMediaList aMediaList The list that is about to be cleared.
+   * \param aExcludeLists If true, only media items, not media lists, are being
+   *                      cleared.
+   * \return True if you do not want any further onBeforeListCleared
+   *         notifications for the current batch.  If there is no current batch,
+   *         the return value is ignored.
    */
-  boolean onBeforeListCleared(in sbIMediaList aMediaList);
+  boolean onBeforeListCleared(in sbIMediaList aMediaList,
+                              in boolean      aExcludeLists);
 
   /**
    * \Brief Called when a media list is cleared.
+   * \param sbIMediaList aMediaList The list that was cleared.
+   * \param aExcludeLists If true, only media items, not media lists, were
+   *                      cleared.
    * \return True if you do not want any further onListCleared notifications
    *         for the current batch.  If there is no current batch, the return
    *         value is ignored.
    */
-  boolean onListCleared(in sbIMediaList aMediaList);
+  boolean onListCleared(in sbIMediaList aMediaList,
+                        in boolean      aExcludeLists);
 
   /**
    * \brief Called when the library is about to perform multiple operations at

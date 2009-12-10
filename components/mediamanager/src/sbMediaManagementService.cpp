@@ -409,9 +409,11 @@ sbMediaManagementService::OnItemMoved(sbIMediaList *aMediaList,
   return NS_OK;
 }
 
-/* boolean onBeforeListCleared (in sbIMediaList aMediaList); */
+/* boolean onBeforeListCleared (in sbIMediaList aMediaList,
+                                in boolean      aExcludeLists); */
 NS_IMETHODIMP
 sbMediaManagementService::OnBeforeListCleared(sbIMediaList *aMediaList,
+                                              PRBool aExcludeLists,
                                               PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
@@ -419,9 +421,11 @@ sbMediaManagementService::OnBeforeListCleared(sbIMediaList *aMediaList,
   return this->QueueItems(aMediaList, sbIMediaFileManager::MANAGE_DELETE);;
 }
 
-/* boolean onListCleared (in sbIMediaList aMediaList); */
+/* boolean onListCleared (in sbIMediaList aMediaList,
+                          in boolean      aExcludeLists); */
 NS_IMETHODIMP
 sbMediaManagementService::OnListCleared(sbIMediaList *aMediaList,
+                                        PRBool aExcludeLists,
                                         PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);

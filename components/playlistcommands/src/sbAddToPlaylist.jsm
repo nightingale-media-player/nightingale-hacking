@@ -701,11 +701,11 @@ addToPlaylistHelper.prototype = {
     return true;
   },
 
-  onBeforeListCleared: function onBeforeListCleared(list) {
+  onBeforeListCleared: function onBeforeListCleared(list, excludeLists) {
     return true;
   },
 
-  onListCleared: function onListCleared(list) {
+  onListCleared: function onListCleared(list, excludeLists) {
     // If we are in a batch, ignore future notifications
     if (!this._inbatch) {
       this.onUpdateEvent(list);
