@@ -1277,6 +1277,15 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                       stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 0, PR_FALSE, PR_TRUE, PR_TRUE, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Playlist URL
+  rv = RegisterURI(NS_LITERAL_STRING(SB_PROPERTY_PLAYLISTURL),
+                   NS_LITERAL_STRING("property.playlist_url"),
+                   stringBundle,
+                   PR_FALSE,
+                   PR_FALSE,
+                   PR_FALSE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
