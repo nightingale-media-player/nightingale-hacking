@@ -81,6 +81,7 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
  components/library/base/src/static/sbLibraryUtils \
  components/moz/strings/src/sbMozStringUtils \
  components/moz/threads/src/sbMozThreads \
+ components/moz/variant/src/static/sbMozVariantUtils \
  components/watchfolder/utils/sbWatchFolderUtils \
  $(NULL)
 

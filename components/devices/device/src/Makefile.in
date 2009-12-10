@@ -72,6 +72,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                      $(topsrcdir)/components/moz/strings/src \
                      $(topsrcdir)/components/moz/threads/src \
                      $(topsrcdir)/components/moz/uri/src \
+                     $(topsrcdir)/components/moz/variant/src/static \
                      $(topsrcdir)/components/moz/xpcom/src \
                      $(topsrcdir)/components/property/src \
                      $(topsrcdir)/components/watchfolder/utils \

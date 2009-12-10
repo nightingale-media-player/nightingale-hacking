@@ -28,6 +28,7 @@
 
 #include <nsCOMPtr.h>
 #include <nsStringAPI.h>
+#include <sbIDevice.h>
 
 class sbIDeviceCapabilities;
 class sbIDevCapVideoStream;
@@ -47,7 +48,8 @@ public:
   /**
    * Initialize the XML document
    */
-  sbDeviceXMLCapabilities(nsIDOMDocument* aDocument);
+  sbDeviceXMLCapabilities(nsIDOMDocument* aDocument,
+                          sbIDevice*      aDevice = nsnull);
   /**
    * Cleanup
    */
@@ -63,17 +65,24 @@ public:
    */
   PRBool HasCapabilities() { return mHasCapabilities; }
   /**
-   * Read the capabilities from the file with the URI spec specified by
-   * aXMLCapabilitiesSpec and add them to the device capabilities object
-   * specified by aCapabilities.
+   * Read the capabilities matching the device specified by aDevice from the
+   * file with the URI spec specified by aXMLCapabilitiesSpec and add them to
+   * the device capabilities object specified by aCapabilities.  If any
+   * capabilities were added, return true in aAddedCapabilities; if no
+   * capabilities were added (e.g., device didn't match), return false.
    * \param aCapabilities The capabilities object to which to add capabilities.
    * \param aXMLCapabilitiesSpec URI spec of capabilities file.
+   * \param aAddedCapabilities Returned true if capabilities added.
+   * \param aDevice Device to match against capabilities.
    */
   static nsresult AddCapabilities
                     (sbIDeviceCapabilities* aCapabilities,
-                     const char*            aXMLCapabilitiesSpec);
+                     const char*            aXMLCapabilitiesSpec,
+                     PRBool*                aAddedCapabilities = nsnull,
+                     sbIDevice*             aDevice = nsnull);
 private:
   nsCOMPtr<nsIDOMDocument> mDocument;
+  sbIDevice* mDevice;                   // Non-owning reference
   sbIDeviceCapabilities * mDeviceCaps;  // Non-owning reference
   PRBool mHasCapabilities;
 
@@ -169,6 +178,40 @@ private:
    * \param aPlaylistNode The playlist DOM node to process
    */
   nsresult ProcessPlaylist(nsIDOMNode * aPlaylistNode);
+
+  /**
+   * Check if the device matches the capabilities node specified by
+   * aCapabilitiesNode.  If it matches, return true in aDeviceMatches;
+   * otherwise, return false.
+   * \param aCapabilitiesNode Capabilities DOM node to check.
+   * \param aDeviceMatches Returned true if device matches.
+   */
+  nsresult DeviceMatchesCapabilitiesNode(nsIDOMNode * aCapabilitiesNode,
+                                         PRBool * aDeviceMatches);
+
+  /**
+   * Check if the device with the properties specified by aDeviceProperties
+   * matches the device node specified by aDeviceNode.  If it matchces, return
+   * true in aDeviceMatches; otherwise, return false.
+   * \param aDeviceNode Device DOM node to check.
+   * \param aDeviceProperties Device properties.
+   * \param aDeviceMatches Returned true if device matches.
+   */
+  nsresult DeviceMatchesDeviceNode(nsIDOMNode * aDeviceNode,
+                                   nsIPropertyBag2 * aDeviceProperties,
+                                   PRBool * aDeviceMatches);
+
+  /**
+   * Search for the first child of the node specified by aNode with the tag name
+   * specified by aTagName.  Return the first child node in aChildNode.  If no
+   * child node matches, return null in aChildNode.
+   * \param aNode Node to search.
+   * \param aTagName Child node tag name for which to search.
+   * \param aChildNode Returned child node.
+   */
+  nsresult GetFirstChildByTagName(nsIDOMNode*  aNode,
+                                  char*        aTagName,
+                                  nsIDOMNode** aChildNode);
 };
 
 #endif /* SBDEVICEXMLCAPABILITIES_H_ */

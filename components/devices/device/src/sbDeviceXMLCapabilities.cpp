@@ -27,8 +27,12 @@
 
 // Songbird includes
 #include <sbIDeviceCapabilities.h>
+#include <sbIDeviceProperties.h>
 #include <sbMemoryUtils.h>
+#include <sbStandardDeviceProperties.h>
 #include <sbStringUtils.h>
+#include <sbVariantUtils.h>
+#include <sbVariantUtilsLib.h>
 
 // Mozilla includes
 #include <nsComponentManagerUtils.h>
@@ -39,6 +43,7 @@
 #include <nsIDOMNodeList.h>
 #include <nsIMutableArray.h>
 #include <nsIScriptSecurityManager.h>
+#include <nsIPropertyBag2.h>
 #include <nsIXMLHttpRequest.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
@@ -48,9 +53,10 @@
 #define SB_DEVICE_CAPS_ELEMENT "devicecaps"
 #define SB_DEVICE_CAPS_NS "http://songbirdnest.com/devicecaps/1.0"
 
-sbDeviceXMLCapabilities::sbDeviceXMLCapabilities(
-  nsIDOMDocument* aDocument) :
+sbDeviceXMLCapabilities::sbDeviceXMLCapabilities(nsIDOMDocument* aDocument,
+                                                 sbIDevice*      aDevice) :
     mDocument(aDocument),
+    mDevice(aDevice),
     mDeviceCaps(nsnull),
     mHasCapabilities(PR_FALSE)
 {
@@ -100,7 +106,9 @@ sbDeviceXMLCapabilities::Read(sbIDeviceCapabilities * aCapabilities) {
 /* static */ nsresult
 sbDeviceXMLCapabilities::AddCapabilities
                            (sbIDeviceCapabilities* aCapabilities,
-                            const char*            aXMLCapabilitiesSpec)
+                            const char*            aXMLCapabilitiesSpec,
+                            PRBool*                aAddedCapabilities,
+                            sbIDevice*             aDevice)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aCapabilities);
@@ -108,6 +116,10 @@ sbDeviceXMLCapabilities::AddCapabilities
 
   // Function variables.
   nsresult rv;
+
+  // No capabilities have yet been added.
+  if (aAddedCapabilities)
+    *aAddedCapabilities = PR_FALSE;
 
   // Create an XMLHttpRequest object.
   nsCOMPtr<nsIXMLHttpRequest>
@@ -138,10 +150,10 @@ sbDeviceXMLCapabilities::AddCapabilities
                          (getter_AddRefs(deviceCapabilitiesDocument));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Read the device capabilities.
+  // Read the device capabilities for the device.
   nsCOMPtr<sbIDeviceCapabilities> deviceCapabilities =
     do_CreateInstance(SONGBIRD_DEVICECAPABILITIES_CONTRACTID);
-  sbDeviceXMLCapabilities xmlCapabilities(deviceCapabilitiesDocument);
+  sbDeviceXMLCapabilities xmlCapabilities(deviceCapabilitiesDocument, aDevice);
   rv = xmlCapabilities.Read(deviceCapabilities);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = deviceCapabilities->InitDone();
@@ -151,6 +163,8 @@ sbDeviceXMLCapabilities::AddCapabilities
   if (xmlCapabilities.HasCapabilities()) {
     rv = aCapabilities->AddCapabilities(deviceCapabilities);
     NS_ENSURE_SUCCESS(rv, rv);
+    if (aAddedCapabilities)
+      *aAddedCapabilities = PR_TRUE;
   }
 
   return NS_OK;
@@ -183,9 +197,14 @@ sbDeviceXMLCapabilities::ProcessDocument(nsIDOMDocument * aDocument)
       NS_ENSURE_SUCCESS(rv, rv);
 
       if (name.EqualsLiteral("devicecaps")) {
-        capsFound = true;
-        rv = ProcessDeviceCaps(domNode);
+        PRBool deviceMatches;
+        rv = DeviceMatchesCapabilitiesNode(domNode, &deviceMatches);
         NS_ENSURE_SUCCESS(rv, rv);
+        if (deviceMatches) {
+          capsFound = true;
+          rv = ProcessDeviceCaps(domNode);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
       }
     }
     if (capsFound) {
@@ -1069,6 +1088,205 @@ sbDeviceXMLCapabilities::ProcessPlaylist(nsIDOMNode * aPlaylistNode)
     rv = AddFormat(sbIDeviceCapabilities::CONTENT_PLAYLIST, mimeType);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  return NS_OK;
+}
+
+nsresult
+sbDeviceXMLCapabilities::DeviceMatchesCapabilitiesNode
+                           (nsIDOMNode * aCapabilitiesNode,
+                            PRBool * aDeviceMatches)
+{
+  NS_ENSURE_ARG_POINTER(aCapabilitiesNode);
+  NS_ENSURE_ARG_POINTER(aDeviceMatches);
+
+  PRUint32 nodeCount;
+  nsresult rv;
+
+  // Get the devices node.  Device matches by default if no devices node is
+  // specified.
+  nsCOMPtr<nsIDOMNode> devicesNode;
+  rv = GetFirstChildByTagName(aCapabilitiesNode,
+                              "devices",
+                              getter_AddRefs(devicesNode));
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!devicesNode) {
+    *aDeviceMatches = PR_TRUE;
+    return NS_OK;
+  }
+
+  // If no device was specified, the device doesn't match.
+  if (!mDevice) {
+    *aDeviceMatches = PR_FALSE;
+    return NS_OK;
+  }
+
+  // Get the device properties.
+  nsCOMPtr<sbIDeviceProperties> deviceProperties;
+  rv = mDevice->GetProperties(getter_AddRefs(deviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIPropertyBag2> properties;
+  rv = deviceProperties->GetProperties(getter_AddRefs(properties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the devices node child list.  Device doesn't match if list is empty.
+  nsCOMPtr<nsIDOMNodeList> childNodeList;
+  rv = devicesNode->GetChildNodes(getter_AddRefs(childNodeList));
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!childNodeList) {
+    *aDeviceMatches = PR_FALSE;
+    return NS_OK;
+  }
+
+  // Check each child node for a matching device node.
+  rv = childNodeList->GetLength(&nodeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  for (PRUint32 nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
+    // Get the next child node.
+    nsCOMPtr<nsIDOMNode> childNode;
+    rv = childNodeList->Item(nodeIndex, getter_AddRefs(childNode));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Skip all but device nodes.
+    nsString nodeName;
+    rv = childNode->GetNodeName(nodeName);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!nodeName.EqualsLiteral("device")) {
+      continue;
+    }
+
+    // Check if the device matches the device node.
+    PRBool matches;
+    rv = DeviceMatchesDeviceNode(childNode, properties, &matches);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (matches) {
+      *aDeviceMatches = PR_TRUE;
+      return NS_OK;
+    }
+  }
+
+  // No match found.
+  *aDeviceMatches = PR_FALSE;
+
+  return NS_OK;
+}
+
+nsresult
+sbDeviceXMLCapabilities::DeviceMatchesDeviceNode
+                           (nsIDOMNode * aDeviceNode,
+                            nsIPropertyBag2 * aDeviceProperties,
+                            PRBool * aDeviceMatches)
+{
+  NS_ENSURE_ARG_POINTER(aDeviceNode);
+  NS_ENSURE_ARG_POINTER(aDeviceProperties);
+  NS_ENSURE_ARG_POINTER(aDeviceMatches);
+
+  nsresult rv;
+
+  // Get the device node attributes.
+  nsCOMPtr<nsIDOMNamedNodeMap> attributes;
+  rv = aDeviceNode->GetAttributes(getter_AddRefs(attributes));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check if each device node attribute matches the device.
+  PRBool matches = PR_TRUE;
+  PRUint32 attributeCount;
+  rv = attributes->GetLength(&attributeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  for (PRUint32 attributeIndex = 0;
+       attributeIndex < attributeCount;
+       ++attributeIndex) {
+    // Get the next attribute.
+    nsCOMPtr<nsIDOMNode> attribute;
+    rv = attributes->Item(attributeIndex, getter_AddRefs(attribute));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the attribute name.
+    nsAutoString attributeName;
+    rv = attribute->GetNodeName(attributeName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the attribute value.
+    nsAutoString attributeValue;
+    rv = attribute->GetNodeValue(attributeValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the corresponding device property key.
+    nsAutoString deviceKey(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_BASE));
+    deviceKey.Append(attributeName);
+
+    // If the device property key does not exist, the device does not match.
+    PRBool hasKey;
+    rv = aDeviceProperties->HasKey(deviceKey, &hasKey);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!hasKey) {
+      matches = PR_FALSE;
+      break;
+    }
+
+    // Get the device property value.
+    nsCOMPtr<nsIVariant> deviceValue;
+    rv = aDeviceProperties->Get(deviceKey, getter_AddRefs(deviceValue));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // If the device property value and the attribute value are not equal, the
+    // device does not match.
+    PRBool equal;
+    rv = sbVariantsEqual(deviceValue, sbNewVariant(attributeValue), &equal);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!equal) {
+      matches = PR_FALSE;
+      break;
+    }
+  }
+
+  // Return results.
+  *aDeviceMatches = matches;
+
+  return NS_OK;
+}
+
+nsresult
+sbDeviceXMLCapabilities::GetFirstChildByTagName(nsIDOMNode*  aNode,
+                                                char*        aTagName,
+                                                nsIDOMNode** aChildNode)
+{
+  NS_ENSURE_ARG_POINTER(aTagName);
+  NS_ENSURE_ARG_POINTER(aChildNode);
+
+  nsresult rv;
+
+  // Get the list of child nodes.
+  nsCOMPtr<nsIDOMNodeList> childNodeList;
+  rv = aNode->GetChildNodes(getter_AddRefs(childNodeList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Search the children for a matching tag name.
+  nsAutoString tagName;
+  tagName.AssignLiteral(aTagName);
+  PRUint32 childNodeCount;
+  rv = childNodeList->GetLength(&childNodeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  for (PRUint32 nodeIndex = 0; nodeIndex < childNodeCount; ++nodeIndex) {
+    // Get the next child node.
+    nsCOMPtr<nsIDOMNode> childNode;
+    rv = childNodeList->Item(nodeIndex, getter_AddRefs(childNode));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the child node name.
+    nsString nodeName;
+    rv = childNode->GetNodeName(nodeName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Return child node if the tag name matches.
+    if (nodeName.Equals(tagName)) {
+      childNode.forget(aChildNode);
+      return NS_OK;
+    }
+  }
+
+  // No child found.
+  *aChildNode = nsnull;
 
   return NS_OK;
 }
