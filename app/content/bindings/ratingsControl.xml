@@ -232,6 +232,7 @@
           Components.utils.import("resource://app/jsmodules/XPCOMUtils.jsm", this);
           Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm", this);
           Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm", this);
+          Components.utils.import("resource://app/jsmodules/sbMetadataUtils.jsm", this);
         
           var self = this;
           this._ratingschange = function(evt) {
@@ -386,18 +387,8 @@
           
             var self = this;
             this._callback = function() {
-              var mediaItemArray = 
-                Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                          .createInstance(Components.interfaces.nsIMutableArray);
-                        
-              mediaItemArray.appendElement(self._curMediaItem, false);
-              var propArray = ArrayConverter.stringEnumerator([SBProperties.rating]);
-              var metadataService = 
-                 Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]                                              
-                           .getService(Components.interfaces.sbIFileMetadataService);
-              var job = metadataService.write(mediaItemArray, propArray);       
-            
-              this.SBJobUtils.showProgressDialog(job, null);
+              sbMetadataUtils.writeMetadata([self._curMediaItem],
+                                            [SBProperties.rating]);
             }
           
             setTimeout(this._callback, 0);  

@@ -38,6 +38,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
+#include <nsTArray.h>
 #include "sbPropertiesCID.h"
 #include "sbSimpleProperty.h"
 
@@ -378,6 +379,79 @@ sbPropertyArray::AppendProperty(const nsAString& aID,
 
   PRBool success = mArray.AppendObject(property);
   NS_ENSURE_STATE(success);
+
+  return NS_OK;
+}
+
+/**
+ * See sbIMutablePropertyArray
+ */
+NS_IMETHODIMP
+sbPropertyArray::AppendProperties(sbIPropertyArray* aPropertyArray,
+                                  PRBool            aSkipDuplicates)
+{
+  NS_ENSURE_ARG_POINTER(aPropertyArray);
+
+  PRUint32 propertyCount;
+  nsresult rv;
+
+  nsAutoLock lock(mArrayLock);
+
+  // If skipping duplicates, create the list of IDs of properties already in
+  // array.
+  nsTArray<nsString> currentPropertyIDList;
+  if (aSkipDuplicates) {
+    propertyCount = mArray.Count();
+    NS_ENSURE_TRUE(currentPropertyIDList.SetCapacity(propertyCount),
+                   NS_ERROR_OUT_OF_MEMORY);
+    for (PRUint32 i = 0; i < propertyCount; i++) {
+      nsCOMPtr<sbIProperty> property = mArray[i];
+
+      nsAutoString id;
+      rv = property->GetId(id);
+      NS_ENSURE_SUCCESS(rv, rv);
+      NS_ENSURE_TRUE(currentPropertyIDList.AppendElement(id),
+                     NS_ERROR_OUT_OF_MEMORY);
+    }
+  }
+
+  // Add properties to array.
+  rv = aPropertyArray->GetLength(&propertyCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  for (PRUint32 i = 0; i < propertyCount; i++) {
+    // Get the next property to add.
+    nsCOMPtr<sbIProperty> property;
+    rv = aPropertyArray->GetPropertyAt(i, getter_AddRefs(property));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the property info.
+    nsAutoString id;
+    nsAutoString value;
+    rv = property->GetId(id);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = property->GetValue(value);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Validate property if strict.
+    if (mStrict) {
+      PRBool valid;
+      rv = ValueIsValid(id, value, &valid);
+      NS_ENSURE_SUCCESS(rv, rv);
+      NS_ENSURE_TRUE(valid, NS_ERROR_ILLEGAL_VALUE);
+    }
+
+    // If skipping duplicates and property is a duplicate, skip it.
+    if (aSkipDuplicates && currentPropertyIDList.Contains(id)) {
+      continue;
+    }
+
+    // Add the property to the array and its ID to the list of present property
+    // IDs.
+    PRBool success = mArray.AppendObject(property);
+    NS_ENSURE_STATE(success);
+    NS_ENSURE_TRUE(currentPropertyIDList.AppendElement(id),
+                   NS_ERROR_OUT_OF_MEMORY);
+  }
 
   return NS_OK;
 }

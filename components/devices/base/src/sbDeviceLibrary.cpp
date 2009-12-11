@@ -422,6 +422,12 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
                               deviceLibraryGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Don't allow writing metadata back to device media files.  Let the device
+  // component handle property updates.
+  rv = this->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_DONT_WRITE_METADATA),
+                         NS_LITERAL_STRING("1"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<sbIMediaList> list;
   list = do_QueryInterface(mDeviceLibrary, &rv);
   NS_ENSURE_SUCCESS(rv, rv);

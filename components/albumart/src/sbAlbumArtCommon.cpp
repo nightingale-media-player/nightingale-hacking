@@ -11,6 +11,8 @@
 #include <sbIJobProgress.h>
 #include <nsIMutableArray.h>
 #include <nsComponentManagerUtils.h>
+#include <nsArrayUtils.h>
+#include <sbILibrary.h>
 
 nsresult SetItemArtwork(nsIURI* aImageLocation, sbIMediaItem* aMediaItem) {
   NS_ENSURE_ARG_POINTER(aImageLocation);
@@ -58,6 +60,20 @@ nsresult WriteImageMetadata(nsIArray* aMediaItems) {
   rv = aMediaItems->GetLength(&numItems);
   NS_ENSURE_SUCCESS(rv, rv);
   if (numItems > 0) {
+    // Do nothing if the media items' library is marked to not write metadata.
+    nsCOMPtr<sbIMediaItem> mediaItem = do_QueryElementAt(aMediaItems, 0, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<sbILibrary> library;
+    rv = mediaItem->GetLibrary(getter_AddRefs(library));
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsAutoString dontWriteMetadata;
+    rv = library->GetProperty
+                    (NS_LITERAL_STRING(SB_PROPERTY_DONT_WRITE_METADATA),
+                     dontWriteMetadata);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (dontWriteMetadata.Equals(NS_LITERAL_STRING("1")))
+      return NS_OK;
+
     nsTArray<nsString> propArray;
     if (!propArray.AppendElement(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL)))
     {

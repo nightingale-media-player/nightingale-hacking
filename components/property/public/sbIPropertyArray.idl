@@ -89,7 +89,7 @@ interface sbIPropertyArray : nsIArray
  * Note that implementations of the interface should also provide 
  * nsIMutableArray.  QI to nsIMutableArray to access add/remove/clear methods.
  */
-[scriptable, uuid(a47d226b-26eb-46b8-9d5a-f919def2ebfb)]
+[scriptable, uuid(d13954dc-1dd1-11b2-ba41-cfc220cadb50)]
 interface sbIMutablePropertyArray : sbIPropertyArray
 {
   /**
@@ -104,6 +104,16 @@ interface sbIMutablePropertyArray : sbIPropertyArray
    */
   void appendProperty(in AString aID,
                       in AString aValue);
+
+  /**
+   * Adds the properties specified by aPropertyArray to the array.  If
+   * aSkipDuplicates is true, don't add properties that are already present.
+   *
+   * \param aPropertyArray  Array of properties to add.
+   * \param aSkipDuplicates If true, skip duplicate properties.
+   */
+  void appendProperties(in sbIPropertyArray aPropertyArray,
+                        in boolean          aSkipDuplicates);
 
   /**
    * Determines whether or not the appendProperty method will throw on invalid

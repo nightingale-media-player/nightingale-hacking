@@ -56,6 +56,29 @@ function runTest() {
   // Test length.
   assertEqual(propertyArray.length, 15);
   
+  var propertyArray2 =
+    Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"].
+    createInstance(Ci.sbIMutablePropertyArray);
+  for (var index = 10; index < 20; index++) {
+    var id = "Property" + index;
+    var value = "Value" + index;
+    propertyArray2.appendProperty(id, value);
+  }
+
+  // Test appendProperties without skipping duplicates.
+  var propertyArray3 =
+    Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"].
+    createInstance(Ci.sbIMutablePropertyArray);
+  propertyArray3.appendProperties(propertyArray, false);
+  propertyArray3.appendProperties(propertyArray2, false);
+  assertEqual(propertyArray3.length, 25);
+
+  // Test appendProperties skipping duplicates.
+  propertyArray3.clear();
+  propertyArray3.appendProperties(propertyArray, true);
+  propertyArray3.appendProperties(propertyArray2, true);
+  assertEqual(propertyArray3.length, 20);
+
   // Test queryElementAt.
   var property = propertyArray.queryElementAt(0, Ci.sbIProperty);
   assertPropertyData(property, "Property0", "Value0");

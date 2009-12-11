@@ -87,6 +87,7 @@
 #include <sbLocalDatabaseCID.h>
 #include <sbMemoryUtils.h>
 #include <sbPrefBranch.h>
+#include <sbPropertiesCID.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStringBundle.h>
 #include <sbStringUtils.h>
@@ -815,36 +816,71 @@ bool sbBaseDeviceRequestDupeCheck::DupeCheck(TransferRequest * aQueueRequest,
 
 bool sbBaseDevice::IsRequestDuplicate(TransferRequestQueue & aQueue,
                                       TransferRequest * aRequest) {
+  nsresult rv;
+
   if (aQueue.empty()) {
     return false;
   }
   // reverse search through the queue for a comparable request
   TransferRequestQueue::reverse_iterator rend = aQueue.rend();
+  nsRefPtr<TransferRequest> duplicateRequest;
   bool isDuplicate = false;
   TransferRequestQueue::reverse_iterator iter;
   for (iter = aQueue.rbegin();
        iter != rend;
        ++iter) {
-    if (!sbBaseDeviceRequestDupeCheck::DupeCheck(iter->get(),
-                                                  aRequest,
-                                                  isDuplicate)) {
+    PRBool continueChecking =
+             sbBaseDeviceRequestDupeCheck::DupeCheck(iter->get(),
+                                                     aRequest,
+                                                     isDuplicate);
+    if (isDuplicate) {
+      duplicateRequest = *iter;
+    }
+    if (!continueChecking) {
       break;
     }
   }
+
+  // If the rqeuests are item update requests, merge the updated properties.
+  if (duplicateRequest &&
+      (duplicateRequest->type == TransferRequest::REQUEST_UPDATE) &&
+      !duplicateRequest->IsPlaylist()) {
+    // Create a new, merged property array.
+    nsCOMPtr<sbIMutablePropertyArray>
+      mergedPropertyList =
+        do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Add the duplicate in the queue properties.
+    nsCOMPtr<sbIPropertyArray> propertyList;
+    propertyList = do_QueryInterface(duplicateRequest->data, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mergedPropertyList->AppendProperties(propertyList, PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Add the new request properties.
+    propertyList = do_QueryInterface(aRequest->data, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mergedPropertyList->AppendProperties(propertyList, PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Change the duplicate in the queue properties to the merged set.
+    duplicateRequest->data = mergedPropertyList;
+  }
+
   // If we found a duplicate playlist request, we may need to change it to
   // update request. Currently all devices recreate playlists on any
   // modification.
-  if (iter != rend && isDuplicate && aRequest->IsPlaylist()) {
-    nsRefPtr<TransferRequest> request = *iter;
+  if (duplicateRequest && aRequest->IsPlaylist()) {
     // If the previous request was a write or move then change it to an update
-    switch (request->type) {
+    switch (duplicateRequest->type) {
       case TransferRequest::REQUEST_WRITE:
       case TransferRequest::REQUEST_MOVE: {
-        request->type = TransferRequest::REQUEST_UPDATE;
-        request->item = request->list;
+        duplicateRequest->type = TransferRequest::REQUEST_UPDATE;
+        duplicateRequest->item = duplicateRequest->list;
         nsCOMPtr<sbILibrary> library;
-        request->list->GetLibrary(getter_AddRefs(library));
-        request->list = library;
+        duplicateRequest->list->GetLibrary(getter_AddRefs(library));
+        duplicateRequest->list = library;
       }
       break;
     }

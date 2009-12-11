@@ -100,4 +100,7 @@ DYNAMIC_LIB_STATIC_IMPORTS += components/moz/strings/src/sbMozStringUtils \
 
 IS_COMPONENT = 1
 
+SONGBIRD_JSMODULES = $(srcdir)/sbMetadataUtils.jsm \
+                     $(NULL)
+
 include $(topsrcdir)/build/rules.mk

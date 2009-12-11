@@ -428,8 +428,19 @@ sbBaseDeviceLibraryListener::OnItemUpdated(sbIMediaList *aMediaList,
   }
 
   nsresult rv;
-  rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_UPDATE,
-                            aMediaItem, aMediaList);
+
+  nsRefPtr<sbBaseDevice::TransferRequest>
+    req = sbBaseDevice::TransferRequest::New();
+  NS_ENSURE_TRUE(req, NS_ERROR_OUT_OF_MEMORY);
+  req->type = sbBaseDevice::TransferRequest::REQUEST_UPDATE;
+  req->item = aMediaItem;
+  req->list = aMediaList;
+  req->data = aProperties;
+  req->index = PR_UINT32_MAX;
+  req->otherIndex = PR_UINT32_MAX;
+  req->priority = sbBaseDevice::TransferRequest::PRIORITY_DEFAULT;
+
+  rv = mDevice->PushRequest(req);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

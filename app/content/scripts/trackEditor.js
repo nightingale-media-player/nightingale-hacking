@@ -37,6 +37,7 @@ Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/sbCoverHelper.jsm");
 Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Cu.import("resource://app/jsmodules/sbMetadataUtils.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -521,35 +522,18 @@ var TrackEditor = {
     }
   */
     
-    // Don't attempt to writeback data if the playlist doesn't allow it
-    if (this.mediaListView.mediaList.getProperty(
-          "http://songbirdnest.com/data/1.0#dontWriteMetadata") == 1)
-    {
-      return true;
-    }
-
     // Add all items that need writing into an array 
-    // and hand them off to the metadata manager
-    var mediaItemArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                        .createInstance(Ci.nsIMutableArray);
+    var mediaItemArray = [];
     for (var i = 0; i < items.length; i++) {
       if (needsWriting[i] && LibraryUtils.canEditMetadata(items[i])) {
-        mediaItemArray.appendElement(items[i], false);
+        mediaItemArray.push(items[i]);
       }
     }
     if (mediaItemArray.length > 0 && writeProperties.length > 0) {
-      var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
-                              .getService(Ci.sbIFileMetadataService);      
-      try {
-	// This will write out the properties in propArray for each item.
-        var propArray = ArrayConverter.stringEnumerator(writeProperties);
-        var job = metadataService.write(mediaItemArray, propArray);
-      
-        SBJobUtils.showProgressDialog(job, window);
-      } catch (e) {
-        // Job will fail if writing is disabled by the pref
-        Components.utils.reportError(e);
-      }
+      sbMetadataUtils.writeMetadata(mediaItemArray,
+                                    writeProperties,
+                                    window,
+                                    this.mediaListView.mediaList);
     }
     
     return true;

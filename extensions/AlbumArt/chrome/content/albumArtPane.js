@@ -39,6 +39,7 @@ Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Cu.import("resource://app/jsmodules/sbMetadataUtils.jsm");
 Cu.import("resource://app/jsmodules/SBUtils.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
@@ -554,18 +555,9 @@ var AlbumArt = {
     
     // Only write the image if it is local
     if (this.checkIsLocal(aMediaItem)) {
-      var propArray = ArrayConverter.stringEnumerator([SBProperties.primaryImageURL]);
-      var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
-                              .getService(Ci.sbIFileMetadataService);      
-      try {
-        var job = metadataService.write(ArrayConverter.nsIArray([aMediaItem]),
-                                        propArray);
-      
-        SBJobUtils.showProgressDialog(job, window);
-      } catch (e) {
-        // Job will fail if writing is disabled by the pref
-        Components.utils.reportError(e);
-      }
+      sbMetadataUtils.writeMetadata([aMediaItem],
+                                    [SBProperties.primaryImageURL],
+                                    window);
     }
   },
 
@@ -633,8 +625,7 @@ var AlbumArt = {
     
     // Now actually set the properties.  This will trigger a notification that
     // will update the currently selected display.
-    var mediaItemArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                        .createInstance(Ci.nsIMutableArray);
+    var mediaItemArray = [];
     itemEnum = selection.selectedMediaItems;
     while (itemEnum.hasMoreElements()) {
       var item = itemEnum.getNext();
@@ -642,26 +633,17 @@ var AlbumArt = {
       if (oldImage != aNewImageUrl) {
         item.setProperty(SBProperties.primaryImageURL, aNewImageUrl);
         if (this.checkIsLocal(item)) {
-          mediaItemArray.appendElement(item, false);
+          mediaItemArray.push(item);
         }
       }
     }
     
     // Write the images to metadata
     if (mediaItemArray.length > 0) {
-      var propArray = ArrayConverter.stringEnumerator([SBProperties.primaryImageURL]);
-      var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
-                              .getService(Ci.sbIFileMetadataService);      
-      try {
-        var job = metadataService.write(mediaItemArray, propArray);
-      
-        SBJobUtils.showProgressDialog(job, window);
-      } catch (e) {
-        // Job will fail if writing is disabled by the pref
-        Components.utils.reportError(e);
-      }
+      sbMetadataUtils.writeMetadata(mediaItemArray,
+                                    [SBProperties.primaryImageURL],
+                                    window);
     }
-    
   },
 
   /**

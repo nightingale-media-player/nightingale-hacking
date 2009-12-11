@@ -116,6 +116,7 @@
 /* boolean: true if the media is DRM protected; false/empty otherwise */
 #define SB_PROPERTY_ISDRMPROTECTED            "http://songbirdnest.com/data/1.0#isDRMProtected"
 #define SB_PROPERTY_ISALBUM                   "http://songbirdnest.com/data/1.0#isAlbum"
+#define SB_PROPERTY_DONT_WRITE_METADATA       "http://songbirdnest.com/data/1.0#dontWriteMetadata"
 
 // Device library specific properties
 #define SB_PROPERTY_DEVICE_PERSISTENT_ID      "http://songbirdnest.com/data/1.0#deviceId"
