@@ -256,9 +256,9 @@ public:
    * \brief For a MIME type, get format information describing it (extension,
    *        mime type, etc.
    */
-  static nsresult GetFormatTypeForMimeType
-                    (const nsAString&                   aMimeType,
-                     sbExtensionToContentFormatEntry_t& aFormatType);
+  static nsresult GetFormatTypesForMimeType
+    (const nsAString&                             aMimeType,
+     nsTArray<sbExtensionToContentFormatEntry_t>& aFormatTypeList);
 
   /**
    * \brief Determine if an item needs transcoding

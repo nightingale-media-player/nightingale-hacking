@@ -1088,15 +1088,16 @@ sbDeviceUtils::GetFormatTypeForURL
 /**
  * Returns the formatting information for a MIME type
  * \param aMimeType The MIME type we want the format stuff for
- * \param aFormatType the formatting map entry for the MIME type
+ * \param aFormatTypeList the formatting map entries for the MIME type
  */
 /* static */ nsresult
-sbDeviceUtils::GetFormatTypeForMimeType
-                 (const nsAString&                   aMimeType,
-                  sbExtensionToContentFormatEntry_t& aFormatType)
+sbDeviceUtils::GetFormatTypesForMimeType
+                 (const nsAString&                             aMimeType,
+                  nsTArray<sbExtensionToContentFormatEntry_t>& aFormatTypeList)
 {
   TRACE(("%s", __FUNCTION__));
 
+  aFormatTypeList.Clear();
   for (PRUint32 index = 0;
        index < NS_ARRAY_LENGTH(MAP_FILE_EXTENSION_CONTENT_FORMAT);
        ++index) {
@@ -1106,12 +1107,12 @@ sbDeviceUtils::GetFormatTypeForMimeType
       TRACE(("%s: ext %s type %s container %s codec %s",
              __FUNCTION__, entry.Extension, entry.MimeType,
              entry.ContainerFormat, entry.Codec));
-      aFormatType = entry;
-      return NS_OK;
+      NS_ENSURE_TRUE(aFormatTypeList.AppendElement(entry),
+                     NS_ERROR_OUT_OF_MEMORY);
     }
   }
 
-  return NS_ERROR_NOT_AVAILABLE;
+  return NS_OK;
 }
 
 /**
