@@ -968,6 +968,12 @@ sbDeviceLibrary::SetMgmtType(PRUint32 aMgmtType)
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (origMgmtType != aMgmtType) {
+    if (aMgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL) {
+      // sync
+      rv = mDevice->SyncLibraries();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
     // update the library is read-only property
     rv = UpdateIsReadOnly();
     NS_ENSURE_SUCCESS(rv, rv);
