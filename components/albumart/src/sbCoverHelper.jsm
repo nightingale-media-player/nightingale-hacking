@@ -474,8 +474,13 @@ var sbCoverHelper = {
    * \param aWindow Window to bind to, this can be null.
    * \param aLibrary The library that these items are from. Optional, default
    *                 to the main library.
+   * \param aSuppressProgressDialog
+   *                            If true, don't open job progress dialog.
    */
-  getArtworkForItems: function(aItemList, aWindow, aLibrary) {
+  getArtworkForItems: function(aItemList,
+                               aWindow,
+                               aLibrary,
+                               aSuppressProgressDialog) {
     var library = aLibrary;
     if (!library)
       library = LibraryUtils.mainLibrary;
@@ -524,6 +529,7 @@ var sbCoverHelper = {
     // Now start scanning
     artworkScanner.addJobProgressListener(jobProgressListener);
     artworkScanner.scanListForArtwork(getArtworkMediaList);
-    SBJobUtils.showProgressDialog(artworkScanner, aWindow);
+    if (!aSuppressProgressDialog)
+      SBJobUtils.showProgressDialog(artworkScanner, aWindow);
   }
 }

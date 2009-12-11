@@ -77,6 +77,7 @@ var AlbumArt = {
   _nowSelectedMediaItemWatcher: null, // Now selected media item watcher.
   _prevAutoFetchArtworkItem: null,    // Previous item for which auto artwork
                                       // fetch was attempted.
+  _autoFetchTimeoutID: null,          // ID of auto-fetch timeout.
 
   // Array of state information for each display (selected/playing/etc)
   _stateInfo: [ { imageID: "sb-albumart-selected",
@@ -433,6 +434,12 @@ var AlbumArt = {
   onUnload: function AlbumArt_onUnload() {
     // Remove our unload event listener so we do not leak
     window.removeEventListener("unload", AlbumArt.onUnload, false);
+
+    // Clear any auto-fetch timeouts.
+    if (this._autoFetchTimeoutID) {
+      clearTimeout(this._autoFetchTimeoutID)
+      this._autoFetchTimeoutID = null;
+    }
 
     // Clear the now selected media item
     AlbumArt.clearNowSelectedMediaItem();
@@ -859,6 +866,22 @@ var AlbumArt = {
    *        needed.
    */
   autoFetchArtwork: function AlbumArt_autoFetchArtwork() {
+    // Ensure no auto-fetch timeout is pending.
+    if (this._autoFetchTimeoutID) {
+      clearTimeout(this._autoFetchTimeoutID)
+      this._autoFetchTimeoutID = null;
+    }
+
+    // Delay the start of auto-fetching for a second.
+    var _this = this;
+    var func = function() {
+      _this._autoFetchTimeoutID = null;
+      _this._autoFetchArtwork();
+    }
+    this._autoFetchTimeoutID = setTimeout(func, 1000);
+  },
+
+  _autoFetchArtwork: function AlbumArt__autoFetchArtwork() {
     // Determine the item for which artwork should be fetched.
     var item = null;
     if (AlbumArt._currentState == STATE_PLAYING) {
@@ -887,7 +910,7 @@ var AlbumArt = {
       var sip = Cc["@mozilla.org/supports-interface-pointer;1"]
                   .createInstance(Ci.nsISupportsInterfacePointer);
       sip.data = ArrayConverter.nsIArray([item]);
-      sbCoverHelper.getArtworkForItems(sip.data, window, item.library);
+      sbCoverHelper.getArtworkForItems(sip.data, window, item.library, true);
     }
   },
 
