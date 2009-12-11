@@ -90,6 +90,19 @@
             <xul:toolbarseparator class="device-progress-manage-separator"/>
           </xul:hbox>
           
+          <!-- Apply/cancel buttons to appear when the user modified settings -->
+          <xul:button sbid="settings_cancel_button"
+                      class="device-progress-settings-cancel-buton"
+                      label="&window.cancel;"
+                      action="settings-cancel"
+                      oncommand="DPW.onAction(event);"/>
+
+          <xul:button sbid="settings_apply_button"
+                      class="device-progress-settings-apply-buton"
+                      label="&window.apply;"
+                      action="settings-apply"
+                      oncommand="DPW.onAction(event);"/>
+
           <!-- Sync device operation button. -->
           <xul:button sbid="sync_operation_button"
                       class="device-progress-button"/>

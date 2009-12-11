@@ -199,6 +199,14 @@ var DPWCfg = {
 
 var DPW = {
   //
+  // Constants
+  //
+
+  SYNCSETTINGS_CHANGE: 0,
+  SYNCSETTINGS_APPLY: 1,
+  SYNCSETTINGS_CANCEL: 2,
+
+  //
   // Device progress object fields.
   //
   //   _cfg                     Configuration.
@@ -213,8 +221,12 @@ var DPW = {
   //                            Last completed operation of last state changed
   //                            event.
   //   _showProgress            If true, progress status should be displayed.
+  //   _syncSettingsChanged     If true, buttons to apply/cancel sync settings
+  //                            should be displayed.
   //
   //   _progressInfoBox         Device progress info.
+  //   _settingsCancelButton    Cancel button for sync settings modifications.
+  //   _settingsApplyButton     Apply button for sync settings modifications.
   //   _syncButton              Sync button element.
   //   _idleBox                 Idle message & spacer.
   //   _cancelButtonBox         Cancel button box element.
@@ -234,8 +246,11 @@ var DPW = {
   _lastEventOperation: Ci.sbIDevice.STATE_IDLE,
   _lastCompletedEventOperation: Ci.sbIDevice.STATE_IDLE,
   _showProgress: false,
+  _syncSettingsChanged: false,
 
   _progressInfoBox: null,
+  _settingsCancelButton: null,
+  _settingsApplyButton: null,
   _syncButton: null,
   _cancelButtonBox: null,
   _finishButton: null,
@@ -267,6 +282,8 @@ var DPW = {
 
     // Get some widget elements.
     this._progressInfoBox  = this._getElement("progress_information_box");
+    this._settingsCancelButton = this._getElement("settings_cancel_button");
+    this._settingsApplyButton = this._getElement("settings_apply_button");
     this._syncButton       = this._getElement("sync_operation_button");
     this._cancelButtonBox = this._getElement("cancel_operation_box");
     this._finishButton = this._getElement("finish_progress_button");
@@ -278,6 +295,8 @@ var DPW = {
 
     this._finishButton.addEventListener("click", this._onButtonEvent, false);
     this._finishButton.addEventListener("keypress", this._onButtonEvent, false);
+
+    document.addEventListener("sbDeviceSync-settings", this._onSettingsEvent, false);
 
     // Initialize object fields.
     this._deviceID = this._widget.deviceID;
@@ -324,6 +343,8 @@ var DPW = {
     this._operationInfoTable = null;
     this._progressInfoBox = null;
     this._idleBox = null;
+    this._settingsCancelButton = null;
+    this._settingsApplyButton = null;
     this._syncButton   = null;
     this._cancelButtonBox = null;
     this._finishButton = null;
@@ -377,7 +398,9 @@ var DPW = {
     }
 
     // Only show sync button if not showing progress.
-    this._syncButton.hidden = this._showProgress;
+    this._settingsCancelButton.hidden = this.showProgress || !this._syncSettingsChanged;
+    this._settingsApplyButton.hidden = this.showProgress || !this._syncSettingsChanged;
+    this._syncButton.hidden = this._showProgress || this._syncSettingsChanged;
     this._syncManualBox.hidden = this._showProgress;
 
     // Set cancel and hide button hidden property.  The device cancel command
@@ -538,7 +561,15 @@ var DPW = {
     switch (aEvent.target.getAttribute("action")) {
       case "finish" :
         this._finish();
-      break;
+        break;
+
+      case "settings-apply":
+        this._dispatchSettingsEvent(this.SYNCSETTINGS_APPLY);
+        break;
+
+      case "settings-cancel":
+        this._dispatchSettingsEvent(this.SYNCSETTINGS_CANCEL);
+        break;
 
       default :
         break;
@@ -563,6 +594,28 @@ var DPW = {
       newEvent.initEvent("sbDeviceProgress-ok-button-enter", false, true);
       document.dispatchEvent(newEvent);
     }
+  },
+
+
+  /**
+   * \brief Handles the sbDeviceSync-settings and updates sync settings UI
+   *        accordingly
+   *
+   * \param aEvent              Event to handle.
+   */
+
+  _onSettingsEvent: function DPW__onSettingsEvent(aEvent) {
+    switch (aEvent.detail) {
+      case DPW.SYNCSETTINGS_CHANGE:
+        DPW._syncSettingsChanged = true;
+        break;
+
+      case DPW.SYNCSETTINGS_APPLY:
+      case DPW.SYNCSETTINGS_CANCEL:
+        DPW._syncSettingsChanged = false;
+        break;
+    }
+    DPW._update();
   },
 
 
@@ -643,6 +696,18 @@ var DPW = {
     this._update();
   },
 
+
+  /**
+   * \brief Notifies listener about a settings apply/cancel action.
+   * 
+   * \param detail              One of the SYNCSETTINGS_* constants
+   */
+
+  _dispatchSettingsEvent: function DPW__dispatchSettingsEvent(detail) {
+    let event = document.createEvent("UIEvents");
+    event.initUIEvent("sbDeviceSync-settings", false, false, window, detail);
+    document.dispatchEvent(event);
+  },
 
   /**
    * \brief Get and return the operation information record for the device
