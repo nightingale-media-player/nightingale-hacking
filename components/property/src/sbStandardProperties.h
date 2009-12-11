@@ -146,4 +146,7 @@
 // Playlist properties
 #define SB_PROPERTY_PLAYLISTURL               "http://songbirdnest.com/data/1.0#playlistURL"
 
+// Artwork properties.
+#define SB_PROPERTY_ATTEMPTED_REMOTE_ART_FETCH "http://songbirdnest.com/data/1.0#attemptedRemoteArtFetch"
+
 #endif /* __SB_STANDARD_PROPERTIES_H__ */

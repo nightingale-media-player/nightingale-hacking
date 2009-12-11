@@ -1286,6 +1286,17 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                    PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Attempted to fetch artwork remotely (internal use)
+  rv = RegisterBoolean
+         (NS_LITERAL_STRING(SB_PROPERTY_ATTEMPTED_REMOTE_ART_FETCH),
+          EmptyString(),
+          stringBundle,
+          PR_FALSE,
+          PR_FALSE,
+          PR_FALSE,
+          PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

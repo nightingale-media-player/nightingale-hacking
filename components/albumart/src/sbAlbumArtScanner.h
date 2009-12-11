@@ -147,6 +147,15 @@ private:
    */
   nsresult GetNextAlbumItems();
 
+  /**
+   * Mark that a remote album art fetch was attempted for the media item
+   * specified by aMediaItem.
+   *
+   * \param aMediaItem          Media item for which remote album art fetch was
+   *                            attempted.
+   */
+  nsresult MarkRemoteFetchAttempted(sbIMediaItem* aMediaItem);
+
   // Timers for doing our work
   nsCOMPtr<nsITimer>                       mIntervalTimer;
   PRInt32                                  mIntervalTimerValue;
@@ -165,7 +174,8 @@ private:
   PRUint32                                 mCompletedItemCount;
   PRUint32                                 mTotalItemCount;
 
-  // Name of fetcher we are currently using
+  // Info for fetcher we are currently using
+  nsCOMPtr<sbIAlbumArtFetcher>             mCurrentFetcher;
   nsAutoString                             mCurrentFetcherName;
   nsAutoString                             mCurrentAlbumName;
 

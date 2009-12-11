@@ -75,6 +75,8 @@ var AlbumArt = {
   _displayPane: null,                 // Display pane we are in.
   _nowSelectedMediaItem: null,        // Now selected media item.
   _nowSelectedMediaItemWatcher: null, // Now selected media item watcher.
+  _prevAutoFetchArtworkItem: null,    // Previous item for which auto artwork
+                                      // fetch was attempted.
 
   // Array of state information for each display (selected/playing/etc)
   _stateInfo: [ { imageID: "sb-albumart-selected",
@@ -282,6 +284,9 @@ var AlbumArt = {
       // Hide the Drag Here box
       aDragBox.hidden = true;
     }
+
+    // Auto-fetch artwork.
+    AlbumArt.autoFetchArtwork();
 
     /* Set the image element URL */
     if (aNewURL)
@@ -846,6 +851,43 @@ var AlbumArt = {
         return false;
       }
       return true;
+    }
+  },
+
+  /**
+   * \brief Automatically fetch artwork for the currently displayed item if
+   *        needed.
+   */
+  autoFetchArtwork: function AlbumArt_autoFetchArtwork() {
+    // Determine the item for which artwork should be fetched.
+    var item = null;
+    if (AlbumArt._currentState == STATE_PLAYING) {
+      item = this.getNowPlayingItem();
+    }
+    else {
+      if (AlbumArt._mediaListView)
+        item = AlbumArt._mediaListView.selection.currentMediaItem;
+    }
+
+    // Do nothing if item has not changed.
+    if (item == AlbumArt._prevAutoFetchArtworkItem)
+      return;
+    AlbumArt.prevAutoFetchArtworkItem = item;
+
+    // Do nothing more if no item.
+    if (!item)
+      return;
+
+    // Auto-fetch if item does not have an image and a remote artwork fetch has
+    // not yet been attempted.
+    var primaryImageURL = item.getProperty(SBProperties.primaryImageURL);
+    var attemptedRemoteArtFetch =
+          item.getProperty(SBProperties.attemptedRemoteArtFetch);
+    if (!primaryImageURL && !attemptedRemoteArtFetch) {
+      var sip = Cc["@mozilla.org/supports-interface-pointer;1"]
+                  .createInstance(Ci.nsISupportsInterfacePointer);
+      sip.data = ArrayConverter.nsIArray([item]);
+      sbCoverHelper.getArtworkForItems(sip.data, window, item.library);
     }
   },
 

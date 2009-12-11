@@ -566,6 +566,7 @@ NS_IMETHODIMP
 sbAlbumArtScanner::OnChangeFetcher(sbIAlbumArtFetcher* aFetcher)
 {
   TRACE(("sbAlbumArtScanner[0x%8.x] - OnChangeFetcher", this));
+  mCurrentFetcher = aFetcher;
   aFetcher->GetName(mCurrentFetcherName);
   UpdateProgress();
   return NS_OK;
@@ -579,6 +580,16 @@ sbAlbumArtScanner::OnTrackResult(nsIURI*       aImageLocation,
   TRACE(("sbAlbumArtScanner[0x%8.x] - OnResult", this));
   NS_ENSURE_ARG_POINTER(aMediaItem);
   nsresult rv;
+
+  // If fetcher is remote, mark that an attempt was made to fetch remote art for
+  // the item.
+  PRBool isLocal;
+  rv = mCurrentFetcher->GetIsLocal(&isLocal);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!isLocal) {
+    rv = MarkRemoteFetchAttempted(aMediaItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // A null aImageLocation indicates a failure
   if (aImageLocation) {
@@ -598,6 +609,23 @@ sbAlbumArtScanner::OnAlbumResult(nsIURI*    aImageLocation,
   NS_ENSURE_ARG_POINTER(aMediaItems);
   nsresult rv;
 
+  // If fetcher is remote, mark that an attempt was made to fetch remote art for
+  // the items.
+  PRBool isLocal;
+  rv = mCurrentFetcher->GetIsLocal(&isLocal);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!isLocal) {
+    PRUint32 itemCount;
+    rv = aMediaItems->GetLength(&itemCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+    for (PRUint32 i = 0; i < itemCount; i++) {
+      nsCOMPtr<sbIMediaItem> mediaItem = do_QueryElementAt(aMediaItems, i, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = MarkRemoteFetchAttempted(mediaItem);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
   // A null aImageLocation indicates a failure
   if (aImageLocation) {
     rv = SetItemsArtwork(aImageLocation, aMediaItems);
@@ -613,6 +641,9 @@ sbAlbumArtScanner::OnSearchComplete(nsIArray* aMediaItems)
 {
   TRACE(("sbAlbumArtScanner[0x%8.x] - OnSearchComplete", this));
   nsresult rv;
+
+  // Done with the fetchers for now
+  mCurrentFetcher = nsnull;
 
   // Now that we are done this album move on to the next
   mProcessNextAlbum = PR_TRUE;
@@ -668,6 +699,7 @@ sbAlbumArtScanner::~sbAlbumArtScanner()
     mIntervalTimer = nsnull;
   }
   mFetcherSet = nsnull;
+  mCurrentFetcher = nsnull;
   mCurrentAlbumItemList = nsnull;
   mStringBundle = nsnull;
 }
@@ -738,6 +770,7 @@ sbAlbumArtScanner::UpdateProgress()
     // listeners since they may take some time and we need to cancel
     // the timers as soon as possible.
     TRACE(("sbAlbumArtScanner::UpdateProgress - Shutting down Job"));
+    mCurrentFetcher = nsnull;
     mProcessNextAlbum = PR_FALSE;
     mIntervalTimer->Cancel();
     mFetcherSet->Shutdown();
@@ -921,3 +954,27 @@ sbAlbumArtScanner::ProcessAlbum()
 
   return NS_OK;
 }
+
+nsresult
+sbAlbumArtScanner::MarkRemoteFetchAttempted(sbIMediaItem* aMediaItem)
+{
+  TRACE(("sbAlbumArtScanner[0x%8.x] - MarkRemoteFetchAttempted", this));
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  nsresult rv;
+
+  // Set attempted remote art fetch property if not already set.
+  nsAutoString attemptedRemoteArtFetch;
+  rv = aMediaItem->GetProperty
+                     (NS_LITERAL_STRING(SB_PROPERTY_ATTEMPTED_REMOTE_ART_FETCH),
+                      attemptedRemoteArtFetch);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!attemptedRemoteArtFetch.Equals(NS_LITERAL_STRING("1"))) {
+    rv = aMediaItem->SetProperty
+           (NS_LITERAL_STRING(SB_PROPERTY_ATTEMPTED_REMOTE_ART_FETCH),
+            NS_LITERAL_STRING("1"));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
