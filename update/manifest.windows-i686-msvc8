@@ -394,6 +394,7 @@
 ./jsmodules/sbCoverHelper.jsm
 ./jsmodules/sbLibraryUtils.jsm
 ./jsmodules/sbLocalDatabaseMigrationUtils.jsm
+./jsmodules/sbMetadataUtils.jsm
 ./jsmodules/sbProperties.jsm
 ./jsmodules/sbSmartMediaListColumnSpecUpdater.jsm
 ./jsmodules/sbStorageFormatter.jsm
