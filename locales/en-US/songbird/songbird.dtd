@@ -436,8 +436,10 @@
 <!ENTITY command.device.renamedevice.accesskey          "R">
 <!ENTITY command.device.devicesync                      "Sync">
 <!ENTITY command.device.devicesync.accesskey            "S">
-<!ENTITY command.device.manual_manage                   "Manually Manage Device">
-<!ENTITY command.device.manual_manage.accesskey         "M">
+<!ENTITY command.device.syncmode.manual                 "Manual">
+<!ENTITY command.device.syncmode.manual.accesskey       "M">
+<!ENTITY command.device.syncmode.auto                   "Auto">
+<!ENTITY command.device.syncmode.auto.accesskey         "A">
 <!-- CD Device entities -->
 <!ENTITY command.device.rip                             "Rip CD">
 <!ENTITY command.device.rip.accesskey                   "R">
@@ -481,7 +483,8 @@
 <!ENTITY device.info.battery.label          "Battery">
 <!ENTITY device.info.firmware_version.label "Firmware Version">
 
-<!ENTITY device.progress.sync "Sync">
+<!ENTITY device.progress.syncmode           "Sync mode:">
+<!ENTITY device.progress.sync               "Sync">
 
 <!ENTITY device.capacity.music.label    "Music">
 <!ENTITY device.capacity.video.label    "Video">

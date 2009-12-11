@@ -66,12 +66,26 @@
                   flex="1"
                   class="device-progress-idle-box"
                   hidden="false">
-          <!-- Manually Manage check box -->
-          <xul:hbox sbid="sync_manual_box">
-            <xul:checkbox sbid="sync_manual_checkbox"
-                          class="device-manual-checkbox"/>
-            <xul:sb-device-toggle-mgmt-command bindelem="prev"
-                                               xbl:inherits="device-id"/>
+          <!-- Sync mode toggle buttons -->
+          <xul:hbox sbid="syncmode_box" class="device-syncmode-box">
+            
+            <xul:label value="&device.progress.syncmode;"/>
+
+            <xul:button sbid="sync_manual_button"
+                        type="radio"
+                        autoCheck="false"
+                        group="device-syncmode"
+                        class="device-syncmode-manual-button"/>
+            <xul:sb-device-syncmode-manual-command bindelem="prev"
+                                                   xbl:inherits="device-id"/>
+
+            <xul:button sbid="sync_auto_button"
+                        type="radio"
+                        autoCheck="false"
+                        group="device-syncmode"
+                        class="device-syncmode-auto-button"/>
+            <xul:sb-device-syncmode-auto-command bindelem="prev"
+                                                 xbl:inherits="device-id"/>
             
             <xul:toolbarseparator class="device-progress-manage-separator"/>
           </xul:hbox>

@@ -282,8 +282,12 @@ deviceControlWidget.prototype = {
         sbCDDeviceUtils.doCDLookUp(this._device);
         break;
       
-      case "toggle-mgmt" :
-        this._toggleManagement();
+      case "mgmt-manual" :
+        this._setManagementMode(true);
+        break;
+
+      case "mgmt-auto" :
+        this._setManagementMode(false);
         break;
 
       default :
@@ -314,11 +318,13 @@ deviceControlWidget.prototype = {
   },
 
   /**
-   * Toggle the Management Flag for the default (first) device library.
+   * Sets the Management Flag for the default (first) device library to manual
+   * or automatic. In automatic mode either "sync all" or "sync playlists" is
+   * selected according to user's preferences.
    */
   
-  _toggleManagement: function deviceControlWidget__toggleManagement() {
-    if (this._deviceLibrary.mgmtType != Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL) {
+  _setManagementMode: function deviceControlWidget__toggleManagement(manual) {
+    if (manual) {
       // Manual Mode
       this._deviceLibrary.mgmtType = Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL;
     }

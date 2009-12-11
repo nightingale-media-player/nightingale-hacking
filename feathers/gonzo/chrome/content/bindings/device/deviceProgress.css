@@ -64,8 +64,15 @@ Imported by bindings.css or directly into feathers.
   padding:0;
   margin:0;
 }
-.device-manual-checkbox[checked="false"] label {
-  color: rgb(101, 101, 101);
+
+.device-syncmode-box {
+  -moz-box-align: center;
+}
+.device-syncmode-manual-button {
+  margin-right: 0;
+}
+.device-syncmode-auto-button {
+  margin-left: 0;
 }
 
 

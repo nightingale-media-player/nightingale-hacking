@@ -274,7 +274,7 @@ var DPW = {
     this._progressTextLabel = this._getElement("progress_text_label");
     this._subProgressTextLabel = this._getElement("sub_progress_text_label")
     this._idleBox = this._getElement("progress_idle_box");
-    this._syncManualBox = this._getElement("sync_manual_box");
+    this._syncManualBox = this._getElement("syncmode_box");
 
     this._finishButton.addEventListener("click", this._onButtonEvent, false);
     this._finishButton.addEventListener("keypress", this._onButtonEvent, false);
