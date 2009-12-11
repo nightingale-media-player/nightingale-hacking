@@ -39,7 +39,7 @@ var TASKFILE_ADDEDMEDIAITEMS_HEADER   = "added-mediaitems";
 var TASKFILE_UPDATEDMEDIAITEMS_HEADER = "updated-mediaitems";
 
 // Media exporter prefs.
-var PREF_IMPORTEXPORT_ONSHUTDOWN = 
+var PREF_IMPORTEXPORT_ONSHUTDOWN =
            "songbird.library_importexport.autoshutdown";
 var PREF_IMPORTEXPORT_ONSTARTUP =
            "songbird.library_importexport.autostartup";
@@ -49,7 +49,7 @@ var PREF_EXPORT_PLAYLISTS =
            "songbird.library_exporter.export_playlists";
 var PREF_EXPORT_SMARTPLAYLISTS =
            "songbird.library_exporter.export_smartplaylists";
-var PREF_EXPORT_STARTAGENT = 
+var PREF_EXPORT_STARTAGENT =
            "songbird.library_exporter.start_agent"
 
 var AppPrefs = Cc["@mozilla.org/fuel/application;1"]
@@ -58,39 +58,11 @@ var AppPrefs = Cc["@mozilla.org/fuel/application;1"]
 //------------------------------------------------------------------------------
 // File management utils
 
-function newAppRelativeFile( path ) {
-
-  var file = Cc["@mozilla.org/file/directory_service;1"]
-               .getService(Ci.nsIProperties)
-               .get("resource:app", Ci.nsIFile);
-  file = file.clone();
-
-  var nodes = path.split("/");
-  for ( var i = 0, end = nodes.length; i < end; i++ )
-  {
-    file.append(nodes[i]);
-  }
-
-  return file;
-}
-
-function newFileURI(file) {
-  return Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-           .getService(Ci.sbILibraryUtils)
-           .getFileContentURI(file);
-}
-
 function newTestFileURI(aFileName) {
   var fileClone = TEST_FILES.clone();
   fileClone.append(aFileName);
 
   return newFileURI(fileClone);
-}
-
-function newURI(spec) {
-  var ioService = Cc["@mozilla.org/network/io-service;1"].
-                  getService(Ci.nsIIOService);
-  return ioService.newURI(spec, null, null);
 }
 
 function removeAllTaskFiles()
@@ -153,7 +125,7 @@ function setExportTracksOnly()
 }
 
 //
-// \brief Toggle exporting of tracks and regular playlists (not smart). 
+// \brief Toggle exporting of tracks and regular playlists (not smart).
 //
 function setExportTracksPlaylists()
 {
@@ -177,7 +149,7 @@ function setExportTracksPlaylistsSmartPlaylists()
 //------------------------------------------------------------------------------
 // Export task data parser utility class.
 // NOTE: This parser is only used for the unit tests and should not be used as
-//       an example in real life. 
+//       an example in real life.
 //       @see bug 16221 for parer upgrading.
 
 function TaskFileDataParser(aDataFile)
@@ -193,7 +165,7 @@ function TaskFileDataParser(aDataFile)
   this._parseDataFile();
 }
 
-TaskFileDataParser.prototype = 
+TaskFileDataParser.prototype =
 {
   // Added resource getters
   getAddedMediaLists: function() {
@@ -219,7 +191,7 @@ TaskFileDataParser.prototype =
     var hasSchema = false;
     var nextItem = 0;
     var result;
-    
+
     while (hasMore) {
       hasMore = inputStream.readLine(curLine);
       dump(curLine.value + "\n");
@@ -302,4 +274,3 @@ TaskFileDataParser.prototype =
     inputStream.close();
   },
 };
-

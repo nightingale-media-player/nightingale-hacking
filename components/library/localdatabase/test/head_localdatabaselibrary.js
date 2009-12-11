@@ -485,20 +485,6 @@ function loadMockDatabase() {
   return db;
 }
 
-function newFileURI(file) {
-  var ioService = Cc["@mozilla.org/network/io-service;1"].
-                  getService(Ci.nsIIOService);
-
-  return ioService.newFileURI(file);
-}
-
-function newURI(spec) {
-  var ioService = Cc["@mozilla.org/network/io-service;1"].
-                  getService(Ci.nsIIOService);
-
-  return ioService.newURI(spec, null, null);
-}
-
 function getFile(fileName) {
   var file = Cc["@mozilla.org/file/directory_service;1"]
                .getService(Ci.nsIProperties)

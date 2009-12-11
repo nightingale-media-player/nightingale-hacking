@@ -445,7 +445,7 @@ function assertArraysEqual(a1, a2) {
   for (var i=0; i<a1.length; i++) {
     assertEqual(a1[i], a2[i], "data mismatch at index " + i);
   }
-} 
+}
 
 // assert the equality of two unordered sets, represnted as JS arrays
 function assertSetsEqual(s1, s2) {
@@ -505,3 +505,53 @@ function testFilesEqual(aFile1, aFile2) {
   return filesEqual;
 }
 
+function newAppRelativeFile( path ) {
+
+  var file = Cc["@mozilla.org/file/directory_service;1"]
+               .getService(Ci.nsIProperties)
+               .get("resource:app", Ci.nsIFile);
+  file = file.clone();
+
+  var nodes = path.split("/");
+  for ( var i = 0, end = nodes.length; i < end; i++ )
+  {
+    file.append( nodes[ i ] );
+  }
+
+  return file;
+}
+
+/**
+ * Makes a new URI from a url string
+ */
+function newURI(aURLString)
+{
+  // Must be a string here
+  if (!(aURLString &&
+       (aURLString instanceof String) || typeof(aURLString) == "string"))
+    throw Components.results.NS_ERROR_INVALID_ARG;
+
+  var ioService =
+    Components.classes["@mozilla.org/network/io-service;1"]
+              .getService(Components.interfaces.nsIIOService);
+
+  try {
+    return ioService.newURI(aURLString, null, null);
+  }
+  catch (e) { }
+
+  return null;
+}
+
+function newFileURI(file)
+{
+  var ioService =
+    Components.classes["@mozilla.org/network/io-service;1"]
+              .getService(Components.interfaces.nsIIOService);
+  try {
+    return ioService.newFileURI(file);
+  }
+  catch (e) { }
+
+  return null;
+}

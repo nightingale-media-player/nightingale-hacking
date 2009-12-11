@@ -23,11 +23,18 @@
 #
 
 
-DEPTH = ../../..
+DEPTH = ../../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
+
+SONGBIRD_TEST_COMPONENT = transcodeservice/files
+
+TEST_FILE_EXTENSIONS = mp3 \
+                       $(NULL)
+
+SONGBIRD_TESTS = $(foreach e,$(TEST_FILE_EXTENSIONS),$(wildcard $(srcdir)/*.$e))
 
 include $(topsrcdir)/build/rules.mk

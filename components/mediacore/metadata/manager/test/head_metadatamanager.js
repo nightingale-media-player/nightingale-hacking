@@ -34,20 +34,6 @@ Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 var gFilesToClose = [];
 var gTailCallback = [];
 
-function newFileURI(file) {
-  var ioService = Cc["@mozilla.org/network/io-service;1"].
-                  getService(Ci.nsIIOService);
-  
-  return ioService.newFileURI(file);
-}
-
-function newURI(spec) {
-  var ioService = Cc["@mozilla.org/network/io-service;1"].
-                  getService(Ci.nsIIOService);
-  
-  return ioService.newURI(spec, null, null);
-}
-
 function createNewLibrary(databaseGuid, databaseLocation) {
 
   var directory;
@@ -60,7 +46,7 @@ function createNewLibrary(databaseGuid, databaseLocation) {
                 get("ProfD", Ci.nsIFile);
     directory.append("db");
   }
-  
+
   var file = directory.clone();
   file.append(databaseGuid + ".db");
 
@@ -76,7 +62,7 @@ function createNewLibrary(databaseGuid, databaseLocation) {
   }
   catch(e) {
   }
-  
+
   if (library) {
     var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"].
                          getService(Ci.sbILibraryManager);
@@ -91,7 +77,7 @@ function getPlatform() {
     var sysInfo =
       Components.classes["@mozilla.org/system-info;1"]
                 .getService(Components.interfaces.nsIPropertyBag2);
-    platform = sysInfo.getProperty("name");                                          
+    platform = sysInfo.getProperty("name");
   }
   catch (e) {
     dump("System-info not available, trying the user agent string.\n");
@@ -106,22 +92,6 @@ function getPlatform() {
       platform = "SunOS";
   }
   return platform;
-}
-
-function newAppRelativeFile( path ) {
-
-  var file = Cc["@mozilla.org/file/directory_service;1"]
-               .getService(Ci.nsIProperties)
-               .get("resource:app", Ci.nsIFile);
-  file = file.clone();
-
-  var nodes = path.split("/");
-  for ( var i = 0, end = nodes.length; i < end; i++ )
-  {
-    file.append( nodes[ i ] );
-  }
-
-  return file;
 }
 
 /**
@@ -139,7 +109,7 @@ function assertObjectIsSubsetOf(mapA, mapB) {
  * Used for debugging.
  */
 function reportJobProgress(job, jobName) {
-  log("\n\n\nMetadata - " + jobName + " job progress - " + 
+  log("\n\n\nMetadata - " + jobName + " job progress - " +
       job.progress + "/" + job.total + ", " + job.errorCount + " failed. " +
       "Status " + job.statusText + " (" + job.status + "), Title: " + job.titleText);
   var errorEnumerator = job.getErrorMessages();

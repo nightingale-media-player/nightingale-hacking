@@ -38,13 +38,6 @@ function getFile(fileName) {
   return file;
 }
 
-function newURI(spec) {
-  var ioService = Cc["@mozilla.org/network/io-service;1"].
-                  getService(Ci.nsIIOService);
-  
-  return ioService.newURI(spec, null, null);
-}
-
 function assertMediaList(aMediaList, aItemTestsFile, aPort) {
 
   var xmlReader = Cc["@mozilla.org/saxparser/xmlreader;1"]
@@ -159,4 +152,3 @@ function getFirstItemByProperty(aMediaList, aProperty, aValue) {
 
   return listener.item;
 }
-

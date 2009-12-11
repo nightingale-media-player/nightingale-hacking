@@ -36,7 +36,7 @@ __defineGetter__("Application", function() {
 
 
 Components.utils.import('resource://gre/modules/XPCOMUtils.jsm');
- 
+
 /**
  * \brief Some globally useful stuff for the tests
  */
@@ -141,7 +141,7 @@ function saveMediaManagerPreferences () {
       log("Unable to save folder preference: " + err);
     }
   }
-  
+
   gOriginalPrefs.enabled = Application.prefs.getValue(SB_MM_PREF_ENABLED, false);
   gOriginalPrefs.copy = Application.prefs.getValue(SB_MM_PREF_COPY, false);
   gOriginalPrefs.move = Application.prefs.getValue(SB_MM_PREF_MOVE, false);
@@ -188,7 +188,7 @@ function setupMediaManagerPreferences () {
   if (gOriginalPrefs == null) {
     saveMediaManagerPreferences();
   }
-  
+
   var prefBranch = Cc["@mozilla.org/preferences-service;1"]
                      .getService(Ci.nsIPrefBranch2);
 
@@ -200,7 +200,7 @@ function setupMediaManagerPreferences () {
   managedFolder.append("Managed");
   // Create the folder
   managedFolder.create(Ci.nsIFile.DIRECTORY_TYPE, 0777);
-  
+
   prefBranch.setComplexValue(SB_MM_PREF_FOLDER, Ci.nsILocalFile, managedFolder);
   prefBranch.setBoolPref(SB_MM_PREF_ENABLED, false);
   prefBranch.setBoolPref(SB_MM_PREF_COPY, true);
@@ -234,7 +234,7 @@ function addItemsToLibrary(aLibrary) {
     newFile = appendPathToDirectory(newFile,
                                     gResultInformation[i].originalFileName);
     toAdd.appendElement(ioService.newFileURI(newFile), false);
-    
+
     // Setup default properties for this item
     var props = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
                   .createInstance(Ci.sbIMutablePropertyArray);
@@ -264,7 +264,7 @@ function checkItem(aMediaItem, aResultInformationIndex, aShouldHaveOriginal) {
     return false;
   }
   current = current.file;
-  
+
   // Now put together the expected path for the item
   var expected = testFolder.clone();
   var expFolder = gResultInformation[aResultInformationIndex].expectedFolder;
@@ -278,12 +278,12 @@ function checkItem(aMediaItem, aResultInformationIndex, aShouldHaveOriginal) {
         "] is not expectd value [" + expected.path + "]!");
     return false;
   }
-  
+
   // Now check that the original file is still in place or not
   var original = testFolder.clone();
   var origName = gResultInformation[aResultInformationIndex].originalFileName;
   original = appendPathToDirectory(original, origName);
-  
+
   if (!original.exists() && aShouldHaveOriginal) {
     log("original doesn't exist, but expected!");
     return false;
@@ -306,7 +306,7 @@ function checkDeletedItem(aMediaItem) {
     return !file.exists();
   }
   return false;
-} 
+}
 
 /**
  * A test Media List Listener to watch for additions to the library
@@ -383,17 +383,6 @@ function appendPathToDirectory(directory, path) {
     directory.append( nodes[ i ] );
   }
   return directory;
-}
-
-/**
- * Gets a file/folder in our test folder
- */
-function newAppRelativeFile( path ) {
-  var file = Cc["@mozilla.org/file/directory_service;1"]
-               .getService(Ci.nsIProperties)
-               .get("resource:app", Ci.nsIFile);
-  file = file.clone();
-  return appendPathToDirectory(file, path);
 }
 
 /**

@@ -60,7 +60,7 @@ function runPerfTest(aName, aTestFunc) {
 
   var fos = Cc["@mozilla.org/network/file-output-stream;1"]
               .createInstance(Ci.nsIFileOutputStream);
-  var s = aName + "\t" + library.databaseGuid + "\t" + 
+  var s = aName + "\t" + library.databaseGuid + "\t" +
           library.length + "\t" + timer.elapsed() + "\n";
   // Open writeonly, createfile, append, with rw permissions for everyone
   fos.init(outputFile, 0x02 | 0x08 | 0x10, 0666, 0);
@@ -78,7 +78,7 @@ function getLibrary() {
     Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
     return LibraryUtils.mainLibrary;
   }
-  
+
   libraryFile = environment.get("SB_PERF_LIBRARY");
 
   var file = Components.classes["@mozilla.org/file/local;1"]
@@ -121,20 +121,6 @@ function newGuidArray(aLibrary) {
   array.fetchSize = 1000;
 
   return array;
-}
-
-function newFileURI(file) {
-  var ioService = Cc["@mozilla.org/network/io-service;1"].
-                  getService(Ci.nsIIOService);
-
-  return ioService.newFileURI(file);
-}
-
-function newURI(spec) {
-  var ioService = Cc["@mozilla.org/network/io-service;1"].
-                  getService(Ci.nsIIOService);
-
-  return ioService.newURI(spec, null, null);
 }
 
 function getFile(fileName) {

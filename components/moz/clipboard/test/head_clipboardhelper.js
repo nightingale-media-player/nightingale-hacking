@@ -30,27 +30,13 @@
 
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 
-function newFileURI(file) {
-  var ioService = Cc["@mozilla.org/network/io-service;1"].
-                  getService(Ci.nsIIOService);
-  
-  return ioService.newFileURI(file);
-}
-
-function newURI(spec) {
-  var ioService = Cc["@mozilla.org/network/io-service;1"].
-                  getService(Ci.nsIIOService);
-  
-  return ioService.newURI(spec, null, null);
-}
-
 function getPlatform() {
   var platform;
   try {
     var sysInfo =
       Components.classes["@mozilla.org/system-info;1"]
                 .getService(Components.interfaces.nsIPropertyBag2);
-    platform = sysInfo.getProperty("name");                                          
+    platform = sysInfo.getProperty("name");
   }
   catch (e) {
     dump("System-info not available, trying the user agent string.\n");
@@ -65,22 +51,6 @@ function getPlatform() {
       platform = "SunOS";
   }
   return platform;
-}
-
-function newAppRelativeFile( path ) {
-
-  var file = Cc["@mozilla.org/file/directory_service;1"]
-               .getService(Ci.nsIProperties)
-               .get("resource:app", Ci.nsIFile);
-  file = file.clone();
-
-  var nodes = path.split("/");
-  for ( var i = 0, end = nodes.length; i < end; i++ )
-  {
-    file.append( nodes[ i ] );
-  }
-
-  return file;
 }
 
 /**

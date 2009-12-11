@@ -81,11 +81,3 @@ function safeSetTimeout(closure, timeout) {
   }, timeout);
 
 }
-
-function newURI(spec) {
-  var ioService = Cc["@mozilla.org/network/io-service;1"].
-                  getService(Ci.nsIIOService);
-  
-  return ioService.newURI(spec, null, null);
-}
-

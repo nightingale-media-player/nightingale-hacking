@@ -43,7 +43,7 @@ var gMediaList;
 const MEDIALIST_TARGET_INDEX = 1;
 
 /**
- * Start by creating a library and doing a directory import of the 
+ * Start by creating a library and doing a directory import of the
  * metadata unit test files.
  */
 function runTest () {
@@ -53,7 +53,7 @@ function runTest () {
   var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"].
                           getService(Ci.sbILibraryManager);
   libraryManager.registerLibrary(gLibrary, false);
-  
+
   var job = gDirectoryImporter.import(gDirectories, gLibrary);
   job.addJobProgressListener(onFirstImportProgress);
   testPending();
@@ -62,21 +62,21 @@ function runTest () {
 
 /**
  * Once the first directory import completes, confirm that
- * we found some files, and that at least some of them 
+ * we found some files, and that at least some of them
  * have expected metadata
  */
 function onFirstImportProgress(job) {
   try {
     log("DirectoryImport: onFirstImportProgress: " + job.statusText +
         " status " + job.status + " added " + job.totalAddedToLibrary );
-    
+
     // Just ignore progress while running
     if (job.status == Ci.sbIJobProgress.STATUS_RUNNING) {
       return;
     }
     // Finished
     job.removeJobProgressListener(onFirstImportProgress);
-    
+
     // Confirm that we got some items
     log("DirectoryImport: onFirstImportProgress: totalAddedToLibrary=" + job.totalAddedToLibrary);
     log("DirectoryImport: onFirstImportProgress: totalDuplicates=" + job.totalDuplicates);
@@ -86,7 +86,7 @@ function onFirstImportProgress(job) {
     assertEqual(job.totalAddedToMediaList, 0);
     assertTrue(job.enumerateAllItems().hasMoreElements());
     assertTrue(job.enumerateAllItems().getNext() instanceof Ci.sbIMediaItem);
-    
+
     // Confirm that at least some metadata was scanned (the scanner is tested elsewhere).
     // Most of the test files fail our dupe check, so just look for anything.
     var foundSomeMetadata = false;
@@ -104,11 +104,11 @@ function onFirstImportProgress(job) {
   } catch (e) {
     log("Error: " + e);
     // Force the test to fail.  If we throw it will
-    // be eaten by the job progress notify function, 
+    // be eaten by the job progress notify function,
     // and the test will never finish.
     assertEqual(true, false);
   }
-  
+
   startSecondImport();
 }
 
@@ -117,20 +117,20 @@ function onFirstImportProgress(job) {
  */
 function startSecondImport () {
   gMediaList = gLibrary.createMediaList("simple");
-  
+
   // Add two items to the list, then have the importer
   // insert all the items into the middle
   gMediaList.add(gLibrary.getItemByIndex(1));
   gMediaList.add(gLibrary.getItemByIndex(2));
 
-  var job = gDirectoryImporter.import(gDirectories, gMediaList, 
+  var job = gDirectoryImporter.import(gDirectories, gMediaList,
                                       MEDIALIST_TARGET_INDEX);
   job.addJobProgressListener(onSecondImportProgress);
 }
 
- 
+
 /**
- * Once the second directory import completes, 
+ * Once the second directory import completes,
  * confirm that the files were inserted into the list
  * as expected, and that the items were reported
  * as dupes in the library
@@ -159,8 +159,8 @@ function onSecondImportProgress(job) {
    assertEqual(gLibrary.length - 1, gMediaList.length - 2);
    assertEqual(gMediaList, job.targetMediaList);
    assertEqual(job.targetIndex, MEDIALIST_TARGET_INDEX);
-   
-   // All found items should appear in order between the first and 
+
+   // All found items should appear in order between the first and
    // last items in the new list.
    var enumerator = job.enumerateAllItems();
    for (var i=1; i < gMediaList.length - 1; i++) {
@@ -174,28 +174,10 @@ function onSecondImportProgress(job) {
  } catch (e) {
    log("Error: " + e);
    // Force the test to fail.  If we throw it will
-   // be eaten by the job progress notify function, 
+   // be eaten by the job progress notify function,
    // and the test will never finish.
    assertEqual(true, false);
  }
 
  testFinished();
-}
-
-
-
-function newAppRelativeFile( path ) {
-
-  var file = Cc["@mozilla.org/file/directory_service;1"]
-               .getService(Ci.nsIProperties)
-               .get("resource:app", Ci.nsIFile);
-  file = file.clone();
-
-  var nodes = path.split("/");
-  for ( var i = 0, end = nodes.length; i < end; i++ )
-  {
-    file.append( nodes[ i ] );
-  }
-
-  return file;
 }

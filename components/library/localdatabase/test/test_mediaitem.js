@@ -27,7 +27,7 @@
 /**
  * \brief Test file
  */
- 
+
 var TEST_STRING = "The quick brown fox jumps over the lazy dog.  Bitches."
 
 var gServerPort = getTestServerPortNumber();
@@ -51,41 +51,6 @@ function read_stream(stream, count) {
       do_throw("Nothing read from input stream!");
   }
   return data.join('');
-}
-
-/**
- * Makes a new URI from a url string
- */
-function newURI(aURLString)
-{
-  // Must be a string here
-  if (!(aURLString &&
-       (aURLString instanceof String) || typeof(aURLString) == "string"))
-    throw Components.results.NS_ERROR_INVALID_ARG;
-  
-  var ioService =
-    Components.classes["@mozilla.org/network/io-service;1"]
-              .getService(Components.interfaces.nsIIOService);
-  
-  try {
-    return ioService.newURI(aURLString, null, null);
-  }
-  catch (e) { }
-  
-  return null;
-}
-
-function newFileURI(file)
-{
-  var ioService =
-    Components.classes["@mozilla.org/network/io-service;1"]
-              .getService(Components.interfaces.nsIIOService);
-  try {
-    return ioService.newFileURI(file);
-  }
-  catch (e) { }
-  
-  return null;
 }
 
 function newTempURI( name ) {
@@ -145,13 +110,13 @@ function testAvailable( library, url, available, completion ) {
       }
     },
     QueryInterface: function(iid) {
-      if (!iid.equals(Components.interfaces.nsIObserver) && 
+      if (!iid.equals(Components.interfaces.nsIObserver) &&
           !iid.equals(Components.interfaces.nsISupports))
         throw Components.results.NS_ERROR_NO_INTERFACE;
       return this;
     }
   }
-  
+
   // Start the test, tell the testharness to wait for us.
   item.testIsAvailable( is_available_observer );
   testPending();
@@ -162,38 +127,38 @@ function testIsAvailable( ioItem ) {
   var databaseGUID = "test_mediaitem_isavailable";
   var testlib = createLibrary(databaseGUID);
   // Async tests of availability for a (supposedly!) known url.
-  testAvailable( testlib, ioItem.contentSrc.spec, "true", 
+  testAvailable( testlib, ioItem.contentSrc.spec, "true",
     function() {
-      testAvailable( testlib, "http://localhost:" + gServerPort + "/test_not_available.mp3", "false", 
+      testAvailable( testlib, "http://localhost:" + gServerPort + "/test_not_available.mp3", "false",
         function() {
           testAvailable( testlib, "http://localhost:" + gServerPort + "/test1.mp3", "true", null);
         }
       );
     }
-  ); 
+  );
 }
 
 function testAsyncRead(ioItem) {
   var listener = {
     _item: ioItem,
-    
+
     /**
     * See nsIStreamListener.idl
     */
-    onDataAvailable: function LLL_onDataAvailable(request, context, inputStream, 
+    onDataAvailable: function LLL_onDataAvailable(request, context, inputStream,
                                                   sourceOffset, count) {
-      // Once we have enough bytes, read it.                                                  
+      // Once we have enough bytes, read it.
       if ((count + sourceOffset) >= TEST_STRING.length) {
         this._value = read_stream(inputStream, (count + sourceOffset));
       }
     },
-    
+
     /**
     * See nsIRequestObserver.idl
     */
     onStartRequest: function LLL_onStartRequest(request, context) {
     },
-    
+
     /**
     * See nsIRequestObserver.idl
     */
@@ -227,18 +192,18 @@ function runTest () {
 
   var databaseGUID = "test_mediaitem";
   var testlib = createLibrary(databaseGUID);
-  
+
   // Get an item
   var item = testlib.getMediaItem("3E586C1A-AD99-11DB-9321-C22AB7121F49");
 
   // Basic tests on retrieving its info...
-  testGet( item, "library", testlib );  
-  testGet( item, "isMutable", true );  
+  testGet( item, "library", testlib );
+  testGet( item, "isMutable", true );
   testGet( item, "mediaCreated", 1169855962000 );
-  testGet( item, "mediaUpdated", 1169855962000 );  
-  testGet( item, "contentSrc", "file:///home/steve/Hells%20Bells.mp3" );  
-  testGet( item, "contentLength", 0x21C );  
-  testGet( item, "contentType", "audio/mpeg" );  
+  testGet( item, "mediaUpdated", 1169855962000 );
+  testGet( item, "contentSrc", "file:///home/steve/Hells%20Bells.mp3" );
+  testGet( item, "contentLength", 0x21C );
+  testGet( item, "contentType", "audio/mpeg" );
 
   // Slightly more complicated tests for setting its info
   testSet( item, "mediaCreated", 0x1337baadf00d );
@@ -247,21 +212,21 @@ function runTest () {
   testSet( item, "contentSrc", newSrc);
   testSet( item, "contentLength", 0xbaadf00d );
   testSet( item, "contentType", "x-media/x-poo" );
-  
+
   item.setProperty("newpropertyneverseenever", "valuevalue");
-  
+
   // Open up a temp file through this interface
   var ioItem = testlib.createMediaItem( newTempURI("test_mediaitem") );
   assertNotEqual(ioItem, null);
   var outputStream = ioItem.openOutputStream();
   assertNotEqual(outputStream, null);
-  
+
   // Write some junk to it and close.
   var count = outputStream.write( TEST_STRING, TEST_STRING.length );
   assertEqual(count, TEST_STRING.length);
   outputStream.flush();
   outputStream.close();
-  
+
   // Reopen it for input, and see if we read the same junk back.
   var inputStream = ioItem.openInputStream().QueryInterface(Components.interfaces.nsILineInputStream);
   assertNotEqual(inputStream, null);
@@ -269,15 +234,15 @@ function runTest () {
   inputStream.readLine( out );
   assertEqual(out.value, TEST_STRING);
   inputStream.close();
-  
+
   try {
     gServer.start(gServerPort);
     gServer.registerDirectory("/", getFile("."));
-    
+
     // Async test, pauses the test system.
     // This passes control to testIsAvailable() when it completes.
     testAsyncRead(ioItem);
-    
+
     // Shouldn't take more than 5 seconds to test all files.
     sleep(5000);
   }
@@ -285,4 +250,3 @@ function runTest () {
     gServer.stop(function() {});
   }
 }
-

@@ -35,6 +35,7 @@
 #include "sbTranscodeBatchJobItem.h"
 #include "sbTranscodeProfile.h"
 #include "sbTranscodeProfileLoader.h"
+#include "sbTranscodingConfigurator.h"
 
 NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(sbTranscodeManager,
         sbTranscodeManager::GetSingleton)
@@ -42,6 +43,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbTranscodeAlbumArt);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTranscodeBatchJobItem);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTranscodeProfile);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTranscodeProfileLoader);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbTranscodingConfigurator);
 
 static nsModuleComponentInfo components[] =
 {
@@ -74,8 +76,13 @@ static nsModuleComponentInfo components[] =
     SONGBIRD_TRANSCODEPROFILELOADER_CID,
     SONGBIRD_TRANSCODEPROFILELOADER_CONTRACTID,
     sbTranscodeProfileLoaderConstructor
+  },
+  {
+    SONGBIRD_TRANSCODINGCONFIGURATOR_CLASSNAME,
+    SONGBIRD_TRANSCODINGCONFIGURATOR_CID,
+    SONGBIRD_TRANSCODINGCONFIGURATOR_CONTRACTID,
+    sbTranscodingConfiguratorConstructor
   }
-
 };
 
 PR_STATIC_CALLBACK(void)
@@ -88,4 +95,3 @@ NS_IMPL_NSGETMODULE_WITH_CTOR_DTOR(SongbirdTranscodeComponent,
                                    components,
                                    nsnull,
                                    DestroyModule)
-

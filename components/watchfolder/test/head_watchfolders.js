@@ -37,46 +37,18 @@ var Application = Cc["@mozilla.org/fuel/application;1"]
                      .getService(Ci.fuelIApplication);
 
 
-function newFileURI(file) {
-  var ioService = Cc["@mozilla.org/network/io-service;1"].
-                  getService(Ci.nsIIOService);
-  return ioService.newFileURI(file);
-}
-
-function newURI(spec) {
-  var ioService = Cc["@mozilla.org/network/io-service;1"].
-                  getService(Ci.nsIIOService);
-  return ioService.newURI(spec, null, null);
-}
-
-function newAppRelativeFile( path ) {
-
-  var file = Cc["@mozilla.org/file/directory_service;1"]
-               .getService(Ci.nsIProperties)
-               .get("resource:app", Ci.nsIFile);
-  file = file.clone();
-
-  var nodes = path.split("/");
-  for ( var i = 0, end = nodes.length; i < end; i++ )
-  {
-    file.append( nodes[ i ] );
-  }
-
-  return file;
-}
-
 /**
- * Start watching the given nsIFile path, 
+ * Start watching the given nsIFile path,
  * or pass null to disable
  */
 function setWatchFolder(file) {
   if (file) {
     dump("WF is watching " + file.path + "\n");
     Application.prefs.setValue("songbird.watch_folder.path", file.path);
-  } 
+  }
   Application.prefs.setValue("songbird.watch_folder.enable", !!file);
   if (!file) {
-    Application.prefs.get("songbird.watch_folder.sessionguid").reset();    
+    Application.prefs.get("songbird.watch_folder.sessionguid").reset();
   }
 }
 
@@ -85,7 +57,7 @@ function setWatchFolder(file) {
  * Used for debugging.
  */
 function reportJobProgress(job, jobName) {
-  log("\n\n\nWatchFolder Job - " + jobName + " job progress - " + 
+  log("\n\n\nWatchFolder Job - " + jobName + " job progress - " +
       job.progress + "/" + job.total + ", " + job.errorCount + " failed. " +
       "Status " + job.statusText + " (" + job.status + "), Title: " + job.titleText);
   var errorEnumerator = job.getErrorMessages();

@@ -1,0 +1,160 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+
+/**
+ * \file sbITranscodingConfigurator.idl
+ * \brief Interfaces to determine the settings for transcoding a file based on
+ * various inputs.
+ */
+
+#include "nsISupports.idl"
+
+interface sbIDevice;
+interface sbIMediaFormat;
+interface sbIMediaFormatVideo;
+interface sbIMediaFormatAudio;
+interface nsIPropertyBag;
+
+/**
+ * \interface sbITranscodingConfigurator
+ * \brief Base interface for all Transcoding Configurators. This interface
+ * should be implemented by any Configurator system and implement the
+ * configurate function.
+ */
+[scriptable, uuid(2e8d2b3e-947d-4bd5-9008-b2ebb680a950)]
+interface sbITranscodingConfigurator : nsISupports
+{
+  /**
+   * \brief The input format to use when configuring the transcode profile.
+   * \throws NS_ERROR_ALREADY_INITIALIZED if configurate has been called.
+   */
+  attribute sbIMediaFormat inputFormat;
+
+  /**
+   * \brief Determine the transcode settings to use based on the input given. Both
+   * the device and the input format must be set before calling this function.
+   * Once this is called, the functions below may be called (they will throw
+   * an error if called before this function is called).
+   *
+   * This function may fail if:
+   *   The device or file info have not been set, or
+   *   No encoder(s) are available for the formats supported by the device.
+   */
+  void configurate();
+
+  /**
+   * \brief The muxer to use. The name is specific to the transcoder (for
+   * example, this may be a gstreamer element name for a gstreamer-based
+   * transcoder). If this is a void string, no muxer is needed (e.g. a bare
+   * FLAC audio file)
+   *
+   * \throws NS_ERROR_NOT_INITIALIZED on read if configurate() has not been
+   * called.
+   */
+  readonly attribute AString muxer;
+
+  /**
+   * \brief The video encoder to use.  The name is specific to the transcoder
+   * (for example, this may be a gstreamer element name for a gstreamer-based
+   * transcoder).  This may be a void string if there is no video.
+   *
+   * \throws NS_ERROR_NOT_INITIALIZED on read if configurate() has not been
+   * called.
+   */
+  readonly attribute AString videoEncoder;
+
+  /**
+   * \brief The basic video format for data that is not specific to a
+   * particular codec.
+   *
+   * \throws NS_ERROR_NOT_INITIALIZED on read if configurate() has not been
+   * called.
+   *
+   * \note the the videoType, bitRate and properties attributes are ignored.
+   */
+  readonly attribute sbIMediaFormatVideo videoFormat;
+
+  /**
+   * \brief The audio encoder to use.  The name is specific to the transcoder
+   * (for example, this may be a gstreamer element name for a gstreamer-based
+   * transcoder).  This may be a void string if there is no audio.
+   *
+   * \throws NS_ERROR_NOT_INITIALIZED on read if configurate() has not been
+   * called.
+   */
+  readonly attribute AString audioEncoder;
+
+  /**
+   * \brief The basic audio format for data that is not specific to a
+   * particular codec.
+   *
+   * \throws NS_ERROR_NOT_INITIALIZED on read if configurate() has not been
+   * called.
+   *
+   * \note the the audioType, bitRate and properties attributes are ignored.
+   */
+  readonly attribute sbIMediaFormatAudio audioFormat;
+
+  /**
+   * \brief With the input given, return the properties to set on the encoder to
+   * encode this format. This is used to e.g. select a bitrate for the video
+   * encoder.
+   *
+   * \note These are in an encoder-specific format.
+   *
+   * \throws NS_ERROR_NOT_INITIALIZED on read if configurate() has not been
+   * called.
+   */
+  readonly attribute nsIPropertyBag videoEncoderProperties;
+
+  /**
+   * \brief With the input given, return the properties to set on the encoder to
+   * encode this format. This is used to e.g. select a bitrate for the audio
+   * encoder.
+   *
+   * \note These are in an encoder-specific format.
+   *
+   * \throws NS_ERROR_NOT_INITIALIZED on read if configurate() has not been
+   * called.
+   */
+  readonly attribute nsIPropertyBag audioEncoderProperties;
+};
+
+/**
+ * configurator specialization for outputs that will be a device
+ */
+[scriptable, uuid(c3a5828e-3b2d-48fc-bf0c-1f07a92de617)]
+interface sbIDeviceTranscodingConfigurator : sbITranscodingConfigurator
+{
+  /**
+   * \brief Set the device that we get the capabilities from, using the
+   * capabilities of the device this function will set inputFormat for the
+   * configurate function to use so we can limit the transcoding to only what
+   * this device supports.
+   *
+   * \throws NS_ERROR_ALREADY_INITIALIZED if configurate has been called.
+   */
+  attribute sbIDevice device;
+};

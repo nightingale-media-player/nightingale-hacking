@@ -27,26 +27,19 @@
 /**
  * \brief Test file
  */
- 
-function newURI(spec) {
-  var ioService = Cc["@mozilla.org/network/io-service;1"].
-                  getService(Ci.nsIIOService);
-  
-  return ioService.newURI(spec, null, null);
-}
 
 function runTest () {
   var mediacoreManager = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
                            .getService(Ci.sbIMediacoreManager);
-  
+
   var factories = mediacoreManager.factories;
   log("Number of factories found: " + factories.length);
-  
+
   var typeSniffer = Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
                       .createInstance(Ci.sbIMediacoreTypeSniffer);
-  
+
   var uri = newURI("file:///path/to/a/file.mp3");
-  
+
   var isMedia = typeSniffer.isValidMediaURL(uri);
   var isVideo = typeSniffer.isValidVideoURL(uri);
   var isPlaylist = typeSniffer.isValidPlaylistURL(uri);
@@ -58,22 +51,22 @@ function runTest () {
 //  assertTrue(isMedia, "URI should be media.");
 //  assertFalse(isVideo, "URI should _not_ be video.");
 //  assertFalse(isPlaylist, "URI should _not_ be a playlist.");
-  
+
   var allExtensions = [];
   var supportedFileExtensions = typeSniffer.mediaFileExtensions;
   while(supportedFileExtensions.hasMore()) {
     allExtensions.push(supportedFileExtensions.getNext());
   }
-  
+
   allExtensions.sort();
   log("All media file extensions: " + allExtensions.join());
-  
+
   allExtensions = [];
   supportedFileExtensions = typeSniffer.audioFileExtensions;
   while(supportedFileExtensions.hasMore()) {
     allExtensions.push(supportedFileExtensions.getNext());
   }
-  
+
   allExtensions.sort();
   log("All audio file extensions: " + allExtensions.join());
 
@@ -82,16 +75,16 @@ function runTest () {
   while(supportedFileExtensions.hasMore()) {
     allExtensions.push(supportedFileExtensions.getNext());
   }
-  
+
   allExtensions.sort();
   log("All video file extensions: " + allExtensions.join());
-  
+
   allExtensions = [];
   supportedFileExtensions = typeSniffer.playlistFileExtensions;
   while(supportedFileExtensions.hasMore()) {
     allExtensions.push(supportedFileExtensions.getNext());
   }
-  
+
   allExtensions.sort();
   log("All playlist file extensions: " + allExtensions.join());
 }

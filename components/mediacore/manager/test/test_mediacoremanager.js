@@ -27,18 +27,11 @@
 /**
  * \brief Test file
  */
- 
+
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
- 
-function newURI(spec) {
-  var ioService = Cc["@mozilla.org/network/io-service;1"].
-                  getService(Ci.nsIIOService);
-  
-  return ioService.newURI(spec, null, null);
-}
 
 function runTest () {
 
@@ -54,17 +47,17 @@ function runTest () {
   log("Test factory logic\n");
   var factories = mediacoreManager.factories;
   log("Number of factories found: " + factories.length);
-  
+
   for(let i = 0; i < factories.length; ++i) {
     let factory = factories.queryElementAt(i, Ci.sbIMediacoreFactory);
-    
+
     log("Factory name: " + factory.name);
     log("Factory contract id: " + factory.contractID);
   }
-  
+
   var uri = newURI("file:///Volumes/Aus-DATA/Media/gnb_mix3.mp3");
   var mediacoreVotingChain = mediacoreManager.voteWithURI(uri);
-  
+
   var mediacore = mediacoreVotingChain.mediacoreChain.queryElementAt(0, Ci.sbIMediacore);
 
   // The following may throw if the interface isn't present for instanceof
@@ -72,29 +65,29 @@ function runTest () {
     if(mediacore instanceof Ci.sbIQuickTimeMediacore) {
       log("QuickTime version: " + mediacore.quickTimeVersion);
     }
-    
+
     if(mediacore instanceof Ci.sbIWindowsMediacore) {
       log("Windows media player version: " + mediacore.windowsMediaVersion);
     }
   }
   catch(e) { };
-  
+
   log("Attempting to play: " + uri.spec);
   mediacore.uri = uri;
   mediacore.play();
-  
+
   log("Attempting to seek to: " + 120000 / 1000 + "s");
   mediacore.position = 120000;
 
   var vol = 0.5;
-  log("Attempting to set volume to: " + vol);  
+  log("Attempting to set volume to: " + vol);
   mediacore.volume = vol;
-  
+
   sleep(25000);
-  
+
   log("Attempting to pause.");
   mediacore.pause();
-  
+
   log("Attempting to stop.");
   mediacore.stop();
 
@@ -102,11 +95,11 @@ function runTest () {
   if(factories.length > 1) {
     index = 1;
   }
-  
+
   log("Going to attempt to play another file, with another core if possible.");
   mediacore = mediacoreVotingChain.mediacoreChain.queryElementAt(index, Ci.sbIMediacore);
 
-  try {    
+  try {
     if(mediacore instanceof Ci.sbIQuickTimeMediacore) {
       log("QuickTime version: " + mediacore.quickTimeVersion);
     }
@@ -116,23 +109,23 @@ function runTest () {
     }
   }
   catch(e) { };
- 
-  
+
+
   var uri2 = newURI("file:///Users/aus/Music/fluxblog.org/fujiyamiyagi_knickerbocker.mp3");
-  
+
   log("Attempting to play: " + uri2.spec);
   mediacore.uri = uri2;
   mediacore.play();
-  
+
   log("Attempting to seek to: " + 1200 / 1000 + "s");
   mediacore.position = 1200;
-  
+
   var vol = 0.8;
   log("Attempting to set volume to: " + vol);
   mediacore.volume = vol;
-  
+
   sleep(25000);
-  
+
 }
 
 /**
@@ -161,7 +154,7 @@ var eventIDs = [Ci.sbIMediacoreEvent.METADATA_CHANGE,
                 Ci.sbIMediacoreEvent.STREAM_START,
                 Ci.sbIMediacoreEvent.STREAM_PAUSE,
                 Ci.sbIMediacoreEvent.STREAM_END];
-  
+
 
 function dummyMediacore() {
   this.wrappedJSObject = this;
@@ -179,10 +172,9 @@ function testSimpleListener(mediaManager) {
     var event = mediaManager.createEvent(eventIDs[index], new dummyMediacore(), "", null);
     mediaManager.dispatchEvent(event, false);
   }
-  assertEqual(listener.log.length, eventIDs.length, "event received count not equal to events sent"); 
+  assertEqual(listener.log.length, eventIDs.length, "event received count not equal to events sent");
   for (index = 0; index < eventIDs.length; ++index) {
     assertEqual(listener.log[index].type, eventIDs[index], "Event type doesn't match event ID sent");
   }
   mediaManager.removeListener(listener);
 }
- 
