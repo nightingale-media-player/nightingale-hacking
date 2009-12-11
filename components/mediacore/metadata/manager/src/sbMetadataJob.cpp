@@ -122,6 +122,7 @@ NS_IMPL_THREADSAFE_CI(sbMetadataJob)
 
 sbMetadataJob::sbMetadataJob() :
   mStatus(sbIJobProgress::STATUS_RUNNING),
+  mBlocked(PR_FALSE),
   mCompletedItemCount(0),
   mTotalItemCount(0),
   mJobType(TYPE_READ),
@@ -1154,6 +1155,13 @@ nsresult sbMetadataJob::GetType(JobType* aJobType)
   return NS_OK;
 }
 
+nsresult sbMetadataJob::SetBlocked(PRBool aBlocked)
+{
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
+  mBlocked = aBlocked;
+  return NS_OK;
+}
+
 
 // =====================================
 // ==  sbIJobProgress Implementation  ==
@@ -1166,6 +1174,15 @@ NS_IMETHODIMP sbMetadataJob::GetStatus(PRUint16* aStatus)
   TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER( aStatus );
   *aStatus = mStatus;
+  return NS_OK;
+}
+
+/* readonly attribute boolean blocked; */
+NS_IMETHODIMP sbMetadataJob::GetBlocked(PRBool* aBlocked)
+{
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
+  NS_ENSURE_ARG_POINTER( aBlocked );
+  *aBlocked = mBlocked;
   return NS_OK;
 }
 

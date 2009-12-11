@@ -316,6 +316,15 @@ NS_IMETHODIMP sbAlbumArtScanner::GetStatus(PRUint16* aStatus)
   return NS_OK;
 }
 
+/* readonly attribute boolean blocked; */
+NS_IMETHODIMP sbAlbumArtScanner::GetBlocked(PRBool* aBlocked)
+{
+  TRACE(("sbAlbumArtScanner[0x%8.x] - GetBlocked", this));
+  NS_ENSURE_ARG_POINTER( aBlocked );
+  *aBlocked = PR_FALSE;
+  return NS_OK;
+}
+
 /* readonly attribute unsigned AString statusText; */
 NS_IMETHODIMP sbAlbumArtScanner::GetStatusText(nsAString& aText)
 {

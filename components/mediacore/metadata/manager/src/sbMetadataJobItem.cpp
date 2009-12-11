@@ -62,6 +62,7 @@ sbMetadataJobItem::sbMetadataJobItem(sbMetadataJob::JobType aJobType,
   mHandler(nsnull),
   mOwningJob(aOwningJob),
   mPropertyList(aRequiredProperties),
+  mProcessingStarted(PR_FALSE),
   mProcessingComplete(PR_FALSE)
 {
   MOZ_COUNT_CTOR(sbMetadataJobItem);
@@ -110,6 +111,19 @@ nsresult sbMetadataJobItem::GetJobType(sbMetadataJob::JobType* aJobType)
 {
   NS_ENSURE_ARG_POINTER(aJobType);
   *aJobType = mJobType;
+  return NS_OK;
+}
+
+nsresult sbMetadataJobItem::GetProcessingStarted(PRBool* aProcessingStarted)
+{
+  NS_ENSURE_ARG_POINTER(aProcessingStarted);
+  *aProcessingStarted = mProcessingStarted;
+  return NS_OK;
+}
+
+nsresult sbMetadataJobItem::SetProcessingStarted(PRBool aProcessingStarted)
+{
+  mProcessingStarted = aProcessingStarted;
   return NS_OK;
 }
 

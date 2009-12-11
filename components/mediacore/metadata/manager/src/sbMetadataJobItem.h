@@ -75,6 +75,8 @@ public:
   nsresult GetMediaItem(sbIMediaItem** aMediaItem);
   nsresult GetOwningJob(sbMetadataJob** aJob);
   nsresult GetJobType(sbMetadataJob::JobType* aJobType);  
+  nsresult GetProcessingStarted(PRBool* aProcessingStarted);
+  nsresult SetProcessingStarted(PRBool aProcessingStarted);
   nsresult GetProcessed(PRBool* aProcessed);
   nsresult SetProcessed(PRBool aProcessed);
   nsresult GetURL(nsACString& aURL);
@@ -89,7 +91,10 @@ protected:
   
   nsCString                          mURL;
   nsStringArray*                     mPropertyList;
-  
+
+  // Flag to indicate that a handler was started for this item
+  PRBool                             mProcessingStarted;
+
   // Flag to indicate that a handler was run for this item
   PRBool                             mProcessingComplete;
 };

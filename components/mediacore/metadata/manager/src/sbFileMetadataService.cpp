@@ -45,6 +45,8 @@
 #include <prlog.h>
 
 #include <sbILibraryManager.h>
+#include <sbIMediacoreSequencer.h>
+#include <sbIMediacoreStatus.h>
 #include <sbIMediaItem.h>
 #include <sbProxiedComponentManager.h>
 #include <sbProxyUtils.h>
@@ -115,6 +117,10 @@ nsresult sbFileMetadataService::Init()
   mJobLock = nsAutoLock::NewLock(
       "sbFileMetadataService job items lock");
   NS_ENSURE_TRUE(mJobLock, NS_ERROR_OUT_OF_MEMORY);
+
+  // Get the mediacore manager.
+  mMediacoreManager = do_GetService(SB_MEDIACOREMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Listen for library shutdown.  The observer service must be used on the main
   // thread.
@@ -444,6 +450,66 @@ nsresult sbFileMetadataService::PutProcessedJobItem(sbMetadataJobItem* aJobItem)
   }
 
   return job->PutProcessedItem(aJobItem);
+}
+
+nsresult
+sbFileMetadataService::GetJobItemIsBlocked(sbMetadataJobItem* aJobItem,
+                                           PRBool*            aJobItemIsBlocked)
+{
+  NS_ENSURE_ARG_POINTER(aJobItem);
+  NS_ENSURE_ARG_POINTER(aJobItemIsBlocked);
+
+  nsresult rv;
+
+  // Get the job type.
+  sbMetadataJob::JobType jobType;
+  rv = aJobItem->GetJobType(&jobType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Only writing jobs can be blocked.
+  if (jobType != sbMetadataJob::TYPE_WRITE) {
+    *aJobItemIsBlocked = PR_FALSE;
+    return NS_OK;
+  }
+
+  // Job is not blocked if the mediacore is not playing.
+  nsCOMPtr<sbIMediacoreStatus> status;
+  PRUint32                     state = 0;
+  rv = mMediacoreManager->GetStatus(getter_AddRefs(status));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = status->GetState(&state);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (state != sbIMediacoreStatus::STATUS_PLAYING) {
+    *aJobItemIsBlocked = PR_FALSE;
+    return NS_OK;
+  }
+
+  // Get the currently playing media item.
+  nsCOMPtr<sbIMediacoreSequencer> sequencer;
+  nsCOMPtr<sbIMediaItem>          sequencerCurrentItem;
+  rv = mMediacoreManager->GetSequencer(getter_AddRefs(sequencer));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = sequencer->GetCurrentItem(getter_AddRefs(sequencerCurrentItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the job media item.
+  nsCOMPtr<sbIMediaItem> jobItem;
+  rv = aJobItem->GetMediaItem(getter_AddRefs(jobItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Job is not blocked if the job media item is not currently being played.
+  PRBool equals;
+  rv = jobItem->Equals(sequencerCurrentItem, &equals);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!equals) {
+    *aJobItemIsBlocked = PR_FALSE;
+    return NS_OK;
+  }
+
+  // Job is blocked.
+  *aJobItemIsBlocked = PR_TRUE;
+
+  return NS_OK;
 }
 
 

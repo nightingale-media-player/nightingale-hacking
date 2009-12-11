@@ -44,6 +44,8 @@
 #include <nsAutoPtr.h>
 
 #include <sbIDataRemote.h>
+#include <sbIMediacoreManager.h>
+
 #include "sbIFileMetadataService.h"
 #include "sbMetadataJob.h"
 
@@ -165,6 +167,17 @@ public:
    */
   nsresult PutProcessedJobItem(sbMetadataJobItem* aJobItem);
 
+  /**
+   * If completion of the job item specified by aJobItem is blocked (e.g.,
+   * writing to a playing file), return true in aJobItemIsBlocked; otherwise,
+   * return false.
+   *
+   * \param aJobItem            Job item to check.
+   * \param aJobItemIsBlocked   If true, job item is blocked.
+   */
+  nsresult GetJobItemIsBlocked(sbMetadataJobItem* aJobItem,
+                               PRBool*            aJobItemIsBlocked);
+
 
 protected:
   
@@ -247,6 +260,9 @@ protected:
   // Used to keep track of what we're processing, and 
   // blacklist files that seem to destroy the app
   nsRefPtr<sbMetadataCrashTracker>         mCrashTracker;
+
+  // Mediacore manager;
+  nsCOMPtr<sbIMediacoreManager>            mMediacoreManager;
 };
 
 #endif // SBFILEMETADATASERVICE_H__

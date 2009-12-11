@@ -41,7 +41,7 @@ interface sbIJobProgressListener;
  *
  * \note This interface is likely to change before 1.0
  */
-[scriptable, uuid(72287c30-1173-11dd-bd0b-0800200c9b66)]
+[scriptable, uuid(13979e02-1dd2-11b2-9e89-eefb590278a8)]
 interface sbIJobProgress : nsISupports
 {
   /**
@@ -64,8 +64,12 @@ interface sbIJobProgress : nsISupports
    * \sa STATUS_FAILED, STATUS_RUNNING, etc.
    */
   readonly attribute unsigned short status;
-  
-  
+
+  /**
+   * \brief If true, progress of job is blocked (e.g., due to locked resource).
+   */
+  readonly attribute boolean blocked;
+
   /**
    * \brief Localized message describing the status of the job
    */

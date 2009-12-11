@@ -162,6 +162,13 @@ public:
    * TYPE_READ or TYPE_WRITE
    */
   nsresult GetType(JobType* aJobType);
+
+  /**
+   * Set the job blocked status to the value specified by aBlocked.
+   *
+   * \param aBlocked Job blocked status.
+   */
+  nsresult SetBlocked(PRBool aBlocked);
   
   
 private:
@@ -282,6 +289,7 @@ private:
   
   // sbIJobProgress variables
   PRUint16                                 mStatus;
+  PRBool                                   mBlocked;
   PRInt32                                  mCompletedItemCount;
   PRInt32                                  mTotalItemCount;
   nsTArray<nsString>                       mErrorMessages;

@@ -136,6 +136,10 @@ sbShutdownJobService.prototype =
     return this._mStatus;
   },
 
+  get blocked() {
+    return false;
+  },
+
   get statusText() {
     var statusText = this._mTasks[this._mTaskIndex].statusText;
     var remainingTasks = (this._mTasks.length - this._mTaskIndex) -1;

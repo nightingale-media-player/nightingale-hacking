@@ -1398,6 +1398,14 @@ sbMediaExportService::GetStatus(PRUint16 *aStatus)
 }
 
 NS_IMETHODIMP
+sbMediaExportService::GetBlocked(PRBool *aBlocked)
+{
+  NS_ENSURE_ARG_POINTER(aBlocked);
+  *aBlocked = PR_FALSE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbMediaExportService::GetStatusText(nsAString & aStatusText)
 {
   return SBGetLocalizedString(aStatusText,

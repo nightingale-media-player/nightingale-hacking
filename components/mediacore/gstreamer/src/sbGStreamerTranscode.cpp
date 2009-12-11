@@ -426,6 +426,16 @@ sbGStreamerTranscode::GetStatus(PRUint16 *aStatus)
 }
 
 NS_IMETHODIMP
+sbGStreamerTranscode::GetBlocked(PRBool *aBlocked)
+{
+  NS_ENSURE_ARG_POINTER(aBlocked);
+
+  *aBlocked = PR_FALSE;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbGStreamerTranscode::GetStatusText(nsAString& aText)
 {
   nsresult rv = NS_ERROR_FAILURE;

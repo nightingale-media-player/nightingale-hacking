@@ -159,12 +159,11 @@ NS_IMETHODIMP sbMainThreadMetadataProcessor::Notify(nsITimer* aTimer)
   // Check on the state of our active job items.
   // Handle completed items and replace with new items.
   for (PRUint32 i=0; i < NUM_ACTIVE_HANDLERS; i++) {
+    nsRefPtr<sbMetadataJobItem> item = mCurrentJobItems[i];
     
     // If this is an active item, check to see if it has completed
     // URGH, sbIMetadataHandler needs a callback!
-    if (mCurrentJobItems[i] != nsnull) {
-      nsRefPtr<sbMetadataJobItem> item = mCurrentJobItems[i];
-      
+    if (item) {
       // Check to see if it has completed
       nsCOMPtr<sbIMetadataHandler> handler;
       rv = item->GetHandler(getter_AddRefs(handler));
@@ -182,18 +181,16 @@ NS_IMETHODIMP sbMainThreadMetadataProcessor::Notify(nsITimer* aTimer)
 
         // Give back the processed job item
         mJobManager->PutProcessedJobItem(item);
-        
+        item = nsnull;
       } else {
         // Still processing.  We aren't ready to shut the timer down.
         finished = PR_FALSE;
       }
     }
-    
-    // If this is an empty slot, start a new handler
-    if (mCurrentJobItems[i] == nsnull) {
-      
+
+    // If this is an empty slot, get a new job item
+    if (!item) {
       // Get the next job item
-      nsRefPtr<sbMetadataJobItem> item;
       rv = mJobManager->GetQueuedJobItem(PR_TRUE, getter_AddRefs(item));
       // If there are no more job items available, we may need to shut down soon
       if (rv == NS_ERROR_NOT_AVAILABLE) {
@@ -201,35 +198,73 @@ NS_IMETHODIMP sbMainThreadMetadataProcessor::Notify(nsITimer* aTimer)
       }
       NS_ENSURE_SUCCESS(rv, rv);
 
-      // Start the metadata handler for this job item.
-      
-      nsCOMPtr<sbIMetadataHandler> handler;
-      rv = item->GetHandler(getter_AddRefs(handler));
-      NS_ENSURE_SUCCESS(rv, rv);
-      
-      sbMetadataJob::JobType jobType;
-      rv = item->GetJobType(&jobType);
-      NS_ENSURE_SUCCESS(rv, rv);
-    
-      // We don't care if it is async... we're polling no matter what.
-      PRBool async = PR_FALSE; 
-      if (jobType == sbMetadataJob::TYPE_WRITE) {
-        rv = handler->Write(&async);
-      } else {
-        rv = handler->Read(&async);
-      }
+      // And stuff it in our working array to check next loop
+      mCurrentJobItems[i] = item;
 
-      // If failed, give back to the job
-      if (NS_FAILED(rv)) {
-        // must push back immediately
-        mJobManager->PutProcessedJobItem(item);
-      }
-      else {
-        // And stuff it in our working array to check next loop
-        mCurrentJobItems[i] = item;
+      // Still processing.  We aren't ready to shut the timer down.
+      finished = PR_FALSE;
+    }
 
-        // Still processing.  We aren't ready to shut the timer down.
-        finished = PR_FALSE;
+    // If item processing hasn't started, start a new handler
+    if (item) {
+      PRBool processingStarted;
+      rv = item->GetProcessingStarted(&processingStarted);
+      NS_ENSURE_SUCCESS(rv, rv);
+      if (!processingStarted) {
+        // Get the job owning the job item.
+        nsRefPtr<sbMetadataJob> job;
+        rv = item->GetOwningJob(getter_AddRefs(job));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        // Don't start processing until the job item is not blocked.
+        PRBool jobItemIsBlocked;
+        rv = mJobManager->GetJobItemIsBlocked(item, &jobItemIsBlocked);
+        NS_ENSURE_SUCCESS(rv, rv);
+        if (jobItemIsBlocked) {
+          // Set the job as blocked.
+          rv = job->SetBlocked(PR_TRUE);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          // Still processing.  We aren't ready to shut the timer down.
+          finished = PR_FALSE;
+          continue;
+        }
+
+        // Set the job as not blocked.
+        rv = job->SetBlocked(PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        // Start the metadata handler for this job item.
+
+        nsCOMPtr<sbIMetadataHandler> handler;
+        rv = item->GetHandler(getter_AddRefs(handler));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        sbMetadataJob::JobType jobType;
+        rv = item->GetJobType(&jobType);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        // We don't care if it is async... we're polling no matter what.
+        PRBool async = PR_FALSE;
+        if (jobType == sbMetadataJob::TYPE_WRITE) {
+          rv = handler->Write(&async);
+        }
+        else {
+          rv = handler->Read(&async);
+        }
+
+        // If failed, give back to the job
+        if (NS_FAILED(rv)) {
+          // must push back immediately
+          mJobManager->PutProcessedJobItem(item);
+          mCurrentJobItems[i] = nsnull;
+        }
+        else {
+          // Still processing.  We aren't ready to shut the timer down.
+          rv = item->SetProcessingStarted(PR_TRUE);
+          NS_ENSURE_SUCCESS(rv, rv);
+          finished = PR_FALSE;
+        }
       }
     }
   } // end mCurrentJobItems for loop
@@ -242,3 +277,4 @@ NS_IMETHODIMP sbMainThreadMetadataProcessor::Notify(nsITimer* aTimer)
   
   return NS_OK;
 }
+

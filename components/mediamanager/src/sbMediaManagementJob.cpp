@@ -817,6 +817,16 @@ sbMediaManagementJob::GetStatus(PRUint16* aStatus)
   return NS_OK;
 }
 
+/* readonly attribute boolean blocked; */
+NS_IMETHODIMP
+sbMediaManagementJob::GetBlocked(PRBool* aBlocked)
+{
+  TRACE(("%s[0x%8.x]", __FUNCTION__, this));
+  NS_ENSURE_ARG_POINTER( aBlocked );
+  *aBlocked = PR_FALSE;
+  return NS_OK;
+}
+
 /* readonly attribute unsigned AString statusText; */
 NS_IMETHODIMP
 sbMediaManagementJob::GetStatusText(nsAString& aText)

@@ -114,6 +114,14 @@ sbiTunesImporterJob::GetStatus(PRUint16 *aStatus)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbiTunesImporterJob::GetBlocked(PRBool *aBlocked)
+{
+  NS_ENSURE_ARG_POINTER(aBlocked);
+  *aBlocked = PR_FALSE;
+  return NS_OK;
+}
+
 /* readonly attribute AString statusText; */
 NS_IMETHODIMP 
 sbiTunesImporterJob::GetStatusText(nsAString & aStatusText)

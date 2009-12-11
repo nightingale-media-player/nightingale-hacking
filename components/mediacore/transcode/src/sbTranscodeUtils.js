@@ -150,6 +150,10 @@ TranscodeBatchJob.prototype = {
     return this._jobStatus;
   },
 
+  get blocked() {
+    return false;
+  },
+
   get statusText() {
     if (!this._statusText)
       this._statusText = SBString("transcode.batch.running");

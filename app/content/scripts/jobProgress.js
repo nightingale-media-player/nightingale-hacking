@@ -123,6 +123,10 @@ var JobProgressDialog = {
         // Otherwise just close
         window.close();
       }
+    } else if (this._job.blocked) {
+      // Close window to prevent blocking the UI.
+      //XXXeps should only do this if dialog is modal.
+      window.close();
     }
   },
   

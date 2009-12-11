@@ -117,6 +117,7 @@ sbTestTask.prototype =
   _jobListener   : null,
   _timer         : null,
   status         : Ci.sbIJobProgress.STATUS_RUNNING,
+  blocked        : false,
   statusText     : "Testing Shutdown Job",
   titleText      : "",
   progress       : 0,

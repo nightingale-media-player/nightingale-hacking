@@ -1997,6 +1997,14 @@ NS_IMETHODIMP sbLocalDatabaseSortInvalidateJob::GetStatus(PRUint16* aStatus)
   return NS_OK;
 }
 
+/* readonly attribute boolean blocked; */
+NS_IMETHODIMP sbLocalDatabaseSortInvalidateJob::GetBlocked(PRBool* aBlocked)
+{
+  NS_ENSURE_ARG_POINTER( aBlocked );
+  *aBlocked = PR_FALSE;
+  return NS_OK;
+}
+
 /* readonly attribute unsigned AString statusText; */
 NS_IMETHODIMP sbLocalDatabaseSortInvalidateJob::GetStatusText(nsAString& aText)
 {

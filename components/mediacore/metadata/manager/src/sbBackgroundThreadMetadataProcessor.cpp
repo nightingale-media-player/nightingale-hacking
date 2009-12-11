@@ -179,6 +179,11 @@ NS_IMETHODIMP sbBackgroundThreadMetadataProcessor::Run()
       } 
     }
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the job owning the job item.
+    nsRefPtr<sbMetadataJob> job;
+    rv = item->GetOwningJob(getter_AddRefs(job));
+    NS_ENSURE_SUCCESS(rv, rv);
     
     // Start the metadata handler for this job item.
     nsCOMPtr<sbIMetadataHandler> handler;
@@ -198,6 +203,46 @@ NS_IMETHODIMP sbBackgroundThreadMetadataProcessor::Run()
       continue; 
     }
   
+    // If the job item is blocked, wait until it is no longer blocked.
+    PRBool skipItem = PR_FALSE;
+    while (1) {
+      // Check if job item is blocked.
+      PRBool jobItemIsBlocked;
+      rv = mJobManager->GetJobItemIsBlocked(item, &jobItemIsBlocked);
+      if (NS_FAILED(rv)) {
+          NS_ERROR("sbBackgroundThreadMetadataProcessor::Run unable "
+                   " to determine if job item is blocked.");
+          skipItem = PR_TRUE;
+          break;
+      }
+
+      // Stop waiting if job item is not blocked.
+      if (!jobItemIsBlocked)
+        break;
+
+      // Set the job as blocked.
+      rv = job->SetBlocked(PR_TRUE);
+      if (NS_FAILED(rv)) {
+          NS_ERROR("sbBackgroundThreadMetadataProcessor::Run unable "
+                   " to set job blocked.");
+          skipItem = PR_TRUE;
+          break;
+      }
+
+      // Wait a bit and check again.
+      PR_Sleep(PR_MillisecondsToInterval(20));
+    }
+    if (skipItem)
+      continue;
+
+    // Set the job as not blocked.
+    rv = job->SetBlocked(PR_FALSE);
+    if (NS_FAILED(rv)) {
+        NS_ERROR("sbBackgroundThreadMetadataProcessor::Run unable "
+                 " to set job not blocked.");
+        continue;
+    }
+
     PRBool async = PR_FALSE; 
     if (jobType == sbMetadataJob::TYPE_WRITE) {
       rv = handler->Write(&async);
@@ -208,6 +253,12 @@ NS_IMETHODIMP sbBackgroundThreadMetadataProcessor::Run()
     // If we were able to start the handler, 
     // make sure it completes.
     if (NS_SUCCEEDED(rv)) {
+      rv = item->SetProcessingStarted(PR_TRUE);
+      if (NS_FAILED(rv)) {
+        NS_ERROR("sbBackgroundThreadMetadataProcessor::Run unable "
+                 " to set item processing started.");
+      }
+
       PRBool handlerCompleted = PR_FALSE;
       rv = handler->GetCompleted(&handlerCompleted);
       if (!NS_SUCCEEDED(rv)) {
@@ -260,3 +311,4 @@ NS_IMETHODIMP sbBackgroundThreadMetadataProcessor::Run()
   TRACE(("sbBackgroundThreadMetadataProcessor[0x%.8x] - Thread Finished", this));
   return NS_OK;
 }
+

@@ -202,6 +202,7 @@ sbLibraryMigration.prototype = {
 
 ///// sbIJobProgress
   get status() Ci.sbIJobProgress.STATUS_RUNNING,
+  get blocked() false,
   get progress() this._progress,
   get total() this._total,
   get errorCount() this._errors.length,

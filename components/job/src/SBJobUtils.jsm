@@ -74,6 +74,12 @@ var SBJobUtils = {
         return;
       }
      
+      // If the job is blocked and the dialog is modal, skip the dialog to avoid
+      // blocking the UI
+      if (!aNonModal && aJobProgress.blocked) {
+        return;
+      }
+
       // Parent to the main window by default
       if (!aWindow || aWindow.closed) {
         var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
@@ -149,6 +155,7 @@ SBJobUtils.JobBase.prototype = {
 
   
   _status              : Ci.sbIJobProgress.STATUS_RUNNING,
+  _blocked             : false,
   _statusText          : "",
   _titleText           : "",
   _progress            : 0,
@@ -175,6 +182,11 @@ SBJobUtils.JobBase.prototype = {
     return this._status;
   },
   
+  get blocked() {
+    return (this._jobProgressDelegate) ?
+      this._jobProgressDelegate.blocked : this._blocked;
+  },
+
   get statusText() {
     return (this._jobProgressDelegate) ? 
       this._jobProgressDelegate.statusText : this._statusText;

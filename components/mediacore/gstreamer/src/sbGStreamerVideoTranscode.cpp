@@ -380,6 +380,16 @@ sbGStreamerVideoTranscoder::GetStatus(PRUint16 *aStatus)
 }
 
 NS_IMETHODIMP
+sbGStreamerVideoTranscoder::GetBlocked(PRBool *aBlocked)
+{
+  NS_ENSURE_ARG_POINTER(aBlocked);
+
+  *aBlocked = PR_FALSE;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbGStreamerVideoTranscoder::GetStatusText(nsAString& aText)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
