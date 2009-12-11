@@ -75,7 +75,7 @@
 <!ENTITY servicepane.title.label        "Service Pane">
 
 <!ENTITY menu.tools            "Tools" >
-<!ENTITY menu.tools.getartwork "Get Artwork...">
+<!ENTITY menu.tools.getartwork "Get Artwork">
 <!ENTITY menu.tools.exportmedia "Export Library Changes">
 
 <!ENTITY menu.help          "Help" >
