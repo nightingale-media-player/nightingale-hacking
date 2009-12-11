@@ -949,6 +949,14 @@ protected:
    */
   nsresult GetCapabilitiesPreference(nsIVariant** aCapabilities);
 
+  /**
+   * Return in aLocalDeviceDir the local directory in which to store device
+   * related files (e.g., device settings file backups).
+   *
+   * \param aLocalDeviceDir       Retured local device file directory.
+   */
+  nsresult GetLocalDeviceDir(nsIFile** aLocalDeviceDir);
+
 
   //----------------------------------------------------------------------------
   //

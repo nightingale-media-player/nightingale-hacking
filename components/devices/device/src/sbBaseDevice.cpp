@@ -44,11 +44,13 @@
 #include <nsIPrefBranch.h>
 #include <nsIProxyObjectManager.h>
 
+#include <nsAppDirectoryServiceDefs.h>
 #include <nsArrayUtils.h>
 #include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsCRT.h>
+#include <nsDirectoryServiceUtils.h>
 #include <nsMemory.h>
 #include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
@@ -3594,6 +3596,70 @@ sbBaseDevice::GetCapabilitiesPreference(nsIVariant** aCapabilities)
   sbNewVariant capabilitiesVariant;
   NS_ENSURE_TRUE(capabilitiesVariant.get(), NS_ERROR_FAILURE);
   NS_ADDREF(*aCapabilities = capabilitiesVariant.get());
+
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::GetLocalDeviceDir(nsIFile** aLocalDeviceDir)
+{
+  NS_ENSURE_ARG_POINTER(aLocalDeviceDir);
+  PRBool   exists;
+  nsresult rv;
+
+  // Get the root of all local device directories, creating it if needed.
+  nsCOMPtr<nsIFile> localDeviceDir;
+  rv = NS_GetSpecialDirectory(NS_APP_USER_PROFILE_50_DIR,
+                              getter_AddRefs(localDeviceDir));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = localDeviceDir->Append(NS_LITERAL_STRING("devices"));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = localDeviceDir->Exists(&exists);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!exists) {
+    rv = localDeviceDir->Create(nsIFile::DIRECTORY_TYPE,
+                                SB_DEFAULT_FILE_PERMISSIONS);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // get id of this device
+  nsID* id;
+  rv = GetId(&id);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // get that as a string
+  char idString[NSID_LENGTH];
+  id->ToProvidedString(idString);
+  NS_Free(id);
+
+  // Produce this device's sub directory name.
+  nsAutoString deviceSubDirName;
+  deviceSubDirName.Assign(NS_LITERAL_STRING("device"));
+  deviceSubDirName.Append(NS_ConvertUTF8toUTF16(idString + 1, NSID_LENGTH - 3));
+
+  // Remove any illegal characters.
+  PRUnichar *begin, *end;
+  for (deviceSubDirName.BeginWriting(&begin, &end); begin < end; ++begin) {
+    if (*begin & (~0x7F)) {
+      *begin = PRUnichar('_');
+    }
+  }
+  deviceSubDirName.StripChars(FILE_ILLEGAL_CHARACTERS
+                              FILE_PATH_SEPARATOR
+                              " _-{}");
+
+  // Get this device's local directory, creating it if needed.
+  rv = localDeviceDir->Append(deviceSubDirName);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = localDeviceDir->Exists(&exists);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!exists) {
+    rv = localDeviceDir->Create(nsIFile::DIRECTORY_TYPE,
+                                SB_DEFAULT_FILE_PERMISSIONS);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Return results.
+  localDeviceDir.forget(aLocalDeviceDir);
 
   return NS_OK;
 }
