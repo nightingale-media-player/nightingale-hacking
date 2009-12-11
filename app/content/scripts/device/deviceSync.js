@@ -1,29 +1,27 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 /**
@@ -106,13 +104,10 @@ var DeviceSyncWidget = {
     // XXX When we deal with multiple libraries we will need to change this
     //     so that it can handle a particular library rather than defaulting
     //     to the first one.
-    this._deviceLibrary = this._device.content.libraries
-                              .queryElementAt(0, Ci.sbIDeviceLibrary);
-
-    // Initialize, read, and apply the sync preferences.
-    this.syncPrefsInitialize();
-    this.syncPrefsRead();
-    this.syncPrefsApply();
+    if (this._device.content.libraries.length > 0) {
+      this.addLibrary(this._device.content
+                          .libraries.queryElementAt(0, Ci.sbIDeviceLibrary));
+    }
 
     // Listen for device events.
     var deviceEventTarget =
@@ -126,6 +121,9 @@ var DeviceSyncWidget = {
          Ci.sbIMediaList.LISTENER_FLAGS_ITEMADDED |
          Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED |
          Ci.sbIMediaList.LISTENER_FLAGS_ITEMUPDATED);
+
+    // Update the UI.
+    this.update();
   },
 
 
@@ -151,6 +149,22 @@ var DeviceSyncWidget = {
     this._widget = null;
     this._device = null;
   },
+
+
+  /**
+   * Update the widget UI.
+   */
+
+  update: function DeviceSyncWidget_update() {
+    // If there is no device library, hide the widget and return.  Otherwise,
+    // show the widget.
+    if (!this._deviceLibrary) {
+      this._widget.setAttribute("hidden", "true");
+      return;
+    }
+    this._widget.removeAttribute("hidden");
+  },
+
 
   //----------------------------------------------------------------------------
   //
@@ -223,6 +237,14 @@ var DeviceSyncWidget = {
           this.syncPrefsRead();
           this.syncPrefsApply();
         }
+        break;
+
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_ADDED :
+        this.addLibrary(aEvent.data.QueryInterface(Ci.sbIDeviceLibrary));
+        break;
+
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_REMOVED :
+        this.removeLibrary(aEvent.data.QueryInterface(Ci.sbIDeviceLibrary));
         break;
 
       default :
@@ -378,6 +400,55 @@ var DeviceSyncWidget = {
    */
 
   onBatchEnd: function DeviceSyncWidget_onBatchEnd(aMediaList) {},
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Device sync library services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Add the library specified by aLibrary.
+   *
+   * \param aLibrary            Library to add.
+   */
+
+  addLibrary: function DeviceSyncWidget_addLibrary(aLibrary) {
+    // Do nothing if library already added.
+    if (this._deviceLibrary)
+      return;
+
+    // Get the device library.
+    this._deviceLibrary = aLibrary;
+
+    // Initialize, read, and apply the sync preferences.
+    this.syncPrefsInitialize();
+    this.syncPrefsRead();
+    this.syncPrefsApply();
+
+    // Update the UI.
+    this.update();
+  },
+
+
+  /**
+   * Remove the library specified by aLibrary.
+   *
+   * \param aLibrary            Library to remove.
+   */
+
+  removeLibrary: function DeviceSyncWidget_removeLibrary(aLibrary) {
+    // Do nothing if current library has not been removed.
+    if (this._deviceLibrary != aLibrary)
+      return;
+
+    // Clear the device library.
+    this._deviceLibrary = null;
+
+    // Update the UI.
+    this.update();
+  },
 
 
   //----------------------------------------------------------------------------
@@ -865,6 +936,8 @@ var DeviceSyncWidget = {
       syncPlaylistTreeCell.setAttribute("value", syncPlaylistList[guid].value);
     }
 
+    // Update the UI.
+    this.update();
   },
 
   /*
