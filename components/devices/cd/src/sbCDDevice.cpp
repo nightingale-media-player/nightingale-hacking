@@ -900,11 +900,17 @@ sbCDDevice::Mount()
   }
   else {
     // Reset status if same disk was inserted again
-    sbDeviceUtils::BulkSetProperty(mDeviceLibrary,
-                                   NS_LITERAL_STRING(SB_PROPERTY_CDRIP_STATUS),
-                                   SBVoidString(),
-                                   nsnull,
-                                   nsnull);
+    rv = sbDeviceUtils::BulkSetProperty(mDeviceLibrary,
+                                        NS_LITERAL_STRING(SB_PROPERTY_CDRIP_STATUS),
+                                        SBVoidString());
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                     "Failed to reset rip status for CD tracks");
+
+    rv = sbDeviceUtils::BulkSetProperty(mDeviceLibrary,
+                                        NS_LITERAL_STRING(SB_PROPERTY_SHOULDRIP),
+                                        NS_LITERAL_STRING("1"));
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                     "Failed to reset selection for CD tracks");
   }
 
   // hide the device library.
