@@ -221,7 +221,7 @@ interface sbIDeviceLibraryListener : nsISupports
  * \interface sbIDeviceLibrary
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(7e132c5a-f5a2-4147-b208-648fe14fc8f6)]
+[scriptable, uuid(3585b1b0-e3ba-11de-8a39-0800200c9a66)]
 interface sbIDeviceLibrary : sbILibrary
 {
   /**
@@ -241,80 +241,147 @@ interface sbIDeviceLibrary : sbILibrary
 
   /** \brief Manually manage device.
     */
-  const unsigned long MGMT_TYPE_MANUAL                  = 0x0;
+  const unsigned long MGMT_TYPE_MANUAL                  = 0x01;
 
-  /** \brief Automatically synchronize all of audio library to device.
+  /** \brief Automatically synchronize all of audio or video library to device.
     */
-  const unsigned long MGMT_TYPE_SYNC_ALL                = 0x01;
+  const unsigned long MGMT_TYPE_SYNC_ALL                = 0x02;
 
-  /** \brief Automatically synchronize a list of audio playlsits to device.
+  /** \brief Automatically synchronize a list of audio/video playlsits to device.
     */
-  const unsigned long MGMT_TYPE_SYNC_PLAYLISTS          = 0x02;
-
-  /** \brief Automatically synchronize all of video library to device.
-    */
-  const unsigned long MGMT_TYPE_VIDEO_SYNC_ALL          = 0x04;
-
-  /** \brief Automatically synchronize a list of video playlsits to device.
-    */
-  const unsigned long MGMT_TYPE_VIDEO_SYNC_PLAYLISTS    = 0x08;
+  const unsigned long MGMT_TYPE_SYNC_PLAYLISTS          = 0x04;
 
   /** \brief This is the maximum logical value we can have for the MGMT_TYPE.
    * Since we can only have either SYNC(ALL or PLAYLIST) on each type or MANUAL.
    */
-  const unsigned long MGMT_TYPE_MAX_VALUE               = 0x0A;
+  const unsigned long MGMT_TYPE_MAX_VALUE               = 0x07;
 
-  // Masks for helping determine if any playlists are to be sync'd
-  const unsigned long MGMT_TYPE_PLAYLISTS_MASK          = 0x0A;
-  const unsigned long MGMT_TYPE_ALL_MASK                = 0x05;
+  // Masks for helping determine the management type
+  const unsigned long MGMT_TYPE_MASK                    = 0x07;
+
+  /**
+   * Media type for management type and playlist list.
+   */
+
+  const unsigned long MEDIATYPE_UNKNOWN                 = 0x0A;
+
+  const unsigned long MEDIATYPE_AUDIO                   = 0x00;
+
+  const unsigned long MEDIATYPE_VIDEO                   = 0x01;
+
+  const unsigned long MEDIATYPE_COUNT                   = 0x02;
 
 
   /**
-   * \brief The currently configured device management type preference
-   * for the device library.
+   * \brief The flag on whether the device is in manual mode.
+   *
+   */
+
+  readonly attribute PRBool isMgmtTypeManual;
+
+   /**
+   * \brief Return the current configured management type preference with
+   *        content type aContentType for device library.
+   *
+   * \param aContentType the content type for the preference.
+   *
+   * \return the value of the management type preference
    *
    * \sa MGMT_TYPE_* constants
    */
 
-  attribute PRUint32 mgmtType;
+  unsigned long getMgmtType(in unsigned long aContentType);
+
+  /**
+   * \brief Set the current configured management type preference for
+   *        device library.
+   *
+   * \param aMgmtType the management type
+   * \param aManualFlag flag to set or unset manual mode.
+   * 
+   * \sa MGMT_TYPE_* constants
+   */
+
+  void setMgmtTypes(in unsigned long aMgmtType, in boolean aManualFlag);
+
+  /**
+   * \brief Set the current configured management type preference with content
+   *        type aContentType for device library.
+   *
+   * \param aContentType the content type for the preference.
+   * \param aMgmtType the management type
+   * 
+   * \sa MGMT_TYPE_* constants
+   */
+
+  void setMgmtType(in unsigned long aContentType,
+                   in unsigned long aMgmtType);
 
   /**
    * \brief Return the list of playlists the user wants to sync from the main
    *        library to the device.
    *
-   * \return List of sbIMediaLists that represent the playlists to
-   *         sync.
+   * \return List of sbIMediaLists that represent the playlists to sync.
    */
 
   nsIArray getSyncPlaylistList();
 
   /**
-   * \brief Set the list of playlists the user wants to sync from the main
-   *        library to the device
+   * \brief Return the list of playlists with content type aContentType the
+   *        user wants to sync from the main library to the device.
    *
-   * \param aPlaylistList List of sbIMediaLists that represent the playlists to
-   *                      sync.
+   * \param aContentType Content type for the playlist
+   *
+   * \return List of sbIMediaLists that represent the playlists to sync.
+   */
+
+  nsIArray getSyncPlaylistListByType(in unsigned long aContentType);
+
+  /**
+   * \brief Set the list of playlists the user wants to sync from the main
+   *        library to the device.
+   *
+   * \param aPlaylistList List of sbIMediaLists that represent the playlists
+   *                      to sync.
    */
 
   void setSyncPlaylistList(in nsIArray aPlaylistList);
 
   /**
-   * \brief Add a playlist to the list of playlists the user wants to sync from
-   *        the main library to the device
+   * \brief Set the list of playlists with content type aContentType the user
+   *        wants to sync from the main library to the device.
    *
+   * \param aContentType Content type for the playlist
+   * \param aPlaylistList List of sbIMediaLists that represent the playlists
+   *                      to sync.
+   */
+
+  void setSyncPlaylistListByType(in unsigned long aContentType,
+                                 in nsIArray aPlaylistList);
+
+  /**
+   * \brief Add a playlist to the list of playlists with content type
+   *        aContentType the user wants to sync from the main library to
+   *        the device
+   *
+   * \param aContentType Content type for the playlist
    * \param aPlaylist The playlist to add.
    */
 
-  void addToSyncPlaylistList(in sbIMediaList aPlaylist);
+  void addToSyncPlaylistList(in unsigned long aContentType,
+                             in sbIMediaList aPlaylist);
 
   /**
-   * \brief Remove a playlist from the list of playlists the user wants to sync
-   *        from the main library to the device
+   * \brief Remove a playlist from the list of playlists with content type
+   *        aContentType the user wants to sync from the main library to the
+   *        device
    *
+   * \param aContentType Content type for the playlist
    * \param aPlaylist The playlist to remove.
    */
 
-  void removeFromSyncPlaylistList(in sbIMediaList aPlaylist);
+  void removeFromSyncPlaylistList(in unsigned long aContentType,
+                                  in sbIMediaList aPlaylist);
 
   /**
    * \brief Initiates a sync operation on this library

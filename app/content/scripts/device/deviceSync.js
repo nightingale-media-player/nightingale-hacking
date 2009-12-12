@@ -490,6 +490,45 @@ var DeviceSyncWidget = {
     radioElem.radioGroup.selectedItem = radioElem;
   },
 
+  /*
+   * \brief get the ID of media type out of the media type string
+   *
+   * \param aMediaType           media type string
+   *
+   */
+
+  _getMediaType: function DeviceSyncWidget__getMediaType(aMediaType)
+  {
+    var mediaType = Ci.sbIDeviceLibrary.MEDIATYPE_UNKOWN;
+    if (aMediaType == "audio")
+      mediaType = Ci.sbIDeviceLibrary.MEDIATYPE_AUDIO;
+    else if (aMediaType == "video")
+      mediaType = Ci.sbIDeviceLibrary.MEDIATYPE_VIDEO;
+
+    return mediaType;
+  },
+
+  /*
+   * \brief get the ID of list content type out of the content type string
+   *
+   * \param aContentType           content type string
+   *
+   */
+
+  _getListContentType:
+  function DeviceSyncWidget__getListContentType(aContentType)
+  {
+    var contentType = Ci.sbIMediaList.CONTENTTYPE_NONE;
+    if (aContentType == "audio")
+      contentType = Ci.sbIMediaList.CONTENTTYPE_AUDIO;
+    else if (aContentType == "video")
+      contentType = Ci.sbIMediaList.CONTENTTYPE_VIDEO;
+    else if (aContentType == "mix")
+      contentType = Ci.sbIMediaList.CONTENTTYPE_MIX;
+
+    return contentType;
+  },
+
   /* ***************************************************************************
    *
    * device sync preference services.
@@ -554,7 +593,6 @@ var DeviceSyncWidget = {
       belongsInTab: true,     // If this list belongs in this tab
       contentType: "audio",   // Content type of this list (audio/video/mix)
       isMix: false,           // If it is a mix different content (audio/video)
-      contentCount: 0,        // Count of items of main content type
       contentDuration: -1     // Duration of items of main content type
     };
 
@@ -574,12 +612,11 @@ var DeviceSyncWidget = {
 
     // sbIMediaListEnumerationListener
     // This gives us a count and duration of items of contentType
-    var contentCounter = {
+    var durationCounter = {
       onEnumerationBegin : function(aMediaList) {
         return Ci.sbIMediaListEnumerationListener.CONTINUE;
       },
       onEnumeratedItem : function(aMediaList, aMediaItem) {
-        listInfo.contentCount++;
         if (aMediaItem.getProperty(SBProperties.duration) != null) {
           listInfo.contentDuration +=
             parseFloat(aMediaItem.getProperty(SBProperties.duration));
@@ -592,25 +629,28 @@ var DeviceSyncWidget = {
 
     aMediaList.enumerateItemsByProperty(SBProperties.contentType,
                                         this._mediaType,
-                                        contentCounter,
+                                        durationCounter,
                                         Ci.sbIMediaList
                                           .ENUMERATIONTYPE_SNAPSHOT);
 
-    // Check if this is a mix of content
-    if (listInfo.contentCount > 0 && listInfo.contentCount < aMediaList.length)
-      listInfo.isMix = true;
-
-    // Set the content type of the media list and belongs in the current tyab
-    if (listInfo.isMix){
-      listInfo.contentType = "mix";
-    }
-    else if (listInfo.contentCount > 0) {
-      listInfo.contentType = this._mediaType;
-    }
-    else {
-      // We don't need to set the content type since this list does not belong
-      // in the tab.
-      listInfo.belongsInTab = false;
+    var listType = aMediaList.getListContentType();
+    switch (listType) {
+      case Ci.sbIMediaList.CONTENTTYPE_AUDIO:
+        if (this._mediaType == "video")
+          listInfo.belongsInTab = false;
+        break;
+      case Ci.sbIMediaList.CONTENTTYPE_VIDEO:
+        listInfo.contentType = "video";
+        if (this._mediaType == "audio")
+          listInfo.belongsInTab = false;
+        break;
+      case Ci.sbIMediaList.CONTENTTYPE_MIX:
+        listInfo.contentType = "mix";
+        listInfo.isMix = true;
+        break;
+      default:
+        Cu.reportError("Unsupported media list type!");
+        break;
     }
 
     return listInfo;
@@ -786,41 +826,60 @@ var DeviceSyncWidget = {
 
   syncPrefsRead: function DeviceSyncWidget_syncPrefsRead(aPrefs)
   {
-      var                         readPrefs;
-      var                         storedSyncPlaylistList;
-      var                         syncPlaylistList;
-      var                         syncPlaylistML;
-      var                         guid;
-      var                         i;
+    var                         readPrefs;
+    var                         storedSyncPlaylistList;
+    var                         syncPlaylistList;
+    var                         syncPlaylistML;
+    var                         guid;
+    var                         i;
+    var                         j;
 
-      /* If no preference object is specified, */
-      /* read into the working preferences.    */
-      if (aPrefs)
-          readPrefs = aPrefs;
-      else
-          readPrefs = this._syncPrefs;
+    /* If no preference object is specified, */
+    /* read into the working preferences.    */
+    if (aPrefs)
+      readPrefs = aPrefs;
+    else
+      readPrefs = this._syncPrefs;
 
-      /* Read the management type preference. */
-      readPrefs.mgmtType.value = this._deviceLibrary.mgmtType;
+    /* Read the management type preference. */
+    var mediaType = this._getMediaType(this._mediaType);
+    readPrefs.mgmtType.value =
+        this._deviceLibrary.getMgmtType(mediaType);
 
-      /* Read the stored sync playlist list preferences. */
-      storedSyncPlaylistList = this._deviceLibrary.getSyncPlaylistList();
+    /* Clear and read the sync playlist list preferences. */
+    syncPlaylistList = readPrefs.syncPlaylistList;
+    for (guid in syncPlaylistList)
+      syncPlaylistList[guid].value = false;
 
-      /* Clear and read the sync playlist list preferences. */
-      syncPlaylistList = readPrefs.syncPlaylistList;
-      for (guid in syncPlaylistList)
-          syncPlaylistList[guid].value = false;
-      for (i = 0; i < storedSyncPlaylistList.length; i++)
-      {
-          syncPlaylistML = storedSyncPlaylistList.queryElementAt(i,
-                                                              Ci.sbIMediaList);
-          if (syncPlaylistML.guid in syncPlaylistList)
-              syncPlaylistList[syncPlaylistML.guid].value = true;
+    /* Read the stored sync playlist list preferences for both audio/video. */
+    for (i = 0; i < Ci.sbIDeviceLibrary.MEDIATYPE_COUNT; ++i) {
+      storedSyncPlaylistList =
+          this._deviceLibrary.getSyncPlaylistListByType(i);
+
+      for (j = 0; j < storedSyncPlaylistList.length; ++j) {
+        syncPlaylistML = storedSyncPlaylistList.queryElementAt(j,
+                                                               Ci.sbIMediaList);
+        if (syncPlaylistML.guid in syncPlaylistList) {
+          syncPlaylistList[syncPlaylistML.guid].value = true;
+          // The playlist content type can change when device is
+          // disconnected. Update the preference when reconnect.
+          var contentType =
+              this._getListContentType(
+                  syncPlaylistList[syncPlaylistML.guid].contentType);
+          if (i != mediaType &&
+              (contentType != Ci.sbIMediaList.CONTENTTYPE_MIX)) {
+            this._deviceLibrary.addToSyncPlaylistList(mediaType,
+                                                      syncPlaylistML);
+            this._deviceLibrary.removeFromSyncPlaylistList(i,
+                                                           syncPlaylistML);
+          }
+        }
       }
+    }
 
-      /* Make a copy of the stored sync prefs. */
-      this._storedSyncPrefs = {};
-      this.syncPrefsCopy(readPrefs, this._storedSyncPrefs);
+    /* Make a copy of the stored sync prefs. */
+    this._storedSyncPrefs = {};
+    this.syncPrefsCopy(readPrefs, this._storedSyncPrefs);
   },
 
 
@@ -837,6 +896,8 @@ var DeviceSyncWidget = {
     var                         mediaList;
     var                         guid;
 
+    var mediaType = this._getMediaType(this._mediaType);
+
     /* we must read only the playlist list preference array before writing
      * anything to the prefs, otherwise the act of writing will go and clobber
      * our changes.
@@ -846,15 +907,35 @@ var DeviceSyncWidget = {
     {
       mediaList = LibraryUtils.mainLibrary.getMediaItem(guid);
       if (mediaList) {
-        if (syncPlaylistList[guid].value)
-          this._deviceLibrary.addToSyncPlaylistList(mediaList);
-        else
-          this._deviceLibrary.removeFromSyncPlaylistList(mediaList);
+        var listType =
+            this._getListContentType(syncPlaylistList[guid].contentType);
+        if (syncPlaylistList[guid].value) {
+          // Add mix type media list to both audio and video.
+          if (listType == Ci.sbIMediaList.CONTENTTYPE_MIX) {
+            for (var i = 0; i < Ci.sbIDeviceLibrary.MEDIATYPE_COUNT; ++i)
+              this._deviceLibrary.addToSyncPlaylistList(i, mediaList);
+          }
+          // Otherwise, only add to the current media type.
+          else {
+            this._deviceLibrary.addToSyncPlaylistList(mediaType, mediaList);
+          }
+        }
+        else {
+          // Remove mix type media list from both audio and video.
+          if (listType == Ci.sbIMediaList.CONTENTTYPE_MIX) {
+            for (var i = 0; i < Ci.sbIDeviceLibrary.MEDIATYPE_COUNT; ++i)
+              this._deviceLibrary.removeFromSyncPlaylistList(i, mediaList);
+          }
+          // Otherwise, only remove from the current media type.
+          else {
+            this._deviceLibrary.removeFromSyncPlaylistList(mediaType, mediaList);
+          }
+        }
       }
     }
 
     /* Write the management type preference. */
-    this._deviceLibrary.mgmtType = this._syncPrefs.mgmtType.value;
+    this._deviceLibrary.setMgmtType(mediaType, this._syncPrefs.mgmtType.value);
   },
 
   /*
@@ -866,14 +947,8 @@ var DeviceSyncWidget = {
 
   syncPrefsMgmtTypeIsAll: function DeviceSyncWidget_syncPrefsMgmtTypeIsAll()
   {
-    var mgmtType = this._syncPrefs.mgmtType.value;
-    var mgmtAllType = Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL;
-
-    if (this._mediaType == "video") {
-      mgmtAllType = Ci.sbIDeviceLibrary.MGMT_TYPE_VIDEO_SYNC_ALL;
-    }
-
-    return ((mgmtType & mgmtAllType) == mgmtAllType);
+    return (this._syncPrefs.mgmtType.value ==
+            Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL);
   },
 
   /*
@@ -893,11 +968,11 @@ var DeviceSyncWidget = {
 
     /* Get the management type pref UI elements. */
     syncRadioGroup = this._getElement("content_auto_sync_type_radio_group");
-    syncPlaylistTree= this._getElement("content_auto_sync_playlist_tree");
+    syncPlaylistTree = this._getElement("content_auto_sync_playlist_tree");
 
     /* Apply management type prefs. */
     // Manual applies to all content type so it will never need a bit compare
-    if (this._syncPrefs.mgmtType.value ==
+    if (this._syncPrefs.mgmtType.value &
         Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL) {
       // Manual manage mode
       // We make sure the tree is not disabled first so it does not look odd
@@ -951,28 +1026,17 @@ var DeviceSyncWidget = {
     function DeviceSyncWidget_syncPrefsSetMgmtType(isSyncAll)
   {
     var mgmtType = this._syncPrefs.mgmtType.value;
-    if (this._mediaType == "video") {
-      // Remove the VIDEO types
-      var mask = ~(Ci.sbIDeviceLibrary.MGMT_TYPE_VIDEO_SYNC_ALL |
-                   Ci.sbIDeviceLibrary.MGMT_TYPE_VIDEO_SYNC_PLAYLISTS);
-      mgmtType &= mask;
 
-      if (isSyncAll)
-        mgmtType |= Ci.sbIDeviceLibrary.MGMT_TYPE_VIDEO_SYNC_ALL;
-      else
-        mgmtType |= Ci.sbIDeviceLibrary.MGMT_TYPE_VIDEO_SYNC_PLAYLISTS;
-    }
-    else {
-      // Remove the AUDIO types
-      var mask = ~(Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL |
-                   Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_PLAYLISTS);
-      mgmtType &= mask;
+    var mask = ~(Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL |
+                 Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_PLAYLISTS);
 
-      if (isSyncAll)
-        mgmtType |= Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL;
-      else
-        mgmtType |= Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_PLAYLISTS;
-    }
+    mgmtType &= mask;
+
+    if (isSyncAll)
+      mgmtType |= Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL;
+    else
+      mgmtType |= Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_PLAYLISTS;
+
     this._syncPrefs.mgmtType.value = mgmtType;
   },
 

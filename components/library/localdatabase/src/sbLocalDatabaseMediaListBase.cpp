@@ -561,6 +561,53 @@ sbLocalDatabaseMediaListBase::GetItemByIndex(PRUint32 aIndex,
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::GetListContentType(PRUint16* aContentType)
+{
+  // Set the default value.
+  *aContentType = sbIMediaList::CONTENTTYPE_NONE;
+
+  // Do some quick check on some types of lists that not belongs to 
+  nsAutoString customType;
+  nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
+                            customType);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (customType.Equals(NS_LITERAL_STRING("download")))
+    return NS_OK;
+
+  PRUint32 length;
+  rv = mFullArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Empty list == audio list.
+  if (!length) {
+    *aContentType = sbIMediaList::CONTENTTYPE_AUDIO;
+    return NS_OK;
+  }
+
+  PRUint32 audioLength = 0, videoLength = 0;
+  rv = GetItemCountByProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                              NS_LITERAL_STRING("audio"),
+                              &audioLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetItemCountByProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                              NS_LITERAL_STRING("video"),
+                              &videoLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // audio | video == mix
+  if (audioLength > 0) {
+    *aContentType |= sbIMediaList::CONTENTTYPE_AUDIO;
+  }
+
+  if (videoLength > 0) {
+    *aContentType |= sbIMediaList::CONTENTTYPE_VIDEO;
+  }
+
+  return NS_OK;
+}
+
 /**
  * See sbIMediaList
  */
@@ -892,6 +939,29 @@ sbLocalDatabaseMediaListBase::GetItemsByProperty(const nsAString & aPropertyID,
   NS_ENSURE_SUCCESS(rv, rv);
 
   return enumerator->GetArray(_retval);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::GetItemCountByProperty(const nsAString & aPropertyID, 
+                                                     const nsAString & aPropertyValue, 
+                                                     PRUint32 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsRefPtr<sbLocalMediaListBaseEnumerationListener> enumerator;
+  NS_NEWXPCOM(enumerator, sbLocalMediaListBaseEnumerationListener);
+  NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv = enumerator->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = EnumerateItemsByProperty(aPropertyID, 
+                                aPropertyValue, 
+                                enumerator, 
+                                sbIMediaList::ENUMERATIONTYPE_LOCKING);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return enumerator->GetArrayLength(_retval);
 }
 
 NS_IMETHODIMP 

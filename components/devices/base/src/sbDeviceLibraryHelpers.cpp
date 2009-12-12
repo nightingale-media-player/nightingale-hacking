@@ -48,27 +48,26 @@ static nsresult GetSyncItemInLibrary(sbIMediaItem*  aMediaItem,
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbLibraryUpdateListener, sbIMediaListListener)
 
 sbLibraryUpdateListener::sbLibraryUpdateListener(sbILibrary * aTargetLibrary,
-                                                 PRUint32 aMgmtType,
+                                                 bool aManualMode,
+                                                 bool aSyncPlaylists,
                                                  nsIArray * aPlaylistsList,
                                                  bool aIgnorePlaylists)
   : mTargetLibrary(aTargetLibrary),
     mPlaylistListener(new sbPlaylistSyncListener(aTargetLibrary)),
-    mIgnorePlaylists(aIgnorePlaylists)
+    mIgnorePlaylists(aIgnorePlaylists),
+    mSyncPlaylists(aSyncPlaylists)
 {
-  SetSyncMode(aMgmtType, aPlaylistsList);
+  SetSyncMode(aManualMode, aPlaylistsList);
 }
 
-void sbLibraryUpdateListener::SetSyncMode(PRUint32 aMgmtType,
+void sbLibraryUpdateListener::SetSyncMode(bool aManualMode,
                                           nsIArray * aPlaylistsList) {
-  PRUint32 isSyncPlaylists;
-  isSyncPlaylists = aMgmtType & sbIDeviceLibrary::MGMT_TYPE_PLAYLISTS_MASK;
-
-  NS_ASSERTION(!isSyncPlaylists && aPlaylistsList != nsnull,
+  NS_ASSERTION(!mSyncPlaylists && aPlaylistsList != nsnull,
                "Sync Management type isn't playlists but playlists were supplied");
-  NS_ASSERTION(isSyncPlaylists && aPlaylistsList == nsnull,
+  NS_ASSERTION(mSyncPlaylists && aPlaylistsList == nsnull,
                "Sync Management type is playlists but no playlists were supplied");
   mPlaylistsList = aPlaylistsList;
-  mMgmtType = aMgmtType;
+  mManualMode = aManualMode;
 }
 
 nsresult sbLibraryUpdateListener::ShouldListenToPlaylist(sbIMediaList * aMainList,
@@ -93,11 +92,10 @@ nsresult sbLibraryUpdateListener::ShouldListenToPlaylist(sbIMediaList * aMainLis
 
 #endif
 
-  PRBool listenToChanges = (mMgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL);
+  PRBool listenToChanges = !mManualMode;
   // If we're supposed to be listening and only interested in certain playlists
   // check that list
-  if (listenToChanges &&
-    (mMgmtType & sbIDeviceLibrary::MGMT_TYPE_PLAYLISTS_MASK)) {
+  if (mSyncPlaylists) {
 
     listenToChanges = PR_FALSE;
 

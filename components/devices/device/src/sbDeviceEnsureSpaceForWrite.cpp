@@ -190,10 +190,8 @@ sbDeviceEnsureSpaceForWrite::GetFreeSpace() {
  */
 nsresult
 sbDeviceEnsureSpaceForWrite::GetWriteMode(WriteMode & aWriteMode) {
-  // get the management type
-  PRUint32 mgmtType;
-   
-  nsresult rv = mOwnerLibrary->GetMgmtType(&mgmtType);
+  PRBool isManual;
+  nsresult rv = mOwnerLibrary->GetIsMgmtTypeManual(&isManual);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // if not enough free space is available, ask user what to do
@@ -208,7 +206,7 @@ sbDeviceEnsureSpaceForWrite::GetWriteMode(WriteMode & aWriteMode) {
     if (abort) {
       aWriteMode = ABORT;
     }
-    else if (mgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL) {
+    else if (!isManual) {
       aWriteMode = SHUFFLE;
     }
     else { 

@@ -3786,7 +3786,8 @@ sbBaseDevice::EnsureSpaceForSync(TransferRequest* aRequest,
                                                &abort);
     NS_ENSURE_SUCCESS(rv, rv);
     if (abort) {
-      rv = dstLib->SetMgmtType(sbIDeviceLibrary::MGMT_TYPE_MANUAL);
+      // Set manual mode for both audio and video preferences.
+      rv = dstLib->SetMgmtTypes(sbIDeviceLibrary::MGMT_TYPE_MANUAL, PR_TRUE);
       NS_ENSURE_SUCCESS(rv, rv);
       *aAbort = PR_TRUE;
       return NS_OK;
@@ -3829,10 +3830,8 @@ sbBaseDevice::SyncCreateAndSyncToList
   NS_ENSURE_SUCCESS(rv, rv);
   rv = aDstLib->SetSyncPlaylistList(emptySyncPlaylistList);
   NS_ENSURE_SUCCESS(rv, rv);
-  // TODO: Probably need to figure out what type we are creating a random list
-  // for and set that instead of both.
-  rv = aDstLib->SetMgmtType(sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS |
-                            sbIDeviceLibrary::MGMT_TYPE_VIDEO_SYNC_PLAYLISTS);
+  // Set sync playlist mode for both audio and video preferences.
+  rv = aDstLib->SetMgmtTypes(sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Create a shuffled sync item list that will fit in the available space.
@@ -3979,13 +3978,24 @@ sbBaseDevice::SyncToMediaList(sbIDeviceLibrary* aDstLib,
   rv = syncPlaylistList->AppendElement(aMediaList, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Set to sync to the sync media list.
-  rv = aDstLib->SetSyncPlaylistList(syncPlaylistList);
+  PRUint16 contentType;
+  rv = aMediaList->GetListContentType(&contentType);
   NS_ENSURE_SUCCESS(rv, rv);
-  // TODO: Probably should check what the content type of the list is then
-  // set the flag for that type.
-  rv = aDstLib->SetMgmtType(sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS |
-                            sbIDeviceLibrary::MGMT_TYPE_VIDEO_SYNC_PLAYLISTS);
+  NS_ENSURE_SUCCESS(contentType > 0, NS_ERROR_FAILURE);
+
+  // Set to sync to the sync media list.
+  if (contentType | sbIMediaList::CONTENTTYPE_AUDIO) {
+    rv = aDstLib->SetSyncPlaylistListByType(sbIDeviceLibrary::MEDIATYPE_AUDIO,
+                                            syncPlaylistList);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  if (contentType | sbIMediaList::CONTENTTYPE_VIDEO) {
+    rv = aDstLib->SetSyncPlaylistListByType(sbIDeviceLibrary::MEDIATYPE_VIDEO,
+                                            syncPlaylistList);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  // Set sync playlist mode for both audio and video preferences.
+  rv = aDstLib->SetMgmtTypes(sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -4018,16 +4028,30 @@ sbBaseDevice::SyncGetSyncItemSizes
   rv = syncList->GetLength(&syncListLength);
   NS_ENSURE_SUCCESS(rv, rv);
   for (PRUint32 i = 0; i < syncListLength; i++) {
-    // Get the next sync media list.
-    nsCOMPtr<sbIMediaList> syncML = do_QueryElementAt(syncList, i, &rv);
+    // Get the next sync media item.
+    nsCOMPtr<sbIMediaItem> syncMI = do_QueryElementAt(syncList, i, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Get the sizes of the sync media items.
-    rv = SyncGetSyncItemSizes(syncML,
-                              aSyncItemList,
-                              aSyncItemSizeMap,
-                              &totalSyncSize);
-    NS_ENSURE_SUCCESS(rv, rv);
+    // Get the sync media list.
+    nsCOMPtr<sbIMediaList> syncML = do_QueryInterface(syncMI, &rv);
+
+    // Not media list.
+    if (NS_FAILED(rv)) {
+      // Get the size of the sync media item.
+      rv = SyncGetSyncItemSizes(syncMI,
+                                aSyncItemList,
+                                aSyncItemSizeMap,
+                                &totalSyncSize);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      // Get the sizes of the sync media items.
+      rv = SyncGetSyncItemSizes(syncML,
+                                aSyncItemList,
+                                aSyncItemSizeMap,
+                                &totalSyncSize);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   // Return results.
@@ -4068,25 +4092,55 @@ sbBaseDevice::SyncGetSyncItemSizes
     if (NS_SUCCEEDED(rv))
       continue;
 
-    // Do nothing more if item is already in list.
-    if (aSyncItemSizeMap.Get(mediaItem, nsnull))
-      continue;
-
-    // Get the item size adding in the per track overhead.  Assume a length of
-    // 0 on error.
-    PRInt64 contentLength;
-    rv = sbLibraryUtils::GetContentLength(mediaItem, &contentLength);
-    if (NS_FAILED(rv))
-      contentLength = 0;
-    contentLength += mPerTrackOverhead;
-
-    // Add item.
-    success = aSyncItemList.AppendObject(mediaItem);
-    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-    success = aSyncItemSizeMap.Put(mediaItem, contentLength);
-    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-    totalSyncSize += contentLength;
+    rv = SyncGetSyncItemSizes(mediaItem,
+                              aSyncItemList,
+                              aSyncItemSizeMap,
+                              &totalSyncSize);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  // Return results.
+  *aTotalSyncSize = totalSyncSize;
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::SyncGetSyncItemSizes
+  (sbIMediaItem*                                 aSyncMI,
+   nsCOMArray<sbIMediaItem>&                     aSyncItemList,
+   nsDataHashtable<nsISupportsHashKey, PRInt64>& aSyncItemSizeMap,
+   PRInt64*                                      aTotalSyncSize)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aSyncMI);
+  NS_ENSURE_ARG_POINTER(aTotalSyncSize);
+
+  // Function variables.
+  PRBool   success;
+  nsresult rv;
+
+  // Accumulate the sizes of the sync item.
+  PRInt64  totalSyncSize = *aTotalSyncSize;
+
+  // Do nothing more if item is already in list.
+  if (aSyncItemSizeMap.Get(aSyncMI, nsnull))
+    return NS_OK;
+
+  // Get the item size adding in the per track overhead.  Assume a length of
+  // 0 on error.
+  PRInt64 contentLength;
+  rv = sbLibraryUtils::GetContentLength(aSyncMI, &contentLength);
+  if (NS_FAILED(rv))
+    contentLength = 0;
+  contentLength += mPerTrackOverhead;
+
+  // Add item.
+  success = aSyncItemList.AppendObject(aSyncMI);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  success = aSyncItemSizeMap.Put(aSyncMI, contentLength);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  totalSyncSize += contentLength;
 
   // Return results.
   *aTotalSyncSize = totalSyncSize;
@@ -4104,38 +4158,10 @@ sbBaseDevice::SyncGetSyncList(sbILibrary*       aSrcLib,
   NS_ENSURE_ARG_POINTER(aDstLib);
   NS_ENSURE_ARG_POINTER(aSyncList);
 
-  // Function variables.
-  nsresult rv;
-
   // Get the list of sync media lists.
   nsCOMPtr<nsIArray> syncList;
-  PRUint32           syncMode;
-  rv = aDstLib->GetMgmtType(&syncMode);
+  nsresult rv = aDstLib->GetSyncPlaylistList(getter_AddRefs(syncList));
   NS_ENSURE_SUCCESS(rv, rv);
-
-  if ((syncMode & sbIDeviceLibrary::MGMT_TYPE_ALL_MASK) > 0) {
-      // Create a sync all array containing the entire source library.
-      nsCOMPtr<nsIMutableArray>
-        syncAllList =
-          do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1",
-                            &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-      nsCOMPtr<sbIMediaList> srcLibML = do_QueryInterface(aSrcLib, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = syncAllList->AppendElement(srcLibML, PR_FALSE);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      // Set the sync list.
-      syncList = do_QueryInterface(syncAllList, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else if ((syncMode & sbIDeviceLibrary::MGMT_TYPE_PLAYLISTS_MASK) > 0) {
-      rv = aDstLib->GetSyncPlaylistList(getter_AddRefs(syncList));
-      NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
-      NS_ENSURE_SUCCESS(NS_ERROR_ILLEGAL_VALUE, NS_ERROR_ILLEGAL_VALUE);
-  }
 
   // Return results.
   syncList.forget(aSyncList);
@@ -4221,30 +4247,9 @@ sbBaseDevice::SyncProduceChangeset(TransferRequest*      aRequest,
 
   // Get the list of sync media lists.
   nsCOMPtr<nsIArray> syncList;
-  PRUint32           syncMode;
-  rv = dstLib->GetMgmtType(&syncMode);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if ((syncMode & sbIDeviceLibrary::MGMT_TYPE_ALL_MASK) > 0) {
-      // Create a sync all array containing the entire source library.
-      nsCOMPtr<nsIMutableArray>
-        syncAllList =
-          do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1",
-                            &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = syncAllList->AppendElement(srcLib, PR_FALSE);
-      NS_ENSURE_SUCCESS(rv, rv);
 
-      // Set the sync list.
-      syncList = do_QueryInterface(syncAllList, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else if ((syncMode & sbIDeviceLibrary::MGMT_TYPE_PLAYLISTS_MASK) > 0) {
-      rv = dstLib->GetSyncPlaylistList(getter_AddRefs(syncList));
-      NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
-      NS_ENSURE_SUCCESS(NS_ERROR_ILLEGAL_VALUE, NS_ERROR_ILLEGAL_VALUE);
-  }
+  rv = SyncGetSyncList(srcLib, dstLib, getter_AddRefs(syncList));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the diffing service.
   nsCOMPtr<sbILibraryDiffingService>

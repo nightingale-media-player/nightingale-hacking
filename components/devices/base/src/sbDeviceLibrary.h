@@ -90,10 +90,12 @@
   NS_IMETHOD GetUserEditableContent(PRBool *aUserEditableContent) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetUserEditableContent(aUserEditableContent); } \
   NS_IMETHOD GetItemByGuid(const nsAString & aGuid, sbIMediaItem **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetItemByGuid(aGuid, _retval); } \
   NS_IMETHOD GetItemByIndex(PRUint32 aIndex, sbIMediaItem **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetItemByIndex(aIndex, _retval); } \
+  NS_IMETHOD GetListContentType(PRUint16 *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetListContentType(_retval); } \
   NS_IMETHOD EnumerateAllItems(sbIMediaListEnumerationListener *aEnumerationListener, PRUint16 aEnumerationType) { return !_to ? NS_ERROR_NULL_POINTER : _to->EnumerateAllItems(aEnumerationListener, aEnumerationType); } \
   NS_IMETHOD EnumerateItemsByProperty(const nsAString & aPropertyID, const nsAString & aPropertyValue, sbIMediaListEnumerationListener *aEnumerationListener, PRUint16 aEnumerationType) { return !_to ? NS_ERROR_NULL_POINTER : _to->EnumerateItemsByProperty(aPropertyID, aPropertyValue, aEnumerationListener, aEnumerationType); } \
   NS_IMETHOD EnumerateItemsByProperties(sbIPropertyArray *aProperties, sbIMediaListEnumerationListener *aEnumerationListener, PRUint16 aEnumerationType) { return !_to ? NS_ERROR_NULL_POINTER : _to->EnumerateItemsByProperties(aProperties, aEnumerationListener, aEnumerationType); } \
   NS_IMETHOD GetItemsByProperty(const nsAString & aPropertyID, const nsAString & aPropertyValue, nsIArray **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetItemsByProperty(aPropertyID, aPropertyValue, _retval); } \
+  NS_IMETHOD GetItemCountByProperty(const nsAString & aPropertyID, const nsAString & aPropertyValue, PRUint32 *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetItemCountByProperty(aPropertyID, aPropertyValue, _retval); } \
   NS_IMETHOD GetItemsByProperties(sbIPropertyArray *aProperties, nsIArray **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetItemsByProperties(aProperties, _retval); } \
   NS_IMETHOD IndexOf(sbIMediaItem *aMediaItem, PRUint32 aStartFrom, PRUint32 *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->IndexOf(aMediaItem, aStartFrom, _retval); } \
   NS_IMETHOD LastIndexOf(sbIMediaItem *aMediaItem, PRUint32 aStartFrom, PRUint32 *_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->LastIndexOf(aMediaItem, aStartFrom, _retval); } \
@@ -165,20 +167,23 @@ protected:
 
   /**
    * \brief Set the management type device preference to the value specified by
-   *        aMgmtType.  Do not initiate any library actions.
+   *        aMgmtTypes.  Do not initiate any library actions.
    *
-   * \param aMgmtType - Device management type preference.
+   * \param aContentType - content type for the preference key.
+   * \param aMgmtTypes - Device management type preference.
    */
-  nsresult SetMgmtTypePref(PRUint32 aMgmtType);
+  nsresult SetMgmtTypePref(PRUint32 aContentType, PRUint32* aMgmtTypes);
 
   /**
    * \brief Set the list of sync playlists device preference to the value
    *        specified by aPlaylistList.  Do not initiate any library actions.
    *
+   * \param aContentType - content type for the preference key.
    * \param aPlaylistList - List of sync playlists preference.
    */
 
-  nsresult SetSyncPlaylistListPref(nsIArray *aPlaylistList);
+  nsresult SetSyncPlaylistListPref(PRUint32 aContentType,
+                                   nsIArray *aPlaylistList);
 
 private:
 
@@ -201,27 +206,30 @@ private:
    * \brief Remove the playlist with the GUID specified by aGUID from the list
    *        of sync playlists.
    *
+   * \param aContentType - Content type for the preference key.
    * \param aGUID - GUID of playlist to remove.
    */
-  nsresult RemoveFromSyncPlaylistList(nsAString& aGUID);
+  nsresult RemoveFromSyncPlaylistList(PRUint32 aContentType, nsAString& aGUID);
 
   /**
    * \brief Return in aPrefKey the device preference key for the management type
    *        preference.
    *
+   * \param aContentType - Content type for the preference key.
    * \param aPrefKey - Returned device preference key for the management type
    *                   preference.
    */
-  nsresult GetMgmtTypePrefKey(nsAString& aPrefKey);
+  nsresult GetMgmtTypePrefKey(PRUint32 aContentType, nsAString& aPrefKey);
 
   /**
    * \brief Return in aPrefKey the device preference key for the list of sync
    *        playlists.
    *
+   * \param aContentType - Content type for the preference key.
    * \param aPrefKey - Returned device preference key for the list of sync
    *                   playlists.
    */
-  nsresult GetSyncListsPrefKey(nsAString& aPrefKey);
+  nsresult GetSyncListsPrefKey(PRUint32 aContentType, nsAString& aPrefKey);
 
   /**
    * \brief Confirm with the user a switch from manual to sync mode.  If user
@@ -296,6 +304,24 @@ private:
    *                         the local library.
    */
   nsresult GetIsSyncedLocally(PRBool* aIsSyncedLocally);
+
+  /**
+   * \brief Return true if the device is configured to auto sync and syncing
+   *        all.
+   *
+   * \param aIsMgmtTypeSyncAll Set to true if the device is configured to
+   *                           auto sync and syncing all.
+   */
+  nsresult GetIsMgmtTypeSyncAll(PRBool* aIsMgmtTypeSyncAll);
+
+  /**
+   * \brief Return true if the device is configured to auto sync and syncing
+   *        playlist.
+   *
+   * \param aIsMgmtTypeSyncList Set to true if the device is configured to
+   *                            auto sync and syncing playlist.
+   */
+  nsresult GetIsMgmtTypeSyncList(PRBool* aIsMgmtTypeSyncList);
 
   /**
    * \brief library for this device, location is specified by the

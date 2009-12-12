@@ -130,8 +130,12 @@ sbIPDLibrary::AddToSyncPlaylistList(sbIMediaList* aPlaylist)
   rv = InitializePrefs();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  PRUint16 contentType;
+  rv = aPlaylist->GetListContentType(&contentType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Forward to the base device library.
-  rv = sbDeviceLibrary::AddToSyncPlaylistList(aPlaylist);
+  rv = sbDeviceLibrary::AddToSyncPlaylistList(contentType, aPlaylist);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Forward to iPod device object.
@@ -167,7 +171,8 @@ sbIPDLibrary::GetMgmtType(PRUint32* aMgmtType)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Forward to the base device library.
-  rv = sbDeviceLibrary::GetMgmtType(aMgmtType);
+  rv = sbDeviceLibrary::GetMgmtType(sbIDeviceLibrary::MEDIATYPE_AUDIO,
+                                    aMgmtType);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -183,7 +188,8 @@ sbIPDLibrary::SetMgmtType(PRUint32 aMgmtType)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Forward to the base device library.
-  rv = sbDeviceLibrary::SetMgmtType(aMgmtType);
+  rv = sbDeviceLibrary::SetMgmtType(sbIDeviceLibrary::MEDIATYPE_AUDIO,
+                                    aMgmtType);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Forward to iPod device object.
@@ -245,14 +251,15 @@ sbIPDLibrary::InitializePrefs()
   PRUint32 mgmtType;
   rv = mDevice->GetMgmtType(&mgmtType);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = SetMgmtTypePref(mgmtType);
+  rv = SetMgmtTypePref(sbIDeviceLibrary::MEDIATYPE_AUDIO, &mgmtType);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Set the sync playlist list preference.
   nsCOMPtr<nsIArray> syncPlaylistList;
   rv = mDevice->GetSyncPlaylistList(getter_AddRefs(syncPlaylistList));
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = SetSyncPlaylistListPref(syncPlaylistList);
+  rv = SetSyncPlaylistListPref(sbIDeviceLibrary::MEDIATYPE_AUDIO,
+                               syncPlaylistList);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Preferences are now initialized.

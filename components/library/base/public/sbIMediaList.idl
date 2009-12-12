@@ -54,7 +54,7 @@ interface sbIPropertyArray;
  *
  * \sa List of "see also" interfaces
  */
-[scriptable, uuid(b980ef53-c00e-45db-9ce6-70326a2641b5)]
+[scriptable, uuid(ee5cbec0-e3a8-11de-8a39-0800200c9a66)]
 interface sbIMediaList : sbIMediaItem
 {
   /*
@@ -137,6 +137,30 @@ interface sbIMediaList : sbIMediaItem
     <enumerateItemsByProperty()>
   */
   const unsigned short ENUMERATIONTYPE_LOCKING  = 1;
+
+  /**
+   * \brief These flags specify the contentType of the media list.
+   *
+   * Const: CONTENTTYPE_NONE
+   * Special list type: Download for example.
+   *
+   * Const: CONTENTTYPE_AUDIO
+   * Only audio items in the lists or empty lists.
+   *
+   * Const: CONTENTTYPE_VIDEO
+   * Only video items in the lists.
+   *
+   * Const: CONTENTTYPE_MIX
+   * Both audio and video items in the lists.
+   */
+
+  const unsigned short CONTENTTYPE_NONE = 0;
+
+  const unsigned short CONTENTTYPE_AUDIO = 1;
+
+  const unsigned short CONTENTTYPE_VIDEO = 2;
+
+  const unsigned short CONTENTTYPE_MIX = 3;
 
   /*
   Group: MediaList Properties
@@ -419,6 +443,70 @@ interface sbIMediaList : sbIMediaItem
   sbIMediaItem getItemByIndex(in unsigned long aIndex);
 
   /**
+   * \brief Get the content type of the media list.
+   * \return Content type for the media list.
+   */
+
+  /*
+  Method: getListContentType()
+
+  Get the content type of <MediaList>.
+
+  Prototype:
+    unsigned short getListContentType()
+
+  Returns:
+    One of the CONTENTTYPE values above.
+
+  Throws:
+    Not Available (Components.results.NS_ERROR_NOT_AVAILABLE)
+    when there is no <MediaItem> at the requested index.
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Create an audio mediaitem.
+    var audioMediaItem = library.createMediaItem("http://path/to/item.mp3");
+
+    //Create a medialist.
+    var mediaList1 = library.createMediaList("simple");
+
+    //Add audio item.
+    mediaList1.add(audioMediaItem);
+
+    //The content type is CONTENTTYPE_AUDIO.
+    mediaList1.getListContentType();
+
+    //Create a video mediaitem.
+    videoMediaItem = library.createMediaItem("http://path/to/item.avi");
+
+    //Add video item.
+    mediaList1.add(videoMediaItem);
+
+    //The content type is CONTENTTYPE_MIX
+    mediaList1.getListContentType();
+
+    //Create another medialist.
+    var mediaList2 = library.createMediaList("simple");
+
+    //Add video item.
+    mediaList2.add(videoMediaItem);
+
+    //The content type is CONTENTTYPE_VIDEO
+    mediaList2.getListContentType();
+    (end)
+
+  See Also:
+    <CONTENTTYPE_NONE>
+    <CONTENTTYPE_AUDIO>
+    <CONTENTTYPE_VIDEO>
+    <CONTENTTYPE_MIX>
+  */
+  unsigned short getListContentType();
+
+  /**
    * \brief Enumerate all items in the list.
    *
    * Do not use ENUMERATIONTYPE_LOCKING unless you fit a usage scenario described in the
@@ -533,6 +621,17 @@ interface sbIMediaList : sbIMediaItem
    */
   nsIArray getItemsByProperty(in AString aPropertyID,
                               in AString aPropertyValue);
+
+  /**
+   * Get item count that have a certain property set to the specified value.
+   *
+   * \param aPropertyID The property id.
+   * \param aPropertyValue The property value.
+   * \return the count of sbIMediaItem elements.
+   * \throw NS_ERROR_NOT_AVAILABLE when no items match the criteria.
+   */
+  PRUint32 getItemCountByProperty(in AString aPropertyID,
+                                  in AString aPropertyValue);
 
   /**
    * Get all items that have a all properties set to the values

@@ -65,6 +65,15 @@ sbLocalMediaListBaseEnumerationListener::GetArray(nsIArray **aArray)
 }
 
 nsresult
+sbLocalMediaListBaseEnumerationListener::GetArrayLength(PRUint32 *aLength)
+{
+  NS_ENSURE_ARG_POINTER(aLength);
+  nsresult rv = mArray->GetLength(aLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
+}
+
+nsresult
 sbLocalMediaListBaseEnumerationListener::SetHasItems(PRBool aHasItems)
 {
   mHasItems = aHasItems;

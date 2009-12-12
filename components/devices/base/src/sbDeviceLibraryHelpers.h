@@ -92,7 +92,8 @@ public:
   NS_DECL_SBIMEDIALISTLISTENER
 
   sbLibraryUpdateListener(sbILibrary * aTargetLibrary,
-                          PRUint32 aMgmtType,
+                          bool aManualMode,
+                          bool aSyncPlaylists,
                           nsIArray * aPlaylistsList,
                           bool aIgnorePlaylists);
 
@@ -124,7 +125,7 @@ public:
    * Sets the management type for the listner
    * \param aMgmtType A management type constant
    */
-  void SetSyncMode(PRUint32 aMgmtType,
+  void SetSyncMode(bool aManualMode,
                    nsIArray * aPlaylistsList);
 protected:
   /**
@@ -136,7 +137,8 @@ protected:
 
   nsRefPtr<sbPlaylistSyncListener> mPlaylistListener;
 
-  PRUint32 mMgmtType;
+  bool mManualMode;
+  bool const mSyncPlaylists;
   bool const mIgnorePlaylists;
 };
 

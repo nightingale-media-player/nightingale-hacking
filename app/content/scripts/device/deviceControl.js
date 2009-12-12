@@ -105,7 +105,7 @@ deviceControlWidget.prototype = {
   //   _deviceListenerAdded     True if a device listener has been added.
   //   _currentState            Current device operational state.
   //   _currentReadOnly         Current device read only state.
-  //   _currentMgmtType         Current device management type.
+  //   _currentMgmtType         Current device management type array.
   //
 
   _widget: null,
@@ -116,7 +116,7 @@ deviceControlWidget.prototype = {
   _deviceListenerAdded: false,
   _currentState: Ci.sbIDevice.STATE_IDLE,
   _currentReadOnly: false,
-  _currentMgmtType: Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL,
+  _currentMgmtType: null,
 
 
   //----------------------------------------------------------------------------
@@ -181,12 +181,56 @@ deviceControlWidget.prototype = {
     func = function(aEvent) { _this.onAction(aEvent); };
     this._domEventListenerSet.add(this._boundElem, "command", func, false);
 
+    this._currentMgmtType = {};
+    for (var i = 0; i < Ci.sbIDeviceLibrary.MEDIATYPE_COUNT; ++i) {
+      this._currentMgmtType[i] = Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL;
+    }
+
     // Add device event listener.
     if (this._widget.getAttribute("listentodevice") == "true") {
       var deviceEventTarget = this._device.QueryInterface
                                              (Ci.sbIDeviceEventTarget);
       deviceEventTarget.addEventListener(this);
       this._deviceListenerAdded = true;
+    }
+
+    // Migrate the old preference if available
+    var prefs = Cc["@mozilla.org/preferences-service;1"]
+                  .getService(Ci.nsIPrefBranch);
+
+    var syncPlaylistPrefKey = "songbird.device." + this._widget.deviceID +
+                              ".preferences.library." + this._deviceLibrary.guid +
+                              ".sync.playlists"
+
+    var syncPlaylistPrefs = null;
+    if (prefs.prefHasUserValue(syncPlaylistPrefKey))
+      syncPlaylistPrefs = prefs.getCharPref(syncPlaylistPrefKey);
+
+    // Migration starts.
+    if (syncPlaylistPrefs) {
+      // Get the list of the guid
+      var guidList = syncPlaylistPrefs.split(",");
+      var syncAudioPlaylists = "";
+      var syncVideoPlaylists = "";
+      var mediaList;
+      for (var i = 0; i < guidList.length; ++i) {
+        try {
+          mediaList = LibraryUtils.mainLibrary.getMediaItem(guidList[i])
+          var contentType = mediaList.getListContentType();
+          if (contentType & Ci.sbIMediaList.CONTENTTYPE_AUDIO)
+            syncAudioPlaylists += guidList[i] + ",";
+          if (contentType & Ci.sbIMediaList.CONTENTTYPE_VIDEO)
+            syncVideoPlaylists += guidList[i] + ",";
+        }
+        catch (ex) {
+        }
+      }
+
+      prefs.setCharPref(syncPlaylistPrefKey + ".audio", syncAudioPlaylists);
+      prefs.setCharPref(syncPlaylistPrefKey + ".video", syncVideoPlaylists);
+
+      // Reset the old preference so that migration only happans once.
+      prefs.setCharPref(syncPlaylistPrefKey, "");
     }
 
     // Force an update of the widget.
@@ -218,6 +262,7 @@ deviceControlWidget.prototype = {
     this._device = null;
     this._deviceLibrary = null;
     this._boundElem = null;
+    this._currentMgmtType = null;
     if (!aReset)
       this._widget = null;
   },
@@ -323,26 +368,9 @@ deviceControlWidget.prototype = {
    * selected according to user's preferences.
    */
   
-  _setManagementMode: function deviceControlWidget__toggleManagement(manual) {
-    if (manual) {
-      // Manual Mode
-      this._deviceLibrary.mgmtType = Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL;
-    }
-    else {
-      // One of the SYNC modes
-      // Read the stored sync playlist list preferences.
-      var storedSyncPlaylistList = this._deviceLibrary.getSyncPlaylistList();
-      if (storedSyncPlaylistList.length > 0) {
-        // The user has selected some playlists previously so default to
-        // SYNC_PLAYLISTS
-        this._deviceLibrary.mgmtType = Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_PLAYLISTS;
-      }
-      else {
-        // If no playlists selected then set to SYNC_ALL
-        this._deviceLibrary.mgmtType = Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL;
-      }
-    }
-    
+  _setManagementMode: function deviceControlWidget__setManagementMode(manual) {
+    this._deviceLibrary.setMgmtTypes(Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL, manual);
+
     // Ensure our UI is all updated properly.
     this._update(true);
   },
@@ -532,7 +560,7 @@ deviceControlWidget.prototype = {
     // destroyed or bad state, we'll just treat as readOnly
     try {
       // Set to read-only if not in manual management mode.
-      if (this._deviceLibrary.mgmtType == Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL)
+      if (this._deviceLibrary.isMgmtTypeManual)
         readOnly = false;
       else
         readOnly = true;
@@ -566,22 +594,32 @@ deviceControlWidget.prototype = {
     var msc = (this._device.parameters.getProperty("DeviceType") == "MSCUSB");
 
     var mgmtType;
-    // This is just preventative measure in case the library is being
-    // destroyed, we'll just treat as readOnly
-    try {
-      // Get the management type for the device library.  Default to manual if no
-      // device library.
-      mgmtType = (this._deviceLibrary ? this._deviceLibrary.mgmtType
-                                        : Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL);
+    var sameMgmtType = true;
+    for (var i = 0; i < Ci.sbIDeviceLibrary.MEDIATYPE_COUNT; ++i) {
+      // This is just preventative measure in case the library is being
+      // destroyed, we'll just treat as readOnly
+      try {
+        // Get the management type for the device library.  Default to manual if no
+        // device library.
+        mgmtType = (this._deviceLibrary ? this._deviceLibrary.getMgmtType(i)
+                                          : Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL);
+      }
+      catch (e) {
+        return;
+      }
+
+      if (this._currentMgmtType[i] != mgmtType) {
+        sameMgmtType = false;
+        this._currentMgmtType[i] = mgmtType;
+        continue;
+      }
     }
-    catch (e) {
-      return;
-    }
+
     // Do nothing if no device state changed and update is not forced.
     if (!aForce &&
+        sameMgmtType &&
         (this._currentState == state) &&
         (this._currentReadOnly == readOnly) &&
-        (this._currentMgmtType == mgmtType) &&
         (this._currentSupportsReformat == supportsReformat) &&
         (this._currentSupportsPlaylist == supportsPlaylist) &&
         (this._currentMsc == msc)) {
@@ -591,7 +629,6 @@ deviceControlWidget.prototype = {
     // Update the current state.
     this._currentState = state;
     this._currentReadOnly = readOnly;
-    this._currentMgmtType = mgmtType;
     this._currentSupportsReformat = supportsReformat;
     this._currentSupportsPlaylist = supportsPlaylist;
     this._currentMsc = msc;
@@ -684,7 +721,7 @@ deviceControlWidget.prototype = {
              this._getStateAttribute(attrVal, aAttrName, "busy")) {}
     else if ((this._currentState == Ci.sbIDevice.STATE_IDLE) &&
              this._getStateAttribute(attrVal, aAttrName, "idle")) {}
-    else if ((this._currentMgmtType != Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL) &&
+    else if (!(this._deviceLibrary.isMgmtTypeManual) &&
              this._getStateAttribute(attrVal, aAttrName, "mgmt_not_manual")) {}
     else if (this._currentSupportsReformat && 
              this._getStateAttribute(attrVal, aAttrName, "supports_reformat")) {}

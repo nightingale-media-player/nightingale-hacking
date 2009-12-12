@@ -1248,21 +1248,12 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
       currentSource < sourcesLength;
       ++currentSource) {
 
-    sourceList = do_QueryElementAt(aSourceLists, currentSource, &rv);
+    sourceItem = do_QueryElementAt(aSourceLists, currentSource, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRUint32 sourceLength = 0;
-    rv = sourceList->GetLength(&sourceLength);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    for(PRUint32 currentItem = 0;
-        currentItem < sourceLength;
-        ++currentItem) {
-
-      rv = sourceList->GetItemByIndex(currentItem,
-                                      getter_AddRefs(sourceItem));
-      NS_ENSURE_SUCCESS(rv, rv);
-
+    sourceList = do_QueryInterface(sourceItem, &rv);
+    // Not media list.
+    if (NS_FAILED(rv)) {
       rv = AddToUniqueItemList(sourceItem,
                                propertyArray,
                                uniqueItems,
@@ -1270,16 +1261,37 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
                                itemsInSource);
       NS_ENSURE_SUCCESS(rv, rv);
     }
-
-    // Add source list to the unique item list if it's not a library.
-    nsCOMPtr<sbILibrary> sourceListIsLibrary = do_QueryInterface(sourceList);
-    if (!sourceListIsLibrary) {
-      rv = AddToUniqueItemList(sourceList,
-                               propertyArray,
-                               uniqueItems,
-                               uniqueItemGUIDs,
-                               itemsInSource);
+    else {
+      PRUint32 sourceLength = 0;
+      rv = sourceList->GetLength(&sourceLength);
       NS_ENSURE_SUCCESS(rv, rv);
+
+      for(PRUint32 currentItem = 0;
+          currentItem < sourceLength;
+          ++currentItem) {
+
+        rv = sourceList->GetItemByIndex(currentItem,
+                                        getter_AddRefs(sourceItem));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = AddToUniqueItemList(sourceItem,
+                                 propertyArray,
+                                 uniqueItems,
+                                 uniqueItemGUIDs,
+                                 itemsInSource);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+
+      // Add source list to the unique item list if it's not a library.
+      nsCOMPtr<sbILibrary> sourceListIsLibrary = do_QueryInterface(sourceList);
+      if (!sourceListIsLibrary) {
+        rv = AddToUniqueItemList(sourceList,
+                                 propertyArray,
+                                 uniqueItems,
+                                 uniqueItemGUIDs,
+                                 itemsInSource);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
   }
 
@@ -1638,17 +1650,6 @@ NS_IMETHODIMP sbLocalDatabaseDiffingService::CreateMultiChangeset(nsIArray *aSou
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-
-  // Sources must be media lists.
-  PRUint32 sourcesLength = 0;
-  rv = aSources->GetLength(&sourcesLength);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMediaList> sourceList;
-  for(PRUint32 current = 0; current < sourcesLength; ++current) {
-    sourceList = do_QueryElementAt(aSources, current, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
 
   // Destination must be a library.
   nsCOMPtr<sbILibrary> destinationLibrary =

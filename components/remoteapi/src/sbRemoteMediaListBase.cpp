@@ -624,6 +624,20 @@ sbRemoteMediaListBase::GetItemByIndex(PRUint32 aIndex,
 }
 
 NS_IMETHODIMP
+sbRemoteMediaListBase::GetItemCountByProperty(const nsAString & aPropertyID,
+                                              const nsAString & aPropertyValue,
+                                              PRUint32 *_retval)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+sbRemoteMediaListBase::GetListContentType(PRUint16* aContentType)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
 sbRemoteMediaListBase::EnumerateAllItems(sbIMediaListEnumerationListener *aEnumerationListener,
                                          PRUint16 aEnumerationType)
 {

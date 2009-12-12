@@ -89,6 +89,10 @@ public:
   // sbIMediaList
   NS_IMETHOD GetItemByGuid(const nsAString& aGuid, sbIMediaItem** _retval);
   NS_IMETHOD GetItemByIndex(PRUint32 aIndex, sbIMediaItem** _retval);
+  NS_IMETHOD GetItemCountByProperty(const nsAString & aPropertyID,
+                                    const nsAString & aPropertyValue,
+                                    PRUint32 *_retval);
+  NS_IMETHOD GetListContentType(PRUint16 * _retval);
   NS_IMETHOD EnumerateAllItems(sbIMediaListEnumerationListener *aEnumerationListener,
                                PRUint16 aEnumerationType);
   NS_IMETHOD EnumerateItemsByProperty(const nsAString& aPropertyID,

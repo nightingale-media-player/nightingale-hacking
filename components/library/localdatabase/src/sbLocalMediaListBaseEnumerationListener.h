@@ -44,6 +44,7 @@ public:
 
   nsresult Init();
   nsresult GetArray(nsIArray ** aArray);
+  nsresult GetArrayLength(PRUint32 * aLength);
   
   nsresult SetHasItems(PRBool aHasItems);
 
