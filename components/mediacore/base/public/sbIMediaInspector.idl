@@ -47,6 +47,19 @@ interface sbIMediaFormatContainer : nsISupports {
   readonly attribute nsIPropertyBag properties;
 };
 
+%{C++
+
+#define SB_MEDIAFORMATCONTAINER_DESCRIPTION    \
+  "Songbird Mediacore Media Format Container"
+#define SB_MEDIAFORMATCONTAINER_CONTRACTID     \
+  "@songbirdnest.com/Songbird/Mediacore/mediaformatcontainer;1"
+#define SB_MEDIAFORMATCONTAINER_CLASSNAME      \
+  "sbMediaFormatContainer"
+#define SB_MEDIAFORMATCONTAINER_CID            \
+  {0xcc3e80f3, 0x9dc4, 0x4f4f, {0xac, 0x17, 0xa7, 0x7e, 0xc3, 0xe6, 0x48, 0xc2}}
+
+%};
+
 /**
  * This interface is used to describe a video format
  */
@@ -94,6 +107,19 @@ interface sbIMediaFormatVideo : nsISupports {
   readonly attribute nsIPropertyBag properties;
 };
 
+%{C++
+
+#define SB_MEDIAFORMATVIDEO_DESCRIPTION    \
+  "Songbird Mediacore Media Format Video"
+#define SB_MEDIAFORMATVIDEO_CONTRACTID     \
+  "@songbirdnest.com/Songbird/Mediacore/mediaformatvideo;1"
+#define SB_MEDIAFORMATVIDEO_CLASSNAME      \
+  "sbMediaFormatVideo"
+#define SB_MEDIAFORMATVIDEO_CID            \
+  {0x4b2257a8, 0xb60b, 0x4f5b, {0xab, 0xf1, 0x66, 0x75, 0x06, 0x30, 0x3e, 0x9f}}
+
+%};
+
 /**
  * This interface describes an audio format for the media inspection service
  */
@@ -126,6 +152,19 @@ interface sbIMediaFormatAudio : nsISupports {
   readonly attribute nsIPropertyBag properties;
 };
 
+%{C++
+
+#define SB_MEDIAFORMATAUDIO_DESCRIPTION    \
+  "Songbird Mediacore Media Format Audio"
+#define SB_MEDIAFORMATAUDIO_CONTRACTID     \
+  "@songbirdnest.com/Songbird/Mediacore/mediaformataudio;1"
+#define SB_MEDIAFORMATAUDIO_CLASSNAME      \
+  "sbMediaFormatAudio"
+#define SB_MEDIAFORMATAUDIO_CID            \
+  {0xd301cef6, 0x4200, 0x4aab, {0xaa, 0x08, 0x1a, 0x3e, 0xa2, 0x71, 0x68, 0xf7}}
+
+%};
+
 /**
  * This interface provides information about the format of a media item.
  * It contains a list of fixed properties (currently there are none) and then
@@ -149,8 +188,21 @@ interface sbIMediaFormat : nsISupports
    * This is the form for the audio stream portion of the media
    * This may be null
    */
-   readonly attribute sbIMediaFormatAudio audioStream;
+  readonly attribute sbIMediaFormatAudio audioStream;
 };
+
+%{C++
+
+#define SB_MEDIAFORMAT_DESCRIPTION    \
+  "Songbird Mediacore Media Format"
+#define SB_MEDIAFORMAT_CONTRACTID     \
+  "@songbirdnest.com/Songbird/Mediacore/mediaformat;1"
+#define SB_MEDIAFORMAT_CLASSNAME      \
+  "sbMediaFormat"
+#define SB_MEDIAFORMAT_CID            \
+  {0x6f12ea87, 0x5c0e, 0x4a39, {0x88, 0x79, 0x52, 0xab, 0xfa, 0x47, 0x5c, 0x01}}
+
+%};
 
 /**
  * This is the interface to the media inspector service. It provides information

@@ -41,6 +41,10 @@
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediacoreEqualizerBand);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediacoreEvent);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaFormatContainer);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaFormatVideo);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaFormatAudio);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaFormat);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaInspector);
 
 static nsModuleComponentInfo sbBaseMediacoreComponents[] =
@@ -56,6 +60,30 @@ static nsModuleComponentInfo sbBaseMediacoreComponents[] =
     SB_MEDIACORE_EVENT_CID,
     SB_MEDIACORE_EVENT_CONTRACTID,
     sbMediacoreEventConstructor
+  },
+  {
+    SB_MEDIAFORMATCONTAINER_CLASSNAME,
+    SB_MEDIAFORMATCONTAINER_CID,
+    SB_MEDIAFORMATCONTAINER_CONTRACTID,
+    sbMediaFormatContainerConstructor
+  },
+  {
+    SB_MEDIAFORMATVIDEO_CLASSNAME,
+    SB_MEDIAFORMATVIDEO_CID,
+    SB_MEDIAFORMATVIDEO_CONTRACTID,
+    sbMediaFormatVideoConstructor
+  },
+  {
+    SB_MEDIAFORMATAUDIO_CLASSNAME,
+    SB_MEDIAFORMATAUDIO_CID,
+    SB_MEDIAFORMATAUDIO_CONTRACTID,
+    sbMediaFormatAudioConstructor
+  },
+  {
+    SB_MEDIAFORMAT_CLASSNAME,
+    SB_MEDIAFORMAT_CID,
+    SB_MEDIAFORMAT_CONTRACTID,
+    sbMediaFormatConstructor
   },
   {
     SB_MEDIAINSPECTOR_CLASSNAME,

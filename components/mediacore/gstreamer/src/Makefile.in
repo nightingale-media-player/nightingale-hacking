@@ -16,6 +16,7 @@ CPP_SRCS = sbGStreamerService.cpp \
            sbGStreamerMediacoreFactory.cpp \
            sbGStreamerMediacoreModule.cpp \
            sbGStreamerMediacoreUtils.cpp \
+           sbGStreamerMediaInspector.cpp \
            sbGStreamerPlatformBase.cpp \
            sbGStreamerPipeline.cpp \
            sbGStreamerRTPStreamer.cpp \

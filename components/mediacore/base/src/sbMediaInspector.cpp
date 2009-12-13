@@ -28,9 +28,9 @@
 // Mozilla includes
 #include <nsComponentManagerUtils.h>
 #include <nsIWritablePropertyBag2.h>
-#include <sbMemoryUtils.h>
 
 #include <sbArrayUtils.h>
+#include <sbMemoryUtils.h>
 
 #define NS_HASH_PROPERTY_BAG_CONTRACTID "@mozilla.org/hash-property-bag;1"
 
