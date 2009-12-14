@@ -35,7 +35,9 @@
 #define NS_HASH_PROPERTY_BAG_CONTRACTID "@mozilla.org/hash-property-bag;1"
 
 /* Implementation file */
-NS_IMPL_ISUPPORTS1(sbMediaFormatContainer, sbIMediaFormatContainer)
+NS_IMPL_ISUPPORTS2(sbMediaFormatContainer,
+                   sbIMediaFormatContainer,
+                   sbIMediaFormatContainerMutable)
 
 sbMediaFormatContainer::sbMediaFormatContainer(nsAString const & aContainerType) :
   mContainerType(aContainerType)
@@ -64,7 +66,29 @@ sbMediaFormatContainer::GetProperties(nsIPropertyBag * *aProperties)
   return sbReturnCOMPtr(mProperties, aProperties);
 }
 
-NS_IMPL_ISUPPORTS1(sbMediaFormatVideo, sbIMediaFormatVideo)
+/* void setContainerType (in AString aContainerType); */
+NS_IMETHODIMP
+sbMediaFormatContainer::SetContainerType(const nsAString & aContainerType)
+{
+  mContainerType = aContainerType;
+  return NS_OK;
+}
+
+/* void setProperties (in nsIPropertyBag aProperties); */
+NS_IMETHODIMP
+sbMediaFormatContainer::SetProperties(nsIPropertyBag *aProperties)
+{
+  // MSVC can't figure out the templates, so we have to tell the compiler
+  // explicitly what types to use
+  nsresult rv = CallQueryInterface<nsIPropertyBag, nsIWritablePropertyBag>
+                                  (aProperties, getter_AddRefs(mProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
+}
+
+NS_IMPL_ISUPPORTS2(sbMediaFormatVideo,
+                   sbIMediaFormatVideo,
+                   sbIMediaFormatVideoMutable)
 
 sbMediaFormatVideo::sbMediaFormatVideo()
 {
@@ -151,7 +175,69 @@ sbMediaFormatVideo::GetProperties(nsIPropertyBag * *aProperties)
   return sbReturnCOMPtr(mProperties, aProperties);
 }
 
-NS_IMPL_ISUPPORTS1(sbMediaFormatAudio, sbIMediaFormatAudio)
+/* void setVideoType (in AString aVideoType); */
+NS_IMETHODIMP
+sbMediaFormatVideo::SetVideoType(const nsAString & aVideoType)
+{
+  mVideoType = aVideoType;
+  return NS_OK;
+}
+
+/* void setVideoWidth (in long aVideoWidth); */
+NS_IMETHODIMP
+sbMediaFormatVideo::SetVideoWidth(PRInt32 aVideoWidth)
+{
+  mVideoWidth = aVideoWidth;
+  return NS_OK;
+}
+
+/* void setVideoHeight (in long aVideoHeight); */
+NS_IMETHODIMP
+sbMediaFormatVideo::SetVideoHeight(PRInt32 aVideoHeight)
+{
+  mVideoHeight = aVideoHeight;
+  return NS_OK;
+}
+
+/* void setVideoPAR (in unsigned long aNumerator, in unsigned long aDenominator); */
+NS_IMETHODIMP
+sbMediaFormatVideo::SetVideoPAR(PRUint32 aNumerator, PRUint32 aDenominator)
+{
+  mVideoPAR = sbFraction(aNumerator, aDenominator);
+  return NS_OK;
+}
+
+/* void setVideoFrameRate (in unsigned long aNumerator, in unsigned long aDenominator); */
+NS_IMETHODIMP
+sbMediaFormatVideo::SetVideoFrameRate(PRUint32 aNumerator, PRUint32 aDenominator)
+{
+  mVideoFrameRate = sbFraction(aNumerator, aDenominator);
+  return NS_OK;
+}
+
+/* void setBitRate (in long aBitRate); */
+NS_IMETHODIMP
+sbMediaFormatVideo::SetBitRate(PRInt32 aBitRate)
+{
+  mBitRate = aBitRate;
+  return NS_OK;
+}
+
+/* void setProperties (in nsIPropertyBag aProperties); */
+NS_IMETHODIMP
+sbMediaFormatVideo::SetProperties(nsIPropertyBag *aProperties)
+{
+  // MSVC can't figure out the templates, so we have to tell the compiler
+  // explicitly what types to use
+  nsresult rv = CallQueryInterface<nsIPropertyBag, nsIWritablePropertyBag>
+                                  (aProperties, getter_AddRefs(mProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
+}
+
+NS_IMPL_ISUPPORTS2(sbMediaFormatAudio,
+                   sbIMediaFormatAudio,
+                   sbIMediaFormatAudioMutable)
 
 sbMediaFormatAudio::sbMediaFormatAudio()
 {
@@ -214,7 +300,52 @@ sbMediaFormatAudio::GetProperties(nsIPropertyBag * *aProperties)
   return sbReturnCOMPtr(mProperties, aProperties);
 }
 
-NS_IMPL_ISUPPORTS1(sbMediaFormat, sbIMediaFormat)
+/* void setAudioType (in AString aAudioType); */
+NS_IMETHODIMP
+sbMediaFormatAudio::SetAudioType(const nsAString & aAudioType)
+{
+  mAudioType = aAudioType;
+  return NS_OK;
+}
+
+/* void setBitRate (in long aBitRate); */
+NS_IMETHODIMP
+sbMediaFormatAudio::SetBitRate(PRInt32 aBitRate)
+{
+  mBitRate = aBitRate;
+  return NS_OK;
+}
+
+/* void setSampleRate (in long aSampleRate); */
+NS_IMETHODIMP
+sbMediaFormatAudio::SetSampleRate(PRInt32 aSampleRate)
+{
+  mSampleRate = aSampleRate;
+  return NS_OK;
+}
+
+/* void setChannels (in long aChannels); */
+NS_IMETHODIMP
+sbMediaFormatAudio::SetChannels(PRInt32 aChannels)
+{
+  mChannels = aChannels;
+  return NS_OK;
+}
+
+/* void setProperties (in nsIPropertyBag aProperties); */
+NS_IMETHODIMP sbMediaFormatAudio::SetProperties(nsIPropertyBag *aProperties)
+{
+  // MSVC can't figure out the templates, so we have to tell the compiler
+  // explicitly what types to use
+  nsresult rv = CallQueryInterface<nsIPropertyBag, nsIWritablePropertyBag>
+                                  (aProperties, getter_AddRefs(mProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
+}
+
+NS_IMPL_ISUPPORTS2(sbMediaFormat,
+                   sbIMediaFormat,
+                   sbIMediaFormatMutable)
 
 sbMediaFormat::sbMediaFormat(sbIMediaFormatContainer * aContainer,
                              sbIMediaFormatVideo * aVideoStream) :
@@ -249,10 +380,33 @@ sbMediaFormat::GetVideoStream(sbIMediaFormatVideo * *aVideoStream)
 NS_IMETHODIMP
 sbMediaFormat::GetAudioStream(sbIMediaFormatAudio * *aAudioStream)
 {
-  nsresult rv;
-
   return sbReturnCOMPtr(mAudioStream, aAudioStream);
 }
+
+/* void setContainer (in sbIMediaFormatContainer aContainer); */
+NS_IMETHODIMP
+sbMediaFormat::SetContainer(sbIMediaFormatContainer *aContainer)
+{
+  mContainer = aContainer;
+  return NS_OK;
+}
+
+/* void setVideoStream (in sbIMediaFormatVideo aFormat); */
+NS_IMETHODIMP
+sbMediaFormat::SetVideoStream(sbIMediaFormatVideo *aFormat)
+{
+  mVideoStream = aFormat;
+  return NS_OK;
+}
+
+/* void setAudioStream (in sbIMediaFormatAudio aFormat); */
+NS_IMETHODIMP
+sbMediaFormat::SetAudioStream(sbIMediaFormatAudio *aFormat)
+{
+  mAudioStream = aFormat;
+  return NS_OK;
+}
+
 
 NS_IMPL_ISUPPORTS1(sbMediaInspector, sbIMediaInspector)
 

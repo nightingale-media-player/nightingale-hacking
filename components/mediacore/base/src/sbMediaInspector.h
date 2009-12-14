@@ -35,21 +35,18 @@
 // Songbird includes
 #include <sbFraction.h>
 #include <sbIMediaInspector.h>
+#include <sbIMediaFormatMutable.h>
 
 #include <nsIWritablePropertyBag.h>
 
-class sbMediaFormatContainer : public sbIMediaFormatContainer
+class sbMediaFormatContainer : public sbIMediaFormatContainerMutable
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIAFORMATCONTAINER
+  NS_DECL_SBIMEDIAFORMATCONTAINERMUTABLE
 
   sbMediaFormatContainer(nsAString const & aContainerType = nsString());
-
-  void SetContainerType(nsAString const & aContainerType)
-  {
-    mContainerType = aContainerType;
-  }
 
   nsresult AddProperty(nsAString const & aKey, nsIVariant * aValue)
   {
@@ -62,18 +59,14 @@ private:
   nsCOMPtr<nsIWritablePropertyBag> mProperties;
 };
 
-class sbMediaFormatVideo : public sbIMediaFormatVideo
+class sbMediaFormatVideo : public sbIMediaFormatVideoMutable
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIAFORMATVIDEO
+  NS_DECL_SBIMEDIAFORMATVIDEOMUTABLE
 
   sbMediaFormatVideo();
-
-  void SetVideoType(nsAString const & aVideoType)
-  {
-    mVideoType = aVideoType;
-  }
 
   void SetVideoDimensions(PRInt32 aWidth, PRInt32 aHeight)
   {
@@ -92,15 +85,6 @@ public:
   void SetVideoFrameRate(sbFraction const & aVideoFrameRate)
   {
     mVideoFrameRate = aVideoFrameRate;
-  }
-
-  /**
-   * Sets the bit rate for the video format
-   * \param aBitRate The bit rate to be set
-   */
-  void SetBitRate(PRInt32 const & aBitRate)
-  {
-    mBitRate = aBitRate;
   }
 
   /**
@@ -130,11 +114,12 @@ private:
   nsCOMPtr<nsIWritablePropertyBag> mProperties;
 };
 
-class sbMediaFormatAudio : public sbIMediaFormatAudio
+class sbMediaFormatAudio : public sbIMediaFormatAudioMutable
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIAFORMATAUDIO
+  NS_DECL_SBIMEDIAFORMATAUDIOMUTABLE
 
   sbMediaFormatAudio();
 
@@ -148,38 +133,16 @@ private:
   nsCOMPtr<nsIWritablePropertyBag> mProperties;
 };
 
-class sbMediaFormat : public sbIMediaFormat
+class sbMediaFormat : public sbIMediaFormatMutable
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIAFORMAT
+  NS_DECL_SBIMEDIAFORMATMUTABLE
 
   sbMediaFormat(sbIMediaFormatContainer * aContainer = nsnull,
                 sbIMediaFormatVideo * aVideoStream = nsnull);
 
-  /**
-   * Sets the container for the media format
-   */
-  void SetContainer(sbIMediaFormatContainer * aContainer)
-  {
-    mContainer = aContainer;
-  }
-
-  /**
-   * Sets the format for the video stream for the media format
-   */
-  void SetVideoStream(sbIMediaFormatVideo * aVideoStream)
-  {
-    mVideoStream = aVideoStream;
-  }
-
-  /**
-   * Sets the format for the audio stream for the media format
-   */
-  void SetAudioStream(sbIMediaFormatAudio * aAudioStream)
-  {
-    mAudioStream = aAudioStream;
-  }
 private:
   ~sbMediaFormat();
 

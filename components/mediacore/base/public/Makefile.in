@@ -54,6 +54,7 @@ XPIDL_SRCS = sbIMediacore.idl \
              sbIMediacoreVotingParticipant.idl \
              sbIVideoBox.idl \
              sbIMediaInspector.idl \
+             sbIMediaFormatMutable.idl \
              sbIOSDControlService.idl \
              $(NULL)
 
