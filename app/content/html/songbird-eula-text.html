@@ -58,8 +58,10 @@
 <li><a name="3rdparty"><strong>Third Party Software.</strong></a> Third party software used in Songbird:
 <ol>
   <li><a href="http://flac.sourceforge.net/" target="_blank">FLAC</a> is distributed under the BSD License.</li>
+#if SB_PLATFORM!=linux
   <li><a href="http://www.gnu.org/software/gettext/" target="_blank">gettext</a> is distributed under the GNU Lesser General Public License.</li>
   <li><a href="http://library.gnome.org/devel/glib/" target="_blank">GLib</a> is distributed under the GNU Library General Public License.</li>
+#endif
   <li>CD lookup data is provided by Gracenote and subject to the Gracenote terms and conditions.  If the Gracenote Addon is installed and used to perform album art lookups, portions of the content is copyright &copy; Gracenote or its providers.
 
   <p>Gracenote&reg; End User License Agreement</p>
@@ -80,15 +82,19 @@
  
   &copy; 2009. Gracenote, Inc.  All Rights Reserved.</li>
   <li><a href="http://www.gstreamer.org/" target="_blank">GStreamer</a> is distributed under the GNU Lesser General Public License.</li>
-  <li><a href="http://www.gtkpod.org/libgpod.html" target="_blank">libgpod</a> is distributed under the GNU Lesser General Public License.</li>
+#if SB_PLATFORM==windows
   <li><a href="http://www.gnu.org/software/libiconv/" target="_blank">libiconv</a> is distributed under the GNU Lesser General Public License.</li>
+#endif
+  <li><a href="http://www.ijg.org/" target="_blank">libjpeg</a> is distributed under the the Independent JPEG Group's libjpeg License.</li>
   <li><a href="http://www.xiph.org/" target="_blank">Ogg</a> is distributed under the Xiph.Org License.</li>
   <li><a href="http://www.vorbis.org/" target="_blank">Vorbis</a> is distributed under the Xiph.Org License.</li>
   <li><a href="http://www.theora.org/" target="_blank">Theora</a> is distributed under the Xiph.Org License.</li>
   <li><a href="http://www.sqlite.org/" target="_blank">SQLite</a> is in the public domain.</li>
   <li><a href="http://developer.kde.org/~wheeler/taglib.html" target="_blank">TagLib</a> is distributed under the GNU Lesser General Public License.</li>
   <li><a href="https://developer.mozilla.org/en/XULRunner" target="_blank">XULRunner</a> is copyright &copy; 2007 Mozilla Foundation and is distributed under the GNU Lesser General Public License.</li>
+#if SB_PLATFORM==windows
   <li><a href="http://www.zlib.net/" target="_blank">zlib</a> is distributed under the zlib license.</li>
+#endif
 #if SB_PLATFORM==linux
   <li><a href="http://www.fluendo.com/" target="_blank">Fluendo</a> is distributed under the Fluendo Gstreamer Plugin License Agreement, a copy of which is included below. By using Songbird, you are agreeing to be bound by the terms of the Fluendo Gstreamer Plugin License Agreement.
 #include fluendo-eula.html
