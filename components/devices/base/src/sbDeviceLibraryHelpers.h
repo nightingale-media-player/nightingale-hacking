@@ -53,7 +53,8 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIALISTLISTENER
 
-  sbPlaylistSyncListener(sbILibrary* aTargetLibrary);
+  sbPlaylistSyncListener(sbILibrary* aTargetLibrary,
+                         bool aSyncPlaylists);
 
   /**
    * Add the media list to our list of lists
@@ -66,6 +67,8 @@ public:
 
   void StopListeningToPlaylists();
 
+  nsresult SetSyncPlaylists(bool aManualMode,
+                            nsIArray * aMediaLists);
 protected:
   virtual ~sbPlaylistSyncListener();
 
@@ -74,6 +77,7 @@ protected:
    * non owning pointer
    */
   sbILibrary * mTargetLibrary;
+  bool mSyncPlaylists;
 
   /**
    * TODO: XXX hack to keep the playlists from going away and our listeners from going deaf
