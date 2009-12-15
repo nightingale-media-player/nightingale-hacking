@@ -95,13 +95,11 @@
                                  class="content-auto-sync-playlist-check"/>
                     <xul:treecol sbid="content_auto_sync_playlist_title"
                                  label="&device.sync.playlist.title;"
-                                 editable="false"
                                  class="content-auto-sync-playlist-title"
                                  flex="1"/>
                     <xul:splitter class="tree-splitter" />
                     <xul:treecol sbid="content_auto_sync_playlist_duration"
                                  hidden="true"
-                                 editable="false"
                                  class="content-auto-sync-playlist-duration"
                                  label="&device.sync.playlist.video.duration;"/>
                   </xul:treecols>

@@ -867,15 +867,17 @@ var DeviceSyncWidget = {
 
       /* Setup the cells */
       /* Check box (only editable cell) */
-      treeCellCheck.value = false;
+      treeCellCheck.setAttribute("value", "false");
       treeCellCheck.setAttribute("sbid",
                                  "content_sync_playlist_checkcell." + guid);
 
       /* Title of the playlist */
       treeCellTitle.setAttribute("label", readableName);
+      treeCellTitle.setAttribute("editable", "false");
 
       /* Duration of all the _mediaType conent in the playlist */
       treeCellDuration.setAttribute("label", duration);
+      treeCellDuration.setAttribute("editable", "false");
 
       /* Append the cells to the row */
       treeRow.appendChild(treeCellCheck);
