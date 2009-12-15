@@ -295,6 +295,18 @@ sbFileMetadataService::StartJob(nsIArray* aMediaItemsArray,
     nsAutoLock lock(mJobLock);
     NS_ENSURE_TRUE(mInitialized, NS_ERROR_NOT_INITIALIZED);
     
+    // If the last job in the job array is blocked, the new job will be too.
+    PRUint32 jobCount = mJobArray.Length();
+    if (jobCount > 0) {
+      PRBool blocked;
+      rv = mJobArray[jobCount-1]->GetBlocked(&blocked);
+      NS_ENSURE_SUCCESS(rv, rv);
+      if (blocked) {
+        rv = job->SetBlocked(PR_TRUE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+
     mJobArray.AppendElement(job);
 
     // Update the legacy flags that show up in the status bar
@@ -553,6 +565,19 @@ sbFileMetadataService::Observe(nsISupports *aSubject,
     {
       nsAutoLock lock(mJobLock);
       jobs.AppendElements(mJobArray);
+
+      // Update blocked status of jobs.  If any job is blocked, all jobs after
+      // it are also blocked.
+      PRBool blocked = PR_FALSE;
+      PRBool jobCount = jobs.Length();
+      for (PRUint32 i=0; i < jobCount; i++) {
+        // If no jobs are blocked yet, check current job.  Otherwise, mark
+        // current job as blocked.
+        if (!blocked)
+          rv = jobs[i]->GetBlocked(&blocked);
+        else
+          rv = jobs[i]->SetBlocked(PR_TRUE);
+      }
     }
     
     PRUint16 status;
