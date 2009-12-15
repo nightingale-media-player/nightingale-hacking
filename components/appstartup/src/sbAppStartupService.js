@@ -186,9 +186,9 @@ sbAppStartupService.prototype =
    */
   _initApplication: function () {
     try {
-      // XXXAus: We should not have to call this when mozbug 461399 is fixed.
-      // Initialize the extension manager permissions.
+      // Initialize the extension manager and remote api whitelists.
       this._initExtensionManagerPermissions();
+      this._initRemoteAPIPermissions();
     }
     catch (e) {
       Cu.reportError(e);
@@ -691,6 +691,55 @@ sbAppStartupService.prototype =
             }
             catch(e) {
               Cu.reportError(e);
+            }
+          }
+        }
+        
+        prefBranch.setCharPref(prefName, "");
+      }
+    }
+  },
+
+  /**
+   * \brief Initialize the Extension Manager Permissions so it includes
+   *        the Songbird Add-Ons site as a permitted install location.
+   */ 
+  _initRemoteAPIPermissions: function () {
+    const httpPrefix = "http://";
+    const prefRoot = "rapi.whitelist.add";
+    
+    var prefBranch = 
+      Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
+      
+    var ioService = 
+      Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
+      
+    var permissionManager = 
+      Cc["@mozilla.org/permissionmanager;1"].getService(Ci.nsIPermissionManager);
+    
+    var childBranches = prefBranch.getChildList(prefRoot, {});
+    
+    for each (let prefName in childBranches) {
+      if(prefBranch.getPrefType(prefName) == Ci.nsIPrefBranch.PREF_STRING) {
+        let prefValue = prefBranch.getCharPref(prefName);
+        let entries = prefValue.split(",");
+        for each (let entry in entries) {
+          entry = entry.replace(" ", "", "g");
+          if (entry.length > 0) {
+            let spec, permissionType;
+            [spec, permissionType] = entry.split("=");
+            spec = httpPrefix + spec;
+            let uri = null;
+            if (permissionType) {
+              try {
+                uri = ioService.newURI(spec, null, null);
+                permissionManager.add(uri, 
+                                      "rapi." + permissionType, 
+                                      Ci.nsIPermissionManager.ALLOW_ACTION);
+                }
+              catch(e) {
+                Cu.reportError(e);
+              }
             }
           }
         }
