@@ -90,7 +90,10 @@ NS_IMPL_ISUPPORTS2(sbMediaFormatVideo,
                    sbIMediaFormatVideo,
                    sbIMediaFormatVideoMutable)
 
-sbMediaFormatVideo::sbMediaFormatVideo()
+sbMediaFormatVideo::sbMediaFormatVideo() :
+    mVideoWidth(0),
+    mVideoHeight(0),
+    mBitRate(0)
 {
   mProperties = do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID);
 }
@@ -239,7 +242,10 @@ NS_IMPL_ISUPPORTS2(sbMediaFormatAudio,
                    sbIMediaFormatAudio,
                    sbIMediaFormatAudioMutable)
 
-sbMediaFormatAudio::sbMediaFormatAudio()
+sbMediaFormatAudio::sbMediaFormatAudio() :
+    mBitRate(0),
+    mSampleRate(0),
+    mChannels(0)
 {
   mProperties = do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID);
 }
