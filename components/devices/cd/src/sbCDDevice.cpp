@@ -981,6 +981,14 @@ sbCDDevice::ReqAbortActive()
     abortRequests = IsRequestAbortedOrDeviceDisconnected();
   }
 
+  // Abort requests if disc is not inserted.
+  if (!abortRequests) {
+    PRBool isDiscInserted;
+    nsresult rv = mCDDevice->GetIsDiscInserted(&isDiscInserted);
+    if (NS_SUCCEEDED(rv) && !isDiscInserted)
+      abortRequests = PR_TRUE;
+  }
+
   return (abortRequests != 0);
 }
 
