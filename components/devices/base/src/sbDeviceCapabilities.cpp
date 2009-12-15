@@ -211,6 +211,7 @@ sbDeviceCapabilities::AddCapabilities(sbIDeviceCapabilities *aCapabilities)
   rv = aCapabilities->GetSupportedFunctionTypes(&functionTypesCount,
                                                 &functionTypes);
   NS_ENSURE_SUCCESS(rv, rv);
+  sbAutoNSMemPtr functionTypesPtr(functionTypes);
 
   rv = SetFunctionTypes(functionTypes, functionTypesCount);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -226,6 +227,7 @@ sbDeviceCapabilities::AddCapabilities(sbIDeviceCapabilities *aCapabilities)
                                                  &contentTypesCount,
                                                  &contentTypes);
     NS_ENSURE_SUCCESS(rv, rv);
+    sbAutoNSMemPtr contentTypesPtr(contentTypes);
 
     rv = AddContentTypes(functionType, contentTypes, contentTypesCount);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -794,9 +796,9 @@ sbDevCapVideoStream::~sbDevCapVideoStream()
 }
 
 static nsresult
-CopyAndParseFractions(const char ** aStrings,
-                      PRUint32 aStringCount,
-                      nsTArray<sbFraction> & aFractions)
+CopyAndParseToFractions(const char ** aStrings,
+                        PRUint32 aStringCount,
+                        nsTArray<sbFraction> & aFractions)
 {
   nsresult rv;
 
@@ -809,12 +811,24 @@ CopyAndParseFractions(const char ** aStrings,
       aFractions.AppendElement(fraction);
     }
     else {
-      nsCString msg("CopyAndParseFractions: Unable to parse fraction ");
+      nsCString msg("CopyAndParseToFractions: Unable to parse fraction ");
       msg.Append(aStrings[index]);
       NS_WARNING(msg.BeginReading());
     }
   }
   return NS_OK;
+}
+
+static void
+CopyAndParseFromFractions(const nsTArray<sbFraction> & aFractions,
+                          PRUint32 aStringCount,
+                          char ** aStrings)
+{
+  for (PRUint32 index = 0; index < aStringCount; ++index)
+  {
+    nsString string = sbFractionToString(aFractions[index]);
+    strcpy(aStrings[index], NS_LossyConvertUTF16toASCII(string).BeginReading());
+  }
 }
 
 /* void initialize (in ACString aType, in nsIArray aExplicitSizes, in sbIDevCapRange aWidths, in sbIDevCapRange aHeights, in unsigned long aVideoParsCount, [array, size_is (aVideoParsCount)] in string aVideoPars, in unsigned long aFrameRateCount, [array, size_is (aFrameRateCount)] in string aFrameRates, in sbIDevCapRange aBitRates); */
@@ -832,8 +846,8 @@ NS_IMETHODIMP sbDevCapVideoStream::Initialize(const nsACString & aType,
   mExplicitSizes = aExplicitSizes;
   mWidths = aWidths;
   mHeights = aHeights;
-  CopyAndParseFractions(aVideoPARs, aVideoPARCount, mVideoPARs);
-  CopyAndParseFractions(aFrameRates, aFrameRateCount, mFrameRates);
+  CopyAndParseToFractions(aVideoPARs, aVideoPARCount, mVideoPARs);
+  CopyAndParseToFractions(aFrameRates, aFrameRateCount, mFrameRates);
   mBitRates = aBitRates;
 
   return NS_OK;
@@ -842,43 +856,54 @@ NS_IMETHODIMP sbDevCapVideoStream::Initialize(const nsACString & aType,
 /* readonly attribute ACString type; */
 NS_IMETHODIMP sbDevCapVideoStream::GetType(nsACString & aType)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  aType = mType;
+  return NS_OK;
 }
 
 /* readonly attribute nsIArray supportedExplicitSizes; */
 NS_IMETHODIMP sbDevCapVideoStream::GetSupportedExplicitSizes(nsIArray * *aSupportedExplicitSizes)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  *aSupportedExplicitSizes = mExplicitSizes;
+  return NS_OK;
 }
 
 /* readonly attribute sbIDevCapRange supportedWidths; */
 NS_IMETHODIMP sbDevCapVideoStream::GetSupportedWidths(sbIDevCapRange * *aSupportedWidths)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  *aSupportedWidths = mWidths;
+  return NS_OK;
 }
 
 /* readonly attribute sbIDevCapRange supportedHeights; */
 NS_IMETHODIMP sbDevCapVideoStream::GetSupportedHeights(sbIDevCapRange * *aSupportedHeights)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  *aSupportedHeights = mHeights;
+  return NS_OK;
 }
 
 /* void getSupportedVideoPARs (out unsigned long aCount, [array, size_is (aCount)] out string aVideoPARs); */
 NS_IMETHODIMP sbDevCapVideoStream::GetSupportedVideoPARs(PRUint32 *aCount, char ***aVideoPARs)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  *aCount = mVideoPARs.Length();
+
+  CopyAndParseFromFractions(mVideoPARs, *aCount, *aVideoPARs);
+  return NS_OK;
 }
 
 /* void getSupportedFrameRates (out unsigned long aCount, [array, size_is (aCount)] out string aFrameRates); */
 NS_IMETHODIMP sbDevCapVideoStream::GetSupportedFrameRates(PRUint32 *aCount, char ***aFrameRates)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  *aCount = mVideoPARs.Length();
+
+  CopyAndParseFromFractions(mFrameRates, *aCount, *aFrameRates);
+  return NS_OK;
 }
 
 /* readonly attribute sbIDevCapRange supportedBitRates; */
 NS_IMETHODIMP sbDevCapVideoStream::GetSupportedBitRates(sbIDevCapRange * *aSupportedBitRates)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  *aSupportedBitRates = mBitRates;
+  return NS_OK;
 }
 
 /*******************************************************************************
