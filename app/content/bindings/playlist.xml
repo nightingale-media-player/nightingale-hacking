@@ -2009,17 +2009,20 @@
             return;
           }
 
-          // Get and assign the new value to the property
-          try {
-            var value = clickable.getValueForClick(oldValue,
-                                                   coords.cellWidth,
-                                                   coords.cellHeight,
-                                                   coords.x,
-                                                   coords.y);
-            this.tree.view.setCellValue(row, col, value);
-          }
-          catch(e if e.result == this._Cr.NS_ERROR_NOT_IMPLEMENTED) {
-            // It is ok for this not to be implemented
+          // Only assign the new value if userEditable
+          if (item.userEditable) {
+            // Get and assign the new value to the property
+            try {
+              var value = clickable.getValueForClick(oldValue,
+                                                     coords.cellWidth,
+                                                     coords.cellHeight,
+                                                     coords.x,
+                                                     coords.y);
+              this.tree.view.setCellValue(row, col, value);
+            }
+            catch(e if e.result == this._Cr.NS_ERROR_NOT_IMPLEMENTED) {
+              // It is ok for this not to be implemented
+            }
           }
           evt.stopPropagation();
         }
