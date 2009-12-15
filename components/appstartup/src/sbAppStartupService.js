@@ -472,8 +472,7 @@ sbAppStartupService.prototype =
   }, 
 
   /**
-   * \brief Initialize the DataRemote used to propagate the command line
-   *        parameters.
+   * \brief Initialize the startup command line parameters.
    */
   _initStartupCmdLine: function () {
     var cmdLine = Cc
@@ -496,8 +495,7 @@ sbAppStartupService.prototype =
   },
 
   /**
-   * \brief Cleanup the DataRemote used to propagate the command line
-   *        parameters.
+   * \brief Cleanup the startup command line parameters.
    */
   _cleanupStartupCmdLine: function () {
     var cmdLine = Cc
@@ -515,8 +513,8 @@ sbAppStartupService.prototype =
       return;
 
     // Remove the start in application directory command line flag handler.
-    commandLineManager.removeFlagHandler(startupCmdLineHandler,
-                                         "start-in-app-directory");
+    cmdLineManager.removeFlagHandler(startupCmdLineHandler,
+                                     "start-in-app-directory");
   },
 
   /**
