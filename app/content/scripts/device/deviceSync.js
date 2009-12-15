@@ -62,18 +62,35 @@ if (typeof(XUL_NS) == "undefined")
 
 var DeviceSyncWidget = {
   //
+  // Constants (same constants defined in deviceProgress.js)
+  //
+
+  SYNCSETTINGS_CHANGE: 0,
+  SYNCSETTINGS_APPLY: 1,
+  SYNCSETTINGS_CANCEL: 2,
+  SYNCSETTINGS_SAVING: 3,
+  SYNCSETTINGS_SAVED: 4,
+
+  //
   // Device sync object fields.
   //
   //   _widget                  Device sync widget.
   //   _deviceLibrary           Device library we are working with.
   //   _isIdle                  Flag for state of device.
   //   _mediaType               Media Type this sync widget represents.
+  //   _syncSettingsChanged     Will be true if settings changed and haven't
+  //                            been saved yet.
+  //   _ignoreDevicePrefChanges Flag to switch off device pref listener
+  //                            temporarily (to be used when we are changing the
+  //                            prefs ourselves).
   //
 
   _widget: null,
   _deviceLibrary: null,
   _isIdle: true,
   _mediaType: null,
+  _syncSettingsChanged: false,
+  _ignoreDevicePrefChanges: false,
 
   /**
    * \brief Initialize the device progress services for the device progress
@@ -108,6 +125,12 @@ var DeviceSyncWidget = {
       this.addLibrary(this._device.content
                           .libraries.queryElementAt(0, Ci.sbIDeviceLibrary));
     }
+
+    // Listen for sync settings apply/cancel events.
+    let self = this;
+    document.addEventListener("sbDeviceSync-settings", function(aEvent) {
+      self._onSettingsEvent(aEvent);
+    }, false);
 
     // Listen for device events.
     var deviceEventTarget =
@@ -178,14 +201,68 @@ var DeviceSyncWidget = {
    */
 
   onUIPrefChange: function DeviceSyncWidget_onUIPrefChange() {
-    // Extract and write the preferences.
+    // Extract preferences
     this.syncPrefsExtract();
-    this.syncPrefsWrite();
-
-    // Re-read and apply the preferences in case the user cancels a switch
-    // to sync mode.
-    this.syncPrefsRead();
     this.syncPrefsApply();
+
+    if (!this._syncSettingsChanged) {
+      // Check whether something really changed
+      var oldPrefs = {};
+      this.syncPrefsCopy(this._syncPrefs, oldPrefs);
+      this.syncPrefsRead(oldPrefs);
+      this._syncSettingsChanged = this.syncPrefsChanged(this._syncPrefs, oldPrefs);
+
+      // Notify listeners that we are in editing mode now
+      if (this._syncSettingsChanged)
+        this._dispatchSettingsEvent(this.SYNCSETTINGS_CHANGE);
+    }
+  },
+
+  /**
+   * \brief Notifies listener about a pref change actions.
+   * 
+   * \param detail              One of the SYNCSETTINGS_* constants
+   */
+
+  _dispatchSettingsEvent: function DPW__dispatchSettingsEvent(detail) {
+    let event = document.createEvent("UIEvents");
+    event.initUIEvent("sbDeviceSync-settings", false, false, window, detail);
+    document.dispatchEvent(event);
+  },
+
+  /**
+   * \brief Handles sbDeviceSync-settings events and cancels/applies edit in
+   *        progress as required.
+   *
+   * \param aEvent              Event to handle.
+   */
+
+  _onSettingsEvent: function DeviceSyncWidget__onSettingsEvent(aEvent) {
+    switch (aEvent.detail) {
+      case this.SYNCSETTINGS_CANCEL:
+        // Reset displayed preferences
+        this._syncSettingsChanged = false;
+        this.syncPrefsRead();
+        this.syncPrefsApply();
+        break;
+      case this.SYNCSETTINGS_APPLY:
+        // Save preferences
+        this._syncSettingsChanged = false;
+        this._dispatchSettingsEvent(this.SYNCSETTINGS_SAVING);
+        try {
+          this.syncPrefsWrite();
+        }
+        finally {
+          this._dispatchSettingsEvent(this.SYNCSETTINGS_SAVED);
+        }
+        break;
+      case this.SYNCSETTINGS_SAVING:
+        this._ignoreDevicePrefChanges = true;
+        break;
+      case this.SYNCSETTINGS_SAVED:
+        this._ignoreDevicePrefChanges = false;
+        break;
+    }
   },
 
   /**
@@ -226,14 +303,14 @@ var DeviceSyncWidget = {
     switch(aEvent.type)
     {
       case Ci.sbIDeviceEvent.EVENT_DEVICE_PREFS_CHANGED :
-        // If any sync preferences changed, re-read and apply the preferences.
-        var prevSyncPrefs = {};
-        var curSyncPrefs = {};
-        this.syncPrefsCopy(this._storedSyncPrefs, prevSyncPrefs);
-        this.syncPrefsCopy(this._storedSyncPrefs, curSyncPrefs);
-        this.syncPrefsRead(curSyncPrefs);
-        if (this.syncPrefsChanged(prevSyncPrefs, curSyncPrefs)) {
-          // We need to update the playlists as well.
+        if (this._ignoreDevicePrefChanges)
+          return;
+
+        // If any sync preferences changed, cancel the edit in progress and
+        // reload prefs.
+        if (this._syncSettingsChanged)
+          this._dispatchSettingsEvent(this.SYNCSETTINGS_CANCEL);
+        else {
           this.syncPrefsRead();
           this.syncPrefsApply();
         }
@@ -898,10 +975,6 @@ var DeviceSyncWidget = {
 
     var mediaType = this._getMediaType(this._mediaType);
 
-    /* we must read only the playlist list preference array before writing
-     * anything to the prefs, otherwise the act of writing will go and clobber
-     * our changes.
-     */
     syncPlaylistList = this._syncPrefs.syncPlaylistList;
     for (guid in syncPlaylistList)
     {

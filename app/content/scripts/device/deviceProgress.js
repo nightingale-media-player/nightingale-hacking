@@ -199,12 +199,14 @@ var DPWCfg = {
 
 var DPW = {
   //
-  // Constants
+  // Constants (same constants defined in deviceSync.js)
   //
 
   SYNCSETTINGS_CHANGE: 0,
   SYNCSETTINGS_APPLY: 1,
   SYNCSETTINGS_CANCEL: 2,
+  SYNCSETTINGS_SAVING: 3,
+  SYNCSETTINGS_SAVED: 4,
 
   //
   // Device progress object fields.
