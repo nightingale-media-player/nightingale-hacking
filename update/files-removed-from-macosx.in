@@ -335,3 +335,16 @@
 ./Contents/Frameworks/XUL.framework/res/cursors/.#colResize.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/.#arrowS.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/.#arrowN.tiff.1.1
+./Contents/Frameworks/XUL.framework/extensions/inspector@mozilla.org/chrome.manifest
+./Contents/Frameworks/XUL.framework/extensions/inspector@mozilla.org/chrome/inspector.jar
+./Contents/Frameworks/XUL.framework/extensions/inspector@mozilla.org/components/inspector-cmdline.js
+./Contents/Frameworks/XUL.framework/extensions/inspector@mozilla.org/defaults/preferences/inspector.js
+./Contents/Frameworks/XUL.framework/extensions/inspector@mozilla.org/install.rdf
+./Contents/Frameworks/XUL.framework/extensions/inspector@mozilla.org/platform/Linux/chrome/icons/default/winInspectorMain.xpm
+./Contents/Frameworks/XUL.framework/extensions/inspector@mozilla.org/platform/Linux/chrome/icons/default/winInspectorMain16.xpm
+./Contents/Frameworks/XUL.framework/extensions/inspector@mozilla.org/platform/OS2/chrome/icons/default/winInspectorMain.ico
+./Contents/Frameworks/XUL.framework/extensions/inspector@mozilla.org/platform/WINNT/chrome/icons/default/winInspectorMain.ico
+./Contents/Frameworks/XUL.framework/extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/chrome.manifest
+./Contents/Frameworks/XUL.framework/extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/chrome/venkman.jar
+./Contents/Frameworks/XUL.framework/extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/components/venkman-service.js
+./Contents/Frameworks/XUL.framework/extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/install.rdf

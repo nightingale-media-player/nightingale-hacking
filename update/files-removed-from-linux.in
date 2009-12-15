@@ -72,3 +72,16 @@
 ./components/sbIPDDevice.xpt
 ./chrome/rubberducky.manifest
 ./chrome/rubberducky.jar
+./xulrunner/extensions/inspector@mozilla.org/chrome.manifest
+./xulrunner/extensions/inspector@mozilla.org/chrome/inspector.jar
+./xulrunner/extensions/inspector@mozilla.org/components/inspector-cmdline.js
+./xulrunner/extensions/inspector@mozilla.org/defaults/preferences/inspector.js
+./xulrunner/extensions/inspector@mozilla.org/install.rdf
+./xulrunner/extensions/inspector@mozilla.org/platform/Linux/chrome/icons/default/winInspectorMain.xpm
+./xulrunner/extensions/inspector@mozilla.org/platform/Linux/chrome/icons/default/winInspectorMain16.xpm
+./xulrunner/extensions/inspector@mozilla.org/platform/OS2/chrome/icons/default/winInspectorMain.ico
+./xulrunner/extensions/inspector@mozilla.org/platform/WINNT/chrome/icons/default/winInspectorMain.ico
+./xulrunner/extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/chrome.manifest
+./xulrunner/extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/chrome/venkman.jar
+./xulrunner/extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/components/venkman-service.js
+./xulrunner/extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/install.rdf
