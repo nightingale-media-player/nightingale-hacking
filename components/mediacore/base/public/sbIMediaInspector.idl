@@ -208,17 +208,37 @@ interface sbIMediaFormat : nsISupports
  * This is the interface to the media inspector service. It provides information
  * on the format of a media item
  */
-[scriptable, uuid(75b542d3-725c-4f68-b652-ef0d8f207cc7)]
+[scriptable, uuid(225b6e0d-8db6-4935-86a5-b21395c0ab5b)]
 interface sbIMediaInspector : nsISupports
 {
   /**
    * This method is used to retrieve the media format information for a given
-   * Songbird media item
+   * Songbird media item, synchronously. This method MUST NOT be used from the
+   * main thread.
+   *
    * \param aMediaItem The item to retrieve the media format
    * \return the media format for the media item. If the service is unable to
    * obtain the format NS_NOT_AVAILABLE exception is "thrown"
    */
   sbIMediaFormat inspectMedia(in sbIMediaItem aMediaItem);
+
+  /**
+   * This method is used to retrieve the media format information for a given
+   * Songbird media item, asynchronously. This method may be used from any
+   * thread. Before calling this, the caller should QI this object to
+   * sbIJobProgress, and listen for the job to complete.
+   * Once complete (and successful), the caller may read the
+   * 'mediaFormat' attribute.
+   *
+   * \param aMediaItem The item to retrieve the media format
+   */
+  void inspectMediaAsync(in sbIMediaItem aMediaItem);
+
+  /**
+   * The media format from the most recent call to inspectMedia or
+   * inspectMediaAsync, if that has completed successfully. Otherwise null.
+   */
+  readonly attribute sbIMediaFormat mediaFormat;
 };
 
 %{C++

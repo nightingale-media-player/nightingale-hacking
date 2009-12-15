@@ -407,22 +407,3 @@ sbMediaFormat::SetAudioStream(sbIMediaFormatAudio *aFormat)
   return NS_OK;
 }
 
-
-NS_IMPL_ISUPPORTS1(sbMediaInspector, sbIMediaInspector)
-
-sbMediaInspector::sbMediaInspector()
-{
-}
-
-sbMediaInspector::~sbMediaInspector()
-{
-}
-
-/* sbIMediaFormat inspectMedia (in sbIMediaItem aMediaItem); */
-NS_IMETHODIMP
-sbMediaInspector::InspectMedia(sbIMediaItem *aMediaItem, sbIMediaFormat **retval)
-{
-
-  return NS_ERROR_NOT_AVAILABLE;
-}
-

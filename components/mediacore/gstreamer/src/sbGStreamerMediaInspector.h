@@ -26,23 +26,87 @@
 #define _SB_GSTREAMER_MEDIAINSPECTOR_H_
 
 #include <nsCOMPtr.h>
+#include <nsTArray.h>
+#include <nsStringGlue.h>
 #include <nsIClassInfo.h>
+#include <nsITimer.h>
 
+#include "sbIJobProgress.h"
+#include "sbIJobCancelable.h"
 #include "sbIMediaInspector.h"
+#include "sbIMediaFormatMutable.h"
 
-class sbGStreamerMediaInspector : public sbIMediaInspector, nsIClassInfo
+#include "sbGStreamerPipeline.h"
+
+#include <gst/gst.h>
+
+class sbGStreamerMediaInspector : public sbGStreamerPipeline,
+                                  public sbIMediaInspector,
+                                  public sbIJobProgress,
+                                  public sbIJobCancelable,
+                                  public nsITimerCallback
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSICLASSINFO
   NS_DECL_SBIMEDIAINSPECTOR
+  NS_DECL_SBIJOBPROGRESS
+  NS_DECL_SBIJOBCANCELABLE
+  NS_DECL_NSITIMERCALLBACK
 
   sbGStreamerMediaInspector();
 
 private:
   virtual ~sbGStreamerMediaInspector();
 
-  nsCOMPtr<sbIMediaFormat>               mMediaFormat;
+  nsresult OnJobProgress();
+
+  NS_IMETHOD StopPipeline();
+  NS_IMETHOD BuildPipeline();
+
+  nsresult StartTimeoutTimer();
+  nsresult StopTimeoutTimer();
+  nsresult CleanupPipeline();
+  void     ResetStatus();
+  nsresult CompleteInspection();
+
+  nsresult PadAdded(GstPad *srcPad);
+  nsresult ProcessPipelineForInfo();
+  nsresult ProcessVideo(sbIMediaFormatVideo **aVideoFormat);
+  nsresult ProcessVideoCaps(sbIMediaFormatVideoMutable *format, GstCaps *caps);
+  nsresult ProcessAudio(sbIMediaFormatAudio **aAudioFormat);
+  nsresult InspectorateElement (GstElement *element);
+
+  /* Get the real pad associated with a (possibly ghost) pad */
+  GstPad * GetRealPad (GstPad *pad);
+
+  void HandleStateChangeMessage(GstMessage *message);
+  void HandleErrorMessage(GstMessage *message);
+
+  static void decodebin_pad_added_cb (GstElement *element, GstPad *pad,
+                                      sbGStreamerMediaInspector *inspector);
+
+  nsCOMPtr<sbIMediaFormatMutable>         mMediaFormat;
+
+  PRUint16                                mStatus;
+  nsTArray<nsString>                      mErrorMessages;
+  nsCOMArray<sbIJobProgressListener>      mProgressListeners;
+  nsCOMPtr<nsITimer>                      mTimeoutTimer;
+
+  nsString                                mSourceURI;
+
+  PRBool                                  mFinished;
+  PRBool                                  mIsPaused;
+  PRBool                                  mTooComplexForCurrentImplementation;
+
+  GstElement                             *mDecodeBin;
+  GstPad                                 *mVideoSrc;
+  GstPad                                 *mAudioSrc;
+
+  GstPad                                 *mAudioDecoderSink;
+  GstPad                                 *mVideoDecoderSink;
+  GstPad                                 *mDemuxerSink;
+
 };
 
 #define SB_GSTREAMER_MEDIAINSPECTOR_CLASSNAME \

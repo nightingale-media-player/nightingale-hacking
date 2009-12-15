@@ -151,22 +151,4 @@ private:
   nsCOMPtr<sbIMediaFormatAudio> mAudioStream;
 };
 
-/**
- * This is the implementation of the \see sbIMediacoreMediaInspector service
- */
-class sbMediaInspector : public sbIMediaInspector
-{
-public:
-  NS_DECL_ISUPPORTS
-  NS_DECL_SBIMEDIAINSPECTOR
-
-  sbMediaInspector();
-
-private:
-  ~sbMediaInspector();
-
-protected:
-  /* additional members */
-};
-
 #endif /* SBMEDIACOREFORMATINSPECTOR_H_ */

@@ -45,7 +45,6 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaFormatContainer);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaFormatVideo);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaFormatAudio);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaFormat);
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaInspector);
 
 static nsModuleComponentInfo sbBaseMediacoreComponents[] =
 {
@@ -85,12 +84,6 @@ static nsModuleComponentInfo sbBaseMediacoreComponents[] =
     SB_MEDIAFORMAT_CONTRACTID,
     sbMediaFormatConstructor
   },
-  {
-    SB_MEDIAINSPECTOR_CLASSNAME,
-    SB_MEDIAINSPECTOR_CID,
-    SB_MEDIAINSPECTOR_CONTRACTID,
-    sbMediaInspectorConstructor
-  }
 };
 
 NS_IMPL_NSGETMODULE(SongbirdBaseMediacore, sbBaseMediacoreComponents)

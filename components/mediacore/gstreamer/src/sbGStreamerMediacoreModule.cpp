@@ -51,7 +51,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbGStreamerRTPStreamer, Init)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbGStreamerTranscode, Init)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbGStreamerVideoTranscoder, Init)
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbGStreamerMediaInspector)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbGStreamerMediaInspector, Init)
 
 static const nsModuleComponentInfo components[] =
 {
