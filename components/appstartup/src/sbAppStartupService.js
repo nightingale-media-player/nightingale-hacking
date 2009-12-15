@@ -499,7 +499,7 @@ sbAppStartupService.prototype =
    * \brief Cleanup the DataRemote used to propagate the command line
    *        parameters.
    */
-  _resetStartupCmdLine: function () {
+  _cleanupStartupCmdLine: function () {
     var cmdLine = Cc
       ["@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird"];
     if (!cmdLine)
