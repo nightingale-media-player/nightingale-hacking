@@ -819,16 +819,21 @@ CopyAndParseToFractions(const char ** aStrings,
   return NS_OK;
 }
 
-static void
+static nsresult
 CopyAndParseFromFractions(const nsTArray<sbFraction> & aFractions,
                           PRUint32 aStringCount,
                           char ** aStrings)
 {
+  aStrings = reinterpret_cast<char**>(NS_Alloc(aStringCount * sizeof(char*)));
+  NS_ENSURE_TRUE(aStrings, NS_ERROR_OUT_OF_MEMORY);
+
   for (PRUint32 index = 0; index < aStringCount; ++index)
   {
     nsString string = sbFractionToString(aFractions[index]);
-    strcpy(aStrings[index], NS_LossyConvertUTF16toASCII(string).BeginReading());
+    aStrings[index] = ToNewCString(NS_ConvertUTF16toUTF8(string));
   }
+
+  return NS_OK;
 }
 
 /* void initialize (in ACString aType, in nsIArray aExplicitSizes, in sbIDevCapRange aWidths, in sbIDevCapRange aHeights, in unsigned long aVideoParsCount, [array, size_is (aVideoParsCount)] in string aVideoPars, in unsigned long aFrameRateCount, [array, size_is (aFrameRateCount)] in string aFrameRates, in sbIDevCapRange aBitRates); */
@@ -886,7 +891,9 @@ NS_IMETHODIMP sbDevCapVideoStream::GetSupportedVideoPARs(PRUint32 *aCount, char 
 {
   *aCount = mVideoPARs.Length();
 
-  CopyAndParseFromFractions(mVideoPARs, *aCount, *aVideoPARs);
+  nsresult rv = CopyAndParseFromFractions(mVideoPARs, *aCount, *aVideoPARs);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -895,7 +902,9 @@ NS_IMETHODIMP sbDevCapVideoStream::GetSupportedFrameRates(PRUint32 *aCount, char
 {
   *aCount = mVideoPARs.Length();
 
-  CopyAndParseFromFractions(mFrameRates, *aCount, *aFrameRates);
+  nsresult rv = CopyAndParseFromFractions(mFrameRates, *aCount, *aFrameRates);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
