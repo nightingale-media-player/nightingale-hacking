@@ -568,3 +568,141 @@ RegisterCustomTags()
                   G_TYPE_STRING, "GN ExtData", "Gracenote Extended Data", NULL);
 }
 
+nsresult
+ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
+{
+  nsCOMPtr<nsISimpleEnumerator> enumerator;
+  nsresult rv = props->GetEnumerator (getter_AddRefs (enumerator));
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  PRBool hasMore = PR_FALSE;
+  while (NS_SUCCEEDED (enumerator->HasMoreElements (&hasMore)) && hasMore) {
+    nsCOMPtr<nsISupports> next;
+    rv = enumerator->GetNext (getter_AddRefs (next));
+    NS_ENSURE_SUCCESS (rv, rv);
+
+    nsCOMPtr<nsIProperty> property = do_QueryInterface (next, &rv);
+    NS_ENSURE_SUCCESS (rv, rv);
+
+    nsString propertyName;
+    rv = property->GetName (propertyName);
+    NS_ENSURE_SUCCESS (rv, rv);
+
+    nsCOMPtr<nsIVariant> propertyVariant;
+    rv = property->GetValue (getter_AddRefs (propertyVariant));
+    NS_ENSURE_SUCCESS (rv, rv);
+
+    NS_ConvertUTF16toUTF8 propertyNameUTF8 (propertyName);
+
+    GParamSpec *paramSpec = g_object_class_find_property (
+            G_OBJECT_GET_CLASS (element),
+            propertyNameUTF8.BeginReading());
+    if (!paramSpec)
+    {
+      LOG(("No such property %s on element", propertyNameUTF8.BeginReading()));
+      return NS_ERROR_FAILURE;
+    }
+
+    PRUint16 variantType;
+    rv = propertyVariant->GetDataType(&variantType);
+    NS_ENSURE_SUCCESS (rv, rv);
+
+    GValue propertyValue = { 0 };
+    if (paramSpec->value_type == G_TYPE_INT &&
+        variantType == nsIDataType::VTYPE_INT32)
+    {
+      PRInt32 val;
+      rv = propertyVariant->GetAsInt32 (&val);
+      NS_ENSURE_SUCCESS (rv, rv);
+      g_value_init (&propertyValue, G_TYPE_INT);
+      g_value_set_int (&propertyValue, val);
+    }
+    else if (paramSpec->value_type == G_TYPE_UINT &&
+             variantType == nsIDataType::VTYPE_UINT32)
+    {
+      PRUint32 val;
+      rv = propertyVariant->GetAsUint32 (&val);
+      NS_ENSURE_SUCCESS (rv, rv);
+      g_value_init (&propertyValue, G_TYPE_UINT);
+      g_value_set_uint (&propertyValue, val);
+    }
+    else if (paramSpec->value_type == G_TYPE_UINT64 &&
+             variantType == nsIDataType::VTYPE_UINT64)
+    {
+      PRUint64 val;
+      rv = propertyVariant->GetAsUint64 (&val);
+      NS_ENSURE_SUCCESS (rv, rv);
+      g_value_init (&propertyValue, G_TYPE_UINT64);
+      g_value_set_uint64 (&propertyValue, val);
+    }
+    else if (paramSpec->value_type == G_TYPE_INT64 &&
+             variantType == nsIDataType::VTYPE_INT64)
+    {
+      PRInt64 val;
+      rv = propertyVariant->GetAsInt64 (&val);
+      NS_ENSURE_SUCCESS (rv, rv);
+      g_value_init (&propertyValue, G_TYPE_INT64);
+      g_value_set_int64 (&propertyValue, val);
+    }
+    else if (paramSpec->value_type == G_TYPE_BOOLEAN &&
+             variantType == nsIDataType::VTYPE_BOOL)
+    {
+      PRBool val;
+      rv = propertyVariant->GetAsBool (&val);
+      NS_ENSURE_SUCCESS (rv, rv);
+      g_value_init (&propertyValue, G_TYPE_BOOLEAN);
+      g_value_set_boolean (&propertyValue, val);
+    }
+    else if (paramSpec->value_type == G_TYPE_FLOAT &&
+             variantType == nsIDataType::VTYPE_FLOAT)
+    {
+      float val;
+      rv = propertyVariant->GetAsFloat (&val);
+      NS_ENSURE_SUCCESS (rv, rv);
+      g_value_init (&propertyValue, G_TYPE_FLOAT);
+      g_value_set_float (&propertyValue, val);
+    }
+    else if (paramSpec->value_type == G_TYPE_DOUBLE &&
+             variantType == nsIDataType::VTYPE_DOUBLE)
+    {
+      double val;
+      rv = propertyVariant->GetAsDouble (&val);
+      NS_ENSURE_SUCCESS (rv, rv);
+      g_value_init (&propertyValue, G_TYPE_DOUBLE);
+      g_value_set_float (&propertyValue, val);
+    }
+    else if (paramSpec->value_type == G_TYPE_STRING &&
+             (variantType == nsIDataType::VTYPE_DOMSTRING ||
+              variantType == nsIDataType::VTYPE_UTF8STRING ||
+              variantType == nsIDataType::VTYPE_CSTRING ||
+              variantType == nsIDataType::VTYPE_ASTRING))
+    {
+      nsCString val;
+      rv = propertyVariant->GetAsACString(val);
+      NS_ENSURE_SUCCESS (rv, rv);
+      g_value_init (&propertyValue, G_TYPE_STRING);
+      g_value_set_string (&propertyValue, val.BeginReading());
+    }
+    else if (G_TYPE_IS_ENUM (paramSpec->value_type) &&
+             variantType == nsIDataType::VTYPE_UINT32)
+    {
+      PRUint32 val;
+      rv = propertyVariant->GetAsUint32 (&val);
+      NS_ENSURE_SUCCESS (rv, rv);
+      g_value_init (&propertyValue, paramSpec->value_type);
+      g_value_set_enum (&propertyValue, val);
+    }
+    else {
+      LOG(("Unknown or mismatching property type"));
+      return NS_ERROR_FAILURE;
+    }
+
+    g_object_set_property (G_OBJECT (element),
+                           propertyNameUTF8.BeginReading(),
+                           &propertyValue);
+    g_value_unset (&propertyValue);
+  }
+
+  return NS_OK;
+}
+

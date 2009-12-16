@@ -36,6 +36,8 @@
 #include "sbITranscodeVideoJob.h"
 #include "sbIJobProgress.h"
 #include "sbIJobCancelable.h"
+#include "sbITranscodingConfigurator.h"
+#include "sbIMediaFormatMutable.h"
 
 #include "sbGStreamerPipeline.h"
 
@@ -106,6 +108,14 @@ private:
   /* Initialize the configurator object to decide on what format and other
      details to transcode to. */
   nsresult InitializeConfigurator ();
+
+  /* Helper function to set an sbIMediaFormatVideo from some GStreamer caps */
+  nsresult SetVideoFormatFromCaps (sbIMediaFormatVideoMutable *format,
+                                   GstCaps *caps);
+
+  /* Helper function to set an sbIMediaFormatAudio from some GStreamer caps */
+  nsresult SetAudioFormatFromCaps (sbIMediaFormatAudioMutable *format,
+                                   GstCaps *caps);
 
   /* Call to send an error event, and shut down the pipeline, if a fatal error
      is encountered during transcoding pipeline setup. The errorName is looked
@@ -200,6 +210,7 @@ private:
 
   nsCOMPtr<sbIPropertyArray>              mMetadata;
   nsCOMPtr<nsIInputStream>                mImageStream;
+  nsCOMPtr<sbITranscodingConfigurator>    mConfigurator;
 
   nsString                                mSourceURI;
   nsString                                mDestURI;

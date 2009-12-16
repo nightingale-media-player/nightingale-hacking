@@ -42,14 +42,11 @@
 #include <nsIURI.h>
 #include <nsIFileURL.h>
 #include <nsIBinaryInputStream.h>
+#include <nsIProperty.h>
 
 #include <gst/tag/tag.h>
 
 #include <prlog.h>
-
-/* Just a placeholder for the configurator. Once we have an interface, and at
-   least a stub implementation, we can turn this back on */
-#define CONFIGURATOR 0
 
 #define PROGRESS_INTERVAL 200 /* milliseconds */
 
@@ -124,6 +121,28 @@ sbGStreamerVideoTranscoder::Notify(nsITimer *aTimer)
 }
 
 /* sbITranscodeJob interface implementation */
+
+NS_IMETHODIMP
+sbGStreamerVideoTranscoder::SetConfigurator(
+                            sbITranscodingConfigurator *aConfigurator)
+{
+  TRACE(("%s[%p]", __FUNCTION__, this));
+
+  mConfigurator = aConfigurator;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbGStreamerVideoTranscoder::GetConfigurator(
+                            sbITranscodingConfigurator **aConfigurator)
+{
+  TRACE(("%s[%p]", __FUNCTION__, this));
+  NS_ENSURE_ARG_POINTER(aConfigurator);
+
+  NS_IF_ADDREF (*aConfigurator = mConfigurator);
+
+  return NS_OK;
+}
 
 NS_IMETHODIMP
 sbGStreamerVideoTranscoder::SetSourceURI(const nsAString& aSourceURI)
@@ -878,7 +897,10 @@ sbGStreamerVideoTranscoder::DecoderPadAdded (GstElement *uridecodebin,
       LOG(("Multiple audio streams: ignoring subsequent ones"));
       return NS_OK;
     }
-#if CONFIGURATOR
+
+#if 0
+    // TODO: Some sort of API like this will be needed once we're using this
+    // for audio-only transcoding as well.
     if (!mTranscoderConfigurator->SupportsAudio()) {
       LOG(("Transcoder not configured to support audio, ignoring stream"));
       return NS_OK;
@@ -894,7 +916,9 @@ sbGStreamerVideoTranscoder::DecoderPadAdded (GstElement *uridecodebin,
       LOG(("Multiple video streams: ignoring subsequent ones"));
       return NS_OK;
     }
-#if CONFIGURATOR
+#if 0
+    // TODO: Some sort of API like this will be needed once we're using this
+    // for audio-only transcoding as well.
     if (!mTranscoderConfigurator->SupportsVideo()) {
       LOG(("Transcoder not configured to support video, ignoring stream"));
       return NS_OK;
@@ -1004,7 +1028,7 @@ sbGStreamerVideoTranscoder::BuildVideoBin(GstCaps *aInputVideoCaps,
   // See the comment/ascii-art in BuildTranscodePipeline for details about what
   // this does
   nsresult rv;
-  GstBin *bin = GST_BIN (gst_bin_new("video-encode-bin"));
+  GstBin *bin = NULL;
   GstElement *videorate = NULL;
   GstElement *colorspace = NULL;
   GstElement *videoscale = NULL;
@@ -1012,26 +1036,34 @@ sbGStreamerVideoTranscoder::BuildVideoBin(GstCaps *aInputVideoCaps,
   GstElement *capsfilter = NULL;
   GstElement *encoder = NULL;
 
+  PRInt32 outputWidth, outputHeight;
+  PRUint32 outputParN, outputParD;
+  PRUint32 outputFramerateN, outputFramerateD;
 
-#if CONFIGURATOR
-#error not implemented
-#else
-  // TODO: Get these from the configurator. For now, they're hard-coded.
-  // As a test example: encode to 240x240 with 4:3 pixels
-  // (equivalent to 320x240 for display purposes, more or less)
-  gint outputWidth = 240;
-  gint outputHeight = 240;
-  gint outputParN = 4;
-  gint outputParD = 3;
-  gint outputFramerateN = 30000;
-  gint outputFramerateD = 1001;
-  const gchar *encoderName = "theoraenc";
-#endif
+  // Ask the configurator for what format we should feed into the encoder
+  nsCOMPtr<sbIMediaFormatVideo> videoFormat;
+  rv = mConfigurator->GetVideoFormat (getter_AddRefs(videoFormat));
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  rv = videoFormat->GetVideoWidth(&outputWidth);
+  NS_ENSURE_SUCCESS (rv, rv);
+  rv = videoFormat->GetVideoHeight(&outputHeight);
+  NS_ENSURE_SUCCESS (rv, rv);
+  rv = videoFormat->GetVideoPAR(&outputParN, &outputParD);
+  NS_ENSURE_SUCCESS (rv, rv);
+  rv = videoFormat->GetVideoFrameRate(&outputFramerateN, &outputFramerateD);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  // Ask the configurator what encoder (if any) we should use.
+  nsString encoderName;
+  rv = mConfigurator->GetVideoEncoder(encoderName);
+  NS_ENSURE_SUCCESS (rv, rv);
 
   GstPad *srcpad, *sinkpad, *ghostpad;
   GstElement *last;
   GstCaps *caps;
 
+  bin = GST_BIN (gst_bin_new("video-encode-bin"));
   videorate = gst_element_factory_make ("videorate", NULL);
   colorspace = gst_element_factory_make ("ffmpegcolorspace", NULL);
   videoscale = gst_element_factory_make ("videoscale", NULL);
@@ -1047,18 +1079,30 @@ sbGStreamerVideoTranscoder::BuildVideoBin(GstCaps *aInputVideoCaps,
     goto failed;
   }
 
-  if (encoderName) {
-    encoder = gst_element_factory_make (encoderName, NULL);
+  if (!encoderName.IsEmpty()) {
+    encoder = gst_element_factory_make (
+            NS_ConvertUTF16toUTF8(encoderName).BeginReading(), NULL);
 
     if (!encoder) {
-      LOG(("No encoder %s available", encoderName));
+      LOG(("No encoder %s available",
+                  NS_ConvertUTF16toUTF8(encoderName).BeginReading()));
       TranscodingFatalError(
               "songbird.transcode.error.video_encoder_unavailable");
       rv = NS_ERROR_FAILURE;
       goto failed;
     }
 
-    // TODO: configure encoder as appropriate.
+    nsCOMPtr<nsIPropertyBag> encoderProperties;
+    rv = mConfigurator->GetVideoEncoderProperties(
+            getter_AddRefs(encoderProperties));
+    if (NS_FAILED (rv)) {
+      goto failed;
+    }
+
+    rv = ApplyPropertyBagToElement(encoder, encoderProperties);
+    if (NS_FAILED (rv)) {
+      goto failed;
+    }
   }
 
   /* Configure videoscale to use 4-tap scaling for higher quality */
@@ -1125,7 +1169,8 @@ failed:
     g_object_unref (capsfilter);
   if (encoder)
     g_object_unref (encoder);
-  g_object_unref (bin);
+  if (bin)
+    g_object_unref (bin);
 
   return rv;
 }
@@ -1139,28 +1184,36 @@ sbGStreamerVideoTranscoder::BuildAudioBin(GstCaps *aInputAudioCaps,
   // See the comment/ascii-art in BuildTranscodePipeline for details about what
   // this does
   nsresult rv;
-  GstBin *bin = GST_BIN (gst_bin_new("audio-encode-bin"));
+  GstBin *bin = NULL;
   GstElement *audiorate = NULL;
   GstElement *audioconvert = NULL;
   GstElement *audioresample = NULL;
   GstElement *capsfilter = NULL;
   GstElement *encoder = NULL;
 
-#if CONFIGURATOR
-#error not implemented
-#else
-  // TODO: Get these from the configurator. For now, they're hard-coded.
-  // As a test example: 44100 Hz stereo.
-  gint outputRate = 44100;
-  gint outputChannels = 2;
-  const gchar *encoderName = "vorbisenc";
-#endif
+  PRInt32 outputRate, outputChannels;
+
+  // Ask the configurator for what format we should feed into the encoder
+  nsCOMPtr<sbIMediaFormatAudio> audioFormat;
+  rv = mConfigurator->GetAudioFormat (getter_AddRefs(audioFormat));
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  rv = audioFormat->GetSampleRate (&outputRate);
+  NS_ENSURE_SUCCESS (rv, rv);
+  rv = audioFormat->GetChannels (&outputChannels);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  // Ask the configurator what encoder (if any) we should use.
+  nsString encoderName;
+  rv = mConfigurator->GetAudioEncoder(encoderName);
+  NS_ENSURE_SUCCESS (rv, rv);
 
   GstPad *srcpad, *sinkpad, *ghostpad;
   GstElement *last;
   GstCaps *caps;
   GstStructure *structure;
 
+  bin = GST_BIN (gst_bin_new("audio-encode-bin"));
   audiorate = gst_element_factory_make ("audiorate", NULL);
   audioconvert = gst_element_factory_make ("audioconvert", NULL);
   audioresample = gst_element_factory_make ("audioresample", NULL);
@@ -1174,17 +1227,29 @@ sbGStreamerVideoTranscoder::BuildAudioBin(GstCaps *aInputAudioCaps,
     goto failed;
   }
 
-  if (encoderName) {
-    encoder = gst_element_factory_make (encoderName, NULL);
+  if (!encoderName.IsEmpty()) {
+    encoder = gst_element_factory_make (
+            NS_ConvertUTF16toUTF8 (encoderName).BeginReading(), NULL);
     if (!encoder) {
-      LOG(("No encoder %s available", encoderName));
+      LOG(("No encoder %s available",
+                  NS_ConvertUTF16toUTF8(encoderName).BeginReading()));
       TranscodingFatalError(
               "songbird.transcode.error.audio_encoder_unavailable");
       rv = NS_ERROR_FAILURE;
       goto failed;
     }
 
-    // TODO: configure encoder as required.
+    nsCOMPtr<nsIPropertyBag> encoderProperties;
+    rv = mConfigurator->GetAudioEncoderProperties(
+            getter_AddRefs(encoderProperties));
+    if (NS_FAILED (rv)) {
+      goto failed;
+    }
+
+    rv = ApplyPropertyBagToElement(encoder, encoderProperties);
+    if (NS_FAILED (rv)) {
+      goto failed;
+    }
   }
 
   /* Configure capsfilter for our output sample rate and channels */
@@ -1244,7 +1309,8 @@ failed:
     g_object_unref (capsfilter);
   if (encoder)
     g_object_unref (encoder);
-  g_object_unref (bin);
+  if (bin)
+    g_object_unref (bin);
 
   return rv;
 }
@@ -1416,20 +1482,20 @@ sbGStreamerVideoTranscoder::AddMuxer (GstPad **muxerSrcPad,
   NS_ENSURE_ARG_POINTER (muxerSrcPad);
   NS_ASSERTION (audioPad || videoPad, "Must have at least one pad");
 
-#if CONFIGURATOR
-#error not implemented
-#else
-  // TODO: Get this from the configurator. For now, hard-coded to make ogg.
-  const gchar *muxerName = "oggmux";
-#endif
+  // Ask the configurator what muxer (if any) we should use.
+  nsString muxerName;
+  nsresult rv = mConfigurator->GetMuxer(muxerName);
+  NS_ENSURE_SUCCESS (rv, rv);
 
   GstElement *muxer = NULL;
 
-  if (muxerName) {
-    muxer = gst_element_factory_make (muxerName, NULL);
+  if (!muxerName.IsEmpty()) {
+    muxer = gst_element_factory_make (
+            NS_ConvertUTF16toUTF8 (muxerName).BeginReading(), NULL);
 
     if (!muxer) {
-      LOG(("No muxer %s available", muxerName));
+      LOG(("No muxer %s available",
+            NS_ConvertUTF16toUTF8 (muxerName).BeginReading()));
       TranscodingFatalError("songbird.transcode.error.muxer_unavailable");
       return NS_ERROR_FAILURE;
     }
@@ -1541,103 +1607,137 @@ sbGStreamerVideoTranscoder::AddSink (GstPad *muxerSrcPad)
 }
 
 nsresult
+sbGStreamerVideoTranscoder::SetVideoFormatFromCaps (
+        sbIMediaFormatVideoMutable *format, GstCaps *caps)
+{
+  nsresult rv;
+
+  GstStructure *structure = gst_caps_get_structure (caps, 0);
+  gboolean success;
+
+  gint width, height;
+
+  success = gst_structure_get_int (structure, "width", &width);
+  NS_ENSURE_TRUE (success, NS_ERROR_FAILURE);
+  success = gst_structure_get_int (structure, "height", &height);
+  NS_ENSURE_TRUE (success, NS_ERROR_FAILURE);
+
+  const GValue* par = gst_structure_get_value(structure,
+          "pixel-aspect-ratio");
+  gint parN, parD;
+  if (par) {
+    parN = gst_value_get_fraction_numerator(par);
+    parD = gst_value_get_fraction_denominator(par);
+  }
+  else {
+    // Default to square pixels.
+    parN = 1;
+    parD = 1;
+  }
+
+  const GValue* fr = gst_structure_get_value(structure, "framerate");
+  gint frN, frD;
+  if (fr) {
+    frN = gst_value_get_fraction_numerator(fr);
+    frD = gst_value_get_fraction_denominator(fr);
+  }
+  else {
+    // Default to 0/1 indicating unknown?
+    frN = 0;
+    frD = 1;
+  }
+
+  // TODO: should we describe the sub-type of raw video (i.e. YUV 4:2:0 or
+  // even more specifically stuff like "I420")?
+  rv = format->SetVideoType (NS_LITERAL_STRING ("video/x-raw"));
+  NS_ENSURE_SUCCESS (rv, rv);
+  rv = format->SetVideoWidth (width);
+  NS_ENSURE_SUCCESS (rv, rv);
+  rv = format->SetVideoHeight (height);
+  NS_ENSURE_SUCCESS (rv, rv);
+  rv = format->SetVideoPAR(parN, parD);
+  NS_ENSURE_SUCCESS (rv, rv);
+  rv = format->SetVideoFrameRate(frN, frD);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbGStreamerVideoTranscoder::SetAudioFormatFromCaps (
+        sbIMediaFormatAudioMutable *format, GstCaps *caps)
+{
+  nsresult rv;
+  GstStructure *structure = gst_caps_get_structure (caps, 0);
+  gboolean success;
+
+  gint rate;
+  gint channels;
+
+  success = gst_structure_get_int (structure, "rate", &rate);
+  NS_ENSURE_TRUE (success, NS_ERROR_FAILURE);
+  success = gst_structure_get_int (structure, "channels", &channels);
+  NS_ENSURE_TRUE (success, NS_ERROR_FAILURE);
+
+  // TODO: should we describe the sub-type of raw audio (i.e. integer, float,
+  // and details like depth, endianness)
+  rv = format->SetAudioType(NS_LITERAL_STRING ("audio/x-raw"));
+  NS_ENSURE_SUCCESS (rv, rv);
+  rv = format->SetSampleRate (rate);
+  NS_ENSURE_SUCCESS (rv, rv);
+  rv = format->SetChannels (channels);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
 sbGStreamerVideoTranscoder::InitializeConfigurator()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
-#if CONFIGURATOR
   nsresult rv;
 
   // Build sbIMediaFormat describing the decoded data.
-  nsCOMPtr<sbIMediaFormat> mediaFormat = do_CreateInstance("...", &rv);
+  nsCOMPtr<sbIMediaFormatMutable> mediaFormat =
+      do_CreateInstance(SB_MEDIAFORMAT_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS (rv, rv);
 
-  // TODO: Use auto-refcounting classes to go with these, so that the
-  // NS_ENSURE_SUCCESS calls don't cause us to leak if they fail.
   if (mVideoSrc) {
-    GstCaps *videoCaps = GST_PAD_CAPS (mVideoSrc);
-    GstStructure *structure = gst_caps_get_structure (videoCaps, 0);
-    gboolean success;
-
-    gint width, height;
-    sbFraction videoPAR;
-    sbFraction framerate;
-
-    success = gst_structure_get_int (structure, "width", &width);
-    NS_ENSURE_TRUE (success, NS_ERROR_FAILURE);
-    success = gst_structure_get_int (structure, "height", &height);
-    NS_ENSURE_TRUE (success, NS_ERROR_FAILURE);
-
-    const GValue* par = gst_structure_get_value(structure,
-            "pixel-aspect-ratio");
-    if (par) {
-      gint parN = gst_value_get_fraction_numerator(par);
-      gint parD = gst_value_get_fraction_denominator(par);
-      videoPAR = sbFraction (parN, parD);
-    }
-    else {
-      // Default to square pixels.
-      videoPAR = sbFraction (1, 1);
-    }
-
-    const GValue* fr = gst_structure_get_value(structure, "framerate");
-    if (par) {
-      gint frN = gst_value_get_fraction_numerator(fr);
-      gint frD = gst_value_get_fraction_denominator(fr);
-      framerate = sbFraction (frN, frD);
-    }
-    else {
-      // Default to 0/1 indicating unknown?
-      videoPAR = sbFraction (0, 1);
-    }
-
-    nsCOMPtr<sbIMediaFormatVideo> videoFormat = do_CreateInstance("....", &rv);
+    nsCOMPtr<sbIMediaFormatVideoMutable> videoFormat =
+        do_CreateInstance(SB_MEDIAFORMATVIDEO_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS (rv, rv);
 
-    // TODO: should we describe the sub-type of raw video (i.e. YUV 4:2:0 or
-    // even more specifically stuff like "I420")?
-    videoFormat->SetVideoType("video/raw");
-    videoFormat->SetVideoDimensions(width, height);
-    videoFormat->SetVideoPAR(videoPAR);
-    videoFormat->SetFramerate(framerate);
-    // TODO: should we set bitrate?
-    // TODO: any additional properties we need to set?
+    GstCaps *videoCaps = GST_PAD_CAPS (mVideoSrc);
+    rv = SetVideoFormatFromCaps(videoFormat, videoCaps);
+    NS_ENSURE_SUCCESS (rv, rv);
 
-    mediaFormat->SetVideoStream(videoFormat);
+    rv = mediaFormat->SetVideoStream(videoFormat);
     NS_ENSURE_SUCCESS (rv, rv);
   }
 
+
   if (mAudioSrc) {
-    GstCaps *videoCaps = GST_PAD_CAPS (mAudioSrc);
-    GstStructure *structure = gst_caps_get_structure (audioCaps, 0);
-    gboolean success;
+    nsCOMPtr<sbIMediaFormatAudioMutable> audioFormat =
+        do_CreateInstance(SB_MEDIAFORMATAUDIO_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS (rv, rv);
 
-    gint rate;
-    gint channels;
-
-    success = gst_structure_get_int (structure, "rate", &rate);
-    NS_ENSURE_TRUE (success, NS_ERROR_FAILURE);
-    success = gst_structure_get_int (structure, "channels", &channels);
-    NS_ENSURE_TRUE (success, NS_ERROR_FAILURE);
-
-    nsCOMPtr<sbIMediaFormatAudio> audioFormat = do_CreateInstance("....", &rv);
-    audioFormat->SetAudioType("audio/raw");
-    audioFormat->SetRate(rate);
-    audioFormat->SetChannels(channels);
-    // TODO: should we set bitrate?
-    // TODO: any additional properties we need to set?
+    GstCaps *audioCaps = GST_PAD_CAPS (mAudioSrc);
+    rv = SetAudioFormatFromCaps(audioFormat, audioCaps);
+    NS_ENSURE_SUCCESS (rv, rv);
 
     rv = mediaFormat->SetAudioStream(audioFormat);
     NS_ENSURE_SUCCESS (rv, rv);
   }
 
-  rv = mConfigurator->SetFileInfo(mediaFormat);
+  rv = mConfigurator->SetInputFormat(mediaFormat);
   NS_ENSURE_SUCCESS (rv, rv);
 
-  // TODO: If this fails (which it might!), fire a useful error.
   rv = mConfigurator->Configurate();
-  NS_ENSURE_SUCCESS (rv, rv);
-#endif
+  if (NS_FAILED (rv)) {
+    TranscodingFatalError("songbird.transcode.error.failed_configuration");
+    NS_ENSURE_SUCCESS (rv, rv);
+  }
 
   return NS_OK;
 }

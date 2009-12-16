@@ -30,6 +30,7 @@
 
 interface sbIPropertyArray;
 interface sbIMediaItem;
+interface sbITranscodingConfigurator;
 interface nsIInputStream;
 
 /**
@@ -46,7 +47,7 @@ interface nsIInputStream;
  * \sa sbIJobProgress
  * \sa sbIJobCancelable
  */
-[scriptable, uuid(7cd3b977-4056-49df-99c6-c5d2a6cdc7d4)]
+[scriptable, uuid(63d959c2-08b8-47fe-958d-2685e3589471)]
 interface sbITranscodeVideoJob : nsISupports
 {
   /**
@@ -67,6 +68,16 @@ interface sbITranscodeVideoJob : nsISupports
    * set this to an input stream that the encoded image can be read from.
    */
   attribute nsIInputStream  metadataImage;
+
+  /**
+   * \brief The configurator that will be used to configurate the transcoder
+   *        for the specific input URI.
+   *
+   * The transcoding job will use the configurator to decide on parameters for
+   * the raw media input to the encoder, and to decide on the specific
+   * encoder settings to use.
+   */
+  attribute sbITranscodingConfigurator configurator;
 
   /**
    * \brief The source URI to transcode from.

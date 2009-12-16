@@ -35,6 +35,9 @@
 #include <nsITimer.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIStringBundle.h>
+#include <nsIVariant.h>
+#include <nsIPropertyBag.h>
+#include <nsIProperty.h>
 
 #include <sbIPropertyArray.h>
 #include <sbMediacoreError.h>
@@ -46,6 +49,25 @@
  */
 #define SB_GST_TAG_GRACENOTE_TAGID         "gracenote-tagid"
 #define SB_GST_TAG_GRACENOTE_EXTENDED_DATA "gracenote-extdata"
+
+/* Apply all the properties from 'props' to element.
+   If any property cannot be set (the type is incompatible, or the element
+   does not have such a property), this will return an error.
+
+   Type compatibility: numerical types MUST match exactly (e.g. if the
+   GObject property contains an unsigned 32 bit int, then the property in
+   the property bag must also be an unsigned 32 bit int.
+
+   Strings MAY be either nsString or nsCString.
+
+   Enum values (for the GObject properties) MUST be 32 bit unsigned integers
+   in the nsIVariant; they'll be converted as appropriate.
+
+   Current limitations: only 32 bit or 64 bit (signed or unsigned) integers,
+   floats, doubles, booleans, strings (AString and ACString), and enums
+   are supported.
+ */
+nsresult ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props);
 
 GstTagList *ConvertPropertyArrayToTagList(sbIPropertyArray *properties);
 
