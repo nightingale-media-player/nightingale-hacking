@@ -873,21 +873,21 @@ NS_IMETHODIMP sbDevCapVideoStream::GetType(nsACString & aType)
 /* readonly attribute nsIArray supportedExplicitSizes; */
 NS_IMETHODIMP sbDevCapVideoStream::GetSupportedExplicitSizes(nsIArray * *aSupportedExplicitSizes)
 {
-  *aSupportedExplicitSizes = mExplicitSizes;
+  NS_IF_ADDREF(*aSupportedExplicitSizes = mExplicitSizes);
   return NS_OK;
 }
 
 /* readonly attribute sbIDevCapRange supportedWidths; */
 NS_IMETHODIMP sbDevCapVideoStream::GetSupportedWidths(sbIDevCapRange * *aSupportedWidths)
 {
-  *aSupportedWidths = mWidths;
+  NS_IF_ADDREF(*aSupportedWidths = mWidths);
   return NS_OK;
 }
 
 /* readonly attribute sbIDevCapRange supportedHeights; */
 NS_IMETHODIMP sbDevCapVideoStream::GetSupportedHeights(sbIDevCapRange * *aSupportedHeights)
 {
-  *aSupportedHeights = mHeights;
+  NS_IF_ADDREF(*aSupportedHeights = mHeights);
   return NS_OK;
 }
 
@@ -916,7 +916,7 @@ NS_IMETHODIMP sbDevCapVideoStream::GetSupportedFrameRates(PRUint32 *aCount, char
 /* readonly attribute sbIDevCapRange supportedBitRates; */
 NS_IMETHODIMP sbDevCapVideoStream::GetSupportedBitRates(sbIDevCapRange * *aSupportedBitRates)
 {
-  *aSupportedBitRates = mBitRates;
+  NS_IF_ADDREF(*aSupportedBitRates = mBitRates);
   return NS_OK;
 }
 
