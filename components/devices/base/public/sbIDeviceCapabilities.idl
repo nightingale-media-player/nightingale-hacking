@@ -307,14 +307,14 @@ interface sbIDevCapVideoStream : nsISupports
    * using sbFraction
    */
   void getSupportedVideoPARs(out unsigned long aCount, 
-                             [array, size_is(aCount)]out string aVideoPARs); 
+                             [retval, array, size_is(aCount)]out string aVideoPARs); 
   
   /**
    * Returns the list of video frame rates. These are string which can be parsed
    * using sbFraction
    */
   void getSupportedFrameRates(out unsigned long aCount,
-                              [array, size_is(aCount)]out string aFrameRates);
+                              [retval, array, size_is(aCount)]out string aFrameRates);
                      
   /**
    * Returns a range of bit rates

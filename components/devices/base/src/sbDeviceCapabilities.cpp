@@ -822,7 +822,7 @@ CopyAndParseToFractions(const char ** aStrings,
 static nsresult
 CopyAndParseFromFractions(const nsTArray<sbFraction> & aFractions,
                           PRUint32 aStringCount,
-                          char ** aStrings)
+                          char ** &aStrings)
 {
   aStrings = reinterpret_cast<char**>(NS_Alloc(aStringCount * sizeof(char*)));
   NS_ENSURE_TRUE(aStrings, NS_ERROR_OUT_OF_MEMORY);
@@ -831,6 +831,11 @@ CopyAndParseFromFractions(const nsTArray<sbFraction> & aFractions,
   {
     nsString string = sbFractionToString(aFractions[index]);
     aStrings[index] = ToNewCString(NS_ConvertUTF16toUTF8(string));
+    if (!aStrings[index]) {
+      // allocation failure
+      NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(index, aStrings);
+      return NS_ERROR_OUT_OF_MEMORY;
+    }
   }
 
   return NS_OK;
