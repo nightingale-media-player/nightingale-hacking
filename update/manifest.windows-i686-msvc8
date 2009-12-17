@@ -1,4 +1,4 @@
-./.autoreg
+f./.autoreg
 ./application.ini
 ./blocklist.xml
 ./cdriphelper.exe
@@ -774,7 +774,7 @@
 ./testharness/sqlbuilder/test_update.js
 ./testharness/temporaryfileservice/test_temporary_file_service.js
 ./testharness/transcodeservice/files/transcode_configurator_test.mp3
-./testharness/transcodeservice/files/test_transcodeconfigurator.js
+./testharness/transcodeservice/test_transcodeconfigurator.js
 ./testharness/urlformatter/head_urlformatter.js
 ./testharness/urlformatter/test_updateparams.js
 ./testharness/watchfolders/files/moverename/deletedFile.mp3
