@@ -186,16 +186,12 @@ inline
 nsString sbFractionToString(sbFraction const & aFraction)
 {
   nsString result;
-  PRUint32 whole;
-  PRUint32 numerator;
-  PRUint32 denominator;
-  aFraction.GetProperFraction(whole, numerator, denominator);
 
-  result.AppendInt(whole, 10);
-  result.Append(NS_LITERAL_STRING(" "));
-  result.AppendInt(numerator, 10);
-  result.Append(NS_LITERAL_STRING("/"));
-  result.AppendInt(denominator, 10);
+  result.AppendInt(aFraction.Numerator(), 10);
+  if (aFraction.Denominator() > 1) {
+    result.Append(NS_LITERAL_STRING("/"));
+    result.AppendInt(aFraction.Denominator(), 10);
+  }
 
   return result;
 }
@@ -237,6 +233,7 @@ nsresult sbFractionFromString(nsAString const & aString,
   // Whole number
   if (space == -1) {
     numerator = aString.ToInteger(&rv, 10);
+    aFraction = sbFraction(numerator);
     return NS_OK;
   }
   // Bad format, no slash
