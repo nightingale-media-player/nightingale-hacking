@@ -68,7 +68,7 @@
 #include <vector>
 
 ///// Local directory includes
-#include "sbGstreamerMediacoreUtils.h"
+#include "sbGStreamerMediacoreUtils.h"
 
 ///// Helper functions
 

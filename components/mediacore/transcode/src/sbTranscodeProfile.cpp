@@ -200,9 +200,9 @@ sbTranscodeProfile::SetContainerProperties(nsIArray * aContainerProperties)
 template<typename T>
 T getInterpolatedQuality(std::map<double, T> &aMap, double aQuality)
 {
-  std::map<double, T>::const_iterator end   = aMap.end(),
-                                      lower,
-                                      upper = aMap.upper_bound(aQuality);
+  typename std::map<double, T>::const_iterator end   = aMap.end(),
+                                               lower,
+                                               upper = aMap.upper_bound(aQuality);
 
   if (aMap.empty()) {
     // completely missing :(
