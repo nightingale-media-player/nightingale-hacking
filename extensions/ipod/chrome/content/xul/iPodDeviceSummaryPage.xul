@@ -10,17 +10,17 @@
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the GPL).
-// 
+//
 // Software distributed under the License is distributed
 // on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
 // express or implied. See the GPL for the specific language
 // governing rights and limitations.
-// 
+//
 // You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 //=END SONGBIRD GPL
 */
 -->
@@ -101,37 +101,10 @@
     </vbox> <!-- /overall_device_info_box -->
 
     <!-- Device management tabbox. -->
-    <tabbox id="device_management_box" flex="1">
-
-      <!-- Device management tabs. -->
-      <tabs id="device_management_tabs">
-        <tab label="&device.management.tabs.music.label;"/>
-        <tab label="&device.management.tabs.tools.label;"/>
-      </tabs>
-
-      <!-- Device management tab panels. -->
-      <tabpanels id="device_management_tabpanels" flex="1">
-
-        <!-- Music management tab panel. -->
-        <tabpanel id="device_management_music_tabpanel">
-          <sb-device-sync id="device_sync_music"
+    <sb-device-managetabs flex="1"
                           observes="deviceIDBroadcaster"
-                          flex="1"
-                          pack="center" />
-        </tabpanel>
-
-        <!-- Device tools management tab panel. -->
-        <tabpanel id="device_management_tools_tabpanel">
-          <sb-device-tools id="ipod_tools_panel" 
-                           observes="deviceIDBroadcaster"
-                           tools="resetwarnings,repair" 
-                           flex="1"
-                           pack="center" />
-        </tabpanel>
-
-      </tabpanels>
-
-    </tabbox> <!-- End of "device_management_box". -->
+                          tools="resetwarnings,repair"
+                          hideSettingsTab="true"/>
 
   </vbox> <!-- End of "main_box". -->
 
@@ -142,7 +115,7 @@
    *
    ************************************************************************* -->
 
-  <!-- Import the Songbird services. -->  
+  <!-- Import the Songbird services. -->
   <script type="application/x-javascript"
           src="chrome://global/content/globalOverlay.js"/>
   <script type="application/x-javascript"
@@ -357,4 +330,3 @@
   ]]></script>
 
 </window>
-

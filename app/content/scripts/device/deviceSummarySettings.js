@@ -31,14 +31,14 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Device sync widget.
+// Device summary settings widget.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 //
-// Device sync defs.
+// Device summary settings defs.
 //
 //------------------------------------------------------------------------------
 
@@ -59,9 +59,52 @@ Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 if (typeof(XUL_NS) == "undefined")
   var XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 
-var DeviceSettingsPane = {
+var DeviceSummarySettings = {
+  //
+  // Device Sync Tabs object fields.
+  //
+  //   _widget                  Device sync tabs widget.
+  //   _deviceID                Device ID.
+  //  _deviceManagementWidgets  array of widgets for device management.
+  //  _mediaManagementWidgets   array of widgets for media management.
+  //
+
+  _widget: null,
+  _deviceID: null,
   _deviceManagementWidgets: [],
   _mediaManagementWidgets: [],
+
+  /**
+   * \brief Initialize the device summary settings services for the device
+   * summary settings widget specified by aWidget.
+   *
+   * \param aWidget             Device sync tabs widget.
+   */
+
+  initialize: function DeviceSummarySettings_initialize(aWidget) {
+    // Get the device widget.
+    this._widget = aWidget;
+
+    // Initialize object fields.
+    this._deviceID = this._widget.deviceID;
+    this._device = this._widget.device;
+
+    this.refreshDeviceSettings();
+  },
+
+  /**
+   * \brief Finalize the device summary settings services.
+   */
+
+  finalize: function DeviceSummarySettings_finalize() {
+    this._device = null;
+    this._deviceID = null;
+    this._widget = null;
+  },
+
+  /**
+   * \brief Call save on all device management widgets.
+   */
 
   // Currently we save every setting (transcode, and diskmgmt).  Since both
   // of those settings are settings where the default is the same as 'unset',
@@ -70,44 +113,51 @@ var DeviceSettingsPane = {
   // default setting is not the same as "explicitly unset" for the device,
   // then we should make sure we only save the settings that aren't in the
   // 'hide' list.
-  save: function DeviceSettingsPane_save() {
+  save: function DeviceSummarySettings_save() {
     for each (let widget in this._deviceManagementWidgets) {
       widget.save();
     }
   },
 
-  reset: function DeviceSettingsPane_reset() {
+  /**
+   * \brief Call reset all device management widgets.
+   */
+
+  reset: function DeviceSummarySettings_reset() {
     for each (let widget in this._deviceManagementWidgets) {
       widget.reset();
     }
   },
 
+  /**
+   * \brief Refresh all the device widgets settings.
+   */
+
   refreshDeviceSettings:
-    function DeviceSettingsPane_refreshDeviceSettings(aEvent) {
+    function DeviceSummarySettings_refreshDeviceSettings() {
     // Add device general settings widget if it hasn't been already.
-    var deviceGeneralSettings =
-          document.getElementById("device_general_settings");
+    var deviceGeneralSettings = this._getElement("device_general_settings");
     if (this._deviceManagementWidgets.indexOf(deviceGeneralSettings) < 0)
       this._deviceManagementWidgets.push(deviceGeneralSettings);
 
     // Refresh the media management.
-    this.refreshMediaManagement(aEvent);
+    this.refreshMediaManagement();
   },
 
-  refreshMediaManagement: function DeviceSettingsPane_refreshMediaManagement(aEvent) {
-    var deviceID = document.getElementById("deviceIDBroadcaster")
-                           .getAttribute("device-id");
+  /**
+   * \brief Refresh all the media management widgets.
+   */
 
+  refreshMediaManagement:
+    function DeviceSummarySettings_refreshMediaManagement() {
     // determine what settings to hide so we can pass it onto the
     // sb-device-management binding
-    var settingsToHide =
-          document.getElementById("device_management_settings_tabpanel")
-          .getAttribute("hide");
+    var settingsToHide = this._widget.getAttribute("hideSettings");
 
     var seenLibraries = {};
     for (let idx = this._mediaManagementWidgets.length - 1; idx >= 0; --idx) {
       let widget = this._mediaManagementWidgets[idx];
-      if (widget.deviceID == deviceID) {
+      if (widget.deviceID == this._deviceID) {
         seenLibraries[widget.libraryID] = true;
         continue;
       }
@@ -119,29 +169,47 @@ var DeviceSettingsPane = {
       ++idx;
     }
 
-    // Get the device.
-    var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
-                          .getService(Ci.sbIDeviceManager2);
-    var device = deviceManager.getDevice(Components.ID(deviceID));
-    var content = device.content;
+    // Get the device content.
+    var content = this._device.content;
 
     // add new bindings as needed
-    var container = document.getElementById("device_management_settings_content");
+    var container = this._getElement("device_management_settings_content");
     for each (let library in ArrayConverter.JSArray(content.libraries)) {
       library.QueryInterface(Ci.sbIDeviceLibrary);
       if (library.guid in seenLibraries) {
         continue;
       }
       var widget = document.createElement("sb-device-management");
-      widget.setAttribute("device-id", deviceID);
+      widget.setAttribute("device-id", this._deviceID);
       widget.setAttribute("library-id", library.guid);
       widget.setAttribute("hide", settingsToHide);
       container.appendChild(widget);
 
-      widget.device = device;
+      widget.device = this._device;
 
       this._deviceManagementWidgets.push(widget);
       this._mediaManagementWidgets.push(widget);
     }
+  },
+
+  //----------------------------------------------------------------------------
+  //
+  // Device summary settings XUL services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * \brief Return the XUL element with the ID specified by aElementID.  Use the
+   *        element "sbid" attribute as the ID.
+   *
+   * \param aElementID          ID of element to get.
+   *
+   * \return Element.
+   */
+
+  _getElement: function DeviceSummarySettings__getElement(aElementID) {
+    return document.getAnonymousElementByAttribute(this._widget,
+                                                   "sbid",
+                                                   aElementID);
   }
 };
