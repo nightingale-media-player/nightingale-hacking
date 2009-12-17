@@ -41,7 +41,9 @@
 #include <mach-o/dyld.h>
 #endif
 
-#define LOG(args) PR_LOG(loadLibrariesLog, PR_LOG_WARN, args)
+// We give this a different name (not LOG) because it's in a header, we don't
+// want to step in LOG() in other source files.
+#define LOAD_LIBRARIES_LOG(args) PR_LOG(loadLibrariesLog, PR_LOG_WARN, args)
 
 static nsresult
 SB_LoadLibraries(nsIFile* aManifest)
@@ -125,7 +127,8 @@ SB_LoadLibraries(nsIFile* aManifest)
       {
         nsCString _path;
         libLocal->GetNativePath(_path);
-        LOG(("SB_LoadLibraries: loading '%s'\n", _path.BeginReading()));
+        LOAD_LIBRARIES_LOG(("SB_LoadLibraries: loading '%s'\n",
+                            _path.BeginReading()));
       }
 #endif
 

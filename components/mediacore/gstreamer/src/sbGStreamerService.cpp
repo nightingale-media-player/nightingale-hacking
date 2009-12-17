@@ -28,6 +28,8 @@
 #include <gst/pbutils/descriptions.h>
 #include <glib/gutils.h>
 
+#include <sbLibraryLoaderUtils.h>
+
 #include <nsIEnvironment.h>
 #include <nsIProperties.h>
 #include <nsIFile.h>
@@ -238,6 +240,26 @@ sbGStreamerService::Init()
           pluginPaths.AppendLiteral(G_SEARCHPATH_SEPARATOR_S);
         pluginPaths.Append(dirPath);
         first = PR_FALSE;
+
+        // The extension might also provide dependent libraries that it needs
+        // for the plugin(s) to work. So, load those if there's a special
+        // text file listing what we need to load.
+        PRBool fileExists;
+        nsCOMPtr<nsIFile> dependencyListFile;
+        rv = extensionDir->Clone(getter_AddRefs(dependencyListFile));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = dependencyListFile->Append(
+                NS_LITERAL_STRING("dependent-libraries.txt"));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = dependencyListFile->Exists(&fileExists);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        if (fileExists) {
+          rv = SB_LoadLibraries(dependencyListFile);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
       }
     }
 
