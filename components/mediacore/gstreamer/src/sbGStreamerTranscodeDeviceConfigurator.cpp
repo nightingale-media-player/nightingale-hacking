@@ -152,7 +152,7 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbGStreamerTranscodeDeviceConfigurator,
 
 sbGStreamerTranscodeDeviceConfigurator::sbGStreamerTranscodeDeviceConfigurator()
   : mQuality(-HUGE_VAL),
-    mVideoBitrate(-PR_INT32_MIN)
+    mVideoBitrate(PR_INT32_MIN)
 {
   /* nothing */
 }
@@ -170,7 +170,7 @@ sbGStreamerTranscodeDeviceConfigurator::~sbGStreamerTranscodeDeviceConfigurator(
  * @param aResultCaps [out] the generated GstCaps, with an outstanding refcount
  */
 nsresult
-MakeCapsFromProperties(nsACString& aCapsName,
+MakeCapsFromProperties(const nsACString& aCapsName,
                        nsIArray *aProps,
                        GstCaps** aResultCaps)
 {
@@ -870,7 +870,7 @@ sbGStreamerTranscodeDeviceConfigurator::FinalizeOutputSize()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // the bit rate desired
-  if (mVideoBitrate == -PR_INT32_MIN) {
+  if (mVideoBitrate == PR_INT32_MIN) {
     mVideoBitrate = videoBPP *
                     mPreferredDimensions.width *
                     mPreferredDimensions.height;
