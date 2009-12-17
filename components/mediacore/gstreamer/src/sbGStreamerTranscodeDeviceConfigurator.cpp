@@ -25,12 +25,6 @@
 
 #define MOOK_HARD_CODE_CONFIGURATE
 
-#if defined(DEBUG) && defined(_MSC_VER)
-#pragma warning (disable: 4244)
-#else
-#error need to remove junk here
-#endif
-
 #if defined(XP_WIN)
 // needed before math.h to import HUGE_VAL correctly
 #define _DLL
