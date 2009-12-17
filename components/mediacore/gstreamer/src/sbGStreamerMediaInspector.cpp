@@ -335,16 +335,38 @@ sbGStreamerMediaInspector::InspectMedia(sbIMediaItem *aMediaItem,
   NS_ENSURE_ARG_POINTER (aMediaItem);
   NS_ENSURE_ARG_POINTER (_retval);
 
-  NS_ASSERTION(!NS_IsMainThread(),
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  PRBool processed = PR_FALSE;
+  PRBool isMainThread = NS_IsMainThread();
+  
+  nsCOMPtr<nsIThread> target;
+  if (isMainThread) {
+    rv = NS_GetMainThread(getter_AddRefs(target));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
+  NS_ASSERTION(!isMainThread,
                "Synchronous InspectMedia is background-thread only");
 
   // Reset internal state tracking.
   ResetStatus();
 
-  nsresult rv = InspectMediaAsync (aMediaItem);
+  rv = InspectMediaAsync (aMediaItem);
 
   while (PR_AtomicAdd (&mFinished, 0) == 0)
   {
+    // This isn't something that's considered safe to do but it does
+    // the job right now. Ideally one would always want to use the
+    // async version that's usable on a background thread.
+    //
+    // The sync version is really meant to be used on a background thread!
+    // However, the Base Device currently needs this method to be synchronous
+    // and on the main thread. This will change in the future.
+    if (isMainThread && target) {
+      rv = target->ProcessNextEvent(PR_FALSE, &processed);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
     // This is an ugly hack, but works well enough.
     PR_Sleep (50);
   }

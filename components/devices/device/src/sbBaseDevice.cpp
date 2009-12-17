@@ -5181,7 +5181,7 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem,
   rv = GetMediaFormat(aMediaItem, getter_AddRefs(mediaFormat));
   PRUint32 bitRate = 0;
   PRUint32 sampleRate = 0;
-  if (NS_FAILED(rv)) {
+  if (NS_FAILED(rv) || !mediaFormat) {
     // TODO: In the future, mediaFormat should always be used, but for now
     // we'll fall back to the format mappings
     rv = sbDeviceUtils::GetFormatTypeForItem(aMediaItem,

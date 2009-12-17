@@ -113,8 +113,9 @@ private:
   "sbGStreamerMediaInspector"
 #define SB_GSTREAMER_MEDIAINSPECTOR_DESCRIPTION \
   "Songbird GStreamer Media Inspector"
+// SB_MEDIAINSPECTOR_CONTRACTID is defined in sbIMediaInspector.idl/.h
 #define SB_GSTREAMER_MEDIAINSPECTOR_CONTRACTID \
-  "@songbirdnest.com/Songbird/Mediacore/gstreamermediainspector;1"
+  SB_MEDIAINSPECTOR_CONTRACTID
 #define SB_GSTREAMER_MEDIAINSPECTOR_CID \
   {0x200782a4, 0x07c6, 0x4ec7, {0xa3, 0x31, 0xb8, 0x88, 0x87, 0x36, 0x80, 0xa6}}
 
