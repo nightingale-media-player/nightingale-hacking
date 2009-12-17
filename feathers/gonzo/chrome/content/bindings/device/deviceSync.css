@@ -42,3 +42,7 @@ Imported by bindings.css or directly into feathers.
 .content-auto-sync-playlist-duration {
   text-align: right;
 }
+
+sb-device-sync[contentType="video"] .content-controls radio {
+  display: none;
+}

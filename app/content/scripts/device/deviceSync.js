@@ -146,7 +146,7 @@ var DeviceSyncWidget = {
          Ci.sbIMediaList.LISTENER_FLAGS_ITEMUPDATED);
 
     // Update the UI.
-    this.update();
+    this.syncPrefsApply();
   },
 
 
@@ -1055,21 +1055,23 @@ var DeviceSyncWidget = {
       // Disable the whole widget
       this._widget.setAttribute("disabled", true);
     }
-    else if (this.syncPrefsMgmtTypeIsAll()) {
-      // SYNC_ALL for this type
-      // Select the Sync All radio button
-      // Disable the playlist
-      this._widget.removeAttribute("disabled");
-      syncPlaylistTree.disabled = true;
-      this._selectRadio("content_auto_sync_all_radio");
-    }
     else {
+      this._widget.removeAttribute("disabled");
+    }
+
+    if ((this._mediaType == "video") || !this.syncPrefsMgmtTypeIsAll()) {
       // SYNC_PLAYLISTS for this type
       // Select the Sync Playlist radio button
       // Enable the playlist
-      this._widget.removeAttribute("disabled");
       syncPlaylistTree.disabled = false;
       this._selectRadio("content_auto_sync_selected_radio");
+    }
+    else {
+      // SYNC_ALL for this type
+      // Select the Sync All radio button
+      // Disable the playlist
+      syncPlaylistTree.disabled = true;
+      this._selectRadio("content_auto_sync_all_radio");
     }
 
     /* Apply the sync playlist list prefs. */
@@ -1129,7 +1131,7 @@ var DeviceSyncWidget = {
       var                         mgmtAll;
 
       mgmtAll = this._getElement("content_auto_sync_all_radio").selected;
-      this.syncPrefsSetMgmtType(mgmtAll);
+      this.syncPrefsSetMgmtType(this._mediaType == "video" ? false : mgmtAll);
 
       /* Extract the sync playlist list preferences. */
       syncPlaylistList = this._syncPrefs.syncPlaylistList;
