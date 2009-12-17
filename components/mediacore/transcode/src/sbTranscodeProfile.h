@@ -28,25 +28,43 @@
 #ifndef SBTRANSCODEPROFILE_H_
 #define SBTRANSCODEPROFILE_H_
 
-#include <nsCOMPtr.h>
 #include <nsIArray.h>
 #include <sbITranscodeProfile.h>
+
+#include <nsCOMPtr.h>
 #include <nsStringAPI.h>
+
+#include <map>
 
 /**
  * Basic implementation of a transcoding profile \see sbITranscodeProfile for
  * more information
  */
-class sbTranscodeProfile : public sbITranscodeProfile
+class sbTranscodeProfile : public sbITranscodeEncoderProfile
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBITRANSCODEPROFILE
+  NS_DECL_SBITRANSCODEENCODERPROFILE
 
   sbTranscodeProfile();
 
 private:
   ~sbTranscodeProfile();
+
+public:
+  /**
+   * add a priority point
+   */
+  nsresult AddPriority(double aQuality, PRUint32 aPriority);
+  /**
+   * add an audio bitrate point
+   */
+  nsresult AddAudioBitrate(double aQuality, double aBitrate);
+  /**
+   * add a video bits-per-pixel point
+   */
+  nsresult AddVideoBPP(double aQuality, double aBPP);
 
 private:
   nsString mId;
@@ -59,6 +77,13 @@ private:
   nsCOMPtr<nsIArray> mContainerProperties;
   nsCOMPtr<nsIArray> mAudioProperties;
   nsCOMPtr<nsIArray> mVideoProperties;
+  
+  /* map for the priority */
+  std::map<double, PRUint32> mPriorityMap;
+  /* map for audio bitrates */
+  std::map<double, double> mAudioBitrateMap;
+  /* map for the video bpps */
+  std::map<double, double> mVideoBPPMap;
 };
 
 #endif /* SBTRANSCODEPROFILE_H_ */

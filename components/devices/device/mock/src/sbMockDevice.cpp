@@ -38,6 +38,7 @@
 #include <nsServiceManagerUtils.h>
 #include <nsXPCOMCIDInternal.h>
 
+#include <sbIDeviceCapabilities.h>
 #include <sbIDeviceLibrary.h>
 #include <sbIDeviceProperties.h>
 
@@ -308,7 +309,100 @@ NS_IMETHODIMP sbMockDevice::SetPreference(const nsAString & aPrefName, nsIVarian
 /* readonly attribute sbIDeviceCapabilities capabilities; */
 NS_IMETHODIMP sbMockDevice::GetCapabilities(sbIDeviceCapabilities * *aCapabilities)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aCapabilities);
+  nsresult rv;
+
+  // Create the device capabilities object.
+  nsCOMPtr<sbIDeviceCapabilities> caps =
+    do_CreateInstance(SONGBIRD_DEVICECAPABILITIES_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 functionTypes[] = {sbIDeviceCapabilities::FUNCTION_DEVICE,
+                              sbIDeviceCapabilities::FUNCTION_VIDEO_PLAYBACK};
+  rv = caps->SetFunctionTypes(functionTypes, NS_ARRAY_LENGTH(functionTypes));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 contentTypes[] = {sbIDeviceCapabilities::CONTENT_VIDEO};
+  rv = caps->AddContentTypes(sbIDeviceCapabilities::FUNCTION_VIDEO_PLAYBACK,
+                             contentTypes, NS_ARRAY_LENGTH(contentTypes));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  const char* K_FORMAT_STRING = "ogg-theora-vorbis-sample-1";
+  rv = caps->AddFormats(sbIDeviceCapabilities::CONTENT_VIDEO,
+                        &K_FORMAT_STRING, 1);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevCapVideoStream> videoFormat =
+    do_CreateInstance(SB_IDEVCAPVIDEOSTREAM_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIImageSize> videoSize =
+    do_CreateInstance(SB_IMAGESIZE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = videoSize->Initialize(1280, 720);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIMutableArray> videoSizeArray =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = videoSizeArray->AppendElement(videoSize, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  const char* K_VIDEO_PAR_STRING = "1/1";
+  const char* K_VIDEO_FRAMERATE_STRING = "30000/1001";
+  nsCOMPtr<sbIDevCapRange> videoBitrateRange =
+    do_CreateInstance(SB_IDEVCAPRANGE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = videoBitrateRange->Initialize(100, 4 * 1024 * 1024, 100);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = videoFormat->Initialize(NS_LITERAL_CSTRING("video/x-theora"),
+                               videoSizeArray,
+                               nsnull, // explicit sizes only
+                               nsnull, // explicit sizes only
+                               1,
+                               &K_VIDEO_PAR_STRING,
+                               1,
+                               &K_VIDEO_FRAMERATE_STRING,
+                               videoBitrateRange);
+  
+  nsCOMPtr<sbIDevCapAudioStream> audioFormat =
+    do_CreateInstance(SB_IDEVCAPAUDIOSTREAM_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIDevCapRange> audioBitrateRange =
+    do_CreateInstance(SB_IDEVCAPRANGE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = audioBitrateRange->Initialize(100, 4 * 1024 * 1024, 100);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIDevCapRange> audioSampleRateRange =
+    do_CreateInstance(SB_IDEVCAPRANGE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = audioSampleRateRange->Initialize(22050, 44100, 22050);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIDevCapRange> audioChannelsRange =
+    do_CreateInstance(SB_IDEVCAPRANGE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = audioChannelsRange->Initialize(1, 2, 1);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = audioFormat->Initialize(NS_LITERAL_CSTRING("audio/x-vorbis"),
+                               audioBitrateRange,
+                               audioSampleRateRange,
+                               audioChannelsRange);
+
+  nsCOMPtr<sbIVideoFormatType> formatType =
+    do_CreateInstance(SB_IVIDEOFORMATTYPE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = formatType->Initialize(NS_LITERAL_CSTRING("application/ogg"),
+                              videoFormat, audioFormat);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = caps->AddFormatType(NS_ConvertASCIItoUTF16(K_FORMAT_STRING), formatType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Complete the device capabilities initialization.
+  rv = caps->InitDone();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  caps.forget(aCapabilities);
+  return NS_OK;
 }
 
 /* readonly attribute sbIDeviceContent content; */

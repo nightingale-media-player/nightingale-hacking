@@ -398,6 +398,7 @@ Win32PlatformInterface::SetVideoBox(nsIBoxObject *aBoxObject,
     mWindow = NULL;
     mParentWindow = NULL;
   }
+  return NS_OK;
 }
 
 Win32PlatformInterface::~Win32PlatformInterface ()

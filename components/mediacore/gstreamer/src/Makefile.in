@@ -3,7 +3,8 @@ DEPTH  = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@ \
-        @top_srcdir@/components/mediacore/base/src/
+        @top_srcdir@/components/mediacore/base/src/ \
+        @top_srcdir@/components/mediacore/transcode/src/
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -22,6 +23,7 @@ CPP_SRCS = sbGStreamerService.cpp \
            sbGStreamerRTPStreamer.cpp \
            sbGStreamerTranscode.cpp \
            sbGStreamerVideoTranscode.cpp \
+           sbGStreamerTranscodeDeviceConfigurator.cpp \
            $(NULL)
 
 # from /components/mediacore/base/src
@@ -38,6 +40,10 @@ CPP_SRCS += sbBaseMediacore.cpp \
             sbVideoBox.cpp \
             $(NULL)
 
+# from /components/mediacore/transcode/src
+CPP_SRCS += sbTranscodingConfigurator.cpp \
+            $(NULL)
+
 ifeq (windows,$(SB_PLATFORM))
    CPP_SRCS += sbGStreamerPlatformWin32.cpp
 endif
@@ -49,6 +55,7 @@ ifneq (,$(filter linux solaris,$(SB_PLATFORM)))
 endif
 
 CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
+                     $(DEPTH)/components/devices/base/public \
                      $(DEPTH)/components/library/base/public \
                      $(DEPTH)/components/mediacore/base/public \
                      $(topsrcdir)/components/mediacore/base/src \
@@ -56,6 +63,7 @@ CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
                      $(topsrcdir)/components/mediacore/gstreamer/src \
                      $(DEPTH)/components/mediacore/metadata/manager/public \
                      $(DEPTH)/components/mediacore/transcode/public \
+                     $(topsrcdir)/components/mediacore/transcode/src \
                      $(DEPTH)/components/moz/strings/components/public \
                      $(topsrcdir)/components/moz/strings/src \
                      $(topsrcdir)/components/moz/threads/src \

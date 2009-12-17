@@ -257,4 +257,18 @@ nsresult sbFractionFromString(nsAString const & aString,
 
   return NS_OK;
 }
+inline
+nsresult sbFractionFromString(nsACString const & aString,
+                              sbFraction & aFraction)
+{
+  return sbFractionFromString(NS_ConvertASCIItoUTF16(aString), aFraction);
+}
+inline
+nsresult sbFractionFromString(const char* aString,
+                              sbFraction & aFraction)
+{
+  return sbFractionFromString(NS_ConvertASCIItoUTF16(nsDependentCString(aString)),
+                              aFraction);
+}
+
 #endif /* SBFRACTION_H_ */

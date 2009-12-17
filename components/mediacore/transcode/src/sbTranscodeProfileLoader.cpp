@@ -41,6 +41,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsStringGlue.h>
 #include <nsThreadUtils.h>
+#include <prdtoa.h>
 
 #include <sbVariantUtils.h>
 
@@ -72,7 +73,9 @@ sbTranscodeProfileLoader::LoadProfile(nsIFile *aFile, sbITranscodeProfile **_ret
     // this is on the main thread, call directly
     rv = LoadProfileInternal();
     NS_ENSURE_SUCCESS(rv, rv);
-    mProfile.forget(_retval);
+    rv = CallQueryInterface(mProfile.get(), _retval);
+    NS_ENSURE_SUCCESS(rv, rv);
+    mProfile.forget();
   } else {
     nsCOMPtr<nsIRunnable> runnable =
       do_QueryInterface(NS_ISUPPORTS_CAST(nsIRunnable*, this), &rv);
@@ -80,7 +83,9 @@ sbTranscodeProfileLoader::LoadProfile(nsIFile *aFile, sbITranscodeProfile **_ret
     rv = NS_DispatchToMainThread(runnable, NS_DISPATCH_SYNC);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    mProfile.forget(_retval);
+    rv = CallQueryInterface(mProfile.get(), _retval);
+    NS_ENSURE_SUCCESS(rv, rv);
+    mProfile.forget();
     // check the return value from LoadProfileInternal
     NS_ENSURE_SUCCESS(mResult, mResult);
   }
@@ -136,7 +141,7 @@ sbTranscodeProfileLoader::LoadProfileInternal()
   rv = fileStream->Close();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mProfile = do_CreateInstance(SONGBIRD_TRANSCODEPROFILE_CONTRACTID, &rv);
+  mProfile = new sbTranscodeProfile();
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIDOMElement> element;
@@ -178,8 +183,24 @@ sbTranscodeProfileLoader::LoadProfileInternal()
           NS_ENSURE_SUCCESS(rv, rv);
           PRInt32 priority = textContent.ToInteger(&rv);
           NS_ENSURE_SUCCESS(rv, rv);
-          rv = mProfile->SetPriority(priority);
+
+          PRBool hasQuality = PR_FALSE;
+          rv = childElement->HasAttribute(NS_LITERAL_STRING("quality"),
+                                          &hasQuality);
           NS_ENSURE_SUCCESS(rv, rv);
+          if (hasQuality) {
+            nsString qualityString;
+            rv = childElement->GetAttribute(NS_LITERAL_STRING("quality"),
+                                            qualityString);
+            NS_ENSURE_SUCCESS(rv, rv);
+            NS_LossyConvertUTF16toASCII qualityCString(qualityString);
+            PRFloat64 quality = PR_strtod(qualityCString.get(), nsnull);
+            rv = mProfile->AddPriority((double)quality, priority);
+            NS_ENSURE_SUCCESS(rv, rv);
+          } else {
+            rv = mProfile->SetPriority(priority);
+            NS_ENSURE_SUCCESS(rv, rv);
+          }
         }
       } else if (localName.EqualsLiteral("id")) {
         nsCOMPtr<nsIDOM3Node> dom3Node = do_QueryInterface(childNode);
@@ -303,7 +324,7 @@ sbTranscodeProfileLoader::ProcessProperty(nsIDOMElement* aPropertyElement,
 }
 
 nsresult
-sbTranscodeProfileLoader::ProcessContainer(sbITranscodeProfile* aProfile,
+sbTranscodeProfileLoader::ProcessContainer(sbTranscodeProfile* aProfile,
                                            ContainerType_t aContainerType,
                                            nsIDOMElement* aContainer)
 {
@@ -349,13 +370,43 @@ sbTranscodeProfileLoader::ProcessContainer(sbITranscodeProfile* aProfile,
             rv = NS_ERROR_UNEXPECTED;
         }
         NS_ENSURE_SUCCESS(rv, rv);
-      } else if (localName.EqualsLiteral("property")) {
+      }
+      else if (localName.EqualsLiteral("property")) {
         nsCOMPtr<sbITranscodeProfileProperty> property;
         rv = ProcessProperty(childElement, getter_AddRefs(property));
         NS_ENSURE_SUCCESS(rv, rv);
 
         rv = properties->AppendElement(property, PR_FALSE);
         NS_ENSURE_SUCCESS(rv, rv);
+      }
+      else if (localName.EqualsLiteral("quality-property")) {
+        nsString attrVal;
+        rv = childElement->GetAttribute(NS_LITERAL_STRING("quality"), attrVal);
+        NS_ENSURE_SUCCESS(rv, rv);
+        nsCString attrCVal = NS_LossyConvertUTF16toASCII(attrVal);
+        PRFloat64 quality = PR_strtod(attrCVal.get(), nsnull);
+
+        rv = childElement->GetAttribute(NS_LITERAL_STRING("value"), attrVal);
+        NS_ENSURE_SUCCESS(rv, rv);
+        attrCVal = NS_LossyConvertUTF16toASCII(attrVal);
+        PRFloat64 value = PR_strtod(attrCVal.get(), nsnull);
+
+        rv = childElement->GetAttribute(NS_LITERAL_STRING("name"), attrVal);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        if (attrVal.EqualsLiteral("bitrate")) {
+          NS_ENSURE_STATE(aContainerType == CONTAINER_AUDIO);
+          rv = aProfile->AddAudioBitrate((double)quality, (double)value);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+        else if (attrVal.EqualsLiteral("bpp")) {
+          NS_ENSURE_STATE(aContainerType == CONTAINER_VIDEO);
+          rv = aProfile->AddVideoBPP((double)quality, (double)value);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+        else {
+          NS_ENSURE_TRUE(false, NS_ERROR_UNEXPECTED);
+        }
       }
     }
     rv = childNode->GetNextSibling(getter_AddRefs(childNode));

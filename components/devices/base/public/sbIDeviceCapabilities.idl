@@ -307,14 +307,16 @@ interface sbIDevCapVideoStream : nsISupports
    * using sbFraction
    */
   void getSupportedVideoPARs(out unsigned long aCount, 
-                             [retval, array, size_is(aCount)]out string aVideoPARs); 
+                             [retval, array, size_is(aCount)]
+                               out string aVideoPARs); 
   
   /**
    * Returns the list of video frame rates. These are string which can be parsed
    * using sbFraction
    */
   void getSupportedFrameRates(out unsigned long aCount,
-                              [retval, array, size_is(aCount)]out string aFrameRates);
+                              [retval, array, size_is(aCount)]
+                                out string aFrameRates);
                      
   /**
    * Returns a range of bit rates
@@ -444,7 +446,7 @@ interface sbIDeviceCapabilities : nsISupports
    * \param aEventCount length of aEventTypes array
    */
   void setEventTypes([array, size_is(aEventTypesCount)]
-                      in unsigned long aEventTypes,
+                       in unsigned long aEventTypes,
                      in unsigned long aEventTypesCount);
 
   /**
@@ -454,8 +456,9 @@ interface sbIDeviceCapabilities : nsISupports
    * \param aContentTypesCount length of aContentTypes array
    */
   void addContentTypes(in PRUint32 aFunctionType,
-                [array, size_is(aContentTypesCount)] in unsigned long aContentTypes,
-                in unsigned long aContentTypesCount);
+                       [array, size_is(aContentTypesCount)]
+                         in unsigned long aContentTypes,
+                       in unsigned long aContentTypesCount);
   
   /**
    * \brief Add an array of formats for a content type
@@ -537,7 +540,7 @@ interface sbIDeviceCapabilities : nsISupports
   void getSupportedContentTypes(in PRUint32 aFunctionType,
                                 out unsigned long aArrayCount,
                                 [retval, array, size_is(aArrayCount)]
-                                out PRUint32 aContentTypes);
+                                  out PRUint32 aContentTypes);
 
   /**
    * Returns an array of format types
@@ -545,7 +548,7 @@ interface sbIDeviceCapabilities : nsISupports
   void getSupportedFormats(in PRUint32 aContentType,
                            out unsigned long aArrayCount,
                            [retval, array, size_is(aArrayCount)]
-                           out string aSupportedFormats);
+                             out string aSupportedFormats);
 
   /**
    * Returns the list of constraints for the format
@@ -558,7 +561,7 @@ interface sbIDeviceCapabilities : nsISupports
    */
   void getSupportedEvents(out unsigned long aArrayCount,
                           [retval, array, size_is(aArrayCount)]
-                           out unsigned long aSupportedEvents);
+                            out unsigned long aSupportedEvents);
 };
 
 %{C++

@@ -35,6 +35,8 @@
 #include <nsIPropertyBag.h>
 #include <nsStringAPI.h>
 
+class nsIWritablePropertyBag2;
+
 #define SONGBIRD_TRANSCODINGCONFIGURATOR_CONTRACTID        \
   "@songbirdnest.com/Songbird/Mediacore/TranscodingConfigurator;1"
 #define SONGBIRD_TRANSCODINGCONFIGURATOR_CLASSNAME         \
@@ -75,9 +77,9 @@ protected:
   // The basic audio format for data that is not specific to a particular codec.
   nsCOMPtr<sbIMediaFormatAudio>       mAudioFormat;
   // The video properties to set to encode a file as defined by configurate.
-  nsCOMPtr<nsIPropertyBag>            mVideoEncoderProperties;
+  nsCOMPtr<nsIWritablePropertyBag2>   mVideoEncoderProperties;
   // The audio properties to set to encode a file as defined by configurate.
-  nsCOMPtr<nsIPropertyBag>            mAudioEncoderProperties;
+  nsCOMPtr<nsIWritablePropertyBag2>   mAudioEncoderProperties;
 };
 
 #endif /*__SB_TRANSCODINGCONFIGURATOR_H__*/

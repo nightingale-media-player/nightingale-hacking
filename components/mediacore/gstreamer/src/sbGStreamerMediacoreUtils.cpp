@@ -527,16 +527,28 @@ const char *
 FindMatchingElementName(const char *srcCapsString, const char *typeName)
 {
   GstCaps *caps;
-  GList *list, *walk;
-  TypeMatchingInfo data;
-  guint bestrank = 0;
-  GstElementFactory *bestfactory = NULL;
 
   caps = gst_caps_from_string (srcCapsString);
   if (!caps)
     return NULL;
 
-  data.srccaps = caps;
+  const char* result = FindMatchingElementName(caps, typeName);
+  gst_caps_unref(caps);
+  return result;
+}
+
+const char *
+FindMatchingElementName(GstCaps *srcCaps, const char *typeName)
+{
+  GList *list, *walk;
+  TypeMatchingInfo data;
+  guint bestrank = 0;
+  GstElementFactory *bestfactory = NULL;
+
+  if (!srcCaps)
+    return NULL;
+
+  data.srccaps = srcCaps;
   data.type = typeName;
 
   list = gst_default_registry_feature_filter (

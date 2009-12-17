@@ -1,0 +1,26 @@
+<profile>
+  <type>video</type>
+  <id>072b5104-1dd2-11b2-9313-e80ca3194e4e</id>
+  <priority>1000</priority> <!-- Low priority; this is not optimized -->
+  <priority quality="0">100</priority> <!-- this sucks at low bitrates -->
+  <priority quality="1">1500</priority>
+  <description>Ogg/Theora/Vorbis test profile</description>
+  <mimetype>application/ogg</mimetype>
+
+  <container>
+    <type>application/ogg</type>
+  </container>
+
+  <video>
+    <type>video/x-theora</type>
+    <quality-property name="bpp" quality="0" value="0.2"/>
+    <quality-property name="bpp" quality="1" value="1"/>
+  </video>
+
+  <audio>
+    <type>audio/x-vorbis</type>
+    <quality-property name="bitrate" quality="0" value="32000"/>
+    <quality-property name="bitrate" quality="0.5" value="128000"/>
+    <quality-property name="bitrate" quality="1" value="320000"/>
+  </audio>
+</profile>

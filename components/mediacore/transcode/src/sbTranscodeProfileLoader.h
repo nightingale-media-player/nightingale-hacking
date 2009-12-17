@@ -32,6 +32,7 @@
 
 #include <nsIRunnable.h>
 
+#include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 
 // forward declarations
@@ -39,7 +40,7 @@ class nsIDOMElement;
 class nsIDOMNode;
 class nsIDOMParser;
 class nsIFile;
-class sbITranscodeProfile;
+class sbTranscodeProfile;
 
 class sbTranscodeProfileLoader : public sbITranscodeProfileLoader,
                                  public nsIRunnable
@@ -88,7 +89,7 @@ protected:
    * \param [in] aContainerType the type of the container
    * \param [out] aContainer the container XML element to parse
    */
-  nsresult ProcessContainer(sbITranscodeProfile* aProfile,
+  nsresult ProcessContainer(sbTranscodeProfile* aProfile,
                             ContainerType_t aContainerType,
                             nsIDOMElement* aContainer);
 
@@ -102,7 +103,7 @@ protected:
    * The transcode profile to output
    * Used as a return value for LoadProfileInternal
    */
-  nsCOMPtr<sbITranscodeProfile> mProfile;
+  nsRefPtr<sbTranscodeProfile> mProfile;
 
   /**
    * The XPCOM result of LoadProfileInternal

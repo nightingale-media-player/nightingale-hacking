@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 /**
  * \file sbITranscodeProfile.idl
@@ -115,6 +113,80 @@ interface sbITranscodeProfile : nsISupports
 
   attribute nsIArray containerProperties;
 };
+
+/**
+ * Transcoding profile data for the configurator algorithm v1
+ */
+[scriptable, uuid(5299d39c-1dd2-11b2-a422-bd0e6c446ba7)]
+interface sbITranscodeEncoderProfile : sbITranscodeProfile {
+  /**
+   * Get the priority of this encoder profile, when used at a given priority
+   * (some profiles may not be suitable for high quality encoding, for example)
+   *
+   * Priorities of zero will not be considered.
+   * It is recommended to return a (small) positive value even for unsuitable
+   * quality settings, as being able to transcode is better than not.
+   *
+   * @param aQuality the desired output quality, in the range 0 to 1 (inclusive)
+   *
+   * @return The priority for this encoder; zero indicates that the given
+   * profile must not be used at this quality.
+   */
+  unsigned long getPriority(in double aQuality);
+
+%{COMMENT
+  /* these live on sbITranscodeProfile for now */
+  /**
+   * \brief The container format to put the transcoded media in (if any).
+   *
+   * Examples:
+   *   "application/ogg", "application/x-id3", "video/quicktime"
+   *
+   * May be an empty string to indicate that no container is desired.
+   *
+   * Note that 'tag' formats such as id3 are considered as container formats
+   * here for simplicity.
+   */
+  attribute AString containerFormat;
+
+  /**
+   * \brief The audio codec to use (if any).
+   *
+   * Examples:
+   *   "audio/x-vorbis", "audio/mpeg", "audio/x-raw-int"
+   *
+   * May be an empty string to indicate that no audio should be stored.
+   */
+  attribute AString audioCodec;
+
+  /**
+   * \brief The video codec to use (if any).
+   *
+   * Examples:
+   *  "video/mpeg", "video/x-theora", "video/x-yuv"
+   *
+   * May be an empty string to indicate that no video should be stored.
+   */
+  attribute AString videoCodec;
+%}COMMENT
+
+  /**
+   * Get the desired audio bitrate for a given quality setting
+   *
+   * @param aQuality the desired quality, in the range 0 to 1 (inclusive)
+   * @return the desired bitrate, in bits per second
+   */
+  double getAudioBitrate(in double aQuality);
+
+  /**
+   * Get the desired video bits per pixel for a given quality setting
+   *
+   * @param aQuality the desired quality, in the range 0 to 1 (inclusive)
+   * @return the desired bits per pixel; this value may be less than 1
+   */
+  double getVideoBitsPerPixel(in double aQuality);
+}; 
+
 
 %{C++
 #define SONGBIRD_TRANSCODEPROFILE_DESCRIPTION             \

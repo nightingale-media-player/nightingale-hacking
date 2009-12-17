@@ -22,8 +22,9 @@
  *=END SONGBIRD GPL
  */
 
-
 #include "sbTranscodingConfigurator.h"
+
+#include <nsIWritablePropertyBag2.h>
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbTranscodingConfigurator,
                               sbITranscodingConfigurator)
@@ -67,7 +68,7 @@ sbTranscodingConfigurator::GetInputFormat(sbIMediaFormat **aInputFormat)
 NS_IMETHODIMP
 sbTranscodingConfigurator::SetInputFormat(sbIMediaFormat *aInputFormat)
 {
-  NS_ENSURE_FALSE(!isConfigurated, NS_ERROR_ALREADY_INITIALIZED);
+  NS_ENSURE_FALSE(isConfigurated, NS_ERROR_ALREADY_INITIALIZED);
   NS_ENSURE_ARG(aInputFormat);
   mInputFormat = aInputFormat;
   return NS_OK;
@@ -162,7 +163,9 @@ sbTranscodingConfigurator::GetVideoEncoderProperties(
 {
   NS_ENSURE_TRUE(isConfigurated, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aVideoEncoderProperties);
-  NS_IF_ADDREF(*aVideoEncoderProperties = mVideoEncoderProperties);
+  nsresult rv;
+  rv = CallQueryInterface(mVideoEncoderProperties, aVideoEncoderProperties);
+  NS_ENSURE_SUCCESS(rv, rv);
   return NS_OK;
 }
 
@@ -177,6 +180,8 @@ sbTranscodingConfigurator::GetAudioEncoderProperties(
 {
   NS_ENSURE_TRUE(isConfigurated, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aAudioEncoderProperties);
-  NS_IF_ADDREF(*aAudioEncoderProperties = mAudioEncoderProperties);
+  nsresult rv;
+  rv = CallQueryInterface(mAudioEncoderProperties, aAudioEncoderProperties);
+  NS_ENSURE_SUCCESS(rv, rv);
   return NS_OK;
 }

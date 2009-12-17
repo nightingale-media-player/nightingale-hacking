@@ -92,15 +92,22 @@ GstBusSyncReply SyncToAsyncDispatcher(GstBus* bus, GstMessage* message,
 nsresult GetMediacoreErrorFromGstError(GError *gerror, nsString aResource,
         sbIMediacoreError **_retval);
 
-/* Find an element name for an element that can produce caps compatible with
-   'srcCapsString' on its source pad, and has a klass name include 'typeName'.
-   Returns NULL if none is found.
-
-   e.g. Call FindMatchingElementName("application/ogg", "Muxer") to get an ogg
-        muxer element name ("oggmux" will be returned).
+/**
+ * Find an element name for an element that can produce caps compatible with
+ * 'srcCapsString' on its source pad, and has a klass name include 'typeName'.
+ * Returns NULL if none is found.
+ *
+ * e.g. Call FindMatchingElementName("application/ogg", "Muxer") to get an ogg
+ *      muxer element name ("oggmux" will be returned).
  */
 const char *
 FindMatchingElementName(const char *srcCapsString, const char *typeName);
+
+/**
+ * Overload of the above, but accepting a GstCaps instead of a string
+ */
+const char *
+FindMatchingElementName(GstCaps *srcCaps, const char *typeName);
 
 /* Register any the custom tags we need to use */
 void

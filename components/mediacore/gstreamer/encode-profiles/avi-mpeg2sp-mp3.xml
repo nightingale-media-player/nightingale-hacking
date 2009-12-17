@@ -1,0 +1,29 @@
+<profile>
+  <type>video</type>
+  <id>3c17973a-1dd2-11b2-b6f7-d0f4121c0aa0</id>
+  <priority>1000</priority> <!-- Low priority; this is not optimized -->
+  <priority quality="0">100</priority> <!-- this sucks at low bitrates -->
+  <priority quality="1">1500</priority>
+  <description>ACME High End test profile</description>
+  <mimetype>video/x-msvideo</mimetype>
+
+  <container>
+    <type>video/x-msvideo</type>
+  </container>
+
+  <video>
+    <type>video/mpeg</type>
+    <property name="mpegversion" type="int" min="4" max="4" default="4"/>
+    <quality-property name="bpp" quality="0" value="0.2"/>
+    <quality-property name="bpp" quality="1" value="1"/>
+  </video>
+
+  <audio>
+    <type>audio/mpeg</type>
+    <property name="mpegversion" type="int" min="1" max="1" default="1"/>
+    <property name="layer" type="int" min="3" max="3" default="3"/>
+    <quality-property name="bitrate" quality="0" value="32000"/>
+    <quality-property name="bitrate" quality="0.5" value="128000"/>
+    <quality-property name="bitrate" quality="1" value="320000"/>
+  </audio>
+</profile>

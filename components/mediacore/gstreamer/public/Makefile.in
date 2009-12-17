@@ -33,6 +33,7 @@ XPIDL_SRCS = sbIGStreamerService.idl \
              sbIGStreamerMediacore.idl \
              sbIGStreamerRTPStreamer.idl \
              sbIGStreamerPipeline.idl \
+             sbPIGstTranscodingConfigurator.idl \
              $(NULL)
 
 XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/property/public \

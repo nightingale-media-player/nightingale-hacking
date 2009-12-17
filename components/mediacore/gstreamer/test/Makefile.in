@@ -33,6 +33,7 @@ SONGBIRD_TEST_COMPONENT = gstreamer
 
 SONGBIRD_TESTS = $(srcdir)/head_gstreamer.js \
                  $(srcdir)/test_plugins.js \
+                 $(srcdir)/test_transcode_profiles.js \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk

@@ -28,7 +28,9 @@
 #include "sbTranscodeProfile.h"
 
 /* Implementation file */
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbTranscodeProfile, sbITranscodeProfile)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbTranscodeProfile,
+                              sbITranscodeProfile,
+                              sbITranscodeEncoderProfile)
 
 sbTranscodeProfile::sbTranscodeProfile() :
   mPriority(0),
@@ -42,44 +44,53 @@ sbTranscodeProfile::~sbTranscodeProfile()
   /* destructor code */
 }
 
-NS_IMETHODIMP sbTranscodeProfile::GetId(nsAString & aId)
+NS_IMETHODIMP
+sbTranscodeProfile::GetId(nsAString & aId)
 {
   aId = mId;
   return NS_OK;
 }
 
-NS_IMETHODIMP sbTranscodeProfile::SetId(nsAString const & aId)
+NS_IMETHODIMP
+sbTranscodeProfile::SetId(nsAString const & aId)
 {
   mId = aId;
   return NS_OK;
 }
 
-NS_IMETHODIMP sbTranscodeProfile::GetPriority(PRUint32 *aPriority)
+NS_IMETHODIMP
+sbTranscodeProfile::GetPriority(PRUint32 *aPriority)
 {
   NS_ENSURE_ARG_POINTER(aPriority);
   *aPriority = mPriority;
   return NS_OK;
 }
 
-NS_IMETHODIMP sbTranscodeProfile::SetPriority(PRUint32 aPriority)
+NS_IMETHODIMP
+sbTranscodeProfile::SetPriority(PRUint32 aPriority)
 {
   mPriority = aPriority;
+  // set a default point for sbITranscodeEncoderProfile::getPriority
+  mPriorityMap[0.5] = aPriority;
   return NS_OK;
 }
 
-NS_IMETHODIMP sbTranscodeProfile::GetDescription(nsAString & aDescription)
+NS_IMETHODIMP
+sbTranscodeProfile::GetDescription(nsAString & aDescription)
 {
   aDescription = mDescription;
   return NS_OK;
 }
 
-NS_IMETHODIMP sbTranscodeProfile::SetDescription(nsAString const & aDescription)
+NS_IMETHODIMP
+sbTranscodeProfile::SetDescription(nsAString const & aDescription)
 {
   mDescription = aDescription;
   return NS_OK;
 }
 
-NS_IMETHODIMP sbTranscodeProfile::GetType(PRUint32 *aType)
+NS_IMETHODIMP
+sbTranscodeProfile::GetType(PRUint32 *aType)
 {
   NS_ENSURE_ARG_POINTER(aType);
 
@@ -87,49 +98,57 @@ NS_IMETHODIMP sbTranscodeProfile::GetType(PRUint32 *aType)
   return NS_OK;
 }
 
-NS_IMETHODIMP sbTranscodeProfile::SetType(PRUint32 aType)
+NS_IMETHODIMP
+sbTranscodeProfile::SetType(PRUint32 aType)
 {
   mType = aType;
   return NS_OK;
 }
 
-NS_IMETHODIMP sbTranscodeProfile::GetContainerFormat(nsAString & aContainerFormat)
+NS_IMETHODIMP
+sbTranscodeProfile::GetContainerFormat(nsAString & aContainerFormat)
 {
   aContainerFormat = mContainerFormat;
   return NS_OK;
 }
 
-NS_IMETHODIMP sbTranscodeProfile::SetContainerFormat(nsAString const & aContainerFormat)
+NS_IMETHODIMP
+sbTranscodeProfile::SetContainerFormat(nsAString const & aContainerFormat)
 {
   mContainerFormat = aContainerFormat;
   return NS_OK;
 }
 
-NS_IMETHODIMP sbTranscodeProfile::GetAudioCodec(nsAString & aAudioCodec)
+NS_IMETHODIMP
+sbTranscodeProfile::GetAudioCodec(nsAString & aAudioCodec)
 {
   aAudioCodec = mAudioCodec;
   return NS_OK;
 }
 
-NS_IMETHODIMP sbTranscodeProfile::SetAudioCodec(nsAString const & aAudioCodec)
+NS_IMETHODIMP
+sbTranscodeProfile::SetAudioCodec(nsAString const & aAudioCodec)
 {
   mAudioCodec = aAudioCodec;
   return NS_OK;
 }
 
-NS_IMETHODIMP sbTranscodeProfile::GetVideoCodec(nsAString & aVideoCodec)
+NS_IMETHODIMP
+sbTranscodeProfile::GetVideoCodec(nsAString & aVideoCodec)
 {
   aVideoCodec = mVideoCodec;
   return NS_OK;
 }
 
-NS_IMETHODIMP sbTranscodeProfile::SetVideoCodec(nsAString const & aVideoCodec)
+NS_IMETHODIMP
+sbTranscodeProfile::SetVideoCodec(nsAString const & aVideoCodec)
 {
   mVideoCodec = aVideoCodec;
   return NS_OK;
 }
 
-NS_IMETHODIMP sbTranscodeProfile::GetAudioProperties(nsIArray * *aAudioProperties)
+NS_IMETHODIMP
+sbTranscodeProfile::GetAudioProperties(nsIArray * *aAudioProperties)
 {
   NS_ENSURE_ARG_POINTER(aAudioProperties);
 
@@ -137,13 +156,15 @@ NS_IMETHODIMP sbTranscodeProfile::GetAudioProperties(nsIArray * *aAudioPropertie
   return NS_OK;
 }
 
-NS_IMETHODIMP sbTranscodeProfile::SetAudioProperties(nsIArray * aAudioProperties)
+NS_IMETHODIMP
+sbTranscodeProfile::SetAudioProperties(nsIArray * aAudioProperties)
 {
   mAudioProperties = aAudioProperties;
   return NS_OK;
 }
 
-NS_IMETHODIMP sbTranscodeProfile::GetVideoProperties(nsIArray * *aVideoProperties)
+NS_IMETHODIMP
+sbTranscodeProfile::GetVideoProperties(nsIArray * *aVideoProperties)
 {
   NS_ENSURE_ARG_POINTER(aVideoProperties);
 
@@ -151,13 +172,15 @@ NS_IMETHODIMP sbTranscodeProfile::GetVideoProperties(nsIArray * *aVideoPropertie
   return NS_OK;
 }
 
-NS_IMETHODIMP sbTranscodeProfile::SetVideoProperties(nsIArray * aVideoProperties)
+NS_IMETHODIMP
+sbTranscodeProfile::SetVideoProperties(nsIArray * aVideoProperties)
 {
   mVideoProperties = aVideoProperties;
   return NS_OK;
 }
 
-NS_IMETHODIMP sbTranscodeProfile::GetContainerProperties(nsIArray * *aContainerProperties)
+NS_IMETHODIMP
+sbTranscodeProfile::GetContainerProperties(nsIArray * *aContainerProperties)
 {
   NS_ENSURE_ARG_POINTER(aContainerProperties);
 
@@ -165,8 +188,92 @@ NS_IMETHODIMP sbTranscodeProfile::GetContainerProperties(nsIArray * *aContainerP
   return NS_OK;
 }
 
-NS_IMETHODIMP sbTranscodeProfile::SetContainerProperties(nsIArray * aContainerProperties)
+NS_IMETHODIMP
+sbTranscodeProfile::SetContainerProperties(nsIArray * aContainerProperties)
 {
   mContainerProperties = aContainerProperties;
+  return NS_OK;
+}
+
+
+/***** nsITranscodeEncoderProfile implementation *****/
+template<typename T>
+T getInterpolatedQuality(std::map<double, T> &aMap, double aQuality)
+{
+  std::map<double, T>::const_iterator end   = aMap.end(),
+                                      lower,
+                                      upper = aMap.upper_bound(aQuality);
+
+  if (aMap.empty()) {
+    // completely missing :(
+    return 0;
+  }
+
+  if (upper == aMap.begin()) {
+    // the first point is larger than desired; just return that
+    return upper->second;
+  }
+
+  lower = upper;
+  --lower;
+  if (upper == end) {
+    // nothing is greater than desired quality, select the highest we have
+    return lower->second;
+  }
+
+  double scale = (aQuality - lower->first) / (upper->first - lower->first);
+  T difference = (T)(scale * (upper->second - lower->second));
+  return lower->second + difference;
+}
+
+/* PRInt32 getPriority (in double aQuality); */
+NS_IMETHODIMP
+sbTranscodeProfile::GetPriority(double aQuality, PRUint32 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = getInterpolatedQuality(mPriorityMap, aQuality);
+  return NS_OK;
+}
+
+/* double getAudioBitrate (in double aQuality); */
+NS_IMETHODIMP
+sbTranscodeProfile::GetAudioBitrate(double aQuality, double *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = getInterpolatedQuality(mAudioBitrateMap, aQuality);
+  return NS_OK;
+}
+
+/* double getVideoBitsPerPixel (in double aQuality); */
+NS_IMETHODIMP
+sbTranscodeProfile::GetVideoBitsPerPixel(double aQuality, double *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = getInterpolatedQuality(mVideoBPPMap, aQuality);
+  return NS_OK;
+}
+
+/***** nsITranscodeEncoderProfile helpers *****/
+nsresult
+sbTranscodeProfile::AddPriority(double aQuality, PRUint32 aPriority)
+{
+  NS_ENSURE_ARG_RANGE(aQuality, 0, 1);
+  mPriorityMap[aQuality] = aPriority;
+  return NS_OK;
+}
+
+nsresult 
+sbTranscodeProfile::AddAudioBitrate(double aQuality, double aBitrate)
+{
+  NS_ENSURE_ARG_RANGE(aQuality, 0, 1);
+  mAudioBitrateMap[aQuality] = aBitrate;
+  return NS_OK;
+}
+
+nsresult 
+sbTranscodeProfile::AddVideoBPP(double aQuality, double aBPP)
+{
+  NS_ENSURE_ARG_RANGE(aQuality, 0, 1);
+  mVideoBPPMap[aQuality] = aBPP;
   return NS_OK;
 }

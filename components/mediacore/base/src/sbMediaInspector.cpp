@@ -27,6 +27,7 @@
 
 // Mozilla includes
 #include <nsComponentManagerUtils.h>
+#include <nsISimpleEnumerator.h>
 #include <nsIWritablePropertyBag2.h>
 
 #include <sbArrayUtils.h>
