@@ -70,9 +70,18 @@ Imported by bindings.css or directly into feathers.
 }
 .device-syncmode-manual-button {
   margin-right: 0;
+  -moz-border-radius-topright: 0;
+  -moz-border-radius-bottomright: 0;
 }
 .device-syncmode-auto-button {
   margin-left: 0;
+  border-left-width: 0;
+  -moz-border-radius-topleft: 0;
+  -moz-border-radius-bottomleft: 0;
+}
+.device-syncmode-manual-button[checked="true"],
+.device-syncmode-auto-button[checked="true"] {
+  -moz-user-focus: ignore;
 }
 
 
