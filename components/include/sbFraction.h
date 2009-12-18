@@ -70,8 +70,8 @@ public:
   {
     return ((mNumerator == aOther.mNumerator &&
              mDenominator == aOther.mDenominator) ||
-            (this.mNumerator * aOther.mDenominator ==
-             this.mDenominator * aOther.mNumerator))
+            (mNumerator * aOther.mDenominator ==
+             mDenominator * aOther.mNumerator));
   }
 
   /**
