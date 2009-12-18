@@ -194,6 +194,7 @@ protected:
 
   nsCOMPtr<nsIURI> mDefaultFirmwareLocation;
   nsCOMPtr<nsIURI> mFirmwareLocation;
+  nsCOMPtr<nsIURI> mDefaultReleaseNotesLocation;
   nsCOMPtr<nsIURI> mReleaseNotesLocation;
   nsCOMPtr<nsIURI> mResetInstructionsLocation;
   nsCOMPtr<nsIURI> mSupportLocation;
