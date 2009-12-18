@@ -164,7 +164,6 @@ sbAlbumArtFetcherSet::FetchAlbumArtForAlbum(nsIArray*            aMediaItems,
 
   if (fetcherListCount <= 0) {
     // No fetchers so abort
-    aListener->OnAlbumResult(nsnull, aMediaItems);
     aListener->OnSearchComplete(aMediaItems);
     return NS_OK;
   }

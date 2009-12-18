@@ -583,12 +583,14 @@ sbAlbumArtScanner::OnTrackResult(nsIURI*       aImageLocation,
 
   // If fetcher is remote, mark that an attempt was made to fetch remote art for
   // the item.
-  PRBool isLocal;
-  rv = mCurrentFetcher->GetIsLocal(&isLocal);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (!isLocal) {
-    rv = MarkRemoteFetchAttempted(aMediaItem);
+  if (mCurrentFetcher) {
+    PRBool isLocal;
+    rv = mCurrentFetcher->GetIsLocal(&isLocal);
     NS_ENSURE_SUCCESS(rv, rv);
+    if (!isLocal) {
+      rv = MarkRemoteFetchAttempted(aMediaItem);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   // A null aImageLocation indicates a failure
@@ -611,18 +613,21 @@ sbAlbumArtScanner::OnAlbumResult(nsIURI*    aImageLocation,
 
   // If fetcher is remote, mark that an attempt was made to fetch remote art for
   // the items.
-  PRBool isLocal;
-  rv = mCurrentFetcher->GetIsLocal(&isLocal);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (!isLocal) {
-    PRUint32 itemCount;
-    rv = aMediaItems->GetLength(&itemCount);
+  if (mCurrentFetcher) {
+    PRBool isLocal;
+    rv = mCurrentFetcher->GetIsLocal(&isLocal);
     NS_ENSURE_SUCCESS(rv, rv);
-    for (PRUint32 i = 0; i < itemCount; i++) {
-      nsCOMPtr<sbIMediaItem> mediaItem = do_QueryElementAt(aMediaItems, i, &rv);
+    if (!isLocal) {
+      PRUint32 itemCount;
+      rv = aMediaItems->GetLength(&itemCount);
       NS_ENSURE_SUCCESS(rv, rv);
-      rv = MarkRemoteFetchAttempted(mediaItem);
-      NS_ENSURE_SUCCESS(rv, rv);
+      for (PRUint32 i = 0; i < itemCount; i++) {
+        nsCOMPtr<sbIMediaItem>
+          mediaItem = do_QueryElementAt(aMediaItems, i, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = MarkRemoteFetchAttempted(mediaItem);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
   }
 
