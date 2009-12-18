@@ -60,7 +60,7 @@
  * set and the default waitForWindow is false.
  */
 
-[scriptable, uuid(ec7e9f72-3386-421b-99c6-5f149fd79950)]
+[scriptable, uuid(2f444a12-1dd2-11b2-a981-d0fd860331fd)]
 interface sbIPrompter : nsIPromptService
 {
   /**
@@ -73,6 +73,11 @@ interface sbIPrompter : nsIPromptService
    * before prompting.
    */
   attribute boolean waitForWindow;
+
+  /**
+   * If true, render prompt text as HTML.
+   */
+  attribute boolean renderHTML;
 
   /**
    * Open a dialog window with the chrome URL specified by aUrl and parent
@@ -98,8 +103,8 @@ interface sbIPrompter : nsIPromptService
 
   /**
    * Open a window with the chrome URL specified by aUrl and parent specified
-   * by aParent. The window name is specified by aName and the window options are
-   * specified by aOptions. Additional window arguments may be provided in 
+   * by aParent. The window name is specified by aName and the window options
+   * are specified by aOptions. Additional window arguments may be provided in 
    * aExtraArguments.
    *
    * There are no default options for openWindow.

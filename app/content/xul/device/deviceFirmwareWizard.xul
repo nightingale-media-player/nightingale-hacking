@@ -202,9 +202,10 @@
         &device.firmware.wizard.repair.time.description;
       </description>
       <groupbox>
-        <description class="device-firmware-wizard-warning-description">
+        <xul:description xmlns="http://www.w3.org/1999/xhtml"
+                         class="device-firmware-wizard-warning-description">
           &device.firmware.wizard.repair.warning;
-        </description>
+        </xul:description>
       </groupbox>
     </vbox>
   </wizardpage>

@@ -239,6 +239,10 @@ sb-status-progressmeter {
   border-top:1px solid rgb(131,131,131);
 }
 
+html|*.loss-of-data-text,
+.loss-of-data-text {
+  color: rgb(255,0,0);
+}
 
 
 /******************************************************************************

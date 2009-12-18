@@ -1,30 +1,28 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 /**
  * \file  URLUtils.jsm
@@ -116,17 +114,55 @@ var URLUtils = {
 
     return urlQuery;
   },
-  
+
+
+  /**
+   * Extract the query parameters from the URL specified by aURLSpec and return
+   * them in the object specified by aQueryParams.  If the URL contains a query,
+   * return true; otherwise, return false.
+   *
+   * \param aURLSpec            URL from which to extract query.
+   * \param aQueryParams        Returned query parameters.
+   *
+   * \return                    True if URL contains a query.
+   */
+
+  extractQuery: function URLUtils_extractQuery(aURLSpec, aQueryParams) {
+    // Get a URL object.
+    var url = this.newURI(aURLSpec).QueryInterface(Ci.nsIURL);
+
+    // Get the URL query string.  Just return false if URL does not contain a
+    // query string.
+    var queryStr = url.query;
+    if (!queryStr)
+      return false;
+
+    // Extract the query parameters.
+    var queryParamList = queryStr.split("&");
+    for (var i = 0; i < queryParamList.length; i++) {
+      var queryParam = queryParamList[i].split("=");
+      if (queryParam.length >= 2) {
+        aQueryParams[queryParam[0]] = decodeURIComponent(queryParam[1]);
+      }
+      else if (queryParam.length == 1) {
+        aQueryParams[queryParam[0]] = true;
+      }
+    }
+
+    return true;
+  },
+
+
   convertURLToDisplayName: function URLUtils_convertURLToDisplayName(aURL) {
     var urlDisplay = "";
-    
+
     try {
       urlDisplay = decodeURI( aURL );
     } catch(err) {
       dump("convertURLToDisplayName, oops! URI decode weirdness: " + err + "\n");
     }
-    
-    // Set the title display  
+
+    // Set the title display
     if ( urlDisplay.lastIndexOf('/') != -1 )
     {
       urlDisplay = urlDisplay.substring( urlDisplay.lastIndexOf('/') + 1, urlDisplay.length );
@@ -140,7 +176,7 @@ var URLUtils = {
     {
       urlDisplay = aURL;
     }
-    
+
     return urlDisplay;
   }
 };

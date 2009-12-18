@@ -1,29 +1,27 @@
 <?xml version="1.0"?>
 <!--
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 -->
 
@@ -113,7 +111,7 @@
                       orient="vertical" hidden="true">
           <xul:vbox sbid="sb-device-tools-format" hidden="true">
             <xul:label value="&device.tools.format_device.title;"/>
-            <xul:description>
+            <xul:description xmlns="http://www.w3.org/1999/xhtml">
               &device.tools.format_device.description;
             </xul:description>
             <xul:hbox>
@@ -124,7 +122,7 @@
           </xul:vbox>
 
           <xul:label value="&device.tools.repair_device.title;"/>
-          <xul:description>
+          <xul:description xmlns="http://www.w3.org/1999/xhtml">
             &device.tools.repair_device.description;
           </xul:description>
           <xul:hbox>
@@ -176,6 +174,7 @@
 
     <implementation>
       <constructor><![CDATA[
+        Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
         Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
 
         var toolsAttribute = this.getAttribute("tools");
@@ -248,13 +247,21 @@
       <method name="formatDevice">
         <body><![CDATA[
           var prompter =
-              Components.classes['@songbirdnest.com/Songbird/Prompter;1']
+              Components.classes["@songbirdnest.com/Songbird/Prompter;1"]
               .getService(Components.interfaces.sbIPrompter);
 
-          var confirmed = prompter.confirm(window,
-              SBString('device.dialog.format.title'),
-              SBFormattedString('device.dialog.format.message',
-                [this.device.name]));
+          // Get the device name and encode it for XML twice.  It will be
+          // decoded once by SBFormattedString and once again by the prompt
+          // dialog.
+          var deviceName = DOMUtils.encodeTextForXML(this.device.name);
+          deviceName = DOMUtils.encodeTextForXML(deviceName);
+
+          // Prompt the user, using HTML for the prompt message.
+          var title = SBString("device.dialog.format.title");
+          var msg = SBFormattedString("device.dialog.format.message",
+                                      [deviceName]);
+          prompter.renderHTML = true;
+          var confirmed = prompter.confirm(window, title, msg);
 
           if (confirmed) {
            this.device.format();
@@ -266,16 +273,24 @@
         <body><![CDATA[
           if (!this._firmwareHandler) {
             var prompter = 
-                Components.classes['@songbirdnest.com/Songbird/Prompter;1']
+                Components.classes["@songbirdnest.com/Songbird/Prompter;1"]
                 .getService(Components.interfaces.sbIPrompter);
   
-            var confirmed = prompter.confirm(window, 
-                SBString('device.dialog.factoryrestore.title'),
-                SBFormattedString('device.dialog.factoryrestore.message', 
-                  [this.device.name]));
+            // Get the device name and encode it for XML twice.  It will be
+            // decoded once by SBFormattedString and once again by the prompt
+            // dialog.
+            var deviceName = DOMUtils.encodeTextForXML(this.device.name);
+            deviceName = DOMUtils.encodeTextForXML(deviceName);
+
+            // Prompt the user, using HTML for the prompt message.
+            var title = SBString("device.dialog.factoryrestore.title");
+            var msg = SBFormattedString("device.dialog.factoryrestore.message",
+                                        [deviceName]);
+            prompter.renderHTML = true;
+            var confirmed = prompter.confirm(window, title, msg);
   
             if (confirmed) {
-              var bag = Components.classes['@mozilla.org/hash-property-bag;1']
+              var bag = Components.classes["@mozilla.org/hash-property-bag;1"]
                   .createInstance(Components.interfaces.nsIPropertyBag2);
               this.device.submitRequest(
                   Components.interfaces.sbIDevice.REQUEST_FACTORY_RESET, bag);

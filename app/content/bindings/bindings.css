@@ -632,3 +632,9 @@ sb-eq-band-slider {
 sb-properties-formatter {
   -moz-binding: url("chrome://songbird/content/bindings/propertiesMenuList.xml#propertiesFormatter");
 }
+
+/* HTML description bindings */
+sb-html-description {
+  -moz-binding: url("chrome://songbird/content/bindings/htmlDescription.xml#sb-html-description") !important;
+}
+

@@ -15,6 +15,18 @@
           src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
 
   <script type="text/javascript"><![CDATA[
+    if (typeof(Cc) == "undefined")
+      var Cc = Components.classes;
+    if (typeof(Ci) == "undefined")
+      var Ci = Components.interfaces;
+    if (typeof(Cr) == "undefined")
+      var Cr = Components.results;
+    if (typeof(Cu) == "undefined")
+      var Cu = Components.utils;
+
+    Cu.import("resource://app/jsmodules/DOMUtils.jsm");
+    Cu.import("resource://app/jsmodules/URLUtils.jsm");
+
     /* XXX Mook: XUL is messed up, flex= and pack= take precedence over CSS
                  unset them (the CSS will set our desired behaviour) */
     addEventListener("load", function() {
@@ -27,6 +39,14 @@
               .parentNode
               .parentNode
               .className += " dialog-content-inner";
+
+      /* check if an HTML description should be used */
+      var queryParams = {};
+      URLUtils.extractQuery(document.documentURI, queryParams);
+      if (queryParams.useHTML) {
+        var bodyDescriptionElem = document.getElementById("info.body");
+        DOMUtils.setClass(bodyDescriptionElem, "sb-html-description");
+      }
     }, false);
     
     /* support the close button */

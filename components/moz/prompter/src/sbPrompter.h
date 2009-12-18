@@ -105,10 +105,12 @@ private:
   // mPromptService              Prompt service.
   // mParentWindowType           Parent window type.
   // mWaitForWindow              If true, wait for parent window type.
+  // mRenderHTML                 If true, render prompt text as HTML.
   //
   // The following fields must only be accessed under the prompter lock:
   //   mParentWindowType
   //   mWaitForWindow
+  //   mRenderHTML
   //
 
   PRLock*                       mPrompterLock;
@@ -117,6 +119,7 @@ private:
   nsCOMPtr<nsIPromptService>    mPromptService;
   nsString                      mParentWindowType;
   PRBool                        mWaitForWindow;
+  PRBool                        mRenderHTML;
 
 
   //

@@ -1,30 +1,28 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 /**
  * \file  DOMUtils.jsm
@@ -222,6 +220,107 @@ var DOMUtils = {
       // Check each of the child's children.
       this._getElementsByAttribute(child, aAttrName, aAttrValue, aMatchList);
     }
+  },
+
+
+  /**
+   * Encode the text specified by aText for use in an XML document and return
+   * the result (e.g., encode "this & that" to "this &amp; that".
+   *
+   * \param aText               Text to encode.
+   *
+   * \return                    Text encoded for XML.
+   */
+
+  encodeTextForXML: function DOMUtils_encodeTextForXML(aText) {
+    // Create an XML text node.
+    var xmlDocument = Cc["@mozilla.org/xml/xml-document;1"]
+                        .createInstance(Ci.nsIDOMDocument);
+    var xmlTextNode = xmlDocument.createTextNode(aText);
+
+    // Produce the encoded XML text by serializing the XML text node.
+    var domSerializer = Cc["@mozilla.org/xmlextras/xmlserializer;1"]
+                          .createInstance(Ci.nsIDOMSerializer);
+    var encodedXMLText = domSerializer.serializeToString(xmlTextNode);
+
+    return encodedXMLText;
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // DOM class attribute services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Set the class specified by aClass within the class attribute of the element
+   * specified by aElem.
+   *
+   * \param aElem               Element for which to set class.
+   * \param aClass              Class to set.
+   */
+
+  setClass: function DOMUtils_setClass(aElem, aClass) {
+    // Get the class attribute.  If it's empty, just set the class and return.
+    var classAttr = aElem.getAttribute("class");
+    if (!classAttr) {
+      aElem.setAttribute("class", aClass);
+      return;
+    }
+
+    // Set class if not already set.
+    var classList = classAttr.split(" ");
+    if (classList.indexOf(aClass) < 0) {
+      classList.push(aClass);
+      aElem.setAttribute("class", classList.join(" "));
+    }
+  },
+
+
+  /**
+   * Clear the class specified by aClass from the class attribute of the element
+   * specified by aElem.
+   *
+   * \param aElem               Element for which to clear class.
+   * \param aClass              Class to clear.
+   */
+
+  clearClass: function DOMUtils_clearClass(aElem, aClass) {
+    // Get the class attribute.  If it's empty, just return.
+    var classAttr = aElem.getAttribute("class");
+    if (!classAttr)
+      return;
+
+    // Clear specified class from class attribute.
+    var classList = classAttr.split(" ");
+    var classCount = classList.length;
+    for (var i = classCount - 1; i >= 0; i--) {
+      if (classList[i] == aClass)
+        classList.splice(i, 1);
+    }
+    if (classList.length < classCount)
+      aElem.setAttribute("class", classList.join(" "));
+  },
+
+
+  /**
+   * Return true if the class specified by aClass is set within the class
+   * attribute of the element specified by aElem.
+   *
+   * \param aElem               Element for which to check if class is set.
+   * \param aClass              Class for which to check.
+   *
+   * \return                    True if class is set.
+   */
+
+  isClassSet: function DOMUtils_isClassSet(aElem, aClass) {
+    var classAttr = aElem.getAttribute("class");
+    var classList = classAttr.split(" ");
+    if (classList.indexOf(aClass) < 0)
+      return false;
+
+    return true;
   },
 
 
