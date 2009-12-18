@@ -1,27 +1,25 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 //
@@ -34,6 +32,8 @@
 //   if (document.__JUMPTO__) document.__JUMPTO__.syncJumpTo();
 // }
 
+
+Components.utils.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
 
 try
 {
@@ -50,7 +50,7 @@ try
   function onJumpToFileKey(evt) {
     // "popup=yes" causes nasty issues on the mac with the resizers?
     if (!document.__JUMPTO__)
-      SBOpenWindow( "chrome://songbird/content/xul/jumpToFile.xul", 
+      SBOpenWindow( "chrome://jumpto/content/jumpToFile.xul", 
           "jump_to_file", 
           "chrome,toolbar=no,popup=no,dialog=no,resizable=yes", 
           [document, window.gBrowser?gBrowser:null] );
@@ -787,9 +787,20 @@ try
 
   jumptoHotkeyActions.__defineGetter__( "actionCount", jumptoHotkeyActions.get_actionCount);
 
-  // called by windows that want to support the J hotkey
   function initJumpToFileHotkey()
   {
+    // Only initialize jump to for main Songbird windows.
+    var windowType = document.documentElement.getAttribute("windowtype");
+    if (windowType != "Songbird:Main")
+      return;
+
+    // Set up to continue initialization after loading the window.  Reset after
+    // window unloaded.
+    window.addEventListener("load", initJumpToFileHotkeyAfterLoad, false);
+    window.addEventListener("unload", resetJumpToFileHotkey, false);
+  }
+
+  function initJumpToFileHotkeyAfterLoad() {
     var hotkeyActionsComponent = Components.classes["@songbirdnest.com/Songbird/HotkeyActions;1"];
     if (hotkeyActionsComponent) {
       var hotkeyactionsService = hotkeyActionsComponent.getService(Components.interfaces.sbIHotkeyActions);
@@ -803,6 +814,9 @@ try
    
   function resetJumpToFileHotkey()
   {
+    window.removeEventListener("load", initJumpToFileHotkeyAfterLoad, false);
+    window.removeEventListener("unload", resetJumpToFileHotkey, false);
+
     SBDataSetBoolValue("jumpto.nosavestate", true);
     var hotkeyActionsComponent = Components.classes["@songbirdnest.com/Songbird/HotkeyActions;1"];
     if (hotkeyActionsComponent) {

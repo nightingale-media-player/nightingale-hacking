@@ -148,6 +148,38 @@ sbHotkeyService.prototype =
   ///////////////////////////////////////////////////////////////////
   // sbIHotkeyService
   ///////////////////////////////////////////////////////////////////
+  getHotkeys: function() {
+    var count = SBDataGetIntValue("globalhotkeys.count");
+    var hotkeyConfigList = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                             .createInstance(Ci.nsIMutableArray);
+    for (var i = 0; i < count; i++) {
+      var hotkeyConfig = Cc[SB_HOTKEY_CONFIGURATION_CONTRACTID]
+                           .createInstance(Ci.sbIHotkeyConfiguration);
+
+      var keyBase = "globalhotkey." + i + ".";
+      hotkeyConfig.key = SBDataGetStringValue(keyBase + "key");
+      hotkeyConfig.keyReadable = SBDataGetStringValue(keyBase + "key.readable");
+      hotkeyConfig.action = SBDataGetStringValue(keyBase + "action");
+
+      if (!this._configListContainsKey(hotkeyConfigList, hotkeyConfig.key))
+        hotkeyConfigList.appendElement(hotkeyConfig, false);
+    }
+
+    return hotkeyConfigList;
+  },
+
+  getHotkey: function(aKey) {
+    var hotkeyConfigList = this.getHotkeys();
+    for (var i = 0; i < hotkeyConfigList.length; i++) {
+      var hotkeyConfig =
+            hotkeyConfigList.queryElementAt(i, Ci.sbIHotkeyConfiguration);
+      if (hotkeyConfig.key == aKey)
+        return hotkeyConfig;
+    }
+
+    return null;
+  },
+
   setHotkeys: function(aHotkeyConfigList) {
     SBDataDeleteBranch("globalhotkey");
     for (var i = 0; i < aHotkeyConfigList.length; i++) {
@@ -163,23 +195,28 @@ sbHotkeyService.prototype =
     this._loadHotkeysFromPrefs();
   },
 
-  getHotkeys: function() {
-    var count = SBDataGetIntValue("globalhotkeys.count");
-    var hotkeyConfigList = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                             .createInstance(Ci.nsIMutableArray);
-    for (var i = 0; i < count; i++) {
-      var hotkeyConfig = Cc[SB_HOTKEY_CONFIGURATION_CONTRACTID]
-                           .createInstance(Ci.sbIHotkeyConfiguration);
+  addHotkey: function(aHotkeyConfig) {
+    var hotkeyConfigList = this.getHotkeys();
+    this._removeHotkeyFromConfigList(hotkeyConfigList, aHotkeyConfig.key);
+    hotkeyConfigList.appendElement(aHotkeyConfig, false);
+    this.setHotkeys(hotkeyConfigList);
+  },
 
-      var keyBase = "globalhotkey." + i + ".";
-      hotkeyConfig.key = SBDataGetStringValue(keyBase + "key");
-      hotkeyConfig.keyReadable = SBDataGetStringValue(keyBase + "key.readable");
-      hotkeyConfig.action = SBDataGetStringValue(keyBase + "action");
+  removeHotkeyByKey: function(aKey) {
+    var hotkeyConfigList = this.getHotkeys();
+    this._removeHotkeyFromConfigList(hotkeyConfigList, aKey);
+    this.setHotkeys(hotkeyConfigList);
+  },
 
-      hotkeyConfigList.appendElement(hotkeyConfig, false);
+  removeHotkeysByAction: function(aAction) {
+    var hotkeyConfigList = this.getHotkeys();
+    for (var i = hotkeyConfigList.length - 1; i >= 0; i--) {
+      var hotkeyConfig =
+            hotkeyConfigList.queryElementAt(i, Ci.sbIHotkeyConfiguration);
+      if (hotkeyConfig.action == aAction)
+        hotkeyConfigList.removeElementAt(i);
     }
-
-    return hotkeyConfigList;
+    this.setHotkeys(hotkeyConfigList);
   },
 
   get hotkeysEnabled() {
@@ -224,9 +261,19 @@ sbHotkeyService.prototype =
 
     // Register observer for application shutdown to clean up.
     ObserverService.addObserver(this, SHUTDOWN_TOPIC, false);
+
+    // Send notification that the service is ready.
+    ObserverService.notifyObservers(this,
+                                    "service-ready",
+                                    SB_HOTKEY_SERVICE_CONTRACTID);
   },
 
   _shutdown: function() {
+    // Send notification that the service is about to shut down.
+    ObserverService.notifyObservers(this,
+                                    "before-service-shutdown",
+                                    SB_HOTKEY_SERVICE_CONTRACTID);
+
     if (CommandLine) {
       CommandLine.removeFlagHandler(this._hotkeyHandler, "hotkey");
     }
@@ -423,11 +470,7 @@ sbHotkeyService.prototype =
 
       { key:         "$178",
         keyReadable: "stop",
-        action:      "playback.stop" },
-
-      { key:         "meta-$74",
-        keyReadable: metaKey + "-J",
-        action:      "jumpto.open" }
+        action:      "playback.stop" }
     ];
 
     // Build an array of hot key configurations
@@ -461,6 +504,26 @@ sbHotkeyService.prototype =
     }
 
     return 0;
+  },
+
+  _configListContainsKey: function(aHotkeyConfigList, aKey) {
+    for (var i = 0; i < aHotkeyConfigList.length; i++) {
+      var hotkeyConfig =
+            aHotkeyConfigList.queryElementAt(i, Ci.sbIHotkeyConfiguration);
+      if (hotkeyConfig.key == aKey)
+        return true;
+    }
+
+    return false;
+  },
+
+  _removeHotkeyFromConfigList: function(aHotkeyConfigList, aKey) {
+    for (var i = aHotkeyConfigList.length - 1; i >= 0; i--) {
+      var hotkeyConfig =
+            aHotkeyConfigList.queryElementAt(i, Ci.sbIHotkeyConfiguration);
+      if (hotkeyConfig.key == aKey)
+        aHotkeyConfigList.removeElementAt(i);
+    }
   },
 
   className: SB_HOTKEY_SERVICE_CLASSNAME,

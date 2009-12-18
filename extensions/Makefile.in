@@ -56,6 +56,7 @@ NOARCH_EXTENSIONS = shoutcast \
                     mashTape \
                     7digital \
                     albumartlastfm \
+                    jumpto \
                     $(NULL)
 
 # Right now, all of these addons are so-called "noarch" addons; because

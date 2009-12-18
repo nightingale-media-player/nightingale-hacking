@@ -2,29 +2,27 @@
 
 <!--
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 -->
 
@@ -165,8 +163,6 @@
         <menuitem id="menuitem_control_repx" label="&menu.control.repx;" type="radio" observes="controlModeRepeatNever" accesskey="&menu.control.repx.accesskey;" />
         <menuitem id="menuitem_control_repa" label="&menu.control.repa;" type="radio" observes="controlModeRepeatAlways" accesskey="&menu.control.repa.accesskey;" />
         <menuitem id="menuitem_control_rep1" label="&menu.control.rep1;" type="radio" observes="controlModeRepeatOnce" accesskey="&menu.control.rep1.accesskey;" />
-        <menuseparator/>
-        <menuitem id="menuitem_control_jumpto" key="jumpto-key" label="&menu.control.jumpto;" type="checkbox" observes="controlJumpTo" accesskey="&menu.control.jumpto.accesskey;" />
         <menuseparator id="menu_EQSeparator"/>
         <menuitem id="menu_equalizer"
                   key="equalizer-key"
@@ -365,12 +361,6 @@
                   attribute="checked" 
                   onchange="return value == '0'" /> 
       </broadcaster>
-      <broadcaster id="controlJumpTo" >
-        <observes type="dataremote"
-                  key="jumpto.visible" 
-                  attribute="checked" 
-                  boolean="true" />
-      </broadcaster>
       <broadcaster id="playercontrols_top" />
       <broadcaster id="playercontrols_bottom" />
     </broadcasterset>
@@ -396,7 +386,6 @@
       <key id="findagain-key" modifiers="accel" key="&menu.edit.findagain.key;" />
       <key id="switch-feathers-key" modifiers="accel,shift" key="&switchfeathers.key;" oncommand="toggleNextFeatherLayout();"/>
       <key id="help-key" keycode="VK_F1" oncommand="onHelp();"/>
-      <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey();"/>
       <key id="equalizer-key" modifiers="accel" key="&equalizer.key;" oncommand="SBOpenEqualizer();"/>
       <key id="sanitize-key" modifiers="accel,shift" keycode="&sanitize.keycode;" oncommand="doMenu('menuitem_tools_clearprivatedata');"/>
       <key id="downloadmgr-key" modifiers="accel,shift" key="&downloadmgr.key;" oncommand="doMenu('menu_downloadmgr');"/>
@@ -495,10 +484,6 @@
   <!-- Metrics functions -->
   <script type="application/x-javascript"   
   src="chrome://songbird/content/scripts/metrics.js" />
-
-  <!-- Jumpto file dialog support -->
-  <script type="application/x-javascript" 
-  src="chrome://songbird/content/scripts/jumpToFile.js" />
   
   <!-- Sanitizer Support (moz) -->
   <script type="application/x-javascript" 

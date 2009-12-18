@@ -36,6 +36,7 @@ var gHotkeysPane = {
   _actions: null,
   _hotkeylabel: null,
   _actionlabel: null,
+  _disabledHotkeyList: null,
 
   init: function init()
   {
@@ -59,6 +60,7 @@ var gHotkeysPane = {
     this._hotkeylabel = document.getElementById("hotkey.hotkeylabel");
     this._actionlabel = document.getElementById("hotkey.actionlabel");
     this._enabled = document.getElementById("hotkeys.enabled");
+    this._disabledHotkeyList = [];
 
     this.loadActions();
     this.loadHotkeys();
@@ -105,14 +107,31 @@ var gHotkeysPane = {
       // Read hotkey config
       var hotkeyConfig =
             hotkeyConfigList.queryElementAt(i, Ci.sbIHotkeyConfiguration);
-      var keycombo = hotkeyConfig.key;
-      var keydisplay = hotkeyConfig.keyReadable;
-      var actionid = hotkeyConfig.action;
-      var action = this._getLocalizedAction(actionid);
-      // make list items accordingly
-      this._addItem(keycombo, keydisplay, actionid, action, -1);
+      if (!this._hotkeyDisabled(hotkeyConfig)) {
+        var keycombo = hotkeyConfig.key;
+        var keydisplay = hotkeyConfig.keyReadable;
+        var actionid = hotkeyConfig.action;
+        var action = this._getLocalizedAction(actionid);
+        // make list items accordingly
+        this._addItem(keycombo, keydisplay, actionid, action, -1);
+      }
+      else {
+        this._disabledHotkeyList.push(hotkeyConfig);
+      }
     }
     this.updateButtons();
+  },
+
+  _hotkeyDisabled: function(hotkeyConfig) {
+    // Hotkey is disabled if it doesn't have an action.  This might happen if an
+    // extension sets up a hotkey and is then disabled.
+    var nodes = this._actionlist.firstChild.childNodes;
+    for (var i=0;i<nodes.length;i++) {
+      if (hotkeyConfig.action == nodes[i].actionid)
+        return false;
+    }
+
+    return true;
   },
 
   _getLocalizedAction: function(actionid)
@@ -171,9 +190,33 @@ var gHotkeysPane = {
       hotkeyConfig.key = keycombo;
       hotkeyConfig.keyReadable = keydisplay;
       hotkeyConfig.action = actionid;
-      hotkeyConfigList.appendElement(hotkeyConfig, false);
+      if (!this._configListContainsKey(hotkeyConfigList, hotkeyConfig.key))
+        hotkeyConfigList.appendElement(hotkeyConfig, false);
     }
+
+    // Add any disabled hotkeys.  This ensures that if an extension adds a
+    // hotkey and is then disabled, its hotkey setting is preserved when the
+    // extension is re-enabled.  If the user reassigns the disabled hotkey in
+    // the UI, it will not be added here.
+    if (this._disabledHotkeyList) {
+      for (var i = 0; i < this._disabledHotkeyList.length; i++) {
+        if (!this._configListContainsKey(hotkeyConfigList, hotkeyConfig.key))
+          hotkeyConfigList.appendElement(this._disabledHotkeyList[i], false);
+      }
+    }
+
     this._hotkeyService.setHotkeys(hotkeyConfigList);
+  },
+
+  _configListContainsKey: function(aHotkeyConfigList, aKey) {
+    for (var i = 0; i < aHotkeyConfigList.length; i++) {
+      var hotkeyConfig =
+            aHotkeyConfigList.queryElementAt(i, Ci.sbIHotkeyConfiguration);
+      if (hotkeyConfig.key == aKey)
+        return true;
+    }
+
+    return false;
   },
 
   onSelectHotkey: function()

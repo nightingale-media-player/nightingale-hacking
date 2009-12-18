@@ -214,10 +214,6 @@ sb-player-curtrack-box {
   -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#curtrack-box") !important;
 }
 
-sb-player-jumpto-button {
-  -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#jumpto-button") !important;
-}
-
 sb-player-fullscreen-button {
   -moz-binding: url("chrome://songbird/content/bindings/playerControls.xml#fullscreen-button") !important;
 }

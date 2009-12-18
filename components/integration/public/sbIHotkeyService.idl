@@ -71,7 +71,7 @@ interface sbIHotkeyConfiguration : nsISupports
 
 interface nsIArray;
 
-[scriptable, uuid(7c581506-1dd2-11b2-81c6-dc8ec2c82950)]
+[scriptable, uuid(99c883d0-1dd1-11b2-88fc-a67455e77067)]
 interface sbIHotkeyService : nsISupports
 {
   /**
@@ -92,20 +92,58 @@ interface sbIHotkeyService : nsISupports
    * \brief Return the set of hot key configurations as an nsIArray of
    *        sbIHotkeyConfiguration objects.
    *
-   * \return Hot key configuration.
+   * \return Hot key configuration list.
    */
 
   nsIArray getHotkeys();
 
 
   /**
+   * \brief Return the hotkey configuration for the key specified by aKey.
+   *
+   * \param aKey                Key for which to get hotkey configuration.
+   *
+   * \return Hotkey configuration.
+   */
+
+  sbIHotkeyConfiguration getHotkey(in AString aKey);
+
+
+  /**
    * \brief Set the hot key configuration to the nsIArray of
    *        sbIHotkeyConfiguration objects specified by aHotkeyConfigList.
    *
-   * \param aHotkeyConfigList   Hotkey configuration.
+   * \param aHotkeyConfigList   Hotkey configuration list.
    */
 
   void setHotkeys(in nsIArray aHotkeyConfigList);
+
+
+  /**
+   * \brief Add the hotkey specified by aHotkeyConfig.
+   *
+   * \param aHotkeyConfig       Hotkey configuration.
+   */
+
+  void addHotkey(in sbIHotkeyConfiguration aHotkeyConfig);
+
+
+  /**
+   * \brief Remove the hotkey with the key specified by aKey.
+   *
+   * \param aKey                Hotkey to remove.
+   */
+
+  void removeHotkeyByKey(in AString aKey);
+
+
+  /**
+   * \brief Remove all hotkeys with the action specified by aAction.
+   *
+   * \param aAction             Action for which to remove hotkeys.
+   */
+
+  void removeHotkeysByAction(in AString aAction);
 };
 
 
