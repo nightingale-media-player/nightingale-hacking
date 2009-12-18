@@ -103,7 +103,7 @@ var DeviceSyncWidget = {
     // Get the sync widget.
     this._widget = aWidget;
 
-    this._mediaType = this._widget.getAttribute("contentType") || "audio";
+    this._mediaType = this._widget.getAttribute("contenttype") || "audio";
 
     // Set up some variable UI labels (these depend on the contentType)
     var syncAllLabel = this._getElement("content_auto_sync_all_radio");

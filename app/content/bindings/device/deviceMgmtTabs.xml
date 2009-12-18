@@ -75,7 +75,7 @@
             <xul:sb-device-sync sbid="device_music_sync"
                                 flex="1"
                                 xbl:inherits="device-id"
-                                contentType="audio"
+                                contenttype="audio"
                                 pack="center" />
           </xul:tabpanel>
           <xul:tabpanel sbid="device_management_video_sync_tabpanel"
@@ -83,7 +83,7 @@
             <xul:sb-device-sync sbid="device_video_sync"
                                 flex="1"
                                 xbl:inherits="device-id"
-                                contentType="video"
+                                contenttype="video"
                                 pack="center"/>
           </xul:tabpanel>
           <xul:tabpanel sbid="device_management_tools_tabpanel"

@@ -43,6 +43,8 @@ Imported by bindings.css or directly into feathers.
   text-align: right;
 }
 
-sb-device-sync[contentType="video"] .content-controls radio {
+/* we must, at present, use all-lowercase attribute names.
+   see https://bugzilla.mozilla.org/show_bug.cgi?id=535806 */
+sb-device-sync[contenttype="video"] .content-controls radio {
   display: none;
 }
