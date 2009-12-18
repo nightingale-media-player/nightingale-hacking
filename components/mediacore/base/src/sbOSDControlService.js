@@ -218,22 +218,25 @@ sbOSDControlService.prototype =
     }
   },
 
-  hideOSDControls: function() {
+  hideOSDControls: function(transition) {
+    var self = this;
     // Don't hide the window while the user is dragging
-    if (this._mouseDownOnOSD)
+    if (this._mouseDownOnOSD || !this._osdControlsShowing)
       return;
 
-    if (!this._cloakService.isCloaked(this._osdWindow)) {
-      if (this._osdWinHasFocus)
-        this._videoWindow.focus();
-      this._cloakService.cloak(this._osdWindow);
-    }
+    transition.apply(this, [function() {
+      if (!self._cloakService.isCloaked(self._osdWindow)) {
+        if (this._osdWinHasFocus)
+          this._videoWindow.focus();
+        self._cloakService.cloak(self._osdWindow);
+      }
 
-    // The OSD controls are no longer showing
-    this._osdControlsShowing = false;
+      // The OSD controls are no longer showing
+      self._osdControlsShowing = false;
+    }]);
   },
 
-  showOSDControls: function() {
+  showOSDControls: function(transition) {
     if (!this._videoWinHasFocus &&
         !this._osdWinHasFocus &&
         !this._videoWindowFullscreen)
@@ -243,13 +246,14 @@ sbOSDControlService.prototype =
       // other window in the OS.
       return;
     }
-
+    this._timer.cancel();
     this._recalcOSDPosition();
 
     // Show the controls if they are currently hidden.
     if (this._cloakService.isCloaked(this._osdWindow)) {
       this._cloakService.uncloak(this._osdWindow);
     }
+    transition.apply(this);
 
     // Controls are showing
     this._osdControlsShowing = true;
@@ -259,6 +263,51 @@ sbOSDControlService.prototype =
                                  SB_OSDHIDE_DELAY,
                                  Ci.nsITimer.TYPE_ONE_SHOT);
   },
+
+  _fade_interval: null,
+  _fadeContinuation: null,
+
+  _fade: function(start, end, func) {
+    var self = this;
+    this._fadeCancel();
+    this._fadeContinuation = func;
+    let node = this._osdWindow.document.getElementById("osd_main_vbox");
+    var opacity = start;
+    var delta = (end - start) / 10;
+    var step = 1;
+
+    self._fade_interval = self._osdWindow.setInterval(function() {
+      opacity += delta;
+      node.style.MozOpacity = opacity;
+
+      if (step++ >= 9) {
+        self._fadeCancel();
+        node = null;
+      }
+    }, 50);
+  },
+  
+  _fadeCancel: function() {
+    this._osdWindow.clearInterval(this._fade_interval);
+    if (this._fadeContinuation)
+       this._fadeContinuation();
+    this._fadeContinuation = null;
+  },
+
+  _showInstantly: function(func) {
+    this._fadeCancel();
+    this._osdWindow.document.getElementById("osd_main_vbox").style.MozOpacity = 1;
+    if (func)
+       func();
+  },
+  _hideInstantly: function(func)
+  {
+    this._fadeCancel();
+    if (func)
+       func();
+  },
+  _fadeIn: function(func) this._fade(0, 1, func), // fade from 0% opaque to 100% opaque
+  _fadeOut: function(func) this._fade(1, 0, func), // fade from 100% opaque to 0% opaque 
 
   _onOSDWinBlur: function(aEvent) {
     this._osdWinHasFocus = false;
@@ -279,7 +328,7 @@ sbOSDControlService.prototype =
   _onOSDWinMousemove: function(aEvent) {
     // The user has the mouse over the OSD controls, ensure that the controls
     // are visible.
-    this.showOSDControls();
+    this.showOSDControls(this._showInstantly);
   },
 
   _onOSDWinMousedown: function(aEvent) {
@@ -292,7 +341,7 @@ sbOSDControlService.prototype =
     {
       // User released the mouse button, reset the timer
       this._mouseDownOnOSD = false;
-      this.showOSDControls();
+      this.showOSDControls(this._showInstantly);
     }
   },
 
@@ -300,12 +349,11 @@ sbOSDControlService.prototype =
   // sbIWindowMoveListener
 
   onMoveStarted: function() {
-    this.hideOSDControls();
+    this.hideOSDControls(this._hideInstantly);
   },
 
   onMoveStopped: function() {
-    this._recalcOSDPosition();
-    this.showOSDControls();
+    this.showOSDControls(this._showInstantly);
   },
 
   //----------------------------------------------------------------------------
@@ -313,7 +361,7 @@ sbOSDControlService.prototype =
 
   notify: function(aTimer) {
     if (aTimer == this._timer) {
-      this.hideOSDControls();
+      this.hideOSDControls(this._fadeOut);
     }
   },
 };
