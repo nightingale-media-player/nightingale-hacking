@@ -81,6 +81,8 @@ Cu.import("resource://app/jsmodules/WindowUtils.jsm");
  *                              operation.
  *   updateIdle                 If true, update UI for an idle operation.
  *   updateBusy                 If true, update UI for a busy operation.
+ *   operationCanceled          If true, remember that the current operation
+ *                              was canceled
  */
 
 var DPWCfg = {
@@ -101,7 +103,8 @@ var DPWCfg = {
       showIdleMessage: true,
       showProgress: true,
       updateBusy: true,
-      preparingOnIdle: true
+      preparingOnIdle: true,
+      operationCanceled: false
     },
 
     /* Sync preparation. */
@@ -112,7 +115,8 @@ var DPWCfg = {
       canBeCompleted: true,
       showIdleMessage: true,
       showProgress: true,
-      updateBusy: true
+      updateBusy: true,
+      operationCanceled: false
     },
 
     /* Copy. */
@@ -123,7 +127,8 @@ var DPWCfg = {
       canBeCompleted: true,
       showIdleMessage: true,
       showProgress: true,
-      updateBusy: true
+      updateBusy: true,
+      operationCanceled: false
     },
 
     /* Delete. */
@@ -134,7 +139,8 @@ var DPWCfg = {
       canBeCompleted: true,
       showIdleMessage: true,
       showProgress: true,
-      updateBusy: true
+      updateBusy: true,
+      operationCanceled: false
     },
 
     /* Update. */
@@ -144,7 +150,8 @@ var DPWCfg = {
       progressMeterDetermined: true,
       canBeCompleted: true,
       showProgress: true,
-      updateBusy: true
+      updateBusy: true,
+      operationCanceled: false
     },
 
     /* Mount. */
@@ -154,7 +161,8 @@ var DPWCfg = {
       progressMeterUndetermined: true,
       canBeCompleted: true,
       showProgress: true,
-      updateBusy: true
+      updateBusy: true,
+      operationCanceled: false
     },
 
     /* Cancel. */
@@ -164,7 +172,8 @@ var DPWCfg = {
       progressMeterUndetermined: true,
       canBeCompleted: true,
       showProgress: true,
-      updateBusy: true
+      updateBusy: true,
+      operationCanceled: true
     },
 
     /* Transcode */
@@ -175,7 +184,8 @@ var DPWCfg = {
       canBeCompleted: true,
       showIdleMessage: true,
       showProgress: true,
-      updateBusy: true
+      updateBusy: true,
+      operationCanceled: false
     },
 
     /* Format. */
@@ -185,7 +195,8 @@ var DPWCfg = {
       progressMeterUndetermined: true,
       canBeCompleted: true,
       showProgress: true,
-      updateBusy: true
+      updateBusy: true,
+      operationCanceled: false
     }
   ]
 };
@@ -222,6 +233,7 @@ var DPW = {
   //   _lastCompletedEventOperation
   //                            Last completed operation of last state changed
   //                            event.
+  //   _operationCanceled       If true, last operation was canceled
   //   _showProgress            If true, progress status should be displayed.
   //   _syncSettingsChanged     If true, buttons to apply/cancel sync settings
   //                            should be displayed.
@@ -247,6 +259,7 @@ var DPW = {
   _operationInfoTable: null,
   _lastEventOperation: Ci.sbIDevice.STATE_IDLE,
   _lastCompletedEventOperation: Ci.sbIDevice.STATE_IDLE,
+  _operationCanceled: false,
   _showProgress: false,
   _syncSettingsChanged: false,
 
@@ -422,13 +435,15 @@ var DPW = {
     var oInfo = this._getOperationInfo(this._lastCompletedEventOperation);
     if (oInfo.showIdleMessage) {
       var key = "device.status.progress_complete_" + oInfo.localeSuffix;
+      if (this._operationCanceled)
+        key = "device.status.progress_aborted";
       this._progressTextLabel.value = SBFormattedString(key,
                                                 [ this._totalItems.intValue ],
                                                 "");
     }
 
-    this._subProgressTextLabel.value =
-                                SBString("device.status.progress_footer_idle");
+    this._progressMeter.hidden = true;
+    this._subProgressTextLabel.hidden = true;
   },
 
 
@@ -463,6 +478,10 @@ var DPW = {
     // Get the operation info.
     var operationInfo = this._getOperationInfo(operation);
     var operationLocaleSuffix = operationInfo.localeSuffix;
+
+    // Show progress meter if it was previously hidden
+    this._progressMeter.hidden = false;
+    this._subProgressTextLabel.hidden = false;
 
     // Update the operation progress meter.
     if (operationInfo.progressMeterDetermined) {
@@ -518,6 +537,11 @@ var DPW = {
                substate == Ci.sbIDevice.STATE_DELETING) {
       localeKey = "device.status.progress_header_deleting";
       subLocaleKey = "device.status.progress_item_index";
+    } else if (operation == Ci.sbIDevice.STATE_SYNCING &&
+               substate == Ci.sbIDevice.STATE_SYNC_PLAYLIST) {
+      localeKey = "device.status.progress_header_" + operationLocaleSuffix;
+      subLocaleKey = "device.status.progress_footer_syncing_finishing";
+      this._itemProgress.setAttribute("mode", "undetermined");
     } else if (operation == Ci.sbIDevice.STATE_COPYING ||
                substate == Ci.sbIDevice.STATE_COPYING) {
       localeKey = "device.status.progress_header_copying";
@@ -533,7 +557,6 @@ var DPW = {
     this._progressTextLabel.value = SBFormattedString(localeKey, "");
     if (curItemIndex > 0 && curItemIndex <= totalItems &&
         operation != Ci.sbIDevice.STATE_MOUNTING &&
-        substate != Ci.sbIDevice.STATE_SYNC_PLAYLIST &&
         substate != Ci.sbIDevice.STATE_SYNCING &&
         substate != Ci.sbIDevice.STATE_COPY_PREPARING &&
         substate != Ci.sbIDevice.STATE_UPDATING &&
@@ -648,6 +671,10 @@ var DPW = {
     // Set to show progress if busy.
     if (lastEventOperationInfo.showProgress)
       this._showProgress = true;
+
+    // Remember canceled operations.
+    if ("operationCanceled" in lastEventOperationInfo)
+      this._operationCanceled = lastEventOperationInfo.operationCanceled;
 
     // Update the last completed event operation.
     if (prevLastEventOperationInfo.canBeCompleted)
