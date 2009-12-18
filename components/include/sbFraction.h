@@ -235,8 +235,21 @@ nsresult sbFractionFromString(nsAString const & aString,
 
   // Whole number
   if (space == -1) {
-    numerator = aString.ToInteger(&rv, 10);
-    aFraction = sbFraction(numerator);
+    if (slash == -1) {
+      numerator = aString.ToInteger(&rv, 10);
+      aFraction = sbFraction(numerator);
+    }
+    else {
+      rv = sbFractionParsePart(aString, 0, slash, &numerator);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = sbFractionParsePart(aString,
+                               slash + 1,
+                               aString.Length() - slash - 1,
+                               &denominator);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      aFraction = sbFraction(numerator, denominator);
+    }
     return NS_OK;
   }
   // Bad format, no slash

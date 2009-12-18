@@ -5154,6 +5154,8 @@ sbBaseDevice::GetMediaFormat(sbIMediaItem* aMediaItem,
   rv = mMediaInspector->InspectMedia(aMediaItem, getter_AddRefs(mediaFormat));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mediaFormat.forget(aMediaFormat);
+
   return NS_OK;
 }
 
@@ -5174,16 +5176,27 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem,
     }
   }
 
-  nsCOMPtr<sbIMediaFormat> mediaFormat;
+  PRUint32 const transcodeType = sbDeviceUtils::GetTranscodeType(aMediaItem);
+  bool needsTranscoding = false;
 
-  sbExtensionToContentFormatEntry_t formatType;
+  // TODO: In the future, mediaFormat should always be used, but for now
+  // we'll fall back to the format mappings for non-video types.
+  if (transcodeType == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO) {
+    nsCOMPtr<sbIMediaFormat> mediaFormat;
 
-  rv = GetMediaFormat(aMediaItem, getter_AddRefs(mediaFormat));
-  PRUint32 bitRate = 0;
-  PRUint32 sampleRate = 0;
-  if (NS_FAILED(rv) || !mediaFormat) {
-    // TODO: In the future, mediaFormat should always be used, but for now
-    // we'll fall back to the format mappings
+    rv = GetMediaFormat(aMediaItem, getter_AddRefs(mediaFormat));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = sbDeviceUtils::DoesItemNeedTranscoding(transcodeType,
+                                                mediaFormat,
+                                                this,
+                                                needsTranscoding);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    sbExtensionToContentFormatEntry_t formatType;
+
+    PRUint32 bitRate = 0;
+    PRUint32 sampleRate = 0;
     rv = sbDeviceUtils::GetFormatTypeForItem(aMediaItem,
                                              formatType,
                                              bitRate,
@@ -5203,18 +5216,7 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem,
       return NS_OK;
     }
     NS_ENSURE_SUCCESS(rv, rv);
-  }
 
-  PRUint32 const transcodeType = sbDeviceUtils::GetTranscodeType(aMediaItem);
-  bool needsTranscoding = false;
-  if (mediaFormat) {
-    rv = sbDeviceUtils::DoesItemNeedTranscoding(transcodeType,
-                                                mediaFormat,
-                                                this,
-                                                needsTranscoding);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
     rv = sbDeviceUtils::DoesItemNeedTranscoding(formatType,
                                                 bitRate,
                                                 sampleRate,
@@ -5222,6 +5224,7 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem,
                                                 needsTranscoding);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
   // Exit if no transcoding is needed
   if (!needsTranscoding) {
     *_retval = PR_TRUE;
@@ -5269,37 +5272,49 @@ sbBaseDevice::FindTranscodeProfile(sbIMediaItem * aMediaItem,
     return NS_ERROR_NOT_AVAILABLE;
   }
 
-  nsCOMPtr<sbIMediaFormat> mediaFormat;
-  rv = GetMediaFormat(aMediaItem, getter_AddRefs(mediaFormat));
-  if (rv == NS_ERROR_NOT_AVAILABLE) {
-    return rv;
-  }
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // TODO: GetFormatTypeForItem is deprecated. Once the media inspector
-  // service is finished this should go away
-  sbExtensionToContentFormatEntry_t formatType;
-  PRUint32 bitRate = 0;
-  PRUint32 sampleRate = 0;
-  rv = sbDeviceUtils::GetFormatTypeForItem(aMediaItem,
-                                           formatType,
-                                           bitRate,
-                                           sampleRate);
-  // Check for expected error, unable to find format type
-
+  PRUint32 const transcodeType = sbDeviceUtils::GetTranscodeType(aMediaItem);
   bool needsTranscoding = false;
-  rv = sbDeviceUtils::DoesItemNeedTranscoding(formatType,
-                                              bitRate,
-                                              sampleRate,
-                                              this,
-                                              needsTranscoding);
-  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (transcodeType == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO) {
+    nsCOMPtr<sbIMediaFormat> mediaFormat;
+    rv = GetMediaFormat(aMediaItem, getter_AddRefs(mediaFormat));
+    if (rv == NS_ERROR_NOT_AVAILABLE) {
+      return rv;
+    }
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = sbDeviceUtils::DoesItemNeedTranscoding(transcodeType,
+                                                mediaFormat,
+                                                this,
+                                                needsTranscoding);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    // TODO: GetFormatTypeForItem is deprecated. Once the media inspector
+    // service is finished this should go away
+    sbExtensionToContentFormatEntry_t formatType;
+    PRUint32 bitRate = 0;
+    PRUint32 sampleRate = 0;
+    rv = sbDeviceUtils::GetFormatTypeForItem(aMediaItem,
+                                             formatType,
+                                             bitRate,
+                                             sampleRate);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Check for expected error, unable to find format type
+    rv = sbDeviceUtils::DoesItemNeedTranscoding(formatType,
+                                                bitRate,
+                                                sampleRate,
+                                                this,
+                                                needsTranscoding);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   if (!needsTranscoding) {
     *aProfile = nsnull;
     return NS_OK;
   }
 
-  rv = SelectTranscodeProfile(formatType.TranscodeType, aProfile);
+  rv = SelectTranscodeProfile(transcodeType, aProfile);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

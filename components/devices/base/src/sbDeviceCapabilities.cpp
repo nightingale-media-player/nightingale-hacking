@@ -26,12 +26,13 @@
 
 #include "sbDeviceCapabilities.h"
 
+#include <nsArrayUtils.h>
+#include <nsComponentManagerUtils.h>
 #include <nsIClassInfoImpl.h>
 #include <nsIMutableArray.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsServiceManagerUtils.h>
-#include <nsComponentManagerUtils.h>
-#include <nsArrayUtils.h>
+
 #include <sbMemoryUtils.h>
 
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbDeviceCapabilities,
@@ -905,7 +906,7 @@ NS_IMETHODIMP sbDevCapVideoStream::GetSupportedVideoPARs(PRUint32 *aCount, char 
 /* void getSupportedFrameRates (out unsigned long aCount, [array, size_is (aCount)] out string aFrameRates); */
 NS_IMETHODIMP sbDevCapVideoStream::GetSupportedFrameRates(PRUint32 *aCount, char ***aFrameRates)
 {
-  *aCount = mVideoPARs.Length();
+  *aCount = mFrameRates.Length();
 
   nsresult rv = CopyAndParseFromFractions(mFrameRates, *aCount, *aFrameRates);
   NS_ENSURE_SUCCESS(rv, rv);

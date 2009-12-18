@@ -46,6 +46,7 @@
 #include <nsThreadUtils.h>
 
 #include "sbBaseDevice.h"
+#include <sbDeviceCapsCompatibility.h>
 #include "sbIDeviceCapabilities.h"
 #include "sbIDeviceContent.h"
 #include "sbIDeviceErrorMonitor.h"
@@ -1472,101 +1473,17 @@ sbDeviceUtils::DoesItemNeedTranscoding(PRUint32 aTranscodeType,
   PRInt32 const devCapContentType =
                   TranscodeToCapsContentTypeMap[aTranscodeType];
 
-  nsCOMPtr<sbIMediaFormatContainer> container;
-  rv =aMediaFormat->GetContainer(getter_AddRefs(container));
+  nsCOMPtr<sbIDeviceCapsCompatibility> devCompatible =
+    do_CreateInstance(SONGBIRD_DEVICECAPSCOMPATIBILITY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = devCompatible->Initialize(devCaps, aMediaFormat, devCapContentType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsString containerType;
-  rv = container->GetContainerType(containerType);
+  PRBool compatible;
+  rv = devCompatible->Compare(&compatible);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIMediaFormatVideo> formatVideo;
-  rv = aMediaFormat->GetVideoStream(getter_AddRefs(formatVideo));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get bitrate and ignore errors
-  PRInt32 bitRate = 0;
-  formatVideo->GetBitRate(&bitRate);
-
-  nsCOMPtr<sbIMediaFormatAudio> formatAudio;
-  rv = aMediaFormat->GetAudioStream(getter_AddRefs(formatAudio));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get sample rate and ignore errors
-  PRInt32 sampleRate = 0;
-  formatAudio->GetSampleRate(&sampleRate);
-
-  nsString itemVideoType;
-  rv = formatVideo->GetVideoType(itemVideoType);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-
-  nsString itemAudioType;
-  rv = formatAudio->GetAudioType(itemAudioType);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 formatsLength;
-  char ** formats;
-  rv = devCaps->GetSupportedFormats(devCapContentType,
-                                    &formatsLength,
-                                    &formats);
-  // If we know of transcoding formats than check them
-  if (NS_SUCCEEDED(rv) && formatsLength > 0) {
-    aNeedsTranscoding = true;
-    for (PRUint32 formatIndex = 0;
-         formatIndex < formatsLength;
-         ++formatIndex) {
-
-      NS_ConvertASCIItoUTF16 format(formats[formatIndex]);
-      nsCOMPtr<nsISupports> formatType;
-      rv = devCaps->GetFormatType(format, getter_AddRefs(formatType));
-      if (NS_SUCCEEDED(rv)) {
-        nsString containerFormat;
-        nsString videoType;
-        nsString audioType;
-        nsString codec; // Not used
-
-        nsCOMPtr<sbIDevCapRange> bitRateRange;
-        nsCOMPtr<sbIDevCapRange> sampleRateRange;
-
-        // TODO: XXX This will need to be improved as we finish out the
-        // implementation of the media inspector
-        rv = GetContainerFormatAndCodec(formatType,
-                                        devCapContentType,
-                                        containerFormat,
-                                        videoType,
-                                        audioType,
-                                        codec,
-                                        getter_AddRefs(bitRateRange),
-                                        getter_AddRefs(sampleRateRange));
-        if (NS_SUCCEEDED(rv)) {
-          // Compare the various attributes, if bit rate and sample rate are
-          // not specified then they always match
-          if (containerFormat.Equals(containerType) &&
-              videoType.Equals(itemVideoType) &&
-              audioType.Equals(itemAudioType) &&
-              (!bitRate || IsValueInRange(bitRate, bitRateRange)) &&
-              (!sampleRate || IsValueInRange(sampleRate, sampleRateRange)))
-          {
-            TRACE(("%s: no transcoding needed, matches format %s "
-                   "container %s codec %s",
-                   __FUNCTION__, formats[formatIndex],
-                   NS_LossyConvertUTF16toASCII(containerFormat).get(),
-                   NS_LossyConvertUTF16toASCII(codec).get()));
-            aNeedsTranscoding = false;
-            break;
-          }
-        }
-      }
-    }
-    NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(formatsLength, formats);
-  }
-  else { // We don't know the transcoding formats of the device so just copy
-    TRACE(("%s: no information on device, assuming no transcoding needed",
-           __FUNCTION__));
-    aNeedsTranscoding = false;
-  }
-  TRACE(("%s: result %s", __FUNCTION__, aNeedsTranscoding ? "yes" : "no"));
+  aNeedsTranscoding = !compatible;
   return NS_OK;
 }
 
