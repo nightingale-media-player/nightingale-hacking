@@ -61,14 +61,17 @@ public:
 
   /**
    * Compares this fraction with another for equality
+   * Also deal with fractions that are not simplified
    *
    * \param aOther The other fraction to compare
    * \return true if the two fraction are equal
    */
   bool IsEqual(sbFraction const & aOther) const
   {
-    return mNumerator == aOther.mNumerator &&
-           mDenominator == aOther.mDenominator;
+    return ((mNumerator == aOther.mNumerator &&
+             mDenominator == aOther.mDenominator) ||
+            (this.mNumerator * aOther.mDenominator ==
+             this.mDenominator * aOther.mNumerator))
   }
 
   /**

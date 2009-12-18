@@ -38,11 +38,13 @@
 
 #include "sbDeviceProperties.h"
 #include "sbDeviceCapabilities.h"
+#include "sbDeviceCapsCompatibility.h"
 #include "sbDeviceStatus.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbAudioFormatType);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbVideoFormatType);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceCapabilities);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceCapsCompatibility);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceProperties);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceStatus);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbFormatTypeConstraint);
@@ -66,6 +68,13 @@ static nsModuleComponentInfo sbDeviceBaseComponents[] =
     SONGBIRD_DEVICECAPABILITIES_CID,
     SONGBIRD_DEVICECAPABILITIES_CONTRACTID,
     sbDeviceCapabilitiesConstructor
+  },
+
+  {
+    SONGBIRD_DEVICECAPSCOMPATIBILITY_DESCRIPTION,
+    SONGBIRD_DEVICECAPSCOMPATIBILITY_CID,
+    SONGBIRD_DEVICECAPSCOMPATIBILITY_CONTRACTID,
+    sbDeviceCapsCompatibilityConstructor
   },
 
   {

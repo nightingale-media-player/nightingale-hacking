@@ -100,6 +100,10 @@ interface sbIDevCapRange : nsISupports
      increments of 'step' are permitted */
   readonly attribute long step;
   
+  /* \brief Determine whether the value is in range. The range could be
+   *        discrete values, or value array.
+   * \returns true if the value is in range.
+   */
   boolean IsValueInRange(in long aValue);
 };
 

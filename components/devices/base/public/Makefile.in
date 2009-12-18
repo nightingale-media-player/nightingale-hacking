@@ -32,6 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 XPIDL_SRCS = sbIDevice.idl \
              sbIDeviceCapabilities.idl \
              sbIDeviceCapabilitiesRegistrar.idl \
+             sbIDeviceCapsCompatibility.idl \
              sbIDeviceCompatibility.idl \
              sbIDeviceContent.idl \
              sbIDeviceControllerRegistrar.idl \
