@@ -46,7 +46,7 @@ interface sbIMediaItem;
  *
  * The main interface to all device objects
  */
-[scriptable, uuid(436c06a0-d4d1-11de-8a39-0800200c9a66)]
+[scriptable, uuid(059a48ea-8d28-4180-ba9d-a49311b66b3f)]
 interface sbIDevice : nsISupports
 {
   /**
@@ -153,6 +153,25 @@ interface sbIDevice : nsISupports
    * reformatting the current device?
    */
   readonly attribute boolean supportsReformat;
+
+  /**
+   * Flag to hold sync requests until we are ready. This is used for when the
+   * user is editing the settings for a device, this way we do not start a sync
+   * in the middle of changes.
+   *
+   * Example:
+   *   (start code)
+   *   this._device.cacheSyncRequests = true;
+   *   // changes are made to settings
+   *   this._device.cacheSyncRequests = false;
+   *   (end)
+   *
+   * Note:
+   *   When cacheSyncRequests is toggled from true to false and there have been
+   *   sync requests we will start a sync.
+   *   By default this attribute is false.
+  */
+  attribute boolean cacheSyncRequests;
 
   /**
    * Whether the device is busy, idle, syncing, mounting, etc.

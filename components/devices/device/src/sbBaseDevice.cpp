@@ -368,6 +368,7 @@ sbBaseDevice::sbBaseDevice() :
   mAbortCurrentRequest(PR_FALSE),
   mIgnoreMediaListCount(0),
   mPerTrackOverhead(DEFAULT_PER_TRACK_OVERHEAD),
+  mSyncState(sbBaseDevice::SYNC_STATE_NORMAL),
   mCapabilitiesRegistrarType(sbIDeviceCapabilitiesRegistrar::NONE),
   mPreferenceLock(nsnull),
   mMusicLimitPercent(100),
@@ -3689,6 +3690,12 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
     return NS_OK;
   }
 
+  // Check if we should cache this sync for later
+  if (mSyncState != sbBaseDevice::SYNC_STATE_NORMAL) {
+    mSyncState = sbBaseDevice::SYNC_STATE_PENDING;
+    return NS_OK;
+  }
+
   // Ensure enough space is available for operation.  Cancel operation if not.
   PRBool abort;
   rv = EnsureSpaceForSync(aRequest, &abort);
@@ -5645,6 +5652,40 @@ NS_IMETHODIMP sbBaseDevice::GetSupportsReformat(PRBool *_retval)
   TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;
+  return NS_OK;
+}
+
+/* attribute boolean cacheSyncRequests; */
+NS_IMETHODIMP
+sbBaseDevice::GetCacheSyncRequests(PRBool *_retval)
+{
+  TRACE(("%s", __FUNCTION__));
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = (mSyncState != sbBaseDevice::SYNC_STATE_NORMAL);
+  return NS_OK;
+}
+
+/* attribute boolean cacheSyncRequests; */
+NS_IMETHODIMP
+sbBaseDevice::SetCacheSyncRequests(PRBool aCacheSyncRequests)
+{
+  TRACE(("%s", __FUNCTION__));
+
+  if (aCacheSyncRequests &&
+      mSyncState == sbBaseDevice::SYNC_STATE_NORMAL) {
+    mSyncState = sbBaseDevice::SYNC_STATE_CACHE;
+  }
+  else if (!aCacheSyncRequests &&
+           mSyncState == sbBaseDevice::SYNC_STATE_PENDING) {
+    mSyncState = sbBaseDevice::SYNC_STATE_NORMAL;
+    // Since we are turning off the CacheSyncRequests and a sync request came in
+    // we need to start a sync.
+    SyncLibraries();
+  }
+  else if (!aCacheSyncRequests) {
+    mSyncState = sbBaseDevice::SYNC_STATE_NORMAL;
+  }
+
   return NS_OK;
 }
 

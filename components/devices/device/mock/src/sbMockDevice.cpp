@@ -713,3 +713,18 @@ NS_IMETHODIMP sbMockDevice::GetSupportsReformat(PRBool *_retval)
   *_retval = PR_FALSE;
   return NS_OK;
 }
+
+/* attribute boolean cacheSyncRequests; */
+NS_IMETHODIMP
+sbMockDevice::GetCacheSyncRequests(PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  return sbBaseDevice::GetCacheSyncRequests(_retval);
+}
+
+/* attribute boolean cacheSyncRequests; */
+NS_IMETHODIMP
+sbMockDevice::SetCacheSyncRequests(PRBool aCacheSyncRequests)
+{
+  return sbBaseDevice::SetCacheSyncRequests(aCacheSyncRequests);
+}

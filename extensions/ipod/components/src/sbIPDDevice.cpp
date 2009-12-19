@@ -1653,3 +1653,18 @@ NS_IMETHODIMP sbIPDDevice::GetSupportsReformat(PRBool *aCanReformat) {
   *aCanReformat = PR_FALSE;
   return NS_OK;
 }
+
+/* attribute boolean cacheSyncRequests; */
+NS_IMETHODIMP
+sbIPDDevice::GetCacheSyncRequests(PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  return sbBaseDevice::GetCacheSyncRequests(_retval);
+}
+
+/* attribute boolean cacheSyncRequests; */
+NS_IMETHODIMP
+sbIPDDevice::SetCacheSyncRequests(PRBool aCacheSyncRequests)
+{
+  return sbBaseDevice::SetCacheSyncRequests(aCacheSyncRequests);
+}
