@@ -349,6 +349,9 @@ var DPW = {
    */
 
   finalize: function DPW_finalize() {
+    // Make sure we turn off the cacheSyncRequests if leaving.
+    this._device.cacheSyncRequests = false;
+
     // Finalize the device services.
     this._deviceFinalize();
 
@@ -633,11 +636,13 @@ var DPW = {
     switch (aEvent.detail) {
       case DPW.SYNCSETTINGS_CHANGE:
         DPW._syncSettingsChanged = true;
+        DPW._device.cacheSyncRequests = true;
         break;
 
       case DPW.SYNCSETTINGS_APPLY:
       case DPW.SYNCSETTINGS_CANCEL:
         DPW._syncSettingsChanged = false;
+        DPW._device.cacheSyncRequests = false;
         break;
     }
     DPW._update();
