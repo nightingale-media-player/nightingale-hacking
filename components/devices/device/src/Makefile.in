@@ -91,6 +91,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbBaseDeviceHelper.js \
                       $(srcdir)/sbDeviceErrorMonitor.js \
+                      $(srcdir)/sbDeviceEventMonitor.js \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

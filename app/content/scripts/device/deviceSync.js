@@ -220,7 +220,7 @@ var DeviceSyncWidget = {
 
   /**
    * \brief Notifies listener about a pref change actions.
-   * 
+   *
    * \param detail              One of the SYNCSETTINGS_* constants
    */
 
@@ -657,7 +657,43 @@ var DeviceSyncWidget = {
     this._storedSyncPrefs = null;
   },
 
-  /*
+   /**
+    * _syncPrefsCalcDuration
+    *
+    * \brief This function will calculate the total duration of items in a list
+    * that match the content type of this._mediaType.
+    */
+
+  _syncPrefsCalcDuration:
+    function DeviceSyncWidget__syncPrefsCalcDuration(aMediaList) {
+    // sbIMediaListEnumerationListener
+    // This gives us a count and duration of items of contentType
+    var contentDuration = -1;
+    var durationCounter = {
+      onEnumerationBegin : function(aMediaList) {
+        return Ci.sbIMediaListEnumerationListener.CONTINUE;
+      },
+      onEnumeratedItem : function(aMediaList, aMediaItem) {
+        if (aMediaItem.getProperty(SBProperties.duration) != null) {
+          contentDuration +=
+            parseFloat(aMediaItem.getProperty(SBProperties.duration));
+        }
+        return Ci.sbIMediaListEnumerationListener.CONTINUE;
+      },
+      onEnumerationEnd : function(aMediaList, aStatusCode) {
+      }
+    };
+
+    aMediaList.enumerateItemsByProperty(SBProperties.contentType,
+                                        this._mediaType,
+                                        durationCounter,
+                                        Ci.sbIMediaList
+                                          .ENUMERATIONTYPE_SNAPSHOT);
+
+    return contentDuration;
+  },
+
+  /**
    * syncPrefsGetListInfo
    *
    * \brief This function gets the information from a media list required to
@@ -680,6 +716,13 @@ var DeviceSyncWidget = {
       listInfo.belongsInTab = false;
       return listInfo;
     }
+    else if (mCustomType == "video-togo") {
+      // This should always be video type
+      listInfo.belongsInTab = (this._mediaType == "video");
+      listInfo.contentType = "video";
+      listInfo.contentDuration = this._syncPrefsCalcDuration(aMediaList);
+      return listInfo;
+    }
 
     // Lists that have no items default to the Music tab.
     if (aMediaList.isEmpty) {
@@ -687,43 +730,21 @@ var DeviceSyncWidget = {
       return listInfo;
     }
 
-    // sbIMediaListEnumerationListener
-    // This gives us a count and duration of items of contentType
-    var durationCounter = {
-      onEnumerationBegin : function(aMediaList) {
-        return Ci.sbIMediaListEnumerationListener.CONTINUE;
-      },
-      onEnumeratedItem : function(aMediaList, aMediaItem) {
-        if (aMediaItem.getProperty(SBProperties.duration) != null) {
-          listInfo.contentDuration +=
-            parseFloat(aMediaItem.getProperty(SBProperties.duration));
-        }
-        return Ci.sbIMediaListEnumerationListener.CONTINUE;
-      },
-      onEnumerationEnd : function(aMediaList, aStatusCode) {
-      }
-    };
-
-    aMediaList.enumerateItemsByProperty(SBProperties.contentType,
-                                        this._mediaType,
-                                        durationCounter,
-                                        Ci.sbIMediaList
-                                          .ENUMERATIONTYPE_SNAPSHOT);
-
     var listType = aMediaList.getListContentType();
     switch (listType) {
       case Ci.sbIMediaList.CONTENTTYPE_AUDIO:
-        if (this._mediaType == "video")
-          listInfo.belongsInTab = false;
+        listInfo.belongsInTab = (this._mediaType == "audio")
         break;
       case Ci.sbIMediaList.CONTENTTYPE_VIDEO:
         listInfo.contentType = "video";
-        if (this._mediaType == "audio")
-          listInfo.belongsInTab = false;
+        listInfo.belongsInTab = (this._mediaType == "video")
+        listInfo.contentDuration = this._syncPrefsCalcDuration(aMediaList);
         break;
       case Ci.sbIMediaList.CONTENTTYPE_MIX:
         listInfo.contentType = "mix";
         listInfo.isMix = true;
+        if (this._mediaType == "video")
+          listInfo.contentDuration = this._syncPrefsCalcDuration(aMediaList);
         break;
       default:
         Cu.reportError("Unsupported media list type!");
@@ -733,7 +754,7 @@ var DeviceSyncWidget = {
     return listInfo;
   },
 
-  /*
+  /**
    * syncPrefsInitPrefs
    *
    * \brief This function initializes the working sync preference set. It sets
@@ -805,7 +826,7 @@ var DeviceSyncWidget = {
   },
 
 
-  /*
+  /**
    * syncPrefsInitUI
    *
    * \brief This function initializes the sync preference UI elements to match
@@ -893,7 +914,7 @@ var DeviceSyncWidget = {
   },
 
 
-  /*
+  /**
    * syncPrefsRead
    *
    * \brief This function reads the sync preferences from the preference
@@ -962,7 +983,7 @@ var DeviceSyncWidget = {
   },
 
 
-  /*
+  /**
    * syncPrefsWrite
    *
    * \brief This function writes the working sync preferences to the preference
@@ -1013,7 +1034,7 @@ var DeviceSyncWidget = {
     this._deviceLibrary.setMgmtType(mediaType, this._syncPrefs.mgmtType.value);
   },
 
-  /*
+  /**
    * syncPrefsMgmtTypeIsAll
    *
    * \brief Checks if the management type for this contentType is ALL
@@ -1026,7 +1047,7 @@ var DeviceSyncWidget = {
             Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL);
   },
 
-  /*
+  /**
    * syncPrefsApply
    *
    * \brief This function applies the working preference set to the preference
@@ -1094,7 +1115,7 @@ var DeviceSyncWidget = {
     this.update();
   },
 
-  /*
+  /**
    * syncPrefsSetMgmtType
    *
    * \brief This function sets the correct mgmt type for the content, without
@@ -1119,7 +1140,7 @@ var DeviceSyncWidget = {
     this._syncPrefs.mgmtType.value = mgmtType;
   },
 
-  /*
+  /**
    * syncPrefsExtract
    *
    * \brief This function extracts the preference settings from the preference
@@ -1153,7 +1174,7 @@ var DeviceSyncWidget = {
   },
 
 
-  /*
+  /**
    * syncPrefsChanged
    *
    * \param aPrefs1,               Preferences to compare.
@@ -1194,7 +1215,7 @@ var DeviceSyncWidget = {
   },
 
 
-  /*
+  /**
    * syncPrefsCopy
    *
    * \param aSrcPrefs              Copy source preferences.
@@ -1225,7 +1246,7 @@ var DeviceSyncWidget = {
   },
 
 
-  /*
+  /**
    * syncPrefsCopyValues
    *
    * \param aSrcPrefs              Copy source preferences.
