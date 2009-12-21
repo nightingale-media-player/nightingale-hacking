@@ -64,6 +64,7 @@
 ./components/sbDeviceController.xpt
 ./components/sbDeviceDeviceTester.so
 ./components/sbDeviceErrorMonitor.js
+./components/sbDeviceEventMonitor.js
 ./components/sbDeviceEventTester.so
 ./components/sbDeviceFirmwareAutoCheckForUpdate.js
 ./components/sbDeviceFirmwareTester.so

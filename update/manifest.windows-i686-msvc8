@@ -1,4 +1,4 @@
-f./.autoreg
+./.autoreg
 ./application.ini
 ./blocklist.xml
 ./cdriphelper.exe
@@ -65,6 +65,7 @@ f./.autoreg
 ./components/sbDeviceController.xpt
 ./components/sbDeviceDeviceTester.dll
 ./components/sbDeviceErrorMonitor.js
+./components/sbDeviceEventMonitor.js
 ./components/sbDeviceEventTester.dll
 ./components/sbDeviceFirmwareAutoCheckForUpdate.js
 ./components/sbDeviceFirmwareTester.dll

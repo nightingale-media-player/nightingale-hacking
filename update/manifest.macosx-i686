@@ -63,6 +63,7 @@
 ./components/sbDeviceController.xpt
 ./components/sbDeviceDeviceTester.dylib
 ./components/sbDeviceErrorMonitor.js
+./components/sbDeviceEventMonitor.js
 ./components/sbDeviceEventTester.dylib
 ./components/sbDeviceFirmwareAutoCheckForUpdate.js
 ./components/sbDeviceFirmwareTester.dylib
