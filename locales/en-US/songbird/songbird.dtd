@@ -502,7 +502,7 @@
 <!ENTITY device.sync.manual.label "Manually manage">
 <!ENTITY device.sync.playlist.title "Title">
 <!ENTITY device.sync.playlist.video.duration "Video Duration">
-
+<!ENTITY device.sync.manual_mode.descr "Your sync mode is currently set to Manual (drag and drop) mode. To enable the settings below, select auto sync from the toggle buttons above.">
 
 <!ENTITY device.settings.header.label "Settings">
 <!ENTITY device.settings.general.label "General">

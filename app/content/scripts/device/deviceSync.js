@@ -1035,15 +1035,15 @@ var DeviceSyncWidget = {
 
   syncPrefsApply: function DeviceSyncWidget_syncPrefsApply()
   {
-    var                         syncRadioGroup;
-    var                         syncPlaylistTree;
     var                         syncPlaylistTreeCell;
     var                         syncPlaylistList;
     var                         guid;
 
     /* Get the management type pref UI elements. */
-    syncRadioGroup = this._getElement("content_auto_sync_type_radio_group");
-    syncPlaylistTree = this._getElement("content_auto_sync_playlist_tree");
+    var selector = this._getElement("content_selector");
+    var syncRadioGroup = this._getElement("content_auto_sync_type_radio_group");
+    var syncPlaylistTree = this._getElement("content_auto_sync_playlist_tree");
+    var manualMessage = this._getElement("manual-mode-descr");
 
     /* Apply management type prefs. */
     // Manual applies to all content type so it will never need a bit compare
@@ -1052,11 +1052,13 @@ var DeviceSyncWidget = {
       // Manual manage mode
       // We make sure the tree is not disabled first so it does not look odd
       syncPlaylistTree.disabled = false;
+      manualMessage.removeAttribute("collapsed");
       // Disable the whole widget
-      this._widget.setAttribute("disabled", true);
+      selector.setAttribute("disabled", true);
     }
     else {
-      this._widget.removeAttribute("disabled");
+      manualMessage.setAttribute("collapsed", "true");
+      selector.removeAttribute("disabled");
     }
 
     if ((this._mediaType == "video") || !this.syncPrefsMgmtTypeIsAll()) {

@@ -55,8 +55,11 @@
      <content>
 
       <xul:vbox class="device-tab-content">
+        <xul:groupbox sbid="manual-mode-descr">
+          <xul:description>&device.sync.manual_mode.descr;</xul:description>
+        </xul:groupbox>
 
-        <xul:vbox>
+        <xul:vbox sbid="content_selector">
 
           <xul:hbox class="device-tab-header-box">
             <!-- Header label and info. -->
