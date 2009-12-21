@@ -149,7 +149,7 @@ sb-device-battery {
 
 
 
-#device_management_tabs {
+.device_management_tabs {
   background-image:none;
 }
 #overall_device_info_box {
@@ -158,7 +158,7 @@ sb-device-battery {
   background-position:center top;
   /* padding:10px 8px 0px 8px; */
 }
-tabbox#device_management_box > tabpanels > tabpanel {
+tabbox.device_management_box > tabpanels > tabpanel {
   overflow-y: auto;
 }
 
@@ -205,4 +205,3 @@ sb-properties-formatter > hbox > vbox > textbox
 {
   display: none;
 }
-

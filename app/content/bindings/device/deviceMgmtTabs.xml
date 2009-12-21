@@ -56,8 +56,8 @@
      *********************************************************************** -->
 
     <content>
-      <xul:tabbox sbid="device_management_box" flex="1">
-        <xul:tabs sbid="device_management_tabs">
+      <xul:tabbox class="device_management_box" flex="1">
+        <xul:tabs class="device_management_tabs">
          <xul:tab sbid="device_management_music_sync_tab"
                   label="&device.management.tabs.music.label;" />
          <xul:tab sbid="device_management_video_sync_tab"
@@ -69,7 +69,7 @@
                   label="&device.management.tabs.settings.label;"
                   xbl:inherits="hidden=hideSettingsTab"/>
         </xul:tabs>
-        <xul:tabpanels sbid="device_management_tabpanels" flex="1">
+        <xul:tabpanels class="device_management_tabpanels" flex="1">
           <xul:tabpanel sbid="device_management_music_sync_tabpanel"
                         pack="center">
             <xul:sb-device-sync sbid="device_music_sync"
