@@ -151,6 +151,11 @@ public:
   virtual nsresult OnGetRecoveryMode(PRBool *aRecoveryMode);
 
   // override me, see cpp file for implementation notes
+  virtual nsresult OnGetDeviceModelNumber(nsAString &aModelNumber);
+  // override me, see cpp file for implementation notes
+  virtual nsresult OnGetDeviceModelVersion(nsAString &aModelVersion);
+
+  // override me, see cpp file for implementation notes
   virtual nsresult OnCanHandleDevice(sbIDevice *aDevice, 
                                      PRBool *_retval);
   // override me, see cpp file for implementation notes

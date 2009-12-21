@@ -453,6 +453,41 @@ sbBaseDeviceFirmwareHandler::OnGetRecoveryMode(PRBool *aRecoveryMode)
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+/*virtual*/ nsresult 
+sbBaseDeviceFirmwareHandler::OnGetDeviceModelNumber(nsAString &aModelNumber)
+{
+  TRACE(("[%s]", __FUNCTION__));
+
+  /**
+   * Here is where you may return the internal model number for the device.
+   * This is optional, if you don't want to implement it, just skip
+   * overriding this method as the default version already does the right
+   * thing by default.
+   */
+
+  aModelNumber.SetIsVoid(PR_TRUE);
+
+  return NS_OK;
+}
+
+/*virtual*/ nsresult 
+sbBaseDeviceFirmwareHandler::OnGetDeviceModelVersion(nsAString &aModelVersion)
+{
+  TRACE(("[%s]", __FUNCTION__));
+
+  /**
+   * Here is where you may return the internal model version for the device.
+   * This is optional, if you don't want to implement it, just skip
+   * overriding this method as the default version already does the right
+   * thing by default.
+   */
+
+  aModelVersion.SetIsVoid(PR_TRUE);
+
+  return NS_OK;
+
+}
+
 /*virtual*/ nsresult
 sbBaseDeviceFirmwareHandler::OnCanHandleDevice(sbIDevice *aDevice,
                                                PRBool *_retval)
@@ -925,8 +960,36 @@ sbBaseDeviceFirmwareHandler::GetDefaultFirmwareUpdate(sbIDeviceFirmwareUpdate **
 }
 
 NS_IMETHODIMP
+sbBaseDeviceFirmwareHandler::GetDeviceModelNumber(nsAString &aModelNumber)
+{
+  TRACE(("[%s]", __FUNCTION__));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoMonitor mon(mMonitor);
+  
+  nsresult rv = OnGetDeviceModelNumber(aModelNumber);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseDeviceFirmwareHandler::GetDeviceModelVersion(nsAString &aModelVersion)
+{
+  TRACE(("[%s]", __FUNCTION__));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv = OnGetDeviceModelVersion(aModelVersion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::CanHandleDevice(sbIDevice *aDevice,
-                                               PRBool *_retval)
+                                             PRBool *_retval)
 {
   TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
