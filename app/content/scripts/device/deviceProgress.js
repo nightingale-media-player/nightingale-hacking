@@ -349,9 +349,6 @@ var DPW = {
    */
 
   finalize: function DPW_finalize() {
-    // Make sure we turn off the cacheSyncRequests if leaving.
-    this._device.cacheSyncRequests = false;
-
     // Finalize the device services.
     this._deviceFinalize();
 
@@ -416,8 +413,8 @@ var DPW = {
     }
 
     // Only show sync button if not showing progress.
-    this._settingsCancelButton.hidden = this.showProgress || !this._syncSettingsChanged;
-    this._settingsApplyButton.hidden = this.showProgress || !this._syncSettingsChanged;
+    this._settingsCancelButton.hidden = this._showProgress || !this._syncSettingsChanged;
+    this._settingsApplyButton.hidden = this._showProgress || !this._syncSettingsChanged;
     this._syncButton.hidden = this._showProgress || this._syncSettingsChanged;
     this._syncManualBox.hidden = this._showProgress;
 
@@ -544,7 +541,7 @@ var DPW = {
                substate == Ci.sbIDevice.STATE_SYNC_PLAYLIST) {
       localeKey = "device.status.progress_header_" + operationLocaleSuffix;
       subLocaleKey = "device.status.progress_footer_syncing_finishing";
-      this._itemProgress.setAttribute("mode", "undetermined");
+      this._progressMeter.setAttribute("mode", "undetermined");
     } else if (operation == Ci.sbIDevice.STATE_COPYING ||
                substate == Ci.sbIDevice.STATE_COPYING) {
       localeKey = "device.status.progress_header_copying";
@@ -800,6 +797,9 @@ var DPW = {
   _deviceFinalize: function DPW__deviceFinalize() {
     // Clear object fields.
     if (this._device) {
+      // Make sure we turn off the cacheSyncRequests if leaving.
+      this._device.cacheSyncRequests = false;
+
       var deviceEventTarget = this._device;
       deviceEventTarget.QueryInterface(Ci.sbIDeviceEventTarget);
       deviceEventTarget.removeEventListener(this);
