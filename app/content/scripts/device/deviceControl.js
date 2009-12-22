@@ -328,11 +328,13 @@ deviceControlWidget.prototype = {
         break;
       
       case "mgmt-manual" :
-        this._setManagementMode(true);
+        if (this._widget.getAttribute("checked") != "true")
+          this._setManagementMode(true);
         break;
 
       case "mgmt-auto" :
-        this._setManagementMode(false);
+        if (this._widget.getAttribute("checked") != "true")
+          this._setManagementMode(false);
         break;
 
       default :
