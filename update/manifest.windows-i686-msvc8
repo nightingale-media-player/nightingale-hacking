@@ -452,7 +452,6 @@
 ./songbird.exe
 ./songbird.ini
 ./songbirditunesagent.exe
-./testharness/acme/res/acme_test_dit.xml
 ./testharness/acme/test_ditparser.js
 ./testharness/addonmetadata/test_addonMetadata.js
 ./testharness/appcontent/head_appcontent.js
