@@ -275,7 +275,7 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, 
     handlerlist_t::reverse_iterator i = handlerlist.rbegin();
     pHandler = (*i).m_Handler;
     LOG(("%s[%p]: using handler %s",
-         __FUNCTION__, this, (*i).m_ContractID));
+         __FUNCTION__, this, (*i).m_ContractID.get()));
   }
 
   NS_ENSURE_TRUE(pHandler, NS_ERROR_UNEXPECTED);
