@@ -76,7 +76,7 @@ var DeviceSyncWidget = {
   //
   //   _widget                  Device sync widget.
   //   _deviceLibrary           Device library we are working with.
-  //   _isIdle                  Flag for state of device.
+  //   _isBusy                  Flag for state of device.
   //   _mediaType               Media Type this sync widget represents.
   //   _syncSettingsChanged     Will be true if settings changed and haven't
   //                            been saved yet.
@@ -87,7 +87,7 @@ var DeviceSyncWidget = {
 
   _widget: null,
   _deviceLibrary: null,
-  _isIdle: true,
+  _isBusy: false,
   _mediaType: null,
   _syncSettingsChanged: false,
   _ignoreDevicePrefChanges: false,
@@ -324,6 +324,11 @@ var DeviceSyncWidget = {
         this.removeLibrary(aEvent.data.QueryInterface(Ci.sbIDeviceLibrary));
         break;
 
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED:
+        this._isBusy = !(aEvent.deviceState == Ci.sbIDevice.STATE_IDLE);
+        this.syncPrefsApply();
+        break;
+
       default :
         break;
     }
@@ -547,24 +552,6 @@ var DeviceSyncWidget = {
     return document.getAnonymousElementByAttribute(this._widget,
                                                    "sbid",
                                                    aElementID);
-  },
-
-  /*
-   * \brief selects the radio element specified by aRadioID.
-   *
-   * \param aRadioID               ID of radio to select.
-   *
-   */
-
-  _selectRadio : function DeviceSyncWidget__selectRadio(aRadioID)
-  {
-    var radioElem;
-
-    /* Get the radio element. */
-    radioElem = this._getElement(aRadioID);
-
-    /* Select the radio. */
-    radioElem.radioGroup.selectedItem = radioElem;
   },
 
   /*
@@ -943,8 +930,11 @@ var DeviceSyncWidget = {
 
     /* Read the management type preference. */
     var mediaType = this._getMediaType(this._mediaType);
-    readPrefs.mgmtType.value =
-        this._deviceLibrary.getMgmtType(mediaType);
+    var mgmtType = this._deviceLibrary.getMgmtType(mediaType);
+    if (this._mediaType == "video")
+      mgmtType = (mgmtType & Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL) |
+                 Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_PLAYLISTS;
+    readPrefs.mgmtType.value = mgmtType;
 
     /* Clear and read the sync playlist list preferences. */
     syncPlaylistList = readPrefs.syncPlaylistList;
@@ -1043,8 +1033,21 @@ var DeviceSyncWidget = {
 
   syncPrefsMgmtTypeIsAll: function DeviceSyncWidget_syncPrefsMgmtTypeIsAll()
   {
-    return (this._syncPrefs.mgmtType.value ==
-            Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL);
+    return !!(this._syncPrefs.mgmtType.value &
+              Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL);
+  },
+
+  /**
+   * syncPrefsMgmtTypeIsManual
+   *
+   * \brief Checks if the management type for this contentType is MANUAL
+   * \returns true if the MGMT_TYPE_ is set to MANUAL for the contentType
+   */
+
+  syncPrefsMgmtTypeIsManual: function DeviceSyncWidget_syncPrefsMgmtTypeIsManual()
+  {
+    return !!(this._syncPrefs.mgmtType.value &
+              Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL);
   },
 
   /**
@@ -1059,6 +1062,7 @@ var DeviceSyncWidget = {
     var                         syncPlaylistTreeCell;
     var                         syncPlaylistList;
     var                         guid;
+    var self = this;
 
     /* Get the management type pref UI elements. */
     var selector = this._getElement("content_selector");
@@ -1067,35 +1071,25 @@ var DeviceSyncWidget = {
     var manualMessage = this._getElement("manual-mode-descr");
 
     /* Apply management type prefs. */
-    // Manual applies to all content type so it will never need a bit compare
-    if (this._syncPrefs.mgmtType.value &
-        Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL) {
-      // Manual manage mode
-      // We make sure the tree is not disabled first so it does not look odd
-      syncPlaylistTree.disabled = false;
-      manualMessage.removeAttribute("collapsed");
-      // Disable the whole widget
-      selector.setAttribute("disabled", true);
+    function selectRadio(id) {
+      syncRadioGroup.selectedItem = self._getElement(id);
     }
-    else {
-      manualMessage.setAttribute("collapsed", "true");
-      selector.removeAttribute("disabled");
+    function boolprop(prop) {
+      return function(node, state) {
+        if (state)
+          node.setAttribute(prop, "true");
+        else
+          node.removeAttribute(prop);
+      }
     }
+    var disable = boolprop("disabled");
+    var collapse = boolprop("collapsed");
 
-    if ((this._mediaType == "video") || !this.syncPrefsMgmtTypeIsAll()) {
-      // SYNC_PLAYLISTS for this type
-      // Select the Sync Playlist radio button
-      // Enable the playlist
-      syncPlaylistTree.disabled = false;
-      this._selectRadio("content_auto_sync_selected_radio");
-    }
-    else {
-      // SYNC_ALL for this type
-      // Select the Sync All radio button
-      // Disable the playlist
-      syncPlaylistTree.disabled = true;
-      this._selectRadio("content_auto_sync_all_radio");
-    }
+    collapse(manualMessage, !this.syncPrefsMgmtTypeIsManual());
+    disable(selector, this._isBusy || this.syncPrefsMgmtTypeIsManual());
+    disable(syncPlaylistTree, this.syncPrefsMgmtTypeIsAll());
+    selectRadio(this.syncPrefsMgmtTypeIsAll() ? "content_auto_sync_all_radio"
+                                              : "content_auto_sync_selected_radio");
 
     /* Apply the sync playlist list prefs. */
     syncPlaylistList = this._syncPrefs.syncPlaylistList;
