@@ -47,6 +47,9 @@ public:
   nsresult SetPropertyName(const nsAString & aPropertyName);
   nsresult SetValueMin(nsIVariant * aValueMin);
   nsresult SetValueMax(nsIVariant * aValueMax);
+  nsresult SetHidden(const PRBool aHidden);
+  nsresult SetMapping(const nsACString & aMapping);
+  nsresult SetScale(const nsACString & aScale);
 
 private:
   ~sbTranscodeProfileProperty();
@@ -63,6 +66,24 @@ protected:
 
   /* \brief The current value of this property (initially the default) */
   nsCOMPtr<nsIVariant> mValue;
+  
+  /**
+   * \brief If true, this property should not be output (instead it should
+   * be used for calcuating a different property)
+   */
+  PRBool mHidden;
+
+  /**
+   * string key for a mapping; if not empty, the value of this property should
+   * be set from the other property given.
+   */
+  nsCString mMapping;
+
+  /**
+   * a scaling factor, expressed as a fraction; the output value of this
+   * property should be multiplied by this fraction.
+   */
+  nsCString mScale;
 };
 
 #endif /* __SB_TRANSCODEPROFILEPROPERTY_H__ */

@@ -171,6 +171,15 @@ interface sbITranscodeEncoderProfile : sbITranscodeProfile {
 %}COMMENT
 
   /**
+   * \brief The file extension to use for this profile
+   * May be empty to indicate no extension is to be used.
+   *
+   * Examples:
+   *   "ogg", "mp3", "avi"
+   */
+  attribute ACString fileExtension;
+
+  /**
    * Get the desired audio bitrate for a given quality setting
    *
    * @param aQuality the desired quality, in the range 0 to 1 (inclusive)
@@ -200,7 +209,7 @@ interface sbITranscodeEncoderProfile : sbITranscodeProfile {
 
 %}
 
-[scriptable, uuid(49f32e88-a71e-4a1e-b502-1e809572ede0)]
+[scriptable, uuid(22bd3898-1dd2-11b2-821f-9742fbc125a7)]
 interface sbITranscodeProfileProperty : nsISupports
 {
   /* \brief The name of the property */
@@ -213,6 +222,24 @@ interface sbITranscodeProfileProperty : nsISupports
 
   /* \brief The current value of this property (initially the default) */
   attribute nsIVariant value;
+  
+  /**
+   * \brief If true, this property should not be output (instead it should
+   * be used for calcuating a different property)
+   */
+  readonly attribute boolean hidden;
+  
+  /**
+   * If set, this property should be set based on another property
+   * Values beginning with @ indicate a special mapping; for example,
+   * "@bitrate" on a video property might read from sbIMediaFormatVideo::bitrate
+   */
+  readonly attribute ACString mapping;
+  
+  /**
+   * A scale value (expressed as a fraction) for the mapping
+   */
+  readonly attribute ACString scale;
 };
 
 

@@ -43,7 +43,7 @@ interface nsIPropertyBag;
  * should be implemented by any Configurator system and implement the
  * configurate function.
  */
-[scriptable, uuid(2e8d2b3e-947d-4bd5-9008-b2ebb680a950)]
+[scriptable, uuid(ae8a8bd4-1dd1-11b2-8054-c4e99a471798)]
 interface sbITranscodingConfigurator : nsISupports
 {
   /**
@@ -74,6 +74,13 @@ interface sbITranscodingConfigurator : nsISupports
    * called.
    */
   readonly attribute AString muxer;
+
+  /**
+   * \brief The file extension to use for transcoded files.
+   * This may depend on the muxer or the used codecs.  It may also depend on
+   * nothing at all; it's all up to the configurator.
+   */
+  readonly attribute ACString fileExtension;
 
   /**
    * \brief The video encoder to use.  The name is specific to the transcoder

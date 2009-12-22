@@ -211,6 +211,15 @@ sbTranscodeProfileLoader::LoadProfileInternal()
           rv = mProfile->SetId(textContent);
           NS_ENSURE_SUCCESS(rv, rv);
         }
+      } else if (localName.EqualsLiteral("extension")) {
+        nsCOMPtr<nsIDOM3Node> dom3Node = do_QueryInterface(childNode);
+        if (dom3Node) {
+          nsString textContent;
+          rv = dom3Node->GetTextContent(textContent);
+          NS_ENSURE_SUCCESS(rv, rv);
+          rv = mProfile->SetFileExtension(NS_ConvertUTF16toUTF8(textContent));
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
       } else if (localName.EqualsLiteral("container")) {
         rv = ProcessContainer(mProfile, CONTAINER_GENERIC, childElement);
         NS_ENSURE_SUCCESS(rv, rv);
@@ -276,6 +285,37 @@ sbTranscodeProfileLoader::ProcessProperty(nsIDOMElement* aPropertyElement,
   NS_ENSURE_SUCCESS(rv, rv);
   rv = property->SetPropertyName(attributeValue);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aPropertyElement->GetAttribute(NS_LITERAL_STRING("hidden"),
+                                      attributeValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (attributeValue.IsEmpty() ||
+      attributeValue.EqualsLiteral("0") ||
+      attributeValue.LowerCaseEqualsLiteral("false"))
+  {
+    rv = property->SetHidden(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = property->SetHidden(PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = aPropertyElement->GetAttribute(NS_LITERAL_STRING("mapping"),
+                                      attributeValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!attributeValue.IsEmpty()) {
+    rv = property->SetMapping(NS_ConvertUTF16toUTF8(attributeValue));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = aPropertyElement->GetAttribute(NS_LITERAL_STRING("scale"),
+                                      attributeValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!attributeValue.IsEmpty()) {
+    rv = property->SetScale(NS_ConvertUTF16toUTF8(attributeValue));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = aPropertyElement->GetAttribute(NS_LITERAL_STRING("type"),
                                       attributeValue);

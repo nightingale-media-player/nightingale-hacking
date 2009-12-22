@@ -36,9 +36,9 @@
 #define NS_HASH_PROPERTY_BAG_CONTRACTID "@mozilla.org/hash-property-bag;1"
 
 /* Implementation file */
-NS_IMPL_ISUPPORTS2(sbMediaFormatContainer,
-                   sbIMediaFormatContainer,
-                   sbIMediaFormatContainerMutable)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbMediaFormatContainer,
+                              sbIMediaFormatContainer,
+                              sbIMediaFormatContainerMutable)
 
 sbMediaFormatContainer::sbMediaFormatContainer(nsAString const & aContainerType) :
   mContainerType(aContainerType)
@@ -87,9 +87,9 @@ sbMediaFormatContainer::SetProperties(nsIPropertyBag *aProperties)
   return NS_OK;
 }
 
-NS_IMPL_ISUPPORTS2(sbMediaFormatVideo,
-                   sbIMediaFormatVideo,
-                   sbIMediaFormatVideoMutable)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbMediaFormatVideo,
+                              sbIMediaFormatVideo,
+                              sbIMediaFormatVideoMutable)
 
 sbMediaFormatVideo::sbMediaFormatVideo() :
     mVideoWidth(0),
@@ -239,9 +239,9 @@ sbMediaFormatVideo::SetProperties(nsIPropertyBag *aProperties)
   return NS_OK;
 }
 
-NS_IMPL_ISUPPORTS2(sbMediaFormatAudio,
-                   sbIMediaFormatAudio,
-                   sbIMediaFormatAudioMutable)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbMediaFormatAudio,
+                              sbIMediaFormatAudio,
+                              sbIMediaFormatAudioMutable)
 
 sbMediaFormatAudio::sbMediaFormatAudio() :
     mBitRate(0),
@@ -350,9 +350,9 @@ NS_IMETHODIMP sbMediaFormatAudio::SetProperties(nsIPropertyBag *aProperties)
   return NS_OK;
 }
 
-NS_IMPL_ISUPPORTS2(sbMediaFormat,
-                   sbIMediaFormat,
-                   sbIMediaFormatMutable)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbMediaFormat,
+                              sbIMediaFormat,
+                              sbIMediaFormatMutable)
 
 sbMediaFormat::sbMediaFormat(sbIMediaFormatContainer * aContainer,
                              sbIMediaFormatVideo * aVideoStream) :

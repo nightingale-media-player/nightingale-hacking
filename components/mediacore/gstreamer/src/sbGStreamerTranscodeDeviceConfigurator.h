@@ -42,10 +42,12 @@
 #include <sbPIGstTranscodingConfigurator.h>
 
 #include <nsCOMPtr.h>
+#include <nsDataHashtable.h>
 
 #include <sbFraction.h>
 
 class nsIArray;
+class nsIWritablePropertyBag;
 
 class sbIDevice;
 class sbITranscodeEncoderProfile;
@@ -68,6 +70,7 @@ public:
   FORWARD_TO_BASE(GetInputFormat, (sbIMediaFormat * *aInputFormat), aInputFormat)
   FORWARD_TO_BASE(SetInputFormat, (sbIMediaFormat * aInputFormat), aInputFormat)
   FORWARD_TO_BASE(GetMuxer, (nsAString & aMuxer), aMuxer)
+  FORWARD_TO_BASE(GetFileExtension, (nsACString & aFileExtension), aFileExtension)
   FORWARD_TO_BASE(GetVideoEncoder, (nsAString & aVideoEncoder), aVideoEncoder)
   FORWARD_TO_BASE(GetVideoFormat, (sbIMediaFormatVideo * *aVideoFormat), aVideoFormat)
   FORWARD_TO_BASE(GetAudioEncoder, (nsAString & aAudioEncoder), aAudioEncoder)
@@ -77,6 +80,10 @@ public:
   
   #undef FORWARD_TO_BASE
 
+  /*
+   * re-implement configurate() to have the configuration logic specific to
+   * gstreamer-based configuration for devices
+   */
   NS_IMETHOD Configurate();
 
   sbGStreamerTranscodeDeviceConfigurator();
@@ -106,10 +113,21 @@ protected:
   nsresult EnsureProfileAvailable(sbITranscodeEncoderProfile *aProfile);
 
   /**
+   * Selects the quality if it has not been set
+   *
+   * @postcondition the quality is set
+   */
+  nsresult SelectQuality();
+
+  /**
    * Select the encoding profile to use
    *
+   * @precondition the device has been set
+   * @precondition the quality has been set
    * @postcondition mSelectedProfile is the encoder profile to use
    * @postcondition mSelectedFormat is ths device format matching the profile
+   * @postcondition mMuxer, mVideoEncoder, mAudioEncoder are the required
+   *                element names
    */
   nsresult SelectProfile();
 
@@ -149,7 +167,35 @@ protected:
    */
   nsresult FinalizeOutputSize();
 
+  /**
+   * Actually set the various video related properties
+   * @precondition mOutputDimensions has been set
+   * @precondition mVideoBitrate has been set
+   * @postcondition mVideoFormat and mVideoEncoderProperties are set
+   */
+  nsresult SetVideoProperties();
+
+  /**
+   * Copy properties, either audio or video.
+   * @param aSrcProps the properties to copy from
+   * @param aDstBag the property bag to output
+   * @param aIsVideo true if this is for video, false for audio
+   */
+  nsresult CopyPropertiesIntoBag(nsIArray * aSrcProps,
+                                 nsIWritablePropertyBag * aDstBag,
+                                 PRBool aIsVideo);
+
 protected:
+  /**
+   * The mapping of profile to gstreamer element names (muxer + a/v encoder)
+   */
+  struct EncoderProfileData {
+    nsCString muxer;
+    nsCString audioEncoder;
+    nsCString videoEncoder;
+  };
+  nsDataHashtable<nsISupportsHashKey, EncoderProfileData> mElementNames;
+  
   /**
    * The quality setting to use
    */
@@ -192,6 +238,11 @@ protected:
    * The selected output dimensions, taking into account the bitrate constraints
    */
   Dimensions mOutputDimensions;
+  
+  /**
+   * The selected output pixel aspect ratio
+   */
+  sbFraction mOutputPAR;
 };
 
 #endif // _SB_GSTREAMER_TRANSCODE_DEVICE_CONFIGURATOR_H_

@@ -72,6 +72,7 @@ private:
   nsString mDescription;
   PRUint32 mType;
   nsString mContainerFormat;
+  nsCString mFileExtension;
   nsString mAudioCodec;
   nsString mVideoCodec;
   nsCOMPtr<nsIArray> mContainerProperties;

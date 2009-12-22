@@ -31,6 +31,7 @@
 
 // Songbird imports.
 #include <sbArray.h>
+#include <sbDeviceTranscoding.h>
 #include <sbDeviceUtils.h>
 #include <sbFileUtils.h>
 #include <sbIDeviceEvent.h>
@@ -1041,8 +1042,9 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   // Find the preferred audio transcoding profile.
   if (!mTranscodeProfile)
   {
-    rv = SelectTranscodeProfile(sbITranscodeProfile::TRANSCODE_TYPE_AUDIO,
-				getter_AddRefs(mTranscodeProfile));
+    rv = GetDeviceTranscoding()->SelectTranscodeProfile(
+                                      sbITranscodeProfile::TRANSCODE_TYPE_AUDIO,
+                                      getter_AddRefs(mTranscodeProfile));
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Cache the bitrate (as a string) so that it can be applied to

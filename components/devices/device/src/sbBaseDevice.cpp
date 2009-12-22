@@ -84,6 +84,8 @@
 #include <nsISupportsPrimitives.h>
 #include <sbITranscodeManager.h>
 #include <sbITranscodeAlbumArt.h>
+#include <sbITranscodingConfigurator.h>
+
 #include <sbArray.h>
 #include <sbFileUtils.h>
 #include <sbLocalDatabaseCID.h>
@@ -100,6 +102,7 @@
 #include "sbDeviceEnsureSpaceForWrite.h"
 #include "sbDeviceLibrary.h"
 #include "sbDeviceStatus.h"
+#include "sbDeviceTranscoding.h"
 #include "sbDeviceUtils.h"
 #include "sbDeviceXMLCapabilities.h"
 #include "sbLibraryListenerHelpers.h"
@@ -268,15 +271,6 @@ PRBool sbBaseDevice::TransferRequest::IsCountable() const
          (type & REQUEST_FLAG_USER) == 0;
 }
 
-void sbBaseDevice::TransferRequest::SetTranscodeProfile(sbITranscodeProfile * aProfile)
-{
-  // Addref then release on the odd chance we're getting reassigned the same
-  // value
-  NS_IF_ADDREF(aProfile);
-  NS_IF_RELEASE(transcodeProfile);
-  transcodeProfile = aProfile;
-}
-
 sbBaseDevice::TransferRequest::TransferRequest() :
   transcodeProfile(nsnull),
   contentSrcSet(PR_FALSE),
@@ -372,6 +366,7 @@ sbBaseDevice::sbBaseDevice() :
   mCapabilitiesRegistrarType(sbIDeviceCapabilitiesRegistrar::NONE),
   mPreferenceLock(nsnull),
   mMusicLimitPercent(100),
+  mDeviceTranscoding(nsnull),
   mConnected(PR_FALSE),
   mReqWaitMonitor(nsnull),
   mReqStopProcessing(0),
@@ -425,6 +420,10 @@ sbBaseDevice::~sbBaseDevice()
   if (mConnectLock)
     PR_DestroyRWLock(mConnectLock);
   mConnectLock = nsnull;
+  
+  if (mDeviceTranscoding) {
+    delete mDeviceTranscoding;
+  }
 }
 
 NS_IMETHODIMP sbBaseDevice::SyncLibraries()
@@ -814,20 +813,22 @@ bool sbBaseDeviceRequestDupeCheck::DupeCheck(TransferRequest * aQueueRequest,
                 aNewRequest->type == aQueueRequest->type;
       return aIsDupe;
     }
-}
+  }
 }
 
-bool sbBaseDevice::IsRequestDuplicate(TransferRequestQueue & aQueue,
-                                      TransferRequest * aRequest) {
+nsresult sbBaseDevice::IsRequestDuplicate(TransferRequestQueue & aQueue,
+                                          TransferRequest * aRequest,
+                                          bool & aIsDuplicate) {
   nsresult rv;
 
   if (aQueue.empty()) {
-    return false;
+    aIsDuplicate = false;
+    return NS_OK;
   }
   // reverse search through the queue for a comparable request
   TransferRequestQueue::reverse_iterator rend = aQueue.rend();
   nsRefPtr<TransferRequest> duplicateRequest;
-  bool isDuplicate = false;
+  aIsDuplicate = false;
   TransferRequestQueue::reverse_iterator iter;
   for (iter = aQueue.rbegin();
        iter != rend;
@@ -835,8 +836,8 @@ bool sbBaseDevice::IsRequestDuplicate(TransferRequestQueue & aQueue,
     PRBool continueChecking =
              sbBaseDeviceRequestDupeCheck::DupeCheck(iter->get(),
                                                      aRequest,
-                                                     isDuplicate);
-    if (isDuplicate) {
+                                                     aIsDuplicate);
+    if (aIsDuplicate) {
       duplicateRequest = *iter;
     }
     if (!continueChecking) {
@@ -888,7 +889,7 @@ bool sbBaseDevice::IsRequestDuplicate(TransferRequestQueue & aQueue,
       break;
     }
   }
-  return isDuplicate;
+  return NS_OK;
 }
 
 nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
@@ -926,7 +927,10 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
 
     // If we have received a similar request for this item we can ignore this
     // one
-    if (IsRequestDuplicate(queue, aRequest)) {
+    bool isDupe;
+    nsresult rv = IsRequestDuplicate(queue, aRequest, isDupe);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (isDupe) {
       return NS_OK;
     }
     // initialize some properties of the request
@@ -2569,12 +2573,6 @@ sbBaseDevice::InitializeRequestThread()
   // Clear the stop request processing flag.
   PR_AtomicSet(&mReqStopProcessing, 0);
 
-  // Get the transcode manager.
-  mTranscodeManager =
-    do_ProxiedGetService
-      ("@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Create the request wait monitor.
   mReqWaitMonitor =
     nsAutoMonitor::NewMonitor("sbDeviceBase::mReqWaitMonitor");
@@ -2597,7 +2595,6 @@ sbBaseDevice::FinalizeRequestThread()
   // Remove object references.
   mReqThread = nsnull;
   mReqAddedEvent = nsnull;
-  mTranscodeManager = nsnull;
 
   // Dispose of the request wait monitor.
   if (mReqWaitMonitor) {
@@ -2802,6 +2799,10 @@ nsresult sbBaseDevice::Init()
 
   // Perform initial properties update.
   UpdateProperties();
+
+  // get transcoding stuff
+  mDeviceTranscoding = new sbDeviceTranscoding(this);
+  NS_ENSURE_TRUE(mDeviceTranscoding, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
 }
@@ -4079,7 +4080,6 @@ sbBaseDevice::SyncGetSyncItemSizes
   NS_ENSURE_ARG_POINTER(aTotalSyncSize);
 
   // Function variables.
-  PRBool   success;
   nsresult rv;
 
   // Accumulate the sizes of all sync items.  Use GetItemByIndex like the
@@ -5146,26 +5146,6 @@ sbBaseDevice::RegisterDeviceCapabilities(sbIDeviceCapabilities * aCapabilities)
   return NS_OK;
 }
 
-nsresult
-sbBaseDevice::GetMediaFormat(sbIMediaItem* aMediaItem,
-                             sbIMediaFormat** aMediaFormat)
-{
-  nsresult rv;
-  if (!mMediaInspector) {
-    mMediaInspector = do_GetService(SB_MEDIAINSPECTOR_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  nsCOMPtr<sbIMediaFormat> mediaFormat;
-
-  rv = mMediaInspector->InspectMedia(aMediaItem, getter_AddRefs(mediaFormat));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  mediaFormat.forget(aMediaFormat);
-
-  return NS_OK;
-}
-
 NS_IMETHODIMP
 sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem,
                                 PRBool        aReportErrors,
@@ -5183,7 +5163,8 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem,
     }
   }
 
-  PRUint32 const transcodeType = sbDeviceUtils::GetTranscodeType(aMediaItem);
+  PRUint32 const transcodeType =
+    GetDeviceTranscoding()->GetTranscodeType(aMediaItem);
   bool needsTranscoding = false;
 
   // TODO: In the future, mediaFormat should always be used, but for now
@@ -5191,46 +5172,67 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem,
   if (transcodeType == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO) {
     nsCOMPtr<sbIMediaFormat> mediaFormat;
 
-    rv = GetMediaFormat(aMediaItem, getter_AddRefs(mediaFormat));
+    rv = GetDeviceTranscoding()->GetMediaFormat(aMediaItem,
+                                            getter_AddRefs(mediaFormat));
     NS_ENSURE_SUCCESS(rv, rv);
     rv = sbDeviceUtils::DoesItemNeedTranscoding(transcodeType,
                                                 mediaFormat,
                                                 this,
                                                 needsTranscoding);
     NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
-    sbExtensionToContentFormatEntry_t formatType;
 
-    PRUint32 bitRate = 0;
-    PRUint32 sampleRate = 0;
-    rv = sbDeviceUtils::GetFormatTypeForItem(aMediaItem,
-                                             formatType,
-                                             bitRate,
-                                             sampleRate);
-
-    // Check for expected error, unable to find format type
-    if (rv == NS_ERROR_NOT_AVAILABLE) {
-      if (aReportErrors) {
-        rv = DispatchTranscodeErrorEvent(
-                                aMediaItem,
-                                SBLocalizedString("transcode.file.notsupported"));
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-      // If we can't even figure out what the format type is
-      // we don't support it.
-      *_retval = PR_FALSE;
+    if (!needsTranscoding) {
+      *_retval = PR_TRUE;
       return NS_OK;
     }
+
+    // XXX MOOK this needs to be fixed to be not gstreamer specific
+    nsCOMPtr<sbIDeviceTranscodingConfigurator> configurator =
+      do_CreateInstance("@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Device/GStreamer;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<sbIDevice> device =
+      do_QueryInterface(NS_ISUPPORTS_CAST(sbIDevice*, this), &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = configurator->SetDevice(device);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = configurator->SetInputFormat(mediaFormat);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = sbDeviceUtils::DoesItemNeedTranscoding(formatType,
-                                                bitRate,
-                                                sampleRate,
-                                                this,
-                                                needsTranscoding);
-    NS_ENSURE_SUCCESS(rv, rv);
+    rv = configurator->Configurate();
+    *_retval = NS_SUCCEEDED(rv) ? PR_TRUE : PR_FALSE;
+    return NS_OK;
   }
+
+  sbExtensionToContentFormatEntry_t formatType;
+
+  PRUint32 bitRate = 0;
+  PRUint32 sampleRate = 0;
+  rv = sbDeviceUtils::GetFormatTypeForItem(aMediaItem,
+                                           formatType,
+                                           bitRate,
+                                           sampleRate);
+
+  // Check for expected error, unable to find format type
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    if (aReportErrors) {
+      rv = DispatchTranscodeErrorEvent(
+                              aMediaItem,
+                              SBLocalizedString("transcode.file.notsupported"));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    // If we can't even figure out what the format type is
+    // we don't support it.
+    *_retval = PR_FALSE;
+    return NS_OK;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbDeviceUtils::DoesItemNeedTranscoding(formatType,
+                                              bitRate,
+                                              sampleRate,
+                                              this,
+                                              needsTranscoding);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Exit if no transcoding is needed
   if (!needsTranscoding) {
@@ -5241,8 +5243,8 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem,
   // the file) but is there a transcoding profile available that will
   // work?
   nsCOMPtr<sbITranscodeProfile> profile;
-  rv = SelectTranscodeProfile(transcodeType,
-                              getter_AddRefs(profile));
+  rv = GetDeviceTranscoding()->SelectTranscodeProfile(transcodeType,
+                                                      getter_AddRefs(profile));
 
   // No profile available means we don't support this file.
   if (rv == NS_ERROR_NOT_AVAILABLE) {
@@ -5260,265 +5262,6 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem,
   // We should definitely have a real profile now, since we didn't
   // get the NOT AVAILABLE error, so... we're done!
   *_retval = PR_TRUE;
-  return NS_OK;
-}
-
-nsresult
-sbBaseDevice::FindTranscodeProfile(sbIMediaItem * aMediaItem,
-                                   sbITranscodeProfile ** aProfile)
-{
-  TRACE(("%s", __FUNCTION__));
-  NS_ENSURE_ARG_POINTER(aMediaItem);
-  NS_ENSURE_ARG_POINTER(aProfile);
-
-  nsresult rv;
-
-
-  if (sbDeviceUtils::IsItemDRMProtected(aMediaItem)) {
-    // Transcoding from DRM formats is not supported.
-    return NS_ERROR_NOT_AVAILABLE;
-  }
-
-  PRUint32 const transcodeType = sbDeviceUtils::GetTranscodeType(aMediaItem);
-  bool needsTranscoding = false;
-
-  if (transcodeType == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO) {
-    nsCOMPtr<sbIMediaFormat> mediaFormat;
-    rv = GetMediaFormat(aMediaItem, getter_AddRefs(mediaFormat));
-    if (rv == NS_ERROR_NOT_AVAILABLE) {
-      return rv;
-    }
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = sbDeviceUtils::DoesItemNeedTranscoding(transcodeType,
-                                                mediaFormat,
-                                                this,
-                                                needsTranscoding);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
-    // TODO: GetFormatTypeForItem is deprecated. Once the media inspector
-    // service is finished this should go away
-    sbExtensionToContentFormatEntry_t formatType;
-    PRUint32 bitRate = 0;
-    PRUint32 sampleRate = 0;
-    rv = sbDeviceUtils::GetFormatTypeForItem(aMediaItem,
-                                             formatType,
-                                             bitRate,
-                                             sampleRate);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Check for expected error, unable to find format type
-    rv = sbDeviceUtils::DoesItemNeedTranscoding(formatType,
-                                                bitRate,
-                                                sampleRate,
-                                                this,
-                                                needsTranscoding);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  if (!needsTranscoding) {
-    *aProfile = nsnull;
-    return NS_OK;
-  }
-
-  rv = SelectTranscodeProfile(transcodeType, aProfile);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-nsresult
-sbBaseDevice::GetSupportedTranscodeProfiles(nsIArray **aSupportedProfiles)
-{
-  nsresult rv;
-  if (!mTranscodeProfiles) {
-    rv = sbDeviceUtils::GetSupportedTranscodeProfiles(
-                          this,
-                          getter_AddRefs(mTranscodeProfiles));
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  NS_IF_ADDREF(*aSupportedProfiles = mTranscodeProfiles);
-
-  return NS_OK;
-}
-
-nsresult
-sbBaseDevice::SelectTranscodeProfile(PRUint32 transcodeType,
-                                     sbITranscodeProfile **aProfile)
-{
-  nsresult rv;
-
-  PRBool hasProfilePref = PR_FALSE;
-  // See if we have a preference for the transcoding profile.
-  nsCOMPtr<nsIVariant> profileIdVariant;
-  nsString prefProfileId;
-  rv = GetPreference(NS_LITERAL_STRING("transcode_profile.profile_id"),
-                     getter_AddRefs(profileIdVariant));
-  if (NS_SUCCEEDED(rv))
-  {
-    hasProfilePref = PR_TRUE;
-    rv = profileIdVariant->GetAsAString(prefProfileId);
-    NS_ENSURE_SUCCESS(rv, rv);
-    TRACE(("%s: found a profile", __FUNCTION__));
-  }
-
-  nsCOMPtr<nsIArray> supportedProfiles;
-  rv = GetSupportedTranscodeProfiles(getter_AddRefs(supportedProfiles));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 bestPriority = 0;
-  nsCOMPtr<sbITranscodeProfile> bestProfile;
-  nsCOMPtr<sbITranscodeProfile> prefProfile;
-
-  PRUint32 length;
-  rv = supportedProfiles->GetLength(&length);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  for (PRUint32 index = 0; index < length; ++index) {
-    nsCOMPtr<sbITranscodeProfile> profile =
-        do_QueryElementAt(supportedProfiles, index, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (profile) {
-      PRUint32 profileContentType;
-      rv = profile->GetType(&profileContentType);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      // If the content types don't match, skip (we don't want to use a video
-      // transcoding profile to transcode audio, for example)
-      if (profileContentType == transcodeType) {
-        if (hasProfilePref) {
-          nsString profileId;
-          rv = profile->GetId(profileId);
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          if (profileId.Equals(prefProfileId))
-            prefProfile = profile;
-        }
-
-        // Also track the highest-priority profile. This is our default.
-        PRUint32 priority;
-        rv = profile->GetPriority(&priority);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        if (!bestProfile || priority > bestPriority) {
-          bestProfile = profile;
-          bestPriority = priority;
-        }
-      }
-      else {
-        TRACE(("%s: skipping profile for content type %d",
-                __FUNCTION__,
-                profileContentType));
-      }
-    }
-  }
-  if (prefProfile) {
-    // We found the profile selected in the preferences. Apply relevant
-    // preferenced properties to it as well...
-    nsCOMPtr<nsIArray> audioProperties;
-    rv = prefProfile->GetAudioProperties(getter_AddRefs(audioProperties));
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = sbDeviceUtils::ApplyPropertyPreferencesToProfile(
-            this,
-            audioProperties,
-            NS_LITERAL_STRING("transcode_profile.audio_properties"));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<nsIArray> videoProperties;
-    rv = prefProfile->GetVideoProperties(getter_AddRefs(videoProperties));
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = sbDeviceUtils::ApplyPropertyPreferencesToProfile(
-            this,
-            videoProperties,
-            NS_LITERAL_STRING("transcode_profile.video_properties"));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<nsIArray> containerProperties;
-    rv = prefProfile->GetContainerProperties(
-            getter_AddRefs(containerProperties));
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = sbDeviceUtils::ApplyPropertyPreferencesToProfile(
-            this,
-            containerProperties,
-            NS_LITERAL_STRING("transcode_profile.container_properties"));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    prefProfile.forget(aProfile);
-    TRACE(("%s: found pref profile", __FUNCTION__));
-    return NS_OK;
-  }
-  else if (bestProfile) {
-    TRACE(("%s: using best-match profile", __FUNCTION__));
-    bestProfile.forget(aProfile);
-    return NS_OK;
-  }
-
-  // Indicate no appropriate transcoding profile available
-  TRACE(("%s: no supported profiles available", __FUNCTION__));
-  return NS_ERROR_NOT_AVAILABLE;
-}
-
-/**
- * Process a batch in preparation for transcoding, figuring out which items
- * need transcoding.
- */
-
-nsresult
-sbBaseDevice::PrepareBatchForTranscoding(Batch & aBatch)
-{
-  TRACE(("%s", __FUNCTION__));
-  nsresult rv;
-
-  if (aBatch.empty()) {
-    return NS_OK;
-  }
-
-  nsCOMPtr<nsIArray> imageFormats;
-  rv = GetSupportedAlbumArtFormats(getter_AddRefs(imageFormats));
-  // No album art formats isn't fatal.
-  if (rv != NS_ERROR_NOT_AVAILABLE) {
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  // Iterate over the batch getting the transcode profiles if needed.
-  Batch::iterator end = aBatch.end();
-  Batch::iterator iter = aBatch.begin();
-  while (iter != end) {
-    // Check for abort.
-    if (IsRequestAbortedOrDeviceDisconnected()) {
-      return NS_ERROR_ABORT;
-    }
-
-    TransferRequest * const request = *iter;
-    rv = FindTranscodeProfile(request->item,
-                              &request->transcodeProfile);
-    // Treat no profiles available as not needing transcoding
-    if (rv == NS_ERROR_NOT_AVAILABLE) {
-      TRACE(("%s: no transcode profile available", __FUNCTION__));
-    } else {
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    if (request->transcodeProfile) {
-      TRACE(("%s: transcoding needed", __FUNCTION__));
-      request->needsTranscoding = PR_TRUE;
-    }
-
-    request->albumArt = do_CreateInstance(
-            SONGBIRD_TRANSCODEALBUMART_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // It's ok for this to fail; album art is optional
-    rv = request->albumArt->Init(request->item, imageFormats);
-    if (NS_FAILED(rv)) {
-      TRACE(("%s: no album art available", __FUNCTION__));
-      request->albumArt = nsnull;
-    }
-
-    ++iter;
-  }
-
   return NS_OK;
 }
 

@@ -499,9 +499,6 @@ sbDeviceStatistics::Initialize(class sbBaseDevice* aDevice)
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aDevice);
 
-  // Function variables.
-  nsresult rv;
-
   // Get the device.
   mBaseDevice = aDevice;
 

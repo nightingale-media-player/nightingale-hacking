@@ -98,6 +98,15 @@ sbTranscodingConfigurator::GetMuxer(nsAString &aMuxer)
   return NS_OK;
 }
 
+/* readonly attribute ACString fileExtension; */
+NS_IMETHODIMP
+sbTranscodingConfigurator::GetFileExtension(nsACString & aFileExtension)
+{
+  NS_ENSURE_TRUE(isConfigurated, NS_ERROR_NOT_INITIALIZED);
+  aFileExtension = mFileExtension;
+  return NS_OK;
+}
+
 /**
  * \brief Get the video Encoder to use.
  * \param aVideoEncoder - name of video encoder.

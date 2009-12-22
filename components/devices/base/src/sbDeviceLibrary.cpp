@@ -152,7 +152,7 @@ NS_IMPL_THREADSAFE_CI(sbDeviceLibrary)
 
 const static char* gMediaType[] = {
   ".audio",
-  ".video" 
+  ".video"
 };
 
 /**

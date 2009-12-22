@@ -120,6 +120,20 @@ sbTranscodeProfile::SetContainerFormat(nsAString const & aContainerFormat)
 }
 
 NS_IMETHODIMP
+sbTranscodeProfile::GetFileExtension(nsACString & aFileExtension)
+{
+  aFileExtension = mFileExtension;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbTranscodeProfile::SetFileExtension(nsACString const & aFileExtension)
+{
+  mFileExtension = aFileExtension;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbTranscodeProfile::GetAudioCodec(nsAString & aAudioCodec)
 {
   aAudioCodec = mAudioCodec;

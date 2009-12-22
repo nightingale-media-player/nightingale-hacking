@@ -232,9 +232,9 @@ sbDeviceCapsCompatibility::CompareVideoFormat(PRBool* aCompatible)
   rv = mDeviceCapabilities->GetSupportedFormats(mContentType,
                                                 &formatsLength,
                                                 &formats);
-  sbAutoNSArray<char*> autoFormats(formats, formatsLength);
 
   if (NS_SUCCEEDED(rv) && formatsLength > 0) {
+    sbAutoNSArray<char*> autoFormats(formats, formatsLength);
     for (PRUint32 formatIndex = 0;
          formatIndex < formatsLength;
          ++formatIndex) {

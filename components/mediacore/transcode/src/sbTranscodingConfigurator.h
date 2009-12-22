@@ -72,6 +72,8 @@ protected:
   nsString                            mMuxer;
   nsString                            mVideoEncoder;
   nsString                            mAudioEncoder;
+  // The file extension to use
+  nsCString                           mFileExtension;
   // The basic video format for data that is not specific to a particular codec.
   nsCOMPtr<sbIMediaFormatVideo>       mVideoFormat;
   // The basic audio format for data that is not specific to a particular codec.

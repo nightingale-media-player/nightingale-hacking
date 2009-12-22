@@ -33,6 +33,8 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbTranscodeProfileProperty,
                               sbITranscodeProfileProperty)
 
 sbTranscodeProfileProperty::sbTranscodeProfileProperty()
+  : mHidden(PR_FALSE),
+    mScale(NS_LITERAL_CSTRING("1/1"))
 {
 }
 
@@ -58,6 +60,27 @@ nsresult
 sbTranscodeProfileProperty::SetValueMax(nsIVariant * aValueMax)
 {
   mValueMax = aValueMax;
+  return NS_OK;
+}
+
+nsresult
+sbTranscodeProfileProperty::SetHidden(const PRBool aHidden)
+{
+  mHidden = aHidden;
+  return NS_OK;
+}
+
+nsresult
+sbTranscodeProfileProperty::SetMapping(const nsACString & aMapping)
+{
+  mMapping = aMapping;
+  return NS_OK;
+}
+
+nsresult
+sbTranscodeProfileProperty::SetScale(const nsACString & aScale)
+{
+  mScale = aScale;
   return NS_OK;
 }
 
@@ -99,5 +122,30 @@ NS_IMETHODIMP
 sbTranscodeProfileProperty::SetValue(nsIVariant * aValue)
 {
   mValue = aValue;
+  return NS_OK;
+}
+
+/* readonly attribute boolean hidden; */
+NS_IMETHODIMP
+sbTranscodeProfileProperty::GetHidden(PRBool *aHidden)
+{
+  NS_ENSURE_ARG_POINTER(aHidden);
+  *aHidden = mHidden;
+  return NS_OK;
+}
+
+/* readonly attribute ACString mapping; */
+NS_IMETHODIMP
+sbTranscodeProfileProperty::GetMapping(nsACString & aMapping)
+{
+  aMapping = mMapping;
+  return NS_OK;
+}
+
+/* readonly attribute ACString scale; */
+NS_IMETHODIMP
+sbTranscodeProfileProperty::GetScale(nsACString & aScale)
+{
+  aScale = mScale;
   return NS_OK;
 }

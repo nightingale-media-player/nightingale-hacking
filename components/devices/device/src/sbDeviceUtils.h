@@ -329,12 +329,6 @@ public:
   IsItemDRMProtected(sbIMediaItem * aMediaItem);
 
   /**
-   * Returns the transcode type for the item
-   */
-  static PRUint32
-  GetTranscodeType(sbIMediaItem * aMediaItem);
-
-  /**
    * Returns the device capabilities type for an item
    */
   static PRUint32

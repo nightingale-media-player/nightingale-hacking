@@ -53,8 +53,8 @@ interface sbITranscodeManager : nsISupports
   * \param aProfile   The transcoding profile to use
   * \return The handler to use, or NULL.
   */
-  sbITranscodeJob getTranscoderForMediaItem(in sbIMediaItem aMediaItem,
-                                            in sbITranscodeProfile aProfile);
+  nsISupports getTranscoderForMediaItem(in sbIMediaItem aMediaItem,
+                                        in sbITranscodeProfile aProfile);
 
   /**
    * \brief Get an array of all the sbITranscodeProfiles available and usable.

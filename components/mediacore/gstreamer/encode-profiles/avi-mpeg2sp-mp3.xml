@@ -6,6 +6,7 @@
   <priority quality="1">1500</priority>
   <description>ACME High End test profile</description>
   <mimetype>video/x-msvideo</mimetype>
+  <extension>avi</extension>
 
   <container>
     <type>video/x-msvideo</type>

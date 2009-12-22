@@ -39,6 +39,8 @@
 #include <nsISimpleEnumerator.h>
 #include <nsArrayUtils.h>
 
+#include <sbITranscodeVideoJob.h>
+
 /* Global transcode manager (singleton) */
 sbTranscodeManager *gTranscodeManager = nsnull;
 
@@ -65,7 +67,7 @@ sbTranscodeManager::sbTranscodeManager()
   NS_ENSURE_SUCCESS (rv, /* void */);
 
   PRBool moreAvailable = PR_FALSE;
-  while(simpleEnumerator->HasMoreElements(&moreAvailable) == NS_OK && 
+  while(simpleEnumerator->HasMoreElements(&moreAvailable) == NS_OK &&
         moreAvailable)
   {
     nsCOMPtr<nsISupportsCString> contractString;
@@ -119,39 +121,65 @@ void sbTranscodeManager::DestroySingleton()
 
 NS_IMETHODIMP
 sbTranscodeManager::GetTranscoderForMediaItem(sbIMediaItem *aMediaItem,
-        sbITranscodeProfile *aProfile, sbITranscodeJob **_retval)
+        sbITranscodeProfile *aProfile, nsISupports **_retval)
 {
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(_retval);
   nsresult rv;
+
   int bestVote = -1;
-  nsCOMPtr<sbITranscodeJob> bestHandler;
+  nsCOMPtr<nsISupports> bestHandler;
 
   for (contractlist_t::iterator contractid = m_ContractList.begin();
        contractid != m_ContractList.end();
        ++contractid )
   {
-    nsCOMPtr<sbITranscodeJob> handler = do_CreateInstance(
-            (*contractid).get(), &rv);
-
-    if(NS_SUCCEEDED(rv) && handler)
+    nsCOMPtr<nsISupports> supports =
+      do_CreateInstance((*contractid).get(), &rv);
+    if (NS_FAILED(rv) || !supports)
     {
+      continue;
+    }
+
+    nsCOMPtr<sbITranscodeJob> oldJob = do_QueryInterface(supports, &rv);
+    if(NS_SUCCEEDED(rv) && oldJob)
+    {
+      // old, audio-only style transcoder
       PRInt32 vote;
-      rv = handler->Vote( aMediaItem, aProfile, &vote);
+      rv = oldJob->Vote(aMediaItem, aProfile, &vote);
       if (NS_FAILED (rv))
         continue;
-      
+
       /* Negative values are not ever permissible */
       if (vote >= bestVote) {
         bestVote = vote;
-        bestHandler = handler;
+        bestHandler = supports;
+      }
+    }
+
+    nsCOMPtr<sbITranscodeVideoJob> videoJob = do_QueryInterface(supports, &rv);
+    if (NS_SUCCEEDED(rv) && videoJob)
+    {
+      // new, video-style transcoder
+      PRInt32 vote;
+      rv = videoJob->Vote(aMediaItem, &vote);
+      if (NS_FAILED(rv)) {
+        continue;
+      }
+
+      /* Negative values are not ever permissible */
+      if (vote >= bestVote) {
+        bestVote = vote;
+        bestHandler = supports;
       }
     }
   }
 
   if (bestHandler) {
-    NS_IF_ADDREF (*_retval = bestHandler);
+    NS_ADDREF(*_retval = bestHandler);
     return NS_OK;
   }
-  else 
+  else
     return NS_ERROR_FAILURE;
 }
 

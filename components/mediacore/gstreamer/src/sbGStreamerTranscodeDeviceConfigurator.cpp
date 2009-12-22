@@ -53,13 +53,22 @@
 #include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsNetUtil.h>
+#include <prlog.h>
 
 ///// Songbird header includes
 #include <sbArrayUtils.h>
 #include <sbMemoryUtils.h>
+#include <sbVariantUtils.h>
 
 ///// GStreamer header includes
+#if _MSC_VER
+#  pragma warning (push)
+#  pragma warning (disable: 4244)
+#endif /* _MSC_VER */
 #include <gst/gst.h>
+#if _MSC_VER
+#  pragma warning (pop)
+#endif /* _MSC_VER */
 
 ///// System includes
 #include <math.h>
@@ -69,6 +78,23 @@
 
 ///// Local directory includes
 #include "sbGStreamerMediacoreUtils.h"
+
+///// NSPR Logging
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbGStreamerTranscodeDeviceConfigurator:5
+ */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gGstTranscodeConfiguratorLog = nsnull;
+#define TRACE(args) PR_LOG(gGstTranscodeConfiguratorLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gGstTranscodeConfiguratorLog, PR_LOG_WARN, args)
+#if __GNUC__
+#define __FUNCTION__ __PRETTY_FUNCTION__
+#endif /* __GNUC__ */
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif /* PR_LOGGING */
 
 ///// Helper functions
 
@@ -85,6 +111,7 @@
 static nsresult
 GetDevCapRangeUpper(sbIDevCapRange *aRange, PRInt32 aTarget, PRInt32 *_retval)
 {
+  TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aRange);
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -148,6 +175,13 @@ sbGStreamerTranscodeDeviceConfigurator::sbGStreamerTranscodeDeviceConfigurator()
   : mQuality(-HUGE_VAL),
     mVideoBitrate(PR_INT32_MIN)
 {
+  #if PR_LOGGING
+    if (!gGstTranscodeConfiguratorLog) {
+      gGstTranscodeConfiguratorLog =
+        PR_NewLogModule("sbGStreamerTranscodeDeviceConfigurator");
+    }
+  #endif /* PR_LOGGING */
+  TRACE(("%s[%p]", __FUNCTION__, this));
   /* nothing */
 }
 
@@ -168,6 +202,7 @@ MakeCapsFromProperties(const nsACString& aCapsName,
                        nsIArray *aProps,
                        GstCaps** aResultCaps)
 {
+  TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aProps);
   NS_ENSURE_ARG_POINTER(aResultCaps);
 
@@ -233,7 +268,7 @@ MakeCapsFromProperties(const nsACString& aCapsName,
     }
   }
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   *aResultCaps = caps.forget();
   return NS_OK;
 }
@@ -241,8 +276,9 @@ MakeCapsFromProperties(const nsACString& aCapsName,
 nsresult
 sbGStreamerTranscodeDeviceConfigurator::EnsureProfileAvailable(sbITranscodeEncoderProfile *aProfile)
 {
+  TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aProfile);
-  
+
   nsresult rv;
 
   // for now, only support video profiles
@@ -256,6 +292,8 @@ sbGStreamerTranscodeDeviceConfigurator::EnsureProfileAvailable(sbITranscodeEncod
     default:
       return NS_ERROR_NOT_IMPLEMENTED;
   }
+
+  EncoderProfileData elementNames;
 
   // check that we have a muxer available
   nsString capsName;
@@ -279,7 +317,12 @@ sbGStreamerTranscodeDeviceConfigurator::EnsureProfileAvailable(sbITranscodeEncod
       muxerCodecName = FindMatchingElementName(caps, "Formatter");
     }
     gst_caps_unref(caps);
-    NS_ENSURE_TRUE(muxerCodecName, NS_ERROR_UNEXPECTED);
+    if (!muxerCodecName) {
+      TRACE(("no muxer available for %s",
+             NS_LossyConvertUTF16toASCII(capsName).get()));
+      return NS_ERROR_UNEXPECTED;
+    }
+    elementNames.muxer = muxerCodecName;
   }
 
   /// Check that we have an audio encoder available
@@ -296,9 +339,14 @@ sbGStreamerTranscodeDeviceConfigurator::EnsureProfileAvailable(sbITranscodeEncod
                                 &caps);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    const char* audioCodecName = FindMatchingElementName(caps, "Encoder");
+    const char* audioEncoder = FindMatchingElementName(caps, "Encoder");
     gst_caps_unref(caps);
-    NS_ENSURE_TRUE(audioCodecName, NS_ERROR_UNEXPECTED);
+    if (!audioEncoder) {
+      TRACE(("no audio encoder available for %s",
+             NS_LossyConvertUTF16toASCII(capsName).get()));
+      return NS_ERROR_UNEXPECTED;
+    }
+    elementNames.audioEncoder = audioEncoder;
   }
 
   /// Check that we have an video encoder available
@@ -315,23 +363,75 @@ sbGStreamerTranscodeDeviceConfigurator::EnsureProfileAvailable(sbITranscodeEncod
                                 &caps);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    const char* videoCodecName = FindMatchingElementName(caps, "Encoder");
+    const char* videoEncoder = FindMatchingElementName(caps, "Encoder");
     gst_caps_unref(caps);
-    NS_ENSURE_TRUE(videoCodecName, NS_ERROR_UNEXPECTED);
+    if (!videoEncoder) {
+      TRACE(("no video encoder available for %s",
+             NS_LossyConvertUTF16toASCII(capsName).get()));
+      return NS_ERROR_UNEXPECTED;
+    }
+    elementNames.videoEncoder = videoEncoder;
   }
 
+  PRBool success = mElementNames.Put(aProfile, elementNames);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  return NS_OK;
+}
+
+nsresult
+sbGStreamerTranscodeDeviceConfigurator::SelectQuality()
+{
+  nsresult rv;
+  if (mQuality != -HUGE_VAL) {
+    // already set
+    return NS_OK;
+  }
+  if (!mDevice) {
+    // we don't have a device to read things from :(
+    // default to 1
+    rv = SetQuality(1.0);
+    NS_ENSURE_SUCCESS(rv, rv);
+    return NS_OK;
+  }
+
+  double quality = 1.0;
+  nsCOMPtr<nsIVariant> qualityVar;
+  rv = mDevice->GetPreference(NS_LITERAL_STRING("transcode.quality.video"),
+                              getter_AddRefs(qualityVar));
+  if (NS_FAILED(rv)) {
+    rv = SetQuality(quality);
+    NS_ENSURE_SUCCESS(rv, rv);
+    return NS_OK;
+  }
+  PRUint16 variantType;
+  rv = qualityVar->GetDataType(&variantType);
+  NS_ENSURE_SUCCESS(rv, rv);
+  switch (variantType) {
+    case nsIDataType::VTYPE_EMPTY:
+      break;
+    default:
+      rv = qualityVar->GetAsDouble(&quality);
+      NS_ENSURE_SUCCESS(rv, rv);
+      break;
+  }
+  rv = SetQuality(quality);
+  NS_ENSURE_SUCCESS(rv, rv);
   return NS_OK;
 }
 
 /**
  * Select the encoding profile to use
  *
+ * @precondition the device has been set
+ * @precondition the quality has been set
  * @postcondition mSelectedProfile is the encoder profile to use
  * @postcondition mSelectedFormat is ths device format matching the profile
  */
 nsresult
 sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
 {
+  TRACE(("%s[%p]", __FUNCTION__, this));
   /**
    * Because there's no useful way to enumerate the device capabilities, we
    * must instead step through the encoder profiles and inspect each to see if
@@ -339,7 +439,7 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
    */
   NS_PRECONDITION(mDevice, "SelectProfile called with no device set!");
   NS_PRECONDITION(mQuality != -HUGE_VAL, "quality is not set!");
-  
+
   nsresult rv;
 
   // the best compatible encoder profile
@@ -348,7 +448,7 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
   PRUint32 selectedPriority = 0;
   // the device format for the selected profile
   nsCOMPtr<sbIVideoFormatType> selectedFormat;
-  
+
   // get available encoder profiles
   nsCOMPtr<nsIArray> profilesArray;
   rv = GetAvailableProfiles(getter_AddRefs(profilesArray));
@@ -356,12 +456,12 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
   nsCOMPtr<nsISimpleEnumerator> profilesEnum;
   rv = profilesArray->Enumerate(getter_AddRefs(profilesEnum));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // get the device caps
   nsCOMPtr<sbIDeviceCapabilities> caps;
   rv = mDevice->GetCapabilities(getter_AddRefs(caps));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // XXXMook: video only for now
   PRUint32 formatCount;
   char **formatStrings;
@@ -370,7 +470,7 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
                                  &formatStrings);
   NS_ENSURE_SUCCESS(rv, rv);
   sbAutoFreeXPCOMArrayByRef<char**> formats(formatCount, formatStrings);
-  
+
   PRBool hasMoreProfiles;
   while (NS_SUCCEEDED(profilesEnum->HasMoreElements(&hasMoreProfiles)) &&
          hasMoreProfiles)
@@ -401,7 +501,7 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
         // XXX Mook: we only support video for now
         continue;
       }
-    
+
       // check the container
       nsCString formatContainer;
       rv = format->GetContainerType(formatContainer);
@@ -413,7 +513,7 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
         // mismatch, try the next device format
         continue;
       }
-      
+
       // check the audio codec
       nsString encoderAudioCodec;
       rv = profile->GetAudioCodec(encoderAudioCodec);
@@ -480,7 +580,16 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
     return NS_ERROR_FAILURE;
   }
   mSelectedFormat = selectedFormat;
-  
+
+  EncoderProfileData elementNames;
+  PRBool success = mElementNames.Get(selectedProfile, &elementNames);
+  NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
+  CopyASCIItoUTF16(elementNames.muxer, mMuxer);
+  CopyASCIItoUTF16(elementNames.audioEncoder, mAudioEncoder);
+  CopyASCIItoUTF16(elementNames.videoEncoder, mVideoEncoder);
+  rv = selectedProfile->GetFileExtension(mFileExtension);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -493,10 +602,36 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
 nsresult
 sbGStreamerTranscodeDeviceConfigurator::SetAudioProperties()
 {
+  TRACE(("%s[%p]", __FUNCTION__, this));
   NS_PRECONDITION(mSelectedProfile,
                   "attempted to set audio properties without selecting profile");
 
   nsresult rv;
+
+  if (!mAudioFormat) {
+    mAudioFormat = do_CreateInstance(SB_MEDIAFORMATAUDIO_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsCOMPtr<sbIMediaFormatAudioMutable> audioFormat =
+    do_QueryInterface(mAudioFormat, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaFormatAudio> inputFormat;
+  rv = mInputFormat->GetAudioStream(getter_AddRefs(inputFormat));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 sampleRate;
+  rv = inputFormat->GetSampleRate(&sampleRate);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = audioFormat->SetSampleRate(sampleRate);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 channels;
+  rv = inputFormat->GetChannels(&channels);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = audioFormat->SetChannels(channels);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   if (!mAudioEncoderProperties) {
     mAudioEncoderProperties =
@@ -511,34 +646,8 @@ sbGStreamerTranscodeDeviceConfigurator::SetAudioProperties()
   nsCOMPtr<nsIArray> propsSrc;
   rv = mSelectedProfile->GetAudioProperties(getter_AddRefs(propsSrc));
   NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<nsISimpleEnumerator> propsEnum;
-  rv = propsSrc->Enumerate(getter_AddRefs(propsEnum));
-  NS_ENSURE_SUCCESS(rv, rv);
-  PRBool hasMore;
-  while (NS_SUCCEEDED(rv = propsEnum->HasMoreElements(&hasMore)) && hasMore) {
-    nsCOMPtr<nsISupports> supports;
-    rv = propsEnum->GetNext(getter_AddRefs(supports));
-    NS_ENSURE_SUCCESS(rv, rv);
-    nsCOMPtr<sbITranscodeProfileProperty> prop =
-      do_QueryInterface(supports, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    nsString propName;
-    rv = prop->GetPropertyName(propName);
-    NS_ENSURE_SUCCESS(rv, rv);
-    nsCOMPtr<nsIVariant> value;
-    rv = prop->GetValue(getter_AddRefs(value));
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = writableBag->SetProperty(propName, value);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  NS_ENSURE_SUCCESS(rv, rv);
 
-  // set the bitrate separately
-  double bitrate;
-  rv = mSelectedProfile->GetAudioBitrate(mQuality, &bitrate);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = mAudioEncoderProperties->SetPropertyAsDouble(NS_LITERAL_STRING("bitrate"),
-                                                    bitrate);
+  rv = CopyPropertiesIntoBag(propsSrc, writableBag, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -553,6 +662,7 @@ sbGStreamerTranscodeDeviceConfigurator::SetAudioProperties()
 nsresult
 sbGStreamerTranscodeDeviceConfigurator::DetermineIdealOutputSize()
 {
+  TRACE(("%s[%p]", __FUNCTION__, this));
   NS_PRECONDITION(mSelectedProfile,
                   "DetermineIdealOutputSize called without selected profile");
   NS_PRECONDITION(mSelectedFormat,
@@ -597,6 +707,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineIdealOutputSize()
       rv = sbFractionFromString(parData[index], outputPAR);
       NS_ENSURE_SUCCESS(rv, rv);
       if (inputPAR.IsEqual(outputPAR)) {
+        mOutputPAR = inputPAR;
         break;
       }
     }
@@ -605,6 +716,8 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineIdealOutputSize()
       // square-looking pixels by duplicating pixels
       input.width *= inputPAR.Denominator();
       input.height *= inputPAR.Numerator();
+      mOutputPAR = sbFraction(1, 1); // XXX Mook: we need to adjust to something
+                                     // we have output PAR for!
     }
   }
 
@@ -789,6 +902,7 @@ sbGStreamerTranscodeDeviceConfigurator::GetMaximumFit(
   const sbGStreamerTranscodeDeviceConfigurator::Dimensions& aInput,
   const sbGStreamerTranscodeDeviceConfigurator::Dimensions& aMaximum)
 {
+  TRACE(("%s", __FUNCTION__));
   if (aInput.width <= aMaximum.width && aInput.height < aMaximum.height) {
     // things fit anyway! there was no need to call this.
     return aInput;
@@ -817,6 +931,7 @@ sbGStreamerTranscodeDeviceConfigurator::GetMaximumFit(
 nsresult
 sbGStreamerTranscodeDeviceConfigurator::FinalizeOutputSize()
 {
+  TRACE(("%s[%p]", __FUNCTION__, this));
   NS_PRECONDITION(mPreferredDimensions.width > 0 &&
                     mPreferredDimensions.height > 0,
                   "FinalizeOutputSize needs preferred dimensions");
@@ -844,7 +959,7 @@ sbGStreamerTranscodeDeviceConfigurator::FinalizeOutputSize()
     rv = videoCaps->GetSupportedFrameRates(&frameRateCount, &frameRates);
     NS_ENSURE_SUCCESS(rv, rv);
     sbAutoFreeXPCOMArray<char**> frameRatesDestroryer(frameRateCount, frameRates);
-    
+
     for (PRUint32 i = 0; i < frameRateCount; ++i) {
       sbFraction candidate;
       rv = sbFractionFromString(frameRates[i], candidate);
@@ -948,7 +1063,7 @@ sbGStreamerTranscodeDeviceConfigurator::FinalizeOutputSize()
     NS_ENSURE_SUCCESS(rv, rv);
     return NS_OK;
   }
-  
+
   // this device supports arbitrary sizes
   double pixels = double(mVideoBitrate) / videoBPP / mVideoFrameRate; // number of pixels
   double width = sqrt(pixels / mPreferredDimensions.height * mPreferredDimensions.width);
@@ -959,7 +1074,166 @@ sbGStreamerTranscodeDeviceConfigurator::FinalizeOutputSize()
   NS_ENSURE_SUCCESS(rv, rv);
   // so, output dimensions are the sizes we want; and the video bitrate is the
   // maximum we can support.
-  
+
+  return NS_OK;
+}
+
+nsresult
+sbGStreamerTranscodeDeviceConfigurator::SetVideoProperties()
+{
+  NS_PRECONDITION(mOutputDimensions.width > 0 && mOutputDimensions.height > 0,
+                  "attempting to set video properties with no output dimensions!");
+  NS_PRECONDITION(mVideoBitrate,
+                  "attempting to set video properties with no video bitrate!");
+
+  nsresult rv;
+  nsCOMPtr<sbIMediaFormatVideoMutable> videoFormat =
+    do_CreateInstance(SB_MEDIAFORMATVIDEO_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // set the video format data
+  rv = videoFormat->SetVideoWidth(mOutputDimensions.width);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = videoFormat->SetVideoHeight(mOutputDimensions.height);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = videoFormat->SetVideoPAR(mOutputPAR.Numerator(),
+                                mOutputPAR.Denominator());
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = videoFormat->SetVideoFrameRate(mVideoFrameRate.Numerator(),
+                                      mVideoFrameRate.Denominator());
+  NS_ENSURE_SUCCESS(rv, rv);
+  mVideoFormat = do_QueryInterface(videoFormat, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!mVideoEncoderProperties) {
+    mVideoEncoderProperties =
+      do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // set arbitrary properties
+  nsCOMPtr<nsIWritablePropertyBag> writableBag =
+    do_QueryInterface(mVideoEncoderProperties, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIArray> propsSrc;
+  rv = mSelectedProfile->GetVideoProperties(getter_AddRefs(propsSrc));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = CopyPropertiesIntoBag(propsSrc, writableBag, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_POSTCONDITION(mVideoFormat,
+                   "setVideoProperties failed to set video format");
+  NS_POSTCONDITION(mVideoEncoderProperties,
+                   "setVideoProperties failed to set video properties");
+  return NS_OK;
+}
+
+/**
+ * Copy properties, either audio or video.
+ * @param aSrcProps the properties to copy from
+ * @param aDstBag the property bag to output
+ * @param aIsVideo true if this is for video, false for audio
+ */
+nsresult
+sbGStreamerTranscodeDeviceConfigurator::CopyPropertiesIntoBag(nsIArray * aSrcProps,
+                                                              nsIWritablePropertyBag * aDstBag,
+                                                              PRBool aIsVideo)
+{
+  NS_ENSURE_ARG_POINTER(aSrcProps);
+  NS_ENSURE_ARG_POINTER(aDstBag);
+
+  nsresult rv;
+
+  nsCOMPtr<nsISimpleEnumerator> propsEnum;
+  rv = aSrcProps->Enumerate(getter_AddRefs(propsEnum));
+  NS_ENSURE_SUCCESS(rv, rv);
+  PRBool hasMore;
+  while (NS_SUCCEEDED(rv = propsEnum->HasMoreElements(&hasMore)) && hasMore) {
+    nsCOMPtr<nsISupports> supports;
+    rv = propsEnum->GetNext(getter_AddRefs(supports));
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<sbITranscodeProfileProperty> prop =
+      do_QueryInterface(supports, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    PRBool hidden;
+    rv = prop->GetHidden(&hidden);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (hidden) {
+      continue;
+    }
+    nsString propName;
+    rv = prop->GetPropertyName(propName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // get the value
+    nsCOMPtr<nsIVariant> value;
+    rv = prop->GetValue(getter_AddRefs(value));
+    NS_ENSURE_SUCCESS(rv, rv);
+    PRUint16 dataType;
+    rv = value->GetDataType(&dataType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCString mapping;
+    rv = prop->GetMapping(mapping);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!mapping.IsEmpty()) {
+      if (aIsVideo && mapping.Equals("bitrate", CaseInsensitiveCompare)) {
+        value = sbNewVariant(mVideoBitrate);
+        NS_ENSURE_TRUE(value, NS_ERROR_OUT_OF_MEMORY);
+      }
+      else if (!aIsVideo && mapping.Equals("bitrate", CaseInsensitiveCompare)) {
+        double audioBitrate;
+        rv = mSelectedProfile->GetAudioBitrate(mQuality, &audioBitrate);
+        NS_ENSURE_SUCCESS(rv, rv);
+        value = sbNewVariant(audioBitrate);
+        NS_ENSURE_TRUE(value, NS_ERROR_OUT_OF_MEMORY);
+      }
+      else {
+        TRACE(("%s[%p]: mapping %s not implemented",
+               __FUNCTION__, this, mapping.get()));
+        return NS_ERROR_NOT_IMPLEMENTED;
+      }
+    }
+
+    // do any scaling
+    nsCString scaleString;
+    rv = prop->GetScale(scaleString);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!scaleString.IsEmpty()) {
+      sbFraction scale;
+      rv = sbFractionFromString(scaleString, scale);
+      NS_ENSURE_SUCCESS(rv, rv);
+      double val;
+      rv = value->GetAsDouble(&val);
+      NS_ENSURE_SUCCESS(rv, rv);
+      val *= scale;
+      nsCOMPtr<nsIWritableVariant> var = do_QueryInterface(value, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = var->SetAsDouble(val);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    // the gstreamer side wants the properties to be the right type :|
+    switch (dataType) {
+      case nsIDataType::VTYPE_INT32: {
+        nsCOMPtr<nsIWritableVariant> var = do_QueryInterface(value, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+        PRInt32 val;
+        rv = var->GetAsInt32(&val);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = var->SetAsInt32(val);
+        NS_ENSURE_SUCCESS(rv, rv);
+        break;
+      }
+    }
+
+    rv = aDstBag->SetProperty(propName, value);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -967,12 +1241,18 @@ sbGStreamerTranscodeDeviceConfigurator::FinalizeOutputSize()
 NS_IMETHODIMP
 sbGStreamerTranscodeDeviceConfigurator::GetAvailableProfiles(nsIArray * *aAvailableProfiles)
 {
+  TRACE(("%s[%p]", __FUNCTION__, this));
   if (mAvailableProfiles) {
     NS_IF_ADDREF (*aAvailableProfiles = mAvailableProfiles);
     return NS_OK;
   }
 
   /* If we haven't already cached it, then figure out what we have */
+
+  if (!mElementNames.IsInitialized()) {
+    PRBool initSuccess = mElementNames.Init();
+    NS_ENSURE_TRUE(initSuccess, NS_ERROR_OUT_OF_MEMORY);
+  }
 
   nsresult rv;
   PRBool hasMoreElements;
@@ -995,7 +1275,7 @@ sbGStreamerTranscodeDeviceConfigurator::GetAvailableProfiles(nsIArray * *aAvaila
       do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbITranscodeProfileLoader> profileLoader = 
+  nsCOMPtr<sbITranscodeProfileLoader> profileLoader =
       do_CreateInstance("@songbirdnest.com/Songbird/Transcode/ProfileLoader;1",
               &rv);
   NS_ENSURE_SUCCESS (rv, rv);
@@ -1044,6 +1324,7 @@ sbGStreamerTranscodeDeviceConfigurator::GetAvailableProfiles(nsIArray * *aAvaila
 NS_IMETHODIMP
 sbGStreamerTranscodeDeviceConfigurator::GetQuality(double *aQuality)
 {
+  TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aQuality);
   *aQuality = mQuality;
   return NS_OK;
@@ -1052,6 +1333,7 @@ sbGStreamerTranscodeDeviceConfigurator::GetQuality(double *aQuality)
 NS_IMETHODIMP
 sbGStreamerTranscodeDeviceConfigurator::SetQuality(double aQuality)
 {
+  TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_FALSE(isConfigurated, NS_ERROR_ALREADY_INITIALIZED);
   mQuality = aQuality;
   return NS_OK;
@@ -1062,6 +1344,7 @@ sbGStreamerTranscodeDeviceConfigurator::SetQuality(double aQuality)
 NS_IMETHODIMP
 sbGStreamerTranscodeDeviceConfigurator::GetDevice(sbIDevice * *aDevice)
 {
+  TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aDevice);
   NS_IF_ADDREF(*aDevice = mDevice);
   return NS_OK;
@@ -1069,6 +1352,7 @@ sbGStreamerTranscodeDeviceConfigurator::GetDevice(sbIDevice * *aDevice)
 NS_IMETHODIMP
 sbGStreamerTranscodeDeviceConfigurator::SetDevice(sbIDevice * aDevice)
 {
+  TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_FALSE(isConfigurated, NS_ERROR_ALREADY_INITIALIZED);
   mDevice = aDevice;
   // clear the desired sizes
@@ -1076,25 +1360,30 @@ sbGStreamerTranscodeDeviceConfigurator::SetDevice(sbIDevice * aDevice)
   return NS_OK;
 }
 
-
 /**** sbITranscodingConfigurator implementation *****/
 
 NS_IMETHODIMP
 sbGStreamerTranscodeDeviceConfigurator::Configurate()
 {
+  TRACE(("%s[%p]", __FUNCTION__, this));
   // check our inputs
   NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(mInputFormat, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_FALSE(mQuality == -HUGE_VAL, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_FALSE(isConfigurated, NS_ERROR_ALREADY_INITIALIZED);
 
   nsresult rv;
 
+  // Get the quality preference
+  rv = SelectQuality();
+  NS_ENSURE_SUCCESS(rv, rv);
+
 #ifdef MOOK_HARD_CODE_CONFIGURATE
   // XXX Mook: temporary hack
+
   mMuxer = NS_LITERAL_STRING("qtmux");
   mVideoEncoder = NS_LITERAL_STRING("jpegenc");
   mAudioEncoder = NS_LITERAL_STRING("adpcmenc");
+  mFileExtension = NS_LITERAL_CSTRING("mp4");
 
   nsCOMPtr<sbIMediaFormatVideoMutable> videoFormat =
     do_CreateInstance(SB_MEDIAFORMATVIDEO_CONTRACTID, &rv);
@@ -1109,7 +1398,7 @@ sbGStreamerTranscodeDeviceConfigurator::Configurate()
   NS_ENSURE_SUCCESS(rv, rv);
   mVideoFormat = do_QueryInterface(videoFormat, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<sbIMediaFormatAudioMutable> audioFormat =
     do_CreateInstance(SB_MEDIAFORMATAUDIO_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1126,13 +1415,13 @@ sbGStreamerTranscodeDeviceConfigurator::Configurate()
   rv = videoProps->SetPropertyAsInt32(NS_LITERAL_STRING("quality"), 30);
   mVideoEncoderProperties = do_QueryInterface(videoProps, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<nsIWritablePropertyBag2> audioProps =
     do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   mAudioEncoderProperties = do_QueryInterface(audioProps, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   isConfigurated = PR_TRUE;
 
   return NS_OK;
@@ -1150,7 +1439,11 @@ sbGStreamerTranscodeDeviceConfigurator::Configurate()
   rv = FinalizeOutputSize();
   NS_ENSURE_SUCCESS(rv, rv);
   // Set video parameters
-  
-  return NS_ERROR_NOT_IMPLEMENTED;
+  rv = SetVideoProperties();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // all done
+  isConfigurated = PR_TRUE;
+  return NS_OK;
 #endif
 }

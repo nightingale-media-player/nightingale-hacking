@@ -6,6 +6,7 @@
   <priority quality="1">1500</priority>
   <description>Ogg/Theora/Vorbis test profile</description>
   <mimetype>application/ogg</mimetype>
+  <extension>ogg</extension>
 
   <container>
     <type>application/ogg</type>
@@ -13,6 +14,8 @@
 
   <video>
     <type>video/x-theora</type>
+    <property name="bitrate" type="int" min="0" max="2000" default="0"
+              mapping="bitrate" scale="1/1000"/>
     <quality-property name="bpp" quality="0" value="0.2"/>
     <quality-property name="bpp" quality="1" value="1"/>
   </video>

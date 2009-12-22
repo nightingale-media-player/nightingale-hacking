@@ -1602,29 +1602,6 @@ sbDeviceUtils::IsItemDRMProtected(sbIMediaItem * aMediaItem)
 }
 
 PRUint32
-sbDeviceUtils::GetTranscodeType(sbIMediaItem * aMediaItem)
-{
-  nsresult rv;
-
-  nsString contentType;
-  rv = aMediaItem->GetContentType(contentType);
-  NS_ENSURE_SUCCESS(rv, sbITranscodeProfile::TRANSCODE_TYPE_UNKNOWN);
-
-  if (contentType.Equals(NS_LITERAL_STRING("audio"))) {
-    return sbITranscodeProfile::TRANSCODE_TYPE_AUDIO;
-  }
-  else if (contentType.Equals(NS_LITERAL_STRING("video"))) {
-    return sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO;
-  }
-  else if (contentType.Equals(NS_LITERAL_STRING("image"))) {
-    return sbITranscodeProfile::TRANSCODE_TYPE_VIDEO;
-  }
-  NS_WARNING("sbDeviceUtils::GetTranscodeType: "
-             "returning unknown transcoding type");
-  return sbITranscodeProfile::TRANSCODE_TYPE_UNKNOWN;
-}
-
-PRUint32
 sbDeviceUtils::GetDeviceCapsMediaType(sbIMediaItem * aMediaItem)
 {
   nsresult rv;

@@ -64,13 +64,13 @@ class nsIPrefBranch;
 class sbAutoIgnoreWatchFolderPath;
 class sbBaseDeviceLibraryListener;
 class sbDeviceBaseLibraryCopyListener;
+class sbDeviceTranscoding;
 class sbBaseDeviceMediaListListener;
 class sbIDeviceCapabilitiesRegistrar;
 class sbIDeviceLibrary;
 class sbITranscodeProfile;
 class sbITranscodeAlbumArt;
 class sbIMediaFormat;
-class sbIMediaInspector;
 
 /* Property used to force a sync diff. */
 #define DEVICE_PROPERTY_SYNC_FORCE_DIFF \
@@ -92,6 +92,9 @@ class NS_HIDDEN sbBaseDevice : public sbIDevice,
                                public sbBaseDeviceEventTarget
 {
 public:
+  // Friend declarations for classes used to divide up device work
+  friend class sbDeviceTranscoding;
+
   struct TransferRequest : public nsISupports {
     /* types of requests. not all types necessarily apply to all types of
      * devices, and devices may have custom types.
@@ -186,11 +189,6 @@ public:
      */
     PRBool IsCountable() const;
 
-    /**
-     * Sets the transcode profile for the request
-     */
-    void SetTranscodeProfile(sbITranscodeProfile * aProfile);
-
     static TransferRequest * New();
 
     /* Don't allow manual construction/destruction, but allow sub-classing. */
@@ -218,8 +216,6 @@ public:
                                PRBool        aReportErrors,
                                PRBool*       _retval);
 
-  nsresult GetMediaFormat(sbIMediaItem* aMediaItem,
-                          sbIMediaFormat** aMediaFormat);
 public:
   sbBaseDevice();
   ~sbBaseDevice();
@@ -549,6 +545,9 @@ public:
         deviceState == sbIDevice::STATE_DISCONNECTED) ? PR_TRUE : PR_FALSE;
   }
 
+  sbDeviceTranscoding * GetDeviceTranscoding() const {
+    return mDeviceTranscoding;
+  }
 protected:
   friend class sbBaseDeviceInitHelper;
   friend class sbDeviceEnsureSpaceForWrite;
@@ -619,7 +618,7 @@ protected:
   PRUint32 mCapabilitiesRegistrarType;
   PRLock*  mPreferenceLock;
   PRUint32 mMusicLimitPercent;
-  nsCOMPtr<nsIArray> mTranscodeProfiles;
+  sbDeviceTranscoding * mDeviceTranscoding;
 
   bool mVideoInserted; // Flag on whether video is inserted
   PRUint32 mSyncType; // syncing type to pass to the UI
@@ -634,7 +633,6 @@ protected:
   //                            various events.
   //   mReqStopProcessing       Non-zero if request processing should stop.
   //   mIsHandlingRequests      True if requests are being handled.
-  //   mTranscodeManager        Transcoding manager
   PRRWLock* mConnectLock;
   PRBool mConnected;
   nsCOMPtr<nsIRunnable> mReqAddedEvent;
@@ -642,8 +640,6 @@ protected:
   PRMonitor* mReqWaitMonitor;
   PRInt32 mReqStopProcessing;
   PRInt32 mIsHandlingRequests;
-  nsCOMPtr<sbITranscodeManager> mTranscodeManager;
-  nsCOMPtr<sbIMediaInspector> mMediaInspector;
 
   // cache data for media management preferences
   struct OrganizeData {
@@ -1270,44 +1266,6 @@ protected:
    */
   nsresult ProcessCapabilitiesRegistrars();
 
-  /* Get an array of all the sbITranscodeProfile instances supported for this
-   * The default implementation filters all available profiles by the
-   * capabilities of the device.
-   */
-  virtual nsresult GetSupportedTranscodeProfiles(nsIArray **aSupportedProfiles);
-
-  /**
-   * Returns the profile for the given media item
-   * \brief aMediaItem The media item to find the profile for
-   * \brief aProfile the profile found or may be null if no transcoding
-   *                 is needed.
-   * \note NS_ERROR_NOT_AVAILABLE is returned if no suitable profile is found
-   *       but transcoding is needed
-   */
-  nsresult FindTranscodeProfile(sbIMediaItem * aMediaItem,
-                                sbITranscodeProfile ** aProfile);
-
-  /**
-   * \brief Select a transcode profile to use when transcoding to this device.
-   * \param aTranscodeType The type of transcoding profile to look for.
-   * \param aProfile       The profile found or may be null if no transcoding
-   *                       is needed.
-   * \note This selects the best available transcoding profile for this device
-   *       for arbitrary input - even if the thing to be transcoded is directly
-   *       supported by the device.
-   * \note NS_ERROR_NOT_AVAILABLE is returned if no suitable profile is found
-   */
-  nsresult SelectTranscodeProfile(PRUint32 aTranscodeType,
-                                  sbITranscodeProfile **aProfile);
-
-  /**
-   * Prepare a batch for transcoding. This processes items in the batch and
-   * determines which of them require transcoding and/or album-art transcoding.
-   *
-   * \brief aBatch The batch to process
-   */
-  nsresult PrepareBatchForTranscoding(Batch & aBatch);
-
   /**
    * Dispatch a transcode error event for the media item specified by aMediaItem
    * with the error message specified by aErrorMessage.
@@ -1426,8 +1384,9 @@ protected:
    * \param aQueue is the queue to check for a duplicate
    * \param aRequest is the request we're checking duplicates of
    */
-  bool IsRequestDuplicate(TransferRequestQueue & aQueue,
-                          TransferRequest * aRequest);
+  nsresult IsRequestDuplicate(TransferRequestQueue & aQueue,
+                              TransferRequest * aRequest,
+                              bool & aIsDuplicate);
 };
 
 void SBUpdateBatchCounts(sbBaseDevice::Batch& aBatch);
