@@ -32,6 +32,7 @@
 #include <nsCOMPtr.h>
 #include <nsIMutableArray.h>
 #include <nsStringGlue.h>
+#include <prlog.h>
 
 #include <sbIMediaListListener.h>
 
@@ -337,7 +338,16 @@ public:
    * Returns the device capabilities type for an item
    */
   static PRUint32
-  GetDeviceCapsMediaType(sbIMediaItem * aMediaItem) ;
+  GetDeviceCapsMediaType(sbIMediaItem * aMediaItem);
+
+#ifdef PR_LOGGING
+  /**
+   * Outputs a the device's capabilites to a PR_Log.
+   */
+  static nsresult
+  LogDeviceCapabilities(sbIDeviceCapabilities *aDeviceCaps,
+                        PRLogModuleInfo *aLogModule);
+#endif
 };
 
 extern sbExtensionToContentFormatEntry_t const

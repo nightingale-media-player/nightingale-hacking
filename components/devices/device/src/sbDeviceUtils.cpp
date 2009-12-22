@@ -70,7 +70,6 @@
 #include <sbArray.h>
 #include <sbIMediaInspector.h>
 
-#include "prlog.h"
 #ifdef PR_LOGGING
 static PRLogModuleInfo* gDeviceUtilsLog = NULL;
 #define LOG(args) \
@@ -1647,3 +1646,444 @@ sbDeviceUtils::GetDeviceCapsMediaType(sbIMediaItem * aMediaItem)
              "returning unknown transcoding type");
   return sbIDeviceCapabilities::CONTENT_UNKNOWN;
 };
+
+#ifdef PR_LOGGING
+#define LOG_MODULE(aLogModule, args)   PR_LOG(aLogModule, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+
+#ifdef __GNUC__
+#define __FUNCTION__ __PRETTY_FUNCTION__
+#endif /* __GNUC__ */
+
+//------------------------------------------------------------------------------
+// sbIDeviceCapabilities Logging functions
+
+static nsresult LogFormatType(const nsAString & aFormat,
+                              sbIDeviceCapabilities *aDeviceCaps,
+                              PRLogModuleInfo *aLogModule);
+
+static nsresult LogImageFormatType(sbIImageFormatType *aImageFormatType,
+                                   const nsAString & aFormat,
+                                   PRLogModuleInfo *aLogModule);
+
+static nsresult LogVideoFormatType(sbIVideoFormatType *aVideoFormatType,
+                                   const nsAString & aFormat,
+                                   PRLogModuleInfo *aLogModule);
+
+static nsresult LogAudioFormatType(sbIAudioFormatType *aAudioFormatType,
+                                   const nsAString & aFormat,
+                                   PRLogModuleInfo *aLogModule);
+
+static nsresult LogPtrArray(PRUint32 aArraySize,
+                            char **aArray,
+                            PRLogModuleInfo *aLogModule);
+
+static nsresult LogSizeArray(nsIArray *aSizeArray, PRLogModuleInfo *aLogModule);
+
+static nsresult LogRange(sbIDevCapRange *aRange,
+                         PRBool aIsMinMax,
+                         PRLogModuleInfo *aLogModule);
+
+
+/* static */ nsresult
+sbDeviceUtils::LogDeviceCapabilities(sbIDeviceCapabilities *aDeviceCaps,
+                                     PRLogModuleInfo *aLogModule)
+{
+  NS_ENSURE_ARG_POINTER(aDeviceCaps);
+  NS_ENSURE_ARG_POINTER(aLogModule);
+
+  nsresult rv;
+
+  LOG_MODULE(aLogModule,
+      ("DEVICE CAPS:\n===============================================\n"));
+
+  PRUint32 functionTypeCount;
+  PRUint32 *functionTypes;
+  rv = aDeviceCaps->GetSupportedFunctionTypes(&functionTypeCount,
+                                              &functionTypes);
+  NS_ENSURE_SUCCESS(rv, rv);
+  sbAutoNSMemoryPtr functionTypesPtr(functionTypes);
+
+  for (PRUint32 functionType = 0;
+       functionType < functionTypeCount;
+       functionType++)
+  {
+    PRUint32 *contentTypes;
+    PRUint32 contentTypesLength;
+
+    rv = aDeviceCaps->GetSupportedContentTypes(functionTypes[functionType],
+                                               &contentTypesLength,
+                                               &contentTypes);
+    NS_ENSURE_SUCCESS(rv, rv);
+    sbAutoNSMemoryPtr contentTypesPtr(contentTypes);
+
+    for (PRUint32 contentType = 0;
+         contentType < contentTypesLength;
+         contentType++)
+    {
+      PRUint32 formatsCount;
+      char **formats;
+      rv = aDeviceCaps->GetSupportedFormats(contentTypes[contentType],
+                                            &formatsCount,
+                                            &formats);
+      NS_ENSURE_SUCCESS(rv, rv);
+      sbAutoNSArray<char *> autoFormatsPtr(formats, formatsCount);
+
+      for (PRUint32 format = 0; format < formatsCount; format++) {
+        rv = LogFormatType(NS_ConvertUTF8toUTF16(formats[format]),
+                           aDeviceCaps,
+                           aLogModule);
+      }
+    }
+  }
+
+  // Output style
+  LOG_MODULE(aLogModule,
+      ("\n===============================================\n"));
+
+  return NS_OK;
+}
+
+/* static */ nsresult
+LogFormatType(const nsAString & aFormat,
+              sbIDeviceCapabilities *aDeviceCaps,
+              PRLogModuleInfo *aLogModule)
+{
+  NS_ENSURE_ARG_POINTER(aDeviceCaps);
+  NS_ENSURE_ARG_POINTER(aLogModule);
+
+  nsresult rv;
+  nsCOMPtr<nsISupports> formatSupports;
+  rv = aDeviceCaps->GetFormatType(aFormat, getter_AddRefs(formatSupports));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // QI to find out which format this is.
+  nsCOMPtr<sbIAudioFormatType> audioFormatType =
+      do_QueryInterface(formatSupports, &rv);
+  if (NS_SUCCEEDED(rv) && audioFormatType) {
+    rv = LogAudioFormatType(audioFormatType, aFormat, aLogModule);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    nsCOMPtr<sbIVideoFormatType> videoFormatType =
+        do_QueryInterface(formatSupports, &rv);
+    if (NS_SUCCEEDED(rv) && videoFormatType) {
+      rv = LogVideoFormatType(videoFormatType, aFormat, aLogModule);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      // Last chance, attempt image type.
+      nsCOMPtr<sbIImageFormatType> imageFormatType =
+          do_QueryInterface(formatSupports, &rv);
+      if (NS_SUCCEEDED(rv) && imageFormatType) {
+        rv = LogImageFormatType(imageFormatType, aFormat, aLogModule);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+  }
+
+  return NS_OK;
+}
+
+/* static */ nsresult
+LogImageFormatType(sbIImageFormatType *aImageFormatType,
+                   const nsAString & aFormat,
+                   PRLogModuleInfo *aLogModule)
+{
+  NS_ENSURE_ARG_POINTER(aImageFormatType);
+  NS_ENSURE_ARG_POINTER(aLogModule);
+
+  nsresult rv;
+
+  nsString format(aFormat);
+  LOG_MODULE(aLogModule, (" *** IMAGE FORMAT TYPE '%s' ***",
+       NS_ConvertUTF16toUTF8(format).get()));
+
+  nsCString imgFormat;
+  rv = aImageFormatType->GetImageFormat(imgFormat);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevCapRange> widths;
+  rv = aImageFormatType->GetSupportedWidths(getter_AddRefs(widths));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevCapRange> heights;
+  rv = aImageFormatType->GetSupportedHeights(getter_AddRefs(heights));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIArray> sizes;
+  rv = aImageFormatType->GetSupportedExplicitSizes(getter_AddRefs(sizes));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  LOG_MODULE(aLogModule, (" * image format: %s", imgFormat.get()));
+
+  LOG_MODULE(aLogModule, (" * image widths:\n"));;
+  rv = LogRange(widths, PR_TRUE, aLogModule);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  LOG_MODULE(aLogModule, (" * image heights:\n"));
+  rv = LogRange(heights, PR_TRUE, aLogModule);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  LOG_MODULE(aLogModule, (" * image supported sizes:\n"));
+  rv = LogSizeArray(sizes, aLogModule);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Output style
+  LOG_MODULE(aLogModule, ("\n"));
+  return NS_OK;
+}
+
+/* static */ nsresult
+LogVideoFormatType(sbIVideoFormatType *aVideoFormatType,
+                   const nsAString & aFormat,
+                   PRLogModuleInfo *aLogModule)
+{
+  NS_ENSURE_ARG_POINTER(aVideoFormatType);
+  NS_ENSURE_ARG_POINTER(aLogModule);
+
+  nsresult rv;
+
+  nsString format(aFormat);
+  LOG_MODULE(aLogModule, (" *** VIDEO FORMAT TYPE '%s' ***",
+        NS_ConvertUTF16toUTF8(format).get()));
+
+  nsCString containerType;
+  rv = aVideoFormatType->GetContainerType(containerType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevCapVideoStream> videoStream;
+  rv = aVideoFormatType->GetVideoStream(getter_AddRefs(videoStream));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCString videoStreamType;
+  rv = videoStream->GetType(videoStreamType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIArray> videoSizes;
+  rv = videoStream->GetSupportedExplicitSizes(getter_AddRefs(videoSizes));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevCapRange> videoWidths;
+  rv = videoStream->GetSupportedWidths(getter_AddRefs(videoWidths));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevCapRange> videoHeights;
+  rv = videoStream->GetSupportedHeights(getter_AddRefs(videoHeights));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevCapRange> videoBitrates;
+  rv = videoStream->GetSupportedBitRates(getter_AddRefs(videoBitrates));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 videoParSize = 0;
+  char **videoPar;
+  rv = videoStream->GetSupportedVideoPARs(&videoParSize, &videoPar);
+  NS_ENSURE_SUCCESS(rv, rv);
+  sbAutoNSArray<char *> autoVideoPARs(videoPar, videoParSize);
+
+  PRUint32 videoFrameRateSize = 0;
+  char **videoFrameRates;
+  rv = videoStream->GetSupportedFrameRates(&videoFrameRateSize,
+                                           &videoFrameRates);
+  NS_ENSURE_SUCCESS(rv, rv);
+  sbAutoNSArray<char *> autoVideoFrameRates(videoFrameRates,
+                                            videoFrameRateSize);
+
+  LOG_MODULE(aLogModule, (" * videostream type = %s)", videoStreamType.get()));
+
+  LOG_MODULE(aLogModule, (" * videostream supported widths:"));
+  rv = LogRange(videoWidths, PR_TRUE, aLogModule);
+
+  LOG_MODULE(aLogModule, (" * videosream supported heights:"));
+  rv = LogRange(videoHeights, PR_TRUE, aLogModule);
+
+  LOG_MODULE(aLogModule, (" * videostream bitrates:"));
+  rv = LogRange(videoBitrates, PR_TRUE, aLogModule);
+
+  LOG_MODULE(aLogModule, (" * videostream PARs:"));
+  rv = LogPtrArray(videoParSize, videoPar, aLogModule);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  LOG_MODULE(aLogModule, (" * videostream frame rates:"));
+  rv = LogPtrArray(videoFrameRateSize, videoFrameRates, aLogModule);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevCapAudioStream> audioStream;
+  rv = aVideoFormatType->GetAudioStream(getter_AddRefs(audioStream));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCString audioStreamType;
+  rv = audioStream->GetType(audioStreamType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevCapRange> audioBitrates;
+  rv = audioStream->GetSupportedBitRates(getter_AddRefs(audioBitrates));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevCapRange> audioSamplerates;
+  rv = audioStream->GetSupportedSampleRates(getter_AddRefs(audioSamplerates));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevCapRange> audioChannels;
+  rv = audioStream->GetSupportedChannels(getter_AddRefs(audioChannels));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  LOG_MODULE(aLogModule, (" * audiostream type = %s", audioStreamType.get()));
+
+  LOG_MODULE(aLogModule, (" * audiostream bitrates:"));
+  rv = LogRange(audioBitrates, PR_TRUE, aLogModule);
+
+  LOG_MODULE(aLogModule, (" * audiostream samplerates:"));
+  rv = LogRange(audioSamplerates, PR_FALSE, aLogModule);
+
+  LOG_MODULE(aLogModule, (" * audiostream channels"));
+  rv = LogRange(audioChannels, PR_TRUE, aLogModule);
+
+  // Output style
+  LOG_MODULE(aLogModule, ("\n"));
+  return NS_OK;
+}
+
+/* static */ nsresult
+LogAudioFormatType(sbIAudioFormatType *aAudioFormatType,
+                   const nsAString & aFormat,
+                   PRLogModuleInfo *aLogModule)
+{
+  NS_ENSURE_ARG_POINTER(aAudioFormatType);
+  NS_ENSURE_ARG_POINTER(aLogModule);
+
+  nsresult rv;
+
+  nsString format(aFormat);
+  LOG_MODULE(aLogModule, (" *** AUDIO FORMAT TYPE '%s' ***",
+        NS_ConvertUTF16toUTF8(format).get()));
+
+  nsCString audioCodec;
+  rv = aAudioFormatType->GetAudioCodec(audioCodec);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCString containerFormat;
+  rv = aAudioFormatType->GetContainerFormat(containerFormat);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevCapRange> bitrates;
+  rv = aAudioFormatType->GetSupportedBitrates(getter_AddRefs(bitrates));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevCapRange> samplerates;
+  rv = aAudioFormatType->GetSupportedSampleRates(getter_AddRefs(samplerates));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevCapRange> channels;
+  rv = aAudioFormatType->GetSupportedChannels(getter_AddRefs(channels));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Output
+  LOG_MODULE(aLogModule, ("  * audioCodec = %s", audioCodec.get()));
+  LOG_MODULE(aLogModule, ("  * containerFormat = %s", containerFormat.get()));
+
+  LOG_MODULE(aLogModule, ("  * audio bitrates:"));
+  rv = LogRange(bitrates, PR_TRUE, aLogModule);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  LOG_MODULE(aLogModule, (" * audio samplerates:"));
+  rv = LogRange(samplerates, PR_FALSE, aLogModule);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  LOG_MODULE(aLogModule, (" * audio channels:"));
+  rv = LogRange(channels, PR_TRUE, aLogModule);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Output style
+  LOG_MODULE(aLogModule, ("\n"));
+  return NS_OK;
+}
+
+/* static */ nsresult
+LogPtrArray(PRUint32 aArraySize,
+            char **aArray,
+            PRLogModuleInfo *aLogModule)
+{
+  NS_ENSURE_ARG_POINTER(aArray);
+  NS_ENSURE_ARG_POINTER(aLogModule);
+
+  for (PRUint32 i = 0; i < aArraySize; i++) {
+    LOG_MODULE(aLogModule, ("   - %s", aArray[i]));
+  }
+
+  return NS_OK;
+}
+
+/* static */ nsresult
+LogSizeArray(nsIArray *aSizeArray, PRLogModuleInfo *aLogModule)
+{
+  NS_ENSURE_ARG_POINTER(aSizeArray);
+  NS_ENSURE_ARG_POINTER(aLogModule);
+
+  nsresult rv;
+  PRUint32 arrayCount = 0;
+  rv = aSizeArray->GetLength(&arrayCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 0; i < arrayCount; i++) {
+    nsCOMPtr<sbIImageSize> curImageSize =
+        do_QueryElementAt(aSizeArray, i, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRInt32 width, height;
+    rv = curImageSize->GetWidth(&width);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = curImageSize->GetHeight(&height);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    LOG_MODULE(aLogModule, ("   - %i x %i", width, height));
+  }
+
+  return NS_OK;
+}
+
+/* static */ nsresult
+LogRange(sbIDevCapRange *aRange,
+         PRBool aIsMinMax,
+         PRLogModuleInfo *aLogModule)
+{
+  NS_ENSURE_ARG_POINTER(aRange);
+  NS_ENSURE_ARG_POINTER(aLogModule);
+
+  nsresult rv;
+  if (aIsMinMax) {
+    PRInt32 min, max, step;
+    rv = aRange->GetMin(&min);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = aRange->GetMax(&max);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = aRange->GetStep(&step);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    LOG_MODULE(aLogModule, ("   - min:  %i", min));
+    LOG_MODULE(aLogModule, ("   - max:  %i", max));
+    LOG_MODULE(aLogModule, ("   - step: %i", step));
+  }
+  else {
+    PRUint32 valueCount = 0;
+    rv = aRange->GetValueCount(&valueCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for (PRUint32 i = 0; i < valueCount; i++) {
+      PRInt32 curValue = 0;
+      rv = aRange->GetValue(i, &curValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      LOG_MODULE(aLogModule, ("   - %i", curValue));
+    }
+  }
+
+  return NS_OK;
+}
+
+#endif
+
