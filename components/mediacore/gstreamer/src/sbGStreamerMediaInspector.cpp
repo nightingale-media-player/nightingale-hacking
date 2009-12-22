@@ -686,7 +686,7 @@ sbGStreamerMediaInspector::FakesinkEvent(GstPad *srcpad, GstEvent *event,
   if ((isAudio && mAudioBitRate) || (!isAudio && mVideoBitRate))
     return NS_OK;
 
-  guint bitrate;
+  guint bitrate = 0;
 
   switch (GST_EVENT_TYPE (event)) {
     case GST_EVENT_TAG: {
@@ -704,10 +704,12 @@ sbGStreamerMediaInspector::FakesinkEvent(GstPad *srcpad, GstEvent *event,
       break;
   }
 
-  if (isAudio)
-    mAudioBitRate = bitrate;
-  else
-    mVideoBitRate = bitrate;
+  if (bitrate) {
+    if (isAudio)
+      mAudioBitRate = bitrate;
+    else
+      mVideoBitRate = bitrate;
+  }
 
   return NS_OK;
 }
