@@ -71,6 +71,7 @@ private:
   nsresult CompleteInspection();
 
   nsresult PadAdded(GstPad *srcPad);
+  nsresult FakesinkEvent(GstPad *srcPad, GstEvent *event, PRBool isAudio);
   nsresult ProcessPipelineForInfo();
   nsresult ProcessVideo(sbIMediaFormatVideo **aVideoFormat);
   nsresult ProcessVideoCaps(sbIMediaFormatVideoMutable *format, GstCaps *caps);
@@ -82,6 +83,12 @@ private:
 
   void HandleStateChangeMessage(GstMessage *message);
   void HandleErrorMessage(GstMessage *message);
+
+  static void fakesink_audio_event_cb (GstPad *pad, GstEvent *event,
+                                 sbGStreamerMediaInspector *inspector);
+
+  static void fakesink_video_event_cb (GstPad *pad, GstEvent *event,
+                                 sbGStreamerMediaInspector *inspector);
 
   static void decodebin_pad_added_cb (GstElement *element, GstPad *pad,
                                       sbGStreamerMediaInspector *inspector);
@@ -106,6 +113,8 @@ private:
   GstPad                                 *mAudioDecoderSink;
   GstPad                                 *mVideoDecoderSink;
   GstPad                                 *mDemuxerSink;
+  guint                                   mAudioBitRate;
+  guint                                   mVideoBitRate;
 
 };
 

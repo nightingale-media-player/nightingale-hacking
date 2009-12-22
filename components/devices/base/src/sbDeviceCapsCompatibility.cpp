@@ -107,6 +107,8 @@ sbDeviceCapsCompatibility::Initialize(
 
   rv = mMediaFormat->GetAudioStream(getter_AddRefs(mMediaAudioStream));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -323,14 +325,13 @@ sbDeviceCapsCompatibility::CompareVideoStream(
   if (!(*aCompatible))
     return NS_OK;
 
-  // Depend on bug 19262 to get the bitrate. Enable this when it
-  // is available.
-#if BITRATE_AVAILABLE
-  rv = CompareVideoBitRate(aVideoStream, aCompatible);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (!(*aCompatible))
-    return NS_OK;
-#endif
+  // Video bit rate could be unknown in the media file.
+  if (mMediaVideoBitRate) {
+    rv = CompareVideoBitRate(aVideoStream, aCompatible);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!(*aCompatible))
+      return NS_OK;
+  }
 
   rv = CompareVideoPAR(aVideoStream, aCompatible);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -370,14 +371,13 @@ sbDeviceCapsCompatibility::CompareAudioStream(
   if (!StringEqualsToCString(mMediaAudioType, deviceAudioType))
     return NS_OK;
 
-  // Depend on bug 19262 to get the bitrate. Enable this when it
-  // is available.
-#if BITRATE_AVAILABLE
-  rv = CompareAudioBitRate(aAudioStream, aCompatible);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (!(*aCompatible))
-    return NS_OK;
-#endif
+  // Audio bit rate could be unknown in the media file.
+  if (mMediaAudioBitRate) {
+    rv = CompareAudioBitRate(aAudioStream, aCompatible);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!(*aCompatible))
+      return NS_OK;
+  }
 
   rv = CompareAudioSampleRate(aAudioStream, aCompatible);
   NS_ENSURE_SUCCESS(rv, rv);

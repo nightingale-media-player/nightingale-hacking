@@ -86,7 +86,9 @@ sbGStreamerMediaInspector::sbGStreamerMediaInspector() :
     mAudioSrc(NULL),
     mAudioDecoderSink(NULL),
     mVideoDecoderSink(NULL),
-    mDemuxerSink(NULL)
+    mDemuxerSink(NULL),
+    mAudioBitRate(0),
+    mVideoBitRate(0)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 }
@@ -636,6 +638,12 @@ sbGStreamerMediaInspector::PadAdded(GstPad *srcpad)
 
     gst_element_link (queue, fakesink);
 
+    GstPad *fakesinkpad = gst_element_get_pad (fakesink, "sink");
+    gst_pad_add_event_probe (fakesinkpad,
+        G_CALLBACK (fakesink_audio_event_cb), this);
+
+    g_object_unref (fakesinkpad);
+
     mAudioSrc = GST_PAD (gst_object_ref (srcpad));
   }
   else if (isVideo && !mVideoSrc) {
@@ -653,11 +661,53 @@ sbGStreamerMediaInspector::PadAdded(GstPad *srcpad)
 
     gst_element_link (queue, fakesink);
 
+    GstPad *fakesinkpad = gst_element_get_pad (fakesink, "sink");
+    gst_pad_add_event_probe (fakesinkpad,
+        G_CALLBACK (fakesink_video_event_cb), this);
+
+    g_object_unref (fakesinkpad);
+
     mVideoSrc = GST_PAD (gst_object_ref (srcpad));
   }
   else {
     // Ignore this one.
   }
+
+  return NS_OK;
+}
+
+nsresult
+sbGStreamerMediaInspector::FakesinkEvent(GstPad *srcpad, GstEvent *event,
+                                         PRBool isAudio)
+{
+  TRACE(("%s[%p]", __FUNCTION__, this));
+
+  // Bit rate is already available.
+  if ((isAudio && mAudioBitRate) || (!isAudio && mVideoBitRate))
+    return NS_OK;
+
+  guint bitrate;
+
+  switch (GST_EVENT_TYPE (event)) {
+    case GST_EVENT_TAG: {
+      GstTagList *list = NULL;
+
+      gst_event_parse_tag (event, &list);
+      if (list && !gst_tag_list_is_empty (list)) {
+        gst_tag_list_get_uint (list, GST_TAG_BITRATE, &bitrate);
+        if (!bitrate)
+          gst_tag_list_get_uint (list, GST_TAG_NOMINAL_BITRATE, &bitrate);
+      }
+      break;
+    }
+    default:
+      break;
+  }
+
+  if (isAudio)
+    mAudioBitRate = bitrate;
+  else
+    mVideoBitRate = bitrate;
 
   return NS_OK;
 }
@@ -878,6 +928,9 @@ sbGStreamerMediaInspector::ProcessVideo(sbIMediaFormatVideo **aVideoFormat)
 
   NS_ENSURE_SUCCESS (rv, rv);
 
+  rv = format->SetBitRate(mVideoBitRate);
+  NS_ENSURE_SUCCESS (rv, rv);
+
   if (mVideoDecoderSink) {
     // This is the sink pad on the decoder. We can process this for
     // information about what codec is being used.
@@ -936,6 +989,9 @@ sbGStreamerMediaInspector::ProcessAudio(sbIMediaFormatAudio **aAudioFormat)
     format->SetChannels (channels);
   }
   gst_caps_unref (caps);
+
+  rv = format->SetBitRate(mAudioBitRate);
+  NS_ENSURE_SUCCESS (rv, rv);
 
   if (mAudioDecoderSink) {
     // This is the sink pad on the decoder. We can process this for
@@ -1004,6 +1060,22 @@ sbGStreamerMediaInspector::GetRealPad (GstPad *pad)
   }
 
   return current;
+}
+
+/* static */ void
+sbGStreamerMediaInspector::fakesink_audio_event_cb (GstPad * pad,
+        GstEvent * event, sbGStreamerMediaInspector *inspector)
+{
+  nsresult rv = inspector->FakesinkEvent(pad, event, PR_TRUE);
+  NS_ENSURE_SUCCESS (rv, /* void */);
+}
+
+/* static */ void
+sbGStreamerMediaInspector::fakesink_video_event_cb (GstPad * pad,
+        GstEvent * event, sbGStreamerMediaInspector *inspector)
+{
+  nsresult rv = inspector->FakesinkEvent(pad, event, PR_FALSE);
+  NS_ENSURE_SUCCESS (rv, /* void */);
 }
 
 /* static */ void
