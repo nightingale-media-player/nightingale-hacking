@@ -364,15 +364,7 @@ var DIPW = {
         break;
 
       case Ci.sbIDevice.STATE_SYNC_PLAYLIST:
-        // Syncing playlist. Finish up audio/video panels if opened.
-        if (this._findMediaInfoPanel("video")) {
-          this._updateMediaInfoPanelState("video", Ci.sbIDevice.STATE_IDLE, false);
-        }
-        if (this._findMediaInfoPanel("audio")) {
-          this._updateMediaInfoPanelState("audio", Ci.sbIDevice.STATE_IDLE, false);
-        }
-
-        this._updateMediaInfoPanelState("complete", Ci.sbIDevice.STATE_SYNCING, true);
+        // Syncing playlist.
         this._lastOperation = state;
         break;
 
