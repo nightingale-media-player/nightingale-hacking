@@ -1624,18 +1624,16 @@ sbDeviceUtils::GetDeviceCapsMediaType(sbIMediaItem * aMediaItem)
   return sbIDeviceCapabilities::CONTENT_UNKNOWN;
 };
 
+//------------------------------------------------------------------------------
+// sbIDeviceCapabilities Logging functions
+// NOTE: This is built only w/ PR_LOGGING turned on.
+
 #ifdef PR_LOGGING
 #define LOG_MODULE(aLogModule, args)   PR_LOG(aLogModule, PR_LOG_WARN, args)
-#else
-#define TRACE(args) /* nothing */
-#define LOG(args)   /* nothing */
 
 #ifdef __GNUC__
 #define __FUNCTION__ __PRETTY_FUNCTION__
 #endif /* __GNUC__ */
-
-//------------------------------------------------------------------------------
-// sbIDeviceCapabilities Logging functions
 
 static nsresult LogFormatType(const nsAString & aFormat,
                               sbIDeviceCapabilities *aDeviceCaps,
