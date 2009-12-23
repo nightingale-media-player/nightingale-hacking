@@ -45,6 +45,7 @@ CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
                      $(MOZSDK_INCLUDE_DIR)/dom \
                      $(MOZSDK_INCLUDE_DIR)/intl \
                      $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/unicharutil \
                      $(NULL)
 
 ifdef MEDIA_CORE_GST_SYSTEM

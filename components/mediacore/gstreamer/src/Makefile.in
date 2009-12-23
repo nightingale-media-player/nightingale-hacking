@@ -179,7 +179,17 @@ else
    endif
 endif
 
+ifeq (windows,$(SB_PLATFORM))
+   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
+else
+   DYNAMIC_LIB_STATIC_IMPORTS += \
+    $(MOZSDK_LIB_DIR)/libunicharutil_external_s$(LIB_SUFFIX) \
+	 $(NULL)
+endif
+
 ifeq (macosx,$(SB_PLATFORM))
+   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
+
    DYNAMIC_LIB_EXTRA_FLAGS = -framework AppKit \
                              -mmacosx-version-min=10.4 \
                              $(NULL)

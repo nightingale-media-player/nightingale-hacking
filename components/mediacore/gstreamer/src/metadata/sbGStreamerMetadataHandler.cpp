@@ -42,6 +42,7 @@
 #include <nsThreadUtils.h>
 #include <nsIStringEnumerator.h>
 #include <nsIURI.h>
+#include <nsUnicharUtils.h>
 
 #include <prlog.h>
 #include <prtime.h>
@@ -209,7 +210,7 @@ HasExtensionInEnumerator(const nsAString& aHaystack, nsIStringEnumerator *aEnum)
 {
   TRACE((__FUNCTION__));
   nsresult rv;
-  
+
   while (PR_TRUE) {
     PRBool hasMore;
     rv = aEnum->HasMore(&hasMore);
@@ -223,7 +224,7 @@ HasExtensionInEnumerator(const nsAString& aHaystack, nsIStringEnumerator *aEnum)
     NS_ENSURE_SUCCESS(rv, PR_FALSE);
     
     string.Insert('.', 0);
-    if (aHaystack.Find(string, PR_TRUE)) {
+    if (aHaystack.Find(string, CaseInsensitiveCompare) >= 0) {
       return PR_TRUE;
     }
   }
@@ -765,7 +766,7 @@ sbGStreamerMetadataHandler::FinalizeTags(PRBool aSucceeded)
     nsCOMPtr<sbIMediacoreCapabilities> caps;
     rv = mFactory->GetCapabilities(getter_AddRefs(caps));
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     nsCOMPtr<nsIStringEnumerator> strings;
     PRBool found = PR_FALSE;
     rv = caps->GetVideoExtensions(getter_AddRefs(strings));
