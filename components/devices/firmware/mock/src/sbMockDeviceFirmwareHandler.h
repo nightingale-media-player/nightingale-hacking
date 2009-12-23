@@ -43,6 +43,13 @@ public:
   sbMockDeviceFirmwareHandler();
 
   virtual nsresult OnInit();
+  virtual nsresult OnGetCurrentFirmwareVersion(PRUint32 *aCurrentFirmwareVersion);
+  virtual nsresult OnGetCurrentFirmwareReadableVersion(nsAString &aCurrentFirmwareReadableVersion);
+  virtual nsresult OnGetRecoveryMode(PRBool *aRecoveryMode);
+
+  virtual nsresult OnGetDeviceModelNumber(nsAString &aModelNumber);
+  virtual nsresult OnGetDeviceModelVersion(nsAString &aModelVersion);
+
   virtual nsresult OnCanHandleDevice(sbIDevice *aDevice, 
                                      PRBool *_retval);
   virtual nsresult OnCanUpdate(sbIDevice *aDevice, 

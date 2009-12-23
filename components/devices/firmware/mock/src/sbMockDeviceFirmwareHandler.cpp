@@ -85,18 +85,72 @@ sbMockDeviceFirmwareHandler::OnInit()
     NS_LITERAL_STRING("@songbirdnest.com/Songbird/Device/Firmware/Handler/MockDevice;1");
 
   nsCOMPtr<nsIURI> uri;
-  nsresult rv = CreateProxiedURI(nsDependentCString(SB_MOCK_DEVICE_RESET_URL),
-                                 getter_AddRefs(uri));
+  nsresult rv = NS_NewURI(getter_AddRefs(uri), SB_MOCK_DEVICE_RESET_URL);
   NS_ENSURE_SUCCESS(rv, rv);
 
   uri.swap(mResetInstructionsLocation);
 
-  rv = CreateProxiedURI(nsDependentCString(SB_MOCK_DEVICE_RELEASE_NOTES_URL),
-                        getter_AddRefs(uri));
+  rv = NS_NewURI(getter_AddRefs(uri), SB_MOCK_DEVICE_RELEASE_NOTES_URL);
   NS_ENSURE_SUCCESS(rv, rv);
 
   uri.swap(mReleaseNotesLocation);
 
+  return NS_OK;
+}
+
+/*virtual*/ nsresult
+sbMockDeviceFirmwareHandler::OnGetCurrentFirmwareVersion(PRUint32 *aCurrentFirmwareVersion)
+{
+  *aCurrentFirmwareVersion = 0x01000000;
+  return NS_OK;
+}
+
+/*virtual*/ nsresult
+sbMockDeviceFirmwareHandler::OnGetCurrentFirmwareReadableVersion(nsAString &aCurrentFirmwareReadableVersion)
+{
+  aCurrentFirmwareReadableVersion.AssignLiteral("1.0.0.0");
+  return NS_OK;
+}
+
+/*virtual*/ nsresult 
+sbMockDeviceFirmwareHandler::OnGetRecoveryMode(PRBool *aRecoveryMode)
+{
+  if(mDevice) {
+    nsCOMPtr<nsIVariant> needsRecoveryModeVariant;
+    nsresult rv = 
+      mDevice->GetPreference(NS_LITERAL_STRING("testing.firmware.needRecoveryMode"),
+                             getter_AddRefs(needsRecoveryModeVariant));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint16 dataType = 0;
+    rv = needsRecoveryModeVariant->GetDataType(&dataType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool needsRecoveryMode = PR_FALSE;
+    if(dataType == nsIDataType::VTYPE_BOOL) {
+      rv = needsRecoveryModeVariant->GetAsBool(&needsRecoveryMode);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      mNeedsRecoveryMode = needsRecoveryMode;
+    }
+  }
+
+  *aRecoveryMode = mRecoveryMode;
+
+  return NS_OK;
+}
+
+/*virtual*/ nsresult 
+sbMockDeviceFirmwareHandler::OnGetDeviceModelNumber(nsAString &aModelNumber)
+{
+  aModelNumber.AssignLiteral("MOCKBOBMSC0001");
+  return NS_OK;
+}
+
+/*virtual*/ nsresult 
+sbMockDeviceFirmwareHandler::OnGetDeviceModelVersion(nsAString &aModelVersion)
+{
+  aModelVersion.AssignLiteral("MOCKBOBMSC0001/ZX");
   return NS_OK;
 }
 
@@ -394,51 +448,50 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
   // XXXAus: Populate the fake support and register locations.
   {
     nsCOMPtr<nsIURI> uri;
-    nsresult rv = CreateProxiedURI(nsDependentCString(SB_MOCK_DEVICE_SUPPORT_URL),
-                                   getter_AddRefs(uri));
+    nsresult rv = NS_NewURI(getter_AddRefs(uri), SB_MOCK_DEVICE_SUPPORT_URL);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsAutoMonitor mon(mMonitor);
     uri.swap(mSupportLocation);
     mon.Exit();
 
-    rv = CreateProxiedURI(nsDependentCString(SB_MOCK_DEVICE_REGISTER_URL),
-                          getter_AddRefs(uri));
+    rv = NS_NewURI(getter_AddRefs(uri), SB_MOCK_DEVICE_REGISTER_URL);
     NS_ENSURE_SUCCESS(rv, rv);
 
     mon.Enter();
     uri.swap(mRegisterLocation);
     mon.Exit();
 
-    rv = CreateProxiedURI(nsDependentCString(SB_MOCK_DEVICE_RESET_URL),
-                          getter_AddRefs(uri));
+    rv = NS_NewURI(getter_AddRefs(uri), SB_MOCK_DEVICE_RESET_URL);
     NS_ENSURE_SUCCESS(rv, rv);
 
     mon.Enter();
     uri.swap(mResetInstructionsLocation);
     mon.Exit();
 
-    nsCOMPtr<nsIVariant> needsRecoveryModeVariant;
-    rv = mDevice->GetPreference(NS_LITERAL_STRING("testing.firmware.needRecoveryMode"),
-                                getter_AddRefs(needsRecoveryModeVariant));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    PRUint16 dataType = 0;
-    rv = needsRecoveryModeVariant->GetDataType(&dataType);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    PRBool needsRecoveryMode = PR_FALSE;
-    if(dataType == nsIDataType::VTYPE_BOOL) {
-      rv = needsRecoveryModeVariant->GetAsBool(&needsRecoveryMode);
+    if(mDevice) {
+      nsCOMPtr<nsIVariant> needsRecoveryModeVariant;
+      rv = mDevice->GetPreference(NS_LITERAL_STRING("testing.firmware.needRecoveryMode"),
+                                  getter_AddRefs(needsRecoveryModeVariant));
       NS_ENSURE_SUCCESS(rv, rv);
 
-      mon.Enter();
-      mNeedsRecoveryMode = needsRecoveryMode;
-      mon.Exit();
+      PRUint16 dataType = 0;
+      rv = needsRecoveryModeVariant->GetDataType(&dataType);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRBool needsRecoveryMode = PR_FALSE;
+      if(dataType == nsIDataType::VTYPE_BOOL) {
+        rv = needsRecoveryModeVariant->GetAsBool(&needsRecoveryMode);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        mon.Enter();
+        mNeedsRecoveryMode = needsRecoveryMode;
+        mon.Exit();
+      }
     }
   }
 
-  {
+  if(mDevice) {
     nsCOMPtr<nsIVariant> shouldFailVariant;
     rv = mDevice->GetPreference(NS_LITERAL_STRING("testing.firmware.cfu.fail"),
                                 getter_AddRefs(shouldFailVariant));
