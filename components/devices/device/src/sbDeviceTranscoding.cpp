@@ -439,6 +439,12 @@ sbDeviceTranscoding::TranscodeVideoItem(
   NS_ENSURE_SUCCESS(rv, rv);
   rv = configurator->SetDevice(device);
   NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIMediaFormat> mediaFormat;
+  rv = GetMediaFormat(aRequest->item, getter_AddRefs(mediaFormat));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = configurator->SetInputFormat(mediaFormat);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = aVideoJob->SetConfigurator(configurator);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -571,7 +577,14 @@ sbDeviceTranscoding::TranscodeMediaItem(
   // Setup the progress listener.
   nsCOMPtr<sbIJobProgress> progress = do_QueryInterface(tcJob, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = progress->AddJobProgressListener(listener);
+  nsCOMPtr<sbIJobProgress> proxiedProgress;
+  rv = do_GetProxyForObject(target,
+                            NS_GET_IID(sbIJobProgress),
+                            progress,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(proxiedProgress));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = proxiedProgress->AddJobProgressListener(listener);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Setup the mediacore event listener.
