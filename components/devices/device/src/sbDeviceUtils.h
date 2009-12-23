@@ -54,6 +54,8 @@ struct sbExtensionToContentFormatEntry_t {
   char const * MimeType;
   char const * ContainerFormat;
   char const * Codec;
+  char const * VideoType;
+  char const * AudioType;
   PRUint32 ContentType;
   PRUint32 TranscodeType;
 };
@@ -317,7 +319,9 @@ public:
    */
   static nsresult GetCodecAndContainerForMimeType(nsCString aMimeType,
                                                   nsCString &aContainer,
-                                                  nsCString &aCodec);
+                                                  nsCString &aCodec,
+                                                  nsCString &aVideoType,
+                                                  nsCString &aAudioType);
 
   /**
    * Returns true if the item is DRM protected

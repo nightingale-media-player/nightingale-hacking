@@ -446,7 +446,11 @@ sbDeviceTranscoding::TranscodeVideoItem(
   rv = configurator->SetInputFormat(mediaFormat);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = aVideoJob->SetConfigurator(configurator);
+  nsCOMPtr<sbITranscodingConfigurator> qiConfigurator =
+    do_QueryInterface(configurator, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aVideoJob->SetConfigurator(qiConfigurator);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

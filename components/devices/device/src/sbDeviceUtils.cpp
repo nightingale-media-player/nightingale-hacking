@@ -895,44 +895,44 @@ sbDeviceUtilsQueryUserSpaceExceeded::Query(sbIDevice*        aDevice,
 sbExtensionToContentFormatEntry_t const
 MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
   /* audio */
-  { "mp3",  "audio/mpeg",      "id3",  "mp3",    sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "wma",  "audio/x-ms-wma",  "asf",  "wmav2",  sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "aac",  "audio/aac",       "mov",  "aac",    sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "m4a",  "audio/aac",       "mov",  "aac",    sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "aa",   "audio/audible",   "",     "",       sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "oga",  "application/ogg", "ogg",  "flac",   sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "ogg",  "application/ogg", "ogg",  "vorbis", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "flac", "audio/x-flac",    "",     "flac",   sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "wav",  "audio/x-wav",     "wav",  "pcm-int",sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "aiff", "audio/x-aiff",    "aiff", "pcm-int",sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "aif",  "audio/x-aiff",    "aiff", "pcm-int",sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "mp3",  "audio/mpeg",      "id3",  "mp3",     "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "wma",  "audio/x-ms-wma",  "asf",  "wmav2",   "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "aac",  "audio/aac",       "mov",  "aac",     "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "m4a",  "audio/aac",       "mov",  "aac",     "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "aa",   "audio/audible",   "",     "",        "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "oga",  "application/ogg", "ogg",  "flac",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "ogg",  "application/ogg", "ogg",  "vorbis",  "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "flac", "audio/x-flac",    "",     "flac",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "wav",  "audio/x-wav",     "wav",  "pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "aiff", "audio/x-aiff",    "aiff", "pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "aif",  "audio/x-aiff",    "aiff", "pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
 
   /* video */
-  { "mp4",  "video/mp4",       "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
-  { "mpg",  "video/mpeg",      "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
-  { "mpeg", "video/mpeg",      "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
-  { "wmv",  "video/x-ms-wmv",  "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
-  { "avi",  "video/x-msvideo", "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
-  { "3gp",  "video/3gpp",      "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
-  { "3g2",  "video/3gpp",      "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
+  { "mp4",  "video/mp4",       "",            "", "",               "",             sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
+  { "mpg",  "video/mpeg",      "",            "", "",               "",             sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
+  { "mpeg", "video/mpeg",      "",            "", "",               "",             sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
+  { "wmv",  "video/x-ms-wmv",  "video/x-wmv", "", "video/x-ms-asf", "audio/x-wma",  sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
+  { "avi",  "video/x-msvideo", "",            "", "mpeg4",          "wma",          sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
+  { "3gp",  "video/3gpp",      "",            "", "",               "",             sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
+  { "3g2",  "video/3gpp",      "",            "", "",               "",             sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
 
   /* images */
-  { "png",  "image/png",      "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "jpg",  "image/jpeg",     "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "gif",  "image/gif",      "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "bmp",  "image/bmp",      "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "ico",  "image/x-icon",   "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "tiff", "image/tiff",     "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "tif",  "image/tiff",     "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "wmf",  "application/x-msmetafile", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "jp2",  "image/jp2",      "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "jpx",  "image/jpx",      "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "fpx",  "application/vnd.netfpx", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "pcd",  "image/x-photo-cd", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "pict", "image/pict",     "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "png",  "image/png",      "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "jpg",  "image/jpeg",     "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "gif",  "image/gif",      "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "bmp",  "image/bmp",      "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "ico",  "image/x-icon",   "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "tiff", "image/tiff",     "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "tif",  "image/tiff",     "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "wmf",  "application/x-msmetafile", "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "jp2",  "image/jp2",      "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "jpx",  "image/jpx",      "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "fpx",  "application/vnd.netfpx", "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "pcd",  "image/x-photo-cd", "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "pict", "image/pict",     "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
 
   /* playlists */
-  { "m3u",  "audio/x-mpegurl", "", "", sbIDeviceCapabilities::CONTENT_PLAYLIST, sbITranscodeProfile::TRANSCODE_TYPE_UNKNOWN }
+  { "m3u",  "audio/x-mpegurl", "", "", "", "", sbIDeviceCapabilities::CONTENT_PLAYLIST, sbITranscodeProfile::TRANSCODE_TYPE_UNKNOWN }
 };
 
 PRUint32 const MAP_FILE_EXTENSION_CONTENT_FORMAT_LENGTH =
@@ -1568,7 +1568,9 @@ sbDeviceUtils::GetTranscodedFileExtension(sbITranscodeProfile *aProfile,
 nsresult
 sbDeviceUtils::GetCodecAndContainerForMimeType(nsCString aMimeType,
                                                nsCString &aContainer,
-                                               nsCString &aCodec)
+                                               nsCString &aCodec,
+                                               nsCString &aVideoType,
+                                               nsCString &aAudioType)
 {
   for (PRUint32 index = 0;
        index < MAP_FILE_EXTENSION_CONTENT_FORMAT_LENGTH;
@@ -1580,6 +1582,8 @@ sbDeviceUtils::GetCodecAndContainerForMimeType(nsCString aMimeType,
     if (aMimeType.EqualsLiteral(entry.MimeType)) {
       aContainer.AssignLiteral(entry.ContainerFormat);
       aCodec.AssignLiteral(entry.Codec);
+      aVideoType.AssignLiteral(entry.VideoType);
+      aAudioType.AssignLiteral(entry.AudioType);
       return NS_OK;
     }
   }
