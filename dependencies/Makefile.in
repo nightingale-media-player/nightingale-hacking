@@ -211,6 +211,7 @@ ifdef MEDIA_CORE_GST #{
 
    GST_PLUGINS_BAD_NAMES = gstaiffparse \
                            gstadpcmdec \
+                           gstadpcmenc \
                            gstid3tag \
                            gstqtmux \
                            gstsdpelem \

@@ -263,6 +263,7 @@
 ./extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/install.rdf
 ./gst-plugins/libgstadder.so
 ./gst-plugins/libgstadpcmdec.so
+./gst-plugins/libgstadpcmenc.so
 ./gst-plugins/libgstaiffparse.so
 ./gst-plugins/libgstalaw.so
 ./gst-plugins/libgstalpha.so

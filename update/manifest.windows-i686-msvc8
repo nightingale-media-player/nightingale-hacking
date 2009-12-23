@@ -293,6 +293,7 @@
 ./gst-plugins/gstacmmp3dec.dll
 ./gst-plugins/gstadder.dll
 ./gst-plugins/gstadpcmdec.dll
+./gst-plugins/gstadpcmenc.dll
 ./gst-plugins/gstaiffparse.dll
 ./gst-plugins/gstalaw.dll
 ./gst-plugins/gstalpha.dll
