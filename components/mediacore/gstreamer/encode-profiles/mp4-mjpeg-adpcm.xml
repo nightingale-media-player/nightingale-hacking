@@ -6,6 +6,7 @@
   <priority quality="1">2000</priority>
   <description>MP4/MJPEG/ADPCM test profile</description>
   <mimetype>video/quicktime</mimetype>
+  <extension>mp4</extension>
 
   <container>
     <type>video/quicktime</type>

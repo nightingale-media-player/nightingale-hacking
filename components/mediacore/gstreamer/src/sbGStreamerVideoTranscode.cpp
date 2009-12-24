@@ -1504,7 +1504,6 @@ sbGStreamerVideoTranscoder::AddMuxer (GstPad **muxerSrcPad,
 
     // Muxer, hook it up!
     gst_bin_add (GST_BIN (mPipeline), muxer);
-    gst_element_sync_state_with_parent (muxer);
 
     if (audioPad) {
       sinkpad = GetCompatiblePad (muxer, audioPad);
@@ -1539,6 +1538,8 @@ sbGStreamerVideoTranscoder::AddMuxer (GstPad **muxerSrcPad,
 
       g_object_unref (sinkpad);
     }
+
+    gst_element_sync_state_with_parent (muxer);
 
     // Get the output of the muxer as our source pad.
     *muxerSrcPad = gst_element_get_static_pad (muxer, "src");
