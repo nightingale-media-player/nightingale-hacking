@@ -612,43 +612,5 @@
                              action="rescan"/>
     </content>
   </binding> <!-- sb-device-rescan-command -->
-  
-  <!-- *************************************************************************
-   *****************************************************************************
-   *
-   * Device sync mode command widgets.
-   *
-   *   These widgets implements the command to switch to manual/automatic sync
-   * mode.
-   *
-   *****************************************************************************
-   ************************************************************************* -->
 
-  <binding id="sb-device-syncmode-manual-command">
-    <content>
-      <xul:sb-device-control xbl:inherits="bindelem,device-id,label,accesskey"
-                             bindforward="parent"
-                             listentodevice="true"
-                             label="&command.device.syncmode.manual;"
-                             accesskey="&command.device.syncmode.manual.accesskey;"
-                             checked_default="true"
-                             checked_mgmt_not_manual="false"
-                             action="mgmt-manual"/>
-    </content>
-  </binding> <!-- sb-device-syncmode-manual-command -->
-  <binding id="sb-device-syncmode-auto-command">
-    <content>
-      <xul:sb-device-control xbl:inherits="bindelem,device-id,label,accesskey"
-                             bindforward="parent"
-                             listentodevice="true"
-                             label="&command.device.syncmode.auto;"
-                             accesskey="&command.device.syncmode.auto.accesskey;"
-                             checked_default="false"
-                             checked_mgmt_not_manual="true"
-                             action="mgmt-auto"/>
-    </content>
-  </binding> <!-- sb-device-syncmode-auto-command -->
-  
-  
 </bindings>
-

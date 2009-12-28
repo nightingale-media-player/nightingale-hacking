@@ -318,23 +318,13 @@ deviceControlWidget.prototype = {
       case "sync" :
         this._device.syncLibraries();
         break;
-      
+
       case "rip" :
         sbCDDeviceUtils.doCDRip(this._device);
         break;
-      
+
       case "rescan" :
         sbCDDeviceUtils.doCDLookUp(this._device);
-        break;
-      
-      case "mgmt-manual" :
-        if (this._widget.getAttribute("checked") != "true")
-          this._setManagementMode(true);
-        break;
-
-      case "mgmt-auto" :
-        if (this._widget.getAttribute("checked") != "true")
-          this._setManagementMode(false);
         break;
 
       default :
@@ -364,19 +354,6 @@ deviceControlWidget.prototype = {
     }
   },
 
-  /**
-   * Sets the Management Flag for the default (first) device library to manual
-   * or automatic. In automatic mode either "sync all" or "sync playlists" is
-   * selected according to user's preferences.
-   */
-  
-  _setManagementMode: function deviceControlWidget__setManagementMode(manual) {
-    this._deviceLibrary.setMgmtTypes(Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL, manual);
-
-    // Ensure our UI is all updated properly.
-    this._update(true);
-  },
-  
   /**
    * Rename the device.
    */
@@ -655,7 +632,7 @@ deviceControlWidget.prototype = {
 
   /**
    * Check the device capabilities to see if it supports playlists.
-   * Device implementations may respond to CONTENT_PLAYLIST for either 
+   * Device implementations may respond to CONTENT_PLAYLIST for either
    * FUNCTION_DEVICE or FUNCTION_AUDIO_PLAYBACK.
    */
   _supportsPlaylist: function deviceControlWidget__supportsPlaylist() {
@@ -681,7 +658,7 @@ deviceControlWidget.prototype = {
       }
     } catch (e) {}
 
-    // couldn't find PLAYLIST support in either the DEVICE 
+    // couldn't find PLAYLIST support in either the DEVICE
     // or AUDIO_PLAYBACK category
     return false;
   },
@@ -725,11 +702,11 @@ deviceControlWidget.prototype = {
              this._getStateAttribute(attrVal, aAttrName, "idle")) {}
     else if (!(this._deviceLibrary.isMgmtTypeManual) &&
              this._getStateAttribute(attrVal, aAttrName, "mgmt_not_manual")) {}
-    else if (this._currentSupportsReformat && 
+    else if (this._currentSupportsReformat &&
              this._getStateAttribute(attrVal, aAttrName, "supports_reformat")) {}
     else if (this._currentMsc &&
              this._getStateAttribute(attrVal, aAttrName, "msc")) {}
-    else if (this._currentSupportsPlaylist && 
+    else if (this._currentSupportsPlaylist &&
              this._getStateAttribute(attrVal, aAttrName, "supports_playlist")) {}
     else if (this._getStateAttribute(attrVal, aAttrName, "default")) {}
     else this._getStateAttribute(attrVal, aAttrName, null);
@@ -876,5 +853,3 @@ deviceControlWidget.prototype = {
     return servicePaneNode;
   }
 };
-
-

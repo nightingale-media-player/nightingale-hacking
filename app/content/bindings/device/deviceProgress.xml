@@ -68,28 +68,14 @@
                   hidden="false">
           <!-- Sync mode toggle buttons -->
           <xul:hbox sbid="syncmode_box" class="device-syncmode-box">
-            
+
             <xul:label value="&device.progress.syncmode;"/>
 
-            <xul:button sbid="sync_manual_button"
-                        type="radio"
-                        autoCheck="false"
-                        group="device-syncmode"
-                        class="device-syncmode-manual-button"/>
-            <xul:sb-device-syncmode-manual-command bindelem="prev"
-                                                   xbl:inherits="device-id"/>
+            <xul:sb-device-management-toggle xbl:inherits="device-id" />
 
-            <xul:button sbid="sync_auto_button"
-                        type="radio"
-                        autoCheck="false"
-                        group="device-syncmode"
-                        class="device-syncmode-auto-button"/>
-            <xul:sb-device-syncmode-auto-command bindelem="prev"
-                                                 xbl:inherits="device-id"/>
-            
             <xul:toolbarseparator class="device-progress-manage-separator"/>
           </xul:hbox>
-          
+
           <!-- Apply/cancel buttons to appear when the user modified settings -->
           <xul:button sbid="settings_cancel_button"
                       class="device-progress-settings-cancel-buton"
@@ -116,26 +102,26 @@
           <xul:vbox sbid="progress_information_vbox"
                     class="device-progress-information-vbox"
                     flex="1">
-  
+
             <!-- Progress text label. -->
             <xul:label sbid="progress_text_label"
                        crop="end"
                        class="dev-progress-text-label"
                        flex="1" />
-  
+
             <!-- Operation progress meter. -->
-            <xul:progressmeter sbid="progress_meter" 
+            <xul:progressmeter sbid="progress_meter"
                                class="device-progressmeter"
                                mode="determined"/>
-  
+
             <!-- Sub Progress label. -->
             <xul:label sbid="sub_progress_text_label"
                        crop="end"
                        class="dev-sub-progress-text-label"
                        flex="1" />
-  
+
           </xul:vbox>
- 
+
           <!-- Cancel device operation button. -->
           <xul:box sbid="cancel_operation_box">
             <xul:button sbid="cancel_operation_button"
@@ -237,4 +223,3 @@
   </binding>
 
 </bindings>
-

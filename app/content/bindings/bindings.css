@@ -508,14 +508,6 @@ sb-device-sync-cancel-command {
   -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-sync-cancel-command");
 }
 
-sb-device-syncmode-manual-command {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-syncmode-manual-command");
-}
-
-sb-device-syncmode-auto-command {
-  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-syncmode-auto-command");
-}
-
 /**
  * CD Device Commands
  */
@@ -583,6 +575,10 @@ sb-device-info-panel {
   -moz-binding: url("chrome://songbird/content/bindings/device/deviceInfoPanel.xml#sb-device-info-panel");
 }
 
+sb-device-management-toggle {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceMgmtToggle.xml#sb-device-management-toggle");
+}
+
 sb-rating {
   -moz-binding: url("chrome://songbird/content/bindings/ratingsControl.xml#sb-rating");
 }
@@ -633,4 +629,3 @@ sb-properties-formatter {
 sb-html-description {
   -moz-binding: url("chrome://songbird/content/bindings/htmlDescription.xml#sb-html-description") !important;
 }
-
