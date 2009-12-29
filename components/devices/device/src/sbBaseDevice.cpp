@@ -420,7 +420,7 @@ sbBaseDevice::~sbBaseDevice()
   if (mConnectLock)
     PR_DestroyRWLock(mConnectLock);
   mConnectLock = nsnull;
-  
+
   if (mDeviceTranscoding) {
     delete mDeviceTranscoding;
   }
@@ -4920,7 +4920,7 @@ nsresult sbBaseDevice::GetDeviceWriteContentSrc
     NS_NAMED_LITERAL_STRING(KEY_FILE_FORMAT, "file-format");
     NS_NAMED_LITERAL_STRING(KEY_DIR_FORMAT, "dir-format");
     nsCOMPtr<nsIWritablePropertyBag2> writableBag =
-      do_CreateInstance("@mozilla.org/hash-property-bag;1");
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1");
     NS_ENSURE_TRUE(writableBag, NS_ERROR_OUT_OF_MEMORY);
     rv = writableBag->SetPropertyAsInterface(KEY_MEDIA_FOLDER, baseFile);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -5275,7 +5275,7 @@ sbBaseDevice::DispatchTranscodeErrorEvent(sbIMediaItem*    aMediaItem,
   nsresult rv;
 
   nsCOMPtr<nsIWritablePropertyBag2> bag =
-    do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = bag->SetPropertyAsAString(NS_LITERAL_STRING("message"), aErrorMessage);

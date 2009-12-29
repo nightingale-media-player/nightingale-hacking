@@ -25,11 +25,17 @@
  */
 
 #include "sbArray.h"
-
+#include "sbPropertyBag.h"
 #include <nsIGenericFactory.h>
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbArray)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbPropertyBag, Init)
 
+#define SB_PROPERTYBAG_CLASSNAME "sbPropertyBag"
+#define SB_PROPERTYBAG_CID \
+   {0x135c8890, 0xd9da, 0x4a1c, \
+     {0xb3, 0x45, 0x3b, 0xb2, 0xfe, 0xe8, 0xfa, 0xb5}}
+#define SB_PROPERTYBAG_CONTRACTID "@songbirdnest.com/moz/xpcom/sbpropertybag;1"
 // fill out data struct to register with component system
 static const nsModuleComponentInfo components[] =
 {
@@ -38,6 +44,12 @@ static const nsModuleComponentInfo components[] =
     SB_THREADSAFE_ARRAY_CID,
     SB_THREADSAFE_ARRAY_CONTRACTID,
     sbArrayConstructor
+  },
+  {
+    SB_PROPERTYBAG_CLASSNAME,
+    SB_PROPERTYBAG_CID,
+    SB_PROPERTYBAG_CONTRACTID,
+    sbPropertyBagConstructor
   }
 };
 

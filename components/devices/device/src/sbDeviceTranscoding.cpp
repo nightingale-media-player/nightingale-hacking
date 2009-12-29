@@ -429,7 +429,7 @@ sbDeviceTranscoding::TranscodeVideoItem(
   rv = aVideoJob->SetMetadata(metadata);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get a configurator
+  // Setup the configurator
   // XXX MOOK this needs to be fixed to be not gstreamer specific
   nsCOMPtr<sbIDeviceTranscodingConfigurator> configurator =
     do_CreateInstance("@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Device/GStreamer;1", &rv);
@@ -445,6 +445,7 @@ sbDeviceTranscoding::TranscodeVideoItem(
 
   rv = configurator->SetInputFormat(mediaFormat);
   NS_ENSURE_SUCCESS(rv, rv);
+
 
   nsCOMPtr<sbITranscodingConfigurator> qiConfigurator =
     do_QueryInterface(configurator, &rv);

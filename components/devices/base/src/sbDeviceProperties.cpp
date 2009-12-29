@@ -61,7 +61,8 @@ isInitialized(PR_FALSE)
 #endif
   mLock = nsAutoLock::NewLock("sbDevicePropertiesLock");
   // Intialize our properties container
-  mProperties2 = do_CreateInstance("@mozilla.org/hash-property-bag;1");
+  mProperties2 =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1");
   mProperties = do_QueryInterface(mProperties2);
 
   TRACE(("sbDeviceProperties[0x%.8x] - Constructed", this));

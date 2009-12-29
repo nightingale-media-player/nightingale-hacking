@@ -635,7 +635,7 @@ sbGStreamerTranscodeDeviceConfigurator::SetAudioProperties()
 
   if (!mAudioEncoderProperties) {
     mAudioEncoderProperties =
-      do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1107,7 +1107,7 @@ sbGStreamerTranscodeDeviceConfigurator::SetVideoProperties()
 
   if (!mVideoEncoderProperties) {
     mVideoEncoderProperties =
-      do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1431,14 +1431,14 @@ sbGStreamerTranscodeDeviceConfigurator::Configurate()
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIWritablePropertyBag2> videoProps =
-    do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = videoProps->SetPropertyAsInt32(NS_LITERAL_STRING("quality"), 30);
   mVideoEncoderProperties = do_QueryInterface(videoProps, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIWritablePropertyBag2> audioProps =
-    do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   mAudioEncoderProperties = do_QueryInterface(audioProps, &rv);
   NS_ENSURE_SUCCESS(rv, rv);

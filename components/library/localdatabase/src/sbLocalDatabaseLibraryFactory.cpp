@@ -57,7 +57,7 @@
 #include <sbSQLBuilderCID.h>
 
 #define DEFAULT_LIBRARY_NAME NS_LITERAL_STRING("defaultlibrary.db")
-#define NS_HASH_PROPERTY_BAG_CONTRACTID "@mozilla.org/hash-property-bag;1"
+#define NS_HASH_PROPERTY_BAG_CONTRACTID "@songbirdnest.com/moz/xpcom/sbpropertybag;1"
 #define PROPERTY_KEY_DATABASEFILE "databaseFile"
 #define SCHEMA_URL "chrome://songbird/content/library/localdatabase/schema.sql"
 #define SB_NAMEKEY_LIBRARY                            \
@@ -141,7 +141,7 @@ GetDBFolder()
 
 NS_IMPL_ISUPPORTS1(sbLocalDatabaseLibraryFactory, sbILibraryFactory)
 
-/*static*/ NS_METHOD 
+/*static*/ NS_METHOD
 sbLocalDatabaseLibraryFactory::RegisterSelf(nsIComponentManager* aCompMgr,
                                             nsIFile* aPath,
                                             const char* aLoaderStr,
@@ -155,10 +155,10 @@ sbLocalDatabaseLibraryFactory::RegisterSelf(nsIComponentManager* aCompMgr,
 
   rv = categoryManager->AddCategoryEntry(APPSTARTUP_CATEGORY,
                                          SB_LOCALDATABASE_LIBRARYFACTORY_DESCRIPTION,
-                                         "service," 
+                                         "service,"
                                          SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID,
-                                         PR_TRUE, 
-                                         PR_TRUE, 
+                                         PR_TRUE,
+                                         PR_TRUE,
                                          nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -213,7 +213,7 @@ sbLocalDatabaseLibraryFactory::CreateLibrary(nsIPropertyBag2* aCreationParameter
 
   rv = CreateLibraryFromDatabase(file, _retval, aCreationParameters);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // set a default name
   rv = (*_retval)->SetName(NS_LITERAL_STRING(SB_NAMEKEY_LIBRARY));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -235,7 +235,7 @@ sbLocalDatabaseLibraryFactory::CreateLibraryFromDatabase(nsIFile* aDatabase,
   // Get a unique value for this database file.
   nsCOMPtr<nsIHashable> hashable = do_QueryInterface(aDatabase, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // We have to copy the file name escaping logic from when we actually create
   // the database, otherwise we end up re-initizliaing the database over and over.
   nsCOMPtr<nsIIOService> ioService = do_GetIOService(&rv);
@@ -259,11 +259,11 @@ sbLocalDatabaseLibraryFactory::CreateLibraryFromDatabase(nsIFile* aDatabase,
   nsCAutoString fileName;
   rv = databaseURL->GetFileName(fileName);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<nsIFile> escapedFile;
   rv = databaseParent->Clone(getter_AddRefs(escapedFile));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = escapedFile->Append(NS_ConvertUTF8toUTF16(fileName));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -288,7 +288,7 @@ sbLocalDatabaseLibraryFactory::CreateLibraryFromDatabase(nsIFile* aDatabase,
 
     mCreatedLibraries.Remove(hashable);
   }
-  
+
   // If the database file does not exist, create and initalize it.  Otherwise,
   // update it.
   if (!exists) {
@@ -339,7 +339,7 @@ sbLocalDatabaseLibraryFactory::CreateLibraryFromDatabase(nsIFile* aDatabase,
 }
 
 nsresult
-sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile, 
+sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile,
                                                 const nsAString &aResourceGUID)
 {
   nsresult rv;

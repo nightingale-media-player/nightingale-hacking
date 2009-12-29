@@ -33,7 +33,7 @@
 #include <sbArrayUtils.h>
 #include <sbMemoryUtils.h>
 
-#define NS_HASH_PROPERTY_BAG_CONTRACTID "@mozilla.org/hash-property-bag;1"
+#define SB_PROPERTYBAG_CONTRACTID "@songbirdnest.com/moz/xpcom/sbpropertybag;1"
 
 /* Implementation file */
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbMediaFormatContainer,
@@ -43,7 +43,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbMediaFormatContainer,
 sbMediaFormatContainer::sbMediaFormatContainer(nsAString const & aContainerType) :
   mContainerType(aContainerType)
 {
-  mProperties = do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID);
+  mProperties = do_CreateInstance(SB_PROPERTYBAG_CONTRACTID);
 }
 
 sbMediaFormatContainer::~sbMediaFormatContainer()
@@ -96,7 +96,7 @@ sbMediaFormatVideo::sbMediaFormatVideo() :
     mVideoHeight(0),
     mBitRate(0)
 {
-  mProperties = do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID);
+  mProperties = do_CreateInstance(SB_PROPERTYBAG_CONTRACTID);
 }
 
 sbMediaFormatVideo::~sbMediaFormatVideo()
@@ -248,7 +248,7 @@ sbMediaFormatAudio::sbMediaFormatAudio() :
     mSampleRate(0),
     mChannels(0)
 {
-  mProperties = do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID);
+  mProperties = do_CreateInstance(SB_PROPERTYBAG_CONTRACTID);
 }
 
 sbMediaFormatAudio::~sbMediaFormatAudio()

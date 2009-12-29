@@ -235,7 +235,7 @@ sbTranscodeProgressListener::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 
     // Dispatch the device event
     nsCOMPtr<nsIWritablePropertyBag2> bag =
-      do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsString message;
