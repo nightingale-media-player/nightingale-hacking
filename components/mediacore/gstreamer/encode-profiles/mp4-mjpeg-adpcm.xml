@@ -16,6 +16,8 @@
     <type>image/jpeg</type>
     <quality-property name="bpp" quality="0" value="0.2"/>
     <quality-property name="bpp" quality="1" value="1"/>
+    <property name="quality" type="int" min="0" max="100" default="100"
+              mapping="quality" scale="100"/>
   </video>
 
   <audio>

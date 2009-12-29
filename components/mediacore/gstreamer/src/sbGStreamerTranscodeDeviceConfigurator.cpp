@@ -1190,6 +1190,10 @@ sbGStreamerTranscodeDeviceConfigurator::CopyPropertiesIntoBag(nsIArray * aSrcPro
         value = sbNewVariant(audioBitrate);
         NS_ENSURE_TRUE(value, NS_ERROR_OUT_OF_MEMORY);
       }
+      else if (mapping.Equals("quality", CaseInsensitiveCompare)) {
+        value = sbNewVariant(mQuality);
+        NS_ENSURE_TRUE(value, NS_ERROR_OUT_OF_MEMORY);
+      }
       else {
         TRACE(("%s[%p]: mapping %s not implemented",
                __FUNCTION__, this, mapping.get()));
@@ -1223,6 +1227,23 @@ sbGStreamerTranscodeDeviceConfigurator::CopyPropertiesIntoBag(nsIArray * aSrcPro
         PRInt32 val;
         rv = var->GetAsInt32(&val);
         NS_ENSURE_SUCCESS(rv, rv);
+        nsCOMPtr<nsIVariant> limit;
+        rv = prop->GetValueMax(getter_AddRefs(limit));
+        if (NS_SUCCEEDED(rv) && limit) {
+          PRInt32 maxInt;
+          rv = limit->GetAsInt32(&maxInt);
+          if (NS_SUCCEEDED(rv) && val > maxInt) {
+            val = maxInt;
+          }
+        }
+        rv = prop->GetValueMin(getter_AddRefs(limit));
+        if (NS_SUCCEEDED(rv) && limit) {
+          PRInt32 minInt;
+          rv = limit->GetAsInt32(&minInt);
+          if (NS_SUCCEEDED(rv) && val < minInt) {
+            val = minInt;
+          }
+        }
         rv = var->SetAsInt32(val);
         NS_ENSURE_SUCCESS(rv, rv);
         break;
