@@ -44,6 +44,7 @@
 #include <nsILocalFile.h>
 #include <nsISound.h>
 
+#include <sbArrayUtils.h>
 #include <sbAutoRWLock.h>
 #include <sbDeviceContent.h>
 #include <sbDeviceUtils.h>
@@ -1016,11 +1017,35 @@ nsresult
 sbCDDevice::GetSupportedTranscodeProfiles(nsIArray **aSupportedProfiles)
 {
   nsresult rv;
-  nsCOMPtr<sbITranscodeManager> tcManager = do_ProxiedGetService(
-          "@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1", &rv);
+  nsCOMPtr<nsIArray> profiles;
+  rv = sbDeviceUtils::GetTranscodeProfiles(getter_AddRefs(profiles));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = tcManager->GetTranscodeProfiles(aSupportedProfiles);
+  nsCOMPtr<nsIMutableArray> supportedProfiles = do_CreateInstance(
+          SB_THREADSAFE_ARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 length;
+  rv = profiles->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbITranscodeProfile> profile;
+  for (PRUint32 index = 0; index < length; ++index) {
+    profile = do_QueryElementAt(profiles, index, &rv);
+    if (NS_FAILED(rv) || !profile) {
+      continue;
+    }
+    PRUint32 type;
+    rv = profile->GetType(&type);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (type == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO) {
+      rv = supportedProfiles->AppendElement(profile, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  rv = CallQueryInterface(supportedProfiles.get(), aSupportedProfiles);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

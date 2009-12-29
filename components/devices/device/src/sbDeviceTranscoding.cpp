@@ -108,7 +108,7 @@ sbDeviceTranscoding::SelectTranscodeProfile(PRUint32 transcodeType,
   }
 
   nsCOMPtr<nsIArray> supportedProfiles;
-  rv = GetSupportedTranscodeProfiles(getter_AddRefs(supportedProfiles));
+  rv = mBaseDevice->GetSupportedTranscodeProfiles(getter_AddRefs(supportedProfiles));
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 bestPriority = 0;

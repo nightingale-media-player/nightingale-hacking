@@ -1267,6 +1267,13 @@ protected:
   nsresult ProcessCapabilitiesRegistrars();
 
   /**
+    * Returns a list of transcode profiles that the device supports
+    * \param aDevice the device to retrieve the profiles for.
+    * \param aProfiles the list of profiles that were found
+    * \return NS_OK if successful else some NS_ERROR value
+    */
+   virtual nsresult GetSupportedTranscodeProfiles(nsIArray **aSupportedProfiles);
+   /**
    * Dispatch a transcode error event for the media item specified by aMediaItem
    * with the error message specified by aErrorMessage.
    *

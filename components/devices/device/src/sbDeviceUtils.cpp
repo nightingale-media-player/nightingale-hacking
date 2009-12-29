@@ -1225,6 +1225,21 @@ GetContainerFormatAndCodec(nsISupports * aFormatType,
 }
 
 nsresult
+sbDeviceUtils::GetTranscodeProfiles(nsIArray ** aProfiles)
+{
+  nsresult rv;
+
+  nsCOMPtr<sbITranscodeManager> tcManager = do_ProxiedGetService(
+          "@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = tcManager->GetTranscodeProfiles(aProfiles);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
 sbDeviceUtils::GetSupportedTranscodeProfiles(sbIDevice * aDevice,
                                              nsIArray **aProfiles)
 {
@@ -1234,16 +1249,12 @@ sbDeviceUtils::GetSupportedTranscodeProfiles(sbIDevice * aDevice,
 
   nsresult rv;
 
-  nsCOMPtr<sbITranscodeManager> tcManager = do_ProxiedGetService(
-          "@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsCOMPtr<nsIMutableArray> supportedProfiles = do_CreateInstance(
           SB_THREADSAFE_ARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIArray> profiles;
-  rv = tcManager->GetTranscodeProfiles(getter_AddRefs(profiles));
+  rv = GetTranscodeProfiles(getter_AddRefs(profiles));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIDeviceCapabilities> devCaps;

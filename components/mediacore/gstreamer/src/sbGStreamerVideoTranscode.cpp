@@ -42,6 +42,7 @@
 #include <nsIURI.h>
 #include <nsIFileURL.h>
 #include <nsIBinaryInputStream.h>
+#include <sbIMediaItem.h>
 #include <nsIProperty.h>
 
 #include <gst/tag/tag.h>
@@ -108,7 +109,7 @@ sbGStreamerVideoTranscoder::~sbGStreamerVideoTranscoder()
 
 /* nsITimerCallback interface implementation */
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbGStreamerVideoTranscoder::Notify(nsITimer *aTimer)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
@@ -245,8 +246,12 @@ sbGStreamerVideoTranscoder::Vote(sbIMediaItem *aMediaItem, PRInt32 *aVote)
 
   NS_ENSURE_ARG_POINTER(aVote);
 
+  nsString contentType;
+  nsresult rv = aMediaItem->GetContentType(contentType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   /* For now just vote 1 for anything */
-  *aVote = 1;
+  *aVote = contentType.Equals(NS_LITERAL_STRING("video")) ? 1 : 0;
 
   return NS_OK;
 }
@@ -381,7 +386,7 @@ sbGStreamerVideoTranscoder::GetRemainingTime(PRUint32 *aRemainingTime)
     GstClockTime totalTime = gst_util_uint64_scale (elapsed, duration,
             position);
     /* Convert to milliseconds */
-    *aRemainingTime = 
+    *aRemainingTime =
      static_cast<PRUint32>((totalTime - elapsed) / GST_MSECOND);
   }
 
@@ -444,7 +449,7 @@ sbGStreamerVideoTranscoder::GetTitleText(nsAString& aText)
           NS_LITERAL_STRING("mediacore.gstreamer.transcode.title"));
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbGStreamerVideoTranscoder::GetProgress(PRUint32* aProgress)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
@@ -454,20 +459,20 @@ sbGStreamerVideoTranscoder::GetProgress(PRUint32* aProgress)
   GstClockTime duration = QueryDuration();
   GstClockTime position = QueryPosition();
 
-  if (duration != GST_CLOCK_TIME_NONE && position != GST_CLOCK_TIME_NONE && 
+  if (duration != GST_CLOCK_TIME_NONE && position != GST_CLOCK_TIME_NONE &&
       duration != 0)
   {
     // Scale to [0-1000], see comment in GetTotal for why we do this.
     *aProgress = (PRUint32)gst_util_uint64_scale (position, 1000, duration);
   }
   else {
-    *aProgress = 0; // Unknown 
+    *aProgress = 0; // Unknown
   }
 
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbGStreamerVideoTranscoder::GetTotal(PRUint32* aTotal)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
@@ -491,13 +496,13 @@ sbGStreamerVideoTranscoder::GetTotal(PRUint32* aTotal)
 
 // Note that you can also get errors reported via the mediacore listener
 // interfaces.
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbGStreamerVideoTranscoder::GetErrorCount(PRUint32* aErrorCount)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
   NS_ENSURE_ARG_POINTER(aErrorCount);
-  NS_ASSERTION(NS_IsMainThread(), 
+  NS_ASSERTION(NS_IsMainThread(),
           "sbIJobProgress::GetErrorCount is main thread only!");
 
   *aErrorCount = mErrorMessages.Length();
@@ -505,7 +510,7 @@ sbGStreamerVideoTranscoder::GetErrorCount(PRUint32* aErrorCount)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbGStreamerVideoTranscoder::GetErrorMessages(nsIStringEnumerator** aMessages)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
@@ -568,7 +573,7 @@ sbGStreamerVideoTranscoder::RemoveJobProgressListener(
 }
 
 // Call all job progress listeners
-nsresult 
+nsresult
 sbGStreamerVideoTranscoder::OnJobProgress()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
@@ -578,7 +583,7 @@ sbGStreamerVideoTranscoder::OnJobProgress()
 
   // Announce our status to the world
   for (PRInt32 i = mProgressListeners.Count() - 1; i >= 0; --i) {
-     // Ignore any errors from listeners 
+     // Ignore any errors from listeners
      mProgressListeners[i]->OnJobProgress(this);
   }
   return NS_OK;
@@ -627,7 +632,7 @@ GstClockTime sbGStreamerVideoTranscoder::QueryPosition()
 
   query = gst_query_new_position(GST_FORMAT_TIME);
 
-  if (gst_element_query(mPipeline, query)) 
+  if (gst_element_query(mPipeline, query))
     gst_query_parse_position(query, NULL, &position);
 
   gst_query_unref (query);
@@ -647,7 +652,7 @@ GstClockTime sbGStreamerVideoTranscoder::QueryDuration()
 
   query = gst_query_new_duration(GST_FORMAT_TIME);
 
-  if (gst_element_query(mPipeline, query)) 
+  if (gst_element_query(mPipeline, query))
     gst_query_parse_duration(query, NULL, &duration);
 
   gst_query_unref (query);
@@ -655,7 +660,7 @@ GstClockTime sbGStreamerVideoTranscoder::QueryDuration()
   return duration;
 }
 
-nsresult 
+nsresult
 sbGStreamerVideoTranscoder::StartProgressReporting()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
@@ -667,13 +672,13 @@ sbGStreamerVideoTranscoder::StartProgressReporting()
               do_CreateInstance("@mozilla.org/timer;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mProgressTimer->InitWithCallback(this, 
+  mProgressTimer->InitWithCallback(this,
           PROGRESS_INTERVAL, nsITimer::TYPE_REPEATING_SLACK);
 
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbGStreamerVideoTranscoder::StopProgressReporting()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
@@ -984,7 +989,7 @@ sbGStreamerVideoTranscoder::ConfigureVideoBox (GstElement *videobox,
     // Image DAR is greater than output DAR. So, we use the full width of the
     // image, and add padding at the top and bottom.
     //     padding = outputHeight - (outputWidth / imageDAR * outputPAR);
-    gint outputImageHeight = outputWidth * 
+    gint outputImageHeight = outputWidth *
         (imageDarD * outputParN) / (imageDarN * outputParD);
     gint padding = outputHeight - outputImageHeight;
     // Arbitrarily, we round paddingTop down, and paddingBottom up.
@@ -1070,8 +1075,8 @@ sbGStreamerVideoTranscoder::BuildVideoBin(GstCaps *aInputVideoCaps,
   videobox = gst_element_factory_make ("videobox", NULL);
   capsfilter = gst_element_factory_make ("capsfilter", NULL);
   encoder = NULL;
-  
-  if (!videorate || !colorspace || !videoscale || !videobox || !capsfilter) 
+
+  if (!videorate || !colorspace || !videoscale || !videobox || !capsfilter)
   {
     // Failed to create an element that we expected to be present, means
     // the gstreamer installation is messed up.
@@ -1121,7 +1126,7 @@ sbGStreamerVideoTranscoder::BuildVideoBin(GstCaps *aInputVideoCaps,
   gst_caps_unref (caps);
 
   /* Configure videobox to add black bars around the image to preserve the
-     actual image aspect ratio, if required. This is a little complex, so 
+     actual image aspect ratio, if required. This is a little complex, so
      it's factored out into another function. */
   ConfigureVideoBox (videobox, aInputVideoCaps, outputWidth, outputHeight,
                      outputParN, outputParD);
@@ -1218,7 +1223,7 @@ sbGStreamerVideoTranscoder::BuildAudioBin(GstCaps *aInputAudioCaps,
   audioconvert = gst_element_factory_make ("audioconvert", NULL);
   audioresample = gst_element_factory_make ("audioresample", NULL);
   capsfilter = gst_element_factory_make ("capsfilter", NULL);
-  
+
   if (!audiorate || !audioconvert || !audioresample || !capsfilter)
   {
     // Failed to create an element that we expected to be present, means
@@ -1419,14 +1424,14 @@ sbGStreamerVideoTranscoder::GetPadFromTemplate (GstElement *element,
     return gst_element_get_static_pad (element, templ->name_template);
   }
   else {
-    // Request pad 
+    // Request pad
     return gst_element_get_request_pad (element, templ->name_template);
   }
 }
 
 /* Get a pad from 'element' that is compatible with (can potentially be linked
  * to) 'pad'.
- * Returned pad may be an existing static pad, or a new request pad 
+ * Returned pad may be an existing static pad, or a new request pad
  */
 GstPad *
 sbGStreamerVideoTranscoder::GetCompatiblePad (GstElement *element,

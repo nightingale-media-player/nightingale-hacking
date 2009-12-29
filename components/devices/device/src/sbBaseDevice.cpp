@@ -5266,6 +5266,13 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem,
 }
 
 nsresult
+sbBaseDevice::GetSupportedTranscodeProfiles(nsIArray **aSupportedProfiles)
+{
+  return GetDeviceTranscoding()->GetSupportedTranscodeProfiles(
+                                                            aSupportedProfiles);
+}
+
+nsresult
 sbBaseDevice::DispatchTranscodeErrorEvent(sbIMediaItem*    aMediaItem,
                                           const nsAString& aErrorMessage)
 {

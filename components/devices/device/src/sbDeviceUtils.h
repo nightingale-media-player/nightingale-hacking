@@ -293,6 +293,11 @@ public:
                                           sbIDevice * aDevice,
                                           bool & aNeedsTranscoding);
   /**
+   * Returns the list or transcode profiles supported by the system
+   */
+  static nsresult GetTranscodeProfiles(nsIArray ** aProfiles);
+
+  /**
    * Returns a list of transcode profiles that the device supports
    * \param aDevice the device to retrieve the profiles for.
    * \param aProfiles the array of profiles that were found
