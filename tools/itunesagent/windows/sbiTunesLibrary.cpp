@@ -291,6 +291,13 @@ sbError sbiTunesLibrary::AddTracks(std::wstring const & aSource,
         WaitForCompletion(result.pdispVal);
       }
       operationStatus = result.pdispVal;
+
+      if (!result.pdispVal) {
+        // Looks like this batch contained no tracks that iTunes accepted.
+        // Go ahead and continue on.
+        return sbNoError;
+      }
+      
       VariantClear(&result);
       break;
     }
