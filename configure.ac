@@ -432,6 +432,8 @@ AC_CHECK_PROGS(DIFF, ${DIFF} gdiff diff, "")
 
 AC_CHECK_PROGS(DOXYGEN, ${DOXYGEN} doxygen, "")
 
+AC_CHECK_PROGS(GREP, ${GREP} ggrep grep)
+
 AC_CHECK_PROG(GZIP, gzip, gzip)
 
 AC_CHECK_PROG(GUNZIP, gunzip, gunzip)

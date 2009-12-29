@@ -173,7 +173,7 @@ ifneq (,$(filter %distdir_manifest, $(MAKECMDGOALS)))
 endif
 
 test_distdir_manifest:
-	@cd $(SONGBIRD_DISTDIR) && $(FIND) . -type f | $(SORT) -n > $(SONGBIRD_OBJDIR)/$(DISTDIR_MANIFEST)
+	@cd $(SONGBIRD_DISTDIR) && $(FIND) . -type f | $(GREP) -v '^\./testharness/' | $(SORT) -n > $(SONGBIRD_OBJDIR)/$(DISTDIR_MANIFEST)
 	@if test -z "$$($(DIFF) -q $(topsrcdir)/update/$(DISTDIR_MANIFEST) $(SONGBIRD_OBJDIR)/$(DISTDIR_MANIFEST))"; then \
       echo Distdir manifests are OK. No added or deleted files detected.; \
    else \
@@ -184,6 +184,6 @@ test_distdir_manifest:
 
 distdir_manifest:
 	@echo Making distdir manifest in $(topsrcdir)/update...
-	cd $(SONGBIRD_DISTDIR) && $(FIND) . -type f | $(SORT) -n > $(topsrcdir)/update/$(DISTDIR_MANIFEST)
+	cd $(SONGBIRD_DISTDIR) && $(FIND) . -type f | $(GREP) -v '^\./testharness/' | $(SORT) -n > $(topsrcdir)/update/$(DISTDIR_MANIFEST)
 
 .PHONY: buildsymbols uploadsymbols do_uploadsymbols stripsymbols do_stripsymbols test_distdir_manifest distdir_manifest
