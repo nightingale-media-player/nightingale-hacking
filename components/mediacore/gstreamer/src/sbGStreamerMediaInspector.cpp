@@ -36,6 +36,7 @@
 #include <sbIMediaInspector.h>
 #include <sbIMediaFormatMutable.h>
 
+#include <nsIWritablePropertyBag2.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 #include <prlog.h>
@@ -832,10 +833,15 @@ sbGStreamerMediaInspector::ProcessPipelineForInfo()
 
     GstCaps *caps = gst_pad_get_negotiated_caps (mDemuxerSink);
     GstStructure *structure = gst_caps_get_structure (caps, 0);
-    containerFormat->SetContainerType (
+    rv = containerFormat->SetContainerType (
             NS_ConvertUTF8toUTF16 (gst_structure_get_name (structure)));
-
     gst_caps_unref (caps);
+
+    NS_ENSURE_SUCCESS (rv, rv);
+
+    // format-specific attributes.
+    rv = ProcessContainerProperties(containerFormat, structure);
+    NS_ENSURE_SUCCESS (rv, rv);
   }
 
   if (mVideoSrc) {
@@ -909,6 +915,111 @@ sbGStreamerMediaInspector::ProcessVideoCaps (sbIMediaFormatVideoMutable *format,
 
   return NS_OK;
 }
+
+nsresult
+sbGStreamerMediaInspector::ProcessContainerProperties (
+                             sbIMediaFormatContainerMutable *aContainerFormat,
+                             GstStructure *aStructure)
+{
+  TRACE(("%s[%p]", __FUNCTION__, this));
+
+  NS_ENSURE_ARG_POINTER (aContainerFormat);
+  NS_ENSURE_ARG_POINTER (aStructure);
+
+  nsresult rv;
+  const gchar *name = gst_structure_get_name (aStructure);
+  nsCOMPtr<nsIWritablePropertyBag2> writableBag =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  if ( !strcmp (name, "video/mpeg")) {
+    gboolean systemstream;
+    if ( gst_structure_get_boolean (aStructure, "systemstream",
+                                    &systemstream)) {
+      rv = writableBag->SetPropertyAsBool (
+             NS_LITERAL_STRING("systemstream"), systemstream);
+      NS_ENSURE_SUCCESS (rv, rv);
+    }
+  }
+
+  // TODO: Additional properties for other container formats.
+
+  rv = aContainerFormat->SetProperties (writableBag);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  return NS_OK;
+}
+ 
+nsresult
+sbGStreamerMediaInspector::ProcessVideoProperties (
+                             sbIMediaFormatVideoMutable *aVideoFormat,
+                             GstStructure *aStructure)
+{
+  TRACE(("%s[%p]", __FUNCTION__, this));
+
+  NS_ENSURE_ARG_POINTER (aVideoFormat);
+  NS_ENSURE_ARG_POINTER (aStructure);
+
+  nsresult rv;
+  const gchar *name = gst_structure_get_name (aStructure);
+  nsCOMPtr<nsIWritablePropertyBag2> writableBag =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  if ( !strcmp (name, "video/mpeg")) {
+    gint mpegversion;
+    if ( gst_structure_get_int (aStructure, "mpegversion", &mpegversion)) {
+      rv = writableBag->SetPropertyAsInt32 (
+             NS_LITERAL_STRING("mpegversion"), mpegversion);
+      NS_ENSURE_SUCCESS (rv, rv);
+
+      // video/mpeg is NOT unique to mpeg4. also used for mpeg1/2.
+      if (mpegversion == 4) {
+        gint levelid;
+        if ( gst_structure_get_int (aStructure, "profile-level-id",
+                                    &levelid)) {
+          rv = writableBag->SetPropertyAsInt32 (
+                 NS_LITERAL_STRING("profile-level-id"), levelid);
+          NS_ENSURE_SUCCESS (rv, rv);
+        }
+      }
+    }
+  }
+  else if ( !strcmp (name, "video/x-h264")) {
+    // TODO: Additional property: profile ID?
+  }
+  else if ( !strcmp (name, "image/jpeg")) {
+    gboolean interlaced;
+    if ( gst_structure_get_boolean (aStructure, "interlaced", &interlaced)) {
+      rv = writableBag->SetPropertyAsBool (
+             NS_LITERAL_STRING("interlaced"), interlaced);
+      NS_ENSURE_SUCCESS (rv, rv);
+    }
+  }
+  else if ( !strcmp (name, "video/x-wmv")) {
+    gint wmvversion;
+    if ( gst_structure_get_int (aStructure, "wmvversion", &wmvversion)) {
+      rv = writableBag->SetPropertyAsInt32 (
+             NS_LITERAL_STRING("wmvversion"), wmvversion);
+      NS_ENSURE_SUCCESS (rv, rv);
+    }
+    // TODO: Additional property: profile, level.
+  }
+  else if ( !strcmp (name, "video/x-pn-realvideo")) {
+    gint rmversion;
+    if ( gst_structure_get_int (aStructure, "rmversion", &rmversion)) {
+      rv = writableBag->SetPropertyAsInt32 (
+             NS_LITERAL_STRING("rmversion"), rmversion);
+      NS_ENSURE_SUCCESS (rv, rv);
+    }
+  }
+
+  rv = aVideoFormat->SetProperties (writableBag);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  return NS_OK;
+}
+ 
 nsresult
 sbGStreamerMediaInspector::ProcessVideo(sbIMediaFormatVideo **aVideoFormat)
 {
@@ -944,9 +1055,12 @@ sbGStreamerMediaInspector::ProcessVideo(sbIMediaFormatVideo **aVideoFormat)
 
     rv = format->SetVideoType (
             NS_ConvertUTF8toUTF16 (gst_structure_get_name (structure)));
-    // TODO: format-specific attributes.
     gst_caps_unref (caps);
 
+    NS_ENSURE_SUCCESS (rv, rv);
+
+    // format-specific attributes.
+    rv = ProcessVideoProperties(format, structure);
     NS_ENSURE_SUCCESS (rv, rv);
   }
   else {
@@ -960,6 +1074,77 @@ sbGStreamerMediaInspector::ProcessVideo(sbIMediaFormatVideo **aVideoFormat)
   }
 
   rv = CallQueryInterface(format.get(), aVideoFormat);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  return NS_OK;
+}
+
+
+nsresult
+sbGStreamerMediaInspector::ProcessAudioProperties (
+                             sbIMediaFormatAudioMutable *aAudioFormat,
+                             GstStructure *aStructure)
+{
+  TRACE(("%s[%p]", __FUNCTION__, this));
+
+  NS_ENSURE_ARG_POINTER (aAudioFormat);
+  NS_ENSURE_ARG_POINTER (aStructure);
+
+  nsresult rv;
+  const gchar *name = gst_structure_get_name (aStructure);
+  nsCOMPtr<nsIWritablePropertyBag2> writableBag =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  if ( !strcmp (name, "audio/mpeg")) {
+    gint mpegversion;
+    if ( gst_structure_get_int (aStructure, "mpegversion", &mpegversion)) {
+      rv = writableBag->SetPropertyAsInt32 (
+             NS_LITERAL_STRING("mpegversion"), mpegversion);
+      NS_ENSURE_SUCCESS (rv, rv);
+
+      // MP3 audio
+      if (mpegversion == 1) {
+        gint layer;
+        if ( gst_structure_get_int (aStructure, "layer",
+                                    &layer)) {
+          rv = writableBag->SetPropertyAsInt32 (
+                 NS_LITERAL_STRING("layer"), layer);
+          NS_ENSURE_SUCCESS (rv, rv);
+        }
+      }
+      else if (mpegversion == 2 || mpegversion == 4) {
+        // TODO: Additional property: profile.
+      }
+    }
+  }
+  else if ( !strcmp (name, "audio/x-adpcm")) {
+    const gchar *layout = gst_structure_get_string (aStructure, "layout");
+    if (layout) {
+      rv = writableBag->SetPropertyAsAString (
+             NS_LITERAL_STRING("layout"), NS_ConvertUTF8toUTF16(layout));
+      NS_ENSURE_SUCCESS (rv, rv);
+    }
+  }
+  else if ( !strcmp (name, "audio/x-wma")) {
+    gint wmaversion;
+    if (gst_structure_get_int (aStructure, "wmaversion", &wmaversion)) {
+      rv = writableBag->SetPropertyAsInt32 (
+             NS_LITERAL_STRING("wmaversion"), wmaversion);
+      NS_ENSURE_SUCCESS (rv, rv);
+    }
+    // TODO: Additional properties??
+  }
+  else if ( !strcmp (name, "audio/x-pn-realaudio")) {
+    gint raversion;
+    if (gst_structure_get_int (aStructure, "raversion", &raversion)) {
+      rv = writableBag->SetPropertyAsInt32 (
+             NS_LITERAL_STRING("raversion"), raversion);
+      NS_ENSURE_SUCCESS (rv, rv);
+    }
+  }
+
+  rv = aAudioFormat->SetProperties (writableBag);
   NS_ENSURE_SUCCESS (rv, rv);
 
   return NS_OK;
@@ -1004,12 +1189,15 @@ sbGStreamerMediaInspector::ProcessAudio(sbIMediaFormatAudio **aAudioFormat)
     caps = gst_pad_get_negotiated_caps (mAudioDecoderSink);
     structure = gst_caps_get_structure (caps, 0);
 
-    format->SetAudioType (
+    rv = format->SetAudioType (
             NS_ConvertUTF8toUTF16 (gst_structure_get_name (structure)));
-
-    // TODO: Turn additional format properties into appropriate things in
-    // mProperties
     gst_caps_unref (caps);
+
+    NS_ENSURE_SUCCESS (rv, rv);
+
+    // format-specific attributes.
+    rv = ProcessAudioProperties(format, structure);
+    NS_ENSURE_SUCCESS (rv, rv);
   }
   else {
     // Raw audio, mark as such.

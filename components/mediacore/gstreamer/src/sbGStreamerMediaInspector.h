@@ -73,9 +73,16 @@ private:
   nsresult PadAdded(GstPad *srcPad);
   nsresult FakesinkEvent(GstPad *srcPad, GstEvent *event, PRBool isAudio);
   nsresult ProcessPipelineForInfo();
+  nsresult ProcessContainerProperties(
+             sbIMediaFormatContainerMutable *aContainerFormat,
+             GstStructure *aStructure);
   nsresult ProcessVideo(sbIMediaFormatVideo **aVideoFormat);
   nsresult ProcessVideoCaps(sbIMediaFormatVideoMutable *format, GstCaps *caps);
+  nsresult ProcessVideoProperties(sbIMediaFormatVideoMutable *aVideoFormat,
+                                  GstStructure *aStructure);
   nsresult ProcessAudio(sbIMediaFormatAudio **aAudioFormat);
+  nsresult ProcessAudioProperties(sbIMediaFormatAudioMutable *aAudioFormat,
+                                  GstStructure *aStructure);
   nsresult InspectorateElement (GstElement *element);
 
   /* Get the real pad associated with a (possibly ghost) pad */
