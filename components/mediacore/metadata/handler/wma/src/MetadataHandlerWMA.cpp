@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 /**
 * \file MetadataHandlerWMA.cpp
@@ -132,6 +130,15 @@
 #define WMP_ALBUMARTIST "WM/AlbumArtist"
 #define WMP_PROTECTED   "Is_Protected"
 
+// Property namespace for Gracenote properties
+// Note that this must match those used in sbGracenoteDefines.h, so
+// be sure to change those if you change these.
+#define SB_GN_EXTENDEDDATA  "http://gracenote.com/pos/1.0#extendedData"
+#define SB_GN_TAGID         "http://gracenote.com/pos/1.0#tagId"
+#define WMP_GN_EXTENDEDDATA "GN/ExtData"
+#define WMP_GN_TAGID        "GN/UniqueFileIdentifier"
+
+
 // These are the keys we're going to read from the WM interface 
 // and push to the SB interface.
 typedef struct
@@ -166,6 +173,8 @@ static const metadataKeyMapEntry_t kMetadataKeys[] = {
   KEY_MAP_ENTRY(LENGTH, WMT_TYPE_QWORD),
   KEY_MAP_ENTRY(ALBUMARTIST, WMT_TYPE_STRING),
   KEY_MAP_ENTRY(PROTECTED, WMT_TYPE_BOOL),
+  KEY_MAP_ENTRY(GN_EXTENDEDDATA, WMT_TYPE_BINARY),
+  KEY_MAP_ENTRY(GN_TAGID, WMT_TYPE_BINARY),
 };
 #undef KEY_MAP_ENTRY
 

@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 /*******************************************************************************
  *******************************************************************************
@@ -80,6 +78,7 @@
 #include <nsUnicharUtils.h>
 #include <nsMemory.h>
 
+/* TagLib imports */
 #include <flacfile.h>
 #include <oggflacfile.h>
 #include <mpcfile.h>
@@ -88,6 +87,8 @@
 #include <mp4file.h>
 #include <asffile.h>
 #include <vorbisfile.h>
+#include <uniquefileidentifierframe.h>
+#include <textidentificationframe.h>
 
 /* C++ std imports. */
 #include <sstream>
@@ -138,6 +139,12 @@
       f.tag()->set##method(true);                           \
   }                                                         \
   PR_END_MACRO
+
+// Property namespace for Gracenote properties
+// Note that this must match those used in sbGracenoteDefines.h, so
+// be sure to change those if you change these.
+#define SB_GN_PROP_EXTENDEDDATA "http://gracenote.com/pos/1.0#extendedData"
+#define SB_GN_PROP_TAGID        "http://gracenote.com/pos/1.0#tagId"
 
 /*******************************************************************************
  *
@@ -623,7 +630,7 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       NS_ENSURE_TRUE(f.file()->isValid(), NS_ERROR_FAILURE);
       
       nsAutoString propertyValue;
-      
+
       // WRITE_PROPERTY is a natty macro
       WRITE_PROPERTY(result, SB_PROPERTY_TRACKNAME, Title);
       WRITE_PROPERTY(result, SB_PROPERTY_ARTISTNAME, Artist);
@@ -707,11 +714,24 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
               //bug 10933: frame->setText(taglibTitle);
             }
             else {
-              TagLib::ID3v2::UrlLinkFrame* frame = new TagLib::ID3v2::UrlLinkFrame("WOAF");
+              TagLib::ID3v2::UrlLinkFrame* frame =
+                new TagLib::ID3v2::UrlLinkFrame("WOAF");
               tag->addFrame(frame);
               frame->setUrl(taglibURL);
               //bug 10933: frame->setText(taglibURL);
             }
+          }
+        }
+
+        { // Write Gracenote-specific frames, see bug 18136
+          nsresult tagResult;
+          nsresult extendedDataResult;
+          tagResult = mpMetadataPropertyArray->GetPropertyValue(
+              NS_LITERAL_STRING(SB_GN_PROP_TAGID), propertyValue);
+          extendedDataResult = mpMetadataPropertyArray->GetPropertyValue(
+              NS_LITERAL_STRING(SB_GN_PROP_EXTENDEDDATA), propertyValue);
+          if (NS_SUCCEEDED(tagResult) || NS_SUCCEEDED(extendedDataResult)) {
+            AddGracenoteMetadataMP3(MPEGFile);
           }
         }
       } else if (fileExt.Equals(NS_LITERAL_CSTRING("ogg")) ||
@@ -731,12 +751,24 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
           PRInt32 imageType = METADATA_IMAGE_TYPE_FRONTCOVER;
           WriteOGGImage(oggFile, imageType, imageSpec);
         }
+
+        { // Write Gracenote-specific frames, see bug 18136
+          nsresult tagResult;
+          nsresult extendedDataResult;
+          tagResult = mpMetadataPropertyArray->GetPropertyValue(
+              NS_LITERAL_STRING(SB_GN_PROP_TAGID), propertyValue);
+          extendedDataResult = mpMetadataPropertyArray->GetPropertyValue(
+              NS_LITERAL_STRING(SB_GN_PROP_EXTENDEDDATA), propertyValue);
+          if (NS_SUCCEEDED(tagResult) || NS_SUCCEEDED(extendedDataResult)) {
+            AddGracenoteMetadataXiph(oggFile);
+          }
+        }
       } else if (fileExt.EqualsLiteral("mp4") ||
                  fileExt.EqualsLiteral("m4a") ||
                  fileExt.EqualsLiteral("m4v")) {
         LOG(("Writing MPEG-4 specific metadata"));
         // Write MP4 specific metadata
-        TagLib::MP4::File* oggFile = static_cast<TagLib::MP4::File*>(f.file());
+        TagLib::MP4::File* mp4File = static_cast<TagLib::MP4::File*>(f.file());
 
         // Write Image Data
         nsAutoString imageSpec;
@@ -746,7 +778,7 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
         );
         if (NS_SUCCEEDED(result)) {
           PRInt32 imageType = METADATA_IMAGE_TYPE_FRONTCOVER;
-          WriteMP4Image(oggFile, imageType, imageSpec);
+          WriteMP4Image(mp4File, imageType, imageSpec);
         }
       } else if (fileExt.EqualsLiteral("asf") ||
                  fileExt.EqualsLiteral("wmv") ||
@@ -785,6 +817,116 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
     mCompleted = PR_TRUE;
   
     return result;
+}
+
+void sbMetadataHandlerTaglib::AddGracenoteMetadataMP3(
+    TagLib::MPEG::File* MPEGFile)
+{
+  nsresult rv;
+  nsString propertyValue;
+
+  rv = mpMetadataPropertyArray->GetPropertyValue(
+      NS_LITERAL_STRING(SB_GN_PROP_TAGID), propertyValue);
+  if (NS_SUCCEEDED(rv)) {
+    const TagLib::ByteVector UFID("UFID");
+    TagLib::ID3v2::Tag *tag2 = MPEGFile->ID3v2Tag(true);
+    NS_ASSERTION(tag2, "TagLib did not create id3v2 tag as asked!");
+
+    TagLib::String owner("http://www.cddb.com/id3/taginfo1.html");
+    NS_LossyConvertUTF16toASCII propertyCValue(propertyValue);
+    TagLib::ByteVector identifier(propertyCValue.BeginReading(),
+                                  propertyCValue.Length());
+
+    // erase old frames
+    const TagLib::ID3v2::FrameList& frames =
+      tag2->frameList(UFID);
+    TagLib::ID3v2::FrameList::ConstIterator it;
+    for (it = frames.begin(); it != frames.end(); ++it) {
+      NS_ASSERTION((*it)->frameID() == UFID,
+                   "TagLib gave us the wrong frame!");
+      TagLib::ID3v2::UniqueFileIdentifierFrame* ufidFrame =
+        static_cast<TagLib::ID3v2::UniqueFileIdentifierFrame*>(*it);
+      if (!(ufidFrame->owner() == owner)) {
+        // this UFID frame is for something else
+        continue;
+      }
+      tag2->removeFrame(ufidFrame);
+      it = frames.begin();
+    }
+
+    // add a new frame
+    TagLib::ID3v2::FrameFactory* factory =
+      TagLib::ID3v2::FrameFactory::instance();
+    TagLib::ID3v2::UniqueFileIdentifierFrame* ufidFrame =
+      static_cast<TagLib::ID3v2::UniqueFileIdentifierFrame*>(
+          factory->createFrame(UFID));
+    ufidFrame->setOwner(owner);
+    ufidFrame->setIdentifier(identifier);
+    tag2->addFrame(ufidFrame);
+  }
+
+  rv = mpMetadataPropertyArray->GetPropertyValue(
+      NS_LITERAL_STRING(SB_GN_PROP_EXTENDEDDATA), propertyValue);
+  if (NS_SUCCEEDED(rv)) {
+    const TagLib::ByteVector TXXX("TXXX");
+    TagLib::ID3v2::Tag *tag2 = MPEGFile->ID3v2Tag(true);
+    NS_ASSERTION(tag2, "TagLib did not create id3v2 tag as asked!");
+
+    TagLib::String description("GN_Ext_Data");
+    NS_LossyConvertUTF16toASCII propertyCValue(propertyValue);
+    TagLib::String text(propertyCValue.BeginReading());
+
+    // erase old frames
+    const TagLib::ID3v2::FrameList& frames =
+      tag2->frameList(TXXX);
+    TagLib::ID3v2::FrameList::ConstIterator it;
+    for (it = frames.begin(); it != frames.end(); ++it) {
+      NS_ASSERTION((*it)->frameID() == TXXX,
+                   "TagLib gave us the wrong frame!");
+      TagLib::ID3v2::UserTextIdentificationFrame* txxxFrame =
+        static_cast<TagLib::ID3v2::UserTextIdentificationFrame*>(*it);
+      if (!(txxxFrame->description() == description)) {
+        // this UFID frame is for something else
+        continue;
+      }
+      tag2->removeFrame(txxxFrame);
+      it = frames.begin();
+    }
+
+    // add a new frame
+    TagLib::ID3v2::FrameFactory* factory =
+      TagLib::ID3v2::FrameFactory::instance();
+    TagLib::ID3v2::UserTextIdentificationFrame* txxxFrame =
+      static_cast<TagLib::ID3v2::UserTextIdentificationFrame*>(
+          factory->createFrame(TXXX));
+    txxxFrame->setDescription(description);
+    txxxFrame->setText(text);
+    tag2->addFrame(txxxFrame);
+  }
+}
+
+void sbMetadataHandlerTaglib::AddGracenoteMetadataXiph(
+    TagLib::Ogg::Vorbis::File *oggFile)
+{
+  nsresult rv;
+  nsString propertyValue;
+
+  TagLib::Ogg::XiphComment *xiphComment = oggFile->tag();
+  NS_ASSERTION(xiphComment, "TagLib has no xiph comment!");
+  rv = mpMetadataPropertyArray->GetPropertyValue(
+      NS_LITERAL_STRING(SB_GN_PROP_TAGID), propertyValue);
+  if (NS_SUCCEEDED(rv)) {
+    TagLib::String value(NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
+                         TagLib::String::UTF8);
+    xiphComment->addField("GracenoteFileID", value);
+  }
+  rv = mpMetadataPropertyArray->GetPropertyValue(
+      NS_LITERAL_STRING(SB_GN_PROP_EXTENDEDDATA), propertyValue);
+  if (NS_SUCCEEDED(rv)) {
+    TagLib::String value(NS_ConvertUTF16toUTF8(propertyValue).BeginReading(),
+                         TagLib::String::UTF8);
+    xiphComment->addField("GracenoteExtData", value);
+  }
 }
 
 /**
