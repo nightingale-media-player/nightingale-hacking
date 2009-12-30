@@ -132,6 +132,8 @@ sbMediaItemWatcher::Watch(sbIMediaItem*         aMediaItem,
 NS_IMETHODIMP
 sbMediaItemWatcher::Cancel()
 {
+  NS_WARN_IF_FALSE(mBatchLevel > 0,
+                   "sbMediaItemWatcher::Cancel called during a batch");
   // Stop listening to library.
   if (mWatchedLibraryML)
     mWatchedLibraryML->RemoveListener(this);
@@ -344,7 +346,9 @@ sbMediaItemWatcher::OnListCleared(sbIMediaList* aMediaList,
   }
 
   // Handle item removed events.
-  mListener->OnItemRemoved(mWatchedMediaItem);
+  if (mWatchedMediaItem) {
+    mListener->OnItemRemoved(mWatchedMediaItem);
+  }
 
   // Keep calling.
   *_retval = PR_FALSE;
@@ -396,6 +400,10 @@ sbMediaItemWatcher::OnBatchEnd(sbIMediaList* aMediaList)
   if (mBatchLevel > 0)
     return NS_OK;
 
+  if (!mWatchedMediaItem) {
+    NS_WARNING("sbMediaItemWatcher::OnBatchEnd");
+    return NS_OK;
+  }
   // Get current watched media item properties.
   nsAutoString properties;
   rv = GetWatchedMediaItemProperties(properties);
@@ -487,7 +495,9 @@ sbMediaItemWatcher::DoItemUpdated(nsAString& aItemProperties)
   mWatchedMediaItemProperties.Assign(aItemProperties);
 
   // Notify the listener.
-  mListener->OnItemUpdated(mWatchedMediaItem);
+  if (mWatchedMediaItem) {
+    mListener->OnItemUpdated(mWatchedMediaItem);
+  }
 
   return NS_OK;
 }
@@ -502,6 +512,8 @@ sbMediaItemWatcher::DoItemUpdated(nsAString& aItemProperties)
 nsresult
 sbMediaItemWatcher::GetWatchedMediaItemProperties(nsAString& aProperties)
 {
+  NS_ENSURE_TRUE(mWatchedMediaItem, NS_ERROR_NOT_AVAILABLE);
+
   nsresult rv;
 
   // Get the watched media item properties.
