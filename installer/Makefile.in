@@ -47,10 +47,27 @@ GARBAGE += $(SB_INSTALLER_FINAL_DIR)/$(SB_INSTALLER_NAME) \
 
 include $(topsrcdir)/build/rules.mk
 
+# We go through the $(notdir) jankiness because if we full-path the .xpt 
+# files, we're liable to run into commandline path limits on Win32.
+#
+# The := assignment of the _XPTS variables is _very_ important; it ensures that 
+# we'll evaluate the $(wildcard)'s _ONCE_, and thus won't delete the 
+# (new, large) xpt files we just created, right after we created them.
+XULRUNNER_COMPONENTSDIR = $(SONGBIRD_XULRUNNERDIR)/components
+
+SONGBIRD_XPTS := $(notdir $(wildcard $(SONGBIRD_COMPONENTSDIR)/*.xpt))
+XULRUNNER_XPTS := $(notdir $(wildcard $(XULRUNNER_COMPONENTSDIR)/*.xpt))
+
+link_installer_xpts:
+	cd $(SONGBIRD_COMPONENTSDIR) && $(XPTLINK) songbird.xpt $(SONGBIRD_XPTS)
+	cd $(XULRUNNER_COMPONENTSDIR) && $(XPTLINK) xulrunner.xpt $(XULRUNNER_XPTS)
+	cd $(SONGBIRD_COMPONENTSDIR) && $(RM) $(SONGBIRD_XPTS)
+	cd $(XULRUNNER_COMPONENTSDIR) && $(RM) $(XULRUNNER_XPTS)
+
 # preedTODO: the easiest way to re-express this dependency is to do it as
 # part of the export step for the installer; it seems to work, but even still,
 # that's kinda janky.
-export::
+export:: $(if $(DEBUG),$(NULL),link_installer_xpts)
 	$(MAKE) -C $(DEPTH) stripsymbols
 	$(INSTALL_FILE) $(topsrcdir)/TRADEMARK.txt $(SONGBIRD_DISTDIR)
 	$(INSTALL_FILE) $(SB_LICENSE_FILE) $(SONGBIRD_DISTDIR)
@@ -64,3 +81,5 @@ endif
 # We do the cd here so the path in the .md5 file is standardized with a "./"
 libs::
 	cd $(SB_INSTALLER_FINAL_DIR) && $(MD5SUM) ./$(SB_INSTALLER_NAME) > $(SB_INSTALLER_NAME).md5
+
+.PHONY: link_installer_xpts
