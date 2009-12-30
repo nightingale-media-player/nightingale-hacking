@@ -23,8 +23,6 @@
  *=END SONGBIRD GPL
  */
 
-#define MOOK_HARD_CODE_CONFIGURATE
-
 #if defined(XP_WIN)
 // needed before math.h to import HUGE_VAL correctly
 #define _DLL
@@ -1398,55 +1396,6 @@ sbGStreamerTranscodeDeviceConfigurator::Configurate()
   rv = SelectQuality();
   NS_ENSURE_SUCCESS(rv, rv);
 
-#ifdef MOOK_HARD_CODE_CONFIGURATE
-  // XXX Mook: temporary hack
-
-  mMuxer = NS_LITERAL_STRING("qtmux");
-  mVideoEncoder = NS_LITERAL_STRING("jpegenc");
-  mAudioEncoder = NS_LITERAL_STRING("adpcmenc");
-  mFileExtension = NS_LITERAL_CSTRING("mp4");
-
-  nsCOMPtr<sbIMediaFormatVideoMutable> videoFormat =
-    do_CreateInstance(SB_MEDIAFORMATVIDEO_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = videoFormat->SetVideoWidth(128);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = videoFormat->SetVideoHeight(128);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = videoFormat->SetVideoPAR(1, 1);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = videoFormat->SetVideoFrameRate(24, 1);
-  NS_ENSURE_SUCCESS(rv, rv);
-  mVideoFormat = do_QueryInterface(videoFormat, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMediaFormatAudioMutable> audioFormat =
-    do_CreateInstance(SB_MEDIAFORMATAUDIO_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = audioFormat->SetSampleRate(22050);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = audioFormat->SetChannels(2);
-  NS_ENSURE_SUCCESS(rv, rv);
-  mAudioFormat = do_QueryInterface(audioFormat, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIWritablePropertyBag2> videoProps =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = videoProps->SetPropertyAsInt32(NS_LITERAL_STRING("quality"), 30);
-  mVideoEncoderProperties = do_QueryInterface(videoProps, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIWritablePropertyBag2> audioProps =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  mAudioEncoderProperties = do_QueryInterface(audioProps, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  isConfigurated = PR_TRUE;
-
-  return NS_OK;
-#else
   // Get the referred encoding profile
   rv = SelectProfile();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1466,5 +1415,4 @@ sbGStreamerTranscodeDeviceConfigurator::Configurate()
   // all done
   isConfigurated = PR_TRUE;
   return NS_OK;
-#endif
 }
