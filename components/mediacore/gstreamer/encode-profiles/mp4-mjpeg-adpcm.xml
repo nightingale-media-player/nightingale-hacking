@@ -14,16 +14,15 @@
 
   <video>
     <type>image/jpeg</type>
-    <quality-property name="bpp" quality="0" value="0.2"/>
-    <quality-property name="bpp" quality="1" value="1"/>
+    <quality-property name="bpp" quality="0" value="1.5"/>
+    <quality-property name="bpp" quality="1" value="12"/>
     <property name="quality" type="int" min="0" max="100" default="100"
               mapping="quality" scale="100"/>
   </video>
 
   <audio>
     <type>audio/x-adpcm</type>
-    <quality-property name="bitrate" quality="0" value="32000"/>
-    <quality-property name="bitrate" quality="0.5" value="128000"/>
-    <quality-property name="bitrate" quality="1" value="320000"/>
+    <!-- the bitrate is constant and not tweakable -->
+    <quality-property name="bitrate" quality="0.5" value="200000"/>
   </audio>
 </profile>
