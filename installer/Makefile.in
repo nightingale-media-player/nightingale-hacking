@@ -28,6 +28,20 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
+# These are a list of executables we don't ship in the (released)
+# installer, relative to the dist dir; for the XR executables, Firefox doesn't
+# ship (most of) them either.
+
+SB_INSTALLER_NO_PKG_FILES = xulrunner/regxpcom$(BIN_SUFFIX) \
+                            xulrunner/xpcshell$(BIN_SUFFIX) \
+                            xulrunner/xpidl$(BIN_SUFFIX) \
+                            xulrunner/xpt_dump$(BIN_SUFFIX) \
+                            xulrunner/xpt_link$(BIN_SUFFIX) \
+                            xulrunner/nsinstall$(BIN_SUFFIX) \
+                            xulrunner/shlibsign$(BIN_SUFFIX) \
+                            xulrunner/run-mozilla.sh \
+                            $(NULL)
+
 SUBDIRS = $(SB_PLATFORM) 
 
 ifdef SONGBIRD_OFFICIAL
@@ -77,6 +91,9 @@ ifeq (macosx,$(SB_PLATFORM))
 	$(INSTALL_FILE) $(INSTALLER_README) $(SONGBIRD_OBJDIR)/dist/README.txt
 endif
 	$(MKDIR) $(SB_INSTALLER_FINAL_DIR)
+ifneq (,$(SONGBIRD_OFFICIAL))
+	$(RM) $(addprefix $(SONGBIRD_OBJDIR)/dist/, $(SB_INSTALLER_NO_PKG_FILES))
+endif
 
 # We do the cd here so the path in the .md5 file is standardized with a "./"
 libs::

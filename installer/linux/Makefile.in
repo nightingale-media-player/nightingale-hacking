@@ -42,11 +42,11 @@ endif
 include $(topsrcdir)/build/rules.mk
 
 libs::
-	$(RM) -rf $(INSTALLER_STAGE_DIR)
+	$(RM) -r $(INSTALLER_STAGE_DIR)
 	$(MKDIR_APP) $(INSTALLER_STAGE_DIR)
-	$(RM) -f $(SB_INSTALLER_NAME)
+	$(RM) $(SB_INSTALLER_NAME)
 	$(CP) -RLp $(SONGBIRD_DISTDIR)/* $(INSTALLER_STAGE_DIR)
 	$(TAR) --owner=0 --group=0 --numeric-owner -c $(INSTALLER_STAGE_DIR) | $(GZIP) -c9 > $(SB_INSTALLER_NAME)
 	$(MV) $(SB_INSTALLER_NAME) $(SB_INSTALLER_FINAL_DIR)
 	# This is a copy of dist; remove it, since it takes up so much space.
-	$(RM) -rf $(INSTALLER_STAGE_DIR)
+	$(RM) -r $(INSTALLER_STAGE_DIR)
