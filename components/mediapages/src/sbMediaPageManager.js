@@ -164,15 +164,17 @@ MediaPageManager.prototype = {
     // Hardcoded first run logic:
     // Libraries get filter lists, playlists do not.
     if (aList instanceof Ci.sbILibrary && this._defaultFilteredPlaylistPage) {
-      // Check the constraints for video type.
-      for (var i = 0; i < aConstraint.groupCount; i++) {
-        var curGroup = aConstraint.getGroup(i);
-        if (curGroup.hasProperty(SBProperties.contentType)) {
-          // Look to see if the content type is 'video'.
-          var propEnum = curGroup.getValues(SBProperties.contentType);
-          // There should only be one value for this property.
-          if (propEnum.getNext() == "video") {
-            return this._defaultPlaylistPage;
+      if (aConstraint) {
+        // Check the constraints for video type.
+        for (var i = 0; i < aConstraint.groupCount; i++) {
+          var curGroup = aConstraint.getGroup(i);
+          if (curGroup.hasProperty(SBProperties.contentType)) {
+            // Look to see if the content type is 'video'.
+            var propEnum = curGroup.getValues(SBProperties.contentType);
+            // There should only be one value for this property.
+            if (propEnum.getNext() == "video") {
+              return this._defaultPlaylistPage;
+            }
           }
         }
       }
