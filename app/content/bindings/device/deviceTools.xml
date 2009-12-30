@@ -352,10 +352,18 @@
           var self = this;
           var deviceListener = {
             onDeviceEvent: function(aEvent) {
-              if (aEvent.type == Components.interfaces.sbIDeviceEvent.EVENT_FIRMWARE_CFU_END) {
+              if (aEvent.type == Components.interfaces.sbIDeviceEvent.EVENT_FIRMWARE_CFU_END ||
+                  aEvent.type == Components.interfaces.sbIDeviceEvent.EVENT_FIRMWARE_CFU_ERROR) {
                 let curFirmHandler = self._firmwareHandler;
-                self._registerURI = curFirmHandler.registerLocation;
-                self._customerSupportLocation = curFirmHandler.customerSupportLocation;
+                
+                try {
+                  self._registerURI = curFirmHandler.registerLocation;
+                  self._customerSupportLocation = curFirmHandler.customerSupportLocation;
+                }
+                catch(e) {
+                  Components.utils.reportError(e);
+                }
+                
                 self._propertyLookup();
               }
             }
@@ -365,12 +373,18 @@
             handler.bind(this.device, deviceListener);
             this._firmwareHandler = handler; 
             this._firmwareHandler.refreshInfo();
-            firmwareVersion = handler.currentFirmwareReadableVersion;
           }
           catch(err) { 
             Components.utils.reportError(err); 
             this._firmwareHandler.unbind();
             this._firmwareHandler = null; 
+          }
+          
+          try {
+            firmwareVersion = handler.currentFirmwareReadableVersion;
+          }
+          catch(err) {
+            Components.utils.reportError(err);
           }
         }
 
