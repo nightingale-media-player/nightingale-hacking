@@ -66,6 +66,9 @@ sbOSDControlService.prototype =
   _videoWinHasFocus:      false,
   _osdWinHasFocus:        false,
   _mouseDownOnOSD:        false,
+  
+  _fadeInterval: null,
+  _fadeContinuation: null,
 
 
   _recalcOSDPosition: function() {
@@ -226,8 +229,9 @@ sbOSDControlService.prototype =
 
     transition.apply(this, [function() {
       if (!self._cloakService.isCloaked(self._osdWindow)) {
-        if (this._osdWinHasFocus)
+        if (this._osdWinHasFocus) {
           this._videoWindow.focus();
+        }
         self._cloakService.cloak(self._osdWindow);
       }
 
@@ -253,6 +257,10 @@ sbOSDControlService.prototype =
     if (this._cloakService.isCloaked(this._osdWindow)) {
       this._cloakService.uncloak(this._osdWindow);
     }
+
+    if (!transition) {
+      transition = this._showInstantly;
+    }
     transition.apply(this);
 
     // Controls are showing
@@ -264,9 +272,6 @@ sbOSDControlService.prototype =
                                  Ci.nsITimer.TYPE_ONE_SHOT);
   },
 
-  _fade_interval: null,
-  _fadeContinuation: null,
-
   _fade: function(start, end, func) {
     var self = this;
     this._fadeCancel();
@@ -276,9 +281,9 @@ sbOSDControlService.prototype =
     var delta = (end - start) / 10;
     var step = 1;
 
-    self._fade_interval = self._osdWindow.setInterval(function() {
+    self._fadeInterval = self._osdWindow.setInterval(function() {
       opacity += delta;
-      node.style.MozOpacity = opacity;
+      node.style.opacity = opacity;
 
       if (step++ >= 9) {
         self._fadeCancel();
@@ -288,26 +293,33 @@ sbOSDControlService.prototype =
   },
   
   _fadeCancel: function() {
-    this._osdWindow.clearInterval(this._fade_interval);
-    if (this._fadeContinuation)
+    this._osdWindow.clearInterval(this._fadeInterval);
+    if (this._fadeContinuation) {
        this._fadeContinuation();
+    }
     this._fadeContinuation = null;
   },
 
   _showInstantly: function(func) {
     this._fadeCancel();
-    this._osdWindow.document.getElementById("osd_main_vbox").style.MozOpacity = 1;
-    if (func)
+    this._osdWindow.document.getElementById("osd_main_vbox")
+                            .style.opacity = 1;
+    if (func) {
        func();
+    }
   },
-  _hideInstantly: function(func)
-  {
+
+  _hideInstantly: function(func) {
     this._fadeCancel();
-    if (func)
+    if (func) {
        func();
+    }
   },
-  _fadeIn: function(func) this._fade(0, 1, func), // fade from 0% opaque to 100% opaque
-  _fadeOut: function(func) this._fade(1, 0, func), // fade from 100% opaque to 0% opaque 
+
+  // fade from 100% opaque to 0% opaque 
+  _fadeOut: function(func) {
+    this._fade(1, 0, func);
+  },
 
   _onOSDWinBlur: function(aEvent) {
     this._osdWinHasFocus = false;
@@ -332,13 +344,13 @@ sbOSDControlService.prototype =
   },
 
   _onOSDWinMousedown: function(aEvent) {
-    if (aEvent.button == 0)
+    if (aEvent.button == 0) {
       this._mouseDownOnOSD = true;
+    }
   },
 
   _onOSDWinMouseup: function(aEvent) {
-    if (aEvent.button == 0)
-    {
+    if (aEvent.button == 0) {
       // User released the mouse button, reset the timer
       this._mouseDownOnOSD = false;
       this.showOSDControls(this._showInstantly);
