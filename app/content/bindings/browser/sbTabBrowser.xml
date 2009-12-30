@@ -535,6 +535,7 @@
       <method name="_getMediaPageURL">
         <parameter name="aMediaList"/>
         <parameter name="aPageURL"/>
+        <parameter name="aConstraints"/>
         <body>
           <![CDATA[
             var mgr = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
@@ -556,7 +557,7 @@
             
             // If no URL, get the default from the page manager
             if (!pageURL) {
-              var page = mgr.getPage(aMediaList);
+              var page = mgr.getPage(aMediaList, aConstraints);
               pageURL = page.contentUrl;
             }
             
@@ -618,7 +619,7 @@
             }
 
             if (!aForcePageURL) {
-              aPageURL = this._getMediaPageURL(aMediaList, aPageURL);
+              aPageURL = this._getMediaPageURL(aMediaList, aPageURL, aMediaListView.filterConstraint);
             }
 
             // if no default location specified, load in the media tab (if available)

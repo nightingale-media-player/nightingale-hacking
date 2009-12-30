@@ -618,7 +618,7 @@
               target = "_blank";
             }
             this.browser.loadURI(node.url, null, null, event, target);
-            
+
             if( node.getAttributeNS(this.BSP, "Imported") == 'true' ) {
 
               //This enables us to know if we're packaging bookmarks
@@ -635,7 +635,6 @@
             
           // If no URL, apply special handling
           } else {
-          
             // If there is a media list for this node, hand it off to the 
             // browser to display somehow.
             // I'm told that this hack is fine, as it will one day be replaced
