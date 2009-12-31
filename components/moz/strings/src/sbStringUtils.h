@@ -47,7 +47,7 @@ public:
     AssignLiteral(valueStr);
   }
 
-  sbAutoString(PRUint32 aValue, PRBool aHex = PR_FALSE)
+  sbAutoString(PRUint32 aValue, PRBool aHex = PR_FALSE, PRBool aHexPrefix = PR_TRUE)
   {
     char valueStr[64];
 
@@ -55,7 +55,12 @@ public:
       PR_snprintf(valueStr, sizeof(valueStr), "%lu", aValue);
     }
     else {
-      PR_snprintf(valueStr, sizeof(valueStr), "0x%lx", aValue);
+      if(aHexPrefix) {
+        PR_snprintf(valueStr, sizeof(valueStr), "0x%lx", aValue);
+      }
+      else {
+        PR_snprintf(valueStr, sizeof(valueStr), "%lx", aValue);
+      }
     }
 
     AssignLiteral(valueStr);
