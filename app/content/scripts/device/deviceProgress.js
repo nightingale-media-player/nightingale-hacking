@@ -57,7 +57,7 @@ if (typeof(Cu) == "undefined")
 
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/WindowUtils.jsm");
-
+Cu.import("resource://gre/modules/DownloadUtils.jsm");
 
 //------------------------------------------------------------------------------
 //
@@ -444,6 +444,9 @@ var DPW = {
 
     this._progressMeter.hidden = true;
     this._subProgressTextLabel.hidden = true;
+
+    this._startTimestamp = null;
+    this._lastTimeLeft = Infinity;
   },
 
 
@@ -483,19 +486,40 @@ var DPW = {
     this._progressMeter.hidden = false;
     this._subProgressTextLabel.hidden = false;
 
+    if (!this._startTimestamp) {
+      this._startTimestamp = new Date();
+      this._lastTimeLeft = Infinity;
+    }
+
+    var now = new Date();
+    var etaString;
+
     // Update the operation progress meter.
     if (operationInfo.progressMeterDetermined) {
-      // Compute the progress from 0-100.
-      var progress = 100;
+      // Compute the progress from 0-1.
+      var progress = 1;
       if ((totalItems > 0) &&
           (curItemIndex > 0) &&
-          (curItemIndex < totalItems)) {
-        progress = Math.round((curItemIndex / totalItems) * 100);
+          (curItemIndex < totalItems))
+      {
+        progress = (curItemIndex - 1) / totalItems;
+      }
+
+      progress += (this._itemProgress.intValue / 100) / totalItems;
+      dump("progress = "+ progress +"\n");
+      var duration = now - this._startTimestamp;
+      if (progress > 0)
+      {
+        var eta = (duration / progress) - duration;
+        let [tempEtaString, tempTimeLeft] = DownloadUtils.getTimeLeft(eta / 1000, this._lastTimeLeft);
+        etaString = tempEtaString;
+        this._lastTimeLeft = tempTimeLeft;
       }
 
       // Set the progress meter to determined.
       this._progressMeter.setAttribute("mode", "determined");
-      this._progressMeter.value = progress;
+      // convert from 0-1 to 0-100, and round
+      this._progressMeter.value = Math.round(progress * 100);
     } else if (operationInfo.progressMeterUndetermined) {
       this._progressMeter.setAttribute("mode", "undetermined");
       this._progressMeter.value = 0;
@@ -528,15 +552,24 @@ var DPW = {
         subLocaleKey = "device.status.progress_item_index";
       }
       else {
-        params[2] = SBFormattedString(
-          "device.status.progress_header_transcoding_percent_complete",
-          [this._itemProgress.intValue]);
+        if (etaString) {
+          params[2] = SBFormattedString("device.status.progress_header_transcoding_percent_complete_eta",
+                                        [progress, etaString]);
+        } else {
+          params[2] = SBFormattedString("device.status.progress_header_transcoding_percent_complete",
+                                        [progress]);
+        }
         subLocaleKey = "device.status.progress_detail";
       }
     } else if (operation == Ci.sbIDevice.STATE_SYNCING &&
                substate == Ci.sbIDevice.STATE_DELETING) {
       localeKey = "device.status.progress_header_deleting";
-      subLocaleKey = "device.status.progress_item_index";
+      if (etaString) {
+        subLocaleKey = "device.status.progress_detail";
+        params[2] = etaString;
+      }
+      else
+        subLocaleKey = "device.status.progress_item_index";
     } else if (operation == Ci.sbIDevice.STATE_SYNCING &&
                substate == Ci.sbIDevice.STATE_SYNC_PLAYLIST) {
       localeKey = "device.status.progress_header_" + operationLocaleSuffix;
@@ -547,10 +580,20 @@ var DPW = {
       localeKey = "device.status.progress_header_copying";
       if (itemType)
         localeKey = localeKey + "." + itemType;
-      subLocaleKey = "device.status.progress_item_index";
+      if (etaString) {
+        subLocaleKey = "device.status.progress_detail";
+        params[2] = etaString;
+      }
+      else
+        subLocaleKey = "device.status.progress_item_index";
     } else {
       localeKey = "device.status.progress_header_" + operationLocaleSuffix;
-      subLocaleKey = "device.status.progress_item_index";
+      if (etaString) {
+        subLocaleKey = "device.status.progress_detail";
+        params[2] = etaString;
+      }
+      else
+        subLocaleKey = "device.status.progress_item_index";
     }
 
     // Update the operation progress text.
