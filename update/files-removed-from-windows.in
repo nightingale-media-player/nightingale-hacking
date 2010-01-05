@@ -496,3 +496,9 @@
 ./xulrunner/components/xuldoc.xpt
 ./xulrunner/components/xultmpl.xpt
 ./xulrunner/components/zipwriter.xpt
+./xulrunner/regxpcom.exe
+./xulrunner/xpcshell.exe
+./xulrunner/xpidl.exe
+./xulrunner/xpt_dump.exe
+./xulrunner/xpt_link.exe
+./xulrunner/shlibsign.exe

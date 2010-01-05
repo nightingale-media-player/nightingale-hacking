@@ -547,3 +547,10 @@
 ./Contents/Frameworks/XUL.framework/components/xuldoc.xpt
 ./Contents/Frameworks/XUL.framework/components/xultmpl.xpt
 ./Contents/Frameworks/XUL.framework/components/zipwriter.xpt
+./Contents/Frameworks/XUL.framework/xulrunner/regxpcom
+./Contents/Frameworks/XUL.framework/xulrunner/xpcshell
+./Contents/Frameworks/XUL.framework/xulrunner/xpidl
+./Contents/Frameworks/XUL.framework/xulrunner/xpt_dump
+./Contents/Frameworks/XUL.framework/xulrunner/xpt_link
+./Contents/Frameworks/XUL.framework/xulrunner/shlibsign
+./Contents/Frameworks/XUL.framework/xulrunner/run-mozilla.sh

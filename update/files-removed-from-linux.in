@@ -284,3 +284,10 @@
 ./xulrunner/components/xuldoc.xpt
 ./xulrunner/components/xultmpl.xpt
 ./xulrunner/components/zipwriter.xpt
+./xulrunner/regxpcom
+./xulrunner/xpcshell
+./xulrunner/xpidl
+./xulrunner/xpt_dump
+./xulrunner/xpt_link
+./xulrunner/shlibsign
+./xulrunner/run-mozilla.sh
