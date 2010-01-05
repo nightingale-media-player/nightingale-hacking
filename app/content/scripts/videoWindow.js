@@ -511,7 +511,7 @@ var videoWindowController = {
     if (target instanceof XULElement && target != this._videoElement)
       return;
 
-    this._osdService.showOSDControls();
+    this._osdService.showOSDControls(Ci.sbIOSDControlService.TRANSITION_NONE);
   },
   
   _onKeyDown: function vwc__onKeyDown(aEvent) {

@@ -34,7 +34,7 @@
 //
 //==============================================================================
 
-[scriptable, uuid(03efb9a5-5583-43a9-ad0f-24685cacde66)]
+[scriptable, uuid(6AE76963-92E6-4A70-9964-F545181E31FE)]
 interface sbIOSDControlService : nsISupports
 {
   //
@@ -64,13 +64,21 @@ interface sbIOSDControlService : nsISupports
   void onVideoWindowFullscreenChanged(in boolean aFullscreen);
 
   //
-  // @brief Hides the OSD controls from showing on top of the video window.
+  // @brief Constants for transitions when hiding or showing the OSD controls.
   //
-  void hideOSDControls();
+  const unsigned long TRANSITION_NONE = 0;
+  const unsigned long TRANSITION_FADE = 1;
+
+  //
+  // @brief Hides the OSD controls from showing on top of the video window.
+  // @param aTransitionType A transition option for hiding the controls.
+  //
+  void hideOSDControls([optional] in unsigned long aTransitionType);
 
   //
   // @brief Show the OSD controls on top of the video window.
+  // @param aTransitionType A transition option for showing the controls.
   //
-  void showOSDControls();
+  void showOSDControls([optional] in unsigned long aTransitionType);
 };
 

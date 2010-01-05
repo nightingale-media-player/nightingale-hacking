@@ -221,11 +221,29 @@ sbOSDControlService.prototype =
     }
   },
 
-  hideOSDControls: function(transition) {
+  hideOSDControls: function(aTransitionType) {
     var self = this;
     // Don't hide the window while the user is dragging
     if (this._mouseDownOnOSD || !this._osdControlsShowing)
       return;
+
+    var transtion;
+    switch (aTransitionType) {
+      case Ci.sbIOSDControlService.TRANSITION_FADE:
+        transition = this._fadeOut;
+        break;
+
+      case Ci.sbIOSDControlService.TRANSITION_NONE:
+        transition = this._hideInstantly;
+        break;
+
+      default:
+        Components.utils.reportError(
+          "Invalid transition type passed into hideOSDControls()!");
+        
+        // Just fall back to hiding instantly.
+        transition = this._hideInstantly; 
+    }
 
     transition.apply(this, [function() {
       if (!self._cloakService.isCloaked(self._osdWindow)) {
@@ -240,7 +258,7 @@ sbOSDControlService.prototype =
     }]);
   },
 
-  showOSDControls: function(transition) {
+  showOSDControls: function(aTransitionType) {
     if (!this._videoWinHasFocus &&
         !this._osdWinHasFocus &&
         !this._videoWindowFullscreen)
@@ -250,6 +268,7 @@ sbOSDControlService.prototype =
       // other window in the OS.
       return;
     }
+    
     this._timer.cancel();
     this._recalcOSDPosition();
 
@@ -258,9 +277,24 @@ sbOSDControlService.prototype =
       this._cloakService.uncloak(this._osdWindow);
     }
 
-    if (!transition) {
-      transition = this._showInstantly;
+    var transtion;
+    switch (aTransitionType) {
+      case Ci.sbIOSDControlService.TRANSITION_FADE:
+        transition = this._fade;
+        break;
+
+      case Ci.sbIOSDControlService.TRANSITION_NONE:
+        transition = this._showInstantly;
+        break;
+
+      default:
+        Components.utils.reportError(
+          "Invalid transition type passed into hideOSDControls()!");
+        
+        // Just fall back to show instantly.
+        transition = this._showInstantly; 
     }
+    
     transition.apply(this);
 
     // Controls are showing
@@ -276,7 +310,7 @@ sbOSDControlService.prototype =
     var self = this;
     this._fadeCancel();
     this._fadeContinuation = func;
-    let node = this._osdWindow.document.getElementById("osd_main_vbox");
+    var node = this._osdWindow.document.getElementById("osd_main_vbox");
     var opacity = start;
     var delta = (end - start) / 10;
     var step = 1;
@@ -340,7 +374,7 @@ sbOSDControlService.prototype =
   _onOSDWinMousemove: function(aEvent) {
     // The user has the mouse over the OSD controls, ensure that the controls
     // are visible.
-    this.showOSDControls(this._showInstantly);
+    this.showOSDControls(Ci.sbIOSDControlService.TRANSITION_NONE);
   },
 
   _onOSDWinMousedown: function(aEvent) {
@@ -353,7 +387,7 @@ sbOSDControlService.prototype =
     if (aEvent.button == 0) {
       // User released the mouse button, reset the timer
       this._mouseDownOnOSD = false;
-      this.showOSDControls(this._showInstantly);
+      this.showOSDControls(Ci.sbIOSDControlService.TRANSITION_NONE);
     }
   },
 
@@ -361,11 +395,11 @@ sbOSDControlService.prototype =
   // sbIWindowMoveListener
 
   onMoveStarted: function() {
-    this.hideOSDControls(this._hideInstantly);
+    this.hideOSDControls(Ci.sbIOSDControlService.TRANSITION_NONE);
   },
 
   onMoveStopped: function() {
-    this.showOSDControls(this._showInstantly);
+    this.showOSDControls(Ci.sbIOSDControlService.TRANSITION_NONE);
   },
 
   //----------------------------------------------------------------------------
@@ -373,7 +407,7 @@ sbOSDControlService.prototype =
 
   notify: function(aTimer) {
     if (aTimer == this._timer) {
-      this.hideOSDControls(this._fadeOut);
+      this.hideOSDControls(Ci.sbIOSDControlService.TRANSITION_FADE);
     }
   },
 };
