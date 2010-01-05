@@ -57,7 +57,7 @@ if (typeof(Cu) == "undefined")
 
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/WindowUtils.jsm");
-Cu.import("resource://gre/modules/DownloadUtils.jsm");
+Cu.import("resource://app/jsmodules/sbTimeFormatter.jsm");
 
 //------------------------------------------------------------------------------
 //
@@ -469,7 +469,7 @@ var DPW = {
    */
 
   _updateProgressBusy: function DPW__updateProgressBusy() {
-    var localeKey;
+    var localeKey, subLocaleKey;
 
     // Get the device status.
     var deviceStatus = this._device.currentStatus;
@@ -506,14 +506,12 @@ var DPW = {
       }
 
       progress += (this._itemProgress.intValue / 100) / totalItems;
-      dump("progress = "+ progress +"\n");
+
       var duration = now - this._startTimestamp;
       if (progress > 0)
       {
         var eta = (duration / progress) - duration;
-        let [tempEtaString, tempTimeLeft] = DownloadUtils.getTimeLeft(eta / 1000, this._lastTimeLeft);
-        etaString = tempEtaString;
-        this._lastTimeLeft = tempTimeLeft;
+        etaString = TimeFormatter.formatHMS(eta / 1000);
       }
 
       // Set the progress meter to determined.
@@ -528,8 +526,6 @@ var DPW = {
       this._progressMeter.value = 0;
     }
 
-    params = [ curItemIndex, totalItems ];
-
     var itemType = this._getItemType();
 
     // If we're preparing to sync (indicated by an idle sub)
@@ -542,34 +538,12 @@ var DPW = {
       subLocaleKey = "device.status.progress_preparing_" + operationLocaleSuffix;
     } else if (operation == Ci.sbIDevice.STATE_TRANSCODE ||
                substate == Ci.sbIDevice.STATE_TRANSCODE) {
-      var progress = this._itemProgress.intValue;
       localeKey = "device.status.progress_header_transcoding";
       if (itemType)
         localeKey = localeKey + "." + itemType;
-
-      if (progress < 0) {
-        // We use a negative value to indicate unknown progress
-        subLocaleKey = "device.status.progress_item_index";
-      }
-      else {
-        if (etaString) {
-          params[2] = SBFormattedString("device.status.progress_header_transcoding_percent_complete_eta",
-                                        [progress, etaString]);
-        } else {
-          params[2] = SBFormattedString("device.status.progress_header_transcoding_percent_complete",
-                                        [progress]);
-        }
-        subLocaleKey = "device.status.progress_detail";
-      }
     } else if (operation == Ci.sbIDevice.STATE_SYNCING &&
                substate == Ci.sbIDevice.STATE_DELETING) {
       localeKey = "device.status.progress_header_deleting";
-      if (etaString) {
-        subLocaleKey = "device.status.progress_detail";
-        params[2] = etaString;
-      }
-      else
-        subLocaleKey = "device.status.progress_item_index";
     } else if (operation == Ci.sbIDevice.STATE_SYNCING &&
                substate == Ci.sbIDevice.STATE_SYNC_PLAYLIST) {
       localeKey = "device.status.progress_header_" + operationLocaleSuffix;
@@ -580,21 +554,15 @@ var DPW = {
       localeKey = "device.status.progress_header_copying";
       if (itemType)
         localeKey = localeKey + "." + itemType;
-      if (etaString) {
-        subLocaleKey = "device.status.progress_detail";
-        params[2] = etaString;
-      }
-      else
-        subLocaleKey = "device.status.progress_item_index";
     } else {
       localeKey = "device.status.progress_header_" + operationLocaleSuffix;
-      if (etaString) {
-        subLocaleKey = "device.status.progress_detail";
-        params[2] = etaString;
-      }
-      else
-        subLocaleKey = "device.status.progress_item_index";
     }
+
+    if (!subLocaleKey) {
+        subLocaleKey = etaString ? "device.status.progress_detail"
+                                 : "device.status.progress_item_index";
+    }
+    params = [curItemIndex, totalItems, etaString];
 
     // Update the operation progress text.
     this._progressTextLabel.value = SBFormattedString(localeKey, "");

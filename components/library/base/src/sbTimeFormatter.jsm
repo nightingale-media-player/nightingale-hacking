@@ -93,6 +93,32 @@ var TimeFormatter = {
     formatTime = bundle.formatStringFromName(formatTimeUnit, [ formatTime ], 1);
 
     return formatTime;
-  }
+  },
+
+  /*
+   * formatHMS
+   *
+   *   ==> aTime                Time (duration) in seconds to format.
+   *
+   *   <==                      Formatted time string in HH:MM:SS format
+   *
+   *   Formats a duration to HH:MM:SS format, No wrapping is done, so this isn't
+   * simply a 24-hour time display.
+   *
+   * Example:
+   *
+   *   formatHMS(32) returns "00:32"
+   *   formatHMS(66) returns "01:06"
+   *   formatHMS(495732) returns "137:42:12"
+   */
+  formatHMS: function formatHMS(aTime) {
+    function number(x) { return typeof(x) == "number"; }
+    function pad(n) { return (n < 10 ? "0" : "") + n; }
+
+    let hours = Math.floor(aTime / 3600);
+    let minutes = Math.floor((aTime - hours * 3600) / 60);
+    let seconds = Math.floor((aTime - hours * 3600 - minutes * 60));
+    return [hours || null, minutes, seconds].filter(number).map(pad).join(":");
+  },
 }
 
