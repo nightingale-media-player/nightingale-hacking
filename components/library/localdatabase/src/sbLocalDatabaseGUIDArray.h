@@ -58,7 +58,7 @@ public:
 
   sbLocalDatabaseGUIDArray();
 
-  nsresult MayInvalidate(const nsAString &aGUID, 
+  nsresult MayInvalidate(const nsAString &aGUID,
                          sbLocalDatabaseResourcePropertyBag *aBag);
 
 
@@ -166,10 +166,13 @@ private:
 
   static int SortBags(const void* a, const void* b, void* closure);
 
-  nsresult AddSortInternal(const nsAString& aProperty, 
-                           PRBool aAscending, 
+  nsresult AddSortInternal(const nsAString& aProperty,
+                           PRBool aAscending,
                            PRBool aSecondary);
   nsresult ClearSecondarySorts();
+
+  nsresult GetMTListener(sbILocalDatabaseGUIDArrayListener ** aListener);
+
 
   // Cached property manager
   nsCOMPtr<sbIPropertyManager> mPropMan;
@@ -284,7 +287,7 @@ public:
 private:
   nsRefPtr<sbLocalDatabaseLibrary> mLibrary;
   nsCOMPtr<sbILocalDatabaseGUIDArray> mArray;
-  
+
   PRUint32 mNextIndex;
   nsString mNextGUID;
 

@@ -157,7 +157,7 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
   mPropertyManager = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mDependentGUIDArrayMonitor = 
+  mDependentGUIDArrayMonitor =
     nsAutoMonitor::NewMonitor("sbLocalDatabasePropertyCache::mDependentGUIDArrayMonitor");
   NS_ENSURE_TRUE(mDependentGUIDArrayMonitor, NS_ERROR_OUT_OF_MEMORY);
 
@@ -176,8 +176,8 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
   mFlushTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mFlushTimer->Init(this, 
-                         SB_LOCALDATABASE_CACHE_FLUSH_DELAY, 
+  rv = mFlushTimer->Init(this,
+                         SB_LOCALDATABASE_CACHE_FLUSH_DELAY,
                          nsITimer::TYPE_REPEATING_SLACK);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -282,7 +282,7 @@ nsresult
 sbLocalDatabasePropertyCache::Shutdown()
 {
   TRACE(("sbLocalDatabasePropertyCache[0x%.8x] - Shutdown()", this));
-  
+
   nsresult rv = NS_OK;
 
   if(mFlushTimer) {
@@ -1196,7 +1196,7 @@ sbLocalDatabasePropertyCache::Write()
           NS_ENSURE_SUCCESS(rv,rv);
           rv = propertyInfo->GetUserViewable(&isUserViewable);
           NS_ENSURE_SUCCESS(rv,rv);
-            
+
           if (isUserViewable) {
             PRUint32 propertyDBID;
             rv = GetPropertyDBID(propertyId, &propertyDBID);
@@ -1374,7 +1374,7 @@ sbLocalDatabasePropertyCache::GetSetInvalidSortDataPref(
   return rv;
 }
 
-void 
+void
 sbLocalDatabasePropertyCache::AddDependentGUIDArray(
                                 sbLocalDatabaseGUIDArray *aGUIDArray)
 {
@@ -1402,25 +1402,17 @@ sbLocalDatabasePropertyCache::RemoveDependentGUIDArray(
 }
 
 nsresult
-sbLocalDatabasePropertyCache::DispatchFlush() 
+sbLocalDatabasePropertyCache::DispatchFlush()
 {
-  PRUint32 dirtyCount = 0;
-  
-  {
-    nsAutoMonitor mon(mMonitor);
-    dirtyCount = mDirty.Count();
-  }
+  nsCOMPtr<nsIRunnable> runnable =
+    NS_NEW_RUNNABLE_METHOD(sbLocalDatabasePropertyCache, this, RunFlushThread);
+  NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
 
-  if (dirtyCount) {
-    nsCOMPtr<nsIRunnable> runnable =
-      NS_NEW_RUNNABLE_METHOD(sbLocalDatabasePropertyCache, this, RunFlushThread);
-    NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
-    
-    nsresult rv = mThreadPoolService->Dispatch(runnable, NS_DISPATCH_NORMAL);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    LOG(("property cache flush operation dispatched"));
-  }
+  nsresult rv = mThreadPoolService->Dispatch(runnable, NS_DISPATCH_NORMAL);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  LOG(("property cache flush operation dispatched"));
+
   return NS_OK;
 }
 
@@ -1543,6 +1535,7 @@ nsresult
 sbLocalDatabasePropertyCache::AddDirty(const nsAString &aGuid,
                                        sbLocalDatabaseResourcePropertyBag * aBag)
 {
+  nsresult rv;
   NS_ENSURE_ARG_POINTER(aBag);
   nsAutoString guid(aGuid);
 
@@ -1554,7 +1547,7 @@ sbLocalDatabasePropertyCache::AddDirty(const nsAString &aGuid,
     if (mDirty.Get(guid, nsnull)) {
       NS_WARNING("Property cache forcing Write() due to duplicate "
                  "guids in the dirty bag list.  This should be a rare event.");
-      nsresult rv = Write();
+      rv = Write();
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
@@ -1563,17 +1556,22 @@ sbLocalDatabasePropertyCache::AddDirty(const nsAString &aGuid,
   }
 
   // Invalidate dependent guid arrays.
+  nsCOMArray<sbLocalDatabaseGUIDArray> arrays;
   {
     nsAutoMonitor mon(mDependentGUIDArrayMonitor);
     guidarrayptr_set_t::const_iterator cit = mDependentGUIDArraySet.begin();
     guidarrayptr_set_t::const_iterator end = mDependentGUIDArraySet.end();
     for(; cit != end; ++cit) {
-      nsresult rv = (*cit)->MayInvalidate(guid, aBag);
-      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), 
-        "Failed to invalid GUID array, GUIDs may be stale.");
+      NS_ENSURE_TRUE(arrays.AppendObject(*cit), NS_ERROR_OUT_OF_MEMORY);
     }
   }
 
+  PRInt32 const count = arrays.Count();
+  for (PRInt32 index = 0; index < count; ++index) {
+    rv = arrays[index]->MayInvalidate(guid, aBag);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+      "Failed to invalidate GUID array, GUIDs may be stale.");
+  }
   return NS_OK;
 }
 

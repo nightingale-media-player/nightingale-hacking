@@ -163,7 +163,7 @@ sbLocalDatabaseResourcePropertyBag::GetPropertyByID(PRUint32 aPropertyDBID,
 {
   if(aPropertyDBID > 0) {
     nsAutoMonitor mon(mCache->mMonitor);
-    
+
     sbPropertyData* data;
 
     if (mValueMap.Get(aPropertyDBID, &data)) {
@@ -186,13 +186,13 @@ sbLocalDatabaseResourcePropertyBag::GetSortablePropertyByID(PRUint32 aPropertyDB
     sbPropertyData* data;
 
     if (mValueMap.Get(aPropertyDBID, &data)) {
-      
+
       // Generate and cache the sortable value
       // only when needed
       if (data->sortableValue.IsEmpty()) {
         nsString propertyID;
         PRBool success = mCache->GetPropertyID(aPropertyDBID, propertyID);
-        NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);          
+        NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
         nsCOMPtr<sbIPropertyInfo> propertyInfo;
         nsresult rv = mPropertyManager->GetPropertyInfo(propertyID,
                                                  getter_AddRefs(propertyInfo));
@@ -221,13 +221,13 @@ sbLocalDatabaseResourcePropertyBag::
     sbPropertyData* data;
 
     if (mValueMap.Get(aPropertyDBID, &data)) {
-      
+
       // Generate and cache the searchable value
       // only when needed
       if (data->searchableValue.IsEmpty()) {
         nsString propertyID;
         PRBool success = mCache->GetPropertyID(aPropertyDBID, propertyID);
-        NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);          
+        NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
         nsCOMPtr<sbIPropertyInfo> propertyInfo;
         nsresult rv = mPropertyManager->GetPropertyInfo(propertyID,
                                                  getter_AddRefs(propertyInfo));
@@ -276,50 +276,52 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
 #endif
 
   NS_ENSURE_TRUE(valid, NS_ERROR_ILLEGAL_VALUE);
-  
+
   // Find all properties whose secondary sort depends on this
   // property
   nsCOMPtr<sbIPropertyArray> dependentProperties;
-  rv = mPropertyManager->GetDependentProperties(aPropertyID, 
+  rv = mPropertyManager->GetDependentProperties(aPropertyID,
             getter_AddRefs(dependentProperties));
   NS_ENSURE_SUCCESS(rv, rv);
   PRUint32 dependentPropertyCount;
   rv = dependentProperties->GetLength(&dependentPropertyCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoMonitor mon(mCache->mMonitor);
+  PRUint32 previousDirtyCount = 0;
+  {
+    nsAutoMonitor mon(mCache->mMonitor);
 
-  rv = PutValue(propertyDBID, aValue);
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = PutValue(propertyDBID, aValue);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUint32 previousDirtyCount = mDirty.Count();
-  
-  // Mark the property that changed as dirty
-  mDirty.PutEntry(propertyDBID);
-  
-  // Also mark as dirty any properties that use
-  // the changed property in their secondary sort values
-  if (dependentPropertyCount > 0) {
-    for (PRUint32 i = 0; i < dependentPropertyCount; i++) {
-      nsCOMPtr<sbIProperty> property;
-      rv = dependentProperties->GetPropertyAt(i, getter_AddRefs(property));
-      NS_ASSERTION(NS_SUCCEEDED(rv),
-          "Property cache failed to update dependent properties!");
-      if (NS_SUCCEEDED(rv)) {
-        nsString propertyID;
-        rv = property->GetId(propertyID);
-        NS_ASSERTION(NS_SUCCEEDED(rv), 
-          "Property cache failed to update dependent properties!");
+    previousDirtyCount = mDirty.Count();
+
+    // Mark the property that changed as dirty
+    mDirty.PutEntry(propertyDBID);
+
+    // Also mark as dirty any properties that use
+    // the changed property in their secondary sort values
+    if (dependentPropertyCount > 0) {
+      for (PRUint32 i = 0; i < dependentPropertyCount; i++) {
+        nsCOMPtr<sbIProperty> property;
+        rv = dependentProperties->GetPropertyAt(i, getter_AddRefs(property));
+        NS_ASSERTION(NS_SUCCEEDED(rv),
+            "Property cache failed to update dependent properties!");
         if (NS_SUCCEEDED(rv)) {
-          mDirty.PutEntry(mCache->GetPropertyDBIDInternal(propertyID));
+          nsString propertyID;
+          rv = property->GetId(propertyID);
+          NS_ASSERTION(NS_SUCCEEDED(rv),
+            "Property cache failed to update dependent properties!");
+          if (NS_SUCCEEDED(rv)) {
+            mDirty.PutEntry(mCache->GetPropertyDBIDInternal(propertyID));
+          }
         }
       }
     }
   }
-
   // If this bag just became dirty, then let the property cache know.
-  // Only notify once in order to avoid unnecessarily locking the 
-  // property cache 
+  // Only notify once in order to avoid unnecessarily locking the
+  // property cache
   if (previousDirtyCount == 0) {
     rv = mCache->AddDirty(mGuid, this);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -351,7 +353,7 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
 NS_IMETHODIMP sbLocalDatabaseResourcePropertyBag::Write()
 {
   nsresult rv = NS_OK;
-  
+
   if(mDirty.Count() > 0) {
     rv = mCache->Write();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -364,8 +366,8 @@ nsresult
 sbLocalDatabaseResourcePropertyBag::PutValue(PRUint32 aPropertyID,
                                              const nsAString& aValue)
 {
-  nsAutoPtr<sbPropertyData> data(new sbPropertyData(aValue, 
-                                                    EmptyString(), 
+  nsAutoPtr<sbPropertyData> data(new sbPropertyData(aValue,
+                                                    EmptyString(),
                                                     EmptyString()));
   nsAutoMonitor mon(mCache->mMonitor);
   PRBool success = mValueMap.Put(aPropertyID, data);
@@ -375,7 +377,7 @@ sbLocalDatabaseResourcePropertyBag::PutValue(PRUint32 aPropertyID,
   return NS_OK;
 }
 
-PRBool 
+PRBool
 sbLocalDatabaseResourcePropertyBag::IsPropertyDirty(PRUint32 aPropertyDBID)
 {
   if(mDirty.IsInitialized() && mDirty.GetEntry(aPropertyDBID)) {

@@ -308,7 +308,9 @@
         gBrowser.addEventListener('TabContentChange', this.disabler, false); 
       ]]></constructor>
       <destructor><![CDATA[
-        gBrowser.removeEventListener('TabContentChange', this.disabler, false);
+        if (gBrowser) {
+          gBrowser.removeEventListener('TabContentChange', this.disabler, false);
+        }
       ]]></destructor>
     </implementation>
   </binding>

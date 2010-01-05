@@ -285,7 +285,7 @@ sbLocalDatabaseGUIDArray::GetPropertyCache(sbILocalDatabasePropertyCache** aProp
 NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::SetPropertyCache(sbILocalDatabasePropertyCache* aPropertyCache)
 {
-  // If we already had a property cache we need to remove the guid array from 
+  // If we already had a property cache we need to remove the guid array from
   // the list of depedent guid arrays for the property cache.
   if(mPropertyCache) {
     mPropertyCache->RemoveDependentGUIDArray(this);
@@ -340,7 +340,7 @@ nsresult sbLocalDatabaseGUIDArray::AddSortInternal(const nsAString& aProperty,
     nsresult rv = mPropertyCache->GetPropertyDBID(aProperty, &ss->propertyId);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  
+
   return NS_OK;
 }
 
@@ -355,8 +355,8 @@ nsresult sbLocalDatabaseGUIDArray::ClearSecondarySorts() {
   return NS_OK;
 }
 
-nsresult 
-sbLocalDatabaseGUIDArray::MayInvalidate(const nsAString &aGUID, 
+nsresult
+sbLocalDatabaseGUIDArray::MayInvalidate(const nsAString &aGUID,
                                         sbLocalDatabaseResourcePropertyBag *aBag)
 {
   PRUint32 propertyDBID = 0;
@@ -408,7 +408,7 @@ sbLocalDatabaseGUIDArray::AddSort(const nsAString& aProperty,
   NS_ENSURE_SUCCESS(rv, rv);
 
   mPrimarySortsCount++;
-  
+
   if (!mIsDistinct) {
 
     if (!mPropMan) {
@@ -421,7 +421,7 @@ sbLocalDatabaseGUIDArray::AddSort(const nsAString& aProperty,
     rv = mPropMan->GetPropertyInfo(aProperty,
                                    getter_AddRefs(propertyInfo));
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     nsCOMPtr<sbIPropertyArray> secondarySortProperties;
     rv =
       propertyInfo->GetSecondarySort(getter_AddRefs(secondarySortProperties));
@@ -438,7 +438,7 @@ sbLocalDatabaseGUIDArray::AddSort(const nsAString& aProperty,
         rv = secondarySortProperties->GetPropertyAt(i, getter_AddRefs(property));
         // we cannot support secondary sort on toplevel properties, so skip them
         if (!SB_IsTopLevelProperty(aProperty)) {
-          // don't completely fail AddSort when a dependent property is not found, 
+          // don't completely fail AddSort when a dependent property is not found,
           // just don't add that secondary sort
           NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get dependent property!");
           if (NS_SUCCEEDED(rv)) {
@@ -448,11 +448,11 @@ sbLocalDatabaseGUIDArray::AddSort(const nsAString& aProperty,
             if (NS_SUCCEEDED(rv)) {
               nsString propertyValue;
               rv = property->GetValue(propertyValue);
-              NS_ASSERTION(NS_SUCCEEDED(rv), 
+              NS_ASSERTION(NS_SUCCEEDED(rv),
                            "Failed to get dependent property value!");
               if (NS_SUCCEEDED(rv)) {
-                AddSortInternal(propertyID, 
-                                propertyValue.EqualsLiteral("a"), 
+                AddSortInternal(propertyID,
+                                propertyValue.EqualsLiteral("a"),
                                 PR_TRUE);
               }
             }
@@ -461,7 +461,7 @@ sbLocalDatabaseGUIDArray::AddSort(const nsAString& aProperty,
       }
     }
   }
-  
+
   return Invalidate();
 }
 
@@ -469,7 +469,7 @@ NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::ClearSorts()
 {
   mSorts.Clear();
-  
+
   mPrimarySortsCount = 0;
 
   return Invalidate();
@@ -660,14 +660,12 @@ sbLocalDatabaseGUIDArray::Invalidate()
 
   nsresult rv;
 
-  if (mListener) {
-    nsCOMPtr<sbILocalDatabaseGUIDArrayListener> listener =
-      do_QueryReferent(mListener, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbILocalDatabaseGUIDArrayListener> listener;
+  rv = GetMTListener(getter_AddRefs(listener));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    if (listener) {
-      listener->OnBeforeInvalidate();
-    }
+  if (listener) {
+    listener->OnBeforeInvalidate();
   }
 
   mCache.Clear();
@@ -680,14 +678,10 @@ sbLocalDatabaseGUIDArray::Invalidate()
 
   mValid = PR_FALSE;
 
-  if (mListener) {
-    nsCOMPtr<sbILocalDatabaseGUIDArrayListener>
-      listener = do_QueryReferent(mListener, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (listener) {
-      listener->OnAfterInvalidate();
-    }
+  rv = GetMTListener(getter_AddRefs(listener));
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (listener) {
+    listener->OnAfterInvalidate();
   }
 
   return NS_OK;
@@ -2051,6 +2045,55 @@ PRInt32
 sbLocalDatabaseGUIDArray::GetPropertyId(const nsAString& aProperty)
 {
   return SB_GetPropertyId(aProperty, mPropertyCache);
+}
+
+nsresult
+sbLocalDatabaseGUIDArray::GetMTListener(
+                                 sbILocalDatabaseGUIDArrayListener ** aListener)
+{
+  NS_ENSURE_ARG_POINTER(aListener);
+
+  nsresult rv;
+
+  // if the listener has gone away just return null
+  if (!mListener) {
+    *aListener = nsnull;
+    return NS_OK;
+  }
+  nsCOMPtr<nsIWeakReference> weak;
+  nsCOMPtr<sbILocalDatabaseGUIDArrayListener> listener;
+  if (!NS_IsMainThread()) {
+    nsCOMPtr<nsIThread> mainThread;
+    rv = NS_GetMainThread(getter_AddRefs(mainThread));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = do_GetProxyForObject(mainThread,
+                              mListener.get(),
+                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                              getter_AddRefs(weak));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    listener = do_QueryReferent(weak, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!listener) {
+      *aListener = nsnull;
+      return NS_OK;
+    }
+    nsCOMPtr<sbILocalDatabaseGUIDArrayListener> proxiedListener;
+    rv = do_GetProxyForObject(mainThread,
+                              listener.get(),
+                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                              getter_AddRefs(proxiedListener));
+    NS_ENSURE_SUCCESS(rv, rv);
+    proxiedListener.forget(aListener);
+    return NS_OK;
+  }
+
+  listener = do_QueryReferent(mListener);
+
+  listener.forget(aListener);
+  return NS_OK;
 }
 
 NS_IMPL_ISUPPORTS1(sbGUIDArrayEnumerator, nsISimpleEnumerator)

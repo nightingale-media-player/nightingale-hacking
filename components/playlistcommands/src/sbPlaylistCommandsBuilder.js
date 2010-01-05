@@ -1276,7 +1276,13 @@ PlaylistCommandsBuilder.prototype = {
     for (var i=0;i<this.m_menus.length;i++) {
       for (var j=0;j<this.m_menus[i].m_Menu.length;j++) {
         if (this.m_menus[i].m_Menu[j].m_CommandSubObject) {
-          this.m_menus[i].m_Menu[j].m_CommandSubObject.shutdownCommands();
+          try {
+            this.m_menus[i].m_Menu[j].m_CommandSubObject.shutdownCommands();
+          } 
+          catch (e)
+          {
+            Cu.reportError(e);
+          }
         }
       }
     }
