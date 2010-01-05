@@ -137,6 +137,9 @@ sbOSDControlService.prototype =
     this._osdWinMouseupListener = function(aEvent) {
       self._onOSDWinMouseup(aEvent);
     };
+    this._osdWinKeypressListener = function(aEvent) {
+      self._onOSDWinKeypress(aEvent);
+    };
     this._osdWindow.addEventListener("blur",
                                      this._osdWinBlurListener,
                                      false);
@@ -152,6 +155,9 @@ sbOSDControlService.prototype =
     this._osdWindow.addEventListener("mouseup",
                                      this._osdWinMouseupListener,
                                      false);
+    this._osdWindow.addEventListener("keypress",
+                                     this._osdWinKeypressListener,
+                                     false)
     this._videoWindow.addEventListener("blur",
                                        this._videoWinBlurListener,
                                        false);
@@ -189,6 +195,9 @@ sbOSDControlService.prototype =
     this._osdWindow.removeEventListener("mouseup",
                                         this._osdWinMouseupListener,
                                         false);
+    this._osdWindow.removeEventListener("keypress",
+                                        this._osdWinKeypressListener,
+                                        false)
     this._videoWindow.removeEventListener("blur",
                                           this._videoWinBlurListener,
                                           false);
@@ -247,8 +256,8 @@ sbOSDControlService.prototype =
 
     transition.apply(this, [function() {
       if (!self._cloakService.isCloaked(self._osdWindow)) {
-        if (this._osdWinHasFocus) {
-          this._videoWindow.focus();
+        if (self._osdWinHasFocus) {
+          self._videoWindow.focus();
         }
         self._cloakService.cloak(self._osdWindow);
       }
@@ -388,6 +397,18 @@ sbOSDControlService.prototype =
       // User released the mouse button, reset the timer
       this._mouseDownOnOSD = false;
       this.showOSDControls(Ci.sbIOSDControlService.TRANSITION_NONE);
+    }
+  },
+
+  _onOSDWinKeypress: function(aEvent) {
+    if (!aEvent.getPreventDefault())
+    {
+      let event = this._videoWindow.document.createEvent("KeyboardEvent");
+      event.initKeyEvent(aEvent.type, aEvent.bubbles, aEvent.cancelable,
+                         this._videoWindow, aEvent.ctrlKey, aEvent.altKey,
+                         aEvent.shiftKey, aEvent.metaKey, aEvent.keyCode,
+                         aEvent.charCode);
+      this._videoWindow.dispatchEvent(event);
     }
   },
 
