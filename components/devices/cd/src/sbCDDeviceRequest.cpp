@@ -431,6 +431,10 @@ sbCDDevice::UpdateDeviceLibrary(sbIDeviceLibrary* aLibrary)
 
   NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
 
+  // Clear out any previous information.
+  rv = mDeviceLibrary->Clear();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Update the library with the new media files.
   nsCOMPtr<nsIArray> mediaItemList;
   rv = mDeviceLibrary->BatchCreateMediaItems(newFileURIList,
