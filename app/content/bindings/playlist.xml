@@ -1061,9 +1061,12 @@
       <method name="_restoreDefaultColumns">
         <body>
 <![CDATA[
-  // Remove the columnSpec for this list
+  // Remove all the columnSpecs for this list
   var medialist = this.mediaListView.mediaList;
   medialist.setProperty(SBProperties.columnSpec, null);
+  medialist.setProperty(SBProperties.columnSpec +
+                          "+(" + this._mediaType + ")",
+                        null);
 
   // Reset the columnSpec pref, if we have one
   if (this.hasAttribute("useColumnSpecPreference")) {
