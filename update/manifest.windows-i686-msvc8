@@ -659,6 +659,7 @@
 ./xulrunner/mozcrt19.dll
 ./xulrunner/mozctl.dll
 ./xulrunner/mozctlx.dll
+./xulrunner/nsinstall.exe
 ./xulrunner/nspr4.dll
 ./xulrunner/nss3.dll
 ./xulrunner/nssckbi.dll
