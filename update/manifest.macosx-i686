@@ -9,6 +9,8 @@
 ./chrome/gonzo.manifest
 ./chrome/locales.jar
 ./chrome/locales.manifest
+./chrome/purplerain.jar
+./chrome/purplerain.manifest
 ./chrome/songbird.jar
 ./chrome/songbird.manifest
 ./components/DeviceDeviceTester.xpt
@@ -25,6 +27,7 @@
 ./components/nsSearchSuggestions.js
 ./components/nsSidebar.js
 ./components/sbAboutCredits.js
+./components/sbAboutDRM.js
 ./components/sbAboutGStreamer.js
 ./components/sbAboutRedirector.js
 ./components/sbAddOnBundleUpdateService.js
@@ -121,6 +124,7 @@
 ./components/sbLocalDatabaseMigrationHelper.js
 ./components/sbM3UPlaylistWriter.js
 ./components/sbMacFileSystemEvents.dylib
+./components/sbMacPurpleRainComponent.dylib
 ./components/sbMediaContentListener.js
 ./components/sbMediaExport.dylib
 ./components/sbMediaExportAgentService.dylib
@@ -254,9 +258,8 @@
 ./extensions/mediapage-test-stub@songbirdnest.com/chrome.manifest
 ./extensions/mediapage-test-stub@songbirdnest.com/chrome/testMediaPage.jar
 ./extensions/mediapage-test-stub@songbirdnest.com/install.rdf
-./extensions/rubberducky-dependencies@songbirdnest.com/chrome.manifest
-./extensions/rubberducky-dependencies@songbirdnest.com/chrome/rubberducky-dependencies.jar
-./extensions/rubberducky-dependencies@songbirdnest.com/install.rdf
+./extensions/purplerain@songbirdnest.com/chrome.manifest
+./extensions/purplerain@songbirdnest.com/install.rdf
 ./extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/chrome.manifest
 ./extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/chrome/venkman.jar
 ./extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/components/venkman-service.js

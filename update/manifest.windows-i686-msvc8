@@ -11,6 +11,8 @@
 ./chrome/icons/default/default.ico
 ./chrome/locales.jar
 ./chrome/locales.manifest
+./chrome/purplerain.jar
+./chrome/purplerain.manifest
 ./chrome/songbird.jar
 ./chrome/songbird.manifest
 ./components/DeviceDeviceTester.xpt
@@ -27,6 +29,7 @@
 ./components/nsSearchSuggestions.js
 ./components/nsSidebar.js
 ./components/sbAboutCredits.js
+./components/sbAboutDRM.js
 ./components/sbAboutGStreamer.js
 ./components/sbAboutRedirector.js
 ./components/sbAddOnBundleUpdateService.js
@@ -283,9 +286,8 @@
 ./extensions/mtp@songbirdnest.com/install.rdf
 ./extensions/mtp@songbirdnest.com/platform/WINNT_x86-msvc/components/mtpDeviceServicePaneService.js
 ./extensions/mtp@songbirdnest.com/platform/WINNT_x86-msvc/components/sbMTPWin32.dll
-./extensions/rubberducky-dependencies@songbirdnest.com/chrome.manifest
-./extensions/rubberducky-dependencies@songbirdnest.com/chrome/rubberducky-dependencies.jar
-./extensions/rubberducky-dependencies@songbirdnest.com/install.rdf
+./extensions/purplerain@songbirdnest.com/chrome.manifest
+./extensions/purplerain@songbirdnest.com/install.rdf
 ./extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/chrome.manifest
 ./extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/chrome/venkman.jar
 ./extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/components/venkman-service.js
@@ -453,6 +455,7 @@
 ./songbird.exe
 ./songbird.ini
 ./songbirditunesagent.exe
+./splash.bmp
 ./updater.ini
 ./xulrunner/AccessibleMarshal.dll
 ./xulrunner/IA2Marshal.dll
