@@ -175,7 +175,7 @@ function ColumnSpecParser(aMediaList, aPlaylist, aMask, aConstraint) {
                                    SBProperties.rating, 78,
                                    SBProperties.comment, 307,
                                   ].join(" "),
-                                  this.ORIGIN_DEFAULT);
+                                  self.ORIGIN_DEFAULT);
       default:
         return self._getColumnMap([SBProperties.trackName, 229,
                                    SBProperties.duration, 45,
@@ -184,7 +184,7 @@ function ColumnSpecParser(aMediaList, aPlaylist, aMask, aConstraint) {
                                    SBProperties.genre, 101,
                                    SBProperties.rating, 78,
                                   ].join(" "),
-                                  this.ORIGIN_DEFAULT);
+                                  self.ORIGIN_DEFAULT);
     }
   }
 
