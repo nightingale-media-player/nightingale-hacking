@@ -197,7 +197,7 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
       const char defaultBlacklistExtensions[] =
         "txt,htm,html,xml,pdf,cpl,msstyles,scr,sys,ocx,bz2,gz,zip,Z,rar,tar,dll,"
         "exe,a,bmp,png,gif,jpeg,jpg,jpe,tif,tiff,xpm,dat,swf,swfl,stm,cgi,sf,xcf,"
-        "far,wvc,mpc,mpp,mp+";
+        "far,wvc,mpc,mpp,mp+"; /*ra,rm,rmvb*/
       char* blacklistExtensionsPtr = nsnull;
       rv = rootPrefBranch->GetCharPref(BLACKLIST_EXTENSIONS_PREF,
                                        &blacklistExtensionsPtr);
