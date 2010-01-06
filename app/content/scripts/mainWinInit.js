@@ -259,7 +259,7 @@ function SBDoFirstRun() {
           Application.prefs.getValue("songbird.firstrun.is_session", false);
     if (isFirstRun) {    
       const placeholderURL = "chrome://songbird/content/mediapages/firstrun.xul";
-      var currentURI = gBrowser.selectedBrowser.currentURI.spec;
+      var currentURI = gBrowser.mediaTab.linkedBrowser.currentURI.spec;
       if (currentURI == placeholderURL || currentURI == "about:blank") {
         const nsIWebNavigation = Components.interfaces.nsIWebNavigation;
         var mediaListView = LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary);

@@ -5,17 +5,9 @@ if (typeof(Ci) == "undefined")
 if (typeof(Cu) == "undefined")
 	var Cu = Components.utils;
 
-if (typeof(SBProperties) == "undefined") {
-    Cu.import("resource://app/jsmodules/sbProperties.jsm");
-    if (!SBProperties)
-        throw new Error("Import of sbProperties module failed");
-}
-
-if (typeof(LibraryUtils) == "undefined") {
-    Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
-    if (!LibraryUtils)
-        throw new Error("Import of sbLibraryUtils module failed");
-}
+Cu.import("resource://app/jsmodules/StringUtils.jsm");
+Cu.import("resource://app/jsmodules/sbProperties.jsm");
+Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 
 if (typeof(songbirdMainWindow) == "undefined")
 	var songbirdMainWindow = Cc["@mozilla.org/appshell/window-mediator;1"]
@@ -43,7 +35,9 @@ function flushDisplay() {
 	}
 }
 
-	
+var letterIndices = ['Z','Y','X','W','V','U','T','S','R','Q','P','O','N','M',
+                     'L','K','J','I','H','G','F','E','D','C','B','A','#'];
+
 if (typeof ConcertTicketing == 'undefined') {
 	var ConcertTicketing = {};
 }
@@ -55,11 +49,11 @@ ConcertTicketing.unload = function() {
 }
 
 ConcertTicketing.init = function() {
-	// Set the tab title
-	var servicePaneStr = Cc["@mozilla.org/intl/stringbundle;1"]
-		.getService(Ci.nsIStringBundleService)
-		.createBundle("chrome://concerts/locale/overlay.properties");
-	document.title = servicePaneStr.GetStringFromName("servicePaneName");
+  // Set the tab title
+  var servicePaneStr = Cc["@mozilla.org/intl/stringbundle;1"]
+            .getService(Ci.nsIStringBundleService)
+            .createBundle("chrome://concerts/locale/overlay.properties");
+  document.title = servicePaneStr.GetStringFromName("servicePaneName");
 
 	var self = this;
 
@@ -90,6 +84,14 @@ ConcertTicketing.init = function() {
 			"http://www.w3.org/1999/xhtml", "html:link");
 	cssNode.type = 'text/css';
 	cssNode.rel = 'stylesheet';
+	cssNode.href = 'chrome://songbird/skin/html.css';
+	cssNode.media = 'screen';
+	headNode.appendChild(cssNode);
+
+	cssNode = this._browseDoc.createElementNS(
+			"http://www.w3.org/1999/xhtml", "html:link");
+	cssNode.type = 'text/css';
+	cssNode.rel = 'stylesheet';
 	cssNode.href = 'chrome://concerts/skin/browse.css';
 	cssNode.media = 'screen';
 	headNode.appendChild(cssNode);
@@ -101,12 +103,6 @@ ConcertTicketing.init = function() {
 	// Set the checked state for the filter checkbox
 	this.filterLibraryArtists = Application.prefs
 			.getValue("extensions.concerts.filterLibraryArtists", true);
-	var checkbox = document.getElementById("checkbox-library-artists");
-	checkbox.style.visibility = "visible";
-	if (this.filterLibraryArtists == true)
-		checkbox.setAttribute("checked", true);
-	else
-		checkbox.setAttribute("checked", false);
 	
 	// Get pref to display play link or not
 	this.showPlayLink = Application.prefs
@@ -117,18 +113,6 @@ ConcertTicketing.init = function() {
 	// Set the last saved concert count
 	this.lastConcertCount = this.skSvc.getConcertCount(
 			this.filterLibraryArtists);
-
-	// See what our last groupby was, and set the state of the menulist
-	// accordingly
-	var groupBy = Application.prefs.getValue("extensions.concerts.groupby",
-			"artist");
-	var groupMenuList = document.getElementById("group-menulist");
-	for (var i=0; i<groupMenuList.itemCount; i++) {
-		if (groupMenuList.getItemAtIndex(i).value == groupBy) {
-			groupMenuList.selectedIndex = i;
-			break;
-		}
-	}
 
 	gMetrics.metricsInc("concerts", "servicepane.clicked", "");
 	// Register our UI display callback with the Songkick object
@@ -181,8 +165,6 @@ ConcertTicketing.editLocation = function() {
 	deck.setAttribute("previous-selected-deck", deck.selectedIndex);
 	
 	// Hide the stuff we don't want to display
-	document.getElementById("pref-about").style.visibility = "hidden";
-	document.getElementById("about-text").style.visibility = "hidden";
 	document.getElementById("pref-library").style.visibility = "hidden";
 	document.getElementById("library-ontour-box").style.visibility ="collapse";
 
@@ -373,11 +355,11 @@ ConcertTicketing.indexJump = function(e) {
 	this._browseDoc = iframe.contentWindow.document;
 
 	var anchor;
-	if (this.id.indexOf("letter-index-") >= 0) {
-		var letter = this.value;
+	if (this.id.indexOf("concerts-nav-letter-") >= 0) {
+		var letter = this.id.replace("concerts-nav-letter-", "");
 		anchor = this._browseDoc.getElementById("indexLetter-" + letter);
 	} else {
-		var dateComponent = this.id.split("-")[2];
+		var dateComponent = this.id.split("-")[3];
 		anchor = this._browseDoc.getElementById("indexDate-" + dateComponent);
 	}
 	if (anchor) {
@@ -398,15 +380,6 @@ ConcertTicketing.browseConcerts = function(ticketingObj) {
 	var deck = document.getElementById("concerts-deck");
 	deck.setAttribute("selectedIndex", 0);
 
-	// Display the user's location in the top-right label
-	this.pCountry = Application.prefs.getValue("extensions.concerts.country",0);
-	this.pState = Application.prefs.getValue("extensions.concerts.state",0);
-	this.pCity = Application.prefs.getValue("extensions.concerts.city", 0);
-	var regionLabel = document.getElementById("label-myregion");
-	var locationString = this.skSvc.getLocationString(this.pCountry,
-			this.pState, this.pCity);
-	regionLabel.value = locationString;
-	regionLabel.className = "text-link";
 	/*
 	 * bug 13347 - disabling this in favour of going to 'edit location' page
 	 * instead
@@ -420,6 +393,8 @@ ConcertTicketing.browseConcerts = function(ticketingObj) {
 	while (this._bodyNode.firstChild) {
 		this._bodyNode.removeChild(this._bodyNode.firstChild);
 	}
+
+  /*
 	// Add the Songkick logo
 	var skDiv = this.createBlock("powered-by-songkick");
 	skDiv.style.width = "100%";
@@ -430,60 +405,168 @@ ConcertTicketing.browseConcerts = function(ticketingObj) {
 	skImg.addEventListener("click", this.openProviderPage, false);
 	skDiv.appendChild(skImg);
 	this._bodyNode.appendChild(skDiv);
-	
-	flushDisplay();
-
+  */
+  
 	var easterEgg = Application.prefs.getValue("extensions.concerts.epic", 0);
 	if (easterEgg == "doctorwho") {
 		ConcertTicketing.showTimeoutError();
 		return;
 	}
-	
+
+  var doc = this._browseDoc;
+  var str = this._strings;
+
+  // Add the header block
+  var headerDiv = this.createBlock("header");
+  var concertsImage = doc.createElement("img");
+  concertsImage.src = "chrome://concerts/skin/Concerts.png";
+  concertsImage.id = "concerts-logo";
+  headerDiv.appendChild(concertsImage);
+  var songkickImage = doc.createElement("img");
+  songkickImage.src = "chrome://concerts/content/songkick-logo-concerts-home.png";
+  songkickImage.id = "songkick-logo";
+  songkickImage.className = "clickable";
+  songkickImage.addEventListener("click", this.openProviderPage, false);
+  headerDiv.appendChild(songkickImage);
+  this._bodyNode.appendChild(headerDiv);
+
+  // Add the subheader block
+  var subHeaderDiv = this.createBlock("sub-header");
+  var numConcertsShownDiv = this.createBlock("num-concerts", true);
+  subHeaderDiv.appendChild(numConcertsShownDiv); 
+	var concertsShown = this.skSvc.getConcertCount(this.filterLibraryArtists);
+  var bundle = new SBStringBundle("chrome://concerts/locale/overlay.properties");
+  var numConcertsStr = bundle.formatCountString("concertsShown",
+                                                concertsShown,
+                                                [ concertsShown ],
+                                                "foo");
+  numConcertsShownDiv.appendChild(doc.createTextNode(numConcertsStr));
+  songbirdMainWindow.Concerts.updateConcertCount();
+
+  
+  var locationChangeDiv = this.createBlock("location", true);
+  subHeaderDiv.appendChild(locationChangeDiv);
+  var cityName = this.createBlock("location-city", true);
+	this.pCountry = Application.prefs.getValue("extensions.concerts.country",0);
+	this.pState = Application.prefs.getValue("extensions.concerts.state",0);
+	this.pCity = Application.prefs.getValue("extensions.concerts.city", 0);
+	var locationString = this.skSvc.getLocationString(this.pCountry,
+                                                    this.pState,
+                                                    this.pCity);
+  cityName.appendChild(doc.createTextNode(locationString));
+  locationChangeDiv.appendChild(cityName);
+  var changeLocation = this.createBlock("location-change", true);
+  changeLocation.appendChild(doc.createTextNode(str.getString("changeLoc")));
+  locationChangeDiv.appendChild(changeLocation);
+  changeLocation.addEventListener("click", ConcertTicketing.editLocation,
+                                  false);
+
+  var filterDiv = this.createBlock("filter", true);
+  var checkbox = doc.createElement("input");
+  checkbox.setAttribute("type", "checkbox");
+  if (this.filterLibraryArtists)
+    checkbox.setAttribute("checked", true);
+  checkbox.addEventListener("click", function(e)
+      { ConcertTicketing.changeFilter(false); }, false);
+  filterDiv.appendChild(checkbox);
+  filterDiv.appendChild(doc.createTextNode(str.getString("filter")));
+  subHeaderDiv.appendChild(filterDiv);
+
+  var clearDiv = this.createBlock("sub-header-empty");
+  clearDiv.style.clear = "both";
+  subHeaderDiv.appendChild(clearDiv);
+  this._bodyNode.appendChild(subHeaderDiv);
+
+
 	var groupBy = Application.prefs.getValue("extensions.concerts.groupby",
-			"artist");
-	var concertsShown;
-	if (groupBy == "artist" || groupBy == "venue") {
-		// Reset the letter indices
-		var letters = document.getElementById("box-index-letter").childNodes;
-		for (let letter in letters) {
-			letters[letter].className="index-letter";
-		}
+	                                         "artist");
+  // Add the nav block - the View/Concerts/Artists selector
+  var navDiv = this.createBlock("concerts-nav");
+  var viewSpan = this.createBlock("concerts-nav-view", true);
+  viewSpan.appendChild(doc.createTextNode(str.getString("navView")));
 
-		// Show the letter indices
-		var deck = document.getElementById("index-deck");
-		deck.setAttribute("selectedIndex", 0);
+  var datesSpan = this.createBlock("concerts-nav-concerts", true);
+  var artistsSpan = this.createBlock("concerts-nav-artists", true);
+  if (groupBy == "artist") {
+    artistsSpan.className += " concerts-nav-selected";
+    datesSpan.addEventListener("mouseover", function(e)
+        {
+          datesSpan.className += " concerts-nav-hover";
+        }, false);
+    datesSpan.addEventListener("mouseout", function(e)
+        {
+          datesSpan.className = datesSpan.className.replace(
+                                      " concerts-nav-hover", "");
+        }, false);
+    datesSpan.addEventListener("click", function(e)
+        {
+          ConcertTicketing.groupBy("date");
+        }, false);
+  } else {
+    datesSpan.className += " concerts-nav-selected";
+    artistsSpan.addEventListener("mouseover", function(e)
+        {
+          artistsSpan.className += " concerts-nav-hover";
+        }, false);
+    artistsSpan.addEventListener("mouseout", function(e)
+        {
+          artistsSpan.className = artistsSpan.className.replace(
+                                      " concerts-nav-hover", "");
+        }, false);
+    artistsSpan.addEventListener("click", function(e)
+        {
+          ConcertTicketing.groupBy("artist");
+        }, false);
+   }
 
-		if (groupBy == "artist")
-			concertsShown = this.browseArtists();
-		else
-			concertsShown = this.browseVenues();
-	} else {
-		// Clear the calendar indices
-		var dateIndexBox = document.getElementById("box-index-date");
-		while (dateIndexBox.firstChild)
-			dateIndexBox.removeChild(dateIndexBox.firstChild);
+  datesSpan.appendChild(doc.createTextNode(str.getString("navDates")));
+  artistsSpan.appendChild(doc.createTextNode(str.getString("navArtists")));
+  navDiv.appendChild(viewSpan);
+  navDiv.appendChild(datesSpan);
+  navDiv.appendChild(artistsSpan);
 
-		// Populate the calendar indices
+  var indexDiv = this.createBlock("concerts-nav-index");
+	if (groupBy == "artist") {
+    // group by Artist Names
+    // Add the #,A-Z index letters
+    for (var i in letterIndices) {
+      var l = letterIndices[i];
+      var letterSpan = this.createBlock("concerts-nav-letter", true);
+      letterSpan.id = "concerts-nav-letter-" + l;
+      letterSpan.appendChild(doc.createTextNode(l));
+      indexDiv.appendChild(letterSpan);
+    }
+  } else {
+    // group by Concert Dates
 		var myDate = new Date();
 		myDate.setDate(1);
+    var dates = [];
 		for (let i=0; i<6; i++) {
 			var mon = myDate.getMonth();
 			var year = myDate.getFullYear();
 			var dateStr = myDate.toLocaleFormat("%b %Y");
-			var dateLabel = document.createElement("label");
-			dateLabel.setAttribute("value", dateStr);
-			dateLabel.className = "index-date";
-			dateLabel.id = "date-index-" + mon + year;
-			dateIndexBox.appendChild(dateLabel);
+      var dateSpan = this.createBlock("concerts-nav-date", true);
+      dateSpan.appendChild(doc.createTextNode(dateStr));
+      dateSpan.id = "concerts-nav-date-" + mon + year;
 			myDate.setMonth(mon+1);
+      dates.push(dateSpan);
+    }
+    for (var i in dates.reverse()) {
+      indexDiv.appendChild(dates[i], null);
 		}
+  }
+  navDiv.appendChild(indexDiv);
+  clearDiv = this.createBlock("concerts-nav-empty");
+  clearDiv.style.clear = "both";
+  navDiv.appendChild(clearDiv);
+  this._bodyNode.appendChild(navDiv);
+	
+	flushDisplay();
 
-		// Show the calendar indices 
-		var deck = document.getElementById("index-deck");
-		deck.setAttribute("selectedIndex", 1);
-
-		concertsShown = this.browseDates();
-	}
+  if (groupBy == "artist")
+    this.browseArtists();
+	else
+		this.browseDates();
 
 	if (concertsShown > 0) {
 		var ft = this.createBlock("ft");
@@ -535,6 +618,11 @@ ConcertTicketing.browseDates = function() {
 			this.filterLibraryArtists);
 	var concertsShown = 0;
 
+	var contentsNode = this._browseDoc.createElement("div");
+  contentsNode.id = "concerts-contents";
+
+	this._bodyNode.appendChild(contentsNode);
+	
 	var today = new Date();
 	var todayMon = today.getMonth();
 	var todayDate = today.getDate();
@@ -558,11 +646,22 @@ ConcertTicketing.browseDates = function() {
 			continue;
 		}
 
-		var dateIndex = document.getElementById("date-index-" + thisIndex);
+    var doc = this._browseDoc;
+    var dateIndex = doc.getElementById("concerts-nav-date-" + thisIndex);
 		if (dateIndex == null) {
 			continue;
 		}
-		dateIndex.className = "index-date text-link";
+		dateIndex.className += " concerts-nav-date-link";
+    dateIndex.addEventListener("mouseover", function(e)
+        {
+          var el = e.currentTarget;
+          el.className += " concerts-nav-hover";
+        }, false);
+    dateIndex.addEventListener("mouseout", function(e)
+        {
+          var el = e.currentTarget;
+          el.className = el.className.replace(" concerts-nav-hover", "");
+        }, false);
 		dateIndex.addEventListener("click", ConcertTicketing.indexJump, false);
 
 		if (thisDate != lastDate) {
@@ -587,7 +686,7 @@ ConcertTicketing.browseDates = function() {
 			dateBlock.appendChild(concertTableBlock);
 			dateDiv.appendChild(dateIndexContainer);
 			dateDiv.appendChild(dateBlock);
-			this._bodyNode.appendChild(dateDiv);
+			contentsNode.appendChild(dateDiv);
 			flushDisplay();
 		}
 		
@@ -698,6 +797,8 @@ ConcertTicketing.browseArtists = function() {
 	var concertsShown = 0;
 	
 	var contentsNode = this._browseDoc.createElement("div");
+  contentsNode.id = "concerts-contents";
+
 	this._bodyNode.appendChild(contentsNode);
 	
 	var today = new Date();
@@ -726,11 +827,25 @@ ConcertTicketing.browseArtists = function() {
 		var thisLetter = concert.artistname[0].toUpperCase();
 		if (thisLetter < 'A' || thisLetter > 'Z')
 			thisLetter = '#';
-		var letterIdx = document.getElementById("letter-index-" + thisLetter);
-		if (letterIdx == null)
-			return;
-		letterIdx.className = "index-letter text-link";
-		letterIdx.addEventListener("click", this.indexJump, false);
+
+    var doc = this._browseDoc;
+    var letterIdx = doc.getElementById("concerts-nav-letter-" + thisLetter);
+		if (letterIdx == null) {
+			continue;
+		}
+		letterIdx.className += " concerts-nav-letter-link";
+    letterIdx.addEventListener("mouseover", function(e)
+        {
+          var el = e.currentTarget;
+          el.className += " concerts-nav-hover";
+        }, false);
+    letterIdx.addEventListener("mouseout", function(e)
+        {
+          var el = e.currentTarget;
+          el.className = el.className.replace(" concerts-nav-hover", "");
+        }, false);
+		letterIdx.addEventListener("click", ConcertTicketing.indexJump, false);
+
 		if (thisLetter != lastLetter) {
 			// Create the block for concert listings of the same letter index
 			var letterDiv = this.createBlock("indexDiv");

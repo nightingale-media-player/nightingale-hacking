@@ -62,6 +62,23 @@ const PREF_STATE = "songbird.albumart.displaypane.view";
 if (typeof(XLINK_NS) == "undefined")
   const XLINK_NS = "http://www.w3.org/1999/xlink";
 
+/*
+ * Function invoked by the display pane manager to populate the display pane
+ * menu.
+ */
+function onDisplayPaneMenuPopup(command, menupopup, doc) {
+  switch (command) {
+    case "create":
+      AlbumArt._populateMenuControl(menupopup, doc);
+      break;
+    case "destroy":
+      AlbumArt._destroyMenuControl();
+      break;
+    default:
+      dump("AlbumArt displaypane menu: unknown command: " + command + "\n");
+  }
+}
+
 /******************************************************************************
  *
  * \class AlbumArt 
@@ -83,39 +100,61 @@ var AlbumArt = {
   // Array of state information for each display (selected/playing/etc)
   _stateInfo: [ { imageID: "sb-albumart-selected",
                   titleID: "selected",
+                  menuID: "selected",
                   defaultTitle: "Now Selected"
                 },
                 { imageID: "sb-albumart-playing",
                   titleID: "playing",
+                  menuID: "playing",
                   defaultTitle: "Now Playing"
                 }
               ],
   _currentState: STATE_SELECTED, // Default to now selected state (display)
 
+  _switchToNowPlaying: function() {
+    AlbumArt.switchState(STATE_PLAYING);
+  },
+  _switchToNowSelected: function() {
+    AlbumArt.switchState(STATE_SELECTED);
+  },
+  _populateMenuControl: function AlbumArt_populateMenuControl(menupopup, doc) {
+    // now playing
+    var nowPlayingMenu = doc.createElement("menuitem");
+    var titleInfo = AlbumArt._stateInfo[STATE_PLAYING];
+    var npString = SBString("albumart.displaypane.menu.show" +
+                            titleInfo.titleID, titleInfo.defaultTitle);
+    nowPlayingMenu.setAttribute("label", npString);
+    nowPlayingMenu.setAttribute("type", "radio");
+    nowPlayingMenu.addEventListener("command", AlbumArt._switchToNowPlaying,
+                                    false);
+    menupopup.appendChild(nowPlayingMenu);
+    
+    // now selected
+    var nowSelectedMenu = doc.createElement("menuitem");
+    titleInfo = AlbumArt._stateInfo[STATE_SELECTED];
+    var nsString = SBString("albumart.displaypane.menu.show" +
+                         titleInfo.titleID, titleInfo.defaultTitle);
+    nowSelectedMenu.setAttribute("label", nsString);
+    nowSelectedMenu.setAttribute("type", "radio");
+    nowSelectedMenu.addEventListener("command",
+                                                  AlbumArt._switchToNowSelected,
+                                                  false);
+    menupopup.appendChild(nowSelectedMenu);
+   
+    if (AlbumArt._currentState == STATE_PLAYING)
+      nowPlayingMenu.setAttribute("selected", "true");
+    else
+      nowSelectedMenu.setAttribute("selected", "true");
 
-  /**
-   * \brief makeTitleBarButton - This modifies the display pane title bar so
-   *        that it acts like a button to toggle between the different displays.
-   */
-  makeTitleBarButton: function AlbumArt_makeTitleBarButton() {
-    if (AlbumArt._displayPane) {
-      // Make the title bar of the display pane act like a button
-      AlbumArt._displayPane.makeClickableTitleBar(AlbumArt.titleClick);
+    AlbumArt._menuPopup = menupopup;
+  },
+
+  _destroyMenuControl: function AlbumArt_destroyMenuControl() {
+    while (AlbumArt._menuPopup.firstChild) {
+      AlbumArt._menuPopup.removeChild(AlbumArt._menuPopup.firstChild);
     }
   },
-  
-  /**
-   * \brief titleClick - This handles the event when the user clicks the title
-   *        bar of the display pane, for primary button clicks we toggle the
-   *        view.
-   * \param aEvent - is the event of this click.
-   */
-  titleClick: function AlbumArt_titleClick(aEvent) {
-    if (aEvent.button == 0) {
-      AlbumArt.toggleView();
-    }
-  },
-  
+
   /**
    * \brief onImageDblClick - This function is called when the user double
    *        clicks the image.
@@ -178,16 +217,17 @@ var AlbumArt = {
     albumArtDeck.selectedIndex = AlbumArt._currentState;
     AlbumArt.setPaneTitle();
 
-    // Update the display-pane title button tooltip
-    var tooltip = "";
-    if (AlbumArt._currentState == STATE_SELECTED) {
-      // tooltip should show going to now playing
-      tooltip = SBString("albumart.displaypane.tooltip.playing");
+    if (AlbumArt._currentState == STATE_PLAYING) {
+      document.getElementById("showNowSelectedMenuItem")
+              .setAttribute("checked", "false");
+      document.getElementById("showNowPlayingMenuItem")
+              .setAttribute("checked", "true");
     } else {
-      // tooltip should show going to selected track
-      tooltip = SBString("albumart.displaypane.tooltip.selected");
+      document.getElementById("showNowPlayingMenuItem")
+              .setAttribute("checked", "false");
+      document.getElementById("showNowSelectedMenuItem")
+              .setAttribute("checked", "true");
     }
-    AlbumArt._displayPane.titlebarTooltipText = tooltip;
   },
 
   /**
@@ -253,6 +293,7 @@ var AlbumArt = {
                                              aImageElement,
                                              aNotBox,
                                              aDragBox,
+                                             aStack,
                                              isPlayingOrSelected) {
     // Determine what to display
     if (!isPlayingOrSelected) {
@@ -266,6 +307,8 @@ var AlbumArt = {
 
       // Set the image to the default cover
       aNewURL = DROP_TARGET_IMAGE;
+    
+      aStack.className = "artwork-none";
     } else if (!aNewURL) {
       // We are playing or have selected items, but the image is not available
 
@@ -277,6 +320,8 @@ var AlbumArt = {
 
       // Set the image to the default cover
       aNewURL = DROP_TARGET_IMAGE;
+      
+      aStack.className = "artwork-none";
     } else {
       // We are playing or have selected items, and we have a valid image
 
@@ -285,10 +330,20 @@ var AlbumArt = {
 
       // Hide the Drag Here box
       aDragBox.hidden = true;
+      
+      aStack.className = "artwork-found";
     }
 
-    // Auto-fetch artwork.
-    AlbumArt.autoFetchArtwork();
+    if (!Application.prefs.getValue("songbird.albumart.autofetch.disabled",
+                                    false)) {
+      // Auto-fetch artwork.
+      AlbumArt.autoFetchArtwork();
+    }
+
+    var princely = Application.prefs.getValue("songbird.purplerain.prince",
+                                              false);
+    if ((princely == "1") && aNotBox.hidden)
+      aNewURL = "chrome://songbird/skin/album-art/princeaa.jpg";
 
     /* Set the image element URL */
     if (aNewURL)
@@ -306,12 +361,18 @@ var AlbumArt = {
     var albumArtSelectedImage = document.getElementById('sb-albumart-selected');
     var albumArtNotSelectedBox = document.getElementById('sb-albumart-not-selected');
     var albumArtSelectedDragBox = document.getElementById('sb-albumart-select-drag');
+    var stack = document.getElementById('sb-albumart-nowselected-stack');
     
+    if (AlbumArt._mediaListView)
+      isSelected = AlbumArt._mediaListView.selection.count > 0;
+    else
+      isSelected = false;
     this.changeImage(aNewURL,
                      albumArtSelectedImage,
                      albumArtNotSelectedBox,
                      albumArtSelectedDragBox,
-                     (AlbumArt.getSelection().count > 0));
+                     stack,
+                     isSelected);
   },
   
   /**
@@ -323,11 +384,13 @@ var AlbumArt = {
     var albumArtPlayingImage = document.getElementById('sb-albumart-playing');
     var albumArtNotPlayingBox = document.getElementById('sb-albumart-not-playing');
     var albumArtPlayingDragBox = document.getElementById('sb-albumart-playing-drag');
+    var stack = document.getElementById('sb-albumart-nowplaying-stack');
     
     this.changeImage(aNewURL,
                      albumArtPlayingImage,
                      albumArtNotPlayingBox,
                      albumArtPlayingDragBox,
+                     stack,
                      (this.getNowPlayingItem() != null));
   },
 
@@ -380,6 +443,12 @@ var AlbumArt = {
     if (dpInstantiator) {
       AlbumArt._displayPane = dpInstantiator.displayPane;
     }
+    // Set the special attribute that we use for removing the always-visible
+    // grippy
+    var splitter = AlbumArt._displayPane._splitter;
+    splitter.setAttribute("hovergrippy", "true");
+    // Also remove the ability for this slider to be manually resized
+    splitter.setAttribute("disabled", "true");
 
     // Get the mediacoreManager.
     AlbumArt._mediacoreManager =
@@ -389,6 +458,13 @@ var AlbumArt = {
     // Load the previous selected display the user shutdown with
     AlbumArt._currentState = Application.prefs.getValue(PREF_STATE,
                                                         AlbumArt._currentState);
+    if (AlbumArt._currentState == STATE_PLAYING) {
+      document.getElementById("showNowPlayingMenuItem")
+              .setAttribute("checked", "true");
+    } else {
+      document.getElementById("showNowSelectedMenuItem")
+              .setAttribute("checked", "true");
+    }
     
     // Ensure we have the correct title and deck displayed.
     AlbumArt.switchState(AlbumArt._currentState);
@@ -404,6 +480,12 @@ var AlbumArt = {
     AlbumArt._coverBind = createDataRemote("metadata.imageURL", null);
     AlbumArt._coverBind.bindObserver(AlbumArt, false);
 
+    // Set the drag description contents
+    document.getElementById('sb-albumart-select-drag').firstChild
+            .textContent = SBString("albumart.displaypane.drag_artwork_here");
+    document.getElementById('sb-albumart-playing-drag').firstChild
+            .textContent = SBString("albumart.displaypane.drag_artwork_here");
+
     // Monitor track changes for faster image changing.
     AlbumArt._mediacoreManager.addListener(AlbumArt);
 
@@ -412,6 +494,7 @@ var AlbumArt = {
                    currentStatus.state == currentStatus.STATUS_UNKNOWN);
     if (stopped) {
       AlbumArt.changeNowPlaying(null);
+      AlbumArt.changeNowSelected(null);
     }
 
     // Listen for resizes of the display pane so that we can keep the aspect
@@ -420,10 +503,6 @@ var AlbumArt = {
                             AlbumArt.onResize,
                             false);
     
-    // Make the title bar of the display pane act like a button so we can
-    // toggle between Now Playing and Now Selected views.
-    AlbumArt.makeTitleBarButton();
-
     // Setup the Now Selected display
     AlbumArt.onTabContentChange();
   },
@@ -435,6 +514,11 @@ var AlbumArt = {
   onUnload: function AlbumArt_onUnload() {
     // Remove our unload event listener so we do not leak
     window.removeEventListener("unload", AlbumArt.onUnload, false);
+
+    // Undo our modifications to the spitter
+    var splitter = AlbumArt._displayPane._splitter;
+    splitter.removeAttribute("hovergrippy");
+    splitter.removeAttribute("disabled");
 
     // Clear any auto-fetch timeouts.
     if (this._autoFetchTimeoutID) {

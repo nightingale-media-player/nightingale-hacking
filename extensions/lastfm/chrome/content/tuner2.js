@@ -923,7 +923,7 @@ var LastfmTuner = {
 				});
 				stationEl.hover(function(e) {
 					this.oldClass = this.className;
-					this.className += " row-selected";
+					this.className += " row-open";
 				}, function(e) {
 					this.className = this.oldClass;
 				});
@@ -959,12 +959,12 @@ $(document).ready(function() {
 	$("#user-profile").hide();
 
 	// Hide the results blocks
-	$('.nav-results:not(.selected)').hide();
+	$('.nav-results:not(.section-open)').hide();
 
 	// Setup hovers for the user-stations box
 	$('#nav-user-stations-results .nav-station').hover(function over(e) {
 		this.oldClass = this.className;
-		this.className += " row-selected";
+		this.className += " row-open";
 	}, function(e) {
 		this.className = this.oldClass;
 	});
@@ -980,7 +980,7 @@ $(document).ready(function() {
 		$('.nav-results:not(#'+resultsId+')').hide('fast');
 		if ($('#' + resultsId).is(':hidden')) {
 			$('#' + resultsId).slideDown('fast');
-			this.className = "nav-stations selected";
+			this.className = "nav-stations section-open";
 		} else {
 			$('#' + resultsId).hide('fast');
 			this.className = "nav-stations";

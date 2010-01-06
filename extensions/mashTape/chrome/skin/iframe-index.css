@@ -9,17 +9,24 @@ body b {
 }
 
 .time {
-	color: grey;
+	color: rgba(255,255,255,0.55);
+  font-style: italic;
 	padding-left: 1em;
 	padding-right: 5px;
 }
 
+div.row-selected,
+div.row-unselected,
 div.row-even,
 div.row-odd {
-	padding: 5px 1.2em .5em 1em;
+	padding: 7px 13px 7px 7px;
 	clear: both;
 	cursor: pointer;
 	overflow: hidden;
+}
+div.row-selected {
+  padding-left: 6px;
+  padding-right: 12px;
 }
 
 div.metadata-flash img,
@@ -37,8 +44,16 @@ div.metadata-review {
 	margin-left: 21px;
 }
 
+div.row-unselected img.favicon-flash {
+  opacity: .65;
+}
+div.row-selected img.favicon-flash {
+  opacity: 1;
+}
+
 img.favicon-flash {
-	padding-left: 5px;
+  padding-top: 2px;
+	padding-left: 4px;
 }
 img.favicon {
 	float: left;
@@ -48,6 +63,7 @@ img.favicon {
 img.thumbnail {
 	float: left;
 	width: 80px;
+  border: 1px solid rgb(54,52,63);
 }
 div.row-even .time,
 div.row-odd .time {

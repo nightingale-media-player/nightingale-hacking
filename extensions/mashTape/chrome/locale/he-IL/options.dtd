@@ -1,11 +1,9 @@
-<!---->
 <!ENTITY mtprefs.general "כללי">
 <!ENTITY mtprefs.info "פרטי אמן">
 <!ENTITY mtprefs.review "סקירות">
 <!ENTITY mtprefs.rss "חדשות">
 <!ENTITY mtprefs.photo "תמונות">
 <!ENTITY mtprefs.flash "וידאו">
-<!---->
 <!ENTITY mtprefs.defaulttab "לשונית ברירת המחדל">
 <!ENTITY mtprefs.defaulttab.help "כשמאשטייפ עולה:">
 <!ENTITY mtprefs.show.info "הצג את המידע על האמן">
@@ -17,7 +15,6 @@
 <!ENTITY mtprefs.autohide.help "הסתר את הפאנל של מאשטייפ אוטומטית בעת מעבר לאתר אינטרנט">
 <!ENTITY mtprefs.services "שירותים">
 <!ENTITY mtprefs.getmore "השג כלים נוספים למאשטייפ">
-<!---->
 <!ENTITY mtprefs.tab.info "הגדרות הלשונית &quot;פרטי אמן&quot;">
 <!ENTITY mtprefs.tab.review "הגדרות הלשונית &quot;סקירות&quot;">
 <!ENTITY mtprefs.tab.rss "הגדרות הלשונית &quot;חדשות&quot;">
@@ -26,13 +23,10 @@
 <!ENTITY mtprefs.tab.help "הראה לשונית זו במאשטייפ">
 <!ENTITY mtprefs.single "פאנל זה תומך בהצגת תוכן משירות אחד בלבד כל פעם. אנא בחר את השירות שתרצה להציג מהרשימה הבאה:">
 <!ENTITY mtprefs.multiple "פאנל זה תומך בהצגת תוכן משירותים שונים בו זמנית. אנא בחר את השירותים שתרצה להציג מהרשימה הבאה:">
-<!---->
 <!ENTITY mtprefs.tab.info.autolocalise "מידע מקומי">
 <!ENTITY mtprefs.tab.info.autolocalise.help "מצא מידע מקומי על אמן באופן אוטומטי אם הדבר אפשרי.">
-<!---->
 <!ENTITY mtprefs.tab.photo.speed "מהירות גלילת התמונה">
 <!ENTITY mtprefs.tab.photo.faster "מהר יותר">
 <!ENTITY mtprefs.tab.photo.slower "איטי יותר">
-<!---->
 <!ENTITY mtprefs.tab.video.autoplay "נגן קטעי וידאו באופן אוטומטי">
 <!ENTITY mtprefs.tab.video.autoplay.help "הדלקת אופציה זו תגרום לקטעי הוידאו להתנגן אחד אחרי השני. זו אפשרות שימושית לניגון אוטומטי של כל הקליפים באמ.טי.וי, לדוגמה. קטעי וידאו שלא מאוגדים יחדיו עשויים שלא לפעול על פי אפשרות זו.">

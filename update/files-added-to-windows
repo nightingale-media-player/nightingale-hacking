@@ -16,6 +16,7 @@
 .\testharness\watchfolders\files\
 .\testharness\watchfolders\
 .\testharness\
+.\splash.bmp
 .\songbirditunesagent.exe
 .\songbird.ini
 .\gstreamer\encode-profiles\wmav2.xml

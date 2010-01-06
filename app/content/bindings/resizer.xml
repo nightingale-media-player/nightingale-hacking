@@ -49,6 +49,7 @@
     <handlers>
       <handler event="mousedown">
         <![CDATA[
+        dump("in mousedown\n");
         // trying to tell the window manager how small it's allowed to 
         // resize this window
         var cstyle = window.getComputedStyle(document.documentElement, '');
@@ -78,6 +79,9 @@
         }
         ]]>
       </handler>
+      <handler event="mousemove"><![CDATA[
+        dump("here\n");
+      ]]></handler>
     </handlers>
   </binding>
 </bindings>

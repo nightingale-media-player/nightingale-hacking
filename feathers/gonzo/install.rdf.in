@@ -9,7 +9,7 @@
     <em:version>@EXTENSION_VER@</em:version>
 
 
-    <em:description>new default feather in development</em:description>
+    <em:description>Old feather no longer in development</em:description>
 
 
     <em:targetApplication>
@@ -25,7 +25,7 @@
          See http://developer.songbirdnest.com/feathers/ -->
     <songbird:skin>
       <Description>
-        <songbird:name>Gonzo (default)</songbird:name>
+        <songbird:name/>
         <songbird:internalName>gonzo</songbird:internalName>
         <songbird:compatibleLayout>
           <Description>

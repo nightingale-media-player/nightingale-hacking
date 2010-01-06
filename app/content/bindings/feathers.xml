@@ -204,6 +204,10 @@
               Components.interfaces.sbILayoutDescription
             );
             
+            // Skip skins with a blank name
+            if (!skin.name)
+              continue;
+
             // Skip skins with no compatible layouts
             if (layouts.length == 0) 
               continue;

@@ -27,7 +27,7 @@ GoogleBlogs.prototype = {
 	providerName: "Google Blog Search",
 	providerUrl: "http://blogsearch.google.com",
 	providerType: "rss",
-	providerIcon: "chrome://mashtape/content/tabs/google.gif",
+	providerIcon: "chrome://mashtape/content/tabs/google.png",
 
 	query: function(searchTerms, updateFn) {
 		var req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]

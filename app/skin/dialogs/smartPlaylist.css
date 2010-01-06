@@ -124,7 +124,7 @@ sb-rating {
 }
 
 .drawer-box {
-  overflow-y:scroll !important;
+  overflow-y:auto !important;
 }
 
 .smart-condition-item-box > hbox,

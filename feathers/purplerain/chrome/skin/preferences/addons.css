@@ -1,0 +1,44 @@
+richlistbox#extensionsView {
+  background-color: transparent;
+}
+
+richlistbox#extensionsView > scrollbox {
+  border-right: 1px solid rgb(42,42,53);
+}
+
+richlistbox richlistitem {
+  background-color: rgb(51,48,61);
+  border-bottom: 1px solid rgb(36,35,41);
+}
+
+richlistbox richlistitem[selected="true"] {
+  background-image: url(chrome://songbird/skin/base-elements/bg-selected-row-big-unfocused.png);
+}
+
+richlistbox:focus richlistitem[selected="true"] {
+  background-image: url(chrome://songbird/skin/base-elements/bg-selected-row-big.png);
+}
+
+#addonsMsg > notification {
+  border-top: 1px solid rgb(80,78,91);
+  border-left: 1px solid rgb(80,78,91);
+  border-right: 1px solid rgb(80,78,91);
+  border-bottom: none;
+  margin-bottom: -1px;
+  padding: 0px;
+}
+#addonsMsg > notification > .notification-inner {
+  padding: 2px 8px;
+}
+#addonsMsg > notification[type="info"] > .notification-inner {
+  border-top: 1px solid rgb(125,154,86) !important;
+  border-bottom: 1px solid rgb(70,98,26) !important;
+}
+#addonsMsg > notification[type="warning"] > .notification-inner {
+  border-top: 1px solid rgb(208,120,39) !important;
+  border-bottom: 1px solid rgb(147,78,4) !important;
+}
+#addonsMsg > notification[type="critical"] > .notification-inner {
+  border-top: 1px solid rgb(183,93,132) !important;
+  border-bottom: 1px solid rgb(128,42,69) !important;
+}

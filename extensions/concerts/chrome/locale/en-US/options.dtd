@@ -1,9 +1,9 @@
-<!ENTITY prefs.about "About">
-<!ENTITY prefs.about.text "If you live in one of the supported countries, you can find out when artists in your library are playing in your town.  Enter your location to get started.">
-<!ENTITY prefs.location.text "Choose the nearest city to see concerts in the surrounding area">
+<!ENTITY prefs.location "Location">
+<!ENTITY prefs.location.descr "Find out who's coming to your area.  &brandShortName; can track your favorite artists and clubs, so you'll never miss another show.  Choose the nearest city to see who's coming to town.">
+
 <!ENTITY prefs.library "Library">
 <!ENTITY prefs.library.text "Songbird can add a column to your music library that will indicate when any of your artists are on tour in your town.">
-<!ENTITY prefs.library.checklabel "Add the on tour column to my library">
+<!ENTITY prefs.library.checklabel "Add the On Tour column to my library">
 <!ENTITY prefs.location "Location">
 
 <!ENTITY prefs.country "Country">

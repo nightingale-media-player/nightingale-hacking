@@ -1,6 +1,6 @@
 box {
-  background-color:rgb(220,220,220);
-  background-image: url('chrome://songbird/skin/display-pane/bg-empty.png');
+  background-color:transparent;
+/*  background-image: url('chrome://songbird/skin/display-pane/bg-empty.png');*/
 }
 
 .instructions {
@@ -14,14 +14,13 @@ box {
 }
 
 .instructions description {
-  color:gray;
   text-align:center;
-  -moz-border-radius:8px;
-  background-color:rgb(235,235,235);
-  border:1px solid rgb(200,200,200);
+  -moz-border-radius:6px;
 }
-.instructions image {
+#add-on-picker {
   vertical-align:top;
+  list-style-image:  url("chrome://songbird/skin/display-pane/button-addon-picker.png");
+  -moz-image-region: rect(0px, 14px, 14px, 0px);
 }
 
 .instructions div {

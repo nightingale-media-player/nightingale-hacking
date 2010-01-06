@@ -1,10 +1,13 @@
 /* General classes used by all iframes */
 body {
-	font-family:Arial,Helvetica,FreeSans,sans-serif;
-	font-size:80.0%;
-	line-height:1.25;
-	margin:10px;
+  padding: 11px;
 }
+div#main-content {
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
+}
+
 a {
 	text-decoration:none;
 	outline:0;
@@ -29,7 +32,7 @@ div.ratings {
 	min-height: 18px;
 	background-repeat: no-repeat;
 	opacity: 0.5;
-	background-image: url(chrome://songbird/skin/ratings/ratings.png);
+	background-image: url(chrome://songbird/skin/media-control-pane/button-faceplate-ratings.png);
 }
 div.rate0 { background-position:0px -18px; }
 div.rate1 { background-position:0px -54px; }

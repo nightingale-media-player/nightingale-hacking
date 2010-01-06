@@ -163,7 +163,8 @@
     <menuitem id="context-bookmarkpage"
        label="&bookmarkPageCmd2.label;"
        accesskey="&bookmarkPageCmd2.accesskey;"
-       oncommand="gContextMenu.bookmarkThisPage();"/>
+       oncommand="gContextMenu.bookmarkThisPage();"
+       style="display:none;"/>
     <menuitem id="context-subscribemedia-page"
        label="&subscribeMediaPageCmd.label;"
        accesskey="&subscribeMediaPageCmd.accesskey;"

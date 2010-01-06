@@ -79,12 +79,15 @@
   <prefpane id="paneManageMedia"
             label="&prefWindow.manageMedia.label;"
             insertafter="paneMain"
-            image="chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png"
+            image="chrome://songbird/skin/base-elements/icon-generic-addon.png"
             src="chrome://songbird/content/xul/preferences/manageMediaPrefs.xul" />
 
   <!-- Hide the Applications panel for the moment -->
   <prefpane id="paneApplications"
             removeelement="true"/>
+          
+  <prefpane id="paneContent"
+            label="&prefpane.content.label;" />
 
 #ifdef XP_WIN
   <prefpane id="paneHotkeys"
@@ -95,32 +98,32 @@
   <prefpane id="panePlayback"
             label="&playback.prefpane.label;"
             insertafter="paneContent"
-            image="chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png"
+            image="chrome://songbird/skin/base-elements/icon-generic-addon.png"
             src="chrome://songbird/content/xul/preferences/playbackPrefs.xul" />
   <prefpane id="paneCDRip"
             label="&cdrip.prefpane.label;"
             insertafter="panePlayback"
-            image="chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png"
+            image="chrome://songbird/skin/base-elements/icon-generic-addon.png"
             src="chrome://songbird/content/xul/preferences/cdripOverlay.xul" />
   <prefpane id="paneAlbumArtwork"
             label="&albumartpreferences.prefpane.label;"
             insertafter="paneCDRip"
-            image="chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png"
+            image="chrome://songbird/skin/base-elements/icon-generic-addon.png"
             src="chrome://songbird/content/xul/preferences/albumArtwork.xul" />
   <prefpane id="paneAddons"
             label="&prefpane.addons.label;"
             insertafter="paneAdvanced"
-            image="chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png"
+            image="chrome://songbird/skin/base-elements/icon-generic-addon.png"
             src="chrome://songbird/content/xul/preferences/addOns.xul" />
   <prefpane id="paneRemoteAPI"
             label="&rapi.prefpane.title;"
             insertafter="paneAddons"
-            image="chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png"
+            image="chrome://songbird/skin/base-elements/icon-generic-addon.png"
             src="chrome://songbird/content/xul/preferences/remoteAPI.xul" />
   <prefpane id="paneImportMedia"
             label="&import_media.prefs.title;"
             insertafter="paneRemoteAPI"
-            image="chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png"
+            image="chrome://songbird/skin/base-elements/icon-generic-addon.png"
             src="chrome://songbird/content/xul/preferences/importMediaPrefs.xul" />
  </prefwindow>
 

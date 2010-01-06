@@ -67,6 +67,7 @@ tier_componentsbase_dirs = \
    components/devices \
    components/devicesobsolete \
    components/mediamanager \
+   components/feathers \
    $(NULL)
 
 tier_componentsall_dirs = \
@@ -77,7 +78,6 @@ tier_componentsall_dirs = \
    components/displaypanes \
    components/draganddrop \
    components/faceplate \
-   components/feathers \
    components/integration \
    components/jscodelib \
    components/mediapages \

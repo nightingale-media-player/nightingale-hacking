@@ -27,7 +27,7 @@
  */
 -->
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/feathers.css" type="text/css"?>
 <?xml-stylesheet href="chrome://albumart/skin/albumArt.css" type="text/css"?>
 
 <!DOCTYPE window [
@@ -52,6 +52,17 @@
                 label="&albumart.displaypane.selected.menu.paste;"
                 oncommand="AlbumArt.onPaste();"/>
       <menuseparator id="getArtworkSeparator"/>
+      <menuitem id="showNowPlayingMenuItem"
+                label="&albumart.displaypane.contextmenu.showplaying;"
+                type="radio"
+                name="displayState"
+                oncommand="AlbumArt.switchState(STATE_PLAYING);"/>
+      <menuitem id="showNowSelectedMenuItem"
+                label="&albumart.displaypane.contextmenu.showselected;"
+                type="radio"
+                name="displayState"
+                oncommand="AlbumArt.switchState(STATE_SELECTED);"/>
+      <menuseparator />
       <menuitem id="getArtworkMenuItem"
                 label="&menu.tools.getartwork;"
                 oncommand="AlbumArt.onGetArtwork();"/>
@@ -64,7 +75,7 @@
   
   <deck selectedIndex="1" id="sb-albumart-deck" flex="1">
     <!-- Now Selected Deck -->
-    <stack flex="1">
+    <stack flex="1" id="sb-albumart-nowselected-stack" class="artwork-none">
       <vbox class="albumArtNowSelectedContainer"
             contextmenu="nowSelectedMenu"
             ondblclick="AlbumArt.onImageDblClick(event);"
@@ -81,18 +92,17 @@
             class="albumArtNowSelectedDragAndDrop"
             ondragdrop="nsDragAndDrop.drop(event, AlbumArt);"
             ondragover="nsDragAndDrop.dragOver(event, AlbumArt);">
-          <description class="drop-message">
-            &albumart.displaypane.drag_and_drop;
-          </description>
+          <description class="drop-message" />
       </vbox>
       <vbox id="sb-albumart-not-selected"
+            contextmenu="nowSelectedMenu"
             class="albumArtNotSelectedContainer">
         <description class="empty-message" value="&albumart.displaypane.not_selected_message;" />
       </vbox>
     </stack>
 
     <!-- Now Playing Deck -->
-    <stack flex="1">
+    <stack flex="1" id="sb-albumart-nowplaying-stack" class="artwork-none">
       <vbox class="albumArtNowPlayingContainer"
             contextmenu="nowSelectedMenu"
             ondblclick="AlbumArt.onImageDblClick(event);"
@@ -109,11 +119,10 @@
             class="albumArtNowPlayingDragAndDrop"
             ondragdrop="nsDragAndDrop.drop(event, AlbumArt);"
             ondragover="nsDragAndDrop.dragOver(event, AlbumArt);">
-        <description class="drop-message">
-          &albumart.displaypane.drag_and_drop;
-        </description>
+          <description class="drop-message" />
       </vbox>    
       <vbox id="sb-albumart-not-playing"
+            contextmenu="nowSelectedMenu"
             class="albumArtNotPlayingContainer">
         <description class="empty-message" value="&albumart.displaypane.not_playing_message;" />
       </vbox>

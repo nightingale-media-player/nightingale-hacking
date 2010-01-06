@@ -1,0 +1,440 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+
+/** 
+*******************************************************************************
+MAIN PLAYBACK CONTROLS
+
+Applies images and layout rules for Play/Pause, Previous (back), Next (forward).
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/
+
+
+
+/** the sb-player-button class is used to get an image-only button
+    with no borders or padding.  **/
+
+.sb-player-button > button:focus,
+.sb-player-volume-slider:focus {
+	outline:none !important;
+}
+
+.sb-player-button,
+.sb-player-button > .clickhold-button
+{
+  -moz-appearance: none !important;
+  border: none !important;
+  margin: 0px;
+  padding: 0px;
+  min-width: 0px !important;
+  min-height: 0px !important;
+  background-image:none !important;
+  background-color:transparent;
+}
+
+.sb-player-button > button > .button-box > .button-text,
+.sb-player-button > .button-box > .button-text,
+.sb-player-button > button > .button-box > .button-icon,
+.sb-player-button > .button-box > .button-icon
+{
+  margin: 0px !important;  
+}
+
+.sb-player-button:focus > button > .button-box > .button-text,
+.sb-player-button > button:focus > .button-box > .button-text,
+.sb-player-button:focus > .button-box > .button-text
+{
+  border: 0px !important;
+  outline: none !important;
+}
+
+.sb-player-button .button-text {
+  display:none;
+}
+
+.sb-player-volume-slider .button-box,
+.sb-player-button .button-box {
+  padding:0;
+  margin:0;
+  border:none;
+}
+
+/*play&pause*/
+.sb-player-play-button-play > button,
+.sb-player-playpause-button-play > button,
+.sb-player-pause-button-pause > button,
+.sb-player-playpause-button-pause > button {  
+  list-style-image: url(chrome://songbird/skin/media-control-pane/button-play-pause.png); 
+  background-image:none !important;
+  background-color:transparent !important;
+}
+  /* prevent the general [disabled="true"] rule of 0.5 opacity from layering
+   * on this element (due to the widget+hbox+button combination...)
+   */
+  sb-player-playpause-button[disabled="true"],
+  sb-player-playpause-button[disabled="true"] * {
+    opacity: 1.0 !important;
+  }
+  /*play*/
+  .sb-player-play-button-play > button,
+  .sb-player-playpause-button-play > button {
+    -moz-image-region: rect(0px 40px 40px 0px);
+  }
+  .sb-player-play-button-play:hover > button,
+  .sb-player-playpause-button-play:hover > button {
+    -moz-image-region: rect(40px 40px 80px 0px);
+  }
+  .sb-player-play-button-play:active > button,
+  .sb-player-playpause-button-play:active > button {
+    -moz-image-region: rect(80px 40px 120px 0px);
+  }
+  .sb-player-play-button-play[disabled="true"] > button,
+  .sb-player-playpause-button-play[disabled="true"] > button {
+    -moz-image-region: rect(120px 40px 160px 0px);
+    opacity: 1.0 !important;
+  }
+  /*pause*/
+  .sb-player-pause-button-pause > button,
+  .sb-player-playpause-button-pause > button {  
+    -moz-image-region: rect(0px 80px 40px 40px);
+  }
+  .sb-player-pause-button-pause:hover > button,
+  .sb-player-playpause-button-pause:hover > button { 
+    -moz-image-region: rect(40px 80px 80px 40px);
+  }
+  .sb-player-pause-button-pause:active > button,
+  .sb-player-playpause-button-pause:active > button{
+    -moz-image-region: rect(80px 80px 120px 40px);
+  }
+  .sb-player-pause-button-pause[disabled="true"] > button,
+  .sb-player-playpause-button-pause[disabled="true"] > button { 
+    -moz-image-region: rect(120px 80px 160px 40px);
+    opacity: 1.0 !important;
+  }
+
+
+/* the stop button */
+
+.sb-player-stop-button-stop > button {
+  list-style-image: url(chrome://songbird/skin/media-control-pane/button-stop.png); 
+  -moz-image-region: rect(0px 40px 40px 0px);
+}
+.sb-player-stop-button-stop:hover > button { 
+  -moz-image-region: rect(40px 40px 80px 0px);
+}
+.sb-player-stop-button-stop:active > button {
+  -moz-image-region: rect(80px 40px 120px 0px);
+}
+.sb-player-stop-button-stop[disabled="true"] > button { 
+  -moz-image-region: rect(120px 40px 160px 0px);
+}
+
+
+sb-player-back-button {
+  list-style-image: url('chrome://songbird/skin/media-control-pane/button-previous.png');
+}
+sb-player-forward-button {
+  list-style-image: url('chrome://songbird/skin/media-control-pane/button-next.png'); 
+}
+sb-player-back-button,
+sb-player-forward-button {
+  -moz-image-region: rect(0px 40px 40px 0px);
+}
+sb-player-back-button:hover,
+sb-player-forward-button:hover { 
+  -moz-image-region: rect(40px 40px 80px 0px);
+}
+sb-player-back-button:active,
+sb-player-forward-button:active { 
+  -moz-image-region: rect(80px 40px 120px 0px);
+}
+sb-player-back-button[disabled="true"],
+sb-player-forward-button[disabled="true"] { 
+  -moz-image-region: rect(120px 40px 160px 0px);
+  opacity:1.0 !important;
+}
+
+
+
+
+
+
+
+
+
+/** 
+*******************************************************************************
+VOLUME
+Mute and Slider
+*******************************************************************************
+*/
+
+.sb-player-volume-slider {
+}
+
+.sb-player-volume-slider[sbid="sb-progress-slider-min"],
+.sb-player-volume-slider[sbid="sb-progress-slider-max"] {
+  margin:0;
+  padding:0;
+  background-image:none;
+  min-width:16px;
+  min-height:16px;
+  max-width:16px;
+  max-height:16px;
+  border:none;
+  
+  background-color:transparent;
+  -moz-border-radius:0;
+}
+
+.sb-player-volume-slider[sbid="sb-progress-slider-min"] {
+  list-style-image: url(chrome://songbird/skin/media-control-pane/button-min-volume.png);
+}
+.sb-player-volume-slider[sbid="sb-progress-slider-max"] {
+  list-style-image: url(chrome://songbird/skin/media-control-pane/button-max-volume.png);
+}
+
+
+
+.sb-player-volume-slider[sbid="sb-progress-slider-min"],
+.sb-player-volume-slider[sbid="sb-progress-slider-max"] {
+  -moz-image-region: rect(0px 16px 16px 0px);
+}
+.sb-player-volume-slider[sbid="sb-progress-slider-min"]:hover,
+.sb-player-volume-slider[sbid="sb-progress-slider-max"]:hover {
+  -moz-image-region: rect(16px 16px 32px 0px);
+}
+.sb-player-volume-slider[sbid="sb-progress-slider-min"]:active,
+.sb-player-volume-slider[sbid="sb-progress-slider-max"]:active {
+  -moz-image-region: rect(32px 16px 48px 0px);
+}
+.sb-player-volume-slider[sbid="sb-progress-slider-min"][disabled="true"],
+.sb-player-volume-slider[sbid="sb-progress-slider-max"][disabled="true"] {
+  -moz-image-region: rect(48px 16px 64px 0px);
+}
+
+.sb-player-volume-slider[sbid="sb-progress-slider-min"][checked],
+.sb-player-volume-slider[sbid="sb-progress-slider-max"][checked] {
+  -moz-image-region: rect(0px 32px 16px 16px);
+}
+.sb-player-volume-slider[sbid="sb-progress-slider-min"][checked]:hover,
+.sb-player-volume-slider[sbid="sb-progress-slider-max"][checked]:hover {
+  -moz-image-region: rect(16px 32px 32px 16px);
+}
+.sb-player-volume-slider[sbid="sb-progress-slider-min"][checked]:active,
+.sb-player-volume-slider[sbid="sb-progress-slider-max"][checked]:active {
+  -moz-image-region: rect(32px 32px 48px 16px);
+}
+.sb-player-volume-slider[sbid="sb-progress-slider-min"][checked][disabled="true"],
+.sb-player-volume-slider[sbid="sb-progress-slider-max"][checked][disabled="true"] {
+  -moz-image-region: rect(48px 32px 64px 16px);
+}
+
+sb-player-mute-button {
+  padding:0;
+  padding:0;
+}
+
+sb-player-volume-slider {
+  margin:0;
+  padding:0;
+}
+
+/** The thumb does not respond to list-style-image, so we are forced to 
+    use a background. We put both states in one image and then change
+    the background-position in order to prevent flickering when changing
+    states. **/
+thumb.sb-player-volume-slider {
+  -moz-appearance:none;
+  width: 12px !important;
+  height: 12px !important;
+  background: transparent;
+  background-image: url(chrome://songbird/skin/media-control-pane/button-volume-thumb.png); 
+  background-repeat: no-repeat;
+  background-position: center 0px;
+  border: none;
+}
+/*
+ * XXXstevel commenting out per bug 19192 for now, sigh.
+thumb.sb-player-volume-slider:hover {
+  background-position: center -12px;
+}
+thumb.sb-player-volume-slider:active {
+  background-position: center -24px;
+}
+*/
+thumb.sb-player-volume-slider[disabled="true"] {
+  background-position: center -36px;
+}
+
+progressmeter.sb-player-volume-slider {
+  min-width: 74px;
+  max-width: 74px;
+  margin: 0px;
+}
+
+progressmeter.sb-player-volume-slider > .progress-bar,
+progressmeter.sb-player-volume-slider > .progress-remainder {
+  background-image: url(chrome://songbird/skin/media-control-pane/bg-volume-bar.png);
+  -moz-appearance: none !important;
+}
+
+progressmeter.sb-player-volume-slider > .progress-bar {
+  background-position: left 0px;
+}
+progressmeter.sb-player-volume-slider > .progress-remainder
+{
+  background-position: right 0px;
+}
+
+
+slider.sb-player-volume-slider,
+progressmeter.sb-player-volume-slider {
+  min-height: 12px !important;
+  height: 12px !important;
+  max-height: 12px !important;
+  border: none;
+  background-color:transparent !important;
+}
+
+stack.sb-player-volume-slider {
+  padding:2px 0;
+}
+
+
+
+
+
+
+
+
+
+
+.sb-player-shuffle-button-off,
+.sb-player-shuffle-button-on {
+  list-style-image: url(chrome://songbird/skin/media-control-pane/button-shuffle.png);
+  background-color:transparent;
+  background-image:none;
+}
+.sb-player-shuffle-button-off {
+  -moz-image-region: rect(0px 24px 24px 0px);
+}
+.sb-player-shuffle-button-off:hover {
+  -moz-image-region: rect(24px 24px 48px 0px);
+}
+.sb-player-shuffle-button-off:active {
+  -moz-image-region: rect(48px 24px 72px 0px);
+}
+sb-player-shuffle-button[disabled="true"] > .sb-player-button > .sb-player-shuffle-button-off {
+  -moz-image-region: rect(72px 24px 96px 0px);
+}
+
+.sb-player-shuffle-button-on {
+  -moz-image-region: rect(0px 48px 24px 24px);
+}
+.sb-player-shuffle-button-on:hover {
+  -moz-image-region: rect(24px 48px 48px 24px);
+}
+.sb-player-shuffle-button-on:active {
+  -moz-image-region: rect(48px 48px 72px 24px);
+}
+sb-player-shuffle-button[disabled="true"] > .sb-player-button > .sb-player-shuffle-button-on {
+  -moz-image-region: rect(72px 48px 96px 24px);
+}
+
+sb-player-shuffle-button[disabled="true"] {
+  opacity:1.0 !important;
+}
+
+
+.sb-player-repeat-button-repnone ,
+.sb-player-repeat-button-repall ,
+.sb-player-repeat-button-rep1 {
+  list-style-image: url(chrome://songbird/skin/media-control-pane/button-repeat.png);
+  background-color:transparent;
+  background-image:none;
+}
+.sb-player-repeat-button-repnone {
+  -moz-image-region: rect(0px 24px 24px 0px);
+}
+.sb-player-repeat-button-repnone:hover {
+  -moz-image-region: rect(24px 24px 48px 0px);
+}
+.sb-player-repeat-button-repnone:active {
+  -moz-image-region: rect(48px 24px 72px 0px);
+}
+sb-player-repeat-button[disabled="true"] > .sb-player-button > .sb-player-repeat-button-repnone {
+  -moz-image-region: rect(72px 24px 96px 0px);
+}
+
+.sb-player-repeat-button-repall {
+  -moz-image-region: rect(0px 48px 24px 24px);
+}
+.sb-player-repeat-button-repall:hover {
+  -moz-image-region: rect(24px 48px 48px 24px);
+}
+.sb-player-repeat-button-repall:active {
+  -moz-image-region: rect(48px 48px 72px 24px);
+}
+sb-player-repeat-button[disabled="true"] > .sb-player-button > .sb-player-repeat-button-repall {
+  -moz-image-region: rect(72px 48px 96px 24px);
+}
+
+.sb-player-repeat-button-rep1 {
+  -moz-image-region: rect(0px 72px 24px 48px);
+}
+.sb-player-repeat-button-rep1:hover {
+  -moz-image-region: rect(24px 72px 48px 48px);
+}
+.sb-player-repeat-button-rep1:active {
+  -moz-image-region: rect(48px 72px 72px 48px);
+}
+sb-player-repeat-button[disabled="true"] > .sb-player-button > .sb-player-repeat-button-rep1 {
+  -moz-image-region: rect(72px 72px 96px 48px);
+}
+
+sb-player-repeat-button[disabled="true"] {
+  opacity:1.0 !important;
+}
+
+
+
+#faceplate-tool-bar .rating-stars {
+  background-image: url('chrome://songbird/skin/media-control-pane/button-faceplate-ratings.png');
+  margin-top: -3px;
+}
+#faceplate-tool-bar sb-rating {
+  padding:0 4px !important;
+  margin:0px !important;
+  background-color:transparent;
+  border:none !important;
+  background-image: url('chrome://songbird/skin/media-control-pane/bg-faceplate-ratings.png');
+  background-position:center 1px;
+  background-repeat:no-repeat;
+}

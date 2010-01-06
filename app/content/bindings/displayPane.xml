@@ -47,32 +47,7 @@
     <!-- a single display pane (with associated title bar) -->
     <xbl:content>
       <vbox flex="1">
-        <hbox anonid="titlebar" class="sb-displaypane-header" flex="1">
-          <vbox pack="center">
-            <!-- the extra vbox is to make sure the height of the image does not
-                 affect the height of the other elements (in particular, the
-                 menu button) -->
-            <image anonid="icon" class="favicon"/>
-          </vbox>
-          <label anonid="header" xbl:inherits="default=label"
-                 class="sb-displaypane-label" flex="1" crop="end"/>
-          <spacer anonid="headerSpacer" flex="1"/>
-          <tabs anonid="dpTabBar"
-                class="sb-displaypane-tabs"
-                collapsed="true"
-                onclick="event.stopPropagation();"
-                onselect="document.getBindingParent(this).onTabSelect(event)"/>
-          <button type="menu"
-                  mousethrough="never"
-                  class="sb-displaypane-menubutton"
-                  tooltiptext="&tooltip.displaypane.options;"
-                  onclick="event.stopPropagation();">
-            <menupopup anonid="menu" class="menulist-menupopup">
-              <sb-displaypane-content-menuitems anonid="contentitems" xbl:inherits="paneid=id"/>
-            </menupopup>
-          </button>
-        </hbox>
-        <browser anonid="content" flex="1" type="chrome" disablehistory="true"
+       <browser anonid="content" flex="1" type="chrome" disablehistory="true"
                  xbl:inherits="orient"/>
       </vbox>
     </xbl:content>
@@ -91,7 +66,6 @@
         this._lastURL.init("displayPanes." + stateid + ".lastURL", null);
         
         this._lastHiddenState.init("displayPanes." + stateid + ".isHidden", null);
-
         // do not register until our browser is ready
         var paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
                                 .getService(Components.interfaces.sbIDisplayPaneManager);
@@ -106,7 +80,8 @@
           if (paneinfo) {
             // hide the pane as soon as possible if the url is about:blank
             if (paneinfo.contentUrl == "about:blank") {
-              this._hidden = true;
+              //this._hidden = true;
+              this.collapsed = true;
             }
             
             // Load the URL once the browser has had time to initialize.
@@ -121,7 +96,8 @@
           }
         } else {
           // hide the pane as soon as possible if we dont have a lasturl to load
-          this._hidden = true;
+          //this._hidden = true;
+          this.collapsed = true;
         }
 
         if (!paneLoaded) {
@@ -130,34 +106,40 @@
             // can show up later.  Wait for that to happen and try again.
             if (OverlayLoader.loadCompleted) {
               // over loads are done; nothing we can do.
-              this.hide();
+              //this.hide();
+              this.collapsed = true;
             } else {
               // there are more overlays to load; wait for them to be done
               var self = this;
               document.addEventListener("sb-overlay-load", function() {
                 document.removeEventListener("sb-overlay-load", arguments.callee, false);
-                
                 var paneinfo = paneMgr.getPaneInfo(self._lastURL.stringValue);
                 if (paneinfo && !self._lastHiddenState.boolValue) {
                   self._internalLoadURL(paneinfo);
                 } else {
                   // still nothing
-                  self.hide();
+                  //self.hide();
+                  self.collapsed = true;
+                  self._internalLoadURL(paneMgr.defaultPaneInfo);
                 }
               }, false);
             }
           } else {
             // there's no overlay loader, so there's no more chance for us to do anything
-            this.hide();
+            //this.hide();
+            this.collapsed = true;
           }
         }
+        /*
         var contentItems = 
-          document.getAnonymousElementByAttribute(this, 
+          document.getAnonymousElementByAttribute(this._splitter, 
                                                   "anonid", 
                                                   "contentitems");
         // magic trick to force the contentitems binding to
         // construct synchronously
-        contentItems.style.MozBinding;
+        if (contentItems)
+          contentItems.style.MozBinding;
+          */
       } catch(e) {
         Components.utils.reportError(e);
       }
@@ -171,6 +153,20 @@
           return this.getAttribute("contentgroup");
         ]]></xbl:getter>
       </xbl:property>
+      <xbl:property name="contentTitle">
+        <xbl:getter><![CDATA[
+          var label = document.getAnonymousElementByAttribute(this._splitter,
+                                                              "anonid",
+                                                              "splitter-label");
+          return (label.value);
+        ]]></xbl:getter>
+        <xbl:setter><![CDATA[
+          var label = document.getAnonymousElementByAttribute(this._splitter,
+                                                              "anonid",
+                                                              "splitter-label");
+          label.value = val;
+        ]]></xbl:setter>
+      </xbl:property>
       <xbl:property name="contentUrl" readonly="true">
         <xbl:getter><![CDATA[
           var elem = document.getAnonymousElementByAttribute(this, "anonid", "content");
@@ -179,28 +175,7 @@
           return elem.currentURI.spec;
         ]]></xbl:getter>
       </xbl:property>
-      <xbl:property name="contentTitle">
-        <xbl:getter><![CDATA[
-          var elem = document.getAnonymousElementByAttribute(this, "anonid", "header");
-          return elem.value;
-        ]]></xbl:getter>
-        <xbl:setter><![CDATA[
-          var elem = document.getAnonymousElementByAttribute(this, "anonid", "header");
-          return elem.value = val;
-        ]]></xbl:setter>
-      </xbl:property>
-      <xbl:property name="contentIcon">
-        <xbl:getter><![CDATA[
-          var elem = document.getAnonymousElementByAttribute(this, "anonid", "icon");
-          return elem.src;
-        ]]></xbl:getter>
-        <xbl:setter><![CDATA[
-          var elem = document.getAnonymousElementByAttribute(this, "anonid", "icon");
-          elem.collapsed = (val.length < 1);
-          return elem.src = val;
-        ]]></xbl:setter>
-      </xbl:property>
-      <xbl:property name="contentWindow" readonly="true">
+    <xbl:property name="contentWindow" readonly="true">
         <xbl:getter><![CDATA[
           var elem = document.getAnonymousElementByAttribute(this, "anonid", "content");
           return elem.contentWindow;
@@ -226,6 +201,7 @@
           return this.hasAttribute("collapsed");
         ]]></xbl:getter>
         <xbl:setter><![CDATA[
+        /*
           if (val) {
             this.setAttribute("collapsed", true);
           } else {
@@ -233,18 +209,17 @@
             if (this._hidden)
               this._hidden = false;
           }
+          // trigger the splitter's mouse event to update the drop-down menu
+          // disabled state
+          this._splitter.toggleDropdownButton(!val);
+          */
+          if (val)
+            this._splitter.setAttribute("state", "collapsed");
+          else
+            this._splitter.setAttribute("state", "open");
+          this._splitter.toggleDropdownButton(!val);
           return val;
         ]]></xbl:setter>
-      </xbl:property>
-      <xbl:property name="titlebarTooltipText">
-        <xbl:setter><![CDATA[
-          var titlebar = this._getElem("titlebar");
-          titlebar.setAttribute("tooltiptext", val);
-        ]]></xbl:setter>
-        <xbl:getter><![CDATA[
-          var titlebar = this._getElem("titlebar");
-          titlebar.getAttribute("tooltiptext");
-        ]]></xbl:getter>
       </xbl:property>
       <xbl:property name="_splitter">
         <xbl:getter><![CDATA[
@@ -307,16 +282,11 @@
         <xbl:parameter name="aPaneInfo"/>
         <xbl:body><![CDATA[
         try{
-          // Clean up our tabs and clickable title bar
-          this.clearTabs();
-          this.resetClickableTitleBar(this._titleBarClickCallback);
-          
-          this._hidden = (aPaneInfo.contentUrl == "about:blank");
+          // reset the title
+          this.contentTitle = "";
+
+          //this._hidden = (aPaneInfo.contentUrl == "about:blank");
           this._getElem("content").loadURI(aPaneInfo.contentUrl, null, null);
-          var header = this._getElem("header");
-          this.contentTitle = aPaneInfo.contentTitle || header.getAttribute("default");
-          this.contentIcon = aPaneInfo.contentIcon;
-          
           // save the last loaded URL
           this._lastURL.stringValue = aPaneInfo.contentUrl;
           this._lastHiddenState.boolValue = this._hidden;
@@ -363,139 +333,6 @@
         ]]></xbl:body>
       </xbl:method>
 
-      <!-- Title bar button -->
-      <xbl:field name="_titleBarClickCallback">null</xbl:field>
-      <xbl:method name="makeClickableTitleBar">
-        <xbl:parameter name="aCallback"/>
-        <xbl:body><![CDATA[
-          if (aCallback == null) {
-            // need a callback to make the title bar clickable
-            return;
-          }
-          var titleBar = this._getElem("titlebar");
-          titleBar.addEventListener("click", aCallback, false);
-          this._titleBarClickCallback = aCallback;
-          titleBar.setAttribute("button", true);
-        ]]></xbl:body>
-      </xbl:method>
-      
-      <xbl:method name="resetClickableTitleBar">
-        <xbl:parameter name="aCallback"/>
-        <xbl:body><![CDATA[
-          var titleBar = this._getElem("titlebar");
-          if (aCallback != null) {
-            titleBar.removeEventListener("click", aCallback, false);
-          }
-          titleBar.setAttribute("button", false);
-        ]]></xbl:body>
-      </xbl:method>
-
-      <!-- Tabs -->
-      <xbl:property name="tabBar" readonly="true">
-        <xbl:getter><![CDATA[
-          var tabBar = this._getElem("dpTabBar");
-          return tabBar;
-        ]]></xbl:getter>
-      </xbl:property>
-      
-      <xbl:field name="_tabPanelLink">null</xbl:field>
-      <xbl:field name="_tabObserver">null</xbl:field>
-      <xbl:method name="enableTabs">
-        <xbl:parameter name="aTabPanel"/>
-        <xbl:parameter name="aTabObserver"/>
-        <xbl:body><![CDATA[
-          this._tabPanelLink = aTabPanel;
-          this._tabObserver = aTabObserver;
-          this.tabsHidden = false;
-          this._getElem("header").setAttribute("flex", 0);
-          this._getElem("dpTabBar").setAttribute("flex", 1);
-        ]]></xbl:body>
-      </xbl:method>
-      
-      <xbl:method name="onTabSelect">
-        <xbl:parameter name="aEvent" />
-        <xbl:body><![CDATA[
-          var tabBar = this.tabBar;
-
-          // If we are linked to a panel then set its selectedIndex
-          if (this._tabPanelLink) {
-            this._tabPanelLink.selectedIndex = tabBar.selectedIndex;
-          }
-          
-          // If there is a callback (aTabObserver) call it with the selectedIndex
-          if (this._tabObserver) {
-            this._tabObserver(tabBar.selectedIndex);
-          }
-        ]]></xbl:body>
-      </xbl:method>
-      
-      <xbl:method name="addTab">
-        <xbl:parameter name="aTabLabel"/>
-        <xbl:parameter name="aTabIcon"/>
-        <xbl:body><![CDATA[
-          var tabBar = this.tabBar;
-          var newTab = tabBar.appendItem(aTabLabel);
-          if (aTabIcon) {
-            newTab.setAttribute("image", aTabIcon);
-          }
-          return newTab;
-        ]]></xbl:body>
-      </xbl:method>
-      
-      <xbl:method name="clearTabs">
-        <xbl:body><![CDATA[
-          var tabBar = this.tabBar;
-          while (tabBar.itemCount > 0) {
-            tabBar.removeItemAt(0);
-          }
-          this.tabsHidden = true;
-        ]]></xbl:body>
-      </xbl:method>
-
-      <xbl:property name="selectedIndex">
-        <xbl:getter><![CDATA[
-          return this.tabBar.selectedIndex;
-        ]]></xbl:getter>
-        <xbl:setter><![CDATA[
-          this.tabBar.selectedIndex = val;
-          if (this._tabPanelLink) {
-            this._tabPanelLink.selectedIndex = this.tabBar.selectedIndex;
-          }
-          return val;
-        ]]></xbl:setter>
-      </xbl:property>
-
-      <xbl:property name="selectedItem">
-        <xbl:getter><![CDATA[
-          return this.tabBar.selectedItem;
-        ]]></xbl:getter>
-        <xbl:setter><![CDATA[
-          this.tabBar.selectedItem = val;
-          if (this._tabPanelLink) {
-            this._tabPanelLink.selectedItem = this.tabBar.selectedItem;
-          }
-          return val;
-        ]]></xbl:setter>
-      </xbl:property>
-      
-      <xbl:property name="tabsHidden">
-        <xbl:getter><![CDATA[
-          return this.tabBar.getAttribute("collapsed");
-        ]]></xbl:getter>
-        <xbl:setter><![CDATA[
-          var tabBar = this.tabBar;
-          var spacer = this._getElem("headerSpacer");
-          if (val) {
-            tabBar.setAttribute("collapsed", true);
-            spacer.removeAttribute("collapsed");
-          } else {
-            tabBar.removeAttribute("collapsed");
-            spacer.setAttribute("collapsed", true);
-          }
-          return val;
-        ]]></xbl:setter>
-      </xbl:property>
-      
     </xbl:implementation>
     
     <xbl:handlers>
@@ -694,6 +531,7 @@
             }
 
             // add the "Show"/"Hide" item
+            /*
             var binding = document.getElementById(paneid);
             var elem = document.createElement("menuitem");
             elem.setAttribute("label", 
@@ -715,6 +553,7 @@
             var sep = document.createElement("menuseparator");
             this.parentNode.insertBefore(sep, this);
             this._items.push(sep);
+            */
 
             // add an item for each available display pane content
             var paneMgr = Cc["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
@@ -749,31 +588,56 @@
             // actually generate menuitems for each |DisplayPaneItem|.
             var shouldInsertSeparator = false;
             for each (var item in displayPanes) {
-              var elem = document.createElement("menuitem");
-              elem.setAttribute("label", item.contentTitle);
-              elem.setAttribute("url", item.contentUrl);
-              elem.setAttribute("image", item.contentIcon);
-              elem.setAttribute("type", "radio");
-              elem.setAttribute("class", "displaypane-menuitem");
-    
-              if (item.contentUrl == this.contentUrl) {
-                elem.setAttribute("selected", "true");
-              }
+              var elem;
 
-              // we embed an oncommand that carries enough information to call
-              // this binding again with the menu item being used.  This is
-              // unfortunately quite ugly.
-              var oncommand = function(aEvent, aId) {
-                var binding = document.getElementById(aId);
-                var menuitem = aEvent.target;
-                var paneMgr = Cc["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
-                                .getService(Ci.sbIDisplayPaneManager);
-                var paneinfo = 
-                  paneMgr.getPaneInfo(menuitem.getAttribute("url"));
-                binding.loadContent(paneinfo);
+              // if this item is the currently loaded display pane, then
+              // inspect it to see if it has submenu states
+              var submenuFound = false;
+              if (item.contentUrl == this.contentUrl) {
+                var paneid = this.getAttribute("paneid");
+                var paneWin = document.getElementById(paneid).contentWindow;
+                if (typeof(paneWin.onDisplayPaneMenuPopup) == "function") {
+                  submenuFound = true;
+                  elem = document.createElement("menu");
+                  elem.setAttribute("label", item.contentTitle);
+                  elem.setAttribute("image", item.contentIcon);
+                  elem.setAttribute("displaypanesubmenu", "true");
+                  elem.setAttribute("class", "menu-iconic");
+                  var menupopup = document.createElement("menupopup");
+                  menupopup.className = "menulist-menupopup";
+                  elem.appendChild(menupopup);
+                  paneWin.onDisplayPaneMenuPopup("create", menupopup, document);
+                }
               }
-              elem.setAttribute("oncommand",
-                                "(" + uneval(oncommand) + ")(event, '" + paneid + "')");
+              if (!submenuFound) {
+                elem = document.createElement("menuitem");
+                elem.setAttribute("label", item.contentTitle);
+                elem.setAttribute("url", item.contentUrl);
+                elem.setAttribute("image", item.contentIcon);
+                elem.setAttribute("type", "radio");
+                elem.setAttribute("class", "displaypane-menuitem");
+    
+                if (item.contentUrl == this.contentUrl) {
+                  elem.setAttribute("selected", "true");
+                }
+
+                // we embed an oncommand that carries enough information to call
+                // this binding again with the menu item being used.  This is
+                // unfortunately quite ugly.
+                var oncommand = function(aEvent, aId) {
+                  var binding = document.getElementById(aId);
+                  var menuitem = aEvent.target;
+                  var paneMgr =
+                      Cc["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+                         .getService(Ci.sbIDisplayPaneManager);
+                  var paneinfo = 
+                    paneMgr.getPaneInfo(menuitem.getAttribute("url"));
+                  binding.loadContent(paneinfo);
+                }
+                elem.setAttribute("oncommand",
+                                  "(" + uneval(oncommand) +
+                                  ")(event, '" + paneid + "')");
+              }
 
               // insert the menuitem
               this.parentNode.insertBefore(elem, this);
@@ -816,13 +680,26 @@
       </xbl:method>
       
       <xbl:method name="_deleteItems">
-        <xbl:body>
+        <xbl:body><![CDATA[
           // remove all items
           var item;
           while ((item = this._items.pop())) {
+            if (item.getAttribute("displaypanesubmenu", "true")) {
+              // display pane sub-menu (<menu>)
+              var paneid = this.getAttribute("paneid");
+              var paneWin = document.getElementById(paneid).contentWindow;
+              if (typeof(paneWin.onDisplayPaneMenuPopup) != "undefined") {
+                // invoke the display pane function to destroy the submenu
+                paneWin.onDisplayPaneMenuPopup("destroy");
+
+                // destroy the menu
+                while (item.firstChild)
+                  item.removeChild(item.firstChild);
+              }
+            }
             this.parentNode.removeChild(item);
           }
-        </xbl:body>
+        ]]></xbl:body>
       </xbl:method>
 
       <xbl:method name="handleEvent">

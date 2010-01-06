@@ -61,6 +61,5 @@ div#loading {
 	left: 0;
 	text-align: center;
 	display: block;
-	background-color: white;
 	z-index: 500;
 }

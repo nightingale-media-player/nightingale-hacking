@@ -6,23 +6,28 @@ div#artist-photo {
 }
 div#artist-photo img {
 	max-width: 150px;
+  border: 1px solid rgb(54,52,63);
 }
 div#content {
 	margin-left: 150px;
 	padding-left: 1em;
 }
+.header-container {
+  margin-bottom: 8px;
+}
 div#content h4 {
-	margin-bottom: 0;
+  margin-top: 0px;
+  margin-bottom: 0px;
 	padding-bottom: 0;
+}
+div#content > div {
+  margin-bottom: 15px;
 }
 div#content img.favicon {
 	float: left;
 	width: 16px;
 	height: 16px;
-}
-div#content h4,
-div#content div.text-indent {
-	margin-left: 20px;
+  margin-right: 8px;
 }
 
 /* Artist info bio text */

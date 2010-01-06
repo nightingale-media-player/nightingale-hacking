@@ -26,7 +26,7 @@ SmugMug.prototype = {
 
 	providerName: "SmugMug",
 	providerType: "photo",
-	providerIcon: "chrome://mashTape/content/tabs/smugmug.ico",
+	providerIcon: "chrome://mashTape/content/tabs/smugmug.png",
 
 	query: function(searchTerms, updateFn) {
 		var req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]

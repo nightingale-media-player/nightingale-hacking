@@ -27,7 +27,7 @@ HypeM.prototype = {
 	providerName: "Hype Machine",
 	providerUrl: "http://hypem.com",
 	providerType: "rss",
-	providerIcon: "chrome://mashtape/content/tabs/hypem.ico",
+	providerIcon: "chrome://mashtape/content/tabs/hypem.png",
 
 	query: function(searchTerms, updateFn) {
 		var req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]

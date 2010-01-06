@@ -17,7 +17,7 @@
   margin-right:4px;
 }
 #lastfmImageContainer:hover {
-  border-color: #1694d9;
+  border-color: rgb(177,153,255);
   cursor:pointer;
 }
 

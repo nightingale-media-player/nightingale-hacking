@@ -3,7 +3,7 @@
 .locationbar-image[properties~="concerts"],
 .alltabs-item.menuitem-iconic[properties~="concerts"],
 .tabbrowser-tab[properties~="concerts"] > .tab-image-middle > .tab-icon > .tab-icon-image {
-	list-style-image: url(chrome://songbird/skin/service-pane/icon-concert.png);
+	list-style-image: url(chrome://concerts/content/songkick-16x16.png);
 }
 
 #faceplate-artist-on-tour-icon {

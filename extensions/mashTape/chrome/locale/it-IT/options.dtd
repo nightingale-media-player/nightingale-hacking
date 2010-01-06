@@ -1,11 +1,10 @@
-<!---->
+<!ENTITY mashTape.firstrun.text "Riproduci una canzone e scopri le foto di Flickr, i video di YouTube, le biografie di Last.Fm, gli articoli di Google News correlati e molto altro!">
 <!ENTITY mtprefs.general "Generale">
 <!ENTITY mtprefs.info "Informazioni Artista">
 <!ENTITY mtprefs.review "Recensioni">
 <!ENTITY mtprefs.rss "News">
 <!ENTITY mtprefs.photo "Foto">
 <!ENTITY mtprefs.flash "Video">
-<!---->
 <!ENTITY mtprefs.defaulttab "Tab Default">
 <!ENTITY mtprefs.defaulttab.help "Quando mashTape parte:">
 <!ENTITY mtprefs.show.info "Mostra Informazioni Artista">
@@ -17,7 +16,6 @@
 <!ENTITY mtprefs.autohide.help "Consenti al pannello di mashTape di scomparire automaticamente quando si passa ad una pagina web.">
 <!ENTITY mtprefs.services "Servizi">
 <!ENTITY mtprefs.getmore "Ottieni più servizi per mashTape">
-<!---->
 <!ENTITY mtprefs.tab.info "Impostazioni Tab Informazioni Artista">
 <!ENTITY mtprefs.tab.review "Impostazioni Tab Recensioni">
 <!ENTITY mtprefs.tab.rss "Impostazioni Tab News">
@@ -26,16 +24,13 @@
 <!ENTITY mtprefs.tab.help "Mostra questo tab in mashTape.">
 <!ENTITY mtprefs.single "Questo pannello consente di visualizzare contenuti da un servizio alla volta. Selezionare un servizio dalla lista in basso.">
 <!ENTITY mtprefs.multiple "Questo pannello consente di visualizzare contenuti da più servizi contemporaneamente. Effettuare la scelta dei servizi dalla lista in basso.">
-<!---->
 <!ENTITY mtprefs.tab.info.autolocalise "Dati localizati">
-<!ENTITY mtprefs.tab.info.autolocalise.help "Recupera automaticamente le informazioni sull&apos;artista se disponibili.">
-<!---->
+<!ENTITY mtprefs.tab.info.autolocalise.help "Recupera automaticamente le informazioni sull'artista se disponibili.">
 <!ENTITY mtprefs.tab.photo.speed "Velocità scorrimento foto">
 <!ENTITY mtprefs.tab.photo.faster "Più veloce">
 <!ENTITY mtprefs.tab.photo.slower "Più lento">
 <!ENTITY mtprefs.tab.photo.keywords.caption "Chiavi di ricerca">
 <!ENTITY mtprefs.tab.photo.keywords "Chiavi di ricerca addizionali">
-<!ENTITY mtprefs.tab.photo.keywords.help "E&apos; possibile specificare delle chiavi addizionali da aggiungere alla ricerca di foto. Le chiavi di ricerca dovranno essere separate da spazi, ad esempio: live concerto gruppo">
-<!---->
+<!ENTITY mtprefs.tab.photo.keywords.help "E' possibile specificare delle chiavi addizionali da aggiungere alla ricerca di foto. Le chiavi di ricerca dovranno essere separate da spazi, ad esempio: live concerto gruppo">
 <!ENTITY mtprefs.tab.video.autoplay "Riproduci video automaticamente">
-<!ENTITY mtprefs.tab.video.autoplay.help "Abilitare questa opzione farà riprodurre automaticamente uno dopo l&apos;altro i risultati collegati di uno stesso provider video. Ciò può servire, ad esempio, per riprodurre automaticamente tutti i video di MTV Music. I provider video non collegati non funzioneranno con questa opzione.">
+<!ENTITY mtprefs.tab.video.autoplay.help "Abilitare questa opzione farà riprodurre automaticamente uno dopo l'altro i risultati collegati di uno stesso provider video. Ciò può servire, ad esempio, per riprodurre automaticamente tutti i video di MTV Music. I provider video non collegati non funzioneranno con questa opzione.">

@@ -1,0 +1,5 @@
+<!ENTITY mashTape.msg.no_info_found "再生中の曲に関するアーティスト情報を見つけることができません">
+<!ENTITY mashTape.msg.no_review_found "再生中の曲に関するレビューを見つけることができません">
+<!ENTITY mashTape.msg.no_rss_found "再生中の曲に関するニュースを見つけることができません">
+<!ENTITY mashTape.msg.no_photo_found "再生中の曲に関する写真を見つけることができません">
+<!ENTITY mashTape.msg.no_flash_found "再生中の曲に関する動画を見つけることができません">

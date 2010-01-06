@@ -43,16 +43,13 @@
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         xmlns:html="http://www.w3.org/1999/xhtml">
 
-<box pack="center" align="center" flex="1">
+<box pack="center" align="center" flex="1" class="empty-box">
 
   <vbox class="instructions" flex="1" pack="center" align="center">
     <description flex="0">
       <html:div>
-        Select an add-on from the menu (<image src="chrome://songbird/skin/display-pane/button-addon-picker.png" alt="Add-on Picker Icon" />)
-        <html:br />
-        or
-        <html:br />
-        Visit the <label class="text-link" href="&getDisplayPanesURL;" value="Add-on Site"/> to browse add-ons
+        &displaypane.default.image.pre; <image id="add-on-picker" alt="&displaypane.default.image.tooltip;"/> &displaypane.default.image.post; &displaypane.default.link.pre;
+        <label class="text-link" href="&getDisplayPanesURL;" value="&displaypane.default.link.text;"/> &displaypane.default.link.post;
       </html:div>
     </description>
   </vbox>

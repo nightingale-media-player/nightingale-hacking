@@ -63,11 +63,55 @@ var mashTapeVideo = {
     if (state == null || state == "stopped") {
       mashTapeVideo.resumeSongbird();
     }
+  },
+
+  resizeHandler: function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    var frameWidth = document.getElementsByTagName("html")[0].clientWidth;
+    var frameHeight = document.getElementsByTagName("html")[0].clientHeight;
+    //dump("New frame size: " + frameWidth + "x" + frameHeight + "\n");
+
+    var swf = document.getElementById("mTFlashObject");
+    if (!swf)
+      return;
+
+    var newHeight = frameHeight - 25; // 25px is more|less our padding
+    var ratio = document.getUserData("mashTapeRatio");
+    if (!ratio)
+      return;
+    var newWidth = newHeight * ratio;
+    if (newWidth > frameWidth - 25) {
+      newWidth = frameWidth - 25;
+      newHeight = newWidth / ratio;
+    }
+
+    if (frameWidth - newWidth > 120) {
+      document.getElementById("content").style.clear = "none";
+      document.getElementById("author").style.display = "block";
+    } else {
+      document.getElementById("content").style.clear = "both";
+      document.getElementById("author").style.display = "inline";
+      var capHeight = document.getElementById("content").clientHeight;
+      if (frameHeight - newHeight < capHeight) {
+        newHeight = newHeight - capHeight;
+        newWidth = newHeight * ratio;
+        //dump("Adjustment: " + newWidth + "x" + newHeight + "\n");
+      }
+    }
+
+    if (newWidth != swf.width && newWidth > 150 && newHeight > 50) {
+      //dump("Setting SWF size: "+newWidth + "x" + newHeight + "\n");
+      swf.width = newWidth;
+      swf.height = newHeight;
+    }
   }
 }
 
 window.addEventListener("songbirdPlaybackResumed", mashTapeVideo.pauseVideo, false);
 window.addEventListener("unload", mashTapeVideo.resumeSongbird, false);
+window.addEventListener("resize", mashTapeVideo.resizeHandler, false);
 
 // YouTube is hard-coded to look for a window-level function named
 // 'onYouTubePlayerReady' which is invoked with the id of the object

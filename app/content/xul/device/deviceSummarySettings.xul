@@ -43,41 +43,42 @@
 
   <tabpanel id="device_management_settings_tabpanel">
     <hbox pack="center" flex="1">
-      <vbox class="device-tab-content"
-            id="device_management_settings_content">
-        <!-- header -->
-        <hbox class="device-tab-header-box">
-          <label class="device-tab-header-label"
-                 value="&device.settings.header.label;"/>
-          <label class="device-tab-header-info" id="settings_head_info_label"
-                 flex="1"/>
+      <vbox>
+        <vbox class="device-tab-content"
+              id="device_management_settings_content">
+          <observes element="deviceIDBroadcaster"
+                    attribute="device-id"
+                    onbroadcast="DeviceSettingsPane.refreshDeviceSettings(event)"/>
+
+          <!-- XXX To be populated in the future by:
+          * bug 16247 (automatic/manual transcoding)
+          * bug 16248 (quota for music)
+          -->
+
+          <!-- General device settings. -->
+          <sb-device-general-settings id="device_general_settings"
+                                      observes="deviceIDBroadcaster"/>
+
+          <!-- will get folder view settings inserted programatticaly -->
+
+
+        </vbox>
+        
+        <hbox class="device-tab-button-box" align="baseline" >
+          <spacer flex="1"/>
 
           <!-- Cancel and save buttons. -->
           <button id="settings_cancel_button"
+                  sbid="cancel_button"
                   label="&window.cancel;"
                   action="cancel"
-                  oncommand="DeviceSettingsPane.reset()"/>
+                  oncommand="DeviceSettingsPane.reset()" />
           <button id="settings_save_button"
+                  sbid="save_button"
                   label="&window.save;"
                   action="save"
-                  oncommand="DeviceSettingsPane.save()"/>
+                  oncommand="DeviceSettingsPane.save()" />
         </hbox>
-
-        <observes element="deviceIDBroadcaster"
-                  attribute="device-id"
-                  onbroadcast="DeviceSettingsPane.refreshDeviceSettings(event)"/>
-
-        <!-- XXX To be populated in the future by:
-        * bug 16247 (automatic/manual transcoding)
-        * bug 16248 (quota for music)
-        -->
-
-        <!-- General device settings. -->
-        <sb-device-general-settings id="device_general_settings"
-                                    observes="deviceIDBroadcaster"/>
-
-        <!-- will get folder view settings inserted programatticaly -->
-
       </vbox>
     </hbox>
     <script src="chrome://songbird/content/scripts/device/deviceSummarySettings.js"

@@ -134,7 +134,7 @@
               onpopupshown="CreateMenu('more-menu');"
               observes="isImage">
             <template>
-                <rule rdf:type="http://home.netscape.com/NC-rdf#BookmarkSeparator">
+                <rule rdf:type="http://home.netscape.com/NC-rdf#oookmarkSeparator">
                     <menupopup>
                     <menuseparator uri="..." />
                     </menupopup>
@@ -450,9 +450,11 @@
       <key id="key_fullZoomReset"   key="&fullZoomResetCmd.commandkey;"    command="cmd_fullZoomReset"   modifiers="accel"/>
 
       <key id="key_viewSource" key="&menu.viewpagesource.key;" command="View:PageSource" modifiers="accel,shift"/>
-	  
+
+      <!-- 
       <key id="key_bookmark" key="&bookmarkPage.key;" command="cmd_bm_newbookmark" modifiers="accel"/>
       <key id="key_subscribe" key="&bookmarkPage.key;" command="cmd_bm_newsubscription" modifiers="accel,shift"/>
+      -->
 
       <key id="key_reload" key="&reloadCmd.commandkey;" command="Browser:Reload" modifiers="accel" />
       <key key="&reloadCmd.commandkey;" command="Browser:ReloadSkipCache" modifiers="accel,shift"/>
@@ -616,10 +618,12 @@
                      tooltiptext="&tooltip.browser.home;"
                      onclick="BrowserHomeClick(event);"/>
 
+      <!--
       <toolbarbutton id="bookmark-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
                      label="&tooltip.browser.bookmark;"
                      command="cmd_bm_newbookmark"
                      tooltiptext="&tooltip.browser.bookmark;"/>
+      -->
 
       <toolbarbutton id="subscription-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
                      label="&tooltip.browser.subscription;"
@@ -631,7 +635,8 @@
                    title="URL">
         <sb-locationbar-textbox id="location_bar"
                                 flex="1" align="center" />  
-                                
+
+        <!--
         <toolbarbutton id="bookmark-subscribe-button" command="cmd_bm_newbookmark"
                        type="sb-clickhold"
                         class="toolbarbutton-1 chromeclass-toolbar-additional"
@@ -643,7 +648,7 @@
                       command="cmd_bm_newsubscription" />
           </menupopup>
         </toolbarbutton>
-        
+        -->
       </toolbaritem>
       
       <toolbaritem id="nav-bar-spacer" flex="1"/>

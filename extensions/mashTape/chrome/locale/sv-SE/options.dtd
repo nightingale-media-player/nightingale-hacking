@@ -1,11 +1,9 @@
-<!---->
 <!ENTITY mtprefs.general "Allmänt">
 <!ENTITY mtprefs.info "Artist Information">
 <!ENTITY mtprefs.review "Recensioner">
 <!ENTITY mtprefs.rss "Nyheter">
 <!ENTITY mtprefs.photo "Foto">
 <!ENTITY mtprefs.flash "Video">
-<!---->
 <!ENTITY mtprefs.defaulttab "Standard tab">
 <!ENTITY mtprefs.defaulttab.help "När mashTape startar;">
 <!ENTITY mtprefs.show.info "Visa Artist Information">
@@ -17,7 +15,6 @@
 <!ENTITY mtprefs.autohide.help "Dölj mashTape automatiskt när du visar en websida.">
 <!ENTITY mtprefs.services "Tjänster">
 <!ENTITY mtprefs.getmore "Skaffa fler tjänster till mashTape">
-<!---->
 <!ENTITY mtprefs.tab.info "Tabb inställningar för Artist information">
 <!ENTITY mtprefs.tab.review "Tabb inställningar för Recension">
 <!ENTITY mtprefs.tab.rss "Tabb inställningar för Nyheter">
@@ -26,16 +23,13 @@
 <!ENTITY mtprefs.tab.help "Visa denna Tabb i mashTape">
 <!ENTITY mtprefs.single "Denna del kan endast visa innehåll från en tjänst i taget. Var vänlig markera ett av alternativen i listan nedan.">
 <!ENTITY mtprefs.multiple "Denna del kan visa innehåll från mer än en tjänst i taget. Var vänlig markera ett eller flera av alternativen i listan nedan.">
-<!---->
 <!ENTITY mtprefs.tab.info.autolocalise "Hittad Data">
 <!ENTITY mtprefs.tab.info.autolocalise.help "Hämta automatiskt data om artisten om det är möjligt.">
-<!---->
 <!ENTITY mtprefs.tab.photo.speed "Visningshastighet, Foto:">
 <!ENTITY mtprefs.tab.photo.faster "Snabbare">
 <!ENTITY mtprefs.tab.photo.slower "Långsammare">
 <!ENTITY mtprefs.tab.photo.keywords.caption "Sökord">
 <!ENTITY mtprefs.tab.photo.keywords "Ytterligare sökord">
 <!ENTITY mtprefs.tab.photo.keywords.help "Du kan specificera ytterligare sökord för din bildsökmotor. Nyckelord ska skiljas åt med mellanrum, till exempel; live konsert band">
-<!---->
 <!ENTITY mtprefs.tab.video.autoplay "Spela upp video automatiskt">
 <!ENTITY mtprefs.tab.video.autoplay.help "Detta alternativet låter dig spela upp videos eftervarandra i en följd.">

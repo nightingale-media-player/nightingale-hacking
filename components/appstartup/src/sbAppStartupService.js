@@ -868,6 +868,35 @@ sbAppStartupService.prototype =
           // update the migration version
           prefBranch.setIntPref("songbird.migration.ui.version", ++migration);
         }
+        case 2:
+        {
+          // Migrate display pane hidden prefs due to display pane changes
+          // introduced in Songbird 1.4.1 (Korn)
+          const DP =["contentpane_bottom","right_sidebar","servicepane_bottom"];
+          for each (var pane in DP) {
+            var pref = "songbird.displayPanes.displaypane_" +pane+ ".isHidden";
+            Application.prefs.setValue(pref, "0");
+          }
+
+          // update the migration version
+          prefBranch.setIntPref("songbird.migration.ui.version", ++migration);
+        }
+        case 3:
+        {
+          // Songbird 1.4.2, bug 19334
+          // Force a switch to the default layout & skin
+          var defaultLayoutPref = "songbird.feathers.default_main_layout";
+          var defaultSkinPref = "songbird.feathers.default_skin_internalname";
+          var defaultLayout = Application.prefs.getValue(defaultLayoutPref, "");
+          var defaultSkin = Application.prefs.getValue(defaultSkinPref, "");
+          var feathersMgr = Cc["@songbirdnest.com/songbird/feathersmanager;1"]
+                              .getService(Ci.sbIFeathersManager);
+          if (feathersMgr.currentLayoutURL != defaultLayout)
+            feathersMgr.switchFeathers(defaultLayout, defaultSkin);
+  
+          // update the migration version
+          prefBranch.setIntPref("songbird.migration.ui.version", ++migration);
+        }
       }
     },
     

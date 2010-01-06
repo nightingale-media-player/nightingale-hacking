@@ -1,0 +1,139 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+
+button,
+description,
+groupbox,
+label,
+listbox,
+menulist,
+progressmeter,
+richlistbox,
+textbox,
+toolbarbutton,
+tree {
+  margin:4px;
+}
+
+/* inset areas */
+
+.inset {}
+.box-inset {}
+  
+/* formatting */
+.groove-top {}
+.groove-right {}
+.groove-left {}
+.groove-bottom {}
+.outset {}
+.outset-top-bottom {}
+  
+/** separator rules **/
+separator, separator[orient="horizontal"] {
+  height:11px;
+
+background-image: url('chrome://songbird/skin/base-elements/bg-separator.png');
+background-position:center center;
+background-repeat:repeat-x;
+}
+separator[orient="vertical"] {
+  width:11px;
+}
+separator.thin, separator.thin[orient="horizontal"] {
+  height:5px;
+  background-image: url('chrome://songbird/skin/base-elements/bg-separator.png');
+  background-position:center center;
+  background-repeat:repeat-x;
+
+}
+separator.thin[orient="vertical"] {
+  width:4px;
+}
+
+/* groove separators (50% size) */
+separator.groove,
+separator.groove[orient="horizontal"] {
+}
+
+separator.groove[orient="vertical"]  {
+}
+
+separator.groove-thin {
+}
+
+separator[orient="vertical"].groove-thin {
+}
+
+/** text formatting rules **/
+/* label (with margins) */
+
+/** Reduced Margin for some UI **/
+
+.small-margin {
+  margin:1px 2px 1px 2px;
+}
+
+.plain {
+/*
+  margin:0px;
+  padding:0px;
+  border:none;
+  background-color:transparent;
+*/
+}
+
+description, label {
+  cursor:default;
+}
+
+.header {
+  font-weight:bold;
+}
+
+.larger-text {
+  font-size:200%;
+}
+
+.smaller-text  {
+  font-size:50%;
+}
+
+.monospace {
+  font-family:monospace;
+}
+
+.indent {
+  margin-left:20px;
+}
+
+.box-padded {
+  padding:4px;
+}    
+
+.spaced {
+  margin:4px;
+}    
+
+.wizard-box {
+  padding:0px;
+}    
+
+.caption-text {
+  margin:2px 4px;
+}
+
+#commonDialog > hbox > vbox > description,
+#commonDialog > hbox > vbox > vbox > description {
+  line-height:14px;
+  margin-bottom:4px;
+}
+
+#commonDialog .dialogTitle {
+  font-weight:bold !important;
+}
+
+/* text that looks like a link */
+.text-link {
+  outline:0;
+  cursor:pointer !important;
+}

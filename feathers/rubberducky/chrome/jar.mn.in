@@ -1,8 +1,0 @@
-rubberducky.jar:
-% skin  songbird  rubberducky/0.2  %skin/
-% skin  rubberducky  rubberducky/0.2  %skin/
-# When rubberducky is active, use the global and mozapps packages that it was
-# designed to work with (found in the rubberducky-dependencies feather)
-% skin  global  rubberducky/0.2  chrome://rubberducky-global/skin/
-% skin  mozapps  rubberducky/0.2  chrome://songbird-mozapps/skin/
-@include_all_to

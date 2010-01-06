@@ -65,11 +65,7 @@
           <xul:image class="sb-first-run-welcome-image"/>
         </xul:vbox>
 
-        <!-- First-run welcome text. -->
-        <xul:description>
-          &first_run.welcome.description.line1;
-        </xul:description>
-        <xul:description>
+        <xul:description id="welcome-line2">
           &first_run.welcome.description.line2;
         </xul:description>
 

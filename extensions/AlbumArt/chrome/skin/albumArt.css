@@ -28,7 +28,7 @@
 .albumArtNowSelectedContainer,
 .albumArtNowPlayingContainer {
   -moz-box-flex: 1;
-  background-image: url('chrome://songbird/skin/display-pane/bg-empty.png');
+  /*background-image: url('chrome://songbird/skin/display-pane/bg-empty.png');*/
 }
 
 .albumArtNotSelectedContainer,

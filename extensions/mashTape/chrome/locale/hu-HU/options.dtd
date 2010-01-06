@@ -1,35 +1,36 @@
+<!ENTITY mashTape.firstrun.text "Lejátszás közben fedezze fel a dalhoz kapcsolódó Flickr fotókat, YouTube videokat, Last.fm gyűjteményeket, Goggle News cikkeket és még sok mást">
 <!ENTITY mtprefs.general "Általános">
-<!ENTITY mtprefs.info "Előadó Információ">
+<!ENTITY mtprefs.info "Információ">
 <!ENTITY mtprefs.review "Értékelések">
 <!ENTITY mtprefs.rss "Hírek">
 <!ENTITY mtprefs.photo "Képek">
-<!ENTITY mtprefs.flash "Videók">
-<!ENTITY mtprefs.defaulttab "Alapértelmezett fül">
-<!ENTITY mtprefs.defaulttab.help "Amikor a mashTape elindul:">
-<!ENTITY mtprefs.show.info "Mutasd az Előadó Információt">
-<!ENTITY mtprefs.show.review "Mutasd az Értékeléseket">
-<!ENTITY mtprefs.show.rss "Mutasd a Híreket">
-<!ENTITY mtprefs.show.photo "Mutasd a Képeket">
-<!ENTITY mtprefs.show.flash "Mutasd a Videokat">
-<!ENTITY mtprefs.autohide "Automatikus-elrejtés">
-<!ENTITY mtprefs.autohide.help "A mashTape panel automatikusan lecsukódik amikor a Songbird böngészőjére váltasz.">
+<!ENTITY mtprefs.flash "Filmek">
+<!ENTITY mtprefs.defaulttab "Alapértelmezett lap">
+<!ENTITY mtprefs.defaulttab.help "A mashTape indulásokor:">
+<!ENTITY mtprefs.show.info "Információ megjelenítése">
+<!ENTITY mtprefs.show.review "Értékelések megjelenítése">
+<!ENTITY mtprefs.show.rss "Hírek megjelenítése">
+<!ENTITY mtprefs.show.photo "Képek megjelenítése">
+<!ENTITY mtprefs.show.flash "Filmek megjelenítése">
+<!ENTITY mtprefs.autohide "Automatikus elrejtés">
+<!ENTITY mtprefs.autohide.help "A mashTape panel automatikusan lecsukódik a Songbird böngészőjre váltáskor.">
 <!ENTITY mtprefs.services "Szolgáltatások">
-<!ENTITY mtprefs.getmore "Szerezz be még több szolgáltatást a mashTape-hez">
-<!ENTITY mtprefs.tab.info "Előadó Információ Fül Beállítás">
-<!ENTITY mtprefs.tab.review "Értékelések Fül Beállítás">
-<!ENTITY mtprefs.tab.rss "Hírek Fül Beállítás">
-<!ENTITY mtprefs.tab.photo "Képek Fül Beállítás">
-<!ENTITY mtprefs.tab.flash "Videók Fül Beállítás">
-<!ENTITY mtprefs.tab.help "Mutasd ezt a fület a mashTape panelon.">
-<!ENTITY mtprefs.single "Ez a panel támogatás egyszerre csak egy szolgáltatás tartalmát jeleníti meg. Válassz ki egy szolgáltatást az alábbi listából.">
-<!ENTITY mtprefs.multiple "Ez a panel támogatás egyszerre több szolgáltatás tartalmát is megjeleníti. Válaszd ki a kívánt szolgáltatást vagy szolgáltatásokat az alábbi listából.">
-<!ENTITY mtprefs.tab.info.autolocalise "Helyi Adatok">
-<!ENTITY mtprefs.tab.info.autolocalise.help "Automatikusan megjeleníti a helyi előadók információit ha elérhető.">
-<!ENTITY mtprefs.tab.photo.speed "Kép Görgetési Sebessége">
+<!ENTITY mtprefs.getmore "További szolgáltatások a mashTape-hez">
+<!ENTITY mtprefs.tab.info "Információ lap beállítása">
+<!ENTITY mtprefs.tab.review "Értékelések lap beállítása">
+<!ENTITY mtprefs.tab.rss "Hírek lap beállítása">
+<!ENTITY mtprefs.tab.photo "Képek lap beállítása">
+<!ENTITY mtprefs.tab.flash "Filmek lap beállítása">
+<!ENTITY mtprefs.tab.help "íésp megjelenítése a mashTape panelen.">
+<!ENTITY mtprefs.single "Ez a panel egyszerre csak egy szolgáltatás tartalmát képes megjelenítwni. Válasszon ki egy szolgáltatást az alábbi listából.">
+<!ENTITY mtprefs.multiple "Ez a panel egyszerre több szolgáltatás tartalmát is képes megjeleníteni. Válassza ki a kívánt szolgáltatás(oka)taz alábbi listából.">
+<!ENTITY mtprefs.tab.info.autolocalise "Helyi adatok">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Amennyiben az elérhető, automatikusan megjeleníti a helyi előadók információt.">
+<!ENTITY mtprefs.tab.photo.speed "Kép görgetési sebessége">
 <!ENTITY mtprefs.tab.photo.faster "Gyorsabb">
 <!ENTITY mtprefs.tab.photo.slower "Lasabb">
-<!ENTITY mtprefs.tab.photo.keywords.caption "Kereső Kulcsszavak">
-<!ENTITY mtprefs.tab.photo.keywords "További kereső kulcsszavak:">
-<!ENTITY mtprefs.tab.photo.keywords.help "Beállíthatsz további kulcsszavakat, hogy csatold a kívánt képkereső szolgáltatást. A kulcsszavakat szóközzel elválasztva kell beírni, pl.: élő koncert együttes">
-<!ENTITY mtprefs.tab.video.autoplay "Videók automatikus lejátszása">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Keresés kulcsszóra">
+<!ENTITY mtprefs.tab.photo.keywords "További keresendő kulcsszavak:">
+<!ENTITY mtprefs.tab.photo.keywords.help "Ttovábbi kulcsszavak adhatók meg, amelyek alapján a képkereső találtaokat ad vissza. A kulcsszavakat szóközzel elválasztva kell beírni, pl.: live concert band">
+<!ENTITY mtprefs.tab.video.autoplay "Filmek automatikus lejátszása">
 <!ENTITY mtprefs.tab.video.autoplay.help "Engedélyezve ezt a beállítást, a kötegelt videókat támogató szolgáltatók videói automatikusan elindulnak egymás után. Ez hasznos lehet például akkor, ha a Zene Videókat az MTV-ről automatikusan egymás után akarod lejátszani. A kötegelt videókat nem támogató szolgáltatók esetében ez a beállítás nem fog muködni.">

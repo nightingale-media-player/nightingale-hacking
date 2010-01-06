@@ -70,6 +70,12 @@
 <!ENTITY menu.control.pause.button     "Pause" >
 <!ENTITY menu.control.stop.button      "Stop" >
 
+<!ENTITY displaypane.default.image.pre "Select an add-on from the">
+<!ENTITY displaypane.default.image.tooltip "Add-on Picker Icon">
+<!ENTITY displaypane.default.image.post "menu or visit the">
+<!ENTITY displaypane.default.link.pre "">
+<!ENTITY displaypane.default.link.text "Add-on Site">
+<!ENTITY displaypane.default.link.post "to browse add-ons.">
 <!ENTITY displaypane.name.servicepane   "Service Pane Bottom">
 <!ENTITY displaypane.name.browser       "Content Pane Bottom">
 <!ENTITY displaypane.name.sidebar       "Right Sidebar">
@@ -127,6 +133,8 @@
 <!ENTITY tooltip.browser.refresh  "Refresh" >
 <!ENTITY tooltip.browser.bookmark "Bookmark this page" >
 <!ENTITY tooltip.browser.subscription "Subscribe to this page" >
+<!ENTITY tooltip.browser.mediapages.list "List View" >
+<!ENTITY tooltip.browser.mediapages.filter "Filter Pane View" >
 <!ENTITY tooltip.browser.mediapages "Switch Media Views..." >
 <!ENTITY tooltip.browser.bookmarksubscribe "Add this page" >
 <!ENTITY tooltip.servicepane.show    "Show Service Pane" >
@@ -337,6 +345,7 @@
 <!ENTITY rapi.library_write_disable.accesskey    "a" >
 
 <!ENTITY prefpane.addons.label        "Add-ons">
+<!ENTITY prefpane.content.label       "Web Content">
 
 <!ENTITY umsd.prefpane                      "USB" >
 <!ENTITY umsd.no_devices_present            "No USB mass-storage devices are connected." >
@@ -645,8 +654,8 @@
 
 <!-- First-run welcome entities. -->
 <!ENTITY first_run.welcome.header.label      "Welcome to &brandShortName;">
-<!ENTITY first_run.welcome.description.line1 "&brandShortName; is a highly customizable alternative to traditional desktop media players.">
-<!ENTITY first_run.welcome.description.line2 "This assistant provides a quick and efficient way to get &brandShortName; up and running.">
+<!ENTITY first_run.welcome.description.line1 "the highly customizable alternative to traditional desktop media players.">
+<!ENTITY first_run.welcome.description.line2 "This assistant provides a quick and efficient way to get up and running.">
 
 <!-- Import media dialog preference entities. -->
 <!ENTITY import_media.prefs.title                         "Media Importer">
@@ -699,6 +708,8 @@
 <!ENTITY albumart.displaypane.not_playing_message  "Nothing playing" >
 <!ENTITY albumart.displaypane.not_selected_message  "Nothing selected" >
 <!ENTITY albumart.displaypane.drag_and_drop  "Drag artwork here" >
+<!ENTITY albumart.displaypane.contextmenu.showselected  "Show Now Selected" >
+<!ENTITY albumart.displaypane.contextmenu.showplaying   "Show Now Playing" >
 <!ENTITY albumart.displaypane.selected.menu.cut "Cut">
 <!ENTITY albumart.displaypane.selected.menu.copy "Copy">
 <!ENTITY albumart.displaypane.selected.menu.paste "Paste">
@@ -807,7 +818,9 @@
 <!ENTITY about.credits.footer.afterLink "to the Mozilla project.">
 <!ENTITY about.credits.heading.translators "Translators">
 <!ENTITY about.credits.heading.champs "Champions">
-<!ENTITY about.credits.description.champs "The Songbird Champions are the die-hard Songbird users and fans who have gone above and beyond the call of duty to help out other Songbird users on our <a href='http://getsatisfaction.com/songbird'>Songbird GetSatisfaction Support Forum</a>.  They are the most prolific guys on our forum, and tirelessly work to ensure that every Songbird user is a happy Songbird user.">
+<!ENTITY about.credits.description.champs.link.pre "The Songbird Champions are the die-hard Songbird users and fans who have gone above and beyond the call of duty to help out other Songbird users on our">
+<!ENTITY about.credits.description.champs.link.text "Songbird GetSatisfaction Support Forum.">
+<!ENTITY about.credits.description.champs.link.post "They are the most prolific guys on our forum, and tirelessly work to ensure that every Songbird user is a happy Songbird user.">
 
 <!ENTITY cdrip.lookup.multiple.title       "Multiple CD Records Found">
 <!ENTITY cdrip.lookup.multiple.description "Choose one of the following or add your own info.">

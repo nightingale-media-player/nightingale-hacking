@@ -84,6 +84,7 @@
                                  type="menu"
                                  anonid="alltabs-button"
                                  mousethrough="never"
+                                 collapsed="true"
                                  tooltipstring="&tabs.listAllTabs;">
                 <xul:menupopup class="tabs-alltabs-popup"
                                anonid="alltabs-popup" position="after_end"/>
@@ -305,6 +306,7 @@
         }
         this._firstTab.collapsed = false;
         this._mediaTab.collapsed = true;
+        this.mAllTabsButton.collapsed = true;
       ]]></handler>
       <handler event="overflow" phase="target"><![CDATA[
         if (event.originalTarget != this._scrollbox) {
@@ -324,6 +326,7 @@
         }
         this._firstTab.collapsed = true;
         this._mediaTab.collapsed = false;
+        this.mAllTabsButton.collapsed = false;
       ]]></handler>
       <handler event="select" phase="capturing"><![CDATA[
         if (this._mediaTab) {

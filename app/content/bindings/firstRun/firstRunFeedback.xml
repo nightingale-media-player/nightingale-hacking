@@ -75,7 +75,7 @@
         </xul:description>
 
         <!-- Options box. -->
-        <xul:vbox anonid="options_box" class="indent">
+        <xul:vbox anonid="options_box">
 
           <!-- Metrics collection checkbox. -->
           <xul:checkbox anonid="metrics_checkbox"

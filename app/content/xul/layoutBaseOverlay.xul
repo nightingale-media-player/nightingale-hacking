@@ -192,8 +192,10 @@
                       oncommand="movePlayerControls(false);" />
           </menupopup>
         </menu>
-        <sb-displaypane-menuitems id="menuitem_view_displaypanes"/>
-        <sb-mediapages-menuitems id="menuitem_view_mediapages" hideGetMore="true"/>
+        <!-- <sb-displaypane-menuitems id="menuitem_view_displaypanes"/> -->
+        <sb-mediapages-menuitems id="menuitem_view_mediapages"
+                                 hideGetMore="true"
+                                 hideBuiltIn="false" />
         <menuseparator/>
         <menuitem id="menuitem-video-fullscreen"
                   label="&menu.fullscreen;"

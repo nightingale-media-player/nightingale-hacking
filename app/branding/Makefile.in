@@ -53,6 +53,10 @@ else
    ICON_TGT_NAME = default$(ICON_EXTENSION)
 endif
 
+ifeq (windows,$(SB_PLATFORM))
+   SONGBIRD_DIST += $(srcdir)/splash.bmp
+endif
+
 CREATEDIRS = $(ICON_TGT_DIR)
 
 JAR_MANIFEST = jar.mn.in

@@ -172,8 +172,15 @@ var SBSessionStore = {
         // when media scan is done / skipped.
         aTabBrowser.loadURI(PLACEHOLDER_URL, null, null, null, '_media');
         
-        var firstrunURL = Application.prefs.getValue(PREF_FIRSTRUN_URL, "about:blank");
-        selectedTab = aTabBrowser.loadOneTab(firstrunURL, null, null, null, true);
+        var loadMLInBackground =
+          Application.prefs.getValue("songbird.firstrun.load_ml_in_background",
+                                     false);
+        var firstrunURL = Application.prefs.getValue(PREF_FIRSTRUN_URL,
+                                                     "about:blank");
+        // If the pref to load the medialist in the background is true, then
+        // we want to load the firstrun page in the foreground
+        selectedTab = aTabBrowser.loadOneTab(firstrunURL, null, null, null,
+                                             !loadMLInBackground);
 
         Application.prefs.setValue(PREF_FIRSTRUN, true);
         Application.prefs.setValue(PREF_FIRSTRUN_SESSION, true);

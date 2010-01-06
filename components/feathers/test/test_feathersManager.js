@@ -35,11 +35,11 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 var gDefaultMainLayoutURL = "";
 var gDefaultSecondaryLayoutURL = "";
 var gDefaultSkinName = "";
+var gBundledSkins = ["purplerain", "gonzo"];
 
-// Rubber-ducky dependency layout URLs. As long as we are still shipping this extension,
-// we need to keep these layouts here (in order to pass feather manager unit test).
-const ALTERNATE_MAIN_LAYOUT_URL     = "chrome://songbird/content/feathers/basic-layouts/xul/mainplayer.xul";
-const ALTERNATE_MINI_LAYOUT_URL     = "chrome://songbird/content/feathers/basic-layouts/xul/miniplayer.xul";
+// Gonzo alternate layouts
+const GONZO_MAIN_LAYOUT = "chrome://gonzo/content/xul/mainplayer.xul";
+const GONZO_SECONDARY_LAYOUT = "chrome://gonzo/content/xul/miniplayer.xul";
 
 // Preference constants for default layout/skin/feather
 // @see sbFeathersManager.js for information about each pref.
@@ -182,7 +182,8 @@ function assertEnumeratorEqualsArray(enumerator, list) {
 function assertEnumeratorMatchesFieldArray(enumerator, field, list) {
   list = list.concat([]); // Clone list before modifying 
   for (var item in enumerator) {
-    assertTrue(list.indexOf(item[field]) > -1);
+    assertTrue(list.indexOf(item[field]) > -1,
+        item[field] + " not found in list: '" + list + "'\n");
     list.splice(list.indexOf(item[field]), 1);
   }
   assertEqual(list.length, 0);
@@ -200,7 +201,7 @@ function assertEnumeratorMatchesFieldArray(enumerator, field, list) {
 function testAddonMetadataReader()
 {
   // Verify all skins added properly
-  var skinNames = [gDefaultSkinName];
+  var skinNames = gBundledSkins;
   assertEqual(feathersManager.skinCount, skinNames.length);
   var enumerator = wrapEnumerator(feathersManager.getSkinDescriptions(),
                      Components.interfaces.sbISkinDescription);
@@ -208,7 +209,7 @@ function testAddonMetadataReader()
   
   // Verify all layouts added properly
   var layoutURLs = [ gDefaultMainLayoutURL, gDefaultSecondaryLayoutURL,
-                     ALTERNATE_MAIN_LAYOUT_URL, ALTERNATE_MINI_LAYOUT_URL ];
+                     GONZO_MAIN_LAYOUT, GONZO_SECONDARY_LAYOUT ];
   assertEqual(feathersManager.layoutCount, layoutURLs.length);
   enumerator = wrapEnumerator(feathersManager.getLayoutDescriptions(), 
                      Components.interfaces.sbILayoutDescription);
@@ -217,10 +218,10 @@ function testAddonMetadataReader()
   // Verify mappings
   enumerator = wrapEnumerator(feathersManager.getSkinsForLayout(layoutURLs[0]), 
                  Components.interfaces.sbISkinDescription);
-  assertEnumeratorMatchesFieldArray(enumerator, "internalName", [gDefaultSkinName]);
+  assertEnumeratorMatchesFieldArray(enumerator, "internalName", [gBundledSkins[0]]);
   enumerator = wrapEnumerator(feathersManager.getSkinsForLayout(layoutURLs[1]), 
                               Components.interfaces.sbISkinDescription);
-  assertEnumeratorMatchesFieldArray(enumerator, "internalName", [gDefaultSkinName]);
+  assertEnumeratorMatchesFieldArray(enumerator, "internalName", [gBundledSkins[0]]);
   
   // Verify showChrome
   // Chrome is only enabled on Mac OS X

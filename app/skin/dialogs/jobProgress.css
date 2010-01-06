@@ -50,6 +50,10 @@ See SBJobUtils.jsm and sbIJobProgress.idl.
   margin: 0;
 }
 
+#jobprogress_error_list > listrows > listboxbody {
+  overflow: scroll;
+}
+
 /* This rule modifies the behavior of the attribute "hidden" so that instead of
 making things display: none; it makes them visibility: hidden;. display: none;
 makes elements not effect layout and not get drawn, while visibility: hidden;

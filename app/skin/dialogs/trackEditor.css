@@ -177,19 +177,39 @@ textbox.short-number-input {
 
 #prev_button > .button-box,
 #next_button > .button-box {
-  padding:3px;
 }
 
 #prev_button {
-    list-style-image: url(chrome://songbird/skin/metadata-editor/button-back.png);
+  list-style-image: url(chrome://songbird/skin/metadata-editor/button-back.png);
 }
 #next_button {
   list-style-image: url(chrome://songbird/skin/metadata-editor/button-forward.png);
 }
 
+#prev_button > hbox.button-box,
+#next_button > hbox.button-box {
+  padding: 0px;
+  -moz-box-flex: 0;
+  height: 20px !important;
+}
 #prev_button,
 #next_button {
-  -moz-image-region: rect(0px 16px 16px 0px);
+  -moz-image-region: rect(0px 23px 20px 0px);
+  border: none !important;
+  padding: 0px !important;
+  margin: 0px !important;
+}
+#prev_button:hover,
+#next_button:hover {
+  -moz-image-region: rect(20px 23px 40px 0px);
+}
+#prev_button:active,
+#next_button:active {
+  -moz-image-region: rect(40px 23px 60px 0px);
+}
+#prev_button[disabled="true"],
+#next_button[disabled="true"] {
+  -moz-image-region: rect(60px 23px 80px 0px);
 }
 /*
 #prev_button:hover,
@@ -219,7 +239,7 @@ textbox.short-number-input {
   
 }
 .art:focus {
-  padding:0px;
+  /*padding:0px;*/
 }
 image.art+button {
   margin:0 4px;

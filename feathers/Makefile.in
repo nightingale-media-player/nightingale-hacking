@@ -30,8 +30,7 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = gonzo \
-          rubberducky \
-          rubberducky-dependencies \
+					purplerain \
           $(NULL)
 
 include $(topsrcdir)/build/rules.mk

@@ -54,7 +54,11 @@
     <implementation type="application/x-javascript">
       <constructor>
       <![CDATA[
-        // NOTE: this would be much nicer in the base class but their constructor fires first!
+        const Cc = Components.classes;
+        const Ci = Components.interfaces;
+
+        // NOTE: this would be much nicer in the base class but their
+        // constructor fires first!
         // We need to explicitly call onPopupShowing() here since the first
         // time this constructor is called it is after the popupshowing event
         // has fired.
@@ -81,9 +85,10 @@
             if (item.mediaPage && gBrowser.currentMediaPage) {
             
               // Set the given media page as the default for the current list
-              var mgr = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
-                                  .getService(Components.interfaces.sbIMediaPageManager);
-              mgr.setPage(gBrowser.currentMediaPage.mediaListView.mediaList, item.mediaPage);
+              var mgr = Cc["@songbirdnest.com/Songbird/MediaPageManager;1"]
+                                .getService(Ci.sbIMediaPageManager);
+              mgr.setPage(gBrowser.currentMediaPage.mediaListView.mediaList,
+                          item.mediaPage);
                       
               // Reload using the new page
               gBrowser.loadMediaList(
@@ -94,7 +99,8 @@
                 null);
             }
             else if (item.hasAttribute("uri")) {
-              gBrowser.loadURI(item.getAttribute("uri"), null, null, null, "_blank");
+              gBrowser.loadURI(item.getAttribute("uri"),
+                               null, null, null, "_blank");
             }
           } catch (e) { 
             Components.utils.reportError(e);
@@ -108,15 +114,15 @@
         of compatible media pages
       -->
       <!-- 
-        NOTE: this function uses _addToMenu directly instead of returning an array
-              of content either method is fine, and here this one probably makes
-              more sense
+        NOTE: this function uses _addToMenu directly instead of returning an
+              array of content either method is fine, and here this one
+              probably makes more sense
       -->
       <method name="generateMenuItems">
         <body>
         <![CDATA[
-          var mgr = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
-                .getService(Components.interfaces.sbIMediaPageManager);
+          var mgr = Cc["@songbirdnest.com/Songbird/MediaPageManager;1"]
+                      .getService(Ci.sbIMediaPageManager);
 
           var mediaPagesLabel = "mediapages.label";
           try {
@@ -150,8 +156,8 @@
           var view = gBrowser.currentMediaPage.mediaListView;
           var ml = view.mediaList;
 
-          // these properties are used to customize the menu based on the space you
-          // want to allocate for it
+          // these properties are used to customize the menu based on the
+          // space you want to allocate for it
           var hideTitle = this.getAttribute("hideMediaListTitle");
           var hideGetMore = this.getAttribute("hideGetMore");
 
@@ -170,7 +176,6 @@
             this._addToMenu(document.createElement("menuseparator"));
             this._addToMenu(mediaPagesMenu);
           }
-
           // the media page manager can use a constraint if we have one
           var constraint = null;
           if (view instanceof Components.interfaces.sbIFilterableMediaListView) {
@@ -187,10 +192,22 @@
 
           
           // Attach a menuitem for each compatible layout
+          var foundMediaPages = false;
           while (pages.hasMoreElements()) {
-            var page = pages.getNext()
+            var page = pages.getNext();
             page.QueryInterface(Components.interfaces.sbIMediaPageInfo);
 
+            // Don't make menu entries for list or filter view since we
+            // have dedicated buttons for those
+            var hideBuiltIn = this.getAttribute("hideBuiltIn");
+            if (hideBuiltIn == "true" &&
+               ((page.contentUrl ==
+                "chrome://songbird/content/mediapages/playlistPage.xul") ||
+                (page.contentUrl ==
+                "chrome://songbird/content/mediapages/filtersPage.xul")))
+            {
+              continue;
+            }
             var item = this._makeMenuItem(page);
 
             if (page.contentUrl == currentPageURL) {
@@ -206,13 +223,15 @@
             } else {
               mediaPagesPopup.appendChild(item);
             }
+            foundMediaPages = true;
           }
 
           // If the current window has a browser/servicepane, then add a link
           // to get more media pages.
           // NOTE: This is brittle. Please change this once we have a proper API.
           if (typeof(gBrowser) != "undefined" && hideGetMore != "true") {
-            this._addToMenu(document.createElement("menuseparator"));
+            if (foundMediaPages)
+              this._addToMenu(document.createElement("menuseparator"));
             this._addToMenu(this._makeGetMore());
           }
         ]]>
@@ -249,8 +268,8 @@
                  " bundle\n"+ e + "\n"); 
           }
           
-          var formatter = Components.classes["@mozilla.org/toolkit/URLFormatterService;1"]
-                                    .getService(Components.interfaces.nsIURLFormatter);
+          var formatter = Cc["@mozilla.org/toolkit/URLFormatterService;1"]
+                            .getService(Ci.nsIURLFormatter);
           var getMoreURL = formatter.formatURLPref("songbird.url.addons.mediaviews");
           item.setAttribute("label", getMoreText);
           item.setAttribute("name", "menu.getmore");
@@ -263,35 +282,59 @@
   </binding>
   <binding id="mediapages-button">
     <content>
-      <xul:toolbarbutton id="mediapages-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
+      <xul:toolbarbutton id="mediapages-button-listview"
+                         class="toolbarbutton-1 chromeclass-toolbar-additional"
+                         anonid="mediapages-button-listview"
+                         label="&tooltip.browser.mediapages.list;"
+                         tooltiptext="&tooltip.browser.mediapages.list;"
+                         oncommand="switchMediaView('list')" />
+      <xul:toolbarbutton id="mediapages-button-filterview"
+                         class="toolbarbutton-1 chromeclass-toolbar-additional"
+                         anonid="mediapages-button-filterview"
+                         label="&tooltip.browser.mediapages.filter;"
+                         tooltiptext="&tooltip.browser.mediapages.filter;"
+                         oncommand="switchMediaView('filter')" />
+      <xul:toolbarbutton id="mediapages-button"
+                         class="toolbarbutton-1 chromeclass-toolbar-additional"
                          anonid="mediapages-button"
                          label="&tooltip.browser.mediapages;"
                          tooltiptext="&tooltip.browser.mediapages;"
                          type="menu">
           <xul:menupopup orient="vertical">
-            <xul:sb-mediapages-menuitems hideMediaListTitle="true"/>
+            <xul:sb-mediapages-menuitems hideMediaListTitle="true"
+                                         hideBuiltIn="true" />
           </xul:menupopup>
       </xul:toolbarbutton>
     </content>
     <implementation>
       <constructor><![CDATA[
-        var button = document.getAnonymousElementByAttribute(this, "anonid", "mediapages-button");
+        const Cc = Components.classes;
+        const Ci = Components.interfaces;
+
+        var button = document.getAnonymousElementByAttribute(this,
+                                  "anonid", "mediapages-button");
+        var listButton = document.getAnonymousElementByAttribute(this,
+                                  "anonid", "mediapages-button-listview");
+        var filterButton = document.getAnonymousElementByAttribute(this,
+                                  "anonid", "mediapages-button-filterview");
         this.disabler = function() {
           
           // enable switching if we have a valid media page
           // or are on a valid media page URL
           // this prevents broken media pages from being inescapable
-          var mgr = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
-                                  .getService(Components.interfaces.sbIMediaPageManager);
+          var mgr = Cc["@songbirdnest.com/Songbird/MediaPageManager;1"]
+                      .getService(Ci.sbIMediaPageManager);
           var pages = mgr.getAvailablePages();
           var mediaPageURL = false;
-          var currentSpec = gBrowser.selectedBrowser.currentURI.spec;
-          for (var i = 0; i < pages.length; i++) {
-            if (currentSpec == pages[i].contentUrl) {
-              mediaPageURL = true;
-              break;
-            }
-          };
+          if (gBrowser.selectedBrowser.currentURI) {
+            var currentSpec = gBrowser.selectedBrowser.currentURI.spec;
+            for (var i = 0; i < pages.length; i++) {
+              if (currentSpec == pages[i].contentUrl) {
+                mediaPageURL = true;
+                break;
+              }
+            };
+          }
 
           if (gBrowser.loading) {
             return; // Do nothing until loading is complete.  This avoids flickering.
@@ -300,18 +343,101 @@
           var mediaPage = gBrowser.currentMediaPage;
           if ((mediaPage && !mediaPage.isOnlyView) || mediaPageURL) {
             button.setAttribute("disabled", "false");
+            listButton.setAttribute("disabled", "false");
+            filterButton.setAttribute("disabled", "false");
           }
           else {
             button.setAttribute("disabled", "true");
+            listButton.setAttribute("disabled", "true");
+            filterButton.setAttribute("disabled", "true");
           }
+
+          // set the button states for the list & filter view buttons so
+          // they are toggled correctly depending on the view
+          if (gBrowser.currentURI)
+            var currentPageURL = gBrowser.currentURI
+                                      .spec.replace(/[\?&]libraryGUID.*$/, "");
+          switch (currentPageURL) {
+            case "chrome://songbird/content/mediapages/filtersPage.xul":
+              listButton.setAttribute("open", "false");
+              filterButton.setAttribute("open", "true");
+              break;
+            case "chrome://songbird/content/mediapages/playlistPage.xul":
+              listButton.setAttribute("open", "true");
+              filterButton.setAttribute("open", "false");
+              break;
+            default:
+              listButton.setAttribute("open", "false");
+              filterButton.setAttribute("open", "false");
+          }
+
         };
+        
+        // cache instances to the List & Filter view
+        var mgr = Cc["@songbirdnest.com/Songbird/MediaPageManager;1"]
+                    .getService(Ci.sbIMediaPageManager);
+        var pages = mgr.getAvailablePages();
+        while (pages.hasMoreElements()) {
+          var page = pages.getNext().QueryInterface(
+                           Components.interfaces.sbIMediaPageInfo);
+          switch (page.contentUrl) {
+            case "chrome://songbird/content/mediapages/filtersPage.xul":
+              this.filterView = page;
+              break;
+            case "chrome://songbird/content/mediapages/playlistPage.xul":
+              this.listView = page;
+              break;
+          }
+        }
+
         gBrowser.addEventListener('TabContentChange', this.disabler, false); 
       ]]></constructor>
+      
       <destructor><![CDATA[
         if (gBrowser) {
           gBrowser.removeEventListener('TabContentChange', this.disabler, false);
         }
       ]]></destructor>
+
+
+      <method name="switchMediaView">
+        <parameter name="viewName"/>
+        <body>
+        <![CDATA[
+          var mgr = Cc["@songbirdnest.com/Songbird/MediaPageManager;1"]
+                      .getService(Ci.sbIMediaPageManager);
+          var listButton = document.getAnonymousElementByAttribute(this,
+                                    "anonid", "mediapages-button-listview");
+          var filterButton = document.getAnonymousElementByAttribute(this,
+                                    "anonid", "mediapages-button-filterview");
+          switch (viewName) {
+            case "list":
+              listButton.setAttribute("open", "true");
+              filterButton.setAttribute("open", "false");
+              mgr.setPage(gBrowser.currentMediaPage.mediaListView.mediaList,
+                          this.listView);
+              break;
+            case "filter":
+              listButton.setAttribute("open", "false");
+              filterButton.setAttribute("open", "true");
+              mgr.setPage(gBrowser.currentMediaPage.mediaListView.mediaList,
+                          this.filterView);
+              break;
+            default:
+              listButton.setAttribute("open", "false");
+              filterButton.setAttribute("open", "false");
+          }
+
+          // Reload using the new page
+          gBrowser.loadMediaList(gBrowser.currentMediaListView.mediaList,  
+                                 null,
+                                 null, 
+                                 gBrowser.currentMediaListView, 
+                                 null);
+        ]]>
+        </body>
+      </method>
+
     </implementation>
   </binding>
 </bindings>

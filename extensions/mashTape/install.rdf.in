@@ -87,8 +87,8 @@
 				<songbird:contentUrl>chrome://mashtape/content/mashTape.xul</songbird:contentUrl>
 				<songbird:contentTitle>@EXTENSION_NAME@</songbird:contentTitle>
 				<songbird:contentIcon>chrome://mashtape/content/mT_favicon.png</songbird:contentIcon>
-				<songbird:defaultWidth>194</songbird:defaultWidth>
-				<songbird:defaultHeight>194</songbird:defaultHeight>
+				<songbird:defaultWidth>177</songbird:defaultWidth>
+				<songbird:defaultHeight>177</songbird:defaultHeight>
 				<songbird:suggestedContentGroups>contentpane</songbird:suggestedContentGroups>
 				<songbird:showOnInstall>true</songbird:showOnInstall>
 			</Description>

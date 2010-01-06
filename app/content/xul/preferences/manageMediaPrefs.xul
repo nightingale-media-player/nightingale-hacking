@@ -71,67 +71,70 @@
     <commandset id="manage_media_commandset"/>
 
     <notificationbox id="media_manage_notification_box" flex="1">
-      <groupbox>
-        <caption label="&prefWindow.manageMedia.title;"/>
-        <description class="para">
-          &prefWindow.manageMedia.enablebox.description.pre;
-          <description class="emphasis">&prefWindow.manageMedia.enablebox.warning;</description>
-          &prefWindow.manageMedia.enablebox.description.post; 
-        </description>
-	<hbox>
-          <checkbox id="manage_media_global_cmd"
-                    preference-editable="true"
-                    label="&prefWindow.manageMedia.enable.enable.label;"
-                    oncommand="return manageMediaPrefsPane.doEnableCommand(event)"
-                    preference="manage_media_pref_library_enable"/>
-	  <spacer flex="1"/>
-	  <button id="mac_apply_button"
-		  label="&prefWindow.manageMedia.mac_button.label;"/>
-	</hbox>
-        <hbox>
-          <filefield id="manage_media_library_file" flex="1"/>
-          <button id="manage_media_library_browse"
-                  label="&window.browse;"
-                  oncommand="manageMediaPrefsPane.doBrowseCommand(event);"/>
-        </hbox>
-      </groupbox>
-      
-      <groupbox id="manage_media_format_box">
-        <caption id="manage_media_format_caption"
-                 label="&prefWindow.manageMedia.format.box.label;"/>
-        <hbox id="manage_media_format_dir_container">
-          <!-- <label id="manage_media_format_dir_label"/> -->
-          <sb-properties-formatter id="manage_media_format_dir_formatter"
-               preference-editable="true" maxProperties="3" trailingSeparator="true"
-               propertyCategory="songbird-media-manager-directory-name-properties"
-               preference="manage_media_pref_library_format_dir">
-            <label id="manage_media_format_dir_suffix_label"
-                   value="&prefWindow.manageMedia.format.dir.suffix;"/>
+      <vbox id="media_manage_notification_box_contents">
+        <groupbox>
+          <caption label="&prefWindow.manageMedia.title;"/>
+          <description class="para">
+            &prefWindow.manageMedia.enablebox.description.pre;
+            <span class="emphasis">&prefWindow.manageMedia.enablebox.warning;</span>
+            &prefWindow.manageMedia.enablebox.description.post; 
+          </description>
+          <hbox>
+            <checkbox id="manage_media_global_cmd"
+                  preference-editable="true"
+                  label="&prefWindow.manageMedia.enable.enable.label;"
+                  oncommand="return manageMediaPrefsPane.doEnableCommand(event)"
+                  preference="manage_media_pref_library_enable"/>
+            <spacer flex="1"/>
+            <button id="mac_apply_button"
+                    label="&prefWindow.manageMedia.mac_button.label;"/>
+          </hbox>
+          <hbox>
+            <filefield id="manage_media_library_file" flex="1"/>
+            <button id="manage_media_library_browse"
+                    label="&window.browse;"
+                    oncommand="manageMediaPrefsPane.doBrowseCommand(event);"/>
+          </hbox>
+        </groupbox>
+        
+        <groupbox id="manage_media_format_box">
+          <caption id="manage_media_format_caption"
+                   label="&prefWindow.manageMedia.format.box.label;"/>
+          <hbox id="manage_media_format_dir_container">
+            <!-- <label id="manage_media_format_dir_label"/> -->
+            <sb-properties-formatter id="manage_media_format_dir_formatter"
+             preference-editable="true" maxProperties="3"
+             trailingSeparator="true"
+             propertyCategory="songbird-media-manager-directory-name-properties"
+             preference="manage_media_pref_library_format_dir">
+              <label id="manage_media_format_dir_suffix_label"
+                     value="&prefWindow.manageMedia.format.dir.suffix;"/>
+            </sb-properties-formatter>
+          </hbox>
+          <checkbox id="manage_media_format_rename"
+                    preference="manage_media_pref_library_rename"
+                    label="&prefWindow.manageMedia.format.file.label;"/>
+          <sb-properties-formatter defaultSeparator=" - "
+               id="manage_media_format_file_formatter" maxProperties="3"
+               preference-editable="true" separatorEditable="true"
+               propertyCategory="songbird-media-manager-file-name-properties"
+               preference="manage_media_pref_library_format_file">
+            <label id="manage_media_format_file_suffix_label"
+               tooltiptext="&prefWindow.manageMedia.format.file.suffix.tooltip;"
+               value="&prefWindow.manageMedia.format.file.suffix;"/>
           </sb-properties-formatter>
-        </hbox>
-        <checkbox id="manage_media_format_rename"
-                  preference="manage_media_pref_library_rename"
-                  label="&prefWindow.manageMedia.format.file.label;"/>
-        <sb-properties-formatter defaultSeparator=" - "
-             id="manage_media_format_file_formatter" maxProperties="3"
-             preference-editable="true" separatorEditable="true"
-             propertyCategory="songbird-media-manager-file-name-properties"
-             preference="manage_media_pref_library_format_file">
-          <label id="manage_media_format_file_suffix_label"
-                 tooltiptext="&prefWindow.manageMedia.format.file.suffix.tooltip;"
-                 value="&prefWindow.manageMedia.format.file.suffix;"/>
-        </sb-properties-formatter>
-        <hbox pack="end">
-          <button id="manage_media_global_preview"
+          <hbox pack="end">
+            <button id="manage_media_global_preview"
                   label="&prefWindow.manageMedia.enable.preview.label;"
                   oncommand="return manageMediaPrefsPane.doDisplayPreview();"/>
-        </hbox>
-      </groupbox>
+          </hbox>
+        </groupbox>
 
-      <label class="header" value="&prefWindow.manageMedia.generalDescription.title;"/>
-      <description class="para">&prefWindow.manageMedia.generalDescription.p1;</description>
-      <description class="para">&prefWindow.manageMedia.generalDescription.p2;</description>
-      
+        <label class="header"
+               value="&prefWindow.manageMedia.generalDescription.title;"/>
+        <description class="para">&prefWindow.manageMedia.generalDescription.p1;</description>
+        <description class="para">&prefWindow.manageMedia.generalDescription.p2;</description>
+      </vbox>
     </notificationbox>
 
   </prefpane>

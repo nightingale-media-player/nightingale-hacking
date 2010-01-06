@@ -39,11 +39,13 @@ Additional styles imported directly by the first run dialog.
 #first_run_wizard {
   height: 440px;
   width: 440px;
+  margin-bottom: 4px;
 }
 
 /* Wizard page styles. */
 .first-run-wizard-page {
   -moz-box-flex: 1;
+  margin-top: 6px;
 }
 
 .sb-first-run-header {
@@ -51,9 +53,19 @@ Additional styles imported directly by the first run dialog.
   font-size:120%;
 }
 
+vbox[anonid="container_box"] > label,
+vbox[anonid="container_box"] > description {
+  margin-left: 5px;
+}
+
 .sb-first-run-checkbox-description {
   font-size: smaller;
   margin-top: 0;
+}
+
+.wizard-buttons-btm {
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
 /* Connection page styles. */
@@ -89,6 +101,14 @@ Additional styles imported directly by the first run dialog.
 }
 
 .sb-first-run-feedback-email-box {
+}
+
+vbox[anonid="options_box"] {
+  margin-top: 13px;
+}
+
+groupbox.sb-first-run-feedback-email-box {
+  margin-top: 17px;
 }
 
 /* iTunes import/export page styles */
@@ -127,6 +147,13 @@ radiogroup {
   -moz-box-flex: 1;
 }
 
+.sb-first-run-import-media-box hbox.indent {
+  margin-left: 16px;
+}
+.sb-first-run-import-media-box checkbox.indent {
+  margin-left: 19px;
+}
+
 /* Welcome page styles. */
 .sb-first-run-welcome-box {
   -moz-box-flex: 1;
@@ -141,6 +168,15 @@ radiogroup {
   list-style-image: url(chrome://songbird-branding/skin/first-run-welcome.png);
 }
 
+.sb-first-run-welcome-box > label.sb-first-run-header {
+  margin-bottom: 0px;
+}
+.sb-first-run-welcome-box > description#welcome-line1 {
+  margin-bottom: 25px;
+}
+.sb-first-run-welcome-box > description#welcome-line2 {
+  margin-top: 25px;
+}
 
 /* *****************************************************************************
  *
@@ -171,7 +207,7 @@ radiogroup {
 
 /* Add-ons page loading image style. */
 .sb-first-run-add-ons-loading-image {
-  list-style-image: url(chrome://songbird/skin/base-elements/icon-loading.png);
+  list-style-image: url(chrome://songbird/skin/base-elements/icon-loading-white.png);
 }
 
 

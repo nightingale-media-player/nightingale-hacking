@@ -349,7 +349,7 @@
     </tabpanels>
   </tabbox>
   
-  <hbox class="dialog-button-box">
+  <hbox class="dialog-button-box" align="center">
     <button id="prev_button"
             label="&trackeditor.prev.button.label;"
             accesskey="&trackeditor.prev.accesskey;"

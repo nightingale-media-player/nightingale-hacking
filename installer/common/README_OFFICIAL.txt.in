@@ -10,11 +10,8 @@ http://wiki.songbirdnest.com/Release_Notes/@SB_MILESTONE@
 
 ADDITIONAL DOCUMENTATION AVAILABLE
 
-* Updating Feathers for Songbird 1.0
-http://wiki.songbirdnest.com/Developer/Articles/Maintaining_Add-Ons/Updating_Feathers_for_Songbird_1.0
-
-* Updating Extensions for Songbird 1.0
-http://wiki.songbirdnest.com/Developer/Articles/Maintaining_Add-Ons/Updating_Extensions_for_Songbird_1.0
+* Updating Extensions & Feathers for @SB_MILESTONE@
+http://wiki.songbirdnest.com/Developer/Articles/Maintaining_Add-Ons/
 
 * Updated the Media Core APIs to take advantage of GStreamer.
 http://wiki.songbirdnest.com/Developer/Articles/Maintaining_Add-Ons/Updating_Extensions_for_Songbird_1.0#Media_Core_API_Changes

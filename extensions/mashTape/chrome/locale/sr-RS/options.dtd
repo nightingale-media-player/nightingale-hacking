@@ -1,11 +1,9 @@
-<!---->
 <!ENTITY mtprefs.general "Опште">
 <!ENTITY mtprefs.info "Подаци о извођачу">
 <!ENTITY mtprefs.review "Рецензије">
 <!ENTITY mtprefs.rss "Вести">
 <!ENTITY mtprefs.photo "Слике">
 <!ENTITY mtprefs.flash "Видео">
-<!---->
 <!ENTITY mtprefs.defaulttab "Подразумевана картица">
 <!ENTITY mtprefs.defaulttab.help "При покретању mashTape-а:">
 <!ENTITY mtprefs.show.info "Прикажи податке о извођачу">
@@ -17,7 +15,6 @@
 <!ENTITY mtprefs.autohide.help "Аутоматски сакриј панел mashTape-а приликом прегледања веб страница.">
 <!ENTITY mtprefs.services "Сервиси">
 <!ENTITY mtprefs.getmore "Преузмите још сервиса за mashTape">
-<!---->
 <!ENTITY mtprefs.tab.info "Својства картице Подаци о извођачу">
 <!ENTITY mtprefs.tab.review "Својства картице Рецензије">
 <!ENTITY mtprefs.tab.rss "Својства картице Вести">
@@ -26,13 +23,10 @@
 <!ENTITY mtprefs.tab.help "Прикажи ову картицу у mashTape-у.">
 <!ENTITY mtprefs.single "Овај панел може да приказује садржај једног сервиса у једном тренутку. Молим изаберите сервис који желите из доње листе.">
 <!ENTITY mtprefs.multiple "Овај панел може да приказује садржај са више сервиса истовремено. Молим изаберите сервисе по жељи из доње листе.">
-<!---->
 <!ENTITY mtprefs.tab.info.autolocalise "Локализовани подаци">
 <!ENTITY mtprefs.tab.info.autolocalise.help "Аутоматски преузми локализоване податке о извођачу ако су доступни.">
-<!---->
 <!ENTITY mtprefs.tab.photo.speed "Брзина померања слика:">
 <!ENTITY mtprefs.tab.photo.faster "Брже">
 <!ENTITY mtprefs.tab.photo.slower "Спорије">
-<!---->
 <!ENTITY mtprefs.tab.video.autoplay "Аутоматски пусти видео">
 <!ENTITY mtprefs.tab.video.autoplay.help "Омогућавање ове опције значи да ће видео материјали бити аутоматски пуштани један за другим. Ово је корисно за аутоматско пуштање свих MTV музичких спотова, на пример. Опција не ради са добављачима који немају ту могућност.">

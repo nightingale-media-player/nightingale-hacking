@@ -72,17 +72,16 @@ function testMediaPageManager() {
     // page
     var pageInfo = pageMgr.getPage(library1);
     assertTrue(pageInfo, "no media pages found for library");
-    assertEqual(pageInfo.contentUrl, DEFAULTPAGE1,
+    assertEqual(pageInfo.contentUrl, DEFAULTPAGE2,
                 "built-in page not found");
   
-    var defaultInfo1 = pageInfo;
     pageInfo = pageMgr.getPage(list1);
     assertEqual(pageInfo.contentUrl, DEFAULTPAGE2,
                 "built-in page not found");
   
     // Set a default for the list
     list1.setProperty(SBProperties.defaultMediaPageURL, BADURL);
-  
+
     // Verify that giving a list that has an obsolete default returns the 
     // global default page
     pageInfo = pageMgr.getPage(list1);
@@ -91,6 +90,16 @@ function testMediaPageManager() {
     );
     var defaultInfo2 = pageInfo;
   
+    // Now verify that setting the media page for our library to the filterlist
+    // works
+    list1.setProperty(SBProperties.defaultMediaPageURL, DEFAULTPAGE1);
+    pageInfo = pageMgr.getPage(list1);
+    assertEqual(
+      pageInfo.contentUrl, DEFAULTPAGE1,
+      "setting playlist mediapage to filterlist should work"
+    );
+    var defaultInfo1 = pageInfo;
+
     // try setting a custom type
     list1.setProperty(SBProperties.customType, "download");
     assertEqual(list1.getProperty(SBProperties.customType), "download",

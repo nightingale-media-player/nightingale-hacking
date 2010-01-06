@@ -156,6 +156,7 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
 
   // the playlists folder and the local library node get the "New Foo..." items
   if (aNode.id == 'SB:Playlists' ||
+      aNode.id == 'SB:Playlists_CreateNewPlaylist' ||
       aNode.getAttributeNS(LSP, 'ListCustomType') == 'local') {
     this.fillNewItemMenu(aNode, aContextMenu, aParentWindow);
   }
@@ -1481,15 +1482,23 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
   var id = this._itemURN(aMediaList);
   var node = this._servicePane.getNode(id);
   var newnode = false;
+
+  var customType = aMediaList.getProperty(SBProperties.customType);
+  var libCustomType = aMediaList.library.getProperty(SBProperties.customType);
+
+  // Migrate the downloads node
+  if (node && customType == 'download' && node.parentNode.id == "SB:Root") {
+    // Delete the existing one and continue as if adding a new node
+    this._servicePane.removeNode(node);
+    node = null;
+  }
+
   if (!node) {
     // Create the node
     // NOTE: it's a container for drag and drop purposes only.
     node = this._servicePane.addNode(id, this._servicePane.root, true);
     newnode = true;
   }
-
-  var customType = aMediaList.getProperty(SBProperties.customType);
-  var libCustomType = aMediaList.library.getProperty(SBProperties.customType);
 
   // Refresh the information just in case it is supposed to change
   // Don't set name if it hasn't changed to avoid a UI redraw
@@ -1502,7 +1511,7 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
     // the download media list isn't editable
     node.editable = false;
     // set the weight of the downloads list
-    node.setAttributeNS(SP, 'Weight', -3);
+    node.setAttributeNS(SP, 'Weight', 999);
   } else {
     // the rest are, but only if the items themselves are not readonly
     node.editable = aMediaList.userEditable;
@@ -1577,6 +1586,22 @@ function sbLibraryServicePane__ensurePlaylistFolderExists() {
   fnode.dndAcceptIn = 'text/x-sb-playlist';
   fnode.editable = false;
   fnode.setAttributeNS(SP, 'Weight', 3);
+
+  // Make sure the "New Playlist" button/node exists
+  var npnode = this._servicePane.getNode('SB:Playlists_CreateNewPlaylist');
+  if (!npnode)
+    npnode = this._servicePane.addNode('SB:Playlists_CreateNewPlaylist', fnode, false);
+  npnode.name = '&servicesource.playlists.newplaylist';
+  npnode.hidden = false;
+  npnode.contractid = CONTRACTID;
+  npnode.editable = false;
+  npnode.image = "chrome://songbird/skin/service-pane/icon-new-playlist.png";
+  npnode.setAttributeNS(SP, 'Weight', 1);
+  if (fnode.firstChild.id != "SB:Playlists_CreateNewPlaylist") {
+    fnode.insertBefore(npnode, fnode.firstChild);
+  }
+  npnode.setAttributeNS(SP, 'eventType', "createnewplaylist");
+  
   return fnode;
 }
 
@@ -1728,8 +1753,9 @@ function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList) {
   {
     // the download playlist is a special case
     if (aNode.getAttributeNS(LSP, 'ListCustomType') == 'download') {
-      // FIXME: put it right after the library
-      this._servicePane.root.appendChild(aNode);
+      // Fix it to the bottom of the library node
+      var libraryNode = this.getNodeForLibraryResource(aMediaList.library);
+      libraryNode.appendChild(aNode);
     } else {
       var self = this;
       // this describes each type of playlist with the attributes/value pairs

@@ -1,0 +1,271 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding id="displaypane-splitter"
+  extends="chrome://songbird/content/bindings/smartSplitter.xml#smart-splitter">
+    <content>
+      <xul:stack id="splitter-stack" anonid="splitter-stack" flex="1">
+
+        <!-- the label at the left/top -->
+        <xul:box pack="center" align="center" flex="1"
+                 anonid="splitter-start-box">
+          <xul:label id="splitter-label" anonid="splitter-label" />
+        </xul:box>
+
+        <!-- the dropdown menu at the right/bottom -->
+        <xul:box pack="start" align="center" flex="0" anonid="splitter-end-box">
+          <xul:button id="dropdown-button"
+                      anonid="dropdown-button"
+                      type="menu"
+                      xul:mousethrough="never"
+                      class="sb-displaypane-menubutton"
+                      tooltiptext="&tooltip.displaypane.options;"
+                      xbl:inherits="menuid"
+                      onclick="if (this.disabled) return; var menu = document.getElementById(this.getAttribute('menuid')); menu.openPopup(this); event.stopPropagation();">
+          </xul:button>
+        </xul:box>
+
+       <!-- the grippy at the center -->
+        <xul:box pack="center" align="center" flex="0" mousethrough="always"
+                 anonid="splitter-grippy-box">
+          <xul:sb-displaypane-grippy flex="0" mousethrough="never"
+                                     xbl:inherits="hovergrippy"
+                                     anonid="grippy" />
+        </xul:box>
+      
+      </xul:stack>
+    </content>
+  
+    
+    <implementation implements="nsIDOMEventListener">
+      <constructor><![CDATA[
+        // Set the orient on the various boxes
+        var ebox = document.getAnonymousElementByAttribute(this,
+                                                        "anonid",
+                                                        "splitter-end-box");
+        var gbox = document.getAnonymousElementByAttribute(this,
+                                                        "anonid",
+                                                        "splitter-grippy-box");
+        if (this.getAttribute("orient") == "vertical") {
+          ebox.setAttribute("align", "center");
+        } else {
+          gbox.setAttribute("orient", "vertical");
+          ebox.setAttribute("align", "start");
+          ebox.setAttribute("pack", "center");
+        }
+        // Force rebuilding of the menupopup
+        var menuId = this.getAttribute("menuid");
+        if (menuId) {
+          var contentItems = document.getElementById(menuId).firstChild;
+          contentItems.style.MozBinding;
+        }
+
+        // Need to hookup a listener to disable the dropdown-button
+        var grippy = document.getAnonymousElementByAttribute(this,
+                                                             "anonid",
+                                                             "grippy");
+        grippy.addEventListener("click", this, false);
+        grippy.addEventListener("mouseover", this.hoverGrippy, false);
+        grippy.addEventListener("mouseout", this.hoverGrippy, false);
+
+        // Update the dropdown button state
+        var state = this.getAttribute("state");
+        if (state == "collapsed") {
+          this.toggleDropdownButton(false);
+        } else {
+          this.toggleDropdownButton(true);
+        }
+        
+        this._previousState = state;
+      ]]></constructor>
+
+      <destructor><![CDATA[
+        var grippy = document.getAnonymousElementByAttribute(this,
+                                                             "anonid",
+                                                             "grippy");
+        grippy.removeEventListener("click", this, false);
+        grippy.removeEventListener("mouseover", this.hoverGrippy, false);
+        grippy.removeEventListener("mouseout", this.hoverGrippy, false);
+      ]]></destructor>
+      
+      <property name="collapseElement" readonly="true">
+        <getter><![CDATA[
+          var element;
+          switch (this.getAttribute("collapse")) {
+              case "after":
+                element = this.getResizeAfter();
+                break;
+              case "before":
+                element = this.getResizeBefore();
+                break;
+              default:
+                dump("splitter " + this.id + " collapse element requested, " +
+                     " but collapse property is unrecognised.\n");
+                break;
+          }
+          return element;
+        ]]></getter>
+      </property>
+
+      <method name="hoverGrippy">
+        <parameter name="event" />
+        <body><![CDATA[
+          // we only process this case when the hovergrippy attribute is set
+          if (this.getAttribute("hovergrippy") != "true")
+              return;
+          var splitter = this.parentNode.parentNode.parentNode;
+          var label = document.getAnonymousElementByAttribute(splitter,
+                                                          "anonid",
+                                                          "splitter-start-box");
+          if (event.type == "mouseover") {
+            label.style.visibility = "collapse";
+          } else if (event.type == "mouseout") {
+            label.style.visibility = "visible";
+          }
+        ]]></body>
+      </method>
+
+      <method name="toggleDropdownButton">
+        <parameter name="state" />
+        <body><![CDATA[
+          var button = document.getAnonymousElementByAttribute(this,
+                                                             "anonid",
+                                                             "dropdown-button");
+          if (state) {
+            button.removeAttribute("disabled");
+          } else {
+            button.setAttribute("disabled", "true");
+          }
+          
+        ]]></body>
+      </method>
+
+      <method name="handleEvent">
+        <parameter name="aEvent"/>
+        <body><![CDATA[
+          var state = this.getAttribute("state");
+          // state is the current state before the grippy action has occured,
+          // therefore if it's collapsed, then it's about to be open - so
+          // enable the button
+          if (state == "collapsed")
+            this.toggleDropdownButton(true);
+          else
+            this.toggleDropdownButton(false);
+        ]]></body>
+      </method>
+      
+      <method name="dpSplitterMouseEvent">
+        <parameter name="aEvent"/>
+        <body><![CDATA[
+          var currentState = this.getAttribute("state");
+          if (this._previousState != "collapsed" &&
+              currentState == "collapsed")
+          {
+            this.toggleDropdownButton(false);
+          } else if (this._previousState == "collapsed" &&
+                     currentState != "collapsed")
+          {
+            this.toggleDropdownButton(true);
+          }
+          this._previousState = currentState;
+        ]]></body>
+      </method>
+
+      <method name="dpSplitterMouseUp">
+        <parameter name="aEvent"/>
+        <body><![CDATA[
+          // If the element clicked was the grippy then ignore since the
+          // grippy does its own logic.
+          if (aEvent.originalTarget.getAttribute("anonid") == "grippy") {
+            aEvent.preventDefault();
+            aEvent.stopPropagation();
+            return;
+          }
+
+          // If we released the mouse and both our current and previous state
+          // of the splitter is collapsed, then restore the DP's height that
+          // we reset to 0 in the mouseDown handler below
+          if (this.getAttribute("state") == "collapsed" &&
+              this._mouseDownState == "collapsed")
+          {
+            if (this.getAttribute("orient") == "vertical") {
+              this.collapseElement.height = this._mouseDownHeight;
+            } else {
+              this.collapseElement.width = this._mouseDownWidth;
+            }
+          }
+        ]]></body>
+      </method> 
+
+      <method name="dpSplitterMouseDown">
+        <parameter name="aEvent"/>
+        <body><![CDATA[
+          // If the element clicked was the grippy then ignore since the
+          // grippy does its own logic.
+          if (aEvent.originalTarget.getAttribute("anonid") == "grippy") {
+            aEvent.preventDefault();
+            aEvent.stopPropagation();
+            return;
+          }
+
+          this._mouseDownState = this.getAttribute("state");
+          if (this._mouseDownState == "collapsed") {
+            // If we're currently collapsed, then save the DP height
+            // and reset it to 0.  This prevents the "jerkiness" when
+            // dragging open a previously collapsed-via-grippy display
+            // pane.
+            
+            // Get the element that this splitter manages
+            var el = this.collapseElement;
+
+            // Stash its size, and reset the size to 0
+            if (this.getAttribute("orient") == "vertical") {
+              this._mouseDownHeight = el.height;
+              el.height = 0;
+            } else {
+              this._mouseDownWidth = el.width;
+              el.width = 0;
+            }
+          }
+        ]]></body>
+      </method> 
+    </implementation>
+
+    <handlers>
+     <handler event="mousemove" action="this.dpSplitterMouseEvent(event);"/>
+     <handler event="mousedown" action="this.dpSplitterMouseDown(event);"/>
+     <handler event="mouseup" action="this.dpSplitterMouseUp(event);"/>
+    </handlers>
+ 
+  </binding>
+</bindings>

@@ -381,6 +381,11 @@ var DeviceMediaManagementServices = {
         curChildNode.setAttribute("disabled", "true");
       }
     }
+    var menulist = this._getElement("encoding-format-menu");
+    if (this._mediaManagementPrefs.transcodeModeManual)
+      menulist.removeAttribute("disabled");
+    else
+      menulist.setAttribute("disabled", "true");
 
     var activeProfile;
     if (this._mediaManagementPrefs.selectedProfile) {

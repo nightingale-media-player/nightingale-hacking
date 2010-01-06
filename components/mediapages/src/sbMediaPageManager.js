@@ -162,26 +162,8 @@ MediaPageManager.prototype = {
     // pick a new one
     
     // Hardcoded first run logic:
-    // Libraries get filter lists, playlists do not.
-    if (aList instanceof Ci.sbILibrary && this._defaultFilteredPlaylistPage) {
-      if (aConstraint) {
-        // Check the constraints for video type.
-        for (var i = 0; i < aConstraint.groupCount; i++) {
-          var curGroup = aConstraint.getGroup(i);
-          if (curGroup.hasProperty(SBProperties.contentType)) {
-            // Look to see if the content type is 'video'.
-            var propEnum = curGroup.getValues(SBProperties.contentType);
-            // There should only be one value for this property.
-            if (propEnum.getNext() == "video") {
-              return this._defaultPlaylistPage;
-            }
-          }
-        }
-      }
-
-      // The content type should display the filtered page.
-      return this._defaultFilteredPlaylistPage;
-    } else if (this._defaultPlaylistPage)  {
+    // Everybody gets the listview (playlistPage)
+    if (this._defaultPlaylistPage)  {
       return this._defaultPlaylistPage;
     } else {
       // No hardcoded defaults.  Look for anything

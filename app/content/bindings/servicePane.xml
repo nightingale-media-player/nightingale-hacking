@@ -44,15 +44,25 @@
                 xbl:inherits="browser"/>
           <children/>
         </xul:vbox>
-        <xul:sb-smart-splitter collapse="after" orient="vertical" resizeafter="closest"
-                               id="displaypane_servicepane_bottom_splitter">
-          <xul:grippy/>
-        </xul:sb-smart-splitter>
+        <xul:sb-displaypane-splitter
+                collapse="after"
+                orient="vertical"
+                resizeafter="closest"
+                id="displaypane_servicepane_bottom_splitter"
+                menuid="displaypane_servicepane_bottom_menu" />
         <xul:sb-displaypane id="displaypane_servicepane_bottom"
                             label="&displaypane.name.servicepane;"
                             splitter="displaypane_servicepane_bottom_splitter"
                             contentgroup="servicepane"/>
       </xul:vbox>
+      <!-- menupopup needs to be outside the vbox otherwise it
+           gets height adjusted to 0 when the splitter is 
+           adjusted -->
+      <xul:menupopup id="displaypane_servicepane_bottom_menu"
+                     class="menulist-menupopup">
+        <xul:sb-displaypane-content-menuitems
+                     paneid="displaypane_servicepane_bottom" />
+      </xul:menupopup>
     </content>
     <implementation>
       <constructor>
@@ -603,6 +613,24 @@
           }
         ]]></body>
       </method>
+      <method name="isLoadableNode">
+        <parameter name="node"/>
+        <body><![CDATA[
+          if (node.url)
+            return true;
+          var libraryServicePane = 
+            Components.classes['@songbirdnest.com/servicepane/library;1']
+            .getService(Components.interfaces.sbILibraryServicePaneService);
+          var mediaList = libraryServicePane.getLibraryResourceForNode(node);
+          if (mediaList)
+            return true;
+          var SP_NS = "http://songbirdnest.com/rdf/servicepane#";
+          var eventType = node.getAttributeNS(SP_NS, "eventType");
+          if (eventType)
+            return true;
+          return false;
+        ]]></body>
+      </method>
       <method name="loadNode">
         <parameter name="node"/>
         <parameter name="event"/>
@@ -691,6 +719,14 @@
                                      event.metaKey,
                                      event);
               this.dispatchEvent(event);
+              
+              var SP_NS = "http://songbirdnest.com/rdf/servicepane#";
+              var eventType = node.getAttributeNS(SP_NS, "eventType");
+              if (eventType) {
+                var event = document.createEvent("UIEvent");
+                event.initUIEvent(eventType, true, true, window, 0);
+                window.dispatchEvent(event);
+              }
             }
           }
         ]]></body>
@@ -996,6 +1032,26 @@
       <handler event="keypress" keycode="VK_RETURN" phase="capturing"><![CDATA[
         this._onEnterKeypress(event);
       ]]></handler>
+      <handler event="mousedown" clickcount="1" button="0" phase="capturing"><![CDATA[
+        // If the user is clicking on a non-loadable node in the servicepane
+        // then suppress the event, otherwise let it pass through
+        if (event.originalTarget.tagName == "treechildren") {
+          var obj={}, row={}, col={};
+          this.mTree.treeBoxObject.getCellAt(event.clientX,
+                                             event.clientY,
+                                             row,
+                                             col,
+                                             obj);
+          
+          if ((obj.value != 'twisty') && (row.value >= 0)) {
+            var node = this.getNodeForRow(row.value);
+            if (!node || !this.isLoadableNode(node)) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+          }
+        }
+      ]]></handler>
       <handler event="click" clickcount="1" button="0" phase="capturing"><![CDATA[
         if (event.originalTarget.tagName == "treechildren") {
           var obj={}, row={}, col={};
@@ -1008,7 +1064,9 @@
           if ((obj.value != 'twisty') && (row.value >= 0)) {
             var node = this.getNodeForRow(row.value);
             if (node) {
-              this.selectAndLoadNode(node, event);
+              if (this.isLoadableNode(node)) {
+                this.selectAndLoadNode(node, event);
+              }
               event.preventDefault();
               event.stopPropagation();
             }
@@ -1064,9 +1122,16 @@
             if (node) {
               // Since we'll be manually selecting in this case
               // we have to suppress the 'select' event.
-              this.mTree.view.selection.selectEventsSuppressed = true;
-              this.selectAndLoadNode(node, event);
-              this.mTree.view.selection.selectEventsSuppressed = false;
+              if (this.isLoadableNode(node)) {
+                this.mTree.view.selection.selectEventsSuppressed = true;
+                this.selectAndLoadNode(node, event);
+                this.mTree.view.selection.selectEventsSuppressed = false;
+              } else {
+                if (node.isContainer)
+                  node.isOpen = !node.isOpen;
+                  if (node.isOpen)
+                    this._highlightSelectedNode();
+              }
               
               if (node.editable)
                 this.startEditingNode(node);

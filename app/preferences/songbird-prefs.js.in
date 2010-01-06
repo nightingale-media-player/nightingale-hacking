@@ -13,11 +13,11 @@ pref("songbird.buildNumber", "@SB_BUILD_NUMBER@");
 
 // Default feather settings:
 // @see sbFeathersManager.js for more information about each pref
-pref("general.skins.selectedSkin", "gonzo");
-pref("songbird.feathers.default_skin_internalname", "gonzo");
-pref("songbird.feathers.default_feather_id", "gonzo@songbirdnest.com");
-pref("songbird.feathers.default_main_layout", "chrome://gonzo/content/xul/mainplayer.xul");
-pref("songbird.feathers.default_secondary_layout", "chrome://gonzo/content/xul/miniplayer.xul");
+pref("general.skins.selectedSkin", "purplerain");
+pref("songbird.feathers.default_skin_internalname", "purplerain");
+pref("songbird.feathers.default_feather_id", "purplerain@songbirdnest.com");
+pref("songbird.feathers.default_main_layout", "chrome://purplerain/content/xul/mainplayer.xul");
+pref("songbird.feathers.default_secondary_layout", "chrome://purplerain/content/xul/miniplayer.xul");
 
 pref("accessibility.typeaheadfind", false);
 pref("accessibility.typeaheadfind.timeout", 5000);
@@ -95,7 +95,7 @@ pref("dom.disable_window_open_feature.status", true);
 pref("dom.disable_window_status_change", true);
 
 // Default columns for the web playlist
-pref("songbird.webplaylist.columnspec",  "http://songbirdnest.com/data/1.0#ordinal 28 a http://songbirdnest.com/data/1.0#trackName 300 http://songbirdnest.com/data/1.0#duration 38 http://songbirdnest.com/data/1.0#artistName 169 http://songbirdnest.com/data/1.0#albumName 159 http://songbirdnest.com/data/1.0#downloadButton 83");
+pref("songbird.webplaylist.columnspec",  "http://songbirdnest.com/data/1.0#ordinal 28 a http://songbirdnest.com/data/1.0#trackName 280 http://songbirdnest.com/data/1.0#duration 38 http://songbirdnest.com/data/1.0#artistName 169 http://songbirdnest.com/data/1.0#albumName 159 http://songbirdnest.com/data/1.0#downloadButton 83");
 
 // Dynamic Skin Switching
 pref("extensions.dss.enabled", false);
@@ -390,8 +390,8 @@ pref("browser.urlbar.search.timeout", 50);
 
 pref("browser.dictionaries.download.url", "https://%LOCALE%.add-ons.mozilla.com/%LOCALE%/firefox/%VERSION%/dictionaries/");
 
-// Default the player controls to the bottom
-pref("songbird.playercontrol.location", "bottom");
+// Default the player controls to the top
+pref("songbird.playercontrol.location", "top");
 
 // Default the service pane location for hovering.
 pref("songbird.splitter.servicepane_splitter.before.width", "178");
@@ -486,7 +486,7 @@ pref("songbird.cdrip.oncomplete.autoeject", false);
 pref("songbird.cdrip.oncomplete.notifysound", false);
 
 // First run Media Library loading
-pref("songbird.firstrun.load_ml_in_background", false);
+pref("songbird.firstrun.load_ml_in_background", true);
 
 // Information Panel default settings
 pref("songbird.infoPanel.interval", 50);

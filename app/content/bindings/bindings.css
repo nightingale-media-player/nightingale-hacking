@@ -225,7 +225,12 @@ sb-mini-player-controls {
 sb-smart-splitter {
   -moz-binding: url("chrome://songbird/content/bindings/smartSplitter.xml#smart-splitter") !important;
 }
-
+sb-displaypane-splitter {
+  -moz-binding: url("chrome://songbird/content/bindings/displayPaneSplitter.xml#displaypane-splitter") !important;
+}
+sb-displaypane-grippy {
+  -moz-binding: url("chrome://songbird/content/bindings/displayPaneGrippy.xml#displaypane-grippy") !important;
+}
 /* CLICK-HOLD BUTTONS */
 
 /* the <sb-clickhold-button/> and <sb-clickhold-toolbarbutton/> tag names are deprecated,

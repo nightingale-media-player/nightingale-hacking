@@ -9,9 +9,9 @@
 <!ENTITY productURL            "http://getsongbird.com">
 <!ENTITY getDisplayPanesURL    "http://addons.songbirdnest.com/tag/displaypane">
 <!ENTITY faviconURL            "chrome://songbird-branding/skin/logo_16.png">
-<!ENTITY aboutImageURL         "chrome://songbird-branding/skin/powered-by-mozilla.gif">
+<!ENTITY aboutImageURL         "chrome://songbird-branding/skin/powered-by-mozilla.png">
 
-<!ENTITY copyright             "Certain files in this binary application are Copyright &copy; 2005-2008">
+<!ENTITY copyright             "Certain files in this binary application are Copyright &copy; 2005-2009">
 
 <!ENTITY window.main.title     "Songbird">
 <!ENTITY window.dev.title      "Songbird">

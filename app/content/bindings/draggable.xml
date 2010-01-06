@@ -120,6 +120,9 @@
             if (this._mIsEnabled) {
               this._mMouseIsDown = true;
             }
+            var titlebar = document.getAnonymousElementByAttribute(this, 
+                              'sbid', 'draggable-titlebar');
+            titlebar.setAttribute("ismousedown", true);
           ]]>
         </body>
       </method>
@@ -135,6 +138,9 @@
                 document.dispatchEvent(event);
               }
             }
+            var titlebar = document.getAnonymousElementByAttribute(this, 
+                              'sbid', 'draggable-titlebar');
+            titlebar.setAttribute("ismousedown", false);
           ]]>
         </body>
       </method>

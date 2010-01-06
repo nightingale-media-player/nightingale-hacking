@@ -65,6 +65,8 @@
                   class="device-syncmode-manual-button"
                   oncommand="toggleMode(true, this);"/>
 
+      <xul:hbox class="device-syncmode-separator" />
+
       <xul:button sbid="sync_auto_button"
                   type="radio"
                   autoCheck="false"

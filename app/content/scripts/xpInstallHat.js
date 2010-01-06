@@ -92,7 +92,7 @@
             }];
           }
   
-          const iconURL = "chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png";
+          const iconURL = "chrome://songbird/skin/base-elements/icon-generic-addon.png";
           // this is just a random notification box so we can get a priority
           var notificationBox = gBrowser.getNotificationBox(gBrowser.getBrowserAtIndex(0));
           const priority = notificationBox.PRIORITY_WARNING_MEDIUM;

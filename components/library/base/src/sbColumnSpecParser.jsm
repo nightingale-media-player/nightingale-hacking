@@ -173,15 +173,15 @@ function ColumnSpecParser(aMediaList, aPlaylist, aMask, aConstraint) {
                                    SBProperties.genre, 101,
                                    SBProperties.year, 45,
                                    SBProperties.rating, 78,
-                                   SBProperties.comment, 307,
+                                   SBProperties.comment, 291,
                                   ].join(" "),
                                   self.ORIGIN_DEFAULT);
       default:
         return self._getColumnMap([SBProperties.trackName, 229,
                                    SBProperties.duration, 45,
                                    SBProperties.artistName, 137, "a",
-                                   SBProperties.albumName, 215,
-                                   SBProperties.genre, 101,
+                                   SBProperties.albumName, 210,
+                                   SBProperties.genre, 90,
                                    SBProperties.rating, 78,
                                   ].join(" "),
                                   self.ORIGIN_DEFAULT);

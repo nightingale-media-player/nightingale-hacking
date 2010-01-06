@@ -2,34 +2,37 @@ mashTape.jar:
 % content mashtape %content/ contentaccessible=yes
 % resource mashtape modules/
 % locale mashtape en-US %locale/en-US/
-% locale mashtape bn-IN %locale/bn-IN/
+#% locale mashtape bn-IN %locale/bn-IN/
 % locale mashtape ca-AD %locale/ca-AD/
-% locale mashtape cs-CZ %locale/cs-CZ/
-% locale mashtape da-DK %locale/da-DK/
-% locale mashtape de-DE %locale/de-DE/
-% locale mashtape en-GB %locale/en-GB/
-% locale mashtape es-AR %locale/es-AR/
+#% locale mashtape cs-CZ %locale/cs-CZ/
+#% locale mashtape da-DK %locale/da-DK/
+#% locale mashtape de-DE %locale/de-DE/
+#% locale mashtape en-GB %locale/en-GB/
+#% locale mashtape es-AR %locale/es-AR/
 % locale mashtape es-ES %locale/es-ES/
 % locale mashtape fr-FR %locale/fr-FR/
-% locale mashtape he-IL %locale/he-IL/
+#% locale mashtape he-IL %locale/he-IL/
 % locale mashtape hu-HU %locale/hu-HU/
 % locale mashtape it-IT %locale/it-IT/
-% locale mashtape ja-JP %locale/ja-JP/
-% locale mashtape kw-GB %locale/kw-GB/
+% locale mashtape ja %locale/ja/
+% locale mashtape ja-JP %locale/ja/
+#% locale mashtape kw-GB %locale/kw-GB/
 % locale mashtape nl-NL %locale/nl-NL/
-% locale mashtape pl-PL %locale/pl-PL/
-% locale mashtape pt-BR %locale/pt-BR/
+#% locale mashtape pl-PL %locale/pl-PL/
+#% locale mashtape pt-BR %locale/pt-BR/
+% locale mashtape pt-PT %locale/pt-PT/
 % locale mashtape ru-RU %locale/ru-RU/
 % locale mashtape sl-SI %locale/sl-SI/
-% locale mashtape sr-RS %locale/sr-RS/
-% locale mashtape sv-SE %locale/sv-SE/
-% locale mashtape th-TH %locale/th-TH/
-% locale mashtape zh-CN %locale/zh-CN/
+#% locale mashtape sr-RS %locale/sr-RS/
+#% locale mashtape sv-SE %locale/sv-SE/
+#% locale mashtape th-TH %locale/th-TH/
+#% locale mashtape zh-CN %locale/zh-CN/
 % locale mashtape zh-TW %locale/zh-TW/
 % skin mashtape classic/1.0 %skin/
 % overlay chrome://browser/content/preferences/preferences.xul chrome://mashtape/content/prefsOverlay.xul
 % style chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://mashtape/skin/mainwin.css
 % override chrome://songbird-web/content/html.css chrome://songbird/skin/html.css
 % override chrome://songbird-web/skin/base-elements/icon-loading-large.png chrome://songbird/skin/base-elements/icon-loading-large.png
+% style chrome://mashtape/content/mashTape.xul chrome://mashtape/skin/styles-win.css os=WinNT
 % content songbird-web foo/ contentaccessible=yes
 @include_all_to

@@ -32,6 +32,7 @@ if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
   
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 
 /**
  * Miniplayer controller.  Handles events and controls
@@ -60,6 +61,14 @@ var gMiniplayer = {
     // Prevent window from being resized inappropriately
     this._setMinMaxCallback();
 
+    // Set tooltip for feather switch button
+    var nextLayout = this._getNextLayout();
+    var button = document.getElementById("miniplayer_feathers_button");
+    var switchToString =
+      SBFormattedString("feathers.switchto", [nextLayout.name],
+                        SBString("feathers.switchfeathers", "Switch Feathers"));
+    button.setAttribute("tooltiptext", switchToString);
+
     // Set attributes on the Window element so we can use them in CSS.
     var windowElement = document.getElementsByTagName("window")[0];
     windowElement.setAttribute("hasTitlebar",this._hasTitlebar());
@@ -67,25 +76,97 @@ var gMiniplayer = {
     windowPlacementSanityChecks();
     initializeDocumentPlatformAttribute();
     
-    // so, right now the height is correct but something somewhere after this is going to go
-    // and screw it right up. we don't know why, or how, but on windows it ends up being 100px
-    // instead of 23px and this setTimeout makes it okay again.
+    // so, right now the height is correct but something somewhere after this
+    // is going to go and screw it right up. we don't know why, or how, but on
+    // windows it ends up being 100px instead of 23px and this setTimeout
+    // makes it okay again.
     setTimeout( function() {
       if (parseInt(windowElement.height)) {
         window.resizeTo(windowElement.width, windowElement.height);
       }
     }, 0); // bump to back of current queue
-    
+
+    // Add resizer listeners
+    this._miniPlayerMinWidth = parseInt(getComputedStyle(
+                                        document.documentElement, "").minWidth);
+    var resizer = document.getElementById("miniplayer_resizer_right");
+    resizer.addEventListener("mousemove", gMiniplayer.resizeHandler, false);
   },
 
+  resizeHandler: function miniPlayer_resizeHandler(e) {
+    if (e.type == "mousemove") {
+      if (!gMiniplayer._mouseDown || (gMiniplayer._mouseDown == false) ||
+          e.clientX < gMiniplayer._miniPlayerMinWidth)
+      {
+        if (e.clientX < gMiniplayer._miniPlayerMinWidth)
+          window.resizeTo(gMiniplayer._miniPlayerMinWidth, 42);
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+    } else if (gMiniplayer._cancelResize && gMiniplayer._cancelResize == true) {
+      gMiniplayer._cancelResize = false;
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+    var windowElement = document.getElementsByTagName("window")[0];
+    var width = windowElement.boxObject.width;
+    if (width < gMiniplayer._miniPlayerMinWidth) {
+      setTimeout(function() {
+        window.resizeTo(gMiniplayer._miniPlayerMinWidth, 42);
+      }, 0);
+    }
 
+    var ratings = document.getElementById("faceplate-tool");
+    var faceplate = document.getElementById("faceplate");
+    var autoscroll = document.getElementById("sb-faceplate-autoscroll-box");
+    
+    // At <500px we drop the ratings
+    if (width < 500 && ratings.style.visibility != "collapse") {
+      ratings.style.visibility = "collapse";
+    } else if (width >= 500 && ratings.style.visibility != "visible") {
+      ratings.style.visibility = "visible";
+    }
+    
+    // <315px we drop the autoscroll
+    if (width < 315 && autoscroll.style.visibility != "collapse") {
+      autoscroll.style.visibility = "collapse";
+    } else if (width >= 315 && autoscroll.style.visibility != "visible") {
+      autoscroll.style.visibility = "visible";
+    }
 
+    // <308px we drop the faceplate in its entirety
+    if (width < 308 && faceplate.style.visibility != "collapse") {
+      faceplate.style.visibility = "collapse";
+    } else if (width >= 308 && faceplate.style.visibility != "visible") {
+      faceplate.style.visibility = "visible";
+    }
+
+    var resizerBoundaryPassed = (e.type == "mousemove" && e.clientX > 308);
+    if (width < 308 && !resizerBoundaryPassed) {
+      setTimeout(function() {
+        window.resizeTo(gMiniplayer._miniPlayerMinWidth, 42);
+      }, 0);
+    } else {
+      gMiniplayer._cancelResize = true;
+      if (width < gMiniplayer._miniPlayerMinWidth && resizerBoundaryPassed) {
+        setTimeout(function() {
+          window.resizeTo(gMiniplayer._miniPlayerMinWidth, 42);
+        }, 0);
+      }
+    }
+
+  },
 
   /**
    * Called when the window is closing. Removes all listeners.
    */
   onUnload: function onUnload()
   {
+    var resizer = document.getElementById("miniplayer_resizer_right");
+    resizer.removeEventListener("mousemove", gMiniplayer.resizeHandler, false);
+
     dump("\nMiniplayer." + arguments.callee.name + "\n");
         
     this._resetMinMaxCallback();
@@ -160,13 +241,49 @@ var gMiniplayer = {
    */
   revertFeathers: function revertFeathers()
   {
-    dump("\nMiniplayer." + arguments.callee.name + "\n");
-
-    var feathersButton = document.getElementsByTagName("sb-feathers-toggle-button")[0];
-    if (feathersButton)
-      feathersButton.doCommand();
+    // Attempt to switch to the next layout available for the current skin
+    try {
+      var feathersMgr = Cc['@songbirdnest.com/songbird/feathersmanager;1']
+                           .getService(Ci.sbIFeathersManager);
+      var skinName = feathersMgr.currentSkinName;
+      var layoutURL = feathersMgr.currentLayoutURL;
+      var nextLayout = this._getNextLayout();
+      
+      // If it is actually going to do anything, switch to the
+      // next layout
+      if (nextLayout.url != layoutURL) {
+        feathersMgr.switchFeathers(nextLayout.url, skinName);
+      }
+    } catch (e) {
+      dump("revertFeathers(): Unable to switch to the " +
+           "next layout for the current skin.\n\n" +
+           " Error: " + e.toString() + "\n");  
+    }
   },
 
+  _getNextLayout: function getNextLayout()
+  {
+    var feathersMgr = Cc['@songbirdnest.com/songbird/feathersmanager;1']
+                         .getService(Ci.sbIFeathersManager);
+    var skinName = feathersMgr.currentSkinName;
+    var layoutURL = feathersMgr.currentLayoutURL;
+      
+    // Find the layout that comes after the current layout, if one doesn't
+    // exist, then we'll just fallback to the default layout for this skin
+    var enum = feathersMgr.getLayoutsForSkin(skinName);
+    var switchLayout;
+    while (enum.hasMoreElements()) {
+      var nextLayout = enum.getNext();
+      if (!switchLayout)
+        switchLayout = nextLayout;
+      if (nextLayout.QueryInterface(Ci.sbILayoutDescription).url == layoutURL
+          && enum.hasMoreElements())
+      {
+        switchlayout = enum.getNext().QueryInterface(Ci.sbILayoutDescription);
+      }
+    }
+    return switchLayout;
+  },
 
 
   ////////////////////////////
@@ -181,20 +298,10 @@ var gMiniplayer = {
    */
   _minMaxHandler: {
 
-    // Shrink until the box doesn't match the window, then stop.
-    _minwidth: -1,
     GetMinWidth: function()
     {
-      try // I guess this is just a fallback for if a page doesn't provide its own.
-      {
-        // If min size is not yet known and if the window size is different from the document's box object,
-        if (this._minwidth == -1 && window.innerWidth != document.getElementById('miniplayer_box').boxObject.width)
-        {
-          // Then we know we've hit the minimum width, record it. Because you can't query it directly.
-          this._minwidth = document.getElementById('miniplayer_box').boxObject.width + 1;
-        }
-      } catch(e) {};
-      return this._minwidth;
+      var minWidth = getComputedStyle(document.documentElement, "").minWidth;
+      return (minWidth == "none") ? -1 : parseInt(minWidth);
     },
 
     GetMinHeight: function()
@@ -246,18 +353,29 @@ var gMiniplayer = {
    */
   _setMinMaxCallback: function _setMinMaxCallback()
   {
-    var platfrom = getPlatformString();
+    var platform = getPlatformString();
 
     try {
 
-      if (platfrom == "Windows_NT") {
+      if (platform == "Windows_NT") {
         var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
         var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
 
         service.setCallback(document, this._minMaxHandler);
         return;
+      } else if (platform == "Darwin") {
+        var nativeWinMgr = 
+                Cc["@songbirdnest.com/integration/native-window-manager;1"]
+                  .getService(Ci.sbINativeWindowManager);
+        if (nativeWinMgr.supportsMinimumWindowSize) {
+          var minWidth = this._minMaxHandler.GetMinWidth();
+          var minHeight = this._minMaxHandler.GetMinHeight();
+          dump("min: " + minWidth + " x " + minHeight + "\n");
+          var cstyle = window.getComputedStyle(document.documentElement, '');
+          dump ("document min: " + cstyle.minWidth + "\n");
+          nativeWinMgr.setMinimumWindowSize(window, minWidth, minHeight);
+        }
       }
-
     }
     catch (err) {
       // No component

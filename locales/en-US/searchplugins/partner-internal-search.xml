@@ -2,7 +2,7 @@
 <ShortName>Library</ShortName><!-- Change name to "Library" not "Songbird" -->
 <Description>Library Search</Description>
 <InputEncoding>UTF-8</InputEncoding>
-<Image width="16" height="16">chrome://songbird-branding/skin/logo_16.png</Image>
+<Image width="16" height="16">chrome://songbird/skin/nav-bar/nav-search-icon.png</Image>
 <!-- HACK: 
      
      gSearchHandler intercepts searches for this engine and sends queries

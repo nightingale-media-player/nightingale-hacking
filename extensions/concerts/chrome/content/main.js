@@ -158,38 +158,83 @@ Concerts = {
 	 * Setup the service pane entry point node
 	 **********************************************************************/
 	_setupServicePaneNode : function() {
+    var SB_NS = 'http://songbirdnest.com/data/1.0#';
+    var SP_NS = 'http://songbirdnest.com/rdf/servicepane#';
+
 		var SPS = Cc['@songbirdnest.com/servicepane/service;1'].
 				getService(Ci.sbIServicePaneService);
 		SPS.init();
-		var BMS = Cc['@songbirdnest.com/servicepane/bookmarks;1'].
-				getService(Ci.sbIBookmarks);
+    var BMS = Cc['@songbirdnest.com/servicepane/bookmarks;1']
+                 .getService(Ci.sbIBookmarks);
 		
-		// Walk nodes to see if a "Radio" folder already exists
-		var concertsNode = SPS.getNode("urn:concerts");
-		if (concertsNode == null) {
-			concertsNode = SPS.addNode("urn:concerts", SPS.root, false);
-			concertsNode.url = "chrome://concerts/content/browse.xul";
-			concertsNode.name = this._strings.getString("servicePaneName");
-			concertsNode.tooltip =
-				this._strings.getString("servicePaneInitialTooltip");
+    var servicesNode = SPS.getNode("SB:Services") ||
+                       this._findServicesNode(SPS.root, SB_NS);
+    if (servicesNode == null) {
+      // No services node found, create one
+      servicesNode = SPS.addNode("SB:Services", SPS.root, true);
+      servicesNode.properties = 'folder services';
+      servicesNode.name = SBString("servicesource.services");
+      servicesNode.setAttributeNS(SB_NS, "servicesFolder", 1);
+      servicesNode.setAttributeNS(SP_NS, "Weight", 1);
+      SPS.sortNode(servicesNode);
+    }
 
-			concertsNode.properties = "concerts";
-			// Sort the radio folder node in the service pane
-			concertsNode.setAttributeNS(
-					"http://songbirdnest.com/rdf/servicepane#", "Weight", -3);
-			SPS.sortNode(concertsNode);
-	
-			// Save
-			SPS.save();
-		} else {
-			// may need to reset the name post-localisation
-			this.updateConcertCount();
-		}
+    var concertsURL = "chrome://concerts/content/browse.xul";
+		var concertsNode = SPS.getNode("urn:concerts") ||
+                       SPS.getNodeForURL(concertsURL);
+		if (concertsNode != null) {
+      // We found one - make sure it's homed under the Services folder
+      if (concertsNode.parentNode &&
+          concertsNode.parentNode.name != SBString("servicesource.services")) {
+        // remove it
+        SPS.removeNode(concertsNode);
+        concertsNode = null;
+      }
+    }
+
+    if (concertsNode == null) {
+      // No Concerts node found, create a new one
+      concertsNode = SPS.addNode("urn:concerts", servicesNode, false);
+      concertsNode.url = "chrome://concerts/content/browse.xul";
+      concertsNode.name = this._strings.getString("servicePaneName");
+      concertsNode.tooltip =
+        this._strings.getString("servicePaneInitialTooltip");
+      concertsNode.properties = "concerts";
+    }
+    concertsNode.image = 'chrome://concerts/content/songkick-16x16.png';
+
+    // may need to reset the name post-localisation
+    this.updateConcertCount();
+
+    // Save
+    SPS.save();
 
 		// outside the loop in case we're going from disabled->enabled
 		concertsNode.hidden = false;
+    servicesNode.hidden = false;
+    concertsNode.editable = false;
+    servicesNode.editable = false;
 	},
-	
+
+  // Find the Services node in the servicepane
+  _findServicesNode : function (node, ns) {
+    // Found the node, return it
+    if (node.isContainer && (node.getAttributeNS(ns, "servicesFolder") == 1))
+      return node;
+
+    // Otherwise recursively walk this node's children
+    if (node.isContainer) {
+      var children = node.childNodes;
+      while (children.hasMoreElements()) {
+        var child = children.getNext().QueryInterface(Ci.sbIServicePaneNode);
+        var result = this._findServicesNode(child, ns);
+        if (result != null)
+          return result;
+      }
+    }
+    return null;
+  },
+
 	updateConcertCount : function(num) {
 		var concertCount;
 
@@ -559,6 +604,21 @@ Concerts.uninstallObserver = {
 			.getService(Ci.sbIServicePaneService);
 		var concertsNode = SPS.getNode("urn:concerts");
 		SPS.removeNode(concertsNode);
+
+    // find the services node, if it has any visible children then leave
+    // it visible - otherwise hide it
+    var servicesNode = SPS.getNode("SB:Services");
+    var visible = false;
+    var enum = servicesNode.childNodes;
+    while (enum.hasMoreElements()) {
+      var node = enum.getNext();
+      if (!node.hidden) {
+        visible = true;
+        break;
+      }
+    }
+    servicesNode.hidden = !visible;
+
 
 		// 2) Remove Concert prefs
 		var prefs = Cc["@mozilla.org/preferences-service;1"]

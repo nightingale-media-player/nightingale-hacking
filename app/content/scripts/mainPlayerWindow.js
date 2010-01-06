@@ -38,6 +38,7 @@ if ("undefined" == typeof(Cr)) {
   this.Cr = Components.results;
 }
 
+Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 
 // Assist with moving player controls by setting an attribute on the layout.
 function movePlayerControls(aIsOnTop)
@@ -329,6 +330,9 @@ var gSongbirdPlayerWindow = {
     gTabBrowser = document.getElementById("content");
     top.controllers.insertControllerAt(0, gSongbirdWindowController);
     
+    window.addEventListener("createnewplaylist", this.onCreateNewPlaylist,
+                            false);
+
     // Set the player controls location
     var playerControlsLocation = 
       Application.prefs.getValue(PREF_PLAYER_CONTROL_LOCATION, false);
@@ -363,6 +367,8 @@ var gSongbirdPlayerWindow = {
     this._onPlayCallback = null;
 
     window.removeEventListener("keypress", this.onMainWindowKeyPress, false);
+    window.removeEventListener("createnewplaylist", this.onCreateNewPlaylist,
+                               false);
   },
 
   
@@ -429,6 +435,20 @@ var gSongbirdPlayerWindow = {
     event.preventDefault();
     event.stopPropagation();
     return false;
+  },
+
+  onCreateNewPlaylist: function gSongbirdPlayerWindow_createNewPlaylist() {
+    try {
+      var mediaList = LibraryUtils.mainLibrary.createMediaList("simple");
+      mediaList.name = SBString("property.dummy.playlist");
+      var node = Cc["@songbirdnest.com/servicepane/library;1"]
+             .getService(Ci.sbILibraryServicePaneService)
+             .getNodeForLibraryResource(mediaList);
+      window.gServicePane.mTreePane.loadNode(node, null);
+      window.gServicePane.startEditingNode(node);
+    } catch (e) {
+      dump("Exception: " + e + "\n");
+    }
   },
 
   nextMediaPage: function gSongbirdPlayerWindow_nextMediaPage() {

@@ -1,0 +1,14 @@
+purplerain.jar:
+% skin  songbird  purplerain  %feathers/purplerain/songbird/chrome/skin/
+% skin  songbird-os-specific  purplerain  %feathers/purplerain/songbird/chrome/skin/os-specific/
+% skin  purplerain  purplerain  %feathers/purplerain/songbird/chrome/skin/
+% skin  global  purplerain  chrome://songbird-global/skin/
+% skin  mozapps  purplerain  chrome://songbird-mozapps/skin/
+% content purplerain  %feathers/purplerain/songbird/chrome/content/
+% locale  purplerain  en-US  %feathers/purplerain/songbird/chrome/locale/en-US/
+# TODO these can be migrated to os-specific dir
+% override chrome://songbird/skin/icons/displaypane-contentpane-bottom.png chrome://songbird/skin/icons/mac/displaypane-contentpane-bottom.png os=darwin
+% override chrome://songbird/skin/icons/displaypane-servicepane-bottom.png chrome://songbird/skin/icons/mac/displaypane-servicepane-bottom.png os=darwin
+% override chrome://songbird/skin/icons/displaypane-right-sidebar.png chrome://songbird/skin/icons/mac/displaypane-right-sidebar.png os=darwin
+#
+@include_all_to feathers/purplerain/songbird/chrome/

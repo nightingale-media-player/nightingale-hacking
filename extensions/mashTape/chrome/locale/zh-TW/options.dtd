@@ -1,11 +1,10 @@
-<!---->
+<!ENTITY mashTape.firstrun.text "播放音樂並尋找相關的 Flickr 照片、YouTube 影片、Last.fm 簡介、Google 新聞等等相關資訊！">
 <!ENTITY mtprefs.general "一般">
 <!ENTITY mtprefs.info "演出者資訊">
 <!ENTITY mtprefs.review "評論">
 <!ENTITY mtprefs.rss "新聞">
 <!ENTITY mtprefs.photo "照片">
 <!ENTITY mtprefs.flash "影片">
-<!---->
 <!ENTITY mtprefs.defaulttab "預設分頁">
 <!ENTITY mtprefs.defaulttab.help "當 mashTape 啟動時:">
 <!ENTITY mtprefs.show.info "顯示演出者資訊分頁">
@@ -17,7 +16,6 @@
 <!ENTITY mtprefs.autohide.help "瀏覽網頁時自動隱藏 mashTape 內容窗格">
 <!ENTITY mtprefs.services "服務">
 <!ENTITY mtprefs.getmore "取得更多 mashTape 的服務提供者">
-<!---->
 <!ENTITY mtprefs.tab.info "演出者資訊分頁設定">
 <!ENTITY mtprefs.tab.review "評論分頁設定">
 <!ENTITY mtprefs.tab.rss "新聞分頁設定">
@@ -26,16 +24,13 @@
 <!ENTITY mtprefs.tab.help "於 mashTape 顯示此分頁">
 <!ENTITY mtprefs.single "此窗格只能顯示一個服務的內容，請從下面的清單中選擇要顯示的服務內容。">
 <!ENTITY mtprefs.multiple "此窗格可以同時顯示多個服務的內容，請從下面的清單中選擇要顯示的服務內容。">
-<!---->
 <!ENTITY mtprefs.tab.info.autolocalise "在地化資訊">
 <!ENTITY mtprefs.tab.info.autolocalise.help "盡量擷取翻譯過的演出者資訊。">
-<!---->
 <!ENTITY mtprefs.tab.photo.speed "照片捲動速度:">
 <!ENTITY mtprefs.tab.photo.faster "快">
 <!ENTITY mtprefs.tab.photo.slower "慢">
 <!ENTITY mtprefs.tab.photo.keywords.caption "搜尋關鍵字">
 <!ENTITY mtprefs.tab.photo.keywords "額外搜尋關鍵字:">
 <!ENTITY mtprefs.tab.photo.keywords.help "當你於照片服務提供者中搜尋時，可以指定額外的關鍵字增加搜尋精確度。關鍵字必須以空白分隔，如: live concert band">
-<!---->
 <!ENTITY mtprefs.tab.video.autoplay "自動播放影片">
 <!ENTITY mtprefs.tab.video.autoplay.help "啟用此功能可以依內建的影片服務提供者傳回的結果按順序播放影片，當你要播放所有 MTV 的 MV 時非常有用。非內建的影片服務提供者則無法使用此功能。">

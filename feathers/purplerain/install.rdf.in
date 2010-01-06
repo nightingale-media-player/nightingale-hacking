@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+#filter substitution
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>purplerain@songbirdnest.com</em:id>
+    <em:type>2</em:type>
+    <em:name>Purple Rain</em:name>
+    <em:version>@EXTENSION_VER@</em:version>
+
+
+    <em:description>new default feather for korn</em:description>
+
+
+    <em:targetApplication>
+      <Description>
+        <em:id>songbird@songbirdnest.com</em:id>
+        <em:minVersion>@EXTENSION_MIN_VER@</em:minVersion>
+        <em:maxVersion>@EXTENSION_MAX_VER@</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+
+    <!-- Register an skin for the built in layouts. 
+         See http://developer.songbirdnest.com/feathers/ -->
+    <songbird:skin>
+      <Description>
+        <songbird:name>Purple Rain (default)</songbird:name>
+        <songbird:internalName>purplerain</songbird:internalName>
+        <songbird:compatibleLayout>
+          <Description>
+            <songbird:layoutURL>chrome://purplerain/content/xul/mainplayer.xul</songbird:layoutURL>
+#ifdef XP_MACOSX
+            <songbird:showChrome>true</songbird:showChrome>
+#else
+            <songbird:showChrome>false</songbird:showChrome>
+#endif
+            <songbird:onTop>false</songbird:onTop>
+          </Description>
+          <Description>
+            <songbird:layoutURL>chrome://purplerain/content/xul/miniplayer.xul</songbird:layoutURL>
+            <songbird:showChrome>false</songbird:showChrome>
+            <songbird:onTop>true</songbird:onTop>
+          </Description>
+        </songbird:compatibleLayout>
+      </Description>
+    </songbird:skin>
+    <songbird:layout>
+      <Description>
+        <songbird:name>Main Player</songbird:name>
+        <songbird:url>chrome://purplerain/content/xul/mainplayer.xul</songbird:url>
+      </Description>
+      <Description>
+        <songbird:name>Mini Player</songbird:name>
+        <songbird:url>chrome://purplerain/content/xul/miniplayer.xul</songbird:url>
+      </Description>
+    </songbird:layout>
+
+
+    <!-- No need to show the user -->
+    <em:hidden>true</em:hidden>
+    <em:locked>true</em:locked>
+    <em:appManaged>true</em:appManaged>
+
+  </Description>
+</RDF>
+

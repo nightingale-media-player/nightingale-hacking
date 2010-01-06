@@ -69,11 +69,12 @@ div#subscriber-box p div#subscriber-text p {
 	position: relative;
 	z-index: 550;
 	font-size: 9pt;
+  color: black;
 }
 
 /* HEADER STYLES */
 div#header {
-	border-top: 1px solid rgb(185,185,185);
+	/*border-top: 1px solid rgb(185,185,185);*/
 	border-bottom: 1px solid rgb(117,117,117);
 	padding: 0;
 	margin: 0;
@@ -449,6 +450,10 @@ div.station-play-button img {
 	vertical-align: baseline !important;
 }
 
-.station-play-button:hover { background-color: #1694d9; }
+.station-play-button:hover { background-color: rgb(116,189,5) }
 .station-play-button:hover a { color: white; }
-.station-play-button a { text-decoration: none; }
+
+.station-play a,
+.station-play-button a {
+   color: black; text-decoration: none;
+}

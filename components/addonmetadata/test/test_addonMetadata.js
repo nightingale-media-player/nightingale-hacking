@@ -83,7 +83,7 @@ function dumpDS(prefix, ds) {
 
 /**
  * Minimal sanity check for the AddonMetadata Datasource.
- * Assumes that rubberducky will be installed.
+ * Assumes that purplerain will be installed.
  */
 function runTest () {
 
@@ -93,8 +93,8 @@ function runTest () {
     
   // dumpDS("AddonMetadataTest DataSource: ", datasource);
   
-  // Find gonzo in the item container
-  var gonzo = null;
+  // Find purplerain in the item container
+  var purplerain = null;
   var itemRoot = rdfService.GetResource(RDFURI_ADDON_ROOT);    
   var cu = Components.classes["@mozilla.org/rdf/container-utils;1"]
                      .getService(Components.interfaces.nsIRDFContainerUtils);
@@ -103,17 +103,17 @@ function runTest () {
 
   while (addons.hasMoreElements()) {
     var addon = addons.getNext().QueryInterface(Components.interfaces.nsIRDFResource);
-    if (addon.Value == ADDON_NS("gonzo@songbirdnest.com")) {
-      gonzo = addon;
+    if (addon.Value == ADDON_NS("purplerain@songbirdnest.com")) {
+      purplerain = addon;
       break;
     }
   }
   
-  // Did we find rubberducky in the list?
-  assertEqual(gonzo != null, true);
+  // Did we find purplerain in the list?
+  assertEqual(purplerain != null, true);
   
   // Does it have a description?
-  assertEqual(datasource.hasArcOut(gonzo, 
+  assertEqual(datasource.hasArcOut(purplerain, 
       rdfService.GetResource(EM_NS("description"))), true); 
       
       

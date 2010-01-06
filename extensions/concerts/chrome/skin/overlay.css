@@ -1,41 +1,116 @@
 /* FIRST RUN/EDIT LOCATION PAGE */
-.concerts-location-box {
-	max-width: 85%;
-	width: 85%;
+#concerts-firstrun-page {
+	overflow: auto;
+  padding: 15px;
+  background-color: white;
 }
 
-description#about-text {
-	margin-bottom: 2em;
+#concerts-firstrun-page description,
+#concerts-firstrun-page label {
+  color: rgb(79,61,99);
+  line-height: 25px;
 }
 
-/* the LIBRARY, ABOUT, and LOCATION label headers */
+#concerts-firstrun-page image.powered-by-image {
+  margin-left: 7px;
+}
+
+/* the Location & On Tour header font */ 
 label.prefs-header {
-	font-size: 185%;
+	font-size: 21px;
+  font-weight: bold;
+  font-family: Helvetica, Arial, Sans;
+}
+label#location {
+  margin-top: 20px;
+}
+/* the text underneath Location */
+.descriptive-text * {
+  margin: 0px;
+}
+description.descr-text {
+  font-size: 21px;
+  margin-bottom: 1em;
+  font-family: Helvetica, Arial, Sans;
+}
+
+/* the container for the rest of the doc */
+.concerts-location-box {
+  -moz-border-radius: 5px;
+  background-color: #efefef;
+  padding: 10px;
+}
+
+#concerts-firstrun-page menulist > hbox.menulist-label-box,
+#concerts-firstrun-page button > hbox.button-box {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+#concerts-firstrun-page .menu-iconic-text,
+#concerts-firstrun-page menulist > hbox > label,
+#concerts-firstrun-page button > hbox > label {
+  color: white;
+  line-height: 10px;
+  padding: 0px !important;
+}
+#concerts-firstrun-page menulist {
+	font-size: 10pt;
+  max-width: 150px !important;
+  min-width: 50px;
+  width: 150px !important;
+}
+#concerts-firstrun-page menulist > hbox > label {
+  text-align: center;
 }
 
 /* the country, state, and city labels */
 label.pref-label {
-	font-size: 85%;
+	font-size: 10pt;
 	margin-bottom: -2px;
 }
 
+/* the cancel/save buttons */
+hbox#command-buttons {
+  padding-left: 5em;
+}
+button#pref-cancel-button > hbox > label {
+  color: rgb(79,61,99);
+}
+button#pref-cancel-button {
+	visibility: hidden;
+  background-image: none;
+  background-color: transparent;
+}
+
+#library-ontour-box {
+  background-color: rgb(219,219,219);
+  -moz-border-radius: 5px;
+  padding: 10px;
+}
+#library-ontour-box label,
+#library-ontour-box description {
+  font-size: 21px;
+  margin: 0px;
+  font-family: Helvetica, Arial, Sans;
+  line-height: 25px;
+}
+
 hbox.library-ontour-image-box {
-	padding-left: 5px;
+  margin-right: 15px;
 }
 
 description#library-text {
 	width: 5px;
 }
 
-#concerts-firstrun-page {
-	overflow: auto;
+#library-ontour-box checkbox {
+  margin-top: 20px;
+  margin-left: 0px;
+  padding-left: 0px;
 }
-#concerts-firstrun-page menulist {
-	font-size: 130%;
-}
-
-button#pref-cancel-button {
-	visibility: hidden;
+#library-ontour-box checkbox > hbox > label {
+  font-size: 14px;
+  font-family: Helvetica, Arial, Sans;
 }
 
 /* the "Concert listings powered by Songkick" label at the bottom right of the
@@ -52,6 +127,7 @@ image.clickable {
 /* LOADING RESULTS/PROGRESS BAR PAGE */
 #concerts-loading-page {
 	font-size: 175%;
+  padding-bottom: 70px;
 }
 
 /* BROWSE CONCERT LISTINGS (in artist or date view) PAGE */

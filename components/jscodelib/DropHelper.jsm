@@ -57,7 +57,7 @@ const Ce = Components.Exception;
 const Cu = Components.utils;
 
 const URI_GENERIC_ICON_XPINSTALL = 
-  "chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png";
+  "chrome://songbird/skin/base-elements/icon-generic-addon.png";
 
 
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");

@@ -1,0 +1,340 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+
+/**
+*******************************************************************************
+THE PLAYLIST
+
+Applies images and layout to playlist.xml and sbPlaylistPage.xul.
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/
+
+
+
+
+treechildren::-moz-tree-drop-feedback
+{
+  background-image: url('chrome://songbird/skin/base-elements/bg-tree-drop-feedback.png') !important;
+  margin: 0;
+  width: 63360in;
+}
+
+
+/**
+*******************************************************************************
+Tree Progress Meter
+*******************************************************************************
+*/
+
+.sb-playlist-tree > treechildren::-moz-tree-progressmeter {
+
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-progressmeter( selected, focus ) {
+
+}
+
+/** Show rating states by repositioning a large background image.
+    This prevents flickering on state change **/
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating ) {
+  background-repeat: no-repeat;
+  background-image: url(chrome://songbird/skin/playlist/ratings.png);
+}
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating ) {
+  background-repeat: no-repeat;
+  background-image: url(chrome://songbird/skin/playlist/ratings-readonly.png);
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating ),
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating0 ),
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating ),
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating0 ) {
+  background-position:left 0px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating1 ),
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating1 ) {
+  background-position:left -18px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating2 ),
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating2 ) {
+  background-position:left -36px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating3 ),
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating3 ) {
+  background-position:left -54px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating4 ),
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating4 ) {
+  background-position:left -72px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( rating, rating5 ),
+.sb-filterlist-tree > treechildren::-moz-tree-cell( rating, rating5 ) {
+  background-position:left -90px;
+}
+
+treechildren::-moz-tree-cell-text( rating ) {
+  color:transparent !important;
+}
+
+/**
+*******************************************************************************
+In-cell Buttons
+*******************************************************************************
+*/
+
+/* button default state and baseline */
+.sb-playlist-tree > treechildren::-moz-tree-cell( button ) {
+  background-image: url('chrome://songbird/skin/playlist/button-left.png');
+  background-position:0px 0px;
+  background-repeat:no-repeat;
+  padding:0px !important;
+  margin:0px !important;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( button ) {
+  background-image: url('chrome://songbird/skin/playlist/button-right.png');
+  background-position:100% -2px;
+  background-repeat:no-repeat;
+  margin:0 0 0 7px !important;
+  padding:1px 8px 2px 0 !important;
+  font-size:9px;
+}
+
+/* button hover state */
+.sb-playlist-tree > treechildren::-moz-tree-cell( button cell-hover ) {
+       background-position:0px -18px !important;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( button cell-hover ) {
+       background-position:100% -20px;
+}
+
+/* button active state */
+.sb-playlist-tree > treechildren::-moz-tree-cell( button cell-active ) {
+       background-position:0px -36px !important;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( button cell-active ) {
+       background-position:100% -38px;
+       padding:1px 8px 2px 0 !important;
+}
+
+/* button disabled state */
+.sb-playlist-tree > treechildren::-moz-tree-cell( button disabled ) {
+       background-position:0px -54px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( button disabled ) {
+       background-position:100% -56px;
+}
+
+
+/**
+*******************************************************************************
+In-cell Clickable Images
+*******************************************************************************
+*/
+
+/* clickable image */
+.sb-playlist-tree > treechildren::-moz-tree-cell( image ) {
+  padding:0px ! important;
+  margin:0px ! important;
+}
+.sb-playlist-tree > treechildren::-moz-tree-image( image ) {
+  padding:1px 1px 1px 1px ! important;
+  margin:0 ! important;
+  height:16px;
+}
+.sb-playlist-tree > treechildren::-moz-tree-image( image cell-active )
+{
+  padding:2px 1px 0 1px ! important;
+}
+
+
+/**
+*******************************************************************************
+In-cell Download Buttons
+*******************************************************************************
+*/
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( downloadbutton )
+{
+  padding:0 2px 0 20px ! important;
+  margin:0 ! important;
+  background-image: url(chrome://songbird/skin/playlist/bg-download.png);
+  background-position:0px 0px;
+  background-repeat:no-repeat;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( downloadbutton button ) {
+  padding-left:20px ! important;
+  margin:0 ! important;
+  background-image: url(chrome://songbird/skin/playlist/button-download-left.png);
+  background-position:0px 0px;
+  background-repeat:no-repeat;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-progressmeter
+{
+
+}
+.sb-playlist-tree > treechildren::-moz-tree-progressmeter(progressNotStarted) {
+  background-image: url(chrome://songbird/skin/playlist/bg-progress-not-started.png) !important;
+}
+.sb-playlist-tree > treechildren::-moz-tree-progressmeter(progressPaused) {
+  background-image: url(chrome://songbird/skin/playlist/bg-progress-paused.png) !important;
+}
+
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( downloadbutton progressCompleted )
+{
+  background: url(chrome://songbird/skin/playlist/bg-download-done.png);
+  background-position:left center;
+  background-repeat:no-repeat;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( button downloadbutton progressFailed )
+{
+  background-image: url(chrome://songbird/skin/playlist/button-left-error.png);
+  padding:0 0 0 20px ! important;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( downloadbutton progressNotStarted ) {
+
+}
+
+/**
+* Ripping status property
+*/
+.sb-playlist-tree > treechildren::-moz-tree-cell( status progressCompleted )
+{
+  background: url(chrome://songbird/skin/playlist/bg-download-done.png);
+  background-position:center center;
+  background-repeat:no-repeat;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( status progressFailed ) {
+  background: url(chrome://songbird/skin/playlist/bg-download-failed.png);
+  background-position:center center;
+  background-repeat:no-repeat;
+}
+treechildren::-moz-tree-cell-text( status ) {
+  color:transparent !important;
+}
+
+/**
+*******************************************************************************
+In-cell Checkbox
+*******************************************************************************
+*/
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( checkbox ) {
+  background-position:center -18px;
+  background-repeat:no-repeat;
+  background-image: url(chrome://songbird/skin/playlist/button-checkbox.png);
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( checkbox checked )
+{
+  background-position:center 0px !important;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( checkbox unchecked )
+{
+  background-position:center -18px !important;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( checkbox checked readonly )
+{
+  background-position:center -36px !important;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( checkbox unchecked readonly )
+{
+  background-position:center -54px !important;
+}
+
+
+.sb-playlist-tree > treechildren::-moz-tree-image( http-songbirdnest-com-data-1-0-artistDetailImage, image link ) {
+  list-style-image: url(chrome://songbird/skin/base-elements/icon-default-favicon.png);
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-image( http-songbirdnest-com-data-1-0-artistDetailImage, image noLink ) {
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-image( http-songbirdnest-com-data-1-0-albumDetailImage, image link ) {
+  list-style-image: url(chrome://songbird/skin/base-elements/icon-default-favicon.png);
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-image( http-songbirdnest-com-data-1-0-albumDetailImage, image noLink ) {
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-image( http-songbirdnest-com-data-1-0-originPageImage, image webOrigin ) {
+  list-style-image: url(chrome://songbird/skin/base-elements/icon-default-favicon.png);
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-image( http-songbirdnest-com-data-1-0-originPageImage, image unknownOrigin ) {
+}
+
+
+
+.sb-playlist-tree > treecols > treecol[bind = 'http://songbirdnest.com/data/1.0#trackName'],
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-trackName ) {
+  padding-left: 18px !important;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell( http-songbirdnest-com-data-1-0-trackName, playing ) {
+  background-repeat: no-repeat;
+  background-image: url(chrome://songbird/skin/playlist/icon-playing.png);
+}
+
+
+
+treecol[bind="http://songbirdnest.com/data/1.0#duration"],
+treecol[bind="http://songbirdnest.com/data/1.0#trackNumber"],
+treecol[bind="http://songbirdnest.com/data/1.0#sampleRate"],
+treecol[bind="http://songbirdnest.com/data/1.0#contentLength"] {
+  text-align:right;
+}
+
+treecol[bind="http://songbirdnest.com/data/1.0#duration"] > label,
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-duration ),
+treecol[bind="http://songbirdnest.com/data/1.0#trackNumber"] > label,
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( http-songbirdnest-com-data-1-0-trackNumber ) {
+}
+
+
+/*
+*******************************************************************************
+Drag and drop Icon
+*******************************************************************************
+*/
+
+.sb-playlist-drag-image {
+  list-style-image: url('chrome://songbird/skin/playlist/icon-dragging.png');
+}
+
+.sb-playlist-drag-badge[value="1"] {
+  display: none;
+}
+
+.sb-playlist-drag-badge:not([value="1"]) {
+  margin-top: 16px;
+  margin-left: 16px;
+  padding:2px 4px;
+}
+

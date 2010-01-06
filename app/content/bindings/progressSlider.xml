@@ -102,7 +102,15 @@
       </getter>
       <setter>
       <![CDATA[
+        var thumbCentre = this.thumb.boxObject.x - this.slider.boxObject.x +
+                          this.thumb.boxObject.width/2;
+        var scaledCentre = thumbCentre / this.slider.boxObject.width *
+                           this._SCALE_MAX;
         var prog = (val * this._SCALE_MAX) / this.maxpos;
+        if (val != 0 && thumbCentre == 0)
+          var prog = (val * this._SCALE_MAX) / this.maxpos;
+        else
+          var prog = scaledCentre;
         this.progress.setAttribute('value', prog);
       ]]>
       </setter>
@@ -172,8 +180,8 @@
       <parameter name="y"/>
       <body>
         <![CDATA[
-          if (x >= this.thumb.boxObject.screenX && x <= this.thumb.boxObject.screenX + this.thumb.boxObject.width &&
-              y >= this.thumb.boxObject.screenY && y <= this.thumb.boxObject.screenY + this.thumb.boxObject.height) {
+          if (x >= this.thumb.boxObject.x && x <= this.thumb.boxObject.x + this.thumb.boxObject.width &&
+              y >= this.thumb.boxObject.y && y <= this.thumb.boxObject.y + this.thumb.boxObject.height) {
             return true;
           }
           return false;
@@ -249,7 +257,6 @@
           var y = event.screenY - this.slider.boxObject.screenY;
           
           var v = 0;
-          
           if (this.getAttribute("orient") == "vertical") {
             v = (y - this.thumb.boxObject.height/2) /
                 (this.slider.boxObject.height - this.thumb.boxObject.height) * m;

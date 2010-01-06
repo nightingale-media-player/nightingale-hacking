@@ -250,6 +250,11 @@
 ./Contents/Resources/gst-plugins/libgstgamma.so
 ./Contents/Resources/gst-plugins/libgstflxdec.so
 ./Contents/Resources/gst-plugins/libgstdebug.so
+./Contents/Resources/extensions/rubberducky-dependencies@songbirdnest.com/install.rdf
+./Contents/Resources/extensions/rubberducky-dependencies@songbirdnest.com/chrome/rubberducky-dependencies.jar
+./Contents/Resources/extensions/rubberducky-dependencies@songbirdnest.com/chrome/
+./Contents/Resources/extensions/rubberducky-dependencies@songbirdnest.com/chrome.manifest
+./Contents/Resources/extensions/rubberducky-dependencies@songbirdnest.com/
 ./Contents/Resources/extensions/rubberducky@songbirdnest.com/install.rdf
 ./Contents/Resources/extensions/rubberducky@songbirdnest.com/chrome/rubberducky.jar
 ./Contents/Resources/extensions/rubberducky@songbirdnest.com/chrome.manifest

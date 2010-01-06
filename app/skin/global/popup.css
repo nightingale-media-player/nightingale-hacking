@@ -60,11 +60,13 @@ popup {
 /* ::::: tooltip ::::: */
 
 tooltip {
+  /*
   -moz-appearance: tooltip;
+  color: InfoText;
+  */
   margin-top: 18px;
   padding: 2px 3px;
   max-width: 40em;
-  color: InfoText;
   font: message-box;
 }
 

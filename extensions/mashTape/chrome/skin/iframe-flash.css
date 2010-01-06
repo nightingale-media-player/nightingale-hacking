@@ -29,7 +29,8 @@ div#caption .time {
 }
 
 .time {
-	color: grey;
+	color: rgba(255,255,255,0.55);
+  font-style: italic;
 	padding-left: 1em;
 }
 

@@ -59,9 +59,8 @@ ArtistInfo.prototype = {
 	providerType: "info",
 	numSections: 6,
 	providerIconBio : "chrome://mashtape/content/tabs/lastfm.png",
-	//providerIconDiscography: "chrome://mashtape/content/tabs/freebase.gif",
 	providerIconDiscography: "chrome://mashtape/content/tabs/musicbrainz.png",
-	providerIconMembers: "chrome://mashtape/content/tabs/freebase.gif",
+	providerIconMembers: "chrome://mashtape/content/tabs/freebase.png",
 	providerIconTags: "chrome://mashtape/content/tabs/lastfm.png",
 	providerIconLinks: "chrome://mashtape/content/tabs/musicbrainz.png",
 

@@ -23,6 +23,11 @@ songbird.jar:
 #else
   content/songbird/html/aboutCredits.xhtml  (aboutCredits.xhtml)
 #endif
+#ifdef SB_USER_ABOUTDRM_FILE
+  content/songbird/html/aboutDRM.xhtml  (@SB_USER_ABOUTDRM_FILE@)
+#else
+  content/songbird/html/aboutDRM.xhtml  (aboutDRM.xhtml)
+#endif
 # Keyboard help
   content/songbird/html/keyboardHelp.xhtml (keyboardHelp.xhtml)
   content/songbird/html/keyboardHelp.css   (keyboardHelp.css)

@@ -43,19 +43,19 @@ hbox > .notch-box {
 }
 
 .notch-box > hbox {
-  border-left: 1px solid black;
+  border-right: 2px solid;
+  -moz-border-right-colors: rgb(121,120,126) rgb(61,61,61);
 }
 
 .notch-box > hbox.end {
-  border-right: 1px solid black;
+  border-right: none;
 }
 
 .notch-box > hbox[disabled="true"] {
-  border-left: 1px solid #d3d3d3;
 }
 
 .notch-box > hbox.end[disabled="true"] {
-  border-right: 1px solid #d3d3d3;
+  border-right: none;
 }
 
 .notch-0percent-description {

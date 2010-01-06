@@ -956,13 +956,43 @@ Songkick.prototype = {
 		if (firstrun)
 			return (0);
 
+    var groupBy = this.prefs.getCharPref("groupby");
 		this._db.resetQuery();
+
+    // Get today's date... sort of strange, but we want 00:00:00, e.g.
+    // stroke of midnight this morning, hence the double new Date()
+    var today = new Date();
+    var todayMon = today.getMonth();
+    var todayDate = today.getDate();
+    var todayYear = today.getFullYear();
+    today = new Date(todayYear, todayMon, todayDate);
+    today = parseInt(today.getTime() / 1000);
+
 		try {
-			if (filterLibraryArtists)
-				this._db.addQuery("select count(distinct concertid) " +
-						"from playing_at where anyLibraryArtist=1");
-			else
-				this._db.addQuery("select count(*) from concerts");
+      if (groupBy == "artist") {
+        var query = "SELECT COUNT(distinct concertid) FROM playing_at" +
+          " JOIN concerts ON playing_at.concertid = concerts.id" +
+          " WHERE concerts.timestamp >= " + today;
+        if (filterLibraryArtists)
+          query += " AND playing_at.libraryArtist = 1";
+        this._db.addQuery(query);
+      } else {
+        var ceilingMon = todayMon+5;
+        var ceilingYear = todayYear;
+        if (ceilingMon > 11) {
+          ceilingMon -= 11;
+          ceilingYear++;
+        }
+        var ceiling = new Date(ceilingYear, ceilingMon, 1);
+        ceiling = parseInt(ceiling.getTime() / 1000);
+        var query = "SELECT COUNT(distinct id) FROM playing_at" +
+          " JOIN concerts ON playing_at.concertid = concerts.id" +
+          " WHERE concerts.timestamp >= " + today +
+          " AND concerts.timestamp < " + ceiling;
+        if (filterLibraryArtists)
+          query += " AND playing_at.anyLibraryArtist = 1";
+        this._db.addQuery(query);
+      }
 			
 			var ret = this._db.execute();
 		} catch (e) {

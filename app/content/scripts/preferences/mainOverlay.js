@@ -50,7 +50,25 @@ addEventListener("load", function() {
     // reset the visibility style, _unless_ it was !important
     selector.style.visibility = "visible";
   }
+
+  // making the menus in the preference pane selector stack vertically to avoid multi-level tabs
+  var browserPreferences = document.getElementById("BrowserPreferences");
+  var selector = document.getAnonymousElementByAttribute(browserPreferences, 'anonid', 'selector');
+  selector.removeAttribute("orient");
+  if (getComputedStyle(selector, "").getPropertyPriority("visibility") == "") {
+    // reset the visibility style, _unless_ it was !important
+    selector.style.visibility = "visible";
+  }
   
+  // hide the CDRip prefpane if no cd-rip engines are installed
+  var catMan = Cc["@mozilla.org/categorymanager;1"]
+                 .getService(Ci.nsICategoryManager);
+  var enum = catMan.enumerateCategory("cdrip-engine");
+  if (!enum.hasMoreElements()) {
+    var radio = document.getAnonymousElementByAttribute(browserPreferences,
+                                                        'pane', 'paneCDRip');
+    radio.hidden = true;
+  }
 }, false);
 
 

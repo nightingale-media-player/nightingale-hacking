@@ -58,7 +58,12 @@ var ConcertOptions = {
 		countryDropdown.removeAllItems();
 		var idx = 0;
 		for (var i=0; i<countries.length; i++) {
-			countryDropdown.appendItem(countries[i].name, countries[i].id);
+      var country = countries[i].name;
+      if (country == "US")
+        country = "United States";
+      else if (country == "UK")
+        country = "United Kingdom";
+			countryDropdown.appendItem(country, countries[i].id);
 			if (countries[i].id == selectedCountry)
 				idx = i;
 		}
@@ -72,7 +77,11 @@ var ConcertOptions = {
 				return (a.name > b.name); })
 		var stateDropdown = document.getElementById("menulist-state");
 		stateDropdown.removeAllItems();
-		if (this._states.length == 1 && this._states[0].name == "") {
+    // catch the UK/New Zealand case where there are no "states"
+		if (this._states.length == 1 &&
+        (this._states[0].name == "" ||
+         this._states[0].name.indexOf("&lt;countrywide&gt;")))
+    {
 			// The "state" is the whole country
 			stateDropdown.disabled = true;
 			this._populateCities(this._states[0].id);

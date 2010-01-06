@@ -245,6 +245,11 @@
 ./gst-plugins/gstdebug.dll
 ./gst-plugins/gstacmenc.dll
 ./gst-plugins/dshowdecwrapper.dll
+./extensions/rubberducky-dependencies@songbirdnest.com/install.rdf
+./extensions/rubberducky-dependencies@songbirdnest.com/chrome/rubberducky-dependencies.jar
+./extensions/rubberducky-dependencies@songbirdnest.com/chrome/
+./extensions/rubberducky-dependencies@songbirdnest.com/chrome.manifest
+./extensions/rubberducky-dependencies@songbirdnest.com/
 ./extensions/rubberducky@songbirdnest.com/install.rdf
 ./extensions/rubberducky@songbirdnest.com/chrome/rubberducky.jar
 ./extensions/rubberducky@songbirdnest.com/chrome/

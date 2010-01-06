@@ -54,18 +54,20 @@
 
       <xul:vbox class="device-tab-content">
 
+        <!-- Header label and info. -->
+        <!--
         <xul:hbox class="device-tab-header-box">
-          <!-- Header label and info. -->
           <xul:label class="device-tab-header-label"
                      value="&device.management.tabs.tools.label;"/>
           <xul:label sbid="content_management_header_info_label"
                      class="device-tab-header-info"/>
         </xul:hbox>
+        -->
 
         <!-- Product Registration -->
         <xul:groupbox tool="register" pack="center" 
                       orient="vertical" hidden="true">
-          <xul:label value="&device.tools.product_registration.title;"/>
+          <xul:caption label="&device.tools.product_registration.title;"/>
           <xul:description>
             &device.tools.product_registration.description;
           </xul:description>
@@ -79,9 +81,8 @@
         <!-- Update Firmware -->
         <xul:groupbox tool="update" pack="center" 
                       orient="vertical" hidden="true">
+          <xul:caption label="&device.tools.update_firmware.title;"/>
           <xul:hbox>
-            <xul:label value="&device.tools.update_firmware.title;"/>
-            <xul:spacer flex="1"/>
             <xul:label value="&device.tools.update_firmware.current_firmware.title;"/>
             <xul:label sbid="sb-device-tools-cur-firmware-ver"/>
           </xul:hbox>
@@ -109,6 +110,7 @@
         <!-- Repair Device -->
         <xul:groupbox tool="repair" pack="center" 
                       orient="vertical" hidden="true">
+          <xul:caption label="&device.tools.repair_device.title;" />
           <xul:vbox sbid="sb-device-tools-format" hidden="true">
             <xul:label value="&device.tools.format_device.title;"/>
             <xul:description xmlns="http://www.w3.org/1999/xhtml">
@@ -121,7 +123,9 @@
             </xul:hbox>
           </xul:vbox>
 
-          <xul:label value="&device.tools.repair_device.title;"/>
+          <xul:label value="&device.tools.repair_device.title;"
+                     sbid="sb-device-tools-repair-label" 
+                     hidden="true" />
           <xul:description xmlns="http://www.w3.org/1999/xhtml">
             &device.tools.repair_device.description;
           </xul:description>
@@ -135,7 +139,7 @@
         <!-- Support -->
         <xul:groupbox tool="support" pack="center" 
                       orient="vertical" hidden="true">
-          <xul:label value="&device.tools.support.title;"/>
+          <xul:caption label="&device.tools.support.title;"/>
           <xul:description>
             &device.tools.support.description;
           </xul:description>
@@ -150,7 +154,7 @@
         <!-- Reset Warnings -->
         <xul:groupbox tool="resetwarnings" pack="center" 
                       orient="vertical" hidden="true">
-          <xul:label value="&device.tools.reset_warnings.title;"/>
+          <xul:caption label="&device.tools.reset_warnings.title;"/>
           <xul:description>
             &device.tools.reset_warnings.description;
           </xul:description>
@@ -406,6 +410,11 @@
                                                     "sbid",
                                                     "sb-device-tools-format");
           this.formatBox.hidden = false;
+
+          var repairLabel = document.getAnonymousElementByAttribute(this,
+                                                "sbid",
+                                                "sb-device-tools-repair-label");
+          repairLabel.hidden = false;
         }
         
         this._startBusyCheck();

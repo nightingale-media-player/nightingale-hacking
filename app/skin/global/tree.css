@@ -25,37 +25,39 @@ treecolpicker {
 
 treecol:hover,
 treecolpicker:hover {
-  background-position:center -15px;
+  background-position:center -20px;
 }
 treecol:active,
 treecolpicker:active {
-  background-position:center -30px;
+  background-position:center -40px;
 }
 
 treecol[sortActive="true"] {
-  background-position:center -45px;
-}
-treecol[sortActive="true"]:hover {
   background-position:center -60px;
 }
+treecol[sortActive="true"]:hover {
+  background-position:center -80px;
+}
 treecol[sortActive="true"]:active {
-  background-position:center -75px;
+  background-position:center -100px;
 }
 
 .treecol-sortdirection[sortDirection="ascending"] {
   list-style-image:url("chrome://songbird/skin/base-elements/icon-sort-ascending.png") !important;
+  margin-left: 4px;
 }
 .treecol-sortdirection[sortDirection="descending"] {
   list-style-image:url("chrome://songbird/skin/base-elements/icon-sort-descending.png") !important;
+  margin-left: 4px;
 }
 
 .sb-filterlist-tree treecol[sortActive="true"] {
   background-position:center 0px;
 }
 .sb-filterlist-tree treecol[sortActive="true"]:hover {
-  background-position:center -15px;
+  background-position:center -20px;
 }
 .sb-filterlist-tree treecol[sortActive="true"]:active {
-  background-position:center -30px;
+  background-position:center -40px;
 }
 

@@ -1,11 +1,10 @@
-<!---->
+<!ENTITY mashTape.firstrun.text "Проиграйте трек и просмотрите относящиеся к нему фотографии на Flickr, видеоролики на YouTube, биографию исполнителя на Last.fm, статьи на Google News и многое другое!">
 <!ENTITY mtprefs.general "Общие">
 <!ENTITY mtprefs.info "Об исполнителе">
 <!ENTITY mtprefs.review "Обзоры">
 <!ENTITY mtprefs.rss "Новости">
 <!ENTITY mtprefs.photo "Фотографии">
 <!ENTITY mtprefs.flash "Видео">
-<!---->
 <!ENTITY mtprefs.defaulttab "Вкладка по умолчанию">
 <!ENTITY mtprefs.defaulttab.help "При запуске mashTape показывать:">
 <!ENTITY mtprefs.show.info "информацию об исполнителе">
@@ -17,7 +16,6 @@
 <!ENTITY mtprefs.autohide.help "Автоматически прятать панель mashTape при переходе на вкладку веб-страницы.">
 <!ENTITY mtprefs.services "Сервисы">
 <!ENTITY mtprefs.getmore "Загрузить дополнительные сервисы для mashTape">
-<!---->
 <!ENTITY mtprefs.tab.info "Настройка вкладки &quot;Об исполнителе&quot;">
 <!ENTITY mtprefs.tab.review "Настройка вкладки &quot;Обзоры&quot;">
 <!ENTITY mtprefs.tab.rss "Настройка вкладки &quot;Новости&quot;">
@@ -26,16 +24,13 @@
 <!ENTITY mtprefs.tab.help "Показывать эту вкладку в mashTape.">
 <!ENTITY mtprefs.single "Эта панель поддерживает отображение содержимого только с одного сервиса. Пожалуйста, выберите сервис из списка.">
 <!ENTITY mtprefs.multiple "Эта панель поддерживает отображение содержимого с нескольких сервисов. Пожалуйста, выберите сервис из списка.">
-<!---->
 <!ENTITY mtprefs.tab.info.autolocalise "Локализованные данные">
 <!ENTITY mtprefs.tab.info.autolocalise.help "Получать локализованную информацию об исполнителе автоматически, когда она доступна.">
-<!---->
 <!ENTITY mtprefs.tab.photo.speed "Скорость прокрутки фотографий">
 <!ENTITY mtprefs.tab.photo.faster "Быстро">
 <!ENTITY mtprefs.tab.photo.slower "Медленно">
 <!ENTITY mtprefs.tab.photo.keywords.caption "Ключевые слова для поиска">
 <!ENTITY mtprefs.tab.photo.keywords "Дополнительные ключевые слова для поиска:">
 <!ENTITY mtprefs.tab.photo.keywords.help "Также вы можете указать дополнительные ключевые слова, которые будут добавлены к вашему сервису поиска фотографий. Они должны быть разделены пробелами, например: live concert band.">
-<!---->
 <!ENTITY mtprefs.tab.video.autoplay "Проигрывать видео автоматически">
 <!ENTITY mtprefs.tab.video.autoplay.help "Включение этой опции позволит видео-провайдеру автоматически проигрывать клипы один за другим. Это удобно для просмотра MTV Music Videos. Провайдеры, не поддерживающие эту опцию, не будут работать.">

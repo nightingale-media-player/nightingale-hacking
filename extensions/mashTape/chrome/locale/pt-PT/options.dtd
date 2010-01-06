@@ -1,0 +1,36 @@
+<!ENTITY mashTape.firstrun.text "Reproduza uma faixa e descubra fotos do Flickr, vídeos do YouTube, biografias do Last.fm, Notícias relacionadas do Google e mais ainda!">
+<!ENTITY mtprefs.general "Geral">
+<!ENTITY mtprefs.info "Informação do Artista">
+<!ENTITY mtprefs.review "Críticas">
+<!ENTITY mtprefs.rss "Notícias">
+<!ENTITY mtprefs.photo "Fotos">
+<!ENTITY mtprefs.flash "Vídeos">
+<!ENTITY mtprefs.defaulttab "Aba Pré-definida">
+<!ENTITY mtprefs.defaulttab.help "Quando o mashTape inicia:">
+<!ENTITY mtprefs.show.info "Mostrar a Informação do Artista">
+<!ENTITY mtprefs.show.review "Mostrar Críticas">
+<!ENTITY mtprefs.show.rss "Mostrar Notícias">
+<!ENTITY mtprefs.show.photo "Mostrar Fotos">
+<!ENTITY mtprefs.show.flash "Mostrar Vídeos">
+<!ENTITY mtprefs.autohide "Auto-esconder">
+<!ENTITY mtprefs.autohide.help "Esconder automaticamente o painel de exibição do mashTape quando navega numa página web.">
+<!ENTITY mtprefs.services "Serviços">
+<!ENTITY mtprefs.getmore "Receber mais serviços para o mashTape">
+<!ENTITY mtprefs.tab.info "Definições da Aba de Informações do Artista">
+<!ENTITY mtprefs.tab.review "Definições da Aba de Críticas">
+<!ENTITY mtprefs.tab.rss "Definições da Aba de Notícias">
+<!ENTITY mtprefs.tab.photo "Definições da Aba de Fotos">
+<!ENTITY mtprefs.tab.flash "Definições da Aba de Vídeos">
+<!ENTITY mtprefs.tab.help "Mostrar esta aba no mashTape.">
+<!ENTITY mtprefs.single "Este painel apenas suporta de exibição de conteúdo de um serviço de cada vez. Por favor seleccione um serviço da lista abaixo.">
+<!ENTITY mtprefs.multiple "Este painel suporta a exibição de conteúdo de vários serviços ao mesmo tempo. Por favor seleccione a sua escolha de serviços da lista abaixo.">
+<!ENTITY mtprefs.tab.info.autolocalise "Dados na Sua Língua">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Apresentar automaticamente informação do artista na sua língua se esta estiver disponível.">
+<!ENTITY mtprefs.tab.photo.speed "Velocidade do Deslocamento das Fotos">
+<!ENTITY mtprefs.tab.photo.faster "Mais Rápido">
+<!ENTITY mtprefs.tab.photo.slower "Mais Lento">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Palavras-chave da Busca">
+<!ENTITY mtprefs.tab.photo.keywords "Palavras-chave da busca adicionais:">
+<!ENTITY mtprefs.tab.photo.keywords.help "Pode especificar palavras-chave adicionais para adicionar à sua busca no provedor de fotos. Palavras-chave devem ser separadas por espaços, por exemplo: vivo concerto banda">
+<!ENTITY mtprefs.tab.video.autoplay "Reproduzir automaticamente os vídeos">
+<!ENTITY mtprefs.tab.video.autoplay.help "Activar esta opção levará a que os resultados agrupados do provedor de vídeo sejam reproduzidos automaticamente um a seguir ao outro. Isto é útil para, por exemplo, reproduzir automaticamente todos os vídeos musicais da  MTV. Provedores de vídeo não-agrupados não funcionam com esta opção.">

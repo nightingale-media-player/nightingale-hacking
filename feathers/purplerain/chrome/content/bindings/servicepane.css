@@ -1,0 +1,166 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+
+/** 
+*******************************************************************************
+
+SERVICE PANE 
+
+Applies images and layout for the left pane in the main window. 
+The Service Pane is the primary area for navigating through services and 
+content. It serves as the primary GUI entry point to content and services.
+
+Imported by bindings.css or directly into feathers.
+
+*******************************************************************************
+*/ 
+
+
+
+
+
+/* Service Pane Icons **/
+.servicepane-tree > treechildren::-moz-tree-image {
+  max-width: 16px;
+  max-height: 16px;
+  min-width: 0px;
+  min-height: 0px;
+  width: 16px;
+  height: 16px;
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( library ),
+.locationbar-image[properties~="library"],
+.alltabs-item.menuitem-iconic[properties~="library"],
+.tabbrowser-tab[properties~="library"] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url(chrome://songbird/skin/service-pane/icon-library.png) ;
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( library video ),
+.locationbar-image[properties~="library"][properties~="video"],
+.alltabs-item.menuitem-iconic[properties~="library"][properties~="video"],
+.tabbrowser-tab[properties~="library"][properties~="video"] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url(chrome://songbird/skin/service-pane/icon-video.png) ;
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( birdhouse ) {
+  list-style-image: url(chrome://songbird/skin/service-pane/icon-birdhouse.png) ;
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( web library ),
+.locationbar-image[properties~="library"][properties~="web"],
+.alltabs-item.menuitem-iconic[properties~="library"][properties~="web"],
+.tabbrowser-tab[properties~="library"][properties~="web"] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url(chrome://songbird/skin/service-pane/icon-web-media-history.png) ;
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( medialist ),
+.locationbar-image[properties~="medialist"],
+.alltabs-item.menuitem-iconic[properties~="medialist"],
+.tabbrowser-tab[properties~="medialist"] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url(chrome://songbird/skin/service-pane/icon-playlist.png) ;
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( medialisttype-smart ),
+.locationbar-image[properties~="medialisttype-smart"],
+.alltabs-item.menuitem-iconic[properties~="medialisttype-smart"],
+.tabbrowser-tab[properties~="medialisttype-smart"] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url(chrome://songbird/skin/service-pane/icon-smartplaylist.png);
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( medialisttype-dynamic ),
+.locationbar-image[properties~="medialisttype-dynamic"],
+.alltabs-item.menuitem-iconic[properties~="medialisttype-dynamic"],
+.tabbrowser-tab[properties~="medialisttype-dynamic"] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url(chrome://songbird/skin/service-pane/icon-subscription.png) ;
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( podcast ),
+.locationbar-image[properties~="podcast"],
+.alltabs-item.menuitem-iconic[properties~="podcast"],
+.tabbrowser-tab[properties~="podcast"] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url(chrome://songbird/skin/service-pane/icon-podcast.png) ;
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( download ),
+.locationbar-image[properties~="download"],
+.alltabs-item.menuitem-iconic[properties~="download"],
+.tabbrowser-tab[properties~="download"] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url(chrome://songbird/skin/service-pane/icon-downloads.png) ;
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( download downloading ),
+.locationbar-image[properties~="download"][properties~="downloading"],
+.alltabs-item.menuitem-iconic[properties~="download"][properties~="downloading"],
+.tabbrowser-tab[properties~="download"][properties~="downloading"] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url(chrome://songbird/skin/service-pane/icon-downloads-progress.png) ;
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( device ),
+.locationbar-image[properties~="device"],
+.alltabs-item.menuitem-iconic[properties~="device"],
+.tabbrowser-tab[properties~="device"] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url(chrome://songbird/skin/service-pane/icon-device.png) ;
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( device busy ),
+.locationbar-image[properties~="device"][properties~="busy"],
+.alltabs-item.menuitem-iconic[properties~="device"][properties~="busy"],
+.tabbrowser-tab[properties~="device"][properties~="busy"] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url(chrome://songbird/skin/service-pane/icon-busy.png);
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( cd-device ),
+.locationbar-image[properties~="cd-device"],
+.alltabs-item.menuitem-iconic[properties~="cd-device"],
+.tabbrowser-tab[properties~="cd-device"] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url(chrome://songbird/skin/service-pane/cd_rest.png) ;
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( cd-device busy ),
+.locationbar-image[properties~="cd-device"][properties~="busy"],
+.alltabs-item.menuitem-iconic[properties~="cd-device"][properties~="busy"],
+.tabbrowser-tab[properties~="cd-device"][properties~="busy"] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url(chrome://songbird/skin/service-pane/cd_ripping.png) ;
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( cd-device successful ),
+.locationbar-image[properties~="cd-device"][properties~="successful"],
+.alltabs-item.menuitem-iconic[properties~="cd-device"][properties~="successful"],
+.tabbrowser-tab[properties~="cd-device"][properties~="successful"] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url(chrome://songbird/skin/service-pane/cd_successful.png) ;
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( cd-device unsuccessful ),
+.locationbar-image[properties~="cd-device"][properties~="unsuccessful"],
+.alltabs-item.menuitem-iconic[properties~="cd-device"][properties~="unsuccessful"],
+.tabbrowser-tab[properties~="cd-device"][properties~="unsuccessful"] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url(chrome://songbird/skin/service-pane/cd_unsuccessful.png) ;
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( bookmark ) {
+  list-style-image: url(chrome://songbird/skin/service-pane/icon-bookmark.png) ;
+}

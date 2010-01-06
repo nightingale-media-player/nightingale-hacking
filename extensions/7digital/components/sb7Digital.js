@@ -38,6 +38,7 @@ if (typeof(Cr) == 'undefined')
 Cu.import('resource://app/jsmodules/sbProperties.jsm');
 Cu.import('resource://app/jsmodules/sbLibraryUtils.jsm');
 Cu.import('resource://gre/modules/XPCOMUtils.jsm');
+Cu.import('resource://app/jsmodules/StringUtils.jsm');
 
 // FUEL makes us happier...
 var Application = Components.classes["@mozilla.org/fuel/application;1"]
@@ -48,7 +49,7 @@ const PREF_CONFIGURED = 'extensions.7digital.configured';
 // What's my GUID
 const EXTENSION_GUID = '7digital@songbirdnest.com';
 // Node IDs for the service pane
-const NODE_STORES = 'SB:Stores';
+const NODE_SERVICES = 'SB:Services';
 const NODE_7DIGITAL = 'SB:7Digital';
 // Where's our stringbundle?
 const STRINGBUNDLE = 'chrome://7digital/locale/7digital.properties';
@@ -152,9 +153,9 @@ function sb7Digital_observe(subject, topic, data) {
 
     this._firstRunTimer.cancel();
     this._firstRunTimer = null;
-  } else if (topic == 'songbird-main-window-presented' &&
-      !Application.prefs.getValue(PREF_CONFIGURED, false)) {
-    // If we need to install ourselves, then let's do that
+  } else if (topic == 'songbird-main-window-presented') {
+             /* && !Application.prefs.getValue(PREF_CONFIGURED, false)) { */
+    // Run this everytime since it involves servicepane node migration
     this.install();
   }
 }
@@ -165,25 +166,54 @@ function sb7Digital_install() {
   this._servicePaneService.init();
   // install ourselves into the service pane
   try {
+    // find the store node
+    var servicesNode = this._servicePaneService.getNode(NODE_SERVICES);
+    if (!servicesNode) {
+      servicesNode = this._servicePaneService.addNode(NODE_SERVICES, 
+          this._servicePaneService.root, true);
+      servicesNode.properties = 'folder services';
+      servicesNode.editable = false;
+      servicesNode.name = SBString("servicesource.services");
+      servicesNode.setAttributeNS(SERVICEPANE_NS, 'Weight', 1);
+      this._servicePaneService.sortNode(servicesNode);
+    }
+
     // find the 7digital node
     var myNode = this._servicePaneService.getNode(NODE_7DIGITAL);
+    
+    // for migration purposes, 7Digital used to be under the store node
+    // let's assert that it's under the servicesnode
+    if (myNode && myNode.parentNode &&
+        myNode.parentNode.name != SBString("servicesource.services"))
+    {
+      var parentNode = myNode.parentNode;
+
+      // it's not under the services node, delete it
+      this._servicePaneService.removeNode(myNode);
+
+      // set it to null so we'll recreate it in the next step
+      myNode = null;
+
+      // see if the parent node is empty, if it is, then remove it
+      var enum = parentNode.childNodes;
+      if (!enum.hasMoreElements()) {
+        this._servicePaneService.removeNode(parentNode);
+      } else {
+        var visible = false;
+        while (enum.hasMoreElements()) {
+          var node = enum.getNext();
+          if (!node.hidden) {
+            visible = true;
+            break;
+          }
+        }
+        parentNode.hidden = !visible;
+      }
+    }
+
     if (!myNode) {
       // can't find my node, let's make it
-      // but first we need to get the store node
-      var storesNode = this._servicePaneService.getNode(NODE_STORES);
-      if (!storesNode) {
-        // what? no store node?
-        storesNode = this._servicePaneService.addNode(NODE_STORES, 
-            this._servicePaneService.root, true);
-        storesNode.properties = 'folder stores';
-        storesNode.editable = false;
-        storesNode.name = '&servicepane.stores';
-        storesNode.stringbundle = STRINGBUNDLE;
-        storesNode.setAttributeNS(SERVICEPANE_NS, 'Weight', 2);
-        this._servicePaneService.sortNode(storesNode);
-      }
-
-      myNode = this._servicePaneService.addNode(NODE_7DIGITAL, storesNode, 
+      myNode = this._servicePaneService.addNode(NODE_7DIGITAL, servicesNode, 
           false);
       myNode.url = STORE_URL;
       myNode.image = 'chrome://7digital/skin/servicepane-icon.png';
@@ -195,11 +225,8 @@ function sb7Digital_install() {
     // make the 7digital node visible
     myNode.hidden = false;
 
-    // find the store node
-    var storesNode = this._servicePaneService.getNode(NODE_STORES);
-    // show it
-    storesNode.hidden = false;
-    
+    // make the services node visible
+    servicesNode.hidden = false;
   } catch (e) {
     Cu.reportError(e);
   }
@@ -252,10 +279,19 @@ function sb7Digital_uninstall() {
       myNode.parentNode.removeChild(myNode);
     }
 
-    // find the stores node
-    var storesNode = this._servicePaneService.getNode(NODE_STORES);
-    // kill it!
-    this._servicePaneService.root.removeChild(storesNode);
+    // find the services node, if it has any visible children then leave
+    // it visible - otherwise hide it
+    var servicesNode = this._servicePaneService.getNode(NODE_SERVICES);
+    var visible = false;
+    var enum = servicesNode.childNodes;
+    while (enum.hasMoreElements()) {
+      var node = enum.getNext();
+      if (!node.hidden) {
+        visible = true;
+        break;
+      }
+    }
+    servicesNode.hidden = !visible;
   } catch (e) {
     Cu.reportError(e);
   }

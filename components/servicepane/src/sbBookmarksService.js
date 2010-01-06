@@ -93,6 +93,7 @@ function sbBookmarks_servicePaneInit(sps) {
     this._bookmarkNode = this.addFolderAt('SB:Bookmarks',
         '&servicesource.bookmarks', null, sps.root, null);
   }
+  this._bookmarkNode.hidden = true;
 
   // set the weight of the bookmarks node
   this._bookmarkNode.setAttributeNS(SP, 'Weight', 4);

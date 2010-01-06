@@ -656,8 +656,7 @@
   
    <content>
      <xul:stack id="sb-player-repeat-button" xbl:inherits="class=class" >
-       <xul:button type="sb-clickhold"
-                   id="repeat_none"
+       <xul:button id="repeat_none"
                    class="sb-player-repeat-button-repnone sb-player-button"
                    oncommand="onRepeat(event.target);"
                    tooltiptext="&menu.control.repx;"
@@ -666,14 +665,8 @@
                    key="playlist.repeat" 
                    attribute="hidden" 
                    onchange="return parseInt( value ) != 0" />
-         <xul:menupopup xbl:inherits="popupanchor,popupalign">  
-          <xul:menuitem id="menu_repeat_none" autocheck="false" checked="true" class="menuitem-iconic" type="radio" label="&menu.control.repx;"/>
-          <xul:menuitem id="menu_repeat_all" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repa;"/>
-          <xul:menuitem id="menu_repeat_1" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
-         </xul:menupopup>
        </xul:button>
-       <xul:button type="sb-clickhold"
-                   id="repeat_1"
+       <xul:button id="repeat_1"
                    class="sb-player-repeat-button-rep1 sb-player-button"
                    oncommand="onRepeat(event.target);"
                    tooltiptext="&menu.control.rep1;"
@@ -682,14 +675,8 @@
                    key="playlist.repeat" 
                    attribute="hidden" 
                    onchange="return parseInt( value ) != 1" />
-          <xul:menupopup xbl:inherits="popupanchor,popupalign">  
-            <xul:menuitem id="menu_repeat_none" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repx;"/>
-            <xul:menuitem id="menu_repeat_all" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repa;"/>
-            <xul:menuitem id="menu_repeat_1" autocheck="false" checked="true" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
-          </xul:menupopup>
        </xul:button>
-       <xul:button type="sb-clickhold"
-                   id="repeat_all"
+       <xul:button id="repeat_all"
                    class="sb-player-repeat-button-repall sb-player-button"
                    oncommand="onRepeat(event.target);"
                    tooltiptext="&menu.control.repa;"
@@ -698,11 +685,6 @@
                    key="playlist.repeat" 
                    attribute="hidden" 
                    onchange="return parseInt( value ) != 2" />
-          <xul:menupopup xbl:inherits="popupanchor,popupalign">
-            <xul:menuitem id="menu_repeat_none" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.repx;"/>
-            <xul:menuitem id="menu_repeat_all" autocheck="false" checked="true" class="menuitem-iconic" type="radio" label="&menu.control.repa;"/>
-            <xul:menuitem id="menu_repeat_1" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&menu.control.rep1;"/>
-          </xul:menupopup>
        </xul:button>
      </xul:stack>
    </content>
@@ -797,8 +779,7 @@
   
    <content>
      <xul:stack id="sb-player-shuffle-button" xbl:inherits="class=class" oncommand="onShuffle( );">
-       <xul:button type="sb-clickhold"
-                   id="sb-player-shuffle-button-off"
+       <xul:button id="sb-player-shuffle-button-off"
                    sbid="shuffle_off"
                    class="sb-player-shuffle-button-off sb-player-button"
                    tooltiptext="&tooltip.control.shuf_off;"
@@ -807,12 +788,8 @@
                    key="playlist.shuffle" 
                    attribute="hidden" 
                    onchange="return parseInt( value ) != 0" />  
-         <xul:menupopup xbl:inherits="popupanchor,popupalign">
-            <xul:menuitem id="menu_shuffle_off" autocheck="false" checked="false" class="menuitem-iconic" type="radio" label="&tooltip.control.shuffle;"/>
-         </xul:menupopup>
        </xul:button>
-       <xul:button type="sb-clickhold"
-                   id="sb-player-shuffle-button-on"
+       <xul:button id="sb-player-shuffle-button-on"
                    sbid="shuffle_on"
                    class="sb-player-shuffle-button-on sb-player-button"
                    tooltiptext="&tooltip.control.shuffle;"
@@ -821,9 +798,6 @@
                    key="playlist.shuffle" 
                    attribute="hidden" 
                    onchange="return parseInt( value ) != 1" />
-         <xul:menupopup xbl:inherits="popupanchor,popupalign">  
-          <xul:menuitem id="menu_shuffle_on" autocheck="false" checked="true" class="menuitem-iconic" type="radio" label="&tooltip.control.shuffle;"/>
-         </xul:menupopup>
        </xul:button>
      </xul:stack>
    </content>
@@ -887,55 +861,79 @@
   
   
   
-  <binding id="seek-slider" extends="chrome://songbird/content/bindings/progressSlider.xml#progress-slider">
-
+  <binding id="seek-slider">
+   <!-- forked from progressSlider.xml by stevel -->
    <handlers>
      <handler event="progressSliderChange" action="this.onTrackSeekbar();"/>
      <handler event="progressSliderRelease" action="this.onReleaseSeekbar();"/>
    </handlers>
 
+   <content>
+     <xul:box sbid="sb-progress-slider" xbl:inherits="orient,class" flex="1">
+       <xul:stack xbl:inherits="class" flex="1">
+         <xul:progressmeter sbid="sb-progress-slider-progress"
+                            class="sb-progress-slider"
+                            xbl:inherits="orient,class,dir"
+                            flex="1"/>
+         <xul:slider sbid="sb-progress-slider-slider" class="sb-progress-slider"
+                     xbl:inherits="disabled,orient,maxpos,class,dir"
+                     pageincrement="0" flex="1"
+                     onmousedown="slidermousedown(event)"
+                     onmouseup="slidermouseup(event)"
+                     onmousemove="slidermousemove(event)" mousethrough="never"> 
+           <xul:thumb sbid="sb-progress-slider-thumb" class="sb-progress-slider"
+                      xbl:inherits="class"/>  
+         </xul:slider>
+       </xul:stack>
+       <children/>
+
+    </xul:box>
+  </content>
+
   <implementation>
 
     <constructor>
-      <![CDATA[
-        // OVERLAY TARGET ID MATCHES ELEMENT NAME
-        this.box.setAttribute("id", "sb-player-seek-slider" );
+    <![CDATA[
+      this.progress.max = this._SCALE_MAX;
 
-        // ADD EXTRA CSS CLASS FOR ANONYMOUS OBJECTS
-        this.setAttribute("class", this.getAttribute("class") + " sb-player-seek-slider");
+      // OVERLAY TARGET ID MATCHES ELEMENT NAME
+      this.box.setAttribute("id", "sb-player-seek-slider" );
 
-        this.mm = 
-          Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
-                    .getService(Components.interfaces.sbIMediacoreManager);
+      // ADD EXTRA CSS CLASS FOR ANONYMOUS OBJECTS
+      this.setAttribute("class", this.getAttribute("class") + " sb-player-seek-slider");
 
-        // observer for DataRemote 
-        const on_remote_position_change = { 
-          _that: null, 
-          observe: function( aSubject, aTopic, aData ) { this._that.onRemotePositionChange(); } 
-        };
-        on_remote_position_change._that = this;
+      this.mm = 
+        Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                  .getService(Components.interfaces.sbIMediacoreManager);
 
-        // Create and bind data remotes
-        this.remote_position = SB_NewDataRemote( "metadata.position", null );
-        this.remote_position.bindObserver(on_remote_position_change, true);
-        this.remote_length = SBDataBindElementAttribute( "metadata.length", this, "maxpos" );
-       
-        this.trackingPosition = 0;
-        this.scrubbingPosition = false;
-        this.seekInProgress = false;
-        this.wasPlayingBeforeSeek = false;
+      // observer for DataRemote 
+      const on_remote_position_change = { 
+        _that: null, 
+        observe: function( aSubject, aTopic, aData ) { this._that.onRemotePositionChange(); } 
+      };
+      on_remote_position_change._that = this;
 
-        this.eventListener = {
-          that: this,
-          onMediacoreEvent: function(aEvent) {
-            if (aEvent.type == aEvent.STREAM_PAUSE) {
-              this.that.seekInProgress = false;
-            }
+      // Create and bind data remotes
+      this.remote_position = SB_NewDataRemote( "metadata.position", null );
+      this.remote_position.bindObserver(on_remote_position_change, true);
+      this.remote_length = SBDataBindElementAttribute( "metadata.length", this, "maxpos" );
+     
+      this.trackingPosition = 0;
+      this.scrubbingPosition = false;
+      this.seekInProgress = false;
+      this.wasPlayingBeforeSeek = false;
+
+      this.eventListener = {
+        that: this,
+        onMediacoreEvent: function(aEvent) {
+          if (aEvent.type == aEvent.STREAM_PAUSE) {
+            this.that.seekInProgress = false;
           }
         }
+      }
 
-        this.mm.addListener(this.eventListener);
-      ]]>
+      this.mm.addListener(this.eventListener);
+    ]]>
     </constructor>
     <destructor>
       <![CDATA[
@@ -953,6 +951,216 @@
         this.mm = null;
       ]]>
     </destructor>
+
+    <field name="_tracking">this._TRACKING_NONE</field>
+    <field name="box">document.getAnonymousElementByAttribute(this, 'sbid', 'sb-progress-slider');</field>
+    <field name="slider">document.getAnonymousElementByAttribute(this, 'sbid', 'sb-progress-slider-slider');</field>
+    <field name="thumb">document.getAnonymousElementByAttribute(this, 'sbid', 'sb-progress-slider-thumb');</field>
+    <field name="progress">document.getAnonymousElementByAttribute(this, 'sbid', 'sb-progress-slider-progress');</field>
+    <field name="lastValue">this.value</field>
+    <field name="_SCALE_MAX" readonly="true">10000</field>
+    <field name="_TRACKING_NONE" readonly="true">0</field>
+    <field name="_TRACKING_SLIDER" readonly="true">1</field>
+    <field name="_TRACKING_THUMB" readonly="true">2</field>
+
+    <property name="value">
+      <getter>
+        return this.slider.getAttribute('curpos');
+      </getter>
+      <setter>
+        var offset = this.thumb.boxObject.width /
+                     this.slider.boxObject.width * this.maxpos;
+        this.progress_value = val - (offset / 2);
+        return this.slider.setAttribute('curpos', val);
+      </setter>
+    </property>
+
+    <property name="progress_value">
+      <getter>
+        return ( this.progress.getAttribute('value') * this.maxpos ) / this._SCALE_MAX;
+      </getter>
+      <setter>
+      <![CDATA[
+        var prog = (val * this._SCALE_MAX) / this.maxpos;
+        this.progress.setAttribute('value', prog);
+      ]]>
+      </setter>
+    </property>
+
+    <property name="maxpos">
+      <getter>
+        return this.slider.getAttribute('maxpos');
+      </getter>
+      <setter>
+        this.slider.setAttribute('maxpos', val);
+        this.progress_value = this.value;
+        // hide the slider if the length of track is zero (stream)
+        if (val == 0) {
+          this.slider.setAttribute('hidden', true);
+        }
+        else {
+          this.slider.setAttribute('hidden', false);
+        }
+        return this.maxpos;
+      </setter>
+    </property>
+
+    <property name="data_tracking" readonly="true">
+      <getter>
+        return this.getAttribute('data_tracking');
+      </getter>
+    </property>
+
+    <property name="is_tracking_data">
+      <getter>
+        var data_str = this.getAttribute('data_tracking');
+        if ( data_str.length )
+        {
+          return SBDataGetBoolValue( data_str );
+        }
+        return "";
+      </getter>
+      <setter>
+        var data_str = this.getAttribute('data_tracking');
+        if ( data_str.length )
+        {
+          return SBDataSetBoolValue( data_str, val );
+        }
+        return "";
+      </setter>
+    </property>
+
+    <method name="sendChangeEvent">
+      <body>
+        var e = document.createEvent("Events");
+        e.initEvent("progressSliderChange", false, true);
+        this.dispatchEvent(e);
+      </body>
+    </method>
+
+    <method name="sendReleaseEvent">
+      <body>
+        var e = document.createEvent("Events");
+        e.initEvent("progressSliderRelease", false, true);
+        this.dispatchEvent(e);
+      </body>
+    </method>
+
+    <method name="mouseonthumb">
+      <parameter name="x"/>
+      <parameter name="y"/>
+      <body>
+        <![CDATA[
+          if (x >= this.thumb.boxObject.x && x <= this.thumb.boxObject.x + this.thumb.boxObject.width &&
+              y >= this.thumb.boxObject.y && y <= this.thumb.boxObject.y + this.thumb.boxObject.height) {
+            return true;
+          }
+          return false;
+        ]]>
+      </body>
+    </method>
+
+    <method name="slidermousedown">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          if (event.button == this._TRACKING_NONE ) 
+          {
+            if (this.mouseonthumb(event.screenX, event.screenY)) 
+            { 
+              this._tracking = this._TRACKING_THUMB; 
+            } 
+            else 
+            {
+              this._tracking = this._TRACKING_SLIDER;
+              this.handlemouse(event);
+            }
+            if ( this._tracking != this._TRACKING_NONE )
+            {
+              // Report if requested
+              this.is_tracking_data = true;
+            }
+            this.sendChangeEvent();
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="slidermouseup">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          if (this._tracking == this._TRACKING_NONE) 
+            return;
+          
+          this._tracking = this._TRACKING_NONE;
+          this.is_tracking_data = false;
+          this.sendReleaseEvent();
+          if (this.value != 0 && this.value != this.maxpos)
+            this.lastValue = this.value;
+        ]]>
+      </body>
+    </method>
+
+    <method name="slidermousemove">
+      <parameter name="event"/>
+      <body>
+          if (this._tracking == this._TRACKING_THUMB) {
+            this.progress_value = this.value;
+          } else if (this._tracking == this._TRACKING_NONE) {
+            return;
+          } else {
+            this.handlemouse(event);
+          }
+          this.sendChangeEvent();
+      </body>
+    </method>
+
+    <method name="handlemouse">
+      <parameter name="event"/>
+      <body>
+        <![CDATA[
+          var m = this.maxpos;
+          var x = event.screenX - this.slider.boxObject.screenX; 
+          var y = event.screenY - this.slider.boxObject.screenY;
+          
+          var v = 0;
+          v = (x - this.thumb.boxObject.width/2) / 
+              (this.slider.boxObject.width - this.thumb.boxObject.width) * m;
+          if (v < 0) v = 0; else if (v > m) v = m;
+          if (this.getAttribute("dir") == "reverse") v = m - v;
+          this.slider.setAttribute('curpos', ''+v);
+          
+          var offset = this.thumb.boxObject.width /
+                       this.slider.boxObject.width * this.maxpos;
+          //this.progress_value = v;
+          this.progress_value = v - (offset / 2);
+        ]]>
+      </body>
+    </method>
+    
+    <method name="snapToValue">
+      <parameter name="val"/>
+      <body>
+        <![CDATA[
+          if (val == this.value) {
+            val = this.lastValue;
+          }
+          this.value = val;
+          
+          // send the event to any listeners
+          this.is_tracking_data = true;
+          this.sendChangeEvent();
+          this.is_tracking_data = false;
+          this.sendReleaseEvent();
+        ]]>
+      </body>
+    </method>
+    <method name="snapToMax">
+      <body>
+        return this.snapToValue(this.maxpos);
+      </body>
+    </method>
 
     <method name="onTrackSeekbar">
       <body>
@@ -994,6 +1202,7 @@
 
     <method name="onReleaseSeekbar">
       <body>
+        <![CDATA[
         try {
           // Setting the position may fail if the format doesn't support
           // seeking or if http resuming does not work.
@@ -1012,6 +1221,7 @@
           Components.utils.reportError(e);
         }
         this.trackingPosition = 0;
+        ]]>
       </body>
     </method>
 
