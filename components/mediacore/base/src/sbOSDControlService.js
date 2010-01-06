@@ -345,8 +345,10 @@ sbOSDControlService.prototype =
 
   _showInstantly: function(func) {
     this._fadeCancel();
-    this._osdWindow.document.getElementById("osd_main_vbox")
-                            .style.opacity = 1;
+    var node = this._osdWindow.document.getElementById("osd_main_vbox");
+    if (node) {
+      node.style.opacity = 1;
+    }
     if (func) {
        func();
     }
