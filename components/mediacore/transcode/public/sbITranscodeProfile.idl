@@ -38,13 +38,26 @@ interface nsIFile;
  *       
  * \sa sbITranscodeJob
  */
-[scriptable, uuid(ec495b79-aeb3-4257-8aa6-a803603bc67c)]
+[scriptable, uuid(497ccd50-ebb4-11de-8a39-0800200c9a66)]
 interface sbITranscodeProfile : nsISupports
 {
-  // Types of transcode profile.
+  /*
+   * Types of transcode profile.
+   *
+   * Const: TRANSCODE_TYPE_UNKNOWN
+   *
+   * Const: TRANSCODE_TYPE_AUDIO
+   *        Audio transcoding profile.
+   *
+   * Const: TRANSCODE_TYPE_IMAGE
+   *        Image transcoding profile.
+   *
+   * Const: TRANSCODE_TYPE_AUDIO_VIDEO
+   *        Video transcoding profile.
+   */
   const unsigned long TRANSCODE_TYPE_UNKNOWN = 0;
   const unsigned long TRANSCODE_TYPE_AUDIO = 1;
-  const unsigned long TRANSCODE_TYPE_VIDEO = 2;
+  const unsigned long TRANSCODE_TYPE_IMAGE = 2;
   const unsigned long TRANSCODE_TYPE_AUDIO_VIDEO = 3;
 
   const unsigned long TRANSCODE_PRIORITY_LOWEST = 0;

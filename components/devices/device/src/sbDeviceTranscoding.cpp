@@ -283,7 +283,7 @@ sbDeviceTranscoding::GetTranscodeType(sbIMediaItem * aMediaItem)
     return sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO;
   }
   else if (contentType.Equals(NS_LITERAL_STRING("image"))) {
-    return sbITranscodeProfile::TRANSCODE_TYPE_VIDEO;
+    return sbITranscodeProfile::TRANSCODE_TYPE_IMAGE;
   }
   NS_WARNING("sbDeviceUtils::GetTranscodeType: "
              "returning unknown transcoding type");

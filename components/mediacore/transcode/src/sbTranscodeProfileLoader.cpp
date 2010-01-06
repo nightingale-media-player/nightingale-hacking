@@ -257,9 +257,9 @@ sbTranscodeProfileLoader::GetType(nsIDOMNode* aTypeNode, PRUint32* _retval)
   if (type.EqualsLiteral("audio")) {
     *_retval = sbITranscodeProfile::TRANSCODE_TYPE_AUDIO;
   } else if (type.EqualsLiteral("video")) {
-    *_retval = sbITranscodeProfile::TRANSCODE_TYPE_VIDEO;
-  } else if (type.EqualsLiteral("audio+video")) {
     *_retval = sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO;
+  } else if (type.EqualsLiteral("image")) {
+    *_retval = sbITranscodeProfile::TRANSCODE_TYPE_IMAGE;
   } else {
     return NS_ERROR_INVALID_ARG;
   }

@@ -284,7 +284,6 @@ sbGStreamerTranscodeDeviceConfigurator::EnsureProfileAvailable(sbITranscodeEncod
   rv = aProfile->GetType(&type);
   NS_ENSURE_SUCCESS(rv, rv);
   switch(type) {
-    case sbITranscodeProfile::TRANSCODE_TYPE_VIDEO:
     case sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO:
       break;
     default:
