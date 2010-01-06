@@ -145,8 +145,8 @@ Imported by bindings.css or directly into feathers.
 
 .device-progress-information-box {
   padding: 10px 10px 10px 10px;
-  border: 1px solid rgb( 138, 138, 138 );
-  background-color: rgb( 241, 241, 241 );
+  border: 1px solid rgb(80,78,91);
+  background-color: rgb(43,41,54);
   -moz-box-pack: end;
   -moz-box-align: center;
 }
