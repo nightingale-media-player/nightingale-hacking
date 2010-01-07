@@ -675,10 +675,13 @@ var DIW = {
       devImage.src = devIconURL;
 
     // If the device is read-only, then unhide the read-only lock icon
-    var lockImage = this._getElement("device_image_ro");
-    var accessCompatibility = this._getDeviceAccessCompatibility();
-    if (accessCompatibility == "ro")
-      lockImage.hidden = false;
+    // but only do it if the device image is also visible
+    if (!devImage.hidden) {
+      var lockImage = this._getElement("device_image_ro");
+      var accessCompatibility = this._getDeviceAccessCompatibility();
+      if (accessCompatibility == "ro")
+        lockImage.hidden = false;
+    }
 
     // Update the device specs.
     this._deviceSpecUpdateAll();
