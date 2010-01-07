@@ -657,15 +657,82 @@ sbDeviceFirmwareUpdater::RecoveryUpdate(sbIDevice *aDevice,
   mon.Exit();
 
   nsCOMPtr<sbIDeviceFirmwareUpdate> firmwareUpdate;
-  rv = GetCachedFirmwareUpdate(aDevice, getter_AddRefs(firmwareUpdate));
-  
-  PRBool needsCaching = PR_FALSE;
-  if(NS_FAILED(rv) || !firmwareUpdate) {
-    rv = handler->GetDefaultFirmwareUpdate(getter_AddRefs(firmwareUpdate));
-    NS_ENSURE_SUCCESS(rv, rv);
-    NS_ENSURE_TRUE(firmwareUpdate, NS_ERROR_UNEXPECTED);
 
+  nsCOMPtr<sbIDeviceFirmwareUpdate> cachedFirmwareUpdate;
+  rv = GetCachedFirmwareUpdate(aDevice, getter_AddRefs(cachedFirmwareUpdate));
+  
+  nsCOMPtr<sbIDeviceFirmwareUpdate> defaultFirmwareUpdate;
+  rv = handler->GetDefaultFirmwareUpdate(getter_AddRefs(defaultFirmwareUpdate));
+
+  PRBool needsCaching = PR_FALSE;
+
+  // Check to make sure the cached firmware image is the same name
+  // as the default one. If not, we need to delete the cached one and use
+  // the default one.
+  if(cachedFirmwareUpdate && defaultFirmwareUpdate) {
+    nsCOMPtr<nsIFile> cachedFile;
+    rv = cachedFirmwareUpdate->GetFirmwareImageFile(getter_AddRefs(cachedFile));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIFile> defaultFile;
+    rv = defaultFirmwareUpdate->GetFirmwareImageFile(getter_AddRefs(defaultFile));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString cachedFileName, defaultFileName;
+    rv = cachedFile->GetLeafName(cachedFileName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = defaultFile->GetLeafName(defaultFileName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if(cachedFileName != defaultFileName) {
+      nsCOMPtr<nsIFile> cacheDir;
+      rv = cachedFile->GetParent(getter_AddRefs(cacheDir));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = cachedFile->Remove(PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<nsISimpleEnumerator> cacheDirEntries;
+      rv = cacheDir->GetDirectoryEntries(getter_AddRefs(cacheDirEntries));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRBool hasMore = PR_FALSE;
+      rv = cacheDirEntries->HasMoreElements(&hasMore);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      while(hasMore) {
+        nsCOMPtr<nsIFile> file;
+        rv = cacheDirEntries->GetNext(getter_AddRefs(file));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        PRBool isFile = PR_FALSE;
+        rv = file->IsFile(&isFile);
+        NS_ENSURE_SUCCESS(rv, rv);
+        
+        if(isFile) {
+          rv = file->Remove(PR_FALSE);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+
+        rv = cacheDirEntries->HasMoreElements(&hasMore);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+        
+      firmwareUpdate = defaultFirmwareUpdate;
+      needsCaching = PR_TRUE;
+    }
+    else {
+      firmwareUpdate = cachedFirmwareUpdate;
+      needsCaching = PR_FALSE;
+    }
+  }
+  else if(defaultFirmwareUpdate) {
+    firmwareUpdate = defaultFirmwareUpdate;
     needsCaching = PR_TRUE;
+  }
+  else {
+    return NS_ERROR_UNEXPECTED;
   }
 
   nsRefPtr<sbDeviceFirmwareUpdaterRunner> runner;
