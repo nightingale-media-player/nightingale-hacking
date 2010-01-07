@@ -382,7 +382,7 @@ sbDeviceTranscoding::GetMediaFormat(sbIMediaItem* aMediaItem,
 {
   nsresult rv;
   if (!mMediaInspector) {
-    mMediaInspector = do_GetService(SB_MEDIAINSPECTOR_CONTRACTID, &rv);
+    mMediaInspector = do_CreateInstance(SB_MEDIAINSPECTOR_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
