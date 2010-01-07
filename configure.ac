@@ -520,7 +520,13 @@ case "$SB_PLATFORM" in
 
     # Tests for bits of the Windows SDK
     AC_CHECK_HEADERS(wmsdk.h, [], AC_MSG_ERROR(Missing wmsdk.h; install the Windows SDK))
-    AC_CHECK_HEADERS([devioctl.h], [], AC_MSG_ERROR([Missing devioctl.h; install the Windows Driver Kit]))
+
+    # Only run this check if we don't have extras; if we do, we'll find it
+    # that way.
+    if test -z "$HAS_EXTRAS"; then
+       AC_CHECK_HEADERS([devioctl.h], [], AC_MSG_ERROR([Missing devioctl.h; install the Windows Driver Kit]))
+    fi
+
     _SAVE_LIBS=$LIBS
     LIBS="$LIBS wmvcore.lib"
     AC_MSG_CHECKING([wmvcore.lib])
@@ -1154,7 +1160,7 @@ AC_SUBST(SB_SEARCHPLUGINS)
 #
 
 HAS_EXTRAS=
-if test -d ${srcdir}/extras; then
+if test -d "${srcdir}/extras"; then
   HAS_EXTRAS=1
 fi
 AC_SUBST(HAS_EXTRAS)
