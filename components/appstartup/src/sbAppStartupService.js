@@ -377,11 +377,14 @@ sbAppStartupService.prototype =
         Application.prefs.getValue("songbird.eulacheck", false);
       
       if (!eulaAccepted) {
-        // XXXAus: QUIT APP!!!
-        //this.quitApp();
+        this._shutdown();
+        var appStartup = Components.classes["@mozilla.org/toolkit/app-startup;1"]
+                                   .getService(Components.interfaces.nsIAppStartup);
+        appStartup.quit(appStartup.eForceQuit);
       }
-
-      this._mainWindowStart();
+      else {
+        this._mainWindowStart();
+      }
     }
   },
   

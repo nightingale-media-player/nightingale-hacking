@@ -151,17 +151,17 @@ var firstRunWizard = {
       var prefService = Cc["@mozilla.org/preferences-service;1"]
                           .getService(Ci.nsIPrefService);
       prefService.savePrefFile(null);
-
-      // Indicate that the wizard is complete and whether it should be restarted.
-      this._firstRunData.onComplete(this.restartWizard);
-
-      // Finalize the services.
-      this._finalize();
-
-      // Restart application as specified. (AFTER we're done finalizing)
-      if (this.restartApp)
-        restartApp();
     }
+
+    // Indicate that the wizard is complete and whether it should be restarted.
+    this._firstRunData.onComplete(this.restartWizard);
+
+    // Finalize the services.
+    this._finalize();
+
+    // Restart application as specified. (AFTER we're done finalizing)
+    if (this.restartApp)
+      restartApp();
   },
 
 
