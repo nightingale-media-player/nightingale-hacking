@@ -478,6 +478,15 @@ if test -z "$UNZIP"; then AC_MSG_ERROR(Unzip not found); fi
 AC_CHECK_PROG(ZIP, zip, zip)
 if test -z "$ZIP"; then AC_MSG_ERROR(Zip not found); fi
 
+#
+# Check for extras.
+#
+
+HAS_EXTRAS=
+if test -d "${srcdir}/extras"; then
+  HAS_EXTRAS=1
+fi
+AC_SUBST(HAS_EXTRAS)
 
 case "$SB_PLATFORM" in
   windows)
@@ -540,6 +549,7 @@ case "$SB_PLATFORM" in
     # Force use of the freely-downloadable MSVC Express compiler
     #
 
+    AC_LANG_PUSH([C++])
     AC_ARG_WITH(msvc-express,
                 [  --with-msvc-express       limit to features buildable with MSVC Express],
                 [SB_WITH_MSVC_EXPRESS=1
@@ -549,6 +559,7 @@ case "$SB_PLATFORM" in
                                  [],
                                  [AC_MSG_ERROR([Missing altbase.h])])])
     AC_SUBST([SB_WITH_MSVC_EXPRESS])
+    AC_LANG_POP([C++])
   ;;
   *)
     AC_CHECK_PROG(LD, ${CXX}, ${CXX})
@@ -1154,16 +1165,6 @@ AC_ARG_WITH(searchplugins,
             [ SB_SEARCHPLUGINS=$withval ],
             [ SB_SEARCHPLUGINS=default ])
 AC_SUBST(SB_SEARCHPLUGINS)
-
-#
-# Check for extras.
-#
-
-HAS_EXTRAS=
-if test -d "${srcdir}/extras"; then
-  HAS_EXTRAS=1
-fi
-AC_SUBST(HAS_EXTRAS)
 
 # If our media core is gstreamer, and we're on linux, we may or may not
 # have this file. Warn if we expect it but don't find it.
