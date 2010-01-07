@@ -520,6 +520,7 @@ case "$SB_PLATFORM" in
 
     # Tests for bits of the Windows SDK
     AC_CHECK_HEADERS(wmsdk.h, [], AC_MSG_ERROR(Missing wmsdk.h; install the Windows SDK))
+    AC_CHECK_HEADERS([devioctl.h], [], AC_MSG_ERROR([Missing devioctl.h; install the Windows Driver Kit]))
     _SAVE_LIBS=$LIBS
     LIBS="$LIBS wmvcore.lib"
     AC_MSG_CHECKING([wmvcore.lib])
@@ -528,6 +529,20 @@ case "$SB_PLATFORM" in
                     AC_MSG_RESULT([yes]),
                     AC_MSG_ERROR([Missing wmvcore.lib; install the Windows SDK]))
     LIBS=$_SAVE_LIBS
+
+    #
+    # Force use of the freely-downloadable MSVC Express compiler
+    #
+
+    AC_ARG_WITH(msvc-express,
+                [  --with-msvc-express       limit to features buildable with MSVC Express],
+                [SB_WITH_MSVC_EXPRESS=1
+                 AC_MSG_WARN([Limiting functionality to MSVC Express-compatible])],
+                [SB_WITH_MSVC_EXPRESS=
+                 AC_CHECK_HEADER([atlbase.h],
+                                 [],
+                                 [AC_MSG_ERROR([Missing altbase.h])])])
+    AC_SUBST([SB_WITH_MSVC_EXPRESS])
   ;;
   *)
     AC_CHECK_PROG(LD, ${CXX}, ${CXX})
@@ -1160,21 +1175,6 @@ AC_SUBST(HAVE_FLUENDO_MP3)
 
 AC_CHECK_LIB([nspr4], [PR_Cleanup])
 AC_CHECK_LIB([xul], [_XRE_Main])
-
-#
-# If we're building the ipod extension on Win32, we'll need the Windows DDK;
-# look for it here.
-#
-
-if test "$SB_PLATFORM" == "windows"; then
-   if test -n "$(echo $SB_EXTENSIONS | grep ipod)"; then
-      # We have the DDK headers in the extras area, so don't fail on this test
-      # if we have that available to us...
-      if test -z "$HAS_EXTRAS"; then
-         AC_CHECK_HEADERS(devioctl.h, [], AC_MSG_ERROR(Missing devioctl.h; install the Windows DDK or disable building of the iPod extension))
-      fi
-   fi
-fi
 
 #
 # Use the mozilla perl method for generating makefiles quickly. This script
