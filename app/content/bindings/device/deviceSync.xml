@@ -62,7 +62,8 @@
         <xul:vbox sbid="content_selector">
 
           <xul:groupbox>
-            <xul:caption label="&device.sync.header.label;" />
+            <xul:caption sbid="content_management_header_label"
+                         label="&device.sync.header.label;" />
 
             <!-- Management preferences. -->
             <xul:vbox class="content-controls"

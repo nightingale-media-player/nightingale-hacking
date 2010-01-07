@@ -109,6 +109,10 @@ var DeviceSyncWidget = {
     var syncAllLabel = this._getElement("content_auto_sync_all_radio");
     syncAllLabel.label = SBString("device.sync.sync_all.label." +
                                   this._mediaType);
+    var syncHeaderLabel = this._getElement("content_management_header_label");
+    syncHeaderLabel.setAttribute("label",
+                                 SBString("device.sync.header.label." +
+                                          this._mediaType));
 
     // Initialize object fields.
     this._device = this._widget.device;
