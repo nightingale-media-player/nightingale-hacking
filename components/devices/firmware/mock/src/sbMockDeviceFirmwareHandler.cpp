@@ -2,25 +2,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
@@ -44,6 +44,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
+#include <nsThreadUtils.h>
 #include <nsXPCOMCIDInternal.h>
 
 #include <sbIDevice.h>
@@ -63,14 +64,14 @@
 #define SB_MOCK_DEVICE_REGISTER_URL \
   "http://dingo.songbirdnest.com/~aus/firmware/register.html"
 
-NS_IMPL_ISUPPORTS_INHERITED1(sbMockDeviceFirmwareHandler, 
+NS_IMPL_ISUPPORTS_INHERITED1(sbMockDeviceFirmwareHandler,
                              sbBaseDeviceFirmwareHandler,
                              nsIStreamListener)
 
 SB_DEVICE_FIRMWARE_HANLDER_REGISTERSELF_IMPL(sbMockDeviceFirmwareHandler,
                                              "Songbird Device Firmware Tester - Mock Device Firmware Handler")
 
-sbMockDeviceFirmwareHandler::sbMockDeviceFirmwareHandler()
+sbMockDeviceFirmwareHandler::sbMockDeviceFirmwareHandler() : mComplete(0)
 {
 }
 
@@ -78,10 +79,10 @@ sbMockDeviceFirmwareHandler::~sbMockDeviceFirmwareHandler()
 {
 }
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbMockDeviceFirmwareHandler::OnInit()
 {
-  mContractId = 
+  mContractId =
     NS_LITERAL_STRING("@songbirdnest.com/Songbird/Device/Firmware/Handler/MockDevice;1");
 
   nsCOMPtr<nsIURI> uri;
@@ -112,12 +113,12 @@ sbMockDeviceFirmwareHandler::OnGetCurrentFirmwareReadableVersion(nsAString &aCur
   return NS_OK;
 }
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbMockDeviceFirmwareHandler::OnGetRecoveryMode(PRBool *aRecoveryMode)
 {
   if(mDevice) {
     nsCOMPtr<nsIVariant> needsRecoveryModeVariant;
-    nsresult rv = 
+    nsresult rv =
       mDevice->GetPreference(NS_LITERAL_STRING("testing.firmware.needRecoveryMode"),
                              getter_AddRefs(needsRecoveryModeVariant));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -140,22 +141,22 @@ sbMockDeviceFirmwareHandler::OnGetRecoveryMode(PRBool *aRecoveryMode)
   return NS_OK;
 }
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbMockDeviceFirmwareHandler::OnGetDeviceModelNumber(nsAString &aModelNumber)
 {
   aModelNumber.AssignLiteral("MOCKBOBMSC0001");
   return NS_OK;
 }
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbMockDeviceFirmwareHandler::OnGetDeviceModelVersion(nsAString &aModelVersion)
 {
   aModelVersion.AssignLiteral("MOCKBOBMSC0001/ZX");
   return NS_OK;
 }
 
-/*virtual*/ nsresult 
-sbMockDeviceFirmwareHandler::OnCanHandleDevice(sbIDevice *aDevice, 
+/*virtual*/ nsresult
+sbMockDeviceFirmwareHandler::OnCanHandleDevice(sbIDevice *aDevice,
                                               PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
@@ -169,7 +170,7 @@ sbMockDeviceFirmwareHandler::OnCanHandleDevice(sbIDevice *aDevice,
   rv = properties->GetVendorName(vendorName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXAus: Other firmware handlers will probably want to be a 
+  // XXXAus: Other firmware handlers will probably want to be a
   //         little bit more stringent.
   if(!vendorName.EqualsLiteral("ACME Inc.")) {
     return NS_OK;
@@ -181,27 +182,27 @@ sbMockDeviceFirmwareHandler::OnCanHandleDevice(sbIDevice *aDevice,
   return NS_OK;
 }
 
-/*virtual*/ nsresult 
-sbMockDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice, 
+/*virtual*/ nsresult
+sbMockDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice,
                                          PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  
+
   // we can update all devices we support
   nsresult rv = OnCanHandleDevice(aDevice, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
   return NS_OK;
 }
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbMockDeviceFirmwareHandler::OnRebind(sbIDevice *aDevice,
                                       sbIDeviceEventListener *aListener,
                                       PRBool *_retval)
 {
   PRBool canHandleDevice = PR_FALSE;
-  
+
   *_retval = PR_FALSE;
-  
+
   nsresult rv = OnCanHandleDevice(aDevice, &canHandleDevice);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -214,7 +215,7 @@ sbMockDeviceFirmwareHandler::OnRebind(sbIDevice *aDevice,
 
     *_retval = PR_TRUE;
   }
-  
+
   return NS_OK;
 }
 
@@ -228,14 +229,14 @@ sbMockDeviceFirmwareHandler::OnCancel()
 /*virtual*/ nsresult
 sbMockDeviceFirmwareHandler::OnRefreshInfo()
 {
-  nsresult rv = SendHttpRequest(NS_LITERAL_CSTRING("GET"), 
+  nsresult rv = SendHttpRequest(NS_LITERAL_CSTRING("GET"),
                                 NS_LITERAL_CSTRING(SB_MOCK_DEVICE_FIRMWARE_URL));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = SetState(HANDLER_REFRESHING_INFO);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_CFU_START, 
+  rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_CFU_START,
                        nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -247,8 +248,8 @@ sbMockDeviceFirmwareHandler::OnUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
 {
   {
     nsCOMPtr<nsIVariant> shouldFailVariant;
-    nsresult rv = 
-      mDevice->GetPreference(NS_LITERAL_STRING("testing.firmware.update.fail"), 
+    nsresult rv =
+      mDevice->GetPreference(NS_LITERAL_STRING("testing.firmware.update.fail"),
                              getter_AddRefs(shouldFailVariant));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -263,7 +264,7 @@ sbMockDeviceFirmwareHandler::OnUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
     }
 
     if(shouldFail) {
-      rv = CheckForError(NS_ERROR_FAILURE, 
+      rv = CheckForError(NS_ERROR_FAILURE,
                          sbIDeviceEvent::EVENT_FIRMWARE_UPDATE_ERROR);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -272,7 +273,7 @@ sbMockDeviceFirmwareHandler::OnUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
   }
 
   nsCOMPtr<nsIFile> firmwareFile;
-  nsresult rv = 
+  nsresult rv =
     aFirmwareUpdate->GetFirmwareImageFile(getter_AddRefs(firmwareFile));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -281,7 +282,7 @@ sbMockDeviceFirmwareHandler::OnUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIInputStreamPump> inputStreamPump;
-  rv = NS_NewInputStreamPump(getter_AddRefs(inputStreamPump), 
+  rv = NS_NewInputStreamPump(getter_AddRefs(inputStreamPump),
                              inputStream, -1, -1, 0, 0, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -291,6 +292,14 @@ sbMockDeviceFirmwareHandler::OnUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
   rv = inputStreamPump->AsyncRead(this, firmwareFile);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Wait on read completion so that the thread doesn't die before the read is
+  // complete.
+  nsCOMPtr<nsIThread> thread = do_GetCurrentThread();
+  while (!PR_AtomicAdd(&mComplete, 0))  {
+    if (!NS_ProcessNextEvent(thread, PR_FALSE)) {
+      PR_Sleep(PR_MillisecondsToInterval(100));
+    }
+  }
   return NS_OK;
 }
 
@@ -307,7 +316,7 @@ sbMockDeviceFirmwareHandler::OnVerifyDevice()
    * Here is where you will want to verify the firmware on the device itself
    * to ensure that it is not corrupt. Whichever method you use will most likely
    * be device specific.
-   * 
+   *
    * The implementation of this method must be asynchronous and not block
    * the main thread. The flow of expected events is as follows:
    * firmware verify start, firmware verify progress, firmware verify end.
@@ -317,7 +326,7 @@ sbMockDeviceFirmwareHandler::OnVerifyDevice()
    *
    * See sbIDeviceEvent for more infomation about event payload.
    *
-   * Events must be sent to both the device and the listener (if it is specified 
+   * Events must be sent to both the device and the listener (if it is specified
    * during the call).
    */
 
@@ -333,15 +342,15 @@ sbMockDeviceFirmwareHandler::OnVerifyUpdate(sbIDeviceFirmwareUpdate *aFirmwareUp
    *
    * The implementation of this method must be asynchronous and not block
    * the main thread. The flow of expected events is as follows:
-   * firmware image verify start, firmware image verify progress, firmware 
+   * firmware image verify start, firmware image verify progress, firmware
    * image verify end.
    *
    * If any firmware image verify error events are sent during the process
    * the firmware image is considered corrupted.
    *
-   * See sbIDeviceEvent for more infomation about event payload. 
+   * See sbIDeviceEvent for more infomation about event payload.
    *
-   * Events must be sent to both the device and the listener (if it is specified 
+   * Events must be sent to both the device and the listener (if it is specified
    * during the call).
    */
 
@@ -368,11 +377,11 @@ sbMockDeviceFirmwareHandler::OnHttpRequestCompleted()
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
 {
   PRUint32 status = 0;
-  
+
   // XXXAus: Check device pref to see if we should simulate a failure!
 
   nsresult rv = mXMLHttpRequest->GetStatus(&status);
@@ -436,7 +445,7 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
     }
     else if(tagName.EqualsLiteral("location")) {
       nsCOMPtr<nsIURI> uri;
-      rv = CreateProxiedURI(NS_ConvertUTF16toUTF8(value), 
+      rv = CreateProxiedURI(NS_ConvertUTF16toUTF8(value),
                             getter_AddRefs(uri));
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -508,7 +517,7 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
     }
 
     if(shouldFail) {
-      rv = CheckForError(NS_ERROR_FAILURE, 
+      rv = CheckForError(NS_ERROR_FAILURE,
                          sbIDeviceEvent::EVENT_FIRMWARE_CFU_ERROR);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -522,10 +531,10 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
   //         and the one we got from the web service.
 
   // XXXAus: For now just pretend like it's always new.
-  nsCOMPtr<nsIVariant> data = 
+  nsCOMPtr<nsIVariant> data =
     sbNewVariant(PR_TRUE, nsIDataType::VTYPE_BOOL).get();
 
-  rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_CFU_END, 
+  rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_CFU_END,
                        data);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -536,10 +545,10 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
 // nsIStreamListener
 // -----------------------------------------------------------------------------
 NS_IMETHODIMP
-sbMockDeviceFirmwareHandler::OnStartRequest(nsIRequest *aRequest, 
+sbMockDeviceFirmwareHandler::OnStartRequest(nsIRequest *aRequest,
                                             nsISupports *aContext)
 {
-  nsresult rv = 
+  nsresult rv =
     SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_WRITE_START, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -561,13 +570,13 @@ sbMockDeviceFirmwareHandler::OnDataAvailable(nsIRequest *aRequest,
   rv = aStream->Available(&availableBytes);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  char *buffer = 
+  char *buffer =
     reinterpret_cast<char *>(NS_Alloc(availableBytes * sizeof(char)));
   NS_ENSURE_TRUE(buffer, NS_ERROR_OUT_OF_MEMORY);
 
   PRUint32 readBytes = 0;
   rv = aStream->Read(buffer, availableBytes, &readBytes);
-  
+
   NS_Free(buffer);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -585,7 +594,7 @@ sbMockDeviceFirmwareHandler::OnDataAvailable(nsIRequest *aRequest,
 
   {
     nsCOMPtr<nsIVariant> shouldFailVariant;
-    nsresult rv = 
+    nsresult rv =
       mDevice->GetPreference(NS_LITERAL_STRING("testing.firmware.write.fail"),
                              getter_AddRefs(shouldFailVariant));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -601,7 +610,7 @@ sbMockDeviceFirmwareHandler::OnDataAvailable(nsIRequest *aRequest,
     }
 
     if(shouldFail) {
-      rv = CheckForError(NS_ERROR_FAILURE, 
+      rv = CheckForError(NS_ERROR_FAILURE,
                          sbIDeviceEvent::EVENT_FIRMWARE_WRITE_ERROR);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -617,7 +626,7 @@ sbMockDeviceFirmwareHandler::OnStopRequest(nsIRequest *aRequest,
                                            nsISupports *aContext,
                                            nsresult aResultCode)
 {
-  nsresult rv = 
+  nsresult rv =
     CheckForError(aResultCode, sbIDeviceEvent::EVENT_FIRMWARE_WRITE_ERROR);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -626,6 +635,8 @@ sbMockDeviceFirmwareHandler::OnStopRequest(nsIRequest *aRequest,
 
   rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_UPDATE_END, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  PR_AtomicIncrement(&mComplete);
 
   return NS_OK;
 }
