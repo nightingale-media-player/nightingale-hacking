@@ -135,7 +135,7 @@ ArrayEnumerator.prototype = {
 function SkinDescription() {};
 SkinDescription.prototype = {
   // TODO Expand?
-  requiredProperties: [ "name", "internalName" ],
+  requiredProperties: [ "internalName" ],
   optionalProperties: [ ],
   QueryInterface: function(iid) {
     if (!iid.equals(Ci.sbISkinDescription))
@@ -278,6 +278,19 @@ AddonMetadataReader.prototype = {
       this._reportErrors(
           "Ignoring skin addon in the install.rdf of extension " +
           addon.Value + ". Message: ", errorList);
+      return;
+    }
+
+    // Don't register skins that have no name, but throw up a friendly
+    // informative message so users don't see gross red error messages
+    // and misinterpret them.
+    if (!skin["name"]) {
+      var consoleSvc = Cc["@mozilla.org/consoleservice;1"]
+                         .getService(Ci.nsIConsoleService);
+      consoleSvc.logStringMessage(
+          "Feathers Metadata Reader: Skipping registration of Feather with " +
+          "skin internal name: '" + skin["internalName"] + "' due to " +
+          "undefined or blank skin name.");
       return;
     }
     

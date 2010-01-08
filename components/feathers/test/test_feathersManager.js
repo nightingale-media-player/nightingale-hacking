@@ -35,7 +35,7 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 var gDefaultMainLayoutURL = "";
 var gDefaultSecondaryLayoutURL = "";
 var gDefaultSkinName = "";
-var gBundledSkins = ["purplerain", "gonzo"];
+var gBundledSkins = ["purplerain"];
 
 // Gonzo alternate layouts
 const GONZO_MAIN_LAYOUT = "chrome://gonzo/content/xul/mainplayer.xul";
