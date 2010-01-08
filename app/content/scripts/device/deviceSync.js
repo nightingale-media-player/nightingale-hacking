@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -1088,9 +1088,15 @@ var DeviceSyncWidget = {
 
     collapse(manualMessage, !this.syncPrefsMgmtTypeIsManual());
     disable(selector, this._isBusy || this.syncPrefsMgmtTypeIsManual());
-    disable(syncPlaylistTree, this.syncPrefsMgmtTypeIsAll());
-    selectRadio(this.syncPrefsMgmtTypeIsAll() ? "content_auto_sync_all_radio"
-                                              : "content_auto_sync_selected_radio");
+    var radio = this._getElement("content_auto_sync_all_radio");
+    disable(radio, this._isBusy || this.syncPrefsMgmtTypeIsManual());
+    radio = this._getElement("content_auto_sync_selected_radio");
+    disable(radio, this._isBusy || this.syncPrefsMgmtTypeIsManual());
+    disable(syncPlaylistTree,
+            this.syncPrefsMgmtTypeIsAll() || this.syncPrefsMgmtTypeIsManual());
+    selectRadio(this.syncPrefsMgmtTypeIsAll() ?
+                  "content_auto_sync_all_radio" :
+                  "content_auto_sync_selected_radio");
 
     /* Apply the sync playlist list prefs. */
     syncPlaylistList = this._syncPrefs.syncPlaylistList;
