@@ -84,6 +84,7 @@ CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
                      $(MOZSDK_INCLUDE_DIR)/pref \
                      $(MOZSDK_INCLUDE_DIR)/xpconnect \
                      $(MOZSDK_INCLUDE_DIR)/xulapp \
+                     $(MOZSDK_INCLUDE_DIR)/unicharutil \
                      $(MOZSDK_IDL_DIR) \
                      $(NULL)
 

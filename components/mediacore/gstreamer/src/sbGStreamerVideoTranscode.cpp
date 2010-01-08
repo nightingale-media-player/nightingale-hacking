@@ -35,6 +35,7 @@
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 #include <nsStringAPI.h>
+#include <nsUnicharUtils.h>
 #include <nsArrayUtils.h>
 #include <nsNetUtil.h>
 
@@ -1743,6 +1744,34 @@ sbGStreamerVideoTranscoder::InitializeConfigurator()
   if (NS_FAILED (rv)) {
     TranscodingFatalError("songbird.transcode.error.failed_configuration");
     NS_ENSURE_SUCCESS (rv, rv);
+  }
+
+  // Ensure that the proper file extension is being used for the destintation
+  // output file.
+  nsCOMPtr<nsIURI> fixedDestURI;
+  rv = NS_NewURI(getter_AddRefs(fixedDestURI), NS_ConvertUTF16toUTF8(mDestURI));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIFileURL> fixedDestFileURI = do_QueryInterface(fixedDestURI, &rv);
+  if (NS_SUCCEEDED(rv) && fixedDestFileURI) {
+    nsCString curFileExt;
+    rv = fixedDestFileURI->GetFileExtension(curFileExt);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCString configFileExt;
+    rv = mConfigurator->GetFileExtension(configFileExt);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!curFileExt.Equals(configFileExt, CaseInsensitiveCompare)) {
+      rv = fixedDestFileURI->SetFileExtension(configFileExt);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCString fixedSpec;
+      rv = fixedDestFileURI->GetSpec(fixedSpec);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      CopyUTF8toUTF16(fixedSpec, mDestURI);
+    }
   }
 
   return NS_OK;
