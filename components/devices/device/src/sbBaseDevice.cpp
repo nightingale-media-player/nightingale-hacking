@@ -914,6 +914,10 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
     PRInt32 priority = aRequest->priority;
     TransferRequestQueue& queue = mRequests[priority];
 
+    // Initialize the iterator if the queue is empty.
+    if (queue.empty())
+      mFirstVideoIterator = queue.end();
+
     #if DEBUG
       CheckRequestBatch(queue.begin(), queue.end());
     #endif /* DEBUG */
@@ -1001,14 +1005,9 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
         aRequest->batchID = batchID;
 
         PRBool isDelete = aRequest->type == TransferRequest::REQUEST_DELETE;
-        if (isWrite || isDelete) {
+        if (isVideo && (isWrite || isDelete)) {
           // Set the flag so iterator can be set later
           mVideoInserted = true;
-        }
-        // Skip when isWrite || isDelete || isAudio. Iterator will be set for
-        // isVideo later.
-        else if (!isAudio) {
-          mFirstVideoIterator = queue.end();
         }
       }
     }
