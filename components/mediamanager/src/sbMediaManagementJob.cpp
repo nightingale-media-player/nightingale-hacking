@@ -562,15 +562,24 @@ sbMediaManagementJob::FindNextItem(sbMediaManagementJobItem** _retval)
     NS_ENSURE_SUCCESS(rv, rv);
     rv = targetFile->GetLeafName(newName);
     NS_ENSURE_SUCCESS(rv, rv);
-    if (oldName.Equals(newName)) {
+
+    PRBool isSameName;
+    #if defined(XP_WIN)
+      isSameName =
+        oldName.Equals(newName.get(),
+                       (nsAString::ComparatorFunc)CaseInsensitiveCompare);
+    #else
+      isSameName = oldName.Equals(newName);
+    #endif
+    if (isSameName) {
       manageType &= ~sbIMediaFileManager::MANAGE_RENAME;
     }
-    
+
     if (!manageType) {
       // we didn't have to do anything to this file after all, try the next one
       continue;
     }
-    
+
     nsRefPtr<sbMediaManagementJobItem> result =
       new sbMediaManagementJobItem(nextItem, targetFile, manageType);
     NS_ENSURE_TRUE(result, NS_ERROR_OUT_OF_MEMORY);
