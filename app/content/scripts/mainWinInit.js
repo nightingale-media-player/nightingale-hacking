@@ -226,7 +226,8 @@ function SBDoFirstRun() {
       // load the main library in the media tab / first tab
       const nsIWebNavigation = Components.interfaces.nsIWebNavigation;
       var mediaListView =
-          LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary);
+          LibraryUtils.createConstrainedMediaListView(
+              LibraryUtils.mainLibrary, [SBProperties.contentType, "audio"]);
       gBrowser.loadMediaListViewWithFlags(mediaListView,
                                           gBrowser.mediaTab,
                                           null,
@@ -262,7 +263,9 @@ function SBDoFirstRun() {
       var currentURI = gBrowser.mediaTab.linkedBrowser.currentURI.spec;
       if (currentURI == placeholderURL || currentURI == "about:blank") {
         const nsIWebNavigation = Components.interfaces.nsIWebNavigation;
-        var mediaListView = LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary);
+        var mediaListView =
+            LibraryUtils.createConstrainedMediaListView(
+                LibraryUtils.mainLibrary, [SBProperties.contentType, "audio"]);
         gBrowser.loadMediaListViewWithFlags(mediaListView,
                                             gBrowser.mediaTab,
                                             null,

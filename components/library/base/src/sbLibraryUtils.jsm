@@ -181,6 +181,24 @@ var LibraryUtils = {
     }
 
     return mediaListView;
+  },
+
+  createConstrainedMediaListView: function(aMediaList, aConstraint,
+                                           aSearchString) {
+    var mediaListView = this.createStandardMediaListView(aMediaList,
+                                                         aSearchString);
+
+    // Take the existing filter constraint and intersect it with the
+    // additional constraint we're about to apply
+    var constraintBuilder =
+          Cc["@songbirdnest.com/Songbird/Library/ConstraintBuilder;1"]
+            .createInstance(Ci.sbILibraryConstraintBuilder);
+    constraintBuilder.includeConstraint(mediaListView.filterConstraint);
+    constraintBuilder.intersect();
+    constraintBuilder.include(aConstraint[0], aConstraint[1]);
+    mediaListView.filterConstraint = constraintBuilder.get();
+
+    return mediaListView;
   }
 }
 
