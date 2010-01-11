@@ -217,6 +217,10 @@ public:
                                PRBool*       _retval);
 
 public:
+  /**
+   * Starting value for batch indexes
+   */
+  static PRUint32 const BATCH_INDEX_START = 1;
   sbBaseDevice();
   ~sbBaseDevice();
 

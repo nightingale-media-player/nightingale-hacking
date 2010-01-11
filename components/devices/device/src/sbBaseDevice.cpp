@@ -307,8 +307,9 @@ static void CheckRequestBatch(sbBaseDevice::TransferRequestQueue::const_iterator
                lastBatchID, (*aBegin)->batchID);
         NS_WARNING("Type change with missing items");
       }
-      if ((lastType != 0) && ((*aBegin)->batchIndex != 1) &&
-          (*aBegin)->type != sbBaseDevice::TransferRequest::REQUEST_DELETE) {
+      if ((lastType != 0) &&
+          ((*aBegin)->batchIndex != sbBaseDevice::BATCH_INDEX_START) &&
+           (*aBegin)->type != sbBaseDevice::TransferRequest::REQUEST_DELETE) {
         printf ("batch does not start with 1 lastBatchID=%ud newBatchID=%ud\n",
                 lastBatchID, (*aBegin)->batchID);
         NS_WARNING("batch does not start with 1");
@@ -532,7 +533,7 @@ void SBUpdateBatchIndex(sbBaseDevice::Batch& aBatch)
 
   // Get the batch begin.
   sbBaseDevice::Batch::iterator batchBegin = aBatch.begin();
-  PRUint32 index = 1;
+  PRUint32 index = sbBaseDevice::BATCH_INDEX_START;
   sbBaseDevice::TransferRequest *request = nsnull;
   for (; batchBegin != aBatch.end(); batchBegin++) {
     request = batchBegin->get();
@@ -550,7 +551,7 @@ void SBCreateSubBatchIndex(sbBaseDevice::Batch& aBatch)
   sbBaseDevice::Batch::iterator batchBegin = aBatch.begin();
   sbBaseDevice::Batch::iterator lastBegin = batchBegin;
   sbBaseDevice::TransferRequest *request = nsnull;
-  PRUint32 index = 0;
+  PRUint32 index = sbBaseDevice::BATCH_INDEX_START;
   PRBool firstTranscoding = PR_TRUE;
   for (; batchBegin != aBatch.end(); ++batchBegin) {
     request = batchBegin->get();
@@ -564,7 +565,7 @@ void SBCreateSubBatchIndex(sbBaseDevice::Batch& aBatch)
       // Only the first needsTranscoding works.
       firstTranscoding = PR_FALSE;
     }
-    request->batchIndex = ++index;
+    request->batchIndex = index++;
   }
 
   // No item needs transcoding
@@ -932,7 +933,7 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
     }
     // initialize some properties of the request
     aRequest->itemTransferID = mLastTransferID++;
-    aRequest->batchIndex = 1;
+    aRequest->batchIndex = BATCH_INDEX_START;
     aRequest->batchCount = 1;
     aRequest->batchID = 0;
     aRequest->itemType = TransferRequest::REQUESTBATCH_UNKNOWN;

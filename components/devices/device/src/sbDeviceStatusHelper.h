@@ -235,7 +235,7 @@ public:
                                      mResult(NS_ERROR_FAILURE),
                                      mOperation(aOperation) {
     // If this is the start of a batch or is not a batch thingy do start op
-    if (mRequest->index == 0 ||
+    if (mRequest->index == sbBaseDevice::BATCH_INDEX_START ||
         mRequest->index == PR_UINT32_MAX) {
       mStatus->OperationStart(mOperation,
                               mRequest->batchIndex,
