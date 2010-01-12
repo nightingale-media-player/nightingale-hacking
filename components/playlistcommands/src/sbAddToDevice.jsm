@@ -102,6 +102,11 @@ var SBPlaylistCommand_AddToDevice =
     m_PlaylistCommands: new Array
     (
       null
+    ),
+
+    m_DeviceIds: new Array
+    (
+      null
     )
   },
 
@@ -197,7 +202,21 @@ var SBPlaylistCommand_AddToDevice =
   getCommandEnabled: function( aSubMenu, aIndex, aHost )
   {
     if (this.m_Context.m_Playlist.tree.currentIndex == -1) return false;
+    
     var cmds = this._getMenu(aSubMenu);
+    if (aSubMenu == ADDTODEVICE_MENU_ID) {
+      var deviceRegistrar =
+        Components.classes["@songbirdnest.com/Songbird/DeviceManager;2"]
+                  .getService(Components.interfaces.sbIDeviceRegistrar);
+
+      var device = deviceRegistrar.getDevice(cmds.m_DeviceIds[aIndex]);
+      if (device.state == Components.interfaces.sbIDevice.STATE_MOUNTING) {
+        // Don't enable the device command if the device is
+        // currently mounting.
+        return false;
+      }
+    }
+
     return cmds.m_Enableds[ aIndex ];
   },
 
@@ -373,6 +392,7 @@ addToDeviceHelper.prototype = {
     this.m_listofdevices.m_Keys = new Array();
     this.m_listofdevices.m_Keycodes = new Array();
     this.m_listofdevices.m_PlaylistCommands = new Array();
+    this.m_listofdevices.m_DeviceIds = new Array();
     
     // get all devices
     var registrar = 
@@ -437,6 +457,7 @@ addToDeviceHelper.prototype = {
       this.m_listofdevices.m_Keys.push("");
       this.m_listofdevices.m_Keycodes.push("");
       this.m_listofdevices.m_PlaylistCommands.push(null);
+      this.m_listofdevices.m_DeviceIds.push(device.id);
     }
 
     this._makingList = false;
