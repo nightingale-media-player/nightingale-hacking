@@ -1163,6 +1163,42 @@ sbMediacoreSequencer::UpdateCurrentItemDuration(PRUint64 aDuration)
 }
 
 nsresult
+sbMediacoreSequencer::StopPlaybackHelper(nsAutoMonitor& aMonitor)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv;
+
+  if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
+     mStatus == sbIMediacoreStatus::STATUS_PAUSED ||
+     mStatus == sbIMediacoreStatus::STATUS_BUFFERING) {
+    // Grip.
+    nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
+    aMonitor.Exit();
+    rv = playbackControl->Stop();
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Stop failed at end of sequence.");
+    aMonitor.Enter();
+  }
+
+  mStatus = sbIMediacoreStatus::STATUS_STOPPED;
+
+  rv = StopSequenceProcessor();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = UpdatePlayStateDataRemotes();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(mSeenPlaying) {
+    mSeenPlaying = PR_FALSE;
+
+    rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult
 sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -1178,31 +1214,8 @@ sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
   nsresult rv;
   if(mErrorCount >= MEDIACORE_MAX_SUBSEQUENT_ERRORS) {
     // Too many subsequent errors, stop
-    if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
-       mStatus == sbIMediacoreStatus::STATUS_PAUSED ||
-       mStatus == sbIMediacoreStatus::STATUS_BUFFERING) {
-      // Grip.
-      nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
-      mon.Exit();
-      rv = playbackControl->Stop();
-      NS_ASSERTION(NS_SUCCEEDED(rv), "Stop failed at end of sequence.");
-      mon.Enter();
-    }
-
-    mStatus = sbIMediacoreStatus::STATUS_STOPPED;
-
-    rv = StopSequenceProcessor();
+    rv = StopPlaybackHelper(mon);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = UpdatePlayStateDataRemotes();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if(mSeenPlaying) {
-      mSeenPlaying = PR_FALSE;
-
-      rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_FALSE);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
   }
   else {
     if (mCoreWillHandleNext) {
@@ -1218,8 +1231,23 @@ sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
       
     mCoreWillHandleNext = PR_FALSE;
 
-    rv = Next();
+    nsCOMPtr<sbIMediaItem> mediaItem;
+    rv = GetCurrentItem(getter_AddRefs(mediaItem));
     NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString contentType;
+    rv = mediaItem->GetContentType(contentType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Pause the sequencer if playback error happens to video.
+    if (!contentType.Equals(NS_LITERAL_STRING("audio"))) {
+      rv = Next();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      rv = StopPlaybackHelper(mon);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
   mon.Exit();
 

@@ -51,6 +51,8 @@
 #include <vector>
 #include <map>
 
+class nsAutoMonitor;
+
 class sbMediacoreSequencer : public sbIMediacoreSequencer,
                              public sbIMediacoreEventListener,
                              public sbIMediacoreStatus,
@@ -160,6 +162,12 @@ protected:
    * Asynchronous callback to seek
    */
   nsresult SeekCallback(PRUint64 aPosition);
+
+  /**
+   * Helper function to cleanly stop the playback. The monitor must be locked
+   * when this function is called.
+   */
+  nsresult StopPlaybackHelper(nsAutoMonitor& aMonitor);
 
 protected:
   PRMonitor *mMonitor;
