@@ -410,7 +410,7 @@ pref("songbird.albumart.maxsize", 16777216);
 pref("songbird.albumart.scanner.interval", 10);
 pref("songbird.albumart.scanner.timeout", 10000);
 // Fetcher preferences
-pref("songbird.albumart.file.extensions", "jpg,jpeg,png,gif,bmp,tif,tiff");
+pref("songbird.albumart.file.extensions", "jpg,jpeg,png,gif,bmp");
 pref("songbird.albumart.file.base_names", "cover,folder");
 // Enable writing artwork to meta data by default
 pref("songbird.metadata.artwork.enableWriting", true);
