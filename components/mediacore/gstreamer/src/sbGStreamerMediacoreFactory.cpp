@@ -37,6 +37,7 @@
 #include <sbTArrayStringEnumerator.h>
 
 #include <sbIGStreamerService.h>
+#include <sbStringUtils.h>
 
 #include "sbGStreamerMediacore.h"
 #include "sbGStreamerMediacoreCID.h"
@@ -213,27 +214,69 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
     }
 
     const char *extraAudioExtensions[] = {"m4r", "m4p", "mp4", "oga"};
-    const char *extraVideoExtensions[] = {"ogv", "vob"};
-    
-    // XXX Mook: we currently assume anything not known to be video is audio :|
-    nsCString knownVideoExtensions;
-    
+
     { // for scope
-      const char defaultKnownVideoExtensions[] =
-        "264,avi,dif,dv,flc,fli,flv,h264,jng,m4v,mkv,mng,mov,mpe,mpeg,mpg,mpv,mve,"
-        "nuv,ogm,qif,qti,qtif,ras,rm,rmvb,smil,ts,viv,wmv,x264";
+
+      // Per bug 19550 -
+      // Severly limit the video extensions that are imported by default to:
+      //   * ogg/ogv (all platforms)
+      //   * wmv (windows only)
+      //   * mp4/m4v (w/ qtvideowrapper plugin)
+      //   * divx/avi (w/ ewmpeg4dec plugin)
+      videoExtensions.AppendElement(NS_LITERAL_STRING("ogv"));
+      videoExtensions.AppendElement(NS_LITERAL_STRING("ogg"));
+#ifdef XP_WIN
+      videoExtensions.AppendElement(NS_LITERAL_STRING("wmv"));
+#endif
+
       char* knownVideoExtensionsPtr = nsnull;
       rv = rootPrefBranch->GetCharPref(VIDEO_EXTENSIONS_PREF,
                                        &knownVideoExtensionsPtr);
       if (NS_SUCCEEDED(rv)) {
-        knownVideoExtensions.Adopt(knownVideoExtensionsPtr);
-      } else {
-        knownVideoExtensions.Assign(defaultKnownVideoExtensions);
+        // The override video extension pref contains a CSV string.
+        nsString_Split(NS_ConvertUTF8toUTF16(knownVideoExtensionsPtr),
+                       NS_LITERAL_STRING(","),
+                       videoExtensions);
       }
-      knownVideoExtensions.Insert(',', 0);
-      knownVideoExtensions.Append(',');
-      LOG(("sbGStreamerMediacoreFactory: known video extensions: %s\n",
-           knownVideoExtensions.BeginReading()));
+
+#ifdef PR_LOGGING
+      nsString videoExtensionStr;
+      for (PRUint32 i = 0; i < videoExtensions.Length(); i++) {
+        videoExtensionStr.Append(videoExtensions[i]);
+        if (i < videoExtensions.Length() - 1) {
+          videoExtensionStr.AppendLiteral(", ");
+        }
+      }
+
+      LOG(("sbGStreamerMediacoreFactory: video file extensions: %s\n",
+            videoExtensionStr.get()));
+#endif
+
+      // Check for the 'qtvideowrapper' plugin to add mp4/m4v extensions.
+      PRBool foundQTPlugin = PR_FALSE;
+      GstPlugin *plugin = gst_default_registry_find_plugin("qtvideowrapper");
+      if (plugin) {
+        foundQTPlugin = PR_TRUE;
+        videoExtensions.AppendElement(NS_LITERAL_STRING("mp4"));
+        videoExtensions.AppendElement(NS_LITERAL_STRING("m4v"));
+        gst_object_unref(plugin);
+      }
+
+      // Check for the 'ewmpeg4dec' plugin to add divx/avi extensions.
+      plugin = gst_default_registry_find_plugin("ewmpeg4dec");
+      if (plugin) {
+        videoExtensions.AppendElement(NS_LITERAL_STRING("divx"));
+        videoExtensions.AppendElement(NS_LITERAL_STRING("avi"));
+
+        // This plugin will also handle "mp4" and "m4v", only append those
+        // extensions if they haven't been added already.
+        if (!foundQTPlugin) {
+          videoExtensions.AppendElement(NS_LITERAL_STRING("mp4"));
+          videoExtensions.AppendElement(NS_LITERAL_STRING("m4v"));
+        }
+
+        gst_object_unref(plugin);
+      }
     }
 
     GList *walker, *list;
@@ -250,7 +293,8 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
       if (factoryexts) {
         while (*factoryexts) {
           gboolean isAudioExtension = isAudioFactory;
-          nsCString delimitedExtension(*factoryexts);
+          nsCString extension(*factoryexts);
+          nsCString delimitedExtension(extension);
           delimitedExtension.Insert(',', 0);
           delimitedExtension.Append(',');
           
@@ -263,26 +307,15 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
 
           if (!blacklisted) {
             if (!isAudioExtension) {
-              if (knownVideoExtensions.Find(delimitedExtension) == -1) {
-                isAudioExtension = TRUE;
-              }
-            }
-            
-            nsString ext = NS_ConvertUTF8toUTF16(*factoryexts);
-            if (isAudioExtension) {
-              if (!audioExtensions.Contains(ext)) {
-                audioExtensions.AppendElement(ext);
+              if (!videoExtensions.Contains(NS_ConvertUTF8toUTF16(extension))) {
+                // XXX Mook: we currently assume anything not known to be video is audio :|
+                audioExtensions.AppendElement(NS_ConvertUTF8toUTF16(*factoryexts));
                 LOG(("sbGStreamerMediacoreFactory: registering audio extension %s\n",
-                     *factoryexts));
-              }
-            } else {
-              if (!videoExtensions.Contains(ext)) {
-                videoExtensions.AppendElement(ext);
-                LOG(("sbGStreamerMediacoreFactory: registering video extension %s\n",
                      *factoryexts));
               }
             }
           }
+
           factoryexts++;
         }
       }
@@ -295,13 +328,6 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
       nsString ext = NS_ConvertUTF8toUTF16(extraAudioExtensions[i]);
       if(!audioExtensions.Contains(ext))
         audioExtensions.AppendElement(ext);
-    }
-
-    for (unsigned int i = 0; i < NS_ARRAY_LENGTH(extraVideoExtensions); i++) 
-    {
-      nsString ext = NS_ConvertUTF8toUTF16(extraVideoExtensions[i]);
-      if(!videoExtensions.Contains(ext))
-        videoExtensions.AppendElement(ext);
     }
 
     rv = caps->SetAudioExtensions(audioExtensions);
