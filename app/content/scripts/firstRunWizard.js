@@ -313,7 +313,11 @@ var firstRunWizard = {
       return;
 
     if (this._tryNextProxyImport()) {
-     // reload the same page
+      // retry whatever caused the connection failure
+      var event = document.createEvent("Events");
+      event.initEvent("firstRunConnectionReset", true, true);
+      this.wizardElem.dispatchEvent(event); 
+      // reload the same page
       this.wizardElem.goTo(this.wizardElem.currentPage.pageid);
       return;
     } else {
