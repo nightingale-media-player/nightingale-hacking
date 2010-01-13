@@ -1306,11 +1306,13 @@ ConcertTicketing.createColumnArtists = function(concert) {
 ConcertTicketing.createColumnVenue = function(concert) {
 	var venueCol = this._browseDoc.createElement("td");
 	venueCol.className = "venue";
-	var anchor = this._browseDoc.createElement("a");
-	this.makeLink(anchor, this.appendPartnerParam(concert.venueURL), "venue");
-	var venueColLabel = this._browseDoc.createTextNode(concert.venue);
-	anchor.appendChild(venueColLabel);
-	venueCol.appendChild(anchor);
+  if (concert.venue != "<generic />") {
+    var anchor = this._browseDoc.createElement("a");
+    this.makeLink(anchor, this.appendPartnerParam(concert.venueURL), "venue");
+    var venueColLabel = this._browseDoc.createTextNode(concert.venue);
+    anchor.appendChild(venueColLabel);
+    venueCol.appendChild(anchor);
+  }
 
 	return (venueCol);
 }
