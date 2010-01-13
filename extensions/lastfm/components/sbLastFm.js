@@ -993,17 +993,22 @@ function sbLastFm_getPairs(url, success, failure) {
 sbLastFm.prototype.getLovedTracks =
 function sbLastFm_getLovedTracks() {
 	var self = this;
+  var lovedLimit = Application.prefs.getValue("extensions.lastfm.loved_limit",
+                                              100);
 	this.apiCall('user.getLovedTracks', {
-		user: self.username
+		user: self.username,
+    limit: lovedLimit
 	}, function response(success, xml, xmlText) {
 		xmlText = xmlText.replace(
 					/<\?xml version="1.0" encoding="[uU][tT][fF]-8"\?>/, "");
 		var x = new XML(xmlText);
 
 		self.lovedTracks = new Object();
+    var i = 0;
 		for each (var track in x..track) {
 			var trackName = track.name.toString().toLowerCase();
 			var artistName = track.artist.name.toString().toLowerCase();
+      dump("loved track " + (i++) + " -- " + trackName + "\n");
 			self.lovedTracks[trackName + "@@" + artistName] = true;
 		}
 	});
