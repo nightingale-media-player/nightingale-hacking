@@ -43,6 +43,8 @@ if (typeof ConcertTicketing == 'undefined') {
 }
 
 ConcertTicketing.unload = function() {
+	this.abortDrawing = true;
+	this.skSvc.drawingLock = false;
 	Components.classes["@songbirdnest.com/Songbird/Concerts/Songkick;1"]
 		.getService(Components.interfaces.sbISongkick)
 		.unregisterDisplayCallback();
