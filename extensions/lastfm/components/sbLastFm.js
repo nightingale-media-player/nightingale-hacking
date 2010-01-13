@@ -1521,10 +1521,6 @@ function sbLastFm_scrobble(aEntries) {
           || entry_list[i].item.getProperty(SBProperties.artistName) == null
           || entry_list[i].item.getProperty(SBProperties.trackName) == null)
       {
-        dump("track: " + entry_list[i].item.getProperty(SBProperties.trackName) + "\n");
-        dump("artist: " + entry_list[i].item.getProperty(SBProperties.artistName) + "\n");
-        dump("content: " + entry_list[i].item.getProperty(SBProperties.contentType) + "\n");
-        dump("skipping missing or non-audio track\n");
         continue;
       }
 
