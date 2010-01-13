@@ -291,6 +291,9 @@ ArtistInfo.prototype = {
 						}
 						data.links.push({name:name, url:url});
 					}
+
+          // Add provider (MusicBrainz) to the list of links
+          data.links.push({name:data.provider, url:data.url});
 					
 					this.updateFn.wrappedJSObject.update(CONTRACTID,
 							data, "links");
