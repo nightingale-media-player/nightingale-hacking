@@ -586,7 +586,8 @@ addToDeviceHelper.prototype = {
   // make sure we don't run before the libraries have been added to the device
   onDeviceEvent: function addToDeviceHelper_onDeviceEvent(aEvent) {
     if (aEvent.type == Components.interfaces.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_ADDED ||
-        aEvent.type == Components.interfaces.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_REMOVED) {
+        aEvent.type == Components.interfaces.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_REMOVED ||
+        aEvent.type == Components.interfaces.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_END) {
       this.onUpdateEvent();
     }
   }
