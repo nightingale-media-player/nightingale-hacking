@@ -909,6 +909,8 @@ MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
 
   /* video */
   { "mp4",  "video/mp4",       "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
+  { "mp4",  "image/jpeg",      "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
+  { "mov",  "image/jpeg",      "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
   { "mpg",  "video/mpeg",      "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
   { "mpeg", "video/mpeg",      "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
   { "wmv",  "video/x-ms-wmv",  "video/x-ms-asf",  "", "video/x-wmv",    "audio/x-wma",    sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
@@ -1093,6 +1095,7 @@ sbDeviceUtils::GetFormatTypeForURL
 /* static */ nsresult
 sbDeviceUtils::GetFormatTypesForMimeType
                  (const nsAString&                             aMimeType,
+                  const PRUint32                               aContentType,
                   nsTArray<sbExtensionToContentFormatEntry_t>& aFormatTypeList)
 {
   TRACE(("%s", __FUNCTION__));
@@ -1103,7 +1106,9 @@ sbDeviceUtils::GetFormatTypesForMimeType
        ++index) {
     sbExtensionToContentFormatEntry_t const & entry =
       MAP_FILE_EXTENSION_CONTENT_FORMAT[index];
-    if (aMimeType.EqualsLiteral(entry.MimeType)) {
+
+    if (aMimeType.EqualsLiteral(entry.MimeType) &&
+      aContentType == entry.ContentType) {
       TRACE(("%s: ext %s type %s container %s codec %s",
              __FUNCTION__, entry.Extension, entry.MimeType,
              entry.ContainerFormat, entry.Codec));

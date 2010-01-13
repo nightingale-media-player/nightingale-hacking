@@ -261,6 +261,7 @@ public:
    */
   static nsresult GetFormatTypesForMimeType
     (const nsAString&                             aMimeType,
+     const PRUint32                               aContentType,
      nsTArray<sbExtensionToContentFormatEntry_t>& aFormatTypeList);
 
   /**
