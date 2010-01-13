@@ -312,6 +312,11 @@ LastFm.onLoad = function() {
     this.prefs.addObserver("", this.prefObserver, false);
   }
 
+  // Add a listener to toggle visibility of the love/ban faceplate toolbar
+  Cc['@songbirdnest.com/Songbird/Mediacore/Manager;1']
+    .getService(Ci.sbIMediacoreManager)
+    .addListener(this);
+
   // clear the login error message
   this.setLoginError(null);
   // update the ui with the should-scrobble state
@@ -330,6 +335,20 @@ LastFm.onLoad = function() {
 
   // Attach our listener to the ShowCurrentTrack event issue by the faceplate
   window.addEventListener("ShowCurrentTrack", LastFm.showCurrentTrack, true);
+}
+
+LastFm.onMediacoreEvent = function(aEvent) {
+  switch(aEvent.type) {
+		case Ci.sbIMediacoreEvent.TRACK_CHANGE:
+      // Hide the faceplate controls for love/ban/tag if it's not audio
+      var mediaItem = aEvent.data;
+      if (mediaItem.getProperty(SBProperties.contentType) != "audio") {
+        document.getElementById("lastfmFaceplate").hidden = true;
+      } else {
+        document.getElementById("lastfmFaceplate").hidden = false;
+      }
+      break;
+  }
 }
 
 LastFm.showOneMoreTag = function(tagName, removable) {
@@ -413,6 +432,11 @@ LastFm.onUnload = function() {
   this._service.listeners.remove(this);
   window.removeEventListener("ShowCurrentTrack", LastFm.showCurrentTrack, true);
   this.prefs.removeObserver("", this.prefObserver, false);
+
+  // Add a listener to toggle visibility of the love/ban faceplate toolbar
+  Cc['@songbirdnest.com/Songbird/Mediacore/Manager;1']
+    .getService(Ci.sbIMediacoreManager)
+    .removeListener(this);
 }
 
 LastFm.showCurrentTrack = function(e) {
