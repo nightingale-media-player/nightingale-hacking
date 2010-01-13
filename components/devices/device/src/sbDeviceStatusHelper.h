@@ -235,8 +235,7 @@ public:
                                      mResult(NS_ERROR_FAILURE),
                                      mOperation(aOperation) {
     // If this is the start of a batch or is not a batch thingy do start op
-    if (mRequest->index == sbBaseDevice::BATCH_INDEX_START ||
-        mRequest->index == PR_UINT32_MAX) {
+    if (mRequest->batchIndex == sbBaseDevice::BATCH_INDEX_START) {
       mStatus->OperationStart(mOperation,
                               mRequest->batchIndex,
                               mRequest->batchCount,
@@ -266,23 +265,12 @@ public:
                                      mStatus(aStatus),
                                      mResult(NS_ERROR_FAILURE),
                                      mOperation(aOperation) {
-    // If this is the start of a batch or is not a batch thingy do start op
-    if (mRequest->index == 0 || mRequest->index == PR_UINT32_MAX) {
-      mStatus->OperationStart(mOperation,
-                              0,
-                              aBatchCount,
-                              aRequest->itemType,
-                              IsItemOp(mOperation) ? mRequest->list : nsnull,
-                              IsItemOp(mOperation) ? mRequest->item : nsnull);
-    }
-    if (IsItemOp(mOperation)) {
-      // Update item status
-      mStatus->ItemStart(aRequest->list,
-                         aRequest->item,
-                         0,
-                         aBatchCount,
-                         aRequest->itemType);
-    }
+    mStatus->OperationStart(mOperation,
+                            0,
+                            aBatchCount,
+                            aRequest->itemType,
+                            IsItemOp(mOperation) ? mRequest->list : nsnull,
+                            IsItemOp(mOperation) ? mRequest->item : nsnull);
   }
 
   /**
