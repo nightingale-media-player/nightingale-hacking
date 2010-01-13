@@ -1008,7 +1008,6 @@ function sbLastFm_getLovedTracks() {
 		for each (var track in x..track) {
 			var trackName = track.name.toString().toLowerCase();
 			var artistName = track.artist.name.toString().toLowerCase();
-      dump("loved track " + (i++) + " -- " + trackName + "\n");
 			self.lovedTracks[trackName + "@@" + artistName] = true;
 		}
 	});
@@ -1516,13 +1515,18 @@ function sbLastFm_scrobble(aEntries) {
     // collect the playlist history entries into objects that can be sent
     // to last.fm's audioscrobbler api
     for (var i=entry_list.length-1; i>=0; i--) {
-	  // if metadata is empty, then skip this track - but mark it as
-	  // scrobbled anyway so we don't try again in the future
-	  if (entry_list[i].item.getProperty(SBProperties.artistName) == null ||
-		  entry_list[i].item.getProperty(SBProperties.trackName) == null)
-	  {
-		  continue;
-	  }
+      // don't scrobble non-audio tracks or tracks w/ missing metadata
+      // scrobbled anyway so we don't try again in the future
+      if (entry_list[i].item.getProperty(SBProperties.contentType) != "audio"
+          || entry_list[i].item.getProperty(SBProperties.artistName) == null
+          || entry_list[i].item.getProperty(SBProperties.trackName) == null)
+      {
+        dump("track: " + entry_list[i].item.getProperty(SBProperties.trackName) + "\n");
+        dump("artist: " + entry_list[i].item.getProperty(SBProperties.artistName) + "\n");
+        dump("content: " + entry_list[i].item.getProperty(SBProperties.contentType) + "\n");
+        dump("skipping missing or non-audio track\n");
+        continue;
+      }
 
       var rating = '';
       if (entry_list[i].hasAnnotation(ANNOTATION_LOVE)) {
@@ -1800,7 +1804,6 @@ function sbLastFm_onTrackChange(aItem) {
   var trackName = aItem.getProperty(SBProperties.trackName).toLowerCase();
   var artistName = aItem.getProperty(SBProperties.artistName).toLowerCase();
   if (this.lovedTracks && this.lovedTracks[trackName + "@@" + artistName]) {
-	  dump("This is a loved track!\n");
 	  this.loveBan(aItem, true);
   }
 
