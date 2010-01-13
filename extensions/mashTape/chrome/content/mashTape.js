@@ -803,7 +803,11 @@ mashTape.updateInfo = function(provider, results, section) {
   
       // notify listeners
       mashTape.mgr.updateInfo("bio", results.bioText.toString());
-      mashTape.mgr.updateInfo("biourl", results.bioUrl.toString());
+
+      var bioUrl = results.bioUrl;
+      if (typeof(bioUrl) != "string")
+        bioUrl = bioUrl.toString();
+      mashTape.mgr.updateInfo("biourl", bioUrl);
       break;
 
     case "photo":

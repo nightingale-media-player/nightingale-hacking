@@ -116,15 +116,21 @@ ArtistInfo.prototype = {
 
 				// Links
 				var links = new Object;
+        var wikiUrl;
 				links.provider = "Wikipedia";
 				links.links = new Array();
 				if (x..foafNs::page.length() >= 1) {
+          wikiUrl = x..foafNs::page[0].@rdfNs::resource.toString();
+          wikiUrl = wikiUrl.replace("en.wikipedia.org",
+                                    language+".wikipedia.org");
 					links.links.push({
-						name: homepage,
-						url: x..foafNs::page[0].@rdfNs::resource
+						name: wikipedia,
+						url: wikiUrl
 					});
 				}
+        links.url = wikiUrl;
 				
+        /* bug 18865 - commenting this out for now since the schema changed
 				var wikiUrl = null;
 				var enUrl = null;
 				for each (var resource in x..rdfNs::Description) {
@@ -146,6 +152,7 @@ ArtistInfo.prototype = {
 				if (wikiUrl == null)
 					wikiUrl = enUrl;
 				links.url = wikiUrl;
+        */
 	
 				var bio = new Object;
 				var bioText = null;
