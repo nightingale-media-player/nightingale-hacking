@@ -630,6 +630,9 @@ function createFavouritesNode() {
 	favouritesNode.properties = "medialist-favorites";
 	favouritesNode.editable = false;
 	favouritesNode.hidden = false;
+  favouritesNode.contractid = null;
+  favouritesNode.dndAcceptIn = null;
+  favouritesNode.dndAcceptNear = null;
 	SPS.save();
 }
 

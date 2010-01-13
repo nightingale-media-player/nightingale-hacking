@@ -499,6 +499,7 @@ function sbLastFm() {
 	  radioFolder.setAttributeNS(SB_NS, "radioFolder", 1);
   }
   radioFolder.editable = false;
+  radioFolder.contractid = null;
 
   // Sort the radio folder node in the service pane
   radioFolder.setAttributeNS(SP_NS, "Weight", 1);
@@ -513,6 +514,9 @@ function sbLastFm() {
   }
   this._servicePaneNode.image = 'chrome://sb-lastfm/skin/as.png';
   this._servicePaneNode.editable = false;
+  this._servicePaneNode.contractid = null;
+  this._servicePaneNode.dndAcceptIn = null;
+  this._servicePaneNode.dndAcceptNear = null;
 
   //dump("HERE: " + this._servicePaneNode + "\n");
   //this._servicePaneService.removeNode(this._servicePaneNode);

@@ -211,6 +211,9 @@ ShoutcastRadio.Controller = {
 			radioFolder.name = radioString;
 		}
 		radioFolder.hidden = false;
+    radioFolder.contractid = null;
+    radioFolder.dndAcceptIn = null;
+    radioFolder.dndAcceptNear = null;
 	
 		// Sort the radio folder node in the service pane
 		radioFolder.setAttributeNS(SP, "Weight", 1);
@@ -232,6 +235,9 @@ ShoutcastRadio.Controller = {
 			}
 		}
     bmNode.hidden = false;
+    bmNode.contractid = null;
+    bmNode.dndAcceptIn = null;
+    bmNode.dndAcceptNear = null;
 
 		// Check the Favourite Stations list to see if it's been created
 		// If it has, then we'll need to relocalise its name on startup
@@ -256,6 +262,9 @@ ShoutcastRadio.Controller = {
 
 				// Re-localise its name
 				favouritesNode.name = this._strings.getString("favourites");
+        favouritesNode.contractid = null;
+        favouritesNode.dndAcceptIn = null;
+        favouritesNode.dndAcceptNear = null;
 			}
 		}
 	
