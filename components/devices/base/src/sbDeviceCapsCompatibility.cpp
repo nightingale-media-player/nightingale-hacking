@@ -241,7 +241,8 @@ sbDeviceCapsCompatibility::CompareVideoFormat(PRBool* aCompatible)
       NS_ConvertASCIItoUTF16 format(formats[formatIndex]);
     
       nsCOMPtr<sbIVideoFormatType> videoFormat;
-      rv = mDeviceCapabilities->GetFormatType(format,
+      rv = mDeviceCapabilities->GetFormatType(mContentType,
+                                              format,
                                               getter_AddRefs(videoFormat));
       if (NS_SUCCEEDED(rv) && videoFormat) {
         // Compare container type

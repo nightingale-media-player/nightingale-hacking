@@ -431,9 +431,14 @@ interface sbIVideoFormatType : nsISupports
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(cc7e84be-5c15-416d-b3dd-ce35de33e497)]
+[scriptable, uuid(a5bc7ccc-70ab-4c0f-8533-6e1ebf6f7bcb)]
 interface sbIDeviceCapabilities : nsISupports
 {
+  /**
+   * \brief Initialize the device capabilities, sets up to be able to accept
+   *  the set and add functions below.
+   */
+  void init();
 
   /**
    * \brief Sets an array of function types
@@ -476,12 +481,15 @@ interface sbIDeviceCapabilities : nsISupports
 
   /**
    * \brief Add a constraint to a format
+   * \param aContentType the content type this format falls under, see the
+   *                     CONTENT_* constants below.
    * \param aFormat the format we're adding a constraint for. This must 
    *                correspond to a format previously added by addFormats
    * \param aFormatType the object describing the format type. For example it 
    *                    it could be a sbIAudioFormatType or a sbIImageFormatType
    */
-  void AddFormatType(in AString aFormat, 
+  void AddFormatType(in PRUint32 aContentType,
+                     in AString aFormat,
                      in nsISupports aFormatType);
                            
   /**
@@ -491,10 +499,10 @@ interface sbIDeviceCapabilities : nsISupports
   void addCapabilities(in sbIDeviceCapabilities aCapabilities);
 
   /**
-   * \brief Indicates that the initialization is complete, the add and set
+   * \brief Indicates that the configuration is complete, the add and set
    *        functions above will no longer affect the data.
    */
-  void initDone();
+  void configureDone();
   
   /**
    *
@@ -532,6 +540,7 @@ interface sbIDeviceCapabilities : nsISupports
   const PRUint32 CONTENT_VIDEO    = 0x05;
   const PRUint32 CONTENT_PLAYLIST = 0x06;
   const PRUint32 CONTENT_ALBUM    = 0x07;
+  const PRUint32 CONTENT_MAX_TYPES= 0x08; // Must be last
 
   /**
    * 
@@ -555,9 +564,9 @@ interface sbIDeviceCapabilities : nsISupports
                              out string aSupportedFormats);
 
   /**
-   * Returns the list of constraints for the format
+   * Returns the list of constraints for the format under a content type
    */
-  nsISupports getFormatType(in AString aFormat);
+  nsISupports getFormatType(in PRUint32 aContentType, in AString aFormat);
    
   /**
    * Returns an array of nsISupportsPRUint32 values defined in
@@ -583,4 +592,3 @@ interface sbIDeviceCapabilities : nsISupports
   {0x99, 0x1e, 0xe6, 0x6f, 0x49, 0x16, 0xa9, 0x0b}        \
 }
 %}
-

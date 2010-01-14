@@ -1441,6 +1441,8 @@ sbIPDDevice::CapabilitiesConnect()
   mCapabilities = do_CreateInstance(SONGBIRD_DEVICECAPABILITIES_CONTRACTID,
                                     &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+  rv = mCapabilities->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Set the device function types.
   PRUint32 functionTypeList[] =
@@ -1464,8 +1466,8 @@ sbIPDDevice::CapabilitiesConnect()
                                  sbIPDSupportedAudioMediaListLength);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Complete the device capabilities initialization.
-  rv = mCapabilities->InitDone();
+  // Complete the device capabilities configuration.
+  rv = mCapabilities->ConfigureDone();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

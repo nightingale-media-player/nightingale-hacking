@@ -490,7 +490,8 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
 
     nsCOMPtr<nsISupports> supports;
     for (PRUint32 formatIndex = 0; formatIndex < formatCount; ++formatIndex) {
-      rv = caps->GetFormatType(NS_ConvertASCIItoUTF16(formatStrings[formatIndex]),
+      rv = caps->GetFormatType(sbIDeviceCapabilities::CONTENT_VIDEO,
+                               NS_ConvertASCIItoUTF16(formatStrings[formatIndex]),
                                getter_AddRefs(supports));
       NS_ENSURE_SUCCESS(rv, rv);
       nsCOMPtr<sbIVideoFormatType> format = do_QueryInterface(supports, &rv);

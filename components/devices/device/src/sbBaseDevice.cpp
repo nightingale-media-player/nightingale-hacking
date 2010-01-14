@@ -3567,11 +3567,14 @@ sbBaseDevice::GetCapabilitiesPreference(nsIVariant** aCapabilities)
   // Read the device capabilities from the device settings document.
   if (domDocument) {
     nsCOMPtr<sbIDeviceCapabilities> deviceCapabilities =
-      do_CreateInstance(SONGBIRD_DEVICECAPABILITIES_CONTRACTID);
+      do_CreateInstance(SONGBIRD_DEVICECAPABILITIES_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = deviceCapabilities->Init();
+    NS_ENSURE_SUCCESS(rv, rv);
     sbDeviceXMLCapabilities xmlCapabilities(domDocument);
     rv = xmlCapabilities.Read(deviceCapabilities);
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = deviceCapabilities->InitDone();
+    rv = deviceCapabilities->ConfigureDone();
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Return any device capabilities from the device settings document.
@@ -5287,7 +5290,8 @@ sbBaseDevice::DispatchTranscodeErrorEvent(sbIMediaItem*    aMediaItem,
 }
 
 static nsresult
-AddAlbumArtFormats(sbIDeviceCapabilities *aCapabilities,
+AddAlbumArtFormats(PRUint32 aContentType,
+                   sbIDeviceCapabilities *aCapabilities,
                    nsIMutableArray *aArray,
                    PRUint32 numFormats,
                    char **formats)
@@ -5296,7 +5300,8 @@ AddAlbumArtFormats(sbIDeviceCapabilities *aCapabilities,
 
   for (PRUint32 i = 0; i < numFormats; i++) {
     nsCOMPtr<nsISupports> formatType;
-    rv = aCapabilities->GetFormatType(NS_ConvertASCIItoUTF16(formats[i]),
+    rv = aCapabilities->GetFormatType(aContentType,
+                                      NS_ConvertASCIItoUTF16(formats[i]),
             getter_AddRefs(formatType));
     /* There might be no corresponding format object for this type, if so, just
        ignore it */
@@ -5333,7 +5338,11 @@ sbBaseDevice::GetSupportedAlbumArtFormats(nsIArray * *aFormats)
           &numFormats, &formats);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddAlbumArtFormats(capabilities, formatConstraints, numFormats, formats);
+  rv = AddAlbumArtFormats(sbIDeviceCapabilities::CONTENT_IMAGE,
+                          capabilities,
+                          formatConstraints,
+                          numFormats,
+                          formats);
   /* Ensure everything is freed here before potentially returning; no
      magic destructors for this thing */
   NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(numFormats, formats);

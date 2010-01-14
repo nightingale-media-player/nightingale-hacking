@@ -52,7 +52,7 @@ NS_IMPL_THREADSAFE_CI(sbDeviceCapabilities)
 
 /**
  * To log this module, set the following environment variable:
- *   NSPR_LOG_MODULES=sbDeviceContent:5
+ *   NSPR_LOG_MODULES=sbDeviceCapabilities:5
  */
 #ifdef PR_LOGGING
 static PRLogModuleInfo* gDeviceCapabilitiesLog = nsnull;
@@ -64,17 +64,9 @@ static PRLogModuleInfo* gDeviceCapabilitiesLog = nsnull;
 #endif /* PR_LOGGING */
 
 sbDeviceCapabilities::sbDeviceCapabilities() :
-isInitialized(false)
+isInitialized(false),
+isConfigured(false)
 {
-  nsresult rv = mContentTypes.Init();
-  NS_ENSURE_SUCCESS(rv, /* void */);
-
-  rv = mSupportedFormats.Init();
-  NS_ENSURE_SUCCESS(rv, /* void */);
-
-  rv = mFormatTypes.Init();
-  NS_ENSURE_SUCCESS(rv, /* void */);
-
 #ifdef PR_LOGGING
   if (!gDeviceCapabilitiesLog) {
     gDeviceCapabilitiesLog = PR_NewLogModule("sbDeviceCapabilities");
@@ -86,16 +78,54 @@ isInitialized(false)
 sbDeviceCapabilities::~sbDeviceCapabilities()
 {
   TRACE(("sbDeviceCapabilities[0x%.8x] - Destructed", this));
+  // Release all the format types...
+  PRInt32 count = mContentFormatTypes.Count();
+  for(PRInt32 i = 0; i < count; i++) {
+    FormatTypes *formatType =
+      static_cast<FormatTypes *>(mContentFormatTypes.ElementAt(i));
+    delete formatType;
+  }
+  mContentFormatTypes.Clear();
 }
 
-
 NS_IMETHODIMP
-sbDeviceCapabilities::InitDone()
+sbDeviceCapabilities::Init()
 {
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
 
+  nsresult rv = mContentTypes.Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mSupportedFormats.Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = sbIDeviceCapabilities::CONTENT_UNKNOWN;
+       i < sbIDeviceCapabilities::CONTENT_MAX_TYPES;
+       i++)
+  {
+    FormatTypes *newFormatTypes = new FormatTypes;
+    if (!newFormatTypes)
+      NS_ENSURE_SUCCESS(rv, NS_ERROR_OUT_OF_MEMORY);
+    rv = newFormatTypes->Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mContentFormatTypes.AppendElement(newFormatTypes) ?
+            NS_OK : NS_ERROR_FAILURE;
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  mContentFormatTypes.Compact();
+
+  isInitialized = PR_TRUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceCapabilities::ConfigureDone()
+{
+  NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(!isConfigured, NS_ERROR_ALREADY_INITIALIZED);
+
   /* set this so we are not called again */
-  isInitialized = true;
+  isConfigured = true;
   return NS_OK;
 }
 
@@ -103,7 +133,8 @@ NS_IMETHODIMP
 sbDeviceCapabilities::SetFunctionTypes(PRUint32 *aFunctionTypes,
                                        PRUint32 aFunctionTypesCount)
 {
-  NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
+  NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(!isConfigured, NS_ERROR_ALREADY_INITIALIZED);
 
   for (PRUint32 arrayCounter = 0; arrayCounter < aFunctionTypesCount; ++arrayCounter) {
     if (mFunctionTypes.IndexOf(aFunctionTypes[arrayCounter]) ==
@@ -119,7 +150,8 @@ NS_IMETHODIMP
 sbDeviceCapabilities::SetEventTypes(PRUint32 *aEventTypes,
                                     PRUint32 aEventTypesCount)
 {
-  NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
+  NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(!isConfigured, NS_ERROR_ALREADY_INITIALIZED);
 
   for (PRUint32 arrayCounter = 0; arrayCounter < aEventTypesCount; ++arrayCounter) {
     if (mSupportedEvents.IndexOf(aEventTypes[arrayCounter]) ==
@@ -138,7 +170,8 @@ sbDeviceCapabilities::AddContentTypes(PRUint32 aFunctionType,
                                       PRUint32 aContentTypesCount)
 {
   NS_ENSURE_ARG_POINTER(aContentTypes);
-  NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
+  NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(!isConfigured, NS_ERROR_ALREADY_INITIALIZED);
 
   nsTArray<PRUint32> * nContentTypes = nsnull;
   PRBool const found = mContentTypes.Get(aFunctionType, &nContentTypes);
@@ -166,7 +199,8 @@ sbDeviceCapabilities::AddFormats(PRUint32 aContentType,
                                  PRUint32 aFormatsCount)
 {
   NS_ENSURE_ARG_POINTER(aFormats);
-  NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
+  NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(!isConfigured, NS_ERROR_ALREADY_INITIALIZED);
 
   nsTArray<nsCString> * nFormats = nsnull;
   PRBool const found = mSupportedFormats.Get(aContentType, &nFormats);
@@ -189,13 +223,23 @@ sbDeviceCapabilities::AddFormats(PRUint32 aContentType,
 }
 
 NS_IMETHODIMP
-sbDeviceCapabilities::AddFormatType(nsAString const & aFormat,
+sbDeviceCapabilities::AddFormatType(PRUint32 aContentType,
+                                    nsAString const & aFormat,
                                     nsISupports * aFormatType)
 {
   NS_ENSURE_ARG_POINTER(aFormatType);
+  NS_ENSURE_ARG_RANGE(aContentType,
+                      sbIDeviceCapabilities::CONTENT_UNKNOWN,
+                      sbIDeviceCapabilities::CONTENT_MAX_TYPES - 1);
 
-  PRBool const added = mFormatTypes.Put(aFormat, aFormatType);
+  FormatTypes *formatType =
+    static_cast<FormatTypes *>(mContentFormatTypes.SafeElementAt(aContentType));
+  if (!formatType)
+    return NS_ERROR_NULL_POINTER;
+
+  PRBool const added = formatType->Put(aFormat, aFormatType);
   NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
+
   return NS_OK;
 }
 
@@ -203,7 +247,8 @@ NS_IMETHODIMP
 sbDeviceCapabilities::AddCapabilities(sbIDeviceCapabilities *aCapabilities)
 {
   NS_ENSURE_ARG_POINTER(aCapabilities);
-  NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
+  NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(!isConfigured, NS_ERROR_ALREADY_INITIALIZED);
 
   nsresult rv;
 
@@ -261,9 +306,11 @@ sbDeviceCapabilities::AddCapabilities(sbIDeviceCapabilities *aCapabilities)
         format.AssignLiteral(formats[formatIndex]);
 
         nsCOMPtr<nsISupports> formatType;
-        rv = aCapabilities->GetFormatType(format, getter_AddRefs(formatType));
+        rv = aCapabilities->GetFormatType(contentType,
+                                          format,
+                                          getter_AddRefs(formatType));
         if (NS_SUCCEEDED(rv)) {
-          rv = AddFormatType(format, formatType);
+          rv = AddFormatType(contentType, format, formatType);
           NS_ENSURE_SUCCESS(rv, rv);
         }
       }
@@ -288,6 +335,7 @@ sbDeviceCapabilities::GetSupportedFunctionTypes(PRUint32 *aArrayCount,
   NS_ENSURE_ARG_POINTER(aArrayCount);
   NS_ENSURE_ARG_POINTER(aFunctionTypes);
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(isConfigured, NS_ERROR_NOT_INITIALIZED);
 
   PRUint32 arrayLen = mFunctionTypes.Length();
   PRUint32* outArray = (PRUint32*)nsMemory::Alloc(arrayLen * sizeof(PRUint32));
@@ -310,6 +358,7 @@ sbDeviceCapabilities::GetSupportedContentTypes(PRUint32 aFunctionType,
   NS_ENSURE_ARG_POINTER(aArrayCount);
   NS_ENSURE_ARG_POINTER(aContentTypes);
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(isConfigured, NS_ERROR_NOT_INITIALIZED);
 
   nsTArray<PRUint32>* contentTypes;
 
@@ -341,6 +390,7 @@ sbDeviceCapabilities::GetSupportedFormats(PRUint32 aContentType,
   NS_ENSURE_ARG_POINTER(aArrayCount);
   NS_ENSURE_ARG_POINTER(aSupportedFormats);
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(isConfigured, NS_ERROR_NOT_INITIALIZED);
 
   nsTArray<nsCString>* supportedFormats;
 
@@ -372,6 +422,7 @@ sbDeviceCapabilities::GetSupportedEvents(PRUint32 *aArrayCount,
   NS_ENSURE_ARG_POINTER(aArrayCount);
   NS_ENSURE_ARG_POINTER(aSupportedEvents);
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(isConfigured, NS_ERROR_NOT_INITIALIZED);
 
   PRUint32 arrayLen = mSupportedEvents.Length();
   PRUint32* outArray = (PRUint32*)nsMemory::Alloc(arrayLen * sizeof(PRUint32));
@@ -392,12 +443,20 @@ sbDeviceCapabilities::GetSupportedEvents(PRUint32 *aArrayCount,
  * Returns the list of constraints for the format
  */
 NS_IMETHODIMP
-sbDeviceCapabilities::GetFormatType(nsAString const & aFormat,
+sbDeviceCapabilities::GetFormatType(PRUint32 aContentType,
+                                    nsAString const & aFormat,
                                     nsISupports ** aFormatType) {
   NS_ENSURE_ARG_POINTER(aFormatType);
+  NS_ENSURE_ARG_RANGE(aContentType,
+                      sbIDeviceCapabilities::CONTENT_UNKNOWN,
+                      sbIDeviceCapabilities::CONTENT_MAX_TYPES - 1);
 
-  return mFormatTypes.Get(aFormat, aFormatType) ? NS_OK :
-                                                  NS_ERROR_NOT_AVAILABLE;
+  FormatTypes *formatType =
+    static_cast<FormatTypes *>(mContentFormatTypes.SafeElementAt(aContentType));
+  if (!formatType)
+    return NS_ERROR_NULL_POINTER;
+
+  return formatType->Get(aFormat, aFormatType) ? NS_OK : NS_ERROR_NOT_AVAILABLE;
 }
 
 /*******************************************************************************

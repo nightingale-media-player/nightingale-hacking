@@ -152,11 +152,14 @@ sbDeviceXMLCapabilities::AddCapabilities
 
   // Read the device capabilities for the device.
   nsCOMPtr<sbIDeviceCapabilities> deviceCapabilities =
-    do_CreateInstance(SONGBIRD_DEVICECAPABILITIES_CONTRACTID);
+    do_CreateInstance(SONGBIRD_DEVICECAPABILITIES_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = deviceCapabilities->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
   sbDeviceXMLCapabilities xmlCapabilities(deviceCapabilitiesDocument, aDevice);
   rv = xmlCapabilities.Read(deviceCapabilities);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = deviceCapabilities->InitDone();
+  rv = deviceCapabilities->ConfigureDone();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Add any device capabilities from the device capabilities document.
@@ -581,7 +584,9 @@ sbDeviceXMLCapabilities::ProcessAudio(nsIDOMNode * aAudioNode)
     rv = AddFormat(sbIDeviceCapabilities::CONTENT_AUDIO, mimeType);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mDeviceCaps->AddFormatType(mimeType, formatType);
+    rv = mDeviceCaps->AddFormatType(sbIDeviceCapabilities::CONTENT_AUDIO,
+                                    mimeType,
+                                    formatType);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   return NS_OK;
@@ -746,7 +751,9 @@ sbDeviceXMLCapabilities::ProcessImage(nsIDOMNode * aImageNode)
     rv = AddFormat(sbIDeviceCapabilities::CONTENT_IMAGE, mimeType);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mDeviceCaps->AddFormatType(mimeType, imageFormatType);
+    rv = mDeviceCaps->AddFormatType(sbIDeviceCapabilities::CONTENT_IMAGE,
+                                    mimeType,
+                                    imageFormatType);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -983,7 +990,9 @@ sbDeviceXMLCapabilities::ProcessVideoFormat(nsIDOMNode* aVideoFormatNode)
   rv = AddFormat(sbIDeviceCapabilities::CONTENT_VIDEO, containerType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mDeviceCaps->AddFormatType(containerType, videoFormat);
+  rv = mDeviceCaps->AddFormatType(sbIDeviceCapabilities::CONTENT_VIDEO,
+                                  containerType,
+                                  videoFormat);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -1290,4 +1299,3 @@ sbDeviceXMLCapabilities::GetFirstChildByTagName(nsIDOMNode*  aNode,
 
   return NS_OK;
 }
-

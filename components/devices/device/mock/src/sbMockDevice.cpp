@@ -316,6 +316,8 @@ NS_IMETHODIMP sbMockDevice::GetCapabilities(sbIDeviceCapabilities * *aCapabiliti
   nsCOMPtr<sbIDeviceCapabilities> caps =
     do_CreateInstance(SONGBIRD_DEVICECAPABILITIES_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+  rv = caps->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 functionTypes[] = {sbIDeviceCapabilities::FUNCTION_DEVICE,
                               sbIDeviceCapabilities::FUNCTION_VIDEO_PLAYBACK};
@@ -394,11 +396,13 @@ NS_IMETHODIMP sbMockDevice::GetCapabilities(sbIDeviceCapabilities * *aCapabiliti
   rv = formatType->Initialize(NS_LITERAL_CSTRING("application/ogg"),
                               videoFormat, audioFormat);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = caps->AddFormatType(NS_ConvertASCIItoUTF16(K_FORMAT_STRING), formatType);
+  rv = caps->AddFormatType(sbIDeviceCapabilities::CONTENT_VIDEO,
+                           NS_ConvertASCIItoUTF16(K_FORMAT_STRING),
+                           formatType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Complete the device capabilities initialization.
-  rv = caps->InitDone();
+  // Complete the device capabilities configuration.
+  rv = caps->ConfigureDone();
   NS_ENSURE_SUCCESS(rv, rv);
 
   caps.forget(aCapabilities);

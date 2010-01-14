@@ -360,6 +360,8 @@ sbCDDevice::CapabilitiesReset()
   mCapabilities = do_CreateInstance(SONGBIRD_DEVICECAPABILITIES_CONTRACTID,
                                     &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+  mCapabilities->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 functionTypes = sbIDeviceCapabilities::FUNCTION_DEVICE;
   rv = mCapabilities->SetFunctionTypes(&functionTypes, 1);
@@ -369,8 +371,8 @@ sbCDDevice::CapabilitiesReset()
   rv = RegisterDeviceCapabilities(mCapabilities);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Complete the device capabilities initialization.
-  rv = mCapabilities->InitDone();
+  // Complete the device capabilities configuration.
+  rv = mCapabilities->ConfigureDone();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

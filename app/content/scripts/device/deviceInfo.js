@@ -943,10 +943,18 @@ var DIW = {
     try {
       var deviceCapabilities = this._device.capabilities;
       var functionArray = deviceCapabilities.getSupportedFunctionTypes({});
-      for (var functionCounter = 0; functionCounter < functionArray.length; functionCounter++) {
-        var contentArray = deviceCapabilities.getSupportedContentTypes(functionArray[functionCounter], {});
-        for (var contentCounter = 0; contentCounter < contentArray.length; contentCounter++) {
-          var formatArray = deviceCapabilities.getSupportedFormats(contentArray[contentCounter], {});
+      for (var functionCounter = 0;
+           functionCounter < functionArray.length;
+           functionCounter++)
+      {
+        var contentArray = deviceCapabilities.getSupportedContentTypes(
+                             functionArray[functionCounter], {});
+        for (var contentCounter = 0;
+             contentCounter < contentArray.length;
+             contentCounter++)
+        {
+          var formatArray = deviceCapabilities.getSupportedFormats(
+                              contentArray[contentCounter], {});
           retFormats = retFormats.concat(formatArray);
         }
       }

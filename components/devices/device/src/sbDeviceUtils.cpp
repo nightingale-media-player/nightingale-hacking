@@ -1300,7 +1300,9 @@ sbDeviceUtils::GetSupportedTranscodeProfiles(sbIDevice * aDevice,
         nsMemory::Free(formats[formatIndex]);
 
         nsCOMPtr<nsISupports> formatTypeSupports;
-        devCaps->GetFormatType(format, getter_AddRefs(formatTypeSupports));
+        devCaps->GetFormatType(contentType,
+                               format,
+                               getter_AddRefs(formatTypeSupports));
         nsString containerFormat;
         nsString codec;
         nsString videoType; // Not used
@@ -1427,7 +1429,9 @@ sbDeviceUtils::DoesItemNeedTranscoding(
 
       NS_ConvertASCIItoUTF16 format(formats[formatIndex]);
       nsCOMPtr<nsISupports> formatType;
-      rv = devCaps->GetFormatType(format, getter_AddRefs(formatType));
+      rv = devCaps->GetFormatType(devCapContentType,
+                                  format,
+                                  getter_AddRefs(formatType));
       if (NS_SUCCEEDED(rv)) {
         nsString containerFormat;
         nsString codec;
@@ -1655,7 +1659,8 @@ sbDeviceUtils::GetDeviceCapsMediaType(sbIMediaItem * aMediaItem)
 #define __FUNCTION__ __PRETTY_FUNCTION__
 #endif /* __GNUC__ */
 
-static nsresult LogFormatType(const nsAString & aFormat,
+static nsresult LogFormatType(PRUint32 aContentType,
+                              const nsAString & aFormat,
                               sbIDeviceCapabilities *aDeviceCaps,
                               PRLogModuleInfo *aLogModule);
 
@@ -1700,7 +1705,6 @@ sbDeviceUtils::LogDeviceCapabilities(sbIDeviceCapabilities *aDeviceCaps,
                                               &functionTypes);
   NS_ENSURE_SUCCESS(rv, rv);
   sbAutoNSMemoryPtr functionTypesPtr(functionTypes);
-
   for (PRUint32 functionType = 0;
        functionType < functionTypeCount;
        functionType++)
@@ -1712,6 +1716,7 @@ sbDeviceUtils::LogDeviceCapabilities(sbIDeviceCapabilities *aDeviceCaps,
                                                &contentTypesLength,
                                                &contentTypes);
     NS_ENSURE_SUCCESS(rv, rv);
+
     sbAutoNSMemoryPtr contentTypesPtr(contentTypes);
 
     for (PRUint32 contentType = 0;
@@ -1727,7 +1732,8 @@ sbDeviceUtils::LogDeviceCapabilities(sbIDeviceCapabilities *aDeviceCaps,
       sbAutoNSArray<char *> autoFormatsPtr(formats, formatsCount);
 
       for (PRUint32 format = 0; format < formatsCount; format++) {
-        rv = LogFormatType(NS_ConvertUTF8toUTF16(formats[format]),
+        rv = LogFormatType(contentTypes[contentType],
+                           NS_ConvertUTF8toUTF16(formats[format]),
                            aDeviceCaps,
                            aLogModule);
       }
@@ -1742,7 +1748,8 @@ sbDeviceUtils::LogDeviceCapabilities(sbIDeviceCapabilities *aDeviceCaps,
 }
 
 /* static */ nsresult
-LogFormatType(const nsAString & aFormat,
+LogFormatType(PRUint32 aContentType,
+              const nsAString & aFormat,
               sbIDeviceCapabilities *aDeviceCaps,
               PRLogModuleInfo *aLogModule)
 {
@@ -1751,7 +1758,9 @@ LogFormatType(const nsAString & aFormat,
 
   nsresult rv;
   nsCOMPtr<nsISupports> formatSupports;
-  rv = aDeviceCaps->GetFormatType(aFormat, getter_AddRefs(formatSupports));
+  rv = aDeviceCaps->GetFormatType(aContentType,
+                                  aFormat,
+                                  getter_AddRefs(formatSupports));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // QI to find out which format this is.
@@ -2081,4 +2090,3 @@ LogRange(sbIDevCapRange *aRange,
 }
 
 #endif
-
