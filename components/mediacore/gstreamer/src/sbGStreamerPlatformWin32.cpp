@@ -492,7 +492,11 @@ void Win32PlatformInterface::MoveVideoWindow(int x, int y,
         int width, int height)
 {
   if (mWindow) {
-    ::SetWindowPos(mWindow, NULL, x, y, width, height, SWP_NOZORDER);
+    // Use SWP_ASYNCWINDOWPOS to avoid a possible deadlock since
+    // we may be calling this from a non-main thread (and the window
+    // was created on the main thread).
+    ::SetWindowPos(mWindow, NULL, x, y, width, height,
+                   SWP_NOZORDER | SWP_ASYNCWINDOWPOS);
   }
 }
 
