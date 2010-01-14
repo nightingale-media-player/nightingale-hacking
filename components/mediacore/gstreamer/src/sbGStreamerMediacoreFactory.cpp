@@ -305,15 +305,10 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
             }
           #endif /* PR_LOGGING */
 
-          if (!blacklisted) {
-            if (!isAudioExtension) {
-              if (!videoExtensions.Contains(NS_ConvertUTF8toUTF16(extension))) {
-                // XXX Mook: we currently assume anything not known to be video is audio :|
-                audioExtensions.AppendElement(NS_ConvertUTF8toUTF16(*factoryexts));
-                LOG(("sbGStreamerMediacoreFactory: registering audio extension %s\n",
-                     *factoryexts));
-              }
-            }
+          if (!blacklisted && isAudioExtension) {
+            audioExtensions.AppendElement(NS_ConvertUTF8toUTF16(*factoryexts));
+            LOG(("sbGStreamerMediacoreFactory: registering audio extension %s\n",
+                  *factoryexts));
           }
 
           factoryexts++;
