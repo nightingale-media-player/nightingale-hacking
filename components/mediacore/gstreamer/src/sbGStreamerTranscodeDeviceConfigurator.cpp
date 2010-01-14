@@ -617,19 +617,19 @@ sbGStreamerTranscodeDeviceConfigurator::SetAudioProperties()
   nsCOMPtr<sbIMediaFormatAudio> inputFormat;
   rv = mInputFormat->GetAudioStream(getter_AddRefs(inputFormat));
   NS_ENSURE_SUCCESS(rv, rv);
+  if (inputFormat) {
+    PRInt32 sampleRate;
+    rv = inputFormat->GetSampleRate(&sampleRate);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = audioFormat->SetSampleRate(sampleRate);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  PRInt32 sampleRate;
-  rv = inputFormat->GetSampleRate(&sampleRate);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = audioFormat->SetSampleRate(sampleRate);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRInt32 channels;
-  rv = inputFormat->GetChannels(&channels);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = audioFormat->SetChannels(channels);
-  NS_ENSURE_SUCCESS(rv, rv);
-
+    PRInt32 channels;
+    rv = inputFormat->GetChannels(&channels);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = audioFormat->SetChannels(channels);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   if (!mAudioEncoderProperties) {
     mAudioEncoderProperties =
       do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
@@ -686,6 +686,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineIdealOutputSize()
   nsCOMPtr<sbIDevCapVideoStream> outputCaps;
   rv = mSelectedFormat->GetVideoStream(getter_AddRefs(outputCaps));
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(outputCaps, NS_ERROR_FAILURE);
 
   // if we can't match the PAR, adjust to square pixels
   { /* scope */
@@ -951,6 +952,8 @@ sbGStreamerTranscodeDeviceConfigurator::FinalizeOutputSize()
     nsCOMPtr<sbIDevCapVideoStream> videoCaps;
     rv = mSelectedFormat->GetVideoStream(getter_AddRefs(videoCaps));
     NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(videoCaps, NS_ERROR_FAILURE);
+
     char ** frameRates;
     PRUint32 frameRateCount;
     rv = videoCaps->GetSupportedFrameRates(&frameRateCount, &frameRates);
@@ -991,6 +994,8 @@ sbGStreamerTranscodeDeviceConfigurator::FinalizeOutputSize()
   nsCOMPtr<sbIDevCapVideoStream> videoCaps;
   rv = mSelectedFormat->GetVideoStream(getter_AddRefs(videoCaps));
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(videoCaps, NS_ERROR_FAILURE);
+
   nsCOMPtr<sbIDevCapRange> videoBitrateRange;
   rv = videoCaps->GetSupportedBitRates(getter_AddRefs(videoBitrateRange));
   NS_ENSURE_SUCCESS(rv, rv);
