@@ -73,7 +73,7 @@
 	<em:contributor>inorbez - eu-ES translation</em:contributor>
 	<em:description>See when your library's artists are touring in your city.  Concert and ticketing information powered by Songkick.com.</em:description>
 
-	<em:iconURL>chrome://concerts/content/ticket_icon.png</em:iconURL>
+	<em:iconURL>chrome://concerts/content/em-icon.png</em:iconURL>
 	<em:homepageURL>http://addons.songbirdnest.com/addon/1281</em:homepageURL>
 
 	<!--
