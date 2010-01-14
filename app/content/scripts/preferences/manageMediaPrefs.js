@@ -79,7 +79,6 @@ var manageMediaPrefsPane = {
   //----------------------------------------------------------------------------
 
   _prefs: [], // Original values for the preferences
-  _isValidManagedFolder: false,
 
   // holds a copy of the library folder that was in use when the user
   // opened the dialog, so that we can tell when the user has chosen a
@@ -98,14 +97,6 @@ var manageMediaPrefsPane = {
       const instantApply =
         Application.prefs.getValue("browser.preferences.instantApply", true);
       if (event.type == "dialogcancel" && !instantApply) {
-        if (!self._isValidManagedFolder) {
-          // The user didn't select a valid managed folder, reset this pref
-          // back to the default library folder value value.
-          var folderPrefElem = 
-            document.getElementById("manage_media_pref_library_folder");
-          Application.prefs.setValue(folderPrefElem.getAttribute("name"),
-                                     self._defaultLibraryFolder.path);
-        }
         return true;
       }
 
@@ -276,18 +267,6 @@ var manageMediaPrefsPane = {
     var file = baseFile.clone();
     file.append(SBBrandedString("mediamanager.music_dir",
                                 SBStringBrandShortName()));
-    if (!file.exists()) {
-      // On Mac we have to have a valid folder in order to display it.
-      try {
-        var permissions = baseFile.permissions;
-        file.create(Ci.nsIFile.DIRECTORY_TYPE, permissions);
-      } catch (e) {
-        Cu.reportError("Unable to create folder: " + file.path +
-                       ", defaulting to " + baseFile.path +
-                       " - Error: " + e);
-        file = baseFile;
-      }
-    }
     return file;
   },
 
@@ -371,23 +350,47 @@ var manageMediaPrefsPane = {
       dirPrefElem.valueFromPreferences = dirFormatElem.value;
     }
 
+    // Need to check if the user chose a usable folder for the managed folder.
+    var managedFolder = document.getElementById("manage_media_library_file");
+    if (!managedFolder || !managedFolder.file) {
+      showErrorNotification(SBString("prefs.media_management.error.no_path2"));
+      return false;
+    }
+
     var button = document.getElementById("manage_media_global_cmd");
     var prefElem = document.getElementById(button.getAttribute("preference"));
     var enabled = prefElem.value;
+    var dir = managedFolder.file;
 
-    if (enabled) {
-      // Need to check if the user chose a usable folder for the managed folder.
-      var managedFolder = document.getElementById("manage_media_library_file");
-      if (!managedFolder || !managedFolder.file) {
-        showErrorNotification(SBString("prefs.media_management.error.no_path2"));
-        return false;
+    if (!enabled) {
+      if (!dir.exists()) {
+        // The user didn't select a valid managed folder, reset this pref
+        // back to the default library folder value value.
+        var folderPrefElem =
+          document.getElementById("manage_media_pref_library_folder");
+        Application.prefs.setValue(folderPrefElem.getAttribute("name"),
+                                   self._defaultLibraryFolder.path);
       }
-      var dir = managedFolder.file;
+    }
+    else {
       var missingDefault = false;
       if (!dir.exists()) {
-        if (dir != this._defaultLibraryFolder) {
+        var parentDir = dir.parent;
+        if (!parentDir.exists()) {
+          showErrorNotification(
+              SBFormattedString("prefs.media_management.error.not_exist",
+                                [dir.path]));
+          return false;
+        }
+
+        try {
+          var permissions = parentDir.permissions;
+          dir.create(Ci.nsIFile.DIRECTORY_TYPE, permissions);
           missingDefault = true;
-        } else {
+        } catch (e) {
+          Cu.reportError("Unable to create folder: " + dir.path +
+                         ", defaulting to " + parentDir.path +
+                         " - Error: " + e);
           showErrorNotification(
               SBFormattedString("prefs.media_management.error.not_exist",
                                 [dir.path]));
@@ -448,9 +451,6 @@ var manageMediaPrefsPane = {
       {
         showErrorNotification(SBString("prefs.media_management.warning.not_empty"), "PRIORITY_WARNING_HIGH");
       }
-
-      // This is now a valid managed folder
-      this._isValidManagedFolder = true;
     }
 
     return true;
