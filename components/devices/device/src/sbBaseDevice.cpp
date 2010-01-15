@@ -561,7 +561,7 @@ void SBCreateSubBatchIndex(sbBaseDevice::Batch& aBatch)
         req = lastBegin->get();
         req->batchCount = index;
       }
-      index = 0;
+      index = sbBaseDevice::BATCH_INDEX_START;
       // Only the first needsTranscoding works.
       firstTranscoding = PR_FALSE;
     }
@@ -571,6 +571,9 @@ void SBCreateSubBatchIndex(sbBaseDevice::Batch& aBatch)
   // No item needs transcoding
   if (firstTranscoding)
     return;
+
+  // Bump the index back since this it is 1 based
+  --index;
 
   // Update the batch count for the batch.
   for (; lastBegin != batchBegin; ++lastBegin) {
