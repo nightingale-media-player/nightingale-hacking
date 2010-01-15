@@ -217,6 +217,7 @@ ifdef MEDIA_CORE_GST #{
                            gstsdpelem \
                            gstselector \
                            gstmozillasrc \
+                           gstmpeg4videoparse \
                            $(NULL)
 
    # Include asfmux only if it's present in the vendor binaries.
