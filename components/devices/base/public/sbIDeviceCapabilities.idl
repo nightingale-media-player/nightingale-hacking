@@ -592,3 +592,34 @@ interface sbIDeviceCapabilities : nsISupports
   {0x99, 0x1e, 0xe6, 0x6f, 0x49, 0x16, 0xa9, 0x0b}        \
 }
 %}
+
+/**
+ * \interface sbIDeviceCapabilitiesUtils
+ * \brief Temporary interface to allow us to access the mime-type ->
+ *        file extension mappings in sbDeviceUtils
+ */
+[scriptable, uuid(c20c7dfa-1dd1-11b2-a4a6-b98bb9a0aa47)]
+interface sbIDeviceCapabilitiesUtils : nsISupports
+{
+  /**
+   * Returns a file extension for the given mimeType & contentType
+   */
+  AString mapContentTypeToFileExtension(in AString aMimeType,
+	                                   in PRUint32 aContentType);
+};
+
+%{C++
+#define SONGBIRD_DEVICECAPABILITIESUTILS_DESCRIPTION \
+  "Songbird Device Capabilities Utils Component"
+#define SONGBIRD_DEVICECAPABILITIESUTILS_CONTRACTID \
+  "@songbirdnest.com/Songbird/Device/DeviceCapabilitiesUtils;1"
+#define SONGBIRD_DEVICECAPABILITIESUTILS_CLASSNAME \
+  "Songbird Device Capabilities Utils"
+#define SONGBIRD_DEVICECAPABILITIESUTILS_CID \
+{ /* c20c7dfa-1dd1-11b2-a4a6-b98bb9a0aa47 */ \
+  0xc20c7dfa, \
+  0x1dd1,     \
+  0x11b2,     \
+  {0xa4, 0xa6, 0xb9, 0x8b, 0xb9, 0xa0, 0xaa, 0x47} \
+}
+%}

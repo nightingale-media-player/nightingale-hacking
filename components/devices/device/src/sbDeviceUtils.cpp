@@ -904,6 +904,7 @@ MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
   { "ogg",  "application/ogg", "ogg",  "vorbis",  "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "flac", "audio/x-flac",    "",     "flac",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "wav",  "audio/x-wav",     "wav",  "pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "wav",  "audio/x-adpcm",   "wav",  "pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "aiff", "audio/x-aiff",    "aiff", "pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "aif",  "audio/x-aiff",    "aiff", "pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
 

@@ -42,6 +42,7 @@ CPP_SRCS = sbBaseDeviceEventTarget.cpp \
            sbDeviceProperties.cpp \
            sbDeviceCapabilities.cpp \
            sbDeviceStatus.cpp \
+           sbDeviceCapabilitiesUtils.cpp \
            $(NULL)
 
 # From /components/moz/strings/src/

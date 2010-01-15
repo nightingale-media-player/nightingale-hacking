@@ -915,7 +915,17 @@ var DIW = {
    * \return Human readable information for mime type.
    */
 
-  _getExtForFormat : function(aMimeType) {
+  _getExtForFormat : function(aMimeType, aContentType) {
+    // Use the device capabilities utils mapping
+    var devCapsUtils =
+      Cc["@songbirdnest.com/Songbird/Device/DeviceCapabilitiesUtils;1"]
+        .getService(Ci.sbIDeviceCapabilitiesUtils);
+    var extension = devCapsUtils.mapContentTypeToFileExtension(aMimeType,
+                                                               aContentType);
+    if (extension)
+      return extension;
+    
+    // As a fallback, use nsIMIMEService to look it up
     var mimeService = Cc["@mozilla.org/mime;1"].getService(Ci.nsIMIMEService);
     if (mimeService) {
       var mimeExtension;
@@ -928,6 +938,7 @@ var DIW = {
         return SBString("device.info.mimetype." + mimeExtension, mimeExtension);
       }
     }
+    
     // Fall back to mime type if all else failed.
     return aMimeType;
   },
@@ -940,6 +951,7 @@ var DIW = {
 
   _getDevicePlaybackFormats: function DIW__getDevicePlaybackFormats() {
     var retFormats = [];
+    var extensions = [];
     try {
       var deviceCapabilities = this._device.capabilities;
       var functionArray = deviceCapabilities.getSupportedFunctionTypes({});
@@ -955,18 +967,18 @@ var DIW = {
         {
           var formatArray = deviceCapabilities.getSupportedFormats(
                               contentArray[contentCounter], {});
-          retFormats = retFormats.concat(formatArray);
+          if (formatArray.length > 0) {
+            for each (var format in formatArray) {
+              var ext = this._getExtForFormat(format,
+                                              contentArray[contentCounter]);
+              extensions.push(ext);
+            }
+          }
         }
       }
     } catch (err) { }
 
-    if (retFormats.length > 0) {
-      var formatIndex;
-      for (formatIndex in retFormats) {
-        retFormats[formatIndex] = this._getExtForFormat(retFormats[formatIndex]);
-      }
-    }
-    return retFormats.join(", ") || SBString("device.info.unknown");
+    return extensions.join(", ") || SBString("device.info.unknown");
   },
 
   /**
