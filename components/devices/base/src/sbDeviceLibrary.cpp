@@ -738,7 +738,7 @@ sbDeviceLibrary::UpdateMainLibraryListeners()
     rv = GetIsMgmtTypeSyncAll(&isSyncAll);
     NS_ENSURE_SUCCESS(rv, rv);
     if (isSyncAll) {
-      mMainLibraryListener->SetSyncMode(isManual, nsnull);
+      mMainLibraryListener->SetSyncMode(isManual, PR_FALSE, nsnull);
 
       // hook up the media list listeners to the existing lists
       nsRefPtr<sbPlaylistAttachListenerEnumerator> enumerator =
@@ -755,7 +755,7 @@ sbDeviceLibrary::UpdateMainLibraryListeners()
       rv = GetSyncPlaylistList(getter_AddRefs(playlists));
       NS_ENSURE_SUCCESS(rv, rv);
 
-      mMainLibraryListener->SetSyncMode(isManual, playlists);
+      mMainLibraryListener->SetSyncMode(isManual, PR_TRUE, playlists);
 
       // Listen to all the playlists specified for synchronization
       PRUint32 length;
@@ -783,7 +783,7 @@ sbDeviceLibrary::UpdateMainLibraryListeners()
       NS_ENSURE_SUCCESS(rv, rv);
     }
   } else {
-    mMainLibraryListener->SetSyncMode(isManual, nsnull);
+    mMainLibraryListener->SetSyncMode(isManual, PR_FALSE, nsnull);
 
     // remove the metadata updating listener
     rv = mainLib->RemoveListener(mMainLibraryListener);

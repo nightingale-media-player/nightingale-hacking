@@ -31,13 +31,14 @@
 #include <nsArrayUtils.h>
 #include <nsCOMPtr.h>
 
+#include <sbIDevice.h>
 #include <sbIOrderableMediaList.h>
 #include <sbIPropertyArray.h>
 
-#include <sbIDevice.h>
 #include "sbDeviceLibrary.h"
 
 #include <sbLibraryUtils.h>
+#include <sbMediaListBatchCallback.h>
 #include <sbStandardProperties.h>
 
 static nsresult GetSyncItemInLibrary(sbIMediaItem*  aMediaItem,
@@ -57,10 +58,11 @@ sbLibraryUpdateListener::sbLibraryUpdateListener(sbILibrary * aTargetLibrary,
     mIgnorePlaylists(aIgnorePlaylists),
     mSyncPlaylists(aSyncPlaylists)
 {
-  SetSyncMode(aManualMode, aPlaylistsList);
+  SetSyncMode(aManualMode, aSyncPlaylists, aPlaylistsList);
 }
 
 void sbLibraryUpdateListener::SetSyncMode(bool aManualMode,
+                                          bool aSyncPlaylists,
                                           nsIArray * aPlaylistsList) {
   NS_ASSERTION(!mSyncPlaylists && aPlaylistsList != nsnull,
                "Sync Management type isn't playlists but playlists were supplied");
@@ -68,7 +70,7 @@ void sbLibraryUpdateListener::SetSyncMode(bool aManualMode,
                "Sync Management type is playlists but no playlists were supplied");
   mPlaylistsList = aPlaylistsList;
   mManualMode = aManualMode;
-  mPlaylistListener->SetSyncPlaylists(aManualMode, aPlaylistsList);
+  mPlaylistListener->SetSyncPlaylists(aSyncPlaylists, aPlaylistsList);
 }
 
 nsresult sbLibraryUpdateListener::ShouldListenToPlaylist(sbIMediaList * aMainList,
@@ -417,11 +419,19 @@ sbPlaylistSyncListener::sbPlaylistSyncListener(sbILibrary* aTargetLibrary,
 {
   NS_ASSERTION(aTargetLibrary,
                "sbPlaylistSyncListener cannot be given a null aTargetLibrary");
+
+  // Initialize the batch helper table.
+  if (!mBatchHelperTable.Init()) {
+    NS_WARNING("Out of memory!");
+  }
 }
 
 sbPlaylistSyncListener::~sbPlaylistSyncListener()
 {
   StopListeningToPlaylists();
+  mBatchHelperTable.Clear();
+  mListRemovedArray.Clear();
+  mItemRemovedArray.Clear();
 }
 
 void sbPlaylistSyncListener::StopListeningToPlaylists() {
@@ -432,18 +442,17 @@ void sbPlaylistSyncListener::StopListeningToPlaylists() {
   mMediaLists.Clear();
 }
 
-nsresult sbPlaylistSyncListener::SetSyncPlaylists(bool aManualMode,
+nsresult sbPlaylistSyncListener::SetSyncPlaylists(bool aSyncPlaylists,
                                                   nsIArray * aMediaLists) {
   nsresult rv;
 
-  PRUint32 length = 0;
-  if (aMediaLists) {
-    rv = aMediaLists->GetLength(&length);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  if (mSyncPlaylists = aSyncPlaylists) {
+    PRUint32 length = 0;
+    if (aMediaLists) {
+      rv = aMediaLists->GetLength(&length);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
 
-  mSyncPlaylists = length != 0 && !aManualMode;
-  if (mSyncPlaylists) {
     mMediaLists.Clear();
     nsCOMPtr<sbIMediaList> mediaList;
     for (PRUint32 index = 0; index < length; ++index) {
@@ -603,68 +612,30 @@ sbPlaylistSyncListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
-  NS_ENSURE_TRUE(mTargetLibrary, NS_ERROR_NOT_INITIALIZED);
 
-  nsresult rv;
+  // Not in a batch. Rebuild playlist directly.
+  if (!mBatchHelperTable.Get(aMediaList, nsnull)) {
+    nsresult rv = RemoveItemNotInBatch(aMediaList, aMediaItem, aIndex);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    PRInt32 index;
+    PRBool success;
 
-  nsCOMPtr<sbIMediaItem> targetListAsItem;
-  rv = GetSyncItemInLibrary(aMediaList,
-                            mTargetLibrary,
-                            getter_AddRefs(targetListAsItem));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMediaList> deviceMediaList =
-    do_QueryInterface(targetListAsItem, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMediaItem> deviceMediaItem;
-  rv = GetSyncItemInLibrary(aMediaItem,
-                            mTargetLibrary,
-                            getter_AddRefs(deviceMediaItem));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-#if DEBUG
-  nsCOMPtr<sbIMediaItem> debugItem;
-  rv = deviceMediaList->GetItemByIndex(aIndex, getter_AddRefs(debugItem));
-  NS_ENSURE_SUCCESS(rv, rv);
-  PRBool debugEquals;
-  NS_ASSERTION(NS_SUCCEEDED(debugItem->Equals(targetListAsItem,
-                                               &debugEquals)) && debugEquals,
-                            "Item not the correct item in the playlist");
-#endif
-
-  // If we're sync'ing playlists we may need to remove the items
-  if (mSyncPlaylists) {
-    bool exists = false;
-
-    // If there is more than one of this item in the list we'll need to keep it
-    PRUint32 itemIndex;
-    rv = deviceMediaList->IndexOf(deviceMediaItem, 0, &itemIndex);
-    if (NS_SUCCEEDED(rv)) {
-      rv = deviceMediaList->IndexOf(deviceMediaItem, itemIndex + 1, &itemIndex);
-      exists = NS_SUCCEEDED(rv);
+    index = mListRemovedArray.IndexOf(aMediaList);
+    // Media list not found in the array. Append.
+    if (index < 0) {
+      success = mListRemovedArray.AppendObject(aMediaList);
+      NS_ENSURE_SUCCESS(success, NS_ERROR_OUT_OF_MEMORY);
     }
 
-    // If there was only one in the list, check other media lists
-    if (!exists) {
-      // Check to see if this is the only instance of this item
-      rv = IsItemInAnotherPlaylist(mTargetLibrary,
-                                   mMediaLists,
-                                   deviceMediaList,
-                                   deviceMediaItem,
-                                   exists);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    // If this is the only instance of this media item remove it from the
-    // device
-    if (!exists) {
-      mTargetLibrary->Remove(deviceMediaItem);
+    index = mItemRemovedArray.IndexOf(aMediaItem);
+    // Media item not found in the array. Append.
+    if (index < 0) {
+      success = mItemRemovedArray.AppendObject(aMediaItem);
+      NS_ENSURE_SUCCESS(success, NS_ERROR_OUT_OF_MEMORY);
     }
   }
-
-  rv = deviceMediaList->RemoveByIndex(aIndex);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   if (_retval) {
     *_retval = PR_FALSE; /* don't stop */
@@ -870,12 +841,255 @@ sbPlaylistSyncListener::OnListCleared(sbIMediaList *aMediaList,
 NS_IMETHODIMP
 sbPlaylistSyncListener::OnBatchBegin(sbIMediaList *aMediaList)
 {
+  NS_ENSURE_ARG_POINTER(aMediaList);
+
+  sbLibraryBatchHelper *batchHelper;
+  // Create a new batch helper for media list if not exist
+  if (!mBatchHelperTable.Get(aMediaList, &batchHelper)) {
+    batchHelper = new sbLibraryBatchHelper();
+    NS_ENSURE_TRUE(batchHelper, NS_ERROR_OUT_OF_MEMORY);
+    PRBool success = mBatchHelperTable.Put(aMediaList, batchHelper);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  // Increase the batch depth.
+  batchHelper->Begin();
+
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbPlaylistSyncListener::OnBatchEnd(sbIMediaList *aMediaList)
 {
+  NS_ENSURE_ARG_POINTER(aMediaList);
+
+  nsresult rv;
+
+  sbLibraryBatchHelper *batchHelper;
+  PRBool success = mBatchHelperTable.Get(aMediaList,
+                                         &batchHelper);
+  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+  // Decrease the batch depth.
+  batchHelper->End();
+
+  // Rebuild the playlist when the remove batch comes to an end.
+  if (!batchHelper->IsActive()) {
+    mBatchHelperTable.Remove(aMediaList);
+
+    PRInt32 index = mListRemovedArray.IndexOf(aMediaList);
+    // Not found in the array means not remove batch.
+    if (index < 0)
+      return NS_OK;
+
+    PRBool success = mListRemovedArray.RemoveObjectAt(index);
+    NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+    rv = RebuildPlaylistAfterItemRemoved(aMediaList);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if (!mBatchHelperTable.Count()) {
+    mListRemovedArray.Clear();
+    mItemRemovedArray.Clear();
+  }
+
+  return NS_OK;
+}
+
+class AddItemsBatchParams : public nsISupports
+{
+public:
+  NS_DECL_ISUPPORTS
+  nsCOMPtr<sbIMediaList>       deviceMediaList;
+  nsCOMArray<sbIMediaItem>     mediaItems;
+};
+NS_IMPL_ISUPPORTS0(AddItemsBatchParams)
+
+nsresult
+sbPlaylistSyncListener::RebuildPlaylistAfterItemRemoved(
+                                            sbIMediaList *aMediaList)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_TRUE(mTargetLibrary, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv;
+
+  nsCOMPtr<sbIMediaItem> targetListAsItem;
+  rv = GetSyncItemInLibrary(aMediaList,
+                            mTargetLibrary,
+                            getter_AddRefs(targetListAsItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaList> deviceMediaList =
+    do_QueryInterface(targetListAsItem, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Clear the media list first
+  rv = deviceMediaList->Clear();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set up the batch callback function parameters.
+  nsRefPtr<AddItemsBatchParams> addItemsBatchParams =
+                                     new AddItemsBatchParams();
+  NS_ENSURE_TRUE(addItemsBatchParams, NS_ERROR_OUT_OF_MEMORY);
+  addItemsBatchParams->deviceMediaList = deviceMediaList;
+
+  rv = sbLibraryUtils::GetItemsByProperty(
+                          aMediaList,
+                          NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                          NS_LITERAL_STRING("0"),
+                          addItemsBatchParams->mediaItems);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Rebuild the playlist to include all the remaining items in the media list.
+
+  // Set up the batch callback function.
+  nsCOMPtr<sbIMediaListBatchCallback>
+    batchCallback = new sbMediaListBatchCallback(AddItemsToList);
+  NS_ENSURE_TRUE(batchCallback, NS_ERROR_OUT_OF_MEMORY);
+
+  // Add items in batch mode.
+  rv = deviceMediaList->RunInBatchMode(batchCallback, addItemsBatchParams);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If we're sync'ing playlists we may need to remove the items
+  if (mSyncPlaylists) {
+    nsCOMPtr<sbIMediaItem> deviceMediaItem;
+    PRUint32 itemLength = mItemRemovedArray.Count();
+    for (PRInt32 i = itemLength - 1; i >= 0; --i) {
+      rv = GetSyncItemInLibrary(mItemRemovedArray[i],
+                                mTargetLibrary,
+                                getter_AddRefs(deviceMediaItem));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRBool success = mItemRemovedArray.RemoveObjectAt(i);
+      NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+      bool exists = false;
+
+      // If there is still one of this item in the list we'll need to keep it
+      PRBool contains;
+      rv = deviceMediaList->Contains(deviceMediaItem, &contains);
+      NS_ENSURE_SUCCESS(rv, rv);
+      exists = contains;
+
+      // If no one in the list, check other media lists
+      if (!exists) {
+        // Check to see if any contains this media item
+        rv = IsItemInAnotherPlaylist(mTargetLibrary,
+                                     mMediaLists,
+                                     deviceMediaList,
+                                     deviceMediaItem,
+                                     exists);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+
+      // If no list contains this media item, remove it from the device
+      if (!exists) {
+        mTargetLibrary->Remove(deviceMediaItem);
+      }
+    }
+  }
+
+  return NS_OK;
+}
+
+/* static */
+nsresult sbPlaylistSyncListener::AddItemsToList(nsISupports* aUserData)
+{
+  // Validate parameters.
+  NS_ENSURE_ARG_POINTER(aUserData);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the add items batch parameters.
+  AddItemsBatchParams* addItemsBatchParams =
+                         static_cast<AddItemsBatchParams *>(aUserData);
+  nsCOMPtr<sbIMediaList> mediaList = addItemsBatchParams->deviceMediaList;
+
+  // Add a batch of items to the list.
+  nsCOMPtr<sbIMediaItem> mediaItem;
+  for (PRUint32 i = 0; i < addItemsBatchParams->mediaItems.Count(); ++i) {
+    mediaItem = addItemsBatchParams->mediaItems.ObjectAt(i);
+    NS_ENSURE_TRUE(mediaItem, NS_ERROR_FAILURE);
+
+    rv = mediaList->Add(mediaItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbPlaylistSyncListener::RemoveItemNotInBatch(sbIMediaList *aMediaList,
+                                             sbIMediaItem *aMediaItem,
+                                             PRUint32 aIndex)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_TRUE(mTargetLibrary, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv;
+
+  nsCOMPtr<sbIMediaItem> targetListAsItem;
+  rv = GetSyncItemInLibrary(aMediaList,
+                            mTargetLibrary,
+                            getter_AddRefs(targetListAsItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaList> deviceMediaList =
+    do_QueryInterface(targetListAsItem, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItem> deviceMediaItem;
+  rv = GetSyncItemInLibrary(aMediaItem,
+                            mTargetLibrary,
+                            getter_AddRefs(deviceMediaItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+#if DEBUG
+  nsCOMPtr<sbIMediaItem> debugItem;
+  rv = deviceMediaList->GetItemByIndex(aIndex, getter_AddRefs(debugItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+  PRBool debugEquals;
+  NS_ASSERTION(NS_SUCCEEDED(debugItem->Equals(deviceMediaItem,
+                                               &debugEquals)) && debugEquals,
+                            "Item not the correct item in the playlist");
+#endif
+
+  if (mSyncPlaylists) {
+    bool exists = false;
+
+    // If there is more than one of this item in the list we'll need to keep it
+    PRUint32 itemIndex;
+    rv = deviceMediaList->IndexOf(deviceMediaItem, 0, &itemIndex);
+    if (NS_SUCCEEDED(rv)) {
+      rv = deviceMediaList->IndexOf(deviceMediaItem, itemIndex + 1, &itemIndex);
+      exists = NS_SUCCEEDED(rv);
+    }
+
+    // If there was only one in the list, check other media lists
+    if (!exists) {
+      // Check to see if this is the only instance of this item
+      rv = IsItemInAnotherPlaylist(mTargetLibrary,
+                                   mMediaLists,
+                                   deviceMediaList,
+                                   deviceMediaItem,
+                                   exists);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    // If this is the only instance of this media item remove it from the
+    // device
+    if (!exists) {
+      mTargetLibrary->Remove(deviceMediaItem);
+    }
+  }
+
+  rv = deviceMediaList->RemoveByIndex(aIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

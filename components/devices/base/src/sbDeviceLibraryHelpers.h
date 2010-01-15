@@ -32,10 +32,12 @@
 #define __SBDEVICELIBRARYHELPERS_H__
 
 #include <nsAutoPtr.h>
+#include <nsClassHashtable.h>
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 
 #include <sbIMediaListListener.h>
+#include <sbLibraryUtils.h>
 
 class nsIArray;
 class sbILibrary;
@@ -67,10 +69,27 @@ public:
 
   void StopListeningToPlaylists();
 
-  nsresult SetSyncPlaylists(bool aManualMode,
+  nsresult SetSyncPlaylists(bool aSyncPlaylists,
                             nsIArray * aMediaLists);
 protected:
   virtual ~sbPlaylistSyncListener();
+
+  /**
+   * Rebuild playlist after items removed.
+   */
+  nsresult RebuildPlaylistAfterItemRemoved(sbIMediaList *aMediaList);
+
+  /**
+   * Handle function for item removal which is not part of batch.
+   */
+  nsresult RemoveItemNotInBatch(sbIMediaList *aMediaList,
+                                sbIMediaItem *aMediaItem,
+                                PRUint32 aIndex);
+
+  /**
+   * Static batch callback function to add media items to media list.
+   */
+  static nsresult AddItemsToList(nsISupports* aUserData);
 
   /**
    * The device owns us and device library owns the device so we're good.
@@ -78,6 +97,17 @@ protected:
    */
   sbILibrary * mTargetLibrary;
   bool mSyncPlaylists;
+
+  /**
+   * Hash table of sbIMediaList -> sbLibraryBatchHelper for playlist batch
+   * removal
+   */
+  nsClassHashtable<nsISupportsHashKey,
+                   sbLibraryBatchHelper> mBatchHelperTable;
+  // Array of media lists that the removed media items belong to
+  nsCOMArray<sbIMediaList> mListRemovedArray;
+  // Array of media items removed
+  nsCOMArray<sbIMediaItem> mItemRemovedArray;
 
   /**
    * TODO: XXX hack to keep the playlists from going away and our listeners from going deaf
@@ -130,6 +160,7 @@ public:
    * \param aMgmtType A management type constant
    */
   void SetSyncMode(bool aManualMode,
+                   bool aSyncPlaylists,
                    nsIArray * aPlaylistsList);
 protected:
   /**

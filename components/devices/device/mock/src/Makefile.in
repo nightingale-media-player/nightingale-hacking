@@ -56,6 +56,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/device/mock/public \
                      $(topsrcdir)/components/devices/device/src \
                      $(topsrcdir)/components/include \
                      $(topsrcdir)/components/library/base/src/static \
+                     $(topsrcdir)/components/library/base/src \
                      $(topsrcdir)/components/library/localdatabase/src \
                      $(topsrcdir)/components/moz/strings/src \
                      $(topsrcdir)/components/moz/xpcom/src \
