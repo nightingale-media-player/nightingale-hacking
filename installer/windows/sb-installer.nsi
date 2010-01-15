@@ -464,7 +464,7 @@ Function .onInit
    Goto overrideVersionCheck
 
 confirmUnsupportedWinVersion:
-   MessageBox MB_OKCANCEL|MB_ICONSTOP "${InstallUnsupportedWinVersion}" /SD IDCANCEL IDOK overrideVersionCheck
+   MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION "${InstallUnsupportedWinVersion}" /SD IDCANCEL IDOK overrideVersionCheck
    Quit
 
 overrideVersionCheck:
