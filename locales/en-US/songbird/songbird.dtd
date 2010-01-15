@@ -506,7 +506,7 @@
 
 <!ENTITY device.sync.header.label "Sync Settings">
 <!ENTITY device.sync.auto_sync.label "Sync">
-<!ENTITY device.sync.sync_all.label "Sync all media">
+<!ENTITY device.sync.sync_all.label "Sync all media and playlists">
 <!ENTITY device.sync.sync_selected.label "Selected playlists:">
 <!ENTITY device.sync.manual.label "Manually manage">
 <!ENTITY device.sync.playlist.title "Title">
