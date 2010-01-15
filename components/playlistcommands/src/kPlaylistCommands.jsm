@@ -45,6 +45,7 @@ var kPlaylistCommands = {
   MEDIAITEM_CLEARHISTORY         : "{7332def6-0b4b-4c4f-83f6-2f18ebc41259}",
   MEDIAITEM_GETARTWORK           : "{20f183c2-64c4-4e53-974c-eb6b6db1e570}",
 
+  MEDIALIST_PLAY                 : "{77c0c7d6-6380-4760-b95c-2a5a7c76047c}",
   MEDIALIST_REMOVE               : "{8be21529-6b2e-4ac7-b96d-c97d78dab81b}",
   MEDIALIST_RENAME               : "{b77c5259-62fc-4cd7-af79-ece9adb778b6}",
   MEDIALIST_UPDATESMARTMEDIALIST : "{a21c0a87-9f0b-4f43-aafe-92c055a13a2d}",

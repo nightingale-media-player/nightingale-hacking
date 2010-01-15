@@ -128,6 +128,7 @@ PublicPlaylistCommands.prototype = {
   m_cmd_UncheckAll                : null, // uncheck all
   
   // Commands that act on playlist themselves
+  m_cmd_list_Play                 : null, // play the selected playlist
   m_cmd_list_Remove               : null, // remove the selected playlist
   m_cmd_list_Rename               : null, // rename the selected playlist
 
@@ -517,6 +518,25 @@ PublicPlaylistCommands.prototype = {
                                                  "library_cmd_cleanupdownloads",
                                                  plCmd_DownloadHasCompletedItems);
 
+      // -----------------------------------------------------------------------
+      // The Play Playlist action
+      // -----------------------------------------------------------------------
+
+      this.m_cmd_list_Play = new PlaylistCommandsBuilder();
+
+      this.m_cmd_list_Play.appendAction(null,
+                                        "playlist_cmd_play",
+                                        "&command.playlist.play",
+                                        "&command.tooltip.playlist.play",
+                                        plCmd_PlayPlaylist_TriggerCallback);
+
+      this.m_cmd_list_Play.setCommandShortcut(null,
+                                    "playlist_cmd_play",
+                                    "&command.playlist.shortcut.key.play",
+                                    "&command.playlist.shortcut.keycode.play",
+                                    "&command.playlist.shortcut.modifiers.play",
+                                    true);
+
       // --------------------------------------------------------------------------
       // The Remove Playlist action
       // --------------------------------------------------------------------------
@@ -667,6 +687,7 @@ PublicPlaylistCommands.prototype = {
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_CLEARHISTORY, this.m_cmd_ClearHistory);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_GETARTWORK, this.m_cmd_GetArtwork);
 
+      this.m_mgr.publish(kPlaylistCommands.MEDIALIST_PLAY, this.m_cmd_list_Play);
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_REMOVE, this.m_cmd_list_Remove);
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_RENAME, this.m_cmd_list_Rename);
 
@@ -675,6 +696,10 @@ PublicPlaylistCommands.prototype = {
       // --------------------------------------------------------------------------
 
       this.m_defaultCommands = new PlaylistCommandsBuilder();
+
+      this.m_defaultCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_play",
+                                                    this.m_cmd_Play);
 
       this.m_defaultCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_edit",
@@ -985,6 +1010,10 @@ PublicPlaylistCommands.prototype = {
       // --------------------------------------------------------------------------
 
       this.m_serviceTreeDefaultCommands = new PlaylistCommandsBuilder();
+  
+      this.m_serviceTreeDefaultCommands.appendPlaylistCommands(null,
+                                              "servicetree_cmdobj_play",
+                                              this.m_cmd_list_Play);
 
       this.m_serviceTreeDefaultCommands.appendPlaylistCommands(null,
                                               "servicetree_cmdobj_remove",
@@ -1056,6 +1085,7 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_CLEARHISTORY, this.m_cmd_ClearHistory);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_GETARTWORK, this.m_cmd_GetArtwork);
 
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_PLAY, this.m_cmd_list_Play);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_REMOVE, this.m_cmd_list_Remove);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_RENAME, this.m_cmd_list_Rename);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_UPDATESMARTMEDIALIST, this.m_cmd_UpdateSmartPlaylist);
@@ -1144,6 +1174,7 @@ PublicPlaylistCommands.prototype = {
     this.m_cmd_CleanUpDownloads.shutdown();
     this.m_cmd_ClearHistory.shutdown();
     this.m_cmd_GetArtwork.shutdown();
+    this.m_cmd_list_Play.shutdown();
     this.m_cmd_list_Remove.shutdown();
     this.m_cmd_list_Rename.shutdown();
     this.m_cmd_UpdateSmartPlaylist.shutdown();
@@ -1506,6 +1537,19 @@ function plCmd_CopyToDevice_TriggerCallback(aContext, aSubMenuId, aCommandId, aH
     //XXX not implemented
     //unwrap(aContext.playlist).sendCopyToDeviceEvent();
   }
+}
+
+// Called when the "play playlist" action is triggered
+function plCmd_PlayPlaylist_TriggerCallback(aContext,
+                                            aSubMenuId, aCommandId, aHost) {
+  var window = unwrap(aContext.window);
+  var mediaList = unwrap(aContext.medialist);
+  var gBrowser = window.gBrowser;
+  var gMM = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+              .getService(Ci.sbIMediacoreManager);
+  gBrowser.loadMediaList(mediaList);
+  var view = mediaList.createView();
+  gMM.sequencer.playView(view);
 }
 
 // Called when the "remove playlist" action is triggered
