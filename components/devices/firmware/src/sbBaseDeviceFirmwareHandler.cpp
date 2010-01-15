@@ -921,29 +921,49 @@ sbBaseDeviceFirmwareHandler::GetDefaultFirmwareUpdate(sbIDeviceFirmwareUpdate **
   *aFirmwareUpdate = nsnull;
 
   nsAutoMonitor mon(mMonitor);
-  NS_ENSURE_TRUE(mDefaultFirmwareLocation, NS_ERROR_NOT_INITIALIZED);
+  
+  // No default firmware available. Return nsnull.
+  NS_ENSURE_TRUE(mDefaultFirmwareLocation, NS_OK);
 
   PRBool schemeIsChrome = PR_FALSE;
   nsresult rv = mDefaultFirmwareLocation->SchemeIs("chrome",
                                                    &schemeIsChrome);
   NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(schemeIsChrome, NS_ERROR_INVALID_ARG);
 
-  nsCOMPtr<nsIChromeRegistry> chromeRegistry =
-    do_GetService("@mozilla.org/chrome/chrome-registry;1", &rv);
+  PRBool schemeIsFile = PR_FALSE;
+  rv = mDefaultFirmwareLocation->SchemeIs("file",
+                                          &schemeIsFile);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIURI> fileURI;
-  rv = chromeRegistry->ConvertChromeURL(mDefaultFirmwareLocation,
-                                        getter_AddRefs(fileURI));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(fileURI, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
+  
   nsCOMPtr<nsIFile> file;
-  rv = fileURL->GetFile(getter_AddRefs(file));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if(schemeIsChrome) {
+    nsCOMPtr<nsIChromeRegistry> chromeRegistry =
+      do_GetService("@mozilla.org/chrome/chrome-registry;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIURI> fileURI;
+    rv = chromeRegistry->ConvertChromeURL(mDefaultFirmwareLocation,
+                                          getter_AddRefs(fileURI));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(fileURI, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = fileURL->GetFile(getter_AddRefs(file));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else if(schemeIsFile) {
+    nsCOMPtr<nsIFileURL> fileURL = 
+      do_QueryInterface(mDefaultFirmwareLocation, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = fileURL->GetFile(getter_AddRefs(file));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    // :(
+    return NS_ERROR_INVALID_ARG;
+  }
 
   nsCOMPtr<sbIDeviceFirmwareUpdate> firmwareUpdate =
     do_CreateInstance(SB_DEVICEFIRMWAREUPDATE_CONTRACTID, &rv);

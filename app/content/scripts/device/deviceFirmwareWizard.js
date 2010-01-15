@@ -679,6 +679,7 @@ var deviceFirmwareWizard = {
         }
         catch(e) {
           criticalFailure = true;
+          Cu.reportError(e);
         }          
 
         if(continueSuccess || criticalFailure) {

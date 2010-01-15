@@ -65,7 +65,7 @@
         -->
 
         <!-- Product Registration -->
-        <xul:groupbox tool="register" pack="center" 
+        <xul:groupbox tool="register" pack="center"
                       orient="vertical" hidden="true">
           <xul:caption label="&device.tools.product_registration.title;"/>
           <xul:description>
@@ -79,7 +79,7 @@
         </xul:groupbox>
 
         <!-- Update Firmware -->
-        <xul:groupbox tool="update" pack="center" 
+        <xul:groupbox tool="update" pack="center"
                       orient="vertical" hidden="true">
           <xul:caption label="&device.tools.update_firmware.title;"/>
           <xul:hbox>
@@ -92,15 +92,15 @@
               &device.tools.update_firmware.description;
             </xul:description>
             <xul:groupbox sbid="sb-device-tools-busy-device-warning"
-                          orient="vertical" 
-                          pack="center" 
+                          orient="vertical"
+                          pack="center"
                           hidden="true">
               <xul:description sbid="sb-device-tools-busy-device-warning-desc"
                                class="dev-tools-busy-warning" />
             </xul:groupbox>
             <xul:hbox>
               <xul:spacer flex="1"/>
-              <xul:button sbid="sb-device-tools-update-firmware-button" 
+              <xul:button sbid="sb-device-tools-update-firmware-button"
                           label="&device.tools.update_firmware.label;"
                           oncommand="updateFirmware();"/>
             </xul:hbox>
@@ -108,7 +108,7 @@
         </xul:groupbox>
 
         <!-- Repair Device -->
-        <xul:groupbox tool="repair" pack="center" 
+        <xul:groupbox tool="repair" pack="center"
                       orient="vertical" hidden="true">
           <xul:caption label="&device.tools.repair_device.title;" />
           <xul:vbox sbid="sb-device-tools-format" hidden="true">
@@ -123,17 +123,17 @@
             </xul:hbox>
           </xul:vbox>
 
-          <xul:label value="&device.tools.repair_device.title;"
-                     sbid="sb-device-tools-repair-label" 
-                     hidden="true" />
-          <xul:description xmlns="http://www.w3.org/1999/xhtml">
-            &device.tools.repair_device.description;
-          </xul:description>
-          <xul:hbox>
-            <xul:spacer flex="1"/>
-            <xul:button label="&device.tools.repair_device.label;"
-                        oncommand="repairDevice();"/>
-          </xul:hbox>
+          <xul:vbox sbid="sb-device-tools-repair" hidden="true">
+            <xul:label value="&device.tools.repair_device.title;"/>
+            <xul:description xmlns="http://www.w3.org/1999/xhtml">
+              &device.tools.repair_device.description;
+            </xul:description>
+            <xul:hbox>
+              <xul:spacer flex="1"/>
+              <xul:button label="&device.tools.repair_device.label;"
+                          oncommand="repairDevice();"/>
+            </xul:hbox>
+          </xul:vbox>
         </xul:groupbox>
 
         <!-- Support -->
@@ -327,7 +327,7 @@
 
       <method name="_update">
         <body>
-              <![CDATA[
+                                                      <![CDATA[
         if(!this._currentFirmwareVersion) {
           this._currentFirmwareVersion =
             document.getAnonymousElementByAttribute(this,
@@ -404,17 +404,26 @@
         }
         
         this._currentFirmwareVersion.value = firmwareVersion;
-        
+
+        var formatBoxHidden = true;
         if (!this.formatBox && this.device.supportsReformat) {
           this.formatBox = document.getAnonymousElementByAttribute(this,
                                                     "sbid",
                                                     "sb-device-tools-format");
-          this.formatBox.hidden = false;
-
-          var repairLabel = document.getAnonymousElementByAttribute(this,
-                                                "sbid",
-                                                "sb-device-tools-repair-label");
-          repairLabel.hidden = false;
+          this.formatBox.hidden = formatBoxHidden = false;
+        }
+        
+        var repairBoxHidden = true;
+        if (!this.repairBox && this._firmwareHandler.defaultFirmwareUpdate) {
+          this.repairBox = document.getAnonymousElementByAttribute(this,
+                                               "sbid",
+                                               "sb-device-tools-repair");
+          this.repairBox.hidden = repairBoxHidden = false;
+        }
+        
+        // We don't support reformatting or restoring the firmware, hide the toolbox.
+        if (formatBoxHidden && repairBoxHidden) {
+          this._getToolBox("repair").collapsed = true;
         }
         
         this._startBusyCheck();
