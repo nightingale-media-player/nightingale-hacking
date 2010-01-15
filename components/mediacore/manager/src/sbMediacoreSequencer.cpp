@@ -1240,7 +1240,7 @@ sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Pause the sequencer if playback error happens to video.
-    if (!contentType.Equals(NS_LITERAL_STRING("audio"))) {
+    if (!contentType.Equals(NS_LITERAL_STRING("video"))) {
       rv = Next();
       NS_ENSURE_SUCCESS(rv, rv);
     }
