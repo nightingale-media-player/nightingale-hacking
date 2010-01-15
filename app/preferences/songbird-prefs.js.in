@@ -409,6 +409,7 @@ pref("songbird.albumart.maxsize", 16777216);
 // Scanning preferences
 pref("songbird.albumart.scanner.interval", 10);
 pref("songbird.albumart.scanner.timeout", 10000);
+pref("songbird.albumart.autofetch.disabled", false);
 // Fetcher preferences
 pref("songbird.albumart.file.extensions", "jpg,jpeg,png,gif,bmp");
 pref("songbird.albumart.file.base_names", "cover,folder");

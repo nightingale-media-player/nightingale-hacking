@@ -731,6 +731,8 @@
 <!ENTITY albumartpreferences.prefpane.priorities.up "Up">
 <!ENTITY albumartpreferences.prefpane.priorities.down "Down">
 <!ENTITY albumartpreferences.prefpane.priorities.reset "Reset">
+<!ENTITY albumartpreferences.prefpane.autofetch.label "Auto-fetch Album Artwork">
+<!ENTITY albumartpreferences.prefpane.autofetch.tooltip "Auto fetch album artwork when a track is played or selected, depending on the mode of the Album Artwork display pane.  Performance may be impacted when this feature is enabled.">
 
 <!-- Wizard entities. -->
 <!ENTITY wizard.button.back.label      "Go Back">

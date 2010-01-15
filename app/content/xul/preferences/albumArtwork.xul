@@ -56,6 +56,11 @@
         name="songbird.albumart.file.extensions"
         type="string"
         instantApply="true"/>
+      <preference id="songbird.albumart.autofetch.disabled"
+        name="songbird.albumart.autofetch.disabled"
+        type="bool"
+        inverted="true"
+        instantApply="true" />
     </preferences>
 
     <groupbox flex="1">
@@ -86,6 +91,10 @@
       <checkbox label="&albumartpreferences.prefpane.enablewrite.label;"
                 preference="songbird.metadata.artwork.enableWriting"
                 tooltip="&albumartpreferences.prefpane.enablewrite.tooltip;"/>
+
+      <checkbox label="&albumartpreferences.prefpane.autofetch.label;"
+                preference="songbird.albumart.autofetch.disabled"
+                tooltip="&albumartpreferences.prefpane.autofetch.tooltip;"/>
     </groupbox>
 
     <groupbox flex="1">
