@@ -160,6 +160,7 @@ var DPWCfg = {
       localeSuffix: "mounting",
       progressMeterUndetermined: true,
       canBeCompleted: true,
+      showIdleMessage: true,
       showProgress: true,
       updateBusy: true,
       operationCanceled: false
@@ -171,6 +172,7 @@ var DPWCfg = {
       localeSuffix: "cancelling",
       progressMeterUndetermined: true,
       canBeCompleted: true,
+      showIdleMessage: true,
       showProgress: true,
       updateBusy: true,
       operationCanceled: true
