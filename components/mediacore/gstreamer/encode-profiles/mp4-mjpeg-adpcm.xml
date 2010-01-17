@@ -16,8 +16,11 @@
     <type>image/jpeg</type>
     <quality-property name="bpp" quality="0" value="1.5"/>
     <quality-property name="bpp" quality="1" value="12"/>
+
+<!-- bug 19646: disable quality setting on jpecenc until crash can be solved
     <property name="quality" type="int" min="0" max="100" default="100"
-              mapping="quality" scale="100"/>
+              mapping="quality" scale="100"/> 
+-->
   </video>
 
   <audio>
