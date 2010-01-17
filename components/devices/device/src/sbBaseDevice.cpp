@@ -268,7 +268,8 @@ sbBaseDevice::TransferRequest::TransferRequest() :
   transcodeProfile(nsnull),
   contentSrcSet(PR_FALSE),
   destinationMediaPresent(PR_FALSE),
-  needsTranscoding(PR_FALSE)
+  needsTranscoding(PR_FALSE),
+  transcoded(PR_FALSE)
 {
 }
 

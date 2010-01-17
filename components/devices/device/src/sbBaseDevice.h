@@ -172,6 +172,8 @@ public:
                                         copied or transcoded to the device) */
     PRBool needsTranscoding;         /* if true, write item media needs to be
                                         transcoded */
+    PRBool transcoded;               /* if true, write item media was
+                                        transcoded */
     nsCOMPtr<sbITranscodeAlbumArt> albumArt; /* Album art transcoding object,
                                                 or null if no album art
                                                 transcoding should be done */
