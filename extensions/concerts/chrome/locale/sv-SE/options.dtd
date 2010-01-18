@@ -1,10 +1,8 @@
-<!ENTITY prefs.about "Om">
-<!ENTITY prefs.about.text "Om du bor i USA eller England, kan du få reda på när artister i ditt bibliotek har en spelning i din stad. Ange din ort för att komma igång.">
-<!ENTITY prefs.location.text "Välj den mest närbelägna staden för att se konserter i det kringliggande området">
+<!ENTITY prefs.location "Plats">
+<!ENTITY prefs.location.descr "Välj den mest närbelägna staden för att se konserter i det kringliggande området">
 <!ENTITY prefs.library "Bibliotek">
 <!ENTITY prefs.library.text "Songbird kan lägga till en kolumn i din bibliotek som kommer att indikera när någon av dina artister har en spelning i ditt område.">
 <!ENTITY prefs.library.checklabel "Lägg till &quot;På turné&quot; kolumnen i mitt bibliotek">
-<!ENTITY prefs.location "Plats">
 <!ENTITY prefs.country "Land">
 <!ENTITY prefs.country.us "USA">
 <!ENTITY prefs.country.uk "England">

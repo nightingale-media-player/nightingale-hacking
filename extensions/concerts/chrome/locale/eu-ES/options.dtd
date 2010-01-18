@@ -1,7 +1,13 @@
-<!ENTITY prefs.library "Liburutegia">
 <!ENTITY prefs.location "Kokapena">
+<!ENTITY prefs.location.descr "Bilatu nor egongo den zure inguruan. Ikuskizunik ez galtzeko, &brandShortName;ek zure gogoko artista eta club-ak jarraitu ditzake. Aukeratu hiririk hurbilena eta ikusi nor datorren.">
+<!ENTITY prefs.library "Liburutegia">
+<!ENTITY prefs.library.text "Songbirdek artistetako bat zure herriaren inguruan biran dabilela adierazteko zutabe bat gehitu dezake liburutegian.">
+<!ENTITY prefs.library.checklabel "Gehitu &quot;Biran&quot; zutabea nire liburutegira">
 <!ENTITY prefs.country "Herrialdea">
 <!ENTITY prefs.country.us "Amerikako Estatu Batuak">
 <!ENTITY prefs.country.uk "Erresuma Batua">
 <!ENTITY prefs.state "Estatua">
 <!ENTITY prefs.city "Hiria">
+<!ENTITY prefs.radius "Erradioa">
+<!ENTITY prefs.findShows "Ikuskizunak bilatu">
+<!ENTITY concerts.poweredby "Kontzertu zerrendak honek eskaintzen ditu:">

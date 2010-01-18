@@ -1,10 +1,8 @@
-<!ENTITY prefs.about "Über">
-<!ENTITY prefs.about.text "Wenn Sie in den USA oder Grossbritannien leben, können Sie herausfinden, wann Künstler in ihrer Stadt spielen. Geben Sie ihren Ort ein, um zu starten.">
-<!ENTITY prefs.location.text "Wählen Sie die nächste Stadt aus, um Konzerte in der Nähe anzuzeigen">
+<!ENTITY prefs.location "Ort">
+<!ENTITY prefs.location.descr "Wählen Sie die nächste Stadt aus, um Konzerte in der Nähe anzuzeigen">
 <!ENTITY prefs.library "Biblithek">
 <!ENTITY prefs.library.text "Songbird kann eine Spalte zu ihrer Bibliothek hinzufügen, die zeigt, ob Künstler in ihrer Stadt sind.">
 <!ENTITY prefs.library.checklabel "Füge die &quot;On Tour&quot;-Spalte zur Bibliothek hinzu">
-<!ENTITY prefs.location "Ort">
 <!ENTITY prefs.country "Land">
 <!ENTITY prefs.country.us "Vereinigte Staaten">
 <!ENTITY prefs.country.uk "Grossbritannien">

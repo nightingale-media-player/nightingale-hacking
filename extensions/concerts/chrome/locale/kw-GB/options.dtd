@@ -1,10 +1,8 @@
-<!ENTITY prefs.about "A-dro">
-<!ENTITY prefs.about.text "Mar os ta trigys y&apos;n SU po y&apos;n RU, ty a yll dismygi p&apos;eur yma artydhyon dhyworth dha lyverva ow seni y&apos;th cita. Ynwor an tyller mayth os trigys ynno rag dalleth gensi.">
-<!ENTITY prefs.location.text "Dewis an nessa cita dhis rag gweles keskanow yn dha gyrhyn.">
+<!ENTITY prefs.location "Tyller">
+<!ENTITY prefs.location.descr "Dewis an nessa cita dhis rag gweles keskanow yn dha gyrhyn.">
 <!ENTITY prefs.library "Lyverva">
 <!ENTITY prefs.library.text "Songbird a yll keworra dhe&apos;th lyverva-ilow koloven a&apos;n diskwa pan yma onan a&apos;th artydhyon ow seni y&apos;th cita.">
 <!ENTITY prefs.library.checklabel "Keworra an goloven &apos;Ow Kul Tro&apos; dhe&apos;m lyverva">
-<!ENTITY prefs.location "Tyller">
 <!ENTITY prefs.country "Pow">
 <!ENTITY prefs.country.us "Statys Unys">
 <!ENTITY prefs.country.uk "Ruwvaneth Unys">

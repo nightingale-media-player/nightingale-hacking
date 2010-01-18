@@ -1,9 +1,3 @@
-<!ENTITY concerts.groupby "Agrupar por">
-<!ENTITY concerts.libraryartists "Solo mostrar conciertos de artistas en mi biblioteca">
-<!ENTITY concerts.sort.artist "Nombre del artista">
-<!ENTITY concerts.sort.event "Fecha del concierto">
-<!ENTITY concerts.sort.venue "Lugar">
-<!ENTITY concerts.editlocation "cambiar">
 <!ENTITY concerts.loading "Comprobando conciertos cerca de tí...">
 <!ENTITY concerts.changelocation "Cambiar ubicación">
 <!ENTITY concerts.easteregg.fail "FALLO">

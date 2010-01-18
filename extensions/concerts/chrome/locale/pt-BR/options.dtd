@@ -1,10 +1,8 @@
-<!ENTITY prefs.about "Sobre">
-<!ENTITY prefs.about.text "Se você vive nos EUA ou Inglaterra, pode descobrir quando artistas de sua biblioteca de música tocarão em sua cidade. Informe sua localização para iniciar.">
-<!ENTITY prefs.location.text "Escolha a cidade mais próxima para verificar os concertos nas redondezas">
+<!ENTITY prefs.location "Localização">
+<!ENTITY prefs.location.descr "Escolha a cidade mais próxima para verificar os concertos nas redondezas">
 <!ENTITY prefs.library "Biblioteca">
 <!ENTITY prefs.library.text "Songbird pode adicionar uma coluna em sua biblioteca de músicas que irá indicar quando algum artista irá tocar em sua cidade.">
 <!ENTITY prefs.library.checklabel "Adicionar a coluna &quot;em turnê&quot; em sua biblioteca de música">
-<!ENTITY prefs.location "Localização">
 <!ENTITY prefs.country "País">
 <!ENTITY prefs.country.us "Estados Unidos">
 <!ENTITY prefs.country.uk "Inglaterra">

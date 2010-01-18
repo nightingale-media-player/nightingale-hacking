@@ -4,7 +4,6 @@
 <!ENTITY prefs.library "Library">
 <!ENTITY prefs.library.text "Songbird can add a column to your music library that will indicate when any of your artists are on tour in your town.">
 <!ENTITY prefs.library.checklabel "Add the On Tour column to my library">
-<!ENTITY prefs.location "Location">
 
 <!ENTITY prefs.country "Country">
 <!ENTITY prefs.country.us "United States">

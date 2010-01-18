@@ -1,0 +1,6 @@
+<!ENTITY concerts.loading "Size yakın kimler turnede kontrol ediyoruz...">
+<!ENTITY concerts.changelocation "Mekanı değiştir">
+<!ENTITY concerts.easteregg.fail "BAŞARISIZ">
+<!ENTITY concerts.easteregg.fail.2 "Bunun için hiçbir konser bulunamadı">
+<!ENTITY concerts.timeout.error "İnternete bağlı değilsiniz ya da konser veritabanımız şu anda çalışmıyor. Lütfen birkaç dakika sonra yeniden deneyiniz.">
+<!ENTITY concerts.timeoutreport.error "Sorun bildir">

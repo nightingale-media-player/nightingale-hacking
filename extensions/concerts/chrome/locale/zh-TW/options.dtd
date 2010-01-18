@@ -1,10 +1,8 @@
-<!ENTITY prefs.about "關於">
-<!ENTITY prefs.about.text "若你住在美國或英國，你可以尋找媒體庫中的演出者有哪些近期會來到你居住的地方表演。請輸入你居住的位置開始搜尋。">
-<!ENTITY prefs.location.text "選擇離你最近的城市以尋找附近是否有舉辦演唱會">
+<!ENTITY prefs.location "位置">
+<!ENTITY prefs.location.descr "選擇離你最近的城市以尋找附近是否有舉辦演唱會">
 <!ENTITY prefs.library "媒體庫">
 <!ENTITY prefs.library.text "Songbird 可以在媒體庫中加入一個欄位，當該演出者到你居住的地方演出時就會提醒你。">
 <!ENTITY prefs.library.checklabel "於媒體庫加入「巡演中」欄位">
-<!ENTITY prefs.location "位置">
 <!ENTITY prefs.country "國家">
 <!ENTITY prefs.country.us "美國">
 <!ENTITY prefs.country.uk "英國">

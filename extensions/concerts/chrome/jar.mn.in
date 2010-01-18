@@ -1,18 +1,24 @@
 concerts.jar:
 % content concerts  %content/	contentaccessible=yes
 % locale  concerts  en-US  %locale/en-US/
-% locale  concerts  en-GB  %locale/en-GB/
-#% locale  concerts  eu-ES  %locale/eu-ES/
-% locale  concerts  zh-CN  %locale/zh-CN/
-% locale  concerts  zh-TW  %locale/zh-TW/
-% locale  concerts  kw-GB  %locale/kw-GB/
-% locale  concerts  fr-FR  %locale/fr-FR/
+#% locale  concerts  ca-AD  %locale/ca/
 % locale  concerts  de-DE  %locale/de-DE/
-% locale  concerts  pl-PL  %locale/pl-PL/
-% locale  concerts  pt-BR  %locale/pt-BR/
-% locale  concerts  ru-RU  %locale/ru-RU/
+% locale  concerts  en-GB  %locale/en-GB/
 % locale  concerts  es-ES  %locale/es-ES/
-% locale  concerts  sv-SE  %locale/sv-SE/
+#% locale  concerts  eu-ES  %locale/eu-ES/
+% locale  concerts  fr %locale/fr/
+% locale  concerts  fr-FR  %locale/fr/
+% locale  concerts  hu-HU  %locale/hu-HU/
+#% locale  concerts  kw-GB  %locale/kw-GB/
+#% locale  concerts  pl-PL  %locale/pl-PL/
+#% locale  concerts  pt-BR  %locale/pt-BR/
+% locale  concerts  pt-PT  %locale/pt-PT/
+#% locale  concerts  ru-RU  %locale/ru-RU/
+% locale  concerts  sl-SI  %locale/sl-SI/
+#% locale  concerts  sv-SE  %locale/sv-SE/
+#% locale  concerts  tr-TR  %locale/tr-TR/
+#% locale  concerts  zh-CN  %locale/zh-CN/
+#% locale  concerts  zh-TW  %locale/zh-TW/
 % skin    concerts  classic/1.0 %skin/
 % overlay chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://concerts/content/scripts-overlay.xul
 @include_all_to
