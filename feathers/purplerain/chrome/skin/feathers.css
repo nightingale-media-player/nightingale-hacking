@@ -1324,3 +1324,13 @@ domi-panelset label.viewer-title {
 #extensionDescription {
   color: rgb(230,230,230) !important;
 }
+
+/******************************************************************************
+* SOFTWARE UPDATE DIALGO
+******************************************************************************/
+#incompatibleWarning {
+  background-color: white !important;
+}
+#incompatibleWarning > vbox > description {
+  color: black !important;
+}
