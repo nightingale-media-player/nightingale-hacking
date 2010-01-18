@@ -413,13 +413,17 @@ sbMetadataAlbumArtFetcher::GetMetadataHandler
   nsCOMPtr<sbIMetadataHandler> metadataHandler;
   nsresult rv;
 
+  // Stash the album art source list into a temporary variable in case it's
+  // changed from underneath us. (attempt to fix bug 19617)
+  nsCOMPtr<nsIArray> albumArtSourceList = mAlbumArtSourceList;
+
   // Try getting a metadata handler from the album art source list.
-  if (mAlbumArtSourceList) {
+  if (albumArtSourceList) {
     PRUint32 albumArtSourceListCount;
-    rv = mAlbumArtSourceList->GetLength(&albumArtSourceListCount);
+    rv = albumArtSourceList->GetLength(&albumArtSourceListCount);
     NS_ENSURE_SUCCESS(rv, rv);
     for (PRUint32 i = 0; i < albumArtSourceListCount; i++) {
-      metadataHandler = do_QueryElementAt(mAlbumArtSourceList, i, &rv);
+      metadataHandler = do_QueryElementAt(albumArtSourceList, i, &rv);
       if (NS_SUCCEEDED(rv))
         break;
     }
