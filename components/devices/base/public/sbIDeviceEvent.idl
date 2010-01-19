@@ -34,7 +34,7 @@ interface sbIDeviceEventTarget;
  * \interface sbIDeviceEvent
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(d2d00b3e-d0b7-4d2d-b1b8-17076d59d64c)]
+[scriptable, uuid(57aca57a-84fa-441a-bba5-c8855f2124d9)]
 interface sbIDeviceEvent : nsISupports
 {
   /**
@@ -153,6 +153,10 @@ interface sbIDeviceEvent : nsISupports
   // events for device scans
   const unsigned long EVENT_DEVICE_SCAN_START          = EVENT_DEVICE_BASE + 38;
   const unsigned long EVENT_DEVICE_SCAN_END            = EVENT_DEVICE_BASE + 39;
+
+  // special before device added event.
+  const unsigned long EVENT_DEVICE_BEFORE_ADDED        = EVENT_DEVICE_BASE + 40;
+
   /**
    * 
    */

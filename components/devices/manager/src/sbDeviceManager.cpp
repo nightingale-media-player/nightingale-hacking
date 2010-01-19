@@ -44,6 +44,7 @@
 
 #include "sbIDeviceController.h"
 #include "sbDeviceEvent.h"
+#include "sbDeviceEventBeforeAddedData.h"
 #include "sbDeviceUtils.h"
 
 #include <sbIPrompter.h>
@@ -191,6 +192,15 @@ NS_IMETHODIMP sbDeviceManager::CreateEvent(PRUint32 aType,
                                     aDeviceState,
                                     aDeviceSubState,
                                     _retval);
+}
+
+/* sbIDeviceEventBeforeAddedData createBeforeAddedData(in sbIDevice aDevice */
+NS_IMETHODIMP sbDeviceManager::CreateBeforeAddedData(
+                                 sbIDevice *aDevice,
+                                 sbIDeviceEventBeforeAddedData **aData)
+{
+  return sbDeviceEventBeforeAddedData::CreateEventBeforeAddedData(aDevice, 
+                                                                  aData);
 }
 
 /* sbIDevice sbIDeviceManager::getDeviceForItem(in sbIMediaItem aItem); */

@@ -37,6 +37,7 @@ CPP_SRCS = sbBaseDeviceEventTarget.cpp \
            sbDeviceCapsCompatibility.cpp \
            sbDeviceCompatibility.cpp \
            sbDeviceEvent.cpp \
+           sbDeviceEventBeforeAddedData.cpp \
            sbDeviceLibrary.cpp \
            sbDeviceLibraryHelpers.cpp \
            sbDeviceProperties.cpp \

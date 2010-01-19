@@ -37,6 +37,7 @@ XPIDL_SRCS = sbIDevice.idl \
              sbIDeviceContent.idl \
              sbIDeviceControllerRegistrar.idl \
              sbIDeviceEvent.idl \
+             sbIDeviceEventBeforeAddedData.idl \
              sbIDeviceEventListener.idl \
              sbIDeviceEventTarget.idl \
              sbIDeviceFirmwareHandler.idl \
