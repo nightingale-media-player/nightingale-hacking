@@ -305,7 +305,7 @@ sbBaseDeviceFirmwareHandler::SendDeviceEvent(sbIDeviceEvent *aEvent,
       rv = do_GetProxyForObject(mainThread,
                                 NS_GET_IID(sbIDeviceEventListener),
                                 listener,
-                                NS_PROXY_ALWAYS | NS_PROXY_SYNC,
+                                NS_PROXY_ALWAYS | NS_PROXY_ASYNC,
                                 getter_AddRefs(proxiedListener));
       NS_ENSURE_SUCCESS(rv, rv);
 
