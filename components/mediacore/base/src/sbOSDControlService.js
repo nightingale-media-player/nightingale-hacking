@@ -233,8 +233,10 @@ sbOSDControlService.prototype =
   hideOSDControls: function(aTransitionType) {
     var self = this;
     // Don't hide the window while the user is dragging
-    if (this._mouseDownOnOSD || !this._osdControlsShowing)
+    if (this._mouseDownOnOSD)
       return;
+
+    this._timer.cancel();
 
     var transtion;
     switch (aTransitionType) {
@@ -255,15 +257,17 @@ sbOSDControlService.prototype =
     }
 
     transition.apply(this, [function() {
+      // The OSD controls are no longer showing. The order of events
+      // here is critical; surprisingly, the cloaking must happen
+      // last.
+      self._osdControlsShowing = false;
+
       if (!self._cloakService.isCloaked(self._osdWindow)) {
         if (self._osdWinHasFocus) {
           self._videoWindow.focus();
         }
         self._cloakService.cloak(self._osdWindow);
       }
-
-      // The OSD controls are no longer showing
-      self._osdControlsShowing = false;
     }]);
   },
 
@@ -277,8 +281,18 @@ sbOSDControlService.prototype =
       // other window in the OS.
       return;
     }
-    
+
     this._timer.cancel();
+    this._timer.initWithCallback(this,
+                                 SB_OSDHIDE_DELAY,
+                                 Ci.nsITimer.TYPE_ONE_SHOT);
+
+    // if the osd is already visible, then all we need to do is reset the timer
+    if (this._osdControlsShowing)
+      return;
+    
+    // Controls are showing
+    this._osdControlsShowing = true;
     this._recalcOSDPosition();
 
     // Show the controls if they are currently hidden.
@@ -305,14 +319,6 @@ sbOSDControlService.prototype =
     }
     
     transition.apply(this);
-
-    // Controls are showing
-    this._osdControlsShowing = true;
-
-    // Set the timer for hiding.
-    this._timer.initWithCallback(this,
-                                 SB_OSDHIDE_DELAY,
-                                 Ci.nsITimer.TYPE_ONE_SHOT);
   },
 
   _fade: function(start, end, func) {
@@ -418,11 +424,14 @@ sbOSDControlService.prototype =
   // sbIWindowMoveListener
 
   onMoveStarted: function() {
+    this._showOSDControlsOnStop = this._osdControlsShowing;
     this.hideOSDControls(Ci.sbIOSDControlService.TRANSITION_NONE);
   },
 
   onMoveStopped: function() {
-    this.showOSDControls(Ci.sbIOSDControlService.TRANSITION_NONE);
+    if (this._showOSDControlsOnStop)
+      this.showOSDControls(Ci.sbIOSDControlService.TRANSITION_NONE);
+    this._showOSDControlsOnStop = false;
   },
 
   //----------------------------------------------------------------------------
