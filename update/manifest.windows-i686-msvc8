@@ -333,6 +333,7 @@
 ./gst-plugins/gstlevel.dll
 ./gst-plugins/gstmatroska.dll
 ./gst-plugins/gstmozillasrc.dll
+./gst-plugins/gstmpeg4videoparse.dll
 ./gst-plugins/gstmpegaudioparse.dll
 ./gst-plugins/gstmulaw.dll
 ./gst-plugins/gstmultifile.dll
