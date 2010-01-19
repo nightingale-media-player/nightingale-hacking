@@ -880,6 +880,9 @@ sb-displaypane-splitter[orient="horizontal"] > stack > box > #dropdown-button {
 *
 * The page that is displayed when the device node is clicked on - iPod, MTP
 ******************************************************************************/
+window > vbox#main_box {
+  overflow: auto;
+}
 /* the top half of the summary page + background for tabs (ipod only) */
 #overall_device_info_box,
 #device_management_tabs {
