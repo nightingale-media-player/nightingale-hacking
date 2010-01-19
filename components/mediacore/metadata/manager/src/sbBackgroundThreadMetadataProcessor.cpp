@@ -243,11 +243,20 @@ NS_IMETHODIMP sbBackgroundThreadMetadataProcessor::Run()
         continue;
     }
 
-    PRBool async = PR_FALSE; 
+    PRBool async = PR_FALSE;
+    PRInt32 operationRetVal;
     if (jobType == sbMetadataJob::TYPE_WRITE) {
-      rv = handler->Write(&async);
+      rv = handler->Write(&operationRetVal);
     } else {
-      rv = handler->Read(&async);
+      rv = handler->Read(&operationRetVal);
+    }
+
+    // According to |sbIMetadataHandler| |write()| or |read()| will return 
+    // -1 if the operation is async, or the number of metadata values written.
+    // (0 if failure).
+    NS_ENSURE_TRUE(operationRetVal != 0, NS_ERROR_FAILURE);
+    if (operationRetVal == -1) {
+      async = PR_TRUE;
     }
 
     // If we were able to start the handler, 
