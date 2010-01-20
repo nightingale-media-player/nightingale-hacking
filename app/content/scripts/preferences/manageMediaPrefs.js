@@ -362,17 +362,18 @@ var manageMediaPrefsPane = {
     var enabled = prefElem.value;
     var dir = managedFolder.file;
 
-    if (!enabled) {
-      if (!dir.exists()) {
-        // The user didn't select a valid managed folder, reset this pref
-        // back to the default library folder value value.
-        var folderPrefElem =
-          document.getElementById("manage_media_pref_library_folder");
-        Application.prefs.setValue(folderPrefElem.getAttribute("name"),
-                                   self._defaultLibraryFolder.path);
-      }
+    if (!dir.exists()) {
+      // The user didn't select a valid managed folder, reset this pref
+      // back to the default library folder value value.
+      var folderPrefElem =
+        document.getElementById("manage_media_pref_library_folder");
+      Application.prefs.setValue(folderPrefElem.getAttribute("name"),
+                                 self._defaultLibraryFolder.path);
+      // Regain the manage folder upon change.
+      managedFolder = document.getElementById("manage_media_library_file");
+      dir = managedFolder.file;
     }
-    else {
+    if (enabled) {
       var missingDefault = false;
       if (!dir.exists()) {
         var parentDir = dir.parent;
