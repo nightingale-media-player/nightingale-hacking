@@ -42,3 +42,4 @@ pref("songbird.url.support", "http://songbirdnest.com/support/");
 pref("songbird.url.support.quicktime", "http://wiki.songbirdnest.com/Developer/Articles/Media_Cores/Setting_Up_QuickTime");
 pref("songbird.url.support.corefailure", "http://wiki.songbirdnest.com/Developer/Articles/Media_Cores/Core_Wrapper_Failure");
 pref("songbird.url.support.inaccessiblelibrary", "https://wiki.songbirdnest.com/Getting_Started_with_Songbird/08_First_Aid_(HELP!)/Inaccessible_Library");
+pref("songbird.url.codec_not_found", "http://wiki.songbirdnest.com/Docs/Video_Codec_Support");

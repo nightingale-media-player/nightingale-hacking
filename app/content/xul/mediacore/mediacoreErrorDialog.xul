@@ -96,6 +96,16 @@
       </vbox>
     </vbox>
 
+    <vbox id="mediacore_error_codec_not_found" hidden="true">
+      <spacer height="1" />
+      <description>
+        <html:div>&mediacore.error.codec_not_found.text.pre;
+          <label class="text-link" id="codec_not_found_link" />
+          &mediacore.error.codec_not_found.text.post;
+        </html:div>
+      </description>
+    </vbox>
+
     <spacer height="5" />
     <checkbox id="mediacore_error_dontshowme" label="&mediacore.error.dontshowme;" checked="false" />
     <spacer height="5" />
@@ -115,6 +125,19 @@
           var desc = document.getElementById("mediacore_error_desc");
 
           desc.textContent = mediacoreError.message + "\n";
+          if (mediacoreError.code ==
+              Ci.sbIMediacoreError.SB_STREAM_CODEC_NOT_FOUND)
+          {
+            var errorMsg =
+                document.getElementById("mediacore_error_codec_not_found");
+            errorMsg.hidden = false;
+
+            var label = document.getElementById("codec_not_found_link");
+            var url = Application.prefs.getValue("songbird.url.codec_not_found",
+                "http://wiki.songbirdnest.com/Docs/Video_Codec_Support");
+            label.setAttribute("value", url);
+            label.setAttribute("onclick", "openLink('" + url + "');");
+          }
         }
       }
       catch( err ) {
@@ -128,6 +151,7 @@
       desc.removeAttribute("id");
       desc.textContent = mediacoreError.message + "\n";
       template.parentNode.appendChild(desc);
+
       window.focus();
     }
     
@@ -138,6 +162,24 @@
                         .prefs;
         prefs.setValue("songbird.mediacore.error.dontshowme", true);
       }
+    }
+
+    function openLink(url) {
+      /*
+      // The following will open in the user's external browser
+      var externalLoader =
+          Cc["@mozilla.org/uriloader/external-protocol-service;1"]
+            .getService(Ci.nsIExternalProtocolService);
+      var nsURI = Cc["@mozilla.org/network/io-service;1"]
+                    .getService(Ci.nsIIOService)
+                    .newURI(url, null, null);
+      externalLoader.loadURI(nsURI, null);
+      */
+
+      // Open it in the Songbird browser
+      Cc["@mozilla.org/appshell/window-mediator;1"]
+        .getService(Ci.nsIWindowMediator)
+        .getMostRecentWindow("Songbird:Main").gBrowser.loadOneTab(url);
     }
   ]]>
   </script>

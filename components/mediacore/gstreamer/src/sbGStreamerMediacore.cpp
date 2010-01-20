@@ -67,12 +67,15 @@
 #include <sbBaseMediacoreEventTarget.h>
 #include <sbMediacoreError.h>
 #include <sbProxiedComponentManager.h>
+#include <sbStringBundle.h>
 
 #include <sbIMediacoreManager.h>
 #include <sbIGStreamerService.h>
 #include <sbIMediaItem.h>
 #include <sbStandardProperties.h>
 #include <sbVideoBox.h>
+
+#include <gst/pbutils/missing-plugins.h>
 
 #include "nsNetUtil.h"
 
@@ -1142,6 +1145,142 @@ void sbGStreamerMediacore::HandleRedirectMessage(GstMessage *message)
   }
 }
 
+void sbGStreamerMediacore::HandleMissingPluginMessage(GstMessage *message)
+{
+  nsCOMPtr<sbMediacoreError> error;
+  gchar *debugMessage;
+  nsString errorMessage;
+  nsresult rv;
+  nsString stringName;
+
+  sbStringBundle bundle;
+  nsTArray<nsString> params;
+
+  NS_ASSERTION(NS_IsMainThread(), "not on main thread");
+
+  // Build an error message to output to the console
+  // TODO: This is currently not localised (but we're probably not setting
+  // things up right to get translated gstreamer messages anyway).
+  debugMessage = gst_missing_plugin_message_get_description(message);
+  if (debugMessage) {
+    stringName = NS_LITERAL_STRING("mediacore.error.known_codec_not_found");
+    params.AppendElement(NS_ConvertUTF8toUTF16(debugMessage));
+    g_free(debugMessage);
+  } else {
+    stringName = NS_LITERAL_STRING("mediacore.error.codec_not_found");
+  }
+
+  if (!mMediacoreError) {
+    nsCOMPtr<sbIMediacoreSequencer> sequencer;
+    {
+      nsAutoMonitor mon(mMonitor);
+      sequencer = mSequencer;
+    }
+
+    if (sequencer) {
+      // Got a valid sequencer, so grab the item's trackName to use in
+      // the error message
+      nsCOMPtr<sbIMediaItem> item;
+      nsresult rv = sequencer->GetCurrentItem(getter_AddRefs(item));
+      if (NS_SUCCEEDED(rv)) {
+        nsString trackNameProp;
+        rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                               trackNameProp);
+        if (NS_SUCCEEDED(rv)) {
+          nsAutoString stripped (trackNameProp);
+          CompressWhitespace(stripped);
+          if (!stripped.IsEmpty()) {
+            NS_NEWXPCOM(error, sbMediacoreError);
+            if (NS_SUCCEEDED(rv)) {
+              params.AppendElement(trackNameProp);
+              errorMessage = bundle.Format(stringName, params);
+              rv = error->Init(sbMediacoreError::SB_STREAM_CODEC_NOT_FOUND,
+                               errorMessage);
+            }
+          }
+        }
+      }
+    }
+
+    // We'll hit this if we didn't find the sequencer, or if we got the
+    // sequencer, but had an empty trackName
+    if (!error) {
+      // If we couldn't find the sequencer, then use the item's file path
+      // to generate the error message
+      nsCOMPtr<nsIURI> uri;
+      rv = GetUri(getter_AddRefs(uri));
+      NS_ENSURE_SUCCESS(rv, /* void */);
+
+      nsCOMPtr<nsIFileURL> url = do_QueryInterface(uri, &rv);
+      if (NS_SUCCEEDED(rv))
+      {
+        nsCOMPtr<nsIFile> file;
+        nsString path;
+
+        rv = url->GetFile(getter_AddRefs(file));
+        if (NS_SUCCEEDED(rv))
+        {
+          rv = file->GetPath(path);
+
+          if (NS_SUCCEEDED(rv)) {
+            NS_NEWXPCOM(error, sbMediacoreError);
+            if (NS_SUCCEEDED(rv)) {
+              params.AppendElement(path);
+              errorMessage = bundle.Format(stringName, params);
+              rv = error->Init(sbMediacoreError::SB_STREAM_CODEC_NOT_FOUND,
+                               errorMessage);
+            }
+          }
+        }
+      }
+
+      if (NS_FAILED(rv)) // not an else, so that it serves as a fallback
+      {
+        nsCString temp;
+        nsString spec;
+
+        rv = uri->GetSpec(temp);
+        if (NS_SUCCEEDED(rv))
+          spec = NS_ConvertUTF8toUTF16(temp);
+        else
+          spec = NS_ConvertUTF8toUTF16(mCurrentUri);
+
+        NS_NEWXPCOM(error, sbMediacoreError);
+        if (NS_SUCCEEDED(rv)) {
+          params.AppendElement(spec);
+          errorMessage = bundle.Format(stringName, params);
+          rv = error->Init(sbMediacoreError::SB_STREAM_CODEC_NOT_FOUND,
+                           errorMessage);
+        }
+      }
+
+      NS_ENSURE_SUCCESS(rv, /* void */);
+    }
+
+    // We don't actually send the error right now. If we did, the sequencer
+    // might tell us to continue on to the next file before we've finished
+    // processing shutdown for this stream.
+    // Instead, we just cache it here, and actually process it once shutdown
+    // is complete.
+    mMediacoreError = error;
+  }
+
+  // Then, shut down the pipeline, which will cause
+  // a STREAM_END event to be fired. Immediately before firing that, we'll
+  // send our error message.
+  nsAutoMonitor lock(mMonitor);
+  mTargetState = GST_STATE_NULL;
+  GstElement *pipeline = (GstElement *)g_object_ref (mPipeline);
+  lock.Exit();
+
+  gst_element_set_state (pipeline, GST_STATE_NULL);
+  g_object_unref (pipeline);
+
+  // Log the error message
+  rv = LogMessageToErrorConsole(errorMessage, nsIScriptError::errorFlag);
+  NS_ENSURE_SUCCESS(rv, /* void */);
+}
+
 void sbGStreamerMediacore::HandleEOSMessage(GstMessage *message)
 {
   nsAutoMonitor lock(mMonitor);
@@ -1327,6 +1466,8 @@ void sbGStreamerMediacore::HandleMessage (GstMessage *message)
     case GST_MESSAGE_ELEMENT: {
       if (gst_structure_has_name (message->structure, "redirect")) {
         HandleRedirectMessage(message);
+      } else if (gst_is_missing_plugin_message(message)) {
+        HandleMissingPluginMessage(message);
       }
       break;
     }

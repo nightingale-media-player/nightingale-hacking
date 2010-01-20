@@ -748,6 +748,8 @@
 <!ENTITY mediacore.error.continue "Continue">
 <!ENTITY mediacore.error.stop     "Stop Playback">
 <!ENTITY mediacore.error.dontshowme "Do not display further media core errors">
+<!ENTITY mediacore.error.codec_not_found.text.pre "For more information on missing codecs, please see">
+<!ENTITY mediacore.error.codec_not_found.text.post "">
 
 <!-- Mediacore Pref Pane entities (Playback Pref Pane) -->
 <!ENTITY playback.prefpane.label          "Playback">

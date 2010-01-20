@@ -145,6 +145,7 @@ protected:
   void HandleWarningMessage (GstMessage *message);
   void HandleBufferingMessage (GstMessage *message);
   void HandleRedirectMessage (GstMessage *message);
+  void HandleMissingPluginMessage (GstMessage *message);
   void OnAudioCapsSet(GstCaps *caps);
   void OnVideoCapsSet(GstCaps *caps);
 
