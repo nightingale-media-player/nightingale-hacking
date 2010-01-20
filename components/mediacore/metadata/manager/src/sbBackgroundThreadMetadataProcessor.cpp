@@ -254,7 +254,6 @@ NS_IMETHODIMP sbBackgroundThreadMetadataProcessor::Run()
     // According to |sbIMetadataHandler| |write()| or |read()| will return 
     // -1 if the operation is async, or the number of metadata values written.
     // (0 if failure).
-    NS_ENSURE_TRUE(operationRetVal != 0, NS_ERROR_FAILURE);
     if (operationRetVal == -1) {
       async = PR_TRUE;
     }
