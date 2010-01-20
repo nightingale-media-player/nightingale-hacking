@@ -57,7 +57,6 @@ function sbOSDControlService()
 sbOSDControlService.prototype =
 {
   _videoWindow:           null,
-  _videoWindowFullscreen: false,
   _osdWindow:             null,
   _cloakService:          null,
   _timer:                 null,
@@ -72,15 +71,10 @@ sbOSDControlService.prototype =
 
 
   _recalcOSDPosition: function() {
-    // This is only necessary when we are not in fullscreen.
-    // If we were to do this while in fullscreen, it would re-anchor
-    // the controls onto the wrong window.
-    if(!this._videoWindowFullscreen) {
-      this._osdWindow.moveTo(this._videoWindow.screenX,
-                             this._videoWindow.screenY);
-      this._osdWindow.resizeTo(this._videoWindow.innerWidth,
-                               this._videoWindow.outerHeight);
-    }
+    this._osdWindow.moveTo(this._videoWindow.screenX,
+                           this._videoWindow.screenY);
+    this._osdWindow.resizeTo(this._videoWindow.innerWidth,
+                             this._videoWindow.outerHeight);
   },
 
   //----------------------------------------------------------------------------
@@ -214,9 +208,6 @@ sbOSDControlService.prototype =
   },
   
   onVideoWindowFullscreenChanged: function(aFullscreen) {
-    this._videoWindowFullscreen = aFullscreen;
-    this._osdWindow.fullScreen = aFullscreen;
-
     var outterBox = 
       this._osdWindow.document.getElementById("osd_wrapper_hbox");
     
@@ -273,8 +264,7 @@ sbOSDControlService.prototype =
 
   showOSDControls: function(aTransitionType) {
     if (!this._videoWinHasFocus &&
-        !this._osdWinHasFocus &&
-        !this._videoWindowFullscreen)
+        !this._osdWinHasFocus)
     {
       // Don't bother showing the controls if the video and the OSD window have
       // lost focus. This prevents floating the OSD controls ontop of every

@@ -55,10 +55,13 @@ spacer {
   background-position:center top;
 }
 
-#video_window:not([hidechrome="true"]) sb-sys-titlebar {
-  visibility:collapse;
-  border:none !important;
-  min-height:0px !important;
+#video_window:not([hidechrome="true"]) sb-sys-titlebar,
+#video_window:not([hidechrome="true"]) .sb-sys-outer-frame-chrome,
+#video_window:not([hidechrome="true"]) .sb-sys-outer-frame-resizer,
+#video_window[fullscreen="true"] sb-sys-titlebar,
+#video_window[fullscreen="true"] .sb-sys-outer-frame-chrome,
+#video_window[fullscreen="true"] .sb-sys-outer-frame-resizer {
+  display: none;
 }
 
 #video_window #video-box {

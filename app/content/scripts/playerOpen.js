@@ -1132,16 +1132,17 @@ function buildHelpMenu()
 
 function buildViewMenu() {
   var disabled = !SBDataGetBoolValue("faceplate.playingvideo");
+  var fullscreen = SBDataGetBoolValue("video.fullscreen");
   
   var fullscreenItem = document.getElementById("menuitem-video-fullscreen");
   if(fullscreenItem) {
-    fullscreenItem.setAttribute("checked", gMM.video.fullscreen);
+    fullscreenItem.setAttribute("checked", !disabled && fullscreen);
     fullscreenItem.setAttribute("disabled", disabled);
   }
   
   var videoToFrontItem = document.getElementById("menuitem-video-to-front");
   if(videoToFrontItem) {
-    videoToFrontItem.setAttribute("disabled", disabled);                                 
+    videoToFrontItem.setAttribute("disabled", disabled);
   }
 }
 
@@ -1308,7 +1309,7 @@ function getFirstItemByProperty(aMediaList, aProperty, aValue) {
 }
 
 function toggleFullscreenVideo() {
-  gMM.video.fullscreen = !gMM.video.fullscreen;
+  SBDataSetBoolValue("video.fullscreen", !SBDataGetBoolValue("video.fullscreen"));
 }
 
 function bringVideoWindowToFront() {

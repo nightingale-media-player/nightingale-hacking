@@ -47,33 +47,24 @@ var videoControlsController = {
   //////////////////////////////////////////////////////////////////////////////
   _mediacoreManager: null,
 
-  _actualSizeDataRemote: null,
-
-  _lastActualSize: null,
+  _videoFullscreenDataRemote: null,
 
   //////////////////////////////////////////////////////////////////////////////
   // Getter
   //////////////////////////////////////////////////////////////////////////////
 
-  get ACTUAL_SIZE_DR_KEY() {
-    const dataRemoteKey = "videowindow.actualsize";
+  get VIDEO_FULLSCREEN_DR_KEY() {
+    const dataRemoteKey = "video.fullscreen";
     return dataRemoteKey;
   },
-
+  
   //////////////////////////////////////////////////////////////////////////////
   // Public Methods
   //////////////////////////////////////////////////////////////////////////////
   
   toggleFullscreen: function vcc_toggleFullscreen() {
-    var video = this._mediacoreManager.video;
-    video.fullscreen = !video.fullscreen;
-    if (video.fullscreen) {
-      this._lastActualSize = this._actualSizeDataRemote.boolValue;
-      this._actualSizeDataRemote.boolValue = false;
-    }
-    else {
-      this._actualSizeDataRemote.boolValue = this._lastActualSize;
-    }
+    this._videoFullscreenDataRemote.boolValue =
+      !this._videoFullscreenDataRemote.boolValue;
   },
 
   //////////////////////////////////////////////////////////////////////////////
@@ -83,13 +74,11 @@ var videoControlsController = {
   _initialize: function vcc__initialize() {
     this._mediacoreManager = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
                                .getService(Ci.sbIMediacoreManager);
-    this._actualSizeDataRemote = SBNewDataRemote(this.ACTUAL_SIZE_DR_KEY);
-    this._lastActualSize = this._actualSizeDataRemote.boolValue;
+    this._videoFullscreenDataRemote = SBNewDataRemote(this.VIDEO_FULLSCREEN_DR_KEY);
   },
   
   _shutdown: function vcc__shutdown() {
     this._mediacoreManager = null;
-    this._actualSizeDataRemote = null;
-    this._lastActualSize = null;
+    this._videoFullscreenDataRemote = null;
   }
 };

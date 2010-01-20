@@ -52,6 +52,7 @@ var videoWindowController = {
   _ssp: null,
   
   _actualSizeDataRemote: null,
+  _lastActualSize: null,
   _windowNeedsResize: false,
   
   _contextMenu: null,
@@ -122,10 +123,8 @@ var videoWindowController = {
        this._videoBox) {
       this._resizeFromVideoBox(this._videoBox);
     }
-    else if(aTopic == this.VIDEO_FULLSCREEN_DR_KEY) {
-      this._osdService.onVideoWindowFullscreenChanged(
-        this._videoFullscreenDataRemote.boolValue);
-    }
+    else if(aTopic == this.VIDEO_FULLSCREEN_DR_KEY)
+      this._setFullScreen(this._videoFullscreenDataRemote.boolValue);
   },
   
   //////////////////////////////////////////////////////////////////////////////
@@ -162,6 +161,7 @@ var videoWindowController = {
        this._actualSizeDataRemote.stringValue == "") {
       this._actualSizeDataRemote.boolValue = true;
     }
+    this._lastActualSize = this._actualSizeDataRemote.boolValue;
 
     this._actualSizeDataRemote.bindObserver(this);
     
@@ -392,7 +392,31 @@ var videoWindowController = {
     
     window.moveTo(posX, posY);
   },
-  
+
+  _setFullScreen: function vwc__setFullScreen(aFullScreen) {
+    if (window.fullScreen != aFullScreen) {
+      // We have to ignore this resize so that we don't disable actual size.
+      // This doesn't actually prevent the window from getting resized, it just
+      // prevents the actual size data remote from being set to false.
+      this._ignoreResize = true;
+
+      window.fullScreen = aFullScreen;
+      document.documentElement.setAttribute("fullscreen", aFullScreen)
+      this._videoFullscreenDataRemote.boolValue = aFullScreen;
+      this._osdService.onVideoWindowFullscreenChanged(aFullScreen);
+
+      if (aFullScreen) {
+        this._lastActualSize = this._actualSizeDataRemote.boolValue;
+        this._actualSizeDataRemote.boolValue = false;
+      }
+      else {
+        this._actualSizeDataRemote.boolValue = this._lastActualSize;
+      }
+
+      window.focus();
+    }
+  },
+
   //////////////////////////////////////////////////////////////////////////////
   // Mediacore Event Handling
   //////////////////////////////////////////////////////////////////////////////
@@ -430,8 +454,7 @@ var videoWindowController = {
 
     // If actual size is enabled and we are not in fullscreen we can
     // go ahead and 'actual size' the video.    
-    if(this._actualSizeDataRemote.boolValue == true &&
-       this._mediacoreManager.video.fullscreen == false) {
+    if(this._actualSizeDataRemote.boolValue == true && !window.fullScreen) {
       // Size it!
       this._resizeFromVideoBox(videoBox);
       
@@ -464,8 +487,7 @@ var videoWindowController = {
         break;
         
         case "fullscreen": {
-          node.setAttribute("checked",
-                            this._mediacoreManager.video.fullscreen);
+          node.setAttribute("checked", window.fullScreen);
         }
         break;
       }
@@ -524,7 +546,7 @@ var videoWindowController = {
   
     // Get out of fullscreen
     if(keyCode == KeyEvent.DOM_VK_ESCAPE) {
-      this._mediacoreManager.video.fullscreen = false;
+      this._setFullScreen(false);
       return;
     }
     
@@ -595,26 +617,19 @@ var videoWindowController = {
   
   _onToggleActualSize: function vwc__onToggleActualSize() {
     var toggle = !this._actualSizeDataRemote.boolValue;
-    this._actualSizeDataRemote.boolValue = toggle;
     if (toggle) {
-      this._mediacoreManager.video.fullscreen = false;
+      this._setFullScreen(false);
     }
+    this._actualSizeDataRemote.boolValue = toggle;
   },
   
   _onToggleFullscreen: function vwc__onToggleFullscreen() {
-    var toggle = !this._mediacoreManager.video.fullscreen;
-    this._mediacoreManager.video.fullscreen = toggle;
-    if (toggle) {
-      this._actualSizeDataRemote.boolValue = false;
-    }
+    this._setFullScreen(!window.fullScreen);
   },
   
   _dismissSelf: function vwc__dismissSelf() {
     if (this._ssp) 
       this._ssp.suppress(false);
-
-    // Always reset fullscreen to false when the window closes.
-    this._mediacoreManager.video.fullscreen = false;
 
     this._playbackStopped = true;
     setTimeout(function() { window.close(); }, 0);
