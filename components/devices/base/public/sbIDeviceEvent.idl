@@ -34,7 +34,7 @@ interface sbIDeviceEventTarget;
  * \interface sbIDeviceEvent
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(57aca57a-84fa-441a-bba5-c8855f2124d9)]
+[scriptable, uuid(530dfffe-3855-4592-b03e-19fa1a4a5041)]
 interface sbIDeviceEvent : nsISupports
 {
   /**
@@ -264,13 +264,19 @@ interface sbIDeviceEvent : nsISupports
    * \note <code>data</code> is null for this event.
    * \note The <code>data</code> for this event is likely to change in the future.
    */
-  const unsigned long EVENT_FIRMWARE_UPDATE_ERROR  = EVENT_FIRMWARE_ERROR_BASE + 4;
-    /**
+  const unsigned long EVENT_FIRMWARE_UPDATE_ERROR   = EVENT_FIRMWARE_ERROR_BASE + 4;
+  /**
    * \brief Firmware write error.
    * \note <code>data</code> is null for this event.
    * \note The <code>data</code> for this event is likely to change in the future.
    */
-  const unsigned long EVENT_FIRMWARE_WRITE_ERROR  = EVENT_FIRMWARE_ERROR_BASE + 5;
+  const unsigned long EVENT_FIRMWARE_WRITE_ERROR    = EVENT_FIRMWARE_ERROR_BASE + 5;
+  /**
+   * \brief Firmware update requires recovery mode to be put on the device.
+   * \note <code>data</code> is null for this event.
+   * \note The <code>data</code> for this event is likely to change in the future.
+   */
+  const unsigned long EVENT_FIRMWARE_NEEDREC_ERROR = EVENT_FIRMWARE_ERROR_BASE + 6;
 
   /**
    * 

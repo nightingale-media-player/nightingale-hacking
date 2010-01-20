@@ -148,6 +148,9 @@ var deviceFirmwareWizard = {
       case "device_needs_recovery_mode": {
         this._currentOperation = "needsrecoverymode";
         
+        let cancelButton = this.wizardElem.getButton("cancel");
+        cancelButton.disabled = false;
+        
         let deviceManager = 
           Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
             .getService(Ci.sbIDeviceManager2);
@@ -191,6 +194,8 @@ var deviceFirmwareWizard = {
           }
         }
 
+        this._deviceFirmwareUpdater.requireRecovery(this._device);
+            
         let label = document.getElementById("device_firmware_wizard_recovery_mode_label");
         label.value = SBFormattedString("device.firmware.wizard.recovery_mode.connected",
                                         [this._deviceProperties.modelNumber]);
@@ -650,6 +655,23 @@ var deviceFirmwareWizard = {
       break;
       case Ci.sbIDeviceEvent.EVENT_FIRMWARE_UPDATE_END:
         this.wizardElem.goTo("device_firmware_wizard_complete_page");  
+      break;
+      
+      // Special error that indicates that the firmware image we're
+      // attempting to put on the device actually requires the device to
+      // be in recovery mode.
+      case Ci.sbIDeviceEvent.EVENT_FIRMWARE_NEEDREC_ERROR:
+        let handler = 
+          this._deviceFirmwareUpdater.getActiveHandler(this._device);
+          
+        if(handler.needsRecoveryMode) {
+          this._currentOperation = "needsrecoverymode";
+          
+          let self = this;  
+          setTimeout(function() {
+            self.wizardElem.goTo("device_needs_recovery_mode_page");
+            }, 0);
+        }
       break;
       
       // Error events

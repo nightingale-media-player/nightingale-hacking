@@ -1137,6 +1137,12 @@ sbDeviceFirmwareUpdater::OnDeviceEvent(sbIDeviceEvent *aEvent)
 
           removeListener = PR_TRUE;
       }
+      else if(eventType == sbIDeviceEvent::EVENT_FIRMWARE_NEEDREC_ERROR) {
+        // Reset status when we get a NEED RECOVERY error to enable normal
+        // operation after device is reconnected in recovery mode.
+        rv = handlerStatus->SetStatus(sbDeviceFirmwareHandlerStatus::STATUS_NONE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
     break;
 
