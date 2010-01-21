@@ -25,6 +25,7 @@
 #ifndef _SB_GSTREAMER_VIDEO_TRANSCODE_H_
 #define _SB_GSTREAMER_VIDEO_TRANSCODE_H_
 
+#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsCOMArray.h>
 #include <nsITimer.h>
@@ -151,6 +152,13 @@ private:
   /* Called when we're notified that a pad's caps have been set */
   nsresult PadNotifyCaps (GstPad *pad);
 
+  /* Check if we have caps on all our pads yet, and continue on to build the
+     full pipeline if so */
+  nsresult CheckForAllCaps ();
+
+  /* Helper to get the proper caps from a pad */
+  GstCaps *GetCapsFromPad (GstPad *pad);
+
   /* Actually build the rest of the pipeline! */
   nsresult BuildRemainderOfPipeline();
 
@@ -228,6 +236,10 @@ private:
   GstPad                                 *mVideoSrc;
   GstPad                                 *mAudioQueueSrc;
   GstPad                                 *mVideoQueueSrc;
+
+  // Lock to prevent trying to build the pipeline concurrently from multiple
+  // threads.
+  PRLock                                 *mBuildLock;
 
 protected:
   /* additional members */

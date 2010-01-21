@@ -98,6 +98,9 @@ sbGStreamerVideoTranscoder::sbGStreamerVideoTranscoder() :
   mVideoQueueSrc(NULL)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
+
+  mBuildLock = nsAutoLock::NewLock("VideoTranscoder lock");
+  NS_ENSURE_TRUE (mBuildLock, /* void */);
 }
 
 sbGStreamerVideoTranscoder::~sbGStreamerVideoTranscoder()
@@ -106,6 +109,10 @@ sbGStreamerVideoTranscoder::~sbGStreamerVideoTranscoder()
 
   nsresult rv = CleanupPipeline();
   NS_ENSURE_SUCCESS (rv, /* void */);
+
+  if (mBuildLock) {
+    nsAutoLock::DestroyLock(mBuildLock);
+  }
 }
 
 /* nsITimerCallback interface implementation */
@@ -1333,8 +1340,9 @@ sbGStreamerVideoTranscoder::AddAudioBin(GstPad *inputAudioSrcPad,
   // Ok, we have an audio source. Add the audio processing bin (including
   // encoder, if any).
   GstElement *audioBin = NULL;
-  GstCaps *caps = GST_PAD_CAPS (mAudioSrc);
+  GstCaps *caps = GetCapsFromPad (mAudioSrc);
   rv = BuildAudioBin(caps, &audioBin);
+  gst_caps_unref (caps);
   NS_ENSURE_SUCCESS (rv, rv);
 
   GstPad *audioBinSinkPad = gst_element_get_pad (audioBin, "sink");
@@ -1381,8 +1389,9 @@ sbGStreamerVideoTranscoder::AddVideoBin(GstPad *inputVideoSrcPad,
   // Ok, we have a video source, so add the video processing bin (usually
   // including an encoder).
   GstElement *videoBin = NULL;
-  GstCaps *caps = GST_PAD_CAPS (mVideoSrc);
+  GstCaps *caps = GetCapsFromPad (mVideoSrc);
   rv = BuildVideoBin(caps, &videoBin);
+  gst_caps_unref (caps);
   NS_ENSURE_SUCCESS (rv, rv);
 
   GstPad *videoBinSinkPad = gst_element_get_pad (videoBin, "sink");
@@ -1715,8 +1724,11 @@ sbGStreamerVideoTranscoder::InitializeConfigurator()
         do_CreateInstance(SB_MEDIAFORMATVIDEO_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS (rv, rv);
 
-    GstCaps *videoCaps = GST_PAD_CAPS (mVideoSrc);
+    GstCaps *videoCaps = GetCapsFromPad (mVideoSrc);
+    NS_ENSURE_TRUE (videoCaps, NS_ERROR_FAILURE);
+
     rv = SetVideoFormatFromCaps(videoFormat, videoCaps);
+    gst_caps_unref (videoCaps);
     NS_ENSURE_SUCCESS (rv, rv);
 
     rv = mediaFormat->SetVideoStream(videoFormat);
@@ -1729,8 +1741,11 @@ sbGStreamerVideoTranscoder::InitializeConfigurator()
         do_CreateInstance(SB_MEDIAFORMATAUDIO_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS (rv, rv);
 
-    GstCaps *audioCaps = GST_PAD_CAPS (mAudioSrc);
+    GstCaps *audioCaps = GetCapsFromPad (mAudioSrc);
+    NS_ENSURE_TRUE (audioCaps, NS_ERROR_FAILURE);
+
     rv = SetAudioFormatFromCaps(audioFormat, audioCaps);
+    gst_caps_unref (audioCaps);
     NS_ENSURE_SUCCESS (rv, rv);
 
     rv = mediaFormat->SetAudioStream(audioFormat);
@@ -1841,20 +1856,64 @@ sbGStreamerVideoTranscoder::DecoderNoMorePads(GstElement *uridecodebin)
 nsresult
 sbGStreamerVideoTranscoder::PadNotifyCaps (GstPad *pad)
 {
+  return CheckForAllCaps();
+}
+
+GstCaps *
+sbGStreamerVideoTranscoder::GetCapsFromPad (GstPad *pad)
+{
+  // We want to get the caps from the decoder associated with this pad (but this
+  // pad might be a ghost pad, or a queue pad linked to the ghost pad, etc)
+  // gst_pad_get_caps() should return the correct caps for our uses here, but
+  // due to bugs in some elements it doesn't always do so (usually this is 
+  // because an element does not call gst_pad_use_fixed_caps()).
+  // So, as a fallback, we try GST_PAD_CAPS, which works in some of these cases,
+  // if the get_caps returned us some non-fixed caps (usually these will be
+  // template caps).
+
+  GstCaps *caps = gst_pad_get_caps (pad);
+  if (caps) {
+    if (gst_caps_is_fixed (caps))
+      return caps;
+    gst_caps_unref (caps);
+  }
+
+  caps = GST_PAD_CAPS (pad);
+  if (caps) {
+    gst_caps_ref (caps);
+    return caps;
+  }
+
+  return NULL;
+}
+
+nsresult
+sbGStreamerVideoTranscoder::CheckForAllCaps ()
+{
+  // Ensure this isn't called from multiple threads concurrently.
+  nsAutoLock lock(mBuildLock);
+
   if (mWaitingForCaps) {
+    TRACE(("CheckForAllCaps: checking if we have fixed caps on all pads"));
     if (mAudioSrc) {
-      if (!GST_PAD_CAPS (mAudioSrc)) {
+      GstCaps *audioCaps = GetCapsFromPad (mAudioSrc);
+      if (!audioCaps) {
         // Not done yet
         return NS_OK;
       }
+      gst_caps_unref (audioCaps);
     }
 
     if (mVideoSrc) {
-      if (!GST_PAD_CAPS (mVideoSrc)) {
+      GstCaps *videoCaps = GetCapsFromPad (mVideoSrc);
+      if (!videoCaps) {
         // Not done yet
         return NS_OK;
       }
+      gst_caps_unref (videoCaps);
     }
+
+    LOG(("Have fixed caps on all pads: proceeding to build pipeline"));
 
     // Ok, we have caps for everything.
     // Build the rest of the pipeline, and unblock the pads.
@@ -1882,9 +1941,14 @@ sbGStreamerVideoTranscoder::PadNotifyCaps (GstPad *pad)
 nsresult
 sbGStreamerVideoTranscoder::PadBlocked (GstPad *pad, gboolean blocked)
 {
-  // TODO: Do we need to do anything here at all?
-
-  return NS_OK;
+  if (blocked ) {
+    LOG(("Pad blocked, checking if we have full caps yet"));
+    return CheckForAllCaps();
+  }
+  else {
+    LOG(("PadBlocked: returning NS_OK after unblocking."));
+    return NS_OK;
+  }
 }
 
 nsresult
