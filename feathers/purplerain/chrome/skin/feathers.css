@@ -1291,6 +1291,7 @@ domi-panelset label.viewer-title {
 #itemList {
   background-color: rgb(43,41,54);
   border: none;
+  overflow: visible !important;
 }
 
 /******************************************************************************
