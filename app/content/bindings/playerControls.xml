@@ -927,7 +927,12 @@
         that: this,
         onMediacoreEvent: function(aEvent) {
           if (aEvent.type == aEvent.STREAM_PAUSE) {
-            this.that.seekInProgress = false;
+            // If our seek finished, issue another seek to wherever we're now
+            // pointing to.  TODO: Skip this if we'd be seeking to the same
+            // point.
+            if (this.that.scrubbingPosition) {
+              this.that.doScrubbingSeek();
+            }
           }
         }
       }
@@ -1186,15 +1191,7 @@
           // unless the previous one completed, otherwise we never make
           // any progress...
           if (this.scrubbingPosition && !this.seekInProgress) {
-            try {
-              this.mm.playbackControl.position = this.progress_value;
-              this.seekInProgress = true;
-            } catch(e) {
-              // Seeking failed; disable scrubbing.
-              this.scrubbingPosition = false;
-              if (this.wasPlayingBeforeSeek)
-                this.mm.playbackControl.play();
-            }
+            this.doScrubbingSeek();
           }
         ]]>
       </body>
@@ -1206,9 +1203,9 @@
         try {
           // Setting the position may fail if the format doesn't support
           // seeking or if http resuming does not work.
+          this.seekInProgress = false;
           this.mm.playbackControl.position = this.value;
 
-          this.seekInProgress = false;
           if (this.scrubbingPosition) {
             this.scrubbingPosition = false;
             if (this.wasPlayingBeforeSeek) {
@@ -1234,6 +1231,22 @@
             
           this.value = this.remote_position.intValue;
         ]]>
+      </body>
+    </method>
+
+    <method name="doScrubbingSeek">
+      <body>
+        try {
+          // Scrubbing seeks only show keyframes for mediacores that support
+          // that.
+          this.mm.playbackControl.seek(this.progress_value, Components.interfaces.sbIMediacorePlaybackControl.SEEK_FLAG_KEYFRAME);
+          this.seekInProgress = true;
+        } catch(e) {
+          // Seeking failed; disable scrubbing.
+          this.scrubbingPosition = false;
+          if (this.wasPlayingBeforeSeek)
+            this.mm.playbackControl.play();
+        }
       </body>
     </method>
 

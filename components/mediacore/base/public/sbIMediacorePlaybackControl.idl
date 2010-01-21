@@ -39,7 +39,7 @@ interface sbIMediacorePlaybackControl : nsISupports
    * milliseconds
    */
   attribute unsigned long long position;
-  
+
   /**
    * The total duration of the stream currently being played, in milliseconds
    * @throws NS_ERROR_NOT_AVAILABLE if the duration is unknown
@@ -55,4 +55,18 @@ interface sbIMediacorePlaybackControl : nsISupports
   void play();
   void pause();
   void stop();
+
+  /**
+   * Seek to a specified point, with some seeking flags set.
+   * A normal, simple seek can be done by simply setting the position attribute.
+   * This function is useful for more complex seek types (with flags set)
+   *
+   */
+  void seek(in unsigned long long position, in unsigned long flags);
+
+  /* A normal seek */
+  const unsigned long SEEK_FLAG_NORMAL = 0;
+
+  /* A seek to the nearest keyframe - faster, but less accurate */
+  const unsigned long SEEK_FLAG_KEYFRAME = 1;
 };

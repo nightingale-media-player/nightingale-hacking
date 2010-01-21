@@ -69,6 +69,7 @@
 #include <sbProxiedComponentManager.h>
 #include <sbStringBundle.h>
 
+#include <sbIMediacorePlaybackControl.h>
 #include <sbIMediacoreManager.h>
 #include <sbIGStreamerService.h>
 #include <sbIMediaItem.h>
@@ -1930,8 +1931,14 @@ sbGStreamerMediacore::OnGetPosition(PRUint64 *aPosition)
   return rv;
 }
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbGStreamerMediacore::OnSetPosition(PRUint64 aPosition)
+{
+  return Seek(aPosition, sbIMediacorePlaybackControl::SEEK_FLAG_NORMAL);
+}
+
+/*virtual*/ nsresult 
+sbGStreamerMediacore::OnSeek(PRUint64 aPosition, PRUint32 aFlags)
 {
   GstClockTime position;
   gboolean ret;
@@ -1947,9 +1954,11 @@ sbGStreamerMediacore::OnSetPosition(PRUint64 aPosition)
   // So, we do a KEY_UNIT seek (the fastest sort) unless it's all three of:
   //  - a local file
   //  - sufficiently small
+  //  - flag passed is to do a normal seek
   
   if (mResourceIsLocal &&
-      mResourceSize <= MAX_FILE_SIZE_FOR_ACCURATE_SEEK) 
+      mResourceSize <= MAX_FILE_SIZE_FOR_ACCURATE_SEEK &&
+      aFlags == SEEK_FLAG_NORMAL)
   {
     flags = (GstSeekFlags)(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE);
   }

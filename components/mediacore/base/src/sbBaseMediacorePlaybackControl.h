@@ -72,6 +72,8 @@ public:
   virtual nsresult OnPause();
   // Override me, see cpp file for implementation notes.
   virtual nsresult OnStop();
+  // Override me, see cpp file for implementation notes.
+  virtual nsresult OnSeek(PRUint64 aPosition, PRUint32 aFlags);
 
 protected:
   virtual ~sbBaseMediacorePlaybackControl();

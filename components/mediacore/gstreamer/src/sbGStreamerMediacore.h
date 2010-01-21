@@ -112,6 +112,7 @@ public:
   virtual nsresult OnPlay();
   virtual nsresult OnPause();
   virtual nsresult OnStop();
+  virtual nsresult OnSeek(PRUint64 aPosition, PRUint32 aFlag);
 
   // sbBaseMediacoreVolumeControl overrides
   virtual nsresult OnInitBaseMediacoreVolumeControl();

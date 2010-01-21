@@ -155,6 +155,21 @@ sbBaseMediacorePlaybackControl::SetPosition(PRUint64 aPosition)
 }
 
 NS_IMETHODIMP 
+sbBaseMediacorePlaybackControl::Seek(PRUint64 aPosition, PRUint32 aFlags)
+{
+  TRACE(("%s[%p] (%llu, %llu)", __FUNCTION__, this, aPosition, aFlags));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv = OnSeek(aPosition, aFlags);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoMonitor mon(mMonitor);
+  mPosition = aPosition;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbBaseMediacorePlaybackControl::GetDuration(PRUint64 *aDuration)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
@@ -385,6 +400,24 @@ sbBaseMediacorePlaybackControl::OnStop()
    */
 
   return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/*virtual*/ nsresult
+sbBaseMediacorePlaybackControl::OnSeek(PRUint64 aPosition, PRUint32 aFlags)
+{
+  /**
+   *  This is where you'll want to seek to aPosition in the currently
+   *  set source. The position is in milliseconds.  The flags map to
+   *  sbIMediacorePlaybackControl.SEEK_FLAG_*
+   *
+   *  Typically, the case where the flag is SEEK_FLAG_NORMAL will be the same
+   *  codepath as OnSetPosition().
+   *
+   *  If let unimplemented, this will just default to being the same as if
+   *  the user has set the position attribute.
+   */
+
+  return OnSetPosition(aPosition);
 }
 
 nsresult
