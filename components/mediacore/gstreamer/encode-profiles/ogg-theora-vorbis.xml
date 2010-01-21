@@ -22,6 +22,8 @@
 
   <audio>
     <type>audio/x-vorbis</type>
+    <property name="max-bitrate" type="int" min="0" max="250000" default="0"
+              mapping="bitrate" scale="1/1"/>
     <quality-property name="bitrate" quality="0" value="32000"/>
     <quality-property name="bitrate" quality="0.5" value="128000"/>
     <quality-property name="bitrate" quality="1" value="320000"/>

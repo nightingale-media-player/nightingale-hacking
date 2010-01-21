@@ -81,9 +81,10 @@ public:
   #undef FORWARD_TO_BASE
 
   /*
-   * re-implement configurate() to have the configuration logic specific to
-   * gstreamer-based configuration for devices
+   * re-implement determineOutputType() and configurate() to have the
+   * configuration logic specific to gstreamer-based configuration for devices
    */
+  NS_IMETHOD DetermineOutputType();
   NS_IMETHOD Configurate();
 
   sbGStreamerTranscodeDeviceConfigurator();

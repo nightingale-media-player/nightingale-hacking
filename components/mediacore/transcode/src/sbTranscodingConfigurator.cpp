@@ -26,15 +26,17 @@
 
 #include <nsIWritablePropertyBag2.h>
 
+#include <sbStringUtils.h>
+
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbTranscodingConfigurator,
                               sbITranscodingConfigurator)
 
 sbTranscodingConfigurator::sbTranscodingConfigurator()
-  : isConfigurated(PR_FALSE),
+  : mConfigurateState(CONFIGURATE_NOT_STARTED),
     mInputFormat(nsnull),
-    mMuxer(EmptyString()),
-    mVideoEncoder(EmptyString()),
-    mAudioEncoder(EmptyString()),
+    mMuxer(SBVoidString()),
+    mVideoEncoder(SBVoidString()),
+    mAudioEncoder(SBVoidString()),
     mVideoFormat(nsnull),
     mAudioFormat(nsnull),
     mVideoEncoderProperties(nsnull),
@@ -68,9 +70,70 @@ sbTranscodingConfigurator::GetInputFormat(sbIMediaFormat **aInputFormat)
 NS_IMETHODIMP
 sbTranscodingConfigurator::SetInputFormat(sbIMediaFormat *aInputFormat)
 {
-  NS_ENSURE_FALSE(isConfigurated, NS_ERROR_ALREADY_INITIALIZED);
+  NS_ENSURE_FALSE(mConfigurateState >= CONFIGURATE_FINISHED,
+                  NS_ERROR_ALREADY_INITIALIZED);
   NS_ENSURE_ARG(aInputFormat);
   mInputFormat = aInputFormat;
+  return NS_OK;
+}
+
+/* void determineOutputType (); */
+NS_IMETHODIMP
+sbTranscodingConfigurator::DetermineOutputType()
+{
+  NS_NOTYETIMPLEMENTED("sbTranscodingConfigurator::DetermineOutputType");
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/**
+ * \brief Returns the muxer to use.
+ * \param aMuxer - Muxer to use in string form.
+ * \returns string value for muxer.
+ */
+NS_IMETHODIMP
+sbTranscodingConfigurator::GetMuxer(nsAString &aMuxer)
+{
+  NS_ENSURE_TRUE(mConfigurateState >= CONFIGURATE_OUPUT_SET,
+                 NS_ERROR_NOT_INITIALIZED);
+  aMuxer = mMuxer;
+  return NS_OK;
+}
+
+/* readonly attribute ACString fileExtension; */
+NS_IMETHODIMP
+sbTranscodingConfigurator::GetFileExtension(nsACString & aFileExtension)
+{
+  NS_ENSURE_TRUE(mConfigurateState >= CONFIGURATE_OUPUT_SET,
+                 NS_ERROR_NOT_INITIALIZED);
+  aFileExtension = mFileExtension;
+  return NS_OK;
+}
+
+/**
+ * \brief Get the audio encoder to use.
+ * \param aAudioEncoder - name of the audio encoder.
+ * \returns audio encoder to use.
+ */
+NS_IMETHODIMP
+sbTranscodingConfigurator::GetAudioEncoder(nsAString &aAudioEncoder)
+{
+  NS_ENSURE_TRUE(mConfigurateState >= CONFIGURATE_OUPUT_SET,
+                 NS_ERROR_NOT_INITIALIZED);
+  aAudioEncoder = mAudioEncoder;
+  return NS_OK;
+}
+
+/**
+ * \brief Get the video Encoder to use.
+ * \param aVideoEncoder - name of video encoder.
+ * \returns video encoder to use.
+ */
+NS_IMETHODIMP
+sbTranscodingConfigurator::GetVideoEncoder(nsAString &aVideoEncoder)
+{
+  NS_ENSURE_TRUE(mConfigurateState >= CONFIGURATE_OUPUT_SET,
+                 NS_ERROR_NOT_INITIALIZED);
+  aVideoEncoder = mVideoEncoder;
   return NS_OK;
 }
 
@@ -86,41 +149,6 @@ sbTranscodingConfigurator::Configurate(void)
 }
 
 /**
- * \brief Returns the muxer to use.
- * \param aMuxer - Muxer to use in string form.
- * \returns string value for muxer.
- */
-NS_IMETHODIMP
-sbTranscodingConfigurator::GetMuxer(nsAString &aMuxer)
-{
-  NS_ENSURE_TRUE(isConfigurated, NS_ERROR_NOT_INITIALIZED);
-  aMuxer = mMuxer;
-  return NS_OK;
-}
-
-/* readonly attribute ACString fileExtension; */
-NS_IMETHODIMP
-sbTranscodingConfigurator::GetFileExtension(nsACString & aFileExtension)
-{
-  NS_ENSURE_TRUE(isConfigurated, NS_ERROR_NOT_INITIALIZED);
-  aFileExtension = mFileExtension;
-  return NS_OK;
-}
-
-/**
- * \brief Get the video Encoder to use.
- * \param aVideoEncoder - name of video encoder.
- * \returns video encoder to use.
- */
-NS_IMETHODIMP
-sbTranscodingConfigurator::GetVideoEncoder(nsAString &aVideoEncoder)
-{
-  NS_ENSURE_TRUE(isConfigurated, NS_ERROR_NOT_INITIALIZED);
-  aVideoEncoder = mVideoEncoder;
-  return NS_OK;
-}
-
-/**
  * \brief Get the Video format to use.
  * \param aVideoFormat - sbIMediaFormatVideo video format to use.
  * \returns the video format to use.
@@ -128,22 +156,10 @@ sbTranscodingConfigurator::GetVideoEncoder(nsAString &aVideoEncoder)
 NS_IMETHODIMP
 sbTranscodingConfigurator::GetVideoFormat(sbIMediaFormatVideo **aVideoFormat)
 {
-  NS_ENSURE_TRUE(isConfigurated, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mConfigurateState >= CONFIGURATE_FINISHED,
+                 NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aVideoFormat);
   NS_IF_ADDREF(*aVideoFormat = mVideoFormat);
-  return NS_OK;
-}
-
-/**
- * \brief Get the audio encoder to use.
- * \param aAudioEncoder - name of the audio encoder.
- * \returns audio encoder to use.
- */
-NS_IMETHODIMP
-sbTranscodingConfigurator::GetAudioEncoder(nsAString &aAudioEncoder)
-{
-  NS_ENSURE_TRUE(isConfigurated, NS_ERROR_NOT_INITIALIZED);
-  aAudioEncoder = mAudioEncoder;
   return NS_OK;
 }
 
@@ -155,7 +171,8 @@ sbTranscodingConfigurator::GetAudioEncoder(nsAString &aAudioEncoder)
 NS_IMETHODIMP
 sbTranscodingConfigurator::GetAudioFormat(sbIMediaFormatAudio **aAudioFormat)
 {
-  NS_ENSURE_TRUE(isConfigurated, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mConfigurateState >= CONFIGURATE_FINISHED,
+                 NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aAudioFormat);
   NS_IF_ADDREF(*aAudioFormat = mAudioFormat);
   return NS_OK;
@@ -170,7 +187,8 @@ NS_IMETHODIMP
 sbTranscodingConfigurator::GetVideoEncoderProperties(
         nsIPropertyBag **aVideoEncoderProperties)
 {
-  NS_ENSURE_TRUE(isConfigurated, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mConfigurateState >= CONFIGURATE_FINISHED,
+                 NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aVideoEncoderProperties);
   nsresult rv;
   rv = CallQueryInterface(mVideoEncoderProperties, aVideoEncoderProperties);
@@ -187,7 +205,8 @@ NS_IMETHODIMP
 sbTranscodingConfigurator::GetAudioEncoderProperties(
         nsIPropertyBag **aAudioEncoderProperties)
 {
-  NS_ENSURE_TRUE(isConfigurated, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mConfigurateState >= CONFIGURATE_FINISHED,
+                 NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aAudioEncoderProperties);
   nsresult rv;
   rv = CallQueryInterface(mAudioEncoderProperties, aAudioEncoderProperties);

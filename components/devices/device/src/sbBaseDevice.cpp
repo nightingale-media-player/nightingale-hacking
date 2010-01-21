@@ -5173,10 +5173,8 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem,
     NS_ENSURE_SUCCESS(rv, rv);
     rv = configurator->SetDevice(device);
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = configurator->SetInputFormat(mediaFormat);
-    NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = configurator->Configurate();
+    rv = configurator->DetermineOutputType();
     *_retval = NS_SUCCEEDED(rv) ? PR_TRUE : PR_FALSE;
     return NS_OK;
   }

@@ -63,9 +63,18 @@ protected:
   virtual ~sbTranscodingConfigurator();
 
 protected:
-  // Have we configurated? Some functions will throw NS_ERROR_ALREADY_INITIALIZED
-  // based on this. This will be set to true when configurate has been called.
-  PRBool                              isConfigurated;
+  enum CONFIGURATE_STATE {
+    /* The various states of configuration this configurator can be in; this
+     * order must be preserved in chronological order so we can compare them
+     * numerically.
+     */
+    CONFIGURATE_NOT_STARTED, /* determineOutputType has not finished */
+    CONFIGURATE_OUPUT_SET, /* determineOutputType finished, not configurated */
+    CONFIGURATE_FINISHED /* configurate has been successfully called */
+  };
+  // Have we configurated?  Some of the properties below will not be ready
+  // until we have determined the output type or configurated.
+  CONFIGURATE_STATE                   mConfigurateState;
   // Store the input format we will use to configurate.
   nsCOMPtr<sbIMediaFormat>            mInputFormat;
   // String values of encoders and muxer

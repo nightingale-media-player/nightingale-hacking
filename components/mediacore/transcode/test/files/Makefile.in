@@ -32,7 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_TEST_COMPONENT = transcodeservice/files
 
-TEST_FILE_EXTENSIONS = mp3 \
+TEST_FILE_EXTENSIONS = mkv \
                        $(NULL)
 
 SONGBIRD_TESTS = $(foreach e,$(TEST_FILE_EXTENSIONS),$(wildcard $(srcdir)/*.$e))

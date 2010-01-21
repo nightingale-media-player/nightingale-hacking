@@ -43,7 +43,7 @@ interface nsIPropertyBag;
  * should be implemented by any Configurator system and implement the
  * configurate function.
  */
-[scriptable, uuid(ae8a8bd4-1dd1-11b2-8054-c4e99a471798)]
+[scriptable, uuid(7aa32e7c-1dd2-11b2-a630-ad3a8587a133)]
 interface sbITranscodingConfigurator : nsISupports
 {
   /**
@@ -53,16 +53,18 @@ interface sbITranscodingConfigurator : nsISupports
   attribute sbIMediaFormat inputFormat;
 
   /**
-   * \brief Determine the transcode settings to use based on the input given. Both
-   * the device and the input format must be set before calling this function.
-   * Once this is called, the functions below may be called (they will throw
-   * an error if called before this function is called).
+   * \brief Determine the trancode destination format to use, based on the
+   * target device and desired output quality settings.  The device must be set 
+   * before calling this function.  This will only determine the file format 
+   * settings, not the details such as dimensions or bitrates.
+   * The muxer and encoder attributes below may be read after calling this
+   * method, but not the format details or properties.
    *
    * This function may fail if:
    *   The device or file info have not been set, or
    *   No encoder(s) are available for the formats supported by the device.
    */
-  void configurate();
+  void determineOutputType();
 
   /**
    * \brief The muxer to use. The name is specific to the transcoder (for
@@ -70,8 +72,8 @@ interface sbITranscodingConfigurator : nsISupports
    * transcoder). If this is a void string, no muxer is needed (e.g. a bare
    * FLAC audio file)
    *
-   * \throws NS_ERROR_NOT_INITIALIZED on read if configurate() has not been
-   * called.
+   * \throws NS_ERROR_NOT_INITIALIZED on read if determineOutputType() has not 
+   * been called.
    */
   readonly attribute AString muxer;
 
@@ -79,6 +81,9 @@ interface sbITranscodingConfigurator : nsISupports
    * \brief The file extension to use for transcoded files.
    * This may depend on the muxer or the used codecs.  It may also depend on
    * nothing at all; it's all up to the configurator.
+   *
+   * \throws NS_ERROR_NOT_INITIALIZED on read if determineOutputType() has not 
+   * been called.
    */
   readonly attribute ACString fileExtension;
 
@@ -87,10 +92,32 @@ interface sbITranscodingConfigurator : nsISupports
    * (for example, this may be a gstreamer element name for a gstreamer-based
    * transcoder).  This may be a void string if there is no video.
    *
-   * \throws NS_ERROR_NOT_INITIALIZED on read if configurate() has not been
-   * called.
+   * \throws NS_ERROR_NOT_INITIALIZED on read if determineOutputType() has not 
+   * been called.
    */
   readonly attribute AString videoEncoder;
+
+  /**
+   * \brief The audio encoder to use.  The name is specific to the transcoder
+   * (for example, this may be a gstreamer element name for a gstreamer-based
+   * transcoder).  This may be a void string if there is no audio.
+   *
+   * \throws NS_ERROR_NOT_INITIALIZED on read if determineOutputType() has not 
+   * been called.
+   */
+  readonly attribute AString audioEncoder;
+  
+  /**
+   * \brief Determine the transcode settings to use based on the input given. 
+   * Both the device and the input format must be set before calling this 
+   * function. Once this is called, the functions below may be called (they 
+   * will throw an error if called before this function is called).
+   *
+   * This function may fail if:
+   *   The device or file info have not been set, or
+   *   No encoder(s) are available for the formats supported by the device.
+   */
+  void configurate();
 
   /**
    * \brief The basic video format for data that is not specific to a
@@ -102,16 +129,6 @@ interface sbITranscodingConfigurator : nsISupports
    * \note the the videoType, bitRate and properties attributes are ignored.
    */
   readonly attribute sbIMediaFormatVideo videoFormat;
-
-  /**
-   * \brief The audio encoder to use.  The name is specific to the transcoder
-   * (for example, this may be a gstreamer element name for a gstreamer-based
-   * transcoder).  This may be a void string if there is no audio.
-   *
-   * \throws NS_ERROR_NOT_INITIALIZED on read if configurate() has not been
-   * called.
-   */
-  readonly attribute AString audioEncoder;
 
   /**
    * \brief The basic audio format for data that is not specific to a

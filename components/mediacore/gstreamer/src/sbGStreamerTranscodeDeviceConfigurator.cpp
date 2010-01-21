@@ -406,6 +406,7 @@ sbGStreamerTranscodeDeviceConfigurator::SelectQuality()
   NS_ENSURE_SUCCESS(rv, rv);
   switch (variantType) {
     case nsIDataType::VTYPE_EMPTY:
+    case nsIDataType::VTYPE_VOID:
       break;
     default:
       rv = qualityVar->GetAsDouble(&quality);
@@ -631,6 +632,10 @@ sbGStreamerTranscodeDeviceConfigurator::SetAudioProperties()
     rv = audioFormat->SetChannels(channels);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+  else {
+    // no audio stream
+    mAudioEncoder.SetIsVoid(PR_TRUE);
+  }
   if (!mAudioEncoderProperties) {
     mAudioEncoderProperties =
       do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
@@ -678,6 +683,9 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineIdealOutputSize()
   nsCOMPtr<sbIMediaFormatVideo> inputFormat;
   rv = mInputFormat->GetVideoStream(getter_AddRefs(inputFormat));
   NS_ENSURE_SUCCESS(rv, rv);
+  if (!inputFormat) {
+    return NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;
+  }
   Dimensions input;
   rv = inputFormat->GetVideoWidth(&input.width);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -946,6 +954,7 @@ sbGStreamerTranscodeDeviceConfigurator::FinalizeOutputSize()
     nsCOMPtr<sbIMediaFormatVideo> inputFormat;
     rv = mInputFormat->GetVideoStream(getter_AddRefs(inputFormat));
     NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(inputFormat, NS_ERROR_FAILURE);
     PRUint32 num, denom;
     rv = inputFormat->GetVideoFrameRate(&num, &denom);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1015,6 +1024,7 @@ sbGStreamerTranscodeDeviceConfigurator::FinalizeOutputSize()
   nsCOMPtr<sbIMediaFormatVideo> inputFormat;
   rv = mInputFormat->GetVideoStream(getter_AddRefs(inputFormat));
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(inputFormat, NS_ERROR_FAILURE);
   Dimensions input;
   rv = inputFormat->GetVideoWidth(&input.width);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1358,7 +1368,8 @@ NS_IMETHODIMP
 sbGStreamerTranscodeDeviceConfigurator::SetQuality(double aQuality)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
-  NS_ENSURE_FALSE(isConfigurated, NS_ERROR_ALREADY_INITIALIZED);
+  NS_ENSURE_FALSE(mConfigurateState > CONFIGURATE_NOT_STARTED,
+                  NS_ERROR_ALREADY_INITIALIZED);
   mQuality = aQuality;
   return NS_OK;
 }
@@ -1377,7 +1388,8 @@ NS_IMETHODIMP
 sbGStreamerTranscodeDeviceConfigurator::SetDevice(sbIDevice * aDevice)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
-  NS_ENSURE_FALSE(isConfigurated, NS_ERROR_ALREADY_INITIALIZED);
+  NS_ENSURE_FALSE(mConfigurateState > CONFIGURATE_NOT_STARTED,
+                  NS_ERROR_ALREADY_INITIALIZED);
   mDevice = aDevice;
   // clear the desired sizes
   mPreferredDimensions = Dimensions();
@@ -1386,14 +1398,15 @@ sbGStreamerTranscodeDeviceConfigurator::SetDevice(sbIDevice * aDevice)
 
 /**** sbITranscodingConfigurator implementation *****/
 
+/* void determineOutputType (); */
 NS_IMETHODIMP
-sbGStreamerTranscodeDeviceConfigurator::Configurate()
+sbGStreamerTranscodeDeviceConfigurator::DetermineOutputType()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   // check our inputs
   NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_TRUE(mInputFormat, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_FALSE(isConfigurated, NS_ERROR_ALREADY_INITIALIZED);
+  NS_ENSURE_FALSE(mConfigurateState >= CONFIGURATE_OUPUT_SET,
+                  NS_ERROR_ALREADY_INITIALIZED);
 
   nsresult rv;
 
@@ -1404,20 +1417,50 @@ sbGStreamerTranscodeDeviceConfigurator::Configurate()
   // Get the referred encoding profile
   rv = SelectProfile();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  mConfigurateState = CONFIGURATE_OUPUT_SET;
+
+  return NS_OK;
+}
+
+/* void configurate (); */
+NS_IMETHODIMP
+sbGStreamerTranscodeDeviceConfigurator::Configurate()
+{
+  TRACE(("%s[%p]", __FUNCTION__, this));
+  // check our inputs
+  NS_ENSURE_TRUE(mInputFormat, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_FALSE(mConfigurateState >= CONFIGURATE_FINISHED,
+                  NS_ERROR_ALREADY_INITIALIZED);
+
+  nsresult rv;
+
+  if (mConfigurateState < CONFIGURATE_OUPUT_SET) {
+    // no output set yet, do that now
+    rv = DetermineOutputType();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   // Get the audio parameters
   rv = SetAudioProperties();
   NS_ENSURE_SUCCESS(rv, rv);
   // Calculate ideal video size
   rv = DetermineIdealOutputSize();
   NS_ENSURE_SUCCESS(rv, rv);
-  // Calculate video bitrate and scale video as necessary
-  rv = FinalizeOutputSize();
-  NS_ENSURE_SUCCESS(rv, rv);
-  // Set video parameters
-  rv = SetVideoProperties();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA == rv) {
+    // No video
+    mVideoEncoder.SetIsVoid(PR_TRUE);
+  }
+  else {
+    // Calculate video bitrate and scale video as necessary
+    rv = FinalizeOutputSize();
+    NS_ENSURE_SUCCESS(rv, rv);
+    // Set video parameters
+    rv = SetVideoProperties();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // all done
-  isConfigurated = PR_TRUE;
+  mConfigurateState = CONFIGURATE_FINISHED;
   return NS_OK;
 }

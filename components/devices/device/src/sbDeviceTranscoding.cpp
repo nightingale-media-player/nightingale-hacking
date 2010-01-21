@@ -338,10 +338,8 @@ sbDeviceTranscoding::FindTranscodeProfile(sbIMediaItem * aMediaItem,
     NS_ENSURE_SUCCESS(rv, rv);
     rv = configurator->SetDevice(device);
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = configurator->SetInputFormat(mediaFormat);
-    NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = configurator->Configurate();
+    rv = configurator->DetermineOutputType();
     *aCanTranscode = NS_SUCCEEDED(rv) ? PR_TRUE : PR_FALSE;
     return NS_OK;
   }
@@ -439,13 +437,6 @@ sbDeviceTranscoding::TranscodeVideoItem(
   NS_ENSURE_SUCCESS(rv, rv);
   rv = configurator->SetDevice(device);
   NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<sbIMediaFormat> mediaFormat;
-  rv = GetMediaFormat(aRequest->item, getter_AddRefs(mediaFormat));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = configurator->SetInputFormat(mediaFormat);
-  NS_ENSURE_SUCCESS(rv, rv);
-
 
   nsCOMPtr<sbITranscodingConfigurator> qiConfigurator =
     do_QueryInterface(configurator, &rv);

@@ -29,68 +29,129 @@ var gTestFileLocation = "testharness/transcodeservice/files/";
  * \brief Test to see if the attribute and functions in
  *  sbITranscodingConfigurator throw when Configurate has not been run.
  * \param configurator is the sbITranscodingConfigurator to use
- * \param hasRunConfigurate indicates if Configurate has run on the configurator
- *  object yet.
- * TODO: Add expected return values for each of the attributes when the
- * Configurate function is implemented.
+ * \param aState the stage in configurating (not done, determined output, or
+ *               fully configurated.
  */
-function testHasConfigurated(configurator, hasRunConfigurate) {
+function testHasConfigurated(configurator, aState) {
 
-  function testAttribute(attributeName, testFunction) {
-    log("Testing " + attributeName + " - " + hasRunConfigurate);
-    try {
-      var testAttributeValue = configurator[attributeName];
-      if (!hasRunConfigurate) {
-        // This should not be reached since the call would throw
-        doFail("Attribute \"" + attributeName + "\" should throw since" +
-               "Configurate was not called yet.");
-      }
-      else if (!testFunction(testAttributeValue)) {
-        // We got something different than expected so fail
-        doFail("Attribute \"" + attributeName + "\" returned" +
-               " \"" + testAttributeValue + "\" instead of the expected value" +
-               " \"" + expectedValue + "\"");
+  const EXPECTED_VALUES = [
+    {
+      // not initialized
+      "muxer" : new Error(),
+      "videoEncoder" : new Error(),
+      "videoFormat": new Error(),
+      "videoEncoderProperties": new Error(),
+      "audioEncoder": new Error(),
+      "audioFormat": new Error(),
+      "audioEncoderProperties": new Error()
+    },
+    {
+      // determined output format, but not configurated
+      "muxer" : "oggmux",
+      "videoEncoder" : "theoraenc",
+      "videoFormat": new Error(),
+      "videoEncoderProperties": new Error(),
+      "audioEncoder": "vorbisenc",
+      "audioFormat": new Error(),
+      "audioEncoderProperties": new Error()
+    },
+    {
+      // configurated
+      "muxer" : "oggmux",
+      "videoEncoder" : "theoraenc",
+      "videoFormat": {videoWidth: 1280,
+                      videoHeight: 720},
+      "videoEncoderProperties": {bitrate: 921}, // pull out of the results :p
+      "audioEncoder": "vorbisenc",
+      "audioFormat": {sampleRate: 44100,
+                      channels: 1},
+      "audioEncoderProperties": {"max-bitrate": 250000}
+    },
+  ];
+
+  var expected = EXPECTED_VALUES[aState];
+  for (let prop in expected) {
+    if (expected[prop] instanceof Error) {
+      try {
+        configurator[prop];
+        doFail("attempt to get property " + prop + " unexpectedly succeeded; " +
+               "got value: " + configurator[prop]);
+      } catch (err) {
+        // error expected
       }
     }
-    catch (err) {
-      if (hasRunConfigurate) {
-        // The call should not have failed since Configurate ran
-        doFail("Attribute \"" + attributeName + "\" threw when it was not" +
-               "expected to.");
+    else if (typeof(expected[prop]) == "string") {
+      // not an error; look at the value (which may throw), and make sure
+      // it's equal.
+      assertEqual(configurator[prop], expected[prop],
+                  "error in stage " + aState + ": " +
+                  "attribute " + prop + " not equal");
+    }
+    else {
+      for (let subprop in expected[prop]) {
+        let result = null;
+        if (configurator[prop] instanceof Ci.nsIPropertyBag2) {
+          assertTrue(configurator[prop].hasKey(subprop),
+                     "error in stage " + aState + ": " +
+                     "property " + subprop + " of " +
+                     "attribute " + prop + " missing");
+          result = configurator[prop].getProperty(subprop);
+        } else {
+          result = configurator[prop][subprop];
+        }
+        assertEqual(result, expected[prop][subprop],
+                    "error in stage " + aState + ": " +
+                    "property " + subprop + " of " +
+                    "attribute " + prop + " not equal");
       }
+      // not implemented
     }
   }
-
-  // TODO: Change these functions to actually compare expected values.
-  testAttribute("muxer", function (value) { return true; });
-  testAttribute("videoEncoder", function (value) { return true; });
-  testAttribute("videoFormat", function (value) { return true; });
-  testAttribute("videoEncoderProperties", function (value) { true; });
-  testAttribute("audioEncoder", function (value) { true; });
-  testAttribute("audioFormat", function (value) { true; });
-  testAttribute("audioEncoderProperties", function (value) { true; });
 }
 
 function runTest() {
   // Set up a test library with a test item to use for the configurator.
   var testlib = createLibrary("test_transcodeconfigurator");
   var testFile = newAppRelativeFile(gTestFileLocation);
-  testFile.append("transcode_configurator_test.mp3");
+  testFile.append("transcode_configurator_test.mkv");
   var localTestFileURI = newFileURI(testFile);
-  assertNotEqual(localTestFileURI, null);
+  assertTrue(localTestFileURI, "failed to get configurator test media file");
   var testItem = testlib.createMediaItem(localTestFileURI, null, true);
-  assertNotEqual(testItem, null);
+  assertTrue(testItem, "failed to create media item");
 
   // Create a new configurator to test with.
   var configurator =
-    Cc["@songbirdnest.com/Songbird/Mediacore/TranscodingConfigurator;1"]
-      .createInstance(Ci.sbITranscodingConfigurator);
-  assertNotEqual(configurator, null);
+    Cc["@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Device/GStreamer;1"]
+      .createInstance(Ci.sbIDeviceTranscodingConfigurator);
+  assertTrue(configurator, "failed to create configurator");
 
   // First test to make sure functions that need configurate called first throw
   // the NS_ERROR_NOT_INITIALIZED.
-  testHasConfigurated(configurator, false);
+  testHasConfigurated(configurator, 0);
 
+  // Test that determineOutputFormat fails due to lack of a device
+  try {
+    configurator.determineOutputType();
+    doFail("configurator determineOutputType successful with no device set");
+  } catch (err) {
+    // expected fail
+  }
+  
+  // Test the configurator by setting a device on it
+  var device = Cc["@songbirdnest.com/Songbird/Device/DeviceTester/MockDevice;1"]
+                  .createInstance(Ci.sbIDevice);
+  configurator.device = device;
+  configurator.determineOutputType();
+  testHasConfigurated(configurator, 1);
+
+  // try to set the device again; this should fail
+  try {
+    configurator.device = null;
+    doFail("set device succeeded after determining output type");
+  } catch (err) {
+    // expected failure
+  }
+  
   // Try to configurate before setting the input format.
   try {
     configurator.configurate();
@@ -101,36 +162,29 @@ function runTest() {
   }
 
   // We have to inspect a mediaItem in order to get a mediaFormat
-/* TODO: Uncomment when inspectMedia is implemented.
   var mediaInspector =
     Cc["@songbirdnest.com/Songbird/Mediacore/mediainspector;1"]
       .createInstance(Ci.sbIMediaInspector);
   var inputFormat = mediaInspector.inspectMedia(testItem);
-  assertNotEqual(inputFormat, null);
+  assertTrue(inputFormat, "failed to inspect configurator test file");
 
   // Set the input format, this should not throw NS_ERROR_ALREADY_INITIALIZED
   configurator.inputFormat = inputFormat;
   assertEqual(configurator.inputFormat, inputFormat);
-*/
-  // TODO: Remove the try/catch when configurate is implemented. See Bug 19145
-  try {
-    configurator.configurate();
-  } catch (err) { }
-/* TODO: Uncomment when inspectMedia is implemented.
+
+  configurator.configurate();
+
+  // test to make sure we get back expected values.
+  testHasConfigurated(configurator, 2);
+
   // Try to set again and this should throw NS_ERROR_ALREADY_INITIALIZED
   try {
     configurator.inputFormat = inputFormat;
-    assertNotEqual(true,
-                   "Setting inputFormat twice worked when it should not have");
+    doFail("Setting inputFormat twice worked when it should not have");
   }
   catch (err) {
     // All good
   }
-*/
-
-  // Now we test to make sure we get back expected values.
-  // TODO: Uncomment once configurate is implemented. See Bug 19145
-  //testHasConfigurated(configurator, true);
 
   return;
 }
