@@ -2180,8 +2180,21 @@ sbBaseDevice::GetItemContentType(sbIMediaItem* aMediaItem,
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aContentType);
 
-  // Return results.  Assume all media items are audio.
-  *aContentType = sbIDeviceCapabilities::CONTENT_AUDIO;
+  // Function variables.
+  nsresult rv;
+
+  // Get the format type.
+  sbExtensionToContentFormatEntry_t formatType;
+  PRUint32                          bitRate;
+  PRUint32                          sampleRate;
+  rv = sbDeviceUtils::GetFormatTypeForItem(aMediaItem,
+                                           formatType,
+                                           bitRate,
+                                           sampleRate);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Return results.
+  *aContentType = formatType.ContentType;
 
   return NS_OK;
 }
