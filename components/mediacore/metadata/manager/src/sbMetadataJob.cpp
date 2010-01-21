@@ -58,6 +58,7 @@
 #include <sbILibrary.h>
 #include <sbILibraryManager.h>
 #include <sbILibraryResource.h>
+#include <sbILibraryUtils.h>
 #include <sbILocalDatabaseLibrary.h>
 #include <sbLocalDatabaseLibrary.h>
 #include <sbILocalDatabaseMediaItem.h>
@@ -1473,24 +1474,45 @@ nsresult sbMetadataJob::CreateDefaultItemName(sbIMediaItem* aItem,
   nsCOMPtr<nsIURI> uri;
   rv = aItem->GetContentSrc(getter_AddRefs(uri));
   NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<nsIURL> url = do_QueryInterface(uri, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the filename as UTF8
-  nsCAutoString escapedURI, unescapedURI;
-  rv = url->GetFileName(escapedURI);
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIFileURL> fileUrl = do_QueryInterface(uri, &rv);
+  if (NS_SUCCEEDED(rv) && fileUrl) {
+    nsCOMPtr<nsIFile> sourceFile, canonicalFile;
+    rv = fileUrl->GetFile(getter_AddRefs(sourceFile));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  // Now unescape it
-  nsCOMPtr<nsINetUtil> netUtil =
-    do_GetService("@mozilla.org/network/util;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = netUtil->UnescapeString(escapedURI, 
-                               nsINetUtil::ESCAPE_ALL, 
-                               unescapedURI);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  retval = NS_ConvertUTF8toUTF16(unescapedURI);
+    nsCOMPtr<sbILibraryUtils> libraryUtils =
+      do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = libraryUtils->GetCanonicalPath(sourceFile,
+                                        getter_AddRefs(canonicalFile));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = canonicalFile->GetLeafName(retval);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    nsCOMPtr<nsIURL> url = do_QueryInterface(uri, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the filename as UTF8
+    nsCAutoString escapedURI, unescapedURI;
+    rv = url->GetFileName(escapedURI);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Now unescape it
+    nsCOMPtr<nsINetUtil> netUtil =
+      do_GetService("@mozilla.org/network/util;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = netUtil->UnescapeString(escapedURI,
+                                 nsINetUtil::ESCAPE_ALL,
+                                 unescapedURI);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    retval = NS_ConvertUTF8toUTF16(unescapedURI);
+  }
+
   return NS_OK;
 }
 

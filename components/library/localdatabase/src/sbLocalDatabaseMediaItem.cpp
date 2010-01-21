@@ -28,6 +28,7 @@
 
 #include <nsIProgrammingLanguage.h>
 #include <sbILibrary.h>
+#include <sbILibraryUtils.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbILocalDatabaseResourcePropertyBag.h>
 #include <sbIPropertyArray.h>
@@ -964,6 +965,21 @@ sbLocalDatabaseMediaItem::OpenOutputStream(nsIOutputStream** _retval)
   nsCOMPtr<nsIFile> file;
   rv = fileURL->GetFile(getter_AddRefs(file));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // try to get the canonical file name
+  PRBool exists;
+  rv = file->Exists(&exists);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (exists) {
+    nsCOMPtr<sbILibraryUtils> libUtils =
+      do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<nsIFile> canonicalFile;
+    rv = libUtils->GetCanonicalPath(file,
+                                    getter_AddRefs(canonicalFile));
+    NS_ENSURE_SUCCESS(rv, rv);
+    canonicalFile.forget(getter_AddRefs(file));
+  }
 
   rv = NS_NewLocalFileOutputStream(_retval, file);
   NS_ENSURE_SUCCESS(rv, rv);

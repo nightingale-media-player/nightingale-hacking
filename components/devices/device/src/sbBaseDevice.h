@@ -1230,30 +1230,21 @@ protected:
   nsresult GetPrimaryLibrary(sbIDeviceLibrary ** aDeviceLibrary);
 
   /**
-   *   Set the content source for the device write destination media item
-   * specified by aWriteDstItem.  The base URI of the content source is
-   * specified by aContentSrcBaseURI.  The URI of the source of the write
-   * operation may be specified by aWriteSrcURI; if none is specified, the
-   * source information is obtained from the write destination item.
+   *   Determine the URI for the device write destination media item specified
+   * by aWriteDstItem.  The base URI is specified by aContentSrcBaseURI.  The
+   * URI of the source of the write operation may be specified by aWriteSrcURI;
+   * if none is specified, the source information is obtained from the write
+   * destination item.
    *
    *   Currently, only base URI schemes of "file:" are supported.
    *
-   * \param aWriteDstItem       Device write destination media item.
-   * \param aContentSrcBaseURI  Base URI of device content source.
-   * \param aWriteSrcURI        URI of source of write.  Defaults to null.
+   * @note The URI is _not_ suitable for inserting into contentSrc directly;
+   * it needs to go through sbILibraryUtils::getContentURI
    */
-  nsresult SetDeviceWriteContentSrc(sbIMediaItem* aWriteDstItem,
-                                    nsIURI*       aContentSrcBaseURI,
-                                    nsIURI*       aWriteSrcURI = nsnull);
-
-  /**
-   * Determine the content source for the device write destination, as above,
-   * but return it in aContentSrc, rather than setting it on the media item.
-   */
-  nsresult GetDeviceWriteContentSrc(sbIMediaItem* aWriteDstItem,
-                          nsIURI*       aContentSrcBaseURI,
-                          nsIURI*       aWriteSrcURI,
-                          nsIURI **     aContentSrc);
+  nsresult GetDeviceWriteDestURI(sbIMediaItem* aWriteDstItem,
+                                 nsIURI*       aContentSrcBaseURI,
+                                 nsIURI*       aWriteSrcURI,
+                                 nsIURI **     aDestinationURI);
 
   /**
    * Present the user with a dialog for the initial device setup.

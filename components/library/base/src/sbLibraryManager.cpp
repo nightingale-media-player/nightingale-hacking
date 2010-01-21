@@ -32,6 +32,7 @@
 #include <nsIAppStartupNotifier.h>
 #include <nsICategoryManager.h>
 #include <nsIGenericFactory.h>
+#include <nsILocalFile.h>
 #include <nsIObserver.h>
 #include <nsIObserverService.h>
 #include <nsIPrefBranch.h>
@@ -53,6 +54,11 @@
 #include <sbProxyUtils.h>
 #include <sbLibraryUtils.h>
 #include <sbThreadUtils.h>
+
+/* for sbILibraryUtils::GetCanonicalPath */
+#if XP_WIN
+#include <windows.h>
+#endif
 
 /**
  * To log this module, set the following environment variable:
@@ -904,7 +910,7 @@ sbLibraryManager::GetContentURI(nsIURI* aURI,
 }
 
 /**
- * Sett sbILibraryUtils.idl
+ * See sbILibraryUtils.idl
  */
 NS_IMETHODIMP
 sbLibraryManager::GetFileContentURI(nsIFile* aFile,
@@ -915,6 +921,47 @@ sbLibraryManager::GetFileContentURI(nsIFile* aFile,
   NS_ENSURE_ARG_POINTER(_retval);
 
   return sbLibraryUtils::GetFileContentURI(aFile, _retval);
+}
+
+/**
+ * See sbILibraryUtils.idl
+ */
+/* nsIFile getCanonicalPath (in nsIFile aFile); */
+NS_IMETHODIMP
+sbLibraryManager::GetCanonicalPath(nsIFile *aFile, nsIFile **_retval)
+{
+  nsresult rv;
+  nsCOMPtr<nsIFile> outFile;
+  NS_ENSURE_ARG_POINTER(aFile);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  #if XP_WIN
+    nsString originalPath, canonicalizedLeafName;
+    rv = aFile->GetPath(originalPath);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    WIN32_FIND_DATA findData = {0};
+    HANDLE findResult = ::FindFirstFileEx(originalPath.BeginReading(),
+                                          FindExInfoStandard,
+                                          &findData,
+                                          FindExSearchNameMatch,
+                                          NULL,
+                                          0);
+    NS_ENSURE_FALSE(findResult == INVALID_HANDLE_VALUE, NS_ERROR_FAILURE);
+    canonicalizedLeafName.Assign(findData.cFileName);
+    ::FindClose(findResult);
+    rv = aFile->Clone(getter_AddRefs(outFile));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = outFile->SetLeafName(canonicalizedLeafName);
+    NS_ENSURE_SUCCESS(rv, rv);
+  #else
+    /* default implementation, assume case-sensitive filesystem */
+    rv = aFile->Clone(getter_AddRefs(outFile));
+    NS_ENSURE_SUCCESS(rv, rv);
+  #endif
+
+  outFile.forget(_retval);
+  return NS_OK;
 }
 
 /**

@@ -74,6 +74,7 @@
 #include <sbIDownloadDevice.h>
 #include <sbILibrary.h>
 #include <sbILibraryDiffingService.h>
+#include <sbILibraryUtils.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
 #include <sbIMediaFileManager.h>
@@ -4829,7 +4830,7 @@ nsresult sbBaseDevice::GetPrimaryLibrary(sbIDeviceLibrary ** aDeviceLibrary)
   return NS_OK;
 }
 
-nsresult sbBaseDevice::GetDeviceWriteContentSrc
+nsresult sbBaseDevice::GetDeviceWriteDestURI
                          (sbIMediaItem* aWriteDstItem,
                           nsIURI*       aContentSrcBaseURI,
                           nsIURI*       aWriteSrcURI,
@@ -4956,25 +4957,15 @@ nsresult sbBaseDevice::GetDeviceWriteContentSrc
 
   } else {
     // Get the write source file name, unescape it, and replace illegal characters.
-    nsCOMPtr<nsIURL> writeSrcURL = do_QueryInterface(writeSrcURI, &rv);
+    nsCOMPtr<nsIFile> canonicalFile;
+    nsCOMPtr<sbILibraryUtils> libUtils =
+      do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+    rv = libUtils->GetCanonicalPath(writeSrcFile, getter_AddRefs(canonicalFile));
     NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCAutoString cWriteSrcFileName;
-    rv = writeSrcURL->GetFileName(cWriteSrcFileName);
+    nsAutoString writeSrcFileName;
+    rv = canonicalFile->GetLeafName(writeSrcFileName);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    // First, unescape it
-    nsCAutoString cUnescapedWriteSrcFileName;
-    nsCOMPtr<nsINetUtil> netUtil =
-                       do_GetService("@mozilla.org/network/util;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = netUtil->UnescapeString(cWriteSrcFileName,
-                                 nsINetUtil::ESCAPE_ALL,
-                                 cUnescapedWriteSrcFileName);
-    NS_ENSURE_SUCCESS(rv, rv);
-    nsAutoString writeSrcFileName =
-                        NS_ConvertUTF8toUTF16(cUnescapedWriteSrcFileName);
-
+    
     // replace illegal characters
     nsString_ReplaceChar(writeSrcFileName, kIllegalChars, PRUnichar('_'));
 
@@ -5015,29 +5006,7 @@ nsresult sbBaseDevice::GetDeviceWriteContentSrc
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  // Get the device content source URI.
-  nsCOMPtr<nsIURI> contentSrc;
-  rv = sbLibraryUtils::GetFileContentURI(contentSrcFile,
-                                         getter_AddRefs(contentSrc));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  contentSrc.forget(aContentSrc);
-  return NS_OK;
-}
-
-nsresult sbBaseDevice::SetDeviceWriteContentSrc
-                         (sbIMediaItem* aWriteDstItem,
-                          nsIURI*       aContentSrcBaseURI,
-                          nsIURI*       aWriteSrcURI)
-{
-  TRACE(("%s", __FUNCTION__));
-  nsCOMPtr<nsIURI> contentSrc;
-  nsresult rv = GetDeviceWriteContentSrc(aWriteDstItem,
-                                         aContentSrcBaseURI,
-                                         aWriteSrcURI,
-                                         getter_AddRefs(contentSrc));
-  // Set the write destination item content source.
-  rv = aWriteDstItem->SetContentSrc(contentSrc);
+  rv = NS_NewFileURI(aContentSrc, contentSrcFile);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

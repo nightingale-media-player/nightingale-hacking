@@ -26,6 +26,7 @@
 
 // Songbird includes
 #include "sbMediaFileManager.h"
+#include <sbILibraryUtils.h>
 #include <sbIMediaItem.h>
 #include <sbLibraryUtils.h>
 #include <sbPropertiesCID.h>
@@ -446,7 +447,14 @@ sbMediaFileManager::GetManagedPath(sbIMediaItem *aItem,
     NS_ENSURE_TRUE(success, NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA);
   } else if (oldItemFile) {
     // not renaming, use the old name
-    rv = oldItemFile->GetLeafName(filename);
+    nsCOMPtr<sbILibraryUtils> libUtils =
+      do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<nsIFile> canonicalOldFile;
+    rv = libUtils->GetCanonicalPath(oldItemFile,
+                                    getter_AddRefs(canonicalOldFile));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = canonicalOldFile->GetLeafName(filename);
     NS_ENSURE_SUCCESS(rv, rv);
   } else {
     return NS_ERROR_INVALID_ARG;
