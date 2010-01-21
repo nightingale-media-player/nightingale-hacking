@@ -166,10 +166,10 @@
   <binding id="sb-sys-buttons">
     <content>
       <xul:hbox id="sb-sys-buttons" flex="1">
+        <xul:sb-sys-hide-button id="sb-sys-buttons-hide" sbid="hide" hidden="true"/>
         <xul:sb-sys-minimize-button id="sb-sys-buttons-mini" sbid="mini"/>
         <xul:sb-sys-maximize-button id="sb-sys-buttons-maxi" sbid="maxi"/>
         <xul:sb-sys-close-button id="sb-sys-buttons-close" sbid="close" xbl:inherits="type"/>
-        <xul:sb-sys-hide-button id="sb-sys-buttons-hide" sbid="hide" hidden="true"/>
       </xul:hbox>
     </content>
     <implementation>
