@@ -31,7 +31,6 @@
 
 #include <sbIDeviceCapsCompatibility.h>
 
-class sbIMediaInspector;
 class sbIDevCapVideoStream;
 class sbIDevCapAudioStream;
 class sbIMediaFormatVideo;

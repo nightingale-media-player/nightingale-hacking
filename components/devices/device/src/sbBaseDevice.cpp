@@ -269,7 +269,7 @@ sbBaseDevice::TransferRequest::TransferRequest() :
   transcodeProfile(nsnull),
   contentSrcSet(PR_FALSE),
   destinationMediaPresent(PR_FALSE),
-  needsTranscoding(PR_FALSE),
+  destinationCompatibility(COMPAT_SUPPORTED),
   transcoded(PR_FALSE)
 {
 }
@@ -555,9 +555,13 @@ void SBCreateSubBatchIndex(sbBaseDevice::Batch& aBatch)
   sbBaseDevice::TransferRequest *request = nsnull;
   PRUint32 index = sbBaseDevice::BATCH_INDEX_START;
   PRBool firstTranscoding = PR_TRUE;
+  const sbBaseDevice::TransferRequest::CompatibilityType NEEDS_TRANSCODING =
+    sbBaseDevice::TransferRequest::COMPAT_NEEDS_TRANSCODING;
   for (; batchBegin != aBatch.end(); ++batchBegin) {
     request = batchBegin->get();
-    if (firstTranscoding && request->needsTranscoding) {
+    if (firstTranscoding &&
+        request->destinationCompatibility == NEEDS_TRANSCODING)
+    {
       sbBaseDevice::TransferRequest *req = nsnull;
       for (; lastBegin != batchBegin; ++lastBegin) {
         req = lastBegin->get();
@@ -594,8 +598,11 @@ void SBCreateSubBatchIndex(sbBaseDevice::Batch& aBatch)
 bool needsTranscodingToBack(nsRefPtr<sbBaseDevice::TransferRequest> const &p1,
                             nsRefPtr<sbBaseDevice::TransferRequest> const &p2)
 {
-  return (!p1->needsTranscoding && p2->needsTranscoding);
+  const sbBaseDevice::TransferRequest::CompatibilityType NEEDS_TRANSCODING =
+    sbBaseDevice::TransferRequest::COMPAT_NEEDS_TRANSCODING;
   // p1 < p2 iff (p1 !transcode && p2 transcode)
+  return p1->destinationCompatibility != NEEDS_TRANSCODING &&
+         p2->destinationCompatibility == NEEDS_TRANSCODING;
 }
 
 /**
@@ -5148,22 +5155,9 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem,
   // TODO: In the future, mediaFormat should always be used, but for now
   // we'll fall back to the format mappings for non-video types.
   if (transcodeType == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO) {
-    nsCOMPtr<sbIMediaFormat> mediaFormat;
-
-    rv = GetDeviceTranscoding()->GetMediaFormat(aMediaItem,
-                                            getter_AddRefs(mediaFormat));
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = sbDeviceUtils::DoesItemNeedTranscoding(transcodeType,
-                                                mediaFormat,
-                                                this,
-                                                needsTranscoding);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (!needsTranscoding) {
-      *_retval = PR_TRUE;
-      return NS_OK;
-    }
-
+    // Try to check if we can transcode first, since it's cheaper than trying
+    // to inspect the actual file (and both ways we get which files we can get
+    // on the device).
     // XXX MOOK this needs to be fixed to be not gstreamer specific
     nsCOMPtr<sbIDeviceTranscodingConfigurator> configurator =
       do_CreateInstance("@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Device/GStreamer;1", &rv);
@@ -5175,7 +5169,28 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem,
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = configurator->DetermineOutputType();
-    *_retval = NS_SUCCEEDED(rv) ? PR_TRUE : PR_FALSE;
+    if (NS_SUCCEEDED(rv)) {
+      *_retval = PR_TRUE;
+      return NS_OK;
+    }
+
+    // Can't transcode, check the media format as a fallback.
+    nsCOMPtr<sbIMediaFormat> mediaFormat;
+    rv = GetDeviceTranscoding()->GetMediaFormat(aMediaItem,
+                                            getter_AddRefs(mediaFormat));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = sbDeviceUtils::DoesItemNeedTranscoding(transcodeType,
+                                                mediaFormat,
+                                                this,
+                                                needsTranscoding);
+
+    if (NS_SUCCEEDED(rv) && !needsTranscoding) {
+      *_retval = PR_TRUE;
+      return NS_OK;
+    }
+
+    // Can't transfer at all.
+    *_retval = PR_FALSE;
     return NS_OK;
   }
 

@@ -170,8 +170,13 @@ public:
     PRBool destinationMediaPresent;  /* if true, the destination media is
                                         present on the device (e.g., it's been
                                         copied or transcoded to the device) */
-    PRBool needsTranscoding;         /* if true, write item media needs to be
-                                        transcoded */
+    /* This determines how much this item will be transferred onto the device */
+    typedef enum {
+      COMPAT_UNSUPPORTED,            /* this item cannot be transferred */
+      COMPAT_SUPPORTED,              /* this item is directly supported on the device */
+      COMPAT_NEEDS_TRANSCODING       /* this item needs to be transcoded */
+    } CompatibilityType;
+    CompatibilityType destinationCompatibility;
     PRBool transcoded;               /* if true, write item media was
                                         transcoded */
     nsCOMPtr<sbITranscodeAlbumArt> albumArt; /* Album art transcoding object,

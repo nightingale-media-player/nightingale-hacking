@@ -54,6 +54,7 @@ public:
    */
   typedef sbBaseDevice::Batch Batch;
   typedef sbBaseDevice::TransferRequest TransferRequest;
+  typedef sbBaseDevice::TransferRequest::CompatibilityType CompatibilityType;
 
 
   /* Get an array of all the sbITranscodeProfile instances supported for this
@@ -67,14 +68,15 @@ public:
    * \param aMediaItem The media item to find the profile for
    * \param aProfile the profile found or may be null if no transcoding
    *                 is needed.
-   * \param aCanTranscode (Temporary) this is a video item, and this can be
-   *                      transcoded
+   * \param aDeviceCompatibility Whether this item is supported directly by the
+   *                             device, or if transcoding is needed.  Will be
+   *                             set even if no profile is found.
    * \note NS_ERROR_NOT_AVAILABLE is returned if no suitable profile is found
    *       but transcoding is needed
    */
   nsresult FindTranscodeProfile(sbIMediaItem * aMediaItem,
                                 sbITranscodeProfile ** aProfile,
-                                PRBool * aCanTranscode);
+                                CompatibilityType * aDeviceCompatibility);
 
   /**
    * \brief Select a transcode profile to use when transcoding to this device.
