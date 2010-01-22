@@ -1271,6 +1271,8 @@ sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
 nsresult
 sbMediacoreSequencer::RecalculateSequence(PRInt64 *aViewPosition /*= nsnull*/)
 {
+  LOG(("[%s] Recalculating Sequence", __FUNCTION__));
+
   nsAutoMonitor mon(mMonitor);
 
   if(!mView) {
