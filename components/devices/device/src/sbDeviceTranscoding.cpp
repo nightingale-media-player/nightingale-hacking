@@ -306,7 +306,7 @@ sbDeviceTranscoding::FindTranscodeProfile(sbIMediaItem * aMediaItem,
 
   nsresult rv;
   *aProfile = nsnull;
-  *aDeviceCompatibility = CompatibilityType::COMPAT_UNSUPPORTED;
+  *aDeviceCompatibility = TransferRequest::COMPAT_UNSUPPORTED;
 
   if (sbDeviceUtils::IsItemDRMProtected(aMediaItem)) {
     // Transcoding from DRM formats is not supported.
@@ -330,7 +330,7 @@ sbDeviceTranscoding::FindTranscodeProfile(sbIMediaItem * aMediaItem,
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (!needsTranscoding) {
-      *aDeviceCompatibility = CompatibilityType::COMPAT_SUPPORTED;
+      *aDeviceCompatibility = TransferRequest::COMPAT_SUPPORTED;
       return NS_OK;
     }
 
@@ -346,7 +346,7 @@ sbDeviceTranscoding::FindTranscodeProfile(sbIMediaItem * aMediaItem,
 
     rv = configurator->DetermineOutputType();
     if (NS_SUCCEEDED(rv)) {
-      *aDeviceCompatibility = CompatibilityType::COMPAT_NEEDS_TRANSCODING;
+      *aDeviceCompatibility = TransferRequest::COMPAT_NEEDS_TRANSCODING;
     }
     return NS_OK;
   }
@@ -371,13 +371,13 @@ sbDeviceTranscoding::FindTranscodeProfile(sbIMediaItem * aMediaItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!needsTranscoding) {
-    *aDeviceCompatibility = CompatibilityType::COMPAT_SUPPORTED;
+    *aDeviceCompatibility = TransferRequest::COMPAT_SUPPORTED;
     return NS_OK;
   }
 
   rv = SelectTranscodeProfile(transcodeType, aProfile);
   if (NS_SUCCEEDED(rv)) {
-    *aDeviceCompatibility = CompatibilityType::COMPAT_NEEDS_TRANSCODING;
+    *aDeviceCompatibility = TransferRequest::COMPAT_NEEDS_TRANSCODING;
   }
 
   return NS_OK;
