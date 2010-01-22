@@ -221,8 +221,8 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
       // Severly limit the video extensions that are imported by default to:
       //   * ogg/ogv (all platforms)
       //   * wmv (windows only)
-      //   * mp4/m4v (w/ qtvideowrapper plugin)
-      //   * divx/avi (w/ ewmpeg4dec plugin)
+      //   * mp4/m4v/mov (w/ qtvideowrapper plugin)
+      //   * divx/avi/mkv (w/ ewmpeg4dec plugin)
       videoExtensions.AppendElement(NS_LITERAL_STRING("ogv"));
       videoExtensions.AppendElement(NS_LITERAL_STRING("ogg"));
 #ifdef XP_WIN
@@ -259,6 +259,7 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
         foundQTPlugin = PR_TRUE;
         videoExtensions.AppendElement(NS_LITERAL_STRING("mp4"));
         videoExtensions.AppendElement(NS_LITERAL_STRING("m4v"));
+        videoExtensions.AppendElement(NS_LITERAL_STRING("mov"));
         gst_object_unref(plugin);
       }
 
@@ -267,6 +268,7 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
       if (plugin) {
         videoExtensions.AppendElement(NS_LITERAL_STRING("divx"));
         videoExtensions.AppendElement(NS_LITERAL_STRING("avi"));
+        videoExtensions.AppendElement(NS_LITERAL_STRING("mkv"));
 
         // This plugin will also handle "mp4" and "m4v", only append those
         // extensions if they haven't been added already.
