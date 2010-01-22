@@ -28,6 +28,7 @@
 #include <nsArrayUtils.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIInputStream.h>
+#include <nsIIOService.h>
 #include <nsIStringEnumerator.h>
 #include <nsIVariant.h>
 
@@ -498,11 +499,46 @@ sbDeviceTranscoding::TranscodeAudioItem(
   return NS_OK;
 }
 
+/**
+ * Set the extension on aURI to the appropriate file extension for profile
+ * aProfile.
+ * \param aProfile the profile we're finding an extension for
+ * \param aURI     the URI to set the found extension on
+ */
+static
+nsresult SetFileExtension(sbITranscodeProfile *aProfile,
+                          nsIURI *aURI)
+{
+  NS_ENSURE_ARG_POINTER(aProfile);
+
+  nsCString extension;
+  nsresult rv = sbDeviceUtils::GetTranscodedFileExtension(aProfile, extension);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIThread> target;
+  rv = NS_GetMainThread(getter_AddRefs(target));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURL> url;
+  rv = do_GetProxyForObject(target,
+                            NS_GET_IID(nsIURL),
+                            aURI,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(url));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = url->SetFileExtension(extension);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 nsresult
 sbDeviceTranscoding::TranscodeMediaItem(
                                      sbBaseDevice::TransferRequest * aRequest,
                                      sbDeviceStatusHelper * aDeviceStatusHelper,
-                                     nsIURI * aDestinationURI)
+                                     nsIURI * aDestinationURI,
+                                     nsIURI ** aTranscodedDestinationURI)
 {
   NS_ENSURE_ARG_POINTER(aRequest);
   NS_ENSURE_ARG_POINTER(aDeviceStatusHelper);
@@ -525,6 +561,25 @@ sbDeviceTranscoding::TranscodeMediaItem(
   rv = NS_GetMainThread(getter_AddRefs(target));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<nsIIOService> ioService =
+      do_ProxiedGetService("@mozilla.org/network/io-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURI> transcodedDestinationURI;
+  nsCOMPtr<nsIURI> transcodedDestinationURIProxy;
+  rv = ioService->NewURI(NS_LITERAL_CSTRING(""),
+                         nsnull,
+                         aDestinationURI,
+                         getter_AddRefs(transcodedDestinationURI));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = do_GetProxyForObject(target,
+                            NS_GET_IID(nsIURI),
+                            transcodedDestinationURI,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(transcodedDestinationURIProxy));
+  NS_ENSURE_SUCCESS(rv, rv);
+  transcodedDestinationURI = transcodedDestinationURIProxy;
+
   nsCOMPtr<sbITranscodeVideoJob> videoJob = do_QueryInterface(tcJob, &rv);
   nsCOMPtr<sbITranscodeJob> audioJob;
   if (NS_SUCCEEDED(rv)) {
@@ -540,11 +595,17 @@ sbDeviceTranscoding::TranscodeMediaItem(
 
     rv = TranscodeVideoItem(videoJob,
                             aRequest,
-                            aDestinationURI);
+                            transcodedDestinationURI);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
-    nsCOMPtr<sbITranscodeJob> proxyJob;
+    // Set the transcoded file extension.  Not finding an extension is ok, we'll
+    // just keep the existing one and hope for the best.
+    rv = SetFileExtension(aRequest->transcodeProfile, transcodedDestinationURI);
+    if (rv != NS_ERROR_NOT_AVAILABLE) {
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
     rv = do_GetProxyForObject(target,
                               NS_GET_IID(sbITranscodeJob),
                               tcJob,
@@ -554,7 +615,7 @@ sbDeviceTranscoding::TranscodeMediaItem(
 
     rv = TranscodeAudioItem(audioJob,
                             aRequest,
-                            aDestinationURI);
+                            transcodedDestinationURI);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -660,8 +721,30 @@ sbDeviceTranscoding::TranscodeMediaItem(
   }
 #endif
 
+  // Get the transcoded video file URI.
+  if (videoJob) {
+    nsAutoString destURI;
+    rv = videoJob->GetDestURI(destURI);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = ioService->NewURI(NS_ConvertUTF16toUTF8(destURI),
+                           nsnull,
+                           nsnull,
+                           getter_AddRefs(transcodedDestinationURI));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = do_GetProxyForObject(target,
+                              NS_GET_IID(nsIURI),
+                              transcodedDestinationURI,
+                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                              getter_AddRefs(transcodedDestinationURIProxy));
+    NS_ENSURE_SUCCESS(rv, rv);
+    transcodedDestinationURI = transcodedDestinationURIProxy;
+  }
+
   // Check for transcode errors.
   NS_ENSURE_TRUE(status == sbIJobProgress::STATUS_SUCCEEDED, NS_ERROR_FAILURE);
+
+  if (aTranscodedDestinationURI)
+    transcodedDestinationURI.forget(aTranscodedDestinationURI);
 
   return NS_OK;
 }

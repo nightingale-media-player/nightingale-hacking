@@ -109,11 +109,15 @@ public:
                           sbIMediaFormat** aMediaFormat);
 
   /**
-   * Transcode the media item for a given request
+   * Transcode the media item for a given request to the destination specified
+   * by aDestinationURI.  If aTranscodedDestinationURI is not null, return the
+   * final destination URI with transcoded file extension in
+   * aTranscodedDestinationURI.
    */
   nsresult TranscodeMediaItem(sbBaseDevice::TransferRequest * aRequest,
                               sbDeviceStatusHelper * aDeviceStatusHelper,
-                              nsIURI * aDestinationURI);
+                              nsIURI * aDestinationURI,
+                              nsIURI ** aTranscodedDestinationURI = nsnull);
 private:
   sbDeviceTranscoding(sbBaseDevice * aBaseDevice);
   nsresult GetTranscodeManager(sbITranscodeManager ** aTranscodeManager);
