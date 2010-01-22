@@ -921,8 +921,10 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
     TransferRequestQueue& queue = mRequests[priority];
 
     // Initialize the iterator if the queue is empty.
-    if (queue.empty())
+    if (queue.empty()) {
       mFirstVideoIterator = queue.end();
+      mSyncType = 0;
+    }
 
     #if DEBUG
       CheckRequestBatch(queue.begin(), queue.end());
@@ -943,11 +945,6 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
     aRequest->batchID = 0;
     aRequest->itemType = TransferRequest::REQUESTBATCH_UNKNOWN;
     aRequest->timeStamp = PR_Now();
-
-    if (aRequest->type == TransferRequest::REQUEST_SYNC) {
-      // Set back to zero when syncing starts.
-      mSyncType = 0;
-    }
 
     PRBool isAudio = PR_FALSE;
     PRBool isVideo = PR_FALSE;
@@ -1014,6 +1011,9 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
         if (isVideo && (isWrite || isDelete)) {
           // Set the flag so iterator can be set later
           mVideoInserted = true;
+        }
+        if (!isAudio && !isWrite && !isDelete) {
+          mFirstVideoIterator = queue.end();
         }
       }
     }

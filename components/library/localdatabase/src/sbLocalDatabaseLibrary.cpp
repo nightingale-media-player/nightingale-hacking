@@ -59,6 +59,7 @@
 #include <sbILocalDatabaseMigrationHelper.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbILocalDatabaseSimpleMediaList.h>
+#include <sbIMediacoreTypeSniffer.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
@@ -850,6 +851,56 @@ sbLocalDatabaseLibrary::SetDefaultItemProperties(sbIMediaItem* aItem,
   rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
                           url);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURI> uri;
+  if (!NS_IsMainThread()) {
+    // we need to proxy to the main thread
+    nsCOMPtr<nsIIOService> ioService =
+      do_ProxiedGetService("@mozilla.org/network/io-service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = ioService->NewURI(NS_ConvertUTF16toUTF8(url), nsnull,
+                           nsnull, getter_AddRefs(uri));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIThread> target;
+    rv = NS_GetMainThread(getter_AddRefs(target));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIURI> proxiedURI;
+    rv = do_GetProxyForObject(target,
+                              NS_GET_IID(nsIURI),
+                              uri,
+                              NS_PROXY_SYNC,
+                              getter_AddRefs(proxiedURI));
+    NS_ENSURE_SUCCESS(rv, rv);
+    uri = proxiedURI;
+  }
+  else {
+    nsCOMPtr<nsIIOService> ioService = do_GetIOService(&rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = ioService->NewURI(NS_ConvertUTF16toUTF8(url), nsnull,
+                           nsnull, getter_AddRefs(uri));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsCOMPtr<sbIMediacoreTypeSniffer> typeSniffer =
+    do_CreateInstance("@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool isVideo = PR_FALSE;
+  rv = typeSniffer->IsValidVideoURL(uri, &isVideo);
+  if (NS_SUCCEEDED(rv) && isVideo) {
+    nsCOMPtr<sbIMutablePropertyArray> mutableProperties =
+      do_QueryInterface(properties, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mutableProperties->AppendProperty(
+                              NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                              NS_LITERAL_STRING("video"));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   nsCOMPtr<sbIPropertyArray> filteredProperties;
 
