@@ -115,6 +115,8 @@ DirectoryImportJob.prototype = {
   // Array of nsIFile directory paths or files
   _inputFiles               : null,
   _fileExtensions           : null,
+  _flaggedFileExtensions    : null,
+  _foundFlaggedExtensions   : null,
   
   // The sbIDirectoryImportService.  Called back on job completion.
   _importService            : null,
@@ -258,7 +260,33 @@ DirectoryImportJob.prototype = {
            "Assuming test mode, and using a hardcoded list.\n");
       this._fileExtensions = ["mp3", "ogg", "flac"];
     }
-    
+
+    // Add the unsupported file extensions as flagged extensions to the file
+    // scanner so that the user can be notified if any unsupported extensions
+    // were discovered.
+    //
+    // NOTE: if the user choose to ignore import warnings, do not bother adding
+    //       the filter list here.
+    var shouldWarnFlagExtensions = Application.prefs.getValue(
+      "songbird.mediaimport.warn_filtered_exts", true);
+    if (shouldWarnFlagExtensions) {
+      this._foundFlaggedExtensions =
+        Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+          .createInstance(Ci.nsIMutableArray);
+      this._flaggedFileExtensions = [];
+      try {
+        var unsupportedExtensions = typeSniffer.unsupportedVideoFileExtensions;
+        while (unsupportedExtensions.hasMore()) {
+          var item = unsupportedExtensions.getNext();
+          this._flaggedFileExtensions.push(item);
+        }
+      }
+      catch (e) {
+        Components.utils.reportError(
+            e + "\nCould not add unsupported file extensions to the file scan!");
+      }
+    }
+
     // XXX If possible, wrap the entire operation in an update batch
     // so that onbatchend listeners dont go to work between the 
     // end of the batchcreate and the start of the metadata scan.
@@ -309,6 +337,13 @@ DirectoryImportJob.prototype = {
                               .createInstance(Components.interfaces.sbIFileScanQuery);
       var fileScanQuery = this._fileScanQuery;
       this._fileExtensions.forEach(function(ext) { fileScanQuery.addFileExtension(ext) });
+
+      // Assign the unsupported file extensions as flagged extensions in the scanner.
+      if (this._flaggedFileExtensions) {
+        this._flaggedFileExtensions.forEach(function(ext) {
+          fileScanQuery.addFlaggedFileExtension(ext);
+        });
+      }
     }
     
     if (file.exists() && file.isDirectory()) {
@@ -380,6 +415,26 @@ DirectoryImportJob.prototype = {
    * Responsible for shutting down the scanner.
    */
   _finishFileScan: function DirectoryImportJob__finishFileScan() {
+    if (this._fileScanQuery.flaggedExtensionsFound) {
+      var ioService = Cc["@mozilla.org/network/io-service;1"]
+                        .getService(Ci.nsIIOService);
+      // Add the leaf name of any flagged file paths to show the user at the
+      // end of the import. See bug 19553.
+      var flaggedExtCount = this._fileScanQuery.getFlaggedFileCount();
+      for (var i = 0; i < flaggedExtCount; i++) {
+        var curFlaggedPath = this._fileScanQuery.getFlaggedFilePath(i);
+        var curFlaggedURL = ioService.newURI(curFlaggedPath, null, null);
+        if (curFlaggedURL instanceof Ci.nsIFileURL) {
+          var curFlaggedFile = curFlaggedURL.QueryInterface(Ci.nsIFileURL).file;
+          var curSupportsStr = Cc["@mozilla.org/supports-string;1"]
+                                 .createInstance(Ci.nsISupportsString);
+          curSupportsStr.data = curFlaggedFile.leafName;
+
+          this._foundFlaggedExtensions.appendElement(curSupportsStr, false);
+        }
+      }
+    }
+
     if (this._fileScanner) {
       this._fileScanner = null;
     }
@@ -625,7 +680,32 @@ DirectoryImportJob.prototype = {
     if (this._timingService) {
       this._timingService.stopPerfTimer(this._timingIdentifier);
     }
-    
+
+    // If flagged extensions where found, show the dialog.
+    if (this._foundFlaggedExtensions &&
+        this._foundFlaggedExtensions.length > 0)
+    {
+      var winMed = Cc["@mozilla.org/appshell/window-mediator;1"]
+                     .getService(Ci.nsIWindowMediator);
+      var sbWin = winMed.getMostRecentWindow("Songbird:Main");
+
+      var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
+        .getService(Ci.sbIPrompter);
+      prompter.waitForWindow = false;
+
+      var dialogBlock = Cc["@mozilla.org/embedcomp/dialogparam;1"]
+                          .createInstance(Ci.nsIDialogParamBlock);
+
+      // Assign the flagged files 
+      dialogBlock.objects = this._foundFlaggedExtensions;
+      
+      // Now open the dialog.
+      prompter.openDialog(sbWin,
+          "chrome://songbird/content/xul/mediaimportWarningDialog.xul",
+          "mediaimportWarningDialog",
+          "chrome,centerscreen,modal=yes",
+          dialogBlock);
+    }
   },
   
   /**

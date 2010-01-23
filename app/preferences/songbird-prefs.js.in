@@ -492,3 +492,6 @@ pref("songbird.firstrun.load_ml_in_background", true);
 // Information Panel default settings
 pref("songbird.infoPanel.interval", 50);
 pref("songbird.infoPanel.steps", 4);
+
+// Filtered extensions warning dialog
+pref("songbird.mediaimport.warn_filtered_exts", true);

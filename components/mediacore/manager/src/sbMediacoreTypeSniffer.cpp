@@ -43,6 +43,7 @@
 #include <sbIPlaylistReader.h>
 
 #include <sbTArrayStringEnumerator.h>
+#include <sbStringUtils.h>
 
 const char *gBannedWebExtensions[] = {"htm", "html", "php", "php3"};
 const PRUint16 gBannedWebExtensionsSize = 
@@ -403,7 +404,7 @@ sbMediacoreTypeSniffer::IsValidImageURL(nsIURI *aURL, PRBool *aRetVal)
   *aRetVal = PR_TRUE;
 
   nsCString fileExtension;
-  nsresult rv = GetFileExtensionFromURI(aURL, fileExtension);
+  GetFileExtensionFromURI(aURL, fileExtension);
 
   if (!fileExtension.IsEmpty()) {
     nsAutoMonitor mon(mMonitor);
@@ -454,7 +455,6 @@ PLDHashOperator PR_CALLBACK EnumerateAllExtensions(EntryType* aEntry,
   NS_ENSURE_TRUE(aUserArg, PL_DHASH_STOP);
 
   nsTArray<nsString> *aArray = reinterpret_cast<nsTArray<nsString> *>(aUserArg);
-  
 
   nsString *elem = 
     aArray->AppendElement(NS_ConvertUTF8toUTF16(aEntry->GetKey()));
@@ -549,3 +549,47 @@ sbMediacoreTypeSniffer::GetMediaFileExtensions(nsIStringEnumerator **_retval)
 
   return NS_OK;
 }
+
+NS_IMETHODIMP
+sbMediacoreTypeSniffer::GetUnsupportedVideoFileExtensions(
+    nsIStringEnumerator **aOutStringEnum)
+{
+  NS_ENSURE_ARG_POINTER(aOutStringEnum);
+
+  static const char defaultKnownVideoExtensions[] =
+    "3g2,3gp,3gp2,3gpp,asf,avi,divx,dv,dvr-ms,flc,flh,fli,flv,flx,m1pg,"
+    "m1v,m2t,m2ts,m2v,mj2,mjp,mjpg,mkv,moov,mov,movie,mp2v,mp4v,mpe,mpeg,"
+    "mpg,mpg2,mpv,mpv2,msdvd,mxf,nsv,ogm,qt,qtch,qtl,qtz,rm,rmvb,rv,smv,"
+    "ts,vc1,vob,vp6,vp7,wm,wmv,xvid";
+
+  nsCString knownExtensions;
+  knownExtensions.Assign(defaultKnownVideoExtensions);
+
+  nsTArray<nsCString> knownExtensionsStrArray;
+  nsCString_Split(knownExtensions,
+                  NS_LITERAL_CSTRING(","),
+                  knownExtensionsStrArray);
+
+  nsTArray<nsString> unsupportedExtensionsStrArray;
+  for (PRUint32 i = 0; i < knownExtensionsStrArray.Length(); i++) {
+    // Validate the current extension against the video and audio known
+    // supported extension list.
+    nsAutoMonitor mon(mMonitor);
+
+    if (mVideoExtensions.GetEntry(knownExtensionsStrArray[i])) {
+      continue;
+    }
+
+    // This isn't a supported extension.
+    unsupportedExtensionsStrArray.AppendElement(
+        NS_ConvertUTF8toUTF16(knownExtensionsStrArray[i]));
+  }
+
+  nsCOMPtr<nsIStringEnumerator> extensionsEnum =
+    new sbTArrayStringEnumerator(&unsupportedExtensionsStrArray);
+  NS_ENSURE_TRUE(extensionsEnum, NS_ERROR_OUT_OF_MEMORY);
+
+  extensionsEnum.forget(aOutStringEnum);
+  return NS_OK;
+}
+

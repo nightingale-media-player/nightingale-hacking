@@ -113,7 +113,7 @@ function ScanBeneathADirectory(aPath) {
  *
  * \sa sbIFileScanCallback, sbIFileScan, FileScan.h
  */
-[scriptable, uuid(db7d7cda-a6fd-4f32-98d1-32ed746eb13d)]
+[scriptable, uuid(E53F7F77-9576-46FC-9F25-0A5A05A7E9CA)]
 interface sbIFileScanQuery : nsISupports
 {
   attribute boolean searchHidden;
@@ -153,6 +153,19 @@ interface sbIFileScanQuery : nsISupports
   void addFileExtension(in AString strExtension);
 
   /**
+   * \brief Add an extension that will not be added to the final discovered
+   *        paths but will set the |flaggedExtensionsFound| attribute to true
+   *        if a file with the specified extension is found during the scan.
+   */
+  void addFlaggedFileExtension(in AString strExtension);
+
+  /**
+   * \brief Returns true if a flagged file extension set in
+   *        |addFlaggedFileExtension()| was found during the file scan.
+   */
+  readonly attribute boolean flaggedExtensionsFound;
+
+  /**
    * \brief Set the callback object for the scan
    *
    * \param pCallback The callback object
@@ -177,6 +190,11 @@ interface sbIFileScanQuery : nsISupports
   PRUint32 getFileCount(); /**/
 
   /**
+   * \brief Get the number of flagged files found.
+   */
+  PRUint32 getFlaggedFileCount();
+
+  /**
    * \brief USER CODE SHOULD NOT REFERENCE THIS METHOD
    */
   void addFilePath(in AString strFilePath); /**/
@@ -190,6 +208,16 @@ interface sbIFileScanQuery : nsISupports
    * \sa getFileCount
    */
   AString getFilePath(in PRUint32 nIndex); /**/
+
+  /**
+   * \brief Get the N'th flagged file from the results of the scan.
+   *
+   * NOTE: Don't call this while |isScanning()| is true.
+   *
+   * \param nIndex the Index of the files array to retrieve
+   * \sa getFlaggedFileCount
+   */
+  AString getFlaggedFilePath(in PRUint32 nIndex);
 
   /**
    * \brief Whether or not the scan operation is executing

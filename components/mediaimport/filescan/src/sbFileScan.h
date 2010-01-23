@@ -83,7 +83,9 @@ class sbFileScanQuery : public sbIFileScanQuery
 {
 public:
   sbFileScanQuery();
-  sbFileScanQuery(const nsString &strDirectory, const PRBool &bRecurse, sbIFileScanCallback *pCallback);
+  sbFileScanQuery(const nsString & strDirectory,
+                  const PRBool & bRecurse,
+                  sbIFileScanCallback *pCallback);
   
   virtual ~sbFileScanQuery();
   // Common initializations.
@@ -94,7 +96,8 @@ public:
 
 protected:
   nsString GetExtensionFromFilename(const nsAString &strFilename);
-  PRBool VerifyFileExtension(const nsAString &strExtension);
+  PRBool VerifyFileExtension(const nsAString &strExtension,
+                             PRBool *aOutIsFlaggedExtension);
 
   PRLock* m_pDirectoryLock;
   nsString m_strDirectory;
@@ -113,9 +116,13 @@ protected:
 
   // thread-safe nsIMutableArray to store the URI spec strings
   nsCOMPtr<nsIMutableArray> m_pFileStack;
+  nsCOMPtr<nsIMutableArray> m_pFlaggedFileStack;
 
   PRLock* m_pExtensionsLock;
   nsTHashtable<nsStringHashKey> m_Extensions;
+
+  PRLock* m_pFlaggedFileExtensionsLock;
+  nsTHashtable<nsStringHashKey> m_FlaggedExtensions;
 
   // m_lastSeenExtension records the extension for the last added URI
   nsString m_lastSeenExtension;

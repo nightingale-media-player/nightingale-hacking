@@ -29,7 +29,7 @@
 interface nsIURI;
 interface nsIStringEnumerator;
 
-[scriptable, uuid(37A33F1D-42D3-4A25-BF28-EF5ED8B461C4)]
+[scriptable, uuid(8C665C11-F599-4B78-8D45-D44869D1FD42)]
 interface sbIMediacoreTypeSniffer : nsISupports
 {
   /**
@@ -52,6 +52,12 @@ interface sbIMediacoreTypeSniffer : nsISupports
    *        combination of audio, video file extensions.
    */
   readonly attribute nsIStringEnumerator mediaFileExtensions;
+
+  /**
+   * \brief Returns all of the unsupported video file extensions for the
+   *        mediacore.
+   */
+  readonly attribute nsIStringEnumerator unsupportedVideoFileExtensions;
 
   /**
    * \brief Check to see if an url points to media content

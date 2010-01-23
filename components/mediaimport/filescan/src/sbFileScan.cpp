@@ -82,21 +82,24 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbFileScanQuery, sbIFileScanQuery)
 
 //-----------------------------------------------------------------------------
 sbFileScanQuery::sbFileScanQuery()
-: m_pDirectoryLock(PR_NewLock())
-, m_pCurrentPathLock(PR_NewLock())
-, m_bSearchHidden(PR_FALSE)
-, m_bRecurse(PR_FALSE)
-, m_pScanningLock(PR_NewLock())
-, m_bIsScanning(PR_FALSE)
-, m_pCallbackLock(PR_NewLock())
-, m_pExtensionsLock(PR_NewLock())
-, m_pCancelLock(PR_NewLock())
-, m_bCancel(PR_FALSE)
+  : m_pDirectoryLock(PR_NewLock())
+  , m_pCurrentPathLock(PR_NewLock())
+  , m_bSearchHidden(PR_FALSE)
+  , m_bRecurse(PR_FALSE)
+  , m_pScanningLock(PR_NewLock())
+  , m_bIsScanning(PR_FALSE)
+  , m_pCallbackLock(PR_NewLock())
+  , m_pExtensionsLock(PR_NewLock())
+  , m_pFlaggedFileExtensionsLock(PR_NewLock())
+  , m_pCancelLock(PR_NewLock())
+  , m_bCancel(PR_FALSE)
 {
   NS_ASSERTION(m_pDirectoryLock, "FileScanQuery.m_pDirectoryLock failed");
   NS_ASSERTION(m_pCurrentPathLock, "FileScanQuery.m_pCurrentPathLock failed");
   NS_ASSERTION(m_pCallbackLock, "FileScanQuery.m_pCallbackLock failed");
   NS_ASSERTION(m_pExtensionsLock, "FileScanQuery.m_pExtensionsLock failed");
+  NS_ASSERTION(m_pFlaggedFileExtensionsLock,
+      "FileScanQuery.m_pFlaggedFileExtensionsLock failed!");
   NS_ASSERTION(m_pScanningLock, "FileScanQuery.m_pScanningLock failed");
   NS_ASSERTION(m_pCancelLock, "FileScanQuery.m_pCancelLock failed");
   MOZ_COUNT_CTOR(sbFileScanQuery);
@@ -104,37 +107,54 @@ sbFileScanQuery::sbFileScanQuery()
 } //ctor
 
 //-----------------------------------------------------------------------------
-sbFileScanQuery::sbFileScanQuery(const nsString &strDirectory, const PRBool &bRecurse, sbIFileScanCallback *pCallback)
-: m_pDirectoryLock(PR_NewLock())
-, m_strDirectory(strDirectory)
-, m_pCurrentPathLock(PR_NewLock())
-, m_bSearchHidden(PR_FALSE)
-, m_bRecurse(bRecurse)
-, m_pScanningLock(PR_NewLock())
-, m_bIsScanning(PR_FALSE)
-, m_pCallbackLock(PR_NewLock())
-, m_pCallback(pCallback)
-, m_pExtensionsLock(PR_NewLock())
-, m_pCancelLock(PR_NewLock())
-, m_bCancel(PR_FALSE)
+sbFileScanQuery::sbFileScanQuery(const nsString & strDirectory,
+                                 const PRBool & bRecurse,
+                                 sbIFileScanCallback *pCallback)
+  : m_pDirectoryLock(PR_NewLock())
+  , m_strDirectory(strDirectory)
+  , m_pCurrentPathLock(PR_NewLock())
+  , m_bSearchHidden(PR_FALSE)
+  , m_bRecurse(bRecurse)
+  , m_pScanningLock(PR_NewLock())
+  , m_bIsScanning(PR_FALSE)
+  , m_pCallbackLock(PR_NewLock())
+  , m_pCallback(pCallback)
+  , m_pExtensionsLock(PR_NewLock())
+  , m_pFlaggedFileExtensionsLock(PR_NewLock())
+  , m_pCancelLock(PR_NewLock())
+  , m_bCancel(PR_FALSE)
 {
   NS_ASSERTION(m_pDirectoryLock, "FileScanQuery.m_pDirectoryLock failed");
   NS_ASSERTION(m_pCurrentPathLock, "FileScanQuery.m_pCurrentPathLock failed");
   NS_ASSERTION(m_pCallbackLock, "FileScanQuery.m_pCallbackLock failed");
   NS_ASSERTION(m_pExtensionsLock, "FileScanQuery.m_pExtensionsLock failed");
+  NS_ASSERTION(m_pFlaggedFileExtensionsLock,
+      "FileScanQuery.m_pFlaggedFileExtensionsLock failed!");
   NS_ASSERTION(m_pScanningLock, "FileScanQuery.m_pScanningLock failed");
   NS_ASSERTION(m_pCancelLock, "FileScanQuery.m_pCancelLock failed");
   MOZ_COUNT_CTOR(sbFileScanQuery);
   init();
 } //ctor
 
-void sbFileScanQuery::init() {
+void sbFileScanQuery::init()
+{
   m_pFileStack = nsnull;
+  m_pFlaggedFileStack = nsnull;
   m_lastSeenExtension = EmptyString();
-  PR_Lock(m_pExtensionsLock);
-  PRBool success = m_Extensions.Init();
-  NS_ASSERTION(success, "FileScanQuery.m_Extensions failed to be initialized");
-  PR_Unlock(m_pExtensionsLock);
+
+  {
+    nsAutoLock lock(m_pExtensionsLock);
+    PRBool success = m_Extensions.Init();
+    NS_ASSERTION(success, "FileScanQuery.m_Extensions failed to be initialized");
+  }
+
+  {
+    nsAutoLock lock(m_pFlaggedFileExtensionsLock);
+
+    PRBool success = m_FlaggedExtensions.Init();
+    NS_ASSERTION(success,
+        "FileScanQuery.m_FlaggedExtensions failed to be initialized!");
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -149,6 +169,8 @@ void sbFileScanQuery::init() {
     PR_DestroyLock(m_pCallbackLock);
   if (m_pExtensionsLock)
     PR_DestroyLock(m_pExtensionsLock);
+  if (m_pFlaggedFileExtensionsLock)
+    PR_DestroyLock(m_pFlaggedFileExtensionsLock);
   if (m_pScanningLock)
     PR_DestroyLock(m_pScanningLock);
   if (m_pCancelLock)
@@ -159,6 +181,7 @@ void sbFileScanQuery::init() {
 /* attribute boolean searchHidden; */
 NS_IMETHODIMP sbFileScanQuery::GetSearchHidden(PRBool *aSearchHidden)
 {
+  NS_ENSURE_ARG_POINTER(aSearchHidden);
   *aSearchHidden = m_bSearchHidden;
   return NS_OK;
 } //GetSearchHidden
@@ -174,14 +197,21 @@ NS_IMETHODIMP sbFileScanQuery::SetSearchHidden(PRBool aSearchHidden)
 /* void SetDirectory (in wstring strDirectory); */
 NS_IMETHODIMP sbFileScanQuery::SetDirectory(const nsAString &strDirectory)
 {
-  PR_Lock(m_pDirectoryLock);
+  nsAutoLock lock(m_pDirectoryLock);
+
+  nsresult rv;
   if (!m_pFileStack) {
-    nsresult rv;
     m_pFileStack =
       do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
+  if (!m_pFlaggedFileStack) {
+    m_pFlaggedFileStack =
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   m_strDirectory = strDirectory;
-  PR_Unlock(m_pDirectoryLock);
   return NS_OK;
 } //SetDirectory
 
@@ -215,16 +245,47 @@ NS_IMETHODIMP sbFileScanQuery::GetRecurse(PRBool *_retval)
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP sbFileScanQuery::AddFileExtension(const nsAString &strExtension)
 {
-  PR_Lock(m_pExtensionsLock);
+  nsAutoLock lock(m_pExtensionsLock);
+
   nsAutoString extStr(strExtension);
   ToLowerCase(extStr);
   if (!m_Extensions.GetEntry(extStr)) {
     nsStringHashKey* hashKey = m_Extensions.PutEntry(extStr);
-    NS_ENSURE_TRUE(hashKey != nsnull, NS_ERROR_OUT_OF_MEMORY);
+    NS_ENSURE_TRUE(hashKey, NS_ERROR_OUT_OF_MEMORY);
   }
-  PR_Unlock(m_pExtensionsLock);
+
   return NS_OK;
 } //AddFileExtension
+
+//-----------------------------------------------------------------------------
+NS_IMETHODIMP
+sbFileScanQuery::AddFlaggedFileExtension(const nsAString & strExtension)
+{
+  nsAutoLock lock(m_pFlaggedFileExtensionsLock);
+
+  nsAutoString extStr(strExtension);
+  ToLowerCase(extStr);
+  if (!m_FlaggedExtensions.GetEntry(extStr)) {
+    nsStringHashKey *hashKey = m_FlaggedExtensions.PutEntry(extStr);
+    NS_ENSURE_TRUE(hashKey, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  return NS_OK;
+} //AddFlaggedFileExtension
+
+//-----------------------------------------------------------------------------
+NS_IMETHODIMP
+sbFileScanQuery::GetFlaggedExtensionsFound(PRBool *aOutIsFound)
+{
+  NS_ENSURE_ARG_POINTER(aOutIsFound);
+
+  PRUint32 length;
+  nsresult rv = m_pFlaggedFileStack->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *aOutIsFound = length > 0;
+  return NS_OK;
+}
 
 //-----------------------------------------------------------------------------
 /* void SetCallback (in sbIFileScanCallback pCallback); */
@@ -268,26 +329,59 @@ NS_IMETHODIMP sbFileScanQuery::GetFileCount(PRUint32 *_retval)
 } //GetFileCount
 
 //-----------------------------------------------------------------------------
+/* PRInt32 GetFlaggedFileCount (); */
+NS_IMETHODIMP sbFileScanQuery::GetFlaggedFileCount(PRUint32 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  if (m_pFlaggedFileStack) {
+    m_pFlaggedFileStack->GetLength(_retval);
+  }
+  else {
+    // no stack, scanning never started
+    *_retval = 0;
+  }
+
+  LOG(("sbFileScanQuery: reporting %d flagged files\n", *_retval));
+  return NS_OK;
+} //GetFileCount
+
+//-----------------------------------------------------------------------------
 /* void AddFilePath (in wstring strFilePath); */
 NS_IMETHODIMP sbFileScanQuery::AddFilePath(const nsAString &strFilePath)
 {
+  PRBool isFlagged = PR_FALSE;
   const nsAutoString strExtension = GetExtensionFromFilename(strFilePath);
   if (m_lastSeenExtension.IsEmpty() ||
       !m_lastSeenExtension.Equals(strExtension, CaseInsensitiveCompare)) {
     // m_lastSeenExtension could be set multiple times without lock guarded
     // in theory. However, the race is benign and in practice, it is rare.
-    if (VerifyFileExtension(strExtension)) {
+    PRBool isValidExtension = VerifyFileExtension(strExtension, &isFlagged);
+    if (isValidExtension) {
       m_lastSeenExtension = strExtension;
-    } else {
+    } else if (!isValidExtension && !isFlagged) {
       LOG(("sbFileScanQuery::AddFilePath, unrecognized extension: (%s) is seen\n",
            NS_LossyConvertUTF16toASCII(strExtension).get()));
       return NS_OK;
     }
   }
-  nsCOMPtr<nsISupportsString> string(do_CreateInstance("@mozilla.org/supports-string;1"));
-  string->SetData(strFilePath);
-  nsresult rv = m_pFileStack->AppendElement(string, PR_FALSE);
+
+  nsresult rv;
+  nsCOMPtr<nsISupportsString> string =
+    do_CreateInstance("@mozilla.org/supports-string;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = string->SetData(strFilePath);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (isFlagged) {
+    rv = m_pFlaggedFileStack->AppendElement(string, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = m_pFileStack->AppendElement(string, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   LOG(("sbFileScanQuery::AddFilePath(%s)\n",
        NS_LossyConvertUTF16toASCII(strFilePath).get()));
   return NS_OK;
@@ -311,6 +405,28 @@ NS_IMETHODIMP sbFileScanQuery::GetFilePath(PRUint32 nIndex, nsAString &_retval)
 
   return NS_OK;
 } //GetFilePath
+
+//------------------------------------------------------------------------------
+/* AString getFlaggedFilePath(in PRUint32 nIndex); */
+NS_IMETHODIMP
+sbFileScanQuery::GetFlaggedFilePath(PRUint32 nIndex, nsAString &retVal)
+{
+  retVal = EmptyString();
+  NS_ENSURE_ARG_MIN(nIndex, 0);
+
+  PRUint32 length;
+  m_pFlaggedFileStack->GetLength(&length);
+  if (nIndex < length) {
+    nsresult rv;
+    nsCOMPtr<nsISupportsString> path =
+      do_QueryElementAt(m_pFlaggedFileStack, nIndex, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    path->GetData(retVal);
+  }
+
+  return NS_OK;
+} //getFlaggedFilePath
 
 //-----------------------------------------------------------------------------
 /* PRBool IsScanning (); */
@@ -444,15 +560,33 @@ nsString sbFileScanQuery::GetExtensionFromFilename(const nsAString &strFilename)
 } //GetExtensionFromFilename
 
 //-----------------------------------------------------------------------------
-PRBool sbFileScanQuery::VerifyFileExtension(const nsAString &strExtension)
+PRBool sbFileScanQuery::VerifyFileExtension(const nsAString &strExtension,
+                                            PRBool *aOutIsFlaggedExtension)
 {
-  PRBool isValid = PR_FALSE;
+  NS_ENSURE_ARG_POINTER(aOutIsFlaggedExtension);
 
-  PR_Lock(m_pExtensionsLock);
-  nsAutoString extString = PromiseFlatString(strExtension);
-  ToLowerCase(extString);
-  isValid = m_Extensions.GetEntry(extString) != nsnull;
-  PR_Unlock(m_pExtensionsLock);
+  *aOutIsFlaggedExtension = PR_FALSE;
+  PRBool isValid = PR_FALSE;
+  nsAutoString extString;
+
+  { // scoped lock
+    nsAutoLock lock(m_pExtensionsLock);
+
+    extString = PromiseFlatString(strExtension);
+    ToLowerCase(extString);
+    isValid = m_Extensions.GetEntry(extString) != nsnull;
+  }
+
+  // If the extension isn't valid, check to see if it is a flagged file
+  // extension and set the out param.
+  if (!isValid) {
+    { // scoped lock
+      nsAutoLock lock(m_pFlaggedFileExtensionsLock);
+
+      *aOutIsFlaggedExtension =
+        m_FlaggedExtensions.GetEntry(extString) != nsnull;
+    }
+  }
 
   return isValid;
 } //VerifyFileExtension
