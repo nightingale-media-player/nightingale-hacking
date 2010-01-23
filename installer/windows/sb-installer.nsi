@@ -431,14 +431,22 @@ FunctionEnd
 
 Function .onInit
    ; preedTODO: Check drive space
-   ${UAC.I.Elevate.AdminOnly}
+
+   ; May seem weird, but it's used for update testing; so ignore the man
+   ; behind the curtain...
+   ReadEnvStr $0 SB_FORCE_NO_UAC
+   ${If} $0 == "" 
+      ${UAC.I.Elevate.AdminOnly}
+   ${EndIf}
 
    Call CommonInstallerInit
 
-   ; Version checks! This is not in CommonInstallerInit, because we always 
-   ; want the uninstaller to be able to run.
-
-   ${If} $UnpackMode != ${TRUE}
+   ${If} $UnpackMode == ${TRUE}
+      ; Force a silent installation if we're just /UNPACK'ing
+      SetSilent silent
+   ${Else}
+      ; Version checks! This is not in CommonInstallerInit, because we always 
+      ; want the uninstaller to be able to run.
       ${If} $CheckOSVersion == ${TRUE}
          ${If} ${AtLeastWinXP}
             ${If} ${IsWinXP}
