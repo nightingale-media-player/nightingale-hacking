@@ -507,3 +507,4 @@
 ./xulrunner/xpt_dump.exe
 ./xulrunner/xpt_link.exe
 ./xulrunner/shlibsign.exe
+./xulrunner/ssltunnel.exe

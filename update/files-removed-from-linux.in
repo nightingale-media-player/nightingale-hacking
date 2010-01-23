@@ -295,4 +295,6 @@
 ./xulrunner/xpt_dump
 ./xulrunner/xpt_link
 ./xulrunner/shlibsign
+./xulrunner/nsinstall
+./xulrunner/ssltunnel
 ./xulrunner/run-mozilla.sh

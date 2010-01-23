@@ -340,6 +340,8 @@
 ./Contents/Frameworks/XUL.framework/res/cursors/.#colResize.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/.#arrowS.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/.#arrowN.tiff.1.1
+./Contents/Frameworks/XUL.framework/res/cursors/.svn/all-wcprops
+./Contents/Frameworks/XUL.framework/res/cursors/.svn/format
 ./Contents/Frameworks/XUL.framework/extensions/inspector@mozilla.org/chrome.manifest
 ./Contents/Frameworks/XUL.framework/extensions/inspector@mozilla.org/chrome/inspector.jar
 ./Contents/Frameworks/XUL.framework/extensions/inspector@mozilla.org/components/inspector-cmdline.js
@@ -535,6 +537,7 @@
 ./Contents/Frameworks/XUL.framework/components/webbrowserpersist.xpt
 ./Contents/Frameworks/XUL.framework/components/webshell_idls.xpt
 ./Contents/Frameworks/XUL.framework/components/widget.xpt
+./Contents/Frameworks/XUL.framework/components/widget_cocoa.xpt
 ./Contents/Frameworks/XUL.framework/components/windowds.xpt
 ./Contents/Frameworks/XUL.framework/components/windowwatcher.xpt
 ./Contents/Frameworks/XUL.framework/components/xml-rpc.xpt
@@ -559,3 +562,5 @@
 ./Contents/Frameworks/XUL.framework/xulrunner/xpt_link
 ./Contents/Frameworks/XUL.framework/xulrunner/shlibsign
 ./Contents/Frameworks/XUL.framework/xulrunner/run-mozilla.sh
+./Contents/Frameworks/XUL.framework/xulrunner/nsinstall
+./Contents/Frameworks/XUL.framework/xulrunner/ssltunnel
