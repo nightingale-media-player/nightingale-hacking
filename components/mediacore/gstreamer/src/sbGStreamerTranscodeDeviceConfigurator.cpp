@@ -604,6 +604,8 @@ sbGStreamerTranscodeDeviceConfigurator::SetAudioProperties()
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_PRECONDITION(mSelectedProfile,
                   "attempted to set audio properties without selecting profile");
+  NS_PRECONDITION(mSelectedFormat,
+                  "attempted to set audio properties without selected output format");
 
   nsresult rv;
 
@@ -620,15 +622,47 @@ sbGStreamerTranscodeDeviceConfigurator::SetAudioProperties()
   rv = mInputFormat->GetAudioStream(getter_AddRefs(inputFormat));
   NS_ENSURE_SUCCESS(rv, rv);
   if (inputFormat) {
+    // Get the device output audio info
+    nsCOMPtr<sbIDevCapAudioStream> outputCaps;
+    rv = mSelectedFormat->GetAudioStream(getter_AddRefs(outputCaps));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool isInRange;
+
+    nsCOMPtr<sbIDevCapRange> sampleRateRange;
+    rv = outputCaps->GetSupportedSampleRates(getter_AddRefs(sampleRateRange));
+    NS_ENSURE_SUCCESS(rv, rv);
     PRInt32 sampleRate;
     rv = inputFormat->GetSampleRate(&sampleRate);
     NS_ENSURE_SUCCESS(rv, rv);
+    rv = sampleRateRange->IsValueInRange(sampleRate, &isInRange);
+    if (NS_FAILED(rv) || !isInRange) {
+      // won't fit; pick anything for now
+      rv = GetDevCapRangeUpper(sampleRateRange, sampleRate, &sampleRate);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
     rv = audioFormat->SetSampleRate(sampleRate);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    nsCOMPtr<sbIDevCapRange> channelsRange;
+    rv = outputCaps->GetSupportedChannels(getter_AddRefs(channelsRange));
+    NS_ENSURE_SUCCESS(rv, rv);
     PRInt32 channels;
     rv = inputFormat->GetChannels(&channels);
     NS_ENSURE_SUCCESS(rv, rv);
+    rv = channelsRange->IsValueInRange(channels, &isInRange);
+    if (NS_FAILED(rv) || !isInRange) {
+      // won't fit; pick anything for now
+      PRInt32 newChannels;
+      rv = GetDevCapRangeUpper(channelsRange, channels, &newChannels);
+      if (NS_SUCCEEDED(rv)) {
+        channels = newChannels;
+      }
+      else {
+        // no channel information; assume supports mono + stereo
+        channels = (channels < 2 ? 1 : 2);
+      }
+    }
     rv = audioFormat->SetChannels(channels);
     NS_ENSURE_SUCCESS(rv, rv);
   }
