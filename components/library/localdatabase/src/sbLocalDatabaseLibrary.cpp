@@ -888,7 +888,7 @@ sbLocalDatabaseLibrary::SetDefaultItemProperties(sbIMediaItem* aItem,
   // Only sniff out the contentType if the property currently doesn't already
   // exist on the base item.
   nsString contentType;
-  rv = aProperties->GetPropertyValue(
+  rv = properties->GetPropertyValue(
     NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE), contentType);
   if (NS_FAILED(rv) || contentType.IsEmpty()) {
     nsCOMPtr<sbIMediacoreTypeSniffer> typeSniffer =
