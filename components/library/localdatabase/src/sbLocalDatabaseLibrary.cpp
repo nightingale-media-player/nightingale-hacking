@@ -885,21 +885,28 @@ sbLocalDatabaseLibrary::SetDefaultItemProperties(sbIMediaItem* aItem,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  nsCOMPtr<sbIMediacoreTypeSniffer> typeSniffer =
-    do_CreateInstance("@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRBool isVideo = PR_FALSE;
-  rv = typeSniffer->IsValidVideoURL(uri, &isVideo);
-  if (NS_SUCCEEDED(rv) && isVideo) {
-    nsCOMPtr<sbIMutablePropertyArray> mutableProperties =
-      do_QueryInterface(properties, &rv);
+  // Only sniff out the contentType if the property currently doesn't already
+  // exist on the base item.
+  nsString contentType;
+  rv = aProperties->GetPropertyValue(
+    NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE), contentType);
+  if (NS_FAILED(rv) || contentType.IsEmpty()) {
+    nsCOMPtr<sbIMediacoreTypeSniffer> typeSniffer =
+      do_CreateInstance("@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mutableProperties->AppendProperty(
-                              NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
-                              NS_LITERAL_STRING("video"));
-    NS_ENSURE_SUCCESS(rv, rv);
+    PRBool isVideo = PR_FALSE;
+    rv = typeSniffer->IsValidVideoURL(uri, &isVideo);
+    if (NS_SUCCEEDED(rv) && isVideo) {
+      nsCOMPtr<sbIMutablePropertyArray> mutableProperties =
+        do_QueryInterface(properties, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mutableProperties->AppendProperty(
+                                NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                                NS_LITERAL_STRING("video"));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   nsCOMPtr<sbIPropertyArray> filteredProperties;
