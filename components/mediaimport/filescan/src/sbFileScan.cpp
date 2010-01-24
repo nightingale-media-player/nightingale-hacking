@@ -279,11 +279,16 @@ sbFileScanQuery::GetFlaggedExtensionsFound(PRBool *aOutIsFound)
 {
   NS_ENSURE_ARG_POINTER(aOutIsFound);
 
-  PRUint32 length;
-  nsresult rv = m_pFlaggedFileStack->GetLength(&length);
-  NS_ENSURE_SUCCESS(rv, rv);
+  *aOutIsFound = PR_FALSE;
 
-  *aOutIsFound = length > 0;
+  if (m_pFlaggedFileStack) {
+    PRUint32 length;
+    nsresult rv = m_pFlaggedFileStack->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    *aOutIsFound = length > 0;
+  }
+
   return NS_OK;
 }
 
