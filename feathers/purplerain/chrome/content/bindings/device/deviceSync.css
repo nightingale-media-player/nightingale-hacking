@@ -42,3 +42,9 @@ Imported by bindings.css or directly into feathers.
 .content-auto-sync-playlist-duration {
   text-align: right;
 }
+
+/* we must, at present, use all-lowercase attribute names.
+   see https://bugzilla.mozilla.org/show_bug.cgi?id=535806 */
+sb-device-sync[contenttype="video"] .content-controls radio {
+  display: none;
+}
