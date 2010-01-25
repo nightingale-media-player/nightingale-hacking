@@ -194,43 +194,46 @@ deviceControlWidget.prototype = {
       this._deviceListenerAdded = true;
     }
 
-    // Migrate the old preference if available
-    var prefs = Cc["@mozilla.org/preferences-service;1"]
-                  .getService(Ci.nsIPrefBranch);
+    // Only attempt to migrate sync settings if we have a device library.
+    if (this._deviceLibrary) {      
+      // Migrate the old preference if available
+      var prefs = Cc["@mozilla.org/preferences-service;1"]
+                    .getService(Ci.nsIPrefBranch);
 
-    var syncPlaylistPrefKey = "songbird.device." + this._widget.deviceID +
-                              ".preferences.library." + this._deviceLibrary.guid +
-                              ".sync.playlists"
+      var syncPlaylistPrefKey = "songbird.device." + this._widget.deviceID +
+                                ".preferences.library." + this._deviceLibrary.guid +
+                                ".sync.playlists"
 
-    var syncPlaylistPrefs = null;
-    if (prefs.prefHasUserValue(syncPlaylistPrefKey))
-      syncPlaylistPrefs = prefs.getCharPref(syncPlaylistPrefKey);
+      var syncPlaylistPrefs = null;
+      if (prefs.prefHasUserValue(syncPlaylistPrefKey))
+        syncPlaylistPrefs = prefs.getCharPref(syncPlaylistPrefKey);
 
-    // Migration starts.
-    if (syncPlaylistPrefs) {
-      // Get the list of the guid
-      var guidList = syncPlaylistPrefs.split(",");
-      var syncAudioPlaylists = "";
-      var syncVideoPlaylists = "";
-      var mediaList;
-      for (var i = 0; i < guidList.length; ++i) {
-        try {
-          mediaList = LibraryUtils.mainLibrary.getMediaItem(guidList[i])
-          var contentType = mediaList.getListContentType();
-          if (contentType & Ci.sbIMediaList.CONTENTTYPE_AUDIO)
-            syncAudioPlaylists += guidList[i] + ",";
-          if (contentType & Ci.sbIMediaList.CONTENTTYPE_VIDEO)
-            syncVideoPlaylists += guidList[i] + ",";
+      // Migration starts.
+      if (syncPlaylistPrefs) {
+        // Get the list of the guid
+        var guidList = syncPlaylistPrefs.split(",");
+        var syncAudioPlaylists = "";
+        var syncVideoPlaylists = "";
+        var mediaList;
+        for (var i = 0; i < guidList.length; ++i) {
+          try {
+            mediaList = LibraryUtils.mainLibrary.getMediaItem(guidList[i])
+            var contentType = mediaList.getListContentType();
+            if (contentType & Ci.sbIMediaList.CONTENTTYPE_AUDIO)
+              syncAudioPlaylists += guidList[i] + ",";
+            if (contentType & Ci.sbIMediaList.CONTENTTYPE_VIDEO)
+              syncVideoPlaylists += guidList[i] + ",";
+          }
+          catch (ex) {
+          }
         }
-        catch (ex) {
-        }
+
+        prefs.setCharPref(syncPlaylistPrefKey + ".audio", syncAudioPlaylists);
+        prefs.setCharPref(syncPlaylistPrefKey + ".video", syncVideoPlaylists);
+
+        // Reset the old preference so that migration only happans once.
+        prefs.setCharPref(syncPlaylistPrefKey, "");
       }
-
-      prefs.setCharPref(syncPlaylistPrefKey + ".audio", syncAudioPlaylists);
-      prefs.setCharPref(syncPlaylistPrefKey + ".video", syncVideoPlaylists);
-
-      // Reset the old preference so that migration only happans once.
-      prefs.setCharPref(syncPlaylistPrefKey, "");
     }
 
     // Force an update of the widget.
@@ -700,7 +703,7 @@ deviceControlWidget.prototype = {
              this._getStateAttribute(attrVal, aAttrName, "busy")) {}
     else if ((this._currentState == Ci.sbIDevice.STATE_IDLE) &&
              this._getStateAttribute(attrVal, aAttrName, "idle")) {}
-    else if (!(this._deviceLibrary.isMgmtTypeManual) &&
+    else if (this._deviceLibrary && !(this._deviceLibrary.isMgmtTypeManual) &&
              this._getStateAttribute(attrVal, aAttrName, "mgmt_not_manual")) {}
     else if (this._currentSupportsReformat &&
              this._getStateAttribute(attrVal, aAttrName, "supports_reformat")) {}
