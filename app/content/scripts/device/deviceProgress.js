@@ -567,7 +567,7 @@ var DPW = {
     params = [curItemIndex, totalItems, etaString];
 
     // Update the operation progress text.
-    this._progressTextLabel.value = SBFormattedString(localeKey, "");
+    this._progressTextLabel.value = SBString(localeKey, "");
     if (curItemIndex > 0 && curItemIndex <= totalItems &&
         operation != Ci.sbIDevice.STATE_MOUNTING &&
         substate != Ci.sbIDevice.STATE_SYNCING &&
