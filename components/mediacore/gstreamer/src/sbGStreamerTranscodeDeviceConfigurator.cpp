@@ -987,7 +987,7 @@ sbGStreamerTranscodeDeviceConfigurator::FinalizeOutputSize()
   // set the video quality setting
   mVideoQuality = mQuality;
 
-  sbFraction outputFrameRate(HUGE_VAL, 1);
+  sbFraction outputFrameRate(PR_UINT32_MAX, 1);
   // get the desired frame rate
   { /* scope */
     nsCOMPtr<sbIMediaFormatVideo> inputFormat;
@@ -1007,7 +1007,8 @@ sbGStreamerTranscodeDeviceConfigurator::FinalizeOutputSize()
     PRUint32 frameRateCount;
     rv = videoCaps->GetSupportedFrameRates(&frameRateCount, &frameRates);
     NS_ENSURE_SUCCESS(rv, rv);
-    sbAutoFreeXPCOMArray<char**> frameRatesDestroryer(frameRateCount, frameRates);
+    NS_ENSURE_TRUE(frameRateCount > 0, NS_ERROR_FAILURE);
+    sbAutoFreeXPCOMArray<char**> frameRatesDestroyer(frameRateCount, frameRates);
 
     for (PRUint32 i = 0; i < frameRateCount; ++i) {
       sbFraction candidate;
