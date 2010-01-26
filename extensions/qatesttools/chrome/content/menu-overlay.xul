@@ -41,6 +41,11 @@
               insertafter="devToolsSeparator"
               command="mockcdcontroller-showcontroller-cmd" />
 
+    <menuitem id="device-caps-dump-menuitem"
+              label="Dump Device Capabilities"
+              insertafter="devToolsSeparator"
+              command="dumpdevicecaps-cmd" />
+
   </menupopup>
 
 </overlay>

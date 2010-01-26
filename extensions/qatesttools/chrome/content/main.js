@@ -51,6 +51,14 @@ MockCDController.Controller =
       function() { self.showDeviceControllerPane(); },
       false);
 
+    var showDeviceCapsDump =
+      document.getElementById("dumpdevicecaps-cmd");
+
+    showDeviceCapsDump.addEventListener(
+      "command",
+      function() { self.showDeviceCapsDump(); },
+      false);
+
     // Only open the controller pane if the pref is currently set.
     if (Application.prefs.getValue("extensions.cdripcontroller.startup_show_controller",
                                    false)) {
@@ -70,7 +78,15 @@ MockCDController.Controller =
     window.openDialog("chrome://mockcdcontroller/content/deviceControllerDialog.xul",
                       "device-controller-pane",
                       "chrome,centerscreen,resizable=false");
-  }
+  },
+
+  showDeviceCapsDump: function()
+  {
+    window.openDialog(
+      "chrome://mockcdcontroller/content/deviceCapsDump.xul",
+      "device-caps-dump-dialog",
+      "chrome,centerscreen,resizable=yes");
+  },
 };
 
 window.addEventListener(
