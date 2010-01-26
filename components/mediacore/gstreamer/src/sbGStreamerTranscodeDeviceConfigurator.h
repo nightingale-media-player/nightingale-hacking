@@ -202,6 +202,11 @@ protected:
    */
   double mQuality;
   /**
+   * The video quality setting to use, in case this deviates from the overall
+   * quality setting (due to bitrate adjustments)
+   */
+  double mVideoQuality;
+  /**
    * The device to transcode to
    */
   nsCOMPtr<sbIDevice> mDevice;

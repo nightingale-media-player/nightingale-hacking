@@ -984,6 +984,9 @@ sbGStreamerTranscodeDeviceConfigurator::FinalizeOutputSize()
                   "FinalizeOutputSize called with no output format");
   nsresult rv;
 
+  // set the video quality setting
+  mVideoQuality = mQuality;
+
   sbFraction outputFrameRate(HUGE_VAL, 1);
   // get the desired frame rate
   { /* scope */
@@ -1021,20 +1024,25 @@ sbGStreamerTranscodeDeviceConfigurator::FinalizeOutputSize()
 
   // get the desired bpp
   double videoBPP;
-  rv = mSelectedProfile->GetVideoBitsPerPixel(mQuality, &videoBPP);
+  PRBool bitrateForced = PR_FALSE;
+restartQualityConfiguration:
+  rv = mSelectedProfile->GetVideoBitsPerPixel(mVideoQuality, &videoBPP);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // the bit rate desired
   if (mVideoBitrate == PR_INT32_MIN) {
     mVideoBitrate = videoBPP *
                     mPreferredDimensions.width *
-                    mPreferredDimensions.height;
+                    mPreferredDimensions.height *
+                    mVideoFrameRate;
   }
   else {
     // we already have some sort of bitrate set
+    bitrateForced = PR_TRUE;
     videoBPP = mVideoBitrate /
                mPreferredDimensions.width /
-               mPreferredDimensions.height;
+               mPreferredDimensions.height /
+               mVideoFrameRate;
   }
   // cap the video bit rate to what the device supports
   nsCOMPtr<sbIDevCapVideoStream> videoCaps;
@@ -1123,6 +1131,19 @@ sbGStreamerTranscodeDeviceConfigurator::FinalizeOutputSize()
   NS_ENSURE_SUCCESS(rv, rv);
   // so, output dimensions are the sizes we want; and the video bitrate is the
   // maximum we can support.
+
+  // check if we can lower the quality if the image is too small
+  if (!bitrateForced && mVideoQuality > 0.2) {
+    double outputPixels = mOutputDimensions.width * mOutputDimensions.height;
+    double maximumPixels = mPreferredDimensions.width *
+                           mPreferredDimensions.height;
+    if (outputPixels / maximumPixels < mVideoQuality) {
+      // the ratio of pixels is way too small!
+      mVideoQuality -= 0.1;
+      mVideoBitrate = PR_INT32_MIN;
+      goto restartQualityConfiguration;
+    }
+  }
 
   return NS_OK;
 }
@@ -1241,6 +1262,10 @@ sbGStreamerTranscodeDeviceConfigurator::CopyPropertiesIntoBag(nsIArray * aSrcPro
       }
       else if (mapping.Equals("quality", CaseInsensitiveCompare)) {
         value = sbNewVariant(mQuality);
+        NS_ENSURE_TRUE(value, NS_ERROR_OUT_OF_MEMORY);
+      }
+      else if (mapping.Equals("video-quality", CaseInsensitiveCompare)) {
+        value = sbNewVariant(mVideoQuality);
         NS_ENSURE_TRUE(value, NS_ERROR_OUT_OF_MEMORY);
       }
       else {

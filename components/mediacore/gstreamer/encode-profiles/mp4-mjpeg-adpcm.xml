@@ -16,8 +16,14 @@
     <type>image/jpeg</type>
     <quality-property name="bpp" quality="0" value="1.5"/>
     <quality-property name="bpp" quality="1" value="12"/>
-    <property name="quality" type="int" min="0" max="100" default="100"
-              mapping="quality" scale="100"/>
+
+    <!-- 
+      the quality setting only goes up to 95 because that is what the
+      libjpeg authors (IJG) recommend as an absolute maximum; see
+      "JPEG image compression FAQ, part 1/2" section 5.
+     -->
+    <property name="quality" type="int" min="5" max="95" default="85"
+              mapping="video-quality" scale="95"/>
   </video>
 
   <audio>
