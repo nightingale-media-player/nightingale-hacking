@@ -1067,6 +1067,15 @@ sbGStreamerVideoTranscoder::BuildVideoBin(GstCaps *aInputVideoCaps,
   rv = videoFormat->GetVideoFrameRate(&outputFramerateN, &outputFramerateD);
   NS_ENSURE_SUCCESS (rv, rv);
 
+  /* Ensure the configurator didn't give us bogus data for any of these, and
+     just fail if it did. */
+  NS_ENSURE_TRUE(outputWidth > 0, NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(outputHeight > 0, NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(outputParN > 0, NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(outputParD > 0, NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(outputFramerateN > 0, NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(outputFramerateD > 0, NS_ERROR_FAILURE);
+
   // Ask the configurator what encoder (if any) we should use.
   nsString encoderName;
   rv = mConfigurator->GetVideoEncoder(encoderName);
@@ -1215,6 +1224,11 @@ sbGStreamerVideoTranscoder::BuildAudioBin(GstCaps *aInputAudioCaps,
   NS_ENSURE_SUCCESS (rv, rv);
   rv = audioFormat->GetChannels (&outputChannels);
   NS_ENSURE_SUCCESS (rv, rv);
+
+  /* Ensure the configurator didn't give us bogus data for any of these, and
+     just fail if it did. */
+  NS_ENSURE_TRUE (outputRate > 0, NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE (outputChannels > 0, NS_ERROR_FAILURE);
 
   // Ask the configurator what encoder (if any) we should use.
   nsString encoderName;
