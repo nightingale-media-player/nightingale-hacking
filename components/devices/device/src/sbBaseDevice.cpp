@@ -109,6 +109,7 @@
 #include "sbLibraryListenerHelpers.h"
 #include "sbLibraryUtils.h"
 #include "sbProxyUtils.h"
+#include "sbProxiedComponentManager.h"
 #include "sbStandardDeviceProperties.h"
 #include "sbStandardProperties.h"
 #include "sbVariantUtils.h"
@@ -3191,24 +3192,24 @@ nsresult sbBaseDevice::GetPrefBranch(const char *aPrefBranchName,
   NS_ENSURE_ARG_POINTER(aPrefBranch);
   nsresult rv;
 
-  // get the prefs service
-  nsCOMPtr<nsIPrefService> prefService =
-    do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // If we're not on the main thread proxy the service
   PRBool const isMainThread = NS_IsMainThread();
+
+  // get the prefs service
+  nsCOMPtr<nsIPrefService> prefService;
+  
   if (!isMainThread) {
-    nsCOMPtr<nsIPrefService> proxy;
-    rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
-                              NS_GET_IID(nsIPrefService),
-                              prefService,
-                              nsIProxyObjectManager::INVOKE_SYNC |
-                              nsIProxyObjectManager::FORCE_PROXY_CREATION,
-                              getter_AddRefs(proxy));
+    prefService = do_ProxiedGetService(NS_PREFSERVICE_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    prefService.swap(proxy);
   }
+  else {
+    prefService = do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsCOMPtr<nsIThread> target;
+  rv = NS_GetMainThread(getter_AddRefs(target));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // get the pref branch
   nsCOMPtr<nsIPrefBranch> prefBranch;
@@ -3218,7 +3219,7 @@ nsresult sbBaseDevice::GetPrefBranch(const char *aPrefBranchName,
   // If we're not on the main thread proxy the pref branch
   if (!isMainThread) {
     nsCOMPtr<nsIPrefBranch> proxy;
-    rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+    rv = do_GetProxyForObject(target,
                               NS_GET_IID(nsIPrefBranch),
                               prefBranch,
                               nsIProxyObjectManager::INVOKE_SYNC |
