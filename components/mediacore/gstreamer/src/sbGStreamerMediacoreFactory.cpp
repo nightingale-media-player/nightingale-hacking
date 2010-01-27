@@ -223,12 +223,11 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
 
       // Per bug 19550 -
       // Severly limit the video extensions that are imported by default to:
-      //   * ogg/ogv (all platforms)
+      //   * ogv (all platforms)
       //   * wmv (windows only)
       //   * mp4/m4v/mov (w/ qtvideowrapper plugin)
       //   * divx/avi/mkv (w/ ewmpeg4dec plugin)
       videoExtensions.AppendElement(NS_LITERAL_STRING("ogv"));
-      videoExtensions.AppendElement(NS_LITERAL_STRING("ogg"));
 #ifdef XP_WIN
       videoExtensions.AppendElement(NS_LITERAL_STRING("wmv"));
 #endif
