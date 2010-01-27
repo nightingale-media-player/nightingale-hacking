@@ -65,6 +65,21 @@ endif
 # Right now this system is not compatible with parallel make.
 .NOTPARALLEL: all clean libs export
 
+ifdef IS_EXTENSION_MULTI_BUILD
+   ifeq (,$(EXTENSION_CONFIGS))
+      $(error IS_EXTENSION_MULTI_BUILD requires defining EXTENSION_CONFIGS)
+   endif
+   # This is a guard against running make with a target directly that isn't
+   # supported by rules.mk when we're in multi-extension mode
+   ifndef IS_EXTENSION
+      ifneq (,$(MAKECMDGOALS))
+         ifneq (,$(filter-out all default clean,$(MAKECMDGOALS)))
+            $(error Extension multi-build detected; make target must be "all", "default", "clean", or the default target)
+         endif
+      endif
+   endif
+endif
+
 ifdef IS_EXTENSION # {
 
 #------------------------------------------------------------------------------
@@ -186,10 +201,15 @@ default all alldep:: $(SUBMAKEFILES) $(APP_DIST_DIRS)
 	$(foreach tier,$(TIERS),$(MAKE) tier_$(tier); ) true
 
 else
-
-default all:: 
-	$(MAKE) export
-	$(MAKE) libs
+default all::
+   ifdef IS_EXTENSION_MULTI_BUILD
+	   $(foreach extcfg,$(EXTENSION_CONFIGS), \
+	      $(MAKE) IS_EXTENSION=1 SB_EXTENSION_CONFIG=$(extcfg) export ; \
+	      $(MAKE) IS_EXTENSION=1 SB_EXTENSION_CONFIG=$(extcfg) libs; ) true
+   else
+	   $(MAKE) export
+	   $(MAKE) libs
+   endif
 endif
 
 ALL_TRASH = \
@@ -224,8 +244,18 @@ ifeq (windows,$(SB_PLATFORM))
 endif
 
 clean:: $(SUBMAKEFILES)
+ifdef IS_EXTENSION_MULTI_BUILD
+   ifdef DO_CLEAN
+	   -$(RM) -r $(ALL_TRASH)
+	   +$(LOOP_OVER_SUBDIRS)
+   else
+	    $(foreach extcfg,$(EXTENSION_CONFIGS), \
+        $(MAKE) IS_EXTENSION=1 SB_EXTENSION_CONFIG=$(extcfg) DO_CLEAN=1 clean; ) true
+   endif
+else
 	-$(RM) -r $(ALL_TRASH)
 	+$(LOOP_OVER_SUBDIRS)
+endif
 
 distclean:: FORCE
 	$(RM) -r $(SONGBIRD_DISTDIR)
