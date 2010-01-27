@@ -1091,8 +1091,8 @@ restartQualityConfiguration:
     nsCOMPtr<nsISimpleEnumerator> sizesEnum;
     rv = sizes->Enumerate(getter_AddRefs(sizesEnum));
     NS_ENSURE_SUCCESS(rv, rv);
-    PRBool hasMore;
-    while (NS_SUCCEEDED(sizesEnum->HasMoreElements(&hasMore)) && sizesEnum) {
+    PRBool hasMore, foundOutput = PR_FALSE;
+    while (NS_SUCCEEDED(sizesEnum->HasMoreElements(&hasMore)) && hasMore) {
       nsCOMPtr<nsISupports> supports;
       rv = sizesEnum->GetNext(getter_AddRefs(supports));
       NS_ENSURE_SUCCESS(rv, rv);
@@ -1112,8 +1112,18 @@ restartQualityConfiguration:
         // we had a better fit before
         continue;
       }
+      foundOutput = PR_TRUE;
       mOutputDimensions = size;
       usefulPixels = usefulSize.width * usefulSize.height;
+    }
+    if (!foundOutput && !bitrateForced && mVideoQuality > 0) {
+      // no available format found, try again with lower quality
+      mVideoQuality = PR_MIN(0, mVideoQuality - 0.1);
+      mVideoBitrate = PR_INT32_MIN;
+      goto restartQualityConfiguration;
+    }
+    if (!foundOutput) {
+      return NS_ERROR_FAILURE;
     }
     rv = GetDevCapRangeUpper(videoBitrateRange,
                              usefulPixels * mVideoFrameRate * videoBPP,

@@ -14,9 +14,9 @@
 
   <video>
     <type>video/x-theora</type>
-    <property name="bitrate" type="int" min="0" max="2000" default="0"
+    <property name="bitrate" type="int" min="0" max="16777" default="0"
               mapping="bitrate" scale="1/1000"/>
-    <quality-property name="bpp" quality="0" value="0.2"/>
+    <quality-property name="bpp" quality="0" value="0.1"/>
     <quality-property name="bpp" quality="1" value="1"/>
   </video>
 

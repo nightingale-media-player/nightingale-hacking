@@ -61,7 +61,7 @@ function testHasConfigurated(configurator, aState) {
       "videoEncoder" : "theoraenc",
       "videoFormat": {videoWidth: 1280,
                       videoHeight: 720},
-      "videoEncoderProperties": {bitrate: 921}, // pull out of the results :p
+      "videoEncoderProperties": {bitrate: 2762}, // from running the actual transcode
       "audioEncoder": "vorbisenc",
       "audioFormat": {sampleRate: 44100,
                       channels: 1},
