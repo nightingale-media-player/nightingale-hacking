@@ -962,25 +962,6 @@ function BrowserNumberTabSelection(event, index) {
   event.stopPropagation();
 }
 
-window.addEventListener("fullscreen", FullScreen, true);
-
-function FullScreen() {
-  var isMediaPage = SBDataGetBoolValue('browser.in_media_page');
-  var servicepaneState =
-    SBDataGetBoolValue('splitter.servicepane_splitter.was_collapsed');
-  if(!isMediaPage) {
-    var playerControls_open =
-	  !(document.getElementById('control_pane_box').getAttribute('hidden'));
-    document.getElementById('control_pane_box').hidden = playerControls_open;
-    SBDataSetBoolValue('player_controls.was_collapsed', playerControls_open);
-    if (playerControls_open)
-      gServicePane.open = false;
-    else
-      gServicePane.open = servicepaneState;
-  }
-}
-
-
 function BrowserHandleBackspace()
 {
   switch (Application.prefs.getValue("browser.backspace_action", 2)) {
