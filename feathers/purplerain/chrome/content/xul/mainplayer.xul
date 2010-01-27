@@ -17,32 +17,29 @@
 
 <!--
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 -->
-
 
 <window
   id="mainplayer"
@@ -66,7 +63,8 @@
   <!-- No matter what mig says, don't take this out!! -->
   <windowregion/>
   
-  <!-- standard overlays insertion point for popups, commands, broadcasters, keys and stringbundles -->
+  <!-- standard overlays insertion point for popups, commands, broadcasters,
+       keys and stringbundles -->
   <sb-support id="mainSupportSet"/>
 
   <sb-sys-outer-frame flex="1">
@@ -82,181 +80,156 @@
       
       <!-- MENU, DRAGGER AND SYSTEM BUTTONS -->
       <sb-sys-titlebar context="feathersPopupMenu">
-        <!-- Note: This menu must have the id "main-menubar", as it is the overlay
-             target of layoutWithBrowserOverlay.xul.  This cannot be put inside of
-             a binding as that would break OSX menu handling. 
-             See http://lxr.mozilla.org/seamonkey/source/widget/src/cocoa/nsMenuBarX.mm#252
+        <!-- Note: This menu must have the id "main-menubar", as it is the
+             overlay target of layoutWithBrowserOverlay.xul.  This cannot be
+             put inside of a binding as that would break OSX menu handling.  See
+    http://lxr.mozilla.org/seamonkey/source/widget/src/cocoa/nsMenuBarX.mm#252
           -->
-        <menubar id="main-menubar" hidden="false" oncommand="onMenu(event.target)" mousethrough="never" />        
+        <menubar id="main-menubar" hidden="false"
+                 oncommand="onMenu(event.target)" mousethrough="never" />
       </sb-sys-titlebar>
     </stack>
 
     <vbox flex="1" id="content_player_wrapper" playercontrols="bottom">
-      <vbox id="content_wrapper" flex="1">
-        <stack id="nav_bar_box">
-          <hbox flex="1" class="hook">
-            <hbox class="left"/>
-            <hbox class="middle" flex="1"/>
-            <hbox class="right"/>
-          </hbox>
-          <!-- BROWSER TOOLBAR.  Filled via overlay by layoutWithBrowserOverlay.xul and others. 
-               Note: this item must have id="navigator-toolbox" for Firefox extension compatibility.
-          -->
-          <toolbox id="navigator-toolbox" flex="1"/>
-        </stack>
+      <hbox id="sp_content_wrapper" flex="1">
+        <!-- SERVICE PANE -->
+        <vbox id="servicepane_box">
+          <sb-servicepane id="servicepane" flex="1" browser="content">
+          </sb-servicepane>
+        </vbox>
+        <sb-smart-splitter id="servicepane_splitter" state="open"
+                           resizebefore="closest" resizeafter="closest"
+                           hideoncollapse="servicepane_box"
+                           showonopen="servicepane_box"
+                           metricscategory="app"
+                           metricsid="collapse.servicepane"/>
 
-        <hbox id="tabstrip-container">
-          <observes type="dataremote"
-                    key="splitter.servicepane_splitter.collapsed"
-                    boolean="true" 
-                    attribute="servicepane_pinned"
-                    inverted="true"/>
-          <tabs id="tabstrip" class="tabbrowser-tabs sb-tabbrowser-tabs"
-                setfocus="false" flex="1"
-                onclick="gBrowser.onTabClick(event);"
-                ondblclick="gBrowser.onTabBarDblClick(event);"
-                onclosetab="gBrowser.removeCurrentTab();"
-                collapsed="true">
-            <tab selected="true" validate="never"
-                 onerror="gBrowser.addToMissedIconCache(this.getAttribute('image')); gBrowser.setIcon(this, null);"
-                 class="tabbrowser-tab" crop="end"/>
-          </tabs>
-        </hbox>
-
-        <vbox id="inner_player_box" flex="1">
-          <vbox id="middle_pane_box" flex="1">
-            <hbox id="middle_pane_inner_box" flex="1">
-
-
-              <!-- SERVICE PANE -->
-              <vbox id="servicepane_box">
-                <sb-servicepane id="servicepane" flex="1" browser="content">
-                </sb-servicepane>
-                <!-- 
-                <hbox id="servicepane-status-bar-box">
-                  <button class="service-pane-spring-load-button"
-                          tooltiptext="&tooltip.servicepane.hide;"
-                          oncommand="const key = 'splitter.servicepane_splitter.was_collapsed';
-                                     gServicePane.open = !gServicePane.open;
-                                     SBDataSetBoolValue(key, gServicePane.open);"
-                          style="min-height:16px; min-width:16px;" >
-                    <observes type="dataremote" key="browser.in_media_page" boolean="true"
-                              attribute="disabled" onchange="
-                                const key = 'splitter.servicepane_splitter.was_collapsed';
-                                if (gServicePane) {
-                                  if (value) {
-                                    /* going into media page mode */
-                                    gServicePane.open = true;
-                                    document.getElementById('control_pane_box').hidden = false;
-                                  } else {
-                                    /* going out of media page */
-                                    gServicePane.open = SBDataGetBoolValue(key);
-                                    document.getElementById('control_pane_box').hidden = SBDataGetBoolValue('player_controls.was_collapsed')
-                                  }
-                                }
-                                return value;
-                              "/>
-                    <observes type="dataremote" key="splitter.servicepane_splitter.collapsed" boolean="true"
-                              attribute="hidden" inverted="false"/>
-                  </button>
-                  <sb-displaypane-button class="service-pane-display-pane-button"
-                                         paneid="displaypane_servicepane_bottom"/>
-                  <statusbar id="servicepane-status-bar" mousethrough="never" flex="1">
-                  </statusbar>
-                  <sb-servicepane-toolbar id="servicepane_toolbar" />
-                </hbox>
-                -->
-              </vbox>
-              <sb-smart-splitter id="servicepane_splitter" state="open"
-                                 resizebefore="closest" resizeafter="closest"
-                                 hideoncollapse="servicepane_box" showonopen="servicepane_box"
-                                 metricscategory="app" metricsid="collapse.servicepane"/>
-
-
-              <vbox flex="1" id="content_pane_box">
-                <vbox id="appcontent" flex="1">
-
-                  <hbox flex="1">
-                    <vbox flex="1">
-
-                      <!-- BROWSER.  Note: these IDs are required for Firefox extension compatibility. -->
-                      <sb-tabbrowser id="content" flex="1" contenttooltip="aHTMLTooltip" contentcontextmenu="contentAreaContextMenu" 
-                                     hasmediatab="true"
-                                     tabstrip="tabstrip"/>
-                                 
-                      <!-- CONTENT PANE DISPLAY PANE -->
-                      <sb-displaypane-splitter
-                          collapse="after"
-                          orient="vertical"
-                          resizeafter="closest"
-                          id="displaypane_contentpane_bottom_splitter"
-                          menuid="displaypane_contentpane_bottom_menu" />
-                      <sb-displaypane id="displaypane_contentpane_bottom" 
-                          label="&displaypane.name.browser;"
-                          contentgroup="contentpane"
-                          splitter="displaypane_contentpane_bottom_splitter" />
-                    </vbox>
-
-                    <!-- SIDEBAR DISPLAY PANE.  Controlled via the View menu
-                         and sbIDisplayPaneManager service. -->
-                    <sb-displaypane-splitter
-                              collapse="after"
-                              orient="horizontal"
-                              resizeafter="closest"
-                              id="displaypane_right_sidebar_splitter"
-                              menuid="displaypane_right_sidebar_menu" />
-                    <sb-displaypane id="displaypane_right_sidebar"
-                              contentgroup="sidebar"
-                              orient="vertical"
-                              label="&displaypane.name.sidebar;"
-                              splitter="displaypane_right_sidebar_splitter"/>
-                  </hbox>
-                  
-                  <!-- menupopup needs to be outside the vbox otherwise it
-                       gets height adjusted to 0 when the splitter is 
-                       adjusted -->
-                  <menupopup id="displaypane_contentpane_bottom_menu"
-                             class="menulist-menupopup">
-                    <sb-displaypane-content-menuitems
-                             paneid="displaypane_contentpane_bottom" />
-                  </menupopup>
-                  <menupopup id="displaypane_right_sidebar_menu"
-                             class="menulist-menupopup">
-                    <sb-displaypane-content-menuitems
-                             paneid="displaypane_right_sidebar" />
-                  </menupopup>
-                                 
-                </vbox>
-              </vbox> <!-- /content_pane_box -->
+        <vbox id="content_wrapper" flex="1">
+          <stack id="nav_bar_box">
+            <hbox flex="1" class="hook">
+              <hbox class="left"/>
+              <hbox class="middle" flex="1"/>
+              <hbox class="right"/>
             </hbox>
-            
-            <!-- STATUS BAR.  Filled via overlay by layoutWithBrowserOverlay.xul
-                 Note: this item must have id="status-bar" for Firefox 
+            <!-- BROWSER TOOLBAR.  Filled via overlay by
+                 layoutWithBrowserOverlay.xul and others. 
+                 Note: this item must have id="navigator-toolbox" for Firefox
                  extension compatibility.
             -->
-            <hbox id="status-bar-box" flex="1">
-              <button class="service-pane-spring-load-button"
-                      tooltiptext="&tooltip.servicepane.show;"
-                      oncommand="const key = 'splitter.servicepane_splitter.was_collapsed';
-                                 gServicePane.open = !gServicePane.open;
-                                 SBDataSetBoolValue(key, gServicePane.open);"
-                      style="min-height:16px; min-width:16px;" >
-                <observes type="dataremote" key="splitter.servicepane_splitter.collapsed" boolean="true"
-                          attribute="hidden" inverted="true"/>
-              </button>
-              <statusbar id="status-bar" mousethrough="never" flex="1">
-              </statusbar>
-              <!--
-              <sb-displaypane-button class="content-pane-display-pane-button"
-                                     paneid="displaypane_contentpane_bottom"/>
-              <sb-displaypane-button class="right-sidebar-display-pane-button"
-                                     paneid="displaypane_right_sidebar"/>
-              -->
-            </hbox>
+            <toolbox id="navigator-toolbox" flex="1"/>
+          </stack>
 
-          </vbox>
-        </vbox>
-      </vbox>
+          <hbox id="tabstrip-container">
+            <observes type="dataremote"
+                      key="splitter.servicepane_splitter.collapsed"
+                      boolean="true" 
+                      attribute="servicepane_pinned"
+                      inverted="true"/>
+            <tabs id="tabstrip" class="tabbrowser-tabs sb-tabbrowser-tabs"
+                  setfocus="false" flex="1"
+                  onclick="gBrowser.onTabClick(event);"
+                  ondblclick="gBrowser.onTabBarDblClick(event);"
+                  onclosetab="gBrowser.removeCurrentTab();"
+                  collapsed="true">
+              <tab selected="true" validate="never"
+                   onerror="gBrowser.addToMissedIconCache(this.getAttribute('image')); gBrowser.setIcon(this, null);"
+                   class="tabbrowser-tab" crop="end"/>
+            </tabs>
+          </hbox>
+
+          <vbox id="inner_player_box" flex="1">
+            <vbox id="middle_pane_box" flex="1">
+              <hbox id="middle_pane_inner_box" flex="1">
+                <vbox flex="1" id="content_pane_box">
+                  <vbox id="appcontent" flex="1">
+
+                    <hbox flex="1">
+                      <vbox flex="1">
+
+                        <!-- BROWSER.  Note: these IDs are required for
+                             Firefox extension compatibility. -->
+                        <sb-tabbrowser id="content" flex="1"
+                                contenttooltip="aHTMLTooltip"
+                                contentcontextmenu="contentAreaContextMenu"
+                                hasmediatab="true"
+                                tabstrip="tabstrip"/>
+
+                        <!-- CONTENT PANE DISPLAY PANE -->
+                        <sb-displaypane-splitter
+                            collapse="after"
+                            orient="vertical"
+                            resizeafter="closest"
+                            id="displaypane_contentpane_bottom_splitter"
+                            menuid="displaypane_contentpane_bottom_menu" />
+                        <sb-displaypane id="displaypane_contentpane_bottom" 
+                            label="&displaypane.name.browser;"
+                            contentgroup="contentpane"
+                            splitter="displaypane_contentpane_bottom_splitter"/>
+                      </vbox>
+
+                      <!-- SIDEBAR DISPLAY PANE.  Controlled via the View menu
+                           and sbIDisplayPaneManager service. -->
+                      <sb-displaypane-splitter
+                                collapse="after"
+                                orient="horizontal"
+                                resizeafter="closest"
+                                id="displaypane_right_sidebar_splitter"
+                                menuid="displaypane_right_sidebar_menu" />
+                      <sb-displaypane id="displaypane_right_sidebar"
+                                contentgroup="sidebar"
+                                orient="vertical"
+                                label="&displaypane.name.sidebar;"
+                                splitter="displaypane_right_sidebar_splitter"/>
+                    </hbox>
+
+                    <!-- menupopup needs to be outside the vbox otherwise it
+                         gets height adjusted to 0 when the splitter is
+                         adjusted -->
+                    <menupopup id="displaypane_contentpane_bottom_menu"
+                               class="menulist-menupopup">
+                      <sb-displaypane-content-menuitems
+                               paneid="displaypane_contentpane_bottom" />
+                    </menupopup>
+                    <menupopup id="displaypane_right_sidebar_menu"
+                               class="menulist-menupopup">
+                      <sb-displaypane-content-menuitems
+                               paneid="displaypane_right_sidebar" />
+                    </menupopup>
+
+                  </vbox>
+                </vbox> <!-- /content_pane_box -->
+              </hbox>
+
+              <!-- STATUS BAR.  Filled via overlay by
+                   layoutWithBrowserOverlay.xul
+                   Note: this item must have id="status-bar" for Firefox
+                   extension compatibility.
+              -->
+              <hbox id="status-bar-box" flex="1">
+                <button class="service-pane-spring-load-button"
+                        tooltiptext="&tooltip.servicepane.show;"
+                        oncommand="const key = 'splitter.servicepane_splitter.was_collapsed';
+                                   gServicePane.open = !gServicePane.open;
+                                   SBDataSetBoolValue(key, gServicePane.open);"
+                        style="min-height:16px; min-width:16px;" >
+                  <observes type="dataremote" key="splitter.servicepane_splitter.collapsed" boolean="true"
+                            attribute="hidden" inverted="true"/>
+                </button>
+                <statusbar id="status-bar" mousethrough="never" flex="1">
+                </statusbar>
+                <!--
+                <sb-displaypane-button class="content-pane-display-pane-button"
+                                       paneid="displaypane_contentpane_bottom"/>
+                <sb-displaypane-button class="right-sidebar-display-pane-button"
+                                       paneid="displaypane_right_sidebar"/>
+                -->
+              </hbox>
+
+            </vbox>
+          </vbox> <!-- /inner_player_box -->
+        </vbox> <!-- /content_wrapper -->
+      </hbox> <!-- /sp_content_wrapper -->
+
       <vbox id="player_wrapper">
         <stack id="control_pane_box" pack="center" >
           <!-- TODO Move corner xul into an sb-themed-frame-stack -->
@@ -379,9 +352,9 @@
               <sb-player-repeat-button class="sb-player-button" />
             </hbox>
           </hbox>
-        </stack>
-      </vbox>
-    </vbox>
+        </stack> <!-- /control_pane_box -->
+      </vbox> <!-- /player_wrapper -->
+    </vbox> <!-- /content_player_wrapper -->
 
   </sb-sys-outer-frame>
 

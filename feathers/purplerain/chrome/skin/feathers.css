@@ -587,6 +587,10 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 /******************************************************************************
 * SERVICE PANE
 ******************************************************************************/
+#sp_content_wrapper {
+  border-top: 1px solid rgb(43,42,53);
+}
+
 #servicepane {
   background-color: rgb(54,52,63);
   border-left: 1px solid rgb(43,41,54);
@@ -862,9 +866,17 @@ sb-displaypane-splitter[orient="horizontal"] > stack > box > #dropdown-button {
 #servicepane_splitter,
 #filter_splitter {
   background-color: rgb(0,0,0);
-  border-right: 1px solid rgb(43,41,54);
-  border-left: 1px solid rgb(43,41,54);
   background-image: none;
+}
+
+#servicepane_splitter {
+  border-right: 1px solid rgb(19,20,26);
+  border-left: 1px solid rgb(43,41,54);
+}
+
+#filter_splitter {
+  border-right: 1px solid rgb(43,41,54);
+  border-left: 1px solid rgb(19,20,26);
 }
 
 .playlist-splitter,

@@ -168,16 +168,25 @@ notification[type="critical"],
   background-image:url('chrome://songbird/skin/notification-bar/bg-critical.png');
 }
 
-
 #tabstrip-container {
-  background-image: url('chrome://songbird/skin/browser-tab-bar/bg-tab-bar.png');
+  /*background-image: url('chrome://songbird/skin/browser-tab-bar/bg-tab-bar.png');
   background-repeat:repeat-x;
   background-position:center bottom;
+  */
+  background-image: none;
+  background-color: black;
+}
+#tabstrip-container > tabs#tabstrip {
+  border-bottom: 1px solid rgb(43,42,53) !important;
+}
+#tabstrip-container > tabs#tabstrip > stack {
+  border-right: 1px solid rgb(15,15,23) !important;
 }
 .tabbrowser-tab {
   background-image: url('chrome://songbird/skin/browser-tab-bar/bg-tab-delimiter.png') !important;
   background-repeat:no-repeat;
   background-position:right 0px !important;
+  padding-bottom: 1px !important;
 }
 .tabbrowser-tab > .tab-image-middle,
 .tabbrowser-tab > .tab-image-left,
@@ -524,26 +533,34 @@ treechildren::-moz-tree-twisty(open) {
 
 
 
-#nav-bar {
+#nav_bar_box {
   border:none;
   background-image:none;
-  background-color:transparent;
+  background-color:black;
+  border-bottom: 1px solid rgb(43,42,53);
 }
+#nav-bar {
+  background-color: transparent;
+  background-image: none;
+  border-right: 1px solid rgb(15,15,23);
+}
+/*
 #nav_bar_box > .hook > .left {
   background-image: url('chrome://songbird/skin/nav-bar/bg-nav-bar-left.png');
   background-position:left top;
   background-repeat:no-repeat;
 }
 #nav_bar_box > .hook > .right {
-  background-image: url('chrome://songbird/skin/nav-bar/bg-nav-bar-right.png');
+  background-image: url('chrome://songbird/skin/nav-bar/bg-nav-bar.png');
   background-position:right top;
   background-repeat:no-repeat;
 }
 #nav_bar_box > .hook {
-  background-image: url('chrome://songbird/skin/nav-bar/bg-nav-bar.png');
+  background-image: url('chrome://songbird/skin/nav-bar/bg-nav-bar-right.png');
   background-position:center top;
   background-repeat:repeat-x;
 }
+  */
 
 #nav-bar toolbarbutton {  
   -moz-background-clip:border;
