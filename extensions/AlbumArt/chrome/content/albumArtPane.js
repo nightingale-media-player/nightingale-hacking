@@ -901,7 +901,8 @@ var AlbumArt = {
     }
 
     // Enable the paste if a valid image is on the clipboard
-    pasteElem.disabled = !validAlbumArt;
+    // Disable the paste if no "audio" is selected.
+    pasteElem.disabled = !validAlbumArt || shouldHideGetArtwork;
 
   },
   
