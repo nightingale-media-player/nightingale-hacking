@@ -748,11 +748,11 @@ sbDeviceTranscoding::TranscodeMediaItem(
     transcodedDestinationURI = transcodedDestinationURIProxy;
   }
 
-  // Check for transcode errors.
-  NS_ENSURE_TRUE(status == sbIJobProgress::STATUS_SUCCEEDED, NS_ERROR_FAILURE);
-
   if (aTranscodedDestinationURI)
     transcodedDestinationURI.forget(aTranscodedDestinationURI);
+
+  // Check for transcode errors.
+  NS_ENSURE_TRUE(status == sbIJobProgress::STATUS_SUCCEEDED, NS_ERROR_FAILURE);
 
   return NS_OK;
 }
