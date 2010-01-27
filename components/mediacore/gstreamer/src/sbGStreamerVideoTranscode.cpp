@@ -1000,9 +1000,18 @@ sbGStreamerVideoTranscoder::ConfigureVideoBox (GstElement *videobox,
     gint outputImageHeight = outputWidth *
         (imageDarD * outputParN) / (imageDarN * outputParD);
     gint padding = outputHeight - outputImageHeight;
-    // Arbitrarily, we round paddingTop down, and paddingBottom up.
-    gint paddingTop = padding/2;
-    gint paddingBottom = padding - paddingTop;
+    // Because we're usually dealing with chroma-subsampled video formats,
+    // adding an odd amount of padding is a bad idea. For example, if we need
+    // to add 2 pixels of padding, it's best to have both on one side, rather
+    // than one on each.
+    gint paddingBottom, paddingTop;
+    if (padding % 4 == 0) {
+      paddingBottom = padding / 2;
+    }
+    else {
+      paddingBottom = padding / 2 + 1;
+    }
+    paddingTop = padding - paddingBottom;
 
     LOG(("Padding %d pixels at top, %d pixels at bottom", paddingTop,
          paddingBottom));
@@ -1017,9 +1026,18 @@ sbGStreamerVideoTranscoder::ConfigureVideoBox (GstElement *videobox,
     gint outputImageWidth = outputHeight *
         (imageDarN * outputParD) / (imageDarD * outputParN);
     gint padding = outputWidth - outputImageWidth;
-    // Arbitrarily, we round paddingLeft down, and paddingRight up.
-    gint paddingLeft = padding/2;
-    gint paddingRight = padding - paddingLeft;
+    // Because we're usually dealing with chroma-subsampled video formats,
+    // adding an odd amount of padding is a bad idea. For example, if we need
+    // to add 2 pixels of padding, it's best to have both on one side, rather
+    // than one on each.
+    gint paddingRight, paddingLeft;
+    if (padding % 4 == 0) {
+      paddingRight = padding / 2;
+    }
+    else {
+      paddingRight = padding / 2 + 1;
+    }
+    paddingLeft = padding - paddingRight;
 
     LOG(("Padding %d pixels at left, %d pixels at right", paddingLeft,
          paddingRight));
