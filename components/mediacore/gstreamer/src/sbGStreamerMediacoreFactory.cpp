@@ -168,6 +168,12 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   nsAutoMonitor mon(mMonitor);
 
+  // TODO: This function is now a _huge_ mess. We should talk to product about
+  // what files we want to import / etc, some time soon - e.g. the current
+  // approach is to treat anything even vaguely-plausibly audio-related as
+  // audio (even if we can't play it!), but to only import a small list of fixed
+  // extensions for videos (excluding many things we might be able to play).
+
   nsresult rv;
   if (!mCapabilities) {
     nsRefPtr<sbMediacoreCapabilities> caps;
@@ -213,11 +219,8 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
            blacklistExtensions.BeginReading()));
     }
 
-#ifdef XP_WIN
-    const char *extraAudioExtensions[] = {"m4r", "m4p", "mp4", "oga", "wma"};
-#else
-    const char *extraAudioExtensions[] = {"m4r", "m4p", "mp4", "oga"};
-#endif
+    const char *extraAudioExtensions[] = {"m4r", "m4p", "mp4", "oga", "wma",
+        "ogg", "aac"};
 
     { // for scope
 
