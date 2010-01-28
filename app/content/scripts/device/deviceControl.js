@@ -1,29 +1,27 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 /**
@@ -48,6 +46,7 @@
 // Songbird imports.
 Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
+Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/sbStorageFormatter.jsm");
 Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
 
@@ -534,20 +533,31 @@ deviceControlWidget.prototype = {
   _isReadOnly: function deviceControlWidget__isReadOnly() {
     var readOnly;
 
+    // If device is read-only, return true.
+    var accessCompatibility;
+    var deviceProperties = this._device.properties.properties;
+    try {
+      accessCompatibility =
+        deviceProperties.getPropertyAsAString("http://songbirdnest.com/" +
+                                              "device/1.0#accessCompatibility");
+    } catch (ex) {}
+    if (accessCompatibility == "ro")
+      return true;
+
     // Treat device as read-only if it doesn't have a library.
     if (!this._deviceLibrary)
       return true;
 
-    // This is just preventative measure in case the library is being
-    // destroyed or bad state, we'll just treat as readOnly
+    // Treat device as read-only if its library is read-only.
     try {
-      // Set to read-only if not in manual management mode.
-      if (this._deviceLibrary.isMgmtTypeManual)
-        readOnly = false;
-      else
+      if (this._deviceLibrary.getProperty(SBProperties.isReadOnly) == "1")
         readOnly = true;
+      else
+        readOnly = false;
     }
-    catch (e) {
+    catch (ex) {
+      // This is just preventative measure in case the library is being
+      // destroyed or bad state, we'll just treat as readOnly
       readOnly = true;
     }
     return readOnly;
@@ -706,11 +716,19 @@ deviceControlWidget.prototype = {
     else if (this._deviceLibrary && !(this._deviceLibrary.isMgmtTypeManual) &&
              this._getStateAttribute(attrVal, aAttrName, "mgmt_not_manual")) {}
     else if (this._currentSupportsReformat &&
-             this._getStateAttribute(attrVal, aAttrName, "supports_reformat")) {}
+             this._getStateAttribute(attrVal,
+                                     aAttrName,
+                                     "supports_reformat")) {}
     else if (this._currentMsc &&
              this._getStateAttribute(attrVal, aAttrName, "msc")) {}
     else if (this._currentSupportsPlaylist &&
-             this._getStateAttribute(attrVal, aAttrName, "supports_playlist")) {}
+             this._getStateAttribute(attrVal,
+                                     aAttrName,
+                                     "supports_playlist")) {}
+    else if (!this._currentSupportsPlaylist &&
+             this._getStateAttribute(attrVal,
+                                     aAttrName,
+                                     "not_supports_playlist")) {}
     else if (this._getStateAttribute(attrVal, aAttrName, "default")) {}
     else this._getStateAttribute(attrVal, aAttrName, null);
 

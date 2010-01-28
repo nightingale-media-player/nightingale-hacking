@@ -4,7 +4,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -59,6 +59,7 @@
 #include <sbIDeviceEvent.h>
 #include <sbIDeviceEventTarget.h>
 #include <sbIDeviceManager.h>
+#include <sbIDeviceProperties.h>
 #include <sbILibraryFactory.h>
 #include <sbILibraryManager.h>
 #include <sbIPrompter.h>
@@ -72,6 +73,7 @@
 #include <sbMemoryUtils.h>
 #include <sbPropertiesCID.h>
 #include <sbProxyUtils.h>
+#include <sbStandardDeviceProperties.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
 #include <sbVariantUtils.h>
@@ -799,6 +801,30 @@ nsresult
 sbDeviceLibrary::UpdateIsReadOnly()
 {
   nsresult rv;
+
+  // Get the device properties.
+  nsCOMPtr<sbIDeviceProperties> baseDeviceProperties;
+  nsCOMPtr<nsIPropertyBag2>     deviceProperties;
+  rv = mDevice->GetProperties(getter_AddRefs(baseDeviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = baseDeviceProperties->GetProperties(getter_AddRefs(deviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the access compatibility.
+  nsAutoString accessCompatibility;
+  rv = deviceProperties->GetPropertyAsAString
+         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_ACCESS_COMPATIBILITY),
+          accessCompatibility);
+  if (NS_FAILED(rv))
+    accessCompatibility.Truncate();
+
+  // If device is read-only, mark library as such and return.
+  if (accessCompatibility.Equals(NS_LITERAL_STRING("ro"))) {
+    rv = this->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY),
+                           NS_LITERAL_STRING("1"));
+    NS_ENSURE_SUCCESS(rv, rv);
+    return NS_OK;
+  }
 
   // Get the management type
   PRBool isManual;
