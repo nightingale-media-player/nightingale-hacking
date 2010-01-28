@@ -40,6 +40,7 @@
 #include <sbIDeviceEventTarget.h>
 
 #include <sbProxiedComponentManager.h>
+#include <sbProxyUtils.h>
 
 #include "sbDeviceFirmwareUpdate.h"
 
@@ -135,9 +136,16 @@ sbBaseDeviceFirmwareHandler::CreateProxiedURI(const nsACString &aURISpec,
   NS_ENSURE_ARG_POINTER(aURI);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<nsIIOService> ioService =
-    do_ProxiedGetService("@mozilla.org/network/io-service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIIOService> ioService;
+  
+  if(NS_IsMainThread()) {
+    ioService = do_GetService("@mozilla.org/network/io-service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    ioService = do_ProxiedGetService("@mozilla.org/network/io-service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   LOG(("[%s] Creating proxied URI for '%s'", aURISpec.BeginReading()));
 
@@ -302,7 +310,7 @@ sbBaseDeviceFirmwareHandler::SendDeviceEvent(sbIDeviceEvent *aEvent,
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsCOMPtr<sbIDeviceEventListener> proxiedListener;
-      rv = do_GetProxyForObject(mainThread,
+      rv = SB_GetProxyForObject(mainThread,
                                 NS_GET_IID(sbIDeviceEventListener),
                                 listener,
                                 NS_PROXY_ALWAYS | NS_PROXY_ASYNC,

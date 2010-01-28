@@ -122,9 +122,7 @@ var deviceFirmwareWizard = {
         let self = this;
         
         this._currentOperation = "checkforupdate";
-        setTimeout(function() {
-            self._deviceFirmwareUpdater.checkForUpdate(self._device, self);
-          }, 0);
+        this._deviceFirmwareUpdater.checkForUpdate(this._device, this);
       }
       break;
       
@@ -228,9 +226,7 @@ var deviceFirmwareWizard = {
           descElem.appendChild(descTextNode);
           
           this._currentOperation = "download";
-          setTimeout(function() {
-            self._deviceFirmwareUpdater.downloadUpdate(self._device, false, self);
-            }, 0);
+          this._deviceFirmwareUpdater.downloadUpdate(this._device, false, this);
         }
       }
       break;
@@ -292,18 +288,19 @@ var deviceFirmwareWizard = {
             document.createTextNode(SBString("device.firmware.repair.no_disconnect_warning"));
           descElem.appendChild(textNode);
           
-          setTimeout(function() {
-              self._deviceFirmwareUpdater.recoveryUpdate(self._device, self);
-              }, 0);
+          this._deviceFirmwareUpdater.recoveryUpdate(this._device, this);
         }
         else {
           let textNode = 
             document.createTextNode(SBString("device.firmware.wizard.no_disconnect_warn"));
           descElem.appendChild(textNode);
           
+          // We have to do this to ensure that the device event is propagated
+          // to everyone before we actually start the update. Yes this is lame.
+          // Yes, it would be nice to do it a different way.
           setTimeout(function() {
               self._deviceFirmwareUpdater.applyUpdate(self._device, self._firmwareUpdate, self);
-              }, 0);
+            }, 0);
         }
       }
       break;
@@ -425,10 +422,7 @@ var deviceFirmwareWizard = {
         }
       }
       else if(this._currentOperation == "confirmrepair") {
-        let self = this;
-        setTimeout(function() {
-            self.wizardElem.goTo("device_firmware_wizard_install_page");
-          }, 0);
+        this.wizardElem.goTo("device_firmware_wizard_install_page");
       }
     }
    
@@ -488,7 +482,10 @@ var deviceFirmwareWizard = {
       let handler = this._deviceFirmwareUpdater.getHandler(this._device);
       handler.bind(this._device, null);
       let recoveryMode = handler.recoveryMode;
+      
       handler.unbind();
+      handler = null;
+      
       if(recoveryMode) {
         setTimeout(function() {
             self._wizardElem.goTo("device_firmware_wizard_repair_page");
@@ -584,7 +581,15 @@ var deviceFirmwareWizard = {
         this.wizardElem.currentPage.setAttribute("shownext", "true");
                   
         var browser = document.getElementById("device_firmware_wizard_release_notes_browser");
-        browser.setAttribute("src", handler.releaseNotesLocation.spec);
+        
+        var releaseNotesLocation = null;
+        try { 
+          releaseNotesLocation = handler.releaseNotesLocation;
+        }
+        catch(e) {}
+        
+        var spec = releaseNotesLocation ? releaseNotesLocation.spec : "about:blank";
+        browser.setAttribute("src", spec);
         
         progressDeck.selectedPanel = 
           document.getElementById("device_firmware_wizard_check_new_box");
@@ -695,9 +700,8 @@ var deviceFirmwareWizard = {
         let continueSuccess = false;
         
         try {
-          var self = this;
           continueSuccess = 
-            this._deviceFirmwareUpdater.continueUpdate(self._device, self);
+            this._deviceFirmwareUpdater.continueUpdate(this._device, this);
         }
         catch(e) {
           criticalFailure = true;

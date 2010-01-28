@@ -735,6 +735,26 @@ sbDeviceFirmwareUpdater::RecoveryUpdate(sbIDevice *aDevice,
     return NS_ERROR_UNEXPECTED;
   }
 
+  //
+  // This isn't great to have to do this on the Main Thread
+  // but the components required to cache the firmware update
+  // are inherently NOT thread-safe and proxying to the main 
+  // thread causes A LOT of badness as it pumps the main thread
+  // at a really bad time almost EVERYTIME.
+  //
+  // Long term we'd probably want to do this copy in an async 
+  // manner and then call this method again after the file has been cached.
+  //
+  if(needsCaching) {
+    nsCOMPtr<sbIDeviceFirmwareUpdate> cachedFirmwareUpdate;
+    rv = sbDeviceFirmwareDownloader::CacheFirmwareUpdate(aDevice,
+                                                         firmwareUpdate, 
+                                                         getter_AddRefs(cachedFirmwareUpdate));
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    cachedFirmwareUpdate.swap(firmwareUpdate);
+  }
+
   nsRefPtr<sbDeviceFirmwareUpdaterRunner> runner;
   NS_NEWXPCOM(runner, sbDeviceFirmwareUpdaterRunner);
   NS_ENSURE_TRUE(runner, NS_ERROR_OUT_OF_MEMORY);
@@ -1332,20 +1352,6 @@ sbDeviceFirmwareUpdaterRunner::Run()
   NS_ENSURE_STATE(mFirmwareUpdate);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-
-  if(mFirmwareUpdateNeedsCaching) {
-    nsCOMPtr<sbIDeviceFirmwareUpdate> cachedFirmwareUpdate;
-    rv = 
-      sbDeviceFirmwareDownloader::CacheFirmwareUpdate(mDevice,
-                                                      mFirmwareUpdate, 
-                                                      getter_AddRefs(cachedFirmwareUpdate));
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    cachedFirmwareUpdate.swap(mFirmwareUpdate);
-  }
-
-  // Don't need this anymore, get rid of it asap.
-  mDevice = nsnull;
 
   if(mRecovery) {
     rv = mHandler->Recover(mFirmwareUpdate);
