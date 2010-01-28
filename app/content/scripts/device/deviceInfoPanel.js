@@ -255,6 +255,26 @@ var DIPW = {
   },
 
   /**
+   * Check the device capabilities to see if it supports video.
+   */
+  _supportsVideo: function DIPW__supportsVideo() {
+    var capabilities = this._device.capabilities;
+    var sbIDC = Ci.sbIDeviceCapabilities;
+    try {
+      var contentTypes = capabilities
+        .getSupportedContentTypes(sbIDC.FUNCTION_VIDEO_PLAYBACK, {});
+      for (var i in contentTypes) {
+        if (contentTypes[i] == sbIDC.CONTENT_VIDEO) {
+          return true;
+        }
+      }
+    } catch (e) {}
+
+    // couldn't find VIDEO support
+    return false;
+  },
+
+  /**
    * \brief Update the device info panel UI according to the current device state.
    */
 
@@ -316,6 +336,7 @@ var DIPW = {
                                      false);
         }
         if ((this._itemType.intValue & TYPE.VIDEO) &&
+            this._supportsVideo() &&
             !this._findMediaInfoPanel("video")) {
           this._updateMediaInfoPanel("video",
                                      SBString("device.infoPanel.sync_video"),
