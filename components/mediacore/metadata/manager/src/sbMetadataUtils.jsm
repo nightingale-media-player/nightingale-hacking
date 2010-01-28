@@ -114,7 +114,7 @@ var sbMetadataUtils = {
     }
 
     // Create an array for the property list.
-    var propertyArray = ArrayConverter.stringEnumerator([aPropertyList]);
+    var propertyArray = ArrayConverter.stringEnumerator(aPropertyList);
 
     try {
       // Initiate writing of the metadata.
