@@ -51,7 +51,7 @@
       <menuitem id="pasteMenuItem"
                 label="&albumart.displaypane.selected.menu.paste;"
                 oncommand="AlbumArt.onPaste();"/>
-      <menuseparator id="getArtworkSeparator"/>
+      <menuseparator />
       <menuitem id="showNowPlayingMenuItem"
                 label="&albumart.displaypane.contextmenu.showplaying;"
                 type="radio"
@@ -62,7 +62,7 @@
                 type="radio"
                 name="displayState"
                 oncommand="AlbumArt.switchState(STATE_SELECTED);"/>
-      <menuseparator />
+      <menuseparator id="getArtworkSeparator"/>
       <menuitem id="getArtworkMenuItem"
                 label="&menu.tools.getartwork;"
                 oncommand="AlbumArt.onGetArtwork();"/>

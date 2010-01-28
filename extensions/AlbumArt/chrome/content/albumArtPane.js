@@ -990,6 +990,11 @@ var AlbumArt = {
    * \returns FlavourSet of flavours supported.
    */
   getSupportedFlavours : function AlbumArt_getSupportedFlavours() {
+    // Disable drag and drop if artwork is not supported
+    var shouldHideGetArtwork = AlbumArt.shouldHideGetArtworkCommand();
+    if (shouldHideGetArtwork)
+      return null;
+
     var flavours = new FlavourSet();
     return sbCoverHelper.getFlavours(flavours);
   },
