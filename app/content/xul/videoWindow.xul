@@ -31,39 +31,36 @@
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css" title="Skin"?>
 
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
-<window
-  id="video_window"
-  onload="videoWindowController._initialize();" 
-  onunload="videoWindowController._shutdown();" 
-  hidechrome="true"
-  title="&videowindow.title;"
-  windowtype="Songbird:Core"
-  minwidth="320"
-  minheight="240"
-  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
->
+<window id="video_window"
+        onload="videoWindowController._initialize();" 
+        onunload="videoWindowController._shutdown();" 
+        hidechrome="true"
+        title="&videowindow.title;"
+        windowtype="Songbird:Core"
+        minwidth="320"
+        minheight="240"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <keyset id="video-window-keyset">
     <key id="video-window-fullscreen-key"
          modifiers="accel shift"
          key="&videowindow.fullscreen.key;"
-         oncommand="videoWindowController._onToggleFullscreen();"/>
+         oncommand="videoWindowController._toggleFullScreen();"/>
   </keyset>
   
   <script type="application/x-javascript"
-   src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
+          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
   <script type="application/x-javascript"
-   src="chrome://songbird/content/scripts/windowUtils.js"/>
-
+          src="chrome://songbird/content/scripts/windowUtils.js"/>
   <script type="application/x-javascript"
-   src="chrome://songbird/content/scripts/videoWindow.js"/>
+          src="chrome://songbird/content/scripts/videoWindow.js"/>
 
   <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
 
   <menupopup id="video-context-menu">
     <menuitem label="&videowindow.actualsize;" id="actualsize"
-			oncommand="videoWindowController._onToggleActualSize();" />
+              oncommand="videoWindowController._setActualSize();"/>
     <menuitem label="&videowindow.fullscreen;" id="fullscreen"
-			oncommand="videoWindowController._onToggleFullscreen();" />
+              oncommand="videoWindowController._setFullScreen(true);"/>
   </menupopup>
 
   <sb-sys-outer-frame flex="1">

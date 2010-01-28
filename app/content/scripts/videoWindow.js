@@ -123,8 +123,9 @@ var videoWindowController = {
        this._videoBox) {
       this._resizeFromVideoBox(this._videoBox);
     }
-    else if(aTopic == this.VIDEO_FULLSCREEN_DR_KEY)
-      this._setFullScreen(this._videoFullscreenDataRemote.boolValue);
+    else if(aTopic == this.VIDEO_FULLSCREEN_DR_KEY &&
+            !this._ignoreResize)
+      this._onFullScreen();
   },
   
   //////////////////////////////////////////////////////////////////////////////
@@ -189,7 +190,6 @@ var videoWindowController = {
     
     // Context menu hook:
     this._contextMenuListener = function(aEvent) {
-    //  alert("Context menu requested");
       return self._onContextMenu(aEvent);
     };
     window.addEventListener("contextmenu", this._contextMenuListener, false);
@@ -371,16 +371,19 @@ var videoWindowController = {
       deltaWidth = Math.round(deltaHeight * mul);
     }
     
-    // We have to ignore this resize so that we don't disable actual size.
-    // This doesn't actually prevent the window from getting resized, it just
-    // prevents the actual size data remote from being set to false.
-    this._ignoreResize = true;
-
     log("Final Delta Width (With aspect ratio compensation): " + deltaWidth);
     log("Final Delta Height (With aspect ratio compensation): " + deltaHeight);
 
-    // Resize it!
-    window.resizeBy(deltaWidth, deltaHeight);
+    if (deltaWidth || deltaHeight)
+    {
+      // We have to ignore this resize so that we don't disable actual size.
+      // This doesn't actually prevent the window from getting resized, it just
+      // prevents the actual size data remote from being set to false.
+      this._ignoreResize = true;
+
+      // Resize it!
+      window.resizeBy(deltaWidth, deltaHeight);
+    }
 
     log("New Video Element Width: " + boxObject.width);
     log("New Video Element Height: " + boxObject.height);
@@ -393,19 +396,22 @@ var videoWindowController = {
     window.moveTo(posX, posY);
   },
 
-  _setFullScreen: function vwc__setFullScreen(aFullScreen) {
-    if (window.fullScreen != aFullScreen) {
-      // We have to ignore this resize so that we don't disable actual size.
-      // This doesn't actually prevent the window from getting resized, it just
-      // prevents the actual size data remote from being set to false.
-      this._ignoreResize = true;
+  _onFullScreen: function vwc__onFullScreen() {
+    var full = this._videoFullscreenDataRemote.boolValue
+    if (window.fullScreen != full) {
+      if (!full)
+      {
+        // We have to ignore this resize so that we don't disable actual size.
+        // This doesn't actually prevent the window from getting resized, it just
+        // prevents the actual size data remote from being set to false.
+        this._ignoreResize = true;
+      }
 
-      window.fullScreen = aFullScreen;
-      document.documentElement.setAttribute("fullscreen", aFullScreen)
-      this._videoFullscreenDataRemote.boolValue = aFullScreen;
-      this._osdService.onVideoWindowFullscreenChanged(aFullScreen);
+      window.fullScreen = full;
+      document.documentElement.setAttribute("fullscreen", full);
+      this._osdService.onVideoWindowFullscreenChanged(full);
 
-      if (aFullScreen) {
+      if (full) {
         this._lastActualSize = this._actualSizeDataRemote.boolValue;
         this._actualSizeDataRemote.boolValue = false;
       }
@@ -415,6 +421,19 @@ var videoWindowController = {
 
       window.focus();
     }
+  },
+
+  _setFullScreen: function vwc__setFullScreen(aFullScreen) {
+    this._videoFullscreenDataRemote.boolValue = aFullScreen;    
+  },
+
+  _toggleFullScreen: function vwc__toggleFullScreen() {
+    this._setFullScreen(!this._videoFullscreenDataRemote.boolValue);
+  },
+
+  _setActualSize: function vwc__setActualSize() {
+    this._setFullScreen(false);
+    this._actualSizeDataRemote.boolValue = true;
   },
 
   //////////////////////////////////////////////////////////////////////////////
@@ -478,26 +497,24 @@ var videoWindowController = {
     if(this._contextMenu.state == "open")
       this._contextMenu.hidePopup();
     
-    for each (var node in this._contextMenu.childNodes) {
-      switch(node.id) {
-        case "actualsize": {
-          node.setAttribute("checked", 
-                            this._actualSizeDataRemote.boolValue);
-        }
-        break;
-        
-        case "fullscreen": {
-          node.setAttribute("checked", window.fullScreen);
-        }
-        break;
-      }
-    }
-    
+    this._setChecked(document.getElementById("actualsize"),
+                     this._actualSizeDataRemote.boolValue);
+    this._setChecked(document.getElementById("fullscreen"),
+                     this._videoFullscreenDataRemote.boolValue);
+
     this._contextMenu.openPopupAtScreen(aEvent.screenX, aEvent.screenY, true);
     
     return true;
   },
   
+  _setChecked: function(node, state)
+  {
+    if (state)
+      node.setAttribute("checked", "true");
+    else
+      node.removeAttribute("checked");
+  },
+
   _onResize: function vwc__onResize(aEvent) {
     // Inform the OSD service that we are resizing.
     this._osdService.onVideoWindowResized();
@@ -613,18 +630,6 @@ var videoWindowController = {
       
       return;
     }
-  },
-  
-  _onToggleActualSize: function vwc__onToggleActualSize() {
-    var toggle = !this._actualSizeDataRemote.boolValue;
-    if (toggle) {
-      this._setFullScreen(false);
-    }
-    this._actualSizeDataRemote.boolValue = toggle;
-  },
-  
-  _onToggleFullscreen: function vwc__onToggleFullscreen() {
-    this._setFullScreen(!window.fullScreen);
   },
   
   _dismissSelf: function vwc__dismissSelf() {
