@@ -662,8 +662,6 @@ sbGStreamerTranscodeDeviceConfigurator::SetAudioProperties()
         // no channel information; assume supports mono + stereo
         channels = (channels < 2 ? 1 : 2);
       }
-      // XXX MikeS make everything stereo to work around bug 19730
-      channels = 2;
     }
     rv = audioFormat->SetChannels(channels);
     NS_ENSURE_SUCCESS(rv, rv);
