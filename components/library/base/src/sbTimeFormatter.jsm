@@ -115,6 +115,9 @@ var TimeFormatter = {
     function number(x) { return typeof(x) == "number"; }
     function pad(n) { return (n < 10 ? "0" : "") + n; }
 
+    if (aTime <= 0)
+      return "00:00";
+
     let hours = Math.floor(aTime / 3600);
     let minutes = Math.floor((aTime - hours * 3600) / 60);
     let seconds = Math.floor((aTime - hours * 3600 - minutes * 60));
