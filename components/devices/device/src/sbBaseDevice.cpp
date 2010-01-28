@@ -5014,7 +5014,7 @@ nsresult sbBaseDevice::GetDeviceWriteDestURI
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = NS_NewFileURI(aContentSrc, contentSrcFile);
+  rv = sbNewFileURI(contentSrcFile, aContentSrc);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
