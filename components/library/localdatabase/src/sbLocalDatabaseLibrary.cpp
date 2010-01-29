@@ -3000,7 +3000,7 @@ sbLocalDatabaseLibrary::ClearItems()
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetMediaListTypes(nsIStringEnumerator** aMediaListTypes)
 {
-  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetMediaListTypes(%s)", this));
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetMediaListTypes()", this));
   NS_ENSURE_ARG_POINTER(aMediaListTypes);
 
   // Array to hold all the registered types.

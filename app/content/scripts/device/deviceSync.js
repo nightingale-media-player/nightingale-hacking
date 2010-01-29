@@ -931,11 +931,11 @@ var DeviceSyncWidget = {
 
     /* Read the management type preference. */
     var mediaType = this._getMediaType(this._mediaType);
-    var mgmtType = this._deviceLibrary.getMgmtType(mediaType);
-    if (this._mediaType == "video")
-      mgmtType = (mgmtType & Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL) |
-                 Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_PLAYLISTS;
-    readPrefs.mgmtType.value = mgmtType;
+    var manual = 
+      this._deviceLibrary.syncMode == Ci.sbIDeviceLibrary.SYNC_MANUAL ?
+        Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL : 0;
+    readPrefs.mgmtType.value = 
+      this._deviceLibrary.getMgmtType(mediaType) | manual;                               
 
     /* Clear and read the sync playlist list preferences. */
     syncPlaylistList = readPrefs.syncPlaylistList;
@@ -1022,7 +1022,9 @@ var DeviceSyncWidget = {
     }
 
     /* Write the management type preference. */
-    this._deviceLibrary.setMgmtType(mediaType, this._syncPrefs.mgmtType.value);
+    this._deviceLibrary.setMgmtType(mediaType, 
+                                    this._syncPrefs.mgmtType.value &
+                                    ~Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL);
   },
 
   /**

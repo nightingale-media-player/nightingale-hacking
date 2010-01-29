@@ -45,6 +45,7 @@
 #include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsCOMArray.h>
+#include <sbProxiedComponentManager.h>
 #include <nsComponentManagerUtils.h>
 #include <nsDirectoryServiceUtils.h>
 #include <nsMemory.h>
@@ -62,8 +63,10 @@
 #include <sbIDeviceProperties.h>
 #include <sbILibraryFactory.h>
 #include <sbILibraryManager.h>
+#include <sbILocalDatabaseSmartMediaList.h>
 #include <sbIPrompter.h>
 #include <sbIPropertyArray.h>
+#include <sbIPropertyManager.h>
 
 /* songbird headers */
 #include <sbDeviceLibraryHelpers.h>
@@ -78,6 +81,7 @@
 #include <sbStringUtils.h>
 #include <sbVariantUtils.h>
 
+#define SB_AUDIO_SMART_PLAYLIST "<sbaudio>"
 
 /* List of properties for which to sync updates. */
 const static char* sbDeviceLibrarySyncUpdatePropertyTable[] =
@@ -309,9 +313,8 @@ NS_IMETHODIMP sbPlaylistAttachListenerEnumerator::OnEnumerationEnd(sbIMediaList*
 }
 
 nsresult
-sbDeviceLibrary::SetMgmtTypePref(PRUint32 aContentType, PRUint32* aMgmtTypes)
+sbDeviceLibrary::SetMgmtTypePref(PRUint32 aContentType, PRUint32 aMgmtTypes)
 {
-  NS_ENSURE_ARG_POINTER(aMgmtTypes);
   NS_ENSURE_ARG_RANGE(aContentType,
                       sbIDeviceLibrary::MEDIATYPE_AUDIO,
                       sbIDeviceLibrary::MEDIATYPE_COUNT - 1);
@@ -324,8 +327,53 @@ sbDeviceLibrary::SetMgmtTypePref(PRUint32 aContentType, PRUint32* aMgmtTypes)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Set the preference.
-  rv = mDevice->SetPreference(prefKey, sbNewVariant(*aMgmtTypes));
+  rv = mDevice->SetPreference(prefKey, sbNewVariant(aMgmtTypes));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbDeviceLibrary::GetMgmtTypePref(PRUint32 aContentType,
+                                 PRUint32 & aMgmtTypes,
+                                 PRUint32 aDefault)
+{
+  NS_ENSURE_ARG_RANGE(aContentType,
+                      sbIDeviceLibrary::MEDIATYPE_AUDIO,
+                      sbIDeviceLibrary::MEDIATYPE_COUNT - 1);
+
+  nsresult rv;
+
+  nsString prefKey;
+  rv = GetMgmtTypePrefKey(aContentType, prefKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIVariant> var;
+  rv = mDevice->GetPreference(prefKey, getter_AddRefs(var));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // check if a value exists
+  PRUint16 dataType;
+  rv = var->GetDataType(&dataType);
+  // If there is no value, set to aDefault
+  if (dataType == nsIDataType::VTYPE_VOID ||
+      dataType == nsIDataType::VTYPE_EMPTY)
+  {
+    aMgmtTypes = aDefault;
+  } else {
+    // has a value
+    PRInt32 mgmtType;
+    rv = var->GetAsInt32(&mgmtType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Double check that it is a valid number
+    NS_ENSURE_ARG_RANGE(mgmtType,
+                        sbIDeviceLibrary::MGMT_TYPE_MANUAL,
+                        sbIDeviceLibrary::MGMT_TYPE_MAX_VALUE);
+
+    // Max the manual mode
+    aMgmtTypes = mgmtType;
+  }
 
   return NS_OK;
 }
@@ -442,6 +490,29 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
                          NS_LITERAL_STRING("1"));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Setup the defaults for sync management
+  PRUint32 mgmtSetting;
+  rv = GetMgmtTypePref(sbIDeviceLibrary::MEDIATYPE_AUDIO,
+                       mgmtSetting,
+                       MGMT_PREF_UNINITIALIZED);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (mgmtSetting == 0) {
+    mgmtSetting = sbIDeviceLibrary::MGMT_TYPE_MANUAL |
+                    sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL;
+    rv = SetMgmtTypePref(sbIDeviceLibrary::MEDIATYPE_AUDIO, mgmtSetting);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  rv = GetMgmtTypePref(sbIDeviceLibrary::MEDIATYPE_VIDEO,
+                       mgmtSetting,
+                       MGMT_PREF_UNINITIALIZED);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (mgmtSetting == 0) {
+    mgmtSetting = sbIDeviceLibrary::MGMT_TYPE_MANUAL |
+                    sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS;
+    rv = SetMgmtTypePref(sbIDeviceLibrary::MEDIATYPE_VIDEO, mgmtSetting);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   nsCOMPtr<sbIMediaList> list;
   list = do_QueryInterface(mDeviceLibrary, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -482,19 +553,21 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   rv = GetIsMgmtTypeSyncList(&isSyncPlaylist);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIArray> syncPlaylists;
-  if (isSyncPlaylist) {
-    rv = GetSyncPlaylistList(getter_AddRefs(syncPlaylists));
-    NS_ENSURE_SUCCESS(rv,rv);
-  }
+  nsCOMPtr<nsIArray> syncPlaylistList;
+  rv = GetSyncPlaylistList(getter_AddRefs(syncPlaylistList));
+  NS_ENSURE_SUCCESS(rv,rv);
+
+  PRUint32 playlistListCount;
+  rv = syncPlaylistList->GetLength(&playlistListCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Check to see if playlists are supported, and if not ignore
   bool const ignorePlaylists = !sbDeviceUtils::ArePlaylistsSupported(mDevice);
   // hook up the listener now if we need to
   mMainLibraryListener =
     new sbLibraryUpdateListener(mDeviceLibrary,
-                                isManual,
-                                isSyncPlaylist,
-                                syncPlaylists,
+                                isManual != PR_FALSE,
+                                playlistListCount ? syncPlaylistList : nsnull,
                                 ignorePlaylists);
   NS_ENSURE_TRUE(mMainLibraryListener, NS_ERROR_OUT_OF_MEMORY);
 
@@ -632,19 +705,17 @@ sbDeviceLibrary::GetIsMgmtTypeManual(PRBool* aIsMgmtTypeManual)
 {
   NS_ASSERTION(aIsMgmtTypeManual, "aIsMgmtTypeManual is null");
 
-  *aIsMgmtTypeManual = PR_FALSE;
-
-  PRUint32 mgmtType;
   nsresult rv;
-  for (PRUint32 i = 0; i < sbIDeviceLibrary::MEDIATYPE_COUNT; ++i) {
-    rv = GetMgmtType(i, &mgmtType);
-    NS_ENSURE_SUCCESS(rv, rv);
 
-    // Manual mode.
-    if (mgmtType & sbIDeviceLibrary::MGMT_TYPE_MANUAL) {
-      *aIsMgmtTypeManual = PR_TRUE;
-      return NS_OK;
-    }
+  PRUint32 syncMode;
+  rv = GetSyncMode(&syncMode);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (syncMode == SYNC_MANUAL) {
+    *aIsMgmtTypeManual = PR_TRUE;
+  }
+  else {
+    *aIsMgmtTypeManual = PR_FALSE;
   }
 
   return NS_OK;
@@ -655,35 +726,7 @@ sbDeviceLibrary::GetIsMgmtTypeSyncList(PRBool* aIsMgmtTypeSyncList)
 {
   NS_ASSERTION(aIsMgmtTypeSyncList, "aIsMgmtTypeSyncList is null");
 
-  *aIsMgmtTypeSyncList = PR_FALSE;
-
-  PRUint32 mgmtType;
-  nsresult rv;
-  for (PRUint32 i = 0; i < sbIDeviceLibrary::MEDIATYPE_COUNT; ++i) {
-    rv = GetMgmtType(i, &mgmtType);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Manual mode.
-    if (mgmtType & sbIDeviceLibrary::MGMT_TYPE_MANUAL)
-      return NS_OK;
-
-    // Sync playlist mode.
-    if (mgmtType == sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS) {
-      *aIsMgmtTypeSyncList = PR_TRUE;
-      return NS_OK;
-    }
-  }
-
-  return NS_OK;
-}
-
-nsresult
-sbDeviceLibrary::GetIsMgmtTypeSyncAll(PRBool* aIsMgmtTypeSyncAll)
-{
-  NS_ASSERTION(aIsMgmtTypeSyncAll, "aIsMgmtTypeSyncAll is null");
-
-  *aIsMgmtTypeSyncAll = PR_TRUE;
-
+  PRBool isSyncList = PR_FALSE;
   PRUint32 mgmtType;
   nsresult rv;
   for (PRUint32 i = 0; i < sbIDeviceLibrary::MEDIATYPE_COUNT; ++i) {
@@ -692,15 +735,36 @@ sbDeviceLibrary::GetIsMgmtTypeSyncAll(PRBool* aIsMgmtTypeSyncAll)
 
     // Manual mode.
     if (mgmtType & sbIDeviceLibrary::MGMT_TYPE_MANUAL) {
-      *aIsMgmtTypeSyncAll = PR_FALSE;
-      return NS_OK;
+      break;
     }
 
     // Sync playlist mode.
     if (mgmtType == sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS) {
-      *aIsMgmtTypeSyncAll = PR_FALSE;
-      return NS_OK;
+      isSyncList = PR_TRUE;
+      break;
     }
+  }
+
+  *aIsMgmtTypeSyncList = isSyncList;
+  return NS_OK;
+}
+
+nsresult
+sbDeviceLibrary::GetIsMgmtTypeSyncAll(PRBool* aIsMgmtTypeSyncAll)
+{
+  NS_ASSERTION(aIsMgmtTypeSyncAll, "aIsMgmtTypeSyncAll is null");
+  nsresult rv;
+
+  // This is a hack for now, since we don't support video all yet.
+  PRUint32 mgmtType;
+  rv = GetMgmtTypePref(sbIDeviceLibrary::MEDIATYPE_AUDIO, mgmtType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mgmtType == sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL) {
+    *aIsMgmtTypeSyncAll = PR_TRUE;
+  }
+  else {
+    *aIsMgmtTypeSyncAll = PR_FALSE;
   }
 
   return NS_OK;
@@ -717,8 +781,8 @@ sbDeviceLibrary::UpdateMainLibraryListeners()
   rv = GetMainLibrary(getter_AddRefs(mainLib));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool isManual = PR_FALSE;
-  rv = GetIsMgmtTypeManual(&isManual);
+  PRUint32 syncMode;
+  rv = GetSyncMode(&syncMode);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool isSyncedLocally = PR_FALSE;
@@ -726,7 +790,7 @@ sbDeviceLibrary::UpdateMainLibraryListeners()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Not in manual mode.
-  if (!isManual && isSyncedLocally) {
+  if (syncMode == SYNC_AUTO && isSyncedLocally) {
     // hook up the metadata updating listener
     rv = mainLib->AddListener(mMainLibraryListener,
                               PR_FALSE,
@@ -740,7 +804,7 @@ sbDeviceLibrary::UpdateMainLibraryListeners()
     rv = GetIsMgmtTypeSyncAll(&isSyncAll);
     NS_ENSURE_SUCCESS(rv, rv);
     if (isSyncAll) {
-      mMainLibraryListener->SetSyncMode(isManual, PR_FALSE, nsnull);
+      mMainLibraryListener->SetSyncMode(false, nsnull);
 
       // hook up the media list listeners to the existing lists
       nsRefPtr<sbPlaylistAttachListenerEnumerator> enumerator =
@@ -753,23 +817,22 @@ sbDeviceLibrary::UpdateMainLibraryListeners()
                                              sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
       NS_ENSURE_SUCCESS(rv, rv);
     } else {
-      nsCOMPtr<nsIArray> playlists;
-      rv = GetSyncPlaylistList(getter_AddRefs(playlists));
+      nsCOMPtr<nsIArray> playlistList;
+      rv = GetSyncPlaylistList(getter_AddRefs(playlistList));
       NS_ENSURE_SUCCESS(rv, rv);
 
-      mMainLibraryListener->SetSyncMode(isManual, PR_TRUE, playlists);
-
-      // Listen to all the playlists specified for synchronization
       PRUint32 length;
-      rv = playlists->GetLength(&length);
+      rv = playlistList->GetLength(&length);
       NS_ENSURE_SUCCESS(rv, rv);
+
+      mMainLibraryListener->SetSyncMode(false, length ? playlistList : nsnull);
 
       // Need to stop listening to all the playlists so we can listen to just
       // the selected ones
       mMainLibraryListener->StopListeningToPlaylists();
 
       for (PRUint32 index = 0; index < length; ++index) {
-        nsCOMPtr<sbIMediaItem> item = do_QueryElementAt(playlists, index, &rv);
+        nsCOMPtr<sbIMediaItem> item = do_QueryElementAt(playlistList, index, &rv);
         NS_ENSURE_SUCCESS(rv, rv);
 
         nsCOMPtr<sbIMediaList> list = do_QueryInterface(item, &rv);
@@ -779,13 +842,12 @@ sbDeviceLibrary::UpdateMainLibraryListeners()
 
         rv = mMainLibraryListener->ListenToPlaylist(list);
       }
-
       // remove the metadata updating listener
       rv = mainLib->RemoveListener(mMainLibraryListener);
       NS_ENSURE_SUCCESS(rv, rv);
     }
   } else {
-    mMainLibraryListener->SetSyncMode(isManual, PR_FALSE, nsnull);
+    mMainLibraryListener->SetSyncMode(syncMode == SYNC_MANUAL, nsnull);
 
     // remove the metadata updating listener
     rv = mainLib->RemoveListener(mMainLibraryListener);
@@ -900,6 +962,7 @@ sbDeviceLibrary::GetMgmtTypePrefKey(PRUint32 aContentType, nsAString& aPrefKey)
   NS_ENSURE_ARG_RANGE(aContentType,
                       sbIDeviceLibrary::MEDIATYPE_AUDIO,
                       sbIDeviceLibrary::MEDIATYPE_COUNT - 1);
+  NS_ENSURE_STATE(mDeviceLibrary);
 
   // Get the device library GUID
   nsString guid;
@@ -923,6 +986,7 @@ sbDeviceLibrary::GetSyncListsPrefKey(PRUint32 aContentType,
   NS_ENSURE_ARG_RANGE(aContentType,
                       sbIDeviceLibrary::MEDIATYPE_AUDIO,
                       sbIDeviceLibrary::MEDIATYPE_COUNT - 1);
+  NS_ENSURE_STATE(mDeviceLibrary);
 
   // Get the device library GUID
   nsString guid;
@@ -1027,61 +1091,56 @@ sbDeviceLibrary::GetMgmtType(PRUint32 aContentType, PRUint32* aMgmtType)
                       sbIDeviceLibrary::MEDIATYPE_COUNT - 1);
   nsresult rv;
 
-  nsString prefKey;
-  rv = GetMgmtTypePrefKey(aContentType, prefKey);
+  PRUint32 mgmtType;
+  rv = GetMgmtTypePref(aContentType, mgmtType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIVariant> var;
-  rv = mDevice->GetPreference(prefKey, getter_AddRefs(var));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // check if a value exists
-  PRUint16 dataType;
-  rv = var->GetDataType(&dataType);
-  if (dataType == nsIDataType::VTYPE_VOID ||
-      dataType == nsIDataType::VTYPE_EMPTY)
-  {
-    // no value, default to manual
-    *aMgmtType = sbIDeviceLibrary::MGMT_TYPE_MANUAL;
-  } else {
-    // has a value
-    PRInt32 mgmtType;
-    rv = var->GetAsInt32(&mgmtType);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Double check that it is a valid number
-    NS_ENSURE_ARG_RANGE(mgmtType,
-                        sbIDeviceLibrary::MGMT_TYPE_MANUAL,
-                        sbIDeviceLibrary::MGMT_TYPE_MAX_VALUE);
-
-    *aMgmtType = mgmtType;
-  }
+  // Max the manual mode
+  *aMgmtType = mgmtType & ~sbIDeviceLibrary::MGMT_TYPE_MANUAL;
 
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbDeviceLibrary::SetMgmtTypes(PRUint32 aMgmtType, PRBool aManualFlag)
+sbDeviceLibrary::GetSyncMode(PRUint32 * aSyncMode)
+{
+  NS_ENSURE_ARG_POINTER(aSyncMode);
+
+  nsresult rv;
+  PRUint32 syncMode = SYNC_AUTO;
+  for (PRUint32 i = 0; i < MEDIATYPE_COUNT; ++i) {
+    PRUint32 mgmtType;
+    rv = GetMgmtTypePref(i, mgmtType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Manual mode.
+    if (mgmtType & MGMT_TYPE_MANUAL) {
+      syncMode = SYNC_MANUAL;
+      break;
+    }
+  }
+  *aSyncMode = syncMode;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceLibrary::SetSyncMode(PRUint32 aSyncMode)
 {
   NS_ENSURE_STATE(mDevice);
   nsresult rv;
 
-  // Check we are setting to a valid number
-  NS_ENSURE_ARG_RANGE(aMgmtType,
-                      sbIDeviceLibrary::MGMT_TYPE_MANUAL,
-                      sbIDeviceLibrary::MGMT_TYPE_MAX_VALUE);
-
-  PRBool isManual;
-  rv = GetIsMgmtTypeManual(&isManual);
+  PRUint32 syncMode;
+  rv = GetSyncMode(&syncMode);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Flag for auto sync.
-  PRBool autoSync = !aManualFlag ||
-                    (aMgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL);
-
-  // If switching from manual management mode to sync mode, confirm with user
-  // before proceeding.  Do nothing more if switch is cancelled.
-  if (isManual && autoSync) {
+  // If we're not changing anything then do nothing
+  if (aSyncMode == syncMode) {
+    return NS_OK;
+  }
+   // If switching from manual management mode to sync mode, confirm with user
+  // before proceeding.  Do nothing more if switch is canceled.
+  if (aSyncMode == sbIDeviceLibrary::SYNC_AUTO) {
     // Check if device is linked to a local sync partner.
     PRBool isLinkedLocally;
     rv = sbDeviceUtils::SyncCheckLinkedPartner(mDevice,
@@ -1113,64 +1172,32 @@ sbDeviceLibrary::SetMgmtTypes(PRUint32 aMgmtType, PRBool aManualFlag)
       return NS_OK;
   }
 
-  // Set the management type to the preference.
-  PRBool sameMgmtType = PR_TRUE;
-  PRUint32 origMgmtType;
-
-  // Toggle manual for the management type preference.
-  if (aMgmtType == sbIDeviceLibrary::MGMT_TYPE_MANUAL) {
-    for (PRUint32 i = 0; i < sbIDeviceLibrary::MEDIATYPE_COUNT; ++i) {
-      // figure out the old pref first
-      rv = GetMgmtType(i, &origMgmtType);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      // Set to manual mode.
-      if (aManualFlag) {
-        rv = SetMgmtType(i, origMgmtType | sbIDeviceLibrary::MGMT_TYPE_MANUAL);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-      // Unset manual mode.
-      else {
-        origMgmtType &= ~(sbIDeviceLibrary::MGMT_TYPE_MANUAL);
-        // No initial value for management type. Set to sync all.
-        if (!origMgmtType)
-          origMgmtType = sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL;
-        rv = SetMgmtType(i, origMgmtType);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-    }
-    // Toggle manual mode. Not same.
-    sameMgmtType = PR_FALSE;
-  }
-  // Set one of the sync modes.
-  else {
-    for (PRUint32 i = 0; i < sbIDeviceLibrary::MEDIATYPE_COUNT; ++i) {
-      rv = GetMgmtType(i, &origMgmtType);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      if (origMgmtType != aMgmtType) {
-        rv = SetMgmtType(i, aMgmtType);
-        NS_ENSURE_SUCCESS(rv, rv);
-        sameMgmtType = PR_FALSE;
-      }
-    }
-  }
-
-  if (!sameMgmtType) {
-    if (autoSync) {
-      // sync
-      rv = mDevice->SyncLibraries();
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    // update the library is read-only property
-    rv = UpdateIsReadOnly();
+  for (PRUint32 i = 0; i < sbIDeviceLibrary::MEDIATYPE_COUNT; ++i) {
+    // figure out the old pref first
+    PRUint32 origMgmtType;
+    rv = GetMgmtTypePref(i, origMgmtType);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // update the main library listeners
-    rv = UpdateMainLibraryListeners();
+    PRInt32 newMgmtType = origMgmtType & ~sbIDeviceLibrary::MGMT_TYPE_MANUAL;
+    if (aSyncMode == sbIDeviceLibrary::SYNC_MANUAL) {
+      newMgmtType |= sbIDeviceLibrary::MGMT_TYPE_MANUAL;
+    }
+    rv = SetMgmtTypePref(i, newMgmtType);
+  }
+
+  if (aSyncMode == sbIDeviceLibrary::SYNC_AUTO) {
+    // sync
+    rv = mDevice->SyncLibraries();
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  // update the library is read-only property
+  rv = UpdateIsReadOnly();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // update the main library listeners
+  rv = UpdateMainLibraryListeners();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -1184,138 +1211,24 @@ sbDeviceLibrary::SetMgmtType(PRUint32 aContentType, PRUint32 aMgmtType)
                       sbIDeviceLibrary::MEDIATYPE_COUNT - 1);
 
   // Check we are setting to a valid number
-  NS_ENSURE_ARG_RANGE(aMgmtType,
-                      sbIDeviceLibrary::MGMT_TYPE_MANUAL,
-                      sbIDeviceLibrary::MGMT_TYPE_MAX_VALUE);
+  NS_ENSURE_TRUE(aMgmtType == MGMT_TYPE_SYNC_ALL ||
+                 aMgmtType == MGMT_TYPE_SYNC_PLAYLISTS,
+                 NS_ERROR_INVALID_ARG);
 
-  nsresult rv = SetMgmtTypePref(aContentType, &aMgmtType);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDeviceLibrary::GetSyncPlaylistList(nsIArray **_retval)
-{
-  NS_ENSURE_ARG_POINTER(_retval);
   nsresult rv;
 
-  PRBool isSyncAll;
-  rv = GetIsMgmtTypeSyncAll(&isSyncAll);
+  PRUint32 oldMgmtType;
+  rv = GetMgmtTypePref(aContentType, oldMgmtType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbILibraryManager> libManager =
-      do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+  // Preserve the existing manual flag, we're only setting the type of sync
+  // not whether to sync or not
+  aMgmtType = (aMgmtType & ~sbIDeviceLibrary::MGMT_TYPE_MANUAL) |
+              (oldMgmtType & sbIDeviceLibrary::MGMT_TYPE_MANUAL);
+
+  rv = SetMgmtTypePref(aContentType, aMgmtType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbILibrary> mainLibrary;
-  rv = libManager->GetMainLibrary(getter_AddRefs(mainLibrary));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Create a sync array.
-  nsCOMPtr<nsIMutableArray>
-    syncAllList =
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1",
-                        &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (isSyncAll) {
-    nsCOMPtr<sbIMediaList> srcLibML = do_QueryInterface(mainLibrary, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = syncAllList->AppendElement(srcLibML, PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    NS_ADDREF(*_retval = syncAllList);
-    return NS_OK;
-  }
-
-  PRUint32 mgmtType;
-  // the variable i is used for both index and the media type
-  for (PRUint32 i = 0; i < sbIDeviceLibrary::MEDIATYPE_COUNT; ++i) {
-    rv = GetMgmtType(i, &mgmtType);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Add all items/lists with media type "i" to the sync list.
-    if (mgmtType == sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL) {
-      nsCOMPtr<sbIMediaList> srcLibML = do_QueryInterface(mainLibrary, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      PRUint32 length;
-      rv = srcLibML->GetLength(&length);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      // Loop through the items/lists in the main library.
-      for (PRUint32 j = 0; j < length; ++j) {
-        nsCOMPtr<sbIMediaItem> mediaItem;
-        rv = srcLibML->GetItemByIndex(j, getter_AddRefs(mediaItem));
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        // Duplicate item. Skip
-        PRUint32 index;
-        rv = syncAllList->IndexOf(0, mediaItem, &index);
-        if (index != -1)
-          continue;
-
-        nsCOMPtr<sbIMediaList> mediaList =
-            do_QueryInterface(mediaItem, &rv);
-        // Process media item.
-        if (NS_FAILED(rv)) {
-          nsString contentType;
-          rv = mediaItem->GetProperty(
-              NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
-              contentType);
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          PRInt32 mediaType = -1;
-          if (contentType.Equals(NS_LITERAL_STRING("audio")))
-            mediaType = sbIDeviceLibrary::MEDIATYPE_AUDIO;
-          else if (contentType.Equals(NS_LITERAL_STRING("video")))
-            mediaType = sbIDeviceLibrary::MEDIATYPE_VIDEO;
-
-          // Add audio or video item to the array for syncing
-          if (mediaType == i) {
-            rv = syncAllList->AppendElement(mediaItem, PR_FALSE);
-            NS_ENSURE_SUCCESS(rv, rv);
-          }
-        }
-        // Process media list.
-        else {
-          PRUint16 listType;
-          rv = mediaList->GetListContentType(&listType);
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          // Matches CONTENTTYPE_* and MEDIETYPE_* constants
-          if ((listType == sbIMediaList::CONTENTTYPE_MIX) ||
-              (listType-1) == i) {
-            rv = syncAllList->AppendElement(mediaItem, PR_FALSE);
-            NS_ENSURE_SUCCESS(rv, rv);
-          }
-        }
-      }
-    }
-    // Add playlists to the sync list.
-    else if (mgmtType == sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS) {
-      nsCOMPtr<nsIArray> array;
-
-      rv = GetSyncPlaylistListByType(i, getter_AddRefs(array));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      PRUint32 length;
-      rv = array->GetLength(&length);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      for (PRUint32 j = 0; j < length; ++j) {
-        nsCOMPtr<sbIMediaList> syncPlaylist = do_QueryElementAt(array,
-                                                                j,
-                                                                &rv);
-        NS_ENSURE_SUCCESS(rv, rv);
-        rv = syncAllList->AppendElement(syncPlaylist, PR_FALSE);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-    }
-  }
-
-  NS_ADDREF(*_retval = syncAllList);
   return NS_OK;
 }
 
@@ -1388,22 +1301,7 @@ sbDeviceLibrary::GetSyncPlaylistListByType(PRUint32 aContentType,
       end = listGuidsCSV.Length();
   }
 
-  NS_ADDREF(*_retval = array);
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbDeviceLibrary::SetSyncPlaylistList(nsIArray *aPlaylistList)
-{
-  NS_ENSURE_ARG_POINTER(aPlaylistList);
-  nsresult rv;
-
-  for (PRUint32 i = 0; i < sbIDeviceLibrary::MEDIATYPE_COUNT; ++i) {
-    rv = SetSyncPlaylistListByType(i, aPlaylistList);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  return NS_OK;
+  return CallQueryInterface(array, _retval);
 }
 
 NS_IMETHODIMP
@@ -1624,6 +1522,176 @@ sbDeviceLibrary::RemoveDeviceLibraryListener(sbIDeviceLibraryListener* aListener
   mListeners.Remove(aListener);
 
   return NS_OK;
+}
+
+/**
+ * Returns the equality operator for the content property
+ */
+static nsresult
+GetEqualOperator(sbIPropertyOperator ** aOperator)
+{
+
+  nsresult rv;
+
+  nsCOMPtr<sbIPropertyManager> manager =
+    do_GetService("@songbirdnest.com/Songbird/Properties/PropertyManager;1",
+                  &rv);
+  nsCOMPtr<sbIPropertyInfo> info;
+  rv = manager->GetPropertyInfo(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                                getter_AddRefs(info));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString opName;
+  rv = info->GetOPERATOR_EQUALS(opName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the operator.
+  rv = info->GetOperator(opName, aOperator);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/**
+ * This returns the existing audio smart playlist or creates a new one if
+ * not found
+ */
+static nsresult
+GetOrCreateAudioSmartMediaList(sbIMediaList ** aAudioMediaList)
+{
+  NS_ENSURE_ARG_POINTER(aAudioMediaList);
+
+  nsresult rv;
+
+  nsCOMPtr<sbILibraryManager> libManager =
+    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create a smart playlist with just audio files
+  nsCOMPtr<sbILibrary> mainLibrary;
+  rv = libManager->GetMainLibrary(getter_AddRefs(mainLibrary));
+
+  nsCOMPtr<sbIMutablePropertyArray> properties =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                                  NS_LITERAL_STRING("1"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
+                                  NS_LITERAL_STRING(SB_AUDIO_SMART_PLAYLIST));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 count = 0;
+  nsCOMPtr<nsIArray> smartMediaLists;
+  rv = mainLibrary->GetItemsByProperties(properties,
+                                         getter_AddRefs(smartMediaLists));
+  if (rv != NS_ERROR_NOT_AVAILABLE) {
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = smartMediaLists->GetLength(&count);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  NS_WARN_IF_FALSE(count < 2, "Multiple audio sync'ing playlists");
+  if (count > 0) {
+    nsCOMPtr<sbIMediaList> list = do_QueryElementAt(smartMediaLists,
+                                                    0,
+                                                    &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return CallQueryInterface(list, aAudioMediaList);
+  }
+  nsCOMPtr<nsIThread> target;
+  rv = NS_GetMainThread(getter_AddRefs(target));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILibrary> proxiedLibrary;
+  rv = do_GetProxyForObject(target,
+                            mainLibrary.get(),
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(proxiedLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaList> mediaList;
+  rv = proxiedLibrary->CreateMediaList(NS_LITERAL_STRING("smart"),
+                                       properties,
+                                       getter_AddRefs(mediaList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILocalDatabaseSmartMediaList> audioList =
+    do_QueryInterface(mediaList, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPropertyOperator> equal;
+  rv = GetEqualOperator(getter_AddRefs(equal));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILocalDatabaseSmartMediaListCondition> condition;
+  rv = audioList->AppendCondition(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                                  equal,
+                                  NS_LITERAL_STRING("audio"),
+                                  nsString(),
+                                  nsString(),
+                                  getter_AddRefs(condition));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = audioList->Rebuild();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mediaList.forget(aAudioMediaList);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceLibrary::GetSyncPlaylistList(nsIArray ** aPlaylistList)
+{
+  nsresult rv;
+
+  nsCOMPtr<nsIMutableArray> allPlaylistList =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // TODO: XXX Ugh, have to punt here. The case that's not handled is if sync
+  // all audio but sync x video playlists. We'll have to manually filter this
+  // out in the sync code
+  PRBool isSyncAll;
+  rv = GetIsMgmtTypeSyncAll(&isSyncAll);
+  if (isSyncAll) {
+    nsCOMPtr<sbIMediaList> mediaList;
+    rv = GetOrCreateAudioSmartMediaList(getter_AddRefs(mediaList));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = allPlaylistList->AppendElement(mediaList, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Process each media type unless audio is all then skip to video
+  bool added = false;
+  nsCOMPtr<nsIArray> playlistList;
+  for (PRUint32 i = isSyncAll ? 1 : 0;
+       i < sbIDeviceLibrary::MEDIATYPE_COUNT;
+       ++i) {
+    PRUint32 mgmtType;
+    GetMgmtType(i, &mgmtType);
+    if (mgmtType != sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS) {
+      continue;
+    }
+    rv = GetSyncPlaylistListByType(i, getter_AddRefs(playlistList));
+    NS_ENSURE_SUCCESS(rv, rv);
+    PRUint32 length;
+    rv = playlistList->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
+    for (PRUint32 index = 0; index < length; ++index) {
+      nsCOMPtr<nsISupports> playlist = do_QueryElementAt(playlistList, index, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = allPlaylistList->AppendElement(playlist, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+      added = true;
+    }
+  }
+
+  return CallQueryInterface(allPlaylistList, aPlaylistList);
 }
 
 /**

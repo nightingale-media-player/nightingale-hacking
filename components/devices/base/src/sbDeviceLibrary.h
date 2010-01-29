@@ -71,7 +71,7 @@
   NS_IMETHOD Flush(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Flush(); } \
   NS_IMETHOD BatchCreateMediaItems(nsIArray *aURIArray, nsIArray *aPropertyArrayArray, PRBool aAllowDuplicates, nsIArray **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->BatchCreateMediaItems(aURIArray, aPropertyArrayArray, aAllowDuplicates, _retval); } \
   NS_IMETHOD BatchCreateMediaItemsIfNotExist(nsIArray *aURIArray, nsIArray *aPropertyArrayArray, nsIArray **aResultItemArray, nsIArray **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->BatchCreateMediaItemsIfNotExist(aURIArray, aPropertyArrayArray, aResultItemArray, _retval); } \
-  NS_IMETHOD BatchCreateMediaItemsAsync(sbIBatchCreateMediaItemsListener *aListener, nsIArray *aURIArray, nsIArray *aPropertyArrayArray, PRBool aAllowDuplicates) { return !_to ? NS_ERROR_NULL_POINTER : _to->BatchCreateMediaItemsAsync(aListener, aURIArray, aPropertyArrayArray, aAllowDuplicates); } 
+  NS_IMETHOD BatchCreateMediaItemsAsync(sbIBatchCreateMediaItemsListener *aListener, nsIArray *aURIArray, nsIArray *aPropertyArrayArray, PRBool aAllowDuplicates) { return !_to ? NS_ERROR_NULL_POINTER : _to->BatchCreateMediaItemsAsync(aListener, aURIArray, aPropertyArrayArray, aAllowDuplicates); }
 
 // These are the methods from sbLibrary that we're going to
 // override in sbDeviceLibrary.
@@ -107,7 +107,7 @@
   NS_IMETHOD RemoveListener(sbIMediaListListener *aListener) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveListener(aListener); } \
   NS_IMETHOD CreateView(sbIMediaListViewState *aState, sbIMediaListView **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->CreateView(aState, _retval); } \
   NS_IMETHOD RunInBatchMode(sbIMediaListBatchCallback *aCallback, nsISupports *aUserData) { return !_to ? NS_ERROR_NULL_POINTER : _to->RunInBatchMode(aCallback, aUserData); } \
-  NS_IMETHOD GetDistinctValuesForProperty(const nsAString & aPropertyID, nsIStringEnumerator **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDistinctValuesForProperty(aPropertyID, _retval); } 
+  NS_IMETHOD GetDistinctValuesForProperty(const nsAString & aPropertyID, nsIStringEnumerator **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDistinctValuesForProperty(aPropertyID, _retval); }
 
 #define SB_FORWARD_SAFE_SBIMEDIAITEM_MINUS_OVERRIDES(_to) \
   NS_SCRIPTABLE NS_IMETHOD GetIsMutable(PRBool *aIsMutable) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetIsMutable(aIsMutable); } \
@@ -125,7 +125,7 @@
   NS_SCRIPTABLE NS_IMETHOD OpenInputStreamAsync(nsIStreamListener *aListener, nsISupports *aContext, nsIChannel **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->OpenInputStreamAsync(aListener, aContext, _retval); } \
   NS_SCRIPTABLE NS_IMETHOD OpenInputStream(nsIInputStream **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->OpenInputStream(_retval); } \
   NS_SCRIPTABLE NS_IMETHOD OpenOutputStream(nsIOutputStream **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->OpenOutputStream(_retval); } \
-  NS_SCRIPTABLE NS_IMETHOD ToString(nsAString & _retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->ToString(_retval); } 
+  NS_SCRIPTABLE NS_IMETHOD ToString(nsAString & _retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->ToString(_retval); }
 
 class sbDeviceLibrary : public sbIDeviceLibrary,
                         public sbIMediaListListener,
@@ -148,7 +148,7 @@ public:
   SB_FORWARD_SAFE_SBIMEDIALIST(mDeviceLibrary)
   SB_FORWARD_SAFE_SBILIBRARY(mDeviceLibrary)
   SB_FORWARD_SAFE_SBIMEDIAITEM_MINUS_OVERRIDES(mDeviceLibrary)
-  
+
   NS_IMETHODIMP GetLibrary(sbILibrary** _retval) {
     NS_ENSURE_ARG_POINTER(_retval);
     *_retval = this;
@@ -172,7 +172,20 @@ protected:
    * \param aContentType - content type for the preference key.
    * \param aMgmtTypes - Device management type preference.
    */
-  nsresult SetMgmtTypePref(PRUint32 aContentType, PRUint32* aMgmtTypes);
+  nsresult SetMgmtTypePref(PRUint32 aContentType, PRUint32 aMgmtTypes);
+
+  /**
+   * \brief Gets the management type device preference to the value specified by
+   *        aMgmtTypes.  Do not initiate any library actions.
+   *
+   * \param aContentType - content type for the preference key.
+   * \param aMgmtTypes - Device management type preference.
+   * \param aDefault - A defaule management type, which itself is defaulted
+   *                   to manual
+   */
+  nsresult GetMgmtTypePref(PRUint32 aContentType,
+                           PRUint32 & aMgmtTypes,
+                           PRUint32 aDefault = MGMT_TYPE_MANUAL);
 
   /**
    * \brief Set the list of sync playlists device preference to the value
@@ -245,7 +258,7 @@ private:
    * Creating a library provides you with storage for all data relating
    * to media items present on the device. After creating a library you will
    * typically want to register it so that it may be shown to the user.
-   * 
+   *
    * When a library is created, two listeners are added to it. One listener
    * takes care of advising the sbIDeviceLibrary interface instance when items
    * need to be transferred to it, deleted from it or updated because data
@@ -253,7 +266,7 @@ private:
    *
    * The second listener is responsible for detecting when items are transferred
    * from the devices library to another library.
-   * 
+   *
    * \param aDeviceDatabaseURI Optional URI for the database.
    * \sa RemoveDeviceLibrary, RegisterDeviceLibrary, UnregisterDeviceLibrary
    */
@@ -274,9 +287,9 @@ private:
    * \brief Unregister a device library with the library manager.
    *
    * Unregister a device library with the library manager will make the library
-   * vanish from the list of libraries and block out access to it programatically 
+   * vanish from the list of libraries and block out access to it programatically
    * as well.
-   * 
+   *
    * A device should always unregister the device library when the application
    * shuts down, when the device is disconnected suddenly and when the user
    * ejects the device.
@@ -334,7 +347,7 @@ private:
    * \brief the device this library belongs to
    */
   nsCOMPtr<sbIDevice> mDevice;
-  
+
   /**
    * \brief the main library updating listener
    */

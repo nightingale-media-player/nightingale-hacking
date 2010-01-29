@@ -59,6 +59,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/device/mock/public \
                      $(topsrcdir)/components/library/base/src \
                      $(topsrcdir)/components/library/localdatabase/src \
                      $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/moz/threads/src \
                      $(topsrcdir)/components/moz/xpcom/src \
                      $(topsrcdir)/components/property/src \
                      $(MOZSDK_INCLUDE_DIR)/necko \

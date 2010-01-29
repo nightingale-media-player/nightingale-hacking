@@ -41,7 +41,7 @@ interface nsIURI;
  *
  * \sa sbIDeviceLibrary
  */
-[scriptable, uuid(b994a7d4-1dd1-11b2-8461-bbc392226cb8)]
+[scriptable, uuid(19196376-585e-422b-aeee-d84c4c6170d4)]
 interface sbIDeviceLibraryListener : nsISupports
 {
   /**
@@ -259,6 +259,7 @@ interface sbIDeviceLibrary : sbILibrary
   // Masks for helping determine the management type
   const unsigned long MGMT_TYPE_MASK                    = 0x07;
 
+  const unsigned long MGMT_PREF_UNINITIALIZED           = 0;
   /**
    * Media type for management type and playlist list.
    */
@@ -293,20 +294,26 @@ interface sbIDeviceLibrary : sbILibrary
   unsigned long getMgmtType(in unsigned long aContentType);
 
   /**
-   * \brief Set the current configured management type preference for
-   *        device library.
-   *
-   * \param aMgmtType the management type
-   * \param aManualFlag flag to set or unset manual mode.
-   * 
-   * \sa MGMT_TYPE_* constants
+   * No syncing
    */
-
-  void setMgmtTypes(in unsigned long aMgmtType, in boolean aManualFlag);
+  const unsigned long SYNC_MANUAL = 0;
+  /**
+   * Sync automatic, either via playlists or all based on SetMgmtType
+   */
+  const unsigned long SYNC_AUTO = 1;
+  
+  
+  /**
+   * \brief Synchronization mode. manual or automatic.
+   *
+   * \sa SYNC_* constants
+   */
+  attribute unsigned long syncMode;
 
   /**
    * \brief Set the current configured management type preference with content
-   *        type aContentType for device library.
+   *        type aContentType for device library. This does not turn on or off
+   *        syncing, it only affects the type of sync.
    *
    * \param aContentType the content type for the preference.
    * \param aMgmtType the management type
@@ -336,16 +343,6 @@ interface sbIDeviceLibrary : sbILibrary
    */
 
   nsIArray getSyncPlaylistListByType(in unsigned long aContentType);
-
-  /**
-   * \brief Set the list of playlists the user wants to sync from the main
-   *        library to the device.
-   *
-   * \param aPlaylistList List of sbIMediaLists that represent the playlists
-   *                      to sync.
-   */
-
-  void setSyncPlaylistList(in nsIArray aPlaylistList);
 
   /**
    * \brief Set the list of playlists with content type aContentType the user

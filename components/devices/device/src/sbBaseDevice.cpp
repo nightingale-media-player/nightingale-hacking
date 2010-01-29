@@ -3197,7 +3197,7 @@ nsresult sbBaseDevice::GetPrefBranch(const char *aPrefBranchName,
 
   // get the prefs service
   nsCOMPtr<nsIPrefService> prefService;
-  
+
   if (!isMainThread) {
     prefService = do_ProxiedGetService(NS_PREFSERVICE_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -3813,7 +3813,7 @@ sbBaseDevice::EnsureSpaceForSync(TransferRequest* aRequest,
     NS_ENSURE_SUCCESS(rv, rv);
     if (abort) {
       // Set manual mode for both audio and video preferences.
-      rv = dstLib->SetMgmtTypes(sbIDeviceLibrary::MGMT_TYPE_MANUAL, PR_TRUE);
+      rv = dstLib->SetSyncMode(sbIDeviceLibrary::SYNC_MANUAL);
       NS_ENSURE_SUCCESS(rv, rv);
       *aAbort = PR_TRUE;
       return NS_OK;
@@ -3854,10 +3854,12 @@ sbBaseDevice::SyncCreateAndSyncToList
   nsCOMPtr<nsIMutableArray> emptySyncPlaylistList =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = aDstLib->SetSyncPlaylistList(emptySyncPlaylistList);
-  NS_ENSURE_SUCCESS(rv, rv);
+  for (PRUint32 i = 0; i < sbIDeviceLibrary::MEDIATYPE_COUNT; ++i) {
+    rv = aDstLib->SetSyncPlaylistListByType(i, emptySyncPlaylistList);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   // Set sync playlist mode for both audio and video preferences.
-  rv = aDstLib->SetMgmtTypes(sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS, PR_FALSE);
+  rv = aDstLib->SetSyncMode(sbIDeviceLibrary::SYNC_MANUAL);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Create a shuffled sync item list that will fit in the available space.
@@ -4014,15 +4016,18 @@ sbBaseDevice::SyncToMediaList(sbIDeviceLibrary* aDstLib,
     rv = aDstLib->SetSyncPlaylistListByType(sbIDeviceLibrary::MEDIATYPE_AUDIO,
                                             syncPlaylistList);
     NS_ENSURE_SUCCESS(rv, rv);
+    rv = aDstLib->SetMgmtType(sbIDeviceLibrary::MEDIATYPE_AUDIO,
+                              sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   if (contentType | sbIMediaList::CONTENTTYPE_VIDEO) {
     rv = aDstLib->SetSyncPlaylistListByType(sbIDeviceLibrary::MEDIATYPE_VIDEO,
                                             syncPlaylistList);
     NS_ENSURE_SUCCESS(rv, rv);
+    rv = aDstLib->SetMgmtType(sbIDeviceLibrary::MEDIATYPE_VIDEO,
+                              sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
-  // Set sync playlist mode for both audio and video preferences.
-  rv = aDstLib->SetMgmtTypes(sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS, PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -4295,6 +4300,40 @@ sbBaseDevice::SyncProduceChangeset(TransferRequest*      aRequest,
   return NS_OK;
 }
 
+/**
+ * This function returns the content type of either a media item or of the
+ * contents of a media list. This insulates the logic below from having to
+ * worry about the difference between media items and media lists.
+ */
+static nsString
+GetNormalizedContentTypeOfItemOrList(sbIMediaItem * aMediaItem)
+{
+  nsresult rv;
+
+  // Default to audio if all else fails
+  nsString contentType(NS_LITERAL_STRING("audio"));
+
+  // Is this a media list
+  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem);
+  if (list) {
+    // If it's pure video treat it as video otherwise it's audio
+    PRUint16 listContentType;
+    rv = list->GetListContentType(&listContentType);
+    if (NS_SUCCEEDED(rv) &&
+        listContentType == sbIDeviceLibrary::CONTENTTYPE_VIDEO) {
+      contentType = NS_LITERAL_STRING("video");
+    }
+  }
+  // It's an item
+  else {
+    rv = aMediaItem->GetContentType(contentType);
+    if (NS_FAILED(rv) || contentType.IsEmpty()) {
+      contentType = NS_LITERAL_STRING("audio");
+    }
+  }
+  return contentType;
+}
+
 nsresult
 sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
                                sbILibraryChangeset* aChangeset)
@@ -4318,6 +4357,20 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
 
   bool const playlistsSupported = sbDeviceUtils::ArePlaylistsSupported(this);
+
+  nsCOMPtr<nsIArray> videoPlaylists;
+  rv = aDstLibrary->GetSyncPlaylistListByType(sbIDeviceLibrary::MEDIATYPE_VIDEO,
+                                              getter_AddRefs(videoPlaylists));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 videoPlaylistCount = 0;
+  rv = videoPlaylists->GetLength(&videoPlaylistCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString skipContentType;
+  if (videoPlaylistCount == 0) {
+    skipContentType = NS_LITERAL_STRING("video");
+  }
 
   // Get the list of all changes.
   nsCOMPtr<nsIArray> changeList;
@@ -4359,8 +4412,10 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
           nsCOMPtr<sbIMediaItem> mediaItem;
           rv = change->GetDestinationItem(getter_AddRefs(mediaItem));
           NS_ENSURE_SUCCESS(rv, rv);
-          rv = deleteItemList->AppendElement(mediaItem, PR_FALSE);
-          NS_ENSURE_SUCCESS(rv, rv);
+          if (skipContentType != GetNormalizedContentTypeOfItemOrList(mediaItem)) {
+            rv = deleteItemList->AppendElement(mediaItem, PR_FALSE);
+            NS_ENSURE_SUCCESS(rv, rv);
+          }
         } break;
 
       case sbIChangeOperation::ADDED:
@@ -4973,7 +5028,7 @@ nsresult sbBaseDevice::GetDeviceWriteDestURI
     nsAutoString writeSrcFileName;
     rv = canonicalFile->GetLeafName(writeSrcFileName);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     // replace illegal characters
     nsString_ReplaceChar(writeSrcFileName, kIllegalChars, PRUnichar('_'));
 

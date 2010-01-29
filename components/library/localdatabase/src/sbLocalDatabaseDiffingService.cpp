@@ -1195,6 +1195,25 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLibraries(
   return NS_OK;
 }
 
+/**
+ * TODO:XXX This should be removed as soon as possilbe and replaced
+ * with filtering capabilities for the diffing service
+ *
+ * This method determines if the list is our special audio list
+ */
+static bool
+IsAudioOnlyList(sbIMediaList * aList) {
+  nsString name;
+  nsresult rv = aList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
+                                   name);
+  if (NS_FAILED(rv) || !name.Equals(NS_LITERAL_STRING("<sbaudio>"))) {
+    return false;
+  }
+  nsString hidden;
+  rv = aList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN), hidden);
+  return NS_SUCCEEDED(rv) && hidden.Equals(NS_LITERAL_STRING("1"));
+}
+
 nsresult
 sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
                                   nsIArray *aSourceLists,
@@ -1262,6 +1281,15 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
       NS_ENSURE_SUCCESS(rv, rv);
     }
     else {
+      nsString excludeContentType;
+      // TODO:XXX This hack must be removed, poor mans filtering mechanism
+      if (IsAudioOnlyList(sourceList)) {
+        nsCOMPtr<sbILibrary> sourceLibrary;
+        rv = sourceList->GetLibrary(getter_AddRefs(sourceLibrary));
+        NS_ENSURE_SUCCESS(rv, rv);
+        excludeContentType = NS_LITERAL_STRING("video");
+        sourceList = sourceLibrary;
+      }
       PRUint32 sourceLength = 0;
       rv = sourceList->GetLength(&sourceLength);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -1274,12 +1302,30 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
                                         getter_AddRefs(sourceItem));
         NS_ENSURE_SUCCESS(rv, rv);
 
-        rv = AddToUniqueItemList(sourceItem,
-                                 propertyArray,
-                                 uniqueItems,
-                                 uniqueItemGUIDs,
-                                 itemsInSource);
-        NS_ENSURE_SUCCESS(rv, rv);
+        PRBool skip;
+        nsCOMPtr<sbIMutablePropertyArray> properties =
+          do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+        nsCOMPtr<sbIMediaList> itemAsList = do_QueryInterface(sourceItem);
+        if (itemAsList) {
+          PRUint16 contentType;
+          rv = itemAsList->GetListContentType(&contentType);
+          // Cheating here, excludeContentType will only be video or empty
+          skip = NS_SUCCEEDED(rv) && (!excludeContentType.IsEmpty() &&
+                 contentType == 2); // sbIDeviceLibrary::CONTENTTYPE_VIDEO
+        }
+        else {
+          nsString contentType;
+          rv = sourceItem->GetContentType(contentType);
+          skip = NS_SUCCEEDED(rv) && contentType.Equals(excludeContentType);
+        }
+        if (!skip) {
+          rv = AddToUniqueItemList(sourceItem,
+                                   propertyArray,
+                                   uniqueItems,
+                                   uniqueItemGUIDs,
+                                   itemsInSource);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
       }
 
       // Add source list to the unique item list if it's not a library.

@@ -197,10 +197,9 @@
         var deviceLibrary = this._device.content.libraries
                                 .queryElementAt(0, Ci.sbIDeviceLibrary);
         var setupSyncCheckbox = document.getElementById("setup_sync_checkbox");
-        if (setupSyncCheckbox.checked)
-          deviceLibrary.setMgmtTypes(Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL, false);
-        else
-          deviceLibrary.setMgmtTypes(Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL, true);
+        deviceLibrary.syncMode = setupSyncCheckbox.checked ?
+                                   Ci.sbIDeviceLibrary.SYNC_AUTO :
+                                   Ci.sbIDeviceLibrary.SYNC_MANUAL);
 
         return true;
       },

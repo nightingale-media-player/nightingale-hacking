@@ -130,10 +130,10 @@ do_GetProxyForObject(nsIEventTarget *target,
   nsCOMPtr<nsIProxyObjectManager> proxyObjMgr =
     do_ProxiedGetService(NS_XPCOMPROXY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  rv = proxyObjMgr->GetProxyForObject(target, 
-                                      aIID, 
-                                      aObj, 
+
+  rv = proxyObjMgr->GetProxyForObject(target,
+                                      aIID,
+                                      aObj,
                                       proxyType,
                                       aProxyObject);
   return rv;

@@ -78,6 +78,7 @@ CPP_EXTRA_INCLUDES = $(srcdir) \
                      $(topsrcdir)/components/devices/marshall/src \
                      $(topsrcdir)/components/library/base/src \
                      $(topsrcdir)/components/library/base/src/static \
+                     $(topsrcdir)/components/moz/threads/src \
                      $(topsrcdir)/components/moz/xpcom/src \
                      $(topsrcdir)/components/property/src \
                      $(MOZSDK_INCLUDE_DIR)/intl \

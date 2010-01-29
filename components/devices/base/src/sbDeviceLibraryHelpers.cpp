@@ -50,27 +50,23 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbLibraryUpdateListener, sbIMediaListListener)
 
 sbLibraryUpdateListener::sbLibraryUpdateListener(sbILibrary * aTargetLibrary,
                                                  bool aManualMode,
-                                                 bool aSyncPlaylists,
                                                  nsIArray * aPlaylistsList,
                                                  bool aIgnorePlaylists)
   : mTargetLibrary(aTargetLibrary),
-    mPlaylistListener(new sbPlaylistSyncListener(aTargetLibrary, aSyncPlaylists)),
+    mPlaylistListener(new sbPlaylistSyncListener(aTargetLibrary,
+                                                 aPlaylistsList != nsnull)),
     mIgnorePlaylists(aIgnorePlaylists),
-    mSyncPlaylists(aSyncPlaylists)
+    mSyncPlaylists(!aPlaylistsList)
 {
-  SetSyncMode(aManualMode, aSyncPlaylists, aPlaylistsList);
+  SetSyncMode(aManualMode, aPlaylistsList);
 }
 
 void sbLibraryUpdateListener::SetSyncMode(bool aManualMode,
-                                          bool aSyncPlaylists,
-                                          nsIArray * aPlaylistsList) {
-  NS_ASSERTION(!mSyncPlaylists && aPlaylistsList != nsnull,
-               "Sync Management type isn't playlists but playlists were supplied");
-  NS_ASSERTION(mSyncPlaylists && aPlaylistsList == nsnull,
-               "Sync Management type is playlists but no playlists were supplied");
-  mPlaylistsList = aPlaylistsList;
+                                          nsIArray * aPlaylistList) {
+  mPlaylistList = aPlaylistList;
+  mSyncPlaylists = aPlaylistList != nsnull;
   mManualMode = aManualMode;
-  mPlaylistListener->SetSyncPlaylists(aSyncPlaylists, aPlaylistsList);
+  mPlaylistListener->SetSyncPlaylists(aPlaylistList);
 }
 
 nsresult sbLibraryUpdateListener::ShouldListenToPlaylist(sbIMediaList * aMainList,
@@ -105,14 +101,14 @@ nsresult sbLibraryUpdateListener::ShouldListenToPlaylist(sbIMediaList * aMainLis
     nsAutoString playlistItemGuid;
     nsCOMPtr<sbIMediaItem> playlist;
 
-    NS_ASSERTION(mPlaylistsList, "Management type is not ALL and mPlaylistsList is null");
+    NS_ASSERTION(mPlaylistList, "Management type is not ALL and mPlaylistList is null");
     // See if the playlist is in the list of playlists to sync
     PRUint32 length;
-    rv = mPlaylistsList->GetLength(&length);
+    rv = mPlaylistList->GetLength(&length);
     NS_ENSURE_SUCCESS(rv, rv);
 
     for (PRUint32 index = 0; index < length; ++index) {
-      playlist = do_QueryElementAt(mPlaylistsList, index, &rv);
+      playlist = do_QueryElementAt(mPlaylistList, index, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
       // If we found it, indicate that we want to listen for changes to
@@ -442,18 +438,18 @@ void sbPlaylistSyncListener::StopListeningToPlaylists() {
   mMediaLists.Clear();
 }
 
-nsresult sbPlaylistSyncListener::SetSyncPlaylists(bool aSyncPlaylists,
-                                                  nsIArray * aMediaLists) {
+nsresult sbPlaylistSyncListener::SetSyncPlaylists(nsIArray * aMediaLists) {
   nsresult rv;
 
-  if (mSyncPlaylists = aSyncPlaylists) {
+  mMediaLists.Clear();
+  mSyncPlaylists = aMediaLists != nsnull;
+  if (mSyncPlaylists) {
     PRUint32 length = 0;
     if (aMediaLists) {
       rv = aMediaLists->GetLength(&length);
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
-    mMediaLists.Clear();
     nsCOMPtr<sbIMediaList> mediaList;
     for (PRUint32 index = 0; index < length; ++index) {
       mediaList = do_QueryElementAt(aMediaLists, index, &rv);
@@ -711,7 +707,7 @@ public:
   sbDeviceSyncPlaylistRemover(sbILibrary * aLibrary,
                               nsCOMArray<sbIMediaList> & aPlaylists) :
                                   mLibrary(aLibrary),
-                                  mPlaylists(aPlaylists)
+                                  mPlaylistList(aPlaylists)
   {
   }
   /**
@@ -758,7 +754,7 @@ public:
     // See if the media item is in another list
     bool exists = false;
     rv = IsItemInAnotherPlaylist(mLibrary,
-                                 mPlaylists,
+                                 mPlaylistList,
                                  aMediaList,
                                  aMediaItem,
                                  exists);
@@ -785,7 +781,7 @@ public:
   }
 private:
   sbILibrary * mLibrary;
-  nsCOMArray<sbIMediaList> & mPlaylists;
+  nsCOMArray<sbIMediaList> & mPlaylistList;
 };
 
 NS_IMPL_ISUPPORTS1(sbDeviceSyncPlaylistRemover,
@@ -971,7 +967,7 @@ sbPlaylistSyncListener::RebuildPlaylistAfterItemRemoved(
       PRBool contains;
       rv = deviceMediaList->Contains(deviceMediaItem, &contains);
       NS_ENSURE_SUCCESS(rv, rv);
-      exists = contains;
+      exists = contains != PR_FALSE;
 
       // If no one in the list, check other media lists
       if (!exists) {

@@ -106,10 +106,9 @@
 
           if (this._deviceLibrary) {
             this.updateButtons(aManual);
-            this._deviceLibrary.setMgmtTypes(Components.interfaces
-                                                       .sbIDeviceLibrary
-                                                       .MGMT_TYPE_MANUAL,
-                                             aManual);
+            this._deviceLibrary.syncMode = aManual ? 
+                                             Ci.sbIDeviceLibrary.SYNC_MANUAL :
+                                             Ci.sbIDeviceLibrary.SYNC_AUTO;
             this.update();
           }
         ]]></body>

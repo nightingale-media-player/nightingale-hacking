@@ -69,8 +69,7 @@ public:
 
   void StopListeningToPlaylists();
 
-  nsresult SetSyncPlaylists(bool aSyncPlaylists,
-                            nsIArray * aMediaLists);
+  nsresult SetSyncPlaylists(nsIArray * aMediaLists);
 protected:
   virtual ~sbPlaylistSyncListener();
 
@@ -127,7 +126,6 @@ public:
 
   sbLibraryUpdateListener(sbILibrary * aTargetLibrary,
                           bool aManualMode,
-                          bool aSyncPlaylists,
                           nsIArray * aPlaylistsList,
                           bool aIgnorePlaylists);
 
@@ -160,7 +158,6 @@ public:
    * \param aMgmtType A management type constant
    */
   void SetSyncMode(bool aManualMode,
-                   bool aSyncPlaylists,
                    nsIArray * aPlaylistsList);
 protected:
   /**
@@ -168,13 +165,13 @@ protected:
    * safe to not own a reference
    */
   sbILibrary* mTargetLibrary;
-  nsCOMPtr<nsIArray> mPlaylistsList;
+  nsCOMPtr<nsIArray> mPlaylistList;
 
   nsRefPtr<sbPlaylistSyncListener> mPlaylistListener;
 
   bool mManualMode;
-  bool const mSyncPlaylists;
-  bool const mIgnorePlaylists;
+  bool mSyncPlaylists;
+  bool mIgnorePlaylists;
 };
 
 #endif
