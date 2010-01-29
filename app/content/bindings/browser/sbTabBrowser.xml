@@ -223,13 +223,13 @@
           Components.classes["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
                     .createInstance(Components.interfaces.sbIMediacoreTypeSniffer);
 
-        // Add a obsever to listen for shutdown to save tab state.
+        // Add a observer to listen for shutdown to save tab state.
         var shutdownListener = {
-          tabbrowser: self,
+          tabBrowser: self,
 
           observe: function(aSubject, aTopic, aData) {
             if (aTopic == "quit-application-granted") {
-              this.tabBrowser._sessionStore.saveTabState(this.tabbrowser);
+              this.tabBrowser._sessionStore.saveTabState(this.tabBrowser);
 
               var observerService = Cc["@mozilla.org/observer-service;1"]
                                       .getService(Ci.nsIObserverService);
