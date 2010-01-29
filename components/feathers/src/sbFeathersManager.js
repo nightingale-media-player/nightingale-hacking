@@ -36,6 +36,7 @@
 // 
  
 Components.utils.import("resource://app/jsmodules/ObserverUtils.jsm");
+Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const Ci = Components.interfaces;
@@ -51,6 +52,8 @@ const IID = Ci.sbIFeathersManager;
 
 const RDFURI_ADDON_ROOT               = "urn:songbird:addon:root" 
 const PREFIX_NS_SONGBIRD              = "http://www.songbirdnest.com/2007/addon-metadata-rdf#";
+
+const CHROME_PREFIX = "chrome://"
 
 // This DataRemote is required to indicate to the feather manager
 // that it is currently running in test mode. 
@@ -396,6 +399,17 @@ AddonMetadataReader.prototype = {
       return;
     }
 
+    // Resolve any localised layout names to their actual strings
+    if (description.name.substr(0,CHROME_PREFIX.length) == CHROME_PREFIX)
+    {
+      var name = SBString("feathers.name.unnamed");
+      var split = description.name.split("#", 2);
+      if (split.length == 2) {
+        var bundle = new SBStringBundle(split[0]);
+        name = bundle.get(split[1], name);
+      }
+      description.name = name;
+    }
     // Submit description
     this._manager.registerLayout(description);
     //debug("AddonMetadataReader: registered layout " + description.name +

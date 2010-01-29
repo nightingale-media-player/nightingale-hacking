@@ -47,11 +47,11 @@
     </songbird:skin>
     <songbird:layout>
       <Description>
-        <songbird:name>Main Player</songbird:name>
+        <songbird:name>chrome://songbird/locale/songbird.properties#feathers.name.mainlayout</songbird:name>
         <songbird:url>chrome://purplerain/content/xul/mainplayer.xul</songbird:url>
       </Description>
       <Description>
-        <songbird:name>Mini Player</songbird:name>
+        <songbird:name>chrome://songbird/locale/songbird.properties#feathers.name.minilayout</songbird:name>
         <songbird:url>chrome://purplerain/content/xul/miniplayer.xul</songbird:url>
       </Description>
     </songbird:layout>
