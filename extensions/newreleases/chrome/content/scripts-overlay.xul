@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://newreleases/skin/sps.css" type="text/css"?>
+<overlay id="newReleases-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<stringbundleset id="stringbundleset"> 
+		<stringbundle id="newReleases-strings"
+			src="chrome://newreleases/locale/overlay.properties"/>
+		</stringbundleset>  
+
+	<script type="text/javascript" src="main.js"/>
+
+</overlay>

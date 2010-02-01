@@ -1,0 +1,161 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+  type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://newreleases/skin/overlay.css"
+    type="text/css"?>
+
+<!DOCTYPE page [
+  <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+  %brandDTD;
+  <!ENTITY % newReleaseOptionsDTD SYSTEM "chrome://newreleases/locale/options.dtd">
+  %newReleaseOptionsDTD;
+  <!ENTITY % newReleasesDTD SYSTEM "chrome://newreleases/locale/overlay.dtd">
+  %newReleasesDTD;
+  <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+  %songbirdDTD;
+]>
+
+<page id="newRelease-window"
+      xmlns:html="http://www.w3.org/1999/xhtml"
+      xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      onload="NewReleaseAlbum.init()"
+      onunload="NewReleaseAlbum.unload()">
+
+  <stringbundleset id="stringbundleset"> 
+    <stringbundle id="newReleases-strings"
+                  src="chrome://newreleases/locale/overlay.properties"/>
+  </stringbundleset>
+
+  <script type="application/x-javascript" src="options.js" />
+  <script type="application/x-javascript" src="browse.js" />
+
+  <deck id="newReleases-deck" flex="1" style="height: 100%;">
+    <!-- the browsing/listing page, the contents of the iframe are all
+         built dynamically in browse.js -->
+    <vbox id="newReleases-list-page">
+      <iframe id="newRelease-listings" flex="1"
+              src="chrome://newreleases/content/iframe-skeleton.html" />
+    </vbox>
+
+    <!-- first-run & edit-location page -->
+    <hbox id="newReleases-firstrun-page">
+      <vbox flex="1">
+        <hbox class="powered-by" pack="start" align="baseline">
+          <image src="chrome://newreleases/skin/NewReleases.png" />
+<!--
+	  Re-enable this block if a provider logo is required
+          <image src="chrome://newreleases/content/songkick_left.png"
+                 class="powered-by-image"
+                 onclick="NewReleaseAlbum.openProviderPage()" />
+-->
+        </hbox>
+
+        <vbox class="descriptive-text">
+          <label id="location" class="prefs-header" value="&prefs.location;" />
+          <description class="descr-text">&prefs.location.descr;</description>
+        </vbox>
+        <vbox class="newReleases-location-box" flex="1">
+          <grid class="location" style="padding-bottom: 1em;" flex="0">
+            <columns>
+              <column flex="0" />
+              <column flex="0" />
+              <column flex="1" />
+            </columns>
+
+            <command id="changeCountry"
+                     oncommand="NewReleaseOptions.changeCountry(this);" />
+            <command id="cancel" oncommand="NewReleaseOptions.cancel();" />
+            <command id="save" oncommand="NewReleaseOptions.save();" />
+            
+            <rows>
+              <row>
+                <label class="pref-label" value="&prefs.country;"/>
+              </row>
+              <row>
+                <menulist id="menulist-country" flex="0"
+                          command="changeCountry" />
+                <hbox id="command-buttons">
+                  <button id="pref-cancel-button" flex="0"
+                          label="&window.cancel;" command="cancel" />
+                  <button id="pref-save-button" flex="0"
+                          label="&prefs.findReleases;" command="save" />
+                </hbox>
+              </row>
+            </rows>
+          </grid>
+        </vbox> <!-- /#newReleases-location-box -->
+      </vbox>
+    </hbox>
+
+    <hbox id="newReleases-loading-page" pack="center" flex="1">
+      <vbox pack="center">
+        <label value="&newReleases.loading;" />
+        <progressmeter id="loading-progress" mode="determined" />
+        <label value="" id="loading-label" />
+<!--
+	Re-enable this block if a provider logo is required
+        <hbox pack="start">
+          <image src="chrome://newreleases/content/songkick_left.png"
+            onclick="NewReleaseAlbum.openProviderPage()"
+            class="clickable"
+            style="margin-left:5px;margin-top:5px;" />
+        </hbox>
+-->
+      </vbox>
+    </hbox>
+    <hbox id="newResults-no-results-page" flex="1">
+      <deck id="no-results-deck" flex="1">
+        <hbox pack="center" flex="1">
+          <spacer flex="1" />
+          <vbox pack="center" flex="1"
+            style="max-width:85%;width:85%;">
+            <label id="noresults-country-1" />
+            <label id="noresults-country-2" />
+            <label id="noresults-country-3" />
+            <label id="noresults-country-4"
+              style="margin-bottom: 0px;"/>
+            <hbox id="sampleresults" align="center">
+              <label id="noresults-country-5"
+                style="margin-top:0px;" />
+              <image id="noresults-newReleases-icon" />
+              <label value="New Releases (19)"/>
+            </hbox>
+            <label id="noresults-city-6" />
+            <hbox pack="start">
+              <button class="noresults-button"
+                onclick="NewReleaseAlbum.editLocation()"
+                label="&newReleases.changelocation;" />
+              <button class="noresults-button"
+                onclick="NewReleaseAlbum.changeFilter(false)"
+                id="noresults-seeallreleases-country"/>
+            </hbox>
+          </vbox>
+          <spacer flex="1" />
+        </hbox>
+        <stack class="fail-noresults" flex="1">
+          <vbox>
+            <hbox pack="start">
+              <button class="noresults-button"
+                onclick="NewReleaseAlbum.editLocation()"
+                label="&newReleases.changelocation;" />
+              <button class="noresults-button"
+                onclick="NewReleaseAlbum.changeFilter(false)"
+                id="noresults-seeallreleases-country-e"/>
+            </hbox>
+          </vbox>
+        </stack>
+      </deck>
+    </hbox>
+    <hbox id="newReleases-timeout-error-page" flex="1">
+      <spacer flex="1" />
+      <vbox id="timeout-vbox" flex="1" pack="center">
+        <description>&newReleases.timeout.error;</description>
+        <label class="text-link" value="&newReleases.timeoutreport.error;"
+          href="http://getsatisfaction.com/songbird" />
+      </vbox>
+      <spacer flex="1" />
+    </hbox>
+  </deck>
+</page>

@@ -1,0 +1,18 @@
+newreleases.jar:
+% content newreleases  %content/	contentaccessible=yes
+% locale  newreleases  en-US  %locale/en-US/
+#% locale  newreleases  en-GB  %locale/en-GB/
+#% locale  newreleases  eu-ES  %locale/eu-ES/
+#% locale  newreleases  zh-CN  %locale/zh-CN/
+#% locale  newreleases  zh-TW  %locale/zh-TW/
+#% locale  newreleases  kw-GB  %locale/kw-GB/
+#% locale  newreleases  fr-FR  %locale/fr-FR/
+#% locale  newreleases  de-DE  %locale/de-DE/
+#% locale  newreleases  pl-PL  %locale/pl-PL/
+#% locale  newreleases  pt-BR  %locale/pt-BR/
+#% locale  newreleases  ru-RU  %locale/ru-RU/
+#% locale  newreleases  es-ES  %locale/es-ES/
+#% locale  newreleases  sv-SE  %locale/sv-SE/
+% skin    newreleases  classic/1.0 %skin/
+% overlay chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://newreleases/content/scripts-overlay.xul
+@include_all_to
