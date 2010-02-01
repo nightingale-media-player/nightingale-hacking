@@ -4,7 +4,7 @@ interface sbISongkickDisplayCallback;
 interface nsIArray;
 interface nsISimpleEnumerator;
 
-[scriptable, uuid(f4474910-bff8-11dd-ad8b-0800200c9a66)]
+[scriptable, uuid(2432a624-1dd2-11b2-8b60-d57e600d8715)]
 interface sbISongkick : nsISupports
 {
 	attribute boolean concertRefreshRunning;
@@ -34,12 +34,12 @@ interface sbISongkick : nsISupports
 
 	// These are JSON encoding of the actual objects and should be JSON
 	// decoded before using
-	string getLocationCountries();
-	string getLocationStates(in long countryID);
-	string getLocationCities(in long stateID);
+	AUTF8String getLocationCountries();
+	AUTF8String getLocationStates(in long countryID);
+	AUTF8String getLocationCities(in long stateID);
 
-	string getCityString(in long cityID);
-	string getLocationString(in long countryID, in long stateID,
+	AUTF8String getCityString(in long cityID);
+	AUTF8String getLocationString(in long countryID, in long stateID,
 					in long cityID);
 
 	long getConcertCount(in boolean filterLibraryArtists);

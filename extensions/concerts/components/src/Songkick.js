@@ -891,7 +891,12 @@ Songkick.prototype = {
 			var result = this._db.getResultObject();
 			for (let i=0; i<result.getRowCount(); i++) {
 				var id = result.getRowCellByColumn(i, "id");
-				var name = result.getRowCellByColumn(i, "name");
+				var name = escape(result.getRowCellByColumn(i, "name"));
+        // bug 19997
+        // database value is stored incorrectly, so compensate for it by
+        // escaping the string to URI safe values, and then running
+        // decodeURIComponent to get it back into UTF8
+        name = decodeURIComponent(unescape(name));
 				cities.push({"id": id, "name": name});
 			}
 		}
