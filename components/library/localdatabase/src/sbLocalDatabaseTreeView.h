@@ -109,6 +109,10 @@ public:
 
   nsresult Rebuild();
 
+  // Getter and setter methods to toggle rebuild prevention.
+  void SetShouldPreventRebuild(PRBool aShouldPreventRebuild);
+  PRBool GetShouldPreventRebuild();
+
   void ClearMediaListView();
 
   nsresult GetState(sbLocalDatabaseTreeViewState** aState);
@@ -272,6 +276,9 @@ private:
 
   // True when we have a listener added to the playback service
   PRPackedBool mIsListeningToPlayback;
+
+  // True when the tree should prevent rebuilding itself.
+  PRPackedBool mShouldPreventRebuild;
 
   nsString mLocalizedAll;
 

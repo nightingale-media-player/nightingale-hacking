@@ -206,6 +206,7 @@ sbLocalDatabaseTreeView::sbLocalDatabaseTreeView() :
  mSelectionIsAll(PR_FALSE),
  mFakeAllRow(PR_FALSE),
  mIsListeningToPlayback(PR_FALSE),
+ mShouldPreventRebuild(PR_FALSE),
  mFirstCachedRow(NOT_SET),
  mLastCachedRow(NOT_SET)
 {
@@ -404,6 +405,12 @@ sbLocalDatabaseTreeView::Rebuild()
 {
   TRACE(("sbLocalDatabaseTreeView[0x%.8x] - Rebuild()", this));
 
+  if (mShouldPreventRebuild) {
+    LOG(("sbLocalDatabaseTreeView - Rebuild() mShouldPreventRebuild == true"
+         ", skipping rebuild."));
+    return NS_OK;
+  }
+
   nsresult rv;
 
   // Check to see if the sort of the underlying array has changed
@@ -468,6 +475,18 @@ sbLocalDatabaseTreeView::Rebuild()
   }
 
   return NS_OK;
+}
+
+void
+sbLocalDatabaseTreeView::SetShouldPreventRebuild(PRBool aShouldPreventRebuild)
+{
+  mShouldPreventRebuild = aShouldPreventRebuild;
+}
+
+PRBool
+sbLocalDatabaseTreeView::GetShouldPreventRebuild()
+{
+  return mShouldPreventRebuild;
 }
 
 void

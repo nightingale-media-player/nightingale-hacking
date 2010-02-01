@@ -1628,6 +1628,11 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnBatchBegin(sbIMediaList* aMediaList)
 {
   mBatchHelper.Begin();
+
+  if (mTreeView) {
+    mTreeView->SetShouldPreventRebuild(PR_TRUE);
+  }
+
   return NS_OK;
 }
 
@@ -1636,12 +1641,17 @@ sbLocalDatabaseMediaListView::OnBatchEnd(sbIMediaList* aMediaList)
 {
   mBatchHelper.End();
 
-  if (mInvalidatePending && !mBatchHelper.IsActive()) {
-    // Invalidate the view array
-    nsresult rv = Invalidate();
-    NS_ENSURE_SUCCESS(rv, rv);
+  if (!mBatchHelper.IsActive()) {
+    if (mTreeView) {
+      mTreeView->SetShouldPreventRebuild(PR_FALSE);
+    }
+    if (mInvalidatePending) {
+      // Invalidate the view array
+      nsresult rv = Invalidate();
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    mInvalidatePending = PR_FALSE;
+      mInvalidatePending = PR_FALSE;
+    }
   }
 
   return NS_OK;
@@ -1972,15 +1982,23 @@ sbLocalDatabaseMediaListView::Invalidate()
   LOG(("sbLocalDatabaseMediaListView[0x%.8x] - Invalidate", this));
   nsresult rv;
 
-  // Invalidate the view array
+  // Invalidating the GUID array might rebuild the tree as well. To avoid
+  // rebuilding the tree twice, simply prevent the tree from rebuilding.
+  if (mTreeView) {
+    mTreeView->SetShouldPreventRebuild(PR_TRUE);
+  }
+
+  // Invalidate the view array.
   rv = mArray->Invalidate();
+  if (mTreeView) {
+    mTreeView->SetShouldPreventRebuild(PR_FALSE);
+  }
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Notify our selection that things have changed
   rv = mSelection->ConfigurationChanged();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // If we have an active tree view, rebuild it
   if (mTreeView) {
     rv = mTreeView->Rebuild();
     NS_ENSURE_SUCCESS(rv, rv);
