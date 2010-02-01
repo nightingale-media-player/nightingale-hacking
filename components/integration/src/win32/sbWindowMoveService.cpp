@@ -102,8 +102,18 @@ sbWindowMoveService::CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
     return CallNextHookEx(NULL, nCode, wParam, lParam);
   }
 
-  if(msg->message == WM_MOVING ||
-     msg->message == WM_WINDOWPOSCHANGING) {
+  if(msg->message == WM_WINDOWPOSCHANGING) {
+    // if the window didn't actually move, then we don't actually care
+    WINDOWINFO wi;
+    wi.cbSize = sizeof(WINDOWINFO);
+    if (GetWindowInfo(msg->hwnd, &wi)) {
+      RECT* oldpos = &wi.rcWindow;
+      WINDOWPOS* newpos = (WINDOWPOS*)msg->lParam;
+      if (newpos->flags & SWP_NOMOVE) {
+        return CallNextHookEx(NULL, nCode, wParam, lParam);
+      }
+    }
+
     sbWindowMoveService::resizing_t::iterator it = 
      self->mResizing.find(msg->hwnd);
 
@@ -116,8 +126,7 @@ sbWindowMoveService::CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
       CallListenerMoveStarted(msg->hwnd, self->mListeners);
     }
   }
-  else if(msg->message == WM_MOVE ||
-          msg->message == WM_WINDOWPOSCHANGED) {
+  else if(msg->message == WM_WINDOWPOSCHANGED) {
     sbWindowMoveService::resizing_t::iterator it = 
       self->mResizing.find(msg->hwnd);
 

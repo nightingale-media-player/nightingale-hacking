@@ -151,7 +151,7 @@ sbOSDControlService.prototype =
                                      false);
     this._osdWindow.addEventListener("keypress",
                                      this._osdWinKeypressListener,
-                                     false)
+                                     false);
     this._videoWindow.addEventListener("blur",
                                        this._videoWinBlurListener,
                                        false);
@@ -191,7 +191,7 @@ sbOSDControlService.prototype =
                                         false);
     this._osdWindow.removeEventListener("keypress",
                                         this._osdWinKeypressListener,
-                                        false)
+                                        false);
     this._videoWindow.removeEventListener("blur",
                                           this._videoWinBlurListener,
                                           false);
@@ -229,7 +229,7 @@ sbOSDControlService.prototype =
 
     this._timer.cancel();
 
-    var transtion;
+    var transition;
     switch (aTransitionType) {
       case Ci.sbIOSDControlService.TRANSITION_FADE:
         transition = this._fadeOut;
@@ -247,7 +247,7 @@ sbOSDControlService.prototype =
         transition = this._hideInstantly; 
     }
 
-    transition.apply(this, [function() {
+    transition.call(this, function() {
       // The OSD controls are no longer showing. The order of events
       // here is critical; surprisingly, the cloaking must happen
       // last.
@@ -259,7 +259,7 @@ sbOSDControlService.prototype =
         }
         self._cloakService.cloak(self._osdWindow);
       }
-    }]);
+    });
   },
 
   showOSDControls: function(aTransitionType) {
@@ -271,6 +271,9 @@ sbOSDControlService.prototype =
       // other window in the OS.
       return;
     }
+
+    if (this._osdSurpressed)
+      return;
 
     this._timer.cancel();
     this._timer.initWithCallback(this,
@@ -290,10 +293,10 @@ sbOSDControlService.prototype =
       this._cloakService.uncloak(this._osdWindow);
     }
 
-    var transtion;
+    var transition;
     switch (aTransitionType) {
       case Ci.sbIOSDControlService.TRANSITION_FADE:
-        transition = this._fade;
+        transition = this._fadeIn;
         break;
 
       case Ci.sbIOSDControlService.TRANSITION_NONE:
@@ -308,7 +311,7 @@ sbOSDControlService.prototype =
         transition = this._showInstantly; 
     }
     
-    transition.apply(this);
+    transition.call(this);
   },
 
   _fade: function(start, end, func) {
@@ -360,6 +363,11 @@ sbOSDControlService.prototype =
   // fade from 100% opaque to 0% opaque 
   _fadeOut: function(func) {
     this._fade(1, 0, func);
+  },
+
+  // fade from 0% opaque to 100% opaque 
+  _fadeIn: function(func) {
+    this._fade(0, 1, func);
   },
 
   _onOSDWinBlur: function(aEvent) {
@@ -414,11 +422,13 @@ sbOSDControlService.prototype =
   // sbIWindowMoveListener
 
   onMoveStarted: function() {
+    this._osdSurpressed = true;
     this._showOSDControlsOnStop = this._osdControlsShowing;
     this.hideOSDControls(Ci.sbIOSDControlService.TRANSITION_NONE);
   },
 
   onMoveStopped: function() {
+    this._osdSurpressed = false;
     if (this._showOSDControlsOnStop)
       this.showOSDControls(Ci.sbIOSDControlService.TRANSITION_NONE);
     this._showOSDControlsOnStop = false;
