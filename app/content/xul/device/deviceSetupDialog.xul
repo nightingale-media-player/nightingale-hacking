@@ -199,7 +199,7 @@
         var setupSyncCheckbox = document.getElementById("setup_sync_checkbox");
         deviceLibrary.syncMode = setupSyncCheckbox.checked ?
                                    Ci.sbIDeviceLibrary.SYNC_AUTO :
-                                   Ci.sbIDeviceLibrary.SYNC_MANUAL);
+                                   Ci.sbIDeviceLibrary.SYNC_MANUAL;
 
         return true;
       },
