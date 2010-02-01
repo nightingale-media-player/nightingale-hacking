@@ -287,13 +287,14 @@
                          anonid="mediapages-button-listview"
                          label="&tooltip.browser.mediapages.list;"
                          tooltiptext="&tooltip.browser.mediapages.list;"
-                         oncommand="switchMediaView('list')" />
+                         oncommand="switchMediaView('listview')" />
       <xul:toolbarbutton id="mediapages-button-filterview"
                          class="toolbarbutton-1 chromeclass-toolbar-additional"
                          anonid="mediapages-button-filterview"
                          label="&tooltip.browser.mediapages.filter;"
                          tooltiptext="&tooltip.browser.mediapages.filter;"
-                         oncommand="switchMediaView('filter')" />
+                         oncommand="switchMediaView('filterview')" />
+      <xul:hbox id="mediapages-other" anonid="mediapages-other" />
       <xul:toolbarbutton id="mediapages-button"
                          class="toolbarbutton-1 chromeclass-toolbar-additional"
                          anonid="mediapages-button"
@@ -317,6 +318,7 @@
                                   "anonid", "mediapages-button-listview");
         var filterButton = document.getAnonymousElementByAttribute(this,
                                   "anonid", "mediapages-button-filterview");
+        var self = this;
         this.disabler = function() {
           
           // enable switching if we have a valid media page
@@ -341,15 +343,8 @@
           }
 
           var mediaPage = gBrowser.currentMediaPage;
-          if ((mediaPage && !mediaPage.isOnlyView) || mediaPageURL) {
-            button.setAttribute("disabled", "false");
-            listButton.setAttribute("disabled", "false");
-            filterButton.setAttribute("disabled", "false");
-          }
-          else {
-            button.setAttribute("disabled", "true");
-            listButton.setAttribute("disabled", "true");
-            filterButton.setAttribute("disabled", "true");
+          if (!((mediaPage && !mediaPage.isOnlyView) || mediaPageURL)) {
+            self.setButtonToggle();
           }
 
           // set the button states for the list & filter view buttons so
@@ -359,24 +354,29 @@
                                       .spec.replace(/[\?&]libraryGUID.*$/, "");
           switch (currentPageURL) {
             case "chrome://songbird/content/mediapages/filtersPage.xul":
-              listButton.setAttribute("open", "false");
-              filterButton.setAttribute("open", "true");
+              self.setButtonToggle("filterview");
               break;
             case "chrome://songbird/content/mediapages/playlistPage.xul":
-              listButton.setAttribute("open", "true");
-              filterButton.setAttribute("open", "false");
+              self.setButtonToggle("listview");
               break;
             default:
-              listButton.setAttribute("open", "false");
-              filterButton.setAttribute("open", "false");
+              self.setButtonToggle(self._pageUrlMapping[currentPageURL]);
           }
 
         };
         
-        // cache instances to the List & Filter view
+        // cache instances to the List & Filter view, and build toolbarbuttons
+        // for our other views
         var mgr = Cc["@songbirdnest.com/Songbird/MediaPageManager;1"]
                     .getService(Ci.sbIMediaPageManager);
         var pages = mgr.getAvailablePages();
+        var mpId = 0;
+        var XULNS =
+            "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+        this._pageIdMapping = [];
+        this._pageUrlMapping = [];
+        this._maxPageId = 0;
+
         while (pages.hasMoreElements()) {
           var page = pages.getNext().QueryInterface(
                            Components.interfaces.sbIMediaPageInfo);
@@ -387,6 +387,30 @@
             case "chrome://songbird/content/mediapages/playlistPage.xul":
               this.listView = page;
               break;
+            default:
+              if (page.contentIcon) {
+                 var pagebutton = document.createElementNS(XULNS,
+                                                           "toolbarbutton");
+                 var thisId = mpId++;
+                 pagebutton.id = "mediapages-button-" + thisId;
+                 pagebutton.className = "toolbarbutton-1 " +
+                            "chromeclass-toolbar-additional mp-other";
+                 pagebutton.anonid="mediapages-button-" + thisId;
+                 pagebutton.mpId = thisId;
+                 pagebutton.addEventListener("command", function() {
+                     switchMediaView(this.mpId);
+                 }, false);
+                 pagebutton.setAttribute("tooltiptext", page.contentTitle);
+                 pagebutton.setAttribute("style", "list-style-image: url("
+                                                  + page.contentIcon + ");");
+                 this._maxPageId = thisId;
+                 this._pageIdMapping[thisId] = page;
+                 this._pageUrlMapping[page.contentUrl] = thisId;
+
+                 var hbox = document.getAnonymousElementByAttribute(this,
+                                          "anonid", "mediapages-other");
+                 hbox.appendChild(pagebutton);
+              }
           }
         }
 
@@ -400,6 +424,54 @@
       ]]></destructor>
 
 
+      <method name="setButtonToggle">
+        <parameter name="id"/>
+        <body>
+        <![CDATA[
+          // If no parameter was passed, then disable all buttons
+          var mpButton = document.getAnonymousElementByAttribute(this,
+                                    "anonid", "mediapages-button");
+          var listButton = document.getAnonymousElementByAttribute(this,
+                                    "anonid", "mediapages-button-listview");
+          var filterButton = document.getAnonymousElementByAttribute(this,
+                                    "anonid", "mediapages-button-filterview");
+
+          var pageButtons = ["listview", "filterview"];
+          for (var i=0; i<=this._maxPageId; i++) {
+            pageButtons.push(i);
+          }
+
+          if (id == null) {
+            mpButton.setAttribute("disabled", true);
+            for each (var buttonId in pageButtons) {
+              var button = document.getAnonymousElementByAttribute(this,
+                                    "anonid", "mediapages-button-" + buttonId);
+              if (!button)
+                button = document.getElementById("mediapages-button-"+buttonId);
+              button.setAttribute("disabled", true);
+              button.setAttribute("open", "false");
+            }
+            return;
+          }
+
+          // Remove any disabled attributes
+          mpButton.removeAttribute("disabled");
+          // Make sure we select the right page
+          for each (var buttonId in pageButtons) {
+            var button = document.getAnonymousElementByAttribute(this,
+                                  "anonid", "mediapages-button-" + buttonId);
+            if (!button)
+              button = document.getElementById("mediapages-button-" + buttonId);
+            button.removeAttribute("disabled");
+            if (buttonId == id)
+              button.setAttribute("open", "true");
+            else
+              button.setAttribute("open", "false");
+          }
+        ]]>
+        </body>
+      </method>
+
       <method name="switchMediaView">
         <parameter name="viewName"/>
         <body>
@@ -410,22 +482,23 @@
                                     "anonid", "mediapages-button-listview");
           var filterButton = document.getAnonymousElementByAttribute(this,
                                     "anonid", "mediapages-button-filterview");
+          var others = document.getAnonymousElementByAttribute(this,
+                                    "anonid", "mediapages-other");
           switch (viewName) {
-            case "list":
-              listButton.setAttribute("open", "true");
-              filterButton.setAttribute("open", "false");
+            case "listview":
+              this.setButtonToggle(viewName);
               mgr.setPage(gBrowser.currentMediaPage.mediaListView.mediaList,
                           this.listView);
               break;
-            case "filter":
-              listButton.setAttribute("open", "false");
-              filterButton.setAttribute("open", "true");
+            case "filterview":
+              this.setButtonToggle(viewName);
               mgr.setPage(gBrowser.currentMediaPage.mediaListView.mediaList,
                           this.filterView);
               break;
             default:
-              listButton.setAttribute("open", "false");
-              filterButton.setAttribute("open", "false");
+              this.setButtonToggle(viewName);
+              mgr.setPage(gBrowser.currentMediaPage.mediaListView.mediaList,
+                          this._pageIdMapping[viewName]);
           }
 
           // Reload using the new page

@@ -104,7 +104,7 @@ interface sbIMediaPageManager : nsISupports
 * \interface sbIMediaPageInfo sbIMediaPageInfo.h
 * \brief This interface is used to describe a medialist page.
 */
-[scriptable, uuid(c9673d60-d36b-11dc-95ff-0800200c9a66)]
+[scriptable, uuid(4817835e-1dd2-11b2-ab1e-81bb1e02f99b)]
 interface sbIMediaPageInfo: nsISupports
 {
   /**
@@ -116,6 +116,11 @@ interface sbIMediaPageInfo: nsISupports
    * \brief The chrome URL to the page.  Must be unique.
    */
   readonly attribute AString contentUrl;
+
+  /**
+   * \brief The chrome URL to the icon representing the page.
+   */
+  readonly attribute AString contentIcon;
 
   /**
    * \brief The interface used to match medialists

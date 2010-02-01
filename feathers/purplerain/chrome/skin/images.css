@@ -626,9 +626,30 @@ treechildren::-moz-tree-twisty(open) {
 #mediapages-button > .toolbarbutton-icon {
   list-style-image: url('chrome://songbird/skin/nav-bar/nav-toggle-drop.png');
 }
+#mediapages-other {
+  min-height: 20px;
+  max-height: 20px;
+}
+#mediapages-other > toolbarbutton.mp-other {
+  min-height: 20px;
+  max-height: 20px;
+  background-image: url('chrome://songbird/skin/nav-bar/bg-mp-button.png');
+  background-position: center 0px;
+}
 
+#mediapages-other > toolbarbutton.mp-other:hover {
+  background-position: center -20px;
+}
 
+#mediapages-other > toolbarbutton.mp-other:active,
+#mediapages-other > toolbarbutton.mp-other[open="true"] {
+  background-position: center -40px;
+}
 
+#mediapages-other > toolbarbutton.mp-other[disabled="true"],
+#mediapages-other > toolbarbutton.mp-other[disabled="true"]:hover {
+  background-position: center -60px;
+}
 
 
 .searchbar-engine-button {  

@@ -50,8 +50,7 @@ MediaPageManager.prototype = {
   _defaultFilteredPlaylistPage: null,
   
   
-  registerPage: function(aName, aURL, aMatchInterface) {
-  
+  registerPage: function(aName, aURL, aIcon, aMatchInterface) {
     // Make sure we don't already have a page with
     // the given url
     var pageInfo;
@@ -69,6 +68,9 @@ MediaPageManager.prototype = {
       },
       get contentUrl() {
         return aURL;
+      },
+      get contentIcon() {
+        return aIcon;
       },
       get matchInterface() {
         return aMatchInterface;
@@ -249,13 +251,15 @@ MediaPageManager.prototype = {
     // Register the playlist with filters
     this._defaultFilteredPlaylistPage =
         this.registerPage( filteredPlaylistString,
-        "chrome://songbird/content/mediapages/filtersPage.xul", 
+        "chrome://songbird/content/mediapages/filtersPage.xul",
+        null,
         matchAll);
 
     // And the playlist without filters
     this._defaultPlaylistPage = 
         this.registerPage( playlistString,
         "chrome://songbird/content/mediapages/playlistPage.xul",
+        null,
         matchAll);
   },
   
@@ -333,6 +337,7 @@ var MediaPageMetadataReader = {
     // Submit description
     this._manager.registerPage( info.contentTitle,
                                 info.contentUrl,
+                                info.contentIcon,
                                 {match: matchFunction}
                                );
     
@@ -342,7 +347,7 @@ var MediaPageMetadataReader = {
   
   _validateProperties: function(info, errorList, warningList) {
     var requiredProperties = ["contentTitle", "contentUrl"];
-    var optionalProperties = ["match"];
+    var optionalProperties = ["contentIcon", "match"];
     
     // check for required properties
     for (var p in requiredProperties) { 
