@@ -150,10 +150,19 @@ var videoWindowController = {
     } catch(e) {
       // No SSP on this platform.
     }
-
-    if (this._ssp)
-      this._ssp.suppress(true);
     
+    // If for some reason the user doesn't have the right to suppress
+    // the screen saver 'suppress' may fail but we shouldn't fail
+    // to initialize the video window because of this.
+    try {
+      if (this._ssp)
+        this._ssp.suppress(true);
+    }
+    catch(e) {
+      Cu.reportError(e);
+    }
+
+  
     this._actualSizeDataRemote = SBNewDataRemote(this.ACTUAL_SIZE_DR_KEY);
     
     // Catch un-initialized actual size data remote value and default
