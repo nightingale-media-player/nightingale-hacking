@@ -29,9 +29,9 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_COMPONENTS += $(srcdir)/newReleases.js \
-                          $(NULL)
+IS_EXTENSION = 1
 
-EXTENSION_STAGE_DIR = ../.xpistage
+SONGBIRD_COMPONENTS += $(srcdir)/newReleases.js \
+                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

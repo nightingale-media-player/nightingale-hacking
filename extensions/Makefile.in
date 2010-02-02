@@ -29,9 +29,9 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-DEFAULT_EXTENSIONS = xpcom_helloworld \
-                     AlbumArt \
+DEFAULT_EXTENSIONS = AlbumArt \
                      qatesttools \
+                     xpcom_helloworld \
                      $(NULL)
 
 # The ipod extension should build out-of-the-box on Linux and Mac, but needs
@@ -50,13 +50,14 @@ endif
 
 # AlbumArt is not on the list because it's used internally by the bird, so
 # we need to build it regardless of platform
-NOARCH_EXTENSIONS = shoutcast \
-                    lastfm \
-                    concerts \
-                    mashTape \
-                    7digital \
+NOARCH_EXTENSIONS = 7digital \
                     albumartlastfm \
+                    concerts \
                     jumpto \
+                    lastfm \
+                    mashTape \
+                    newaliases \
+                    shoutcast \
                     $(NULL)
 
 # Right now, all of these addons are so-called "noarch" addons; because
