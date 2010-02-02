@@ -56,7 +56,7 @@ NOARCH_EXTENSIONS = 7digital \
                     jumpto \
                     lastfm \
                     mashTape \
-                    newaliases \
+                    newreleases \
                     shoutcast \
                     $(NULL)
 
