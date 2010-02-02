@@ -37,7 +37,7 @@ interface nsISimpleEnumerator;
 * \brief The medialist page manager, used to register, unregister,
 * enumerate, set and retrieve page/medialists associations
 */
-[scriptable, uuid(e4ff017e-1dd1-11b2-bef2-a2a583e02a39)]
+[scriptable, uuid(6a721b22-1dd2-11b2-bcde-de4c99cf9aab)]
 interface sbIMediaPageManager : nsISupports
 {
   /**
@@ -48,7 +48,7 @@ interface sbIMediaPageManager : nsISupports
    * \param aMatch The interface or js function used to determine whether this page matches a particular medialist
    * \return An sbMediaListIPageInfo interface describing the page
    */
-  sbIMediaPageInfo registerPage(in AString aName, in AString aURL, in sbIMediaListMatch aMatch);
+  sbIMediaPageInfo registerPage(in AString aName, in AString aURL, in AString aIcon, in sbIMediaListMatch aMatch);
 
   /**
    * \brief Unregister a medialist page.

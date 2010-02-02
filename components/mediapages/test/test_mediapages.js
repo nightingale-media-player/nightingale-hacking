@@ -162,7 +162,7 @@ function testMediaPageManager() {
   
     // Set up a match for all simple lists
     var page_simpletype = pageMgr.registerPage("MatchSimpleType", 
-                          URL2, 
+                          URL2, null,
                           function(aList) { return (aList.type == "simple"); } );
   
     // Verify that matching works :
@@ -172,7 +172,7 @@ function testMediaPageManager() {
   
     // Set up a match for all lists again
     var page_matchall = pageMgr.registerPage("MatchAll", 
-                                         URL1, 
+                                         URL1, null,
                                          function(aList) { return true; } );
     
     // Verify that matching works:
@@ -190,7 +190,7 @@ function testMediaPageManager() {
     
     // Set up a match for all smart lists
     var page_smarttype = pageMgr.registerPage("MatchSmartType", 
-                         URL3, 
+                         URL3, null,
                          function(aList) { return (aList.type == "smart"); } );
   
     // Verify that matching works:
