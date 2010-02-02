@@ -63,6 +63,7 @@ CREATEDIRS += $(CURDIR)/webpageapi \
 
 GARBAGE += Docs.css \
            header.html \
+           footer.html \
            tmp \
            $(CREATEDIRS) \
            $(NULL)
