@@ -39,6 +39,7 @@ Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
+Cu.import("resource://app/jsmodules/SBUtils.jsm");
 
 // File operation constants for init (-1 is default mode)
 const FLAGS_DEFAULT = -1;
@@ -507,8 +508,12 @@ var sbCoverHelper = {
     listProperties.appendProperty(SBProperties.mediaListName, "Get Artwork");
     var getArtworkMediaList = library.createMediaList("simple",
                                                       listProperties);
+    var isAudioItem = function(aItem) {
+      return aItem.getProperty(SBProperties.contentType) == "audio";
+    }
+    var audioItems = new SBFilteredEnumerator(mediaItems, isAudioItem);
     // Add all the items to our new hidden temporary playlist
-    getArtworkMediaList.addSome(mediaItems);
+    getArtworkMediaList.addSome(audioItems);
 
     // Set up the scanner
     var artworkScanner = Cc["@songbirdnest.com/Songbird/album-art/scanner;1"]

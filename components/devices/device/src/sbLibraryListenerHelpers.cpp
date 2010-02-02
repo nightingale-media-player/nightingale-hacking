@@ -235,6 +235,15 @@ sbBaseDeviceLibraryListener::OnBatchEnd(sbIMediaList *aMediaList)
                               nsnull, aMediaList);
 }
 
+inline bool
+IsItemHidden(sbIMediaItem * aMediaItem)
+{
+  nsString hidden;
+  nsresult rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                                        hidden);
+  return NS_SUCCEEDED(rv) && hidden.Equals(NS_LITERAL_STRING("1"));
+}
+
 NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
                                          sbIMediaItem *aMediaItem,
@@ -250,6 +259,13 @@ sbBaseDeviceLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
 
   nsresult rv;
 
+  // Skip hidden media items
+  if (IsItemHidden(aMediaList) || IsItemHidden(aMediaItem)) {
+    return NS_OK;
+  }
+
+  // Hide the item. It is the responsibility of the device to make the item
+  // visible when the transfer is successful.
   // Always listen to all added lists.
   nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem);
   if (list) {
@@ -320,6 +336,11 @@ sbBaseDeviceLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
     return NS_OK;
   }
 
+  // Skip hidden media items
+  if (IsItemHidden(aMediaItem) || IsItemHidden(aMediaList)) {
+    return NS_OK;
+  }
+
   nsresult rv;
 
   /* If the item is hidden, then it wasn't transferred to the device (which
@@ -365,6 +386,11 @@ sbBaseDeviceLibraryListener::OnBeforeListCleared(sbIMediaList *aMediaList,
 
   /* yay, we're going to wipe the device! */
   if(MediaItemIgnored(aMediaList)) {
+    return NS_OK;
+  }
+
+  // Skip hidden media items
+  if (IsItemHidden(aMediaList)) {
     return NS_OK;
   }
 
@@ -427,6 +453,11 @@ sbBaseDeviceLibraryListener::OnItemUpdated(sbIMediaList *aMediaList,
     return NS_OK;
   }
 
+  // Skip hidden media items
+  if (IsItemHidden(aMediaItem)) {
+    return NS_OK;
+  }
+
   nsresult rv;
 
   nsRefPtr<sbBaseDevice::TransferRequest>
@@ -459,6 +490,11 @@ sbBaseDeviceLibraryListener::OnItemMoved(sbIMediaList *aMediaList,
   *aNoMoreForBatch = PR_FALSE;
 
   if(MediaItemIgnored(aMediaList)) {
+    return NS_OK;
+  }
+
+  // Skip hidden media items
+  if (IsItemHidden(aMediaList)) {
     return NS_OK;
   }
 
