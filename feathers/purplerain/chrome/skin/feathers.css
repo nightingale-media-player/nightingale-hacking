@@ -895,6 +895,13 @@ sb-displaypane-splitter[orient="horizontal"] > stack > box > #dropdown-button {
 window > vbox#main_box {
   overflow: auto;
 }
+
+sb-device-managetabs {
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 12px;
+}
+
 /* the top half of the summary page + background for tabs (ipod only) */
 #overall_device_info_box,
 #device_management_tabs {
@@ -948,9 +955,12 @@ window > vbox#main_box {
   margin: 10px 10px 13px 10px;
 }
 
+.device-settings-tab-header-box,
 .device-tab-header-box {
   background-color: rgb(74,73,79);
   height: 28px;
+}
+.device-tab-header-box {
   margin-top: 15px;
 }
 .device-tab-content groupbox {
@@ -984,7 +994,22 @@ label.device-name-label {
   color: rgb(159,157,166);
 }
 
+.device_management_tabpanels {
+  padding-top: 30px !important;
+}
 
+/* tree that holds the list of playlists to sync */
+sb-device-sync tree {
+  background-image: none;
+  background-color: rgb(69,67,78);
+  border: 1px solid rgb(42,42,53);
+}
+sb-device-sync tree treecol[type="checkbox"] {
+  min-width: 23px !important;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+  margin-right: -3px !important;
+}
 /******************************************************************************
 * WIZARDS
 ******************************************************************************/

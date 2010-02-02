@@ -60,7 +60,7 @@
         <xul:vbox class="device-tab-content"
                   sbid="device_management_settings_content">
           <!-- header -->
-          <xul:hbox class="device-tab-header-box">
+          <xul:hbox class="device-settings-tab-header-box">
             <xul:label class="device-tab-header-label"
                        value="&device.settings.header.label;"/>
             <xul:label class="device-tab-header-info"

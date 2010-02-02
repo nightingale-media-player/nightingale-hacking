@@ -81,7 +81,7 @@
                           enableColumnDrag="false"
                           editable="true"
                           seltype="single"
-                          rows="5"
+                          rows="8"
                           onkeyup="_onUIPrefChange();"
                           onclick="_onUIPrefChange();">
                   <xul:treecols>
