@@ -795,9 +795,21 @@ mashTape.updateInfo = function(provider, results, section) {
       }
       bioDiv.innerHTML = results.bioText.toString();
       bioDiv.setAttribute("mashTape-full-height", bioDiv.scrollHeight);
-      if (bioDiv.scrollHeight > 93) {
+
+      // 98px is the line height (14px) * 7 rows of text.  if we've got more
+      // than 7 lines of text, then use the "Read More" link to only show
+      // an initial amount
+      if (bioDiv.scrollHeight > 98) {
+        // determine where to set initial height to (bug 19980)
+        var height = 0;
+        for (var i=0; i<bioDiv.childNodes.length; i++) {
+          if (bioDiv.childNodes[i].offsetTop <= 100)
+            height = bioDiv.childNodes[i].offsetTop + 5;
+        }
+        if (height == 0)
+          height = 98;
         doc.getElementById("bio-toggle-text").style.display = "block";
-        bioDiv.style.height = "93px";
+        bioDiv.style.height = height + "px";
       } else
         doc.getElementById("bio-toggle-text").style.display = "none";
   
