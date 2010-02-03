@@ -261,8 +261,13 @@ mashTape.updateNav = function() {
 // default one.
 mashTape.selectPane = function(pane) {
   var contentDeck = document.getElementById("mashTape-content-deck");
-  if (pane == null)
+  if (pane == null) {
     pane = Application.prefs.getValue("extensions.mashTape.defaultpane","info");
+
+    // also need to select the tab nav element itself
+    document.getElementById("mashTape-nav-radiogroup").selectedItem =
+        document.getElementById("mashTape-nav-tab-" + pane);
+  }
   switch(pane) {
     case "info":
       if (mashTape.infoTab.style.visibility != "collapse") {
@@ -2182,6 +2187,9 @@ mashTape.prefObserver = {
         } else {
           tab.style.visibility = "collapse";
           gMetrics.metricsInc("mashtape", pref[0], "tab.disabled");
+          // if we're currently on the tab, then hide it and select some
+          // other tab
+          mashTape.selectPane();
         }
       } else if (data == "autohide") {
         var enabled = subject.getBoolPref(data);

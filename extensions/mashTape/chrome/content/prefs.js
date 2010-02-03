@@ -248,7 +248,8 @@ var mashTapePreferences = {
 				// select an enabled tab instead
 				for each (var tab in ["info", "review","rss", "photo", "flash"])
 				{
-					if (this._prefBranch.getBoolPref(tab + ".enabled")) {
+					if (this._prefBranch.getBoolPref(tab + ".enabled") &&
+              this.providers[tab].length > 0) {
 						var sItem = this.getDefaultTabItem(tab);
 						this.defaultTabSelect.selectedItem = sItem;
 						this._prefBranch.setCharPref("defaultpane", tab);
