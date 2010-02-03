@@ -134,7 +134,7 @@ sbWindowCloak::SetVisibility(nsIDOMWindow* aDOMWindow,
 
   // See if we have previously cloaked this window.
   sbCloakInfo* cloakInfo = nsnull;
-  PRBool alreadyHashedWindow = mCloakedWindows.Get(embedWindow, &cloakInfo);
+  mCloakedWindows.Get(embedWindow, &cloakInfo);
 
   if (!cloakInfo) {
     // This is the first time we have seen this window so assume it is already

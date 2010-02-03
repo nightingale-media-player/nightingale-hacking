@@ -3,7 +3,7 @@
 # 
 # This file is part of the Songbird web player.
 #
-# Copyright(c) 2005-2008 POTI, Inc.
+# Copyright(c) 2005-2010 POTI, Inc.
 # http://www.songbirdnest.com
 # 
 # This file may be licensed under the terms of of the
@@ -34,6 +34,7 @@ DYNAMIC_LIB = sbIntegration
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/integration/public \
                      $(MOZSDK_INCLUDE_DIR)/dom \
+                     $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                      $(MOZSDK_INCLUDE_DIR)/gfx \
                      $(MOZSDK_INCLUDE_DIR)/intl \
                      $(MOZSDK_INCLUDE_DIR)/xultmpl \
@@ -46,22 +47,31 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/integration/public \
                      $(MOZSDK_IDL_DIR) \
                      $(NULL)
 
-DYNAMIC_LIB_EXTRA_FLAGS = $(GTK_LIBS) \
+DYNAMIC_LIB_EXTRA_FLAGS = $(DBUS_LIBS) \
+                          $(GTK_LIBS) \
                           $(NULL)
 
-CPP_SRCS = sbNativeWindowManager.cpp \
+CPP_SRCS = sbDBus.cpp \
+           sbNativeWindowManager.cpp \
            sbGtkWindowMoveService.cpp \
+           sbScreenSaverSuppressor.cpp \
            $(NULL)
 
 # From current_directory/..
 CPP_SRCS += WindowCloak.cpp \
             IntegrationComponent.cpp \
             NativeWindowFromNode.cpp \
+            sbBaseScreenSaverSuppressor.cpp \
             $(NULL)
 
 IS_COMPONENT = 1
 
-CFLAGS += $(GTK_CFLAGS)
-CXXFLAGS += $(GTK_CFLAGS)
+CFLAGS += $(DBUS_CLFAGS) \
+          $(GTK_CFLAGS) \
+          $(NULL)
+
+CXXFLAGS += $(DBUS_CFLAGS) \
+            $(GTK_CFLAGS) \
+            $(NULL)
 
 include $(topsrcdir)/build/rules.mk

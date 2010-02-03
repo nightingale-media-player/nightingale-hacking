@@ -4,7 +4,7 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2010 POTI, Inc.
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
@@ -45,6 +45,7 @@
 #ifdef MOZ_WIDGET_GTK2 
 #include "linux/sbNativeWindowManager.h"
 #include "linux/sbGtkWindowMoveService.h"
+#include "linux/sbScreenSaverSuppressor.h"
 #endif
 
 #ifdef XP_WIN
@@ -90,6 +91,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbScreenSaverSuppressor, Init);
 
 #ifdef MOZ_WIDGET_GTK2
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbGtkWindowMoveService)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbScreenSaverSuppressor, Init);
 #endif
 
 static nsModuleComponentInfo sbIntegration[] =
@@ -187,6 +189,13 @@ static nsModuleComponentInfo sbIntegration[] =
     SB_WINDOWMOVE_SERVICE_CID,
     SB_WINDOWMOVE_SERVICE_CONTRACTID,
     sbGtkWindowMoveServiceConstructor
+  },
+  {
+    SB_BASE_SCREEN_SAVER_SUPPRESSOR_CLASSNAME,
+    SB_BASE_SCREEN_SAVER_SUPPRESSOR_CID,
+    SB_BASE_SCREEN_SAVER_SUPPRESSOR_CONTRACTID,
+    sbScreenSaverSuppressorConstructor,
+    sbScreenSaverSuppressor::RegisterSelf
   },
 #endif
 };
