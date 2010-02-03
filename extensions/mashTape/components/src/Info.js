@@ -146,6 +146,7 @@ ArtistInfo.prototype = {
 				var x = new XML(xmlText);
 
 				var data = new Object;
+        data.provider = "Last.fm";
 				data.url = "http://www.last.fm/music/" +
 					encodeURIComponent(this.artist) + "/+tags";
 				data.tags = new Array();
