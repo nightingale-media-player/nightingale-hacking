@@ -460,6 +460,7 @@
 <!ENTITY command.device.ejectcddevice                   "Eject CD">
 <!ENTITY command.device.ejectcddevice.accesskey         "E">
 
+<!ENTITY device.repair.menuitem.default                   "Repair my device">
 
 <!ENTITY device.firmware.wizard.title                     "Update Firmware">
 <!ENTITY device.firmware.wizard.check.page.title          "Check for Updated Firmware">
