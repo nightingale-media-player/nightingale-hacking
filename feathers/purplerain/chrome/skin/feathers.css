@@ -708,7 +708,7 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 * NAV BAR
 ******************************************************************************/
 #nav-bar toolbarbutton {
-  background: transparent;
+  background-color: transparent;
   border: none;
   -moz-border-radius: 0px;
 }

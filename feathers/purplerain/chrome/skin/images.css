@@ -562,22 +562,28 @@ treechildren::-moz-tree-twisty(open) {
 }
   */
 
-#nav-bar toolbarbutton {  
+#nav-bar toolbarbutton {
+  background-image: url('chrome://songbird/skin/nav-bar/bg-nav-bar-button.png');
+  background-position: center 0px;
+  background-repeat: no-repeat;
   -moz-background-clip:border;
-  -moz-image-region: rect(0px 23px 20px 0px);
+  -moz-image-region: rect(0px 24px 20px 0px);
   opacity: 1.0 !important;
 }
 #nav-bar toolbarbutton:hover {
-  -moz-image-region: rect(20px 23px 40px 0px);
+  background-position: center -20px;
+  -moz-image-region: rect(20px 24px 40px 0px);
   opacity: 1.0 !important;
 }
 #nav-bar toolbarbutton:active,
 #nav-bar toolbarbutton[open="true"] {
-  -moz-image-region: rect(40px 23px 60px 0px);
+  background-position: center -40px;
+  -moz-image-region: rect(40px 24px 60px 0px);
   opacity: 1.0 !important;
 }
 #nav-bar toolbarbutton[disabled="true"] {
-  -moz-image-region: rect(60px 23px 80px 0px);
+  background-position: center -60px;
+  -moz-image-region: rect(60px 24px 80px 0px);
   opacity: 1.0 !important;
 }
 
@@ -593,6 +599,25 @@ treechildren::-moz-tree-twisty(open) {
   list-style-image: url("chrome://songbird/skin/nav-bar/dropmarker.png");
 }
   */
+
+/* In Purple Rain we have hard-coded images that incorporate background &
+ * foreground into one list-style-image.  If you're a third-party featherer,
+ * you may wish to just define foreground icons and overlay the regular
+ * bg-nav-bar-button.png, in which case you can remove this rule
+ */
+#back-button,
+#forward-button,
+#stop-button,
+.sb-browser-stopreload-stop-button,
+#reload-button,
+.sb-browser-stopreload-reload-button,
+#home-button,
+#mediapages-button-listview,
+#mediapages-button-filterview,
+#mediapages-button
+{
+  background-image: none !important;
+}
 
 #back-button {
   list-style-image: url('chrome://songbird/skin/nav-bar/nav-button-back.png');
