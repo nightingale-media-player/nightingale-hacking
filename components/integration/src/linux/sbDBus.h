@@ -288,6 +288,33 @@ public:
 //------------------------------------------------------------------------------
 
 /**
+ * Post warning on failed ensure success using the error specified by aError and
+ * return value expression specified by aReturnValue.
+ *
+ * \param aError                D-Bus error.
+ * \param aReturnValue          Return value expression.
+ */
+
+#if defined(DEBUG)
+
+#define SB_DBUS_ENSURE_SUCCESS_BODY(aError, aReturnValue)                      \
+  char* msg = PR_smprintf("SB_DBUS_ENSURE_SUCCESS(%s, %s) failed with "        \
+                          "result %s",                                         \
+                          #aError,                                             \
+                          #aReturnValue,                                       \
+                          aError.message);                                     \
+  NS_WARNING(msg);                                                             \
+  PR_smprintf_free(msg);
+
+#else
+
+#define SB_DBUS_ENSURE_SUCCESS_BODY(aError, aReturnValue)                      \
+  NS_WARNING("SB_DBUS_ENSURE_SUCCESS(" #aError ", " #aReturnValue ") failed");
+
+#endif
+
+
+/**
  * Ensure that the D-Bus error specified by aError indicates success.  If it
  * doesn't post a warning with the D-Bus error message and return from the
  * current function with the return value specified by aReturnValue.
@@ -299,13 +326,7 @@ public:
 #define SB_DBUS_ENSURE_SUCCESS(aError, aReturnValue)                           \
   PR_BEGIN_MACRO                                                               \
     if (dbus_error_is_set(&aError)) {                                          \
-      char* msg = PR_smprintf("SB_DBUS_ENSURE_SUCCESS(%s, %s) failed with "    \
-                              "result %s",                                     \
-                              #aError,                                         \
-                              #aReturnValue,                                   \
-                              aError.message);                                 \
-      NS_WARNING(msg);                                                         \
-      PR_smprintf_free(msg);                                                   \
+      SB_DBUS_ENSURE_SUCCESS_BODY(aError, aReturnValue)                        \
       return aReturnValue;                                                     \
     }                                                                          \
   PR_END_MACRO
