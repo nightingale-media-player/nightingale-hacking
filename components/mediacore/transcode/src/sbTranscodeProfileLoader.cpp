@@ -73,10 +73,13 @@ sbTranscodeProfileLoader::LoadProfile(nsIFile *aFile, sbITranscodeProfile **_ret
     // this is on the main thread, call directly
     rv = LoadProfileInternal();
     NS_ENSURE_SUCCESS(rv, rv);
+
     rv = CallQueryInterface(mProfile.get(), _retval);
     NS_ENSURE_SUCCESS(rv, rv);
-    mProfile.forget();
-  } else {
+
+    mProfile = nsnull;
+  }
+  else {
     nsCOMPtr<nsIRunnable> runnable =
       do_QueryInterface(NS_ISUPPORTS_CAST(nsIRunnable*, this), &rv);
     NS_ASSERTION(runnable, "sbTranscodeProfileLoader should implement nsIRunnable");
@@ -85,10 +88,13 @@ sbTranscodeProfileLoader::LoadProfile(nsIFile *aFile, sbITranscodeProfile **_ret
 
     rv = CallQueryInterface(mProfile.get(), _retval);
     NS_ENSURE_SUCCESS(rv, rv);
-    mProfile.forget();
+
+    mProfile = nsnull;
+
     // check the return value from LoadProfileInternal
     NS_ENSURE_SUCCESS(mResult, mResult);
   }
+
   mFile = nsnull;
   return NS_OK;
 }
