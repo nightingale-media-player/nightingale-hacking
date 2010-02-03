@@ -360,7 +360,9 @@
               self.setButtonToggle("listview");
               break;
             default:
-              self.setButtonToggle(self._pageUrlMapping[currentPageURL]);
+              if (self._pageUrlMapping[currentPageURL]) {
+                self.setButtonToggle(self._pageUrlMapping[currentPageURL]);
+              }
           }
 
         };
@@ -437,9 +439,10 @@
                                     "anonid", "mediapages-button-filterview");
 
           var pageButtons = ["listview", "filterview"];
-          for (var i=0; i<=this._maxPageId; i++) {
-            pageButtons.push(i);
-          }
+          if (this._pageIdMapping.length > 0)
+            for (var i=0; i<=this._maxPageId; i++) {
+              pageButtons.push(i);
+            }
 
           if (id == null) {
             mpButton.setAttribute("disabled", true);
@@ -448,6 +451,7 @@
                                     "anonid", "mediapages-button-" + buttonId);
               if (!button)
                 button = document.getElementById("mediapages-button-"+buttonId);
+
               button.setAttribute("disabled", true);
               button.setAttribute("open", "false");
             }
@@ -462,6 +466,7 @@
                                   "anonid", "mediapages-button-" + buttonId);
             if (!button)
               button = document.getElementById("mediapages-button-" + buttonId);
+
             button.removeAttribute("disabled");
             if (buttonId == id)
               button.setAttribute("open", "true");
