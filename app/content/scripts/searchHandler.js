@@ -351,7 +351,7 @@ const gSearchHandler = {
   getSearchBar: function SearchHandler_getSearchBar() {
     // Look for a searchbar element
     var elements = document.getElementsByTagName("searchbar"); 
-    if (elements && elements.length > 0 && isElementVisible(elements[0])) {
+    if (elements && elements.length > 0) {
        return elements[0];
     } 
     return null;

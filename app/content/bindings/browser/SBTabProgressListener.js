@@ -115,6 +115,18 @@ SBTabProgressListener.prototype = {
 
       // Let listeners know that the tab location has changed
       this._tabBrowser.notifyTabContentChange();
+
+      // If we're in the media tab and NOT a media list view, then we're some
+      // sort of arbitrary XUL page, so hide the #nav-bar
+      if (this._tabBrowser.selectedTab == mediaTab &&
+          !this._tabBrowser.currentMediaListView)
+      {
+        document.getElementById("nav-bar").setAttribute("collapsed", "true");
+      }
+      else
+      {
+        document.getElementById("nav-bar").removeAttribute("collapsed");
+      }
     }
     catch ( err )
     {
