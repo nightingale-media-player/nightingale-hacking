@@ -118,7 +118,10 @@ var DialogController =
             }
           }
           catch (e) {
-            Cu.reportError("Hrm... couldn't get the format type?");
+            // If a format type isn't available, it's most likely a device
+            // function type.
+            this._logGenericFormatType(contentArray[contentCount],
+                                       formatArray[formatIndex]);
           }
         }
       }
@@ -126,6 +129,52 @@ var DialogController =
 
     document.getElementById("devicecaps-desc").appendChild(
       document.createTextNode(this._output));
+  },
+
+  _logGenericFormatType: function(aContentType, aFormat)
+  {
+    var contentType = "";
+    var sbIDC = Ci.sbIDeviceCapabilities;
+    switch (aContentType) {
+      case sbIDC.CONTENT_UNKNOWN:
+        contentType = "UNKNOWN";
+        break;
+
+      case sbIDC.CONTENT_FILE:
+        contentType = "FILE";
+        break;
+
+      case sbIDC.CONTENT_FOLDER:
+        contentType = "FOLDER";
+        break;
+
+      case sbIDC.CONTENT_AUDIO:
+        contentType = "AUDIO";
+        break;
+
+      case sbIDC.CONTENT_IMAGE:
+        contentType = "IMAGE";
+        break;
+
+      case sbIDC.CONTENT_VIDEO:
+        contentType = "VIDEO";
+        break;
+
+      case sbIDC.CONTENT_PLAYLIST:
+        contentType = "PLAYLIST";
+        break;
+
+      case sbIDC.CONTENT_ALBUM:
+        contentType = "ALBUM";
+        break;
+
+      case sbIDC.CONTENT_MAX_TYPES:
+        contentType = "MAX_TYPES";
+        break;
+    }
+
+    this._output +=
+      " *** " + contentType + " FORMAT '" + aFormat + "' ***\n\n";
   },
 
   _logAudioFormatType: function(aAudioFormat, aFormat)
