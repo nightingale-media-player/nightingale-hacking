@@ -48,6 +48,7 @@ var deviceFirmwareWizard = {
   _device: null,
   _deviceProperties: null,
   _deviceFirmwareUpdater: null,
+  _isDefaultDevice: false,
   _wizardElem: null,
   _wizardMode: "update",
   
@@ -154,9 +155,27 @@ var deviceFirmwareWizard = {
             .getService(Ci.sbIDeviceManager2);
         
         deviceManager.addEventListener(this);
+
+        // Handle default device
+        if(this._isDefaultDevice) {
+          let recoveryInstructions = 
+            SBFormattedString("device.firmware.wizard.recovery_mode.instructions", 
+                              [this._defaultDeviceName, 
+                               this._defaultDeviceKey, 
+                               this._defaultDeviceKey]);
+
+          let browser = document.getElementById("device_firmware_wizard_recovery_mode_browser");
+          let dataURI = "data:text/html," + escape(recoveryInstructions);
+          browser.setAttribute("src", dataURI);
+          
+          let label = document.getElementById("device_firmware_wizard_recovery_mode_label");
+          label.value = SBFormattedString("device.firmware.wizard.recovery_mode.connected",
+                                          [this._defaultDeviceName]);                         
+          return;
+        }
         
-        let handler = null;
-        
+        // Not default device, proceed as normal.
+        let handler = null;        
         try {
           handler = this._deviceFirmwareUpdater.getActiveHandler(this._device);
         }
@@ -261,8 +280,10 @@ var deviceFirmwareWizard = {
           this._repairDescriptionNode = null;
         }
 
+        let deviceName = this._isDefaultDevice ? 
+                           this._defaultDeviceName : this._deviceProperties.friendlyName;
         let descString = SBFormattedString("device.firmware.repair.description",
-                                           [this._deviceProperties.friendlyName]);
+                                           [deviceName]);
         this._repairDescriptionNode = document.createTextNode(descString);
         descElem.appendChild(this._repairDescriptionNode);
       }
@@ -457,9 +478,27 @@ var deviceFirmwareWizard = {
     } catch(e) {
       this._wizardMode = "update";
     }
-
-    this._device = dialogPB.objects.queryElementAt(0, Ci.sbIDevice);
-    this._deviceProperties = this._device.properties;
+    
+    try {
+      var defaultDevice = dialogPB.GetString(1).split("=");
+      this._isDefaultDevice = (defaultDevice[1] == "true");
+    }
+    catch(e) {
+      this._isDefaultDevice = false;
+    }
+    
+    if(!this._isDefaultDevice) {
+      this._device = dialogPB.objects.queryElementAt(0, Ci.sbIDevice);
+    }
+    else {
+      this._defaultDeviceName = dialogPB.GetString(2);
+      this._defaultDeviceKey = dialogPB.GetString(3);
+    }
+    
+    if(!this._isDefaultDevice) {
+      this._deviceProperties = this._device.properties;
+    }
+    
     this._deviceFirmwareUpdater = 
       Cc["@songbirdnest.com/Songbird/Device/Firmware/Updater;1"]
         .getService(Ci.sbIDeviceFirmwareUpdater);
@@ -475,8 +514,20 @@ var deviceFirmwareWizard = {
     this._initialized = true;
     SBDataSetBoolValue(this._activeDataRemote, true);
     
-    // in repair mode, skip check for update and download firmware
+    // in repair mode and default device mode, skip check for update and 
+    // download firmware.
     var self = this;
+    
+    // first check for default device mode as it needs to bypass the use
+    // of the firmware handler.
+    if(this._wizardMode == "repair" && this._isDefaultDevice) {
+      // repair mode + default device means we go straight to displaying
+      // the instructions to put the device in recovery mode.
+      this._wizardElem.title = SBString("device.firmware.repair.title");
+      return this._wizardElem.goTo("device_needs_recovery_mode_page");
+    }
+    
+    // not default device, proceed as normal.
     if(this._wizardMode == "repair") {
       this._wizardElem.title = SBString("device.firmware.repair.title");
       let handler = this._deviceFirmwareUpdater.getHandler(this._device);
@@ -690,7 +741,7 @@ var deviceFirmwareWizard = {
   _handleNeedsRecoveryMode: function deviceFirmwareWizard__handleNeedsRecoveryMode(aEvent) {
     switch(aEvent.type) {
       case Ci.sbIDeviceEvent.EVENT_DEVICE_ADDED: {
-        if(!this._waitingForDeviceReconnect) {
+        if(!this._waitingForDeviceReconnect && !this._isDefaultDevice) {
           return;
         }
         
@@ -699,14 +750,21 @@ var deviceFirmwareWizard = {
         let criticalFailure = false;
         let continueSuccess = false;
         
-        try {
-          continueSuccess = 
-            this._deviceFirmwareUpdater.continueUpdate(this._device, this);
+        // Not default device, proceed as normal.
+        if(!this._isDefaultDevice) {
+          try {
+            continueSuccess = 
+              this._deviceFirmwareUpdater.continueUpdate(this._device, this);
+          }
+          catch(e) {
+            criticalFailure = true;
+            Cu.reportError(e);
+          }
         }
-        catch(e) {
-          criticalFailure = true;
-          Cu.reportError(e);
-        }          
+        else {
+          // Simply continue if we're dealing with the default device.
+          continueSuccess = true;
+        }
 
         if(continueSuccess || criticalFailure) {
           this._waitingForDeviceReconnect = false;

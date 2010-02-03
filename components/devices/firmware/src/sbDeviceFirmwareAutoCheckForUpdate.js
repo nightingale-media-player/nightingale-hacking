@@ -208,7 +208,7 @@ function sbDeviceFirmwareAutoCheckForUpdate_observe(subject, topic, data) {
          "chrome://songbird/content/xul/device/deviceFirmwareWizard.xul",
          "device_firmware_dialog",
          "",
-         ["", this._queueItem ],
+         ["", "defaultDevice=false", this._queueItem ],
          null);
 
       this._queue.splice(0, 1);
@@ -392,7 +392,7 @@ function sbDeviceFirmwareAutoCheckForUpdate__promptForRepair(aDevice) {
                  "chrome://songbird/content/xul/device/deviceFirmwareWizard.xul",
                  "device_firmware_dialog",
                  "",
-                 [ "mode=repair", aDevice ],
+                 [ "mode=repair", "defaultDevice=false", aDevice ],
                  null);  
   }
 }

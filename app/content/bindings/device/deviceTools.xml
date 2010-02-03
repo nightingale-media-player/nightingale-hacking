@@ -243,7 +243,7 @@
              "chrome://songbird/content/xul/device/deviceFirmwareWizard.xul",
              "device_firmware_dialog",
              "",
-             [ "mode=update", this.device ],
+             [ "mode=update", "defaultDevice=false", this.device ],
              null);
          ]]></body>
       </method>
@@ -305,7 +305,7 @@
                "chrome://songbird/content/xul/device/deviceFirmwareWizard.xul",
                "device_firmware_dialog",
                "",
-               [ "mode=repair", this.device ],
+               [ "mode=repair", "defaultDevice=false", this.device ],
                null);
           }
         ]]></body>

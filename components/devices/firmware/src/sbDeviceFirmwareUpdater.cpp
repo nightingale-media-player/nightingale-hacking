@@ -668,7 +668,8 @@ sbDeviceFirmwareUpdater::RecoveryUpdate(sbIDevice *aDevice,
 
   // Check to make sure the cached firmware image is the same name
   // as the default one. If not, we need to delete the cached one and use
-  // the default one.
+  // the default one. We'll also check the filesizes, if they don't match
+  // we're going to prefer the default firmware instead.
   if(cachedFirmwareUpdate && defaultFirmwareUpdate) {
     nsCOMPtr<nsIFile> cachedFile;
     rv = cachedFirmwareUpdate->GetFirmwareImageFile(getter_AddRefs(cachedFile));
@@ -685,7 +686,16 @@ sbDeviceFirmwareUpdater::RecoveryUpdate(sbIDevice *aDevice,
     rv = defaultFile->GetLeafName(defaultFileName);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if(cachedFileName != defaultFileName) {
+    PRInt64 cachedFileSize = 0;
+    rv = cachedFile->GetFileSize(&cachedFileSize);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRInt64 defaultFileSize = 0;
+    rv = defaultFile->GetFileSize(&defaultFileSize);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if((cachedFileName != defaultFileName) || 
+       (cachedFileName == defaultFileName && cachedFileSize != defaultFileSize)) {
       nsCOMPtr<nsIFile> cacheDir;
       rv = cachedFile->GetParent(getter_AddRefs(cacheDir));
       NS_ENSURE_SUCCESS(rv, rv);
