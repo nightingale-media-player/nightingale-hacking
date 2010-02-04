@@ -158,19 +158,19 @@
       
       <property name="open">
         <getter>
-          if (this.mSplitter) {
-            return this.mSplitter.getAttribute("state") == "open";
-          } else {
-            return this.boxObject.width > 0;
-          }
+        <![CDATA[
+          var elId = this.mSplitter.getAttribute("collapseelement");
+          return !document.getElementById(elId).collapsed;
+        ]]>
         </getter>
         <setter>
-          if (this.mSplitter) {
-          this.mSplitter.setAttribute("state", val ? "open" : "collapsed");
-          } else {
-          this.collapsed = val;
-          }
+        <![CDATA[
+          var elId = this.mSplitter.getAttribute("collapseelement");
+          var el = document.getElementById(elId);
+          el.collapsed = !val;
 
+          SBDataSetBoolValue('splitter.servicepane_splitter.collapsed',
+                             el.collapsed);
           // If we are opening the service pane, make sure we highlight the
           // appropriate node.
           if(val) {
@@ -180,6 +180,7 @@
               this.mTreePane.highlightNode(node);
             }
           }
+          ]]>
         </setter>
       </property>
 

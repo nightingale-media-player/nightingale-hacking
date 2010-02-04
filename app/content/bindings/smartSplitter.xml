@@ -41,6 +41,12 @@
 
     <constructor>
       <![CDATA[
+        this._threshold = parseInt(this.getAttribute("collapsethreshold"));
+        if (this._threshold) {
+          var elementId = this.getAttribute("collapseelement");
+          this._collapseElement = document.getElementById(elementId);
+        }
+
         this._destroyed = false;
         this.restoreLastState();
         this.setAttribute("mousethrough", "never");
@@ -73,9 +79,17 @@
       <body>
         <![CDATA[
           if (event.attrName == "state") {
-            this.savePosition();
-            this.saveState();
-            this.doAutoShowHide();
+            if (this._collapseElement) {
+              var state = this.getAttribute("state");
+              if (state == "collapsed")
+                this._collapseElement.collapsed = true;
+              else
+                this._collapseElement.collapsed = false;
+            } else {
+              this.savePosition();
+              this.saveState();
+              this.doAutoShowHide();
+            }
           }
         ]]>
       </body>
@@ -124,9 +138,57 @@
       <parameter name="event"/>
       <body>
         <![CDATA[
+          // Auto-collapse logic.
+          // Whenever the user initiates a drag ('mousedown' event)
+          // we save the initial boxObject X position of the splitter
+          // (captured by event.currentTarget).
+          if (event.type == "mousedown") {
+            this._initialX = parseInt(event.currentTarget.boxObject.x);
+            this.toggled = false;
+          }
+
           var state = this.getAttribute( "state" );
           this.savePosition();
-          this.doAutoShowHide();
+
+          if (this._threshold && state == "dragging"
+              && event && this._collapseElement)
+          {
+            // If the mouse X position is less than initialX position, and
+            // the element-to-be-collapsed is still open, then do the
+            // threshold calculation.  If we're past the threshold, then
+            // collapse the element and set the initialX to be the minimum
+            // width of the collapsed element.  (e.g. the last good X
+            // position of the splitter just prior to collapsing
+            if (event.clientX < this._initialX
+                && !this._collapseElement.collapsed)
+            {
+              var minWidth =
+                  getComputedStyle(this._collapseElement, "").minWidth;
+              minWidth = parseInt(minWidth);
+              var threshold = Math.min(minWidth, minWidth - this._threshold);
+              if (event.clientX < threshold) {
+                this._collapseElement.collapsed = true;
+                this._initialX = minWidth;
+                this.toggled = true;
+              }
+            }
+            // Otherwise if the mouse X position is greater than the initialX
+            // position and the element is collapsed, then do the threshold
+            // calculation and expand the element.  Upon expanding, reset the
+            // initialX position to be the threshold value.
+            else if (event.clientX > this._initialX
+                     && this._collapseElement.collapsed)
+            {
+              var threshold = this._initialX + this._threshold;
+              if (event.clientX > threshold) {
+                this._collapseElement.collapsed = false;
+                this._initialX = this._threshold;
+                this.toggled = true;
+              }
+            }
+          } else if (!this._threshold) {
+            this.doAutoShowHide(event);
+          }
 
           // Only record state change on mouse up, rather than
           // on every mousemove
@@ -147,15 +209,30 @@
               if (collapsed && !SBDataGetBoolValue(root + "collapsed"))
                 metrics_inc(metricscategory, metricsid, null);
             }
-            
+
             this.saveState();
             
-            // trigger an event (name of the event is the name of the state) for custom handlers
+            // trigger an event (name of the event is the name of the state)
+            // for custom handlers
             var e = document.createEvent("Events");
             e.initEvent(state, false, true);
             this.dispatchEvent(e);
+
+            if (this.toggled) {
+              if (this._collapseElement.collapsed) {
+                this.setAttribute("state", "collapsed");
+              } else {
+                this.setAttribute("state", "open");
+              }
+
+              SBDataSetBoolValue(root + 'collapsed',
+                                 this._collapseElement.collapsed);
+              SBDataSetBoolValue(root + 'was_collapsed',
+                                 !this._collapseElement.collapsed);
+            }
+
+            this.toggled = false;
           }
-          
         ]]>
       </body>
     </method>
@@ -346,7 +423,7 @@
           switch (state) {
             case "open":
             case "dragging":
-              var hideonopen = this.getAttribute("hideonopen");
+             var hideonopen = this.getAttribute("hideonopen");
               if (hideonopen != "") {
                 var element = document.getElementById(hideonopen);
                 if (element) element.collapsed = true;
@@ -409,6 +486,7 @@
               }
             }
           }
+
           if (!sizeonly) {
             var state = SBDataGetStringValue( root + "collapsed" );
             if (state == "") {
@@ -418,6 +496,7 @@
               // use the stored value
               state = SBDataGetBoolValue( root + "collapsed" ) ? "collapsed" : "open";
             }
+
             this.setAttribute( "state", state );
             this.doAutoShowHide();
           }

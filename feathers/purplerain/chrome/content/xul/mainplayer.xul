@@ -96,9 +96,25 @@
         <vbox id="servicepane_box">
           <sb-servicepane id="servicepane" flex="1" browser="content">
           </sb-servicepane>
-        </vbox>
+          <hbox pack="end" flex="1" id="servicepane-status-bar-box">
+            <button class="service-pane-spring-load-button"
+                    tooltiptext="&tooltip.servicepane.show;"
+                    oncommand="gServicePane.open = !gServicePane.open;
+                               SBDataSetBoolValue(
+                                  'splitter.servicepane_splitter.was_collapsed',
+                                  gServicePane.open);"
+                    style="min-height:16px; min-width:16px;">
+              <observes type="dataremote"
+                        key="splitter.servicepane_splitter.collapsed"
+                        boolean="true"
+                        attribute="hidden" />
+            </button>
+          </hbox>
+      </vbox>
         <sb-smart-splitter id="servicepane_splitter" state="open"
                            resizebefore="closest" resizeafter="closest"
+                           collapsethreshold="20"
+                           collapseelement="servicepane_box"
                            hideoncollapse="servicepane_box"
                            showonopen="servicepane_box"
                            metricscategory="app"

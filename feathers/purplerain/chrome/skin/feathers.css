@@ -460,22 +460,23 @@ notification[type="critical"],
 * One for the browser and another for the service pane
 ******************************************************************************/
 statusbar {
-  background-color: rgb(43,41,54);
-  background-image: url(chrome://songbird/skin/base-elements/bg-statusbar.png);
   margin-right: 8px;
   padding-top: 1px;
   padding-bottom: 1px;
 }
 #servicepane-status-bar-box,
 #status-bar-box {
+  background-color: rgb(43,41,54);
+  background-image: url(chrome://songbird/skin/base-elements/bg-statusbar.png);
   border-top:1px solid rgb(87,86,100);
-  /* border-bottom:1px solid rgb(131,131,131); */
+  min-height: 25px;
+  -moz-box-align: center;
 }
 .service-pane-spring-load-button,
 .servicepane-toolbar-newitem-button,
 sb-displaypane-button > button {
-  border-right: 1px solid rgb(161,161,161);
-  border-left: 1px solid rgb(161,161,161);
+  border-right: none;
+  border-left: none;
 }
 
 
@@ -594,6 +595,9 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 #servicepane {
   background-color: rgb(54,52,63);
   border-left: 1px solid rgb(43,41,54);
+  border-bottom: 1px solid rgb(44,42,55);
+}
+
 }
 
 #servicepane_box {
@@ -863,18 +867,17 @@ sb-displaypane-splitter[orient="horizontal"] > stack > box > #dropdown-button {
 /******************************************************************************
 * SPLITTERS (the non-displaypane variety)
 ******************************************************************************/
-#servicepane_splitter,
+#servicepane_splitter {
+  border-left: 1px solid rgb(19,20,26);
+  border-right: 1px solid rgb(0,0,0);
+}
+#servicepane_box[collapsed="true"] + #servicepane_splitter {
+  margin-left: 2px;
+}
+
 #filter_splitter {
   background-color: rgb(0,0,0);
   background-image: none;
-}
-
-#servicepane_splitter {
-  border-right: 1px solid rgb(19,20,26);
-  border-left: 1px solid rgb(43,41,54);
-}
-
-#filter_splitter {
   border-right: 1px solid rgb(43,41,54);
   border-left: 1px solid rgb(19,20,26);
 }

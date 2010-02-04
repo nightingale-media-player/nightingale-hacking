@@ -265,16 +265,31 @@ notification[type="critical"],
 
 
 
-
 #servicepane-status-bar-box > .service-pane-spring-load-button,
 #status-bar-box > .service-pane-spring-load-button {
   list-style-image:  url("chrome://songbird/skin/service-pane/button-service-pane-toggle.png");
+  background-image: none;
+  background-color: transparent;
+  min-width: auto;
+  padding-right: 0px !important;
+  padding-left: 0px !important;
 }
-#servicepane-status-bar-box > .service-pane-spring-load-button {
-  -moz-image-region: rect(0px, 32px, 16px, 16px);
-}
+
+/* the open/expand servicepane button */
 #status-bar-box > .service-pane-spring-load-button {
   -moz-image-region: rect(0px, 16px, 16px, 0px);
+  margin-left: -2px !important;
+}
+#status-bar-box > .service-pane-spring-load-button:hover {
+  -moz-image-region: rect(16px, 16px, 32px, 0px);
+}
+/* the close/collapse servicepane button */
+#servicepane-status-bar-box > .service-pane-spring-load-button {
+  -moz-image-region: rect(32px, 16px, 48px, 0px);
+  margin-right: -2px !important;
+}
+#servicepane-status-bar-box > .service-pane-spring-load-button:hover {
+  -moz-image-region: rect(48px, 16px, 64px, 0px);
 }
 
 

@@ -389,22 +389,9 @@ These let the user resize the frames in your box model.
   visibility:collapse;
 }
 
-#servicepane_splitter[state="collapsed"] {
-  width:0px;
-  min-width:0px;
-  max-width:0px;
-  border:none !important;
-}
-
-#servicepane_splitter[state="collapsed"]:hover {
-}
-
-#servicepane_splitter[state="collapsed"]:active {
-}
-
 #servicepane_splitter {
-  max-width:4px;
-  min-width:4px;
+  max-width:2px;
+  min-width:2px;
 }
 #filter_splitter {
   max-width:3px;
@@ -697,8 +684,6 @@ notification,
   border-bottom:none !important;
   max-height:19px;
 }
-
-
 
 .servicepane-toolbar-newitem-button {
   max-width:16px;
