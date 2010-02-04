@@ -112,7 +112,7 @@ deviceGeneralSettingsSvc.prototype = {
 
     // Determine which settings are supported.
     this._getSupportedSettings();
-
+    
     // Hide device settings and do nothing more if no settings are supported.
     if (!this._autoLaunchSupported && !this._autoFirmwareCheckSupported) {
       this._widget.hidden = true;
@@ -229,14 +229,22 @@ deviceGeneralSettingsSvc.prototype = {
     if (this._autoFirmwareCheckSupported &&
         (allSettings || (aSettingID == "auto_firmware_check_checkbox"))) {
       // Get the device auto-firmware check setting.  Use a default if no
-      // setting set.  (no pref = null, so it defaults to false)
-      var autoFirmwareCheckEnabled =
-        this._device.getPreference("firmware.update.enabled");
+      // setting set.  (no pref = null, defaults to true in the case)
+      var deviceAutoFirmwarePref = this._device.getPreference("firmware.update.enabled");
+      
+      var autoFirmwareCheckEnabled = 
+        (deviceAutoFirmwarePref == null) ? true : deviceAutoFirmwarePref;
+
+      // Also set the device pref if it was not already present.        
+      if(deviceAutoFirmwarePref == null) {
+        this._device.setPreference("firmware.update.enabled",
+                                   autoFirmwareCheckEnabled);        
+      }
 
       // Set the UI setting.
       var autoFirmwareCheckCheckbox =
             this._getElement("auto_firmware_check_checkbox");
-      autoFirmwareCheckCheckbox.checked = !!autoFirmwareCheckEnabled;
+      autoFirmwareCheckCheckbox.checked = autoFirmwareCheckEnabled;
     }
   },
 
