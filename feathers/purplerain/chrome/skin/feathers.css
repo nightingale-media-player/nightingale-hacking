@@ -461,7 +461,7 @@ notification[type="critical"],
 ******************************************************************************/
 statusbar {
   background-color: rgb(43,41,54);
-  background-image: none;
+  background-image: url(chrome://songbird/skin/base-elements/bg-statusbar.png);
   margin-right: 8px;
   padding-top: 1px;
   padding-bottom: 1px;

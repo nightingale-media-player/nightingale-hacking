@@ -266,12 +266,6 @@ notification[type="critical"],
 
 
 
-statusbar {
-  background-image:url('chrome://songbird/skin/service-pane/bg-status-bar.png');
-  background-repeat:repeat-x;
-  background-position:left top;
-}
-
 #servicepane-status-bar-box > .service-pane-spring-load-button,
 #status-bar-box > .service-pane-spring-load-button {
   list-style-image:  url("chrome://songbird/skin/service-pane/button-service-pane-toggle.png");
