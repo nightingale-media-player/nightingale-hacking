@@ -1,27 +1,25 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 if (typeof(Ci) == "undefined")
@@ -231,40 +229,6 @@ var AlbumArt = {
   },
 
   /**
-   * \brief isPaneSquare - This function ensures that the height of the
-   *        display pane is equal to the width. This will resize the pane if
-   *        it is not square.
-   * \return False if the pane is not square, True if it is. 
-   */
-  isPaneSquare: function AlbumArt_isPaneSquare() {
-    // Window is our displaypane, so grab the size
-    var windowWidth = window.innerWidth;
-    var windowHeight = window.innerHeight;
-
-    if (windowHeight != windowWidth) {
-      // First determine if we are in the service pane display pane
-      if (AlbumArt._displayPane &&
-          AlbumArt._displayPane.contentGroup == "servicepane") {
-        // Account for the displayPane header.
-        var displayPaneHeaderSize = AlbumArt._displayPane.height - windowHeight;
-        AlbumArt._displayPane.height = windowWidth + displayPaneHeaderSize;
-        // Indicate that we have resized the pane.
-        return false;
-      }
-    }
-    return true;
-  },
-  
-  /**
-   * \brief onResize - This function is called when either an image loads or
-   *        the display pane is resized.
-   */
-  onResize: function AlbumArt_onResize() {
-    // Ensure the display pane content is square.
-    AlbumArt.isPaneSquare();
-  },
-
-  /**
    * \brief canEditItems - This checks that all items in aItemArray can have
    *        their metadata edited. It will return true only if all items are
    *        editable.
@@ -469,9 +433,6 @@ var AlbumArt = {
     // Ensure we have the correct title and deck displayed.
     AlbumArt.switchState(AlbumArt._currentState);
     
-    // Make sure we are square (this will resize)
-    AlbumArt.isPaneSquare();
-
     // Setup the dataremote for the now playing image.
     var createDataRemote =  new Components.Constructor(
                                   "@songbirdnest.com/Songbird/DataRemote;1",
@@ -497,12 +458,6 @@ var AlbumArt = {
       AlbumArt.changeNowSelected(null);
     }
 
-    // Listen for resizes of the display pane so that we can keep the aspect
-    // ratio of the image.
-    window.addEventListener("resize",
-                            AlbumArt.onResize,
-                            false);
-    
     // Setup the Now Selected display
     AlbumArt.onTabContentChange();
   },
@@ -537,10 +492,6 @@ var AlbumArt = {
     
     AlbumArt._coverBind.unbind();
     AlbumArt._coverBind = null;
-
-    window.removeEventListener("resize",
-                               AlbumArt.onResize,
-                               false);
 
     // Remove selection listeners
     if(AlbumArt._mediaListView) {
