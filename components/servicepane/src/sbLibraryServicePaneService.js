@@ -963,11 +963,61 @@ function sbLibraryServicePane_setNodeReadOnly(aNode, aReadOnly) {
 
 
 /**
+ * Return true if the given device supports playlist
+ */
+sbLibraryServicePane.prototype._doesDeviceSupportPlaylist =
+function sbLibraryServicePane__doesDeviceSupportPlaylist(aDevice) {
+  // Check the device capabilities to see if it supports playlists.
+  // Device implementations may respond to CONTENT_PLAYLIST for either
+  // FUNCTION_DEVICE or FUNCTION_AUDIO_PLAYBACK.
+  var capabilities = aDevice.capabilities;
+  var sbIDC = Ci.sbIDeviceCapabilities;
+  try {
+    var contentTypes = capabilities.
+      getSupportedContentTypes(sbIDC.FUNCTION_DEVICE, {});
+    for (var i in contentTypes) {
+      if (contentTypes[i] == sbIDC.CONTENT_PLAYLIST) {
+        return true;
+      }
+    }
+  } catch (e) {}
+
+  try {
+    var contentTypes = capabilities
+      .getSupportedContentTypes(sbIDC.FUNCTION_AUDIO_PLAYBACK, {});
+    for (var i in contentTypes) {
+      if (contentTypes[i] == sbIDC.CONTENT_PLAYLIST) {
+        return true;
+      }
+    }
+  } catch (e) {}
+
+  // couldn't find PLAYLIST support in either the DEVICE
+  // or AUDIO_PLAYBACK category
+  return false;
+}
+
+
+/**
  * Return true if the given library supports the given list type
  */
 sbLibraryServicePane.prototype._doesLibrarySupportListType =
 function sbLibraryServicePane__doesLibrarySupportListType(aLibrary, aListType) {
   //logcall(arguments);
+
+  var device;
+  // Get device from non-device library will cause NS_ERROR_NOT_IMPLEMENTED.
+  // Device library could also return NS_ERROR_UNEXPECTED on failure.
+  try {
+    device = aLibrary.device;
+  } catch (e) {
+    device = null;
+  }
+
+  // Check whether the device support playlist.
+  if (device && !this._doesDeviceSupportPlaylist(device)) {
+    return false;
+  }
 
   // If the transfer policy indicates read only media lists, the library does
   // not support adding media lists of any type
