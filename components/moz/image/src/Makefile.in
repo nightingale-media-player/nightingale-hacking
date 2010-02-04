@@ -22,38 +22,27 @@
 #=END SONGBIRD GPL
 #
 
-DEPTH = ../..
+DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-# 
-# The "process" directory was removed from SUBDIRS because it's currently 
-# unused, but the component may need to be resurrected at some point. 
-# 
+CPP_SRCS = sbImageParser.cpp \
+           sbImageParserModule.cpp \
+           $(NULL)
 
-SUBDIRS = strings \
-          distribution \
-          clipboard \
-          dirprovider \
-          domevents \
-          filedownloader \
-          fileutils \
-          prompter \
-          proxy \
-          temporaryfileservice \
-          threadpoolservice \
-          threads \
-          urlformatter \
-          variant \
-          windowwatcher \
-          xpcom \
-          streams \
-          shutdownservice \
-          system \
-          image \
-          $(NULL)
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/moz/image/public \
+                     $(topsrcdir)/components/include \
+										 $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(NULL)
+
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+                            plc4 \
+                            $(NULL)
+DYNAMIC_LIB = sbPrompter
+
+IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

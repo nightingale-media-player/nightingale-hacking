@@ -22,38 +22,16 @@
 #=END SONGBIRD GPL
 #
 
-DEPTH = ../..
+DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-# 
-# The "process" directory was removed from SUBDIRS because it's currently 
-# unused, but the component may need to be resurrected at some point. 
-# 
+XPIDL_SRCS = sbIImageParser.idl \
+             $(NULL)
 
-SUBDIRS = strings \
-          distribution \
-          clipboard \
-          dirprovider \
-          domevents \
-          filedownloader \
-          fileutils \
-          prompter \
-          proxy \
-          temporaryfileservice \
-          threadpoolservice \
-          threads \
-          urlformatter \
-          variant \
-          windowwatcher \
-          xpcom \
-          streams \
-          shutdownservice \
-          system \
-          image \
-          $(NULL)
+XPIDL_MODULE = sbImageParser.xpt
 
 include $(topsrcdir)/build/rules.mk
