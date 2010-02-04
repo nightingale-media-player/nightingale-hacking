@@ -1155,6 +1155,9 @@ sbLocalDatabaseCascadeFilterSet::ApplyConstraintFilters(sbILocalDatabaseGUIDArra
 
   }
   else {
+    nsCOMPtr<sbIPropertyManager> propMan =
+      do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsISimpleEnumerator> groupEnum;
     rv = constraint->GetGroups(getter_AddRefs(groupEnum));
@@ -1182,7 +1185,36 @@ sbLocalDatabaseCascadeFilterSet::ApplyConstraintFilters(sbILocalDatabaseGUIDArra
         rv = group->GetValues(prop, getter_AddRefs(valueEnum));
         NS_ENSURE_SUCCESS(rv, rv);
 
-        rv = aArray->AddFilter(prop, valueEnum, PR_FALSE);
+        nsCOMPtr<sbIPropertyInfo> info;
+        rv = propMan->GetPropertyInfo(prop,
+                                      getter_AddRefs(info));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        /* Convert our valueEnum to an enum of the sortable values */
+        sbStringArray valueArray;
+        PRBool hasMore;
+        rv = valueEnum->HasMore(&hasMore);
+        NS_ENSURE_SUCCESS(rv, rv);
+        while (hasMore) {
+          nsString sortableValue;
+          nsAutoString value;
+          rv = valueEnum->GetNext(value);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          rv = info->MakeSortable(value, sortableValue);
+          NS_ENSURE_SUCCESS(rv, rv);
+          nsString* successString = valueArray.AppendElement(sortableValue);
+          NS_ENSURE_TRUE(successString, NS_ERROR_OUT_OF_MEMORY);
+
+          rv = valueEnum->HasMore(&hasMore);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+
+        nsCOMPtr<nsIStringEnumerator> sortedValueEnum =
+          new sbTArrayStringEnumerator(&valueArray);
+        NS_ENSURE_TRUE(sortedValueEnum, NS_ERROR_OUT_OF_MEMORY);
+
+        rv = aArray->AddFilter(prop, sortedValueEnum, PR_FALSE);
         NS_ENSURE_SUCCESS(rv, rv);
       }
     }
