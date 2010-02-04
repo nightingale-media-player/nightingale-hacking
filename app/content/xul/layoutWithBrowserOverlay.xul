@@ -471,9 +471,12 @@
       <key id="key_selectTab8" oncommand="BrowserNumberTabSelection(event, 7);" key="8" modifiers="accel"/>
       <key id="key_selectTab9" oncommand="BrowserNumberTabSelection(event, 8);" key="9" modifiers="accel"/>
       <key id="key_search" key="&searchFocus.key;" oncommand="BrowserSearch.webSearch();" modifiers="accel"/>
-	  
+
+      <!--
+      Removed per bug 20069, but left here for posterity - stevel
       <key keycode="VK_BACK" oncommand="BrowserHandleBackspace();"/>
       <key keycode="VK_BACK" oncommand="BrowserHandleShiftBackspace();" modifiers="shift"/>
+      -->
 
 #ifndef XP_MACOSX
       <key id="goBackKb"  keycode="VK_LEFT" command="Browser:Back" modifiers="alt"/>
