@@ -108,6 +108,7 @@
 ./components/sbHotkeyActions.js
 ./components/sbIMediacoreErrorHandler.xpt
 ./components/sbIURIImportService.xpt
+./components/sbImageParser.xpt
 ./components/sbIntegration.dll
 ./components/sbIntegration.xpt
 ./components/sbIntl.dll
