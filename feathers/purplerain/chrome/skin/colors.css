@@ -184,6 +184,12 @@ treecolpicker > .tree-columnpicker-icon {
   margin:0;
 }
 
+#nav-bar toolbarbutton#mediapages-button-listview,
+#nav-bar toolbarbutton#mediapages-button-filterview {
+  min-width: 23px;
+  max-width: 23px;
+}
+
 #nav-bar toolbarbutton#mediapages-button,
 #nav-bar toolbarbutton#mediapages-button .toolbarbutton-icon {
   min-width: 11px;
