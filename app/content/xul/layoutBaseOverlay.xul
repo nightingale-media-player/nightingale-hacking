@@ -198,6 +198,7 @@
                                  hideBuiltIn="false" />
         <menuseparator/>
         <menuitem id="menuitem-video-fullscreen"
+                  key="video-window-full-screen-key"
                   label="&menu.fullscreen;"
                   type="checkbox"
                   oncommand="toggleFullscreenVideo();"/>
@@ -403,6 +404,7 @@
       <key id="control-previous-key" keycode="VK_LEFT" modifiers="control" command="cmd_control_previous"/>
       <!-- video related controls -->
       <key id="video-window-to-front-key" modifiers="accel shift" key="&videowindow.bringtofront.key;" oncommand="bringVideoWindowToFront();"/>
+      <key id="video-window-full-screen-key" modifiers="accel shift" key="&videowindow.fullscreen.key;" oncommand="toggleFullscreenVideo();"/>
 
     </keyset>
 
