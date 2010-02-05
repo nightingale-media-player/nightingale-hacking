@@ -1818,8 +1818,9 @@ mashTape.loadFlashDetail = function(el) {
     e.preventDefault();
     e.stopPropagation();
     var target = e.target;
-    while (target != null && !target.href)
+    while (target != null && !target.href) {
       target = target.parentNode;
+    }
     if (target == null)
       return;
     if (target.href) {
@@ -1850,6 +1851,7 @@ mashTape.loadFlashDetail = function(el) {
   // display the content divs
   var actualContent = doc.getElementById("actual-content");
   actualContent.style.display = "block";
+  doc.getElementById("caption").href = url;
 
   var containingDiv = el;
   if (mashTape.selectedFlash)
