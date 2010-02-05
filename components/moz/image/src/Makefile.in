@@ -35,7 +35,7 @@ CPP_SRCS = sbImageParser.cpp \
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/moz/image/public \
                      $(topsrcdir)/components/include \
-										 $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
                      $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
