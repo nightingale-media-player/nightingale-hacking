@@ -149,12 +149,12 @@
   </tabbox>
 
   <hbox class="dialog-button-box">
-    <button id="prev_button"
+    <button id="prev_button" flex="0"
             label="&trackeditor.prev.button.label;"
             accesskey="&trackeditor.prev.accesskey;"
             tooltiptext="&tooltip.control.back;"
             command="trackeditor-prev-cmd"/>
-    <button id="next_button"
+    <button id="next_button" flex="0"
             label="&trackeditor.next.button.label;"
             accesskey="&trackeditor.next.accesskey;"
             tooltiptext="&tooltip.control.fwd;"
