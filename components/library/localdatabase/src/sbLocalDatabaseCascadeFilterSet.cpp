@@ -450,9 +450,6 @@ sbLocalDatabaseCascadeFilterSet::Set(PRUint16 aIndex,
     sbFilterSpec& downstream = mFilters[i];
     downstream.values.Clear();
 
-    rv = ConfigureArray(i);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     if (downstream.treeView) {
       nsCOMPtr<nsITreeSelection> selection;
       rv = downstream.treeView->GetSelection(getter_AddRefs(selection));
@@ -465,6 +462,9 @@ sbLocalDatabaseCascadeFilterSet::Set(PRUint16 aIndex,
       rv = downstream.treeView->Rebuild();
       NS_ENSURE_SUCCESS(rv, rv);
     }
+
+    rv = ConfigureArray(i);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     // Notify listeners
     mListeners.EnumerateEntries(OnValuesChangedCallback, &i);
