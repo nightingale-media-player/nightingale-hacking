@@ -41,7 +41,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/moz/image/public \
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             plc4 \
                             $(NULL)
-DYNAMIC_LIB = sbPrompter
+DYNAMIC_LIB = sbImageParser
 
 IS_COMPONENT = 1
 
