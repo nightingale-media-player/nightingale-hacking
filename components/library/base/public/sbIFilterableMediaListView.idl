@@ -47,7 +47,8 @@ interface sbILibraryConstraint;
 interface sbIFilterableMediaListView : nsISupports
 {
   /**
-   * \brief Get or set the current filter constraint
+   * \brief Get or set the current filter constraints, including any constraints
+   *        on the cascadeFilterSet of this view.
    */
   attribute sbILibraryConstraint filterConstraint;
 };

@@ -1147,6 +1147,34 @@ sbLocalDatabaseMediaListView::NotifyListenersInternal(ListenerFunc aListenerFunc
   }
 }
 
+nsresult
+sbLocalDatabaseMediaListView::GetViewConstraint(sbILibraryConstraint** aFilterConstraint)
+{
+  NS_ENSURE_ARG_POINTER(aFilterConstraint);
+
+  nsresult rv;
+
+  if (mViewFilter) {
+    nsCOMPtr<sbILibraryConstraintBuilder> builder =
+      do_CreateInstance(SONGBIRD_LIBRARY_CONSTRAINTBUILDER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = builder->IncludeConstraint(mViewFilter, nsnull);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbILibraryConstraint> constraint;
+    rv = builder->Get(getter_AddRefs(constraint));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    NS_ADDREF(*aFilterConstraint = constraint);
+  }
+  else {
+    *aFilterConstraint = nsnull;
+  }
+
+  return NS_OK;
+}
+
 // sbIFilterableMediaListView
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::GetFilterConstraint(sbILibraryConstraint** aFilterConstraint)

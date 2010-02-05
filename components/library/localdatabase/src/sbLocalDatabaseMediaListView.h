@@ -104,6 +104,10 @@ public:
     NotifyListenersInternal(&sbIMediaListViewListener::OnSortChanged);
   }
 
+  // Get the filter constraints set on the view. This excludes additional
+  // constraints from the CascadeFilterSet in this view.
+  nsresult GetViewConstraint(sbILibraryConstraint** aFilterConstraint);
+
 private:
   typedef nsTArray<nsString> sbStringArray;
   typedef nsCOMArray<sbIPropertyArray> sbPropertyArrayList;

@@ -1122,9 +1122,10 @@ sbLocalDatabaseCascadeFilterSet::ApplyConstraintFilters(sbILocalDatabaseGUIDArra
 
   nsCOMPtr<sbILibraryConstraint> constraint;
 
-  // ask the media list view for the constraints
+  // ask the media list view for the constraints it is using (not including
+  // any that come from this CFS)
   if (mMediaListView) {
-    rv = mMediaListView->GetFilterConstraint(getter_AddRefs(constraint));
+    rv = mMediaListView->GetViewConstraint(getter_AddRefs(constraint));
     if (NS_FAILED(rv)) {
       constraint = nsnull;
     }
