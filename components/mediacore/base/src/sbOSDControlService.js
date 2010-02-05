@@ -38,6 +38,9 @@ if (typeof(Cr) == "undefined")
 // Constants
 
 const SB_OSDHIDE_DELAY = 3000;
+const MAX_OSD_WIDTH    = 502;
+const OSD_HEIGHT       = 70;
+const OSD_PADDING      = 18;  // 9 on each side.
 
 
 //==============================================================================
@@ -71,10 +74,29 @@ sbOSDControlService.prototype =
 
 
   _recalcOSDPosition: function() {
-    this._osdWindow.moveTo(this._videoWindow.screenX,
-                           this._videoWindow.screenY);
-    this._osdWindow.resizeTo(this._videoWindow.innerWidth,
-                             this._videoWindow.outerHeight);
+    // Compute the position of the OSD controls using the video windows local
+    // and screen coordinates.
+    var osdY = this._videoWindow.screenY +
+      (this._videoWindow.outerHeight * 0.95 - this._osdWindow.outerHeight);
+
+    // Resize the osd window as needed. (after move if needed)
+    var newOSDWidth = this._osdWindow.innerWidth;
+    if (this._videoWindow.innerWidth + OSD_PADDING > MAX_OSD_WIDTH) {
+      newOSDWidth = MAX_OSD_WIDTH;
+    }
+    else {
+      newOSDWidth = this._videoWindow.innerWidth - OSD_PADDING;
+    }
+
+    // Now compute X position.
+    var osdX = this._videoWindow.screenX +
+      (this._videoWindow.innerWidth / 2) - (newOSDWidth / 2);
+
+    // Move to the new (x,y) coordinates.
+    this._osdWindow.moveTo(osdX, osdY);
+
+    // Now finally resize the osd window.
+    this._osdWindow.resizeTo(newOSDWidth, OSD_HEIGHT);
   },
 
   //----------------------------------------------------------------------------
@@ -229,6 +251,8 @@ sbOSDControlService.prototype =
 
     this._timer.cancel();
 
+    /* disable transitions for now.
+       See bug: 20058
     var transition;
     switch (aTransitionType) {
       case Ci.sbIOSDControlService.TRANSITION_FADE:
@@ -246,8 +270,9 @@ sbOSDControlService.prototype =
         // Just fall back to hiding instantly.
         transition = this._hideInstantly; 
     }
+    */
 
-    transition.call(this, function() {
+    this._hideInstantly.call(this, function() {
       // The OSD controls are no longer showing. The order of events
       // here is critical; surprisingly, the cloaking must happen
       // last.
@@ -293,6 +318,8 @@ sbOSDControlService.prototype =
       this._cloakService.uncloak(this._osdWindow);
     }
 
+    /* disable transitions for now
+       See bug: 20058
     var transition;
     switch (aTransitionType) {
       case Ci.sbIOSDControlService.TRANSITION_FADE:
@@ -310,15 +337,16 @@ sbOSDControlService.prototype =
         // Just fall back to show instantly.
         transition = this._showInstantly; 
     }
+    */
     
-    transition.call(this);
+    this._showInstantly.call(this);
   },
 
   _fade: function(start, end, func) {
     var self = this;
     this._fadeCancel();
     this._fadeContinuation = func;
-    var node = this._osdWindow.document.getElementById("osd_main_vbox");
+    var node = this._osdWindow.document.getElementById("osd_wrapper_hbox");
     var opacity = start;
     var delta = (end - start) / 10;
     var step = 1;
@@ -344,7 +372,7 @@ sbOSDControlService.prototype =
 
   _showInstantly: function(func) {
     this._fadeCancel();
-    var node = this._osdWindow.document.getElementById("osd_main_vbox");
+    var node = this._osdWindow.document.getElementById("osd_wrapper_hbox");
     if (node) {
       node.style.opacity = 1;
     }

@@ -28,9 +28,9 @@
 */
 
 #video_osd_controls_win {
-  background-color: transparent !important;
+  background-color: black !important;
   width: 320px;
-  height: 240px;
+  height: 70px;
 }
 
 /*
@@ -39,9 +39,6 @@
 */
 
 #osd_wrapper_hbox {
-  padding-bottom: 14px;
-  padding-left: 10px;
-  padding-right: 10px;
 }
 
 #osd_wrapper_hbox[fullscreen] {
