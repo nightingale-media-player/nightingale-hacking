@@ -559,6 +559,21 @@ public:
   sbDeviceTranscoding * GetDeviceTranscoding() const {
     return mDeviceTranscoding;
   }
+  /**
+   * This should be used with extreme caution. It is exposed because the
+   * MTP property implementation needs to lock the state for formatting
+   * so that properties do not block the main thread when formatting
+   */
+  PRLock * StateLock() {
+    return mStateLock;
+  }
+  /**
+   * Return the state without locking. This is for use in conjunction with
+   * StateLock
+   */
+  PRUint32 GetDeviceState() {
+    return mState;
+  }
 protected:
   friend class sbBaseDeviceInitHelper;
   friend class sbDeviceEnsureSpaceForWrite;

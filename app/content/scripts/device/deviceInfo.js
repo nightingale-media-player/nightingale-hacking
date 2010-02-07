@@ -704,11 +704,14 @@ var DIW = {
   //
   //   _device                  sbIDevice object.
   //   _deviceProperties        Cache properties to avoid costly garbage
-
+  //   _lastPropertyValue       Holds the last value retrieved in case we
+  //                            can't retrieve the property due to formatting
+  //                            or other reasons
+  
   _device: null,
-
   _deviceProperties : null,
-
+  _lastPropertyValue : {},
+  
   /**
    * \brief Finalize the device services.
    */
@@ -732,8 +735,15 @@ var DIW = {
   _getDeviceProperty: function DIW__getDeviceProperty(aPropertyName, aDefault) {
     try {
       if (this._deviceProperties.properties.hasKey(aPropertyName))
-        return this._deviceProperties.properties.getPropertyAsAString(aPropertyName);
-    } catch (err) { }
+        var value = this._deviceProperties.properties.getPropertyAsAString(
+                                                                 aPropertyName);
+      this._lastPropertyValue[aPropertyName] = value;
+      return value;
+    } catch (err) {
+      if (this._lastPropertyValue[aPropertyName]) {
+        return this._lastPropertyValue[aPropertyName];
+      }
+    }
     return aDefault;
   },
 
@@ -745,7 +755,15 @@ var DIW = {
 
   _getDeviceModel: function DIW__getDeviceModel() {
     var modelNumber = null;
-    try { modelNumber = this._deviceProperties.modelNumber; } catch(err) {}
+    try { 
+      modelNumber = this._deviceProperties.modelNumber;
+      this._lastPropertyValue.modelNumber = modelNumber;
+    } 
+    catch(err) {
+      if (this._lastPropertyValue.modelNumber) {
+        modelNumber = this._lastPropertyValues.modelNumber;
+      }
+    }
     if (modelNumber == null)
       modelNumber = SBString("device.info.unknown");
 
@@ -760,7 +778,14 @@ var DIW = {
 
   _getDeviceProduct: function DIW__getDeviceProduct() {
     var productName = null;
-    try { productName = this._device.productName; } catch(err) {}
+    try { 
+      productName = this._device.productName;
+      this._lastPropertyValue.productName = productName; 
+    } catch(err) {
+      if (this._lastPropertyValue.productName) {
+        productName = this._lastPropertyValue.productName;
+      } 
+    }
     if (productName == null)
       productName = SBString("device.info.unknown");
     return productName;
@@ -807,7 +832,14 @@ var DIW = {
 
   _getDeviceFriendlyName: function DIW__getDeviceFriendlyName() {
     var friendlyName = null;
-    try { friendlyName = this._deviceProperties.friendlyName; } catch(err) {}
+    try { 
+      friendlyName = this._deviceProperties.friendlyName;
+      this._lastPropertyValue.friendlyName = friendlyNname; 
+    } catch(err) {
+      if (this._lastPropertyValue.friendlyName) {
+        friendlyName = this._lastPropertyValue.friendlyName;
+      }
+    }
     if (friendlyName == null)
       friendlyName = SBString("device.info.unknown");
 
@@ -823,7 +855,14 @@ var DIW = {
 
   _getDeviceSerialNumber: function DIW__getDeviceSerialNumber() {
     var serialNumber = null;
-    try { serialNumber = this._deviceProperties.serialNumber; } catch(err) {}
+    try { 
+      serialNumber = this._deviceProperties.serialNumber;
+      this._lastPropertyValue.serialNumber = serialNumber; 
+    } catch(err) {
+      if (this._lastPropertyValue.serialNumber) {
+        serialNumber = this._lastPropertyValue.serialNumber;
+      }
+    }
     if (serialNumber == null)
       serialNumber = SBString("device.info.unknown");
 
@@ -839,7 +878,14 @@ var DIW = {
 
   _getDeviceVendor: function DIW__getDeviceVendor() {
     var vendorName = null;
-    try { vendorName = this._deviceProperties.vendorName; } catch(err) {}
+    try { 
+      vendorName = this._deviceProperties.vendorName;
+      this._lastPropertyValue.vendorName = this._lastPropertyValue.vendorName; 
+    } catch(err) {
+      if (this._lastPropertyValue.vendorName) {
+        vendorName = this._lastPropertyValue.vendorName;
+      }
+    }
     if (vendorName == null)
       vendorName = SBString("device.info.unknown");
 
@@ -1040,6 +1086,7 @@ var DIW = {
   _getDeviceIcon: function DIW__getDeviceIcon() {
     try {
       var uri = this._deviceProperties.iconUri;
+      this._lastPropertyValue.uri = uri;
       var spec = uri.spec;
       if (uri.schemeIs("file") && /\.ico$/(spec)) {
         // try to use a suitably sized image
@@ -1047,6 +1094,9 @@ var DIW = {
       }
       return spec;
     } catch (err) {
+      if (this._lastPropertyValue.uri) {
+        return this._lastPropertyValue.uri;
+      }
       // default image dictated by CSS.
       return null;
     }

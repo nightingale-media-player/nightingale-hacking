@@ -548,8 +548,14 @@ deviceControlWidget.prototype = {
     if (!this._deviceLibrary)
       return true;
 
-    // Treat device as read-only if its library is read-only.
+    // If we're formatting treat the device as readOnly
+    if (this._device.state == Ci.sbIDevice.STATE_FORMATTING) 
+      return true;
+   
+    // This is just preventative measure in case the library is being
+    // destroyed or bad state, we'll just treat as readOnly
     try {
+      // Treat device as read-only if its library is read-only.
       if (this._deviceLibrary.getProperty(SBProperties.isReadOnly) == "1")
         readOnly = true;
       else

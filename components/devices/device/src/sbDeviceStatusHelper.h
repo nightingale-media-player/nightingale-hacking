@@ -227,13 +227,15 @@ public:
    * Initialize the request and status, start the operation and
    * setup to auto fail. Must Call SetResult for successful completion
    */
-  sbDeviceStatusAutoOperationComplete(sbDeviceStatusHelper * aStatus,
-                                      sbDeviceStatusHelper::Operation aOperation,
-                                      sbBaseDevice::TransferRequest * aRequest) :
-                                     mRequest(aRequest),
-                                     mStatus(aStatus),
-                                     mResult(NS_ERROR_FAILURE),
-                                     mOperation(aOperation) {
+  sbDeviceStatusAutoOperationComplete(
+                                     sbDeviceStatusHelper * aStatus,
+                                     sbDeviceStatusHelper::Operation aOperation,
+                                     sbBaseDevice::TransferRequest * aRequest) :
+                                       mRequest(aRequest),
+                                       mStatus(aStatus),
+                                       mResult(NS_ERROR_FAILURE),
+                                       mOperation(aOperation)
+  {
     // If this is the start of a batch or is not a batch thingy do start op
     if (mRequest->batchIndex == sbBaseDevice::BATCH_INDEX_START) {
       mStatus->OperationStart(mOperation,
@@ -252,19 +254,35 @@ public:
                          aRequest->itemType);
     }
   }
+  sbDeviceStatusAutoOperationComplete(
+                                   sbDeviceStatusHelper * aStatus,
+                                   sbDeviceStatusHelper::Operation aOperation) :
+                                     mRequest(nsnull),
+                                     mStatus(aStatus),
+                                     mResult(NS_ERROR_FAILURE),
+                                     mOperation(aOperation)
+  {
+    mStatus->OperationStart(mOperation,
+                            -1,
+                            -1,
+                            -1,
+                            nsnull,
+                            nsnull);
+  }
   /**
      * Initialize the request and status, start the operation and
      * setup to auto fail. Must Call SetResult for successful completion
      * This version allows overriding of the batch count
      */
-  sbDeviceStatusAutoOperationComplete(sbDeviceStatusHelper * aStatus,
-                                      sbDeviceStatusHelper::Operation aOperation,
-                                      sbBaseDevice::TransferRequest * aRequest,
-                                      PRInt32 aBatchCount) :
-                                     mRequest(aRequest),
-                                     mStatus(aStatus),
-                                     mResult(NS_ERROR_FAILURE),
-                                     mOperation(aOperation) {
+  sbDeviceStatusAutoOperationComplete(
+                                     sbDeviceStatusHelper * aStatus,
+                                     sbDeviceStatusHelper::Operation aOperation,
+                                     sbBaseDevice::TransferRequest * aRequest,
+                                     PRInt32 aBatchCount) :
+                                       mRequest(aRequest),
+                                       mStatus(aStatus),
+                                       mResult(NS_ERROR_FAILURE),
+                                       mOperation(aOperation) {
     mStatus->OperationStart(mOperation,
                             0,
                             aBatchCount,
