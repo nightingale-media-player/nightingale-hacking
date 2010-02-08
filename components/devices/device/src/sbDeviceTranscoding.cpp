@@ -236,7 +236,11 @@ sbDeviceTranscoding::PrepareBatchForTranscoding(Batch & aBatch)
       return NS_ERROR_ABORT;
     }
 
-    TransferRequest * const request = *iter;
+    // Get request and skip it if it's a write playlist track request
+    TransferRequest * const request = *iter++;
+    if (request->IsPlaylist())
+      continue;
+
     rv = FindTranscodeProfile(request->item,
                               &request->transcodeProfile,
                               &request->destinationCompatibility);
@@ -264,8 +268,6 @@ sbDeviceTranscoding::PrepareBatchForTranscoding(Batch & aBatch)
       TRACE(("%s: no album art available", __FUNCTION__));
       request->albumArt = nsnull;
     }
-
-    ++iter;
   }
 
   return NS_OK;

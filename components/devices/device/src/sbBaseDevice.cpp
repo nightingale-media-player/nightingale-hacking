@@ -590,18 +590,22 @@ void SBCreateSubBatchIndex(sbBaseDevice::Batch& aBatch)
 }
 
 /**
- * Put the transcode items at the end.
- * Used by ReqHandleWriteBatch to reorder the transcoding items to the back.
- * this is equivalent to all the items needing transcoding being assigned a
- * value of 0 and items not needing transcoding being assigned a value of 1
- * and then performing a stable sort.
+ * Put the transcode and playlist items at the end.
+ * Used as a std::list::sort compare function by ReqHandleWriteBatch to reorder
+ * the transcoding and playlist items to the back.
  */
-bool needsTranscodingToBack(nsRefPtr<sbBaseDevice::TransferRequest> const &p1,
-                            nsRefPtr<sbBaseDevice::TransferRequest> const &p2)
+bool SBWriteRequestBatchSortComparator
+       (nsRefPtr<sbBaseDevice::TransferRequest> const &p1,
+        nsRefPtr<sbBaseDevice::TransferRequest> const &p2)
 {
+  // Playlist items come after everything
+  // p1 < p2 if (p1 !IsPlaylist && p2 IsPlaylist)
+  if (!p1->IsPlaylist() && p2->IsPlaylist())
+    return true;
+
   const sbBaseDevice::TransferRequest::CompatibilityType NEEDS_TRANSCODING =
     sbBaseDevice::TransferRequest::COMPAT_NEEDS_TRANSCODING;
-  // p1 < p2 iff (p1 !transcode && p2 transcode)
+  // p1 < p2 if (p1 !transcode && p2 transcode)
   return p1->destinationCompatibility != NEEDS_TRANSCODING &&
          p2->destinationCompatibility == NEEDS_TRANSCODING;
 }

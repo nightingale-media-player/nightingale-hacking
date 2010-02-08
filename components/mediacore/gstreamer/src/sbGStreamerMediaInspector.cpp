@@ -355,6 +355,7 @@ sbGStreamerMediaInspector::InspectMedia(sbIMediaItem *aMediaItem,
   ResetStatus();
 
   rv = InspectMediaAsync (aMediaItem);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   while (PR_AtomicAdd (&mFinished, 0) == 0)
   {

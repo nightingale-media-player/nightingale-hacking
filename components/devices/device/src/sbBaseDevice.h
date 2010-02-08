@@ -1419,8 +1419,9 @@ void SBUpdateBatchIndex(sbBaseDevice::Batch& aBatch);
 
 void SBCreateSubBatchIndex(sbBaseDevice::Batch& aBatch);
 
-bool needsTranscodingToBack(nsRefPtr<sbBaseDevice::TransferRequest> const &p1,
-                            nsRefPtr<sbBaseDevice::TransferRequest> const &p2);
+bool SBWriteRequestBatchSortComparator
+       (nsRefPtr<sbBaseDevice::TransferRequest> const &p1,
+        nsRefPtr<sbBaseDevice::TransferRequest> const &p2);
 
 /**
  * This class provides an nsIRunnable interface that may be used to dispatch
