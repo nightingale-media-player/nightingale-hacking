@@ -720,7 +720,7 @@
 
 <!-- Album Art preferences pane entities. -->
 <!ENTITY albumartpreferences.prefpane.label "Artwork">
-<!ENTITY albumartpreferences.prefpane.enablewrite.label "Write Artwork to Meta Data">
+<!ENTITY albumartpreferences.prefpane.enablewrite.label "Store artwork within each file's metadata">
 <!ENTITY albumartpreferences.prefpane.enablewrite.tooltip "This will allow &brandShortName; to embed artwork in compatible tags for media files.">
 
 <!ENTITY albumartpreferences.prefpane.search_file_names.label "Search file names:">
@@ -776,6 +776,9 @@
 
 <!ENTITY playback.prefpane.units.kilobytes  "kB">
 <!ENTITY playback.prefpane.units.ms         "ms">
+
+<!ENTITY playback.prefpane.ratings.label "Ratings Metadata">
+<!ENTITY playback.prefpane.ratings.enablewriting "Store ratings info within each file's file metadata.">
 
 <!ENTITY fetch_album_art.dialog.title "Get Artwork">
 <!ENTITY fetch_album_art.dialog.message "Not currently implemented. (See Bug 14281)">

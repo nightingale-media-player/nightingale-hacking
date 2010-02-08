@@ -73,6 +73,12 @@
         name="songbird.mediacore.normalization.preferredGain"
         type="string"/>
 
+      <preference
+        id="rating_metadata_writing_pref"
+        prefid="rating_metadata_writing_pref"
+        name="songbird.metadata.ratings.enableWriting"
+        type="bool"/>
+
     </preferences>
 
     <groupbox>
@@ -130,6 +136,13 @@
         
       </vbox>
       
+    </groupbox>
+
+    <groupbox>
+      <caption label="&playback.prefpane.ratings.label;"/>
+      <checkbox id="rating_metadata_writing_checkbox"
+                preference="rating_metadata_writing_pref"
+                label="&playback.prefpane.ratings.enablewriting;"/>
     </groupbox>
 
   </prefpane>
