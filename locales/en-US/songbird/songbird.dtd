@@ -509,11 +509,11 @@
 <!ENTITY device.sync.header.label "Sync Settings">
 <!ENTITY device.sync.auto_sync.label "Sync">
 <!ENTITY device.sync.sync_all.label "Sync all media and playlists">
-<!ENTITY device.sync.sync_selected.label "Selected playlists:">
+<!ENTITY device.sync.sync_selected.label "Sync selected playlists:">
 <!ENTITY device.sync.manual.label "Manually manage">
 <!ENTITY device.sync.playlist.title "Title">
 <!ENTITY device.sync.playlist.video.duration "Video Duration">
-<!ENTITY device.sync.manual_mode.descr "Your sync mode is currently set to Manual (drag and drop) mode. To enable the settings below, select auto sync from the toggle buttons above.">
+<!ENTITY device.sync.manual_mode.descr "Music and Video syncing is currently set to Manual (drag and drop) mode.  To enable the settings below, select auto sync from the toggle button above.">
 
 <!ENTITY device.settings.header.label "Settings">
 <!ENTITY device.settings.general.label "General">

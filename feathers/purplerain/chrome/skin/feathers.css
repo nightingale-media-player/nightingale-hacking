@@ -1,28 +1,27 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"); 
 @namespace html url("http://www.w3.org/1999/xhtml");
 
@@ -923,9 +922,11 @@ sb-device-managetabs {
 .device-capacity-bar-box {
   margin-left: 1px;
 }
+/*
 .device-capacity-bar-box > hbox + hbox:not([flex="0"]) {
   margin-left: 1px;
 }
+*/
 .device-capacity-bar-box > hbox {
   max-height: 18px !important;
   margin-top: 2px;
@@ -989,11 +990,20 @@ radiogroup#auto_sync_settings_radio_group > listbox {
   border-bottom: 1px solid rgb(35,33,44);
 }
 
+.device-settings-button-box {
+  background-image: url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
+  background-repeat:repeat-x;
+  background-position:left top;
+  background-color: rgb(39,37,49);
+  border: 1px solid rgb(35,33,44);
+}
+
 .device-capacity-legend-label-box > label.capacity_header_label,
 label.device-name-label {
   color: rgb(234,234,234);
 }
 .device-capacity-legend-label-box > label.capacity_value_label {
+  font-size: 9px !important;
   color: rgb(159,157,166);
 }
 

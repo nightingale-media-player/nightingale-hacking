@@ -4,7 +4,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -174,6 +174,7 @@ var DeviceSummarySettings = {
 
     // add new bindings as needed
     var container = this._getElement("device_management_settings_content");
+    var buttonBox = this._getElement("device_settings_button_box");
     for each (let library in ArrayConverter.JSArray(content.libraries)) {
       library.QueryInterface(Ci.sbIDeviceLibrary);
       if (library.guid in seenLibraries) {
@@ -183,7 +184,7 @@ var DeviceSummarySettings = {
       widget.setAttribute("device-id", this._deviceID);
       widget.setAttribute("library-id", library.guid);
       widget.setAttribute("hide", settingsToHide);
-      container.appendChild(widget);
+      container.insertBefore(widget, buttonBox);
 
       widget.device = this._device;
 

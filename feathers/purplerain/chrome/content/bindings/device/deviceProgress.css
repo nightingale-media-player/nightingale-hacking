@@ -1,30 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
- 
- 
 
 /** 
 *******************************************************************************
@@ -59,7 +55,7 @@ Imported by bindings.css or directly into feathers.
 }
 
 .device-progress-manage-separator {
-  margin: 0px 17px 0px 17px !important;
+  margin: 0px 13px 0px 13px !important;
 }
 .content-controls > radiogroup {
   border:none;
@@ -138,6 +134,9 @@ Imported by bindings.css or directly into feathers.
   outline: none !important;
 }
 
+.device-progress-button[sbid="sync_operation_button"] {
+  margin-right: 0px;
+}
 
 /*
  * Progress information box (shows labels and progress bar)
@@ -146,25 +145,26 @@ Imported by bindings.css or directly into feathers.
 .device-progress-information-box {
   padding: 10px 10px 10px 10px;
   border: 1px solid rgb(80,78,91);
-  background-color: rgb(43,41,54);
+  background-color: rgb(51,49,62);
+  -moz-border-radius: 3px;
   -moz-box-pack: end;
   -moz-box-align: center;
+  min-width: 284px;
 }
 
 .dev-progress-text-label {
-  font-size:10px;
-  font-weight:bold;
-/**TODO: fix hack to center the text**/
+  /**TODO: fix hack to center the text**/
   padding-top:1px;
   padding-bottom:3px;
 }
 .dev-sub-progress-text-label {
-  font-size:10px;
   /**TODO: fix hack to center the text**/
   padding-top:4px;
 }
 .dev-progress-text-label,
 .dev-sub-progress-text-label {
+  font-size:10px;
+  color: rgb(234,234,235);
   margin:0px;
 }
 

@@ -1,5 +1,6 @@
 .info-panel-bar-scrollbox {
-  background-image:url('chrome://songbird/skin/base-elements/bg-generic-bar-dark.png');
+  background-image:url('chrome://songbird/skin/device/bg-infobar-shadow.png');
+  background-color: rgb(54,52,63);
   background-repeat:repeat-x;
   background-position:center top;
 }
@@ -11,8 +12,8 @@ sb-info-panel[mediatype="video"] .info-panel-icon {
   list-style-image: url('chrome://songbird/skin/device/video.png');
 }
 sb-info-panel[state="success"] .info-panel-icon {
-  list-style-image: url('chrome://songbird/skin/info-bar/check.png');
+  list-style-image: url('chrome://songbird/skin/device/check.png');
 }
 sb-info-panel[state="error"] .info-panel-icon {
-  list-style-image: url('chrome://songbird/skin/info-bar/error.png');
+  list-style-image: url('chrome://songbird/skin/device/error.png');
 }
