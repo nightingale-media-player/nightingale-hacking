@@ -6,6 +6,7 @@
 <!ENTITY window.save        "Save">
 <!ENTITY window.yes         "Yes">
 <!ENTITY window.no          "No">
+<!ENTITY window.stop        "Stop">
 
 <!-- Mac system menu -->
 <!ENTITY menu.mac.exit                  "Quit &brandShortName;" >

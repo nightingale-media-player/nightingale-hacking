@@ -79,7 +79,7 @@
           <!-- Apply/cancel buttons to appear when the user modified settings -->
           <xul:button sbid="settings_cancel_button"
                       class="device-progress-settings-cancel-buton"
-                      label="&window.cancel;"
+                      label="&window.stop;"
                       action="settings-cancel"
                       oncommand="DPW.onAction(event);"/>
 
