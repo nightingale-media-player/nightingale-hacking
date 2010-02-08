@@ -597,12 +597,6 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
   border-bottom: 1px solid rgb(44,42,55);
 }
 
-}
-
-#servicepane_box {
-  min-width: 125px !important;
-}
-
 #sb_servicepane_box {
   border: none;
 }
