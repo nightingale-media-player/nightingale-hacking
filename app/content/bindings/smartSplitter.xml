@@ -186,6 +186,11 @@
                 this.toggled = true;
               }
             }
+
+            var e = document.createEvent("Events");
+            e.initEvent(state, false, true);
+            this.dispatchEvent(e);
+
           } else if (!this._threshold) {
             this.doAutoShowHide(event);
           }

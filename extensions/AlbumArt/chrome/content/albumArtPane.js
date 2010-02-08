@@ -310,10 +310,26 @@ var AlbumArt = {
       aNewURL = "chrome://songbird/skin/album-art/princeaa.jpg";
 
     /* Set the image element URL */
-    if (aNewURL)
+    if (aNewURL) {
       aImageElement.setAttributeNS(XLINK_NS, "href", aNewURL);
-    else
+
+      // Attempt to determine the image's height & width so we can use it
+      // for aspect ratio scaling calculations later (to adjust the display
+      // pane height)
+      var img = new Image();
+      img.addEventListener("load", function(e) {
+          AlbumArt.imageDimensions = {
+            width: img.width,
+            height: img.height,
+            aspectRatio: (img.height/img.width)
+          }
+          img.removeEventListener("load", arguments.callee, false);
+          delete img;
+      }, false);
+      img.src = aNewURL;
+    } else {
       aImageElement.removeAttributeNS(XLINK_NS, "href");
+    }
   },
 
   /**
@@ -391,6 +407,52 @@ var AlbumArt = {
   },
   
   /**
+   * \brief onServicepaneResize - Called when the servicepane is resized
+   */
+  onServicepaneResize: function AlbumArt_onServicepaneResize(e) {
+    var imgEl;
+    if (AlbumArt._currentState == STATE_PLAYING) {
+      imgEl = AlbumArt._albumArtPlayingImage;
+    } else {
+      imgEl = AlbumArt._albumArtSelectedImage;
+    }
+
+    // Determine the new actual image dimensions
+    var svgWidth = imgEl.width.baseVal.value;
+    var svgHeight = parseInt(AlbumArt.imageDimensions.aspectRatio * svgWidth);
+    if (Math.abs(svgHeight - AlbumArt._displayPane.height) > 10) {
+      AlbumArt._animating = true;
+      AlbumArt._finalAnimatedHeight = svgHeight;
+      AlbumArt.animateHeight(AlbumArt._displayPane.height);
+    } else {
+      if (!AlbumArt._animating)
+        AlbumArt._displayPane.height = svgHeight;
+      else
+        AlbumArt._finalAnimatedHeight = svgHeight;
+    }
+  },
+
+  animateHeight: function AlbumArt_animateHeight(destHeight) {
+    destHeight = parseInt(destHeight);
+    AlbumArt._displayPane.height = destHeight;
+
+    if (destHeight == AlbumArt._finalAnimatedHeight) {
+      AlbumArt._animating = false;
+    } else {
+      var newHeight;
+      var delta = Math.abs(AlbumArt._finalAnimatedHeight - destHeight) / 2;
+      if (delta < 5)
+        newHeight = AlbumArt._finalAnimatedHeight;
+      else {
+        if (AlbumArt._finalAnimatedHeight > destHeight)
+          newHeight = destHeight + delta;
+        else
+          newHeight = destHeight - delta;
+      }
+      setTimeout(AlbumArt.animateHeight, 0, newHeight);
+    }
+  },
+  /**
    * \brief onLoad - Called when the display pane loads, here we make sure that
    *        we have the correct image loaded.
    */
@@ -459,6 +521,23 @@ var AlbumArt = {
 
     // Setup the Now Selected display
     AlbumArt.onTabContentChange();
+
+    AlbumArt._albumArtSelectedImage =
+            document.getElementById('sb-albumart-selected');
+    AlbumArt._albumArtPlayingImage =
+            document.getElementById('sb-albumart-playing');
+    var mainWindow = window.QueryInterface(Ci.nsIInterfaceRequestor)
+                   .getInterface(Ci.nsIWebNavigation)
+                   .QueryInterface(Ci.nsIDocShellTreeItem)
+                   .rootTreeItem
+                   .QueryInterface(Ci.nsIInterfaceRequestor)
+                   .getInterface(Ci.nsIDOMWindow);
+
+    AlbumArt._servicePaneSplitter =
+            mainWindow.document.getElementById("servicepane_splitter");
+    AlbumArt._servicePaneSplitter.addEventListener("dragging",
+                                                   AlbumArt.onServicepaneResize,
+                                                   false);
   },
   
   /**
@@ -468,6 +547,11 @@ var AlbumArt = {
   onUnload: function AlbumArt_onUnload() {
     // Remove our unload event listener so we do not leak
     window.removeEventListener("unload", AlbumArt.onUnload, false);
+
+    // Remove servicepane resize listener
+    AlbumArt._servicePaneSplitter.removeEventListener("dragging",
+                                                   AlbumArt.onServicepaneResize,
+                                                   false);
 
     // Undo our modifications to the spitter
     var splitter = AlbumArt._displayPane._splitter;
