@@ -23,9 +23,10 @@
  */
 
 /**
- * \brief Test the metadata lookup manager and FreeDB provider
+ * \brief Test the metadata lookup manager with the test provider
  */
 
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 
 var gMLM;
@@ -33,12 +34,17 @@ var gMockSvc;
 var gMockController;
 
 var testListener = {
+  QueryInterface: XPCOMUtils.generateQI([
+    Ci.sbICDDeviceListener,
+    Ci.sbIJobProgressListener
+  ]),
+
   // sbICDDeviceListener
   onMediaInserted: function(cdDevice) {
     assertEqual(cdDevice.isDiscInserted, true,
                 "Expected CD device to be inserted");
 
-    // get the FreeDB provider
+    // get the test provider
     var provider = gMLM.getProvider("TestProvider");
 
     // lookup the disc
@@ -58,6 +64,11 @@ var testListener = {
   onJobProgress: function(job) {
     if (job.status != Ci.sbIJobProgress.STATUS_SUCCEEDED)
       return;
+
+    // The check below does an implicit QueryInterface call, it is necessary
+    // before accessing sbIMetadataLookupJob properties
+    assertEqual(job instanceof Ci.sbIMetadataLookupJob, true,
+                "Expected sbIMetadataLookupJob instance. Got: " + job);
 
     // output the # of results found
     var numResults = job.mlNumResults;
