@@ -327,10 +327,9 @@ var AlbumArt = {
     var albumArtSelectedDragBox = document.getElementById('sb-albumart-select-drag');
     var stack = document.getElementById('sb-albumart-nowselected-stack');
     
+    var isSelected = false;
     if (AlbumArt._mediaListView)
       isSelected = AlbumArt._mediaListView.selection.count > 0;
-    else
-      isSelected = false;
     this.changeImage(aNewURL,
                      albumArtSelectedImage,
                      albumArtNotSelectedBox,

@@ -1622,9 +1622,8 @@ function plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost) {
 function plCmd_IsAnyAudioSelected(aContext, aSubMenuId, aCommandId, aHost) {
   var selection = unwrap(aContext.playlist).mediaListView.selection;
   var items = selection.selectedMediaItems;
-  item = null;
   while (items.hasMoreElements()) {
-    item = items.getNext().QueryInterface(Ci.sbIMediaItem)
+    let item = items.getNext().QueryInterface(Ci.sbIMediaItem)
     if (item.getProperty(SBProperties.contentType) == "audio") {
       return true;
     }

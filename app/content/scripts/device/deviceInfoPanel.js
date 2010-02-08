@@ -363,7 +363,7 @@ var DIPW = {
           this._lastOperation = state;
 
           // Necessary to test and remove the preceding video panel
-          audioPanel = this._findMediaInfoPanel("audio");
+          let audioPanel = this._findMediaInfoPanel("audio");
           if (audioPanel && audioPanel.index != 0) {
             this._removeMediaInfoPanel("video");
             this._updateMediaInfoPanelState("audio", Ci.sbIDevice.STATE_SYNCING, true);

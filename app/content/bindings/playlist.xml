@@ -2859,8 +2859,8 @@
                     .getService(this._Ci.sbIDndSourceTracker);
 
   // handle mediaitem drops
-  data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST,
-                                            session);
+  var data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST,
+                                                session);
   if (data) {
     var context = dnd.getSourceSupports(data)
                      .QueryInterface(this._Ci.sbIMediaListTransferContext);
@@ -3089,8 +3089,8 @@
 
   var context;
 
-  data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST,
-                                            this._dragSession);
+  var data = DNDUtils.getTransferDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST,
+                                                this._dragSession);
   if (data) {
     context = dnd.getSourceSupports(data)
                 .QueryInterface(this._Ci.sbIMediaListTransferContext);

@@ -564,7 +564,6 @@ var DPW = {
         subLocaleKey = etaString ? "device.status.progress_detail"
                                  : "device.status.progress_item_index";
     }
-    params = [curItemIndex, totalItems, etaString];
 
     // Update the operation progress text.
     this._progressTextLabel.value = SBString(localeKey, "");
@@ -574,6 +573,7 @@ var DPW = {
         substate != Ci.sbIDevice.STATE_COPY_PREPARING &&
         substate != Ci.sbIDevice.STATE_UPDATING &&
         substate != Ci.sbIDevice.STATE_SYNCING_TYPE) {
+      let params = [curItemIndex, totalItems, etaString];
       this._subProgressTextLabel.value =
              SBFormattedString(subLocaleKey, params, "");
     } else {
