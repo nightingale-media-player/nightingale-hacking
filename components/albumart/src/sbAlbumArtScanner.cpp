@@ -866,17 +866,25 @@ sbAlbumArtScanner::GetNextAlbumItems()
       continue;
     }
 
+#ifdef PR_LOGGING
+    // Adding track name for debugging
+    nsString trackName;
+    rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME), trackName);
+    NS_ENSURE_SUCCESS(rv, rv);
+    TRACE(("sbAlbumArtScanner - Processing Track [%s] by [%s] from [%s]",
+           NS_ConvertUTF16toUTF8(trackName).get(),
+           NS_ConvertUTF16toUTF8(artistName).get(),
+           NS_ConvertUTF16toUTF8(albumName).get()
+           ));
+#endif
+    
     // if this is the first album then just set the Last* values and append the
     // item to the list
     if (mLastAlbumName.IsEmpty()) {
       mLastAlbumName.Assign(albumName);
       mCurrentAlbumName.Assign(albumName);
       mLastArtistName.Assign(artistName);
-  
-      TRACE(("sbAlbumArtScanner - Processing Album %s by %s",
-             NS_ConvertUTF16toUTF8(albumName).get(),
-             NS_ConvertUTF16toUTF8(artistName).get()
-           ));
+      TRACE(("sbAlbumArtScanner - First instance of album."));
     } else if (!mLastAlbumName.Equals(albumName)) {
       // if the album names are different then we definitly have a new album
       // so don't add this track or increment the index, just break out of the
@@ -904,12 +912,14 @@ sbAlbumArtScanner::GetNextAlbumItems()
       rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
                              primaryImageUrl);
       if (NS_FAILED(rv) || !primaryImageUrl.IsEmpty()) {
+        TRACE(("sbAlbumArtScanner - Item already has cover."));
         // Move on to the next item
         mCompletedItemCount++;
         continue;
       }
     }
-  
+    
+    TRACE(("sbAlbumArtScanner - Adding to list"));
     rv = mCurrentAlbumItemList->AppendElement(NS_ISUPPORTS_CAST(sbIMediaItem *,
                                                                 item),
                                               PR_FALSE);
@@ -951,8 +961,8 @@ sbAlbumArtScanner::ProcessAlbum()
     mStatus = sbIJobProgress::STATUS_SUCCEEDED;
     UpdateProgress();
   } else {
-    // We have items left but no items in mCurrentAlbumItemList?
-    mCompletedItemCount++;
+    // We have items left but no items in mCurrentAlbumItemList, this probably
+    // means we have all the artwork for this album, just move on to the next.
     UpdateProgress();
     mProcessNextAlbum = PR_TRUE;
   }
