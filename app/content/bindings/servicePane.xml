@@ -724,7 +724,7 @@
               var SP_NS = "http://songbirdnest.com/rdf/servicepane#";
               var eventType = node.getAttributeNS(SP_NS, "eventType");
               if (eventType) {
-                var event = document.createEvent("UIEvent");
+                let event = document.createEvent("UIEvent");
                 event.initUIEvent(eventType, true, true, window, 0);
                 window.dispatchEvent(event);
               }
