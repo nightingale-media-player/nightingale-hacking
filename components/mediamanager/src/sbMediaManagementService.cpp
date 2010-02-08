@@ -291,13 +291,6 @@ sbMediaManagementService::Observe(nsISupports *aSubject,
     rv = StopListening();
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<nsIRunnable> runnable =
-      NS_NEW_RUNNABLE_METHOD(sbMediaManagementService, this, ShutdownProcessActionThread);
-    NS_ENSURE_TRUE(runnable, NS_ERROR_OUT_OF_MEMORY);
-
-    rv = mPerformActionThread->Dispatch(runnable, nsIEventTarget::DISPATCH_SYNC);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     rv = mPerformActionThread->Shutdown();
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -896,8 +889,13 @@ sbMediaManagementService::StopListening()
   rv = prefBranch2->RemoveObserver(SB_PREF_MEDIA_MANAGER_LISTEN, this);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // flush
-  rv = mPerformActionTimer->InitWithCallback(this, 0, nsITimer::TYPE_ONE_SHOT);
+  nsCOMPtr<nsIRunnable> runnable =
+    NS_NEW_RUNNABLE_METHOD(sbMediaManagementService,
+                           this,
+                           ShutdownProcessActionThread);
+  NS_ENSURE_TRUE(runnable, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = mPerformActionThread->Dispatch(runnable, nsIEventTarget::DISPATCH_SYNC);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

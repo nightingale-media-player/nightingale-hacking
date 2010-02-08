@@ -125,7 +125,8 @@ protected:
   NS_METHOD StartListening();
   
   /**
-   * do anything else needed to stop listening
+   * do anything else needed to stop listening.
+   * Any pending transactions will be processed.
    */
   NS_METHOD StopListening();
   

@@ -62,7 +62,8 @@ sbTranscodeProfileLoader::~sbTranscodeProfileLoader()
 
 /* sbITranscodeProfile loadProfile (in nsIFile aFile); */
 NS_IMETHODIMP
-sbTranscodeProfileLoader::LoadProfile(nsIFile *aFile, sbITranscodeProfile **_retval)
+sbTranscodeProfileLoader::LoadProfile(nsIFile *aFile,
+                                      sbITranscodeProfile **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
