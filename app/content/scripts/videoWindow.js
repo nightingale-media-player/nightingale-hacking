@@ -71,6 +71,8 @@ var videoWindowController = {
 
   _osdService: null,
   
+  _platform: null,
+  
   //////////////////////////////////////////////////////////////////////////////
   // Getters/Setters
   //////////////////////////////////////////////////////////////////////////////
@@ -211,6 +213,9 @@ var videoWindowController = {
     
     this._contextMenu = document.getElementById("video-context-menu");
     this._videoElement = document.getElementById("video-box");
+    
+    // Stash current platform
+    this._platform = getPlatformString();
   },
   
   _shutdown: function vwc__shutdown() {
@@ -638,6 +643,16 @@ var videoWindowController = {
       this._mediacoreManager.volumeControl.mute = !mute;
       
       return;
+    }
+    
+    // Handle ALT + F4 and CTRL + W key shortcut if we are on windows
+    if(this._platform == "Windows_NT") {
+      if((aEvent.altKey && (keyCode == KeyEvent.DOM_VK_F4)) || 
+         (aEvent.ctrlKey && (keyCode == KeyEvent.DOM_VK_W))) {
+        this._mediacoreManager.sequencer.stop();
+        this._dismissSelf();
+        return;
+      }
     }
   },
   
