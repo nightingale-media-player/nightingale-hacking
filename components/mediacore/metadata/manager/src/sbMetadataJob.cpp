@@ -1476,6 +1476,7 @@ nsresult sbMetadataJob::CreateDefaultItemName(sbIMediaItem* aItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIFileURL> fileUrl = do_QueryInterface(uri, &rv);
+  nsString filename;
   if (NS_SUCCEEDED(rv) && fileUrl) {
     nsCOMPtr<nsIFile> sourceFile, canonicalFile;
     rv = fileUrl->GetFile(getter_AddRefs(sourceFile));
@@ -1489,7 +1490,7 @@ nsresult sbMetadataJob::CreateDefaultItemName(sbIMediaItem* aItem,
                                         getter_AddRefs(canonicalFile));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = canonicalFile->GetLeafName(retval);
+    rv = canonicalFile->GetLeafName(filename);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
@@ -1510,7 +1511,15 @@ nsresult sbMetadataJob::CreateDefaultItemName(sbIMediaItem* aItem,
                                  unescapedURI);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    retval = NS_ConvertUTF8toUTF16(unescapedURI);
+    filename = NS_ConvertUTF8toUTF16(unescapedURI);
+  }
+
+  PRInt32 dot = filename.RFind(NS_LITERAL_STRING("."));
+  if (dot > 0 && dot < (PRInt32)(filename.Length() - 1)) {
+    retval = nsDependentSubstring(filename, 0, dot);
+  }
+  else {
+    retval = filename;
   }
 
   return NS_OK;
