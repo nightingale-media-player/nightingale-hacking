@@ -48,3 +48,7 @@ Imported by bindings.css or directly into feathers.
 sb-device-sync[contenttype="video"] .content-controls radio {
   display: none;
 }
+
+sb-device-sync[disabled="true"] {
+  opacity: 1;
+}

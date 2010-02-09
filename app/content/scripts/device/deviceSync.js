@@ -1083,22 +1083,15 @@ var DeviceSyncWidget = {
           node.setAttribute(prop, "true");
         else
           node.removeAttribute(prop);
-      }
+      };
     }
     var disable = boolprop("disabled");
     var collapse = boolprop("collapsed");
 
     collapse(manualMessage, !this.syncPrefsMgmtTypeIsManual());
-    disable(selector, this._isBusy || this.syncPrefsMgmtTypeIsManual());
-    var radio = this._getElement("content_auto_sync_all_radio");
-    disable(radio, this._isBusy || this.syncPrefsMgmtTypeIsManual());
-    radio = this._getElement("content_auto_sync_selected_radio");
-    disable(radio, this._isBusy || this.syncPrefsMgmtTypeIsManual());
-    disable(syncPlaylistTree,
-            this.syncPrefsMgmtTypeIsAll() || this.syncPrefsMgmtTypeIsManual());
-    selectRadio(this.syncPrefsMgmtTypeIsAll() ?
-                  "content_auto_sync_all_radio" :
-                  "content_auto_sync_selected_radio");
+    disable(this._widget, this._isBusy || this.syncPrefsMgmtTypeIsManual());
+    selectRadio(this.syncPrefsMgmtTypeIsAll() ? "content_auto_sync_all_radio"
+                                              : "content_auto_sync_selected_radio");
 
     /* Apply the sync playlist list prefs. */
     syncPlaylistList = this._syncPrefs.syncPlaylistList;

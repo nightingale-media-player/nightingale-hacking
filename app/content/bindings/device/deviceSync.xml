@@ -72,11 +72,13 @@
               <!-- Content management radio group. -->
               <xul:radiogroup sbid="content_auto_sync_type_radio_group">
                 <xul:radio sbid="content_auto_sync_all_radio"
-                           label="&device.sync.sync_all.label;"/>
-                <xul:radio
-                        sbid="content_auto_sync_selected_radio"
-                        label="&device.sync.sync_selected.label;"/>
+                           label="&device.sync.sync_all.label;"
+                           xbl:inherits="disabled"/>
+                <xul:radio sbid="content_auto_sync_selected_radio"
+                           label="&device.sync.sync_selected.label;"
+                           xbl:inherits="disabled"/>
                 <xul:tree sbid="content_auto_sync_playlist_tree"
+                          xbl:inherits="disabled"
                           hidecolumnpicker="true"
                           enableColumnDrag="false"
                           editable="true"
