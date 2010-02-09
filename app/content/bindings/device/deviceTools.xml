@@ -97,33 +97,32 @@
           </xul:vbox>
         </xul:groupbox>
 
-        <!-- Repair Device -->
-        <xul:groupbox tool="repair" pack="center"
+        <!-- Format Device -->
+        <xul:groupbox tool="format" pack="center"
                       orient="vertical" hidden="true">
-          <xul:caption label="&device.tools.repair_device.title;" />
-          <xul:vbox sbid="sb-device-tools-format" hidden="true">
-            <xul:label value="&device.tools.format_device.title;"/>
-            <xul:description xmlns="http://www.w3.org/1999/xhtml">
-              &device.tools.format_device.description;
-            </xul:description>
-            <xul:hbox>
-              <xul:spacer flex="1"/>
-              <xul:button label="&device.tools.format_device.label;"
-                          oncommand="formatDevice();"/>
-            </xul:hbox>
-          </xul:vbox>
+          <xul:caption label="&device.tools.format_device.title;" />
+          <xul:description xmlns="http://www.w3.org/1999/xhtml">
+            &device.tools.format_device.description;
+          </xul:description>
+          <xul:hbox>
+            <xul:spacer flex="1"/>
+            <xul:button label="&device.tools.format_device.label;"
+                        oncommand="formatDevice();"/>
+          </xul:hbox>
+        </xul:groupbox>
 
-          <xul:vbox sbid="sb-device-tools-repair" hidden="true">
-            <xul:label value="&device.tools.repair_device.title;"/>
-            <xul:description xmlns="http://www.w3.org/1999/xhtml">
-              &device.tools.repair_device.description;
-            </xul:description>
-            <xul:hbox>
-              <xul:spacer flex="1"/>
-              <xul:button label="&device.tools.repair_device.label;"
-                          oncommand="repairDevice();"/>
-            </xul:hbox>
-          </xul:vbox>
+        <!-- Restore Device -->
+        <xul:groupbox tool="restore" pack="center"
+                      orient="vertical" hidden="true">
+          <xul:caption label="&device.tools.restore_device.title;" />
+          <xul:description xmlns="http://www.w3.org/1999/xhtml">
+            &device.tools.restore_device.description;
+          </xul:description>
+          <xul:hbox>
+            <xul:spacer flex="1"/>
+            <xul:button label="&device.tools.restore_device.label;"
+                        oncommand="repairDevice();"/>
+          </xul:hbox>
         </xul:groupbox>
 
         <!-- Support -->
@@ -395,27 +394,8 @@
         
         this._currentFirmwareVersion.value = firmwareVersion;
 
-        var formatBoxHidden = true;
-        if (!this.formatBox && this.device.supportsReformat) {
-          this.formatBox = document.getAnonymousElementByAttribute(this,
-                                                    "sbid",
-                                                    "sb-device-tools-format");
-          this.formatBox.hidden = formatBoxHidden = false;
-        }
-
-        var repairBoxHidden = true;
-        if (!this.repairBox && this._firmwareHandler &&
-            this._firmwareHandler.defaultFirmwareUpdate) {
-          this.repairBox = document.getAnonymousElementByAttribute(this,
-                                               "sbid",
-                                               "sb-device-tools-repair");
-          this.repairBox.hidden = repairBoxHidden = false;
-        }
-
-        // We don't support reformatting or restoring the firmware, hide the
-        // toolbox.
-        if (formatBoxHidden && repairBoxHidden) {
-          this._getToolBox("repair").collapsed = true;
+        if (!this.device.supportsReformat) {
+          this._getToolBox("format").collapsed = true;
         }
         
         this._startBusyCheck();
@@ -470,7 +450,7 @@
         <body><![CDATA[
           if(!this._firmwareHandler) {
             // no handler
-            for each (let id in ["support", "update", "register"]) {
+            for each (let id in ["support", "update", "register", "restore"]) {
               this._getToolBox(id).collapsed = true;
             }
           }
@@ -483,10 +463,14 @@
               }
               if (!firmHandler || !firmHandler.canUpdate(this.device)) {
                 this._getToolBox("update").collapsed = true;
-                this._getToolBox("repair").collapsed = true;
+                this._getToolBox("format").collapsed = true;
+                this._getToolBox("restore").collapsed = true;
               }
               if (firmHandler && firmHandler.customerSupportLocation == null) {
                 this._getToolBox("support").collapsed = true;
+              }
+              if (!firmHandler.defaultFirmwareUpdate) {
+                this._getToolBox("restore").collapsed = true;
               }
             } catch (e) {
               Components.utils.reportError(e);
@@ -495,7 +479,8 @@
 
           if (this._getToolBox("register").collapsed &&
               this._getToolBox("update").collapsed &&
-              this._getToolBox("repair").collapsed &&
+              this._getToolBox("format").collapsed &&
+              this._getToolBox("restore").collapsed &&
               this._getToolBox("support").collapsed)
           {
             // All toolboxes are hidden, we should just disable the Tools tab
@@ -532,7 +517,7 @@
 
     <handlers>
       <handler event="deviceBound" 
-               action="this._update(); this._propertyLookup();"/>
+               action="try { this._update(); this._propertyLookup(); } catch (e) { dump('exception:' + e + '\n'); }"/>
     </handlers>
   </binding>
 

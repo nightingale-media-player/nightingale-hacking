@@ -547,12 +547,12 @@
 <!ENTITY device.tools.update_firmware.label "Check for updated firmware">
 <!ENTITY device.tools.update_firmware.current_firmware.title "Current firmware version:">
 
-<!ENTITY device.tools.repair_device.title "Repair Device">
-<!ENTITY device.tools.repair_device.description 'Restoring your device to factory settings <strong class="loss-of-data-text">will erase all media on the device</strong>, as well as restoring the factory firmware and settings.'>
-<!ENTITY device.tools.repair_device.label "Restore device to factory settings">
+<!ENTITY device.tools.restore_device.title "Restore Device">
+<!ENTITY device.tools.restore_device.description 'Restoring your device to factory settings will erase all media on the device, as well as restoring the factory firmware and settings.'>
+<!ENTITY device.tools.restore_device.label "Restore device to factory settings">
 
 <!ENTITY device.tools.format_device.title "Format Device">
-<!ENTITY device.tools.format_device.description 'Formatting your device <strong class="loss-of-data-text">will erase all media on the device</strong>.'>
+<!ENTITY device.tools.format_device.description 'Formatting your device will erase all media on the device.'>
 <!ENTITY device.tools.format_device.label "Format device">
 
 <!ENTITY device.tools.support.title "Support">

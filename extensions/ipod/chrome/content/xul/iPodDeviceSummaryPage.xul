@@ -103,7 +103,7 @@
     <!-- Device management tabbox. -->
     <sb-device-managetabs flex="1"
                           observes="deviceIDBroadcaster"
-                          tools="resetwarnings,repair"
+                          tools="resetwarnings,format"
                           hideSettingsTab="true"/>
 
   </vbox> <!-- End of "main_box". -->
