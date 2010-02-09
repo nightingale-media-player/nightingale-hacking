@@ -194,6 +194,10 @@
   list-style-image: url("chrome://songbird/skin/video/osd-fullscreen.png") !important;
 }
 
+#full_screen_button[fullscreen] {
+  list-style-image: url("chrome://songbird/skin/video/osd-escapefull.png") !important;
+}
+
 #full_screen_button:active {
   list-style-image: url("chrome://songbird/skin/video/osd-fullscreen-press.png") !important;
   -moz-appearance: none !important;
@@ -202,6 +206,10 @@
   background-image: none !important;
   -moz-border-radius: 0 !important;
   border: none !important;
+}
+
+#full_screen_button[fullscreen]:active {
+  list-style-image: url("chrome://songbird/skin/video/osd-escapefull-press.png") !important;
 }
 
 #full_screen_button button:focus,

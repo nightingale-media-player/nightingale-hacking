@@ -232,13 +232,17 @@ sbOSDControlService.prototype =
   onVideoWindowFullscreenChanged: function(aFullscreen) {
     var outterBox = 
       this._osdWindow.document.getElementById("osd_wrapper_hbox");
+    var fullscreenButton =
+      this._osdWindow.document.getElementById("full_screen_button");
     
     if(outterBox) {
       if(aFullscreen) {
         outterBox.setAttribute("fullscreen", true);
+        fullscreenButton.setAttribute("fullscreen", true);
       }
       else {
         outterBox.removeAttribute("fullscreen");
+        fullscreenButton.removeAttribute("fullscreen");
       }
     }
   },
