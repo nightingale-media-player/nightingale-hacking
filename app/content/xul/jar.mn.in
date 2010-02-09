@@ -6,6 +6,7 @@ songbird.jar:
 % overlay chrome://browser/content/preferences/tabs.xul                      chrome://songbird/content/xul/preferences/tabsOverlay.xul
 % overlay chrome://browser/content/preferences/permissions.xul               chrome://songbird/content/xul/preferences/permissionsOverlay.xul
 % overlay chrome://browser/content/preferences/sanitize.xul                  chrome://songbird/content/xul/preferences/sanitizeOverlay.xul
+% overlay chrome://browser/content/preferences/advanced.xul                  chrome://songbird/content/xul/preferences/advancedOverlay.xul
 # remove help button from pref windows
 % overlay chrome://browser/content/preferences/colors.xul                    chrome://songbird/content/xul/preferences/helpRemovalOverlay.xul
 % overlay chrome://browser/content/preferences/connection.xul                chrome://songbird/content/xul/preferences/helpRemovalOverlay.xul

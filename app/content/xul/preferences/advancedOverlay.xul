@@ -31,28 +31,23 @@
 <!DOCTYPE overlay [
 <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
 <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % advancedDTD SYSTEM "chrome://browser/locale/preferences/advanced.dtd">
 %brandDTD;
 %songbirdDTD;
+%advancedDTD;
 ]>
 
 <!-- Advanced prefs overlay. -->
 <overlay id="sb_advanced_prefpane_overlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <!-- Preferences overlay. -->
-  <preferences id="advancedPreferences">
-    <preference id="recommended_addons.update.enabled"
-                name="songbird.recommended_addons.update.enabled"
-                type="bool"/>
-  </preferences>
-
   <!-- Update tab overlay. -->
   <vbox id="autoUpdateGroup">
-    <checkbox id="enableRecommendedAddonsUpdate"
-              insertafter="enableAddonUpdate"
-              label="&enable_recommended_addons_update.label;"
-              accesskey="&enable_recommended_addons_update.accesskey;"
-              preference="recommended_addons.update.enabled"/>
+    <checkbox id="enableAppUpdate" removeelement="true" />
+    <checkbox id="enableAppUpdate"
+              label="&enableAppUpdate.label;"
+              preference="app.update.enabled"
+              insertbefore="enableAddonUpdate" />
   </vbox>
 
 </overlay>
