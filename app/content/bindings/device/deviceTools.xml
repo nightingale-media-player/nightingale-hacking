@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -53,16 +53,6 @@
     <content>
 
       <xul:vbox class="device-tab-content">
-
-        <!-- Header label and info. -->
-        <!--
-        <xul:hbox class="device-tab-header-box">
-          <xul:label class="device-tab-header-label"
-                     value="&device.management.tabs.tools.label;"/>
-          <xul:label sbid="content_management_header_info_label"
-                     class="device-tab-header-info"/>
-        </xul:hbox>
-        -->
 
         <!-- Product Registration -->
         <xul:groupbox tool="register" pack="center"
@@ -327,7 +317,7 @@
 
       <method name="_update">
         <body>
-                                                      <![CDATA[
+        <![CDATA[
         if(!this._currentFirmwareVersion) {
           this._currentFirmwareVersion =
             document.getAnonymousElementByAttribute(this,
@@ -412,16 +402,18 @@
                                                     "sb-device-tools-format");
           this.formatBox.hidden = formatBoxHidden = false;
         }
-        
+
         var repairBoxHidden = true;
-        if (!this.repairBox && this._firmwareHandler.defaultFirmwareUpdate) {
+        if (!this.repairBox && this._firmwareHandler &&
+            this._firmwareHandler.defaultFirmwareUpdate) {
           this.repairBox = document.getAnonymousElementByAttribute(this,
                                                "sbid",
                                                "sb-device-tools-repair");
           this.repairBox.hidden = repairBoxHidden = false;
         }
-        
-        // We don't support reformatting or restoring the firmware, hide the toolbox.
+
+        // We don't support reformatting or restoring the firmware, hide the
+        // toolbox.
         if (formatBoxHidden && repairBoxHidden) {
           this._getToolBox("repair").collapsed = true;
         }
@@ -499,6 +491,15 @@
             } catch (e) {
               Components.utils.reportError(e);
             }
+          }
+
+          if (this._getToolBox("register").collapsed &&
+              this._getToolBox("update").collapsed &&
+              this._getToolBox("repair").collapsed &&
+              this._getToolBox("support").collapsed)
+          {
+            // All toolboxes are hidden, we should just disable the Tools tab
+            this.setAttribute("disabled", "true");
           }
         ]]></body>
       </method>
