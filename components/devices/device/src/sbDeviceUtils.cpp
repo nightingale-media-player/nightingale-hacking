@@ -902,7 +902,7 @@ MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
   { "aa",   "audio/audible",   "",     "",        "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "oga",  "application/ogg", "ogg",  "flac",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "ogg",  "application/ogg", "ogg",  "vorbis",  "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "flac", "audio/x-flac",    "",     "flac",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "flac", "audio/x-flac",    "flac", "flac",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "wav",  "audio/x-wav",     "wav",  "pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "wav",  "audio/x-adpcm",   "wav",  "pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "aiff", "audio/x-aiff",    "aiff", "pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
