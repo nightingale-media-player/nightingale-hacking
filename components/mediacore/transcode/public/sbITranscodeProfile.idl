@@ -125,6 +125,13 @@ interface sbITranscodeProfile : nsISupports
   attribute nsIArray videoProperties;
 
   attribute nsIArray containerProperties;
+
+  /* Additional attributes on the format type (sbITranscodeProfileAttribute) */
+  attribute nsIArray containerAttributes;
+  /* Additional attributes on the video type (sbITranscodeProfileAttribute) */
+  attribute nsIArray videoAttributes;
+  /* Additional attributes on the audio type (sbITranscodeProfileAttribute) */
+  attribute nsIArray audioAttributes;
 };
 
 /**
@@ -221,6 +228,16 @@ interface sbITranscodeEncoderProfile : sbITranscodeProfile {
   {0xdc50c9ab, 0x63ec, 0x4d6a, {0xa9, 0xd1, 0x79, 0x07, 0xbc, 0xe3, 0x33, 0x24}}
 
 %}
+
+[scriptable, uuid(2747feca-25af-4509-8ec5-800b10817d0b)]
+interface sbITranscodeProfileAttribute : nsISupports
+{
+  /* \brief The attribute's name */
+  readonly attribute AString name;
+
+  /* \brief The attribute's value */
+  readonly attribute nsIVariant value;
+};
 
 [scriptable, uuid(22bd3898-1dd2-11b2-821f-9742fbc125a7)]
 interface sbITranscodeProfileProperty : nsISupports

@@ -209,6 +209,53 @@ sbTranscodeProfile::SetContainerProperties(nsIArray * aContainerProperties)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbTranscodeProfile::GetAudioAttributes(nsIArray * *aAudioAttributes)
+{
+  NS_ENSURE_ARG_POINTER(aAudioAttributes);
+
+  NS_IF_ADDREF(*aAudioAttributes = mAudioAttributes);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbTranscodeProfile::SetAudioAttributes(nsIArray * aAudioAttributes)
+{
+  mAudioAttributes = aAudioAttributes;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbTranscodeProfile::GetVideoAttributes(nsIArray * *aVideoAttributes)
+{
+  NS_ENSURE_ARG_POINTER(aVideoAttributes);
+
+  NS_IF_ADDREF(*aVideoAttributes = mVideoAttributes);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbTranscodeProfile::SetVideoAttributes(nsIArray * aVideoAttributes)
+{
+  mVideoAttributes = aVideoAttributes;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbTranscodeProfile::GetContainerAttributes(nsIArray * *aContainerAttributes)
+{
+  NS_ENSURE_ARG_POINTER(aContainerAttributes);
+
+  NS_IF_ADDREF(*aContainerAttributes = mContainerAttributes);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbTranscodeProfile::SetContainerAttributes(nsIArray * aContainerAttributes)
+{
+  mContainerAttributes = aContainerAttributes;
+  return NS_OK;
+}
 
 /***** nsITranscodeEncoderProfile implementation *****/
 template<typename T>

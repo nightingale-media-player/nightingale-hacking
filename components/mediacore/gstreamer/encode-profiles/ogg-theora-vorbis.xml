@@ -14,6 +14,7 @@
 
   <video>
     <type>video/x-theora</type>
+
     <property name="bitrate" type="int" min="0" max="16777" default="0"
               mapping="bitrate" scale="1/1000"/>
     <quality-property name="bpp" quality="0" value="0.1"/>
@@ -22,6 +23,7 @@
 
   <audio>
     <type>audio/x-vorbis</type>
+
     <property name="max-bitrate" type="int" min="0" max="250000" default="0"
               mapping="bitrate" scale="1/1"/>
     <quality-property name="bitrate" quality="0" value="32000"/>

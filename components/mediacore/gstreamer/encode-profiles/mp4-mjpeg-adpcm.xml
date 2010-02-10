@@ -10,6 +10,7 @@
 
   <container>
     <type>video/quicktime</type>
+    <attribute name="variant" type="string" value="apple" />
   </container>
 
   <video>
@@ -35,7 +36,8 @@
 
   <audio>
     <type>audio/x-adpcm</type>
-    <!-- the bitrate is constant and not tweakable -->
+    <!-- the bitrate is constant (for a given input format) and not
+         tweakable. The actual value here is completely wrong. -->
     <quality-property name="bitrate" quality="0.5" value="200000"/>
   </audio>
 </profile>

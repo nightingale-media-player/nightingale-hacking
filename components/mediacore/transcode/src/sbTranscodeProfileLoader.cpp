@@ -47,6 +47,7 @@
 
 #include "sbTranscodeProfile.h"
 #include "sbTranscodeProfileProperty.h"
+#include "sbTranscodeProfileAttribute.h"
 
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbTranscodeProfileLoader,
                               sbITranscodeProfileLoader,
@@ -274,6 +275,59 @@ sbTranscodeProfileLoader::GetType(nsIDOMNode* aTypeNode, PRUint32* _retval)
 }
 
 nsresult
+sbTranscodeProfileLoader::ProcessAttribute(nsIDOMElement* aAttributeElement,
+                                           sbITranscodeProfileAttribute** _retval)
+{
+  NS_ENSURE_ARG_POINTER(aAttributeElement);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  nsRefPtr<sbTranscodeProfileAttribute> attr =
+    new sbTranscodeProfileAttribute();
+  NS_ENSURE_TRUE(attr, NS_ERROR_OUT_OF_MEMORY);
+
+  nsString name;
+  rv = aAttributeElement->GetAttribute(NS_LITERAL_STRING("name"),
+                                       name);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = attr->SetName(name);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString type;
+  rv = aAttributeElement->GetAttribute(NS_LITERAL_STRING("type"),
+                                       type);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString valueString;
+  rv = aAttributeElement->GetAttribute(NS_LITERAL_STRING("value"),
+                                       valueString);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (type.EqualsLiteral("int")) {
+    PRInt32 value;
+
+    value = valueString.ToInteger(&rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = attr->SetValue(sbNewVariant(value));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else if (type.EqualsLiteral("string")) {
+    rv = attr->SetValue(sbNewVariant(valueString));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
+
+  rv = CallQueryInterface(attr.get(), _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
 sbTranscodeProfileLoader::ProcessProperty(nsIDOMElement* aPropertyElement,
                                           sbITranscodeProfileProperty** _retval)
 {
@@ -384,6 +438,10 @@ sbTranscodeProfileLoader::ProcessContainer(sbTranscodeProfile* aProfile,
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<nsIMutableArray> attributes =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<nsIDOMNode> childNode;
   rv = aContainer->GetFirstChild(getter_AddRefs(childNode));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -416,6 +474,14 @@ sbTranscodeProfileLoader::ProcessContainer(sbTranscodeProfile* aProfile,
           default:
             rv = NS_ERROR_UNEXPECTED;
         }
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      else if (localName.EqualsLiteral("attribute")) {
+        nsCOMPtr<sbITranscodeProfileAttribute> attr;
+        rv = ProcessAttribute(childElement, getter_AddRefs(attr));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = attributes->AppendElement(attr, PR_FALSE);
         NS_ENSURE_SUCCESS(rv, rv);
       }
       else if (localName.EqualsLiteral("property")) {
@@ -463,12 +529,15 @@ sbTranscodeProfileLoader::ProcessContainer(sbTranscodeProfile* aProfile,
   switch (aContainerType) {
     case CONTAINER_GENERIC:
       rv = aProfile->SetContainerProperties(properties);
+      rv = aProfile->SetContainerAttributes(attributes);
       break;
     case CONTAINER_AUDIO:
       rv = aProfile->SetAudioProperties(properties);
+      rv = aProfile->SetAudioAttributes(attributes);
       break;
     case CONTAINER_VIDEO:
       rv = aProfile->SetVideoProperties(properties);
+      rv = aProfile->SetVideoAttributes(attributes);
       break;
     default:
       rv = NS_ERROR_UNEXPECTED;

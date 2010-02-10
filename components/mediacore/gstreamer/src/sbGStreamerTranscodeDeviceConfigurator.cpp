@@ -189,80 +189,83 @@ sbGStreamerTranscodeDeviceConfigurator::~sbGStreamerTranscodeDeviceConfigurator(
 }
 
 /**
- * make a GstCaps structure from a caps name and an array of properties
+ * make a GstCaps structure from a caps name and an array of attributes
  *
  * @param aCapsName [in] the name (e.g. "audio/x-raw-int")
- * @param aProps [in] the properties
+ * @param aAttributes [in] the attributes
  * @param aResultCaps [out] the generated GstCaps, with an outstanding refcount
  */
 nsresult
-MakeCapsFromProperties(const nsACString& aCapsName,
-                       nsIArray *aProps,
+MakeCapsFromAttributes(const nsACString& aCapsName,
+                       nsIArray *aAttributes,
                        GstCaps** aResultCaps)
 {
   TRACE(("%s", __FUNCTION__));
-  NS_ENSURE_ARG_POINTER(aProps);
+  NS_ENSURE_ARG_POINTER(aAttributes);
   NS_ENSURE_ARG_POINTER(aResultCaps);
 
   nsresult rv;
 
-  nsCOMPtr<nsISimpleEnumerator> propsEnum;
-  rv = aProps->Enumerate(getter_AddRefs(propsEnum));
+  nsCOMPtr<nsISimpleEnumerator> attrsEnum;
+  rv = aAttributes->Enumerate(getter_AddRefs(attrsEnum));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // set up a caps structure
-  sbGstCaps caps = gst_caps_new_simple(aCapsName.BeginReading(), NULL);
+  sbGstCaps caps = gst_caps_from_string(aCapsName.BeginReading());
   NS_ENSURE_TRUE(caps, NS_ERROR_FAILURE);
   GstStructure* capsStruct = gst_caps_get_structure(caps.get(), 0);
 
   PRBool hasMore;
-  while (NS_SUCCEEDED(rv = propsEnum->HasMoreElements(&hasMore)) && hasMore) {
-    nsCOMPtr<nsISupports> propSupports;
-    rv = propsEnum->GetNext(getter_AddRefs(propSupports));
+  while (NS_SUCCEEDED(rv = attrsEnum->HasMoreElements(&hasMore)) && hasMore) {
+    nsCOMPtr<nsISupports> attrSupports;
+    rv = attrsEnum->GetNext(getter_AddRefs(attrSupports));
     NS_ENSURE_SUCCESS(rv, rv);
-    nsCOMPtr<sbITranscodeProfileProperty> prop =
-      do_QueryInterface(propSupports, &rv);
+    nsCOMPtr<sbITranscodeProfileAttribute> attr =
+      do_QueryInterface(attrSupports, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    nsString propName;
-    rv = prop->GetPropertyName(propName);
+    nsString attrName;
+    rv = attr->GetName(attrName);
     NS_ENSURE_SUCCESS(rv, rv);
-    nsCOMPtr<nsIVariant> propMin, propMax;
-    rv = prop->GetValueMin(getter_AddRefs(propMin));
+    nsCOMPtr<nsIVariant> attrValue;
+    rv = attr->GetValue(getter_AddRefs(attrValue));
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = prop->GetValueMax(getter_AddRefs(propMax));
+    PRUint16 attrType;
+    rv = attrValue->GetDataType(&attrType);
     NS_ENSURE_SUCCESS(rv, rv);
-    PRUint16 propType;
-    rv = propMin->GetDataType(&propType);
-    NS_ENSURE_SUCCESS(rv, rv);
-    #if DEBUG
-    { // debug only - make sure min/max is the same type
-      PRUint16 propMaxType;
-      rv = propMax->GetDataType(&propMaxType);
-      NS_ENSURE_SUCCESS(rv, rv);
-      NS_ENSURE_TRUE(propType == propMaxType, NS_ERROR_UNEXPECTED);
-    }
-    #endif /* DEBUG */
-    switch(propType) {
+    switch(attrType) {
       case nsIDataType::VTYPE_INT8:    case nsIDataType::VTYPE_UINT8:
       case nsIDataType::VTYPE_INT16:   case nsIDataType::VTYPE_UINT16:
       case nsIDataType::VTYPE_INT32:   case nsIDataType::VTYPE_UINT32:
       case nsIDataType::VTYPE_INT64:   case nsIDataType::VTYPE_UINT64:
       {
-        PRInt32 minValue, maxValue;
-        rv = propMin->GetAsInt32(&minValue);
-        NS_ENSURE_SUCCESS(rv, rv);
-        rv = propMax->GetAsInt32(&maxValue);
+        PRInt32 intValue;
+        rv = attrValue->GetAsInt32(&intValue);
         NS_ENSURE_SUCCESS(rv, rv);
         gst_structure_set(capsStruct,
-                          NS_LossyConvertUTF16toASCII(propName).get(),
-                          GST_TYPE_INT_RANGE,
-                          minValue,
-                          maxValue,
+                          NS_LossyConvertUTF16toASCII(attrName).get(),
+                          G_TYPE_INT,
+                          intValue,
+                          NULL);
+        break;
+      }
+      case nsIDataType::VTYPE_UTF8STRING:
+      case nsIDataType::VTYPE_DOMSTRING:
+      case nsIDataType::VTYPE_CSTRING:
+      case nsIDataType::VTYPE_ASTRING:
+      {
+        nsCString stringValue;
+        rv = attrValue->GetAsACString(stringValue);
+        NS_ENSURE_SUCCESS (rv, rv);
+
+        gst_structure_set(capsStruct,
+                          NS_LossyConvertUTF16toASCII(attrName).get(),
+                          G_TYPE_STRING,
+                          stringValue.BeginReading(),
                           NULL);
         break;
       }
       default:
-        NS_NOTYETIMPLEMENTED("Unknown property type");
+        NS_NOTYETIMPLEMENTED("Unknown attribute type");
     }
   }
   NS_ENSURE_SUCCESS(rv, rv);
@@ -297,13 +300,13 @@ sbGStreamerTranscodeDeviceConfigurator::EnsureProfileAvailable(sbITranscodeEncod
   rv = aProfile->GetContainerFormat(capsName);
   NS_ENSURE_SUCCESS(rv, rv);
   if (!capsName.IsEmpty()) {
-    nsCOMPtr<nsIArray> props;
-    rv = aProfile->GetContainerProperties(getter_AddRefs(props));
+    nsCOMPtr<nsIArray> attrs;
+    rv = aProfile->GetContainerAttributes(getter_AddRefs(attrs));
     NS_ENSURE_SUCCESS(rv, rv);
 
     GstCaps* caps = NULL;
-    rv = MakeCapsFromProperties(NS_LossyConvertUTF16toASCII(capsName),
-                                props,
+    rv = MakeCapsFromAttributes(NS_LossyConvertUTF16toASCII(capsName),
+                                attrs,
                                 &caps);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -326,13 +329,13 @@ sbGStreamerTranscodeDeviceConfigurator::EnsureProfileAvailable(sbITranscodeEncod
   rv = aProfile->GetAudioCodec(capsName);
   NS_ENSURE_SUCCESS(rv, rv);
   if (!capsName.IsEmpty()) {
-    nsCOMPtr<nsIArray> props;
-    rv = aProfile->GetAudioProperties(getter_AddRefs(props));
+    nsCOMPtr<nsIArray> attrs;
+    rv = aProfile->GetAudioAttributes(getter_AddRefs(attrs));
     NS_ENSURE_SUCCESS(rv, rv);
 
     GstCaps* caps = NULL;
-    rv = MakeCapsFromProperties(NS_LossyConvertUTF16toASCII(capsName),
-                                props,
+    rv = MakeCapsFromAttributes(NS_LossyConvertUTF16toASCII(capsName),
+                                attrs,
                                 &caps);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -350,13 +353,13 @@ sbGStreamerTranscodeDeviceConfigurator::EnsureProfileAvailable(sbITranscodeEncod
   rv = aProfile->GetVideoCodec(capsName);
   NS_ENSURE_SUCCESS(rv, rv);
   if (!capsName.IsEmpty()) {
-    nsCOMPtr<nsIArray> props;
-    rv = aProfile->GetVideoProperties(getter_AddRefs(props));
+    nsCOMPtr<nsIArray> attrs;
+    rv = aProfile->GetVideoAttributes(getter_AddRefs(attrs));
     NS_ENSURE_SUCCESS(rv, rv);
 
     GstCaps* caps = NULL;
-    rv = MakeCapsFromProperties(NS_LossyConvertUTF16toASCII(capsName),
-                                props,
+    rv = MakeCapsFromAttributes(NS_LossyConvertUTF16toASCII(capsName),
+                                attrs,
                                 &caps);
     NS_ENSURE_SUCCESS(rv, rv);
 

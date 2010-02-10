@@ -14,15 +14,17 @@
 
   <video>
     <type>video/mpeg</type>
-    <property name="mpegversion" type="int" min="4" max="4" default="4"/>
+    <attribute name="mpegversion" type="int" value="4" />
+
     <quality-property name="bpp" quality="0" value="0.2"/>
     <quality-property name="bpp" quality="1" value="1"/>
   </video>
 
   <audio>
     <type>audio/mpeg</type>
-    <property name="mpegversion" type="int" min="1" max="1" default="1"/>
-    <property name="layer" type="int" min="3" max="3" default="3"/>
+    <attribute name="mpegversion" type="int" value="1"/>
+    <attribute name="layer" type="int" value="3"/>
+
     <quality-property name="bitrate" quality="0" value="32000"/>
     <quality-property name="bitrate" quality="0.5" value="128000"/>
     <quality-property name="bitrate" quality="1" value="320000"/>

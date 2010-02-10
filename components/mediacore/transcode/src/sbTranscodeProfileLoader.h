@@ -79,10 +79,17 @@ protected:
   /**
    * Process the given property node and fill out the property data
    * \param [in] aPropertyElement the XML element with property data to read
-   * \return the parsed trascode property
+   * \return the parsed transcode property
    */
   nsresult ProcessProperty(nsIDOMElement* aPropertyElement,
                            sbITranscodeProfileProperty** _retval);
+  /**
+   * Process the given attribute node and fill out the attribute data
+   * \param [in] aPropertyElement the XML element with attribute data to read
+   * \return the parsed transcode attribute
+   */
+  nsresult ProcessAttribute(nsIDOMElement* aAttributeElement,
+                            sbITranscodeProfileAttribute** _retval);
   /**
    * Process the container element and set the properties on the given profile
    * \param [in] aProfile the transcode profile to modify

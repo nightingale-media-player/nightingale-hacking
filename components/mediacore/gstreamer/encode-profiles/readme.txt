@@ -18,7 +18,7 @@ It also has a series of properties that depend on the quality setting input:
     setting level.  The quality setting is a real number between 0 and 1.
 
 There are also codec-related attributes of the profile:
-  <contain/> - details about the muxer.
+  <container/> - details about the muxer.
     <type/> - text content is the GStreamer (mime-ish) type of the container.
   
   <video/> - details about the video stream.
@@ -26,8 +26,13 @@ There are also codec-related attributes of the profile:
 
 For <video/> and <audio/>, they have the following children:
   <type/> - text content is the GStreamer (mime-ish) type of the video stream
-  <property/> - a property to set on the type; together, they specify what is
-    effectively a capsfilter for the output.  <property/> has these attributes:
+  <attribute/> - a property to set on the GStreamer caps type.
+    Has these attributes:
+      name= the name of the property
+      type= type of property (string or int are currently supported)
+      value= the actual value to use
+  <property/> - a property to set on the element.
+    Has these attributes:
       name= - the name of the property to set on the GStreamer element.
       mapping= - (optional) if set, the value for this property will be taken
                  from the named one instead of the other attributes.

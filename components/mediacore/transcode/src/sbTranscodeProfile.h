@@ -78,6 +78,9 @@ private:
   nsCOMPtr<nsIArray> mContainerProperties;
   nsCOMPtr<nsIArray> mAudioProperties;
   nsCOMPtr<nsIArray> mVideoProperties;
+  nsCOMPtr<nsIArray> mContainerAttributes;
+  nsCOMPtr<nsIArray> mAudioAttributes;
+  nsCOMPtr<nsIArray> mVideoAttributes;
   
   /* map for the priority */
   std::map<double, PRUint32> mPriorityMap;

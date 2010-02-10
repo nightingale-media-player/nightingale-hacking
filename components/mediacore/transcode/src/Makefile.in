@@ -39,6 +39,7 @@ CPP_SRCS = sbTranscodeAlbumArt.cpp \
            sbTranscodeProfile.cpp \
            sbTranscodeProfileLoader.cpp \
            sbTranscodeProfileProperty.cpp \
+           sbTranscodeProfileAttribute.cpp \
            sbImageTools.cpp \
            sbTranscodingConfigurator.cpp \
            $(NULL)
