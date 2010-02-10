@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2009, Pioneers of the Inevitable, Inc.
+# Copyright (c) 2008, Pioneers of the Inevitable, Inc.
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -26,25 +26,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # 
 
-DEPTH = ../..
-topsrcdir = @top_srcdir@
-srcdir = @srcdir@
-VPATH = @srcdir@
+EXTENSION_NAME = concerts-philips
+EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
+EXTENSION_NO_BINARY_COMPONENTS = 1
 
-include $(DEPTH)/build/autodefs.mk
+EXTENSION_VER = 1.0.3pre
+EXTENSION_MIN_VER = $(SB_JSONLY_EXTENSION_MIN_VER)
+EXTENSION_MAX_VER = $(SB_JSONLY_EXTENSION_MAX_VER)
 
-IS_EXTENSION_MULTI_BUILD = 1
-EXTENSION_CONFIGS = extension-config-songbird.mk \
-                    extension-config-philips.mk \
-                    $(NULL)
-
-SUBDIRS = chrome \
-          components \
-          defaults \
-          $(NULL)
-
-CREATEDIRS = $(SONGBIRD_COMPONENTSDIR) \
-             $(SONGBIRD_PREFERENCESDIR) \
-             $(NULL)
-
-include $(topsrcdir)/build/rules.mk
+SONGKICK_APIKEY=hTrRhmWVCEqe9Rx3
+SONGKICK_PARTNERCODE=411

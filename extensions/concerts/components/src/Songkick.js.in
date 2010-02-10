@@ -1,3 +1,5 @@
+#filter substitution
+
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
@@ -11,7 +13,7 @@ const CID         = "{33268520-4d39-11dd-ae16-0800200c9a66}";
 const CONTRACTID  = "@songbirdnest.com/Songbird/Concerts/Songkick;1";
 
 // Songbird's Songkick API key - unique to Songbird, don't use anywhere else
-const SongkickAPIKey = "BBb1rqkkzs5Jovfz";
+const SongkickAPIKey = "@SONGKICK_APIKEY@";
 
 // Testing flags
 const SHORT_TIMER = true;

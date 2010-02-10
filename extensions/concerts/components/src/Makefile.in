@@ -37,10 +37,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-IS_EXTENSION = 1
+IS_EXTENSION=1
 
-SONGBIRD_COMPONENTS = $(srcdir)/Songkick.js \
-                      $(NULL)
+SONGBIRD_PP_RESOURCES = $(srcdir)/Songkick.js.in
+SONGBIRD_PP_DIR = $(SONGBIRD_COMPONENTSDIR)
+PPDEFINES = -DSONGKICK_APIKEY="$(SONGKICK_APIKEY)"
 
 include $(topsrcdir)/build/rules.mk
 

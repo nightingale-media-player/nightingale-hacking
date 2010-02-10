@@ -1,3 +1,5 @@
+#filter substitution
+
 if (typeof(Cc) == "undefined")
 	var Cc = Components.classes;
 if (typeof(Ci) == "undefined")
@@ -34,6 +36,8 @@ function flushDisplay() {
 				.currentThread.processNextEvent(true);
 	}
 }
+
+var SongkickPartnerCode = "p=@SONGKICK_PARTNERCODE@";
 
 var letterIndices = ['Z','Y','X','W','V','U','T','S','R','Q','P','O','N','M',
                      'L','K','J','I','H','G','F','E','D','C','B','A','#'];
@@ -301,7 +305,7 @@ ConcertTicketing.showTimeoutError = function() {
 
 ConcertTicketing.openCityPage = function() {
 	var url = Application.prefs.getValue("extensions.concerts.citypage", "");
-	gBrowser.loadOneTab(url + "?p=21");
+	gBrowser.loadOneTab(url + "?" + SongkickPartnerCode);
 }
 
 ConcertTicketing.openProviderPage = function() {
@@ -314,7 +318,7 @@ ConcertTicketing.openProviderPage = function() {
 
 	var city = Application.prefs.getValue("extensions.concerts.city", 0);
 	if (city != 0)
-		url += "?p=21&user_location=" + city;
+		url += "?" + SongkickPartnerCode + "&user_location=" + city;
 	gBrowser.loadOneTab(url);
 }
 
@@ -577,11 +581,12 @@ ConcertTicketing.browseConcerts = function(ticketingObj) {
 		var url = this.skSvc.providerURL();
 		var city = Application.prefs.getValue("extensions.concerts.city", 0);
 		if (city != 0)
-			url += "?p=21&user_location=" + city;
+			url += "?" + SongkickPartnerCode + "&user_location=" + city;
 		poweredBy.innerHTML = this._strings.getString("poweredBy") + 
 			" <a target='_blank' href='" + url + "'>Songkick</a>. "
 			+ this._strings.getString("tosPrefix") + 
-			" <a target='_blank' href='http://www.songkick.com/terms?p=21'>" +
+			" <a target='_blank' href='http://www.songkick.com/terms?" +
+      SongkickPartnerCode + "'>" +
 			this._strings.getString("tosLink") + "</a>.";
 		ft.appendChild(poweredBy);
 
@@ -942,7 +947,7 @@ ConcertTicketing.openDateLink = function(e) {
 		var year = this.getAttribute("year");
 		var month = parseInt(this.getAttribute("month")) + 1;
 		var date = this.getAttribute("date");
-		gBrowser.loadOneTab(citypage + "?p=21" +
+		gBrowser.loadOneTab(citypage + "?" + SongkickPartnerCode +
 				"&d=" + year + "-" + month + "-" + date);
 	}
 }
@@ -1142,11 +1147,11 @@ ConcertTicketing.makeLink = function(el, url, metric) {
 
 // Adds Songbird's partner code & user location
 ConcertTicketing.appendCityParam = function(url) {
-	return (url + "?p=21&user_location=" + this.pCity);
+	return (url + "?" + SongkickPartnerCode + "&user_location=" + this.pCity);
 }
 // Add's Songbird's partner code only
 ConcertTicketing.appendPartnerParam = function(url) {
-	return (url + "?p=21");
+	return (url + "?" + SongkickPartnerCode);
 }
 
 /***************************************************************************
