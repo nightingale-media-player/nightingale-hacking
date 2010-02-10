@@ -62,6 +62,8 @@
                   label="&device.management.tabs.music.label;" />
          <xul:tab sbid="device_management_video_sync_tab"
                   label="&device.management.tabs.video.label;"/>
+         <xul:tab sbid="device_management_image_sync_tab"
+                  label="&device.management.tabs.image.label;"/>
          <xul:tab sbid="device_management_settings_sync_tab"
                   label="&device.management.tabs.settings.label;"
                   xbl:inherits="hidden=hideSettingsTab"/>
@@ -85,6 +87,13 @@
                                 xbl:inherits="device-id"
                                 contenttype="video"
                                 pack="center"/>
+          </xul:tabpanel>
+          <xul:tabpanel sbid="device_management_image_sync_tabpanel"
+                        pack="center">
+            <xul:sb-device-image-sync sbid="device_image_sync"
+                                      flex="1"
+                                      xbl:inherits="device-id"
+                                      pack="center"/>
           </xul:tabpanel>
           <xul:tabpanel sbid="device_management_settings_tabpanel"
                         pack="center">

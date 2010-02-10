@@ -48,6 +48,8 @@
 #include <sbProxiedComponentManager.h>
 #include <nsComponentManagerUtils.h>
 #include <nsDirectoryServiceUtils.h>
+#include <nsIFile.h>
+#include <nsILocalFile.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
@@ -155,10 +157,12 @@ NS_IMPL_THREADSAFE_CI(sbDeviceLibrary)
 #define PREF_SYNC_BRANCH    ".sync."
 #define PREF_SYNC_MGMTTYPE  "mgmtType"
 #define PREF_SYNC_LISTS     "playlists"
+#define PREF_SYNC_ROOT      "root"
 
 const static char* gMediaType[] = {
   ".audio",
-  ".video"
+  ".video",
+  ".image"
 };
 
 /**
@@ -386,6 +390,8 @@ sbDeviceLibrary::SetSyncPlaylistListPref(PRUint32 aContentType,
   NS_ENSURE_ARG_RANGE(aContentType,
                       sbIDeviceLibrary::MEDIATYPE_AUDIO,
                       sbIDeviceLibrary::MEDIATYPE_COUNT - 1);
+  NS_ENSURE_FALSE(aContentType == sbIDeviceLibrary::MEDIATYPE_IMAGE,
+                  NS_ERROR_NOT_IMPLEMENTED);
 
   nsresult rv;
 
@@ -730,6 +736,10 @@ sbDeviceLibrary::GetIsMgmtTypeSyncList(PRBool* aIsMgmtTypeSyncList)
   PRUint32 mgmtType;
   nsresult rv;
   for (PRUint32 i = 0; i < sbIDeviceLibrary::MEDIATYPE_COUNT; ++i) {
+    // Ignore management type for images, it is always semi-manual
+    if (i == sbIDeviceLibrary::MEDIATYPE_IMAGE)
+      continue;
+
     rv = GetMgmtType(i, &mgmtType);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -917,6 +927,8 @@ sbDeviceLibrary::RemoveFromSyncPlaylistList(PRUint32 aContentType,
   NS_ENSURE_ARG_RANGE(aContentType,
                       sbIDeviceLibrary::MEDIATYPE_AUDIO,
                       sbIDeviceLibrary::MEDIATYPE_COUNT - 1);
+  NS_ENSURE_FALSE(aContentType == sbIDeviceLibrary::MEDIATYPE_IMAGE,
+                  NS_ERROR_NOT_IMPLEMENTED);
   nsresult rv;
 
   // Get the preference key
@@ -998,6 +1010,28 @@ sbDeviceLibrary::GetSyncListsPrefKey(PRUint32 aContentType,
   aPrefKey.Append(guid);
   aPrefKey.AppendLiteral(PREF_SYNC_BRANCH);
   aPrefKey.AppendLiteral(PREF_SYNC_LISTS);
+  aPrefKey.AppendLiteral(gMediaType[aContentType]);
+
+  return NS_OK;
+}
+
+nsresult
+sbDeviceLibrary::GetSyncRootPrefKey(PRUint32 aContentType, nsAString& aPrefKey)
+{
+  NS_ENSURE_ARG_RANGE(aContentType,
+                      sbIDeviceLibrary::MEDIATYPE_AUDIO,
+                      sbIDeviceLibrary::MEDIATYPE_COUNT - 1);
+
+  // Get the device library GUID
+  nsString guid;
+  nsresult rv = mDeviceLibrary->GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the preference key
+  aPrefKey.Assign(NS_LITERAL_STRING(PREF_SYNC_PREFIX));
+  aPrefKey.Append(guid);
+  aPrefKey.AppendLiteral(PREF_SYNC_BRANCH);
+  aPrefKey.AppendLiteral(PREF_SYNC_ROOT);
   aPrefKey.AppendLiteral(gMediaType[aContentType]);
 
   return NS_OK;
@@ -1109,6 +1143,10 @@ sbDeviceLibrary::GetSyncMode(PRUint32 * aSyncMode)
   nsresult rv;
   PRUint32 syncMode = SYNC_AUTO;
   for (PRUint32 i = 0; i < MEDIATYPE_COUNT; ++i) {
+    // Ignore management type for images, it is always semi-manual
+    if (i == sbIDeviceLibrary::MEDIATYPE_IMAGE)
+      continue;
+
     PRUint32 mgmtType;
     rv = GetMgmtTypePref(i, mgmtType);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1173,6 +1211,10 @@ sbDeviceLibrary::SetSyncMode(PRUint32 aSyncMode)
   }
 
   for (PRUint32 i = 0; i < sbIDeviceLibrary::MEDIATYPE_COUNT; ++i) {
+    // Skip images - not managed by playlists
+    if (i == sbIDeviceLibrary::MEDIATYPE_IMAGE)
+      continue;
+
     // figure out the old pref first
     PRUint32 origMgmtType;
     rv = GetMgmtTypePref(i, origMgmtType);
@@ -1240,6 +1282,9 @@ sbDeviceLibrary::GetSyncPlaylistListByType(PRUint32 aContentType,
   NS_ENSURE_ARG_RANGE(aContentType,
                       sbIDeviceLibrary::MEDIATYPE_AUDIO,
                       sbIDeviceLibrary::MEDIATYPE_COUNT - 1);
+  NS_ENSURE_FALSE(aContentType == sbIDeviceLibrary::MEDIATYPE_IMAGE,
+                  NS_ERROR_NOT_IMPLEMENTED);
+
   nsresult rv;
 
   nsCOMPtr<nsIMutableArray> array =
@@ -1269,8 +1314,9 @@ sbDeviceLibrary::GetSyncPlaylistListByType(PRUint32 aContentType,
 
   PRInt32 start = 0;
   PRInt32 end = listGuidsCSV.FindChar(',', start);
-  if (end < 0)
+  if (end < 0) {
     end = listGuidsCSV.Length();
+  }
   while (end > start) {
     // Extract the list GUID
     nsDependentSubstring listGUID = Substring(listGuidsCSV, start, end - start);
@@ -1312,6 +1358,8 @@ sbDeviceLibrary::SetSyncPlaylistListByType(PRUint32 aContentType,
   NS_ENSURE_ARG_RANGE(aContentType,
                       sbIDeviceLibrary::MEDIATYPE_AUDIO,
                       sbIDeviceLibrary::MEDIATYPE_COUNT - 1);
+  NS_ENSURE_FALSE(aContentType == sbIDeviceLibrary::MEDIATYPE_IMAGE,
+                  NS_ERROR_NOT_IMPLEMENTED);
 
   nsresult rv = SetSyncPlaylistListPref(aContentType, aPlaylistList);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1328,6 +1376,8 @@ sbDeviceLibrary::AddToSyncPlaylistList(PRUint32 aContentType,
   NS_ENSURE_ARG_RANGE(aContentType,
                       sbIDeviceLibrary::MEDIATYPE_AUDIO,
                       sbIDeviceLibrary::MEDIATYPE_COUNT - 1);
+  NS_ENSURE_FALSE(aContentType == sbIDeviceLibrary::MEDIATYPE_IMAGE,
+                  NS_ERROR_NOT_IMPLEMENTED);
   nsresult rv;
 
   // Get the preference key
@@ -1370,6 +1420,8 @@ sbDeviceLibrary::RemoveFromSyncPlaylistList(PRUint32 aContentType,
   NS_ENSURE_ARG_RANGE(aContentType,
                       sbIDeviceLibrary::MEDIATYPE_AUDIO,
                       sbIDeviceLibrary::MEDIATYPE_COUNT - 1);
+  NS_ENSURE_FALSE(aContentType == sbIDeviceLibrary::MEDIATYPE_IMAGE,
+                  NS_ERROR_NOT_IMPLEMENTED);
   nsresult rv;
 
   // Get the preference key
@@ -1400,6 +1452,199 @@ sbDeviceLibrary::RemoveFromSyncPlaylistList(PRUint32 aContentType,
     rv = mDevice->SetPreference(prefKey, sbNewVariant(listGuidsCSV));
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceLibrary::GetSyncRootFolderByType(PRUint32 aContentType,
+                                         nsIFile **_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_ARG_RANGE(aContentType,
+                      sbIDeviceLibrary::MEDIATYPE_AUDIO,
+                      sbIDeviceLibrary::MEDIATYPE_COUNT - 1);
+  NS_ENSURE_TRUE(aContentType == sbIDeviceLibrary::MEDIATYPE_IMAGE,
+                 NS_ERROR_NOT_IMPLEMENTED);
+  nsresult rv;
+
+  // Get the preference
+  nsString prefKey;
+  rv = GetSyncRootPrefKey(aContentType, prefKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIVariant> var;
+  rv = mDevice->GetPreference(prefKey, getter_AddRefs(var));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString folderPath;
+  rv = var->GetAsAString(folderPath);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (folderPath.IsEmpty()) {
+    *_retval = nsnull;
+    return NS_OK;
+  }
+
+  // Convert folder path into a file object
+  nsCOMPtr<nsILocalFile> folder;
+  rv = NS_NewLocalFile(folderPath, PR_TRUE, getter_AddRefs(folder));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ADDREF(*_retval = folder);
+
+  return NS_OK;  
+}
+
+NS_IMETHODIMP
+sbDeviceLibrary::SetSyncRootFolderByType(PRUint32 aContentType,
+                                         nsIFile *aFolder)
+{
+  NS_ENSURE_ARG_POINTER(aFolder);
+  NS_ENSURE_ARG_RANGE(aContentType,
+                      sbIDeviceLibrary::MEDIATYPE_AUDIO,
+                      sbIDeviceLibrary::MEDIATYPE_COUNT - 1);
+  NS_ENSURE_TRUE(aContentType == sbIDeviceLibrary::MEDIATYPE_IMAGE,
+                 NS_ERROR_NOT_IMPLEMENTED);
+  nsresult rv;
+
+  // Get folder path
+  nsAutoString folderPath;
+  rv = aFolder->GetPath(folderPath);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the preference key
+  nsString prefKey;
+  rv = GetSyncRootPrefKey(aContentType, prefKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Write the preference
+  rv = mDevice->SetPreference(prefKey, sbNewVariant(folderPath));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;  
+}
+
+NS_IMETHODIMP
+sbDeviceLibrary::GetSyncFolderListByType(PRUint32 aContentType,
+                                         nsIArray **_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_ARG_RANGE(aContentType,
+                      sbIDeviceLibrary::MEDIATYPE_AUDIO,
+                      sbIDeviceLibrary::MEDIATYPE_COUNT - 1);
+  NS_ENSURE_TRUE(aContentType == sbIDeviceLibrary::MEDIATYPE_IMAGE,
+                 NS_ERROR_NOT_IMPLEMENTED);
+  nsresult rv;
+
+  // Create an array for the result
+  nsCOMPtr<nsIMutableArray> array =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 mgmtType;
+  rv = GetMgmtType(aContentType, &mgmtType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If all items, simply add the root folder to the list
+  if (mgmtType == sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL) {
+    nsCOMPtr<nsIFile> rootFolder;
+    rv = GetSyncRootFolderByType(aContentType, getter_AddRefs(rootFolder));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (rootFolder) {
+      rv = array->AppendElement(rootFolder, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+  else if (mgmtType == sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS) {
+    // Get the preference
+    nsString prefKey;
+    rv = GetSyncListsPrefKey(aContentType, prefKey);
+    NS_ENSURE_SUCCESS(rv, rv);
+  
+    nsCOMPtr<nsIVariant> var;
+    rv = mDevice->GetPreference(prefKey, getter_AddRefs(var));
+    NS_ENSURE_SUCCESS(rv, rv);
+  
+    nsAutoString foldersDSV;
+    rv = var->GetAsAString(foldersDSV);
+    NS_ENSURE_SUCCESS(rv, rv);
+  
+    // Scan folder list DSV for folder paths and add them to the array
+    PRInt32 start = 0;
+    PRInt32 end = foldersDSV.FindChar('\1', start);
+    if (end < 0) {
+      end = foldersDSV.Length();
+    }
+    while (end > start) {
+      // Extract the folder path
+      nsDependentSubstring folderPath = Substring(foldersDSV, start, end - start);
+  
+      nsCOMPtr<nsILocalFile> folder;
+      rv = NS_NewLocalFile(folderPath, PR_TRUE, getter_AddRefs(folder));
+      if (NS_FAILED(rv))  // Invalid path, skip
+        continue;
+  
+      rv = array->AppendElement(folder, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+  
+      // Scan for the next folder path
+      start = end + 1;
+      end = foldersDSV.FindChar('\1', start);
+      if (end < 0)
+        end = foldersDSV.Length();
+    }
+  }
+
+  NS_ADDREF(*_retval = array);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceLibrary::SetSyncFolderListByType(PRUint32 aContentType,
+                                         nsIArray *aFolderList)
+{
+  NS_ENSURE_ARG_POINTER(aFolderList);
+  NS_ENSURE_ARG_RANGE(aContentType,
+                      sbIDeviceLibrary::MEDIATYPE_AUDIO,
+                      sbIDeviceLibrary::MEDIATYPE_COUNT - 1);
+  NS_ENSURE_TRUE(aContentType == sbIDeviceLibrary::MEDIATYPE_IMAGE,
+                 NS_ERROR_NOT_IMPLEMENTED);
+  nsresult rv;
+
+  // Get the number of sync folders
+  PRUint32 length;
+  rv = aFolderList->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Produce the sync folder list DSV
+  nsAutoString foldersDSV;
+  for (PRUint32 i = 0; i < length; i++) {
+    // Get the next sync folder
+    nsCOMPtr<nsIFile> folder = do_QueryElementAt(aFolderList, i, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the folder path
+    nsAutoString folderPath;
+    rv = folder->GetPath(folderPath);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Add the folder to the list of sync folders
+    if (i > 0)
+      foldersDSV.AppendLiteral("\1");
+    foldersDSV.Append(folderPath);
+  }
+
+  // Get the preference key
+  nsString prefKey;
+  rv = GetSyncListsPrefKey(aContentType, prefKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Write the preference
+  rv = mDevice->SetPreference(prefKey, sbNewVariant(foldersDSV));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -1672,6 +1917,10 @@ sbDeviceLibrary::GetSyncPlaylistList(nsIArray ** aPlaylistList)
   for (PRUint32 i = isSyncAll ? 1 : 0;
        i < sbIDeviceLibrary::MEDIATYPE_COUNT;
        ++i) {
+    // Skip images - not managed by playlists
+    if (i == sbIDeviceLibrary::MEDIATYPE_IMAGE)
+      continue;
+
     PRUint32 mgmtType;
     GetMgmtType(i, &mgmtType);
     if (mgmtType != sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS) {

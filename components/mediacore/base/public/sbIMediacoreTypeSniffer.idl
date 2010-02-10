@@ -29,7 +29,7 @@
 interface nsIURI;
 interface nsIStringEnumerator;
 
-[scriptable, uuid(8C665C11-F599-4B78-8D45-D44869D1FD42)]
+[scriptable, uuid(4c4cebf8-1dd2-11b2-9ce7-bf7e9e3a2b69)]
 interface sbIMediacoreTypeSniffer : nsISupports
 {
   /**
@@ -46,6 +46,11 @@ interface sbIMediacoreTypeSniffer : nsISupports
    * \brief Returns all playlist file extensions.
    */
   readonly attribute nsIStringEnumerator playlistFileExtensions;
+
+  /**
+   * \brief Returns all image file extensions.
+   */
+  readonly attribute nsIStringEnumerator imageFileExtensions;
 
   /**
    * \brief Returns all media file extensions. Media file extensions are a 

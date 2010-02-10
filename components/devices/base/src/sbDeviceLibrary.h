@@ -245,6 +245,15 @@ private:
   nsresult GetSyncListsPrefKey(PRUint32 aContentType, nsAString& aPrefKey);
 
   /**
+   * \brief Return in aPrefKey the device preference key for the sync root
+   *        folder.
+   *
+   * \param aContentType - Content type for the preference key.
+   * \param aPrefKey - Returned device preference key for the sync root folder.
+   */
+  nsresult GetSyncRootPrefKey(PRUint32 aContentType, nsAString& aPrefKey);
+
+  /**
    * \brief Confirm with the user a switch from manual to sync mode.  If user
    *        cancels the switch, return true in aCancelSwitch.
    *

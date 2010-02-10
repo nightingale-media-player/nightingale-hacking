@@ -32,6 +32,7 @@ interface sbIMediaItem;
 interface sbIMediaList;
 interface sbIPropertyArray;
 interface nsIURI;
+interface nsIFile;
 
 
 /**
@@ -221,7 +222,7 @@ interface sbIDeviceLibraryListener : nsISupports
  * \interface sbIDeviceLibrary
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(3585b1b0-e3ba-11de-8a39-0800200c9a66)]
+[scriptable, uuid(8e8cd544-1dd2-11b2-a8b3-b686e094d115)]
 interface sbIDeviceLibrary : sbILibrary
 {
   /**
@@ -270,7 +271,9 @@ interface sbIDeviceLibrary : sbILibrary
 
   const unsigned long MEDIATYPE_VIDEO                   = 0x01;
 
-  const unsigned long MEDIATYPE_COUNT                   = 0x02;
+  const unsigned long MEDIATYPE_IMAGE                   = 0x02;
+
+  const unsigned long MEDIATYPE_COUNT                   = 0x03;
 
 
   /**
@@ -379,6 +382,49 @@ interface sbIDeviceLibrary : sbILibrary
 
   void removeFromSyncPlaylistList(in unsigned long aContentType,
                                   in sbIMediaList aPlaylist);
+
+  /**
+   * \brief Return the root folder for sync.
+   *
+   * \param aContentType Content type to be synced
+   *
+   * \return nsIFile that represents the root folder for the sync.
+   */
+
+  nsIFile getSyncRootFolderByType(in unsigned long aContentType);
+
+  /**
+   * \brief Set the root folder for sync.
+   *
+   * \param aContentType Content type to be synced
+   * \param aFolder nsIFile that represents the root folder for the sync.
+   */
+
+  void setSyncRootFolderByType(in unsigned long aContentType,
+                               in nsIFile aFolder);
+
+  /**
+   * \brief Return the list of folders with content type aContentType the
+   *        user wants to sync from his disk to the device.
+   *
+   * \param aContentType Content type to be synced
+   *
+   * \return List of nsIFile that represent the folders to sync.
+   */
+
+  nsIArray getSyncFolderListByType(in unsigned long aContentType);
+
+  /**
+   * \brief Set the list of folders with content type aContentType the user
+   *        wants to sync from his disk to the device.
+   *
+   * \param aContentType Content type to be synced
+   * \param aFolderList List of nsIFIle that represent the folders
+   *                      to sync.
+   */
+
+  void setSyncFolderListByType(in unsigned long aContentType,
+                               in nsIArray aFolderList);
 
   /**
    * \brief Initiates a sync operation on this library

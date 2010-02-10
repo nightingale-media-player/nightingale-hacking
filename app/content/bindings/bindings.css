@@ -564,6 +564,10 @@ sb-device-sync {
   -moz-binding: url("chrome://songbird/content/bindings/device/deviceSync.xml#sb-device-sync");
 }
 
+sb-device-image-sync {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceImageSync.xml#sb-device-image-sync");
+}
+
 sb-device-summary-settings {
   -moz-binding: url("chrome://songbird/content/bindings/device/deviceSummarySettings.xml#sb-device-summary-settings");
 }

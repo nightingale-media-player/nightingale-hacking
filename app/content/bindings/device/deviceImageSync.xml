@@ -1,0 +1,889 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Image sync widget
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-image-sync"
+     extends="chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-control">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+     <content>
+
+      <xul:vbox class="device-tab-content">
+        <xul:hbox align="center">
+          <xul:checkbox sbid="sync_images_from_checkbox"
+                        label="&device.sync.images.from.label;"
+                        oncommand="document.getBindingParent(this)._enableSync(this.checked);"/>
+          <xul:menulist sbid="sync_images_from_list"
+                        flex="1"
+                        onselect="document.getBindingParent(this)._folderChanged();">
+            <xul:menupopup>
+              <xul:menuitem label="&device.sync.images.browse;" value=""/>
+            </xul:menupopup>
+          </xul:menulist>
+        </xul:hbox>
+
+        <xul:groupbox>
+          <xul:radiogroup sbid="sync_images_type_group">
+            <xul:radio sbid="sync_images_all_radio"
+                       label="&device.sync.images.all.label;"
+                       _label_default="&device.sync.images.all.label;"
+                       _label_template="&device.sync.images.all.template;"
+                       oncommand="document.getBindingParent(this)._syncAll(true);"/>
+            <xul:radio sbid="sync_images_selected_radio"
+                       label="&device.sync.images.selected.label;"
+                       oncommand="document.getBindingParent(this)._syncAll(false);"/>
+            <xul:tree sbid="sync_images_folders_tree"
+                      hidecolumnpicker="true"
+                      enableColumnDrag="false"
+                      editable="true"
+                      seltype="single"
+                      rows="5"
+                      onclick="if (this.getAttribute('disabled') != 'true')
+                                 document.getBindingParent(this)._updateSyncFolders();">
+              <xul:treecols height="0">
+                <xul:treecol sbid="sync_images_folder_check"
+                             type="checkbox"
+                             editable="true"
+                             class="sync-images-folder-check"/>
+                <xul:treecol sbid="sync_images_folder_name"
+                             class="sync-images-folder-name"
+                             flex="1"/>
+                <xul:treecol sbid="sync_images_folder_filecount"
+                             class="sync-images-folder-filecount"
+                             width="80"/>
+              </xul:treecols>
+
+              <xul:treechildren sbid="sync_images_folder_children"
+                                alternatingbackground="true"/>
+            </xul:tree>
+          </xul:radiogroup>
+        </xul:groupbox>
+      </xul:vbox>
+    </content>
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation implements="sbIDeviceEventListener">
+
+      <field name="_syncPrefs">null</field>
+      <field name="_deviceLibrary">null</field>
+      <field name="_deviceEventTarget">null</field>
+      <field name="_displayedFolder">null</field>
+      <field name="_settingsChanged">false</field>
+      <field name="_ignoreDevicePrefChanges">false</field>
+      <!-- _ignoreFolderChanges defaults to true to ignore the select event
+           during widget construction -->
+      <field name="_ignoreFolderChanges">true</field>
+      <field name="_fileScanner">Cc["@songbirdnest.com/Songbird/FileScan;1"]
+                                   .createInstance(Ci.sbIFileScan);</field>
+      <field name="_fileScanQuery">null</field>
+      <field name="_fileScanTimer">null</field>
+
+      <!--
+       * \brief Constructor, initializes the widget.
+       -->
+      <constructor> <![CDATA[
+      {
+        Cu.import("resource://app/jsmodules/DeviceHelper.jsm", this);
+        Cu.import("resource://app/jsmodules/ArrayConverter.jsm", this);
+
+        this._syncPrefs = {};
+
+        if (this.device)
+          this._initDevice();
+
+        // Listen for sync settings apply/cancel events.
+        let self = this;
+        document.addEventListener("sbDeviceSync-settings", function(aEvent) {
+          self._onSettingsEvent(aEvent);
+        }, false);
+
+        // Initialize UI
+        this._updateUI();
+      }
+      ]]></constructor>
+
+      <!--
+       * \brief Destructor, cleans up everything.
+       -->
+      <destructor> <![CDATA[
+      {
+        this._finalizeDevice();
+      }
+      ]]></destructor>
+
+      <method name="_initDevice">
+        <body><![CDATA[
+          // Update the device library we are dealing with
+          // Currently we just grab the first one since we only deal with one library
+          // XXX When we deal with multiple libraries we will need to change this
+          //     so that it can handle a particular library rather than defaulting
+          //     to the first one.
+          if (this._deviceLibrary)
+            this._removeLibrary(this._deviceLibrary);
+          if (this.device.content.libraries.length > 0) {
+            this._addLibrary(this.device.content
+                                 .libraries.queryElementAt(0, Ci.sbIDeviceLibrary));
+            if (this.device.content.libraries.length > 1)
+              Cu.reportError("Unexpected: device has more than one library");
+          }
+
+          // Listen for device events.
+          this._deviceEventTarget =
+                this.device.QueryInterface(Ci.sbIDeviceEventTarget);
+          this._deviceEventTarget.addEventListener(this);
+        ]]></body>
+      </method>
+
+      <method name="_finalizeDevice">
+        <body><![CDATA[
+          if (this._deviceEventTarget)
+            this._deviceEventTarget.removeEventListener(this);
+        ]]></body>
+      </method>
+
+      <!--
+       * \brief Retrieves an anonymous child element by its sbid attribute.
+       *
+       * \param aElementID  element ID to search
+       * \return Element
+       -->
+      <method name="_getElement">
+        <parameter name="aElementID"/>
+        <body><![CDATA[
+        {
+          return document.getAnonymousElementByAttribute(this,
+                                                         "sbid",
+                                                         aElementID);
+        }
+        ]]></body>
+      </method>
+
+      <!--
+       * \brief Re-reads sync preferences.
+       *
+       * \param aPrefs  object to be populated with the preferences
+       -->
+      <method name="_syncPrefsRead">
+        <parameter name="aPrefs"/>
+        <body><![CDATA[
+        {
+          let mediaType = Ci.sbIDeviceLibrary.MEDIATYPE_IMAGE;
+          aPrefs.mgmtType = this._deviceLibrary.getMgmtType(mediaType);
+          aPrefs.rootFolder = this._deviceLibrary
+                                  .getSyncRootFolderByType(mediaType);
+
+          // Ignore folders that no longer exist
+          if (aPrefs.rootFolder && !aPrefs.rootFolder.exists())
+            aPrefs.rootFolder = null;
+
+          // Default root folder is "My Pictures"
+          if (!aPrefs.rootFolder) {
+            let directoryService = Cc["@mozilla.org/file/directory_service;1"]
+                                     .getService(Ci.nsIProperties);
+            if (directoryService.has("Pics"))
+              aPrefs.rootFolder = directoryService.get("Pics", Ci.nsIFile);
+          }
+
+          aPrefs.syncFoldersList = {};
+          let storedFoldersList = this._deviceLibrary
+                                      .getSyncFolderListByType(mediaType);
+          for (let i = 0; i < storedFoldersList.length; i++) {
+            let folder = storedFoldersList.queryElementAt(i, Ci.nsIFile);
+            aPrefs.syncFoldersList[folder.path] = true;
+          }
+        }
+        ]]></body>
+      </method>
+
+      <!--
+       * \brief Saves sync preferences.
+       *
+       * \param aPrefs  object the preferences should be taken from
+       -->
+      <method name="_syncPrefsWrite">
+        <parameter name="aPrefs"/>
+        <body><![CDATA[
+        {
+          let mediaType = Ci.sbIDeviceLibrary.MEDIATYPE_IMAGE;
+          this._deviceLibrary.setMgmtType(mediaType, aPrefs.mgmtType);
+
+          if (aPrefs.rootFolder) {
+            this._deviceLibrary.setSyncRootFolderByType(mediaType,
+                                                        aPrefs.rootFolder);
+          }
+
+          let jsArray = [];
+          for (let path in aPrefs.syncFoldersList) {
+            let file = Cc["@mozilla.org/file/local;1"]
+                         .createInstance(Ci.nsILocalFile);
+            file.initWithPath(path);
+            jsArray.push(file);
+          }
+          let array = this.ArrayConverter.nsIArray(jsArray);
+          this._deviceLibrary.setSyncFolderListByType(mediaType, array);
+        }
+        ]]></body>
+      </method>
+
+      <!--
+       * \brief Updates UI with current sync preferences.
+       -->
+      <method name="_updateUI">
+        <body><![CDATA[
+        {
+          // Hide widget if no device library present
+          if (!this._deviceLibrary) {
+            this.setAttribute("hidden", "true")
+            return;
+          }
+          this.removeAttribute("hidden");
+
+          // Update main checkbox state
+          let syncEnabled = (this._syncPrefs.mgmtType !=
+                             Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL);
+          this._getElement("sync_images_from_checkbox").checked = syncEnabled;
+
+          // Enable/disable radio buttons
+          let syncAllRadio = this._getElement("sync_images_all_radio");
+          let syncSelectedRadio = this._getElement("sync_images_selected_radio");
+          syncAllRadio.disabled = syncSelectedRadio.disabled = !syncEnabled;
+
+          // Update radio group state
+          let syncSelected = (this._syncPrefs.mgmtType ==
+                              Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_PLAYLISTS);
+          let selectedRadio = (syncSelected ? syncSelectedRadio : syncAllRadio);
+          let radioGroup = this._getElement("sync_images_type_group");
+          radioGroup.selectedItem = selectedRadio;
+
+          // Make sure to remove selection in root folder dropdown list (disable
+          // select handler to prevent an endless loop)
+          let rootFolderElement = this._getElement("sync_images_from_list");
+          try {
+            this._ignoreFolderChanges = true;
+            rootFolderElement.selectedIndex = -1;
+          }
+          finally {
+            this._ignoreFolderChanges = false;
+          }
+
+          // Enable/disable list of subfolders
+          this._getElement("sync_images_folders_tree").disabled = !syncSelected;
+
+          // Update root folder displayed and list of subfolders if necessary
+          let subfoldersElement = this._getElement("sync_images_folder_children");
+          if (this._syncPrefs.rootFolder) {
+            rootFolderElement.setAttribute("label",
+                                           this._syncPrefs.rootFolder.leafName);
+            rootFolderElement.setAttribute("value",
+                                           this._syncPrefs.rootFolder.path);
+
+            if (!this._displayedFolder ||
+                !this._syncPrefs.rootFolder.equals(this._displayedFolder)) {
+              // Reset label for "all items" radio
+              syncAllRadio.setAttribute("label",
+                                  syncAllRadio.getAttribute("_label_default"));
+
+              // Remove currently displayed subfolders
+              while (subfoldersElement.firstChild)
+                subfoldersElement.removeChild(subfoldersElement.firstChild);
+
+              // Add subfolders of the new root folder to the list
+              let subfolders = this._syncPrefs.rootFolder.directoryEntries;
+              for (let folder in this.ArrayConverter.JSEnum(subfolders)) {
+                if (!(folder instanceof Ci.nsIFile) || !folder.isDirectory())
+                  continue;
+
+                // Generate tree item
+                let item = document.createElement("treeitem");
+                let row = document.createElement("treerow");
+
+                let checkCell = document.createElement("treecell");
+                row.appendChild(checkCell);
+
+                let nameCell = document.createElement("treecell");
+                nameCell.setAttribute("label", folder.leafName);
+                row.appendChild(nameCell);
+
+                let countCell = document.createElement("treecell");
+                row.appendChild(countCell);
+
+                item.appendChild(row);
+                subfoldersElement.appendChild(item);
+
+                // Attach some properties to the item to make working with it
+                // easier later
+                item._folder = folder;
+                item._checkCell = checkCell;
+                item._countCell = countCell;
+              }
+
+              // Cancel current scan query and start new one
+              this.startDirScan();
+            }
+          }
+          else {
+            rootFolderElement.setAttribute("label", " ");
+            rootFolderElement.setAttribute("value", "");
+
+            if (this._displayedFolder) {
+              // Reset label for "all items" radio
+              syncAllRadio.setAttribute("label",
+                                  syncAllRadio.getAttribute("_label_default"));
+
+              // Remove currently displayed subfolders
+              while (subfoldersElement.firstChild)
+                subfoldersElement.removeChild(subfoldersElement.firstChild);
+            }
+
+            this.stopDirScan();
+          }
+
+          this._displayedFolder = this._syncPrefs.rootFolder;
+
+          // Update subfolder selection
+          for (let item = subfoldersElement.firstChild;
+               item;
+               item = item.nextSibling) {
+            let isChecked = (syncSelected ?
+                             item._folder.path in this._syncPrefs.syncFoldersList :
+                             true);
+            item._checkCell.setAttribute("value", isChecked);
+          }
+        }
+        ]]></body>
+      </method>
+
+      <!--
+       * \brief Called when the user selects a different root folder from the list.
+       -->
+      <method name="_folderChanged">
+        <body><![CDATA[
+        {
+          if (this._ignoreFolderChanges)
+            return;
+
+          let oldPrefs = this._copyPrefs();
+          let list = this._getElement("sync_images_from_list");
+          if (list.value) {
+            let rootFolder = Cc["@mozilla.org/file/local;1"]
+                               .createInstance(Ci.nsILocalFile);
+            rootFolder.initWithPath(list.value);
+            this._syncPrefs.rootFolder = rootFolder;
+
+            if (oldPrefs.rootFolder &&
+                !oldPrefs.rootFolder.equals(this._syncPrefs.rootFolder)) {
+              // Clear subfolders list if root folder changed
+              this._syncPrefs.syncFoldersList = {};
+            }
+
+            this._updateUI();
+          }
+          else {
+            // User clicked "Choose folder", open file picker
+            let filePicker = Cc["@mozilla.org/filepicker;1"]
+                               .createInstance(Ci.nsIFilePicker);
+            filePicker.init(window, list.getAttribute("label"),
+                            Ci.nsIFilePicker.modeGetFolder);
+            if (this._syncPrefs.rootFolder instanceof Ci.nsILocalFile)
+              filePicker.displayDirectory = this._syncPrefs.rootFolder;
+            if (filePicker.show() == Ci.nsIFilePicker.returnOK) {
+              this._syncPrefs.rootFolder = filePicker.file;
+
+              if (oldPrefs.rootFolder &&
+                  !oldPrefs.rootFolder.equals(this._syncPrefs.rootFolder)) {
+                // Clear subfolders list if root folder changed
+                this._syncPrefs.syncFoldersList = {};
+              }
+
+              this._updateUI();
+            }
+          }
+          this._checkPrefChange(oldPrefs);
+        }
+        ]]></body>
+      </method>
+
+      <!--
+       * \brief Enables or disables sync depending on aEnable parameter.
+       -->
+      <method name="_enableSync">
+        <parameter name="aEnable"/>
+        <body><![CDATA[
+        {
+          let oldPrefs = this._copyPrefs();
+          this._syncPrefs.mgmtType = (aEnable ?
+                                      Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL :
+                                      Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL);
+          this._updateUI();
+          this._checkPrefChange(oldPrefs);
+        }
+        ]]></body>
+      </method>
+
+      <!--
+       * \brief Swiches between syncing all content and selected folders
+       * depending on aEnable parameter.
+       -->
+      <method name="_syncAll">
+        <parameter name="aEnable"/>
+        <body><![CDATA[
+        {
+          let oldPrefs = this._copyPrefs();
+          this._syncPrefs.mgmtType = (aEnable ?
+                                      Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL :
+                                      Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_PLAYLISTS);
+          this._updateUI();
+          this._checkPrefChange(oldPrefs);
+        }
+        ]]></body>
+      </method>
+
+      <!--
+       * \brief Called if the user changes subfolder selection.
+       -->
+      <method name="_updateSyncFolders">
+        <body><![CDATA[
+        {
+          let oldPrefs = this._copyPrefs();
+          let subfoldersElement = this._getElement("sync_images_folder_children");
+          this._syncPrefs.syncFoldersList = {};
+          for (let item = subfoldersElement.firstChild;
+               item;
+               item = item.nextSibling) {
+            if (item._checkCell.getAttribute("value") == "true")
+              this._syncPrefs.syncFoldersList[item._folder.path] = true;
+          }
+          this._checkPrefChange(oldPrefs);
+        }
+        ]]></body>
+      </method>
+
+      <!--
+       * \brief Called whenever a new device library has been added.
+       * 
+       * \param aLibrary library to be added to the display
+       -->
+      <method name="_addLibrary">
+        <parameter name="aLibrary"/>
+        <body><![CDATA[
+        {
+          // Do nothing if library already added.
+          if (this._deviceLibrary) {
+            if (aLibrary != this.deviceLibrary)
+              Cu.reportError("Unexpected: device already has a library");
+            return;
+          }
+
+          // Get the device library.
+          this._deviceLibrary = aLibrary;
+      
+          // Re-read preferences and update UI
+          this._syncPrefsRead(this._syncPrefs);
+          this._updateUI();
+        }
+        ]]></body>
+      </method>
+
+      <!--
+       * \brief Called whenever a device library has been removed.
+       * 
+       * \param aLibrary library to be removed from the display
+       -->
+      <method name="_removeLibrary">
+        <parameter name="aLibrary"/>
+        <body><![CDATA[
+        {
+          // Do nothing if current library hasn't been removed.
+          if (this._deviceLibrary != aLibrary)
+            return;
+
+          // Clear device library.
+          this._deviceLibrary = null;
+      
+          // Update UI
+          this._updateUI();
+        }
+        ]]></body>
+      </method>
+
+      <!--
+       * \brief Starts a new scan of the root directory.
+       -->
+      <method name="startDirScan">
+        <body><![CDATA[
+        {
+          // Cancel scan already in progress
+          this.stopDirScan();
+
+          // Initialize file scan query
+          this._fileScanQuery = Cc["@songbirdnest.com/Songbird/FileScanQuery;1"]
+                                  .createInstance(Ci.sbIFileScanQuery);
+  
+          // Type sniffer currently won't return any image extensions, but we
+          // probably want to use this later instead of hardcoded extensions
+          // (bug 20121)
+          /*
+          let typeSniffer = Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+                              .createInstance(Ci.sbIMediacoreTypeSniffer);
+          let fileExtensions = typeSniffer.imageFileExtensions;
+          while (fileExtensions.hasMore()
+            this._fileScanQuery.addFileExtension(fileExtensions.getNext());
+          */
+
+          for each (let extension in ["gif", "jpg", "jpeg", "png", "bmp"])
+            this._fileScanQuery.addFileExtension(extension);
+
+          this._fileScanQuery.setDirectory(this._syncPrefs.rootFolder.path);
+          this._fileScanQuery.setRecurse(true);
+          this._fileScanner.submitQuery(this._fileScanQuery);
+
+          // Poll the query to determine when it is done - everything else
+          // isn't thread-safe.
+          let self = this;
+          function pollCallback() {
+            if (!self._fileScanQuery.isScanning()) {
+              self._fileScanTimer.cancel();
+              self._fileScanTimer = null;
+
+              let query = self._fileScanQuery;
+              self._fileScanQuery = null;
+              self.processDirScanResults(query);
+            }
+          }
+
+          this._fileScanTimer = Cc["@mozilla.org/timer;1"]
+                                  .createInstance(Ci.nsITimer);
+          this._fileScanTimer.initWithCallback(pollCallback, 1000,
+                                               Ci.nsITimer.TYPE_REPEATING_SLACK);
+        }
+        ]]></body>
+      </method>
+
+      <!--
+       * \brief Stops the directory scan currently in progress.
+       -->
+      <method name="stopDirScan">
+        <body><![CDATA[
+        {
+          if (this._fileScanQuery && this._fileScanQuery.isScanning())
+            this._fileScanQuery.cancel();
+          this._fileScanQuery = null;
+
+          if (this._fileScanTimer)
+            this._fileScanTimer.cancel();
+          this._fileScanTimer = null;
+        }
+        ]]></body>
+      </method>
+
+      <!--
+       * \brief Updates file counts for subdirectories after a finished scan.
+       *
+       * \param aScanQuery  file scan query that finished executing
+       -->
+      <method name="processDirScanResults">
+        <parameter name="aScanQuery"/>
+        <body><![CDATA[
+        {
+          let totalCount = aScanQuery.getFileCount();
+
+          let ioService = Cc["@mozilla.org/network/io-service;1"]
+                            .getService(Ci.nsIIOService);
+          let libUtils = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                           .getService(Ci.sbILibraryUtils);
+
+          // Count number of files for the subdirectories
+          let subdirCounts = {};
+          let rootFolder = this._syncPrefs.rootFolder;
+          for (let i = 0; i < totalCount; i++) {
+            let path = aScanQuery.getFilePath(i);
+            let uri = ioService.newURI(path, null, null);
+            let file = (uri instanceof Ci.nsIFileURL ? uri.file : null)
+            if (!file)
+              continue;
+
+            // Walk up in the directory hierarchy until we find a subdirectory
+            // of our root directory
+            while (file.parent && !file.parent.equals(rootFolder))
+              file = file.parent;
+
+            if (file.parent && file.isDirectory()) {
+              file = libUtils.getCanonicalPath(file)
+                             .QueryInterface(Ci.nsILocalFile);
+              let subdir = file.getRelativeDescriptor(rootFolder);
+              if (!(subdir in subdirCounts))
+                subdirCounts[subdir] = 0;
+              subdirCounts[subdir]++;
+            }
+          }
+
+          // Update label of the "All items" radio button
+          let allRadio = this._getElement("sync_images_all_radio");
+          let allRadioLabel = allRadio.getAttribute("_label_template");
+          allRadioLabel = allRadioLabel.replace(/%S/g, totalCount);
+          allRadio.setAttribute("label", allRadioLabel);
+
+          // Update count column for the list items
+          let subfoldersElement = this._getElement("sync_images_folder_children");
+          for (let item = subfoldersElement.firstChild;
+               item;
+               item = item.nextSibling) {
+            let file = libUtils.getCanonicalPath(item._folder)
+                               .QueryInterface(Ci.nsILocalFile);
+            let path = file.getRelativeDescriptor(rootFolder);
+            let count = (path in subdirCounts ?
+                         subdirCounts[path] :
+                         0);
+            item._countCell.setAttribute("label", count);
+          }
+        }
+        ]]></body>
+      </method>
+
+      <!--
+       * \brief Notifies listener about a pref change actions.
+       *
+       * \param detail              One of the SYNCSETTINGS_* constants
+       -->
+      <method name="_dispatchSettingsEvent">
+        <parameter name="detail"/>
+        <body><![CDATA[
+        {
+          let event = document.createEvent("UIEvents");
+          event.initUIEvent("sbDeviceSync-settings", false, false, window, detail);
+          document.dispatchEvent(event);
+        }
+        ]]></body>
+      </method>
+
+      <!--
+       * \brief Checks whether the current user action changed preferences and
+       * notifies other UI widgets if necessary.
+       *
+       * \param aOldPrefs preferences before the change for comparison
+       -->
+      <method name="_checkPrefChange">
+        <parameter name="aOldPrefs"/>
+        <body><![CDATA[
+        {
+          // If settings changed already - nothing to do, return
+          if (this._settingsChanged)
+            return;
+
+          this._settingsChanged = this._comparePrefs(this._syncPrefs, aOldPrefs);
+
+          // Notify listeners if we are in editing mode now
+          if (this._settingsChanged)
+            this._dispatchSettingsEvent(this.SYNCSETTINGS_CHANGE);
+        }
+        ]]></body>
+      </method>
+
+      <!--
+       * \brief Creates a deep copy of the current preferences.
+       *
+       * \return a deep copy of the _syncPrefs property value
+       -->
+      <method name="_copyPrefs">
+        <body><![CDATA[
+        {
+          function copyObject(from, to) {
+            for (let field in from) {
+              if (from[field] instanceof Object &&
+                  !(from[field] instanceof Ci.nsISupports)) {
+                to[field] = {};
+                copyObject(from[field], to[field]);
+              }
+              else
+                to[field] = from[field];
+            }
+          }
+
+          let result = {};
+          copyObject(this._syncPrefs, result);
+          return result;
+        }
+        ]]></body>
+      </method>
+
+      <!--
+       * \brief Checks whether the two prefs copies are different.
+       *
+       * \param aPrefs1 preferences to compare
+       * \param aPrefs2 preferences to compare
+       * \return true if the preferences are different
+       -->
+      <method name="_comparePrefs">
+        <parameter name="aPrefs1"/>
+        <parameter name="aPrefs2"/>
+        <body><![CDATA[
+        {
+          // Compare selected management type
+          if (aPrefs1.mgmtType != aPrefs2.mgmtType)
+            return true;
+
+          // Compare root folders
+          let root1IsNull = (aPrefs1.rootFolder == null);
+          let root2IsNull = (aPrefs2.rootFolder == null);
+          if (root1IsNull != root2IsNull)
+            return true;
+
+          if (!root1IsNull && !aPrefs1.rootFolder.equals(aPrefs2.rootFolder))
+            return true;
+
+          // Compare selected subfolders
+          for (let folderPath in aPrefs1.syncFoldersList)
+            if (!(folderPath in aPrefs2.syncFoldersList))
+              return true;
+          for (let folderPath in aPrefs2.syncFoldersList)
+            if (!(folderPath in aPrefs1.syncFoldersList))
+              return true;
+
+          return false;
+        }
+        ]]></body>
+      </method>
+
+      <!--
+       * \brief Handles sbDeviceSync-settings events and cancels/applies edit in
+       *        progress as required.
+       *
+       * \param aEvent              Event to handle.
+       -->
+      <method name="_onSettingsEvent">
+        <parameter name="aEvent"/>
+        <body><![CDATA[
+        {
+          switch (aEvent.detail) {
+            case this.SYNCSETTINGS_CANCEL:
+              // Reset displayed preferences
+              this._settingsChanged = false;
+              this._syncPrefsRead(this._syncPrefs);
+              this._updateUI();
+              break;
+            case this.SYNCSETTINGS_APPLY:
+              // Save preferences
+              this._settingsChanged = false;
+              this._dispatchSettingsEvent(this.SYNCSETTINGS_SAVING);
+              try {
+                this._syncPrefsWrite(this._syncPrefs);
+              }
+              finally {
+                this._dispatchSettingsEvent(this.SYNCSETTINGS_SAVED);
+              }
+              break;
+            case this.SYNCSETTINGS_SAVING:
+              this._ignoreDevicePrefChanges = true;
+              break;
+            case this.SYNCSETTINGS_SAVED:
+              this._ignoreDevicePrefChanges = false;
+              break;
+          }
+        }
+        ]]></body>
+      </method>
+
+      <!--
+       * \brief Handle the device event specified by aEvent.
+       *
+       * \param aEvent              Device event.
+       -->
+      <method name="onDeviceEvent">
+        <parameter name="aEvent"/>
+        <body><![CDATA[
+        {
+          switch(aEvent.type) {
+            case Ci.sbIDeviceEvent.EVENT_DEVICE_PREFS_CHANGED:
+              if (this._ignoreDevicePrefChanges)
+                return;
+      
+              // If any sync preferences changed, cancel the edit in progress and
+              // reload prefs.
+              if (this._settingsChanged)
+                this._dispatchSettingsEvent(this.SYNCSETTINGS_CANCEL);
+              else {
+                this._syncPrefsRead(this._syncPrefs);
+                this._updateUI();
+              }
+              break;
+      
+            case Ci.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_ADDED:
+              this._addLibrary(aEvent.data.QueryInterface(Ci.sbIDeviceLibrary));
+              break;
+      
+            case Ci.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_REMOVED:
+              this._removeLibrary(aEvent.data.QueryInterface(Ci.sbIDeviceLibrary));
+              break;
+          }
+        }
+        ]]></body>
+      </method>
+    </implementation>
+
+
+    <!-- ***********************************************************************
+     *
+     * Handlers.
+     *
+     *********************************************************************** -->
+
+    <handlers>
+      <handler event="deviceBound"><![CDATA[
+        /* Remove ourselves from the old device and attach to the new one */
+        this._finalizeDevice();
+        this._initDevice();
+        ]]></handler>
+    </handlers>
+
+  </binding>
+
+</bindings>

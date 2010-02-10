@@ -491,6 +491,7 @@ sbMediacoreTypeSniffer::GetVideoFileExtensions(nsIStringEnumerator **_retval)
 
   nsTArray<nsString> allExtensions;
 
+  nsAutoMonitor mon(mMonitor);
   PRUint32 count = mVideoExtensions.EnumerateEntries(EnumerateAllExtensions<nsCStringHashKey>, 
                                                      &allExtensions);
   NS_ENSURE_TRUE(count == mVideoExtensions.Count(), NS_ERROR_UNEXPECTED);
@@ -515,6 +516,27 @@ sbMediacoreTypeSniffer::GetPlaylistFileExtensions(nsIStringEnumerator **_retval)
   PRUint32 count = mPlaylistExtensions.EnumerateEntries(EnumerateAllExtensions<nsCStringHashKey>, 
                                                         &allExtensions);
   NS_ENSURE_TRUE(count == mPlaylistExtensions.Count(), NS_ERROR_UNEXPECTED);
+
+  nsCOMPtr<nsIStringEnumerator> allExtensionsEnum = 
+    new sbTArrayStringEnumerator(&allExtensions);
+  NS_ENSURE_TRUE(allExtensionsEnum, NS_ERROR_OUT_OF_MEMORY);
+
+  allExtensionsEnum.forget(_retval);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbMediacoreTypeSniffer::GetImageFileExtensions(nsIStringEnumerator **_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsTArray<nsString> allExtensions;
+
+  nsAutoMonitor mon(mMonitor);
+  PRUint32 count = mImageExtensions.EnumerateEntries(EnumerateAllExtensions<nsCStringHashKey>, 
+                                                     &allExtensions);
+  NS_ENSURE_TRUE(count == mImageExtensions.Count(), NS_ERROR_UNEXPECTED);
 
   nsCOMPtr<nsIStringEnumerator> allExtensionsEnum = 
     new sbTArrayStringEnumerator(&allExtensions);

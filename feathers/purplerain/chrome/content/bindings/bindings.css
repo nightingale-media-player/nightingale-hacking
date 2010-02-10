@@ -59,6 +59,7 @@ For more information, see:
 @import url(device/deviceCapacity.css);
 @import url(device/deviceInfo.css);
 @import url(device/deviceInfoPanel.css);
+@import url(device/deviceImageSync.css);
 @import url(device/deviceProgress.css);
 @import url(device/deviceSync.css);
 @import url(device/deviceTools.css);

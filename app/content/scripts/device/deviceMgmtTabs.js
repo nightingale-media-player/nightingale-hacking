@@ -101,6 +101,12 @@ var DeviceMgmtTabs = {
                                      sbIDC.FUNCTION_VIDEO_PLAYBACK)) {
       this._toggleTab("video", true);
     }
+
+    // Check Images
+    if (!this._deviceSupportsContent(sbIDC.CONTENT_IMAGE,
+                                     -1)) {
+      this._toggleTab("image", true);
+    }
   },
 
   /**
@@ -185,31 +191,33 @@ var DeviceMgmtTabs = {
     }
 
     // Now check if the device supports the content type in that function.
-    try {
-      var contentTypes = this._device
-                             .capabilities
-                             .getSupportedContentTypes(aFunctionType, {});
-      for (var i in contentTypes) {
-        if (contentTypes[i] == aContentType) {
-          return true;
+    if (aFunctionType >= 0) {
+      try {
+        var contentTypes = this._device
+                               .capabilities
+                               .getSupportedContentTypes(aFunctionType, {});
+        for (var i in contentTypes) {
+          if (contentTypes[i] == aContentType) {
+            return true;
+          }
         }
       }
-    }
-    catch (err) {
-      var strContentType;
-      switch (aContentType) {
-        case Ci.sbIDeviceCapabilities.CONTENT_AUDIO:
-          strContentType = "Audio";
-          break;
-        case Ci.sbIDeviceCapabilities.CONTENT_VIDEO:
-          strConentType = "Video";
-          break;
-        default:
-          strContentType = "Unknown";
-          break;
+      catch (err) {
+        var strContentType;
+        switch (aContentType) {
+          case Ci.sbIDeviceCapabilities.CONTENT_AUDIO:
+            strContentType = "Audio";
+            break;
+          case Ci.sbIDeviceCapabilities.CONTENT_VIDEO:
+            strConentType = "Video";
+            break;
+          default:
+            strContentType = "Unknown";
+            break;
+        }
+        Cu.reportError("Unable to determine if device supports content: "+
+                       strContentType + " [" + err + "]");
       }
-      Cu.reportError("Unable to determine if device supports content: "+
-                     strContentType + " [" + err + "]");
     }
 
     return false;

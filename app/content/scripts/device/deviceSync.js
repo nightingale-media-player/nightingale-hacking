@@ -62,16 +62,6 @@ if (typeof(XUL_NS) == "undefined")
 
 var DeviceSyncWidget = {
   //
-  // Constants (same constants defined in deviceProgress.js)
-  //
-
-  SYNCSETTINGS_CHANGE: 0,
-  SYNCSETTINGS_APPLY: 1,
-  SYNCSETTINGS_CANCEL: 2,
-  SYNCSETTINGS_SAVING: 3,
-  SYNCSETTINGS_SAVED: 4,
-
-  //
   // Device sync object fields.
   //
   //   _widget                  Device sync widget.
@@ -100,6 +90,8 @@ var DeviceSyncWidget = {
    */
 
   initialize: function DeviceSyncWidget__initialize(aWidget) {
+    Cu.import("resource://app/jsmodules/DeviceHelper.jsm", this);
+
     // Get the sync widget.
     this._widget = aWidget;
 
@@ -125,6 +117,8 @@ var DeviceSyncWidget = {
     if (this._device.content.libraries.length > 0) {
       this.addLibrary(this._device.content
                           .libraries.queryElementAt(0, Ci.sbIDeviceLibrary));
+      if (this._device.content.libraries.length > 1)
+        Cu.reportError("Unexpected: device has more than one library");
     }
 
     // Listen for sync settings apply/cancel events.
@@ -499,8 +493,11 @@ var DeviceSyncWidget = {
 
   addLibrary: function DeviceSyncWidget_addLibrary(aLibrary) {
     // Do nothing if library already added.
-    if (this._deviceLibrary)
+    if (this._deviceLibrary) {
+      if (aLibrary != this._deviceLibrary)
+        Cu.reportError("Unexpected: device already has a library");
       return;
+    }
 
     // Get the device library.
     this._deviceLibrary = aLibrary;
@@ -944,8 +941,14 @@ var DeviceSyncWidget = {
 
     /* Read the stored sync playlist list preferences for both audio/video. */
     for (i = 0; i < Ci.sbIDeviceLibrary.MEDIATYPE_COUNT; ++i) {
-      storedSyncPlaylistList =
-          this._deviceLibrary.getSyncPlaylistListByType(i);
+      try {
+        storedSyncPlaylistList =
+            this._deviceLibrary.getSyncPlaylistListByType(i);
+      }
+      catch (e if e.result == Cr.NS_ERROR_NOT_IMPLEMENTED) {
+        // Expected for types not synced by playlists
+        continue;
+      }
 
       for (j = 0; j < storedSyncPlaylistList.length; ++j) {
         syncPlaylistML = storedSyncPlaylistList.queryElementAt(j,
@@ -999,8 +1002,14 @@ var DeviceSyncWidget = {
         if (syncPlaylistList[guid].value) {
           // Add mix type media list to both audio and video.
           if (listType == Ci.sbIMediaList.CONTENTTYPE_MIX) {
-            for (var i = 0; i < Ci.sbIDeviceLibrary.MEDIATYPE_COUNT; ++i)
-              this._deviceLibrary.addToSyncPlaylistList(i, mediaList);
+            for (var i = 0; i < Ci.sbIDeviceLibrary.MEDIATYPE_COUNT; ++i) {
+              try {
+                this._deviceLibrary.addToSyncPlaylistList(i, mediaList);
+              }
+              catch (e if e.result == Cr.NS_ERROR_NOT_IMPLEMENTED) {
+                // Expected for types not synced by playlists
+              }
+            }
           }
           // Otherwise, only add to the current media type.
           else {
@@ -1010,8 +1019,14 @@ var DeviceSyncWidget = {
         else {
           // Remove mix type media list from both audio and video.
           if (listType == Ci.sbIMediaList.CONTENTTYPE_MIX) {
-            for (var i = 0; i < Ci.sbIDeviceLibrary.MEDIATYPE_COUNT; ++i)
-              this._deviceLibrary.removeFromSyncPlaylistList(i, mediaList);
+            for (var i = 0; i < Ci.sbIDeviceLibrary.MEDIATYPE_COUNT; ++i) {
+              try {
+                this._deviceLibrary.removeFromSyncPlaylistList(i, mediaList);
+              }
+              catch (e if e.result == Cr.NS_ERROR_NOT_IMPLEMENTED) {
+                // Expected for types not synced by playlists
+              }
+            }
           }
           // Otherwise, only remove from the current media type.
           else {
