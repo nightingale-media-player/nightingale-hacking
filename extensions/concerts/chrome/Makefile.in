@@ -29,7 +29,10 @@ VPATH = @srcdir@
   
 include $(DEPTH)/build/autodefs.mk
 
-IS_EXTENSION=1
+IS_EXTENSION_MULTI_BUILD = 1
+EXTENSION_CONFIGS = $(srcdir)/../extension-config-songbird.mk \
+                    $(srcdir)/../extension-config-philips.mk \
+                    $(NULL)
 
 SONGBIRD_PP_RESOURCES = $(srcdir)/content/browse.js.in
 SONGBIRD_PP_DIR = $(SONGBIRD_CHROMEDIR)/content

@@ -73,7 +73,7 @@ ifdef IS_EXTENSION_MULTI_BUILD
    # supported by rules.mk when we're in multi-extension mode
    ifndef IS_EXTENSION
       ifneq (,$(MAKECMDGOALS))
-         ifneq (,$(filter-out all default clean,$(MAKECMDGOALS)))
+         ifneq (,$(filter-out all export libs default clean,$(MAKECMDGOALS)))
             $(error Extension multi-build detected; make target must be "all", "default", "clean", or the default target)
          endif
       endif

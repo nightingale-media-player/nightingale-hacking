@@ -29,6 +29,9 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-IS_EXTENSION = 1
+IS_EXTENSION_MULTI_BUILD = 1
+EXTENSION_CONFIGS = $(srcdir)/../extension-config-songbird.mk \
+                    $(srcdir)/../extension-config-philips.mk \
+                    $(NULL)
 
 include $(topsrcdir)/build/rules.mk
