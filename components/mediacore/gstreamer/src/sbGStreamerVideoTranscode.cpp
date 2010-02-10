@@ -700,6 +700,13 @@ sbGStreamerVideoTranscoder::StopProgressReporting()
 }
 
 void
+sbGStreamerVideoTranscoder::AsyncStopPipeline()
+{
+  nsresult rv = StopPipeline();
+  NS_ENSURE_SUCCESS (rv, /* void */);
+}
+
+void
 sbGStreamerVideoTranscoder::TranscodingFatalError (const char *errorName)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
@@ -720,7 +727,16 @@ sbGStreamerVideoTranscoder::TranscodingFatalError (const char *errorName)
   // Dispatch event so that listeners can act directly on that.
   DispatchMediacoreEvent (sbIMediacoreEvent::ERROR_EVENT, nsnull, error);
 
-  nsresult rv = StopPipeline();
+  /* Stop the pipeline. We might be calling this from a non-main thread, so
+     dispatch the shutdown asynchronously. */
+  nsCOMPtr<nsIThread> mainThread;
+  nsresult rv = NS_GetMainThread (getter_AddRefs(mainThread));
+  NS_ENSURE_SUCCESS (rv, /* void */);
+
+  nsCOMPtr<nsIRunnable> event = NS_NEW_RUNNABLE_METHOD (
+          sbGStreamerVideoTranscoder, this, AsyncStopPipeline);
+
+  rv = mainThread->Dispatch(event, NS_DISPATCH_NORMAL);
   NS_ENSURE_SUCCESS (rv, /* void */);
 }
 

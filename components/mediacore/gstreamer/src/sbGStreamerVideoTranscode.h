@@ -87,6 +87,8 @@ private:
   nsresult StartProgressReporting();
   nsresult StopProgressReporting();
 
+  void AsyncStopPipeline();
+
   /* Build initial, partial, transcoding pipeline. The bulk of the pipeline is
      built dynamically when the pipeline is started via a call to Transcode().
    */
