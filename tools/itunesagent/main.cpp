@@ -70,7 +70,7 @@ int main(int argc, char * argv[]) {
   }
   
   if (processor->TaskFileExists()) {
-   error = processor->WaitForiTunes();
+    error = processor->WaitForiTunes();
     if (!error) {
       error = processor->ProcessTaskFile();
     }
