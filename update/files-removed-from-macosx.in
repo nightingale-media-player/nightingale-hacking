@@ -418,6 +418,7 @@
 ./Contents/Resources/components/sbTestHarness.xpt
 ./Contents/Resources/components/sbTestMediacoreBase.xpt
 ./Contents/Resources/components/sbTranscodeModule.xpt
+./Contents/Resources/components/sbTranscodeUtils.js
 ./Contents/Resources/components/sbURLFormatter.xpt
 ./Contents/Resources/components/sbUpdate.xpt
 ./Contents/Resources/components/sbWatchFolderService.xpt

@@ -153,6 +153,7 @@
 ./components/sbTestHarness.xpt
 ./components/sbTestMediacoreBase.xpt
 ./components/sbTranscodeModule.xpt
+./components/sbTranscodeUtils.js
 ./components/sbURLFormatter.xpt
 ./components/sbUpdate.xpt
 ./components/sbWatchFolderService.xpt

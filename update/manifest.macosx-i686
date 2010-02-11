@@ -220,7 +220,6 @@
 ./components/sbTimeFormatter.jsm
 ./components/sbTranscodeModule.dylib
 ./components/sbTranscodeModule.xpt
-./components/sbTranscodeUtils.js
 ./components/sbURIImportService.js
 ./components/sbURLFormatter.js
 ./components/sbURLFormatter.xpt

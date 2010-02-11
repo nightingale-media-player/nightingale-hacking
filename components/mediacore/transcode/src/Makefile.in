@@ -35,7 +35,6 @@ DYNAMIC_LIB = sbTranscodeModule
 CPP_SRCS = sbTranscodeAlbumArt.cpp \
            sbTranscodeManager.cpp \
            sbTranscodeModule.cpp \
-           sbTranscodeBatchJobItem.cpp \
            sbTranscodeProfile.cpp \
            sbTranscodeProfileLoader.cpp \
            sbTranscodeProfileProperty.cpp \
@@ -74,9 +73,6 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
 
 DYNAMIC_LIB_STATIC_IMPORTS += components/moz/strings/src/sbMozStringUtils \
                               components/moz/threads/src/sbMozThreads \
-
-
-SONGBIRD_COMPONENTS = $(srcdir)/sbTranscodeUtils.js
 
 IS_COMPONENT = 1
 

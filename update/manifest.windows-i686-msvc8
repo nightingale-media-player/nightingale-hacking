@@ -223,7 +223,6 @@
 ./components/sbTimeFormatter.jsm
 ./components/sbTranscodeModule.dll
 ./components/sbTranscodeModule.xpt
-./components/sbTranscodeUtils.js
 ./components/sbURIImportService.js
 ./components/sbURLFormatter.js
 ./components/sbURLFormatter.xpt
