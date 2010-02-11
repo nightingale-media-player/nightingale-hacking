@@ -29,10 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-IS_EXTENSION_MULTI_BUILD = 1
-EXTENSION_CONFIGS = $(srcdir)/../../extension-config-songbird.mk \
-                    $(srcdir)/../../extension-config-philips.mk \
-                    $(NULL)
+IS_EXTENSION = 1
 
 # compile these IDL files
 XPIDL_SRCS = Songkick.idl \
