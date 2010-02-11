@@ -380,6 +380,7 @@
 ./jsmodules/AddOnUtils.jsm
 ./jsmodules/ArrayConverter.jsm
 ./jsmodules/DOMUtils.jsm
+./jsmodules/DeviceHelper.jsm
 ./jsmodules/Distribution.jsm
 ./jsmodules/DropHelper.jsm
 ./jsmodules/FolderUtils.jsm
