@@ -4,7 +4,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -35,6 +35,7 @@ class sbIDevCapVideoStream;
 class sbIDevCapAudioStream;
 class sbIDevCapVideoFormatType;
 class nsIDOMDocument;
+class nsIDOMElement;
 class nsIDOMNode;
 class nsIMutableArray;
 
@@ -46,10 +47,10 @@ class sbDeviceXMLCapabilities
 {
 public:
   /**
-   * Initialize the XML document
+   * Initialize the XML capabilities
    */
-  sbDeviceXMLCapabilities(nsIDOMDocument* aDocument,
-                          sbIDevice*      aDevice = nsnull);
+  sbDeviceXMLCapabilities(nsIDOMElement* aRootElement,
+                          sbIDevice*     aDevice = nsnull);
   /**
    * Cleanup
    */
@@ -66,6 +67,29 @@ public:
   PRBool HasCapabilities() { return mHasCapabilities; }
   /**
    * Read the capabilities matching the device specified by aDevice from the
+   * document specified by aDocument and return them in aCapabilities.  If no
+   * matching capabilities are present, return null in aCapabilities.
+   * \param aCapabilities Returned device capabilities.
+   * \param aDocument Document from which to get capabilities.
+   * \param aDevice Device to match against capabilities.
+   */
+  static nsresult GetCapabilities(sbIDeviceCapabilities** aCapabilities,
+                                  nsIDOMDocument*         aDocument,
+                                  sbIDevice*              aDevice = nsnull);
+  /**
+   * Read the capabilities matching the device specified by aDevice from the
+   * root DOM noded specified by aDeviceCapsRootNode and return them in
+   * aCapabilities.  If no matching capabilities are present, return null in
+   * aCapabilities.
+   * \param aCapabilities Returned device capabilities.
+   * \param aDeviceCapsRootNode Root DOM node from which to get capabilities.
+   * \param aDevice Device to match against capabilities.
+   */
+  static nsresult GetCapabilities(sbIDeviceCapabilities** aCapabilities,
+                                  nsIDOMNode*             aDeviceCapsRootNode,
+                                  sbIDevice*              aDevice = nsnull);
+  /**
+   * Read the capabilities matching the device specified by aDevice from the
    * file with the URI spec specified by aXMLCapabilitiesSpec and add them to
    * the device capabilities object specified by aCapabilities.  If any
    * capabilities were added, return true in aAddedCapabilities; if no
@@ -80,10 +104,26 @@ public:
                      const char*            aXMLCapabilitiesSpec,
                      PRBool*                aAddedCapabilities = nsnull,
                      sbIDevice*             aDevice = nsnull);
+  /**
+   * Read the capabilities matching the device specified by aDevice from the
+   * root DOM node specified by aDeviceCapsRootNode and add them to the device
+   * capabilities object specified by aCapabilities.  If any capabilities were
+   * added, return true in aAddedCapabilities; if no capabilities were added
+   * (e.g., device didn't match), return false.
+   * \param aCapabilities The capabilities object to which to add capabilities.
+   * \param aDeviceCapsRootNode Root DOM node from which to get capabilities.
+   * \param aAddedCapabilities Returned true if capabilities added.
+   * \param aDevice Device to match against capabilities.
+   */
+  static nsresult AddCapabilities
+                    (sbIDeviceCapabilities* aCapabilities,
+                     nsIDOMNode*            aDeviceCapsRootNode,
+                     PRBool*                aAddedCapabilities = nsnull,
+                     sbIDevice*             aDevice = nsnull);
 private:
-  nsCOMPtr<nsIDOMDocument> mDocument;
   sbIDevice* mDevice;                   // Non-owning reference
   sbIDeviceCapabilities * mDeviceCaps;  // Non-owning reference
+  nsCOMPtr<nsIDOMElement> mRootElement;
   PRBool mHasCapabilities;
 
   /**
@@ -109,10 +149,10 @@ private:
                      nsAString const & aFormat);
 
   /**
-   * Processing the DOM document object populating the device capabilities
-   * with information it finds
+   * Processing the DOM node populating the device capabilities with information
+   * it finds
    */
-  nsresult ProcessDocument(nsIDOMDocument * aDocument);
+  nsresult ProcessCapabilities(nsIDOMNode* aRootNode);
 
   /**
    * Process the devicecaps node in the DOM document

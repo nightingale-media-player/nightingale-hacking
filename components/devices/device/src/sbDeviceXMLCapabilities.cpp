@@ -4,7 +4,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -38,6 +38,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsIFile.h>
 #include <nsIDOMDocument.h>
+#include <nsIDOMElement.h>
 #include <nsIDOMNamedNodeMap.h>
 #include <nsIDOMNode.h>
 #include <nsIDOMNodeList.h>
@@ -53,14 +54,14 @@
 #define SB_DEVICE_CAPS_ELEMENT "devicecaps"
 #define SB_DEVICE_CAPS_NS "http://songbirdnest.com/devicecaps/1.0"
 
-sbDeviceXMLCapabilities::sbDeviceXMLCapabilities(nsIDOMDocument* aDocument,
-                                                 sbIDevice*      aDevice) :
-    mDocument(aDocument),
+sbDeviceXMLCapabilities::sbDeviceXMLCapabilities(nsIDOMElement* aRootElement,
+                                                 sbIDevice*     aDevice) :
+    mRootElement(aRootElement),
     mDevice(aDevice),
     mDeviceCaps(nsnull),
     mHasCapabilities(PR_FALSE)
 {
-  NS_ASSERTION(mDocument, "no XML document provided");
+  NS_ASSERTION(mRootElement, "no device capabilities element provided");
 }
 
 sbDeviceXMLCapabilities::~sbDeviceXMLCapabilities()
@@ -98,8 +99,78 @@ sbDeviceXMLCapabilities::Read(sbIDeviceCapabilities * aCapabilities) {
 
   mDeviceCaps = aCapabilities;
 
-  rv = ProcessDocument(mDocument);
+  rv = ProcessCapabilities(mRootElement);
   NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
+}
+
+/* static */ nsresult
+sbDeviceXMLCapabilities::GetCapabilities
+                           (sbIDeviceCapabilities** aCapabilities,
+                            nsIDOMDocument*         aDocument,
+                            sbIDevice*              aDevice)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aCapabilities);
+  NS_ENSURE_ARG_POINTER(aDocument);
+
+  // Function variables.
+  nsresult rv;
+
+  // No capabilities are available yet.
+  *aCapabilities = nsnull;
+
+  // Get the document element.
+  nsCOMPtr<nsIDOMElement> documentElem;
+  rv = aDocument->GetDocumentElement(getter_AddRefs(documentElem));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the capabilities.
+  rv = GetCapabilities(aCapabilities, documentElem, aDevice);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/* static */ nsresult
+sbDeviceXMLCapabilities::GetCapabilities
+                           (sbIDeviceCapabilities** aCapabilities,
+                            nsIDOMNode*             aDeviceCapsRootNode,
+                            sbIDevice*              aDevice)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aCapabilities);
+  NS_ENSURE_ARG_POINTER(aDeviceCapsRootNode);
+
+  // Function variables.
+  nsresult rv;
+
+  // No capabilities are available yet.
+  *aCapabilities = nsnull;
+
+  // Get the device capabilities root element.  There are no capabilities if
+  // root node is not an element.
+  nsCOMPtr<nsIDOMElement>
+    deviceCapsRootElem = do_QueryInterface(aDeviceCapsRootNode, &rv);
+  if (NS_FAILED(rv))
+    return NS_OK;
+
+  // Read the device capabilities for the device.
+  nsCOMPtr<sbIDeviceCapabilities> deviceCapabilities =
+    do_CreateInstance(SONGBIRD_DEVICECAPABILITIES_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = deviceCapabilities->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+  sbDeviceXMLCapabilities xmlCapabilities(deviceCapsRootElem, aDevice);
+  rv = xmlCapabilities.Read(deviceCapabilities);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = deviceCapabilities->ConfigureDone();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Return results.
+  if (xmlCapabilities.HasCapabilities())
+    deviceCapabilities.forget(aCapabilities);
+
   return NS_OK;
 }
 
@@ -144,26 +215,53 @@ sbDeviceXMLCapabilities::AddCapabilities
   rv = xmlHttpRequest->Send(nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the device capabilities document.
+  // Get the device capabilities root element.
+  nsCOMPtr<nsIDOMElement>  deviceCapsElem;
   nsCOMPtr<nsIDOMDocument> deviceCapabilitiesDocument;
   rv = xmlHttpRequest->GetResponseXML
                          (getter_AddRefs(deviceCapabilitiesDocument));
   NS_ENSURE_SUCCESS(rv, rv);
-
-  // Read the device capabilities for the device.
-  nsCOMPtr<sbIDeviceCapabilities> deviceCapabilities =
-    do_CreateInstance(SONGBIRD_DEVICECAPABILITIES_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = deviceCapabilities->Init();
-  NS_ENSURE_SUCCESS(rv, rv);
-  sbDeviceXMLCapabilities xmlCapabilities(deviceCapabilitiesDocument, aDevice);
-  rv = xmlCapabilities.Read(deviceCapabilities);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = deviceCapabilities->ConfigureDone();
+  rv = deviceCapabilitiesDocument->GetDocumentElement
+                                     (getter_AddRefs(deviceCapsElem));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Add any device capabilities from the device capabilities document.
-  if (xmlCapabilities.HasCapabilities()) {
+  // Add the device capabilities.
+  rv = AddCapabilities(aCapabilities,
+                       deviceCapsElem,
+                       aAddedCapabilities,
+                       aDevice);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/* static */ nsresult
+sbDeviceXMLCapabilities::AddCapabilities
+                           (sbIDeviceCapabilities* aCapabilities,
+                            nsIDOMNode*            aDeviceCapsRootNode,
+                            PRBool*                aAddedCapabilities,
+                            sbIDevice*             aDevice)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aCapabilities);
+  NS_ENSURE_ARG_POINTER(aDeviceCapsRootNode);
+
+  // Function variables.
+  nsresult rv;
+
+  // No capabilities have yet been added.
+  if (aAddedCapabilities)
+    *aAddedCapabilities = PR_FALSE;
+
+  // Get the device capabilities.
+  nsCOMPtr<sbIDeviceCapabilities> deviceCapabilities;
+  rv = GetCapabilities(getter_AddRefs(deviceCapabilities),
+                       aDeviceCapsRootNode,
+                       aDevice);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Add any device capabilities.
+  if (deviceCapabilities) {
     rv = aCapabilities->AddCapabilities(deviceCapabilities);
     NS_ENSURE_SUCCESS(rv, rv);
     if (aAddedCapabilities)
@@ -174,43 +272,44 @@ sbDeviceXMLCapabilities::AddCapabilities
 }
 
 nsresult
-sbDeviceXMLCapabilities::ProcessDocument(nsIDOMDocument * aDocument)
+sbDeviceXMLCapabilities::ProcessCapabilities(nsIDOMNode* aRootNode)
 {
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aRootNode);
+
+  // Function variables.
   nsresult rv;
 
-  nsCOMPtr<nsIDOMNodeList> domNodes;
-  rv = aDocument->GetElementsByTagNameNS(NS_LITERAL_STRING(SB_DEVICE_CAPS_NS),
-                                         NS_LITERAL_STRING(SB_DEVICE_CAPS_ELEMENT),
-                                         getter_AddRefs(domNodes));
+  // Get the list of all device capabilities nodes.  If none exist, there are no
+  // capabilities to process.
+  nsCOMPtr<nsIDOMElement> rootElement = do_QueryInterface(aRootNode, &rv);
+  if (NS_FAILED(rv))
+    return NS_OK;
+  nsCOMPtr<nsIDOMNodeList> deviceCapsNodeList;
+  rv = rootElement->GetElementsByTagNameNS
+                      (NS_LITERAL_STRING(SB_DEVICE_CAPS_NS),
+                       NS_LITERAL_STRING(SB_DEVICE_CAPS_ELEMENT),
+                       getter_AddRefs(deviceCapsNodeList));
+  if (NS_FAILED(rv) || !deviceCapsNodeList)
+    return NS_OK;
 
+  // Check each device capabilities node for a matching item.
+  PRUint32 nodeCount;
+  rv = deviceCapsNodeList->GetLength(&nodeCount);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  if (domNodes) {
-    PRUint32 nodeCount;
-    rv = domNodes->GetLength(&nodeCount);
+  for (PRUint32 i = 0; i < nodeCount; i++) {
+    // Get the next device capabilities node.
+    nsCOMPtr<nsIDOMNode> deviceCapsNode;
+    rv = deviceCapsNodeList->Item(i, getter_AddRefs(deviceCapsNode));
     NS_ENSURE_SUCCESS(rv, rv);
-    bool capsFound = false;
-    nsCOMPtr<nsIDOMNode> domNode;
-    for (PRUint32 nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
-      rv = domNodes->Item(nodeIndex, getter_AddRefs(domNode));
-      NS_ENSURE_SUCCESS(rv, rv);
 
-      nsString name;
-      rv = domNode->GetNodeName(name);
+    // Process device capabilities if they match device.
+    PRBool deviceMatches;
+    rv = DeviceMatchesCapabilitiesNode(deviceCapsNode, &deviceMatches);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (deviceMatches) {
+      rv = ProcessDeviceCaps(deviceCapsNode);
       NS_ENSURE_SUCCESS(rv, rv);
-
-      if (name.EqualsLiteral("devicecaps")) {
-        PRBool deviceMatches;
-        rv = DeviceMatchesCapabilitiesNode(domNode, &deviceMatches);
-        NS_ENSURE_SUCCESS(rv, rv);
-        if (deviceMatches) {
-          capsFound = true;
-          rv = ProcessDeviceCaps(domNode);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-      }
-    }
-    if (capsFound) {
       mHasCapabilities = PR_TRUE;
     }
   }
