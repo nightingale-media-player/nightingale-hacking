@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -146,9 +146,20 @@
       -->
       <method name="update">
         <body><![CDATA[
-          // Get the device management state
-          var isManual = this._deviceLibrary.isMgmtTypeManual;
-          this.updateButtons(isManual);
+          // Determine whether or not we have any media mounted
+          var manualButton = this.getElement("sync_manual_button");
+          var syncButton = this.getElement("sync_auto_button");
+          if (!this.device.content.libraries.length > 0) {
+            manualButton.setAttribute("disabled", "true");
+            syncButton.setAttribute("disabled", "true");
+          } else {
+            manualButton.removeAttribute("disabled");
+            syncButton.removeAttribute("disabled");
+            
+            // Get the device management state
+            var isManual = this._deviceLibrary.isMgmtTypeManual;
+            this.updateButtons(isManual);
+          }
         ]]></body>
       </method>
 

@@ -134,6 +134,20 @@ Imported by bindings.css or directly into feathers.
   outline: none !important;
 }
 
+/* disabled state to override above rules */
+.device-syncmode-manual-button[disabled="true"],
+.device-syncmode-manual-button[disabled="true"]:hover,
+.device-syncmode-auto-button[disabled="true"],
+.device-syncmode-auto-button[disabled="true"]:hover {
+  background-position:0px -19px;
+}
+.device-syncmode-manual-button[disabled="true"] > .button-box > label,
+.device-syncmode-manual-button[disabled="true"]:hover > .button-box > label,
+.device-syncmode-auto-button[disabled="true"]:hover > .button-box > label,
+.device-syncmode-auto-button[disabled="true"] > .button-box > label {
+  color: rgb(154,153,160);
+}
+
 .device-progress-button[sbid="sync_operation_button"] {
   margin-right: 0px;
 }
