@@ -180,6 +180,7 @@ static PRLogModuleInfo* gDeviceLibraryLog = nsnull;
 
 sbDeviceLibrary::sbDeviceLibrary(sbIDevice* aDevice)
   : mDevice(aDevice),
+    mSyncSettingsChanged(PR_FALSE),
     mLock(nsnull)
 {
 #ifdef PR_LOGGING
@@ -539,8 +540,8 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   rv = GetMainLibrary(getter_AddRefs(mainLib));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // get the current is synced locally state
-  rv = GetIsSyncedLocally(&mLastIsSyncedLocally);
+  // get the current sync all setting.
+  rv = GetIsMgmtTypeSyncAll(&mLastIsSyncAll);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // add a device event listener to listen for changes to the is synced locally
@@ -553,10 +554,6 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
 
   PRBool isManual = PR_FALSE;
   rv = GetIsMgmtTypeManual(&isManual);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRBool isSyncPlaylist = PR_FALSE;
-  rv = GetIsMgmtTypeSyncList(&isSyncPlaylist);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIArray> syncPlaylistList;
@@ -801,19 +798,19 @@ sbDeviceLibrary::UpdateMainLibraryListeners()
 
   // Not in manual mode.
   if (syncMode == SYNC_AUTO && isSyncedLocally) {
-    // hook up the metadata updating listener
-    rv = mainLib->AddListener(mMainLibraryListener,
-                              PR_FALSE,
-                              sbIMediaList::LISTENER_FLAGS_ITEMADDED |
-                              sbIMediaList::LISTENER_FLAGS_BEFOREITEMREMOVED |
-                              sbIMediaList::LISTENER_FLAGS_ITEMUPDATED,
-                              mMainLibraryListenerFilter);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     PRBool isSyncAll = PR_FALSE;
     rv = GetIsMgmtTypeSyncAll(&isSyncAll);
     NS_ENSURE_SUCCESS(rv, rv);
     if (isSyncAll) {
+      // hook up the metadata updating listener
+      rv = mainLib->AddListener(mMainLibraryListener,
+                                PR_FALSE,
+                                sbIMediaList::LISTENER_FLAGS_ITEMADDED |
+                                sbIMediaList::LISTENER_FLAGS_BEFOREITEMREMOVED |
+                                sbIMediaList::LISTENER_FLAGS_ITEMUPDATED,
+                                mMainLibraryListenerFilter);
+      NS_ENSURE_SUCCESS(rv, rv);
+
       mMainLibraryListener->SetSyncMode(false, nsnull);
 
       // hook up the media list listeners to the existing lists
@@ -835,11 +832,11 @@ sbDeviceLibrary::UpdateMainLibraryListeners()
       rv = playlistList->GetLength(&length);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      mMainLibraryListener->SetSyncMode(false, length ? playlistList : nsnull);
-
       // Need to stop listening to all the playlists so we can listen to just
       // the selected ones
       mMainLibraryListener->StopListeningToPlaylists();
+
+      mMainLibraryListener->SetSyncMode(false, length ? playlistList : nsnull);
 
       for (PRUint32 index = 0; index < length; ++index) {
         nsCOMPtr<sbIMediaItem> item = do_QueryElementAt(playlistList, index, &rv);
@@ -857,13 +854,13 @@ sbDeviceLibrary::UpdateMainLibraryListeners()
       NS_ENSURE_SUCCESS(rv, rv);
     }
   } else {
+    mMainLibraryListener->StopListeningToPlaylists();
+
     mMainLibraryListener->SetSyncMode(syncMode == SYNC_MANUAL, nsnull);
 
     // remove the metadata updating listener
     rv = mainLib->RemoveListener(mMainLibraryListener);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    mMainLibraryListener->StopListeningToPlaylists();
   }
 
   return NS_OK;
@@ -1176,7 +1173,7 @@ sbDeviceLibrary::SetSyncMode(PRUint32 aSyncMode)
   if (aSyncMode == syncMode) {
     return NS_OK;
   }
-   // If switching from manual management mode to sync mode, confirm with user
+  // If switching from manual management mode to sync mode, confirm with user
   // before proceeding.  Do nothing more if switch is canceled.
   if (aSyncMode == sbIDeviceLibrary::SYNC_AUTO) {
     // Check if device is linked to a local sync partner.
@@ -1714,6 +1711,14 @@ sbDeviceLibrary::Sync()
   rv = device->SubmitRequest(sbIDevice::REQUEST_SYNC, requestParams);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  if (mSyncSettingsChanged) {
+    // update the main library listeners
+    rv = UpdateMainLibraryListeners();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mSyncSettingsChanged = PR_FALSE;
+  }
+
   return NS_OK;
 }
 
@@ -2149,16 +2154,16 @@ NS_IMETHODIMP sbDeviceLibrary::OnDeviceEvent(sbIDeviceEvent* aEvent)
 
   // handle changes to the sync parnter preference
   if (type == sbIDeviceEvent::EVENT_DEVICE_PREFS_CHANGED) {
-    // get the synced locally state
-    PRBool isSyncedLocally = PR_FALSE;
-    rv = GetIsSyncedLocally(&isSyncedLocally);
+    // get the sync all setting
+    PRBool isSyncAll = PR_FALSE;
+    rv = GetIsMgmtTypeSyncAll(&isSyncAll);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // update the main library listeners if the synced locally state changed
-    if (isSyncedLocally != mLastIsSyncedLocally) {
-      rv = UpdateMainLibraryListeners();
-      NS_ENSURE_SUCCESS(rv, rv);
-      mLastIsSyncedLocally = isSyncedLocally;
+    // Save the flag if the sync setting changes to update the main library
+    // listeners later.
+    if (isSyncAll != mLastIsSyncAll) {
+      mSyncSettingsChanged = PR_TRUE;
+      mLastIsSyncAll = isSyncAll;
     }
   }
 

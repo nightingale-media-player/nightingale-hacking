@@ -373,9 +373,14 @@ private:
   nsInterfaceHashtable<nsISupportsHashKey, sbIDeviceLibraryListener> mListeners;
 
   /**
-   * \brief Last is synced locally state.  Used to detect changes to the state.
+   * \brief Last sync setting is sync all. Used to detect setting change.
    */
-  PRBool mLastIsSyncedLocally;
+  PRBool mLastIsSyncAll;
+
+  /**
+   * \brief The sync setting has been changed or not.
+   */
+  PRBool mSyncSettingsChanged;
 
   PRLock* mLock;
 };
