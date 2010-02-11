@@ -174,7 +174,8 @@ var DIPW = {
 
 
   /**
-   * \brief Get the state to update panel based on MSC device state and substate.
+   * \brief Get the state to update panel based on MSC device state and
+   *        substate
    *
    * \return the substate when the MSC device is when syncing
    *         or the copying state based on the item type
@@ -210,7 +211,8 @@ var DIPW = {
   },
 
   /**
-   * \brief Get the state to update panel based on MTP device state and substate.
+   * \brief Get the state to update panel based on MTP device state and
+   *        substate.
    *
    * \return the substate when the MTP device is when syncing
    *         or the copying state based on the item type
@@ -275,19 +277,20 @@ var DIPW = {
   },
 
   /**
-   * \brief Update the device info panel UI according to the current device state.
+   * \brief Update the device info panel UI according to the current device
+   *        state.
    */
 
   /**
-   *  STATE_SYNC_PREPARING          // Clear out the panel.
-   *  STATE_COPY_PREPARING          // Set up what types we are syncing, show panel.
-   *  STATE_SYNCING_TYPE            // Set up what types we are syncing, show panel.
-   *  STATE_UPDATING                // Set up what types we are syncing, show panel.
-   *  STATE_DELETING                // Set up what types we are syncing, show panel.
-   *  STATE_SYNCING_MUSIC           // Put music panel in sync state.
-   *  STATE_SYNCING_VIDEO           // Finish up music, Put video panel in sync state.
-   *  STATE_SYN_PLAYLIST            // Finish up video, Add complete panel.
-   *  STATE_IDLE                    // Finish up complete panel.
+   *  STATE_SYNC_PREPARING   // Clear out the panel.
+   *  STATE_COPY_PREPARING   // Set up what types we are syncing, show panel.
+   *  STATE_SYNCING_TYPE     // Set up what types we are syncing, show panel.
+   *  STATE_UPDATING         // Set up what types we are syncing, show panel.
+   *  STATE_DELETING         // Set up what types we are syncing, show panel.
+   *  STATE_SYNCING_MUSIC    // Put music panel in sync state.
+   *  STATE_SYNCING_VIDEO    // Finish up music, Put video panel in sync state.
+   *  STATE_SYN_PLAYLIST     // Finish up video, Add complete panel.
+   *  STATE_IDLE             // Finish up complete panel.
    */
 
   _update: function DIPW__update() {
@@ -359,14 +362,18 @@ var DIPW = {
       case Ci.sbIDevice.STATE_COPYING_MUSIC:
         if (this._lastOperation != Ci.sbIDevice.STATE_COPYING_MUSIC) {
           // Syncing music
-          this._updateMediaInfoPanelState("audio", Ci.sbIDevice.STATE_SYNCING, true);
+          this._updateMediaInfoPanelState("audio",
+                                          Ci.sbIDevice.STATE_SYNCING,
+                                          true);
           this._lastOperation = state;
 
           // Necessary to test and remove the preceding video panel
           let audioPanel = this._findMediaInfoPanel("audio");
           if (audioPanel && audioPanel.index != 0) {
             this._removeMediaInfoPanel("video");
-            this._updateMediaInfoPanelState("audio", Ci.sbIDevice.STATE_SYNCING, true);
+            this._updateMediaInfoPanelState("audio",
+                                            Ci.sbIDevice.STATE_SYNCING,
+                                            true);
           }
         }
         break;
@@ -375,11 +382,15 @@ var DIPW = {
         if (this._lastOperation != Ci.sbIDevice.STATE_COPYING_VIDEO) {
           // Syncing video. Finish up audio panel if opened.
           if (this._findMediaInfoPanel("audio")) {
-            this._updateMediaInfoPanelState("audio", Ci.sbIDevice.STATE_IDLE, false);
+            this._updateMediaInfoPanelState("audio",
+                                            Ci.sbIDevice.STATE_IDLE,
+                                            false);
           }
 
           // Mark video panel active
-          this._updateMediaInfoPanelState("video", Ci.sbIDevice.STATE_SYNCING, true);
+          this._updateMediaInfoPanelState("video",
+                                          Ci.sbIDevice.STATE_SYNCING,
+                                          true);
           this._lastOperation = state;
         }
         break;
@@ -407,37 +418,24 @@ var DIPW = {
           break;
         }
 
-        var hasError = false;
         // For MSC device. Finish up video panel if opened.
         // audio panel has to be finished up for CANCEL.
-        if (this._lastOperation != Ci.sbIDevice.STATE_SYNC_PLAYLIST) {
-          if (this._findMediaInfoPanel("video")) {
-            this._updateMediaInfoPanelState("video", Ci.sbIDevice.STATE_IDLE, false);
-          }
-          if (this._findMediaInfoPanel("audio")) {
-            this._updateMediaInfoPanelState("audio", Ci.sbIDevice.STATE_IDLE, false);
-          }
+        if (this._findMediaInfoPanel("video")) {
+          this._updateMediaInfoPanelState("video",
+                                          Ci.sbIDevice.STATE_IDLE,
+                                          false);
         }
-        else {
-          // Finish up complete panel
-          hasError = this._updateMediaInfoPanelState("complete", state, true);
+        if (this._findMediaInfoPanel("audio")) {
+          this._updateMediaInfoPanelState("audio",
+                                          Ci.sbIDevice.STATE_IDLE,
+                                          false);
         }
 
-        if (!hasError) {
-          // Update the existing one to OK to disconnect
-          this._updateMediaInfoPanel("complete",
-                                     SBString("device.status.progress_complete"),
-                                     "success",
-                                     true);
-        }
-        else {
-          // Append a Ok to disconnect panel
-          this._updateMediaInfoPanelState("complete", state, false);
-          this._updateMediaInfoPanel("complete_success",
-                                     SBString("device.status.progress_complete"),
-                                     "success",
-                                     true);
-        }
+        // Update the existing one to OK to disconnect
+        this._updateMediaInfoPanel("complete",
+                                   SBString("device.status.progress_complete"),
+                                   "success",
+                                   true);
 
         // Reset to remove all panel for next sync.
         this._removePanels = 1;
@@ -477,9 +475,10 @@ var DIPW = {
    * \return                       Whether state has error.
    */
 
-  _updateMediaInfoPanelState: function DIPW__updateMediaInfoPanelState(aMediaType,
-                                                                       aState,
-                                                                       aIsActive) {
+  _updateMediaInfoPanelState: function DIPW__updateMediaInfoPanelState(
+                                               aMediaType,
+                                               aState,
+                                               aIsActive) {
     var baseString = "device.infoPanel.sync_" + aMediaType;
 
     var hasErrors = false;
