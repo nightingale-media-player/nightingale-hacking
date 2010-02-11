@@ -1,3 +1,4 @@
+#filter substitution
 concerts.jar:
 % content concerts  %content/	contentaccessible=yes
 % locale  concerts  en-US  %locale/en-US/
@@ -23,4 +24,5 @@ concerts.jar:
 % locale  concerts  zh-TW  %locale/zh-TW/
 % skin    concerts  classic/1.0 %skin/
 % overlay chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://concerts/content/scripts-overlay.xul
+  content/browse.js  (@BROWSE_JS_RELATIVE_PATH@/browse.js)
 @include_all_to

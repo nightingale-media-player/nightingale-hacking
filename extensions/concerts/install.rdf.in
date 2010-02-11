@@ -50,7 +50,7 @@
       </Description>
     </em:targetApplication>
 
-    <em:id>concerts@songbirdnest.com</em:id>
+    <em:id>@EXTENSION_UUID@</em:id>
     <em:type>2</em:type>
     <em:version>@EXTENSION_VER@</em:version>
     <em:name>Concerts</em:name>

@@ -29,11 +29,16 @@ VPATH = @srcdir@
   
 include $(DEPTH)/build/autodefs.mk
 
-IS_EXTENSION=1
+IS_EXTENSION = 1
+
+# make-jars wants relative paths in its jar.mn's...
+BROWSE_JS_RELATIVE_PATH = $(subst $(topsrcdir),$(DEPTH),$(EXTENSION_TMP_DIR))
 
 SONGBIRD_PP_RESOURCES = $(srcdir)/content/browse.js.in
-SONGBIRD_PP_DIR = $(SONGBIRD_CHROMEDIR)/content
-PPDEFINES = -DSONGKICK_PARTNERCODE="$(SONGKICK_PARTNERCODE)"
+SONGBIRD_PP_DIR = $(EXTENSION_TMP_DIR)
+PPDEFINES = -DSONGKICK_PARTNERCODE="$(SONGKICK_PARTNERCODE)" \
+            -DBROWSE_JS_RELATIVE_PATH="$(BROWSE_JS_RELATIVE_PATH)" \
+            $(NULL)
 
 JAR_MANIFEST = jar.mn.in
 

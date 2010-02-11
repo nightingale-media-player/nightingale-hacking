@@ -66,6 +66,9 @@ endif
 .NOTPARALLEL: all clean libs export
 
 ifdef IS_EXTENSION_MULTI_BUILD
+   ifneq (1,$(IS_EXTENSION_MULTI_BUILD))
+      $(error IS_EXTENSION_MULTI_BUILD must be undefined or set to "1")
+   endif
    ifeq (,$(EXTENSION_CONFIGS))
       $(error IS_EXTENSION_MULTI_BUILD requires defining EXTENSION_CONFIGS)
    endif
@@ -73,7 +76,7 @@ ifdef IS_EXTENSION_MULTI_BUILD
    # supported by rules.mk when we're in multi-extension mode
    ifndef IS_EXTENSION
       ifneq (,$(MAKECMDGOALS))
-         ifneq (,$(filter-out all export libs default clean,$(MAKECMDGOALS)))
+         ifneq (,$(filter-out all default export libs clean,$(MAKECMDGOALS)))
             $(error Extension multi-build detected; make target must be "all", "default", "clean", or the default target)
          endif
       endif
@@ -104,6 +107,12 @@ ifdef IS_EXTENSION # {
    # Allow extension-config.mk to override this
    EXTENSION_STAGE_DIR ?= $(SONGBIRD_OBJDIR)/extensions/$(EXTENSION_NAME)/.xpistage
 
+   # Define a temporary directory that extensions can use to dump things into; this
+   # is mostly useful in the context of extension multi-builds, where EXTENSION_NAME
+   # will keep preprocessed files from collding into each other; see install.rdf
+   # preprocessing for an example...
+   EXTENSION_TMP_DIR ?= $(SONGBIRD_OBJDIR)/extensions/$(EXTENSION_NAME)/tmp
+   
    ifdef OUR_EXTENSION_MAKE_IN_ROOTSRCDIR
       export OUR_EXTENSION_VER_DEVDATE := $(shell date +%Y%m%d%H%M)
    endif
@@ -202,14 +211,8 @@ default all alldep:: $(SUBMAKEFILES) $(APP_DIST_DIRS)
 
 else
 default all::
-   ifdef IS_EXTENSION_MULTI_BUILD
-	   $(foreach extcfg,$(EXTENSION_CONFIGS), \
-	      $(MAKE) IS_EXTENSION=1 SB_EXTENSION_CONFIG=$(extcfg) export ; \
-	      $(MAKE) IS_EXTENSION=1 SB_EXTENSION_CONFIG=$(extcfg) libs; ) true
-   else
 	   $(MAKE) export
 	   $(MAKE) libs
-   endif
 endif
 
 ALL_TRASH = \
@@ -244,14 +247,9 @@ ifeq (windows,$(SB_PLATFORM))
 endif
 
 clean:: $(SUBMAKEFILES)
-ifdef IS_EXTENSION_MULTI_BUILD
-   ifdef DO_CLEAN
-	   -$(RM) -r $(ALL_TRASH)
-	   +$(LOOP_OVER_SUBDIRS)
-   else
-	    $(foreach extcfg,$(EXTENSION_CONFIGS), \
-        $(MAKE) IS_EXTENSION=1 SB_EXTENSION_CONFIG=$(extcfg) DO_CLEAN=1 clean; ) true
-   endif
+ifeq (1_,$(IS_EXTENSION_MULTI_BUILD)_$(DO_TARGET))
+	$(foreach extcfg,$(EXTENSION_CONFIGS), \
+    $(MAKE) IS_EXTENSION=1 SB_EXTENSION_CONFIG=$(extcfg) DO_TARGET=1 clean; ) true
 else
 	-$(RM) -r $(ALL_TRASH)
 	+$(LOOP_OVER_SUBDIRS)
@@ -284,16 +282,26 @@ $(foreach tier,$(TIERS),tier_$(tier)):: $(foreach tier,$(TIERS),$(if $(tier_$(ti
 ##
 
 libs:: $(SUBMAKEFILES) $(OUR_SUBDIRS)
+ifeq (1_,$(IS_EXTENSION_MULTI_BUILD)_$(DO_TARGET))
+	$(foreach extcfg,$(EXTENSION_CONFIGS), \
+    $(MAKE) IS_EXTENSION=1 SB_EXTENSION_CONFIG=$(extcfg) DO_TARGET=1 libs; ) true
+else
 	+$(LOOP_OVER_SUBDIRS)
+endif
 
 export:: $(SUBMAKEFILES) $(APP_DIST_DIRS) $(CREATEDIRS) $(OUR_SUBDIRS)
+ifeq (1_,$(IS_EXTENSION_MULTI_BUILD)_$(DO_TARGET))
+	$(foreach extcfg,$(EXTENSION_CONFIGS), \
+    $(MAKE) IS_EXTENSION=1 SB_EXTENSION_CONFIG=$(extcfg) DO_TARGET=1 export; ) true
+else
 	+$(LOOP_OVER_SUBDIRS)
+endif
 
 ## 
 ## Handle application and component directory creation
 ##
 $(sort $(APP_DIST_DIRS) $(CREATEDIRS)): %: FORCE
-	$(if $(wildcard $@),,$(MKDIR_APP) $@)
+	$(if $(wildcard $@),$(NULL),$(MKDIR_APP) $@)
 
 ##
 ## Program handling for libs and export targets
@@ -1166,7 +1174,14 @@ ifdef IS_EXTENSION # {
       endif
 
       ifeq (.in,$(suffix $(strip $(INSTALL_RDF))))
-         OUR_INSTALL_RDF = $(patsubst %.in,%,$(strip $(INSTALL_RDF)))
+         # The use of IS_EXTENSION_MULTI_BUILD in this rule is ok, because we end up only
+         # defining these the _INSTALL_RDF rules if OUR_EXTENSION_MAKE_IN_ROOTSRCDIR is
+         # defined, e.g. we're at the root level of the extension make, where
+         # IS_EXTENSION_MULTI_BUILD, by definition, is defined.
+
+         OUR_INSTALL_RDF = $(if $(IS_EXTENSION_MULTI_BUILD), \
+          $(EXTENSION_TMP_DIR)/)$(patsubst %.in,%,$(strip $(INSTALL_RDF)))
+
          OUR_INSTALL_RDF_IN = $(strip $(srcdir)/$(INSTALL_RDF))
          ALL_TRASH += $(OUR_INSTALL_RDF)
       else
@@ -1218,7 +1233,7 @@ $(OUR_INSTALL_RDF): $(OUR_INSTALL_RDF_IN)
 
 export:: $(if $(IS_EXTENSION), $(if $(OUR_EXTENSION_MAKE_IN_ROOTSRCDIR), $(OUR_INSTALL_RDF)))
 ifdef IS_EXTENSION
-	$(MKDIR_APP) $(EXTENSION_STAGE_DIR)
+	$(MKDIR_APP) $(EXTENSION_STAGE_DIR) $(if $(EXTENSION_TMP_DIR), $(EXTENSION_TMP_DIR))
 endif
 
 libs:: $(if $(IS_EXTENSION), $(OUR_SUBDIRS) $(if $(JAR_MANIFEST),$(OUR_JAR_MN)))
@@ -1246,6 +1261,7 @@ ifdef IS_EXTENSION
    ifdef OUR_EXTENSION_MAKE_IN_ROOTSRCDIR
       ALL_TRASH += $(if $(OUR_INSTALL_RDF_IN), $(OUR_INSTALL_RDF)) \
                    $(EXTENSION_STAGE_DIR) \
+                   $(EXTENSION_TMP_DIR) \
                    $(NULL)
    endif
 endif
