@@ -241,32 +241,51 @@ sbDeviceTranscoding::PrepareBatchForTranscoding(Batch & aBatch)
     if (request->IsPlaylist())
       continue;
 
-    rv = FindTranscodeProfile(request->item,
-                              &request->transcodeProfile,
-                              &request->destinationCompatibility);
-    // Treat no profiles available as not needing transcoding
-    if (rv == NS_ERROR_NOT_AVAILABLE) {
-      TRACE(("%s: no transcode profile available", __FUNCTION__));
-      request->destinationCompatibility =
-        sbBaseDevice::TransferRequest::COMPAT_UNSUPPORTED;
-    } else {
+    // First, ensure that the item isn't DRM protected before looking for
+    // transcode profiles.
+    if (sbDeviceUtils::IsItemDRMProtected(request->item)) {
+      PRBool isSupported = PR_FALSE;
+      rv = mBaseDevice->SupportsMediaItemDRM(
+          request->item,
+          PR_TRUE,  // report errors
+          &isSupported);
+      if (NS_SUCCEEDED(rv) && isSupported) {
+        request->destinationCompatibility =
+          sbBaseDevice::TransferRequest::COMPAT_SUPPORTED;
+      }
+      else {
+        request->destinationCompatibility =
+          sbBaseDevice::TransferRequest::COMPAT_UNSUPPORTED;
+      }
+    }
+    else {
+      rv = FindTranscodeProfile(request->item,
+                                &request->transcodeProfile,
+                                &request->destinationCompatibility);
+      // Treat no profiles available as not needing transcoding
+      if (rv == NS_ERROR_NOT_AVAILABLE) {
+        TRACE(("%s: no transcode profile available", __FUNCTION__));
+        request->destinationCompatibility =
+          sbBaseDevice::TransferRequest::COMPAT_UNSUPPORTED;
+      } else {
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      if (request->transcodeProfile) {
+        TRACE(("%s: transcoding needed", __FUNCTION__));
+        request->destinationCompatibility =
+          sbBaseDevice::TransferRequest::COMPAT_NEEDS_TRANSCODING;
+      }
+
+      request->albumArt = do_CreateInstance(
+              SONGBIRD_TRANSCODEALBUMART_CONTRACTID, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
-    }
-    if (request->transcodeProfile) {
-      TRACE(("%s: transcoding needed", __FUNCTION__));
-      request->destinationCompatibility =
-        sbBaseDevice::TransferRequest::COMPAT_NEEDS_TRANSCODING;
-    }
 
-    request->albumArt = do_CreateInstance(
-            SONGBIRD_TRANSCODEALBUMART_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // It's ok for this to fail; album art is optional
-    rv = request->albumArt->Init(request->item, imageFormats);
-    if (NS_FAILED(rv)) {
-      TRACE(("%s: no album art available", __FUNCTION__));
-      request->albumArt = nsnull;
+      // It's ok for this to fail; album art is optional
+      rv = request->albumArt->Init(request->item, imageFormats);
+      if (NS_FAILED(rv)) {
+        TRACE(("%s: no album art available", __FUNCTION__));
+        request->albumArt = nsnull;
+      }
     }
   }
 

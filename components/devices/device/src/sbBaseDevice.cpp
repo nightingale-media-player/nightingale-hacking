@@ -5200,12 +5200,10 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem,
 
   if (sbDeviceUtils::IsItemDRMProtected(aMediaItem)) {
     PRBool supported;
-    rv = SupportsMediaItemDRM(aMediaItem, aReportErrors, &supported);
+    rv = SupportsMediaItemDRM(aMediaItem, aReportErrors, _retval);
     NS_ENSURE_SUCCESS(rv, rv);
-    if (!supported) {
-      *_retval = PR_FALSE;
-      return NS_OK;
-    }
+
+    return NS_OK;
   }
 
   PRUint32 const transcodeType =
