@@ -100,8 +100,12 @@ var deviceFirmwareWizard = {
       return false;
     }
 
-    if(this._currentOperation != "complete") {
-      this._deviceFirmwareUpdater.cancel(this._device);
+    try {
+      if(this._currentOperation != "complete") {
+        this._deviceFirmwareUpdater.cancel(this._device);
+      }
+    } catch (e) {
+      // Ignore any exceptions thrown so we continue to close the window
     }
     
     return true;
