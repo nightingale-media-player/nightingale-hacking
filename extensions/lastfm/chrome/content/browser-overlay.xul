@@ -69,7 +69,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
               <rows>
                 <row align="center">
                   <label value="Username:"/>
-                  <textbox id="lastfmUsername"/>
+                  <textbox id="lastfmUsername" maxlength="15"/>
                 </row>
                 <row align="center">
                   <label value="Password:"/>
