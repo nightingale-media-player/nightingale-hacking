@@ -663,15 +663,16 @@ sbMetadataHandlerWMA::SetImageDataInternal(PRInt32 aType,
                                               contentType); 
   NS_ENSURE_SUCCESS(rv, rv);
   
-  NS_ConvertASCIItoUTF16 conentTypeUnicode(contentType);
+  NS_ConvertASCIItoUTF16 contentTypeUnicode(contentType);
 
   nsString emptyString;
-  picData->pwszMIMEType = conentTypeUnicode.BeginWriting();
+  WM_PICTURE newPicData;
+  newPicData.pwszMIMEType = contentTypeUnicode.BeginWriting();
   /* this only works because both songbird and WMA copy the types from id3v1 */
-  picData->bPictureType = aType;
-  picData->pwszDescription = emptyString.BeginWriting();
-  picData->pbData = reinterpret_cast<BYTE*>(dataString.BeginWriting());
-  picData->dwDataLen = dataString.Length();
+  newPicData.bPictureType = aType;
+  newPicData.pwszDescription = emptyString.BeginWriting();
+  newPicData.pbData = reinterpret_cast<BYTE*>(dataString.BeginWriting());
+  newPicData.dwDataLen = dataString.Length();
   
   if (targetIndex == static_cast<WORD>(-1)) {
     // no existing picture found
@@ -681,7 +682,7 @@ sbMetadataHandlerWMA::SetImageDataInternal(PRInt32 aType,
                                &index,
                                WMT_TYPE_BINARY,
                                0,
-                               reinterpret_cast<const BYTE*>(data.BeginReading()),
+                               reinterpret_cast<const BYTE*>(&newPicData),
                                sizeof(WM_PICTURE));
     COM_ENSURE_SUCCESS(hr);
   } else {
@@ -690,7 +691,7 @@ sbMetadataHandlerWMA::SetImageDataInternal(PRInt32 aType,
                                   targetIndex,
                                   WMT_TYPE_BINARY,
                                   NULL,
-                                  reinterpret_cast<const BYTE*>(data.BeginReading()),
+                                  reinterpret_cast<const BYTE*>(&newPicData),
                                   sizeof(WM_PICTURE));
     COM_ENSURE_SUCCESS(hr);
   }
