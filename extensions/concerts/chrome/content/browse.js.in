@@ -831,7 +831,9 @@ ConcertTicketing.browseArtists = function() {
 		{
 			continue;
 		}
-		var thisLetter = concert.artistname[0].toUpperCase();
+
+    var artistname = decodeURIComponent(unescape(concert.artistname));
+		var thisLetter = artistname[0].toUpperCase();
 		if (thisLetter < 'A' || thisLetter > 'Z')
 			thisLetter = '#';
 
@@ -871,19 +873,19 @@ ConcertTicketing.browseArtists = function() {
 			contentsNode.appendChild(letterDiv);
 			flushDisplay();
 		}
-		if (concert.artistname != lastArtist) {
+		if (artistname != lastArtist) {
 			// Create a new artist block
 			var artistBlock = this.createBlock("artistBlock");
 
 			// Create the main concert title
-			var artistName = this.createBlock("mainArtistName", true);
+			var artistNameBlock = this.createBlock("mainArtistName", true);
 			thisMainArtistAnchor = this._browseDoc.createElement("a");
 			this.makeLink(thisMainArtistAnchor, "", "artist.main");
 			var artistNameText =
-				this._browseDoc.createTextNode(concert.artistname);
+				this._browseDoc.createTextNode(artistname);
 			thisMainArtistAnchor.appendChild(artistNameText);
-			artistName.appendChild(thisMainArtistAnchor);
-			artistBlock.appendChild(artistName);
+			artistNameBlock.appendChild(thisMainArtistAnchor);
+			artistBlock.appendChild(artistNameBlock);
 
 			if (concert.libartist == 1 && this.showPlayLink) {
 				// Create the play link
@@ -893,7 +895,7 @@ ConcertTicketing.browseArtists = function() {
 				playLink.src = "chrome://concerts/skin/icon-play.png";
 				playBlock.className = "playLink";
 				playBlock.appendChild(playLink);
-				playBlock.setAttribute("artistName", concert.artistname);
+				playBlock.setAttribute("artistName", artistname);
 				playBlock.addEventListener("click", this.playArtist, false);
 				artistBlock.appendChild(playBlock);
 			}
@@ -912,7 +914,7 @@ ConcertTicketing.browseArtists = function() {
 		artistConcertBlock.appendChild(thisConcert);
 
 		lastLetter = thisLetter;
-		lastArtist = concert.artistname;
+		lastArtist = artistname;
 		
 		concertsShown++;
 	}
@@ -1073,8 +1075,9 @@ ConcertTicketing.createRowArtistView = function(concert, mainAnchor) {
 	otherArtistsCol.className = "artists";
 	var first = true;
 	var artists = concert.artists;
+  var artistname = decodeURIComponent(unescape(concert.artistname));
 	for (let i in artists) {
-		if (artists[i].name == concert.artistname) {
+		if (decodeURIComponent(unescape(artists[i].name)) == artistname) {
 			mainAnchor.setAttribute("href",
 					this.appendCityParam(artists[i].url));
 			continue;
@@ -1259,14 +1262,15 @@ ConcertTicketing.createColumnArtists = function(concert) {
 		var anchor = this._browseDoc.createElement("a");
 		this.makeLink(anchor, this.appendCityParam(artists[i].url),
 				"artist.other");
-		var anchorLabel = this._browseDoc.createTextNode(artists[i].name);
+    var artistName = decodeURIComponent(unescape(artists[i].name));
+		var anchorLabel = this._browseDoc.createTextNode(artistName);
 		anchor.appendChild(anchorLabel);
 
 		// Test to see if the concert title is the exact same string as this
 		// artist name - if so, then this artist is the headliner and should
 		// be called out first, otherwise append the artist name/link to the
 		// column
-		if (artists[i].name == concert.title) {
+		if (artistName == concert.title) {
 			headlinerFound = true;
 			headlinerNode = anchor;
 		} else {
@@ -1277,7 +1281,7 @@ ConcertTicketing.createColumnArtists = function(concert) {
 		}
 
 		// Mask it out of the concert title
-		concertTitle = concertTitle.replace(artists[i].name, "");
+		concertTitle = concertTitle.replace(artistName, "");
 	}
 	/*
 	 * XXX Taking this logic out for now - it'd work really nicely if we had
@@ -1313,10 +1317,13 @@ ConcertTicketing.createColumnArtists = function(concert) {
 ConcertTicketing.createColumnVenue = function(concert) {
 	var venueCol = this._browseDoc.createElement("td");
 	venueCol.className = "venue";
+
   if (concert.venue != "<generic />") {
+    var venueName = concert.venue;
+    venueName = decodeURIComponent(unescape(venueName));
     var anchor = this._browseDoc.createElement("a");
     this.makeLink(anchor, this.appendPartnerParam(concert.venueURL), "venue");
-    var venueColLabel = this._browseDoc.createTextNode(concert.venue);
+    var venueColLabel = this._browseDoc.createTextNode(venueName);
     anchor.appendChild(venueColLabel);
     venueCol.appendChild(anchor);
   }

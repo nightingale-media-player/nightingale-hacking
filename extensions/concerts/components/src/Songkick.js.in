@@ -1332,13 +1332,16 @@ skArtistConcertEnumerator.prototype = {
 
 		var artistname =
 			this._results.getRowCellByColumn(this._rowIndex, "name");
+    artistname = decodeURIComponent(escape(artistname));
 		var artisturl =
 			this._results.getRowCellByColumn(this._rowIndex, "artistURL");
 		var id = this._results.getRowCellByColumn(this._rowIndex, "id");
 		var ts = this._results.getRowCellByColumn(this._rowIndex, "timestamp");
 		var venue = this._results.getRowCellByColumn(this._rowIndex, "venue");
+    venue = decodeURIComponent(escape(venue));
 		var city = this._results.getRowCellByColumn(this._rowIndex, "city");
 		var title = this._results.getRowCellByColumn(this._rowIndex, "title");
+    title = decodeURIComponent(escape(title));
 		var url =
 			this._results.getRowCellByColumn(this._rowIndex,"concertURL");
 		var lib =
@@ -1358,6 +1361,7 @@ skArtistConcertEnumerator.prototype = {
 		for (let i=0; i<results.getRowCount(); i++) {
 			var artistName = results.getRowCellByColumn(i, "name");
 			var artistURL = results.getRowCellByColumn(i, "artistURL");
+      artistName = decodeURIComponent(escape(artistName));
 			artists.push({name:artistName, url:artistURL});
 		}
 		this._rowIndex++;
