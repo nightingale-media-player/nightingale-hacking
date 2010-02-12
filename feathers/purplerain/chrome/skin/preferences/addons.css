@@ -28,7 +28,7 @@ richlistbox:focus richlistitem[selected="true"] {
   padding: 0px;
 }
 #addonsMsg > notification > .notification-inner {
-  padding: 2px 8px;
+  padding: 3px 8px;
 }
 #addonsMsg > notification[type="info"] > .notification-inner {
   border-top: 1px solid rgb(125,154,86) !important;
