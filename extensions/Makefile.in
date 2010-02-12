@@ -77,7 +77,7 @@ ifeq (windows_,$(SB_PLATFORM)_$(SONGBIRD_NIGHTLY)$(SONGBIRD_OFFICIAL))
    DEFAULT_EXTENSIONS += systray
 endif
 
-SUBDIRS = $(subst $(COMMA),$(SPACE), \
-          $(subst default,$(DEFAULT_EXTENSIONS),$(SB_EXTENSIONS)))
+SUBDIRS = $(sort $(subst $(COMMA),$(SPACE), \
+          $(subst default,$(DEFAULT_EXTENSIONS),$(SB_EXTENSIONS))))
 
 include $(topsrcdir)/build/rules.mk
