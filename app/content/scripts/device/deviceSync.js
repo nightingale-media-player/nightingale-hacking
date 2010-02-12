@@ -316,7 +316,7 @@ var DeviceSyncWidget = {
         break;
 
       case Ci.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_REMOVED :
-        this.removeLibrary(aEvent.data.QueryInterface(Ci.sbIDeviceLibrary));
+        this.removeLibrary(aEvent.data);
         break;
 
       case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED:
@@ -518,9 +518,9 @@ var DeviceSyncWidget = {
    * \param aLibrary            Library to remove.
    */
 
-  removeLibrary: function DeviceSyncWidget_removeLibrary(aLibrary) {
+  removeLibrary: function DeviceSyncWidget_removeLibrary(aGUID) {
     // Do nothing if current library has not been removed.
-    if (this._deviceLibrary != aLibrary)
+    if (this._deviceLibrary.guid != aGUID)
       return;
 
     // Clear the device library.
