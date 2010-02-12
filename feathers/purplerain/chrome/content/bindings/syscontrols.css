@@ -125,6 +125,7 @@ sb-sys-buttons[type="dialog"] > hbox > sb-sys-close-button,
 sb-sys-buttons[type="dialog"] > hbox > sb-sys-hide-button {
   max-height: 19px;
   list-style-image: url(chrome://songbird/skin/window/button-close-solo.png);
+  margin-right: 5px !important;
 }
 
 sb-sys-minimize-button,
