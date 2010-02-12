@@ -320,7 +320,9 @@ var DeviceSyncWidget = {
         break;
 
       case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED:
-        this._isBusy = !(aEvent.deviceState == Ci.sbIDevice.STATE_IDLE);
+        try {
+          this._isBusy = !(aEvent.deviceState == Ci.sbIDevice.STATE_IDLE);
+        } catch (e) {}
         this.syncPrefsApply();
         break;
 

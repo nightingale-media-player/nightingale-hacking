@@ -168,7 +168,7 @@
           //     so that it can handle a particular library rather than defaulting
           //     to the first one.
           if (this._deviceLibrary)
-            this._removeLibrary(this._deviceLibrary);
+            this._removeLibrary(this._deviceLibrary.guid);
           if (this.device.content.libraries.length > 0) {
             this._addLibrary(this.device.content
                                  .libraries.queryElementAt(0, Ci.sbIDeviceLibrary));
@@ -539,11 +539,11 @@
        * \param aLibrary library to be removed from the display
        -->
       <method name="_removeLibrary">
-        <parameter name="aLibrary"/>
+        <parameter name="aGUID"/>
         <body><![CDATA[
         {
           // Do nothing if current library hasn't been removed.
-          if (this._deviceLibrary != aLibrary)
+          if (this._deviceLibrary.guid != aGUID)
             return;
 
           // Clear device library.
@@ -861,7 +861,7 @@
               break;
       
             case Ci.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_REMOVED:
-              this._removeLibrary(aEvent.data.QueryInterface(Ci.sbIDeviceLibrary));
+              this._removeLibrary(aEvent.data);
               break;
           }
         }

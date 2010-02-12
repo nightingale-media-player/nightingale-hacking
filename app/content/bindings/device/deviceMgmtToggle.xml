@@ -157,8 +157,10 @@
             syncButton.removeAttribute("disabled");
             
             // Get the device management state
-            var isManual = this._deviceLibrary.isMgmtTypeManual;
-            this.updateButtons(isManual);
+            if (this._deviceLibrary) {
+              var isManual = this._deviceLibrary.isMgmtTypeManual;
+              this.updateButtons(isManual);
+            }
           }
         ]]></body>
       </method>
