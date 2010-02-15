@@ -53,7 +53,7 @@ interface nsIArray;
  *
  * \sa sbIFileScanQuery, sbIFileScan, FileScan.h
  */
-[scriptable, uuid(5224b8f1-34bf-4c88-8742-1c54b6d20c0a)]
+[scriptable, uuid(e1cf5762-1dd1-11b2-bc1c-a0de92947c7a)]
 interface sbIFileScanCallback : nsISupports
 {
   /**
@@ -274,6 +274,13 @@ interface sbIFileScanQuery : nsISupports
    * \brief USER CODE SHOULD NOT REFERENCE THIS METHOD
    */
   PRBool isCancelled();
+
+  /**
+   * If true, URLs are preprocessed to become library content URIs (ie,
+   * lowercase on win32). Default is TRUE.
+   */
+  attribute boolean wantLibraryContentURIs;
+
 };
 
 /**

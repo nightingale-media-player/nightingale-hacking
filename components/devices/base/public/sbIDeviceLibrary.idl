@@ -222,7 +222,7 @@ interface sbIDeviceLibraryListener : nsISupports
  * \interface sbIDeviceLibrary
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(8e8cd544-1dd2-11b2-a8b3-b686e094d115)]
+[scriptable, uuid(5e66c00e-8bec-4ee8-ba69-409e7bdd28cd)]
 interface sbIDeviceLibrary : sbILibrary
 {
   /**
@@ -240,7 +240,12 @@ interface sbIDeviceLibrary : sbILibrary
    * Syncronization settings
    */
 
-  /** \brief Manually manage device.
+  /** \brief Do not automatically sync files of the corresponding content type.
+    */
+  const unsigned long MGMT_TYPE_NONE                    = 0x00;
+
+  /** \brief Manually manage device (obsolete, use setSyncMode instead, or 
+    * use MGMT_TYPE_SYNC_NONE for no auto syncing of a specific content type). 
     */
   const unsigned long MGMT_TYPE_MANUAL                  = 0x01;
 

@@ -102,6 +102,7 @@
 #include "sbDeviceLibrary.h"
 #include "sbDeviceStatus.h"
 #include "sbDeviceTranscoding.h"
+#include "sbDeviceImages.h"
 #include "sbDeviceUtils.h"
 #include "sbDeviceXMLCapabilities.h"
 #include "sbLibraryListenerHelpers.h"
@@ -362,6 +363,7 @@ sbBaseDevice::sbBaseDevice() :
   mPreferenceLock(nsnull),
   mMusicLimitPercent(100),
   mDeviceTranscoding(nsnull),
+  mDeviceImages(nsnull),
   mConnected(PR_FALSE),
   mReqWaitMonitor(nsnull),
   mReqStopProcessing(0),
@@ -418,6 +420,10 @@ sbBaseDevice::~sbBaseDevice()
 
   if (mDeviceTranscoding) {
     delete mDeviceTranscoding;
+  }
+  
+  if (mDeviceImages) {
+    delete mDeviceImages;
   }
 }
 
@@ -2215,7 +2221,7 @@ sbBaseDevice::CreateTransferRequest(PRUint32 aRequest,
                                     nsIPropertyBag2 *aRequestParameters,
                                     TransferRequest **aTransferRequest)
 {
-  NS_ENSURE_TRUE( ((aRequest >= REQUEST_MOUNT && aRequest <= REQUEST_FORMAT) ||
+  NS_ENSURE_TRUE( ((aRequest >= REQUEST_MOUNT && aRequest <= REQUEST_IMAGESYNC) ||
                    (aRequest & REQUEST_FLAG_USER)),
                   NS_ERROR_ILLEGAL_VALUE);
   NS_ENSURE_ARG_POINTER(aRequestParameters);
@@ -2820,6 +2826,10 @@ nsresult sbBaseDevice::Init()
   // get transcoding stuff
   mDeviceTranscoding = new sbDeviceTranscoding(this);
   NS_ENSURE_TRUE(mDeviceTranscoding, NS_ERROR_OUT_OF_MEMORY);
+
+  // get image stuff
+  mDeviceImages = new sbDeviceImages(this);
+  NS_ENSURE_TRUE(mDeviceImages, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
 }
@@ -3752,8 +3762,17 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
   rv = SyncApplyChanges(dstLib, changeset);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Update the sync types (audio/video/photo) after queuing requests
+  // Update the sync types (audio/video/image) after queuing requests
   aRequest->itemType = mSyncType;
+
+  // If the user has enabled image sync, trigger it after the audio/video sync
+  PRUint32 mgmtType;
+  rv = dstLib->GetMgmtType(sbIDeviceLibrary::MEDIATYPE_IMAGE, &mgmtType);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (mgmtType != sbIDeviceLibrary::MGMT_TYPE_NONE) {
+    rv = PushRequest(REQUEST_IMAGESYNC);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }

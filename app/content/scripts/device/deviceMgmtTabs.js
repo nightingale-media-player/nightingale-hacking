@@ -189,6 +189,25 @@ var DeviceMgmtTabs = {
     if (!this._checkFunctionSupport(aFunctionType)) {
       return false;
     }
+    
+    // lone> the next statement is not good, instead all relevant device
+    // interfaces should report image support as needed: some devices currently
+    // do not report image support even though they do support images, and some
+    // devices will never report support because the api (ie, MSC) doesn't allow
+    // us to ask; any MSC device has potential support for anything whatsoever,
+    // since it appears as a USB drive. maybe it only means than MSC should
+    // always support everything, but why not MTP then ? In fact, it's an open
+    // question as to whether we should use this function to determine tab
+    // visibility at all because even if a device does not support images (or
+    // videos), you could still want to use it as syncable portable storage for
+    // the files. The same argument can be made of tabs which are always visible
+    // (ie, music): think of a USB key that plugs into a car stereo, it'll never
+    // be reported as supporting music, yet it's just the portable storage used
+    // by the user to play on a device that does support playback, so it's a
+    // good thing we show the tab even though the physical device reports no
+    // audio support.
+    if (aContentType == sbIDC.CONTENT_IMAGE)
+      return true;
 
     // Now check if the device supports the content type in that function.
     if (aFunctionType >= 0) {
@@ -209,7 +228,10 @@ var DeviceMgmtTabs = {
             strContentType = "Audio";
             break;
           case Ci.sbIDeviceCapabilities.CONTENT_VIDEO:
-            strConentType = "Video";
+            strContentType = "Video";
+            break;
+          case Ci.sbIDeviceCapabilities.CONTENT_IMAGE:
+            strContentType = "Image";
             break;
           default:
             strContentType = "Unknown";

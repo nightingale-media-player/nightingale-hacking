@@ -350,6 +350,13 @@ sbDeviceStatusHelper::ItemStart(PRInt32     aItemNum,
                                 PRInt32     aItemCount,
                                 PRInt32     aItemType)
 {
+  // Update current item number and item count.
+  mItemNum = aItemNum;
+  mItemCount = aItemCount;
+  
+  // Update current item type
+  mItemType = aItemType;
+
   // Dispatch operation dependent status processing.
   switch(mOperationType)
   {
@@ -448,10 +455,6 @@ sbDeviceStatusHelper::ItemStart(sbIMediaList* aMediaList,
   // Update the current media item and list.
   mMediaList = aMediaList;
   mMediaItem = aMediaItem;
-
-  // Update current item number and item count.
-  mItemNum = aItemNum;
-  mItemCount = aItemCount;
 
   // Apply default status processing.
   ItemStart(aItemNum, aItemCount, aItemType);

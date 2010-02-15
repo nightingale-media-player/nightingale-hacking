@@ -107,6 +107,7 @@ protected:
 
   PRBool m_bSearchHidden;
   PRBool m_bRecurse;
+  PRBool m_bWantLibraryContentURIs;
 
   PRLock* m_pScanningLock;
   PRBool m_bIsScanning;

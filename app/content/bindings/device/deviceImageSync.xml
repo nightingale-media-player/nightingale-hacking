@@ -289,7 +289,7 @@
 
           // Update main checkbox state
           let syncEnabled = (this._syncPrefs.mgmtType !=
-                             Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL);
+                             Ci.sbIDeviceLibrary.MGMT_TYPE_NONE);
           this._getElement("sync_images_from_checkbox").checked = syncEnabled;
 
           // Enable/disable radio buttons
@@ -462,7 +462,7 @@
           let oldPrefs = this._copyPrefs();
           this._syncPrefs.mgmtType = (aEnable ?
                                       Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL :
-                                      Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL);
+                                      Ci.sbIDeviceLibrary.MGMT_TYPE_NONE);
           this._updateUI();
           this._checkPrefChange(oldPrefs);
         }

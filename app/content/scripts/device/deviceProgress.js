@@ -117,6 +117,18 @@ var DPWCfg = {
       operationCanceled: false
     },
 
+    /* Sync preparation. */
+    {
+      state: Ci.sbIDevice.STATE_IMAGESYNC_PREPARING,
+      localeSuffix: "imagesync_preparing",
+      progressMeterUndetermined: true,
+      canBeCompleted: true,
+      showIdleMessage: true,
+      showProgress: true,
+      updateBusy: true,
+      operationCanceled: false
+    },
+
     /* Copy. */
     {
       state: Ci.sbIDevice.STATE_COPYING,
@@ -458,6 +470,8 @@ var DPW = {
       return "audio";
     else if (this._itemType.intValue == 2)
       return "video";
+    else if (this._itemType.intValue == 4)
+      return "image";
     else
       return null;
   },

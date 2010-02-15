@@ -56,6 +56,7 @@
 #include <sbITranscodeManager.h>
 
 #include <sbMemoryUtils.h>
+#include <nsComponentManagerUtils.h>
 
 #include "sbDeviceStatistics.h"
 
@@ -65,6 +66,7 @@ class sbAutoIgnoreWatchFolderPath;
 class sbBaseDeviceLibraryListener;
 class sbDeviceBaseLibraryCopyListener;
 class sbDeviceTranscoding;
+class sbDeviceImages;
 class sbBaseDeviceMediaListListener;
 class sbIDeviceCapabilitiesRegistrar;
 class sbIDeviceLibrary;
@@ -94,6 +96,7 @@ class NS_HIDDEN sbBaseDevice : public sbIDevice,
 public:
   // Friend declarations for classes used to divide up device work
   friend class sbDeviceTranscoding;
+  friend class sbDeviceImages;
 
   struct TransferRequest : public nsISupports {
     /* types of requests. not all types necessarily apply to all types of
@@ -122,6 +125,7 @@ public:
       REQUEST_WRITE         = sbIDevice::REQUEST_WRITE,
       REQUEST_DELETE        = sbIDevice::REQUEST_DELETE,
       REQUEST_SYNC          = sbIDevice::REQUEST_SYNC,
+      REQUEST_IMAGESYNC     = sbIDevice::REQUEST_IMAGESYNC,
       /* delete all files */
       REQUEST_WIPE          = sbIDevice::REQUEST_WIPE,
       /* move an item in one playlist */
@@ -134,7 +138,8 @@ public:
     enum {
       REQUESTBATCH_UNKNOWN       = 0,
       REQUESTBATCH_AUDIO         = 1,
-      REQUESTBATCH_VIDEO         = 2
+      REQUESTBATCH_VIDEO         = 2,
+      REQUESTBATCH_IMAGE         = 4
     };
 
     int type;                        /* one of the REQUEST_* constants,
@@ -574,6 +579,11 @@ public:
   PRUint32 GetDeviceState() {
     return mState;
   }
+  
+  sbDeviceImages* GetDeviceImages() const {
+    return mDeviceImages;
+  }
+  
 protected:
   friend class sbBaseDeviceInitHelper;
   friend class sbDeviceEnsureSpaceForWrite;
@@ -645,6 +655,7 @@ protected:
   PRLock*  mPreferenceLock;
   PRUint32 mMusicLimitPercent;
   sbDeviceTranscoding * mDeviceTranscoding;
+  sbDeviceImages *mDeviceImages;
 
   bool mVideoInserted; // Flag on whether video is inserted
   PRUint32 mSyncType; // syncing type to pass to the UI

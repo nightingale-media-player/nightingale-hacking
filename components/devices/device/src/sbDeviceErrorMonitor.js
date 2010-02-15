@@ -234,6 +234,13 @@ deviceErrorMonitor.prototype = {
               mediaURL = mediaItem.getProperty(SBProperties.contentURL);
               mediaURL = decodeURIComponent(mediaURL);
             }
+          } else if (aDeviceEvent.data instanceof Ci.nsIFile) {
+            var ios = Components.classes["@mozilla.org/network/io-service;1"]
+                                .getService(Components.interfaces.nsIIOService);
+            var fileHandler = ios.getProtocolHandler("file")
+                                 .QueryInterface(Components.interfaces
+                                    .nsIFileProtocolHandler);
+            mediaURL = fileHandler.getURLSpecFromFile(aDeviceEvent.data);
           }
         } else {
           mediaURL = SBString("device.info.unknown");

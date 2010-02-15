@@ -56,7 +56,8 @@ Cu.import("resource://app/jsmodules/WindowUtils.jsm");
 
 var TYPE = { "NONE": 0,
              "MUSIC": 1,
-             "VIDEO": 2 };
+             "VIDEO": 2,
+             "IMAGE": 4 };
 
 //------------------------------------------------------------------------------
 //
@@ -82,6 +83,7 @@ var DIPW = {
   _deviceErrorMonitor : null,
   _itemType: null,
   _removePanels: null,
+  _lastUpdateTimeout: null,
 
   /**
    * \brief Initialize the device info panel services for the device info panel
@@ -168,6 +170,8 @@ var DIPW = {
       return Ci.sbIDevice.STATE_COPYING_MUSIC;
     else if (this._itemType.intValue & TYPE.VIDEO)
       return Ci.sbIDevice.STATE_COPYING_VIDEO;
+    else if (this._itemType.intValue & TYPE.IMAGE)
+      return Ci.sbIDevice.STATE_COPYING_IMAGE;
     else
       return Ci.sbIDevice.STATE_IDLE;
   },
@@ -301,6 +305,12 @@ var DIPW = {
     else if (deviceType == "MSCUSB")
       state = this._getMSCDeviceState();
 
+    if (state != Ci.sbIDevice.STATE_IDLE &&
+        this._lastUpdateTimeout) {
+      clearTimeout(this._lastUpdateTimeout);
+      this._lastUpdateTimeout = null;
+    }
+
     switch (state) {
       case Ci.sbIDevice.STATE_COPYING:
         break;
@@ -312,11 +322,17 @@ var DIPW = {
           this._panelBar.animateOut();
         this._lastOperation = state;
         break;
+        
+      case Ci.sbIDevice.STATE_IMAGESYNC_PREPARING:
+        this._lastOperation = state;
+        break;
 
       case Ci.sbIDevice.STATE_COPY_PREPARING:
       case Ci.sbIDevice.STATE_SYNCING_TYPE:
       case Ci.sbIDevice.STATE_UPDATING:
       case Ci.sbIDevice.STATE_DELETING:
+        var active = state == Ci.sbIDevice.STATE_UPDATING ||
+                     state == Ci.sbIDevice.STATE_DELETING;
         // If we are syncing set up the panels for the types we are going to
         // sync.
 
@@ -336,7 +352,12 @@ var DIPW = {
           this._updateMediaInfoPanel("audio",
                                      SBString("device.infoPanel.sync_audio"),
                                      "sync",
-                                     false);
+                                     active);
+          if (active) {
+            this._updateMediaInfoPanelState("audio",
+                                            Ci.sbIDevice.STATE_SYNCING,
+                                            true);
+          }
         }
         if ((this._itemType.intValue & TYPE.VIDEO) &&
             this._supportsVideo() &&
@@ -344,15 +365,33 @@ var DIPW = {
           this._updateMediaInfoPanel("video",
                                      SBString("device.infoPanel.sync_video"),
                                      "sync",
-                                     false);
+                                     active);
+          if (active) {
+            this._updateMediaInfoPanelState("video",
+                                            Ci.sbIDevice.STATE_SYNCING,
+                                            true);
+          }
+        }
+        if ((this._itemType.intValue & TYPE.IMAGE) &&
+            !this._findMediaInfoPanel("image")) {
+          this._updateMediaInfoPanel("image",
+                                     SBString("device.infoPanel.sync_image"),
+                                     "sync",
+                                     active);
+          if (active) {
+            this._updateMediaInfoPanelState("image",
+                                            Ci.sbIDevice.STATE_SYNCING,
+                                            true);
+          }
         }
 
         // Make sure we are visible
-        if (!this._panelBar.isShown)
+        if (this._itemType.intValue && 
+            !this._panelBar.isShown)
           this._panelBar.animateIn();
-
-        // - Set last operation when itemType is 0 (!= audio|video). This is
-        //   necessary for cases that IDLE follows SYNCING_TYPE.
+        
+        // - Set last operation when itemType is 0 (!= audio|video|image). This
+        //   is necessary for cases that IDLE follows SYNCING_TYPE.
         //   If _itemType == 0, the sync will complete for the following IDLE.
         if (!this._itemType.intValue)
           this._lastOperation = state;
@@ -375,6 +414,9 @@ var DIPW = {
                                             Ci.sbIDevice.STATE_SYNCING,
                                             true);
           }
+          if (!this._panelBar.isShown)
+            this._panelBar.animateIn();
+          this._lastOperation = state;
         }
         break;
 
@@ -391,12 +433,28 @@ var DIPW = {
           this._updateMediaInfoPanelState("video",
                                           Ci.sbIDevice.STATE_SYNCING,
                                           true);
+          if (!this._panelBar.isShown)
+            this._panelBar.animateIn();
+
           this._lastOperation = state;
         }
         break;
 
       case Ci.sbIDevice.STATE_SYNC_PLAYLIST:
         // Syncing playlist.
+        this._lastOperation = state;
+        break;
+
+      case Ci.sbIDevice.STATE_COPYING_IMAGE:
+        if (this._findMediaInfoPanel("audio")) {
+          this._updateMediaInfoPanelState("audio", Ci.sbIDevice.STATE_IDLE, false);
+        }
+        if (this._findMediaInfoPanel("video")) {
+          this._updateMediaInfoPanelState("video", Ci.sbIDevice.STATE_IDLE, false);
+        }
+        this._updateMediaInfoPanelState("image", Ci.sbIDevice.STATE_SYNCING, true);
+        if (!this._panelBar.isShown)
+          this._panelBar.animateIn();
         this._lastOperation = state;
         break;
 
@@ -409,6 +467,8 @@ var DIPW = {
         // give out DELETING.
         if (state != Ci.sbIDevice.STATE_CANCEL &&
             this._lastOperation != Ci.sbIDevice.STATE_SYNC_PLAYLIST &&
+            this._lastOperation != Ci.sbIDevice.STATE_IMAGESYNC_PREPARING &&
+            this._lastOperation != Ci.sbIDevice.STATE_COPYING_IMAGE &&
             this._lastOperation != Ci.sbIDevice.STATE_COPYING_MUSIC &&
             this._lastOperation != Ci.sbIDevice.STATE_COPYING_VIDEO &&
             this._lastOperation != Ci.sbIDevice.STATE_SYNCING_TYPE &&
@@ -417,30 +477,44 @@ var DIPW = {
             this._lastOperation != Ci.sbIDevice.STATE_DELETING) {
           break;
         }
+        
+        if (this._lastUpdateTimeout)
+          break;
 
-        // For MSC device. Finish up video panel if opened.
-        // audio panel has to be finished up for CANCEL.
-        if (this._findMediaInfoPanel("video")) {
-          this._updateMediaInfoPanelState("video",
-                                          Ci.sbIDevice.STATE_IDLE,
-                                          false);
+        var _onLastUpdate = function(self) {
+
+          // For MSC device. Finish up video panel if opened.
+          // audio panel has to be finished up for CANCEL.
+          if (self._findMediaInfoPanel("video")) {
+            self._updateMediaInfoPanelState("video",
+                                            Ci.sbIDevice.STATE_IDLE,
+                                            false);
+          }
+          if (self._findMediaInfoPanel("audio")) {
+            self._updateMediaInfoPanelState("audio",
+                                            Ci.sbIDevice.STATE_IDLE,
+                                            false);
+          }
+          if (self._findMediaInfoPanel("image")) {
+            self._updateMediaInfoPanelState("image",
+                                            Ci.sbIDevice.STATE_IDLE,
+                                            false);
+          }
+
+          // Update the existing one to OK to disconnect
+          self._updateMediaInfoPanel("complete",
+                                     SBString("device.status.progress_complete"),
+                                     "success",
+                                     true);
+
+          // Reset to remove all panel for next sync.
+          self._removePanels = 1;
+
+          self._lastOperation = state;
         }
-        if (this._findMediaInfoPanel("audio")) {
-          this._updateMediaInfoPanelState("audio",
-                                          Ci.sbIDevice.STATE_IDLE,
-                                          false);
-        }
 
-        // Update the existing one to OK to disconnect
-        this._updateMediaInfoPanel("complete",
-                                   SBString("device.status.progress_complete"),
-                                   "success",
-                                   true);
-
-        // Reset to remove all panel for next sync.
-        this._removePanels = 1;
-
-        this._lastOperation = state;
+        this._lastUpdateTimeout = setTimeout(_onLastUpdate, 1000, this);
+        
         break;
 
       default:

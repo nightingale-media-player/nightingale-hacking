@@ -48,6 +48,7 @@ XPIDL_SRCS = sbIDevice.idl \
              sbIDeviceRegistrar.idl \
              sbIDeviceManager.idl \
              sbIDeviceStatus.idl \
+             sbIDeviceImage.idl \
              $(NULL)
 
 XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/library/base/public \

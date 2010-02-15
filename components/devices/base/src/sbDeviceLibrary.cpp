@@ -373,7 +373,7 @@ sbDeviceLibrary::GetMgmtTypePref(PRUint32 aContentType,
 
     // Double check that it is a valid number
     NS_ENSURE_ARG_RANGE(mgmtType,
-                        sbIDeviceLibrary::MGMT_TYPE_MANUAL,
+                        sbIDeviceLibrary::MGMT_TYPE_NONE,
                         sbIDeviceLibrary::MGMT_TYPE_MAX_VALUE);
 
     // Max the manual mode
@@ -1250,7 +1250,8 @@ sbDeviceLibrary::SetMgmtType(PRUint32 aContentType, PRUint32 aMgmtType)
                       sbIDeviceLibrary::MEDIATYPE_COUNT - 1);
 
   // Check we are setting to a valid number
-  NS_ENSURE_TRUE(aMgmtType == MGMT_TYPE_SYNC_ALL ||
+  NS_ENSURE_TRUE(aMgmtType == MGMT_TYPE_NONE ||
+                 aMgmtType == MGMT_TYPE_SYNC_ALL ||
                  aMgmtType == MGMT_TYPE_SYNC_PLAYLISTS,
                  NS_ERROR_INVALID_ARG);
 

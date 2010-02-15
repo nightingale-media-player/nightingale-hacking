@@ -38,6 +38,7 @@ CPP_SRCS = sbBaseDevice.cpp \
            sbDeviceProgressListener.cpp \
            sbDeviceStatusHelper.cpp \
            sbDeviceTranscoding.cpp \
+           sbDeviceImages.cpp \
            sbDeviceUtils.cpp \
            sbDeviceXMLCapabilities.cpp \
            sbDeviceXMLInfo.cpp \
@@ -67,6 +68,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                      $(DEPTH)/components/moz/windowwatcher/public \
                      $(DEPTH)/components/property/public \
                      $(DEPTH)/components/watchfolder/public \
+                     $(DEPTH)/components/mediaimport/filescan/public \
                      $(topsrcdir)/components/devices/base/src \
                      $(topsrcdir)/components/include \
                      $(topsrcdir)/components/library/base/src/static \
@@ -89,6 +91,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                      $(MOZSDK_INCLUDE_DIR)/pref \
                      $(MOZSDK_INCLUDE_DIR)/windowwatcher \
                      $(MOZSDK_INCLUDE_DIR)/xpconnect \
+                     $(MOZSDK_INCLUDE_DIR)/unicharutil \
                      $(NULL)
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbBaseDeviceHelper.js \

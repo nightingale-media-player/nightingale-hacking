@@ -93,6 +93,7 @@ sbFileScanQuery::sbFileScanQuery()
   , m_pFlaggedFileExtensionsLock(PR_NewLock())
   , m_pCancelLock(PR_NewLock())
   , m_bCancel(PR_FALSE)
+, m_bWantLibraryContentURIs(PR_TRUE)
 {
   NS_ASSERTION(m_pDirectoryLock, "FileScanQuery.m_pDirectoryLock failed");
   NS_ASSERTION(m_pCurrentPathLock, "FileScanQuery.m_pCurrentPathLock failed");
@@ -123,6 +124,7 @@ sbFileScanQuery::sbFileScanQuery(const nsString & strDirectory,
   , m_pFlaggedFileExtensionsLock(PR_NewLock())
   , m_pCancelLock(PR_NewLock())
   , m_bCancel(PR_FALSE)
+, m_bWantLibraryContentURIs(PR_TRUE)
 {
   NS_ASSERTION(m_pDirectoryLock, "FileScanQuery.m_pDirectoryLock failed");
   NS_ASSERTION(m_pCurrentPathLock, "FileScanQuery.m_pCurrentPathLock failed");
@@ -596,6 +598,25 @@ PRBool sbFileScanQuery::VerifyFileExtension(const nsAString &strExtension,
   return isValid;
 } //VerifyFileExtension
 
+//-----------------------------------------------------------------------------
+/* attribute boolean wantContentURLs; */
+NS_IMETHODIMP sbFileScanQuery::
+  GetWantLibraryContentURIs(PRBool *aWantLibraryContentURIs)
+{
+  NS_ENSURE_ARG_POINTER(aWantLibraryContentURIs);
+  *aWantLibraryContentURIs = m_bWantLibraryContentURIs;
+  return NS_OK;
+} //GetWantLibraryContentURIs
+
+//-----------------------------------------------------------------------------
+NS_IMETHODIMP sbFileScanQuery::
+  SetWantLibraryContentURIs(PRBool aWantLibraryContentURIs)
+{
+  m_bWantLibraryContentURIs = aWantLibraryContentURIs;
+  return NS_OK;
+} //SetWantLibraryContentURIs
+
+
 //*****************************************************************************
 //  sbFileScan Class
 //*****************************************************************************
@@ -880,6 +901,9 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
 
   nsString strTheDirectory;
   pQuery->GetDirectory(strTheDirectory);
+  
+  PRBool bWantLibraryContentURIs = PR_TRUE;
+  pQuery->GetWantLibraryContentURIs(&bWantLibraryContentURIs);
 
   ret = pFile->InitWithPath(strTheDirectory);
   if(NS_FAILED(ret)) return ret;
@@ -943,8 +967,12 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
                 {
                   // Get a library content URI for the file.
                   nsCOMPtr<nsIURI> pURI;
-                  rv = pLibraryUtils->GetFileContentURI(pEntry,
-                                                        getter_AddRefs(pURI));
+                  if (bWantLibraryContentURIs) {
+                    rv = pLibraryUtils->GetFileContentURI(pEntry,
+                                                          getter_AddRefs(pURI));
+                  } else {
+                    rv = NS_NewFileURI(getter_AddRefs(pURI), pEntry);
+                  }
 
                   // Get the file URI spec.
                   nsCAutoString spec;
