@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- vim: set sw=2 ts=2 et :miv -->
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://global/content/commonDialog.css"
+                 type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+                 type="text/css"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://songbird/locale/songbird.dtd">
+<overlay id="songbird-device-transcode-error-report-overlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script type="application/x-javascript;version=1.8"
+          name="deviceTranscodeOverlayScript"><![CDATA[
+  (function(){
+    const Cc = Components.classes;
+    const Ci = Components.interfaces;
+    Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
+
+    function deviceManagerListener(event) {
+      
+      var item = null, msg;
+
+      switch (event.type) {
+        case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSCODE_ERROR: {
+          let bag = event.data, error;
+          if (!bag || !(bag instanceof Ci.nsIPropertyBag2)) {
+            // no event data, nothing we can do
+            return;
+          }
+          if (bag.hasKey("transcode-error")) {
+            error = bag.get("transcode-error");
+            if (!(error instanceof Ci.nsIScriptError) ||
+                !(error instanceof Ci.sbITranscodeError))
+            {
+              return;
+            }
+            msg = error;
+            item = error.destItem || error.srcItem;
+          }
+          else {
+            return;
+          }
+          break;
+        }
+        case Ci.sbIDeviceEvent.EVENT_DEVICE_NOT_ENOUGH_FREESPACE: {
+          item = event.data;
+          if (!(item instanceof Ci.sbIMediaItem)) {
+            return;
+          }
+          msg = SBString("device.error.not_enough_free_space");
+          break;
+        }
+        default:
+          // unknown event
+          return;
+      }
+      var notificationBox = gBrowser.getNotificationBox();
+      var device = deviceManager.getDeviceForItem(item);
+      var buttons = [
+        {
+          label: SBFormattedString("transcode.error.device_goto_page.label",
+                                   [device.name]),
+          accessKey: SBString("transcode.error.device_goto_page.accesskey"),
+          callback: function(notification, button) {
+            var devSPS = Cc['@songbirdnest.com/servicepane/device;1']
+                           .getService(Ci.sbIDeviceServicePaneService);
+            var node = devSPS.getNodeForDevice(device);
+            gServicePane.mTreePane.selectAndLoadNode(node);
+          },
+          popup: null
+        }
+      ];
+      notificationBox.appendNotification(msg,
+                                         event,
+                                         null,
+                                         notificationBox.PRIORITY_CRITICAL_MEDIUM,
+                                         buttons);
+    }
+
+    // attach our device event listener
+    var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                          .getService(Ci.sbIDeviceEventTarget);
+    deviceManager.addEventListener(deviceManagerListener);
+
+    // attach our cleanup routine
+    addEventListener("unload", function(event) {
+      removeEventListener(event.type, arguments.callee, false);
+      deviceManager.removeEventListener(deviceManagerListener);
+      delete deviceManager;
+    }, false);
+  })();
+  ]]></script>
+</overlay>

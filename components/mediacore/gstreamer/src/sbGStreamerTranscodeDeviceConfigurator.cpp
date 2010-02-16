@@ -45,6 +45,8 @@
 #include <sbIDevice.h>
 #include <sbIDeviceCapabilities.h>
 #include <sbIMediaFormatMutable.h>
+#include <sbITranscodeError.h>
+#include <sbITranscodeManager.h>
 #include <sbITranscodeProfile.h>
 
 ///// Gecko header includes
@@ -56,6 +58,8 @@
 ///// Songbird header includes
 #include <sbArrayUtils.h>
 #include <sbMemoryUtils.h>
+#include <sbStringUtils.h>
+#include <sbTranscodeUtils.h>
 #include <sbVariantUtils.h>
 
 ///// GStreamer header includes
@@ -469,7 +473,29 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
   rv = caps->GetSupportedFormats(sbIDeviceCapabilities::CONTENT_VIDEO,
                                  &formatCount,
                                  &formatStrings);
+  if (NS_FAILED(rv)) {
+    // report an error
+    nsresult rv2;
+    nsString deviceName;
+    rv2 = mDevice->GetName(deviceName);
+    if (NS_FAILED(rv2)) {
+      deviceName =
+        SBLocalizedString("transcode.error.device_no_video.unknown_device");
+    }
+    nsTArray<nsString> detailParams;
+    detailParams.AppendElement(deviceName);
+    nsString detail =
+      SBLocalizedString("transcode.error.device_no_video.details", detailParams);
+    rv2 = SB_NewTranscodeError(NS_LITERAL_STRING("transcode.error.device_no_video.has_item"),
+                               NS_LITERAL_STRING("transcode.error.device_no_video.without_item"),
+                               detail,
+                               mInputUri,
+                               nsnull,
+                               getter_AddRefs(mLastError));
+    NS_ENSURE_SUCCESS(rv2, rv2);
+  }
   NS_ENSURE_SUCCESS(rv, rv);
+
   sbAutoFreeXPCOMArrayByRef<char**> formats(formatCount, formatStrings);
 
   PRBool hasMoreProfiles;
@@ -579,6 +605,24 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
   mSelectedProfile = selectedProfile;
   if (!mSelectedProfile) {
     // no suitable encoder profile found
+    // report an error
+    nsString deviceName;
+    rv = mDevice->GetName(deviceName);
+    if (NS_FAILED(rv)) {
+      deviceName =
+        SBLocalizedString("transcode.error.device_no_video.unknown_device");
+    }
+    nsTArray<nsString> detailParams;
+    detailParams.AppendElement(deviceName);
+    nsString detail =
+      SBLocalizedString("transcode.error.no_profile.details", detailParams);
+    rv = SB_NewTranscodeError(NS_LITERAL_STRING("transcode.error.no_profile.has_item"),
+                              NS_LITERAL_STRING("transcode.error.no_profile.without_item"),
+                              detail,
+                              mInputUri,
+                              nsnull,
+                              getter_AddRefs(mLastError));
+    NS_ENSURE_SUCCESS(rv, rv);
     return NS_ERROR_FAILURE;
   }
   mSelectedFormat = selectedFormat;

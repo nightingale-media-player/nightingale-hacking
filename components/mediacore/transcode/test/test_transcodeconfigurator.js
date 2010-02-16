@@ -124,6 +124,9 @@ function runTest() {
     Cc["@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Device/GStreamer;1"]
       .createInstance(Ci.sbIDeviceTranscodingConfigurator);
   assertTrue(configurator, "failed to create configurator");
+  // need to set an input URI so the error handling can report something;
+  // the value actually used here isn't important.
+  configurator.inputUri = newURI("data:text/plain,does_not_exist");
 
   // First test to make sure functions that need configurate called first throw
   // the NS_ERROR_NOT_INITIALIZED.

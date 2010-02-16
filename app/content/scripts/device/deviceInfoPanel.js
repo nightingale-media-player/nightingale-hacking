@@ -465,17 +465,29 @@ var DIPW = {
         // Sync empty playlists can leave the last operation to COPY_PREPARING,
         // SYNCING_TYPE and UPDATING. Remove playlists with only one item can
         // give out DELETING.
-        if (state != Ci.sbIDevice.STATE_CANCEL &&
-            this._lastOperation != Ci.sbIDevice.STATE_SYNC_PLAYLIST &&
-            this._lastOperation != Ci.sbIDevice.STATE_IMAGESYNC_PREPARING &&
-            this._lastOperation != Ci.sbIDevice.STATE_COPYING_IMAGE &&
-            this._lastOperation != Ci.sbIDevice.STATE_COPYING_MUSIC &&
-            this._lastOperation != Ci.sbIDevice.STATE_COPYING_VIDEO &&
-            this._lastOperation != Ci.sbIDevice.STATE_SYNCING_TYPE &&
-            this._lastOperation != Ci.sbIDevice.STATE_COPY_PREPARING &&
-            this._lastOperation != Ci.sbIDevice.STATE_UPDATING &&
-            this._lastOperation != Ci.sbIDevice.STATE_DELETING) {
-          break;
+        if (state != Ci.sbIDevice.STATE_CANCEL) {
+          switch (this._lastOperation) {
+            case Ci.sbIDevice.STATE_SYNC_PLAYLIST:
+            case Ci.sbIDevice.STATE_IMAGESYNC_PREPARING:
+            case Ci.sbIDevice.STATE_COPYING_IMAGE:
+            case Ci.sbIDevice.STATE_COPYING_MUSIC:
+            case Ci.sbIDevice.STATE_COPYING_VIDEO:
+            case Ci.sbIDevice.STATE_SYNCING_TYPE:
+            case Ci.sbIDevice.STATE_COPY_PREPARING:
+            case Ci.sbIDevice.STATE_UPDATING:
+            case Ci.sbIDevice.STATE_DELETING:
+              break;
+            default:
+              for each (let type in ["audio", "video", "none"]) {
+                if (this._checkForDeviceErrors(type)) {
+                  this._updateMediaInfoPanelState(type, state, false);
+                  // Make sure we are visible
+                  if (!this._panelBar.isShown)
+                    this._panelBar.animateIn();
+                }
+              }
+              return;
+          }
         }
         
         if (this._lastUpdateTimeout)

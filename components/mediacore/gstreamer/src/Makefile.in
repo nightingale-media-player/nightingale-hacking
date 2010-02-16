@@ -56,6 +56,7 @@ endif
 
 CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
                      $(DEPTH)/components/devices/base/public \
+                     $(topsrcdir)/components/job/src \
                      $(DEPTH)/components/library/base/public \
                      $(DEPTH)/components/mediacore/base/public \
                      $(topsrcdir)/components/mediacore/base/src \

@@ -27,5 +27,6 @@ songbird.jar:
 % overlay chrome://songbird/content/xul/layoutBaseOverlay.xul                chrome://songbird/content/xul/linuxMenuOverlay.xul OS=Linux
 % overlay chrome://songbird/content/xul/layoutBaseOverlay.xul                chrome://songbird/content/xul/macMenuOverlay.xul OS=Darwin
 % overlay chrome://songbird/content/xul/layoutWithBrowserOverlay.xul         chrome://songbird/content/xul/contentAreaContextOverlay.xul
+% overlay chrome://songbird/content/xul/layoutWithBrowserOverlay.xul         chrome://songbird/content/xul/device/deviceTranscodeOverlay.xul
 # Profile overlays
 % overlay chrome://mozapps/content/profile/profileSelection.xul              chrome://songbird/content/xul/profileSelectionOverlay.xul

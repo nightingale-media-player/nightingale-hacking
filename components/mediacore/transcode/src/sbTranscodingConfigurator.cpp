@@ -24,7 +24,10 @@
 
 #include "sbTranscodingConfigurator.h"
 
+#include <nsIURI.h>
 #include <nsIWritablePropertyBag2.h>
+
+#include <sbITranscodeError.h>
 
 #include <sbStringUtils.h>
 
@@ -48,6 +51,21 @@ sbTranscodingConfigurator::sbTranscodingConfigurator()
 sbTranscodingConfigurator::~sbTranscodingConfigurator()
 {
   // Nothing to do yet
+}
+
+/* attribute nsIURI inputUri; */
+NS_IMETHODIMP
+sbTranscodingConfigurator::GetInputUri(nsIURI * *aInputUri)
+{
+  NS_ENSURE_ARG_POINTER(aInputUri);
+  NS_IF_ADDREF(*aInputUri = mInputUri);
+  return NS_OK;
+}
+NS_IMETHODIMP
+sbTranscodingConfigurator::SetInputUri(nsIURI * aInputUri)
+{
+  mInputUri = aInputUri;
+  return NS_OK;
 }
 
 /**
@@ -74,6 +92,15 @@ sbTranscodingConfigurator::SetInputFormat(sbIMediaFormat *aInputFormat)
                   NS_ERROR_ALREADY_INITIALIZED);
   NS_ENSURE_ARG(aInputFormat);
   mInputFormat = aInputFormat;
+  return NS_OK;
+}
+
+/* readonly attribute sbITranscodeError lastError; */
+NS_IMETHODIMP
+sbTranscodingConfigurator::GetLastError(sbITranscodeError * *aLastError)
+{
+  NS_ENSURE_ARG_POINTER(aLastError);
+  NS_IF_ADDREF(*aLastError = mLastError);
   return NS_OK;
 }
 

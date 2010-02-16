@@ -1,0 +1,94 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+#include "nsISupports.idl"
+
+interface nsIURI;
+interface sbIMediaItem;
+
+[scriptable, uuid(1bc8ee84-1dd2-11b2-a317-cb97cfde203c)]
+interface sbITranscodeError : nsISupports {
+  /**
+   * The string key in songbird.properties for the error message, for when the
+   * media item is available.  If the localized string contains the substring
+   * "%(item)", that substring will be replaced with the title of the media item.
+   */
+  readonly attribute AString messageWithItem;
+  
+  /**
+   * The string key in songbird.properties for the error message, for when the
+   * media item is not available.  If the localized string contains the
+   * substring "%(item)", that substring will be replaced with the url of the
+   * media item.
+   */
+  readonly attribute AString messageWithoutItem;
+  
+  /**
+   * A longer detailed message.  This may be more technical and used for
+   * debugging purposes.  This will not be localized.
+   */
+  readonly attribute AString detail;
+  
+  /**
+   * The URI of the transcoding source file, if available.  May be null.
+   */
+  attribute AString sourceUri;
+  
+  /**
+   * The media item of the transcoding source, if available.  May be null.
+   */
+  attribute sbIMediaItem sourceItem;
+  
+  /**
+   * The URI of the transcoding destination file, if available.  May not be null.
+   */
+  attribute AString destUri;
+
+  /**
+   * The media item of the transcoding destination, if available.  May be null.
+   */
+  attribute sbIMediaItem destItem;
+  
+  /**
+   * Initialize the transcode error
+   */
+  void init(in AString aMessageWithItem,
+            in AString aMessageWithoutItem,
+            in AString aDetails);
+};
+/**
+ * An event listener interface for transcode errors.  They can be registered
+ * on the transcode manager.
+ */
+[scriptable, function, uuid(9a8b39ba-1dd1-11b2-b816-c35ce7c2a3fe)]
+interface sbITranscodeErrorListener : nsISupports {
+  void onTranscodeError(in sbITranscodeError error);
+};
+
+%{C++
+
+#define SONGBIRD_TRANSCODEERROR_CONTRACTID               \
+  "@songbirdnest.com/Songbird/Mediacore/TranscodeError;1"
+
+%}C++

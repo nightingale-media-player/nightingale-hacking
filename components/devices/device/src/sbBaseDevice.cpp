@@ -96,6 +96,7 @@
 #include <sbProxiedComponentManager.h>
 #include <sbStringBundle.h>
 #include <sbStringUtils.h>
+#include <sbTranscodeUtils.h>
 #include <sbURIUtils.h>
 #include <sbVariantUtils.h>
 #include <sbWatchFolderUtils.h>
@@ -5443,8 +5444,13 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem,
     // to inspect the actual file (and both ways we get which files we can get
     // on the device).
     // XXX MOOK this needs to be fixed to be not gstreamer specific
+    nsCOMPtr<nsIURI> inputUri;
+    rv = aMediaItem->GetContentSrc(getter_AddRefs(inputUri));
+    NS_ENSURE_SUCCESS(rv, rv);
     nsCOMPtr<sbIDeviceTranscodingConfigurator> configurator =
       do_CreateInstance("@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Device/GStreamer;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = configurator->SetInputUri(inputUri);
     NS_ENSURE_SUCCESS(rv, rv);
     nsCOMPtr<sbIDevice> device =
       do_QueryInterface(NS_ISUPPORTS_CAST(sbIDevice*, this), &rv);
@@ -5564,6 +5570,21 @@ sbBaseDevice::DispatchTranscodeErrorEvent(sbIMediaItem*    aMediaItem,
   NS_ENSURE_SUCCESS(rv, rv);
   rv = bag->SetPropertyAsInterface(NS_LITERAL_STRING("item"), aMediaItem);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString srcUri;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
+                               srcUri);
+  if (NS_SUCCEEDED(rv)) {
+    nsCOMPtr<sbITranscodeError> transcodeError;
+    rv = SB_NewTranscodeError(aErrorMessage, aErrorMessage, SBVoidString(),
+                              srcUri,
+                              aMediaItem,
+                              getter_AddRefs(transcodeError));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = bag->SetPropertyAsInterface(NS_LITERAL_STRING("transcode-error"),
+                                     NS_ISUPPORTS_CAST(sbITranscodeError*, transcodeError));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSCODE_ERROR,
                               sbNewVariant(NS_GET_IID(nsIPropertyBag2), bag));

@@ -38,9 +38,11 @@
 #include "sbIJobProgress.h"
 #include "sbIJobCancelable.h"
 #include "sbITranscodingConfigurator.h"
+#include "sbITranscodeError.h"
 #include "sbIMediaFormatMutable.h"
 
 #include "sbGStreamerPipeline.h"
+#include "sbJobUtils.h"
 
 // {227551a3-24dc-42e7-9ab6-9525e989edfd}
 #define SB_GSTREAMER_VIDEO_TRANSCODE_CID \
@@ -226,7 +228,7 @@ private:
   nsString                                mDestURI;
 
   PRUint16                                mStatus;
-  nsTArray<nsString>                      mErrorMessages;
+  nsTArray<nsCOMPtr<sbITranscodeError> >  mErrors;
 
   nsCOMArray<sbIJobProgressListener>      mProgressListeners;
   nsCOMPtr<nsITimer>                      mProgressTimer;

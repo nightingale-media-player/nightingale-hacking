@@ -75,6 +75,10 @@ protected:
   // Have we configurated?  Some of the properties below will not be ready
   // until we have determined the output type or configurated.
   CONFIGURATE_STATE                   mConfigurateState;
+  // The input URI that is being transcoded
+  nsCOMPtr<nsIURI>                    mInputUri;
+  // The last transcode error seen
+  nsCOMPtr<sbITranscodeError>         mLastError;
   // Store the input format we will use to configurate.
   nsCOMPtr<sbIMediaFormat>            mInputFormat;
   // String values of encoders and muxer

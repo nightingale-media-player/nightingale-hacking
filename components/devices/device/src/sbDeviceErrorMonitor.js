@@ -247,10 +247,13 @@ deviceErrorMonitor.prototype = {
         }
 
         // Format the error message
-        var errorString =  this._sbStrings.formatStringFromName(
+        var errorString = aErrorMsg;
+        if (mediaURL) {
+          errorString = this._sbStrings.formatStringFromName(
                                                         "device.error.format",
                                                         [aErrorMsg, mediaURL],
                                                         2);
+        }
         // Store the error information
         var errorInfo = {
           msg : errorString,
@@ -310,29 +313,6 @@ deviceErrorMonitor.prototype = {
       return (errorList ? (errorList.length > 0) : false);
     }
     return false;
-  },
-
-  /**
-   * \brief Gets an array of strings (nsISupportsString) that indicate errors
-   *        that have happend on this device recently.
-   *
-   * \param aDevice device to get error list from.
-   * \returns array of error strings, empty if no errors exist yet.
-   */
-  getErrorsForDevice: function deviceErrorMonitor_getErrorsForDevice(aDevice) {
-    var devIndex = this._findDeviceIndex(aDevice);
-    var errorList = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                      .createInstance(Ci.nsIMutableArray);
-
-    if (devIndex == -1)
-      return errorList;
-
-    var jsErrorList = this._getAllErrors(devIndex);
-    for (var index = 0; index < jsErrorList.length; index++) {
-      errorList.appendElement(jsErrorList[index].msg, false);
-    }
-
-    return errorList;
   },
 
   /**

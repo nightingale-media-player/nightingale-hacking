@@ -67,8 +67,11 @@ public:
   #define FORWARD_TO_BASE(METHOD, PROTO, ARGS) \
     NS_IMETHOD METHOD PROTO { return sbTranscodingConfigurator::METHOD(ARGS); }
 
+  FORWARD_TO_BASE(GetInputUri, (nsIURI ** aUri), aUri)
+  FORWARD_TO_BASE(SetInputUri, (nsIURI * aUri), aUri)
   FORWARD_TO_BASE(GetInputFormat, (sbIMediaFormat * *aInputFormat), aInputFormat)
   FORWARD_TO_BASE(SetInputFormat, (sbIMediaFormat * aInputFormat), aInputFormat)
+  FORWARD_TO_BASE(GetLastError, (sbITranscodeError * *aLastError), aLastError)
   FORWARD_TO_BASE(GetMuxer, (nsAString & aMuxer), aMuxer)
   FORWARD_TO_BASE(GetFileExtension, (nsACString & aFileExtension), aFileExtension)
   FORWARD_TO_BASE(GetVideoEncoder, (nsAString & aVideoEncoder), aVideoEncoder)

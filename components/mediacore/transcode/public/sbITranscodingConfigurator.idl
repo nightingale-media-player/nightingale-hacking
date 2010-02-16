@@ -31,11 +31,13 @@
 
 #include "nsISupports.idl"
 
+interface nsIPropertyBag;
+interface nsIURI;
 interface sbIDevice;
 interface sbIMediaFormat;
 interface sbIMediaFormatVideo;
 interface sbIMediaFormatAudio;
-interface nsIPropertyBag;
+interface sbITranscodeError;
 
 /**
  * \interface sbITranscodingConfigurator
@@ -47,10 +49,21 @@ interface nsIPropertyBag;
 interface sbITranscodingConfigurator : nsISupports
 {
   /**
+   * The URI to use for the transcoding input.  Mostly informational.
+   */
+  attribute nsIURI inputUri;
+  
+  /**
    * \brief The input format to use when configuring the transcode profile.
    * \throws NS_ERROR_ALREADY_INITIALIZED if configurate has been called.
    */
   attribute sbIMediaFormat inputFormat;
+  
+  /**
+   * The last error this configurator has seen.  May be null if no error has
+   * been encountered.
+   */
+  readonly attribute sbITranscodeError lastError;
 
   /**
    * \brief Determine the trancode destination format to use, based on the

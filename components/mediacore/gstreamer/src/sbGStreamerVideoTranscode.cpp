@@ -31,6 +31,7 @@
 #include <sbTArrayStringEnumerator.h>
 #include <sbMemoryUtils.h>
 #include <sbStringBundle.h>
+#include <sbTranscodeUtils.h>
 
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
@@ -513,7 +514,7 @@ sbGStreamerVideoTranscoder::GetErrorCount(PRUint32* aErrorCount)
   NS_ASSERTION(NS_IsMainThread(),
           "sbIJobProgress::GetErrorCount is main thread only!");
 
-  *aErrorCount = mErrorMessages.Length();
+  *aErrorCount = mErrors.Length();
 
   return NS_OK;
 }
@@ -527,13 +528,15 @@ sbGStreamerVideoTranscoder::GetErrorMessages(nsIStringEnumerator** aMessages)
   NS_ASSERTION(NS_IsMainThread(),
     "sbIJobProgress::GetProgress is main thread only!");
 
+  nsresult rv;
+
   *aMessages = nsnull;
 
-  nsCOMPtr<nsIStringEnumerator> enumerator =
-    new sbTArrayStringEnumerator(&mErrorMessages);
-  NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
+  nsRefPtr<sbJobErrorEnumerator<sbITranscodeError> > enumerator =
+      new sbJobErrorEnumerator<sbITranscodeError>(mErrors);
+  rv = CallQueryInterface(enumerator.get(), aMessages);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  enumerator.forget(aMessages);
   return NS_OK;
 }
 
@@ -603,13 +606,22 @@ void sbGStreamerVideoTranscoder::HandleErrorMessage(GstMessage *message)
 
   GError *gerror = NULL;
   gchar *debug = NULL;
+  nsresult rv;
 
   mStatus = sbIJobProgress::STATUS_FAILED;
 
   gst_message_parse_error(message, &gerror, &debug);
 
-  mErrorMessages.AppendElement(
-      NS_ConvertUTF8toUTF16(nsDependentCString(gerror->message)));
+  nsCOMPtr<sbITranscodeError> errorObj;
+  rv = SB_NewTranscodeError(NS_ConvertUTF8toUTF16(gerror->message),
+                            NS_ConvertUTF8toUTF16(gerror->message),
+                            SBVoidString(),
+                            mSourceURI,
+                            nsnull,
+                            getter_AddRefs(errorObj));
+  if (NS_SUCCEEDED(rv)) {
+    mErrors.AppendElement(errorObj);
+  }
 
   g_error_free (gerror);
   g_free(debug);
@@ -711,11 +723,19 @@ sbGStreamerVideoTranscoder::TranscodingFatalError (const char *errorName)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
+  nsresult rv;
   sbStringBundle bundle;
   nsString message = bundle.Get(errorName);
 
   // Add an error message for users of sbIJobProgress interface.
-  mErrorMessages.AppendElement(message);
+  nsCOMPtr<sbITranscodeError> errorObj;
+  rv = SB_NewTranscodeError(message, message, SBVoidString(),
+                            mSourceURI,
+                            nsnull,
+                            getter_AddRefs(errorObj));
+  if (NS_SUCCEEDED(rv)) {
+    mErrors.AppendElement(errorObj);
+  }
 
   nsRefPtr<sbMediacoreError> error;
 
@@ -729,14 +749,10 @@ sbGStreamerVideoTranscoder::TranscodingFatalError (const char *errorName)
 
   /* Stop the pipeline. We might be calling this from a non-main thread, so
      dispatch the shutdown asynchronously. */
-  nsCOMPtr<nsIThread> mainThread;
-  nsresult rv = NS_GetMainThread (getter_AddRefs(mainThread));
-  NS_ENSURE_SUCCESS (rv, /* void */);
-
   nsCOMPtr<nsIRunnable> event = NS_NEW_RUNNABLE_METHOD (
           sbGStreamerVideoTranscoder, this, AsyncStopPipeline);
 
-  rv = mainThread->Dispatch(event, NS_DISPATCH_NORMAL);
+  rv = NS_DispatchToMainThread(event, NS_DISPATCH_NORMAL);
   NS_ENSURE_SUCCESS (rv, /* void */);
 }
 
@@ -820,7 +836,7 @@ sbGStreamerVideoTranscoder::ClearStatus()
 {
   /* Cleanup done directly _before_ creating a pipeline */
   mStatus = sbIJobProgress::STATUS_RUNNING;
-  mErrorMessages.Clear();
+  mErrors.Clear();
 
   return NS_OK;
 }

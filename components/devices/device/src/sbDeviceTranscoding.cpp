@@ -30,21 +30,28 @@
 #include <nsIInputStream.h>
 #include <nsIIOService.h>
 #include <nsIStringEnumerator.h>
+#include <nsISupportsPrimitives.h>
+#include <nsIWritablePropertyBag2.h>
 #include <nsIVariant.h>
 
 #include <nsServiceManagerUtils.h>
 
 // Songbird interfaces
+#include <sbIDeviceEvent.h>
 #include <sbIJobCancelable.h>
 #include <sbIMediacoreEventTarget.h>
 #include <sbIMediaInspector.h>
 #include <sbITranscodeAlbumArt.h>
+#include <sbITranscodeError.h>
 #include <sbITranscodeManager.h>
 #include <sbITranscodeVideoJob.h>
 #include <sbITranscodingConfigurator.h>
 
 // Songbird includes
 #include <sbProxiedComponentManager.h>
+#include <sbStandardProperties.h>
+#include <sbTranscodeUtils.h>
+#include <sbVariantUtils.h>
 
 // Local includes
 #include "sbDeviceStatusHelper.h"
@@ -263,12 +270,10 @@ sbDeviceTranscoding::PrepareBatchForTranscoding(Batch & aBatch)
                                 &request->transcodeProfile,
                                 &request->destinationCompatibility);
       // Treat no profiles available as not needing transcoding
-      if (rv == NS_ERROR_NOT_AVAILABLE) {
+      if (NS_FAILED(rv)) {
         TRACE(("%s: no transcode profile available", __FUNCTION__));
         request->destinationCompatibility =
           sbBaseDevice::TransferRequest::COMPAT_UNSUPPORTED;
-      } else {
-        NS_ENSURE_SUCCESS(rv, rv);
       }
       if (request->transcodeProfile) {
         TRACE(("%s: transcoding needed", __FUNCTION__));
@@ -356,8 +361,13 @@ sbDeviceTranscoding::FindTranscodeProfile(sbIMediaItem * aMediaItem,
     }
 
     // XXX MOOK this needs to be fixed to be not gstreamer specific
+    nsCOMPtr<nsIURI> inputUri;
+    rv = aMediaItem->GetContentSrc(getter_AddRefs(inputUri));
+    NS_ENSURE_SUCCESS(rv, rv);
     nsCOMPtr<sbIDeviceTranscodingConfigurator> configurator =
       do_CreateInstance("@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Device/GStreamer;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = configurator->SetInputUri(inputUri);
     NS_ENSURE_SUCCESS(rv, rv);
     nsCOMPtr<sbIDevice> device =
       do_QueryInterface(NS_ISUPPORTS_CAST(sbIDevice*, mBaseDevice), &rv);
@@ -368,6 +378,34 @@ sbDeviceTranscoding::FindTranscodeProfile(sbIMediaItem * aMediaItem,
     rv = configurator->DetermineOutputType();
     if (NS_SUCCEEDED(rv)) {
       *aDeviceCompatibility = TransferRequest::COMPAT_NEEDS_TRANSCODING;
+    }
+    else {
+      // we need transcoding, but we don't have anything available to do it with
+      nsCOMPtr<sbITranscodeError> error;
+      rv = configurator->GetLastError(getter_AddRefs(error));
+      if (NS_SUCCEEDED(rv) && error) {
+        nsCOMPtr<nsISupportsString> errorString(do_QueryInterface(error));
+        NS_ENSURE_TRUE(errorString, NS_ERROR_NO_INTERFACE);
+        rv = error->SetDestItem(aMediaItem);
+        NS_ENSURE_SUCCESS(rv, rv);
+        nsCOMPtr<nsIWritablePropertyBag2> bag =
+          do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+        nsString message;
+        rv = errorString->GetData(message);
+        if (NS_SUCCEEDED(rv)) {
+          rv = bag->SetPropertyAsAString(NS_LITERAL_STRING("message"),
+                                         message);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+        rv = bag->SetPropertyAsInterface(NS_LITERAL_STRING("transcode-error"),
+                                         NS_ISUPPORTS_CAST(sbITranscodeError*, error));
+        NS_ENSURE_SUCCESS(rv, rv);
+        mBaseDevice->CreateAndDispatchEvent(
+            sbIDeviceEvent::EVENT_DEVICE_TRANSCODE_ERROR,
+            sbNewVariant(bag));
+        /* ignore result */
+      }
     }
     return NS_OK;
   }
@@ -461,6 +499,8 @@ sbDeviceTranscoding::TranscodeVideoItem(
   // XXX MOOK this needs to be fixed to be not gstreamer specific
   nsCOMPtr<sbIDeviceTranscodingConfigurator> configurator =
     do_CreateInstance("@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Device/GStreamer;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = configurator->SetInputUri(sourceURI);
   NS_ENSURE_SUCCESS(rv, rv);
   nsCOMPtr<sbIDevice> device =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbIDevice*, mBaseDevice), &rv);
@@ -773,6 +813,9 @@ sbDeviceTranscoding::TranscodeMediaItem(
     transcodedDestinationURI.forget(aTranscodedDestinationURI);
 
   // Check for transcode errors.
+  // There is no need to fire a device event, because any appropriate events
+  // would have been fired based on the media core event in
+  // sbTranscodeProgressListener::OnMediacoreEvent
   NS_ENSURE_TRUE(status == sbIJobProgress::STATUS_SUCCEEDED, NS_ERROR_FAILURE);
 
   return NS_OK;
