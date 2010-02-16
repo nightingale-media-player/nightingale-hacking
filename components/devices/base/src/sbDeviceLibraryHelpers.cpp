@@ -309,12 +309,26 @@ sbLibraryUpdateListener::OnItemUpdated(sbIMediaList *aMediaList,
   NS_ENSURE_TRUE(mTargetLibrary, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(mPlaylistListener, NS_ERROR_OUT_OF_MEMORY);
 
-  // If this is a list and we're ignore lists then just leave
-  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem);
-  if (list && mIgnorePlaylists) {
-    return NS_OK;
-  }
   nsresult rv;
+
+  // If this is a list and we're ignoring lists or the list is not a simple
+  // list, then just leave
+  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem);
+  if (list) {
+    // Check if playlists are being ignored
+    if (mIgnorePlaylists)
+      return NS_OK;
+
+    // Check if list is not simple
+    nsString customType;
+    rv = list->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
+                           customType);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!customType.IsEmpty() &&
+        !customType.Equals(NS_LITERAL_STRING("simple"))) {
+      return NS_OK;
+    }
+  }
 
   // the property array here are the old values; we need the new ones
   nsCOMPtr<sbIPropertyArray> newProps;
