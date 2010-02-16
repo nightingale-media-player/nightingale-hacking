@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -359,20 +359,22 @@ function SBFirstRunSmartPlaylists() {
 function createDefaultSmartPlaylists() {
   var defaultSmartPlaylists = [];
 
-  var propertyManager = 
-    Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
-              .getService(Components.interfaces.sbIPropertyManager);
-  var numberPI = 
+  var propertyManager =
+    Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+      .getService(Ci.sbIPropertyManager);
+  var numberPI =
     propertyManager.getPropertyInfo(SBProperties.playCount);
-  var ratingPI = 
+  var ratingPI =
     propertyManager.getPropertyInfo(SBProperties.rating);
-  var datePI = 
+  var datePI =
     propertyManager.getPropertyInfo(SBProperties.created);
-    
+  var typePI =
+    propertyManager.getPropertyInfo(SBProperties.contentType);
+ 
   const sbILDSML = Components.interfaces.sbILocalDatabaseSmartMediaList;
-  
+ 
   datePI.QueryInterface(Components.interfaces.sbIDatetimePropertyInfo);
-  
+ 
   // XXXlone> waiting for a patch to land before autoUpdateMode fields
   // can be enabled
 
@@ -380,10 +382,17 @@ function createDefaultSmartPlaylists() {
     {
       name: "&smart.defaultlist.highestrated",
       conditions: [
-        { 
+        {
           property     : SBProperties.rating,
           operator     : ratingPI.getOperator(ratingPI.OPERATOR_GREATER),
           leftValue    : 3,
+          rightValue   : null,
+          displayUnit  : null
+        },
+        {
+          property     : SBProperties.contentType,
+          operator     : typePI.getOperator(typePI.OPERATOR_NOTEQUALS),
+          leftValue    : "video",
           rightValue   : null,
           displayUnit  : null
         }
@@ -399,10 +408,17 @@ function createDefaultSmartPlaylists() {
     {
       name: "&smart.defaultlist.mostplayed",
       conditions: [
-        { 
+        {
           property     : SBProperties.playCount,
           operator     : numberPI.getOperator(numberPI.OPERATOR_GREATER),
           leftValue    : 0,
+          rightValue   : null,
+          displayUnit  : null
+        },
+        {
+          property     : SBProperties.contentType,
+          operator     : typePI.getOperator(typePI.OPERATOR_NOTEQUALS),
+          leftValue    : "video",
           rightValue   : null,
           displayUnit  : null
         }
@@ -418,12 +434,19 @@ function createDefaultSmartPlaylists() {
     {
       name: "&smart.defaultlist.recentlyadded",
       conditions: [
-        { 
+        {
           property     : SBProperties.created,
           operator     : datePI.getOperator(datePI.OPERATOR_INTHELAST),
           leftValue    : 1000*60*60*24*30, // 30 days
           rightValue   : null,
           displayUnit  : "m"
+        },
+        {
+          property     : SBProperties.contentType,
+          operator     : typePI.getOperator(typePI.OPERATOR_NOTEQUALS),
+          leftValue    : "video",
+          rightValue   : null,
+          displayUnit  : null
         }
       ],
       matchType        : sbILDSML.MATCH_TYPE_ALL,
@@ -437,12 +460,19 @@ function createDefaultSmartPlaylists() {
     {
       name: "&smart.defaultlist.recentlyplayed",
       conditions: [
-        { 
+        {
           property     : SBProperties.lastPlayTime,
           operator     : datePI.getOperator(datePI.OPERATOR_INTHELAST),
           leftValue    : 1000*60*60*24*7, // 7 days
           rightValue   : null,
           displayUnit  : "w"
+        },
+        {
+          property     : SBProperties.contentType,
+          operator     : typePI.getOperator(typePI.OPERATOR_NOTEQUALS),
+          leftValue    : "video",
+          rightValue   : null,
+          displayUnit  : null
         }
       ],
       matchType        : sbILDSML.MATCH_TYPE_ALL,

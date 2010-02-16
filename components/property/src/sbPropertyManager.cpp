@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #include "sbPropertyManager.h"
 #include "sbPropertiesCID.h"
@@ -46,6 +44,7 @@
 #include "sbURIPropertyInfo.h"
 #include "sbImagePropertyInfo.h"
 #include "sbDummyPlaylistPropertyInfo.h"
+#include "sbDummyContentTypePropertyInfo.h"
 #include "sbDownloadButtonPropertyBuilder.h"
 #include "sbStatusPropertyBuilder.h"
 #include "sbSimpleButtonPropertyBuilder.h"
@@ -452,13 +451,10 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Content Type
-  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
-                    NS_LITERAL_STRING("property.content_type"),
-                    stringBundle,
-                    PR_FALSE,
-                    PR_FALSE,
-                    0, PR_FALSE,
-                    PR_FALSE, PR_FALSE);
+  rv = RegisterDummy(new sbDummyContentTypePropertyInfo(),
+                     NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                     NS_LITERAL_STRING("property.content_type"),
+                     stringBundle);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Content Length (-1, can't determine.)

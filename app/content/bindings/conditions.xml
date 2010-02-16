@@ -1,29 +1,27 @@
 <?xml version="1.0"?>
 <!--
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 -->
 
@@ -150,7 +148,8 @@
                 sbid="conditionvalue1"
                 drawer-prop-map="value=value"
                 drawer-attr-map="invalid=invalid"
-                onmousedown="event.stopPropagation();" onmouseup="event.stopPropagation();">
+                onmousedown="event.stopPropagation();"
+                onmouseup="event.stopPropagation();">
                 <xul:menupopup>
                   <xul:menuitem label="&smart.playlistcondition.library;" 
                                 value=""/>
@@ -162,7 +161,27 @@
                 </xul:menupopup>
               </xul:menulist>
             </xul:hbox>
-            <!-- List of available units -->
+            <xul:hbox
+                drawer-prop-map-set="hidden=!mediatypefield"
+                hidden="true">
+              <xul:menulist id="conditionmediatype"
+                drawer-prop-map="value=value"
+                drawer-attr-map="invalid=invalid"
+                onmousedown="event.stopPropagation();"
+                onmouseup="event.stopPropagation();">
+                <xul:menupopup>
+                  <xul:menuitem id="menuitem_mediatype_audio"
+                                class="menuitem-iconic"
+                                label="&smart.contenttypecondition.audio;"
+                                value="audio"/>
+                  <xul:menuitem id="menuitem_mediatype_video"
+                                class="menuitem-iconic"
+                                label="&smart.contenttypecondition.video;"
+                                value="video"/>
+                </xul:menupopup>
+              </xul:menulist>
+            </xul:hbox>
+             <!-- List of available units -->
             <xul:menulist 
                 id="unitspopup" 
                 class="smart-condition-list"
@@ -882,6 +901,7 @@
                 def = info.OPERATOR_EQUALS;
                 break;
               case "smartmedialist_playlist":
+              case "smartmedialist_contenttype":
                 def = info.OPERATOR_EQUALS;
                 break;
               default:
@@ -1281,6 +1301,7 @@
             // hide all fields by default
             state.ratingfield = false;
             state.playlistfield = false;
+            state.mediatypefield = false;
             state.textfield = false;
 
             switch (info.type) {
@@ -1311,6 +1332,9 @@
                 break;
               case "smartmedialist_playlist":
                 state.playlistfield = true;
+                break;
+              case "smartmedialist_contenttype":
+                state.mediatypefield = true;
                 break;
               default:
                 // property types that are not explicitely supported only expose
@@ -1964,6 +1988,7 @@
               case "uri":
               case "rating":
               case "smartmedialist_playlist":
+              case "smartmedialist_contenttype":
                 break;
               default:
                 return false;

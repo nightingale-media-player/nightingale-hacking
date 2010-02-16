@@ -22,8 +22,8 @@
  *=END SONGBIRD GPL
  */
 
-#ifndef __SBDUMMYPLAYLISTPROPERTYINFO_H__
-#define __SBDUMMYPLAYLISTPROPERTYINFO_H__
+#ifndef __SBDUMMYCONTENTTYPEPROPERTYINFO_H__
+#define __SBDUMMYCONTENTTYPEPROPERTYINFO_H__
 
 #include "sbDummyPropertyInfo.h"
 
@@ -34,17 +34,17 @@
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
-class sbDummyPlaylistPropertyInfo : public sbDummyPropertyInfo
+class sbDummyContentTypePropertyInfo : public sbDummyPropertyInfo
 {
 public:
 
   NS_DECL_ISUPPORTS_INHERITED
 
-  sbDummyPlaylistPropertyInfo();
-  virtual ~sbDummyPlaylistPropertyInfo() {}
+  sbDummyContentTypePropertyInfo();
+  virtual ~sbDummyContentTypePropertyInfo() {}
 
   virtual nsresult Init();
 };
 
-#endif /* __SBDUMMYPLAYLISTPROPERTYINFO_H__ */
+#endif /* __SBDUMMYCONTENTTYPEPROPERTYINFO_H__ */
 

@@ -172,6 +172,8 @@
 <!ENTITY smart.to                 "to" >
 <!ENTITY smart.autoupdate         "Auto update">
 <!ENTITY smart.playlistcondition.library "Library">
+<!ENTITY smart.contenttypecondition.video "Video">
+<!ENTITY smart.contenttypecondition.audio "Music">
 
 
 <!ENTITY textbox.songbird_open_url "Enter the URL or path of the media you wish to playback:">

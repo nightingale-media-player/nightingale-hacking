@@ -1,28 +1,27 @@
-/**
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
+
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
@@ -31,6 +30,7 @@ const Ce = Components.Exception;
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 
 const debugLog = false;
 
@@ -60,6 +60,9 @@ SmartMediaListsUpdater.prototype = {
   // hash table of lists to update
   _updateQueue           : {},
   
+  // hash table of lists to update condition to filter video items
+  _updateVideoQueue      : {},
+  
   // currently updating a batch of smart playlists
   _updating              : false,
   
@@ -86,6 +89,7 @@ SmartMediaListsUpdater.prototype = {
   // db table names
   _dirtyPropertiesTable  : "smartplupd_dirty_properties",
   _dirtyListsTable       : "smartplupd_dirty_lists",
+  _updateVideoListsTable : "smartplupd_update_video_lists",
   _monitor               : null,
   
   // --------------------------------------------------------------------------
@@ -135,21 +139,28 @@ SmartMediaListsUpdater.prototype = {
                       .createInstance(Ci.sbIDatabaseQuery);
     this._dbQuery.setAsyncQuery(false);
     this._dbQuery.setDatabaseGUID("songbird");
-    
+
     // holds the dirty properties
     this._dbQuery.resetQuery();
-    this._dbQuery.addQuery("CREATE TABLE IF NOT EXISTS " + 
-                           this._dirtyPropertiesTable + 
+    this._dbQuery.addQuery("CREATE TABLE IF NOT EXISTS " +
+                           this._dirtyPropertiesTable +
                            " (propertyid TEXT UNIQUE NOT NULL)");
     this._dbQuery.execute();
-    
+
     // holds the dirty lists
     this._dbQuery.resetQuery();
-    this._dbQuery.addQuery("CREATE TABLE IF NOT EXISTS " + 
-                           this._dirtyListsTable + 
+    this._dbQuery.addQuery("CREATE TABLE IF NOT EXISTS " +
+                           this._dirtyListsTable +
                            " (listguid TEXT UNIQUE NOT NULL)");
     this._dbQuery.execute();
-    
+
+    // holds the update lists
+    this._dbQuery.resetQuery();
+    this._dbQuery.addQuery("CREATE TABLE IF NOT EXISTS " +
+                           this._updateVideoListsTable +
+                           " (listguid TEXT UNIQUE NOT NULL)");
+    this._dbQuery.execute();
+
     // Apply a function to every row value #0 in a db table
     var query = this._dbQuery;
     function applyOnTableValues(aTableId, aFunction) {
@@ -167,7 +178,7 @@ SmartMediaListsUpdater.prototype = {
 
     // remember our context
     var that = this;
-    
+
     // If we have lists in the dirty lists db table, we need to add them to the
     // _updateQueue js table.
     function addToUpdateQueue(aListGuid) {
@@ -186,6 +197,26 @@ SmartMediaListsUpdater.prototype = {
       that._updatedProperties[aPropertyID] = true;
     }
     applyOnTableValues(this._dirtyPropertiesTable, addToModifiedProperties);
+
+    // If we have lists in the update video lists db table, we need to add them
+    // to the _updateVideoQueue js table.
+    var length = 0;
+    function addToUpdateVideoQueue(aListGuid) {
+      // check that the list is still valid, just in case.
+      var mediaList = LibraryUtils.mainLibrary.getMediaItem(aListGuid);
+      if (mediaList instanceof Ci.sbIMediaList &&
+          mediaList.type == "smart") {
+        that._updateVideoQueue[aListGuid] = mediaList;
+        ++length;
+      }
+    }
+    applyOnTableValues(this._updateVideoListsTable, addToUpdateVideoQueue);
+
+    // Update the smart playlists condition to filter video items.
+    if (length) {
+      this.updateListConditions();
+      this.resetUpdateVideoListsTable();
+    }
 
     // Start an update if needed, after a delay. This will update any list
     // in the update queue, as well as any list whose content is dependent on
@@ -356,6 +387,55 @@ SmartMediaListsUpdater.prototype = {
     }
   },
   
+  // --------------------------------------------------------------------------
+  // Update the smart playlist condition.
+  // --------------------------------------------------------------------------
+  updateListConditions: function() {
+    var propertyManager =
+      Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+        .getService(Ci.sbIPropertyManager);
+    var typePI = propertyManager.getPropertyInfo(SBProperties.contentType);
+
+    var condition = {
+      property     : SBProperties.contentType,
+      operator     : typePI.getOperator(typePI.OPERATOR_NOTEQUALS),
+      leftValue    : "video",
+      rightValue   : null,
+      displayUnit  : null,
+    };
+    var defaultSmartPlaylists = [
+      SBString("smart.defaultlist.highestrated", "Highest Rated"),
+      SBString("smart.defaultlist.mostplayed", "Most Played"),
+      SBString("smart.defaultlist.recentlyadded", "Recently Added"),
+      SBString("smart.defaultlist.recentlyplayed", "Recently Played")
+    ];
+    var list;
+
+    function objectConverter(a) {
+      var obj = {};
+      for (var i = 0; i < a.length; ++i) {
+        obj[a[i]] = '';
+      }
+      return obj;
+    }
+
+    for (var guid in this._updateVideoQueue) {
+      list = this._updateVideoQueue[guid];
+      // Append the condition to filter video items.
+      if (list.name in objectConverter(defaultSmartPlaylists)) {
+        list.appendCondition(condition.property,
+                             condition.operator,
+                             condition.leftValue,
+                             condition.rightValue,
+                             condition.displayUnit);
+      }
+      else
+        continue;
+
+      list.rebuild();
+    }
+  },
+
   // --------------------------------------------------------------------------
   // Returns an array of all smart playlists
   // --------------------------------------------------------------------------
@@ -685,6 +765,15 @@ SmartMediaListsUpdater.prototype = {
   resetDirtyPropertiesTable: function() {
     this._dbQuery.resetQuery();
     this._dbQuery.addQuery("DELETE FROM " + this._dirtyPropertiesTable);
+    this._dbQuery.execute();
+  },
+
+  // --------------------------------------------------------------------------
+  // remove all rows from the update video lists db table
+  // --------------------------------------------------------------------------
+  resetUpdateVideoListsTable: function() {
+    this._dbQuery.resetQuery();
+    this._dbQuery.addQuery("DELETE FROM " + this._updateVideoListsTable);
     this._dbQuery.execute();
   },
 

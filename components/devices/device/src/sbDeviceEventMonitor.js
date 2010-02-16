@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -159,12 +159,53 @@ deviceEventMonitor.prototype = {
                                            Ci.sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
 
     if (!playlistFound) {
-      // Create the playlist since it does not exist.
-      var list = mainLibrary.createMediaList("simple");
+      var propertyManager =
+        Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+          .getService(Ci.sbIPropertyManager);
+      var typePI = propertyManager.getPropertyInfo(SBProperties.contentType);
+      const sbILDSML = Components.interfaces.sbILocalDatabaseSmartMediaList;
+
+      var videoSmartPlaylist = [
+        {
+          name: "&device.sync.video-togo.playlist",
+          conditions: [
+            {
+              property     : SBProperties.contentType,
+              operator     : typePI.getOperator(typePI.OPERATOR_EQUALS),
+              leftValue    : "video",
+              rightValue   : null,
+              displayUnit  : null
+            }
+          ],
+          matchType        : sbILDSML.MATCH_TYPE_ALL,
+          limitType        : sbILDSML.LIMIT_TYPE_NONE,
+          limit            : 0,
+          selectDirection  : false,
+          randomSelection  : true,
+          autoUpdate       : true
+        }
+      ];
+      // Create the smart playlist since it does not exist.
+      var list = mainLibrary.createMediaList("smart");
+      for each (var item in videoSmartPlaylist) {
+        for (var prop in item) {
+          if (prop == "conditions") {
+            for each (var condition in item.conditions) {
+              list.appendCondition(condition.property,
+                                   condition.operator,
+                                   condition.leftValue,
+                                   condition.rightValue,
+                                   condition.displayUnit);
+            }
+          } else {
+            list[prop] = item[prop];
+          }
+        }
+      }
       list.setProperty(SBProperties.customType, VIDEO_TOGO_PLAYLIST_NAME);
-      list.name = SBString("device.sync.video-togo.playlist", "Video Playlist");
       list.setProperty(SBProperties.hidden, "0");
       SmartMediaListColumnSpecUpdater.update(list);
+      list.rebuild();
     }
   },
 

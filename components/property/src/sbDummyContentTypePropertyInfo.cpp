@@ -22,7 +22,7 @@
  *=END SONGBIRD GPL
  */
 
-#include "sbDummyPlaylistPropertyInfo.h"
+#include "sbDummyContentTypePropertyInfo.h"
 #include "sbStandardOperators.h"
 
 #include <sbIPropertyArray.h>
@@ -30,22 +30,22 @@
 #include <nsITreeView.h>
 #include <nsAutoPtr.h>
 
-NS_IMPL_ISUPPORTS_INHERITED0(sbDummyPlaylistPropertyInfo, 
+NS_IMPL_ISUPPORTS_INHERITED0(sbDummyContentTypePropertyInfo,
                              sbDummyPropertyInfo);
 
-sbDummyPlaylistPropertyInfo::sbDummyPlaylistPropertyInfo()
+sbDummyContentTypePropertyInfo::sbDummyContentTypePropertyInfo()
 {
 }
 
 nsresult
-sbDummyPlaylistPropertyInfo::Init()
+sbDummyContentTypePropertyInfo::Init()
 {
   nsresult rv;
 
   rv = sbDummyPropertyInfo::Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  SetType(NS_LITERAL_STRING("smartmedialist_playlist"));
+  SetType(NS_LITERAL_STRING("smartmedialist_contenttype"));
 
   nsAutoString op;
   nsRefPtr<sbPropertyOperator> propOp;
