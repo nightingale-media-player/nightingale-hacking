@@ -1,29 +1,27 @@
 /* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #ifndef __SBBASEDEVICE__H__
 #define __SBBASEDEVICE__H__
@@ -77,6 +75,9 @@ class sbIMediaFormat;
 /* Property used to force a sync diff. */
 #define DEVICE_PROPERTY_SYNC_FORCE_DIFF \
           "http://songbirdnest.com/device/1.0#forceDiff"
+
+// Device property XML namespace.
+#define SB_DEVICE_PROPERTY_NS "http://songbirdnest.com/device/1.0"
 
 #define SB_SYNC_PARTNER_PREF NS_LITERAL_STRING("SyncPartner")
 
@@ -652,6 +653,7 @@ protected:
   nsDataHashtableMT<nsISupportsHashKey, nsRefPtr<sbBaseDeviceMediaListListener> > mMediaListListeners;
   nsCOMPtr<sbIDeviceCapabilitiesRegistrar> mCapabilitiesRegistrar;
   PRUint32 mCapabilitiesRegistrarType;
+  nsCOMPtr<sbIDeviceCapabilities> mCapabilities;
   PRLock*  mPreferenceLock;
   PRUint32 mMusicLimitPercent;
   sbDeviceTranscoding * mDeviceTranscoding;
@@ -687,6 +689,7 @@ protected:
   };
   nsClassHashtableMT<nsIDHashKey, OrganizeData> mOrganizeLibraryPrefs;
 
+  nsClassHashtable<nsUint32HashKey, nsString> mMediaFolderURLTable;
 
   /**
    * Default per track storage overhead.  10000 is enough for one 8K block plus
@@ -750,6 +753,25 @@ protected:
                                   PRInt64*    aMusicAvailableSpace);
 
   /**
+   * Return true in _retval if DRM is supported for the media item specified by
+   * aMediaItem; return false otherwise.  If aReportErrors is true and DRM is
+   * not supported, report a device error.
+   *
+   * \param aMediaItem    Media item to check.
+   * \param aReportErrors If true, report device errors.
+   * \param _retval       Returned true if DRM is supported.
+   */
+  virtual nsresult SupportsMediaItemDRM(sbIMediaItem* aMediaItem,
+                                        PRBool        aReportErrors,
+                                        PRBool*       _retval);
+
+  //----------------------------------------------------------------------------
+  //
+  // Device settings services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
    * Return in aDeviceSettingsDocument a DOM document object representing the
    * Songbird settings stored on the device.  Return null in
    * aDeviceSettingsDocument if no Songbird settings are stored on the device.
@@ -781,19 +803,62 @@ protected:
   nsresult GetDeviceSettingsDocument
              (nsTArray<PRUint8>&     aDeviceSettingsContent,
               class nsIDOMDocument** aDeviceSettingsDocument);
+  /**
+   * Apply the contents of the device settings document to the device settings.
+   */
+  virtual nsresult ApplyDeviceSettingsDocument();
 
   /**
-   * Return true in _retval if DRM is supported for the media item specified by
-   * aMediaItem; return false otherwise.  If aReportErrors is true and DRM is
-   * not supported, report a device error.
+   * Apply the contents of the device settings document specified by
+   * aDeviceSettingsDocument to the device settings.
    *
-   * \param aMediaItem    Media item to check.
-   * \param aReportErrors If true, report device errors.
-   * \param _retval       Returned true if DRM is supported.
+   * \param aDeviceSettingsDocument   Device settings document.
    */
-  virtual nsresult SupportsMediaItemDRM(sbIMediaItem* aMediaItem,
-                                        PRBool        aReportErrors,
-                                        PRBool*       _retval);
+  virtual nsresult ApplyDeviceSettings
+                     (class nsIDOMDocument* aDeviceSettingsDocument);
+
+  /**
+   * Apply the contents of the device settings document specified by
+   * aDeviceSettingsDocument to the device property specified by
+   * aPropertyName.  The property will be set to the same value as the device
+   * setting element with the same tag name as the device property suffix.  The
+   * suffix is the unique suffix of the device property.
+   *
+   * \param aDeviceSettingsDocument Device settings document.
+   * \param aPropertyName           Name of device property to which to apply.
+   */
+  nsresult ApplyDeviceSettingsToProperty
+             (class nsIDOMDocument*  aDeviceSettingsDocument,
+              const nsAString&       aPropertyName);
+
+  /**
+   * Apply the device settings property value specified by aPropertyValue to the
+   * device property specified by aPropertyName.
+   *
+   * \param aPropertyName           Name of device property to which to apply.
+   * \param aPropertyValue          Device settings property value.
+   */
+  virtual nsresult ApplyDeviceSettingsToProperty
+                     (const nsAString& aPropertyName,
+                      nsIVariant*      aPropertyValue);
+
+  /**
+   * Apply the device info content of the device settings document specified by
+   * aDeviceSettingsDocument.
+   *
+   * \param aDeviceSettingsDocument Device settings document.
+   */
+  nsresult ApplyDeviceSettingsDeviceInfo
+             (class nsIDOMDocument* aDeviceSettingsDocument);
+
+  /**
+   * Apply the contents of the device settings document specified by
+   * aDeviceSettingsDocument to the device capabilities.
+   *
+   * \param aDeviceSettingsDocument   Device settings document.
+   */
+  nsresult ApplyDeviceSettingsToCapabilities
+            (class nsIDOMDocument* aDeviceSettingsDocument);
 
 
   //----------------------------------------------------------------------------
@@ -1259,6 +1324,11 @@ protected:
    * \param aDeviceLibrary out parameter receiving the primary library object
    */
   nsresult GetPrimaryLibrary(sbIDeviceLibrary ** aDeviceLibrary);
+
+  /**
+   * Update locations of folders containing media.
+   */
+  virtual nsresult UpdateMediaFolders();
 
   /**
    *   Determine the URI for the device write destination media item specified

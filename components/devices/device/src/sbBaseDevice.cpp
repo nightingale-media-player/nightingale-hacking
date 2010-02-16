@@ -54,6 +54,8 @@
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 #include <nsIDOMDocument.h>
+#include <nsIDOMElement.h>
+#include <nsIDOMNodeList.h>
 #include <nsIDOMWindow.h>
 #include <nsIPromptService.h>
 #include <nsIScriptSecurityManager.h>
@@ -105,6 +107,7 @@
 #include "sbDeviceImages.h"
 #include "sbDeviceUtils.h"
 #include "sbDeviceXMLCapabilities.h"
+#include "sbDeviceXMLInfo.h"
 #include "sbLibraryListenerHelpers.h"
 #include "sbLibraryUtils.h"
 #include "sbProxyUtils.h"
@@ -2812,6 +2815,9 @@ nsresult sbBaseDevice::Init()
   rv = sbDeviceStatistics::New(this, getter_AddRefs(mDeviceStatistics));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Initialize the media folder URL table.
+  NS_ENSURE_TRUE(mMediaFolderURLTable.Init(), NS_ERROR_OUT_OF_MEMORY);
+
   // Initialize the device properties.
   rv = InitializeProperties();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2914,6 +2920,33 @@ sbBaseDevice::GetMusicAvailableSpace(sbILibrary* aLibrary,
 }
 
 nsresult
+sbBaseDevice::SupportsMediaItemDRM(sbIMediaItem* aMediaItem,
+                                   PRBool        aReportErrors,
+                                   PRBool*       _retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  // DRM is not supported by default.  Subclasses can override this.
+  if (aReportErrors) {
+    rv = DispatchTranscodeErrorEvent
+           (aMediaItem, SBLocalizedString("transcode.file.drmprotected"));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  *_retval = PR_FALSE;
+
+  return NS_OK;
+}
+
+//------------------------------------------------------------------------------
+//
+// Device settings services.
+//
+//------------------------------------------------------------------------------
+
+nsresult
 sbBaseDevice::GetDeviceSettingsDocument
                 (nsIDOMDocument** aDeviceSettingsDocument)
 {
@@ -3005,22 +3038,195 @@ sbBaseDevice::GetDeviceSettingsDocument
 }
 
 nsresult
-sbBaseDevice::SupportsMediaItemDRM(sbIMediaItem* aMediaItem,
-                                   PRBool        aReportErrors,
-                                   PRBool*       _retval)
+sbBaseDevice::ApplyDeviceSettingsDocument()
 {
-  NS_ENSURE_ARG_POINTER(aMediaItem);
-  NS_ENSURE_ARG_POINTER(_retval);
-
   nsresult rv;
 
-  // DRM is not supported by default.  Subclasses can override this.
-  if (aReportErrors) {
-    rv = DispatchTranscodeErrorEvent
-           (aMediaItem, SBLocalizedString("transcode.file.drmprotected"));
+  // This function should only be called on the main thread.
+  NS_ASSERTION(NS_IsMainThread(), "not on main thread");
+
+  // Get the device settings document.  Do nothing if device settings document
+  // is not available.
+  nsCOMPtr<nsIDOMDocument> deviceSettingsDocument;
+  rv = GetDeviceSettingsDocument(getter_AddRefs(deviceSettingsDocument));
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!deviceSettingsDocument)
+    return NS_OK;
+
+  // Apply the device settings.
+  rv = ApplyDeviceSettings(deviceSettingsDocument);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::ApplyDeviceSettings(nsIDOMDocument* aDeviceSettingsDocument)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aDeviceSettingsDocument);
+
+  // Function variables.
+  nsresult rv;
+
+  // Apply the device friendly name setting.
+  rv = ApplyDeviceSettingsToProperty
+         (aDeviceSettingsDocument,
+          NS_LITERAL_STRING(SB_DEVICE_PROPERTY_NAME));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Apply device settings device info.
+  rv = ApplyDeviceSettingsDeviceInfo(aDeviceSettingsDocument);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Apply the device capabilities.
+  rv = ApplyDeviceSettingsToCapabilities(aDeviceSettingsDocument);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::ApplyDeviceSettingsToProperty
+                (nsIDOMDocument*  aDeviceSettingsDocument,
+                 const nsAString& aPropertyName)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aDeviceSettingsDocument);
+  NS_ENSURE_TRUE(StringBeginsWith(aPropertyName,
+                                  NS_LITERAL_STRING(SB_DEVICE_PROPERTY_BASE)),
+                 NS_ERROR_INVALID_ARG);
+
+  // Function variables.
+  NS_NAMED_LITERAL_STRING(devPropNS, SB_DEVICE_PROPERTY_NS);
+  nsCOMPtr<nsIDOMNode> dummyNode;
+  nsresult             rv;
+
+  // This function should only be called on the main thread.
+  NS_ASSERTION(NS_IsMainThread(), "not on main thread");
+
+  // Get the device property name suffix.
+  nsAutoString propertyNameSuffix(Substring(aPropertyName,
+                                            strlen(SB_DEVICE_PROPERTY_BASE)));
+
+  // Get the device setting element.
+  nsCOMPtr<nsIDOMElement>  deviceSettingElement;
+  nsCOMPtr<nsIDOMNodeList> elementList;
+  nsCOMPtr<nsIDOMNode>     elementNode;
+  PRUint32                 elementCount;
+  rv = aDeviceSettingsDocument->GetElementsByTagNameNS
+                                  (devPropNS,
+                                   propertyNameSuffix,
+                                   getter_AddRefs(elementList));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = elementList->GetLength(&elementCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (elementCount > 0) {
+    rv = elementList->Item(0, getter_AddRefs(elementNode));
+    NS_ENSURE_SUCCESS(rv, rv);
+    deviceSettingElement = do_QueryInterface(elementNode, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  *_retval = PR_FALSE;
+
+  // Do nothing if device settings element does not exist.
+  if (!deviceSettingElement)
+    return NS_OK;
+
+  // Apply the device setting to the property.
+  nsAutoString  propertyValue;
+  rv = deviceSettingElement->GetAttribute(NS_LITERAL_STRING("value"),
+                                          propertyValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = ApplyDeviceSettingsToProperty(aPropertyName,
+                                     sbNewVariant(propertyValue));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::ApplyDeviceSettingsToProperty(const nsAString& aPropertyName,
+                                            nsIVariant*      aPropertyValue)
+{
+  // Nothing for the base class to do.
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::ApplyDeviceSettingsDeviceInfo
+                (nsIDOMDocument* aDeviceSettingsDocument)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aDeviceSettingsDocument);
+
+  // Function variables.
+  nsAutoPtr<nsString> folderURL;
+  PRBool              needMediaFolderUpdate = PR_FALSE;
+  nsresult            rv;
+
+  // Get the device info from the device settings document.  Do nothing if no
+  // device info present.
+  nsAutoPtr<sbDeviceXMLInfo> deviceXMLInfo(new sbDeviceXMLInfo(this));
+  PRBool                     present;
+  NS_ENSURE_TRUE(deviceXMLInfo, NS_ERROR_OUT_OF_MEMORY);
+  rv = deviceXMLInfo->Read(aDeviceSettingsDocument);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = deviceXMLInfo->GetDeviceInfoPresent(&present);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!present)
+    return NS_OK;
+
+  // Get the device music folder URL.
+  folderURL = new nsString();
+  NS_ENSURE_TRUE(folderURL, NS_ERROR_OUT_OF_MEMORY);
+  rv = deviceXMLInfo->GetDeviceFolder(NS_LITERAL_STRING("music"), *folderURL);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!folderURL->IsEmpty()) {
+    mMediaFolderURLTable.Put(sbIDeviceCapabilities::CONTENT_AUDIO, folderURL);
+    folderURL.forget();
+    needMediaFolderUpdate = PR_TRUE;
+  }
+
+  // Get the device video folder URL.
+  folderURL = new nsString();
+  NS_ENSURE_TRUE(folderURL, NS_ERROR_OUT_OF_MEMORY);
+  rv = deviceXMLInfo->GetDeviceFolder(NS_LITERAL_STRING("video"), *folderURL);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!folderURL->IsEmpty()) {
+    mMediaFolderURLTable.Put(sbIDeviceCapabilities::CONTENT_VIDEO, folderURL);
+    folderURL.forget();
+    needMediaFolderUpdate = PR_TRUE;
+  }
+
+  // Update media folders if needed.  Ignore errors if media folders fail to
+  // update.
+  if (needMediaFolderUpdate)
+    UpdateMediaFolders();
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::ApplyDeviceSettingsToCapabilities
+                (nsIDOMDocument* aDeviceSettingsDocument)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aDeviceSettingsDocument);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the device capabilities from the device settings document.
+  nsCOMPtr<sbIDeviceCapabilities> deviceCaps;
+  rv = sbDeviceXMLCapabilities::GetCapabilities(getter_AddRefs(deviceCaps),
+                                                aDeviceSettingsDocument,
+                                                this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If the device settings document has device capabilities, use them;
+  // otherwise, continue using current device capabilities.
+  if (deviceCaps)
+    mCapabilities = deviceCaps;
 
   return NS_OK;
 }
@@ -4907,6 +5113,13 @@ nsresult sbBaseDevice::GetPrimaryLibrary(sbIDeviceLibrary ** aDeviceLibrary)
     do_QueryElementAt(libraries, 0, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   deviceLib.forget(aDeviceLibrary);
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::UpdateMediaFolders()
+{
+  // Nothing for the base class to do.
   return NS_OK;
 }
 
