@@ -1,6 +1,10 @@
 newreleases.jar:
 % content newreleases  %content/	contentaccessible=yes
+% locale  newreleases  ca-AD  %locale/ca-AD/
+% locale  newreleases  de     %locale/de/
 % locale  newreleases  en-US  %locale/en-US/
+% locale  newreleases  fr     %locale/fr/
+% locale  newreleases  pt-PT  %locale/pt-PT/
 #% locale  newreleases  en-GB  %locale/en-GB/
 #% locale  newreleases  eu-ES  %locale/eu-ES/
 #% locale  newreleases  zh-CN  %locale/zh-CN/
