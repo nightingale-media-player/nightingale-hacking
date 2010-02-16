@@ -360,7 +360,7 @@ sbTranscodeError::Init(const nsAString & aMessageWithItem,
                        const nsAString & aDetails)
 {
   NS_ENSURE_FALSE(mLock, NS_ERROR_ALREADY_INITIALIZED);
-  mLock = nsAutoLock::NewLock(__FILE__ "::" __FUNCTION__);
+  mLock = nsAutoLock::NewLock("sbTranscodeError::mLock");
   NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
   nsAutoLock lock(mLock);
   mMessageWithItem.Assign(aMessageWithItem);
