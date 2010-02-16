@@ -276,6 +276,10 @@ NewReleases.prototype = {
 	 * concert data)
 	 *********************************************************************/
 	onItemUpdated : function(list, item, index) {
+		// The media library column isn't fully implemented yet
+		// in New Releases so go ahead and exit cleanly for now
+		return true;
+
 		var firstrun = this.prefs.getBoolPref("firstrun");
 		if (firstrun)
 			return true;
