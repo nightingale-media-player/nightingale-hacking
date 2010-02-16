@@ -268,7 +268,7 @@ AddonMetadataReader.prototype = {
     }
 
     for each (var prop in SkinDescription.prototype.optionalProperties) {
-      if(skin[prop][0]) {
+      if(skin[prop] && skin[prop][0]) {
         description[prop] = skin[prop][0];
       }
     }
