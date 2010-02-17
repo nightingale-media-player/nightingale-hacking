@@ -955,7 +955,7 @@ var AlbumArt = {
     else {
       // Now playing
       var item = AlbumArt.getNowPlayingItem();
-      if (item && item.getProperty(SBProperties.contentType == "audio")) {
+      if (item && item.getProperty(SBProperties.contentType) == "audio") {
         return false;
       }
       return true;
