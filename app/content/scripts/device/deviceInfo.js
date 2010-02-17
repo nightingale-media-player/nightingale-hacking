@@ -1017,13 +1017,16 @@ var DIW = {
             for each (var format in formatArray) {
               var ext = this._getExtForFormat(format,
                                               contentArray[contentCounter]);
-              extensions.push(ext);
+              if(extensions.indexOf(ext) == -1)
+                extensions.push(ext);
             }
           }
         }
       }
     } catch (err) { }
 
+    extensions.sort();
+    
     return extensions.join(", ") || SBString("device.info.unknown");
   },
 

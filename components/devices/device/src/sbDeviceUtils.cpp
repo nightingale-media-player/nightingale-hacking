@@ -900,6 +900,7 @@ MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
   { "aac",  "audio/aac",       "mov",  "aac",     "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "m4a",  "audio/aac",       "mov",  "aac",     "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "aa",   "audio/audible",   "",     "",        "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "aa",   "audio/x-pn-audibleaudio", "", "",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "oga",  "application/ogg", "ogg",  "flac",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "ogg",  "application/ogg", "ogg",  "vorbis",  "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "flac", "audio/x-flac",    "flac", "flac",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
@@ -907,6 +908,7 @@ MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
   { "wav",  "audio/x-adpcm",   "wav",  "pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "aiff", "audio/x-aiff",    "aiff", "pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "aif",  "audio/x-aiff",    "aiff", "pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "ape",  "audio/ape",       "",     "",        "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
 
   /* video */
   { "mp4",  "video/mp4",       "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
@@ -1415,6 +1417,10 @@ sbDeviceUtils::DoesItemNeedTranscoding(
   nsString itemCodec;
   itemCodec.AssignLiteral(aFormatType.Codec);
 
+  LOG(("Determining if item needs transcoding\n\tItem Container: %s\n\tItem Codec: %s", 
+       NS_LossyConvertUTF16toASCII(itemContainerFormat).get(),
+       NS_LossyConvertUTF16toASCII(itemCodec).get()));
+
   PRUint32 formatsLength;
   char ** formats;
   rv = devCaps->GetSupportedFormats(devCapContentType,
@@ -1449,6 +1455,11 @@ sbDeviceUtils::DoesItemNeedTranscoding(
                                         getter_AddRefs(bitRateRange),
                                         getter_AddRefs(sampleRateRange));
         if (NS_SUCCEEDED(rv)) {
+
+          LOG(("Comparing container and codec\n\tCaps Container: %s\n\tCaps Codec: %s",
+               NS_LossyConvertUTF16toASCII(containerFormat).get(),
+               NS_LossyConvertUTF16toASCII(codec).get()));
+
           // Compare the various attributes, if bit rate and sample rate are
           // not specified then they always match
           if (containerFormat.Equals(itemContainerFormat) &&
