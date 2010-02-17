@@ -324,8 +324,13 @@ sbGStreamerMediaInspector::GetMediaFormat(sbIMediaFormat **_retval)
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER (_retval);
 
-  nsresult rv = CallQueryInterface(mMediaFormat.get(), _retval);
-  NS_ENSURE_SUCCESS (rv, rv);
+  if (mMediaFormat) {
+    nsresult rv = CallQueryInterface(mMediaFormat.get(), _retval);
+    NS_ENSURE_SUCCESS (rv, rv);
+  }
+  else {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
 
   return NS_OK;
 }
@@ -375,7 +380,7 @@ sbGStreamerMediaInspector::InspectMedia(sbIMediaItem *aMediaItem,
     PR_Sleep (50);
   }
 
-  if (mIsPaused) {
+  if (mIsPaused && mMediaFormat) {
     rv = CallQueryInterface(mMediaFormat.get(), _retval);
     NS_ENSURE_SUCCESS (rv, rv);
 
