@@ -982,7 +982,16 @@
 
     <property name="progress_value">
       <getter>
-        return ( this.progress.getAttribute('value') * this.maxpos ) / this._SCALE_MAX;
+      <![CDATA[
+        var pos = this.progress.getAttribute('value');
+        if (pos < 0) {
+          // We sometimes get negative values here, which don't make any sense.
+          return 0;
+        }
+        else {
+          return ( pos * this.maxpos ) / this._SCALE_MAX;
+        }
+      ]]>
       </getter>
       <setter>
       <![CDATA[
