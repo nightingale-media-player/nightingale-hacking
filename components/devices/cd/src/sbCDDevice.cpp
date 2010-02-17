@@ -183,12 +183,6 @@ sbCDDevice::InitDevice()
                               "sbCDDevice::mConnectLock");
   NS_ENSURE_TRUE(mConnectLock, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = mStatus.Initialize();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Initialize the device state.
-  SetState(sbIDevice::STATE_IDLE);
-
   // Create and initialize the device content object.
   mDeviceContent = sbDeviceContent::New();
   NS_ENSURE_TRUE(mDeviceContent, NS_ERROR_OUT_OF_MEMORY);
@@ -207,6 +201,12 @@ sbCDDevice::InitDevice()
   // Create the device ID.  This depends on mCDDevice being initialised first.
   rv = CreateDeviceID(&mDeviceID);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mStatus.Initialize();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Initialize the device state.
+  SetState(sbIDevice::STATE_IDLE);
 
   // Log progress.
   LOG(("Exit sbCDDevice::InitDevice"));
