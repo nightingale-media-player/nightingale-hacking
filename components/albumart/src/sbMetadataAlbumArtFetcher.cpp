@@ -408,6 +408,7 @@ sbMetadataAlbumArtFetcher::GetMetadataHandler
   // Validate arguments.
   NS_ASSERTION(aContentSrcURI, "aContentSrcURI is null");
   NS_ASSERTION(aMetadataHandler, "aMetadataHandler is null");
+  NS_ENSURE_STATE(mMetadataManager);
 
   // Function variables.
   nsCOMPtr<sbIMetadataHandler> metadataHandler;
