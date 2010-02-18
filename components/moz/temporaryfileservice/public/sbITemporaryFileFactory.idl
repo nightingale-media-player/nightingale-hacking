@@ -1,0 +1,89 @@
+/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 :miv */
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+#include "nsISupports.idl"
+
+/**
+ * \interface sbITemporaryFileFactory
+ *
+ *   The sbITemporaryFileFactory interface provides support for creating
+ * temporary files and directories.  These files and directories are deleted
+ * when the temporary file factory is destroyed.
+ *
+ * "@songbirdnest.com/Songbird/TemporaryFileFactory;1"
+ * Use create instance with this component.
+ *
+ *   This component creates its own temporary directory which it uses as the
+ * parent directory of all created temporary files.  When this component is
+ * destroyed the temporary directory is deleted.
+ */
+
+interface nsIFile;
+
+[scriptable, uuid(946d078c-1dd1-11b2-a2d6-ff587bbe3f7d)]
+interface sbITemporaryFileFactory : nsISupports
+{
+  /**
+   * \brief Root directory of temporary files and directories.
+   */
+
+  attribute nsIFile rootTemporaryDirectory;
+
+
+  /**
+   * \brief Create and return a new and unique temporary file of the type
+   *        specified by aType.  If aBaseName is specified, use aBaseName as the
+   *        base name of the file.  If aExtension is specified, use aExtension
+   *        as the file extension.
+   *
+   * \param aType               Type of file to create.  One of nsIFile file
+   *                            types.
+   * \param aBaseName           Optional file base name.
+   * \param aExtension          Optional file extension.
+   */
+
+  nsIFile createFile(in unsigned long            aType,
+                     [optional] in AString       aBaseName,
+                     [optional] in AString       aExtension);
+
+
+  /**
+   * \brief Clear all temporary files and directories.
+   */
+
+  void clear();
+};
+
+
+//
+// C++ defs.
+//
+
+%{C++
+#define SB_TEMPORARYFILEFACTORY_CONTRACTID \
+          "@songbirdnest.com/Songbird/TemporaryFileFactory;1"
+%}C++
+
