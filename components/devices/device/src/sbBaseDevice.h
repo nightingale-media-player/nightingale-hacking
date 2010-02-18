@@ -51,6 +51,7 @@
 #include <sbILibraryChangeset.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
+#include <sbITemporaryFileFactory.h>
 #include <sbITranscodeManager.h>
 
 #include <sbMemoryUtils.h>
@@ -188,8 +189,9 @@ public:
     nsCOMPtr<sbITranscodeAlbumArt> albumArt; /* Album art transcoding object,
                                                 or null if no album art
                                                 transcoding should be done */
-    nsCOMPtr<nsIFile> temporaryFile; /* Temporary file for transcoding, if one
-                                        was used. */
+    /* Factory for creating temporary files.  All temporary files are removed
+       when factory is destroyed. */
+    nsCOMPtr<sbITemporaryFileFactory> temporaryFileFactory;
 
     NS_DECL_ISUPPORTS
     /**

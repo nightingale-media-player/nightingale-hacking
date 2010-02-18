@@ -65,6 +65,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                      $(DEPTH)/components/mediamanager/public \
                      $(DEPTH)/components/moz/prompter/public \
                      $(DEPTH)/components/moz/strings/components/public \
+                     $(DEPTH)/components/moz/temporaryfileservice/public \
                      $(DEPTH)/components/moz/windowwatcher/public \
                      $(DEPTH)/components/property/public \
                      $(DEPTH)/components/watchfolder/public \
