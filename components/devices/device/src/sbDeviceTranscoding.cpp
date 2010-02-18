@@ -321,6 +321,43 @@ sbDeviceTranscoding::GetTranscodeType(sbIMediaItem * aMediaItem)
   return sbITranscodeProfile::TRANSCODE_TYPE_UNKNOWN;
 }
 
+/**
+ * Helper function to dispatch a transcode error to a device
+ * @param aError The transcode error to dispatch
+ * @param aDevice The device to dispatch the transcode error to
+ */
+static nsresult
+DispatchTranscodeError(sbITranscodeError* aError,
+                       sbBaseDevice* aDevice)
+{
+  NS_ENSURE_ARG_POINTER(aError);
+  NS_ENSURE_ARG_POINTER(aDevice);
+
+  nsresult rv;
+
+  nsCOMPtr<nsIWritablePropertyBag2> bag =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsISupportsString> errorString(do_QueryInterface(aError));
+  NS_ENSURE_TRUE(errorString, NS_ERROR_NO_INTERFACE);
+  nsString message;
+  rv = errorString->GetData(message);
+  if (NS_SUCCEEDED(rv)) {
+    rv = bag->SetPropertyAsAString(NS_LITERAL_STRING("message"),
+                                   message);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  rv = bag->SetPropertyAsInterface(NS_LITERAL_STRING("transcode-error"),
+                                   NS_ISUPPORTS_CAST(sbITranscodeError*, aError));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  aDevice->CreateAndDispatchEvent(
+      sbIDeviceEvent::EVENT_DEVICE_TRANSCODE_ERROR,
+      sbNewVariant(bag));
+  /* ignore result */
+  return NS_OK;
+}
+
 nsresult
 sbDeviceTranscoding::FindTranscodeProfile(sbIMediaItem * aMediaItem,
                                           sbITranscodeProfile ** aProfile,
@@ -346,6 +383,26 @@ sbDeviceTranscoding::FindTranscodeProfile(sbIMediaItem * aMediaItem,
   if (transcodeType == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO) {
     nsCOMPtr<sbIMediaFormat> mediaFormat;
     rv = GetMediaFormat(aMediaItem, getter_AddRefs(mediaFormat));
+    if (NS_FAILED(rv)) {
+      nsString inputUri;
+      nsresult rv2;
+      rv2 = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
+                                    inputUri);
+      NS_ENSURE_SUCCESS(rv2, rv2);
+      nsTArray<nsString> params;
+      params.AppendElement(inputUri);
+      SBLocalizedString message("mediacore.error.failure", params);
+      nsCOMPtr<sbITranscodeError> error;
+      rv2 = SB_NewTranscodeError(message,
+                                 message,
+                                 SBVoidString(),
+                                 inputUri,
+                                 aMediaItem,
+                                 getter_AddRefs(error));
+      NS_ENSURE_SUCCESS(rv2, rv2);
+      rv2 = DispatchTranscodeError(error, mBaseDevice);
+      NS_ENSURE_SUCCESS(rv2, rv2);
+    }
     if (rv == NS_ERROR_NOT_AVAILABLE) {
       return rv;
     }
@@ -385,27 +442,10 @@ sbDeviceTranscoding::FindTranscodeProfile(sbIMediaItem * aMediaItem,
       nsCOMPtr<sbITranscodeError> error;
       rv = configurator->GetLastError(getter_AddRefs(error));
       if (NS_SUCCEEDED(rv) && error) {
-        nsCOMPtr<nsISupportsString> errorString(do_QueryInterface(error));
-        NS_ENSURE_TRUE(errorString, NS_ERROR_NO_INTERFACE);
         rv = error->SetDestItem(aMediaItem);
         NS_ENSURE_SUCCESS(rv, rv);
-        nsCOMPtr<nsIWritablePropertyBag2> bag =
-          do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
+        rv = DispatchTranscodeError(error, mBaseDevice);
         NS_ENSURE_SUCCESS(rv, rv);
-        nsString message;
-        rv = errorString->GetData(message);
-        if (NS_SUCCEEDED(rv)) {
-          rv = bag->SetPropertyAsAString(NS_LITERAL_STRING("message"),
-                                         message);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
-        rv = bag->SetPropertyAsInterface(NS_LITERAL_STRING("transcode-error"),
-                                         NS_ISUPPORTS_CAST(sbITranscodeError*, error));
-        NS_ENSURE_SUCCESS(rv, rv);
-        mBaseDevice->CreateAndDispatchEvent(
-            sbIDeviceEvent::EVENT_DEVICE_TRANSCODE_ERROR,
-            sbNewVariant(bag));
-        /* ignore result */
       }
     }
     return NS_OK;
@@ -424,9 +464,6 @@ sbDeviceTranscoding::FindTranscodeProfile(sbIMediaItem * aMediaItem,
     // we can't figure out what this audio-only file is; dispatch an error
     // message to the user before aborting.
     nsresult rv2 = rv;
-    nsCOMPtr<sbITranscodeError> error =
-      do_CreateInstance(SONGBIRD_TRANSCODEERROR_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
     nsString inputUri;
     rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
                                  inputUri);
@@ -437,31 +474,12 @@ sbDeviceTranscoding::FindTranscodeProfile(sbIMediaItem * aMediaItem,
                               params);
     nsString detailMessage;
     detailMessage.AppendInt(rv2, 16);
-    rv = error->Init(message, message, detailMessage);
+    nsCOMPtr<sbITranscodeError> error;
+    rv = SB_NewTranscodeError(message, message, detailMessage,
+                              inputUri, aMediaItem, getter_AddRefs(error));
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = error->SetDestItem(aMediaItem);
+    rv = DispatchTranscodeError(error, mBaseDevice);
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = error->SetSourceUri(inputUri);
-    NS_ENSURE_SUCCESS(rv, rv);
-    nsCOMPtr<nsIWritablePropertyBag2> bag =
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    nsCOMPtr<nsISupportsString> errorString(do_QueryInterface(error));
-    NS_ENSURE_TRUE(errorString, NS_ERROR_NO_INTERFACE);
-    rv = errorString->GetData(message);
-    if (NS_SUCCEEDED(rv)) {
-      rv = bag->SetPropertyAsAString(NS_LITERAL_STRING("message"),
-                                     message);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    rv = bag->SetPropertyAsInterface(NS_LITERAL_STRING("transcode-error"),
-                                     NS_ISUPPORTS_CAST(sbITranscodeError*, error));
-    NS_ENSURE_SUCCESS(rv, rv);
-    mBaseDevice->CreateAndDispatchEvent(
-        sbIDeviceEvent::EVENT_DEVICE_TRANSCODE_ERROR,
-        sbNewVariant(bag));
-    /* ignore result */
-
     NS_ENSURE_SUCCESS(rv2, rv2);
   }
 
@@ -485,40 +503,20 @@ sbDeviceTranscoding::FindTranscodeProfile(sbIMediaItem * aMediaItem,
   else {
     nsString detailMessage;
     detailMessage.AppendInt(rv, 16);
-    nsCOMPtr<sbITranscodeError> error =
-      do_CreateInstance(SONGBIRD_TRANSCODEERROR_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = error->Init(NS_LITERAL_STRING("transcode.error.no_profile.has_item"),
-                     NS_LITERAL_STRING("transcode.error.no_profile.without_item"),
-                     detailMessage);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = error->SetDestItem(aMediaItem);
-    NS_ENSURE_SUCCESS(rv, rv);
     nsString inputUri;
     rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
                                  inputUri);
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = error->SetSourceUri(inputUri);
+    nsCOMPtr<sbITranscodeError> error;
+    rv = SB_NewTranscodeError(NS_LITERAL_STRING("transcode.error.no_profile.has_item"),
+                              NS_LITERAL_STRING("transcode.error.no_profile.without_item"),
+                              detailMessage,
+                              inputUri,
+                              aMediaItem,
+                              getter_AddRefs(error));
     NS_ENSURE_SUCCESS(rv, rv);
-    nsCOMPtr<nsIWritablePropertyBag2> bag =
-      do_CreateInstance("@songbirdnest.com/moz/xpcom/sbpropertybag;1", &rv);
+    rv = DispatchTranscodeError(error, mBaseDevice);
     NS_ENSURE_SUCCESS(rv, rv);
-    nsCOMPtr<nsISupportsString> errorString(do_QueryInterface(error));
-    NS_ENSURE_TRUE(errorString, NS_ERROR_NO_INTERFACE);
-    nsString message;
-    rv = errorString->GetData(message);
-    if (NS_SUCCEEDED(rv)) {
-      rv = bag->SetPropertyAsAString(NS_LITERAL_STRING("message"),
-                                     message);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    rv = bag->SetPropertyAsInterface(NS_LITERAL_STRING("transcode-error"),
-                                     NS_ISUPPORTS_CAST(sbITranscodeError*, error));
-    NS_ENSURE_SUCCESS(rv, rv);
-    mBaseDevice->CreateAndDispatchEvent(
-        sbIDeviceEvent::EVENT_DEVICE_TRANSCODE_ERROR,
-        sbNewVariant(bag));
-    /* ignore result */
   }
 
   return NS_OK;

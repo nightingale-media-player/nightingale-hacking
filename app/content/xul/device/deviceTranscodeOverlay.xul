@@ -61,7 +61,7 @@
               return;
             }
             msg = error;
-            item = error.destItem || error.srcItem;
+            item = error.destItem || error.sourceItem;
           }
           else {
             return;
