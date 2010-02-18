@@ -1183,7 +1183,7 @@ void sbGStreamerMediacore::HandleMissingPluginMessage(GstMessage *message)
       // the error message
       nsCOMPtr<sbIMediaItem> item;
       nsresult rv = sequencer->GetCurrentItem(getter_AddRefs(item));
-      if (NS_SUCCEEDED(rv)) {
+      if (NS_SUCCEEDED(rv) && item) {
         nsString trackNameProp;
         rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
                                trackNameProp);
