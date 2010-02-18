@@ -213,7 +213,7 @@
 ./components/sbStorageFormatter.jsm
 ./components/sbStrings.dll
 ./components/sbStrings.xpt
-./components/sbTemporaryFileService.js
+./components/sbTemporaryFileService.dll
 ./components/sbTemporaryFileService.xpt
 ./components/sbTestHarness.dll
 ./components/sbTestHarness.js

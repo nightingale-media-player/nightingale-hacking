@@ -209,7 +209,7 @@
 ./components/sbStorageFormatter.jsm
 ./components/sbStrings.so
 ./components/sbStrings.xpt
-./components/sbTemporaryFileService.js
+./components/sbTemporaryFileService.so
 ./components/sbTemporaryFileService.xpt
 ./components/sbTestHarness.js
 ./components/sbTestHarness.so

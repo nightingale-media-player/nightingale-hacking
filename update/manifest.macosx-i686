@@ -210,7 +210,7 @@
 ./components/sbStorageFormatter.jsm
 ./components/sbStrings.dylib
 ./components/sbStrings.xpt
-./components/sbTemporaryFileService.js
+./components/sbTemporaryFileService.dylib
 ./components/sbTemporaryFileService.xpt
 ./components/sbTestHarness.dylib
 ./components/sbTestHarness.js
