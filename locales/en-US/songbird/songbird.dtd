@@ -6,7 +6,6 @@
 <!ENTITY window.save        "Save">
 <!ENTITY window.yes         "Yes">
 <!ENTITY window.no          "No">
-<!ENTITY window.stop        "Stop">
 
 <!-- Mac system menu -->
 <!ENTITY menu.mac.exit                  "Quit &brandShortName;" >
@@ -174,7 +173,6 @@
 <!ENTITY smart.playlistcondition.library "Library">
 <!ENTITY smart.contenttypecondition.video "Video">
 <!ENTITY smart.contenttypecondition.audio "Music">
-
 
 <!ENTITY textbox.songbird_open_url "Enter the URL or path of the media you wish to playback:">
 
@@ -427,16 +425,16 @@
 <!ENTITY prefs.security.addons.label   "Add-on Installation" >
 
 <!-- Device entities -->
-<!ENTITY command.device.cancel                          "Cancel">
-<!ENTITY command.device.cancel.accesskey                "C">
-<!ENTITY command.device.canceldevicecopy                "Cancel Copy">
-<!ENTITY command.device.canceldevicecopy.accesskey      "C">
-<!ENTITY command.device.canceldevicedelete              "Cancel Delete">
-<!ENTITY command.device.canceldevicedelete.accesskey    "C">
-<!ENTITY command.device.canceldevicesync                "Cancel Sync">
-<!ENTITY command.device.canceldevicesync.accesskey      "C">
-<!ENTITY command.device.canceldeviceupdate              "Cancel Update">
-<!ENTITY command.device.canceldeviceupdate.accesskey    "C">
+<!ENTITY command.device.cancel                          "Stop">
+<!ENTITY command.device.cancel.accesskey                "S">
+<!ENTITY command.device.canceldevicecopy                "Stop Copy">
+<!ENTITY command.device.canceldevicecopy.accesskey      "S">
+<!ENTITY command.device.canceldevicedelete              "Stop Delete">
+<!ENTITY command.device.canceldevicedelete.accesskey    "S">
+<!ENTITY command.device.canceldevicesync                "Stop Sync">
+<!ENTITY command.device.canceldevicesync.accesskey      "S">
+<!ENTITY command.device.canceldeviceupdate              "Stop Update">
+<!ENTITY command.device.canceldeviceupdate.accesskey    "S">
 <!ENTITY command.device.ejectdevice                     "Eject">
 <!ENTITY command.device.ejectdevice.accesskey           "E">
 <!ENTITY command.device.formatdevice                    "Format">
