@@ -97,16 +97,10 @@ interface sbIDeviceStatus: nsISupports {
    */
   
   /**
-   * \brief Time elapsed while working on this task, in milliseconds.
+   * \brief The time elapsed in milliseconds since currentState last changed
    */
-  attribute unsigned long elapsedTime;
+  readonly attribute PRUint32 elapsedTime;
 
-  /**
-   * \brief Estimated time remaining for this task to complete, in milliseconds.
-   *        May be -1 if the remaining time is indeterminate.
-   */
-  attribute unsigned long remainingTime;
-  
   /**
    * Current List being processed
    */

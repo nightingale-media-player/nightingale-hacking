@@ -57,8 +57,7 @@ private:
   nsCOMPtr<sbIDataRemote> mWorkTotalCountRemote;
   nsCOMPtr<sbIMediaItem> mItem;
   nsCOMPtr<sbIMediaList> mList;
-  PRUint32 mElapsedTime;
-  PRUint32 mRemainingTime;
+  PRTime mTimestamp;
   PRInt64 mCurrentProgress;
   
   nsresult GetDataRemote(nsIProxyObjectManager* aProxyObjectManager,

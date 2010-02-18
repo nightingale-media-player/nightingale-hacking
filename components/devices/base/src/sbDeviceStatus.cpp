@@ -41,8 +41,7 @@ sbDeviceStatus::sbDeviceStatus()
   /* member initializers and constructor code */
   mCurrentState = sbIDevice::STATE_IDLE;
   mCurrentSubState = sbIDevice::STATE_IDLE;
-  mElapsedTime = 0;
-  mRemainingTime = -1; // Default to unknown
+  mTimestamp = 0;
   mCurrentProgress = -1;
 }
 
@@ -62,7 +61,12 @@ sbDeviceStatus::GetCurrentState(PRUint32 *aCurrentState)
 NS_IMETHODIMP
 sbDeviceStatus::SetCurrentState(PRUint32 aCurrentState)
 {
-  mCurrentState = aCurrentState;
+  if (aCurrentState != mCurrentState)
+  {
+    mTimestamp = PR_IntervalNow();
+    mCurrentState = aCurrentState;
+  }
+
   // If we're idle we want to set the current index to zero so the JS code
   // doesn't erroneously display counts from the previous batch
   if (aCurrentState == sbIDevice::STATE_IDLE) {
@@ -208,33 +212,11 @@ sbDeviceStatus::SetMediaList(sbIMediaList * aMediaList)
   return NS_OK;
 }
 
-/* attribute unsigned long elapsedTime; */
-NS_IMETHODIMP
-sbDeviceStatus::GetElapsedTime(PRUint32 *aElapsedTime)
+/* readonly attribute PRUint32 elapsedTime; */
+NS_IMETHODIMP sbDeviceStatus::GetElapsedTime(PRUint32 *aElapsedTime)
 {
   NS_ENSURE_ARG_POINTER(aElapsedTime);
-  *aElapsedTime = mElapsedTime;
-  return NS_OK;
-}
-NS_IMETHODIMP
-sbDeviceStatus::SetElapsedTime(PRUint32 aElapsedTime)
-{
-  mElapsedTime = aElapsedTime;
-  return NS_OK;
-}
-
-/* attribute unsigned long remainingTime; */
-NS_IMETHODIMP
-sbDeviceStatus::GetRemainingTime(PRUint32 *aRemainingTime)
-{
-  NS_ENSURE_ARG_POINTER(aRemainingTime);
-  *aRemainingTime = mRemainingTime;
-  return NS_OK;
-}
-NS_IMETHODIMP
-sbDeviceStatus::SetRemainingTime(PRUint32 aRemainingTime)
-{
-  mRemainingTime = aRemainingTime;
+  *aElapsedTime = PR_IntervalToMilliseconds(PR_IntervalNow() - mTimestamp);
   return NS_OK;
 }
 
@@ -242,6 +224,7 @@ NS_IMETHODIMP sbDeviceStatus::Init(const nsAString& aDeviceID)
 {
   nsresult rv;
   mDeviceID.Assign(aDeviceID);
+  mTimestamp = PR_IntervalNow();
   
   NS_NAMED_LITERAL_STRING(STATE, "status.state");
   NS_NAMED_LITERAL_STRING(OPERATION, "status.operation");

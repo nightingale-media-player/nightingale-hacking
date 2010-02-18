@@ -490,6 +490,7 @@ var DPW = {
     var substate = deviceStatus.currentSubState;
     var curItemIndex = this._curItemIndex.intValue;
     var totalItems = this._totalItems.intValue;
+    var duration = deviceStatus.elapsedTime;
 
     // Get the operation info.
     var operationInfo = this._getOperationInfo(operation);
@@ -519,8 +520,6 @@ var DPW = {
       }
 
       progress += (this._itemProgress.intValue / 100) / totalItems;
-
-      var duration = now - this._startTimestamp;
       if (progress > 0)
       {
         var eta = (duration / progress) - duration;
