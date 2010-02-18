@@ -449,14 +449,11 @@ Function .onInit
       ; want the uninstaller to be able to run.
       ${If} $CheckOSVersion == ${TRUE}
          ${If} ${AtLeastWinXP}
+         ${AndIf} ${AtMostWin7}
             ${If} ${IsWinXP}
                ${Unless} ${AtLeastServicePack} 2
                   Goto confirmUnsupportedWinVersion
                ${EndUnless}
-            ${Else}
-               ${If} ${AtLeastWin7}
-                  Goto confirmUnsupportedWinVersion
-               ${EndIf}
             ${EndIf}
          ${Else}
             Goto confirmUnsupportedWinVersion
