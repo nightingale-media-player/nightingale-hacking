@@ -723,7 +723,11 @@ treechildren::-moz-tree-twisty(open) {
   background-image:url('chrome://songbird/skin/base-elements/bg-button-highlighted.png');
 }
 */
+searchbar[empty="true"] > .searchbar-textbox > .search-go-container > .search-go-button {
+  visibility: collapse;
+}
 searchbar:not([empty="true"]) > .searchbar-textbox > .search-go-container > .search-go-button {
+  visibility: visible;
   list-style-image: url("chrome://songbird/skin/nav-bar/button-clear-search.png");
 }
 
