@@ -103,7 +103,6 @@
 #define SB_YEAR         SB_PROPERTY_YEAR
 #define SB_BITRATE      SB_PROPERTY_BITRATE
 #define SB_RATING       SB_PROPERTY_RATING
-#define SB_DESCRIPTION  "description"
 #define SB_COMMENT      SB_PROPERTY_COMMENT
 #define SB_LENGTH       SB_PROPERTY_DURATION
 #define SB_ALBUMARTIST  SB_PROPERTY_ALBUMARTISTNAME
@@ -124,8 +123,7 @@
 #define WMP_YEAR        "WM/Year"
 #define WMP_BITRATE     "Bitrate"
 #define WMP_RATING      "Rating"
-#define WMP_DESCRIPTION "Description"
-#define WMP_COMMENT     "Comment"
+#define WMP_COMMENT     "Description"
 #define WMP_LENGTH      "Duration"
 #define WMP_ALBUMARTIST "WM/AlbumArtist"
 #define WMP_PROTECTED   "Is_Protected"
