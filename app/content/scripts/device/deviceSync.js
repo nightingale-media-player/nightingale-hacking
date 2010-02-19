@@ -1107,8 +1107,8 @@ var DeviceSyncWidget = {
 
     collapse(manualMessage, !this.syncPrefsMgmtTypeIsManual());
     disable(this._widget, this._isBusy || this.syncPrefsMgmtTypeIsManual());
-    if (this.syncPrefsMgmtTypeIsAll())
-      disable(syncPlaylistTree, true);
+    disable(syncPlaylistTree,
+            this.syncPrefsMgmtTypeIsAll() || this.syncPrefsMgmtTypeIsManual());
     selectRadio(this.syncPrefsMgmtTypeIsAll() ? "content_auto_sync_all_radio"
                                               : "content_auto_sync_selected_radio");
 
