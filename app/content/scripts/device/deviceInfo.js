@@ -622,6 +622,8 @@ var DIW = {
 
   _hideLabels: function DIW__hideLabels() {
     if (this._widget.getAttribute("hidelabels")) {
+      this._getElement("device_specs_label_column").hidden = true;
+
       // Hide the labels
       var gridRows = this._getElement("device_spec_rows");
 

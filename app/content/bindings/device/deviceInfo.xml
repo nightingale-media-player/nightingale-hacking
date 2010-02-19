@@ -124,7 +124,7 @@
             <!-- Grid columns. -->
             <xul:columns>
               <xul:column sbid="device_specs_label_column"/>
-              <xul:column sbid="device_specs_value_column"/>
+              <xul:column sbid="device_specs_value_column" flex="1"/>
             </xul:columns>
 
             <!-- Grid rows. -->
@@ -135,6 +135,7 @@
                            class="device-specs-grid-label"
                            value="&device.info.product.label;"/>
                 <xul:label sbid="product_capacity_value_label"
+                           crop="end"
                            class="device-specs-grid-label"/>
               </xul:row>
 
