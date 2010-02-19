@@ -6011,7 +6011,7 @@ sbBaseDevice::LogDeviceFoldersEnum(const unsigned int& aKey,
     LOG(("  %s: %s\n", contentTypeName, NS_ConvertUTF16toUTF8(*aData).get()));
 #endif
 
-  return PLDHashOperator::PL_DHASH_NEXT;
+  return PL_DHASH_NEXT;
 }
 
 
