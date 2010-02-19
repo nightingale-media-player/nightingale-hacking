@@ -129,13 +129,11 @@ private:
   //
   // mPrefService               Preference service to get prefs.
   // mAlbumArtService           Album art service.
-  // mMetadataManager           Metadata manager.
   // mAlbumArtSourceList        List of album art sources.
   //
 
   nsCOMPtr<nsIPrefBranch>       mPrefService;
   nsCOMPtr<sbIAlbumArtService>  mAlbumArtService;
-  nsCOMPtr<sbIMetadataManager>  mMetadataManager;
   nsCOMPtr<nsIArray>            mAlbumArtSourceList;
 
 
@@ -144,9 +142,13 @@ private:
   //
 
   nsresult GetMetadataHandler(nsIURI*               aContentSrcURI,
+                              nsIArray*             aSourceList,
+                              sbIMetadataManager*  aManager,
                               sbIMetadataHandler**  aMetadataHandler);
   
   nsresult GetImageForItem(sbIMediaItem*            aMediaItem,
+                           nsIArray*                aSourceList,
+                           sbIMetadataManager*      aManager,
                            sbIAlbumArtListener*     aListener);
 };
 

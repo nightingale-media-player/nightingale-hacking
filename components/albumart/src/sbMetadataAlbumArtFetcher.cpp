@@ -124,12 +124,23 @@ sbMetadataAlbumArtFetcher::FetchAlbumArtForAlbum(nsIArray*            aMediaItem
     return NS_ERROR_NOT_AVAILABLE;
   }
 
+  // Get the metadata manager.
+  nsCOMPtr<sbIMetadataManager> metadataManager =
+    do_GetService("@songbirdnest.com/Songbird/MetadataManager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Stash the album art source list into temporary variable in case
+  // it's changed from underneath us.
+  // (attempt to fix bug 19617/20161)
+  nsCOMPtr<nsIArray> sourceList = mAlbumArtSourceList;
+
   while (NS_SUCCEEDED(listEnum->HasMoreElements(&hasMore)) && hasMore) {
     nsCOMPtr<nsISupports> next;
     if (NS_SUCCEEDED(listEnum->GetNext(getter_AddRefs(next))) && next) {
       nsCOMPtr<sbIMediaItem> mediaItem(do_QueryInterface(next, &rv));
       if (NS_SUCCEEDED(rv) && mediaItem) {
-        rv = GetImageForItem(mediaItem, aListener);
+        rv = GetImageForItem(mediaItem, sourceList,
+                             metadataManager, aListener);
         if (NS_FAILED(rv) && aListener) {
           aListener->OnTrackResult(nsnull, mediaItem);
         }
@@ -368,11 +379,6 @@ sbMetadataAlbumArtFetcher::Initialize()
   mAlbumArtService = do_GetService(SB_ALBUMARTSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the metadata manager.
-  mMetadataManager =
-    do_GetService("@songbirdnest.com/Songbird/MetadataManager;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Get the preference branch.
   mPrefService = do_GetService("@mozilla.org/preferences-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -402,29 +408,26 @@ sbMetadataAlbumArtFetcher::Initialize()
 nsresult
 sbMetadataAlbumArtFetcher::GetMetadataHandler
                              (nsIURI*              aContentSrcURI,
+                              nsIArray*            aSourceList,
+                              sbIMetadataManager*  aManager,
                               sbIMetadataHandler** aMetadataHandler)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
   // Validate arguments.
   NS_ASSERTION(aContentSrcURI, "aContentSrcURI is null");
   NS_ASSERTION(aMetadataHandler, "aMetadataHandler is null");
-  NS_ENSURE_STATE(mMetadataManager);
 
   // Function variables.
   nsCOMPtr<sbIMetadataHandler> metadataHandler;
   nsresult rv;
 
-  // Stash the album art source list into a temporary variable in case it's
-  // changed from underneath us. (attempt to fix bug 19617)
-  nsCOMPtr<nsIArray> albumArtSourceList = mAlbumArtSourceList;
-
   // Try getting a metadata handler from the album art source list.
-  if (albumArtSourceList) {
+  if (aSourceList) {
     PRUint32 albumArtSourceListCount;
-    rv = albumArtSourceList->GetLength(&albumArtSourceListCount);
+    rv = aSourceList->GetLength(&albumArtSourceListCount);
     NS_ENSURE_SUCCESS(rv, rv);
     for (PRUint32 i = 0; i < albumArtSourceListCount; i++) {
-      metadataHandler = do_QueryElementAt(albumArtSourceList, i, &rv);
+      metadataHandler = do_QueryElementAt(aSourceList, i, &rv);
       if (NS_SUCCEEDED(rv))
         break;
     }
@@ -435,7 +438,8 @@ sbMetadataAlbumArtFetcher::GetMetadataHandler
     nsCAutoString contentSrcURISpec;
     rv = aContentSrcURI->GetSpec(contentSrcURISpec);
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = mMetadataManager->GetHandlerForMediaURL
+    NS_ENSURE_TRUE(aManager, NS_ERROR_NOT_INITIALIZED);
+    rv = aManager->GetHandlerForMediaURL
                              (NS_ConvertUTF8toUTF16(contentSrcURISpec),
                               getter_AddRefs(metadataHandler));
     if (NS_FAILED(rv))
@@ -454,6 +458,8 @@ sbMetadataAlbumArtFetcher::GetMetadataHandler
 
 nsresult
 sbMetadataAlbumArtFetcher::GetImageForItem(sbIMediaItem*        aMediaItem,
+                                           nsIArray*            aSourceList,
+                                           sbIMetadataManager*  aManager,
                                            sbIAlbumArtListener* aListener)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
@@ -474,7 +480,8 @@ sbMetadataAlbumArtFetcher::GetImageForItem(sbIMediaItem*        aMediaItem,
   // Get the metadata handler for the media item content.  Do nothing more if
   // none available.
   nsCOMPtr<sbIMetadataHandler> metadataHandler;
-  rv = GetMetadataHandler(contentSrcURI, getter_AddRefs(metadataHandler));
+  rv = GetMetadataHandler(contentSrcURI, aSourceList, aManager,
+                          getter_AddRefs(metadataHandler));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Try reading the front cover metadata image.
