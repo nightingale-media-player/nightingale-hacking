@@ -448,24 +448,24 @@ sbHotkeyService.prototype =
         action:      "playback.playpause" },
 
       // Regular keys
-      { key:         "meta-$38",
-        keyReadable: metaKey + "-up",
+      { key:         "meta-$190",
+        keyReadable: metaKey + "- .",
         action:      "playback.volumeup" },
 
-      { key:         "meta-$40",
-        keyReadable: metaKey + "-down",
+      { key:         "meta-$188",
+        keyReadable: metaKey + "- ,",
         action:      "playback.volumedown" },
 
-      { key:         "meta-$39",
-        keyReadable: metaKey + "-right",
+      { key:         "meta-$221",
+        keyReadable: metaKey + "- ]",
         action:      "playback.nexttrack" },
 
-      { key:         "meta-$37",
-        keyReadable: metaKey + "-left",
+      { key:         "meta-$219",
+        keyReadable: metaKey + "- [",
         action:      "playback.previoustrack" },
 
-      { key:         "meta-$96",
-        keyReadable: metaKey + "-numpad0",
+      { key:         "meta-$220",
+        keyReadable: metaKey + "- \\",
         action:      "playback.playpause" },
 
       { key:         "$178",
