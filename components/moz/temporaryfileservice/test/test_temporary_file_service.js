@@ -84,7 +84,7 @@ function runTest() {
   assertTrue(tmpFile1, "Could not create temporary file.");
   var fileURL = fileProtocolHandler.newFileURI(tmpFile1);
   fileURL = fileURL.QueryInterface(Ci.nsIURL);
-  assertEqual(fileURL.fileBaseName, fileBaseName);
+  assertEqual(fileURL.fileBaseName.search(fileBaseName), 0);
 
   // Create and validate a temporary file with a specified extension.
   tmpFile1 = temporaryFileService.createFile(Ci.nsIFile.NORMAL_FILE_TYPE,
