@@ -196,21 +196,27 @@ sbDeviceEnsureSpaceForWrite::GetWriteMode(WriteMode & aWriteMode) {
 
   // if not enough free space is available, ask user what to do
   if (mFreeSpace < mTotalLength) {
-    PRBool abort;
-    rv = sbDeviceUtils::QueryUserSpaceExceeded(mDevice,
-                                               mOwnerLibrary,
-                                               mTotalLength,
-                                               mFreeSpace,
-                                               &abort);
-    NS_ENSURE_SUCCESS(rv, rv);
+    PRBool abort = PR_FALSE;
+    // avoid asking user multiple times in one syncing/copying operation
+    if (!mDevice->GetEnsureSpaceChecked()) {
+      rv = sbDeviceUtils::QueryUserSpaceExceeded(mDevice,
+                                                 mOwnerLibrary,
+                                                 mTotalLength,
+                                                 mFreeSpace,
+                                                 &abort);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
     if (abort) {
       aWriteMode = ABORT;
     }
-    else if (!isManual) {
-      aWriteMode = SHUFFLE;
-    }
-    else { 
-      aWriteMode = MANUAL;
+    else {
+      if (!isManual) {
+        aWriteMode = SHUFFLE;
+      }
+      else { 
+        aWriteMode = MANUAL;
+      }
+      mDevice->SetEnsureSpaceChecked(true);
     }
   }
   else { 

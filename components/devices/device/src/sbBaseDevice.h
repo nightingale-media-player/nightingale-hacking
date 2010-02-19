@@ -549,6 +549,20 @@ public:
     return mAbortCurrentRequest;
   }
 
+  /**
+   * Returns true if the space has been checked.
+   */
+  bool GetEnsureSpaceChecked() const {
+    return mEnsureSpaceChecked;
+  }
+
+  /**
+   * Set the checked flag.
+   */
+  void SetEnsureSpaceChecked(bool aChecked) {
+    mEnsureSpaceChecked = aChecked;
+  }
+
   NS_SCRIPTABLE NS_IMETHOD SetWarningDialogEnabled(const nsAString & aWarning, PRBool aEnabled);
   NS_SCRIPTABLE NS_IMETHOD GetWarningDialogEnabled(const nsAString & aWarning, PRBool *_retval);
   NS_SCRIPTABLE NS_IMETHOD ResetWarningDialogs(void);
@@ -665,6 +679,8 @@ protected:
   PRUint32 mSyncType; // syncing type to pass to the UI
   // Iterator points to the first video request
   TransferRequestQueue::iterator mFirstVideoIterator;
+
+  bool mEnsureSpaceChecked;
 
   //   mConnected               True if device is connected.
   //   mConnectLock             Connect lock.

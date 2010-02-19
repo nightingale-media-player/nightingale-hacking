@@ -1850,6 +1850,13 @@ GetOrCreateAudioSmartMediaList(sbIMediaList ** aAudioMediaList)
                                                     &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    nsCOMPtr<sbILocalDatabaseSmartMediaList> audioList =
+      do_QueryInterface(list, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = audioList->Rebuild();
+    NS_ENSURE_SUCCESS(rv, rv);
+
     return CallQueryInterface(list, aAudioMediaList);
   }
   nsCOMPtr<nsIThread> target;

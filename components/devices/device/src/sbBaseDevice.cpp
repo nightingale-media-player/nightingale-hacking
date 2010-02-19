@@ -373,6 +373,7 @@ sbBaseDevice::sbBaseDevice() :
   mReqStopProcessing(0),
   mVideoInserted(false),
   mSyncType(0),
+  mEnsureSpaceChecked(false),
   mIsHandlingRequests(PR_FALSE)
 {
 #ifdef PR_LOGGING
@@ -1946,8 +1947,7 @@ nsresult sbBaseDevice::CheckAccess(sbIDeviceLibrary* aDevLib)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the prompt title.
-  nsAutoString title = SBLocalizedString
-                         ("device.dialog.read_only_device.title");
+  SBLocalizedString title("device.dialog.read_only_device.title");
 
   // Get the prompt message.
   nsAutoString       msg;
@@ -1976,10 +1976,8 @@ nsresult sbBaseDevice::CheckAccess(sbIDeviceLibrary* aDevLib)
   }
 
   // Get the button labels.
-  nsAutoString buttonLabel0 =
-    SBLocalizedString("device.dialog.read_only_device.change");
-  nsAutoString buttonLabel1 =
-    SBLocalizedString("device.dialog.read_only_device.dont_change");
+  SBLocalizedString buttonLabel0("device.dialog.read_only_device.change");
+  SBLocalizedString buttonLabel1("device.dialog.read_only_device.dont_change");
 
   // Prompt user.
   PRInt32 buttonPressed;
@@ -4026,7 +4024,7 @@ sbBaseDevice::EnsureSpaceForSync(TransferRequest* aRequest,
   // user does not abort the operation, create and sync to a sync media list
   // that will fit in the available space.  Otherwise, set the management type
   // to manual and return with abort.
-  if (availableSpace < totalSyncSize) {
+  if (availableSpace < totalSyncSize && !mEnsureSpaceChecked) {
     // Ask the user what action to take.
     PRBool abort;
     rv = sbDeviceUtils::QueryUserSpaceExceeded(this,
@@ -4042,6 +4040,10 @@ sbBaseDevice::EnsureSpaceForSync(TransferRequest* aRequest,
       *aAbort = PR_TRUE;
       return NS_OK;
     }
+
+    // Save the flag so that we won't ask user multiple times in one
+    // syncing operation.
+    mEnsureSpaceChecked = true;
 
     // Create a sync media list and sync to it.
     rv = SyncCreateAndSyncToList(srcLib,
@@ -4079,6 +4081,10 @@ sbBaseDevice::SyncCreateAndSyncToList
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   for (PRUint32 i = 0; i < sbIDeviceLibrary::MEDIATYPE_COUNT; ++i) {
+    // Skip image type since we don't support it right now.
+    if (i = sbIDeviceLibrary::MEDIATYPE_IMAGE)
+      continue;
+
     rv = aDstLib->SetSyncPlaylistListByType(i, emptySyncPlaylistList);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -4178,31 +4184,63 @@ sbBaseDevice::SyncCreateSyncMediaList(sbILibrary*    aSrcLib,
   // Function variables.
   nsresult rv;
 
-  // Create a new source sync media list.
-  nsCOMPtr<sbIMediaList> syncMediaList;
-  rv = aSrcLib->CreateMediaList(NS_LITERAL_STRING("simple"),
-                                nsnull,
-                                getter_AddRefs(syncMediaList));
+  // Produce the sync media list name.
+  SBLocalizedString listName("device.error.not_enough_freespace.random_playlist_name");
+
+  nsCOMPtr<sbIMutablePropertyArray> propertyArray =
+      do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+  rv = propertyArray->AppendProperty(
+                        NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
+                        listName);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = propertyArray->AppendProperty(
+                        NS_LITERAL_STRING(SB_PROPERTY_LISTTYPE),
+                        NS_LITERAL_STRING("1"));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = propertyArray->AppendProperty(
+                        NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                        NS_LITERAL_STRING("1"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIArray> randomMediaList;
+  rv = aSrcLib->GetItemsByProperties(propertyArray,
+                                     getter_AddRefs(randomMediaList));
+  if (rv != NS_ERROR_NOT_AVAILABLE) {
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  PRUint32 length;
+  rv = randomMediaList->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaList> syncMediaList;
+  if (length > 0) {
+   rv = randomMediaList->QueryElementAt(0,
+                                         NS_GET_IID(sbIMediaList),
+                                         getter_AddRefs(syncMediaList));
+    NS_ENSURE_SUCCESS(rv, rv);
+    // Clear the old items in the list
+    rv = syncMediaList->Clear();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    // Create a new source sync media list.
+    rv = aSrcLib->CreateMediaList(NS_LITERAL_STRING("simple"),
+                                  nsnull,
+                                  getter_AddRefs(syncMediaList));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Set the sync media list name.
+    rv = syncMediaList->SetName(listName);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // Add the sync item list to the sync media list.
   nsCOMPtr<nsISimpleEnumerator> syncItemListEnum;
   rv = aSyncItemList->Enumerate(getter_AddRefs(syncItemListEnum));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = syncMediaList->AddSome(syncItemListEnum);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the device name.
-  nsAutoString deviceName;
-  rv = GetName(deviceName);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Produce the sync media list name.
-  nsString listName = SBLocalizedString
-                        ("device.error.not_enough_freespace.playlist_name");
-
-  // Set the sync media list name.
-  rv = syncMediaList->SetName(listName);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Return results.
