@@ -142,7 +142,7 @@
 !define DetailPrintQuitAgentWait "Requesting ${BrandShortName} agent shutdown..."
 !define DetailPrintQuitAgent "Requesting ${BrandShortName} agent shutdown..."
 
-!define InstallUnsupportedWinVersion "${BrandShortName} is unsupported on this version of Windows.$\n$\nYou may continue the installation, but some functionality may be degraded or unavailable." 
+!define InstallUnsupportedWinVersion "${BrandShortName} is currently untested on this version of Windows.$\n$\nYou may continue the installation, but some functionality may be unavailable." 
 
 !define TakeSurveyMessage "We're sorry to see that you uninstalled ${BrandShortName}.$\n$\nWill you consider helping us make ${BrandShortName} better by taking a quick anonymous survey to help us improve the product?$\nIt shouldn't take more than 30 seconds to complete."
 
