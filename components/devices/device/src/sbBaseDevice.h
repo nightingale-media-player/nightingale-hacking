@@ -67,7 +67,7 @@ class sbDeviceBaseLibraryCopyListener;
 class sbDeviceTranscoding;
 class sbDeviceImages;
 class sbBaseDeviceMediaListListener;
-class sbIDeviceCapabilitiesRegistrar;
+class sbIDeviceInfoRegistrar;
 class sbIDeviceLibrary;
 class sbITranscodeProfile;
 class sbITranscodeAlbumArt;
@@ -667,8 +667,8 @@ protected:
   nsRefPtr<sbBaseDeviceLibraryListener> mLibraryListener;
   nsRefPtr<sbDeviceBaseLibraryCopyListener> mLibraryCopyListener;
   nsDataHashtableMT<nsISupportsHashKey, nsRefPtr<sbBaseDeviceMediaListListener> > mMediaListListeners;
-  nsCOMPtr<sbIDeviceCapabilitiesRegistrar> mCapabilitiesRegistrar;
-  PRUint32 mCapabilitiesRegistrarType;
+  nsCOMPtr<sbIDeviceInfoRegistrar> mInfoRegistrar;
+  PRUint32 mInfoRegistrarType;
   nsCOMPtr<sbIDeviceCapabilities> mCapabilities;
   PRLock*  mPreferenceLock;
   PRUint32 mMusicLimitPercent;
@@ -1371,16 +1371,19 @@ protected:
 
   nsresult SetupDevice();
   /**
+   * Calls the device info registrars to register the device info.
+   */
+  nsresult RegisterDeviceInfo();
+  /**
    * Calls any registered device capabilities augmenter.
    * \param aCapabilities Capabilities object to augment.
    */
   nsresult RegisterDeviceCapabilities(sbIDeviceCapabilities * aCapabilities);
 
   /**
-   * Process the capabilities registrars to find out which ones are interested
-   * in us.
+   * Process the info registrars to find out which ones are interested in us.
    */
-  nsresult ProcessCapabilitiesRegistrars();
+  nsresult ProcessInfoRegistrars();
 
   /**
     * Returns a list of transcode profiles that the device supports
@@ -1501,6 +1504,16 @@ protected:
   nsresult
   IgnoreWatchFolderPath(nsIURI * aURI,
                         sbAutoIgnoreWatchFolderPath ** aIgnorePath);
+  /**
+   * Log the list of device folders.
+   */
+  void LogDeviceFolders();
+  /**
+   * Enumerator function for logging the list of device folders.
+   */
+  static PLDHashOperator LogDeviceFoldersEnum(const unsigned int& aKey,
+                                              nsString*           aData,
+                                              void*               aUserArg);
   /**
    * Determines if a request already exists that is similar to one being
    * submitted

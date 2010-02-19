@@ -66,7 +66,7 @@
 
 #include <sbIDeviceContent.h>
 #include <sbIDeviceCapabilities.h>
-#include <sbIDeviceCapabilitiesRegistrar.h>
+#include <sbIDeviceInfoRegistrar.h>
 #include <sbIDeviceEvent.h>
 #include <sbIDeviceHelper.h>
 #include <sbIDeviceManager.h>
@@ -142,6 +142,15 @@ PRLogModuleInfo* gBaseDeviceLog = nsnull;
 #define PREF_ORGANIZE_FILE_FORMAT "media_management.library.format.file"
 
 #define BATCH_TIMEOUT 200 /* number of milliseconds to wait for batching */
+
+// List of supported device content folders.
+static const PRUint32 sbBaseDeviceSupportedFolderContentTypeList[] =
+{
+  sbIDeviceCapabilities::CONTENT_AUDIO,
+  sbIDeviceCapabilities::CONTENT_VIDEO,
+  sbIDeviceCapabilities::CONTENT_PLAYLIST,
+  sbIDeviceCapabilities::CONTENT_IMAGE
+};
 
 NS_IMPL_THREADSAFE_ISUPPORTS0(sbBaseDevice::TransferRequest)
 
@@ -363,7 +372,7 @@ sbBaseDevice::sbBaseDevice() :
   mIgnoreMediaListCount(0),
   mPerTrackOverhead(DEFAULT_PER_TRACK_OVERHEAD),
   mSyncState(sbBaseDevice::SYNC_STATE_NORMAL),
-  mCapabilitiesRegistrarType(sbIDeviceCapabilitiesRegistrar::NONE),
+  mInfoRegistrarType(sbIDeviceInfoRegistrar::NONE),
   mPreferenceLock(nsnull),
   mMusicLimitPercent(100),
   mDeviceTranscoding(nsnull),
@@ -3161,6 +3170,7 @@ sbBaseDevice::ApplyDeviceSettingsDeviceInfo
   // Function variables.
   nsAutoPtr<nsString> folderURL;
   PRBool              needMediaFolderUpdate = PR_FALSE;
+  PRBool              success;
   nsresult            rv;
 
   // Get the device info from the device settings document.  Do nothing if no
@@ -3175,32 +3185,35 @@ sbBaseDevice::ApplyDeviceSettingsDeviceInfo
   if (!present)
     return NS_OK;
 
-  // Get the device music folder URL.
-  folderURL = new nsString();
-  NS_ENSURE_TRUE(folderURL, NS_ERROR_OUT_OF_MEMORY);
-  rv = deviceXMLInfo->GetDeviceFolder(NS_LITERAL_STRING("music"), *folderURL);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (!folderURL->IsEmpty()) {
-    mMediaFolderURLTable.Put(sbIDeviceCapabilities::CONTENT_AUDIO, folderURL);
-    folderURL.forget();
-    needMediaFolderUpdate = PR_TRUE;
-  }
+  // Get device folders.
+  for (PRUint32 i = 0;
+       i < NS_ARRAY_LENGTH(sbBaseDeviceSupportedFolderContentTypeList);
+       ++i) {
+    // Get the next folder content type.
+    PRUint32 folderContentType = sbBaseDeviceSupportedFolderContentTypeList[i];
 
-  // Get the device video folder URL.
-  folderURL = new nsString();
-  NS_ENSURE_TRUE(folderURL, NS_ERROR_OUT_OF_MEMORY);
-  rv = deviceXMLInfo->GetDeviceFolder(NS_LITERAL_STRING("video"), *folderURL);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (!folderURL->IsEmpty()) {
-    mMediaFolderURLTable.Put(sbIDeviceCapabilities::CONTENT_VIDEO, folderURL);
-    folderURL.forget();
-    needMediaFolderUpdate = PR_TRUE;
+    // Allocate a folder URL.
+    nsAutoPtr<nsString> folderURL(new nsString());
+    NS_ENSURE_TRUE(folderURL, NS_ERROR_OUT_OF_MEMORY);
+
+    // Get the device folder URL and add it to the media folder URL table.
+    rv = deviceXMLInfo->GetDeviceFolder(folderContentType, *folderURL);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!folderURL->IsEmpty()) {
+      success = mMediaFolderURLTable.Put(folderContentType, folderURL);
+      NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+      folderURL.forget();
+      needMediaFolderUpdate = PR_TRUE;
+    }
   }
 
   // Update media folders if needed.  Ignore errors if media folders fail to
   // update.
   if (needMediaFolderUpdate)
     UpdateMediaFolders();
+
+  // Log the device folders.
+  LogDeviceFolders();
 
   return NS_OK;
 }
@@ -5368,11 +5381,11 @@ nsresult sbBaseDevice::SetupDevice()
 }
 
 nsresult
-sbBaseDevice::ProcessCapabilitiesRegistrars()
+sbBaseDevice::ProcessInfoRegistrars()
 {
   TRACE(("%s", __FUNCTION__));
   // If we haven't built the registrars then do so
-  if (mCapabilitiesRegistrarType != sbIDeviceCapabilitiesRegistrar::NONE) {
+  if (mInfoRegistrarType != sbIDeviceInfoRegistrar::NONE) {
     return NS_OK;
   }
 
@@ -5382,7 +5395,7 @@ sbBaseDevice::ProcessCapabilitiesRegistrars()
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsISimpleEnumerator> enumerator;
-  rv = catMgr->EnumerateCategory(SB_DEVICE_CAPABILITIES_REGISTRAR_CATEGORY,
+  rv = catMgr->EnumerateCategory(SB_DEVICE_INFO_REGISTRAR_CATEGORY,
                                  getter_AddRefs(enumerator));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -5404,32 +5417,71 @@ sbBaseDevice::ProcessCapabilitiesRegistrars()
     NS_ENSURE_SUCCESS(rv, rv);
 
     char * contractId;
-    rv = catMgr->GetCategoryEntry(SB_DEVICE_CAPABILITIES_REGISTRAR_CATEGORY,
+    rv = catMgr->GetCategoryEntry(SB_DEVICE_INFO_REGISTRAR_CATEGORY,
                                   entryName.get(),
                                   &contractId);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<sbIDeviceCapabilitiesRegistrar> capabilitiesRegistrar =
+    nsCOMPtr<sbIDeviceInfoRegistrar> infoRegistrar =
       do_CreateInstance(contractId, &rv);
     NS_Free(contractId);
     NS_ENSURE_SUCCESS(rv, rv);
 
     PRBool interested;
-    rv = capabilitiesRegistrar->InterestedInDevice(this, &interested);
+    rv = infoRegistrar->InterestedInDevice(this, &interested);
     NS_ENSURE_SUCCESS(rv, rv);
     if (interested) {
       PRUint32 type;
-      rv = capabilitiesRegistrar->GetType(&type);
+      rv = infoRegistrar->GetType(&type);
       NS_ENSURE_SUCCESS(rv, rv);
-      if (type >= mCapabilitiesRegistrarType) {
-        mCapabilitiesRegistrar = capabilitiesRegistrar;
-        mCapabilitiesRegistrarType = type;
+      if (type >= mInfoRegistrarType) {
+        mInfoRegistrar = infoRegistrar;
+        mInfoRegistrarType = type;
       }
     }
 
     rv = enumerator->HasMoreElements(&hasMore);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::RegisterDeviceInfo()
+{
+  TRACE(("%s", __FUNCTION__));
+
+  PRBool   success;
+  nsresult rv;
+
+  // Process the device info registrars.
+  rv = ProcessInfoRegistrars();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Register device folders.
+  for (PRUint32 i = 0;
+       i < NS_ARRAY_LENGTH(sbBaseDeviceSupportedFolderContentTypeList);
+       ++i) {
+    // Get the next folder content type.
+    PRUint32 folderContentType = sbBaseDeviceSupportedFolderContentTypeList[i];
+
+    // Allocate a folder URL.
+    nsAutoPtr<nsString> folderURL(new nsString());
+    NS_ENSURE_TRUE(folderURL, NS_ERROR_OUT_OF_MEMORY);
+
+    // Get the device folder URL and add it to the media folder URL table.
+    rv = mInfoRegistrar->GetDeviceFolder(this, folderContentType, *folderURL);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!folderURL->IsEmpty()) {
+      success = mMediaFolderURLTable.Put(folderContentType, folderURL);
+      NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+      folderURL.forget();
+    }
+  }
+
+  // Log the device folders.
+  LogDeviceFolders();
+
   return NS_OK;
 }
 
@@ -5445,11 +5497,11 @@ sbBaseDevice::RegisterDeviceCapabilities(sbIDeviceCapabilities * aCapabilities)
 
   nsresult rv;
 
-  rv = ProcessCapabilitiesRegistrars();
+  rv = ProcessInfoRegistrars();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (mCapabilitiesRegistrar) {
-    rv = mCapabilitiesRegistrar->AddCapabilities(this, aCapabilities);
+  if (mInfoRegistrar) {
+    rv = mInfoRegistrar->AddCapabilities(this, aCapabilities);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -5916,6 +5968,52 @@ sbBaseDevice::IgnoreWatchFolderPath(nsIURI * aURI,
 
   return NS_OK;
 }
+
+void
+sbBaseDevice::LogDeviceFolders()
+{
+#ifdef PR_LOGGING
+  LOG(("DEVICE FOLDERS:\n========================================\n"));
+  mMediaFolderURLTable.EnumerateRead(LogDeviceFoldersEnum, nsnull);
+#endif
+}
+
+/* static */ PLDHashOperator
+sbBaseDevice::LogDeviceFoldersEnum(const unsigned int& aKey,
+                                   nsString*           aData,
+                                   void*               aUserArg)
+{
+#ifdef PR_LOGGING
+  static const char* contentTypeNameList[] = {
+    "CONTENT_UNKNOWN",
+    "CONTENT_FILE",
+    "CONTENT_FOLDER",
+    "CONTENT_AUDIO",
+    "CONTENT_IMAGE",
+    "CONTENT_VIDEO",
+    "CONTENT_PLAYLIST",
+    "CONTENT_ALBUM"
+  };
+
+  // Get the content type name.
+  const char* contentTypeName;
+  char        contentTypeString[32];
+  if (aKey < NS_ARRAY_LENGTH(contentTypeNameList)) {
+    contentTypeName = contentTypeNameList[aKey];
+  }
+  else {
+    sprintf(contentTypeString, "0x%08x", aKey);
+    contentTypeName = contentTypeString;
+  }
+
+  // Log folder.
+  if (aData)
+    LOG(("  %s: %s\n", contentTypeName, NS_ConvertUTF16toUTF8(*aData).get()));
+#endif
+
+  return PLDHashOperator::PL_DHASH_NEXT;
+}
+
 
 //------------------------------------------------------------------------------
 //

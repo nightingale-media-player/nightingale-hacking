@@ -59,6 +59,7 @@
 #include <nsIPropertyBag2.h>
 #include <nsIScriptSecurityManager.h>
 #include <nsIXMLHttpRequest.h>
+#include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 
 
@@ -249,6 +250,50 @@ sbDeviceXMLInfo::GetDeviceFolder(const nsAString& aFolderType,
       return NS_OK;
     }
   }
+
+  return NS_OK;
+}
+
+
+//-------------------------------------
+//
+// GetDeviceFolder
+//
+
+nsresult
+sbDeviceXMLInfo::GetDeviceFolder(PRUint32   aContentType,
+                                 nsAString& aFolderURL)
+{
+  nsresult rv;
+
+  // Map from content type to device XML info folder element type.
+  static const char* folderContentTypeMap[] = {
+    "",
+    "",
+    "",
+    "music",
+    "photo",
+    "video",
+    "playlist",
+    "album"
+  };
+
+  // Default to no folder.
+  aFolderURL.Truncate();
+
+  // Validate content type.
+  if (aContentType >= NS_ARRAY_LENGTH(folderContentTypeMap))
+    return NS_OK;
+
+  // Get the folder type.
+  nsAutoString folderType;
+  folderType.AssignLiteral(folderContentTypeMap[aContentType]);
+  if (folderType.IsEmpty())
+    return NS_OK;
+
+  // Get the device folder URL.
+  rv = GetDeviceFolder(folderType, aFolderURL);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

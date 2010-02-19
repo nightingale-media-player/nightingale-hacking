@@ -31,7 +31,7 @@ VPATH = @srcdir@ \
 include $(DEPTH)/build/autodefs.mk
 
 CPP_SRCS = sbBaseDeviceEventTarget.cpp \
-           sbDefaultBaseDeviceCapabilitiesRegistrar.cpp \
+           sbDefaultBaseDeviceInfoRegistrar.cpp \
            sbDeviceBaseModule.cpp \
            sbDeviceContent.cpp \
            sbDeviceCapsCompatibility.cpp \

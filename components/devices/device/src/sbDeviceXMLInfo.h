@@ -133,6 +133,18 @@ public :
                            nsAString&       aFolderURL);
 
   /**
+   * Return in aFolderURL the URL for the device folder of the content type
+   * specified by aContentType.  If no folder of the specified type is present
+   * in the device info, return a void URL.  The returned URL is relative to the
+   * device mount path.
+   *
+   * \param aContentType        Folder content type from sbIDeviceCapabilities.
+   * \param aFolderURL          Returned folder URL.
+   */
+  nsresult GetDeviceFolder(PRUint32   aContentType,
+                           nsAString& aFolderURL);
+
+  /**
    * Construct a Songbird device XML info object to be used for the device
    * specified by aDevice.
    *
