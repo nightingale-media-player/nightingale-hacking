@@ -227,6 +227,7 @@ var DPW = {
   //
   //   _cfg                     Configuration.
   //   _widget                  Device info widget.
+  //   _device                  Device bound to device control widget.
   //   _deviceID                Device ID.
   //   _curItemIndex            Current index in the batch of items to process
   //   _totalItems              Total items in the batch
@@ -256,6 +257,7 @@ var DPW = {
 
   _cfg: DPWCfg,
   _widget: null,
+  _device: null,
   _deviceID: null,
   _curItemIndex: null,
   _totalItems: null,
@@ -359,6 +361,7 @@ var DPW = {
 
     // Clear object fields.
     this._widget = null;
+    this._device = null;
     this._deviceID = null;
     this._operationInfoTable = null;
     this._progressInfoBox = null;
@@ -613,6 +616,7 @@ var DPW = {
 
       case "settings-apply":
         this._dispatchSettingsEvent(this.SYNCSETTINGS_APPLY);
+        this._device.syncLibraries();
         break;
 
       case "settings-cancel":
@@ -665,7 +669,10 @@ var DPW = {
         DPW._device.cacheSyncRequests = false;
         break;
     }
-    DPW._update();
+
+    // Click apply button will trigger sync, which will do the update later.
+    if (aEvent.detail != DPW.SYNCSETTINGS_APPLY)
+      DPW._update();
   },
 
 
