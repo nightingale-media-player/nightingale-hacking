@@ -495,7 +495,7 @@
 <!ENTITY device.info.battery.label          "Battery">
 <!ENTITY device.info.firmware_version.label "Firmware Version">
 
-<!ENTITY device.progress.syncmode           "Sync mode:">
+<!ENTITY device.progress.syncmode.label     "Audio &amp; Video Syncing:">
 <!ENTITY device.progress.sync               "Sync">
 
 <!ENTITY device.capacity.music.label    "Music">

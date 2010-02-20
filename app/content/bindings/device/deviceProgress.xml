@@ -67,7 +67,7 @@
           <!-- Sync mode toggle buttons -->
           <xul:hbox sbid="syncmode_box" class="device-syncmode-box">
 
-            <xul:label value="&device.progress.syncmode;"/>
+            <xul:label value="&device.progress.syncmode.label;"/>
 
             <xul:sb-device-management-toggle sbid="syncmode-toggle"
                                              xbl:inherits="device-id" />
