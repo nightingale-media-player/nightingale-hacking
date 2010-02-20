@@ -567,21 +567,36 @@
           // Initialize file scan query
           this._fileScanQuery = Cc["@songbirdnest.com/Songbird/FileScanQuery;1"]
                                   .createInstance(Ci.sbIFileScanQuery);
+
+          // Determine which file types the device can handle based on the
+          // image capabilities for the device.
+          var deviceCapsUtils =
+            Cc["@songbirdnest.com/Songbird/Device/DeviceCapabilitiesUtils;1"]
+              .getService(Ci.sbIDeviceCapabilitiesUtils);
+          var deviceCaps = this.device.capabilities;
+          var imageFormatTypes = deviceCaps.getSupportedFormats(
+            Ci.sbIDeviceCapabilities.CONTENT_IMAGE, {});
+          for (var i = 0; i < imageFormatTypes.length; i++) {
+            var curImageFormat = deviceCaps.getFormatType(
+              Ci.sbIDeviceCapabilities.CONTENT_IMAGE, imageFormatTypes[i]);
+            // Sanity check
+            if (curImageFormat instanceof Ci.sbIImageFormatType) {
+              var curExt = deviceCapsUtils.mapContentTypeToFileExtension(
+                curImageFormat.imageFormat,
+                Ci.sbIDeviceCapabilities.CONTENT_IMAGE);
+
+              // Add this extension to the file scan.
+              this._fileScanQuery.addFileExtension(curExt);
+
+              // HACK: the above function will only return *one* file extension
+              // for a given mime type. If this mime type is 'jpg',
+              // append 'jpeg'.
+              if (curExt == "jpg") {
+                this._fileScanQuery.addFileExtension("jpeg");
+              }
+            }
+          }
   
-          // Type sniffer currently won't return any image extensions, but we
-          // probably want to use this later instead of hardcoded extensions
-          // (bug 20121)
-          /*
-          let typeSniffer = Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
-                              .createInstance(Ci.sbIMediacoreTypeSniffer);
-          let fileExtensions = typeSniffer.imageFileExtensions;
-          while (fileExtensions.hasMore()
-            this._fileScanQuery.addFileExtension(fileExtensions.getNext());
-          */
-
-          for each (let extension in ["gif", "jpg", "jpeg", "png", "bmp"])
-            this._fileScanQuery.addFileExtension(extension);
-
           this._fileScanQuery.setDirectory(this._syncPrefs.rootFolder.path);
           this._fileScanQuery.setRecurse(true);
           this._fileScanner.submitQuery(this._fileScanQuery);
