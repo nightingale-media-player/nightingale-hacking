@@ -1655,6 +1655,62 @@ sbDeviceUtils::GetDeviceCapsMediaType(sbIMediaItem * aMediaItem)
   return sbIDeviceCapabilities::CONTENT_UNKNOWN;
 };
 
+/* static */ PRBool
+sbDeviceUtils::GetDoesDeviceSupportContent(sbIDevice *aDevice,
+                                           PRUint32 aContentType,
+                                           PRUint32 aFunctionType)
+{
+  NS_ENSURE_TRUE(aDevice, PR_FALSE);
+
+  nsresult rv;
+  nsCOMPtr<sbIDeviceCapabilities> deviceCaps;
+  rv = aDevice->GetCapabilities(getter_AddRefs(deviceCaps));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 *functionTypes;
+  PRUint32 functionTypeCount;
+  rv = deviceCaps->GetSupportedFunctionTypes(&functionTypeCount,
+                                             &functionTypes);
+  NS_ENSURE_SUCCESS(rv, rv);
+  sbAutoNSMemPtr functionTypesPtr(functionTypes);
+
+  PRBool foundFunctionType = PR_FALSE;
+  for (PRUint32 functionIndex = 0;
+       functionIndex < functionTypeCount && !foundFunctionType;
+       ++functionIndex)
+  {
+    if (functionTypes[functionIndex] == aFunctionType) {
+      foundFunctionType = PR_TRUE;
+    }
+  }
+
+  if (!foundFunctionType) {
+    // The function type isn't supported, just return false.
+    return PR_FALSE;
+  }
+
+  // Next, ensure that the device supports the content type in that function.
+  PRUint32 *contentTypes;
+  PRUint32 contentTypeCount;
+  rv = deviceCaps->GetSupportedContentTypes(aFunctionType,
+                                            &contentTypeCount,
+                                            &contentTypes);
+  NS_ENSURE_SUCCESS(rv, rv);
+  sbAutoNSMemPtr contentTypesPtr(contentTypes);
+
+  PRBool foundContentType = PR_FALSE;
+  for (PRUint32 contentIndex = 0;
+       contentIndex < contentTypeCount && !foundContentType;
+       ++contentIndex)
+  {
+    if (contentTypes[contentIndex] == aContentType) {
+      foundContentType = PR_TRUE;
+    }
+  }
+
+  return foundContentType;
+}
+
 //------------------------------------------------------------------------------
 // sbIDeviceCapabilities Logging functions
 // NOTE: This is built only w/ PR_LOGGING turned on.

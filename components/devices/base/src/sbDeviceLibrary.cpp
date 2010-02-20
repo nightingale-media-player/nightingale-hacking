@@ -58,6 +58,7 @@
 
 /* songbird interfaces */
 #include <sbIDevice.h>
+#include <sbIDeviceCapabilities.h>
 #include <sbIDeviceContent.h>
 #include <sbIDeviceEvent.h>
 #include <sbIDeviceEventTarget.h>
@@ -1901,6 +1902,46 @@ GetOrCreateAudioSmartMediaList(sbIMediaList ** aAudioMediaList)
   return NS_OK;
 }
 
+/**
+ * Checks to see if a |nsIArray| instance contains a specific |sbIMediaList|
+ * by comparing the list guid with the guids in the array.
+ */
+static PRBool
+DoesArrayContainMediaList(nsIArray *aArray, sbIMediaList *aMediaList)
+{
+  NS_ENSURE_TRUE(aArray, PR_FALSE);
+  NS_ENSURE_TRUE(aMediaList, PR_FALSE);
+
+  PRBool found = PR_FALSE;
+  PRUint32 length = 0;
+  nsresult rv = aArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+  nsString searchListGuid;
+  rv = aMediaList->GetGuid(searchListGuid);
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+  for (PRUint32 i = 0; i < length && !found; i++) {
+    nsCOMPtr<sbIMediaList> curList =
+      do_QueryElementAt(aArray, i, &rv);
+    if (NS_FAILED(rv) || !curList) {
+      continue;
+    }
+
+    nsString curListGuid;
+    rv = curList->GetGuid(curListGuid);
+    if (NS_FAILED(rv)) {
+      continue;
+    }
+
+    if (curListGuid.Equals(searchListGuid)) {
+      found = PR_TRUE;
+    }
+  }
+
+  return found;
+}
+
 NS_IMETHODIMP
 sbDeviceLibrary::GetSyncPlaylistList(nsIArray ** aPlaylistList)
 {
@@ -1910,46 +1951,123 @@ sbDeviceLibrary::GetSyncPlaylistList(nsIArray ** aPlaylistList)
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // TODO: XXX Ugh, have to punt here. The case that's not handled is if sync
-  // all audio but sync x video playlists. We'll have to manually filter this
-  // out in the sync code
+  // Determine if the sync list is for all "music" playlists.
+  // NOTE: This also counts for normal, mixed playlists as well.
   PRBool isSyncAll;
   rv = GetIsMgmtTypeSyncAll(&isSyncAll);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   if (isSyncAll) {
+    // If the "sync all" option is turned on, add every audio medialist and
+    // every normal mixed playlist.
     nsCOMPtr<sbIMediaList> mediaList;
     rv = GetOrCreateAudioSmartMediaList(getter_AddRefs(mediaList));
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = allPlaylistList->AppendElement(mediaList, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbILibraryManager> libManager =
+      do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbILibrary> mainLibrary;
+    rv = libManager->GetMainLibrary(getter_AddRefs(mainLibrary));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMutablePropertyArray> propArray =
+      do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = propArray->AppendProperty(
+      NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+      NS_LITERAL_STRING("1"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = propArray->AppendProperty(
+      NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+      NS_LITERAL_STRING("0"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIArray> mainLibraryPlaylists;
+    rv = mainLibrary->GetItemsByProperties(
+      propArray,
+      getter_AddRefs(mainLibraryPlaylists));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 length = 0;
+    rv = mainLibraryPlaylists->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool deviceSupportsVideo = sbDeviceUtils::GetDoesDeviceSupportContent(
+      mDevice,
+      sbIDeviceCapabilities::CONTENT_VIDEO,
+      sbIDeviceCapabilities::FUNCTION_VIDEO_PLAYBACK);
+
+    for (PRUint32 i = 0; i < length; i++) {
+      nsCOMPtr<sbIMediaList> curList =
+        do_QueryElementAt(mainLibraryPlaylists, i, &rv);
+      if (NS_FAILED(rv) || !curList) {
+        continue;
+      }
+
+      nsString listName;
+      curList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME), listName);
+
+      // First, ensure that the content type is audio.
+      PRUint16 listContentType;
+      rv = curList->GetListContentType(&listContentType);
+      if (NS_FAILED(rv) || listContentType == sbIMediaList::CONTENTTYPE_VIDEO) {
+        continue;
+      }
+
+      if (listContentType == sbIMediaList::CONTENTTYPE_AUDIO) {
+        rv = allPlaylistList->AppendElement(curList, PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      else if (deviceSupportsVideo &&
+               listContentType == sbIMediaList::CONTENTTYPE_MIX)
+      {
+        rv = allPlaylistList->AppendElement(curList, PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
   }
 
-  // Process each media type unless audio is all then skip to video
-  bool added = false;
+  // The user has opted to manually select which playlists are going to get
+  // sycn'd to the device.
   nsCOMPtr<nsIArray> playlistList;
-  for (PRUint32 i = isSyncAll ? 1 : 0;
-       i < sbIDeviceLibrary::MEDIATYPE_COUNT;
-       ++i) {
-    // Skip images - not managed by playlists
-    if (i == sbIDeviceLibrary::MEDIATYPE_IMAGE)
-      continue;
-
+  for (PRUint32 i = 0; i < sbIDeviceLibrary::MEDIATYPE_COUNT; ++i) {
     PRUint32 mgmtType;
-    GetMgmtType(i, &mgmtType);
-    if (mgmtType != sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS) {
+    rv = GetMgmtType(i, &mgmtType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Skip images - not managed by playlists
+    if (i == sbIDeviceLibrary::MEDIATYPE_IMAGE ||
+        mgmtType != sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS)
+    {
       continue;
     }
+
+    // Get an array of playlists that the user has selected to sync based on
+    // the device preferences.
+    // NOTE: These preferences are set in the device sync page.
     rv = GetSyncPlaylistListByType(i, getter_AddRefs(playlistList));
     NS_ENSURE_SUCCESS(rv, rv);
+
     PRUint32 length;
     rv = playlistList->GetLength(&length);
     NS_ENSURE_SUCCESS(rv, rv);
     for (PRUint32 index = 0; index < length; ++index) {
-      nsCOMPtr<nsISupports> playlist = do_QueryElementAt(playlistList, index, &rv);
+      nsCOMPtr<sbIMediaList> playlist =
+        do_QueryElementAt(playlistList, index, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
-      rv = allPlaylistList->AppendElement(playlist, PR_FALSE);
-      NS_ENSURE_SUCCESS(rv, rv);
-      added = true;
+
+      // Ensure that the playlist doesn't already exist in the array.
+      if (!DoesArrayContainMediaList(allPlaylistList, playlist)) {
+        rv = allPlaylistList->AppendElement(playlist, PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
   }
 
