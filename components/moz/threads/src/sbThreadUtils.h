@@ -609,6 +609,60 @@ protected:
                          aFailureReturnValue,                                  \
                          aArg1Value)
 
+/**
+ * From the main thread, invoke the method specified by aMethod on the object
+ * specified by aObject.  Return the method's return value. On any error,
+ * return the value specified by aFailureReturnValue. Pass to the method the
+ * argument value specified by aArg1.
+ *
+ * \param aObject               Object for which to invoke method.
+ * \param aMethod               Method to invoke.
+ * \param aFailureReturnValue   Value to return on failure.
+ * \param aArg1                 Value of first method argument.
+ *
+ * \return                      Value returned by invoked method or
+ *                              aFailureReturnValue on failure.
+ */
+template <class T, class MT, class RT, class A1>
+inline
+RT sbInvokeOnMainThread1(T & aObject,
+                        MT aMethod,
+                        RT aFailureReturnValue,
+                        A1 aArg1)
+{
+  return sbRunnableMethod1<T, RT, A1>::InvokeOnMainThread(&aObject,
+                                                          aMethod,
+                                                          aFailureReturnValue,
+                                                          aArg1);
+}
+
+/**
+ * From the main thread, invoke asynchronously the method specified by aMethod
+ * on the object specified by aObject. On any error, return the value specified
+ * by aFailureReturnValue. Pass to the method the argument value specified
+ * by aArg1.
+ *
+ * \param aObject               Object for which to invoke method.
+ * \param aMethod               Method to invoke.
+ * \param aFailureReturnValue   Value to return on failure.
+ * \param aArg1                 Value of first method argument.
+ *
+ * \return                      aFailureReturnValue on failure to invoke
+ */
+template <class T, class MT, class RT, class A1>
+inline
+RT sbInvokeOnMainThread1Async(T & aObject,
+                              MT aMethod,
+                              RT aFailureReturnValue,
+                              A1 aArg1)
+{
+  return sbRunnableMethod1<T, RT, A1>::InvokeOnMainThreadAsync(
+                                                            &aObject,
+                                                            aMethod,
+                                                            aFailureReturnValue,
+                                                            aArg1);
+}
+
 #define SB_INVOKE_ON_MAIN_THREAD2(aClassType,                                  \
                                   aObject,                                     \
                                   aMethod,                                     \
@@ -625,6 +679,66 @@ protected:
                          aArg1Value,                                           \
                          aArg2Value)
 
+/**
+ * From the main thread, invoke the method specified by aMethod on the object
+ * specified by aObject.  Return the method's return value. On any error,
+ * return the value specified by aFailureReturnValue. Pass to the method the
+ * argument value specified by aArg1.
+ *
+ * \param aObject               Object for which to invoke method.
+ * \param aMethod               Method to invoke.
+ * \param aFailureReturnValue   Value to return on failure.
+ * \param aArg1                 Value of the first argument.
+ * \param aArg2                 Value of the second argument
+ *
+ * \return                      aFailureReturnValue on failure.
+ */
+template <class T, class MT, class RT, class A1, class A2>
+inline
+RT sbInvokeOnMainThread2(T & aObject,
+                         MT aMethod,
+                         RT aFailureReturnValue,
+                         A1 aArg1,
+                         A2 aArg2)
+{
+  return sbRunnableMethod2<T, RT, A1, A2>::InvokeOnMainThread(
+                                                            &aObject,
+                                                            aMethod,
+                                                            aFailureReturnValue,
+                                                            aArg1,
+                                                            aArg2);
+}
+
+/**
+ * From the main thread, invoke asynchronously the method specified by aMethod
+ * on the object specified by aObject.  Return the method's return value.
+ * On any error, return the value specified by aFailureReturnValue. Pass to
+ * the method the argument value specified by aArg1.
+ *
+ * \param aObject               Object for which to invoke method.
+ * \param aMethod               Method to invoke.
+ * \param aFailureReturnValue   Value to return on failure.
+ * \param aArg1                 Value of the first argument.
+ * \param aArg2                 Value of the second argument
+ *
+ * \return                      Value returned by invoked method or
+ *                              aFailureReturnValue on failure.
+ */
+template <class T, class MT, class RT, class A1, class A2>
+inline
+RT sbInvokeOnMainThread2Async(T & aObject,
+                              MT aMethod,
+                              RT aFailureReturnValue,
+                              A1 aArg1,
+                              A2 aArg2)
+{
+  return sbRunnableMethod2<T, RT, A1, A2>::InvokeOnMainThreadAsync(
+                                                            &aObject,
+                                                            aMethod,
+                                                            aFailureReturnValue,
+                                                            aArg1,
+                                                            aArg2);
+}
 
 /**
  * From the main thread, asynchronously invoke the method specified by aMethod

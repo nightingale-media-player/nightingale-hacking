@@ -229,6 +229,7 @@ var DPW = {
   //   _widget                  Device info widget.
   //   _device                  Device bound to device control widget.
   //   _deviceID                Device ID.
+  //   _deviceErrorMonitor      Error monitor for the device
   //   _curItemIndex            Current index in the batch of items to process
   //   _totalItems              Total items in the batch
   //   _operationInfoTable      Table mapping operation state values to
@@ -258,6 +259,7 @@ var DPW = {
   _cfg: DPWCfg,
   _widget: null,
   _device: null,
+  _deviceErrorMonitor : null,
   _deviceID: null,
   _curItemIndex: null,
   _totalItems: null,
@@ -294,6 +296,10 @@ var DPW = {
 
     // Get the device widget.
     this._widget = aWidget;
+
+    this._deviceErrorMonitor =
+      Cc["@songbirdnest.com/device/error-monitor-service;1"]
+        .getService(Ci.sbIDeviceErrorMonitor);
 
     // Initialize the operation info table.
     this._operationInfoTable = {};
@@ -448,9 +454,17 @@ var DPW = {
   _updateProgressIdle: function DPW__updateProgressIdle() {
     var oInfo = this._getOperationInfo(this._lastCompletedEventOperation);
     if (oInfo.showIdleMessage) {
+      
       var key = "device.status.progress_complete_" + oInfo.localeSuffix;
-      if (this._operationCanceled)
+      
+      // Check for errors, notify of errors, cancel takes precedence
+      var hasErrors = this._checkForDeviceErrors("");
+      if (this._operationCanceled) {
         key = "device.status.progress_aborted";
+      }
+      else if (hasErrors) { 
+        key += "_errors";
+      }
       this._progressTextLabel.value = SBFormattedString(key,
                                                 [ this._totalItems.intValue ],
                                                 "");
@@ -672,7 +686,7 @@ var DPW = {
 
     // Click apply button will trigger sync, which will do the update later.
     if (aEvent.detail != DPW.SYNCSETTINGS_APPLY)
-      DPW._update();
+    DPW._update();
   },
 
 
@@ -915,5 +929,22 @@ var DPW = {
    */
   _deviceIsSyncing: function DPW__deviceIsSyncing() {
     return this._isSyncing;
-  }
+  },
+  
+  /**
+   * \brief Returns true if the device has errors for the media type
+   * \param aMediaType the media type to check errors for, or if it's an
+   *                   an empty string it returns true if any media type has
+   *                   has errors.
+   */
+  _checkForDeviceErrors: function DIPW__checkForDeviceErrors(aMediaType) {
+    var hasErrors = false;
+    try {
+      hasErrors = this._deviceErrorMonitor.deviceHasErrors(this._device,
+                                                           aMediaType);
+    } catch (err) {
+      Cu.reportError(err);
+    }
+    return hasErrors;
+  },
 };

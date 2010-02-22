@@ -44,7 +44,7 @@ interface sbIDeviceEventTarget : nsISupports
    *
    * @param aEvent the event to dispatch
    * @param aSync dispatch the event asynchronously (default false)
-   * @return Undefined if the event was dispatched asynchournously
+   * @return Undefined if the event was dispatched asynchronously
    *         True if the event has been dispatched (false if no listeners)
    */
   boolean dispatchEvent(in sbIDeviceEvent aEvent, [optional] in PRBool aAsync);

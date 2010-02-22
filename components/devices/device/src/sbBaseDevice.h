@@ -99,6 +99,7 @@ public:
   // Friend declarations for classes used to divide up device work
   friend class sbDeviceTranscoding;
   friend class sbDeviceImages;
+  friend class sbBatchCleanup;
 
   struct TransferRequest : public nsISupports {
     /* types of requests. not all types necessarily apply to all types of
@@ -283,8 +284,11 @@ public:
                          sbIMediaItem* aItem = nsnull,
                          sbIMediaList* aList = nsnull);
 
-  /* clear the request queue */
-  nsresult ClearRequests();
+  /**
+   * clear the request queue
+   * \param aSetCancel Determines whether or not the current request is "canceled"
+   */
+  nsresult ClearRequests(bool aSetCancel = true);
 
   /**
    * Return in aRequestType the request type of the request batch specified by

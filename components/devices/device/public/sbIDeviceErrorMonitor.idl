@@ -57,7 +57,7 @@ interface sbIDeviceErrorMonitor : nsISupports {
    *        errors.
    *
    * \param aDevice The device to get the list of errors for
-   * \param aContentType type of content we want errors for, or null for all
+   * \param aContentType type of content we want errors for, or empty string for all
    *                     types.
    * \returns array of property bags that contain error information
    *

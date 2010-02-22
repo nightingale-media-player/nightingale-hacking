@@ -1327,9 +1327,10 @@ nsresult sbBaseDevice::RemoveRequest(const int aType,
   return NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;
 }
 
-typedef std::vector<nsRefPtr<sbBaseDevice::TransferRequest> > sbBaseDeviceTransferRequests;
+typedef std::vector<nsRefPtr<sbBaseDevice::TransferRequest> >
+  sbBaseDeviceTransferRequests;
 
-nsresult sbBaseDevice::ClearRequests()
+nsresult sbBaseDevice::ClearRequests(bool aSetCancel)
 {
   nsresult rv;
   sbBaseDeviceTransferRequests requests;
@@ -1339,8 +1340,10 @@ nsresult sbBaseDevice::ClearRequests()
     nsAutoMonitor reqMon(mRequestMonitor);
 
     if(!mRequests.empty()) {
-      rv = SetState(STATE_CANCEL);
-      NS_ENSURE_SUCCESS(rv, rv);
+      if (aSetCancel) {
+        rv = SetState(STATE_CANCEL);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
 
       // Save off the library items that are pending to avoid any
       // potential reenterancy issues when deleting them.
@@ -1373,8 +1376,8 @@ nsresult sbBaseDevice::ClearRequests()
       // just set the state to idle.  Let the request processing code deal with
       // doing a clean abort and removing library items for the current request.
       if (mHaveCurrentRequest) {
-        mAbortCurrentRequest = PR_TRUE;
-      } else {
+        mAbortCurrentRequest |= aSetCancel ? PR_TRUE : PR_FALSE;
+      } else if (aSetCancel) {
         rv = SetState(STATE_IDLE);
         NS_ENSURE_SUCCESS(rv, rv);
       }

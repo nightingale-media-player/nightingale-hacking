@@ -37,6 +37,7 @@
 #include "sbIDeviceEventListener.h"
 #include "sbDeviceEvent.h"
 #include "sbProxyUtils.h"
+#include <sbThreadUtils.h>
 
 class sbDeviceEventTargetRemovalHelper : public nsDequeFunctor {
   public:
@@ -58,36 +59,6 @@ class sbDeviceEventTargetRemovalHelper : public nsDequeFunctor {
   protected:
     PRInt32 mIndexToRemove;
 };
-
-// helper class for async event dispatch, because XPCOM proxies can't deal
-// with having out-params.  Note that we discard the result anyway.
-class sbDETAsyncDispatchHelper : public nsIRunnable
-{
-  NS_DECL_ISUPPORTS
-  public:
-    sbDETAsyncDispatchHelper(sbIDeviceEventTarget* aTarget,
-                             sbIDeviceEvent* aEvent)
-      : mTarget(aTarget), mEvent(aEvent)
-    {
-      NS_ASSERTION(aTarget, "sbDeviceEventTargetAsyncDispatchHelper: no target");
-      NS_ASSERTION(aEvent, "sbDeviceEventTargetAsyncDispatchHelper: no event");
-    }
-    NS_IMETHODIMP Run()
-    {
-      NS_ASSERTION(NS_IsMainThread(),
-                   "sbDeviceEventTargetAsyncDispatchHelper: not on main thread!");
-
-      /* ignore return value */
-      mTarget->DispatchEvent(mEvent,
-                             PR_FALSE, /* don't re-async */
-                             nsnull); /* ignore retval */
-      return NS_OK;
-    }
-  private:
-    nsCOMPtr<sbIDeviceEventTarget> mTarget;
-    nsCOMPtr<sbIDeviceEvent> mEvent;
-};
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbDETAsyncDispatchHelper, nsIRunnable);
 
 sbBaseDeviceEventTarget::sbBaseDeviceEventTarget()
 {
@@ -112,40 +83,47 @@ NS_IMETHODIMP sbBaseDeviceEventTarget::DispatchEvent(sbIDeviceEvent *aEvent,
 {
   nsresult rv;
 
-  // Note: in the async case, we need to make a new runnable, because
-  // DispatchEvent has an out param, and XPCOM proxies can't deal with that.
-  if (aAsync) {
-    nsRefPtr<sbDETAsyncDispatchHelper> dispatchHelper =
-      new sbDETAsyncDispatchHelper(static_cast<sbIDeviceEventTarget*>(this), aEvent);
-    NS_ENSURE_TRUE(dispatchHelper, NS_ERROR_OUT_OF_MEMORY);
-    rv = NS_DispatchToMainThread(dispatchHelper, NS_DISPATCH_NORMAL);
-    NS_ENSURE_SUCCESS(rv, rv);
+  PRUint32 const listeners = mListeners.Count();
+  if (listeners == 0) {
+    if (_retval) {
+      *_retval = PR_FALSE;
+    }
     return NS_OK;
   }
-  if (!NS_IsMainThread()) {
-    // we need to proxy to the main thread
-    nsCOMPtr<sbIDeviceEventTarget> proxiedSelf;
-    { /* scope the monitor */
-      NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-      nsAutoMonitor mon(mMonitor);
-      rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
-                                NS_GET_IID(sbIDeviceEventTarget),
-                                this,
-                                NS_PROXY_SYNC,
-                                getter_AddRefs(proxiedSelf));
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
+
+  // This will be released inside of DispatchEventInternal. In the case of
+  // an async dispatch we need to hold on till dispatched.
+  if (aAsync) {
+    nsCOMPtr<sbIDeviceEvent> event(aEvent);
+    rv = sbInvokeOnMainThread1Async(
+                              *this,
+                              &sbBaseDeviceEventTarget::DispatchEventInternal,
+                              NS_ERROR_FAILURE,
+                              event);
     // don't have a return value if dispatching asynchronously
     // (since the variable is likely to be dead by that point)
-    return proxiedSelf->DispatchEvent(aEvent, PR_FALSE, _retval);
   }
-
-  return DispatchEventInternal(aEvent, _retval);
+  else {
+    if (!NS_IsMainThread()) {
+      nsCOMPtr<sbIDeviceEvent> event(aEvent);
+      rv = sbInvokeOnMainThread1(
+                                *this,
+                                &sbBaseDeviceEventTarget::DispatchEventInternal,
+                                NS_ERROR_FAILURE,
+                                event);
+    }
+    else {
+      rv = DispatchEventInternal(aEvent);
+    }
+  }
+  if (_retval) {
+    *_retval = PR_TRUE;
+  }
+  return rv;
 }
 
 /* Dispatch an event, assuming we're already on the main thread */
-nsresult sbBaseDeviceEventTarget::DispatchEventInternal(sbIDeviceEvent *aEvent,
-                                                        PRBool* _retval)
+nsresult sbBaseDeviceEventTarget::DispatchEventInternal(nsCOMPtr<sbIDeviceEvent> aEvent)
 {
   DispatchState state;
   state.length = mListeners.Count();
@@ -154,6 +132,8 @@ nsresult sbBaseDeviceEventTarget::DispatchEventInternal(sbIDeviceEvent *aEvent,
 
   // make sure the event has not already been dispatched
   nsCOMPtr<sbDeviceEvent> event = do_QueryInterface(aEvent, &rv);
+
+  // Now release the addref our caller did since we are now holding a reference
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_FALSE(event->WasDispatched(), NS_ERROR_ALREADY_INITIALIZED);
 
@@ -161,13 +141,9 @@ nsresult sbBaseDeviceEventTarget::DispatchEventInternal(sbIDeviceEvent *aEvent,
   rv = event->SetTarget(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // store thes state into our state stack, so if any listener removes a
+  // store the state into our state stack, so if any listener removes a
   // listener we get updated
   mStates.Push(&state);
-
-  // note that the return value doesn't exist if we're an async proxy
-  if (_retval)
-    *_retval = PR_FALSE;
 
   for (state.index = 0; state.index < state.length; ++state.index) {
     rv = mListeners[state.index]->OnDeviceEvent(aEvent);
@@ -177,8 +153,6 @@ nsresult sbBaseDeviceEventTarget::DispatchEventInternal(sbIDeviceEvent *aEvent,
         NS_WARNING("Device event listener returned error");
       }
     #endif
-    if (_retval)
-      *_retval = PR_TRUE;
   }
 
   // pop the stored state, to ensure we don't end up with a pointer to a stack
@@ -200,7 +174,7 @@ nsresult sbBaseDeviceEventTarget::DispatchEventInternal(sbIDeviceEvent *aEvent,
 
   // always dispatch as sync, since if we wanted to be async, we're already on
   // that path and the caller's already gone.
-  rv = parentEventTarget->DispatchEvent(aEvent, PR_TRUE, _retval);
+  rv = parentEventTarget->DispatchEvent(aEvent, PR_FALSE, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

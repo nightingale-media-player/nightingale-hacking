@@ -176,13 +176,6 @@ private:
  *
  *   sbDeviceStatusAutoState             Wrapper to auto set the state to a
  *                                       specified value.
- *   sbDeviceStatusAutoOperationFailure  Auto-complete operation with
- *                                       NS_ERROR_FAILURE.
- *   sbDeviceStatusAutoOperationComplete Auto-complete operation with the result
-  *                                      specified by the second constructor
- *                                       argument.
- *   sbDeviceStatusAutoItemFailure       Auto-complete item with
- *                                        NS_ERROR_FAILURE.
  */
 
 SB_AUTO_CLASS2(sbDeviceStatusAutoState,
