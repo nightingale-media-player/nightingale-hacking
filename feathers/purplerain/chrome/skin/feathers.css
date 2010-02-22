@@ -1383,6 +1383,11 @@ domi-panelset label.viewer-title {
   color: black !important;
 }
 
+#updateCheckErrorNotFound {
+  background-color: transparent;
+  border: none;
+}
+
 /*******************************************************************************
 * MEDIA IMPORT DIALOG
 *******************************************************************************/
