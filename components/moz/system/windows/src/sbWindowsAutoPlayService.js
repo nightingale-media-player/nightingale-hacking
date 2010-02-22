@@ -1,30 +1,28 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 /**
  * \file  sbWindowsAutoPlayService.js
@@ -264,11 +262,15 @@ sbWindowsAutoPlayService.prototype = {
       case "autoplay-manage-volume-device" :
         this._handleAutoPlayManageVolumeDevice();
         break;
-        
+
+      case "autoplay-manage-mtp-device" :
+        this._handleAutoPlayManageMTPDevice();
+        break;
+
       case "autoplay-cd-rip" :
         this._handleAutoPlayCDRip();
         break;
-        
+
       default :
         return false;
     }
@@ -312,7 +314,33 @@ sbWindowsAutoPlayService.prototype = {
                             .getService(Ci.sbIWindowWatcher);
       var _this = this;
       var func = function(aWindow)
-                   { _this._alertUserCannotManageDevice(aWindow); };
+                   { _this._alertUserCannotManageVolumeDevice(aWindow); };
+      windowWatcher.callWithWindow("Songbird:Main", func);
+    }
+  },
+
+
+  /**
+   * Handle a Windows AutoPlay manage MTP device action.
+   */
+
+  _handleAutoPlayManageMTPDevice:
+    function sbWindowsAutoPlayService__handleAutoPlayManageMTPDevice() {
+    // Handle the action.
+    var actionHandled =
+          this._handleAction
+                 (Ci.sbIWindowsAutoPlayService.ACTION_MANAGE_MTP_DEVICE,
+                  null);
+
+    // If the action was not handled, alert the user that the device cannot be
+    // managed.  Wait until a Songbird main window is available so it can be
+    // used as the parent of the alert.
+    if (!actionHandled) {
+      var windowWatcher = Cc["@songbirdnest.com/Songbird/window-watcher;1"]
+                            .getService(Ci.sbIWindowWatcher);
+      var _this = this;
+      var func = function(aWindow)
+                   { _this._alertUserCannotManageMTPDevice(aWindow); };
       windowWatcher.callWithWindow("Songbird:Main", func);
     }
   },
@@ -321,7 +349,7 @@ sbWindowsAutoPlayService.prototype = {
   /**
    * Handle a CD Rip action
    */
-   
+
   _handleAutoPlayCDRip:
     function sbWindowsAutoPlayService__handleAutoPlayCDRip() {
     // Handle the action.
@@ -379,14 +407,14 @@ sbWindowsAutoPlayService.prototype = {
 
 
   /**
-   * Alert the user that a device cannot be managed.  Use the window specified
-   * by aWindow for the parent window of the alert.
+   * Alert the user that a volume device cannot be managed.  Use the window
+   * specified by aWindow for the parent window of the alert.
    *
    * \param aWindow             Parent window of alert.
    */
 
-  _alertUserCannotManageDevice:
-    function sbWindowsAutoPlayService__alertUserCannotManageDevice(aWindow) {
+  _alertUserCannotManageVolumeDevice: function
+    sbWindowsAutoPlayService__alertUserCannotManageVolumeDevice(aWindow) {
     // Get the application services.
     var Application = Cc["@mozilla.org/fuel/application;1"]
                         .getService(Ci.fuelIApplication);
@@ -413,12 +441,46 @@ sbWindowsAutoPlayService.prototype = {
 
 
   /**
+   * Alert the user that an MTP device cannot be managed.  Use the window
+   * specified by aWindow for the parent window of the alert.
+   *
+   * \param aWindow             Parent window of alert.
+   */
+
+  _alertUserCannotManageMTPDevice: function
+    sbWindowsAutoPlayService__alertUserCannotManageMTPDevice(aWindow) {
+    // Get the application services.
+    var Application = Cc["@mozilla.org/fuel/application;1"]
+                        .getService(Ci.fuelIApplication);
+
+    // Determine which dialog strings to use.
+    var stringNamePrefix = "windows.autoplay.cannot_manage_device.dialog.";
+    if (Application.extensions.has("mtp@songbirdnest.com")) {
+      if (!Application.extensions.get("mtp@songbirdnest.com").enabled) {
+        stringNamePrefix =
+          "windows.autoplay.cannot_manage_device.mtp_not_enabled.dialog.";
+      }
+    } else {
+      stringNamePrefix =
+        "windows.autoplay.cannot_manage_device.mtp_not_installed.dialog.";
+    }
+
+    // Alert user.
+    var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
+                     .createInstance(Ci.sbIPrompter);
+    var title = SBString(stringNamePrefix + "title");
+    var msg = SBString(stringNamePrefix + "msg");
+    prompter.alert(aWindow, title, msg);
+  },
+
+
+  /**
    * Alert the user that the CD cannot be ripped. Use the window specified
    * by aWindow for the parent window of the alert.
    *
    * \param aWindow             Parent window of the alert.
    */
-   
+
   _alertUserCannotCDRip:
     function sbWindowsAutoPlayService__alertUserCannotCDRip(aWindow) {
     var prefix = "windows.autoplay.cannot_cd_rip.dialog.";
@@ -428,7 +490,7 @@ sbWindowsAutoPlayService.prototype = {
     var msg = SBString(prefix + "msg");
     prompter.alert(aWindow, title, msg);
   },
-  
+
   //----------------------------------------------------------------------------
   //
   // Windows AutoPlay event handler services.
@@ -487,7 +549,8 @@ sbWindowsAutoPlayService.prototype = {
 
     // Add Windows AutoPlay command line flag handlers.
     commandLineManager.addFlagHandler(this, "autoplay-manage-volume-device");
-    
+    commandLineManager.addFlagHandler(this, "autoplay-manage-mtp-device");
+
     // Add Windows CD AutoPlay rip command line flag handlers
     commandLineManager.addFlagHandler(this, "autoplay-cd-rip");
   },
@@ -505,7 +568,7 @@ sbWindowsAutoPlayService.prototype = {
 
     // Remove Windows AutoPlay command line flag handlers.
     commandLineManager.removeFlagHandler(this, "autoplay-manage-volume-device");
-    
+
     // Remove Windows CD AutoPlay rip command line flag handlers
     commandLineManager.removeFlagHandler(this, "autoplay-cd-rip");
   },

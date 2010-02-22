@@ -51,6 +51,7 @@
 !define AutoPlayManageVolumeDeviceProgID         "${AutoPlayBaseName}.ManageVolumeDevice"
 !define AutoPlayVolumeDeviceArrivalHandlerName   "${AutoPlayBaseName}ManageVolumeDeviceOnArrival"
 !define AutoPlayVolumeDeviceArrivalHandlerProgID "${AutoPlayManageVolumeDeviceProgID}"
+!define AutoPlayMTPDeviceArrivalHandlerName      "${AutoPlayBaseName}ManageMTPDeviceOnArrival"
 
 ; AutoPlay human-readable strings.
 !define AutoPlayManageDeviceAction "Manage device"

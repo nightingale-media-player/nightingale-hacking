@@ -16,7 +16,7 @@
  *
  * The Initial Developer of the Original Code is
  * POTI <http://www.songbirdnest.com/>.
- * Portions created by the Initial Developer are Copyright (C) 2008
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
@@ -178,17 +178,10 @@ int CommandDeleteFile(std::string aFile, bool aRecursive) {
   return DoFileCommand(FO_DELETE, "delete", aFile, std::string(""), aRecursive);
 }
 
-int CommandExecuteFile(std::string aExecutable, const std::vector<std::string>& aArgs) {
+int CommandExecuteFile(const std::string& aExecutable,
+                       const std::string& aArgs) {
   tstring executable(FilterSubstitution(ConvertUTF8toUTFn(aExecutable)));
-  tstring arg(_T(" \""));
-  std::vector<std::string>::const_iterator it, end = aArgs.end();
-  for (it = aArgs.begin(); it < end; ++it) {
-    DebugMessage("<%s>", it->c_str());
-    arg.append(FilterSubstitution(ConvertUTF8toUTFn(*it)));
-    arg.append(_T("\" \""));
-  }
-  arg.erase(arg.length() - 2);  // remove the excess quote at the end
-                                // if no args, comeletely earses the string
+  tstring arg(FilterSubstitution(ConvertUTF8toUTFn(aArgs)));
   
   DebugMessage("<%s> <%s>",
                ConvertUTFnToUTF8(executable).c_str(),
@@ -214,7 +207,7 @@ tstring FilterSubstitution(tstring aString) {
     if (end == tstring::npos) {
       break;
     }
-    tstring variable = result.substr(start + 1, end - 1);
+    tstring variable = result.substr(start + 1, end - start - 1);
     if (variable == _T("APPDIR")) {
       tstring appdir = GetAppDirectory();
       DebugMessage("AppDir: %S", appdir.c_str());
@@ -264,6 +257,55 @@ std::vector<std::string> ParseCommandLine(const std::string& aCommandLine) {
   } while (prev < length);
   
   return args;
+}
+
+void ParseExecCommandLine(const std::string& aCommandLine,
+                          std::string&       aExecutable,
+                          std::string&       aArgs)
+{
+  static const char WHITESPACE[] = " \t\r\n";
+  std::string::size_type offset = 0;
+  std::string::size_type executableStart, executableEnd, executableLength;
+
+  // set default executable and arguments to empty strings
+  aExecutable.clear();
+  aArgs.clear();
+
+  // skip command to start of executable
+  offset = aCommandLine.find_first_not_of(WHITESPACE, offset);
+  if (offset == std::string::npos)
+    return;
+  offset = aCommandLine.find_first_of(WHITESPACE, offset);
+  if (offset == std::string::npos)
+    return;
+  offset = aCommandLine.find_first_not_of(WHITESPACE, offset);
+  if (offset == std::string::npos)
+    return;
+  executableStart = offset;
+
+  // Get executable string.  The executable end index will be the next space or
+  // quote after the executable string or npos.
+  if (aCommandLine[executableStart] == '"') {
+    ++executableStart; // eat the quote
+    executableEnd = aCommandLine.find('"', executableStart);
+  }
+  else {
+    executableEnd = aCommandLine.find_first_of(WHITESPACE, executableStart);
+  }
+  if (executableEnd == std::string::npos)
+    executableLength = aCommandLine.length() - executableStart;
+  else
+    executableLength = executableEnd - executableStart;
+  aExecutable = aCommandLine.substr(executableStart, executableLength);
+  if (executableEnd == std::string::npos)
+    return;
+  offset = executableEnd + 1;  // skip past space or quote
+
+  // get the arguments
+  std::string::size_type argsStart;
+  argsStart = aCommandLine.find_first_not_of(WHITESPACE, offset);
+  if (argsStart != std::string::npos)
+    aArgs = aCommandLine.substr(argsStart);
 }
 
 tstring GetAppDirectory() {

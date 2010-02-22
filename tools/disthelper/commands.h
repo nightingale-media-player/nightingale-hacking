@@ -91,10 +91,19 @@ int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection);
 std::vector<std::string> ParseCommandLine(const std::string& aCommandLine);
 
 /**
+ * Parse a given "exec" command line (an "exec" line in the steps) into the
+ * executable string and argument list string.
+ */
+void ParseExecCommandLine(const std::string& aCommandLine,
+                          std::string&       aExecutable,
+                          std::string&       aArgs);
+
+/**
  * Execute a file with some number of arguments.  The arguments should not
  * include the name of the executable.  (i.e. no argv[0])
  */
-int CommandExecuteFile(std::string aExecutable, const std::vector<std::string>& aArgs);
+int CommandExecuteFile(const std::string& aExecutable,
+                       const std::string& aArgs);
 
 /**
  * Filters a line, replacing $foo$ with their values; unrecognized strings will

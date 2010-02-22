@@ -190,6 +190,29 @@ Function InstallBrandingRegistryKeys
    StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\PlayMusicFilesOnArrival"
    WriteRegStr HKLM $0 "${AutoPlayVolumeDeviceArrivalHandlerName}" ""
 
+   ; Register an MTP device arrival handler to launch Songbird to manage the MTP
+   ; device.  Make use of the "Shell.HWEventHandlerShellExecute" COM component.
+   ; If any command line arguments are present in InitCmdLine, the executable
+   ; string must be enclosed in quotes if it contains spaces.
+   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\${AutoPlayMTPDeviceArrivalHandlerName}"
+   WriteRegStr HKLM $0 "Action" "${AutoPlayManageDeviceAction}"
+   WriteRegStr HKLM $0 "DefaultIcon" "$INSTDIR\${FileMainEXE}"
+   WriteRegStr HKLM $0 "InitCmdLine" '"$INSTDIR\${FileMainEXE}" -autoplay-manage-mtp-device'
+   WriteRegStr HKLM $0 "ProgID" "Shell.HWEventHandlerShellExecute"
+   WriteRegStr HKLM $0 "Provider" "${BrandShortName}"
+
+   ; Register to handle MTPMediaPlayerArrival events using the MTP device
+   ; arrival handler.
+   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\MTPMediaPlayerArrival"
+   WriteRegStr HKLM $0 "${AutoPlayMTPDeviceArrivalHandlerName}" ""
+
+   ; Register to handle WPD audio and video events using the MTP device arrival
+   ; handler.
+   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\WPD\Sink\{4AD2C85E-5E2D-45E5-8864-4F229E3C6CF0}"
+   WriteRegStr HKLM $0 "${AutoPlayMTPDeviceArrivalHandlerName}" ""
+   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\WPD\Sink\{9261B03C-3D78-4519-85E3-02C5E1F50BB9}"
+   WriteRegStr HKLM $0 "${AutoPlayMTPDeviceArrivalHandlerName}" ""
+
    ; Register CD Rip command
    WriteRegStr HKLM "Software\Classes\${AutoPlayProgID}\shell\Rip\command" "" "$INSTDIR\${FileMainEXE} -autoplay-cd-rip"
 

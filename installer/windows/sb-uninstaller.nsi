@@ -96,6 +96,20 @@ Function un.RemoveBrandingRegistryKeys
    StrCpy $0 "Software\Classes\${AutoPlayManageVolumeDeviceProgID}"
    DeleteRegKey HKLM $0
 
+   ; Remove the MTP device arrival handler from the MTPMediaPlayerArrival event.
+   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\MTPMediaPlayerArrival"
+   DeleteRegValue HKLM $0 "${AutoPlayMTPDeviceArrivalHandlerName}"
+
+   ; Remove the MTP device arrival handler from the WPD auto and video events.
+   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\WPD\Sink\{4AD2C85E-5E2D-45E5-8864-4F229E3C6CF0}"
+   DeleteRegValue HKLM $0 "${AutoPlayMTPDeviceArrivalHandlerName}"
+   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\WPD\Sink\{9261B03C-3D78-4519-85E3-02C5E1F50BB9}"
+   DeleteRegValue HKLM $0 "${AutoPlayMTPDeviceArrivalHandlerName}"
+
+   ; Remove the MTP device arrival handler.
+   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\${AutoPlayMTPDeviceArrivalHandlerName}"
+   DeleteRegKey HKLM $0
+
    ; Remove the CD Rip handler from the PlayMusicFilesOnArrival
    ; event.
    DeleteRegValue HKLM "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\PlayCDAudioOnArrival" "${AutoPlayCDRipHandlerName}"

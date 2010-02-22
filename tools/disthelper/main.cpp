@@ -15,7 +15,7 @@
  *
  * The Initial Developer of the Original Code is
  * POTI <http://www.songbirdnest.com/>.
- * Portions created by the Initial Developer are Copyright (C) 2008
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
@@ -252,10 +252,13 @@ int main(int argc, LPTSTR *argv) {
         result = CommandSetVersionInfo(command[1], iniFile[command[2]]);
       }
     } else if (command[0] == "exec") {
-      command.erase(command.begin()); // the command name
-      std::string executable = command.front();
-      command.erase(command.begin()); // the executable name
-      result = CommandExecuteFile(executable, command);
+      // Run the executable with the full argument string.  This allows the
+      // executable to parse the arguments as needed, preserving, for example,
+      // escape sequences for quotes (see CommandLineToArgvW).
+      std::string executable;
+      std::string args;
+      ParseExecCommandLine(line, executable, args);
+      result = CommandExecuteFile(executable, args);
     } else {
       OutputDebugString(_T("bad command!"));
       result = DH_ERROR_UNKNOWN;
