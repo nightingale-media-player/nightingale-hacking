@@ -1711,6 +1711,56 @@ sbDeviceUtils::GetDoesDeviceSupportContent(sbIDevice *aDevice,
   return foundContentType;
 }
 
+/*static*/
+nsresult sbDeviceUtils::AddSupportedFileExtensions
+                          (sbIDevice*          aDevice,
+                           PRUint32            aContentType,
+                           nsTArray<nsString>& aFileExtensionList)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aDevice);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the device capabilities.
+  nsCOMPtr<sbIDeviceCapabilities> caps;
+  rv = aDevice->GetCapabilities(getter_AddRefs(caps));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the list of supported MIME types and set it up for auto-disposal.  Just
+  // return if content type is not available.
+  char** mimeTypeList;
+  PRUint32 mimeTypeCount;
+  rv = caps->GetSupportedFormats(aContentType, &mimeTypeCount, &mimeTypeList);
+  if (rv == NS_ERROR_NOT_AVAILABLE)
+    return NS_OK;
+  NS_ENSURE_SUCCESS(rv, rv);
+  sbAutoNSArray<char*> autoMimeTypeList(mimeTypeList, mimeTypeCount);
+
+  // Get the set of file extensions from the MIME type list.
+  for (PRUint32 i = 0; i < mimeTypeCount; ++i) {
+    // Get the format types for the MIME type.
+    nsTArray<sbExtensionToContentFormatEntry_t> formatTypeList;
+    rv = sbDeviceUtils::GetFormatTypesForMimeType
+                          (NS_ConvertASCIItoUTF16(mimeTypeList[i]),
+                           aContentType,
+                           formatTypeList);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Add each file extension to the list.
+    for (PRUint32 j = 0; j < formatTypeList.Length(); ++j) {
+      // Add the file extension to the list.
+      NS_ConvertASCIItoUTF16 extension(formatTypeList[j].Extension);
+      if (!aFileExtensionList.Contains(extension)) {
+        aFileExtensionList.AppendElement(extension);
+      }
+    }
+  }
+
+  return NS_OK;
+}
+
 //------------------------------------------------------------------------------
 // sbIDeviceCapabilities Logging functions
 // NOTE: This is built only w/ PR_LOGGING turned on.
