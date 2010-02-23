@@ -134,6 +134,7 @@
       {
         Cu.import("resource://app/jsmodules/DeviceHelper.jsm", this);
         Cu.import("resource://app/jsmodules/ArrayConverter.jsm", this);
+        Cu.import("resource://app/jsmodules/StringUtils.jsm", this);
 
         this._syncPrefs = {};
 
@@ -459,12 +460,45 @@
         <parameter name="aEnable"/>
         <body><![CDATA[
         {
-          let oldPrefs = this._copyPrefs();
-          this._syncPrefs.mgmtType = (aEnable ?
-                                      Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL :
-                                      Ci.sbIDeviceLibrary.MGMT_TYPE_NONE);
-          this._updateUI();
-          this._checkPrefChange(oldPrefs);
+          var shouldUpdatePrefs = true;
+
+          // Prompt the user if they are about to turn on photo syncing.
+          if (this._getElement("sync_images_from_checkbox").checked) {
+            var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
+                             .createInstance(Ci.sbIPrompter);
+            var buttonFlags =
+              Ci.nsIPromptService.BUTTON_POS_1 *
+              Ci.nsIPromptService.BUTTON_TITLE_IS_STRING +
+              Ci.nsIPromptService.BUTTON_POS_0 *
+              Ci.nsIPromptService.BUTTON_TITLE_IS_STRING;
+
+            var buttonPressed = prompter.confirmEx(
+              null,
+              SBString("device.dialog.sync_images_confirmation.title"),
+              SBFormattedString("device.dialog.sync_images_confirmation.msg",
+                                [this.device.name]),
+              buttonFlags,
+              SBString("device.dialog.sync_images_confirmation.sync_button"),
+              SBString("device.dialog.sync_images_confirmation.no_button"),
+              null,
+              null,
+              {});
+
+            if (buttonPressed != 0) {
+              // The user did not choose to sync, clear the checkbox state.
+              this._getElement("sync_images_from_checkbox").checked = false;
+              shouldUpdatePrefs = false;
+            }
+          }
+
+          if (shouldUpdatePrefs) {
+              let oldPrefs = this._copyPrefs();
+              this._syncPrefs.mgmtType = (aEnable ?
+                                          Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL :
+                                          Ci.sbIDeviceLibrary.MGMT_TYPE_NONE);
+              this._updateUI();
+              this._checkPrefChange(oldPrefs);
+          }
         }
         ]]></body>
       </method>

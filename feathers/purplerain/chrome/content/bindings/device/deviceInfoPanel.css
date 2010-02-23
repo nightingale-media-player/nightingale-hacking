@@ -11,6 +11,9 @@ sb-info-panel[mediatype="audio"] .info-panel-icon {
 sb-info-panel[mediatype="video"] .info-panel-icon {
   list-style-image: url('chrome://songbird/skin/device/video.png');
 }
+sb-info-panel[mediatype="image"] .info-panel-icon {
+  list-style-image: url('chrome://songbird/skin/device/image.png');
+}
 sb-info-panel[state="success"] .info-panel-icon {
   list-style-image: url('chrome://songbird/skin/device/check.png');
 }
