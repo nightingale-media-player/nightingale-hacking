@@ -59,6 +59,7 @@ const Cu = Components.utils;
 const URI_GENERIC_ICON_XPINSTALL = 
   "chrome://songbird/skin/base-elements/icon-generic-addon.png";
 
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
@@ -538,6 +539,18 @@ var InternalDropHandler = {
           aListener.onFirstMediaItem(newlist.getItemByIndex(0));
       }
 
+      // lone> some of these values may not be accurate, this assumes that all 
+      // tracks have been copied, which is true if both the source and target 
+      // are playlists, but could be false if the target is a library. better 
+      // than nothing anyway.
+      this._dropComplete(aListener,
+                         aTargetList,
+                         list.length,
+                         0,
+                         rejectedItems,
+                         list.length,
+                         0);
+
     } else {
       if (context.list == aTargetList) {
         // uh oh - you can't drop a list onto itself
@@ -552,41 +565,65 @@ var InternalDropHandler = {
       // make an enumerator with all the items from the source playlist        
       var allItems = {
         items: [],
+        itemsPending: 0,
         onEnumerationBegin: function(aMediaList) {
-          this.items = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                         .createInstance(Ci.nsIMutableArray);
+          this.items = [];
         },
         onEnumeratedItem: function(aMediaList, aMediaItem) {
-          if (!selectedDevice ||
-              selectedDevice.supportsMediaItem(aMediaItem)) {
-            this.items.appendElement(aMediaItem, false);
+          if (selectedDevice) {
+            this.itemsPending++;
+            selectedDevice.supportsMediaItem(aMediaItem, this);
           }
           else {
-            rejectedItems++;
+            this.items.push(aMediaItem);
           }
         },
         onEnumerationEnd: function(aMediaList, aResultCode) {
+          if (!selectedDevice) {
+            // no device to check for support; do the actual transfer now
+            onEnumerateComplete();
+          }
+        },
+        onSupportsMediaItem: function(aMediaItem, aIsSupported) {
+          if (!aIsSupported) {
+            rejectedItems++;
+          }
+          this.itemsPending--;
+          if (this.itemsPending < 1) {
+            onEnumerateComplete();
+          }
         }
       };
 
       list.enumerateAllItems(allItems);
-      
-      // add the contents
-      if (aDropPosition != -1 &&
-          aTargetList instanceof Ci.sbIOrderableMediaList) {
-        aTargetList.insertSomeBefore(aDropPosition, allItems.items.enumerate());
-      } else {
-        aTargetList.addSome(allItems.items.enumerate());
-      }
-      if (aListener && list.length > 0) {
-        aListener.onFirstMediaItem(list.getItemByIndex(0));
+
+      function onEnumerateComplete() {
+        // add the contents
+        if (aDropPosition != -1 &&
+            aTargetList instanceof Ci.sbIOrderableMediaList)
+        {
+          aTargetList.insertSomeBefore(aDropPosition,
+                                       ArrayConverter.enumerator(allItems.items));
+        } else {
+          aTargetList.addSome(ArrayConverter.enumerator(allItems.items));
+        }
+        if (aListener && list.length > 0) {
+          aListener.onFirstMediaItem(list.getItemByIndex(0));
+        }
+  
+        // lone> some of these values may not be accurate, this assumes that all 
+        // tracks have been copied, which is true if both the source and target 
+        // are playlists, but could be false if the target is a library. better 
+        // than nothing anyway.
+        InternalDropHandler._dropComplete(aListener,
+                                          aTargetList,
+                                          list.length,
+                                          0,
+                                          rejectedItems,
+                                          list.length,
+                                          0);
       }
     }
-    // lone> some of these values may not be accurate, this assumes that all 
-    // tracks have been copied, which is true if both the source and target 
-    // are playlists, but could be false if the target is a library. better 
-    // than nothing anyway.
-    this._dropComplete(aListener, aTargetList, list.length, 0, rejectedItems, list.length, 0);
   },
 
   /**
@@ -642,31 +679,20 @@ var InternalDropHandler = {
       libraryDevice = null;
     }
 
-    // Create a filtered item enumerator that filters duplicates and counts
-    // unsupported items for device libraries.
-    var totalUnsupported = 0;
+    // Create a filtered item enumerator that filters duplicates
     var func = function(aElement) {
-      var includeItem = dupFilter.filter(aElement);
-
-      if (includeItem && libraryDevice) {
-        try {
-          var mediaItem = aElement.QueryInterface(Ci.sbIMediaItem);
-          if (!libraryDevice.supportsMediaItem(mediaItem))
-            totalUnsupported++;
-        } catch (ex) {
-        }
-      }
-
-      return includeItem;
+      return dupFilter.filter(aElement);
     };
     var filteredItems = new SBFilteredEnumerator(items, func);
+    var totalUnsupported = 0;
 
     // Create an enumerator that wraps the enumerator we were handed.
     // We use this to set downloadStatusTarget and to notify the onFirstMediaItem
-    // listener.
+    // listener, as well as counting the number of unsupported items
     var unwrapper = {
       enumerator: filteredItems,
       first: true,
+      itemsPending: 0,
 
       hasMoreElements : function() {
         return this.enumerator.hasMoreElements();
@@ -682,38 +708,56 @@ var InternalDropHandler = {
         
         item.setProperty(SBProperties.downloadStatusTarget,
                          item.library.guid + "," + item.guid);
+
+        if (libraryDevice) {
+          this.itemsPending++;
+          libraryDevice.supportsMediaItem(item, this);
+        }
+
         return item;
       },
-      QueryInterface : function(iid) {
-        if (iid.equals(Components.interfaces.nsISimpleEnumerator) ||
-            iid.equals(Components.interfaces.nsISupports))
-          return this;
-        throw Components.results.NS_NOINTERFACE;
-      }
+      onSupportsMediaItem : function(aMediaItem, aIsSupported) {
+        if (!aIsSupported) {
+          totalUnsupported++;
+        }
+        this.itemsPending--;
+        if (this.itemsPending < 1) {
+          onEnumerateComplete();
+        }
+      },
+      QueryInterface : XPCOMUtils.generateQI([Ci.nsISimpleEnumerator,
+                                              Ci.sbIDeviceSupportsItemCallback])
     }
 
-    if (aDropPosition != -1 &&
-            aTargetList instanceof Ci.sbIOrderableMediaList) {
+    if (aDropPosition != -1 && aTargetList instanceof Ci.sbIOrderableMediaList) {
       aTargetList.insertSomeBefore(unwrapper, aDropPosition);
     } else {
       aTargetList.addSome(unwrapper);
     }
 
-    var totalImported = dupFilter.mediaItemCount - dupFilter.duplicateCount;
-    var totalDups = dupFilter.duplicateCount;
-    var totalInserted = dupFilter.mediaItemCount;
-    if (dupFilter.removeDuplicates)
-      totalInserted = totalImported;
-    totalImported -= totalUnsupported;
-    totalInserted -= totalUnsupported;
+    if (!libraryDevice) {
+      // no library device, therefore no asynchronous callback of item support
+      // checks - fire the enumeration complete code now
+      onEnumerateComplete();
+    }
 
-    this._dropComplete(aListener,
-                       aTargetList,
-                       totalImported,
-                       totalDups,
-                       totalUnsupported,
-                       totalInserted,
-                       0);
+    function onEnumerateComplete() {
+      var totalImported = dupFilter.mediaItemCount - dupFilter.duplicateCount;
+      var totalDups = dupFilter.duplicateCount;
+      var totalInserted = dupFilter.mediaItemCount;
+      if (dupFilter.removeDuplicates)
+        totalInserted = totalImported;
+      totalImported -= totalUnsupported;
+      totalInserted -= totalUnsupported;
+  
+      InternalDropHandler._dropComplete(aListener,
+                                        aTargetList,
+                                        totalImported,
+                                        totalDups,
+                                        totalUnsupported,
+                                        totalInserted,
+                                        0);
+    }
   },
 
   // called when the whole drop handling operation has completed, used

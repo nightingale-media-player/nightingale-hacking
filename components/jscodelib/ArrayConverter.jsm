@@ -231,6 +231,7 @@ var ArrayConverter = {
         }
       }
     }
+    return null;
   },
 
   /**
@@ -243,11 +244,14 @@ var ArrayConverter = {
   },
 
   /**
-   * Return a nsISimpleEnumerator for a JavaScript array.
+   * Return a nsISimpleEnumerator for a JavaScript array or nsIArray.
    *
    * @param aArray JavaScript array to convert.
    */
   enumerator: function get_enumerator(/* in JSArray */ aArray) {
+    if (aArray instanceof Ci.nsIArray) {
+      return aArray.nsIArray.enumerate();
+    }
     return new Enumerator(aArray);
   },
 
