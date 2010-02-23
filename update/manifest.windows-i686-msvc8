@@ -287,9 +287,9 @@
 ./extensions/mtp@songbirdnest.com/chrome/mtp.jar
 ./extensions/mtp@songbirdnest.com/install.rdf
 ./extensions/mtp@songbirdnest.com/platform/WINNT_x86-msvc/components/mtpDeviceServicePaneService.js
+./extensions/mtp@songbirdnest.com/platform/WINNT_x86-msvc/components/sbMTPMarshall.xpt
 ./extensions/mtp@songbirdnest.com/platform/WINNT_x86-msvc/components/sbMTPServices.js
 ./extensions/mtp@songbirdnest.com/platform/WINNT_x86-msvc/components/sbMTPWin32.dll
-./extensions/mtp@songbirdnest.com/platform/WINNT_x86-msvc/components/sbMTPMarshall.xpt
 ./extensions/purplerain@songbirdnest.com/chrome.manifest
 ./extensions/purplerain@songbirdnest.com/install.rdf
 ./extensions/{f13b157f-b174-47e7-a34d-4815ddfdfeb8}/chrome.manifest
