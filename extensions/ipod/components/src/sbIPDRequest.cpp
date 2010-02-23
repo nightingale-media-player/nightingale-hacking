@@ -415,7 +415,10 @@ sbIPDDevice::ReqHandleWriteTrack(TransferRequest* aRequest)
 
   // Remove unsupported media items and report errors.
   PRBool supported;
-  rv = SupportsMediaItem(aRequest->item, PR_TRUE, &supported);
+  rv = sbBaseDevice::SupportsMediaItem(aRequest->item,
+                                       nsnull,
+                                       PR_TRUE,
+                                       &supported);
   NS_ENSURE_SUCCESS(rv, /* void */);
   if (!supported) {
     rv = DeleteItem(aRequest->list, aRequest->item);

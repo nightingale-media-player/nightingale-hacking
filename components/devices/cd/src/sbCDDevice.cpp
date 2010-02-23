@@ -808,9 +808,9 @@ sbCDDevice::SyncLibraries()
 }
 
 NS_IMETHODIMP
-sbCDDevice::SupportsMediaItem(sbIMediaItem* aMediaItem,
-                              PRBool        aReportErrors,
-                              PRBool*       _retval) {
+sbCDDevice::SupportsMediaItem(sbIMediaItem*                  aMediaItem,
+                              sbIDeviceSupportsItemCallback* aCallback)
+{
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
