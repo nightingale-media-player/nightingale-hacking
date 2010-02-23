@@ -1732,7 +1732,7 @@ sbDeviceLibrary::Sync()
   rv = GetMgmtType(sbIDeviceLibrary::MEDIATYPE_IMAGE, &mgmtType);
   NS_ENSURE_SUCCESS(rv, rv);
   if (mgmtType != sbIDeviceLibrary::MGMT_TYPE_NONE) {
-    requestParams =
+    nsCOMPtr<nsIWritablePropertyBag2> requestParams =
       do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     // make a low priority request so it's guaranteed to be handled after
