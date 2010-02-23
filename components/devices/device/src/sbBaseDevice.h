@@ -64,6 +64,7 @@ class nsIPrefBranch;
 class sbAutoIgnoreWatchFolderPath;
 class sbBaseDeviceLibraryListener;
 class sbDeviceBaseLibraryCopyListener;
+class sbDeviceSupportsItemHelper;
 class sbDeviceTranscoding;
 class sbDeviceImages;
 class sbBaseDeviceMediaListListener;
@@ -228,9 +229,8 @@ public:
   NS_IMETHOD GetSupportsReformat(PRBool *_retval);
   NS_IMETHOD GetCacheSyncRequests(PRBool *_retval);
   NS_IMETHOD SetCacheSyncRequests(PRBool aChacheSyncRequests);
-  NS_IMETHOD SupportsMediaItem(sbIMediaItem* aMediaItem,
-                               PRBool        aReportErrors,
-                               PRBool*       _retval);
+  NS_IMETHOD SupportsMediaItem(sbIMediaItem*                  aMediaItem,
+                               sbIDeviceSupportsItemCallback* aCallback);
 
 public:
   /**
@@ -773,6 +773,27 @@ protected:
    */
   nsresult GetMusicAvailableSpace(sbILibrary* aLibrary,
                                   PRInt64*    aMusicAvailableSpace);
+
+  /**
+   * Internal version of SupportsMediaItem.
+   *
+   * @param aCallback [optional] A callback to use to report the result.  If the
+   *                  callback is used, this method will raise
+   *                  NS_ERROR_IN_PROGRESS.  Note that it may not be used even
+   *                  if available; in that case, _retval will be used as in the
+   *                  synchronous case.
+   *
+   * This is expected to be called from the main thread when asynchronous
+   * behaviour is desired.
+   *
+   * @throw NS_ERROR_IN_PROGRESS if the result will be asynchronously supplied
+   *                             via the callback.
+   */
+  nsresult SupportsMediaItem(sbIMediaItem*                  aMediaItem,
+                             sbDeviceSupportsItemHelper*    aCallback,
+                             PRBool                         aReportErrors,
+                             PRBool*                        _retval);
+  friend class sbDeviceSupportsItemHelper;
 
   /**
    * Return true in _retval if DRM is supported for the media item specified by

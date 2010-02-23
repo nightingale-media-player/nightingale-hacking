@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright© 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 /**
  * \file sbIDevice.idl
@@ -41,12 +39,23 @@ interface sbIDeviceStatus;
 interface sbIMediaItem;
 
 /**
+ * \interface sbIDeviceSupportsMediaItemCallback
+ *
+ * A callback interface for sbIDevice::supportsMediaItem
+ */
+[scriptable, function, uuid(a46d3a7e-1dd1-11b2-a1dd-f531804f18a9)]
+interface sbIDeviceSupportsItemCallback : nsISupports
+{
+  void onSupportsMediaItem(in sbIMediaItem aMediaItem, in boolean aIsSupported);
+};
+
+/**
  * \interface sbIDevice
  * \note Implementations of this interface must be threadsafe.
  *
  * The main interface to all device objects
  */
-[scriptable, uuid(ffc35973-a4b8-4378-8a91-7d9545f9151e)]
+[scriptable, uuid(d59ed7e2-1dd1-11b2-99eb-b40b3170516a)]
 interface sbIDevice : nsISupports
 {
   /**
@@ -263,11 +272,14 @@ interface sbIDevice : nsISupports
    *   a) not DRM protected, or
    *   b) is DRM protected and supported by the device
    *
-   * If a media item cannot be stored on the device and aReportErrors is true,
-   * report an unsupported media item as a device error.
+   * \param aMediaItem the item to check
+   * \param aCallback the callback to report to
+   *
+   * \note This method is asynchronous; the callback will be invoked on the
+   *       main thread.
    */
-  boolean supportsMediaItem(in sbIMediaItem aMediaItem,
-                            [optional] in boolean aReportErrors);
+  void supportsMediaItem(in sbIMediaItem aMediaItem,
+                         in sbIDeviceSupportsItemCallback aCallback);
 
   /**
    * Eject device.

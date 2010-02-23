@@ -109,6 +109,10 @@ public:
    */
   nsresult GetMediaFormat(sbIMediaItem* aMediaItem,
                           sbIMediaFormat** aMediaFormat);
+  /**
+   * Get a media inspector
+   */
+  nsresult GetMediaInspector(sbIMediaInspector** _retval);
 
   /**
    * Transcode the media item for a given request to the destination specified

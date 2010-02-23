@@ -543,6 +543,18 @@ sbDeviceTranscoding::GetMediaFormat(sbIMediaItem* aMediaItem,
 }
 
 nsresult
+sbDeviceTranscoding::GetMediaInspector(sbIMediaInspector** _retval)
+{
+  nsresult rv;
+  if (!mMediaInspector) {
+    mMediaInspector = do_CreateInstance(SB_MEDIAINSPECTOR_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  NS_ADDREF(*_retval = mMediaInspector);
+  return NS_OK;
+}
+
+nsresult
 sbDeviceTranscoding::TranscodeVideoItem(
                                      sbITranscodeVideoJob * aVideoJob,
                                      sbBaseDevice::TransferRequest * aRequest,

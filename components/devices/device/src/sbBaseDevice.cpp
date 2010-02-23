@@ -96,6 +96,7 @@
 #include <sbProxiedComponentManager.h>
 #include <sbStringBundle.h>
 #include <sbStringUtils.h>
+#include <sbThreadUtils.h>
 #include <sbTranscodeUtils.h>
 #include <sbURIUtils.h>
 #include <sbVariantUtils.h>
@@ -104,6 +105,7 @@
 #include "sbDeviceEnsureSpaceForWrite.h"
 #include "sbDeviceLibrary.h"
 #include "sbDeviceStatus.h"
+#include "sbDeviceSupportsItemHelper.h"
 #include "sbDeviceTranscoding.h"
 #include "sbDeviceImages.h"
 #include "sbDeviceUtils.h"
@@ -5512,14 +5514,47 @@ sbBaseDevice::RegisterDeviceCapabilities(sbIDeviceCapabilities * aCapabilities)
 }
 
 NS_IMETHODIMP
-sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem,
-                                PRBool        aReportErrors,
-                                PRBool*       _retval)
+sbBaseDevice::SupportsMediaItem(sbIMediaItem*                  aMediaItem,
+                                sbIDeviceSupportsItemCallback* aCallback)
 {
+  // This is always async, so it's fine to always create a new runnable and
+  // do anything there
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aCallback);
+
+  nsresult rv;
+  nsRefPtr<sbDeviceSupportsItemHelper> helper =
+    new sbDeviceSupportsItemHelper();
+  NS_ENSURE_TRUE(helper, NS_ERROR_OUT_OF_MEMORY);
+  rv = helper->Init(aMediaItem, this, aCallback);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIRunnable> runnable =
+    NS_NEW_RUNNABLE_METHOD(sbDeviceSupportsItemHelper,
+                           helper,
+                           RunSupportsMediaItem);
+  NS_ENSURE_TRUE(runnable, NS_ERROR_OUT_OF_MEMORY);
+  rv = NS_DispatchToMainThread(runnable);
+  NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::SupportsMediaItem(sbIMediaItem*                  aMediaItem,
+                                sbDeviceSupportsItemHelper*    aCallback,
+                                PRBool                         aReportErrors,
+                                PRBool*                        _retval)
+{
+  // we will always need the retval
+  NS_ENSURE_ARG_POINTER(_retval);
+  if (NS_IsMainThread()) {
+    // it is an error to call this on the main thread with no callback
+    NS_ENSURE_ARG_POINTER(aCallback);
+  }
+
   nsresult rv;
 
   if (sbDeviceUtils::IsItemDRMProtected(aMediaItem)) {
-    PRBool supported;
     rv = SupportsMediaItemDRM(aMediaItem, aReportErrors, _retval);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -5558,22 +5593,28 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem,
     }
 
     // Can't transcode, check the media format as a fallback.
+    if (aCallback) {
+      // asynchronous
+      nsCOMPtr<sbIMediaInspector> inspector;
+      rv = GetDeviceTranscoding()->GetMediaInspector(getter_AddRefs(inspector));
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = aCallback->InitJobProgress(inspector, transcodeType);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = inspector->InspectMediaAsync(aMediaItem);
+      NS_ENSURE_SUCCESS(rv, rv);
+      return NS_ERROR_IN_PROGRESS;
+    }
+    // synchronous
     nsCOMPtr<sbIMediaFormat> mediaFormat;
     rv = GetDeviceTranscoding()->GetMediaFormat(aMediaItem,
-                                            getter_AddRefs(mediaFormat));
+                                                getter_AddRefs(mediaFormat));
     NS_ENSURE_SUCCESS(rv, rv);
     rv = sbDeviceUtils::DoesItemNeedTranscoding(transcodeType,
                                                 mediaFormat,
                                                 this,
                                                 needsTranscoding);
 
-    if (NS_SUCCEEDED(rv) && !needsTranscoding) {
-      *_retval = PR_TRUE;
-      return NS_OK;
-    }
-
-    // Can't transfer at all.
-    *_retval = PR_FALSE;
+    *_retval = (NS_SUCCEEDED(rv) && !needsTranscoding);
     return NS_OK;
   }
 
