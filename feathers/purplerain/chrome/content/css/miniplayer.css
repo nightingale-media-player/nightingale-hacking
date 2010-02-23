@@ -432,10 +432,10 @@ sb-sys-close-button.mini {
   -moz-image-region: rect(0px 13px 17px 0px);
   margin-bottom: 2px;
 }
-sb-sys-close-button:hover {
+sb-sys-close-button.mini:hover {
   -moz-image-region: rect(17px 13px 34px 0px);
 }
-sb-sys-close-button:active {
+sb-sys-close-button.mini:active {
   -moz-image-region: rect(34px 13px 51px 0px);
 }
 
