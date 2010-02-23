@@ -104,7 +104,7 @@ var DeviceMgmtTabs = {
 
     // Check Images
     if (!this._deviceSupportsContent(sbIDC.CONTENT_IMAGE,
-                                     -1)) {
+                                     sbIDC.FUNCTION_IMAGE_DISPLAY)) {
       this._toggleTab("image", true);
     }
   },
@@ -206,6 +206,7 @@ var DeviceMgmtTabs = {
     // by the user to play on a device that does support playback, so it's a
     // good thing we show the tab even though the physical device reports no
     // audio support.
+    var sbIDC = Ci.sbIDeviceCapabilities;
     if (aContentType == sbIDC.CONTENT_IMAGE)
       return true;
 
@@ -224,13 +225,13 @@ var DeviceMgmtTabs = {
       catch (err) {
         var strContentType;
         switch (aContentType) {
-          case Ci.sbIDeviceCapabilities.CONTENT_AUDIO:
+          case sbIDC.CONTENT_AUDIO:
             strContentType = "Audio";
             break;
-          case Ci.sbIDeviceCapabilities.CONTENT_VIDEO:
+          case sbIDC.CONTENT_VIDEO:
             strContentType = "Video";
             break;
-          case Ci.sbIDeviceCapabilities.CONTENT_IMAGE:
+          case sbIDC.CONTENT_IMAGE:
             strContentType = "Image";
             break;
           default:
