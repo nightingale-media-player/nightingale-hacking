@@ -1721,6 +1721,22 @@ sbDeviceLibrary::Sync()
     mSyncSettingsChanged = PR_FALSE;
   }
 
+  // If the user has enabled image sync, trigger it after the audio/video sync
+  PRUint32 mgmtType;
+  rv = GetMgmtType(sbIDeviceLibrary::MEDIATYPE_IMAGE, &mgmtType);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (mgmtType != sbIDeviceLibrary::MGMT_TYPE_NONE) {
+    requestParams =
+      do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    // make a low priority request so it's guaranteed to be handled after
+    // higher priority requests, such as audio and video
+    rv = requestParams->SetPropertyAsInt32(NS_LITERAL_STRING("priority"), sbBaseDevice::TransferRequest::PRIORITY_LOW);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = device->SubmitRequest(sbIDevice::REQUEST_IMAGESYNC, requestParams);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   return NS_OK;
 }
 

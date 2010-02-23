@@ -3996,15 +3996,6 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
   // Update the sync types (audio/video/image) after queuing requests
   aRequest->itemType = mSyncType;
 
-  // If the user has enabled image sync, trigger it after the audio/video sync
-  PRUint32 mgmtType;
-  rv = dstLib->GetMgmtType(sbIDeviceLibrary::MEDIATYPE_IMAGE, &mgmtType);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (mgmtType != sbIDeviceLibrary::MGMT_TYPE_NONE) {
-    rv = PushRequest(REQUEST_IMAGESYNC);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
   return NS_OK;
 }
 

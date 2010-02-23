@@ -165,7 +165,11 @@ public:
 
     PRUint32 itemTransferID;         /* id for this item transfer */
 
-    static const PRInt32 PRIORITY_DEFAULT = 0x1000000;
+    static const PRInt32 PRIORITY_HIGHEST   = 0x0000000;
+    static const PRInt32 PRIORITY_HIGH      = 0x1000000;
+    static const PRInt32 PRIORITY_DEFAULT   = 0x2000000;
+    static const PRInt32 PRIORITY_LOW       = 0x3000000;
+    static const PRInt32 PRIORITY_LOWEST    = 0x4000000;
     PRInt32 priority;                /* priority for the request (lower first) */
 
     PRInt64 timeStamp;               /* time stamp of when request was
