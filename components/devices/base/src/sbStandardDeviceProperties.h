@@ -48,5 +48,7 @@
 #define SB_DEVICE_PROPERTY_VIDEO_ITEM_COUNT       "http://songbirdnest.com/device/1.0#videoItemCount"
 #define SB_DEVICE_PROPERTY_VIDEO_TOTAL_PLAY_TIME  "http://songbirdnest.com/device/1.0#videoTotalPlayTime"
 #define SB_DEVICE_PROPERTY_VIDEO_USED_SPACE       "http://songbirdnest.com/device/1.0#videoUsedSpace"
+#define SB_DEVICE_PROPERTY_IMAGE_ITEM_COUNT       "http://songbirdnest.com/device/1.0#imageItemCount"
+#define SB_DEVICE_PROPERTY_IMAGE_USED_SPACE       "http://songbirdnest.com/device/1.0#imageUsedSpace"
 
 #endif /* __SB_STANDARD_DEVICE_PROPERTIES_H__ */

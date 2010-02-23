@@ -102,8 +102,10 @@ var DCW = {
 
   _panelElements: [ "device-cap-bar-music-box",
                     "device-cap-bar-video-box",
+                    "device-cap-bar-image-box",
                     "device-capacity-legend-music",
-                    "device-capacity-legend-video"
+                    "device-capacity-legend-video",
+                    "device-capacity-legend-image"
                   ],
 
   /**
@@ -371,10 +373,12 @@ var DCW = {
         _getDeviceProperty("http://songbirdnest.com/device/1.0#musicUsedSpace", 0));
     var videoSpace = parseInt(this.
         _getDeviceProperty("http://songbirdnest.com/device/1.0#videoUsedSpace", 0));
+    var imageSpace = parseInt(this.
+        _getDeviceProperty("http://songbirdnest.com/device/1.0#imageUsedSpace", 0));
     var usedSpace = parseInt(this.
         _getDeviceProperty("http://songbirdnest.com/device/1.0#totalUsedSpace", 0));
     var totalSpace = usedSpace + freeSpace;
-    var otherSpace = usedSpace - musicSpace - videoSpace;
+    var otherSpace = usedSpace - musicSpace - videoSpace - imageSpace;
 
     // Set up the device capacity table.
     var capTable = {};
@@ -382,6 +386,7 @@ var DCW = {
     capTable.free = Math.max(0, freeSpace);
     capTable.music = Math.max(0, musicSpace);
     capTable.video = Math.max(0, videoSpace);
+    capTable.image = Math.max(0, imageSpace);
     capTable.other = Math.max(0, otherSpace);
     return capTable;
   }

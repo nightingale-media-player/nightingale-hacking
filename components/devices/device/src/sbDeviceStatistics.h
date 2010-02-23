@@ -140,6 +140,20 @@ public:
 
   void AddVideoPlayTime(PRInt64 aAddVideoPlayTime);
 
+  // Image count.
+  PRUint32 ImageCount();
+
+  void SetImageCount(PRUint32 aImageCount);
+
+  void AddImageCount(PRInt32 aAddImageCount);
+
+  // Image used.
+  PRUint64 ImageUsed();
+
+  void SetImageUsed(PRUint64 aImageUsed);
+
+  void AddImageUsed(PRInt64 aAddImageUsed);
+
 
   //----------------------------------------------------------------------------
   //
@@ -161,6 +175,8 @@ private:
   // mVideoCount                Count of the number of video items.
   // mVideoUsed                 Count of the number of bytes used for video.
   // mVideoPlayTime             Total video playback time in microseconds.
+  // mVideoCount                Count of the number of image items.
+  // mVideoUsed                 Count of the number of bytes used for images.
   //
 
   class sbBaseDevice*           mBaseDevice;
@@ -172,6 +188,8 @@ private:
   PRUint32                      mVideoCount;
   PRUint64                      mVideoUsed;
   PRUint64                      mVideoPlayTime;
+  PRUint32                      mImageCount;
+  PRUint64                      mImageUsed;
 
 
   //

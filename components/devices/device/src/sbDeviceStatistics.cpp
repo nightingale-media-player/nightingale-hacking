@@ -450,6 +450,56 @@ void sbDeviceStatistics::AddVideoPlayTime(PRInt64 aAddVideoPlayTime)
 }
 
 
+//
+// Image count setter/getters.
+//
+
+PRUint32 sbDeviceStatistics::ImageCount()
+{
+  nsAutoLock autoStatLock(mStatLock);
+  return mImageCount;
+}
+
+void sbDeviceStatistics::SetImageCount(PRUint32 aImageCount)
+{
+  nsAutoLock autoStatLock(mStatLock);
+  mImageCount = aImageCount;
+}
+
+void sbDeviceStatistics::AddImageCount(PRInt32 aAddImageCount)
+{
+  nsAutoLock autoStatLock(mStatLock);
+  PRInt32 ImageCount =
+            PR_MAX(static_cast<PRInt32>(mImageCount) + aAddImageCount, 0);
+  mImageCount = ImageCount;
+}
+
+
+//
+// Image used setter/getters.
+//
+
+PRUint64 sbDeviceStatistics::ImageUsed()
+{
+  nsAutoLock autoStatLock(mStatLock);
+  return mImageUsed;
+}
+
+void sbDeviceStatistics::SetImageUsed(PRUint64 aImageUsed)
+{
+  nsAutoLock autoStatLock(mStatLock);
+  mImageUsed = aImageUsed;
+}
+
+void sbDeviceStatistics::AddImageUsed(PRInt64 aAddImageUsed)
+{
+  nsAutoLock autoStatLock(mStatLock);
+  PRInt64 ImageUsed =
+            PR_MAX(static_cast<PRInt64>(mImageUsed) + aAddImageUsed, 0);
+  mImageUsed = ImageUsed;
+}
+
+
 //------------------------------------------------------------------------------
 //
 // Private device statistics services.
@@ -468,7 +518,9 @@ sbDeviceStatistics::sbDeviceStatistics() :
   mAudioPlayTime(0),
   mVideoCount(0),
   mVideoUsed(0),
-  mVideoPlayTime(0)
+  mVideoPlayTime(0),
+  mImageCount(0),
+  mImageUsed(0)
 {
 }
 
@@ -529,6 +581,8 @@ sbDeviceStatistics::ClearLibraryStatistics(sbIDeviceLibrary* aLibrary)
   mVideoCount = 0;
   mVideoUsed = 0;
   mVideoPlayTime = 0;
+  mImageCount = 0;
+  mImageUsed = 0;
 
   return NS_OK;
 }

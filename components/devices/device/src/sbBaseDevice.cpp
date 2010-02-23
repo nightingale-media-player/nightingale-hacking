@@ -3337,6 +3337,14 @@ sbBaseDevice::UpdateStatisticsProperties()
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_TOTAL_PLAY_TIME),
           sbNewVariant(mDeviceStatistics->VideoPlayTime()));
   NS_ENSURE_SUCCESS(rv, rv);
+  rv = deviceProperties->SetProperty
+         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMAGE_ITEM_COUNT),
+          sbNewVariant(mDeviceStatistics->ImageCount()));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = deviceProperties->SetProperty
+         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMAGE_USED_SPACE),
+          sbNewVariant(mDeviceStatistics->ImageUsed()));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

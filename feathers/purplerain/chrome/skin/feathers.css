@@ -934,6 +934,10 @@ sb-device-managetabs {
 .device-capacity-legend-color-box[type="video"] {
   background-color: rgb(82,113,50);
 }
+.device-capacity-image,
+.device-capacity-legend-color-box[type="image"] {
+  background-color: rgb(255,255,255);
+}
 .device-capacity-other,
 .device-capacity-legend-color-box[type="other"] {
   background-color: rgb(171,98,23);

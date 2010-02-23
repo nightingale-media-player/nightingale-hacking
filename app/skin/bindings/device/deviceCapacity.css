@@ -74,6 +74,11 @@ Imported by bindings.css or directly into feathers.
   background-color: rgb(69,200,0);
 }
 
+.device-capacity-image,
+.device-capacity-legend-color-box[type="image"] {
+  background-color: rgb(255,255,255);
+}
+
 .device-capacity-other,
 .device-capacity-legend-color-box[type="other"] {
   background-color: rgb(255,210,0);

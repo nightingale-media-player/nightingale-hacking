@@ -75,6 +75,9 @@
             <xul:hbox sbid="device-cap-bar-video-box"
                       type="video"
                       class="device-capacity-video"/>
+            <xul:hbox sbid="device-cap-bar-image-box"
+                      type="image"
+                      class="device-capacity-image"/>
             <xul:hbox type="other" class="device-capacity-other"/>
             <xul:hbox type="free" class="device-capacity-free"/>
           </xul:hbox>
@@ -117,6 +120,10 @@
                                          type="video"
                                          class="device-capacity-legend-video"
                                          label="&device.capacity.video.label;"/>
+          <xul:sb-device-capacity-legend sbid="device-capacity-legend-image"
+                                         type="image"
+                                         class="device-capacity-legend-image"
+                                         label="&device.capacity.image.label;"/>
           <xul:sb-device-capacity-legend type="other"
                                          class="device-capacity-legend-other"
                                          label="&device.capacity.other.label;"/>
