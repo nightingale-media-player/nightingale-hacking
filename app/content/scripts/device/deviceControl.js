@@ -721,6 +721,8 @@ deviceControlWidget.prototype = {
              this._getStateAttribute(attrVal, aAttrName, "idle")) {}
     else if (this._deviceLibrary && !(this._deviceLibrary.isMgmtTypeManual) &&
              this._getStateAttribute(attrVal, aAttrName, "mgmt_not_manual")) {}
+    else if (this._deviceLibrary && this._canTriggerSync() &&
+             this._getStateAttribute(attrVal, aAttrName, "can_trigger_sync")) {}
     else if (this._currentSupportsReformat &&
              this._getStateAttribute(attrVal,
                                      aAttrName,
@@ -878,5 +880,15 @@ deviceControlWidget.prototype = {
     servicePaneNode = servicePaneService.getNode(servicePaneNodeID);
 
     return servicePaneNode;
+  },
+  
+  _canTriggerSync: function deviceControlWidget__canTriggerSync() {
+    // user can trigger sync if management is not manual
+    if (!(this._deviceLibrary.isMgmtTypeManual))
+      return true;
+    // and also if photo sync is enabled
+    return (this._deviceLibrary
+                .getMgmtType(this._deviceLibrary.MEDIATYPE_IMAGE) != 
+            this._deviceLibrary.MGMT_TYPE_NONE);
   }
 };

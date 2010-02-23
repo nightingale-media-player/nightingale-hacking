@@ -345,7 +345,7 @@ var DIPW = {
           this._panelBar.removeAllPanels();
           this._removePanels = 0;
         }
-
+        var completeAudio, completeVideo;
         // Set up the panels for the upcoming syncing.
         if ((this._itemType.intValue & TYPE.MUSIC) &&
             !this._findMediaInfoPanel("audio")) {
@@ -371,6 +371,7 @@ var DIPW = {
                                             Ci.sbIDevice.STATE_SYNCING,
                                             true);
           }
+          completeAudio = true;
         }
         if ((this._itemType.intValue & TYPE.IMAGE) &&
             !this._findMediaInfoPanel("image")) {
@@ -382,6 +383,23 @@ var DIPW = {
             this._updateMediaInfoPanelState("image",
                                             Ci.sbIDevice.STATE_SYNCING,
                                             true);
+          }
+          completeAudio = true;
+          completeVideo = true;
+        }
+        
+        if (completeAudio) {
+          if (this._findMediaInfoPanel("audio")) {
+            this._updateMediaInfoPanelState("audio",
+                                            Ci.sbIDevice.STATE_IDLE,
+                                            false);
+          }
+        }
+        if (completeVideo) {
+          if (this._findMediaInfoPanel("audio")) {
+            this._updateMediaInfoPanelState("audio",
+                                            Ci.sbIDevice.STATE_IDLE,
+                                            false);
           }
         }
 

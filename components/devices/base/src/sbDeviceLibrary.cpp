@@ -1659,68 +1659,74 @@ sbDeviceLibrary::Sync()
   NS_ASSERTION(device,
                "sbDeviceLibrary::GetDevice returned success with no device");
 
-  nsCOMPtr<sbILibraryManager> libraryManager =
-    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+  PRBool isManual = PR_FALSE;
+  rv = GetIsMgmtTypeManual(&isManual);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbILibrary> mainLib;
-  rv = libraryManager->GetMainLibrary(getter_AddRefs(mainLib));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  #if DEBUG
-    // sanity check that we're using the right device
-    { /* scope */
-      nsCOMPtr<sbIDeviceContent> content;
-      rv = device->GetContent(getter_AddRefs(content));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsCOMPtr<nsIArray> libraries;
-      rv = content->GetLibraries(getter_AddRefs(libraries));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      PRUint32 libraryCount;
-      rv = libraries->GetLength(&libraryCount);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      PRBool found = PR_FALSE;
-      for (PRUint32 index = 0; index < libraryCount; ++index) {
-        nsCOMPtr<sbIDeviceLibrary> library =
-          do_QueryElementAt(libraries, index, &rv);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        if (SameCOMIdentity(NS_ISUPPORTS_CAST(sbILibrary*, this), library)) {
-          found = PR_TRUE;
-          break;
-        }
-      }
-      NS_ASSERTION(found,
-                   "sbDeviceLibrary has device that doesn't hold this library");
-    }
-  #endif /* DEBUG */
-
-  nsCOMPtr<nsIWritablePropertyBag2> requestParams =
-    do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = requestParams->SetPropertyAsInterface(NS_LITERAL_STRING("item"),
-                                             mainLib);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = requestParams->SetPropertyAsInterface(NS_LITERAL_STRING("list"),
-                                             NS_ISUPPORTS_CAST(sbIMediaList*, this));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = device->SubmitRequest(sbIDevice::REQUEST_SYNC, requestParams);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (mSyncSettingsChanged) {
-    // update the main library listeners
-    rv = UpdateMainLibraryListeners();
+  
+  if (!isManual) {
+      nsCOMPtr<sbILibraryManager> libraryManager =
+      do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    mSyncSettingsChanged = PR_FALSE;
-  }
+    nsCOMPtr<sbILibrary> mainLib;
+    rv = libraryManager->GetMainLibrary(getter_AddRefs(mainLib));
+    NS_ENSURE_SUCCESS(rv, rv);
 
+    #if DEBUG
+      // sanity check that we're using the right device
+      { /* scope */
+        nsCOMPtr<sbIDeviceContent> content;
+        rv = device->GetContent(getter_AddRefs(content));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsCOMPtr<nsIArray> libraries;
+        rv = content->GetLibraries(getter_AddRefs(libraries));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        PRUint32 libraryCount;
+        rv = libraries->GetLength(&libraryCount);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        PRBool found = PR_FALSE;
+        for (PRUint32 index = 0; index < libraryCount; ++index) {
+          nsCOMPtr<sbIDeviceLibrary> library =
+            do_QueryElementAt(libraries, index, &rv);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          if (SameCOMIdentity(NS_ISUPPORTS_CAST(sbILibrary*, this), library)) {
+            found = PR_TRUE;
+            break;
+          }
+        }
+        NS_ASSERTION(found,
+                     "sbDeviceLibrary has device that doesn't hold this library");
+      }
+    #endif /* DEBUG */
+
+    nsCOMPtr<nsIWritablePropertyBag2> requestParams = 
+      do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = requestParams->SetPropertyAsInterface(NS_LITERAL_STRING("item"),
+                                               mainLib);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = requestParams->SetPropertyAsInterface(NS_LITERAL_STRING("list"),
+                                               NS_ISUPPORTS_CAST(sbIMediaList*, this));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = device->SubmitRequest(sbIDevice::REQUEST_SYNC, requestParams);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (mSyncSettingsChanged) {
+      // update the main library listeners
+      rv = UpdateMainLibraryListeners();
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      mSyncSettingsChanged = PR_FALSE;
+    }
+  }
+  
   // If the user has enabled image sync, trigger it after the audio/video sync
   PRUint32 mgmtType;
   rv = GetMgmtType(sbIDeviceLibrary::MEDIATYPE_IMAGE, &mgmtType);

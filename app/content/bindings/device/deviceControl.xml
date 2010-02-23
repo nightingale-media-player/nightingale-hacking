@@ -74,6 +74,7 @@
    *   busy                     Device is busy.
    *   idle                     Device is idle.
    *   mgmt_not_manual          Device is not configured for manual management.
+   *   can_trigger_sync         Device sync can be triggered.
    *   supports_playlist        Device supports playlists.
    *   not_supports_playlist    Device does not support playlists.
    *
@@ -463,7 +464,7 @@
          label="&command.device.devicesync;"
          accesskey="&command.device.devicesync.accesskey;"
          disabled_default="true"
-         disabled_mgmt_not_manual="remove_attribute"
+         disabled_can_trigger_sync="remove_attribute"
          action="sync"/>
     </content>
   </binding> <!-- sb-device-sync-command -->
@@ -520,7 +521,7 @@
         accesskey_default="&command.device.devicesync.accesskey;"
         action_default="sync"
         disabled_default="true"
-        disabled_mgmt_not_manual="remove_attribute"
+        disabled_can_trigger_sync="remove_attribute"
 
         label_copy="&command.device.canceldevicecopy;"
         accesskey_copy="&command.device.canceldevicecopy.accesskey;"
