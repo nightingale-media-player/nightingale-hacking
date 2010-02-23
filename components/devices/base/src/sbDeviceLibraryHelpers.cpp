@@ -1020,7 +1020,7 @@ nsresult sbPlaylistSyncListener::AddItemsToList(nsISupports* aUserData)
 
   // Add a batch of items to the list.
   nsCOMPtr<sbIMediaItem> mediaItem;
-  for (PRUint32 i = 0; i < addItemsBatchParams->mediaItems.Count(); ++i) {
+  for (PRInt32 i = 0; i < addItemsBatchParams->mediaItems.Count(); ++i) {
     mediaItem = addItemsBatchParams->mediaItems.ObjectAt(i);
     NS_ENSURE_TRUE(mediaItem, NS_ERROR_FAILURE);
 

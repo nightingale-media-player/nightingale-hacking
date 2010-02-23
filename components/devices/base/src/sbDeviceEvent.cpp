@@ -135,6 +135,7 @@ NS_IMETHODIMP sbDeviceEvent::GetDeviceState(PRUint32 * aDeviceState)
   NS_ENSURE_ARG_POINTER(aDeviceState);
 
   *aDeviceState = mDeviceState;
+  return NS_OK;
 }
 
 NS_IMETHODIMP sbDeviceEvent::GetDeviceSubState(PRUint32 * aDeviceSubState)
@@ -142,4 +143,5 @@ NS_IMETHODIMP sbDeviceEvent::GetDeviceSubState(PRUint32 * aDeviceSubState)
   NS_ENSURE_ARG_POINTER(aDeviceSubState);
 
   *aDeviceSubState = mDeviceSubState;
+  return NS_OK;
 }
