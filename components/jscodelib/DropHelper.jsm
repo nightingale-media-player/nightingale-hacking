@@ -80,9 +80,6 @@ Cu.import("resource://app/jsmodules/StringUtils.jsm");
 
 var DNDUtils = {
 
-  _Ci: Components.interfaces,
-  _Cc: Components.classes,
-
   // returns true if the drag session contains supported flavors
   isSupported: function(aDragSession, aFlavourArray) {
     for (var i=0;i<aFlavourArray.length;i++) {
@@ -103,8 +100,8 @@ var DNDUtils = {
   // fills an array with the data for all items of a given flavor
   getTransferDataForFlavour: function(aFlavour, aSession, aArray) {
     if (!aSession) {
-      var dragService = this._Cc["@mozilla.org/widget/dragservice;1"]
-                            .getService(this._Ci.nsIDragService);
+      var dragService = Cc["@mozilla.org/widget/dragservice;1"]
+                            .getService(Ci.nsIDragService);
       aSession = dragService.getCurrentSession();
     }
 
@@ -114,8 +111,8 @@ var DNDUtils = {
     if (aSession.isDataFlavorSupported(aFlavour)) {
 
       for (var i=0;i<nitems;i++) {
-        var transfer = this._Cc["@mozilla.org/widget/transferable;1"]
-                           .createInstance(this._Ci.nsITransferable);
+        var transfer = Cc["@mozilla.org/widget/transferable;1"]
+                           .createInstance(Ci.nsITransferable);
 
         transfer.addDataFlavor(aFlavour);
         aSession.getData(transfer, i);
@@ -145,7 +142,7 @@ var DNDUtils = {
   getInternalTransferData: function(aData, aInterface) {
     // get the object from the dnd source tracker
     var dnd = Components.classes["@songbirdnest.com/Songbird/DndSourceTracker;1"]
-        .getService(this._Ci.sbIDndSourceTracker);
+        .getService(Ci.sbIDndSourceTracker);
     var source = dnd.getSourceSupports(aData);
     // and request the specified interface
     return source.QueryInterface(aInterface);
@@ -426,9 +423,6 @@ const TYPE_X_SB_TRANSFER_MEDIA_ITEMS = "application/x-sb-transfer-media-items";
 
 var InternalDropHandler = {
 
-  _Ci: Components.interfaces,
-  _Cc: Components.classes,
-
   supportedFlavours: [ TYPE_X_SB_TRANSFER_MEDIA_ITEM,
                        TYPE_X_SB_TRANSFER_MEDIA_LIST,
                        TYPE_X_SB_TRANSFER_MEDIA_ITEMS ],
@@ -441,8 +435,8 @@ var InternalDropHandler = {
   // performs a default drop of the drag session. media items go to the
   // main library.
   drop: function(aWindow, aDragSession, aListener) {
-    var mainLibrary = this._Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-                          .getService(this._Ci.sbILibraryManager)
+    var mainLibrary = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                          .getService(Ci.sbILibraryManager)
                           .mainLibrary;
     this.dropOnList(aWindow, aDragSession, mainLibrary, -1, aListener);
   },
@@ -514,19 +508,19 @@ var InternalDropHandler = {
     var context = DNDUtils.
       getInternalTransferDataForFlavour(aDragSession,
                                         TYPE_X_SB_TRANSFER_MEDIA_LIST, 
-                                        this._Ci.sbIMediaListTransferContext);
+                                        Ci.sbIMediaListTransferContext);
     var list = context.list;
 
     // record metrics
     var metrics_totype = aTargetList.library.getProperty(SBProperties.customType);
     var metrics_fromtype = list.library.getProperty(SBProperties.customType);
     this._metrics("app.servicepane.copy", 
-                       metrics_fromtype, 
-                       metrics_totype, 
-                       list.length);
+                  metrics_fromtype, 
+                  metrics_totype, 
+                  list.length);
 
     // are we dropping on a library ?
-    var targetListIsLibrary = (aTargetList instanceof this._Ci.sbILibrary);
+    var targetListIsLibrary = (aTargetList instanceof Ci.sbILibrary);
     var rejectedItems = 0; // for devices we may have to reject some items
 
     if (targetListIsLibrary) {
@@ -579,7 +573,7 @@ var InternalDropHandler = {
       
       // add the contents
       if (aDropPosition != -1 &&
-          aTargetList instanceof this._Ci.sbIOrderableMediaList) {
+          aTargetList instanceof Ci.sbIOrderableMediaList) {
         aTargetList.insertSomeBefore(aDropPosition, allItems.items.enumerate());
       } else {
         aTargetList.addSome(allItems.items.enumerate());
@@ -604,12 +598,12 @@ var InternalDropHandler = {
     var context = DNDUtils.
       getInternalTransferDataForFlavour(aDragSession,
                                         TYPE_X_SB_TRANSFER_MEDIA_ITEMS, 
-                                        this._Ci.sbIMediaItemsTransferContext);
+                                        Ci.sbIMediaItemsTransferContext);
 
     var items = context.items;
     
     // are we dropping on a library ?
-    if (aTargetList instanceof this._Ci.sbILibrary) {
+    if (aTargetList instanceof Ci.sbILibrary) {
       if (items.hasMoreElements() && 
           items.getNext().library == aTargetList) {
         // can't add items to a library to which they already belong
@@ -625,16 +619,16 @@ var InternalDropHandler = {
     var metrics_totype = aTargetList.library.getProperty(SBProperties.customType);
     var metrics_fromtype = context.source.library.getProperty(SBProperties.customType);
     this._metrics("app.servicepane.copy", 
-                       metrics_fromtype, 
-                       metrics_totype, 
-                       context.count);
+                  metrics_fromtype, 
+                  metrics_totype, 
+                  context.count);
 
     // Create a media item duplicate enumerator filter to count the number of
     // duplicate items and to remove them from the enumerator if the target is
     // a library.
     var dupFilter = new LibraryUtils.EnumeratorDuplicateFilter
                                        (aTargetList.library);
-    if (aTargetList instanceof this._Ci.sbILibrary) {
+    if (aTargetList instanceof Ci.sbILibrary) {
       dupFilter.removeDuplicates = true;
     }
 
@@ -699,7 +693,7 @@ var InternalDropHandler = {
     }
 
     if (aDropPosition != -1 &&
-            aTargetList instanceof this._Ci.sbIOrderableMediaList) {
+            aTargetList instanceof Ci.sbIOrderableMediaList) {
       aTargetList.insertSomeBefore(unwrapper, aDropPosition);
     } else {
       aTargetList.addSome(unwrapper);
@@ -758,7 +752,7 @@ var InternalDropHandler = {
   
   _metrics: function(aCategory, aUniqueID, aExtraString, aIntValue) {
     var metrics = Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
-                      .createInstance(this._Ci.sbIMetrics);
+                      .createInstance(Ci.sbIMetrics);
     metrics.metricsAdd(aCategory, aUniqueID, aExtraString, aIntValue);
   }
  
@@ -854,9 +848,6 @@ requirements are met.
 
 var ExternalDropHandler = {
 
-  _Ci: Components.interfaces,
-  _Cc: Components.classes,
-
   supportedFlavours: [ "application/x-moz-file",
                        "text/x-moz-url",
                        "text/unicode"],
@@ -869,8 +860,8 @@ var ExternalDropHandler = {
   // performs a default drop of the drag session. media items go to the
   // main library. 
   drop: function(aWindow, aDragSession, aListener) {
-    var mainLibrary = this._Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-                          .getService(this._Ci.sbILibraryManager)
+    var mainLibrary = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                          .getService(Ci.sbILibraryManager)
                           .mainLibrary;
     this.dropOnList(aWindow, aDragSession, mainLibrary, -1, aListener);
   },
@@ -878,8 +869,8 @@ var ExternalDropHandler = {
   // performs a default drop of a list of urls. media items go to the
   // main library. 
   dropUrls: function(aWindow, aUrlArray, aListener) {
-    var mainLibrary = this._Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-                          .getService(this._Ci.sbILibraryManager)
+    var mainLibrary = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                          .getService(Ci.sbILibraryManager)
                           .mainLibrary;
     this.dropUrlsOnList(aWindow, aUrlArray, mainLibrary, -1, aListener);
   },
@@ -980,11 +971,11 @@ var ExternalDropHandler = {
     var xpiArray = {};
     var xpiCount = 0;
 
-    var uriList = this._Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                      .createInstance(this._Ci.nsIMutableArray);
+    var uriList = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                      .createInstance(Ci.nsIMutableArray);
 
-    var ioService = this._Cc["@mozilla.org/network/io-service;1"]
-                        .getService(this._Ci.nsIIOService);
+    var ioService = Cc["@mozilla.org/network/io-service;1"]
+                        .getService(Ci.nsIIOService);
     
     // process all entries in the drop
     for (var dropentry in dropdata) {
@@ -1004,10 +995,10 @@ var ExternalDropHandler = {
       var prettyName;
 
       if (flavour == "application/x-moz-file") {
-        var ioService = this._Cc["@mozilla.org/network/io-service;1"]
-                            .getService(this._Ci.nsIIOService);
+        var ioService = Cc["@mozilla.org/network/io-service;1"]
+                            .getService(Ci.nsIIOService);
         var fileHandler = ioService.getProtocolHandler("file")
-                          .QueryInterface(this._Ci.nsIFileProtocolHandler);
+                          .QueryInterface(Ci.nsIFileProtocolHandler);
         rawData = fileHandler.getURLSpecFromFile(item);
 
         // Check to see that this is a xpi/jar - if so handle that event
@@ -1020,7 +1011,7 @@ var ExternalDropHandler = {
           ++xpiCount;
         }
       } else {
-        if (item instanceof this._Ci.nsISupportsString) {
+        if (item instanceof Ci.nsISupportsString) {
           rawData = item.toString();
         } else {
           rawData = ""+item;
@@ -1059,8 +1050,8 @@ var ExternalDropHandler = {
       window.setTimeout(window.installXPIArray, 10, xpiArray);
     }
 
-    var uriImportService = this._Cc["@songbirdnest.com/uri-import-service;1"]
-                               .getService(this._Ci.sbIURIImportService);
+    var uriImportService = Cc["@songbirdnest.com/uri-import-service;1"]
+                               .getService(Ci.sbIURIImportService);
     uriImportService.importURIArray(uriList,
                                     window,
                                     targetlist,
