@@ -782,7 +782,7 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 }
 .device-capacity-image,
 .device-capacity-legend-color-box[type="image"] {
-  background-color: rgb(255,255,255);
+  background-color: rgb(140,42,81);
 }
 .device-capacity-other,
 .device-capacity-legend-color-box[type="other"] {
