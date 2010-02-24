@@ -33,6 +33,7 @@ DYNAMIC_LIB = sbDeviceFirmwareUpdater
 
 CPP_SRCS = sbDeviceFirmwareDownloader.cpp \
            sbDeviceFirmwareModule.cpp \
+           sbDeviceFirmwareSupport.cpp \
            sbDeviceFirmwareUpdate.cpp \
            sbDeviceFirmwareUpdater.cpp \
            sbBaseDeviceFirmwareHandler.cpp \

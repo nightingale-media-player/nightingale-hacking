@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -24,6 +24,7 @@
 
 #include "nsISupports.idl"
 
+interface nsISimpleEnumerator;
 interface nsIURI;
 interface sbIDevice;
 interface sbIDeviceEventListener;
@@ -37,7 +38,7 @@ interface sbIDeviceFirmwareUpdate;
  *       to use your own listener if you do not have a listener registered
  *       with the device.
  */
-[scriptable, uuid(47153b7a-feaa-461d-a2b3-86788aebc639)]
+[scriptable, uuid(29bdc372-e6f6-48a8-b114-10faec695e03)]
 interface sbIDeviceFirmwareHandler : nsISupports
 {
   /**
@@ -147,6 +148,14 @@ interface sbIDeviceFirmwareHandler : nsISupports
    * \note This is optional and may be null.
    */
   readonly attribute AString deviceModelVersion;
+
+  /**
+   * \brief Array containing the list of devices supported by the
+   *        firmware handler.
+   * \note This is optional and may be null.
+   * \note Array contains sbIDeviceFirmwareSupport objects
+   */
+  readonly attribute nsISimpleEnumerator supportedDevices;
 
   /** 
    * \brief Check to see if this handler supports the given device

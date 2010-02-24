@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #include "sbBaseDeviceFirmwareHandler.h"
 
@@ -31,6 +29,7 @@
 #include <nsIIOService.h>
 #include <nsIScriptSecurityManager.h>
 
+#include <nsArrayUtils.h>
 #include <nsAutoLock.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
@@ -42,6 +41,7 @@
 #include <sbProxiedComponentManager.h>
 #include <sbProxyUtils.h>
 
+#include "sbDeviceFirmwareSupport.h"
 #include "sbDeviceFirmwareUpdate.h"
 
 /**
@@ -121,8 +121,66 @@ sbBaseDeviceFirmwareHandler::Init()
   rv = mXMLHttpRequest->SetMozBackgroundRequest(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mSupportedDevices = 
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = OnInit();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult 
+sbBaseDeviceFirmwareHandler::AppendSupportedDevice(
+                               const nsAString &aDeviceFriendlyName,
+                               const PRUint32 aDeviceVendorID,
+                               const PRUint32 aDeviceProductID)
+{
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<sbIDeviceFirmwareSupport> deviceSupport = 
+    do_CreateInstance(SB_DEVICEFIRMWARESUPPORT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deviceSupport->SimpleInit(aDeviceFriendlyName,
+                                 aDeviceVendorID,
+                                 aDeviceProductID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mSupportedDevices->AppendElement(deviceSupport, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult 
+sbBaseDeviceFirmwareHandler::AppendSupportedDeviceProductID(
+                               const nsAString &aDeviceFriendlyName,
+                               const PRUint32 aDeviceProductID)
+{
+  PRUint32 length = 0;
+  nsresult rv = mSupportedDevices->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIArray> array = do_QueryInterface(mSupportedDevices, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for(PRUint32 current = 0; current < length; current++) {
+    nsCOMPtr<sbIDeviceFirmwareSupport> deviceSupport = 
+      do_QueryElementAt(array, current, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString friendlyName;
+    rv = deviceSupport->GetDeviceFriendlyName(friendlyName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if(friendlyName.Equals(aDeviceFriendlyName)) {
+      rv = deviceSupport->AppendProductID(aDeviceProductID);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      return NS_OK;
+    }
+  }
 
   return NS_OK;
 }
@@ -494,6 +552,17 @@ sbBaseDeviceFirmwareHandler::OnGetDeviceModelVersion(nsAString &aModelVersion)
 
   return NS_OK;
 
+}
+
+/*virtual*/ nsresult
+sbBaseDeviceFirmwareHandler::OnGetSupportedDevices(nsISimpleEnumerator **aSupportedDevices)
+{
+  /**
+   * Here is where you would return a list of sbIDeviceFirmwareSupport
+   * objects which describe which devices your firmware handler supports.
+   */
+
+  return NS_OK;
 }
 
 /*virtual*/ nsresult
@@ -1010,6 +1079,20 @@ sbBaseDeviceFirmwareHandler::GetDeviceModelVersion(nsAString &aModelVersion)
   nsAutoMonitor mon(mMonitor);
 
   nsresult rv = OnGetDeviceModelVersion(aModelVersion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseDeviceFirmwareHandler::GetSupportedDevices(
+                               nsISimpleEnumerator **aSupportedDevices)
+{
+  nsAutoMonitor mon(mMonitor);
+
+  *aSupportedDevices = nsnull;
+
+  nsresult rv = OnGetSupportedDevices(aSupportedDevices);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
