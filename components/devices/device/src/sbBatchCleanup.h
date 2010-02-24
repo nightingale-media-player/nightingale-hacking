@@ -42,8 +42,10 @@ public:
    * \param aEnd The end of the iterator of the batch
    */
   sbBatchCleanup(sbBaseDevice * aDevice,
+                 sbBaseDevice::Batch &aBatch,
                  sbBaseDevice::Batch::const_iterator aStart,
                  sbBaseDevice::Batch::const_iterator aEnd) :
+                   mBatch(aBatch),
                    mCurrent(aStart),
                    mEnd(aEnd),
                    mDevice(aDevice) {
@@ -52,9 +54,11 @@ public:
    * Cleans up the items that haven't been proccessed
    */
   ~sbBatchCleanup() {
-    nsresult rv = mDevice->RemoveLibraryItems(mCurrent, mEnd);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
-                        "Unable to cleanup library items");
+    if (!mBatch.empty()) {
+      nsresult rv = mDevice->RemoveLibraryItems(mCurrent, mEnd);
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                          "Unable to cleanup library items");
+    }
   }
   /**
    * Sets the next item after the current has been completed
@@ -67,6 +71,10 @@ public:
     mCurrent = aNextIter;
   }
 private:
+  /**
+   * Current batch being processed
+   */
+  sbBaseDevice::Batch &mBatch;
   /**
    * Current item being processed
    */

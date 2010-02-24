@@ -608,6 +608,13 @@ public:
   sbDeviceImages* GetDeviceImages() const {
     return mDeviceImages;
   }
+
+  /**
+   * Reset the Batch Depth when abort.
+   */
+  void ResetBatchDepth() {
+    PR_AtomicSet(&mBatchDepth, 0);
+  }
   
 protected:
   friend class sbBaseDeviceInitHelper;
