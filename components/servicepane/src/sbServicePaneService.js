@@ -1,27 +1,27 @@
-/** vim: ts=2 sw=2 expandtab
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 :miv */
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 /**
@@ -42,6 +42,9 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Ce = Components.Exception;
+const Cu = Components.utils;
+
+Cu.import("resource://app/jsmodules/RDFHelper.jsm");
 
 const RDFSVC = Cc['@mozilla.org/rdf/rdf-service;1'].getService(Ci.nsIRDFService);
 const RDFCU = Cc['@mozilla.org/rdf/container-utils;1'].getService(Ci.nsIRDFContainerUtils);
@@ -591,7 +594,73 @@ ServicePaneService.prototype.init = function ServicePaneService_init() {
     node = node.nextSibling;
   }
 
+  // Check addon nodes.
+  this.checkAddonNodes();
+
   DEBUG('ServicePaneService.init() ends');
+}
+
+ServicePaneService.prototype.checkAddonNodes =
+  function ServicePaneService_checkAddonNodes(aNode) {
+  // Get node.  Start at root if none specified.
+  var node = aNode;
+  if (!node)
+    node = this._root;
+
+  // Check node if it's an addon node.
+  if (node.hasAttributeNS(SP, "addonID")) {
+    // If node addon is not installed, remove node and return.  If node addon is
+    // disabled, hide node.
+    var addonID = node.getAttributeNS(SP, "addonID");
+    if (!this.isAddonInstalled(addonID)) {
+      this.removeNode(node);
+      return;
+    }
+    else if (this.isAddonDisabled(addonID)) {
+      node.hidden = true;
+    }
+  }
+
+  // Check node children.
+  if (node.isContainer) {
+    var child = node.firstChild;
+    while (child) {
+      var nextSibling = child.nextSibling;
+      this.checkAddonNodes(child);
+      child = nextSibling;
+    }
+  }
+}
+
+ServicePaneService.prototype.isAddonInstalled =
+  function ServicePaneService_isAddonInstalled(aAddonID) {
+  // Check if addon is installed.
+  var extensionManager = Cc["@mozilla.org/extensions/manager;1"]
+                           .getService(Ci.nsIExtensionManager);
+  var addonInstalled = extensionManager.getItemForID(aAddonID) ? true : false;
+
+  return addonInstalled;
+}
+
+ServicePaneService.prototype.isAddonDisabled =
+  function ServicePaneService_isAddonDisabled(aAddonID) {
+  // Get the addon info.
+  var extensionManager = Cc["@mozilla.org/extensions/manager;1"]
+                           .getService(Ci.nsIExtensionManager);
+  addonInfo = RDFHelper.help(extensionManager.datasource.URI,
+                             "urn:mozilla:item:" + aAddonID,
+                             RDFHelper.DEFAULT_RDF_NAMESPACES);
+
+  // Check if addon is disabled.
+  var addonDisabled = false;
+  if ((addonInfo.userDisabled == "true") ||
+      (addonInfo.userDisabled == "needs-enable") ||
+      (addonInfo.appDisabled == "true") ||
+      (addonInfo.appDisabled == "needs-enable")) {
+    addonDisabled = true;
+  }
+
+  return addonDisabled;
 }
 
 ServicePaneService.prototype.shutdown = function ServicePaneService_shutdown() {

@@ -1,3 +1,4 @@
+#filter substitution
 newreleases.jar:
 % content newreleases  %content/	contentaccessible=yes
 % locale  newreleases  ca-AD  %locale/ca-AD/
@@ -19,4 +20,5 @@ newreleases.jar:
 #% locale  newreleases  sv-SE  %locale/sv-SE/
 % skin    newreleases  classic/1.0 %skin/
 % overlay chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://newreleases/content/scripts-overlay.xul
+  content/main.js    (@SONGBIRD_PP_RELATIVE_PATH@/main.js)
 @include_all_to

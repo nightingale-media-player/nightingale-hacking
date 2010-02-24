@@ -24,6 +24,8 @@
 //
 */
 
+#filter substitution
+
 // Constants for convience
 if (typeof(Cc) == 'undefined')
   var Cc = Components.classes;
@@ -221,6 +223,7 @@ function sb7Digital_install() {
       myNode.name = '&servicepane.7digital';
       myNode.stringbundle = STRINGBUNDLE;
     }
+    myNode.setAttributeNS(SERVICEPANE_NS, "addonID", "@EXTENSION_UUID@");
 
     // make the 7digital node visible
     myNode.hidden = false;

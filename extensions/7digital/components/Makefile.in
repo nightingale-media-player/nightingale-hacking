@@ -7,8 +7,8 @@ include $(DEPTH)/build/autodefs.mk
 
 IS_EXTENSION = 1
 
-SONGBIRD_COMPONENTS = $(srcdir)/sb7Digital.js
-
-EXTENSION_STAGE_DIR = ../.xpistage
+SONGBIRD_PP_RESOURCES = $(srcdir)/sb7Digital.js.in
+SONGBIRD_PP_DIR = $(SONGBIRD_COMPONENTSDIR)
+PPDEFINES = -DEXTENSION_UUID="$(EXTENSION_UUID)"
 
 include $(topsrcdir)/build/rules.mk

@@ -1,3 +1,5 @@
+#filter substitution
+
 if (typeof(Cc) == 'undefined')
 	var Cc = Components.classes;
 if (typeof(Ci) == 'undefined')
@@ -30,35 +32,41 @@ if (typeof(gBrowser) == "undefined")
 			.getService(Ci.nsIWindowMediator)
 			.getMostRecentWindow("Songbird:Main").window.gBrowser;
 
-if (typeof(gSkSvc) == "undefined")
-	var gSkSvc = Cc["@songbirdnest.com/Songbird/Concerts/Songkick;1"]
-		.getService(Ci.sbISongkick);
+if (typeof(gSkSvc) == "undefined") {
+	var gSkSvc = Cc["@songbirdnest.com/newreleases;1"]
+		.getService(Ci.nsIClassInfo).wrappedJSObject;
+}
 
 if (typeof(gMetrics) == "undefined")
 	var gMetrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
 			.createInstance(Ci.sbIMetrics);
 
 function debugLog(funcName, str) {
-	var debug = Application.prefs.getValue("extensions.concerts.debug", false);
+	var debug = Application.prefs.getValue("extensions.newreleases.debug", false);
 	if (debug) {
-		dump("*** Concerts/main.js::" + funcName + " // " + str + "\n");
+		dump("*** NewReleases/main.js::" + funcName + " // " + str + "\n");
 	}
 }
 
-if (typeof Concerts == 'undefined') {
-  var Concerts = {};
+if (typeof NewReleases == 'undefined') {
+  var NewReleases = {};
 }
 
-Concerts = {
+//FIX:
+//- fix On Tour functionality
+//- property stuff - simply disable?
+//- songkick.ico
+
+NewReleases = {
 	// Reference to the On Tour status icon
 	_onTourIcon : null,
-	lastConcertCount : 0,
+	lastReleasesCount : 0,
 	touringPlaylist : null,
 
 	onLoad: function() {
 		// Initialization code
 		this._initialized = true;
-		this._strings = document.getElementById("concerts-strings");
+		this._strings = document.getElementById("newReleases-strings");
 
 		if (typeof(Ci.sbIMediacoreManager) != "undefined") {
 			this.newMediaCore = true;
@@ -70,19 +78,20 @@ Concerts = {
 				.getService(Ci.sbIPlaylistPlayback);
 		}
 
-		// Instantiate the Songkick XPCOM service
-		this.skSvc = Cc["@songbirdnest.com/Songbird/Concerts/Songkick;1"]
-			.getService(Ci.sbISongkick);
+		// Instantiate the New Releases XPCOM service
+		this.nrSvc = Cc["@songbirdnest.com/newreleases;1"]
+			.getService(Ci.nsIClassInfo).wrappedJSObject;
 	
 		// Wait until the On Tour properties are registered
 		this._blockAndFinishLoad();
 	},
 
 	_blockAndFinishLoad: function _blockAndFinishLoad() {
-		if (!Components.classes
-				["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
-				.getService(Ci.sbIPropertyManager)
-				.hasProperty(this.skSvc.onTourUrlProperty))
+		//if (!Components.classes
+				//["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+				//.getService(Ci.sbIPropertyManager)
+				//.hasProperty(this.nrSvc.onTourUrlProperty))
+		if (false)
 		{
 			debugLog("_blockAndFinishLoad", "Waiting for property init..");
 			setTimeout(_blockAndFinishLoad, 100);
@@ -91,24 +100,21 @@ Concerts = {
 			// Add the service pane node
 			this._setupServicePaneNode();
 
-			// Register the concert count updater with the service
-			this.updateConcertCount.wrappedJSObject = this.updateConcertCount;
-			this.skSvc.registerSPSUpdater(this.updateConcertCount);
+			// Register the releases count updater with the service
+			this.updateNewReleasesCount.wrappedJSObject = this.updateNewReleasesCount;
+			this.nrSvc.registerSPSUpdater(this.updateNewReleasesCount);
 
 			// Save our property strings
-			this.onTourImgProperty = this.skSvc.onTourImgProperty;
-			this.onTourUrlProperty = this.skSvc.onTourUrlProperty;
+			this.onTourImgProperty = this.nrSvc.onTourImgProperty;
+			this.onTourUrlProperty = this.nrSvc.onTourUrlProperty;
 
 			// Add the artist dataremote listener
 			// This is what handles the OnTour status icon in the faceplate
 			this._setupArtistDataRemote();
 
-			// Startup a thread to refresh concert data
-			this.skSvc.startRefreshThread();
+			// Startup a thread to refresh releases data
+			this.nrSvc.startRefreshThread();
 
-			// Load location information
-			this.skSvc.refreshLocations();
-			
 			// Add the Artists on Tour playlist
 			this._getOnTourPlaylist();
 			this.rebuildOnTourPlaylist();
@@ -129,9 +135,9 @@ Concerts = {
 							var url =
 								item.getProperty(gSkSvc.onTourUrlProperty);
 							var city = Application.prefs
-									.getValue("extensions.concerts.city", 0);
+									.getValue("extensions.newreleases.city", 0);
 							url += "?user_location=" + city;
-							gMetrics.metricsInc("concerts", "library.link", "");
+							gMetrics.metricsInc("newReleases", "library.link", "");
 							gBrowser.loadOneTab(url);
 						}
 					}
@@ -145,12 +151,12 @@ Concerts = {
 	},
   
 	onUnLoad: function() {
-		Concerts._initialized = false;
-		var skSvc = Cc["@songbirdnest.com/Songbird/Concerts/Songkick;1"]
-			.getService(Ci.sbISongkick);
-		skSvc.unregisterSPSUpdater();
-		if (Concerts._artistDataRemote)
-			Concerts._artistDataRemote.unbind();
+		NewReleases._initialized = false;
+		var nrSvc = Cc["@songbirdnest.com/newreleases;1"]
+			.getService(Ci.nsIClassInfo).wrappedJSObject;
+		nrSvc.unregisterSPSUpdater();
+		if (NewReleases._artistDataRemote)
+			NewReleases._artistDataRemote.unbind();
 		gMediaCore.removeListener(this._mmListener);
 	},
   
@@ -179,40 +185,41 @@ Concerts = {
       SPS.sortNode(servicesNode);
     }
 
-    var concertsURL = "chrome://concerts/content/browse.xul";
-		var concertsNode = SPS.getNode("urn:concerts") ||
-                       SPS.getNodeForURL(concertsURL);
-		if (concertsNode != null) {
+    var newReleasesURL = "chrome://newreleases/content/browse.xul";
+		var newReleasesNode = SPS.getNode("urn:newreleases") ||
+                       SPS.getNodeForURL(newReleasesURL);
+		if (newReleasesNode != null) {
       // We found one - make sure it's homed under the Services folder
-      if (concertsNode.parentNode &&
-          concertsNode.parentNode.name != SBString("servicesource.services")) {
+      if (newReleasesNode.parentNode &&
+          newReleasesNode.parentNode.name != SBString("servicesource.services")) {
         // remove it
-        SPS.removeNode(concertsNode);
-        concertsNode = null;
+        SPS.removeNode(newReleasesNode);
+        newReleasesNode = null;
       }
     }
 
-    if (concertsNode == null) {
-      // No Concerts node found, create a new one
-      concertsNode = SPS.addNode("urn:concerts", servicesNode, false);
-      concertsNode.url = "chrome://concerts/content/browse.xul";
-      concertsNode.name = this._strings.getString("servicePaneName");
-      concertsNode.tooltip =
+    if (newReleasesNode == null) {
+      // No New Releases node found, create a new one
+      newReleasesNode = SPS.addNode("urn:newreleases", servicesNode, false);
+      newReleasesNode.url = "chrome://newreleases/content/browse.xul";
+      newReleasesNode.name = this._strings.getString("servicePaneName");
+      newReleasesNode.image = 'chrome://newreleases/skin/node-icon.png';
+      newReleasesNode.tooltip =
         this._strings.getString("servicePaneInitialTooltip");
-      concertsNode.properties = "concerts";
+      newReleasesNode.properties = "newReleases";
     }
-    concertsNode.image = 'chrome://concerts/content/songkick-16x16.png';
+    newReleasesNode.setAttributeNS(SP_NS, "addonID", "@EXTENSION_UUID@");
 
     // may need to reset the name post-localisation
-    this.updateConcertCount();
+    //this.updateNewReleasesCount();
 
     // Save
     SPS.save();
 
 		// outside the loop in case we're going from disabled->enabled
-		concertsNode.hidden = false;
+		newReleasesNode.hidden = false;
     servicesNode.hidden = false;
-    concertsNode.editable = false;
+    newReleasesNode.editable = false;
     servicesNode.editable = false;
 	},
 
@@ -235,45 +242,46 @@ Concerts = {
     return null;
   },
 
-	updateConcertCount : function(num) {
-		var concertCount;
-
-		var skSvc = Cc["@songbirdnest.com/Songbird/Concerts/Songkick;1"]
-			.getService(Ci.sbISongkick);
+	updateNewReleasesCount : function(num) {
+		var newReleasesCount;
+		var nrSvc = Cc["@songbirdnest.com/newreleases;1"]
+			.getService(Ci.nsIClassInfo).wrappedJSObject;
 		var filter = Application.prefs.getValue(
-				"extensions.concerts.filterLibraryArtists", true);
+				"extensions.newreleases.filterLibraryArtists", true);
 		if (typeof(num) == "undefined") {
-			concertCount = skSvc.getConcertCount(filter);
+			newReleasesCount = nrSvc.getNewReleasesCount(filter);
 		} else
-			concertCount = num;
+			newReleasesCount = num;
 
+dump("lastReleasesCount: " + this.lastReleasesCount + ", newReleasesCount: " + newReleasesCount + "\n");
 		// Only update if the count has changed
-		if (this.lastConcertCount == concertCount)
+		if (this.lastReleasesCount == newReleasesCount)
 			return;
-		this.lastConcertCount = concertCount;
+		this.lastReleasesCount = newReleasesCount;
 
 		var name;
 		var tooltip;
 		if (typeof(this.servicePaneStr) == "undefined") {
 			this.servicePaneStr = Cc["@mozilla.org/intl/stringbundle;1"]
 				.getService(Ci.nsIStringBundleService)
-				.createBundle("chrome://concerts/locale/overlay.properties");
+				.createBundle("chrome://newreleases/locale/overlay.properties");
+
 		}
 
 		var SPS = Components.classes['@songbirdnest.com/servicepane/service;1']
 			.getService(Components.interfaces.sbIServicePaneService);
 		SPS.init();
-		var concertsNode = SPS.getNode("urn:concerts");
-		if (concertsNode != null) {
-			if (concertCount > 0) {
-				concertsNode.name = 
+		var newReleasesNode = SPS.getNode("urn:newreleases");
+		if (newReleasesNode != null) {
+			if (newReleasesCount > 0) {
+				newReleasesNode.name = 
 					this.servicePaneStr.GetStringFromName("servicePaneName")
-					+ " (" + concertCount + ")";
+					+ " (" + newReleasesCount + ")";
 			} else {
-				concertsNode.name = 
+				newReleasesNode.name = 
 					this.servicePaneStr.GetStringFromName("servicePaneName")
 			}
-			concertsNode.tooltip = concertCount +
+			newReleasesNode.tooltip = newReleasesCount +
 				this.servicePaneStr.GetStringFromName("servicePaneTooltip")
 		}
 		SPS.save();
@@ -304,9 +312,9 @@ Concerts = {
 		this._onTourIcon = document.createElement('image');
 		this._onTourIcon.setAttribute("id", "faceplate-artist-on-tour-icon");
 		this._onTourIcon.setAttribute("src",
-				"chrome://concerts/skin/icon-ticket.png");
+				"chrome://newreleases/skin/icon-ticket.png");
 		this._onTourIcon.setAttribute("onmousedown",
-				"Concerts.loadArtist(event)");
+				"NewReleases.loadArtist(event)");
 		this._onTourIcon.setAttribute("mousethrough", "never");
 		debugLog("setupArtistDataRemote", "Added click handler for faceplate");
 		this._onTourIcon.style.visibility = "collapse";
@@ -316,8 +324,8 @@ Concerts = {
 		var createDataRemote = new Components.Constructor(
 				"@songbirdnest.com/Songbird/DataRemote;1",
 				Ci.sbIDataRemote, "init");
-		Concerts._artistDataRemote = createDataRemote("metadata.artist", null);
-		Concerts._artistDataRemote.bindObserver(this, true);
+		NewReleases._artistDataRemote = createDataRemote("metadata.artist", null);
+		NewReleases._artistDataRemote.bindObserver(this, true);
 
 		// See if we're already playing (to catch the feather/layout switch)
 		var currentItem;
@@ -349,7 +357,7 @@ Concerts = {
 			var mainWin = Cc["@mozilla.org/appshell/window-mediator;1"]
 					.getService(Ci.nsIWindowMediator)
 					.getMostRecentWindow("Songbird:Main").window;
-			var onTour = this.skSvc.getTourStatus(aData);
+			var onTour = this.nrSvc.getTourStatus(aData);
 			if (onTour)
 				this._onTourIcon.style.visibility = "visible";
 			else
@@ -362,22 +370,22 @@ Concerts = {
 		// Prevent the highlight-current-item action from firing
 		e.stopPropagation();
 
-		gMetrics.metricsInc("concerts", "faceplate.link", "");
+		gMetrics.metricsInc("newReleases", "faceplate.link", "");
 		// Load the artist event page into a new tab
 		var item;
-		if (Concerts.newMediaCore)
+		if (NewReleases.newMediaCore)
 			item = gMediaCore.sequencer.view.getItemByIndex(
 				gMediaCore.sequencer.viewPosition);
 		else
 			item = gMediaCore.playingView.mediaList.getItemByGuid(
 				gMediaCore.currentGUID);
-		var city = Application.prefs.getValue("extensions.concerts.city", 0);
+		var city = Application.prefs.getValue("extensions.newreleases.city", 0);
 
 		var url = item.getProperty(this.onTourUrlProperty);
 		if (!url) {
 			// if the track lacks an on tour property, then it's possible
 			// it's from the web playlist.  we can make a best guess
-			url = Concerts.skSvc
+			url = NewReleases.nrSvc
 				.getArtistOnTourUrl(item.getProperty(SBProperties.artistName));
 		}
 		url += "?user_location=" + city;
@@ -396,14 +404,14 @@ Concerts = {
 	playlistCellClick : function(e) {
 		var prop = e.getData("property");
 		var item = e.getData("item");
-		var skSvc = Cc["@songbirdnest.com/Songbird/Concerts/Songkick;1"]
-			.getService(Ci.sbISongkick);
-		if (prop == skSvc.onTourImgProperty) {
-			var url = item.getProperty(skSvc.onTourUrlProperty);
+		var nrSvc = Cc["@songbirdnest.com/newreleases;1"]
+			.getService(Ci.nsIClassInfo).wrappedJSObject;
+		if (prop == nrSvc.onTourImgProperty) {
+			var url = item.getProperty(nrSvc.onTourUrlProperty);
 			var city =
-				Application.prefs.getValue("extensions.concerts.city", 0);
+				Application.prefs.getValue("extensions.newreleases.city", 0);
 			url += "?user_location=" + city;
-			gMetrics.metricsInc("concerts", "library.link", "");
+			gMetrics.metricsInc("newReleases", "library.link", "");
 			gBrowser.loadOneTab(url);
 		}
 		e.stopPropagation();
@@ -514,13 +522,13 @@ Concerts = {
 			{
 				debugLog("viewChangeListener",
 					"Artists on tour playback initiated");
-				gMetrics.metricsInc("concerts", "smartpls.played", "");
+				gMetrics.metricsInc("newReleases", "smartpls.played", "");
 			}
 		}
 	},
 }
 
-Concerts.uninstallObserver = {
+NewReleases.uninstallObserver = {
 	_uninstall : false,
 	_disable : false,
 	list : null,
@@ -533,19 +541,19 @@ Concerts.uninstallObserver = {
 
 				var SPS = Cc['@songbirdnest.com/servicepane/service;1'].
 					getService(Ci.sbIServicePaneService);
-				var concertsNode = SPS.getNode("urn:concerts");
+				var newReleasesNode = SPS.getNode("urn:newreleases");
 
-				if (subject.id == "concerts@songbirdnest.com") {
+				if (subject.id == "newreleases@songbirdnest.com") {
 					if (data == "item-uninstalled") {
 						this._uninstall = true;
 					} else if (data == "item-disabled") {
 						this._disable = true;
-						concertsNode.hidden = true;
+						newReleasesNode.hidden = true;
 					} else if (data == "item-cancel-action") {
 						if (this._uninstall)
 							this._uninstall = false;
 						if (this._disable)
-							concertsNode.hidden = false;
+							newReleasesNode.hidden = false;
 					}
 				}
 				break;
@@ -592,37 +600,36 @@ Concerts.uninstallObserver = {
 	uninstallCleanup : function() {
 		// Cleanup after ourselves
 		// We need to do a few things:
-		// 1) Remove service pane node for Concerts
-		// 2) Remove Concert prefs
+		// 1) Remove service pane node for New Releases
+		// 2) Remove New Releases prefs
 		// 3) Remove "On Tour" property from library if it's visible
 
 		// Keep a count of when it was uninstalled
-		gMetrics.metricsInc("concerts", "uninstall", "");
+		gMetrics.metricsInc("newReleases", "uninstall", "");
 		
 		// 1) Remove service pane node
 		var SPS = Cc['@songbirdnest.com/servicepane/service;1']
 			.getService(Ci.sbIServicePaneService);
-		var concertsNode = SPS.getNode("urn:concerts");
-		SPS.removeNode(concertsNode);
+		var newReleasesNode = SPS.getNode("urn:newreleases");
+		SPS.removeNode(newReleasesNode);
 
-    // find the services node, if it has any visible children then leave
-    // it visible - otherwise hide it
-    var servicesNode = SPS.getNode("SB:Services");
-    var visible = false;
-    var enum = servicesNode.childNodes;
-    while (enum.hasMoreElements()) {
-      var node = enum.getNext();
-      if (!node.hidden) {
-        visible = true;
-        break;
-      }
-    }
-    servicesNode.hidden = !visible;
+		// find the services node, if it has any visible children then leave
+		// it visible - otherwise hide it
+		var servicesNode = SPS.getNode("SB:Services");
+		var visible = false;
+		var enum = servicesNode.childNodes;
+		while (enum.hasMoreElements()) {
+			var node = enum.getNext();
+			if (!node.hidden) {
+				visible = true;
+				break;
+			}
+		}
+		servicesNode.hidden = !visible;
 
-
-		// 2) Remove Concert prefs
+		// 2) Remove New Releases prefs
 		var prefs = Cc["@mozilla.org/preferences-service;1"]
-			.getService(Ci.nsIPrefService).getBranch("extensions.concerts.");
+			.getService(Ci.nsIPrefService).getBranch("extensions.newreleases.");
 		if (prefs.prefHasUserValue("showplaylink"))
 			prefs.clearUserPref("showplaylink");
 		if (prefs.prefHasUserValue("showgcal"))
@@ -642,23 +649,23 @@ Concerts.uninstallObserver = {
 		prefs.deleteBranch("");
 		
 		// 3) Remove "On Tour" property from library colspec
-		var skSvc = Cc["@songbirdnest.com/Songbird/Concerts/Songkick;1"]
-			.getService(Ci.sbISongkick);
+		var nrSvc = Cc["@songbirdnest.com/newreleases;1"]
+			.getService(Ci.nsIClassInfo).wrappedJSObject;
 		var mainLib = Cc['@songbirdnest.com/Songbird/library/Manager;1']
 			.getService(Ci.sbILibraryManager).mainLibrary;
 		var colSpec = mainLib.getProperty(SBProperties.columnSpec);
-		var propRe = new RegExp("\\s+"+skSvc.onTourImgProperty+" \\d+","g");
-		if (colSpec.indexOf(skSvc.onTourImgProperty)) {
+		var propRe = new RegExp("\\s+"+nrSvc.onTourImgProperty+" \\d+","g");
+		if (colSpec.indexOf(nrSvc.onTourImgProperty)) {
 			colSpec = colSpec.replace(propRe, "");
 			mainLib.setProperty(SBProperties.columnSpec, colSpec);
 		}
 		var colSpec = mainLib.getProperty(SBProperties.defaultColumnSpec);
-		if (colSpec.indexOf(skSvc.onTourImgProperty)) {
+		if (colSpec.indexOf(nrSvc.onTourImgProperty)) {
 			colSpec = colSpec.replace(propRe, "");
 			mainLib.setProperty(SBProperties.defaultColumnSpec, colSpec);
 		}
 	},
 }
 
-window.addEventListener("load", function(e) { Concerts.onLoad(e); }, false);
-window.addEventListener("unload", function(e) { Concerts.onUnLoad(e); }, false);
+window.addEventListener("load", function(e) { NewReleases.onLoad(e); }, false);
+window.addEventListener("unload", function(e) { NewReleases.onUnLoad(e); }, false);
