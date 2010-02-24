@@ -599,8 +599,9 @@ deviceControlWidget.prototype = {
       try {
         // Get the management type for the device library.  Default to manual if no
         // device library.
-        mgmtType = (this._deviceLibrary ? this._deviceLibrary.getMgmtType(i)
-                                          : Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL);
+        mgmtType = this._deviceLibrary ? this._deviceLibrary.getMgmtType(i) |
+                                         this._deviceLibrary.isMgmtTypeManual
+                                       : Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL;
       }
       catch (e) {
         return;
