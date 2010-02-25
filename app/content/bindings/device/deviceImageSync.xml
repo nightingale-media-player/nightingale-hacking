@@ -66,7 +66,7 @@
           </xul:menulist>
         </xul:hbox>
 
-        <xul:groupbox>
+        <xul:groupbox sbid="content_selector">
           <xul:radiogroup sbid="sync_images_type_group">
             <xul:radio sbid="sync_images_all_radio"
                        label="&device.sync.images.all.label;"
@@ -292,6 +292,17 @@
           let syncEnabled = (this._syncPrefs.mgmtType !=
                              Ci.sbIDeviceLibrary.MGMT_TYPE_NONE);
           this._getElement("sync_images_from_checkbox").checked = syncEnabled;
+
+          if (!syncEnabled)
+          {
+            this.setAttribute("disabled", "true");
+            this._getElement("content_selector").setAttribute("disabled", "true");
+          }
+          else
+          {
+            this.removeAttribute("disabled");
+            this._getElement("content_selector").removeAttribute("disabled");
+          }
 
           // Enable/disable radio buttons
           let syncAllRadio = this._getElement("sync_images_all_radio");

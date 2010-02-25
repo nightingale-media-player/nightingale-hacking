@@ -49,6 +49,17 @@ sb-device-sync[contenttype="video"] .content-controls radio {
   display: none;
 }
 
-sb-device-sync[disabled="true"] {
+sb-device-sync[disabled="true"],
+sb-device-image-sync[disabled="true"] {
   opacity: 1;
+}
+
+sb-device-sync[disabled="true"] [disabled="true"],
+sb-device-image-sync[disabled="true"] [disabled="true"] {
+  opacity: 1;
+}
+
+sb-device-sync[disabled="true"] vbox[sbid="content_selector"],
+sb-device-image-sync[disabled="true"] groupbox[sbid="content_selector"] {
+  opacity: .5;
 }
