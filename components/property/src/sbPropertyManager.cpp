@@ -1241,12 +1241,6 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                        PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Whether an item represents an album (e.g., CD device library)
-  rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_ISALBUM), EmptyString(),
-                       stringBundle, PR_FALSE, PR_FALSE, PR_FALSE,
-                       PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // If true, don't write metadata to contents (use with libraries and media
   // lists)
   rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_DONT_WRITE_METADATA),

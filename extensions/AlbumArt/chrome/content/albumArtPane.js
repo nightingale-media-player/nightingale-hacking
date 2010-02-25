@@ -684,7 +684,7 @@ var AlbumArt = {
    * \param aNewImageUrl - new string url of file to set cover to on each item.
    */
   setSelectionsCover: function AlbumArt_setSelectionsCover(aNewImageUrl) {
-    var selection = AlbumArt.getSelection();
+    var selection = AlbumArt._mediaListView.selection;
     var multipleItems = false;
     
     // First check through all the items to see if they are the same or not
@@ -806,30 +806,6 @@ var AlbumArt = {
   },
 
   /**
-   * \brief This will get the current media item selection.
-   * \return Current media item selection.
-   */
-  getSelection: function AlbumArt_getSelection() {
-    // Get the media list view selection.
-    var selection = AlbumArt._mediaListView.selection;
-
-    // If nothing is selected, and the current media list is an album media
-    // list, return a selection of all media list view items.
-    if (selection.count == 0) {
-      var mediaList = AlbumArt._mediaListView.mediaList;
-      if (mediaList.getProperty(SBProperties.isAlbum) == "1") {
-        var mediaListViewClone = AlbumArt._mediaListView.clone();
-        mediaListViewClone.selection.selectAll();
-        if (mediaListViewClone.selection.count > 0)
-          mediaListViewClone.selection.currentIndex = 0;
-        return mediaListViewClone.selection;
-      }
-    }
-
-    return selection;
-  },
-
-  /**
    * \brief This will get the now playing media item.
    * \return Now playing media item.
    */
@@ -943,7 +919,7 @@ var AlbumArt = {
   shouldHideGetArtworkCommand: function AlbumArt_shouldHideGetArtworkCommand() {
     if (AlbumArt._currentState == STATE_SELECTED) {
       // Now Selected
-      var items = AlbumArt.getSelection().selectedMediaItems;
+      var items = AlbumArt._mediaListView.selection.selectedMediaItems;
       while (items.hasMoreElements()) {
         var item = items.getNext().QueryInterface(Ci.sbIMediaItem);
         if (item.getProperty(SBProperties.contentType) == "audio") {
@@ -1155,7 +1131,7 @@ var AlbumArt = {
         return aElement.getProperty(SBProperties.contentType) == "audio";
       };
       var selectedAudioItems = new SBFilteredEnumerator(
-          AlbumArt.getSelection().selectedMediaItems, 
+          AlbumArt._mediaListView.selection.selectedMediaItems, 
           isAudioItem);
       
       // We need to convert our JS object into an XPCOM object.
@@ -1204,7 +1180,7 @@ var AlbumArt = {
    */
   onSelectionChanged: function AlbumArt_onSelectionChanged() {
     // Get the new now selected media item
-    var selection = AlbumArt.getSelection();
+    var selection = AlbumArt._mediaListView.selection;
     var curImageUrl = null;
     var item = selection.currentMediaItem;
     
