@@ -800,6 +800,9 @@ sb-displaypane-splitter[orient="vertical"] > stack > box > label {
   color: rgb(191,191,191);
   font-size: 11px;
 }
+sb-displaypane-splitter[state="collapsed"] > stack > box > label {
+  color: rgb(58,58,58);
+}
 
 sb-displaypane-splitter[orient="vertical"][hovergrippy="true"] > stack > box > sb-displaypane-grippy {
   background-image: none;
