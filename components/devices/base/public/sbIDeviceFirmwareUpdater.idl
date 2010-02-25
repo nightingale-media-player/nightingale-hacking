@@ -41,7 +41,7 @@ interface sbIDeviceFirmwareUpdate;
  *       to use your own listener if you do not have a listener registered
  *       with the device.
  */
-[scriptable, uuid(1561bc1c-c1a9-484e-b86c-585534dfa86b)]
+[scriptable, uuid(9188484a-dba7-4c8f-a567-e7426fa64895)]
 interface sbIDeviceFirmwareUpdater : nsISupports
 {
   /**
@@ -103,11 +103,20 @@ interface sbIDeviceFirmwareUpdater : nsISupports
                    in sbIDeviceEventListener aListener);
 
   /**
-   * \brief Recovery the device restoring it to factory state
+   * \brief Recover the device restoring it to factory state
    * \param aDevice - The device to restore to factory state
+   * \param aFirmwareUpdate [optional] - The firmware update to apply to the device
+   *                                     when recovering.
+   * \param aDeviceVendorID [optional] - The device vendor ID. Set to 0 to fetch
+   *                                     from device instance or if not available.
+   * \param aDeviceProductID [optional] - The device product ID. Set to 0 to fetch
+   *                                      from device instance or if not available.
    * \param aListener [optional] - Device listener to receive events
    */
   void recoveryUpdate(in sbIDevice aDevice,
+                      in sbIDeviceFirmwareUpdate aFirmwareUpdate,
+                      in unsigned long aDeviceVendorID,
+                      in unsigned long aDeviceProductID,
                       in sbIDeviceEventListener aListener);
 
   /**
@@ -154,22 +163,34 @@ interface sbIDeviceFirmwareUpdater : nsISupports
   void unregisterHandler(in sbIDeviceFirmwareHandler aFirmwareHandler);
 
   /** 
-   * \brief Is there a handler availabe for the specified device
+   * \brief Is there a handler available for the specified device
    * \param aDevice - The device
+   * \param aDeviceVendorID [optional] - The device vendor ID. Set to 0 to fetch
+   *                                     from device instance or if not available.
+   * \param aDeviceProductID [optional] - The device product ID. Set to 0 to fetch
+   *                                      from device instance or if not available.
    * \retval True - Firmware Handler is available for specified device
    * \retval False - No firmware handler available for specified device
    */
-  boolean hasHandler(in sbIDevice aDevice);
+  boolean hasHandler(in sbIDevice aDevice, 
+                     in unsigned long aDeviceVendorID,
+                     in unsigned long aDeviceProductID);
 
   /**
    * \brief Get the firmware handler for the specified device
    * \param aDevice - The device
+   * \param aDeviceVendorID [optional] - The device vendor ID. Set to 0 to fetch
+   *                                     from device instance or if not available.
+   * \param aDeviceProductID [optional] - The device product ID. Set to 0 to fetch
+   *                                      from device instance or if not available.
    * \return The device firmware handler
    * \throw NS_ERROR_NOT_AVAILABLE when there is no firmware handler available
    *        for the specified device
    * \note This returns a new instance of a handler.
    */
-  sbIDeviceFirmwareHandler getHandler(in sbIDevice aDevice);
+  sbIDeviceFirmwareHandler getHandler(in sbIDevice aDevice, 
+                                      in unsigned long aDeviceVendorID,
+                                      in unsigned long aDeviceProductID);
 
   /**
    * \brief Get the running firmware handler for the specified device

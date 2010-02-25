@@ -50,9 +50,9 @@ public:
   virtual nsresult OnGetDeviceModelNumber(nsAString &aModelNumber);
   virtual nsresult OnGetDeviceModelVersion(nsAString &aModelVersion);
 
-  virtual nsresult OnCanHandleDevice(sbIDevice *aDevice,
-                                     PRBool *_retval);
   virtual nsresult OnCanUpdate(sbIDevice *aDevice,
+                               PRUint32 aDeviceVendorID,
+                               PRUint32 aDeviceProductID,
                                PRBool *_retval);
   virtual nsresult OnRebind(sbIDevice *aDevice,
                           sbIDeviceEventListener *aListener,

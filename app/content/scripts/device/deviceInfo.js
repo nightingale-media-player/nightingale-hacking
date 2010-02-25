@@ -905,8 +905,8 @@ var DIW = {
     // the device firmware version.  Don't use the device properties firmware
     // version as it will generally not match the version displayed in the
     // device UI.
-    if(deviceFirmwareUpdater.hasHandler(this._device)) {
-      var handler = deviceFirmwareUpdater.getHandler(this._device);
+    if(deviceFirmwareUpdater.hasHandler(this._device, 0, 0)) {
+      var handler = deviceFirmwareUpdater.getHandler(this._device, 0, 0);
       handler.bind(this._device, null);
       
       try {

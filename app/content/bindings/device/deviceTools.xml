@@ -339,8 +339,8 @@
         // If we have a firmware handler for the device, use it to read
         // the device firmware version instead of using the one provided
         // by the device properties.
-        if(deviceFirmwareUpdater.hasHandler(this.device)) {
-          var handler = deviceFirmwareUpdater.getHandler(this.device);
+        if(deviceFirmwareUpdater.hasHandler(this.device, 0, 0)) {
+          var handler = deviceFirmwareUpdater.getHandler(this.device, 0, 0);
           
           var self = this;
           var deviceListener = {

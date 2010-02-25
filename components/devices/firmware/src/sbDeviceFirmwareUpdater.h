@@ -67,6 +67,8 @@ public:
 
   already_AddRefed<sbIDeviceFirmwareHandler>
     GetRunningHandler(sbIDevice *aDevice, 
+                      PRUint32 aVendorID,
+                      PRUint32 aProductID,
                       sbIDeviceEventListener *aListener,
                       PRBool aCreate);
 

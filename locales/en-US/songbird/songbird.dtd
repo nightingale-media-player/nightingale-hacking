@@ -525,7 +525,7 @@
 <!ENTITY device.settings.general.label "General">
 <!ENTITY device.settings.auto_launch.checkbox.label "Open &brandShortName; when this device is detected">
 <!ENTITY device.settings.auto_firmware_check.checkbox.label "Check for new firmware automatically">
-<!ENTITY device.settings.music.transcoding.label "Music Transcoding">
+<!ENTITY device.settings.music.transcoding.label "Music Conversion">
 <!ENTITY device.settings.disk.label "Disk Management">
 <!ENTITY device.settings.disk.management.label "Customize directory structure">
 <!ENTITY device.settings.disk.management.filename "Song files">
@@ -533,7 +533,7 @@
 <!ENTITY device.settings.disk.100percent.label "100&#37;">
 <!ENTITY device.settings.disk.0percent.label "0&#37;">
 
-<!ENTITY device.settings.music.transcoding.mode.auto.label "Automatically configure transcoding">
+<!ENTITY device.settings.music.transcoding.mode.auto.label "Automatically configure conversion">
 <!ENTITY device.settings.music.transcoding.mode.manual.label "Manually specify bitrate and format">
 <!ENTITY device.settings.music.transcoding.format.label "Encoding format">
 <!ENTITY device.settings.music.transcoding.bitrate.label "Bitrate">
@@ -752,11 +752,11 @@
 <!ENTITY wizard.button.finish.label    "Finish">
 
 <!-- Mediacore entities. -->
-<!ENTITY mediacore.error.title    "Mediacore Error">
-<!ENTITY mediacore.error.preface  "&brandShortName; has encountered the following media core error(s):">
+<!ENTITY mediacore.error.title    "Playback Error">
+<!ENTITY mediacore.error.preface  "&brandShortName; has encountered the following playback error(s):">
 <!ENTITY mediacore.error.continue "Continue">
 <!ENTITY mediacore.error.stop     "Stop Playback">
-<!ENTITY mediacore.error.dontshowme "Do not display further media core errors">
+<!ENTITY mediacore.error.dontshowme "Do not display further playback errors">
 <!ENTITY mediacore.error.codec_not_found.text.pre "For more information on missing codecs, please see">
 <!ENTITY mediacore.error.codec_not_found.text.post "">
 

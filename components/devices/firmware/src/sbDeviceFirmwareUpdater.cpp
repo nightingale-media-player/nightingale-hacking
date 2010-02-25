@@ -241,6 +241,8 @@ sbDeviceFirmwareUpdater::GetRunningHandler(sbIDevice *aDevice)
 
 already_AddRefed<sbIDeviceFirmwareHandler>
 sbDeviceFirmwareUpdater::GetRunningHandler(sbIDevice *aDevice, 
+                                           PRUint32 aVendorID,
+                                           PRUint32 aProductID,
                                            sbIDeviceEventListener *aListener, 
                                            PRBool aCreate)
 {
@@ -250,7 +252,10 @@ sbDeviceFirmwareUpdater::GetRunningHandler(sbIDevice *aDevice,
 
   nsCOMPtr<sbIDeviceFirmwareHandler> handler;
   if(!mRunningHandlers.Get(aDevice, getter_AddRefs(handler)) && aCreate) {
-    nsresult rv = GetHandler(aDevice, getter_AddRefs(handler));
+    nsresult rv = GetHandler(aDevice, 
+                             aVendorID, 
+                             aProductID, 
+                             getter_AddRefs(handler));
     NS_ENSURE_SUCCESS(rv, nsnull);
 
     rv = handler->Bind(aDevice, aListener);
@@ -403,12 +408,12 @@ sbDeviceFirmwareUpdater::CheckForUpdate(sbIDevice *aDevice,
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   nsCOMPtr<sbIDeviceFirmwareHandler> handler = 
-    GetRunningHandler(aDevice, aListener, PR_TRUE);
+    GetRunningHandler(aDevice, 0, 0, aListener, PR_TRUE);
   
   NS_ENSURE_TRUE(handler, NS_ERROR_UNEXPECTED);
   
   PRBool canUpdate;
-  rv = handler->CanUpdate(aDevice, &canUpdate);
+  rv = handler->CanUpdate(aDevice, 0, 0, &canUpdate);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(canUpdate, NS_ERROR_NOT_IMPLEMENTED);
 
@@ -465,7 +470,7 @@ sbDeviceFirmwareUpdater::DownloadUpdate(sbIDevice *aDevice,
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   nsCOMPtr<sbIDeviceFirmwareHandler> handler = 
-    GetRunningHandler(aDevice, aListener, PR_TRUE);
+    GetRunningHandler(aDevice, 0, 0, aListener, PR_TRUE);
 
   nsAutoMonitor mon(mMonitor);
   
@@ -559,7 +564,7 @@ sbDeviceFirmwareUpdater::ApplyUpdate(sbIDevice *aDevice,
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   nsCOMPtr<sbIDeviceFirmwareHandler> handler = 
-    GetRunningHandler(aDevice, aListener, PR_TRUE);
+    GetRunningHandler(aDevice, 0, 0, aListener, PR_TRUE);
 
   nsAutoMonitor mon(mMonitor);
 
@@ -609,6 +614,9 @@ sbDeviceFirmwareUpdater::ApplyUpdate(sbIDevice *aDevice,
 
 NS_IMETHODIMP 
 sbDeviceFirmwareUpdater::RecoveryUpdate(sbIDevice *aDevice, 
+                                        sbIDeviceFirmwareUpdate *aFirmwareUpdate,
+                                        PRUint32 aDeviceVendorID,
+                                        PRUint32 aDeviceProductID,
                                         sbIDeviceEventListener *aListener)
 {
   LOG(("[sbDeviceFirmwareUpdater] - ApplyUpdate"));
@@ -620,7 +628,11 @@ sbDeviceFirmwareUpdater::RecoveryUpdate(sbIDevice *aDevice,
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   nsCOMPtr<sbIDeviceFirmwareHandler> handler = 
-    GetRunningHandler(aDevice, aListener, PR_TRUE);
+    GetRunningHandler(aDevice, 
+                      aDeviceVendorID, 
+                      aDeviceProductID, 
+                      aListener, 
+                      PR_TRUE);
 
   nsAutoMonitor mon(mMonitor);
 
@@ -654,15 +666,42 @@ sbDeviceFirmwareUpdater::RecoveryUpdate(sbIDevice *aDevice,
 
   mon.Exit();
 
+  // This will determine if we need to cache the firmware update
+  // or if it's already cached.
+  PRBool needsCaching = PR_FALSE;
+
+  // This will be the actual final firmware update we use.
   nsCOMPtr<sbIDeviceFirmwareUpdate> firmwareUpdate;
 
+  // 'Default' firmware update, this may end up being the firmware update
+  // passed in as an argument
+  nsCOMPtr<sbIDeviceFirmwareUpdate> defaultFirmwareUpdate;
+
+  // Cached firmware update
   nsCOMPtr<sbIDeviceFirmwareUpdate> cachedFirmwareUpdate;
   rv = GetCachedFirmwareUpdate(aDevice, getter_AddRefs(cachedFirmwareUpdate));
-  
-  nsCOMPtr<sbIDeviceFirmwareUpdate> defaultFirmwareUpdate;
-  rv = handler->GetDefaultFirmwareUpdate(getter_AddRefs(defaultFirmwareUpdate));
+  LOG(("Using cached firmware update? %s", 
+       NS_SUCCEEDED(rv) ? "true" : "false"));
 
-  PRBool needsCaching = PR_FALSE;
+  // No firmware update passed, use default one.
+  if(!aFirmwareUpdate) {
+    rv = handler->GetDefaultFirmwareUpdate(getter_AddRefs(defaultFirmwareUpdate));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    //
+    // Use specific firmware updated passed. In this case we assume 
+    // it's available and has already been cached into the firmware cache
+    // via a download.
+    //
+    // This isn't totally awesome, it would be nice to instead check the path
+    // of the firmware image and see if it's in the firmware cache path already
+    // or not. But even then one would have to make sure it's in the exact
+    // path for the firmware cache for the device.
+    //
+    defaultFirmwareUpdate = aFirmwareUpdate;
+    needsCaching = PR_FALSE;
+  }
 
   // Check to make sure the cached firmware image is the same name
   // as the default one. If not, we need to delete the cached one and use
@@ -735,6 +774,9 @@ sbDeviceFirmwareUpdater::RecoveryUpdate(sbIDevice *aDevice,
       needsCaching = PR_FALSE;
     }
   }
+  else if(cachedFirmwareUpdate) {
+    firmwareUpdate = cachedFirmwareUpdate;
+  }
   else if(defaultFirmwareUpdate) {
     firmwareUpdate = defaultFirmwareUpdate;
     needsCaching = PR_TRUE;
@@ -752,6 +794,9 @@ sbDeviceFirmwareUpdater::RecoveryUpdate(sbIDevice *aDevice,
   //
   // Long term we'd probably want to do this copy in an async 
   // manner and then call this method again after the file has been cached.
+  //
+  // Yes, this sucks if it's a 100MB firmware image. But that's really, really
+  // really, really rare :)
   //
   if(needsCaching) {
     nsCOMPtr<sbIDeviceFirmwareUpdate> cachedFirmwareUpdate;
@@ -943,6 +988,8 @@ sbDeviceFirmwareUpdater::UnregisterHandler(sbIDeviceFirmwareHandler *aFirmwareHa
 
 NS_IMETHODIMP 
 sbDeviceFirmwareUpdater::HasHandler(sbIDevice *aDevice, 
+                                    PRUint32 aDeviceVendorID,
+                                    PRUint32 aDeviceProductID,
                                     PRBool *_retval)
 {
   LOG(("[sbDeviceFirmwareUpdater] - HasHandler"));
@@ -953,7 +1000,10 @@ sbDeviceFirmwareUpdater::HasHandler(sbIDevice *aDevice,
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsCOMPtr<sbIDeviceFirmwareHandler> handler;
-  nsresult rv = GetHandler(aDevice, getter_AddRefs(handler));
+  nsresult rv = GetHandler(aDevice, 
+                           aDeviceVendorID, 
+                           aDeviceProductID, 
+                           getter_AddRefs(handler));
   
   *_retval = PR_FALSE;
   if(NS_SUCCEEDED(rv)) {
@@ -965,6 +1015,8 @@ sbDeviceFirmwareUpdater::HasHandler(sbIDevice *aDevice,
 
 NS_IMETHODIMP 
 sbDeviceFirmwareUpdater::GetHandler(sbIDevice *aDevice, 
+                                    PRUint32 aDeviceVendorID,
+                                    PRUint32 aDeviceProductID,
                                     sbIDeviceFirmwareHandler **_retval)
 {
   LOG(("[sbDeviceFirmwareUpdater] - GetHandler"));
@@ -995,7 +1047,10 @@ sbDeviceFirmwareUpdater::GetHandler(sbIDevice *aDevice,
     }
 
     PRBool canHandleDevice = PR_FALSE;
-    rv = handler->CanHandleDevice(aDevice, &canHandleDevice);
+    rv = handler->CanUpdate(aDevice, 
+                            aDeviceVendorID, 
+                            aDeviceProductID, 
+                            &canHandleDevice);
     if(NS_FAILED(rv)) {
       continue;
     }

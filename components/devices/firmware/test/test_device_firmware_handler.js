@@ -36,9 +36,9 @@ function runTest () {
   
   var updater = Components.classes["@songbirdnest.com/Songbird/Device/Firmware/Updater;1"]
                           .getService(Components.interfaces.sbIDeviceFirmwareUpdater);
-  assertTrue(updater.hasHandler(device));
+  assertTrue(updater.hasHandler(device, 0, 0));
 
-  var handler = updater.getHandler(device);
+  var handler = updater.getHandler(device, 0, 0);
   assertNotEqual(handler, null);
   
   var listener = {

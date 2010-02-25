@@ -168,13 +168,18 @@ var deviceFirmwareWizard = {
                                this._defaultDeviceKey, 
                                this._defaultDeviceKey]);
 
+          // Hack up the style so that it doesn't look so damn ugly.
+          recoveryInstructions = "<p style=\"font-family: sans-serif; font-size: 12px\">" + 
+                                 recoveryInstructions + 
+                                 "</p>";
+
           let browser = document.getElementById("device_firmware_wizard_recovery_mode_browser");
           let dataURI = "data:text/html," + escape(recoveryInstructions);
           browser.setAttribute("src", dataURI);
           
           let label = document.getElementById("device_firmware_wizard_recovery_mode_label");
           label.value = SBFormattedString("device.firmware.wizard.recovery_mode.connected",
-                                          [this._defaultDeviceName]);                         
+                                        [this._defaultDeviceName]);
           return;
         }
         
@@ -313,7 +318,20 @@ var deviceFirmwareWizard = {
             document.createTextNode(SBString("device.firmware.repair.no_disconnect_warning"));
           descElem.appendChild(textNode);
           
-          this._deviceFirmwareUpdater.recoveryUpdate(this._device, this);
+          if(this._isDefaultDevice) {
+            this._deviceFirmwareUpdater.recoveryUpdate(this._device, 
+                                                       null, 
+                                                       this._defaultDeviceVID, 
+                                                       this._defaultDevicePID, 
+                                                       this);
+          }
+          else {
+            this._deviceFirmwareUpdater.recoveryUpdate(this._device, 
+                                                       null, 
+                                                       0, 
+                                                       0, 
+                                                       this);
+          }
         }
         else {
           let textNode = 
@@ -497,6 +515,10 @@ var deviceFirmwareWizard = {
     else {
       this._defaultDeviceName = dialogPB.GetString(2);
       this._defaultDeviceKey = dialogPB.GetString(3);
+      
+      var deviceVIDPID = dialogPB.GetString(4).split("-");
+      this._defaultDeviceVID = deviceVIDPID[0];
+      this._defaultDevicePID = deviceVIDPID[1];
     }
     
     if(!this._isDefaultDevice) {
@@ -534,7 +556,7 @@ var deviceFirmwareWizard = {
     // not default device, proceed as normal.
     if(this._wizardMode == "repair") {
       this._wizardElem.title = SBString("device.firmware.repair.title");
-      let handler = this._deviceFirmwareUpdater.getHandler(this._device);
+      let handler = this._deviceFirmwareUpdater.getHandler(this._device, 0, 0);
       handler.bind(this._device, null);
       let recoveryMode = handler.recoveryMode;
       

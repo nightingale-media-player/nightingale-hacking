@@ -248,12 +248,19 @@ function sbDeviceFirmwareAutoCheckForUpdate_onDeviceEvent(aEvent) {
         this._registerTimer(device);
       }
       
+      // XXXAus says:
+      //
+      // Disabled this for now since we did not update the UE
+      // to consider the Tools menu entry for repairing devices.
+      //
+      
+      /*
       // if we have a firmware handler for this device, we'll
       // also check to see if it's recovery mode and ask the 
       // user if they wish to repair it if it is.
-      if (this._deviceFirmwareUpdater.hasHandler(device) &&
+      if (this._deviceFirmwareUpdater.hasHandler(device, 0, 0) &&
           !SBDataGetBoolValue(FIRMWARE_WIZARD_ACTIVE_DATAREMOTE)) {
-        var handler = this._deviceFirmwareUpdater.getHandler(device);
+        var handler = this._deviceFirmwareUpdater.getHandler(device, 0, 0);
         handler.bind(device, null);
         
         var recoveryMode = handler.recoveryMode;
@@ -269,6 +276,7 @@ function sbDeviceFirmwareAutoCheckForUpdate_onDeviceEvent(aEvent) {
             });
         }
       }
+      */
     }
     break;
 

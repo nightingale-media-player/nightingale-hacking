@@ -176,7 +176,7 @@ deviceGeneralSettingsSvc.prototype = {
     // Determine whether the device supports auto-firmware update checks.
     var updater = Cc['@songbirdnest.com/Songbird/Device/Firmware/Updater;1']
                     .getService(Ci.sbIDeviceFirmwareUpdater);
-    this._autoFirmwareCheckSupported = updater.hasHandler(this._device);
+    this._autoFirmwareCheckSupported = updater.hasHandler(this._device, 0, 0);
   },
 
 

@@ -38,7 +38,7 @@ interface sbIDeviceFirmwareUpdate;
  *       to use your own listener if you do not have a listener registered
  *       with the device.
  */
-[scriptable, uuid(29bdc372-e6f6-48a8-b114-10faec695e03)]
+[scriptable, uuid(c54f6746-e188-438b-b0a1-e024f9bf4d6b)]
 interface sbIDeviceFirmwareHandler : nsISupports
 {
   /**
@@ -158,20 +158,18 @@ interface sbIDeviceFirmwareHandler : nsISupports
   readonly attribute nsISimpleEnumerator supportedDevices;
 
   /** 
-   * \brief Check to see if this handler supports the given device
-   * \param aDevice - The device
-   * \note No events need to be sent for this method. It should be a synchronous
-   *       operation. But, do try and be as quick about it as possible.
-   */
-  boolean canHandleDevice(in sbIDevice aDevice);
-
-  /** 
    * \brief Check to see if this handler can update the specified device
    * \param aDevice - The device
+   * \param aDeviceVendorID [optional] - The device vendor ID. Set to 0 if not
+   *                                     available.
+   * \param aDeviceProductID [optional] - The device product ID. Set to 0 if not
+   *                                      available.
    * \note No events need to be sent for this method. It should be a synchronous
    *       operation. But, do try and be as quick about it as possible.
    */
-  boolean canUpdate(in sbIDevice aDevice);
+  boolean canUpdate(in sbIDevice aDevice, 
+                    in unsigned long aDeviceVendorID, 
+                    in unsigned long aDeviceProductID);
 
   /**
    * \brief Bind the handler to a device

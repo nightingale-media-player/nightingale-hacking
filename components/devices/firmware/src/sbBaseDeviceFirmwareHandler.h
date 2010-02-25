@@ -168,10 +168,9 @@ public:
   virtual nsresult OnGetSupportedDevices(nsISimpleEnumerator **aSupportedDevices);
 
   // override me, see cpp file for implementation notes
-  virtual nsresult OnCanHandleDevice(sbIDevice *aDevice, 
-                                     PRBool *_retval);
-  // override me, see cpp file for implementation notes
   virtual nsresult OnCanUpdate(sbIDevice *aDevice, 
+                               PRUint32 aDeviceVendorID,
+                               PRUint32 aDeviceProductID,
                                PRBool *_retval);
   // override me, see cpp file for implementation notes
   virtual nsresult OnRebind(sbIDevice *aDevice,

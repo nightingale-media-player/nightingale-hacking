@@ -46,6 +46,7 @@
   xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   id="device_firmware_wizard"
   type="songbird"
+  hidechrome="true"
   title="&device.firmware.wizard.title;"
   onload="deviceFirmwareWizard.doLoad();"
   onunload="deviceFirmwareWizard.doUnload();"

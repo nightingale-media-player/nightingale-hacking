@@ -566,24 +566,9 @@ sbBaseDeviceFirmwareHandler::OnGetSupportedDevices(nsISimpleEnumerator **aSuppor
 }
 
 /*virtual*/ nsresult
-sbBaseDeviceFirmwareHandler::OnCanHandleDevice(sbIDevice *aDevice,
-                                               PRBool *_retval)
-{
-  TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_ARG_POINTER(_retval);
-  /**
-   * Here is where you will want to verify the incoming sbIDevice object
-   * to determine if your handler can support it in some way. _retval should be
-   * set to either PR_TRUE (yes, use this handler for the device) or PR_FALSE
-   * (let some other handler try).
-   */
-
-  *_retval = PR_FALSE;
-  return NS_OK;
-}
-
-/*virtual*/ nsresult
 sbBaseDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice,
+                                         PRUint32 aDeviceVendorID,
+                                         PRUint32 aDeviceProductID,
                                          PRBool *_retval)
 {
   TRACE(("[%s]", __FUNCTION__));
@@ -1099,24 +1084,9 @@ sbBaseDeviceFirmwareHandler::GetSupportedDevices(
 }
 
 NS_IMETHODIMP
-sbBaseDeviceFirmwareHandler::CanHandleDevice(sbIDevice *aDevice,
-                                             PRBool *_retval)
-{
-  TRACE(("[%s]", __FUNCTION__));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_ARG_POINTER(aDevice);
-  NS_ENSURE_ARG_POINTER(_retval);
-
-  nsAutoMonitor mon(mMonitor);
-
-  nsresult rv = OnCanHandleDevice(aDevice, _retval);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::CanUpdate(sbIDevice *aDevice,
+                                       PRUint32 aDeviceVendorID,
+                                       PRUint32 aDeviceProductID,
                                        PRBool *_retval)
 {
   TRACE(("[%s]", __FUNCTION__));
@@ -1126,7 +1096,10 @@ sbBaseDeviceFirmwareHandler::CanUpdate(sbIDevice *aDevice,
 
   nsAutoMonitor mon(mMonitor);
 
-  nsresult rv = OnCanUpdate(aDevice, _retval);
+  nsresult rv = OnCanUpdate(aDevice, 
+                            aDeviceVendorID, 
+                            aDeviceProductID, 
+                            _retval);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
