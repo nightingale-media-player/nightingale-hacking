@@ -30,7 +30,6 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 DEFAULT_EXTENSIONS = AlbumArt \
-                     qatesttools \
                      xpcom_helloworld \
                      $(NULL)
 
@@ -40,12 +39,15 @@ DEFAULT_EXTENSIONS = AlbumArt \
 # by default; there's some configure.ac goo that goes with this to ensure
 # we have the right header files here...
 
-ifeq (windows,$(SB_PLATFORM))
-   ifeq (1,$(HAS_EXTRAS))
+# Also, for now, disable the iPod in nightly and release builds.
+ifeq (,$(SONGBIRD_OFFICIAL)$(SONGBIRD_NIGHTLY))
+   ifeq (windows,$(SB_PLATFORM))
+      ifeq (1,$(HAS_EXTRAS))
+         DEFAULT_EXTENSIONS += ipod
+      endif
+   else
       DEFAULT_EXTENSIONS += ipod
    endif
-else
-   DEFAULT_EXTENSIONS += ipod
 endif
 
 # AlbumArt is not on the list because it's used internally by the bird, so
@@ -56,6 +58,7 @@ NOARCH_EXTENSIONS = 7digital \
                     lastfm \
                     mashTape \
                     newreleases \
+                    qatesttools \
                     shoutcast \
                     $(NULL)
 
