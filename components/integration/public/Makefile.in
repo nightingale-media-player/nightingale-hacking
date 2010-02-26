@@ -31,7 +31,6 @@ include $(DEPTH)/build/autodefs.mk
 
 XPIDL_SRCS = IWindowCloak.idl \
              IWindowMinMax.idl \
-             IWindowLayer.idl \
              IWindowRegion.idl \
              IWindowResizeHook.idl \
              IGlobalHotkeys.idl \

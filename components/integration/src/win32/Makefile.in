@@ -74,7 +74,6 @@ CPP_SRCS = MultiMonitor.cpp \
 # From ..
 CPP_SRCS += NativeWindowFromNode.cpp \
             WindowCloak.cpp \
-            WindowLayer.cpp \
             IntegrationComponent.cpp \
             sbBaseScreenSaverSuppressor.cpp \
             $(NULL)
