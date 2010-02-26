@@ -1,29 +1,27 @@
 <?xml version="1.0"?>
 <!--
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 -->
 
@@ -530,15 +528,18 @@
     <implementation>
       <constructor>
         <![CDATA[
+          const Cc = Components.classes;
+          const Ci = Components.interfaces;
+        
           window.gOuterFrame = this;
-          var sysInfo = Components.classes["@mozilla.org/system-info;1"]
-                        .getService(Components.interfaces.nsIPropertyBag2);
+          var sysInfo = Cc["@mozilla.org/system-info;1"]
+                          .getService(Ci.nsIPropertyBag2);
 
           // we cannot use SBDataGetBoolValue here because that is loaded via an
           // overlay, but this object is loaded via a binding on dialog, which
           // is instantiated before the overlay is applied.
-          var plucked = Components.classes["@songbirdnest.com/Songbird/DataRemote;1"]
-                                  .createInstance(Components.interfaces.sbIDataRemote);
+          var plucked = Cc["@songbirdnest.com/Songbird/DataRemote;1"]
+                          .createInstance(Ci.sbIDataRemote);
           plucked.init("accessibility.enabled", null);
 
           if ( plucked.boolValue ) {
@@ -552,6 +553,15 @@
           } else {
             // Otherwise, fix yer frame, mate!
             this.enableResizers();
+            if (document.documentElement.hasAttribute('hidechrome') &&
+                ("@songbirdnest.com/Songbird/WindowChromeService;1" in Cc))
+            {
+              // this platform wants custom chrome hiding
+              Cc["@songbirdnest.com/Songbird/WindowChromeService;1"]
+                .getService(Ci.sbIWindowChromeService)
+                .hideChrome(window, true);
+              document.documentElement.removeAttribute('hidechrome');
+            }
           }
             
           if ( this.getAttribute("overflow") == "true" )

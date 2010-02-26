@@ -38,6 +38,7 @@ XPIDL_SRCS = IWindowCloak.idl \
              sbIHotkeyService.idl \
              sbINativeWindowManager.idl \
              sbIScreenSaverSuppressor.idl \
+             sbIWindowChromeService.idl \
              sbIWindowMoveService.idl \
              $(NULL)
              
