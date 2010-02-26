@@ -207,6 +207,7 @@ var DPWCfg = {
       localeSuffix: "formatting",
       progressMeterUndetermined: true,
       canBeCompleted: true,
+      showIdleMessage: true,
       showProgress: true,
       updateBusy: true,
       operationCanceled: false
