@@ -5530,7 +5530,7 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem*                  aMediaItem,
 
   nsCOMPtr<nsIRunnable> runnable =
     NS_NEW_RUNNABLE_METHOD(sbDeviceSupportsItemHelper,
-                           helper,
+                           helper.get(),
                            RunSupportsMediaItem);
   NS_ENSURE_TRUE(runnable, NS_ERROR_OUT_OF_MEMORY);
   rv = NS_DispatchToMainThread(runnable);
