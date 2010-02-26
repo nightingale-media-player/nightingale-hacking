@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -46,18 +46,19 @@ sbDeviceImages::sbDeviceImages(sbBaseDevice * aBaseDevice) :
 // filled with sbIDeviceImage items which the device implementation should
 // act upon.
 nsresult
-sbDeviceImages::ComputeImageSyncArrays(sbIDeviceLibrary *aLibrary,
-                                      nsIArray *aDeviceImageArray,
-                                      const std::set<nsString> &aFileExtensionSet,
-                                      nsIArray **retCopyArray,
-                                      nsIArray **retDeleteArray)
+sbDeviceImages::ComputeImageSyncArrays
+                  (sbIDeviceLibrary *aLibrary,
+                   nsIArray *aDeviceImageArray,
+                   const nsTArray<nsString> &aFileExtensionList,
+                   nsIArray **retCopyArray,
+                   nsIArray **retDeleteArray)
 {
   NS_ENSURE_ARG_POINTER(retCopyArray);
   NS_ENSURE_ARG_POINTER(retDeleteArray);
   nsresult rv;
-  
+
   nsCOMPtr<nsIFile> baseDir;
-  rv = aLibrary->GetSyncRootFolderByType(sbIDeviceLibrary::MEDIATYPE_IMAGE, 
+  rv = aLibrary->GetSyncRootFolderByType(sbIDeviceLibrary::MEDIATYPE_IMAGE,
                                          getter_AddRefs(baseDir));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -68,7 +69,7 @@ sbDeviceImages::ComputeImageSyncArrays(sbIDeviceLibrary *aLibrary,
   rv = aLibrary->GetSyncFolderListByType(sbIDeviceLibrary::MEDIATYPE_IMAGE,
                                          getter_AddRefs(subDirs));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Create the array of files to copy
   nsCOMPtr<nsIMutableArray> syncCopyArray =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
@@ -93,7 +94,7 @@ sbDeviceImages::ComputeImageSyncArrays(sbIDeviceLibrary *aLibrary,
   }
   sbDeviceImageComparator comp;
   searchableDeviceImageArray.Sort(comp);
-  
+
   // Create the array of local files
   nsCOMPtr<nsIMutableArray> localImagesArray =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
@@ -103,15 +104,15 @@ sbDeviceImages::ComputeImageSyncArrays(sbIDeviceLibrary *aLibrary,
   PRUint32 numEntries;
   rv = subDirs->GetLength(&numEntries);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   for (PRUint32 i=0; i<numEntries; i++) {
-    nsCOMPtr<nsIFile> subDir = 
+    nsCOMPtr<nsIFile> subDir =
       do_QueryElementAt(subDirs, i, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     rv = AddLocalImages(baseDir,
                         subDir,
-                        aFileExtensionSet,
+                        aFileExtensionList,
                         PR_TRUE,
                         localImagesArray);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -123,13 +124,13 @@ sbDeviceImages::ComputeImageSyncArrays(sbIDeviceLibrary *aLibrary,
 
   nsTArray< sbIDeviceImage* > searchableLocalImageArray;
   for (PRUint32 i=0; i<len; i++) {
-    nsCOMPtr<sbIDeviceImage> image = 
+    nsCOMPtr<sbIDeviceImage> image =
       do_QueryElementAt(localImagesArray, i, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     searchableLocalImageArray.AppendElement(image);
   }
   searchableLocalImageArray.Sort(comp);
-  
+
   // add any local image missing from the device to the copy array
   DiffImages(syncCopyArray, searchableDeviceImageArray, localImagesArray);
   // add any device image missing locally to the delete array
@@ -140,7 +141,7 @@ sbDeviceImages::ComputeImageSyncArrays(sbIDeviceLibrary *aLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
   rv = CallQueryInterface(syncDeleteArray, retDeleteArray);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   return NS_OK;
 }
 
@@ -151,12 +152,12 @@ sbDeviceImages::ComputeImageSyncArrays(sbIDeviceLibrary *aLibrary,
 // extensions.
 nsresult
 sbDeviceImages::ScanImages(nsIFile *aScanDir,
-                           nsIFile *aBaseDir, 
-                           const std::set<nsString> &aFileExtensionSet,
+                           nsIFile *aBaseDir,
+                           const nsTArray<nsString> &aFileExtensionList,
                            PRBool recursive,
                            nsIArray **retImageArray) {
   nsresult rv;
-  
+
   // turn the scan files into a uri
   nsCOMPtr<nsIURI> scanDirUri;
   rv = NS_NewFileURI(getter_AddRefs(scanDirUri), aScanDir);
@@ -164,8 +165,8 @@ sbDeviceImages::ScanImages(nsIFile *aScanDir,
 
   // Scan for all media files in image directory.
   nsCOMPtr<sbIFileScanQuery> fileScanQuery;
-  rv = ScanForImageFiles(scanDirUri, 
-                         aFileExtensionSet, 
+  rv = ScanForImageFiles(scanDirUri,
+                         aFileExtensionList,
                          recursive,
                          getter_AddRefs(fileScanQuery));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -174,7 +175,7 @@ sbDeviceImages::ScanImages(nsIFile *aScanDir,
   PRUint32 fileCount;
   rv = fileScanQuery->GetFileCount(&fileCount);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Get the base paths
   nsString basePath;
   rv = aBaseDir->GetPath(basePath);
@@ -184,11 +185,11 @@ sbDeviceImages::ScanImages(nsIFile *aScanDir,
   nsCOMPtr<nsIMutableArray> imageArray =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   for (PRUint32 i = 0; i < fileCount; i++) {
     // Check for abort.
     NS_ENSURE_FALSE(mBaseDevice->ReqAbortActive(), NS_ERROR_ABORT);
-    
+
     // Get the next file URI spec.
     nsAutoString fileURISpec;
     rv = fileScanQuery->GetFilePath(i, fileURISpec);
@@ -216,19 +217,19 @@ sbDeviceImages::ScanImages(nsIFile *aScanDir,
       nsCOMPtr<nsIFile> file;
       rv = fileURL->GetFile(getter_AddRefs(file));
       NS_ENSURE_SUCCESS(rv, rv);
-      
+
       // Get the file's parent directory
       nsCOMPtr<nsIFile> parent;
       rv = file->GetParent(getter_AddRefs(parent));
       NS_ENSURE_SUCCESS(rv, rv);
-      
+
       // Get the local path
       nsString parentPath;
       rv = parent->GetPath(parentPath);
       NS_ENSURE_SUCCESS(rv, rv);
 
       // Subtract the image folder from the file's path
-      NS_ENSURE_TRUE(parentPath.Length() >= basePath.Length(), 
+      NS_ENSURE_TRUE(parentPath.Length() >= basePath.Length(),
                      NS_ERROR_UNEXPECTED);
       nsString partialPath;
       partialPath = parentPath.BeginReading() + basePath.Length();
@@ -236,12 +237,12 @@ sbDeviceImages::ScanImages(nsIFile *aScanDir,
       // Eat the first path separator if there's one
       if (partialPath.First() == *FILE_PATH_SEPARATOR)
         partialPath = partialPath.BeginReading() + 1;
-        
+
       // Get the file name
       nsString filename;
       rv = file->GetLeafName(filename);
       NS_ENSURE_SUCCESS(rv, rv);
-      
+
       // Get the file size
       PRInt64 size;
       rv = file->GetFileSize(&size);
@@ -272,26 +273,26 @@ nsresult
 sbDeviceImages::
   AddLocalImages(nsIFile *baseDir,
                  nsIFile *scanDir,
-                 const std::set<nsString> aFileExtensionSet,
+                 const nsTArray<nsString> aFileExtensionList,
                  PRBool recursive,
                  nsIMutableArray *localImageArray)
 {
   nsresult rv;
-  
+
   // Scan for images at that location
   nsCOMPtr<nsIArray> items;
   rv = ScanImages(scanDir,
                   baseDir,
-                  aFileExtensionSet, 
-                  recursive, 
+                  aFileExtensionList,
+                  recursive,
                   getter_AddRefs(items));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Add all elements to the main array  
+  // Add all elements to the main array
   PRUint32 len;
   rv = items->GetLength(&len);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   for (PRUint32 i=0;i<len;i++) {
     nsCOMPtr<sbIDeviceImage> image = do_QueryElementAt(items, i, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -303,15 +304,15 @@ sbDeviceImages::
 
 // search for each item that is in searchItem in the searchableImageArray.
 // if an item does not exist, it is inserted in the diffResultsArray
-nsresult 
-sbDeviceImages::DiffImages(nsIMutableArray *diffResultsArray, 
+nsresult
+sbDeviceImages::DiffImages(nsIMutableArray *diffResultsArray,
                            nsTArray< sbIDeviceImage* > &searchableImageArray,
                            nsIArray *searchItems)
 {
   PRUint32 len;
   nsresult rv = searchItems->GetLength(&len);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // a comparator object for binary search
   sbDeviceImageComparator comp;
   for (PRUint32 i=0;i<len;i++) {
@@ -319,7 +320,7 @@ sbDeviceImages::DiffImages(nsIMutableArray *diffResultsArray,
     nsCOMPtr<sbIDeviceImage> image = do_QueryElementAt(searchItems, i, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     // Look for that item in the searchable array
-    if (searchableImageArray.BinaryIndexOf(image, comp) == 
+    if (searchableImageArray.BinaryIndexOf(image, comp) ==
         searchableImageArray.NoIndex) {
       // If the item was not found, add it to the diff array
       diffResultsArray->AppendElement(image, PR_FALSE);
@@ -332,7 +333,7 @@ sbDeviceImages::DiffImages(nsIMutableArray *diffResultsArray,
 // perform the actual image scanning of a directory using a filescan object
 nsresult
 sbDeviceImages::ScanForImageFiles(nsIURI *aImageFilesPath,
-                                  const std::set<nsString> &aFileExtensionSet,
+                                  const nsTArray<nsString> &aFileExtensionList,
                                   PRBool recursive,
                                   sbIFileScanQuery** aFileScanQuery)
 {
@@ -369,11 +370,8 @@ sbDeviceImages::ScanForImageFiles(nsIURI *aImageFilesPath,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Add the file extensions to the file scan query.
-  std::set<nsString>::const_iterator const end = aFileExtensionSet.end();
-  for (std::set<nsString>::const_iterator iter = aFileExtensionSet.begin();
-       iter != end;
-       ++iter) {
-    rv = fileScanQuery->AddFileExtension(*iter);
+  for (PRUint32 i = 0; i < aFileExtensionList.Length(); ++i) {
+    rv = fileScanQuery->AddFileExtension(aFileExtensionList[i]);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -417,13 +415,13 @@ sbDeviceImages::ScanForImageFiles(nsIURI *aImageFilesPath,
 NS_IMPL_ISUPPORTS1(sbDeviceImage,
                    sbIDeviceImage);
 
-sbDeviceImage::sbDeviceImage() : 
+sbDeviceImage::sbDeviceImage() :
   mSize(0)
 {
 }
 
 // Get the file size in bytes
-NS_IMETHODIMP sbDeviceImage::GetSize(PRUint64 *aSizePtr) 
+NS_IMETHODIMP sbDeviceImage::GetSize(PRUint64 *aSizePtr)
 {
   NS_ENSURE_ARG_POINTER(aSizePtr);
   *aSizePtr = mSize;
@@ -431,7 +429,7 @@ NS_IMETHODIMP sbDeviceImage::GetSize(PRUint64 *aSizePtr)
 }
 
 // Set the file size in bytes
-NS_IMETHODIMP sbDeviceImage::SetSize(PRUint64 aSize) 
+NS_IMETHODIMP sbDeviceImage::SetSize(PRUint64 aSize)
 {
   mSize = aSize;
   return NS_OK;

@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -42,7 +42,7 @@ class sbDeviceImages
 {
 public:
   friend class sbBaseDevice;
-  
+
   // Compute the difference between the images present locally and
   // those provided in the device image array. You must provide a list
   // of supported extensions. Upon return, the copy and delete arrays are
@@ -50,21 +50,21 @@ public:
   // act upon.
   nsresult ComputeImageSyncArrays(sbIDeviceLibrary *aLibrary,
                                   nsIArray *aDeviceImageArray,
-                                  const std::set<nsString> &aFileExtensionSet,
+                                  const nsTArray<nsString> &aFileExtensionList,
                                   nsIArray **retCopyArray,
                                   nsIArray **retDeleteArray);
-  
+
   // This may be called by devices whose underlying storage lies on the
   // filesystem to build an array of sbIDeviceImage items. aScanPath is the
   // directory that is to be scanned. aBasePath is the base of the image
   // directory on that filesystem. You must also provide a list of supported
   // extensions.
   nsresult ScanImages(nsIFile *aScanDir,
-                      nsIFile *aBaseDir, 
-                      const std::set<nsString> &aFileExtensionSet,
+                      nsIFile *aBaseDir,
+                      const nsTArray<nsString> &aFileExtensionList,
                       PRBool recursive,
                       nsIArray **retImageArray);
-  
+
 private:
   // ctor
   sbDeviceImages(sbBaseDevice * aBaseDevice);
@@ -74,22 +74,22 @@ private:
   nsresult
     AddLocalImages(nsIFile *baseDir,
                    nsIFile *subDir,
-                   const std::set<nsString> aFileExtensionSet,
+                   const nsTArray<nsString> aFileExtensionList,
                    PRBool recursive,
                    nsIMutableArray *localImageArray);
 
   // search for each item that is in searchItem in the searchableImageArray.
   // if an item does not exist, it is inserted in the diffResultsArray
-  nsresult DiffImages(nsIMutableArray *diffResultsArray, 
+  nsresult DiffImages(nsIMutableArray *diffResultsArray,
                       nsTArray< sbIDeviceImage* > &searchableImageArray,
                       nsIArray *searchItems);
 
   // perform the actual image scanning of a directory using a filescan object
   nsresult ScanForImageFiles(nsIURI *aImageFilesPath,
-                             const std::set<nsString> &aFileExtensionSet,
+                             const nsTArray<nsString> &aFileExtensionList,
                              PRBool recursive,
                              sbIFileScanQuery** aFileScanQuery);
-  
+
   // A pointer to our parent base device
   sbBaseDevice        *mBaseDevice;
 };
@@ -99,7 +99,7 @@ class sbDeviceImage : public sbIDeviceImage {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIDEVICEIMAGE
-  
+
   sbDeviceImage();
   virtual ~sbDeviceImage() {}
 
