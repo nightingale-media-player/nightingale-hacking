@@ -183,16 +183,20 @@ public:
   {
     nsresult rv;
     
-    // Get the main thread then call InvokeOnThread
-    nsCOMPtr<nsIThread> mainThread;
-    rv = NS_GetMainThread(getter_AddRefs(mainThread));
+    // Create a Songbird runnable method.
+    nsRefPtr<SelfType> runnable;
+    rv = New(getter_AddRefs(runnable),
+             aObject,
+             aMethod,
+             aFailureReturnValue,
+             aArg1Value);
     NS_ENSURE_SUCCESS(rv, aFailureReturnValue);
-    
-    return InvokeOnThread(aObject,
-                          aMethod,
-                          aFailureReturnValue,
-                          aArg1Value,
-                          mainThread);
+
+    // Dispatch the runnable method on the main thread. 
+    rv = NS_DispatchToMainThread(runnable, NS_DISPATCH_SYNC); 
+    NS_ENSURE_SUCCESS(rv, rv); 
+ 
+    return NS_OK;
   }
   
   /**
@@ -256,16 +260,20 @@ public:
   {
     nsresult rv;
 
-    // Get the main thread then call InvokeOnThreadAsync
-    nsCOMPtr<nsIThread> mainThread;
-    rv = NS_GetMainThread(getter_AddRefs(mainThread));
+    // Create a Songbird runnable method.
+    nsRefPtr<SelfType> runnable;
+    rv = New(getter_AddRefs(runnable),
+             aObject,
+             aMethod,
+             aFailureReturnValue,
+             aArg1Value);
     NS_ENSURE_SUCCESS(rv, aFailureReturnValue);
-    
-    return InvokeOnThreadAsync(aObject,
-                               aMethod,
-                               aFailureReturnValue,
-                               aArg1Value,
-                               mainThread);
+
+    // Dispatch the runnable method on the main thread. 
+    rv = NS_DispatchToMainThread(runnable, NS_DISPATCH_NORMAL); 
+    NS_ENSURE_SUCCESS(rv, rv); 
+ 
+    return NS_OK;
   }
 
   /**
@@ -529,17 +537,21 @@ public:
   {
     nsresult rv;
 
-    // Get the main thread then call InvokeOnThread
-    nsCOMPtr<nsIThread> mainThread;
-    rv = NS_GetMainThread(getter_AddRefs(mainThread));
+    // Create a Songbird runnable method.
+    nsRefPtr<SelfType> runnable;
+    rv = New(getter_AddRefs(runnable),
+             aObject,
+             aMethod,
+             aFailureReturnValue,
+             aArg1Value,
+             aArg2Value);
     NS_ENSURE_SUCCESS(rv, aFailureReturnValue);
-    
-    return InvokeOnThread(aObject,
-                          aMethod,
-                          aFailureReturnValue,
-                          aArg1Value,
-                          aArg2Value,
-                          mainThread);
+
+    // Dispatch the runnable method on the main thread. 
+    rv = NS_DispatchToMainThread(runnable, NS_DISPATCH_SYNC); 
+    NS_ENSURE_SUCCESS(rv, rv); 
+ 
+    return NS_OK;
   }
 
   /**
@@ -607,17 +619,21 @@ public:
   {
     nsresult rv;
 
-    // Get the main thread then call InvokeOnThread
-    nsCOMPtr<nsIThread> mainThread;
-    rv = NS_GetMainThread(getter_AddRefs(mainThread));
+    // Create a Songbird runnable method.
+    nsRefPtr<SelfType> runnable;
+    rv = New(getter_AddRefs(runnable),
+             aObject,
+             aMethod,
+             aFailureReturnValue,
+             aArg1Value,
+             aArg2Value);
     NS_ENSURE_SUCCESS(rv, aFailureReturnValue);
-    
-    return InvokeOnThreadAsync(aObject,
-                               aMethod,
-                               aFailureReturnValue,
-                               aArg1Value,
-                               aArg2Value,
-                               mainThread);
+
+    // Dispatch the runnable method on the main thread. 
+    rv = NS_DispatchToMainThread(runnable, NS_DISPATCH_NORMAL); 
+    NS_ENSURE_SUCCESS(rv, rv); 
+ 
+    return NS_OK;
   }
 
   /**
