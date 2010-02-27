@@ -455,8 +455,9 @@ var DPW = {
   _updateProgressIdle: function DPW__updateProgressIdle() {
     var oInfo = this._getOperationInfo(this._lastCompletedEventOperation);
     if (oInfo.showIdleMessage) {
-      
-      var key = "device.status.progress_complete_" + oInfo.localeSuffix;
+      // Per bug 20294, don't bother showing different idle messages for each
+      // operation type.
+      var key = "device.status.progress_completed";
       
       // Check for errors, notify of errors, cancel takes precedence
       var hasErrors = this._checkForDeviceErrors("");
@@ -466,9 +467,10 @@ var DPW = {
       else if (hasErrors) { 
         key += "_errors";
       }
-      this._progressTextLabel.value = SBFormattedString(key,
-                                                [ this._totalItems.intValue ],
-                                                "");
+      else {
+        key += "_ok";
+      }
+      this._progressTextLabel.value = SBString(key, "");
     }
 
     this._progressMeter.hidden = true;
