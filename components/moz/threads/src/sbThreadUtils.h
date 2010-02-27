@@ -49,8 +49,8 @@
 // Mozilla imports.
 #include <nsAutoLock.h>
 #include <nsAutoPtr.h>
+#include <nsIThreadPool.h>
 #include <nsThreadUtils.h>
-
 
 //------------------------------------------------------------------------------
 //
@@ -182,6 +182,42 @@ public:
                                        Arg1Type   aArg1Value)
   {
     nsresult rv;
+    
+    // Get the main thread then call InvokeOnThread
+    nsCOMPtr<nsIThread> mainThread;
+    rv = NS_GetMainThread(getter_AddRefs(mainThread));
+    NS_ENSURE_SUCCESS(rv, aFailureReturnValue);
+    
+    return InvokeOnThread(aObject,
+                          aMethod,
+                          aFailureReturnValue,
+                          aArg1Value,
+                          mainThread);
+  }
+  
+  /**
+   * Invoke the method specified by aMethod of the object specified by aObject
+   * on the supplied thread.  Invoke the method with the argument specified by
+   * aArg1Value.  Return the value returned by the invoked method.  If any error
+   * occurs, return aFailureReturnValue.
+   *
+   * \param aObject             Object for which to invoke method.
+   * \param aMethod             Method to invoke.
+   * \param aFailureReturnValue Value to return on failure.
+   * \param aArg1Value          Value of first method argument.
+   * \param aThread             Thread to run on.
+   *
+   * \return                    Value returned by invoked method or
+   *                            aFailureReturnValue on failure.
+   */
+
+  static ReturnType InvokeOnThread(ClassType* aObject,
+                                   MethodType aMethod,
+                                   ReturnType aFailureReturnValue,
+                                   Arg1Type   aArg1Value,
+                                   nsIEventTarget* aThread)
+  {
+    nsresult rv;
 
     // Create a Songbird runnable method.
     nsRefPtr<SelfType> runnable;
@@ -192,8 +228,8 @@ public:
              aArg1Value);
     NS_ENSURE_SUCCESS(rv, aFailureReturnValue);
 
-    // Dispatch the runnable method on the main thread.
-    rv = NS_DispatchToMainThread(runnable, NS_DISPATCH_SYNC);
+    // Dispatch the runnable method on the thread.
+    rv = aThread->Dispatch(runnable, NS_DISPATCH_SYNC);
     NS_ENSURE_SUCCESS(rv, aFailureReturnValue);
 
     return runnable->GetReturnValue();
@@ -205,7 +241,7 @@ public:
    * specified by aObject on the main thread.  Invoke the method with the
    * argument specified by aArg1Value.  Use the value specified by
    * aFailureReturnValue as the runnable method failure return value.
-   *XXXeps the return value is only need to properly create the object.
+   *XXXeps the return value is only needed to properly create the object.
    *
    * \param aObject             Object for which to invoke method.
    * \param aMethod             Method to invoke.
@@ -220,6 +256,40 @@ public:
   {
     nsresult rv;
 
+    // Get the main thread then call InvokeOnThreadAsync
+    nsCOMPtr<nsIThread> mainThread;
+    rv = NS_GetMainThread(getter_AddRefs(mainThread));
+    NS_ENSURE_SUCCESS(rv, aFailureReturnValue);
+    
+    return InvokeOnThreadAsync(aObject,
+                               aMethod,
+                               aFailureReturnValue,
+                               aArg1Value,
+                               mainThread);
+  }
+
+  /**
+   * Asynchronously, invoke the method specified by aMethod of the object
+   * specified by aObject on the supplied thread.  Invoke the method with the
+   * argument specified by aArg1Value.  Use the value specified by
+   * aFailureReturnValue as the runnable method failure return value.
+   *XXXeps the return value is only needed to properly create the object.
+   *
+   * \param aObject             Object for which to invoke method.
+   * \param aMethod             Method to invoke.
+   * \param aFailureReturnValue Value to return on failure.
+   * \param aArg1Value          Value of first method argument.
+   * \param aThread             Thread to run on.
+   */
+
+  static ReturnType InvokeOnThreadAsync(ClassType* aObject,
+                                        MethodType aMethod,
+                                        ReturnType aFailureReturnValue,
+                                        Arg1Type   aArg1Value,
+                                        nsIEventTarget* aThread)
+  {
+    nsresult rv;
+
     // Create a Songbird runnable method.
     nsRefPtr<SelfType> runnable;
     rv = New(getter_AddRefs(runnable),
@@ -227,15 +297,14 @@ public:
              aMethod,
              aFailureReturnValue,
              aArg1Value);
-    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, aFailureReturnValue);
 
-    // Dispatch the runnable method on the main thread.
-    rv = NS_DispatchToMainThread(runnable, NS_DISPATCH_NORMAL);
-    NS_ENSURE_SUCCESS(rv, rv);
+    // Dispatch the runnable method on the thread.
+    rv = aThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
+    NS_ENSURE_SUCCESS(rv, aFailureReturnValue);
 
-    return NS_OK;
+    return runnable->GetReturnValue();
   }
-
 
   /**
    * Get the runnable method return value.
@@ -460,6 +529,45 @@ public:
   {
     nsresult rv;
 
+    // Get the main thread then call InvokeOnThread
+    nsCOMPtr<nsIThread> mainThread;
+    rv = NS_GetMainThread(getter_AddRefs(mainThread));
+    NS_ENSURE_SUCCESS(rv, aFailureReturnValue);
+    
+    return InvokeOnThread(aObject,
+                          aMethod,
+                          aFailureReturnValue,
+                          aArg1Value,
+                          aArg2Value,
+                          mainThread);
+  }
+
+  /**
+   * Invoke the method specified by aMethod of the object specified by aObject
+   * on the supplied thread.  Invoke the method with the arguments specified by
+   * aArg1Value and aArg2Value.  Return the value returned by the invoked
+   * method.  If any error occurs, return aFailureReturnValue.
+   *
+   * \param aObject             Object for which to invoke method.
+   * \param aMethod             Method to invoke.
+   * \param aFailureReturnValue Value to return on failure.
+   * \param aArg1Value          Value of first method argument.
+   * \param aArg2Value          Value of second method argument.
+   * \param aThread             Thread to run on.
+   *
+   * \return                    Value returned by invoked method or
+   *                            aFailureReturnValue on failure.
+   */
+
+  static ReturnType InvokeOnThread(ClassType* aObject,
+                                   MethodType aMethod,
+                                   ReturnType aFailureReturnValue,
+                                   Arg1Type   aArg1Value,
+                                   Arg2Type   aArg2Value,
+                                   nsIEventTarget* aThread)
+  {
+    nsresult rv;
+
     // Create a Songbird runnable method.
     nsRefPtr<SelfType> runnable;
     rv = New(getter_AddRefs(runnable),
@@ -471,19 +579,18 @@ public:
     NS_ENSURE_SUCCESS(rv, aFailureReturnValue);
 
     // Dispatch the runnable method on the main thread.
-    rv = NS_DispatchToMainThread(runnable, NS_DISPATCH_SYNC);
+    rv = aThread->Dispatch(runnable, NS_DISPATCH_SYNC);
     NS_ENSURE_SUCCESS(rv, aFailureReturnValue);
 
     return runnable->GetReturnValue();
   }
-
 
   /**
    * Asynchronously, invoke the method specified by aMethod of the object
    * specified by aObject on the main thread.  Invoke the method with the
    * arguments specified by aArg1Value and aArg2Value.  Use the value specified
    * by aFailureReturnValue as the runnable method failure return value.
-   *XXXeps the return value is only need to properly create the object.
+   *XXXeps the return value is only needed to properly create the object.
    *
    * \param aObject             Object for which to invoke method.
    * \param aMethod             Method to invoke.
@@ -500,6 +607,43 @@ public:
   {
     nsresult rv;
 
+    // Get the main thread then call InvokeOnThread
+    nsCOMPtr<nsIThread> mainThread;
+    rv = NS_GetMainThread(getter_AddRefs(mainThread));
+    NS_ENSURE_SUCCESS(rv, aFailureReturnValue);
+    
+    return InvokeOnThreadAsync(aObject,
+                               aMethod,
+                               aFailureReturnValue,
+                               aArg1Value,
+                               aArg2Value,
+                               mainThread);
+  }
+
+  /**
+   * Asynchronously, invoke the method specified by aMethod of the object
+   * specified by aObject on the main thread.  Invoke the method with the
+   * arguments specified by aArg1Value and aArg2Value.  Use the value specified
+   * by aFailureReturnValue as the runnable method failure return value.
+   *XXXeps the return value is only needed to properly create the object.
+   *
+   * \param aObject             Object for which to invoke method.
+   * \param aMethod             Method to invoke.
+   * \param aFailureReturnValue Value to return on failure.
+   * \param aArg1Value          Value of first method argument.
+   * \param aArg2Value          Value of second method argument.
+   * \param aThread             Thread to run on.
+   */
+
+  static ReturnType InvokeOnThreadAsync(ClassType* aObject,
+                                        MethodType aMethod,
+                                        ReturnType aFailureReturnValue,
+                                        Arg1Type   aArg1Value,
+                                        Arg2Type   aArg2Value,
+                                        nsIEventTarget* aThread)
+  {
+    nsresult rv;
+
     // Create a Songbird runnable method.
     nsRefPtr<SelfType> runnable;
     rv = New(getter_AddRefs(runnable),
@@ -508,15 +652,14 @@ public:
              aFailureReturnValue,
              aArg1Value,
              aArg2Value);
-    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, aFailureReturnValue);
 
     // Dispatch the runnable method on the main thread.
-    rv = NS_DispatchToMainThread(runnable, NS_DISPATCH_NORMAL);
-    NS_ENSURE_SUCCESS(rv, rv);
+    rv = aThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
+    NS_ENSURE_SUCCESS(rv, aFailureReturnValue);
 
-    return NS_OK;
+    return runnable->GetReturnValue();
   }
-
 
   //----------------------------------------------------------------------------
   //
@@ -626,14 +769,44 @@ protected:
 template <class T, class MT, class RT, class A1>
 inline
 RT sbInvokeOnMainThread1(T & aObject,
-                        MT aMethod,
-                        RT aFailureReturnValue,
-                        A1 aArg1)
+                         MT aMethod,
+                         RT aFailureReturnValue,
+                         A1 aArg1)
 {
   return sbRunnableMethod1<T, RT, A1>::InvokeOnMainThread(&aObject,
                                                           aMethod,
                                                           aFailureReturnValue,
                                                           aArg1);
+}
+
+/**
+ * From the supplied thread, invoke the method specified by aMethod on the
+ * object specified by aObject.  Return the method's return value. On any error,
+ * return the value specified by aFailureReturnValue. Pass to the method the
+ * argument value specified by aArg1.
+ *
+ * \param aObject               Object for which to invoke method.
+ * \param aMethod               Method to invoke.
+ * \param aFailureReturnValue   Value to return on failure.
+ * \param aArg1                 Value of first method argument.
+ * \param aThread               Thread to run on.
+ *
+ * \return                      Value returned by invoked method or
+ *                              aFailureReturnValue on failure.
+ */
+template <class T, class MT, class RT, class A1, class TH>
+inline
+RT sbInvokeOnThread1(T & aObject,
+                     MT aMethod,
+                     RT aFailureReturnValue,
+                     A1 aArg1,
+                     TH aThread)
+{
+  return sbRunnableMethod1<T, RT, A1>::InvokeOnThread(&aObject,
+                                                      aMethod,
+                                                      aFailureReturnValue,
+                                                      aArg1,
+                                                      aThread);
 }
 
 /**
@@ -661,6 +834,35 @@ RT sbInvokeOnMainThread1Async(T & aObject,
                                                             aMethod,
                                                             aFailureReturnValue,
                                                             aArg1);
+}
+
+/**
+ * From the supplied thread, invoke asynchronously the method specified by
+ * aMethod on the object specified by aObject. On any error, return the value
+ * specified by aFailureReturnValue. Pass to the method the argument value
+ * specified by aArg1.
+ *
+ * \param aObject               Object for which to invoke method.
+ * \param aMethod               Method to invoke.
+ * \param aFailureReturnValue   Value to return on failure.
+ * \param aArg1                 Value of first method argument.
+ * \param aThread               Thread to run on.
+ *
+ * \return                      aFailureReturnValue on failure to invoke
+ */
+template <class T, class MT, class RT, class A1, class TH>
+inline
+RT sbInvokeOnThread1Async(T & aObject,
+                          MT aMethod,
+                          RT aFailureReturnValue,
+                          A1 aArg1,
+                          TH aThread)
+{
+  return sbRunnableMethod1<T, RT, A1>::InvokeOnThreadAsync(&aObject,
+                                                           aMethod,
+                                                           aFailureReturnValue,
+                                                           aArg1,
+                                                           aThread);
 }
 
 #define SB_INVOKE_ON_MAIN_THREAD2(aClassType,                                  \
@@ -710,6 +912,38 @@ RT sbInvokeOnMainThread2(T & aObject,
 }
 
 /**
+ * From the supplied thread, invoke the method specified by aMethod on the
+ * object specified by aObject.  Return the method's return value. On any error,
+ * return the value specified by aFailureReturnValue. Pass to the method the
+ * argument value specified by aArg1.
+ *
+ * \param aObject               Object for which to invoke method.
+ * \param aMethod               Method to invoke.
+ * \param aFailureReturnValue   Value to return on failure.
+ * \param aArg1                 Value of the first argument.
+ * \param aArg2                 Value of the second argument
+ * \param aThread               Thread to run on.
+ *
+ * \return                      aFailureReturnValue on failure.
+ */
+template <class T, class MT, class RT, class A1, class A2, class TH>
+inline
+RT sbInvokeOnThread2(T & aObject,
+                     MT aMethod,
+                     RT aFailureReturnValue,
+                     A1 aArg1,
+                     A2 aArg2,
+                     TH aThread)
+{
+  return sbRunnableMethod2<T, RT, A1, A2>::InvokeOnThread(&aObject,
+                                                          aMethod,
+                                                          aFailureReturnValue,
+                                                          aArg1,
+                                                          aArg2,
+                                                          aThread);
+}
+
+/**
  * From the main thread, invoke asynchronously the method specified by aMethod
  * on the object specified by aObject.  Return the method's return value.
  * On any error, return the value specified by aFailureReturnValue. Pass to
@@ -741,12 +975,46 @@ RT sbInvokeOnMainThread2Async(T & aObject,
 }
 
 /**
+ * From the supplied thread, invoke asynchronously the method specified by
+ * aMethod on the object specified by aObject.  Return the method's return
+ * value. On any error, return the value specified by aFailureReturnValue. Pass
+ * to the method the argument value specified by aArg1.
+ *
+ * \param aObject               Object for which to invoke method.
+ * \param aMethod               Method to invoke.
+ * \param aFailureReturnValue   Value to return on failure.
+ * \param aArg1                 Value of the first argument.
+ * \param aArg2                 Value of the second argument
+ * \param aThread               Thread to run on.
+ *
+ * \return                      Value returned by invoked method or
+ *                              aFailureReturnValue on failure.
+ */
+template <class T, class MT, class RT, class A1, class A2, class TH>
+inline
+RT sbInvokeOnThread2Async(T & aObject,
+                          MT aMethod,
+                          RT aFailureReturnValue,
+                          A1 aArg1,
+                          A2 aArg2,
+                          TH aThread)
+{
+  return sbRunnableMethod2<T, RT, A1, A2>::InvokeOnThreadAsync(
+                                                            &aObject,
+                                                            aMethod,
+                                                            aFailureReturnValue,
+                                                            aArg1,
+                                                            aArg2,
+                                                            aThread);
+}
+
+/**
  * From the main thread, asynchronously invoke the method specified by aMethod
  * on the object specified by aObject of the type specified by aClassType.  Pass
  * to the method the argument value specified by aArg1Value of type specified by
  * aArg1Type.  Use the value specified by aFailureReturnValue as the runnable
  * method failure return value.
- *XXXeps the return value is only need to properly create the object.
+ *XXXeps the return value is only needed to properly create the object.
  *
  * \param aClassType            Type of method class.
  * \param aObject               Object for which to invoke method.

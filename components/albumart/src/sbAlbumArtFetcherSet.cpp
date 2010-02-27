@@ -555,16 +555,19 @@ sbAlbumArtFetcherSet::OnSearchComplete(nsIArray* aMediaItems)
     // All done so indicate complete
     TRACE(("Found all artwork, finishing"));
 
-    // Make sure we shutdown the current fetcher
+    if (mListener) {
+      // We don't check the result since we want to always shutdown the fetcher
+      // after we return from this call.
+      mListener->OnSearchComplete(aMediaItems);
+      mListener = nsnull;
+    }
+
+    // Make sure we shutdown the current fetcher; we do this after the call to
+    // the listener so we don't release items it may need.
     if (mFetcher) {
       rv = mFetcher->Shutdown();
       NS_ENSURE_SUCCESS(rv, rv);
       mFetcher = nsnull;
-    }
-
-    if (mListener) {
-      mListener->OnSearchComplete(aMediaItems);
-      mListener = nsnull;
     }
   } else {
     // Missing images so try next fetcher for items that failed
