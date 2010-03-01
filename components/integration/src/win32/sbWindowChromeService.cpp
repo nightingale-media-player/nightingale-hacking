@@ -36,9 +36,19 @@ static UINT_PTR gSubclassId = NULL;
 NS_IMPL_ISUPPORTS1(sbWindowChromeService, sbIWindowChromeService);
 
 sbWindowChromeService::sbWindowChromeService()
+  : mhDWMAPI(NULL),
+    mDwmIsCompositionEnabled(NULL)
 {
+  NS_ASSERTION(!gSubclassId,
+               "sbWindowChromeService constructed twice!");
   if (!gSubclassId) {
     gSubclassId = (UINT_PTR)this;
+    mhDWMAPI = ::LoadLibrary(TEXT("dwmapi"));
+    if (mhDWMAPI) {
+      mDwmIsCompositionEnabled =
+        (t_DwmIsCompositionEnabled)::GetProcAddress(mhDWMAPI,
+                                                    "DwmIsCompositionEnabled");
+    }
   }
 }
 
@@ -46,6 +56,9 @@ sbWindowChromeService::~sbWindowChromeService()
 {
   if (gSubclassId == (UINT_PTR)this) {
     gSubclassId = NULL;
+  }
+  if (mhDWMAPI) {
+    ::FreeLibrary(mhDWMAPI);
   }
 }
 
@@ -205,24 +218,16 @@ sbWindowChromeService::WndProc(HWND hWnd,
     // Since that only works when DWM is enabled anyway, check if it is - if it
     // is not, do not call the default implementation since that causes flicker
     // on systems with theming but not DWM (e.g. XP, or Vista with 16bpp).
-    HMODULE hDWMAPI = ::LoadLibrary(TEXT("dwmapi"));
-    if (!hDWMAPI) {
-      // no DWMAPI; no need to do any NCPAINT
-      return 0;
-    }
-    t_DwmIsCompositionEnabled pDwmIsCompositionEnabled =
-      (t_DwmIsCompositionEnabled)::GetProcAddress(hDWMAPI,
-                                                  "DwmIsCompositionEnabled");
-    if (!pDwmIsCompositionEnabled) {
-      ::FreeLibrary(hDWMAPI);
+    sbWindowChromeService* self = (sbWindowChromeService*)uIdSubclass;
+    if (!self->mDwmIsCompositionEnabled) {
+      // DWM API isn't available, don't do anything
       return 0;
     }
     BOOL isDWMCompositionEnabled = FALSE;
-    HRESULT hr = pDwmIsCompositionEnabled(&isDWMCompositionEnabled);
+    HRESULT hr = self->mDwmIsCompositionEnabled(&isDWMCompositionEnabled);
     if (FAILED(hr)) {
       isDWMCompositionEnabled = FALSE;
     }
-    ::FreeLibrary(hDWMAPI);
 
     if (!isDWMCompositionEnabled) {
       // DWM composition isn't on; don't do NCPAINT

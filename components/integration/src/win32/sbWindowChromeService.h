@@ -50,6 +50,10 @@ private:
   ~sbWindowChromeService();
 
 protected:
+  // declarations to memoize DwmIsCompositionEnabled
+  typedef HRESULT (WINAPI *t_DwmIsCompositionEnabled)(BOOL *);
+  HMODULE mhDWMAPI;
+  t_DwmIsCompositionEnabled mDwmIsCompositionEnabled;
 };
 
 #define SONGBIRD_WINDOW_CHROME_SERVICE_CONTRACTID         \
