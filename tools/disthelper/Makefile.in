@@ -50,6 +50,11 @@ ifeq ($(SB_PLATFORM),windows)
                                   shlwapi \
                                   version \
                                   $(NULL)
+
+   ifeq (,$(DEBUG))
+      SIMPLE_PROGRAM_FLAGS = -subsystem:windows
+   endif
+
    CPP_SRCS += icon.cpp \
                versioninfo.cpp \
                commands.cpp \
