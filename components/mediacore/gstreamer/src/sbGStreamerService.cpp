@@ -148,7 +148,7 @@ sbGStreamerService::Init()
   NS_NAMED_LITERAL_STRING(kGstPluginSystemPath, "GST_PLUGIN_SYSTEM_PATH");
   NS_NAMED_LITERAL_STRING(kGstRegistry, "GST_REGISTRY");
   NS_NAMED_LITERAL_STRING(kGstPluginPath, "GST_PLUGIN_PATH");
-  PRBool systemGstPlugins;
+  PRBool noSystemPlugins;
   PRBool systemGst;
   PRBool hasMore;
   PRBool first = PR_TRUE;
@@ -167,15 +167,15 @@ sbGStreamerService::Init()
 
 #if defined(XP_MACOSX) || defined(XP_WIN)
   systemGst = PR_FALSE;
-  systemGstPlugins = PR_FALSE;
+  noSystemPlugins = PR_TRUE;
 #else
   // On unix, default to using the bundled gstreamer (plus the system plugins
   // as a fallback).
   // If this env var is set, use ONLY the system gstreamer.
-  rv = envSvc->Exists(NS_LITERAL_STRING("SB_USE_SYSTEM_GST"), &systemGst);
+  rv = envSvc->Exists(NS_LITERAL_STRING("SB_GST_SYSTEM"), &systemGst);
   NS_ENSURE_SUCCESS(rv, rv);
   // And if this one is set, don't use system plugins
-  rv = envSvc->Exists(NS_LITERAL_STRING("SB_USE_SYSTEM_GST_PLUGINS"), &systemGstPlugins);
+  rv = envSvc->Exists(NS_LITERAL_STRING("SB_GST_NO_SYSTEM"), &noSystemPlugins);
   NS_ENSURE_SUCCESS(rv, rv);
 #endif
 
@@ -284,7 +284,7 @@ sbGStreamerService::Init()
     // Remaining steps on unix only
 #if !defined(XP_MACOSX) && !defined(XP_WIN)
 
-    if (systemGstPlugins) {
+    if (!noSystemPlugins) {
       // 4. Add $HOME/.gstreamer-0.10/plugins to system plugin path
       // Use the same code as gstreamer for this to ensure it's the
       // same path...
