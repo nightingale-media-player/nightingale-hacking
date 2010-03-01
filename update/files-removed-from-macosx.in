@@ -367,6 +367,7 @@
 ./Contents/Resources/components/sbClipboardHelper.xpt
 ./Contents/Resources/components/sbCommandLine.xpt
 ./Contents/Resources/components/sbController.xpt
+./Contents/Resources/components/sbDOMEventUtils.dylib
 ./Contents/Resources/components/sbDOMEventUtils.xpt
 ./Contents/Resources/components/sbDataRemote.xpt
 ./Contents/Resources/components/sbDatabaseEngine.xpt

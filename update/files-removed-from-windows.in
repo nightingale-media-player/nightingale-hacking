@@ -313,6 +313,7 @@
 ./components/sbClipboardHelper.xpt
 ./components/sbCommandLine.xpt
 ./components/sbController.xpt
+./components/sbDOMEventUtils.dll
 ./components/sbDOMEventUtils.xpt
 ./components/sbDataRemote.xpt
 ./components/sbDatabaseEngine.xpt

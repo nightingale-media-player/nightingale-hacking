@@ -102,6 +102,7 @@
 ./components/sbClipboardHelper.xpt
 ./components/sbCommandLine.xpt
 ./components/sbController.xpt
+./components/sbDOMEventUtils.so
 ./components/sbDOMEventUtils.xpt
 ./components/sbDataRemote.xpt
 ./components/sbDatabaseEngine.xpt

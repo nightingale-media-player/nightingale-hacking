@@ -54,8 +54,6 @@
 ./components/sbCommandLine.xpt
 ./components/sbController.xpt
 ./components/sbDBEngine.dylib
-./components/sbDOMEventUtils.dylib
-./components/sbDOMEventUtils.xpt
 ./components/sbDataRemote.js
 ./components/sbDataRemote.xpt
 ./components/sbDatabaseEngine.xpt
