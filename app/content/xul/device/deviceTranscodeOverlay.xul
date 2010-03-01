@@ -41,66 +41,96 @@
     const Cc = Components.classes;
     const Ci = Components.interfaces;
     Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
+    Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
 
+    // A set of devices with events. The key is the device id; only the
+    // presence of the key matters.
+    var devicesWithEvents = {};
+    
     function deviceManagerListener(event) {
+
+      var device = event.origin;
+      if (!(device instanceof Ci.sbIDevice)) {
+        return;
+      }
       
-      var item = null, msg;
+      var msg = SBString("transcode.error.notification.label");
 
       switch (event.type) {
         case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSCODE_ERROR: {
-          let bag = event.data, error;
+          let bag = event.data;
           if (!bag || !(bag instanceof Ci.nsIPropertyBag2)) {
             // no event data, nothing we can do
-            return;
+            break;
           }
           if (bag.hasKey("transcode-error")) {
-            error = bag.get("transcode-error");
-            if (!(error instanceof Ci.nsIScriptError) ||
-                !(error instanceof Ci.sbITranscodeError))
+            let error = bag.get("transcode-error");
+            if ((error instanceof Ci.nsIScriptError) &&
+                (error instanceof Ci.sbITranscodeError))
             {
-              return;
+              devicesWithEvents[device.id] = true;
             }
-            msg = error;
-            item = error.destItem || error.sourceItem;
-          }
-          else {
-            return;
           }
           break;
         }
         case Ci.sbIDeviceEvent.EVENT_DEVICE_NOT_ENOUGH_FREESPACE: {
-          item = event.data;
-          if (!(item instanceof Ci.sbIMediaItem)) {
-            return;
-          }
-          msg = SBString("device.error.not_enough_free_space");
+          devicesWithEvents[device.id] = true;
           break;
         }
-        default:
-          // unknown event
-          return;
       }
+      
+      if (device.isBusy) {
+        // The device is still busy; wait until it becomes idle before reporting
+        return;
+      }
+      if (!(device.id in devicesWithEvents)) {
+        // this device has no events we want to report
+        return;
+      }
+      
+      // If we get here, there is some unreported but interesting event,
+      // but the device is now idle
+      delete devicesWithEvents[device.id];
       var notificationBox = gBrowser.getNotificationBox();
-      var device = deviceManager.getDeviceForItem(item);
       var buttons = [
         {
-          label: SBFormattedString("transcode.error.device_goto_page.label",
-                                   [device.name]),
-          accessKey: SBString("transcode.error.device_goto_page.accesskey"),
+          label: SBString("transcode.error.notification.detail.label"),
+          accessKey: SBString("transcode.error.notification.detail.accesskey"),
           callback: function(notification, button) {
-            var devSPS = Cc['@songbirdnest.com/servicepane/device;1']
-                           .getService(Ci.sbIDeviceServicePaneService);
-            var node = devSPS.getNodeForDevice(device);
-            gServicePane.mTreePane.selectAndLoadNode(node);
+            let deviceErrorMonitor =
+              Cc["@songbirdnest.com/device/error-monitor-service;1"]
+                .getService(Ci.sbIDeviceErrorMonitor);
+            let errorItems = deviceErrorMonitor.getDeviceErrors(device);
+            WindowUtils.openDialog
+              (window,
+               "chrome://songbird/content/xul/device/deviceErrorDialog.xul",
+               "device_error_dialog",
+               "chrome,centerscreen",
+               false,
+               [ "", device, errorItems, "syncing" ],
+               null);
+            deviceErrorMonitor.clearErrorsForDevice(device);
           },
           popup: null
         }
       ];
-      notificationBox.appendNotification(msg,
-                                         event,
-                                         null,
-                                         notificationBox.PRIORITY_CRITICAL_MEDIUM,
-                                         buttons);
+      var notification = notificationBox.appendNotification(
+                           msg,
+                           event,
+                           "chrome://songbird/skin/device/error.png",
+                           notificationBox.PRIORITY_CRITICAL_MEDIUM,
+                           buttons);
+      var onNotificationCommand = function(event) {
+        let classes = event.originalTarget.className.split(/\s+/);
+        if (classes.indexOf("messageCloseButton") > -1) {
+          // the user clicked on the dismiss button; clear the device errors
+          let deviceErrorMonitor =
+            Cc["@songbirdnest.com/device/error-monitor-service;1"]
+              .getService(Ci.sbIDeviceErrorMonitor);
+          deviceErrorMonitor.clearErrorsForDevice(device);
+        }
+      };
+      notification.addEventListener("command", onNotificationCommand, false);
     }
 
     // attach our device event listener
