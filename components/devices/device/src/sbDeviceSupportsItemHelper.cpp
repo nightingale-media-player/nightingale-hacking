@@ -91,12 +91,6 @@ sbDeviceSupportsItemHelper::OnJobProgress(sbIJobProgress *aJobProgress)
   rv = aJobProgress->RemoveJobProgressListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mItem = nsnull;
-  mInspector = nsnull;
-  mCallback = nsnull;
-  NS_ISUPPORTS_CAST(sbIDevice*, mDevice)->Release();
-  mDevice = nsnull;
-
   return NS_OK;
 }
 
