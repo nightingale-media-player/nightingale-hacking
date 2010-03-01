@@ -480,7 +480,7 @@ sbDeviceStatusHelper::ItemProgress(double aProgress)
                    NS_LITERAL_STRING("InProgress"),
                    mItemNum,
                    mItemCount,
-                   0.0,
+                   aProgress,
                    mItemType);
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_TRANSFER_PROGRESS,

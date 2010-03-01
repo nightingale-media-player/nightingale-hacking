@@ -259,7 +259,7 @@ sbIPDDevice::AddTrack(sbIMediaItem* aMediaItem,
     }
     NS_ENSURE_TRUE(PR_FALSE, NS_ERROR_FAILURE);
   }
-  mIPDStatus->ItemProgress(100.0);
+  mIPDStatus->ItemProgress(1.0);
 
   // Set the track media item device persistent ID.
   mLibraryListener->IgnoreMediaItem(aMediaItem);
@@ -350,7 +350,7 @@ sbIPDDevice::DeleteTrack(Itdb_Track* aTrack)
   mITDBDirty = PR_TRUE;
 
   // Update item progress.
-  mIPDStatus->ItemProgress(100.0);
+  mIPDStatus->ItemProgress(1.0);
 
   return NS_OK;
 }
