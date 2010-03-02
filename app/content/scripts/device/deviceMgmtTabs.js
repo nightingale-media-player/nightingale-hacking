@@ -55,6 +55,7 @@ if (typeof(Cu) == "undefined")
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
+Cu.import("resource://app/jsmodules/SBUtils.jsm");
 
 if (typeof(XUL_NS) == "undefined")
   var XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
@@ -87,6 +88,37 @@ var DeviceMgmtTabs = {
     this._deviceID = this._widget.deviceID;
     this._device = this._widget.device;
 
+    this._update();
+
+    // Add device listener
+    if (this._device) {
+      var deviceEventTarget = this._device;
+      deviceEventTarget.QueryInterface(Ci.sbIDeviceEventTarget);
+      deviceEventTarget.addEventListener(this);
+    }
+  },
+
+  _update: function DeviceMgmtTabs_update() {
+    // Need these to fire after the device listeners within the
+    // respective widgets
+    var self = this;
+    SBUtils.deferFunction(function() {
+      // Check to see if we should hide the tools tab (if no tools are
+      // applicable to this device.
+      var toolBox = self._getElement("device_tools");
+      if (toolBox.getAttribute("disabled") == "true") {
+        self._widget.setAttribute("hideToolsTab", "true");
+      }
+
+      // Check to see if we should hide the settings tab
+      var settingsBox = self._getElement("device_summary_settings");
+      if (settingsBox.getAttribute("disabled") == "true") {
+        self._widget.setAttribute("hideSettingsTab", "true");
+      } else {
+        self._widget.removeAttribute("hideSettingsTab");
+      }
+    });
+    
     // Check what content this device supports then hide tabs for unsupported
     // content types.
     var sbIDC = Ci.sbIDeviceCapabilities;
@@ -114,9 +146,25 @@ var DeviceMgmtTabs = {
    */
 
   finalize: function DeviceMgmtTabs_finalize() {
+    if (this._device) {
+      var deviceEventTarget = this._device;
+      deviceEventTarget.QueryInterface(Ci.sbIDeviceEventTarget);
+      deviceEventTarget.removeEventListener(this);
+    }
+
     this._device = null;
     this._deviceID = null;
     this._widget = null;
+  },
+
+  onDeviceEvent: function DeviceMgmtTabs_onDeviceEvent(aEvent) {
+    switch (aEvent.type) {
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_INSERTED:
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_REMOVED:
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_END:
+        this._update();
+        break;
+    }
   },
 
   /**

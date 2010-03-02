@@ -191,20 +191,7 @@
         /* Re-initialize the device sync management services. */
         this.DeviceMgmtTabs.finalize(this);
         this.DeviceMgmtTabs.initialize(this);
-
-        // Check to see if we should hide the tools tab (if no tools are
-        // applicable to this device.  Wrapped in a setTimeout(0) to ensure
-        // the code runs after the deviceBound listener in deviceTools.xml
-        var self = this;
-        setTimeout(function(e) {
-          var toolBox = document.getAnonymousElementByAttribute(self,
-                                                                "sbid",
-                                                                "device_tools");
-          if (toolBox.getAttribute("disabled") == "true") {
-            self.setAttribute("hideToolsTab", "true");
-          }
-        }, 0);
-        ]]></handler>
+      ]]></handler>
     </handlers>
 
   </binding>

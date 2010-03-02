@@ -90,6 +90,13 @@ var DeviceSummarySettings = {
     this._device = this._widget.device;
 
     this.refreshDeviceSettings();
+    
+    // Add device listener
+    if (this._device) {
+      var deviceEventTarget = this._device;
+      deviceEventTarget.QueryInterface(Ci.sbIDeviceEventTarget);
+      deviceEventTarget.addEventListener(this);
+    }
   },
 
   /**
@@ -97,9 +104,25 @@ var DeviceSummarySettings = {
    */
 
   finalize: function DeviceSummarySettings_finalize() {
+    if (this._device) {
+      var deviceEventTarget = this._device;
+      deviceEventTarget.QueryInterface(Ci.sbIDeviceEventTarget);
+      deviceEventTarget.removeEventListener(this);
+    }
+
     this._device = null;
     this._deviceID = null;
     this._widget = null;
+  },
+
+  onDeviceEvent: function DeviceSummarySettings_onDeviceEvent(aEvent) {
+    switch (aEvent.type) {
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_INSERTED:
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_REMOVED:
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_END:
+        this.refreshDeviceSettings();
+        break;
+    }
   },
 
   /**
@@ -175,6 +198,7 @@ var DeviceSummarySettings = {
     // add new bindings as needed
     var container = this._getElement("device_management_settings_content");
     var buttonBox = this._getElement("device_settings_button_box");
+    var disable = true;
     for each (let library in ArrayConverter.JSArray(content.libraries)) {
       library.QueryInterface(Ci.sbIDeviceLibrary);
       if (library.guid in seenLibraries) {
@@ -190,7 +214,13 @@ var DeviceSummarySettings = {
 
       this._deviceManagementWidgets.push(widget);
       this._mediaManagementWidgets.push(widget);
+      disable = false;
     }
+
+    if (disable && this._getElement("device_general_settings").hidden)
+      this._widget.setAttribute("disabled", "true");
+    else
+      this._widget.removeAttribute("disabled");
   },
 
   //----------------------------------------------------------------------------
