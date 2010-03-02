@@ -61,6 +61,12 @@ NewReleaseAlbum.unload = function() {
 }
 
 NewReleaseAlbum.init = function() {
+	// Set the tab title
+	var servicePaneStr = Cc["@mozilla.org/intl/stringbundle;1"]
+		.getService(Ci.nsIStringBundleService)
+		.createBundle("chrome://newreleases/locale/overlay.properties");
+	document.title = servicePaneStr.GetStringFromName("servicePaneName");
+
 	var self = this;
 
 	if (typeof(Ci.sbIMediacoreManager) != "undefined")
@@ -199,6 +205,7 @@ NewReleaseAlbum.displayCallback.prototype = {
 		this.progressbar.value = pct;
 	},
 	timeoutError : function() {
+		songbirdMainWindow.NewReleases.updateNewReleasesCount(0);
 		var deck = document.getElementById("newReleases-deck");
 		deck.setAttribute("selectedIndex", 4);
 	},

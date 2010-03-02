@@ -208,6 +208,16 @@ NewReleases = {
         this._strings.getString("servicePaneInitialTooltip");
       newReleasesNode.properties = "newReleases";
     }
+    else {
+      // Read the last count from node name
+      let name = newReleasesNode.name;
+      let begin = name.indexOf('(');
+      if (begin != -1) {
+        let end = name.indexOf(')');
+        if (end != -1 && end > begin)
+          this.lastReleasesCount = parseInt(name.substring(begin + 1, end));
+      }
+    }
     newReleasesNode.setAttributeNS(SP_NS, "addonID", "@EXTENSION_UUID@");
 
     // may need to reset the name post-localisation

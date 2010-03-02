@@ -203,6 +203,16 @@ Concerts = {
         this._strings.getString("servicePaneInitialTooltip");
       concertsNode.properties = "concerts";
     }
+    else {
+      // Read the last count from node name
+      let name = concertsNode.name;
+      let begin = name.indexOf('(');
+      if (begin != -1) {
+        let end = name.indexOf(')');
+        if (end != -1 && end > begin)
+          this.lastConcertCount = parseInt(name.substring(begin + 1, end));
+      }
+    }
     concertsNode.setAttributeNS(SP_NS, "addonID", "@EXTENSION_UUID@");
     concertsNode.image = 'chrome://concerts/content/songkick-16x16.png';
 

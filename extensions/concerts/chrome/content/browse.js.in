@@ -199,6 +199,7 @@ ConcertTicketing.displayCallback.prototype = {
 		this.progressbar.value = pct;
 	},
 	timeoutError : function() {
+		songbirdMainWindow.Concerts.updateConcertCount(0);
 		var deck = document.getElementById("concerts-deck");
 		deck.setAttribute("selectedIndex", 4);
 	},
