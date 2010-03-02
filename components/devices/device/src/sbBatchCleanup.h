@@ -48,13 +48,15 @@ public:
                    mBatch(aBatch),
                    mCurrent(aStart),
                    mEnd(aEnd),
-                   mDevice(aDevice) {
+                   mDevice(aDevice),
+                   mAtEnd(aStart == aEnd)
+  {
   }
   /**
    * Cleans up the items that haven't been proccessed
    */
   ~sbBatchCleanup() {
-    if (!mBatch.empty()) {
+    if (!mAtEnd && !mBatch.empty()) {
       nsresult rv = mDevice->RemoveLibraryItems(mCurrent, mEnd);
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
                           "Unable to cleanup library items");
@@ -69,6 +71,19 @@ public:
     NS_ASSERTION(mCurrent != mEnd,
                  "ItemCompleted called after end of batch encountered");
     mCurrent = aNextIter;
+    mAtEnd = mCurrent == mEnd;
+  }
+  /**
+   * This resets the iterators when the batch has been modified
+   * \param aCurrent the current iterator to be processed
+   * \param aEnd the end of the batch
+   */
+  void ResetIterators(sbBaseDevice::Batch::const_iterator aCurrent,
+                      sbBaseDevice::Batch::const_iterator aEnd)
+  {
+    mCurrent = aCurrent;
+    mEnd = aEnd;
+    mAtEnd = mCurrent == mEnd;
   }
 private:
   /**
@@ -88,6 +103,10 @@ private:
     * Pointer to the device, non-owning since we never live beyond it
     */
   sbBaseDevice * mDevice;
+  /**
+   * We use this because during destruction the iterators may not be valid.
+   */
+  PRBool mAtEnd;
 };
 
 #endif

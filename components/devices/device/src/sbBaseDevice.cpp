@@ -437,7 +437,7 @@ sbBaseDevice::~sbBaseDevice()
   if (mDeviceTranscoding) {
     delete mDeviceTranscoding;
   }
-  
+
   if (mDeviceImages) {
     delete mDeviceImages;
   }
@@ -1404,8 +1404,15 @@ nsresult sbBaseDevice::BatchGetRequestType(sbBaseDevice::Batch& aBatch,
   NS_ENSURE_ARG(!aBatch.empty());
   NS_ENSURE_ARG_POINTER(aRequestType);
 
+  sbBaseDevice::Batch::const_iterator iter = aBatch.begin();
+  int requestType = (*iter)->type;
+  // Skip batch begin, but if that's all there is, then punt and return it
+  if (requestType == TransferRequest::REQUEST_BATCH_BEGIN &&
+      ++iter != aBatch.end()) {
+    requestType = (*iter)->type;
+  }
   // Use the type of the first batch request as the batch request type.
-  *aRequestType = aBatch.front()->type;
+  *aRequestType = requestType;
 
   return NS_OK;
 }
