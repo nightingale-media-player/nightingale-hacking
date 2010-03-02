@@ -342,6 +342,19 @@ function doOK()
   if (!isConfigurationValid())
     return true;
 
+  var smart_conditions = document.getElementById("smart_conditions");
+  var conditions = smart_conditions.conditions;
+  var check = document.getElementById("smart_match_check");
+
+  // the rules themselves are valid, but some values do not make sense to
+  // make playlists for (eg. contains "" ?), so we take care of this here,
+  // by showing those fields as invalid after the user clicks ok.
+  if (check.checked &&
+      !testAdditionalRestrictions(conditions, smart_conditions)) {
+    updateOkButton();
+    return false;
+  }
+
   // Get the smart playlist, creating one if necessary
   var list = window.arguments[0];
   var paramObject = null;
@@ -393,13 +406,6 @@ function configureList(list)
   list.clearConditions();
   var check = document.getElementById("smart_match_check");
   if (check.checked) {
-    // the rules themselves are valid, but some values do not make sense to
-    // make playlists for (eg. contains "" ?), so we take care of this here,
-    // by showing those fields as invalid after the user clicks ok.
-    if (!testAdditionalRestrictions(conditions, smart_conditions)) {
-      updateOkButton();
-      return false;
-    }
     conditions.forEach(function(condition) {
       var info = pm.getPropertyInfo(condition.metadata);
       // access specialized operators
