@@ -7,6 +7,8 @@ if (typeof(gMetrics) == "undefined")
 	var gMetrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
     		.createInstance(Ci.sbIMetrics);
 
+Components.utils.import("resource://app/jsmodules/sbColumnSpecParser.jsm");
+
 var ConcertOptions = {
 	pCountry : null,
 	pState : null,
@@ -164,44 +166,40 @@ var ConcertOptions = {
 			if (check.checked) {
 				gMetrics.metricsInc("concerts", "library.ontour.checked", "");
 
-				var hardcodedSpec = SBProperties.trackName + " 261  " +
-						SBProperties.duration + " 43 " +
-						SBProperties.artistName + " 173 " +
-						SBProperties.albumName + " 156 " +
-						SBProperties.genre + " 53 " +
-						SBProperties.rating + " 80 " +
-						this.skSvc.onTourImgProperty + " 10";
-				
 				// Get the library colspec.  If it's not null, then append
 				// the On Tour image property to it
-				var colSpec = LibraryUtils.mainLibrary.getProperty(
-							SBProperties.columnSpec);
-				if (colSpec != null) {
-					// Make sure we don't already have the column visible
-					if (colSpec.indexOf(this.skSvc.onTourImgProperty) == -1) {
-						colSpec += " " + this.skSvc.onTourImgProperty + " 10";
-						LibraryUtils.mainLibrary.setProperty(
-								SBProperties.columnSpec, colSpec);
-					}
-				} else {
-					// If it was null, then look for the default colspec
-					colSpec = LibraryUtils.mainLibrary.getProperty(
-							SBProperties.defaultColumnSpec);
-					// If default colspec isn't null, then append the On Tour
-					// image property to that
-					if (colSpec != null) {
-						colSpec += " " + this.skSvc.onTourImgProperty + " 10";
-						LibraryUtils.mainLibrary.setProperty(
-								SBProperties.defaultColumnSpec, colSpec);
-					} else {
-						// Failing that, just set the default colspec to be
-						// our hardcoded one above (adapted from
-						// sbColumnSpecParser.jsm)
-						LibraryUtils.mainLibrary.setProperty(
-								SBProperties.defaultColumnSpec, hardcodedSpec);
-					}
-				}
-			}
+        var parser = new ColumnSpecParser(LibraryUtils.mainLibrary, null, null,
+                                          "audio");
+        var foundProperty = false;
+        // Scan to see if the concerts property is there already.
+        for each (var column in parser.columnMap) {
+          if (column.property == this.skSvc.onTourImgProperty) {
+            foundProperty = true;
+            break;
+          }
+        }
+
+        // Only add the property if it's not already there
+        if (!foundProperty) {
+          // Make room for it
+          ColumnSpecParser.reduceWidthsProportionally(parser.columnMap, 58);
+          // Turn the colspec into a proper string
+          var colspec = "";
+          for each (var column in parser.columnMap) {
+            colspec += column.property + " " +
+                       column.width + " ";
+            if (column.property == parser.sortID) {
+              if (parser.sortIsAscending)
+                colspec += "a ";
+              else
+                colspec += "d ";
+            }
+          }
+          colspec += this.skSvc.onTourImgProperty + " 58";
+          var property = SBProperties.columnSpec + "+(audio)";
+          LibraryUtils.mainLibrary.setProperty(property, colspec);
+        }
+      }
 		}
 		ConcertTicketing.loadConcertData(city);
 	},
