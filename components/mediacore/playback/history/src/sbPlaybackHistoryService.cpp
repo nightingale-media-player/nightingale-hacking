@@ -1722,7 +1722,8 @@ sbPlaybackHistoryService::UpdateMetrics()
   nsAutoMonitor mon(mMonitor);
 
   NS_ENSURE_STATE(mCurrentView);
-  
+  NS_ENSURE_STATE(mCurrentItem);
+
   if (!mMetrics) {
     // metrics not available, e.g. after library shutdown
     return NS_OK;
@@ -1889,6 +1890,11 @@ sbPlaybackHistoryService::Observe(nsISupports* aSubject,
     NS_ENSURE_SUCCESS(rv, rv);
   } 
   else if(strcmp(aTopic, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC) == 0) {
+    // Remove all library references
+    mLibraries.Clear();
+    mCurrentItem = nsnull;
+    mCurrentView = nsnull;
+
     // Releasing metrics prevents a leak
     mMetrics = nsnull;
     rv = 
