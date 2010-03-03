@@ -93,7 +93,7 @@
             </row>
             <row>
               <textbox id="genredropdown"
-                       property="http://songbirdnest.com/data/1.0#genre"
+                       property="http://songbirdnest.com/data/1.0#genre$video"
                        type="autocomplete" flex="1"
                        autocompletesearch="library-distinct-properties"/>
               <sb-rating property="http://songbirdnest.com/data/1.0#rating"/>

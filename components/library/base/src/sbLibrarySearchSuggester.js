@@ -61,14 +61,19 @@ const XPCOM_SHUTDOWN_TOPIC              = "xpcom-shutdown";
 /**
  * Map of properties to hard-coded default values
  */
-var gDefaultValues= {};
-gDefaultValues[SBProperties.genre] = [
+var gDefaultValues = {};
+gDefaultValues["audio"] = [
   "Alternative", "Blues/R&B", "Books&Spoken", "Children's Music",
   "Classical", "Comedy", "Country", "Dance", "Easy Listening", "World",
   "Electronic", "Folk", "Hip Hop/Rap", "Holiday", "House", "Industrial",
   "Jazz", "New Age", "Nerdcore", "Podcast", "Pop", "Reggae", "Religious",
   "Rock", "Science", "Soundtrack", "Techno", "Trance",
   "TV", "Film", "Music Video", "Home Movie", "Unclassifiable",
+];
+
+gDefaultValues["video"] = [
+  "Children's", "Comedy", "Drama", "Entertainment", "Healthcare & Fitness",
+  "Travel", "Unclassifiable",
 ];
 
 /**
@@ -330,36 +335,41 @@ LibrarySearchSuggester.prototype = {
 
       // parse search parameters
       var params = searchParam.split(";");
-             //Components.utils.reportError(params);
 
-      this._prop = params[0];
+      var properties = params[0].split("$");
+      this._prop = properties[0];
+      this._type = properties[1] || "audio";
+
       var guid = params[1];
       var additionalValues = params[2];
       this._conversionUnit = params[3];
 
-      // Record distinct values for a library
-      function getDistinctValues(aLibrary, prop, obj) {
-        if (!aLibrary) 
-          return;
-        var values = aLibrary.getDistinctValuesForProperty(prop);
-        while (values.hasMore()) { 
-          // is there a way to assert a key without doing an assignment ?
-          obj._distinctValues[values.getNext()] = true;
+      if (this._type != "video") {
+        // Record distinct values for a library
+        function getDistinctValues(aLibrary, prop, obj) {
+          if (!aLibrary) 
+            return;
+          var values = aLibrary.getDistinctValuesForProperty(prop);
+          while (values.hasMore()) { 
+            // is there a way to assert a key without doing an assignment ?
+            obj._distinctValues[values.getNext()] = true;
+          }
+        }
+
+        // If we have a guid in the params, get the distinct values
+        // from a library with that guid, otherwise, get them from
+        // all libraries
+        if (guid && guid.length > 0) {
+          getDistinctValues(this._libraryManager.getLibrary(guid),
+                            this._prop, this);
+        } else {
+          var libs = this._libraryManager.getLibraries();
+          while (libs.hasMoreElements()) {
+            getDistinctValues(libs.getNext(), this._prop, this);
+          }
         }
       }
-      
-      // If we have a guid in the params, get the distinct values
-      // from a library with that guid, otherwise, get them from
-      // all libraries
-      if (guid && guid.length > 0) {
-        getDistinctValues(this._libraryManager.getLibrary(guid), this._prop, this);
-      } else {
-        var libs = this._libraryManager.getLibraries();
-        while (libs.hasMoreElements()) {
-          getDistinctValues(libs.getNext(), this._prop, this);
-        }
-      }
-      
+
       // If we have additional values, add them to the 
       // distinct values array
       if (additionalValues && additionalValues.length > 0) {
@@ -453,7 +463,7 @@ LibrarySearchSuggester.prototype = {
    * Add hardcoded default values for the current property
    */
   _addDefaultDistinctValues: function() {
-    var defaults = gDefaultValues[this._prop];
+    var defaults = gDefaultValues[this._type];
     if (defaults) {
       for each (var value in defaults) {
         this._distinctValues[value] = true;
