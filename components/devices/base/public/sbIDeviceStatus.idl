@@ -97,7 +97,7 @@ interface sbIDeviceStatus: nsISupports {
    */
   
   /**
-   * \brief The time elapsed in milliseconds since currentState was last at STATE_IDLE
+   * \brief The time elapsed in milliseconds since currentState last changed
    */
   readonly attribute PRUint32 elapsedTime;
 
