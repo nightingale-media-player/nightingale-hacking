@@ -562,7 +562,10 @@ var DPW = {
     }
 
     var itemType = this._getItemType();
-
+    // Determine if this is a playlist
+    var deviceStatus = this._device.currentStatus;
+    var isPlaylist = deviceStatus.mediaItem instanceof Ci.sbIMediaList;
+    
     // If we're preparing to sync (indicated by an idle sub)
     // then show the preparing label
     if (operationInfo.preparingOnIdle && (substate == Ci.sbIDevice.STATE_IDLE))
@@ -578,7 +581,14 @@ var DPW = {
         localeKey = localeKey + "." + itemType;
     } else if (operation == Ci.sbIDevice.STATE_SYNCING &&
                substate == Ci.sbIDevice.STATE_DELETING) {
-      localeKey = "device.status.progress_header_deleting";
+      // we don't want to show deleting playlists counts during sync
+      if (!isPlaylist) {
+        localeKey = "device.status.progress_header_deleting";
+      }
+      else {
+        localKey = "device.status.progress_header_syncing";
+        subLocaleKey = "device.status.progress_footer_syncing_finishing";
+      }
     } else if (operation == Ci.sbIDevice.STATE_SYNCING &&
                substate == Ci.sbIDevice.STATE_SYNC_PLAYLIST) {
       localeKey = "device.status.progress_header_" + operationLocaleSuffix;
