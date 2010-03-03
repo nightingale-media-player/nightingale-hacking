@@ -284,6 +284,7 @@ var DPW = {
   _idleBox: null,
   _syncManualBox: null,
 
+  _lastProgress: 0,
 
   /**
    * \brief Initialize the device progress services for the device progress
@@ -453,6 +454,8 @@ var DPW = {
    */
 
   _updateProgressIdle: function DPW__updateProgressIdle() {
+    this._lastProgress = 0;
+
     var oInfo = this._getOperationInfo(this._lastCompletedEventOperation);
     if (oInfo.showIdleMessage) {
       // Per bug 20294, don't bother showing different idle messages for each
@@ -531,15 +534,24 @@ var DPW = {
     // Update the operation progress meter.
     if (operationInfo.progressMeterDetermined) {
       // Compute the progress from 0-1.
-      var progress = 1;
+      var progress = 0;
       if ((totalItems > 0) &&
           (curItemIndex > 0) &&
-          (curItemIndex < totalItems))
+          (curItemIndex <= totalItems))
       {
         progress = (curItemIndex - 1) / totalItems;
       }
 
-      progress += (this._itemProgress.intValue / 100) / totalItems;
+      // in MTP mode we are incorrectly told that 100% of the zeroth file
+      // has been completed.
+      if (curItemIndex != 0)
+        progress += (this._itemProgress.intValue / 100) / totalItems;
+
+      if (progress > this._lastProgress)
+        this._lastProgress = progress;
+      else
+        progress = this._lastProgress;
+
       if (progress > 0)
       {
         var eta = (duration / progress) - duration;
@@ -557,6 +569,14 @@ var DPW = {
       this._progressMeter.setAttribute("mode", "determined");
       this._progressMeter.value = 0;
     }
+
+    dump("==> "+ operationInfo.localeSuffix +": item "+
+         curItemIndex +" of "+ totalItems +", completed "+
+         this._itemProgress.intValue +"% of this item, "+
+         (progress * 100) +"% in total."+
+         duration +"ms spent so far, "
+         eta +"ms or "
+         etaString +" left.\n");
 
     var itemType = this._getItemType();
 
