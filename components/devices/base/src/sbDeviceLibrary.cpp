@@ -182,6 +182,7 @@ static PRLogModuleInfo* gDeviceLibraryLog = nsnull;
 sbDeviceLibrary::sbDeviceLibrary(sbIDevice* aDevice)
   : mDevice(aDevice),
     mSyncSettingsChanged(PR_FALSE),
+    mSyncModeChanged(PR_FALSE),
     mLock(nsnull)
 {
 #ifdef PR_LOGGING
@@ -1174,6 +1175,7 @@ sbDeviceLibrary::SetSyncMode(PRUint32 aSyncMode)
   if (aSyncMode == syncMode) {
     return NS_OK;
   }
+
   // If switching from manual management mode to sync mode, confirm with user
   // before proceeding.  Do nothing more if switch is canceled.
   if (aSyncMode == sbIDeviceLibrary::SYNC_AUTO) {
@@ -1225,19 +1227,33 @@ sbDeviceLibrary::SetSyncMode(PRUint32 aSyncMode)
     rv = SetMgmtTypePref(i, newMgmtType);
   }
 
-  if (aSyncMode == sbIDeviceLibrary::SYNC_AUTO) {
-    // sync
-    rv = mDevice->SyncLibraries();
+  if (aSyncMode == sbIDeviceLibrary::SYNC_MANUAL && !mSyncModeChanged) {
+    // update the library is read-only property
+    rv = UpdateIsReadOnly();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // update the main library listeners
+    rv = UpdateMainLibraryListeners();
     NS_ENSURE_SUCCESS(rv, rv);
   }
+  // Delay the updates for toggling from manual to auto
+  else if (aSyncMode == sbIDeviceLibrary::SYNC_AUTO) {
+    mSyncModeChanged = PR_TRUE;
+  }
+  // Skip the updates for canceling the sync mode change and toggle back
+  // to manual.
+  else if (mSyncModeChanged) {
+    mSyncModeChanged = PR_FALSE;
+  }
 
-  // update the library is read-only property
-  rv = UpdateIsReadOnly();
-  NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
+}
 
-  // update the main library listeners
-  rv = UpdateMainLibraryListeners();
-  NS_ENSURE_SUCCESS(rv, rv);
+NS_IMETHODIMP
+sbDeviceLibrary::GetSyncModeChanged(PRBool *aSyncModeChanged)
+{
+  NS_ENSURE_ARG_POINTER(aSyncModeChanged);
+  *aSyncModeChanged = mSyncModeChanged;
 
   return NS_OK;
 }
@@ -1664,7 +1680,7 @@ sbDeviceLibrary::Sync()
   NS_ENSURE_SUCCESS(rv, rv);
   
   if (!isManual) {
-      nsCOMPtr<sbILibraryManager> libraryManager =
+    nsCOMPtr<sbILibraryManager> libraryManager =
       do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1718,12 +1734,21 @@ sbDeviceLibrary::Sync()
     rv = device->SubmitRequest(sbIDevice::REQUEST_SYNC, requestParams);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (mSyncSettingsChanged) {
+    // Update if sync mode is changed to SYNC_AUTO.
+    if (mSyncModeChanged) {
+      // update the library is read-only property
+      rv = UpdateIsReadOnly();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    if (mSyncSettingsChanged || mSyncModeChanged) {
       // update the main library listeners
       rv = UpdateMainLibraryListeners();
       NS_ENSURE_SUCCESS(rv, rv);
 
+      // No harm to reset both to false
       mSyncSettingsChanged = PR_FALSE;
+      mSyncModeChanged = PR_FALSE;
     }
   }
   
@@ -1737,7 +1762,9 @@ sbDeviceLibrary::Sync()
     NS_ENSURE_SUCCESS(rv, rv);
     // make a low priority request so it's guaranteed to be handled after
     // higher priority requests, such as audio and video
-    rv = requestParams->SetPropertyAsInt32(NS_LITERAL_STRING("priority"), sbBaseDevice::TransferRequest::PRIORITY_LOW);
+    rv = requestParams->SetPropertyAsInt32(
+                            NS_LITERAL_STRING("priority"),
+                            sbBaseDevice::TransferRequest::PRIORITY_LOW);
     NS_ENSURE_SUCCESS(rv, rv);
     rv = device->SubmitRequest(sbIDevice::REQUEST_IMAGESYNC, requestParams);
     NS_ENSURE_SUCCESS(rv, rv);

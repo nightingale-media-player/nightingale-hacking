@@ -222,7 +222,7 @@ interface sbIDeviceLibraryListener : nsISupports
  * \interface sbIDeviceLibrary
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(5e66c00e-8bec-4ee8-ba69-409e7bdd28cd)]
+[scriptable, uuid(ed060df0-25cb-11df-8a39-0800200c9a66)]
 interface sbIDeviceLibrary : sbILibrary
 {
   /**
@@ -317,6 +317,11 @@ interface sbIDeviceLibrary : sbILibrary
    * \sa SYNC_* constants
    */
   attribute unsigned long syncMode;
+
+  /**
+   * \brief Flag for synchronization mode change from manual to automatic
+   */
+  readonly attribute boolean syncModeChanged;
 
   /**
    * \brief Set the current configured management type preference with content

@@ -230,6 +230,7 @@ var DPW = {
   //   _widget                  Device info widget.
   //   _device                  Device bound to device control widget.
   //   _deviceID                Device ID.
+  //   _deviceLibrary           Device library we are working with.
   //   _deviceErrorMonitor      Error monitor for the device
   //   _curItemIndex            Current index in the batch of items to process
   //   _totalItems              Total items in the batch
@@ -262,6 +263,7 @@ var DPW = {
   _device: null,
   _deviceErrorMonitor : null,
   _deviceID: null,
+  _deviceLibrary: null,
   _curItemIndex: null,
   _totalItems: null,
   _operationInfoTable: null,
@@ -370,6 +372,7 @@ var DPW = {
     this._widget = null;
     this._device = null;
     this._deviceID = null;
+    this._deviceLibrary = null;
     this._operationInfoTable = null;
     this._progressInfoBox = null;
     this._idleBox = null;
@@ -618,6 +621,21 @@ var DPW = {
   //----------------------------------------------------------------------------
 
   /**
+   * \brief Dispatch sync settings change event.
+   */
+
+  onModeChange: function DeviceSyncWidget_onModeChange() {
+    if (this._deviceLibrary.syncMode == Ci.sbIDeviceLibrary.SYNC_MANUAL) {
+      // Update the UI in case the Apply/Cancel buttons are still there.
+      DPW._syncSettingsChanged = false;
+      DPW._device.cacheSyncRequests = false;
+      DPW._update();
+    }
+    else
+      this._dispatchSettingsEvent(this.SYNCSETTINGS_CHANGE);
+  },
+
+  /**
    * \brief Handle the event specified by aEvent for elements with defined
    *        actions.
    *
@@ -681,15 +699,24 @@ var DPW = {
         break;
 
       case DPW.SYNCSETTINGS_APPLY:
+        DPW._syncSettingsChanged = false;
+        DPW._device.cacheSyncRequests = false;
+        break;
+
       case DPW.SYNCSETTINGS_CANCEL:
         DPW._syncSettingsChanged = false;
         DPW._device.cacheSyncRequests = false;
+
+        // Reset back the syncmode if there is pending sync mode change.
+        if (DPW._deviceLibrary.syncModeChanged) {
+          DPW._deviceLibrary.syncMode = !DPW._deviceLibrary.syncMode;
+        }
         break;
     }
 
     // Click apply button will trigger sync, which will do the update later.
     if (aEvent.detail != DPW.SYNCSETTINGS_APPLY)
-    DPW._update();
+      DPW._update();
   },
 
 
@@ -834,6 +861,16 @@ var DPW = {
       var deviceEventTarget = this._device;
       deviceEventTarget.QueryInterface(Ci.sbIDeviceEventTarget);
       deviceEventTarget.addEventListener(this);
+    }
+
+    if (this._device.content.libraries.length > 0) {
+      this._deviceLibrary = this._device.content.libraries
+          .queryElementAt(0, Ci.sbIDeviceLibrary);
+
+      // If there is pending sync mode change, make sure to reset when
+      // the summary page is reloaded.
+      if (this._deviceLibrary.syncModeChanged)
+        this._deviceLibrary.syncMode = !this._deviceLibrary.syncMode;
     }
   },
 

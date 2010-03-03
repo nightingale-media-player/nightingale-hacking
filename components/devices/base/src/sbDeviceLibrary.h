@@ -382,6 +382,11 @@ private:
    */
   PRBool mSyncSettingsChanged;
 
+  /**
+   * \brief The sync mode has been changed or not.
+   */
+  PRBool mSyncModeChanged;
+
   PRLock* mLock;
 };
 
