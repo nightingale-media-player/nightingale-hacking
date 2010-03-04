@@ -101,15 +101,13 @@ deviceEventMonitor.prototype = {
    */
   _deviceSupportsVideo:
     function deviceEventMonitor__deviceSupportsVideo(aDevice) {
+    var capabilities = aDevice.capabilities;
+    var sbIDC = Ci.sbIDeviceCapabilities;
     try {
-      var contentTypes = aDevice.capabilities.getSupportedContentTypes(
-                            Ci.sbIDeviceCapabilities.FUNCTION_VIDEO_PLAYBACK,
-                            {});
-      return contentTypes.some(
-        function (contentType) {
-          return (contentType == Ci.sbIDeviceCapabilities.CONTENT_VIDEO);
-        }
-      );
+      if (capabilities.supportsContent(sbIDC.FUNCTION_VIDEO_PLAYBACK,
+                                       sbIDC.CONTENT_VIDEO)) {
+        return true;
+      }
     }
     catch (err) {
       Cu.reportError("Unable to determine if device supports video:" + err);

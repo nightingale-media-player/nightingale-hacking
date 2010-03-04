@@ -26,6 +26,8 @@
 
 #include "sbDeviceCapabilities.h"
 
+#include <algorithm>
+
 #include <nsArrayUtils.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIClassInfoImpl.h>
@@ -436,6 +438,42 @@ sbDeviceCapabilities::GetSupportedEvents(PRUint32 *aArrayCount,
 
   *aArrayCount = arrayLen;
   *aSupportedEvents = outArray;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceCapabilities::SupportsContent(PRUint32 aFunctionType,
+                                      PRUint32 aContentType,
+                                      PRBool *aSupported)
+{
+  NS_ENSURE_ARG_POINTER(aSupported);
+  NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(isConfigured, NS_ERROR_NOT_INITIALIZED);
+
+  *aSupported = PR_FALSE;
+
+  nsresult rv;
+  PRUint32 *functionTypes;
+  PRUint32 functionTypesLength;
+  rv = GetSupportedFunctionTypes(&functionTypesLength,
+                                 &functionTypes);
+  NS_ENSURE_SUCCESS(rv, rv);
+  sbAutoNSMemPtr functionTypesPtr(functionTypes);
+  PRUint32 *end = functionTypes + functionTypesLength;
+  // function type not available. not supported.
+  if (std::find(functionTypes, end, aFunctionType) == end)
+    return NS_OK;
+
+  PRUint32 *contentTypes;
+  PRUint32 contentTypesLength;
+  rv = GetSupportedContentTypes(aFunctionType,
+                                &contentTypesLength,
+                                &contentTypes);
+  NS_ENSURE_SUCCESS(rv, rv);
+  sbAutoNSMemPtr contentTypesPtr(contentTypes);
+  end = contentTypes + contentTypesLength;
+  *aSupported = std::find(contentTypes, end, aContentType) != end;
+
   return NS_OK;
 }
 

@@ -267,12 +267,9 @@ var DIPW = {
     var capabilities = this._device.capabilities;
     var sbIDC = Ci.sbIDeviceCapabilities;
     try {
-      var contentTypes = capabilities
-        .getSupportedContentTypes(sbIDC.FUNCTION_VIDEO_PLAYBACK, {});
-      for (var i in contentTypes) {
-        if (contentTypes[i] == sbIDC.CONTENT_VIDEO) {
-          return true;
-        }
+      if (capabilities.supportsContent(sbIDC.FUNCTION_VIDEO_PLAYBACK,
+                                       sbIDC.CONTENT_VIDEO)) {
+        return true;
       }
     } catch (e) {}
 
@@ -359,6 +356,7 @@ var DIPW = {
                                             true);
           }
         }
+
         if ((this._itemType.intValue & TYPE.VIDEO) &&
             this._supportsVideo() &&
             !this._findMediaInfoPanel("video")) {

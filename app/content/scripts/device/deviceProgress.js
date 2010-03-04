@@ -333,6 +333,12 @@ var DPW = {
     this._deviceID = this._widget.deviceID;
     this._device = this._widget.device;
 
+    // Set the label accordingly.
+    var syncModeLabel = this._getElement("syncmode_label");
+    var key = this._supportsVideo() ? "device.progress.syncmode.label"
+                                    : "device.progress.audiosync.label";
+    syncModeLabel.value = SBString(key, "");
+
     // Initialize the device services.
     this._deviceInitialize();
 
@@ -394,6 +400,24 @@ var DPW = {
   // Device progress UI update services.
   //
   //----------------------------------------------------------------------------
+
+  /**
+   * \brief Check the device capabilities to see if it supports video.
+   */
+
+  _supportsVideo: function DPW__supportsVideo() {
+    var capabilities = this._device.capabilities;
+    var sbIDC = Ci.sbIDeviceCapabilities;
+    try {
+      if (capabilities.supportsContent(sbIDC.FUNCTION_VIDEO_PLAYBACK,
+                                       sbIDC.CONTENT_VIDEO)) {
+        return true;
+      }
+    } catch (e) {}
+
+    // couldn't find VIDEO support
+    return false;
+  },
 
   /**
    * \brief Update the device progress UI according to the current device state.
@@ -851,15 +875,6 @@ var DPW = {
   // register to receive notifications when the device state changes.
   //
   //----------------------------------------------------------------------------
-
-  //
-  // Device info services fields.
-  //
-  //   _device                  sbIDevice object.
-  //
-
-  _device: null,
-
 
   /**
    * \brief Initialize the device services.

@@ -431,7 +431,7 @@ interface sbIVideoFormatType : nsISupports
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(a5bc7ccc-70ab-4c0f-8533-6e1ebf6f7bcb)]
+[scriptable, uuid(5d3f2ef0-25e3-11df-8a39-0800200c9a66)]
 interface sbIDeviceCapabilities : nsISupports
 {
   /**
@@ -575,6 +575,14 @@ interface sbIDeviceCapabilities : nsISupports
   void getSupportedEvents(out unsigned long aArrayCount,
                           [retval, array, size_is(aArrayCount)]
                             out unsigned long aSupportedEvents);
+
+  /**
+   * Whether the device supports the content type specified by aContentType
+   * \param aFunctionType   the function type to check.
+   * \param aContentType    the content type to check.
+   * \returns true if the content type is supported.
+   */
+  boolean supportsContent(in PRUint32 aFunctionType, in PRUint32 aContentType);
 };
 
 %{C++

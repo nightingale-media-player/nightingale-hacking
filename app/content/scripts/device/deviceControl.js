@@ -659,22 +659,11 @@ deviceControlWidget.prototype = {
     var capabilities = this._device.capabilities;
     var sbIDC = Ci.sbIDeviceCapabilities;
     try {
-      var contentTypes = capabilities.
-        getSupportedContentTypes(sbIDC.FUNCTION_DEVICE, {});
-      for (var i in contentTypes) {
-        if (contentTypes[i] == sbIDC.CONTENT_PLAYLIST) {
-          return true;
-        }
-      }
-    } catch (e) {}
-
-    try {
-      var contentTypes = capabilities
-        .getSupportedContentTypes(sbIDC.FUNCTION_AUDIO_PLAYBACK, {});
-      for (var i in contentTypes) {
-        if (contentTypes[i] == sbIDC.CONTENT_PLAYLIST) {
-          return true;
-        }
+      if (capabilities.supportsContent(sbIDC.FUNCTION_DEVICE,
+                                       sbIDC.CONTENT_PLAYLIST) ||
+          capabilities.supportsContent(sbIDC.FUNCTION_AUDIO_PLAYBACK,
+                                       sbIDC.CONTENT_PLAYLIST)) {
+        return true;
       }
     } catch (e) {}
 
