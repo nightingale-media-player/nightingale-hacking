@@ -61,11 +61,13 @@ sbDeviceStatus::GetCurrentState(PRUint32 *aCurrentState)
 NS_IMETHODIMP
 sbDeviceStatus::SetCurrentState(PRUint32 aCurrentState)
 {
-  if (aCurrentState != mCurrentState)
+  // edge transition from IDLE to any other state
+  if (aCurrentState != mCurrentState && mCurrentState == sbIDevice::STATE_IDLE)
   {
     mTimestamp = PR_IntervalNow();
-    mCurrentState = aCurrentState;
   }
+
+  mCurrentState = aCurrentState;
 
   // If we're idle we want to set the current index to zero so the JS code
   // doesn't erroneously display counts from the previous batch
