@@ -391,7 +391,7 @@ sbDeviceTranscoding::FindTranscodeProfile(sbIMediaItem * aMediaItem,
       NS_ENSURE_SUCCESS(rv2, rv2);
       nsTArray<nsString> params;
       params.AppendElement(inputUri);
-      SBLocalizedString message("mediacore.error.failure", params);
+      SBLocalizedString message("transcode.error.generic", params);
       nsCOMPtr<sbITranscodeError> error;
       rv2 = SB_NewTranscodeError(message,
                                  message,
@@ -470,8 +470,7 @@ sbDeviceTranscoding::FindTranscodeProfile(sbIMediaItem * aMediaItem,
     NS_ENSURE_SUCCESS(rv, rv);
     nsTArray<nsString> params;
     params.AppendElement(inputUri);
-    SBLocalizedString message("mediacore.error.failure",
-                              params);
+    SBLocalizedString message("transcode.error.generic", params);
     nsString detailMessage;
     detailMessage.AppendInt(rv2, 16);
     nsCOMPtr<sbITranscodeError> error;
