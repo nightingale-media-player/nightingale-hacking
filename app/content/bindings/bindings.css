@@ -638,3 +638,8 @@ sb-properties-formatter {
 sb-html-description {
   -moz-binding: url("chrome://songbird/content/bindings/htmlDescription.xml#sb-html-description") !important;
 }
+
+/* File Field Binding */
+sb-filefield {
+  -moz-binding: url("chrome://songbird/content/bindings/fileField.xml#sb-filefield") !important;
+}

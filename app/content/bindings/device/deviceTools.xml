@@ -461,7 +461,7 @@
               if (firmHandler && firmHandler.registerLocation == null) {
                 this._getToolBox("register").collapsed = true;
               }
-              if (!firmHandler || !firmHandler.canUpdate(this.device)) {
+              if (!firmHandler || !firmHandler.canUpdate(this.device, 0, 0)) {
                 this._getToolBox("update").collapsed = true;
                 this._getToolBox("format").collapsed = true;
                 this._getToolBox("restore").collapsed = true;

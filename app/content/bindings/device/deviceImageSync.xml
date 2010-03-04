@@ -134,8 +134,9 @@
        -->
       <constructor> <![CDATA[
       {
-        Cu.import("resource://app/jsmodules/DeviceHelper.jsm", this);
         Cu.import("resource://app/jsmodules/ArrayConverter.jsm", this);
+        Cu.import("resource://app/jsmodules/DeviceHelper.jsm", this);
+        Cu.import("resource://app/jsmodules/PlatformUtils.jsm", this);
         Cu.import("resource://app/jsmodules/StringUtils.jsm", this);
 
         this._syncPrefs = {};
@@ -281,7 +282,8 @@
        * \brief Updates UI with current sync preferences.
        -->
       <method name="_updateUI">
-        <body><![CDATA[
+        <body>
+        <![CDATA[
         {
           // Hide widget if no device library present
           if (!this._deviceLibrary) {
@@ -335,8 +337,14 @@
           // Update root folder displayed and list of subfolders if necessary
           let subfoldersElement = this._getElement("sync_images_folder_children");
           if (this._syncPrefs.rootFolder) {
+            var displayLabelText = this._syncPrefs.rootFolder.leafName;
+            if(this.PlatformUtils.platformString == "Windows_NT") {
+              displayLabelText = Cc["@songbirdnest.com/Songbird/KnownFolderManager;1"]
+                                   .createInstance(Ci.sbIKnownFolderManager)
+                                   .getDisplayNameFromPath(this._syncPrefs.rootFolder.path);
+            }
             rootFolderElement.setAttribute("label",
-                                           this._syncPrefs.rootFolder.leafName);
+                                           displayLabelText);
             rootFolderElement.setAttribute("value",
                                            this._syncPrefs.rootFolder.path);
 

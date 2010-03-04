@@ -47,6 +47,7 @@
 #endif
 
 #ifdef XP_WIN
+#include "win32/sbKnownFolderManager.h"
 #include "win32/sbNativeWindowManager.h"
 #include "win32/sbScreenSaverSuppressor.h"
 #include "win32/sbWindowMoveService.h"
@@ -68,7 +69,6 @@
 
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbWindowCloak)
-
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbNativeWindowManager)
 
 #ifdef XP_WIN
@@ -77,6 +77,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowResizeHook)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowRegion)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CGlobalHotkeys)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbWindowChromeService)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbKnownFolderManager, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbScreenSaverSuppressor, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbWindowMoveService, Init);
 #endif
@@ -109,6 +110,13 @@ static nsModuleComponentInfo sbIntegration[] =
   },
 
 #ifdef XP_WIN
+  {
+    SONGBIRD_KNOWN_FOLDER_MANAGER_CLASSNAME,
+    SONGBIRD_KNOWN_FOLDER_MANAGER_CID,
+    SONGBIRD_KNOWN_FOLDER_MANAGER_CONTRACTID,
+    sbKnownFolderManagerConstructor
+  },
+
   {
     SONGBIRD_WINDOW_CHROME_SERVICE_CLASSNAME,
     SONGBIRD_WINDOW_CHROME_SERVICE_CID,

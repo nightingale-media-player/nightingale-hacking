@@ -90,7 +90,7 @@
                     label="&prefWindow.manageMedia.mac_button.label;"/>
           </hbox>
           <hbox>
-            <filefield id="manage_media_library_file" flex="1"/>
+            <sb-filefield id="manage_media_library_file" flex="1"/>
             <button id="manage_media_library_browse"
                     label="&window.browse;"
                     oncommand="manageMediaPrefsPane.doBrowseCommand(event);"/>

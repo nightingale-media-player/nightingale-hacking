@@ -34,6 +34,8 @@ var Ci = Components.interfaces;
 var Cr = Components.results;
 var Cu = Components.utils;
 
+Cu.import("resource://app/jsmodules/PlatformUtils.jsm");
+
 function makeFile(path) {
   var file = Cc["@mozilla.org/file/local;1"].
              createInstance(Ci.nsILocalFile);
@@ -114,7 +116,15 @@ var SongbirdMainPaneOverlay = {
 
     var leafName, iconURL, path;
     if (val) {
-      leafName = val.leafName;
+      if(PlatformUtils.platformString == "Windows_NT") {
+        var knownFolderManager = 
+          Cc["@songbirdnest.com/Songbird/KnownFolderManager;1"]
+            .createInstance(Ci.sbIKnownFolderManager);
+        leafName = knownFolderManager.getDisplayNameFromPath(val.path);
+      }
+      else {
+        leafName = val.leafName;
+      }
       iconURL = "moz-icon://" + fph.getURLSpecFromFile(val) + "?size=16";
       path = val.path;
     }

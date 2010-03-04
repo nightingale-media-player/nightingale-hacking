@@ -36,6 +36,7 @@ XPIDL_SRCS = IWindowCloak.idl \
              IGlobalHotkeys.idl \
              sbIHotkeyActions.idl \
              sbIHotkeyService.idl \
+             sbIKnownFolderManager.idl \
              sbINativeWindowManager.idl \
              sbIScreenSaverSuppressor.idl \
              sbIWindowChromeService.idl \

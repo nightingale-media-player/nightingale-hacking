@@ -140,15 +140,10 @@ var manageMediaPrefsPane = {
       window.addEventListener("dialogcancel", forceCheck, false);
     }
     
-    document.getElementById("manage_media_pref_library_folder")
-            .addEventListener("change", this, false);
+    // update the file field during construction.
+    let fileField = document.getElementById("manage_media_library_file");
+    fileField.file = manageMediaPrefsPane._libraryFolder;
     
-    // fake a change event to update some display
-    var event = document.createEvent("Events");
-    event.initEvent("change", true, true);
-    document.getElementById("manage_media_pref_library_folder")
-            .dispatchEvent(event);
-
     this._checkForValidPref(true);
     this._updateUI();
     this._saveCurrentPrefs();
@@ -231,25 +226,6 @@ var manageMediaPrefsPane = {
     this._updateUI();
   },
   
-  /**
-   * Handle DOM events (mostly, pref change)
-   */
-  handleEvent: function manageMediaPrefsPane_handleEvent(aEvent) {
-    switch (String(aEvent.type)) {
-      case "change":
-        switch (aEvent.target.id) {
-          case "manage_media_pref_library_folder":
-            let prefElem = aEvent.target;
-            let fileField = document.getElementById("manage_media_library_file");
-            fileField.file = prefElem.value || manageMediaPrefsPane._libraryFolder;
-            // we want to use the full path, unless that ends up being empty
-            fileField.label = fileField.file.path;
-            break;
-        }
-        break;
-    }
-  },
-
   //----------------------------------------------------------------------------
   //
   // Internal services.
