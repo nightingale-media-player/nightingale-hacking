@@ -1,29 +1,27 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
- 
+
 /*
 
   DropHelper Module
@@ -566,6 +564,7 @@ var InternalDropHandler = {
       var allItems = {
         items: [],
         itemsPending: 0,
+        enumerationEnded: false,
         onEnumerationBegin: function(aMediaList) {
           this.items = [];
         },
@@ -579,20 +578,20 @@ var InternalDropHandler = {
           }
         },
         onEnumerationEnd: function(aMediaList, aResultCode) {
-          if (!selectedDevice) {
-            // no device to check for support; do the actual transfer now
-            onEnumerateComplete();
-          }
+          this.enumerationEnded = true;
+          this._checkEnumerationComplete();
         },
         onSupportsMediaItem: function(aMediaItem, aIsSupported) {
           if (!aIsSupported) {
             rejectedItems++;
           }
           this.itemsPending--;
-          if (this.itemsPending < 1) {
+          this._checkEnumerationComplete();
+        },
+        _checkEnumerationComplete : function() {
+          if (this.enumerationEnded && (this.itemsPending < 1))
             onEnumerateComplete();
-          }
-        }
+        },
       };
 
       list.enumerateAllItems(allItems);
@@ -693,19 +692,22 @@ var InternalDropHandler = {
       enumerator: filteredItems,
       first: true,
       itemsPending: 0,
+      _hasMoreElements: true,
 
       hasMoreElements : function() {
-        return this.enumerator.hasMoreElements();
+        this._hasMoreElements = this.enumerator.hasMoreElements();
+        this._checkEnumerationComplete();
+        return this._hasMoreElements;
       },
       getNext : function() {
         var item = this.enumerator.getNext();
-        
+
         if (this.first) {
           this.first = false;
           if (aListener)
             aListener.onFirstMediaItem(item);
         }
-        
+
         item.setProperty(SBProperties.downloadStatusTarget,
                          item.library.guid + "," + item.guid);
 
@@ -721,9 +723,11 @@ var InternalDropHandler = {
           totalUnsupported++;
         }
         this.itemsPending--;
-        if (this.itemsPending < 1) {
+        this._checkEnumerationComplete();
+      },
+      _checkEnumerationComplete : function() {
+        if (!this._hasMoreElements && (this.itemsPending < 1))
           onEnumerateComplete();
-        }
       },
       QueryInterface : XPCOMUtils.generateQI([Ci.nsISimpleEnumerator,
                                               Ci.sbIDeviceSupportsItemCallback])
@@ -733,12 +737,6 @@ var InternalDropHandler = {
       aTargetList.insertSomeBefore(unwrapper, aDropPosition);
     } else {
       aTargetList.addSome(unwrapper);
-    }
-
-    if (!libraryDevice) {
-      // no library device, therefore no asynchronous callback of item support
-      // checks - fire the enumeration complete code now
-      onEnumerateComplete();
     }
 
     function onEnumerateComplete() {
