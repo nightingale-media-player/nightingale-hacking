@@ -48,7 +48,7 @@
 
 #define PERMISSIONS_FILE  0644
 
-NS_IMPL_ISUPPORTS1(sbMediaFileManager, sbIMediaFileManager);
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbMediaFileManager, sbIMediaFileManager);
 
 /**
  * To log this module, set the following environment variable:

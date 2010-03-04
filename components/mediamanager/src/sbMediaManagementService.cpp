@@ -451,9 +451,13 @@ NS_IMETHODIMP
 sbMediaManagementService::OnJobProgress(sbIJobProgress *aJobProgress)
 {
   NS_ENSURE_ARG_POINTER(aJobProgress);
-  NS_ENSURE_TRUE(mPerformActionTimer, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv;
+
+  if (!mPerformActionTimer) {
+    mPerformActionTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   PRUint16 jobStatus;
   rv = aJobProgress->GetStatus(&jobStatus);
@@ -878,8 +882,12 @@ sbMediaManagementService::StopListening()
 {
   TRACE(("%s: stopping", __FUNCTION__));
   NS_ENSURE_TRUE(mLibrary, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_TRUE(mPerformActionTimer, NS_ERROR_NOT_INITIALIZED);
   nsresult rv;
+
+  if (!mPerformActionTimer) {
+    mPerformActionTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = mLibrary->RemoveListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
