@@ -84,16 +84,18 @@
                       rows="5"
                       onclick="if (this.getAttribute('disabled') != 'true')
                                  document.getBindingParent(this)._updateSyncFolders();">
-              <xul:treecols height="0">
+              <xul:treecols>
                 <xul:treecol sbid="sync_images_folder_check"
                              type="checkbox"
                              editable="true"
                              class="sync-images-folder-check"/>
                 <xul:treecol sbid="sync_images_folder_name"
                              class="sync-images-folder-name"
+                             label="&device.sync.images.foldername;"
                              flex="1"/>
                 <xul:treecol sbid="sync_images_folder_filecount"
                              class="sync-images-folder-filecount"
+                             label="&device.sync.images.filecount;"
                              width="80"/>
               </xul:treecols>
 

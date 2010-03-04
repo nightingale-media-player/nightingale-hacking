@@ -1013,16 +1013,21 @@ label.device-name-label {
 }
 
 /* tree that holds the list of playlists to sync */
-sb-device-sync tree {
+sb-device-sync tree,
+sb-device-image-sync tree {
   background-image: none;
   background-color: rgb(69,67,78);
   border: 1px solid rgb(42,42,53);
 }
-sb-device-sync tree treecol[type="checkbox"] {
+sb-device-sync tree treecol[type="checkbox"],
+sb-device-image-sync tree treecol[type="checkbox"] {
   min-width: 23px !important;
   padding-left: 0px !important;
   padding-right: 0px !important;
   margin-right: -3px !important;
+}
+sb-device-image-sync radiogroup {
+  padding: 0px;
 }
 /******************************************************************************
 * WIZARDS

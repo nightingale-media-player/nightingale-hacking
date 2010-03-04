@@ -519,6 +519,8 @@
 <!ENTITY device.sync.images.all.label "All photos">
 <!ENTITY device.sync.images.all.template "All photos (&#37;S)">
 <!ENTITY device.sync.images.selected.label "Selected sub-folders">
+<!ENTITY device.sync.images.foldername "Folder Name">
+<!ENTITY device.sync.images.filecount "Photos">
 
 <!ENTITY device.settings.header.label "Settings">
 <!ENTITY device.settings.general.label "General">
