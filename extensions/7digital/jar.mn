@@ -1,9 +1,65 @@
 7digital.jar:
 % content 7digital  %content/
+% locale  7digital  ar     %locale/ar/
+% locale  7digital  cs     %locale/cs/
+% locale  7digital  da     %locale/da/
+% locale  7digital  de     %locale/de/
+% locale  7digital  de-DE  %locale/de-DE/
+% locale  7digital  el     %locale/el/
 % locale  7digital  en-US  %locale/en-US/
+% locale  7digital  es-ES  %locale/es-ES/
+% locale  7digital  fi     %locale/fi/
+% locale  7digital  fr     %locale/fr/
+% locale  7digital  he     %locale/he/
+% locale  7digital  hu     %locale/hu/
+% locale  7digital  it     %locale/it/
+% locale  7digital  ja     %locale/ja/
+% locale  7digital  ko     %locale/ko/
+% locale  7digital  lt-LT  %locale/lt-LT/
+% locale  7digital  nl     %locale/nl/
+% locale  7digital  nn-NO  %locale/nn-NO/
+% locale  7digital  pl     %locale/pl/
+% locale  7digital  pt-BR  %locale/pt-BR/
+% locale  7digital  pt-PT  %locale/pt-PT/
+% locale  7digital  ru     %locale/ru/
+% locale  7digital  sk     %locale/sk/
+% locale  7digital  sr-RS  %locale/sr-RS/
+% locale  7digital  sv-SE  %locale/sv-SE/
+% locale  7digital  th     %locale/th/
+% locale  7digital  tr     %locale/tr/
+% locale  7digital  zh-CN  %locale/zh-CN/
+% locale  7digital  zh-TW  %locale/zh-TW/
 % skin    7digital  classic/1.0 %skin/
   content/7digital-search.xml      (chrome/content/7digital-search.xml)
+  locale/ar/7digital.properties    (chrome/locale/ar/7digital.properties)
+  locale/cs/7digital.properties    (chrome/locale/cs/7digital.properties)
+  locale/da/7digital.properties    (chrome/locale/da/7digital.properties)
+  locale/de/7digital.properties    (chrome/locale/de/7digital.properties)
+  locale/de-DE/7digital.properties (chrome/locale/de-DE/7digital.properties)
+  locale/el/7digital.properties    (chrome/locale/el/7digital.properties)
   locale/en-US/7digital.properties (chrome/locale/en-US/7digital.properties)
+  locale/es-ES/7digital.properties (chrome/locale/es-ES/7digital.properties)
+  locale/fi/7digital.properties    (chrome/locale/fi/7digital.properties)
+  locale/fr/7digital.properties    (chrome/locale/fr/7digital.properties)
+  locale/he/7digital.properties    (chrome/locale/he/7digital.properties)
+  locale/hu/7digital.properties    (chrome/locale/hu/7digital.properties)
+  locale/it/7digital.properties    (chrome/locale/it/7digital.properties)
+  locale/ja/7digital.properties    (chrome/locale/ja/7digital.properties)
+  locale/ko/7digital.properties    (chrome/locale/ko/7digital.properties)
+  locale/lt-LT/7digital.properties (chrome/locale/lt-LT/7digital.properties)
+  locale/nl/7digital.properties    (chrome/locale/nl/7digital.properties)
+  locale/nn-NO/7digital.properties (chrome/locale/nn-NO/7digital.properties)
+  locale/pl/7digital.properties    (chrome/locale/pl/7digital.properties)
+  locale/pt-BR/7digital.properties (chrome/locale/pt-BR/7digital.properties)
+  locale/pt-PT/7digital.properties (chrome/locale/pt-PT/7digital.properties)
+  locale/ru/7digital.properties    (chrome/locale/ru/7digital.properties)
+  locale/sk/7digital.properties    (chrome/locale/sk/7digital.properties)
+  locale/sr-RS/7digital.properties (chrome/locale/sr-RS/7digital.properties)
+  locale/sv-SE/7digital.properties (chrome/locale/sv-SE/7digital.properties)
+  locale/th/7digital.properties    (chrome/locale/th/7digital.properties)
+  locale/tr/7digital.properties    (chrome/locale/tr/7digital.properties)
+  locale/zh-CN/7digital.properties (chrome/locale/zh-CN/7digital.properties)
+  locale/zh-TW/7digital.properties (chrome/locale/zh-TW/7digital.properties)
   skin/7digital.css                (chrome/skin/7digital.css)
   skin/extension-icon.png          (chrome/skin/extension-icon.png)
   skin/servicepane-icon.png        (chrome/skin/servicepane-icon.png)
