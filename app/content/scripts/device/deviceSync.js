@@ -350,9 +350,11 @@ var DeviceSyncWidget = {
   onItemAdded: function DeviceSyncWidget_onItemAdded(aMediaList,
                                                      aMediaItem,
                                                      aIndex) {
-    // Handle playlist changes.
-    if (aMediaItem.getProperty(SBProperties.isList))
-        this._onPlaylistChange();
+    // Handle unhidden playlist changes.
+    if (aMediaItem.getProperty(SBProperties.isList) &&
+        !aMediaItem.getProperty(SBProperties.hidden)) {
+      this._onPlaylistChange();
+    }
 
     return false;
   },
@@ -780,7 +782,7 @@ var DeviceSyncWidget = {
     LibraryUtils.mainLibrary.enumerateItemsByProperties
                                     (propArray,
                                      mediaListArray,
-                                     Ci.sbIMediaList.ENUMERATIONTYPE_LOCKING);
+                                     Ci.sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
     mediaListList = mediaListArray.array;
 
     /* Fill in the sync playlist list preferences. */
