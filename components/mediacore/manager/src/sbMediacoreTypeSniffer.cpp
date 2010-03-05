@@ -2,25 +2,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
@@ -41,15 +41,15 @@
 #include <sbIMediacoreCapabilities.h>
 #include <sbIMediacoreFactory.h>
 #include <sbIPlaylistReader.h>
-
 #include <sbTArrayStringEnumerator.h>
+#include <sbProxiedComponentManager.h>
 #include <sbStringUtils.h>
 
 const char *gBannedWebExtensions[] = {"htm", "html", "php", "php3"};
-const PRUint16 gBannedWebExtensionsSize = 
+const PRUint16 gBannedWebExtensionsSize =
   sizeof(gBannedWebExtensions) / sizeof(gBannedWebExtensions[0]);
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbMediacoreTypeSniffer, 
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbMediacoreTypeSniffer,
                               sbIMediacoreTypeSniffer)
 
 sbMediacoreTypeSniffer::sbMediacoreTypeSniffer()
@@ -65,14 +65,14 @@ sbMediacoreTypeSniffer::~sbMediacoreTypeSniffer()
 }
 
 nsresult
-sbMediacoreTypeSniffer::Init() 
+sbMediacoreTypeSniffer::Init()
 {
   mMonitor = nsAutoMonitor::NewMonitor("sbMediacoreTypeSniffer::mMonitor");
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
 
-  nsCOMPtr<sbIMediacoreFactoryRegistrar> factoryRegistrar = 
+  nsCOMPtr<sbIMediacoreFactoryRegistrar> factoryRegistrar =
     do_GetService(SB_MEDIACOREMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -123,7 +123,7 @@ sbMediacoreTypeSniffer::Init()
     while(NS_SUCCEEDED(extensions->HasMore(&hasMore)) &&
           hasMore) {
       nsString extension;
-      
+
       rv = extensions->GetNext(extension);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -177,9 +177,19 @@ sbMediacoreTypeSniffer::Init()
   }
 
   // Get the playlist extensions from the playlist reader manager
-  nsCOMPtr<sbIPlaylistReaderManager> readerManager = 
-    do_GetService("@songbirdnest.com/Songbird/PlaylistReaderManager;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIPlaylistReaderManager> readerManager;
+  if (NS_IsMainThread()) {
+    readerManager = do_GetService(
+                           "@songbirdnest.com/Songbird/PlaylistReaderManager;1",
+                           &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    readerManager = do_ProxiedGetService(
+                           "@songbirdnest.com/Songbird/PlaylistReaderManager;1",
+                           &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   length = 0;
   PRUnichar **extensions = nsnull;
@@ -245,8 +255,8 @@ sbMediacoreTypeSniffer::GetFileExtensionFromURI(nsIURI* aURI,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
-sbMediacoreTypeSniffer::IsValidMediaURL(nsIURI *aURL, 
+NS_IMETHODIMP
+sbMediacoreTypeSniffer::IsValidMediaURL(nsIURI *aURL,
                                         PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aURL);
@@ -281,7 +291,7 @@ sbMediacoreTypeSniffer::IsValidMediaURL(nsIURI *aURL,
     return NS_OK;
   }
 
-  // XXXAus: For the time being, if there's no extension we'll pretend like it 
+  // XXXAus: For the time being, if there's no extension we'll pretend like it
   //         is not media.
   *_retval = PR_FALSE;
 
@@ -319,8 +329,8 @@ sbMediacoreTypeSniffer::IsValidAudioURL(nsIURI *aURL, PRBool *aRetVal)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
-sbMediacoreTypeSniffer::IsValidVideoURL(nsIURI *aURL, 
+NS_IMETHODIMP
+sbMediacoreTypeSniffer::IsValidVideoURL(nsIURI *aURL,
                                         PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aURL);
@@ -357,8 +367,8 @@ sbMediacoreTypeSniffer::IsValidVideoURL(nsIURI *aURL,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
-sbMediacoreTypeSniffer::IsValidPlaylistURL(nsIURI *aURL, 
+NS_IMETHODIMP
+sbMediacoreTypeSniffer::IsValidPlaylistURL(nsIURI *aURL,
                                            PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aURL);
@@ -372,7 +382,7 @@ sbMediacoreTypeSniffer::IsValidPlaylistURL(nsIURI *aURL,
 
   // The quick and easy way. Verify against file extension if available.
   if(!fileExtension.IsEmpty()) {
-    
+
     nsAutoMonitor mon(mMonitor);
 
     if(mPlaylistExtensions.GetEntry(fileExtension)) {
@@ -438,7 +448,7 @@ sbMediacoreTypeSniffer::IsValidWebSafePlaylistURL(nsIURI *aURL,
 
   if(!fileExtension.IsEmpty() &&
      !mBannedWebExtensions.GetEntry(fileExtension)) {
-    
+
     if(mPlaylistExtensions.GetEntry(fileExtension)) {
       *_retval = PR_TRUE;
     }
@@ -448,7 +458,7 @@ sbMediacoreTypeSniffer::IsValidWebSafePlaylistURL(nsIURI *aURL,
 }
 
 template<class EntryType>
-PLDHashOperator PR_CALLBACK EnumerateAllExtensions(EntryType* aEntry, 
+PLDHashOperator PR_CALLBACK EnumerateAllExtensions(EntryType* aEntry,
                                                    void *aUserArg)
 {
   NS_ENSURE_TRUE(aEntry, PL_DHASH_STOP);
@@ -456,14 +466,14 @@ PLDHashOperator PR_CALLBACK EnumerateAllExtensions(EntryType* aEntry,
 
   nsTArray<nsString> *aArray = reinterpret_cast<nsTArray<nsString> *>(aUserArg);
 
-  nsString *elem = 
+  nsString *elem =
     aArray->AppendElement(NS_ConvertUTF8toUTF16(aEntry->GetKey()));
   NS_ENSURE_TRUE(elem, PL_DHASH_STOP);
 
   return PL_DHASH_NEXT;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreTypeSniffer::GetAudioFileExtensions(nsIStringEnumerator **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
@@ -471,11 +481,11 @@ sbMediacoreTypeSniffer::GetAudioFileExtensions(nsIStringEnumerator **_retval)
   nsTArray<nsString> allExtensions;
 
   nsAutoMonitor mon(mMonitor);
-  PRUint32 count = mAudioExtensions.EnumerateEntries(EnumerateAllExtensions<nsCStringHashKey>, 
+  PRUint32 count = mAudioExtensions.EnumerateEntries(EnumerateAllExtensions<nsCStringHashKey>,
                                                      &allExtensions);
   NS_ENSURE_TRUE(count == mAudioExtensions.Count(), NS_ERROR_UNEXPECTED);
 
-  nsCOMPtr<nsIStringEnumerator> allExtensionsEnum = 
+  nsCOMPtr<nsIStringEnumerator> allExtensionsEnum =
     new sbTArrayStringEnumerator(&allExtensions);
   NS_ENSURE_TRUE(allExtensionsEnum, NS_ERROR_OUT_OF_MEMORY);
 
@@ -484,7 +494,7 @@ sbMediacoreTypeSniffer::GetAudioFileExtensions(nsIStringEnumerator **_retval)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreTypeSniffer::GetVideoFileExtensions(nsIStringEnumerator **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
@@ -492,11 +502,11 @@ sbMediacoreTypeSniffer::GetVideoFileExtensions(nsIStringEnumerator **_retval)
   nsTArray<nsString> allExtensions;
 
   nsAutoMonitor mon(mMonitor);
-  PRUint32 count = mVideoExtensions.EnumerateEntries(EnumerateAllExtensions<nsCStringHashKey>, 
+  PRUint32 count = mVideoExtensions.EnumerateEntries(EnumerateAllExtensions<nsCStringHashKey>,
                                                      &allExtensions);
   NS_ENSURE_TRUE(count == mVideoExtensions.Count(), NS_ERROR_UNEXPECTED);
 
-  nsCOMPtr<nsIStringEnumerator> allExtensionsEnum = 
+  nsCOMPtr<nsIStringEnumerator> allExtensionsEnum =
     new sbTArrayStringEnumerator(&allExtensions);
   NS_ENSURE_TRUE(allExtensionsEnum, NS_ERROR_OUT_OF_MEMORY);
 
@@ -505,7 +515,7 @@ sbMediacoreTypeSniffer::GetVideoFileExtensions(nsIStringEnumerator **_retval)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreTypeSniffer::GetPlaylistFileExtensions(nsIStringEnumerator **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
@@ -513,11 +523,11 @@ sbMediacoreTypeSniffer::GetPlaylistFileExtensions(nsIStringEnumerator **_retval)
   nsTArray<nsString> allExtensions;
 
   nsAutoMonitor mon(mMonitor);
-  PRUint32 count = mPlaylistExtensions.EnumerateEntries(EnumerateAllExtensions<nsCStringHashKey>, 
+  PRUint32 count = mPlaylistExtensions.EnumerateEntries(EnumerateAllExtensions<nsCStringHashKey>,
                                                         &allExtensions);
   NS_ENSURE_TRUE(count == mPlaylistExtensions.Count(), NS_ERROR_UNEXPECTED);
 
-  nsCOMPtr<nsIStringEnumerator> allExtensionsEnum = 
+  nsCOMPtr<nsIStringEnumerator> allExtensionsEnum =
     new sbTArrayStringEnumerator(&allExtensions);
   NS_ENSURE_TRUE(allExtensionsEnum, NS_ERROR_OUT_OF_MEMORY);
 
@@ -526,7 +536,7 @@ sbMediacoreTypeSniffer::GetPlaylistFileExtensions(nsIStringEnumerator **_retval)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreTypeSniffer::GetImageFileExtensions(nsIStringEnumerator **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
@@ -534,11 +544,11 @@ sbMediacoreTypeSniffer::GetImageFileExtensions(nsIStringEnumerator **_retval)
   nsTArray<nsString> allExtensions;
 
   nsAutoMonitor mon(mMonitor);
-  PRUint32 count = mImageExtensions.EnumerateEntries(EnumerateAllExtensions<nsCStringHashKey>, 
+  PRUint32 count = mImageExtensions.EnumerateEntries(EnumerateAllExtensions<nsCStringHashKey>,
                                                      &allExtensions);
   NS_ENSURE_TRUE(count == mImageExtensions.Count(), NS_ERROR_UNEXPECTED);
 
-  nsCOMPtr<nsIStringEnumerator> allExtensionsEnum = 
+  nsCOMPtr<nsIStringEnumerator> allExtensionsEnum =
     new sbTArrayStringEnumerator(&allExtensions);
   NS_ENSURE_TRUE(allExtensionsEnum, NS_ERROR_OUT_OF_MEMORY);
 
@@ -547,23 +557,23 @@ sbMediacoreTypeSniffer::GetImageFileExtensions(nsIStringEnumerator **_retval)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreTypeSniffer::GetMediaFileExtensions(nsIStringEnumerator **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsTArray<nsString> allExtensions;
-  
+
   nsAutoMonitor mon(mMonitor);
-  PRUint32 count = mAudioExtensions.EnumerateEntries(EnumerateAllExtensions<nsCStringHashKey>, 
+  PRUint32 count = mAudioExtensions.EnumerateEntries(EnumerateAllExtensions<nsCStringHashKey>,
                                                      &allExtensions);
   NS_ENSURE_TRUE(count == mAudioExtensions.Count(), NS_ERROR_UNEXPECTED);
 
-  count = mVideoExtensions.EnumerateEntries(EnumerateAllExtensions<nsCStringHashKey>, 
+  count = mVideoExtensions.EnumerateEntries(EnumerateAllExtensions<nsCStringHashKey>,
                                             &allExtensions);
   NS_ENSURE_TRUE(count == mVideoExtensions.Count(), NS_ERROR_UNEXPECTED);
 
-  nsCOMPtr<nsIStringEnumerator> allExtensionsEnum = 
+  nsCOMPtr<nsIStringEnumerator> allExtensionsEnum =
     new sbTArrayStringEnumerator(&allExtensions);
   NS_ENSURE_TRUE(allExtensionsEnum, NS_ERROR_OUT_OF_MEMORY);
 
