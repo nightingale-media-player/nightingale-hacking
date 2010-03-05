@@ -537,6 +537,11 @@ PublicPlaylistCommands.prototype = {
                                     "&command.playlist.shortcut.modifiers.play",
                                     true);
 
+      // disable the command for empty playlists.
+      this.m_cmd_list_Play.setCommandEnabledCallback(null,
+                                                     "playlist_cmd_play",
+                                                     plCmd_IsNotEmptyPlaylist);
+
       // --------------------------------------------------------------------------
       // The Remove Playlist action
       // --------------------------------------------------------------------------
@@ -1726,6 +1731,11 @@ function plCmd_IsToolbarInstantiator(aContext, aSubMenuId, aCommandId, aHost) {
 function plCmd_IsNotLibraryContext(aContext, aSubMenuId, aCommandId, aHost) {
   var medialist = unwrap(aContext.medialist);
   return (medialist.library != medialist);
+}
+
+// Return true if the playlist is empty
+function plCmd_IsNotEmptyPlaylist(aContext, aSubMenuId, aCommandId, ahost) {
+  return !!(unwrap(aContext.medialist).length);
 }
 
 // Returns true if the playlist can be modified (is not read-only)
