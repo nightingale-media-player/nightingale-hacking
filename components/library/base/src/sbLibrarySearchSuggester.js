@@ -67,8 +67,7 @@ gDefaultValues["audio"] = [
   "Classical", "Comedy", "Country", "Dance", "Easy Listening", "World",
   "Electronic", "Folk", "Hip Hop/Rap", "Holiday", "House", "Industrial",
   "Jazz", "New Age", "Nerdcore", "Podcast", "Pop", "Reggae", "Religious",
-  "Rock", "Science", "Soundtrack", "Techno", "Trance",
-  "TV", "Film", "Music Video", "Home Movie", "Unclassifiable",
+  "Rock", "Science", "Soundtrack", "Techno", "Trance", "Unclassifiable",
 ];
 
 gDefaultValues["video"] = [
