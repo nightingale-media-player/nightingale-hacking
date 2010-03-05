@@ -58,7 +58,7 @@ function runTest(tester) {
     tester.log("----------------------------------------------------------------------");
     tester.log("Creating MediaList from Main Library - should succeed");
     mainLib.createMediaListFromURL("funTestList",
-                                   "http://dingo.songbirdnest.com/~redfive/test_files/remoteLibraryTest.m3u",
+                                   "http://sandbox.songbirdnest.com/~redfive/test_files/remoteLibraryTest.m3u",
                                    function (mediaList) {
                                      var test = tester;
                                      list = mediaList;
@@ -77,7 +77,7 @@ function runTest(tester) {
     tester.log("----------------------------------------------------------------------");
     tester.log("Creating MediaList from Main Library to bogus URL - should create 0 length list");
     mainLib.createMediaListFromURL("funTestList2",
-                                   "http://dingo.songbirdnest.com/~redfive/test_files/dummy.m3u",
+                                   "http://sandbox.songbirdnest.com/~redfive/test_files/dummy.m3u",
                                    function (mediaList) {
                                      var test = tester;
                                      list = mediaList;
@@ -94,7 +94,7 @@ function runTest(tester) {
 
     mainLib.createSimpleMediaList("testRemoteLibrary1");
     mainLib.createMediaItem(
-              "http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/nyx_-_Undercover.mp3");
+              "http://sandbox.songbirdnest.com/~redfive/test_files/ccmixter/nyx_-_Undercover.mp3");
 
     // property access/modification in the mainLibrary
     var testValue = "Test Value";
@@ -135,7 +135,7 @@ function runTest(tester) {
     tester.log("Creating MediaList from Web Library - should fail");
     try {
       webLib.createMediaListFromURL("funTestList4",
-                                    "http://dingo.songbirdnest.com/~redfive/test_files/remoteLibraryTest.m3u",
+                                    "http://sandbox.songbirdnest.com/~redfive/test_files/remoteLibraryTest.m3u",
                                     function(mediaList) {
                                       var test = tester;
                                       list = mediaList;
@@ -168,7 +168,7 @@ function runTest(tester) {
     tester.log("----------------------------------------------------------------------");
     tester.log("Creating MediaList from Site Library - should succeed");
     siteLib.createMediaListFromURL("funTestList5",
-                                   "http://dingo.songbirdnest.com/~redfive/test_files/remoteLibraryTest.m3u",
+                                   "http://sandbox.songbirdnest.com/~redfive/test_files/remoteLibraryTest.m3u",
                                    function(mediaList) {
                                      var test = tester;
                                      list = mediaList;

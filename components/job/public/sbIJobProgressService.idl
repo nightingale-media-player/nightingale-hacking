@@ -37,10 +37,6 @@ interface nsIDOMWindow;
  * This interface will eventually become a generic place to 
  * register long-running sbIJobProgress implementing tasks.
  *
- * The idea is that Songbird may one day have a standardized
- * task manager, looking something like 
- * http://dingo.songbirdnest.com/~komi/status-all-over/wireframes/service-pane-status-bar.png 
- *
  * Until this materializes all sbIJobProgressService can do is
  * help launch a modal job progress dialog.
  *

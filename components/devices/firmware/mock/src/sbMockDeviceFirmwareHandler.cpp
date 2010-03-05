@@ -54,15 +54,15 @@
 #include <sbVariantUtils.h>
 
 #define SB_MOCK_DEVICE_FIRMWARE_URL \
-  "http://dingo.songbirdnest.com/~aus/firmware/firmware.xml"
+  "http://sandbox.songbirdnest.com/~kreeger/firmware/firmware.xml"
 #define SB_MOCK_DEVICE_RESET_URL \
-  "http://dingo.songbirdnest.com/~aus/firmware/reset.html"
+  "http://sandbox.songbirdnest.com/~kreeger/firmware/reset.html"
 #define SB_MOCK_DEVICE_RELEASE_NOTES_URL \
-  "http://dingo.songbirdnest.com/~aus/firmware/release_notes.html"
+  "http://sandbox.songbirdnest.com/~kreeger/firmware/release_notes.html"
 #define SB_MOCK_DEVICE_SUPPORT_URL \
-  "http://dingo.songbirdnest.com/~aus/firmware/support.html"
+  "http://sandbox.songbirdnest.com/~kreeger/firmware/support.html"
 #define SB_MOCK_DEVICE_REGISTER_URL \
-  "http://dingo.songbirdnest.com/~aus/firmware/register.html"
+  "http://sandbox.songbirdnest.com/~kreeger/firmware/register.html"
 
 NS_IMPL_ISUPPORTS_INHERITED1(sbMockDeviceFirmwareHandler,
                              sbBaseDeviceFirmwareHandler,
