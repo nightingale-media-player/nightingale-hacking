@@ -1563,6 +1563,8 @@ protected:
 
 void SBUpdateBatchCounts(sbBaseDevice::Batch& aBatch);
 
+void SBUpdateBatchCountsIgnorePlaylist(sbBaseDevice::Batch& aBatch);
+
 void SBUpdateBatchIndex(sbBaseDevice::Batch& aBatch);
 
 void SBCreateSubBatchIndex(sbBaseDevice::Batch& aBatch);

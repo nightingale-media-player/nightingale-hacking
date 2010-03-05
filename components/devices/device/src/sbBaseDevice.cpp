@@ -548,6 +548,37 @@ void SBUpdateBatchCounts(sbBaseDevice::Batch& aBatch)
                       (*(aBatch.rbegin()))->batchID);
 }
 
+void SBUpdateBatchCountsIgnorePlaylist(sbBaseDevice::Batch& aBatch)
+{
+  // Do nothing if batch is empty.
+  if (aBatch.empty())
+    return;
+
+  // Get the batch begin.
+  sbBaseDevice::Batch::iterator batchBegin = aBatch.begin();
+  sbBaseDevice::Batch::iterator lastBegin = batchBegin;
+  sbBaseDevice::TransferRequest *request = nsnull;
+  nsCOMPtr<sbIMediaList> itemList;
+  PRUint32 index = 0;
+  for (; batchBegin != aBatch.end(); ++batchBegin) {
+    request = batchBegin->get();
+    if (request->item)
+      itemList = do_QueryInterface(request->item);
+    // Reset the batch count for the items before playlists.
+    if (itemList) {
+      sbBaseDevice::TransferRequest *req = nsnull;
+      for (; lastBegin != batchBegin; ++lastBegin) {
+        req = lastBegin->get();
+        req->batchCount = index;
+      }
+      break;
+    }
+    ++index;
+  }
+
+  return;
+}
+
 void SBUpdateBatchIndex(sbBaseDevice::Batch& aBatch)
 {
   // Do nothing if batch is empty.
