@@ -220,8 +220,8 @@ public:
    * \param aPartnerChangeGranted   Returned true if the user granted the
    *                                request.
    */
-  static nsresult SyncRequestPartnerChange(sbIDevice* aDevice,
-                                           PRBool*    aPartnerChangeGranted);
+  static nsresult SyncModeOrPartnerChange(sbIDevice* aDevice,
+                                          PRBool*    aPartnerChangeGranted);
   /**
    * Determines if the device given supports playlists
    */

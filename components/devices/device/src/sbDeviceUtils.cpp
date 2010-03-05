@@ -670,12 +670,12 @@ nsresult sbDeviceUtils::SyncCheckLinkedPartner(sbIDevice* aDevice,
   // If device is not linked locally, request that its sync partner be changed.
   if (!isLinkedLocally && aRequestPartnerChange) {
     // Request that the device sync partner be changed.
-    PRBool partnerChangeGranted;
-    rv = SyncRequestPartnerChange(aDevice, &partnerChangeGranted);
+    PRBool cancelSwitch;
+    rv = SyncModeOrPartnerChange(aDevice, &cancelSwitch);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Change the sync partner if the request was granted.
-    if (partnerChangeGranted) {
+    // Change the sync partner if the switch was granted.
+    if (!cancelSwitch) {
       rv = aDevice->SetPreference(NS_LITERAL_STRING("SyncPartner"),
                                   sbNewVariant(localSyncPartnerID));
       NS_ENSURE_SUCCESS(rv, rv);
@@ -690,13 +690,13 @@ nsresult sbDeviceUtils::SyncCheckLinkedPartner(sbIDevice* aDevice,
 }
 
 /* static */
-nsresult sbDeviceUtils::SyncRequestPartnerChange
+nsresult sbDeviceUtils::SyncModeOrPartnerChange
                           (sbIDevice* aDevice,
-                           PRBool*    aPartnerChangeGranted)
+                           PRBool*    aCancelSwitch)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aDevice);
-  NS_ENSURE_ARG_POINTER(aPartnerChangeGranted);
+  NS_ENSURE_ARG_POINTER(aCancelSwitch);
 
   // Function variables.
   nsresult rv;
@@ -706,14 +706,6 @@ nsresult sbDeviceUtils::SyncRequestPartnerChange
   rv = aDevice->GetName(deviceName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the main library name.
-  nsCOMPtr<sbILibrary> mainLibrary;
-  nsString             libraryName;
-  rv = GetMainLibrary(getter_AddRefs(mainLibrary));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = mainLibrary->GetName(libraryName);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Get a prompter that waits for a window.
   nsCOMPtr<sbIPrompter> prompter =
                           do_CreateInstance(SONGBIRD_PROMPTER_CONTRACTID, &rv);
@@ -721,20 +713,15 @@ nsresult sbDeviceUtils::SyncRequestPartnerChange
   rv = prompter->SetWaitForWindow(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Ensure that the library name is not empty.
-  if (libraryName.IsEmpty()) {
-    libraryName = SBLocalizedString("servicesource.library");
-  }
-
   // Get the prompt title.
   nsAString const& title =
-    SBLocalizedString("device.dialog.sync_confirmation.change_library.title");
+    SBLocalizedString("device.dialog.sync_confirmation.change.title");
 
   // Get the prompt message.
   nsTArray<nsString> formatParams;
   formatParams.AppendElement(deviceName);
   nsAString const& message =
-    SBLocalizedString("device.dialog.sync_confirmation.change_library.msg",
+    SBLocalizedString("device.dialog.sync_confirmation.change.msg",
                       formatParams);
 
   // Configure the buttons.
@@ -743,25 +730,25 @@ nsresult sbDeviceUtils::SyncRequestPartnerChange
   // Configure the no button as button 1.
   nsAString const& noButton =
     SBLocalizedString
-      ("device.dialog.sync_confirmation.change_library.no_button");
+      ("device.dialog.sync_confirmation.change.no_button");
   buttonFlags += (nsIPromptService::BUTTON_POS_1 *
                   nsIPromptService::BUTTON_TITLE_IS_STRING);
 
   // Configure the sync button as button 0.
   nsAString const& syncButton =
     SBLocalizedString
-      ("device.dialog.sync_confirmation.change_library.sync_button");
+      ("device.dialog.sync_confirmation.change.sync_button");
   buttonFlags += (nsIPromptService::BUTTON_POS_0 *
                   nsIPromptService::BUTTON_TITLE_IS_STRING) +
                  nsIPromptService::BUTTON_POS_0_DEFAULT;
-  PRInt32 grantPartnerChangeIndex = 0;
+  PRInt32 grantChangeIndex = 0;
 
   // XXX lone> see mozbug 345067, there is no way to tell the prompt service
   // what code to return when the titlebar's X close button is clicked, it is
   // always 1, so we have to make the No button the second button.
 
-  // Query the user to determine whether the device sync partner should be
-  // changed to the local partner.
+  // Query the user to determine whether the device sync partner or the sync
+  // mode should be changed.
   PRInt32 buttonPressed;
   rv = prompter->ConfirmEx(nsnull,
                            title.BeginReading(),
@@ -775,11 +762,11 @@ nsresult sbDeviceUtils::SyncRequestPartnerChange
                            &buttonPressed);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Check if partner change request was granted.
-  if (buttonPressed == grantPartnerChangeIndex)
-    *aPartnerChangeGranted = PR_TRUE;
+  // Check if change request was granted.
+  if (buttonPressed == grantChangeIndex)
+    *aCancelSwitch = PR_FALSE;
   else
-    *aPartnerChangeGranted = PR_FALSE;
+    *aCancelSwitch = PR_TRUE;
 
   return NS_OK;
 }
