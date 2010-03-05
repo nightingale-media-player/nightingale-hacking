@@ -46,6 +46,9 @@
         defaultButton="accept"
         buttonlabelaccept="Close">
 
+  <script type="application/x-javascript"
+          src="chrome://global/content/globalOverlay.js"/>
+
   <commandset id="selectEditMenuItems">
     <command id="cmd_copy" oncommand="goDoCommand('cmd_copy')" disabled="true"/>
     <command id="cmd_selectAll" oncommand="goDoCommand('cmd_selectAll')"/>
