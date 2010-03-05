@@ -85,9 +85,6 @@
 
   <vbox flex="1">
     <vbox flex="1">
-      <!-- Preface the error with a quick message -->
-      <label class="header" value="&mediacore.error.preface;" />
-
       <!-- Detailed description of the error -->
       <vbox id="mediacore_error_desc_box" flex="1">
         <description class="indent mediacore_error_desc"
@@ -165,17 +162,6 @@
     }
 
     function openLink(url) {
-      /*
-      // The following will open in the user's external browser
-      var externalLoader =
-          Cc["@mozilla.org/uriloader/external-protocol-service;1"]
-            .getService(Ci.nsIExternalProtocolService);
-      var nsURI = Cc["@mozilla.org/network/io-service;1"]
-                    .getService(Ci.nsIIOService)
-                    .newURI(url, null, null);
-      externalLoader.loadURI(nsURI, null);
-      */
-
       // Open it in the Songbird browser
       Cc["@mozilla.org/appshell/window-mediator;1"]
         .getService(Ci.nsIWindowMediator)

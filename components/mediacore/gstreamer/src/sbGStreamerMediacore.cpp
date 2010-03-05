@@ -1193,7 +1193,7 @@ void sbGStreamerMediacore::HandleMissingPluginMessage(GstMessage *message)
           if (!stripped.IsEmpty()) {
             NS_NEWXPCOM(error, sbMediacoreError);
             if (NS_SUCCEEDED(rv)) {
-              params.AppendElement(trackNameProp);
+              params.InsertElementAt(0, trackNameProp);
               errorMessage = bundle.Format(stringName, params);
               rv = error->Init(sbMediacoreError::SB_STREAM_CODEC_NOT_FOUND,
                                errorMessage);
@@ -1226,7 +1226,7 @@ void sbGStreamerMediacore::HandleMissingPluginMessage(GstMessage *message)
           if (NS_SUCCEEDED(rv)) {
             NS_NEWXPCOM(error, sbMediacoreError);
             if (NS_SUCCEEDED(rv)) {
-              params.AppendElement(path);
+              params.InsertElementAt(0, path);
               errorMessage = bundle.Format(stringName, params);
               rv = error->Init(sbMediacoreError::SB_STREAM_CODEC_NOT_FOUND,
                                errorMessage);
@@ -1248,7 +1248,7 @@ void sbGStreamerMediacore::HandleMissingPluginMessage(GstMessage *message)
 
         NS_NEWXPCOM(error, sbMediacoreError);
         if (NS_SUCCEEDED(rv)) {
-          params.AppendElement(spec);
+          params.InsertElementAt(0, spec);
           errorMessage = bundle.Format(stringName, params);
           rv = error->Init(sbMediacoreError::SB_STREAM_CODEC_NOT_FOUND,
                            errorMessage);
@@ -1332,46 +1332,81 @@ void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
   nsCOMPtr<sbIMediacoreError> error;
   nsCOMPtr<sbIMediacoreEvent> event;
   gchar *debugMessage;
-  nsresult rv;
+  nsresult rv = NS_ERROR_UNEXPECTED;
 
   NS_ASSERTION(NS_IsMainThread(), "not on main thread");
 
   gst_message_parse_error(message, &gerror, &debugMessage);
   
   if (!mMediacoreError) {
-    // Create an error for later dispatch. 
-    nsCOMPtr<nsIURI> uri;
-    rv = GetUri(getter_AddRefs(uri));
-    NS_ENSURE_SUCCESS(rv, /* void */);
 
-    nsCOMPtr<nsIFileURL> url = do_QueryInterface(uri, &rv);
-    if (NS_SUCCEEDED(rv))
+    // Try and fetch track name from sequencer information.
+    nsCOMPtr<sbIMediacoreSequencer> sequencer;
     {
-      nsCOMPtr<nsIFile> file;
-      nsString path;
+      nsAutoMonitor mon(mMonitor);
+      sequencer = mSequencer;
+    }
 
-      rv = url->GetFile(getter_AddRefs(file));
-      if (NS_SUCCEEDED(rv))
-      {
-        rv = file->GetPath(path);
-
-        if (NS_SUCCEEDED(rv))
-          rv = GetMediacoreErrorFromGstError(gerror, path, getter_AddRefs(error));
+    if (sequencer) {
+      // Got a valid sequencer, so grab the item's trackName to use in
+      // the error message
+      nsCOMPtr<sbIMediaItem> item;
+      rv = sequencer->GetCurrentItem(getter_AddRefs(item));
+      if (NS_SUCCEEDED(rv) && item) {
+        nsString trackNameProp;
+        rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                               trackNameProp);
+        if (NS_SUCCEEDED(rv)) {
+          nsAutoString stripped (trackNameProp);
+          CompressWhitespace(stripped);
+          rv = GetMediacoreErrorFromGstError(gerror, stripped, getter_AddRefs(error));
+        }
       }
     }
 
-    if (NS_FAILED(rv)) // not an else, so that it serves as a fallback
-    {
-      nsCString temp;
-      nsString spec;
+    //
+    // If there was no sequencer or there was an error while fetching the
+    // track name we'll fall back to using the file path.
+    //
+    if (NS_FAILED(rv)) {
+      // Create an error for later dispatch. 
+      nsCOMPtr<nsIURI> uri;
+      rv = GetUri(getter_AddRefs(uri));
+      NS_ENSURE_SUCCESS(rv, /* void */);
 
-      rv = uri->GetSpec(temp);
+      nsCOMPtr<nsIFileURL> url = do_QueryInterface(uri, &rv);
       if (NS_SUCCEEDED(rv))
-        spec = NS_ConvertUTF8toUTF16(temp);
-      else
-        spec = NS_ConvertUTF8toUTF16(mCurrentUri);
+      {
+        nsCOMPtr<nsIFile> file;
+        nsString path;
 
-      rv = GetMediacoreErrorFromGstError(gerror, spec, getter_AddRefs(error));
+        rv = url->GetFile(getter_AddRefs(file));
+        if (NS_SUCCEEDED(rv))
+        {
+          rv = file->GetPath(path);
+
+          if (NS_SUCCEEDED(rv))
+            rv = GetMediacoreErrorFromGstError(gerror, path, getter_AddRefs(error));
+        }
+      }
+
+      //
+      // Blast! Still no information for the user, use the URI Spec as a last
+      // ditch effort to give them useful information.
+      //
+      if (NS_FAILED(rv)) // not an else, so that it serves as a fallback
+      {
+        nsCString temp;
+        nsString spec;
+
+        rv = uri->GetSpec(temp);
+        if (NS_SUCCEEDED(rv))
+          spec = NS_ConvertUTF8toUTF16(temp);
+        else
+          spec = NS_ConvertUTF8toUTF16(mCurrentUri);
+
+        rv = GetMediacoreErrorFromGstError(gerror, spec, getter_AddRefs(error));
+      }
     }
 
     NS_ENSURE_SUCCESS(rv, /* void */);
