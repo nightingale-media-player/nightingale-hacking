@@ -50,6 +50,9 @@ private:
   ~sbWindowChromeService();
 
 protected:
+  // helper to check if DWM composition is enabled
+  static bool IsCompositionEnabled(const sbWindowChromeService* self);
+
   // declarations to memoize DwmIsCompositionEnabled
   typedef HRESULT (WINAPI *t_DwmIsCompositionEnabled)(BOOL *);
   HMODULE mhDWMAPI;

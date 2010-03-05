@@ -62,6 +62,22 @@ sbWindowChromeService::~sbWindowChromeService()
   }
 }
 
+/* static */ bool
+sbWindowChromeService::IsCompositionEnabled(const sbWindowChromeService* self)
+{
+  if (!self || !self->mDwmIsCompositionEnabled) {
+    // DWM API isn't available
+    return false;
+  }
+  BOOL isDWMCompositionEnabled = FALSE;
+  HRESULT hr = self->mDwmIsCompositionEnabled(&isDWMCompositionEnabled);
+  if (FAILED(hr)) {
+    return false;
+  }
+
+  return isDWMCompositionEnabled != FALSE;
+}
+
 /* void hideChrome (in nsISupports aWindow, in boolean aHide); */
 NS_IMETHODIMP sbWindowChromeService::HideChrome(nsISupports *aWindow,
                                                 PRBool aHide)
@@ -225,24 +241,22 @@ sbWindowChromeService::WndProc(HWND hWnd,
     // no chrome at all).
     return 0;
   }
-  // for these messages, we want to call the default window proc then invalidate
-  // the non-client areas
   case WM_NCACTIVATE:
-  case WM_SETTEXT:
+  {
+    if (IsCompositionEnabled((sbWindowChromeService*)uIdSubclass)) {
+      // When DWM composition is enabled, call the default handler so that
+      // it draws the window shadow.  In this case the window is also double
+      // buffered (by the DWM), so we don't have to worry about flickering.
+      return DefSubclassProc(hWnd, uMsg, wParam, lParam);
+    }
+    // No DWM, don't do anything to avoid extra paints of the non-client area
+    // which cases bad flickering.
+    return TRUE;
+  }
   case WM_ACTIVATE:
   {
-    // unset enough window styles to turn off rendering of the non-client area
-    // while we call the default implementations.  The usual solution found on
-    // the internet seems to call for unsetting WS_VISIBLE instead, but it
-    // seems to cause repainting problems in other windows when we deactivate.
-    LONG style = ::GetWindowLong(hWnd, GWL_STYLE);
-    ::SetWindowLong(hWnd,
-                    GWL_STYLE,
-                    (style & ~(WS_CAPTION | WS_SYSMENU | WS_BORDER | WS_THICKFRAME)));
-    LRESULT result = DefSubclassProc(hWnd, uMsg, wParam, lParam);
-    // undo the window styles hack
-    ::SetWindowLong(hWnd, GWL_STYLE, style);
-    return result;
+    // Nothing needs to be done here; but suppress some painting.
+    return 0;
   }
   case WM_NCPAINT:
   {
@@ -250,34 +264,13 @@ sbWindowChromeService::WndProc(HWND hWnd,
     // Since that only works when DWM is enabled anyway, check if it is - if it
     // is not, do not call the default implementation since that causes flicker
     // on systems with theming but not DWM (e.g. XP, or Vista with 16bpp).
-    sbWindowChromeService* self = (sbWindowChromeService*)uIdSubclass;
-    if (!self->mDwmIsCompositionEnabled) {
-      // DWM API isn't available, don't do anything
+    if (!IsCompositionEnabled((sbWindowChromeService*)uIdSubclass)) {
+      // no need to do anything; however, invalidate the window anyway in case
+      // this paint was caused by invalidation.
+      InvalidateRgn(hWnd, NULL, FALSE);
       return 0;
     }
-    BOOL isDWMCompositionEnabled = FALSE;
-    HRESULT hr = self->mDwmIsCompositionEnabled(&isDWMCompositionEnabled);
-    if (FAILED(hr)) {
-      isDWMCompositionEnabled = FALSE;
-    }
-
-    if (!isDWMCompositionEnabled) {
-      // DWM composition isn't on; don't do NCPAINT
-      return 0;
-    }
-
-    // Try to convince it that it doesn't really need to draw the window.
-    // This usually ends up not working very well - but that seems to be the
-    // best we can do for now.
-    HRGN region = (HRGN)wParam;
-    RECT rect;
-    ::GetWindowRect(hWnd, &rect);
-    HRGN rectRgn = CreateRectRgnIndirect(&rect);
-    CombineRgn(region, region, rectRgn, RGN_DIFF);
-    DeleteObject(rectRgn);
-    LRESULT result = DefSubclassProc(hWnd, uMsg, (WPARAM)region, lParam);
-    InvalidateRgn(hWnd, NULL, FALSE);
-    return result;
+    return DefSubclassProc(hWnd, uMsg, wParam, lParam);
   }
   case 0xAE: /* undocumented: WM_NCUAHDRAWCAPTION */
   case 0xAF: /* undocumented: WM_NCUAHDRAWFRAME */
