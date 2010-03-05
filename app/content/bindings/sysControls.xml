@@ -560,6 +560,8 @@
               Cc["@songbirdnest.com/Songbird/WindowChromeService;1"]
                 .getService(Ci.sbIWindowChromeService)
                 .hideChrome(window, true);
+              document.documentElement.setAttribute('sb-show-sys-titlebar', 
+                                                    true);
               document.documentElement.removeAttribute('hidechrome');
             }
           }
