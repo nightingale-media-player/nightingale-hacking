@@ -129,16 +129,48 @@ sbWindowChromeService::WndProc(HWND hWnd,
       break;
     }
     if (IsZoomed(hWnd)) {
-      // For maximized windows, adjust by the size of the borders as well,
-      // because Windows actually makes the window bigger than the screen to
-      // accoommodate for window borders.
+      // On Windows 7, Windows will adjust the size of the maximized windows
+      // so that they're larger than the screen to account for the window
+      // border (even with Aero disabled).  On XP, however, it does _not_ do
+      // that.  So, figure out how big the window wants to be, and how big the
+      // screen is, and go for the closest solution.
       NCCALCSIZE_PARAMS* params = (NCCALCSIZE_PARAMS*)lParam;
+      RECT* rectWindow = &params->rgrc[0]; // shorthand
+      RECT rectMon = {0};
       int xSize = ::GetSystemMetrics(SM_CXSIZEFRAME);
       int ySize = ::GetSystemMetrics(SM_CYSIZEFRAME);
-      params->rgrc[0].top += ySize;
-      params->rgrc[0].bottom -= ySize;
-      params->rgrc[0].left += xSize;
-      params->rgrc[0].right -= xSize;
+
+      HMONITOR hMon = ::MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+      if (hMon) {
+        MONITORINFO monInfo = {0};
+        monInfo.cbSize = sizeof(monInfo);
+        BOOL success = ::GetMonitorInfo(hMon, &monInfo);
+        if (success) {
+          ::CopyRect(&rectMon, &monInfo.rcWork);
+        }
+        else {
+          ::CopyRect(&rectMon, rectWindow);
+        }
+        ::CloseHandle(hMon);
+      }
+      else {
+        // no monitor!?
+        ::CopyRect(&rectMon, rectWindow);
+      }
+
+      const LONG TOLERANCE = 2;
+      if (rectMon.top - rectWindow->top > ySize - TOLERANCE) {
+        rectWindow->top += ySize;
+      }
+      if (rectWindow->bottom - rectMon.bottom > ySize - TOLERANCE) {
+        rectWindow->bottom -= ySize;
+      }
+      if (rectMon.left - rectWindow->left > xSize - TOLERANCE) {
+        rectWindow->left += xSize;
+      }
+      if (rectWindow->right - rectMon.right > xSize - TOLERANCE) {
+        rectWindow->right -= xSize;
+      }
 
       // Chop off one pixel on any edge with auto-hidden taskbars (deskbars,
       // really).  This is required to make sure those taskbars will remain
