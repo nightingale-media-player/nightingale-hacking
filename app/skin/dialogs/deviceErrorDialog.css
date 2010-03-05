@@ -27,6 +27,7 @@
   display: block;
   overflow-y: scroll;
   min-height: 8em;
+  max-height: 20em;
 }
 
 .device_error_desc
