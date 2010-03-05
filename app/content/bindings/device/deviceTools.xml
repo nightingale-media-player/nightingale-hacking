@@ -484,7 +484,7 @@
               this._getToolBox("support").collapsed)
           {
             // All toolboxes are hidden, we should just disable the Tools tab
-            this.setAttribute("disabled", "true");
+            this.setAttribute("disabledTab", "true");
           }
         ]]></body>
       </method>
