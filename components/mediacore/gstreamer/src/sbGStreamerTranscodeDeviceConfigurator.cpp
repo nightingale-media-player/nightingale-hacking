@@ -486,8 +486,8 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
     detailParams.AppendElement(deviceName);
     nsString detail =
       SBLocalizedString("transcode.error.device_no_video.details", detailParams);
-    rv2 = SB_NewTranscodeError(NS_LITERAL_STRING("transcode.error.device_no_video.has_item"),
-                               NS_LITERAL_STRING("transcode.error.device_no_video.without_item"),
+    rv2 = SB_NewTranscodeError(NS_LITERAL_STRING("transcode.error.device_no_video.hasitem"),
+                               NS_LITERAL_STRING("transcode.error.device_no_video.withoutitem"),
                                detail,
                                mInputUri,
                                nsnull,
@@ -616,8 +616,8 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
     detailParams.AppendElement(deviceName);
     nsString detail =
       SBLocalizedString("transcode.error.no_profile.details", detailParams);
-    rv = SB_NewTranscodeError(NS_LITERAL_STRING("transcode.error.no_profile.has_item"),
-                              NS_LITERAL_STRING("transcode.error.no_profile.without_item"),
+    rv = SB_NewTranscodeError(NS_LITERAL_STRING("transcode.error.no_profile.hasitem"),
+                              NS_LITERAL_STRING("transcode.error.no_profile.withoutitem"),
                               detail,
                               mInputUri,
                               nsnull,
