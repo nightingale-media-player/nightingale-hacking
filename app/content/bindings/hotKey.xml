@@ -194,6 +194,12 @@
             case e.DOM_VK_F22: return "f22";
             case e.DOM_VK_F23: return "f23";
             case e.DOM_VK_F24: return "f24";
+            case e.DOM_VK_COMMA: return "comma";
+            case e.DOM_VK_PERIOD: return "period";
+            case e.DOM_VK_SLASH: return "slash";
+            case e.DOM_VK_OPEN_BRACKET: return "openbracket";
+            case e.DOM_VK_BACK_SLASH: return "backslash";
+            case e.DOM_VK_CLOSE_BRACKET: return "closebracket";
             case e.DOM_VK_NUM_LOCK: return "numlock";
             case e.DOM_VK_SCROLL_LOCK: return "scrolllock";
             case e.DOM_VK_META: return this.meta_key_str;
@@ -319,10 +325,20 @@
     <method name="addKeyStr">
       <parameter name="str"/>
       <parameter name="key"/>
+      <parameter name="forDisplay"/>
       <body>
         <![CDATA[
-          if (!str) str = "";
-          if (str != "") str += "-";
+          const forDisplayStr = " - ";
+          const notForDisplayStr = "-";
+          
+          if (!str) {
+            str = "";
+          }
+          
+          if (str != "") {
+            str += forDisplay ? forDisplayStr : notForDisplayStr;
+          }
+          
           str += key;
           return str;
         ]]>
@@ -402,14 +418,16 @@
       <body>
         <![CDATA[
           var str = "";
-          if (this.hotkeyCtrl) str = this.addKeyStr(str, "ctrl");
-          if (this.hotkeyAlt) str = this.addKeyStr(str, "alt");
-          if (this.hotkeyShift) str = this.addKeyStr(str, "shift");
-          if (this.hotkeyMeta) str = this.addKeyStr(str, for_display_purposes ? this.meta_key_str : "meta");
+          if (this.hotkeyCtrl) str = this.addKeyStr(str, "ctrl", for_display_purposes);
+          if (this.hotkeyAlt) str = this.addKeyStr(str, "alt", for_display_purposes);
+          if (this.hotkeyShift) str = this.addKeyStr(str, "shift", for_display_purposes);
+          if (this.hotkeyMeta) str = this.addKeyStr(str, 
+                                                    for_display_purposes ? this.meta_key_str : "meta", 
+                                                    for_display_purposes);
           if (for_display_purposes) {
-            if (this.hotkeyCode != 0) str = this.addKeyStr(str, this.keyCodeToString(this.hotkeyCode));
+            if (this.hotkeyCode != 0) str = this.addKeyStr(str, this.keyCodeToString(this.hotkeyCode), true);
           } else {
-            if (this.hotkeyCode != 0) str = this.addKeyStr(str, "$" + this.hotkeyCode);
+            if (this.hotkeyCode != 0) str = this.addKeyStr(str, "$" + this.hotkeyCode, false);
           }
           if (for_display_purposes) str = this.localizeKeys(str);
           if (for_display_purposes) str = str.toUpperCase();
@@ -425,7 +443,7 @@
           var r = str;
           try {
             r = this.songbirdStrings.GetStringFromName("keyboard."+str);
-          } catch (err) {  /* we have a default */ }
+          } catch (err) {  Components.utils.reportError(err); /* we have a default */ }
           r = r.replace(/-/g, " ");
           return r;
         ]]>
@@ -439,9 +457,11 @@
           var res;
           var keys = str.split("-");
           for (var i=0;i<keys.length;i++) {
-            var k = keys[i];
+            // trim whitespace at beginning and end.
+            var k = keys[i].replace(/^\s+/, "");
+            k = k.replace(/\s+$/, "");
             k = k.toLowerCase();
-            res = this.addKeyStr(res, this.localizeKey(k));
+            res = this.addKeyStr(res, this.localizeKey(k), true);
           }
           return res;
         ]]>

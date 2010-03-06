@@ -449,23 +449,23 @@ sbHotkeyService.prototype =
 
       // Regular keys
       { key:         "meta-$190",
-        keyReadable: metaKey + "- .",
+        keyReadable: metaKey + " - .",
         action:      "playback.volumeup" },
 
       { key:         "meta-$188",
-        keyReadable: metaKey + "- ,",
+        keyReadable: metaKey + " - ,",
         action:      "playback.volumedown" },
 
       { key:         "meta-$221",
-        keyReadable: metaKey + "- ]",
+        keyReadable: metaKey + " - ]",
         action:      "playback.nexttrack" },
 
       { key:         "meta-$219",
-        keyReadable: metaKey + "- [",
+        keyReadable: metaKey + " - [",
         action:      "playback.previoustrack" },
 
       { key:         "meta-$220",
-        keyReadable: metaKey + "- \\",
+        keyReadable: metaKey + " - \\",
         action:      "playback.playpause" },
 
       { key:         "$178",
