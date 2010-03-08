@@ -170,11 +170,13 @@
 ./components/sbMockCDDevice.so
 ./components/sbMockCDDevice.xpt
 ./components/sbMockCDDeviceService.js
+./components/sbMockFirmwareHandlerURLService.js
 ./components/sbMoveRenameHelper.js
 ./components/sbMozVariant.so
 ./components/sbNetworkProxy.so
 ./components/sbNetworkProxyImport.xpt
 ./components/sbOSDControlService.js
+./components/sbPIMockFirmware.xpt
 ./components/sbParserError.js
 ./components/sbPlaybackHistoryService.so
 ./components/sbPlaybackHistoryService.xpt
