@@ -107,7 +107,7 @@
         var scaledCentre = thumbCentre / this.slider.boxObject.width *
                            this._SCALE_MAX;
         var prog = (val * this._SCALE_MAX) / this.maxpos;
-        if (val != 0 && thumbCentre == 0)
+        if (val != 0 && (thumbCentre == 6 || thumbCentre == 0))
           var prog = (val * this._SCALE_MAX) / this.maxpos;
         else
           var prog = scaledCentre;
