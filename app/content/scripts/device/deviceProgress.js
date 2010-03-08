@@ -336,7 +336,7 @@ var DPW = {
 
     // Set the label accordingly.
     var syncModeLabel = this._getElement("syncmode_label");
-    var key = this._supportsVideo() ? "device.progress.syncmode.label"
+    var key = this._supportsVideo() ? "device.progress.audiovideosync.label"
                                     : "device.progress.audiosync.label";
     syncModeLabel.value = SBString(key, "");
 
