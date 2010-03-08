@@ -49,6 +49,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/device/test \
                      $(DEPTH)/components/library/base/public \
                      $(DEPTH)/components/library/localdatabase/public \
                      $(DEPTH)/components/property/public \
+                     $(DEPTH)/components/devices/firmware/mock/public \
                      $(topsrcdir)/components/devices/base/src \
                      $(topsrcdir)/components/devices/device/src \
                      $(topsrcdir)/components/devices/firmware/src \
@@ -85,5 +86,8 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
  $(NULL)
 
 IS_COMPONENT = 1
+
+SONGBIRD_COMPONENTS = $(srcdir)/sbMockFirmwareHandlerURLService.js \
+                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk

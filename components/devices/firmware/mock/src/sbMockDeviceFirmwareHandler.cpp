@@ -5,7 +5,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2010 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -53,16 +53,6 @@
 
 #include <sbVariantUtils.h>
 
-#define SB_MOCK_DEVICE_FIRMWARE_URL \
-  "http://sandbox.songbirdnest.com/~kreeger/firmware/firmware.xml"
-#define SB_MOCK_DEVICE_RESET_URL \
-  "http://sandbox.songbirdnest.com/~kreeger/firmware/reset.html"
-#define SB_MOCK_DEVICE_RELEASE_NOTES_URL \
-  "http://sandbox.songbirdnest.com/~kreeger/firmware/release_notes.html"
-#define SB_MOCK_DEVICE_SUPPORT_URL \
-  "http://sandbox.songbirdnest.com/~kreeger/firmware/support.html"
-#define SB_MOCK_DEVICE_REGISTER_URL \
-  "http://sandbox.songbirdnest.com/~kreeger/firmware/register.html"
 
 NS_IMPL_ISUPPORTS_INHERITED1(sbMockDeviceFirmwareHandler,
                              sbBaseDeviceFirmwareHandler,
@@ -82,16 +72,29 @@ sbMockDeviceFirmwareHandler::~sbMockDeviceFirmwareHandler()
 /*virtual*/ nsresult
 sbMockDeviceFirmwareHandler::OnInit()
 {
+  nsresult rv;
   mContractId =
     NS_LITERAL_STRING("@songbirdnest.com/Songbird/Device/Firmware/Handler/MockDevice;1");
 
+  mHandlerURLService =
+    do_GetService("@songbirdnest.com/mock-firmware-url-handler;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+ 
+  nsCString resetURL;
+  rv = mHandlerURLService->GetRegisterURL(resetURL);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<nsIURI> uri;
-  nsresult rv = NS_NewURI(getter_AddRefs(uri), SB_MOCK_DEVICE_RESET_URL);
+  rv = NS_NewURI(getter_AddRefs(uri), resetURL);
   NS_ENSURE_SUCCESS(rv, rv);
 
   uri.swap(mResetInstructionsLocation);
 
-  rv = NS_NewURI(getter_AddRefs(uri), SB_MOCK_DEVICE_RELEASE_NOTES_URL);
+  nsCString releaseNotesURL;
+  rv = mHandlerURLService->GetReleaseNotesURL(releaseNotesURL);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = NS_NewURI(getter_AddRefs(uri), releaseNotesURL);
   NS_ENSURE_SUCCESS(rv, rv);
 
   uri.swap(mReleaseNotesLocation);
@@ -219,8 +222,12 @@ sbMockDeviceFirmwareHandler::OnCancel()
 /*virtual*/ nsresult
 sbMockDeviceFirmwareHandler::OnRefreshInfo()
 {
-  nsresult rv = SendHttpRequest(NS_LITERAL_CSTRING("GET"),
-                                NS_LITERAL_CSTRING(SB_MOCK_DEVICE_FIRMWARE_URL));
+  nsresult rv;
+  nsCString firmwareURL;
+  rv = mHandlerURLService->GetFirmwareURL(firmwareURL);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = SendHttpRequest(NS_LITERAL_CSTRING("GET"), firmwareURL);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = SetState(HANDLER_REFRESHING_INFO);
@@ -444,24 +451,35 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
     }
   }
 
-  // XXXAus: Populate the fake support and register locations.
   {
+    nsCString supportURL;
+    rv = mHandlerURLService->GetSupportURL(supportURL);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     nsCOMPtr<nsIURI> uri;
-    nsresult rv = NS_NewURI(getter_AddRefs(uri), SB_MOCK_DEVICE_SUPPORT_URL);
+    nsresult rv = NS_NewURI(getter_AddRefs(uri), supportURL);
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsAutoMonitor mon(mMonitor);
     uri.swap(mSupportLocation);
     mon.Exit();
 
-    rv = NS_NewURI(getter_AddRefs(uri), SB_MOCK_DEVICE_REGISTER_URL);
+    nsCString registerURL;
+    rv = mHandlerURLService->GetRegisterURL(registerURL);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = NS_NewURI(getter_AddRefs(uri), registerURL);
     NS_ENSURE_SUCCESS(rv, rv);
 
     mon.Enter();
     uri.swap(mRegisterLocation);
     mon.Exit();
 
-    rv = NS_NewURI(getter_AddRefs(uri), SB_MOCK_DEVICE_RESET_URL);
+    nsCString resetURL;
+    rv = mHandlerURLService->GetRegisterURL(resetURL);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = NS_NewURI(getter_AddRefs(uri), resetURL);
     NS_ENSURE_SUCCESS(rv, rv);
 
     mon.Enter();

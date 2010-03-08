@@ -25,11 +25,73 @@
 //
 */
 
+
+/**
+ * Unit test constants
+ */
+
+var TEST_FILE_LOCATION = "testharness/devicefirmware/files/";
+var PORT_NUMBER        = getTestServerPortNumber();
+var REMOTE_FILE_PREFIX = "http://localhost:" + PORT_NUMBER + "/files/";
+
+
+/**
+ * Get a temporary folder for use in metadata tests.
+ * Will be removed in tail_metadatamanager.js
+ */
+var gTempFolder = null;
+function getTempFolder() {
+  if (gTempFolder) {
+    return gTempFolder;
+  }
+  gTempFolder = Components.classes["@mozilla.org/file/directory_service;1"]
+                       .getService(Components.interfaces.nsIProperties)
+                       .get("TmpD", Components.interfaces.nsIFile);
+  gTempFolder.append("songbird_metadata_tests.tmp");
+  gTempFolder.createUnique(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0777);
+  return gTempFolder;
+}
+
+
+/**
+ * \brief Copy the given folder to tempName, returning an nsIFile
+ * for the new location
+ */
+function getCopyOfFolder(folder, tempName) {
+  assertNotEqual(folder, null);
+  var tempFolder = getTempFolder();
+  folder.copyTo(tempFolder, tempName);
+  folder = tempFolder.clone();
+  folder.append(tempName);
+  assertEqual(folder.exists(), true);
+  return folder;
+}
+
+
 /**
  * \brief Device Firmware Tests
  */
 
 function runTest () {
+  // Setup the JS server to serve up the mock test handler files.
+  var testFolder = getCopyOfFolder(newAppRelativeFile(TEST_FILE_LOCATION,
+                                                      "_temp_firmware_files"));
+
+  var jsHttpServer = Cc["@mozilla.org/server/jshttp;1"]
+                       .createInstance(Ci.nsIHttpServer);
+  jsHttpServer.start(PORT_NUMBER);
+  jsHttpServer.registerDirectory("/", testFolder.clone()); 
+  
+  // Set the remote URL's for the firmware files via the JS HTTP server.
+  var handlerURLService = Cc["@songbirdnest.com/mock-firmware-url-handler;1"]
+                            .getService(Ci.sbPIMockFirmwareHandlerURLService);
+
+  handlerURLService.firmwareURL = REMOTE_FILE_PREFIX + "firmware.xml";
+  handlerURLService.resetURL = REMOTE_FILE_PREFIX + "reset.html";
+  handlerURLService.releaseNotesURL = REMOTE_FILE_PREFIX + "release_notes.html";
+  handlerURLService.supportURL = REMOTE_FILE_PREFIX + "support.html";
+  handlerURLService.registerURL = REMOTE_FILE_PREFIX + "register.html";
+  
   var device = Components.classes["@songbirdnest.com/Songbird/Device/DeviceTester/MockDevice;1"]
                          .createInstance(Components.interfaces.sbIDevice);
   assertEqual(device.name, "Bob's Mock Device");
@@ -40,7 +102,7 @@ function runTest () {
 
   var handler = updater.getHandler(device, 0, 0);
   assertNotEqual(handler, null);
-  
+
   var listener = {
     op: "", 
     firmwareUpdate: null,
