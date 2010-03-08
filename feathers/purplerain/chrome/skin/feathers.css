@@ -370,6 +370,11 @@ tabpanels {
 }
 tabpanel {
 }
+/* prevent the content pane bottom display pane from being resized high enough
+ * that it breaks the tabbrowser vertical scrollbar */
+sb-tabbrowser {
+  min-height: 110px;
+}
 sb-tabbrowser > tabbox > tabpanels {
   padding: 0px !important;
   border: none !important;
