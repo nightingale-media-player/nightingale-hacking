@@ -138,7 +138,7 @@
 <!ENTITY tooltip.browser.mediapages "Switch Media Views..." >
 <!ENTITY tooltip.browser.bookmarksubscribe "Add this page" >
 <!ENTITY tooltip.servicepane.show    "Show Service Pane" >
-<!ENTITY tooltip.servicepane.hide    "Hide Service Pane" >
+<!ENTITY tooltip.servicepane.collapse    "Collapse Service Pane" >
 <!ENTITY tooltip.servicepane.newnode "New Playlist" >
 <!ENTITY tooltip.displaypane.options "Content Pane Options">
 

@@ -98,7 +98,7 @@
           </sb-servicepane>
           <hbox pack="end" flex="1" id="servicepane-status-bar-box">
             <button class="service-pane-spring-load-button"
-                    tooltiptext="&tooltip.servicepane.show;"
+                    tooltiptext="&tooltip.servicepane.collapse;"
                     oncommand="gServicePane.open = !gServicePane.open;
                                SBDataSetBoolValue(
                                   'splitter.servicepane_splitter.was_collapsed',
