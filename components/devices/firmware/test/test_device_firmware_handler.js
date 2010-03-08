@@ -192,6 +192,7 @@ function runTest () {
   finally {
     eventTarget.removeEventListener(listener);
   }
- 
+
+  jsHttpServer.stop();
   return;
 }
