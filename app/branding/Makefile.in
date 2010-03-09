@@ -53,7 +53,7 @@ else
    ICON_TGT_NAME = default$(ICON_EXTENSION)
 endif
 
-ifeq (windows,$(SB_PLATFORM))
+ifeq (windows_,$(SB_PLATFORM)_$(DEBUG))
    SONGBIRD_DIST += $(srcdir)/splash.bmp
 endif
 
