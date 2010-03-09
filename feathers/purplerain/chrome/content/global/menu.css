@@ -26,7 +26,7 @@ menuitem[_moz-menuactive="true"][disabled="true"] > label {
 
 .menu-text,
 .menu-iconic-text {
-  margin:0px 4px 0px 2px;
+  margin:2px 4px 2px 2px;
   padding:0;
 }
 
@@ -38,7 +38,7 @@ menuitem[_moz-menuactive="true"][disabled="true"] > label {
 
 .menu-accel,
 .menu-iconic-accel {
-  margin: 0px 0px 0px 0px !important;
+  margin: 1px 0px 1px 0px !important;
   padding-right: 8px;
   font-style:normal !important;
   font-weight:normal !important;
