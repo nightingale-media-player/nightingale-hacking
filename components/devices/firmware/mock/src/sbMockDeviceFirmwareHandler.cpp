@@ -441,6 +441,10 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
       mFirmwareVersion = 0x01000001;
     }
     else if(tagName.EqualsLiteral("location")) {
+      // XXXKREEGER TEST HACK
+      fprintf(stderr, "\n\n\n [KREEGER] URI: %s\n\n\n",
+          NS_ConvertUTF16toUTF8(value).get());
+
       nsCOMPtr<nsIURI> uri;
       rv = CreateProxiedURI(NS_ConvertUTF16toUTF8(value),
                             getter_AddRefs(uri));
