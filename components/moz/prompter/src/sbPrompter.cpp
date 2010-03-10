@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -49,7 +49,7 @@
 // Mozilla imports.
 #include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
-#include <nsIDialogParamBlock.h>
+#include <nsIDOMWindowInternal.h>
 #include <nsIProxyObjectManager.h>
 #include <nsPIPromptService.h>
 #include <nsServiceManagerUtils.h>
@@ -58,12 +58,12 @@
 
 //------------------------------------------------------------------------------
 //
-// Songbird prompter globals.
+// Songbird prompter defs.
 //
 //------------------------------------------------------------------------------
 
-static const char
-  kHTMLPromptURL[] = "chrome://global/content/commonDialog.xul?useHTML";
+#define kPromptURL "chrome://global/content/commonDialog.xul"
+#define kHTMLPromptURL "chrome://global/content/commonDialog.xul?useHTML"
 static const char kQuestionIconClass[] = "question-icon";
 static const char kAlertIconClass[] = "alert-icon";
 
@@ -171,10 +171,11 @@ sbPrompter::OpenDialog(nsIDOMWindow*    aParent,
   return NS_OK;
 }
 
+
 /**
  * Open a window with the chrome URL specified by aUrl and parent specified
  * by aParent. The window name is specified by aName and the window options are
- * specified by aOptions. Additional window arguments may be provided in 
+ * specified by aOptions. Additional window arguments may be provided in
  * aExtraArguments.
  *
  * There are no default options for openWindow.
@@ -247,6 +248,44 @@ sbPrompter::OpenWindow(nsIDOMWindow*    aParent,
 
   return NS_OK;
 }
+
+
+/**
+ * Cancel and close the current prompter window.
+ */
+
+NS_IMETHODIMP
+sbPrompter::Cancel()
+{
+  nsresult rv;
+
+  // If not on main thread, proxy to it.
+  if (!NS_IsMainThread()) {
+    // Get a main thread proxy.
+    nsCOMPtr<sbIPrompter> prompter;
+    rv = GetProxiedPrompter(getter_AddRefs(prompter));
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+    // Call proxied prompter.
+    rv = prompter->Cancel();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return NS_OK;
+  }
+
+  // If there's a current prompter window, close it.
+  if (mCurrentWindow) {
+    nsCOMPtr<nsIDOMWindowInternal>
+      window = do_QueryInterface(mCurrentWindow, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = window->Close();
+    NS_ENSURE_SUCCESS(rv, rv);
+    mCurrentWindow = nsnull;
+  }
+
+  return NS_OK;
+}
+
 
 //
 // Getters/setters.
@@ -374,35 +413,23 @@ sbPrompter::Alert(nsIDOMWindow*    aParent,
   if (mWaitForWindow && !mParentWindowType.IsEmpty() && !parent)
     return NS_ERROR_NOT_AVAILABLE;
 
-  // If rendering HTML, open dialog here.  Otherwise, forward call to the
-  // Mozilla prompt service.
-  if (mRenderHTML) {
-    // Set up the dialog parameter block.
-    nsCOMPtr<nsIDialogParamBlock>
-      paramBlock = do_CreateInstance(NS_DIALOGPARAMBLOCK_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = paramBlock->SetInt(nsPIPromptService::eNumberButtons, 1);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = paramBlock->SetString(nsPIPromptService::eMsg, aText);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = paramBlock->SetString(nsPIPromptService::eDialogTitle, aDialogTitle);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = paramBlock->SetString(nsPIPromptService::eIconClass,
-                               NS_ConvertASCIItoUTF16(kAlertIconClass).get());
-    NS_ENSURE_SUCCESS(rv, rv);
+  // Set up the dialog parameter block.
+  nsCOMPtr<nsIDialogParamBlock>
+    paramBlock = do_CreateInstance(NS_DIALOGPARAMBLOCK_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = paramBlock->SetInt(nsPIPromptService::eNumberButtons, 1);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = paramBlock->SetString(nsPIPromptService::eMsg, aText);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = paramBlock->SetString(nsPIPromptService::eDialogTitle, aDialogTitle);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = paramBlock->SetString(nsPIPromptService::eIconClass,
+                             NS_ConvertASCIItoUTF16(kAlertIconClass).get());
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    // Present the dialog.
-    nsCOMPtr<nsPIPromptService>
-      pPromptService = do_QueryInterface(mPromptService, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = pPromptService->DoDialog(parent, paramBlock, kHTMLPromptURL);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
-    // Forward method call.
-    rv = mPromptService->Alert(parent, aDialogTitle, aText);
-    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
-  }
+  // Present the dialog.
+  rv = PresentPrompterDialog(parent, paramBlock);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -467,47 +494,31 @@ sbPrompter::AlertCheck(nsIDOMWindow*    aParent,
   if (mWaitForWindow && !mParentWindowType.IsEmpty() && !parent)
     return NS_ERROR_NOT_AVAILABLE;
 
-  // If rendering HTML, open dialog here.  Otherwise, forward call to the
-  // Mozilla prompt service.
-  if (mRenderHTML) {
-    // Set up the dialog parameter block.
-    nsCOMPtr<nsIDialogParamBlock>
-      paramBlock = do_CreateInstance(NS_DIALOGPARAMBLOCK_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = paramBlock->SetInt(nsPIPromptService::eNumberButtons, 1);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = paramBlock->SetString(nsPIPromptService::eMsg, aText);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = paramBlock->SetString(nsPIPromptService::eDialogTitle, aDialogTitle);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = paramBlock->SetString(nsPIPromptService::eCheckboxMsg, aCheckMsg);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = paramBlock->SetString(nsPIPromptService::eIconClass,
-                               NS_ConvertASCIItoUTF16(kAlertIconClass).get());
-    NS_ENSURE_SUCCESS(rv, rv);
+  // Set up the dialog parameter block.
+  nsCOMPtr<nsIDialogParamBlock>
+    paramBlock = do_CreateInstance(NS_DIALOGPARAMBLOCK_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = paramBlock->SetInt(nsPIPromptService::eNumberButtons, 1);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = paramBlock->SetString(nsPIPromptService::eMsg, aText);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = paramBlock->SetString(nsPIPromptService::eDialogTitle, aDialogTitle);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = paramBlock->SetString(nsPIPromptService::eCheckboxMsg, aCheckMsg);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = paramBlock->SetString(nsPIPromptService::eIconClass,
+                             NS_ConvertASCIItoUTF16(kAlertIconClass).get());
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    // Present the dialog.
-    nsCOMPtr<nsPIPromptService>
-      pPromptService = do_QueryInterface(mPromptService, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = pPromptService->DoDialog(parent, paramBlock, kHTMLPromptURL);
-    NS_ENSURE_SUCCESS(rv, rv);
+  // Present the dialog.
+  rv = PresentPrompterDialog(parent, paramBlock);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    // Get the results.
-    PRInt32 checkState;
-    rv = paramBlock->GetInt(nsPIPromptService::eCheckboxState, &checkState);
-    NS_ENSURE_SUCCESS(rv, rv);
-    *aCheckState = checkState ? PR_TRUE : PR_FALSE;
-  }
-  else {
-    // Forward method call.
-    rv = mPromptService->AlertCheck(parent,
-                                    aDialogTitle,
-                                    aText,
-                                    aCheckMsg,
-                                    aCheckState);
-    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
-  }
+  // Get the results.
+  PRInt32 checkState;
+  rv = paramBlock->GetInt(nsPIPromptService::eCheckboxState, &checkState);
+  NS_ENSURE_SUCCESS(rv, rv);
+  *aCheckState = checkState ? PR_TRUE : PR_FALSE;
 
   return NS_OK;
 }
@@ -567,41 +578,29 @@ sbPrompter::Confirm(nsIDOMWindow*    aParent,
   if (mWaitForWindow && !mParentWindowType.IsEmpty() && !parent)
     return NS_ERROR_NOT_AVAILABLE;
 
-  // If rendering HTML, open dialog here.  Otherwise, forward call to the
-  // Mozilla prompt service.
-  if (mRenderHTML) {
-    // Set up the dialog parameter block.
-    nsCOMPtr<nsIDialogParamBlock>
-      paramBlock = do_CreateInstance(NS_DIALOGPARAMBLOCK_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = paramBlock->SetInt(nsPIPromptService::eNumberButtons, 2);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = paramBlock->SetString(nsPIPromptService::eMsg, aText);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = paramBlock->SetString(nsPIPromptService::eDialogTitle, aDialogTitle);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = paramBlock->SetString(nsPIPromptService::eIconClass,
-                               NS_ConvertASCIItoUTF16(kQuestionIconClass).get());
-    NS_ENSURE_SUCCESS(rv, rv);
+  // Set up the dialog parameter block.
+  nsCOMPtr<nsIDialogParamBlock>
+    paramBlock = do_CreateInstance(NS_DIALOGPARAMBLOCK_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = paramBlock->SetInt(nsPIPromptService::eNumberButtons, 2);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = paramBlock->SetString(nsPIPromptService::eMsg, aText);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = paramBlock->SetString(nsPIPromptService::eDialogTitle, aDialogTitle);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = paramBlock->SetString(nsPIPromptService::eIconClass,
+                             NS_ConvertASCIItoUTF16(kQuestionIconClass).get());
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    // Present the dialog.
-    nsCOMPtr<nsPIPromptService>
-      pPromptService = do_QueryInterface(mPromptService, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = pPromptService->DoDialog(parent, paramBlock, kHTMLPromptURL);
-    NS_ENSURE_SUCCESS(rv, rv);
+  // Present the dialog.
+  rv = PresentPrompterDialog(parent, paramBlock);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    // Get the results.
-    PRInt32 buttonPressed = 0;
-    rv = paramBlock->GetInt(nsPIPromptService::eButtonPressed, &buttonPressed);
-    NS_ENSURE_SUCCESS(rv, rv);
-    *_retval = buttonPressed ? PR_FALSE : PR_TRUE;
-  }
-  else {
-    // Forward method call.
-    rv = mPromptService->Confirm(parent, aDialogTitle, aText, _retval);
-    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
-  }
+  // Get the results.
+  PRInt32 buttonPressed = 0;
+  rv = paramBlock->GetInt(nsPIPromptService::eButtonPressed, &buttonPressed);
+  NS_ENSURE_SUCCESS(rv, rv);
+  *_retval = buttonPressed ? PR_FALSE : PR_TRUE;
 
   return NS_OK;
 }
@@ -669,54 +668,37 @@ sbPrompter::ConfirmCheck(nsIDOMWindow*    aParent,
   if (mWaitForWindow && !mParentWindowType.IsEmpty() && !parent)
     return NS_ERROR_NOT_AVAILABLE;
 
-  // If rendering HTML, open dialog here.  Otherwise, forward call to the
-  // Mozilla prompt service.
-  if (mRenderHTML) {
-    // Set up the dialog parameter block.
-    nsCOMPtr<nsIDialogParamBlock>
-      paramBlock = do_CreateInstance(NS_DIALOGPARAMBLOCK_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = paramBlock->SetInt(nsPIPromptService::eNumberButtons, 2);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = paramBlock->SetString(nsPIPromptService::eMsg, aText);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = paramBlock->SetString(nsPIPromptService::eDialogTitle, aDialogTitle);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = paramBlock->SetString(nsPIPromptService::eCheckboxMsg, aCheckMsg);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = paramBlock->SetString(nsPIPromptService::eIconClass,
-                               NS_ConvertASCIItoUTF16(kQuestionIconClass).get());
-    NS_ENSURE_SUCCESS(rv, rv);
+  // Set up the dialog parameter block.
+  nsCOMPtr<nsIDialogParamBlock>
+    paramBlock = do_CreateInstance(NS_DIALOGPARAMBLOCK_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = paramBlock->SetInt(nsPIPromptService::eNumberButtons, 2);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = paramBlock->SetString(nsPIPromptService::eMsg, aText);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = paramBlock->SetString(nsPIPromptService::eDialogTitle, aDialogTitle);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = paramBlock->SetString(nsPIPromptService::eCheckboxMsg, aCheckMsg);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = paramBlock->SetString(nsPIPromptService::eIconClass,
+                             NS_ConvertASCIItoUTF16(kQuestionIconClass).get());
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    // Present the dialog.
-    nsCOMPtr<nsPIPromptService>
-      pPromptService = do_QueryInterface(mPromptService, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = pPromptService->DoDialog(parent, paramBlock, kHTMLPromptURL);
-    NS_ENSURE_SUCCESS(rv, rv);
+  // Present the dialog.
+  rv = PresentPrompterDialog(parent, paramBlock);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    // Get the button pressed results.
-    PRInt32 buttonPressed = 0;
-    rv = paramBlock->GetInt(nsPIPromptService::eButtonPressed, &buttonPressed);
-    NS_ENSURE_SUCCESS(rv, rv);
-    *_retval = buttonPressed ? PR_FALSE : PR_TRUE;
+  // Get the button pressed results.
+  PRInt32 buttonPressed = 0;
+  rv = paramBlock->GetInt(nsPIPromptService::eButtonPressed, &buttonPressed);
+  NS_ENSURE_SUCCESS(rv, rv);
+  *_retval = buttonPressed ? PR_FALSE : PR_TRUE;
 
-    // Get the check state results.
-    PRInt32 checkState;
-    rv = paramBlock->GetInt(nsPIPromptService::eCheckboxState, &checkState);
-    NS_ENSURE_SUCCESS(rv, rv);
-    *aCheckState = checkState ? PR_TRUE : PR_FALSE;
-  }
-  else {
-    // Forward method call.
-    rv = mPromptService->ConfirmCheck(parent,
-                                      aDialogTitle,
-                                      aText,
-                                      aCheckMsg,
-                                      aCheckState,
-                                      _retval);
-    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
-  }
+  // Get the check state results.
+  PRInt32 checkState;
+  rv = paramBlock->GetInt(nsPIPromptService::eCheckboxState, &checkState);
+  NS_ENSURE_SUCCESS(rv, rv);
+  *aCheckState = checkState ? PR_TRUE : PR_FALSE;
 
   return NS_OK;
 }
@@ -818,7 +800,7 @@ NS_IMETHODIMP
 sbPrompter::Prompt(nsIDOMWindow*    aParent,
                    const PRUnichar* aDialogTitle,
                    const PRUnichar* aText,
-                   PRUnichar**      aValue, 
+                   PRUnichar**      aValue,
                    const PRUnichar* aCheckMsg,
                    PRBool*          aCheckState,
                    PRBool*          _retval)
@@ -1119,13 +1101,13 @@ sbPrompter::Select(nsIDOMWindow*     aParent,
  * Observe will be called when there is a notification for the
  * topic |aTopic|.  This assumes that the object implementing
  * this interface has been registered with an observer service
- * such as the nsIObserverService. 
+ * such as the nsIObserverService.
  *
- * If you expect multiple topics/subjects, the impl is 
+ * If you expect multiple topics/subjects, the impl is
  * responsible for filtering.
  *
- * You should not modify, add, remove, or enumerate 
- * notifications in the implemention of observe. 
+ * You should not modify, add, remove, or enumerate
+ * notifications in the implemention of observe.
  *
  * @param aSubject : Notification specific interface pointer.
  * @param aTopic   : The notification topic or subject.
@@ -1331,6 +1313,45 @@ sbPrompter::GetProxiedPrompter(sbIPrompter** aPrompter)
                               nsIProxyObjectManager::FORCE_PROXY_CREATION,
                               (void**) aPrompter);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+
+/**
+ * Present the prompter dialog using the parent window specified by aParent and
+ * dialog parameter block specified by aParamBlock.
+ *
+ * \param aParent               Parent window.
+ * \param aParamBlock           Prompter dialog parameter block.
+ */
+
+nsresult
+sbPrompter::PresentPrompterDialog(nsIDOMWindow*        aParent,
+                                  nsIDialogParamBlock* aParamBlock)
+{
+  nsresult rv;
+
+  // Get the prompter dialog URI spec.
+  nsAutoString dialogURISpec;
+  if (mRenderHTML)
+    dialogURISpec.Assign(NS_LITERAL_STRING(kHTMLPromptURL));
+  else
+    dialogURISpec.Assign(NS_LITERAL_STRING(kPromptURL));
+
+  // Open the prompter dialog.
+  nsCOMPtr<nsISupports> extraArgument = do_QueryInterface(aParamBlock, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = OpenDialog(aParent,
+                  dialogURISpec,
+                  NS_LITERAL_STRING("_blank"),
+                  NS_LITERAL_STRING(""),
+                  extraArgument,
+                  getter_AddRefs(mCurrentWindow));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Prompter dialog window is no longer open.
+  mCurrentWindow = nsnull;
 
   return NS_OK;
 }

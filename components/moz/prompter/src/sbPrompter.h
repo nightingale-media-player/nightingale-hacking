@@ -1,30 +1,28 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #ifndef __SB_PROMPTER_H__
 #define __SB_PROMPTER_H__
@@ -37,7 +35,7 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-/** 
+/**
  * \file  sbPrompter.h
  * \brief Songbird Prompter Definitions.
  */
@@ -48,7 +46,7 @@
 
 // Mozilla imports.
 #include <nsCOMPtr.h>
-#include <nsIDOMWindowInternal.h>
+#include <nsIDialogParamBlock.h>
 #include <nsIObserver.h>
 #include <nsIWindowWatcher.h>
 #include <nsStringAPI.h>
@@ -106,6 +104,7 @@ private:
   // mParentWindowType           Parent window type.
   // mWaitForWindow              If true, wait for parent window type.
   // mRenderHTML                 If true, render prompt text as HTML.
+  // mCurrentWindow              Currently open prompter dialog window.
   //
   // The following fields must only be accessed under the prompter lock:
   //   mParentWindowType
@@ -120,6 +119,7 @@ private:
   nsString                      mParentWindowType;
   PRBool                        mWaitForWindow;
   PRBool                        mRenderHTML;
+  nsCOMPtr<nsIDOMWindow>        mCurrentWindow;
 
 
   //
@@ -131,6 +131,9 @@ private:
   nsresult GetParent(nsIDOMWindow** aParent);
 
   nsresult GetProxiedPrompter(sbIPrompter** aPrompter);
+
+  nsresult PresentPrompterDialog(nsIDOMWindow*        aParent,
+                                 nsIDialogParamBlock* aParamBlock);
 };
 
 
