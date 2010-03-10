@@ -418,7 +418,7 @@
                                                     "sb-device-tools-busy-device-warning-desc");
         }
         
-        if(this.device.isBusy) {
+        if(this.device && this.device.isBusy) {
           if(this._busyWarningText) {
             this._busyWarningDesc.removeChild(this._busyWarningText);
             this._busyWarningText = null;

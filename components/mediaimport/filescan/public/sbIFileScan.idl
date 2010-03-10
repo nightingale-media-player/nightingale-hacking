@@ -296,7 +296,7 @@ interface sbIFileScanQuery : nsISupports
  *
  * \sa sbIFileScanCallback, sbIFileScanQuery
  */
-[scriptable, uuid(411DD545-EAD0-41c4-8BA1-697DBE5C67EA)]
+[scriptable, uuid(9d87834c-cab9-488c-b152-416cfa8305c3)]
 interface sbIFileScan : nsISupports
 { 
   /**
@@ -318,4 +318,9 @@ interface sbIFileScan : nsISupports
   PRInt32 scanDirectory(in AString strDirectory, 
     in PRBool bRecurse, 
     in sbIFileScanCallback pCallback);
+  /**
+   * Cleans up after ourselves. If you're using sbIFileScan in GC environment
+   * please explicitly cleanup
+   */
+  void finalize();
 };

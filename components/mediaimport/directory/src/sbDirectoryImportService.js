@@ -436,6 +436,7 @@ DirectoryImportJob.prototype = {
     }
 
     if (this._fileScanner) {
+      this._fileScanner.finalize();
       this._fileScanner = null;
     }
     if (this._pollingTimer) {

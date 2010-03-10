@@ -160,6 +160,10 @@
        -->
       <destructor> <![CDATA[
       {
+        if (this._fileScanner) {
+          this._fileScanner.finalize();
+          this._fileScanner = null;
+        }
         this._finalizeDevice();
       }
       ]]></destructor>
@@ -658,22 +662,27 @@
 
           // Poll the query to determine when it is done - everything else
           // isn't thread-safe.
-          let self = this;
+          var self = this;
           function pollCallback() {
-            if (!self._fileScanQuery.isScanning()) {
-              self._fileScanTimer.cancel();
-              self._fileScanTimer = null;
+            // If the fileScanQuery is null, we still want to cancel the timer
+            // else if it's not check whether it's still scanning and if it's
+            // not, then process what it found
+            if (!self._fileScanQuery || !self._fileScanQuery.isScanning()) {
+              if (self._fileScanTimer) {
+                window.clearInterval(self._fileScanTimer);
+                self._fileScanTimer = null;
+              }
 
               let query = self._fileScanQuery;
-              self._fileScanQuery = null;
-              self.processDirScanResults(query);
+              if (query) {
+                self._fileScanQuery = null;
+                self.processDirScanResults(query);
+                self._fileScanner.finalize();
+              }
             }
           }
-
-          this._fileScanTimer = Cc["@mozilla.org/timer;1"]
-                                  .createInstance(Ci.nsITimer);
-          this._fileScanTimer.initWithCallback(pollCallback, 1000,
-                                               Ci.nsITimer.TYPE_REPEATING_SLACK);
+          
+          this._fileScanTimer = window.setInterval(pollCallback, 1000);
         }
         ]]></body>
       </method>
@@ -689,7 +698,7 @@
           this._fileScanQuery = null;
 
           if (this._fileScanTimer)
-            this._fileScanTimer.cancel();
+            window.clearInterval(this._fileScanTimer);
           this._fileScanTimer = null;
         }
         ]]></body>

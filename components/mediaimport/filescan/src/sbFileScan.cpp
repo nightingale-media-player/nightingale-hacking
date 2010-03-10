@@ -31,9 +31,10 @@
 
 // INCLUDES ===================================================================
 #include "sbFileScan.h"
-#include "nspr.h"
-#include "prmem.h"
-#include "prlog.h"
+#include <nspr.h>
+#include <prmem.h>
+#include <prmon.h>
+#include <prlog.h>
 
 #include <nsMemory.h>
 #include <nsAutoLock.h>     // for nsAutoMonitor
@@ -628,6 +629,8 @@ sbFileScan::sbFileScan()
 , m_pThread(nsnull)
 , m_ThreadShouldShutdown(PR_FALSE)
 , m_ThreadQueueHasItem(PR_FALSE)
+, m_Finalized(PR_FALSE)
+, m_ThreadIsRunning(0)
 {
   NS_ASSERTION(m_pThreadMonitor, "FileScan.m_pThreadMonitor failed");
   MOZ_COUNT_CTOR(sbFileScan);
@@ -635,7 +638,6 @@ sbFileScan::sbFileScan()
   nsresult rv;
 
   // Attempt to create the scan thread
-
   nsCOMPtr<nsIRunnable> pThreadRunner = new sbFileScanThread(this);
   NS_ASSERTION(pThreadRunner, "Unable to create sbFileScanThread");
   if (pThreadRunner) {
@@ -650,11 +652,15 @@ sbFileScan::~sbFileScan()
 {
   MOZ_COUNT_DTOR(sbFileScan);
   nsresult rv = NS_OK;
-  rv = Shutdown();
+  if (!m_Finalized) {
+    rv = Finalize();
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "sbFileScan::Finalize failed");
+  }
   NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to shut down sbFileScanThread");
 
-  if (m_pThreadMonitor)
+  if (m_pThreadMonitor) {
     nsAutoMonitor::DestroyMonitor(m_pThreadMonitor);
+  }
 } //dtor
 
 nsresult
@@ -671,10 +677,20 @@ sbFileScan::Shutdown()
       rv = mon.Notify();
       NS_ENSURE_SUCCESS(rv, rv);
     }
+    nsCOMPtr<nsIThread> currentThread = do_GetCurrentThread();
+    NS_ENSURE_TRUE(currentThread, NS_ERROR_FAILURE);
+
+    // Wait for the thread to get to a safe spot before shutting down. Shutting
+    // down the thread will cause problems if it's about to proxy.
+    while (m_ThreadIsRunning) {
+      NS_ProcessPendingEvents(currentThread);
+      if (m_ThreadIsRunning) {
+       PR_Sleep(PR_MillisecondsToInterval(100));
+      }
+    }
 
     rv = m_pThread->Shutdown();
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Shutdown Failed!");
-
     m_pThread = nsnull;
   }
 
@@ -698,6 +714,21 @@ NS_IMETHODIMP sbFileScan::SubmitQuery(sbIFileScanQuery *pQuery)
 
   return NS_OK;
 } //SubmitQuery
+
+//-----------------------------------------------------------------------------
+/* void finalize(); */
+NS_IMETHODIMP sbFileScan::Finalize()
+{
+  nsresult rv;
+  if (m_Finalized) {
+    NS_WARNING("sbFileScan::Finalize called more than once");
+    return NS_OK;
+  }
+  m_Finalized = PR_TRUE;
+  rv = Shutdown();
+  NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
+}
 
 //-----------------------------------------------------------------------------
 /* PRInt32 ScanDirectory (in wstring strDirectory, in PRBool bRecurse); */
@@ -838,23 +869,25 @@ NS_IMETHODIMP sbFileScan::ScanDirectory(const nsAString &strDirectory, PRBool bR
 //-----------------------------------------------------------------------------
 /*static*/ void PR_CALLBACK sbFileScan::QueryProcessor(sbFileScan* pFileScan)
 {
+  PR_AtomicSet(&pFileScan->m_ThreadIsRunning, 1);
   while(PR_TRUE)
   {
     nsCOMPtr<sbIFileScanQuery> pQuery;
-
+    NS_ASSERTION(pFileScan->m_ThreadIsRunning == 0,
+                 "QueryProcess called when thread has already started");
     { // Enter Monitor
       nsAutoMonitor mon(pFileScan->m_pThreadMonitor);
-
       while (!pFileScan->m_ThreadQueueHasItem && !pFileScan->m_ThreadShouldShutdown)
         mon.Wait();
 
       if (pFileScan->m_ThreadShouldShutdown) {
+        PR_AtomicSet(&pFileScan->m_ThreadIsRunning, 0);
         return;
       }
 
       if(pFileScan->m_QueryQueue.size())
       {
-        // The quey was addref'd when it was put into m_QueryQueue so we do
+        // The query was addref'd when it was put into m_QueryQueue so we do
         // not need to addref it again when we assign it to pQuery.  This will
         // be deleted when pQuery goes out of scope.
         pQuery = dont_AddRef(pFileScan->m_QueryQueue.front());
@@ -901,7 +934,7 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
 
   nsString strTheDirectory;
   pQuery->GetDirectory(strTheDirectory);
-  
+
   PRBool bWantLibraryContentURIs = PR_TRUE;
   pQuery->GetWantLibraryContentURIs(&bWantLibraryContentURIs);
 
@@ -936,7 +969,7 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
         // Allow us to get the hell out of here.
         PRBool cancel = PR_FALSE;
         pQuery->IsCancelled(&cancel);
-        
+
         if (cancel) {
           break;
         }

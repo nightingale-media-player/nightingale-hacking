@@ -278,6 +278,8 @@ function getMediaFilesInFolder(folder) {
   assertEqual(query.getFileCount() > 0, true);
   var urls = query.getResultRangeAsURIStrings(0, query.getFileCount() - 1);
 
+  scan.finalize();
+  
   return urls;
 }
 
