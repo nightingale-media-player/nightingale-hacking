@@ -26,6 +26,10 @@
 #
 # Songbird Windows application update test script.
 #
+# Options:
+#
+#   -clobber                    Perform a clobber and full rebuild.
+#
 #   This script may be used to test updating of the Songbird application on
 # Windows.  It builds a Songbird mar file, sets up the update files on the
 # specified web server, downloads and installs a base Songbird, patches it to
@@ -77,10 +81,15 @@
 # 11. Verify that update worked.
 #
 
-echo "ac_add_options --enable-installer" > songbird.config
-make -f songbird.mk clobber && \
-  make -f songbird.mk && \
-  make -C compiled/update complete
+if [ "$1" = "-clobber" ]; then
+  echo "ac_add_options --enable-installer" > songbird.config
+  make -f songbird.mk clobber && \
+    make -f songbird.mk && \
+    make -C compiled/update complete
+else
+  make -C compiled && make -C compiled/update complete
+fi
+
 cp compiled/_built_installer/Songbird_*_windows-i686-msvc8.complete.mar \
    ${HTTP_SERVER_PATH}/Songbird.mar
 chmod a+r ${HTTP_SERVER_PATH}/Songbird.mar
