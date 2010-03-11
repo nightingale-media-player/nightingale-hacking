@@ -57,11 +57,11 @@ protected:
   PRBool isInitialized;
   PRBool isConfigured;
   typedef nsClassHashtable<nsUint32HashKey, nsTArray<PRUint32> > ContentTypes;
-  typedef nsClassHashtable<nsUint32HashKey, nsTArray<nsCString> > SupportedFormats;
+  typedef nsClassHashtable<nsUint32HashKey, nsTArray<nsCString> > SupportedMimeTypes;
   typedef nsInterfaceHashtable<nsStringHashKey, nsISupports> FormatTypes;
   nsTArray<PRUint32> mFunctionTypes;
   ContentTypes mContentTypes;
-  SupportedFormats mSupportedFormats;
+  SupportedMimeTypes mSupportedMimeTypes;
   nsVoidArray mContentFormatTypes;
   nsTArray<PRUint32> mSupportedEvents;
 };

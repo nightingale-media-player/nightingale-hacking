@@ -470,26 +470,26 @@ interface sbIDeviceCapabilities : nsISupports
                        in unsigned long aContentTypesCount);
   
   /**
-   * \brief Add an array of formats for a content type
-   * \param aContentType Content type these formats fall under
-   * \param aFormats an array of formats for aContentType
-   * \param aFormatsCount length of aFormats array
+   * \brief Add an array of mime types for a content type
+   * \param aContentType Content type these mime types fall under
+   * \param aMimeTypes an array of mime types for aContentType
+   * \param aMimeTypesCount length of aMimeTypes array
    */
-  void addFormats(in PRUint32 aContentType,
-                  [array, size_is(aFormatsCount)] in string aFormats,
-                  in unsigned long aFormatsCount);
+  void addMimeTypes(in PRUint32 aContentType,
+                  [array, size_is(aMimeTypesCount)] in string aMimeTypes,
+                  in unsigned long aMimeTypesCount);
 
   /**
-   * \brief Add a constraint to a format
+   * \brief Add a constraint to a mime type
    * \param aContentType the content type this format falls under, see the
    *                     CONTENT_* constants below.
-   * \param aFormat the format we're adding a constraint for. This must 
-   *                correspond to a format previously added by addFormats
+   * \param aMimeType the mime type we're adding a constraint for. This must 
+   *                  correspond to a mime type previously added by addMimeTypes
    * \param aFormatType the object describing the format type. For example it 
    *                    it could be a sbIAudioFormatType or a sbIImageFormatType
    */
   void AddFormatType(in PRUint32 aContentType,
-                     in AString aFormat,
+                     in AString aMimeType,
                      in nsISupports aFormatType);
                            
   /**
@@ -556,12 +556,12 @@ interface sbIDeviceCapabilities : nsISupports
                                   out PRUint32 aContentTypes);
 
   /**
-   * Returns an array of format types
+   * Returns an array of mime types supported for this type of content.
    */
-  void getSupportedFormats(in PRUint32 aContentType,
-                           out unsigned long aArrayCount,
-                           [retval, array, size_is(aArrayCount)]
-                             out string aSupportedFormats);
+  void getSupportedMimeTypes(in PRUint32 aContentType,
+                             out unsigned long aArrayCount,
+                             [retval, array, size_is(aArrayCount)]
+                               out string aSupportedMimeTypes);
 
   /**
    * Returns the list of constraints for the format under a content type

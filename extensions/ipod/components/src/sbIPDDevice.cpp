@@ -1460,9 +1460,9 @@ sbIPDDevice::CapabilitiesConnect()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Set the device formats.
-  rv = mCapabilities->AddFormats(sbIDeviceCapabilities::CONTENT_AUDIO,
-                                 sbIPDSupportedAudioMediaList,
-                                 sbIPDSupportedAudioMediaListLength);
+  rv = mCapabilities->AddMimeTypes(sbIDeviceCapabilities::CONTENT_AUDIO,
+                                   sbIPDSupportedAudioMediaList,
+                                   sbIPDSupportedAudioMediaListLength);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Complete the device capabilities configuration.

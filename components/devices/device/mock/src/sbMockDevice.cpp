@@ -329,9 +329,9 @@ NS_IMETHODIMP sbMockDevice::GetCapabilities(sbIDeviceCapabilities * *aCapabiliti
                              contentTypes, NS_ARRAY_LENGTH(contentTypes));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  const char* K_FORMAT_STRING = "ogg-theora-vorbis-sample-1";
-  rv = caps->AddFormats(sbIDeviceCapabilities::CONTENT_VIDEO,
-                        &K_FORMAT_STRING, 1);
+  const char* K_MIMETYPE_STRING = "ogg-theora-vorbis-sample-1";
+  rv = caps->AddMimeTypes(sbIDeviceCapabilities::CONTENT_VIDEO,
+                          &K_MIMETYPE_STRING, 1);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIDevCapVideoStream> videoFormat =
@@ -397,7 +397,7 @@ NS_IMETHODIMP sbMockDevice::GetCapabilities(sbIDeviceCapabilities * *aCapabiliti
                               videoFormat, audioFormat);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = caps->AddFormatType(sbIDeviceCapabilities::CONTENT_VIDEO,
-                           NS_ConvertASCIItoUTF16(K_FORMAT_STRING),
+                           NS_ConvertASCIItoUTF16(K_MIMETYPE_STRING),
                            formatType);
   NS_ENSURE_SUCCESS(rv, rv);
 

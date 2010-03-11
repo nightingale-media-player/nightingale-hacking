@@ -963,7 +963,7 @@ var DIW = {
    * \return Human readable information for mime type.
    */
 
-  _getExtForFormat : function(aMimeType, aContentType) {
+  _getExtForMimeType : function(aMimeType, aContentType) {
     // Use the device capabilities utils mapping
     var devCapsUtils =
       Cc["@songbirdnest.com/Songbird/Device/DeviceCapabilitiesUtils;1"]
@@ -1013,12 +1013,12 @@ var DIW = {
              contentCounter < contentArray.length;
              contentCounter++)
         {
-          var formatArray = deviceCapabilities.getSupportedFormats(
+          var mimeTypeArray = deviceCapabilities.getSupportedMimeTypes(
                               contentArray[contentCounter], {});
-          if (formatArray.length > 0) {
-            for each (var format in formatArray) {
-              var ext = this._getExtForFormat(format,
-                                              contentArray[contentCounter]);
+          if (mimeTypeArray.length > 0) {
+            for each (var mimetype in mimeTypeArray) {
+              var ext = this._getExtForMimeType(mimetype,
+                                                contentArray[contentCounter]);
               if(extensions.indexOf(ext) == -1)
                 extensions.push(ext);
             }

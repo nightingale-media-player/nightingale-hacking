@@ -5768,15 +5768,15 @@ static nsresult
 AddAlbumArtFormats(PRUint32 aContentType,
                    sbIDeviceCapabilities *aCapabilities,
                    nsIMutableArray *aArray,
-                   PRUint32 numFormats,
-                   char **formats)
+                   PRUint32 numMimeTypes,
+                   char **mimeTypes)
 {
   nsresult rv;
 
-  for (PRUint32 i = 0; i < numFormats; i++) {
+  for (PRUint32 i = 0; i < numMimeTypes; i++) {
     nsCOMPtr<nsISupports> formatType;
     rv = aCapabilities->GetFormatType(aContentType,
-                                      NS_ConvertASCIItoUTF16(formats[i]),
+                                      NS_ConvertASCIItoUTF16(mimeTypes[i]),
             getter_AddRefs(formatType));
     /* There might be no corresponding format object for this type, if so, just
        ignore it */
@@ -5807,20 +5807,20 @@ sbBaseDevice::GetSupportedAlbumArtFormats(nsIArray * *aFormats)
   rv = GetCapabilities(getter_AddRefs(capabilities));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  char **formats;
-  PRUint32 numFormats;
-  rv = capabilities->GetSupportedFormats(sbIDeviceCapabilities::CONTENT_IMAGE,
-          &numFormats, &formats);
+  char **mimeTypes;
+  PRUint32 numMimeTypes;
+  rv = capabilities->GetSupportedMimeTypes(sbIDeviceCapabilities::CONTENT_IMAGE,
+          &numMimeTypes, &mimeTypes);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = AddAlbumArtFormats(sbIDeviceCapabilities::CONTENT_IMAGE,
                           capabilities,
                           formatConstraints,
-                          numFormats,
-                          formats);
+                          numMimeTypes,
+                          mimeTypes);
   /* Ensure everything is freed here before potentially returning; no
      magic destructors for this thing */
-  NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(numFormats, formats);
+  NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(numMimeTypes, mimeTypes);
   NS_ENSURE_SUCCESS (rv, rv);
 
   NS_ADDREF (*aFormats = formatConstraints);

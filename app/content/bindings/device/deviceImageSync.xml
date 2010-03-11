@@ -633,7 +633,7 @@
             Cc["@songbirdnest.com/Songbird/Device/DeviceCapabilitiesUtils;1"]
               .getService(Ci.sbIDeviceCapabilitiesUtils);
           var deviceCaps = this.device.capabilities;
-          var imageFormatTypes = deviceCaps.getSupportedFormats(
+          var imageFormatTypes = deviceCaps.getSupportedMimeTypes(
             Ci.sbIDeviceCapabilities.CONTENT_IMAGE, {});
           for (var i = 0; i < imageFormatTypes.length; i++) {
             var curImageFormat = deviceCaps.getFormatType(

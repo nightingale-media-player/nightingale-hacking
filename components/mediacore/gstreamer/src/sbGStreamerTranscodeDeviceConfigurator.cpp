@@ -468,11 +468,11 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // XXXMook: video only for now
-  PRUint32 formatCount;
-  char **formatStrings;
-  rv = caps->GetSupportedFormats(sbIDeviceCapabilities::CONTENT_VIDEO,
-                                 &formatCount,
-                                 &formatStrings);
+  PRUint32 mimeTypesCount;
+  char **mimeTypes;
+  rv = caps->GetSupportedMimeTypes(sbIDeviceCapabilities::CONTENT_VIDEO,
+                                   &mimeTypesCount,
+                                   &mimeTypes);
   if (NS_FAILED(rv)) {
     // report an error
     nsresult rv2;
@@ -496,7 +496,7 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
   }
   NS_ENSURE_SUCCESS(rv, rv);
 
-  sbAutoFreeXPCOMArrayByRef<char**> formats(formatCount, formatStrings);
+  sbAutoFreeXPCOMArrayByRef<char**> autoMimeTypes(mimeTypesCount, mimeTypes);
 
   PRBool hasMoreProfiles;
   while (NS_SUCCEEDED(profilesEnum->HasMoreElements(&hasMoreProfiles)) &&
@@ -519,9 +519,9 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
     }
 
     nsCOMPtr<nsISupports> supports;
-    for (PRUint32 formatIndex = 0; formatIndex < formatCount; ++formatIndex) {
+    for (PRUint32 mimeTypeIndex = 0; mimeTypeIndex < mimeTypesCount; ++mimeTypeIndex) {
       rv = caps->GetFormatType(sbIDeviceCapabilities::CONTENT_VIDEO,
-                               NS_ConvertASCIItoUTF16(formatStrings[formatIndex]),
+                               NS_ConvertASCIItoUTF16(mimeTypes[mimeTypeIndex]),
                                getter_AddRefs(supports));
       NS_ENSURE_SUCCESS(rv, rv);
       nsCOMPtr<sbIVideoFormatType> format = do_QueryInterface(supports, &rv);

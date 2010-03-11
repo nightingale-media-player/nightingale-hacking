@@ -226,23 +226,23 @@ sbDeviceCapsCompatibility::CompareVideoFormat(PRBool* aCompatible)
     // TODO: Get additional audio properties
   }
 
-  // Get supported formats
-  PRUint32 formatsLength;
-  char **formats;
-  rv = mDeviceCapabilities->GetSupportedFormats(mContentType,
-                                                &formatsLength,
-                                                &formats);
+  // Get supported mime types
+  PRUint32 mimeTypesLength;
+  char **mimeTypes;
+  rv = mDeviceCapabilities->GetSupportedMimeTypes(mContentType,
+                                                  &mimeTypesLength,
+                                                  &mimeTypes);
 
-  if (NS_SUCCEEDED(rv) && formatsLength > 0) {
-    sbAutoNSArray<char*> autoFormats(formats, formatsLength);
-    for (PRUint32 formatIndex = 0;
-         formatIndex < formatsLength;
-         ++formatIndex) {
-      NS_ConvertASCIItoUTF16 format(formats[formatIndex]);
+  if (NS_SUCCEEDED(rv) && mimeTypesLength > 0) {
+    sbAutoNSArray<char*> autoMimeTypes(mimeTypes, mimeTypesLength);
+    for (PRUint32 mimeTypeIndex = 0;
+         mimeTypeIndex < mimeTypesLength;
+         ++mimeTypeIndex) {
+      NS_ConvertASCIItoUTF16 mimeType(mimeTypes[mimeTypeIndex]);
     
       nsCOMPtr<sbIVideoFormatType> videoFormat;
       rv = mDeviceCapabilities->GetFormatType(mContentType,
-                                              format,
+                                              mimeType,
                                               getter_AddRefs(videoFormat));
       if (NS_SUCCEEDED(rv) && videoFormat) {
         // Compare container type

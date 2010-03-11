@@ -1265,28 +1265,28 @@ sbDeviceUtils::GetSupportedTranscodeProfiles(sbIDevice * aDevice,
   {
     PRUint32 const contentType = contentTypes[contentTypeIndex];
     TRACE(("%s: Finding profiles for content type %d", __FUNCTION__, contentType));
-    PRUint32 formatsLength;
-    char ** formats;
-    rv = devCaps->GetSupportedFormats(contentType,
-                                      &formatsLength,
-                                      &formats);
+    PRUint32 mimeTypesLength;
+    char ** mimeTypes;
+    rv = devCaps->GetSupportedMimeTypes(contentType,
+                                        &mimeTypesLength,
+                                        &mimeTypes);
     // Not found error is expected, we'll not do anything in that case, but we
     // need to finish out processing and not return early
     if (rv != NS_ERROR_NOT_AVAILABLE) {
       NS_ENSURE_SUCCESS(rv, rv);
     }
     if (NS_SUCCEEDED(rv)) {
-      for (PRUint32 formatIndex = 0;
-           formatIndex < formatsLength && NS_SUCCEEDED(rv);
-           ++formatIndex)
+      for (PRUint32 mimeTypeIndex = 0;
+           mimeTypeIndex < mimeTypesLength && NS_SUCCEEDED(rv);
+           ++mimeTypeIndex)
       {
-        nsString format;
-        format.AssignLiteral(formats[formatIndex]);
-        nsMemory::Free(formats[formatIndex]);
+        nsString mimeType;
+        mimeType.AssignLiteral(mimeTypes[mimeTypeIndex]);
+        nsMemory::Free(mimeTypes[mimeTypeIndex]);
 
         nsCOMPtr<nsISupports> formatTypeSupports;
         devCaps->GetFormatType(contentType,
-                               format,
+                               mimeType,
                                getter_AddRefs(formatTypeSupports));
         nsString containerFormat;
         nsString codec;
@@ -1342,7 +1342,7 @@ sbDeviceUtils::GetSupportedTranscodeProfiles(sbIDevice * aDevice,
           }
         }
       }
-      nsMemory::Free(formats);
+      nsMemory::Free(mimeTypes);
     }
   }
 
@@ -1404,22 +1404,22 @@ sbDeviceUtils::DoesItemNeedTranscoding(
        NS_LossyConvertUTF16toASCII(itemContainerFormat).get(),
        NS_LossyConvertUTF16toASCII(itemCodec).get()));
 
-  PRUint32 formatsLength;
-  char ** formats;
-  rv = devCaps->GetSupportedFormats(devCapContentType,
-                                    &formatsLength,
-                                    &formats);
+  PRUint32 mimeTypesLength;
+  char ** mimeTypes;
+  rv = devCaps->GetSupportedMimeTypes(devCapContentType,
+                                      &mimeTypesLength,
+                                      &mimeTypes);
   // If we know of transcoding formats than check them
-  if (NS_SUCCEEDED(rv) && formatsLength > 0) {
+  if (NS_SUCCEEDED(rv) && mimeTypesLength > 0) {
     aNeedsTranscoding = true;
-    for (PRUint32 formatIndex = 0;
-         formatIndex < formatsLength;
-         ++formatIndex) {
+    for (PRUint32 mimeTypesIndex = 0;
+         mimeTypesIndex < mimeTypesLength;
+         ++mimeTypesIndex) {
 
-      NS_ConvertASCIItoUTF16 format(formats[formatIndex]);
+      NS_ConvertASCIItoUTF16 mimeType(mimeTypes[mimeTypesIndex]);
       nsCOMPtr<nsISupports> formatType;
       rv = devCaps->GetFormatType(devCapContentType,
-                                  format,
+                                  mimeType,
                                   getter_AddRefs(formatType));
       if (NS_SUCCEEDED(rv)) {
         nsString containerFormat;
@@ -1450,9 +1450,9 @@ sbDeviceUtils::DoesItemNeedTranscoding(
               (!aBitRate || IsValueInRange(aBitRate, bitRateRange)) &&
               (!aSampleRate || IsValueInRange(aSampleRate, sampleRateRange)))
           {
-            TRACE(("%s: no transcoding needed, matches format %s "
+            TRACE(("%s: no transcoding needed, matches mime type %s "
                    "container %s codec %s",
-                   __FUNCTION__, formats[formatIndex],
+                   __FUNCTION__, mimeTypes[mimeTypesIndex],
                    NS_LossyConvertUTF16toASCII(containerFormat).get(),
                    NS_LossyConvertUTF16toASCII(codec).get()));
             aNeedsTranscoding = false;
@@ -1461,7 +1461,7 @@ sbDeviceUtils::DoesItemNeedTranscoding(
         }
       }
     }
-    NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(formatsLength, formats);
+    NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(mimeTypesLength, mimeTypes);
   }
   else { // We don't know the transcoding formats of the device so just copy
     TRACE(("%s: no information on device, assuming no transcoding needed",
@@ -1719,7 +1719,7 @@ nsresult sbDeviceUtils::AddSupportedFileExtensions
   // return if content type is not available.
   char** mimeTypeList;
   PRUint32 mimeTypeCount;
-  rv = caps->GetSupportedFormats(aContentType, &mimeTypeCount, &mimeTypeList);
+  rv = caps->GetSupportedMimeTypes(aContentType, &mimeTypeCount, &mimeTypeList);
   if (rv == NS_ERROR_NOT_AVAILABLE)
     return NS_OK;
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1823,17 +1823,17 @@ sbDeviceUtils::LogDeviceCapabilities(sbIDeviceCapabilities *aDeviceCaps,
          contentType < contentTypesLength;
          contentType++)
     {
-      PRUint32 formatsCount;
-      char **formats;
-      rv = aDeviceCaps->GetSupportedFormats(contentTypes[contentType],
-                                            &formatsCount,
-                                            &formats);
+      PRUint32 mimeTypesCount;
+      char **mimeTypes;
+      rv = aDeviceCaps->GetSupportedMimeTypes(contentTypes[contentType],
+                                              &mimeTypesCount,
+                                              &mimeTypes);
       NS_ENSURE_SUCCESS(rv, rv);
-      sbAutoNSArray<char *> autoFormatsPtr(formats, formatsCount);
+      sbAutoNSArray<char *> autoMimeTypesPtr(mimeTypes, mimeTypesCount);
 
-      for (PRUint32 format = 0; format < formatsCount; format++) {
+      for (PRUint32 mimeType = 0; mimeType < mimeTypesCount; mimeType++) {
         rv = LogFormatType(contentTypes[contentType],
-                           NS_ConvertUTF8toUTF16(formats[format]),
+                           NS_ConvertUTF8toUTF16(mimeTypes[mimeType]),
                            aDeviceCaps,
                            aLogModule);
       }

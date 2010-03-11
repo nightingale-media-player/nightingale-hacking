@@ -238,7 +238,7 @@ var DeviceMediaManagementServices = {
 
       var profiles = transcodeManager.getTranscodeProfiles();
       var deviceCaps = this._device.capabilities;
-      var formatMimeTypes = deviceCaps.getSupportedFormats(
+      var formatMimeTypes = deviceCaps.getSupportedMimeTypes(
               Ci.sbIDeviceCapabilities.CONTENT_AUDIO, {});
 
       for (formatIndex in formatMimeTypes) {

@@ -143,10 +143,10 @@ private:
   /**
    * Associates a given format with a content type
    * \param aContentType the content type being associated to the format
-   * \param aFormat The format being associated with the content type
+   * \param aMimeType The mime type being associated with the content type
    */
-  nsresult AddFormat(PRUint32 aContentType,
-                     nsAString const & aFormat);
+  nsresult AddMimeType(PRUint32 aContentType,
+                       nsAString const & aMimeType);
 
   /**
    * Processing the DOM node populating the device capabilities with information
