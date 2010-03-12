@@ -165,6 +165,9 @@ sbOSDControlService.prototype =
     this._osdWindow.addEventListener("mousemove",
                                      this._osdWinMousemoveListener,
                                      false);
+    this._videoWindow.addEventListener("mousemove",
+                                       this._osdWinMousemoveListener,
+                                       false);
     this._osdWindow.addEventListener("mousedown",
                                      this._osdWinMousedownListener,
                                      false);

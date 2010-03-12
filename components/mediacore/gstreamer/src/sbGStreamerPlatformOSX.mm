@@ -96,17 +96,76 @@ static PRLogModuleInfo* gGStreamerPlatformOSX =
 @end
 
 
+@interface NSView (GstGlView)
+
+- (void)setDelegate:(id)aDelegate;
+
+@end
+
+
+/**
+ * ObjC class to listen to |NSView| events from the GST video view.
+ */
+@interface SBGstGLViewDelgate : NSObject
+{
+  OSXPlatformInterface *mOwner;  // weak, it owns us.
+}
+
+- (id)initWithPlatformInterface:(OSXPlatformInterface *)aOwner;
+- (void)mouseMoved:(NSEvent *)theEvent;
+
+@end
+
+@implementation SBGstGLViewDelgate
+
+- (id)initWithPlatformInterface:(OSXPlatformInterface *)aOwner
+{
+  if ((self = [super init])) {
+    mOwner = aOwner;
+  }
+
+  return self;
+}
+
+- (void)dealloc
+{
+  if (mOwner) {
+    mOwner = nsnull;
+  }
+
+  [super dealloc];
+}
+
+- (void)mouseMoved:(NSEvent *)theEvent
+{
+  if (!mOwner) {
+    return;
+  }
+
+  mOwner->OnMouseMoved(theEvent);
+}
+
+@end
+
 
 OSXPlatformInterface::OSXPlatformInterface(sbGStreamerMediacore *aCore) :
     BasePlatformInterface(aCore),
     mParentView(NULL),
-    mVideoView(NULL)
+    mVideoView(NULL),
+    mGstGLViewDelegate(NULL)
 {
+  mGstGLViewDelegate =
+    (void *)[[SBGstGLViewDelgate alloc] initWithPlatformInterface:this];
 }
 
 OSXPlatformInterface::~OSXPlatformInterface()
 {
   RemoveView();
+
+  // Clean up the view delegate.
+  SBGstGLViewDelgate *delegate = (SBGstGLViewDelgate *)mGstGLViewDelegate;
+  [delegate release];
+  mGstGLViewDelegate = NULL;
 }
 
 GstElement *
@@ -225,7 +284,71 @@ OSXPlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
   [parentView performSelectorOnMainThread:@selector(lockAddSubview:)
                                withObject:view
                             waitUntilDone:YES];
+
+  // Fail safe, ensure that the gst |NSView| responds to the delegate method
+  // before attempting to set the delegate of the view.
+  if ([view respondsToSelector:@selector(setDelegate:)]) {
+    [view setDelegate:(id)mGstGLViewDelegate];
+  }
+
   [pool release];
+}
+
+void
+OSXPlatformInterface::OnMouseMoved(void *aCocoaEvent)
+{
+  NS_ENSURE_TRUE(aCocoaEvent, /* void */);
+  NS_ENSURE_TRUE(mVideoView, /* void */);
+
+  // Convert the cocoa event to a gecko event
+  nsresult rv;
+  nsCOMPtr<nsIDOMMouseEvent> mouseEvent;
+  rv = CreateDOMMouseEvent(getter_AddRefs(mouseEvent));
+  NS_ENSURE_SUCCESS(rv, /* void */);
+
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  // Get the window and local view coordinates and convert them from cocoa
+  // coords (bottom-left) to gecko coords (top-left).
+  NSEvent *event = (NSEvent *)aCocoaEvent;
+  NSView *eventView = (NSView *)mVideoView;
+
+  float menuBarHeight = 0.0;
+  NSArray *allScreens = [NSScreen screens];
+  if ([allScreens count]) {
+    menuBarHeight = [[allScreens objectAtIndex:0] frame].size.height;
+  }
+  float windowHeight = [[[eventView window] contentView] frame].size.height;
+
+  // This will need to be flipped....
+  NSPoint viewPoint = [event locationInWindow];
+  NSPoint screenPoint = [[eventView window] convertBaseToScreen:viewPoint];
+
+  viewPoint.y = windowHeight - viewPoint.y;
+  screenPoint.y = menuBarHeight - screenPoint.y;
+
+  rv = mouseEvent->InitMouseEvent(
+      NS_LITERAL_STRING("mousemove"),
+      PR_TRUE,
+      PR_TRUE,
+      nsnull,
+      0,
+      (PRInt32)screenPoint.x,
+      (PRInt32)screenPoint.y,
+      (PRInt32)viewPoint.x,
+      (PRInt32)viewPoint.y,
+      (([event modifierFlags] & NSControlKeyMask) != 0),
+      (([event modifierFlags] & NSAlternateKeyMask) != 0),
+      (([event modifierFlags] & NSShiftKeyMask) != 0),
+      (([event modifierFlags] & NSCommandKeyMask) != 0),
+      0,
+      nsnull);
+  [pool release];
+  NS_ENSURE_SUCCESS(rv, /* void */);
+  
+  nsCOMPtr<nsIDOMEvent> domEvent(do_QueryInterface(mouseEvent));
+  rv = DispatchDOMEvent(domEvent);
+  NS_ENSURE_SUCCESS(rv, /* void */);
 }
 
 void

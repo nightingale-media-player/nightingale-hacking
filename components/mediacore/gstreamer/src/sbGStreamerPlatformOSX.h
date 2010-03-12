@@ -49,6 +49,9 @@ public:
   virtual void ResizeToWindow() {return BasePlatformInterface::ResizeToWindow();}
   virtual void PrepareVideoWindow(GstMessage *aMessage);
 
+  // Event callback member functions
+  void OnMouseMoved(void *aCocoaEvent);
+
 protected:
   // Implement virtual methods in BasePlatformInterface
   void MoveVideoWindow (int x, int y, int width, int height);
@@ -60,8 +63,10 @@ protected:
 
   void RemoveView();
 
-  void *mParentView;
-  void *mVideoView;
+  // ObjC member variables stored as void pointers for build simplification:
+  void *mParentView;         // weak (NSView *)
+  void *mVideoView;          // weak (NSView *)
+  void *mGstGLViewDelegate;  // strong (NSObject *)
 };
 
 #endif // _SB_GSTREAMER_PLATFORM_OSX_H_
