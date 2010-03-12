@@ -473,6 +473,11 @@ else
    ifeq (macosx,$(SB_PLATFORM))
       OUR_CPP_FLAGS += -isysroot $(SB_MACOSX_SDK)
    endif
+   ifeq (,$(DEBUG))
+      ifeq (,$(DISABLE_DEADLY_WARNINGS))
+         OUR_CPP_FLAGS += $(CFLAGS_WARNING_IS_ERROR)
+      endif
+   endif
 endif
 
 ifdef CPP_DEFS
@@ -531,6 +536,11 @@ else
    ifeq (macosx,$(SB_PLATFORM))
       OUR_CMM_FLAGS += -isysroot $(SB_MACOSX_SDK)
    endif
+   ifeq (,$(DEBUG))
+      ifeq (,$(DISABLE_DEADLY_WARNINGS))
+         OUR_CMM_FLAGS += $(CFLAGS_WARNING_IS_ERROR)
+      endif
+   endif
 endif
 
 ifdef CMM_DEFS
@@ -588,6 +598,11 @@ else
    OUR_C_FLAGS = $(CFLAGS) $(C_EXTRA_FLAGS)
    ifeq (macosx,$(SB_PLATFORM))
       OUR_C_FLAGS += -isysroot $(SB_MACOSX_SDK)
+   endif
+   ifeq (,$(DEBUG))
+      ifeq (,$(DISABLE_DEADLY_WARNINGS))
+         OUR_C_FLAGS += $(CFLAGS_WARNING_IS_ERROR)
+      endif
    endif
 endif
 
