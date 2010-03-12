@@ -93,7 +93,7 @@ var DialogController =
            contentCount++)
       {
         var formatArray =
-          caps.getSupportedFormats(contentArray[contentCount], {});
+          caps.getSupportedMimeTypes(contentArray[contentCount], {});
 
         for (var formatIndex = 0;
              formatIndex < formatArray.length;
