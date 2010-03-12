@@ -586,7 +586,7 @@ ConcertTicketing.browseConcerts = function(ticketingObj) {
 		poweredBy.innerHTML = this._strings.getString("poweredBy") + 
 			" <a target='_blank' href='" + url + "'>Songkick</a>. "
 			+ this._strings.getString("tosPrefix") + 
-			" <a target='_blank' href='http://www.songkick.com/terms?" +
+			" <a target='_blank' href='http://www.songkick.com/info/terms/?" +
       SongkickPartnerCode + "'>" +
 			this._strings.getString("tosLink") + "</a>.";
 		ft.appendChild(poweredBy);
