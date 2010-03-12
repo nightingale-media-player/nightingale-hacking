@@ -30,6 +30,8 @@ VPATH = @srcdir@ \
 
 include $(DEPTH)/build/autodefs.mk
 
+DISABLE_DEADLY_WARNINGS = 1
+
 DYNAMIC_LIB = sbIntegration
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/integration/public \
@@ -66,12 +68,12 @@ CPP_SRCS += WindowCloak.cpp \
 
 IS_COMPONENT = 1
 
-CFLAGS += $(DBUS_CLFAGS) \
-          $(GTK_CFLAGS) \
-          $(NULL)
+C_EXTRA_FLAGS += $(DBUS_CLFAGS) \
+                 $(GTK_CFLAGS) \
+                 $(NULL)
 
-CXXFLAGS += $(DBUS_CFLAGS) \
-            $(GTK_CFLAGS) \
-            $(NULL)
+CPP_EXTRA_FLAGS += $(DBUS_CFLAGS) \
+                   $(GTK_CFLAGS) \
+                   $(NULL)
 
 include $(topsrcdir)/build/rules.mk
