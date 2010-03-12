@@ -30,6 +30,8 @@ VPATH = @srcdir@ \
 
 include $(DEPTH)/build/autodefs.mk
 
+DISABLE_DEADLY_WARNINGS = 1
+
 CPP_SRCS = sbDeviceDeviceTesterModule.cpp \
            sbDeviceDeviceTesterUtils.cpp \
            sbMockDevice.cpp \

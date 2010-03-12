@@ -29,6 +29,8 @@ VPATH = @srcdir@ @top_srcdir@/components/mediacore/base/src
 
 include $(DEPTH)/build/autodefs.mk
 
+DISABLE_DEADLY_WARNINGS = 1
+
 SONGBIRD_TEST_COMPONENT = mediacorebase
 
 XPIDL_SRCS = sbITestMediacoreEventCreator.idl \
