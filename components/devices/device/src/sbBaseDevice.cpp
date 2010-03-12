@@ -4137,7 +4137,7 @@ sbBaseDevice::SyncCreateAndSyncToList
   NS_ENSURE_SUCCESS(rv, rv);
   for (PRUint32 i = 0; i < sbIDeviceLibrary::MEDIATYPE_COUNT; ++i) {
     // Skip image type since we don't support it right now.
-    if (i = sbIDeviceLibrary::MEDIATYPE_IMAGE)
+    if (i == sbIDeviceLibrary::MEDIATYPE_IMAGE)
       continue;
 
     rv = aDstLib->SetSyncPlaylistListByType(i, emptySyncPlaylistList);
