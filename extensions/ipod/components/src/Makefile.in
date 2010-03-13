@@ -31,9 +31,7 @@ VPATH = @srcdir@ \
 
 include $(DEPTH)/build/autodefs.mk
 
-ifneq (,$(filter macosx linux,$(SB_PLATFORM)))
-   DISABLE_DEADLY_WARNINGS = 1
-endif
+DISABLE_DEADLY_WARNINGS = 1
 
 IS_EXTENSION = 1
 

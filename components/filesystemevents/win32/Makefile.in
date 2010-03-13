@@ -31,6 +31,10 @@ VPATH = @srcdir@ \
 
 include $(DEPTH)/build/autodefs.mk
 
+ifeq (windows,$(SB_PLATFORM))
+   DISABLE_DEADLY_WARNINGS = 1
+endif
+
 DYNAMIC_LIB = sbWin32FileSystemEvents
 
 CPP_SRCS = sbWin32FileSystemWatcher.cpp \

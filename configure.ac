@@ -746,8 +746,8 @@ case "$SB_PLATFORM" in
     CFLAGS_INCLUDE_SUFFIX=""
     CFLAGS_PREPROCESS="-P"
     CFLAGS_ASSEMBLER="-FAs"
-    # Will eventually be something close to -WX, but not yet.
-    CFLAGS_WARNING_IS_ERROR=""
+    # Always disable warning 4624, because the XPCOM elicits this warning.
+    CFLAGS_WARNING_IS_ERROR="-WX -wd4624"
     LDFLAGS="$LDFLAGS $MSVC_LINKER_FLAGS"
     LDFLAGS_DLL="-DLL $MSVC_DLL_LINKER_FLAGS"
     LDFLAGS_BIN=""
