@@ -785,7 +785,9 @@ case "$SB_PLATFORM" in
     MACOSX_FRAMEWORKS="$MACOSX_CONTENTS/Frameworks"
     XULRUNNERDIR="/XUL.framework"
 
-    GCC_COMPILER_FLAGS="-c -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-common -fpascal-strings -fno-rtti -no-cpp-precomp -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -fshort-wchar -pipe"
+    GCC_COMPILER_FLAGS="-c -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-common -fpascal-strings -no-cpp-precomp -Wall -Wconversion -Wpointer-arith -Wcast-align -Wno-long-long -fshort-wchar -pipe"
+    GCC_CPP_COMPILER_FLAGS="-Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -fno-rtti"
+
     if test "$enable_debug" = "yes"; then
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -g -ggdb3 -fno-inline"
     else
@@ -799,14 +801,13 @@ case "$SB_PLATFORM" in
     GCC_LINKER_FLAGS="-lpthread -lobjc -shared-libgcc -lstdc++ -Wl,-executable_path,\$(topsrcdir)/$OBJDIRNAME/$DISTDIRNAME$MACOSX_FRAMEWORKS$XULRUNNERDIR"
 
     CFLAGS="$CFLAGS $GCC_COMPILER_FLAGS"
-    CXXFLAGS="$CXXFLAGS $GCC_COMPILER_FLAGS"
-    CMMFLAGS="$CMMFLAGS $GCC_COMPILER_FLAGS -fobjc-exceptions -DUSE_COCOA"
+    CXXFLAGS="$CXXFLAGS $GCC_COMPILER_FLAGS $GCC_CPP_COMPILER_FLAGS"
+    CMMFLAGS="$CMMFLAGS $GCC_COMPILER_FLAGS $GCC_CPP_COMPILER_FLAGS -fobjc-exceptions -DUSE_COCOA"
     CFLAGS_INCLUDE_PREFIX="-I"
     CFLAGS_INCLUDE_SUFFIX=""
     CFLAGS_PREPROCESS="-E"
     CFLAGS_ASSEMBLER="-S"
-    # Will eventually be -Werror, but not yet.
-    CFLAGS_WARNING_IS_ERROR=""
+    CFLAGS_WARNING_IS_ERROR="-Werror"
     LDFLAGS="$LDFLAGS $GCC_LINKER_FLAGS"
     LDFLAGS_DLL=""
     LDFLAGS_BIN=""

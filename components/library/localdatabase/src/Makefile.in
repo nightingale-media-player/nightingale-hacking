@@ -30,7 +30,9 @@ VPATH = @srcdir@ \
 
 include $(DEPTH)/build/autodefs.mk
 
-DISABLE_DEADLY_WARNINGS = 1
+ifneq (,$(filter macosx linux,$(SB_PLATFORM)))
+   DISABLE_DEADLY_WARNINGS = 1
+endif
 
 DYNAMIC_LIB = sbLocalDatabaseLibrary
 
