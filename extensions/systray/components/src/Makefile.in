@@ -96,6 +96,9 @@ CPP_EXTRA_INCLUDES = ../public \
                      $(MOZSDK_IDL_DIR) \
                      $(NULL)
 
+DYNAMIC_LIB_EXTRA_IMPORTS = xul \
+                            $(NULL)
+
 # build a component (ie: a dynamically loadable module)
 IS_COMPONENT = 1
 
