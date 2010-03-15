@@ -101,7 +101,7 @@ sbURLFormatterService.prototype = {
   _defaults: {
     get appInfo() {
       if (!this._appInfo)
-        this._appInfo = Cc["@mozilla.org/xre/app-info;1"].
+        this._appInfo = Cc["@mozilla.org/xre/runtime;1"].
                         getService(Ci.nsIXULAppInfo).
                         QueryInterface(Ci.nsIXULRuntime);
       return this._appInfo;

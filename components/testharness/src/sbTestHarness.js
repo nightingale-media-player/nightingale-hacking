@@ -172,7 +172,7 @@ sbTestHarness.prototype = {
     
     var em = Cc["@mozilla.org/extensions/manager;1"]
                .getService(Ci.nsIExtensionManager);
-    var appInfo = Cc["@mozilla.org/xre/app-info;1"]
+    var appInfo = Cc["@mozilla.org/xre/runtime;1"]
                     .getService(Ci.nsIXULRuntime);
 
     var itemList = em.getItemList(Ci.nsIUpdateItem.TYPE_EXTENSION, {});

@@ -36,6 +36,7 @@
 #include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsDirectoryServiceUtils.h>
+#include <nsXPCOMCIDInternal.h>
 #include <nsIArray.h>
 #include <nsIBufferedStreams.h>
 #include <nsIFile.h>
@@ -734,7 +735,7 @@ sbiTunesImporter::OSType sbiTunesImporter::GetOSType()
   if (mOSType == UNINITIALIZED) {
     nsresult rv;
     nsCOMPtr<nsIXULRuntime> appInfo = 
-      do_CreateInstance("@mozilla.org/xre/app-info;1", &rv);
+      do_CreateInstance(XULRUNTIME_SERVICE_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, UNKNOWN_OS);
     
     nsCString osName;

@@ -48,7 +48,7 @@ function sbIDeviceDeviceTesterUtils_GetOrganizedPath(aUtils, aLibrary) {
 
   var result = aUtils.GetOrganizedPath(file, item);
   
-  var platform = Components.classes["@mozilla.org/xre/app-info;1"]
+  var platform = Components.classes["@mozilla.org/xre/runtime;1"]
                            .getService(Components.interfaces.nsIXULRuntime)
                            .OS;
   var badchars;

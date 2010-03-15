@@ -83,7 +83,7 @@ Metrics.prototype = {
   {
     var user_install_uuid = this._getPlayerUUID();
     
-    var xulRuntime = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULRuntime);    
+    var xulRuntime = Components.classes["@mozilla.org/xre/runtime;1"].getService(Components.interfaces.nsIXULRuntime);    
     var user_os = xulRuntime.OS;
 
     
