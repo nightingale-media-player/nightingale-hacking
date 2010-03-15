@@ -103,7 +103,6 @@ MAKEFILES_dependencies="
 dependencies/Makefile
 dependencies/vendor/mozbrowser/Makefile
 dependencies/vendor/mozbrowser/components/preferences/Makefile
-dependencies/vendor/mozbrowser/exthelper/Makefile
 dependencies/vendor/mozbrowser/fuel/Makefile
 dependencies/vendor/mozbrowser/fuel/public/Makefile
 dependencies/vendor/mozbrowser/fuel/src/Makefile

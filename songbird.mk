@@ -180,19 +180,25 @@ $(if $($(1)_DEP_SVNURL), \
  )
 endef
 
-SB_DEP_PKGS ?= MOZBROWSER MOZJSHTTPD
+SB_DEP_PKGS ?= MOZBROWSER MOZJSHTTPD MOZEXTHELPER
 
 MOZBROWSER_DEP_DIR ?= $(TOPSRCDIR)/dependencies/vendor/mozbrowser
 MOZBROWSER_DEP_UPDATE ?= $(SVN) up $(MOZBROWSER_DEP_DIR)
 MOZBROWSER_DEP_CHECKOUT ?= $(SVN) co $(call resolve_dep_co_svnurl,MOZBROWSER) $(MOZBROWSER_DEP_DIR)
 MOZBROWSER_DEP_REPO ?= vendor
-MOZBROWSER_DEP_REPODIR ?= mozbrowser
+MOZBROWSER_DEP_REPODIR ?= xulrunner-1.9.2/mozilla/browser
 
 MOZJSHTTPD_DEP_DIR ?= $(TOPSRCDIR)/dependencies/vendor/mozjshttpd
 MOZJSHTTPD_DEP_UPDATE ?= $(SVN) up $(MOZJSHTTPD_DEP_DIR)
 MOZJSHTTPD_DEP_CHECKOUT ?= $(SVN) co $(call resolve_dep_co_svnurl,MOZJSHTTPD) $(MOZJSHTTPD_DEP_DIR)
 MOZJSHTTPD_DEP_REPO ?= vendor
-MOZJSHTTPD_DEP_REPODIR ?= xulrunner/mozilla/netwerk/test/httpserver
+MOZJSHTTPD_DEP_REPODIR ?= xulrunner-1.9.2/mozilla/netwerk/test/httpserver
+
+MOZEXTHELPER_DEP_DIR ?= $(TOPSRCDIR)/dependencies/vendor/mozexthelper
+MOZEXTHELPER_DEP_UPDATE ?= $(SVN) up $(MOZEXTHELPER_DEP_DIR)
+MOZEXTHELPER_DEP_CHECKOUT ?= $(SVN) co $(call resolve_dep_co_svnurl,MOZEXTHELPER) $(MOZEXTHELPER_DEP_DIR)
+MOZEXTHELPER_DEP_REPO ?= vendor
+MOZEXTHELPER_DEP_REPODIR ?= xulrunner-1.9.2/mozilla/toolkit/components/exthelper
 
 ifndef SB_DISABLE_PKG_AUTODEPS
    SB_DEP_PKG_LIST = $(foreach p,\
