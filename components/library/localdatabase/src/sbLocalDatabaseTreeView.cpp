@@ -543,7 +543,7 @@ sbLocalDatabaseTreeView::TokenizeProperties(const nsAString& aProperties,
 
     // Make an atom
     nsCOMPtr<nsIAtom> atom;
-    rv = atomService->GetAtom(token.get(), getter_AddRefs(atom));
+    rv = atomService->GetAtom(token, getter_AddRefs(atom));
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Don't encourage people to step on each other's toes.
