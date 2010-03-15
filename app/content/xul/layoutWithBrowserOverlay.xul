@@ -378,6 +378,7 @@
       <command id="cmd_fullZoomEnlarge" oncommand="FullZoom.enlarge()"/>
       <command id="cmd_fullZoomReset"   oncommand="FullZoom.reset()"/>
 
+      <!-- disabled per bug 20269
       <command id="cmd_bm_newsubscription"    oncommand="SBSubscribe(null, gBrowser.currentURI)"  >
         <observes type="dataremote"
                   key="browser.cansubscription" 
@@ -385,6 +386,7 @@
                   boolean="true"
                   inverted="true" />  
       </command>
+      -->
 
       <command id="cmd_bm_newbookmark"       oncommand="bmManager.addBookmark();">
         <observes type="dataremote"
