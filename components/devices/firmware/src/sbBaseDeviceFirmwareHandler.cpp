@@ -115,7 +115,7 @@ sbBaseDeviceFirmwareHandler::Init()
   rv = ssm->GetSystemPrincipal(getter_AddRefs(principal));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mXMLHttpRequest->Init(principal, nsnull, nsnull);
+  rv = mXMLHttpRequest->Init(principal, nsnull, nsnull, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mXMLHttpRequest->SetMozBackgroundRequest(PR_TRUE);
