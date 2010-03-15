@@ -243,6 +243,8 @@ OSXPlatformInterface::SetVideoBox (nsIBoxObject *aBoxObject, nsIWidget *aWidget)
 void
 OSXPlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
 {
+  BasePlatformInterface::PrepareVideoWindow(aMessage);
+
   // Firstly, if we don't already have a video view set up, request a video
   // window, and set up the appropriate parent view.
   if (!mParentView) {
@@ -290,6 +292,9 @@ OSXPlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
   if ([view respondsToSelector:@selector(setDelegate:)]) {
     [view setDelegate:(id)mGstGLViewDelegate];
   }
+
+  // Resize the window
+  ResizeToWindow();
 
   [pool release];
 }
@@ -357,7 +362,6 @@ OSXPlatformInterface::MoveVideoWindow (int x, int y, int width, int height)
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
   NSView *view = (NSView *)mVideoView;
-
   if (view) {
     NSRect rect;
     // Remap to OSX's coordinate system, which is from the bottom left.
