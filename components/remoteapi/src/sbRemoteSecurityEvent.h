@@ -81,11 +81,8 @@ public:
 /** nsIPrivateDOMEvent - this is non-XPCOM so no forward macro **/
   NS_IMETHOD DuplicatePrivateData();
   NS_IMETHOD SetTarget(nsIDOMEventTarget* aTarget);
-  NS_IMETHOD SetCurrentTarget(nsIDOMEventTarget* aTarget);
-  NS_IMETHOD SetOriginalTarget(nsIDOMEventTarget* aTarget);
-  NS_IMETHOD IsDispatchStopped(PRBool* aIsDispatchPrevented);
-  NS_IMETHOD GetInternalNSEvent(nsEvent** aNSEvent);
-  NS_IMETHOD HasOriginalTarget(PRBool* aResult);
+  NS_IMETHOD_(PRBool) IsDispatchStopped();
+  NS_IMETHOD_(nsEvent*) GetInternalNSEvent();
   NS_IMETHOD SetTrusted(PRBool aTrusted);
 
 public:
