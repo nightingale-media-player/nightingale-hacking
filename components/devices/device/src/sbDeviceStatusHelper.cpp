@@ -131,6 +131,7 @@ sbDeviceStatusHelper::OperationStart(sbDeviceStatusHelper::Operation aOperationT
   if (aItemNum > 1 && mOperationType != OPERATION_TYPE_NONE) {
     return;
   }
+
   // Update the current operation type.
   mOperationType = aOperationType;
   if (aMediaList) {
@@ -143,6 +144,8 @@ sbDeviceStatusHelper::OperationStart(sbDeviceStatusHelper::Operation aOperationT
   mItemNum = aItemNum;
   mItemCount = aItemCount;
   mItemType = aItemType;
+
+  mStatus->SetIsNewBatch(true);
 
   // Dispatch operation dependent status processing.
   switch (mOperationType)
@@ -181,6 +184,9 @@ sbDeviceStatusHelper::OperationStart(sbDeviceStatusHelper::Operation aOperationT
                    aItemCount,
                    0.0,
                    aItemType);
+      mDevice->CreateAndDispatchEvent
+                 (sbIDeviceEvent::EVENT_DEVICE_TRANSCODE_START,
+                  sbNewVariant(mMediaItem));
       break;
 
     case OPERATION_TYPE_DELETE :
@@ -739,7 +745,6 @@ sbDeviceStatusHelper::UpdateStatus(const nsAString& aOperation,
 
   return NS_OK;
 }
-
 
 //------------------------------------------------------------------------------
 //

@@ -555,8 +555,13 @@ var DPW = {
       this._lastTimeLeft = Infinity;
     }
 
-    var now = new Date();
-    var etaString;
+    if (deviceStatus.isNewBatch)
+    {
+//       dump("==> New Batch!\n");
+      deviceStatus.isNewBatch = false;
+    }
+
+    var eta, etaString;
 
     // Update the operation progress meter.
     if (operationInfo.progressMeterDetermined) {
@@ -574,16 +579,18 @@ var DPW = {
       if (curItemIndex != 0)
         progress += (this._itemProgress.intValue / 100) / totalItems;
 
-      if (progress > this._lastProgress)
-        this._lastProgress = progress;
-      else
-        progress = this._lastProgress;
-
-      if (progress > 0)
+      if (progress > 0.05) // 5%
       {
-        var eta = (duration / progress) - duration;
+        if (progress > this._lastProgress)
+          this._lastProgress = progress;
+        else
+          progress = this._lastProgress;
+
+        eta = (duration / progress) - duration;
         etaString = TimeFormatter.formatHMS(eta / 1000);
       }
+      else
+        this._lastProgress = progress;
 
       // Set the progress meter to determined.
       this._progressMeter.setAttribute("mode", "determined");
@@ -598,7 +605,9 @@ var DPW = {
     }
 
 //     var now = new Date().valueOf();
-//     dump("==> "+ now +": "+ operationInfo.localeSuffix +" "+
+//     dump("==> "+ now +": "+
+//          operationInfo.localeSuffix +"+"+
+//          this._getOperationInfo(substate).localeSuffix +" "+
 //          curItemIndex +"/"+ totalItems +".  "+
 //          this._itemProgress.intValue +"% of this item, "+
 //          Math.round(progress * 10000) / 100 +"% in total.  "+
@@ -608,7 +617,6 @@ var DPW = {
 
     var itemType = this._getItemType();
     // Determine if this is a playlist
-    var deviceStatus = this._device.currentStatus;
     var isPlaylist = deviceStatus.mediaItem instanceof Ci.sbIMediaList;
     
     // If we're preparing to sync (indicated by an idle sub)
@@ -631,7 +639,7 @@ var DPW = {
         localeKey = "device.status.progress_header_deleting";
       }
       else {
-        localKey = "device.status.progress_header_syncing";
+        localeKey = "device.status.progress_header_syncing";
         subLocaleKey = "device.status.progress_footer_syncing_finishing";
       }
     } else if (operation == Ci.sbIDevice.STATE_SYNCING &&
