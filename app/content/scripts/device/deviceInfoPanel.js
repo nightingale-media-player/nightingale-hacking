@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -319,7 +319,7 @@ var DIPW = {
           this._panelBar.animateOut();
         this._lastOperation = state;
         break;
-        
+
       case Ci.sbIDevice.STATE_IMAGESYNC_PREPARING:
         this._lastOperation = state;
         break;
@@ -385,7 +385,7 @@ var DIPW = {
           completeAudio = true;
           completeVideo = true;
         }
-        
+
         if (completeAudio) {
           if (this._findMediaInfoPanel("audio")) {
             this._updateMediaInfoPanelState("audio",
@@ -402,10 +402,10 @@ var DIPW = {
         }
 
         // Make sure we are visible
-        if (this._itemType.intValue && 
+        if (this._itemType.intValue &&
             !this._panelBar.isShown)
           this._panelBar.animateIn();
-        
+
         // - Set last operation when itemType is 0 (!= audio|video|image). This
         //   is necessary for cases that IDLE follows SYNCING_TYPE.
         //   If _itemType == 0, the sync will complete for the following IDLE.
@@ -494,7 +494,7 @@ var DIPW = {
             case Ci.sbIDevice.STATE_DELETING:
               break;
             default:
-              for each (let type in ["audio", "video", "none"]) {
+              for each (let type in ["audio", "video", "image", "none"]) {
                 if (this._checkForDeviceErrors(type)) {
                   this._updateMediaInfoPanelState(type, state, false);
                   // Make sure we are visible
@@ -505,7 +505,7 @@ var DIPW = {
               return;
           }
         }
-        
+
         if (this._lastUpdateTimeout)
           break;
 
@@ -542,7 +542,7 @@ var DIPW = {
         }
 
         this._lastUpdateTimeout = setTimeout(_onLastUpdate, 1000, this);
-        
+
         break;
 
       default:

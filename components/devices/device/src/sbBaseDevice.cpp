@@ -5591,6 +5591,36 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem*                  aMediaItem,
 
   nsresult rv;
 
+  // Handle image media items using file extensions.
+  nsString contentType;
+  rv = aMediaItem->GetContentType(contentType);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (contentType.Equals(NS_LITERAL_STRING("image"))) {
+    // Get the media item file extension.
+    nsCString        sourceFileExtension;
+    nsCOMPtr<nsIURI> sourceURI;
+    rv = aMediaItem->GetContentSrc(getter_AddRefs(sourceURI));
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<nsIFileURL> sourceFileURL = do_QueryInterface(sourceURI, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = sourceFileURL->GetFileExtension(sourceFileExtension);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the list of file extensions supported by the device.
+    nsTArray<nsString> fileExtensionList;
+    rv = sbDeviceUtils::AddSupportedFileExtensions
+                          (this,
+                           sbIDeviceCapabilities::CONTENT_IMAGE,
+                           fileExtensionList);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Item is supported if its file extension is supported.
+    *_retval = fileExtensionList.Contains
+                                   (NS_ConvertUTF8toUTF16(sourceFileExtension));
+
+    return NS_OK;
+  }
+
   if (sbDeviceUtils::IsItemDRMProtected(aMediaItem)) {
     rv = SupportsMediaItemDRM(aMediaItem, aReportErrors, _retval);
     NS_ENSURE_SUCCESS(rv, rv);

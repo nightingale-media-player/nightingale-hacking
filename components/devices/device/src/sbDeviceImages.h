@@ -65,6 +65,21 @@ public:
                       PRBool recursive,
                       nsIArray **retImageArray);
 
+  // Create and return in aMediaItem a temporary media item for the local file
+  // represented by aImage.
+  nsresult CreateTemporaryLocalMediaItem(sbIDeviceImage* aImage,
+                                         sbIMediaItem** aMediaItem);
+
+  // Create an nsIFile for an sbIDeviceImage item given the base image sync
+  // directory. The function can automatically create the needed subdirectories
+  // in which the file will reside, or to create a file object pointing at the
+  // file's parent directory rather than at the file itself.
+  nsresult MakeFile(sbIDeviceImage* aImage,
+                    nsIFile*        aBaseDir,
+                    PRBool          aWithFilename,
+                    PRBool          aCreateDirectories,
+                    nsIFile**       retFile);
+
 private:
   // ctor
   sbDeviceImages(sbBaseDevice * aBaseDevice);

@@ -1,28 +1,28 @@
+/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #ifndef __SBSTRINGUTILS_H__
 #define __SBSTRINGUTILS_H__
@@ -336,6 +336,48 @@ S sbAppendStringArray(S & aTarget,
                       T const & aStringArray)
 {
   return sbAppendStringArray(aTarget, aSeparator, aStringArray, sbAppendStringArrayDefaultExtractor<S>);
+}
+
+
+/**
+ * Append the strings in the string enumerator specified by aEnumerator to the
+ * string array specified by aStringArray.
+ *
+ * \param aStringArray          String array to which to append.
+ * \param aEnumerator           Source string enumerator.
+ *
+ * Example:
+ *
+ *   nsTArray<nsString> stringArray;
+ *   nsCOMPtr<nsIStringEnumerator> stringEnumerator = GetStringEnumerator();
+ *   sbAppendStringEnumerator(stringArray, stringEnumerator);
+ */
+template <class StringType, class EnumeratorType>
+inline nsresult
+sbAppendStringEnumerator(StringType&     aStringArray,
+                         EnumeratorType* aEnumerator)
+{
+  NS_ENSURE_ARG_POINTER(aEnumerator);
+
+  // Append all elements from the enumerator.
+  nsresult rv;
+  while (1) {
+    // Check if the enumerator has any more elements.
+    PRBool hasMore;
+    rv = aEnumerator->HasMore(&hasMore);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!hasMore)
+      break;
+
+    // Append the enumerator element to the array.
+    typename StringType::elem_type stringElement;
+    rv = aEnumerator->GetNext(stringElement);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(aStringArray.AppendElement(stringElement),
+                   NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  return NS_OK;
 }
 
 #endif /* __SBSTRINGUTILS_H__ */
