@@ -636,7 +636,13 @@ FeathersManager.prototype = {
     
     this._previousLayoutDataRemote = createDataRemote("feathers.previousLayout", null);
     this._previousSkinDataRemote = createDataRemote("feathers.previousSkin", null);
-    
+
+    // Check to make sure we have a skin set; if not, then set the current
+    // skin to be the default skin.  If we don't have a default skin, then
+    // we'll really fubar'd.  (bug 20528)
+    if (!this.currentSkinName) {
+      this._skinDataRemote.stringValue = this._defaultSkinName;
+    }
     // TODO: Rename accessibility.enabled?
     this._showChromeDataRemote = createDataRemote("accessibility.enabled", null);
     
