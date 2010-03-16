@@ -174,6 +174,27 @@ fi
 AC_SUBST(SB_UPDATE_CHANNEL)
 
 #
+# Check for --with-deadly-warnings
+#
+
+SB_WITH_DEADLY_WARNINGS=
+
+AC_ARG_WITH(deadly-warnings,
+            [  --with-deadly-warnings=<debug,release,all,none,force>,conditions under which compiler warnings are considered build failures (default=release)],
+            [ SB_WITH_DEADLY_WARNINGS=$withval ],
+            [ SB_WITH_DEADLY_WARNINGS=release])
+
+case "$SB_WITH_DEADLY_WARNINGS" in
+  debug|release|all|none|force)
+  ;;
+  *)
+    AC_MSG_ERROR([Unknown --with-deadly warnings option; use debug, release, all, none, or force])
+  ;;
+esac
+
+AC_SUBST(SB_WITH_DEADLY_WARNINGS)
+
+#
 # Check for --with-songbird-extensions
 #
 

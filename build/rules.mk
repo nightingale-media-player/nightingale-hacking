@@ -62,6 +62,23 @@ else
    OUR_SUBDIRS = $(SUBDIRS)
 endif
 
+#
+# Deal with all the various configurations of compiler warnings being deadly
+#
+# Deafult is nothing; takes care of the "none" case as well...
+
+CFLAGS_DEADLY_WARNINGS = $(NULL)
+
+ifeq (debug_1,$(SB_WITH_DEADLY_WARNINGS)_$(DEBUG))
+   CFLAGS_DEADLY_WARNINGS = $(CFLAGS_WARNING_IS_ERROR)
+endif
+ifeq (release_,$(SB_WITH_DEADLY_WARNINGS)_$(DEBUG))
+   CFLAGS_DEADLY_WARNINGS = $(CFLAGS_WARNING_IS_ERROR)
+endif
+ifneq (,$(filter all force,$(SB_WITH_DEADLY_WARNINGS)))
+   CFLAGS_DEADLY_WARNINGS = $(CFLAGS_WARNING_IS_ERROR)
+endif
+
 # Right now this system is not compatible with parallel make.
 .NOTPARALLEL: all clean libs export
 
@@ -473,11 +490,13 @@ else
    ifeq (macosx,$(SB_PLATFORM))
       OUR_CPP_FLAGS += -isysroot $(SB_MACOSX_SDK)
    endif
-   ifeq (,$(DEBUG))
-      ifeq (,$(DISABLE_DEADLY_WARNINGS))
-         OUR_CPP_FLAGS += $(CFLAGS_WARNING_IS_ERROR)
-      endif
+   ifeq (,$(DISABLE_DEADLY_WARNINGS))
+      OUR_CPP_FLAGS += $(CFLAGS_DEADLY_WARNINGS)
    endif
+endif
+
+ifeq (force,$(SB_WITH_DEADLY_WARNINGS))
+   OUR_CPP_FLAGS += $(CFLAGS_DEADLY_WARNINGS)
 endif
 
 ifdef CPP_DEFS
@@ -536,11 +555,13 @@ else
    ifeq (macosx,$(SB_PLATFORM))
       OUR_CMM_FLAGS += -isysroot $(SB_MACOSX_SDK)
    endif
-   ifeq (,$(DEBUG))
-      ifeq (,$(DISABLE_DEADLY_WARNINGS))
-         OUR_CMM_FLAGS += $(CFLAGS_WARNING_IS_ERROR)
-      endif
+   ifeq (,$(DISABLE_DEADLY_WARNINGS))
+      OUR_CMM_FLAGS += $(CFLAGS_DEADLY_WARNINGS)
    endif
+endif
+
+ifeq (force,$(SB_WITH_DEADLY_WARNINGS))
+   OUR_CMM_FLAGS += $(CFLAGS_DEADLY_WARNINGS)
 endif
 
 ifdef CMM_DEFS
@@ -599,11 +620,13 @@ else
    ifeq (macosx,$(SB_PLATFORM))
       OUR_C_FLAGS += -isysroot $(SB_MACOSX_SDK)
    endif
-   ifeq (,$(DEBUG))
-      ifeq (,$(DISABLE_DEADLY_WARNINGS))
-         OUR_C_FLAGS += $(CFLAGS_WARNING_IS_ERROR)
-      endif
+   ifeq (,$(DISABLE_DEADLY_WARNINGS))
+      OUR_C_FLAGS += $(CFLAGS_DEADLY_WARNINGS)
    endif
+endif
+
+ifeq (force,$(SB_WITH_DEADLY_WARNINGS))
+   OUR_C_FLAGS += $(CFLAGS_DEADLY_WARNINGS)
 endif
 
 ifdef C_DEFS
