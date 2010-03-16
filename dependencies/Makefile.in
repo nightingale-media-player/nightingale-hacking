@@ -509,16 +509,13 @@ include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
 #  SONGBIRD_EXTENSIONSDIR
 #
 # We are explicit about which XR extensions we "ship", namely
-#   DOM inspector
-#   venkman
+#   none right now
 #
 # We delete all other extensions, and we _ALWAYS_ delete for release builds; 
 # see bug 17874
 #
 
-XULRUNNER_SHIPPED_EXTENSIONS = inspector@mozilla.org \
-                               {f13b157f-b174-47e7-a34d-4815ddfdfeb8} \
-                               $(NULL)
+XULRUNNER_SHIPPED_EXTENSIONS = $(NULL)
 
 XULRUNNER_EXTENSION_ROOTDIR = $(SONGBIRD_XULRUNNERDIR)/extensions
 
@@ -534,9 +531,11 @@ SONGBIRD_XR_EXTENSIONS = $(foreach e, \
 export::
 	$(TAR) -j -x -p -f $(XULRUNNER_DIR)/xulrunner.tar.bz2 -C $(SONGBIRD_XULRUNNERDIR)
 	$(RM) -r $(SONGBIRD_XR_EXTENSIONS)
-ifneq (1,$(SONGBIRD_OFFICIAL))
-	$(MV) $(XULRUNNER_EXTENSION_DIRS) $(SONGBIRD_EXTENSIONSDIR)
-endif 
+ifneq (,$(XULRUNNER_EXTENSION_DIRS))
+	ifneq (1,$(SONGBIRD_OFFICIAL))
+		$(MV) $(XULRUNNER_EXTENSION_DIRS) $(SONGBIRD_EXTENSIONSDIR)
+	endif 
+endif
 	$(RM) -r $(XULRUNNER_EXTENSION_ROOTDIR)
 
 libs::
