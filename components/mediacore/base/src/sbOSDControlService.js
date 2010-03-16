@@ -55,15 +55,26 @@ function sbOSDControlService()
   this._cloakService = Cc["@songbirdnest.com/Songbird/WindowCloak;1"]
                          .getService(Ci.sbIWindowCloak);
   this._timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
+
+  // Ask the window chrome service (if available) if it supports window
+  // composition to enable transparent graphics for the OSD.
+  this._useTransparentGraphics = true;
+  if ("@songbirdnest.com/Songbird/WindowChromeService;1" in Cc) {
+    var winChromeService =
+      Cc["@songbirdnest.com/Songbird/WindowChromeService;1"]
+        .getService(Ci.sbIWindowChromeService);
+    this._useTransparentGraphics = winChromeService.isCompositionEnabled;
+  }
 }
 
 sbOSDControlService.prototype =
 {
-  _videoWindow:           null,
-  _osdWindow:             null,
-  _cloakService:          null,
-  _timer:                 null,
-  _osdControlsShowing:    false,
+  _videoWindow:            null,
+  _osdWindow:              null,
+  _cloakService:           null,
+  _timer:                  null,
+  _osdControlsShowing:     false,
+  _useTransparentGraphics: false,
   
   _videoWinHasFocus:      false,
   _osdWinHasFocus:        false,
@@ -99,6 +110,17 @@ sbOSDControlService.prototype =
     this._osdWindow.resizeTo(newOSDWidth, OSD_HEIGHT);
   },
 
+  _setOSDGraphics: function() {
+    // Use the altenate graphic set if the current enviroment can't handle
+    // transparent PNG files.
+    if (!this._useTransparentGraphics) {
+      var doc = this._osdWindow.document.documentElement;
+      var classes = doc.className.split(/\s+/);
+      classes.push("alt");
+      doc.className = classes.join(" ");
+    }
+  },
+
   //----------------------------------------------------------------------------
   // sbIOSDControlService
 
@@ -113,6 +135,8 @@ sbOSDControlService.prototype =
         "chrome,dependent,modal=no,titlebar=no",
         null);
     this._osdWindow.QueryInterface(Ci.nsIDOMWindowInternal);
+
+    this._setOSDGraphics();
 
     // Cloak the window right now.
     this._cloakService.cloak(this._osdWindow);
@@ -156,6 +180,12 @@ sbOSDControlService.prototype =
     this._osdWinKeypressListener = function(aEvent) {
       self._onOSDWinKeypress(aEvent);
     };
+    this._osdWinLoadListener = function(aEvent) {
+      self._setOSDGraphics();
+    };
+    this._osdWindow.addEventListener("load",
+                                     this._osdWinLoadListener,
+                                     false);
     this._osdWindow.addEventListener("blur",
                                      this._osdWinBlurListener,
                                      false);
@@ -199,6 +229,9 @@ sbOSDControlService.prototype =
     }
     
     this._timer.cancel();
+    this._osdWindow.removeEventListener("load",
+                                        this._osdWinLoadListener,
+                                        false);
     this._osdWindow.removeEventListener("blur",
                                         this._osdWinBlurListener,
                                         false);

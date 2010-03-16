@@ -118,6 +118,15 @@ NS_IMETHODIMP sbWindowChromeService::HideChrome(nsISupports *aWindow,
   return NS_OK;
 }
 
+/* readonly attribute boolean isCompositionEnabled; */
+NS_IMETHODIMP
+sbWindowChromeService::GetIsCompositionEnabled(PRBool *aIsCompositionEnabled)
+{
+  NS_ENSURE_ARG_POINTER(aIsCompositionEnabled);
+  *aIsCompositionEnabled = IsCompositionEnabled(this);
+  return NS_OK;
+}
+
 /* static */
 LRESULT
 sbWindowChromeService::WndProc(HWND hWnd,
