@@ -68,24 +68,11 @@ static PRLogModuleInfo* gGStreamerPlatformOSX =
  */
 @interface NSView (GStreamerPlatformOSX)
 
-- (void)lockAddSubview:(NSView *)aView;
-
 - (void)setFrameAsString:(NSString *)aString;
 
 @end
 
 @implementation NSView (GStreamerPlatformOSX)
-
-- (void)lockAddSubview:(NSView *)aView
-{
-  if ([self lockFocusIfCanDraw]) {
-    [self addSubview:aView];
-    [self unlockFocus];
-  }
-  else {
-    NS_WARNING("XXX Could not lock focus of the video view!");
-  }
-}
 
 - (void)setFrameAsString:(NSString *)aString
 {
@@ -283,7 +270,7 @@ OSXPlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
   // Now, we want to set this view as a subview of the NSView we have
   // as our window-for-displaying-video. Don't do this from a non-main
   // thread, though!
-  [parentView performSelectorOnMainThread:@selector(lockAddSubview:)
+  [parentView performSelectorOnMainThread:@selector(addSubview:)
                                withObject:view
                             waitUntilDone:YES];
 
@@ -388,11 +375,13 @@ void OSXPlatformInterface::RemoveView()
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     NSView *view = (NSView *)mVideoView;
-    mVideoView = NULL;
+    if (view) {
+      [view performSelectorOnMainThread:@selector(removeFromSuperviewWithoutNeedingDisplay)
+                             withObject:nil
+                          waitUntilDone:YES];
+    }
 
-    // Remove the old view, if there was one.
-    [view performSelectorOnMainThread:@selector(removeFromSuperviewWithoutNeedingDisplay) withObject:nil waitUntilDone:YES];
-
+    mVideoView = nsnull;
     [pool release];
   }
 }
