@@ -44,8 +44,8 @@ include $(topsrcdir)/build/tiers.mk
 # Provide working dependencies for the Mac vendor-binaries bits we use in the
 # build
 ifeq (macosx,$(SB_PLATFORM))
-  SB_DYLD_LIBRARY_PATH = $(DEPS_DIR)/libIDL/$(SB_CONFIGURATION)/lib:$(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib:$(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/lib
-  export DYLD_LIBRARY_PATH = $(SB_DYLD_LIBRARY_PATH)
+   SB_DYLD_LIBRARY_PATH = $(DEPS_DIR)/libIDL/$(SB_CONFIGURATION)/lib:$(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib:$(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/lib
+   export DYLD_LIBRARY_PATH = $(SB_DYLD_LIBRARY_PATH)
 endif
 
 # Since public, src, and test are directories used throughout the tree
