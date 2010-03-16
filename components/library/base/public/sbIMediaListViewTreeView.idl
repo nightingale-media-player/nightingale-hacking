@@ -34,6 +34,7 @@
 interface nsISimpleEnumerator;
 interface nsITreeColumn;
 interface sbIMediaItem;
+interface nsIDOMDataTransfer;
 
 /**
  * \interface sbIMediaListViewTreeViewObserver
