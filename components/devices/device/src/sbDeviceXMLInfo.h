@@ -145,6 +145,17 @@ public :
                            nsAString& aFolderURL);
 
   /**
+   * Return in aMountTimeout the mount timeout value in seconds.  If no mount
+   * timeout value is available, return NS_ERROR_NOT_AVAILABLE.
+   *
+   * \param aMountTimeout       Returned mount timeout value.
+   *
+   * \return NS_ERROR_NOT_AVAILABLE
+   *                            Mount timeout value not available.
+   */
+  nsresult GetMountTimeout(PRUint32* aMountTimeout);
+
+  /**
    * Construct a Songbird device XML info object to be used for the device
    * specified by aDevice.
    *
