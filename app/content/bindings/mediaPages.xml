@@ -1,29 +1,27 @@
 <?xml version="1.0"?>
 <!--
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 -->
 
@@ -87,8 +85,13 @@
               // Set the given media page as the default for the current list
               var mgr = Cc["@songbirdnest.com/Songbird/MediaPageManager;1"]
                                 .getService(Ci.sbIMediaPageManager);
+              var LSP = Cc["@songbirdnest.com/servicepane/library;1"]
+                          .getService(Ci.sbILibraryServicePaneService);
+              var type = LSP.getNodeContentTypeFromMediaListView(
+                               gBrowser.currentMediaPage.mediaListView);
               mgr.setPage(gBrowser.currentMediaPage.mediaListView.mediaList,
-                          item.mediaPage);
+                          item.mediaPage,
+                          type);
                       
               // Reload using the new page
               gBrowser.loadMediaList(
@@ -489,21 +492,28 @@
                                     "anonid", "mediapages-button-filterview");
           var others = document.getAnonymousElementByAttribute(this,
                                     "anonid", "mediapages-other");
+          var LSP = Cc["@songbirdnest.com/servicepane/library;1"]
+                      .getService(Ci.sbILibraryServicePaneService);
+          var type = LSP.getNodeContentTypeFromMediaListView(
+                           gBrowser.currentMediaPage.mediaListView);
           switch (viewName) {
             case "listview":
               this.setButtonToggle(viewName);
               mgr.setPage(gBrowser.currentMediaPage.mediaListView.mediaList,
-                          this.listView);
+                          this.listView,
+                          type);
               break;
             case "filterview":
               this.setButtonToggle(viewName);
               mgr.setPage(gBrowser.currentMediaPage.mediaListView.mediaList,
-                          this.filterView);
+                          this.filterView,
+                          type);
               break;
             default:
               this.setButtonToggle(viewName);
               mgr.setPage(gBrowser.currentMediaPage.mediaListView.mediaList,
-                          this._pageIdMapping[viewName]);
+                          this._pageIdMapping[viewName],
+                          type);
           }
 
           // Reload using the new page

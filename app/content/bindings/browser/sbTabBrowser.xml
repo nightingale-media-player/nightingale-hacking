@@ -6,29 +6,29 @@
 ]
 >
 <!--
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 -->
 
 <bindings
@@ -43,12 +43,12 @@
           <![CDATA[
         window.gBrowser = this;
 
-        Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
-        Components.utils.import("resource://app/jsmodules/kPlaylistCommands.jsm");
-        Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
-        Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
-        Components.utils.import("resource://app/jsmodules/XPCOMUtils.jsm");
-        Components.utils.import("resource://app/jsmodules/URLUtils.jsm");
+        Cu.import("resource://app/jsmodules/sbProperties.jsm");
+        Cu.import("resource://app/jsmodules/kPlaylistCommands.jsm");
+        Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+        Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
+        Cu.import("resource://app/jsmodules/XPCOMUtils.jsm");
+        Cu.import("resource://app/jsmodules/URLUtils.jsm");
 
         // we moved the strip container to the tabs binding
         // this must happen before the addProgressListener call below to properly
@@ -69,14 +69,14 @@
          * and to set various data remotes on location change, such as toolbar
          * button states and setting <sb-tabbrowser>.loading
          */
-        var subscriptLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
-                                        .getService(Components.interfaces.mozIJSSubScriptLoader);
+        var subscriptLoader = Cc["@mozilla.org/moz/jssubscript-loader;1"]
+                                .getService(Ci.mozIJSSubScriptLoader);
         var scope = {};
         subscriptLoader.loadSubScript("chrome://songbird/content/bindings/browser/SBTabProgressListener.js", scope);
         this.webProgressListener = new scope.SBTabProgressListener(this);
         this.addProgressListener(this.webProgressListener,
-            Components.interfaces.nsIWebProgress.NOTIFY_LOCATION |
-            Components.interfaces.nsIWebProgress.NOTIFY_STATE_ALL);
+                                 Ci.nsIWebProgress.NOTIFY_LOCATION |
+                                 Ci.nsIWebProgress.NOTIFY_STATE_ALL);
 
         this.loading = false;
         
@@ -140,7 +140,7 @@
             // If we're stopped, then we need to stash whatever the user is looking at
             // so that the next view to load will use the same thing.
             if (this.tabbrowser.mm.status.state == 
-                Components.interfaces.sbIMediacoreStatus.STATUS_STOPPED) {
+                Ci.sbIMediacoreStatus.STATUS_STOPPED) {
             
               // If the current tab has a view then stash that.
               if (this.tabbrowser.mCurrentTab.mediaListView && 
@@ -172,12 +172,12 @@
         // tell appshell how to open new tabs (sb bug 3757)
         scope = {};
         subscriptLoader.loadSubScript("chrome://songbird/content/bindings/browser/BrowserDOMWindow.js", scope);
-        window.QueryInterface(Components.interfaces.nsIDOMChromeWindow).browserDOMWindow =
+        window.QueryInterface(Ci.nsIDOMChromeWindow).browserDOMWindow =
           new scope.BrowserDOMWindow(this);
 
         this.selectedBrowser.webNavigation.sessionHistory =
-            Components.classes["@mozilla.org/browser/shistory;1"]
-            .createInstance(Components.interfaces.nsISHistory);
+            Cc["@mozilla.org/browser/shistory;1"]
+              .createInstance(Ci.nsISHistory);
         this.browsers[0].removeAttribute("disablehistory");
 
         // add a service pane listener to keep in sync with changes there
@@ -185,8 +185,8 @@
         // they should be retitled.
         var self = this;
         this._servicePaneService = 
-            Components.classes['@songbirdnest.com/servicepane/service;1']
-            .getService(Components.interfaces.sbIServicePaneService);
+              Cc['@songbirdnest.com/servicepane/service;1']
+                .getService(Ci.sbIServicePaneService);
         this._servicePaneService.init(); // TODO: make service pane init itself
         this._servicePaneListener = {
           nodePropertyChanged: function(aNodeId, aPropertyName) {
@@ -215,13 +215,12 @@
         }
         this._servicePaneService.addListener(this._servicePaneListener);
         
-        this.mm = 
-          Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
-                    .getService(Components.interfaces.sbIMediacoreManager);
+        this.mm = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                    .getService(Ci.sbIMediacoreManager);
                     
         this.typeSniffer = 
-          Components.classes["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
-                    .createInstance(Components.interfaces.sbIMediacoreTypeSniffer);
+              Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+                .createInstance(Ci.sbIMediacoreTypeSniffer);
 
         // Add a observer to listen for shutdown to save tab state.
         var shutdownListener = {
@@ -256,7 +255,7 @@
         window.removeEventListener('unload', this.windowUnloadEventListener, true);
 
         window.removeEventListener("remoteapi", this.onRemoteAPI, true);
-        window.QueryInterface(Components.interfaces.nsIDOMChromeWindow)
+        window.QueryInterface(Ci.nsIDOMChromeWindow)
               .browserDOMWindow = null;
               
         this.mm = null;
@@ -294,8 +293,8 @@
                 // in case the URI is not ASCII.
                 try {
                   var characterSet = browser.contentDocument.characterSet;
-                  const textToSubURI = Components.classes["@mozilla.org/intl/texttosuburi;1"]
-                                                 .getService(Components.interfaces.nsITextToSubURI);
+                  const textToSubURI = Cc["@mozilla.org/intl/texttosuburi;1"]
+                                         .getService(Ci.nsITextToSubURI);
                   title = textToSubURI.unEscapeNonAsciiURI(characterSet, title);
                 } catch(ex) { /* Do nothing. */ }
 
@@ -383,7 +382,7 @@
             if (aURI && aURI.indexOf &&
                 aURI.indexOf("chrome://songbird/content/xul/sbLibraryPage.xul") == 0)
             {
-              Components.utils.reportError("TabBrowser.loadURI was called for" +
+              Cu.reportError("TabBrowser.loadURI was called for" +
                     " sbLibraryPage.xul! Use gBrowser.loadMediaList instead.");
                     
               this.loadMediaList(LibraryUtils.mainLibrary, aEvent, 
@@ -405,10 +404,9 @@
               aReferrerURI = null;
             } else {
               if (typeof(aReferrerURI) == 'string') {
-                aReferrerURI = (Components
-                    .classes["@mozilla.org/network/io-service;1"]
-                    .getService(Components.interfaces.nsIIOService)
-                    .newURI(aReferrerURI, aCharset, null));
+                aReferrerURI = (Cc["@mozilla.org/network/io-service;1"]
+                                  .getService(Ci.nsIIOService)
+                                  .newURI(aReferrerURI, aCharset, null));
               }
             }
 
@@ -462,13 +460,13 @@
         <parameter name="aLoadInBackground"/>
         <body>
           <![CDATA[
-            var pageURL = this._getMediaPageURL(aMediaListView.mediaList, aPageURL);
+            var pageURL = this._getMediaPageURL(aMediaListView, aPageURL);
             var bgLoad = (aLoadInBackground != null) ? aLoadInBackground :
                           this.mPrefs.getBoolPref("browser.tabs.loadInBackground");
-            const sbIMediaListView = Components.interfaces.sbIMediaListView;
+            const sbIMediaListView = Ci.sbIMediaListView;
             if (!aMediaListView || !(aMediaListView instanceof sbIMediaListView)) {
-              Components.utils.reportError(new Exception('Attempting to load invalid media list view',
-                                                         Components.results.NS_ERROR_INVALID_ARG));
+              Cu.reportError(new Exception('Attempting to load invalid media list view',
+                                           Cr.NS_ERROR_INVALID_ARG));
               var url = "about:neterror?e=malformedURI&u=" + encodeURIComponent(aPageURL);
               if (aTab) {
                 aTab.linkedBrowser.loadURIWithFlags(url, aFlags);
@@ -509,7 +507,7 @@
           <![CDATA[
             var tab = aTab;
             if (!aFlags) {
-              aFlags = Components.interfaces.nsIWebNavigation.LOAD_FLAGS_NONE;
+              aFlags = Ci.nsIWebNavigation.LOAD_FLAGS_NONE;
             }
             var bgLoad = (aLoadInBackground != null) ? aLoadInBackground :
                           this.mPrefs.getBoolPref("browser.tabs.loadInBackground");
@@ -529,35 +527,50 @@
       </method>
       
       <!-- Get the media page URL for a media list
-           @param aMediaList the media list to look up
-           @param aPageURL [optional] a suggested URL
+           @param aMediaListView the media list View to look up
+           @param aPageURL       [optional] a suggested URL
+           @param aConstraints   [optional] A constrain used as an additional
+                                            matching criteria
         -->
       <method name="_getMediaPageURL">
-        <parameter name="aMediaList"/>
+        <parameter name="aMediaListView"/>
         <parameter name="aPageURL"/>
         <parameter name="aConstraints"/>
         <body>
           <![CDATA[
-            var mgr = Components.classes["@songbirdnest.com/Songbird/MediaPageManager;1"]
-                                .getService(Components.interfaces.sbIMediaPageManager);
+            var mgr = Cc["@songbirdnest.com/Songbird/MediaPageManager;1"]
+                        .getService(Ci.sbIMediaPageManager);
             
             var pageURL = null;
+            var mediaList = null;
+            if (aMediaListView instanceof Ci.sbIMediaListView) {
+              mediaList = aMediaListView.mediaList;
+            }
+            else if (aMediaListView instanceof Ci.sbIMediaList) {
+              // Fallback for obsolete API
+              mediaList = aMediaListView;
+            }
 
             // If a page URL was provided, confirm that it is allowed for this medialist
             if (aPageURL) {
               var found = false;
-              for each (var page in ArrayConverter.JSArray(mgr.getAvailablePages(aMediaList))) {
-                page.QueryInterface(Components.interfaces.sbIMediaPageInfo);
+              for each (var page in ArrayConverter.JSEnum(
+                                        mgr.getAvailablePages(mediaList))) {
+                page.QueryInterface(Ci.sbIMediaPageInfo);
                 if (aPageURL.indexOf(page.contentUrl) == 0) {
                   pageURL = aPageURL;
                   break;
                 }
               }
             }
-            
+
+            var LSP = Cc["@songbirdnest.com/servicepane/library;1"]
+                        .getService(Ci.sbILibraryServicePaneService);
+            var type = LSP.getNodeContentTypeFromMediaListView(aMediaListView);
+
             // If no URL, get the default from the page manager
             if (!pageURL) {
-              var page = mgr.getPage(aMediaList, aConstraints);
+              var page = mgr.getPage(mediaList, aConstraints, type);
               pageURL = page.contentUrl;
             }
             
@@ -571,8 +584,8 @@
               } else {
                 pageURL += "?";
               }
-              pageURL += "libraryGUID=" + escape(aMediaList.library.guid) +
-                         "&listGUID=" + escape(aMediaList.guid);
+              pageURL += "libraryGUID=" + escape(mediaList.library.guid) +
+                         "&listGUID=" + escape(mediaList.guid);
             }
 
             return pageURL;
@@ -615,11 +628,14 @@
           <![CDATA[
             // If we weren't passed a view, create one
             if (aMediaListView == null) {
-              aMediaListView = LibraryUtils.createStandardMediaListView(aMediaList);
+              aMediaListView =
+                LibraryUtils.createStandardMediaListView(aMediaList);
             }
 
             if (!aForcePageURL) {
-              aPageURL = this._getMediaPageURL(aMediaList, aPageURL, aMediaListView.filterConstraint);
+              aPageURL = this._getMediaPageURL(aMediaListView,
+                                               aPageURL,
+                                               aMediaListView.filterConstraint);
             }
 
             // if no default location specified, load in the media tab (if available)
@@ -810,15 +826,15 @@
               foundItem: null,
               onEnumerationBegin: function onEnumerationBegin() {
                 if (this.foundItem) {
-                  return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
+                  return Ci.sbIMediaListEnumerationListener.CANCEL;
                 }
                 else {
-                  return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
+                  return Ci.sbIMediaListEnumerationListener.CONTINUE;
                 }
               },
               onEnumeratedItem: function onEnumeratedItem(list, item) {
                 this.foundItem = item;
-                return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
+                return Ci.sbIMediaListEnumerationListener.CANCEL;
               },
               onEnumerationEnd: function onEnumerationEnd() {
               }
@@ -869,9 +885,8 @@
           var tab = this.selectedTab;
           try
           {
-            var ioService =
-              Components.classes["@mozilla.org/network/io-service;1"]
-                        .getService(Components.interfaces.nsIIOService);
+            var ioService = Cc["@mozilla.org/network/io-service;1"]
+                              .getService(Ci.nsIIOService);
             var uri;
             try {
               uri = ioService.newURI(aURL, null, null);
@@ -892,14 +907,14 @@
                 library = LibraryUtils.webLibrary;
               }
               else {
-                library = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                          .getService(Components.interfaces.sbILibraryManager).mainLibrary;
+                library = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                            .getService(Ci.sbILibraryManager).mainLibrary;
               }
 
               // Check to see if this playlist already exists
               var propertyArray =
-                Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-                          .createInstance(Components.interfaces.sbIMutablePropertyArray);
+                Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                  .createInstance(Ci.sbIMutablePropertyArray);
               propertyArray.appendProperty(SBProperties.isList, "1");
               propertyArray.appendProperty(SBProperties.originURL, uri.spec);
 
@@ -909,7 +924,7 @@
                 },
                 onEnumeratedItem: function(list, item) {
                   this.item = item;
-                  return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
+                  return Ci.sbIMediaListEnumerationListener.CANCEL;
                 },
                 onEnumerationEnd: function() {
                 }
@@ -948,11 +963,11 @@
               }
 
               var playlistReaderManager =
-                Components.classes["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
-                          .getService(Components.interfaces.sbIPlaylistReaderManager);
+                Cc["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
+                  .getService(Ci.sbIPlaylistReaderManager);
               var playlistReaderListener =
-                Components.classes["@songbirdnest.com/Songbird/PlaylistReaderListener;1"]
-                          .createInstance(Components.interfaces.sbIPlaylistReaderListener);
+                Cc["@songbirdnest.com/Songbird/PlaylistReaderListener;1"]
+                  .createInstance(Ci.sbIPlaylistReaderListener);
 
               // Create this closure here to prevent this object from getting garbage
               // collected too soon.  The playlist reader uses the nsIWebBrowserPersist
@@ -965,20 +980,20 @@
                   if (aTopic.indexOf("error") != -1) {
                     // If we get an error parsing a page we thought was a 
                     // playlist then we probably misidentified the content.
-                    Components.utils.reportError("Failed to parse playlist at " + aURL);
+                    Cu.reportError("Failed to parse playlist at " + aURL);
                   }
                   else {
                     var array =
-                      Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                                .createInstance(Components.interfaces.nsIMutableArray);
+                      Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                        .createInstance(Ci.nsIMutableArray);
                     for (var i = 0; i < mediaList.length; i++) {
                       array.appendElement(mediaList.getItemByIndex(i), false);
                     }
 
                     // Send the items in the new media list to the metadata scanner
                     var metadataService = 
-                      Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]                                              
-                                .getService(Components.interfaces.sbIFileMetadataService);
+                      Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+                        .getService(Ci.sbIFileMetadataService);
                     metadataService.read(array);
 
                     // Start playback
@@ -1031,12 +1046,12 @@
           if (aBrowser instanceof Document) {
             // given a document; find the containing <browser> instead
             browser = this.getBrowserForDocument(aBrowser);
-          } else if (aBrowser instanceof Components.interfaces.nsIDocShell) {
+          } else if (aBrowser instanceof Ci.nsIDocShell) {
             // given a random docshell, try to find a <browser> that holds
             // an ancestor
             for (var i = 0; i < this.browsers.length; ++i) {
               // walk up the docshell tree to see if the <browser> we have is a parent
-              var targetDocShell = aBrowser.QueryInterface(Components.interfaces.nsIDocShellTreeItem);
+              var targetDocShell = aBrowser.QueryInterface(Ci.nsIDocShellTreeItem);
               browser = this.getBrowserAtIndex(i);
               while (targetDocShell && browser.docShell != targetDocShell) {
                 targetDocShell = targetDocShell.parent;
@@ -1047,7 +1062,7 @@
             }
           }
           if (!browser) {
-            throw Components.interfaces.NS_ERROR_INVALID_ARG;
+            throw Ci.NS_ERROR_INVALID_ARG;
           }
           
           var notificationBox = this.getNotificationBox(browser);
@@ -1171,7 +1186,7 @@
             }
             
             if (!val) {
-              throw Components.results.NS_ERROR_INVALID_ARG;
+              throw Cr.NS_ERROR_INVALID_ARG;
             }
             // we can't just move stuff around the DOM, because then anonymous
             // nodes magically become real.  And breaks all sorts of things.
@@ -1239,8 +1254,8 @@
           return true;
         }
 
-        var ioService = Components.classes["@mozilla.org/network/io-service;1"]
-            .getService(Components.interfaces.nsIIOService);
+        var ioService = Cc["@mozilla.org/network/io-service;1"]
+                          .getService(Ci.nsIIOService);
 
         var target = event.target;
         var linkNode = null;
@@ -1311,10 +1326,10 @@
           // get the document that this event originated in
           var doc = event.target.ownerDocument;
 
-          var secMan = Components.classes["@mozilla.org/scriptsecuritymanager;1"]
-              .getService(Components.interfaces.nsIScriptSecurityManager);
+          var secMan = Cc["@mozilla.org/scriptsecuritymanager;1"]
+                         .getService(Ci.nsIScriptSecurityManager);
           secMan.checkLoadURIStrWithPrincipal(doc.nodePrincipal, href,
-              Components.interfaces.nsIScriptSecurityManager.STANDARD);
+                     Ci.nsIScriptSecurityManager.STANDARD);
 
           // get the referrer if we can
           var referrer = doc ? doc.documentURIObject : null;
