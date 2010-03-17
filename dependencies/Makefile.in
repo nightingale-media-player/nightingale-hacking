@@ -72,10 +72,6 @@ ifeq (windows,$(SB_PLATFORM))
    MOZ_WIN32_CUSTOM_CRT = $(SONGBIRD_XULRUNNERDIR)/mozcrt19$(DEBUG:%=d).dll
 endif
 
-ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
-   SONGBIRD_DIST += $(SONGBIRD_XULRUNNERDIR)/libjemalloc.so
-endif
-
 ifeq (macosx,$(SB_PLATFORM))
 libs::
 	$(MKDIR) $(SONGBIRD_MACOS)
