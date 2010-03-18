@@ -1,0 +1,171 @@
+<?xml version="1.0"?>
+<!-- vim: set sw=2 :miv -->
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device storage volume selector widget.
+   *
+   *   This widget provides an interface for selecting a device storage volume.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-volume-selector"
+           extends="chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-control">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <content>
+
+      <!-- Volume selector deck. -->
+      <xul:deck sbid="volume_selector_deck" flex="1">
+
+        <xul:label sbid="volume_label"/>
+
+        <xul:menulist sbid="volume_menulist"
+                      flex="1"
+                      oncommand="onVolumeChange();">
+          <xul:menupopup sbid="volume_menupopup"/>
+        </xul:menulist>
+
+      </xul:deck>
+
+    </content>
+
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+        // Import external services.
+        this.importExternalServices();
+      ]]></constructor>
+
+
+      <!--
+       * destructor
+       *
+       *   This method destroys the widget.
+       -->
+
+      <destructor> <![CDATA[
+        // Finalize the widget services.
+        this.deviceVolumeSelectorSvc.finalize(this);
+      ]]></destructor>
+
+
+      <!--
+       * onVolumeChange
+       *
+       *   Handle a volume change event.
+       -->
+
+      <method name="onVolumeChange"><body><![CDATA[
+        this.deviceVolumeSelectorSvc.onVolumeChange();
+      ]]></body></method>
+
+
+      <!-- *********************************************************************
+       *
+       * Internal device volume selector services.
+       *
+       ********************************************************************* -->
+
+      <!--
+       * importExternalServices
+       *
+       *   This function imports external services.
+       -->
+
+      <method name="importExternalServices"><body><![CDATA[
+        // Get the Javascript sub-script loader services.
+        var jsLoader =
+          Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                    .getService(Components.interfaces.mozIJSSubScriptLoader);
+
+        // Import the device volume selector services.
+        if (typeof(this.deviceVolumeSelectorSvc) == "undefined") {
+          jsLoader.loadSubScript
+            ("chrome://songbird/content/scripts/device/deviceVolumeSelector.js",
+             this);
+        }
+      ]]></body></method>
+
+    </implementation>
+
+
+    <!-- ***********************************************************************
+     *
+     * Handlers.
+     *
+     *********************************************************************** -->
+
+    <handlers>
+
+      <!--
+       * deviceBound
+       *
+       *   Handle a device bound event.
+       -->
+
+      <handler event="deviceBound"><![CDATA[
+        // Re-initialize the device volume selector services.
+        this.deviceVolumeSelectorSvc.finalize(this);
+        this.deviceVolumeSelectorSvc.initialize(this);
+      ]]></handler>
+
+    </handlers>
+
+  </binding>
+
+</bindings>
+

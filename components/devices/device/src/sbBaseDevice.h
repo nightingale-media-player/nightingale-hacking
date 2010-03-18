@@ -235,6 +235,8 @@ public:
   NS_IMETHOD SetCacheSyncRequests(PRBool aChacheSyncRequests);
   NS_IMETHOD SupportsMediaItem(sbIMediaItem*                  aMediaItem,
                                sbIDeviceSupportsItemCallback* aCallback);
+  NS_IMETHOD GetDefaultLibrary(sbIDeviceLibrary** aDefaultLibrary);
+  NS_IMETHOD SetDefaultLibrary(sbIDeviceLibrary* aDefaultLibrary);
 
 public:
   /**
@@ -384,6 +386,17 @@ public:
    * @param aDevLib the device library to remove.
    */
   nsresult RemoveLibrary(sbIDeviceLibrary* aDevLib);
+
+  /**
+   * Update the default library to the library specified by aDevLib.
+   * @param aDevLib the device library to which to update the default library.
+   */
+  nsresult UpdateDefaultLibrary(sbIDeviceLibrary* aDevLib);
+
+  /**
+   * Handle a change to the default library.
+   */
+  virtual nsresult OnDefaultLibraryChanged();
 
   /**
    * Called when a media list has been added to the device library
@@ -679,6 +692,7 @@ protected:
   };
   PRUint32 mSyncState;            // State of how to handle sync requsts
 
+  nsCOMPtr<sbIDeviceLibrary> mDefaultLibrary;
   nsRefPtr<sbBaseDeviceLibraryListener> mLibraryListener;
   nsRefPtr<sbDeviceBaseLibraryCopyListener> mLibraryCopyListener;
   nsDataHashtableMT<nsISupportsHashKey, nsRefPtr<sbBaseDeviceMediaListListener> > mMediaListListeners;

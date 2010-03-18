@@ -649,6 +649,24 @@ sbIPDDevice::GetContent(sbIDeviceContent** aContent)
 
 
 /**
+ * The default library to use for device operations when no library is
+ * specified.
+ */
+
+NS_IMETHODIMP
+sbIPDDevice::GetDefaultLibrary(sbIDeviceLibrary** aDefaultLibrary)
+{
+  return sbBaseDevice::GetDefaultLibrary(aDefaultLibrary);
+}
+
+NS_IMETHODIMP
+sbIPDDevice::SetDefaultLibrary(sbIDeviceLibrary* aDefaultLibrary)
+{
+  return sbBaseDevice::SetDefaultLibrary(aDefaultLibrary);
+}
+
+
+/**
  * The parameters with which the device was created
  */
 

@@ -1936,6 +1936,25 @@ nsresult sbBaseDevice::AddLibrary(sbIDeviceLibrary* aDevLib)
   rv = GetContent(getter_AddRefs(content));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Get the current number of libraries.
+  PRUint32           libraryCount;
+  nsCOMPtr<nsIArray> libraries;
+  rv = content->GetLibraries(getter_AddRefs(libraries));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = libraries->GetLength(&libraryCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If the library will be the first library, assume it's internal.  Otherwise,
+  // assume it's removable.
+  if (libraryCount == 0) {
+    rv = aDevLib->SetName(SBLocalizedString("device.volume.internal.name"));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = aDevLib->SetName(SBLocalizedString("device.volume.removable.name"));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   // Add the library to the device content.
   rv = content->AddLibrary(aDevLib);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1943,6 +1962,35 @@ nsresult sbBaseDevice::AddLibrary(sbIDeviceLibrary* aDevLib)
   // Send a device library added event.
   CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_LIBRARY_ADDED,
                          sbNewVariant(aDevLib));
+
+  // If no default library has been set, use library as default.  Otherwise,
+  // check default library preference.
+  if (!mDefaultLibrary) {
+    rv = UpdateDefaultLibrary(aDevLib);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    // Get the default library GUID.
+    nsAutoString defaultLibraryGUID;
+    nsCOMPtr<nsIVariant> defaultLibraryGUIDPref;
+    rv = GetPreference(NS_LITERAL_STRING("default_library_guid"),
+                       getter_AddRefs(defaultLibraryGUIDPref));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = defaultLibraryGUIDPref->GetAsAString(defaultLibraryGUID);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the added library GUID.
+    nsAutoString libraryGUID;
+    rv = aDevLib->GetGuid(libraryGUID);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // If added library GUID matches default library preference GUID, set it as
+    // the default.
+    if (libraryGUID.Equals(defaultLibraryGUID)) {
+      rv = UpdateDefaultLibrary(aDevLib);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
 
   // Apply the library preferences.
   rv = ApplyLibraryPreference(aDevLib, SBVoidString(), nsnull);
@@ -2068,6 +2116,36 @@ nsresult sbBaseDevice::RemoveLibrary(sbIDeviceLibrary* aDevLib)
   // Function variables.
   nsresult rv;
 
+  // Get the device content.
+  nsCOMPtr<sbIDeviceContent> content;
+  rv = GetContent(getter_AddRefs(content));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If the default library is being removed, change the default to the first
+  // library.
+  if (aDevLib == mDefaultLibrary) {
+    // Get the list of device libraries.
+    PRUint32           libraryCount;
+    nsCOMPtr<nsIArray> libraries;
+    rv = content->GetLibraries(getter_AddRefs(libraries));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = libraries->GetLength(&libraryCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Set the default library to the first library or null if no libraries.
+    nsCOMPtr<sbIDeviceLibrary> defaultLibrary;
+    for (PRUint32 i = 0; i < libraryCount; ++i) {
+      nsCOMPtr<sbIDeviceLibrary> library = do_QueryElementAt(libraries, i, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      if (library != aDevLib) {
+        defaultLibrary = library;
+        break;
+      }
+    }
+    rv = UpdateDefaultLibrary(defaultLibrary);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   // Send a device library removed event.
   nsAutoString guid;
   rv = aDevLib->GetGuid(guid);
@@ -2075,14 +2153,33 @@ nsresult sbBaseDevice::RemoveLibrary(sbIDeviceLibrary* aDevLib)
   CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_LIBRARY_REMOVED,
                          sbNewVariant(guid));
 
-  // Get the device content.
-  nsCOMPtr<sbIDeviceContent> content;
-  rv = GetContent(getter_AddRefs(content));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Remove the device library from the device content.
   rv = content->RemoveLibrary(aDevLib);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::UpdateDefaultLibrary(sbIDeviceLibrary* aDevLib)
+{
+  // Do nothing if default library is not changing.
+  if (aDevLib == mDefaultLibrary)
+    return NS_OK;
+
+  // Update the default library and handle the change.
+  mDefaultLibrary = aDevLib;
+  OnDefaultLibraryChanged();
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::OnDefaultLibraryChanged()
+{
+  // Send a default library changed event.
+  CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_DEFAULT_LIBRARY_CHANGED,
+                         sbNewVariant(mDefaultLibrary));
 
   return NS_OK;
 }
@@ -5779,6 +5876,55 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem*                  aMediaItem,
   // We should definitely have a real profile now, since we didn't
   // get the NOT AVAILABLE error, so... we're done!
   *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+/* attribute sbIDeviceLibrary defaultLibrary; */
+NS_IMETHODIMP
+sbBaseDevice::GetDefaultLibrary(sbIDeviceLibrary** aDefaultLibrary)
+{
+  NS_ENSURE_ARG_POINTER(aDefaultLibrary);
+  NS_IF_ADDREF(*aDefaultLibrary = mDefaultLibrary);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseDevice::SetDefaultLibrary(sbIDeviceLibrary* aDefaultLibrary)
+{
+  NS_ENSURE_ARG_POINTER(aDefaultLibrary);
+  nsresult rv;
+
+  // Do nothing if default library is not changing.
+  if (mDefaultLibrary == aDefaultLibrary)
+    return NS_OK;
+
+  // Ensure library is in the device content.
+  nsCOMPtr<nsIArray>         libraries;
+  nsCOMPtr<sbIDeviceContent> content;
+  PRUint32                   index;
+  rv = GetContent(getter_AddRefs(content));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = content->GetLibraries(getter_AddRefs(libraries));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = libraries->IndexOf(0, aDefaultLibrary, &index);
+  if (rv == NS_ERROR_FAILURE) {
+    // Library is not in device content.
+    rv = NS_ERROR_ILLEGAL_VALUE;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Update the default library preference.
+  nsAutoString guid;
+  rv = aDefaultLibrary->GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = SetPreference(NS_LITERAL_STRING("default_library_guid"),
+                     sbNewVariant(guid));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Update the default library.
+  rv = UpdateDefaultLibrary(aDefaultLibrary);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

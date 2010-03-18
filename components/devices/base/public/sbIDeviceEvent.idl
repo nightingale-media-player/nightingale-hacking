@@ -34,7 +34,7 @@ interface sbIDeviceEventTarget;
  * \interface sbIDeviceEvent
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(530dfffe-3855-4592-b03e-19fa1a4a5041)]
+[scriptable, uuid(4405fad4-1dd2-11b2-b903-de5a73c9540f)]
 interface sbIDeviceEvent : nsISupports
 {
   /**
@@ -139,23 +139,25 @@ interface sbIDeviceEvent : nsISupports
   const unsigned long EVENT_DEVICE_TRANSCODE_ERROR      = EVENT_DEVICE_BASE + 31;
   
   // device library events
-  const unsigned long EVENT_DEVICE_LIBRARY_ADDED        = EVENT_DEVICE_BASE + 32;
-  const unsigned long EVENT_DEVICE_LIBRARY_REMOVED      = EVENT_DEVICE_BASE + 33;
+  const unsigned long EVENT_DEVICE_LIBRARY_ADDED       = EVENT_DEVICE_BASE + 32;
+  const unsigned long EVENT_DEVICE_LIBRARY_REMOVED     = EVENT_DEVICE_BASE + 33;
+  const unsigned long
+    EVENT_DEVICE_DEFAULT_LIBRARY_CHANGED               = EVENT_DEVICE_BASE + 34;
 
   // device formatting events
-  const unsigned long EVENT_DEVICE_FORMATTING_START    = EVENT_DEVICE_BASE + 34;
-  const unsigned long EVENT_DEVICE_FORMATTING_PROGRESS = EVENT_DEVICE_BASE + 35;
-  const unsigned long EVENT_DEVICE_FORMATTING_END      = EVENT_DEVICE_BASE + 36;
+  const unsigned long EVENT_DEVICE_FORMATTING_START    = EVENT_DEVICE_BASE + 35;
+  const unsigned long EVENT_DEVICE_FORMATTING_PROGRESS = EVENT_DEVICE_BASE + 36;
+  const unsigned long EVENT_DEVICE_FORMATTING_END      = EVENT_DEVICE_BASE + 37;
 
   // file that you were trying to transfer is missing
-  const unsigned long EVENT_DEVICE_FILE_MISSING        = EVENT_DEVICE_BASE + 37;
+  const unsigned long EVENT_DEVICE_FILE_MISSING        = EVENT_DEVICE_BASE + 38;
   
   // events for device scans
-  const unsigned long EVENT_DEVICE_SCAN_START          = EVENT_DEVICE_BASE + 38;
-  const unsigned long EVENT_DEVICE_SCAN_END            = EVENT_DEVICE_BASE + 39;
+  const unsigned long EVENT_DEVICE_SCAN_START          = EVENT_DEVICE_BASE + 39;
+  const unsigned long EVENT_DEVICE_SCAN_END            = EVENT_DEVICE_BASE + 40;
 
   // special before device added event.
-  const unsigned long EVENT_DEVICE_BEFORE_ADDED        = EVENT_DEVICE_BASE + 40;
+  const unsigned long EVENT_DEVICE_BEFORE_ADDED        = EVENT_DEVICE_BASE + 41;
 
   /**
    * 

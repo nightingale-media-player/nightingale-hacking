@@ -426,12 +426,24 @@ NS_IMETHODIMP sbMockDevice::GetContent(sbIDeviceContent * *aContent)
     rv = CreateDeviceLibrary(LIBID, nsnull, getter_AddRefs(devLib));
     NS_ENSURE_SUCCESS(rv, rv);
     
-    rv = mContent->AddLibrary(devLib);
+    rv = AddLibrary(devLib);
     NS_ENSURE_SUCCESS(rv, rv);
-    
   }
   NS_ADDREF(*aContent = mContent);
   return NS_OK;
+}
+
+/* attribute sbIDeviceLibrary defaultLibrary; */
+NS_IMETHODIMP
+sbMockDevice::GetDefaultLibrary(sbIDeviceLibrary** aDefaultLibrary)
+{
+  return sbBaseDevice::GetDefaultLibrary(aDefaultLibrary);
+}
+
+NS_IMETHODIMP
+sbMockDevice::SetDefaultLibrary(sbIDeviceLibrary* aDefaultLibrary)
+{
+  return sbBaseDevice::SetDefaultLibrary(aDefaultLibrary);
 }
 
 /* readonly attribute nsIPropertyBag2 parameters; */

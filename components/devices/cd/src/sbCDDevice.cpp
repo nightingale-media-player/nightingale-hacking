@@ -650,6 +650,19 @@ sbCDDevice::GetContent(sbIDeviceContent * *aContent)
   return NS_OK;
 }
 
+/* attribute sbIDeviceLibrary defaultLibrary; */
+NS_IMETHODIMP
+sbCDDevice::GetDefaultLibrary(sbIDeviceLibrary** aDefaultLibrary)
+{
+  return sbBaseDevice::GetDefaultLibrary(aDefaultLibrary);
+}
+
+NS_IMETHODIMP
+sbCDDevice::SetDefaultLibrary(sbIDeviceLibrary* aDefaultLibrary)
+{
+  return sbBaseDevice::SetDefaultLibrary(aDefaultLibrary);
+}
+
 /* readonly attribute nsIPropertyBag2 parameters; */
 NS_IMETHODIMP
 sbCDDevice::GetParameters(nsIPropertyBag2 * *aParameters)

@@ -33,6 +33,7 @@ interface nsIVariant;
 
 interface sbIDeviceCapabilities;
 interface sbIDeviceContent;
+interface sbIDeviceLibrary;
 interface sbIDeviceProperties;
 interface sbIDeviceParameters;
 interface sbIDeviceStatus;
@@ -55,7 +56,7 @@ interface sbIDeviceSupportsItemCallback : nsISupports
  *
  * The main interface to all device objects
  */
-[scriptable, uuid(d59ed7e2-1dd1-11b2-99eb-b40b3170516a)]
+[scriptable, uuid(69bc8c40-1dd2-11b2-894e-af015b55c959)]
 interface sbIDevice : nsISupports
 {
   /**
@@ -122,6 +123,12 @@ interface sbIDevice : nsISupports
    * All the device's content.
    */
   readonly attribute sbIDeviceContent content;
+
+  /**
+   * The default library to use for device operations when no library is
+   * specified.
+   */
+  attribute sbIDeviceLibrary defaultLibrary;
 
   /**
    * The parameters with which the device was created
