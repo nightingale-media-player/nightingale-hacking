@@ -1691,6 +1691,10 @@ sbDeviceLibrary::Sync()
                             NS_LITERAL_STRING("priority"),
                             sbBaseDevice::TransferRequest::PRIORITY_LOW);
     NS_ENSURE_SUCCESS(rv, rv);
+    rv = requestParams->SetPropertyAsInterface
+                          (NS_LITERAL_STRING("list"),
+                           NS_ISUPPORTS_CAST(sbIMediaList*, this));
+    NS_ENSURE_SUCCESS(rv, rv);
     rv = device->SubmitRequest(sbIDevice::REQUEST_IMAGESYNC, requestParams);
     NS_ENSURE_SUCCESS(rv, rv);
   }

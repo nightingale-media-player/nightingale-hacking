@@ -3515,9 +3515,8 @@ nsresult sbBaseDevice::GetPrefBranch(const char *aPrefBranchName,
   return rv;
 }
 
-nsresult sbBaseDevice::GetPrefBranch(nsIPrefBranch** aPrefBranch)
+nsresult sbBaseDevice::GetPrefBranchRoot(nsACString& aRoot)
 {
-  NS_ENSURE_ARG_POINTER(aPrefBranch);
   nsresult rv;
 
   // get id of this device
@@ -3530,10 +3529,46 @@ nsresult sbBaseDevice::GetPrefBranch(nsIPrefBranch** aPrefBranch)
   id->ToProvidedString(idString);
   NS_Free(id);
 
-  // create the pref key
-  nsCString prefKey(PREF_DEVICE_PREFERENCES_BRANCH);
-  prefKey.Append(idString);
-  prefKey.AppendLiteral(".preferences.");
+  // create the pref branch root
+  aRoot.Assign(PREF_DEVICE_PREFERENCES_BRANCH);
+  aRoot.Append(idString);
+  aRoot.AppendLiteral(".preferences.");
+
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::GetPrefBranch(nsIPrefBranch** aPrefBranch)
+{
+  NS_ENSURE_ARG_POINTER(aPrefBranch);
+  nsresult rv;
+
+  // get the pref branch root
+  nsCAutoString root;
+  rv = GetPrefBranchRoot(root);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return GetPrefBranch(root.get(), aPrefBranch);
+}
+
+nsresult sbBaseDevice::GetPrefBranch(sbIDeviceLibrary* aLibrary,
+                                     nsIPrefBranch**   aPrefBranch)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  NS_ENSURE_ARG_POINTER(aPrefBranch);
+  nsresult rv;
+
+  // start with the pref branch root
+  nsCAutoString prefKey;
+  rv = GetPrefBranchRoot(prefKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // add the library pref key
+  nsAutoString libraryGUID;
+  rv = aLibrary->GetGuid(libraryGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+  prefKey.Append(".library.");
+  prefKey.Append(NS_ConvertUTF16toUTF8(libraryGUID));
+  prefKey.Append(".");
 
   return GetPrefBranch(prefKey.get(), aPrefBranch);
 }

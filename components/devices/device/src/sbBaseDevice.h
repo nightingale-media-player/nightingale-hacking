@@ -950,8 +950,15 @@ protected:
   //
   //----------------------------------------------------------------------------
 
+  /* get the prefbranch root for this device */
+  nsresult GetPrefBranchRoot(nsACString& aRoot);
+
   /* get a prefbranch for this device */
   nsresult GetPrefBranch(nsIPrefBranch** aPrefBranch);
+
+  /* get a prefbranch for a device library */
+  nsresult GetPrefBranch(sbIDeviceLibrary* aLibrary,
+                         nsIPrefBranch**   aPrefBranch);
 
   /* Helper function to get a particular pref branch */
   nsresult GetPrefBranch(const char *aPrefBranchName,
