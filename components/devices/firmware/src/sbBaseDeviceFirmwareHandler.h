@@ -213,6 +213,7 @@ protected:
   nsCOMPtr<nsIURI> mDefaultReleaseNotesLocation;
   nsCOMPtr<nsIURI> mReleaseNotesLocation;
   nsCOMPtr<nsIURI> mResetInstructionsLocation;
+  nsString         mRecoveryModeKeyCombination;
   nsCOMPtr<nsIURI> mSupportLocation;
   nsCOMPtr<nsIURI> mRegisterLocation;
 

@@ -205,7 +205,24 @@ var deviceFirmwareWizard = {
                   let label = document.getElementById("device_firmware_wizard_recovery_mode_label");
                   label.value = SBFormattedString("device.firmware.wizard.recovery_mode.connected",
                                                   [self._deviceProperties.modelNumber]);
-                  if(handler.resetInstructionsLocation) {
+                                                  
+                  if(handler.recoveryModeKeyCombination) {
+                    let recoveryInstructions = 
+                      SBFormattedString("device.firmware.wizard.recovery_mode.instructions", 
+                                        [self._deviceProperties.modelNumber, 
+                                         handler.recoveryModeKeyCombination, 
+                                         handler.recoveryModeKeyCombination]);
+
+                    // Hack up the style so that it doesn't look so damn ugly.
+                    recoveryInstructions = "<p style=\"font-family: sans-serif; font-size: 12px\">" + 
+                                           recoveryInstructions + 
+                                           "</p>";
+
+                    let browser = document.getElementById("device_firmware_wizard_recovery_mode_browser");
+                    let dataURI = "data:text/html," + escape(recoveryInstructions);
+                    browser.setAttribute("src", dataURI);
+                  }
+                  else if(handler.resetInstructionsLocation) {
                     let browser = document.getElementById("device_firmware_wizard_recovery_mode_browser");
                     browser.setAttribute("src", handler.resetInstructionsLocation.spec);
                   }

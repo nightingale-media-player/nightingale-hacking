@@ -125,6 +125,8 @@ sbBaseDeviceFirmwareHandler::Init()
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mRecoveryModeKeyCombination.Truncate();
+
   rv = OnInit();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -899,6 +901,21 @@ sbBaseDeviceFirmwareHandler::GetResetInstructionsLocation(nsIURI * *aResetInstru
 
   nsresult rv = mResetInstructionsLocation->Clone(aResetInstructionsLocation);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseDeviceFirmwareHandler::GetRecoveryModeKeyCombination(
+                               nsAString &aRecoveryModeKeyCombination)
+{
+  TRACE(("[%s]", __FUNCTION__));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  aRecoveryModeKeyCombination.Truncate();
+
+  nsAutoMonitor mon(mMonitor);
+  aRecoveryModeKeyCombination.Assign(mRecoveryModeKeyCombination);
 
   return NS_OK;
 }
