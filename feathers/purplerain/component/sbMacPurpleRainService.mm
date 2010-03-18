@@ -241,17 +241,17 @@ sbMacPurpleRainService::Init()
   // cocoa NSImage class can use for painting.
   nsCOMPtr<nsIURI> leftImageChromeURI;
   rv = NS_NewURI(getter_AddRefs(leftImageChromeURI),
-      NS_LITERAL_STRING("chrome://songbird/skin/os-specific/mac/title-bar-endcap-l.png"));
+      NS_LITERAL_STRING("chrome://purplerain/skin/os-specific/mac/title-bar-endcap-l.png"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIURI> rightImageChromeURI;
   rv = NS_NewURI(getter_AddRefs(rightImageChromeURI),
-      NS_LITERAL_STRING("chrome://songbird/skin/os-specific/mac/title-bar-endcap-r.png"));
+      NS_LITERAL_STRING("chrome://purplerain/skin/os-specific/mac/title-bar-endcap-r.png"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIURI> centerImageChromeURI;
   rv = NS_NewURI(getter_AddRefs(centerImageChromeURI),
-      NS_LITERAL_STRING("chrome://songbird/skin/os-specific/mac/title-bar-backing.png"));
+      NS_LITERAL_STRING("chrome://purplerain/skin/os-specific/mac/title-bar-backing.png"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIChromeRegistry> chromeRegistry =
