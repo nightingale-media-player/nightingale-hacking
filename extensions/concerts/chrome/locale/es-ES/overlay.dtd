@@ -1,6 +1,6 @@
-<!ENTITY concerts.loading "Comprobando conciertos cerca de tí...">
+<!ENTITY concerts.loading "Estamos comprobando quién está de gira cerca">
 <!ENTITY concerts.changelocation "Cambiar ubicación">
-<!ENTITY concerts.easteregg.fail "FALLO">
-<!ENTITY concerts.easteregg.fail.2 "No se encontraron conciertos para">
-<!ENTITY concerts.timeout.error "No estás conectado a Internet o nuestra base de datos no funciona bien en estos momentos. Por favor, prueba dentro de unos minutos.">
+<!ENTITY concerts.easteregg.fail "FAIL">
+<!ENTITY concerts.easteregg.fail.2 "No se ha encontrado ningún concierto en">
+<!ENTITY concerts.timeout.error "No estás conectado a Internet o la base de datos de conciertos no está funcionando en este momento. Vuelve a intentarlo en unos minutos. ">
 <!ENTITY concerts.timeoutreport.error "Informar de un problema">

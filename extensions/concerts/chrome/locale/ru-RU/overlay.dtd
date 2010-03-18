@@ -1,6 +1,0 @@
-<!ENTITY concerts.loading "Мы проверим кто на гастролях рядом с вами">
-<!ENTITY concerts.changelocation "Сменить местоположение">
-<!ENTITY concerts.easteregg.fail "провал">
-<!ENTITY concerts.easteregg.fail.2 "Не найдено не одного концерта для">
-<!ENTITY concerts.timeout.error "По ходу вы не подключены к интернету или наша база данных концертов недоступна в данный момент. Пожалуйста попробуйте позже.">
-<!ENTITY concerts.timeoutreport.error "Сообщить о проблеме">

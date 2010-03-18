@@ -1,6 +1,6 @@
-<!ENTITY concerts.loading "我們正在檢查哪些演唱會最靠近你...">
+<!ENTITY concerts.loading "我們正在檢查，看有哪位明星在您附近嘗試舉行巡迴演出…">
 <!ENTITY concerts.changelocation "變更位置">
-<!ENTITY concerts.easteregg.fail "失敗">
-<!ENTITY concerts.easteregg.fail.2 "找不到演唱會:">
-<!ENTITY concerts.timeout.error "你尚未連線到網路或我們的演唱會資料庫未正常工作，請等幾分鐘後重試一次。">
-<!ENTITY concerts.timeoutreport.error "回報問題">
+<!ENTITY concerts.easteregg.fail "FAIL">
+<!ENTITY concerts.easteregg.fail.2 "沒有找到將在 <Location> 舉行的演唱會">
+<!ENTITY concerts.timeout.error "您可能尚未連接至互聯網，或者我們的演唱會數據庫目前沒有運作。請稍候數分鐘，然後重試。">
+<!ENTITY concerts.timeoutreport.error "報告問題">

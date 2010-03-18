@@ -1,13 +1,13 @@
 <!ENTITY prefs.location "Plats">
-<!ENTITY prefs.location.descr "Välj den mest närbelägna staden för att se konserter i det kringliggande området">
+<!ENTITY prefs.location.descr ""Ta reda på vem som kommer till dina trakter. &brandShortName; kan hitta dina favoritartister och -klubbar, så att du aldrig mer behöver missa ett evenemang. Välj den närmaste staden för att se vem som kommer till stan."">"
 <!ENTITY prefs.library "Bibliotek">
-<!ENTITY prefs.library.text "Songbird kan lägga till en kolumn i din bibliotek som kommer att indikera när någon av dina artister har en spelning i ditt område.">
-<!ENTITY prefs.library.checklabel "Lägg till &quot;På turné&quot; kolumnen i mitt bibliotek">
+<!ENTITY prefs.library.text "&brandShortName; kan lägga till en kolumn i ditt musikbibliotek som indikerar när någon av dina artister kommer till stan.">
+<!ENTITY prefs.library.checklabel "Lägg till kolumnen På turné i mitt bibliotek">
 <!ENTITY prefs.country "Land">
 <!ENTITY prefs.country.us "USA">
-<!ENTITY prefs.country.uk "England">
+<!ENTITY prefs.country.uk "Storbritannien">
 <!ENTITY prefs.state "Stat">
 <!ENTITY prefs.city "Stad">
 <!ENTITY prefs.radius "Radie">
-<!ENTITY prefs.findShows "Hitta konserter">
-<!ENTITY concerts.poweredby "Konsertlistor är tillhandahållna av">
+<!ENTITY prefs.findShows "Hitta evenemang">
+<!ENTITY concerts.poweredby "Konsertförteckningarna tillhandahålls av">

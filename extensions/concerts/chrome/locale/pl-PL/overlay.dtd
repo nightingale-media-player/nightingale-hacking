@@ -1,6 +1,0 @@
-<!ENTITY concerts.loading "Sprawdzamy kto koncertuje niedaleko Twojego położenia...">
-<!ENTITY concerts.changelocation "Zmień położenie">
-<!ENTITY concerts.easteregg.fail "NIC Z TEGO">
-<!ENTITY concerts.easteregg.fail.2 "Nie znaleziono żadnych koncertów">
-<!ENTITY concerts.timeout.error "Nie ustanowiono połączenia z Internetem lub nasza baza danych aktualnie nie działa. Proszę spróbować ponownie za kilka minut.">
-<!ENTITY concerts.timeoutreport.error "Zgłoś problem">

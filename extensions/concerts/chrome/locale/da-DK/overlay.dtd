@@ -1,6 +1,0 @@
-<!ENTITY concerts.loading "Vi er igang med at checke hvem der er på tourné tæt på dig...">
-<!ENTITY concerts.changelocation "Skift Lokation">
-<!ENTITY concerts.easteregg.fail "FEJL">
-<!ENTITY concerts.easteregg.fail.2 "Ingen koncerter fundet for">
-<!ENTITY concerts.timeout.error "Enten er du ikke forbundet til Internettet eller også virker vores koncertdatabase ikke lige nu. Prøv venligst igen om et par minutter.">
-<!ENTITY concerts.timeoutreport.error "Reportér et problem">

@@ -1,6 +1,0 @@
-<!ENTITY concerts.loading "Ki koncertezik a közelben...">
-<!ENTITY concerts.changelocation "Helyszín módosítása">
-<!ENTITY concerts.easteregg.fail "HIBA">
-<!ENTITY concerts.easteregg.fail.2 "Nem található koncert ehhez:">
-<!ENTITY concerts.timeout.error "Vagy nincs csatlakozva az internethez vagy a koncertadatbázis jelenleg nem működik. Próbálja meg pár perc múlva.">
-<!ENTITY concerts.timeoutreport.error "Hibabejelentés">

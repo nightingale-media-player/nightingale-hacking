@@ -1,0 +1,6 @@
+<!ENTITY concerts.loading "نتحقق من الفنانين الذي يقومون بجولة في منطقة مجاورة...">
+<!ENTITY concerts.changelocation "تغيير المكان">
+<!ENTITY concerts.easteregg.fail "FAIL">
+<!ENTITY concerts.easteregg.fail.2 "لم يتم العثور على أي حفلات موسيقية في">
+<!ENTITY concerts.timeout.error "لست متصلاً بإنترنت أو أن قاعدة بيانات الحفلات الموسيقية لا تعمل جيداً الآن. يرجى إعادة المحاولة بعد دقائق.">
+<!ENTITY concerts.timeoutreport.error "الإبلاغ عن مشكلة">

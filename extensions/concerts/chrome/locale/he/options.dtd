@@ -1,0 +1,13 @@
+<!ENTITY prefs.location "מיקום">
+<!ENTITY prefs.location.descr "גלה מי מגיע לאזור שלך  &brandShortName;  יכול לעקוב אחרי האמנים והמועדונים המועדפים שלך, כך שלעולם לא תפסיד עוד הופעה. בחר את העיר הקרובה ביותר כדי לראות מי מגיע לשם.">
+<!ENTITY prefs.library "ספרייה">
+<!ENTITY prefs.library.text "&brandShortName;  יכול להוסיף עמודה לספריית המוזיקה שלך שתכלול מידע על מתי אחד מהאמנים שלך נמצא במסע הופעות ומופיע בעירך.">
+<!ENTITY prefs.library.checklabel "הוסף את עמודת מסע הופעות לספרייה שלי">
+<!ENTITY prefs.country "ארץ">
+<!ENTITY prefs.country.us "ארצות הברית">
+<!ENTITY prefs.country.uk "בריטניה">
+<!ENTITY prefs.state "מדינה">
+<!ENTITY prefs.city "עיר">
+<!ENTITY prefs.radius "רדיוס">
+<!ENTITY prefs.findShows "מצא הופעות">
+<!ENTITY concerts.poweredby "רשימת ההופעות מסופקת על ידי">

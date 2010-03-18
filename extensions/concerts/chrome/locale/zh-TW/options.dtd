@@ -1,13 +1,13 @@
 <!ENTITY prefs.location "位置">
-<!ENTITY prefs.location.descr "選擇離你最近的城市以尋找附近是否有舉辦演唱會">
-<!ENTITY prefs.library "媒體庫">
-<!ENTITY prefs.library.text "Songbird 可以在媒體庫中加入一個欄位，當該演出者到你居住的地方演出時就會提醒你。">
-<!ENTITY prefs.library.checklabel "於媒體庫加入「巡演中」欄位">
-<!ENTITY prefs.country "國家">
+<!ENTITY prefs.location.descr "了解誰會到臨您所在地區。&brandShortName; 可跟蹤您喜愛的明星及俱樂部，讓您絕對不會錯過任何一場演出。選擇最近的城市，看看哪位明星將會到來。">
+<!ENTITY prefs.library "資料庫">
+<!ENTITY prefs.library.text "&brandShortName; 會在您的音樂資料庫中新增一列，顯示出資料庫中的明星將在什麽時候在您的城市舉行巡迴演出。">
+<!ENTITY prefs.library.checklabel "在我的資料庫中新增 On Tour 列">
+<!ENTITY prefs.country "國家/地區">
 <!ENTITY prefs.country.us "美國">
 <!ENTITY prefs.country.uk "英國">
-<!ENTITY prefs.state "州或省">
-<!ENTITY prefs.city "城市">
-<!ENTITY prefs.radius "半徑">
-<!ENTITY prefs.findShows "尋找演出">
-<!ENTITY concerts.poweredby "演唱會資料提供者:">
+<!ENTITY prefs.state "州">
+<!ENTITY prefs.city "街">
+<!ENTITY prefs.radius "範圍">
+<!ENTITY prefs.findShows "搜尋演出">
+<!ENTITY concerts.poweredby "演唱會清單提供者">

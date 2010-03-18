@@ -1,0 +1,6 @@
+<!ENTITY concerts.loading "Tarkistamme sinua lähellä keikkailevat artistit...">
+<!ENTITY concerts.changelocation "Vaihda sijaintia">
+<!ENTITY concerts.easteregg.fail "FAIL">
+<!ENTITY concerts.easteregg.fail.2 "Ei konsertteja: ">
+<!ENTITY concerts.timeout.error "Sinulla ei ole internet-yhteyttä, tai konserttitietokantamme ei toimi. Yritä muutaman minuutin kuluttua uudelleen.">
+<!ENTITY concerts.timeoutreport.error "Ilmoita ongelma">
