@@ -1,5 +1,6 @@
 <!ENTITY prefs.location "Plats">
-<!ENTITY prefs.location.descr ""Ta reda på vem som kommer till dina trakter. &brandShortName; kan hitta dina favoritartister och -klubbar, så att du aldrig mer behöver missa ett evenemang. Välj den närmaste staden för att se vem som kommer till stan."">"
+<!ENTITY prefs.location.descr "&quot;Ta reda på vem som kommer till dina trakter. &brandShortName; kan hitta dina favoritartister och -klubbar, så att du aldrig mer behöver missa ett evenemang. Välj den närmaste staden för att se vem som kommer till stan.&quot;&quot;&gt;&quot;
+">
 <!ENTITY prefs.library "Bibliotek">
 <!ENTITY prefs.library.text "&brandShortName; kan lägga till en kolumn i ditt musikbibliotek som indikerar när någon av dina artister kommer till stan.">
 <!ENTITY prefs.library.checklabel "Lägg till kolumnen På turné i mitt bibliotek">
