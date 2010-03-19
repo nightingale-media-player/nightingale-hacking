@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -22,8 +22,8 @@
  *=END SONGBIRD GPL
  */
 
-#ifndef __SB_WINDOWS_UTILS_H__
-#define __SB_WINDOWS_UTILS_H__
+#ifndef SB_WINDOWS_UTILS_H_
+#define SB_WINDOWS_UTILS_H_
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -42,6 +42,40 @@
 
 //------------------------------------------------------------------------------
 //
+// Songbird Windows utilities compile warning work-arounds.
+//
+//------------------------------------------------------------------------------
+
+//
+// Include these first to avoid deprecated name warnings.
+//
+//   C:\Program Files\Microsoft Visual Studio 8\VC\INCLUDE\cstdio(33) :
+//   warning C4995 : 'gets': name was marked as #pragma deprecated
+//
+#include <cstdio>
+#include <cstring>
+#include <cwchar>
+
+
+//
+// Avoid redefine warnings in strsafe.h.
+//
+//   C:\Program Files\Microsoft SDKs\Windows\v6.0\include\strsafe.h(60) :
+//   warning C4005: 'SUCCEEDED' : macro redefinition;
+//   c:\client\trunk\dependencies\windows-i686-msvc8\private\windows_ddk\
+//   release\include\winerror.h(16682) : see previous definition of 'SUCCEEDED'
+//
+
+#include <windows.h>
+#undef S_OK
+#undef SUCCEEDED
+#undef FAILED
+#include <tchar.h>
+#include <strsafe.h>
+
+
+//------------------------------------------------------------------------------
+//
 // Songbird Windows utilities imported services.
 //
 //------------------------------------------------------------------------------
@@ -57,6 +91,79 @@
 #include <tchar.h>
 
 #include <strsafe.h>
+
+// C++ STL imports.
+#include <string>
+
+
+//------------------------------------------------------------------------------
+//
+// Songbird tstring services.
+//
+//------------------------------------------------------------------------------
+
+/**
+ * This clas implements a TCHAR version of the STL basic_string class.  It
+ * provides support for constructing tstrings from both UTF-8 and UTF-16
+ * strings.
+ */
+
+typedef std::basic_string<TCHAR,
+                          std::char_traits<TCHAR>,
+                          std::allocator<TCHAR> > tstringBase;
+
+class tstring : public tstringBase
+{
+
+public:
+
+  //
+  // Constructors.
+  //
+
+  tstring() {}
+
+  tstring(tstringBase& aString) { assign(aString); }
+
+  tstring(LPCSTR aString);
+
+  tstring(const std::string& aString);
+
+  tstring(LPCWSTR aString);
+
+  tstring(const std::wstring& aString);
+
+
+  //
+  // Operators.
+  //
+
+  operator LPCTSTR() const
+  {
+    return c_str();
+  }
+
+
+  //
+  // Public services.
+  //
+
+  /**
+   * Assign the formatted string with the format specified by aFormat and
+   * arguments specified by aArgs.  Return the number of characters written or a
+   * negative value on error.
+   *
+   * \param aFormat             Format string.
+   * \param aArgs               Format arguments.
+   *
+   * \returns                   Number of characters written or a negative value
+   *                            on error.
+   */
+  int vprintf(LPCSTR  aFormat,
+              va_list aArgs);
+  int vprintf(LPCWSTR aFormat,
+              va_list aArgs);
+};
 
 
 //------------------------------------------------------------------------------
@@ -79,6 +186,22 @@
 #define SB_WIN_WARNING(aMessage)                                               \
     printf("WARNING: %s: file %s, line %d\n", aMessage, __FILE__, __LINE__)
 #endif
+
+
+/**
+ * Post a warning with the message specified by aMessage if the condition
+ * expression specified by aCondition evaluates to false.
+ *
+ * \param aCondition            Condition expression.
+ * \param aMessage              Warning message.
+ */
+
+#define SB_WIN_WARN_IF_FALSE(aCondition, aMessage)                             \
+  do {                                                                         \
+    if (!(aCondition)) {                                                       \
+      SB_WIN_WARNING(aMessage);                                                \
+    }                                                                          \
+  } while (0)
 
 
 /**
@@ -170,6 +293,8 @@
 //                              registry key.
 //   sbAutoIUnknown             Wrapper to automatically release an IUnknown
 //                              object.
+//   sbAutoLocalFree            Wrapper to automatically free a local memory
+//                              object.
 //
 
 template<typename T> SB_AUTO_NULL_CLASS(sbAutoPtr, T*, delete mValue);
@@ -180,7 +305,101 @@ SB_AUTO_CLASS(sbAutoHANDLE,
               mValue = INVALID_HANDLE_VALUE);
 SB_AUTO_NULL_CLASS(sbAutoRegKey, HKEY, RegCloseKey(mValue));
 SB_AUTO_NULL_CLASS(sbAutoIUnknown, IUnknown*, mValue->Release());
+SB_AUTO_NULL_CLASS(sbAutoLocalFree, HLOCAL, LocalFree(mValue));
 
 
-#endif // __SB_WINDOWS_UTILS_H__
+//------------------------------------------------------------------------------
+//
+// Songbird Windows registry services.
+//
+//------------------------------------------------------------------------------
+
+/**
+ * Set the value of the Windows registry key specified by aKey and aSubKey with
+ * the value name specified by aValueName to the value specified by aValue.
+ * Create the key if necessary.  If aValueName is an empty string, set the
+ * default key value.
+ *
+ * \param aKey                  The base registry key.
+ * \param aSubKey               The registry sub-key to which to write.
+ * \param aValueName            Name of the value to write.
+ * \param aValue                Value to write.
+ */
+HRESULT sbWinWriteRegStr(HKEY           aKey,
+                         const tstring& aSubKey,
+                         const tstring& aValueName,
+                         const tstring& aValue);
+
+/**
+ * Delete the Windows registry key specified by aKey and aSubKey.
+ *
+ * \param aKey                  The base registry key.
+ * \param aSubKey               The registry sub-key to delete.
+ */
+HRESULT sbWinDeleteRegKey(HKEY           aKey,
+                          const tstring& aSubKey);
+
+/**
+ * Delete the Windows registry value for the key specified by aKey and aSubKey
+ * and value name specified by aValueName.
+ *
+ * \param aKey                  The base registry key.
+ * \param aSubKey               The registry sub-key from which to delete value.
+ * \param aValueName            Name of value to delete.
+ */
+HRESULT sbWinDeleteRegValue(HKEY           aKey,
+                            const tstring& aSubKey,
+                            const tstring& aValueName);
+
+
+//------------------------------------------------------------------------------
+//
+// Songbird Windows environment services.
+//
+//------------------------------------------------------------------------------
+
+/**
+ * This class may be used to retrieve environment variable strings as tstrings.
+ */
+
+class sbEnvString : public tstring
+{
+
+public:
+
+  /**
+   * Construct an environment variable string using the environment variable
+   * with the name specified by aEnvVarName.  If the environment variable is not
+   * set, use the default string specified by aDefault.
+   *
+   * \param aEnvVarName         Environment variable name.
+   * \param aDefault            Optional default string.
+   */
+  sbEnvString(LPCSTR aEnvVarName,
+              LPCSTR aDefault = NULL);
+  sbEnvString(LPCWSTR aEnvVarName,
+              LPCWSTR aDefault = NULL);
+};
+
+
+//------------------------------------------------------------------------------
+//
+// Songbird Windows utilities.
+//
+//------------------------------------------------------------------------------
+
+/**
+ * Return in aModuleFilePath and aModuleDirPath the file path and directory path
+ * for the module specified by aModule.
+ *
+ * \param aModule               Module for which to get path.
+ * \param aModuleFilePath       Module file path.
+ * \param aModuleDirPath        Module directory path.
+ */
+HRESULT sbWinGetModuleFilePath(HMODULE  aModule,
+                               tstring& aModuleFilePath,
+                               tstring& aModuleDirPath);
+
+
+#endif // SB_WINDOWS_UTILS_H_
 

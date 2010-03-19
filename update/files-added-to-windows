@@ -19,6 +19,8 @@
 .\splash.bmp
 .\songbirditunesagent.exe
 .\songbird.ini
+.\sbBrandingStrings.ini
+.\sbAutoPlayUtil.exe
 .\gstreamer\encode-profiles\wmav2.xml
 .\gstreamer\encode-profiles\vorbis.xml
 .\gstreamer\encode-profiles\ogg-theora-vorbis.xml

@@ -1,11 +1,9 @@
-/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
-/* vim: set sw=2 :miv */
 /*
  *=BEGIN SONGBIRD GPL
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -24,31 +22,51 @@
  *=END SONGBIRD GPL
  */
 
-#ifndef __SB_WINDOWS_EVENT_LOG_H__
-#define __SB_WINDOWS_EVENT_LOG_H__
+#ifndef SB_WINDOWS_STORAGE_H_
+#define SB_WINDOWS_STORAGE_H_
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// Songbird Windows event logging services.
+// Songbird Windows storage device services defs.
 //
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 /**
- * \file  sbWindowsEventLog.h
- * \brief Songbird Windows Event Logging Services Definitions.
+ * \file  sbWindowsStorage.h
+ * \brief Songbird Windows Storage Device Services Definitions.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows event logging services.
+// Songbird Windows storage device imported services.
 //
 //------------------------------------------------------------------------------
 
-void sbWindowsEventLog(const char* aMsg, ...);
+// Windows imports.
+#include <devioctl.h>
+#include <objbase.h>
+
+#include <ntddstor.h>
 
 
-#endif // __SB_WINDOWS_EVENT_LOG_H__
+//------------------------------------------------------------------------------
+//
+// Songbird Windows storage device services.
+//
+//------------------------------------------------------------------------------
 
+/**
+ * Return in aStorageDevNum the storage device number for the device with the
+ * file path specified by aDevPath.
+ *
+ * \param aDevPath              Device file path.
+ * \param aStorageDevNum        Returned storage device number.
+ */
+HRESULT sbWinGetStorageDevNum(LPWSTR                 aDevPath,
+                              STORAGE_DEVICE_NUMBER* aStorageDevNum);
+
+
+#endif // SB_WINDOWS_STORAGE_H_
 

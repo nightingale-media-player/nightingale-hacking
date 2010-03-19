@@ -42,30 +42,6 @@
 !define SubApplicationWait    2000
 !define QuitApplicationWait   3000
 
-;
-; AutoPlay settings.
-;
-;   Change AutoPlayBaseName to configure a separate AutoPlay installation.
-;
-!define AutoPlayBaseName                         "${BrandShortName}"
-!define AutoPlayManageVolumeDeviceProgID         "${AutoPlayBaseName}.ManageVolumeDevice"
-!define AutoPlayVolumeDeviceArrivalHandlerName   "${AutoPlayBaseName}ManageVolumeDeviceOnArrival"
-!define AutoPlayVolumeDeviceArrivalHandlerProgID "${AutoPlayManageVolumeDeviceProgID}"
-!define AutoPlayMTPDeviceArrivalHandlerName      "${AutoPlayBaseName}ManageMTPDeviceOnArrival"
-
-; AutoPlay human-readable strings.
-!define AutoPlayManageDeviceAction "Manage device"
-
-; CD AutoPlay settings
-;
-;   Change AutoPlayBaseName to configure a separate AutoPlay installation.
-;
-!define AutoPlayProgID             "${AutoPlayBaseName}.AutoPlay"
-!define AutoPlayCDRipHandlerName   "${AutoPlayBaseName}CDOnRip"
-
-; CD AutoPlay human-readable strings.
-!define AutoPlayCDRipAction "Rip music from CD"
-
 #if SB_USE_JEMALLOC==1
 !define UsingJemalloc         "@SB_USE_JEMALLOC@"
 #endif

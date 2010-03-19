@@ -1,25 +1,4 @@
 #filter substitution
 [steps:update]
 0001=exec $APPDIR$cdriphelper.exe upgrade
-0002=exec REG ADD "HKLM\Software\Classes\@SB_APPNAME@.ManageVolumeDevice\shell\manage\command" /ve /t REG_SZ /d "$APPDIR$Songbird.exe -autoplay-manage-volume-device -start-in-app-directory" /f
-0003=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageVolumeDeviceOnArrival" /v "Action" /t REG_SZ /d "Manage device" /f
-0004=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageVolumeDeviceOnArrival" /v "DefaultIcon" /t REG_SZ /d "$APPDIR$Songbird.exe" /f
-0005=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageVolumeDeviceOnArrival" /v "InvokeProgID" /t REG_SZ /d "@SB_APPNAME@.ManageVolumeDevice" /f
-0006=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageVolumeDeviceOnArrival" /v "InvokeVerb" /t REG_SZ /d "manage" /f
-0007=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageVolumeDeviceOnArrival" /v "Provider" /t REG_SZ /d "@SB_APPNAME@" /f
-0008=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\PlayMusicFilesOnArrival" /v "@SB_APPNAME@ManageVolumeDeviceOnArrival" /t REG_SZ /d "" /f
-0009=exec REG ADD "HKLM\Software\Classes\@SB_APPNAME@.AutoPlay\shell\Rip\command" /ve /t REG_SZ /d "$APPDIR$Songbird.exe -autoplay-cd-rip" /f
-0010=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@CDOnRip" /v "Action" /t REG_SZ /d "Rip Music from CD" /f
-0011=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@CDOnRip" /v "DefaultIcon" /t REG_SZ /d "$APPDIR$Songbird.exe" /f
-0012=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@CDOnRip" /v "InvokeProgID" /t REG_SZ /d "@SB_APPNAME@.AutoPlay" /f
-0013=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@CDOnRip" /v "InvokeVerb" /t REG_SZ /d "Rip" /f
-0014=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@CDOnRip" /v "Provider" /t REG_SZ /d "@SB_APPNAME@" /f
-0015=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\PlayCDAudioOnArrival" /v "@SB_APPNAME@CDOnRip" /t REG_SZ /d "" /f
-0016=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageMTPDeviceOnArrival" /v "Action" /t REG_SZ /d "Manage device" /f
-0017=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageMTPDeviceOnArrival" /v "DefaultIcon" /t REG_SZ /d "$APPDIR$Songbird.exe" /f
-0018=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageMTPDeviceOnArrival" /v "InitCmdLine" /t REG_SZ /d "\"$APPDIR$Songbird.exe\" -autoplay-manage-mtp-device" /f
-0019=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageMTPDeviceOnArrival" /v "ProgID" /t REG_SZ /d "Shell.HWEventHandlerShellExecute" /f
-0020=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageMTPDeviceOnArrival" /v "Provider" /t REG_SZ /d "@SB_APPNAME@" /f
-0021=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\MTPMediaPlayerArrival" /v "@SB_APPNAME@ManageMTPDeviceOnArrival" /t REG_SZ /d "" /f
-0022=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\WPD\Sink\{4AD2C85E-5E2D-45E5-8864-4F229E3C6CF0}" /v "@SB_APPNAME@ManageMTPDeviceOnArrival" /t REG_SZ /d "" /f
-0023=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\WPD\Sink\{9261B03C-3D78-4519-85E3-02C5E1F50BB9}" /v "@SB_APPNAME@ManageMTPDeviceOnArrival" /t REG_SZ /d "" /f
+0002=exec $APPDIR$sbAutoPlayUtil.exe -Upgrade

@@ -157,79 +157,10 @@ Function InstallBrandingRegistryKeys
    WriteRegStr HKLM $RootAppRegistryKey "${MuiStartmenupageRegName}" $R0
    DeleteRegKey HKLM ${MuiStartmenupageRegKey}
 
-   ;
-   ; AutoPlay v2 registration.
-   ;
-   ; See http://msdn.microsoft.com/en-us/magazine/cc301341.aspx
-   ;     http://social.msdn.microsoft.com/Forums/en-US/netfxbcl/thread/8341c15b-04ef-438e-ab1e-276186fd2177/
-   ;
-   ;   AutoPlay support for MSC devices is provided by registering a handler to
-   ; handle PlayMusicFilesOnArrival events for volume-based devices as described
-   ; in "http://msdn.microsoft.com/en-us/magazine/cc301341.aspx".
-   ;
+   ; Install Songbird AutoPlay services.
+   ExecWait '"$INSTDIR\sbAutoPlayUtil" -Install'
 
-   ; Register a manage volume device ProgID to launch Songbird.  By default,
-   ; Songbird will be launched with the volume mount point as the current
-   ; working directory.  This prevents the volume from being ejected.  To avoid
-   ; this, Songbird is directed to start in the Songbird application directory.
-   StrCpy $0 "Software\Classes\${AutoPlayManageVolumeDeviceProgID}\shell\manage\command"
-   WriteRegStr HKLM $0 "" "$INSTDIR\${FileMainEXE} -autoplay-manage-volume-device -start-in-app-directory"
-
-   ; Register a volume device arrival handler to invoke the manage volume
-   ; device ProgID.
-   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\${AutoPlayVolumeDeviceArrivalHandlerName}"
-   WriteRegStr HKLM $0 "" ""
-   WriteRegStr HKLM $0 "Action" "${AutoPlayManageDeviceAction}"
-   WriteRegStr HKLM $0 "DefaultIcon" "$INSTDIR\${FileMainEXE}"
-   WriteRegStr HKLM $0 "InvokeProgID" "${AutoPlayVolumeDeviceArrivalHandlerProgID}"
-   WriteRegStr HKLM $0 "InvokeVerb" "manage"
-   WriteRegStr HKLM $0 "Provider" "${BrandShortName}"
-
-   ; Register to handle PlayMusicFilesOnArrival events using the volume
-   ; device arrival handler.
-   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\PlayMusicFilesOnArrival"
-   WriteRegStr HKLM $0 "${AutoPlayVolumeDeviceArrivalHandlerName}" ""
-
-   ; Register an MTP device arrival handler to launch Songbird to manage the MTP
-   ; device.  Make use of the "Shell.HWEventHandlerShellExecute" COM component.
-   ; If any command line arguments are present in InitCmdLine, the executable
-   ; string must be enclosed in quotes if it contains spaces.
-   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\${AutoPlayMTPDeviceArrivalHandlerName}"
-   WriteRegStr HKLM $0 "Action" "${AutoPlayManageDeviceAction}"
-   WriteRegStr HKLM $0 "DefaultIcon" "$INSTDIR\${FileMainEXE}"
-   WriteRegStr HKLM $0 "InitCmdLine" '"$INSTDIR\${FileMainEXE}" -autoplay-manage-mtp-device'
-   WriteRegStr HKLM $0 "ProgID" "Shell.HWEventHandlerShellExecute"
-   WriteRegStr HKLM $0 "Provider" "${BrandShortName}"
-
-   ; Register to handle MTPMediaPlayerArrival events using the MTP device
-   ; arrival handler.
-   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\MTPMediaPlayerArrival"
-   WriteRegStr HKLM $0 "${AutoPlayMTPDeviceArrivalHandlerName}" ""
-
-   ; Register to handle WPD audio and video events using the MTP device arrival
-   ; handler.
-   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\WPD\Sink\{4AD2C85E-5E2D-45E5-8864-4F229E3C6CF0}"
-   WriteRegStr HKLM $0 "${AutoPlayMTPDeviceArrivalHandlerName}" ""
-   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\WPD\Sink\{9261B03C-3D78-4519-85E3-02C5E1F50BB9}"
-   WriteRegStr HKLM $0 "${AutoPlayMTPDeviceArrivalHandlerName}" ""
-
-   ; Register CD Rip command
-   WriteRegStr HKLM "Software\Classes\${AutoPlayProgID}\shell\Rip\command" "" "$INSTDIR\${FileMainEXE} -autoplay-cd-rip"
-
-   ; Register an Audio CD Rip handler
-   ; device ProgID.
-   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\${AutoPlayCDRipHandlerName}"
-   WriteRegStr HKLM $0 "Action" "${AutoPlayCDRipAction}"
-   WriteRegStr HKLM $0 "DefaultIcon" "$INSTDIR\${FileMainEXE}"
-   WriteRegStr HKLM $0 "InvokeProgID" "${AutoPlayProgID}"
-   WriteRegStr HKLM $0 "InvokeVerb" "Rip"
-   WriteRegStr HKLM $0 "Provider" "${BrandShortName}"
-
-   ; Register for CD arrival events for rip
-   ; device arrival handler.
-   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\PlayCDAudioOnArrival" "${AutoPlayCDRipHandlerName}" ""
-   
-FunctionEnd 
+FunctionEnd
 
 Section "Desktop Icon"
    ${If} $DistributionMode == ${TRUE}

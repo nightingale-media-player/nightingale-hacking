@@ -1,9 +1,11 @@
+/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 :miv */
 /*
  *=BEGIN SONGBIRD GPL
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -22,19 +24,31 @@
  *=END SONGBIRD GPL
  */
 
+#ifndef SB_WINDOWS_EVENT_LOG_H_
+#define SB_WINDOWS_EVENT_LOG_H_
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//
+// Songbird Windows event logging services.
+//
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
 /**
- * \file  sbWindowsUtils.cpp
- * \brief Songbird Windows Utilities Source.
+ * \file  sbWindowsEventLog.h
+ * \brief Songbird Windows Event Logging Services Definitions.
  */
 
 //------------------------------------------------------------------------------
 //
-// Songbird Windows utilities imported services.
+// Songbird Windows event logging services.
 //
 //------------------------------------------------------------------------------
 
-// Self import.
-#include "sbWindowsUtils.h"
+void sbWindowsEventLog(const char* aMsg, ...);
 
-//XXXeps eventually, something will be put here.
+
+#endif // SB_WINDOWS_EVENT_LOG_H_
+
 

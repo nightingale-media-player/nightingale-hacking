@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -46,6 +46,9 @@
 // Self import.
 #include "sbWindowsEventLog.h"
 
+// Local imports.
+#include "sbWindowsUtils.h"
+
 // Windows imports.
 #include <windows.h>
 
@@ -73,7 +76,9 @@
 //
 //------------------------------------------------------------------------------
 
-void sbWindowsEventLogInitialize();
+static void sbWindowsEventLogInitialize();
+
+static void sbWindowsEventLogFinalize();
 
 
 //------------------------------------------------------------------------------
@@ -89,7 +94,7 @@ void sbWindowsEventLogInitialize();
 //
 
 static BOOL gSBWindowsEventLogInitialized = FALSE;
-static HANDLE gSBWindowsEventLogEventSource = INVALID_HANDLE_VALUE;
+static HANDLE gSBWindowsEventLogEventSource = NULL;
 
 
 //------------------------------------------------------------------------------
@@ -112,18 +117,15 @@ sbWindowsEventLog(const char* aMsg, ...)
   sbWindowsEventLogInitialize();
 
   // Produce the log message.
-  char msg[256];
+  tstring msg;
   va_list argList;
   va_start(argList, aMsg);
-  vsnprintf(msg, sizeof(msg), aMsg, argList);
+  msg.vprintf(aMsg, argList);
   va_end(argList);
 
-  // Convert the log message to unicode.
-  wchar_t wMsg[256];
-  MultiByteToWideChar(CP_UTF8, 0, msg, -1, wMsg, sizeof(wMsg));
-
   // Report the log event.
-  LPCWSTR msgList[1] = { wMsg };
+  LPCTSTR msgList[1] = { msg };
+
   ReportEvent(gSBWindowsEventLogEventSource,
               EVENTLOG_INFORMATION_TYPE,
               0,
@@ -153,6 +155,9 @@ sbWindowsEventLogInitialize()
   if (gSBWindowsEventLogInitialized)
     return;
 
+  // Set up to finalize on exit.
+  atexit(sbWindowsEventLogFinalize);
+
   // Register the event source.
   gSBWindowsEventLogEventSource = RegisterEventSourceA
                                     (NULL,
@@ -162,4 +167,16 @@ sbWindowsEventLogInitialize()
   gSBWindowsEventLogInitialized = TRUE;
 }
 
+
+/**
+ * \brief Finalize the Songbird Windows event logging services.
+ */
+
+void
+sbWindowsEventLogFinalize()
+{
+  // Deregister the event source.
+  if (gSBWindowsEventLogEventSource)
+    DeregisterEventSource(gSBWindowsEventLogEventSource);
+}
 

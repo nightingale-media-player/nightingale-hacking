@@ -3,7 +3,7 @@
 #
 # This file is part of the Songbird web player.
 #
-# Copyright(c) 2005-2009 POTI, Inc.
+# Copyright(c) 2005-2010 POTI, Inc.
 # http://www.songbirdnest.com
 #
 # This file may be licensed under the terms of of the
@@ -47,14 +47,14 @@ CPP_EXTRA_INCLUDES += \
  $(DEPS_DIR)/private/windows_ddk/$(SB_CONFIGURATION)/include \
  $(DEPTH)/components/moz/system/windows/formatter/public \
  $(topsrcdir)/components/include \
- $(topsrcdir)/components/moz/system/windows/src/static \
+ $(topsrcdir)/tools/lib/windows/static \
  $(NULL)
 
 CPP_EXTRA_DEFS += -DSB_LOG_TO_WINDOWS_EVENT_LOG \
                   $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
- components/moz/system/windows/src/static/sbWindowsUtils \
+ tools/lib/windows/static/sbWindowsUtils \
  $(NULL)
 
 WIN32_RC_SRCS = sbWindowsFormatter.rc \
