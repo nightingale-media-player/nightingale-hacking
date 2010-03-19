@@ -115,9 +115,13 @@ Function un.RemoveCdrip
       ${If} $InstallerMode == "debug"
          MessageBox MB_OK "$INSTDIR\${CdripHelperEXE} returned $0"
       ${EndIf}
-      ; If we uninstall the CD-rip drivers, we always prompt for a reboot
-      ; because... hey... it's windows...
-      SetRebootFlag true
+      ; If the CD ripping/Gearworks driver is flagged for removal
+      ; we need to reboot to remove it. Only prompt to reboot
+      ; if neccessary 
+      ReadRegDWORD $0 HKLM "${CdripServiceRegKey}" "DeleteFlag"
+      ${If} $0 == "1"
+         SetRebootFlag true
+      ${EndIf} 
    ${EndIf}
 
    DeleteRegKey HKLM "$RootAppRegistryKey\${CdripRegKey}"
