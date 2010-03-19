@@ -45,5 +45,7 @@ CPP_EXTRA_INCLUDES += \
  $(topsrcdir)/components/include \
  $(NULL)
 
+CPP_EXTRA_FLAGS += $(CFLAGS_STATIC_LIBC)
+
 include $(topsrcdir)/build/rules.mk
 

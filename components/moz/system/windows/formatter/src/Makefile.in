@@ -53,6 +53,8 @@ CPP_EXTRA_INCLUDES += \
 CPP_EXTRA_DEFS += -DSB_LOG_TO_WINDOWS_EVENT_LOG \
                   $(NULL)
 
+CPP_EXTRA_FLAGS += $(CFLAGS_STATIC_LIBC)
+
 DYNAMIC_LIB_STATIC_IMPORTS += \
  tools/lib/windows/static/sbWindowsUtils \
  $(NULL)
