@@ -169,12 +169,12 @@ var deviceFirmwareWizard = {
                                this._defaultDeviceKey]);
 
           // Hack up the style so that it doesn't look so damn ugly.
-          recoveryInstructions = "<p style=\"font-family: sans-serif; font-size: 12px\">" + 
+          recoveryInstructions = "<html><body><p style=\"font-family: sans-serif; font-size: 12px\">" + 
                                  recoveryInstructions + 
-                                 "</p>";
+                                 "</p></body></html>";
 
           let browser = document.getElementById("device_firmware_wizard_recovery_mode_browser");
-          let dataURI = "data:text/html," + escape(recoveryInstructions);
+          let dataURI = "data:text/html;charset=UTF-8," + recoveryInstructions;
           browser.setAttribute("src", dataURI);
           
           let label = document.getElementById("device_firmware_wizard_recovery_mode_label");
@@ -214,12 +214,12 @@ var deviceFirmwareWizard = {
                                          handler.recoveryModeKeyCombination]);
 
                     // Hack up the style so that it doesn't look so damn ugly.
-                    recoveryInstructions = "<p style=\"font-family: sans-serif; font-size: 12px\">" + 
+                    recoveryInstructions = "<html><body><p style=\"font-family: sans-serif; font-size: 12px\">" + 
                                            recoveryInstructions + 
-                                           "</p>";
+                                           "</p></body></html>";
 
                     let browser = document.getElementById("device_firmware_wizard_recovery_mode_browser");
-                    let dataURI = "data:text/html," + escape(recoveryInstructions);
+                    let dataURI = "data:text/html;charset=UTF-8," + recoveryInstructions;
                     browser.setAttribute("src", dataURI);
                   }
                   else if(handler.resetInstructionsLocation) {
