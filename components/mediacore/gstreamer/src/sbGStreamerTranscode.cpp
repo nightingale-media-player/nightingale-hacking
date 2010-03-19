@@ -838,10 +838,10 @@ struct GSTNameMap {
 };
 
 static struct GSTNameMap SupportedContainers[] = {
-  {"ogg", "application/ogg"},
-  {"id3", "application/x-id3"},
-  {"asf", "video/x-ms-asf"},
-  {"wav", "audio/x-wav"}
+  {"application/ogg", "application/ogg"},
+  {"audio/mpeg", "application/x-id3"},
+  {"audio/x-ms-asf", "video/x-ms-asf"},
+  {"wudio/x-wav", "audio/x-wav"}
 };
 
 nsresult
@@ -878,10 +878,10 @@ sbGStreamerTranscode::GetContainer(nsAString &container, nsIArray *properties,
 }
 
 static struct GSTNameMap SupportedAudioCodecs[] = {
-  {"vorbis", "audio/x-vorbis"},
-  {"flac", "audio/x-flac"},
-  {"wmav2", "audio/x-wma, wmaversion=(int)2"},
-  {"mp3", "audio/mpeg, mpegversion=(int)1, layer=(int)3"},
+  {"audio/x-vorbis", "audio/x-vorbis"},
+  {"audio/x-flac", "audio/x-flac"},
+  {"audio/x-ms-wma", "audio/x-wma, wmaversion=(int)2"},
+  {"audio/mpeg", "audio/mpeg, mpegversion=(int)1, layer=(int)3"},
 };
 
 nsresult

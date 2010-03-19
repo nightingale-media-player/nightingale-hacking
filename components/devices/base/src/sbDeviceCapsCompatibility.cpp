@@ -240,58 +240,71 @@ sbDeviceCapsCompatibility::CompareVideoFormat(PRBool* aCompatible)
          ++mimeTypeIndex) {
       NS_ConvertASCIItoUTF16 mimeType(mimeTypes[mimeTypeIndex]);
     
-      nsCOMPtr<sbIVideoFormatType> videoFormat;
-      rv = mDeviceCapabilities->GetFormatType(mContentType,
-                                              mimeType,
-                                              getter_AddRefs(videoFormat));
-      if (NS_SUCCEEDED(rv) && videoFormat) {
-        // Compare container type
-        nsCString deviceContainerType;
-        rv = videoFormat->GetContainerType(deviceContainerType);
-        NS_ENSURE_SUCCESS(rv, rv);
+      nsISupports** formatTypes;
+      PRUint32 formatTypeCount;
+      rv = mDeviceCapabilities->GetFormatTypes(mContentType,
+                                               mimeType,
+                                               &formatTypeCount,
+                                               &formatTypes);
+      NS_ENSURE_SUCCESS(rv, rv);
+      sbAutoFreeXPCOMPointerArray<nsISupports> freeFormats(formatTypeCount,
+                                                           formatTypes);
 
-        // Container type not equal
-        if (!StringEqualsToCString(mMediaContainerType, deviceContainerType))
-          continue;
+      for (PRUint32 formatIndex = 0;
+           formatIndex < formatTypeCount;
+           formatIndex++)
+      {
+        nsCOMPtr<sbIVideoFormatType> videoFormat = do_QueryInterface(
+            formatTypes[formatIndex], &rv);
+        if (NS_SUCCEEDED(rv) && videoFormat) {
+          // Compare container type
+          nsCString deviceContainerType;
+          rv = videoFormat->GetContainerType(deviceContainerType);
+          NS_ENSURE_SUCCESS(rv, rv);
 
-        // Get device video stream
-        nsCOMPtr<sbIDevCapVideoStream> videoStream;
-        rv = videoFormat->GetVideoStream(getter_AddRefs(videoStream));
-        NS_ENSURE_SUCCESS(rv, rv);
+          // Container type not equal
+          if (!StringEqualsToCString(mMediaContainerType, deviceContainerType))
+            continue;
 
-        // Skip to the next format
-        if (!videoStream) {
-          LOG(("%s[%p] -- Empty video stream for supported video format",
-               __FUNCTION__, this));
-          continue;
-        }
-
-        rv = CompareVideoStream(videoStream, aCompatible);
-        NS_ENSURE_SUCCESS(rv, rv);
-        if (!(*aCompatible))
-          continue;
-
-        if (mMediaAudioStream) {
-          // Get device audio stream
-          nsCOMPtr<sbIDevCapAudioStream> audioStream;
-          rv = videoFormat->GetAudioStream(getter_AddRefs(audioStream));
+          // Get device video stream
+          nsCOMPtr<sbIDevCapVideoStream> videoStream;
+          rv = videoFormat->GetVideoStream(getter_AddRefs(videoStream));
           NS_ENSURE_SUCCESS(rv, rv);
 
           // Skip to the next format
-          if (!audioStream) {
-            LOG(("%s[%p] -- Empty audio stream for supported video format",
+          if (!videoStream) {
+            LOG(("%s[%p] -- Empty video stream for supported video format",
                  __FUNCTION__, this));
             continue;
           }
 
-          rv = CompareAudioStream(audioStream, aCompatible);
+          rv = CompareVideoStream(videoStream, aCompatible);
           NS_ENSURE_SUCCESS(rv, rv);
           if (!(*aCompatible))
             continue;
-        }
 
-        // Come this far means we get a match. Compatible.
-        break;
+          if (mMediaAudioStream) {
+            // Get device audio stream
+            nsCOMPtr<sbIDevCapAudioStream> audioStream;
+            rv = videoFormat->GetAudioStream(getter_AddRefs(audioStream));
+            NS_ENSURE_SUCCESS(rv, rv);
+ 
+            // Skip to the next format
+            if (!audioStream) {
+              LOG(("%s[%p] -- Empty audio stream for supported video format",
+                   __FUNCTION__, this));
+              continue;
+            }
+  
+            rv = CompareAudioStream(audioStream, aCompatible);
+            NS_ENSURE_SUCCESS(rv, rv);
+            if (!(*aCompatible))
+              continue;
+          }
+  
+          // Getting this far means we got a match and have set aCompatible.
+          return NS_OK;
+        }
       }
     }
   }

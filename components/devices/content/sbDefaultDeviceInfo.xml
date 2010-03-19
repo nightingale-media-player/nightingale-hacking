@@ -29,7 +29,7 @@
   <deviceinfo>
     <devicecaps xmlns="http://songbirdnest.com/devicecaps/1.0">
       <audio>
-        <format mime="audio/mpeg" container="id3" codec="mp3">
+        <format mime="audio/mpeg" container="audio/mpeg" codec="audio/mpeg">
           <bitrates>
             <range min="8000" max="320000" step="1" />
           </bitrates>

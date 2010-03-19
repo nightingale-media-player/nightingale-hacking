@@ -5985,21 +5985,26 @@ AddAlbumArtFormats(PRUint32 aContentType,
   nsresult rv;
 
   for (PRUint32 i = 0; i < numMimeTypes; i++) {
-    nsCOMPtr<nsISupports> formatType;
-    rv = aCapabilities->GetFormatType(aContentType,
-                                      NS_ConvertASCIItoUTF16(mimeTypes[i]),
-            getter_AddRefs(formatType));
-    /* There might be no corresponding format object for this type, if so, just
-       ignore it */
-    if (NS_FAILED (rv))
-      continue;
-
-    nsCOMPtr<sbIImageFormatType> constraints =
-        do_QueryInterface(formatType, &rv);
+    nsISupports** formatTypes;
+    PRUint32 formatTypeCount;
+    rv = aCapabilities->GetFormatTypes(aContentType,
+                                       NS_ConvertASCIItoUTF16(mimeTypes[i]),
+                                       &formatTypeCount,
+                                       &formatTypes);
     NS_ENSURE_SUCCESS(rv, rv);
+    sbAutoFreeXPCOMPointerArray<nsISupports> freeFormats(formatTypeCount,
+                                                         formatTypes); 
+    for (PRUint32 formatIndex = 0;
+         formatIndex < formatTypeCount;
+         formatIndex++)
+    {
+      nsCOMPtr<sbIImageFormatType> constraints =
+          do_QueryInterface(formatTypes[formatIndex], &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = aArray->AppendElement(constraints, PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
+      rv = aArray->AppendElement(constraints, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   return NS_OK;

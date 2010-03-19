@@ -6,11 +6,11 @@
   <mimetype>audio/x-ms-wma</mimetype>
 
   <container>
-    <type>asf</type>
+    <type>video/x-ms-asf</type>
   </container>
 
   <audio>
-    <type>wmav2</type>
+    <type>audio/x-ms-wma</type>
     <property name="bitrate" type="int" min="32000" max="320000" default="160000"/>
   </audio>
 </profile>

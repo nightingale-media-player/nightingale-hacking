@@ -58,7 +58,7 @@ protected:
   PRBool isConfigured;
   typedef nsClassHashtable<nsUint32HashKey, nsTArray<PRUint32> > ContentTypes;
   typedef nsClassHashtable<nsUint32HashKey, nsTArray<nsCString> > SupportedMimeTypes;
-  typedef nsInterfaceHashtable<nsStringHashKey, nsISupports> FormatTypes;
+  typedef nsClassHashtable<nsStringHashKey, nsTArray<nsCOMPtr<nsISupports> > > FormatTypes;
   nsTArray<PRUint32> mFunctionTypes;
   ContentTypes mContentTypes;
   SupportedMimeTypes mSupportedMimeTypes;

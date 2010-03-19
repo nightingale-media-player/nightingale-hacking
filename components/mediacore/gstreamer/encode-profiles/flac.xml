@@ -16,7 +16,7 @@
     -->
 
   <audio>
-    <type>flac</type>
+    <type>audio/x-flac</type>
     <!-- No properties at the moment either -->
   </audio>
 </profile>

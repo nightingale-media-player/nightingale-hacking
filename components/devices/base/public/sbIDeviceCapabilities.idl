@@ -564,10 +564,16 @@ interface sbIDeviceCapabilities : nsISupports
                                out string aSupportedMimeTypes);
 
   /**
-   * Returns the list of constraints for the format under a content type
+   * Returns an array of constraint objects (sbIVideoFormatType,
+   * sbIAudioFormatType, sbIImageFormatType, depending on the content
+   * type requested) for this mime type and type of content.
    */
-  nsISupports getFormatType(in PRUint32 aContentType, in AString aFormat);
-   
+  void getFormatTypes(in PRUint32 aContentType,
+                      in AString aMimeType,
+                      out unsigned long aArrayCount,
+                      [retval, array, size_is(aArrayCount)]
+                        out nsISupports aSupportedFormats);
+ 
   /**
    * Returns an array of nsISupportsPRUint32 values defined in
    * sbIDeviceEvent.idl
