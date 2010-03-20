@@ -617,7 +617,7 @@ public:
   PRUint32 GetDeviceState() {
     return mState;
   }
-  
+
   sbDeviceImages* GetDeviceImages() const {
     return mDeviceImages;
   }
@@ -628,7 +628,7 @@ public:
   void ResetBatchDepth() {
     PR_AtomicSet(&mBatchDepth, 0);
   }
-  
+
 protected:
   friend class sbBaseDeviceInitHelper;
   friend class sbDeviceEnsureSpaceForWrite;
@@ -1580,6 +1580,7 @@ protected:
   nsresult IsRequestDuplicate(TransferRequestQueue & aQueue,
                               TransferRequest * aRequest,
                               bool & aIsDuplicate);
+  nsresult  GetExcludedFolders(nsTArray<nsString> & aExcludedFolders);
 };
 
 void SBUpdateBatchCounts(sbBaseDevice::Batch& aBatch);

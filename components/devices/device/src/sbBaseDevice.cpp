@@ -154,6 +154,41 @@ static const PRUint32 sbBaseDeviceSupportedFolderContentTypeList[] =
   sbIDeviceCapabilities::CONTENT_IMAGE
 };
 
+static nsresult
+GetPropertyBag(sbIDevice * aDevice, nsIPropertyBag2 ** aProperties)
+{
+  TRACE(("%s", __FUNCTION__));
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(aProperties);
+
+  nsCOMPtr<sbIDeviceProperties> deviceProperties;
+  nsresult rv = aDevice->GetProperties(getter_AddRefs(deviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deviceProperties->GetProperties(aProperties);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+
+static nsresult
+GetWritableDeviceProperties(sbIDevice * aDevice,
+                            nsIWritablePropertyBag ** aProperties)
+{
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(aProperties);
+
+  nsresult rv;
+
+  // Get the device properties.
+  nsCOMPtr<nsIPropertyBag2>        roDeviceProperties;
+  rv = GetPropertyBag(aDevice, getter_AddRefs(roDeviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return CallQueryInterface(roDeviceProperties, aProperties);
+}
+
 NS_IMPL_THREADSAFE_ISUPPORTS0(sbBaseDevice::TransferRequest)
 
 class MediaListListenerAttachingEnumerator : public sbIMediaListEnumerationListener
@@ -2008,11 +2043,8 @@ nsresult sbBaseDevice::CheckAccess(sbIDeviceLibrary* aDevLib)
   nsresult rv;
 
   // Get the device properties.
-  nsCOMPtr<sbIDeviceProperties> baseDeviceProperties;
   nsCOMPtr<nsIPropertyBag2>     deviceProperties;
-  rv = GetProperties(getter_AddRefs(baseDeviceProperties));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = baseDeviceProperties->GetProperties(getter_AddRefs(deviceProperties));
+  rv = GetPropertyBag(this, getter_AddRefs(deviceProperties));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the access compatibility.
@@ -3004,11 +3036,8 @@ sbBaseDevice::GetMusicFreeSpace(sbILibrary* aLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the device properties.
-  nsCOMPtr<sbIDeviceProperties> baseDeviceProperties;
   nsCOMPtr<nsIPropertyBag2>     deviceProperties;
-  rv = GetProperties(getter_AddRefs(baseDeviceProperties));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = baseDeviceProperties->GetProperties(getter_AddRefs(deviceProperties));
+  rv = GetPropertyBag(this, getter_AddRefs(deviceProperties));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the music used space.
@@ -3038,11 +3067,8 @@ sbBaseDevice::GetMusicAvailableSpace(sbILibrary* aLibrary,
   nsresult rv;
 
   // Get the device properties.
-  nsCOMPtr<sbIDeviceProperties> baseDeviceProperties;
   nsCOMPtr<nsIPropertyBag2>     deviceProperties;
-  rv = GetProperties(getter_AddRefs(baseDeviceProperties));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = baseDeviceProperties->GetProperties(getter_AddRefs(deviceProperties));
+  rv = GetPropertyBag(this, getter_AddRefs(deviceProperties));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the total capacity.
@@ -3347,6 +3373,24 @@ sbBaseDevice::ApplyDeviceSettingsDeviceInfo
     }
   }
 
+  nsString excludedFolders;
+  rv = deviceXMLInfo->GetExcludedFolders(excludedFolders);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!excludedFolders.IsEmpty()) {
+    LOG(("Excluded Folders: %s",
+         NS_LossyConvertUTF16toASCII(excludedFolders).BeginReading()));
+
+    // Get the device properties.
+    nsCOMPtr<nsIWritablePropertyBag> deviceProperties;
+    rv = GetWritableDeviceProperties(this, getter_AddRefs(deviceProperties));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = deviceProperties->SetProperty(
+                           NS_LITERAL_STRING(SB_DEVICE_PROPERTY_EXCLUDED_FOLDERS),
+                           sbNewVariant(excludedFolders));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   // Update media folders if needed.  Ignore errors if media folders fail to
   // update.
   if (needMediaFolderUpdate)
@@ -3436,14 +3480,8 @@ sbBaseDevice::UpdateStatisticsProperties()
   nsresult rv;
 
   // Get the device properties.
-  nsCOMPtr<sbIDeviceProperties>    baseDeviceProperties;
-  nsCOMPtr<nsIPropertyBag2>        roDeviceProperties;
   nsCOMPtr<nsIWritablePropertyBag> deviceProperties;
-  rv = GetProperties(getter_AddRefs(baseDeviceProperties));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = baseDeviceProperties->GetProperties(getter_AddRefs(roDeviceProperties));
-  NS_ENSURE_SUCCESS(rv, rv);
-  deviceProperties = do_QueryInterface(roDeviceProperties, &rv);
+  rv = GetWritableDeviceProperties(this, getter_AddRefs(deviceProperties));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Update the statistics properties.
@@ -4660,11 +4698,9 @@ sbBaseDevice::SyncGetSyncAvailableSpace(sbILibrary* aLibrary,
   nsresult rv;
 
   // Get the device properties.
-  nsCOMPtr<sbIDeviceProperties> baseDeviceProperties;
+  // Get the device properties.
   nsCOMPtr<nsIPropertyBag2>     deviceProperties;
-  rv = GetProperties(getter_AddRefs(baseDeviceProperties));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = baseDeviceProperties->GetProperties(getter_AddRefs(deviceProperties));
+  rv = GetPropertyBag(this, getter_AddRefs(deviceProperties));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the free space and the music used space.
@@ -5653,6 +5689,25 @@ sbBaseDevice::RegisterDeviceInfo()
     }
   }
 
+  nsString excludedFolders;
+  rv = mInfoRegistrar->GetExcludedFolders(this, excludedFolders);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  LOG(("Excluded Folders: %s",
+       NS_LossyConvertUTF16toASCII(excludedFolders).BeginReading()));
+
+  if (!excludedFolders.IsEmpty()) {
+    // Get the device properties.
+    nsCOMPtr<nsIWritablePropertyBag> deviceProperties;
+    rv = GetWritableDeviceProperties(this, getter_AddRefs(deviceProperties));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = deviceProperties->SetProperty(
+                           NS_LITERAL_STRING(SB_DEVICE_PROPERTY_EXCLUDED_FOLDERS),
+                           sbNewVariant(excludedFolders));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   // Log the device folders.
   LogDeviceFolders();
 
@@ -6128,23 +6183,6 @@ sbBaseDevice::SetCacheSyncRequests(PRBool aCacheSyncRequests)
   return NS_OK;
 }
 
-static nsresult
-GetPropertyBag(sbIDevice * aDevice, nsIPropertyBag2 ** aProperties)
-{
-  TRACE(("%s", __FUNCTION__));
-  NS_ENSURE_ARG_POINTER(aDevice);
-  NS_ENSURE_ARG_POINTER(aProperties);
-
-  nsCOMPtr<sbIDeviceProperties> deviceProperties;
-  nsresult rv = aDevice->GetProperties(getter_AddRefs(deviceProperties));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = deviceProperties->GetProperties(aProperties);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
 nsresult
 sbBaseDevice::GetNameBase(nsAString& aName)
 {
@@ -6262,6 +6300,29 @@ sbBaseDevice::IgnoreWatchFolderPath(nsIURI * aURI,
   NS_ENSURE_SUCCESS(rv, rv);
 
   autoWFPathIgnore.forget(aIgnorePath);
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::GetExcludedFolders(nsTArray<nsString> & aExcludedFolders)
+{
+  nsresult rv;
+
+  nsCOMPtr<nsIPropertyBag2> deviceProperties;
+  rv = GetPropertyBag(this, getter_AddRefs(deviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString excludedFolderStrings;
+  rv = deviceProperties->GetPropertyAsAString(
+                         NS_LITERAL_STRING(SB_DEVICE_PROPERTY_EXCLUDED_FOLDERS),
+                         excludedFolderStrings);
+  if (rv != NS_ERROR_NOT_AVAILABLE) {
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsString_Split(excludedFolderStrings,
+                   NS_LITERAL_STRING(","),
+                   aExcludedFolders);
+  }
 
   return NS_OK;
 }

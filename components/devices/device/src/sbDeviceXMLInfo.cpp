@@ -298,6 +298,52 @@ sbDeviceXMLInfo::GetDeviceFolder(PRUint32   aContentType,
   return NS_OK;
 }
 
+//-------------------------------------
+//
+// GetExcludedFolders
+//
+nsresult
+sbDeviceXMLInfo::GetExcludedFolders(nsAString & aExcludedFolders)
+{
+  nsresult rv;
+
+  aExcludedFolders.Truncate();
+
+  // Do nothing more if no device info element.
+  if (!mDeviceInfoElement)
+    return NS_OK;
+
+  // Get the list of exclude folder nodes.
+  nsCOMPtr<nsIDOMNodeList> excludeNodeList;
+  rv = mDeviceInfoElement->GetElementsByTagNameNS
+                             (NS_LITERAL_STRING(SB_DEVICE_INFO_NS),
+                              NS_LITERAL_STRING("excludefolder"),
+                              getter_AddRefs(excludeNodeList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get all excluded folders.
+  PRUint32 nodeCount;
+  rv = excludeNodeList->GetLength(&nodeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  for (PRUint32 i = 0; i < nodeCount; i++) {
+    // Get the next exclude folder element.
+    nsCOMPtr<nsIDOMElement> excludeElement;
+    nsCOMPtr<nsIDOMNode>    excludeNode;
+    rv = excludeNodeList->Item(i, getter_AddRefs(excludeNode));
+    NS_ENSURE_SUCCESS(rv, rv);
+    excludeElement = do_QueryInterface(excludeNode, &rv);
+    if (NS_SUCCEEDED(rv)) {
+      nsString excludeURL;
+      rv = excludeElement->GetAttribute(NS_LITERAL_STRING("url"), excludeURL);
+      NS_ENSURE_SUCCESS(rv, rv);
+      if (!aExcludedFolders.IsEmpty()) {
+        aExcludedFolders.AppendLiteral(",");
+      }
+      aExcludedFolders.Append(excludeURL);
+    }
+  }
+  return NS_OK;
+}
 
 //-------------------------------------
 //

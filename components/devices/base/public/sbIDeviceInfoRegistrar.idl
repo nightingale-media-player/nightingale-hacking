@@ -39,7 +39,7 @@ interface sbITranscodeProfile;
  *
  * Implementations are to be thread safe.
  */
-[scriptable, uuid(c7d2552e-1dd1-11b2-a09f-94194d7a4b64)]
+[scriptable, uuid(3e3b878a-fec0-4a83-ac43-24c47742b6f9)]
 interface sbIDeviceInfoRegistrar : nsISupports
 {
   /* Types of registrars */
@@ -100,6 +100,13 @@ interface sbIDeviceInfoRegistrar : nsISupports
    */
   unsigned long getMountTimeout(in sbIDevice aDevice);
 
+  /**
+   * \brief Return the excluded folder list as a comma separate string
+   *
+   * \return                    A comma separate list of relative folder paths
+   */
+  AString getExcludedFolders(in sbIDevice aDevice);
+     
   /**
    * \brief Determines if the registrar is interested in this device
    * \param aDevice The device to check if the registrar is interested in

@@ -50,5 +50,6 @@
 #define SB_DEVICE_PROPERTY_VIDEO_USED_SPACE       "http://songbirdnest.com/device/1.0#videoUsedSpace"
 #define SB_DEVICE_PROPERTY_IMAGE_ITEM_COUNT       "http://songbirdnest.com/device/1.0#imageItemCount"
 #define SB_DEVICE_PROPERTY_IMAGE_USED_SPACE       "http://songbirdnest.com/device/1.0#imageUsedSpace"
+#define SB_DEVICE_PROPERTY_EXCLUDED_FOLDERS       "http://songbirdnest.com/device/1.0#excludedFolders"
 
 #endif /* __SB_STANDARD_DEVICE_PROPERTIES_H__ */

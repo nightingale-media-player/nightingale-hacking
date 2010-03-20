@@ -27,6 +27,7 @@
 
 <deviceinfolist xmlns="http://songbirdnest.com/deviceinfo/1.0">
   <deviceinfo>
+    <exclude url="recordings"/>
     <devicecaps xmlns="http://songbirdnest.com/devicecaps/1.0">
       <audio>
         <format mime="audio/mpeg" container="audio/mpeg" codec="audio/mpeg">
