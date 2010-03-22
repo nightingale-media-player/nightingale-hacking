@@ -82,6 +82,7 @@
 #include <sbIMediaManagementService.h>
 #include <sbIOrderableMediaList.h>
 #include <sbIPrompter.h>
+#include <sbIPropertyUnitConverter.h>
 #include <nsISupportsPrimitives.h>
 #include <sbITranscodeManager.h>
 #include <sbITranscodeAlbumArt.h>
@@ -1979,16 +1980,48 @@ nsresult sbBaseDevice::AddLibrary(sbIDeviceLibrary* aDevLib)
   rv = libraries->GetLength(&libraryCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Get the capacity for the library's device volume.
+  nsAutoString displayCapacity;
+  nsAutoString capacity;
+  rv = aDevLib->GetProperty(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_CAPACITY),
+                            capacity);
+  if (NS_SUCCEEDED(rv) && !capacity.IsEmpty()) {
+    // Convert the capacity to a display capacity.
+    nsCOMPtr<sbIPropertyUnitConverter> storageConverter =
+      do_CreateInstance(SB_STORAGEPROPERTYUNITCONVERTER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = storageConverter->AutoFormat(capacity, -1, 1, displayCapacity);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   // If the library will be the first library, assume it's internal.  Otherwise,
   // assume it's removable.
+  nsAutoString libraryName;
+  nsTArray<nsString> libraryNameParams;
   if (libraryCount == 0) {
-    rv = aDevLib->SetName(SBLocalizedString("device.volume.internal.name"));
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (!displayCapacity.IsEmpty()) {
+      libraryNameParams.AppendElement(displayCapacity);
+      libraryName =
+        SBLocalizedString("device.volume.internal.name_with_capacity",
+                          libraryNameParams);
+    }
+    else {
+      libraryName = SBLocalizedString("device.volume.internal.name");
+    }
   }
   else {
-    rv = aDevLib->SetName(SBLocalizedString("device.volume.removable.name"));
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (!displayCapacity.IsEmpty()) {
+      libraryNameParams.AppendElement(displayCapacity);
+      libraryName =
+        SBLocalizedString("device.volume.removable.name_with_capacity",
+                          libraryNameParams);
+    }
+    else {
+      libraryName = SBLocalizedString("device.volume.removable.name");
+    }
   }
+  rv = aDevLib->SetName(libraryName);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Add the library to the device content.
   rv = content->AddLibrary(aDevLib);
