@@ -50,7 +50,18 @@ var Cr = Components.results;
 var Cu = Components.utils;
 
 // Songbird imports.
+Cu.import("resource://app/jsmodules/DOMUtils.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
+
+
+//------------------------------------------------------------------------------
+//
+// Device volume selector defs.
+//
+//------------------------------------------------------------------------------
+
+// XUL XML namespace.
+var XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 
 
 //------------------------------------------------------------------------------
@@ -81,7 +92,7 @@ var deviceVolumeSelectorSvc = {
    */
 
   initialize: function deviceVolumeSelectorSvc_initialize(aWidget) {
-    // Get the device volume selector widget and widget device
+    // Get the device volume selector widget and widget device.
     this._widget = aWidget;
     this._device = this._widget.device;
 
@@ -114,32 +125,6 @@ var deviceVolumeSelectorSvc = {
     this._widget = null;
     this._device = null;
     this._volumeSelectorDeck = null;
-  },
-
-
-  /**
-   * Handle a volume change event.
-   */
-
-  onVolumeChange: function deviceVolumeSelectorSvc_onVolumeChange() {
-    // Get the selected volume library GUID.
-    var volumeMenuList = this._getElement("volume_menulist");
-    var libraryGUID = volumeMenuList.value;
-
-    // Set the device default library to the selected volume library.
-    var content = this._device.content;
-    var libraries = content.libraries;
-    libraryCount = libraries.length;
-    for (var i = 0; i < libraryCount; i++) {
-      // Get the next library.
-      var library = libraries.queryElementAt(i, Ci.sbIDeviceLibrary);
-
-      // If library is the selected library, set it as the default.
-      if (library.guid == libraryGUID) {
-        this._device.defaultLibrary = library;
-        break;
-      }
-    }
   },
 
 
@@ -237,19 +222,6 @@ var deviceVolumeSelectorSvc = {
     var volumeMenuList = this._getElement("volume_menulist");
     this._volumeSelectorDeck.selectedPanel = volumeMenuList;
 
-    // Empty volume menu list.
-    volumeMenuList.removeAllItems();
-
-    // Fill volume menu list with all device volumes.
-    var content = this._device.content;
-    var libraries = content.libraries;
-    libraryCount = libraries.length;
-    for (var i = 0; i < libraryCount; i++) {
-      // Add the next device volume library to the menu list.
-      var library = libraries.queryElementAt(i, Ci.sbIDeviceLibrary);
-      volumeMenuList.appendItem(library.name, library.guid);
-    }
-
     // Set the selected volume to the device default library volume.
     var defaultLibrary = this._device.defaultLibrary;
     if (defaultLibrary)
@@ -281,4 +253,224 @@ var deviceVolumeSelectorSvc = {
   }
 };
 
+
+//------------------------------------------------------------------------------
+//
+// Device volume menuitems services.
+//
+//------------------------------------------------------------------------------
+
+var deviceVolumeMenuItemsSvc = {
+  //
+  // Device volume menuitems object fields.
+  //
+  //   _widget                  Device volume menuitems widget.
+  //   _device                  Widget device.
+  //   _addedElementList        List of UI elements added by this widget.
+  //   _addedElementListenerSet Set of listeners added to UI elements.
+  //
+
+  _widget: null,
+  _device: null,
+  _addedElementList: null,
+  _addedElementListenerSet: null,
+
+
+  /**
+   * Initialize the device volume menuitems services for the device volume
+   * menuitems widget specified by aWidget.
+   *
+   * \param aWidget             Device volume menuitems widget.
+   */
+
+  initialize: function deviceVolumeMenuItemsSvc_initialize(aWidget) {
+    // Do nothing if widget is not yet bound to a device.
+    if (!aWidget.device)
+      return;
+
+    // Get the device volume menuitems widget and widget device.
+    this._widget = aWidget;
+    this._device = this._widget.device;
+
+    // Listen to device events.
+    var deviceEventTarget =
+          this._device.QueryInterface(Ci.sbIDeviceEventTarget);
+    deviceEventTarget.addEventListener(this);
+
+    // Update UI.
+    this._update();
+  },
+
+
+  /**
+   * Finalize the device volume menuitems services.
+   */
+
+  finalize: function deviceVolumeMenuItemsSvc_finalize() {
+    // Stop listening to device events.
+    if (this._device) {
+      var deviceEventTarget =
+            this._device.QueryInterface(Ci.sbIDeviceEventTarget);
+      deviceEventTarget.removeEventListener(this);
+    }
+
+    // Remove all added elements.
+    this._removeAddedElements();
+
+    // Clear object fields.
+    this._widget = null;
+    this._device = null;
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Device volume menuitems sbIDeviceEventListener services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Handle the device event specified by aEvent.
+   *
+   * \param aEvent              Device event.
+   */
+
+  onDeviceEvent: function deviceVolumeMenuItemsSvc_onDeviceEvent(aEvent) {
+    // Dispatch processing of event.
+    switch (aEvent.type)
+    {
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_ADDED :
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_REMOVED :
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_DEFAULT_LIBRARY_CHANGED :
+        this._update();
+        break;
+
+      default :
+        break;
+    }
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Internal volume menuitems sbIDeviceEventListener services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Update the widget UI.
+   */
+
+  _update: function deviceVolumeMenuItemsSvc__update() {
+    // Remove all added elements.
+    this._removeAddedElements();
+
+    // Get the minimum number of volumes to add any UI elements.
+    var minVolumeCount = 1;
+    if (this._widget.hasAttribute("minvolumes"))
+      minVolumeCount = parseInt(this._widget.getAttribute("minvolumes"));
+
+    // Get the list of device volume libraries.  Don't add any UI elements if
+    // not enough volumes are present.
+    var libraries = this._device.content.libraries;
+    libraryCount = libraries.length;
+    if (libraryCount < minVolumeCount)
+      return;
+
+    // Check if the default volume menuitem should be checked.
+    var checkDefault = this._widget.getAttribute("checkdefault") == "true";
+
+    // Create a list of added elements.
+    this._addedElementList = [];
+    this._addedElementListenerSet = new DOMEventListenerSet();
+
+    // If specified, add a menu separator before menuitems.
+    if (this._widget.getAttribute("addseparatorbefore") == "true") {
+      var separator = document.createElementNS(XUL_NS, "menuseparator");
+      this._widget.parentNode.insertBefore(separator, this._widget);
+      this._addedElementList.push(separator);
+    }
+
+    // Add a menu item for each device volume.
+    for (var i = 0; i < libraryCount; i++) {
+      // Get the next volume library.
+      library = libraries.queryElementAt(i, Ci.sbIDeviceLibrary);
+
+      // Create a volume menuitem.
+      var menuItem = document.createElementNS(XUL_NS, "menuitem");
+      menuItem.setAttribute("label", library.name);
+      menuItem.setAttribute("value", library.guid);
+
+      // If specified, check the default volume menuitem.
+      if (checkDefault && (library.guid == this._device.defaultLibrary.guid))
+        menuItem.setAttribute("checked", "true");
+
+      // Add a command listener to the menuitem.
+      var _this = this;
+      var func = function(aEvent) { return _this._onVolumeChange(aEvent); };
+      this._addedElementListenerSet.add(menuItem, "command", func, false);
+
+      // Add the volume menuitem.
+      this._widget.parentNode.insertBefore(menuItem, this._widget);
+      this._addedElementList.push(menuItem);
+    }
+
+    // If specified, add a menu separator after menuitems.
+    if (this._widget.getAttribute("addseparatorafter") == "true") {
+      var separator = document.createElementNS(XUL_NS, "menuseparator");
+      this._widget.parentNode.insertBefore(separator, this._widget);
+      this._addedElementList.push(separator);
+    }
+  },
+
+
+  /**
+   * Remove all UI elements added by this widget.
+   */
+
+  _removeAddedElements:
+    function deviceVolumeMenuItemsSvc__removeAddedElements() {
+    // Remove all added element listeners.
+    if (this._AddedElementListenerSet) {
+      this._addedElementListenerSet.removeAll();
+      this._addedElementListenerSet = null;
+    }
+
+    // Remove all added elements.
+    if (this._addedElementList) {
+      for (var i = 0; i < this._addedElementList.length; i++) {
+        var element = this._addedElementList[i];
+        element.parentNode.removeChild(element);
+      }
+      this._addedElementList = null;
+    }
+  },
+
+
+  /**
+   * Handle the volume change event specified by aEvent.
+   *
+   * \param aEvent              Volume change event.
+   */
+
+  _onVolumeChange: function deviceVolumeMenuItemsSvc__onVolumeChange(aEvent) {
+    // Get the selected volume library GUID.
+    var libraryGUID = aEvent.target.value;
+
+    // Set the device default library to the selected volume library.
+    var content = this._device.content;
+    var libraries = content.libraries;
+    libraryCount = libraries.length;
+    for (var i = 0; i < libraryCount; i++) {
+      // Get the next library.
+      var library = libraries.queryElementAt(i, Ci.sbIDeviceLibrary);
+
+      // If library is the selected library, set it as the default.
+      if (library.guid == libraryGUID) {
+        this._device.defaultLibrary = library;
+        break;
+      }
+    }
+  }
+};
 

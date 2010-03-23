@@ -2226,6 +2226,28 @@ nsresult sbBaseDevice::RemoveLibrary(sbIDeviceLibrary* aDevLib)
 }
 
 nsresult
+sbBaseDevice::UpdateLibraryProperty(sbILibrary*      aLibrary,
+                                    const nsAString& aPropertyID,
+                                    const nsAString& aPropertyValue)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  nsresult rv;
+
+  // Get the current property value.
+  nsAutoString currentPropertyValue;
+  rv = aLibrary->GetProperty(aPropertyID, currentPropertyValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set the property value if it's changing.
+  if (!aPropertyValue.Equals(currentPropertyValue)) {
+    rv = aLibrary->SetProperty(aPropertyID, aPropertyValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult
 sbBaseDevice::UpdateDefaultLibrary(sbIDeviceLibrary* aDevLib)
 {
   // Do nothing if default library is not changing.

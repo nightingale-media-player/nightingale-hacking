@@ -52,6 +52,10 @@
 
       <menuseparator/>
 
+      <sb-device-volume-menuitems addseparatorafter="true"
+                                  checkdefault="true"
+                                  minvolumes="2"/>
+
       <menuitem/><sb-device-sync-cancel-command bindelem="prev"/>
 
       <menuseparator/>

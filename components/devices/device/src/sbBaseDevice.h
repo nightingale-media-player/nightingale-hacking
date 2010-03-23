@@ -388,6 +388,19 @@ public:
   nsresult RemoveLibrary(sbIDeviceLibrary* aDevLib);
 
   /**
+   * Update the property with the ID specified by aPropertyID to the value
+   * specified by aPropertyValue in the library specified by aLibrary if
+   * aPropertyValue is different than the current property value.
+   *
+   * \param aLibrary            Library to update.
+   * \param aPropertyID         ID of property to update.
+   * \param aPropertyValue      Property value to which to update.
+   */
+  nsresult UpdateLibraryProperty(sbILibrary*      aLibrary,
+                                 const nsAString& aPropertyID,
+                                 const nsAString& aPropertyValue);
+
+  /**
    * Update the default library to the library specified by aDevLib.
    * @param aDevLib the device library to which to update the default library.
    */
