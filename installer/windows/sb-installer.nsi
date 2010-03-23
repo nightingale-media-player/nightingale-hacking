@@ -58,7 +58,27 @@ Section "-Application" Section1
          ; Execute disthelper.exe in install mode; disthelper.exe needs a 
          ; distribution.ini, but gets it from the environment; we expect the 
          ; partner installer *calling us* to set this.
-         ExecWait '"$INSTDIR\${DistHelperEXE}" install'
+         StrCpy $0 -1
+         ExecWait '"$INSTDIR\${DistHelperEXE}" install' $0
+         
+         ; Check if we errored here and return the exit code.
+         IfErrors DistHelperError
+
+         ; See client/tools/disthelper/error.h for return codes
+         ${If} $0 != 0
+            Goto DistHelperError
+         ${Else}
+            Goto DistHelperSuccess
+         ${EndIf}
+
+         DistHelperError:
+            SetErrors
+            DetailPrint "$INSTDIR\${DistHelperEXE} install failed: $0"
+            ${If} $InstallerMode == "debug"
+               MessageBox MB_OK "$INSTDIR\${DistHelperEXE} install failed: $0"
+            ${EndIf}
+
+         DistHelperSuccess:
       ${EndIf}
 
       Call InstallCdrip
@@ -198,10 +218,38 @@ End:
 SectionEnd
 
 Function InstallCdrip
-   ; We theoretically should check the return value here, and maybe not set
-   ; this registry key?
+   Push $0
+   Push $1
+   
+   ExecWait '"$INSTDIR\${CdripHelperEXE}" install' $0
+   
+   IfErrors CdripHelperErrors
+
+   ; See client/tools/cdriphelper/error.h for return codes
+   ${If} $0 != 0
+   ${AndIf} $0 != 128
+      Goto CdripHelperErrors
+   ${EndIf}
+
+   Goto CdripHelperSuccess
+
+   CdripHelperErrors:
+      SetErrors
+      DetailPrint "$INSTDIR\${CdripHelperEXE} install failed: $0"
+
+      ${If} $InstallerMode == "debug"
+         MessageBox MB_OK "$INSTDIR\${CdripHelperEXE} install failed: $0"
+      ${EndIf}
+
+      ; Don't write the registry key if we didn't succeed.
+      Goto CdripHelperOut
+
+CdripHelperSuccess:
    WriteRegStr HKLM $RootAppRegistryKey ${CdripRegKey} ${TRUE}
-   ExecWait '"$INSTDIR\${CdripHelperEXE}" install'
+
+CdripHelperOut:
+   Pop $1
+   Pop $0
 FunctionEnd
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -324,10 +372,27 @@ FunctionEnd
 Function CallUninstaller
    Exch $0
    Push $1
+   Push $2
+   
    System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("SB_INSTALLER_NOMUTEX", "1").r1'
    ExecWait '"$0\${FileUninstallEXE}" /S _?=$0' $1
    DetailPrint '"$0\${FileUninstallEXE}" /S _?=$0 returned $1'
 
+   IfErrors UninstallerFailed
+
+   ${If} $1 != 0
+      Goto UninstallerFailed
+   ${Else}
+      Goto UninstallerSuccess
+   ${EndIf}
+
+UninstallerFailed:
+   ${If} $InstallerMode == "debug"
+      DetailPrint '"$0\${FileUninstallEXE}" /S _?=$0 returned $1'
+   ${EndIf}
+   Goto UninstallerOut
+ 
+UninstallerSuccess:
    ; We use this key existing as a reasonable hueristic about whether the
    ; installer really did anything (and didn't bail out because it needed
    ; input while in silent mode).
@@ -338,6 +403,8 @@ Function CallUninstaller
    ${EndIf}
 
    RMDir $0
+UninstallerOut: 
+   Pop $2
    Pop $1
    Pop $0
 FunctionEnd

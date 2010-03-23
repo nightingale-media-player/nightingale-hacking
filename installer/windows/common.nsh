@@ -177,7 +177,11 @@ checkAgent:
             ${EndIf}
 
             DetailPrint "${DetailPrintQuitAgent}"
+            
+            ; No need to check for errors here as we'll catch them anyway
+            ; when we check to make sure the process is actually gone.
             ExecWait '"$R6" --kill'
+            
             DetailPrint "${DetailPrintQuitAppWait}"
             sleep ${SubApplicationWait}
             ${nsProcess::FindProcess} "${AgentEXE}" $0

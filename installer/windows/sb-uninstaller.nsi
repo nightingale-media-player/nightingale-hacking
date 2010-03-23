@@ -111,6 +111,9 @@ Function un.RemoveCdrip
    ReadRegStr $0 HKLM $RootAppRegistryKey ${CdripRegKey}
 
    ${If} $0 == ${TRUE}
+      ; We don't check the return value or error flag here because
+      ; there's nothing we can do about it and we want to finish uninstalling
+      ; so that we cleanup after ourselves as much as possible.
       ExecWait '"$INSTDIR\${CdripHelperEXE}" remove' $0
       ${If} $InstallerMode == "debug"
          MessageBox MB_OK "$INSTDIR\${CdripHelperEXE} returned $0"
