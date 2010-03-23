@@ -114,7 +114,7 @@ static HRESULT SBAutoPlayUpgrade();
 int WINAPI
 _tWinMain(HINSTANCE aAppHandle,
           HINSTANCE aPrevAppHandle,
-          LPCTSTR   aCommandLine,
+          LPTSTR    aCommandLine,
           int       aCommandShow)
 {
   HRESULT hr;
