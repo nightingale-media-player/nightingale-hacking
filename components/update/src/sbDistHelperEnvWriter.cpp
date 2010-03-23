@@ -46,10 +46,12 @@
 /* Songbird header includes */
 
 /* Other includes */
-#if XP_WIN
+#if defined(XP_WIN)
   #include <windows.h>
+#elif defined(XP_MACOSX)
+  #include <crt_externs.h>
 #else
-  #include <stdlib.h>
+  extern char **environ;
 #endif
 
 /* Misc preprocessor macros */
@@ -173,9 +175,16 @@ sbDistHelperEnvWriter::OnUpdatePending(nsIFile *aUpdateDir)
     }
   #else
     const char ENV_PREFIX[] = "DISTHELPER_";
-    for (const char** env = environ; *env; ++env) {
+    char** env;
+    #if defined(XP_MACOSX)
+      // Darwin/OSX is similar to Windows in needing to use a call to get environ
+      env = *_NSGetEnviron();
+    #else
+      env = environ;
+    #endif
+    for (; *env; ++env) {
       if (!strncmp(ENV_PREFIX, *env, NS_ARRAY_LENGTH(ENV_PREFIX) - 1)) {
-        nsCAutoString envString(env);
+        nsCAutoString envString(*env);
         TRACE(("env var: %s", envString.get()));
         envString.Append('\n');
         PRUint32 bytesWritten;
