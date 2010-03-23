@@ -208,6 +208,12 @@ int main(int argc, LPTSTR *argv) {
     LogMessage("Failed to copy application.ini file %S", srcAppIniName.c_str());
   }
 
+  result = SetupEnvironment();
+  if (result) {
+    LogMessage("Failed to set up environment.");
+    return result;
+  }
+
   for (it = iniFile[section].begin(); it != end; ++it) {
     std::string line = it->second;
     LogMessage("Executing command %s", line.c_str());

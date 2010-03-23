@@ -50,6 +50,11 @@
  */
 
 /**
+ * Initializes the environment variables from disthelper.env
+ */
+int SetupEnvironment();
+
+/**
  * Copy a file from aSrc to aDest, attempting to overwrite if the file already
  * exists.
  */

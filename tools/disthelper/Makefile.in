@@ -62,6 +62,7 @@ ifeq ($(SB_PLATFORM),windows)
    CPP_SRCS += icon.cpp \
                versioninfo.cpp \
                commands.cpp \
+               environment.cpp \
                winmain.cpp \
                $(NULL)
 
