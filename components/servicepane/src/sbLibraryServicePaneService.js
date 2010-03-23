@@ -258,10 +258,6 @@ function sbLibraryServicePane_fillNewItemMenu(aNode, aContextMenu, aParentWindow
       'menu.servicepane.file.smart.accesskey',
       'doMenu("menuitem_file_smart")',
       "alt");
-  add('menuitem_file_remote',
-      'menu.servicepane.file.remote',
-      'menu.servicepane.file.remote.accesskey',
-      'doMenu("menuitem_file_remote")');
 }
 
 sbLibraryServicePane.prototype.onSelectionChanged =
