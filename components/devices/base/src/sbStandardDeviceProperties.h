@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #ifndef __SB_STANDARD_DEVICE_PROPERTIES_H__
 #define __SB_STANDARD_DEVICE_PROPERTIES_H__
@@ -51,5 +49,7 @@
 #define SB_DEVICE_PROPERTY_IMAGE_ITEM_COUNT       "http://songbirdnest.com/device/1.0#imageItemCount"
 #define SB_DEVICE_PROPERTY_IMAGE_USED_SPACE       "http://songbirdnest.com/device/1.0#imageUsedSpace"
 #define SB_DEVICE_PROPERTY_EXCLUDED_FOLDERS       "http://songbirdnest.com/device/1.0#excludedFolders"
+#define SB_DEVICE_PROPERTY_VENDOR_ID              "http://songbirdnest.com/device/1.0#vendorId"
+#define SB_DEVICE_PROPERTY_PRODUCT_ID             "http://songbirdnest.com/device/1.0#productId"
 
 #endif /* __SB_STANDARD_DEVICE_PROPERTIES_H__ */
