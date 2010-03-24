@@ -223,6 +223,7 @@
 ./components/sbURIImportService.js
 ./components/sbURLFormatter.js
 ./components/sbURLFormatter.xpt
+./components/sbUpdate.so
 ./components/sbUpdate.xpt
 ./components/sbWatchFolderService.so
 ./components/sbWatchFolderService.xpt

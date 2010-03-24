@@ -224,6 +224,7 @@
 ./components/sbURIImportService.js
 ./components/sbURLFormatter.js
 ./components/sbURLFormatter.xpt
+./components/sbUpdate.dylib
 ./components/sbUpdate.xpt
 ./components/sbWatchFolderService.dylib
 ./components/sbWatchFolderService.xpt
