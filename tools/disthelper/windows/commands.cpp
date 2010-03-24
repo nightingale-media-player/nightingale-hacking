@@ -207,12 +207,31 @@ tstring FilterSubstitution(tstring aString) {
     if (end == tstring::npos) {
       break;
     }
+    // Try to substitute $APPDIR$
     tstring variable = result.substr(start + 1, end - start - 1);
     if (variable == _T("APPDIR")) {
       tstring appdir = GetAppDirectory();
       DebugMessage("AppDir: %S", appdir.c_str());
       result.replace(start, end-start+1, appdir);
       start += appdir.length();
+      continue;
+    }
+    // Try to substitute $XXX$ with environment variable %DISTHELPER_XXX%
+    tstring envName(_T("DISTHELPER_"));
+    envName.append(variable);
+    tstring envValue = _tgetenv(envName.c_str());
+    if (envValue.length() > 0) {
+      DebugMessage("Environment %S: %S", envName.c_str(), envValue.c_str());
+      result.replace(start, end-start+1, envValue);
+      start += envValue.length();
+      continue;
+    }
+    // Try to substitute $XXX$ with environment variable %XXX%
+    envValue = _tgetenv(variable.c_str());
+    if (envValue.length() > 0) {
+      DebugMessage("Environment %S: %S", variable.c_str(), envValue.c_str());
+      result.replace(start, end-start+1, envValue);
+      start += envValue.length();
       continue;
     }
     start = end + 1;
