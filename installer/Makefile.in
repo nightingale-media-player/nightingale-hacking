@@ -81,13 +81,10 @@ include $(topsrcdir)/build/rules.mk
 XULRUNNER_COMPONENTSDIR = $(SONGBIRD_XULRUNNERDIR)/components
 
 SONGBIRD_XPTS := $(notdir $(wildcard $(SONGBIRD_COMPONENTSDIR)/*.xpt))
-XULRUNNER_XPTS := $(notdir $(wildcard $(XULRUNNER_COMPONENTSDIR)/*.xpt))
 
 link_installer_xpts:
 	cd $(SONGBIRD_COMPONENTSDIR) && $(XPTLINK) songbird.xpt $(SONGBIRD_XPTS)
-	cd $(XULRUNNER_COMPONENTSDIR) && $(XPTLINK) xulrunner.xpt $(XULRUNNER_XPTS)
 	cd $(SONGBIRD_COMPONENTSDIR) && $(RM) $(SONGBIRD_XPTS)
-	cd $(XULRUNNER_COMPONENTSDIR) && $(RM) $(XULRUNNER_XPTS)
 
 # preedTODO: the easiest way to re-express this dependency is to do it as
 # part of the export step for the installer; it seems to work, but even still,
