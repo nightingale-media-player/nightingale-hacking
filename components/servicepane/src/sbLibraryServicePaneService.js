@@ -654,6 +654,13 @@ function sbLibraryServicePane_onDragGesture(aNode, aTransferable) {
 
 
 /**
+ * Called when the user is about to attempt to rename a library/medialist node
+ */
+sbLibraryServicePane.prototype.onBeforeRename =
+function sbLibraryServicePane_onBeforeRename(aNode) {
+}
+
+/**
  * Called when the user has attempted to rename a library/medialist node
  */
 sbLibraryServicePane.prototype.onRename =

@@ -1094,6 +1094,29 @@ function ServicePaneService_onDragGesture(aId, aTransferable) {
 }
 
 /**
+ * Called before a node is renamed by the user.
+ * Delegates to the module that owns the given node.
+ */
+ServicePaneService.prototype.onBeforeRename =
+function ServicePaneService_onBeforeRename(aID) {
+  if (!this._initialized) {
+    this.init();
+  }
+  var node = this.getNode(aID);
+  if (!node || !node.editable) {
+    return;
+  }
+
+  // Pass the message on to the node owner
+  if (node.contractid) {
+    var module = Cc[node.contractid].getService(Ci.sbIServicePaneModule);
+    if (module) {
+      module.onBeforeRename(node);
+    }
+  }
+}
+
+/**
  * Called when a node is renamed by the user.
  * Delegates to the module that owns the given node.
  */
