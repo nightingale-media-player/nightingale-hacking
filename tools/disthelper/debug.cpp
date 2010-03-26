@@ -40,8 +40,11 @@
 #include "commands.h"
 
 #if XP_WIN
+  #include <windows.h>
+#else
+  #include "tchar.h"
+#endif
 
-#include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -56,27 +59,29 @@ extern bool gEnableLogging = true;
 
 void DebugMessage(const char* fmt, ...) {
   va_list args;
-  int len;
   char *buffer;
 
   // retrieve the variable arguments
   va_start(args, fmt);
-  
-  len = _vscprintf(fmt, args) // _vscprintf doesn't count
-                         + 1; // terminating '\0'
-  
-  buffer = (char*)malloc(len * sizeof(char));
 
-  vsprintf(buffer, fmt, args);
-  ::OutputDebugStringA(buffer);
+  #if _MSC_VER
+    int len = _vscprintf(fmt, args) // _vscprintf doesn't count
+                               + 1; // terminating '\0'
+    buffer = (char*)malloc(len * sizeof(char));
+    vsprintf(buffer, fmt, args);
+  #else
+    vasprintf(&buffer, fmt, args);
+  #endif
+
+  ::OutputDebugString(ConvertUTF8toUTFn(buffer).c_str());
 
   free(buffer);
   va_end(args);
 }
 
 void LogMessage(const char* fmt, ...) {
-  std::wstring appDir(ResolvePathName("$/disthelper.log"));
-  FILE* fout = _wfopen(appDir.c_str(), L"a");
+  tstring appDir(ResolvePathName("$/disthelper.log"));
+  FILE* fout = _tfopen(appDir.c_str(), _T("a"));
   if (fout) {
     time_t timer;
     time(&timer);
@@ -90,27 +95,24 @@ void LogMessage(const char* fmt, ...) {
     // do printf()-style formatting into a string buffer
     va_list args;
     va_start(args, fmt);
-    size_t len = _vscprintf(fmt, args) // _vscprintf doesn't count
-                                  + 1; // terminating '\0'
-    va_end(args);
-    
-    char* buffer = (char*)malloc(len * sizeof(char));
+    char* buffer = NULL;
+    #if _MSC_VER
+      size_t len = _vscprintf(fmt, args) // _vscprintf doesn't count
+                                    + 1; // terminating '\0'
+      buffer = (char*)malloc(len * sizeof(char));
+      vsprintf(buffer, fmt, args);
+    #else
+      vasprintf(&buffer, fmt, args);
+    #endif
   
-    va_start(args, fmt);
-    vsprintf(buffer, fmt, args);
     va_end(args);
     stream << buffer;
     free(buffer);
     
-    ::OutputDebugStringA(stream.str().c_str());
+    ::OutputDebugString(ConvertUTF8toUTFn(stream.str()).c_str());
     fprintf(fout, "%s\n", stream.str().c_str());
   
     fclose(fout);
   }
 }
 
-#else
-void LogMessage(const char* fmt, ...) {
-  #error not implemented
-}
-#endif
