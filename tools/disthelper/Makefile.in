@@ -41,10 +41,10 @@ CPP_SRCS = main.cpp \
            $(NULL)
 
 # we force include mozilla-config.h/xpcom-config.h; otherwise this is not necessary
-CPP_EXTRA_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
-                     $(MOZSDK_INCLUDE_DIR)/xpcom \
-                     $(srcdir)
-                     $(NULL)
+CPP_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/xpcom \
+               $(srcdir)
+               $(NULL)
 
 SIMPLE_PROGRAM_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                               $(NULL)
@@ -69,17 +69,7 @@ ifeq ($(SB_PLATFORM),windows)
    ifneq (,$(SB_ENABLE_TESTS))
       SUBDIRS += windows/tests
    endif
-endif # SB_PLATFORM == windows
-
-ifeq ($(SB_PLATFORM),macosx)
-   CMM_EXTRA_INCLUDES = $(srcdir) \
-                        $(NULL)
-   CMM_SRCS += $(SB_PLATFORM)/commands.mm \
-               $(NULL)
-   SIMPLE_PROGRAM_EXTRA_FLAGS = -Wl,-framework,Foundation \
-                                -Wl,-framework,AppKit \
-                                $(NULL)
-endif # SB_PLATFORM == macosx
+endif
 
 
 # This executable gets called by the updater, so having a _d in the debug
@@ -91,7 +81,5 @@ DISABLE_IMPLICIT_NAMING = 1
 SIMPLE_PROGRAM = disthelper$(BIN_SUFFIX)
 
 FINAL_TARGET = $(SONGBIRD_DISTDIR)
-
-CREATEDIRS = $(SB_PLATFORM)
 
 include $(topsrcdir)/build/rules.mk

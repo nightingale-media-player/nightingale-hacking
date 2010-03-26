@@ -35,13 +35,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifdef XP_WIN
 #include <windows.h>
 #include <tchar.h>
 #include <shellapi.h>
-#else
-#include "tchar.h"
-#endif
 #include <stdlib.h>
 #include <vector>
 
@@ -156,9 +152,9 @@ int main(int argc, LPTSTR *argv) {
   IniEntry_t::const_iterator it, end = iniFile[section].end();
   
   /// copy the distribution.ini / application.ini files to the appdir
-  DebugMessage("Copying %s to %s\n",
+  DebugMessage("Copying %s to %S\n",
                ConvertUTFnToUTF8(distIni).c_str(),
-               ConvertUTFnToUTF8(ResolvePathName("$/distribution/")).c_str());
+               ResolvePathName("$/distribution/").c_str());
 
   if (section == "steps:install") {
     LogMessage("Skipping distribution.ini check for installation, forcing copy");
