@@ -772,7 +772,7 @@ var DPW = {
 
         // Reset back the syncmode if there is pending sync mode change.
         if (DPW._deviceLibrary.syncModeChanged) {
-          DPW._deviceLibrary.syncMode = !DPW._deviceLibrary.syncMode;
+          DPW._deviceLibrary.syncMode = Ci.sbIDeviceLibrary.SYNC_MANUAL;
         }
         break;
     }
@@ -921,10 +921,17 @@ var DPW = {
       this._deviceLibrary = this._device.content.libraries
           .queryElementAt(0, Ci.sbIDeviceLibrary);
 
-      // If there is pending sync mode change, make sure to reset when
-      // the summary page is reloaded.
-      if (this._deviceLibrary.syncModeChanged)
-        this._deviceLibrary.syncMode = !this._deviceLibrary.syncMode;
+      // Update the progress UI to apply/cancel for pending sync mode change
+      var prefs = Cc["@mozilla.org/preferences-service;1"]
+                    .getService(Ci.nsIPrefBranch);
+      var syncModeChangedKey = "songbird.device." + this._widget.deviceID +
+                               ".syncmode.changed";
+
+      if (prefs.prefHasUserValue(syncModeChangedKey) &&
+          prefs.getBoolPref(syncModeChangedKey)) {
+        prefs.clearUserPref(syncModeChangedKey);
+        this._dispatchSettingsEvent(this.SYNCSETTINGS_CHANGE);
+      }
     }
   },
 

@@ -30,6 +30,7 @@
 #include <nsIClassInfoImpl.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIFileURL.h>
+#include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
 #include <nsIVariant.h>
 #include <nsIWritablePropertyBag2.h>
@@ -1101,9 +1102,35 @@ sbDeviceLibrary::SetSyncMode(PRUint32 aSyncMode)
     return NS_OK;
   }
 
+  nsCOMPtr<nsIPrefBranch> rootPrefBranch =
+    do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevice> device;
+  rv = GetDevice(getter_AddRefs(device));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsID* id;
+  rv = device->GetId(&id);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCString key(NS_LITERAL_CSTRING("songbird.device."));
+  key.AppendLiteral(id->ToString());
+  key.AppendLiteral(".syncmode.changed");
+
+  PRBool hasValue = PR_FALSE;
+  rv = rootPrefBranch->PrefHasUserValue(key.get(), &hasValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool isChanged = PR_FALSE;
+  if (hasValue) {
+    rv = rootPrefBranch->GetBoolPref(key.get(), &isChanged);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   // If switching from manual management mode to sync mode, confirm with user
   // before proceeding.  Do nothing more if switch is canceled.
-  if (aSyncMode == sbIDeviceLibrary::SYNC_AUTO) {
+  if (aSyncMode == sbIDeviceLibrary::SYNC_AUTO && !isChanged) {
     // Check if device is linked to a local sync partner.
     PRBool isLinkedLocally;
     rv = sbDeviceUtils::SyncCheckLinkedPartner(mDevice,
