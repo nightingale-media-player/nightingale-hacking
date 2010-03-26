@@ -41,11 +41,7 @@
 
 extern bool gEnableLogging;
 
-#if XP_WIN
 void DebugMessage(const char* fmt, ...);
-#else
-  #define DebugMessage printf
-#endif
 
 void LogMessage(const char* fmt, ...);
 
