@@ -84,6 +84,9 @@ pref("browser.link.open_newwindow.restriction", 0);
 pref('browser.tabs.enabled', true);
 pref("browser.tabs.loadDivertedInBackground", false);
 
+// set the default device transcoding/transfer ratio.
+pref("device.transcoding.transfer.ratio", 1);
+
 //
 // Advanced DOM JavaScript preferences
 //

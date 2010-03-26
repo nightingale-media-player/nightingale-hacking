@@ -650,6 +650,9 @@ void SBCreateSubBatchIndex(sbBaseDevice::Batch& aBatch)
     if (firstTranscoding &&
         request->destinationCompatibility == NEEDS_TRANSCODING)
     {
+      // Bump the index back since this it is 1 based
+      --index;
+
       sbBaseDevice::TransferRequest *req = nsnull;
       for (; lastBegin != batchBegin; ++lastBegin) {
         req = lastBegin->get();
@@ -1747,6 +1750,13 @@ nsresult sbBaseDevice::SetPreferenceInternal(nsIPrefBranch*   aPrefBranch,
   if (aHasChanged)
     *aHasChanged = hasChanged;
 
+  return NS_OK;
+}
+
+/* readonly attribute boolean isDirectTranscoding; */
+NS_IMETHODIMP sbBaseDevice::GetIsDirectTranscoding(PRBool *aIsDirect)
+{
+  *aIsDirect = PR_TRUE;
   return NS_OK;
 }
 

@@ -224,6 +224,7 @@ public:
   /* selected methods from sbIDevice */
   NS_IMETHOD GetPreference(const nsAString & aPrefName, nsIVariant **_retval);
   NS_IMETHOD SetPreference(const nsAString & aPrefName, nsIVariant *aPrefValue);
+  NS_IMETHOD GetIsDirectTranscoding(PRBool *aIsDirect);
   NS_IMETHOD GetIsBusy(PRBool *aIsBusy);
   NS_IMETHOD GetCanDisconnect(PRBool *aCanDisconnect);
   NS_IMETHOD GetState(PRUint32 *aState);

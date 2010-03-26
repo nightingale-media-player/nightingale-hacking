@@ -122,7 +122,8 @@ sbDeviceStatusHelper::OperationStart(sbDeviceStatusHelper::Operation aOperationT
                                      PRInt32  aItemCount,
                                      PRInt32  aItemType,
                                      sbIMediaList* aMediaList,
-                                     sbIMediaItem* aMediaItem)
+                                     sbIMediaItem* aMediaItem,
+                                     PRBool aNewBatch)
 {
   // Check if we're already started. The initial batch item might have
   // completed but might not have been removed from the queue, thus
@@ -144,7 +145,8 @@ sbDeviceStatusHelper::OperationStart(sbDeviceStatusHelper::Operation aOperationT
   mItemCount = aItemCount;
   mItemType = aItemType;
 
-  mStatus->SetIsNewBatch(true);
+  if (aNewBatch)
+    mStatus->SetIsNewBatch(true);
 
   // Dispatch operation dependent status processing.
   switch (mOperationType)
