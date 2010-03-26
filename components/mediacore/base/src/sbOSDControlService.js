@@ -291,8 +291,6 @@ sbOSDControlService.prototype =
 
     this._timer.cancel();
 
-    /* disable transitions for now.
-       See bug: 20058
     var transition;
     switch (aTransitionType) {
       case Ci.sbIOSDControlService.TRANSITION_FADE:
@@ -305,14 +303,17 @@ sbOSDControlService.prototype =
 
       default:
         Components.utils.reportError(
-          "Invalid transition type passed into hideOSDControls()!");
-        
+            "Invalid transition type passed into hideOSDControls()!");
+
         // Just fall back to hiding instantly.
         transition = this._hideInstantly; 
     }
-    */
 
-    this._hideInstantly.call(this, function() {
+    if (!this._useTransparentGraphics) {
+      transition = this._hideInstantly;
+    }
+
+    transition.call(this, function() {
       // The OSD controls are no longer showing. The order of events
       // here is critical; surprisingly, the cloaking must happen
       // last.
@@ -358,8 +359,6 @@ sbOSDControlService.prototype =
       this._cloakService.uncloak(this._osdWindow);
     }
 
-    /* disable transitions for now
-       See bug: 20058
     var transition;
     switch (aTransitionType) {
       case Ci.sbIOSDControlService.TRANSITION_FADE:
@@ -372,14 +371,17 @@ sbOSDControlService.prototype =
 
       default:
         Components.utils.reportError(
-          "Invalid transition type passed into hideOSDControls()!");
-        
+            "Invalid transition type passed into hideOSDControls()!");
+
         // Just fall back to show instantly.
-        transition = this._showInstantly; 
+        transition = this._showInstantly;
     }
-    */
+
+    if (!this._useTransparentGraphics) {
+      transition = this._showInstantly;
+    }
     
-    this._showInstantly.call(this);
+    transition.call(this);
   },
 
   _fade: function(start, end, func) {
