@@ -99,7 +99,10 @@ static PRLogModuleInfo* gGStreamerPlatformOSX =
 }
 
 - (id)initWithPlatformInterface:(OSXPlatformInterface *)aOwner;
+- (void)startListeningToResizeEvents;
+- (void)stopListeningToResizeEvents;
 - (void)mouseMoved:(NSEvent *)theEvent;
+- (void)windowResized:(NSNotification *)aNotice;
 
 @end
 
@@ -120,7 +123,30 @@ static PRLogModuleInfo* gGStreamerPlatformOSX =
     mOwner = nsnull;
   }
 
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+
   [super dealloc];
+}
+
+- (void)startListeningToResizeEvents
+{
+  if (!mOwner) {
+    return;
+  }
+
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(windowResized:)
+                                               name:NSWindowDidResizeNotification
+                                             object:nil];
+}
+
+- (void)stopListeningToResizeEvents
+{
+  if (!mOwner) {
+    return;
+  }
+
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)mouseMoved:(NSEvent *)theEvent
@@ -130,6 +156,17 @@ static PRLogModuleInfo* gGStreamerPlatformOSX =
   }
 
   mOwner->OnMouseMoved(theEvent);
+}
+
+- (void)windowResized:(NSNotification *)aNotice
+{
+  if (!mOwner) {
+    return;
+  }
+
+  if ([[aNotice object] isEqual:[(NSView *)mOwner->GetVideoView() window]]) {
+    mOwner->OnWindowResized();
+  }
 }
 
 @end
@@ -178,7 +215,7 @@ OSXPlatformInterface::SetVideoSink(GstElement *aVideoSink)
   }
 
   // Keep a reference to it.
-  if (mVideoSink) 
+  if (mVideoSink)
       gst_object_ref(mVideoSink);
 
   return mVideoSink;
@@ -202,7 +239,7 @@ OSXPlatformInterface::SetAudioSink(GstElement *aAudioSink)
   }
 
   // Keep a reference to it.
-  if (mAudioSink) 
+  if (mAudioSink)
       gst_object_ref(mAudioSink);
 
   return mAudioSink;
@@ -214,7 +251,7 @@ OSXPlatformInterface::SetVideoBox (nsIBoxObject *aBoxObject, nsIWidget *aWidget)
   // First let the superclass do its thing.
   nsresult rv = BasePlatformInterface::SetVideoBox (aBoxObject, aWidget);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   if (aWidget) {
     mParentView = (void *)(aWidget->GetNativeData(NS_NATIVE_WIDGET));
     NS_ENSURE_TRUE(mParentView != NULL, NS_ERROR_FAILURE);
@@ -239,7 +276,7 @@ OSXPlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
     nsresult rv = NS_GetMainThread(getter_AddRefs(mainThread));
     NS_ENSURE_SUCCESS(rv, /* void */);
 
-    nsCOMPtr<nsIRunnable> runnable = 
+    nsCOMPtr<nsIRunnable> runnable =
         NS_NEW_RUNNABLE_METHOD (sbGStreamerMediacore,
                                 mCore,
                                 RequestVideoWindow);
@@ -267,6 +304,10 @@ OSXPlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
   mVideoView = g_value_get_pointer (value);
   view = (NSView *)mVideoView;
 
+  // Listen to live resize events since gecko resize events aren't posted on
+  // Mac until the resize has finished. (see bug 20445).
+  [mGstGLViewDelegate startListeningToResizeEvents];
+
   // Now, we want to set this view as a subview of the NSView we have
   // as our window-for-displaying-video. Don't do this from a non-main
   // thread, though!
@@ -284,6 +325,12 @@ OSXPlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
   ResizeToWindow();
 
   [pool release];
+}
+
+void*
+OSXPlatformInterface::GetVideoView()
+{
+  return mVideoView;
 }
 
 void
@@ -337,10 +384,16 @@ OSXPlatformInterface::OnMouseMoved(void *aCocoaEvent)
       nsnull);
   [pool release];
   NS_ENSURE_SUCCESS(rv, /* void */);
-  
+
   nsCOMPtr<nsIDOMEvent> domEvent(do_QueryInterface(mouseEvent));
   rv = DispatchDOMEvent(domEvent);
   NS_ENSURE_SUCCESS(rv, /* void */);
+}
+
+void
+OSXPlatformInterface::OnWindowResized()
+{
+  ResizeToWindow();
 }
 
 void
@@ -380,6 +433,8 @@ void OSXPlatformInterface::RemoveView()
                              withObject:nil
                           waitUntilDone:YES];
     }
+
+    [mGstGLViewDelegate stopListeningToResizeEvents];
 
     mVideoView = nsnull;
     [pool release];

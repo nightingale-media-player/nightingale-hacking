@@ -49,8 +49,12 @@ public:
   virtual void ResizeToWindow() {return BasePlatformInterface::ResizeToWindow();}
   virtual void PrepareVideoWindow(GstMessage *aMessage);
 
+  // Get the main view view
+  void* GetVideoView();
+
   // Event callback member functions
   void OnMouseMoved(void *aCocoaEvent);
+  void OnWindowResized();
 
 protected:
   // Implement virtual methods in BasePlatformInterface
