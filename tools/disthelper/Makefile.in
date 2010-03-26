@@ -75,6 +75,7 @@ ifeq ($(SB_PLATFORM),macosx)
    CMM_EXTRA_INCLUDES = $(srcdir) \
                         $(NULL)
    CMM_SRCS += $(SB_PLATFORM)/commands.mm \
+               $(SB_PLATFORM)/environment.mm \
                $(NULL)
    SIMPLE_PROGRAM_EXTRA_FLAGS = -Wl,-framework,Foundation \
                                 -Wl,-framework,AppKit \

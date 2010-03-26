@@ -55,7 +55,7 @@
  * characters, and looks like "WWW MMM DD hh:mm:ss YYYY\n\0"
  */
 
-extern bool gEnableLogging = true;
+bool gEnableLogging = true;
 
 void DebugMessage(const char* fmt, ...) {
   va_list args;
