@@ -31,6 +31,8 @@
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 
 function runTest () {
+  // disabled for now, see bug 20531
+  return;
   testRegistration();
   testUpdate();
   testPodcast();
