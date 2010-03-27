@@ -40,7 +40,7 @@
 #include <tchar.h>
 #include <shellapi.h>
 #else
-#include "tchar.h"
+#include "tchar_compat.h"
 #endif
 #include <stdlib.h>
 #include <vector>

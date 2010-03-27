@@ -40,7 +40,7 @@
 #include "stringconvert.h"
 #include "debug.h"
 #include "commands.h"
-#include "tchar.h"
+#include "tchar_compat.h"
 
 // unix include
 #include <errno.h>

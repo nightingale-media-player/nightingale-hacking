@@ -42,7 +42,7 @@
 #if XP_WIN
   #include <windows.h>
 #else
-  #include "tchar.h"
+  #include "tchar_compat.h"
 #endif
 
 #include <stdio.h>
