@@ -1510,6 +1510,27 @@ protected:
    */
   nsresult GetMusicLimitSpacePercent(const nsAString & aPrefBase,
                                      PRUint32 *aOutLimitPercentage);
+
+  /**
+   * Hashtable enumerator function that removes the items from the list
+   */
+  static PLDHashOperator RemoveLibraryEnumerator(
+                                             nsISupports * aList,
+                                             nsCOMPtr<nsIMutableArray> & aItems,
+                                             void * aUserArg);
+
+  /**
+   * Auto class to unignore when leaving scope
+   */
+  class AutoListenerIgnore
+  {
+  public:
+    AutoListenerIgnore(sbBaseDevice * aDevice);
+    ~AutoListenerIgnore();
+  private:
+    sbBaseDevice * mDevice;
+  };
+
   /**
    * This iterates over the transfer requests and removes the Songbird library
    * items that were created for the requests. REQUEST_WRITE entries come from
@@ -1524,6 +1545,10 @@ protected:
   template <class T>
   nsresult RemoveLibraryItems(T iter, T end)
   {
+    nsresult rv;
+    nsInterfaceHashtable<nsISupportsHashKey, nsIMutableArray> groupedItems;
+    groupedItems.Init();
+
     while (iter != end) {
       nsRefPtr<sbBaseDevice::TransferRequest> request = *iter;
       // If this is a request that adds an item to the device we need to remove
@@ -1532,7 +1557,16 @@ protected:
         case sbBaseDevice::TransferRequest::REQUEST_WRITE:
         case sbBaseDevice::TransferRequest::REQUEST_READ: {
           if (request->list && request->item) {
-            nsresult rv = DeleteItem(request->list, request->item);
+            nsCOMPtr<nsIMutableArray> items;
+            groupedItems.Get(request->list, getter_AddRefs(items));
+            if (!items) {
+              items = do_CreateInstance(
+                               "@songbirdnest.com/moz/xpcom/threadsafe-array;1",
+                               &rv);
+              NS_ENSURE_TRUE(groupedItems.Put(request->list, items),
+                             NS_ERROR_OUT_OF_MEMORY);
+            }
+            rv = items->AppendElement(request->item, PR_FALSE);
             NS_ENSURE_SUCCESS(rv, rv);
           }
         }
@@ -1540,6 +1574,8 @@ protected:
       }
       ++iter;
     }
+    AutoListenerIgnore ignore(this);
+    groupedItems.Enumerate(RemoveLibraryEnumerator, this);
     return NS_OK;
   }
 

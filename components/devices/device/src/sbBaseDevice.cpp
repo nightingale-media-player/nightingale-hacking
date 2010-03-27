@@ -6113,7 +6113,7 @@ AddAlbumArtFormats(PRUint32 aContentType,
                                        &formatTypes);
     NS_ENSURE_SUCCESS(rv, rv);
     sbAutoFreeXPCOMPointerArray<nsISupports> freeFormats(formatTypeCount,
-                                                         formatTypes); 
+                                                         formatTypes);
     for (PRUint32 formatIndex = 0;
          formatIndex < formatTypeCount;
          formatIndex++)
@@ -6495,4 +6495,43 @@ sbDeviceReqAddedEvent::New(sbBaseDevice* aDevice,
   NS_ADDREF(*aEvent = event);
 
   return NS_OK;
+}
+
+PLDHashOperator
+sbBaseDevice::RemoveLibraryEnumerator(nsISupports * aList,
+                                      nsCOMPtr<nsIMutableArray> & aItems,
+                                      void * aUserArg)
+{
+  NS_ENSURE_TRUE(aList, PL_DHASH_NEXT);
+  NS_ENSURE_TRUE(aItems, PL_DHASH_NEXT);
+
+  sbBaseDevice * const device =
+    static_cast<sbBaseDevice*>(aUserArg);
+
+  AutoListenerIgnore ignore(device);
+
+  nsCOMPtr<nsISimpleEnumerator> enumerator;
+  nsresult rv = aItems->Enumerate(getter_AddRefs(enumerator));
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aList);
+  if (list) {
+    rv = list->RemoveSome(enumerator);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_NEXT);
+  }
+
+  return PL_DHASH_NEXT;
+}
+
+sbBaseDevice::AutoListenerIgnore::AutoListenerIgnore(sbBaseDevice * aDevice) :
+  mDevice(aDevice)
+{
+  mDevice->SetIgnoreMediaListListeners(PR_TRUE);
+  mDevice->mLibraryListener->SetIgnoreListener(PR_TRUE);
+}
+
+sbBaseDevice::AutoListenerIgnore::~AutoListenerIgnore()
+{
+  mDevice->SetIgnoreMediaListListeners(PR_FALSE);
+  mDevice->mLibraryListener->SetIgnoreListener(PR_FALSE);
 }
