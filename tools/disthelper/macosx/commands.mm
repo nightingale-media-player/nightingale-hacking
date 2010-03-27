@@ -202,6 +202,13 @@ int CommandDeleteFile(std::string aFile, bool aRecursive) {
   NSError *error = nil;
   NSFileManager* fileMan = [NSFileManager defaultManager];
 
+  success = [fileMan fileExistsAtPath:path isDirectory:&isDir];
+  if (!success) {
+    DebugMessage("File %s does not exist, cannot delete", [path UTF8String]);
+    [pool release];
+    return DH_ERROR_OK;
+  }
+
   if (isDir && !aRecursive && !isDirectoryEmpty(aFile)) {
     LogMessage("Failed to recursively delete %s, not empty", aFile.c_str());
     [pool release];
