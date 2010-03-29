@@ -36,8 +36,8 @@
 
 #include "sbIDeviceEventListener.h"
 #include "sbDeviceEvent.h"
-#include <sbThreadUtils.h>
 #include <sbProxiedComponentManager.h>
+#include <sbThreadUtils.h>
 
 
 class sbDeviceEventTargetRemovalHelper : public nsDequeFunctor {
