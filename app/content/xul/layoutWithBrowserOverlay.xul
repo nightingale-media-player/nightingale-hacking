@@ -559,6 +559,10 @@
   <script type="application/x-javascript"
   src="chrome://songbird/content/scripts/mainPlayerWindow.js" />
 
+  <!-- Device support -->
+  <script type="application/x-javascript"
+  src="chrome://songbird/content/scripts/device/deviceSupport.js" />
+
   <!-- ********************************************************************* -->
   <!-- **                                                                 ** -->
   <!-- **                  Browser Toolbar Overlay Items                  ** -->
