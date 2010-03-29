@@ -65,7 +65,7 @@ function runTest() {
                      "2":    1.0};
 
   for (var i in K_PRIORITY_MAP) {
-    assertEqual(K_PRIORITY_MAP[i], profile.getPriority(i));
+    assertEqual(K_PRIORITY_MAP[i], profile.getEncoderProfilePriority(i));
   }
   for (var i in K_BITRATE_MAP) {
     assertEqual(K_BITRATE_MAP[i], profile.getAudioBitrate(i));

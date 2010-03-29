@@ -139,7 +139,7 @@ interface sbITranscodeProfile : nsISupports
 /**
  * Transcoding profile data for the configurator algorithm v1
  */
-[scriptable, uuid(5299d39c-1dd2-11b2-a422-bd0e6c446ba7)]
+[scriptable, uuid(43E0BD54-33F1-4C6F-9826-5E70BE6D6280)]
 interface sbITranscodeEncoderProfile : sbITranscodeProfile {
   /**
    * Get the priority of this encoder profile, when used at a given priority
@@ -154,7 +154,7 @@ interface sbITranscodeEncoderProfile : sbITranscodeProfile {
    * @return The priority for this encoder; zero indicates that the given
    * profile must not be used at this quality.
    */
-  unsigned long getPriority(in double aQuality);
+  unsigned long getEncoderProfilePriority(in double aQuality);
 
 %{COMMENT
   /* these live on sbITranscodeProfile for now */

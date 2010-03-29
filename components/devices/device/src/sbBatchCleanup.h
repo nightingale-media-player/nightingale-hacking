@@ -57,9 +57,13 @@ public:
    */
   ~sbBatchCleanup() {
     if (!mAtEnd && !mBatch.empty()) {
+#if DEBUG
       nsresult rv = mDevice->RemoveLibraryItems(mCurrent, mEnd);
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
                           "Unable to cleanup library items");
+#else
+      mDevice->RemoveLibraryItems(mCurrent, mEnd);
+#endif
     }
   }
   /**

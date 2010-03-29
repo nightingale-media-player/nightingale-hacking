@@ -512,7 +512,7 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
 
     // check the priority first, that's easier
     PRUint32 priority;
-    rv = profile->GetPriority(mQuality, &priority);
+    rv = profile->GetEncoderProfilePriority(mQuality, &priority);
     NS_ENSURE_SUCCESS(rv, rv);
     if (priority <= selectedPriority) {
       continue;
@@ -609,7 +609,7 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
         // assume we match here
         selectedProfile = profile;
         selectedFormat = format;
-        rv = profile->GetPriority(mQuality, &selectedPriority);
+        rv = profile->GetEncoderProfilePriority(mQuality, &selectedPriority);
         NS_ENSURE_SUCCESS(rv, rv);
       }
     }

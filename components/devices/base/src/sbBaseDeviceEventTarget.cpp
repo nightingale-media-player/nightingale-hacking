@@ -36,8 +36,9 @@
 
 #include "sbIDeviceEventListener.h"
 #include "sbDeviceEvent.h"
-#include "sbProxyUtils.h"
 #include <sbThreadUtils.h>
+#include <sbProxiedComponentManager.h>
+
 
 class sbDeviceEventTargetRemovalHelper : public nsDequeFunctor {
   public:
@@ -194,7 +195,7 @@ NS_IMETHODIMP sbBaseDeviceEventTarget::AddEventListener(sbIDeviceEventListener *
     { /* scope the monitor */
       NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
       nsAutoMonitor mon(mMonitor);
-      rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+      rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                                 NS_GET_IID(sbIDeviceEventTarget),
                                 this,
                                 NS_PROXY_SYNC,
@@ -228,7 +229,7 @@ NS_IMETHODIMP sbBaseDeviceEventTarget::RemoveEventListener(sbIDeviceEventListene
     { /* scope the monitor */
       NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
       nsAutoMonitor mon(mMonitor);
-      rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+      rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                                 NS_GET_IID(sbIDeviceEventTarget),
                                 this,
                                 NS_PROXY_SYNC,

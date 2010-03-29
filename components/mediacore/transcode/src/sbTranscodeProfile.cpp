@@ -287,9 +287,10 @@ T getInterpolatedQuality(std::map<double, T> &aMap, double aQuality)
   return lower->second + difference;
 }
 
-/* PRInt32 getPriority (in double aQuality); */
+/* PRInt32 getEncoderProfilePriority (in double aQuality); */
 NS_IMETHODIMP
-sbTranscodeProfile::GetPriority(double aQuality, PRUint32 *_retval)
+sbTranscodeProfile::GetEncoderProfilePriority(double aQuality,
+                                              PRUint32 *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = getInterpolatedQuality(mPriorityMap, aQuality);

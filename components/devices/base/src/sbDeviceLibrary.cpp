@@ -79,7 +79,7 @@
 #include <sbLocalDatabaseCID.h>
 #include <sbMemoryUtils.h>
 #include <sbPropertiesCID.h>
-#include <sbProxyUtils.h>
+#include <sbProxiedComponentManager.h>
 #include <sbStandardDeviceProperties.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
@@ -1747,7 +1747,7 @@ sbDeviceLibrary::AddDeviceLibraryListener(sbIDeviceLibraryListener* aListener)
   // Make a proxy for the listener that will always send callbacks to the
   // current thread.
   nsCOMPtr<sbIDeviceLibraryListener> proxy;
-  nsresult rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
+  nsresult rv = do_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
                                      NS_GET_IID(sbIDeviceLibraryListener),
                                      aListener,
                                      NS_PROXY_SYNC | NS_PROXY_ALWAYS,
@@ -2318,7 +2318,7 @@ sbDeviceLibrary::CreateMediaItem(nsIURI *aContentUri,
   if (mPerformAction) {
     nsresult rv;
     nsCOMPtr<sbILibrary> lib;
-    rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+    rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                               NS_GET_IID(sbILibrary),
                               mDeviceLibrary,
                               NS_PROXY_SYNC,
@@ -2351,7 +2351,7 @@ sbDeviceLibrary::CreateMediaItemIfNotExist(nsIURI *aContentUri,
   if (mPerformAction) {
     nsresult rv;
     nsCOMPtr<sbILibrary> lib;
-    rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+    rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                               NS_GET_IID(sbILibrary),
                               mDeviceLibrary,
                               NS_PROXY_SYNC,
