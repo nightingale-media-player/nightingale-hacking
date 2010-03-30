@@ -50,6 +50,7 @@ public:
 
   virtual nsresult OnGetDeviceModelNumber(nsAString &aModelNumber);
   virtual nsresult OnGetDeviceModelVersion(nsAString &aModelVersion);
+  virtual nsresult OnGetDeviceVendor(nsAString &aDeviceVendor);
 
   virtual nsresult OnCanUpdate(sbIDevice *aDevice,
                                PRUint32 aDeviceVendorID,

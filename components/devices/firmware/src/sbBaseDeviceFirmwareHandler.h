@@ -163,6 +163,8 @@ public:
   virtual nsresult OnGetDeviceModelNumber(nsAString &aModelNumber);
   // override me, see cpp file for implementation notes
   virtual nsresult OnGetDeviceModelVersion(nsAString &aModelVersion);
+  // override me, see cpp file for implementation notes
+  virtual nsresult OnGetDeviceVendor(nsAString &aDeviceVendor);
 
   // override me, see cpp file for implementation notes
   virtual nsresult OnGetSupportedDevices(nsISimpleEnumerator **aSupportedDevices);

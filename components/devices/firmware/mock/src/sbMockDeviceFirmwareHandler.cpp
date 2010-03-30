@@ -159,6 +159,13 @@ sbMockDeviceFirmwareHandler::OnGetDeviceModelVersion(nsAString &aModelVersion)
 }
 
 /*virtual*/ nsresult
+sbMockDeviceFirmwareHandler::OnGetDeviceVendor(nsAString &aDeviceVendor)
+{
+  aDeviceVendor.AssignLiteral("ACME Inc.");
+  return NS_OK;
+}
+
+/*virtual*/ nsresult
 sbMockDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice,
                                          PRUint32 aDeviceVendorID,
                                          PRUint32 aDeviceProductID,

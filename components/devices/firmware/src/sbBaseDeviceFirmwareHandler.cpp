@@ -26,6 +26,7 @@
 
 #include <nsIChromeRegistry.h>
 #include <nsIFileURL.h>
+#include <nsIHttpChannel.h>
 #include <nsIIOService.h>
 #include <nsIScriptSecurityManager.h>
 
@@ -207,7 +208,7 @@ sbBaseDeviceFirmwareHandler::CreateProxiedURI(const nsACString &aURISpec,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  LOG(("[%s] Creating proxied URI for '%s'", aURISpec.BeginReading()));
+  //LOG(("[%s] Creating proxied URI for '%s'", aURISpec.BeginReading()));
 
   nsCOMPtr<nsIURI> uri;
   rv = ioService->NewURI(aURISpec,
@@ -554,6 +555,23 @@ sbBaseDeviceFirmwareHandler::OnGetDeviceModelVersion(nsAString &aModelVersion)
 
   return NS_OK;
 
+}
+
+/*virtual*/ nsresult 
+sbBaseDeviceFirmwareHandler::OnGetDeviceVendor(nsAString &aDeviceVendor)
+{
+  TRACE(("[%s]", __FUNCTION__));
+
+  /**
+   * Here is where you may return the vendor name for the device.
+   * This is optional, if you don't want to implement it, just skip
+   * overriding this method as the default version already does the right
+   * thing by default.
+   */
+  
+  aDeviceVendor.SetIsVoid(PR_TRUE);
+
+  return NS_OK;
 }
 
 /*virtual*/ nsresult
@@ -1087,6 +1105,20 @@ sbBaseDeviceFirmwareHandler::GetDeviceModelVersion(nsAString &aModelVersion)
 }
 
 NS_IMETHODIMP
+sbBaseDeviceFirmwareHandler::GetDeviceVendor(nsAString &aDeviceVendor)
+{
+  TRACE(("[%s]", __FUNCTION__));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv = OnGetDeviceVendor(aDeviceVendor);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::GetSupportedDevices(
                                nsISimpleEnumerator **aSupportedDevices)
 {
@@ -1269,6 +1301,32 @@ sbBaseDeviceFirmwareHandler::Notify(nsITimer *aTimer)
     if(state == HTTP_STATE_COMPLETED) {
       rv = mXMLHttpRequestTimer->Cancel();
       NS_ENSURE_SUCCESS(rv, rv);
+
+#ifdef PR_LOGGING
+      nsCOMPtr<nsIChannel> channel;
+      rv = mXMLHttpRequest->GetChannel(getter_AddRefs(channel));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<nsIHttpChannel> httpChannel = 
+        do_QueryInterface(channel, &rv);
+      
+      if(NS_SUCCEEDED(rv) && httpChannel) {
+        PRUint32 status = 0;
+        rv = httpChannel->GetResponseStatus(&status);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        LOG(("HTTP Request Status Code: %i", status));
+
+        nsCString statusText;
+        rv = httpChannel->GetResponseStatusText(statusText);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        LOG(("HTTP Request Status Text: %s", statusText.BeginReading()));
+      }
+      else {
+        LOG(("No HTTP Channel available!"));
+      }
+#endif
 
       rv = OnHttpRequestCompleted();
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnHttpRequestCompleted failed");

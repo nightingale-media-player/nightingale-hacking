@@ -52,13 +52,23 @@ public:
   nsresult Init(sbIDevice *aDevice, 
                 sbIDeviceEventListener *aListener,
                 sbIDeviceFirmwareHandler *aHandler);
+  nsresult Init(sbIDevice *aDevice,
+                const nsAString &aCacheDirName,
+                sbIDeviceEventListener *aListener,
+                sbIDeviceFirmwareHandler *aHandler);
 
   static nsresult CreateCacheRoot(nsIFile **aCacheRoot);
   static nsresult CreateCacheDirForDevice(sbIDevice *aDevice, 
                                           nsIFile *aCacheRoot, 
                                           nsIFile **aCacheDir);
-  static nsresult GetCacheDirForDevice(sbIDevice *aDevice, nsIFile **aCacheDir);
+  static nsresult CreateCacheDirForDevice(const nsAString &aCacheDirName, 
+                                          nsIFile *aCacheRoot, 
+                                          nsIFile **aCacheDir);
   static nsresult CacheFirmwareUpdate(sbIDevice *aDevice, 
+                                      sbIDeviceFirmwareUpdate *aFirmwareUpdate,
+                                      sbIDeviceFirmwareUpdate **aCachedFirmwareUpdate);
+  static nsresult CacheFirmwareUpdate(sbIDevice *aDevice, 
+                                      const nsAString &aCacheDirName,
                                       sbIDeviceFirmwareUpdate *aFirmwareUpdate,
                                       sbIDeviceFirmwareUpdate **aCachedFirmwareUpdate);
 

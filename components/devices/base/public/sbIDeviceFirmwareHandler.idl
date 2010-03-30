@@ -38,7 +38,7 @@ interface sbIDeviceFirmwareUpdate;
  *       to use your own listener if you do not have a listener registered
  *       with the device.
  */
-[scriptable, uuid(8f69e726-0b39-44c8-b961-18b9fef31cc9)]
+[scriptable, uuid(caf2294b-da39-48ac-859a-6ebfd4433eeb)]
 interface sbIDeviceFirmwareHandler : nsISupports
 {
   /**
@@ -158,6 +158,12 @@ interface sbIDeviceFirmwareHandler : nsISupports
    * \note This is optional and may be null.
    */
   readonly attribute AString deviceModelVersion;
+
+  /**
+   * \brief Device manufacturer as reported by the firmware handler.
+   * \note This is optional and may be null.
+   */
+  readonly attribute AString deviceVendor;
 
   /**
    * \brief Array containing the list of devices supported by the

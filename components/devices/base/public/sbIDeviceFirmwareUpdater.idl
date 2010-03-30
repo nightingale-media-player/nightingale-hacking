@@ -41,12 +41,16 @@ interface sbIDeviceFirmwareUpdate;
  *       to use your own listener if you do not have a listener registered
  *       with the device.
  */
-[scriptable, uuid(9188484a-dba7-4c8f-a567-e7426fa64895)]
+[scriptable, uuid(f6ad23c7-bd65-4fee-8536-0b47b493109e)]
 interface sbIDeviceFirmwareUpdater : nsISupports
 {
   /**
    * \brief Check for an update
    * \param aDevice - Device for which to check for an update
+   * \param aDeviceVendorID [optional] - The device vendor ID. Set to 0 to fetch
+   *                                     from device instance or if not available.
+   * \param aDeviceProductID [optional] - The device product ID. Set to 0 to fetch
+   *                                      from device instance or if not available.
    * \param aListener [optional] - Device listener to recieve events
    * \note The flow of events for this method is the following: 
    *       firmware check for update start, firmware check for update end. 
@@ -55,6 +59,8 @@ interface sbIDeviceFirmwareUpdater : nsISupports
    * \note Any error event that occurs will cancel this operation.
    */
   void checkForUpdate(in sbIDevice aDevice, 
+                      in unsigned long aDeviceVendorID,
+                      in unsigned long aDeviceProductID,
                       in sbIDeviceEventListener aListener);
 
   /**
