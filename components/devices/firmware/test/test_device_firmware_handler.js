@@ -172,7 +172,7 @@ function runTest () {
     var eventTarget = device.QueryInterface(Ci.sbIDeviceEventTarget);
     eventTarget.addEventListener(listener);
     
-    updater.checkForUpdate(device, null);
+    updater.checkForUpdate(device, 0, 0, null);
     testPending();
       
     log("Testing 'downloadUpdate'");
