@@ -37,10 +37,10 @@
  *  NSPR_LOG_MODULES=sbDeviceCapsCompatibility:5 (or :3 for LOG messages only)
  */
 #ifdef PR_LOGGING
-static PRLogModuleInfo* gDeviceCapsCompatibility =
+static PRLogModuleInfo* gDeviceCapsCompatibilityLog =
                           PR_NewLogModule("sbDeviceCapsCompatibility");
-#define LOG(args) PR_LOG(gDeviceCapsCompatibility, PR_LOG_WARNING, args)
-#define TRACE(args) PR_LOG(gDeviceCapsCompatibility, PR_LOG_DEBUG, args)
+#define LOG(args) PR_LOG(gDeviceCapsCompatibilityLog, PR_LOG_WARNING, args)
+#define TRACE(args) PR_LOG(gDeviceCapsCompatibilityLog, PR_LOG_DEBUG, args)
 #else /* PR_LOGGING */
 #define LOG(args)   /* nothing */
 #define TRACE(args) /* nothing */
@@ -263,8 +263,12 @@ sbDeviceCapsCompatibility::CompareVideoFormat(PRBool* aCompatible)
           NS_ENSURE_SUCCESS(rv, rv);
 
           // Container type not equal
-          if (!StringEqualsToCString(mMediaContainerType, deviceContainerType))
+          if (!StringEqualsToCString(mMediaContainerType, deviceContainerType)) {
+            LOG(("Not match! media container type: %s, device container type: %s",
+                 mMediaContainerType.BeginReading(),
+                 deviceContainerType.BeginReading()));
             continue;
+          }
 
           // Get device video stream
           nsCOMPtr<sbIDevCapVideoStream> videoStream;
@@ -331,8 +335,12 @@ sbDeviceCapsCompatibility::CompareVideoStream(
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Video type not equal. Not compatible.
-  if (!StringEqualsToCString(mMediaVideoType, deviceVideoType))
+  if (!StringEqualsToCString(mMediaVideoType, deviceVideoType)) {
+    LOG(("Not match! media video type: %s, device video type: %s",
+         mMediaVideoType.BeginReading(),
+         deviceVideoType.BeginReading()));
     return NS_OK;
+  }
 
   rv = CompareVideoWidthAndHeight(aVideoStream, aCompatible);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -382,8 +390,12 @@ sbDeviceCapsCompatibility::CompareAudioStream(
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Audio type not equal. Not compatible.
-  if (!StringEqualsToCString(mMediaAudioType, deviceAudioType))
+  if (!StringEqualsToCString(mMediaAudioType, deviceAudioType)) {
+    LOG(("Not match! media audio type: %s, device audio type: %s",
+         mMediaAudioType.BeginReading(),
+         deviceAudioType.BeginReading()));
     return NS_OK;
+  }
 
   // Audio bit rate could be unknown in the media file.
   if (mMediaAudioBitRate) {
@@ -408,6 +420,30 @@ sbDeviceCapsCompatibility::CompareAudioStream(
   // Compatible and return.
   return NS_OK;
 }
+
+#ifdef PR_LOGGING
+static nsresult GetDevCapRangeValues(sbIDevCapRange *aCapRange,
+                                     PRInt32 *aMin,
+                                     PRInt32 *aMax,
+                                     PRInt32 *aStep)
+{
+  NS_ENSURE_ARG_POINTER(aCapRange);
+  NS_ENSURE_ARG_POINTER(aMin);
+  NS_ENSURE_ARG_POINTER(aMax);
+  NS_ENSURE_ARG_POINTER(aStep);
+
+  nsresult rv = aCapRange->GetMin(aMin);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aCapRange->GetMax(aMax);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aCapRange->GetStep(aStep);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+#endif
 
 nsresult
 sbDeviceCapsCompatibility::CompareVideoWidthAndHeight(
@@ -438,11 +474,32 @@ sbDeviceCapsCompatibility::CompareVideoWidthAndHeight(
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Video width not in range. Not compatible.
-    if (!inRange)
+    if (!inRange) {
+#ifdef PR_LOGGING
+      PRInt32 min, max, step;
+      rv = GetDevCapRangeValues(deviceSupportedWidths, &min, &max, &step);
+      NS_ENSURE_SUCCESS(rv, rv);
+      LOG(("media video width (%d) not in supported range "
+           "(min: %d, max: %d, step: %d)",
+           mMediaVideoWidth, min, max, step));
+#endif
       return NS_OK;
+    }
 
     rv = deviceSupportedHeights->IsValueInRange(mMediaVideoHeight, &inRange);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!inRange) {
+#ifdef PR_LOGGING
+      PRInt32 min, max, step;
+      rv = GetDevCapRangeValues(deviceSupportedHeights, &min, &max, &step);
+      NS_ENSURE_SUCCESS(rv, rv);
+      LOG(("media video height (%d) not in supported range "
+           "(min: %d, max: %d, step: %d)",
+           mMediaVideoWidth, min, max, step));
+#endif
+      return NS_OK;
+    }
 
     *aCompatible = inRange;
   }
@@ -476,6 +533,15 @@ sbDeviceCapsCompatibility::CompareVideoWidthAndHeight(
           match = PR_TRUE;
           break;
         }
+
+        LOG(("media video width/height (%d/%d) not equal to explicit "
+             "size item[%d] (width: %d, height: %d)",
+             mMediaVideoWidth, mMediaVideoHeight, index, width, height));
+      }
+
+      if (!match) {
+        LOG(("media video width/height not in device explicit size array!"));
+        return NS_OK;
       }
 
       *aCompatible = match;
@@ -508,6 +574,17 @@ sbDeviceCapsCompatibility::CompareVideoBitRate(
 
   rv = deviceSupportedBitRates->IsValueInRange(mMediaVideoBitRate, aCompatible);
   NS_ENSURE_SUCCESS(rv, rv);
+
+#ifdef PR_LOGGING
+  if (!(*aCompatible)) {
+    PRInt32 min, max, step;
+    rv = GetDevCapRangeValues(deviceSupportedBitRates, &min, &max, &step);
+    NS_ENSURE_SUCCESS(rv, rv);
+    LOG(("media video bit rate (%d) not in supported range "
+         "(min: %d, max: %d, step: %d)",
+         mMediaVideoBitRate, min, max, step));
+  }
+#endif
 
   return NS_OK;
 }
@@ -547,7 +624,17 @@ sbDeviceCapsCompatibility::CompareVideoPAR(
       *aCompatible = PR_TRUE;
       break;
     }
+
+    LOG(("media video PAR (%d/%d) not equal to supported PAR item[%d] (%d/%d)",
+         mMediaVideoPARNumerator, mMediaVideoPARDenominator, i,
+         fraction.Numerator(), fraction.Denominator()));
   }
+
+#ifdef PR_LOGGING
+  if (!(*aCompatible)) {
+    LOG(("media video PAR not in device supported array!"));
+  }
+#endif
 
   return NS_OK;
 }
@@ -586,7 +673,18 @@ sbDeviceCapsCompatibility::CompareVideoFrameRate(
       *aCompatible = PR_TRUE;
       break;
     }
+
+    LOG(("media video frame rate (%d/%d) not equal to supported "
+         "frame rate item[%d] (%d/%d)",
+         mMediaVideoFRNumerator, mMediaVideoFRDenominator, i,
+         fraction.Numerator(), fraction.Denominator()));
   }
+
+#ifdef PR_LOGGING
+  if (!(*aCompatible)) {
+    LOG(("media video frame rate not in device supported array!"));
+  }
+#endif
 
   return NS_OK;
 }
@@ -611,6 +709,17 @@ sbDeviceCapsCompatibility::CompareAudioBitRate(
 
   rv = deviceSupportedBitRates->IsValueInRange(mMediaAudioBitRate, aCompatible);
   NS_ENSURE_SUCCESS(rv, rv);
+
+#ifdef PR_LOGGING
+  if (!(*aCompatible)) {
+    PRInt32 min, max, step;
+    rv = GetDevCapRangeValues(deviceSupportedBitRates, &min, &max, &step);
+    NS_ENSURE_SUCCESS(rv, rv);
+    LOG(("media audio bit rate (%d) not in supported range "
+         "(min: %d, max: %d, step: %d)",
+         mMediaAudioBitRate, min, max, step));
+  }
+#endif
 
   return NS_OK;
 }
@@ -637,6 +746,17 @@ sbDeviceCapsCompatibility::CompareAudioSampleRate(
                                                   aCompatible);
   NS_ENSURE_SUCCESS(rv, rv);
 
+#ifdef PR_LOGGING
+  if (!(*aCompatible)) {
+    PRInt32 min, max, step;
+    rv = GetDevCapRangeValues(deviceSupportedSampleRates, &min, &max, &step);
+    NS_ENSURE_SUCCESS(rv, rv);
+    LOG(("media audio sample rate (%d) not in supported range "
+         "(min: %d, max: %d, step: %d)",
+         mMediaAudioSampleRate, min, max, step));
+  }
+#endif
+
   return NS_OK;
 }
 
@@ -661,6 +781,17 @@ sbDeviceCapsCompatibility::CompareAudioChannels(
   rv = deviceSupportedChannels->IsValueInRange(mMediaAudioChannels,
                                                aCompatible);
   NS_ENSURE_SUCCESS(rv, rv);
+
+#ifdef PR_LOGGING
+  if (!(*aCompatible)) {
+    PRInt32 min, max, step;
+    rv = GetDevCapRangeValues(deviceSupportedChannels, &min, &max, &step);
+    NS_ENSURE_SUCCESS(rv, rv);
+    LOG(("media audio channel (%d) not in supported range "
+         "(min: %d, max: %d, step: %d)",
+         mMediaAudioChannels, min, max, step));
+  }
+#endif
 
   return NS_OK;
 }
