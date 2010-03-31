@@ -244,7 +244,7 @@ var DeviceMediaManagementServices = {
       for (formatMimeTypeIndex in formatMimeTypes) {
         var formats = deviceCaps.
           getFormatTypes(Ci.sbIDeviceCapabilities.CONTENT_AUDIO,
-                         formatMimeTypes[formatMimeTypeIndex]);
+                         formatMimeTypes[formatMimeTypeIndex], {});
         for (formatIndex in formats) {
           var format = formats[formatIndex];
           var container = format.containerFormat;

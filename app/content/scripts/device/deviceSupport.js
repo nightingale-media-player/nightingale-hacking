@@ -131,7 +131,7 @@ var sbDeviceVolumeSupport = {
     // Add each device.
     var deviceRegistrar = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
                             .getService(Ci.sbIDeviceRegistrar);
-    for each (device in ArrayConverter.JSEnum(devices)) {
+    for each (device in ArrayConverter.JSEnum(deviceRegistrar.devices)) {
       this._addDevice(device.QueryInterface(Ci.sbIDevce));
     }
   },
