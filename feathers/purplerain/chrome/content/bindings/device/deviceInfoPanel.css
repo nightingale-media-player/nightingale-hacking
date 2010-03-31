@@ -20,3 +20,12 @@ sb-info-panel[state="success"] .info-panel-icon {
 sb-info-panel[state="error"] .info-panel-icon {
   list-style-image: url('chrome://songbird/skin/device/error.png');
 }
+
+.info-panel-bar-scrollbox > scrollbox {
+  overflow: visible;
+}
+
+sb-info-panel[active="true"] .info-panel-active {
+  margin-bottom: -1px;
+}
+
