@@ -340,6 +340,7 @@
 ./gst-plugins/libgstwavparse.so
 ./gst-plugins/libgstximagesink.so
 ./gst-plugins/libgstxvimagesink.so
+./gstreamer/encode-profiles/asf-wmv-wma.xml
 ./gstreamer/encode-profiles/avi-mpeg2sp-mp3.xml
 ./gstreamer/encode-profiles/flac.xml
 ./gstreamer/encode-profiles/mp3.xml
