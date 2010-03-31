@@ -2049,8 +2049,10 @@ sbGStreamerVideoTranscoder::BuildRemainderOfPipeline ()
   }
 
   g_object_unref (srcpad);
-  g_object_unref (newVideoSrc);
-  g_object_unref (newAudioSrc);
+  if (newVideoSrc)
+    g_object_unref (newVideoSrc);
+  if (newAudioSrc)
+    g_object_unref (newAudioSrc);
 
   // We have the pipeline fully set up; now we can set the metadata.
   rv = SetMetadataOnTagSetters();

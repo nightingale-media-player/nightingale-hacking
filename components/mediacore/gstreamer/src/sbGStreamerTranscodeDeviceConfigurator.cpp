@@ -192,15 +192,46 @@ sbGStreamerTranscodeDeviceConfigurator::~sbGStreamerTranscodeDeviceConfigurator(
   /* nothing */
 }
 
+struct sb_gst_caps_map_entry {
+  const char *sb_name;
+  const char *gst_name;
+};
+
+static const struct sb_gst_caps_map_entry sb_gst_caps_map[] =
+{
+  { "audio/x-pcm-int",   "audio/x-raw-int" },
+  { "audio/x-pcm-float", "audio/x-raw-float" },
+  { "audio/x-ms-wma",    "audio/x-wma" },
+
+  { "video/x-ms-wmv",    "video/x-wmv" }
+};
+
+/* GStreamer caps name are generally similar to mime-types, but some of them
+ * differ. We use this table to convert the ones that differ that we know about
+ */
+static nsresult
+GetGstCapsName(const nsACString &aMimeType, nsACString &aGstCapsName)
+{
+  for (int i = 0; i < NS_ARRAY_LENGTH(sb_gst_caps_map); i++) {
+    if (aMimeType.EqualsLiteral(sb_gst_caps_map[i].sb_name)) {
+      aGstCapsName.AssignLiteral(sb_gst_caps_map[i].gst_name);
+      return NS_OK;
+    }
+  }
+
+  aGstCapsName = aMimeType;
+  return NS_OK;
+}
+
 /**
  * make a GstCaps structure from a caps name and an array of attributes
  *
- * @param aCapsName [in] the name (e.g. "audio/x-raw-int")
+ * @param aMimeType [in] the name (e.g. "audio/x-pcm-int")
  * @param aAttributes [in] the attributes
  * @param aResultCaps [out] the generated GstCaps, with an outstanding refcount
  */
 nsresult
-MakeCapsFromAttributes(const nsACString& aCapsName,
+MakeCapsFromAttributes(const nsACString& aMimeType,
                        nsIArray *aAttributes,
                        GstCaps** aResultCaps)
 {
@@ -214,8 +245,12 @@ MakeCapsFromAttributes(const nsACString& aCapsName,
   rv = aAttributes->Enumerate(getter_AddRefs(attrsEnum));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCString name;
+  rv = GetGstCapsName (aMimeType, name);
+  NS_ENSURE_SUCCESS (rv, rv);
+
   // set up a caps structure
-  sbGstCaps caps = gst_caps_from_string(aCapsName.BeginReading());
+  sbGstCaps caps = gst_caps_from_string(name.BeginReading());
   NS_ENSURE_TRUE(caps, NS_ERROR_FAILURE);
   GstStructure* capsStruct = gst_caps_get_structure(caps.get(), 0);
 
