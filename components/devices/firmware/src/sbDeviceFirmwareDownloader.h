@@ -72,6 +72,9 @@ public:
                                       sbIDeviceFirmwareUpdate *aFirmwareUpdate,
                                       sbIDeviceFirmwareUpdate **aCachedFirmwareUpdate);
 
+  static nsresult CreateDirInCacheRoot(const nsAString &aDirName,
+                                       nsIFile **aNewDir);
+
   PRBool   IsAlreadyInCache();
   nsresult GetCachedFile(nsIFile **aFile);
  

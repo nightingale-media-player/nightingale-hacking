@@ -758,6 +758,62 @@ sbDeviceFirmwareDownloader::CacheFirmwareUpdate(
   return NS_OK;
 }
 
+/*static*/ nsresult 
+sbDeviceFirmwareDownloader::CreateDirInCacheRoot(const nsAString &aDirName,
+                                                 nsIFile **aNewDir)
+{
+  NS_ENSURE_ARG_POINTER(aNewDir);
+  
+  NS_ENSURE_TRUE(!aDirName.IsEmpty(), NS_ERROR_INVALID_ARG);
+
+  nsCOMPtr<nsIFile> cacheRoot;
+  nsresult rv = 
+    sbDeviceFirmwareDownloader::CreateCacheRoot(getter_AddRefs(cacheRoot));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIFile> cacheDir;
+  rv = cacheRoot->Clone(getter_AddRefs(cacheDir));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = cacheDir->Append(aDirName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool exists = PR_FALSE;
+  PRBool isDirectory = PR_FALSE;
+
+  rv = cacheDir->Exists(&exists);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(!exists) {
+    rv = cacheDir->Create(nsIFile::DIRECTORY_TYPE, 0755);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = cacheDir->IsDirectory(&isDirectory);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(!isDirectory) {
+    rv = cacheDir->Create(nsIFile::DIRECTORY_TYPE, 0755);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  PRBool isReadable = PR_FALSE;
+  PRBool isWritable = PR_FALSE;
+
+  rv = cacheDir->IsReadable(&isReadable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = cacheDir->IsWritable(&isWritable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ENSURE_TRUE(isReadable, NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(isWritable, NS_ERROR_FAILURE);
+
+  cacheDir.forget(aNewDir);
+
+  return NS_OK;
+}
+
 PRBool
 sbDeviceFirmwareDownloader::IsAlreadyInCache()
 {
