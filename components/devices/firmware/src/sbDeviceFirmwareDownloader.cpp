@@ -861,6 +861,25 @@ sbDeviceFirmwareDownloader::IsAlreadyInCache()
     return PR_FALSE;
   }
 
+  nsCOMPtr<nsIURI> firmwareURI;
+  rv = mHandler->GetLatestFirmwareLocation(getter_AddRefs(firmwareURI));
+  NS_ENSURE_TRUE(firmwareURI, NS_ERROR_UNEXPECTED);
+
+  nsCOMPtr<nsIURL> firmwareURL = do_QueryInterface(firmwareURI, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCString newFileName;
+  rv = firmwareURL->GetFileName(newFileName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString localFileName;
+  rv = localFile->GetLeafName(localFileName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(!localFileName.EqualsLiteral(newFileName.BeginReading())) {
+    return PR_FALSE;
+  }
+
   return PR_TRUE;
 }
 
@@ -909,10 +928,15 @@ sbDeviceFirmwareDownloader::Start()
   PRBool inCache = IsAlreadyInCache();
 
   if(!inCache) {
-    // Not in cache, download.
+    // Not in cache, clean out cache dir first.
+    rv = mDeviceCacheDir->Remove(PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mDeviceCacheDir->Create(nsIFile::DIRECTORY_TYPE, 0755);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     nsCOMPtr<nsIURI> firmwareURI;
-    rv =
-      mHandler->GetLatestFirmwareLocation(getter_AddRefs(firmwareURI));
+    rv = mHandler->GetLatestFirmwareLocation(getter_AddRefs(firmwareURI));
     NS_ENSURE_TRUE(firmwareURI, NS_ERROR_UNEXPECTED);
 
     rv = mDownloader->SetSourceURI(firmwareURI);
