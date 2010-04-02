@@ -83,10 +83,10 @@ int main(int argc, LPTSTR *argv) {
   }
   distIni = GetDistIniDirectory(ininame);
   if (distIni.empty()) {
-    DebugMessage("Failed to find distribution.ini");
+    DebugMessage("Failed to find distribution.ini %s", ininame);
     return DH_ERROR_USER;
   }
-  distIni = ininame;
+  distIni = GetDistIniDirectory() + GetLeafName(ininame);
   
   tstring srcAppIniName(GetDistIniDirectory()),
           destAppIniName(ResolvePathName("$/application.ini"));
@@ -99,7 +99,7 @@ int main(int argc, LPTSTR *argv) {
     IniFile_t srcAppIni, destAppIni;
     result = ReadIniFile(srcAppIniName.c_str(), srcAppIni);
     if (result) {
-      LogMessage("Failed to read source application.ini file %S: %i",
+      LogMessage("Failed to read source application.ini file %s: %i",
                  srcAppIniName.c_str(), result);
       ShowFatalError("Failed to read source application.ini file %s: %i",
                      srcAppIniName.c_str(), result);
@@ -107,7 +107,7 @@ int main(int argc, LPTSTR *argv) {
     }
     result = ReadIniFile(destAppIniName.c_str(), destAppIni);
     if (result) {
-      LogMessage("Failed to read destination application.ini file %S: %i",
+      LogMessage("Failed to read destination application.ini file %s: %i",
                  destAppIniName.c_str(), result);
       ShowFatalError("Failed to read destination application.ini file %s: %i",
                      destAppIniName.c_str(), result);
@@ -117,14 +117,15 @@ int main(int argc, LPTSTR *argv) {
     std::string srcAppVer = srcAppIni["app"]["BuildID"],
                 destAppVer = destAppIni["app"]["BuildID"];
     LogMessage("Checking application.ini build IDs... old=[%s] new=[%s]",
-               srcAppVer.c_str(), destAppVer.c_str());
+               ConvertUTF8toUTFn(srcAppVer).c_str(),
+               ConvertUTF8toUTFn(destAppVer).c_str());
     if (srcAppVer != destAppVer) {
       LogMessage("source and destination application.ini are for different builds! (%s / %s)",
-                 srcAppVer.c_str(),
-                 destAppVer.c_str());
-      ShowFatalError("source and destination application.ini are for different builds! (%S / %S)",
-                     srcAppVer.c_str(),
-                     destAppVer.c_str());
+                 ConvertUTF8toUTFn(srcAppVer).c_str(),
+                 ConvertUTF8toUTFn(destAppVer).c_str());
+      ShowFatalError("source and destination application.ini are for different builds! (%s / %s)",
+                     ConvertUTF8toUTFn(srcAppVer).c_str(),
+                     ConvertUTF8toUTFn(destAppVer).c_str());
       return DH_ERROR_UNKNOWN;
     }
   }
@@ -133,11 +134,12 @@ int main(int argc, LPTSTR *argv) {
   IniFile_t iniFile;
   result = ReadIniFile(distIni.c_str(), iniFile);
   if (result) {
-    LogMessage("Failed to read INI file %S: %i", distIni.c_str(), result);
+    LogMessage("Failed to read distribution INI file %s: %i",
+               distIni.c_str(), result);
     if (usingFallback) {
       // we're using the fallback, the fact that distini (really, songbird.ini)
       // is missing is not fatal, just means we have nothing to do
-      LogMessage("Squelching error, fallback %S missing is not fatal", ininame);
+      LogMessage("Squelching error, fallback %s missing is not fatal", ininame);
       if (ConvertUTFnToUTF8(argv[1]) == "uninstall") {
         // uninstall mode, explicitly delete the log
         gEnableLogging = false;
@@ -157,59 +159,73 @@ int main(int argc, LPTSTR *argv) {
   
   /// copy the distribution.ini / application.ini files to the appdir
   DebugMessage("Copying %s to %s\n",
-               ConvertUTFnToUTF8(distIni).c_str(),
-               ConvertUTFnToUTF8(ResolvePathName("$/distribution/")).c_str());
+               distIni.c_str(), ResolvePathName("$/distribution/").c_str());
 
   if (section == "steps:install") {
     LogMessage("Skipping distribution.ini check for installation, forcing copy");
     result = CommandCopyFile(ConvertUTFnToUTF8(distIni), "$/distribution/");
     if (result) {
-      LogMessage("Failed to copy distribution.ini file %S", distIni.c_str());
+      LogMessage("Failed to copy distribution.ini file %s", distIni.c_str());
     }
   } else if (section != "steps:uninstall" && !usingFallback) {
     // don't copy on uninstall or using the fallback
     IniFile_t destDistIni;
-    std::string destDistPath = GetLeafName(ConvertUTFnToUTF8(distIni));
+    std::string destDistPath = ConvertUTFnToUTF8(GetLeafName(distIni));
     destDistPath.insert(0, "$/distribution/");
     tstring destDistIniFile = ResolvePathName(destDistPath);
     result = ReadIniFile(destDistIniFile.c_str(), destDistIni);
     if (result != DH_ERROR_OK) {
-      LogMessage("Failed to read existing distribution.ini %S", destDistIniFile.c_str());
-      ShowFatalError("Failed to read existing distribution.ini %s", destDistIniFile.c_str());
+      LogMessage("Failed to read existing distribution.ini %s",
+                 destDistIniFile.c_str());
+      ShowFatalError("Failed to read existing distribution.ini %s",
+                     destDistIniFile.c_str());
       return DH_ERROR_UNKNOWN;
     }
 
    std::string oldVersion = destDistIni["global"]["version"],
                 newVersion = iniFile["global"]["version"];
     LogMessage("Checking distribution.ini versions... old=[%s] new=[%s]",
-               oldVersion.c_str(), newVersion.c_str());
+               ConvertUTF8toUTFn(oldVersion).c_str(),
+               ConvertUTF8toUTFn(newVersion).c_str());
     if (VersionLessThan()(newVersion, oldVersion)) {
       // the new version is older than the old version? abort!
-      LogMessage("Existing distribution.ini %S has version %s, which is newer than replacement %S of version %s",
-                 ResolvePathName(destDistPath).c_str(), oldVersion.c_str(),
-                 distIni.c_str(), newVersion.c_str());
-      ShowFatalError("existing distribution.ini %s has version %S, which is newer than replacement %s of version %S",
-                 ResolvePathName(destDistPath).c_str(), oldVersion.c_str(),
-                 distIni.c_str(), newVersion.c_str());
+      LogMessage("Existing distribution.ini %s has version %s, "
+                 "which is newer than replacement %s of version %s",
+                 ResolvePathName(destDistPath).c_str(),
+                 ConvertUTF8toUTFn(oldVersion).c_str(),
+                 distIni.c_str(),
+                 ConvertUTF8toUTFn(newVersion).c_str());
+      ShowFatalError("existing distribution.ini %s has version %s, "
+                     "which is newer than replacement %s of version %s",
+                     ResolvePathName(destDistPath).c_str(),
+                     ConvertUTF8toUTFn(oldVersion).c_str(),
+                     distIni.c_str(),
+                     ConvertUTF8toUTFn(newVersion).c_str());
       return DH_ERROR_UNKNOWN;
     }
 
     if (VersionLessThan()(oldVersion, newVersion)) {
       // we have a newer file, copy it over
+      DebugMessage("Copying distribution ini %s [version %s] over [version %s]",
+                   distIni.c_str(),
+                   ConvertUTF8toUTFn(newVersion).c_str(),
+                   ConvertUTF8toUTFn(oldVersion).c_str());
       result = CommandCopyFile(ConvertUTFnToUTF8(distIni), "$/distribution/");
       if (result) {
-        LogMessage("Failed to copy distribution.ini file %S", distIni.c_str());
+        LogMessage("Failed to copy distribution.ini file %s", distIni.c_str());
       }
     } else {
-      LogMessage("Not copying identical versions %S (version %s) to %S (version %s)",
-                 distIni.c_str(), oldVersion.c_str(),
-                 ResolvePathName("$/distribution/").c_str(), newVersion.c_str());
+      LogMessage("Not copying identical versions %s (version %s) to %s (version %s)",
+                 distIni.c_str(),
+                 ConvertUTF8toUTFn(oldVersion).c_str(),
+                 ResolvePathName("$/distribution/").c_str(),
+                 ConvertUTF8toUTFn(newVersion).c_str());
     }
   }
 
   result = CommandCopyFile(ConvertUTFnToUTF8(srcAppIniName), "$/");
   if (result) {
-    LogMessage("Failed to copy application.ini file %S", srcAppIniName.c_str());
+    LogMessage("Failed to copy application.ini file %s", srcAppIniName.c_str());
   }
 
   result = SetupEnvironment();
@@ -220,7 +236,7 @@ int main(int argc, LPTSTR *argv) {
 
   for (it = iniFile[section].begin(); it != end; ++it) {
     std::string line = it->second;
-    LogMessage("Executing command %s", line.c_str());
+    LogMessage("Executing command %s", ConvertUTF8toUTFn(line).c_str());
     std::vector<std::string> command = ParseCommandLine(line);
     if (command[0] == "copy") {
       if (command.size() < 3) {
@@ -270,7 +286,7 @@ int main(int argc, LPTSTR *argv) {
       ParseExecCommandLine(line, executable, args);
       result = CommandExecuteFile(executable, args);
     } else {
-      OutputDebugString(_T("bad command!"));
+      DebugMessage("bad command %s!", ConvertUTF8toUTFn(command[0]).c_str());
       result = DH_ERROR_UNKNOWN;
     }
     

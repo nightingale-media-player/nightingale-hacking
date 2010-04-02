@@ -50,6 +50,8 @@
 #include <time.h>
 #include <sstream>
 
+#include <stringconvert.h>
+
 #define CTIME_STRLEN 26
 /* According to the MSDN documentation on ctime(), it returns exactly 26
  * characters, and looks like "WWW MMM DD hh:mm:ss YYYY\n\0"
@@ -59,21 +61,22 @@ bool gEnableLogging = true;
 
 void DebugMessage(const char* fmt, ...) {
   va_list args;
-  char *buffer;
+  TCHAR *buffer;
 
   // retrieve the variable arguments
   va_start(args, fmt);
 
   #if _MSC_VER
-    int len = _vscprintf(fmt, args) // _vscprintf doesn't count
-                               + 1; // terminating '\0'
-    buffer = (char*)malloc(len * sizeof(char));
-    vsprintf(buffer, fmt, args);
+    tstring format = ConvertUTF8toUTFn(fmt);
+    int len = _vscwprintf(format.c_str(), args) // _vscprintf doesn't count
+                                           + 1; // terminating '\0'
+    buffer = (TCHAR*)malloc(len * sizeof(TCHAR));
+    vswprintf_s(buffer, len, format.c_str(), args);
   #else
     vasprintf(&buffer, fmt, args);
   #endif
 
-  ::OutputDebugString(ConvertUTF8toUTFn(buffer).c_str());
+  ::OutputDebugString(buffer);
 
   free(buffer);
   va_end(args);
@@ -87,20 +90,21 @@ void LogMessage(const char* fmt, ...) {
     time(&timer);
     
     // set up a string stream and dump the timestamp into it
-    std::ostringstream stream;
+    std::basic_ostringstream<TCHAR> stream;
     stream << '['
-           << std::string(ctime(&timer), CTIME_STRLEN - 2)
+           << ConvertUTF8toUTFn(std::string(ctime(&timer), CTIME_STRLEN - 2))
            << "] ";
     
     // do printf()-style formatting into a string buffer
     va_list args;
     va_start(args, fmt);
-    char* buffer = NULL;
+    TCHAR* buffer = NULL;
     #if _MSC_VER
-      size_t len = _vscprintf(fmt, args) // _vscprintf doesn't count
-                                    + 1; // terminating '\0'
-      buffer = (char*)malloc(len * sizeof(char));
-      vsprintf(buffer, fmt, args);
+      tstring format = ConvertUTF8toUTFn(fmt);
+      int len = _vscwprintf(format.c_str(), args) // _vscwprintf doesn't count
+                                             + 1; // terminating '\0'
+      buffer = (TCHAR*)malloc(len * sizeof(TCHAR));
+      vswprintf_s(buffer, len, format.c_str(), args);
     #else
       vasprintf(&buffer, fmt, args);
     #endif
@@ -109,8 +113,8 @@ void LogMessage(const char* fmt, ...) {
     stream << buffer;
     free(buffer);
     
-    ::OutputDebugString(ConvertUTF8toUTFn(stream.str()).c_str());
-    fprintf(fout, "%s\n", stream.str().c_str());
+    ::OutputDebugString(stream.str().c_str());
+    fprintf(fout, "%s\n", ConvertUTFnToUTF8(stream.str()).c_str());
   
     fclose(fout);
   }

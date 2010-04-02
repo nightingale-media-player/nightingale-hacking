@@ -68,7 +68,7 @@ tstring ResolvePathName(std::string aSrc) {
     if ([src hasPrefix:@"$/"]) {
       NSString * appDir =
         [NSString stringWithUTF8String:GetAppDirectory().c_str()];
-      src = [[appDir substringFromIndex:2] stringByAppendingString:src];
+      src = [appDir stringByAppendingString:[src substringFromIndex:2]];
     }
     if (![src isAbsolutePath]) {
       NSString *distIniDir =
@@ -78,7 +78,7 @@ tstring ResolvePathName(std::string aSrc) {
         src = resolved;
       }
       else {
-        DebugMessage("Failed to resolve path name %S", [src UTF8String]);
+        DebugMessage("Failed to resolve path name %s", [src UTF8String]);
       }
     }
     result.assign([src UTF8String]);
@@ -107,21 +107,33 @@ static bool isDirectoryEmpty(std::string aPath) {
 int CommandCopyFile(std::string aSrc, std::string aDest, bool aRecursive) {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-  NSString *srcPath = [NSString stringWithUTF8String:aSrc.c_str()],
-           *destPath = [NSString stringWithUTF8String:aDest.c_str()];
+  NSString *srcPath =
+    [NSString stringWithUTF8String:ResolvePathName(aSrc).c_str()];
+  NSString *destPath =
+    [NSString stringWithUTF8String:ResolvePathName(aDest).c_str()];
   BOOL success, isDir;
   NSError *error = nil;
   NSFileManager* fileMan = [NSFileManager defaultManager];
 
   if (![fileMan fileExistsAtPath:srcPath isDirectory:&isDir]) {
+    DebugMessage("ERROR: [%s] does not exist, cannot copy",
+                 [srcPath UTF8String]);
     [pool release];
     return DH_ERROR_READ;
   }
 
+  // the APIs we use don't copy the leaf name for us; we need to do this
+  // manually.
+  destPath =
+    [destPath stringByAppendingPathComponent:[srcPath lastPathComponent]];
+
   // XXXMook: ugly hack to check if we're using the 10.5 SDK or higher (that is,
   // a SDK that knows about 10.5 methods).
   #ifdef kCFCoreFoundationVersionNumber10_5
-    if ((!aRecursive) && isDir) {
+    if ([fileMan fileExistsAtPath:destPath]) {
+      [fileMan removeItemAtPath:destPath error:NULL];
+    }
+    if (isDir && !aRecursive) {
       // we don't want to recurse, but this is a directory; just create a new,
       // empty one instead
       NSDictionary* attribs = [fileMan attributesOfItemAtPath:srcPath
@@ -137,7 +149,10 @@ int CommandCopyFile(std::string aSrc, std::string aDest, bool aRecursive) {
                                   error:&error];
     }
   #else
-    if ((!aRecursive) && isDir) {
+    if ([fileMan fileExistsAtPath:destPath]) {
+      [fileMan removeFileAtPath:destPath handler:nil];
+    }
+    if (isDir && !aRecursive) {
       // we don't want to recurse, but this is a directory; just create a new,
       // empty one instead
       NSDictionary* attribs = [fileMan fileAttributesAtPath:srcPath
@@ -146,6 +161,7 @@ int CommandCopyFile(std::string aSrc, std::string aDest, bool aRecursive) {
                                     attributes:attribs];
     }
     else {
+      // copyPath:toPath:handler: will bail if the destination already exists
       success = [fileMan copyPath:srcPath
                            toPath:destPath
                           handler:nil];
@@ -160,13 +176,16 @@ int CommandCopyFile(std::string aSrc, std::string aDest, bool aRecursive) {
 int CommandMoveFile(std::string aSrc, std::string aDest, bool aRecursive) {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-  NSString *srcPath = [NSString stringWithUTF8String:aSrc.c_str()],
-           *destPath = [NSString stringWithUTF8String:aDest.c_str()];
+  NSString *srcPath =
+    [NSString stringWithUTF8String:ResolvePathName(aSrc).c_str()];
+  NSString *destPath =
+    [NSString stringWithUTF8String:ResolvePathName(aDest).c_str()];
   BOOL success, isDir;
   NSError *error = nil;
   NSFileManager* fileMan = [NSFileManager defaultManager];
 
   if (![fileMan fileExistsAtPath:srcPath isDirectory:&isDir]) {
+    DebugMessage("cannot move non-existent file %s", [srcPath UTF8String]);
     [pool release];
     return DH_ERROR_READ;
   }
@@ -176,6 +195,11 @@ int CommandMoveFile(std::string aSrc, std::string aDest, bool aRecursive) {
     [pool release];
     return DH_ERROR_USER;
   }
+
+  // the APIs we use don't copy the leaf name for us; we need to do this
+  // manually.
+  destPath =
+    [destPath stringByAppendingPathComponent:[srcPath lastPathComponent]];
 
   // XXXMook: ugly hack to check if we're using the 10.5 SDK or higher (that is,
   // a SDK that knows about 10.5 methods).
@@ -197,7 +221,8 @@ int CommandMoveFile(std::string aSrc, std::string aDest, bool aRecursive) {
 int CommandDeleteFile(std::string aFile, bool aRecursive) {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-  NSString *path = [NSString stringWithUTF8String:aFile.c_str()];
+  NSString *path =
+    [NSString stringWithUTF8String:ResolvePathName(aFile).c_str()];
   BOOL success, isDir;
   NSError *error = nil;
   NSFileManager* fileMan = [NSFileManager defaultManager];
@@ -339,11 +364,12 @@ tstring GetAppDirectory() {
   NSProcessInfo* process = [NSProcessInfo processInfo];
   NSString * execPath = [[process arguments] objectAtIndex:0];
   NSString * dirPath = [execPath stringByDeletingLastPathComponent];
+  dirPath = [dirPath stringByAppendingString:@"/"];
   tstring result([dirPath UTF8String]);
   [pool release];
 
   #if DEBUG
-    DebugMessage("Found app directory %S", result.c_str());
+    DebugMessage("Found app directory %s", result.c_str());
   #endif
   return result;
 }
@@ -375,7 +401,7 @@ tstring GetDistIniDirectory(const TCHAR *aPath) {
     path = [path stringByDeletingLastPathComponent];
 
     #if DEBUG
-      DebugMessage("found distribution path %S", path);
+      DebugMessage("found distribution path %s", [path UTF8String]);
     #endif
     gDistIniDirectory = tstring([path UTF8String]);
     // we expect a path separator at the end of the string
@@ -385,8 +411,8 @@ tstring GetDistIniDirectory(const TCHAR *aPath) {
   return gDistIniDirectory;
 }
 
-std::string GetLeafName(std::string aSrc) {
-  std::string leafName;
+tstring GetLeafName(tstring aSrc) {
+  tstring leafName;
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   NSString *src = [NSString stringWithUTF8String:aSrc.c_str()];
   leafName.assign([[src lastPathComponent] UTF8String]);

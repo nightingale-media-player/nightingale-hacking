@@ -1,16 +1,17 @@
+# vim: set sw=3 noet syntax=Makefile :
 #
-# BEGIN SONGBIRD GPL
+#=BEGIN SONGBIRD GPL
 #
 # This file is part of the Songbird web player.
 #
-# Copyright(c) 2005-2008 POTI, Inc.
+# Copyright(c) 2005-2010 POTI, Inc.
 # http://www.songbirdnest.com
 #
 # This file may be licensed under the terms of of the
-# GNU General Public License Version 2 (the "GPL").
+# GNU General Public License Version 2 (the ``GPL'').
 #
 # Software distributed under the License is distributed
-# on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+# on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
 # express or implied. See the GPL for the specific language
 # governing rights and limitations.
 #
@@ -19,7 +20,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# END SONGBIRD GPL
+#=END SONGBIRD GPL
 #
 
 DEPTH = ../..
@@ -67,7 +68,7 @@ ifeq ($(SB_PLATFORM),windows)
                $(NULL)
 
    ifneq (,$(SB_ENABLE_TESTS))
-      SUBDIRS += windows/tests
+      SUBDIRS += $(SB_PLATFORM)/tests
    endif
 endif # SB_PLATFORM == windows
 
@@ -80,6 +81,10 @@ ifeq ($(SB_PLATFORM),macosx)
    SIMPLE_PROGRAM_EXTRA_FLAGS = -Wl,-framework,Foundation \
                                 -Wl,-framework,AppKit \
                                 $(NULL)
+
+   ifneq (,$(SB_ENABLE_TESTS))
+      SUBDIRS += $(SB_PLATFORM)/tests
+   endif
 endif # SB_PLATFORM == macosx
 
 

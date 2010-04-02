@@ -40,11 +40,10 @@
 #include "readini.h"
 #include "error.h"
 
-#include <direct.h>
 #include <errno.h>
 #include <string>
 #include <vector>
-#include <windows.h>
+#include <sys/stat.h>
 
 #ifndef NS_ARRAY_LENGTH
 #define NS_ARRAY_LENGTH(x) ( sizeof(x) / sizeof((x)[0]) )
@@ -82,7 +81,7 @@ static const testdata_t DIST_TEST_DATA[] = {
 void TestDistVersion() {
   printf("Starting distribution.ini version tests...\n");
   
-  int result = _mkdir("../../distribution");
+  int result = mkdir("../../distribution", 0755);
   check(result == 0 || errno == EEXIST,
         "Failed to create distribution directory: %d\n", errno);
 
@@ -111,7 +110,7 @@ void TestDistVersion() {
       fclose(f);
     } else {
       // no old version
-      _unlink("../../distribution/test.ini");
+      unlink("../../distribution/test.ini");
     }
     if (DIST_TEST_DATA[i].newVersion) {
       f = fopen("test.ini", "w");
@@ -120,11 +119,11 @@ void TestDistVersion() {
       fclose(f);
     } else {
       // no new version
-      _unlink("test.ini");
+      unlink("test.ini");
     }
 
     fflush(stdout); fflush(stderr);
-    result = system("..\\..\\disthelper.exe test windows\\tests\\test.ini");
+    result = system("../../disthelper test macosx/tests/test.ini");
     check(result != -1, "Failed to execute disthelper: %08x\n", errno);
     
     IniFile_t data;
@@ -178,7 +177,7 @@ static const testdata_t APP_TEST_DATA[] = {
 void TestAppVersion() {
   printf("Starting application.ini version tests...\n");
   
-  int result = _mkdir("../../distribution");
+  int result = mkdir("../../distribution", 0755);
   check(result == 0 || errno == EEXIST,
         "Failed to create distribution directory: %d\n", errno);
   
@@ -207,7 +206,7 @@ void TestAppVersion() {
       fclose(f);
     } else {
       // no old version
-      _unlink("../../application.ini");
+      unlink("../../application.ini");
     }
     if (APP_TEST_DATA[i].newVersion) {
       f = fopen("application.ini", "w");
@@ -216,11 +215,11 @@ void TestAppVersion() {
       fclose(f);
     } else {
       // no new version
-      _unlink("application.ini");
+      unlink("application.ini");
     }
 
     fflush(stdout); fflush(stderr);
-    result = system("..\\..\\disthelper.exe test windows\\tests\\test.ini");
+    result = system("../../disthelper test macosx/tests/test.ini");
     check(result != -1, "Failed to execute disthelper: %08x\n", errno);
     
     IniFile_t data;

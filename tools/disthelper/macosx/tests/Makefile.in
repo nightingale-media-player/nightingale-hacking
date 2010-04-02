@@ -40,7 +40,7 @@ CPP_SRCS = main.cpp \
            $(NULL)
 
 # things from ../
-CPP_SRCS += commands.cpp \
+CMM_SRCS += commands.mm \
             $(NULL)
 
 # things from ../../
@@ -50,19 +50,20 @@ CPP_SRCS += debug.cpp \
             $(NULL)
 
 # we force include mozilla-config.h/xpcom-config.h; otherwise this is not necessary
-CPP_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
-               $(srcdir) \
-               $(srcdir)/../.. \
-               $(NULL)
+CMM_EXTRA_INCLUDES = $(srcdir) \
+                     $(srcdir)/../.. \
+		     $(NULL)
+
+CPP_EXTRA_INCLUDES = $(srcdir) \
+                     $(srcdir)/../.. \
+                     $(NULL)
 
 SIMPLE_PROGRAM_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                               $(NULL)
 
-SIMPLE_PROGRAM_EXTRA_IMPORTS = shell32 \
-                               shlwapi \
-                               version \
-                               $(NULL)
+SIMPLE_PROGRAM_EXTRA_FLAGS = -Wl,-framework,Foundation \
+			     -Wl,-framework,AppKit \
+			     $(NULL)
 
 # Since this is debug-only, we don't need tests.exe coming out as tests_d.exe;
 # turn that feature off.

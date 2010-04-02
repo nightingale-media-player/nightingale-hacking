@@ -52,13 +52,13 @@ void TestDebug() {
 
   // delete any existing log files first...
   tstring logpath = ResolvePathName("$/disthelper.log");
-  int result = _tunlink(logpath.c_str());
+  int result = unlink(logpath.c_str());
   check(result == 0 || errno == ENOENT,
         "TestDebug: failed to remove old file %S, errno %i\n",
         logpath.c_str(),
         errno);
 
-  LogMessage("hello, %s\n", ConvertUTF8toUTFn("world!").c_str());
+  LogMessage("hello, %s\n", "world!");
   time_t unixtime;
   time(&unixtime);
   tm* now = localtime(&unixtime);

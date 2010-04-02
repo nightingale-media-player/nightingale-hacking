@@ -52,6 +52,7 @@
 #include <string>
 #include <algorithm>
 
+#include <stringconvert.h>
 #include <debug.h>
 
 /* all strings are assumed to be UTF-8 */
@@ -80,12 +81,14 @@ public:
                *rightData = aRight.c_str();
     do {
       unsigned long leftVal, rightVal;
-      leftVal = strtoul(leftData + distance(aLeft.begin(), leftBegin), NULL, 10);
-      rightVal = strtoul(rightData + distance(aRight.begin(), rightBegin), NULL, 10);
-      DebugMessage("version parts: %s (%u) / %s (%u)",
-                   leftData + distance(aLeft.begin(), leftBegin),
+      const char *leftPart = leftData + distance(aLeft.begin(), leftBegin),
+                 *rightPart = rightData + distance(aRight.begin(), rightBegin);
+      leftVal = strtoul(leftPart, NULL, 10);
+      rightVal = strtoul(rightPart, NULL, 10);
+      DebugMessage("version parts: %s (%lu) / %s (%lu)",
+                   ConvertUTF8toUTFn(leftPart).c_str(),
                    leftVal,
-                   rightData + distance(aRight.begin(), rightBegin),
+                   ConvertUTF8toUTFn(rightPart).c_str(),
                    rightVal);
       if (leftVal != rightVal) {
         return (leftVal < rightVal);

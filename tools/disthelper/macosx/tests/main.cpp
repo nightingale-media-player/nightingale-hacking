@@ -1,4 +1,4 @@
-/* vim: le=unix sw=2 : */
+// vim: set sw=2 :
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -16,7 +16,7 @@
  *
  * The Initial Developer of the Original Code is
  * POTI <http://www.songbirdnest.com/>.
- * Portions created by the Initial Developer are Copyright (C) 2008-2010
+ * Portions created by the Initial Developer are Copyright (C) 2008
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
@@ -36,45 +36,29 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#include "error.h"
-#include "stringconvert.h"
-#include "commands.h"
-#include "readini.h"
+#include <cstdio>
+#include <cstdarg>
+#include <cstdlib>
 
-// mac includes
-#import <Foundation/Foundation.h>
-#import <CoreServices/CoreServices.h>
+void TestParser();
+void TestDebug();
+void TestVersion();
 
-int SetupEnvironment()
-{
-  NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-  // on OSX, the update staging area is always in the app dir
-  NSString * appDir = [NSString stringWithUTF8String:GetAppDirectory().c_str()];
-  NSString* envFile =
-    [appDir stringByAppendingPathComponent:@"updates/0/disthelper.env"];
-  if (![[NSFileManager defaultManager] fileExistsAtPath:envFile]) {
-    // file doesn't exist, it's safe to skip over it
-    return DH_ERROR_OK;
-  }
-  IniFile_t iniData;
-  int result = ReadIniFile([envFile UTF8String], iniData);
-  if (result) {
-    return result;
-  }
-  IniEntry_t::const_iterator it = iniData[""].begin(),
-                             end = iniData[""].end();
-  result = DH_ERROR_OK;
-  const char PREFIX[] = "DISTHELPER_";
-  for (; it != end; ++it) {
-    if (strncmp(PREFIX, it->first.c_str(), sizeof(PREFIX) - 1)) {
-      // variable does not start with DISTHELPER_; ignore it to avoid possible
-      // security problems
-      continue;
-    }
-    if (!setenv(it->first.c_str(), it->second.c_str(), true)) {
-      result = DH_ERROR_UNKNOWN;
-    }
-  }
-  [pool release];
-  return result;
+int main() {
+  TestParser();
+  TestDebug();
+  TestVersion();
+  return 0;
+}
+
+void check(int cond, const char* fmt, ...) {
+  if (cond)
+    return;
+
+  va_list args;
+  va_start(args, fmt);
+  vprintf(fmt, args);
+  va_end(args);
+  fflush(stdout);
+  exit(1);
 }

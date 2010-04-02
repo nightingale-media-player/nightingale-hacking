@@ -58,7 +58,7 @@ tstring ResolvePathName(std::string aSrc) {
   std::wstring src(ConvertUTF8ToUTF16(aSrc));
   std::wstring::iterator begin(src.begin());
   #if DEBUG
-    DebugMessage("Resolving path name %S", src.c_str());
+    DebugMessage("Resolving path name %s", src.c_str());
   #endif
   // replace all forward slashes with backward ones
   std::wstring::size_type i = src.find(L'/');
@@ -83,11 +83,11 @@ tstring ResolvePathName(std::string aSrc) {
       buffer[length] = '\0';
       src.assign(buffer, length + 1);
     } else {
-      DebugMessage("Failed to resolve path name %S", src.c_str());
+      DebugMessage("Failed to resolve path name %s", src.c_str());
     }
   }
   #if DEBUG
-    DebugMessage("Resolved path name %S", src.c_str());
+    DebugMessage("Resolved path name %s", src.c_str());
   #endif
   return src;
 }
@@ -101,22 +101,22 @@ static int DoFileCommand(UINT aFunction, const char* aDescription, std::string a
         int result = SHCreateDirectory(NULL, dest.c_str());
         switch (result) {
           case ERROR_BAD_PATHNAME:
-            DebugMessage("Failed to create directory %S: the path is invalid", dest.c_str());
+            DebugMessage("Failed to create directory %s: the path is invalid", dest.c_str());
             return DH_ERROR_WRITE;
           case ERROR_FILENAME_EXCED_RANGE:
-            DebugMessage("Failed to create directory %S: the path is too long", dest.c_str());
+            DebugMessage("Failed to create directory %s: the path is too long", dest.c_str());
             return DH_ERROR_WRITE;
           case ERROR_FILE_EXISTS:
           case ERROR_ALREADY_EXISTS:
             // that's fine, since we never checked that it didn't exist
             break;
           case ERROR_CANCELLED:
-            DebugMessage("Failed to create directory %S: the operation was cancelled", dest.c_str());
+            DebugMessage("Failed to create directory %s: the operation was cancelled", dest.c_str());
             return DH_ERROR_WRITE;
           case ERROR_SUCCESS:
             break;
           default:
-            DebugMessage("Failed to create directory %S: unknown reason %ul", dest.c_str(), ::GetLastError());
+            DebugMessage("Failed to create directory %s: unknown reason %ul", dest.c_str(), ::GetLastError());
             return DH_ERROR_WRITE;
         }
     }
@@ -129,10 +129,10 @@ static int DoFileCommand(UINT aFunction, const char* aDescription, std::string a
       std::wstring findPath(src);
       findPath.append(L"\\*");
       WIN32_FIND_DATA findData;
-      DebugMessage("Looking in %S", findPath.c_str());
+      DebugMessage("Looking in %s", findPath.c_str());
       HANDLE hFind = ::FindFirstFile(findPath.c_str(), &findData);
       if (hFind != INVALID_HANDLE_VALUE) {
-        DebugMessage("Cannot delete %S non-recursively, it conatins files", src.c_str());
+        DebugMessage("Cannot delete %s non-recursively, it conatins files", src.c_str());
         return DH_ERROR_OK;
       }
     }
@@ -152,14 +152,14 @@ static int DoFileCommand(UINT aFunction, const char* aDescription, std::string a
     ops.fFlags |= FOF_NORECURSION;
   }
   #if DEBUG
-    DebugMessage("%sing %S to %S (%srecursive)",
+    DebugMessage("%Sing %s to %s (%Srecursive)",
                  aDescription,
                  src.c_str(),
                  dest.c_str(),
                  aRecursive ? "" : "not ");
   #endif
   if (::SHFileOperation(&ops)) {
-    LogMessage("Failed to %s %S to %S", aDescription, src.c_str(), dest.c_str());
+    LogMessage("Failed to %S %s to %s", aDescription, src.c_str(), dest.c_str());
     return DH_ERROR_UNKNOWN;
   }
   return DH_ERROR_OK;
@@ -183,9 +183,7 @@ int CommandExecuteFile(const std::string& aExecutable,
   tstring executable(FilterSubstitution(ConvertUTF8toUTFn(aExecutable)));
   tstring arg(FilterSubstitution(ConvertUTF8toUTFn(aArgs)));
   
-  DebugMessage("<%s> <%s>",
-               ConvertUTFnToUTF8(executable).c_str(),
-               ConvertUTFnToUTF8(arg).c_str());
+  DebugMessage("<%s> <%s>", executable.c_str(), arg.c_str());
   HINSTANCE hInst = ::ShellExecuteW(NULL,
                                     L"open",
                                     executable.c_str(),
@@ -211,7 +209,7 @@ tstring FilterSubstitution(tstring aString) {
     tstring variable = result.substr(start + 1, end - start - 1);
     if (variable == _T("APPDIR")) {
       tstring appdir = GetAppDirectory();
-      DebugMessage("AppDir: %S", appdir.c_str());
+      DebugMessage("AppDir: %s", appdir.c_str());
       result.replace(start, end-start+1, appdir);
       start += appdir.length();
       continue;
@@ -221,7 +219,7 @@ tstring FilterSubstitution(tstring aString) {
     envName.append(variable);
     tstring envValue = _tgetenv(envName.c_str());
     if (envValue.length() > 0) {
-      DebugMessage("Environment %S: %S", envName.c_str(), envValue.c_str());
+      DebugMessage("Environment %s: %s", envName.c_str(), envValue.c_str());
       result.replace(start, end-start+1, envValue);
       start += envValue.length();
       continue;
@@ -229,7 +227,7 @@ tstring FilterSubstitution(tstring aString) {
     // Try to substitute $XXX$ with environment variable %XXX%
     envValue = _tgetenv(variable.c_str());
     if (envValue.length() > 0) {
-      DebugMessage("Environment %S: %S", variable.c_str(), envValue.c_str());
+      DebugMessage("Environment %s: %s", variable.c_str(), envValue.c_str());
       result.replace(start, end-start+1, envValue);
       start += envValue.length();
       continue;
@@ -341,7 +339,7 @@ tstring GetAppDirectory() {
     result.erase(sep + 1);
   }
   #if DEBUG
-    DebugMessage("Found app directory %S", result.c_str());
+    DebugMessage("Found app directory %s", result.c_str());
   #endif
   return result;
 }
@@ -355,42 +353,42 @@ tstring GetDistIniDirectory(const TCHAR *aPath) {
     // the PathAppend call will correctly copy aPath over if it is already an
     // absolute path; otherwise, it will append aPath to the app directory
     if (!::PathAppend(buffer, aPath)) {
-      DebugMessage("Failed to resolve dist.ini path %S", aPath);
+      DebugMessage("Failed to resolve dist.ini path %s", aPath);
       return tstring(_T(""));
     }
 
     // if the given file doesn't exist, bail (because there are no actions)
     if (!::PathFileExists(buffer)) {
-      DebugMessage("File %S doesn't exist, bailing", buffer);
+      DebugMessage("File %s doesn't exist, bailing", buffer);
       return tstring(_T(""));
     }
 
     // now remove the file name
     if (!::PathRemoveFileSpec(buffer)) {
-      DebugMessage("Failed to find directory name for %S", buffer);
+      DebugMessage("Failed to find directory name for %s", buffer);
       return tstring(_T(""));
     }
     if (!::PathAddBackslash(buffer)) {
-      DebugMessage("Failed to add trailing backslash to %S", buffer);
+      DebugMessage("Failed to add trailing backslash to %s", buffer);
       return tstring(_T(""));
     }
 
     #if DEBUG
-      DebugMessage("found distribution path %S", buffer);
+      DebugMessage("found distribution path %s", buffer);
     #endif
     gDistIniDirectory = buffer;
   }
   return gDistIniDirectory;
 }
 
-std::string GetLeafName(std::string aSrc) {
-  std::string::size_type slash, backslash;
-  backslash = aSrc.rfind('\\');
-  if (backslash != std::string::npos) {
+tstring GetLeafName(tstring aSrc) {
+  tstring::size_type slash, backslash;
+  backslash = aSrc.rfind(_T('\\'));
+  if (backslash != tstring::npos) {
     return aSrc.substr(backslash);
   }
-  slash = aSrc.rfind('/');
-  if (slash != std::string::npos) {
+  slash = aSrc.rfind(_T('/'));
+  if (slash != tstring::npos) {
     return aSrc.substr(slash);
   }
   return aSrc;
@@ -415,14 +413,14 @@ void ShowFatalError(const char* fmt, ...) {
   tstring msg(_T("An application update error has occurred; please re-install ")
               _T("the application.  Your media has not been affected.\n\n")
               _T("Related deatails:\n\n"));
-  msg.append(ConvertUTF8ToUTF16(fmt));
+  msg.append(ConvertUTF8toUTFn(fmt));
   
   len = _vsctprintf(msg.c_str(), args) // _vscprintf doesn't count
           + 1;                         // terminating '\0'
   
   buffer = (TCHAR*)malloc(len * sizeof(TCHAR));
 
-  _vstprintf(buffer, msg.c_str(), args);
+  _vstprintf_s(buffer, len, msg.c_str(), args);
   ::MessageBox(NULL,
                buffer,
                _T("Update Distribution Helper"),

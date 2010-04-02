@@ -143,7 +143,7 @@ tstring ResolvePathName(std::string aSrc);
 /**
  * Finds the leaf name of a path.  Equivalent to a basename() call.
  */
-std::string GetLeafName(std::string aSrc);
+tstring GetLeafName(tstring aSrc);
 
 /**
  * Report a generic fatal error to the user, and prevent the application from running

@@ -67,7 +67,7 @@ private:
 int ReadIniFile(const TCHAR* path, IniFile_t& results) {
   AutoFILE fp = _tfopen(path, _T("r"));
   if (!fp) {
-    LogMessage("Failed to open file %S\n", path);
+    LogMessage("Failed to open file %s\n", path);
     return DH_ERROR_READ;
   }
   
@@ -99,7 +99,7 @@ int ReadIniFile(const TCHAR* path, IniFile_t& results) {
         // start of section
         if (p[len - 1] != ']') {
           // badly formatted
-          LogMessage("Line %s badly formatted\n", p);
+          LogMessage("Line %s badly formatted\n", ConvertUTF8toUTFn(p).c_str());
           return DH_ERROR_PARSE;
         }
         section.assign(p + 1, len - 2);
@@ -113,7 +113,7 @@ int ReadIniFile(const TCHAR* path, IniFile_t& results) {
     char* sep = strchr(p, '=');
     if (!sep) {
       // no separator (may want to make this mean delete?)
-      LogMessage("Failed to read line %s", p);
+      LogMessage("Failed to read line %s", ConvertUTF8toUTFn(p).c_str());
       return DH_ERROR_PARSE;
     }
     *sep = '\0';
