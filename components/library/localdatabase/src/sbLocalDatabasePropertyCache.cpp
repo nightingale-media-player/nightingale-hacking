@@ -173,6 +173,9 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
   mThreadPoolService = do_GetService(SB_THREADPOOLSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = mThreadPoolService->SetIdleThreadTimeout(15000);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   mFlushTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
