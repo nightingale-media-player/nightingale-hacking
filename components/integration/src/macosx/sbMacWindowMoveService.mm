@@ -120,6 +120,13 @@ static NSString *kSBWindowStoppedMovingNotification = @"SBWindowStoppedMoving";
 
 - (void)swizzledSendEvent:(NSEvent *)aEvent
 {
+  // Swizzle back to the original method.
+  MethodSwizzle([self class],
+                @selector(swizzledSendEvent:),
+                @selector(sendEvent:));
+
+  [self sendEvent:aEvent];
+
   // Check for the mouse up event.
   BOOL shouldReswizzle = YES;
   if (NSLeftMouseUp == [aEvent type]) {
@@ -129,14 +136,9 @@ static NSString *kSBWindowStoppedMovingNotification = @"SBWindowStoppedMoving";
     shouldReswizzle = NO;
   }
 
-  // Swizzle back to the original method.
-  MethodSwizzle([self class],
-                @selector(swizzledSendEvent:),
-                @selector(sendEvent:));
-
-  [self sendEvent:aEvent];
-
-  // Swizzle back if needed.
+  // If this event was the mouse up event, don't reswizzle. The method will be
+  // reswizzled when this interface gets notified of a window move start in
+  // |onWindowWillMove|.
   if (shouldReswizzle) {
     MethodSwizzle([self class],
                   @selector(sendEvent:),
@@ -162,6 +164,7 @@ static NSString *kSBWindowStoppedMovingNotification = @"SBWindowStoppedMoving";
 
 - (void)onWindowWillMove;
 - (void)onWindowDidStopMoving:(NSNotification *)aNotification;
+- (void)notifyListenerMoveStoppedTimeout;
 
 @end
 
@@ -211,15 +214,24 @@ static NSString *kSBWindowStoppedMovingNotification = @"SBWindowStoppedMoving";
 
 - (void)onWindowDidStopMoving:(NSNotification *)aNotification
 {
+  // Hack, notify after a short timeout to ensure the listener will actually
+  // be able to look at the window frame.
+  [self performSelector:@selector(notifyListenerMoveStoppedTimeout)
+             withObject:nil
+             afterDelay:0.1];
+
+  // No longer need to listen to events for now.
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)notifyListenerMoveStoppedTimeout
+{
   // Notify our listener of the move stop
   nsresult rv;
   nsCOMPtr<sbIWindowMoveListener> listener =
     do_QueryInterface([mListener value], &rv);
   NS_ENSURE_SUCCESS(rv, /* void */);
   listener->OnMoveStopped();
-
-  // No longer need to listen to events for now.
-  [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

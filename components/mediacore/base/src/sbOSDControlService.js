@@ -499,8 +499,9 @@ sbOSDControlService.prototype =
 
   onMoveStopped: function() {
     this._osdSurpressed = false;
-    if (this._showOSDControlsOnStop)
+    if (this._showOSDControlsOnStop) {
       this.showOSDControls(Ci.sbIOSDControlService.TRANSITION_NONE);
+    }
     this._showOSDControlsOnStop = false;
   },
 
