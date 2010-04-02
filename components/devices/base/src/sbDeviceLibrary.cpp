@@ -1460,7 +1460,7 @@ sbDeviceLibrary::GetSyncRootFolderByType(PRUint32 aContentType,
 
   NS_ADDREF(*_retval = folder);
 
-  return NS_OK;  
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -1489,7 +1489,7 @@ sbDeviceLibrary::SetSyncRootFolderByType(PRUint32 aContentType,
   rv = mDevice->SetPreference(prefKey, sbNewVariant(folderPath));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  return NS_OK;  
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -1529,15 +1529,15 @@ sbDeviceLibrary::GetSyncFolderListByType(PRUint32 aContentType,
     nsString prefKey;
     rv = GetSyncListsPrefKey(aContentType, prefKey);
     NS_ENSURE_SUCCESS(rv, rv);
-  
+
     nsCOMPtr<nsIVariant> var;
     rv = mDevice->GetPreference(prefKey, getter_AddRefs(var));
     NS_ENSURE_SUCCESS(rv, rv);
-  
+
     nsAutoString foldersDSV;
     rv = var->GetAsAString(foldersDSV);
     NS_ENSURE_SUCCESS(rv, rv);
-  
+
     // Scan folder list DSV for folder paths and add them to the array
     PRInt32 start = 0;
     PRInt32 end = foldersDSV.FindChar('\1', start);
@@ -1547,15 +1547,15 @@ sbDeviceLibrary::GetSyncFolderListByType(PRUint32 aContentType,
     while (end > start) {
       // Extract the folder path
       nsDependentSubstring folderPath = Substring(foldersDSV, start, end - start);
-  
+
       nsCOMPtr<nsILocalFile> folder;
       rv = NS_NewLocalFile(folderPath, PR_TRUE, getter_AddRefs(folder));
       if (NS_FAILED(rv))  // Invalid path, skip
         continue;
-  
+
       rv = array->AppendElement(folder, PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);
-  
+
       // Scan for the next folder path
       start = end + 1;
       end = foldersDSV.FindChar('\1', start);
@@ -1630,7 +1630,7 @@ sbDeviceLibrary::Sync()
   PRBool isManual = PR_FALSE;
   rv = GetIsMgmtTypeManual(&isManual);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   if (!isManual) {
     nsCOMPtr<sbILibraryManager> libraryManager =
       do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
@@ -1671,7 +1671,7 @@ sbDeviceLibrary::Sync()
       }
     #endif /* DEBUG */
 
-    nsCOMPtr<nsIWritablePropertyBag2> requestParams = 
+    nsCOMPtr<nsIWritablePropertyBag2> requestParams =
       do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1703,7 +1703,7 @@ sbDeviceLibrary::Sync()
       mSyncModeChanged = PR_FALSE;
     }
   }
-  
+
   // If the user has enabled image sync, trigger it after the audio/video sync
   PRUint32 mgmtType;
   rv = GetMgmtType(sbIDeviceLibrary::MEDIATYPE_IMAGE, &mgmtType);
@@ -2317,21 +2317,13 @@ sbDeviceLibrary::CreateMediaItem(nsIURI *aContentUri,
                                                              &mShouldProcceed));
   if (mPerformAction) {
     nsresult rv;
-    nsCOMPtr<sbILibrary> lib;
-    rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
-                              NS_GET_IID(sbILibrary),
-                              mDeviceLibrary,
-                              NS_PROXY_SYNC,
-                              getter_AddRefs(lib));
+    rv = mDeviceLibrary->CreateMediaItem(aContentUri,
+                                         aProperties,
+                                         aAllowDuplicates,
+                                         _retval);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    return lib->CreateMediaItem(aContentUri,
-                                aProperties,
-                                aAllowDuplicates,
-                                _retval);
-  } else {
-    return NS_OK;
   }
+  return NS_OK;
 }
 
 /*
@@ -2350,21 +2342,13 @@ sbDeviceLibrary::CreateMediaItemIfNotExist(nsIURI *aContentUri,
                                                              &mShouldProcceed));
   if (mPerformAction) {
     nsresult rv;
-    nsCOMPtr<sbILibrary> lib;
-    rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
-                              NS_GET_IID(sbILibrary),
-                              mDeviceLibrary,
-                              NS_PROXY_SYNC,
-                              getter_AddRefs(lib));
+    rv = mDeviceLibrary->CreateMediaItemIfNotExist(aContentUri,
+                                                   aProperties,
+                                                   aResultItem,
+                                                   _retval);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    return lib->CreateMediaItemIfNotExist(aContentUri,
-                                aProperties,
-                                aResultItem,
-                                _retval);
-  } else {
-    return NS_OK;
   }
+  return NS_OK;
 }
 
 /*
