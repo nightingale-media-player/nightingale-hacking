@@ -39,6 +39,7 @@
 #include "commands.h"
 #include "readini.h"
 #include "error.h"
+#include "tchar_compat.h"
 
 #include <errno.h>
 #include <string>
