@@ -41,7 +41,7 @@ Additional styles imported directly by the device setup dialog.
 
 #setup_ignore_checkbox[checked="true"] + #setup_ignore_description {
   font-size: smaller;
-  color: red;
+  color: rgb(255, 58, 109);
 }
 
 #device_setup_dialog {
