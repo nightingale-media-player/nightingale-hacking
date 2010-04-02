@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -84,6 +84,40 @@ var URLUtils = {
       Cu.reportError(ex);
     }
     return uri;
+  },
+
+
+  /**
+   * Add the query parameters specified by aQueryParams to the URL specified by
+   * aURL and return the resulting URL.
+   *
+   * \param aURL                URL to which to add query parameters.
+   * \param aQueryParams        Query parameters.
+   *
+   * \return                    URL with query parameters added.
+   */
+
+  addQuery: function URLUtils_addQuery(aURL, aQueryParams) {
+    // Get the URL query parameters.
+    var urlQueryParams = {};
+    this.extractQuery(aURL, urlQueryParams);
+
+    // Add the query parameters.
+    for (paramName in aQueryParams) {
+      urlQueryParams[paramName] = aQueryParams[paramName];
+    }
+
+    // Produce the new URL query string.
+    var urlQuery = this.produceQuery(urlQueryParams);
+
+    // Copy the specified URL and set the new query string.
+    var url = Cc["@mozilla.org/network/standard-url;1"]
+                .createInstance(Ci.nsIStandardURL);
+    url.init(Ci.nsIStandardURL.URLTYPE_STANDARD, 0, aURL, null, null);
+    url.QueryInterface(Ci.nsIURL);
+    url.query = urlQuery;
+
+    return url.spec;
   },
 
 

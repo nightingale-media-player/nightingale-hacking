@@ -473,8 +473,11 @@ var sbDeviceVolumeSupport = {
     var deviceNode = dsps.getNodeForDevice(aDevice);
 
     // Load the device node.
-    if (gServicePane)
-      gServicePane.mTreePane.loadNode(deviceNode, null);
+    if (gServicePane) {
+      gServicePane.mTreePane.selectAndLoadNode(deviceNode,
+                                               null,
+                                               { manageVolumes: "true" });
+    }
   }
 };
 

@@ -66,6 +66,7 @@
       <constructor>
           <![CDATA[
         Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
+        Components.utils.import("resource://app/jsmodules/URLUtils.jsm");
 
         window.gServicePane = this;
       ]]></constructor>
@@ -613,17 +614,19 @@
       <method name="selectAndLoadNode">
         <parameter name="node"/>
         <parameter name="event"/>
+        <parameter name="arguments"/>
         <body><![CDATA[
           this.highlightNode(node);  // also unhighlights other nodes
-          this.loadNode(node, event);
+          this.loadNode(node, event, arguments);
         ]]></body>
       </method>
       <method name="loadSelectedNode">
         <parameter name="event"/>
+        <parameter name="arguments"/>
         <body><![CDATA[
           var node = this.getNodeForRow(this.mTree.currentIndex);
           if (node) {
-            this.loadNode(node, event);
+            this.loadNode(node, event, arguments);
           }
         ]]></body>
       </method>
@@ -648,6 +651,7 @@
       <method name="loadNode">
         <parameter name="node"/>
         <parameter name="event"/>
+        <parameter name="arguments"/>
         <body><![CDATA[
           // If this node has a URL, just load it in the browser
           if (node.url) {
@@ -659,7 +663,11 @@
               // Middle click.
               target = "_blank";
             }
-            this.browser.loadURI(node.url, null, null, event, target);
+
+            var url = node.url;
+            if (arguments)
+              url = URLUtils.addQuery(url, arguments);
+            this.browser.loadURI(url, null, null, event, target);
 
             if( node.getAttributeNS(this.BSP, "Imported") == 'true' ) {
 

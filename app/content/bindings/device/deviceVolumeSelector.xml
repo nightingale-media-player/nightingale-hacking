@@ -58,9 +58,15 @@
       <!-- Volume selector deck. -->
       <xul:deck sbid="volume_selector_deck" flex="1">
 
-        <xul:label sbid="volume_label"/>
+        <xul:label sbid="volume_label"
+                   class="sb-device-volume-selector-label"
+                   flex="1"
+                   xbl:inherits="highlight"/>
 
-        <xul:menulist sbid="volume_menulist" flex="1">
+        <xul:menulist sbid="volume_menulist"
+                      class="sb-device-volume-selector-menulist"
+                      flex="1"
+                      xbl:inherits="highlight">
           <xul:menupopup sbid="volume_menupopup">
             <xul:sb-device-volume-menuitems xbl:inherits="device-id"/>
           </xul:menupopup>
