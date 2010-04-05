@@ -440,7 +440,8 @@ var deviceVolumeMenuItemsSvc = {
     if (this._addedElementList) {
       for (var i = 0; i < this._addedElementList.length; i++) {
         var element = this._addedElementList[i];
-        element.parentNode.removeChild(element);
+        if (element.parentNode)
+          element.parentNode.removeChild(element);
       }
       this._addedElementList = null;
     }
