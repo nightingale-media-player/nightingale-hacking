@@ -1,4 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+/*
+ *
+ *=BEGIN SONGBIRD LICENSE
+ *
+ * Copyright(c) 2009-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * For information about the licensing and copyright of this Add-On please
+ * contact POTI, Inc. at customer@songbirdnest.com.
+ *
+ *=END SONGBIRD LICENSE
+ *
+ */
+-->
+
 <?xml-stylesheet href="chrome://newreleases/skin/sps.css" type="text/css"?>
 <overlay id="newReleases-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
