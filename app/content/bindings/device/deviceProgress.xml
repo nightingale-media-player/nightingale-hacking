@@ -70,7 +70,7 @@
             <xul:label sbid="syncmode_label"/>
 
             <xul:sb-device-management-toggle sbid="syncmode-toggle"
-                                             xbl:inherits="device-id"
+                                             xbl:inherits="dev-lib-guid"
                                              oncommand="DPW.onModeChange();"/>
 
             <xul:toolbarseparator class="device-progress-manage-separator"/>

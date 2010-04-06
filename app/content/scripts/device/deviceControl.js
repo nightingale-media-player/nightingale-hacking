@@ -125,29 +125,79 @@ deviceControlWidget.prototype = {
   //----------------------------------------------------------------------------
 
   /**
-   * Bind the device control widget to a device.
+   * Bind the device control widget to a device library or device.
    */
 
   bindDevice: function deviceControlWidget_bindDevice() {
-    // Get the bound device ID.  Do nothing if it hasn't changed.
-    var deviceID = this._widget.getAttribute("device-id");
-    if ((deviceID == this._widget.deviceID) || !deviceID)
-      return;
+    // If the device library GUID is specified, check if it has changed.
+    // Otherwise, check if the device ID has changed.
+    let devLibGUID = this._widget.getAttribute("dev-lib-guid");
+    let devLib;
+    let deviceID;
+    let device;
+    if (devLibGUID) {
+      // Just return if the device library GUID has not changed.
+      if (devLibGUID == this._widget.devLibGUID)
+        return;
 
-    // Get the bound device.
-    var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
-                          .getService(Ci.sbIDeviceManager2);
-    this._widget.device = deviceManager.getDevice(Components.ID(deviceID));
+      // Get the device library.
+      let libMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                     .getService(Ci.sbILibraryManager);
+      devLib = libMgr.getLibrary(devLibGUID);
+
+      // Get the device info from the device library.
+      if (devLib)
+        device = devLib.device;
+      if (device)
+        deviceID = device.id;
+    }
+    else {
+      // Get the device ID.  Just return if it has not changed or has not been
+      // specified.
+      deviceID = this._widget.getAttribute("device-id");
+      if (!deviceID || (deviceID == this._widget.deviceID))
+        return;
+
+      // Get the device object.
+      let deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                            .getService(Ci.sbIDeviceManager2);
+      device = deviceManager.getDevice(Components.ID(deviceID));
+
+      // Get the device default library info.
+      if (device)
+        devLib = device.defaultLibrary;
+      if (devLib)
+        devLibGUID = devLib.guid;
+    }
+
+    // Determine whether a new device or device library has been bound.
+    let deviceBound = device != this._widget.device;
+    let devLibBound = devLib != this._widget.devLib;
+
+    // Set some widget fields.
+    this._widget.device = device;
     this._widget.deviceID = deviceID;
+    this._widget.devLib = devLib;
+    this._widget.devLibGUID = devLibGUID;
 
     // Re-initialize the device control widget services.
     this.finalize(true);
     this.initialize();
 
     // Send a device bound event.  It doesn't bubble, and it can't be cancelled.
-    var event = document.createEvent("Events");
-    event.initEvent("deviceBound", false, false);
-    this._widget.dispatchEvent(event);
+    if (deviceBound) {
+      let event = document.createEvent("Events");
+      event.initEvent("deviceBound", false, false);
+      this._widget.dispatchEvent(event);
+    }
+
+    // Send a device library bound event.  It doesn't bubble, and it can't be
+    // cancelled.
+    if (devLibBound) {
+      let event = document.createEvent("Events");
+      event.initEvent("devLibBound", false, false);
+      this._widget.dispatchEvent(event);
+    }
   },
 
 

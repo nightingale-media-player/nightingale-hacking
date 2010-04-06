@@ -190,7 +190,7 @@
         // Create a device control widget object.
         this._deviceControlWidget = new deviceControlWidget(this);
 
-        // Try binding to a device.
+        // Try binding to a device or a device library.
         this._deviceControlWidget.bindDevice();
 
         // Add a node destroy function.
@@ -215,11 +215,21 @@
         this._deviceControlWidget = null;
 
         // Remove object references.  But only if they're not read only...
-        if (!this.__lookupGetter__("deviceID") || this.__lookupSetter__("deviceID")) {
+        if (!this.__lookupGetter__("deviceID") ||
+            this.__lookupSetter__("deviceID")) {
           this.deviceID = null;
         }
-        if (!this.__lookupGetter__("device") || this.__lookupSetter__("device")) {
+        if (!this.__lookupGetter__("device") ||
+            this.__lookupSetter__("device")) {
           this.device = null;
+        }
+        if (!this.__lookupGetter__("devLibGUID") ||
+            this.__lookupSetter__("devLibGUID")) {
+          this.devLibGUID = null;
+        }
+        if (!this.__lookupGetter__("devLib") ||
+            this.__lookupSetter__("devLib")) {
+          this.devLib = null;
         }
         this.boundElem = null;
       ]]></body></method>
@@ -261,9 +271,18 @@
     <handlers>
 
       <handler event="DOMAttrModified"
-               action="if (this._deviceControlWidget) this._deviceControlWidget.bindDevice();"/>
+               action="if (this._deviceControlWidget)
+                         this._deviceControlWidget.bindDevice();"/>
 
       <handler event="deviceBound"><![CDATA[
+        // Stop event so that is doesn't propagate beyond widget.  Even with
+        // bubbling disabled, deviceBound events will propagate to parent
+        // elements.
+        event.stopPropagation();
+        event.preventDefault();
+      ]]></handler>
+
+      <handler event="devLibBound"><![CDATA[
         // Stop event so that is doesn't propagate beyond widget.  Even with
         // bubbling disabled, deviceBound events will propagate to parent
         // elements.
