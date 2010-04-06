@@ -42,6 +42,7 @@
 #include "readini.h"
 
 #include <windows.h>
+#include <shlwapi.h>
 #include <shlobj.h>
 
 /**
@@ -100,6 +101,12 @@ int SetupEnvironment()
 {
   tstring envFile = GetUpdateRoot();
   envFile.append(_T("\\updates\\0\\disthelper.env"));
+  
+  if (!::PathFileExists(envFile.c_str())) {
+    // the environment file not existing is not a fatal error
+    return DH_ERROR_OK;
+  }
+
   IniFile_t iniData;
   int result = ReadIniFile(envFile.c_str(), iniData);
   if (result) {

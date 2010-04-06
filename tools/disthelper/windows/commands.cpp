@@ -196,6 +196,7 @@ int CommandExecuteFile(const std::string& aExecutable,
 tstring FilterSubstitution(tstring aString) {
   tstring result = aString;
   tstring::size_type start = 0, end = tstring::npos;
+  TCHAR *envData;
   while (true) {
     start = result.find(tstring::value_type('$'), start);
     if (start == tstring::npos) {
@@ -217,19 +218,19 @@ tstring FilterSubstitution(tstring aString) {
     // Try to substitute $XXX$ with environment variable %DISTHELPER_XXX%
     tstring envName(_T("DISTHELPER_"));
     envName.append(variable);
-    tstring envValue = _tgetenv(envName.c_str());
-    if (envValue.length() > 0) {
-      DebugMessage("Environment %s: %s", envName.c_str(), envValue.c_str());
-      result.replace(start, end-start+1, envValue);
-      start += envValue.length();
+    envData = _tgetenv(envName.c_str());
+    if (envData && *envData) {
+      DebugMessage("Environment %s: %s", envName.c_str(), envData);
+      result.replace(start, end-start+1, envData);
+      start += _tcslen(envData);
       continue;
     }
     // Try to substitute $XXX$ with environment variable %XXX%
-    envValue = _tgetenv(variable.c_str());
-    if (envValue.length() > 0) {
-      DebugMessage("Environment %s: %s", variable.c_str(), envValue.c_str());
-      result.replace(start, end-start+1, envValue);
-      start += envValue.length();
+    envData = _tgetenv(variable.c_str());
+    if (envData && *envData) {
+      DebugMessage("Environment %s: %s", variable.c_str(), envData);
+      result.replace(start, end-start+1, envData);
+      start += _tcslen(envData);
       continue;
     }
     start = end + 1;
