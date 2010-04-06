@@ -1056,12 +1056,14 @@ sbDeviceUtils::GetFormatTypeForURL
     nsDependentSubstring fileExtension(aURL,
                                        lastDot + 1,
                                        aURL.Length() - lastDot - 1);
+    nsCAutoString extension = NS_ConvertUTF16toUTF8(fileExtension);
+    ToLowerCase(extension);
     for (PRUint32 index = 0;
          index < NS_ARRAY_LENGTH(MAP_FILE_EXTENSION_CONTENT_FORMAT);
          ++index) {
       sbExtensionToContentFormatEntry_t const & entry =
         MAP_FILE_EXTENSION_CONTENT_FORMAT[index];
-      if (fileExtension.EqualsLiteral(entry.Extension)) {
+      if (extension.EqualsLiteral(entry.Extension)) {
         TRACE(("%s: ext %s type %s container %s codec %s",
                __FUNCTION__, entry.Extension, entry.MimeType,
                entry.ContainerFormat, entry.Codec));

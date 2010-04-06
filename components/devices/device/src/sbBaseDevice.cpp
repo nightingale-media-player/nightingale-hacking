@@ -5857,6 +5857,7 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem*                  aMediaItem,
     NS_ENSURE_SUCCESS(rv, rv);
     rv = sourceFileURL->GetFileExtension(sourceFileExtension);
     NS_ENSURE_SUCCESS(rv, rv);
+    ToLowerCase(sourceFileExtension);
 
     // Get the list of file extensions supported by the device.
     nsTArray<nsString> fileExtensionList;
