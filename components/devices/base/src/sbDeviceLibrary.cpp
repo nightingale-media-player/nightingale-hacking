@@ -543,10 +543,6 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   rv = GetMainLibrary(getter_AddRefs(mainLib));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // get the current sync all setting.
-  rv = GetIsMgmtTypeSyncAll(&mLastIsSyncAll);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // add a device event listener to listen for changes to the is synced locally
   // state
   nsCOMPtr<sbIDeviceEventTarget>
@@ -1698,8 +1694,7 @@ sbDeviceLibrary::Sync()
       rv = UpdateMainLibraryListeners();
       NS_ENSURE_SUCCESS(rv, rv);
 
-      // No harm to reset both to false
-      mSyncSettingsChanged = PR_FALSE;
+      // Reset to false
       mSyncModeChanged = PR_FALSE;
     }
   }
@@ -1708,7 +1703,10 @@ sbDeviceLibrary::Sync()
   PRUint32 mgmtType;
   rv = GetMgmtType(sbIDeviceLibrary::MEDIATYPE_IMAGE, &mgmtType);
   NS_ENSURE_SUCCESS(rv, rv);
-  if (mgmtType != sbIDeviceLibrary::MGMT_TYPE_NONE) {
+  if (mgmtType != sbIDeviceLibrary::MGMT_TYPE_NONE ||
+      mSyncSettingsChanged) {
+    mSyncSettingsChanged = PR_FALSE;
+
     nsCOMPtr<nsIWritablePropertyBag2> requestParams =
       do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -2285,17 +2283,9 @@ NS_IMETHODIMP sbDeviceLibrary::OnDeviceEvent(sbIDeviceEvent* aEvent)
 
   // handle changes to the sync parnter preference
   if (type == sbIDeviceEvent::EVENT_DEVICE_PREFS_CHANGED) {
-    // get the sync all setting
-    PRBool isSyncAll = PR_FALSE;
-    rv = GetIsMgmtTypeSyncAll(&isSyncAll);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     // Save the flag if the sync setting changes to update the main library
     // listeners later.
-    if (isSyncAll != mLastIsSyncAll) {
-      mSyncSettingsChanged = PR_TRUE;
-      mLastIsSyncAll = isSyncAll;
-    }
+    mSyncSettingsChanged = PR_TRUE;
   }
 
   return NS_OK;

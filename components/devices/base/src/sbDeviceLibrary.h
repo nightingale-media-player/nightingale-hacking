@@ -365,11 +365,6 @@ private:
   nsInterfaceHashtable<nsISupportsHashKey, sbIDeviceLibraryListener> mListeners;
 
   /**
-   * \brief Last sync setting is sync all. Used to detect setting change.
-   */
-  PRBool mLastIsSyncAll;
-
-  /**
    * \brief The sync setting has been changed or not.
    */
   PRBool mSyncSettingsChanged;

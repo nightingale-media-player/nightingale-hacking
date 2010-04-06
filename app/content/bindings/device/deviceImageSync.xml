@@ -487,16 +487,16 @@
         {
           var shouldUpdatePrefs = true;
 
+          var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
+                           .createInstance(Ci.sbIPrompter);
+          var buttonFlags =
+            Ci.nsIPromptService.BUTTON_POS_1 *
+            Ci.nsIPromptService.BUTTON_TITLE_IS_STRING +
+            Ci.nsIPromptService.BUTTON_POS_0 *
+            Ci.nsIPromptService.BUTTON_TITLE_IS_STRING;
+
           // Prompt the user if they are about to turn on photo syncing.
           if (this._getElement("sync_images_from_checkbox").checked) {
-            var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
-                             .createInstance(Ci.sbIPrompter);
-            var buttonFlags =
-              Ci.nsIPromptService.BUTTON_POS_1 *
-              Ci.nsIPromptService.BUTTON_TITLE_IS_STRING +
-              Ci.nsIPromptService.BUTTON_POS_0 *
-              Ci.nsIPromptService.BUTTON_TITLE_IS_STRING;
-
             var buttonPressed = prompter.confirmEx(
               null,
               SBString("device.dialog.sync_images_confirmation.title"),
@@ -512,6 +512,25 @@
             if (buttonPressed != 0) {
               // The user did not choose to sync, clear the checkbox state.
               this._getElement("sync_images_from_checkbox").checked = false;
+              shouldUpdatePrefs = false;
+            }
+          }
+          else {
+            var buttonPressed = prompter.confirmEx(
+              null,
+              SBString("device.dialog.sync_images_confirmation.title"),
+              SBFormattedString("device.dialog.remove_images_confirmation.msg",
+                                [this.device.name]),
+              buttonFlags,
+              SBString("device.dialog.remove_images_confirmation.sync_button"),
+              SBString("device.dialog.remove_images_confirmation.no_button"),
+              null,
+              null,
+              {});
+
+            if (buttonPressed != 0) {
+              // The user did not accept unsync, restore the checkbox state.
+              this._getElement("sync_images_from_checkbox").checked = true;
               shouldUpdatePrefs = false;
             }
           }
