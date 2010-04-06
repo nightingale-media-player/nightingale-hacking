@@ -52,11 +52,6 @@
 
 #include <stringconvert.h>
 
-#define CTIME_STRLEN 26
-/* According to the MSDN documentation on ctime(), it returns exactly 26
- * characters, and looks like "WWW MMM DD hh:mm:ss YYYY\n\0"
- */
-
 bool gEnableLogging = true;
 
 void DebugMessage(const char* fmt, ...) {
@@ -88,12 +83,11 @@ void LogMessage(const char* fmt, ...) {
   if (fout) {
     time_t timer;
     time(&timer);
-    
-    // set up a string stream and dump the timestamp into it
-    std::basic_ostringstream<TCHAR> stream;
-    stream << '['
-           << ConvertUTF8toUTFn(std::string(ctime(&timer), CTIME_STRLEN - 2))
-           << "] ";
+    tm* now = localtime(&timer);
+    const int BUFFER_LEN = 30;
+    char time_str[BUFFER_LEN]; // '[', ']', ' '
+    strftime(time_str, BUFFER_LEN - 1, "[%a %b %d %H:%M:%S %Y] ", now);
+    tstring output = ConvertUTF8toUTFn(time_str);
     
     // do printf()-style formatting into a string buffer
     va_list args;
@@ -110,11 +104,11 @@ void LogMessage(const char* fmt, ...) {
     #endif
   
     va_end(args);
-    stream << buffer;
+    output += tstring(buffer);
     free(buffer);
     
-    ::OutputDebugString(stream.str().c_str());
-    fprintf(fout, "%s\n", ConvertUTFnToUTF8(stream.str()).c_str());
+    ::OutputDebugString(output.c_str());
+    fprintf(fout, "%s\n", ConvertUTFnToUTF8(output).c_str());
   
     fclose(fout);
   }

@@ -6,15 +6,32 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <sys/stat.h>
 
-inline char *_tgetenv(const char* varname) {
+static inline char *_tgetenv(const char* varname) {
   return getenv(varname);
 }
+static inline int _tputenv(char* envstring) {
+  return putenv(envstring);
+}
 
-inline void OutputDebugString(LPCTSTR msg) {
+static inline int _tunlink(const char* filename) {
+  return unlink(filename);
+}
+
+static inline int _unlink(const char* filename) {
+  return unlink(filename);
+}
+
+static inline int _mkdir(const char* dirname) {
+  return mkdir(dirname, 0755);
+}
+
+static inline void OutputDebugString(LPCTSTR msg) {
   fprintf(stderr, "%s\n", msg);
 }
 
-inline FILE* _tfopen(const char* filename, const char* mode) {
+static inline FILE* _tfopen(const char* filename, const char* mode) {
   return fopen(filename, mode);
 }

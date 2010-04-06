@@ -45,6 +45,10 @@
 #include <sstream>
 #include <errno.h>
 
+#ifndef XP_WIN
+#include "tchar_compat.h"
+#endif
+
 void check(int cond, const char* fmt, ...);
 
 void TestDebug() {

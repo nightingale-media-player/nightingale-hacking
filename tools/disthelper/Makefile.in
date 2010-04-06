@@ -50,6 +50,10 @@ CPP_EXTRA_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
 SIMPLE_PROGRAM_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                               $(NULL)
 
+ifneq (,$(SB_ENABLE_TESTS))
+   SUBDIRS += tests
+endif
+
 ifeq ($(SB_PLATFORM),windows)
    SIMPLE_PROGRAM_EXTRA_IMPORTS = shell32 \
                                   shlwapi \
@@ -67,9 +71,6 @@ ifeq ($(SB_PLATFORM),windows)
                winmain.cpp \
                $(NULL)
 
-   ifneq (,$(SB_ENABLE_TESTS))
-      SUBDIRS += $(SB_PLATFORM)/tests
-   endif
 endif # SB_PLATFORM == windows
 
 ifeq ($(SB_PLATFORM),macosx)
@@ -82,9 +83,6 @@ ifeq ($(SB_PLATFORM),macosx)
                                 -Wl,-framework,AppKit \
                                 $(NULL)
 
-   ifneq (,$(SB_ENABLE_TESTS))
-      SUBDIRS += $(SB_PLATFORM)/tests
-   endif
 endif # SB_PLATFORM == macosx
 
 

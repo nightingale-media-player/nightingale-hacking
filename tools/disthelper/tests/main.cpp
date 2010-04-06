@@ -36,16 +36,29 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#include <windows.h>
 #include <cstdio>
 #include <cstdarg>
 #include <cstdlib>
+
+#ifdef XP_WIN
+#include <tchar.h>
+#include <windows.h>
+#else
+#include "tchar_compat.h"
+#endif /* XP_WIN */
 
 void TestParser();
 void TestDebug();
 void TestVersion();
 
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
+#ifdef XP_WIN
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
+#else
+int main()
+#endif
+{
+  // disable the user-visible (and hanging) error reporting
+  _tputenv(_T("DISTHELPER_SILENT_FAILURE=1"));
   TestParser();
   TestDebug();
   TestVersion();

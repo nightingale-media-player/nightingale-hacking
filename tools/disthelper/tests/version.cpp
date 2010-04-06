@@ -39,12 +39,20 @@
 #include "commands.h"
 #include "readini.h"
 #include "error.h"
-#include "tchar_compat.h"
 
 #include <errno.h>
 #include <string>
 #include <vector>
-#include <sys/stat.h>
+
+#ifdef XP_WIN
+  #include <direct.h>
+  #include <windows.h>
+#endif /* XP_WIN */
+
+#ifdef XP_MACOSX
+  #include "tchar_compat.h"
+  #include <sys/stat.h>
+#endif /* XP_MACOSX */
 
 #ifndef NS_ARRAY_LENGTH
 #define NS_ARRAY_LENGTH(x) ( sizeof(x) / sizeof((x)[0]) )
@@ -82,7 +90,7 @@ static const testdata_t DIST_TEST_DATA[] = {
 void TestDistVersion() {
   printf("Starting distribution.ini version tests...\n");
   
-  int result = mkdir("../../distribution", 0755);
+  int result = _mkdir("../distribution");
   check(result == 0 || errno == EEXIST,
         "Failed to create distribution directory: %d\n", errno);
 
@@ -94,7 +102,7 @@ void TestDistVersion() {
             i, DIST_TEST_DATA[i].oldVersion, DIST_TEST_DATA[i].newVersion,
             DIST_TEST_DATA[i].shouldSucceed ? "yes" : "no");
     // put in dummy application.ini files :/
-    f = fopen("../../application.ini", "w");
+    f = fopen("../application.ini", "w");
     check(f != NULL, "Failed to write old application.ini");
     fprintf(f, "[app]\nbuildid=0\n");
     fclose(f);
@@ -105,13 +113,13 @@ void TestDistVersion() {
 
     // write out the test data
     if (DIST_TEST_DATA[i].oldVersion) {
-      f = fopen("../../distribution/test.ini", "w");
+      f = fopen("../distribution/test.ini", "w");
       check(f != NULL, "Failed to write old data file");
       fprintf(f, "[global]\nversion=%s\nid=old\n", DIST_TEST_DATA[i].oldVersion);
       fclose(f);
     } else {
       // no old version
-      unlink("../../distribution/test.ini");
+      _unlink("../distribution/test.ini");
     }
     if (DIST_TEST_DATA[i].newVersion) {
       f = fopen("test.ini", "w");
@@ -120,15 +128,19 @@ void TestDistVersion() {
       fclose(f);
     } else {
       // no new version
-      unlink("test.ini");
+      _unlink("test.ini");
     }
 
     fflush(stdout); fflush(stderr);
-    result = system("../../disthelper test macosx/tests/test.ini");
+    #ifdef XP_WIN
+      result = system("..\\disthelper.exe test tests\\test.ini");
+    #else
+      result = system("../disthelper test tests/test.ini");
+    #endif /* XP_WIN */
     check(result != -1, "Failed to execute disthelper: %08x\n", errno);
     
     IniFile_t data;
-    result = ReadIniFile(_T("../../distribution/test.ini"), data);
+    result = ReadIniFile(_T("../distribution/test.ini"), data);
     check(result == DH_ERROR_OK ||
             (!DIST_TEST_DATA[i].shouldSucceed &&
              (!DIST_TEST_DATA[i].oldVersion || !DIST_TEST_DATA[i].newVersion)),
@@ -178,7 +190,7 @@ static const testdata_t APP_TEST_DATA[] = {
 void TestAppVersion() {
   printf("Starting application.ini version tests...\n");
   
-  int result = mkdir("../../distribution", 0755);
+  int result = _mkdir("../distribution");
   check(result == 0 || errno == EEXIST,
         "Failed to create distribution directory: %d\n", errno);
   
@@ -190,7 +202,7 @@ void TestAppVersion() {
             i, APP_TEST_DATA[i].oldVersion, APP_TEST_DATA[i].newVersion,
             APP_TEST_DATA[i].shouldSucceed ? "yes" : "no");
     // put in dummy distribution.ini files :/
-    f = fopen("../../distribution/test.ini", "w");
+    f = fopen("../distribution/test.ini", "w");
     check(f != NULL, "Failed to write old distribution.ini");
     fprintf(f, "[global]\nversion=0\n");
     fclose(f);
@@ -201,13 +213,13 @@ void TestAppVersion() {
 
     // write out the test data
     if (APP_TEST_DATA[i].oldVersion) {
-      f = fopen("../../application.ini", "w");
+      f = fopen("../application.ini", "w");
       check(f != NULL, "Failed to write old data file");
       fprintf(f, "[app]\nbuildid=%s\nid=old\n", APP_TEST_DATA[i].oldVersion);
       fclose(f);
     } else {
       // no old version
-      unlink("../../application.ini");
+      _unlink("../application.ini");
     }
     if (APP_TEST_DATA[i].newVersion) {
       f = fopen("application.ini", "w");
@@ -216,15 +228,19 @@ void TestAppVersion() {
       fclose(f);
     } else {
       // no new version
-      unlink("application.ini");
+      _unlink("application.ini");
     }
 
     fflush(stdout); fflush(stderr);
-    result = system("../../disthelper test macosx/tests/test.ini");
+    #ifdef XP_WIN
+      result = system("..\\disthelper.exe test tests\\test.ini");
+    #else
+      result = system("../disthelper test tests/test.ini");
+    #endif /* XP_WIN */
     check(result != -1, "Failed to execute disthelper: %08x\n", errno);
     
     IniFile_t data;
-    result = ReadIniFile(_T("../../application.ini"), data);
+    result = ReadIniFile(_T("../application.ini"), data);
     check(result == DH_ERROR_OK || !APP_TEST_DATA[i].shouldSucceed,
           "Failed to read output (testcase #%i)", i);
     if (APP_TEST_DATA[i].shouldSucceed) {

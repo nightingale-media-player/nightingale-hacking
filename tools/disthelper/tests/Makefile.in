@@ -23,12 +23,12 @@
 #=END SONGBIRD GPL
 #
 
-DEPTH = ../../../..
+DEPTH = ../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@ \
+        @srcdir@/../$(SB_PLATFORM) \
         @srcdir@/.. \
-        @srcdir@/../.. \
         $(NULL)
 
 include $(DEPTH)/build/autodefs.mk
@@ -39,11 +39,14 @@ CPP_SRCS = main.cpp \
            version.cpp \
            $(NULL)
 
-# things from ../
-CPP_SRCS += commands.cpp \
-            $(NULL)
+# things from ../$(SB_PLATFORM)
+ifeq ($(SB_PLATFORM), macosx)
+   CMM_SRCS += commands.mm
+else #not macosx
+   CPP_SRCS += commands.cpp
+endif
 
-# things from ../../
+# things from ../
 CPP_SRCS += debug.cpp \
             readini.cpp \
             stringconvert.cpp \
@@ -53,16 +56,28 @@ CPP_SRCS += debug.cpp \
 CPP_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(srcdir) \
-               $(srcdir)/../.. \
+               $(srcdir)/.. \
                $(NULL)
+
+CMM_EXTRA_INCLUDES = $(srcdir) \
+                     $(srcdir)/.. \
+		     $(NULL)
 
 SIMPLE_PROGRAM_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                               $(NULL)
 
-SIMPLE_PROGRAM_EXTRA_IMPORTS = shell32 \
-                               shlwapi \
-                               version \
-                               $(NULL)
+ifeq ($(SB_PLATFORM), windows)
+   SIMPLE_PROGRAM_EXTRA_IMPORTS = shell32 \
+				  shlwapi \
+				  version \
+				  $(NULL)
+endif #windows
+
+ifeq ($(SB_PLATFORM), macosx)
+   SIMPLE_PROGRAM_EXTRA_FLAGS = -Wl,-framework,Foundation \
+				-Wl,-framework,AppKit \
+				$(NULL)
+endif
 
 # Since this is debug-only, we don't need tests.exe coming out as tests_d.exe;
 # turn that feature off.
