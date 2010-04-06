@@ -768,6 +768,50 @@ function sbLibraryServicePane_suggestLibraryForNewList(aMediaListType, aNode) {
   return null;
 }
 
+/* \brief Suggest a unique name for creating a new playlist
+ *
+ * \param aLibrary an sbILibrary.
+ * \return a unique playlist name.
+ */
+sbLibraryServicePane.prototype.suggestNameForNewPlaylist =
+function sbLibraryServicePane_suggestNameForNewPlaylist(aLibrary) {
+  // Give the playlist a default name
+  // TODO: Localization should be done internally
+  var name = SBString("playlist", "Playlist");
+  var length = name.length;
+
+  if(aLibrary instanceof Ci.sbILibrary) {
+    // Build the existing IDs array
+    let listIDs = [];
+    let mediaLists = aLibrary.getItemsByProperty(SBProperties.isList, "1");
+    for (let i = 0; i < mediaLists.length; ++i) {
+      let mediaListName = mediaLists.queryElementAt(i, Ci.sbIMediaList).name;
+      if (mediaListName && mediaListName.substr(0, length) == name) {
+        if (mediaListName.length == length) {
+          listIDs.push(1);
+        }
+        else if (mediaListName.length > length + 1) {
+          listIDs.push(parseInt(mediaListName.substr(length + 1)));
+        }
+      }
+    }
+
+    let id = 1;
+    while (1) {
+      // The id is available.
+      if (listIDs.indexOf(id) == -1)
+        break;
+
+      ++id;
+    }
+
+    if (id > 1)
+      name = SBFormattedString("playlist.sequence", [id]);
+  }
+
+  return name;
+}
+
 sbLibraryServicePane.prototype.createNodeForLibrary =
 function sbLibraryServicePane_createNodeForLibrary(aLibrary) {
   if(aLibrary instanceof Ci.sbILibrary) {
@@ -843,7 +887,7 @@ function sbLibraryServicePane_getNodeForLibraryResource(aResource) {
   }
   for each (let type in ["audio", "video", "podcast"]) {
     let constrainedURN = urn + ":constraint(" + type + ")";
-    node = this._servicePane.getNode(urn);
+    node = this._servicePane.getNode(constrainedURN);
     if (node && !node.hidden) {
       return node;
     }

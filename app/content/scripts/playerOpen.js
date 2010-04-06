@@ -721,10 +721,7 @@ function makeNewPlaylist(mediaListType) {
 
   // Create the playlist
   var mediaList = library.createMediaList(mediaListType);
-
-  // Give the playlist a default name
-  // TODO: Localization should be done internally
-  mediaList.name = SBString("playlist", "Playlist");
+  mediaList.name = librarySPS.suggestNameForNewPlaylist(library);
 
   // If we have a servicetree, tell it to make the new playlist node editable
   if (servicePane) {

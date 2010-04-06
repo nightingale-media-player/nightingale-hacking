@@ -339,14 +339,15 @@ deviceControlWidget.prototype = {
    */
 
   _createPlaylist: function deviceControlWidget__createPlaylist() {
+    var libSPS = Cc["@songbirdnest.com/servicepane/library;1"]
+                   .getService(Ci.sbILibraryServicePaneService);
+
     // Create the playlist.
     var mediaList = this._deviceLibrary.createMediaList("simple");
-    mediaList.name = SBString("playlist", "Playlist");
+    mediaList.name = libSPS.suggestNameForNewPlaylist(this._deviceLibrary);
 
     // Edit the playlist service pane node.
     if (gServicePane) {
-      var libSPS = Cc["@songbirdnest.com/servicepane/library;1"]
-                     .getService(Ci.sbILibraryServicePaneService);
       var libDSPS = Cc["@songbirdnest.com/servicepane/device;1"]
                      .getService(Ci.sbIDeviceServicePaneService);
       var node = libSPS.getNodeForLibraryResource(mediaList);

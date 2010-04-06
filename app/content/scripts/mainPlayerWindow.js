@@ -437,11 +437,12 @@ var gSongbirdPlayerWindow = {
 
   onCreateNewPlaylist: function gSongbirdPlayerWindow_createNewPlaylist() {
     try {
-      var mediaList = LibraryUtils.mainLibrary.createMediaList("simple");
-      mediaList.name = SBString("property.dummy.playlist");
-      var node = Cc["@songbirdnest.com/servicepane/library;1"]
-             .getService(Ci.sbILibraryServicePaneService)
-             .getNodeForLibraryResource(mediaList);
+      var mainLibrary = LibraryUtils.mainLibrary;
+      var librarySPS = Cc["@songbirdnest.com/servicepane/library;1"]
+                         .getService(Ci.sbILibraryServicePaneService);
+      var mediaList = mainLibrary.createMediaList("simple");
+      mediaList.name = librarySPS.suggestNameForNewPlaylist(mainLibrary);
+      var node = librarySPS.getNodeForLibraryResource(mediaList);
       window.gServicePane.mTreePane.loadNode(node, null);
       window.gServicePane.startEditingNode(node);
     } catch (e) {
