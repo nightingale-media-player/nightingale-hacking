@@ -311,14 +311,22 @@ private:
   nsresult ProcessRequest();
 
   /**
-   * Mounts the device given a path
+   * Mount the media volume specified by aVolume.
+   *
+   * This function must be called on the main thread.
+   *
+   * \param aVolume             Media volume to mount.
    */
-  nsresult Mount();
+  nsresult Mount(sbBaseDeviceVolume* aVolume);
 
   /**
-   * Unmount the CD
+   * Unmount the media volume specified by aVolume.
+   *
+   * This function must be called on the main thread.
+   *
+   * \param aVolume               Media volume to unmount.
    */
-  nsresult Unmount();
+  nsresult Unmount(sbBaseDeviceVolume* aVolume);
 
   /**
    * Called to process a newly added request

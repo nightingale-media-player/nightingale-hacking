@@ -438,7 +438,24 @@ NS_IMETHODIMP sbCDDevice::Connect()
     mConnected = PR_TRUE;
   }
 
-  Mount();
+  // Create a device volume.
+  nsRefPtr<sbBaseDeviceVolume> volume;
+  rv = sbBaseDeviceVolume::New(getter_AddRefs(volume), this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set the volume GUID.
+  char volumeGUID[NSID_LENGTH];
+  mDeviceID.ToProvidedString(volumeGUID);
+  rv = volume->SetGUID(NS_ConvertUTF8toUTF16(volumeGUID));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Add the volume.
+  rv = AddVolume(volume);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Mount volume.
+  Mount(volume);
+
   // Start the request processing.
   rv = ProcessRequest();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -533,14 +550,25 @@ sbCDDevice::ReqDisconnect()
 NS_IMETHODIMP
 sbCDDevice::Disconnect()
 {
+  nsresult rv;
+
   // Log progress.
   LOG(("Enter sbCDDevice::Disconnect\n"));
 
   // This function should only be called on the main thread.
   NS_ASSERTION(NS_IsMainThread(), "not on main thread");
 
-  nsresult rv = Unmount();
-  NS_ENSURE_SUCCESS(rv, rv);
+  // Unmount and remove the default volume.
+  nsRefPtr<sbBaseDeviceVolume> volume;
+  {
+    nsAutoLock autoVolumeLock(mVolumeLock);
+    volume = mDefaultVolume;
+  }
+  if (volume) {
+    rv = Unmount(volume);
+    NS_ENSURE_SUCCESS(rv, rv);
+    RemoveVolume(volume);
+  }
 
   // Stop the request processing.
   rv = ReqProcessingStop();
@@ -876,7 +904,7 @@ sbCDDevice::ResetWarningDialogs()
 }
 
 nsresult
-sbCDDevice::Mount()
+sbCDDevice::Mount(sbBaseDeviceVolume* aVolume)
 {
   nsresult rv;
 
@@ -887,9 +915,21 @@ sbCDDevice::Mount()
   sbAutoReadLock autoConnectLock(mConnectLock);
   NS_ENSURE_TRUE(mConnected, NS_ERROR_NOT_AVAILABLE);
 
-  // Do nothing if a media volume has already been mounted.
-  if (mDeviceLibrary)
-    return NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;
+  // Do nothing if volume has already been mounted.
+  PRBool isMounted;
+  rv = aVolume->GetIsMounted(&isMounted);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (isMounted)
+    return NS_OK;
+
+  // Set the primary and default volume.
+  {
+    nsAutoLock autoVolumeLock(mVolumeLock);
+    if (!mPrimaryVolume)
+      mPrimaryVolume = aVolume;
+    if (!mDefaultVolume)
+      mDefaultVolume = aVolume;
+  }
 
   // Make a string out of the device ID.
   char deviceID[NSID_LENGTH];
@@ -906,6 +946,10 @@ sbCDDevice::Mount()
   rv = CreateDeviceLibrary(mDeviceLibraryPath,
                            nsnull,
                            getter_AddRefs(deviceLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set the volume device library.
+  rv = aVolume->SetDeviceLibrary(deviceLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Set the main device library.
@@ -971,6 +1015,10 @@ sbCDDevice::Mount()
   rv = PushRequest(TransferRequest::REQUEST_MOUNT, nsnull, deviceLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Indicate that the volume has been mounted in Songbird.
+  rv = aVolume->SetIsMounted(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Release connect lock.
   autoConnectLock.unlock();
 
@@ -978,8 +1026,10 @@ sbCDDevice::Mount()
 }
 
 nsresult
-sbCDDevice::Unmount()
+sbCDDevice::Unmount(sbBaseDeviceVolume* aVolume)
 {
+  nsresult rv;
+
   // This function must only be called on the main thread.
   NS_ASSERTION(NS_IsMainThread(), "not on main thread");
 
@@ -987,13 +1037,20 @@ sbCDDevice::Unmount()
   sbAutoReadLock autoConnectLock(mConnectLock);
   NS_ENSURE_TRUE(mConnected, NS_ERROR_NOT_AVAILABLE);
 
+  // Get the volume info and mark the volume as no longer mounted.
+  nsRefPtr<sbDeviceStatistics> deviceStatistics;
+  rv = aVolume->GetStatistics(getter_AddRefs(deviceStatistics));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = aVolume->SetIsMounted(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Do nothing if media volume not mounted.
   if (!mDeviceLibrary) {
     return NS_OK;
   }
 
   // Remove the device library from the device statistics.
-  nsresult rv = mDeviceStatistics->RemoveLibrary(mDeviceLibrary);
+  rv = deviceStatistics->RemoveLibrary(mDeviceLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Remove the device library and dispose of it.

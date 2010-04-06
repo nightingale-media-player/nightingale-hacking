@@ -31,6 +31,7 @@
 
 #include "sbIDevice.h"
 #include "sbBaseDeviceEventTarget.h"
+#include "sbBaseDeviceVolume.h"
 #include "sbDeviceLibrary.h"
 
 #include <nsAutoPtr.h>
@@ -101,6 +102,7 @@ public:
   friend class sbDeviceTranscoding;
   friend class sbDeviceImages;
   friend class sbBatchCleanup;
+  friend class sbBaseDeviceVolume;
 
   struct TransferRequest : public nsISupports {
     /* types of requests. not all types necessarily apply to all types of
@@ -693,7 +695,6 @@ protected:
   PRUint32 mState;
   PRLock *mPreviousStateLock;
   PRUint32 mPreviousState;
-  nsRefPtr<sbDeviceStatistics> mDeviceStatistics;
   PRBool mHaveCurrentRequest;
   PRBool mAbortCurrentRequest;
   PRInt32 mIgnoreMediaListCount; // Allows us to know if we're ignoring lists
@@ -846,6 +847,60 @@ protected:
   virtual nsresult SupportsMediaItemDRM(sbIMediaItem* aMediaItem,
                                         PRBool        aReportErrors,
                                         PRBool*       _retval);
+
+  //----------------------------------------------------------------------------
+  //
+  // Device volume services.
+  //
+  //----------------------------------------------------------------------------
+
+  //
+  //   mVolumeLock              Volume lock.
+  //   mVolumeList              List of volumes.
+  //   mVolumeGUIDTable         Table mapping volume GUIDs to volumes.
+  //   mVolumeLibraryGUIDTable  Table mapping library GUIDs to volumes.
+  //   mPrimaryVolume           Primary volume (usually internal storage).
+  //   mDefaultVolume           Default volume when none specified.
+  //
+
+  PRLock*                                    mVolumeLock;
+  nsTArray< nsRefPtr<sbBaseDeviceVolume> >   mVolumeList;
+  nsInterfaceHashtableMT<nsStringHashKey,
+                         sbBaseDeviceVolume> mVolumeGUIDTable;
+  nsInterfaceHashtableMT<nsStringHashKey,
+                         sbBaseDeviceVolume> mVolumeLibraryGUIDTable;
+  nsRefPtr<sbBaseDeviceVolume>               mPrimaryVolume;
+  nsRefPtr<sbBaseDeviceVolume>               mDefaultVolume;
+
+  /**
+   * Add the media volume specified by aVolume to the set of device media
+   * volumes.
+   *
+   * \param aVolume               Volume to add.
+   */
+  nsresult AddVolume(sbBaseDeviceVolume* aVolume);
+
+  /**
+   * Remove the media volume specified by aVolume from the set of device media
+   * volumes.
+   *
+   * \param aVolume               Volume to remove.
+   */
+  nsresult RemoveVolume(sbBaseDeviceVolume* aVolume);
+
+  /**
+   * Return in aVolume the media volume containing the media item specified by
+   * aItem.  If the media item does not belong to a media volume, return
+   * NS_ERROR_NOT_AVAILABLE.
+   *
+   * \param aItem                 Media item for which to get volume.
+   * \param aVolume               Returned media volume.
+   *
+   * \returns NS_ERROR_NOT_AVAILABLE
+   *                              Media item does not belong to a volume.
+   */
+  nsresult GetVolumeForItem(sbIMediaItem*        aItem,
+                            sbBaseDeviceVolume** aVolume);
 
   //----------------------------------------------------------------------------
   //

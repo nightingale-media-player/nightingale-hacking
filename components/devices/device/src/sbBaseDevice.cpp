@@ -421,7 +421,8 @@ sbBaseDevice::sbBaseDevice() :
   mVideoInserted(false),
   mSyncType(0),
   mEnsureSpaceChecked(false),
-  mIsHandlingRequests(PR_FALSE)
+  mIsHandlingRequests(PR_FALSE),
+  mVolumeLock(nsnull)
 {
 #ifdef PR_LOGGING
   if (!gBaseDeviceLog) {
@@ -445,6 +446,16 @@ sbBaseDevice::sbBaseDevice() :
                               __FILE__"::mConnectLock");
   NS_ASSERTION(mConnectLock, "Failed to allocate connection lock");
 
+  // Create the volume lock.
+  mVolumeLock = nsAutoLock::NewLock("sbBaseDevice::mVolumeLock");
+  NS_ASSERTION(mVolumeLock, "Failed to allocate volume lock");
+
+  // Initialize the volume tables.
+  NS_ASSERTION(mVolumeGUIDTable.Init(),
+               "Failed to initialize volume GUID table");
+  NS_ASSERTION(mVolumeLibraryGUIDTable.Init(),
+               "Failed to initialize volume library GUID table");
+
   // the typical case is 1 library per device
   PRBool success = mOrganizeLibraryPrefs.Init(1);
   NS_ASSERTION(success, "Failed to initialize organize prefs hashtable");
@@ -454,6 +465,15 @@ sbBaseDevice::~sbBaseDevice()
 {
   NS_WARN_IF_FALSE(mBatchDepth == 0,
                    "Device destructed with batches remaining");
+
+  if (mVolumeLock)
+    nsAutoLock::DestroyLock(mVolumeLock);
+  mVolumeLock = nsnull;
+
+  mVolumeList.Clear();
+  mVolumeGUIDTable.Clear();
+  mVolumeLibraryGUIDTable.Clear();
+
   if (mPreferenceLock)
     nsAutoLock::DestroyLock(mPreferenceLock);
 
@@ -2260,12 +2280,22 @@ sbBaseDevice::UpdateLibraryProperty(sbILibrary*      aLibrary,
 nsresult
 sbBaseDevice::UpdateDefaultLibrary(sbIDeviceLibrary* aDevLib)
 {
+  nsresult rv;
+
   // Do nothing if default library is not changing.
   if (aDevLib == mDefaultLibrary)
     return NS_OK;
 
-  // Update the default library and handle the change.
+  // Update the default library and volume.
   mDefaultLibrary = aDevLib;
+  nsRefPtr<sbBaseDeviceVolume> volume;
+  rv = GetVolumeForItem(aDevLib, getter_AddRefs(volume));
+  if (NS_SUCCEEDED(rv)) {
+    nsAutoLock autoVolumeLock(mVolumeLock);
+    mDefaultVolume = volume;
+  }
+
+  // Handle the default library change.
   OnDefaultLibraryChanged();
 
   return NS_OK;
@@ -3056,10 +3086,6 @@ nsresult sbBaseDevice::Init()
                             getter_AddRefs(mBatchEndTimer));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get a device statistics instance.
-  rv = sbDeviceStatistics::New(this, getter_AddRefs(mDeviceStatistics));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Initialize the media folder URL table.
   NS_ENSURE_TRUE(mMediaFolderURLTable.Init(), NS_ERROR_OUT_OF_MEMORY);
 
@@ -3175,6 +3201,101 @@ sbBaseDevice::SupportsMediaItemDRM(sbIMediaItem* aMediaItem,
     NS_ENSURE_SUCCESS(rv, rv);
   }
   *_retval = PR_FALSE;
+
+  return NS_OK;
+}
+
+//------------------------------------------------------------------------------
+//
+// Device volume services.
+//
+//------------------------------------------------------------------------------
+
+nsresult
+sbBaseDevice::AddVolume(sbBaseDeviceVolume* aVolume)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aVolume);
+
+  // Function variables.
+  nsresult rv;
+
+  // Add the volume to the volume lists and tables.
+  nsAutoString volumeGUID;
+  rv = aVolume->GetGUID(volumeGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+  {
+    nsAutoLock autoVolumeLock(mVolumeLock);
+    NS_ENSURE_TRUE(mVolumeList.AppendElement(aVolume), NS_ERROR_OUT_OF_MEMORY);
+    NS_ENSURE_TRUE(mVolumeGUIDTable.Put(volumeGUID, aVolume),
+                   NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::RemoveVolume(sbBaseDeviceVolume* aVolume)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aVolume);
+
+  // Function variables.
+  nsresult rv;
+
+  // If the device volume has a device library, get the library GUID.
+  nsAutoString               libraryGUID;
+  nsCOMPtr<sbIDeviceLibrary> library;
+  rv = aVolume->GetDeviceLibrary(getter_AddRefs(library));
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (library)
+    library->GetGuid(libraryGUID);
+
+  // Remove the volume from the volume lists and tables.
+  nsAutoString volumeGUID;
+  rv = aVolume->GetGUID(volumeGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+  {
+    nsAutoLock autoVolumeLock(mVolumeLock);
+    mVolumeList.RemoveElement(aVolume);
+    mVolumeGUIDTable.Remove(volumeGUID);
+    if (!libraryGUID.IsEmpty())
+      mVolumeLibraryGUIDTable.Remove(libraryGUID);
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::GetVolumeForItem(sbIMediaItem*        aItem,
+                               sbBaseDeviceVolume** aVolume)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(aVolume);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the item's library's guid.
+  nsAutoString libraryGUID;
+  nsCOMPtr<sbILibrary> library;
+  rv = aItem->GetLibrary(getter_AddRefs(library));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = library->GetGuid(libraryGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the volume from the volume library GUID table.
+  nsRefPtr<sbBaseDeviceVolume> volume;
+  {
+    nsAutoLock autoVolumeLock(mVolumeLock);
+    PRBool present = mVolumeLibraryGUIDTable.Get(libraryGUID,
+                                                 getter_AddRefs(volume));
+    NS_ENSURE_TRUE(present, NS_ERROR_NOT_AVAILABLE);
+  }
+
+  // Return results.
+  volume.forget(aVolume);
 
   return NS_OK;
 }
@@ -3544,6 +3665,19 @@ sbBaseDevice::UpdateStatisticsProperties()
 {
   nsresult rv;
 
+  // Get the statistics for the default volume.  Just return if no default
+  // volume.
+  nsRefPtr<sbBaseDeviceVolume> volume;
+  nsRefPtr<sbDeviceStatistics> deviceStatistics;
+  {
+    nsAutoLock autoVolumeLock(mVolumeLock);
+    if (!mDefaultVolume)
+      return NS_OK;
+    volume = mDefaultVolume;
+  }
+  rv = volume->GetStatistics(getter_AddRefs(deviceStatistics));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Get the device properties.
   nsCOMPtr<nsIWritablePropertyBag> deviceProperties;
   rv = GetWritableDeviceProperties(this, getter_AddRefs(deviceProperties));
@@ -3553,35 +3687,35 @@ sbBaseDevice::UpdateStatisticsProperties()
   //XXXeps should use base properties class and use SetPropertyInternal
   rv = deviceProperties->SetProperty
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_ITEM_COUNT),
-          sbNewVariant(mDeviceStatistics->AudioCount()));
+          sbNewVariant(deviceStatistics->AudioCount()));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = deviceProperties->SetProperty
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_USED_SPACE),
-          sbNewVariant(mDeviceStatistics->AudioUsed()));
+          sbNewVariant(deviceStatistics->AudioUsed()));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = deviceProperties->SetProperty
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_TOTAL_PLAY_TIME),
-          sbNewVariant(mDeviceStatistics->AudioPlayTime()));
+          sbNewVariant(deviceStatistics->AudioPlayTime()));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = deviceProperties->SetProperty
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_ITEM_COUNT),
-          sbNewVariant(mDeviceStatistics->VideoCount()));
+          sbNewVariant(deviceStatistics->VideoCount()));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = deviceProperties->SetProperty
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_USED_SPACE),
-          sbNewVariant(mDeviceStatistics->VideoUsed()));
+          sbNewVariant(deviceStatistics->VideoUsed()));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = deviceProperties->SetProperty
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_TOTAL_PLAY_TIME),
-          sbNewVariant(mDeviceStatistics->VideoPlayTime()));
+          sbNewVariant(deviceStatistics->VideoPlayTime()));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = deviceProperties->SetProperty
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMAGE_ITEM_COUNT),
-          sbNewVariant(mDeviceStatistics->ImageCount()));
+          sbNewVariant(deviceStatistics->ImageCount()));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = deviceProperties->SetProperty
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMAGE_USED_SPACE),
-          sbNewVariant(mDeviceStatistics->ImageUsed()));
+          sbNewVariant(deviceStatistics->ImageUsed()));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
