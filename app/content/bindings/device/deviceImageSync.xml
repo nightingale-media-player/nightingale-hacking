@@ -670,11 +670,12 @@
                 self._fileScanTimer = null;
               }
 
+              // keep _fileScanner around to deal with more incoming queries.
+              // it will be finalized in destructor.
               let query = self._fileScanQuery;
               if (query) {
                 self._fileScanQuery = null;
                 self.processDirScanResults(query);
-                self._fileScanner.finalize();
               }
             }
           }
