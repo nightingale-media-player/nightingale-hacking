@@ -56,7 +56,9 @@
      *********************************************************************** -->
 
     <content>
-      <xul:tabbox class="device_management_box" flex="1">
+      <xul:tabbox sbid="device_management_tabbox"
+                  class="device_management_box"
+                  flex="1">
         <xul:tabs class="device_management_tabs">
          <xul:tab sbid="device_management_music_sync_tab"
                   label="&device.management.tabs.music.label;" />

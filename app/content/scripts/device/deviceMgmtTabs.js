@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -81,6 +81,8 @@ var DeviceMgmtTabs = {
    */
 
   initialize: function DeviceMgmtTabs_initialize(aWidget) {
+    Cu.import("resource://app/jsmodules/DeviceHelper.jsm", this);
+
     // Get the device widget.
     this._widget = aWidget;
 
@@ -90,10 +92,13 @@ var DeviceMgmtTabs = {
 
     var toolsBox = this._getElement("device_tools");
     var settingsBox = this._getElement("device_summary_settings");
+    var tabBox = this._getElement("device_management_tabbox");
     if (toolsBox) 
       toolsBox.addEventListener("DOMAttrModified", this.tabListener, false);
     if (settingsBox)
       settingsBox.addEventListener("DOMAttrModified", this.tabListener, false);
+    if (tabBox)
+      tabBox.addEventListener("DOMAttrModified", this.tabListener, false);
 
     this._update();
 
@@ -106,22 +111,31 @@ var DeviceMgmtTabs = {
   },
 
   tabListener: function DeviceMgmtTabs_tabDisableListener(event) {
-    var target = event.target;
-    var id = target.getAttribute("sbid");
-    if (event.attrName != "disabledTab")
-      return;
-    if (event.newValue == "true") {
-      if (id == "device_tools") {
-        DeviceMgmtTabs._widget.setAttribute("hideToolsTab", "true");
-      } else if (id == "device_summary_settings") {
-        DeviceMgmtTabs._widget.setAttribute("hideSettingsTab", "true");
-      }
-    } else {
-      if (id == "device_tools") {
-        DeviceMgmtTabs._widget.removeAttribute("hideToolsTab");
-      } else if (id == "device_summary_settings") {
-        DeviceMgmtTabs._widget.removeAttribute("hideSettingsTab");
-      }
+    switch (event.attrName) {
+      case "disabledTab":
+        var target = event.target;
+        var id = target.getAttribute("sbid");
+        if (event.newValue == "true") {
+          if (id == "device_tools") {
+            DeviceMgmtTabs._widget.setAttribute("hideToolsTab", "true");
+          } else if (id == "device_summary_settings") {
+            DeviceMgmtTabs._widget.setAttribute("hideSettingsTab", "true");
+          }
+        } else {
+          if (id == "device_tools") {
+            DeviceMgmtTabs._widget.removeAttribute("hideToolsTab");
+          } else if (id == "device_summary_settings") {
+            DeviceMgmtTabs._widget.removeAttribute("hideSettingsTab");
+          }
+        }
+        break;
+
+      case "selectedIndex":
+        if (event.newValue == "2") {
+          DeviceMgmtTabs._dispatchSettingsEvent(
+                           DeviceMgmtTabs.SYNCSETTINGS_IMAGETAB);
+        }
+        break;
     }
   },
 
@@ -181,6 +195,19 @@ var DeviceMgmtTabs = {
         this._update();
         break;
     }
+  },
+
+  /**
+   * \brief Notifies listener about a pref change actions.
+   *
+   * \param detail              One of the SYNCSETTINGS_* constants
+   */
+
+  _dispatchSettingsEvent:
+    function DeviceMgmtTabs__dispatchSettingsEvent(detail) {
+    let event = document.createEvent("UIEvents");
+    event.initUIEvent("sbDeviceSync-settings", false, false, window, detail);
+    document.dispatchEvent(event);
   },
 
   /**

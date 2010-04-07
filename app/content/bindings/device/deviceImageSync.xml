@@ -120,6 +120,7 @@
       <field name="_deviceEventTarget">null</field>
       <field name="_displayedFolder">null</field>
       <field name="_settingsChanged">false</field>
+      <field name="_imageTab">false</field>
       <field name="_ignoreDevicePrefChanges">false</field>
       <!-- _ignoreFolderChanges defaults to true to ignore the select event
            during widget construction -->
@@ -144,12 +145,6 @@
         if (this.device)
           this._initDevice();
 
-        // Listen for sync settings apply/cancel events.
-        let self = this;
-        document.addEventListener("sbDeviceSync-settings", function(aEvent) {
-          self._onSettingsEvent(aEvent);
-        }, false);
-
         // Initialize UI
         this._updateUI();
       }
@@ -170,11 +165,20 @@
 
       <method name="_initDevice">
         <body><![CDATA[
+          // No need to initilize the device if device does not support image.
+          var capabilities = this.device.capabilities;
+          var sbIDC = Ci.sbIDeviceCapabilities;
+          if (!capabilities.supportsContent(sbIDC.FUNCTION_IMAGE_DISPLAY,
+                                            sbIDC.CONTENT_IMAGE)) {
+            return;
+          }
+
           // Update the device library we are dealing with
-          // Currently we just grab the first one since we only deal with one library
-          // XXX When we deal with multiple libraries we will need to change this
-          //     so that it can handle a particular library rather than defaulting
-          //     to the first one.
+          // Currently we just grab the first one since we only deal with one
+          // library
+          // XXX When we deal with multiple libraries we will need to change
+          //     this so that it can handle a particular library rather than
+          //     defaulting to the first one.
           if (this._deviceLibrary)
             this._removeLibrary(this._deviceLibrary.guid);
           if (this.device.content.libraries.length > 0) {
@@ -188,6 +192,12 @@
           this._deviceEventTarget =
                 this.device.QueryInterface(Ci.sbIDeviceEventTarget);
           this._deviceEventTarget.addEventListener(this);
+
+          // Listen for sync settings apply/cancel events.
+          let self = this;
+          document.addEventListener("sbDeviceSync-settings", function(aEvent) {
+            self._onSettingsEvent(aEvent);
+          }, false);
         ]]></body>
       </method>
 
@@ -289,6 +299,10 @@
         <body>
         <![CDATA[
         {
+          // Do not update the UI if the image tab hasn't been selected.
+          if (!this._imageTab)
+            return;
+
           // Hide widget if no device library present
           if (!this._deviceLibrary) {
             this.setAttribute("hidden", "true")
@@ -470,6 +484,10 @@
                 this._syncPrefs.syncFoldersList = {};
               }
 
+              this._updateUI();
+            }
+            else {
+              this._syncPrefs.rootFolder = oldPrefs.rootFolder;
               this._updateUI();
             }
           }
@@ -881,6 +899,12 @@
         <body><![CDATA[
         {
           switch (aEvent.detail) {
+            case this.SYNCSETTINGS_IMAGETAB:
+              if (!this._imageTab) {
+                this._imageTab = true;
+                this._updateUI();
+              }
+              break;
             case this.SYNCSETTINGS_CANCEL:
               // Reset displayed preferences
               this._settingsChanged = false;

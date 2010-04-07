@@ -24,7 +24,8 @@
 
 EXPORTED_SYMBOLS = [ "SYNCSETTINGS_CHANGE",
                      "SYNCSETTINGS_APPLY", "SYNCSETTINGS_CANCEL",
-                     "SYNCSETTINGS_SAVING", "SYNCSETTINGS_SAVED" ];
+                     "SYNCSETTINGS_SAVING", "SYNCSETTINGS_SAVED",
+                     "SYNCSETTINGS_IMAGETAB" ];
 
 // Possible values for detail parameter in sbDeviceSync-settings event
 var SYNCSETTINGS_CHANGE = 0;
@@ -32,3 +33,4 @@ var SYNCSETTINGS_APPLY = 1;
 var SYNCSETTINGS_CANCEL = 2;
 var SYNCSETTINGS_SAVING = 3;
 var SYNCSETTINGS_SAVED = 4;
+var SYNCSETTINGS_IMAGETAB = 5;
