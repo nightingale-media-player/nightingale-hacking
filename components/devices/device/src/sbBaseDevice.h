@@ -1463,13 +1463,6 @@ protected:
   nsresult PromptForEjectDuringPlayback(PRBool* aEject);
 
   /**
-   * Returns the primary library for the device
-   *
-   * \param aDeviceLibrary out parameter receiving the primary library object
-   */
-  nsresult GetPrimaryLibrary(sbIDeviceLibrary ** aDeviceLibrary);
-
-  /**
    * Update locations of folders containing media.
    */
   virtual nsresult UpdateMediaFolders();

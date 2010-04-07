@@ -5552,31 +5552,6 @@ sbBaseDevice::PromptForEjectDuringPlayback(PRBool* aEject)
   return NS_OK;
 }
 
-nsresult sbBaseDevice::GetPrimaryLibrary(sbIDeviceLibrary ** aDeviceLibrary)
-{
-  TRACE(("%s", __FUNCTION__));
-  NS_ENSURE_ARG_POINTER(aDeviceLibrary);
-
-  nsCOMPtr<sbIDeviceContent> content;
-  nsresult rv = GetContent(getter_AddRefs(content));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIArray> libraries;
-  rv = content->GetLibraries(getter_AddRefs(libraries));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 libraryCount;
-  rv = libraries->GetLength(&libraryCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(libraryCount > 0, NS_ERROR_UNEXPECTED);
-
-  nsCOMPtr<sbIDeviceLibrary> deviceLib =
-    do_QueryElementAt(libraries, 0, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  deviceLib.forget(aDeviceLibrary);
-  return NS_OK;
-}
-
 nsresult
 sbBaseDevice::UpdateMediaFolders()
 {

@@ -268,10 +268,11 @@ sbDeviceImages::ScanImages(nsIFile *aScanDir,
 }
 
 // Create and return in aMediaItem a temporary media item for the local file
-// represented by aImage.
+// represented by aImage and device library aLibrary.
 nsresult
-sbDeviceImages::CreateTemporaryLocalMediaItem(sbIDeviceImage* aImage,
-                                              sbIMediaItem**  aMediaItem)
+sbDeviceImages::CreateTemporaryLocalMediaItem(sbIDeviceImage*   aImage,
+                                              sbIDeviceLibrary* aLibrary,
+                                              sbIMediaItem**    aMediaItem)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -280,12 +281,9 @@ sbDeviceImages::CreateTemporaryLocalMediaItem(sbIDeviceImage* aImage,
   nsresult rv;
 
   // Get the local image base directory.
-  nsCOMPtr<nsIFile>          baseDir;
-  nsCOMPtr<sbIDeviceLibrary> library;
-  rv = mBaseDevice->GetPrimaryLibrary(getter_AddRefs(library));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = library->GetSyncRootFolderByType(sbIDeviceLibrary::MEDIATYPE_IMAGE,
-                                        getter_AddRefs(baseDir));
+  nsCOMPtr<nsIFile> baseDir;
+  rv = aLibrary->GetSyncRootFolderByType(sbIDeviceLibrary::MEDIATYPE_IMAGE,
+                                         getter_AddRefs(baseDir));
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(baseDir, NS_ERROR_UNEXPECTED);
 
