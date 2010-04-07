@@ -239,6 +239,8 @@ ServicePaneNode.prototype.__defineSetter__ ('contractid', function (aValue) {
 ServicePaneNode.prototype.__defineGetter__ ('hidden', function () {
   return this.getAttributeNS(SP,'Hidden') == 'true'; })
 ServicePaneNode.prototype.__defineSetter__ ('hidden', function (aValue) {
+  if (!aValue)
+    this.setAttributeNS(SP,'HideList',null);
   this.setAttributeNS(SP,'Hidden', aValue?'true':'false'); });
 
 ServicePaneNode.prototype.__defineGetter__ ('hasNoChildren', function () {
@@ -789,6 +791,36 @@ function ServicePaneService_removeNode(aNode) {
     // or if it's an orphan call the internal function to clear it out
     aNode.clearNode();
   }
+}
+ServicePaneService.prototype.setNodeHidden =
+function ServicePaneService_setNodeHidden(aNode, aContractID, aHide) {
+  // Get the list of components that have hidden the node.
+  let hideList = aNode.getAttributeNS(SP, "HideList");
+  if (hideList) {
+    hideList = hideList.split(" ");
+  }
+  else {
+    hideList = [];
+  }
+
+  // If hiding, add the component to the list of components hiding the node.
+  // Otherwise, remove the component from the list.
+  let hideIndex = hideList.indexOf(aContractID);
+  if (aHide) {
+    if (hideIndex < 0)
+      hideList.push(aContractID);
+  }
+  else {
+    while (hideIndex >= 0) {
+      hideList.splice(hideIndex, 1);
+      hideIndex = hideList.indexOf(aContractID);
+    }
+  }
+
+  // Update the list of components hiding the node.  Set the node as hidden if
+  // any component is hiding it.
+  aNode.setAttributeNS(SP, "HideList", hideList.join(" "));
+  aNode.hidden = (hideList.length > 0);
 }
 ServicePaneService.prototype.getNode =
 function ServicePaneService_getNode(aId) {

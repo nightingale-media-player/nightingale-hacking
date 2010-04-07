@@ -1119,7 +1119,7 @@ function sbLibraryServicePane__hideLibraryNodes(aNode) {
 
   // If this is one of our nodes, hide it
   if (aNode.contractid == CONTRACTID) {
-    aNode.hidden = true;
+    this._servicePane.setNodeHidden(aNode, CONTRACTID, true);
   }
 
   // If this is a container, descend into all children
@@ -1423,7 +1423,8 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary, aMove) {
     node.url = null;
     node.contractid = CONTRACTID;
     node.editable = false;
-    node.hidden = (aLibrary.getProperty(SBProperties.hidden) == "1");
+    var hidden = (aLibrary.getProperty(SBProperties.hidden) == "1");
+    self._servicePane.setNodeHidden(node, CONTRACTID, hidden);
 
     // Set properties for styling purposes
     self._mergeProperties(node,
@@ -1475,7 +1476,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary, aMove) {
 
     // Set the weight of the web library
     node.setAttributeNS(SP, 'Weight', 5);
-    node.hidden = true;
+    self._servicePane.setNodeHidden(node, CONTRACTID, true);
     return node;
   }
 
@@ -1509,7 +1510,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary, aMove) {
   self._mergeProperties(parentNode, K_PARENT_PROPS);
   if (newNode) {
     // always create them as hidden
-    parentNode.hidden = true;
+    self._servicePane.setNodeHidden(parentNode, CONTRACTID, true);
   }
 
   if (aLibrary == this._libraryManager.mainLibrary) {
@@ -1530,13 +1531,13 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary, aMove) {
     this._servicePane.sortNode(parentNode);
 
     if (newNode) {
-      parentNode.hidden = false;
+      this._servicePane.setNodeHidden(parentNode, CONTRACTID, false);
       this._insertLibraryNode(parentNode, aLibrary);
     }
     else if (parentNode.properties.split(/\s/).indexOf('library') != -1) {
       // this came from before we had split views for the libraries
       // we need to migrate
-      parentNode.hidden = false;
+      this._servicePane.setNodeHidden(parentNode, CONTRACTID, false);
       let oldProps = parentNode.properties.split(/\s+/);
       let newProps = oldProps.filter(function(val) K_PARENT_PROPS.indexOf(val) == -1);
       this._mergeProperties(node, newProps);
@@ -1557,7 +1558,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary, aMove) {
     // if the iTunes folder exists, then make it visible
     var fnode = this._servicePane.getNode('SB:iTunes');
     if (fnode)
-      fnode.hidden = false;
+      this._servicePane.setNodeHidden(fnode, CONTRACTID, false);
   }
   else {
     for each (let type in ["video", "audio"]) {
@@ -1676,7 +1677,8 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
   }
 
   // Get hidden state from list, since we hide all list nodes on startup
-  node.hidden = (aMediaList.getProperty(SBProperties.hidden) == "1");
+  var hidden = (aMediaList.getProperty(SBProperties.hidden) == "1");
+  this._servicePane.setNodeHidden(node, CONTRACTID, hidden);
 
   return node;
 }
@@ -1695,7 +1697,7 @@ function sbLibraryServicePane__ensurePlaylistFolderExists() {
   }
   fnode.name = '&servicesource.playlists';
   this._mergeProperties(fnode, ["folder", this._makeCSSProperty(fnode.name)]);
-  fnode.hidden = false;
+  this._servicePane.setNodeHidden(fnode, CONTRACTID, false);
   fnode.contractid = CONTRACTID;
   fnode.dndAcceptIn = 'text/x-sb-playlist';
   fnode.editable = false;
@@ -1706,7 +1708,7 @@ function sbLibraryServicePane__ensurePlaylistFolderExists() {
   if (!npnode)
     npnode = this._servicePane.addNode('SB:Playlists_CreateNewPlaylist', fnode, false);
   npnode.name = '&servicesource.playlists.newplaylist';
-  npnode.hidden = false;
+  this._servicePane.setNodeHidden(npnode, CONTRACTID, false);
   npnode.contractid = CONTRACTID;
   npnode.editable = false;
   npnode.image = "chrome://songbird/skin/service-pane/icon-new-playlist.png";
@@ -1738,7 +1740,7 @@ function sbLibraryServicePane__ensurePodcastFolderExists() {
   }
   fnode.name = "&servicesource.podcasts";
   this._mergeProperties(fnode, ["folder", this._makeCSSProperty(fnode.name)]);
-  fnode.hidden = false;
+  this._servicePane.setNodeHidden(fnode, CONTRACTID, false);
   fnode.contractid = CONTRACTID;
   fnode.editable = false;
   fnode.setAttributeNS(SP, "Weight", 2);
@@ -1759,7 +1761,7 @@ function sbLibraryServicePane__ensureiTunesFolderExists() {
   }
   fnode.name = '&servicesource.itunes';
   this._mergeProperties(fnode, ["folder", this._makeCSSProperty(fnode.name)]);
-  fnode.hidden = false;
+  this._servicePane.setNodeHidden(fnode, CONTRACTID, false);
   fnode.contractid = CONTRACTID;
   fnode.editable = false;
   fnode.setAttributeNS(SP, 'Weight', 3);
