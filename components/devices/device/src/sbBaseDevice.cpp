@@ -430,6 +430,12 @@ sbBaseDevice::sbBaseDevice() :
   }
 #endif /* PR_LOGGING */
 
+  #if defined(__GNUC__) && !defined(DEBUG)
+    PRBool __attribute__((unused)) success;
+  #else
+    PRBool success;
+  #endif
+
   mStateLock = nsAutoLock::NewLock(__FILE__ "::mStateLock");
   NS_ASSERTION(mStateLock, "Failed to allocate state lock");
 
@@ -451,13 +457,14 @@ sbBaseDevice::sbBaseDevice() :
   NS_ASSERTION(mVolumeLock, "Failed to allocate volume lock");
 
   // Initialize the volume tables.
-  NS_ASSERTION(mVolumeGUIDTable.Init(),
-               "Failed to initialize volume GUID table");
-  NS_ASSERTION(mVolumeLibraryGUIDTable.Init(),
-               "Failed to initialize volume library GUID table");
+  success = mVolumeGUIDTable.Init();
+  NS_ASSERTION(success, "Failed to initialize volume GUID table");
+
+  success = mVolumeLibraryGUIDTable.Init();
+  NS_ASSERTION(success, "Failed to initialize volume library GUID table");
 
   // the typical case is 1 library per device
-  PRBool success = mOrganizeLibraryPrefs.Init(1);
+  success = mOrganizeLibraryPrefs.Init(1);
   NS_ASSERTION(success, "Failed to initialize organize prefs hashtable");
 }
 
