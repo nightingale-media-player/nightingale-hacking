@@ -102,16 +102,19 @@
       </getter>
       <setter>
       <![CDATA[
-        var thumbCentre = this.thumb.boxObject.x - this.slider.boxObject.x +
-                          this.thumb.boxObject.width/2;
-        var scaledCentre = thumbCentre / this.slider.boxObject.width *
-                           this._SCALE_MAX;
-        var prog = (val * this._SCALE_MAX) / this.maxpos;
-        if (val != 0 && (thumbCentre == 6 || thumbCentre == 0))
-          var prog = (val * this._SCALE_MAX) / this.maxpos;
-        else
-          var prog = scaledCentre;
-        this.progress.setAttribute('value', prog);
+        // Align the slider with the thumb center. Volume ranges from zero to
+        // one, but the slider range is both scaled and slightly compressed due
+        // to the thumb width. 
+        var sliderWidth = this.slider.boxObject.width;
+        var thumbWidth = this.thumb.boxObject.width;
+        // range in pixels of valid slider positions
+        var sliderRange = sliderWidth - thumbWidth;
+        var volume = val / this.maxpos;
+        // slider offset in pixels
+        var sliderOffset = sliderRange * volume + thumbWidth/2;
+        // scaled slider value
+        var sliderProgress = this.maxpos * sliderOffset / sliderWidth;
+        this.progress.setAttribute('value', sliderProgress);
       ]]>
       </setter>
     </property>
