@@ -83,8 +83,13 @@ endif
 # turn that feature off.
 DISABLE_IMPLICIT_NAMING = 1
 
-SIMPLE_PROGRAM = tests$(BIN_SUFFIX)
+SIMPLE_PROGRAM = test_disthelper$(BIN_SUFFIX)
 
 NO_DIST_INSTALL = 1
+
+SONGBIRD_TEST_COMPONENT = disthelper
+
+SONGBIRD_TESTS = $(srcdir)/test_disthelper.js \
+                 $(NULL)
 
 include $(topsrcdir)/build/rules.mk

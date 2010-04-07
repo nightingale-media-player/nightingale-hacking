@@ -35,3 +35,7 @@ static inline void OutputDebugString(LPCTSTR msg) {
 static inline FILE* _tfopen(const char* filename, const char* mode) {
   return fopen(filename, mode);
 }
+
+static inline int _tchdir(const char* dirname) {
+  return chdir(dirname);
+}

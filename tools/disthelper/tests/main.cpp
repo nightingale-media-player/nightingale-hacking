@@ -40,6 +40,8 @@
 #include <cstdarg>
 #include <cstdlib>
 
+#include "commands.h"
+
 #ifdef XP_WIN
 #include <tchar.h>
 #include <windows.h>
@@ -59,6 +61,7 @@ int main()
 {
   // disable the user-visible (and hanging) error reporting
   _tputenv(_T("DISTHELPER_SILENT_FAILURE=1"));
+  _tchdir(GetAppDirectory().c_str());
   TestParser();
   TestDebug();
   TestVersion();
