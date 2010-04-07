@@ -241,6 +241,7 @@
 ./defaults/preferences/songbird-prefs.js
 ./defaults/preferences/songbird-zzz-branding.js
 ./defaults/profile/mimeTypes.rdf
+./disthelper
 ./extensions/albumart@songbirdnest.com/chrome.manifest
 ./extensions/albumart@songbirdnest.com/chrome/albumart.jar
 ./extensions/albumart@songbirdnest.com/install.rdf
