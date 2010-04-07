@@ -1,28 +1,26 @@
-/* vim: ts=2 sw=2 expandtab
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 /**
  * \file sbILibraryServicePaneService.idl
@@ -40,7 +38,7 @@ interface sbIMediaListView;
  * \interface sbILibraryServicePaneService
  * \brief Provides information about libraries and medialists needed by the service pane
  */
-[scriptable, uuid(03a32d24-edc2-4d26-99a3-b16859193a42)]
+[scriptable, uuid(3a663e90-3c00-11df-9879-0800200c9a66)]
 interface sbILibraryServicePaneService : nsISupports {
 
   /* \brief Suggest a library for creating a new media list
@@ -52,6 +50,13 @@ interface sbILibraryServicePaneService : nsISupports {
    */
   sbILibrary suggestLibraryForNewList (in AString aMediaListType,
                                        in sbIServicePaneNode aNode);
+
+  /* \brief Suggest a unique name for creating a new playlist
+   *
+   * \param aLibrary an sbILibrary.
+   * \return a unique playlist name.
+   */
+  AString suggestNameForNewPlaylist (in sbILibrary aLibrary);
 
   /* \brief Attempts to create a service pane node for a given library.
    *
@@ -88,6 +93,17 @@ interface sbILibraryServicePaneService : nsISupports {
    */
   sbIServicePaneNode getNodeFromMediaListView (in sbIMediaListView aMediaListView);
 
+  /**
+   * \brief Attempt to get the content type of service pane node for the given
+   *        media list view.
+   *
+   * \param aMediaListView the view for which to get the content type.
+   * \returns the content type of service pane node that represents the given
+   *          media list view or null if the type information is not available
+   *          for the node.
+   */
+  AString getNodeContentTypeFromMediaListView (in sbIMediaListView aMediaListView);
+
   /* \brief Attempt to get a library resource for the given service pane node.
    *
    * Note that there is no guarantee that hidden service pane nodes
@@ -103,6 +119,6 @@ interface sbILibraryServicePaneService : nsISupports {
    * \param aNode Node to set.
    * \param aReadOnly If true, node is read-only.
    */
-  void setNodeReadOnly(in sbIServicePaneNode aNode,
-                       in boolean aReadOnly);
+  void setNodeReadOnly (in sbIServicePaneNode aNode,
+                        in boolean aReadOnly);
 };

@@ -7,11 +7,11 @@
   <mimetype>audio/mpeg</mimetype>
 
   <container>
-    <type>id3</type>
+    <type>audio/mpeg</type>
   </container>
 
   <audio>
-    <type>mp3</type>
+    <type>audio/mpeg</type>
     <property name="bitrate" type="int" min="32000" max="320000" default="192000"/>
   </audio>
 </profile>

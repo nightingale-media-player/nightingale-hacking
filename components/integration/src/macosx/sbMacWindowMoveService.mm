@@ -30,6 +30,8 @@
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 
+#import <objc/objc-class.h>
+
 
 //==============================================================================
 // ObjC class wrapper for owning nsISupports derivatives.
@@ -74,6 +76,168 @@
 
 
 //==============================================================================
+// Method swizzle method.
+//==============================================================================
+
+void MethodSwizzle(Class aClass, SEL orig_sel, SEL alt_sel)
+{
+  Method orig_method = nil, alt_method = nil;
+
+  // First, look for methods
+  orig_method = class_getInstanceMethod(aClass, orig_sel);
+  alt_method = class_getInstanceMethod(aClass, alt_sel);
+
+  // If both are found, swizzle them.
+  if ((orig_method != nil) && (alt_method != nil)) {
+    char *temp_type;
+    IMP temp_imp;
+
+    temp_type = orig_method->method_types;
+    orig_method->method_types = alt_method->method_types;
+    alt_method->method_types = temp_type;
+
+    temp_imp = orig_method->method_imp;
+    orig_method->method_imp = alt_method->method_imp;
+    alt_method->method_imp = temp_imp;;
+  }
+}
+
+
+//==============================================================================
+// NSWindow category entry for swizzled method.
+//==============================================================================
+
+static NSString *kSBWindowStoppedMovingNotification = @"SBWindowStoppedMoving";
+
+
+@interface NSWindow (SBSwizzleSupport)
+
+- (void)swizzledSendEvent:(NSEvent *)aEvent;
+
+@end
+
+@implementation NSWindow (SBSwizzleSupport)
+
+- (void)swizzledSendEvent:(NSEvent *)aEvent
+{
+  // Swizzle back to the original method.
+  MethodSwizzle([self class],
+                @selector(swizzledSendEvent:),
+                @selector(sendEvent:));
+
+  [self sendEvent:aEvent];
+
+  // Check for the mouse up event.
+  BOOL shouldReswizzle = YES;
+  if (NSLeftMouseUp == [aEvent type]) {
+    NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+    [defaultCenter postNotificationName:kSBWindowStoppedMovingNotification
+                                 object:self];
+    shouldReswizzle = NO;
+  }
+
+  // If this event was the mouse up event, don't reswizzle. The method will be
+  // reswizzled when this interface gets notified of a window move start in
+  // |onWindowWillMove|.
+  if (shouldReswizzle) {
+    MethodSwizzle([self class],
+                  @selector(sendEvent:),
+                  @selector(swizzledSendEvent:));
+  }
+}
+
+@end
+
+
+//==============================================================================
+// Window Listener Context Utility Class.
+//==============================================================================
+
+@interface SBWinMoveListenerContext : NSObject
+{
+  SBISupportsOwner *mListener;       // strong
+  NSWindow         *mWatchedWindow;  // strong
+}
+
+- (id)initWithListener:(sbIWindowMoveListener *)aListener
+                window:(NSWindow *)aWindow;
+
+- (void)onWindowWillMove;
+- (void)onWindowDidStopMoving:(NSNotification *)aNotification;
+- (void)notifyListenerMoveStoppedTimeout;
+
+@end
+
+@implementation SBWinMoveListenerContext
+
+- (id)initWithListener:(sbIWindowMoveListener *)aListener
+                window:(NSWindow *)aWindow
+{
+  if ((self = [super init])) {
+    mListener = [[SBISupportsOwner alloc] initWithValue:aListener];
+    mWatchedWindow = [aWindow retain];
+  }
+
+  return self;
+}
+
+- (void)dealloc
+{
+  [mListener release];
+  [mWatchedWindow release];
+  [super dealloc];
+}
+
+- (void)onWindowWillMove
+{
+  // First, notify our listener
+  nsresult rv;
+  nsCOMPtr<sbIWindowMoveListener> listener =
+    do_QueryInterface([mListener value], &rv);
+  NS_ENSURE_SUCCESS(rv, /* void */);
+  listener->OnMoveStarted();
+
+  // Next, to avoid hacking on XR for bug XXX simply method swizzle the
+  // |mouseUp:| event handler for the window class. This can be avoided by
+  // patching XR to post an event when this event happens in the |NSWindow|
+  // subclasses in the cocoa widget stuff.
+  MethodSwizzle([mWatchedWindow class],
+                @selector(sendEvent:),
+                @selector(swizzledSendEvent:));
+
+  NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+  [defaultCenter addObserver:self
+                    selector:@selector(onWindowDidStopMoving:)
+                        name:kSBWindowStoppedMovingNotification
+                      object:nil];
+}
+
+- (void)onWindowDidStopMoving:(NSNotification *)aNotification
+{
+  // Hack, notify after a short timeout to ensure the listener will actually
+  // be able to look at the window frame.
+  [self performSelector:@selector(notifyListenerMoveStoppedTimeout)
+             withObject:nil
+             afterDelay:0.1];
+
+  // No longer need to listen to events for now.
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)notifyListenerMoveStoppedTimeout
+{
+  // Notify our listener of the move stop
+  nsresult rv;
+  nsCOMPtr<sbIWindowMoveListener> listener =
+    do_QueryInterface([mListener value], &rv);
+  NS_ENSURE_SUCCESS(rv, /* void */);
+  listener->OnMoveStopped();
+}
+
+@end
+
+
+//==============================================================================
 // SBMacCocoaWindowListener
 //==============================================================================
 
@@ -82,9 +246,6 @@
 - (void)startListening;
 - (void)stopListening;
 - (void)windowWillMove:(NSNotification *)aNotification;
-- (void)windowDidMove:(NSNotification *)aNotification;
-- (void)getListenerForNotification:(NSNotification *)aNotification
-            outListener:(sbIWindowMoveListener **)aOutListener;
 
 @end
 
@@ -116,11 +277,11 @@
     [self startListening];
   }
 
-  SBISupportsOwner *listener =
-    [[SBISupportsOwner alloc] initWithValue:aListener];
-  NS_ENSURE_TRUE(listener, /* void */);
+  SBWinMoveListenerContext *listenerContext =
+    [[SBWinMoveListenerContext alloc] initWithListener:aListener
+                                                window:aWindow];
 
-  [mListenerWinDict setObject:listener
+  [mListenerWinDict setObject:listenerContext
                        forKey:[NSNumber numberWithInt:[aWindow hash]]];
 }
 
@@ -146,15 +307,9 @@
 
   // Listen to window move events.
   NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
-
-  // Move
   [defaultCenter addObserver:self
                     selector:@selector(windowWillMove:)
                         name:NSWindowWillMoveNotification
-                      object:nil];
-  [defaultCenter addObserver:self
-                    selector:@selector(windowDidMove:)
-                        name:NSWindowDidMoveNotification
                       object:nil];
 
   mIsObserving = YES;
@@ -172,50 +327,13 @@
 
 - (void)windowWillMove:(NSNotification *)aNotification
 {
-  nsCOMPtr<sbIWindowMoveListener> listener;
-  [self getListenerForNotification:aNotification
-                       outListener:getter_AddRefs(listener)];
+  NSWindow *eventWindow = (NSWindow *)[aNotification object];
 
-  if (listener) {
-    nsresult rv = listener->OnMoveStarted();
-    NS_ENSURE_SUCCESS(rv, /* void */);
-  }
-}
-
-- (void)windowDidMove:(NSNotification *)aNotification
-{
-  nsCOMPtr<sbIWindowMoveListener> listener;
-  [self getListenerForNotification:aNotification
-                       outListener:getter_AddRefs(listener)];
-
-  if (listener) {
-    nsresult rv = listener->OnMoveStopped();
-    NS_ENSURE_SUCCESS(rv, /* void */);
-  }
-}
-
-- (void)getListenerForNotification:(NSNotification *)aNotification
-            outListener:(sbIWindowMoveListener **)aOutListener
-{
-  if (!aOutListener || !aNotification) {
-    return;
-  }
-
-  *aOutListener = nsnull;  // null out by default.
-
-  // The window is the object value on this event.
-  NSWindow *window = (NSWindow *)[aNotification object];
-  NSNumber *winHash = [NSNumber numberWithInt:[window hash]];
-  SBISupportsOwner *supports =
-    (SBISupportsOwner *)[mListenerWinDict objectForKey:winHash];
-
-  if (supports) {
-    nsresult rv;
-    nsCOMPtr<sbIWindowMoveListener> listener =
-      do_QueryInterface([supports value], &rv);
-    NS_ENSURE_SUCCESS(rv, /* void */);
-
-    listener.forget(aOutListener);
+  SBWinMoveListenerContext *listenerContext =
+    (SBWinMoveListenerContext *)[mListenerWinDict objectForKey:
+      [NSNumber numberWithInt:[eventWindow hash]]];
+  if (listenerContext) {
+    [listenerContext onWindowWillMove];
   }
 }
 

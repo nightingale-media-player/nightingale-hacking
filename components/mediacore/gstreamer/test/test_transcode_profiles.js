@@ -42,13 +42,13 @@ function runTest() {
 
   profile = testProfile.QueryInterface(Ci.sbITranscodeEncoderProfile);
   
-  const K_PRIORITY_MAP = {"-1":   100,
-                          "0":    100,
-                          "0.25": 550,
-                          "0.5":  1000,
-                          "0.75": 1250,
-                          "1":    1500,
-                          "2":    1500};
+  const K_PRIORITY_MAP = {"-1":   350,
+                          "0":    350,
+                          "0.25": 1925,
+                          "0.5":  3500,
+                          "0.75": 4000,
+                          "1":    4500,
+                          "2":    4500};
   const K_BITRATE_MAP = {"-1":   32000,
                          "0":    32000,
                          "0.25": 80000,
@@ -65,7 +65,7 @@ function runTest() {
                      "2":    1.0};
 
   for (var i in K_PRIORITY_MAP) {
-    assertEqual(K_PRIORITY_MAP[i], profile.getPriority(i));
+    assertEqual(K_PRIORITY_MAP[i], profile.getEncoderProfilePriority(i));
   }
   for (var i in K_BITRATE_MAP) {
     assertEqual(K_BITRATE_MAP[i], profile.getAudioBitrate(i));

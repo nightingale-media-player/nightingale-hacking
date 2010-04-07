@@ -216,8 +216,10 @@ ContentAreaContextMenu.prototype = {
 
   initMiscItems: function CM_initMiscItems() {
     // Use "Bookmark This Link" if on a link.
+    /*
     this.showItem("context-bookmarkpage",
                   !(this.onTextInput || this.onLink || this.onImage));
+    */
     this.showItem("context-searchselect", this.isTextSelected);
     //xxxlone: note that if we ever want to change this to show the 
     // frame items at the same time as the image and/or link items, 
@@ -368,12 +370,14 @@ ContentAreaContextMenu.prototype = {
       this.updateAddToPlaylist();
     }
     
+    /*
     var showSubscribe = SBDataGetBoolValue("browser.cansubscription") &&
                         !this.onLink &&
                         !this.onImage &&
                         !this.onTextInput;
     this.showItem("context-subscribemedia-page", showSubscribe);
     this.showItem("context-subscribemedia-frame", showSubscribe);
+    */
   },
 
   // Set various context menu attributes based on the state of the world.

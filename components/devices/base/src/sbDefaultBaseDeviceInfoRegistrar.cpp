@@ -175,6 +175,55 @@ sbDefaultBaseDeviceInfoRegistrar::GetDeviceFolder(sbIDevice* aDevice,
 }
 
 NS_IMETHODIMP
+sbDefaultBaseDeviceInfoRegistrar::GetMountTimeout(sbIDevice* aDevice,
+                                                  PRUint32*  retval)
+{
+  TRACE(("%s", __FUNCTION__));
+
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(retval);
+
+  nsresult rv;
+
+  // Get the device XML info and check if it's available.
+  sbDeviceXMLInfo* deviceXMLInfo;
+  rv = GetDeviceXMLInfo(aDevice, &deviceXMLInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!deviceXMLInfo)
+    return NS_ERROR_NOT_AVAILABLE;
+
+  // Get the mount timeout value.
+  rv = deviceXMLInfo->GetMountTimeout(retval);
+  if (rv == NS_ERROR_NOT_AVAILABLE)
+    return NS_ERROR_NOT_AVAILABLE;
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDefaultBaseDeviceInfoRegistrar::GetExcludedFolders(sbIDevice * aDevice,
+                                                     nsAString & aFolders)
+{
+  TRACE(("%s", __FUNCTION__));
+
+  nsresult rv;
+
+  aFolders.Truncate();
+  // Get the device XML info and check if it's available.
+  sbDeviceXMLInfo* deviceXMLInfo;
+  rv = GetDeviceXMLInfo(aDevice, &deviceXMLInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!deviceXMLInfo)
+    return NS_OK;
+
+  rv = deviceXMLInfo->GetExcludedFolders(aFolders);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbDefaultBaseDeviceInfoRegistrar::InterestedInDevice(sbIDevice *aDevice,
                                                      PRBool *retval)
 {

@@ -192,6 +192,10 @@ function test_library(device) {
                     .libraries
                     .queryElementAt(0, Ci.sbIDeviceLibrary)
                     .device);
+  assertEqual(device.defaultLibrary,
+              device.content
+                    .libraries
+                    .queryElementAt(0, Ci.sbIDeviceLibrary));
   // stop a circular reference
   if (device.connected)
     device.disconnect();

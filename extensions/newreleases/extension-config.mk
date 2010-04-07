@@ -1,5 +1,7 @@
 #
-# Copyright (c) 2009, Pioneers of the Inevitable, Inc.
+#=BEGIN SONGBIRD BSD-LIKE LICENSE
+#
+# Copyright (c) 2010, Pioneers of the Inevitable, Inc.
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -25,6 +27,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # 
+#=END SONGBIRD BSD-LIKE LICENSE
+#
 
 EXTENSION_NAME = newreleases
 EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com

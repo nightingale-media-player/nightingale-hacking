@@ -31,6 +31,7 @@
 
 #include "sbIDevice.h"
 #include "sbBaseDeviceEventTarget.h"
+#include "sbBaseDeviceVolume.h"
 #include "sbDeviceLibrary.h"
 
 #include <nsAutoPtr.h>
@@ -101,6 +102,7 @@ public:
   friend class sbDeviceTranscoding;
   friend class sbDeviceImages;
   friend class sbBatchCleanup;
+  friend class sbBaseDeviceVolume;
 
   struct TransferRequest : public nsISupports {
     /* types of requests. not all types necessarily apply to all types of
@@ -224,6 +226,7 @@ public:
   /* selected methods from sbIDevice */
   NS_IMETHOD GetPreference(const nsAString & aPrefName, nsIVariant **_retval);
   NS_IMETHOD SetPreference(const nsAString & aPrefName, nsIVariant *aPrefValue);
+  NS_IMETHOD GetIsDirectTranscoding(PRBool *aIsDirect);
   NS_IMETHOD GetIsBusy(PRBool *aIsBusy);
   NS_IMETHOD GetCanDisconnect(PRBool *aCanDisconnect);
   NS_IMETHOD GetState(PRUint32 *aState);
@@ -235,6 +238,8 @@ public:
   NS_IMETHOD SetCacheSyncRequests(PRBool aChacheSyncRequests);
   NS_IMETHOD SupportsMediaItem(sbIMediaItem*                  aMediaItem,
                                sbIDeviceSupportsItemCallback* aCallback);
+  NS_IMETHOD GetDefaultLibrary(sbIDeviceLibrary** aDefaultLibrary);
+  NS_IMETHOD SetDefaultLibrary(sbIDeviceLibrary* aDefaultLibrary);
 
 public:
   /**
@@ -384,6 +389,30 @@ public:
    * @param aDevLib the device library to remove.
    */
   nsresult RemoveLibrary(sbIDeviceLibrary* aDevLib);
+
+  /**
+   * Update the property with the ID specified by aPropertyID to the value
+   * specified by aPropertyValue in the library specified by aLibrary if
+   * aPropertyValue is different than the current property value.
+   *
+   * \param aLibrary            Library to update.
+   * \param aPropertyID         ID of property to update.
+   * \param aPropertyValue      Property value to which to update.
+   */
+  nsresult UpdateLibraryProperty(sbILibrary*      aLibrary,
+                                 const nsAString& aPropertyID,
+                                 const nsAString& aPropertyValue);
+
+  /**
+   * Update the default library to the library specified by aDevLib.
+   * @param aDevLib the device library to which to update the default library.
+   */
+  nsresult UpdateDefaultLibrary(sbIDeviceLibrary* aDevLib);
+
+  /**
+   * Handle a change to the default library.
+   */
+  virtual nsresult OnDefaultLibraryChanged();
 
   /**
    * Called when a media list has been added to the device library
@@ -604,7 +633,7 @@ public:
   PRUint32 GetDeviceState() {
     return mState;
   }
-  
+
   sbDeviceImages* GetDeviceImages() const {
     return mDeviceImages;
   }
@@ -615,7 +644,7 @@ public:
   void ResetBatchDepth() {
     PR_AtomicSet(&mBatchDepth, 0);
   }
-  
+
 protected:
   friend class sbBaseDeviceInitHelper;
   friend class sbDeviceEnsureSpaceForWrite;
@@ -666,7 +695,6 @@ protected:
   PRUint32 mState;
   PRLock *mPreviousStateLock;
   PRUint32 mPreviousState;
-  nsRefPtr<sbDeviceStatistics> mDeviceStatistics;
   PRBool mHaveCurrentRequest;
   PRBool mAbortCurrentRequest;
   PRInt32 mIgnoreMediaListCount; // Allows us to know if we're ignoring lists
@@ -679,6 +707,7 @@ protected:
   };
   PRUint32 mSyncState;            // State of how to handle sync requsts
 
+  nsCOMPtr<sbIDeviceLibrary> mDefaultLibrary;
   nsRefPtr<sbBaseDeviceLibraryListener> mLibraryListener;
   nsRefPtr<sbDeviceBaseLibraryCopyListener> mLibraryCopyListener;
   nsDataHashtableMT<nsISupportsHashKey, nsRefPtr<sbBaseDeviceMediaListListener> > mMediaListListeners;
@@ -821,6 +850,60 @@ protected:
 
   //----------------------------------------------------------------------------
   //
+  // Device volume services.
+  //
+  //----------------------------------------------------------------------------
+
+  //
+  //   mVolumeLock              Volume lock.
+  //   mVolumeList              List of volumes.
+  //   mVolumeGUIDTable         Table mapping volume GUIDs to volumes.
+  //   mVolumeLibraryGUIDTable  Table mapping library GUIDs to volumes.
+  //   mPrimaryVolume           Primary volume (usually internal storage).
+  //   mDefaultVolume           Default volume when none specified.
+  //
+
+  PRLock*                                    mVolumeLock;
+  nsTArray< nsRefPtr<sbBaseDeviceVolume> >   mVolumeList;
+  nsInterfaceHashtableMT<nsStringHashKey,
+                         sbBaseDeviceVolume> mVolumeGUIDTable;
+  nsInterfaceHashtableMT<nsStringHashKey,
+                         sbBaseDeviceVolume> mVolumeLibraryGUIDTable;
+  nsRefPtr<sbBaseDeviceVolume>               mPrimaryVolume;
+  nsRefPtr<sbBaseDeviceVolume>               mDefaultVolume;
+
+  /**
+   * Add the media volume specified by aVolume to the set of device media
+   * volumes.
+   *
+   * \param aVolume               Volume to add.
+   */
+  nsresult AddVolume(sbBaseDeviceVolume* aVolume);
+
+  /**
+   * Remove the media volume specified by aVolume from the set of device media
+   * volumes.
+   *
+   * \param aVolume               Volume to remove.
+   */
+  nsresult RemoveVolume(sbBaseDeviceVolume* aVolume);
+
+  /**
+   * Return in aVolume the media volume containing the media item specified by
+   * aItem.  If the media item does not belong to a media volume, return
+   * NS_ERROR_NOT_AVAILABLE.
+   *
+   * \param aItem                 Media item for which to get volume.
+   * \param aVolume               Returned media volume.
+   *
+   * \returns NS_ERROR_NOT_AVAILABLE
+   *                              Media item does not belong to a volume.
+   */
+  nsresult GetVolumeForItem(sbIMediaItem*        aItem,
+                            sbBaseDeviceVolume** aVolume);
+
+  //----------------------------------------------------------------------------
+  //
   // Device settings services.
   //
   //----------------------------------------------------------------------------
@@ -950,8 +1033,15 @@ protected:
   //
   //----------------------------------------------------------------------------
 
+  /* get the prefbranch root for this device */
+  nsresult GetPrefBranchRoot(nsACString& aRoot);
+
   /* get a prefbranch for this device */
   nsresult GetPrefBranch(nsIPrefBranch** aPrefBranch);
+
+  /* get a prefbranch for a device library */
+  nsresult GetPrefBranch(sbIDeviceLibrary* aLibrary,
+                         nsIPrefBranch**   aPrefBranch);
 
   /* Helper function to get a particular pref branch */
   nsresult GetPrefBranch(const char *aPrefBranchName,
@@ -1475,6 +1565,27 @@ protected:
    */
   nsresult GetMusicLimitSpacePercent(const nsAString & aPrefBase,
                                      PRUint32 *aOutLimitPercentage);
+
+  /**
+   * Hashtable enumerator function that removes the items from the list
+   */
+  static PLDHashOperator RemoveLibraryEnumerator(
+                                             nsISupports * aList,
+                                             nsCOMPtr<nsIMutableArray> & aItems,
+                                             void * aUserArg);
+
+  /**
+   * Auto class to unignore when leaving scope
+   */
+  class AutoListenerIgnore
+  {
+  public:
+    AutoListenerIgnore(sbBaseDevice * aDevice);
+    ~AutoListenerIgnore();
+  private:
+    sbBaseDevice * mDevice;
+  };
+
   /**
    * This iterates over the transfer requests and removes the Songbird library
    * items that were created for the requests. REQUEST_WRITE entries come from
@@ -1489,6 +1600,10 @@ protected:
   template <class T>
   nsresult RemoveLibraryItems(T iter, T end)
   {
+    nsresult rv;
+    nsInterfaceHashtable<nsISupportsHashKey, nsIMutableArray> groupedItems;
+    groupedItems.Init();
+
     while (iter != end) {
       nsRefPtr<sbBaseDevice::TransferRequest> request = *iter;
       // If this is a request that adds an item to the device we need to remove
@@ -1497,7 +1612,16 @@ protected:
         case sbBaseDevice::TransferRequest::REQUEST_WRITE:
         case sbBaseDevice::TransferRequest::REQUEST_READ: {
           if (request->list && request->item) {
-            nsresult rv = DeleteItem(request->list, request->item);
+            nsCOMPtr<nsIMutableArray> items;
+            groupedItems.Get(request->list, getter_AddRefs(items));
+            if (!items) {
+              items = do_CreateInstance(
+                               "@songbirdnest.com/moz/xpcom/threadsafe-array;1",
+                               &rv);
+              NS_ENSURE_TRUE(groupedItems.Put(request->list, items),
+                             NS_ERROR_OUT_OF_MEMORY);
+            }
+            rv = items->AppendElement(request->item, PR_FALSE);
             NS_ENSURE_SUCCESS(rv, rv);
           }
         }
@@ -1505,6 +1629,8 @@ protected:
       }
       ++iter;
     }
+    AutoListenerIgnore ignore(this);
+    groupedItems.Enumerate(RemoveLibraryEnumerator, this);
     return NS_OK;
   }
 
@@ -1559,9 +1685,12 @@ protected:
   nsresult IsRequestDuplicate(TransferRequestQueue & aQueue,
                               TransferRequest * aRequest,
                               bool & aIsDuplicate);
+  nsresult  GetExcludedFolders(nsTArray<nsString> & aExcludedFolders);
 };
 
 void SBUpdateBatchCounts(sbBaseDevice::Batch& aBatch);
+
+void SBUpdateBatchCountsIgnorePlaylist(sbBaseDevice::Batch& aBatch);
 
 void SBUpdateBatchIndex(sbBaseDevice::Batch& aBatch);
 

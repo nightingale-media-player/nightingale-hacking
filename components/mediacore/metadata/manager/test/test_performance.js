@@ -60,6 +60,8 @@ function runTest () {
   }
   var urls = query.getResultRangeAsURIStrings(0, query.getFileCount() - 1);
 
+  fileScan.finalize();
+  
   log("Creating " + urls.length + " items...");
   var items = library.batchCreateMediaItems(urls, null, true);
 

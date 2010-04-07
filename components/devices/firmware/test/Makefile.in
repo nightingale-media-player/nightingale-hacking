@@ -36,4 +36,7 @@ SONGBIRD_TEST_COMPONENT = devicefirmware
 SONGBIRD_TESTS = $(srcdir)/test_device_firmware_handler.js \
                  $(NULL)
 
+SUBDIRS = testfiles \
+          $(NULL)
+
 include $(topsrcdir)/build/rules.mk

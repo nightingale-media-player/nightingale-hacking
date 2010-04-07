@@ -174,8 +174,7 @@ public:
   nsresult Init(sbIDevice *aDevice,
                 sbIDeviceFirmwareUpdate *aUpdate, 
                 sbIDeviceFirmwareHandler *aHandler,
-                PRBool aRecovery = PR_FALSE,
-                PRBool aFirmwareUpdateNeedsCaching = PR_FALSE);
+                PRBool aRecovery = PR_FALSE);
 
 private:
   virtual ~sbDeviceFirmwareUpdaterRunner();
@@ -186,7 +185,6 @@ protected:
   nsCOMPtr<sbIDeviceFirmwareHandler>  mHandler;
 
   PRPackedBool mRecovery;
-  PRPackedBool mFirmwareUpdateNeedsCaching;
 };
 
 #define SB_DEVICEFIRMWAREUPDATER_DESCRIPTION               \

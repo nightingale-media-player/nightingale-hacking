@@ -1,28 +1,27 @@
-/**
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
+
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
@@ -112,7 +111,7 @@ MediaPageManager.prototype = {
     // Page not found, throw!
     throw new Error("Page " + aPageInfo.contentTitle + " not found in unregisterPage");
   },
-  
+
   getAvailablePages: function(aList, aConstraint) {
     this._ensureMediaPageRegistration();
     // If no list is provided, return the entire set
@@ -127,12 +126,12 @@ MediaPageManager.prototype = {
         tempArray.push(pageInfo);
       }
     }
-    
+
     // ... and return that.
     return ArrayConverter.enumerator(tempArray); 
   },
-  
-  getPage: function(aList, aConstraint) {
+
+  getPage: function(aList, aConstraint, aType) {
     this._ensureMediaPageRegistration();
 
     // use the outermost list
@@ -140,16 +139,35 @@ MediaPageManager.prototype = {
 
     // Read the saved state
     var remote = Cc["@songbirdnest.com/Songbird/DataRemote;1"]
-                 .createInstance(Ci.sbIDataRemote);
-    remote.init("mediapages." + aList.guid, null);
+                   .createInstance(Ci.sbIDataRemote);
+    var baseKey = "mediapages." + aList.guid;
+    var key = baseKey;
+    if (aType)
+      key = baseKey + "." + aType;
+    remote.init(key, null);
     var savedPageURL = remote.stringValue;
     if (savedPageURL && savedPageURL != "") {
       // Check that the saved url is still registered 
       // and still supports this list
-      var pageInfo = this._checkPageForList(aList, aConstraint, savedPageURL);
+      let pageInfo = this._checkPageForList(aList, aConstraint, savedPageURL);
       if (pageInfo) return pageInfo;
     }
-    
+    // fall back to prefs with no type
+    else if (aType) {
+      let remote = Cc["@songbirdnest.com/Songbird/DataRemote;1"]
+                     .createInstance(Ci.sbIDataRemote);
+      remote.init(baseKey, null);
+      let savedOldPageURL = remote.stringValue;
+      if (savedOldPageURL && savedOldPageURL != "") {
+        // Check that the saved url is still registered 
+        // and still supports this list
+        let oldPageInfo = this._checkPageForList(aList,
+                                                 aConstraint,
+                                                 savedOldPageURL);
+        if (oldPageInfo) return oldPageInfo;
+      }
+    }
+
     // Read the list's default
     var defaultPageURL = aList.getProperty(SBProperties.defaultMediaPageURL);
     if (defaultPageURL && defaultPageURL != "") {
@@ -158,11 +176,11 @@ MediaPageManager.prototype = {
       var pageInfo = this._checkPageForList(aList, aConstraint, defaultPageURL);
       if (pageInfo) return pageInfo;
     }
-    
+
     // No saved state and no default, this is either the first time this list
     // is shown, or its previous saved/default page isn't valid anymore, so
     // pick a new one
-    
+
     // Hardcoded first run logic:
     // Everybody gets the listview (playlistPage)
     if (this._defaultPlaylistPage)  {
@@ -177,22 +195,25 @@ MediaPageManager.prototype = {
         }
       }
     }
-    
+
     // Oh crap.
     throw new Error("MediaPageManager unable to determine a page for " + aList.guid);
 
     // keep js happy ?
     return null;
   },
-  
-  setPage: function(aList, aPageInfo) {
+
+  setPage: function(aList, aPageInfo, aType) {
     // use the outermost list
     aList = this._getOutermostList(aList);
 
     // Save the state
     var remote = Cc["@songbirdnest.com/Songbird/DataRemote;1"]
                  .createInstance(Ci.sbIDataRemote);
-    remote.init("mediapages." + aList.guid, null);
+    var key = "mediapages." + aList.guid;
+    if (aType)
+      key = key + "." + aType;
+    remote.init(key, null);
     remote.stringValue = aPageInfo.contentUrl;
   },
 
@@ -205,7 +226,7 @@ MediaPageManager.prototype = {
       aList = aList.library.getMediaItem(outerGuid);
     return aList;
   },
-  
+ 
   // internal. checks that a url is registered in the list of pages, and that 
   // its matching test succeeds for a given list
   _checkPageForList: function(aList, aConstraint, aUrl) {
@@ -231,9 +252,8 @@ MediaPageManager.prototype = {
     var playlistString = "mediapages.playlistpage";
     var filteredPlaylistString = "mediapages.filteredplaylistpage";
     try {
-      var stringBundleService =
-          Components.classes["@mozilla.org/intl/stringbundle;1"]
-                    .getService(Components.interfaces.nsIStringBundleService);
+      var stringBundleService = Cc["@mozilla.org/intl/stringbundle;1"]
+                                  .getService(Ci.nsIStringBundleService);
       var stringBundle = stringBundleService.createBundle(
            "chrome://songbird/locale/songbird.properties" );
       playlistString = stringBundle.GetStringFromName(playlistString);
@@ -499,10 +519,10 @@ var MediaPageMetadataReader = {
    * \param errorList Array of error messages
    */
   _reportErrors: function _reportErrors(contextMessage, errorList) {
-    var consoleService = Components.classes["@mozilla.org/consoleservice;1"].
-         getService(Components.interfaces.nsIConsoleService);
+    var consoleService = Cc["@mozilla.org/consoleservice;1"]
+                           .getService(Ci.nsIConsoleService);
     for (var i = 0; i  < errorList.length; i++) {
-      Components.utils.reportError("MediaPage Addon Metadata: " + contextMessage + errorList[i]);
+      Cu.reportError("MediaPage Addon Metadata: " + contextMessage + errorList[i]);
     }
   }
 }

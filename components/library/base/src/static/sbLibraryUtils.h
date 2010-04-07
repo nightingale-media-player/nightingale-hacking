@@ -64,8 +64,12 @@ public:
 
   void End()
   {
+#ifdef DEBUG
     PRInt32 depth = PR_AtomicDecrement(&mDepth);
     NS_ASSERTION(depth >= 0, "Illegal batch depth, mismatched calls!");
+#else
+    PR_AtomicDecrement(&mDepth);
+#endif
   }
 
   PRUint32 Depth()

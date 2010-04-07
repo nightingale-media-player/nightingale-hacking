@@ -1,27 +1,26 @@
 /** vim: ts=2 sw=2 expandtab
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 /**
@@ -259,10 +258,6 @@ function sbLibraryServicePane_fillNewItemMenu(aNode, aContextMenu, aParentWindow
       'menu.servicepane.file.smart.accesskey',
       'doMenu("menuitem_file_smart")',
       "alt");
-  add('menuitem_file_remote',
-      'menu.servicepane.file.remote',
-      'menu.servicepane.file.remote.accesskey',
-      'doMenu("menuitem_file_remote")');
 }
 
 sbLibraryServicePane.prototype.onSelectionChanged =
@@ -659,6 +654,13 @@ function sbLibraryServicePane_onDragGesture(aNode, aTransferable) {
 
 
 /**
+ * Called when the user is about to attempt to rename a library/medialist node
+ */
+sbLibraryServicePane.prototype.onBeforeRename =
+function sbLibraryServicePane_onBeforeRename(aNode) {
+}
+
+/**
  * Called when the user has attempted to rename a library/medialist node
  */
 sbLibraryServicePane.prototype.onRename =
@@ -766,6 +768,50 @@ function sbLibraryServicePane_suggestLibraryForNewList(aMediaListType, aNode) {
   return null;
 }
 
+/* \brief Suggest a unique name for creating a new playlist
+ *
+ * \param aLibrary an sbILibrary.
+ * \return a unique playlist name.
+ */
+sbLibraryServicePane.prototype.suggestNameForNewPlaylist =
+function sbLibraryServicePane_suggestNameForNewPlaylist(aLibrary) {
+  // Give the playlist a default name
+  // TODO: Localization should be done internally
+  var name = SBString("playlist", "Playlist");
+  var length = name.length;
+
+  if(aLibrary instanceof Ci.sbILibrary) {
+    // Build the existing IDs array
+    let listIDs = [];
+    let mediaLists = aLibrary.getItemsByProperty(SBProperties.isList, "1");
+    for (let i = 0; i < mediaLists.length; ++i) {
+      let mediaListName = mediaLists.queryElementAt(i, Ci.sbIMediaList).name;
+      if (mediaListName && mediaListName.substr(0, length) == name) {
+        if (mediaListName.length == length) {
+          listIDs.push(1);
+        }
+        else if (mediaListName.length > length + 1) {
+          listIDs.push(parseInt(mediaListName.substr(length + 1)));
+        }
+      }
+    }
+
+    let id = 1;
+    while (1) {
+      // The id is available.
+      if (listIDs.indexOf(id) == -1)
+        break;
+
+      ++id;
+    }
+
+    if (id > 1)
+      name = SBFormattedString("playlist.sequence", [id]);
+  }
+
+  return name;
+}
+
 sbLibraryServicePane.prototype.createNodeForLibrary =
 function sbLibraryServicePane_createNodeForLibrary(aLibrary) {
   if(aLibrary instanceof Ci.sbILibrary) {
@@ -841,7 +887,7 @@ function sbLibraryServicePane_getNodeForLibraryResource(aResource) {
   }
   for each (let type in ["audio", "video", "podcast"]) {
     let constrainedURN = urn + ":constraint(" + type + ")";
-    node = this._servicePane.getNode(urn);
+    node = this._servicePane.getNode(constrainedURN);
     if (node && !node.hidden) {
       return node;
     }
@@ -862,45 +908,39 @@ function sbLibraryServicePane_getNodeFromMediaListView(aMediaListView) {
   //logcall(arguments);
 
   // get the base URN...
-  var baseURN = this._getURNForLibraryResource(aMediaListView.mediaList);
+  var urn = this._getURNForLibraryResource(aMediaListView.mediaList);
 
-  if ((aMediaListView instanceof Ci.sbIFilterableMediaListView) &&
-      aMediaListView.filterConstraint)
-  {
-    // try to add constraints
-    var urn = baseURN;
-
-    // stash off the properties involved in the standard constraints,
-    // so that we don't look at them
-    var standardConstraintProperties = {};
-    const standardConstraint = LibraryUtils.standardFilterConstraint
-    for (let group in ArrayConverter.JSEnum(standardConstraint.groups)) {
-      group.QueryInterface(Ci.sbILibraryConstraintGroup);
-      for (let prop in ArrayConverter.JSEnum(group.properties)) {
-        standardConstraintProperties[prop] = true;
-      }
-    }
-
-    for (let group in ArrayConverter.JSEnum(aMediaListView.filterConstraint.groups)) {
-      group.QueryInterface(Ci.sbILibraryConstraintGroup);
-      for (let prop in ArrayConverter.JSEnum(group.properties)) {
-        if (prop in standardConstraintProperties) {
-          continue;
-        }
-        for (let value in ArrayConverter.JSEnum(group.getValues(prop))) {
-          urn += ":constraint(" + value + ")";
-        }
-      }
-    }
-
-    let node = this._servicePane.getNode(urn);
-    if (node) {
-      return node;
-    }
+  var values = this._getConstraintsValueArrayFromMediaListView(aMediaListView);
+  for (i = 0; i < values.length; ++i) {
+    urn += ":constraint(" + values[i] + ")";
   }
 
-  // lookup by constraints failed, use the base URN
-  return this._servicePane.getNode(baseURN);
+  // If lookup constraints failed, roll back to the base URN
+  return this._servicePane.getNode(urn);
+}
+
+/**
+ * \brief Attempt to get the content type of service pane node for the given
+ *        media list view.
+ *
+ * \param aMediaListView the view for which to get the content type.
+ * \returns the content type of service pane node that represents the given
+ *          media list view or null if the type information is not available
+ *          for the node.
+ */
+sbLibraryServicePane.prototype.getNodeContentTypeFromMediaListView =
+function sbLibraryServicePane_getNodeContentTypeFromMediaListView(
+                                  aMediaListView) {
+  var values = this._getConstraintsValueArrayFromMediaListView(aMediaListView);
+
+  const K_TYPES = ["audio", "video", "podcast"];
+
+  for (i = 0; i < values.length; ++i) {
+    if (K_TYPES.indexOf(values[i]) > -1)
+      return values[i];
+  }
+
+  return null;
 }
 
 /* \brief Attempt to get a library resource for the given service pane node.
@@ -960,6 +1000,41 @@ function sbLibraryServicePane_setNodeReadOnly(aNode, aReadOnly) {
 /////////////////////
 // Private Methods //
 /////////////////////
+
+sbLibraryServicePane.prototype._getConstraintsValueArrayFromMediaListView =
+function sbLibraryServicePane__getConstraintsValueArrayFromMediaListView(
+                                   aMediaListView) {
+  var values = [];
+
+  if ((aMediaListView instanceof Ci.sbIFilterableMediaListView) &&
+      aMediaListView.filterConstraint)
+  {
+    // stash off the properties involved in the standard constraints,
+    // so that we don't look at them
+    var standardConstraintProperties = {};
+    const standardConstraint = LibraryUtils.standardFilterConstraint;
+    for (let group in ArrayConverter.JSEnum(standardConstraint.groups)) {
+      group.QueryInterface(Ci.sbILibraryConstraintGroup);
+      for (let prop in ArrayConverter.JSEnum(group.properties)) {
+        standardConstraintProperties[prop] = true;
+      }
+    }
+
+    for (let group in ArrayConverter.JSEnum(aMediaListView.filterConstraint.groups)) {
+      group.QueryInterface(Ci.sbILibraryConstraintGroup);
+      for (let prop in ArrayConverter.JSEnum(group.properties)) {
+        if (prop in standardConstraintProperties) {
+          continue;
+        }
+        for (let value in ArrayConverter.JSEnum(group.getValues(prop))) {
+          values.push(value);
+        }
+      }
+    }
+  }
+
+  return values;
+}
 
 
 /**

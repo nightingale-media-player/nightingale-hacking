@@ -322,12 +322,22 @@ sbCDDevice::ReqHandleMount(TransferRequest* aRequest)
                                     sbDeviceStatusHelper::OPERATION_TYPE_MOUNT,
                                     aRequest);
 
+  // Get the volume to mount.
+  nsRefPtr<sbBaseDeviceVolume> volume;
+  rv = GetVolumeForItem(aRequest->list, getter_AddRefs(volume));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the volume info.
+  nsRefPtr<sbDeviceStatistics> deviceStatistics;
+  rv = volume->GetStatistics(getter_AddRefs(deviceStatistics));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Update the device library contents.
   rv = UpdateDeviceLibrary(mDeviceLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Add the library to the device statistics.
-  rv = mDeviceStatistics->AddLibrary(mDeviceLibrary);
+  rv = deviceStatistics->AddLibrary(mDeviceLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Update the device library CD disc hash.

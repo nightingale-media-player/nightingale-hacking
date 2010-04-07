@@ -1,0 +1,13 @@
+<!ENTITY prefs.location "Miesto">
+<!ENTITY prefs.location.descr "Zistite, kto príde do vašej oblasti.  &brandShortName; dokáže sledovať vašich obľúbených umelcov a kluby, vďaka čomu nezmeškáte ani jedno vystúpenie.  Vyberte si najbližšie mesto a zistite, ktorý umelec ho navštívi.">
+<!ENTITY prefs.library "Knižnica">
+<!ENTITY prefs.library.text "&brandShortName; dokáže pridať stĺpec do vašej hudobnej knižnice, ktorý vás upozorní, keď do vášho mesta zavítajú na turné niektorí z vašich obľúbených umelcov.">
+<!ENTITY prefs.library.checklabel "Pridať stĺpec Na turné do mojej knižnice">
+<!ENTITY prefs.country "Krajina">
+<!ENTITY prefs.country.us "Spojené štáty americké">
+<!ENTITY prefs.country.uk "Spojené kráľovstvo">
+<!ENTITY prefs.state "Štát">
+<!ENTITY prefs.city "Mesto">
+<!ENTITY prefs.radius "Rádius">
+<!ENTITY prefs.findShows "Nájsť vystúpenia">
+<!ENTITY concerts.poweredby "Koncertné zoznamy poskytla spoločnosť">

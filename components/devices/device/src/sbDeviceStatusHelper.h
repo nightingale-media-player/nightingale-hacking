@@ -1,29 +1,27 @@
 /* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #ifndef sbDeviceStatus_h
 #define sbDeviceStatus_h
@@ -87,7 +85,8 @@ public:
                       PRInt32       aItemCount,
                       PRInt32       aItemType,
                       sbIMediaList* aMediaList = nsnull,
-                      sbIMediaItem* aMediaItem = nsnull);
+                      sbIMediaItem* aMediaItem = nsnull,
+                      PRBool        aNewBatch = PR_TRUE);
 
   void OperationComplete(nsresult aResult);
 
@@ -229,14 +228,29 @@ public:
                                        mResult(NS_ERROR_FAILURE),
                                        mOperation(aOperation)
   {
-    // If this is the start of a batch or is not a batch thingy do start op
-    if (mRequest->batchIndex == sbBaseDevice::BATCH_INDEX_START) {
+    PRBool copyAfterTranscode = 
+      (mOperation == sbDeviceStatusHelper::OPERATION_TYPE_WRITE &&
+       mRequest->destinationCompatibility ==
+         sbBaseDevice::TransferRequest::COMPAT_NEEDS_TRANSCODING);
+
+    // If this is the start of a batch or is not a batch thingy do start op.
+    //
+    // Some device has two phases for transcoding (MTP for example).
+    // If this is the last copying operation in the queue after the last
+    // transcoding, do a start op (initialization). The values have been
+    // destroyed by the auto complete destructor of the last transcoding
+    // operation already.
+    if (mRequest->batchIndex == sbBaseDevice::BATCH_INDEX_START ||
+        (copyAfterTranscode && mRequest->batchIndex == mRequest->batchCount)) {
+
+      // Not a new batch if this is a write operation after transcoding.
       mStatus->OperationStart(mOperation,
                               mRequest->batchIndex,
                               mRequest->batchCount,
                               mRequest->itemType,
                               IsItemOp(mOperation) ? mRequest->list : nsnull,
-                              IsItemOp(mOperation) ? mRequest->item : nsnull);
+                              IsItemOp(mOperation) ? mRequest->item : nsnull,
+                              !copyAfterTranscode);
     }
     if (IsItemOp(mOperation)) {
       // Update item status

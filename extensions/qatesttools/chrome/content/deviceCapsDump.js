@@ -93,28 +93,31 @@ var DialogController =
            contentCount++)
       {
         var formatArray =
-          caps.getSupportedFormats(contentArray[contentCount], {});
+          caps.getSupportedMimeTypes(contentArray[contentCount], {});
 
         for (var formatIndex = 0;
              formatIndex < formatArray.length;
              formatIndex++)
         {
           try {
-            var format = caps.getFormatType(contentArray[contentCount],
-                                            formatArray[formatIndex]);
+            var formats = caps.getFormatTypes(contentArray[contentCount],
+                                              formatArray[formatIndex],
+                                              {});
             
-            // Pass on logging depending on what type the format is.
-            if (format instanceof Ci.sbIAudioFormatType) {
-              format.QueryInterface(Ci.sbIAudioFormatType);
-              this._logAudioFormatType(format, formatArray[formatIndex]);
-            }
-            else if (format instanceof Ci.sbIVideoFormatType) {
-              format.QueryInterface(Ci.sbIVideoFormatType);
-              this._logVideoFormatType(format, formatArray[formatIndex]);
-            }
-            else if (format instanceof Ci.sbIImageFormatType) {
-              format.QueryInterface(Ci.sbIImageFormatType);
-              this._logImageFormatType(format, formatArray[formatIndex]);
+            for each (format in formats) {
+              // Pass on logging depending on what type the format is.
+              if (format instanceof Ci.sbIAudioFormatType) {
+                format.QueryInterface(Ci.sbIAudioFormatType);
+                this._logAudioFormatType(format, formatArray[formatIndex]);
+              }
+              else if (format instanceof Ci.sbIVideoFormatType) {
+                format.QueryInterface(Ci.sbIVideoFormatType);
+                this._logVideoFormatType(format, formatArray[formatIndex]);
+              }
+              else if (format instanceof Ci.sbIImageFormatType) {
+                format.QueryInterface(Ci.sbIImageFormatType);
+                this._logImageFormatType(format, formatArray[formatIndex]);
+              }
             }
           }
           catch (e) {
@@ -179,7 +182,7 @@ var DialogController =
 
   _logAudioFormatType: function(aAudioFormat, aFormat)
   {
-    var codec = aAudioFormat.containerFormat;
+    var codec = aAudioFormat.audioCodec;
     var containerFormat = aAudioFormat.containerFormat;
     var bitrates = aAudioFormat.supportedBitrates;
     var sampleRates = aAudioFormat.supportedSampleRates;

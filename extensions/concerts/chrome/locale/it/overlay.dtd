@@ -1,0 +1,6 @@
+<!ENTITY concerts.loading "Stiamo cercando gli artisti in tour nelle tue vicinanze…">
+<!ENTITY concerts.changelocation "Cambia località">
+<!ENTITY concerts.easteregg.fail "FAIL">
+<!ENTITY concerts.easteregg.fail.2 "Nessun concerto trovato a">
+<!ENTITY concerts.timeout.error "Nessuna connessione a Internet o il database non funziona.  Riprovare più tardi.">
+<!ENTITY concerts.timeoutreport.error "Segnala un problema">

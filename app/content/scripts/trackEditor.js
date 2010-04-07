@@ -1,27 +1,25 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 if (typeof(Ci) == "undefined")
@@ -52,11 +50,10 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
  *
  *****************************************************************************/
 var TrackEditor = {
-  
-  
+
   _propertyManager: Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
                       .getService(Ci.sbIPropertyManager),
-             
+
   // TrackEditorState object
   state: null,
   
@@ -203,12 +200,10 @@ var TrackEditor = {
     if (tabCount > 1) {
       trackeditorTabs.hidden = false;
     }
-    
-    
+
     // Monitor all changes in order to update the dialog controls
     this.state.addPropertyListener("all", this);
   },
-  
   
   /**
    * Show/hide warning messages as needed in the header of the dialog
@@ -482,7 +477,7 @@ var TrackEditor = {
           if (value == "" && property != SBProperties.primaryImageURL) {
             value = null;
           }
-          
+
           item.setProperty(property, value);
           
           // Flag the item as needing a metadata-write job.

@@ -1,28 +1,27 @@
-/* vim: ts=2 sw=2 expandtab
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+/* vim: ts=2 sw=2 expandtab */
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 /**
  * \file sbIServicePaneService.idl
@@ -179,7 +178,7 @@ interface sbIServicePaneListener : nsISupports {
 *
 * @halfbaked
 */
-[scriptable, uuid(01935bf0-70a4-4334-b166-0349ced535bf)]
+[scriptable, uuid(66cd575e-1dd2-11b2-b622-cc0af12fc9d4)]
 interface sbIServicePaneService : nsISupports
 {
   /**
@@ -296,11 +295,17 @@ interface sbIServicePaneService : nsISupports
   PRBool onDragGesture(in AString aID,
                        out nsITransferable aTransferable);
 
+  /* \brief Called before a user starts to rename a node.
+   * \param aId the ID of the node about to be renamed
+   */
+  void onBeforeRename(in AString aID);
+
   /* \brief Called when a node is renamed by the user, allows
    *        the node owner to accept the action by setting the
    *        node name to the given value.
    * \param aId the ID of the node being renamed
-   * \param aNewName new name entered by the user
+   * \param aNewName new name entered by the user or null if user canceled
+   *        renaming
    */
   void onRename(in AString aID,
                 in AString aNewName);
@@ -321,7 +326,7 @@ interface sbIServicePaneService : nsISupports
 * \interface sbIServicePaneModule
 * \brief The interface exposed by the service pane backends
 */
-[scriptable, uuid(db05f541-6e70-4fad-98fc-e50820d36648)]
+[scriptable, uuid(abc52828-1dd1-11b2-a8ce-dae6d9263bb7)]
 interface sbIServicePaneModule : nsISupports
 {
   /* \brief Initialize this service pane module
@@ -363,11 +368,17 @@ interface sbIServicePaneModule : nsISupports
   PRBool onDragGesture(in sbIServicePaneNode aNode,
                        in nsITransferable aTransferable);
 
+  /* \brief Called before a user starts to rename a node.
+   * \param aNode the node that is about to be renamed
+   */
+  void onBeforeRename(in sbIServicePaneNode aNode);
+
   /* \brief Called when a node is renamed by the user, allows
    *        the module to accept the action by setting the
    *        node name to the given value.
    * \param aNode the node that was renamed
-   * \param aNewName new name entered by the user
+   * \param aNewName new name entered by the user or null if user canceled
+   *        renaming
    */
   void onRename(in sbIServicePaneNode aNode,
                 in AString aNewName);

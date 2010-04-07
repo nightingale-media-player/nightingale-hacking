@@ -62,6 +62,22 @@ sbWindowChromeService::~sbWindowChromeService()
   }
 }
 
+/* static */ bool
+sbWindowChromeService::IsCompositionEnabled(const sbWindowChromeService* self)
+{
+  if (!self || !self->mDwmIsCompositionEnabled) {
+    // DWM API isn't available
+    return false;
+  }
+  BOOL isDWMCompositionEnabled = FALSE;
+  HRESULT hr = self->mDwmIsCompositionEnabled(&isDWMCompositionEnabled);
+  if (FAILED(hr)) {
+    return false;
+  }
+
+  return isDWMCompositionEnabled != FALSE;
+}
+
 /* void hideChrome (in nsISupports aWindow, in boolean aHide); */
 NS_IMETHODIMP sbWindowChromeService::HideChrome(nsISupports *aWindow,
                                                 PRBool aHide)
@@ -102,6 +118,15 @@ NS_IMETHODIMP sbWindowChromeService::HideChrome(nsISupports *aWindow,
   return NS_OK;
 }
 
+/* readonly attribute boolean isCompositionEnabled; */
+NS_IMETHODIMP
+sbWindowChromeService::GetIsCompositionEnabled(PRBool *aIsCompositionEnabled)
+{
+  NS_ENSURE_ARG_POINTER(aIsCompositionEnabled);
+  *aIsCompositionEnabled = IsCompositionEnabled(this);
+  return NS_OK;
+}
+
 /* static */
 LRESULT
 sbWindowChromeService::WndProc(HWND hWnd,
@@ -129,16 +154,48 @@ sbWindowChromeService::WndProc(HWND hWnd,
       break;
     }
     if (IsZoomed(hWnd)) {
-      // For maximized windows, adjust by the size of the borders as well,
-      // because Windows actually makes the window bigger than the screen to
-      // accoommodate for window borders.
+      // On Windows 7, Windows will adjust the size of the maximized windows
+      // so that they're larger than the screen to account for the window
+      // border (even with Aero disabled).  On XP, however, it does _not_ do
+      // that.  So, figure out how big the window wants to be, and how big the
+      // screen is, and go for the closest solution.
       NCCALCSIZE_PARAMS* params = (NCCALCSIZE_PARAMS*)lParam;
+      RECT* rectWindow = &params->rgrc[0]; // shorthand
+      RECT rectMon = {0};
       int xSize = ::GetSystemMetrics(SM_CXSIZEFRAME);
       int ySize = ::GetSystemMetrics(SM_CYSIZEFRAME);
-      params->rgrc[0].top += ySize;
-      params->rgrc[0].bottom -= ySize;
-      params->rgrc[0].left += xSize;
-      params->rgrc[0].right -= xSize;
+
+      HMONITOR hMon = ::MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+      if (hMon) {
+        MONITORINFO monInfo = {0};
+        monInfo.cbSize = sizeof(monInfo);
+        BOOL success = ::GetMonitorInfo(hMon, &monInfo);
+        if (success) {
+          ::CopyRect(&rectMon, &monInfo.rcWork);
+        }
+        else {
+          ::CopyRect(&rectMon, rectWindow);
+        }
+        ::CloseHandle(hMon);
+      }
+      else {
+        // no monitor!?
+        ::CopyRect(&rectMon, rectWindow);
+      }
+
+      const LONG TOLERANCE = 2;
+      if (rectMon.top - rectWindow->top > ySize - TOLERANCE) {
+        rectWindow->top += ySize;
+      }
+      if (rectWindow->bottom - rectMon.bottom > ySize - TOLERANCE) {
+        rectWindow->bottom -= ySize;
+      }
+      if (rectMon.left - rectWindow->left > xSize - TOLERANCE) {
+        rectWindow->left += xSize;
+      }
+      if (rectWindow->right - rectMon.right > xSize - TOLERANCE) {
+        rectWindow->right -= xSize;
+      }
 
       // Chop off one pixel on any edge with auto-hidden taskbars (deskbars,
       // really).  This is required to make sure those taskbars will remain
@@ -193,24 +250,22 @@ sbWindowChromeService::WndProc(HWND hWnd,
     // no chrome at all).
     return 0;
   }
-  // for these messages, we want to call the default window proc then invalidate
-  // the non-client areas
   case WM_NCACTIVATE:
-  case WM_SETTEXT:
+  {
+    if (IsCompositionEnabled((sbWindowChromeService*)uIdSubclass)) {
+      // When DWM composition is enabled, call the default handler so that
+      // it draws the window shadow.  In this case the window is also double
+      // buffered (by the DWM), so we don't have to worry about flickering.
+      return DefSubclassProc(hWnd, uMsg, wParam, lParam);
+    }
+    // No DWM, don't do anything to avoid extra paints of the non-client area
+    // which cases bad flickering.
+    return TRUE;
+  }
   case WM_ACTIVATE:
   {
-    // unset enough window styles to turn off rendering of the non-client area
-    // while we call the default implementations.  The usual solution found on
-    // the internet seems to call for unsetting WS_VISIBLE instead, but it
-    // seems to cause repainting problems in other windows when we deactivate.
-    LONG style = ::GetWindowLong(hWnd, GWL_STYLE);
-    ::SetWindowLong(hWnd,
-                    GWL_STYLE,
-                    (style & ~(WS_CAPTION | WS_SYSMENU | WS_BORDER | WS_THICKFRAME)));
-    LRESULT result = DefSubclassProc(hWnd, uMsg, wParam, lParam);
-    // undo the window styles hack
-    ::SetWindowLong(hWnd, GWL_STYLE, style);
-    return result;
+    // Nothing needs to be done here; but suppress some painting.
+    return 0;
   }
   case WM_NCPAINT:
   {
@@ -218,34 +273,13 @@ sbWindowChromeService::WndProc(HWND hWnd,
     // Since that only works when DWM is enabled anyway, check if it is - if it
     // is not, do not call the default implementation since that causes flicker
     // on systems with theming but not DWM (e.g. XP, or Vista with 16bpp).
-    sbWindowChromeService* self = (sbWindowChromeService*)uIdSubclass;
-    if (!self->mDwmIsCompositionEnabled) {
-      // DWM API isn't available, don't do anything
+    if (!IsCompositionEnabled((sbWindowChromeService*)uIdSubclass)) {
+      // no need to do anything; however, invalidate the window anyway in case
+      // this paint was caused by invalidation.
+      InvalidateRgn(hWnd, NULL, FALSE);
       return 0;
     }
-    BOOL isDWMCompositionEnabled = FALSE;
-    HRESULT hr = self->mDwmIsCompositionEnabled(&isDWMCompositionEnabled);
-    if (FAILED(hr)) {
-      isDWMCompositionEnabled = FALSE;
-    }
-
-    if (!isDWMCompositionEnabled) {
-      // DWM composition isn't on; don't do NCPAINT
-      return 0;
-    }
-
-    // Try to convince it that it doesn't really need to draw the window.
-    // This usually ends up not working very well - but that seems to be the
-    // best we can do for now.
-    HRGN region = (HRGN)wParam;
-    RECT rect;
-    ::GetWindowRect(hWnd, &rect);
-    HRGN rectRgn = CreateRectRgnIndirect(&rect);
-    CombineRgn(region, region, rectRgn, RGN_DIFF);
-    DeleteObject(rectRgn);
-    LRESULT result = DefSubclassProc(hWnd, uMsg, (WPARAM)region, lParam);
-    InvalidateRgn(hWnd, NULL, FALSE);
-    return result;
+    return DefSubclassProc(hWnd, uMsg, wParam, lParam);
   }
   case 0xAE: /* undocumented: WM_NCUAHDRAWCAPTION */
   case 0xAF: /* undocumented: WM_NCUAHDRAWFRAME */

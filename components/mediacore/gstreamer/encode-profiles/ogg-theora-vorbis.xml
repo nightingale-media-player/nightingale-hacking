@@ -1,9 +1,11 @@
 <profile>
   <type>video</type>
   <id>072b5104-1dd2-11b2-9313-e80ca3194e4e</id>
-  <priority>1000</priority> <!-- Low priority; this is not optimized -->
-  <priority quality="0">100</priority> <!-- this sucks at low bitrates -->
-  <priority quality="1">1500</priority>
+  <priority>3500</priority> <!-- High priority: free codecs are the best choice
+                                 if supported (which will unfortunately be
+                                 rare) -->
+  <priority quality="0">350</priority> <!-- this sucks at low bitrates -->
+  <priority quality="1">4500</priority>
   <description>Ogg/Theora/Vorbis test profile</description>
   <mimetype>application/ogg</mimetype>
   <extension>ogg</extension>

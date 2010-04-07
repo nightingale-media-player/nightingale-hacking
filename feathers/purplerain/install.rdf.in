@@ -25,7 +25,7 @@
          See http://developer.songbirdnest.com/feathers/ -->
     <songbird:skin>
       <Description>
-        <songbird:name>Purple Rain (default)</songbird:name>
+        <songbird:name>Purple Rain</songbird:name>
         <songbird:internalName>purplerain</songbird:internalName>
         <songbird:compatibleLayout>
           <Description>

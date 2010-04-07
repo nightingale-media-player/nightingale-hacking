@@ -28,9 +28,13 @@
 */
 
 #video_osd_controls_win {
-  background-color: black !important;
+  background-color: transparent;
   width: 320px;
   height: 70px;
+}
+
+#video_osd_controls_win.alt {
+  background-color: black;
 }
 
 /*
@@ -54,11 +58,19 @@
   height: 70px;
 }
 
+#video_osd_controls_win.alt #osd_border_left {
+  background-image: url("chrome://songbird/skin/video/osd-alt-base-l.png");
+}
+
 #osd_border_right {
   background-image: url("chrome://songbird/skin/video/osd-base-r.png");
   background-repeat: no-repeat;
   width: 6px;
   height: 70px;
+}
+
+#video_osd_controls_win.alt #osd_border_right {
+  background-image: url("chrome://songbird/skin/video/osd-alt-base-r.png");
 }
 
 #osd_controls_hbox {
@@ -68,6 +80,10 @@
   max-height: 70px;
   background-image: url("chrome://songbird/skin/video/osd-base-c.png");
   background-repeat: repeat-x;
+}
+
+#video_osd_controls_win.alt #osd_controls_hbox {
+  background-image: url("chrome://songbird/skin/video/osd-alt-base-c.png");
 }
 
 #osd_controls_top_hbox {

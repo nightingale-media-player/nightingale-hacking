@@ -37,7 +37,7 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbRatingPropertyInfo,
 
 #define STAR_WIDTH 14
 #define MAX_RATING 5
-#define ZERO_HIT_WIDTH 4
+#define ZERO_HIT_WIDTH 10
 
 sbRatingPropertyInfo::sbRatingPropertyInfo(const nsAString& aPropertyID,
                                            const nsAString& aDisplayName,
@@ -256,12 +256,7 @@ sbRatingPropertyInfo::GetValueForClick(const nsAString& aCurrentValue,
   nsString ratingStr;
   ratingStr.AppendInt(rating);
 
-  if (rating > 0 && ratingStr.Equals(aCurrentValue)) {
-    ratingStr.Truncate();
-    ratingStr.AppendInt(rating - 1);
-  }
-
-  if (ratingStr.EqualsLiteral("0")) {
+  if (ratingStr.Equals(aCurrentValue) || ratingStr.EqualsLiteral("0")) {
     ratingStr.SetIsVoid(PR_TRUE);
   }
 

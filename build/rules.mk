@@ -44,8 +44,8 @@ include $(topsrcdir)/build/tiers.mk
 # Provide working dependencies for the Mac vendor-binaries bits we use in the
 # build
 ifeq (macosx,$(SB_PLATFORM))
-  SB_DYLD_LIBRARY_PATH = $(DEPS_DIR)/libIDL/$(SB_CONFIGURATION)/lib:$(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib:$(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/lib
-  export DYLD_LIBRARY_PATH = $(SB_DYLD_LIBRARY_PATH)
+   SB_DYLD_LIBRARY_PATH = $(DEPS_DIR)/libIDL/$(SB_CONFIGURATION)/lib:$(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib:$(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/lib
+   export DYLD_LIBRARY_PATH = $(SB_DYLD_LIBRARY_PATH)
 endif
 
 # Since public, src, and test are directories used throughout the tree
@@ -60,6 +60,23 @@ ifeq (,$(DISABLE_IMPLICIT_SUBDIRS))
    endif
 else
    OUR_SUBDIRS = $(SUBDIRS)
+endif
+
+#
+# Deal with all the various configurations of compiler warnings being deadly
+#
+# Deafult is nothing; takes care of the "none" case as well...
+
+CFLAGS_DEADLY_WARNINGS = $(NULL)
+
+ifeq (debug_1,$(SB_WITH_DEADLY_WARNINGS)_$(DEBUG))
+   CFLAGS_DEADLY_WARNINGS = $(CFLAGS_WARNING_IS_ERROR)
+endif
+ifeq (release_,$(SB_WITH_DEADLY_WARNINGS)_$(DEBUG))
+   CFLAGS_DEADLY_WARNINGS = $(CFLAGS_WARNING_IS_ERROR)
+endif
+ifneq (,$(filter all force,$(SB_WITH_DEADLY_WARNINGS)))
+   CFLAGS_DEADLY_WARNINGS = $(CFLAGS_WARNING_IS_ERROR)
 endif
 
 # Right now this system is not compatible with parallel make.
@@ -473,6 +490,13 @@ else
    ifeq (macosx,$(SB_PLATFORM))
       OUR_CPP_FLAGS += -isysroot $(SB_MACOSX_SDK)
    endif
+   ifeq (,$(DISABLE_DEADLY_WARNINGS))
+      OUR_CPP_FLAGS += $(CFLAGS_DEADLY_WARNINGS)
+   endif
+endif
+
+ifeq (force,$(SB_WITH_DEADLY_WARNINGS))
+   OUR_CPP_FLAGS += $(CFLAGS_DEADLY_WARNINGS)
 endif
 
 ifdef CPP_DEFS
@@ -531,6 +555,13 @@ else
    ifeq (macosx,$(SB_PLATFORM))
       OUR_CMM_FLAGS += -isysroot $(SB_MACOSX_SDK)
    endif
+   ifeq (,$(DISABLE_DEADLY_WARNINGS))
+      OUR_CMM_FLAGS += $(CFLAGS_DEADLY_WARNINGS)
+   endif
+endif
+
+ifeq (force,$(SB_WITH_DEADLY_WARNINGS))
+   OUR_CMM_FLAGS += $(CFLAGS_DEADLY_WARNINGS)
 endif
 
 ifdef CMM_DEFS
@@ -589,6 +620,13 @@ else
    ifeq (macosx,$(SB_PLATFORM))
       OUR_C_FLAGS += -isysroot $(SB_MACOSX_SDK)
    endif
+   ifeq (,$(DISABLE_DEADLY_WARNINGS))
+      OUR_C_FLAGS += $(CFLAGS_DEADLY_WARNINGS)
+   endif
+endif
+
+ifeq (force,$(SB_WITH_DEADLY_WARNINGS))
+   OUR_C_FLAGS += $(CFLAGS_DEADLY_WARNINGS)
 endif
 
 ifdef C_DEFS
@@ -855,6 +893,13 @@ ifdef SIMPLE_PROGRAM_FLAGS
    OUR_SIMPLE_PROGRAM_FLAGS = $(SIMPLE_PROGRAM_FLAGS)
 else
    OUR_SIMPLE_PROGRAM_FLAGS = $(LDFLAGS) $(LDFLAGS_BIN) $(SIMPLE_PROGRAM_EXTRA_FLAGS)
+   ifeq (,$(DISABLE_DEADLY_WARNINGS))
+      OUR_SIMPLE_PRGRAM_FLAGS += $(CFLAGS_DEADLY_WARNINGS)
+   endif
+endif
+   
+ifeq (force,$(SB_WITH_DEADLY_WARNINGS))
+   OUR_SIMPLE_PRGRAM_FLAGS += $(CFLAGS_DEADLY_WARNINGS)
 endif
 
 ifdef SIMPLE_PROG_OBJS

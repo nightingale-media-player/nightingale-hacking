@@ -1,6 +1,6 @@
-<!ENTITY concerts.loading "Vi kollar vem som är på turné i din närhet...">
+<!ENTITY concerts.loading "Vi kollar vilka som turnerar nära dig...">
 <!ENTITY concerts.changelocation "Ändra plats">
-<!ENTITY concerts.easteregg.fail "MISSLYCKAT">
-<!ENTITY concerts.easteregg.fail.2 "Inga konserter upptäckta för">
-<!ENTITY concerts.timeout.error "Antingen är du inte ansluten till Internet, eller så fungerar inte vår databas för tillfället. Var vänlig försök igen om några minuter.">
+<!ENTITY concerts.easteregg.fail "FAIL">
+<!ENTITY concerts.easteregg.fail.2 "Inga konserter hittades för">
+<!ENTITY concerts.timeout.error "Antingen är du inte ansluten till internet eller så fungerar inte vår konsertdatabas just nu. Försök igen om några minuter.">
 <!ENTITY concerts.timeoutreport.error "Rapportera ett problem">

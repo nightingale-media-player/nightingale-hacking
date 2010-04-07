@@ -136,8 +136,8 @@
     <menuseparator id="context-sep-copylink"/>
 
     <menuitem id="context-showimage"
-       label="&reloadImageCmd.label;"
-       accesskey="&reloadImageCmd.accesskey;"
+       label="&showImageCmd.label;"
+       accesskey="&showImageCmd.accesskey;"
        oncommand="gContextMenu.showImage();"/>
     <menuseparator id="context-sep-viewbgimage"/>
     <menuitem id="context-viewimage"
@@ -160,6 +160,7 @@
        oncommand="gContextMenu.openImageInDefaultBrowser();"/>
     <menuseparator id="context-sep-openimageexternal"/>
 
+    <!--
     <menuitem id="context-bookmarkpage"
        label="&bookmarkPageCmd2.label;"
        accesskey="&bookmarkPageCmd2.accesskey;"
@@ -169,6 +170,7 @@
        label="&subscribeMediaPageCmd.label;"
        accesskey="&subscribeMediaPageCmd.accesskey;"
        oncommand="gContextMenu.subscribeMediaPage();"/>
+       -->
     <menuitem id="context-savepage"
        label="&savePageCmd.label;"
        accesskey="&savePageCmd.accesskey2;"
@@ -234,6 +236,7 @@
            accesskey="&openFrameCmdInDefaultBrowser.accesskey;"
            oncommand="gContextMenu.openFrameInDefaultBrowser();"/>
         <menuseparator id="context-sep-openframeexternal"/>
+        <!--
         <menuitem id="context-bookmarkframe"
             label="&bookmarkThisFrameCmd.label;"
             accesskey="&bookmarkThisFrameCmd.accesskey;"
@@ -242,6 +245,7 @@
            label="&subscribeMediaFrameCmd.label;"
            accesskey="&subscribeMediaFrameCmd.accesskey;"
            oncommand="gContextMenu.subscribeMediaFrame();"/>
+           -->
         <menuitem id="context-saveframe"
             label="&saveFrameCmd.label;"
             accesskey="&saveFrameCmd.accesskey;"

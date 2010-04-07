@@ -58,7 +58,27 @@ Section "-Application" Section1
          ; Execute disthelper.exe in install mode; disthelper.exe needs a 
          ; distribution.ini, but gets it from the environment; we expect the 
          ; partner installer *calling us* to set this.
-         ExecWait '"$INSTDIR\${DistHelperEXE}" install'
+         StrCpy $0 -1
+         ExecWait '"$INSTDIR\${DistHelperEXE}" install' $0
+         
+         ; Check if we errored here and return the exit code.
+         IfErrors DistHelperError
+
+         ; See client/tools/disthelper/error.h for return codes
+         ${If} $0 != 0
+            Goto DistHelperError
+         ${Else}
+            Goto DistHelperSuccess
+         ${EndIf}
+
+         DistHelperError:
+            SetErrors
+            DetailPrint "$INSTDIR\${DistHelperEXE} install failed: $0"
+            ${If} $InstallerMode == "debug"
+               MessageBox MB_OK "$INSTDIR\${DistHelperEXE} install failed: $0"
+            ${EndIf}
+
+         DistHelperSuccess:
       ${EndIf}
 
       Call InstallCdrip
@@ -157,79 +177,10 @@ Function InstallBrandingRegistryKeys
    WriteRegStr HKLM $RootAppRegistryKey "${MuiStartmenupageRegName}" $R0
    DeleteRegKey HKLM ${MuiStartmenupageRegKey}
 
-   ;
-   ; AutoPlay v2 registration.
-   ;
-   ; See http://msdn.microsoft.com/en-us/magazine/cc301341.aspx
-   ;     http://social.msdn.microsoft.com/Forums/en-US/netfxbcl/thread/8341c15b-04ef-438e-ab1e-276186fd2177/
-   ;
-   ;   AutoPlay support for MSC devices is provided by registering a handler to
-   ; handle PlayMusicFilesOnArrival events for volume-based devices as described
-   ; in "http://msdn.microsoft.com/en-us/magazine/cc301341.aspx".
-   ;
+   ; Install Songbird AutoPlay services.
+   ExecWait '"$INSTDIR\sbAutoPlayUtil" -Install'
 
-   ; Register a manage volume device ProgID to launch Songbird.  By default,
-   ; Songbird will be launched with the volume mount point as the current
-   ; working directory.  This prevents the volume from being ejected.  To avoid
-   ; this, Songbird is directed to start in the Songbird application directory.
-   StrCpy $0 "Software\Classes\${AutoPlayManageVolumeDeviceProgID}\shell\manage\command"
-   WriteRegStr HKLM $0 "" "$INSTDIR\${FileMainEXE} -autoplay-manage-volume-device -start-in-app-directory"
-
-   ; Register a volume device arrival handler to invoke the manage volume
-   ; device ProgID.
-   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\${AutoPlayVolumeDeviceArrivalHandlerName}"
-   WriteRegStr HKLM $0 "" ""
-   WriteRegStr HKLM $0 "Action" "${AutoPlayManageDeviceAction}"
-   WriteRegStr HKLM $0 "DefaultIcon" "$INSTDIR\${FileMainEXE}"
-   WriteRegStr HKLM $0 "InvokeProgID" "${AutoPlayVolumeDeviceArrivalHandlerProgID}"
-   WriteRegStr HKLM $0 "InvokeVerb" "manage"
-   WriteRegStr HKLM $0 "Provider" "${BrandShortName}"
-
-   ; Register to handle PlayMusicFilesOnArrival events using the volume
-   ; device arrival handler.
-   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\PlayMusicFilesOnArrival"
-   WriteRegStr HKLM $0 "${AutoPlayVolumeDeviceArrivalHandlerName}" ""
-
-   ; Register an MTP device arrival handler to launch Songbird to manage the MTP
-   ; device.  Make use of the "Shell.HWEventHandlerShellExecute" COM component.
-   ; If any command line arguments are present in InitCmdLine, the executable
-   ; string must be enclosed in quotes if it contains spaces.
-   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\${AutoPlayMTPDeviceArrivalHandlerName}"
-   WriteRegStr HKLM $0 "Action" "${AutoPlayManageDeviceAction}"
-   WriteRegStr HKLM $0 "DefaultIcon" "$INSTDIR\${FileMainEXE}"
-   WriteRegStr HKLM $0 "InitCmdLine" '"$INSTDIR\${FileMainEXE}" -autoplay-manage-mtp-device'
-   WriteRegStr HKLM $0 "ProgID" "Shell.HWEventHandlerShellExecute"
-   WriteRegStr HKLM $0 "Provider" "${BrandShortName}"
-
-   ; Register to handle MTPMediaPlayerArrival events using the MTP device
-   ; arrival handler.
-   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\MTPMediaPlayerArrival"
-   WriteRegStr HKLM $0 "${AutoPlayMTPDeviceArrivalHandlerName}" ""
-
-   ; Register to handle WPD audio and video events using the MTP device arrival
-   ; handler.
-   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\WPD\Sink\{4AD2C85E-5E2D-45E5-8864-4F229E3C6CF0}"
-   WriteRegStr HKLM $0 "${AutoPlayMTPDeviceArrivalHandlerName}" ""
-   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\WPD\Sink\{9261B03C-3D78-4519-85E3-02C5E1F50BB9}"
-   WriteRegStr HKLM $0 "${AutoPlayMTPDeviceArrivalHandlerName}" ""
-
-   ; Register CD Rip command
-   WriteRegStr HKLM "Software\Classes\${AutoPlayProgID}\shell\Rip\command" "" "$INSTDIR\${FileMainEXE} -autoplay-cd-rip"
-
-   ; Register an Audio CD Rip handler
-   ; device ProgID.
-   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\${AutoPlayCDRipHandlerName}"
-   WriteRegStr HKLM $0 "Action" "${AutoPlayCDRipAction}"
-   WriteRegStr HKLM $0 "DefaultIcon" "$INSTDIR\${FileMainEXE}"
-   WriteRegStr HKLM $0 "InvokeProgID" "${AutoPlayProgID}"
-   WriteRegStr HKLM $0 "InvokeVerb" "Rip"
-   WriteRegStr HKLM $0 "Provider" "${BrandShortName}"
-
-   ; Register for CD arrival events for rip
-   ; device arrival handler.
-   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\PlayCDAudioOnArrival" "${AutoPlayCDRipHandlerName}" ""
-   
-FunctionEnd 
+FunctionEnd
 
 Section "Desktop Icon"
    ${If} $DistributionMode == ${TRUE}
@@ -267,10 +218,38 @@ End:
 SectionEnd
 
 Function InstallCdrip
-   ; We theoretically should check the return value here, and maybe not set
-   ; this registry key?
+   Push $0
+   Push $1
+   
+   ExecWait '"$INSTDIR\${CdripHelperEXE}" install' $0
+   
+   IfErrors CdripHelperErrors
+
+   ; See client/tools/cdriphelper/error.h for return codes
+   ${If} $0 != 0
+   ${AndIf} $0 != 128
+      Goto CdripHelperErrors
+   ${EndIf}
+
+   Goto CdripHelperSuccess
+
+   CdripHelperErrors:
+      SetErrors
+      DetailPrint "$INSTDIR\${CdripHelperEXE} install failed: $0"
+
+      ${If} $InstallerMode == "debug"
+         MessageBox MB_OK "$INSTDIR\${CdripHelperEXE} install failed: $0"
+      ${EndIf}
+
+      ; Don't write the registry key if we didn't succeed.
+      Goto CdripHelperOut
+
+CdripHelperSuccess:
    WriteRegStr HKLM $RootAppRegistryKey ${CdripRegKey} ${TRUE}
-   ExecWait '"$INSTDIR\${CdripHelperEXE}" install'
+
+CdripHelperOut:
+   Pop $1
+   Pop $0
 FunctionEnd
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -393,10 +372,27 @@ FunctionEnd
 Function CallUninstaller
    Exch $0
    Push $1
+   Push $2
+   
    System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("SB_INSTALLER_NOMUTEX", "1").r1'
    ExecWait '"$0\${FileUninstallEXE}" /S _?=$0' $1
    DetailPrint '"$0\${FileUninstallEXE}" /S _?=$0 returned $1'
 
+   IfErrors UninstallerFailed
+
+   ${If} $1 != 0
+      Goto UninstallerFailed
+   ${Else}
+      Goto UninstallerSuccess
+   ${EndIf}
+
+UninstallerFailed:
+   ${If} $InstallerMode == "debug"
+      DetailPrint '"$0\${FileUninstallEXE}" /S _?=$0 returned $1'
+   ${EndIf}
+   Goto UninstallerOut
+ 
+UninstallerSuccess:
    ; We use this key existing as a reasonable hueristic about whether the
    ; installer really did anything (and didn't bail out because it needed
    ; input while in silent mode).
@@ -407,6 +403,8 @@ Function CallUninstaller
    ${EndIf}
 
    RMDir $0
+UninstallerOut: 
+   Pop $2
    Pop $1
    Pop $0
 FunctionEnd

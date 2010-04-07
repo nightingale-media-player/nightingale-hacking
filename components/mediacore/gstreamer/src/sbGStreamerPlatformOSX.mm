@@ -68,24 +68,11 @@ static PRLogModuleInfo* gGStreamerPlatformOSX =
  */
 @interface NSView (GStreamerPlatformOSX)
 
-- (void)lockAddSubview:(NSView *)aView;
-
 - (void)setFrameAsString:(NSString *)aString;
 
 @end
 
 @implementation NSView (GStreamerPlatformOSX)
-
-- (void)lockAddSubview:(NSView *)aView
-{
-  if ([self lockFocusIfCanDraw]) {
-    [self addSubview:aView];
-    [self unlockFocus];
-  }
-  else {
-    NS_WARNING("XXX Could not lock focus of the video view!");
-  }
-}
 
 - (void)setFrameAsString:(NSString *)aString
 {
@@ -96,17 +83,113 @@ static PRLogModuleInfo* gGStreamerPlatformOSX =
 @end
 
 
+@interface NSView (GstGlView)
+
+- (void)setDelegate:(id)aDelegate;
+
+@end
+
+
+/**
+ * ObjC class to listen to |NSView| events from the GST video view.
+ */
+@interface SBGstGLViewDelgate : NSObject
+{
+  OSXPlatformInterface *mOwner;  // weak, it owns us.
+}
+
+- (id)initWithPlatformInterface:(OSXPlatformInterface *)aOwner;
+- (void)startListeningToResizeEvents;
+- (void)stopListeningToResizeEvents;
+- (void)mouseMoved:(NSEvent *)theEvent;
+- (void)windowResized:(NSNotification *)aNotice;
+
+@end
+
+@implementation SBGstGLViewDelgate
+
+- (id)initWithPlatformInterface:(OSXPlatformInterface *)aOwner
+{
+  if ((self = [super init])) {
+    mOwner = aOwner;
+  }
+
+  return self;
+}
+
+- (void)dealloc
+{
+  if (mOwner) {
+    mOwner = nsnull;
+  }
+
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+  [super dealloc];
+}
+
+- (void)startListeningToResizeEvents
+{
+  if (!mOwner) {
+    return;
+  }
+
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(windowResized:)
+                                               name:NSWindowDidResizeNotification
+                                             object:nil];
+}
+
+- (void)stopListeningToResizeEvents
+{
+  if (!mOwner) {
+    return;
+  }
+
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)mouseMoved:(NSEvent *)theEvent
+{
+  if (!mOwner) {
+    return;
+  }
+
+  mOwner->OnMouseMoved(theEvent);
+}
+
+- (void)windowResized:(NSNotification *)aNotice
+{
+  if (!mOwner) {
+    return;
+  }
+
+  if ([[aNotice object] isEqual:[(NSView *)mOwner->GetVideoView() window]]) {
+    mOwner->OnWindowResized();
+  }
+}
+
+@end
+
 
 OSXPlatformInterface::OSXPlatformInterface(sbGStreamerMediacore *aCore) :
     BasePlatformInterface(aCore),
     mParentView(NULL),
-    mVideoView(NULL)
+    mVideoView(NULL),
+    mGstGLViewDelegate(NULL)
 {
+  mGstGLViewDelegate =
+    (void *)[[SBGstGLViewDelgate alloc] initWithPlatformInterface:this];
 }
 
 OSXPlatformInterface::~OSXPlatformInterface()
 {
   RemoveView();
+
+  // Clean up the view delegate.
+  SBGstGLViewDelgate *delegate = (SBGstGLViewDelgate *)mGstGLViewDelegate;
+  [delegate release];
+  mGstGLViewDelegate = NULL;
 }
 
 GstElement *
@@ -132,7 +215,7 @@ OSXPlatformInterface::SetVideoSink(GstElement *aVideoSink)
   }
 
   // Keep a reference to it.
-  if (mVideoSink) 
+  if (mVideoSink)
       gst_object_ref(mVideoSink);
 
   return mVideoSink;
@@ -156,7 +239,7 @@ OSXPlatformInterface::SetAudioSink(GstElement *aAudioSink)
   }
 
   // Keep a reference to it.
-  if (mAudioSink) 
+  if (mAudioSink)
       gst_object_ref(mAudioSink);
 
   return mAudioSink;
@@ -168,7 +251,7 @@ OSXPlatformInterface::SetVideoBox (nsIBoxObject *aBoxObject, nsIWidget *aWidget)
   // First let the superclass do its thing.
   nsresult rv = BasePlatformInterface::SetVideoBox (aBoxObject, aWidget);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   if (aWidget) {
     mParentView = (void *)(aWidget->GetNativeData(NS_NATIVE_WIDGET));
     NS_ENSURE_TRUE(mParentView != NULL, NS_ERROR_FAILURE);
@@ -184,6 +267,8 @@ OSXPlatformInterface::SetVideoBox (nsIBoxObject *aBoxObject, nsIWidget *aWidget)
 void
 OSXPlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
 {
+  BasePlatformInterface::PrepareVideoWindow(aMessage);
+
   // Firstly, if we don't already have a video view set up, request a video
   // window, and set up the appropriate parent view.
   if (!mParentView) {
@@ -191,7 +276,7 @@ OSXPlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
     nsresult rv = NS_GetMainThread(getter_AddRefs(mainThread));
     NS_ENSURE_SUCCESS(rv, /* void */);
 
-    nsCOMPtr<nsIRunnable> runnable = 
+    nsCOMPtr<nsIRunnable> runnable =
         NS_NEW_RUNNABLE_METHOD (sbGStreamerMediacore,
                                 mCore,
                                 RequestVideoWindow);
@@ -219,13 +304,96 @@ OSXPlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
   mVideoView = g_value_get_pointer (value);
   view = (NSView *)mVideoView;
 
+  // Listen to live resize events since gecko resize events aren't posted on
+  // Mac until the resize has finished. (see bug 20445).
+  [mGstGLViewDelegate startListeningToResizeEvents];
+
   // Now, we want to set this view as a subview of the NSView we have
   // as our window-for-displaying-video. Don't do this from a non-main
   // thread, though!
-  [parentView performSelectorOnMainThread:@selector(lockAddSubview:)
+  [parentView performSelectorOnMainThread:@selector(addSubview:)
                                withObject:view
                             waitUntilDone:YES];
+
+  // Fail safe, ensure that the gst |NSView| responds to the delegate method
+  // before attempting to set the delegate of the view.
+  if ([view respondsToSelector:@selector(setDelegate:)]) {
+    [view setDelegate:(id)mGstGLViewDelegate];
+  }
+
+  // Resize the window
+  ResizeToWindow();
+
   [pool release];
+}
+
+void*
+OSXPlatformInterface::GetVideoView()
+{
+  return mVideoView;
+}
+
+void
+OSXPlatformInterface::OnMouseMoved(void *aCocoaEvent)
+{
+  NS_ENSURE_TRUE(aCocoaEvent, /* void */);
+  NS_ENSURE_TRUE(mVideoView, /* void */);
+
+  // Convert the cocoa event to a gecko event
+  nsresult rv;
+  nsCOMPtr<nsIDOMMouseEvent> mouseEvent;
+  rv = CreateDOMMouseEvent(getter_AddRefs(mouseEvent));
+  NS_ENSURE_SUCCESS(rv, /* void */);
+
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  // Get the window and local view coordinates and convert them from cocoa
+  // coords (bottom-left) to gecko coords (top-left).
+  NSEvent *event = (NSEvent *)aCocoaEvent;
+  NSView *eventView = (NSView *)mVideoView;
+
+  float menuBarHeight = 0.0;
+  NSArray *allScreens = [NSScreen screens];
+  if ([allScreens count]) {
+    menuBarHeight = [[allScreens objectAtIndex:0] frame].size.height;
+  }
+  float windowHeight = [[[eventView window] contentView] frame].size.height;
+
+  // This will need to be flipped....
+  NSPoint viewPoint = [event locationInWindow];
+  NSPoint screenPoint = [[eventView window] convertBaseToScreen:viewPoint];
+
+  viewPoint.y = windowHeight - viewPoint.y;
+  screenPoint.y = menuBarHeight - screenPoint.y;
+
+  rv = mouseEvent->InitMouseEvent(
+      NS_LITERAL_STRING("mousemove"),
+      PR_TRUE,
+      PR_TRUE,
+      nsnull,
+      0,
+      (PRInt32)screenPoint.x,
+      (PRInt32)screenPoint.y,
+      (PRInt32)viewPoint.x,
+      (PRInt32)viewPoint.y,
+      (([event modifierFlags] & NSControlKeyMask) != 0),
+      (([event modifierFlags] & NSAlternateKeyMask) != 0),
+      (([event modifierFlags] & NSShiftKeyMask) != 0),
+      (([event modifierFlags] & NSCommandKeyMask) != 0),
+      0,
+      nsnull);
+  [pool release];
+  NS_ENSURE_SUCCESS(rv, /* void */);
+
+  nsCOMPtr<nsIDOMEvent> domEvent(do_QueryInterface(mouseEvent));
+  rv = DispatchDOMEvent(domEvent);
+  NS_ENSURE_SUCCESS(rv, /* void */);
+}
+
+void
+OSXPlatformInterface::OnWindowResized()
+{
+  ResizeToWindow();
 }
 
 void
@@ -234,7 +402,6 @@ OSXPlatformInterface::MoveVideoWindow (int x, int y, int width, int height)
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
   NSView *view = (NSView *)mVideoView;
-
   if (view) {
     NSRect rect;
     // Remap to OSX's coordinate system, which is from the bottom left.
@@ -261,11 +428,15 @@ void OSXPlatformInterface::RemoveView()
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     NSView *view = (NSView *)mVideoView;
-    mVideoView = NULL;
+    if (view) {
+      [view performSelectorOnMainThread:@selector(removeFromSuperviewWithoutNeedingDisplay)
+                             withObject:nil
+                          waitUntilDone:YES];
+    }
 
-    // Remove the old view, if there was one.
-    [view performSelectorOnMainThread:@selector(removeFromSuperviewWithoutNeedingDisplay) withObject:nil waitUntilDone:YES];
+    [mGstGLViewDelegate stopListeningToResizeEvents];
 
+    mVideoView = nsnull;
     [pool release];
   }
 }

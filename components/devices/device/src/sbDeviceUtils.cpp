@@ -880,19 +880,19 @@ sbDeviceUtilsQueryUserSpaceExceeded::Query(sbIDevice*        aDevice,
 sbExtensionToContentFormatEntry_t const
 MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
   /* audio */
-  { "mp3",  "audio/mpeg",      "id3",  "mp3",     "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "wma",  "audio/x-ms-wma",  "asf",  "wmav2",   "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "aac",  "audio/aac",       "mov",  "aac",     "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "m4a",  "audio/aac",       "mov",  "aac",     "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "mp3",  "audio/mpeg",      "audio/mpeg",  "audio/mpeg",     "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "wma",  "audio/x-ms-wma",  "video/x-ms-asf",  "audio/x-ms-wma",   "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "aac",  "audio/aac",       "video/quicktime",  "audio/aac",     "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "m4a",  "audio/aac",       "video/quicktime",  "audio/aac",     "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "aa",   "audio/audible",   "",     "",        "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "aa",   "audio/x-pn-audibleaudio", "", "",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "oga",  "application/ogg", "ogg",  "flac",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "ogg",  "application/ogg", "ogg",  "vorbis",  "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "flac", "audio/x-flac",    "flac", "flac",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "wav",  "audio/x-wav",     "wav",  "pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "wav",  "audio/x-adpcm",   "wav",  "pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "aiff", "audio/x-aiff",    "aiff", "pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "aif",  "audio/x-aiff",    "aiff", "pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "oga",  "application/ogg", "application/ogg",  "audio/x-flac",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "ogg",  "application/ogg", "application/ogg",  "audio/x-vorbis",  "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "flac", "audio/x-flac",    "", "audio/x-flac",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "wav",  "audio/x-wav",     "audio/x-wav",  "audio/x-pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "wav",  "audio/x-adpcm",   "audio/x-wav",  "audio/x-adpcm", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "aiff", "audio/x-aiff",    "audio/x-aiff", "audio/x-pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "aif",  "audio/x-aiff",    "audio/x-aiff", "audio/x-pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "ape",  "audio/ape",       "",     "",        "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
 
   /* video */
@@ -900,7 +900,7 @@ MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
   { "mp4",  "image/jpeg",      "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
   { "mpg",  "video/mpeg",      "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
   { "mpeg", "video/mpeg",      "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
-  { "wmv",  "video/x-ms-wmv",  "video/x-ms-asf",  "", "video/x-wmv",    "audio/x-wma",    sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
+  { "wmv",  "video/x-ms-wmv",  "video/x-ms-asf",  "", "video/x-ms-wmv",    "audio/x-ms-wma",    sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
   { "avi",  "video/x-msvideo", "",                "", "mpeg4",          "wma",            sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
   { "3gp",  "video/3gpp",      "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
   { "3g2",  "video/3gpp",      "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
@@ -1056,12 +1056,14 @@ sbDeviceUtils::GetFormatTypeForURL
     nsDependentSubstring fileExtension(aURL,
                                        lastDot + 1,
                                        aURL.Length() - lastDot - 1);
+    nsCAutoString extension = NS_ConvertUTF16toUTF8(fileExtension);
+    ToLowerCase(extension);
     for (PRUint32 index = 0;
          index < NS_ARRAY_LENGTH(MAP_FILE_EXTENSION_CONTENT_FORMAT);
          ++index) {
       sbExtensionToContentFormatEntry_t const & entry =
         MAP_FILE_EXTENSION_CONTENT_FORMAT[index];
-      if (fileExtension.EqualsLiteral(entry.Extension)) {
+      if (extension.EqualsLiteral(entry.Extension)) {
         TRACE(("%s: ext %s type %s container %s codec %s",
                __FUNCTION__, entry.Extension, entry.MimeType,
                entry.ContainerFormat, entry.Codec));
@@ -1265,84 +1267,109 @@ sbDeviceUtils::GetSupportedTranscodeProfiles(sbIDevice * aDevice,
   {
     PRUint32 const contentType = contentTypes[contentTypeIndex];
     TRACE(("%s: Finding profiles for content type %d", __FUNCTION__, contentType));
-    PRUint32 formatsLength;
-    char ** formats;
-    rv = devCaps->GetSupportedFormats(contentType,
-                                      &formatsLength,
-                                      &formats);
+    PRUint32 mimeTypesLength;
+    char ** mimeTypes;
+    rv = devCaps->GetSupportedMimeTypes(contentType,
+                                        &mimeTypesLength,
+                                        &mimeTypes);
     // Not found error is expected, we'll not do anything in that case, but we
     // need to finish out processing and not return early
     if (rv != NS_ERROR_NOT_AVAILABLE) {
       NS_ENSURE_SUCCESS(rv, rv);
     }
     if (NS_SUCCEEDED(rv)) {
-      for (PRUint32 formatIndex = 0;
-           formatIndex < formatsLength && NS_SUCCEEDED(rv);
-           ++formatIndex)
+      TRACE(("%s: Checking %d mime types for type %d", __FUNCTION__,
+             mimeTypesLength, contentType));
+
+      for (PRUint32 mimeTypeIndex = 0;
+           mimeTypeIndex < mimeTypesLength && NS_SUCCEEDED(rv);
+           ++mimeTypeIndex)
       {
-        nsString format;
-        format.AssignLiteral(formats[formatIndex]);
-        nsMemory::Free(formats[formatIndex]);
+        TRACE(("%s: Checking mime type %s", __FUNCTION__,
+               mimeTypes[mimeTypeIndex]));
+        nsString mimeType;
+        mimeType.AssignLiteral(mimeTypes[mimeTypeIndex]);
+        nsMemory::Free(mimeTypes[mimeTypeIndex]);
 
-        nsCOMPtr<nsISupports> formatTypeSupports;
-        devCaps->GetFormatType(contentType,
-                               format,
-                               getter_AddRefs(formatTypeSupports));
-        nsString containerFormat;
-        nsString codec;
-        nsString videoType; // Not used
-        nsString audioType; // Not used
-        rv = GetContainerFormatAndCodec(formatTypeSupports,
-                                        contentType,
-                                        containerFormat,
-                                        videoType,
-                                        audioType,
-                                        codec);
-        NS_ENSURE_SUCCESS(rv, rv);
+        nsISupports** formatTypes;
+        PRUint32 formatTypeCount;
+        rv = devCaps->GetFormatTypes(contentType,
+                                     mimeType,
+                                     &formatTypeCount,
+                                     &formatTypes);
+        NS_ENSURE_SUCCESS (rv, rv);
+        sbAutoFreeXPCOMPointerArray<nsISupports> freeFormats(formatTypeCount,
+                                                             formatTypes); 
 
-        // Look for a match among our transcoding profile
-        PRUint32 length;
-        rv = profiles->GetLength(&length);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        for (PRUint32 index = 0;
-             index < length && NS_SUCCEEDED(rv);
-             ++index)
+        for (PRUint32 formatIndex = 0;
+             formatIndex < formatTypeCount;
+             formatIndex++)
         {
-          nsCOMPtr<sbITranscodeProfile> profile = do_QueryElementAt(profiles,
-                                                                    index,
-                                                                    &rv);
+          nsCOMPtr<nsISupports> formatTypeSupports = formatTypes[formatIndex];
+
+          nsString containerFormat;
+          nsString codec;
+          nsString videoType; // Not used
+          nsString audioType; // Not used
+          rv = GetContainerFormatAndCodec(formatTypeSupports,
+                                          contentType,
+                                          containerFormat,
+                                          videoType,
+                                          audioType,
+                                          codec);
           NS_ENSURE_SUCCESS(rv, rv);
-          nsString profileContainerFormat;
-          rv = profile->GetContainerFormat(profileContainerFormat);
+          TRACE(("%s: Checking format %d with container %s, video %s, audio %s, codec %s",
+                  __FUNCTION__, formatIndex,
+                  NS_ConvertUTF16toUTF8(containerFormat).BeginReading(),
+                  NS_ConvertUTF16toUTF8(videoType).BeginReading(),
+                  NS_ConvertUTF16toUTF8(audioType).BeginReading(),
+                  NS_ConvertUTF16toUTF8(codec).BeginReading()));
+
+          // Look for a match among our transcoding profile
+          PRUint32 length;
+          rv = profiles->GetLength(&length);
           NS_ENSURE_SUCCESS(rv, rv);
 
-          PRUint32 profileType;
-          rv = profile->GetType(&profileType);
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          nsString audioCodec;
-          rv = profile->GetAudioCodec(audioCodec);
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          nsString videoCodec;
-          rv = profile->GetVideoCodec(videoCodec);
-
-          if (TranscodeToCapsContentTypeMap[profileType] == contentType &&
-              profileContainerFormat.Equals(containerFormat))
+          for (PRUint32 index = 0;
+               index < length && NS_SUCCEEDED(rv);
+               ++index)
           {
-            if ((contentType == sbIDeviceCapabilities::CONTENT_AUDIO &&
-                 audioCodec.Equals(codec)) ||
-                (contentType == sbIDeviceCapabilities::CONTENT_VIDEO &&
-                 videoCodec.Equals(codec)))
+            nsCOMPtr<sbITranscodeProfile> profile = do_QueryElementAt(profiles,
+                                                                      index,
+                                                                      &rv);
+            NS_ENSURE_SUCCESS(rv, rv);
+            nsString profileContainerFormat;
+            rv = profile->GetContainerFormat(profileContainerFormat);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            PRUint32 profileType;
+            rv = profile->GetType(&profileType);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            nsString audioCodec;
+            rv = profile->GetAudioCodec(audioCodec);
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            nsString videoCodec;
+            rv = profile->GetVideoCodec(videoCodec);
+
+            if (TranscodeToCapsContentTypeMap[profileType] == contentType &&
+                profileContainerFormat.Equals(containerFormat))
             {
-              rv = supportedProfiles->AppendElement(profile, PR_FALSE);
-              NS_ENSURE_SUCCESS(rv, rv);
+              if ((contentType == sbIDeviceCapabilities::CONTENT_AUDIO &&
+                   audioCodec.Equals(codec)) ||
+                  (contentType == sbIDeviceCapabilities::CONTENT_VIDEO &&
+                   videoCodec.Equals(codec)))
+              {
+                TRACE(("%s: Adding this format", __FUNCTION__));
+                rv = supportedProfiles->AppendElement(profile, PR_FALSE);
+                NS_ENSURE_SUCCESS(rv, rv);
+              }
             }
           }
         }
       }
-      nsMemory::Free(formats);
+      nsMemory::Free(mimeTypes);
     }
   }
 
@@ -1404,24 +1431,34 @@ sbDeviceUtils::DoesItemNeedTranscoding(
        NS_LossyConvertUTF16toASCII(itemContainerFormat).get(),
        NS_LossyConvertUTF16toASCII(itemCodec).get()));
 
-  PRUint32 formatsLength;
-  char ** formats;
-  rv = devCaps->GetSupportedFormats(devCapContentType,
-                                    &formatsLength,
-                                    &formats);
+  PRUint32 mimeTypesLength;
+  char ** mimeTypes;
+  rv = devCaps->GetSupportedMimeTypes(devCapContentType,
+                                      &mimeTypesLength,
+                                      &mimeTypes);
   // If we know of transcoding formats than check them
-  if (NS_SUCCEEDED(rv) && formatsLength > 0) {
+  if (NS_SUCCEEDED(rv) && mimeTypesLength > 0) {
     aNeedsTranscoding = true;
-    for (PRUint32 formatIndex = 0;
-         formatIndex < formatsLength;
-         ++formatIndex) {
+    for (PRUint32 mimeTypesIndex = 0;
+         mimeTypesIndex < mimeTypesLength;
+         ++mimeTypesIndex) {
 
-      NS_ConvertASCIItoUTF16 format(formats[formatIndex]);
-      nsCOMPtr<nsISupports> formatType;
-      rv = devCaps->GetFormatType(devCapContentType,
-                                  format,
-                                  getter_AddRefs(formatType));
-      if (NS_SUCCEEDED(rv)) {
+      NS_ConvertASCIItoUTF16 mimeType(mimeTypes[mimeTypesIndex]);
+      nsISupports** formatTypes;
+      PRUint32 formatTypeCount;
+      rv = devCaps->GetFormatTypes(devCapContentType,
+                                   mimeType,
+                                   &formatTypeCount,
+                                   &formatTypes);
+      NS_ENSURE_SUCCESS (rv, rv);
+      sbAutoFreeXPCOMPointerArray<nsISupports> freeFormats(formatTypeCount,
+                                                           formatTypes); 
+
+      for (PRUint32 formatIndex = 0;
+           formatIndex < formatTypeCount;
+           formatIndex++)
+      {
+        nsCOMPtr<nsISupports> formatType = formatTypes[formatIndex];
         nsString containerFormat;
         nsString codec;
 
@@ -1450,9 +1487,9 @@ sbDeviceUtils::DoesItemNeedTranscoding(
               (!aBitRate || IsValueInRange(aBitRate, bitRateRange)) &&
               (!aSampleRate || IsValueInRange(aSampleRate, sampleRateRange)))
           {
-            TRACE(("%s: no transcoding needed, matches format %s "
+            TRACE(("%s: no transcoding needed, matches mime type %s "
                    "container %s codec %s",
-                   __FUNCTION__, formats[formatIndex],
+                   __FUNCTION__, mimeTypes[mimeTypesIndex],
                    NS_LossyConvertUTF16toASCII(containerFormat).get(),
                    NS_LossyConvertUTF16toASCII(codec).get()));
             aNeedsTranscoding = false;
@@ -1461,7 +1498,7 @@ sbDeviceUtils::DoesItemNeedTranscoding(
         }
       }
     }
-    NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(formatsLength, formats);
+    NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(mimeTypesLength, mimeTypes);
   }
   else { // We don't know the transcoding formats of the device so just copy
     TRACE(("%s: no information on device, assuming no transcoding needed",
@@ -1719,7 +1756,7 @@ nsresult sbDeviceUtils::AddSupportedFileExtensions
   // return if content type is not available.
   char** mimeTypeList;
   PRUint32 mimeTypeCount;
-  rv = caps->GetSupportedFormats(aContentType, &mimeTypeCount, &mimeTypeList);
+  rv = caps->GetSupportedMimeTypes(aContentType, &mimeTypeCount, &mimeTypeList);
   if (rv == NS_ERROR_NOT_AVAILABLE)
     return NS_OK;
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1823,17 +1860,17 @@ sbDeviceUtils::LogDeviceCapabilities(sbIDeviceCapabilities *aDeviceCaps,
          contentType < contentTypesLength;
          contentType++)
     {
-      PRUint32 formatsCount;
-      char **formats;
-      rv = aDeviceCaps->GetSupportedFormats(contentTypes[contentType],
-                                            &formatsCount,
-                                            &formats);
+      PRUint32 mimeTypesCount;
+      char **mimeTypes;
+      rv = aDeviceCaps->GetSupportedMimeTypes(contentTypes[contentType],
+                                              &mimeTypesCount,
+                                              &mimeTypes);
       NS_ENSURE_SUCCESS(rv, rv);
-      sbAutoNSArray<char *> autoFormatsPtr(formats, formatsCount);
+      sbAutoNSArray<char *> autoMimeTypesPtr(mimeTypes, mimeTypesCount);
 
-      for (PRUint32 format = 0; format < formatsCount; format++) {
+      for (PRUint32 mimeType = 0; mimeType < mimeTypesCount; mimeType++) {
         rv = LogFormatType(contentTypes[contentType],
-                           NS_ConvertUTF8toUTF16(formats[format]),
+                           NS_ConvertUTF8toUTF16(mimeTypes[mimeType]),
                            aDeviceCaps,
                            aLogModule);
       }
@@ -1857,37 +1894,48 @@ LogFormatType(PRUint32 aContentType,
   NS_ENSURE_ARG_POINTER(aLogModule);
 
   nsresult rv;
-  nsCOMPtr<nsISupports> formatSupports;
-  rv = aDeviceCaps->GetFormatType(aContentType,
-                                  aFormat,
-                                  getter_AddRefs(formatSupports));
+  nsISupports** formatTypes;
+  PRUint32 formatTypeCount;
+  rv = aDeviceCaps->GetFormatTypes(aContentType,
+                                   aFormat,
+                                   &formatTypeCount,
+                                   &formatTypes);
   NS_ENSURE_SUCCESS(rv, rv);
+  sbAutoFreeXPCOMPointerArray<nsISupports> freeFormats(formatTypeCount,
+                                                       formatTypes); 
 
-  // QI to find out which format this is.
-  nsCOMPtr<sbIAudioFormatType> audioFormatType =
-      do_QueryInterface(formatSupports, &rv);
-  if (NS_SUCCEEDED(rv) && audioFormatType) {
-    rv = LogAudioFormatType(audioFormatType, aFormat, aLogModule);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
-    nsCOMPtr<sbIVideoFormatType> videoFormatType =
+  for (PRUint32 formatIndex = 0;
+       formatIndex < formatTypeCount;
+       formatIndex++)
+  {
+    nsCOMPtr<nsISupports> formatSupports = formatTypes[formatIndex];
+
+    // QI to find out which format this is.
+    nsCOMPtr<sbIAudioFormatType> audioFormatType =
         do_QueryInterface(formatSupports, &rv);
-    if (NS_SUCCEEDED(rv) && videoFormatType) {
-      rv = LogVideoFormatType(videoFormatType, aFormat, aLogModule);
+    if (NS_SUCCEEDED(rv) && audioFormatType) {
+      rv = LogAudioFormatType(audioFormatType, aFormat, aLogModule);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     else {
-      // Last chance, attempt image type.
-      nsCOMPtr<sbIImageFormatType> imageFormatType =
+      nsCOMPtr<sbIVideoFormatType> videoFormatType =
           do_QueryInterface(formatSupports, &rv);
-      if (NS_SUCCEEDED(rv) && imageFormatType) {
-        rv = LogImageFormatType(imageFormatType, aFormat, aLogModule);
+      if (NS_SUCCEEDED(rv) && videoFormatType) {
+        rv = LogVideoFormatType(videoFormatType, aFormat, aLogModule);
         NS_ENSURE_SUCCESS(rv, rv);
+      }
+      else {
+        // Last chance, attempt image type.
+        nsCOMPtr<sbIImageFormatType> imageFormatType =
+            do_QueryInterface(formatSupports, &rv);
+        if (NS_SUCCEEDED(rv) && imageFormatType) {
+          rv = LogImageFormatType(imageFormatType, aFormat, aLogModule);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
       }
     }
   }
-
+ 
   return NS_OK;
 }
 

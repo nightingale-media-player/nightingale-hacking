@@ -30,6 +30,10 @@ VPATH = @srcdir@ \
 
 include $(DEPTH)/build/autodefs.mk
 
+ifeq (macosx,$(SB_PLATFORM))
+   DISABLE_DEADLY_WARNINGS = 1
+endif
+
 ifneq (,$(filter-out macosx windows,$(SB_PLATFORM)))
    $(error The Songbird iTunes agent can only be built on Win32 and Mac)
 endif

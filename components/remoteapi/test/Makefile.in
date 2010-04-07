@@ -31,18 +31,41 @@ include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_TEST_COMPONENT = remoteapi
 
+
+#
+# According to head.songbird.js - |getTestServerPortNumber()|, the default port
+# number is 8180, but can be set via the enviroment variable
+# |SONGBIRD_TEST_SERVER_PORT|.
+#
+ifndef SONGBIRD_TEST_SERVER_PORT
+   PP_TEST_SERVER_PORT = 8180
+else
+   PP_TEST_SERVER_PORT = $(SONGBIRD_TEST_SERVER_PORT)
+endif
+
+PPDEFINES = -DSONGBIRD_TEST_SERVER_PORT="$(PP_TEST_SERVER_PORT)" \
+            $(NULL)
+
+SONGBIRD_PP_RESOURCES = $(srcdir)/test_batchCalls_page.html.in \
+                        $(srcdir)/test_privileged_page.html.in \
+                        $(srcdir)/test_remotedownload_page.html.in \
+                        $(srcdir)/test_remotelibrary_page.html.in \
+                        $(srcdir)/test_remotemedialist_add_page.html.in \
+                        $(srcdir)/media/remoteLibraryTest.m3u.in \
+                        $(NULL)
+
 SONGBIRD_TESTS = $(srcdir)/head_remoteapi.js \
                  $(srcdir)/tail_remoteapi.js \
                  $(srcdir)/test_batchCalls.js \
-                 $(srcdir)/test_batchCalls_page.html \
+                 $(DEPTH)/components/remoteapi/test/test_batchCalls_page.html \
                  $(srcdir)/test_crossLibAdd.js \
                  $(srcdir)/test_crossLibAdd_page.html \
                  $(srcdir)/test_empty.js \
                  $(srcdir)/test_empty_page.html \
                  $(srcdir)/test_remotedownload.js \
-                 $(srcdir)/test_remotedownload_page.html \
+                 $(DEPTH)/components/remoteapi/test/test_remotedownload_page.html \
                  $(srcdir)/test_remotelibrary.js \
-                 $(srcdir)/test_remotelibrary_page.html \
+                 $(DEPTH)/components/remoteapi/test/test_remotelibrary_page.html \
                  $(srcdir)/test_remotelibrary_duplicates.js \
                  $(srcdir)/test_remotelibrary_duplicates_page.html \
                  $(srcdir)/test_remotelibrary_getters.js \
@@ -58,7 +81,7 @@ SONGBIRD_TESTS = $(srcdir)/head_remoteapi.js \
                  $(srcdir)/test_remotemedialist_add2.js \
                  $(srcdir)/test_remotemedialist_add2_page.html \
                  $(srcdir)/test_remotemedialist_add.js \
-                 $(srcdir)/test_remotemedialist_add_page.html \
+                 $(DEPTH)/components/remoteapi/test/test_remotemedialist_add_page.html \
                  $(srcdir)/test_remoteplayer.js \
                  $(srcdir)/test_remoteplayer_page.html \
                  $(srcdir)/test_remoteplayerlisteners.js \
@@ -66,7 +89,7 @@ SONGBIRD_TESTS = $(srcdir)/head_remoteapi.js \
                  $(srcdir)/test_siteID.js \
                  $(srcdir)/test_siteID_page.html \
                  $(srcdir)/test_privileged.js \
-                 $(srcdir)/test_privileged_page.html \
+                 $(DEPTH)/components/remoteapi/test/test_privileged_page.html \
                  $(srcdir)/test_properties.js \
                  $(srcdir)/test_properties_page.html \
                  $(srcdir)/test_properties_urls.js \
@@ -87,6 +110,13 @@ SONGBIRD_TESTS = $(srcdir)/head_remoteapi.js \
                  $(srcdir)/media/test14.mp3 \
                  $(srcdir)/media/test15.mp3 \
                  $(srcdir)/media/test16.mp3 \
+                 $(srcdir)/media/DJBLUE_-_Hear_Me.mp3 \
+                 $(srcdir)/media/jaspertine_-_Introvert.mp3 \
+                 $(srcdir)/media/stefsax_-_I_like_it_like_Thats.thaens.mp3 \
+                 $(srcdir)/media/Sawtooth_-_We_Are_Not_Evil_Down_To_Brass_Tacks_Remix.mp3 \
+                 $(srcdir)/media/Vanchy_-_Black_Is_The_Night_Vanchy_s_Re-Fix.mp3 \
+                 $(DEPTH)/components/remoteapi/test/remoteLibraryTest.m3u \
+                 $(srcdir)/media/nyx_-_Undercover.mp3 \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk

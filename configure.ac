@@ -174,6 +174,27 @@ fi
 AC_SUBST(SB_UPDATE_CHANNEL)
 
 #
+# Check for --with-deadly-warnings
+#
+
+SB_WITH_DEADLY_WARNINGS=
+
+AC_ARG_WITH(deadly-warnings,
+            [  --with-deadly-warnings=<debug,release,all,none,force>,conditions under which compiler warnings are considered build failures (default=release)],
+            [ SB_WITH_DEADLY_WARNINGS=$withval ],
+            [ SB_WITH_DEADLY_WARNINGS=release])
+
+case "$SB_WITH_DEADLY_WARNINGS" in
+  debug|release|all|none|force)
+  ;;
+  *)
+    AC_MSG_ERROR([Unknown --with-deadly warnings option; use debug, release, all, none, or force])
+  ;;
+esac
+
+AC_SUBST(SB_WITH_DEADLY_WARNINGS)
+
+#
 # Check for --with-songbird-extensions
 #
 
@@ -746,6 +767,8 @@ case "$SB_PLATFORM" in
     CFLAGS_INCLUDE_SUFFIX=""
     CFLAGS_PREPROCESS="-P"
     CFLAGS_ASSEMBLER="-FAs"
+    # Always disable warning 4624, because the XPCOM elicits this warning.
+    CFLAGS_WARNING_IS_ERROR="-WX -wd4624"
     LDFLAGS="$LDFLAGS $MSVC_LINKER_FLAGS"
     LDFLAGS_DLL="-DLL $MSVC_DLL_LINKER_FLAGS"
     LDFLAGS_BIN=""
@@ -783,7 +806,9 @@ case "$SB_PLATFORM" in
     MACOSX_FRAMEWORKS="$MACOSX_CONTENTS/Frameworks"
     XULRUNNERDIR="/XUL.framework"
 
-    GCC_COMPILER_FLAGS="-c -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-common -fpascal-strings -fno-rtti -no-cpp-precomp -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -fshort-wchar -pipe"
+    GCC_COMPILER_FLAGS="-c -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-common -fpascal-strings -no-cpp-precomp -Wall -Wconversion -Wpointer-arith -Wcast-align -Wno-long-long -fshort-wchar -pipe"
+    GCC_CPP_COMPILER_FLAGS="-Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -fno-rtti"
+
     if test "$enable_debug" = "yes"; then
       GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -g -ggdb3 -fno-inline"
     else
@@ -797,12 +822,13 @@ case "$SB_PLATFORM" in
     GCC_LINKER_FLAGS="-lpthread -lobjc -shared-libgcc -lstdc++ -Wl,-executable_path,\$(topsrcdir)/$OBJDIRNAME/$DISTDIRNAME$MACOSX_FRAMEWORKS$XULRUNNERDIR"
 
     CFLAGS="$CFLAGS $GCC_COMPILER_FLAGS"
-    CXXFLAGS="$CXXFLAGS $GCC_COMPILER_FLAGS"
-    CMMFLAGS="$CMMFLAGS $GCC_COMPILER_FLAGS -fobjc-exceptions -DUSE_COCOA"
+    CXXFLAGS="$CXXFLAGS $GCC_COMPILER_FLAGS $GCC_CPP_COMPILER_FLAGS"
+    CMMFLAGS="$CMMFLAGS $GCC_COMPILER_FLAGS $GCC_CPP_COMPILER_FLAGS -fobjc-exceptions -DUSE_COCOA"
     CFLAGS_INCLUDE_PREFIX="-I"
     CFLAGS_INCLUDE_SUFFIX=""
     CFLAGS_PREPROCESS="-E"
     CFLAGS_ASSEMBLER="-S"
+    CFLAGS_WARNING_IS_ERROR="-Werror"
     LDFLAGS="$LDFLAGS $GCC_LINKER_FLAGS"
     LDFLAGS_DLL=""
     LDFLAGS_BIN=""
@@ -874,6 +900,7 @@ case "$SB_PLATFORM" in
     CFLAGS_INCLUDE_SUFFIX=""
     CFLAGS_PREPROCESS="-E"
     CFLAGS_ASSEMBLER="-S"
+    CFLAGS_WARNING_IS_ERROR="-Werror"
     LDFLAGS="$LDFLAGS $GCC_LINKER_FLAGS"
     LDFLAGS_DLL="-shared"
     LDFLAGS_BIN=""
@@ -954,6 +981,7 @@ case "$SB_PLATFORM" in
     CFLAGS_INCLUDE_SUFFIX=""
     CFLAGS_PREPROCESS="-E"
     CFLAGS_ASSEMBLER="-S"
+    CFLAGS_WARNING_IS_ERROR="-Werror"
     LDFLAGS_LIB="-static"
     LDFLAGS_OUT_PREFIX="-o "
     LDFLAGS_OUT_SUFFIX=""
@@ -1007,6 +1035,7 @@ AC_SUBST(CMMFLAGS)
 AC_SUBST(CFLAGS_STATIC_LIBC)
 AC_SUBST(CFLAGS_PREPROCESS)
 AC_SUBST(CFLAGS_ASSEMBLER)
+AC_SUBST(CFLAGS_WARNING_IS_ERROR)
 AC_SUBST(STRIP_FLAGS)
 AC_SUBST(COMPILER_GARBAGE)
 

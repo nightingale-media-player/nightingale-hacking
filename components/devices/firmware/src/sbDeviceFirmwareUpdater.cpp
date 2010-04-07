@@ -397,6 +397,8 @@ sbDeviceFirmwareUpdater::GetCachedFirmwareUpdate(sbIDevice *aDevice,
 
 NS_IMETHODIMP 
 sbDeviceFirmwareUpdater::CheckForUpdate(sbIDevice *aDevice, 
+                                        PRUint32 aDeviceVendorID,
+                                        PRUint32 aDeviceProductID,
                                         sbIDeviceEventListener *aListener)
 {
   LOG(("[sbDeviceFirmwareUpdater] - CheckForUpdate"));
@@ -408,12 +410,19 @@ sbDeviceFirmwareUpdater::CheckForUpdate(sbIDevice *aDevice,
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   nsCOMPtr<sbIDeviceFirmwareHandler> handler = 
-    GetRunningHandler(aDevice, 0, 0, aListener, PR_TRUE);
+    GetRunningHandler(aDevice, 
+                      aDeviceVendorID, 
+                      aDeviceProductID, 
+                      aListener, 
+                      PR_TRUE);
   
   NS_ENSURE_TRUE(handler, NS_ERROR_UNEXPECTED);
   
   PRBool canUpdate;
-  rv = handler->CanUpdate(aDevice, 0, 0, &canUpdate);
+  rv = handler->CanUpdate(aDevice, 
+                          aDeviceVendorID, 
+                          aDeviceProductID, 
+                          &canUpdate);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(canUpdate, NS_ERROR_NOT_IMPLEMENTED);
 
@@ -472,6 +481,14 @@ sbDeviceFirmwareUpdater::DownloadUpdate(sbIDevice *aDevice,
   nsCOMPtr<sbIDeviceFirmwareHandler> handler = 
     GetRunningHandler(aDevice, 0, 0, aListener, PR_TRUE);
 
+  nsString deviceModel;
+  rv = handler->GetDeviceModelNumber(deviceModel);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString deviceVendor;
+  rv = handler->GetDeviceVendor(deviceVendor);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsAutoMonitor mon(mMonitor);
   
   sbDeviceFirmwareHandlerStatus *handlerStatus = GetHandlerStatus(handler);
@@ -508,10 +525,23 @@ sbDeviceFirmwareUpdater::DownloadUpdate(sbIDevice *aDevice,
   NS_NEWXPCOM(downloader, sbDeviceFirmwareDownloader);
   NS_ENSURE_TRUE(downloader, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = downloader->Init(aDevice,
-                        aListener,
-                        handler);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if(deviceModel.IsVoid() || deviceVendor.IsVoid()) {
+    rv = downloader->Init(aDevice,
+                          aListener,
+                          handler);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    nsString deviceCacheDirName(deviceVendor);
+    deviceCacheDirName.AppendLiteral(" ");
+    deviceCacheDirName += deviceModel;
+
+    rv = downloader->Init(aDevice,
+                          deviceCacheDirName,
+                          aListener,
+                          handler);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // Firmware Downloader is responsible for sending all necessary events.
   rv = downloader->Start();
@@ -619,7 +649,7 @@ sbDeviceFirmwareUpdater::RecoveryUpdate(sbIDevice *aDevice,
                                         PRUint32 aDeviceProductID,
                                         sbIDeviceEventListener *aListener)
 {
-  LOG(("[sbDeviceFirmwareUpdater] - ApplyUpdate"));
+  LOG(("[sbDeviceFirmwareUpdater] - RecoveryUpdate"));
 
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_FALSE(mIsShutdown, NS_ERROR_ILLEGAL_DURING_SHUTDOWN);
@@ -699,7 +729,7 @@ sbDeviceFirmwareUpdater::RecoveryUpdate(sbIDevice *aDevice,
     // or not. But even then one would have to make sure it's in the exact
     // path for the firmware cache for the device.
     //
-    defaultFirmwareUpdate = aFirmwareUpdate;
+    firmwareUpdate = aFirmwareUpdate;
     needsCaching = PR_FALSE;
   }
 
@@ -799,12 +829,34 @@ sbDeviceFirmwareUpdater::RecoveryUpdate(sbIDevice *aDevice,
   // really, really rare :)
   //
   if(needsCaching) {
-    nsCOMPtr<sbIDeviceFirmwareUpdate> cachedFirmwareUpdate;
-    rv = sbDeviceFirmwareDownloader::CacheFirmwareUpdate(aDevice,
-                                                         firmwareUpdate, 
-                                                         getter_AddRefs(cachedFirmwareUpdate));
+    nsString deviceModel;
+    rv = handler->GetDeviceModelNumber(deviceModel);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
+    nsString deviceVendor;
+    rv = handler->GetDeviceVendor(deviceVendor);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if(deviceModel.IsVoid() || deviceVendor.IsVoid()) {
+      nsCOMPtr<sbIDeviceFirmwareUpdate> cachedFirmwareUpdate;
+      rv = sbDeviceFirmwareDownloader::CacheFirmwareUpdate(aDevice,
+                                                           firmwareUpdate, 
+                                                           getter_AddRefs(cachedFirmwareUpdate));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      nsString deviceCacheDirName(deviceVendor);
+      deviceCacheDirName.AppendLiteral(" ");
+      deviceCacheDirName += deviceModel;
+
+      nsCOMPtr<sbIDeviceFirmwareUpdate> cachedFirmwareUpdate;
+      rv = sbDeviceFirmwareDownloader::CacheFirmwareUpdate(aDevice,
+                                                           deviceCacheDirName,
+                                                           firmwareUpdate, 
+                                                           getter_AddRefs(cachedFirmwareUpdate));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
     cachedFirmwareUpdate.swap(firmwareUpdate);
   }
 
@@ -812,7 +864,7 @@ sbDeviceFirmwareUpdater::RecoveryUpdate(sbIDevice *aDevice,
   NS_NEWXPCOM(runner, sbDeviceFirmwareUpdaterRunner);
   NS_ENSURE_TRUE(runner, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = runner->Init(aDevice, firmwareUpdate, handler, PR_TRUE, needsCaching);
+  rv = runner->Init(aDevice, firmwareUpdate, handler, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mThreadPool->Dispatch(runner, NS_DISPATCH_NORMAL);
@@ -1378,7 +1430,6 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceFirmwareUpdaterRunner,
 
 sbDeviceFirmwareUpdaterRunner::sbDeviceFirmwareUpdaterRunner()
 : mRecovery(PR_FALSE)
-, mFirmwareUpdateNeedsCaching(PR_FALSE)
 {
 }
 
@@ -1391,8 +1442,7 @@ nsresult
 sbDeviceFirmwareUpdaterRunner::Init(sbIDevice *aDevice,
                                     sbIDeviceFirmwareUpdate *aUpdate, 
                                     sbIDeviceFirmwareHandler *aHandler,                                    
-                                    PRBool aRecovery /*= PR_FALSE*/,
-                                    PRBool aFirmwareUpdateNeedsCaching /*= PR_FALSE*/)
+                                    PRBool aRecovery /*= PR_FALSE*/)
 {
   NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(aUpdate);
@@ -1403,7 +1453,6 @@ sbDeviceFirmwareUpdaterRunner::Init(sbIDevice *aDevice,
   mHandler = aHandler;
 
   mRecovery = aRecovery;
-  mFirmwareUpdateNeedsCaching = aFirmwareUpdateNeedsCaching;
 
   return NS_OK;
 }
@@ -1424,7 +1473,6 @@ sbDeviceFirmwareUpdaterRunner::Run()
     rv = mHandler->Update(mFirmwareUpdate);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-
 
   return NS_OK;
 }

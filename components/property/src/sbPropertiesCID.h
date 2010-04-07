@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #define SB_MUTABLEPROPERTYARRAY_DESCRIPTION                \
   "Songbird Mutable Property Array Implementation"
@@ -219,3 +217,16 @@
   }
 #define SB_ORIGINPAGEIMAGEPROPERTYBUILDER_CONTRACTID             \
   "@songbirdnest.com/Songbird/Properties/Builder/OriginPageImage;1"
+
+#define SB_STORAGEPROPERTYUNITCONVERTER_DESCRIPTION              \
+  "Songbird Storage Property Unit Converter"
+#define SB_STORAGEPROPERTYUNITCONVERTER_CID                      \
+  {   /*{f07898c0-1dd1-11b2-8f36-c49aa3409f12}*/                 \
+    0xf07898c0,                                                  \
+    0x1dd1,                                                      \
+    0x11b2,                                                      \
+    { 0x8f, 0x36, 0xc4, 0x9a, 0xa3, 0x40, 0x9f, 0x12 }           \
+  }
+#define SB_STORAGEPROPERTYUNITCONVERTER_CONTRACTID               \
+  "@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"
+

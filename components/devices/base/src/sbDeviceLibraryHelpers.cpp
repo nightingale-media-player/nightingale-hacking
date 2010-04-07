@@ -55,8 +55,8 @@ sbLibraryUpdateListener::sbLibraryUpdateListener(sbILibrary * aTargetLibrary,
   : mTargetLibrary(aTargetLibrary),
     mPlaylistListener(new sbPlaylistSyncListener(aTargetLibrary,
                                                  aPlaylistsList != nsnull)),
-    mIgnorePlaylists(aIgnorePlaylists),
-    mSyncPlaylists(!aPlaylistsList)
+    mSyncPlaylists(!aPlaylistsList),
+    mIgnorePlaylists(aIgnorePlaylists)
 {
   SetSyncMode(aManualMode, aPlaylistsList);
 }
@@ -261,9 +261,9 @@ sbLibraryUpdateListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
  */
 static nsresult
 GetHideState(sbIPropertyArray * aOldProps,
-            sbIPropertyArray * aNewProps,
-            bool & aIsHidden,
-            bool & aIsUnhidden)
+             sbIPropertyArray * aNewProps,
+             PRBool & aIsHidden,
+             PRBool & aIsUnhidden)
 {
   nsresult rv;
   nsString oldHidden;
@@ -336,8 +336,8 @@ sbLibraryUpdateListener::OnItemUpdated(sbIMediaList *aMediaList,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // If this item is being unhidden then we'll need to add to the device lib
-  bool isHidden;
-  bool isUnhidden;
+  PRBool isHidden = PR_FALSE;
+  PRBool isUnhidden = PR_FALSE;
   rv = GetHideState(aProperties, newProps, isHidden, isUnhidden);
   NS_ENSURE_SUCCESS(rv, rv);
 

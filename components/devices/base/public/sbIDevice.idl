@@ -33,6 +33,7 @@ interface nsIVariant;
 
 interface sbIDeviceCapabilities;
 interface sbIDeviceContent;
+interface sbIDeviceLibrary;
 interface sbIDeviceProperties;
 interface sbIDeviceParameters;
 interface sbIDeviceStatus;
@@ -55,7 +56,7 @@ interface sbIDeviceSupportsItemCallback : nsISupports
  *
  * The main interface to all device objects
  */
-[scriptable, uuid(d59ed7e2-1dd1-11b2-99eb-b40b3170516a)]
+[scriptable, uuid(ba953610-380f-11df-9879-0800200c9a66)]
 interface sbIDevice : nsISupports
 {
   /**
@@ -124,22 +125,33 @@ interface sbIDevice : nsISupports
   readonly attribute sbIDeviceContent content;
 
   /**
+   * The default library to use for device operations when no library is
+   * specified.
+   */
+  attribute sbIDeviceLibrary defaultLibrary;
+
+  /**
    * The parameters with which the device was created
    */
   readonly attribute nsIPropertyBag2 parameters;
-  
+ 
   /**
    * The device's properties.
    */
   readonly attribute sbIDeviceProperties properties;
-  
+ 
+  /**
+   * Whether the media item is transcoded to the device directly.
+   */
+  readonly attribute boolean isDirectTranscoding;
+
   /**
    * Whether the device is currently performing a busy operation, like copying
    * or deleting. This is defined by the device as to what states determine the
    * device is busy.
    */
   readonly attribute boolean isBusy;
-  
+ 
   /**
    * Whether it is safe to disconnect the device, generally this is when it
    * is not performing a critical operation like copying a file to/from the
@@ -148,7 +160,7 @@ interface sbIDevice : nsISupports
    * the application.
    */
   readonly attribute boolean canDisconnect;
-  
+ 
   /**
    * A more detailed state of the device, with information on what item/list it
    * is currently being worked on and includes possible substates for more

@@ -71,7 +71,9 @@
       <menupopup id="menu_FilePopup">
         <menuitem id="menuitem_file_new" key="newplaylist-key" observes="servicePaneOpen" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
         <menuitem id="menuitem_file_smart" key="newsmartplaylist-key" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;" />
+        <!-- disabled per bug 20269
         <menuitem id="menuitem_file_remote" class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;" />
+        -->
         <!-- disabled per bug 17607
         <menuitem id="menuitem_file_podcast" class="menuitem-iconic" label="&menu.file.podcast;" accesskey="&menu.file.podcast.accesskey;" />
         -->

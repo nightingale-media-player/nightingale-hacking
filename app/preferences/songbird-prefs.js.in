@@ -13,7 +13,6 @@ pref("songbird.buildNumber", "@SB_BUILD_NUMBER@");
 
 // Default feather settings:
 // @see sbFeathersManager.js for more information about each pref
-pref("general.skins.selectedSkin", "purplerain");
 pref("songbird.feathers.default_skin_internalname", "purplerain");
 pref("songbird.feathers.default_feather_id", "purplerain@songbirdnest.com");
 pref("songbird.feathers.default_main_layout", "chrome://purplerain/content/xul/mainplayer.xul");
@@ -84,6 +83,9 @@ pref("browser.link.open_newwindow.restriction", 0);
 //pref("browser.tabs.loadInBackground", true);
 pref('browser.tabs.enabled', true);
 pref("browser.tabs.loadDivertedInBackground", false);
+
+// set the default device transcoding/transfer ratio.
+pref("device.transcoding.transfer.ratio", 1);
 
 //
 // Advanced DOM JavaScript preferences

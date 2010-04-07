@@ -1,27 +1,27 @@
-/** vim: ts=2 sw=2 expandtab
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+/* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 :miv */
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 /**
@@ -224,14 +224,14 @@ deviceErrorMonitor.prototype = {
             mediaURL = aDeviceEvent.data.name;
             mediaItem = aDeviceEvent.data;
           } else if (aDeviceEvent.data instanceof Ci.sbIMediaItem) {
-            mediaURL = aDeviceEvent.data.getProperty(SBProperties.contentURL);
+            mediaURL = aDeviceEvent.data.contentSrc.spec;
             mediaURL = decodeURIComponent(mediaURL);
             mediaItem = aDeviceEvent.data;
           } else if (aDeviceEvent.data instanceof Ci.nsIPropertyBag2) {
             var bag = aDeviceEvent.data;
             if (bag.hasKey("item")) {
               mediaItem = bag.getPropertyAsInterface("item", Ci.sbIMediaItem);
-              mediaURL = mediaItem.getProperty(SBProperties.contentURL);
+              mediaURL = mediaItem.contentSrc.spec;
               mediaURL = decodeURIComponent(mediaURL);
             }
           } else if (aDeviceEvent.data instanceof Ci.nsIFile) {
@@ -264,6 +264,16 @@ deviceErrorMonitor.prototype = {
         var contentType = this._getContentType(aDeviceEvent);
         // Get the error list, if one doesn't exists create it
         var errorList = this._getErrorList(devIndex, contentType);
+
+        // Ignore error if an error has already been logged for item
+        if (errorInfo.item) {
+          for (var i = 0; i < errorList.length; i++) {
+            var item = errorList[i].item;
+            if (item && item.equals(errorInfo.item))
+              return;
+          }
+        }
+
         errorList.push(errorInfo);
 
         this._notifyListeners(device);

@@ -53,6 +53,8 @@
 #include <nsCOMPtr.h>
 #include <nsIDOMDocument.h>
 #include <nsIDOMElement.h>
+#include <nsStringAPI.h>
+#include <nsTArray.h>
 
 //------------------------------------------------------------------------------
 //
@@ -143,6 +145,24 @@ public :
    */
   nsresult GetDeviceFolder(PRUint32   aContentType,
                            nsAString& aFolderURL);
+
+  /**
+   * Return in aMountTimeout the mount timeout value in seconds.  If no mount
+   * timeout value is available, return NS_ERROR_NOT_AVAILABLE.
+   *
+   * \param aMountTimeout       Returned mount timeout value.
+   *
+   * \return NS_ERROR_NOT_AVAILABLE
+   *                            Mount timeout value not available.
+   */
+  nsresult GetMountTimeout(PRUint32* aMountTimeout);
+
+  /**
+   * Returns a list of excluded folders folders in the array passed in. Each
+   * array entry may be folder name or a path to a specific folder.
+   * \param aFolders This is an array that the excluded folders will be added
+   */
+  nsresult GetExcludedFolders(nsAString & aExcludedFolders);
 
   /**
    * Construct a Songbird device XML info object to be used for the device

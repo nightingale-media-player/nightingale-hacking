@@ -86,11 +86,11 @@ public:
   sbFileScanQuery(const nsString & strDirectory,
                   const PRBool & bRecurse,
                   sbIFileScanCallback *pCallback);
-  
+
   virtual ~sbFileScanQuery();
   // Common initializations.
   void init();
-  
+
   NS_DECL_ISUPPORTS
   NS_DECL_SBIFILESCANQUERY
 
@@ -170,6 +170,8 @@ protected:
   PRBool m_ThreadQueueHasItem;
 
   nsCOMPtr<nsINetUtil> mNetUtil;
+  PRBool m_Finalized;
+  PRInt32 m_ThreadIsRunning;
 };
 
 class sbFileScanThread : public nsIRunnable

@@ -507,8 +507,8 @@ sbDeviceTranscoding::FindTranscodeProfile(sbIMediaItem * aMediaItem,
                                  inputUri);
     NS_ENSURE_SUCCESS(rv, rv);
     nsCOMPtr<sbITranscodeError> error;
-    rv = SB_NewTranscodeError(NS_LITERAL_STRING("transcode.error.no_profile.has_item"),
-                              NS_LITERAL_STRING("transcode.error.no_profile.without_item"),
+    rv = SB_NewTranscodeError(NS_LITERAL_STRING("transcode.error.no_profile.hasitem"),
+                              NS_LITERAL_STRING("transcode.error.no_profile.withoutitem"),
                               detailMessage,
                               inputUri,
                               aMediaItem,

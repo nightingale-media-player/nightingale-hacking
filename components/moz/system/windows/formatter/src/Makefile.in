@@ -3,7 +3,7 @@
 #
 # This file is part of the Songbird web player.
 #
-# Copyright(c) 2005-2009 POTI, Inc.
+# Copyright(c) 2005-2010 POTI, Inc.
 # http://www.songbirdnest.com
 #
 # This file may be licensed under the terms of of the
@@ -29,6 +29,10 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+ifeq (windows,$(SB_PLATFORM))
+   DISABLE_DEADLY_WARNINGS = 1
+endif
+
 # Ensure the DLL name is always the same (e.g., doesn't get a different name for
 # debug builds), so that the registry is properly set up by the installer.
 DISABLE_IMPLICIT_NAMING = 1
@@ -43,14 +47,16 @@ CPP_EXTRA_INCLUDES += \
  $(DEPS_DIR)/private/windows_ddk/$(SB_CONFIGURATION)/include \
  $(DEPTH)/components/moz/system/windows/formatter/public \
  $(topsrcdir)/components/include \
- $(topsrcdir)/components/moz/system/windows/src/static \
+ $(topsrcdir)/tools/lib/windows/static \
  $(NULL)
 
 CPP_EXTRA_DEFS += -DSB_LOG_TO_WINDOWS_EVENT_LOG \
                   $(NULL)
 
+CPP_EXTRA_FLAGS += $(CFLAGS_STATIC_LIBC)
+
 DYNAMIC_LIB_STATIC_IMPORTS += \
- components/moz/system/windows/src/static/sbWindowsUtils \
+ tools/lib/windows/static/sbWindowsUtils \
  $(NULL)
 
 WIN32_RC_SRCS = sbWindowsFormatter.rc \

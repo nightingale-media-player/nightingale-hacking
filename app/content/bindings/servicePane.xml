@@ -1,29 +1,27 @@
 <?xml version="1.0"?>
 <!--
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 -->
 
@@ -68,6 +66,7 @@
       <constructor>
           <![CDATA[
         Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
+        Components.utils.import("resource://app/jsmodules/URLUtils.jsm");
 
         window.gServicePane = this;
       ]]></constructor>
@@ -310,10 +309,12 @@
           var node = null;
           var newName = null;
 
+          if (this._editingRow != -1)
+            node = sp.getNodeForRow(this._editingRow);
+
           if (accept && this._editingRow != -1 &&
               this._editingColumn && !this.inputField.hidden &&
               this.hasAttribute('editing')) {
-            node = sp.getNodeForRow(this._editingRow);
             newName = this.inputField.value;
           }
 
@@ -427,9 +428,22 @@
           // Ensure the node is highlighted and start editing it
           var index = this.getRowForNode(aNode);
           if (index >= 0 && aNode.editable) {
+            // Highlight node
             this.highlightNode(aNode);
-            this.mTree.startEditing(index, this.mTree.columns[0]);
-            return true;
+
+            // Notify service pane service that the node is about to be renamed
+            this.mService.onBeforeRename(aNode.id);
+
+            // Start editing
+            var startedEditing = this.mTree.startEditing(index,
+                                                         this.mTree.columns[0]);
+
+            // If editing did not start, notify the service pane service that
+            // the rename was canceled by passing null for the new name
+            if (!startedEditing)
+              this.mService.onRename(aNode.id, null);
+
+            return startedEditing;
           }
           return false;
         ]]></body>
@@ -600,17 +614,19 @@
       <method name="selectAndLoadNode">
         <parameter name="node"/>
         <parameter name="event"/>
+        <parameter name="arguments"/>
         <body><![CDATA[
           this.highlightNode(node);  // also unhighlights other nodes
-          this.loadNode(node, event);
+          this.loadNode(node, event, arguments);
         ]]></body>
       </method>
       <method name="loadSelectedNode">
         <parameter name="event"/>
+        <parameter name="arguments"/>
         <body><![CDATA[
           var node = this.getNodeForRow(this.mTree.currentIndex);
           if (node) {
-            this.loadNode(node, event);
+            this.loadNode(node, event, arguments);
           }
         ]]></body>
       </method>
@@ -635,6 +651,7 @@
       <method name="loadNode">
         <parameter name="node"/>
         <parameter name="event"/>
+        <parameter name="arguments"/>
         <body><![CDATA[
           // If this node has a URL, just load it in the browser
           if (node.url) {
@@ -646,7 +663,11 @@
               // Middle click.
               target = "_blank";
             }
-            this.browser.loadURI(node.url, null, null, event, target);
+
+            var url = node.url;
+            if (arguments)
+              url = URLUtils.addQuery(url, arguments);
+            this.browser.loadURI(url, null, null, event, target);
 
             if( node.getAttributeNS(this.BSP, "Imported") == 'true' ) {
 

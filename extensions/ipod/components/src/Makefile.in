@@ -31,6 +31,8 @@ VPATH = @srcdir@ \
 
 include $(DEPTH)/build/autodefs.mk
 
+DISABLE_DEADLY_WARNINGS = 1
+
 IS_EXTENSION = 1
 
 CPP_SRCS = MLEVL.cpp \

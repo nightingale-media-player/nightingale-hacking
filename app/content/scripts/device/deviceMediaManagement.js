@@ -238,24 +238,27 @@ var DeviceMediaManagementServices = {
 
       var profiles = transcodeManager.getTranscodeProfiles();
       var deviceCaps = this._device.capabilities;
-      var formatMimeTypes = deviceCaps.getSupportedFormats(
+      var formatMimeTypes = deviceCaps.getSupportedMimeTypes(
               Ci.sbIDeviceCapabilities.CONTENT_AUDIO, {});
 
-      for (formatIndex in formatMimeTypes) {
-        var format = deviceCaps.
-          getFormatType(Ci.sbIDeviceCapabilities.CONTENT_AUDIO,
-                        formatMimeTypes[formatIndex]);
-        var container = format.containerFormat;
-        var audioCodec = format.audioCodec;
+      for (formatMimeTypeIndex in formatMimeTypes) {
+        var formats = deviceCaps.
+          getFormatTypes(Ci.sbIDeviceCapabilities.CONTENT_AUDIO,
+                         formatMimeTypes[formatMimeTypeIndex], {});
+        for (formatIndex in formats) {
+          var format = formats[formatIndex];
+          var container = format.containerFormat;
+          var audioCodec = format.audioCodec;
 
-        for (var i = 0; i < profiles.length; i++) {
-          var profile = profiles.queryElementAt(i, Ci.sbITranscodeProfile);
+          for (var i = 0; i < profiles.length; i++) {
+            var profile = profiles.queryElementAt(i, Ci.sbITranscodeProfile);
 
-          if (profile.type == Ci.sbITranscodeProfile.TRANSCODE_TYPE_AUDIO &&
-              profile.containerFormat == container &&
-              profile.audioCodec == audioCodec)
-          {
-            this._mediaManagementPrefs.transcodeProfiles.push(profile);
+            if (profile.type == Ci.sbITranscodeProfile.TRANSCODE_TYPE_AUDIO &&
+                profile.containerFormat == container &&
+                profile.audioCodec == audioCodec)
+            {
+              this._mediaManagementPrefs.transcodeProfiles.push(profile);
+            }
           }
         }
       }

@@ -40,7 +40,7 @@ interface sbIMediaList;
  * Holds the current status of a device, idle, syncing, etc with all the
  * relevent information.
  */
-[scriptable, uuid(137ec35a-1dd2-11b2-9ea5-9bec0a3bc5bd)]
+[scriptable, uuid(c4b8e380-1dd1-11b2-b549-be35d52daa54)]
 interface sbIDeviceStatus: nsISupports {
   /**
    * \brief The current overall state of the device.
@@ -105,10 +105,14 @@ interface sbIDeviceStatus: nsISupports {
    * Current List being processed
    */
   attribute sbIMediaList mediaList;
+
+  /**
+   * A new batch has begun since you last checked
+   */
+  attribute boolean isNewBatch;
   
   /**
    * \brief Initialize the DeviceStatus component for a device
    */
   void init(in AString aDeviceID);
 };
-

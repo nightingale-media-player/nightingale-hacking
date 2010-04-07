@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 // Base class for property unit converters (sbIPropertyUnitConverter)
 
@@ -383,9 +381,6 @@ sbPropertyUnitConverter::AutoFormat(const nsAString &aValue,
                                     PRInt32 aMinDecimals,
                                     PRInt32 aMaxDecimals,
                                     nsAString &_retval) {
-  if (!mPropertyInfo) 
-    return NS_ERROR_NOT_INITIALIZED;
-
   sbSimpleAutoLock lock(mLock);
 
   // parse as number
@@ -394,6 +389,8 @@ sbPropertyUnitConverter::AutoFormat(const nsAString &aValue,
   
   // It is okay to fail parsing, just default to propertyinfo.Format
   if (rv != NS_OK) {
+    if (!mPropertyInfo)
+      return NS_ERROR_FAILURE;
     nsCOMPtr<sbIPropertyInfo> propInfo = do_QueryReferent(mPropertyInfo, &rv);
     if (NS_FAILED(rv) || !propInfo)
       return NS_ERROR_FAILURE;
@@ -407,6 +404,8 @@ sbPropertyUnitConverter::AutoFormat(const nsAString &aValue,
   // for 'not supported'.
   if (autoUnit < 0) {
     // in which case we just format using the property info native unit
+    if (!mPropertyInfo)
+      return NS_ERROR_FAILURE;
     nsCOMPtr<sbIPropertyInfo> propInfo = do_QueryReferent(mPropertyInfo, &rv);
     if (NS_FAILED(rv) || !propInfo)
       return NS_ERROR_FAILURE;

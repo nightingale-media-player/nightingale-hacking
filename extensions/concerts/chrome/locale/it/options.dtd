@@ -1,0 +1,13 @@
+<!ENTITY prefs.location "Località">
+<!ENTITY prefs.location.descr "Scopri chi sta per arrivare in città.  &brandShortName; è in grado di tenere traccia dei programmi dei tuoi artisti e club preferiti, per non farti più perdere neanche un evento. Scegli la città a te più vicina per vedere chi sta per arrivare.">
+<!ENTITY prefs.library "Libreria">
+<!ENTITY prefs.library.text "&brandShortName; aggiunge una colonna alla tua libreria musicale per indicare quando un artista è in tour nella tua città.">
+<!ENTITY prefs.library.checklabel "Aggiungi la colonna In tour alla libreria">
+<!ENTITY prefs.country "Paese">
+<!ENTITY prefs.country.us "Stati Uniti">
+<!ENTITY prefs.country.uk "Regno Unito">
+<!ENTITY prefs.state "Stato">
+<!ENTITY prefs.city "Città">
+<!ENTITY prefs.radius "Area">
+<!ENTITY prefs.findShows "Trova spettacoli">
+<!ENTITY concerts.poweredby "Gli elenchi dei concerti sono forniti da">

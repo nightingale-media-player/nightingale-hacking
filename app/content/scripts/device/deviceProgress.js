@@ -240,6 +240,8 @@ var DPW = {
   //   _lastCompletedEventOperation
   //                            Last completed operation of last state changed
   //                            event.
+  //   _lastIsTranscoding       True if the locale suffix of previous operation
+  //                            is transcoding.
   //   _operationCanceled       If true, last operation was canceled
   //   _showProgress            If true, progress status should be displayed.
   //   _syncSettingsChanged     If true, buttons to apply/cancel sync settings
@@ -257,6 +259,15 @@ var DPW = {
   //   _idleLabel               Idle text label element.
   //   _idleBox                 Idle box holding idle text.
   //
+  //   _lastProgress            Saved last item progress number.
+  //   _ratio                   The ratio for transcoding : transferring.
+  //   _firstCopying            True for the first copying after transcoding
+  //
+  //   _transcodingStart        Time stamp when transcoding starts.
+  //   _transcodingEnd          Time stamp when transcoding ends.
+  //   _copyingStart            Time stamp when copying starts.
+  //   _copyingEnd              Time stamp when copying ends.
+  //
 
   _cfg: DPWCfg,
   _widget: null,
@@ -267,6 +278,7 @@ var DPW = {
   _curItemIndex: null,
   _totalItems: null,
   _operationInfoTable: null,
+  _lastIsTranscoding: false,
   _lastEventOperation: Ci.sbIDevice.STATE_IDLE,
   _lastCompletedEventOperation: Ci.sbIDevice.STATE_IDLE,
   _operationCanceled: false,
@@ -287,6 +299,13 @@ var DPW = {
   _syncManualBox: null,
 
   _lastProgress: 0,
+  _ratio: 1,
+  _firstCopying: false,
+
+  _transcodingStart: 0,
+  _transcodingEnd: 0,
+  _copyingStart: 0,
+  _copyingEnd: 0,
 
   /**
    * \brief Initialize the device progress services for the device progress
@@ -336,7 +355,7 @@ var DPW = {
 
     // Set the label accordingly.
     var syncModeLabel = this._getElement("syncmode_label");
-    var key = this._supportsVideo() ? "device.progress.syncmode.label"
+    var key = this._supportsVideo() ? "device.progress.audiovideosync.label"
                                     : "device.progress.audiosync.label";
     syncModeLabel.value = SBString(key, "");
 
@@ -360,6 +379,16 @@ var DPW = {
     // Update the last completed operation
     this._lastCompletedEventOperation = this._device.previousState;
 
+    // Read the ratio value from preference.
+    var prefService = Cc['@mozilla.org/preferences-service;1']
+                        .getService(Ci.nsIPrefBranch);
+    if (!this._device.isDirectTranscoding) {
+      try {
+        let key = "device.transcoding.transfer.ratio";
+        this._ratio = prefService.getIntPref(key);
+      } catch (err) {}
+    }
+
     // Simulate a device state changed event to initialize the operation state
     // and update the UI.
     this._handleStateChanged({ data: this._device.state });
@@ -378,6 +407,7 @@ var DPW = {
     // Clear object fields.
     this._widget = null;
     this._device = null;
+    this._deviceErrorMonitor = null;
     this._deviceID = null;
     this._deviceLibrary = null;
     this._operationInfoTable = null;
@@ -482,6 +512,15 @@ var DPW = {
 
   _updateProgressIdle: function DPW__updateProgressIdle() {
     this._lastProgress = 0;
+    this._lastIsTranscoding = false;
+
+    // Write back the ratio so this can be used in the future.
+    var prefService = Cc['@mozilla.org/preferences-service;1']
+                        .getService(Ci.nsIPrefBranch);
+    if (!this._device.isDirectTranscoding) {
+      let key = "device.transcoding.transfer.ratio";
+      prefService.setIntPref(key, this._ratio);
+    }
 
     var oInfo = this._getOperationInfo(this._lastCompletedEventOperation);
     if (oInfo.showIdleMessage) {
@@ -555,8 +594,13 @@ var DPW = {
       this._lastTimeLeft = Infinity;
     }
 
-    var now = new Date();
-    var etaString;
+    if (deviceStatus.isNewBatch)
+    {
+//      dump("==> New Batch!\n");
+      deviceStatus.isNewBatch = false;
+    }
+
+    var eta, etaString;
 
     // Update the operation progress meter.
     if (operationInfo.progressMeterDetermined) {
@@ -571,19 +615,92 @@ var DPW = {
 
       // We are often incorrectly told that 100% of the zeroth file
       // has been completed. This will be fixed by bug 20363.
-      if (curItemIndex != 0)
-        progress += (this._itemProgress.intValue / 100) / totalItems;
+      if (curItemIndex != 0) {
+        let increase = (this._itemProgress.intValue / 100) / totalItems;
 
-      if (progress > this._lastProgress)
-        this._lastProgress = progress;
-      else
-        progress = this._lastProgress;
+        // Some device has two phases for transcoding (MTP): transcode to
+        // temporary file, then copy to the device.
+        if (!this._device.isDirectTranscoding) {
+          // Calculate the transcoding and copying progress based on ratio.
+          //
+          // Make sure the progress bar moves forwards in a continuous way
+          // for transcoding/copying.
+          if (operation == Ci.sbIDevice.STATE_TRANSCODE ||
+              substate == Ci.sbIDevice.STATE_TRANSCODE) {
+            if (this._itemProgress.intValue == 0) {
+              this._lastIsTranscoding = true;
+              this._firstCopying = true;
 
-      if (progress > 0)
+              // Calculate the ratio based on the processing time of
+              // previous items.
+              if (curItemIndex > 1) {
+                this._copyingEnd = duration;
+                let transcodingDuration =
+                  this._transcodingEnd - this._transcodingStart;
+                let copyingDuration =
+                  this._copyingEnd - this._copyingStart;
+
+                // Replace the saved ratio with the first calculated one.
+                if (curItemIndex == 2) {
+                  this._ratio = transcodingDuration / copyingDuration + 0.5;
+                  if (!this._ratio) this._ratio = 1;
+                }
+                // Calculate the avarage ratio.
+                else {
+                  this._ratio = this._ratio * (curItemIndex - 2) + 0.5 +
+                                  transcodingDuration / copyingDuration;
+                  this._ratio /= (curItemIndex - 1);
+                  if (!this._ratio) this._ratio = 1;
+                }
+              }
+              this._transcodingStart = duration;
+            }
+
+            let divisor = totalItems * (1 / this._ratio + 1);
+            increase = (this._itemProgress.intValue / 100) / divisor;
+          }
+          else if (this._lastIsTranscoding &&
+                   (operation == Ci.sbIDevice.STATE_COPYING ||
+                    substate == Ci.sbIDevice.STATE_COPYING)) {
+            if (this._itemProgress.intValue == 0) {
+              this._copyingStart = duration;
+              this._transcodingEnd = duration;
+            }
+
+            let divisor = totalItems * (this._ratio + 1);
+
+            // XXX Hack: the item progress of first copying after transcoding
+            //           is still the one from transcoding. Due to asynchronous
+            //           update?
+            //           Ignore the first copying so that the progress bar works
+            if (this._firstCopying) {
+              this._firstCopying = false;
+              increase = this._ratio / divisor;
+            }
+            else {
+              increase =
+                (this._itemProgress.intValue / 100 + this._ratio) / divisor;
+            }
+          }
+        }
+
+        progress += increase;
+      }
+
+      // Show the time remaining detail starting from 5%. The value could
+      // change dramatically before 5%.
+      if (progress > 0.05)
       {
-        var eta = (duration / progress) - duration;
+        if (progress > this._lastProgress)
+          this._lastProgress = progress;
+        else
+          progress = this._lastProgress;
+
+        eta = (duration / progress) - duration;
         etaString = TimeFormatter.formatHMS(eta / 1000);
       }
+      else
+        this._lastProgress = progress;
 
       // Set the progress meter to determined.
       this._progressMeter.setAttribute("mode", "determined");
@@ -598,7 +715,9 @@ var DPW = {
     }
 
 //     var now = new Date().valueOf();
-//     dump("==> "+ now +": "+ operationInfo.localeSuffix +" "+
+//     dump("==> "+ now +": "+
+//          operationInfo.localeSuffix +"+"+
+//          this._getOperationInfo(substate).localeSuffix +" "+
 //          curItemIndex +"/"+ totalItems +".  "+
 //          this._itemProgress.intValue +"% of this item, "+
 //          Math.round(progress * 10000) / 100 +"% in total.  "+
@@ -608,7 +727,6 @@ var DPW = {
 
     var itemType = this._getItemType();
     // Determine if this is a playlist
-    var deviceStatus = this._device.currentStatus;
     var isPlaylist = deviceStatus.mediaItem instanceof Ci.sbIMediaList;
     
     // If we're preparing to sync (indicated by an idle sub)
@@ -631,7 +749,7 @@ var DPW = {
         localeKey = "device.status.progress_header_deleting";
       }
       else {
-        localKey = "device.status.progress_header_syncing";
+        localeKey = "device.status.progress_header_syncing";
         subLocaleKey = "device.status.progress_footer_syncing_finishing";
       }
     } else if (operation == Ci.sbIDevice.STATE_SYNCING &&
@@ -764,7 +882,7 @@ var DPW = {
 
         // Reset back the syncmode if there is pending sync mode change.
         if (DPW._deviceLibrary.syncModeChanged) {
-          DPW._deviceLibrary.syncMode = !DPW._deviceLibrary.syncMode;
+          DPW._deviceLibrary.syncMode = Ci.sbIDeviceLibrary.SYNC_MANUAL;
         }
         break;
     }
@@ -913,10 +1031,17 @@ var DPW = {
       this._deviceLibrary = this._device.content.libraries
           .queryElementAt(0, Ci.sbIDeviceLibrary);
 
-      // If there is pending sync mode change, make sure to reset when
-      // the summary page is reloaded.
-      if (this._deviceLibrary.syncModeChanged)
-        this._deviceLibrary.syncMode = !this._deviceLibrary.syncMode;
+      // Update the progress UI to apply/cancel for pending sync mode change
+      var prefs = Cc["@mozilla.org/preferences-service;1"]
+                    .getService(Ci.nsIPrefBranch);
+      var syncModeChangedKey = "songbird.device." + this._widget.deviceID +
+                               ".syncmode.changed";
+
+      if (prefs.prefHasUserValue(syncModeChangedKey) &&
+          prefs.getBoolPref(syncModeChangedKey)) {
+        prefs.clearUserPref(syncModeChangedKey);
+        this._dispatchSettingsEvent(this.SYNCSETTINGS_CHANGE);
+      }
     }
   },
 

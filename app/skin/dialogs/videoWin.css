@@ -55,9 +55,9 @@ spacer {
   background-position:center top;
 }
 
-#video_window:not([hidechrome="true"]) sb-sys-titlebar,
-#video_window:not([hidechrome="true"]) .sb-sys-outer-frame-chrome,
-#video_window:not([hidechrome="true"]) .sb-sys-outer-frame-resizer,
+#video_window:not([hidechrome="true"]):not([sb-show-sys-titlebar]) sb-sys-titlebar,
+#video_window:not([hidechrome="true"]):not([sb-show-sys-titlebar]) .sb-sys-outer-frame-chrome,
+#video_window:not([hidechrome="true"]):not([sb-show-sys-titlebar]) .sb-sys-outer-frame-resizer,
 #video_window[fullscreen="true"] sb-sys-titlebar,
 #video_window[fullscreen="true"] .sb-sys-outer-frame-chrome,
 #video_window[fullscreen="true"] .sb-sys-outer-frame-resizer {

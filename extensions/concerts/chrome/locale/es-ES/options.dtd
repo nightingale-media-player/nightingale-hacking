@@ -1,13 +1,13 @@
 <!ENTITY prefs.location "Ubicación">
-<!ENTITY prefs.location.descr "Elije la cuidad más cercana para ver conciertos en la zona circundante">
+<!ENTITY prefs.location.descr "Entérate de quién va ir a tu ciudad. &brandShortName; puede seguir a tus artistas y clubs favoritos para que no te pierdas otro espectáculo.">
 <!ENTITY prefs.library "Biblioteca">
-<!ENTITY prefs.library.text "Songbird puede añadir una columna a tu biblioteca musical para indicar cuando un artista está de gira en tu ciudad.">
-<!ENTITY prefs.library.checklabel "Añadir la columna en gira a mi biblioteca.">
+<!ENTITY prefs.library.text "&brandShortName; puede añadir una columna a la biblioteca de música que indicará si cualquiera de los artistas están de gira por tu ciudad">
+<!ENTITY prefs.library.checklabel "Añadir la columna De gira a la biblioteca">
 <!ENTITY prefs.country "País">
-<!ENTITY prefs.country.us "EEUU">
+<!ENTITY prefs.country.us "Estados Unidos">
 <!ENTITY prefs.country.uk "Reino Unido">
 <!ENTITY prefs.state "Estado">
 <!ENTITY prefs.city "Ciudad">
 <!ENTITY prefs.radius "Radio">
-<!ENTITY prefs.findShows "Buscar conciertos">
-<!ENTITY concerts.poweredby "Listas de conciertos proporcionados por">
+<!ENTITY prefs.findShows "Encontrar espectáculos">
+<!ENTITY concerts.poweredby "Las listas de conciertos son suministradas por">

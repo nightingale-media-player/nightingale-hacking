@@ -8,6 +8,8 @@ VPATH = @srcdir@ \
 
 include $(DEPTH)/build/autodefs.mk
 
+DISABLE_DEADLY_WARNINGS = 1
+
 DYNAMIC_LIB = sbGStreamerMediacore
 
 SUBDIRS = metadata

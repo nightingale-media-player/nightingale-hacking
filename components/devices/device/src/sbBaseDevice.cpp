@@ -82,6 +82,7 @@
 #include <sbIMediaManagementService.h>
 #include <sbIOrderableMediaList.h>
 #include <sbIPrompter.h>
+#include <sbIPropertyUnitConverter.h>
 #include <nsISupportsPrimitives.h>
 #include <sbITranscodeManager.h>
 #include <sbITranscodeAlbumArt.h>
@@ -153,6 +154,41 @@ static const PRUint32 sbBaseDeviceSupportedFolderContentTypeList[] =
   sbIDeviceCapabilities::CONTENT_PLAYLIST,
   sbIDeviceCapabilities::CONTENT_IMAGE
 };
+
+static nsresult
+GetPropertyBag(sbIDevice * aDevice, nsIPropertyBag2 ** aProperties)
+{
+  TRACE(("%s", __FUNCTION__));
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(aProperties);
+
+  nsCOMPtr<sbIDeviceProperties> deviceProperties;
+  nsresult rv = aDevice->GetProperties(getter_AddRefs(deviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deviceProperties->GetProperties(aProperties);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+
+static nsresult
+GetWritableDeviceProperties(sbIDevice * aDevice,
+                            nsIWritablePropertyBag ** aProperties)
+{
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(aProperties);
+
+  nsresult rv;
+
+  // Get the device properties.
+  nsCOMPtr<nsIPropertyBag2>        roDeviceProperties;
+  rv = GetPropertyBag(aDevice, getter_AddRefs(roDeviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return CallQueryInterface(roDeviceProperties, aProperties);
+}
 
 NS_IMPL_THREADSAFE_ISUPPORTS0(sbBaseDevice::TransferRequest)
 
@@ -385,7 +421,8 @@ sbBaseDevice::sbBaseDevice() :
   mVideoInserted(false),
   mSyncType(0),
   mEnsureSpaceChecked(false),
-  mIsHandlingRequests(PR_FALSE)
+  mIsHandlingRequests(PR_FALSE),
+  mVolumeLock(nsnull)
 {
 #ifdef PR_LOGGING
   if (!gBaseDeviceLog) {
@@ -409,6 +446,16 @@ sbBaseDevice::sbBaseDevice() :
                               __FILE__"::mConnectLock");
   NS_ASSERTION(mConnectLock, "Failed to allocate connection lock");
 
+  // Create the volume lock.
+  mVolumeLock = nsAutoLock::NewLock("sbBaseDevice::mVolumeLock");
+  NS_ASSERTION(mVolumeLock, "Failed to allocate volume lock");
+
+  // Initialize the volume tables.
+  NS_ASSERTION(mVolumeGUIDTable.Init(),
+               "Failed to initialize volume GUID table");
+  NS_ASSERTION(mVolumeLibraryGUIDTable.Init(),
+               "Failed to initialize volume library GUID table");
+
   // the typical case is 1 library per device
   PRBool success = mOrganizeLibraryPrefs.Init(1);
   NS_ASSERTION(success, "Failed to initialize organize prefs hashtable");
@@ -418,6 +465,15 @@ sbBaseDevice::~sbBaseDevice()
 {
   NS_WARN_IF_FALSE(mBatchDepth == 0,
                    "Device destructed with batches remaining");
+
+  if (mVolumeLock)
+    nsAutoLock::DestroyLock(mVolumeLock);
+  mVolumeLock = nsnull;
+
+  mVolumeList.Clear();
+  mVolumeGUIDTable.Clear();
+  mVolumeLibraryGUIDTable.Clear();
+
   if (mPreferenceLock)
     nsAutoLock::DestroyLock(mPreferenceLock);
 
@@ -548,6 +604,37 @@ void SBUpdateBatchCounts(sbBaseDevice::Batch& aBatch)
                       (*(aBatch.rbegin()))->batchID);
 }
 
+void SBUpdateBatchCountsIgnorePlaylist(sbBaseDevice::Batch& aBatch)
+{
+  // Do nothing if batch is empty.
+  if (aBatch.empty())
+    return;
+
+  // Get the batch begin.
+  sbBaseDevice::Batch::iterator batchBegin = aBatch.begin();
+  sbBaseDevice::Batch::iterator lastBegin = batchBegin;
+  sbBaseDevice::TransferRequest *request = nsnull;
+  nsCOMPtr<sbIMediaList> itemList;
+  PRUint32 index = 0;
+  for (; batchBegin != aBatch.end(); ++batchBegin) {
+    request = batchBegin->get();
+    if (request->item)
+      itemList = do_QueryInterface(request->item);
+    // Reset the batch count for the items before playlists.
+    if (itemList) {
+      sbBaseDevice::TransferRequest *req = nsnull;
+      for (; lastBegin != batchBegin; ++lastBegin) {
+        req = lastBegin->get();
+        req->batchCount = index;
+      }
+      break;
+    }
+    ++index;
+  }
+
+  return;
+}
+
 void SBUpdateBatchIndex(sbBaseDevice::Batch& aBatch)
 {
   // Do nothing if batch is empty.
@@ -583,6 +670,9 @@ void SBCreateSubBatchIndex(sbBaseDevice::Batch& aBatch)
     if (firstTranscoding &&
         request->destinationCompatibility == NEEDS_TRANSCODING)
     {
+      // Bump the index back since this it is 1 based
+      --index;
+
       sbBaseDevice::TransferRequest *req = nsnull;
       for (; lastBegin != batchBegin; ++lastBegin) {
         req = lastBegin->get();
@@ -1683,6 +1773,13 @@ nsresult sbBaseDevice::SetPreferenceInternal(nsIPrefBranch*   aPrefBranch,
   return NS_OK;
 }
 
+/* readonly attribute boolean isDirectTranscoding; */
+NS_IMETHODIMP sbBaseDevice::GetIsDirectTranscoding(PRBool *aIsDirect)
+{
+  *aIsDirect = PR_TRUE;
+  return NS_OK;
+}
+
 /* readonly attribute boolean isBusy; */
 NS_IMETHODIMP sbBaseDevice::GetIsBusy(PRBool *aIsBusy)
 {
@@ -1905,6 +2002,57 @@ nsresult sbBaseDevice::AddLibrary(sbIDeviceLibrary* aDevLib)
   rv = GetContent(getter_AddRefs(content));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Get the current number of libraries.
+  PRUint32           libraryCount;
+  nsCOMPtr<nsIArray> libraries;
+  rv = content->GetLibraries(getter_AddRefs(libraries));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = libraries->GetLength(&libraryCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the capacity for the library's device volume.
+  nsAutoString displayCapacity;
+  nsAutoString capacity;
+  rv = aDevLib->GetProperty(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_CAPACITY),
+                            capacity);
+  if (NS_SUCCEEDED(rv) && !capacity.IsEmpty()) {
+    // Convert the capacity to a display capacity.
+    nsCOMPtr<sbIPropertyUnitConverter> storageConverter =
+      do_CreateInstance(SB_STORAGEPROPERTYUNITCONVERTER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = storageConverter->AutoFormat(capacity, -1, 1, displayCapacity);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // If the library will be the first library, assume it's internal.  Otherwise,
+  // assume it's removable.
+  nsAutoString libraryName;
+  nsTArray<nsString> libraryNameParams;
+  if (libraryCount == 0) {
+    if (!displayCapacity.IsEmpty()) {
+      libraryNameParams.AppendElement(displayCapacity);
+      libraryName =
+        SBLocalizedString("device.volume.internal.name_with_capacity",
+                          libraryNameParams);
+    }
+    else {
+      libraryName = SBLocalizedString("device.volume.internal.name");
+    }
+  }
+  else {
+    if (!displayCapacity.IsEmpty()) {
+      libraryNameParams.AppendElement(displayCapacity);
+      libraryName =
+        SBLocalizedString("device.volume.removable.name_with_capacity",
+                          libraryNameParams);
+    }
+    else {
+      libraryName = SBLocalizedString("device.volume.removable.name");
+    }
+  }
+  rv = aDevLib->SetName(libraryName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Add the library to the device content.
   rv = content->AddLibrary(aDevLib);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1912,6 +2060,35 @@ nsresult sbBaseDevice::AddLibrary(sbIDeviceLibrary* aDevLib)
   // Send a device library added event.
   CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_LIBRARY_ADDED,
                          sbNewVariant(aDevLib));
+
+  // If no default library has been set, use library as default.  Otherwise,
+  // check default library preference.
+  if (!mDefaultLibrary) {
+    rv = UpdateDefaultLibrary(aDevLib);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    // Get the default library GUID.
+    nsAutoString defaultLibraryGUID;
+    nsCOMPtr<nsIVariant> defaultLibraryGUIDPref;
+    rv = GetPreference(NS_LITERAL_STRING("default_library_guid"),
+                       getter_AddRefs(defaultLibraryGUIDPref));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = defaultLibraryGUIDPref->GetAsAString(defaultLibraryGUID);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the added library GUID.
+    nsAutoString libraryGUID;
+    rv = aDevLib->GetGuid(libraryGUID);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // If added library GUID matches default library preference GUID, set it as
+    // the default.
+    if (libraryGUID.Equals(defaultLibraryGUID)) {
+      rv = UpdateDefaultLibrary(aDevLib);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
 
   // Apply the library preferences.
   rv = ApplyLibraryPreference(aDevLib, SBVoidString(), nsnull);
@@ -1929,11 +2106,8 @@ nsresult sbBaseDevice::CheckAccess(sbIDeviceLibrary* aDevLib)
   nsresult rv;
 
   // Get the device properties.
-  nsCOMPtr<sbIDeviceProperties> baseDeviceProperties;
   nsCOMPtr<nsIPropertyBag2>     deviceProperties;
-  rv = GetProperties(getter_AddRefs(baseDeviceProperties));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = baseDeviceProperties->GetProperties(getter_AddRefs(deviceProperties));
+  rv = GetPropertyBag(this, getter_AddRefs(deviceProperties));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the access compatibility.
@@ -2037,6 +2211,36 @@ nsresult sbBaseDevice::RemoveLibrary(sbIDeviceLibrary* aDevLib)
   // Function variables.
   nsresult rv;
 
+  // Get the device content.
+  nsCOMPtr<sbIDeviceContent> content;
+  rv = GetContent(getter_AddRefs(content));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If the default library is being removed, change the default to the first
+  // library.
+  if (aDevLib == mDefaultLibrary) {
+    // Get the list of device libraries.
+    PRUint32           libraryCount;
+    nsCOMPtr<nsIArray> libraries;
+    rv = content->GetLibraries(getter_AddRefs(libraries));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = libraries->GetLength(&libraryCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Set the default library to the first library or null if no libraries.
+    nsCOMPtr<sbIDeviceLibrary> defaultLibrary;
+    for (PRUint32 i = 0; i < libraryCount; ++i) {
+      nsCOMPtr<sbIDeviceLibrary> library = do_QueryElementAt(libraries, i, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      if (library != aDevLib) {
+        defaultLibrary = library;
+        break;
+      }
+    }
+    rv = UpdateDefaultLibrary(defaultLibrary);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   // Send a device library removed event.
   nsAutoString guid;
   rv = aDevLib->GetGuid(guid);
@@ -2044,14 +2248,65 @@ nsresult sbBaseDevice::RemoveLibrary(sbIDeviceLibrary* aDevLib)
   CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_LIBRARY_REMOVED,
                          sbNewVariant(guid));
 
-  // Get the device content.
-  nsCOMPtr<sbIDeviceContent> content;
-  rv = GetContent(getter_AddRefs(content));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Remove the device library from the device content.
   rv = content->RemoveLibrary(aDevLib);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::UpdateLibraryProperty(sbILibrary*      aLibrary,
+                                    const nsAString& aPropertyID,
+                                    const nsAString& aPropertyValue)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  nsresult rv;
+
+  // Get the current property value.
+  nsAutoString currentPropertyValue;
+  rv = aLibrary->GetProperty(aPropertyID, currentPropertyValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set the property value if it's changing.
+  if (!aPropertyValue.Equals(currentPropertyValue)) {
+    rv = aLibrary->SetProperty(aPropertyID, aPropertyValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::UpdateDefaultLibrary(sbIDeviceLibrary* aDevLib)
+{
+  nsresult rv;
+
+  // Do nothing if default library is not changing.
+  if (aDevLib == mDefaultLibrary)
+    return NS_OK;
+
+  // Update the default library and volume.
+  mDefaultLibrary = aDevLib;
+  nsRefPtr<sbBaseDeviceVolume> volume;
+  rv = GetVolumeForItem(aDevLib, getter_AddRefs(volume));
+  if (NS_SUCCEEDED(rv)) {
+    nsAutoLock autoVolumeLock(mVolumeLock);
+    mDefaultVolume = volume;
+  }
+
+  // Handle the default library change.
+  OnDefaultLibraryChanged();
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::OnDefaultLibraryChanged()
+{
+  // Send a default library changed event.
+  CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_DEFAULT_LIBRARY_CHANGED,
+                         sbNewVariant(mDefaultLibrary));
 
   return NS_OK;
 }
@@ -2831,10 +3086,6 @@ nsresult sbBaseDevice::Init()
                             getter_AddRefs(mBatchEndTimer));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get a device statistics instance.
-  rv = sbDeviceStatistics::New(this, getter_AddRefs(mDeviceStatistics));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Initialize the media folder URL table.
   NS_ENSURE_TRUE(mMediaFolderURLTable.Init(), NS_ERROR_OUT_OF_MEMORY);
 
@@ -2876,11 +3127,8 @@ sbBaseDevice::GetMusicFreeSpace(sbILibrary* aLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the device properties.
-  nsCOMPtr<sbIDeviceProperties> baseDeviceProperties;
   nsCOMPtr<nsIPropertyBag2>     deviceProperties;
-  rv = GetProperties(getter_AddRefs(baseDeviceProperties));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = baseDeviceProperties->GetProperties(getter_AddRefs(deviceProperties));
+  rv = GetPropertyBag(this, getter_AddRefs(deviceProperties));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the music used space.
@@ -2910,11 +3158,8 @@ sbBaseDevice::GetMusicAvailableSpace(sbILibrary* aLibrary,
   nsresult rv;
 
   // Get the device properties.
-  nsCOMPtr<sbIDeviceProperties> baseDeviceProperties;
   nsCOMPtr<nsIPropertyBag2>     deviceProperties;
-  rv = GetProperties(getter_AddRefs(baseDeviceProperties));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = baseDeviceProperties->GetProperties(getter_AddRefs(deviceProperties));
+  rv = GetPropertyBag(this, getter_AddRefs(deviceProperties));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the total capacity.
@@ -2956,6 +3201,101 @@ sbBaseDevice::SupportsMediaItemDRM(sbIMediaItem* aMediaItem,
     NS_ENSURE_SUCCESS(rv, rv);
   }
   *_retval = PR_FALSE;
+
+  return NS_OK;
+}
+
+//------------------------------------------------------------------------------
+//
+// Device volume services.
+//
+//------------------------------------------------------------------------------
+
+nsresult
+sbBaseDevice::AddVolume(sbBaseDeviceVolume* aVolume)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aVolume);
+
+  // Function variables.
+  nsresult rv;
+
+  // Add the volume to the volume lists and tables.
+  nsAutoString volumeGUID;
+  rv = aVolume->GetGUID(volumeGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+  {
+    nsAutoLock autoVolumeLock(mVolumeLock);
+    NS_ENSURE_TRUE(mVolumeList.AppendElement(aVolume), NS_ERROR_OUT_OF_MEMORY);
+    NS_ENSURE_TRUE(mVolumeGUIDTable.Put(volumeGUID, aVolume),
+                   NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::RemoveVolume(sbBaseDeviceVolume* aVolume)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aVolume);
+
+  // Function variables.
+  nsresult rv;
+
+  // If the device volume has a device library, get the library GUID.
+  nsAutoString               libraryGUID;
+  nsCOMPtr<sbIDeviceLibrary> library;
+  rv = aVolume->GetDeviceLibrary(getter_AddRefs(library));
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (library)
+    library->GetGuid(libraryGUID);
+
+  // Remove the volume from the volume lists and tables.
+  nsAutoString volumeGUID;
+  rv = aVolume->GetGUID(volumeGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+  {
+    nsAutoLock autoVolumeLock(mVolumeLock);
+    mVolumeList.RemoveElement(aVolume);
+    mVolumeGUIDTable.Remove(volumeGUID);
+    if (!libraryGUID.IsEmpty())
+      mVolumeLibraryGUIDTable.Remove(libraryGUID);
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::GetVolumeForItem(sbIMediaItem*        aItem,
+                               sbBaseDeviceVolume** aVolume)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(aVolume);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the item's library's guid.
+  nsAutoString libraryGUID;
+  nsCOMPtr<sbILibrary> library;
+  rv = aItem->GetLibrary(getter_AddRefs(library));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = library->GetGuid(libraryGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the volume from the volume library GUID table.
+  nsRefPtr<sbBaseDeviceVolume> volume;
+  {
+    nsAutoLock autoVolumeLock(mVolumeLock);
+    PRBool present = mVolumeLibraryGUIDTable.Get(libraryGUID,
+                                                 getter_AddRefs(volume));
+    NS_ENSURE_TRUE(present, NS_ERROR_NOT_AVAILABLE);
+  }
+
+  // Return results.
+  volume.forget(aVolume);
 
   return NS_OK;
 }
@@ -3219,6 +3559,24 @@ sbBaseDevice::ApplyDeviceSettingsDeviceInfo
     }
   }
 
+  nsString excludedFolders;
+  rv = deviceXMLInfo->GetExcludedFolders(excludedFolders);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!excludedFolders.IsEmpty()) {
+    LOG(("Excluded Folders: %s",
+         NS_LossyConvertUTF16toASCII(excludedFolders).BeginReading()));
+
+    // Get the device properties.
+    nsCOMPtr<nsIWritablePropertyBag> deviceProperties;
+    rv = GetWritableDeviceProperties(this, getter_AddRefs(deviceProperties));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = deviceProperties->SetProperty(
+                           NS_LITERAL_STRING(SB_DEVICE_PROPERTY_EXCLUDED_FOLDERS),
+                           sbNewVariant(excludedFolders));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   // Update media folders if needed.  Ignore errors if media folders fail to
   // update.
   if (needMediaFolderUpdate)
@@ -3307,50 +3665,57 @@ sbBaseDevice::UpdateStatisticsProperties()
 {
   nsresult rv;
 
+  // Get the statistics for the default volume.  Just return if no default
+  // volume.
+  nsRefPtr<sbBaseDeviceVolume> volume;
+  nsRefPtr<sbDeviceStatistics> deviceStatistics;
+  {
+    nsAutoLock autoVolumeLock(mVolumeLock);
+    if (!mDefaultVolume)
+      return NS_OK;
+    volume = mDefaultVolume;
+  }
+  rv = volume->GetStatistics(getter_AddRefs(deviceStatistics));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Get the device properties.
-  nsCOMPtr<sbIDeviceProperties>    baseDeviceProperties;
-  nsCOMPtr<nsIPropertyBag2>        roDeviceProperties;
   nsCOMPtr<nsIWritablePropertyBag> deviceProperties;
-  rv = GetProperties(getter_AddRefs(baseDeviceProperties));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = baseDeviceProperties->GetProperties(getter_AddRefs(roDeviceProperties));
-  NS_ENSURE_SUCCESS(rv, rv);
-  deviceProperties = do_QueryInterface(roDeviceProperties, &rv);
+  rv = GetWritableDeviceProperties(this, getter_AddRefs(deviceProperties));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Update the statistics properties.
   //XXXeps should use base properties class and use SetPropertyInternal
   rv = deviceProperties->SetProperty
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_ITEM_COUNT),
-          sbNewVariant(mDeviceStatistics->AudioCount()));
+          sbNewVariant(deviceStatistics->AudioCount()));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = deviceProperties->SetProperty
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_USED_SPACE),
-          sbNewVariant(mDeviceStatistics->AudioUsed()));
+          sbNewVariant(deviceStatistics->AudioUsed()));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = deviceProperties->SetProperty
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_TOTAL_PLAY_TIME),
-          sbNewVariant(mDeviceStatistics->AudioPlayTime()));
+          sbNewVariant(deviceStatistics->AudioPlayTime()));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = deviceProperties->SetProperty
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_ITEM_COUNT),
-          sbNewVariant(mDeviceStatistics->VideoCount()));
+          sbNewVariant(deviceStatistics->VideoCount()));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = deviceProperties->SetProperty
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_USED_SPACE),
-          sbNewVariant(mDeviceStatistics->VideoUsed()));
+          sbNewVariant(deviceStatistics->VideoUsed()));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = deviceProperties->SetProperty
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_TOTAL_PLAY_TIME),
-          sbNewVariant(mDeviceStatistics->VideoPlayTime()));
+          sbNewVariant(deviceStatistics->VideoPlayTime()));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = deviceProperties->SetProperty
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMAGE_ITEM_COUNT),
-          sbNewVariant(mDeviceStatistics->ImageCount()));
+          sbNewVariant(deviceStatistics->ImageCount()));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = deviceProperties->SetProperty
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMAGE_USED_SPACE),
-          sbNewVariant(mDeviceStatistics->ImageUsed()));
+          sbNewVariant(deviceStatistics->ImageUsed()));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -3484,9 +3849,8 @@ nsresult sbBaseDevice::GetPrefBranch(const char *aPrefBranchName,
   return rv;
 }
 
-nsresult sbBaseDevice::GetPrefBranch(nsIPrefBranch** aPrefBranch)
+nsresult sbBaseDevice::GetPrefBranchRoot(nsACString& aRoot)
 {
-  NS_ENSURE_ARG_POINTER(aPrefBranch);
   nsresult rv;
 
   // get id of this device
@@ -3499,10 +3863,46 @@ nsresult sbBaseDevice::GetPrefBranch(nsIPrefBranch** aPrefBranch)
   id->ToProvidedString(idString);
   NS_Free(id);
 
-  // create the pref key
-  nsCString prefKey(PREF_DEVICE_PREFERENCES_BRANCH);
-  prefKey.Append(idString);
-  prefKey.AppendLiteral(".preferences.");
+  // create the pref branch root
+  aRoot.Assign(PREF_DEVICE_PREFERENCES_BRANCH);
+  aRoot.Append(idString);
+  aRoot.AppendLiteral(".preferences.");
+
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::GetPrefBranch(nsIPrefBranch** aPrefBranch)
+{
+  NS_ENSURE_ARG_POINTER(aPrefBranch);
+  nsresult rv;
+
+  // get the pref branch root
+  nsCAutoString root;
+  rv = GetPrefBranchRoot(root);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return GetPrefBranch(root.get(), aPrefBranch);
+}
+
+nsresult sbBaseDevice::GetPrefBranch(sbIDeviceLibrary* aLibrary,
+                                     nsIPrefBranch**   aPrefBranch)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  NS_ENSURE_ARG_POINTER(aPrefBranch);
+  nsresult rv;
+
+  // start with the pref branch root
+  nsCAutoString prefKey;
+  rv = GetPrefBranchRoot(prefKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // add the library pref key
+  nsAutoString libraryGUID;
+  rv = aLibrary->GetGuid(libraryGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+  prefKey.Append(".library.");
+  prefKey.Append(NS_ConvertUTF16toUTF8(libraryGUID));
+  prefKey.Append(".");
 
   return GetPrefBranch(prefKey.get(), aPrefBranch);
 }
@@ -4106,7 +4506,7 @@ sbBaseDevice::SyncCreateAndSyncToList
   NS_ENSURE_SUCCESS(rv, rv);
   for (PRUint32 i = 0; i < sbIDeviceLibrary::MEDIATYPE_COUNT; ++i) {
     // Skip image type since we don't support it right now.
-    if (i = sbIDeviceLibrary::MEDIATYPE_IMAGE)
+    if (i == sbIDeviceLibrary::MEDIATYPE_IMAGE)
       continue;
 
     rv = aDstLib->SetSyncPlaylistListByType(i, emptySyncPlaylistList);
@@ -4497,11 +4897,9 @@ sbBaseDevice::SyncGetSyncAvailableSpace(sbILibrary* aLibrary,
   nsresult rv;
 
   // Get the device properties.
-  nsCOMPtr<sbIDeviceProperties> baseDeviceProperties;
+  // Get the device properties.
   nsCOMPtr<nsIPropertyBag2>     deviceProperties;
-  rv = GetProperties(getter_AddRefs(baseDeviceProperties));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = baseDeviceProperties->GetProperties(getter_AddRefs(deviceProperties));
+  rv = GetPropertyBag(this, getter_AddRefs(deviceProperties));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the free space and the music used space.
@@ -5490,6 +5888,25 @@ sbBaseDevice::RegisterDeviceInfo()
     }
   }
 
+  nsString excludedFolders;
+  rv = mInfoRegistrar->GetExcludedFolders(this, excludedFolders);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  LOG(("Excluded Folders: %s",
+       NS_LossyConvertUTF16toASCII(excludedFolders).BeginReading()));
+
+  if (!excludedFolders.IsEmpty()) {
+    // Get the device properties.
+    nsCOMPtr<nsIWritablePropertyBag> deviceProperties;
+    rv = GetWritableDeviceProperties(this, getter_AddRefs(deviceProperties));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = deviceProperties->SetProperty(
+                           NS_LITERAL_STRING(SB_DEVICE_PROPERTY_EXCLUDED_FOLDERS),
+                           sbNewVariant(excludedFolders));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   // Log the device folders.
   LogDeviceFolders();
 
@@ -5559,6 +5976,37 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem*                  aMediaItem,
   }
 
   nsresult rv;
+
+  // Handle image media items using file extensions.
+  nsString contentType;
+  rv = aMediaItem->GetContentType(contentType);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (contentType.Equals(NS_LITERAL_STRING("image"))) {
+    // Get the media item file extension.
+    nsCString        sourceFileExtension;
+    nsCOMPtr<nsIURI> sourceURI;
+    rv = aMediaItem->GetContentSrc(getter_AddRefs(sourceURI));
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<nsIFileURL> sourceFileURL = do_QueryInterface(sourceURI, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = sourceFileURL->GetFileExtension(sourceFileExtension);
+    NS_ENSURE_SUCCESS(rv, rv);
+    ToLowerCase(sourceFileExtension);
+
+    // Get the list of file extensions supported by the device.
+    nsTArray<nsString> fileExtensionList;
+    rv = sbDeviceUtils::AddSupportedFileExtensions
+                          (this,
+                           sbIDeviceCapabilities::CONTENT_IMAGE,
+                           fileExtensionList);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Item is supported if its file extension is supported.
+    *_retval = fileExtensionList.Contains
+                                   (NS_ConvertUTF8toUTF16(sourceFileExtension));
+
+    return NS_OK;
+  }
 
   if (sbDeviceUtils::IsItemDRMProtected(aMediaItem)) {
     rv = SupportsMediaItemDRM(aMediaItem, aReportErrors, _retval);
@@ -5686,6 +6134,55 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem*                  aMediaItem,
   return NS_OK;
 }
 
+/* attribute sbIDeviceLibrary defaultLibrary; */
+NS_IMETHODIMP
+sbBaseDevice::GetDefaultLibrary(sbIDeviceLibrary** aDefaultLibrary)
+{
+  NS_ENSURE_ARG_POINTER(aDefaultLibrary);
+  NS_IF_ADDREF(*aDefaultLibrary = mDefaultLibrary);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseDevice::SetDefaultLibrary(sbIDeviceLibrary* aDefaultLibrary)
+{
+  NS_ENSURE_ARG_POINTER(aDefaultLibrary);
+  nsresult rv;
+
+  // Do nothing if default library is not changing.
+  if (mDefaultLibrary == aDefaultLibrary)
+    return NS_OK;
+
+  // Ensure library is in the device content.
+  nsCOMPtr<nsIArray>         libraries;
+  nsCOMPtr<sbIDeviceContent> content;
+  PRUint32                   index;
+  rv = GetContent(getter_AddRefs(content));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = content->GetLibraries(getter_AddRefs(libraries));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = libraries->IndexOf(0, aDefaultLibrary, &index);
+  if (rv == NS_ERROR_FAILURE) {
+    // Library is not in device content.
+    rv = NS_ERROR_ILLEGAL_VALUE;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Update the default library preference.
+  nsAutoString guid;
+  rv = aDefaultLibrary->GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = SetPreference(NS_LITERAL_STRING("default_library_guid"),
+                     sbNewVariant(guid));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Update the default library.
+  rv = UpdateDefaultLibrary(aDefaultLibrary);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 nsresult
 sbBaseDevice::GetSupportedTranscodeProfiles(nsIArray **aSupportedProfiles)
 {
@@ -5737,27 +6234,32 @@ static nsresult
 AddAlbumArtFormats(PRUint32 aContentType,
                    sbIDeviceCapabilities *aCapabilities,
                    nsIMutableArray *aArray,
-                   PRUint32 numFormats,
-                   char **formats)
+                   PRUint32 numMimeTypes,
+                   char **mimeTypes)
 {
   nsresult rv;
 
-  for (PRUint32 i = 0; i < numFormats; i++) {
-    nsCOMPtr<nsISupports> formatType;
-    rv = aCapabilities->GetFormatType(aContentType,
-                                      NS_ConvertASCIItoUTF16(formats[i]),
-            getter_AddRefs(formatType));
-    /* There might be no corresponding format object for this type, if so, just
-       ignore it */
-    if (NS_FAILED (rv))
-      continue;
-
-    nsCOMPtr<sbIImageFormatType> constraints =
-        do_QueryInterface(formatType, &rv);
+  for (PRUint32 i = 0; i < numMimeTypes; i++) {
+    nsISupports** formatTypes;
+    PRUint32 formatTypeCount;
+    rv = aCapabilities->GetFormatTypes(aContentType,
+                                       NS_ConvertASCIItoUTF16(mimeTypes[i]),
+                                       &formatTypeCount,
+                                       &formatTypes);
     NS_ENSURE_SUCCESS(rv, rv);
+    sbAutoFreeXPCOMPointerArray<nsISupports> freeFormats(formatTypeCount,
+                                                         formatTypes);
+    for (PRUint32 formatIndex = 0;
+         formatIndex < formatTypeCount;
+         formatIndex++)
+    {
+      nsCOMPtr<sbIImageFormatType> constraints =
+          do_QueryInterface(formatTypes[formatIndex], &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = aArray->AppendElement(constraints, PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
+      rv = aArray->AppendElement(constraints, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   return NS_OK;
@@ -5776,20 +6278,20 @@ sbBaseDevice::GetSupportedAlbumArtFormats(nsIArray * *aFormats)
   rv = GetCapabilities(getter_AddRefs(capabilities));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  char **formats;
-  PRUint32 numFormats;
-  rv = capabilities->GetSupportedFormats(sbIDeviceCapabilities::CONTENT_IMAGE,
-          &numFormats, &formats);
+  char **mimeTypes;
+  PRUint32 numMimeTypes;
+  rv = capabilities->GetSupportedMimeTypes(sbIDeviceCapabilities::CONTENT_IMAGE,
+          &numMimeTypes, &mimeTypes);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = AddAlbumArtFormats(sbIDeviceCapabilities::CONTENT_IMAGE,
                           capabilities,
                           formatConstraints,
-                          numFormats,
-                          formats);
+                          numMimeTypes,
+                          mimeTypes);
   /* Ensure everything is freed here before potentially returning; no
      magic destructors for this thing */
-  NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(numFormats, formats);
+  NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(numMimeTypes, mimeTypes);
   NS_ENSURE_SUCCESS (rv, rv);
 
   NS_ADDREF (*aFormats = formatConstraints);
@@ -5877,23 +6379,6 @@ sbBaseDevice::SetCacheSyncRequests(PRBool aCacheSyncRequests)
   else if (!aCacheSyncRequests) {
     mSyncState = sbBaseDevice::SYNC_STATE_NORMAL;
   }
-
-  return NS_OK;
-}
-
-static nsresult
-GetPropertyBag(sbIDevice * aDevice, nsIPropertyBag2 ** aProperties)
-{
-  TRACE(("%s", __FUNCTION__));
-  NS_ENSURE_ARG_POINTER(aDevice);
-  NS_ENSURE_ARG_POINTER(aProperties);
-
-  nsCOMPtr<sbIDeviceProperties> deviceProperties;
-  nsresult rv = aDevice->GetProperties(getter_AddRefs(deviceProperties));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = deviceProperties->GetProperties(aProperties);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -6019,6 +6504,29 @@ sbBaseDevice::IgnoreWatchFolderPath(nsIURI * aURI,
   return NS_OK;
 }
 
+nsresult
+sbBaseDevice::GetExcludedFolders(nsTArray<nsString> & aExcludedFolders)
+{
+  nsresult rv;
+
+  nsCOMPtr<nsIPropertyBag2> deviceProperties;
+  rv = GetPropertyBag(this, getter_AddRefs(deviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString excludedFolderStrings;
+  rv = deviceProperties->GetPropertyAsAString(
+                         NS_LITERAL_STRING(SB_DEVICE_PROPERTY_EXCLUDED_FOLDERS),
+                         excludedFolderStrings);
+  if (rv != NS_ERROR_NOT_AVAILABLE) {
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsString_Split(excludedFolderStrings,
+                   NS_LITERAL_STRING(","),
+                   aExcludedFolders);
+  }
+
+  return NS_OK;
+}
+
 void
 sbBaseDevice::LogDeviceFolders()
 {
@@ -6122,4 +6630,43 @@ sbDeviceReqAddedEvent::New(sbBaseDevice* aDevice,
   NS_ADDREF(*aEvent = event);
 
   return NS_OK;
+}
+
+PLDHashOperator
+sbBaseDevice::RemoveLibraryEnumerator(nsISupports * aList,
+                                      nsCOMPtr<nsIMutableArray> & aItems,
+                                      void * aUserArg)
+{
+  NS_ENSURE_TRUE(aList, PL_DHASH_NEXT);
+  NS_ENSURE_TRUE(aItems, PL_DHASH_NEXT);
+
+  sbBaseDevice * const device =
+    static_cast<sbBaseDevice*>(aUserArg);
+
+  AutoListenerIgnore ignore(device);
+
+  nsCOMPtr<nsISimpleEnumerator> enumerator;
+  nsresult rv = aItems->Enumerate(getter_AddRefs(enumerator));
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aList);
+  if (list) {
+    rv = list->RemoveSome(enumerator);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_NEXT);
+  }
+
+  return PL_DHASH_NEXT;
+}
+
+sbBaseDevice::AutoListenerIgnore::AutoListenerIgnore(sbBaseDevice * aDevice) :
+  mDevice(aDevice)
+{
+  mDevice->SetIgnoreMediaListListeners(PR_TRUE);
+  mDevice->mLibraryListener->SetIgnoreListener(PR_TRUE);
+}
+
+sbBaseDevice::AutoListenerIgnore::~AutoListenerIgnore()
+{
+  mDevice->SetIgnoreMediaListListeners(PR_FALSE);
+  mDevice->mLibraryListener->SetIgnoreListener(PR_FALSE);
 }

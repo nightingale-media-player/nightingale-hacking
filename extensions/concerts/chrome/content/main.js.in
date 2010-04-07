@@ -548,7 +548,7 @@ Concerts.uninstallObserver = {
 					getService(Ci.sbIServicePaneService);
 				var concertsNode = SPS.getNode("urn:concerts");
 
-				if (subject.id == "concerts@songbirdnest.com") {
+				if (subject.id == "@EXTENSION_UUID@") {
 					if (data == "item-uninstalled") {
 						this._uninstall = true;
 					} else if (data == "item-disabled") {

@@ -39,7 +39,7 @@ interface sbITranscodeProfile;
  *
  * Implementations are to be thread safe.
  */
-[scriptable, uuid(7e589a3c-1dd2-11b2-a000-d352271669aa)]
+[scriptable, uuid(3e3b878a-fec0-4a83-ac43-24c47742b6f9)]
 interface sbIDeviceInfoRegistrar : nsISupports
 {
   /* Types of registrars */
@@ -87,6 +87,26 @@ interface sbIDeviceInfoRegistrar : nsISupports
   AString getDeviceFolder(in sbIDevice     aDevice,
                           in unsigned long aContentType);
 
+  /**
+   * \brief Return the mount timeout value in seconds for the device specified
+   *        by aDevice.
+   *
+   * \param aDevice             Device for which to get mount timeout.
+   *
+   * \return                    Device mount timeout value in seconds.
+   *
+   * \throws NS_ERROR_NOT_AVAILABLE
+   *                            Device mount timeout value not available.
+   */
+  unsigned long getMountTimeout(in sbIDevice aDevice);
+
+  /**
+   * \brief Return the excluded folder list as a comma separate string
+   *
+   * \return                    A comma separate list of relative folder paths
+   */
+  AString getExcludedFolders(in sbIDevice aDevice);
+     
   /**
    * \brief Determines if the registrar is interested in this device
    * \param aDevice The device to check if the registrar is interested in

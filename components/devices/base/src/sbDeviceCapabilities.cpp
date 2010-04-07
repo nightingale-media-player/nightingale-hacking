@@ -98,7 +98,7 @@ sbDeviceCapabilities::Init()
   nsresult rv = mContentTypes.Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mSupportedFormats.Init();
+  rv = mSupportedMimeTypes.Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 i = sbIDeviceCapabilities::CONTENT_UNKNOWN;
@@ -196,29 +196,29 @@ sbDeviceCapabilities::AddContentTypes(PRUint32 aFunctionType,
 }
 
 NS_IMETHODIMP
-sbDeviceCapabilities::AddFormats(PRUint32 aContentType,
-                                 const char * *aFormats,
-                                 PRUint32 aFormatsCount)
+sbDeviceCapabilities::AddMimeTypes(PRUint32 aContentType,
+                                   const char * *aMimeTypes,
+                                   PRUint32 aMimeTypesCount)
 {
-  NS_ENSURE_ARG_POINTER(aFormats);
+  NS_ENSURE_ARG_POINTER(aMimeTypes);
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(!isConfigured, NS_ERROR_ALREADY_INITIALIZED);
 
-  nsTArray<nsCString> * nFormats = nsnull;
-  PRBool const found = mSupportedFormats.Get(aContentType, &nFormats);
+  nsTArray<nsCString> * nMimeTypes = nsnull;
+  PRBool const found = mSupportedMimeTypes.Get(aContentType, &nMimeTypes);
   if (!found) {
-    nFormats = new nsTArray<nsCString>(aFormatsCount);
+    nMimeTypes = new nsTArray<nsCString>(aMimeTypesCount);
   }
-  NS_ASSERTION(nFormats, "nFormats should not be null");
-  for (PRUint32 arrayCounter = 0; arrayCounter < aFormatsCount; ++arrayCounter) {
-    nsCString format(aFormats[arrayCounter]);
-    if (nFormats->IndexOf(format) == nFormats->NoIndex) {
-      nFormats->AppendElement(aFormats[arrayCounter]);
+  NS_ASSERTION(nMimeTypes, "nMimeTypes should not be null");
+  for (PRUint32 arrayCounter = 0; arrayCounter < aMimeTypesCount; ++arrayCounter) {
+    nsCString mimeType(aMimeTypes[arrayCounter]);
+    if (nMimeTypes->IndexOf(mimeType) == nMimeTypes->NoIndex) {
+      nMimeTypes->AppendElement(aMimeTypes[arrayCounter]);
     }
   }
 
   if (!found) {
-    mSupportedFormats.Put(aContentType, nFormats);
+    mSupportedMimeTypes.Put(aContentType, nMimeTypes);
   }
 
   return NS_OK;
@@ -226,7 +226,7 @@ sbDeviceCapabilities::AddFormats(PRUint32 aContentType,
 
 NS_IMETHODIMP
 sbDeviceCapabilities::AddFormatType(PRUint32 aContentType,
-                                    nsAString const & aFormat,
+                                    nsAString const & aMimeType,
                                     nsISupports * aFormatType)
 {
   NS_ENSURE_ARG_POINTER(aFormatType);
@@ -239,8 +239,18 @@ sbDeviceCapabilities::AddFormatType(PRUint32 aContentType,
   if (!formatType)
     return NS_ERROR_NULL_POINTER;
 
-  PRBool const added = formatType->Put(aFormat, aFormatType);
-  NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
+  nsTArray<nsCOMPtr<nsISupports> > * formatTypes;
+  PRBool const found = formatType->Get(aMimeType, &formatTypes);
+  if (!found) {
+    formatTypes = new nsTArray<nsCOMPtr<nsISupports> >(1);
+  }
+
+  formatTypes->AppendElement(aFormatType);
+
+  if (!found) {
+    PRBool const added = formatType->Put(aMimeType, formatTypes);
+    NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
+  }
 
   return NS_OK;
 }
@@ -285,34 +295,43 @@ sbDeviceCapabilities::AddCapabilities(sbIDeviceCapabilities *aCapabilities)
          ++contentTypeIndex) {
       PRUint32 contentType = contentTypes[contentTypeIndex];
 
-      char**   formats;
-      PRUint32 formatsCount;
-      rv = aCapabilities->GetSupportedFormats(contentType,
-                                              &formatsCount,
-                                              &formats);
+      char**   mimeTypes;
+      PRUint32 mimeTypesCount;
+      rv = aCapabilities->GetSupportedMimeTypes(contentType,
+                                                &mimeTypesCount,
+                                                &mimeTypes);
       if (rv == NS_ERROR_NOT_AVAILABLE) {
         continue;
       }
       NS_ENSURE_SUCCESS(rv, rv);
-      sbAutoNSArray<char*> autoFormats(formats, formatsCount);
+      sbAutoNSArray<char*> autoMimeTypes(mimeTypes, mimeTypesCount);
 
-      rv = AddFormats(contentType,
-                      const_cast<const char**>(formats),
-                      formatsCount);
+      rv = AddMimeTypes(contentType,
+                        const_cast<const char**>(mimeTypes),
+                        mimeTypesCount);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      for (PRUint32 formatIndex = 0;
-           formatIndex < formatsCount;
-           ++formatIndex) {
-        nsAutoString format;
-        format.AssignLiteral(formats[formatIndex]);
+      for (PRUint32 mimeTypeIndex = 0;
+           mimeTypeIndex < mimeTypesCount;
+           ++mimeTypeIndex) {
+        nsAutoString mimeType;
+        mimeType.AssignLiteral(mimeTypes[mimeTypeIndex]);
 
-        nsCOMPtr<nsISupports> formatType;
-        rv = aCapabilities->GetFormatType(contentType,
-                                          format,
-                                          getter_AddRefs(formatType));
-        if (NS_SUCCEEDED(rv)) {
-          rv = AddFormatType(contentType, format, formatType);
+        nsISupports** formatTypes;
+        PRUint32 formatTypeCount;
+        rv = aCapabilities->GetFormatTypes(contentType,
+                                           mimeType,
+                                           &formatTypeCount,
+                                           &formatTypes);
+        NS_ENSURE_SUCCESS(rv, rv);
+        sbAutoFreeXPCOMPointerArray<nsISupports> freeFormats(formatTypeCount,
+                                                             formatTypes); 
+        for (PRUint32 formatIndex = 0;
+             formatIndex < formatTypeCount;
+             formatIndex++)
+        {
+          nsCOMPtr<nsISupports> formatType = formatTypes[formatIndex];
+          rv = AddFormatType(contentType, mimeType, formatType);
           NS_ENSURE_SUCCESS(rv, rv);
         }
       }
@@ -385,35 +404,35 @@ sbDeviceCapabilities::GetSupportedContentTypes(PRUint32 aFunctionType,
 }
 
 NS_IMETHODIMP
-sbDeviceCapabilities::GetSupportedFormats(PRUint32 aContentType,
-                                          PRUint32 *aArrayCount,
-                                          char ***aSupportedFormats)
+sbDeviceCapabilities::GetSupportedMimeTypes(PRUint32 aContentType,
+                                            PRUint32 *aArrayCount,
+                                            char ***aSupportedMimeTypes)
 {
   NS_ENSURE_ARG_POINTER(aArrayCount);
-  NS_ENSURE_ARG_POINTER(aSupportedFormats);
+  NS_ENSURE_ARG_POINTER(aSupportedMimeTypes);
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(isConfigured, NS_ERROR_NOT_INITIALIZED);
 
-  nsTArray<nsCString>* supportedFormats;
+  nsTArray<nsCString>* supportedMimeTypes;
 
-  if (!mSupportedFormats.Get(aContentType, &supportedFormats)) {
+  if (!mSupportedMimeTypes.Get(aContentType, &supportedMimeTypes)) {
     NS_WARNING("Requseted content type is not available for this device.");
     return NS_ERROR_NOT_AVAILABLE;
   }
 
-  PRUint32 arrayLen = supportedFormats->Length();
+  PRUint32 arrayLen = supportedMimeTypes->Length();
   char** outArray = reinterpret_cast<char**>(NS_Alloc(arrayLen * sizeof(char*)));
   if (!outArray) {
     return NS_ERROR_OUT_OF_MEMORY;
   }
 
   for (PRUint32 arrayCounter = 0; arrayCounter < arrayLen; arrayCounter++) {
-    nsCString const & format = supportedFormats->ElementAt(arrayCounter);
-    outArray[arrayCounter] = ToNewCString(format);
+    nsCString const & mimeType = supportedMimeTypes->ElementAt(arrayCounter);
+    outArray[arrayCounter] = ToNewCString(mimeType);
   }
 
   *aArrayCount = arrayLen;
-  *aSupportedFormats = outArray;
+  *aSupportedMimeTypes = outArray;
   return NS_OK;
 }
 
@@ -481,10 +500,13 @@ sbDeviceCapabilities::SupportsContent(PRUint32 aFunctionType,
  * Returns the list of constraints for the format
  */
 NS_IMETHODIMP
-sbDeviceCapabilities::GetFormatType(PRUint32 aContentType,
-                                    nsAString const & aFormat,
-                                    nsISupports ** aFormatType) {
-  NS_ENSURE_ARG_POINTER(aFormatType);
+sbDeviceCapabilities::GetFormatTypes(PRUint32 aContentType,
+                                     nsAString const & aMimeType,
+                                     PRUint32 *aArrayCount,
+                                     nsISupports *** aSupportedFormats)
+{
+  NS_ENSURE_ARG_POINTER(aArrayCount);
+  NS_ENSURE_ARG_POINTER(aSupportedFormats);
   NS_ENSURE_ARG_RANGE(aContentType,
                       sbIDeviceCapabilities::CONTENT_UNKNOWN,
                       sbIDeviceCapabilities::CONTENT_MAX_TYPES - 1);
@@ -494,7 +516,26 @@ sbDeviceCapabilities::GetFormatType(PRUint32 aContentType,
   if (!formatType)
     return NS_ERROR_NULL_POINTER;
 
-  return formatType->Get(aFormat, aFormatType) ? NS_OK : NS_ERROR_NOT_AVAILABLE;
+  nsTArray<nsCOMPtr<nsISupports> > * formats;
+  PRBool const found = formatType->Get(aMimeType, &formats);
+  PRUint32 count = 0;
+  if (found) {
+    count = formats->Length();
+  }
+
+  nsISupports **formatsArray = static_cast<nsISupports **>(NS_Alloc(
+              sizeof(nsISupports *) * count));
+  NS_ENSURE_TRUE(formatsArray, NS_ERROR_OUT_OF_MEMORY);
+
+  for (PRUint32 i = 0; i < count; i++) {
+    formatsArray[i] = formats->ElementAt(i);
+    NS_ADDREF(formatsArray[i]);
+  }
+
+  *aArrayCount = count;
+  *aSupportedFormats = formatsArray;
+
+  return NS_OK;
 }
 
 /*******************************************************************************

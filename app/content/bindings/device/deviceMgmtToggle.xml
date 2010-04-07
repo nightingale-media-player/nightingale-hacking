@@ -104,11 +104,24 @@
           if (aButton.checked)
             return; // Ignore clicks on an already toggled button.
 
-          if (this._deviceLibrary) {
+          if (this.devLib) {
             this.updateButtons(aManual);
-            this._deviceLibrary.syncMode = aManual ? 
-                                             Ci.sbIDeviceLibrary.SYNC_MANUAL :
+            this.devLib.syncMode = aManual ? Ci.sbIDeviceLibrary.SYNC_MANUAL :
                                              Ci.sbIDeviceLibrary.SYNC_AUTO;
+            if (aManual) {
+              // Set editable to true for device playlists in manual mode.
+              var DSP = Cc['@songbirdnest.com/servicepane/device;1']
+                          .getService(Ci.sbIDeviceServicePaneService);
+              var base = 'http://songbirdnest.com/rdf/library-servicepane#';
+              var deviceNode = DSP.getNodeForDevice(this.device);
+              for (let node = deviceNode.firstChild; node;
+                   node = node.nextSibling) {
+                var listType = node.getAttributeNS(base, "ListType");
+                // Only update the playlist nodes.
+                if (listType != "library")
+                  node.editable = true;
+              }
+            }
             this.update();
           }
         ]]></body>
@@ -155,10 +168,10 @@
           } else {
             manualButton.removeAttribute("disabled");
             syncButton.removeAttribute("disabled");
-            
+
             // Get the device management state
-            if (this._deviceLibrary) {
-              var isManual = this._deviceLibrary.isMgmtTypeManual;
+            if (this.devLib) {
+              var isManual = this.devLib.isMgmtTypeManual;
               this.updateButtons(isManual);
             }
           }
@@ -175,11 +188,6 @@
             var deviceEventTarget = this.device;
             deviceEventTarget.QueryInterface(Ci.sbIDeviceEventTarget);
             deviceEventTarget.addEventListener(this);
-
-            if (this.device.content.libraries.length > 0) {
-              this._deviceLibrary = this.device.content.libraries
-                  .queryElementAt(0,Components.interfaces.sbIDeviceLibrary);
-            }
             this.update();
           }
         ]]></body>
@@ -195,7 +203,6 @@
             var deviceEventTarget = this.device;
             deviceEventTarget.QueryInterface(Ci.sbIDeviceEventTarget);
             deviceEventTarget.removeEventListener(this);
-            this._deviceLibrary = null;
           }
         ]]></body>
       </method>
@@ -237,8 +244,8 @@
      *********************************************************************** -->
 
     <handlers>
-      <handler event="deviceBound"><![CDATA[
-        /* Re-initialize the device info services. */
+      <handler event="devLibBound"><![CDATA[
+        /* Re-initialize the widget. */
         this.deviceFinalize();
         this.deviceInitialize();
       ]]></handler>

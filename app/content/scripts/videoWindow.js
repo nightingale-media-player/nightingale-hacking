@@ -606,7 +606,7 @@ var videoWindowController = {
     }
     
     // Volume Up
-    if(aEvent.ctrlKey && keyCode == KeyEvent.DOM_VK_UP) {
+    if(!aEvent.altKey && aEvent.ctrlKey && keyCode == KeyEvent.DOM_VK_UP) {
       let vol = this._mediacoreManager.volumeControl.volume;
       vol += 0.03;
       
@@ -621,7 +621,7 @@ var videoWindowController = {
     }
     
     // Volume Down
-    if(aEvent.ctrlKey && keyCode == KeyEvent.DOM_VK_DOWN) {
+    if(!aEvent.altKey && aEvent.ctrlKey && keyCode == KeyEvent.DOM_VK_DOWN) {
       let vol = this._mediacoreManager.volumeControl.volume;
       vol -= 0.03;
 

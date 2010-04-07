@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -35,7 +35,7 @@
 //
 //------------------------------------------------------------------------------
 
-EXPORTED_SYMBOLS = [ "DOMUtils", "DOMEventListenerSet" ];
+EXPORTED_SYMBOLS = [ "DOMUtils", "sbDOMHighlighter", "DOMEventListenerSet" ];
 
 
 //------------------------------------------------------------------------------
@@ -416,6 +416,314 @@ var DOMUtils = {
     for (var i = 0; i < aNodeList.length; i++) {
       this.destroyNode(aNodeList[i]);
     }
+  }
+};
+
+
+//------------------------------------------------------------------------------
+//
+// DOM highlighter services.
+//
+//   These services may be used to apply highlighting effects to DOM elements.
+//   Highlighting is applied by setting a DOM element attribute to a particular
+// value.
+//   The highlighting effect blinks the highlighting for a specified period of
+// time and then leaves the highlight applied.  When the user clicks anywhere,
+// the highlighting is removed.
+//
+//------------------------------------------------------------------------------
+
+/**
+ *   Construct a DOM highlighter object to highlight the element specified by
+ * aElement within the window specified by aWindow and return the highlighter
+ * object.
+ *   The element is highlighted by setting one of its attributes to a particular
+ * value.  A CSS rule can then be set up to apply highlight styling to the
+ * element based on the attribute and value.
+ *   The attribute to set is specified by aAttribute.  The attribute is set to
+ * the value specified by aValue.
+ *   If the attribute is "class", the value is added to the class attribute
+ * instead of replacing it entirely.
+ *   If aAttribute is not specified, the "class" attribute is used as the
+ * default.
+ *   If aValue is not specified, a default value is also used.  If the "class"
+ * attribute is being used, "highlight" is used as the value to add to the
+ * "class" attribute.  Otherwise, the attribute is set to the value "true".
+ *   Blink the highlighting for the duration specified by aBlinkDuration.  If
+ * the duration is not specified, choose a default duration.  If the duration is
+ * negative, do not blink.
+ *
+ * \param aWindow               Window containing element.
+ * \param aElement              Element to highlight.
+ * \param aValue                Value to set highlight.
+ * \param aAttribute            Attribute to use to highlight.
+ * \param aBlinkDuration        Duration of blinking in milliseconds.
+ */
+
+function sbDOMHighlighter(aWindow,
+                          aElement,
+                          aValue,
+                          aAttribute,
+                          aBlinkDuration) {
+  // Get the attribute to highlight, defaulting to "class".
+  var attribute = aAttribute;
+  if (!attribute)
+    attribute = "class";
+
+  // Get the attribute value with which to highlight.  Choose an appropriate
+  // default if no value was specified.
+  var value = aValue;
+  if (!value) {
+    if (attribute == "class") {
+      value = "highlight";
+    }
+    else {
+      value = "true";
+    }
+  }
+
+  // Get the blink duration.
+  var blinkDuration = aBlinkDuration;
+  if (!blinkDuration)
+    blinkDuration = this.defaultBlinkDuration;
+
+  // Save parameters.
+  this._window = aWindow;
+  this._element = aElement;
+  this._value = value;
+  this._attribute = attribute;
+  this._blinkDuration = blinkDuration;
+}
+
+
+/**
+ *   Highlight the element specified by aElement within the window specified by
+ * aWindow and return the highlighter object.
+ *   The element is highlighted by setting one of its attributes to a particular
+ * value.  A CSS rule can then be set up to apply highlight styling to the
+ * element based on the attribute and value.
+ *   The attribute to set is specified by aAttribute.  The attribute is set to
+ * the value specified by aValue.
+ *   If the attribute is "class", the value is added to the class attribute
+ * instead of replacing it entirely.
+ *   If aAttribute is not specified, the "class" attribute is used as the
+ * default.
+ *   If aValue is not specified, a default value is also used.  If the "class"
+ * attribute is being used, "highlight" is used as the value to add to the
+ * "class" attribute.  Otherwise, the attribute is set to the value "true".
+ *   Blink the highlighting for the duration specified by aBlinkDuration.  If
+ * the duration is not specified, choose a default duration.  If the duration is
+ * negative, do not blink.
+ *
+ * \param aWindow               Window containing element.
+ * \param aElement              Element to highlight.
+ * \param aValue                Value to set highlight.
+ * \param aAttribute            Attribute to use to highlight.
+ * \param aBlinkDuration        Duration of blinking in milliseconds.
+ *
+ * \return                      Highlighter object.
+ */
+
+sbDOMHighlighter.highlightElement =
+  function sbDOMHighlighter_highlightElement(aWindow,
+                                             aElement,
+                                             aValue,
+                                             aAttribute,
+                                             aBlinkDuration) {
+  // Create and start a highlighter.
+  var highlighter = new sbDOMHighlighter(aWindow,
+                                         aElement,
+                                         aValue,
+                                         aAttribute,
+                                         aBlinkDuration);
+  highlighter.start();
+
+  return highlighter;
+}
+
+
+// Define the class.
+sbDOMHighlighter.prototype = {
+  // Set the constructor.
+  constructor: sbDOMHighlighter,
+
+  //
+  // DOM highlighter configuration.
+  //
+  //   blinkPeriod              Blink period in milliseconds.
+  //   defaultBlinkDuration     Default blink duration in milliseconds.
+  //
+
+  blinkPeriod: 250,
+  defaultBlinkDuration: 2000,
+
+
+  //
+  // DOM highlighter fields.
+  //
+  //   _window                  Window containing element.
+  //   _element                 Element to highlight.
+  //   _attribute               Attribute to use to highlight.
+  //   _value                   Value to set highlight.
+  //   _blinkDuration           Duration of blinking.
+  //   _domEventListenerSet     Set of DOM event listeners.
+  //   _blinkTimer              Timer used for blinking.
+  //   _blinkStart              Timestamp of start of blinking.
+  //   _isHighlighted           If true, element is currently highlighted.
+  //
+
+  _window: null,
+  _element: null,
+  _attribute: null,
+  _value: null,
+  _blinkDuration: -1,
+  _domEventListenerSet: null,
+  _blinkTimer: null,
+  _blinkStart: 0,
+  _isHighlighted: false,
+
+
+  /**
+   * Start the highlight effect.
+   */
+
+  start: function sbDOMHighlighter_start() {
+    var self = this;
+    var func;
+
+    // Create a DOM event listener set.
+    this._domEventListenerSet = new DOMEventListenerSet();
+
+    // Listen to document click and window unload events.
+    func = function _onClickWrapper() { self._onClick(); };
+    this._domEventListenerSet.add(this._element.ownerDocument,
+                                  "click",
+                                  func,
+                                  true);
+    if (this._window) {
+      func = function _onUnloadWrapper() { self._onUnload(); };
+      this._domEventListenerSet.add(this._window, "unload", func, false);
+    }
+
+    // Highlight element.
+    this.setHighlight();
+
+    // Start blinking.
+    this._blinkStart = Date.now();
+    var self = this;
+    var func = function _blinkWrapper() { self._blink(); };
+    this._blinkTimer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
+    this._blinkTimer.initWithCallback(func,
+                                      this.blinkPeriod,
+                                      Ci.nsITimer.TYPE_REPEATING_SLACK);
+  },
+
+
+  /**
+   * Cancel the highlighter.
+   */
+
+  cancel: function sbDOMHighlighter_cancel() {
+    // Remove DOM event listeners.
+    if (this._domEventListenerSet)
+      this._domEventListenerSet.removeAll();
+
+    // Cancel blink timer.
+    if (this._blinkTimer)
+      this._blinkTimer.cancel();
+
+    // Remove object references.
+    this._element = null;
+    this._domEventListenerSet = null;
+    this._blinkTimer = null;
+  },
+
+
+  /**
+   * Set the highlight on the element.
+   */
+
+  setHighlight: function sbDOMHighlighter_setHighlight() {
+    // Apply highlight.
+    if (this._attribute == "class") {
+      DOMUtils.setClass(this._element, this._value);
+    }
+    else {
+      this._element.setAttribute(this._attribute, this._value);
+    }
+
+    // Indicate that the element is now highlighted.
+    this._isHighlighted = true;
+  },
+
+
+  /**
+   * Clear the highlight on the element.
+   */
+
+  clearHighlight: function sbDOMHighlighter_clearHighlight() {
+    // Remove highlight.
+    if (this._attribute == "class") {
+      DOMUtils.clearClass(this._element, this._value);
+    }
+    else {
+      this._element.removeAttribute(this._attribute);
+    }
+
+    // Indicate that the element is no longer highlighted.
+    this._isHighlighted = false;
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Internal DOM highlighter services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Blink the element highlight.
+   */
+
+  _blink: function sbDOMHighlighter__blink() {
+    // If the blink duration has been reached, set the highlight and stop the
+    // blinking.
+    var blinkTime = Date.now() - this._blinkStart;
+    if (blinkTime >= this._blinkDuration) {
+      this._blinkTimer.cancel();
+      this._blinkTimer = null;
+      this.setHighlight();
+      return;
+    }
+
+    // Blink the element highlight.
+    if (this._isHighlighted) {
+      this.clearHighlight();
+    }
+    else {
+      this.setHighlight();
+    }
+  },
+
+
+  /**
+   * Handle a click event.
+   */
+
+  _onClick: function sbDOMHighlighter__onClick() {
+    // Clear highlight and cancel highlighter.
+    this.clearHighlight();
+    this.cancel();
+  },
+
+
+  /**
+   * Handle an unload event.
+   */
+
+  _onUnload: function sbDOMHighlighter__onUnload() {
+    // Cancel highlighter.
+    this.cancel();
   }
 };
 

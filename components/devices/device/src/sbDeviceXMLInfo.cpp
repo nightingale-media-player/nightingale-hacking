@@ -298,6 +298,109 @@ sbDeviceXMLInfo::GetDeviceFolder(PRUint32   aContentType,
   return NS_OK;
 }
 
+//-------------------------------------
+//
+// GetExcludedFolders
+//
+nsresult
+sbDeviceXMLInfo::GetExcludedFolders(nsAString & aExcludedFolders)
+{
+  nsresult rv;
+
+  aExcludedFolders.Truncate();
+
+  // Do nothing more if no device info element.
+  if (!mDeviceInfoElement)
+    return NS_OK;
+
+  // Get the list of exclude folder nodes.
+  nsCOMPtr<nsIDOMNodeList> excludeNodeList;
+  rv = mDeviceInfoElement->GetElementsByTagNameNS
+                             (NS_LITERAL_STRING(SB_DEVICE_INFO_NS),
+                              NS_LITERAL_STRING("excludefolder"),
+                              getter_AddRefs(excludeNodeList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get all excluded folders.
+  PRUint32 nodeCount;
+  rv = excludeNodeList->GetLength(&nodeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  for (PRUint32 i = 0; i < nodeCount; i++) {
+    // Get the next exclude folder element.
+    nsCOMPtr<nsIDOMElement> excludeElement;
+    nsCOMPtr<nsIDOMNode>    excludeNode;
+    rv = excludeNodeList->Item(i, getter_AddRefs(excludeNode));
+    NS_ENSURE_SUCCESS(rv, rv);
+    excludeElement = do_QueryInterface(excludeNode, &rv);
+    if (NS_SUCCEEDED(rv)) {
+      nsString excludeURL;
+      rv = excludeElement->GetAttribute(NS_LITERAL_STRING("url"), excludeURL);
+      NS_ENSURE_SUCCESS(rv, rv);
+      if (!aExcludedFolders.IsEmpty()) {
+        aExcludedFolders.AppendLiteral(",");
+      }
+      aExcludedFolders.Append(excludeURL);
+    }
+  }
+  return NS_OK;
+}
+
+//-------------------------------------
+//
+// GetMountTimeout
+//
+
+nsresult
+sbDeviceXMLInfo::GetMountTimeout(PRUint32* aMountTimeout)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aMountTimeout);
+
+  // Function variables.
+  nsresult rv;
+
+  // Check if a device info element is available.
+  if (!mDeviceInfoElement)
+    return NS_ERROR_NOT_AVAILABLE;
+
+  // Get the list of mount timeout nodes.
+  nsCOMPtr<nsIDOMNodeList> mountTimeoutNodeList;
+  rv = mDeviceInfoElement->GetElementsByTagNameNS
+                             (NS_LITERAL_STRING(SB_DEVICE_INFO_NS),
+                              NS_LITERAL_STRING("mounttimeout"),
+                              getter_AddRefs(mountTimeoutNodeList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check if any mount timeout nodes are available.
+  PRUint32 nodeCount;
+  rv = mountTimeoutNodeList->GetLength(&nodeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!nodeCount)
+    return NS_ERROR_NOT_AVAILABLE;
+
+  // Get the first mount timeout element.
+  nsCOMPtr<nsIDOMElement> mountTimeoutElement;
+  nsCOMPtr<nsIDOMNode>    mountTimeoutNode;
+  rv = mountTimeoutNodeList->Item(0, getter_AddRefs(mountTimeoutNode));
+  NS_ENSURE_SUCCESS(rv, rv);
+  mountTimeoutElement = do_QueryInterface(mountTimeoutNode, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Read the mount timeout value.
+  nsAutoString mountTimeoutString;
+  rv = mountTimeoutElement->GetAttribute(NS_LITERAL_STRING("value"),
+                                         mountTimeoutString);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Return results.
+  PRUint32 mountTimeout;
+  mountTimeout = mountTimeoutString.ToInteger(&rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  *aMountTimeout = mountTimeout;
+
+  return NS_OK;
+}
+
 
 //-------------------------------------
 //

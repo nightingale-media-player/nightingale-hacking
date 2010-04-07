@@ -173,6 +173,7 @@ var DeviceSummarySettings = {
 
   refreshMediaManagement:
     function DeviceSummarySettings_refreshMediaManagement() {
+    var disable = true;
     // determine what settings to hide so we can pass it onto the
     // sb-device-management binding
     var settingsToHide = this._widget.getAttribute("hideSettings");
@@ -180,6 +181,9 @@ var DeviceSummarySettings = {
     var seenLibraries = {};
     for (let idx = this._mediaManagementWidgets.length - 1; idx >= 0; --idx) {
       let widget = this._mediaManagementWidgets[idx];
+      if (!widget.hidden)
+        disable = false;
+
       if (widget.deviceID == this._deviceID) {
         seenLibraries[widget.libraryID] = true;
         continue;
@@ -198,7 +202,6 @@ var DeviceSummarySettings = {
     // add new bindings as needed
     var container = this._getElement("device_management_settings_content");
     var buttonBox = this._getElement("device_settings_button_box");
-    var disable = true;
     for each (let library in ArrayConverter.JSArray(content.libraries)) {
       library.QueryInterface(Ci.sbIDeviceLibrary);
       if (library.guid in seenLibraries) {
@@ -217,10 +220,12 @@ var DeviceSummarySettings = {
       disable = false;
     }
 
-    if (disable && this._getElement("device_general_settings").hidden)
-      this._widget.setAttribute("disabled", "true");
-    else
-      this._widget.removeAttribute("disabled");
+    if (disable && this._getElement("device_general_settings").hidden) {
+      this._widget.setAttribute("disabledTab", "true");
+    }
+    else {
+      this._widget.removeAttribute("disabledTab");
+    }
   },
 
   //----------------------------------------------------------------------------

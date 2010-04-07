@@ -5,7 +5,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2010 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -29,8 +29,9 @@
 #define __SB_MOCKDEVICEFIRMWAREHANDLER_H__
 
 #include "sbBaseDeviceFirmwareHandler.h"
-
+#include <sbPIMockFirmwareHandlerURLService.h>
 #include <nsIStreamListener.h>
+
 
 class sbMockDeviceFirmwareHandler : public sbBaseDeviceFirmwareHandler,
                                     public nsIStreamListener
@@ -49,6 +50,7 @@ public:
 
   virtual nsresult OnGetDeviceModelNumber(nsAString &aModelNumber);
   virtual nsresult OnGetDeviceModelVersion(nsAString &aModelVersion);
+  virtual nsresult OnGetDeviceVendor(nsAString &aDeviceVendor);
 
   virtual nsresult OnCanUpdate(sbIDevice *aDevice,
                                PRUint32 aDeviceVendorID,
@@ -70,7 +72,7 @@ private:
 
 protected:
   nsresult HandleRefreshInfoRequest();
-
+  nsCOMPtr<sbPIMockFirmwareHandlerURLService> mHandlerURLService;
   PRInt32 mComplete;
 };
 

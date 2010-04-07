@@ -82,12 +82,12 @@ sbDeviceXMLCapabilities::AddContentType(PRUint32 aFunctionType,
 }
 
 nsresult
-sbDeviceXMLCapabilities::AddFormat(PRUint32 aContentType,
-                                   nsAString const & aFormat)
+sbDeviceXMLCapabilities::AddMimeType(PRUint32 aContentType,
+                                     nsAString const & aMimeType)
 {
-  nsCString const & formatString = NS_LossyConvertUTF16toASCII(aFormat);
-  char const * format = formatString.BeginReading();
-  return mDeviceCaps->AddFormats(aContentType, &format, 1);
+  nsCString const & mimeTypeString = NS_LossyConvertUTF16toASCII(aMimeType);
+  char const * mimeType = mimeTypeString.BeginReading();
+  return mDeviceCaps->AddMimeTypes(aContentType, &mimeType, 1);
 }
 
 nsresult
@@ -680,7 +680,7 @@ sbDeviceXMLCapabilities::ProcessAudio(nsIDOMNode * aAudioNode)
                                 nsnull);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = AddFormat(sbIDeviceCapabilities::CONTENT_AUDIO, mimeType);
+    rv = AddMimeType(sbIDeviceCapabilities::CONTENT_AUDIO, mimeType);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = mDeviceCaps->AddFormatType(sbIDeviceCapabilities::CONTENT_AUDIO,
@@ -847,7 +847,7 @@ sbDeviceXMLCapabilities::ProcessImage(nsIDOMNode * aImageNode)
                                      heights);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = AddFormat(sbIDeviceCapabilities::CONTENT_IMAGE, mimeType);
+    rv = AddMimeType(sbIDeviceCapabilities::CONTENT_IMAGE, mimeType);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = mDeviceCaps->AddFormatType(sbIDeviceCapabilities::CONTENT_IMAGE,
@@ -1086,7 +1086,7 @@ sbDeviceXMLCapabilities::ProcessVideoFormat(nsIDOMNode* aVideoFormatNode)
                                audioStream);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddFormat(sbIDeviceCapabilities::CONTENT_VIDEO, containerType);
+  rv = AddMimeType(sbIDeviceCapabilities::CONTENT_VIDEO, containerType);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mDeviceCaps->AddFormatType(sbIDeviceCapabilities::CONTENT_VIDEO,
@@ -1193,7 +1193,7 @@ sbDeviceXMLCapabilities::ProcessPlaylist(nsIDOMNode * aPlaylistNode)
                              mimeType);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = AddFormat(sbIDeviceCapabilities::CONTENT_PLAYLIST, mimeType);
+    rv = AddMimeType(sbIDeviceCapabilities::CONTENT_PLAYLIST, mimeType);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

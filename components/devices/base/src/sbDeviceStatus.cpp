@@ -43,6 +43,7 @@ sbDeviceStatus::sbDeviceStatus()
   mCurrentSubState = sbIDevice::STATE_IDLE;
   mTimestamp = 0;
   mCurrentProgress = -1;
+  mNewBatch = false;
 }
 
 sbDeviceStatus::~sbDeviceStatus()
@@ -219,6 +220,20 @@ NS_IMETHODIMP sbDeviceStatus::GetElapsedTime(PRUint32 *aElapsedTime)
 {
   NS_ENSURE_ARG_POINTER(aElapsedTime);
   *aElapsedTime = PR_IntervalToMilliseconds(PR_IntervalNow() - mTimestamp);
+  return NS_OK;
+}
+
+/* attribute boolean isNewBatch; */
+NS_IMETHODIMP sbDeviceStatus::GetIsNewBatch(PRBool *aIsNewBatch)
+{
+  *aIsNewBatch = mNewBatch;
+  return NS_OK;
+}
+NS_IMETHODIMP sbDeviceStatus::SetIsNewBatch(PRBool aIsNewBatch)
+{
+  mNewBatch = aIsNewBatch;
+  if (aIsNewBatch)
+    mTimestamp = PR_IntervalNow();
   return NS_OK;
 }
 

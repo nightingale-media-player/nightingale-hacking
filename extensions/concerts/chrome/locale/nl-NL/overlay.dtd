@@ -1,6 +1,0 @@
-<!ENTITY concerts.loading "We controleren welke artiesten er op tournee zijn in je omgeving...">
-<!ENTITY concerts.changelocation "Locatie veranderen">
-<!ENTITY concerts.easteregg.fail "MISLUKT">
-<!ENTITY concerts.easteregg.fail.2 "Er werden geen concerten gevonden voor">
-<!ENTITY concerts.timeout.error "Je bent ofwel niet verbonden met het Internet, ofwel is onze concert database momenteel niet beschikbaar. Gelieve nogmaals te proberen binnen enkele minuten.">
-<!ENTITY concerts.timeoutreport.error "Rapporteer een probleem">

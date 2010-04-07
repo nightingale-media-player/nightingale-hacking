@@ -69,7 +69,8 @@
         </xul:groupbox>
 
         <!-- Update Firmware -->
-        <xul:groupbox tool="update" pack="center"
+        <xul:groupbox sbid="sb-device-tools-update-box"
+                      tool="update" pack="center"
                       orient="vertical" hidden="true">
           <xul:caption label="&device.tools.update_firmware.title;"/>
           <xul:hbox>
@@ -81,13 +82,6 @@
             <xul:description>
               &device.tools.update_firmware.description;
             </xul:description>
-            <xul:groupbox sbid="sb-device-tools-busy-device-warning"
-                          orient="vertical"
-                          pack="center"
-                          hidden="true">
-              <xul:description sbid="sb-device-tools-busy-device-warning-desc"
-                               class="dev-tools-busy-warning" />
-            </xul:groupbox>
             <xul:hbox>
               <xul:spacer flex="1"/>
               <xul:button sbid="sb-device-tools-update-firmware-button"
@@ -98,7 +92,8 @@
         </xul:groupbox>
 
         <!-- Format Device -->
-        <xul:groupbox tool="format" pack="center"
+        <xul:groupbox sbid="sb-device-tools-format-box"
+                      tool="format" pack="center"
                       orient="vertical" hidden="true">
           <xul:caption label="&device.tools.format_device.title;" />
           <xul:description xmlns="http://www.w3.org/1999/xhtml">
@@ -106,13 +101,15 @@
           </xul:description>
           <xul:hbox>
             <xul:spacer flex="1"/>
-            <xul:button label="&device.tools.format_device.label;"
+            <xul:button sbid="sb-device-tools-format-button"
+                        label="&device.tools.format_device.label;"
                         oncommand="formatDevice();"/>
           </xul:hbox>
         </xul:groupbox>
 
         <!-- Restore Device -->
-        <xul:groupbox tool="restore" pack="center"
+        <xul:groupbox sbid="sb-device-tools-restore-box"
+                      tool="restore" pack="center"
                       orient="vertical" hidden="true">
           <xul:caption label="&device.tools.restore_device.title;" />
           <xul:description xmlns="http://www.w3.org/1999/xhtml">
@@ -120,7 +117,8 @@
           </xul:description>
           <xul:hbox>
             <xul:spacer flex="1"/>
-            <xul:button label="&device.tools.restore_device.label;"
+            <xul:button sbid="sb-device-tools-restore-button"
+                        label="&device.tools.restore_device.label;"
                         oncommand="repairDevice();"/>
           </xul:hbox>
         </xul:groupbox>
@@ -167,27 +165,23 @@
 
     <implementation>
       <constructor><![CDATA[
-        Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
-        Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
+        Cu.import("resource://app/jsmodules/DOMUtils.jsm");
+        Cu.import("resource://app/jsmodules/WindowUtils.jsm");
 
         var toolsAttribute = this.getAttribute("tools");
         var toolsList = toolsAttribute.split(",");
-        
+
         for(let i = 0; i < toolsList.length; ++i) {
           let box = this._getToolBox(toolsList[i]);
           if(box) {
             box.hidden = false;
           }
         }
-        
+
         this.device = null;
         this._firmwareHandler = null;
         this._busyCheckTimer = null;
         this._currentFirmwareVersion = null;
-        this._busyWarningBox = null;
-        this._busyWarningDesc = null;
-        this._busyWarningText = null;
-        this._updateFirmwareButton = null;
         this._registerURI = null;
         this._customerSupportLocation = null;
       ]]>
@@ -200,17 +194,17 @@
         this._firmwareHandler = null;
         this._busyCheckTimer = null;
         this._currentFirmwareVersion = null;
-        this._busyWarningBox = null;
-        this._busyWarningDesc = null;
-        this._busyWarningText = null;
-        this._updateFirmwareButton = null;
         this._registerURI = null;
         this._customerSupportLocation = null;
 
         if(this.device) {
+          if (this.device.supportsReformat) {
+            this.device.QueryInterface(Ci.sbIDeviceEventTarget)
+                       .removeEventListener(this.deviceChangeEvent);
+          }
           this.device = null;
         }
-        
+
         if(this._busyCheckTimer) {
           clearInterval(this._busyCheckTimer);
         }
@@ -239,9 +233,8 @@
 
       <method name="formatDevice">
         <body><![CDATA[
-          var prompter =
-              Components.classes["@songbirdnest.com/Songbird/Prompter;1"]
-              .getService(Components.interfaces.sbIPrompter);
+          var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
+                           .getService(Ci.sbIPrompter);
 
           // Get the device name and encode it for XML twice.  It will be
           // decoded once by SBFormattedString and once again by the prompt
@@ -265,9 +258,8 @@
       <method name="repairDevice">
         <body><![CDATA[
           if (!this._firmwareHandler) {
-            var prompter = 
-                Components.classes["@songbirdnest.com/Songbird/Prompter;1"]
-                .getService(Components.interfaces.sbIPrompter);
+            var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
+                             .getService(Ci.sbIPrompter);
   
             // Get the device name and encode it for XML twice.  It will be
             // decoded once by SBFormattedString and once again by the prompt
@@ -283,10 +275,10 @@
             var confirmed = prompter.confirm(window, title, msg);
   
             if (confirmed) {
-              var bag = Components.classes["@mozilla.org/hash-property-bag;1"]
-                  .createInstance(Components.interfaces.nsIPropertyBag2);
+              var bag = Cc["@mozilla.org/hash-property-bag;1"]
+                          .createInstance(Ci.nsIPropertyBag2);
               this.device.submitRequest(
-                  Components.interfaces.sbIDevice.REQUEST_FACTORY_RESET, bag);
+                  Ci.sbIDevice.REQUEST_FACTORY_RESET, bag);
             }
           } else {
             WindowUtils.openModalDialog
@@ -319,44 +311,35 @@
         <![CDATA[
         if(!this._currentFirmwareVersion) {
           this._currentFirmwareVersion =
-            document.getAnonymousElementByAttribute(this,
-                                                    "sbid",
-                                                    "sb-device-tools-cur-firmware-ver");
-        }
-
-        if(!this._updateFirmwareButton) {
-          this._updateFirmwareButton = 
-            document.getAnonymousElementByAttribute(this,
-                                                    "sbid",
-                                                    "sb-device-tools-update-firmware-button");
+            this._getElement("sb-device-tools-cur-firmware-ver");
         }
 
         var firmwareVersion = null;
-        var deviceFirmwareUpdater = 
-          Components.classes["@songbirdnest.com/Songbird/Device/Firmware/Updater;1"]
-                    .getService(Components.interfaces.sbIDeviceFirmwareUpdater);
+        var deviceFirmwareUpdater =
+          Cc["@songbirdnest.com/Songbird/Device/Firmware/Updater;1"]
+            .getService(Ci.sbIDeviceFirmwareUpdater);
 
         // If we have a firmware handler for the device, use it to read
         // the device firmware version instead of using the one provided
         // by the device properties.
         if(deviceFirmwareUpdater.hasHandler(this.device, 0, 0)) {
           var handler = deviceFirmwareUpdater.getHandler(this.device, 0, 0);
-          
+
           var self = this;
           var deviceListener = {
             onDeviceEvent: function(aEvent) {
-              if (aEvent.type == Components.interfaces.sbIDeviceEvent.EVENT_FIRMWARE_CFU_END ||
-                  aEvent.type == Components.interfaces.sbIDeviceEvent.EVENT_FIRMWARE_CFU_ERROR) {
+              if (aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_CFU_END ||
+                  aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_CFU_ERROR) {
                 let curFirmHandler = self._firmwareHandler;
-                
+
                 try {
                   self._registerURI = curFirmHandler.registerLocation;
                   self._customerSupportLocation = curFirmHandler.customerSupportLocation;
                 }
                 catch(e) {
-                  Components.utils.reportError(e);
+                  Cu.reportError(e);
                 }
-                
+
                 self._propertyLookup();
               }
             }
@@ -364,76 +347,85 @@
 
           try {
             handler.bind(this.device, deviceListener);
-            this._firmwareHandler = handler; 
+            this._firmwareHandler = handler;
             this._firmwareHandler.refreshInfo();
           }
-          catch(err) { 
-            Components.utils.reportError(err); 
+          catch(err) {
+            Cu.reportError(err);
             this._firmwareHandler.unbind();
-            this._firmwareHandler = null; 
+            this._firmwareHandler = null;
           }
-          
+
           try {
             firmwareVersion = handler.currentFirmwareReadableVersion;
           }
           catch(err) {
-            Components.utils.reportError(err);
+            Cu.reportError(err);
           }
         }
 
         if(firmwareVersion == null) {
-          try { 
+          try {
             firmwareVersion = this.device.properties.firmwareVersion;
           }
-          catch(err) { Components.utils.reportError(err); }
+          catch(err) { Cu.reportError(err); }
         }
 
         if (firmwareVersion == null) {
           firmwareVersion = SBString("device.info.unknown");
         }
-        
+
         this._currentFirmwareVersion.value = firmwareVersion;
 
         if (!this.device.supportsReformat) {
           this._getToolBox("format").collapsed = true;
         }
-        
+        else {
+          var self = this;
+          this.deviceChangeEvent = function(aEvent) {
+            if (aEvent.type == Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED) {
+              try {
+                self._updateBusyState();
+              } catch (e) {}
+            }
+          }
+
+          // Listen for device events.
+          this.device.QueryInterface(Ci.sbIDeviceEventTarget)
+                     .addEventListener(this.deviceChangeEvent);
+        }
+
         this._startBusyCheck();
         ]]></body>
       </method>
 
       <method name="_updateBusyState">
         <body><![CDATA[
-        if(!this._busyWarningBox) {
-          this._busyWarningBox= 
-            document.getAnonymousElementByAttribute(this,
-                                                    "sbid",
-                                                    "sb-device-tools-busy-device-warning");
-        }
-
-        if(!this._busyWarningDesc) {
-          this._busyWarningDesc = 
-            document.getAnonymousElementByAttribute(this,
-                                                    "sbid",
-                                                    "sb-device-tools-busy-device-warning-desc");
-        }
-        
-        if(this.device.isBusy) {
-          if(this._busyWarningText) {
-            this._busyWarningDesc.removeChild(this._busyWarningText);
-            this._busyWarningText = null;
+          var formatBox = this._getElement("sb-device-tools-format-box");
+          var updateBox = this._getElement("sb-device-tools-update-box");
+          var restoreBox = this._getElement("sb-device-tools-restore-box");
+          var formatButton =
+            this._getElement("sb-device-tools-format-button");
+          var updateButton =
+            this._getElement("sb-device-tools-update-firmware-button");
+          var restoreButton =
+            this._getElement("sb-device-tools-restore-button");
+          if (this.device && this.device.isBusy) {
+            formatBox.setAttribute('disabled', 'true');
+            updateBox.setAttribute('disabled', 'true');
+            restoreBox.setAttribute('disabled', 'true');
+            formatButton.setAttribute('disabled', 'true');
+            updateButton.setAttribute('disabled', 'true');
+            restoreButton.setAttribute('disabled', 'true');
           }
-          var warningDesc = SBFormattedString('device.tools.update_firmware.busy_warning', 
-                                              [this.device.name]);
-          this._busyWarningText = document.createTextNode(warningDesc);
-          this._busyWarningDesc.appendChild(this._busyWarningText);
-          this._busyWarningBox.hidden = false;
-          this._updateFirmwareButton.disabled = true;
-        }
-        else {
-          this._busyWarningBox.hidden = true;
-          this._updateFirmwareButton.disabled = false;
-        }          
+          else {
+            formatBox.removeAttribute('disabled');
+            updateBox.removeAttribute('disabled');
+            restoreBox.removeAttribute('disabled');
+            formatButton.removeAttribute('disabled');
+            updateButton.removeAttribute('disabled');
+            restoreButton.removeAttribute('disabled');
+          }
         ]]></body>
       </method>
 
@@ -473,7 +465,7 @@
                 this._getToolBox("restore").collapsed = true;
               }
             } catch (e) {
-              Components.utils.reportError(e);
+              Cu.reportError(e);
             }
           }
 
@@ -484,11 +476,11 @@
               this._getToolBox("support").collapsed)
           {
             // All toolboxes are hidden, we should just disable the Tools tab
-            this.setAttribute("disabled", "true");
+            this.setAttribute("disabledTab", "true");
           }
         ]]></body>
       </method>
-      
+
       <method name="_getToolBox">
         <parameter name="aID"/>
         <body>
@@ -503,16 +495,22 @@
           if (typeof SBGetBrowser == 'function') {
             browser = SBGetBrowser();
           }
-            
+
           if (browser) {
             browser.loadURI(aURL.spec, null, null, null);
-          } 
+          }
           else {
             SBBrowserOpenURLInNewWindow(aURL.spec);
           }
         ]]></body>
       </method>
 
+      <method name="_getElement">
+        <parameter name="aID"/>
+        <body>
+          return document.getAnonymousElementByAttribute(this, "sbid", aID);
+        </body>
+      </method>
     </implementation>
 
     <handlers>

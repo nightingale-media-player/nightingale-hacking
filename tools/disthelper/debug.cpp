@@ -40,77 +40,77 @@
 #include "commands.h"
 
 #if XP_WIN
+  #include <windows.h>
+#else
+  #include "tchar_compat.h"
+#endif
 
-#include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <sstream>
 
-#define CTIME_STRLEN 26
-/* According to the MSDN documentation on ctime(), it returns exactly 26
- * characters, and looks like "WWW MMM DD hh:mm:ss YYYY\n\0"
- */
+#include <stringconvert.h>
 
-extern bool gEnableLogging = true;
+bool gEnableLogging = true;
 
 void DebugMessage(const char* fmt, ...) {
   va_list args;
-  int len;
-  char *buffer;
+  TCHAR *buffer;
 
   // retrieve the variable arguments
   va_start(args, fmt);
-  
-  len = _vscprintf(fmt, args) // _vscprintf doesn't count
-                         + 1; // terminating '\0'
-  
-  buffer = (char*)malloc(len * sizeof(char));
 
-  vsprintf(buffer, fmt, args);
-  ::OutputDebugStringA(buffer);
+  #if _MSC_VER
+    tstring format = ConvertUTF8toUTFn(fmt);
+    int len = _vscwprintf(format.c_str(), args) // _vscprintf doesn't count
+                                           + 1; // terminating '\0'
+    buffer = (TCHAR*)malloc(len * sizeof(TCHAR));
+    vswprintf_s(buffer, len, format.c_str(), args);
+  #else
+    vasprintf(&buffer, fmt, args);
+  #endif
+
+  ::OutputDebugString(buffer);
 
   free(buffer);
   va_end(args);
 }
 
 void LogMessage(const char* fmt, ...) {
-  std::wstring appDir(ResolvePathName("$/disthelper.log"));
-  FILE* fout = _wfopen(appDir.c_str(), L"a");
+  tstring appDir(ResolvePathName("$/disthelper.log"));
+  FILE* fout = _tfopen(appDir.c_str(), _T("a"));
   if (fout) {
     time_t timer;
     time(&timer);
-    
-    // set up a string stream and dump the timestamp into it
-    std::ostringstream stream;
-    stream << '['
-           << std::string(ctime(&timer), CTIME_STRLEN - 2)
-           << "] ";
+    tm* now = localtime(&timer);
+    const int BUFFER_LEN = 30;
+    char time_str[BUFFER_LEN]; // '[', ']', ' '
+    strftime(time_str, BUFFER_LEN - 1, "[%a %b %d %H:%M:%S %Y] ", now);
+    tstring output = ConvertUTF8toUTFn(time_str);
     
     // do printf()-style formatting into a string buffer
     va_list args;
     va_start(args, fmt);
-    size_t len = _vscprintf(fmt, args) // _vscprintf doesn't count
-                                  + 1; // terminating '\0'
-    va_end(args);
-    
-    char* buffer = (char*)malloc(len * sizeof(char));
+    TCHAR* buffer = NULL;
+    #if _MSC_VER
+      tstring format = ConvertUTF8toUTFn(fmt);
+      int len = _vscwprintf(format.c_str(), args) // _vscwprintf doesn't count
+                                             + 1; // terminating '\0'
+      buffer = (TCHAR*)malloc(len * sizeof(TCHAR));
+      vswprintf_s(buffer, len, format.c_str(), args);
+    #else
+      vasprintf(&buffer, fmt, args);
+    #endif
   
-    va_start(args, fmt);
-    vsprintf(buffer, fmt, args);
     va_end(args);
-    stream << buffer;
+    output += tstring(buffer);
     free(buffer);
     
-    ::OutputDebugStringA(stream.str().c_str());
-    fprintf(fout, "%s\n", stream.str().c_str());
+    ::OutputDebugString(output.c_str());
+    fprintf(fout, "%s\n", ConvertUTFnToUTF8(output).c_str());
   
     fclose(fout);
   }
 }
 
-#else
-void LogMessage(const char* fmt, ...) {
-  #error not implemented
-}
-#endif

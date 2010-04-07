@@ -1,28 +1,28 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
-//=BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2009 POTI, Inc.
-// http://www.songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the GPL).
-// 
-// Software distributed under the License is distributed
-// on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-// 
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-//=END SONGBIRD GPL
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 /**
  * \file  sbIPDDevice.cpp
@@ -649,6 +649,24 @@ sbIPDDevice::GetContent(sbIDeviceContent** aContent)
 
 
 /**
+ * The default library to use for device operations when no library is
+ * specified.
+ */
+
+NS_IMETHODIMP
+sbIPDDevice::GetDefaultLibrary(sbIDeviceLibrary** aDefaultLibrary)
+{
+  return sbBaseDevice::GetDefaultLibrary(aDefaultLibrary);
+}
+
+NS_IMETHODIMP
+sbIPDDevice::SetDefaultLibrary(sbIDeviceLibrary* aDefaultLibrary)
+{
+  return sbBaseDevice::SetDefaultLibrary(aDefaultLibrary);
+}
+
+
+/**
  * The parameters with which the device was created
  */
 
@@ -708,6 +726,12 @@ sbIPDDevice::GetPreviousState(PRUint32* aState)
   return sbBaseDevice::GetPreviousState(aState);
 }
 
+/* pass through to the base class */
+NS_IMETHODIMP
+sbIPDDevice::GetIsDirectTranscoding(PRBool* aIsDirect)
+{
+  return sbBaseDevice::GetIsDirectTranscoding(aIsDirect);
+}
 
 /* pass through to the base class */
 NS_IMETHODIMP
@@ -1460,9 +1484,9 @@ sbIPDDevice::CapabilitiesConnect()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Set the device formats.
-  rv = mCapabilities->AddFormats(sbIDeviceCapabilities::CONTENT_AUDIO,
-                                 sbIPDSupportedAudioMediaList,
-                                 sbIPDSupportedAudioMediaListLength);
+  rv = mCapabilities->AddMimeTypes(sbIDeviceCapabilities::CONTENT_AUDIO,
+                                   sbIPDSupportedAudioMediaList,
+                                   sbIPDSupportedAudioMediaListLength);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Complete the device capabilities configuration.

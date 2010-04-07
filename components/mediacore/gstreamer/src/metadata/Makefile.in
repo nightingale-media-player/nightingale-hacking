@@ -29,6 +29,10 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+ifeq (windows,$(SB_PLATFORM))
+   DISABLE_DEADLY_WARNINGS = 1 
+endif
+
 STATIC_LIB = sbMetadataGstreamer
 
 CPP_SRCS = sbGStreamerMetadataHandler.cpp \

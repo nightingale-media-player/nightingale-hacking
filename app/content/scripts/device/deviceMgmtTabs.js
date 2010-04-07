@@ -88,6 +88,13 @@ var DeviceMgmtTabs = {
     this._deviceID = this._widget.deviceID;
     this._device = this._widget.device;
 
+    var toolsBox = this._getElement("device_tools");
+    var settingsBox = this._getElement("device_summary_settings");
+    if (toolsBox) 
+      toolsBox.addEventListener("DOMAttrModified", this.tabListener, false);
+    if (settingsBox)
+      settingsBox.addEventListener("DOMAttrModified", this.tabListener, false);
+
     this._update();
 
     // Add device listener
@@ -98,27 +105,27 @@ var DeviceMgmtTabs = {
     }
   },
 
-  _update: function DeviceMgmtTabs_update() {
-    // Need these to fire after the device listeners within the
-    // respective widgets
-    var self = this;
-    SBUtils.deferFunction(function() {
-      // Check to see if we should hide the tools tab (if no tools are
-      // applicable to this device.
-      var toolBox = self._getElement("device_tools");
-      if (toolBox.getAttribute("disabled") == "true") {
-        self._widget.setAttribute("hideToolsTab", "true");
+  tabListener: function DeviceMgmtTabs_tabDisableListener(event) {
+    var target = event.target;
+    var id = target.getAttribute("sbid");
+    if (event.attrName != "disabledTab")
+      return;
+    if (event.newValue == "true") {
+      if (id == "device_tools") {
+        DeviceMgmtTabs._widget.setAttribute("hideToolsTab", "true");
+      } else if (id == "device_summary_settings") {
+        DeviceMgmtTabs._widget.setAttribute("hideSettingsTab", "true");
       }
+    } else {
+      if (id == "device_tools") {
+        DeviceMgmtTabs._widget.removeAttribute("hideToolsTab");
+      } else if (id == "device_summary_settings") {
+        DeviceMgmtTabs._widget.removeAttribute("hideSettingsTab");
+      }
+    }
+  },
 
-      // Check to see if we should hide the settings tab
-      var settingsBox = self._getElement("device_summary_settings");
-      if (settingsBox.getAttribute("disabled") == "true") {
-        self._widget.setAttribute("hideSettingsTab", "true");
-      } else {
-        self._widget.removeAttribute("hideSettingsTab");
-      }
-    });
-    
+  _update: function DeviceMgmtTabs_update() {
     // Check what content this device supports then hide tabs for unsupported
     // content types.
     var sbIDC = Ci.sbIDeviceCapabilities;
@@ -151,6 +158,15 @@ var DeviceMgmtTabs = {
       deviceEventTarget.QueryInterface(Ci.sbIDeviceEventTarget);
       deviceEventTarget.removeEventListener(this);
     }
+
+    var toolsBox = this._getElement("device_tools");
+    var settingsBox = this._getElement("device_summary_settings");
+    if (toolsBox)
+      toolsBox.removeEventListener("DOMAttrModified", this.tabListener, false);
+    if (settingsBox)
+      settingsBox.removeEventListener("DOMAttrModified",
+                                      this.tabListener,
+                                      false);
 
     this._device = null;
     this._deviceID = null;

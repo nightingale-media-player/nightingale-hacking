@@ -192,15 +192,46 @@ sbGStreamerTranscodeDeviceConfigurator::~sbGStreamerTranscodeDeviceConfigurator(
   /* nothing */
 }
 
+struct sb_gst_caps_map_entry {
+  const char *sb_name;
+  const char *gst_name;
+};
+
+static const struct sb_gst_caps_map_entry sb_gst_caps_map[] =
+{
+  { "audio/x-pcm-int",   "audio/x-raw-int" },
+  { "audio/x-pcm-float", "audio/x-raw-float" },
+  { "audio/x-ms-wma",    "audio/x-wma" },
+
+  { "video/x-ms-wmv",    "video/x-wmv" }
+};
+
+/* GStreamer caps name are generally similar to mime-types, but some of them
+ * differ. We use this table to convert the ones that differ that we know about
+ */
+static nsresult
+GetGstCapsName(const nsACString &aMimeType, nsACString &aGstCapsName)
+{
+  for (int i = 0; i < NS_ARRAY_LENGTH(sb_gst_caps_map); i++) {
+    if (aMimeType.EqualsLiteral(sb_gst_caps_map[i].sb_name)) {
+      aGstCapsName.AssignLiteral(sb_gst_caps_map[i].gst_name);
+      return NS_OK;
+    }
+  }
+
+  aGstCapsName = aMimeType;
+  return NS_OK;
+}
+
 /**
  * make a GstCaps structure from a caps name and an array of attributes
  *
- * @param aCapsName [in] the name (e.g. "audio/x-raw-int")
+ * @param aMimeType [in] the name (e.g. "audio/x-pcm-int")
  * @param aAttributes [in] the attributes
  * @param aResultCaps [out] the generated GstCaps, with an outstanding refcount
  */
 nsresult
-MakeCapsFromAttributes(const nsACString& aCapsName,
+MakeCapsFromAttributes(const nsACString& aMimeType,
                        nsIArray *aAttributes,
                        GstCaps** aResultCaps)
 {
@@ -214,8 +245,12 @@ MakeCapsFromAttributes(const nsACString& aCapsName,
   rv = aAttributes->Enumerate(getter_AddRefs(attrsEnum));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCString name;
+  rv = GetGstCapsName (aMimeType, name);
+  NS_ENSURE_SUCCESS (rv, rv);
+
   // set up a caps structure
-  sbGstCaps caps = gst_caps_from_string(aCapsName.BeginReading());
+  sbGstCaps caps = gst_caps_from_string(name.BeginReading());
   NS_ENSURE_TRUE(caps, NS_ERROR_FAILURE);
   GstStructure* capsStruct = gst_caps_get_structure(caps.get(), 0);
 
@@ -468,11 +503,11 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // XXXMook: video only for now
-  PRUint32 formatCount;
-  char **formatStrings;
-  rv = caps->GetSupportedFormats(sbIDeviceCapabilities::CONTENT_VIDEO,
-                                 &formatCount,
-                                 &formatStrings);
+  PRUint32 mimeTypesCount;
+  char **mimeTypes;
+  rv = caps->GetSupportedMimeTypes(sbIDeviceCapabilities::CONTENT_VIDEO,
+                                   &mimeTypesCount,
+                                   &mimeTypes);
   if (NS_FAILED(rv)) {
     // report an error
     nsresult rv2;
@@ -486,8 +521,8 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
     detailParams.AppendElement(deviceName);
     nsString detail =
       SBLocalizedString("transcode.error.device_no_video.details", detailParams);
-    rv2 = SB_NewTranscodeError(NS_LITERAL_STRING("transcode.error.device_no_video.has_item"),
-                               NS_LITERAL_STRING("transcode.error.device_no_video.without_item"),
+    rv2 = SB_NewTranscodeError(NS_LITERAL_STRING("transcode.error.device_no_video.hasitem"),
+                               NS_LITERAL_STRING("transcode.error.device_no_video.withoutitem"),
                                detail,
                                mInputUri,
                                nsnull,
@@ -496,7 +531,7 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
   }
   NS_ENSURE_SUCCESS(rv, rv);
 
-  sbAutoFreeXPCOMArrayByRef<char**> formats(formatCount, formatStrings);
+  sbAutoFreeXPCOMArrayByRef<char**> autoMimeTypes(mimeTypesCount, mimeTypes);
 
   PRBool hasMoreProfiles;
   while (NS_SUCCEEDED(profilesEnum->HasMoreElements(&hasMoreProfiles)) &&
@@ -512,91 +547,106 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
 
     // check the priority first, that's easier
     PRUint32 priority;
-    rv = profile->GetPriority(mQuality, &priority);
+    rv = profile->GetEncoderProfilePriority(mQuality, &priority);
     NS_ENSURE_SUCCESS(rv, rv);
     if (priority <= selectedPriority) {
       continue;
     }
 
-    nsCOMPtr<nsISupports> supports;
-    for (PRUint32 formatIndex = 0; formatIndex < formatCount; ++formatIndex) {
-      rv = caps->GetFormatType(sbIDeviceCapabilities::CONTENT_VIDEO,
-                               NS_ConvertASCIItoUTF16(formatStrings[formatIndex]),
-                               getter_AddRefs(supports));
+    for (PRUint32 mimeTypeIndex = 0;
+         mimeTypeIndex < mimeTypesCount;
+         ++mimeTypeIndex)
+    {
+      nsISupports** formatTypes;
+      PRUint32 formatTypeCount;
+      rv = caps->GetFormatTypes(sbIDeviceCapabilities::CONTENT_VIDEO,
+                               NS_ConvertASCIItoUTF16(mimeTypes[mimeTypeIndex]),
+                               &formatTypeCount,
+                               &formatTypes);
       NS_ENSURE_SUCCESS(rv, rv);
-      nsCOMPtr<sbIVideoFormatType> format = do_QueryInterface(supports, &rv);
-      if (NS_FAILED(rv) || !format) {
-        // XXX Mook: we only support video for now
-        continue;
-      }
+      sbAutoFreeXPCOMPointerArray<nsISupports> freeFormats(formatTypeCount,
+                                                           formatTypes); 
 
-      // check the container
-      nsCString formatContainer;
-      rv = format->GetContainerType(formatContainer);
-      NS_ENSURE_SUCCESS(rv, rv);
-      nsString encoderContainer;
-      rv = profile->GetContainerFormat(encoderContainer);
-      NS_ENSURE_SUCCESS(rv, rv);
-      if (!encoderContainer.Equals(NS_ConvertUTF8toUTF16(formatContainer))) {
-        // mismatch, try the next device format
-        continue;
-      }
-
-      // check the audio codec
-      nsString encoderAudioCodec;
-      rv = profile->GetAudioCodec(encoderAudioCodec);
-      NS_ENSURE_SUCCESS(rv, rv);
-      nsCOMPtr<sbIDevCapAudioStream> audioCaps;
-      rv = format->GetAudioStream(getter_AddRefs(audioCaps));
-      NS_ENSURE_SUCCESS(rv, rv);
-      if (!audioCaps) {
-        if (!encoderAudioCodec.IsEmpty()) {
-          // this device format doesn't support audio, but the encoder does
-          // skip for now, I think?
+      for (PRUint32 formatIndex = 0;
+           formatIndex < formatTypeCount;
+           formatIndex++)
+      {
+        nsCOMPtr<sbIVideoFormatType> format = do_QueryInterface(
+            formatTypes[formatIndex], &rv);
+        if (NS_FAILED(rv) || !format) {
+          // XXX Mook: we only support video for now
           continue;
         }
-      }
-      else {
-        nsCString formatAudioCodec;
-        rv = audioCaps->GetType(formatAudioCodec);
+
+        // check the container
+        nsCString formatContainer;
+        rv = format->GetContainerType(formatContainer);
         NS_ENSURE_SUCCESS(rv, rv);
-        if (!encoderAudioCodec.Equals(NS_ConvertUTF8toUTF16(formatAudioCodec))) {
+        nsString encoderContainer;
+        rv = profile->GetContainerFormat(encoderContainer);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        if (!encoderContainer.Equals(NS_ConvertUTF8toUTF16(formatContainer))) {
           // mismatch, try the next device format
           continue;
         }
-        // XXX Mook: TODO: match properties
-      }
 
-      // check the video codec
-      nsString encoderVideoCodec;
-      rv = profile->GetVideoCodec(encoderVideoCodec);
-      NS_ENSURE_SUCCESS(rv, rv);
-      nsCOMPtr<sbIDevCapVideoStream> videoCaps;
-      rv = format->GetVideoStream(getter_AddRefs(videoCaps));
-      NS_ENSURE_SUCCESS(rv, rv);
-      if (!videoCaps) {
-        if (!encoderVideoCodec.IsEmpty()) {
-          // this device format doesn't support video, but the encoder does
-          // skip for now, I think?
-          continue;
-        }
-      }
-      else {
-        nsCString formatVideoCodec;
-        rv = videoCaps->GetType(formatVideoCodec);
+        // check the audio codec
+        nsString encoderAudioCodec;
+        rv = profile->GetAudioCodec(encoderAudioCodec);
         NS_ENSURE_SUCCESS(rv, rv);
-        if (!encoderVideoCodec.Equals(NS_ConvertUTF8toUTF16(formatVideoCodec))) {
-          // mismatch, try the next device format
-          continue;
+        nsCOMPtr<sbIDevCapAudioStream> audioCaps;
+        rv = format->GetAudioStream(getter_AddRefs(audioCaps));
+        NS_ENSURE_SUCCESS(rv, rv);
+        if (!audioCaps) {
+          if (!encoderAudioCodec.IsEmpty()) {
+            // this device format doesn't support audio, but the encoder does
+            // skip for now, I think?
+            continue;
+          }
         }
-        // XXX Mook: TODO: match properties
+        else {
+          nsCString formatAudioCodec;
+          rv = audioCaps->GetType(formatAudioCodec);
+          NS_ENSURE_SUCCESS(rv, rv);
+          if (!encoderAudioCodec.Equals(NS_ConvertUTF8toUTF16(formatAudioCodec))) {
+            // mismatch, try the next device format
+            continue;
+          }
+          // XXX Mook: TODO: match properties
+        }
+  
+        // check the video codec
+        nsString encoderVideoCodec;
+        rv = profile->GetVideoCodec(encoderVideoCodec);
+        NS_ENSURE_SUCCESS(rv, rv);
+        nsCOMPtr<sbIDevCapVideoStream> videoCaps;
+        rv = format->GetVideoStream(getter_AddRefs(videoCaps));
+        NS_ENSURE_SUCCESS(rv, rv);
+        if (!videoCaps) {
+          if (!encoderVideoCodec.IsEmpty()) {
+            // this device format doesn't support video, but the encoder does
+            // skip for now, I think?
+            continue;
+          }
+        }
+        else {
+          nsCString formatVideoCodec;
+          rv = videoCaps->GetType(formatVideoCodec);
+          NS_ENSURE_SUCCESS(rv, rv);
+          if (!encoderVideoCodec.Equals(NS_ConvertUTF8toUTF16(formatVideoCodec))) {
+            // mismatch, try the next device format
+            continue;
+          }
+          // XXX Mook: TODO: match properties
+        }
+  
+        // assume we match here
+        selectedProfile = profile;
+        selectedFormat = format;
+        rv = profile->GetEncoderProfilePriority(mQuality, &selectedPriority);
+        NS_ENSURE_SUCCESS(rv, rv);
       }
-
-      // assume we match here
-      selectedProfile = profile;
-      selectedFormat = format;
-      rv = profile->GetPriority(mQuality, &selectedPriority);
-      NS_ENSURE_SUCCESS(rv, rv);
     }
     // if we reach here, we have either added it to the available list or
     // the encoder profile is not compatible; either way, nothing to do here
@@ -616,8 +666,8 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
     detailParams.AppendElement(deviceName);
     nsString detail =
       SBLocalizedString("transcode.error.no_profile.details", detailParams);
-    rv = SB_NewTranscodeError(NS_LITERAL_STRING("transcode.error.no_profile.has_item"),
-                              NS_LITERAL_STRING("transcode.error.no_profile.without_item"),
+    rv = SB_NewTranscodeError(NS_LITERAL_STRING("transcode.error.no_profile.hasitem"),
+                              NS_LITERAL_STRING("transcode.error.no_profile.withoutitem"),
                               detail,
                               mInputUri,
                               nsnull,

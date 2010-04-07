@@ -41,12 +41,16 @@
 
 extern bool gEnableLogging;
 
-#if XP_WIN
-void DebugMessage(const char* fmt, ...);
-#else
-  #define DebugMessage printf
-#endif
+void DebugMessage(const char* fmt, ...)
+#ifdef __GNUC__
+__attribute__((format(printf, 1, 2)));
+#endif /* __GNUC__ */
+;
 
-void LogMessage(const char* fmt, ...);
+void LogMessage(const char* fmt, ...)
+#ifdef __GNUC__
+__attribute__((format(printf, 1, 2)))
+#endif /* __GNUC__ */
+;
 
 #endif /* _DISTHERLPER_DEBUG_H__ */

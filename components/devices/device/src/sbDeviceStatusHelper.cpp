@@ -1,29 +1,28 @@
+/* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -123,7 +122,8 @@ sbDeviceStatusHelper::OperationStart(sbDeviceStatusHelper::Operation aOperationT
                                      PRInt32  aItemCount,
                                      PRInt32  aItemType,
                                      sbIMediaList* aMediaList,
-                                     sbIMediaItem* aMediaItem)
+                                     sbIMediaItem* aMediaItem,
+                                     PRBool aNewBatch)
 {
   // Check if we're already started. The initial batch item might have
   // completed but might not have been removed from the queue, thus
@@ -131,6 +131,7 @@ sbDeviceStatusHelper::OperationStart(sbDeviceStatusHelper::Operation aOperationT
   if (aItemNum > 1 && mOperationType != OPERATION_TYPE_NONE) {
     return;
   }
+
   // Update the current operation type.
   mOperationType = aOperationType;
   if (aMediaList) {
@@ -143,6 +144,9 @@ sbDeviceStatusHelper::OperationStart(sbDeviceStatusHelper::Operation aOperationT
   mItemNum = aItemNum;
   mItemCount = aItemCount;
   mItemType = aItemType;
+
+  if (aNewBatch)
+    mStatus->SetIsNewBatch(true);
 
   // Dispatch operation dependent status processing.
   switch (mOperationType)
@@ -181,6 +185,9 @@ sbDeviceStatusHelper::OperationStart(sbDeviceStatusHelper::Operation aOperationT
                    aItemCount,
                    0.0,
                    aItemType);
+      mDevice->CreateAndDispatchEvent
+                 (sbIDeviceEvent::EVENT_DEVICE_TRANSCODE_START,
+                  sbNewVariant(mMediaItem));
       break;
 
     case OPERATION_TYPE_DELETE :
@@ -528,6 +535,14 @@ sbDeviceStatusHelper::ItemProgress(double aProgress)
 void
 sbDeviceStatusHelper::ItemComplete(nsresult aResult)
 {
+  // Post an error event on a failure result.
+  if (NS_FAILED(aResult)) {
+    mDevice->CreateAndDispatchEvent
+               (sbIDeviceEvent::EVENT_DEVICE_ERROR_UNEXPECTED,
+                sbNewVariant(mMediaItem),
+                PR_TRUE);
+  }
+
   // Dispatch operation dependent status processing.
   switch(mOperationType)
   {
@@ -739,7 +754,6 @@ sbDeviceStatusHelper::UpdateStatus(const nsAString& aOperation,
 
   return NS_OK;
 }
-
 
 //------------------------------------------------------------------------------
 //

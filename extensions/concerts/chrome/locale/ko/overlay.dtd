@@ -1,0 +1,6 @@
+<!ENTITY concerts.loading "주변 도시의 투어 아티스트 확인 중...">
+<!ENTITY concerts.changelocation "지역 변경">
+<!ENTITY concerts.easteregg.fail "FAIL">
+<!ENTITY concerts.easteregg.fail.2 "다음 지역의 아티스트 없음:">
+<!ENTITY concerts.timeout.error "인터넷에 연결되어 있지 않거나 콘서트 데이터베이스가 현재 작동하지 않습니다.  몇 분 이내에 다시 시도하십시오.">
+<!ENTITY concerts.timeoutreport.error "문제 보고">

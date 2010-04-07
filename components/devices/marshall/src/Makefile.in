@@ -29,6 +29,10 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+ifeq (linux,$(SB_PLATFORM))
+   DISABLE_DEADLY_WARNINGS = 1
+endif
+
 STATIC_LIB = sbDeviceMarshall
 
 CPP_SRCS = sbBaseDeviceMarshall.cpp \

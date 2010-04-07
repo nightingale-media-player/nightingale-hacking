@@ -38,7 +38,7 @@ interface sbIDeviceFirmwareUpdate;
  *       to use your own listener if you do not have a listener registered
  *       with the device.
  */
-[scriptable, uuid(c54f6746-e188-438b-b0a1-e024f9bf4d6b)]
+[scriptable, uuid(caf2294b-da39-48ac-859a-6ebfd4433eeb)]
 interface sbIDeviceFirmwareHandler : nsISupports
 {
   /**
@@ -92,8 +92,18 @@ interface sbIDeviceFirmwareHandler : nsISupports
    * \brief Location of the reset instructions.
    * \note This value is not valid until it is refreshed at least once.
    *       The value can be refreshed by calling refreshInfo.
+   * \note This is optional and may be null.
    */
   readonly attribute nsIURI resetInstructionsLocation;
+
+  /**
+   * \brief Magic key combination required by the device to go into
+   *        recovery or firmware flashing mode.
+   * \note This value is not valid until it is refreshed at least once.
+   *       This value can be refreshed by calling refreshInfo.
+   * \note This is optional and may be null.
+   */
+  readonly attribute AString recoveryModeKeyCombination;
 
   /**
    * \brief Device Customer Support URL.
@@ -148,6 +158,12 @@ interface sbIDeviceFirmwareHandler : nsISupports
    * \note This is optional and may be null.
    */
   readonly attribute AString deviceModelVersion;
+
+  /**
+   * \brief Device manufacturer as reported by the firmware handler.
+   * \note This is optional and may be null.
+   */
+  readonly attribute AString deviceVendor;
 
   /**
    * \brief Array containing the list of devices supported by the

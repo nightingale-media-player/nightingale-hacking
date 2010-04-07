@@ -32,7 +32,9 @@
 #include "sbBaseDevice.h"
 #include "sbDeviceImages.h"
 #include "sbDeviceUtils.h"
+#include <sbFileUtils.h>
 #include <sbIDeviceCapabilities.h>
+#include <sbStringUtils.h>
 
 
 sbDeviceImages::sbDeviceImages(sbBaseDevice * aBaseDevice) :
@@ -263,6 +265,120 @@ sbDeviceImages::ScanImages(nsIFile *aScanDir,
 
   // Return the array of images that were found
   return CallQueryInterface(imageArray, retImageArray);
+}
+
+// Create and return in aMediaItem a temporary media item for the local file
+// represented by aImage.
+nsresult
+sbDeviceImages::CreateTemporaryLocalMediaItem(sbIDeviceImage* aImage,
+                                              sbIMediaItem**  aMediaItem)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the local image base directory.
+  nsCOMPtr<nsIFile>          baseDir;
+  nsCOMPtr<sbIDeviceLibrary> library;
+  rv = mBaseDevice->GetPrimaryLibrary(getter_AddRefs(library));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = library->GetSyncRootFolderByType(sbIDeviceLibrary::MEDIATYPE_IMAGE,
+                                        getter_AddRefs(baseDir));
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(baseDir, NS_ERROR_UNEXPECTED);
+
+  // Get the local device image file URI.
+  nsCOMPtr<nsIURI>  imageURI;
+  nsCOMPtr<nsIFile> imageFile;
+  rv = MakeFile(aImage, baseDir, PR_TRUE, PR_FALSE, getter_AddRefs(imageFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = NS_NewFileURI(getter_AddRefs(imageURI), imageFile);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create a temporary media item.
+  nsCOMPtr<sbIMediaItem>
+    item = do_CreateInstance
+             ("@songbirdnest.com/Songbird/Library/TemporaryMediaItem;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set up the temporary media item.
+  rv = item->SetContentType(NS_LITERAL_STRING("image"));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = item->SetContentSrc(imageURI);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Return results.
+  item.forget(aMediaItem);
+
+  return NS_OK;
+}
+
+// Create an nsIFile for an sbIDeviceImage item given the base image sync
+// directory. The function can automatically create the needed subdirectories
+// in which the file will reside, or to create a file object pointing at the
+// file's parent directory rather than at the file itself.
+nsresult sbDeviceImages::MakeFile(sbIDeviceImage* aImage,
+                                  nsIFile*        aBaseDir,
+                                  PRBool          aWithFilename,
+                                  PRBool          aCreateDirectories,
+                                  nsIFile**       retFile)
+{
+  NS_ENSURE_ARG_POINTER(retFile);
+  NS_ENSURE_ARG_POINTER(aBaseDir);
+
+  nsresult rv;
+
+  // Create a local file object to point at the source file
+  nsCOMPtr<nsIFile> file;
+  rv = aBaseDir->Clone(getter_AddRefs(file));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the image subdirectories
+  nsString subDirectories;
+  rv = aImage->GetSubdirectory(subDirectories);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Add subdirectories to the file object, one by one, optionally making sure
+  // that they each exist
+  if (!subDirectories.IsEmpty()) {
+    nsTArray<nsString> subDirectoryList;
+    nsString_Split(subDirectories,
+                   NS_LITERAL_STRING(FILE_PATH_SEPARATOR),
+                   subDirectoryList);
+    for (PRUint32 i = 0; i < subDirectoryList.Length(); ++i) {
+      const nsString& subDirectory = subDirectoryList[i];
+      if (!subDirectory.IsEmpty()) {
+        // Append the sub-directory to the file object
+        rv = file->Append(subDirectory);
+        NS_ENSURE_SUCCESS(rv, rv);
+        // If needed, create the directory
+        if (aCreateDirectories) {
+          PRBool exists;
+          rv = file->Exists(&exists);
+          NS_ENSURE_SUCCESS(rv, rv);
+          if (!exists) {
+            rv = file->Create(nsIFile::DIRECTORY_TYPE,
+                              SB_DEFAULT_DIRECTORY_PERMISSIONS);
+            NS_ENSURE_SUCCESS(rv, rv);
+          }
+        }
+      }
+    }
+  }
+
+  // If needed, add the filename to the file object
+  if (aWithFilename) {
+    nsString filename;
+    rv = aImage->GetFilename(filename);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = file->Append(filename);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  file.forget(retFile);
+  return NS_OK;
 }
 
 // ----------------------------------------------------------------------------

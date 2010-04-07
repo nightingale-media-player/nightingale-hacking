@@ -30,6 +30,7 @@
 #include <nsIClassInfoImpl.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIFileURL.h>
+#include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
 #include <nsIVariant.h>
 #include <nsIWritablePropertyBag2.h>
@@ -78,7 +79,7 @@
 #include <sbLocalDatabaseCID.h>
 #include <sbMemoryUtils.h>
 #include <sbPropertiesCID.h>
-#include <sbProxyUtils.h>
+#include <sbProxiedComponentManager.h>
 #include <sbStandardDeviceProperties.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
@@ -540,10 +541,6 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
 
   nsCOMPtr<sbILibrary> mainLib;
   rv = GetMainLibrary(getter_AddRefs(mainLib));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // get the current sync all setting.
-  rv = GetIsMgmtTypeSyncAll(&mLastIsSyncAll);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // add a device event listener to listen for changes to the is synced locally
@@ -1101,9 +1098,35 @@ sbDeviceLibrary::SetSyncMode(PRUint32 aSyncMode)
     return NS_OK;
   }
 
+  nsCOMPtr<nsIPrefBranch> rootPrefBranch =
+    do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevice> device;
+  rv = GetDevice(getter_AddRefs(device));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsID* id;
+  rv = device->GetId(&id);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCString key(NS_LITERAL_CSTRING("songbird.device."));
+  key.AppendLiteral(id->ToString());
+  key.AppendLiteral(".syncmode.changed");
+
+  PRBool hasValue = PR_FALSE;
+  rv = rootPrefBranch->PrefHasUserValue(key.get(), &hasValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool isChanged = PR_FALSE;
+  if (hasValue) {
+    rv = rootPrefBranch->GetBoolPref(key.get(), &isChanged);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   // If switching from manual management mode to sync mode, confirm with user
   // before proceeding.  Do nothing more if switch is canceled.
-  if (aSyncMode == sbIDeviceLibrary::SYNC_AUTO) {
+  if (aSyncMode == sbIDeviceLibrary::SYNC_AUTO && !isChanged) {
     // Check if device is linked to a local sync partner.
     PRBool isLinkedLocally;
     rv = sbDeviceUtils::SyncCheckLinkedPartner(mDevice,
@@ -1433,7 +1456,7 @@ sbDeviceLibrary::GetSyncRootFolderByType(PRUint32 aContentType,
 
   NS_ADDREF(*_retval = folder);
 
-  return NS_OK;  
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -1462,7 +1485,7 @@ sbDeviceLibrary::SetSyncRootFolderByType(PRUint32 aContentType,
   rv = mDevice->SetPreference(prefKey, sbNewVariant(folderPath));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  return NS_OK;  
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -1502,15 +1525,15 @@ sbDeviceLibrary::GetSyncFolderListByType(PRUint32 aContentType,
     nsString prefKey;
     rv = GetSyncListsPrefKey(aContentType, prefKey);
     NS_ENSURE_SUCCESS(rv, rv);
-  
+
     nsCOMPtr<nsIVariant> var;
     rv = mDevice->GetPreference(prefKey, getter_AddRefs(var));
     NS_ENSURE_SUCCESS(rv, rv);
-  
+
     nsAutoString foldersDSV;
     rv = var->GetAsAString(foldersDSV);
     NS_ENSURE_SUCCESS(rv, rv);
-  
+
     // Scan folder list DSV for folder paths and add them to the array
     PRInt32 start = 0;
     PRInt32 end = foldersDSV.FindChar('\1', start);
@@ -1520,15 +1543,15 @@ sbDeviceLibrary::GetSyncFolderListByType(PRUint32 aContentType,
     while (end > start) {
       // Extract the folder path
       nsDependentSubstring folderPath = Substring(foldersDSV, start, end - start);
-  
+
       nsCOMPtr<nsILocalFile> folder;
       rv = NS_NewLocalFile(folderPath, PR_TRUE, getter_AddRefs(folder));
       if (NS_FAILED(rv))  // Invalid path, skip
         continue;
-  
+
       rv = array->AppendElement(folder, PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);
-  
+
       // Scan for the next folder path
       start = end + 1;
       end = foldersDSV.FindChar('\1', start);
@@ -1603,7 +1626,7 @@ sbDeviceLibrary::Sync()
   PRBool isManual = PR_FALSE;
   rv = GetIsMgmtTypeManual(&isManual);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   if (!isManual) {
     nsCOMPtr<sbILibraryManager> libraryManager =
       do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
@@ -1644,7 +1667,7 @@ sbDeviceLibrary::Sync()
       }
     #endif /* DEBUG */
 
-    nsCOMPtr<nsIWritablePropertyBag2> requestParams = 
+    nsCOMPtr<nsIWritablePropertyBag2> requestParams =
       do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1671,17 +1694,19 @@ sbDeviceLibrary::Sync()
       rv = UpdateMainLibraryListeners();
       NS_ENSURE_SUCCESS(rv, rv);
 
-      // No harm to reset both to false
-      mSyncSettingsChanged = PR_FALSE;
+      // Reset to false
       mSyncModeChanged = PR_FALSE;
     }
   }
-  
+
   // If the user has enabled image sync, trigger it after the audio/video sync
   PRUint32 mgmtType;
   rv = GetMgmtType(sbIDeviceLibrary::MEDIATYPE_IMAGE, &mgmtType);
   NS_ENSURE_SUCCESS(rv, rv);
-  if (mgmtType != sbIDeviceLibrary::MGMT_TYPE_NONE) {
+  if (mgmtType != sbIDeviceLibrary::MGMT_TYPE_NONE ||
+      mSyncSettingsChanged) {
+    mSyncSettingsChanged = PR_FALSE;
+
     nsCOMPtr<nsIWritablePropertyBag2> requestParams =
       do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1690,6 +1715,10 @@ sbDeviceLibrary::Sync()
     rv = requestParams->SetPropertyAsInt32(
                             NS_LITERAL_STRING("priority"),
                             sbBaseDevice::TransferRequest::PRIORITY_LOW);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = requestParams->SetPropertyAsInterface
+                          (NS_LITERAL_STRING("list"),
+                           NS_ISUPPORTS_CAST(sbIMediaList*, this));
     NS_ENSURE_SUCCESS(rv, rv);
     rv = device->SubmitRequest(sbIDevice::REQUEST_IMAGESYNC, requestParams);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1716,7 +1745,7 @@ sbDeviceLibrary::AddDeviceLibraryListener(sbIDeviceLibraryListener* aListener)
   // Make a proxy for the listener that will always send callbacks to the
   // current thread.
   nsCOMPtr<sbIDeviceLibraryListener> proxy;
-  nsresult rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
+  nsresult rv = do_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
                                      NS_GET_IID(sbIDeviceLibraryListener),
                                      aListener,
                                      NS_PROXY_SYNC | NS_PROXY_ALWAYS,
@@ -2254,17 +2283,9 @@ NS_IMETHODIMP sbDeviceLibrary::OnDeviceEvent(sbIDeviceEvent* aEvent)
 
   // handle changes to the sync parnter preference
   if (type == sbIDeviceEvent::EVENT_DEVICE_PREFS_CHANGED) {
-    // get the sync all setting
-    PRBool isSyncAll = PR_FALSE;
-    rv = GetIsMgmtTypeSyncAll(&isSyncAll);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     // Save the flag if the sync setting changes to update the main library
     // listeners later.
-    if (isSyncAll != mLastIsSyncAll) {
-      mSyncSettingsChanged = PR_TRUE;
-      mLastIsSyncAll = isSyncAll;
-    }
+    mSyncSettingsChanged = PR_TRUE;
   }
 
   return NS_OK;
@@ -2286,21 +2307,13 @@ sbDeviceLibrary::CreateMediaItem(nsIURI *aContentUri,
                                                              &mShouldProcceed));
   if (mPerformAction) {
     nsresult rv;
-    nsCOMPtr<sbILibrary> lib;
-    rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
-                              NS_GET_IID(sbILibrary),
-                              mDeviceLibrary,
-                              NS_PROXY_SYNC,
-                              getter_AddRefs(lib));
+    rv = mDeviceLibrary->CreateMediaItem(aContentUri,
+                                         aProperties,
+                                         aAllowDuplicates,
+                                         _retval);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    return lib->CreateMediaItem(aContentUri,
-                                aProperties,
-                                aAllowDuplicates,
-                                _retval);
-  } else {
-    return NS_OK;
   }
+  return NS_OK;
 }
 
 /*
@@ -2319,21 +2332,13 @@ sbDeviceLibrary::CreateMediaItemIfNotExist(nsIURI *aContentUri,
                                                              &mShouldProcceed));
   if (mPerformAction) {
     nsresult rv;
-    nsCOMPtr<sbILibrary> lib;
-    rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
-                              NS_GET_IID(sbILibrary),
-                              mDeviceLibrary,
-                              NS_PROXY_SYNC,
-                              getter_AddRefs(lib));
+    rv = mDeviceLibrary->CreateMediaItemIfNotExist(aContentUri,
+                                                   aProperties,
+                                                   aResultItem,
+                                                   _retval);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    return lib->CreateMediaItemIfNotExist(aContentUri,
-                                aProperties,
-                                aResultItem,
-                                _retval);
-  } else {
-    return NS_OK;
   }
+  return NS_OK;
 }
 
 /*

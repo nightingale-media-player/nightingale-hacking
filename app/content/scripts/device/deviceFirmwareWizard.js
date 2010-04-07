@@ -127,7 +127,15 @@ var deviceFirmwareWizard = {
         let self = this;
         
         this._currentOperation = "checkforupdate";
-        this._deviceFirmwareUpdater.checkForUpdate(this._device, this);
+        if(this._isDefaultDevice) {
+          this._deviceFirmwareUpdater.checkForUpdate(this._device, 
+                                                     this._defaultDeviceVID,
+                                                     this._defaultDevicePID,
+                                                     this);
+        }
+        else {
+          this._deviceFirmwareUpdater.checkForUpdate(this._device, 0, 0, this);
+        }
       }
       break;
       
@@ -169,12 +177,12 @@ var deviceFirmwareWizard = {
                                this._defaultDeviceKey]);
 
           // Hack up the style so that it doesn't look so damn ugly.
-          recoveryInstructions = "<p style=\"font-family: sans-serif; font-size: 12px\">" + 
+          recoveryInstructions = "<html><body><p style=\"font-family: sans-serif; font-size: 12px\">" + 
                                  recoveryInstructions + 
-                                 "</p>";
+                                 "</p></body></html>";
 
           let browser = document.getElementById("device_firmware_wizard_recovery_mode_browser");
-          let dataURI = "data:text/html," + escape(recoveryInstructions);
+          let dataURI = "data:text/html;charset=UTF-8," + recoveryInstructions;
           browser.setAttribute("src", dataURI);
           
           let label = document.getElementById("device_firmware_wizard_recovery_mode_label");
@@ -205,7 +213,24 @@ var deviceFirmwareWizard = {
                   let label = document.getElementById("device_firmware_wizard_recovery_mode_label");
                   label.value = SBFormattedString("device.firmware.wizard.recovery_mode.connected",
                                                   [self._deviceProperties.modelNumber]);
-                  if(handler.resetInstructionsLocation) {
+                                                  
+                  if(handler.recoveryModeKeyCombination) {
+                    let recoveryInstructions = 
+                      SBFormattedString("device.firmware.wizard.recovery_mode.instructions", 
+                                        [self._deviceProperties.modelNumber, 
+                                         handler.recoveryModeKeyCombination, 
+                                         handler.recoveryModeKeyCombination]);
+
+                    // Hack up the style so that it doesn't look so damn ugly.
+                    recoveryInstructions = "<html><body><p style=\"font-family: sans-serif; font-size: 12px\">" + 
+                                           recoveryInstructions + 
+                                           "</p></body></html>";
+
+                    let browser = document.getElementById("device_firmware_wizard_recovery_mode_browser");
+                    let dataURI = "data:text/html;charset=UTF-8," + recoveryInstructions;
+                    browser.setAttribute("src", dataURI);
+                  }
+                  else if(handler.resetInstructionsLocation) {
                     let browser = document.getElementById("device_firmware_wizard_recovery_mode_browser");
                     browser.setAttribute("src", handler.resetInstructionsLocation.spec);
                   }
@@ -213,7 +238,7 @@ var deviceFirmwareWizard = {
               }
             };
             
-            this._deviceFirmwareUpdater.checkForUpdate(this._device, listener);
+            this._deviceFirmwareUpdater.checkForUpdate(this._device, 0, 0, listener);
             this._deviceFirmwareUpdater.requireRecovery(this._device);
             
             return;
@@ -221,15 +246,31 @@ var deviceFirmwareWizard = {
         }
 
         this._deviceFirmwareUpdater.requireRecovery(this._device);
-            
+        
         let label = document.getElementById("device_firmware_wizard_recovery_mode_label");
         label.value = SBFormattedString("device.firmware.wizard.recovery_mode.connected",
                                         [this._deviceProperties.modelNumber]);
+                                        
+        if(handler.recoveryModeKeyCombination) {
+          let recoveryInstructions = 
+            SBFormattedString("device.firmware.wizard.recovery_mode.instructions", 
+                              [this._deviceProperties.modelNumber, 
+                               handler.recoveryModeKeyCombination, 
+                               handler.recoveryModeKeyCombination]);
 
-        if(handler.resetInstructionsLocation) {
+          // Hack up the style so that it doesn't look so damn ugly.
+          recoveryInstructions = "<html><body><p style=\"font-family: sans-serif; font-size: 12px\">" + 
+                                 recoveryInstructions + 
+                                 "</p></body></html>";
+
+          let browser = document.getElementById("device_firmware_wizard_recovery_mode_browser");
+          let dataURI = "data:text/html;charset=UTF-8," + recoveryInstructions;
+          browser.setAttribute("src", dataURI);
+        }
+        else if(handler.resetInstructionsLocation) {
           let browser = document.getElementById("device_firmware_wizard_recovery_mode_browser");
           browser.setAttribute("src", handler.resetInstructionsLocation.spec);
-        }
+        }        
       }
       break;
       
@@ -318,19 +359,24 @@ var deviceFirmwareWizard = {
             document.createTextNode(SBString("device.firmware.repair.no_disconnect_warning"));
           descElem.appendChild(textNode);
           
-          if(this._isDefaultDevice) {
-            this._deviceFirmwareUpdater.recoveryUpdate(this._device, 
-                                                       null, 
-                                                       this._defaultDeviceVID, 
-                                                       this._defaultDevicePID, 
-                                                       this);
+          try {
+            if(this._isDefaultDevice) {
+              this._deviceFirmwareUpdater.recoveryUpdate(this._device, 
+                                                         this._firmwareUpdate, 
+                                                         this._defaultDeviceVID, 
+                                                         this._defaultDevicePID, 
+                                                         this);
+            }
+            else {
+              this._deviceFirmwareUpdater.recoveryUpdate(this._device, 
+                                                         this._firmwareUpdate, 
+                                                         0, 
+                                                         0, 
+                                                         this);
+            }
           }
-          else {
-            this._deviceFirmwareUpdater.recoveryUpdate(this._device, 
-                                                       null, 
-                                                       0, 
-                                                       0, 
-                                                       this);
+          catch(e) {
+            this.wizardElem.goTo("device_firmware_install_error_page");
           }
         }
         else {
@@ -462,10 +508,15 @@ var deviceFirmwareWizard = {
           setTimeout(function() {
             self.wizardElem.goTo("device_needs_recovery_mode_page");
             }, 0);
+          return false;
         }
       }
       else if(this._currentOperation == "confirmrepair") {
-        this.wizardElem.goTo("device_firmware_wizard_install_page");
+        let self = this;
+        setTimeout(function() {
+          self.wizardElem.goTo("device_firmware_wizard_download_page");
+          }, 0);
+        return false;
       }
     }
    
@@ -565,7 +616,7 @@ var deviceFirmwareWizard = {
       
       if(recoveryMode) {
         setTimeout(function() {
-            self._wizardElem.goTo("device_firmware_wizard_repair_page");
+            self._wizardElem.goTo("device_firmware_wizard_check_page");
           }, 0);
       }
       else {
@@ -632,6 +683,16 @@ var deviceFirmwareWizard = {
     if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_CFU_END) {
       var progressDeck = document.getElementById("device_firmware_wizard_check_deck");
       if(aEvent.data == true) {
+        
+        // If we are in repair mode, we skip to the repair confirmation page
+        if(this._wizardMode == "repair") {
+          var self = this;
+          setTimeout(function() {
+            self._wizardElem.goTo("device_firmware_wizard_repair_page");
+          }, 0);
+          return;
+        }
+        
         var newVerDesc = 
           document.getElementById("device_firmware_wizard_check_newver_description");
         
@@ -808,7 +869,7 @@ var deviceFirmwareWizard = {
           else {
             if(this._wizardMode == "repair") {
               // Repair mode needs to ask for confirmation first.
-              this.wizardElem.goTo("device_firmware_wizard_repair_page");
+              this.wizardElem.goTo("device_firmware_wizard_check_page");
             }
             else {
               // Business as usual, download the new firmware and proceed
@@ -824,8 +885,14 @@ var deviceFirmwareWizard = {
         this._waitingForDeviceReconnect = true;
 
         let label = document.getElementById("device_firmware_wizard_recovery_mode_label");
-        label.value = SBFormattedString("device.firmware.wizard.recovery_mode.disconnected",
-                                        [this._deviceProperties.modelNumber]);
+        if(this._isDefaultDevice) {
+          label.value = SBFormattedString("device.firmware.wizard.recovery_mode.disconnected",
+                                          [this._defaultDeviceName]);
+        }
+        else {
+          label.value = SBFormattedString("device.firmware.wizard.recovery_mode.disconnected",
+                                          [this._deviceProperties.modelNumber]);
+        }
       }
       break;
     } 
