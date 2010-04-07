@@ -4352,15 +4352,8 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
   // Function variables.
   nsresult rv;
 
-  // Cancel operation if device is not linked to the local sync partner.
-  PRBool isLinkedLocally;
-  rv = sbDeviceUtils::SyncCheckLinkedPartner(this, PR_TRUE, &isLinkedLocally);
+  rv = sbDeviceUtils::SetLinkedSyncPartner(this);
   NS_ENSURE_SUCCESS(rv, rv);
-  if (!isLinkedLocally) {
-    rv = SetState(STATE_CANCEL);
-    NS_ENSURE_SUCCESS(rv, rv);
-    return NS_OK;
-  }
 
   // Check if we should cache this sync for later
   if (mSyncState != sbBaseDevice::SYNC_STATE_NORMAL) {

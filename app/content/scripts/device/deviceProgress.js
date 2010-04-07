@@ -1030,18 +1030,6 @@ var DPW = {
     if (this._device.content.libraries.length > 0) {
       this._deviceLibrary = this._device.content.libraries
           .queryElementAt(0, Ci.sbIDeviceLibrary);
-
-      // Update the progress UI to apply/cancel for pending sync mode change
-      var prefs = Cc["@mozilla.org/preferences-service;1"]
-                    .getService(Ci.nsIPrefBranch);
-      var syncModeChangedKey = "songbird.device." + this._widget.deviceID +
-                               ".syncmode.changed";
-
-      if (prefs.prefHasUserValue(syncModeChangedKey) &&
-          prefs.getBoolPref(syncModeChangedKey)) {
-        prefs.clearUserPref(syncModeChangedKey);
-        this._dispatchSettingsEvent(this.SYNCSETTINGS_CHANGE);
-      }
     }
   },
 

@@ -106,9 +106,9 @@
 
           if (this.devLib) {
             this.updateButtons(aManual);
-            this.devLib.syncMode = aManual ? Ci.sbIDeviceLibrary.SYNC_MANUAL :
-                                             Ci.sbIDeviceLibrary.SYNC_AUTO;
+
             if (aManual) {
+              this.devLib.syncMode = Ci.sbIDeviceLibrary.SYNC_MANUAL;
               // Set editable to true for device playlists in manual mode.
               var DSP = Cc['@songbirdnest.com/servicepane/device;1']
                           .getService(Ci.sbIDeviceServicePaneService);
@@ -120,6 +120,32 @@
                 // Only update the playlist nodes.
                 if (listType != "library")
                   node.editable = true;
+              }
+            }
+            else {
+              var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
+                               .createInstance(Ci.sbIPrompter);
+              var buttonFlags =
+                Ci.nsIPromptService.BUTTON_POS_1 *
+                Ci.nsIPromptService.BUTTON_TITLE_IS_STRING +
+                Ci.nsIPromptService.BUTTON_POS_0 *
+                Ci.nsIPromptService.BUTTON_TITLE_IS_STRING;
+
+              var buttonPressed = prompter.confirmEx(
+                null,
+                SBString("device.dialog.sync_confirmation.change.title"),
+                SBFormattedString("device.dialog.sync_confirmation.change.msg",
+                                  [this.device.name]),
+                buttonFlags,
+                SBString("device.dialog.sync_confirmation.change.sync_button"),
+                SBString("device.dialog.sync_confirmation.change.no_button"),
+                null,
+                null,
+                {});
+
+              if (buttonPressed == 0) {
+                // Toggle to auto
+                this.devLib.syncMode = Ci.sbIDeviceLibrary.SYNC_AUTO;
               }
             }
             this.update();
