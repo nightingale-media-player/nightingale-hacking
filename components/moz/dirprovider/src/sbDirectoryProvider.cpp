@@ -63,6 +63,8 @@ sbDirectoryProvider::Init()
 
   rv = dirService->RegisterProvider(this);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
