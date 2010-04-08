@@ -299,6 +299,7 @@
         else {
           acceptButton.label =
             SBString("device.dialog.setup.button.default.label");
+          this.removeErrorNotifications();
         }
       },
 
@@ -336,6 +337,7 @@
           syncContainerElem.removeAttribute("disabled");
           nameTextboxElem.removeAttribute("disabled");
           syncCheckboxElem.removeAttribute("disabled");
+          this.removeErrorNotifications();
         }
 
       },
