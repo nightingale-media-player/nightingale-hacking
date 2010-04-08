@@ -2395,6 +2395,22 @@ sbMediacoreSequencer::GetCurrentItem(sbIMediaItem **aItem)
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aItem);
 
+  if (!NS_IsMainThread()) {
+    // this method accesses the view, which isn't threadsafe.
+    // proxy to the main thread to avoid hilarious crashes.
+    nsresult rv;
+    nsCOMPtr<nsIThread> mainThread = do_GetMainThread();
+    nsCOMPtr<sbIMediacoreSequencer> proxiedSeq;
+    rv = do_GetProxyForObject(mainThread,
+                              NS_GET_IID(sbIMediacoreSequencer),
+                              NS_ISUPPORTS_CAST(sbIMediacoreSequencer*, this),
+                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                              getter_AddRefs(proxiedSeq));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = proxiedSeq->GetCurrentItem(aItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+    return NS_OK;
+  }
   // by default, if there's no current item, this doesn't throw, it returns a
   // null item instead.
   *aItem = nsnull;
