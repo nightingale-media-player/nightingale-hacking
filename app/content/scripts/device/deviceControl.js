@@ -211,14 +211,7 @@ deviceControlWidget.prototype = {
 
     // Initialize object fields.
     this._device = this._widget.device;
-
-    // Get the bound device library.
-    if (this._device.content.libraries.length > 0) {
-      this._deviceLibrary = this._device.content.libraries
-                                .queryElementAt(0, Ci.sbIDeviceLibrary);
-    } else {
-      this._deviceLibrary = null;
-    }
+    this._deviceLibrary = this._widget.devLib;
 
     // Get the bound element.
     this._getBoundElem();
@@ -368,7 +361,13 @@ deviceControlWidget.prototype = {
         break;
 
       case "sync" :
-        this._device.syncLibraries();
+        // Sync specific device library or all libraries on device.
+        if (this._deviceLibrary) {
+          this._deviceLibrary.sync();
+        }
+        else {
+          this._device.syncLibraries();
+        }
         break;
 
       case "rip" :

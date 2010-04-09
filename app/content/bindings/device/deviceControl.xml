@@ -48,6 +48,7 @@
    *   Attributes
    *   ==========
    *   device-id                ID of device to which widget is bound.
+   *   dev-lib-guid             GUID of device library to which widget is bound.
    *   service_pane_node_id     ID of associated service pane node.
    *   bindelem                 Element to which to bind device control.
    *   bindforward              Element through which to forward device control.
@@ -108,9 +109,18 @@
    *
    *   This widget provides a base level of services for device control widgets.
    * It may be used directly as a widget or extened by other widgets.
+   *
    *   This widget may be bound to a device by setting the "device-id"
    * attribute.  When the widget is bound to a device, the "deviceBound" event
    * is dispatched.
+   *   This widget may be bound to a device library by setting the
+   * "dev-lib-guid" attribute.
+   *   Binding the widget to a device will also bind the widget to the default
+   * device library.  Binding the widget to a device library will also bind the
+   * widget to the library's device.
+   *   When the widget is bound to a new device, the "deviceBound" event is
+   * dispatched.  When the widget is bound to a new device library, the
+   * "devLibBound" event is dispatched.
    *
    *   This widget updates its attributes based upon the device state.  These
    * attributes include the accesskey, action, disabled, and label attributes.
@@ -162,11 +172,15 @@
        *
        *   deviceID             ID of device to which widget is bound.
        *   device               Bound device object.
+       *   devLibGUID           GUID of device library to which widget is bound.
+       *   devLib               Bound device library object.
        *   boundElem            Element bound to widget.
        -->
 
       <field name="deviceID"/>
       <field name="device"/>
+      <field name="devLibID"/>
+      <field name="devLib"/>
       <field name="boundElem"/>
 
 
@@ -308,7 +322,7 @@
   <binding id="sb-device-eject-command">
     <content>
       <xul:sb-device-control
-         xbl:inherits="bindelem,device-id,service_pane_node_id,label,accesskey"
+         xbl:inherits="bindelem,device-id,dev-lib-guid,service_pane_node_id,label,accesskey"
          bindforward="parent"
          label="&command.device.ejectdevice;"
          accesskey="&command.device.ejectdevice.accesskey;"
@@ -332,7 +346,7 @@
   <binding id="sb-device-format-command">
     <content>
       <xul:sb-device-control
-         xbl:inherits="bindelem,device-id,service_pane_node_id"
+         xbl:inherits="bindelem,device-id,dev-lib-guid,service_pane_node_id"
          bindforward="parent"
          label="&command.device.formatdevice;"
          accesskey="&command.device.formatdevice.accesskey;"
@@ -384,7 +398,7 @@
   <binding id="sb-device-get-info-command">
     <content>
       <xul:sb-device-control
-         xbl:inherits="bindelem,device-id,service_pane_node_id"
+         xbl:inherits="bindelem,device-id,dev-lib-guid,service_pane_node_id"
          bindforward="parent"
          label="&command.device.getdeviceinfo;"
          accesskey="&command.device.getdeviceinfo.accesskey;"
@@ -408,7 +422,7 @@
   <binding id="sb-device-model-capacity-command">
     <content>
       <xul:sb-device-control
-         xbl:inherits="bindelem,device-id,service_pane_node_id"
+         xbl:inherits="bindelem,device-id,dev-lib-guid,service_pane_node_id"
          bindforward="parent"
          disabled="true"
          label_default="device_model_cap"/>
@@ -429,7 +443,7 @@
   <binding id="sb-device-new-playlist-command">
     <content>
       <xul:sb-device-control
-         xbl:inherits="bindelem,device-id,service_pane_node_id"
+         xbl:inherits="bindelem,device-id,dev-lib-guid,service_pane_node_id"
          bindforward="parent"
          label="&menu.file.new;"
          accesskey="&menu.file.new.accesskey;"
@@ -477,7 +491,7 @@
   <binding id="sb-device-sync-command">
     <content>
       <xul:sb-device-control
-         xbl:inherits="bindelem,device-id,service_pane_node_id"
+         xbl:inherits="bindelem,device-id,dev-lib-guid,service_pane_node_id"
          bindforward="parent"
          listentodevice="true"
          label="&command.device.devicesync;"
@@ -532,7 +546,7 @@
   <binding id="sb-device-sync-cancel-command">
     <content>
       <xul:sb-device-control
-        xbl:inherits="bindelem,device-id"
+        xbl:inherits="bindelem,device-id,dev-lib-guid"
         bindforward="parent"
         listentodevice="true"
 
@@ -624,7 +638,7 @@
 
   <binding id="sb-device-rescan-command">
     <content>
-      <xul:sb-device-control xbl:inherits="bindelem,device-id,label,accesskey"
+      <xul:sb-device-control xbl:inherits="bindelem,device-id,dev-lib-guid,label,accesskey"
                              bindforward="parent"
                              listentodevice="true"
                              disabled_default="true"

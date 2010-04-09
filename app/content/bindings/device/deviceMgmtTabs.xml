@@ -78,7 +78,7 @@
                         pack="center">
             <xul:sb-device-sync sbid="device_music_sync"
                                 flex="1"
-                                xbl:inherits="device-id"
+                                xbl:inherits="device-id,dev-lib-guid"
                                 contenttype="audio"
                                 pack="center" />
           </xul:tabpanel>
@@ -86,7 +86,7 @@
                         pack="center">
             <xul:sb-device-sync sbid="device_video_sync"
                                 flex="1"
-                                xbl:inherits="device-id"
+                                xbl:inherits="device-id,dev-lib-guid"
                                 contenttype="video"
                                 pack="center"/>
           </xul:tabpanel>
@@ -94,21 +94,22 @@
                         pack="center">
             <xul:sb-device-image-sync sbid="device_image_sync"
                                       flex="1"
-                                      xbl:inherits="device-id"
+                                      xbl:inherits="device-id,dev-lib-guid"
                                       pack="center"/>
           </xul:tabpanel>
           <xul:tabpanel sbid="device_management_settings_tabpanel"
                         pack="center">
-            <xul:sb-device-summary-settings sbid="device_summary_settings"
-                                            flex="1"
-                                            xbl:inherits="device-id,hideSettings"
-                                            pack="center"/>
+            <xul:sb-device-summary-settings
+              sbid="device_summary_settings"
+              flex="1"
+              xbl:inherits="device-id,dev-lib-guid,hideSettings"
+              pack="center"/>
           </xul:tabpanel>
           <xul:tabpanel sbid="device_management_tools_tabpanel"
                         pack="center">
             <xul:sb-device-tools sbid="device_tools"
                                  flex="1"
-                                 xbl:inherits="tools,device-id"
+                                 xbl:inherits="tools,device-id,dev-lib-guid"
                                  pack="center"/>
           </xul:tabpanel>
         </xul:tabpanels>

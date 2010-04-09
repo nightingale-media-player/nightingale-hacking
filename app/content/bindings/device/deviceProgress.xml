@@ -92,7 +92,8 @@
           <!-- Sync device operation button. -->
           <xul:button sbid="sync_operation_button"
                       class="device-progress-button"/>
-          <xul:sb-device-sync-command bindelem="prev" xbl:inherits="device-id"/>
+          <xul:sb-device-sync-command bindelem="prev"
+                                      xbl:inherits="dev-lib-guid"/>
         </xul:hbox>
 
         <xul:hbox sbid="progress_information_box"
@@ -213,6 +214,12 @@
 
     <handlers>
       <handler event="deviceBound"><![CDATA[
+        /* Re-initialize the device info services. */
+        DPW.finalize(this);
+        DPW.initialize(this);
+        ]]></handler>
+
+      <handler event="devLibBound"><![CDATA[
         /* Re-initialize the device info services. */
         DPW.finalize(this);
         DPW.initialize(this);
