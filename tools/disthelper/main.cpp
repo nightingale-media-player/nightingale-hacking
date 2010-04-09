@@ -68,6 +68,12 @@ int main(int argc, LPTSTR *argv) {
     return DH_ERROR_USER;
   }
 
+  result = SetupEnvironment();
+  if (result) {
+    LogMessage("Failed to set up environment.");
+    return result;
+  }
+
   LPTSTR ininame;
   tstring distIni;
   bool usingFallback = false;
@@ -226,12 +232,6 @@ int main(int argc, LPTSTR *argv) {
   result = CommandCopyFile(ConvertUTFnToUTF8(srcAppIniName), "$/");
   if (result) {
     LogMessage("Failed to copy application.ini file %s", srcAppIniName.c_str());
-  }
-
-  result = SetupEnvironment();
-  if (result) {
-    LogMessage("Failed to set up environment.");
-    return result;
   }
 
   for (it = iniFile[section].begin(); it != end; ++it) {
