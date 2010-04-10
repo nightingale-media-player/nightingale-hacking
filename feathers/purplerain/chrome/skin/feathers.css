@@ -904,6 +904,10 @@ sb-device-info-panel {
   border-bottom: 1px solid rgb(67,65,76);
 }
 
+sb-device-info-panel[collapsed="true"] {
+  border-bottom: 0px;
+}
+
 sb-device-managetabs {
   margin-left: 10px;
   margin-right: 10px;

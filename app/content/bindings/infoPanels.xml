@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -72,6 +72,9 @@
           // By default we will start shown
           if (this.hasAttribute("starthidden")) {
             this._shown = !this.getAttribute("starthidden");
+            if (!this._shown) {
+              this.parentNode.setAttribute("collapsed", true);
+            }
           }
         ]]>
       </constructor>
@@ -236,6 +239,9 @@
               // Clean up timers
               clearInterval(self._timer);
               self._timer = null;
+
+              if (!slideIn)
+                self.parentNode.setAttribute("collapsed", true);
             }
             else {
               // Keep animating by moving the margin and changing the opacity
@@ -259,6 +265,7 @@
       <!-- Wrapper functions for the animation -->
       <method name="animateIn">
         <body><![CDATA[
+          this.parentNode.removeAttribute("collapsed");
           this._animate(true);
           this._shown = true;
         ]]></body>

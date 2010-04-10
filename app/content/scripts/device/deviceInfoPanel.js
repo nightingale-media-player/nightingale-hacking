@@ -342,6 +342,12 @@ var DIPW = {
           this._panelBar.removeAllPanels();
           this._removePanels = 0;
         }
+
+        // Make sure we are visible
+        if (this._itemType.intValue &&
+            !this._panelBar.isShown)
+          this._panelBar.animateIn();
+
         var completeAudio, completeVideo;
         // Set up the panels for the upcoming syncing.
         if ((this._itemType.intValue & TYPE.MUSIC) &&
@@ -400,11 +406,6 @@ var DIPW = {
                                             false);
           }
         }
-
-        // Make sure we are visible
-        if (this._itemType.intValue &&
-            !this._panelBar.isShown)
-          this._panelBar.animateIn();
 
         // - Set last operation when itemType is 0 (!= audio|video|image). This
         //   is necessary for cases that IDLE follows SYNCING_TYPE.
