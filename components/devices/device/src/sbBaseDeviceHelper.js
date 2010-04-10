@@ -1,26 +1,26 @@
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 /**
  * This is a helper class for devices
@@ -131,7 +131,7 @@ BaseDeviceHelper.prototype = {
     var buttonFlags = (Ci.nsIPromptService.BUTTON_POS_0 *
                        Ci.nsIPromptService.BUTTON_TITLE_IS_STRING) +
                       (Ci.nsIPromptService.BUTTON_POS_1 *
-                       Ci.nsIPromptService.BUTTON_TITLE_CANCEL);
+                       Ci.nsIPromptService.BUTTON_TITLE_IS_STRING);
     var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
                      .getService(Ci.sbIPrompter);
     var neverPromptAgain = { value: false };
@@ -141,7 +141,7 @@ BaseDeviceHelper.prototype = {
                           message,
                           buttonFlags,
                           SBString(messageKeyPrefix + ".confirm_button"),
-                          null,
+                          SBString(messageKeyPrefix + ".cancel_button"),
                           null,
                           null,
                           neverPromptAgain);
