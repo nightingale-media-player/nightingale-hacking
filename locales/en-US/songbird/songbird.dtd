@@ -513,7 +513,7 @@
 <!ENTITY device.sync.manual.label "Manually manage">
 <!ENTITY device.sync.playlist.title "Title">
 <!ENTITY device.sync.playlist.video.duration "Video Duration">
-<!ENTITY device.sync.manual_mode.descr "Music and Video syncing is currently set to Manual (drag and drop) mode.  To enable the settings below, select auto sync from the toggle button above.">
+<!ENTITY device.sync.manual_mode.descr "The device is currently set to Manual (drag and drop) mode. To enable the settings below, select &quot;Auto&quot; from the toggle button above.">
 <!ENTITY device.sync.images.from.label "Sync photos from:">
 <!ENTITY device.sync.images.browse "Choose folder...">
 <!ENTITY device.sync.images.all.label "All photos">
