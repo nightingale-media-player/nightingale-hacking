@@ -66,9 +66,10 @@ public:
                       nsIArray **retImageArray);
 
   // Create and return in aMediaItem a temporary media item for the local file
-  // represented by aImage.
-  nsresult CreateTemporaryLocalMediaItem(sbIDeviceImage* aImage,
-                                         sbIMediaItem** aMediaItem);
+  // represented by aImage and device library aLibrary.
+  nsresult CreateTemporaryLocalMediaItem(sbIDeviceImage*   aImage,
+                                         sbIDeviceLibrary* aLibrary,
+                                         sbIMediaItem**    aMediaItem);
 
   // Create an nsIFile for an sbIDeviceImage item given the base image sync
   // directory. The function can automatically create the needed subdirectories

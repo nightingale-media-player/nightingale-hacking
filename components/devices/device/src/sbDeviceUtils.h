@@ -195,33 +195,13 @@ public:
   static nsresult ShowDeviceErrors(sbIDevice* aDevice);
 
   /**
-   * Check if the device specified by aDevice is linked to the local sync
-   * partner.  If it is, return true in aIsLinkedLocally; otherwise, return
-   * false.  If aRequestPartnerChange is true and the device is not linked
-   * locally, make a request to the user to change the device sync partner to
-   * the local sync partner.
+   * Set the sync partener preference to the device if the device is not linked
+   * to local sync partner.
    *
    * \param aDevice                 Device to check.
-   * \param aRequestPartnerChange   Request that the sync partner be changed to
-   *                                the local sync partner.
-   * \param aIsLinkedLocally        Returned true if the device is linked to the
-   *                                local sync partner.
    */
-  static nsresult SyncCheckLinkedPartner(sbIDevice* aDevice,
-                                         PRBool     aRequestPartnerChange,
-                                         PRBool*    aIsLinkedLocally);
+  static nsresult SetLinkedSyncPartner(sbIDevice* aDevice);
 
-  /**
-   * Make a request of the user to change the sync partner of the device
-   * specified by aDevice to the local sync partner.  If the user grants the
-   * request, return true in aPartnerChangeGranted; otherwise, return false.
-   *
-   * \param aDevice                 Device.
-   * \param aPartnerChangeGranted   Returned true if the user granted the
-   *                                request.
-   */
-  static nsresult SyncModeOrPartnerChange(sbIDevice* aDevice,
-                                          PRBool*    aPartnerChangeGranted);
   /**
    * Determines if the device given supports playlists
    */

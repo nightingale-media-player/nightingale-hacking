@@ -268,13 +268,6 @@
                 document.getElementById("setup_name_textbox");
           this._device.properties.friendlyName = setupNameTextboxElem.value;
 
-          if (syncCheckboxElem.checked) {
-            // Store the preference for later use by the device summary page
-            // initialization and depress the sync confirmation dialog.
-            var key = "songbird.device." + this._device.id + ".syncmode.changed";
-            Application.prefs.setValue(key, true);
-          }
-
           // Set the sync preference.
           var deviceLibrary = this._device.content.libraries
                                   .queryElementAt(0, Ci.sbIDeviceLibrary);
@@ -306,6 +299,7 @@
         else {
           acceptButton.label =
             SBString("device.dialog.setup.button.default.label");
+          this.removeErrorNotifications();
         }
       },
 
@@ -343,6 +337,7 @@
           syncContainerElem.removeAttribute("disabled");
           nameTextboxElem.removeAttribute("disabled");
           syncCheckboxElem.removeAttribute("disabled");
+          this.removeErrorNotifications();
         }
 
       },

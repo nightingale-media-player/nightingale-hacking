@@ -178,7 +178,7 @@ interface sbIServicePaneListener : nsISupports {
 *
 * @halfbaked
 */
-[scriptable, uuid(66cd575e-1dd2-11b2-b622-cc0af12fc9d4)]
+[scriptable, uuid(56d1a99c-1dd2-11b2-8033-bf4fffd4949c)]
 interface sbIServicePaneService : nsISupports
 {
   /**
@@ -215,7 +215,17 @@ interface sbIServicePaneService : nsISupports
    * \param aNode the node to remove
    */
   void removeNode(in sbIServicePaneNode aNode);
-  
+
+  /* \brief Set a component as hiding or not hiding a node.  The hode is hidden
+   *        if any component is hiding it.
+   * \param aNode the node to hide or unhide
+   * \param aContractID contract ID of component hiding or unhiding
+   * \param aHide if true, hide node; otherwise, unhide
+   */
+  void setNodeHidden(in sbIServicePaneNode aNode,
+                     in AString            aContractID,
+                     in boolean            aHide);
+
   /* \brief Get the node object for the given id
    * \param aId the ID of the desired node
    * \return node object, or null if it couldn't be found

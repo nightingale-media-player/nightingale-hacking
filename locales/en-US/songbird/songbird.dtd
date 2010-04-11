@@ -513,7 +513,7 @@
 <!ENTITY device.sync.manual.label "Manually manage">
 <!ENTITY device.sync.playlist.title "Title">
 <!ENTITY device.sync.playlist.video.duration "Video Duration">
-<!ENTITY device.sync.manual_mode.descr "Music and Video syncing is currently set to Manual (drag and drop) mode.  To enable the settings below, select auto sync from the toggle button above.">
+<!ENTITY device.sync.manual_mode.descr "The device is currently set to Manual (drag and drop) mode. To enable the settings below, select &quot;Auto&quot; from the toggle button above.">
 <!ENTITY device.sync.images.from.label "Sync photos from:">
 <!ENTITY device.sync.images.browse "Choose folder...">
 <!ENTITY device.sync.images.all.label "All photos">
@@ -649,7 +649,7 @@
 
 <!-- First-run iTunes import/export entities. -->
 <!ENTITY first_run.itunes.header.label                  "iTunes Import/Export">
-<!ENTITY first_run.itunes.description                   "It appears you have iTunes installed. &brandShortName; can be configured to import and/or music export tracks between &brandShortName; and iTunes so that your libraries are in sync.">
+<!ENTITY first_run.itunes.description                   "It appears you have iTunes installed. &brandShortName; can be configured to import and/or export tracks between &brandShortName; and iTunes so that your libraries are in sync.">
 <!ENTITY first_run.itunes.checkbox.import.label         "Import music tracks and playlists from iTunes">
 <!ENTITY first_run.itunes.checkbox.import.description   "Podcasts and music purchased from the iTunes Store can be imported into &brandShortName;.  This feature works well if &brandShortName; is going to be your primary music player.">
 <!ENTITY first_run.itunes.checkbox.export.label         "Export new music tracks and playlists to iTunes">

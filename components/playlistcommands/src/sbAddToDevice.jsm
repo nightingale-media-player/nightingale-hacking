@@ -438,9 +438,8 @@ addToDeviceHelper.prototype = {
       var isEnabled = false;
       if (!devicename) 
         devicename = "Unnamed Device";
-      if (device.content && device.content.libraries.length > 0) {
-        var library = device.content.libraries.
-          queryElementAt(0, Components.interfaces.sbILibrary);
+      var library = device.defaultLibrary;
+      if (library) {
         isEnabled = library.userEditable;
         libraryguid = library.guid;
       } else {

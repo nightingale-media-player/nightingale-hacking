@@ -85,13 +85,19 @@
 
         this.sliderScale = 10000;
         this.maxpos = this.sliderScale;
-        this.value = parseFloat(this.remote_volume.stringValue) * this.sliderScale;
         this.trackingVolume = false;
         
-        // initialize lastValue if it wasn't set
-        if (this.remote_lastVolume.stringValue == "") {
-          this.lastValue = this.value;
-        }
+        // The slider value cannot be set correctly until the boxObject
+        // dimensions are set.
+        var self = this;
+        window.setTimeout(function() {
+          self.value = parseFloat(self.remote_volume.stringValue) *
+                       self.sliderScale;
+          // initialize lastValue if it wasn't set
+          if (self.remote_lastVolume.stringValue == "") {
+            self.lastValue = self.value;
+          }
+        }, 0);
       ]]>
     </constructor>
     <destructor>
@@ -168,8 +174,17 @@
             this.remote_volume.intValue = 0;
             this.value = 0;
           } else {
-            var lastValue = this.lastValue / this.sliderScale;
-            this.mm.volumeControl.volume = this.lastValue / this.sliderScale;
+            var volume;
+            if (this.value == 0) {
+              volume = this.lastValue / this.sliderScale;
+            } else {
+              // This catches the case where the user exits mute by clicking on
+              // the volume bar. The new value is not necessarily the same as
+              // the last value prior to muting.
+              volume = this.value / this.sliderScale;
+              this.lastValue = this.value;
+            }
+            this.mm.volumeControl.volume = volume; 
           }
         ]]>
       </body>

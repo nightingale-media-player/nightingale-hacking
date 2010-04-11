@@ -108,18 +108,7 @@ var DeviceSyncWidget = {
 
     // Initialize object fields.
     this._device = this._widget.device;
-
-    // Get the device library we are dealing with
-    // Currently we just grab the first one since we only deal with one library
-    // XXX When we deal with multiple libraries we will need to change this
-    //     so that it can handle a particular library rather than defaulting
-    //     to the first one.
-    if (this._device.content.libraries.length > 0) {
-      this.addLibrary(this._device.content
-                          .libraries.queryElementAt(0, Ci.sbIDeviceLibrary));
-      if (this._device.content.libraries.length > 1)
-        Cu.reportError("Unexpected: device has more than one library");
-    }
+    this._deviceLibrary = this._widget.devLib;
 
     // Listen for sync settings apply/cancel events.
     let self = this;
@@ -140,8 +129,13 @@ var DeviceSyncWidget = {
          Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED |
          Ci.sbIMediaList.LISTENER_FLAGS_ITEMUPDATED);
 
-    // Update the UI.
+    // Initialize, read, and apply the sync preferences.
+    this.syncPrefsInitialize();
+    this.syncPrefsRead();
     this.syncPrefsApply();
+
+    // Update the UI.
+    this.update();
   },
 
 
@@ -311,14 +305,6 @@ var DeviceSyncWidget = {
         }
         break;
 
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_ADDED :
-        this.addLibrary(aEvent.data.QueryInterface(Ci.sbIDeviceLibrary));
-        break;
-
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_REMOVED :
-        this.removeLibrary(aEvent.data);
-        break;
-
       case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED:
         try {
           this._isBusy = !(aEvent.deviceState == Ci.sbIDevice.STATE_IDLE);
@@ -481,58 +467,6 @@ var DeviceSyncWidget = {
    */
 
   onBatchEnd: function DeviceSyncWidget_onBatchEnd(aMediaList) {},
-
-
-  //----------------------------------------------------------------------------
-  //
-  // Device sync library services.
-  //
-  //----------------------------------------------------------------------------
-
-  /**
-   * Add the library specified by aLibrary.
-   *
-   * \param aLibrary            Library to add.
-   */
-
-  addLibrary: function DeviceSyncWidget_addLibrary(aLibrary) {
-    // Do nothing if library already added.
-    if (this._deviceLibrary) {
-      if (aLibrary != this._deviceLibrary)
-        Cu.reportError("Unexpected: device already has a library");
-      return;
-    }
-
-    // Get the device library.
-    this._deviceLibrary = aLibrary;
-
-    // Initialize, read, and apply the sync preferences.
-    this.syncPrefsInitialize();
-    this.syncPrefsRead();
-    this.syncPrefsApply();
-
-    // Update the UI.
-    this.update();
-  },
-
-
-  /**
-   * Remove the library specified by aLibrary.
-   *
-   * \param aLibrary            Library to remove.
-   */
-
-  removeLibrary: function DeviceSyncWidget_removeLibrary(aGUID) {
-    // Do nothing if current library has not been removed.
-    if (this._deviceLibrary.guid != aGUID)
-      return;
-
-    // Clear the device library.
-    this._deviceLibrary = null;
-
-    // Update the UI.
-    this.update();
-  },
 
 
   //----------------------------------------------------------------------------

@@ -305,7 +305,6 @@ function sbDeviceServicePane_createLibraryNodeForDevice(aDevice, aLibrary) {
       libraryNode.setAttributeNS(DEVICESP_NS, "device-id", aDevice.id);
       libraryNode.setAttributeNS(DEVICESP_NS, "deviceNodeType", "library");
 
-      libraryNode.hidden = (aLibrary.getProperty(SBProperties.hidden) == "1");
       var firstChild = deviceNode.firstChild;
       if (!firstChild) {
         deviceNode.appendChild(libraryNode);

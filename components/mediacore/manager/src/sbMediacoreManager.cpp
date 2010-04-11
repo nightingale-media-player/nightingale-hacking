@@ -1501,7 +1501,7 @@ sbMediacoreManager::GetFactories(nsIArray * *aFactories)
   rv = mutableArray->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if(length < mCores.Count()) {
+  if(length < mFactories.Count()) {
     return NS_ERROR_FAILURE;
   }
 

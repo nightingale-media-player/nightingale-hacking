@@ -116,10 +116,10 @@
     <implementation implements="sbIDeviceEventListener">
 
       <field name="_syncPrefs">null</field>
-      <field name="_deviceLibrary">null</field>
       <field name="_deviceEventTarget">null</field>
       <field name="_displayedFolder">null</field>
       <field name="_settingsChanged">false</field>
+      <field name="_imageTab">false</field>
       <field name="_ignoreDevicePrefChanges">false</field>
       <!-- _ignoreFolderChanges defaults to true to ignore the select event
            during widget construction -->
@@ -144,12 +144,6 @@
         if (this.device)
           this._initDevice();
 
-        // Listen for sync settings apply/cancel events.
-        let self = this;
-        document.addEventListener("sbDeviceSync-settings", function(aEvent) {
-          self._onSettingsEvent(aEvent);
-        }, false);
-
         // Initialize UI
         this._updateUI();
       }
@@ -170,24 +164,28 @@
 
       <method name="_initDevice">
         <body><![CDATA[
-          // Update the device library we are dealing with
-          // Currently we just grab the first one since we only deal with one library
-          // XXX When we deal with multiple libraries we will need to change this
-          //     so that it can handle a particular library rather than defaulting
-          //     to the first one.
-          if (this._deviceLibrary)
-            this._removeLibrary(this._deviceLibrary.guid);
-          if (this.device.content.libraries.length > 0) {
-            this._addLibrary(this.device.content
-                                 .libraries.queryElementAt(0, Ci.sbIDeviceLibrary));
-            if (this.device.content.libraries.length > 1)
-              Cu.reportError("Unexpected: device has more than one library");
+          // No need to initilize the device if device does not support image.
+          var capabilities = this.device.capabilities;
+          var sbIDC = Ci.sbIDeviceCapabilities;
+          if (!capabilities.supportsContent(sbIDC.FUNCTION_IMAGE_DISPLAY,
+                                            sbIDC.CONTENT_IMAGE)) {
+            return;
           }
 
           // Listen for device events.
           this._deviceEventTarget =
                 this.device.QueryInterface(Ci.sbIDeviceEventTarget);
           this._deviceEventTarget.addEventListener(this);
+
+          // Listen for sync settings apply/cancel events.
+          let self = this;
+          document.addEventListener("sbDeviceSync-settings", function(aEvent) {
+            self._onSettingsEvent(aEvent);
+          }, false);
+
+          // Read preferences and update UI
+          this._syncPrefsRead(this._syncPrefs);
+          this._updateUI();
         ]]></body>
       </method>
 
@@ -225,9 +223,8 @@
         <body><![CDATA[
         {
           let mediaType = Ci.sbIDeviceLibrary.MEDIATYPE_IMAGE;
-          aPrefs.mgmtType = this._deviceLibrary.getMgmtType(mediaType);
-          aPrefs.rootFolder = this._deviceLibrary
-                                  .getSyncRootFolderByType(mediaType);
+          aPrefs.mgmtType = this.devLib.getMgmtType(mediaType);
+          aPrefs.rootFolder = this.devLib.getSyncRootFolderByType(mediaType);
 
           // Ignore folders that no longer exist
           if (aPrefs.rootFolder && !aPrefs.rootFolder.exists())
@@ -242,7 +239,7 @@
           }
 
           aPrefs.syncFoldersList = {};
-          let storedFoldersList = this._deviceLibrary
+          let storedFoldersList = this.devLib
                                       .getSyncFolderListByType(mediaType);
           for (let i = 0; i < storedFoldersList.length; i++) {
             let folder = storedFoldersList.queryElementAt(i, Ci.nsIFile);
@@ -262,11 +259,10 @@
         <body><![CDATA[
         {
           let mediaType = Ci.sbIDeviceLibrary.MEDIATYPE_IMAGE;
-          this._deviceLibrary.setMgmtType(mediaType, aPrefs.mgmtType);
+          this.devLib.setMgmtType(mediaType, aPrefs.mgmtType);
 
           if (aPrefs.rootFolder) {
-            this._deviceLibrary.setSyncRootFolderByType(mediaType,
-                                                        aPrefs.rootFolder);
+            this.devLib.setSyncRootFolderByType(mediaType, aPrefs.rootFolder);
           }
 
           let jsArray = [];
@@ -277,7 +273,7 @@
             jsArray.push(file);
           }
           let array = this.ArrayConverter.nsIArray(jsArray);
-          this._deviceLibrary.setSyncFolderListByType(mediaType, array);
+          this.devLib.setSyncFolderListByType(mediaType, array);
         }
         ]]></body>
       </method>
@@ -289,8 +285,12 @@
         <body>
         <![CDATA[
         {
+          // Do not update the UI if the image tab hasn't been selected.
+          if (!this._imageTab)
+            return;
+
           // Hide widget if no device library present
-          if (!this._deviceLibrary) {
+          if (!this.devLib) {
             this.setAttribute("hidden", "true")
             return;
           }
@@ -472,6 +472,10 @@
 
               this._updateUI();
             }
+            else {
+              this._syncPrefs.rootFolder = oldPrefs.rootFolder;
+              this._updateUI();
+            }
           }
           this._checkPrefChange(oldPrefs);
         }
@@ -581,54 +585,6 @@
               this._syncPrefs.syncFoldersList[item._folder.path] = true;
           }
           this._checkPrefChange(oldPrefs);
-        }
-        ]]></body>
-      </method>
-
-      <!--
-       * \brief Called whenever a new device library has been added.
-       * 
-       * \param aLibrary library to be added to the display
-       -->
-      <method name="_addLibrary">
-        <parameter name="aLibrary"/>
-        <body><![CDATA[
-        {
-          // Do nothing if library already added.
-          if (this._deviceLibrary) {
-            if (aLibrary != this.deviceLibrary)
-              Cu.reportError("Unexpected: device already has a library");
-            return;
-          }
-
-          // Get the device library.
-          this._deviceLibrary = aLibrary;
-      
-          // Re-read preferences and update UI
-          this._syncPrefsRead(this._syncPrefs);
-          this._updateUI();
-        }
-        ]]></body>
-      </method>
-
-      <!--
-       * \brief Called whenever a device library has been removed.
-       * 
-       * \param aLibrary library to be removed from the display
-       -->
-      <method name="_removeLibrary">
-        <parameter name="aGUID"/>
-        <body><![CDATA[
-        {
-          // Do nothing if current library hasn't been removed.
-          if (this._deviceLibrary.guid != aGUID)
-            return;
-
-          // Clear device library.
-          this._deviceLibrary = null;
-      
-          // Update UI
-          this._updateUI();
         }
         ]]></body>
       </method>
@@ -881,6 +837,12 @@
         <body><![CDATA[
         {
           switch (aEvent.detail) {
+            case this.SYNCSETTINGS_IMAGETAB:
+              if (!this._imageTab) {
+                this._imageTab = true;
+                this._updateUI();
+              }
+              break;
             case this.SYNCSETTINGS_CANCEL:
               // Reset displayed preferences
               this._settingsChanged = false;
@@ -932,14 +894,6 @@
                 this._updateUI();
               }
               break;
-      
-            case Ci.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_ADDED:
-              this._addLibrary(aEvent.data.QueryInterface(Ci.sbIDeviceLibrary));
-              break;
-      
-            case Ci.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_REMOVED:
-              this._removeLibrary(aEvent.data);
-              break;
           }
         }
         ]]></body>
@@ -955,7 +909,13 @@
 
     <handlers>
       <handler event="deviceBound"><![CDATA[
-        /* Remove ourselves from the old device and attach to the new one */
+        // Re-initialize the widget.
+        this._finalizeDevice();
+        this._initDevice();
+        ]]></handler>
+
+      <handler event="devLibBound"><![CDATA[
+        // Re-initialize the widget.
         this._finalizeDevice();
         this._initDevice();
         ]]></handler>

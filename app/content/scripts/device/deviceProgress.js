@@ -352,6 +352,7 @@ var DPW = {
     // Initialize object fields.
     this._deviceID = this._widget.deviceID;
     this._device = this._widget.device;
+    this._deviceLibrary = this._widget.devLib;
 
     // Set the label accordingly.
     var syncModeLabel = this._getElement("syncmode_label");
@@ -1027,10 +1028,7 @@ var DPW = {
       deviceEventTarget.addEventListener(this);
     }
 
-    if (this._device.content.libraries.length > 0) {
-      this._deviceLibrary = this._device.content.libraries
-          .queryElementAt(0, Ci.sbIDeviceLibrary);
-
+    if (this._deviceLibrary) {
       // Update the progress UI to apply/cancel for pending sync mode change
       var prefs = Cc["@mozilla.org/preferences-service;1"]
                     .getService(Ci.nsIPrefBranch);

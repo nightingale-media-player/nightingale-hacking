@@ -430,6 +430,12 @@ sbBaseDevice::sbBaseDevice() :
   }
 #endif /* PR_LOGGING */
 
+  #if defined(__GNUC__) && !defined(DEBUG)
+    PRBool __attribute__((unused)) success;
+  #else
+    PRBool success;
+  #endif
+
   mStateLock = nsAutoLock::NewLock(__FILE__ "::mStateLock");
   NS_ASSERTION(mStateLock, "Failed to allocate state lock");
 
@@ -451,13 +457,14 @@ sbBaseDevice::sbBaseDevice() :
   NS_ASSERTION(mVolumeLock, "Failed to allocate volume lock");
 
   // Initialize the volume tables.
-  NS_ASSERTION(mVolumeGUIDTable.Init(),
-               "Failed to initialize volume GUID table");
-  NS_ASSERTION(mVolumeLibraryGUIDTable.Init(),
-               "Failed to initialize volume library GUID table");
+  success = mVolumeGUIDTable.Init();
+  NS_ASSERTION(success, "Failed to initialize volume GUID table");
+
+  success = mVolumeLibraryGUIDTable.Init();
+  NS_ASSERTION(success, "Failed to initialize volume library GUID table");
 
   // the typical case is 1 library per device
-  PRBool success = mOrganizeLibraryPrefs.Init(1);
+  success = mOrganizeLibraryPrefs.Init(1);
   NS_ASSERTION(success, "Failed to initialize organize prefs hashtable");
 }
 
@@ -4345,15 +4352,8 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
   // Function variables.
   nsresult rv;
 
-  // Cancel operation if device is not linked to the local sync partner.
-  PRBool isLinkedLocally;
-  rv = sbDeviceUtils::SyncCheckLinkedPartner(this, PR_TRUE, &isLinkedLocally);
+  rv = sbDeviceUtils::SetLinkedSyncPartner(this);
   NS_ENSURE_SUCCESS(rv, rv);
-  if (!isLinkedLocally) {
-    rv = SetState(STATE_CANCEL);
-    NS_ENSURE_SUCCESS(rv, rv);
-    return NS_OK;
-  }
 
   // Check if we should cache this sync for later
   if (mSyncState != sbBaseDevice::SYNC_STATE_NORMAL) {
@@ -5549,31 +5549,6 @@ sbBaseDevice::PromptForEjectDuringPlayback(PRBool* aEject)
   rv = prefBranch.SetBoolPref("eject_while_playing", hide_dialog);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  return NS_OK;
-}
-
-nsresult sbBaseDevice::GetPrimaryLibrary(sbIDeviceLibrary ** aDeviceLibrary)
-{
-  TRACE(("%s", __FUNCTION__));
-  NS_ENSURE_ARG_POINTER(aDeviceLibrary);
-
-  nsCOMPtr<sbIDeviceContent> content;
-  nsresult rv = GetContent(getter_AddRefs(content));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIArray> libraries;
-  rv = content->GetLibraries(getter_AddRefs(libraries));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 libraryCount;
-  rv = libraries->GetLength(&libraryCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(libraryCount > 0, NS_ERROR_UNEXPECTED);
-
-  nsCOMPtr<sbIDeviceLibrary> deviceLib =
-    do_QueryElementAt(libraries, 0, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  deviceLib.forget(aDeviceLibrary);
   return NS_OK;
 }
 

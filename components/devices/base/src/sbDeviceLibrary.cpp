@@ -1098,64 +1098,11 @@ sbDeviceLibrary::SetSyncMode(PRUint32 aSyncMode)
     return NS_OK;
   }
 
-  nsCOMPtr<nsIPrefBranch> rootPrefBranch =
-    do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIDevice> device;
-  rv = GetDevice(getter_AddRefs(device));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsID* id;
-  rv = device->GetId(&id);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCString key(NS_LITERAL_CSTRING("songbird.device."));
-  key.AppendLiteral(id->ToString());
-  key.AppendLiteral(".syncmode.changed");
-
-  PRBool hasValue = PR_FALSE;
-  rv = rootPrefBranch->PrefHasUserValue(key.get(), &hasValue);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRBool isChanged = PR_FALSE;
-  if (hasValue) {
-    rv = rootPrefBranch->GetBoolPref(key.get(), &isChanged);
+  // Set the SyncPartner preference if switching from manual management mode
+  // to sync mode.
+  if (aSyncMode == sbIDeviceLibrary::SYNC_AUTO) {
+    rv = sbDeviceUtils::SetLinkedSyncPartner(mDevice);
     NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  // If switching from manual management mode to sync mode, confirm with user
-  // before proceeding.  Do nothing more if switch is canceled.
-  if (aSyncMode == sbIDeviceLibrary::SYNC_AUTO && !isChanged) {
-    // Check if device is linked to a local sync partner.
-    PRBool isLinkedLocally;
-    rv = sbDeviceUtils::SyncCheckLinkedPartner(mDevice,
-                                               PR_FALSE,
-                                               &isLinkedLocally);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Confirm either link partner switch or manual to sync mode switch.
-    PRBool cancelSwitch = PR_TRUE;
-    if (!isLinkedLocally) {
-      // Request that the link partner be changed.
-      rv = sbDeviceUtils::SyncCheckLinkedPartner(mDevice,
-                                                 PR_TRUE,
-                                                 &isLinkedLocally);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      // Cancel switch if link partner was not changed.
-      if (!isLinkedLocally)
-        cancelSwitch = PR_TRUE;
-      else
-        cancelSwitch = PR_FALSE;
-    } else {
-      rv = sbDeviceUtils::SyncModeOrPartnerChange(mDevice, &cancelSwitch);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    // Do nothing more is switch canceled.
-    if (cancelSwitch)
-      return NS_OK;
   }
 
   for (PRUint32 i = 0; i < sbIDeviceLibrary::MEDIATYPE_COUNT; ++i) {
