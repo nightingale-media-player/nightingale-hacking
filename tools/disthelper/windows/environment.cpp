@@ -36,10 +36,11 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#include "error.h"
-#include "stringconvert.h"
 #include "commands.h"
+#include "debug.h"
+#include "error.h"
 #include "readini.h"
+#include "stringconvert.h"
 
 #include <windows.h>
 #include <shlwapi.h>
@@ -79,6 +80,8 @@ tstring GetUpdateRoot() {
   tstring programFiles(buffer);
   programFiles.append(_T("\\"));
   if (_wcsnicmp(programFiles.c_str(), appDir.c_str(), programFiles.size())) {
+    DebugMessage("application directory <%s> does not start with profile files <%s>",
+                 appDir.c_str(), programFiles.c_str());
     // appDir does not start with program files
     return appDir;
   }
@@ -93,16 +96,34 @@ tstring GetUpdateRoot() {
   }
   tstring localData(buffer);
   localData.append(_T("\\"));
+  // append the profile name
+  { /* scope */
+    tstring appIni(appDir);
+    appIni.append(_T("application.ini"));
+    TCHAR profBuffer[0x100];
+    DWORD charsRead = ::GetPrivateProfileString(_T("App"),
+                                                _T("Profile"),
+                                                _T("Songbird2"),
+                                                profBuffer,
+                                                sizeof(profBuffer)/sizeof(profBuffer[0]),
+                                                appIni.c_str());
+    if (charsRead) {
+      localData.append(profBuffer);
+      localData.append(_T("\\"));
+    }
+  }
   localData.append(appDir, programFiles.size(), tstring::npos);
+  DebugMessage("using update directory <%s>", localData.c_str());
   return localData;
 }
 
 int SetupEnvironment()
 {
   tstring envFile = GetUpdateRoot();
-  envFile.append(_T("\\updates\\0\\disthelper.env"));
+  envFile.append(_T("updates\\0\\disthelper.env"));
   
   if (!::PathFileExists(envFile.c_str())) {
+    DebugMessage("environment file %s not found", envFile.c_str());
     // the environment file not existing is not a fatal error
     return DH_ERROR_OK;
   }
