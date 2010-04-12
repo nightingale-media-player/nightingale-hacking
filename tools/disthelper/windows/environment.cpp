@@ -80,7 +80,7 @@ tstring GetUpdateRoot() {
   tstring programFiles(buffer);
   programFiles.append(_T("\\"));
   if (_wcsnicmp(programFiles.c_str(), appDir.c_str(), programFiles.size())) {
-    DebugMessage("application directory <%s> does not start with profile files <%s>",
+    DebugMessage("application directory <%s> does not start with program files <%s>",
                  appDir.c_str(), programFiles.c_str());
     // appDir does not start with program files
     return appDir;
@@ -99,7 +99,8 @@ tstring GetUpdateRoot() {
   // append the profile name
   { /* scope */
     tstring appIni(appDir);
-    appIni.append(_T("application.ini"));
+    appIni.append(_T("distribution\\application.ini"));
+    DebugMessage("reading profile path from <%s>", appIni.c_str());
     TCHAR profBuffer[0x100];
     DWORD charsRead = ::GetPrivateProfileString(_T("App"),
                                                 _T("Profile"),
@@ -128,6 +129,7 @@ int SetupEnvironment()
     return DH_ERROR_OK;
   }
 
+  DebugMessage("reading saved environment from <%s>", envFile.c_str());
   IniFile_t iniData;
   int result = ReadIniFile(envFile.c_str(), iniData);
   if (result) {

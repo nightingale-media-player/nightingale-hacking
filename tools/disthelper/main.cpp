@@ -233,6 +233,13 @@ int main(int argc, LPTSTR *argv) {
   if (result) {
     LogMessage("Failed to copy application.ini file %s", srcAppIniName.c_str());
   }
+  // save the distribution-specific application.ini (with the modified profile
+  // path) to distribution/ - see bug 20694 and SetupEnvironment()
+  result = CommandCopyFile(ConvertUTFnToUTF8(srcAppIniName), "$/distribution/");
+  if (result) {
+    LogMessage("Failed to copy application.ini file %s to distribution/",
+               srcAppIniName.c_str());
+  }
 
   for (it = iniFile[section].begin(); it != end; ++it) {
     std::string line = it->second;
