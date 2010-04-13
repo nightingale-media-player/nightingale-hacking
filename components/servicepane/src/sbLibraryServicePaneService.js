@@ -915,7 +915,6 @@ function sbLibraryServicePane_getNodeFromMediaListView(aMediaListView) {
     urn += ":constraint(" + values[i] + ")";
   }
 
-  // If lookup constraints failed, roll back to the base URN
   return this._servicePane.getNode(urn);
 }
 
