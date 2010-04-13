@@ -6155,6 +6155,9 @@ sbBaseDevice::SetDefaultLibrary(sbIDeviceLibrary* aDefaultLibrary)
   rv = UpdateDefaultLibrary(aDefaultLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Update properties for new default library.
+  UpdateProperties();
+
   return NS_OK;
 }
 
