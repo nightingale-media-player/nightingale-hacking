@@ -75,6 +75,7 @@ protected:
   nsresult PrepareShutdown();
   nsresult FinalShutdown();
   nsresult QuitApplicationGranted();
+  nsresult RemoveAllDevices();
 
 protected:
   PRMonitor* mMonitor;
