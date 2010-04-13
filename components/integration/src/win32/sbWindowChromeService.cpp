@@ -153,19 +153,25 @@ sbWindowChromeService::WndProc(HWND hWnd,
       // we do not need to do anything special for this case
       break;
     }
+    NCCALCSIZE_PARAMS* params = (NCCALCSIZE_PARAMS*)lParam;
+    bool willMinimize = (params->rgrc[0].left == -32000) &&
+                        (params->rgrc[0].top  == -32000);
+    if (willMinimize) {
+      // we are going to minimize; don't touch anything
+      break;
+    }
     if (IsZoomed(hWnd)) {
       // On Windows 7, Windows will adjust the size of the maximized windows
       // so that they're larger than the screen to account for the window
       // border (even with Aero disabled).  On XP, however, it does _not_ do
       // that.  So, figure out how big the window wants to be, and how big the
       // screen is, and go for the closest solution.
-      NCCALCSIZE_PARAMS* params = (NCCALCSIZE_PARAMS*)lParam;
       RECT* rectWindow = &params->rgrc[0]; // shorthand
       RECT rectMon = {0};
       int xSize = ::GetSystemMetrics(SM_CXSIZEFRAME);
       int ySize = ::GetSystemMetrics(SM_CYSIZEFRAME);
 
-      HMONITOR hMon = ::MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+      HMONITOR hMon = ::MonitorFromRect(rectWindow, MONITOR_DEFAULTTONULL);
       if (hMon) {
         MONITORINFO monInfo = {0};
         monInfo.cbSize = sizeof(monInfo);
@@ -184,16 +190,24 @@ sbWindowChromeService::WndProc(HWND hWnd,
       }
 
       const LONG TOLERANCE = 2;
-      if (rectMon.top - rectWindow->top > ySize - TOLERANCE) {
+      if (rectMon.top > rectWindow->top &&
+          rectMon.top - rectWindow->top < ySize + TOLERANCE)
+      {
         rectWindow->top += ySize;
       }
-      if (rectWindow->bottom - rectMon.bottom > ySize - TOLERANCE) {
+      if (rectWindow->bottom > rectMon.bottom &&
+          rectWindow->bottom - rectMon.bottom < ySize + TOLERANCE)
+      {
         rectWindow->bottom -= ySize;
       }
-      if (rectMon.left - rectWindow->left > xSize - TOLERANCE) {
+      if (rectMon.left > rectWindow->left &&
+          rectMon.left - rectWindow->left < xSize + TOLERANCE)
+      {
         rectWindow->left += xSize;
       }
-      if (rectWindow->right - rectMon.right > xSize - TOLERANCE) {
+      if (rectWindow->right > rectMon.right &&
+          rectWindow->right - rectMon.right < xSize + TOLERANCE)
+      {
         rectWindow->right -= xSize;
       }
 
