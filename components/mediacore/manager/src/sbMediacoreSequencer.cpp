@@ -887,6 +887,25 @@ sbMediacoreSequencer::UpdateRepeatDataRemote(PRUint32 aRepeatMode)
 }
 
 nsresult
+sbMediacoreSequencer::ResetPlayingVideoDataRemote()
+{
+  
+  PRBool isPlayingVideo;
+  nsresult rv = mDataRemoteFaceplatePlayingVideo->GetBoolValue(&isPlayingVideo);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (isPlayingVideo) {
+    rv = UpdateLastPositionProperty(mCurrentItem, nsnull);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult
 sbMediacoreSequencer::HandleVolumeChangeEvent(sbIMediacoreEvent *aEvent)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -1596,7 +1615,8 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
       nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
       mon.Exit();
 
-      UpdateLastPositionProperty(lastItem, nsnull);
+      rv = UpdateLastPositionProperty(lastItem, nsnull);
+      NS_ENSURE_SUCCESS(rv, rv);
 
       rv = playbackControl->Stop();
       NS_ASSERTION(NS_SUCCEEDED(rv),
@@ -2546,7 +2566,7 @@ sbMediacoreSequencer::PlayURL(nsIURI *aURI)
 
   // Reset the playing-video dataremote in case the user was previously
   // playing video
-  rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_FALSE);
+  rv = ResetPlayingVideoDataRemote();
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = Setup(aURI);
@@ -2596,7 +2616,7 @@ sbMediacoreSequencer::Play()
 
   // Always reset this data remote, otherwise the video window may get into
   // an unexpected state and not get shown ever again.
-  nsresult rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_FALSE);
+  nsresult rv = ResetPlayingVideoDataRemote();
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = ResetMetadataDataRemotes();
