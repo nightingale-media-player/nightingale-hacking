@@ -1367,7 +1367,13 @@ function sbLibraryServicePane__getLibraryForURN(aID) {
   //logcall(arguments);
   var guid = this._getLibraryGUIDForURN(aID);
   if (guid) {
-    return this._libraryManager.getLibrary(guid);
+    try {
+      return this._libraryManager.getLibrary(guid);
+    }
+    catch (e) {
+      LOG("sbLibraryServicePane__getLibraryForURN: error trying to get " +
+          "library " + guid);
+    }
   }
   return null;
 }
