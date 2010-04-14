@@ -128,10 +128,17 @@ NS_IMETHODIMP sbMockDevice::Disconnect()
   NS_ENSURE_STATE(mIsConnected);
   
   nsresult rv;
+  nsRefPtr<sbBaseDeviceVolume> volume;
+  {
+    nsAutoLock autoVolumeLock(mVolumeLock);
+    volume = mDefaultVolume;
+  }
   if (mContent) {
     rv = mContent->Finalize();
     NS_ENSURE_SUCCESS(rv, rv);
   }
+  if (volume)
+    RemoveVolume(volume);
   
   mIsConnected = PR_FALSE;
   return NS_OK;
@@ -418,10 +425,40 @@ NS_IMETHODIMP sbMockDevice::GetContent(sbIDeviceContent * *aContent)
     NS_ENSURE_SUCCESS(rv, rv);
     mContent = deviceContent;
     
+    // Create a device volume.
+    nsRefPtr<sbBaseDeviceVolume> volume;
+    rv = sbBaseDeviceVolume::New(getter_AddRefs(volume), this);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Set the volume GUID.
+    char volumeGUID[NSID_LENGTH];
+    nsID* deviceID;
+    rv = GetId(&deviceID);
+    NS_ENSURE_SUCCESS(rv, rv);
+    deviceID->ToProvidedString(volumeGUID);
+    NS_Free(deviceID);
+    rv = volume->SetGUID(NS_ConvertUTF8toUTF16(volumeGUID));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Add the volume.
+    rv = AddVolume(volume);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Set the primary and default volume.
+    {
+      nsAutoLock autoVolumeLock(mVolumeLock);
+      mPrimaryVolume = volume;
+      mDefaultVolume = volume;
+    }
+
     // make a mock library too
     NS_NAMED_LITERAL_STRING(LIBID, "mock-library.mock-device");
     nsCOMPtr<sbIDeviceLibrary> devLib;
     rv = CreateDeviceLibrary(LIBID, nsnull, getter_AddRefs(devLib));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Set the volume device library.
+    rv = volume->SetDeviceLibrary(devLib);
     NS_ENSURE_SUCCESS(rv, rv);
     
     rv = AddLibrary(devLib);
