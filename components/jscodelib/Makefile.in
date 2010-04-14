@@ -31,6 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_JSMODULES = $(srcdir)/AddOnUtils.jsm \
                      $(srcdir)/ArrayConverter.jsm \
+                     $(srcdir)/DebugUtils.jsm \
                      $(srcdir)/DeviceHelper.jsm \
                      $(srcdir)/DropHelper.jsm \
                      $(srcdir)/DOMUtils.jsm \
