@@ -997,6 +997,16 @@ function SBGetBrowser()
 }
 
 /**
+ * \brief Get the application notification box.
+ *
+ * \return Application notification box.
+ */
+
+function SBGetApplicationNotificationBox() {
+  return document.getElementById("application-notificationbox");
+}
+
+/**
  * Based on original code from Mozilla's browser/base/content/browser.js
  *
  * Update the global flag that tracks whether or not any edit UI (the Edit menu,

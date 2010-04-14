@@ -444,13 +444,15 @@ var sbDeviceVolumeSupport = {
       }
 
       // Notify the user of the new volume.
-      var notificationBox = gBrowser.getNotificationBox();
-      var notification = notificationBox.appendNotification
-                           (label,
-                            "new_volume",
-                            null,
-                            notificationBox.PRIORITY_INFO_LOW,
-                            buttonList);
+      var notificationBox = SBGetApplicationNotificationBox();
+      if (notificationBox) {
+        var notification = notificationBox.appendNotification
+                             (label,
+                              "new_volume",
+                              null,
+                              notificationBox.PRIORITY_INFO_LOW,
+                              buttonList);
+      }
     }
 
     // Update the device last volume list.
@@ -548,7 +550,9 @@ sbDeviceVolumeSupport.initialize();
     // If we get here, there is some unreported but interesting event,
     // but the device is now idle
     delete devicesWithEvents[device.id];
-    var notificationBox = gBrowser.getNotificationBox();
+    var notificationBox = SBGetApplicationNotificationBox();
+    if (!notificationBox)
+      return;
     var buttons = [
       {
         label: SBString("transcode.error.notification.detail.label"),
