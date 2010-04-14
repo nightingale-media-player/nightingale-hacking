@@ -5,6 +5,8 @@ if (typeof(Ci) == "undefined")
 if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
 
+Cu.import("resource://shoutcast-radio/Utils.jsm");
+
 if (typeof(songbirdMainWindow) == "undefined")
 	var songbirdMainWindow = Cc["@mozilla.org/appshell/window-mediator;1"]
 			.getService(Ci.nsIWindowMediator)
@@ -204,8 +206,7 @@ var RadioDirectory = {
 		var libGuid = Application.prefs.getValue(shoutcastLibraryGuid, "");
 		if (libGuid != "") {
 			// XXX should error check this
-			var libGuid = Application.prefs.get(shoutcastLibraryGuid);
-			this.radioLib = libraryManager.getLibrary(libGuid.value);
+			this.radioLib = libraryManager.getLibrary(libGuid);
 		} else {
 			this.radioLib = createLibrary("shoutcast_radio_library", null,
 					false);
@@ -223,8 +224,7 @@ var RadioDirectory = {
 		libGuid = Application.prefs.getValue(shoutcastTempLibGuid, "");
 		if (libGuid != "") {
 			// XXX should error check this
-			var libGuid = Application.prefs.get(shoutcastTempLibGuid);
-			this.tempLib = libraryManager.getLibrary(libGuid.value);
+			this.tempLib = libraryManager.getLibrary(libGuid);
 
 			// Get our favourites & stream lists
 			var a = this.tempLib.getItemsByProperty(
@@ -312,13 +312,6 @@ var RadioDirectory = {
 					"radio_favouritesList");
 			this.streamList.setProperty(SBProperties.customType,
 					"radio_tempStreamList");
-
-			// set our flag for SP node creation to false
-			this.favesList.setProperty(SC_nodeCreated, "0");
-		}
-		if (RadioDirectory.favesList.getProperty(SC_nodeCreated) == "0"
-				&& RadioDirectory.favesList.length > 0) {
-			createFavouritesNode();
 		}
 
 		// Seed the favouriteIDs array with the IDs of the stations
@@ -517,10 +510,6 @@ var RadioDirectory = {
 			var item = this.radioLib.createMediaItem(uri, props);
 			RadioDirectory.favesList.add(item);
 			gMetrics.metricsInc("shoutcast", "custom", "added");
-			if (RadioDirectory.favesList.getProperty(SC_nodeCreated) == "0"
-					&& RadioDirectory.favesList.length > 0) {
-				createFavouritesNode();
-			}
 		}
 	}
 }
@@ -576,75 +565,10 @@ var libListener = {
 	}
 }
 
-function findRadioNode(node) {
-	if (node.isContainer && node.name != null &&
-		((node.name == RadioDirectory._strings.getString("radioFolderLabel"))
-		 || (node.getAttributeNS(SC_NS, "radioFolder") == 1)))
-	{
-		node.setAttributeNS(SC_NS, "radioFolder", 1);
-		return node;
-	}
-
-	if (node.isContainer) {
-		var children = node.childNodes;
-		while (children.hasMoreElements()) {
-			var child = children.getNext()
-				.QueryInterface(Ci.sbIServicePaneNode);
-			var result = findRadioNode(child);
-			if (result != null)
-				return result;
-		}
-	}
-
-	return null;
-}
-
-function createFavouritesNode() {
-	RadioDirectory.favesList.setProperty(SC_nodeCreated, "1");
-	RadioDirectory.favesList.setProperty(SBProperties.hidden, "0");
-
-	// Get our library service pane service
-	var librarySPS = Cc['@songbirdnest.com/servicepane/library;1']
-			.getService(Ci.sbILibraryServicePaneService);
-	var favouritesNode = librarySPS.getNodeForLibraryResource(
-			RadioDirectory.favesList);
-
-	// Get our bookmark service
-	var BMS = Cc['@songbirdnest.com/servicepane/bookmarks;1'].
-			getService(Ci.sbIBookmarks);
-
-	// Get the service pane service
-	var SPS = Cc['@songbirdnest.com/servicepane/service;1'].
-			getService(Ci.sbIServicePaneService);
-
-	// Find the Radio folder node
-	SPS.init();
-	var radioNode = findRadioNode(SPS.root);
-	if (radioNode == null) {
-		alert("FUBAR. Should never be reached.");
-		return;
-	}
-
-	// Append the node
-	radioNode.appendChild(favouritesNode);
-	favouritesNode.properties = "medialist-favorites";
-	favouritesNode.editable = false;
-	favouritesNode.hidden = false;
-  favouritesNode.contractid = null;
-  favouritesNode.dndAcceptIn = null;
-  favouritesNode.dndAcceptNear = null;
-	SPS.save();
-}
-
 function onPlaylistCellClick(e) {
 	if (e.getData("property") == SC_bookmark) {
 		var item = e.getData("item");
 
-		// See if we have a node for this list already
-		if (RadioDirectory.favesList.getProperty(SC_nodeCreated) == "0") {
-			createFavouritesNode();
-		}
-		
 		var id = item.getProperty(SC_id);
 		var idx = RadioDirectory.favouriteIDs.indexOf(id);
 
@@ -694,6 +618,9 @@ function onPlaylistCellClick(e) {
 					"chrome://shoutcast-radio/skin/heart-active.png");
 			RadioDirectory.favesList.add(item);
 		}
+
+		// Add favorites node if necessary
+		Utils.ensureFavouritesNode();
 	}
 }
 

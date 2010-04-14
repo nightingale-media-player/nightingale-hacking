@@ -7,9 +7,10 @@ if (typeof Cc == 'undefined')
 	var Cc = Components.classes;
 if (typeof Ci == 'undefined')
 	var Ci = Components.interfaces;
+if (typeof Cu == 'undefined')
+	var Cu = Components.utils;
 
-if (typeof SP == 'undefined')
-	var SP = "http://songbirdnest.com/rdf/servicepane#";
+Cu.import("resource://shoutcast-radio/Utils.jsm", ShoutcastRadio);
 
 if (typeof(gMM) == "undefined")
 	var gMM = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
@@ -23,29 +24,6 @@ if (typeof(FAVICON_PATH) == "undefined")
 	const FAVICON_PATH = "chrome://shoutcast-radio/skin/shoutcast_favicon.png";
 
 const shoutcastTempLibGuid = "extensions.shoutcast-radio.templib.guid";
-
-function findRadioNode(node, radioString) {
-	if (node.isContainer && node.name != null &&
-		((node.name == radioString)
-		 || (node.getAttributeNS(SC_NS, "radioFolder") == 1)))
-	{
-		node.setAttributeNS(SC_NS, "radioFolder", 1);
-		return node;
-	}
-
-	if (node.isContainer) {
-		var children = node.childNodes;
-		while (children.hasMoreElements()) {
-			var child =
-					children.getNext().QueryInterface(Ci.sbIServicePaneNode);
-			var result = findRadioNode(child, radioString);
-			if (result != null)
-				return result;
-		}
-	}
-
-	return null;
-}
 
 var mmListener = {
 	time : null,
@@ -187,6 +165,9 @@ var mmListener = {
  * UI controller that is loaded into the main player window
  */
 ShoutcastRadio.Controller = {
+	SB_NS: "http://songbirdnest.com/data/1.0#",
+	SP_NS: "http://songbirdnest.com/rdf/servicepane#",
+
 	onLoad: function() {
 		// initialization code
 		this._initialized = true;
@@ -195,80 +176,34 @@ ShoutcastRadio.Controller = {
 		// Create a service pane node for our chrome
 		var SPS = Cc['@songbirdnest.com/servicepane/service;1'].
 				getService(Ci.sbIServicePaneService);
-		SPS.init();
-		var BMS = Cc['@songbirdnest.com/servicepane/bookmarks;1'].
-				getService(Ci.sbIBookmarks);
 		
 		// Walk nodes to see if a "Radio" folder already exists
-		var radioString = this._strings.getString("radioFolderLabel");
-		var radioFolder = findRadioNode(SPS.root, radioString);
-		if (radioFolder == null) {
-			radioFolder = BMS.addFolder(radioString);
-			radioFolder.editable = false;
-			radioFolder.setAttributeNS(SC_NS, "radioFolder", 1);
-		} else {
-			// Relocalise the name on startup
-			radioFolder.name = radioString;
+		var radioFolder = SPS.getNode("SB:RadioStations");
+		if (!radioFolder) {
+			radioFolder = SPS.createNode();
+			radioFolder.id = "SB:RadioStations";
+			radioFolder.className = "folder radio";
+			radioFolder.name = this._strings.getString("radioFolderLabel");
+			radioFolder.setAttributeNS(this.SB_NS, "radioFolder", 1); // for backward-compat
+			radioFolder.setAttributeNS(this.SP_NS, "Weight", 1);
+			SPS.root.appendChild(radioFolder);
 		}
+		radioFolder.editable = false;
 		radioFolder.hidden = false;
-    radioFolder.contractid = null;
-    radioFolder.dndAcceptIn = null;
-    radioFolder.dndAcceptNear = null;
 	
-		// Sort the radio folder node in the service pane
-		radioFolder.setAttributeNS(SP, "Weight", 1);
-		SPS.sortNode(radioFolder);
-
-		// Bookmark the SHOUTcast chrome
-		var bmNode = BMS.addBookmarkAt(
-				"chrome://shoutcast-radio/content/directory.xul", "SHOUTcast",
-				FAVICON_PATH, radioFolder, null);
-		if (bmNode) {
-			bmNode.editable = false;
-			bmNode.image = FAVICON_PATH;
-		} else {
-			// bookmark already exists
-			bmNode = SPS.getNodeForURL(
-					"chrome://shoutcast-radio/content/directory.xul");
-			if (bmNode.image != FAVICON_PATH) {
-				bmNode.image = FAVICON_PATH;
-			}
+		// Add SHOUTcast chrome to service pane
+		var node = SPS.getNodeForURL("chrome://shoutcast-radio/content/directory.xul");
+		if (!node) {
+			node = SPS.createNode();
+			node.url = "chrome://shoutcast-radio/content/directory.xul";
 		}
-    bmNode.hidden = false;
-    bmNode.contractid = null;
-    bmNode.dndAcceptIn = null;
-    bmNode.dndAcceptNear = null;
+		node.name = "SHOUTcast";
+		node.image = FAVICON_PATH;
+		node.editable = false;
+		radioFolder.appendChild(node);
 
-		// Check the Favourite Stations list to see if it's been created
-		// If it has, then we'll need to relocalise its name on startup
-		var libGuid = Application.prefs.getValue(shoutcastTempLibGuid, "");
-		if (libGuid != "") {
-			var libraryManager =
-					Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-					.getService(Ci.sbILibraryManager);
-			var tempLib = libraryManager.getLibrary(libGuid);
-
-			// Get our favourites & stream lists
-			var a = tempLib.getItemsByProperty(
-						SBProperties.customType, "radio_favouritesList");
-			var favesList = a.queryElementAt(0, Ci.sbIMediaList);
-			
-			if (favesList.getProperty(SC_nodeCreated) == "1") {
-				// We've created a node in the past, go grab it
-				var librarySPS = Cc['@songbirdnest.com/servicepane/library;1']
-						.getService(Ci.sbILibraryServicePaneService);
-				var favouritesNode =
-						librarySPS.getNodeForLibraryResource(favesList);
-
-				// Re-localise its name
-				favouritesNode.name = this._strings.getString("favourites");
-        favouritesNode.contractid = null;
-        favouritesNode.dndAcceptIn = null;
-        favouritesNode.dndAcceptNear = null;
-			}
-		}
-	
-		SPS.save();
+		// Add favorites node if necessary
+		ShoutcastRadio.Utils.ensureFavouritesNode();
 
 		// Attach our listener for media core events
 		gMM.addListener(mmListener);
@@ -291,15 +226,6 @@ ShoutcastRadio.Controller = {
 					.createInstance(Ci.sbITextPropertyInfo);
 			pI.id = SC_streamName;
 			pI.displayName = this._strings.getString("streamName");
-			pI.userEditable = false;
-			pI.userViewable = false;
-			pMgr.addPropertyInfo(pI);
-		}
-		if (!pMgr.hasProperty(SC_nodeCreated)) {
-			var pI = Cc["@songbirdnest.com/Songbird/Properties/Info/Boolean;1"]
-					.createInstance(Ci.sbIBooleanPropertyInfo);
-			pI.id = SC_nodeCreated;
-			pI.displayName = "Favourites Node Created"; // not user viewable
 			pI.userEditable = false;
 			pI.userViewable = false;
 			pMgr.addPropertyInfo(pI);
@@ -476,45 +402,6 @@ var shoutcastUninstallObserver = {
 	_tabs : null,
 
 	observe : function(subject, topic, data) {
-		var radioString =
-			ShoutcastRadio.Controller._strings.getString("radioFolderLabel");
-
-    // Get our various servicepane nodes
-    var SPS = Cc['@songbirdnest.com/servicepane/service;1'].
-        getService(Ci.sbIServicePaneService);
-    var radioNode = findRadioNode(SPS.root, radioString);
-    var shoutcastNode = SPS.getNodeForURL(
-        "chrome://shoutcast-radio/content/directory.xul");
-				
-    var tempLibGuid;
-    var radioLibGuid;
-    var prefs = Cc["@mozilla.org/preferences-service;1"].
-        getService(Components.interfaces.nsIPrefService);
-    var scPrefs = prefs.getBranch("extensions.shoutcast-radio.");
-    var librarySPS = Cc['@songbirdnest.com/servicepane/library;1']
-      .getService(Ci.sbILibraryServicePaneService);
-		
-    // wrap in a try/catch in case the user hasn't initialised any
-    // of the libraries or favourites node
-    try {
-      // Very long convoluted way to get the favourites node
-      var libGuid = scPrefs.getCharPref("templib.guid");
-      var libraryManager =
-          Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-          .getService(Ci.sbILibraryManager);
-      var tempLib = libraryManager.getLibrary(libGuid);
-
-      // Get our favourites list
-      var a = tempLib.getItemsByProperty(
-          SBProperties.customType, "radio_favouritesList");
-      var favesList = a.queryElementAt(0, Ci.sbIMediaList);
-
-      // Actually get the favourites node now
-      var favouritesNode = librarySPS.getNodeForLibraryResource(
-          favesList);
-    } catch (e) {
-    }
-
 		if (topic == "em-action-requested") {
 			// Extension has been flagged to be uninstalled
 			subject.QueryInterface(Ci.nsIUpdateItem);
@@ -522,65 +409,21 @@ var shoutcastUninstallObserver = {
 			if (subject.id == "shoutcast-radio@songbirdnest.com") {
 				if (data == "item-uninstalled") {
 					this._uninstall = true;
-				} else if (data == "item-disabled") {
-					this._disable = true;
-					shoutcastNode.hidden = true;
-          if (favouritesNode)
-            favouritesNode.hidden = true;
-          // iterate over radio child nodes and see if we should hide the
-          // radio node
-          var hide = true;
-          var it = radioNode.childNodes;
-          while (it.hasMoreElements()) {
-            var node = it.getNext().QueryInterface(Ci.sbIServicePaneNode);
-            if (!node.hidden) {
-              hide = false;
-            }
-          }
-          radioNode.hidden = hide;
 				} else if (data == "item-cancel-action") {
-					if (this._uninstall)
-						this._uninstall = false;
-					if (this._disable) {
-						shoutcastNode.hidden = false;
-            radioNode.hidden = false;
-            if (favouritesNode)
-              favouritesNode.hidden = false;
-          }
+					this._uninstall = false;
 				}
 			}
 		} else if (topic == "quit-application-granted") {
 			// We're shutting down, so check to see if we were flagged
 			// for uninstall - if we were, then cleanup here
 			if (this._uninstall) {
+				var tempLibGuid;
+				var radioLibGuid;
+				var prefs = Cc["@mozilla.org/preferences-service;1"]
+											.getService(Components.interfaces.nsIPrefService);
+				var scPrefs = prefs.getBranch("extensions.shoutcast-radio.");
+
 				// Things to cleanup:
-				// Remove only the Shoutcast node 
-				SPS.removeNode(shoutcastNode);
-
-				if (scPrefs.prefHasUserValue("templib.guid") && favouritesNode) {
-          // Remove the favourites node
-					SPS.removeNode(favouritesNode);
-				}
-
-				// Remove the "Radio" node if it's empty
-				// XXX stevel - in a loop due to bugs with multiple Radio
-				// nodes having been created
-				var enum = radioNode.childNodes;
-				while (enum.hasMoreElements()) {
-					var node = enum.getNext();
-					dump(node.name + "--" + node.url + "--" + node.id + "\n");
-					var item = librarySPS.getLibraryResourceForNode(node);
-					if (!item || (item.getProperty(SBProperties.customType) ==
-							"radio_favouritesList"))
-					{
-						SPS.removeNode(node);
-					}
-				}
-				while (radioNode != null && !radioNode.firstChild) {
-					SPS.removeNode(radioNode);
-					radioNode = findRadioNode(SPS.root, radioString);
-				}
-
 				// Remove preferences
 				if (scPrefs.prefHasUserValue("plsinit"))
 					scPrefs.clearUserPref("plsinit");

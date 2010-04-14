@@ -1,5 +1,6 @@
 shoutcast.jar:
 % content shoutcast-radio %content/
+% resource shoutcast-radio modules/
 % locale shoutcast-radio en-US %locale/en-US/
 % locale shoutcast-radio da-DK %locale/da-DK/
 % locale shoutcast-radio de-DE %locale/de-DE/

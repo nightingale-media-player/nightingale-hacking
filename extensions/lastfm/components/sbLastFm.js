@@ -300,28 +300,6 @@ function PlayedTrack(mediaItem, timestamp, rating, source) {
   this.i = timestamp;
 }
 
-function findRadioNode(node, radioString) {
-	if (node.isContainer && node.name != null &&
-		((radioString && node.name == radioString)
-		 || (node.getAttributeNS(SB_NS, "radioFolder") == 1)))
-	{
-		node.setAttributeNS(SB_NS, "radioFolder", 1);
-		return node;
-	}
-
-	if (node.isContainer) {
-		var children = node.childNodes;
-		while (children.hasMoreElements()) {
-			var child =
-					children.getNext().QueryInterface(Ci.sbIServicePaneNode);
-			var result = findRadioNode(child, radioString);
-			if (result != null)
-				return result;
-		}
-	}
-	return null;
-}
-
 function sbLastFm() {
   // our interface is really lightweight - make the service available as a JS
   // object so we can avoid the IDL / XPConnect complexity.
@@ -486,40 +464,32 @@ function sbLastFm() {
   // create a service pane node for the radio tuner ui
   this._servicePaneService = Cc['@songbirdnest.com/servicepane/service;1']
     .getService(Ci.sbIServicePaneService);
-  var BMS = Cc['@songbirdnest.com/servicepane/bookmarks;1']
-	.getService(Ci.sbIBookmarks);
  
   // find a radio folder if it already exists
-  var radioString = this._strings.GetStringFromName("lastfm.radio.label");
-  var radioFolder = findRadioNode(this._servicePaneService.root, radioString);
-  if (radioFolder)
-	  radioFolder.name = radioString;
-  else {
-	  radioFolder = BMS.addFolder(radioString);
-	  radioFolder.setAttributeNS(SB_NS, "radioFolder", 1);
+  var radioFolder = this._servicePaneService.getNode("SB:RadioStations");
+  if (!radioFolder) {
+	  radioFolder = this._servicePaneService.createNode();
+    radioFolder.id = "SB:RadioStations";
+    radioFolder.className = "folder radio";
+	  radioFolder.name = this._strings.GetStringFromName("lastfm.radio.label");
+	  radioFolder.setAttributeNS(SB_NS, "radioFolder", 1); // for backward-compat
+	  radioFolder.setAttributeNS(SP_NS, "Weight", 1);
+	  this._servicePaneService.root.appendChild(radioFolder);
   }
   radioFolder.editable = false;
-  radioFolder.contractid = null;
 
-  // Sort the radio folder node in the service pane
-  radioFolder.setAttributeNS(SP_NS, "Weight", 1);
-  this._servicePaneService.sortNode(radioFolder);
-
-  this._servicePaneNode = BMS.addBookmarkAt(
-		  "chrome://sb-lastfm/content/tuner2.xhtml", "Last.fm",
-		  "chrome://sb-lastfm/skin/as.png", radioFolder, null);
+  this._servicePaneNode = this._servicePaneService.getNodeForURL(
+                                  "chrome://sb-lastfm/content/tuner2.xhtml");
   if (!this._servicePaneNode) {
-	  this._servicePaneNode = this._servicePaneService.getNodeForURL(
-		  "chrome://sb-lastfm/content/tuner2.xhtml");
+    this._servicePaneNode = this._servicePaneService.createNode();
+    this._servicePaneNode.url = "chrome://sb-lastfm/content/tuner2.xhtml";
   }
+  this._servicePaneNode.name = "Last.fm";
   this._servicePaneNode.image = 'chrome://sb-lastfm/skin/as.png';
   this._servicePaneNode.editable = false;
-  this._servicePaneNode.contractid = null;
-  this._servicePaneNode.dndAcceptIn = null;
-  this._servicePaneNode.dndAcceptNear = null;
+  this._servicePaneNode.hidden = true;
+  radioFolder.appendChild(this._servicePaneNode);
 
-  //dump("HERE: " + this._servicePaneNode + "\n");
-  //this._servicePaneService.removeNode(this._servicePaneNode);
   this.updateServicePaneNodes();
 
   // track metrics
@@ -540,8 +510,6 @@ function sbLastFm() {
   // reset some data remotes
   SBDataSetStringValue("lastfm.radio.station", "");
   SBDataSetBoolValue("lastfm.radio.requesting", false);
-
-  LastFmUninstallObserver.register();
 }
 
 // XPCOM Magic
@@ -562,8 +530,7 @@ sbLastFm.prototype.log = function sbLastFm_log(message) {
 sbLastFm.prototype.updateServicePaneNodes = function updateSPNodes() {
   // only show the Last.fm radio node if the user is a subscriber or if they've
   // specifically requested to have it be shown
-  var radioString = this._strings.GetStringFromName("lastfm.radio.label");
-  var radioFolder = findRadioNode(this._servicePaneService.root, radioString);
+  var radioFolder = this._servicePaneService.getNode("SB:RadioStations");
   if (this.loggedIn && (this._subscriber || this.displayRadioNode))
     this._servicePaneNode.hidden = false;
   else
@@ -1847,95 +1814,4 @@ sbLastFm.prototype.onStop = function sbLastFm_onStop() {
 
 function NSGetModule(compMgr, fileSpec) {
   return XPCOMUtils.generateModule([sbLastFm]);
-}
-
-/* UNINSTALL OBSERVER */
-var LastFmUninstallObserver = {
-	_uninstall : false,
-	_disable : false,
-	_tabs : null,
-
-	observe : function(subject, topic, data) {
-		if (topic == "em-action-requested") {
-			// Extension has been flagged to be uninstalled
-			subject.QueryInterface(Ci.nsIUpdateItem);
-			
-			var SPS = Cc['@songbirdnest.com/servicepane/service;1'].
-					getService(Ci.sbIServicePaneService);
-			var radioNode = findRadioNode(SPS.root);
-			var lastFmNode = SPS.getNodeForURL(
-					"chrome://sb-lastfm/content/tuner2.xhtml");
-
-			if (subject.id == "audioscrobbler@songbirdnest.com") {
-				if (data == "item-uninstalled") {
-					this._uninstall = true;
-				} else if (data == "item-disabled") {
-					this._disable = true;
-					lastFmNode.hidden = true;
-
-          // iterate over radio child nodes and see if we should hide the
-          // radio node
-          var hide = true;
-          var it = radioNode.childNodes;
-          while (it.hasMoreElements()) {
-            if (!it.getNext().QueryInterface(Ci.sbIServicePaneNode).hidden) {
-              hide = false;
-            }
-          }
-          radioNode.hidden = hide;
-				} else if (data == "item-cancel-action") {
-					if (this._uninstall)
-						this._uninstall = false;
-					if (this._disable) {
-						lastFmNode.hidden = false;
-            radioNode.hidden = false;
-          }
-				}
-			}
-		} else if (topic == "quit-application-granted") {
-			// We're shutting down, so check to see if we were flagged
-			// for uninstall - if we were, then cleanup here
-			if (this._uninstall) {
-				// Things to cleanup:
-				// Service pane node
-				var SPS = Cc['@songbirdnest.com/servicepane/service;1'].
-						getService(Ci.sbIServicePaneService);
-
-				// Remove only the Last.fm node 
-				var lastFmNode = SPS.getNodeForURL(
-						"chrome://sb-lastfm/content/tuner2.xhtml");
-				SPS.removeNode(lastFmNode);
-
-				// Remove the "Radio" node if it's empty
-				// XXX stevel - in a loop due to bugs with multiple Radio
-				// nodes having been created
-				var radioFolder = findRadioNode(SPS.root);
-				var enum = radioFolder.childNodes;
-				while (enum.hasMoreElements()) {
-					var node = enum.getNext();
-					dump(node.name + "--" + node.url + "--" + node.id + "\n");
-				}
-
-				while (radioFolder != null && !radioFolder.firstChild) {
-					SPS.removeNode(radioFolder);
-					radioFolder = findRadioNode(SPS.root);
-				}
-			}
-			this.unregister();
-		}
-	},
-
-	register : function() {
-		var observerService = Cc["@mozilla.org/observer-service;1"]
-			.getService(Ci.nsIObserverService);
-		observerService.addObserver(this, "em-action-requested", false);
-		observerService.addObserver(this, "quit-application-granted", false);
-	},
-
-	unregister : function() {
-		var observerService = Cc["@mozilla.org/observer-service;1"]
-			.getService(Ci.nsIObserverService);
-		observerService.removeObserver(this, "em-action-requested");
-		observerService.removeObserver(this, "quit-application-granted");
-	}
 }
