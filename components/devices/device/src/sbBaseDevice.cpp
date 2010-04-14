@@ -2294,10 +2294,13 @@ sbBaseDevice::UpdateDefaultLibrary(sbIDeviceLibrary* aDevLib)
     return NS_OK;
 
   // Update the default library and volume.
-  mDefaultLibrary = aDevLib;
   nsRefPtr<sbBaseDeviceVolume> volume;
-  rv = GetVolumeForItem(aDevLib, getter_AddRefs(volume));
-  if (NS_SUCCEEDED(rv)) {
+  if (aDevLib) {
+    rv = GetVolumeForItem(aDevLib, getter_AddRefs(volume));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  mDefaultLibrary = aDevLib;
+  {
     nsAutoLock autoVolumeLock(mVolumeLock);
     mDefaultVolume = volume;
   }
@@ -3268,6 +3271,8 @@ sbBaseDevice::RemoveVolume(sbBaseDeviceVolume* aVolume)
     mVolumeGUIDTable.Remove(volumeGUID);
     if (!libraryGUID.IsEmpty())
       mVolumeLibraryGUIDTable.Remove(libraryGUID);
+    if (mPrimaryVolume == aVolume)
+      mPrimaryVolume = nsnull;
   }
 
   return NS_OK;
