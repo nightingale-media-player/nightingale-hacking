@@ -41,6 +41,7 @@ interface nsIStringEnumerator;
 interface nsIDragSession;
 interface nsITransferable;
 interface nsIStringBundle;
+interface sbIServicePaneMutationListener;
 
 /**
  * \interface sbIServicePaneNode
@@ -90,6 +91,20 @@ interface sbIServicePaneNode : nsISupports
   /* \deprecated This is the same as className property now */
   attribute AString properties;
 
+  /**
+   * \brief Adds mutation listener that will be called whenever a node or one
+   *        of its children get modified.
+   *
+   * \param aListener listener to be added
+   */
+  void addMutationListener (in sbIServicePaneMutationListener aListener);
+  
+  /**
+   * \brief Removes a previously added mutation listener.
+   *
+   * \param aListener listener to be removed
+   */
+  void removeMutationListener (in sbIServicePaneMutationListener aListener);
   
   // here's a subset of the W3C DOM Level 1 Core
   
@@ -125,6 +140,42 @@ interface sbIServicePaneNode : nsISupports
   void removeChild (in sbIServicePaneNode aChild);
   void replaceChild (in sbIServicePaneNode aNewNode,
                      in sbIServicePaneNode aOldNode);
+};
+
+/**
+ * \interface sbIServicePaneMutationListener
+ * \brief The interface to be implemented by node mutation listeners added via
+ *        sbIServicePaneNode.addListener()
+ */
+[scriptable, uuid(586dc48c-1dd2-11b2-bca8-9329bfa23e88)]
+interface sbIServicePaneMutationListener : nsISupports {
+  /**
+   * \brief Called after a node attribute changes
+   *
+   * \param aNode service pane node that was changed
+   * \param aAttrName name of the attribute modified
+   * \param aNamespace namespace of the attribute (can be null)
+   * \param aOldVal old attribute value (will be null for new attributes)
+   * \param aNewVal new attribute value (will ne null if attribute is removed)
+   */
+  void attrModified (in sbIServicePaneNode aNode, in AString aAttrName,
+                     in AString aNamespace, in AString aOldVal, in AString aNewVal);
+
+  /**
+   * \brief Called after a node is added to the service pane tree
+   *
+   * \param aNode service pane node that was added
+   * \param aParent new parent node
+   */
+  void nodeInserted (in sbIServicePaneNode aNode, in sbIServicePaneNode aParent);
+
+  /**
+   * \brief Called after a node is removed from the service pane tree
+   *
+   * \param aNode service pane node that was removed
+   * \param aParent old parent node
+   */
+  void nodeRemoved (in sbIServicePaneNode aNode, in sbIServicePaneNode aParent);
 };
 
 /**

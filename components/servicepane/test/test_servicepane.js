@@ -184,17 +184,6 @@ function serializeTree(aNode) {
   return result;
 }
 
-function removeIfExists(SPS, ids) {
-  for (var i=0; i<ids.length; i++) {
-    var id = ids[i];
-    DBG('removeIfExists id='+id+'\n');
-    var node = SPS.getNode(id);
-    if (node) {
-      SPS.removeNode(node);
-    }
-  }
-}
-
 function testAttributes(aNode) {
   // Node shouldn't have any attributes yet
   assertEqual(serializeTree(aNode), '[node/]');
@@ -861,67 +850,257 @@ function testModuleInteraction(SPS, aRoot) {
 }
 
 
-function testListeners (SPS) {
-  var test_node_id = 'SB:ListenerTest';
-  // if our test node already exists, let's throw it away
-  removeIfExists(SPS, [test_node_id]);
+function testListeners (SPS, aRoot) {
+  let calls = [];
 
+  let testListener = {
+    QueryInterface: XPCOMUtils.generateQI([Ci.sbIServicePaneMutationListener]),
 
-  // define a listener
-  var listener = { };
-  // what calls has the listener recieved
-  listener.calls = [];
-  // the listener callback which collects the calls is receives
-  listener.nodePropertyChanged = 
-    function nodePropertyChanged(aNodeId, aPropertyName) {
-      log('nodePropertyChanged('+aNodeId+', '+aPropertyName+')');
-      this.calls.push([aNodeId, aPropertyName]);
+    attrModified: function(aNode, aAttrName, aNamespace, aOldValue, aNewValue) {
+      calls.push(["attrModified", aNode, aAttrName, aNamespace, aOldValue, aNewValue]);
+    },
+
+    nodeInserted: function(aNode, aParent) {
+      calls.push(["nodeInserted", aNode, aParent]);
+    },
+
+    nodeRemoved: function(aNode, aParent) {
+      calls.push(["nodeRemoved", aNode, aParent]);
     }
+  };
 
+  let node1 = SPS.createNode();
+  assertTrue(node1 instanceof Ci.sbIServicePaneNode);
 
-  // add our listener
-  SPS.addListener(listener);
-  // it should have no calls
-  assertEqual(listener.calls.length, 0);
+  let node2 = SPS.createNode();
+  assertTrue(node2 instanceof Ci.sbIServicePaneNode);
 
-  // create a new node
-  var test_node = SPS.addNode(test_node_id, SPS.root, false);
-  // it should have six calls:
-  //  http://songbirdnest.com/rdf/servicepane#Hidden)
-  //  http://www.w3.org/1999/02/22-rdf-syntax-ns#nextVal)
-  //  http://www.w3.org/1999/02/22-rdf-syntax-ns#nextVal)
-  //  http://www.w3.org/1999/02/22-rdf-syntax-ns#_24)
-  //  http://songbirdnest.com/rdf/servicepane#Editable)
-  //  http://songbirdnest.com/rdf/servicepane#Weight)
-  assertEqual(listener.calls.length, 6);
+  // Changes outside the tree shouldn't trigger listeners
+  SPS.root.addMutationListener(testListener);
+  node1.addMutationListener(testListener);
+  node1.setAttribute("foo", "bar");
+  node1.removeAttribute("foo", "bar");
+  node1.appendChild(node2);
+  node1.removeChild(node2);
+  assertEqual(calls.length, 0);
+  SPS.root.removeMutationListener(testListener);
 
-  // reset the listener call list
-  listener.calls = []
+  // Adding a child to the tree should trigger listeners on it
+  aRoot.appendChild(node1);
+  assertEqual(calls.length, 1);
+  assertEqual(calls[0][0], "nodeInserted");
+  assertEqual(calls[0][1], node1);
+  assertEqual(calls[0][2], aRoot);
+  calls = [];
 
-  // set a property
-  test_node.setAttributeNS('http://example.com/ns/','property', 'value');
-  // it should have one call
-  assertEqual(listener.calls.length, 1);
-  // it should be on our node
-  assertEqual(listener.calls[0][0], test_node_id);
-  // it should be our test property
-  assertEqual(listener.calls[0][1], 'http://example.com/ns/property');
+  // Adding a child below the node should also trigger listeners
+  node1.appendChild(node2);
+  assertEqual(calls.length, 1);
+  assertEqual(calls[0][0], "nodeInserted");
+  assertEqual(calls[0][1], node2);
+  assertEqual(calls[0][2], node1);
+  calls = [];
 
-  // reset the listener call list
-  listener.calls = [];
+  // Removing a child below the node should trigger listeners
+  node1.removeChild(node2);
+  assertEqual(calls.length, 1);
+  assertEqual(calls[0][0], "nodeRemoved");
+  assertEqual(calls[0][1], node2);
+  assertEqual(calls[0][2], node1);
+  calls = [];
 
-  // remove the listener
-  SPS.removeListener(listener);
-  // it should have no calls
-  assertEqual(listener.calls.length, 0);
+  // Removing the node itself from the tree should trigger listeners
+  aRoot.removeChild(node1);
+  assertEqual(calls.length, 1);
+  assertEqual(calls[0][0], "nodeRemoved");
+  assertEqual(calls[0][1], node1);
+  assertEqual(calls[0][2], aRoot);
+  aRoot.appendChild(node1);
+  calls = [];
 
-  // manipulate our node
-  test_node.setAttributeNS('http://example.com/ns/','otherproperty', 'value');
-  // the listener should have no calls
-  assertEqual(listener.calls.length, 0);
+  // Adding a node next to you shouldn't trigger listeners however
+  aRoot.insertBefore(node2, node1);
+  assertEqual(calls.length, 0);
 
-  // remove our test node
-  SPS.root.removeChild(test_node);
+  // Moving a node already in the tree should trigger both removal and insertion
+  node1.removeMutationListener(testListener);
+  aRoot.addMutationListener(testListener);
+  aRoot.insertBefore(node1, node2);
+  assertEqual(calls.length, 2);
+  assertEqual(calls[0][0], "nodeRemoved");
+  assertEqual(calls[0][1], node1);
+  assertEqual(calls[0][2], aRoot);
+  assertEqual(calls[1][0], "nodeInserted");
+  assertEqual(calls[1][1], node1);
+  assertEqual(calls[1][2], aRoot);
+  aRoot.removeChild(node2);
+  calls = [];
+
+  // Replacing a child should also trigger removal and the insertion
+  aRoot.replaceChild(node2, node1);
+  assertEqual(calls.length, 2);
+  assertEqual(calls[0][0], "nodeRemoved");
+  assertEqual(calls[0][1], node1);
+  assertEqual(calls[0][2], aRoot);
+  assertEqual(calls[1][0], "nodeInserted");
+  assertEqual(calls[1][1], node2);
+  assertEqual(calls[1][2], aRoot);
+  calls = [];
+
+  // Test attribute modification in tree
+  node2.setAttribute("foo", "bar");
+  assertEqual(calls.length, 1);
+  assertEqual(calls[0][0], "attrModified");
+  assertEqual(calls[0][1], node2);
+  assertEqual(calls[0][2], "foo");
+  assertEqual(calls[0][3], null);  
+  assertEqual(calls[0][4], null);  
+  assertEqual(calls[0][5], "bar");  
+  calls = [];
+
+  node2.setAttribute("foo", "baz");
+  assertEqual(calls.length, 1);
+  assertEqual(calls[0][0], "attrModified");
+  assertEqual(calls[0][1], node2);
+  assertEqual(calls[0][2], "foo");
+  assertEqual(calls[0][3], null);  
+  assertEqual(calls[0][4], "bar");  
+  assertEqual(calls[0][5], "baz");  
+  calls = [];
+
+  node2.removeAttribute("foo");
+  assertEqual(calls.length, 1);
+  assertEqual(calls[0][0], "attrModified");
+  assertEqual(calls[0][1], node2);
+  assertEqual(calls[0][2], "foo");
+  assertEqual(calls[0][3], null);  
+  assertEqual(calls[0][4], "baz");  
+  assertEqual(calls[0][5], null);  
+  calls = [];
+
+  node2.setAttributeNS("ns", "foo", "bar");
+  assertEqual(calls.length, 1);
+  assertEqual(calls[0][0], "attrModified");
+  assertEqual(calls[0][1], node2);
+  assertEqual(calls[0][2], "foo");
+  assertEqual(calls[0][3], "ns");  
+  assertEqual(calls[0][4], null);
+  assertEqual(calls[0][5], "bar");  
+  calls = [];
+
+  node2.removeAttributeNS("ns", "foo");
+  assertEqual(calls.length, 1);
+  assertEqual(calls[0][0], "attrModified");
+  assertEqual(calls[0][1], node2);
+  assertEqual(calls[0][2], "foo");
+  assertEqual(calls[0][3], "ns");  
+  assertEqual(calls[0][4], "bar");  
+  assertEqual(calls[0][5], null);  
+  calls = [];
+
+  // Same tests with the listener on the node itself rather than a parent node
+  aRoot.removeMutationListener(testListener);
+  node2.addMutationListener(testListener);
+
+  node2.setAttribute("foo", "bar");
+  assertEqual(calls.length, 1);
+  assertEqual(calls[0][0], "attrModified");
+  assertEqual(calls[0][1], node2);
+  assertEqual(calls[0][2], "foo");
+  assertEqual(calls[0][3], null);  
+  assertEqual(calls[0][4], null);  
+  assertEqual(calls[0][5], "bar");  
+  calls = [];
+
+  node2.setAttribute("foo", "baz");
+  assertEqual(calls.length, 1);
+  assertEqual(calls[0][0], "attrModified");
+  assertEqual(calls[0][1], node2);
+  assertEqual(calls[0][2], "foo");
+  assertEqual(calls[0][3], null);  
+  assertEqual(calls[0][4], "bar");  
+  assertEqual(calls[0][5], "baz");  
+  calls = [];
+
+  node2.removeAttribute("foo");
+  assertEqual(calls.length, 1);
+  assertEqual(calls[0][0], "attrModified");
+  assertEqual(calls[0][1], node2);
+  assertEqual(calls[0][2], "foo");
+  assertEqual(calls[0][3], null);  
+  assertEqual(calls[0][4], "baz");  
+  assertEqual(calls[0][5], null);  
+  calls = [];
+
+  node2.setAttributeNS("ns", "foo", "bar");
+  assertEqual(calls.length, 1);
+  assertEqual(calls[0][0], "attrModified");
+  assertEqual(calls[0][1], node2);
+  assertEqual(calls[0][2], "foo");
+  assertEqual(calls[0][3], "ns");  
+  assertEqual(calls[0][4], null);
+  assertEqual(calls[0][5], "bar");  
+  calls = [];
+
+  node2.removeAttributeNS("ns", "foo");
+  assertEqual(calls.length, 1);
+  assertEqual(calls[0][0], "attrModified");
+  assertEqual(calls[0][1], node2);
+  assertEqual(calls[0][2], "foo");
+  assertEqual(calls[0][3], "ns");  
+  assertEqual(calls[0][4], "bar");  
+  assertEqual(calls[0][5], null);  
+  calls = [];
+
+  // Test listeners added via deprecated SPS.addListener() API
+  node2.removeMutationListener(testListener);
+  node2.id = "node2";
+  testListener = {
+    nodePropertyChanged: function(aNodeId, aProperty) {
+      calls.push([aNodeId, aProperty]);
+    }
+  };
+  SPS.addListener(testListener);
+
+  node2.setAttribute("foo", "bar");
+  assertEqual(calls.length, 1);
+  assertEqual(calls[0][0], "node2");
+  assertEqual(calls[0][1], "foo");
+  calls = [];
+
+  node2.removeAttribute("foo");
+  assertEqual(calls.length, 1);
+  assertEqual(calls[0][0], "node2");
+  assertEqual(calls[0][1], "foo");
+  calls = [];
+
+  node2.setAttributeNS("http://example.com/", "foo", "bar");
+  assertEqual(calls.length, 1);
+  assertEqual(calls[0][0], "node2");
+  assertEqual(calls[0][1], "http://example.com/foo");
+  calls = [];
+
+  node2.removeAttributeNS("http://example.com/", "foo");
+  assertEqual(calls.length, 1);
+  assertEqual(calls[0][0], "node2");
+  assertEqual(calls[0][1], "http://example.com/foo");
+  calls = [];
+
+  let node3 = SPS.addNode("node3", aRoot, true);
+  assertEqual(calls.length, 1);
+  assertEqual(calls[0][0], "node3");
+  assertEqual(calls[0][1], "id");
+  calls = [];
+
+  // Listeners should no longer be triggered after calling removeListener
+  SPS.removeListener(testListener);
+
+  node2.setAttribute("foo", "bar");
+  assertEqual(calls.length, 0);
+
+  // Clean up
+  aRoot.removeChild(node2);
+  aRoot.removeChild(node3);
 }
 
 
@@ -966,9 +1145,8 @@ function runTest (SPS) {
   // Test functions that are forwarded to modules
   testModuleInteraction(SPS, testRoot);
 
-  // test the listeners
-  // TODO
-  // testListeners(SPS);
+  // Test listeners
+  testListeners(SPS, testRoot);
 
   // Clean up
   SPS.root.removeChild(testRoot);

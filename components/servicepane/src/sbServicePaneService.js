@@ -90,6 +90,7 @@ ServicePaneNode.prototype = {
   _stringBundle: null,
   _stringBundleURI: null,
   _isInTree: false,
+  _listeners: null,
 
   QueryInterface: XPCOMUtils.generateQI([Ci.sbIServicePaneNode]),
 
@@ -199,10 +200,20 @@ ServicePaneNode.prototype = {
     else if (aName == "stringbundle" || aName == "contractid")
       delete this._stringBundle;
 
+    let oldValue = (aName in this._attributes ? this._attributes[aName] : null);
+
     if (aValue === null)
       delete this._attributes[aName];
     else
       this._attributes[aName] = aValue;
+
+    // Trigger mutation listeners
+    let attr = aName;
+    let namespace = null;
+    if (/(.*):/.test(attr))
+      [namespace, attr] = [RegExp.$1, RegExp.rightContext];
+    this._notifyMutationListeners("attrModified", [this, attr, namespace,
+                                                   oldValue, aValue]);
 
     return aValue;
   },
@@ -215,7 +226,16 @@ ServicePaneNode.prototype = {
     else if (aName == "stringbundle" || aName == "contractid")
       delete this._stringBundle;
 
+    let oldValue = (aName in this._attributes ? this._attributes[aName] : null);
     delete this._attributes[aName];
+
+    // Trigger mutation listeners
+    let attr = aName;
+    let namespace = null;
+    if (/(.*):/.test(attr))
+      [namespace, attr] = [RegExp.$1, RegExp.rightContext];
+    this._notifyMutationListeners("attrModified", [this, attr, namespace,
+                                                   oldValue, null]);
   },
 
   // Attribute functions with namespace - these simply combine namespace and
@@ -333,6 +353,10 @@ ServicePaneNode.prototype = {
     aChild._nodeIndex = index;
     aChild._parentNode = this;
     aChild.isInTree = this.isInTree;
+
+    // Trigger mutation listeners
+    aChild._notifyMutationListeners("nodeInserted", [aChild, this]);
+
     return aChild;
   },
 
@@ -344,6 +368,9 @@ ServicePaneNode.prototype = {
     if (!aChild || aChild._parentNode != this)
       throw Ce("Cannot remove a node that isn't a child");
 
+    let wasInTree = aChild.isInTree;
+    let oldParentNode = aChild._parentNode;
+
     let index = aChild._nodeIndex;
     for (let i = index + 1; i < this._childNodes.length; i++)
       this._childNodes[i]._nodeIndex--;
@@ -352,6 +379,10 @@ ServicePaneNode.prototype = {
     delete aChild._nodeIndex;
     delete aChild._parentNode;
     aChild.isInTree = null;
+
+    // Trigger mutation listeners
+    aChild._notifyMutationListeners("nodeRemoved", [aChild, this], wasInTree, oldParentNode);
+
     return aChild;
   },
 
@@ -368,6 +399,54 @@ ServicePaneNode.prototype = {
     let insertBefore = aOldChild.nextSibling;
     this.removeChild(aOldChild);
     this.insertBefore(aChild, insertBefore);
+  },
+
+  addMutationListener: function(aListener) {
+    if (this._listeners == null)
+      this._listeners = [];
+
+    // Don't add listeners twice
+    for each (let listener in this._listeners)
+      if (listener == aListener)
+        return;
+
+    this._listeners.push(aListener);
+  },
+
+  removeMutationListener: function(aListener) {
+    if (this._listeners == null)
+      return;
+
+    for (let i = 0; i < this._listeners.length; i++)
+      if (this._listeners[i] == aListener)
+        this._listeners.splice(i--, 1);
+
+    if (this._listeners.length == 0)
+      this._listeners = null;
+  },
+
+  _notifyMutationListeners: function(aMethod, aArgs, aIsInTree, aParentNode) {
+    // Don't trigger listeners if we haven't been added to the service pane tree
+    let isInTree = (typeof aIsInTree != "undefined" ? aIsInTree : this.isInTree);
+    if (!isInTree)
+      return;
+
+    // Notify our listeners first
+    if (this._listeners != null) {
+      for each (let listener in this._listeners) {
+        try {
+          listener[aMethod].apply(listener, aArgs);
+        }
+        catch (e) {
+          Cu.reportError(e);
+        }
+      }
+    }
+
+    // Bubble up the event via recursive call
+    let parentNode = (typeof aParentNode != "undefined" ? aParentNode : this._parentNode);
+    if (parentNode)
+      parentNode._notifyMutationListeners(aMethod, aArgs);
   },
 
   // Attribute shortcuts
@@ -406,6 +485,28 @@ ServicePaneNode.prototype = {
   set dndAcceptIn(aValue) this.setAttribute("dndAcceptIn", aValue),
 };
 
+
+/**
+ * \brief Class translating sbIServicePaneMutationListener calls into
+ * sbIServicePaneListener calls.
+ */
+function MutationEventTranslator(aListener) {
+  this.listener = aListener;
+}
+MutationEventTranslator.prototype = {
+  listener: null,
+
+  QueryInterface: XPCOMUtils.generateQI([Ci.sbIServicePaneMutationListener]),
+
+  attrModified: function(aNode, aAttrName, aNamespace, aOldValue, aNewValue) {
+    if (aNode.id)
+      this.listener.nodePropertyChanged(aNode.id,
+                                        aNamespace == null ? aAttrName : aNamespace + aAttrName);
+  },
+
+  nodeInserted: function() {},
+  nodeRemoved: function() {}
+}
 
 function ServicePaneService () {
   LOG("Service pane initialization started");
@@ -628,11 +729,22 @@ ServicePaneService.prototype = {
   },
 
   addListener: function ServicePaneService_addListener(aListener) {
-    // TODO
+    deprecationWarning("sbIServicePaneService.addListener() is deprecated " +
+                       "and may be removed in future. Consider using " +
+                       "root.addMutationListener() instead.");
+    this.root.addMutationListener(new MutationEventTranslator(aListener));
   },
 
   removeListener: function ServicePaneService_removeListener(aListener) {
-    // TODO
+    deprecationWarning("sbIServicePaneService.addListener() is deprecated " +
+                       "and may be removed in future. Consider using " +
+                       "root.removeMutationListener() instead.");
+
+    // Make a copy of the listeners in case they change while we are in the loop
+    let listeners = this.root._listeners.slice();
+    for each (let listener in listeners)
+      if (listener instanceof MutationEventTranslator && listener.listener == aListener)
+        this.root.removeMutationListener(listener);
   },
 
   fillContextMenu: function ServicePaneService_fillContextMenu(
@@ -718,10 +830,10 @@ ServicePaneService.prototype = {
     }
 
     let node = this.createNode();
+    aParent.appendChild(node);
     node.id = (aId !== null ? aId : "_generatedNodeId" + ++this._nodeIndex);
     if (!aContainer)
       node.setAttribute("isContainer", "false");
-    aParent.appendChild(node);
 
     return node;
   },
