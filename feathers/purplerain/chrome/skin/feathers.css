@@ -163,7 +163,8 @@ label {
 label.button-text {
   font-size: 10px;
 }
-tooltip > label {
+tooltip description,
+tooltip label {
   color: rgb(40,40,40);
 }
 treechildren::-moz-tree-cell-text {
