@@ -278,23 +278,6 @@
 
       <panel type="autocomplete" id="PopupAutoComplete" noautofocus="true"/>
       
-      <!-- POPUP FOR SPRING-LOADED SERVICE PANE -->
-      <panel id="service_pane_spring_load_panel"
-             onpopupshowing="gServicePane.initSpringLoadPanel(this);"
-             ondragdrop="this.hidePopup()"
-             position="after_start">
-        <hbox class="service-pane-spring-load-header">
-          <button class="service-pane-spring-load-button"
-                  oncommand="gServicePane.open = true; this.parentNode.parentNode.hidePopup();"/>
-          <hbox flex="1">
-            <label flex="1" value="&servicepane.title.label;"/>
-          </hbox>
-          <toolbarbutton class="close-button"
-                         oncommand="this.parentNode.parentNode.hidePopup();"/>
-        </hbox>
-        <box class="service-pane-spring-load-tree" flex="1"/>
-      </panel>
-
       <!-- POPUP FOR THE POPUPBLOCKER MENU -->
       <menupopup id="blockedPopupOptions" 
                 onpopupshowing="gPopupBlockerObserver.fillPopupList(event);">

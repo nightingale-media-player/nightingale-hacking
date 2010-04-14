@@ -777,7 +777,7 @@ function testModuleInteraction(SPS, aRoot) {
   // fillContextMenu should get node by ID and pass other parameters to modules
   // unchanged
   testModule._fillContextMenuParams = null;
-  SPS.fillContextMenu("test-root", fakeElement, fakeWindow);
+  SPS.fillContextMenu(aRoot, fakeElement, fakeWindow);
   assertNotEqual(testModule._fillContextMenuParams, null);
   assertEqual(testModule._fillContextMenuParams.length, 3);
   assertEqual(testModule._fillContextMenuParams[0], aRoot);
@@ -787,7 +787,7 @@ function testModuleInteraction(SPS, aRoot) {
   // fillNewItemMenu should get node by ID and pass other parameters to modules
   // unchanged
   testModule._fillNewItemMenuParams = null;
-  SPS.fillNewItemMenu("test-root", fakeElement, fakeWindow);
+  SPS.fillNewItemMenu(aRoot, fakeElement, fakeWindow);
   assertNotEqual(testModule._fillNewItemMenuParams, null);
   assertEqual(testModule._fillNewItemMenuParams.length, 3);
   assertEqual(testModule._fillNewItemMenuParams[0], aRoot);
@@ -797,7 +797,7 @@ function testModuleInteraction(SPS, aRoot) {
   // onSelectionChanged should get node by ID and pass other parameters to modules
   // unchanged
   testModule._onSelectionChangedParams = null;
-  SPS.onSelectionChanged("test-root", fakeElement, fakeWindow);
+  SPS.onSelectionChanged(aRoot, fakeElement, fakeWindow);
   assertNotEqual(testModule._onSelectionChangedParams, null);
   assertEqual(testModule._onSelectionChangedParams.length, 3);
   assertEqual(testModule._onSelectionChangedParams[0], aRoot);
@@ -807,7 +807,7 @@ function testModuleInteraction(SPS, aRoot) {
   // onBeforeRename should trigger node's owner
   aRoot.contractid = testModule.contractId;
   testModule._onBeforeRenameParams = null;
-  SPS.onBeforeRename("test-root");
+  SPS.onBeforeRename(aRoot);
   assertNotEqual(testModule._onBeforeRenameParams, null);
   assertEqual(testModule._onBeforeRenameParams.length, 1);
   assertEqual(testModule._onBeforeRenameParams[0], aRoot);
@@ -816,7 +816,7 @@ function testModuleInteraction(SPS, aRoot) {
   // onRename should trigger node's owner
   aRoot.contractid = testModule.contractId;
   testModule._onRenameParams = null;
-  SPS.onRename("test-root", "Dummy title");
+  SPS.onRename(aRoot, "Dummy title");
   assertNotEqual(testModule._onRenameParams, null);
   assertEqual(testModule._onRenameParams.length, 2);
   assertEqual(testModule._onRenameParams[0], aRoot);
@@ -827,20 +827,20 @@ function testModuleInteraction(SPS, aRoot) {
   testModule.removeFromCategory();
   
   testModule._fillContextMenuParams = null;
-  SPS.fillContextMenu("test-root", fakeElement, fakeWindow);
+  SPS.fillContextMenu(aRoot, fakeElement, fakeWindow);
   assertEqual(testModule._fillContextMenuParams, null);
   
   testModule._fillNewItemMenuParams = null;
-  SPS.fillNewItemMenu("test-root", fakeElement, fakeWindow);
+  SPS.fillNewItemMenu(aRoot, fakeElement, fakeWindow);
   assertEqual(testModule._fillNewItemMenuParams, null);
 
   testModule._onSelectionChangedParams = null;
-  SPS.onSelectionChanged("test-root", fakeElement, fakeWindow);
+  SPS.onSelectionChanged(aRoot, fakeElement, fakeWindow);
   assertEqual(testModule._onSelectionChangedParams, null);
 
   aRoot.contractid = testModule.contractId;
   testModule._onRenameParams = null;
-  SPS.onRename("test-root", "Dummy title");
+  SPS.onRename(aRoot, "Dummy title");
   assertEqual(testModule._onRenameParams, null);
   aRoot.contractid = null;
 

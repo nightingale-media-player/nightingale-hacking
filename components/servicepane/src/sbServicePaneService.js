@@ -328,7 +328,7 @@ ServicePaneNode.prototype = {
       // Use comparison function to determine node position
       let index = 0;
       for (; index < this._childNodes.length; index++)
-        if (this._comparisonFunction(aChild, this._childNodes[index]) >= 0)
+        if (this._comparisonFunction(aChild, this._childNodes[index]) < 0)
           break;
       if (index < this._childNodes.length)
         aBefore = this._childNodes[index];
@@ -748,11 +748,10 @@ ServicePaneService.prototype = {
   },
 
   fillContextMenu: function ServicePaneService_fillContextMenu(
-                                          aId, aContextMenu, aParentWindow) {
-    let node = aId ? this.getNode(aId) : null;
+                                          aNode, aContextMenu, aParentWindow) {
     for each (let module in this._modules) {
       try {
-        module.fillContextMenu(node, aContextMenu, aParentWindow);
+        module.fillContextMenu(aNode, aContextMenu, aParentWindow);
       } catch (ex) {
         Components.utils.reportError(ex);
       }
@@ -760,11 +759,10 @@ ServicePaneService.prototype = {
   },
 
   fillNewItemMenu: function ServicePaneService_fillNewItemMenu(
-                                          aId, aContextMenu, aParentWindow) {
-    let node = aId ? this.getNode(aId) : null;
+                                          aNode, aContextMenu, aParentWindow) {
     for each (let module in this._modules) {
       try {
-        module.fillNewItemMenu(node, aContextMenu, aParentWindow);
+        module.fillNewItemMenu(aNode, aContextMenu, aParentWindow);
       } catch (ex) {
         Components.utils.reportError(ex);
       }
@@ -772,11 +770,10 @@ ServicePaneService.prototype = {
   },
 
   onSelectionChanged: function ServicePaneService_onSelectionChanged(
-                                          aId, aContainer, aParentWindow) {
-    let node = aId ? this.getNode(aId) : null;
+                                          aNode, aContainer, aParentWindow) {
     for each (let module in this._modules) {
       try {
-        module.onSelectionChanged(node, aContainer, aParentWindow);
+        module.onSelectionChanged(aNode, aContainer, aParentWindow);
       } catch (ex) {
         Components.utils.reportError(ex);
       }
@@ -787,15 +784,14 @@ ServicePaneService.prototype = {
    * Called before a node is renamed by the user.
    * Delegates to the module that owns the given node.
    */
-  onBeforeRename: function ServicePaneService_onBeforeRename(aID) {
-    let node = this.getNode(aID);
-    if (!node || !node.editable)
+  onBeforeRename: function ServicePaneService_onBeforeRename(aNode) {
+    if (!aNode || !aNode.editable)
       return;
   
     // Pass the message on to the node owner
-    if (node.contractid && node.contractid in this._modulesByContractId) {
-      let module = this._modulesByContractId[node.contractid];
-      module.onBeforeRename(node);
+    if (aNode.contractid && aNode.contractid in this._modulesByContractId) {
+      let module = this._modulesByContractId[aNode.contractid];
+      module.onBeforeRename(aNode);
     }
   },
 
@@ -803,15 +799,14 @@ ServicePaneService.prototype = {
    * Called when a node is renamed by the user.
    * Delegates to the module that owns the given node.
    */
-  onRename: function ServicePaneService_onRename(aID, aNewName) {
-    let node = this.getNode(aID);
-    if (!node || !node.editable)
+  onRename: function ServicePaneService_onRename(aNode, aNewName) {
+    if (!aNode || !aNode.editable)
       return;
   
     // Pass the message on to the node owner
-    if (node.contractid && node.contractid in this._modulesByContractId) {
-      let module = this._modulesByContractId[node.contractid];
-      module.onRename(node, aNewName);
+    if (aNode.contractid && aNode.contractid in this._modulesByContractId) {
+      let module = this._modulesByContractId[aNode.contractid];
+      module.onRename(aNode, aNewName);
     }
   },
 
@@ -916,37 +911,36 @@ ServicePaneService.prototype = {
   },
 
   canDrop: function ServicePaneService_canDrop(
-                                  aId, aDragSession, aOrientation, aWindow) {
-    LOG("canDrop(" + aId + ")");
-
-    let node = this.getNode(aId);
-    if (!node) {
+                                  aNode, aDragSession, aOrientation, aWindow) {
+    if (!aNode) {
       return false;
     }
   
+    LOG("canDrop(" + aNode.id + ")");
+
     // see if we can handle the drag and drop based on node properties
-    if (this._canDropReorder(node, aDragSession, aOrientation)) {
+    if (this._canDropReorder(aNode, aDragSession, aOrientation)) {
       return true;
     }
   
     // let the module that owns this node handle this
-    if (node.contractid && node.contractid in this._modulesByContractId) {
-      let module = this._modulesByContractId[node.contractid];
-      return module.canDrop(node, aDragSession, aOrientation, aWindow);
+    if (aNode.contractid && aNode.contractid in this._modulesByContractId) {
+      let module = this._modulesByContractId[aNode.contractid];
+      return module.canDrop(aNode, aDragSession, aOrientation, aWindow);
     }
     return false;
   },
 
   onDrop: function ServicePaneService_onDrop(
-                                    aId, aDragSession, aOrientation, aWindow) {
-    LOG("onDrop(" + aId + ")");
-
-    let node = this.getNode(aId);
-    if (!node) {
+                                    aNode, aDragSession, aOrientation, aWindow) {
+    if (!aNode) {
       return;
     }
+
+    LOG("onDrop(" + aNode.id + ")");
+
     // see if this is a reorder we can handle based on node properties
-    let type = this._canDropReorder(node, aDragSession, aOrientation);
+    let type = this._canDropReorder(aNode, aDragSession, aOrientation);
     if (type) {
       // we're in business
   
@@ -968,35 +962,39 @@ ServicePaneService.prototype = {
       let droppedNode = this.getNode(data);
   
       // fail if we can't get the node or it is the node we are over
-      if (!droppedNode || node == droppedNode) {
+      if (!droppedNode || aNode == droppedNode) {
         return;
       }
   
       if (aOrientation == 0) {
         // drop into
-        node.appendChild(droppedNode);
+        aNode.appendChild(droppedNode);
       } else if (aOrientation > 0) {
         // drop after
-        node.parentNode.insertBefore(droppedNode, node.nextSibling);
+        aNode.parentNode.insertBefore(droppedNode, aNode.nextSibling);
       } else {
         // drop before
-        node.parentNode.insertBefore(droppedNode, node);
+        aNode.parentNode.insertBefore(droppedNode, aNode);
       }
       return;
     }
   
     // or let the module that owns this node handle it
-    if (node.contractid && node.contractid in this._modulesByContractId) {
-      let module = this._modulesByContractId[node.contractid];
-      module.onDrop(node, aDragSession, aOrientation, aWindow);
+    if (aNode.contractid && aNode.contractid in this._modulesByContractId) {
+      let module = this._modulesByContractId[aNode.contractid];
+      module.onDrop(aNode, aDragSession, aOrientation, aWindow);
     }
   },
 
-  onDragGesture: function ServicePaneService_onDragGesture(aId, aTransferable) {
-    LOG("onDragGesture(" + aId + ")");
+  onDragGesture: function ServicePaneService_onDragGesture(aNode, aTransferable) {
+    if (!aNode) {
+      return false;
+    }
+
+    LOG("onDragGesture(" + aNode.id + ")");
   
-    let node = this.getNode(aId);
-    if (!node) {
+    if (!aNode.id) {
+      Cu.reportError(new Exception("Cannot drag a service pane node without ID"));
       return false;
     }
   
@@ -1007,22 +1005,21 @@ ServicePaneService.prototype = {
                          .createInstance(Ci.nsITransferable);
   
     // get drag types from the node data
-    if (node.dndDragTypes) {
-      let types = node.dndDragTypes.split(',');
+    if (aNode.dndDragTypes) {
+      let types = aNode.dndDragTypes.split(',');
       for each (let type in types) {
-        transferable.addDataFlavor(type);
         let text = Components.classes["@mozilla.org/supports-string;1"].
            createInstance(Components.interfaces.nsISupportsString);
-        text.data = node.id;
+        text.data = aNode.id;
         // double the length - it's unicode - this is stupid
         transferable.setTransferData(type, text, text.data.length * 2);
         success = true;
       }
     }
   
-    if (node.contractid && node.contractid in this._modulesByContractId) {
-      let module = this._modulesByContractId[node.contractid];
-      if (module.onDragGesture(node, transferable)) {
+    if (aNode.contractid && aNode.contractid in this._modulesByContractId) {
+      let module = this._modulesByContractId[aNode.contractid];
+      if (module.onDragGesture(aNode, transferable)) {
         success = true;
       }
     }

@@ -203,7 +203,7 @@ interface sbIServicePaneListener : nsISupports {
 *
 * @halfbaked
 */
-[scriptable, uuid(061a99c4-1dd2-11b2-a72c-c9da1a791544)]
+[scriptable, uuid(77e16142-1dd2-11b2-adee-9daf2e82cdd8)]
 interface sbIServicePaneService : nsISupports
 {
   /**
@@ -277,59 +277,59 @@ interface sbIServicePaneService : nsISupports
   void save();
 
   /* \brief Fill the context menu for the given node
-   * \param aId the id of the node
+   * \param aNode node clicked on
    * \param aContextMenu the menu we're trying to fill
    * \param aParentWindow the toplevel window we're displaying in
    */
-  void fillContextMenu(in AString aId,
+  void fillContextMenu(in sbIServicePaneNode aNode,
                        in nsIDOMXULElement aContextMenu,
                        in nsIDOMWindow aParentWindow);
   
   /* \brief Fill a menu with menuitems to create new tree nodes
-   * \param aId the id of the node or null for the click and hold menu
+   * \param aNode the node or null for the click and hold menu
    * \param aContextMenu the menu we're trying to fill
    * \param aParentWindow the toplevel window we're displaying in
    */
-  void fillNewItemMenu(in AString aId,
+  void fillNewItemMenu(in sbIServicePaneNode aNode,
                        in nsIDOMXULElement aContextMenu,
                        in nsIDOMWindow aParentWindow);
   
   /* \brief Selection changes notification
-   * \param aId the id of the node that is now selected
+   * \param aNode node that is now selected
    * \param aContainer The container object that implements the selection
    * \param aParentWindow the toplevel window we're displaying in
    */
-  void onSelectionChanged(in AString aId,
+  void onSelectionChanged(in sbIServicePaneNode aNode,
                           in nsIDOMNode aContainer,
                           in nsIDOMWindow aParentWindow);
   
   /* drag and drop support */
-  PRBool canDrop(in AString aID,
+  PRBool canDrop(in sbIServicePaneNode aNode,
                  in nsIDragSession aDragSession,
                  in PRInt32 aOrientation,
                  in nsIDOMWindow aWindow);
                  
-  void onDrop(in AString aID,
+  void onDrop(in sbIServicePaneNode aNode,
               in nsIDragSession aDragSession,
               in PRInt32 aOrientation,
               in nsIDOMWindow aWindow);
               
-  PRBool onDragGesture(in AString aID,
+  PRBool onDragGesture(in sbIServicePaneNode aNode,
                        out nsITransferable aTransferable);
 
   /* \brief Called before a user starts to rename a node.
-   * \param aId the ID of the node about to be renamed
+   * \param aNode the node about to be renamed
    */
-  void onBeforeRename(in AString aID);
+  void onBeforeRename(in sbIServicePaneNode aNode);
 
   /* \brief Called when a node is renamed by the user, allows
    *        the node owner to accept the action by setting the
    *        node name to the given value.
-   * \param aId the ID of the node being renamed
+   * \param aNode the node being renamed
    * \param aNewName new name entered by the user or null if user canceled
    *        renaming
    */
-  void onRename(in AString aID,
+  void onRename(in sbIServicePaneNode aNode,
                 in AString aNewName);
 
   /* \brief Add a service pane listener
