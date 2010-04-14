@@ -181,68 +181,39 @@ NewReleases = {
     var SB_NS = 'http://songbirdnest.com/data/1.0#';
     var SP_NS = 'http://songbirdnest.com/rdf/servicepane#';
 
-		var SPS = Cc['@songbirdnest.com/servicepane/service;1'].
-				getService(Ci.sbIServicePaneService);
-		SPS.init();
+    var SPS = Cc["@songbirdnest.com/servicepane/service;1"]
+                .getService(Ci.sbIServicePaneService);
 		
-    var servicesNode = SPS.getNode("SB:Services") ||
-                       this._findServicesNode(SPS.root, SB_NS);
-    if (servicesNode == null) {
+    var servicesNode = SPS.getNode("SB:Services");
+    if (servicesNode) {
+      servicesNode.hidden = false;
+    } else {
       // No services node found, create one
-      servicesNode = SPS.addNode("SB:Services", SPS.root, true);
-      servicesNode.properties = 'folder services';
+      servicesNode = SPS.createNode();
+      servicesNode.id = "SB:Services";
+      servicesNode.className = 'folder services';
       servicesNode.name = SBString("servicesource.services");
+      servicesNode.editable = false;
       servicesNode.setAttributeNS(SB_NS, "servicesFolder", 1);
       servicesNode.setAttributeNS(SP_NS, "Weight", 1);
-      SPS.sortNode(servicesNode);
+      SPS.root.appendChild(servicesNode);
     }
 
-    var newReleasesURL = "chrome://newreleases/content/browse.xul";
-		var newReleasesNode = SPS.getNode("urn:newreleases") ||
-                       SPS.getNodeForURL(newReleasesURL);
-		if (newReleasesNode != null) {
-      // We found one - make sure it's homed under the Services folder
-      if (newReleasesNode.parentNode &&
-          newReleasesNode.parentNode.name != SBString("servicesource.services")) {
-        // remove it
-        SPS.removeNode(newReleasesNode);
-        newReleasesNode = null;
-      }
-    }
-
-    if (newReleasesNode == null) {
-      // No New Releases node found, create a new one
-      newReleasesNode = SPS.addNode("urn:newreleases", servicesNode, false);
-      newReleasesNode.url = "chrome://newreleases/content/browse.xul";
-      newReleasesNode.name = this._strings.getString("servicePaneName");
-      newReleasesNode.image = 'chrome://newreleases/skin/node-icon.png';
-      newReleasesNode.tooltip =
-        this._strings.getString("servicePaneInitialTooltip");
-      newReleasesNode.properties = "newReleases";
-    }
-    else {
-      // Read the last count from node name
-      let name = newReleasesNode.name;
-      let begin = name.indexOf('(');
-      if (begin != -1) {
-        let end = name.indexOf(')');
-        if (end != -1 && end > begin)
-          this.lastReleasesCount = parseInt(name.substring(begin + 1, end));
-      }
-    }
+    // Create New Releases node
+    var newReleasesNode = SPS.createNode();
+    newReleasesNode.id = "urn:newreleases";
+    newReleasesNode.url = "chrome://newreleases/content/browse.xul";
+    newReleasesNode.name = this._strings.getString("servicePaneName");
+    newReleasesNode.image = 'chrome://newreleases/skin/node-icon.png';
+    newReleasesNode.tooltip =
+      this._strings.getString("servicePaneInitialTooltip");
+    newReleasesNode.editable = false;
+    newReleasesNode.className = "newReleases";
     newReleasesNode.setAttributeNS(SP_NS, "addonID", "@EXTENSION_UUID@");
+    servicesNode.appendChild(newReleasesNode);
 
     // may need to reset the name post-localisation
-    //this.updateNewReleasesCount();
-
-    // Save
-    SPS.save();
-
-		// outside the loop in case we're going from disabled->enabled
-		newReleasesNode.hidden = false;
-    servicesNode.hidden = false;
-    newReleasesNode.editable = false;
-    servicesNode.editable = false;
+    this.updateNewReleasesCount();
 	},
 
   // Find the Services node in the servicepane
@@ -275,7 +246,6 @@ NewReleases = {
 		} else
 			newReleasesCount = num;
 
-dump("lastReleasesCount: " + this.lastReleasesCount + ", newReleasesCount: " + newReleasesCount + "\n");
 		// Only update if the count has changed
 		if (this.lastReleasesCount == newReleasesCount)
 			return;
@@ -290,9 +260,8 @@ dump("lastReleasesCount: " + this.lastReleasesCount + ", newReleasesCount: " + n
 
 		}
 
-		var SPS = Components.classes['@songbirdnest.com/servicepane/service;1']
-			.getService(Components.interfaces.sbIServicePaneService);
-		SPS.init();
+		var SPS = Cc["@songbirdnest.com/servicepane/service;1"]
+								.getService(Ci.sbIServicePaneService);
 		var newReleasesNode = SPS.getNode("urn:newreleases");
 		if (newReleasesNode != null) {
 			if (newReleasesCount > 0) {
@@ -306,7 +275,6 @@ dump("lastReleasesCount: " + this.lastReleasesCount + ", newReleasesCount: " + n
 			newReleasesNode.tooltip = newReleasesCount +
 				this.servicePaneStr.GetStringFromName("servicePaneTooltip")
 		}
-		SPS.save();
 	},
 	
 

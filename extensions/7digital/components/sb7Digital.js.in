@@ -154,8 +154,7 @@ function sb7Digital_observe(subject, topic, data) {
     this._firstRunTimer.cancel();
     this._firstRunTimer = null;
   } else if (topic == 'songbird-main-window-presented') {
-             /* && !Application.prefs.getValue(PREF_CONFIGURED, false)) { */
-    // Run this everytime since it involves servicepane node migration
+    // Run this everytime since it involves servicepane node initialization
     this.install();
   }
 }
@@ -163,81 +162,32 @@ function sb7Digital_observe(subject, topic, data) {
 // install 7digital music store integration
 sb7Digital.prototype.install =
 function sb7Digital_install() {
-  this._servicePaneService.init();
   // install ourselves into the service pane
   try {
     // find the store node
     var servicesNode = this._servicePaneService.getNode(NODE_SERVICES);
     if (!servicesNode) {
-      servicesNode = this._servicePaneService.addNode(NODE_SERVICES, 
-          this._servicePaneService.root, true);
-      servicesNode.properties = 'folder services';
+      servicesNode = this._servicePaneService.createNode();
+      servicesNode.id = NODE_SERVICES;
+      servicesNode.className = 'folder services';
       servicesNode.editable = false;
       servicesNode.name = SBString("servicesource.services");
-      servicesNode.hidden = false;
       servicesNode.setAttributeNS(SERVICEPANE_NS, 'Weight', 1);
-      this._servicePaneService.sortNode(servicesNode);
+      this._servicePaneService.root.appendChild(servicesNode);
     } else {
       servicesNode.hidden = false;
-      servicesNode.name = SBString("servicesource.services");
     }
 
-    // find the 7digital node
-    var myNode = this._servicePaneService.getNode(NODE_7DIGITAL);
-
-    // for migration purposes, 7Digital used to be under the store node
-    // let's assert that it's under the servicesnode
-    if (myNode && myNode.parentNode &&
-        myNode.parentNode.name != SBString("servicesource.services"))
-    {
-      var parentNode = myNode.parentNode;
-
-      // it's not under the services node, delete it
-      this._servicePaneService.removeNode(myNode);
-
-      // set it to null so we'll recreate it in the next step
-      myNode = null;
-
-      // see if the parent node is empty, if it is, then remove it
-      var enum = parentNode.childNodes;
-      if (!enum.hasMoreElements()) {
-        this._servicePaneService.removeNode(parentNode);
-      } else {
-        var visible = false;
-        while (enum.hasMoreElements()) {
-          var node = enum.getNext();
-          if (!node.hidden) {
-            visible = true;
-            break;
-          }
-        }
-        parentNode.hidden = !visible;
-      }
-    } else if (myNode && !myNode.parentNode) {
-      // it's not under the services node, delete it
-      this._servicePaneService.removeNode(myNode);
-
-      // set it to null so we'll recreate it in the next step
-      myNode = null;
-    }
-
-    if (!myNode) {
-      // can't find my node, let's make it
-      myNode = this._servicePaneService.addNode(NODE_7DIGITAL, servicesNode, 
-          false);
-      myNode.url = STORE_URL;
-      myNode.image = 'chrome://7digital/skin/servicepane-icon.png';
-      myNode.properties = '7digital';
-      myNode.name = '&servicepane.7digital';
-      myNode.stringbundle = STRINGBUNDLE;
-    }
+    // create 7digital node
+    var myNode = this._servicePaneService.createNode();
+    myNode.id = NODE_7DIGITAL;
+    myNode.url = STORE_URL;
+    myNode.image = 'chrome://7digital/skin/servicepane-icon.png';
+    myNode.className = '7digital';
+    myNode.name = '&servicepane.7digital';
+    myNode.stringbundle = STRINGBUNDLE;
     myNode.setAttributeNS(SERVICEPANE_NS, "addonID", "@EXTENSION_UUID@");
-
-    // make the 7digital node visible
-    myNode.hidden = false;
-
-    // make the services node visible
-    servicesNode.hidden = false;
+    servicesNode.appendChild(myNode);
   } catch (e) {
     Cu.reportError(e);
   }
@@ -279,34 +229,6 @@ function sb7Digital_install() {
 // uninstall 7digital music store integration
 sb7Digital.prototype.uninstall =
 function sb7Digital_uninstall() {
-  this._servicePaneService.init();
-  // remove ourselves from the service pane
-  try {
-    // find the 7digital node
-    var myNode = this._servicePaneService.getNode(NODE_7DIGITAL);
-
-    // try to remove the 7digital node
-    if (myNode) {
-      myNode.parentNode.removeChild(myNode);
-    }
-
-    // find the services node, if it has any visible children then leave
-    // it visible - otherwise hide it
-    var servicesNode = this._servicePaneService.getNode(NODE_SERVICES);
-    var visible = false;
-    var enum = servicesNode.childNodes;
-    while (enum.hasMoreElements()) {
-      var node = enum.getNext();
-      if (!node.hidden) {
-        visible = true;
-        break;
-      }
-    }
-    servicesNode.hidden = !visible;
-  } catch (e) {
-    Cu.reportError(e);
-  }
-
   // uninstall our search plugin
   try {
 
@@ -343,4 +265,3 @@ function NSGetModule(compMgr, fileSpec) {
       sb7Digital.prototype.contractID, true, true);
   });
 }
-
