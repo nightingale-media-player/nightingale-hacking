@@ -77,9 +77,6 @@
         <!-- disabled per bug 17607
         <menuitem id="menuitem_file_podcast" class="menuitem-iconic" label="&menu.file.podcast;" accesskey="&menu.file.podcast.accesskey;" />
         -->
-        <!-- XXX lone: disabled; see bug 4387
-        <menuitem id="menuitem_file_folder" class="menuitem-iconic" label="&menu.file.folder;" accesskey="&menu.file.folder.accesskey;" />
-        -->
         <menuseparator id="menu_ImportSeparator"/>
 
         <menuitem id="menuitem_file_scan" key="file-scan-key" class="menuitem-iconic" label="&menu.file.scan;" accesskey="&menu.file.scan.accesskey;"/>

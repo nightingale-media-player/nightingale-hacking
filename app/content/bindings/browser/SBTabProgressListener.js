@@ -28,7 +28,7 @@
  *
  * The tab progress implementation for <sb-tabbrowser>
  * used to set various data remotes on location change (such as whether the back
- * button can be enabled, and whether the displayed content can be bookmarked).
+ * button can be enabled).
  * In addition, it triggers notifyTabContentChange() (for TabContentChange) and
  * session store.
  */
@@ -47,8 +47,6 @@ function SBTabProgressListener(aTabBrowser ) {
 // create an object which implements as much of nsIWebProgressListener as we're using
 SBTabProgressListener.prototype = {
   _tabBrowser: null,
-  _bookmarkService: Components.classes['@songbirdnest.com/servicepane/bookmarks;1']
-                         .getService(Components.interfaces.sbIBookmarks),
 
   onLocationChange: function SBTabProgressListener_onLocationChange(aWebProgress, aRequest, aLocation) {
     try {
@@ -81,29 +79,6 @@ SBTabProgressListener.prototype = {
                     .getService(Components.interfaces.nsIIOService);
         
         aLocation = ioService.newURI("about:blank", null, null);
-      }
-
-      // set the context-menu based on the chromeyness of the location
-      if (aLocation.scheme == 'chrome' || aLocation.scheme == 'about') {
-        //XXXAus: Disable bookmarking for chrome URI's to prevent
-        //stale bookmarks. See bug #4009.
-        SBDataSetBoolValue('browser.canbookmark', false);
-
-        this._tabBrowser.selectedBrowser.contextMenu = null;
-      }
-      else {
-        //XXXAus: Enable bookmarking for all other URI schemes.
-        //See bug #4009.
-        // also check if bookmark already exists
-        if (this._bookmarkService.bookmarkExists(aLocation.spec)){
-          SBDataSetBoolValue('browser.canbookmark', false);
-        }
-        else {
-          SBDataSetBoolValue('browser.canbookmark', true);
-        }
-
-        this._tabBrowser.selectedBrowser.contextMenu =
-          this._tabBrowser.getAttribute('contentcontextmenu');
       }
 
       SBDataSetBoolValue('browser.cansubscription',

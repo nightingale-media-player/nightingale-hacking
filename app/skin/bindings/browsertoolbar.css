@@ -144,24 +144,6 @@ Imported by bindings.css or directly into feathers.
 }
 
 
-/** The bookmark button **/
-#bookmark-button
-{
-  list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);
-  -moz-image-region: rect(0px 96px 16px 80px);
-}
-#bookmark-button:hover
-{
-  -moz-image-region: rect(16px 96px 32px 80px);
-}
-#bookmark-button[disabled="true"]
-{
-  -moz-image-region: rect(48px 96px 64px 80px);
-}
-#bookmark-button[active="true"]
-{
-  -moz-image-region: rect(32px 96px 48px 80px);
-}
 #subscription-button
 {
   list-style-image: url(chrome://songbird/skin/buttons/webbar-buttons.png);

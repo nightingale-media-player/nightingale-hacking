@@ -350,9 +350,6 @@
           this._changeOpenState(row, openState);
           sp.getNodeForRow(row).isOpen = sp.mTree.view.isContainerOpen(row);
         }
-
-        // Namespace for BookmarksServicePaneService attributes.
-        this.BSP = 'http://songbirdnest.com/rdf/bookmarks#';
       ]]></constructor>
       <destructor><![CDATA[
         this.mService.onSelectionChanged(null, this.mTree, window);
@@ -668,21 +665,6 @@
             if (arguments)
               url = URLUtils.addQuery(url, arguments);
             this.browser.loadURI(url, null, null, event, target);
-
-            if( node.getAttributeNS(this.BSP, "Imported") == 'true' ) {
-
-              //This enables us to know if we're packaging bookmarks
-              //that people like or hate while not tracking any bookmarks they create.
-              //See http://bugzilla.songbirdnest.com/show_bug.cgi?id=4021
-
-              // changed to loadNode from click as there are ways other than clicking
-              // to get here.
-
-              try {
-                metrics_inc("app.servicepane.loadnode.bookmarks", node.url, null);
-              } catch(e) { Components.utils.reportError(e); }
-            }
-            
           // If no URL, apply special handling
           } else {
             // If there is a media list for this node, hand it off to the 

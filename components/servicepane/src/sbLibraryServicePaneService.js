@@ -41,7 +41,6 @@ Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
 
 const CONTRACTID = "@songbirdnest.com/servicepane/library;1";
-const ROOTNODE = "SB:Bookmarks";
 
 const URN_PREFIX_ITEM = 'urn:item:';
 const URN_PREFIX_LIBRARY = 'urn:library:';

@@ -92,7 +92,6 @@
 <!ENTITY help.keyboard.name.view.zoomin         "Zoom In" >
 <!ENTITY help.keyboard.name.view.zoomout        "Zoom Out" >
 <!ENTITY help.keyboard.name.view.zoomreset      "Zoom Reset" >
-<!ENTITY help.keyboard.name.bookmark            "Bookmark" >
 <!ENTITY help.keyboard.name.subscribe           "Subscribe" >
 <!ENTITY help.keyboard.name.locationbar         "Focus Location Bar" >
 <!ENTITY help.keyboard.name.tab.new             "New Tab" >

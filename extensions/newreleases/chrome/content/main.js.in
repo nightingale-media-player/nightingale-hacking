@@ -184,8 +184,6 @@ NewReleases = {
 		var SPS = Cc['@songbirdnest.com/servicepane/service;1'].
 				getService(Ci.sbIServicePaneService);
 		SPS.init();
-    var BMS = Cc['@songbirdnest.com/servicepane/bookmarks;1']
-                 .getService(Ci.sbIBookmarks);
 		
     var servicesNode = SPS.getNode("SB:Services") ||
                        this._findServicesNode(SPS.root, SB_NS);
