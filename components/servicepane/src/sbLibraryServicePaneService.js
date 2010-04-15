@@ -1217,13 +1217,19 @@ sbLibraryServicePane.prototype._libraryRemoved =
 function sbLibraryServicePane__libraryRemoved(aLibrary) {
   //logcall(arguments);
 
-  // Find the node for this library
-  var id = this._libraryURN(aLibrary);
-  var node = this._servicePane.getNode(id);
+  // Get the list of nodes for items within the library
+  var libraryItemNodeList = this._servicePane.getNodesByAttributeNS
+                                                (LSP,
+                                                 "LibraryGUID",
+                                                 aLibrary.guid);
 
-  // Hide this node and everything below it
-  if (node) {
-    this._hideLibraryNodes(node);
+  // Hide all nodes for items within the library
+  var libraryItemNodeEnum = libraryItemNodeList.enumerate();
+  while (libraryItemNodeEnum.hasMoreElements()) {
+    // Hide the library item node
+    libraryItemNode =
+      libraryItemNodeEnum.getNext().QueryInterface(Ci.sbIServicePaneNode);
+    this._servicePane.setNodeHidden(libraryItemNode, CONTRACTID, true);
   }
 
   aLibrary.removeListener(this);
