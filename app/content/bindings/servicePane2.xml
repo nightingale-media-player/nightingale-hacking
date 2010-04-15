@@ -81,19 +81,22 @@
     -->
   <binding id="servicepane-node">
     <content mousethrough="never">
-      <xul:hbox class="servicepane-node"
-                flex="1"
-                onclick="loadNodeURL(event);">
-        <xul:image class="servicepane-node-container-arrow" />
-        <xul:image class="servicepane-node-image"
-                   xbl:inherits="src=image"/>
-        <xul:label class="servicepane-node-label"
-                   xbl:inherits="value=name"/>
-        <xul:spacer flex="1" />
-        <xul:hbox class="servicepane-node-badges" flex="1">
-          <children /> <!-- servicepane-node-badges -->
+      <xul:vbox class="servicepane-node" flex="1" onclick="loadNodeURL(event);">
+        
+        <xul:hbox class="servicepane-node-info">
+          <xul:image class="servicepane-node-container-arrow" />
+          <xul:image class="servicepane-node-image" xbl:inherits="src=image"/>
+          <xul:label class="servicepane-node-label" xbl:inherits="value=label"/>
+          <xul:spacer flex="1" />
+          <xul:hbox class="servicepane-node-badges"
+                    sbid="servicepane-node-badges" flex="1" />
         </xul:hbox>
-      </xul:hbox>
+        
+        <xul:vbox class="servicepane-node-children">
+          <children />
+        </xul:vbox>
+
+      </xul:vbox>
     </content>
 
     <implementation>
@@ -108,7 +111,9 @@
           // this point so we call up the DOM of nodes.
           if (this.hasAttribute("nodeid")) {
             var nodeID = this.getAttribute("nodeid");
-            this.nodeData = this.parentNode.getNode(nodeID);
+            dump("nodeid: " + nodeID + " -- parentNode? " + this.parentNode.tagName + "\n");
+            if (this.parentNode)
+              this.nodeData = this.parentNode.getNode(nodeID);
           } else {
             // If we have no node data, then hide by default.
             this.setAttribute("hidden", true);
@@ -121,6 +126,11 @@
         -   whenever we need
         -->
       <field name="_nodeData">null</field>
+      
+       <!--
+        - \brief Hold the badges associated with this node
+        -->
+      <field name="_badges">null</field>
       
       <!--
         - \brief sbIServicePaneNode data associated with this node
@@ -135,8 +145,8 @@
           if (this._nodeData) {
             // Set up the elements
             this.setAttribute("image", this._nodeData.image);
-            this.setAttribute("name", this._nodeData.displayName);
-            this.setAttribute("badge", "");
+            this.setAttribute("label", this._nodeData.displayName);
+            this.setAttribute("collapsed", !this._nodeData.isOpen);
             
             // Hide the node if it should be hidden
             if (this._nodeData.hidden) {
@@ -147,9 +157,9 @@
           }
           else {
             this.setAttribute("image", "");
-            this.setAttribute("name", "");
-            this.setAttribute("badge", "");
+            this.setAttribute("label", "");
             this.setAttribute("hidden");
+            this.setAttribute("collapsed", false);
           }
           return this._nodeData;
         ]]></setter>
@@ -295,6 +305,15 @@
         ]]></body>
       </method>
 
+      <method name="appendBadge">
+      </method>
+
+      <method name="removeBadge">
+      </method>
+
+      <method name="insertBadgeBefore">
+      </method>
+
     </implementation>
   </binding>
   
@@ -317,6 +336,7 @@
       <method name="getNode">
         <parameter name="nodeID"/>
         <body><![CDATA[
+          dump("sb-servicepane-group.getNode() called\n");
           return this.parentNode.getNode(nodeID);
         ]]></body>
       </method>
@@ -438,7 +458,7 @@
           var groupEntry = this.mService.root.firstChild;
           while (groupEntry && groupEntry != this.mService.root.lastChild) {
             // Create the group and set the state
-            var newgroup = this.creategroup(groupEntry);
+            var newgroup = this.createGroup(groupEntry);
             
             // Create the nodes in this group
             var nodeEntry = groupEntry.firstChild;
