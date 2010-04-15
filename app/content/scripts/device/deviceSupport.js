@@ -254,6 +254,12 @@ var sbDeviceVolumeSupport = {
       clearTimeout(deviceInfo.monitorVolumesTimeout);
       deviceInfo.monitorVolumesTimeout = null;
     }
+
+    // Remove any device notifications.
+    if (deviceInfo.notification) {
+      deviceInfo.notification.close();
+      deviceInfo.notification = null;
+    }
   },
 
 
@@ -318,8 +324,11 @@ var sbDeviceVolumeSupport = {
       return;
     }
 
+    // Update device notification.
+    this._updateNotification(deviceInfo);
+
     // Check for new volumes.
-    this._checkForNewVolumes(deviceInfo.device);
+    this._checkForNewVolumes(deviceInfo);
   },
 
 
@@ -382,16 +391,19 @@ var sbDeviceVolumeSupport = {
 
   /**
    * Check if any new volumes have been added to the device specified by
-   * aDevice.  If any have, and there are more than one volume to be managed,
-   * notify the user.
+   * aDeviceInfo.  If any have, and there are more than one volume to be
+   * managed, notify the user.
    *
-   * \aDevice                   Device to check.
+   * \param aDeviceInfo         Info for device to check.
    */
 
   _checkForNewVolumes:
-    function sbDeviceVolumeSupport__checkForNewVolumes(aDevice) {
+    function sbDeviceVolumeSupport__checkForNewVolumes(aDeviceInfo) {
+    // Get the device info.
+    var device = aDeviceInfo.device;
+
     // Get the current device volume library list.
-    var volumeLibraryList = ArrayConverter.JSArray(aDevice.content.libraries);
+    var volumeLibraryList = ArrayConverter.JSArray(device.content.libraries);
 
     // Just return if there are currently no volumes.  This could be because
     // the device has not yet made its volumes available.
@@ -399,7 +411,7 @@ var sbDeviceVolumeSupport = {
       return;
 
     // Get the last device volume GUID list.
-    var lastVolumeGUIDList = aDevice.getPreference("last_volume_list", null);
+    var lastVolumeGUIDList = device.getPreference("last_volume_list", null);
     if (lastVolumeGUIDList) {
       lastVolumeGUIDList = lastVolumeGUIDList.split(",");
     }
@@ -414,8 +426,12 @@ var sbDeviceVolumeSupport = {
         newVolumeLibraryList.push(library);
     }
 
-    // Notify user of new volume if necessary.
-    if ((newVolumeLibraryList.length > 0) && (volumeLibraryList.length > 1)) {
+    // Notify user of new volume if necessary.  Notify if there's a new volume
+    // and at least two volumes to manage.  Only display one notification per
+    // device at a time.
+    if (!aDeviceInfo.notification &&
+        (newVolumeLibraryList.length > 0) &&
+        (volumeLibraryList.length > 1)) {
       // Use the first new volume library.
       var volumeLibrary = newVolumeLibraryList[0];
 
@@ -426,7 +442,7 @@ var sbDeviceVolumeSupport = {
       // Produce the notification label.
       var label = SBFormattedString("device.new_volume_notification.label",
                                     [ StorageFormatter.format(capacity),
-                                      aDevice.name ]);
+                                      device.name ]);
 
       // Produce the list of notification buttons.  Only add a manage volumes
       // button if the service pane is available.
@@ -438,7 +454,7 @@ var sbDeviceVolumeSupport = {
           accessKey:
             SBString("device.new_volume_notification.manage_button.accesskey"),
           callback: function buttonCallback(aNotification, aButton) {
-            _this._doManageVolumes(aDevice);
+            _this._doManageVolumes(device);
           }
         });
       }
@@ -446,12 +462,12 @@ var sbDeviceVolumeSupport = {
       // Notify the user of the new volume.
       var notificationBox = SBGetApplicationNotificationBox();
       if (notificationBox) {
-        var notification = notificationBox.appendNotification
-                             (label,
-                              "new_volume",
-                              null,
-                              notificationBox.PRIORITY_INFO_LOW,
-                              buttonList);
+        aDeviceInfo.notification = notificationBox.appendNotification
+                                     (label,
+                                      "new_volume",
+                                      null,
+                                      notificationBox.PRIORITY_INFO_LOW,
+                                      buttonList);
       }
     }
 
@@ -459,7 +475,7 @@ var sbDeviceVolumeSupport = {
     var volumeGUIDList = [];
     for each (var library in volumeLibraryList)
       volumeGUIDList.push(library.guid);
-    aDevice.setPreference("last_volume_list", volumeGUIDList.join(","));
+    device.setPreference("last_volume_list", volumeGUIDList.join(","));
   },
 
 
@@ -475,10 +491,51 @@ var sbDeviceVolumeSupport = {
     var deviceNode = dsps.getNodeForDevice(aDevice);
 
     // Load the device node.
-    if (gServicePane) {
+    if (deviceNode && gServicePane) {
       gServicePane.mTreePane.selectAndLoadNode(deviceNode,
                                                null,
                                                { manageVolumes: "true" });
+    }
+  },
+
+
+  /**
+   * Update the notification for the device specified by aDeviceInfo.  If the
+   * notification no longer needs to be presented, remove it.
+   *
+   * \param aDeviceInfo         Info for device to update.
+   */
+
+  _updateNotification:
+    function sbDeviceVolumeSupport__updateNotification(aDeviceInfo) {
+    // If a notification has previously been presented for a device and has
+    // since been dismissed, remove notification object from device info.
+    // Unfortunately, there's no callback available for when a notification has
+    // been dismissed.
+    if (aDeviceInfo.notification) {
+      // Check if the notification is still present in the notification box.
+      let notificationBox = SBGetApplicationNotificationBox();
+      let allNotifications = notificationBox.allNotifications;
+      let notificationPresent = false;
+      for (let i = 0; i < allNotifications.length; i++) {
+        if (aDeviceInfo.notification == allNotifications[i]) {
+          notificationPresent = true;
+          break;
+        }
+      }
+
+      // Clear the notification from the device info if it's no longer present.
+      if (!notificationPresent)
+        aDeviceInfo.notification = null;
+    }
+
+    // If a volume management notification is still present, but the number of
+    // volumes is less than two, remove the notification since volume management
+    // is no longer relevant.
+    if (aDeviceInfo.notification &&
+        (aDeviceInfo.device.content.libraries.length < 2)) {
+      aDeviceInfo.notification.close();
+      aDeviceInfo.notification = null;
     }
   }
 };
