@@ -52,6 +52,7 @@ Imported by bindings.css or directly into feathers.
   height: 16px;
 }
 
+sb-servicepane-node.library image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( library ),
 .locationbar-image[properties~="library"],
 .alltabs-item.menuitem-iconic[properties~="library"],
@@ -59,6 +60,7 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/service-pane/icon-library.png) ;
 }
 
+sb-servicepane-node.library.video image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( library video ),
 .locationbar-image[properties~="library"][properties~="video"],
 .alltabs-item.menuitem-iconic[properties~="library"][properties~="video"],
@@ -70,6 +72,7 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/service-pane/icon-birdhouse.png) ;
 }
 
+sb-servicepane-node.library.web image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( web library ),
 .locationbar-image[properties~="library"][properties~="web"],
 .alltabs-item.menuitem-iconic[properties~="library"][properties~="web"],
@@ -77,6 +80,7 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/service-pane/icon-web-media-history.png) ;
 }
 
+sb-servicepane-node.medialist image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( medialist ),
 .locationbar-image[properties~="medialist"],
 .alltabs-item.menuitem-iconic[properties~="medialist"],
@@ -84,6 +88,7 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/service-pane/icon-playlist.png) ;
 }
 
+sb-servicepane-node.medialisttype-smart image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( medialisttype-smart ),
 .locationbar-image[properties~="medialisttype-smart"],
 .alltabs-item.menuitem-iconic[properties~="medialisttype-smart"],
@@ -91,6 +96,7 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/service-pane/icon-smartplaylist.png);
 }
 
+sb-servicepane-node.medialisttype-dynamic image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( medialisttype-dynamic ),
 .locationbar-image[properties~="medialisttype-dynamic"],
 .alltabs-item.menuitem-iconic[properties~="medialisttype-dynamic"],
@@ -98,6 +104,7 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/service-pane/icon-subscription.png) ;
 }
 
+sb-servicepane-node.podcast image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( podcast ),
 .locationbar-image[properties~="podcast"],
 .alltabs-item.menuitem-iconic[properties~="podcast"],
@@ -105,6 +112,7 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/service-pane/icon-podcast.png) ;
 }
 
+sb-servicepane-node.download image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( download ),
 .locationbar-image[properties~="download"],
 .alltabs-item.menuitem-iconic[properties~="download"],
@@ -112,6 +120,7 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/service-pane/icon-downloads.png) ;
 }
 
+sb-servicepane-node.download.downloading image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( download downloading ),
 .locationbar-image[properties~="download"][properties~="downloading"],
 .alltabs-item.menuitem-iconic[properties~="download"][properties~="downloading"],
@@ -119,6 +128,7 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/service-pane/icon-downloads-progress.png) ;
 }
 
+sb-servicepane-node.device image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( device ),
 .locationbar-image[properties~="device"],
 .alltabs-item.menuitem-iconic[properties~="device"],
@@ -126,6 +136,7 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/service-pane/icon-device.png) ;
 }
 
+sb-servicepane-node.device.busy image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( device busy ),
 .locationbar-image[properties~="device"][properties~="busy"],
 .alltabs-item.menuitem-iconic[properties~="device"][properties~="busy"],
@@ -133,6 +144,7 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/service-pane/icon-busy.png);
 }
 
+sb-servicepane-node.cd-device image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( cd-device ),
 .locationbar-image[properties~="cd-device"],
 .alltabs-item.menuitem-iconic[properties~="cd-device"],
@@ -140,6 +152,7 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/service-pane/cd_rest.png) ;
 }
 
+sb-servicepane-node.cd-device.busy image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( cd-device busy ),
 .locationbar-image[properties~="cd-device"][properties~="busy"],
 .alltabs-item.menuitem-iconic[properties~="cd-device"][properties~="busy"],
@@ -147,6 +160,7 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/service-pane/cd_ripping.png) ;
 }
 
+sb-servicepane-node.cd-device.successful image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( cd-device successful ),
 .locationbar-image[properties~="cd-device"][properties~="successful"],
 .alltabs-item.menuitem-iconic[properties~="cd-device"][properties~="successful"],
@@ -154,6 +168,7 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/service-pane/cd_successful.png) ;
 }
 
+sb-servicepane-node.cd-device.unsuccessful image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( cd-device unsuccessful ),
 .locationbar-image[properties~="cd-device"][properties~="unsuccessful"],
 .alltabs-item.menuitem-iconic[properties~="cd-device"][properties~="unsuccessful"],
@@ -161,6 +176,7 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/service-pane/cd_unsuccessful.png) ;
 }
 
+sb-servicepane-node.bookmark image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( bookmark ) {
   list-style-image: url(chrome://songbird/skin/service-pane/icon-bookmark.png) ;
 }

@@ -84,8 +84,9 @@
       <xul:vbox class="servicepane-node" flex="1" onclick="loadNodeURL(event);">
         
         <xul:hbox class="servicepane-node-info">
-          <xul:image class="servicepane-node-container-arrow" />
-          <xul:image class="servicepane-node-image" xbl:inherits="src=image"/>
+          <xul:image class="servicepane-node-container-arrow" flex="0"/>
+          <xul:image class="servicepane-node-image"
+                     xbl:inherits="src=image" flex="0" />
           <xul:label class="servicepane-node-label" xbl:inherits="value=label"/>
           <xul:spacer flex="1" />
           <xul:hbox class="servicepane-node-badges"
@@ -111,7 +112,7 @@
           // this point so we call up the DOM of nodes.
           if (this.hasAttribute("nodeid")) {
             var nodeID = this.getAttribute("nodeid");
-            dump("nodeid: " + nodeID + " -- parentNode? " + this.parentNode.tagName + "\n");
+            dump("nodeid: " + nodeID + "\n");
             if (this.parentNode)
               this.nodeData = this.parentNode.getNode(nodeID);
           } else {
@@ -154,6 +155,8 @@
             } else if (this.hasAttribute("hidden")) {
               this.removeAttribute("hidden");
             }
+
+            this.className += this._nodeData.className;
           }
           else {
             this.setAttribute("image", "");
@@ -321,8 +324,8 @@
     <content mousethrough="never">
       <xul:vbox class="servicepane-group" flex="1">
         <xul:hbox class="servicepane-group-header">
-          <xul:label class="servicepane-group-label"
-                     xbl:inherits="value=label"/>
+          <xul:description class="servicepane-group-label"
+                     xbl:inherits="xbl:text=label"/>
           <xul:spacer flex="1" />
           <xul:image class="servicepane-group-toggle"/>
         </xul:hbox>
@@ -336,7 +339,6 @@
       <method name="getNode">
         <parameter name="nodeID"/>
         <body><![CDATA[
-          dump("sb-servicepane-group.getNode() called\n");
           return this.parentNode.getNode(nodeID);
         ]]></body>
       </method>
@@ -454,6 +456,7 @@
             this.mService.init();
           }
 
+try {
           var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
           var groupEntry = this.mService.root.firstChild;
           while (groupEntry && groupEntry != this.mService.root.lastChild) {
@@ -470,6 +473,9 @@
             this.appendChild(newgroup);
             groupEntry = groupEntry.nextSibling;
           }
+} catch (e) {
+  dump("exception in loadServicePane: " + e + "\n");
+}
         ]]></body>
       </method>
 
