@@ -385,9 +385,54 @@
         this.mService.init();
         
         this.loadServicePane();
+
+        /* Add a listener to the root node so we know to update when the 
+           hierarchy of nodes changes */
+        this._mutationListener.element = this;
+        this.mService.root.addMutationListener(this._mutationListener);
       ]]>
       </constructor>
   
+      <destructor>
+      <![CDATA[
+        this.mService.root.removeMutationListener(this._mutationListener);
+      ]]>
+      </destructor>
+
+      <!-- sbIServicePaneMutationListener -->
+      <field name="_mutationListener">
+      <![CDATA[
+        ({
+          element: null,
+          hiddenAttributeChanged: function(node, oldVal, newVal) {
+          },
+
+          isOpenAttributeChanged: function(node, oldVal, newVal) {
+          },
+
+          attrModified: function(node, attrName, namespace, oldVal, newVal) {
+          },
+
+          nodeInserted: function(node, parent) {
+            if (!parent || parent == this.element.mService.root) {
+              let newGroup = this.element.createGroup(node);
+              this.element.appendChild(newGroup);
+            } else {
+              /* find the node representing the parent */
+              dump("looking for node with id: " + parent.id + "\n");
+              dump("element: " + this.element.id + "\n");
+              let parentNode = this.element.getElementsByAttribute("nodeid",
+                                            parent.id)[0];
+              let newnode = this.element.createNode(node, parentNode);
+            }
+          },
+
+          nodeRemoved: function(node, parent) {
+          },
+        })
+      ]]>
+      </field>
+
       <!-- The ID of the currently selected node, or null if none -->
       <field name="_selectedNodeID">null</field>
 
@@ -415,6 +460,7 @@
           var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
           var newGroup = document.createElementNS(XULNS, "sb-servicepane-group");
           newGroup.setAttribute("label", nodeData.displayName);
+          newGroup.setAttribute("nodeid", nodeData.id);
           newGroup.setAttribute("id", nodeData.id);
           if (!nodeData.isOpen) {
             newGroup.setAttribute("open", false);
@@ -427,11 +473,11 @@
       </method>
 
       <!--
-        - \brief Create a node that belongs in a group
+        - \brief Create a node that belongs to another node or group
         -->
       <method name="createNode">
         <parameter name="nodeData"/>
-        <parameter name="group"/>
+        <parameter name="parentNode"/>
         <body><![CDATA[
           var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
           var newNode = document.createElementNS(XULNS,"sb-servicepane-node");
@@ -439,7 +485,7 @@
           if (this.hasAttribute("browser")) {
             newNode.setAttribute("browser", this.getAttribute("browser"));
           }
-          group.appendChild(newNode);
+          parentNode.appendChild(newNode);
         ]]></body>
       </method>
 
