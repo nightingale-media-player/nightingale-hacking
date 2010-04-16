@@ -240,6 +240,13 @@ sbDeviceLibrary::Finalize()
   if (NS_SUCCEEDED(rv))
     deviceEventTarget->RemoveEventListener(this);
 
+  // remove device library listener
+  if (mDeviceLibrary) {
+    nsCOMPtr<sbIMediaList> list = do_QueryInterface(mDeviceLibrary);
+    if (list)
+      list->RemoveListener(this);
+  }
+
   if (mDeviceLibrary)
     UnregisterDeviceLibrary();
 
