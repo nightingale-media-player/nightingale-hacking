@@ -840,8 +840,8 @@ struct GSTNameMap {
 static struct GSTNameMap SupportedContainers[] = {
   {"application/ogg", "application/ogg"},
   {"audio/mpeg", "application/x-id3"},
-  {"audio/x-ms-asf", "video/x-ms-asf"},
-  {"wudio/x-wav", "audio/x-wav"}
+  {"video/x-ms-asf", "video/x-ms-asf"},
+  {"audio/x-wav", "audio/x-wav"}
 };
 
 nsresult
