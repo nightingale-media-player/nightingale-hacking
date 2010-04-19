@@ -36,12 +36,15 @@
 #include <sbIDeviceManager.h>
 #include <sbIDeviceEvent.h>
 #include <sbIDeviceEventTarget.h>
+#include <sbThreadUtils.h>
 #include <sbVariantUtils.h>
 
 #include <nsComponentManagerUtils.h>
 #include <nsIClassInfoImpl.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsISupportsPrimitives.h>
+#include <nsIThreadManager.h>
+#include <nsIThreadPool.h>
 #include <nsServiceManagerUtils.h>
 #include <nsMemory.h>
 #include <prlog.h>
@@ -351,15 +354,45 @@ sbCDDeviceMarshall::DiscoverDevices()
 
   NS_ENSURE_STATE(mCDDeviceService);
 
-  // Since the GW stuff is a little jacked, use the index getter
-  PRInt32 deviceCount = 0;
-  rv = mCDDeviceService->GetNbDevices(&deviceCount);
+  nsCOMPtr<nsIThreadPool> threadPoolService =
+    do_GetService("@songbirdnest.com/Songbird/ThreadPoolService;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Dispatch the scan start event.
-  CreateAndDispatchDeviceManagerEvent(sbIDeviceEvent::EVENT_DEVICE_SCAN_START,
-                                      nsnull,
-                                      static_cast<sbIDeviceMarshall *>(this));
+  nsCOMPtr<nsIThreadManager> threadMgr =
+    do_GetService("@mozilla.org/thread-manager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Save the threading context for notifying the listeners on the current
+  // thread once the scan has ended. 
+  rv = threadMgr->GetCurrentThread(getter_AddRefs(mOwnerContextThread));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIRunnable> runnable =
+    NS_NEW_RUNNABLE_METHOD(sbCDDeviceMarshall, this, RunDiscoverDevices);
+  NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
+
+  rv = threadPoolService->Dispatch(runnable, NS_DISPATCH_NORMAL);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+void
+sbCDDeviceMarshall::RunDiscoverDevices()
+{
+  // Since the GW stuff is a little jacked, use the index getter
+  PRInt32 deviceCount = 0;
+  nsresult rv = mCDDeviceService->GetNbDevices(&deviceCount);
+  NS_ENSURE_SUCCESS(rv, /* void */);
+
+  // Notify of scan start.
+  nsCOMPtr<nsIRunnable> runnable =
+    NS_NEW_RUNNABLE_METHOD(sbCDDeviceMarshall, this, RunNotifyDeviceStartScan);
+  NS_ENSURE_TRUE(runnable, /* void */);
+  rv = mOwnerContextThread->Dispatch(runnable, NS_DISPATCH_SYNC);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+      "WARNING: Could not notify of device start scan!");
+  
 
   for (PRInt32 i = 0; i < deviceCount; i++) {
     nsCOMPtr<sbICDDevice> curDevice;
@@ -369,16 +402,43 @@ sbCDDeviceMarshall::DiscoverDevices()
       continue;
     }
 
-    rv = AddDevice(curDevice);
+    // Add the device on the main thread.
+    rv = sbInvokeOnThread1(*this,
+                           &sbCDDeviceMarshall::AddDevice,
+                           NS_ERROR_FAILURE,
+                           curDevice.get(),
+                           mOwnerContextThread);
+
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not add a CD Device!");
   }
 
+
+  // Notify of scan end.
+  runnable = NS_NEW_RUNNABLE_METHOD(sbCDDeviceMarshall,
+                                    this,
+                                    RunNotifyDeviceStopScan);
+  NS_ENSURE_TRUE(runnable, /* void */);
+  rv = mOwnerContextThread->Dispatch(runnable, NS_DISPATCH_SYNC);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+      "WARNING: Could not notify of device start scan!");
+}
+
+void
+sbCDDeviceMarshall::RunNotifyDeviceStartScan()
+{
+  // Dispatch the scan start event.
+  CreateAndDispatchDeviceManagerEvent(sbIDeviceEvent::EVENT_DEVICE_SCAN_START,
+                                      nsnull,
+                                      static_cast<sbIDeviceMarshall *>(this));
+}
+
+void
+sbCDDeviceMarshall::RunNotifyDeviceStopScan()
+{
   // Dispatch the scan end event.
   CreateAndDispatchDeviceManagerEvent(sbIDeviceEvent::EVENT_DEVICE_SCAN_END,
                                       nsnull,
                                       static_cast<sbIDeviceMarshall *>(this));
-
-  return NS_OK;
 }
 
 nsresult
