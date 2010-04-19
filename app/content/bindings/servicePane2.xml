@@ -59,16 +59,94 @@
   <binding id="servicepane-node-badge">
     <content mousethrough="never">
       <xul:hbox class="servicepane-node-badge">
-        <xul:label class="servicepane-node-badge-label" />
-        <xul:image class="servicepane-node-badge-image" />
+        <xul:label sbid="servicepane-node-badge-label"
+                   class="servicepane-node-badge-label"/>
+        <xul:image sbid="servicepane-node-badge-image"
+                   class="servicepane-node-badge-image"
+                   hidden="true"/>
       </xul:hbox>
     </content>
     
     <implementation>
       <constructor>
       <![CDATA[
+          if (this.hasAttribute("badgeImage")) {
+            this.badgeImage = this.getAttribute("badgeImage");
+          }
+          if (this.hasAttribute("badgeLabel")) {
+            this.badgeLabel = this.getAttribute("badgeLabel");
+          }
       ]]>
       </constructor>
+
+      <!--
+        - \brief Gets an element in this binding that has the sbid matching the
+        -   anonID parameter.
+        - \param anonID Anonymous id of the element requested (matches sbid)
+        - \return element if found, or null if not
+        -->
+      <method name="_getElement">
+        <parameter name="anonID"/>
+        <body><![CDATA[
+          return document.getAnonymousElementByAttribute(this,
+                                                         "sbid",
+                                                         anonID);
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Updates the badge depending on the values of the elements. If
+        - the image has no src then we show the label and hide the image, if the
+        - image has a src then we hide the label and show the image.
+        -->
+      <method name="_update">
+        <body><![CDATA[
+          let imageNode = this._getElement("servicepane-node-badge-image");
+          let textNode = this._getElement("servicepane-node-badge-label");
+          if (imageNode.hasAttribute("src")) {
+            imageNode.removeAttribute("hidden");
+            textNode.setAttribute("hidden", true);
+          }
+          else {
+            imageNode.setAttribute("hidden", true);
+            textNode.removeAttribute("hidden");
+          }
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief property for the image of this badge.
+        --> 
+      <property name="badgeImage">
+        <getter><![CDATA[
+          let imageNode = this._getElement("servicepane-node-badge-image");
+          return imageNode.src;
+        ]]></getter>
+        <setter><![CDATA[
+          let imageNode = this._getElement("servicepane-node-badge-image");
+          let textNode = this._getElement("servicepane-node-badge-label");
+          imageNode.src = val;
+          this._update();
+          return val;
+        ]]></setter>
+      </property>
+
+      <!--
+        - \brief property for the text of this badge
+        --> 
+      <property name="badgeLabel">
+        <getter><![CDATA[
+          let textNode = this._getElement("servicepane-node-badge-label");
+          return imageNode.value;
+        ]]></getter>
+        <setter><![CDATA[
+          let textNode = this._getElement("servicepane-node-badge-label");
+          textNode.value = val;
+          this._update();
+          return val;
+        ]]></setter>
+      </property>
+
     </implementation>
   </binding>
 
@@ -127,12 +205,22 @@
         -   whenever we need
         -->
       <field name="_nodeData">null</field>
-      
-       <!--
-        - \brief Hold the badges associated with this node
+
+      <!--
+        - \brief Gets an element in this binding that has the sbid matching the
+        -   anonID parameter.
+        - \param anonID Anonymous id of the element requested (matches sbid)
+        - \return element if found, or null if not
         -->
-      <field name="_badges">null</field>
-      
+      <method name="_getElement">
+        <parameter name="anonID"/>
+        <body><![CDATA[
+          return document.getAnonymousElementByAttribute(this,
+                                                         "sbid",
+                                                         anonID);
+        ]]></body>
+      </method>
+
       <!--
         - \brief sbIServicePaneNode data associated with this node
         --> 
@@ -308,13 +396,82 @@
         ]]></body>
       </method>
 
+      <!--
+        - \brief Creates a badge element.
+        - \param badgeLabel - Value to set the badge to (can be null)
+        - \param badgeImage - Image to set the badge to (can be null)
+        - \return newly created badge element
+        -->
+      <method name="_createBadge">
+        <parameter name="badgeLabel"/>
+        <parameter name="badgeImage"/>
+        <body><![CDATA[
+          var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+          var newBadge = document.createElementNS(XULNS,
+                                                  "sb-servicepane-node-badge");
+          if (badgeLabel)
+            newBadge.setAttribute("badgeLabel", badgeLabel);
+          if (badgeImage)
+            newBadge.setAttribute("badgeImage", badgeImage);
+          return newBadge;
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Appends a badge element to the node.
+        - \param badgeLabel - Value to set the badge to (can be null)
+        - \param badgeImage - Image to set the badge to (can be null)
+        - \return newly appended badge element.
+        -->
       <method name="appendBadge">
+        <parameter name="badgeLabel"/>
+        <parameter name="badgeImage"/>
+        <body><![CDATA[
+          var newBadge = this._createBadge(badgeLabel, badgeImage);
+          var badgeContainer = this._getElement("servicepane-node-badges");
+          badgeContainer.appendChild(newBadge);
+          return newBadge;
+        ]]></body>
       </method>
 
+      <!--
+        - \brief Removes a badge element.
+        - \param index - Index of the badge to remove.
+        - \return copy of removed badge.
+        -->
       <method name="removeBadge">
+        <parameter name="index"/>
+        <body><![CDATA[
+          var oldChild = null;
+          var badgeContainer = this._getElement("servicepane-node-badges");
+          if (badgeContainer.childNodes.length >= index) {
+            oldChild = badgeContainer.removeChild(badgeContainer.childNodes[index]);
+          }
+          return oldChild;
+        ]]></body>
       </method>
 
-      <method name="insertBadgeBefore">
+      <!--
+        - \brief Inserts a badge element before an existing one.
+        - \param badgeLabel - Value to set the badge to (can be null)
+        - \param badgeImage - Image to set the badge to (can be null)
+        - \param beforeIndex - Index of badge to insert a new badge before.
+        - \return newly appended badge element.
+        -->
+     <method name="insertBadgeBefore">
+        <parameter name="badgeLabel"/>
+        <parameter name="badgeImage"/>
+        <parameter name="beforeIndex"/>
+        <body><![CDATA[
+          var badgeContainer = this._getElement("servicepane-node-badges");
+          if (beforeIndex > 0 &&
+              beforeIndex < badgeContainer.childNodes.length) {
+            var newBadge = this._createBadge(badgeLabel, badgeImage);
+            badgeContainer.insertBefore(newBadge,
+                                        badgeContainer.childNodes[beforeIndex]);
+          }
+          return newBadge;
+        ]]></body>
       </method>
 
     </implementation>
