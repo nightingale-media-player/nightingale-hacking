@@ -727,22 +727,29 @@ sbLocalDatabaseSimpleMediaList::Contains(sbIMediaItem* aMediaItem,
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(_retval);
   nsresult rv;
-  
+
   SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
   nsString guid;
   rv = aMediaItem->GetGuid(guid);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Leverage the guid array cache
   rv = GetArray()->ContainsGuid(guid, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::Add(sbIMediaItem* aMediaItem)
+{
+  return AddItem(aMediaItem, nsnull);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::AddItem(sbIMediaItem* aMediaItem,
+                                        sbIMediaItem ** aNewMediaItem)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
 
@@ -770,6 +777,10 @@ sbLocalDatabaseSimpleMediaList::Add(sbIMediaItem* aMediaItem)
   rv = listener.OnEnumerationEnd(nsnull, NS_OK);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  if (aNewMediaItem) {
+    rv = GetItemByIndex(startingIndex, aNewMediaItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   return NS_OK;
 }
 
@@ -1212,7 +1223,7 @@ sbLocalDatabaseSimpleMediaList::Clear()
 
 // Called when something external changed our content without going through the
 // normal means (ie, sbIMediaList). This is not a routine operation, normally
-// everything should go through the media list methods, but there are cases, 
+// everything should go through the media list methods, but there are cases,
 // such as smart playlists, where it makes sense to just copy the content of
 // one table into another. When this happens, none of the listeners will have
 // been notified of anything that may have happened to the items in the list.
@@ -1253,9 +1264,9 @@ sbLocalDatabaseSimpleMediaList::NotifyContentChanged()
       nsCOMPtr<sbIMediaItem> item;
       rv = GetItemByIndex(index, getter_AddRefs(item));
       NotifyListenersItemAdded(this, item, index);
-    } 
+    }
   }
-  
+
   return NS_OK;
 }
 

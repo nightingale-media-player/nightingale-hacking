@@ -3853,6 +3853,13 @@ sbLocalDatabaseLibrary::Contains(sbIMediaItem* aMediaItem,
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::Add(sbIMediaItem* aMediaItem)
 {
+  return AddItem(aMediaItem, nsnull);
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::AddItem(sbIMediaItem* aMediaItem,
+                                sbIMediaItem ** aNewMediaItem)
+{
   NS_ENSURE_ARG_POINTER(aMediaItem);
 
   SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
@@ -3893,6 +3900,9 @@ sbLocalDatabaseLibrary::Add(sbIMediaItem* aMediaItem)
   // It's better here to continue rather than halt on error.
   originalLocalDatabaseLibrary->NotifyCopyListenersItemCopied(aMediaItem,
                                                               newMediaItem);
+  if (aNewMediaItem) {
+    newMediaItem.forget(aNewMediaItem);
+  }
 
   return NS_OK;
 }

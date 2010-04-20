@@ -2341,11 +2341,21 @@ sbDeviceLibrary::ClearItems()
 NS_IMETHODIMP
 sbDeviceLibrary::Add(sbIMediaItem *aMediaItem)
 {
+  return AddItem(aMediaItem, nsnull);
+}
+
+/*
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbDeviceLibrary::AddItem(sbIMediaItem *aMediaItem,
+                         sbIMediaItem ** aNewMediaItem)
+{
   NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
   SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeAdd(aMediaItem, &mShouldProcceed));
 
   if (mPerformAction) {
-    return mDeviceLibrary->Add(aMediaItem);
+    return mDeviceLibrary->AddItem(aMediaItem, aNewMediaItem);
   } else {
     return NS_OK;
   }

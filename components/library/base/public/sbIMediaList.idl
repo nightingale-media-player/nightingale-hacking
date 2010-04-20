@@ -54,7 +54,7 @@ interface sbIPropertyArray;
  *
  * \sa List of "see also" interfaces
  */
-[scriptable, uuid(ee5cbec0-e3a8-11de-8a39-0800200c9a66)]
+[scriptable, uuid(16BD1ACC-2C8B-4f91-A340-F4F3437C516B)]
 interface sbIMediaList : sbIMediaItem
 {
   /*
@@ -867,7 +867,49 @@ interface sbIMediaList : sbIMediaItem
     <clear()>
   */
   void add(in sbIMediaItem aMediaItem);
+  
+  /**
+   * \brief addItem a media item to this list
+   * \param aMediaItem The media item to add to the list
+   * \return the media item added. This may not be the same item passed in
+   *         if the item belongs to another library. And it may be null if
+   *         no item was added.
+   */
 
+  /*
+  Method: addItem()
+
+  Add a <MediaItem> to this <MediaList>.
+
+  Prototype:
+    addItem(<MediaItem> mediaItem);
+
+  Parameters:
+    mediaItem - The <MediaItem> to add.
+
+  Example:
+    (start code)
+    //Create or get a library.
+    var library = songbird.siteLibrary("", "");
+
+    //Create a mediaitem.
+    var mediaItem = library.createMediaItem("http://path/to/item.mp3");
+
+    //Create a medialist.
+    var mediaList = library.createMediaList("simple");
+
+    //Add same item twice. We now have mediaItem at index 0 and 1.
+    var newItem = mediaList.addItem(mediaItem);
+
+    (end)
+
+  See Also:
+    <addAll()>
+    <remove()>
+    <removeByIndex()>
+    <clear()>
+  */
+  sbIMediaItem addItem(in sbIMediaItem aMediaItem);
   /**
    * \brief Add the contents of a media list to this list
    * \param aMediaList The media list whose contents are to be added

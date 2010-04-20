@@ -77,6 +77,7 @@
 // override in sbDeviceLibrary.
 #define SB_DECL_SBIMEDIALIST_OVERRIDES \
   NS_IMETHOD Add(sbIMediaItem *aMediaItem); \
+  NS_IMETHOD AddItem(sbIMediaItem *aMediaItem, sbIMediaItem ** aNewMediaItem); \
   NS_IMETHOD AddAll(sbIMediaList *aMediaList); \
   NS_IMETHOD AddSome(nsISimpleEnumerator *aMediaItems); \
   NS_IMETHOD Clear(void);

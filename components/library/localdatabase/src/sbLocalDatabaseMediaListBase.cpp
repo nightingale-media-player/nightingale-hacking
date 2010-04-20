@@ -144,7 +144,7 @@ void sbLocalDatabaseMediaListBase::SetArray(sbILocalDatabaseGUIDArray * aArray)
     mPreviousListener = PR_FALSE;
     ClearCachedPartialArray();
   }
-  
+
   mFullArray = aArray;
 }
 
@@ -219,7 +219,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByPropertyInternal(const nsAString& 
   rv = guidArray->AddFilter(aID, aValueEnum, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // We need to listen for invalidates so our partial cached array can be 
+  // We need to listen for invalidates so our partial cached array can be
   // invalidated
   if (!mPreviousListener) {
     mPreviousListener = PR_TRUE;
@@ -228,7 +228,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByPropertyInternal(const nsAString& 
 
   // Save off the guid array in case we need it.
   mCachedPartialArray = guidArray;
-  
+
   // And make an enumerator to return the filtered items.
   sbGUIDArrayEnumerator enumerator(mLibrary, guidArray);
 
@@ -567,7 +567,7 @@ sbLocalDatabaseMediaListBase::GetListContentType(PRUint16* aContentType)
   // Set the default value.
   *aContentType = sbIMediaList::CONTENTTYPE_NONE;
 
-  // Do some quick check on some types of lists that not belongs to 
+  // Do some quick check on some types of lists that not belongs to
   nsAutoString customType;
   nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
                             customType);
@@ -783,10 +783,10 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProp
 {
   NS_ENSURE_ARG_POINTER(aProperties);
   NS_ENSURE_ARG_POINTER(aEnumerationListener);
-  
+
   // This isn't a single value so we can't use the previous single value cached
   ClearCachedPartialArray();
-  
+
   PRUint32 propertyCount;
   nsresult rv = aProperties->GetLength(&propertyCount);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -919,8 +919,8 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProp
 
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetItemsByProperty(const nsAString & aPropertyID, 
-                                                 const nsAString & aPropertyValue, 
+sbLocalDatabaseMediaListBase::GetItemsByProperty(const nsAString & aPropertyID,
+                                                 const nsAString & aPropertyValue,
                                                  nsIArray **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
@@ -932,9 +932,9 @@ sbLocalDatabaseMediaListBase::GetItemsByProperty(const nsAString & aPropertyID,
   nsresult rv = enumerator->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = EnumerateItemsByProperty(aPropertyID, 
-                                aPropertyValue, 
-                                enumerator, 
+  rv = EnumerateItemsByProperty(aPropertyID,
+                                aPropertyValue,
+                                enumerator,
                                 sbIMediaList::ENUMERATIONTYPE_LOCKING);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -942,8 +942,8 @@ sbLocalDatabaseMediaListBase::GetItemsByProperty(const nsAString & aPropertyID,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::GetItemCountByProperty(const nsAString & aPropertyID, 
-                                                     const nsAString & aPropertyValue, 
+sbLocalDatabaseMediaListBase::GetItemCountByProperty(const nsAString & aPropertyID,
+                                                     const nsAString & aPropertyValue,
                                                      PRUint32 *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
@@ -955,17 +955,17 @@ sbLocalDatabaseMediaListBase::GetItemCountByProperty(const nsAString & aProperty
   nsresult rv = enumerator->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = EnumerateItemsByProperty(aPropertyID, 
-                                aPropertyValue, 
-                                enumerator, 
+  rv = EnumerateItemsByProperty(aPropertyID,
+                                aPropertyValue,
+                                enumerator,
                                 sbIMediaList::ENUMERATIONTYPE_LOCKING);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return enumerator->GetArrayLength(_retval);
 }
 
-NS_IMETHODIMP 
-sbLocalDatabaseMediaListBase::GetItemsByProperties(sbIPropertyArray *aProperties, 
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::GetItemsByProperties(sbIPropertyArray *aProperties,
                                                    nsIArray **_retval)
 {
   NS_ENSURE_ARG_POINTER(aProperties);
@@ -978,8 +978,8 @@ sbLocalDatabaseMediaListBase::GetItemsByProperties(sbIPropertyArray *aProperties
   nsresult rv = enumerator->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = EnumerateItemsByProperties(aProperties, 
-                                  enumerator, 
+  rv = EnumerateItemsByProperties(aProperties,
+                                  enumerator,
                                   sbIMediaList::ENUMERATIONTYPE_LOCKING);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1092,7 +1092,7 @@ sbLocalDatabaseMediaListBase::GetUserEditableContent(PRBool* aUserEditableConten
   NS_ENSURE_ARG_POINTER(aUserEditableContent);
 
   // Item is readonly if it contains a "1" in the corresponding property.
-  
+
   nsAutoString str;
   nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISCONTENTREADONLY), str);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1104,6 +1104,14 @@ sbLocalDatabaseMediaListBase::GetUserEditableContent(PRBool* aUserEditableConten
 
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::Add(sbIMediaItem* aMediaItem)
+{
+  NS_NOTREACHED("Not meant to be implemented in this base class");
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::AddItem(sbIMediaItem* aMediaItem,
+                                      sbIMediaItem ** aNewMediaItem)
 {
   NS_NOTREACHED("Not meant to be implemented in this base class");
   return NS_ERROR_NOT_IMPLEMENTED;
@@ -1270,7 +1278,7 @@ sbGUIDArrayValueEnumerator::GetNext(nsAString& _retval)
   NS_ENSURE_SUCCESS(rv, rv);
 
   mNextIndex++;
-  
+
   return NS_OK;
 }
 

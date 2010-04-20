@@ -58,6 +58,7 @@ sbURIImportService.prototype =
   _totalInserted:    0,      // number of items inserted in the medialist
   _totalDups:        0,      // number of items we already had in the library
   _otherDrops:       0,      // number of other drops handled (eg, XPI, JAR)
+  _mainLibrary:      null,   // The main library
 
 
   // sbIURIImportService
@@ -83,6 +84,9 @@ sbURIImportService.prototype =
     this._totalImported = 0;
     this._totalInserted = 0;
     this._totalDups = 0;
+    this._mainLibrary = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                          .getService(Ci.sbILibraryManager)
+                          .mainLibrary;
 
     this._uriArray = aMutableURIArray;
 
@@ -204,13 +208,13 @@ sbURIImportService.prototype =
   _importDropFile: function(aURI) {
     try {    
       // is this a media url ?
-      var typeSniffer = 
+      let typeSniffer = 
         Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
           .createInstance(Ci.sbIMediacoreTypeSniffer);
-      var Application = Cc["@mozilla.org/fuel/application;1"]
+      let Application = Cc["@mozilla.org/fuel/application;1"]
                           .getService(Ci.fuelIApplication);
 
-      var isValidMediaURL = typeSniffer.isValidMediaURL(aURI);
+      let isValidMediaURL = typeSniffer.isValidMediaURL(aURI);
       if (!Application.prefs.getValue("songbird.mediascan.enableVideoImporting", true)
           && typeSniffer.isValidVideoURL(aURI)) {
         isValidMediaURL = false;
@@ -219,7 +223,7 @@ sbURIImportService.prototype =
       if (isValidMediaURL) {
         // check whether the item already exists in the library 
         // for the target list
-        var item = 
+        let item = 
           this._getFirstItemByProperty(this._targetList.library,
                                        SBProperties.contentURL,
                                        aURI.spec);
@@ -230,22 +234,47 @@ sbURIImportService.prototype =
                                          SBProperties.originURL,
                                          aURI.spec);
         }
-
+        let mainLibraryItem = false;
+        // If we're not dropping on the main library look to see if the main
+        // library knows about this item. If it does, then use that item to add
+        if (!this._targetList.library.equals(this._mainLibrary)) {
+          if (!item) {
+            item = this._getFirstItemByProperty(this._mainLibrary,
+                                                SBProperties.contentURL,
+                                                aURI.spec);
+          }
+          // If we didn't find the content URL try the originURL
+          if (!item) {
+            item = 
+              this._getFirstItemByProperty(this._mainLibrary,
+                                           SBProperties.originURL,
+                                           aURI.spec);
+          }
+          mainLibraryItem = item != null;
+        }
         // if the item didnt exist before, create it now
-        var itemAdded = false;
-        if (!item) {
-          var holder = {};
-          var wasCreated = 
-            this._targetList.library.createMediaItemIfNotExist(aURI, 
-                                                               null, 
-                                                               holder);
-          item = holder.value;
-          
-          if (wasCreated && item) {
+        let itemAdded = false;
+        if (mainLibraryItem || !item) {
+          let holder = {};
+          if (!mainLibraryItem) {
+              
+              itemAdded = 
+                this._targetList.library.createMediaItemIfNotExist(aURI, 
+                                                                   null, 
+                                                                   holder);
+              item = holder.value;
+          }
+          else {
+            
+            // If we add it from the main library, we need to get the item
+            // that might have been created and use that
+            let newItem = this._targetList.library.addItem(item);
+            itemAdded = newItem && newItem.equals(item);
+            item = newItem;
+          }
+          if (itemAdded) {
             this._scanList.appendElement(item, false);
             this._totalImported++;
-            
-            itemAdded = true;
           }
         } 
 
@@ -360,6 +389,7 @@ sbURIImportService.prototype =
     this._scanList = null;
     this._window = null;
     this._listener = null;
+    this._mainLibrary = null;
   },
 
   QueryInterface: XPCOMUtils.generateQI([Ci.sbIURIImportService])
