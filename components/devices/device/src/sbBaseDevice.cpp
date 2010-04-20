@@ -1953,13 +1953,18 @@ nsresult sbBaseDevice::InitializeDeviceLibrary
                             NS_LITERAL_STRING("1"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsRefPtr<sbBaseDeviceLibraryListener> libListener = new sbBaseDeviceLibraryListener();
-  NS_ENSURE_TRUE(libListener, NS_ERROR_OUT_OF_MEMORY);
+  if (!mLibraryListener) {
+    nsRefPtr<sbBaseDeviceLibraryListener> libListener =
+      new sbBaseDeviceLibraryListener();
+    NS_ENSURE_TRUE(libListener, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = libListener->Init(this);
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = libListener->Init(this);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = aDevLib->AddDeviceLibraryListener(libListener);
+    libListener.swap(mLibraryListener);
+  }
+
+  rv = aDevLib->AddDeviceLibraryListener(mLibraryListener);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // hook up the media list listeners to the existing lists
@@ -1972,8 +1977,6 @@ nsresult sbBaseDevice::InitializeDeviceLibrary
                                          enumerator,
                                          sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  libListener.swap(mLibraryListener);
 
   return NS_OK;
 }
