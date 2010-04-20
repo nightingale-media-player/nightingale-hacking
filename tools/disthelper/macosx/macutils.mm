@@ -52,9 +52,17 @@
 NSString*
 GetBundlePlistPath()
 {
-  return [NSString stringWithFormat:@"%s/%@",
-         GetAppResoucesDirectory().c_str(),
-         @"Info.plist"];
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  NSString *resourcesDir =
+    [NSString stringWithUTF8String:GetAppResoucesDirectory().c_str()];
+
+  NSString *retVal =
+    [[NSString alloc] initWithFormat:@"%@/%@",
+       [resourcesDir stringByDeletingLastPathComponent], @"Info.plist"];
+
+  [pool release];
+
+  return [retVal autorelease];
 }
 
 //------------------------------------------------------------------------------

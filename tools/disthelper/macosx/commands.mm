@@ -457,13 +457,19 @@ void ShowFatalError(const char* fmt, ...) {
   va_end(args);
 }
 
-/**
- * Dummy commands that don't exist on OSX
- */
-int CommandSetVersionInfo(std::string aExecutable,
-                          IniEntry_t& aSection)
-{
-  return DH_ERROR_USER;
+int
+ReplacePlistProperty(std::string & aKey, std::string & aValue) {
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  NSString *key = [NSString stringWithUTF8String:aKey.c_str()];
+  NSString *value = [NSString stringWithUTF8String:aValue.c_str()];
+#if DEBUG
+  DebugMessage("Updating key '%s' with value '%s",
+      [key UTF8String], [value UTF8String]);
+#endif
+  int result = UpdateInfoPlistKey(key, value);
+  [pool release];
+
+  return result;
 }
 
 int CommandSetIcon(std::string aExecutable,
@@ -481,3 +487,4 @@ int CommandSetIcon(std::string aExecutable,
   [pool release];
   return result; 
 }
+

@@ -298,14 +298,18 @@ int main(int argc, LPTSTR *argv) {
         }
         result = CommandSetIcon(command[1], command[2], iconname);
       }
-    } else if (command[0] == "versioninfo") {
+    }
+#if defined(XP_WIN)
+    else if (command[0] == "versioninfo") {
       if (command.size() < 3) {
         OutputDebugString(_T("Not enough arguments for versioninfo"));
         result = DH_ERROR_UNKNOWN;
       } else {
         result = CommandSetVersionInfo(command[1], iniFile[command[2]]);
       }
-    } else if (command[0] == "exec") {
+    }
+#endif
+    else if (command[0] == "exec") {
       // Run the executable with the full argument string.  This allows the
       // executable to parse the arguments as needed, preserving, for example,
       // escape sequences for quotes (see CommandLineToArgvW).
@@ -313,7 +317,24 @@ int main(int argc, LPTSTR *argv) {
       std::string args;
       ParseExecCommandLine(line, executable, args);
       result = CommandExecuteFile(executable, args);
-    } else {
+    }
+#if defined(XP_MACOSX)
+    else if (command[0] == "plist") {
+      if (command.size() < 2) {
+        OutputDebugString(_T("Not enough arguments for plist"));
+        result = DH_ERROR_UNKNOWN;
+      } else {
+        std::string keyname(command[1]);
+
+        // Append the rest of the commands as the second argument.
+        std::string value(line);
+        value.erase(0, line.find(keyname) + keyname.size() + 1);
+
+        result = ReplacePlistProperty(keyname, value);
+      }
+    }
+#endif
+    else {
       DebugMessage("bad command %s!", ConvertUTF8toUTFn(command[0]).c_str());
       result = DH_ERROR_UNKNOWN;
     }
