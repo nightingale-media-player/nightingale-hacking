@@ -51,6 +51,15 @@
 #include "error.h"
 #include "debug.h"
 
+// platform-specifc key definition
+#if defined(XP_WIN)
+#define DH_PLATFORM_STR ":win"
+#elif defined(XP_MACOSX)
+#define DH_PLATFORM_STR ":mac"
+#else
+#error "unknown disthelper platform"
+#endif
+
 /*
  * disthelper
  * usage: $0 <mode> [<ini file>]
@@ -158,22 +167,21 @@ int main(int argc, LPTSTR *argv) {
     ShowFatalError("Failed to read INI file %s: %i", distIni.c_str(), result);
     return result;
   }
+
   std::string section;
   section.assign(ConvertUTFnToUTF8(argv[1]));
-  section.insert(0, "steps:");
-  IniEntry_t::const_iterator it, end = iniFile[section].end();
-  
+
   /// copy the distribution.ini / application.ini files to the appdir
   DebugMessage("Copying %s to %s\n",
                distIni.c_str(), ResolvePathName("$/distribution/").c_str());
 
-  if (section == "steps:install") {
+  if (section == "install") {
     LogMessage("Skipping distribution.ini check for installation, forcing copy");
     result = CommandCopyFile(ConvertUTFnToUTF8(distIni), "$/distribution/");
     if (result) {
       LogMessage("Failed to copy distribution.ini file %s", distIni.c_str());
     }
-  } else if (section != "steps:uninstall" && !usingFallback) {
+  } else if (section != "uninstall" && !usingFallback) {
     // don't copy on uninstall or using the fallback
     IniFile_t destDistIni;
     std::string destDistPath = ConvertUTFnToUTF8(GetLeafName(distIni));
@@ -240,6 +248,19 @@ int main(int argc, LPTSTR *argv) {
     LogMessage("Failed to copy application.ini file %s to distribution/",
                srcAppIniName.c_str());
   }
+
+  section.assign(ConvertUTFnToUTF8(argv[1]));
+  section.insert(0, "steps:");
+  section.append(DH_PLATFORM_STR);
+  #ifdef XP_WIN
+    if (iniFile.find(section) == iniFile.end()) {
+      // no platform-specific steps. fallback to old style on windows only
+      // (since this whole thing used to be Windows-only)
+      section.assign(ConvertUTFnToUTF8(argv[1]));
+      section.insert(0, "steps:");
+    }
+  #endif
+  IniEntry_t::const_iterator it, end = iniFile[section].end();
 
   for (it = iniFile[section].begin(); it != end; ++it) {
     std::string line = it->second;
