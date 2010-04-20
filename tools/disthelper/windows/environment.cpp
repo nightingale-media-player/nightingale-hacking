@@ -53,7 +53,7 @@ tstring GetUpdateRoot() {
   HRESULT hr;
   TCHAR appDirFull[MAX_PATH];
   const DWORD appDirFullLen = sizeof(appDirFull) / sizeof(appDirFull[0]);
-  tstring appDir = GetAppDirectory();
+  tstring appDir = GetAppResoucesDirectory();
 
   // AppDir may be a short path. Convert to long path to make sure
   // the consistency of the update folder location

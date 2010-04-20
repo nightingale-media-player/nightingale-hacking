@@ -1,4 +1,3 @@
-/* vim: le=unix sw=2 : */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -20,7 +19,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   Mook <mook@songbirdnest.com>
+ *   Nick Kreeger <kreeger@songbirdnest.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -36,46 +35,64 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#include "macutils.h"
+
+// disthelper includes
 #include "error.h"
-#include "stringconvert.h"
+#include "debug.h"
 #include "commands.h"
-#include "readini.h"
 
-// mac includes
-#import <Foundation/Foundation.h>
-#import <CoreServices/CoreServices.h>
+// Mac OS X includes
+#include <ApplicationServices/ApplicationServices.h>
 
-int SetupEnvironment()
+
+//------------------------------------------------------------------------------
+// Internal macutil functions
+
+NSString*
+GetBundlePlistPath()
 {
-  NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-  // on OSX, the update staging area is always in the app dir
-  NSString * appDir =
-    [NSString stringWithUTF8String:GetAppResoucesDirectory().c_str()];
-  NSString* envFile =
-    [appDir stringByAppendingPathComponent:@"updates/0/disthelper.env"];
-  if (![[NSFileManager defaultManager] fileExistsAtPath:envFile]) {
-    // file doesn't exist, it's safe to skip over it
-    return DH_ERROR_OK;
-  }
-  IniFile_t iniData;
-  int result = ReadIniFile([envFile UTF8String], iniData);
-  if (result) {
-    return result;
-  }
-  IniEntry_t::const_iterator it = iniData[""].begin(),
-                             end = iniData[""].end();
-  result = DH_ERROR_OK;
-  const char PREFIX[] = "DISTHELPER_";
-  for (; it != end; ++it) {
-    if (strncmp(PREFIX, it->first.c_str(), sizeof(PREFIX) - 1)) {
-      // variable does not start with DISTHELPER_; ignore it to avoid possible
-      // security problems
-      continue;
-    }
-    if (!setenv(it->first.c_str(), it->second.c_str(), true)) {
-      result = DH_ERROR_UNKNOWN;
-    }
-  }
-  [pool release];
-  return result;
+  return [NSString stringWithFormat:@"%s/%@",
+         GetAppResoucesDirectory().c_str(),
+         @"Info.plist"];
 }
+
+//------------------------------------------------------------------------------
+// Public macutil functions
+
+int
+UpdateInfoPlistKey(NSString *aKey, NSString *aValue)
+{
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  NSString *plistFile = GetBundlePlistPath();
+  NSMutableDictionary *plistDict =
+    [NSMutableDictionary dictionaryWithContentsOfFile:plistFile];
+
+  // First, update the property in the plist.
+  [plistDict setValue:aValue forKey:aKey];
+
+  // Next, flush the updated plist file to disk.
+  [plistDict writeToFile:plistFile atomically:NO];
+
+  // Finally, update the LaunchServices database to catch the property change.
+  // Since, |GetAppResoucesDirectory()| returns the path
+  // "../MyApp.app/Contents/Resources/", work our way to the root ".app" folder.
+  NSString *targetDir =
+    [NSString stringWithUTF8String:GetAppResoucesDirectory().c_str()];
+  targetDir = [targetDir stringByDeletingLastPathComponent];
+  targetDir = [targetDir stringByDeletingLastPathComponent];
+  NSURL *bundleURL = [NSURL URLWithString:targetDir];
+  OSStatus status = LSRegisterURL((CFURLRef)bundleURL, true);
+  if (status != noErr) {
+#if DEBUG
+    DebugMessage("Could not update the LaunchServices registry!");
+#endif
+    [pool release];
+    return DH_ERROR_USER;
+  }
+
+  [pool release];
+  return DH_ERROR_OK;
+}
+

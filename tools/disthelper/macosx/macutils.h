@@ -1,4 +1,3 @@
-/* vim: le=unix sw=2 : */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -20,7 +19,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   Mook <mook@songbirdnest.com>
+ *   Nick Kreeger <kreeger@songbirdnest.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -36,46 +35,29 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#include "error.h"
-#include "stringconvert.h"
-#include "commands.h"
-#include "readini.h"
+#ifndef MACUTILS_H_
+#define MACUTILS_H_
 
-// mac includes
-#import <Foundation/Foundation.h>
-#import <CoreServices/CoreServices.h>
+#include <Foundation/Foundation.h>
 
-int SetupEnvironment()
-{
-  NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-  // on OSX, the update staging area is always in the app dir
-  NSString * appDir =
-    [NSString stringWithUTF8String:GetAppResoucesDirectory().c_str()];
-  NSString* envFile =
-    [appDir stringByAppendingPathComponent:@"updates/0/disthelper.env"];
-  if (![[NSFileManager defaultManager] fileExistsAtPath:envFile]) {
-    // file doesn't exist, it's safe to skip over it
-    return DH_ERROR_OK;
-  }
-  IniFile_t iniData;
-  int result = ReadIniFile([envFile UTF8String], iniData);
-  if (result) {
-    return result;
-  }
-  IniEntry_t::const_iterator it = iniData[""].begin(),
-                             end = iniData[""].end();
-  result = DH_ERROR_OK;
-  const char PREFIX[] = "DISTHELPER_";
-  for (; it != end; ++it) {
-    if (strncmp(PREFIX, it->first.c_str(), sizeof(PREFIX) - 1)) {
-      // variable does not start with DISTHELPER_; ignore it to avoid possible
-      // security problems
-      continue;
-    }
-    if (!setenv(it->first.c_str(), it->second.c_str(), true)) {
-      result = DH_ERROR_UNKNOWN;
-    }
-  }
-  [pool release];
-  return result;
-}
+
+//==============================================================================
+//
+// @file macutils.h
+// @brief Collection of utility functions for modifying a bundles attributes.
+//
+//==============================================================================
+
+//
+// @brief Update a property in the applications Info.plist file. This method
+//        will also update the LaunchServices database entry for the app to
+//        reflect the new property.
+// @param aKey The keyname to update in the plist.
+// @param aValue The new value to insert into the plist.
+// @return DH_ERROR_OK if the operation succeeded.
+//
+int UpdateInfoPlistKey(NSString *aKey, NSString *aValue);
+
+
+#endif  // MACUTILS_H_
+

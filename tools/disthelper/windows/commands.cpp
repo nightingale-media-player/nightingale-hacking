@@ -70,7 +70,7 @@ tstring ResolvePathName(std::string aSrc) {
     if (L'$' == *begin) {
       std::wstring::iterator next = begin;
       ++++next; // skip two characters
-      src.replace(begin, next, GetAppDirectory());
+      src.replace(begin, next, GetAppResoucesDirectory());
     }
     WCHAR buffer[MAX_LONG_PATH + 1];
     DWORD length = SearchPath(GetDistIniDirectory().c_str(),
@@ -209,7 +209,7 @@ tstring FilterSubstitution(tstring aString) {
     // Try to substitute $APPDIR$
     tstring variable = result.substr(start + 1, end - start - 1);
     if (variable == _T("APPDIR")) {
-      tstring appdir = GetAppDirectory();
+      tstring appdir = GetAppResoucesDirectory();
       DebugMessage("AppDir: %s", appdir.c_str());
       result.replace(start, end-start+1, appdir);
       start += appdir.length();
@@ -326,7 +326,7 @@ void ParseExecCommandLine(const std::string& aCommandLine,
     aArgs = aCommandLine.substr(argsStart);
 }
 
-tstring GetAppDirectory() {
+tstring GetAppResoucesDirectory() {
   WCHAR buffer[MAX_LONG_PATH + 1] = {0}; 
   HMODULE hExeModule = ::GetModuleHandle(NULL);
   DWORD length = ::GetModuleFileName(hExeModule, buffer, MAX_LONG_PATH);
@@ -349,7 +349,7 @@ tstring gDistIniDirectory;
 tstring GetDistIniDirectory(const TCHAR *aPath) {
   if (aPath) {
     TCHAR buffer[MAX_PATH];
-    _tcsncpy(buffer, GetAppDirectory().c_str(), NS_ARRAY_LENGTH(buffer));
+    _tcsncpy(buffer, GetAppResoucesDirectory().c_str(), NS_ARRAY_LENGTH(buffer));
     buffer[NS_ARRAY_LENGTH(buffer) - 1] = _T('\0');
     // the PathAppend call will correctly copy aPath over if it is already an
     // absolute path; otherwise, it will append aPath to the app directory

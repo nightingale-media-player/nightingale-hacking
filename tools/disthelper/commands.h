@@ -122,7 +122,7 @@ tstring FilterSubstitution(tstring aString);
  * Get the path to the application directory (where disthelper.exe lives).
  * Must end with a path separator (\ on Windows, / on Unix)
  */
-tstring GetAppDirectory();
+tstring GetAppResoucesDirectory();
 
 /**
  * Get the path to the directory containing distribution.ini file

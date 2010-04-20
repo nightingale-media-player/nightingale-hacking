@@ -1,4 +1,3 @@
-/* vim: le=unix sw=2 : */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -41,6 +40,7 @@
 #include "debug.h"
 #include "commands.h"
 #include "tchar_compat.h"
+#include "macutils.h"
 
 // unix include
 #include <errno.h>
@@ -66,8 +66,8 @@ tstring ResolvePathName(std::string aSrc) {
   #endif
   if (0 != [src length]) {
     if ([src hasPrefix:@"$/"]) {
-      NSString * appDir =
-        [NSString stringWithUTF8String:GetAppDirectory().c_str()];
+      NSString *appDir =
+        [NSString stringWithUTF8String:GetAppResoucesDirectory().c_str()];
       src = [appDir stringByAppendingString:[src substringFromIndex:2]];
     }
     if (![src isAbsolutePath]) {
@@ -286,7 +286,7 @@ tstring FilterSubstitution(tstring aString) {
     // Try to substitute $APPDIR$
     tstring variable = result.substr(start + 1, end - start - 1);
     if (variable == _T("APPDIR")) {
-      tstring appdir = GetAppDirectory();
+      tstring appdir(GetAppResoucesDirectory());
       DebugMessage("AppDir: %s", appdir.c_str());
       result.replace(start, end-start+1, appdir);
       start += appdir.length();
@@ -363,20 +363,20 @@ void ParseExecCommandLine(const std::string& aCommandLine,
   aArgs = aCommandLine;
 }
 
-tstring GetAppDirectory() {
+tstring
+GetAppResoucesDirectory() {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
   NSProcessInfo* process = [NSProcessInfo processInfo];
-  NSString * execPath = [[process arguments] objectAtIndex:0];
-  NSString * dirPath = [execPath stringByDeletingLastPathComponent];
+  NSString* execPath = [[process arguments] objectAtIndex:0];
+  NSString* dirPath = [execPath stringByDeletingLastPathComponent];
   dirPath = [dirPath stringByAppendingString:@"/"];
-  tstring result([dirPath UTF8String]);
+#if DEBUG
+  DebugMessage("Found app directory %s", [dirPath UTF8String]);
+#endif
+  tstring retval([dirPath UTF8String]);
   [pool release];
-
-  #if DEBUG
-    DebugMessage("Found app directory %s", result.c_str());
-  #endif
-  return result;
+  return retval; 
 }
 
 tstring gDistIniDirectory;
@@ -470,5 +470,14 @@ int CommandSetIcon(std::string aExecutable,
                    std::string aIconFile,
                    std::string aIconName)
 {
-  return DH_ERROR_USER;
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  NSString *newIconPath =
+    [NSString stringWithUTF8String:ResolvePathName(aIconFile).c_str()];
+
+  int result = UpdateInfoPlistKey(@"CFBundleIconFile",
+                                  [newIconPath lastPathComponent]);
+
+  [pool release];
+  return result; 
 }
