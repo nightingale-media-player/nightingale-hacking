@@ -127,6 +127,11 @@ int CommandCopyFile(std::string aSrc, std::string aDest, bool aRecursive) {
   destPath =
     [destPath stringByAppendingPathComponent:[srcPath lastPathComponent]];
 
+  if ([srcPath isEqualToString:destPath]) {
+    // no need to copy a file onto itself
+    return DH_ERROR_OK;
+  }
+
   // XXXMook: ugly hack to check if we're using the 10.5 SDK or higher (that is,
   // a SDK that knows about 10.5 methods).
   #ifdef kCFCoreFoundationVersionNumber10_5

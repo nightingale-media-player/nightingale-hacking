@@ -48,6 +48,7 @@ PPDEFINES += $(SB_BRANDING_DEFINES)
 ifeq (macosx,$(SB_PLATFORM))
    SONGBIRD_CONTENTS += $(CURDIR)/Info.plist
    SONGBIRD_PP_RESOURCES += $(srcdir)/Info.plist.in
+   SONGBIRD_DIST += $(srcdir)/updater.plist
 endif
 
 SUBDIRS = branding \
