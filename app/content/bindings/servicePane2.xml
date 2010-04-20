@@ -190,7 +190,6 @@
           // this point so we call up the DOM of nodes.
           if (this.hasAttribute("nodeid")) {
             var nodeID = this.getAttribute("nodeid");
-            dump("nodeid: " + nodeID + "\n");
             if (this.parentNode)
               this.nodeData = this.parentNode.getNode(nodeID);
           } else {
@@ -561,13 +560,28 @@
       <![CDATA[
         ({
           element: null,
+          // Old interface, deprecated
           hiddenAttributeChanged: function(node, oldVal, newVal) {
           },
 
+          // Old interface, deprecated
           isOpenAttributeChanged: function(node, oldVal, newVal) {
           },
 
           attrModified: function(node, attrName, namespace, oldVal, newVal) {
+            if (oldVal == newVal)
+              return;
+            switch (attrName) {
+              case "hidden":
+                let spNode = this.element.getElementsByAttribute("nodeid",
+                                                                 node.id)[0];
+                if (newVal == "false") {
+                  spNode.removeAttribute("hidden");
+                } else if (newVal == "true") {
+                  spNode.setAttribute("hidden", true);
+                }
+                break;
+            }
           },
 
           nodeInserted: function(node, parent) {
@@ -576,8 +590,6 @@
               this.element.appendChild(newGroup);
             } else {
               /* find the node representing the parent */
-              dump("looking for node with id: " + parent.id + "\n");
-              dump("element: " + this.element.id + "\n");
               let parentNode = this.element.getElementsByAttribute("nodeid",
                                             parent.id)[0];
               let newnode = this.element.createNode(node, parentNode);
@@ -659,7 +671,6 @@
             this.mService.init();
           }
 
-try {
           var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
           var groupEntry = this.mService.root.firstChild;
           while (groupEntry && groupEntry != this.mService.root.lastChild) {
@@ -676,9 +687,6 @@ try {
             this.appendChild(newgroup);
             groupEntry = groupEntry.nextSibling;
           }
-} catch (e) {
-  dump("exception in loadServicePane: " + e + "\n");
-}
         ]]></body>
       </method>
 

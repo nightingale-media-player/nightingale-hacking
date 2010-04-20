@@ -478,12 +478,9 @@ function sbLastFm() {
   }
   radioFolder.editable = false;
 
-  this._servicePaneNode = this._servicePaneService.getNodeForURL(
-                                  "chrome://sb-lastfm/content/tuner2.xhtml");
-  if (!this._servicePaneNode) {
-    this._servicePaneNode = this._servicePaneService.createNode();
-    this._servicePaneNode.url = "chrome://sb-lastfm/content/tuner2.xhtml";
-  }
+  this._servicePaneNode = this._servicePaneService.createNode();
+  this._servicePaneNode.url = "chrome://sb-lastfm/content/tuner2.xhtml";
+  this._servicePaneNode.id = "SB:RadioStations:LastFM";
   this._servicePaneNode.name = "Last.fm";
   this._servicePaneNode.image = 'chrome://sb-lastfm/skin/as.png';
   this._servicePaneNode.editable = false;

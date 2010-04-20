@@ -192,15 +192,14 @@ ShoutcastRadio.Controller = {
 		radioFolder.hidden = false;
 	
 		// Add SHOUTcast chrome to service pane
-		var node = SPS.getNodeForURL("chrome://shoutcast-radio/content/directory.xul");
-		if (!node) {
-			node = SPS.createNode();
-			node.url = "chrome://shoutcast-radio/content/directory.xul";
-		}
+    var node = SPS.createNode();
+    node.url = "chrome://shoutcast-radio/content/directory.xul";
+    node.id = "SB:RadioStations:SHOUTcast";
 		node.name = "SHOUTcast";
 		node.image = FAVICON_PATH;
-		node.editable = false;
 		radioFolder.appendChild(node);
+		node.editable = false;
+    node.hidden = false;
 
 		// Add favorites node if necessary
 		ShoutcastRadio.Utils.ensureFavouritesNode();
