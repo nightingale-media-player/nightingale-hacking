@@ -58,6 +58,5 @@
 //
 int UpdateInfoPlistKey(NSString *aKey, NSString *aValue);
 
-
 #endif  // MACUTILS_H_
 

@@ -50,8 +50,7 @@
 // Internal macutil functions
 
 NSString*
-GetBundlePlistPath()
-{
+GetBundlePlistPath() {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   NSString *resourcesDir =
     [NSString stringWithUTF8String:GetAppResoucesDirectory().c_str()];
@@ -69,8 +68,7 @@ GetBundlePlistPath()
 // Public macutil functions
 
 int
-UpdateInfoPlistKey(NSString *aKey, NSString *aValue)
-{
+UpdateInfoPlistKey(NSString *aKey, NSString *aValue) {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
   NSString *plistFile = GetBundlePlistPath();

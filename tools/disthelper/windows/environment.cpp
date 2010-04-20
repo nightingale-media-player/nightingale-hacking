@@ -118,8 +118,7 @@ tstring GetUpdateRoot() {
   return localData;
 }
 
-int SetupEnvironment()
-{
+int SetupEnvironment() {
   tstring envFile = GetUpdateRoot();
   envFile.append(_T("updates\\0\\disthelper.env"));
   

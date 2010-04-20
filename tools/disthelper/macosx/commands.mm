@@ -474,8 +474,7 @@ ReplacePlistProperty(std::string & aKey, std::string & aValue) {
 
 int CommandSetIcon(std::string aExecutable,
                    std::string aIconFile,
-                   std::string aIconName)
-{
+                   std::string aIconName) {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
   NSString *newIconPath =

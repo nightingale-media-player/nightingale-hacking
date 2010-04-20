@@ -1,4 +1,3 @@
-/* vim: le=unix sw=2 : */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -45,8 +44,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreServices/CoreServices.h>
 
-int SetupEnvironment()
-{
+int SetupEnvironment() {
   NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
   // on OSX, the update staging area is always in the app dir
   NSString * appDir =
