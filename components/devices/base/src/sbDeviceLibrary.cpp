@@ -250,18 +250,11 @@ sbDeviceLibrary::Finalize()
   if (mDeviceLibrary)
     UnregisterDeviceLibrary();
 
-  // Get and clear the device library.
-  nsCOMPtr<sbILibrary> deviceLibrary;
-  {
-    nsAutoLock lock(mLock);
-    deviceLibrary = mDeviceLibrary;
-    mDeviceLibrary = nsnull;
-    // remove the listeners
-    mListeners.Clear();
-  }
-
   // let go of the owner device
   mDevice = nsnull;
+
+  // Don't null out mDeviceLibrary since there may be listeners on it that still
+  // need to be removed.
 
   return NS_OK;
 }

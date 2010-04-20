@@ -1281,7 +1281,7 @@ PlaylistCommandsBuilder.prototype = {
           } 
           catch (e)
           {
-            Cu.reportError(e);
+            Components.utils.reportError(e);
           }
         }
       }
