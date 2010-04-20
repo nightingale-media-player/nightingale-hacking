@@ -1,33 +1,32 @@
 /* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #include "sbLocalDatabaseLibrary.h"
 
 #include <nsArrayUtils.h>
+#include <nsIArray.h>
 #include <nsIClassInfo.h>
 #include <nsIClassInfoImpl.h>
 #include <nsIFile.h>
@@ -1637,10 +1636,12 @@ sbLocalDatabaseLibrary::ContainsCopy(sbIMediaItem* aMediaItem,
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aContainsCopy);
 
-  // If the media item's library and this list's library are the same, this
-  // item must already be in this database.
+  nsresult rv;
+
+  // Shortcut, if the media item's library and this list's library are the same,
+  // this item must already be in this database.
   nsCOMPtr<sbILibrary> itemLibrary;
-  nsresult rv = aMediaItem->GetLibrary(getter_AddRefs(itemLibrary));
+  rv = aMediaItem->GetLibrary(getter_AddRefs(itemLibrary));
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool equals;
@@ -1652,62 +1653,24 @@ sbLocalDatabaseLibrary::ContainsCopy(sbIMediaItem* aMediaItem,
     return NS_OK;
   }
 
-  // check if this has already been copied over before
-  NS_NAMED_LITERAL_STRING(PROP_LIBRARY, SB_PROPERTY_ORIGINLIBRARYGUID);
-  NS_NAMED_LITERAL_STRING(PROP_ITEM, SB_PROPERTY_ORIGINITEMGUID);
-
-  nsString originLibGuid, originItemGuid;
-
-  rv = aMediaItem->GetProperty(PROP_LIBRARY, originLibGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (originLibGuid.IsEmpty()) {
-    rv = itemLibrary->GetGuid(originLibGuid);
+  rv = sbLibraryUtils::FindOriginalsByID(
+                               aMediaItem,
+                               static_cast<sbLocalDatabaseMediaListBase*>(this),
+                               nsnull);
+  if (rv != NS_ERROR_NOT_AVAILABLE) {
     NS_ENSURE_SUCCESS(rv, rv);
+    *aContainsCopy = PR_TRUE;
+    return NS_OK;
   }
 
-  rv = aMediaItem->GetProperty(PROP_ITEM, originItemGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (originItemGuid.IsEmpty()) {
-    rv = aMediaItem->GetGuid(originItemGuid);
+  rv = sbLibraryUtils::FindCopiesByID(
+                               aMediaItem,
+                               static_cast<sbLocalDatabaseMediaListBase*>(this),
+                               nsnull);
+  if (rv != NS_ERROR_NOT_AVAILABLE) {
     NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  nsCOMPtr<sbIMediaItem> existingItem;
-  if (originLibGuid.Equals(mGuid)) {
-    // the item originally came from this library, look for it
-    rv = this->GetMediaItem(originItemGuid, getter_AddRefs(existingItem));
-    if (NS_SUCCEEDED(rv)) {
-      // found it
-      *aContainsCopy = PR_TRUE;
-      return NS_OK;
-    }
-  } else {
-    // the item is foreign, look for another item that was also copied from the
-    // same place
-    nsCOMPtr<sbIMutablePropertyArray> originGuidArray =
-      do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = originGuidArray->AppendProperty(PROP_LIBRARY, originLibGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = originGuidArray->AppendProperty(PROP_ITEM, originItemGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsRefPtr<sbMediaListEnumSingleItemHelper> guidCheckHelper =
-      sbMediaListEnumSingleItemHelper::New();
-    NS_ENSURE_TRUE(guidCheckHelper, NS_ERROR_OUT_OF_MEMORY);
-
-    rv = this->EnumerateItemsByProperties(originGuidArray,
-                                          guidCheckHelper,
-                                          ENUMERATIONTYPE_SNAPSHOT);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    existingItem = guidCheckHelper->GetItem();
-    if (existingItem) {
-      *aContainsCopy = PR_TRUE;
-      return NS_OK;
-    }
+    *aContainsCopy = PR_TRUE;
+    return NS_OK;
   }
 
   *aContainsCopy = PR_FALSE;

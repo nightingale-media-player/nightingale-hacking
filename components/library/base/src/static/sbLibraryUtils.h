@@ -1,40 +1,46 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
 
 #ifndef __SBLIBRARYUTILS_H__
 #define __SBLIBRARYUTILS_H__
 
+// Mozilla inclues
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <pratom.h>
 #include <nsServiceManagerUtils.h>
 #include <nsComponentManagerUtils.h>
 #include <nsStringAPI.h>
+
+// Mozilla interfaces
+#include <nsIMutableArray.h>
+
+// Songbird includes
 #include <sbMemoryUtils.h>
 
+// Songbird interfaces
 #include <sbILibrary.h>
 #include <sbILibraryManager.h>
 
@@ -100,16 +106,41 @@ public:
   static nsresult GetItemInLibrary(/* in */  sbIMediaItem * aItem,
                                    /* in */  sbILibrary   * aLibrary,
                                    /* out */ sbIMediaItem **_retval);
-  
-  /**
-   * Attempt to get the content length of the media item
-   *
-   * \param aItem    The item to look up
-   * \retur          The content length of the item (or throw an exception)
-   */
-  static nsresult GetContentLength(/* in */  sbIMediaItem * aItem,
-                                   /* out */ PRInt64      * _retval);
 
+  /**
+   * This function searches aList for items that have the same content url as
+   * aMediaItem's origin URL
+   * \param aItem The item to find a match for
+   * \param aLibrary The library to look in
+   * \return The media items found, or null
+   */
+  static nsresult FindOriginalsByURL(sbIMediaItem *    aMediaItem,
+                                     sbIMediaList *    aList,
+                                     nsIMutableArray * aCopies);
+
+  /**
+   * aList is searched for items that have origin ID's that match
+   * aMediaItem's ID and items that has the same origin ID's as the
+   * aMediaItem's origin ID's
+   * \param aItem The item to find a copies of
+   * \param aList The list to search
+   * \return The media items found, or empty array. aCopies may be null
+   *         in which case the function will return NS_ERROR_NOT_AVAILABLE
+   *         if no copies are found
+   */
+  static nsresult FindCopiesByID(sbIMediaItem * aMediaItem,
+                                 sbIMediaList * aList,
+                                 nsIMutableArray * aCopies);
+
+  /**
+   * Searches aList for items that have ID's that match aMediaItem's origin ID
+   * \param aItem The item to find a match for
+   * \param aLibrary The library to look in
+   * \return The media items found, or null
+   */
+  static nsresult FindOriginalsByID(sbIMediaItem * aMediaItem,
+                                    sbIMediaList * aList,
+                                    nsIMutableArray * aCopies);
   /**
    * Return the origin media item for the media item specified by aItem.
    *
@@ -118,6 +149,14 @@ public:
    */
   static nsresult GetOriginItem(/* in */ sbIMediaItem*   aItem,
                                 /* out */ sbIMediaItem** _retval);
+  /**
+   * Attempt to get the content length of the media item
+   *
+   * \param aItem    The item to look up
+   * \retur          The content length of the item (or throw an exception)
+   */
+  static nsresult GetContentLength(/* in */  sbIMediaItem * aItem,
+                                   /* out */ PRInt64      * _retval);
 
   /**
    * \brief Return a library content URI for the URI specified by aURI.
@@ -144,14 +183,14 @@ public:
    *        of nsIIOService.newFileURI for generating library content URI's.
    *
    * \param aFile               File for which to get content URI.
-   * 
+   *
    * \return                    Library content URI.
    */
   static nsresult GetFileContentURI(/* in  */ nsIFile*  aFile,
                                     /* out */ nsIURI** _retval);
-  
+
   static nsresult GetItemsByProperty(sbIMediaList * aMediaList,
-                                     nsAString const & aPropertyName, 
+                                     nsAString const & aPropertyName,
                                      nsAString const & aValue,
                                      nsCOMArray<sbIMediaItem> & aMediaItems);
 };
@@ -165,7 +204,7 @@ nsresult GetMainLibrary(sbILibrary ** aMainLibrary) {
   nsCOMPtr<sbILibraryManager> libManager =
       do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<sbILibrary> mainLibrary;
   return libManager->GetMainLibrary(aMainLibrary);
 }
@@ -179,7 +218,7 @@ nsresult GetMainLibraryId(nsAString & aLibraryId) {
   nsCOMPtr<sbILibrary> mainLibrary;
   nsresult rv = GetMainLibrary(getter_AddRefs(mainLibrary));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   return mainLibrary->GetGuid(aLibraryId);
 }
 

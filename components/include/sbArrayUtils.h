@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -57,11 +57,38 @@ nsresult sbCOMArrayTonsIArray(T & aCOMArray, nsIArray ** aOutArray)
 
 /**
  * Clones a nsIArray into a new one
+ * @param aSrc [in] the array to copy from
+ * @param aDest [in|out] the array to append to
+ * @param aWeak [in] Whether to store as a weak reference
+ */
+inline nsresult
+sbAppendnsIArray(nsIArray * aSrc, nsIMutableArray * aDest, PRBool aWeak = PR_FALSE)
+{
+  nsresult rv;
+
+  nsCOMPtr<nsISimpleEnumerator> it;
+  rv = aSrc->Enumerate(getter_AddRefs(it));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool hasMore;
+  while (NS_SUCCEEDED(it->HasMoreElements(&hasMore)) && hasMore) {
+    nsCOMPtr<nsISupports> supports;
+    rv = it->GetNext(getter_AddRefs(supports));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = aDest->AppendElement(supports, aWeak);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+/**
+ * Clones a nsIArray into a new one
  * @param aSrc [in] the array to clone
  * @param aClonedArray [out] the newly created array
  * @param aWeak [in] Whether to store as a weak reference
  */
-nsresult
+inline nsresult
 sbClonensIArray(nsIArray * aSrc, nsIArray ** aClonedArray, PRBool aWeak = PR_FALSE)
 {
   NS_ENSURE_ARG_POINTER(aSrc);
@@ -73,18 +100,7 @@ sbClonensIArray(nsIArray * aSrc, nsIArray ** aClonedArray, PRBool aWeak = PR_FAL
     do_CreateInstance(SB_THREADSAFE_ARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsISimpleEnumerator> it;
-  rv = aSrc->Enumerate(getter_AddRefs(it));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRBool hasMore;
-  while (NS_SUCCEEDED(it->HasMoreElements(&hasMore)) && hasMore) {
-    nsCOMPtr<nsISupports> supports;
-    rv = it->GetNext(getter_AddRefs(supports));
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = array->AppendElement(supports, aWeak);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  rv = sbAppendnsIArray(aSrc, array, aWeak);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = CallQueryInterface(array, aClonedArray);
