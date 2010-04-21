@@ -556,6 +556,7 @@ function ServicePaneService () {
                           .getService(Ci.nsIObserverService);
   observerService.addObserver(this, "xpcom-category-entry-added", true);
   observerService.addObserver(this, "xpcom-category-entry-removed", true);
+  observerService.addObserver(this, "quit-application", false);
 }
 
 ServicePaneService.prototype = {
@@ -591,6 +592,9 @@ ServicePaneService.prototype = {
         if (data == "service-pane" && subject instanceof Ci.nsISupportsCString) {
           this._removeModule(subject.data);
         }
+        break;
+      case "quit-application":
+        this._shutdown();
         break;
     }
   },
@@ -634,6 +638,28 @@ ServicePaneService.prototype = {
   init: function ServicePaneService_init() {
     deprecationWarning("sbIServicePaneService.init() is deprecated, you no " +
                        "longer need to call it.");
+  },
+  
+  _shutdown: function ServicePaneService__shutdown() {
+    let observerService = Cc["@mozilla.org/observer-service;1"]
+                            .getService(Ci.nsIObserverService);
+    observerService.removeObserver(this, "quit-application");
+    observerService.removeObserver(this, "xpcom-category-entry-added");
+    observerService.removeObserver(this, "xpcom-category-entry-removed");
+    for each (let module in this._modules) {
+      try {
+        module.shutdown();
+      } catch (e) {
+        // Components.utils.reportError can't report to anywhere visible at
+        // this point, since to get here we must have closed the Error Console.
+        // Dump to stderr instead.
+        dump("**********************************************\n");
+        dump(e + "\n");
+        dump("**********************************************\n");
+      }
+    }
+    this._modules = [];
+    this._modulesByContractId = {};
   },
 
   createNode: function ServicePaneService_createNode() {

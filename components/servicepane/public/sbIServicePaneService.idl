@@ -348,7 +348,7 @@ interface sbIServicePaneService : nsISupports
 * \interface sbIServicePaneModule
 * \brief The interface exposed by the service pane backends
 */
-[scriptable, uuid(abc52828-1dd1-11b2-a8ce-dae6d9263bb7)]
+[scriptable, uuid(2ece4c56-1dd2-11b2-9cc4-8a248cad3050)]
 interface sbIServicePaneModule : nsISupports
 {
   /* \brief Initialize this service pane module
@@ -408,6 +408,10 @@ interface sbIServicePaneModule : nsISupports
   /* \brief optional URI of stringbundle to use to localize names of nodes
     associated with this module */
   readonly attribute AString stringbundle;
+
+  /* \brief Called when service pane service is shutting down 
+   */ 
+  void shutdown();
 };
 
 
