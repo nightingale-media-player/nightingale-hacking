@@ -1,27 +1,25 @@
-/**
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 /**
@@ -33,6 +31,9 @@ Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 const PR_RDONLY = -1;
 const PR_FLAGS_DEFAULT = -1;
 
+// the minimum number of chracters to feed into the charset detector
+const GUESS_CHARSET_MIN_CHAR_COUNT = 256;
+
 function SB_ProcessFile(aFile, aCallback, aThis) {
 
   var istream = Cc["@mozilla.org/network/file-input-stream;1"]
@@ -40,13 +41,62 @@ function SB_ProcessFile(aFile, aCallback, aThis) {
   istream.init(aFile, PR_RDONLY, PR_FLAGS_DEFAULT, 0);
   istream.QueryInterface(Ci.nsILineInputStream);
 
-  var line = {}, hasmore;
-  do {
-    hasmore = istream.readLine(line);
-    aCallback.apply(aThis, [line.value]);
-  } while(hasmore);
+  var detector = Cc["@songbirdnest.com/Songbird/CharsetDetector;1"]
+                   .createInstance(Ci.sbICharsetDetector);
+  var line = {}, hasmore, charset;
+  var value = "";
+  var length = 0;
+  try {
+    do {
+      hasmore = istream.readLine(line);
+      value = line.value;
+
+      // Blank can be ignored.
+      if (value == "")
+        continue;
+
+      // Send the file content for detection, until we get the best value.
+      detector.detect(value);
+
+      length += value.length; 
+    } while(hasmore &&
+            !detector.isCharsetFound &&
+            length < GUESS_CHARSET_MIN_CHAR_COUNT);
+    charset = detector.finish();
+  }
+  catch (ex) {
+    dump("charset detection error in SB_ProcessFile: " + ex + "\n");
+  }
 
   istream.close();
+
+  var fstream = Cc["@mozilla.org/network/file-input-stream;1"]
+                  .createInstance(Ci.nsIFileInputStream);
+  fstream.init(aFile, PR_RDONLY, PR_FLAGS_DEFAULT, 0);
+  fstream.QueryInterface(Ci.nsILineInputStream);
+  var unicodeConverter = Cc["@mozilla.org/intl/scriptableunicodeconverter"]
+                           .createInstance(Ci.nsIScriptableUnicodeConverter);
+  // Re-read the file with the charset found.
+  do {
+    hasmore = fstream.readLine(line);
+    value = line.value;
+
+    // Blank can be ignored for all playlist handlers.
+    if (value == "")
+      continue;
+
+    try {
+      unicodeConverter.charset = charset;
+      value = unicodeConverter.ConvertToUnicode(value);
+    }
+    catch (ex) {
+      dump("Unicode conversion error in SB_ProcessFile: " + ex + "\n");
+    }
+
+    aCallback.apply(aThis, [value]);
+  } while(hasmore);
+
+  fstream.close();
 }
 
 function SB_AddItems(aItems, aMediaList, aAddDistinctOnly) {
@@ -197,7 +247,16 @@ function SB_ResolveURI(aStringURL, aBaseURI)
       file.initWithPath(aStringURL);
 
       var uri = ios.newFileURI(file);
-      return uri;
+
+      // Only return "file" scheme uri if the file exists.
+      if (uri instanceof Ci.nsIFileURL) {
+        if (uri.file && uri.file.exists()) {
+          return uri;
+        }
+      }
+
+      return null;
+      
     }
     catch(e) {
       // If the base URI is a local file, try to use it to resolve the local
@@ -225,7 +284,15 @@ function SB_ResolveURI(aStringURL, aBaseURI)
   // Ok, it is not a local file.  Try creating a new URI with the base URI
   try {
     var uri = ios.newURI(aStringURL, null, aBaseURI);
-    return uri;
+
+    // Only return "file" scheme uri if the file exists.
+    if (uri instanceof Ci.nsIFileURL) {
+      if (uri.file && uri.file.exists()) {
+        return uri;
+      }
+    }
+
+    return null;
   }
   catch(e) {
     // fall through
