@@ -630,7 +630,11 @@ sb-servicepane-group description.servicepane-group-label {
 }
 
 sb-servicepane-node {
-  margin-left: 8px;
+  padding-left: 8px;
+}
+sb-servicepane-node.selected {
+  background-color: rgb(92,81,132);
+  -moz-border-radius: 3px;
 }
 
 /* the open/closed container toggle arrow for the node and its subnodes */

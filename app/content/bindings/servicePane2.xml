@@ -206,6 +206,18 @@
       <field name="_nodeData">null</field>
 
       <!--
+        - \brief Get the servicepane element itself
+        -->
+      <property name="_servicePane">
+        <getter><![CDATA[
+          let parent = this.parentNode;
+          while (parent && parent.tagName != "sb-servicepane")
+            parent = parent.parentNode;
+          return parent;
+        ]]></getter>
+      </property>
+
+      <!--
         - \brief Gets an element in this binding that has the sbid matching the
         -   anonID parameter.
         - \param anonID Anonymous id of the element requested (matches sbid)
@@ -277,7 +289,11 @@
         <body><![CDATA[
           if (!this.browser)
             return; // Nothing to do if we don't have a browser.
-        
+
+          // Style the node as selected (which means first removing any selected
+          // styles from any currently selected node
+          this._servicePane.selectNode(this);
+
           // If this node has a URL, just load it in the browser
           if (this._nodeData.url) {
             var target = null;
@@ -472,8 +488,16 @@
           return newBadge;
         ]]></body>
       </method>
-
     </implementation>
+
+    <handlers>
+      <handler event="command">
+      <![CDATA[
+        dump("event dispatched\n");
+      ]]>
+      </handler>
+    </handlers>
+
   </binding>
   
   <binding id="servicepane-group">
@@ -702,6 +726,13 @@
         ]]></body>
       </method>
 
+      <method name="getDOMNode">
+        <parameter name="nodeID"/>
+        <body><![CDATA[
+          let spNode = this.getElementsByAttribute("nodeid", nodeID)[0];
+          return spNode;
+        ]]></body>
+      </method>
       <!--
         - \brief Get the selected node if any.
         - \return sbIServicePaneNode of the selected node, or null if none is
@@ -715,6 +746,30 @@
           else {
             return null;
           }
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Deselect any currently selected node(s) and select the
+        - passed in node
+        -->
+      <method name="selectNode">
+        <parameter name="newNode"/>
+        <body><![CDATA[
+          if (selectedNode == newNode)
+            return;
+
+          // Remove the 'selected' CSS class from the currently selected node
+          let selectedNode = this.getSelectedNode();
+          if (selectedNode) {
+            let domNode = this.getDOMNode(selectedNode.id);
+            domNode.className = domNode.className.replace(/\bselected\b/, '');
+          }
+
+          // Add the 'selected' class to the new node
+          newNode.className += " selected";
+          this._selectedNodeID = newNode.nodeData.id;
+          return newNode;
         ]]></body>
       </method>
 
