@@ -2943,7 +2943,11 @@ sbLocalDatabaseLibrary::GetDuplicate(sbIMediaItem*  aMediaItem,
 
   // Search for a duplicate item
   nsresult rv = sbLibraryUtils::GetItemInLibrary(aMediaItem, this, _retval);
-  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Didn't find it or failed, set retval to null.
+  if(NS_FAILED(rv)) {
+    *_retval = nsnull;
+  }
 
   return NS_OK;
 }
