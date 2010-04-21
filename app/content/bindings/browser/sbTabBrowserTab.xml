@@ -454,7 +454,6 @@
           // may have extra information about the location
           var servicePane = Components.classes['@songbirdnest.com/servicepane/service;1']
                                       .getService(Components.interfaces.sbIServicePaneService);
-          servicePane.init();
           var servicePaneNode = servicePane.getNodeForURL(this.linkedBrowser.currentURI.spec); 
 
           // If we couldnt find a node for the URL, try
@@ -484,8 +483,8 @@
               if (servicePaneNode.image) {
                 this.setIcon(servicePaneNode.image);
               } 
-              if (servicePaneNode.properties) {
-                properties = servicePaneNode.properties;
+              if (servicePaneNode.className) {
+                properties = servicePaneNode.className;
               }
               // if the service pane node has an actual name, not a
               // stringbundle reference then set that name as the tab label
