@@ -82,6 +82,10 @@ sbBaseDeviceVolume::New(sbBaseDeviceVolume** aVolume,
 
 sbBaseDeviceVolume::~sbBaseDeviceVolume()
 {
+  // Dispose of the volume lock.
+  if (mVolumeLock)
+    nsAutoLock::DestroyLock(mVolumeLock);
+  mVolumeLock = nsnull;
 }
 
 
