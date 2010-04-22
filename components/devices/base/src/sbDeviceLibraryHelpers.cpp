@@ -61,6 +61,14 @@ sbLibraryUpdateListener::sbLibraryUpdateListener(sbILibrary * aTargetLibrary,
   SetSyncMode(aManualMode, aPlaylistsList);
 }
 
+sbLibraryUpdateListener::~sbLibraryUpdateListener()
+{
+  if (mPlaylistListener) {
+    mPlaylistListener->StopListeningToPlaylists();
+    mPlaylistListener = nsnull;
+  }
+}
+
 void sbLibraryUpdateListener::SetSyncMode(bool aManualMode,
                                           nsIArray * aPlaylistList) {
   mPlaylistList = aPlaylistList;
@@ -438,7 +446,6 @@ sbPlaylistSyncListener::sbPlaylistSyncListener(sbILibrary* aTargetLibrary,
 
 sbPlaylistSyncListener::~sbPlaylistSyncListener()
 {
-  StopListeningToPlaylists();
   mBatchHelperTable.Clear();
   mListRemovedArray.Clear();
   mItemRemovedArray.Clear();
