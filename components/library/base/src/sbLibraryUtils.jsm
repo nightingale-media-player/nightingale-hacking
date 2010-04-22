@@ -224,7 +224,10 @@ var LibraryUtils = {
       return false;
     }
     const PREF_FIRSTRUN_URL = "songbird.url.firstrunpage";
-    if (url == Application.prefs.getValue(PREF_FIRSTRUN_URL, null)) {
+    var firstRunURL = Cc["@mozilla.org/preferences-service;1"].
+                        getService(Ci.nsIPrefBranch).
+                        getCharPref(PREF_FIRSTRUN_URL);
+    if (url == firstRunURL) {
       // first run url, sure this can be a media tab
       return true;
     }
