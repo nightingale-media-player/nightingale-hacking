@@ -184,13 +184,40 @@ int CommandExecuteFile(const std::string& aExecutable,
   tstring arg(FilterSubstitution(ConvertUTF8toUTFn(aArgs)));
   
   DebugMessage("<%s> <%s>", executable.c_str(), arg.c_str());
-  HINSTANCE hInst = ::ShellExecuteW(NULL,
-                                    L"open",
-                                    executable.c_str(),
-                                    arg.c_str(),
-                                    NULL,
-                                    SW_SHOWDEFAULT);
-  return ((ULONG_PTR)hInst > 32 ? DH_ERROR_OK : DH_ERROR_UNKNOWN);
+
+  // We need to use CreateProcess in order to get a handle to the launched
+  // process so we can wait for it to exit.  This means we need to quote the
+  // executable name on the command line in order to deal with spaces in the
+  // path for the disthelper binary.
+  tstring cmdline(_T("\""));
+  cmdline.append(executable);
+  cmdline.append(_T("\" "));
+  cmdline.append(arg);
+  
+  STARTUPINFO si = {sizeof(STARTUPINFO), 0};
+  PROCESS_INFORMATION pi = {0};
+  LPTSTR cmdlineBuffer = new TCHAR[cmdline.length() + 1];
+  cmdlineBuffer[cmdline.length()] = _T('\0');
+  _tcsncpy(cmdlineBuffer, cmdline.c_str(), cmdline.length());
+  BOOL ok = CreateProcess(executable.c_str(),
+                          cmdlineBuffer,
+                          NULL,  // no special security attributes
+                          NULL,  // no special thread attributes
+                          FALSE, // don't inherit filehandles
+                          0,     // No special process creation flags
+                          NULL,  // inherit my environment
+                          NULL,  // use my current directory
+                          &si,
+                          &pi);
+  delete[] cmdlineBuffer;
+
+  if (ok) {
+    WaitForSingleObject(pi.hProcess, INFINITE);
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
+  }
+
+  return (ok ? DH_ERROR_OK : DH_ERROR_UNKNOWN);
 }
 
 tstring FilterSubstitution(tstring aString) {
