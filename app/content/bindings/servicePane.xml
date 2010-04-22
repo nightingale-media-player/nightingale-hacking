@@ -492,7 +492,7 @@
           // If this node has a URL, just load it in the browser
           if (node.url) {
             var target = null;
-            if (this.isMediaTabURL(node.url)) {
+            if (LibraryUtils.isMediaTabURL(node.url, this.browser)) {
               target = "_media";
               this.browser.selectedTab = this.browser.mediaTab;
             } else if (event.button == 1) {
@@ -572,34 +572,6 @@
               }
             }
           }
-        ]]></body>
-      </method>
-      <method name="isMediaTabURL">
-        <parameter name="aURL"/>
-        <body><![CDATA[
-          if (!aURL) {
-            return Components.results.NS_ERROR_INVALID_ARG;
-          }
-          if (!this.browser.mediaTab) {
-            // no media tab, can't be a media tab url
-            return false;
-          }
-          var url = aURL;
-          if (aURL instanceof Components.interfaces.nsIURI) {
-            url = aURL.spec;
-          }
-          if (!(/chrome:\/\//.test(url))) {
-            // not chrome
-            return false;
-          }
-          const PREF_FIRSTRUN_URL = "songbird.url.firstrunpage";
-          if (url == Application.prefs.getValue(PREF_FIRSTRUN_URL, null)) {
-            // first run url, sure this can be a media tab
-            return true;
-          }
-          var node = this.mService.getNodeForURL(url);
-          if (!node) return false;
-          return true;
         ]]></body>
       </method>
       <!-- context menu helper -->

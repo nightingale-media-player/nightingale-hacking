@@ -199,7 +199,43 @@ var LibraryUtils = {
     mediaListView.filterConstraint = constraintBuilder.get();
 
     return mediaListView;
+  },
+
+  /**
+   * \brief Determine if a url is a media tab url.
+   * \param aURL url to check.
+   * \param aBrowser an sbtabbrowser object (optional, for mediaTab test).
+   * \return true if aURL is a media tab url, false if not.
+   */
+  isMediaTabURL: function(aURL, aBrowser) {
+    if (!aURL) {
+      return Components.results.NS_ERROR_INVALID_ARG;
+    }
+    if (aBrowser && !aBrowser.mediaTab) {
+      // no media tab, can't be a media tab url
+      return false;
+    }
+    var url = aURL;
+    if (aURL instanceof Components.interfaces.nsIURI) {
+      url = aURL.spec;
+    }
+    if (!(/chrome:\/\//.test(url))) {
+      // not chrome
+      return false;
+    }
+    const PREF_FIRSTRUN_URL = "songbird.url.firstrunpage";
+    if (url == Application.prefs.getValue(PREF_FIRSTRUN_URL, null)) {
+      // first run url, sure this can be a media tab
+      return true;
+    }
+    var service =
+      Components.classes['@songbirdnest.com/servicepane/service;1']
+      .getService(Components.interfaces.sbIServicePaneService);
+    var node = service.getNodeForURL(url);
+    if (!node) return false;
+    return true;
   }
+
 }
 
 
@@ -861,4 +897,3 @@ LibraryUtils.EnumeratorDuplicateFilter.prototype = {
     return true;
   }
 }
-
