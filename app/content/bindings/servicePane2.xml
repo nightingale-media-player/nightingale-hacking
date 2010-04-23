@@ -51,7 +51,7 @@
     xmlns:xbl="http://www.mozilla.org/xbl">
 
   <!--
-    - \brief ServicePaneNodeBadge is a single badge attached to a 
+    - \brief ServicePaneNodeBadge is a single badge attached to a
     - ServicePaneNode.  It contains a text label, image, and an associated
     - action.  If the image is null, then the text label will be used.
     - When the badge is clicked, the action will be taken if one is defined.
@@ -66,7 +66,7 @@
                    hidden="true"/>
       </xul:hbox>
     </content>
-    
+
     <implementation>
       <constructor>
       <![CDATA[
@@ -116,7 +116,7 @@
 
       <!--
         - \brief property for the image of this badge.
-        --> 
+        -->
       <property name="badgeImage">
         <getter><![CDATA[
           let imageNode = this._getElement("servicepane-node-badge-image");
@@ -133,7 +133,7 @@
 
       <!--
         - \brief property for the text of this badge
-        --> 
+        -->
       <property name="badgeLabel">
         <getter><![CDATA[
           let textNode = this._getElement("servicepane-node-badge-label");
@@ -159,8 +159,8 @@
     -->
   <binding id="servicepane-node">
     <content mousethrough="never">
-      <xul:vbox class="servicepane-node" flex="1" onclick="loadNodeURL(event);">
-        
+      <xul:vbox class="servicepane-node" flex="1">
+
         <xul:hbox class="servicepane-node-info">
           <xul:image class="servicepane-node-container-arrow" flex="0"/>
           <xul:image class="servicepane-node-image"
@@ -170,7 +170,7 @@
           <xul:hbox class="servicepane-node-badges"
                     sbid="servicepane-node-badges" flex="1" />
         </xul:hbox>
-        
+
         <xul:vbox class="servicepane-node-children">
           <children />
         </xul:vbox>
@@ -184,7 +184,7 @@
           // TODO: Check for a better way to load. (stevo)
           // This is here because we can not call nodeData until the binding has
           // been applied.
-          
+
           // If this element has a node id then load up the data from the node
           // we are always expected to be in the service pane under a group at
           // this point so we call up the DOM of nodes.
@@ -198,12 +198,17 @@
           }
         ]]>
       </constructor>
-      
+
       <!--
         - \brief Hold the actual node data for this node so we can reference it
         -   whenever we need
         -->
       <field name="_nodeData">null</field>
+
+      <!--
+        - \brief The node ID
+        -->
+      <field name="nodeId">this._nodeData.id</field>
 
       <!--
         - \brief Get the servicepane element itself
@@ -234,7 +239,7 @@
 
       <!--
         - \brief sbIServicePaneNode data associated with this node
-        --> 
+        -->
       <property name="nodeData">
         <getter><![CDATA[
           return this._nodeData;
@@ -247,7 +252,7 @@
             this.setAttribute("image", this._nodeData.image);
             this.setAttribute("label", this._nodeData.displayName);
             this.setAttribute("collapsed", !this._nodeData.isOpen);
-            
+
             // Hide the node if it should be hidden
             if (this._nodeData.hidden) {
               this.setAttribute("hidden", true);
@@ -266,7 +271,7 @@
           return this._nodeData;
         ]]></setter>
       </property>
-      
+
       <!--
         - \brief The browser we are linked to if any.
         -->
@@ -290,9 +295,9 @@
           if (!this.browser)
             return; // Nothing to do if we don't have a browser.
 
-          // Style the node as selected (which means first removing any selected
-          // styles from any currently selected node
-          this._servicePane.selectNode(this);
+          // Style the node as active (which means first removing any
+          // styles from any currently active node
+          this._servicePane.makeNodeActive(this);
 
           // If this node has a URL, just load it in the browser
           if (this._nodeData.url) {
@@ -305,14 +310,14 @@
               target = "_blank";
             }
             this.browser.loadURI(this._nodeData.url, null, null, event, target);
-          
+
           // If no URL, apply special handling
           } else {
-            // If there is a media list for this node, hand it off to the 
+            // If there is a media list for this node, hand it off to the
             // browser to display somehow.
             // I'm told that this hack is fine, as it will one day be replaced
             // with the playlist commands system.
-            var libraryServicePane = 
+            var libraryServicePane =
               Components.classes['@songbirdnest.com/servicepane/library;1']
               .getService(Components.interfaces.sbILibraryServicePaneService);
             var mediaList = libraryServicePane.getLibraryResourceForNode(this._nodeData);
@@ -366,7 +371,7 @@
                                      event.metaKey,
                                      event);
               this.dispatchEvent(event);
-              
+
               var SP_NS = "http://songbirdnest.com/rdf/servicepane#";
               var eventType = this._nodeData.getAttributeNS(SP_NS, "eventType");
               if (eventType) {
@@ -441,7 +446,7 @@
         - \param beforeIndex - Index of badge to insert a new badge before.
         - \return newly appended badge element.
         -->
-     <method name="insertBadgeBefore">
+      <method name="insertBadgeBefore">
         <parameter name="badgeLabel"/>
         <parameter name="badgeImage"/>
         <parameter name="beforeIndex"/>
@@ -456,18 +461,26 @@
           return newBadge;
         ]]></body>
       </method>
+
     </implementation>
 
     <handlers>
-      <handler event="command">
+      <handler event="click">
       <![CDATA[
-        dump("event dispatched\n");
+        if (event.button == 0)
+          this.loadNodeURL(event);
+      ]]>
+      </handler>
+
+      <handler event="contextmenu">
+      <![CDATA[
+        this._servicePane.openContextMenu(event, this.nodeId);
       ]]>
       </handler>
     </handlers>
 
   </binding>
-  
+
   <binding id="servicepane-group">
     <content mousethrough="never">
       <xul:vbox class="servicepane-group" flex="1">
@@ -492,7 +505,7 @@
       </method>
     </implementation>
   </binding>
-  
+
   <binding id="servicepane">
     <content mousethrough="never">
       <xul:vbox id="sb_servicepane" class="servicepane-outer-box" flex="1">
@@ -513,15 +526,22 @@
                             contentgroup="servicepane"/>
       </xul:vbox>
       <!-- menupopup needs to be outside the vbox otherwise it
-           gets height adjusted to 0 when the splitter is 
+           gets height adjusted to 0 when the splitter is
            adjusted -->
       <xul:menupopup id="displaypane_servicepane_bottom_menu"
                      class="menulist-menupopup">
         <xul:sb-displaypane-content-menuitems
                      paneid="displaypane_servicepane_bottom" />
       </xul:menupopup>
+
+      <!-- context menu popup -->
+      <xul:popupset>
+        <xul:popup sbid="popup"
+                   onpopupshown="onPopupShown(event);"
+                   onpopuphidden="onPopupHidden(event);" />
+      </xul:popupset>
     </content>
-    
+
     <implementation>
       <constructor>
       <![CDATA[
@@ -531,16 +551,21 @@
           Components.classes['@songbirdnest.com/servicepane/service;1']
           .getService(Components.interfaces.sbIServicePaneService);
         this.mService.init();
-        
+
         this.loadServicePane();
 
-        /* Add a listener to the root node so we know to update when the 
+        // save the popup node
+        this.mPopup = document.getAnonymousElementByAttribute(this,
+                                                              'sbid',
+                                                              'popup');
+
+        /* Add a listener to the root node so we know to update when the
            hierarchy of nodes changes */
         this._mutationListener.element = this;
         this.mService.root.addMutationListener(this._mutationListener);
       ]]>
       </constructor>
-  
+
       <destructor>
       <![CDATA[
         this.mService.root.removeMutationListener(this._mutationListener);
@@ -567,6 +592,8 @@
               case "hidden":
                 let spNode = this.element.getElementsByAttribute("nodeid",
                                                                  node.id)[0];
+                if (!spNode)
+                  return;
                 if (newVal == "false") {
                   spNode.removeAttribute("hidden");
                 } else if (newVal == "true") {
@@ -584,18 +611,42 @@
               /* find the node representing the parent */
               let parentNode = this.element.getElementsByAttribute("nodeid",
                                             parent.id)[0];
+              if (!parentNode) {
+                return;
+              }
               let newnode = this.element.createNode(node, parentNode);
             }
           },
 
           nodeRemoved: function(node, parent) {
+            // find the DOM node representing this servicepane node
+            let domNode = this.element.getDOMNode(node.id);
+
+            // was this node active?
+            let active = null;
+            if (domNode)
+              active = domNode.className.match(/\bactive\b/);
+
+            // remove the actual node
+            if (domNode && domNode.parentNode) {
+              domNode.parentNode.removeChild(domNode);
+            }
+
+            // XXXtodo
+            // if the node was active, then the browser will have gone back
+            // in history and loaded the previously loaded page.  check the
+            // servicepane to see if we have a node that matches the page,
+            // and if so - visually highlight/select it
           },
         })
       ]]>
       </field>
 
-      <!-- The ID of the currently selected node, or null if none -->
-      <field name="_selectedNodeID">null</field>
+      <!-- The ID of the active node, or null if none -->
+      <field name="_activeNodeID">null</field>
+
+      <!-- The ID of the highlighted node, or null if none -->
+      <field name="_highlightedNodeID">null</field>
 
       <!--
         TODO: Change the use of these functions so we can remove the
@@ -646,7 +697,9 @@
           if (this.hasAttribute("browser")) {
             newNode.setAttribute("browser", this.getAttribute("browser"));
           }
-          parentNode.appendChild(newNode);
+          if (parentNode) {
+            parentNode.appendChild(newNode);
+          }
         ]]></body>
       </method>
 
@@ -668,14 +721,14 @@
           while (groupEntry && groupEntry != this.mService.root.lastChild) {
             // Create the group and set the state
             var newgroup = this.createGroup(groupEntry);
-            
+
             // Create the nodes in this group
             var nodeEntry = groupEntry.firstChild;
             while (nodeEntry && nodeEntry != groupEntry.lastChild) {
               this.createNode(nodeEntry, newgroup);
               nodeEntry = nodeEntry.nextSibling;
             }
-            
+
             this.appendChild(newgroup);
             groupEntry = groupEntry.nextSibling;
           }
@@ -701,15 +754,32 @@
           return spNode;
         ]]></body>
       </method>
+
       <!--
-        - \brief Get the selected node if any.
-        - \return sbIServicePaneNode of the selected node, or null if none is
-        -         selected.
+        - \brief Get the active node if any.
+        - \return sbIServicePaneNode of the active node, or null if none
         -->
       <method name="getSelectedNode">
         <body><![CDATA[
-          if (this._selectedNodeID) {
-            return this.mService.getNode(this._selectedNodeID);
+          return this.getActiveNode();
+        ]]></body>
+      </method>
+
+      <method name="getActiveNode">
+        <body><![CDATA[
+          if (this._activeNodeID) {
+            return this.mService.getNode(this._activeNodeID);
+          }
+          else {
+            return null;
+          }
+        ]]></body>
+      </method>
+
+      <method name="getHighlightedNode">
+        <body><![CDATA[
+          if (this._highlightedNodeID) {
+            return this.mService.getNode(this._highlightedNodeID);
           }
           else {
             return null;
@@ -721,22 +791,48 @@
         - \brief Deselect any currently selected node(s) and select the
         - passed in node
         -->
-      <method name="selectNode">
+      <method name="makeNodeActive">
         <parameter name="newNode"/>
         <body><![CDATA[
-          if (selectedNode == newNode)
+          // Remove the 'active' CSS class from the currently active node
+          let activeNode = this.getActiveNode();
+
+          if (activeNode == newNode)
             return;
 
-          // Remove the 'selected' CSS class from the currently selected node
-          let selectedNode = this.getSelectedNode();
-          if (selectedNode) {
-            let domNode = this.getDOMNode(selectedNode.id);
-            domNode.className = domNode.className.replace(/\bselected\b/, '');
+          if (activeNode) {
+            let domNode = this.getDOMNode(activeNode.id);
+            domNode.className = domNode.className.replace(/\bactive\b/, '');
           }
 
-          // Add the 'selected' class to the new node
-          newNode.className += " selected";
-          this._selectedNodeID = newNode.nodeData.id;
+          // Add the 'active' class to the new node
+          newNode.className += " active";
+          this._activeNodeID = newNode.nodeData.id;
+          return newNode;
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Dehighlight any currently highlighted node(s) and
+        - highlight the passed in node
+        -->
+      <method name="makeNodeHighlighted">
+        <parameter name="newNode"/>
+        <body><![CDATA[
+          // Remove the 'highlight' CSS from the currently highlighted node
+          let highlightedNode = this.getHighlightedNode();
+
+          if (highlightedNode == newNode)
+            return;
+
+          if (highlightedNode) {
+            let domNode = this.getDOMNode(highlightedNode.id);
+            domNode.className = domNode.className.replace(/\bhighlighted\b/,'');
+          }
+
+          // Add the 'highlighted' class to the new node
+          newNode.className += " highlighted";
+          this._highlightedNodeID = newNode.nodeData.id;
           return newNode;
         ]]></body>
       </method>
@@ -752,7 +848,7 @@
           return false;
         ]]></body>
       </method>
- 
+
       <!--
         - \brief Get the name of a node that has a particular URL.
         - \param aURL URL to search for in the nodes.
@@ -790,6 +886,79 @@
           var node = this.mService.getNodeForURL(aURL);
           return (node) ? node.properties : "";
         ]]></body>
+      </method>
+
+      <!-- Popup menu methods -->
+      <method name="onPopupShown">
+        <parameter name="event" />
+        <body>
+          <![CDATA[
+          let visibleChildren = false;
+          for (var i=0;i<this.mPopup.childNodes.length;i++) {
+            let thisChild = this.mPopup.childNodes[i];
+            if (thisChild.hidden)
+              continue;
+            visibleChildren = true;
+            break;
+          }
+          if (!visibleChildren)
+            this.mPopup.hidePopup();
+          ]]>
+        </body>
+      </method>
+
+      <method name="onPopupHidden">
+        <parameter name="event" />
+        <body>
+          <![CDATA[
+          //this.mPopup.hidePopup();
+          // Remove the 'highlight' CSS from the currently highlighted node
+          let highlightedNode = this.getHighlightedNode();
+          if (highlightedNode) {
+            let domNode = this.getDOMNode(highlightedNode.id);
+            domNode.className = domNode.className.replace(/\bhighlighted\b/,'');
+          }
+
+          this._highlightedNodeID = null;
+          ]]>
+        </body>
+      </method>
+
+      <method name="openContextMenu">
+        <parameter name="event" />
+        <parameter name="nodeId" />
+        <body>
+          <![CDATA[
+          // clear the popup menu
+          while (this.mPopup.lastChild) {
+            DOMUtils.destroyNode(this.mPopup.lastChild);
+            this.mPopup.removeChild(this.mPopup.lastChild);
+          }
+
+          // if we got passed a DOM node, then fill the context menu with
+          // the context menu options defined by the service handling the
+          // node.  otherwise, fill the popup with the contents of the
+          // "new stuff" menu
+          if (nodeId) {
+            let node = this.getNode(nodeId);
+            this.makeNodeHighlighted(this.getDOMNode(nodeId));
+            this.mService.fillContextMenu(node, this.mPopup, window);
+          } else {
+            this.mService.fillNewItemMenu(null, this.mPopup, window);
+          }
+
+          // show the popup menu
+          document.popupNode = null;
+          this.mPopup.showPopup(document.documentElement,
+                                event.screenX + 5,
+                                event.screenY + 5,
+                                'context', null, null, null);
+
+          // XXXstevel: should we select/highlight the node?
+          event.stopPropagation();
+          event.preventDefault();
+          ]]>
+        </body>
       </method>
 
       <!--

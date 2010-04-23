@@ -632,9 +632,22 @@ sb-servicepane-group description.servicepane-group-label {
 sb-servicepane-node {
   padding-left: 8px;
 }
-sb-servicepane-node.selected {
+
+/* loaded in the browser & selected in the servicepane */
+sb-servicepane-node.active {
   background-color: rgb(92,81,132);
   -moz-border-radius: 3px;
+}
+
+/* highlighted in the servicepane for when a node is right-clicked, but not
+ * loaded in the browser */
+sb-servicepane-node.highlighted {
+  background-color: rgb(61,57,84);
+  -moz-border-radius: 3px;
+  padding-left: 7px;
+  margin-top: -1px;
+  margin-bottom: -1px;
+  border: 1px solid rgb(143,132,181);
 }
 
 /* the open/closed container toggle arrow for the node and its subnodes */
