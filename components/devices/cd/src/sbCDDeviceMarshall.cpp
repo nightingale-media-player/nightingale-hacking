@@ -42,6 +42,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsIClassInfoImpl.h>
 #include <nsIProgrammingLanguage.h>
+#include <nsIPropertyBag2.h>
 #include <nsISupportsPrimitives.h>
 #include <nsIThreadManager.h>
 #include <nsIThreadPool.h>
@@ -250,18 +251,36 @@ sbCDDeviceMarshall::AddDevice(sbICDDevice *aCDDevice)
 
 nsresult
 sbCDDeviceMarshall::RemoveDevice(sbIDevice* aDevice) {
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-nsresult
-sbCDDeviceMarshall::RemoveDevice(nsAString const & aName)
-{
   nsresult rv;
-  // Only remove the device if it's stashed in the device hash.
-  nsCOMPtr<sbIDevice> device;
-  rv = GetDevice(aName, getter_AddRefs(device));
-  if (NS_FAILED(rv) || !device) {
+
+  // Get the device name.
+  nsString                  deviceName;
+  nsCOMPtr<nsIPropertyBag2> parameters;
+  nsCOMPtr<nsIVariant>      var;
+  nsCOMPtr<nsISupports>     supports;
+  rv = aDevice->GetParameters(getter_AddRefs(parameters));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = parameters->GetProperty(NS_LITERAL_STRING("sbICDDevice"),
+                               getter_AddRefs(var));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = var->GetAsISupports(getter_AddRefs(supports));
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbICDDevice> cdDevice = do_QueryInterface(supports, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = cdDevice->GetName(deviceName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Just return if device is not in the hash of known CD devices.
+  PRBool hasDevice;
+  rv = GetHasDevice(deviceName, &hasDevice);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!hasDevice)
     return NS_OK;
+
+  // Remove device from hash of known CD devices.
+  {
+    nsAutoMonitor mon(mKnownDevicesLock);
+    mKnownDevices.Remove(deviceName);
   }
 
   nsCOMPtr<sbIDeviceRegistrar> deviceRegistrar =
@@ -275,7 +294,7 @@ sbCDDeviceMarshall::RemoveDevice(nsAString const & aName)
   // Get the device controller for this device.
   nsCOMPtr<sbIDeviceController> deviceController;
   nsID *controllerId = nsnull;
-  rv = device->GetControllerId(&controllerId);
+  rv = aDevice->GetControllerId(&controllerId);
   if (NS_SUCCEEDED(rv)) {
     rv = deviceControllerRegistrar->GetController(
         controllerId,
@@ -293,16 +312,31 @@ sbCDDeviceMarshall::RemoveDevice(nsAString const & aName)
 
   // Release the device from the controller
   if (deviceController) {
-    rv = deviceController->ReleaseDevice(device);
+    rv = deviceController->ReleaseDevice(aDevice);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to release the device");
   }
 
   // Unregister the device
-  rv = deviceRegistrar->UnregisterDevice(device);
+  rv = deviceRegistrar->UnregisterDevice(aDevice);
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to unregister device");
 
-  nsAutoMonitor mon(mKnownDevicesLock);
-  mKnownDevices.Remove(aName);
+  return NS_OK;
+}
+
+nsresult
+sbCDDeviceMarshall::RemoveDevice(nsAString const & aName)
+{
+  nsresult rv;
+  // Only remove the device if it's stashed in the device hash.
+  nsCOMPtr<sbIDevice> device;
+  rv = GetDevice(aName, getter_AddRefs(device));
+  if (NS_FAILED(rv) || !device) {
+    return NS_OK;
+  }
+
+  // Remove device.
+  rv = RemoveDevice(device);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
