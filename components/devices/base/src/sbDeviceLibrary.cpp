@@ -1949,10 +1949,16 @@ sbDeviceLibrary::GetSyncPlaylistList(nsIArray ** aPlaylistList)
     rv = mainLibraryPlaylists->GetLength(&length);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool deviceSupportsVideo = sbDeviceUtils::GetDoesDeviceSupportContent(
-      mDevice,
-      sbIDeviceCapabilities::CONTENT_VIDEO,
-      sbIDeviceCapabilities::FUNCTION_VIDEO_PLAYBACK);
+    nsCOMPtr<sbIDeviceCapabilities> capabilities;
+    rv = mDevice->GetCapabilities(getter_AddRefs(capabilities));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool deviceSupportsVideo;
+    rv = capabilities->SupportsContent(
+           sbIDeviceCapabilities::CONTENT_VIDEO,
+           sbIDeviceCapabilities::FUNCTION_VIDEO_PLAYBACK,
+           &deviceSupportsVideo);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     for (PRUint32 i = 0; i < length; i++) {
       nsCOMPtr<sbIMediaList> curList =

@@ -1,34 +1,33 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright© 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the “GPL”).
-// 
-// Software distributed under the License is distributed 
-// on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #include "nsISupports.idl"
 
 interface nsIArray;
 interface sbIDevice;
 interface nsIVariant;
+interface nsIStringEnumerator;
 
 /**
  * \interface sbIImageSize
@@ -431,7 +430,7 @@ interface sbIVideoFormatType : nsISupports
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(5d3f2ef0-25e3-11df-8a39-0800200c9a66)]
+[scriptable, uuid(4b1ab380-4b67-11df-9879-0800200c9a66)]
 interface sbIDeviceCapabilities : nsISupports
 {
   /**
@@ -589,6 +588,17 @@ interface sbIDeviceCapabilities : nsISupports
    * \returns true if the content type is supported.
    */
   boolean supportsContent(in PRUint32 aFunctionType, in PRUint32 aContentType);
+
+  /**
+   * Get all the file extensions of the content type specified by aContentType
+   * supported by the device specified by aDevice.
+   *
+   * \param aDevice             Device from which to get file extensions.
+   * \param aContentType        Content type for the file extensions to get.
+   * \returns all file extensions the device supports
+   */
+  nsIStringEnumerator getSupportedFileExtensions(in sbIDevice aDevice,
+                                                 in PRUint32 aContentType);
 };
 
 %{C++
