@@ -160,6 +160,8 @@ public:
   void SetSyncMode(bool aManualMode,
                    nsIArray * aPlaylistsList);
 protected:
+  virtual ~sbLibraryUpdateListener();
+
   /**
    * The target library holds a reference to us (to unregister), so it is
    * safe to not own a reference

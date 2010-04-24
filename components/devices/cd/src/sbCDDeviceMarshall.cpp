@@ -36,12 +36,16 @@
 #include <sbIDeviceManager.h>
 #include <sbIDeviceEvent.h>
 #include <sbIDeviceEventTarget.h>
+#include <sbThreadUtils.h>
 #include <sbVariantUtils.h>
 
 #include <nsComponentManagerUtils.h>
 #include <nsIClassInfoImpl.h>
 #include <nsIProgrammingLanguage.h>
+#include <nsIPropertyBag2.h>
 #include <nsISupportsPrimitives.h>
+#include <nsIThreadManager.h>
+#include <nsIThreadPool.h>
 #include <nsServiceManagerUtils.h>
 #include <nsMemory.h>
 #include <prlog.h>
@@ -247,18 +251,36 @@ sbCDDeviceMarshall::AddDevice(sbICDDevice *aCDDevice)
 
 nsresult
 sbCDDeviceMarshall::RemoveDevice(sbIDevice* aDevice) {
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-nsresult
-sbCDDeviceMarshall::RemoveDevice(nsAString const & aName)
-{
   nsresult rv;
-  // Only remove the device if it's stashed in the device hash.
-  nsCOMPtr<sbIDevice> device;
-  rv = GetDevice(aName, getter_AddRefs(device));
-  if (NS_FAILED(rv) || !device) {
+
+  // Get the device name.
+  nsString                  deviceName;
+  nsCOMPtr<nsIPropertyBag2> parameters;
+  nsCOMPtr<nsIVariant>      var;
+  nsCOMPtr<nsISupports>     supports;
+  rv = aDevice->GetParameters(getter_AddRefs(parameters));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = parameters->GetProperty(NS_LITERAL_STRING("sbICDDevice"),
+                               getter_AddRefs(var));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = var->GetAsISupports(getter_AddRefs(supports));
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbICDDevice> cdDevice = do_QueryInterface(supports, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = cdDevice->GetName(deviceName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Just return if device is not in the hash of known CD devices.
+  PRBool hasDevice;
+  rv = GetHasDevice(deviceName, &hasDevice);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!hasDevice)
     return NS_OK;
+
+  // Remove device from hash of known CD devices.
+  {
+    nsAutoMonitor mon(mKnownDevicesLock);
+    mKnownDevices.Remove(deviceName);
   }
 
   nsCOMPtr<sbIDeviceRegistrar> deviceRegistrar =
@@ -272,7 +294,7 @@ sbCDDeviceMarshall::RemoveDevice(nsAString const & aName)
   // Get the device controller for this device.
   nsCOMPtr<sbIDeviceController> deviceController;
   nsID *controllerId = nsnull;
-  rv = device->GetControllerId(&controllerId);
+  rv = aDevice->GetControllerId(&controllerId);
   if (NS_SUCCEEDED(rv)) {
     rv = deviceControllerRegistrar->GetController(
         controllerId,
@@ -290,16 +312,31 @@ sbCDDeviceMarshall::RemoveDevice(nsAString const & aName)
 
   // Release the device from the controller
   if (deviceController) {
-    rv = deviceController->ReleaseDevice(device);
+    rv = deviceController->ReleaseDevice(aDevice);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to release the device");
   }
 
   // Unregister the device
-  rv = deviceRegistrar->UnregisterDevice(device);
+  rv = deviceRegistrar->UnregisterDevice(aDevice);
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to unregister device");
 
-  nsAutoMonitor mon(mKnownDevicesLock);
-  mKnownDevices.Remove(aName);
+  return NS_OK;
+}
+
+nsresult
+sbCDDeviceMarshall::RemoveDevice(nsAString const & aName)
+{
+  nsresult rv;
+  // Only remove the device if it's stashed in the device hash.
+  nsCOMPtr<sbIDevice> device;
+  rv = GetDevice(aName, getter_AddRefs(device));
+  if (NS_FAILED(rv) || !device) {
+    return NS_OK;
+  }
+
+  // Remove device.
+  rv = RemoveDevice(device);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -351,15 +388,45 @@ sbCDDeviceMarshall::DiscoverDevices()
 
   NS_ENSURE_STATE(mCDDeviceService);
 
-  // Since the GW stuff is a little jacked, use the index getter
-  PRInt32 deviceCount = 0;
-  rv = mCDDeviceService->GetNbDevices(&deviceCount);
+  nsCOMPtr<nsIThreadPool> threadPoolService =
+    do_GetService("@songbirdnest.com/Songbird/ThreadPoolService;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Dispatch the scan start event.
-  CreateAndDispatchDeviceManagerEvent(sbIDeviceEvent::EVENT_DEVICE_SCAN_START,
-                                      nsnull,
-                                      static_cast<sbIDeviceMarshall *>(this));
+  nsCOMPtr<nsIThreadManager> threadMgr =
+    do_GetService("@mozilla.org/thread-manager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Save the threading context for notifying the listeners on the current
+  // thread once the scan has ended. 
+  rv = threadMgr->GetCurrentThread(getter_AddRefs(mOwnerContextThread));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIRunnable> runnable =
+    NS_NEW_RUNNABLE_METHOD(sbCDDeviceMarshall, this, RunDiscoverDevices);
+  NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
+
+  rv = threadPoolService->Dispatch(runnable, NS_DISPATCH_NORMAL);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+void
+sbCDDeviceMarshall::RunDiscoverDevices()
+{
+  // Since the GW stuff is a little jacked, use the index getter
+  PRInt32 deviceCount = 0;
+  nsresult rv = mCDDeviceService->GetNbDevices(&deviceCount);
+  NS_ENSURE_SUCCESS(rv, /* void */);
+
+  // Notify of scan start.
+  nsCOMPtr<nsIRunnable> runnable =
+    NS_NEW_RUNNABLE_METHOD(sbCDDeviceMarshall, this, RunNotifyDeviceStartScan);
+  NS_ENSURE_TRUE(runnable, /* void */);
+  rv = mOwnerContextThread->Dispatch(runnable, NS_DISPATCH_SYNC);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+      "WARNING: Could not notify of device start scan!");
+  
 
   for (PRInt32 i = 0; i < deviceCount; i++) {
     nsCOMPtr<sbICDDevice> curDevice;
@@ -369,16 +436,43 @@ sbCDDeviceMarshall::DiscoverDevices()
       continue;
     }
 
-    rv = AddDevice(curDevice);
+    // Add the device on the main thread.
+    rv = sbInvokeOnThread1(*this,
+                           &sbCDDeviceMarshall::AddDevice,
+                           NS_ERROR_FAILURE,
+                           curDevice.get(),
+                           mOwnerContextThread);
+
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not add a CD Device!");
   }
 
+
+  // Notify of scan end.
+  runnable = NS_NEW_RUNNABLE_METHOD(sbCDDeviceMarshall,
+                                    this,
+                                    RunNotifyDeviceStopScan);
+  NS_ENSURE_TRUE(runnable, /* void */);
+  rv = mOwnerContextThread->Dispatch(runnable, NS_DISPATCH_SYNC);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+      "WARNING: Could not notify of device start scan!");
+}
+
+void
+sbCDDeviceMarshall::RunNotifyDeviceStartScan()
+{
+  // Dispatch the scan start event.
+  CreateAndDispatchDeviceManagerEvent(sbIDeviceEvent::EVENT_DEVICE_SCAN_START,
+                                      nsnull,
+                                      static_cast<sbIDeviceMarshall *>(this));
+}
+
+void
+sbCDDeviceMarshall::RunNotifyDeviceStopScan()
+{
   // Dispatch the scan end event.
   CreateAndDispatchDeviceManagerEvent(sbIDeviceEvent::EVENT_DEVICE_SCAN_END,
                                       nsnull,
                                       static_cast<sbIDeviceMarshall *>(this));
-
-  return NS_OK;
 }
 
 nsresult

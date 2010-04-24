@@ -37,26 +37,27 @@ interface nsIDOMXULElement;
 interface nsIDOMNode;
 interface nsIDOMWindow;
 interface nsISimpleEnumerator;
+interface nsIStringEnumerator;
 interface nsIDragSession;
 interface nsITransferable;
 interface nsIStringBundle;
+interface sbIServicePaneMutationListener;
 
 /**
  * \interface sbIServicePaneNode
  * \brief The interface to interact with a particular node in the service pane
  */
-[scriptable, uuid(fb37abd9-8f53-4352-9ca2-5fa17295b01c)]
+[scriptable, uuid(161aee8c-1dd2-11b2-90cb-aaa30be15b1f)]
 interface sbIServicePaneNode : nsISupports
 {
-  /* \brief the uri of this node as an RDF resource */
-  readonly attribute nsIRDFResource resource;
-  
   /* \brief the uri of this node as a string */
-  readonly attribute AString id;
+  attribute AString id;
   
-  /* \brief can this node have children */
+  /* \deprecated All nodes are potential containers now, don't use this */
   readonly attribute boolean isContainer;
   
+  /* \brief class name of the node */
+  attribute AString className;
   /* \brief the URL to load when the node is clicked on in the tree */
   attribute AString url;
   /* \brief the URL of the image to display in the tree */
@@ -87,26 +88,51 @@ interface sbIServicePaneNode : nsISupports
   /* \brief the uri of a stringbundle to use to translate the properties of this node */
   attribute AString stringbundle;
 
-  /* \brief space separated list of property IDs, used to style the tree cell */
+  /* \deprecated This is the same as className property now */
   attribute AString properties;
 
+  /**
+   * \brief Adds mutation listener that will be called whenever a node or one
+   *        of its children get modified.
+   *
+   * \param aListener listener to be added
+   */
+  void addMutationListener (in sbIServicePaneMutationListener aListener);
+  
+  /**
+   * \brief Removes a previously added mutation listener.
+   *
+   * \param aListener listener to be removed
+   */
+  void removeMutationListener (in sbIServicePaneMutationListener aListener);
   
   // here's a subset of the W3C DOM Level 1 Core
   
+  boolean hasAttribute(in AString aName);
+  AString getAttribute(in AString aName);
+  AString setAttribute(in AString aName,
+                       in AString aValue);
+  void removeAttribute(in AString aName);
+
+  boolean hasAttributeNS(in aString aNamespace,
+                         in AString aName);
   AString getAttributeNS(in AString aNamespace,
                          in AString aName);
   AString setAttributeNS(in AString aNamespace,
                          in AString aName,
                          in AString aValue);
-  boolean hasAttributeNS(in aString aNamespace,
+  void removeAttributeNS(in AString aNamespace,
                          in AString aName);
   
+  /** \brief enumerator returning names of node attributes */
+  readonly attribute nsIStringEnumerator attributes;
+  /** \brief enumerator returning node's child nodes */
   readonly attribute nsISimpleEnumerator childNodes;
   readonly attribute sbIServicePaneNode firstChild;
   readonly attribute sbIServicePaneNode lastChild;
   readonly attribute sbIServicePaneNode nextSibling;
-  readonly attribute sbIServicePaneNode parentNode;
   readonly attribute sbIServicePaneNode previousSibling;
+  readonly attribute sbIServicePaneNode parentNode;
   
   sbIServicePaneNode appendChild (in sbIServicePaneNode aChild);
   sbIServicePaneNode insertBefore (in sbIServicePaneNode aNewNode,
@@ -114,43 +140,42 @@ interface sbIServicePaneNode : nsISupports
   void removeChild (in sbIServicePaneNode aChild);
   void replaceChild (in sbIServicePaneNode aNewNode,
                      in sbIServicePaneNode aOldNode);
-  
-  
-  // potential additions:
-  // readonly attribute ownerDataSource; // like ownerDocument
-  // boolean hasChildNodes();
-  // AString getAttribute(in AString aName);
-  // AString setAttribute(in AString aName, in AString aValue);
-  // AString removeAttribute(in AString aName);
-  // AString removeAttributeNS(in AString aNamespace, in AString aName);
-  // some way to enumerate attributes
-  // readonly attribute AString namespaceURI; // default attribute namespace
 };
 
 /**
- * \interface sbIServicePaneNodeInternal
- * \brief this is for internal use by sbServicePaneService.
+ * \interface sbIServicePaneMutationListener
+ * \brief The interface to be implemented by node mutation listeners added via
+ *        sbIServicePaneNode.addListener()
  */
-[scriptable, uuid(9bbc6245-475e-464b-834c-9a45d7642f2b)]
-interface sbIServicePaneNodeInternal : sbIServicePaneNode {
+[scriptable, uuid(586dc48c-1dd2-11b2-bca8-9329bfa23e88)]
+interface sbIServicePaneMutationListener : nsISupports {
   /**
-   * \brief Remove the child from this node
-   * Remove the child from its parent but do not remove its properties
-   * \param aChild the child node to remove
+   * \brief Called after a node attribute changes
+   *
+   * \param aNode service pane node that was changed
+   * \param aAttrName name of the attribute modified
+   * \param aNamespace namespace of the attribute (can be null)
+   * \param aOldVal old attribute value (will be null for new attributes)
+   * \param aNewVal new attribute value (will ne null if attribute is removed)
    */
-  void unlinkChild (in sbIServicePaneNode aChild);
-  
+  void attrModified (in sbIServicePaneNode aNode, in AString aAttrName,
+                     in AString aNamespace, in AString aOldVal, in AString aNewVal);
+
   /**
-   * \brief Remove this node from its parent
+   * \brief Called after a node is added to the service pane tree
+   *
+   * \param aNode service pane node that was added
+   * \param aParent new parent node
    */
-  void unlinkNode ();
-  
+  void nodeInserted (in sbIServicePaneNode aNode, in sbIServicePaneNode aParent);
+
   /**
-   * \brief Remove all the properties and children from a node
-   * Remove all the properties and children from a node. This
-   * effectively removes it from the RDF.
+   * \brief Called after a node is removed from the service pane tree
+   *
+   * \param aNode service pane node that was removed
+   * \param aParent old parent node
    */
-  void clearNode ();
+  void nodeRemoved (in sbIServicePaneNode aNode, in sbIServicePaneNode aParent);
 };
 
 /**
@@ -178,41 +203,34 @@ interface sbIServicePaneListener : nsISupports {
 *
 * @halfbaked
 */
-[scriptable, uuid(56d1a99c-1dd2-11b2-8033-bf4fffd4949c)]
+[scriptable, uuid(77e16142-1dd2-11b2-adee-9daf2e82cdd8)]
 interface sbIServicePaneService : nsISupports
 {
-  /**
-   * \brief The tree represented as an RDF data source.
-   */
-  readonly attribute nsIRDFDataSource dataSource;
-
   /**
    * \brief The root of the tree.
    */
   readonly attribute sbIServicePaneNode root;
 
   /**
-   * \brief Initialize the service. This may be called multiple times safely
+   * \deprecated Calling this is no longer necessary, it won't do anything
    */
   void init();
 
-  /* \brief Add a node to the tree
-   * Create a new node and add it as a child of the specified parent. If a
-   * child with the given id already exists then do not create it, and return
-   * null. Otherwise return a node object.
-   * \param aId an URN to use as the ID, or null if it should be anonymous
-   * \param aParent the desired parent node
-   * \param aContainer should the new node be a container
+  /* \brief Creates a new node object
    * \return node object, or null if the node couldn't be created
+   */
+  sbIServicePaneNode createNode();
+
+  /* \deprecated The proper way of creating nodes is now calling createNode(),
+   *             seting its attributes as required and calling
+   *             parent.appendChild() with this node then.
    */
   sbIServicePaneNode addNode(in AString aId,
                              in sbIServicePaneNode aParent,
                              in boolean aContainer);
   
-  /* \brief Remove a node and all its children
-   * Remove a node from the tree and all its children and all their childen and
-   * so on.
-   * \param aNode the node to remove
+  /* \deprecated The proper way to remove a node is calling
+   *             node.parentNode.removeChild(node).
    */
   void removeNode(in sbIServicePaneNode aNode);
 
@@ -248,76 +266,70 @@ interface sbIServicePaneService : nsISupports
                                  in AString aName,
                                  in AString aValue);
 
-  /* \brief Sort a node based on its weight attribute
-   * \param aNode the node to sort
+  /* \deprecated Sorting is performed automatically now, calling this method
+   *             won't do anything.
    */
   void sortNode(in sbIServicePaneNode aNode);
 
-  /* \brief Save the state of the tree to disk.
-   * This should go away and be handled magically
+  /* \deprecated Service pane no longer supports persistance, calling this
+   *             method won't do anything.
    */
   void save();
 
   /* \brief Fill the context menu for the given node
-   * \param aId the id of the node
+   * \param aNode node clicked on
    * \param aContextMenu the menu we're trying to fill
    * \param aParentWindow the toplevel window we're displaying in
    */
-  void fillContextMenu(in AString aId,
+  void fillContextMenu(in sbIServicePaneNode aNode,
                        in nsIDOMXULElement aContextMenu,
                        in nsIDOMWindow aParentWindow);
   
   /* \brief Fill a menu with menuitems to create new tree nodes
-   * \param aId the id of the node or null for the click and hold menu
+   * \param aNode the node or null for the click and hold menu
    * \param aContextMenu the menu we're trying to fill
    * \param aParentWindow the toplevel window we're displaying in
    */
-  void fillNewItemMenu(in AString aId,
+  void fillNewItemMenu(in sbIServicePaneNode aNode,
                        in nsIDOMXULElement aContextMenu,
                        in nsIDOMWindow aParentWindow);
   
   /* \brief Selection changes notification
-   * \param aId the id of the node that is now selected
+   * \param aNode node that is now selected
    * \param aContainer The container object that implements the selection
    * \param aParentWindow the toplevel window we're displaying in
    */
-  void onSelectionChanged(in AString aId,
+  void onSelectionChanged(in sbIServicePaneNode aNode,
                           in nsIDOMNode aContainer,
                           in nsIDOMWindow aParentWindow);
   
-  /* I think we'll need to have this interface too:
-  nsITreeView wrapTreeView(in nsITreeView aTreeView);
-  it will take an existing tree-builder tree view and add some
-  functionality that we want to have
-  */
-  
   /* drag and drop support */
-  PRBool canDrop(in AString aID,
+  PRBool canDrop(in sbIServicePaneNode aNode,
                  in nsIDragSession aDragSession,
                  in PRInt32 aOrientation,
                  in nsIDOMWindow aWindow);
                  
-  void onDrop(in AString aID,
+  void onDrop(in sbIServicePaneNode aNode,
               in nsIDragSession aDragSession,
               in PRInt32 aOrientation,
               in nsIDOMWindow aWindow);
               
-  PRBool onDragGesture(in AString aID,
+  PRBool onDragGesture(in sbIServicePaneNode aNode,
                        out nsITransferable aTransferable);
 
   /* \brief Called before a user starts to rename a node.
-   * \param aId the ID of the node about to be renamed
+   * \param aNode the node about to be renamed
    */
-  void onBeforeRename(in AString aID);
+  void onBeforeRename(in sbIServicePaneNode aNode);
 
   /* \brief Called when a node is renamed by the user, allows
    *        the node owner to accept the action by setting the
    *        node name to the given value.
-   * \param aId the ID of the node being renamed
+   * \param aNode the node being renamed
    * \param aNewName new name entered by the user or null if user canceled
    *        renaming
    */
-  void onRename(in AString aID,
+  void onRename(in sbIServicePaneNode aNode,
                 in AString aNewName);
 
   /* \brief Add a service pane listener
@@ -336,7 +348,7 @@ interface sbIServicePaneService : nsISupports
 * \interface sbIServicePaneModule
 * \brief The interface exposed by the service pane backends
 */
-[scriptable, uuid(abc52828-1dd1-11b2-a8ce-dae6d9263bb7)]
+[scriptable, uuid(2ece4c56-1dd2-11b2-9cc4-8a248cad3050)]
 interface sbIServicePaneModule : nsISupports
 {
   /* \brief Initialize this service pane module
@@ -397,8 +409,8 @@ interface sbIServicePaneModule : nsISupports
     associated with this module */
   readonly attribute AString stringbundle;
 
-  /* \brief Called when service pane service is shutting down
-   */
+  /* \brief Called when service pane service is shutting down 
+   */ 
   void shutdown();
 };
 

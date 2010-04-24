@@ -81,12 +81,15 @@ int CommandDeleteFile(std::string aFile, bool aRecursive = false);
  */
 int CommandSetIcon(std::string aExecutable, std::string aIconFile, std::string aIconName);
 
+#if defined(XP_WIN)
 /**
  * Set auxilary version information for a given executable file to the key/value
  * pairs found in the INI file section.  This may not make sense on all
  * platforms; this is a no-op in those cases.
+ * NOTE: This is a win32-only function.
  */
 int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection);
+#endif
 
 /**
  * Parse a given command line (a line in the steps) into discrete components,
@@ -122,7 +125,7 @@ tstring FilterSubstitution(tstring aString);
  * Get the path to the application directory (where disthelper.exe lives).
  * Must end with a path separator (\ on Windows, / on Unix)
  */
-tstring GetAppDirectory();
+tstring GetAppResoucesDirectory();
 
 /**
  * Get the path to the directory containing distribution.ini file
@@ -149,5 +152,13 @@ tstring GetLeafName(tstring aSrc);
  * Report a generic fatal error to the user, and prevent the application from running
  */
 void ShowFatalError(const char* fmt, ...);
+
+#if defined(XP_MACOSX)
+/**
+ * Update a property in the bundles plist.
+ * NOTE: This is a mac-only function.
+ */
+int ReplacePlistProperty(std::string & aKey, std::string & aValue);
+#endif
 
 #endif /* _DISTHERLPER_COMMANDS_H__ */

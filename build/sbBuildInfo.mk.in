@@ -33,5 +33,5 @@ SB_JSONLY_EXTENSION_MAX_VER=2.0.0a
 # and if you want to be 100% sure/correct, so should you..
 #
 # RepoRevisionClient=$Rev$
-RepoRevisionVendor=11248
-RepoRevisionVendorBinaries=11589
+RepoRevisionVendor=11254
+RepoRevisionVendorBinaries=11631

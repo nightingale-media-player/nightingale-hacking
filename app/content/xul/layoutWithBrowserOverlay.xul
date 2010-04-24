@@ -278,23 +278,6 @@
 
       <panel type="autocomplete" id="PopupAutoComplete" noautofocus="true"/>
       
-      <!-- POPUP FOR SPRING-LOADED SERVICE PANE -->
-      <panel id="service_pane_spring_load_panel"
-             onpopupshowing="gServicePane.initSpringLoadPanel(this);"
-             ondragdrop="this.hidePopup()"
-             position="after_start">
-        <hbox class="service-pane-spring-load-header">
-          <button class="service-pane-spring-load-button"
-                  oncommand="gServicePane.open = true; this.parentNode.parentNode.hidePopup();"/>
-          <hbox flex="1">
-            <label flex="1" value="&servicepane.title.label;"/>
-          </hbox>
-          <toolbarbutton class="close-button"
-                         oncommand="this.parentNode.parentNode.hidePopup();"/>
-        </hbox>
-        <box class="service-pane-spring-load-tree" flex="1"/>
-      </panel>
-
       <!-- POPUP FOR THE POPUPBLOCKER MENU -->
       <menupopup id="blockedPopupOptions" 
                 onpopupshowing="gPopupBlockerObserver.fillPopupList(event);">
@@ -388,14 +371,6 @@
       </command>
       -->
 
-      <command id="cmd_bm_newbookmark"       oncommand="bmManager.addBookmark();">
-        <observes type="dataremote"
-                  key="browser.canbookmark"
-                  attribute="disabled"
-                  boolean="true"
-                  inverted="true" />
-      </command>
-      
       <command id="View:PageSource" oncommand="BrowserViewSourceOfDocument(content.document);" observes="isImage"/>
       <command id="cmd_mediapage_next" oncommand="goDoCommand(this.id);"/>
       <command id="cmd_metadata" oncommand="goDoCommand('cmd_metadata');"/>
@@ -452,7 +427,6 @@
       <key id="key_viewSource" key="&menu.viewpagesource.key;" command="View:PageSource" modifiers="accel,shift"/>
 
       <!-- 
-      <key id="key_bookmark" key="&bookmarkPage.key;" command="cmd_bm_newbookmark" modifiers="accel"/>
       <key id="key_subscribe" key="&bookmarkPage.key;" command="cmd_bm_newsubscription" modifiers="accel,shift"/>
       -->
 
@@ -543,10 +517,6 @@
   <script type="application/x-javascript"   
   src="chrome://songbird/content/scripts/searchHandler.js" />
 
-  <!-- Bookmarks manager -->
-  <script type="application/x-javascript" 
-  src="chrome://songbird/content/scripts/bookmarks.js" />
-
   <!-- Popup Blocker UI functions -->
   <script type="application/x-javascript" 
   src="chrome://songbird/content/scripts/popupBlocker.js" />
@@ -625,13 +595,6 @@
                      tooltiptext="&tooltip.browser.home;"
                      onclick="BrowserHomeClick(event);"/>
 
-      <!--
-      <toolbarbutton id="bookmark-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
-                     label="&tooltip.browser.bookmark;"
-                     command="cmd_bm_newbookmark"
-                     tooltiptext="&tooltip.browser.bookmark;"/>
-      -->
-
       <toolbarbutton id="subscription-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
                      label="&tooltip.browser.subscription;"
                      command="cmd_bm_newsubscription"
@@ -642,20 +605,6 @@
                    title="URL">
         <sb-locationbar-textbox id="location_bar"
                                 flex="1" align="center" />  
-
-        <!--
-        <toolbarbutton id="bookmark-subscribe-button" command="cmd_bm_newbookmark"
-                       type="sb-clickhold"
-                        class="toolbarbutton-1 chromeclass-toolbar-additional"
-                        tooltiptext="&tooltip.browser.bookmarksubscribe;">
-          <menupopup id="bookmark-subscribe-popup" popupanchor="bottomleft" popupalign="topleft">
-            <menuitem label="&tooltip.browser.bookmark;" tooltiptext="&tooltip.browser.bookmark;"
-                      command="cmd_bm_newbookmark" />
-            <menuitem label="&tooltip.browser.subscription;" tooltiptext="&tooltip.browser.subscription;"
-                      command="cmd_bm_newsubscription" />
-          </menupopup>
-        </toolbarbutton>
-        -->
       </toolbaritem>
       
       <toolbaritem id="nav-bar-spacer" flex="1"/>

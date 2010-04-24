@@ -1,30 +1,29 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #include "sbDeviceCapabilities.h"
+#include "sbTArrayStringEnumerator.h"
 
 #include <algorithm>
 
@@ -35,6 +34,7 @@
 #include <nsIProgrammingLanguage.h>
 #include <nsServiceManagerUtils.h>
 
+#include <sbDeviceUtils.h>
 #include <sbMemoryUtils.h>
 
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbDeviceCapabilities,
@@ -492,6 +492,33 @@ sbDeviceCapabilities::SupportsContent(PRUint32 aFunctionType,
   sbAutoNSMemPtr contentTypesPtr(contentTypes);
   end = contentTypes + contentTypesLength;
   *aSupported = std::find(contentTypes, end, aContentType) != end;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceCapabilities::GetSupportedFileExtensions(sbIDevice *aDevice,
+                                                 PRUint32 aContentType,
+                                                 nsIStringEnumerator **_retval)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aDevice);
+
+  // Function variables.
+  nsresult rv;
+
+  nsTArray<nsString> allExtensions;
+  rv = sbDeviceUtils::AddSupportedFileExtensions(aDevice,
+                                                 aContentType,
+                                                 allExtensions);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIStringEnumerator> allExtensionsEnum =
+    new sbTArrayStringEnumerator(&allExtensions);
+
+  NS_ENSURE_TRUE(allExtensionsEnum, NS_ERROR_OUT_OF_MEMORY);
+
+  allExtensionsEnum.forget(_retval);
 
   return NS_OK;
 }

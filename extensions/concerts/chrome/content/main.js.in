@@ -163,90 +163,40 @@ Concerts = {
     var SB_NS = 'http://songbirdnest.com/data/1.0#';
     var SP_NS = 'http://songbirdnest.com/rdf/servicepane#';
 
-		var SPS = Cc['@songbirdnest.com/servicepane/service;1'].
-				getService(Ci.sbIServicePaneService);
-		SPS.init();
-    var BMS = Cc['@songbirdnest.com/servicepane/bookmarks;1']
-                 .getService(Ci.sbIBookmarks);
+    var SPS = Cc["@songbirdnest.com/servicepane/service;1"]
+                .getService(Ci.sbIServicePaneService);
 		
-    var servicesNode = SPS.getNode("SB:Services") ||
-                       this._findServicesNode(SPS.root, SB_NS);
-    if (servicesNode == null) {
+    var servicesNode = SPS.getNode("SB:Services");
+    if (servicesNode) {
+      servicesNode.hidden = false;
+    } else {
       // No services node found, create one
-      servicesNode = SPS.addNode("SB:Services", SPS.root, true);
-      servicesNode.properties = 'folder services';
+      servicesNode = SPS.createNode();
+      servicesNode.id = "SB:Services";
+      servicesNode.className = 'folder services';
       servicesNode.name = SBString("servicesource.services");
+      servicesNode.editable = false;
       servicesNode.setAttributeNS(SB_NS, "servicesFolder", 1);
       servicesNode.setAttributeNS(SP_NS, "Weight", 1);
-      SPS.sortNode(servicesNode);
+      SPS.root.appendChild(servicesNode);
     }
 
-    var concertsURL = "chrome://concerts/content/browse.xul";
-		var concertsNode = SPS.getNode("urn:concerts") ||
-                       SPS.getNodeForURL(concertsURL);
-		if (concertsNode != null) {
-      // We found one - make sure it's homed under the Services folder
-      if (concertsNode.parentNode &&
-          concertsNode.parentNode.name != SBString("servicesource.services")) {
-        // remove it
-        SPS.removeNode(concertsNode);
-        concertsNode = null;
-      }
-    }
-
-    if (concertsNode == null) {
-      // No Concerts node found, create a new one
-      concertsNode = SPS.addNode("urn:concerts", servicesNode, false);
-      concertsNode.url = "chrome://concerts/content/browse.xul";
-      concertsNode.name = this._strings.getString("servicePaneName");
-      concertsNode.tooltip =
-        this._strings.getString("servicePaneInitialTooltip");
-      concertsNode.properties = "concerts";
-    }
-    else {
-      // Read the last count from node name
-      let name = concertsNode.name;
-      let begin = name.indexOf('(');
-      if (begin != -1) {
-        let end = name.indexOf(')');
-        if (end != -1 && end > begin)
-          this.lastConcertCount = parseInt(name.substring(begin + 1, end));
-      }
-    }
+    // Create concerts node
+    var concertsNode = SPS.createNode();
+    concertsNode.id = "urn:concerts";
+    concertsNode.url = "chrome://concerts/content/browse.xul";
+    concertsNode.name = this._strings.getString("servicePaneName");
+    concertsNode.tooltip =
+      this._strings.getString("servicePaneInitialTooltip");
+    concertsNode.editable = false;
+    concertsNode.className = "concerts";
     concertsNode.setAttributeNS(SP_NS, "addonID", "@EXTENSION_UUID@");
     concertsNode.image = 'chrome://concerts/content/songkick-16x16.png';
+    servicesNode.appendChild(concertsNode);
 
     // may need to reset the name post-localisation
     this.updateConcertCount();
-
-    // Save
-    SPS.save();
-
-		// outside the loop in case we're going from disabled->enabled
-		concertsNode.hidden = false;
-    servicesNode.hidden = false;
-    concertsNode.editable = false;
-    servicesNode.editable = false;
 	},
-
-  // Find the Services node in the servicepane
-  _findServicesNode : function (node, ns) {
-    // Found the node, return it
-    if (node.isContainer && (node.getAttributeNS(ns, "servicesFolder") == 1))
-      return node;
-
-    // Otherwise recursively walk this node's children
-    if (node.isContainer) {
-      var children = node.childNodes;
-      while (children.hasMoreElements()) {
-        var child = children.getNext().QueryInterface(Ci.sbIServicePaneNode);
-        var result = this._findServicesNode(child, ns);
-        if (result != null)
-          return result;
-      }
-    }
-    return null;
-  },
 
 	updateConcertCount : function(num) {
 		var concertCount;
@@ -273,9 +223,8 @@ Concerts = {
 				.createBundle("chrome://concerts/locale/overlay.properties");
 		}
 
-		var SPS = Components.classes['@songbirdnest.com/servicepane/service;1']
-			.getService(Components.interfaces.sbIServicePaneService);
-		SPS.init();
+		var SPS = Cc["@songbirdnest.com/servicepane/service;1"]
+			          .getService(Ci.sbIServicePaneService);
 		var concertsNode = SPS.getNode("urn:concerts");
 		if (concertsNode != null) {
 			if (concertCount > 0) {
@@ -289,7 +238,6 @@ Concerts = {
 			concertsNode.tooltip = concertCount +
 				this.servicePaneStr.GetStringFromName("servicePaneTooltip")
 		}
-		SPS.save();
 	},
 	
 
@@ -535,7 +483,6 @@ Concerts = {
 
 Concerts.uninstallObserver = {
 	_uninstall : false,
-	_disable : false,
 	list : null,
 	
 	observe : function(subject, topic, data) {
@@ -544,21 +491,11 @@ Concerts.uninstallObserver = {
 				// Extension has been flagged to be uninstalled
 				subject.QueryInterface(Ci.nsIUpdateItem);
 
-				var SPS = Cc['@songbirdnest.com/servicepane/service;1'].
-					getService(Ci.sbIServicePaneService);
-				var concertsNode = SPS.getNode("urn:concerts");
-
 				if (subject.id == "@EXTENSION_UUID@") {
 					if (data == "item-uninstalled") {
 						this._uninstall = true;
-					} else if (data == "item-disabled") {
-						this._disable = true;
-						concertsNode.hidden = true;
 					} else if (data == "item-cancel-action") {
-						if (this._uninstall)
-							this._uninstall = false;
-						if (this._disable)
-							concertsNode.hidden = false;
+						this._uninstall = false;
 					}
 				}
 				break;
@@ -597,7 +534,7 @@ Concerts.uninstallObserver = {
 	cleanupPlaylists : function(libraryManager) {
 		this.observerService.removeObserver(this,
 				"songbird-library-manager-before-shutdown");
-		// 4) Remove the Artists On Tour smart playlist
+		// 3) Remove the Artists On Tour smart playlist
 		if (this.list != null)
 			this.mainLib.remove(this.list);
 	},
@@ -605,35 +542,13 @@ Concerts.uninstallObserver = {
 	uninstallCleanup : function() {
 		// Cleanup after ourselves
 		// We need to do a few things:
-		// 1) Remove service pane node for Concerts
-		// 2) Remove Concert prefs
-		// 3) Remove "On Tour" property from library if it's visible
+		// 1) Remove Concert prefs
+		// 2) Remove "On Tour" property from library if it's visible
 
 		// Keep a count of when it was uninstalled
 		gMetrics.metricsInc("concerts", "uninstall", "");
 		
-		// 1) Remove service pane node
-		var SPS = Cc['@songbirdnest.com/servicepane/service;1']
-			.getService(Ci.sbIServicePaneService);
-		var concertsNode = SPS.getNode("urn:concerts");
-		SPS.removeNode(concertsNode);
-
-    // find the services node, if it has any visible children then leave
-    // it visible - otherwise hide it
-    var servicesNode = SPS.getNode("SB:Services");
-    var visible = false;
-    var enum = servicesNode.childNodes;
-    while (enum.hasMoreElements()) {
-      var node = enum.getNext();
-      if (!node.hidden) {
-        visible = true;
-        break;
-      }
-    }
-    servicesNode.hidden = !visible;
-
-
-		// 2) Remove Concert prefs
+		// 1) Remove Concert prefs
 		var prefs = Cc["@mozilla.org/preferences-service;1"]
 			.getService(Ci.nsIPrefService).getBranch("extensions.concerts.");
 		if (prefs.prefHasUserValue("showplaylink"))
@@ -654,7 +569,7 @@ Concerts.uninstallObserver = {
 			prefs.clearUserPref("locations.forcerefresh");
 		prefs.deleteBranch("");
 		
-		// 3) Remove "On Tour" property from library colspec
+		// 2) Remove "On Tour" property from library colspec
 		var skSvc = Cc["@songbirdnest.com/Songbird/Concerts/Songkick;1"]
 			.getService(Ci.sbISongkick);
 		var mainLib = Cc['@songbirdnest.com/Songbird/library/Manager;1']

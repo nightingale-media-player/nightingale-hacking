@@ -187,15 +187,13 @@
         this._servicePaneService = 
               Cc['@songbirdnest.com/servicepane/service;1']
                 .getService(Ci.sbIServicePaneService);
-        this._servicePaneService.init(); // TODO: make service pane init itself
         this._servicePaneListener = {
-          nodePropertyChanged: function(aNodeId, aPropertyName) {
-            var SP_NS = 'http://songbirdnest.com/rdf/servicepane#';
-            var NC_NS = 'http://home.netscape.com/NC-rdf#';
-            if (aPropertyName != SP_NS+'Properties' &&
-                aPropertyName != NC_NS+'Name' &&
-                aPropertyName != SP_NS+'Image') {
-              // we only care about Properties and Image changing
+          attrModified: function(aNode, aAttrName, aNamespace, aOldVal, aNewVal) {
+            if (aNamespace != null ||
+                (aAttrName != 'className' &&
+                 aAttrName != 'name' &&
+                 aAttrName != 'image')) {
+              // we only care about class name and image changing
               return;
             }
 
@@ -203,17 +201,18 @@
             var tab = self.tabContainer.firstChild;
             while(tab) {
               // looking for one associated with the node that changed
-              if (tab.servicePaneNode && 
-                  tab.servicePaneNode.id == aNodeId) {
+              if (tab.servicePaneNode == aNode) {
                 // and apply its properties
                 tab.applyPropertiesFromServicePaneNode();
               }
               tab = tab.nextSibling;
             }
           },
-          QueryInterface: XPCOMUtils.generateQI([Ci.sbIServicePaneListener])
+          nodeInserted: function() {},
+          nodeRemoved: function() {},
+          QueryInterface: XPCOMUtils.generateQI([Ci.sbIServicePaneMutationListener])
         }
-        this._servicePaneService.addListener(this._servicePaneListener);
+        this._servicePaneService.root.addMutationListener(this._servicePaneListener);
         
         this.mm = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
                     .getService(Ci.sbIMediacoreManager);
@@ -246,7 +245,7 @@
         <![CDATA[
         
         // remove service pane listener        
-        this._servicePaneService.removeListener(this._servicePaneListener);
+        this._servicePaneService.root.removeMutationListener(this._servicePaneListener);
         this._servicePaneService = null;
 
         this.removeProgressListener(this);
@@ -264,6 +263,7 @@
 
       <field name="_sessionStore">null</field>
       <field name="_servicePaneService">null</field>
+      <field name="_servicePaneListener">null</field>
       
       <property name="tabStrip" readonly="true">
         <getter>return this.mStrip;</getter>

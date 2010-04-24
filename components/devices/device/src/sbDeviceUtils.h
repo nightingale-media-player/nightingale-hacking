@@ -323,19 +323,6 @@ public:
   GetDeviceCapsMediaType(sbIMediaItem * aMediaItem);
 
   /**
-   * Returns true if the device supports a certain content type w/ a paired
-   * function type (i.e. audio content, w/ audio playback).
-   * \param aDevice The device to lookup up capabilities with.
-   * \param aContentType The requested content type.
-   * \param aFunctionType The requested function type.
-   * \return True if the content and function type are supported on the device.
-   */
-  static PRBool
-  GetDoesDeviceSupportContent(sbIDevice *aDevice,
-                              PRUint32 aContentType,
-                              PRUint32 aFunctionType);
-
-  /**
    * Add to the file extension list specified by aFileExtensionList the list of
    * file extensions of the content type specified by aContentType supported by
    * the device specified by aDevice.

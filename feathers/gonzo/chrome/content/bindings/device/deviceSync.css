@@ -1,29 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
-
 
 
 /**
@@ -60,6 +57,16 @@ sb-device-image-sync[disabled="true"] [disabled="true"] {
 }
 
 sb-device-sync[disabled="true"] vbox[sbid="content_selector"],
-sb-device-image-sync[disabled="true"] groupbox[sbid="content_selector"] {
+sb-device-image-sync[disabled="true"] groupbox[sbid="content_selector"],
+sb-device-image-sync[disabled="true"] label[sbid="sync_images_supported_formats"] {
   opacity: .5;
+}
+
+label[sbid="sync_images_supported_formats"] {
+  color: rgb(170, 168, 179);
+  font-size: 11px;
+}
+
+vbox[sbid="sync_images_supported_formats_box"] {
+  height: 20px;
 }

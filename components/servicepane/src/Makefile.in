@@ -30,7 +30,6 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbServicePaneService.js \
-                      $(srcdir)/sbBookmarksService.js \
                       $(srcdir)/sbDeviceServicePaneService.js \
                       $(srcdir)/sbLibraryServicePaneService.js \
                       $(NULL)

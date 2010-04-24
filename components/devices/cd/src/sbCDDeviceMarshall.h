@@ -38,6 +38,7 @@
 #include <nsIWritablePropertyBag.h>
 #include <nsInterfaceHashtable.h>
 #include <nsAutoLock.h>
+#include <nsIThread.h>
 
 
 class sbCDDeviceMarshall : public sbBaseDeviceMarshall,
@@ -92,12 +93,31 @@ protected:
                                                nsISupports *aOrigin = nsnull,
                                                PRBool aAsync = PR_FALSE);
 
+  //
+  // @brief Internal method for discovering plugged in devices on a
+  //        background thread.
+  //
+  void RunDiscoverDevices();
+
+  //
+  // @brief Internal method for sending the device start scan event.
+  //
+  void RunNotifyDeviceStartScan();
+
+  //
+  // @brief Internal method for sending the device stop scan event.
+  //
+  void RunNotifyDeviceStopScan();
+
 private:
   nsInterfaceHashtableMT<nsStringHashKey, nsISupports> mKnownDevices;
   PRMonitor                                            *mKnownDevicesLock;
 
   // The CD device service to use
   nsCOMPtr<sbICDDeviceService> mCDDeviceService;
+
+  // Threading
+  nsCOMPtr<nsIThread> mOwnerContextThread;
 
   // Prevent copying and assignment
   sbCDDeviceMarshall(sbCDDeviceMarshall const &);

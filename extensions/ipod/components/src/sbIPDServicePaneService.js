@@ -612,9 +612,6 @@ IPD_SPS.prototype = {
                           .getService(Ci.nsIObserverService);
     this._observerSvc.addObserver(this, "quit-application", false);
 
-    // Remove all device nodes.
-    this._removeDevNodes(this._servicePaneSvc.root);
-
     // Get the library manager.
     this._libMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
                      .getService(Ci.sbILibraryManager);
@@ -654,9 +651,6 @@ IPD_SPS.prototype = {
 
     // Remove all devices.
     this._removeAllDevices();
-
-    // Remove all device nodes.
-    this._removeDevNodes(this._servicePaneSvc.root);
 
     // Clear the device lists
     this._devInfoList = null;
@@ -788,30 +782,6 @@ IPD_SPS.prototype = {
     // Remove all devices.
     for (var deviceID in this._devInfoList)
       this._removeDevice(this._devInfoList[deviceID].device);
-  },
-
-
-  /**
-   * \brief Remove all device nodes from the service pane node specified by
-   *        aNode.  If aNode or any of its descendents are device nodes, they
-   *        are removed.
-   *
-   * \param aNode               Node from which to remove device nodes.
-   */
-
-  _removeDevNodes: function IPD_SPS__removeDevNodes(aNode) {
-    // Remove child device nodes.
-    if (aNode.isContainer) {
-      var childEnum = aNode.childNodes;
-      while (childEnum.hasMoreElements()) {
-        var child = childEnum.getNext().QueryInterface(Ci.sbIServicePaneNode);
-        this._removeDevNodes(child);
-      }
-    }
-
-    // Remove device nodes.
-    if (aNode.contractid == this._cfg.contractID)
-      this._servicePaneSvc.removeNode(aNode);
   },
 
 

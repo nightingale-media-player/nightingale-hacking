@@ -1953,13 +1953,18 @@ nsresult sbBaseDevice::InitializeDeviceLibrary
                             NS_LITERAL_STRING("1"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsRefPtr<sbBaseDeviceLibraryListener> libListener = new sbBaseDeviceLibraryListener();
-  NS_ENSURE_TRUE(libListener, NS_ERROR_OUT_OF_MEMORY);
+  if (!mLibraryListener) {
+    nsRefPtr<sbBaseDeviceLibraryListener> libListener =
+      new sbBaseDeviceLibraryListener();
+    NS_ENSURE_TRUE(libListener, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = libListener->Init(this);
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = libListener->Init(this);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = aDevLib->AddDeviceLibraryListener(libListener);
+    libListener.swap(mLibraryListener);
+  }
+
+  rv = aDevLib->AddDeviceLibraryListener(mLibraryListener);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // hook up the media list listeners to the existing lists
@@ -1972,8 +1977,6 @@ nsresult sbBaseDevice::InitializeDeviceLibrary
                                          enumerator,
                                          sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  libListener.swap(mLibraryListener);
 
   return NS_OK;
 }
@@ -2294,10 +2297,13 @@ sbBaseDevice::UpdateDefaultLibrary(sbIDeviceLibrary* aDevLib)
     return NS_OK;
 
   // Update the default library and volume.
-  mDefaultLibrary = aDevLib;
   nsRefPtr<sbBaseDeviceVolume> volume;
-  rv = GetVolumeForItem(aDevLib, getter_AddRefs(volume));
-  if (NS_SUCCEEDED(rv)) {
+  if (aDevLib) {
+    rv = GetVolumeForItem(aDevLib, getter_AddRefs(volume));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  mDefaultLibrary = aDevLib;
+  {
     nsAutoLock autoVolumeLock(mVolumeLock);
     mDefaultVolume = volume;
   }
@@ -3268,6 +3274,8 @@ sbBaseDevice::RemoveVolume(sbBaseDeviceVolume* aVolume)
     mVolumeGUIDTable.Remove(volumeGUID);
     if (!libraryGUID.IsEmpty())
       mVolumeLibraryGUIDTable.Remove(libraryGUID);
+    if (mPrimaryVolume == aVolume)
+      mPrimaryVolume = nsnull;
   }
 
   return NS_OK;
@@ -6154,6 +6162,9 @@ sbBaseDevice::SetDefaultLibrary(sbIDeviceLibrary* aDefaultLibrary)
   // Update the default library.
   rv = UpdateDefaultLibrary(aDefaultLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Update properties for new default library.
+  UpdateProperties();
 
   return NS_OK;
 }

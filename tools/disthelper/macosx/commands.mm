@@ -1,4 +1,3 @@
-/* vim: le=unix sw=2 : */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -41,6 +40,7 @@
 #include "debug.h"
 #include "commands.h"
 #include "tchar_compat.h"
+#include "macutils.h"
 
 // unix include
 #include <errno.h>
@@ -66,8 +66,8 @@ tstring ResolvePathName(std::string aSrc) {
   #endif
   if (0 != [src length]) {
     if ([src hasPrefix:@"$/"]) {
-      NSString * appDir =
-        [NSString stringWithUTF8String:GetAppDirectory().c_str()];
+      NSString *appDir =
+        [NSString stringWithUTF8String:GetAppResoucesDirectory().c_str()];
       src = [appDir stringByAppendingString:[src substringFromIndex:2]];
     }
     if (![src isAbsolutePath]) {
@@ -126,6 +126,11 @@ int CommandCopyFile(std::string aSrc, std::string aDest, bool aRecursive) {
   // manually.
   destPath =
     [destPath stringByAppendingPathComponent:[srcPath lastPathComponent]];
+
+  if ([srcPath isEqualToString:destPath]) {
+    // no need to copy a file onto itself
+    return DH_ERROR_OK;
+  }
 
   // XXXMook: ugly hack to check if we're using the 10.5 SDK or higher (that is,
   // a SDK that knows about 10.5 methods).
@@ -281,7 +286,7 @@ tstring FilterSubstitution(tstring aString) {
     // Try to substitute $APPDIR$
     tstring variable = result.substr(start + 1, end - start - 1);
     if (variable == _T("APPDIR")) {
-      tstring appdir = GetAppDirectory();
+      tstring appdir(GetAppResoucesDirectory());
       DebugMessage("AppDir: %s", appdir.c_str());
       result.replace(start, end-start+1, appdir);
       start += appdir.length();
@@ -358,20 +363,20 @@ void ParseExecCommandLine(const std::string& aCommandLine,
   aArgs = aCommandLine;
 }
 
-tstring GetAppDirectory() {
+tstring
+GetAppResoucesDirectory() {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
   NSProcessInfo* process = [NSProcessInfo processInfo];
-  NSString * execPath = [[process arguments] objectAtIndex:0];
-  NSString * dirPath = [execPath stringByDeletingLastPathComponent];
+  NSString* execPath = [[process arguments] objectAtIndex:0];
+  NSString* dirPath = [execPath stringByDeletingLastPathComponent];
   dirPath = [dirPath stringByAppendingString:@"/"];
-  tstring result([dirPath UTF8String]);
+#if DEBUG
+  DebugMessage("Found app directory %s", [dirPath UTF8String]);
+#endif
+  tstring retval([dirPath UTF8String]);
   [pool release];
-
-  #if DEBUG
-    DebugMessage("Found app directory %s", result.c_str());
-  #endif
-  return result;
+  return retval; 
 }
 
 tstring gDistIniDirectory;
@@ -452,18 +457,33 @@ void ShowFatalError(const char* fmt, ...) {
   va_end(args);
 }
 
-/**
- * Dummy commands that don't exist on OSX
- */
-int CommandSetVersionInfo(std::string aExecutable,
-                          IniEntry_t& aSection)
-{
-  return DH_ERROR_USER;
+int
+ReplacePlistProperty(std::string & aKey, std::string & aValue) {
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  NSString *key = [NSString stringWithUTF8String:aKey.c_str()];
+  NSString *value = [NSString stringWithUTF8String:aValue.c_str()];
+#if DEBUG
+  DebugMessage("Updating key '%s' with value '%s",
+      [key UTF8String], [value UTF8String]);
+#endif
+  int result = UpdateInfoPlistKey(key, value);
+  [pool release];
+
+  return result;
 }
 
 int CommandSetIcon(std::string aExecutable,
                    std::string aIconFile,
-                   std::string aIconName)
-{
-  return DH_ERROR_USER;
+                   std::string aIconName) {
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  NSString *newIconPath =
+    [NSString stringWithUTF8String:ResolvePathName(aIconFile).c_str()];
+
+  int result = UpdateInfoPlistKey(@"CFBundleIconFile",
+                                  [newIconPath lastPathComponent]);
+
+  [pool release];
+  return result; 
 }
+

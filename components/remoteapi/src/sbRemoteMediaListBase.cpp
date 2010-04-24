@@ -121,7 +121,7 @@ sbRemoteMediaListBase::~sbRemoteMediaListBase()
 //
 // ---------------------------------------------------------------------------
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbRemoteMediaListBase::GetRemotePlayer(sbIRemotePlayer * *aRemotePlayer)
 {
   NS_ENSURE_STATE(mRemotePlayer);
@@ -463,7 +463,7 @@ sbRemoteMediaListBase::AddHelper( JSContext *cx,
     rv = uri->GetSpec(uriCStr);
     SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get spec from uri.")
 
-    // Create the item. 
+    // Create the item.
     rv = library->CreateMediaItem( NS_ConvertUTF8toUTF16(uriCStr),
                                    getter_AddRefs(item) );
     SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not create new Media Item.")
@@ -544,7 +544,7 @@ sbRemoteMediaListBase::AddHelper( JSContext *cx,
     SB_ENSURE_WITH_JSTHROW( cx, rv, "Object not valid MediaList.")
 
     // we only download into the mainLib with the correct param (see above)
-    if (shouldDownload) { 
+    if (shouldDownload) {
       LOG_LIST(("sbRemoteMediaListBase::AddHelper() - Downloading item."));
 
       // We need to know if this is the main library for downloading
@@ -726,6 +726,13 @@ sbRemoteMediaListBase::Contains(sbIMediaItem* aMediaItem, PRBool* _retval)
 NS_IMETHODIMP
 sbRemoteMediaListBase::Add(sbIMediaItem *aMediaItem)
 {
+  return AddItem(aMediaItem, nsnull);
+}
+
+NS_IMETHODIMP
+sbRemoteMediaListBase::AddItem(sbIMediaItem *aMediaItem,
+                               sbIMediaItem ** aNewItem)
+{
   LOG_LIST(("sbRemoteMediaListBase::Add()"));
   NS_ENSURE_ARG_POINTER(aMediaItem);
 
@@ -737,7 +744,7 @@ sbRemoteMediaListBase::Add(sbIMediaItem *aMediaItem)
   nsCOMPtr<sbIMediaItem> internalMediaItem = wrappedMediaItem->GetMediaItem();
   NS_ENSURE_TRUE(internalMediaItem, NS_ERROR_FAILURE);
 
-  rv = mMediaList->Add(internalMediaItem);
+  rv = mMediaList->AddItem(internalMediaItem, aNewItem);
   if (NS_SUCCEEDED(rv)) {
     LOG_LIST(("sbRemoteMediaListBase::Add() - added the item"));
     mRemotePlayer->GetNotificationManager()

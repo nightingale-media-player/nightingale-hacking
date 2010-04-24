@@ -87,6 +87,7 @@ sbFileScanQuery::sbFileScanQuery()
   , m_pCurrentPathLock(PR_NewLock())
   , m_bSearchHidden(PR_FALSE)
   , m_bRecurse(PR_FALSE)
+  , m_bWantLibraryContentURIs(PR_TRUE)
   , m_pScanningLock(PR_NewLock())
   , m_bIsScanning(PR_FALSE)
   , m_pCallbackLock(PR_NewLock())
@@ -94,7 +95,6 @@ sbFileScanQuery::sbFileScanQuery()
   , m_pFlaggedFileExtensionsLock(PR_NewLock())
   , m_pCancelLock(PR_NewLock())
   , m_bCancel(PR_FALSE)
-, m_bWantLibraryContentURIs(PR_TRUE)
 {
   NS_ASSERTION(m_pDirectoryLock, "FileScanQuery.m_pDirectoryLock failed");
   NS_ASSERTION(m_pCurrentPathLock, "FileScanQuery.m_pCurrentPathLock failed");
@@ -117,6 +117,7 @@ sbFileScanQuery::sbFileScanQuery(const nsString & strDirectory,
   , m_pCurrentPathLock(PR_NewLock())
   , m_bSearchHidden(PR_FALSE)
   , m_bRecurse(bRecurse)
+  , m_bWantLibraryContentURIs(PR_TRUE)
   , m_pScanningLock(PR_NewLock())
   , m_bIsScanning(PR_FALSE)
   , m_pCallbackLock(PR_NewLock())
@@ -125,7 +126,6 @@ sbFileScanQuery::sbFileScanQuery(const nsString & strDirectory,
   , m_pFlaggedFileExtensionsLock(PR_NewLock())
   , m_pCancelLock(PR_NewLock())
   , m_bCancel(PR_FALSE)
-, m_bWantLibraryContentURIs(PR_TRUE)
 {
   NS_ASSERTION(m_pDirectoryLock, "FileScanQuery.m_pDirectoryLock failed");
   NS_ASSERTION(m_pCurrentPathLock, "FileScanQuery.m_pCurrentPathLock failed");
@@ -918,7 +918,6 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
 
   nsresult ret = NS_ERROR_UNEXPECTED;
   nsCOMPtr<nsILocalFile> pFile = do_CreateInstance("@mozilla.org/file/local;1");
-
   nsCOMPtr<sbILibraryUtils> pLibraryUtils =
     do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -956,7 +955,6 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
 
     if(pDirEntries)
     {
-      PRBool bHasMore = PR_FALSE;
       PRBool keepRunning = PR_FALSE;
 
       {
@@ -974,72 +972,72 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
           break;
         }
 
-        pDirEntries->HasMoreElements(&bHasMore);
+        PRBool bHasMore = PR_FALSE;
+        ret = pDirEntries->HasMoreElements(&bHasMore);
 
-        if(bHasMore)
+        nsCOMPtr<nsISupports> pDirEntry;
+        if(NS_SUCCEEDED(rv) && bHasMore) {
+          ret = pDirEntries->GetNext(getter_AddRefs(pDirEntry));
+        }
+
+        if(NS_SUCCEEDED(rv) && pDirEntry)
         {
-          nsCOMPtr<nsISupports> pDirEntry;
-          pDirEntries->GetNext(getter_AddRefs(pDirEntry));
+          nsIID nsIFileIID = NS_IFILE_IID;
+          nsCOMPtr<nsIFile> pEntry;
+          pDirEntry->QueryInterface(nsIFileIID, getter_AddRefs(pEntry));
 
-          if(pDirEntry)
+          if(pEntry)
           {
-            nsIID nsIFileIID = NS_IFILE_IID;
-            nsCOMPtr<nsIFile> pEntry;
-            pDirEntry->QueryInterface(nsIFileIID, getter_AddRefs(pEntry));
+            PRBool bIsFile = PR_FALSE, bIsDirectory = PR_FALSE, bIsHidden = PR_FALSE;
+            pEntry->IsFile(&bIsFile);
+            pEntry->IsDirectory(&bIsDirectory);
+            pEntry->IsHidden(&bIsHidden);
 
-            if(pEntry)
+            if(!bIsHidden || bSearchHidden)
             {
-              PRBool bIsFile = PR_FALSE, bIsDirectory = PR_FALSE, bIsHidden = PR_FALSE;
-              pEntry->IsFile(&bIsFile);
-              pEntry->IsDirectory(&bIsDirectory);
-              pEntry->IsHidden(&bIsHidden);
-
-              if(!bIsHidden || bSearchHidden)
+              if(bIsFile)
               {
-                if(bIsFile)
-                {
-                  // Get a library content URI for the file.
-                  nsCOMPtr<nsIURI> pURI;
-                  if (bWantLibraryContentURIs) {
-                    rv = pLibraryUtils->GetFileContentURI(pEntry,
-                                                          getter_AddRefs(pURI));
-                  } else {
-                    rv = NS_NewFileURI(getter_AddRefs(pURI), pEntry);
-                  }
+                // Get a library content URI for the file.
+                nsCOMPtr<nsIURI> pURI;
+                if (bWantLibraryContentURIs) {
+                  rv = pLibraryUtils->GetFileContentURI(pEntry,
+                                                        getter_AddRefs(pURI));
+                } else {
+                  rv = NS_NewFileURI(getter_AddRefs(pURI), pEntry);
+                }
 
-                  // Get the file URI spec.
-                  nsCAutoString spec;
-                  if (NS_SUCCEEDED(rv)) {
-                    rv = pURI->GetSpec(spec);
-                    LOG(("sbFileScan::ScanDirectory (C++) found spec: %s\n",
-                         spec.get()));
-                  }
+                // Get the file URI spec.
+                nsCAutoString spec;
+                if (NS_SUCCEEDED(rv)) {
+                  rv = pURI->GetSpec(spec);
+                  LOG(("sbFileScan::ScanDirectory (C++) found spec: %s\n",
+                       spec.get()));
+                }
 
-                  // Add the file path to the query.
-                  if (NS_SUCCEEDED(rv)) {
-                    nsString strPath = NS_ConvertUTF8toUTF16(spec);
-                    pQuery->AddFilePath(strPath);
-                    nFoundCount += 1;
+                // Add the file path to the query.
+                if (NS_SUCCEEDED(rv)) {
+                  nsString strPath = NS_ConvertUTF8toUTF16(spec);
+                  pQuery->AddFilePath(strPath);
+                  nFoundCount += 1;
 
-                    if(pCallback)
-                    {
-                      pCallback->OnFileScanFile(strPath, nFoundCount);
-                    }
+                  if(pCallback)
+                  {
+                    pCallback->OnFileScanFile(strPath, nFoundCount);
                   }
                 }
-                else if(bIsDirectory && bRecurse)
+              }
+              else if(bIsDirectory && bRecurse)
+              {
+                nsISimpleEnumerator *pMoreEntries = nsnull;
+                pEntry->GetDirectoryEntries(&pMoreEntries);
+
+                if(pMoreEntries)
                 {
-                  nsISimpleEnumerator *pMoreEntries = nsnull;
-                  pEntry->GetDirectoryEntries(&pMoreEntries);
+                  dirStack.push_back(pDirEntries);
+                  fileEntryStack.push_back(pEntry);
+                  entryStack.push_back(pDirEntry);
 
-                  if(pMoreEntries)
-                  {
-                    dirStack.push_back(pDirEntries);
-                    fileEntryStack.push_back(pEntry);
-                    entryStack.push_back(pDirEntry);
-
-                    pDirEntries = pMoreEntries;
-                  }
+                  pDirEntries = pMoreEntries;
                 }
               }
             }

@@ -230,9 +230,9 @@
               // Note that node.image only retrieves
               // hardcoded image URLs.  If the image
               // is supplied via CSS we need to use 
-              // the properties list instead.  
-              if (servicePaneNode.properties) {
-                props = servicePaneNode.properties;
+              // the class name instead.  
+              if (servicePaneNode.className) {
+                props = servicePaneNode.className;
               }
             }
           }

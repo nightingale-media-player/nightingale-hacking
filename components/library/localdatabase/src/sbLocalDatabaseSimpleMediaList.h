@@ -74,6 +74,7 @@ public:
   NS_IMETHOD GetItemByGuid(const nsAString& aGuid, sbIMediaItem** _retval);
   NS_IMETHOD Contains(sbIMediaItem* aMediaItem, PRBool* _retval);
   NS_IMETHOD Add(sbIMediaItem *aMediaItem);
+  NS_IMETHOD AddItem(sbIMediaItem * aMediaItem, sbIMediaItem ** aNewMediaItem);
   NS_IMETHOD AddAll(sbIMediaList *aMediaList);
   NS_IMETHOD AddSome(nsISimpleEnumerator *aMediaItems);
   NS_IMETHOD Remove(sbIMediaItem* aMediaItem);

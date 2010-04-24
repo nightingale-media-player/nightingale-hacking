@@ -843,12 +843,6 @@ function HandleAppCommandEvent(evt)
   case "Search":
     BrowserSearch.webSearch();
     break;
-  case "Bookmarks":
-    // Todo:
-    // - Open the service pane if it is closed
-    // - Expand the bookmarks folder if it's closed
-    // - EnsureVisible on the folder item
-    break;
   case "Home":
     gBrowser.goHome();
     break;

@@ -41,7 +41,6 @@ Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
 
 const CONTRACTID = "@songbirdnest.com/servicepane/library;1";
-const ROOTNODE = "SB:Bookmarks";
 
 const URN_PREFIX_ITEM = 'urn:item:';
 const URN_PREFIX_LIBRARY = 'urn:library:';
@@ -915,7 +914,6 @@ function sbLibraryServicePane_getNodeFromMediaListView(aMediaListView) {
     urn += ":constraint(" + values[i] + ")";
   }
 
-  // If lookup constraints failed, roll back to the base URN
   return this._servicePane.getNode(urn);
 }
 
@@ -1219,13 +1217,19 @@ sbLibraryServicePane.prototype._libraryRemoved =
 function sbLibraryServicePane__libraryRemoved(aLibrary) {
   //logcall(arguments);
 
-  // Find the node for this library
-  var id = this._libraryURN(aLibrary);
-  var node = this._servicePane.getNode(id);
+  // Get the list of nodes for items within the library
+  var libraryItemNodeList = this._servicePane.getNodesByAttributeNS
+                                                (LSP,
+                                                 "LibraryGUID",
+                                                 aLibrary.guid);
 
-  // Hide this node and everything below it
-  if (node) {
-    this._hideLibraryNodes(node);
+  // Hide all nodes for items within the library
+  var libraryItemNodeEnum = libraryItemNodeList.enumerate();
+  while (libraryItemNodeEnum.hasMoreElements()) {
+    // Hide the library item node
+    libraryItemNode =
+      libraryItemNodeEnum.getNext().QueryInterface(Ci.sbIServicePaneNode);
+    this._servicePane.setNodeHidden(libraryItemNode, CONTRACTID, true);
   }
 
   aLibrary.removeListener(this);
@@ -1368,7 +1372,13 @@ function sbLibraryServicePane__getLibraryForURN(aID) {
   //logcall(arguments);
   var guid = this._getLibraryGUIDForURN(aID);
   if (guid) {
-    return this._libraryManager.getLibrary(guid);
+    try {
+      return this._libraryManager.getLibrary(guid);
+    }
+    catch (e) {
+      LOG("sbLibraryServicePane__getLibraryForURN: error trying to get " +
+          "library " + guid);
+    }
   }
   return null;
 }

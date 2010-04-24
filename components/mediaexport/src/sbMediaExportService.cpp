@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -21,6 +21,7 @@
  *
  *=END SONGBIRD GPL
  */
+
 
 #include "sbMediaExportService.h"
 
@@ -92,11 +93,8 @@ EnumerateItemsByGuids(typename T::const_iterator const aGuidStringListBegin,
   }
 
   nsRefPtr<sbMediaListEnumArrayHelper> enumHelper =
-    new sbMediaListEnumArrayHelper();
+    sbMediaListEnumArrayHelper::New();
   NS_ENSURE_TRUE(enumHelper, NS_ERROR_OUT_OF_MEMORY);
-
-  rv = enumHelper->New();
-  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = aMediaList->EnumerateItemsByProperties(
       properties,
@@ -190,7 +188,7 @@ sbMediaExportService::InitInternal()
   }
 
   mIsRunning = PR_TRUE;
-  
+
   // At least one item needs to be exported, setup the library listener.
   nsresult rv;
   nsCOMPtr<sbILibrary> mainLibrary;
@@ -248,25 +246,25 @@ sbMediaExportService::Shutdown()
 
   rv = observerService->RemoveObserver(this, SB_LIBRARY_MANAGER_SHUTDOWN_TOPIC);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = StopListeningMediaLists();
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mPrefController->Shutdown();
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Let's ask the update service if there are updates that need to be applied.
   nsCOMPtr<nsIUpdateManager> updateMgr =
     do_GetService("@mozilla.org/updates/update-manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
- 
+
   PRBool hasPendingUpdates = PR_FALSE;
   PRInt32 updateCount;
   rv = updateMgr->GetUpdateCount(&updateCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
   LOG(("%s: Found %i updates", __FUNCTION__, updateCount));
-  
+
   if (updateCount > 0) {
     for (PRInt32 i = 0; i < updateCount && !hasPendingUpdates; i++) {
       nsCOMPtr<nsIUpdate> curUpdate;
@@ -282,7 +280,7 @@ sbMediaExportService::Shutdown()
       }
 
       // According to |nsIUpdate| in "nsIUpdateService.idl", the |state| field
-      // will contain the literal string "pending" when there are updates that 
+      // will contain the literal string "pending" when there are updates that
       // will be applied.
       if (state.EqualsLiteral("pending")) {
         hasPendingUpdates = PR_TRUE;
@@ -308,7 +306,7 @@ sbMediaExportService::Shutdown()
       }
     }
   }
-  
+
   return NS_OK;
 }
 
@@ -316,7 +314,7 @@ nsresult
 sbMediaExportService::StopListeningMediaLists()
 {
   LOG(("%s: Removing listeners from all media lists", __FUNCTION__));
-  
+
   nsresult rv;
 
   if (mIsRunning) {
@@ -329,7 +327,7 @@ sbMediaExportService::StopListeningMediaLists()
       }
 
       rv = curMediaList->RemoveListener(this);
-      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), 
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
           "Could not remove media list listener!");
 
 #if PR_LOGGING
@@ -338,7 +336,7 @@ sbMediaExportService::StopListeningMediaLists()
       NS_ENSURE_SUCCESS(rv, rv);
       LOG(("%s: Removing listener for media list '%s'",
             __FUNCTION__, NS_ConvertUTF16toUTF8(listGuid).get()));
-#endif 
+#endif
     }
 
     // Remove smart media list listener references from all the observed smart
@@ -374,7 +372,7 @@ sbMediaExportService::StopListeningMediaLists()
 
     mIsRunning = PR_FALSE;
   }
-  
+
   return NS_OK;
 }
 
@@ -388,7 +386,7 @@ sbMediaExportService::OnBoolPrefChanged(const nsAString & aPrefName,
         (aNewPrefValue ? "true" : "false")));
 
   nsresult rv;
-  
+
   // If the user turned on some export prefs and the service is not running
   // it is now time to start running.
   if (!mIsRunning && mPrefController->GetShouldExportAnyMedia()) {
@@ -400,8 +398,8 @@ sbMediaExportService::OnBoolPrefChanged(const nsAString & aPrefName,
     rv = StopListeningMediaLists();
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Since the user has turned off the media exporting prefs, tell the 
-    // export-agent to unregister itself. This call will remove any 
+    // Since the user has turned off the media exporting prefs, tell the
+    // export-agent to unregister itself. This call will remove any
     // startup/login hooks that the agent has setup.
     nsCOMPtr<sbIMediaExportAgentService> agentService =
       do_GetService(SB_MEDIAEXPORTAGENTSERVICE_CONTRACTID, &rv);
@@ -420,8 +418,8 @@ sbMediaExportService::ListenToMediaList(sbIMediaList *aMediaList)
   NS_ENSURE_ARG_POINTER(aMediaList);
 
   nsresult rv;
-  
-#ifdef PR_LOGGING 
+
+#ifdef PR_LOGGING
   nsString listGuid;
   rv = aMediaList->GetGuid(listGuid);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -490,7 +488,7 @@ sbMediaExportService::ListenToMediaList(sbIMediaList *aMediaList)
 }
 
 nsresult
-sbMediaExportService::GetShouldWatchMediaList(sbIMediaList *aMediaList, 
+sbMediaExportService::GetShouldWatchMediaList(sbIMediaList *aMediaList,
                                               PRBool *aShouldWatch)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
@@ -508,7 +506,7 @@ sbMediaExportService::GetShouldWatchMediaList(sbIMediaList *aMediaList,
 #endif
 
   nsString propValue;
-  
+
   // Don't watch the Downloads folder
   rv = aMediaList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
                                propValue);
@@ -522,7 +520,7 @@ sbMediaExportService::GetShouldWatchMediaList(sbIMediaList *aMediaList,
   if (NS_SUCCEEDED(rv) && !propValue.IsEmpty()) {
     return NS_OK;
   }
-  
+
   // Don't watch subscriptions
   rv = aMediaList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISSUBSCRIPTION),
                                propValue);
@@ -531,7 +529,7 @@ sbMediaExportService::GetShouldWatchMediaList(sbIMediaList *aMediaList,
   }
 
   // Make sure this list isn't supposed to be hidden
-  rv = aMediaList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN), 
+  rv = aMediaList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
                                propValue);
   if (NS_FAILED(rv) || propValue.EqualsLiteral("1")) {
     return NS_OK;
@@ -541,12 +539,12 @@ sbMediaExportService::GetShouldWatchMediaList(sbIMediaList *aMediaList,
   rv = aMediaList->GetType(propValue);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (propValue.EqualsLiteral("simple") && 
-      !mPrefController->GetShouldExportPlaylists()) 
+  if (propValue.EqualsLiteral("simple") &&
+      !mPrefController->GetShouldExportPlaylists())
   {
     return NS_OK;
   }
-  
+
   if (propValue.EqualsLiteral("smart") &&
       !mPrefController->GetShouldExportSmartPlaylists())
   {
@@ -883,11 +881,8 @@ sbMediaExportService::WriteUpdatedSmartPlaylists()
     }
 
     nsRefPtr<sbMediaListEnumArrayHelper> enumHelper =
-      new sbMediaListEnumArrayHelper();
+      sbMediaListEnumArrayHelper::New();
     NS_ENSURE_TRUE(enumHelper, NS_ERROR_OUT_OF_MEMORY);
-
-    rv = enumHelper->New();
-    NS_ENSURE_SUCCESS(rv, rv);
 
     rv = curSmartMediaList->EnumerateAllItems(
         enumHelper,
@@ -1008,13 +1003,13 @@ sbMediaExportService::NotifyListeners()
 
   nsresult rv;
   if (!NS_IsMainThread()) {
-    // Since all of the listeners expect to be notified on the main thread, 
+    // Since all of the listeners expect to be notified on the main thread,
     // proxy back to this method on the main thread.
     nsCOMPtr<nsIThread> mainThread;
     rv = NS_GetMainThread(getter_AddRefs(mainThread));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<nsIRunnable> runnable = 
+    nsCOMPtr<nsIRunnable> runnable =
       NS_NEW_RUNNABLE_METHOD(sbMediaExportService, this, ProxyNotifyListeners);
     NS_ENSURE_TRUE(runnable, NS_ERROR_OUT_OF_MEMORY);
 
@@ -1023,7 +1018,7 @@ sbMediaExportService::NotifyListeners()
 
   for (PRInt32 i = 0; i < mJobListeners.Count(); i++) {
     rv = mJobListeners[i]->OnJobProgress(this);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), 
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
         "Could not notify job progress listener!");
   }
 
@@ -1067,7 +1062,7 @@ sbMediaExportService::ExportSongbirdData()
 
   // Since looking up the stashed data locks the main thread, write out the
   // export data on a background thread.
-  nsCOMPtr<nsIThreadPool> threadPoolService = 
+  nsCOMPtr<nsIThreadPool> threadPoolService =
     do_GetService(SB_THREADPOOLSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1087,9 +1082,9 @@ sbMediaExportService::Observe(nsISupports *aSubject,
                               const PRUnichar *aData)
 {
   NS_ENSURE_ARG_POINTER(aTopic);
-  
+
   LOG(("%s: Topic '%s' observed", __FUNCTION__, aTopic));
-  
+
   nsresult rv;
   if (strcmp(aTopic, SB_LIBRARY_MANAGER_READY_TOPIC) == 0) {
     // No need to listen for the library manager ready notice
@@ -1114,19 +1109,19 @@ sbMediaExportService::Observe(nsISupports *aSubject,
 //------------------------------------------------------------------------------
 // sbIMediaListListener
 
-NS_IMETHODIMP 
-sbMediaExportService::OnItemAdded(sbIMediaList *aMediaList, 
-                                  sbIMediaItem *aMediaItem, 
-                                  PRUint32 aIndex, 
+NS_IMETHODIMP
+sbMediaExportService::OnItemAdded(sbIMediaList *aMediaList,
+                                  sbIMediaItem *aMediaItem,
+                                  PRUint32 aIndex,
                                   PRBool *aRetVal)
 {
   LOG(("%s: Media Item Added!", __FUNCTION__));
-  
+
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
 
   nsresult rv;
-  
+
   nsString itemGuid;
   rv = aMediaItem->GetGuid(itemGuid);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1170,7 +1165,7 @@ sbMediaExportService::OnItemAdded(sbIMediaList *aMediaList,
     rv = aMediaList->GetGuid(listGuid);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Add this mediaitem's guid to the parent medialist's guid string set 
+    // Add this mediaitem's guid to the parent medialist's guid string set
     // in the added items map.
     sbMediaListItemMapIter guidIter = mAddedItemsMap.find(listGuid);
     if (guidIter == mAddedItemsMap.end()) {
@@ -1189,18 +1184,18 @@ sbMediaExportService::OnItemAdded(sbIMediaList *aMediaList,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
-sbMediaExportService::OnBeforeItemRemoved(sbIMediaList *aMediaList, 
-                                          sbIMediaItem *aMediaItem, 
-                                          PRUint32 aIndex, 
+NS_IMETHODIMP
+sbMediaExportService::OnBeforeItemRemoved(sbIMediaList *aMediaList,
+                                          sbIMediaItem *aMediaItem,
+                                          PRUint32 aIndex,
                                           PRBool *aRetVal)
 {
   return NS_OK;
 }
 
-NS_IMETHODIMP 
-sbMediaExportService::OnAfterItemRemoved(sbIMediaList *aMediaList, 
-                                         sbIMediaItem *aMediaItem, 
+NS_IMETHODIMP
+sbMediaExportService::OnAfterItemRemoved(sbIMediaList *aMediaList,
+                                         sbIMediaItem *aMediaItem,
                                          PRUint32 aIndex, PRBool *_retval)
 {
   LOG(("%s: After Media Item Removed!!", __FUNCTION__));
@@ -1258,10 +1253,10 @@ sbMediaExportService::OnAfterItemRemoved(sbIMediaList *aMediaList,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
-sbMediaExportService::OnItemUpdated(sbIMediaList *aMediaList, 
-                                    sbIMediaItem *aMediaItem, 
-                                    sbIPropertyArray *aProperties, 
+NS_IMETHODIMP
+sbMediaExportService::OnItemUpdated(sbIMediaList *aMediaList,
+                                    sbIMediaItem *aMediaItem,
+                                    sbIPropertyArray *aProperties,
                                     PRBool *aRetVal)
 {
   LOG(("%s: Media Item Updated!!", __FUNCTION__));
@@ -1319,17 +1314,17 @@ sbMediaExportService::OnItemUpdated(sbIMediaList *aMediaList,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
-sbMediaExportService::OnItemMoved(sbIMediaList *aMediaList, 
-                                  PRUint32 aFromIndex, 
-                                  PRUint32 aToIndex, 
+NS_IMETHODIMP
+sbMediaExportService::OnItemMoved(sbIMediaList *aMediaList,
+                                  PRUint32 aFromIndex,
+                                  PRUint32 aToIndex,
                                   PRBool *aRetVal)
 {
   LOG(("%s: Media Item Moved!", __FUNCTION__));
   return NS_OK;
 }
-NS_IMETHODIMP 
-sbMediaExportService::OnBeforeListCleared(sbIMediaList *aMediaList, 
+NS_IMETHODIMP
+sbMediaExportService::OnBeforeListCleared(sbIMediaList *aMediaList,
                                           PRBool aExcludeLists,
                                           PRBool *aRetVal)
 {
@@ -1337,8 +1332,8 @@ sbMediaExportService::OnBeforeListCleared(sbIMediaList *aMediaList,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
-sbMediaExportService::OnListCleared(sbIMediaList *aMediaList, 
+NS_IMETHODIMP
+sbMediaExportService::OnListCleared(sbIMediaList *aMediaList,
                                     PRBool aExcludeLists,
                                     PRBool *aRetVal)
 {
@@ -1346,14 +1341,14 @@ sbMediaExportService::OnListCleared(sbIMediaList *aMediaList,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediaExportService::OnBatchBegin(sbIMediaList *aMediaList)
 {
   LOG(("%s: Media List Batch Begin!", __FUNCTION__));
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediaExportService::OnBatchEnd(sbIMediaList *aMediaList)
 {
   LOG(("%s: Media List Batch End!", __FUNCTION__));
@@ -1477,16 +1472,16 @@ NS_IMETHODIMP
 sbMediaExportService::GetNeedsToRunTask(PRBool *aNeedsToRunTask)
 {
   NS_ENSURE_ARG_POINTER(aNeedsToRunTask);
-  
+
   nsresult rv;
   *aNeedsToRunTask = PR_FALSE;
-  
+
   rv = GetHasPendingChanges(aNeedsToRunTask);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!*aNeedsToRunTask && mPrefController->GetShouldExportAnyMedia()) {
     // Since there isn't any pending changes, check to see if the agent should
-    // be started. Only start the agent if it is not running and there is at 
+    // be started. Only start the agent if it is not running and there is at
     // least one pending export task file on disk.
     nsCOMPtr<nsIFile> taskFileParentFolder;
     rv = NS_GetSpecialDirectory(NS_APP_APPLICATION_REGISTRY_DIR,

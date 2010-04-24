@@ -415,6 +415,26 @@ sbLocalDatabaseSmartMediaList::~sbLocalDatabaseSmartMediaList()
   if (mSourceMonitor) {
     nsAutoMonitor::DestroyMonitor(mSourceMonitor);
   }
+
+  if (mItem) {
+    /* use a single-iteration loop to allow breaking out easier */
+    nsCOMPtr<sbILibrary> library;
+    nsresult rv = mItem->GetLibrary(getter_AddRefs(library));
+    NS_ENSURE_SUCCESS(rv, /* void */);
+
+    nsCOMPtr<sbIMediaList> libraryList = do_QueryInterface(library, &rv);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+
+    (void) libraryList->RemoveListener(this);
+
+    // Unregister ourselves as we're done
+    nsCOMPtr<nsIObserverService> observerService =
+        do_GetService(OBSERVER_SERVICE_CONTRACT_ID, &rv);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+    
+    rv = observerService->RemoveObserver(this, LIBRARY_MANAGER_BEFORE_SHUTDOWN);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+  }
 }
 
 /**
@@ -3244,6 +3264,7 @@ NS_IMETHODIMP
 sbLocalDatabaseSmartMediaList::Observe(nsISupports *aObject,
                                        const char *aTopic,
                                        const PRUnichar *aData) {
+  TRACE(("%s: observing %s", __FUNCTION__, aTopic));
   if (strcmp(aTopic, LIBRARY_MANAGER_BEFORE_SHUTDOWN) == 0) {
     // Unregister ourselves from the library so we don't leak in odd cases
     // See bug 14896 for more information

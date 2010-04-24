@@ -789,6 +789,11 @@ nsresult sbDeviceManager::PrepareShutdown()
       NS_WARNING("Failed to disconnect device.");
   }
 
+  // Remove all devices.
+  rv = RemoveAllDevices();
+  if (NS_FAILED(rv))
+    NS_WARNING("Failed to remove all devices.");
+
   return NS_OK;
 }
 
@@ -822,5 +827,47 @@ nsresult sbDeviceManager::FinalShutdown()
   mMarshalls.Clear();
 
   return NS_OK;
+}
+
+nsresult sbDeviceManager::RemoveAllDevices()
+{
+  nsresult rv;
+
+  // Get the list of all devices.
+  nsCOMPtr<nsIArray> devices;
+  rv = this->GetDevices(getter_AddRefs(devices));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Remove each device.
+  PRUint32 length;
+  rv = devices->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+  for (PRInt32 i = length - 1; i >= 0; i--) {
+    // Get device.
+    nsCOMPtr<sbIDevice> device = do_QueryElementAt(devices, i, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get device controller.
+    nsCOMPtr<sbIDeviceController> controller;
+    nsID*                         controllerID = nsnull;
+    rv = device->GetControllerId(&controllerID);
+    NS_ENSURE_SUCCESS(rv, rv);
+    sbAutoNSMemPtr autoControllerID(controllerID);
+    rv = GetController(controllerID, getter_AddRefs(controller));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get device marshall.
+    nsCOMPtr<sbIDeviceMarshall> marshall;
+    nsID*                       marshallID = nsnull;
+    rv = controller->GetMarshallId(&marshallID);
+    NS_ENSURE_SUCCESS(rv, rv);
+    sbAutoNSMemPtr autoMarshallID(marshallID);
+    rv = GetMarshallByID(marshallID, getter_AddRefs(marshall));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Remove device.
+    rv = marshall->RemoveDevice(device);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 }
 

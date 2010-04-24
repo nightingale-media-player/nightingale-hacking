@@ -79,15 +79,13 @@ IconResEntryN
 */
 
 #pragma pack(push, 2)
-typedef struct
-{
+typedef struct {
   WORD Reserved;
   WORD ResourceType;
   WORD ImageCount;
 } IconHeader;
 
-typedef struct
-{
+typedef struct {
   BYTE Width;
   BYTE Height;
   BYTE Colors;
@@ -98,8 +96,7 @@ typedef struct
   DWORD ImageOffset;
 } IconDirEntry;
 
-typedef struct
-{
+typedef struct {
   BYTE Width;
   BYTE Height;
   BYTE Colors;
@@ -112,8 +109,7 @@ typedef struct
 #pragma pack(pop)
 
 
-int CommandSetIcon(std::string aExecutable, std::string aIconFile, std::string aIconName)
-{
+int CommandSetIcon(std::string aExecutable, std::string aIconFile, std::string aIconName) {
   tstring executable, iconfile;
   executable.assign(ResolvePathName(aExecutable));
   iconfile.assign(ResolvePathName(aIconFile));

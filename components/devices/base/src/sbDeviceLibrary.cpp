@@ -240,21 +240,21 @@ sbDeviceLibrary::Finalize()
   if (NS_SUCCEEDED(rv))
     deviceEventTarget->RemoveEventListener(this);
 
+  // remove device library listener
+  if (mDeviceLibrary) {
+    nsCOMPtr<sbIMediaList> list = do_QueryInterface(mDeviceLibrary);
+    if (list)
+      list->RemoveListener(this);
+  }
+
   if (mDeviceLibrary)
     UnregisterDeviceLibrary();
 
-  // Get and clear the device library.
-  nsCOMPtr<sbILibrary> deviceLibrary;
-  {
-    nsAutoLock lock(mLock);
-    deviceLibrary = mDeviceLibrary;
-    mDeviceLibrary = nsnull;
-    // remove the listeners
-    mListeners.Clear();
-  }
-
   // let go of the owner device
   mDevice = nsnull;
+
+  // Don't null out mDeviceLibrary since there may be listeners on it that still
+  // need to be removed.
 
   return NS_OK;
 }
@@ -1949,10 +1949,16 @@ sbDeviceLibrary::GetSyncPlaylistList(nsIArray ** aPlaylistList)
     rv = mainLibraryPlaylists->GetLength(&length);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool deviceSupportsVideo = sbDeviceUtils::GetDoesDeviceSupportContent(
-      mDevice,
-      sbIDeviceCapabilities::CONTENT_VIDEO,
-      sbIDeviceCapabilities::FUNCTION_VIDEO_PLAYBACK);
+    nsCOMPtr<sbIDeviceCapabilities> capabilities;
+    rv = mDevice->GetCapabilities(getter_AddRefs(capabilities));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool deviceSupportsVideo;
+    rv = capabilities->SupportsContent(
+           sbIDeviceCapabilities::CONTENT_VIDEO,
+           sbIDeviceCapabilities::FUNCTION_VIDEO_PLAYBACK,
+           &deviceSupportsVideo);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     for (PRUint32 i = 0; i < length; i++) {
       nsCOMPtr<sbIMediaList> curList =
@@ -2334,11 +2340,21 @@ sbDeviceLibrary::ClearItems()
 NS_IMETHODIMP
 sbDeviceLibrary::Add(sbIMediaItem *aMediaItem)
 {
+  return AddItem(aMediaItem, nsnull);
+}
+
+/*
+ * See sbIMediaList
+ */
+NS_IMETHODIMP
+sbDeviceLibrary::AddItem(sbIMediaItem *aMediaItem,
+                         sbIMediaItem ** aNewMediaItem)
+{
   NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
   SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeAdd(aMediaItem, &mShouldProcceed));
 
   if (mPerformAction) {
-    return mDeviceLibrary->Add(aMediaItem);
+    return mDeviceLibrary->AddItem(aMediaItem, aNewMediaItem);
   } else {
     return NS_OK;
   }

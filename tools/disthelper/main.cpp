@@ -51,6 +51,15 @@
 #include "error.h"
 #include "debug.h"
 
+// platform-specifc key definition
+#if defined(XP_WIN)
+#define DH_PLATFORM_STR ":win"
+#elif defined(XP_MACOSX)
+#define DH_PLATFORM_STR ":mac"
+#else
+#error "unknown disthelper platform"
+#endif
+
 /*
  * disthelper
  * usage: $0 <mode> [<ini file>]
@@ -158,22 +167,21 @@ int main(int argc, LPTSTR *argv) {
     ShowFatalError("Failed to read INI file %s: %i", distIni.c_str(), result);
     return result;
   }
+
   std::string section;
   section.assign(ConvertUTFnToUTF8(argv[1]));
-  section.insert(0, "steps:");
-  IniEntry_t::const_iterator it, end = iniFile[section].end();
-  
+
   /// copy the distribution.ini / application.ini files to the appdir
   DebugMessage("Copying %s to %s\n",
                distIni.c_str(), ResolvePathName("$/distribution/").c_str());
 
-  if (section == "steps:install") {
+  if (section == "install") {
     LogMessage("Skipping distribution.ini check for installation, forcing copy");
     result = CommandCopyFile(ConvertUTFnToUTF8(distIni), "$/distribution/");
     if (result) {
       LogMessage("Failed to copy distribution.ini file %s", distIni.c_str());
     }
-  } else if (section != "steps:uninstall" && !usingFallback) {
+  } else if (section != "uninstall" && !usingFallback) {
     // don't copy on uninstall or using the fallback
     IniFile_t destDistIni;
     std::string destDistPath = ConvertUTFnToUTF8(GetLeafName(distIni));
@@ -233,6 +241,26 @@ int main(int argc, LPTSTR *argv) {
   if (result) {
     LogMessage("Failed to copy application.ini file %s", srcAppIniName.c_str());
   }
+  // save the distribution-specific application.ini (with the modified profile
+  // path) to distribution/ - see bug 20694 and SetupEnvironment()
+  result = CommandCopyFile(ConvertUTFnToUTF8(srcAppIniName), "$/distribution/");
+  if (result) {
+    LogMessage("Failed to copy application.ini file %s to distribution/",
+               srcAppIniName.c_str());
+  }
+
+  section.assign(ConvertUTFnToUTF8(argv[1]));
+  section.insert(0, "steps:");
+  section.append(DH_PLATFORM_STR);
+  #ifdef XP_WIN
+    if (iniFile.find(section) == iniFile.end()) {
+      // no platform-specific steps. fallback to old style on windows only
+      // (since this whole thing used to be Windows-only)
+      section.assign(ConvertUTFnToUTF8(argv[1]));
+      section.insert(0, "steps:");
+    }
+  #endif
+  IniEntry_t::const_iterator it, end = iniFile[section].end();
 
   for (it = iniFile[section].begin(); it != end; ++it) {
     std::string line = it->second;
@@ -270,14 +298,18 @@ int main(int argc, LPTSTR *argv) {
         }
         result = CommandSetIcon(command[1], command[2], iconname);
       }
-    } else if (command[0] == "versioninfo") {
+    }
+#if defined(XP_WIN)
+    else if (command[0] == "versioninfo") {
       if (command.size() < 3) {
         OutputDebugString(_T("Not enough arguments for versioninfo"));
         result = DH_ERROR_UNKNOWN;
       } else {
         result = CommandSetVersionInfo(command[1], iniFile[command[2]]);
       }
-    } else if (command[0] == "exec") {
+    }
+#endif
+    else if (command[0] == "exec") {
       // Run the executable with the full argument string.  This allows the
       // executable to parse the arguments as needed, preserving, for example,
       // escape sequences for quotes (see CommandLineToArgvW).
@@ -285,7 +317,24 @@ int main(int argc, LPTSTR *argv) {
       std::string args;
       ParseExecCommandLine(line, executable, args);
       result = CommandExecuteFile(executable, args);
-    } else {
+    }
+#if defined(XP_MACOSX)
+    else if (command[0] == "plist") {
+      if (command.size() < 2) {
+        OutputDebugString(_T("Not enough arguments for plist"));
+        result = DH_ERROR_UNKNOWN;
+      } else {
+        std::string keyname(command[1]);
+
+        // Append the rest of the commands as the second argument.
+        std::string value(line);
+        value.erase(0, line.find(keyname) + keyname.size() + 1);
+
+        result = ReplacePlistProperty(keyname, value);
+      }
+    }
+#endif
+    else {
       DebugMessage("bad command %s!", ConvertUTF8toUTFn(command[0]).c_str());
       result = DH_ERROR_UNKNOWN;
     }

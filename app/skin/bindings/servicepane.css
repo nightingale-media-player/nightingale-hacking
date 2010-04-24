@@ -153,11 +153,6 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/icons/icon-folder-closed.png) ;
 }
 
-.servicepane-tree > treechildren::-moz-tree-image( bookmark )
-{
-  list-style-image: url(chrome://songbird/skin/icons/icon-bookmark.ico) ;
-}
-
 .servicepane-tree > treechildren::-moz-tree-row( dropBefore ),
 .servicepane-tree > treechildren::-moz-tree-row( dropAfter )
 {

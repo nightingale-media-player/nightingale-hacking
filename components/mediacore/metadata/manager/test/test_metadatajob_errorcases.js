@@ -1,28 +1,27 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
 
 /**
  * \brief Test error handling in metadata jobs
@@ -112,13 +111,28 @@ function runTest() {
   ///////////////////////////////////////
   // Load the files into two libraries //
   ///////////////////////////////////////
+  log("Creating libraries");
   var library1 = createNewLibrary( "test_metadatajob_errorcases_library1" );
   var library2 = createNewLibrary( "test_metadatajob_errorcases_library2" );
   var items1 = importFilesToLibrary(files, library1);
   var items2 = importFilesToLibrary(files, library2);
+  // We need to make the items in the two libraries copies of each other
+  // So the synchronization logic is happy
+  log("Populating library2");
+  for (index = 0; index < items1.length; ++index) {
+    // Set item 2 to be a copy of item 1
+    let item1 = library1.getItemByIndex(index);
+    let item2 = library2.getItemByIndex(index);
+    // hopefully these should all be in the same order on reimport
+    assertEqual(item1.contentSrc.spec, item2.contentSrc.spec);
+    item2.setProperty(SBProperties.originItemGuid, item1.guid);
+    item2.setProperty(SBProperties.originLibraryGuid, item2.library.guid);
+    
+  }
+
   assertEqual(items1.length, files.length);
   assertEqual(items2.length, files.length);
-
+  
   var job = startMetadataJob(items1, "read");
   
   
@@ -184,6 +198,14 @@ function runTest() {
       // Make sure by reimporting library2 and comparing it with library1 
       library2.clear();
       items2 = importFilesToLibrary(files, library2);
+      for (index = 0; index < items1.length; ++index) {
+        let item1 = library1.getItemByIndex(index);
+        let item2 = library2.getItemByIndex(index);
+        // hopefully these should all be in the same order on reimport
+        assertEqual(item1.contentSrc.spec, item2.contentSrc.spec);
+        item2.setProperty(SBProperties.originItemGuid, item1.guid);
+        item2.setProperty(SBProperties.originLibraryGuid, item2.library.guid);
+      }
       assertEqual(items2.length, files.length);
       
       // Verify job progress reporting.

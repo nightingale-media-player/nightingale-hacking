@@ -92,6 +92,7 @@ JoinStringMapIntoQueryString(sbStringMap& aMap,
   NS_IMETHOD GetIsEmpty(PRBool *aIsEmpty) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetIsEmpty(aIsEmpty); } \
   NS_IMETHOD GetUserEditableContent(PRBool *aUserEditableContent) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetUserEditableContent(aUserEditableContent); } \
   NS_IMETHOD Add(sbIMediaItem *aMediaItem) { return !_to ? NS_ERROR_NULL_POINTER : _to->Add(aMediaItem); } \
+  NS_IMETHOD AddItem(sbIMediaItem *aMediaItem, sbIMediaItem ** aNewMediaItem) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddItem(aMediaItem, aNewMediaItem); } \
   NS_IMETHOD AddAll(sbIMediaList *aMediaList) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddAll(aMediaList); } \
   NS_IMETHOD AddSome(nsISimpleEnumerator *aMediaItems) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddSome(aMediaItems); } \
   NS_IMETHOD Remove(sbIMediaItem *aMediaItem) { return !_to ? NS_ERROR_NULL_POINTER : _to->Remove(aMediaItem); } \
@@ -109,7 +110,7 @@ JoinStringMapIntoQueryString(sbStringMap& aMap,
   NS_SCRIPTABLE NS_IMETHOD GetMediaItemId(PRUint32 *aMediaItemId) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaItemId(aMediaItemId); } \
   NS_SCRIPTABLE NS_IMETHOD GetPropertyBag(sbILocalDatabaseResourcePropertyBag * *aPropertyBag) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetPropertyBag(aPropertyBag); } \
   NS_SCRIPTABLE NS_IMETHOD SetPropertyBag(sbILocalDatabaseResourcePropertyBag * aPropertyBag) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetPropertyBag(aPropertyBag); } \
-  NS_IMETHOD_(void) SetSuppressNotifications(PRBool aSuppress) { if (_to) _to->SetSuppressNotifications(aSuppress); } 
+  NS_IMETHOD_(void) SetSuppressNotifications(PRBool aSuppress) { if (_to) _to->SetSuppressNotifications(aSuppress); }
 
 class sbLocalDatabaseSmartMediaListCondition : public sbILocalDatabaseSmartMediaListCondition
 {
@@ -226,21 +227,21 @@ private:
                        PRUint32* _retval);
 
   void ShuffleArray(sbMediaItemIdArray& aArray);
-  
-  nsresult GetConditionNeedsNull(sbRefPtrCondition& aCondition, 
-                                 sbIPropertyInfo* aInfo, 
+
+  nsresult GetConditionNeedsNull(sbRefPtrCondition& aCondition,
+                                 sbIPropertyInfo* aInfo,
                                  PRBool &bNeedIsNull);
-  
+
   nsresult MediaListGuidToDB(nsAString &val, PRUint32 &v);
 
   PRInt64 ParseDateTime(nsAString &aDateTime);
 
   PRInt64 StripTime(PRInt64 aDateTime);
-  
+
   void SPrintfInt64(nsAString &aString, PRInt64 aValue);
   PRInt64 ScanfInt64d(nsAString &aString);
   nsresult ScanfInt64(nsAString &aString, PRInt64 *aRetVal);
-  
+
   nsresult ReadConfiguration();
 
   nsresult WriteConfiguration();
@@ -272,7 +273,7 @@ private:
   nsCOMArray<sbILocalDatabaseSmartMediaListListener> mListeners;
 
   nsString mClearListQuery;
-  
+
   PRMonitor * mSourceMonitor;
   nsString mSourceLibraryGuid;
 };

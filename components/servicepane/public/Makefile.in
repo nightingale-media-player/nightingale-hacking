@@ -30,7 +30,6 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 XPIDL_SRCS = sbIServicePaneService.idl \
-             sbIBookmarks.idl \
              sbIDeviceServicePaneService.idl \
              sbILibraryServicePaneService.idl \
              $(NULL)

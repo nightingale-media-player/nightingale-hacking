@@ -202,22 +202,21 @@ var DeviceSummarySettings = {
     // add new bindings as needed
     var container = this._getElement("device_management_settings_content");
     var buttonBox = this._getElement("device_settings_button_box");
-    for each (let library in ArrayConverter.JSArray(content.libraries)) {
-      library.QueryInterface(Ci.sbIDeviceLibrary);
-      if (library.guid in seenLibraries) {
-        continue;
+    if (this._device.defaultLibrary) {
+      var library = this._device.defaultLibrary;
+      if (!(library.guid in seenLibraries)) {
+        var widget = document.createElement("sb-device-management");
+        widget.setAttribute("device-id", this._deviceID);
+        widget.setAttribute("library-id", library.guid);
+        widget.setAttribute("hide", settingsToHide);
+        container.insertBefore(widget, buttonBox);
+
+        widget.device = this._device;
+
+        this._deviceManagementWidgets.push(widget);
+        this._mediaManagementWidgets.push(widget);
+        disable = false;
       }
-      var widget = document.createElement("sb-device-management");
-      widget.setAttribute("device-id", this._deviceID);
-      widget.setAttribute("library-id", library.guid);
-      widget.setAttribute("hide", settingsToHide);
-      container.insertBefore(widget, buttonBox);
-
-      widget.device = this._device;
-
-      this._deviceManagementWidgets.push(widget);
-      this._mediaManagementWidgets.push(widget);
-      disable = false;
     }
 
     if (disable && this._getElement("device_general_settings").hidden) {

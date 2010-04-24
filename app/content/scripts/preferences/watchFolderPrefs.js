@@ -73,6 +73,9 @@ var watchFolderPrefsPane = {
   // will also be set if watch folders was toggled disabled -> enabled
   folderPathChanged: false,
 
+  // Used to determine if this script should assign the pref manually
+  shouldSetWFPathPref: false,
+
   //----------------------------------------------------------------------------
   //
   // Event handling services.
@@ -84,6 +87,27 @@ var watchFolderPrefsPane = {
    */
 
   doPaneLoad: function watchFolderPrefsPane_doPaneLoad() {
+    // Instant-apply prefs (mac and linux) will notify the pref and update the
+    // watch folder component before this dialog can warn the user. If the
+    // current platform is not windows, disable instant-apply and handle the
+    // pref assignment in this script.
+    // See bug 15570.
+    try {
+      var sysInfo = Cc["@mozilla.org/system-info;1"]
+                      .getService(Ci.nsIPropertyBag2);
+      if (sysInfo.getProperty("name") != "Windows_NT") {
+        this.shouldSetWFPathPref = true;
+      }
+    }
+    catch (e) {
+    }
+
+    if (this.shouldSetWFPathPref) {
+      // Remove the preferences attribute.
+      document.getElementById("watch_folder_path_textbox")
+              .removeAttribute("preference");
+    }
+
     // Update the UI.
     this._updateUIState();
 
@@ -337,6 +361,13 @@ var watchFolderPrefsPane = {
         showErrorNotification(SBString("prefs.watch_folder.error.contains_managed"));
         return false;
       }
+    }
+
+    // The path seems legit, if this script is supposed to set the WF path pref
+    // do that now.
+    if (this.shouldSetWFPathPref) {
+      document.getElementById("watch_folder_path_pref")
+              .valueFromPreferences = path;
     }
 
     return true;

@@ -66,8 +66,7 @@ typedef std::map<std::wstring, stringData_t> stringMap_t;
  * overrunning 'length'. Updates *offset after reading.
  * Returns empty string if the string is not terminated.
  */
-static std::wstring ReadString(void *data, int length, int *offset)
-{
+static std::wstring ReadString(void *data, int length, int *offset) {
   size_t buffer_len = (length - *offset) / sizeof(wchar_t);
   wchar_t *src_data = reinterpret_cast<wchar_t*>(data) + *offset / sizeof(wchar_t);
   size_t src_len = wcsnlen(src_data, buffer_len);
@@ -82,8 +81,7 @@ static std::wstring ReadString(void *data, int length, int *offset)
  * Write a UTF-16 string and null terminator into data + *offset.
  * Updates *offset after writing.
  */
-static void WriteString(void *data, int *offset, std::wstring value)
-{
+static void WriteString(void *data, int *offset, std::wstring value) {
   wchar_t *buffer = reinterpret_cast<wchar_t*>(data);
   buffer += *offset / sizeof(wchar_t);
   wcsncpy(buffer, value.c_str(), value.length() + 1);
@@ -94,8 +92,7 @@ static void WriteString(void *data, int *offset, std::wstring value)
  * Read a WORD (16 bits unsigned) from data + *offset, without overrunning
  * 'length'.  Updates *offset after reading.
  */
-static WORD ReadWord(void *data, int length, int *offset)
-{
+static WORD ReadWord(void *data, int length, int *offset) {
   size_t buffer_len = (length - *offset);
   if (buffer_len < sizeof(WORD)) {
     // not enough bytes
@@ -110,8 +107,7 @@ static WORD ReadWord(void *data, int length, int *offset)
  * Write a WORD (unsigned 16 bit integer) into data + *offset.
  * Updates *offset after writing.
  */
-static void WriteWord(void *data, int *offset, WORD value)
-{
+static void WriteWord(void *data, int *offset, WORD value) {
   *(reinterpret_cast<WORD*>(data) + *offset / sizeof(WORD)) = value;
   *offset += sizeof(WORD);
 }
@@ -126,8 +122,7 @@ FindChildWithKey(std::wstring searchKey,
                  void *data,
                  int length,
                  void **childData,
-                 int *childDataLength)
-{
+                 int *childDataLength) {
   int offset = 0;
   WORD structureLength = ReadWord (data, length, &offset);
   WORD valueLength = ReadWord (data, length, &offset);
@@ -174,8 +169,7 @@ FindChildWithKey(std::wstring searchKey,
 static int
 GetVersionInfoBlock(std::wstring executableName,
                     void **data,
-                    int *dataSize)
-{
+                    int *dataSize) {
   // get the source data block...
   DWORD dummy;
   DWORD sourceSize = GetFileVersionInfoSize(executableName.c_str(), &dummy);
@@ -223,8 +217,7 @@ static int
 ReadStringTable(void *buffer,
                 int length,
                 stringMap_t &stringData,
-                std::wstring &langid)
-{
+                std::wstring &langid) {
   int offset = 0;
   WORD len = ReadWord(buffer, length, &offset);
   WORD dummy = ReadWord(buffer, length, &offset);
@@ -258,8 +251,7 @@ ReadStringTable(void *buffer,
 
 static int
 ReadStringsFromINIFile(IniEntry_t &aSection,
-                       stringMap_t &stringData)
-{
+                       stringMap_t &stringData) {
   IniEntry_t::const_iterator it, end = aSection.end();
   for (it = aSection.begin(); it != end; ++it) {
     std::wstring key = ConvertUTF8ToUTF16(it->first);
@@ -277,8 +269,7 @@ ReadStringsFromINIFile(IniEntry_t &aSection,
 }
 
 static int
-GetStringTableSize(const stringMap_t &stringData)
-{
+GetStringTableSize(const stringMap_t &stringData) {
   // Start with the StringTable header size: 3 words, plus 8 character
   // language ID (plus null terminator)
   int size = ROUND_UP_4 (3 * sizeof(WORD) + 9 * sizeof(WCHAR));
@@ -299,8 +290,7 @@ GetStringTableSize(const stringMap_t &stringData)
 static int
 WriteStringTable(void *buffer,
                  const stringMap_t &stringData,
-                 const std::wstring langid)
-{
+                 const std::wstring langid) {
   int tableSize = GetStringTableSize (stringData);
 
   // Write the StringTable header.

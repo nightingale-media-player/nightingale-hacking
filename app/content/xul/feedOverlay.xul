@@ -38,7 +38,7 @@
   <toolbaritem id="urlbar-container">
     <toolbarbutton id="feed-button"
                    type="menu"
-                   insertbefore="bookmark-subscribe-button"
+                   insertafter="location_bar"
                    tooltiptext="Feeds">
       <panel id="feed-panel"
              position="after_end"

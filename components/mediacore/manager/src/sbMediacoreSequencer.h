@@ -94,6 +94,7 @@ public:
   nsresult UpdateURLDataRemotes(nsIURI *aURI);
   nsresult UpdateShuffleDataRemote(PRUint32 aMode);
   nsresult UpdateRepeatDataRemote(PRUint32 aRepeatMode);
+  nsresult ResetPlayingVideoDataRemote();
 
   // Volume & Mute
   nsresult HandleVolumeChangeEvent(sbIMediacoreEvent *aEvent);

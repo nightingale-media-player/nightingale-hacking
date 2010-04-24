@@ -37,6 +37,7 @@ IS_EXTENSION = 1
 
 SUBDIRS = chrome \
           defaults \
+          modules \
           $(NULL)
 
 CREATEDIRS = $(SONGBIRD_PREFERENCESDIR)

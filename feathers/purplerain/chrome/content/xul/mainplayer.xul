@@ -138,6 +138,8 @@
                 <toolbox id="navigator-toolbox" flex="1"/>
               </stack>
 
+              <notificationbox id="application-notificationbox"/>
+
               <hbox id="tabstrip-container">
                 <observes type="dataremote"
                           key="splitter.servicepane_splitter.collapsed"

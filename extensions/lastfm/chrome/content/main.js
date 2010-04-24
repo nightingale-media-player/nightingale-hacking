@@ -509,17 +509,23 @@ LastFm.onLoggedInStateChanged = function LastFm_onLoggedInStateChanged() {
 
     // main screen turn on
     this._deck.selectedPanel = this._profile;
+
+    // show the last.fm faceplate if we're logged in 
+    document.getElementById("lastfmFaceplate").hidden = false;
   } else {
     // logged out
-	if (this._service.userLoggedOut) {
-		// remove the "log out" menu item
-		this._menuLogout.parentNode.removeChild(this._menuLogout);
-		// insert the "log in" menu item
-		this._menuEnableScrobbling.parentNode.insertBefore(this._menuLogin,
-			this._menuEnableScrobbling);
-		// disable the "enable scrobbling" menu item
-		this._menuEnableScrobbling.disabled = true;
-	}
+    if (this._service.userLoggedOut) {
+      // remove the "log out" menu item
+      this._menuLogout.parentNode.removeChild(this._menuLogout);
+      // insert the "log in" menu item
+      this._menuEnableScrobbling.parentNode.insertBefore(this._menuLogin,
+        this._menuEnableScrobbling);
+      // disable the "enable scrobbling" menu item
+      this._menuEnableScrobbling.disabled = true;
+      
+      // don't show the last.fm faceplate if we're logged out
+      document.getElementById("lastfmFaceplate").hidden = true;
+    }
 
     // switch back to the login panel
     this._deck.selectedPanel = this._login;

@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -110,17 +110,6 @@ sbOSDControlService.prototype =
     this._osdWindow.resizeTo(newOSDWidth, OSD_HEIGHT);
   },
 
-  _setOSDGraphics: function() {
-    // Use the altenate graphic set if the current enviroment can't handle
-    // transparent PNG files.
-    if (!this._useTransparentGraphics) {
-      var doc = this._osdWindow.document.documentElement;
-      var classes = doc.className.split(/\s+/);
-      classes.push("alt");
-      doc.className = classes.join(" ");
-    }
-  },
-
   //----------------------------------------------------------------------------
   // sbIOSDControlService
 
@@ -135,8 +124,6 @@ sbOSDControlService.prototype =
         "chrome,dependent,modal=no,titlebar=no",
         null);
     this._osdWindow.QueryInterface(Ci.nsIDOMWindowInternal);
-
-    this._setOSDGraphics();
 
     // Cloak the window right now.
     this._cloakService.cloak(this._osdWindow);
@@ -180,12 +167,6 @@ sbOSDControlService.prototype =
     this._osdWinKeypressListener = function(aEvent) {
       self._onOSDWinKeypress(aEvent);
     };
-    this._osdWinLoadListener = function(aEvent) {
-      self._setOSDGraphics();
-    };
-    this._osdWindow.addEventListener("load",
-                                     this._osdWinLoadListener,
-                                     false);
     this._osdWindow.addEventListener("blur",
                                      this._osdWinBlurListener,
                                      false);
@@ -229,9 +210,6 @@ sbOSDControlService.prototype =
     }
     
     this._timer.cancel();
-    this._osdWindow.removeEventListener("load",
-                                        this._osdWinLoadListener,
-                                        false);
     this._osdWindow.removeEventListener("blur",
                                         this._osdWinBlurListener,
                                         false);

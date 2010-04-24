@@ -215,11 +215,6 @@ ContentAreaContextMenu.prototype = {
   },
 
   initMiscItems: function CM_initMiscItems() {
-    // Use "Bookmark This Link" if on a link.
-    /*
-    this.showItem("context-bookmarkpage",
-                  !(this.onTextInput || this.onLink || this.onImage));
-    */
     this.showItem("context-searchselect", this.isTextSelected);
     //xxxlone: note that if we ever want to change this to show the 
     // frame items at the same time as the image and/or link items, 
@@ -1180,19 +1175,6 @@ ContentAreaContextMenu.prototype = {
     var where = "tab";
 
     openUILinkIn(uri, where);
-  },
-
-  bookmarkThisPage: function CM_bookmarkThisPage() {
-    bmManager.addBookmark();
-  },
-
-  addBookmarkForFrame: function CM_addBookmarkForFrame() {
-    var doc = this.target.ownerDocument;
-    var uri = doc.documentURIObject;
-    var title = doc.title;
-    if (!title || title == "") 
-      title = uri.spec;
-    bmManager.addBookmarkForPage(uri, title);
   },
 
   savePageAs: function CM_savePageAs() {

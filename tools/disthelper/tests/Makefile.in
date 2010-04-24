@@ -41,7 +41,9 @@ CPP_SRCS = main.cpp \
 
 # things from ../$(SB_PLATFORM)
 ifeq ($(SB_PLATFORM), macosx)
-   CMM_SRCS += commands.mm
+   CMM_SRCS += commands.mm \
+               macutils.mm \
+               $(NULL)
 else #not macosx
    CPP_SRCS += commands.cpp
 endif
@@ -61,22 +63,22 @@ CPP_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
 
 CMM_EXTRA_INCLUDES = $(srcdir) \
                      $(srcdir)/.. \
-		     $(NULL)
+                     $(NULL)
 
 SIMPLE_PROGRAM_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                               $(NULL)
 
 ifeq ($(SB_PLATFORM), windows)
    SIMPLE_PROGRAM_EXTRA_IMPORTS = shell32 \
-				  shlwapi \
-				  version \
-				  $(NULL)
+                                  shlwapi \
+                                  version \
+                                  $(NULL)
 endif #windows
 
 ifeq ($(SB_PLATFORM), macosx)
    SIMPLE_PROGRAM_EXTRA_FLAGS = -Wl,-framework,Foundation \
-				-Wl,-framework,AppKit \
-				$(NULL)
+                                -Wl,-framework,AppKit \
+                                $(NULL)
 endif
 
 # Since this is debug-only, we don't need tests.exe coming out as tests_d.exe;

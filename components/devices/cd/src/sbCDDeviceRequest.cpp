@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -47,7 +47,6 @@
 #include <sbStandardProperties.h>
 #include <sbPropertiesCID.h>
 #include <sbStringUtils.h>
-#include <sbMediaListEnumArrayHelper.h>
 #include <sbMemoryUtils.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStatusPropertyValue.h>
@@ -1040,7 +1039,8 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
 
   sbIMediaItem * destination = aRequest->item;
 
-  // We're creating a copy so we want to break the link back
+  // We're creating a copy of the file so we want to break the link back to
+  // the CD device library item, especially since it's semi-transient
   SBVoidString voidString;
   destination->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
                            voidString);

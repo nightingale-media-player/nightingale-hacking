@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #ifndef __SB_LOCALDATABASEDIFFINGSERVICE_H__
 #define __SB_LOCALDATABASEDIFFINGSERVICE_H__
@@ -48,6 +46,8 @@
 
 #include <sbLibraryChangeset.h>
 
+class sbLDBDSEnumerator;
+
 class sbLocalDatabaseDiffingService : public sbILibraryDiffingService,
                                       public nsIClassInfo
 {
@@ -57,19 +57,20 @@ public:
   NS_DECL_SBILIBRARYDIFFINGSERVICE
 
   sbLocalDatabaseDiffingService();
-  
+
   static NS_METHOD RegisterSelf(nsIComponentManager* aCompMgr,
                                 nsIFile* aPath,
                                 const char* aLoaderStr,
                                 const char* aType,
                                 const nsModuleComponentInfo *aInfo);
 
-  /** 
+  /**
    * Initialize the local database diffing service.
    * \throw NS_ERROR_ALREADY_INITIALIZED if called more than once.
    */
   nsresult Init();
 
+protected:
   /**
    * Get all property info elements from the property manager.
    */
@@ -82,10 +83,10 @@ public:
    * \param aDestinationItem The destination item.
    * \param[out] aLibraryChange The newly created library change.
    */
-  nsresult CreateLibraryChangeFromItems(sbIMediaItem *aSourceItem, 
+  nsresult CreateLibraryChangeFromItems(sbIMediaItem *aSourceItem,
                                         sbIMediaItem *aDestinationItem,
                                         sbILibraryChange **aLibraryChange);
-  
+
   nsresult CreateItemAddedLibraryChange(sbIMediaItem *aSourceItem,
                                         sbILibraryChange **aLibraryChange);
 
@@ -99,7 +100,7 @@ public:
   /**
    * Create an array of sbIPropertyChange elements from a source
    * and destination sbIPropertyArray.
-   * 
+   *
    * \param aSourceProperties The source property array.
    * \param aDestinationProperties The destination property array.
    * \param[out] aPropertyChanges The newly created property changes array.
@@ -114,13 +115,27 @@ public:
    *
    * \param aSourceList The source list.
    * \param aDestinationList The destination list.
-   * \param[out] 
+   * \param[out]
    */
   nsresult CreateLibraryChangesetFromLists(sbIMediaList *aSourceList,
                                            sbIMediaList *aDestinationList,
                                            sbILibraryChangeset **aLibraryChangeset);
-  
-  /** 
+
+  /**
+   * Creates a list of change given two libraries and two enumerators
+   * \param aSrcLibrary The source library
+   * \param aDestLibrary The destination library
+   * \param aSrcEnum The source items to compare, all items must belong to
+   *                 aSrcLibrary
+   * \param aDestEnum The items in the destination to compare, all items must
+   *                  belong to aDestLibrary
+   */
+  nsresult CreateChanges(sbIMediaList * aSrcLibrary,
+                         sbIMediaList * aDestLibrary,
+                         sbLDBDSEnumerator * aSrcEnum,
+                         sbLDBDSEnumerator * aDestEnum,
+                         nsIArray ** aChanges);
+  /**
    * Create an sbILibraryChangeset from a source and a destination
    * sbILibrary.
    *
@@ -152,6 +167,10 @@ public:
     nsTArray<nsString>&                                  aUniqueItemGUIDList,
     nsTHashtable<nsStringHashKey>&                       aUniqueItemPropTable);
 
+  /**
+   * Enumerator function for enumerating libraries and building change lists
+   */
+  static PLDHashOperator Enumerator(nsIDHashKey* aEntry, void* userArg);
 private:
   ~sbLocalDatabaseDiffingService();
 
@@ -162,26 +181,6 @@ protected:
 //  XXXAus: These are placeholders for future implementation.
 //  nsInterfaceHashtableMT<> mObservers;
 //  nsInterfaceHashtableMT<> mChangesets;
-};
-
-class sbLocalDatabaseDiffingServiceEnumerator : public sbIMediaListEnumerationListener
-{
-public:
-  NS_DECL_ISUPPORTS
-  NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
-
-  sbLocalDatabaseDiffingServiceEnumerator();
-
-  nsresult Init();
-
-  nsresult GetArray(nsIArray **aArray);
-
-protected:
-  ~sbLocalDatabaseDiffingServiceEnumerator();
-
-private:
-  nsCOMPtr<nsIMutableArray> mArray;
-
 };
 
 #endif /* __SB_LOCALDATABASEDIFFINGSERVICE_H__ */

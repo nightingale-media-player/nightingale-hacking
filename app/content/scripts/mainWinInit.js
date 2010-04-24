@@ -406,32 +406,6 @@ function createDefaultSmartPlaylists() {
       autoUpdate       : true
     },
     {
-      name: "&smart.defaultlist.mostplayed",
-      conditions: [
-        {
-          property     : SBProperties.playCount,
-          operator     : numberPI.getOperator(numberPI.OPERATOR_GREATER),
-          leftValue    : 0,
-          rightValue   : null,
-          displayUnit  : null
-        },
-        {
-          property     : SBProperties.contentType,
-          operator     : typePI.getOperator(typePI.OPERATOR_NOTEQUALS),
-          leftValue    : "video",
-          rightValue   : null,
-          displayUnit  : null
-        }
-      ],
-      matchType        : sbILDSML.MATCH_TYPE_ALL,
-      limitType        : sbILDSML.LIMIT_TYPE_ITEMS,
-      limit            : 25,
-      selectPropertyID : SBProperties.playCount,
-      selectDirection  : false,
-      randomSelection  : false,
-      autoUpdate       : true
-    },
-    {
       name: "&smart.defaultlist.recentlyadded",
       conditions: [
         {

@@ -104,6 +104,10 @@
             </xul:tree>
           </xul:radiogroup>
         </xul:groupbox>
+        <xul:vbox sbid="sync_images_supported_formats_box">
+          <xul:spacer flex="1"/>
+          <xul:label sbid="sync_images_supported_formats"/>
+        </xul:vbox>
       </xul:vbox>
     </content>
 
@@ -171,6 +175,23 @@
                                             sbIDC.CONTENT_IMAGE)) {
             return;
           }
+
+          // The file extension list that device supports.
+          fileExtensions = capabilities.getSupportedFileExtensions(
+                                          this.device,
+                                          sbIDC.CONTENT_IMAGE);
+
+          let extensions = "";
+          while (fileExtensions.hasMore()) {
+            if (extensions != "")
+              extensions += ","
+            extensions += " ." + fileExtensions.getNext();
+          }
+          let supportedExtensions =
+                this._getElement("sync_images_supported_formats");
+          supportedExtensions.value =
+            SBFormattedString("device.sync.images.supported.formats",
+                              [extensions]);
 
           // Listen for device events.
           this._deviceEventTarget =
@@ -339,13 +360,15 @@
           this._getElement("sync_images_folders_tree").disabled = !syncSelected;
 
           // Update root folder displayed and list of subfolders if necessary
-          let subfoldersElement = this._getElement("sync_images_folder_children");
+          let subfoldersElement =
+                this._getElement("sync_images_folder_children");
           if (this._syncPrefs.rootFolder) {
             var displayLabelText = this._syncPrefs.rootFolder.leafName;
             if(this.PlatformUtils.platformString == "Windows_NT") {
-              displayLabelText = Cc["@songbirdnest.com/Songbird/KnownFolderManager;1"]
-                                   .createInstance(Ci.sbIKnownFolderManager)
-                                   .getDisplayNameFromPath(this._syncPrefs.rootFolder.path);
+              displayLabelText =
+                Cc["@songbirdnest.com/Songbird/KnownFolderManager;1"]
+                  .createInstance(Ci.sbIKnownFolderManager)
+                  .getDisplayNameFromPath(this._syncPrefs.rootFolder.path);
             }
             rootFolderElement.setAttribute("label",
                                            displayLabelText);
@@ -602,12 +625,16 @@
           this._fileScanQuery = Cc["@songbirdnest.com/Songbird/FileScanQuery;1"]
                                   .createInstance(Ci.sbIFileScanQuery);
 
-          let typeSniffer =
-                Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
-                  .createInstance(Ci.sbIMediacoreTypeSniffer);
-          let fileExtensions = typeSniffer.imageFileExtensions;
-          while (fileExtensions.hasMore())
+          let capabilities = this.device.capabilities;
+          let sbIDC = Ci.sbIDeviceCapabilities;
+          let fileExtensions = capabilities.getSupportedFileExtensions(
+                                              this.device,
+                                              sbIDC.CONTENT_IMAGE);
+
+          // Only scan the images that the device supports.
+          while (fileExtensions.hasMore()) {
             this._fileScanQuery.addFileExtension(fileExtensions.getNext());
+          }
 
           this._fileScanQuery.setDirectory(this._syncPrefs.rootFolder.path);
           this._fileScanQuery.setRecurse(true);

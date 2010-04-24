@@ -70,7 +70,7 @@ tstring ResolvePathName(std::string aSrc) {
     if (L'$' == *begin) {
       std::wstring::iterator next = begin;
       ++++next; // skip two characters
-      src.replace(begin, next, GetAppDirectory());
+      src.replace(begin, next, GetAppResoucesDirectory());
     }
     WCHAR buffer[MAX_LONG_PATH + 1];
     DWORD length = SearchPath(GetDistIniDirectory().c_str(),
@@ -184,13 +184,40 @@ int CommandExecuteFile(const std::string& aExecutable,
   tstring arg(FilterSubstitution(ConvertUTF8toUTFn(aArgs)));
   
   DebugMessage("<%s> <%s>", executable.c_str(), arg.c_str());
-  HINSTANCE hInst = ::ShellExecuteW(NULL,
-                                    L"open",
-                                    executable.c_str(),
-                                    arg.c_str(),
-                                    NULL,
-                                    SW_SHOWDEFAULT);
-  return ((ULONG_PTR)hInst > 32 ? DH_ERROR_OK : DH_ERROR_UNKNOWN);
+
+  // We need to use CreateProcess in order to get a handle to the launched
+  // process so we can wait for it to exit.  This means we need to quote the
+  // executable name on the command line in order to deal with spaces in the
+  // path for the disthelper binary.
+  tstring cmdline(_T("\""));
+  cmdline.append(executable);
+  cmdline.append(_T("\" "));
+  cmdline.append(arg);
+  
+  STARTUPINFO si = {sizeof(STARTUPINFO), 0};
+  PROCESS_INFORMATION pi = {0};
+  LPTSTR cmdlineBuffer = new TCHAR[cmdline.length() + 1];
+  cmdlineBuffer[cmdline.length()] = _T('\0');
+  _tcsncpy(cmdlineBuffer, cmdline.c_str(), cmdline.length());
+  BOOL ok = CreateProcess(executable.c_str(),
+                          cmdlineBuffer,
+                          NULL,  // no special security attributes
+                          NULL,  // no special thread attributes
+                          FALSE, // don't inherit filehandles
+                          0,     // No special process creation flags
+                          NULL,  // inherit my environment
+                          NULL,  // use my current directory
+                          &si,
+                          &pi);
+  delete[] cmdlineBuffer;
+
+  if (ok) {
+    WaitForSingleObject(pi.hProcess, INFINITE);
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
+  }
+
+  return (ok ? DH_ERROR_OK : DH_ERROR_UNKNOWN);
 }
 
 tstring FilterSubstitution(tstring aString) {
@@ -209,7 +236,7 @@ tstring FilterSubstitution(tstring aString) {
     // Try to substitute $APPDIR$
     tstring variable = result.substr(start + 1, end - start - 1);
     if (variable == _T("APPDIR")) {
-      tstring appdir = GetAppDirectory();
+      tstring appdir = GetAppResoucesDirectory();
       DebugMessage("AppDir: %s", appdir.c_str());
       result.replace(start, end-start+1, appdir);
       start += appdir.length();
@@ -326,7 +353,7 @@ void ParseExecCommandLine(const std::string& aCommandLine,
     aArgs = aCommandLine.substr(argsStart);
 }
 
-tstring GetAppDirectory() {
+tstring GetAppResoucesDirectory() {
   WCHAR buffer[MAX_LONG_PATH + 1] = {0}; 
   HMODULE hExeModule = ::GetModuleHandle(NULL);
   DWORD length = ::GetModuleFileName(hExeModule, buffer, MAX_LONG_PATH);
@@ -349,7 +376,7 @@ tstring gDistIniDirectory;
 tstring GetDistIniDirectory(const TCHAR *aPath) {
   if (aPath) {
     TCHAR buffer[MAX_PATH];
-    _tcsncpy(buffer, GetAppDirectory().c_str(), NS_ARRAY_LENGTH(buffer));
+    _tcsncpy(buffer, GetAppResoucesDirectory().c_str(), NS_ARRAY_LENGTH(buffer));
     buffer[NS_ARRAY_LENGTH(buffer) - 1] = _T('\0');
     // the PathAppend call will correctly copy aPath over if it is already an
     // absolute path; otherwise, it will append aPath to the app directory

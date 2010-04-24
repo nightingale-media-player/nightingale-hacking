@@ -1,0 +1,999 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+<!--
+  -TODO:
+  - Bug 18545
+  -  1. Create 3 bindings (done)
+  -   i.   Service Pane (done)
+  -   ii.  Service Pane Group (done)
+  -   iii. Service Pane Node (done)
+  -  2. Migrate functionality of old service pane to new service pane
+  -  3. Context menus for nodes.
+  -  4. Edit names for nodes.
+  -  5. Ability to highlight nodes.
+  - Bug 18548
+  -  1. Toggle node visibility when clicking on toggle image in header of group.
+  - Bug 18551
+  -  1. Make sure we can change the badge on nodes easily.
+  - Bug 18552
+  -  1. Make sure we can change the image on nodes easily.
+  -->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!--
+    - \brief ServicePaneNodeBadge is a single badge attached to a
+    - ServicePaneNode.  It contains a text label, image, and an associated
+    - action.  If the image is null, then the text label will be used.
+    - When the badge is clicked, the action will be taken if one is defined.
+    -->
+  <binding id="servicepane-node-badge">
+    <content mousethrough="never">
+      <xul:hbox class="servicepane-node-badge">
+        <xul:label sbid="servicepane-node-badge-label"
+                   class="servicepane-node-badge-label"/>
+        <xul:image sbid="servicepane-node-badge-image"
+                   class="servicepane-node-badge-image"
+                   hidden="true"/>
+      </xul:hbox>
+    </content>
+
+    <implementation>
+      <constructor>
+      <![CDATA[
+          if (this.hasAttribute("badgeImage")) {
+            this.badgeImage = this.getAttribute("badgeImage");
+          }
+          if (this.hasAttribute("badgeLabel")) {
+            this.badgeLabel = this.getAttribute("badgeLabel");
+          }
+      ]]>
+      </constructor>
+
+      <!--
+        - \brief Gets an element in this binding that has the sbid matching the
+        -   anonID parameter.
+        - \param anonID Anonymous id of the element requested (matches sbid)
+        - \return element if found, or null if not
+        -->
+      <method name="_getElement">
+        <parameter name="anonID"/>
+        <body><![CDATA[
+          return document.getAnonymousElementByAttribute(this,
+                                                         "sbid",
+                                                         anonID);
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Updates the badge depending on the values of the elements. If
+        - the image has no src then we show the label and hide the image, if the
+        - image has a src then we hide the label and show the image.
+        -->
+      <method name="_update">
+        <body><![CDATA[
+          let imageNode = this._getElement("servicepane-node-badge-image");
+          let textNode = this._getElement("servicepane-node-badge-label");
+          if (imageNode.hasAttribute("src")) {
+            imageNode.removeAttribute("hidden");
+            textNode.setAttribute("hidden", true);
+          }
+          else {
+            imageNode.setAttribute("hidden", true);
+            textNode.removeAttribute("hidden");
+          }
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief property for the image of this badge.
+        -->
+      <property name="badgeImage">
+        <getter><![CDATA[
+          let imageNode = this._getElement("servicepane-node-badge-image");
+          return imageNode.src;
+        ]]></getter>
+        <setter><![CDATA[
+          let imageNode = this._getElement("servicepane-node-badge-image");
+          let textNode = this._getElement("servicepane-node-badge-label");
+          imageNode.src = val;
+          this._update();
+          return val;
+        ]]></setter>
+      </property>
+
+      <!--
+        - \brief property for the text of this badge
+        -->
+      <property name="badgeLabel">
+        <getter><![CDATA[
+          let textNode = this._getElement("servicepane-node-badge-label");
+          return imageNode.value;
+        ]]></getter>
+        <setter><![CDATA[
+          let textNode = this._getElement("servicepane-node-badge-label");
+          textNode.value = val;
+          this._update();
+          return val;
+        ]]></setter>
+      </property>
+
+    </implementation>
+  </binding>
+
+   <!--
+    - \brief ServicePaneNode is a single entry attached to a ServicePaneGroup.
+    - it contains an icon, label and an arbitrary # of ServicePaneNodeBadges.
+    - When the user clicks the node the url attached to this node will launch
+    - in the browser if any.  If the node is already selected and the user
+    - clicks it, the node should be renamed.
+    -->
+  <binding id="servicepane-node">
+    <content mousethrough="never">
+      <xul:vbox class="servicepane-node" flex="1">
+
+        <xul:hbox class="servicepane-node-info">
+          <xul:image class="servicepane-node-container-arrow" flex="0"/>
+          <xul:image class="servicepane-node-image"
+                     xbl:inherits="src=image" flex="0" />
+          <xul:label class="servicepane-node-label" xbl:inherits="value=label"/>
+          <xul:spacer flex="1" />
+          <xul:hbox class="servicepane-node-badges"
+                    sbid="servicepane-node-badges" flex="1" />
+        </xul:hbox>
+
+        <xul:vbox class="servicepane-node-children">
+          <children />
+        </xul:vbox>
+
+      </xul:vbox>
+    </content>
+
+    <implementation>
+      <constructor>
+        <![CDATA[
+          // TODO: Check for a better way to load. (stevo)
+          // This is here because we can not call nodeData until the binding has
+          // been applied.
+
+          // If this element has a node id then load up the data from the node
+          // we are always expected to be in the service pane under a group at
+          // this point so we call up the DOM of nodes.
+          if (this.hasAttribute("nodeid")) {
+            var nodeID = this.getAttribute("nodeid");
+            if (this.parentNode)
+              this.nodeData = this.parentNode.getNode(nodeID);
+          } else {
+            // If we have no node data, then hide by default.
+            this.setAttribute("hidden", true);
+          }
+        ]]>
+      </constructor>
+
+      <!--
+        - \brief Hold the actual node data for this node so we can reference it
+        -   whenever we need
+        -->
+      <field name="_nodeData">null</field>
+
+      <!--
+        - \brief The node ID
+        -->
+      <field name="nodeId">this._nodeData.id</field>
+
+      <!--
+        - \brief Get the servicepane element itself
+        -->
+      <property name="_servicePane">
+        <getter><![CDATA[
+          let parent = this.parentNode;
+          while (parent && parent.tagName != "sb-servicepane")
+            parent = parent.parentNode;
+          return parent;
+        ]]></getter>
+      </property>
+
+      <!--
+        - \brief Gets an element in this binding that has the sbid matching the
+        -   anonID parameter.
+        - \param anonID Anonymous id of the element requested (matches sbid)
+        - \return element if found, or null if not
+        -->
+      <method name="_getElement">
+        <parameter name="anonID"/>
+        <body><![CDATA[
+          return document.getAnonymousElementByAttribute(this,
+                                                         "sbid",
+                                                         anonID);
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief sbIServicePaneNode data associated with this node
+        -->
+      <property name="nodeData">
+        <getter><![CDATA[
+          return this._nodeData;
+        ]]></getter>
+        <setter><![CDATA[
+          // val should be a sbIServicePaneNode object
+          this._nodeData = val;
+          if (this._nodeData) {
+            // Set up the elements
+            this.setAttribute("image", this._nodeData.image);
+            this.setAttribute("label", this._nodeData.displayName);
+            this.setAttribute("collapsed", !this._nodeData.isOpen);
+
+            // Hide the node if it should be hidden
+            if (this._nodeData.hidden) {
+              this.setAttribute("hidden", true);
+            } else if (this.hasAttribute("hidden")) {
+              this.removeAttribute("hidden");
+            }
+
+            this.className += this._nodeData.className;
+          }
+          else {
+            this.setAttribute("image", "");
+            this.setAttribute("label", "");
+            this.setAttribute("hidden");
+            this.setAttribute("collapsed", false);
+          }
+          return this._nodeData;
+        ]]></setter>
+      </property>
+
+      <!--
+        - \brief The browser we are linked to if any.
+        -->
+      <field name="_browser">null</field>
+      <property name="browser">
+        <getter><![CDATA[
+          if (!this._browser) {
+            this._browser = document.getElementById(this.getAttribute('browser'));
+          }
+          return this._browser;
+        ]]></getter>
+      </property>
+
+      <!--
+        - \brief Load the URL associated with this node in the browser if
+        - available.
+        -->
+      <method name="loadNodeURL">
+        <parameter name="event"/>
+        <body><![CDATA[
+          if (!this.browser)
+            return; // Nothing to do if we don't have a browser.
+
+          // Style the node as active (which means first removing any
+          // styles from any currently active node
+          this._servicePane.makeNodeActive(this);
+
+          // If this node has a URL, just load it in the browser
+          if (this._nodeData.url) {
+            var target = null;
+            if (LibraryUtils.isMediaTabURL(this._nodeData.url, this.browser)) {
+              target = "_media";
+              this.browser.selectedTab = this.browser.mediaTab;
+            } else if (event.button == 1) {
+              // Middle click.
+              target = "_blank";
+            }
+            this.browser.loadURI(this._nodeData.url, null, null, event, target);
+
+          // If no URL, apply special handling
+          } else {
+            // If there is a media list for this node, hand it off to the
+            // browser to display somehow.
+            // I'm told that this hack is fine, as it will one day be replaced
+            // with the playlist commands system.
+            var libraryServicePane =
+              Components.classes['@songbirdnest.com/servicepane/library;1']
+              .getService(Components.interfaces.sbILibraryServicePaneService);
+            var mediaList = libraryServicePane.getLibraryResourceForNode(this._nodeData);
+            if (mediaList) {
+              const NS_SP = "http://songbirdnest.com/rdf/servicepane#";
+              var view = LibraryUtils.createStandardMediaListView(mediaList);
+              if (this._nodeData.hasAttributeNS(NS_SP,
+                                                "mediaListViewConstraints")) {
+                // set up the constraints
+                var builder = Cc["@songbirdnest.com/Songbird/Library/ConstraintBuilder;1"]
+                                .createInstance(Ci.sbILibraryConstraintBuilder);
+                try {
+                  builder.parseFromString(
+                    this._nodeData.getAttributeNS(NS_SP,
+                                                  "mediaListViewConstraints"));
+                  view.filterConstraint = builder.get();
+                } catch (e) {
+                  // boo, the constraints are bad, use standard instead
+                  view.filterConstraint = LibraryUtils.standardFilterConstraint;
+                }
+              }
+              var tab = this.browser.loadMediaList(mediaList,
+                                                   event,
+                                                   "_media",
+                                                   view);
+              this.browser.selectedTab = tab;
+
+              // Record list type metrics for some reason.
+              // See http://bugzilla.songbirdnest.com/show_bug.cgi?id=4021
+              // changed to loadNode from click as there are ways other than clicking
+              // to get here.
+              try {
+                var listType = mediaList.getProperty(SBProperties.customType);
+                var libType = mediaList.library.getProperty(SBProperties.customType);
+                metrics_inc("app.servicepane.loadnode.medialist", libType + "." + listType, null);
+              } catch(e) { Components.utils.reportError(e); }
+
+            } else {
+              // we have no handler for this service pane node load
+              // dispatch an event people can listen for and don't report
+              let event = document.createEvent("XULCommandEvent");
+              event.QueryInterface(Components.interfaces.nsIDOMXULCommandEvent);
+              event.initCommandEvent("servicepane-loadnode",
+                                     event.bubble,
+                                     false,
+                                     event.view,
+                                     event.detail,
+                                     event.ctrlKey,
+                                     event.altKey,
+                                     event.shiftKey,
+                                     event.metaKey,
+                                     event);
+              this.dispatchEvent(event);
+
+              var SP_NS = "http://songbirdnest.com/rdf/servicepane#";
+              var eventType = this._nodeData.getAttributeNS(SP_NS, "eventType");
+              if (eventType) {
+                let event = document.createEvent("UIEvent");
+                event.initUIEvent(eventType, true, true, window, 0);
+                window.dispatchEvent(event);
+              }
+            }
+          }
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Creates a badge element.
+        - \param badgeLabel - Value to set the badge to (can be null)
+        - \param badgeImage - Image to set the badge to (can be null)
+        - \return newly created badge element
+        -->
+      <method name="_createBadge">
+        <parameter name="badgeLabel"/>
+        <parameter name="badgeImage"/>
+        <body><![CDATA[
+          var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+          var newBadge = document.createElementNS(XULNS,
+                                                  "sb-servicepane-node-badge");
+          if (badgeLabel)
+            newBadge.setAttribute("badgeLabel", badgeLabel);
+          if (badgeImage)
+            newBadge.setAttribute("badgeImage", badgeImage);
+          return newBadge;
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Appends a badge element to the node.
+        - \param badgeLabel - Value to set the badge to (can be null)
+        - \param badgeImage - Image to set the badge to (can be null)
+        - \return newly appended badge element.
+        -->
+      <method name="appendBadge">
+        <parameter name="badgeLabel"/>
+        <parameter name="badgeImage"/>
+        <body><![CDATA[
+          var newBadge = this._createBadge(badgeLabel, badgeImage);
+          var badgeContainer = this._getElement("servicepane-node-badges");
+          badgeContainer.appendChild(newBadge);
+          return newBadge;
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Removes a badge element.
+        - \param index - Index of the badge to remove.
+        - \return copy of removed badge.
+        -->
+      <method name="removeBadge">
+        <parameter name="index"/>
+        <body><![CDATA[
+          var oldChild = null;
+          var badgeContainer = this._getElement("servicepane-node-badges");
+          if (badgeContainer.childNodes.length >= index) {
+            oldChild = badgeContainer.removeChild(badgeContainer.childNodes[index]);
+          }
+          return oldChild;
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Inserts a badge element before an existing one.
+        - \param badgeLabel - Value to set the badge to (can be null)
+        - \param badgeImage - Image to set the badge to (can be null)
+        - \param beforeIndex - Index of badge to insert a new badge before.
+        - \return newly appended badge element.
+        -->
+      <method name="insertBadgeBefore">
+        <parameter name="badgeLabel"/>
+        <parameter name="badgeImage"/>
+        <parameter name="beforeIndex"/>
+        <body><![CDATA[
+          var badgeContainer = this._getElement("servicepane-node-badges");
+          if (beforeIndex > 0 &&
+              beforeIndex < badgeContainer.childNodes.length) {
+            var newBadge = this._createBadge(badgeLabel, badgeImage);
+            badgeContainer.insertBefore(newBadge,
+                                        badgeContainer.childNodes[beforeIndex]);
+          }
+          return newBadge;
+        ]]></body>
+      </method>
+
+    </implementation>
+
+    <handlers>
+      <handler event="click">
+      <![CDATA[
+        if (event.button == 0)
+          this.loadNodeURL(event);
+      ]]>
+      </handler>
+
+      <handler event="contextmenu">
+      <![CDATA[
+        this._servicePane.openContextMenu(event, this.nodeId);
+      ]]>
+      </handler>
+    </handlers>
+
+  </binding>
+
+  <binding id="servicepane-group">
+    <content mousethrough="never">
+      <xul:vbox class="servicepane-group" flex="1">
+        <xul:hbox class="servicepane-group-header">
+          <xul:description class="servicepane-group-label"
+                     xbl:inherits="xbl:text=label"/>
+          <xul:spacer flex="1" />
+          <xul:image class="servicepane-group-toggle"/>
+        </xul:hbox>
+        <xul:vbox sbid="groupNodes" xbl:inherits="open">
+          <children /> <!-- servicepane-nodes -->
+        </xul:vbox>
+      </xul:vbox>
+    </content>
+
+    <implementation>
+      <method name="getNode">
+        <parameter name="nodeID"/>
+        <body><![CDATA[
+          return this.parentNode.getNode(nodeID);
+        ]]></body>
+      </method>
+    </implementation>
+  </binding>
+
+  <binding id="servicepane">
+    <content mousethrough="never">
+      <xul:vbox id="sb_servicepane" class="servicepane-outer-box" flex="1">
+        <xul:vbox id="sb_servicepane_box"
+                  class="servicepane-inner-box"
+                  flex="1">
+          <children /> <!-- servicepane-group elements -->
+        </xul:vbox>
+        <xul:sb-displaypane-splitter
+                collapse="after"
+                orient="vertical"
+                resizeafter="closest"
+                id="displaypane_servicepane_bottom_splitter"
+                menuid="displaypane_servicepane_bottom_menu" />
+        <xul:sb-displaypane id="displaypane_servicepane_bottom"
+                            label="&displaypane.name.servicepane;"
+                            splitter="displaypane_servicepane_bottom_splitter"
+                            contentgroup="servicepane"/>
+      </xul:vbox>
+      <!-- menupopup needs to be outside the vbox otherwise it
+           gets height adjusted to 0 when the splitter is
+           adjusted -->
+      <xul:menupopup id="displaypane_servicepane_bottom_menu"
+                     class="menulist-menupopup">
+        <xul:sb-displaypane-content-menuitems
+                     paneid="displaypane_servicepane_bottom" />
+      </xul:menupopup>
+
+      <!-- context menu popup -->
+      <xul:popupset>
+        <xul:popup sbid="popup"
+                   onpopupshown="onPopupShown(event);"
+                   onpopuphidden="onPopupHidden(event);" />
+      </xul:popupset>
+    </content>
+
+    <implementation>
+      <constructor>
+      <![CDATA[
+        window.gServicePane = this;
+
+        this.mService =
+          Components.classes['@songbirdnest.com/servicepane/service;1']
+          .getService(Components.interfaces.sbIServicePaneService);
+        this.mService.init();
+
+        this.loadServicePane();
+
+        // save the popup node
+        this.mPopup = document.getAnonymousElementByAttribute(this,
+                                                              'sbid',
+                                                              'popup');
+
+        /* Add a listener to the root node so we know to update when the
+           hierarchy of nodes changes */
+        this._mutationListener.element = this;
+        this.mService.root.addMutationListener(this._mutationListener);
+      ]]>
+      </constructor>
+
+      <destructor>
+      <![CDATA[
+        this.mService.root.removeMutationListener(this._mutationListener);
+      ]]>
+      </destructor>
+
+      <!-- sbIServicePaneMutationListener -->
+      <field name="_mutationListener">
+      <![CDATA[
+        ({
+          element: null,
+          // Old interface, deprecated
+          hiddenAttributeChanged: function(node, oldVal, newVal) {
+          },
+
+          // Old interface, deprecated
+          isOpenAttributeChanged: function(node, oldVal, newVal) {
+          },
+
+          attrModified: function(node, attrName, namespace, oldVal, newVal) {
+            if (oldVal == newVal)
+              return;
+            switch (attrName) {
+              case "hidden":
+                let spNode = this.element.getElementsByAttribute("nodeid",
+                                                                 node.id)[0];
+                if (!spNode)
+                  return;
+                if (newVal == "false") {
+                  spNode.removeAttribute("hidden");
+                } else if (newVal == "true") {
+                  spNode.setAttribute("hidden", true);
+                }
+                break;
+            }
+          },
+
+          nodeInserted: function(node, parent) {
+            if (!parent || parent == this.element.mService.root) {
+              let newGroup = this.element.createGroup(node);
+              this.element.appendChild(newGroup);
+            } else {
+              /* find the node representing the parent */
+              let parentNode = this.element.getElementsByAttribute("nodeid",
+                                            parent.id)[0];
+              if (!parentNode) {
+                return;
+              }
+              let newnode = this.element.createNode(node, parentNode);
+            }
+          },
+
+          nodeRemoved: function(node, parent) {
+            // find the DOM node representing this servicepane node
+            let domNode = this.element.getDOMNode(node.id);
+
+            // was this node active?
+            let active = null;
+            if (domNode)
+              active = domNode.className.match(/\bactive\b/);
+
+            // remove the actual node
+            if (domNode && domNode.parentNode) {
+              domNode.parentNode.removeChild(domNode);
+            }
+
+            // XXXtodo
+            // if the node was active, then the browser will have gone back
+            // in history and loaded the previously loaded page.  check the
+            // servicepane to see if we have a node that matches the page,
+            // and if so - visually highlight/select it
+          },
+        })
+      ]]>
+      </field>
+
+      <!-- The ID of the active node, or null if none -->
+      <field name="_activeNodeID">null</field>
+
+      <!-- The ID of the highlighted node, or null if none -->
+      <field name="_highlightedNodeID">null</field>
+
+      <!--
+        TODO: Change the use of these functions so we can remove the
+        mTreePane dependency (not to be confused with the T-PAIN dependency).
+        mTreePane is used for the following:
+        isMediaTabURL(url) - SBSessionStore.js#298
+        loadNode(node, null) - mainPlayerWindow.js#445, deviceSupport.js#477
+      -->
+      <field name="mTreePane">null</field>
+
+      <!-- Splitter between the service pane and the content on the main view
+           in the Purple Rain/Gonzo feathers. -->
+      <field name="mSplitter">
+        document.getElementById('servicepane_splitter');
+      </field>
+
+      <!--
+        - \brief Create a group that may hold nodes
+        -->
+      <method name="createGroup">
+        <parameter name="nodeData"/>
+        <body><![CDATA[
+          var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+          var newGroup = document.createElementNS(XULNS, "sb-servicepane-group");
+          newGroup.setAttribute("label", nodeData.displayName);
+          newGroup.setAttribute("nodeid", nodeData.id);
+          newGroup.setAttribute("id", nodeData.id);
+          if (!nodeData.isOpen) {
+            newGroup.setAttribute("open", false);
+          }
+          if (nodeData.hidden) {
+            newGroup.setAttribute("hidden", true);
+          }
+          return newGroup;
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Create a node that belongs to another node or group
+        -->
+      <method name="createNode">
+        <parameter name="nodeData"/>
+        <parameter name="parentNode"/>
+        <body><![CDATA[
+          var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+          var newNode = document.createElementNS(XULNS,"sb-servicepane-node");
+          newNode.setAttribute("nodeid", nodeData.id);
+          if (this.hasAttribute("browser")) {
+            newNode.setAttribute("browser", this.getAttribute("browser"));
+          }
+          if (parentNode) {
+            parentNode.appendChild(newNode);
+          }
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Inital load of the service pane, this will create the groups
+        - and fill them with nodes as defined.
+        -->
+      <method name="loadServicePane">
+        <body><![CDATA[
+          if (!this.mService) {
+            this.mService =
+              Components.classes['@songbirdnest.com/servicepane/service;1']
+              .getService(Components.interfaces.sbIServicePaneService);
+            this.mService.init();
+          }
+
+          var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+          var groupEntry = this.mService.root.firstChild;
+          while (groupEntry && groupEntry != this.mService.root.lastChild) {
+            // Create the group and set the state
+            var newgroup = this.createGroup(groupEntry);
+
+            // Create the nodes in this group
+            var nodeEntry = groupEntry.firstChild;
+            while (nodeEntry && nodeEntry != groupEntry.lastChild) {
+              this.createNode(nodeEntry, newgroup);
+              nodeEntry = nodeEntry.nextSibling;
+            }
+
+            this.appendChild(newgroup);
+            groupEntry = groupEntry.nextSibling;
+          }
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Get the node from an id.
+        - \param nodeID is the id of the node.
+        - \return the sbIServicePaneNode from the id.
+        -->
+      <method name="getNode">
+        <parameter name="nodeID"/>
+        <body><![CDATA[
+          return this.mService.getNode(nodeID);
+        ]]></body>
+      </method>
+
+      <method name="getDOMNode">
+        <parameter name="nodeID"/>
+        <body><![CDATA[
+          let spNode = this.getElementsByAttribute("nodeid", nodeID)[0];
+          return spNode;
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Get the active node if any.
+        - \return sbIServicePaneNode of the active node, or null if none
+        -->
+      <method name="getSelectedNode">
+        <body><![CDATA[
+          return this.getActiveNode();
+        ]]></body>
+      </method>
+
+      <method name="getActiveNode">
+        <body><![CDATA[
+          if (this._activeNodeID) {
+            return this.mService.getNode(this._activeNodeID);
+          }
+          else {
+            return null;
+          }
+        ]]></body>
+      </method>
+
+      <method name="getHighlightedNode">
+        <body><![CDATA[
+          if (this._highlightedNodeID) {
+            return this.mService.getNode(this._highlightedNodeID);
+          }
+          else {
+            return null;
+          }
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Deselect any currently selected node(s) and select the
+        - passed in node
+        -->
+      <method name="makeNodeActive">
+        <parameter name="newNode"/>
+        <body><![CDATA[
+          // Remove the 'active' CSS class from the currently active node
+          let activeNode = this.getActiveNode();
+
+          if (activeNode == newNode)
+            return;
+
+          if (activeNode) {
+            let domNode = this.getDOMNode(activeNode.id);
+            domNode.className = domNode.className.replace(/\bactive\b/, '');
+          }
+
+          // Add the 'active' class to the new node
+          newNode.className += " active";
+          this._activeNodeID = newNode.nodeData.id;
+          return newNode;
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Dehighlight any currently highlighted node(s) and
+        - highlight the passed in node
+        -->
+      <method name="makeNodeHighlighted">
+        <parameter name="newNode"/>
+        <body><![CDATA[
+          // Remove the 'highlight' CSS from the currently highlighted node
+          let highlightedNode = this.getHighlightedNode();
+
+          if (highlightedNode == newNode)
+            return;
+
+          if (highlightedNode) {
+            let domNode = this.getDOMNode(highlightedNode.id);
+            domNode.className = domNode.className.replace(/\bhighlighted\b/,'');
+          }
+
+          // Add the 'highlighted' class to the new node
+          newNode.className += " highlighted";
+          this._highlightedNodeID = newNode.nodeData.id;
+          return newNode;
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Start editing a nodes name, this may not be enabled if the
+        -        node is read only.
+        - \return true if editing started, false if not able to edit.
+        -->
+      <method name="startEditingNode">
+        <parameter name="aNode"/>
+        <body><![CDATA[
+          return false;
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Get the name of a node that has a particular URL.
+        - \param aURL URL to search for in the nodes.
+        - \return name of the node, or aURL if no node found.
+        -->
+      <method name="getURLName">
+        <parameter name="aURL"/>
+        <body><![CDATA[
+          var node = this.mService.getNodeForURL(aURL);
+          return (node) ? node.name : aURL;
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Get the image of a node that has a particular URL.
+        - \param aURL URL to search for in the nodes.
+        - \return image of the node, or null if no node found.
+        -->
+      <method name="getURLImage">
+        <parameter name="aURL"/>
+        <body><![CDATA[
+          var node = this.mService.getNodeForURL(aURL);
+          return (node) ? node.image : null;
+        ]]></body>
+      </method>
+
+      <!--
+        - \brief Get the properties of a node that has a particular URL.
+        - \param aURL URL to search for in the nodes.
+        - \return properties of the node, or "" if no node found.
+        -->
+      <method name="getURLProperties">
+        <parameter name="aURL"/>
+        <body><![CDATA[
+          var node = this.mService.getNodeForURL(aURL);
+          return (node) ? node.properties : "";
+        ]]></body>
+      </method>
+
+      <!-- Popup menu methods -->
+      <method name="onPopupShown">
+        <parameter name="event" />
+        <body>
+          <![CDATA[
+          let visibleChildren = false;
+          for (var i=0;i<this.mPopup.childNodes.length;i++) {
+            let thisChild = this.mPopup.childNodes[i];
+            if (thisChild.hidden)
+              continue;
+            visibleChildren = true;
+            break;
+          }
+          if (!visibleChildren)
+            this.mPopup.hidePopup();
+          ]]>
+        </body>
+      </method>
+
+      <method name="onPopupHidden">
+        <parameter name="event" />
+        <body>
+          <![CDATA[
+          //this.mPopup.hidePopup();
+          // Remove the 'highlight' CSS from the currently highlighted node
+          let highlightedNode = this.getHighlightedNode();
+          if (highlightedNode) {
+            let domNode = this.getDOMNode(highlightedNode.id);
+            domNode.className = domNode.className.replace(/\bhighlighted\b/,'');
+          }
+
+          this._highlightedNodeID = null;
+          ]]>
+        </body>
+      </method>
+
+      <method name="openContextMenu">
+        <parameter name="event" />
+        <parameter name="nodeId" />
+        <body>
+          <![CDATA[
+          // clear the popup menu
+          while (this.mPopup.lastChild) {
+            DOMUtils.destroyNode(this.mPopup.lastChild);
+            this.mPopup.removeChild(this.mPopup.lastChild);
+          }
+
+          // if we got passed a DOM node, then fill the context menu with
+          // the context menu options defined by the service handling the
+          // node.  otherwise, fill the popup with the contents of the
+          // "new stuff" menu
+          if (nodeId) {
+            let node = this.getNode(nodeId);
+            this.makeNodeHighlighted(this.getDOMNode(nodeId));
+            this.mService.fillContextMenu(node, this.mPopup, window);
+          } else {
+            this.mService.fillNewItemMenu(null, this.mPopup, window);
+          }
+
+          // show the popup menu
+          document.popupNode = null;
+          this.mPopup.showPopup(document.documentElement,
+                                event.screenX + 5,
+                                event.screenY + 5,
+                                'context', null, null, null);
+
+          // XXXstevel: should we select/highlight the node?
+          event.stopPropagation();
+          event.preventDefault();
+          ]]>
+        </body>
+      </method>
+
+      <!--
+        - \brief State of the service pane, open or closed.
+        -->
+      <property name="open">
+        <getter>
+        <![CDATA[
+          var elId = this.mSplitter.getAttribute("collapseelement");
+          return !document.getElementById(elId).collapsed;
+        ]]>
+        </getter>
+        <setter>
+        <![CDATA[
+          var elId = this.mSplitter.getAttribute("collapseelement");
+          var el = document.getElementById(elId);
+          el.collapsed = !val;
+
+          SBDataSetBoolValue('splitter.servicepane_splitter.collapsed',
+                             el.collapsed);
+          // If we are opening the service pane, make sure we highlight the
+          // appropriate node.
+          if(val) {
+            // Is there a servicepane node for the current tab?
+            //var node = this.mTreePane.browser.selectedTab.servicePaneNode;
+            //if (node) {
+            //  this.mTreePane.highlightNode(node);
+            //}
+          }
+          ]]>
+        </setter>
+      </property>
+
+
+    </implementation>
+  </binding>
+
+</bindings>

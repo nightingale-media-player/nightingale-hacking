@@ -161,11 +161,6 @@
     <menuseparator id="context-sep-openimageexternal"/>
 
     <!--
-    <menuitem id="context-bookmarkpage"
-       label="&bookmarkPageCmd2.label;"
-       accesskey="&bookmarkPageCmd2.accesskey;"
-       oncommand="gContextMenu.bookmarkThisPage();"
-       style="display:none;"/>
     <menuitem id="context-subscribemedia-page"
        label="&subscribeMediaPageCmd.label;"
        accesskey="&subscribeMediaPageCmd.accesskey;"
@@ -237,10 +232,6 @@
            oncommand="gContextMenu.openFrameInDefaultBrowser();"/>
         <menuseparator id="context-sep-openframeexternal"/>
         <!--
-        <menuitem id="context-bookmarkframe"
-            label="&bookmarkThisFrameCmd.label;"
-            accesskey="&bookmarkThisFrameCmd.accesskey;"
-            oncommand="gContextMenu.addBookmarkForFrame();"/>
         <menuitem id="context-subscribemedia-frame"
            label="&subscribeMediaFrameCmd.label;"
            accesskey="&subscribeMediaFrameCmd.accesskey;"

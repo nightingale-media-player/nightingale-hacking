@@ -295,7 +295,7 @@ var SBSessionStore = {
             if (aTabBrowser.mediaTab) {
               // let the placeholder URL load in the media tab (again).
               if ((PLACEHOLDER_URL == url) ||
-                  (gServicePane && gServicePane.mTreePane.isMediaTabURL(url)))
+                  LibraryUtils.isMediaTabURL(url, aTabBrowser))
               {
                 LOG("this is the placeholder tab or media url");
                 // this is the first tab, and is a media-ish url

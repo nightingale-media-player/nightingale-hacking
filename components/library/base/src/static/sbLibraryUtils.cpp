@@ -1,31 +1,33 @@
 /* vim: set sw=2 : */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #include "sbLibraryUtils.h"
+
+#include "sbMediaListEnumArrayHelper.h"
+
+#include <vector>
 
 #include <nsIFile.h>
 #include <nsIFileURL.h>
@@ -33,6 +35,7 @@
 #include <nsIThread.h>
 #include <nsIURI.h>
 
+#include <nsArrayUtils.h>
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
 #include <nsNetUtil.h>
@@ -44,6 +47,7 @@
 #include <sbIMediaItem.h>
 #include <sbIPropertyArray.h>
 
+#include <sbArrayUtils.h>
 #include <sbFileUtils.h>
 #include <sbPropertiesCID.h>
 #include <sbProxiedComponentManager.h>
@@ -51,130 +55,296 @@
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
 
-/* static */
-nsresult sbLibraryUtils::GetItemInLibrary(/* in */  sbIMediaItem*  aItem,
-                                          /* in */  sbILibrary*    aLibrary,
-                                          /* out */ sbIMediaItem** _retval)
+static nsresult
+FindByProperties(sbIMediaList * aList,
+                 sbIPropertyArray * aProperties,
+                 nsIArray * aCopies)
 {
-  /* this is an internal method, just assert/crash, don't be nice */
-  NS_ASSERTION(aItem, "no item to look up!");
-  NS_ASSERTION(aLibrary, "no library to search in!");
-  NS_ASSERTION(_retval, "null return value pointer!");
+  NS_ENSURE_ARG_POINTER(aList);
+  NS_ENSURE_ARG_POINTER(aProperties);
 
   nsresult rv;
 
-  nsCOMPtr<sbILibrary> itemLibrary;
-  rv = aItem->GetLibrary(getter_AddRefs(itemLibrary));
+  nsCOMPtr<sbIMediaListEnumerationListener> enumerator;
+  nsRefPtr<sbMediaListEnumSingleItemHelper> single;
+  if (aCopies) {
+    enumerator = sbMediaListEnumArrayHelper::New(aCopies);
+  }
+  else {
+    single = sbMediaListEnumSingleItemHelper::New();
+    enumerator = do_QueryInterface(single);
+  }
+  NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = aList->EnumerateItemsByProperties(
+                                        aProperties,
+                                        enumerator,
+                                        sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  {
-    PRBool isSameLib;
-    rv = itemLibrary->Equals(aLibrary, &isSameLib);
-    NS_ENSURE_SUCCESS(rv, rv);
-    if (isSameLib) {
-      /* okay, so we want to find the same item... */
-      NS_ADDREF(*_retval = aItem);
-      return NS_OK;
-    }
-  }
-  
-
-  // check if aItem originally was from aLibrary
-  nsString originLibraryGuid, originItemGuid;
-  nsString sourceLibraryGuid, sourceItemGuid;
-  {
-    rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID),
-                            originLibraryGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-  
-    rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
-                            originItemGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-  
-    nsString targetLibraryGuid;
-    rv = aLibrary->GetGuid(targetLibraryGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-  
-    if (targetLibraryGuid.Equals(originLibraryGuid)) {
-      // the media item originally came from the target library
-      // find the media item with the matching guid
-      rv = aLibrary->GetMediaItem(originItemGuid, _retval);
-      if (NS_FAILED(rv)) {
-        *_retval = nsnull;
-      }
-      return NS_OK;
+  // If we're not getting all the copies, just see if we found one, if not
+  // return not available error
+  if (!aCopies) {
+    nsCOMPtr<sbIMediaItem> item = single->GetItem();
+    if (!item) {
+      return NS_ERROR_NOT_AVAILABLE;
     }
   }
 
+  return NS_OK;
+}
 
-  // check if some item in aLibrary was originally a copy of aItem
-  {
-    rv = itemLibrary->GetGuid(sourceLibraryGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-  
-    rv = aItem->GetGuid(sourceItemGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
+static nsresult
+FindByOrigin(sbIMediaList * aList,
+             nsString const & aOriginLibGuid,
+             nsString const & aOriginItemGuid,
+             nsIArray * aCopies)
+{
+  NS_ENSURE_ARG_POINTER(aList);
 
-    nsCOMPtr<sbIMutablePropertyArray> propArray =
-      do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  nsresult rv;
+
+  nsCOMPtr<sbIMutablePropertyArray> properties =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!aOriginLibGuid.IsEmpty()) {
+    rv = properties->AppendProperty(
+                                 NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID),
+                                 aOriginLibGuid);
     NS_ENSURE_SUCCESS(rv, rv);
-  
-    rv = propArray->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID),
-                                   sourceLibraryGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = propArray->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
-                                   sourceItemGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-  
-    nsRefPtr<sbMediaListEnumSingleItemHelper> helper =
-      sbMediaListEnumSingleItemHelper::New();
-    NS_ENSURE_TRUE(helper, NS_ERROR_OUT_OF_MEMORY);
-  
-    rv = aLibrary->EnumerateItemsByProperties(propArray,
-                                              helper,
-                                              sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    nsCOMPtr<sbIMediaItem> item = helper->GetItem();
-    if (item) {
-      item.forget(_retval);
-      return NS_OK;
-    }
   }
-  
-  
-  // check if there is some item in aLibrary that was a copy of the same thing
-  // that aItem was a copy of
-  if (!originLibraryGuid.IsEmpty() && !originItemGuid.IsEmpty()) {
-    nsCOMPtr<sbIMutablePropertyArray> propArray =
-      do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-  
-    rv = propArray->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID),
-                                   sourceLibraryGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = propArray->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
-                                   sourceItemGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-  
-    nsRefPtr<sbMediaListEnumSingleItemHelper> helper =
-      sbMediaListEnumSingleItemHelper::New();
-    NS_ENSURE_TRUE(helper, NS_ERROR_OUT_OF_MEMORY);
 
-    rv = aLibrary->EnumerateItemsByProperties(propArray,
-                                              helper,
-                                              sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+  rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
+                                  aOriginItemGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return FindByProperties(aList, properties, aCopies);
+}
+
+static nsresult
+FindByContentURL(sbIMediaList * aList,
+                 nsString const & aContentURL,
+                 nsIArray * aCopies)
+{
+  NS_ENSURE_ARG_POINTER(aList);
+
+  nsresult rv;
+
+  nsCOMPtr<sbIMutablePropertyArray> properties =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
+                                  aContentURL);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return FindByProperties(aList, properties, aCopies);
+}
+
+static nsresult
+FindByOriginURL(sbIMediaList * aList,
+                 nsString const & aOriginURL,
+                 nsIArray * aCopies)
+{
+  NS_ENSURE_ARG_POINTER(aList);
+
+  nsresult rv;
+
+  nsCOMPtr<sbIMutablePropertyArray> properties =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
+                                  aOriginURL);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return FindByProperties(aList, properties, aCopies);
+}
+
+/* static */
+nsresult sbLibraryUtils::GetItemInLibrary(/* in */  sbIMediaItem*  aMediaItem,
+                                          /* in */  sbILibrary*    aLibrary,
+                                          /* out */ sbIMediaItem** aItemCopy)
+{
+  /* this is an internal method, just assert/crash, don't be nice */
+  NS_ASSERTION(aMediaItem, "no item to look up!");
+  NS_ASSERTION(aLibrary, "no library to search in!");
+  NS_ASSERTION(aItemCopy, "null return value pointer!");
+
+  nsresult rv;
+
+  nsCOMPtr<nsIMutableArray> theCopies =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbLibraryUtils::FindCopiesByID(aMediaItem, aLibrary, theCopies);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 count;
+  rv = theCopies->GetLength(&count);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Look for originals
+  if (count == 0) {
+    rv = sbLibraryUtils::FindOriginalsByID(aMediaItem, aLibrary, theCopies);
     NS_ENSURE_SUCCESS(rv, rv);
-    
-    nsCOMPtr<sbIMediaItem> item = helper->GetItem();
-    if (item) {
-      item.forget(_retval);
-      return NS_OK;
-    }
+  }
+
+  rv = theCopies->GetLength(&count);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (count != 0) {
+    nsCOMPtr<sbIMediaItem> item = do_QueryElementAt(theCopies, 0, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    item.forget(aItemCopy);
+    return NS_OK;
   }
 
   // give up
-  *_retval = nsnull;
+  *aItemCopy = nsnull;
+  return NS_OK;
+}
+
+nsresult
+sbLibraryUtils::FindOriginalsByURL(/* in */ sbIMediaItem *     aMediaItem,
+                                   /* in */  sbIMediaList *    aList,
+                                   /* out */ nsIMutableArray * aCopies)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aList);
+
+  nsresult rv;
+  bool foundOne = false;
+  nsString originURL;
+
+  // Look up the original content URL
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
+                               originURL);
+  if (rv != NS_ERROR_NOT_AVAILABLE) {
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = FindByContentURL(aList,
+                          originURL,
+                          aCopies);
+    if (rv != NS_ERROR_NOT_AVAILABLE) {
+      NS_ENSURE_SUCCESS(rv, rv);
+      foundOne = true;
+    }
+
+    // Now look up the content url if different from the origin URL
+    nsString url;
+    rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
+                                 url);
+    if (!url.Equals(originURL)) {
+      rv = FindByContentURL(aList,
+                            url,
+                            aCopies);
+      if (rv != NS_ERROR_NOT_AVAILABLE) {
+        NS_ENSURE_SUCCESS(rv, rv);
+        foundOne = true;
+      }
+    }
+  }
+  return foundOne ? NS_OK : NS_ERROR_NOT_AVAILABLE;
+}
+
+nsresult sbLibraryUtils::FindCopiesByID(sbIMediaItem * aMediaItem,
+                                        sbIMediaList * aList,
+                                        nsIMutableArray * aCopies)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aList);
+
+  nsresult rv;
+
+  nsString guid;
+  rv = aMediaItem->GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = FindByOrigin(aList, nsString(), guid, aCopies);
+  if (rv != NS_ERROR_NOT_AVAILABLE) {
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsString originLibID;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID),
+                               originLibID);
+  if (rv == NS_ERROR_NOT_AVAILABLE || originLibID.IsEmpty()) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString originItemID;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
+                               originItemID);
+  if (rv == NS_ERROR_NOT_AVAILABLE || originItemID.IsEmpty()) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMutablePropertyArray> properties =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = properties->AppendProperty(
+                               NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID),
+                               originLibID);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
+                                  originItemID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = FindByProperties(aList, properties, aCopies);
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+ /**
+  * Searches aList for items that have ID's that match aMediaItem's origin ID
+  * \param aItem The item to find a match for
+  * \param aLibrary The library to look in
+  * \return The media items found, or null
+  */
+nsresult sbLibraryUtils::FindOriginalsByID(sbIMediaItem * aMediaItem,
+                                           sbIMediaList * aList,
+                                           nsIMutableArray * aCopies)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aList);
+
+  nsresult rv;
+
+  nsString originID;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
+                               originID);
+  if (rv == NS_ERROR_NOT_AVAILABLE || originID.IsEmpty()) {
+    NS_ENSURE_SUCCESS(rv, rv);
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
+  nsCOMPtr<nsIArray> copies;
+  rv = aList->GetItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_GUID),
+                                 originID,
+                                 getter_AddRefs(copies));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 count;
+  rv = copies->GetLength(&count);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (aCopies) {
+    rv = sbAppendnsIArray(copies, aCopies);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else if (count == 0) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
   return NS_OK;
 }
 
@@ -190,14 +360,14 @@ nsresult sbLibraryUtils::GetContentLength(/* in */  sbIMediaItem * aItem,
   if(NS_FAILED(rv) || !*_retval) {
     // try to get the length from disk
     nsCOMPtr<sbIMediaItem> item(aItem);
-    
+
     if (!NS_IsMainThread()) {
       // Proxy item to get contentURI.
       // Note that we do *not* call do_GetProxyForObject if we're already on
       // the main thread - doing that causes us to process the next pending event
       nsCOMPtr<nsIThread> target;
       rv = NS_GetMainThread(getter_AddRefs(target));
-  
+
       rv = do_GetProxyForObject(target,
                                 NS_GET_IID(sbIMediaItem),
                                 aItem,
@@ -229,7 +399,7 @@ nsresult sbLibraryUtils::GetContentLength(/* in */  sbIMediaItem * aItem,
                             strContentLength);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  
+
   return NS_OK;
 }
 
@@ -340,7 +510,7 @@ nsresult sbLibraryUtils::GetFileContentURI(nsIFile* aFile,
 class MediaItemArrayCreator : public sbIMediaListEnumerationListener
 {
 public:
-  MediaItemArrayCreator(nsCOMArray<sbIMediaItem> & aMediaItems) : 
+  MediaItemArrayCreator(nsCOMArray<sbIMediaItem> & aMediaItems) :
     mMediaItems(aMediaItems)
    {}
   NS_DECL_ISUPPORTS
@@ -382,9 +552,9 @@ NS_IMETHODIMP MediaItemArrayCreator::OnEnumerationEnd(sbIMediaList*,
 }
 
 
-nsresult 
+nsresult
 sbLibraryUtils::GetItemsByProperty(sbIMediaList * aMediaList,
-                                   nsAString const & aPropertyName, 
+                                   nsAString const & aPropertyName,
                                    nsAString const & aValue,
                                    nsCOMArray<sbIMediaItem> & aMediaItems) {
   nsRefPtr<MediaItemArrayCreator> creator = new MediaItemArrayCreator(aMediaItems);

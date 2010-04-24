@@ -67,7 +67,8 @@
   minheight="180"
   resizers="all"
   ondialogaccept="if (deviceSetupDialog.onAccept()) onExit();"
-  onload="deviceSetupDialog.onLoad();">
+  onload="deviceSetupDialog.onLoad();"
+  onunload="deviceSetupDialog.onUnload();">
 
   <!-- *************************************************************************
    *
@@ -190,46 +191,42 @@
         var setupNameTextboxElem =
               document.getElementById("setup_name_textbox");
         var friendlyName = this._device.properties.friendlyName;
-        if (friendlyName)
+        if (friendlyName) {
           setupNameTextboxElem.value = friendlyName;
+        }
         else {
           try { productName = this._device.productName; } catch (ex) {}
           setupNameTextboxElem.value = productName;
         }
 
-        var isSelectorEnabled = false;
+        // Set the volume selector device ID.
+        var volumeSelectorElem =
+              document.getElementById("device_setup_volume_selector");
+        volumeSelectorElem.setAttribute("device-id", this._device.id);
 
-        // Unhide volume selector if the device has multiple volumes.
-        var content = this._device.content;
-        var libraries = content.libraries;
-        if (libraries.length > 1) {
-          var selectorContainerElem =
-                document.getElementById("selectorContainer");
-          var volumeSelectorElem =
-                document.getElementById("device_setup_volume_selector");
-          volumeSelectorElem.setAttribute("device-id", this._device.id);
-          selectorContainerElem.removeAttribute("hidden");
-          isSelectorEnabled = true;
-        }
+        // Listen to device events.
+        var deviceEventTarget =
+              this._device.QueryInterface(Ci.sbIDeviceEventTarget);
+        deviceEventTarget.addEventListener(this);
 
-        // Unhide the ignore box for MSC device.
-        var deviceType = this._device.parameters.getProperty("DeviceType");
-        var dialogElem = document.getElementById("device_setup_dialog");
-        dialogElem.setAttribute("dialogHeight", "normal");
-        if ((deviceType != "WPD") && (deviceType != "MTP")) {
-          var ignoreContainerElem = document.getElementById("ignoreContainer");
-          ignoreContainerElem.removeAttribute("hidden");
+        // Update the dialog.
+        this._update();
+      },
 
-          if (isSelectorEnabled) {
-            dialogElem.setAttribute("dialogHeight", "max");
-          }
-        }
-        else {
-          if (!isSelectorEnabled) {
-            dialogElem.setAttribute("dialogHeight", "min");
-          }
+
+      /**
+       * Handle unload events.
+       */
+
+      onUnload: function deviceSetupDialog_onUnload() {
+        // Stop listening to device events.
+        if (this._device) {
+          var deviceEventTarget =
+                this._device.QueryInterface(Ci.sbIDeviceEventTarget);
+          deviceEventTarget.removeEventListener(this);
         }
       },
+
 
       /**
        * Handle dialog accept events based on the status of the check boxes.
@@ -370,6 +367,75 @@
                                     null,
                                     notifBox[level],
                                     []);
+      },
+
+
+      /**
+       * Update the device setup dialog.
+       */
+
+      _update: function deviceSetupDialog__update() {
+        var isSelectorEnabled = false;
+
+        // Only show volume selector if the device has multiple volumes.
+        var content = this._device.content;
+        var libraries = content.libraries;
+        var selectorContainerElem =
+              document.getElementById("selectorContainer");
+        if (libraries.length > 1) {
+          selectorContainerElem.removeAttribute("hidden");
+          isSelectorEnabled = true;
+        }
+        else {
+          selectorContainerElem.setAttribute("hidden", "true");
+        }
+
+        // Only show the ignore box for MSC device.
+        var deviceType = this._device.parameters.getProperty("DeviceType");
+        var dialogElem = document.getElementById("device_setup_dialog");
+        dialogElem.setAttribute("dialogHeight", "normal");
+        var ignoreContainerElem = document.getElementById("ignoreContainer");
+        if ((deviceType != "WPD") && (deviceType != "MTP")) {
+          ignoreContainerElem.removeAttribute("hidden");
+
+          if (isSelectorEnabled) {
+            dialogElem.setAttribute("dialogHeight", "max");
+          }
+        }
+        else {
+          ignoreContainerElem.setAttribute("hidden", "true");
+
+          if (!isSelectorEnabled) {
+            dialogElem.setAttribute("dialogHeight", "min");
+          }
+        }
+      },
+
+
+      //------------------------------------------------------------------------
+      //
+      // Device volume selector sbIDeviceEventListener services.
+      //
+      //------------------------------------------------------------------------
+
+      /**
+       * Handle the device event specified by aEvent.
+       *
+       * \param aEvent              Device event.
+       */
+
+      onDeviceEvent: function deviceSetupDialog_onDeviceEvent(aEvent) {
+        // Dispatch processing of event.
+        switch (aEvent.type)
+        {
+          case Ci.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_ADDED :
+          case Ci.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_REMOVED :
+            this._update();
+            break;
+
+          default :
+            break;
+        }
       }
     };
   ]]></script>

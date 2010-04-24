@@ -2608,9 +2608,9 @@
 
       <method name="deselectAll">
         <body>
-        <![CDATA[
-          this.mediaListView.selection.selectNone();
-        ]]>
+<![CDATA[
+  this.mediaListView.selection.selectNone();
+]]>
         </body>
       </method>
 
@@ -2636,13 +2636,71 @@
         </body>
       </method>
 
-    <method name="_downloadItem">
-      <parameter name="item"/>
-      <body>
+      <method name="_downloadItem">
+        <parameter name="item"/>
+        <body>
 <![CDATA[
   var ddh = this._Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
                     .getService(this._Ci.sbIDownloadDeviceHelper);
   ddh.downloadItem(item);
+]]>
+        </body>
+      </method>
+
+      <method name="_canDownloadDrop">
+        <parameter name="aDragSession"/>
+        <body>
+<![CDATA[
+  // bail out if the drag session does not contain internal items.
+  // We may eventually add a handler to add an external media URL
+  // drop on the download playlist.
+  if (!InternalDropHandler.isSupported(aDragSession)) {
+    return false;
+  }
+
+  var IOS = Cc["@mozilla.org/network/io-service;1"]
+              .getService(Ci.nsIIOService);
+
+  function canDownload(aMediaItem) {
+    var contentSpec = aMediaItem.getProperty(SBProperties.contentURL);
+    var contentURL = IOS.newURI(contentSpec, null, null);
+    switch(contentURL.scheme) {
+      case "http":
+      case "https":
+      case "ftp":
+        // these are safe to download
+        return true;
+    }
+    return false;
+  }
+
+  if (aDragSession.isDataFlavorSupported(
+                     this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS)) {
+    var context = DNDUtils.
+      getInternalTransferDataForFlavour(aDragSession,
+                                        this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
+                                        Ci.sbIMediaItemsTransferContext);
+ 
+    var items = context.items;
+    // we must remember to reset the context before we exit, so that when we
+    // actually need the items in onDrop we can get them again!
+    var count = 0;
+    var downloadable = true;
+    while (items.hasMoreElements() && downloadable) {
+      downloadable = canDownload(items.getNext());
+      ++count;
+    }
+    // we can't download nothing.
+    if (count == 0) { downloadable = false; }
+
+    // rewind the items list.
+    context.reset();
+
+    return downloadable;
+  } else {
+    Cu.reportError("_getMediaListForDrop should have returned null");
+    return false;
+  }
 ]]>
         </body>
       </method>
@@ -2657,9 +2715,16 @@
 
         // whether we can accept the drop or not
         canDrop: function(event, session) {
+          // XXX Alfred: same hack as we did for bug 4760 to do special
+          // handling for the download playlist.
+          var list = this._self.mediaList;
+          var customType = list.getProperty(SBProperties.customType);
+          if (customType == "download") {
+            return this._self._canDownloadDrop(session);
+          }
+
           // this is a playlist for a readonly library, can't drop
-          if (!this._self.mediaList.userEditable ||
-              !this._self.mediaList.userEditableContent) {
+          if (!list.userEditable || !list.userEditableContent) {
             return false;
           }
           return (InternalDropHandler.isSupported(session) ||
@@ -3073,6 +3138,13 @@
   var session = dragService.getCurrentSession();
   if (session != null)
     this._dragSession = session.QueryInterface(this._Ci.nsIDragSession);
+
+  // XXX Alfred: same hack as we did for bug 4760 to do special handling
+  // for the download playlist.
+  var customType = this.mediaList.getProperty(SBProperties.customType);
+  if (customType == "download") {
+    return this._canDownloadDrop(this._dragSession);
+  }
 
   // this is a playlist for a readonly library, can't drop
   if (!this.mediaList.userEditable ||
