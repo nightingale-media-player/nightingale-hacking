@@ -199,12 +199,18 @@ int CommandExecuteFile(const std::string& aExecutable,
   LPTSTR cmdlineBuffer = new TCHAR[cmdline.length() + 1];
   cmdlineBuffer[cmdline.length()] = _T('\0');
   _tcsncpy(cmdlineBuffer, cmdline.c_str(), cmdline.length());
+
+  DWORD creationFlags = 0;
+  #if !defined(DEBUG)
+    // prevent console apps from getting a window
+    creationFlags |= CREATE_NO_WINDOW;
+  #endif /* !DEBUG */
   BOOL ok = CreateProcess(executable.c_str(),
                           cmdlineBuffer,
                           NULL,  // no special security attributes
                           NULL,  // no special thread attributes
                           FALSE, // don't inherit filehandles
-                          0,     // No special process creation flags
+                          creationFlags,
                           NULL,  // inherit my environment
                           NULL,  // use my current directory
                           &si,
