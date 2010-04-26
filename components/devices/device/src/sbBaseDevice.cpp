@@ -1438,7 +1438,7 @@ nsresult sbBaseDevice::ClearRequests(bool aSetCancel)
   {
     nsAutoMonitor reqMon(mRequestMonitor);
 
-    if(!mRequests.empty()) {
+    if(!mRequests.empty() || mHaveCurrentRequest) {
       if (aSetCancel) {
         rv = SetState(STATE_CANCEL);
         NS_ENSURE_SUCCESS(rv, rv);
@@ -4753,6 +4753,9 @@ sbBaseDevice::SyncGetSyncItemSizes
   rv = syncList->GetLength(&syncListLength);
   NS_ENSURE_SUCCESS(rv, rv);
   for (PRUint32 i = 0; i < syncListLength; i++) {
+    // Check for abort.
+    NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
+
     // Get the next sync media item.
     nsCOMPtr<sbIMediaItem> syncMI = do_QueryElementAt(syncList, i, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -4806,6 +4809,9 @@ sbBaseDevice::SyncGetSyncItemSizes
   rv = aSyncML->GetLength(&itemCount);
   NS_ENSURE_SUCCESS(rv, rv);
   for (PRUint32 i = 0; i < itemCount; i++) {
+    // Check for abort.
+    NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
+
     // Get the sync item.
     nsCOMPtr<sbIMediaItem> mediaItem;
     rv = aSyncML->GetItemByIndex(i, getter_AddRefs(mediaItem));
