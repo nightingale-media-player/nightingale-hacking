@@ -457,13 +457,9 @@ var videoWindowController = {
   _handleBeforeTrackChange: function vwc__handleBeforeTrackChange(aEvent) {
     var mediaItem = aEvent.data.QueryInterface(Ci.sbIMediaItem);
     
-    dump("_handleBeforeTrackChange: " + mediaItem + "\n");
-    dump("_handleBeforeTrackChange: " + mediaItem.contentType + "\n");
-    
     // If the next item is not video, we will dismiss 
     // the window on track change.
     if(mediaItem.contentType != "video") {
-      //this._shouldDismiss = true;
       this._dismissSelf();
     }
     
@@ -483,8 +479,11 @@ var videoWindowController = {
   },
   
   _handleVideoSizeChanged: function vwc__handleVideoSizeChanged(aEvent) {
-    var videoBox = aEvent.data.QueryInterface(Ci.sbIVideoBox);
+    if(!(aEvent.data instanceof Ci.sbIVideoBox))
+      return;
 
+    var videoBox = aEvent.data;
+    
     // If actual size is enabled and we are not in fullscreen we can
     // go ahead and 'actual size' the video.    
     if(this._actualSizeDataRemote.boolValue == true && !window.fullScreen) {

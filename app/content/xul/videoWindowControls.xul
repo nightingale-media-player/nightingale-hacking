@@ -125,7 +125,13 @@
 
             </stack>
 
+            <!-- XXXAus: We add a space before and after to avoid
+                         text rendering issues that cut off the last 
+                         digit in the time elapsed display :( 
+            -->
             <sb-player-timeelapsed-label class="osd-faceplate-text"
+                                         textbefore=" "
+                                         textafter=" "
                                          align="right"/>
           </hbox>
 

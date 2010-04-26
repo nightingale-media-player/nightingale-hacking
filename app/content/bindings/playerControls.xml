@@ -1744,8 +1744,8 @@
       <xul:hbox id="sb-player-totaltime-label" flex="1" xbl:inherits="class,align,crop,disabled,flex">
         <xul:label sbid="timelabel" xbl:inherits="class,align,crop,disabled,flex" mousethrough="never">
           <xul:observes type="dataremote"
-                    key="metadata.length.str" 
-                    attribute="value"/>  
+                        key="metadata.length.str" 
+                        attribute="value"/>  
         </xul:label>
       </xul:hbox>
     </content>
