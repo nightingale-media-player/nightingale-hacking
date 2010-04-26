@@ -657,10 +657,14 @@ sb-servicepane-node image.servicepane-node-container-arrow {
 }
 
 /* the image for the node itself */
-sb-servicepane-node > vbox > hbox.servicepane-node-info {
+sb-servicepane-node > vbox > hbox.servicepane-node-info,
+sb-servicepane-node > vbox > hbox.servicepane-node-info > stack > hbox {
   -moz-box-align: center;
 }
 
+sb-servicepane-node textbox {
+  margin: 0px;
+}
 /* END NEW SERVICEPANE */
 
 /* shift the servicepane tree contents down 4px, but don't shift the scrollbar

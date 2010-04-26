@@ -165,10 +165,27 @@
           <xul:image class="servicepane-node-container-arrow" flex="0"/>
           <xul:image class="servicepane-node-image"
                      xbl:inherits="src=image" flex="0" />
-          <xul:label class="servicepane-node-label" xbl:inherits="value=label"/>
-          <xul:spacer flex="1" />
-          <xul:hbox class="servicepane-node-badges"
+          <xul:stack sbid="servcepane-node-stack" flex="1">
+            <xul:hbox>
+              <xul:label class="servicepane-node-label"
+                         xbl:inherits="value=label"/>
+              <xul:spacer flex="1" />
+              <xul:hbox class="servicepane-node-badges"
                     sbid="servicepane-node-badges" flex="1" />
+            </xul:hbox>
+
+            <!-- that onblur event is a little confusing.  the event bubbles up
+                 so that it fires for both the HTML input element & the XUL
+                 element.  we check the original target to make sure it's the
+                 right element (e.g. where textboxBlur() is defined -->
+            <xul:textbox class="servicepane-node-textbox"
+                         sbid="servicepane-node-textbox"
+                         xbl:inherits="value=label"
+                         flex="1"
+                         onkeypress="textboxKeypress(event)"
+                         onblur="if (event.originalTarget != this) textboxBlur(event)"
+                         hidden="true" />
+          </xul:stack>
         </xul:hbox>
 
         <xul:vbox class="servicepane-node-children">
@@ -196,6 +213,9 @@
             // If we have no node data, then hide by default.
             this.setAttribute("hidden", true);
           }
+
+          this._textbox = this._getElement("servicepane-node-textbox");
+          this._textbox.realParent = this;
         ]]>
       </constructor>
 
@@ -462,13 +482,54 @@
         ]]></body>
       </method>
 
+      <method name="textboxBlur">
+        <parameter name="event"/>
+        <body><![CDATA[
+          if (this._textbox.getAttribute("hidden"))
+            return;
+          this._textbox.value = this.getAttribute("label");
+          this._textbox.setAttribute("hidden", true);
+          this._servicePane.mService.onRename(this.nodeData, null);
+          event.stopPropagation();
+          event.preventDefault();
+        ]]></body>
+      </method>
+
+      <method name="textboxKeypress">
+        <parameter name="event"/>
+        <body><![CDATA[
+          switch (event.keyCode) {
+            case 27: // escape
+              // reset changes & exit editing mode
+              this._textbox.value = this.getAttribute("label");
+              this._textbox.setAttribute("hidden", true);
+              this._servicePane.mService.onRename(this.nodeData, null);
+              break;
+            case 13: // enter
+              // save changes & exit editing mode
+              this.setAttribute("label", this._textbox.value);
+              this._textbox.setAttribute("hidden", true);
+              this._servicePane.mService.onRename(this.nodeData,
+                                                  this._textbox.value);
+              break;
+          }
+        ]]></body>
+      </method>
+
     </implementation>
 
     <handlers>
       <handler event="click">
       <![CDATA[
-        if (event.button == 0)
-          this.loadNodeURL(event);
+        if (event.button == 0) {
+          // if we're the active node, then rename
+          if (this._servicePane.getActiveNode() == this.nodeData &&
+              this.nodeData.editable)
+            this._servicePane.startEditingNode(this.nodeData);
+          // otherwise load 
+          else
+            this.loadNodeURL(event);
+        }
       ]]>
       </handler>
 
@@ -648,6 +709,9 @@
       <!-- The ID of the highlighted node, or null if none -->
       <field name="_highlightedNodeID">null</field>
 
+      <!-- The node we're currently editing -->
+      <field name="_editingNode">null</field>
+
       <!--
         TODO: Change the use of these functions so we can remove the
         mTreePane dependency (not to be confused with the T-PAIN dependency).
@@ -800,6 +864,15 @@
           if (activeNode == newNode)
             return;
 
+          if (this._editingNode) {
+            // don't save any changes
+            this._editingNode._textbox.setAttribute("hidden", true);
+            this._editingNode._textbox.value =
+                 this._editingNode.getAttribute("label");
+            this.mService.onRename(this._editingNode.nodeData, null);
+            this._editingNode = null;
+          }
+
           if (activeNode) {
             let domNode = this.getDOMNode(activeNode.id);
             domNode.className = domNode.className.replace(/\bactive\b/, '');
@@ -845,7 +918,35 @@
       <method name="startEditingNode">
         <parameter name="aNode"/>
         <body><![CDATA[
-          return false;
+          if (!aNode || !aNode.editable)
+            return false;
+
+          try {
+            // are we editing any other nodes currently?
+            if (this._editingNode) {
+              // don't save any changes
+              this._editingNode._textbox.setAttribute("hidden", true);
+              this._editingNode._textbox.value =
+                   this._editingNode.getAttribute("label");
+              this.mService.onRename(this._editingNode.nodeData, null);
+              this._editingNode = null;
+            }
+
+            // notify servicepane service that we're about to rename the node
+            this.mService.onBeforeRename(aNode);
+
+            // start editing this node
+            this._editingNode = this.getDOMNode(aNode.id);
+            this._editingNode._textbox.removeAttribute("hidden");
+            this._editingNode._textbox.value =
+                 this._editingNode.getAttribute("label");
+            this._editingNode._textbox.select();
+            return true;
+          } catch (e) {
+            dump("Exception: " + e + "\n");
+            this._editingNode = null;
+            return false;
+          }
         ]]></body>
       </method>
 
