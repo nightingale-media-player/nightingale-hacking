@@ -573,6 +573,9 @@ FeathersManager.prototype = {
 
   _layoutCount: 0,
   _skinCount: 0,
+
+  // nsIURI, our agent sheet
+  _agentSheetURI: null,
   
 
   /**
@@ -617,13 +620,13 @@ FeathersManager.prototype = {
 
 
     // Register our agent sheet for form styling
+    this._agentSheetURI = Cc["@mozilla.org/network/io-service;1"]
+                            .getService(Ci.nsIIOService)
+                            .newURI("chrome://songbird/skin/formsImport.css",
+                                    null, null);
     var styleSheetService = Cc["@mozilla.org/content/style-sheet-service;1"]
                               .getService(Ci.nsIStyleSheetService);
-    var styleSheetURI = Cc["@mozilla.org/network/io-service;1"]
-                          .getService(Ci.nsIIOService)
-                          .newURI("chrome://songbird/skin/formsImport.css",
-                                  null, null);
-    styleSheetService.loadAndRegisterSheet(styleSheetURI,
+    styleSheetService.loadAndRegisterSheet(this._agentSheetURI,
                                            styleSheetService.AGENT_SHEET);
 
     // Make dataremotes to persist feathers settings
@@ -1342,28 +1345,6 @@ FeathersManager.prototype = {
     });
   },
 
-  _flushXULPrototypeCache: function flushXULPrototypeCache() {
-    var prefs = Cc["@mozilla.org/preferences-service;1"]
-                          .getService(Ci.nsIPrefBranch);
-    var disabled = false;
-    var userPref = false;
-
-    try {
-      disabled = prefs.getBoolPref("nglayout.debug.disable_xul_cache");
-      userPref = true;
-    }
-    catch(e) {
-    }
-
-    if (!disabled) {
-      prefs.setBoolPref("nglayout.debug.disable_xul_cache", true);
-      prefs.setBoolPref("nglayout.debug.disable_xul_cache", false);
-      if (!userPref) {
-        prefs.clearUserPref("nglayout.debug.disable_xul_cache");
-      }
-    }
-  },
-
   /**
    * Called by the observer service. Looks for XRE shutdown messages 
    */
@@ -1443,8 +1424,20 @@ FeathersManager_switchFeathers_callback.prototype = {
       // Set new values
       this.feathersManager._layoutDataRemote.stringValue = this.layoutURL;
       this.feathersManager._skinDataRemote.stringValue = this.internalName;
+
+      // Flush all chrome caches
+      Cc["@mozilla.org/observer-service;1"]
+        .getService(Ci.nsIObserverService)
+        .notifyObservers(null, "chrome-flush-caches", null);
+
+      // Reload our agent sheet
+      var styleSheetService = Cc["@mozilla.org/content/style-sheet-service;1"]
+                                .getService(Ci.nsIStyleSheetService);
+      styleSheetService.unregisterSheet(this.feathersManager._agentSheetURI,
+                                        styleSheetService.AGENT_SHEET);
+      styleSheetService.loadAndRegisterSheet(this.feathersManager._agentSheetURI,
+                                             styleSheetService.AGENT_SHEET);
   
-      this.feathersManager._flushXULPrototypeCache();
       this.feathersManager.openPlayerWindow();
       this.feathersManager._switching = false;
       this.feathersManager._onSelectComplete();
