@@ -1438,11 +1438,11 @@ sbGStreamerTranscodeDeviceConfigurator::CopyPropertiesIntoBag(nsIArray * aSrcPro
   return NS_OK;
 }
 
-/***** sbPIGstTranscodingConfigurator implementation *****/
 NS_IMETHODIMP
 sbGStreamerTranscodeDeviceConfigurator::GetAvailableProfiles(nsIArray * *aAvailableProfiles)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
+
   if (mAvailableProfiles) {
     NS_IF_ADDREF (*aAvailableProfiles = mAvailableProfiles);
     return NS_OK;
@@ -1572,7 +1572,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineOutputType()
   TRACE(("%s[%p]", __FUNCTION__, this));
   // check our inputs
   NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_FALSE(mConfigurateState >= CONFIGURATE_OUPUT_SET,
+  NS_ENSURE_FALSE(mConfigurateState >= CONFIGURATE_OUTPUT_SET,
                   NS_ERROR_ALREADY_INITIALIZED);
 
   nsresult rv;
@@ -1585,7 +1585,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineOutputType()
   rv = SelectProfile();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mConfigurateState = CONFIGURATE_OUPUT_SET;
+  mConfigurateState = CONFIGURATE_OUTPUT_SET;
 
   return NS_OK;
 }
@@ -1602,7 +1602,7 @@ sbGStreamerTranscodeDeviceConfigurator::Configurate()
 
   nsresult rv;
 
-  if (mConfigurateState < CONFIGURATE_OUPUT_SET) {
+  if (mConfigurateState < CONFIGURATE_OUTPUT_SET) {
     // no output set yet, do that now
     rv = DetermineOutputType();
     NS_ENSURE_SUCCESS(rv, rv);

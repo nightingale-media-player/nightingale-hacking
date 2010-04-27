@@ -6007,118 +6007,57 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem*                  aMediaItem,
     GetDeviceTranscoding()->GetTranscodeType(aMediaItem);
   bool needsTranscoding = false;
 
-  // TODO: In the future, mediaFormat should always be used, but for now
-  // we'll fall back to the format mappings for non-video types.
-  if (transcodeType == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO) {
-    // Try to check if we can transcode first, since it's cheaper than trying
-    // to inspect the actual file (and both ways we get which files we can get
-    // on the device).
-    // XXX MOOK this needs to be fixed to be not gstreamer specific
-    nsCOMPtr<nsIURI> inputUri;
-    rv = aMediaItem->GetContentSrc(getter_AddRefs(inputUri));
-    NS_ENSURE_SUCCESS(rv, rv);
-    nsCOMPtr<sbIDeviceTranscodingConfigurator> configurator =
-      do_CreateInstance("@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Device/GStreamer;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = configurator->SetInputUri(inputUri);
-    NS_ENSURE_SUCCESS(rv, rv);
-    nsCOMPtr<sbIDevice> device =
-      do_QueryInterface(NS_ISUPPORTS_CAST(sbIDevice*, this), &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = configurator->SetDevice(device);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = configurator->DetermineOutputType();
-    if (NS_SUCCEEDED(rv)) {
-      *_retval = PR_TRUE;
-      return NS_OK;
-    }
-
-    // Can't transcode, check the media format as a fallback.
-    if (aCallback) {
-      // asynchronous
-      nsCOMPtr<sbIMediaInspector> inspector;
-      rv = GetDeviceTranscoding()->GetMediaInspector(getter_AddRefs(inspector));
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = aCallback->InitJobProgress(inspector, transcodeType);
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = inspector->InspectMediaAsync(aMediaItem);
-      NS_ENSURE_SUCCESS(rv, rv);
-      return NS_ERROR_IN_PROGRESS;
-    }
-    // synchronous
-    nsCOMPtr<sbIMediaFormat> mediaFormat;
-    rv = GetDeviceTranscoding()->GetMediaFormat(aMediaItem,
-                                                getter_AddRefs(mediaFormat));
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = sbDeviceUtils::DoesItemNeedTranscoding(transcodeType,
-                                                mediaFormat,
-                                                this,
-                                                needsTranscoding);
-
-    *_retval = (NS_SUCCEEDED(rv) && !needsTranscoding);
-    return NS_OK;
-  }
-
-  sbExtensionToContentFormatEntry_t formatType;
-
-  PRUint32 bitRate = 0;
-  PRUint32 sampleRate = 0;
-  rv = sbDeviceUtils::GetFormatTypeForItem(aMediaItem,
-                                           formatType,
-                                           bitRate,
-                                           sampleRate);
-
-  // Check for expected error, unable to find format type
-  if (rv == NS_ERROR_NOT_AVAILABLE) {
-    if (aReportErrors) {
-      rv = DispatchTranscodeErrorEvent(
-                              aMediaItem,
-                              SBLocalizedString("transcode.file.notsupported"));
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    // If we can't even figure out what the format type is
-    // we don't support it.
-    *_retval = PR_FALSE;
-    return NS_OK;
-  }
+  // Try to check if we can transcode first, since it's cheaper than trying
+  // to inspect the actual file (and both ways we get which files we can get
+  // on the device).
+  // XXX MOOK this needs to be fixed to be not gstreamer specific
+  nsCOMPtr<nsIURI> inputUri;
+  rv = aMediaItem->GetContentSrc(getter_AddRefs(inputUri));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sbDeviceUtils::DoesItemNeedTranscoding(formatType,
-                                              bitRate,
-                                              sampleRate,
-                                              this,
-                                              needsTranscoding);
+  nsCOMPtr<sbIDeviceTranscodingConfigurator> configurator;
+  rv = sbDeviceUtils::GetTranscodingConfigurator(transcodeType,
+                                               getter_AddRefs(configurator));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Exit if no transcoding is needed
-  if (!needsTranscoding) {
+  rv = configurator->SetInputUri(inputUri);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIDevice> device =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbIDevice*, this), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = configurator->SetDevice(device);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = configurator->DetermineOutputType();
+  if (NS_SUCCEEDED(rv)) {
     *_retval = PR_TRUE;
     return NS_OK;
   }
-  // So we do need to transcode (the device doesn't natively support
-  // the file) but is there a transcoding profile available that will
-  // work?
-  nsCOMPtr<sbITranscodeProfile> profile;
-  rv = GetDeviceTranscoding()->SelectTranscodeProfile(transcodeType,
-                                                      getter_AddRefs(profile));
 
-  // No profile available means we don't support this file.
-  if (rv == NS_ERROR_NOT_AVAILABLE) {
-    if (aReportErrors) {
-      rv = DispatchTranscodeErrorEvent
-             (aMediaItem, SBLocalizedString("transcode.file.notsupported"));
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    *_retval = PR_FALSE;
-    return NS_OK;
+  // Can't transcode, check the media format as a fallback.
+  if (aCallback) {
+    // asynchronous
+    nsCOMPtr<sbIMediaInspector> inspector;
+    rv = GetDeviceTranscoding()->GetMediaInspector(getter_AddRefs(inspector));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = aCallback->InitJobProgress(inspector, transcodeType);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = inspector->InspectMediaAsync(aMediaItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+    return NS_ERROR_IN_PROGRESS;
   }
+  // synchronous
+  nsCOMPtr<sbIMediaFormat> mediaFormat;
+  rv = GetDeviceTranscoding()->GetMediaFormat(transcodeType,
+                                              aMediaItem,
+                                              getter_AddRefs(mediaFormat));
   NS_ENSURE_SUCCESS(rv, rv);
+  rv = sbDeviceUtils::DoesItemNeedTranscoding(transcodeType,
+                                              mediaFormat,
+                                              this,
+                                              needsTranscoding);
 
-  // We should definitely have a real profile now, since we didn't
-  // get the NOT AVAILABLE error, so... we're done!
-  *_retval = PR_TRUE;
+  *_retval = (NS_SUCCEEDED(rv) && !needsTranscoding);
   return NS_OK;
 }
 
@@ -6175,10 +6114,12 @@ sbBaseDevice::SetDefaultLibrary(sbIDeviceLibrary* aDefaultLibrary)
 }
 
 nsresult
-sbBaseDevice::GetSupportedTranscodeProfiles(nsIArray **aSupportedProfiles)
+sbBaseDevice::GetSupportedTranscodeProfiles(PRUint32 aType,
+                                            nsIArray **aSupportedProfiles)
 {
   return GetDeviceTranscoding()->GetSupportedTranscodeProfiles(
-                                                            aSupportedProfiles);
+          aType,
+          aSupportedProfiles);
 }
 
 nsresult

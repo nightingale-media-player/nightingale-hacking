@@ -96,6 +96,15 @@ interface sbITranscodeProfile : nsISupports
    */
   attribute unsigned long type;
 
+  /**
+   * \brief The file extension to use for this profile
+   * May be empty to indicate no extension is to be used.
+   *
+   * Examples:
+   *   "ogg", "mp3", "avi"
+   */
+  attribute ACString fileExtension;
+
   /* \brief The container format to put the transcoded media in (if any).
 
      Examples:
@@ -191,15 +200,6 @@ interface sbITranscodeEncoderProfile : sbITranscodeProfile {
    */
   attribute AString videoCodec;
 %}COMMENT
-
-  /**
-   * \brief The file extension to use for this profile
-   * May be empty to indicate no extension is to be used.
-   *
-   * Examples:
-   *   "ogg", "mp3", "avi"
-   */
-  attribute ACString fileExtension;
 
   /**
    * Get the desired audio bitrate for a given quality setting

@@ -241,6 +241,11 @@ private:
   GstPad                                 *mAudioQueueSrc;
   GstPad                                 *mVideoQueueSrc;
 
+  // Booleans to track whether we'll use audio/video/muxer
+  PRBool                                  mUseAudio;
+  PRBool                                  mUseVideo;
+  PRBool                                  mUseMuxer;
+
   // Lock to prevent trying to build the pipeline concurrently from multiple
   // threads.
   PRLock                                 *mBuildLock;

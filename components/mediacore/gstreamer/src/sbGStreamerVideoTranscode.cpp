@@ -96,7 +96,10 @@ sbGStreamerVideoTranscoder::sbGStreamerVideoTranscoder() :
   mAudioSrc(NULL),
   mVideoSrc(NULL),
   mAudioQueueSrc(NULL),
-  mVideoQueueSrc(NULL)
+  mVideoQueueSrc(NULL),
+  mUseAudio(PR_FALSE),
+  mUseVideo(PR_FALSE),
+  mUseMuxer(PR_FALSE)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
@@ -259,8 +262,15 @@ sbGStreamerVideoTranscoder::Vote(sbIMediaItem *aMediaItem, PRInt32 *aVote)
   nsresult rv = aMediaItem->GetContentType(contentType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  /* For now just vote 1 for anything */
-  *aVote = contentType.Equals(NS_LITERAL_STRING("video")) ? 1 : 0;
+  /* For now just vote 1 for anything audio or video */
+  if (contentType.EqualsLiteral("video") ||
+      contentType.EqualsLiteral("audio"))
+  {
+    *aVote = 1;
+  }
+  else {
+    *aVote = 0;
+  }
 
   return NS_OK;
 }
@@ -1853,6 +1863,32 @@ sbGStreamerVideoTranscoder::InitializeConfigurator()
     }
   }
 
+  /* Determine whether we want audio/video/muxer. Whether we _actually_
+     use these also depends on what the input file has - but we won't
+     try to set up a video bin if there's no video encoder */
+  nsString audioEncoder;
+  rv = mConfigurator->GetAudioEncoder(audioEncoder);
+  NS_ENSURE_SUCCESS(rv, rv);
+  mUseAudio = !audioEncoder.IsEmpty();
+
+  nsString videoEncoder;
+  rv = mConfigurator->GetVideoEncoder(videoEncoder);
+  NS_ENSURE_SUCCESS(rv, rv);
+  mUseVideo = !videoEncoder.IsEmpty();
+
+  nsString muxer;
+  rv = mConfigurator->GetMuxer(muxer);
+  NS_ENSURE_SUCCESS(rv, rv);
+  mUseMuxer = !muxer.IsEmpty();
+
+  /* Check that we have at least one codec */
+  if (!mUseAudio && !mUseVideo)
+    return NS_ERROR_UNEXPECTED;
+
+  /* And if we're not using a muxer, ONLY one codec */
+  if (!mUseMuxer && (mUseAudio && mUseAudio))
+    return NS_ERROR_UNEXPECTED;
+
   return NS_OK;
 }
 
@@ -2029,19 +2065,30 @@ sbGStreamerVideoTranscoder::BuildRemainderOfPipeline ()
   GstPad *newAudioSrc = NULL;
   GstPad *newVideoSrc = NULL;
 
-  if (mAudioQueueSrc) {
+  if (mAudioQueueSrc && mUseAudio) {
     rv = AddAudioBin (mAudioQueueSrc, &newAudioSrc);
     NS_ENSURE_SUCCESS (rv, rv);
   }
 
-  if (mVideoQueueSrc) {
+  if (mVideoQueueSrc && mUseVideo) {
     rv = AddVideoBin (mVideoQueueSrc, &newVideoSrc);
     NS_ENSURE_SUCCESS (rv, rv);
   }
 
   GstPad *srcpad = NULL;
-  rv = AddMuxer (&srcpad, newAudioSrc, newVideoSrc);
-  NS_ENSURE_SUCCESS (rv, rv);
+
+  if (mUseMuxer) {
+    rv = AddMuxer (&srcpad, newAudioSrc, newVideoSrc);
+    NS_ENSURE_SUCCESS (rv, rv);
+  }
+  else {
+    if (newAudioSrc)
+      srcpad = (GstPad *)gst_object_ref (newAudioSrc);
+    else if (newVideoSrc)
+      srcpad = (GstPad *)gst_object_ref (newVideoSrc);
+    else
+      NS_NOTREACHED ("No audio or video, not allowed");
+  }
 
   rv = AddSink (srcpad);
   if (NS_FAILED (rv)) {

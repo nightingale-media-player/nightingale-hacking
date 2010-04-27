@@ -1506,11 +1506,12 @@ protected:
 
   /**
     * Returns a list of transcode profiles that the device supports
-    * \param aDevice the device to retrieve the profiles for.
-    * \param aProfiles the list of profiles that were found
+    * \param aType the type of transcode profiles to retrieve.
+    * \param aSupportedProfiles the list of profiles that were found
     * \return NS_OK if successful else some NS_ERROR value
     */
-   virtual nsresult GetSupportedTranscodeProfiles(nsIArray **aSupportedProfiles);
+   virtual nsresult GetSupportedTranscodeProfiles(PRUint32 aType,
+                                                  nsIArray **aSupportedProfiles);
    /**
    * Dispatch a transcode error event for the media item specified by aMediaItem
    * with the error message specified by aErrorMessage.

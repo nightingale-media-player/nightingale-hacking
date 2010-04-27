@@ -23,45 +23,42 @@
  *=END SONGBIRD GPL
  */
 
-#ifndef _SB_GSTREAMER_TRANSCODE_DEVICE_CONFIGURATOR_H_
-#define _SB_GSTREAMER_TRANSCODE_DEVICE_CONFIGURATOR_H_
+#ifndef _SB_GSTREAMER_TRANSCODE_AUDIO_CONFIGURATOR_H_
+#define _SB_GSTREAMER_TRANSCODE_AUDIO_CONFIGURATOR_H_
 
-// {8D5D04F8-2060-4e82-A25B-C7D67A6B5292}
-#define SB_GSTREAMER_TRANSCODE_DEVICE_CONFIGURATOR_CID \
-    { 0x8d5d04f8, 0x2060, 0x4e82, \
-    { 0xa2, 0x5b, 0xc7, 0xd6, 0x7a, 0x6b, 0x52, 0x92 } }
+// {b61e78ec-9aa1-4505-b16c-e33819bca705}
+#define SB_GSTREAMER_TRANSCODE_AUDIO_CONFIGURATOR_CID \
+    { 0xb61e78ec, 0x9aa1, 0x4505, \
+    { 0xb12, 0x6c, 0xe3, 0x38, 0x19, 0xbc, 0xa7, 0x05 } }
 
-#define SB_GSTREAMER_TRANSCODE_DEVICE_CONFIGURATOR_CONTRACTID \
-    "@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Device/GStreamer;1"
-#define SB_GSTREAMER_TRANSCODE_DEVICE_CONFIGURATOR_CLASSNAME  \
-    "GStreamerTranscodeDeviceConfigurator"
+#define SB_GSTREAMER_TRANSCODE_AUDIO_CONFIGURATOR_CONTRACTID \
+    "@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Audio/GStreamer;1"
+#define SB_GSTREAMER_TRANSCODE_AUDIO_CONFIGURATOR_CLASSNAME  \
+    "GStreamerTranscodeAudioConfigurator"
 
 #include <sbTranscodingConfigurator.h>
 
 #include <sbITranscodingConfigurator.h>
+#include <sbITranscodeProfile.h>
 #include <sbPIGstTranscodingConfigurator.h>
 
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
-
-#include <sbFraction.h>
 
 class nsIArray;
 class nsIWritablePropertyBag;
 
 class sbIDevice;
 class sbITranscodeEncoderProfile;
-class sbIVideoFormatType;
+class sbIAudioFormatType;
 
-class sbGStreamerTranscodeDeviceConfigurator :
+class sbGStreamerTranscodeAudioConfigurator :
         public sbTranscodingConfigurator,
-        public sbIDeviceTranscodingConfigurator,
-        public sbPIGstTranscodingConfigurator
+        public sbIDeviceTranscodingConfigurator
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIDEVICETRANSCODINGCONFIGURATOR
-  NS_DECL_SBPIGSTTRANSCODINGCONFIGURATOR
 
   // forward most of sbITranscodingConfigurator to the base class
   #define FORWARD_TO_BASE(METHOD, PROTO, ARGS) \
@@ -89,24 +86,14 @@ public:
    */
   NS_IMETHOD DetermineOutputType();
   NS_IMETHOD Configurate();
-  /* Implement GetAvailableProfiles to return only appropriate profiles. */
+
   NS_IMETHOD GetAvailableProfiles(nsIArray **aProfiles);
 
-  sbGStreamerTranscodeDeviceConfigurator();
+  sbGStreamerTranscodeAudioConfigurator();
 
 protected:
-  virtual ~sbGStreamerTranscodeDeviceConfigurator();
+  virtual ~sbGStreamerTranscodeAudioConfigurator();
 
-  /**
-   * structure to contain a set of dimensions (width * height)
-   */
-  struct Dimensions {
-    PRInt32 width;
-    PRInt32 height;
-    Dimensions() : width(PR_INT32_MIN), height(PR_INT32_MIN) {}
-    Dimensions(PRInt32 w, PRInt32 h) : width(w), height(h) {}
-  };
-  
   /**
    * Make sure the given transcode profile does not use any gstreamer elements
    * that we do not have access to.
@@ -116,14 +103,10 @@ protected:
    * @throw NS_ERROR_NOT_AVAILABLE if the profile uses elements that are not
    * found
    */
-  nsresult EnsureProfileAvailable(sbITranscodeEncoderProfile *aProfile);
+  nsresult EnsureProfileAvailable(sbITranscodeProfile *aProfile);
 
-  /**
-   * Selects the quality if it has not been set
-   *
-   * @postcondition the quality is set
-   */
-  nsresult SelectQuality();
+  nsresult CheckProfileSupportedByDevice(sbITranscodeProfile *aProfile,
+                                         sbIAudioFormatType **aFormat);
 
   /**
    * Select the encoding profile to use
@@ -137,6 +120,9 @@ protected:
    */
   nsresult SelectProfile();
 
+  /* Select the audio format (sample rate, channels, etc) to encode to */
+  nsresult SelectOutputAudioFormat();
+
   /**
    * Set audio-related properties
    *
@@ -144,42 +130,6 @@ protected:
    * @postcondition mAudioEncoderProperties contains the audio properties desired
    */
   nsresult SetAudioProperties();
-
-  /**
-   * Determine the desired output size (ignoring bitrate constraints)
-   *
-   * @precondition the profile has been selected via SelectProfile()
-   * @postcondition mPreferredDimensions is the desired output size
-   */
-  nsresult DetermineIdealOutputSize();
-
-  /**
-   * Given an input image dimensions (which provides the aspect ratio) and
-   * maximum image dimensions, return a rectangle that is the largest possible
-   * to fit in the second but with the aspect ratio of the first.
-   * This for now will ignore all PARs.
-   */
-  static Dimensions GetMaximumFit(const Dimensions& aInput,
-                                  const Dimensions& aMaximum);
-
-  /**
-   * Scale the video to something useful for the selected video bit rate
-   * @precondition mPreferredDimensions has been set
-   * @precondition mSelectedProfile has been selected
-   * @precondition mSelectedFormat has been selected
-   * @postcondition mVideoBitrate will be set (if it hasn't already been, or
-   *                if the existing setting is too high for the device)
-   * @postcondition mOutputDimensions will be the desired output dimensions
-   */
-  nsresult FinalizeOutputSize();
-
-  /**
-   * Actually set the various video related properties
-   * @precondition mOutputDimensions has been set
-   * @precondition mVideoBitrate has been set
-   * @postcondition mVideoFormat and mVideoEncoderProperties are set
-   */
-  nsresult SetVideoProperties();
 
   /**
    * Copy properties, either audio or video.
@@ -190,6 +140,13 @@ protected:
   nsresult CopyPropertiesIntoBag(nsIArray * aSrcProps,
                                  nsIWritablePropertyBag * aDstBag,
                                  PRBool aIsVideo);
+
+  /* For each property in the property array, get a value from the device
+   * preferences and apply it to the property.
+   */
+  nsresult ApplyPreferencesToPropertyArray(sbIDevice *aDevice,
+                                           nsIArray  *aPropertyArray,
+                                           nsString aPrefNameBase);
 
 protected:
   /**
@@ -203,15 +160,6 @@ protected:
   nsDataHashtable<nsISupportsHashKey, EncoderProfileData> mElementNames;
   
   /**
-   * The quality setting to use
-   */
-  double mQuality;
-  /**
-   * The video quality setting to use, in case this deviates from the overall
-   * quality setting (due to bitrate adjustments)
-   */
-  double mVideoQuality;
-  /**
    * The device to transcode to
    */
   nsCOMPtr<sbIDevice> mDevice;
@@ -223,37 +171,17 @@ protected:
   /**
    * The encoder profile selected; set by SelectProfile()
    */
-  nsCOMPtr<sbITranscodeEncoderProfile> mSelectedProfile;
+  nsCOMPtr<sbITranscodeProfile> mSelectedProfile;
   /**
-   * The device video format that corresponds with mSelectedProfile;
+   * The device audio format that corresponds with mSelectedProfile;
    * set by SelectProfile()
    */
-  nsCOMPtr<sbIVideoFormatType> mSelectedFormat;
+  nsCOMPtr<sbIAudioFormatType> mSelectedFormat;
 
-  /**
-   * The preferred output dimensions, ignoring bitrate constraints
+  /** True if we selected our profile based on something set in the preferences;
+   *  in such a case we should also look for property values from preferences.
    */
-  Dimensions mPreferredDimensions;
-  
-  /**
-   * The video bit rate we want to use
-   */
-  PRInt32 mVideoBitrate;
-  
-  /**
-   * The video frame rate we want to use
-   */
-  sbFraction mVideoFrameRate;
-
-  /**
-   * The selected output dimensions, taking into account the bitrate constraints
-   */
-  Dimensions mOutputDimensions;
-  
-  /**
-   * The selected output pixel aspect ratio
-   */
-  sbFraction mOutputPAR;
+  PRBool mProfileFromPrefs;
 };
 
-#endif // _SB_GSTREAMER_TRANSCODE_DEVICE_CONFIGURATOR_H_
+#endif // _SB_GSTREAMER_TRANSCODE_AUDIO_CONFIGURATOR_H_

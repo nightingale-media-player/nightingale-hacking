@@ -61,7 +61,8 @@ public:
    * The default implementation filters all available profiles by the
    * capabilities of the device.
    */
-  virtual nsresult GetSupportedTranscodeProfiles(nsIArray **aSupportedProfiles);
+  virtual nsresult GetSupportedTranscodeProfiles(PRUint32 aType,
+                                                 nsIArray **aSupportedProfiles);
 
   /**
    * Returns the profile for the given media item
@@ -105,34 +106,37 @@ public:
   static PRUint32 GetTranscodeType(sbIMediaItem * aMediaItem);
 
   /**
-   * Returns the media format for a media item
+   * Returns the media format for a media item appropriate for a particular
+   * type of transcoding.
    */
-  nsresult GetMediaFormat(sbIMediaItem* aMediaItem,
+  nsresult GetMediaFormat(PRUint32 aTranscodeType,
+                          sbIMediaItem* aMediaItem,
                           sbIMediaFormat** aMediaFormat);
+
+  /**
+   * Returns a media format for an audio media item based on the file extension
+   * and properties on the item (not based on file content!)
+   */
+  nsresult GetAudioFormatFromMediaItem(sbIMediaItem* aMediaItem,
+                                       sbIMediaFormat** aMediaFormat);
   /**
    * Get a media inspector
    */
   nsresult GetMediaInspector(sbIMediaInspector** _retval);
 
   /**
-   * Transcode the media item for a given request to the destination specified
+   * Transcode a media item to the destination specified
    * by aDestinationURI.  If aTranscodedDestinationURI is not null, return the
    * final destination URI with transcoded file extension in
    * aTranscodedDestinationURI.
    */
-  nsresult TranscodeMediaItem(sbBaseDevice::TransferRequest * aRequest,
+  nsresult TranscodeMediaItem(sbIMediaItem *aItem,
                               sbDeviceStatusHelper * aDeviceStatusHelper,
                               nsIURI * aDestinationURI,
                               nsIURI ** aTranscodedDestinationURI = nsnull);
 private:
   sbDeviceTranscoding(sbBaseDevice * aBaseDevice);
   nsresult GetTranscodeManager(sbITranscodeManager ** aTranscodeManager);
-  nsresult TranscodeVideoItem(sbITranscodeVideoJob * aVideoJob,
-                              sbBaseDevice::TransferRequest * aRequest,
-                              nsIURI * aDestinationURI);
-  nsresult TranscodeAudioItem(sbITranscodeJob * aVideoJob,
-                              sbBaseDevice::TransferRequest * aRequest,
-                              nsIURI * aDestinationURI);
 
   sbBaseDevice * mBaseDevice;
   nsCOMPtr<nsIArray> mTranscodeProfiles;

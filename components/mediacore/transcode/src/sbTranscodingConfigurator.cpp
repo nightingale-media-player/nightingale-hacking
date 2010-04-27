@@ -53,6 +53,15 @@ sbTranscodingConfigurator::~sbTranscodingConfigurator()
   // Nothing to do yet
 }
 
+/* attribute readonly nsIArray availableProfiles; */
+NS_IMETHODIMP
+sbTranscodingConfigurator::GetAvailableProfiles(nsIArray **aArray)
+{
+  NS_ENSURE_ARG_POINTER(aArray);
+
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 /* attribute nsIURI inputUri; */
 NS_IMETHODIMP
 sbTranscodingConfigurator::GetInputUri(nsIURI * *aInputUri)
@@ -120,7 +129,7 @@ sbTranscodingConfigurator::DetermineOutputType()
 NS_IMETHODIMP
 sbTranscodingConfigurator::GetMuxer(nsAString &aMuxer)
 {
-  NS_ENSURE_TRUE(mConfigurateState >= CONFIGURATE_OUPUT_SET,
+  NS_ENSURE_TRUE(mConfigurateState >= CONFIGURATE_OUTPUT_SET,
                  NS_ERROR_NOT_INITIALIZED);
   aMuxer = mMuxer;
   return NS_OK;
@@ -130,7 +139,7 @@ sbTranscodingConfigurator::GetMuxer(nsAString &aMuxer)
 NS_IMETHODIMP
 sbTranscodingConfigurator::GetFileExtension(nsACString & aFileExtension)
 {
-  NS_ENSURE_TRUE(mConfigurateState >= CONFIGURATE_OUPUT_SET,
+  NS_ENSURE_TRUE(mConfigurateState >= CONFIGURATE_OUTPUT_SET,
                  NS_ERROR_NOT_INITIALIZED);
   aFileExtension = mFileExtension;
   return NS_OK;
@@ -144,7 +153,7 @@ sbTranscodingConfigurator::GetFileExtension(nsACString & aFileExtension)
 NS_IMETHODIMP
 sbTranscodingConfigurator::GetAudioEncoder(nsAString &aAudioEncoder)
 {
-  NS_ENSURE_TRUE(mConfigurateState >= CONFIGURATE_OUPUT_SET,
+  NS_ENSURE_TRUE(mConfigurateState >= CONFIGURATE_OUTPUT_SET,
                  NS_ERROR_NOT_INITIALIZED);
   aAudioEncoder = mAudioEncoder;
   return NS_OK;
@@ -158,7 +167,7 @@ sbTranscodingConfigurator::GetAudioEncoder(nsAString &aAudioEncoder)
 NS_IMETHODIMP
 sbTranscodingConfigurator::GetVideoEncoder(nsAString &aVideoEncoder)
 {
-  NS_ENSURE_TRUE(mConfigurateState >= CONFIGURATE_OUPUT_SET,
+  NS_ENSURE_TRUE(mConfigurateState >= CONFIGURATE_OUTPUT_SET,
                  NS_ERROR_NOT_INITIALIZED);
   aVideoEncoder = mVideoEncoder;
   return NS_OK;

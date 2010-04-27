@@ -147,7 +147,152 @@ sbDeviceCapsCompatibility::Compare(PRBool* aCompatible)
 nsresult
 sbDeviceCapsCompatibility::CompareAudioFormat(PRBool* aCompatible)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  TRACE(("%s[%p]", __FUNCTION__, this));
+  NS_ENSURE_ARG_POINTER(aCompatible);
+  NS_ENSURE_TRUE(mDeviceCapabilities, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMediaFormat, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv;
+  *aCompatible = PR_FALSE;
+
+  // Retrieve all the properties of the format we're comparing to
+  // Get container type
+  nsCOMPtr<sbIMediaFormatContainer> mediaContainer;
+  rv = mMediaFormat->GetContainer(getter_AddRefs(mediaContainer));
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(mediaContainer, NS_OK);
+
+  rv = mediaContainer->GetContainerType(mMediaContainerType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!mMediaAudioStream) {
+    // Since we're only comparing audio, if we don't have audio, reject.
+    return NS_OK;
+  }
+
+  // Retrive all the audio properties if available
+  // Get Audio type
+  rv = mMediaAudioStream->GetAudioType(mMediaAudioType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get Audio bit rate
+  rv = mMediaAudioStream->GetBitRate(&mMediaAudioBitRate);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get Audio sample rate
+  rv = mMediaAudioStream->GetSampleRate(&mMediaAudioSampleRate);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get Audio channels
+  rv = mMediaAudioStream->GetChannels(&mMediaAudioChannels);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // TODO: Get additional audio properties
+
+  // Get supported mime types
+  PRUint32 mimeTypesLength;
+  char **mimeTypes;
+  rv = mDeviceCapabilities->GetSupportedMimeTypes(mContentType,
+                                                  &mimeTypesLength,
+                                                  &mimeTypes);
+
+  if (NS_SUCCEEDED(rv) && mimeTypesLength > 0) {
+    sbAutoNSArray<char*> autoMimeTypes(mimeTypes, mimeTypesLength);
+    for (PRUint32 mimeTypeIndex = 0;
+         mimeTypeIndex < mimeTypesLength;
+         ++mimeTypeIndex)
+    {
+      NS_ConvertASCIItoUTF16 mimeType(mimeTypes[mimeTypeIndex]);
+    
+      nsISupports** formatTypes;
+      PRUint32 formatTypeCount;
+      rv = mDeviceCapabilities->GetFormatTypes(mContentType,
+                                               mimeType,
+                                               &formatTypeCount,
+                                               &formatTypes);
+      NS_ENSURE_SUCCESS(rv, rv);
+      sbAutoFreeXPCOMPointerArray<nsISupports> freeFormats(formatTypeCount,
+                                                           formatTypes);
+
+      for (PRUint32 formatIndex = 0;
+           formatIndex < formatTypeCount;
+           formatIndex++)
+      {
+        nsCOMPtr<sbIAudioFormatType> audioFormat =
+            do_QueryInterface(formatTypes[formatIndex], &rv);
+        if (NS_SUCCEEDED(rv) && audioFormat) {
+          // Compare container type
+          nsCString deviceContainerType;
+          rv = audioFormat->GetContainerFormat(deviceContainerType);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          // Container type not equal
+          if (!StringEqualsToCString(mMediaContainerType, deviceContainerType)) {
+            LOG(("Not match! media container type: %s, device container type: %s",
+                 NS_ConvertUTF16toUTF8(mMediaContainerType).BeginReading(),
+                 deviceContainerType.BeginReading()));
+            continue;
+          }
+
+          // Compare audio type
+          nsCString deviceAudioCodec;
+          rv = audioFormat->GetAudioCodec(deviceAudioCodec);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          // Audio codec not equal. Not compatible.
+          if (!StringEqualsToCString(mMediaAudioType, deviceAudioCodec)) {
+            LOG(("Not match! media audio type: %s, device audio type: %s",
+                 NS_ConvertUTF16toUTF8(mMediaAudioType).BeginReading(),
+                 deviceAudioCodec.BeginReading()));
+            continue;
+          }
+
+          // Audio bit rate could be unknown in the media file.
+          if (mMediaAudioBitRate) {
+            nsCOMPtr<sbIDevCapRange> deviceSupportedBitRates;
+            rv = audioFormat->GetSupportedBitrates(
+                          getter_AddRefs(deviceSupportedBitRates));
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            rv = deviceSupportedBitRates->IsValueInRange(mMediaAudioBitRate,
+                                                         aCompatible);
+            NS_ENSURE_SUCCESS(rv, rv);
+            if (!(*aCompatible))
+              continue;
+          }
+
+          // Compare audio sample rates
+          nsCOMPtr<sbIDevCapRange> deviceSupportedSampleRates;
+          rv = audioFormat->GetSupportedSampleRates(
+                         getter_AddRefs(deviceSupportedSampleRates));
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          rv = deviceSupportedSampleRates->IsValueInRange(mMediaAudioSampleRate,
+                                                          aCompatible);
+          NS_ENSURE_SUCCESS(rv, rv);
+          if (!(*aCompatible))
+            continue;
+
+          // Compare audio channels
+          nsCOMPtr<sbIDevCapRange> deviceSupportedChannels;
+          rv = audioFormat->GetSupportedChannels(
+                         getter_AddRefs(deviceSupportedChannels));
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          rv = deviceSupportedChannels->IsValueInRange(mMediaAudioChannels,
+                                                       aCompatible);
+          NS_ENSURE_SUCCESS(rv, rv);
+          if (!(*aCompatible))
+             continue;
+
+          // Getting this far means we got a match and have set aCompatible.
+          return NS_OK;
+        }
+      }
+    }
+  }
+
+  return NS_OK;
 }
 
 nsresult
@@ -265,7 +410,7 @@ sbDeviceCapsCompatibility::CompareVideoFormat(PRBool* aCompatible)
           // Container type not equal
           if (!StringEqualsToCString(mMediaContainerType, deviceContainerType)) {
             LOG(("Not match! media container type: %s, device container type: %s",
-                 mMediaContainerType.BeginReading(),
+                 NS_ConvertUTF16toUTF8(mMediaContainerType).BeginReading(),
                  deviceContainerType.BeginReading()));
             continue;
           }
@@ -337,7 +482,7 @@ sbDeviceCapsCompatibility::CompareVideoStream(
   // Video type not equal. Not compatible.
   if (!StringEqualsToCString(mMediaVideoType, deviceVideoType)) {
     LOG(("Not match! media video type: %s, device video type: %s",
-         mMediaVideoType.BeginReading(),
+         NS_ConvertUTF16toUTF8(mMediaVideoType).BeginReading(),
          deviceVideoType.BeginReading()));
     return NS_OK;
   }
@@ -392,7 +537,7 @@ sbDeviceCapsCompatibility::CompareAudioStream(
   // Audio type not equal. Not compatible.
   if (!StringEqualsToCString(mMediaAudioType, deviceAudioType)) {
     LOG(("Not match! media audio type: %s, device audio type: %s",
-         mMediaAudioType.BeginReading(),
+         NS_ConvertUTF16toUTF8(mMediaAudioType).BeginReading(),
          deviceAudioType.BeginReading()));
     return NS_OK;
   }

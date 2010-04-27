@@ -27,6 +27,7 @@
 
 #include <algorithm>
 
+#include <nsAlgorithm.h>
 #include <nsArrayUtils.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
@@ -830,44 +831,24 @@ MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
 PRUint32 const MAP_FILE_EXTENSION_CONTENT_FORMAT_LENGTH =
   NS_ARRAY_LENGTH(MAP_FILE_EXTENSION_CONTENT_FORMAT);
 
-const PRUint32 K = 1000;
+const PRInt32 K = 1000;
 
 /**
- * Convert the string bit rate to an integer
- * \param aBitRate the string version of the bit rate
- * \return the integer version of the bit rate or 0 if it fails
+ * Convert the string value to an integer
+ * \param aValue the string version of the value
+ * \return the integer version of the value or 0 if it fails
  */
-static PRUint32 ParseBitRate(nsAString const & aBitRate)
-{
-  TRACE(("%s: %s", __FUNCTION__, NS_LossyConvertUTF16toASCII(aBitRate).get()));
+static PRInt32 ParseInteger(nsAString const & aValue) {
+  TRACE(("%s: %s", __FUNCTION__, NS_LossyConvertUTF16toASCII(aValue).get()));
   nsresult rv;
-
-  if (aBitRate.IsEmpty()) {
+  if (aValue.IsEmpty()) {
     return 0;
   }
-  PRUint32 rate = aBitRate.ToInteger(&rv, 10);
+  PRUint32 val = aValue.ToInteger(&rv, 10);
   if (NS_FAILED(rv)) {
-    rate = 0;
+    val = 0;
   }
-  return rate * K;
-}
-
-/**
- * Convert the string sample rate to an integer
- * \param aSampleRate the string version of the sample rate
- * \return the integer version of the sample rate or 0 if it fails
- */
-static PRUint32 ParseSampleRate(nsAString const & aSampleRate) {
-  TRACE(("%s: %s", __FUNCTION__, NS_LossyConvertUTF16toASCII(aSampleRate).get()));
-  nsresult rv;
-  if (aSampleRate.IsEmpty()) {
-    return 0;
-  }
-  PRUint32 rate = aSampleRate.ToInteger(&rv, 10);
-  if (NS_FAILED(rv)) {
-    rate = 0;
-  }
-  return rate;
+  return val;
 }
 
 /**
@@ -877,7 +858,7 @@ static PRUint32 ParseSampleRate(nsAString const & aSampleRate) {
  * \param aBitRate The bit rate for the item
  * \param aSampleRate the sample rate for the item
  */
-nsresult
+/* static */ nsresult
 sbDeviceUtils::GetFormatTypeForItem(
                  sbIMediaItem * aItem,
                  sbExtensionToContentFormatEntry_t & aFormatType,
@@ -906,14 +887,71 @@ sbDeviceUtils::GetFormatTypeForItem(
   nsString bitRate;
   rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_BITRATE), bitRate);
   NS_ENSURE_SUCCESS(rv, rv);
-  aBitRate = ParseBitRate(bitRate);
+  aBitRate = NS_MIN (ParseInteger(bitRate) * K, 0);
 
   // Get the sample rate.
   nsString sampleRate;
   rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_SAMPLERATE),
                           sampleRate);
   NS_ENSURE_SUCCESS(rv, rv);
-  aSampleRate = ParseSampleRate(sampleRate);
+  aSampleRate = NS_MIN (ParseInteger(sampleRate), 0);
+
+  return NS_OK;
+}
+
+/**
+ * Returns the formatting information for an item
+ * \param aItem The item we want the format stuff for
+ * \param aFormatType the formatting map entry for the item
+ * \param aSampleRate the sample rate for the item
+ * \param aChannels the number of channels for the item
+ * \param aBitRate The bit rate for the item
+ */
+/* static */ nsresult
+sbDeviceUtils::GetFormatTypeForItem(
+                 sbIMediaItem * aItem,
+                 sbExtensionToContentFormatEntry_t & aFormatType,
+                 PRUint32 & aSampleRate,
+                 PRUint32 & aChannels,
+                 PRUint32 & aBitRate)
+{
+  TRACE(("%s", __FUNCTION__));
+  NS_ENSURE_ARG_POINTER(aItem);
+
+  nsresult rv;
+
+  // We do it with string manipulation here rather than proper URL objects due
+  // to thread-unsafety of URLs.
+  nsString contentURL;
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
+                          contentURL);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the format type.
+  rv = GetFormatTypeForURL(contentURL, aFormatType);
+  if (rv == NS_ERROR_NOT_AVAILABLE)
+    return rv;
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the bit rate.
+  nsString bitRate;
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_BITRATE), bitRate);
+  NS_ENSURE_SUCCESS(rv, rv);
+  aBitRate = NS_MIN (ParseInteger(bitRate) * K, 0);
+
+  // Get the sample rate.
+  nsString sampleRate;
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_SAMPLERATE),
+                          sampleRate);
+  NS_ENSURE_SUCCESS(rv, rv);
+  aSampleRate = NS_MIN (ParseInteger(sampleRate), 0);
+
+  // Get the channel count.
+  nsString channels;
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CHANNELS),
+                          channels);
+  NS_ENSURE_SUCCESS(rv, rv);
+  aChannels = NS_MIN (ParseInteger(channels), 0);
 
   return NS_OK;
 }
@@ -1120,7 +1158,7 @@ GetContainerFormatAndCodec(nsISupports * aFormatType,
 }
 
 nsresult
-sbDeviceUtils::GetTranscodeProfiles(nsIArray ** aProfiles)
+sbDeviceUtils::GetTranscodeProfiles(PRUint32 aType, nsIArray ** aProfiles)
 {
   nsresult rv;
 
@@ -1128,14 +1166,15 @@ sbDeviceUtils::GetTranscodeProfiles(nsIArray ** aProfiles)
           "@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = tcManager->GetTranscodeProfiles(aProfiles);
+  rv = tcManager->GetTranscodeProfiles(aType, aProfiles);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
 nsresult
-sbDeviceUtils::GetSupportedTranscodeProfiles(sbIDevice * aDevice,
+sbDeviceUtils::GetSupportedTranscodeProfiles(PRUint32 aType,
+                                             sbIDevice * aDevice,
                                              nsIArray **aProfiles)
 {
   TRACE(("%s", __FUNCTION__));
@@ -1149,7 +1188,7 @@ sbDeviceUtils::GetSupportedTranscodeProfiles(sbIDevice * aDevice,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIArray> profiles;
-  rv = GetTranscodeProfiles(getter_AddRefs(profiles));
+  rv = GetTranscodeProfiles(aType, getter_AddRefs(profiles));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIDeviceCapabilities> devCaps;
@@ -1440,6 +1479,31 @@ sbDeviceUtils::DoesItemNeedTranscoding(PRUint32 aTranscodeType,
   return NS_OK;
 }
 
+// XXX this needs to be fixed to be not gstreamer specific
+nsresult
+sbDeviceUtils::GetTranscodingConfigurator(
+        PRUint32 aTranscodeType,
+        sbIDeviceTranscodingConfigurator **aConfigurator)
+{
+ nsresult rv;
+ nsCOMPtr<sbIDeviceTranscodingConfigurator> configurator;
+ if (aTranscodeType == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO) {
+    configurator = do_CreateInstance(
+            "@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/"
+            "Audio/GStreamer;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    configurator = do_CreateInstance(
+            "@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/"
+            "Device/GStreamer;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  NS_ADDREF (*aConfigurator = configurator);
+
+  return NS_OK;
+}
 
 nsresult
 sbDeviceUtils::ApplyPropertyPreferencesToProfile(sbIDevice* aDevice,

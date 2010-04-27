@@ -620,8 +620,7 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
     NS_ENSURE_SUCCESS (rv, rv);
 
     GValue propertyValue = { 0 };
-    if (paramSpec->value_type == G_TYPE_INT &&
-        variantType == nsIDataType::VTYPE_INT32)
+    if (paramSpec->value_type == G_TYPE_INT)
     {
       PRInt32 val;
       rv = propertyVariant->GetAsInt32 (&val);
@@ -629,8 +628,7 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
       g_value_init (&propertyValue, G_TYPE_INT);
       g_value_set_int (&propertyValue, val);
     }
-    else if (paramSpec->value_type == G_TYPE_UINT &&
-             variantType == nsIDataType::VTYPE_UINT32)
+    else if (paramSpec->value_type == G_TYPE_UINT)
     {
       PRUint32 val;
       rv = propertyVariant->GetAsUint32 (&val);
@@ -638,8 +636,7 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
       g_value_init (&propertyValue, G_TYPE_UINT);
       g_value_set_uint (&propertyValue, val);
     }
-    else if (paramSpec->value_type == G_TYPE_UINT64 &&
-             variantType == nsIDataType::VTYPE_UINT64)
+    else if (paramSpec->value_type == G_TYPE_UINT64)
     {
       PRUint64 val;
       rv = propertyVariant->GetAsUint64 (&val);
@@ -647,8 +644,7 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
       g_value_init (&propertyValue, G_TYPE_UINT64);
       g_value_set_uint64 (&propertyValue, val);
     }
-    else if (paramSpec->value_type == G_TYPE_INT64 &&
-             variantType == nsIDataType::VTYPE_INT64)
+    else if (paramSpec->value_type == G_TYPE_INT64)
     {
       PRInt64 val;
       rv = propertyVariant->GetAsInt64 (&val);
@@ -656,8 +652,7 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
       g_value_init (&propertyValue, G_TYPE_INT64);
       g_value_set_int64 (&propertyValue, val);
     }
-    else if (paramSpec->value_type == G_TYPE_BOOLEAN &&
-             variantType == nsIDataType::VTYPE_BOOL)
+    else if (paramSpec->value_type == G_TYPE_BOOLEAN)
     {
       PRBool val;
       rv = propertyVariant->GetAsBool (&val);
@@ -665,8 +660,7 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
       g_value_init (&propertyValue, G_TYPE_BOOLEAN);
       g_value_set_boolean (&propertyValue, val);
     }
-    else if (paramSpec->value_type == G_TYPE_FLOAT &&
-             variantType == nsIDataType::VTYPE_FLOAT)
+    else if (paramSpec->value_type == G_TYPE_FLOAT)
     {
       float val;
       rv = propertyVariant->GetAsFloat (&val);
@@ -674,8 +668,7 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
       g_value_init (&propertyValue, G_TYPE_FLOAT);
       g_value_set_float (&propertyValue, val);
     }
-    else if (paramSpec->value_type == G_TYPE_DOUBLE &&
-             variantType == nsIDataType::VTYPE_DOUBLE)
+    else if (paramSpec->value_type == G_TYPE_DOUBLE)
     {
       double val;
       rv = propertyVariant->GetAsDouble (&val);
@@ -683,11 +676,7 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
       g_value_init (&propertyValue, G_TYPE_DOUBLE);
       g_value_set_float (&propertyValue, val);
     }
-    else if (paramSpec->value_type == G_TYPE_STRING &&
-             (variantType == nsIDataType::VTYPE_DOMSTRING ||
-              variantType == nsIDataType::VTYPE_UTF8STRING ||
-              variantType == nsIDataType::VTYPE_CSTRING ||
-              variantType == nsIDataType::VTYPE_ASTRING))
+    else if (paramSpec->value_type == G_TYPE_STRING)
     {
       nsCString val;
       rv = propertyVariant->GetAsACString(val);
@@ -695,8 +684,7 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
       g_value_init (&propertyValue, G_TYPE_STRING);
       g_value_set_string (&propertyValue, val.BeginReading());
     }
-    else if (G_TYPE_IS_ENUM (paramSpec->value_type) &&
-             variantType == nsIDataType::VTYPE_UINT32)
+    else if (G_TYPE_IS_ENUM (paramSpec->value_type))
     {
       PRUint32 val;
       rv = propertyVariant->GetAsUint32 (&val);
@@ -705,7 +693,7 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
       g_value_set_enum (&propertyValue, val);
     }
     else {
-      LOG(("Unknown or mismatching property type"));
+      LOG(("Unsupported property type"));
       return NS_ERROR_FAILURE;
     }
 

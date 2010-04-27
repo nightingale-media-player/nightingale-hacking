@@ -48,17 +48,17 @@ interface sbITranscodeManager : nsISupports
   * setting the source and destination URIs, encoding profile, etc.
   *
   * \param aMediaItem The media item to transcode.
-  * \param aProfile   The transcoding profile to use
   * \return The handler to use, or NULL.
   */
-  nsISupports getTranscoderForMediaItem(in sbIMediaItem aMediaItem,
-                                        in sbITranscodeProfile aProfile);
+  nsISupports getTranscoderForMediaItem(in sbIMediaItem aMediaItem);
 
   /**
    * \brief Get an array of all the sbITranscodeProfiles available and usable.
    *
+   * \param aType Type of transcode profile to return. Use one of the
+   *              TRANSCODE_TYPE_* constants from sbITranscodeProfile
    */
-  nsIArray getTranscodeProfiles();
+  nsIArray getTranscodeProfiles(in unsigned long aType);
 
 };
 

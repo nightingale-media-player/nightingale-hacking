@@ -236,7 +236,8 @@ var DeviceMediaManagementServices = {
           Cc["@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1"]
             .getService(Ci.sbITranscodeManager);
 
-      var profiles = transcodeManager.getTranscodeProfiles();
+      var profiles = transcodeManager.getTranscodeProfiles(
+              Ci.sbITranscodeProfile.TRANSCODE_TYPE_AUDIO);
       var deviceCaps = this._device.capabilities;
       var formatMimeTypes = deviceCaps.getSupportedMimeTypes(
               Ci.sbIDeviceCapabilities.CONTENT_AUDIO, {});

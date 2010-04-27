@@ -31,6 +31,7 @@
 
 #include "nsISupports.idl"
 
+interface nsIArray;
 interface nsIPropertyBag;
 interface nsIURI;
 interface sbIDevice;
@@ -48,6 +49,11 @@ interface sbITranscodeError;
 [scriptable, uuid(7aa32e7c-1dd2-11b2-a630-ad3a8587a133)]
 interface sbITranscodingConfigurator : nsISupports
 {
+  /**
+   * The list of profiles this configurator can use
+   */
+  readonly attribute nsIArray availableProfiles;
+
   /**
    * The URI to use for the transcoding input.  Mostly informational.
    */

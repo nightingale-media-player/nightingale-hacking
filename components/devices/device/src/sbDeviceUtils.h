@@ -33,6 +33,7 @@
 #include <prlog.h>
 
 #include <sbIMediaListListener.h>
+#include <sbITranscodingConfigurator.h>
 
 #include "sbBaseDevice.h"
 #include "sbIDeviceStatus.h"
@@ -218,6 +219,17 @@ public:
                      PRUint32 & aSampleRate);
 
   /**
+   * \brief For a media item, get format information describing it (extension,
+   *        mime type, etc.
+   */
+  static nsresult GetFormatTypeForItem(
+                     sbIMediaItem * aItem,
+                     sbExtensionToContentFormatEntry_t & aFormatType,
+                     PRUint32 & aSampleRate,
+                     PRUint32 & aChannels,
+                     PRUint32 & aBitRate);
+
+  /**
    * \brief For a URI, get format information describing it (extension,
    *        mime type, etc.
    */
@@ -272,17 +284,20 @@ public:
                                           sbIDevice * aDevice,
                                           bool & aNeedsTranscoding);
   /**
-   * Returns the list or transcode profiles supported by the system
+   * Returns the list or transcode profiles for a particular transcoding type
+   * supported by the system
    */
-  static nsresult GetTranscodeProfiles(nsIArray ** aProfiles);
+  static nsresult GetTranscodeProfiles(PRUint32 aType, nsIArray ** aProfiles);
 
   /**
    * Returns a list of transcode profiles that the device supports
+   * \param aType the type of transcoding profiles to retrieve.
    * \param aDevice the device to retrieve the profiles for.
    * \param aProfiles the array of profiles that were found
    * \return NS_OK if successful else some NS_ERROR value
    */
-  static nsresult GetSupportedTranscodeProfiles(sbIDevice * aDevice,
+  static nsresult GetSupportedTranscodeProfiles(PRUint32 aType,
+                                                sbIDevice * aDevice,
                                                 nsIArray ** aProfiles);
 
   /** For each transcoding profile property in aPropertyArray, look up a
@@ -306,6 +321,12 @@ public:
                                                   nsCString &aCodec,
                                                   nsCString &aVideoType,
                                                   nsCString &aAudioType);
+
+  /* Get an appropriate transcoding configurator for this type of transcoding */
+  static nsresult GetTranscodingConfigurator(
+                              PRUint32 aTranscodeType,
+                              sbIDeviceTranscodingConfigurator **aConfigurator);
+
 
   /**
    * Returns true if the item is DRM protected
