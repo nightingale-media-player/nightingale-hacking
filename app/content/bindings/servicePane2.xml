@@ -608,6 +608,10 @@
       <![CDATA[
         window.gServicePane = this;
 
+        // Setup logging
+        Components.utils.import("resource://app/jsmodules/DebugUtils.jsm");
+        this.log = DebugUtils.generateLogFunction("Servicepane");
+
         this.mService =
           Components.classes['@songbirdnest.com/servicepane/service;1']
           .getService(Components.interfaces.sbIServicePaneService);
@@ -781,14 +785,18 @@
           }
 
           var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+
+          this.log("********** SERVICEPANE ROOT **********");
           var groupEntry = this.mService.root.firstChild;
           while (groupEntry && groupEntry != this.mService.root.lastChild) {
+            this.log("|- " + groupEntry.id);
             // Create the group and set the state
             var newgroup = this.createGroup(groupEntry);
 
             // Create the nodes in this group
             var nodeEntry = groupEntry.firstChild;
-            while (nodeEntry && nodeEntry != groupEntry.lastChild) {
+            while (nodeEntry) {
+              this.log("\t|- " + nodeEntry.id);
               this.createNode(nodeEntry, newgroup);
               nodeEntry = nodeEntry.nextSibling;
             }
