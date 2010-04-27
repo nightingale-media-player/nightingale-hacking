@@ -197,6 +197,9 @@
 
         // Remove mutation listener
         this.mService.root.removeMutationListener(this._mutationListener);
+
+        // Detach tree view
+        this.mTree.view = null;
       ]]></destructor>
 
       <field name="_mutationListener"><![CDATA[
@@ -806,8 +809,11 @@
         <body><![CDATA[
           this._treeBoxObject = treeBoxObject;
           this._rows = [];
-          this._addChildRows(this._rows, this.mService.root);
-          this._highlightSelectedNode();
+
+          if (treeBoxObject) {
+            this._addChildRows(this._rows, this.mService.root);
+            this._highlightSelectedNode();
+          }
         ]]></body>
       </method>
 
