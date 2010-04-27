@@ -175,7 +175,7 @@ nsresult sbLibraryUtils::GetItemInLibrary(/* in */  sbIMediaItem*  aMediaItem,
   nsresult rv;
 
   nsCOMPtr<nsIMutableArray> theCopies =
-    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbLibraryUtils::FindCopiesByID(aMediaItem, aLibrary, theCopies);
@@ -247,7 +247,7 @@ sbLibraryUtils::FindOriginalsByURL(/* in */ sbIMediaItem *     aMediaItem,
       }
     }
   }
-  return foundOne ? NS_OK : NS_ERROR_NOT_AVAILABLE;
+  return (aCopies || foundOne) ? NS_OK : NS_ERROR_NOT_AVAILABLE;
 }
 
 nsresult sbLibraryUtils::FindCopiesByID(sbIMediaItem * aMediaItem,
@@ -266,13 +266,17 @@ nsresult sbLibraryUtils::FindCopiesByID(sbIMediaItem * aMediaItem,
   rv = FindByOrigin(aList, nsString(), guid, aCopies);
   if (rv != NS_ERROR_NOT_AVAILABLE) {
     NS_ENSURE_SUCCESS(rv, rv);
+    if (!aCopies)
+      return NS_OK;
   }
 
   nsString originLibID;
   rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID),
                                originLibID);
   if (rv == NS_ERROR_NOT_AVAILABLE || originLibID.IsEmpty()) {
-    return NS_ERROR_NOT_AVAILABLE;
+    if (!aCopies)
+      return NS_ERROR_NOT_AVAILABLE;
+    return NS_OK;
   }
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -280,7 +284,9 @@ nsresult sbLibraryUtils::FindCopiesByID(sbIMediaItem * aMediaItem,
   rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
                                originItemID);
   if (rv == NS_ERROR_NOT_AVAILABLE || originItemID.IsEmpty()) {
-    return NS_ERROR_NOT_AVAILABLE;
+    if (!aCopies)
+      return NS_ERROR_NOT_AVAILABLE;
+    return NS_OK;
   }
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -298,7 +304,9 @@ nsresult sbLibraryUtils::FindCopiesByID(sbIMediaItem * aMediaItem,
 
   rv = FindByProperties(aList, properties, aCopies);
   if (rv == NS_ERROR_NOT_AVAILABLE) {
-    return NS_ERROR_NOT_AVAILABLE;
+    if (!aCopies)
+      return NS_ERROR_NOT_AVAILABLE;
+    return NS_OK;
   }
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -325,7 +333,9 @@ nsresult sbLibraryUtils::FindOriginalsByID(sbIMediaItem * aMediaItem,
                                originID);
   if (rv == NS_ERROR_NOT_AVAILABLE || originID.IsEmpty()) {
     NS_ENSURE_SUCCESS(rv, rv);
-    return NS_ERROR_NOT_AVAILABLE;
+    if (!aCopies)
+      return NS_ERROR_NOT_AVAILABLE;
+    return NS_OK;
   }
 
   nsCOMPtr<nsIArray> copies;

@@ -112,7 +112,9 @@ public:
    * aMediaItem's origin URL
    * \param aItem The item to find a match for
    * \param aLibrary The library to look in
-   * \return The media items found, or null
+   * \return The media items found, or empty array. aCopies may be null
+   *         in which case the function will return NS_ERROR_NOT_AVAILABLE
+   *         if no copies are found
    */
   static nsresult FindOriginalsByURL(sbIMediaItem *    aMediaItem,
                                      sbIMediaList *    aList,
@@ -136,7 +138,9 @@ public:
    * Searches aList for items that have ID's that match aMediaItem's origin ID
    * \param aItem The item to find a match for
    * \param aLibrary The library to look in
-   * \return The media items found, or null
+   * \return The media items found, or empty array. aCopies may be null
+   *         in which case the function will return NS_ERROR_NOT_AVAILABLE
+   *         if no copies are found
    */
   static nsresult FindOriginalsByID(sbIMediaItem * aMediaItem,
                                     sbIMediaList * aList,
