@@ -361,8 +361,8 @@ function sbDeviceServicePane_attrModified(aNode, aAttrName, aNamespace,
     return;
   }
   var deviceNode = this.getNodeForDevice(device);
-  if (deviceNode && node.parentNode != deviceNode) {
-    deviceNode.appendChild(node);
+  if (deviceNode && aNode.parentNode != deviceNode) {
+    deviceNode.appendChild(aNode);
   }
 };
 
