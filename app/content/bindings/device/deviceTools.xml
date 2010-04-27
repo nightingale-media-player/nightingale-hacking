@@ -196,13 +196,11 @@
         this._registerURI = null;
         this._customerSupportLocation = null;
 
-        if(this.device) {
-          if (this.device.supportsReformat) {
-            this.device.QueryInterface(Ci.sbIDeviceEventTarget)
-                       .removeEventListener(this.deviceChangeEvent);
-          }
-          this.device = null;
+        if(this.device && this.deviceChangeEvent) {
+          this.device.QueryInterface(Ci.sbIDeviceEventTarget)
+                     .removeEventListener(this.deviceChangeEvent);
         }
+        this.device = null;
 
         if(this._busyCheckTimer) {
           clearInterval(this._busyCheckTimer);
