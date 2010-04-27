@@ -188,10 +188,7 @@
           // Determine whether or not we have any media mounted
           var manualButton = this.getElement("sync_manual_button");
           var syncButton = this.getElement("sync_auto_button");
-          if (!this.device.content.libraries.length > 0) {
-            manualButton.setAttribute("disabled", "true");
-            syncButton.setAttribute("disabled", "true");
-          } else {
+          if (this.device && this.device.content.libraries.length > 0) {
             manualButton.removeAttribute("disabled");
             syncButton.removeAttribute("disabled");
 
@@ -200,6 +197,9 @@
               var isManual = this.devLib.isMgmtTypeManual;
               this.updateButtons(isManual);
             }
+          } else {
+            manualButton.setAttribute("disabled", "true");
+            syncButton.setAttribute("disabled", "true");
           }
         ]]></body>
       </method>
@@ -214,8 +214,8 @@
             var deviceEventTarget = this.device;
             deviceEventTarget.QueryInterface(Ci.sbIDeviceEventTarget);
             deviceEventTarget.addEventListener(this);
-            this.update();
           }
+          this.update();
         ]]></body>
       </method>
 

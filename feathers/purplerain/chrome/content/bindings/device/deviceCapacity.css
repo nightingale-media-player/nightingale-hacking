@@ -63,6 +63,10 @@ Imported by bindings.css or directly into feathers.
   margin:4px 0px 4px 0px;
 }
 
+.device-capacity-bar-stack[disabled="true"] {
+  opacity: .5;
+}
+
 .device-capacity-bar-box {
   height: 20px;
 }

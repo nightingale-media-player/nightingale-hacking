@@ -502,6 +502,10 @@ var DPW = {
     // Update the sync mode toggle buttons
     var syncModeToggle = this._getElement("syncmode-toggle");
     if (syncModeToggle) {
+      // Disable sync button if the device doesn't contain any storage
+      if (!this._device.defaultLibrary)
+        this._syncButton.setAttribute("disabled", "true");
+
       syncModeToggle.deviceInitialize();
     }
   },
