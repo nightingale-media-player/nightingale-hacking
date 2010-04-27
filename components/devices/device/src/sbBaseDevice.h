@@ -1752,11 +1752,17 @@ private:
 //
 // Auto-disposal class wrappers.
 //
+//   sbAutoResetEnsureSpaceChecked
+//                              Wrapper to automatically reset the space
+//                              checked flag.
 //   sbAutoDeviceCompleteCurrentRequest
 //                              Wrapper to automatically complete the current
 //                              request.
 //
 
+SB_AUTO_NULL_CLASS(sbAutoResetEnsureSpaceChecked,
+                   sbBaseDevice*,
+                   mValue->SetEnsureSpaceChecked(false));
 SB_AUTO_NULL_CLASS(sbAutoDeviceCompleteCurrentRequest,
                    sbBaseDevice*,
                    mValue->CompleteCurrentRequest());
