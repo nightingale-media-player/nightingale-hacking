@@ -165,6 +165,10 @@ Concerts = {
 
     var SPS = Cc["@songbirdnest.com/servicepane/service;1"]
                 .getService(Ci.sbIServicePaneService);
+
+    // Check whether the node already exists
+    if (SPS.getNode("urn:concerts"))
+      return;
 		
     var servicesNode = SPS.getNode("SB:Services");
     if (servicesNode) {

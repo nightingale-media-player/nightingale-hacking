@@ -177,6 +177,10 @@ ShoutcastRadio.Controller = {
 		var SPS = Cc['@songbirdnest.com/servicepane/service;1'].
 				getService(Ci.sbIServicePaneService);
 		
+    // Check whether the node already exists
+    if (SPS.getNode("SB:RadioStations:SHOUTcast"))
+      return;
+		
 		// Walk nodes to see if a "Radio" folder already exists
 		var radioFolder = SPS.getNode("SB:RadioStations");
 		if (!radioFolder) {
