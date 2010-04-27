@@ -157,10 +157,19 @@ public:
    * Attempt to get the content length of the media item
    *
    * \param aItem    The item to look up
-   * \retur          The content length of the item (or throw an exception)
+   * \return         The content length of the item (or throw an exception)
    */
   static nsresult GetContentLength(/* in */  sbIMediaItem * aItem,
                                    /* out */ PRInt64      * _retval);
+
+  /**
+   * Set the content length of the media item
+   *
+   * \param aItem    The item to set the content length to
+   * \param aURI     The URI to retrive the content length from
+   */
+  static nsresult SetContentLength(/* in */  sbIMediaItem * aItem,
+                                   /* in */  nsIURI       * aURI);
 
   /**
    * \brief Return a library content URI for the URI specified by aURI.

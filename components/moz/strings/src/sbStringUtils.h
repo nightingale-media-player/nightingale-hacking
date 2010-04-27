@@ -66,6 +66,14 @@ public:
     AssignLiteral(valueStr);
   }
 
+  sbAutoString(PRInt64 aValue)
+  {
+    char valueStr[64];
+
+    PR_snprintf(valueStr, sizeof(valueStr), "%lld", aValue);
+    AssignLiteral(valueStr);
+  }
+
   sbAutoString(PRUint64 aValue)
   {
     char valueStr[64];

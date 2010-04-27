@@ -402,13 +402,39 @@ nsresult sbLibraryUtils::GetContentLength(/* in */  sbIMediaItem * aItem,
     rv = file->GetFileSize(_retval);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsString strContentLength;
-    AppendInt(strContentLength, *_retval);
-
     rv = aItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH),
-                            strContentLength);
+                            sbAutoString(*_retval));
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  return NS_OK;
+}
+
+/* static */
+nsresult sbLibraryUtils::SetContentLength(/* in */  sbIMediaItem * aItem,
+                                          /* in */  nsIURI       * aURI)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(aURI);
+
+  nsresult rv;
+
+  nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(aURI, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  // note that this will abort if this is not a local file.  This is the
+  // desired behaviour.
+
+  nsCOMPtr<nsIFile> file;
+  rv = fileURL->GetFile(getter_AddRefs(file));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt64 length;
+  rv = file->GetFileSize(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH),
+                          sbAutoString(length));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
