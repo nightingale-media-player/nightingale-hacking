@@ -129,25 +129,12 @@ function sbLibraryServicePane_servicePaneInit(sps) {
   // keep track of the service pane service
   this._servicePane = sps;
 
-  // Before initializing, hide all existing library nodes.
-  // This way we only show things when we are notified
-  // that they actually exist.
-  this._hideLibraryNodes(this._servicePane.root);
-
-  // register for notification that the library manager is initialized
-  var obs = Cc["@mozilla.org/observer-service;1"].
-            getService(Ci.nsIObserverService);
-  obs.addObserver(this, "songbird-library-manager-ready", false);
-  obs.addObserver(this, "songbird-library-manager-before-shutdown", false);
-
   // get the library manager
   this._initLibraryManager();
 }
 
 sbLibraryServicePane.prototype.shutdown =
-function sbLibraryServicePane_shutdown() {
-  this._removeAllLibraries();
-}
+function sbLibraryServicePane_shutdown() {}
 
 sbLibraryServicePane.prototype.fillContextMenu =
 function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow) {
@@ -734,13 +721,11 @@ function sbLibraryServicePane_suggestLibraryForNewList(aMediaListType, aNode) {
   if (lib)
     return lib;
 
-  if (aNode.isContainer) {
-    // check the children of the node (but not recursively) for a usable library
-    for (var child = aNode.firstChild; child; child = child.nextSibling) {
-      lib = checkNode(child, this);
-      if (lib)
-        return lib;
-    }
+  // check the children of the node (but not recursively) for a usable library
+  for (var child = aNode.firstChild; child; child = child.nextSibling) {
+    lib = checkNode(child, this);
+    if (lib)
+      return lib;
   }
   
   // Move up the tree looking for libraries that support the
@@ -874,26 +859,22 @@ function sbLibraryServicePane_getNodeForLibraryResource(aResource) {
   //logcall(arguments);
 
   var urn = this._getURNForLibraryResource(aResource);
-  var node = this._servicePane.getNode(urn);
-  var hiddenNode = null;
-  if (node && node.hasAttributeNS(LSP, "LibraryGUID")) {
-    // this is a library node (and not a dummy playlist container)
-    if (!node.hidden) {
-      return node;
+
+  if (aResource instanceof Ci.sbILibrary) {
+    // For backwards compatibility, prefer the audio/video node for libraries
+    // over the container (if any of them is visible)
+    for each (let type in ["audio", "video", "podcast"]) {
+      let constrainedURN = urn + ":constraint(" + type + ")";
+      let node = this._servicePane.getNode(constrainedURN);
+      if (node && !node.hidden) {
+        return node;
+      }
     }
-    // this is a hidden node; not as good, but might be useful as a last-ditch
-    hiddenNode = node;
   }
-  for each (let type in ["audio", "video", "podcast"]) {
-    let constrainedURN = urn + ":constraint(" + type + ")";
-    node = this._servicePane.getNode(constrainedURN);
-    if (node && !node.hidden) {
-      return node;
-    }
-    // this node is hidden; remember it if nothing better comes along
-    hiddenNode = hiddenNode || node;
-  }
-  return hiddenNode;
+
+  // For playlists and libraries that don't have any visible children, return
+  // the main node - even if it is hidden
+  return this._servicePane.getNode(urn);
 }
 
 /**
@@ -1108,30 +1089,6 @@ function sbLibraryServicePane__doesLibrarySupportListType(aLibrary, aListType) {
 
 
 /**
- * Hide this node and any nodes below it that belong to
- * the library service pane service
- */
-sbLibraryServicePane.prototype._hideLibraryNodes =
-function sbLibraryServicePane__hideLibraryNodes(aNode) {
-  //logcall(arguments);
-
-  // If this is one of our nodes, hide it
-  if (aNode.contractid == CONTRACTID) {
-    this._servicePane.setNodeHidden(aNode, CONTRACTID, true);
-  }
-
-  // If this is a container, descend into all children
-  if (aNode.isContainer) {
-    var children = aNode.childNodes;
-    while (children.hasMoreElements()) {
-      var child = children.getNext().QueryInterface(Ci.sbIServicePaneNode);
-      this._hideLibraryNodes(child);
-    }
-  }
-}
-
-
-/**
  * Add all registered libraries to the service pane
  */
 sbLibraryServicePane.prototype._addAllLibraries =
@@ -1141,19 +1098,6 @@ function sbLibraryServicePane__addAllLibraries() {
   while (libraries.hasMoreElements()) {
     var library = libraries.getNext();
     this._libraryAdded(library);
-  }
-}
-
-/**
- * Remove all registered libraries from the service pane
- */
-sbLibraryServicePane.prototype._removeAllLibraries =
-function sbLibraryServicePane__removeAllLibraries() {
-  //logcall(arguments);
-  var libraries = this._libraryManager.getLibraries();
-  while (libraries.hasMoreElements()) {
-    var library = libraries.getNext();
-    this._libraryRemoved(library);
   }
 }
 
@@ -1191,7 +1135,7 @@ function sbLibraryServicePane__processListsInLibrary(aLibrary) {
 sbLibraryServicePane.prototype._libraryAdded =
 function sbLibraryServicePane__libraryAdded(aLibrary) {
   //logcall(arguments);
-  var node = this._ensureLibraryNodeExists(aLibrary, true);
+  var node = this._ensureLibraryNodeExists(aLibrary);
 
   // Listen to changes in the library so that we can display new playlists
   var filter = SBProperties.createArray([[SBProperties.hidden, null],
@@ -1265,7 +1209,7 @@ function sbLibraryServicePane__playlistRemoved(aMediaList) {
   var id = this._itemURN(aMediaList);
   var node = this._servicePane.getNode(id);
   if (node) {
-    this._servicePane.removeNode(node);
+    node.parentNode.removeChild(node);
   }
 }
 
@@ -1388,11 +1332,9 @@ function sbLibraryServicePane__getLibraryForURN(aID) {
 /**
  * Ensure the library nodes for the given library exists, then return the
  * container node
- * @param aMove true to force move the nodes into the container if they
- *              already exist elsewhere
  */
 sbLibraryServicePane.prototype._ensureLibraryNodeExists =
-function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary, aMove) {
+function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
   //logcall(arguments);
   var self = this;
 
@@ -1405,56 +1347,38 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary, aMove) {
    * @returns the node (old or new) for the library of the given type
    */
   function makeNodeFromLibrary(aLibrary, aConstraintType, aParentNode) {
-    const K_DEFAULT_WEIGHTS = {
-      // weights to use by default, for a given constraint type
-      "audio": 100,
-      "video": 200
-    };
-
     var id = self._libraryURN(aLibrary);
     if (aConstraintType) {
       // add a constraint only if the constraint type was specified
       id += ":constraint(" + aConstraintType + ")";
     }
     var node = self._servicePane.getNode(id);
-    var newnode = false;
     if (!node) {
       // Create the node
-      node = self._servicePane.addNode(id, aParentNode, true);
-      newnode = true;
-    }
-    var customType = aLibrary.getProperty(SBProperties.customType);
+      node = self._servicePane.createNode();
+      node.id = id;
+      node.contractid = CONTRACTID;
+      node.editable = false;
 
-    // Refresh the information just in case it is supposed to change
-    // Don't set name if it hasn't changed to avoid a UI redraw
-    if (node.name != aLibrary.name) {
-      node.name = aLibrary.name;
-    }
-    node.url = null;
-    node.contractid = CONTRACTID;
-    node.editable = false;
-    var hidden = (aLibrary.getProperty(SBProperties.hidden) == "1");
-    self._servicePane.setNodeHidden(node, CONTRACTID, hidden);
-
-    // Set properties for styling purposes
-    self._mergeProperties(node,
+      // Set properties for styling purposes
+      self._addClassNames(node,
                           ["library",
                            "libraryguid-" + aLibrary.guid,
                            aLibrary.type,
                            customType]);
-    // Save the type of media list so that we can group by type
-    node.setAttributeNS(LSP, "ListType", aLibrary.type)
-    // Save the guid of the library
-    node.setAttributeNS(LSP, "LibraryGUID", aLibrary.guid);
-    // and save it as the list guid
-    node.setAttributeNS(LSP, "ListGUID", aLibrary.guid);
-    // Save the customType for use by metrics.
-    node.setAttributeNS(LSP, "ListCustomType", customType);
-    // Save the customType for use by metrics.
-    node.setAttributeNS(LSP, "LibraryCustomType", customType);
-
-    if (aConstraintType) {
-        self._mergeProperties(node, [aConstraintType]);
+      // Save the type of media list so that we can group by type
+      node.setAttributeNS(LSP, "ListType", aLibrary.type)
+      // Save the guid of the library
+      node.setAttributeNS(LSP, "LibraryGUID", aLibrary.guid);
+      // and save it as the list guid
+      node.setAttributeNS(LSP, "ListGUID", aLibrary.guid);
+      // Save the customType for use by metrics.
+      node.setAttributeNS(LSP, "ListCustomType", customType);
+      // Save the customType for use by metrics.
+      node.setAttributeNS(LSP, "LibraryCustomType", customType);
+  
+      if (aConstraintType) {
+        self._addClassNames(node, [aConstraintType]);
         var builder = Cc["@songbirdnest.com/Songbird/Library/ConstraintBuilder;1"]
                         .createInstance(Ci.sbILibraryConstraintBuilder);
         builder.includeConstraint(LibraryUtils.standardFilterConstraint);
@@ -1463,16 +1387,23 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary, aMove) {
         node.setAttributeNS(SP,
                             "mediaListViewConstraints",
                             builder.get());
-        if (aConstraintType in K_DEFAULT_WEIGHTS) {
-          node.setAttributeNS(SP,
-                              "Weight",
-                              K_DEFAULT_WEIGHTS[aConstraintType]);
-        }
+      }
     }
+    var customType = aLibrary.getProperty(SBProperties.customType);
 
-    if (newnode) {
-      // Position the node in the tree
-      self._insertNodeAfter(aParentNode, node);
+    // Refresh the information just in case it is supposed to change
+    // Don't set name if it hasn't changed to avoid a UI redraw
+    let name = (aConstraintType ? '&servicesource.library.' + aConstraintType :
+                                  aLibrary.name);
+    if (node.name != name) {
+      node.name = name;
+    }
+    var hidden = (aLibrary.getProperty(SBProperties.hidden) == "1");
+    self._servicePane.setNodeHidden(node, CONTRACTID, hidden);
+
+    if (aParentNode && node.parentNode != aParentNode) {
+      // Insert the node as first child
+      aParentNode.insertBefore(node, aParentNode.firstChild);
     }
     return node;
   }
@@ -1482,83 +1413,54 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary, aMove) {
   if (customType == 'web') {
     // the web library has no video/audio split, nor a parent, so we need to
     // special case it here and return early
-    let node = makeNodeFromLibrary(aLibrary, null, self._servicePane.root);
+    let node = makeNodeFromLibrary(aLibrary, null, null);
 
     // Set the weight of the web library
     node.setAttributeNS(SP, 'Weight', 5);
     self._servicePane.setNodeHidden(node, CONTRACTID, true);
+
+    if (!node.parentNode)
+      this._servicePane.root.appendChild(node);
+
     return node;
   }
 
   // make the parent node
   var id = self._libraryURN(aLibrary);
   var parentNode = self._servicePane.getNode(id);
-  var newNode = false;
   if (!parentNode) {
     // Create the node
-    parentNode = self._servicePane.addNode(id, self._servicePane.root, true);
-    newNode = true;
+    parentNode = this._servicePane.createNode();
+    parentNode.id = id;
+    parentNode.editable = false;
+    parentNode.setAttributeNS(SP, 'Weight', -4);
+
+    // uncomment this to cause clicks on the container node to load an unfiltered
+    // library.  we need to think more about the ramifications for UE before
+    // turning this on, so it's off for now.
+    // (see also below on the migration part)
+    //parentNode.contractid = CONTRACTID;
+
+    // class names that should exist on the parent container node
+    const K_PARENT_PROPS = ["folder", "library-container"];
+  
+    self._addClassNames(parentNode, K_PARENT_PROPS);
+
+    if (aLibrary != this._libraryManager.mainLibrary) {
+      // always create them as hidden
+      self._servicePane.setNodeHidden(parentNode, CONTRACTID, true);
+    }
   }
+
   // Refresh the information just in case it is supposed to change
   // Don't set name if it hasn't changed to avoid a UI redraw
   if (parentNode.name != aLibrary.name) {
     parentNode.name = aLibrary.name;
   }
 
-  // uncomment this to cause clicks on the container node to load an unfiltered
-  // library.  we need to think more about the ramifications for UE before
-  // turning this on, so it's off for now.
-  // (see also below on the migration part)
-  //parentNode.contractid = CONTRACTID;
-
-  // properties that should exist on the parent container node
-  const K_PARENT_PROPS = ["folder", "library-container"];
-
-  parentNode.url = null;
-  parentNode.editable = false;
-  parentNode.setAttributeNS(SP, 'Weight', -4);
-  self._mergeProperties(parentNode, K_PARENT_PROPS);
-  if (newNode) {
-    // always create them as hidden
-    self._servicePane.setNodeHidden(parentNode, CONTRACTID, true);
-  }
-
   if (aLibrary == this._libraryManager.mainLibrary) {
-    var node = null;
-    // note that |node| should be the audio node at the end of this loop,
-    // for use by the migrate-from-before-split-views step
     for each (let type in ["video", "audio"]) {
-      node = makeNodeFromLibrary(aLibrary, type, parentNode);
-      node.name = '&servicesource.library.' + type;
-      // read the localized display name and write it back in, to work around
-      // the fact that the translation wrapper for the RDF data source doesn't
-      // deal with ArcLabelsIn correctly
-      node.name = node.displayName;
-      if (aMove || !node.parentNode) {
-        this._insertNodeAfter(parentNode, node);
-      }
-    }
-    this._servicePane.sortNode(parentNode);
-
-    if (newNode) {
-      this._servicePane.setNodeHidden(parentNode, CONTRACTID, false);
-      this._insertLibraryNode(parentNode, aLibrary);
-    }
-    else if (parentNode.properties.split(/\s/).indexOf('library') != -1) {
-      // this came from before we had split views for the libraries
-      // we need to migrate
-      this._servicePane.setNodeHidden(parentNode, CONTRACTID, false);
-      let oldProps = parentNode.properties.split(/\s+/);
-      let newProps = oldProps.filter(function(val) K_PARENT_PROPS.indexOf(val) == -1);
-      this._mergeProperties(node, newProps);
-      parentNode.properties = K_PARENT_PROPS.join(" ");
-
-      // properties we know we want to delete
-      for each (let i in ["url", "image", "tooltip", "contractid",
-                          "dndDragTypes", "dndAcceptNear", "dndAcceptIn"])
-      {
-        parentNode[i] = null;
-      }
+      let node = makeNodeFromLibrary(aLibrary, type, parentNode);
     }
 
     // the main library uses a separate Playlists and Podcasts folder
@@ -1573,14 +1475,6 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary, aMove) {
   else {
     for each (let type in ["video", "audio"]) {
       let node = makeNodeFromLibrary(aLibrary, type, parentNode);
-      node.name = '&servicesource.library.' + type;
-      // read the localized display name and write it back in, to work around
-      // the fact that the translation wrapper for the RDF data source doesn't
-      // deal with ArcLabelsIn correctly
-      node.name = node.displayName;
-      if (aMove || !node.parentNode) {
-        this._insertNodeAfter(parentNode, node);
-      }
 
       // other libraries store the playlists under them, but only
       // assign the default value if they do not specifically tell
@@ -1589,7 +1483,11 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary, aMove) {
       if (node.getAttributeNS(SP,'dndCustomAccept') != 'true')
         node.dndAcceptIn = 'text/x-sb-playlist-'+aLibrary.guid;
     }
-    this._servicePane.sortNode(parentNode);
+  }
+
+  if (!parentNode.parentNode) {
+    // Append library to the root, service pane will sort by weight
+    this._servicePane.root.appendChild(parentNode);
   }
 
   return parentNode;
@@ -1606,23 +1504,63 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
 
   var id = this._itemURN(aMediaList);
   var node = this._servicePane.getNode(id);
-  var newnode = false;
 
   var customType = aMediaList.getProperty(SBProperties.customType);
   var libCustomType = aMediaList.library.getProperty(SBProperties.customType);
 
-  // Migrate the downloads node
-  if (node && customType == 'download' && node.parentNode.id == "SB:Root") {
-    // Delete the existing one and continue as if adding a new node
-    this._servicePane.removeNode(node);
-    node = null;
-  }
-
   if (!node) {
     // Create the node
     // NOTE: it's a container for drag and drop purposes only.
-    node = this._servicePane.addNode(id, this._servicePane.root, true);
-    newnode = true;
+    node = this._servicePane.createNode();
+    node.id = id;
+    node.contractid = CONTRACTID;
+
+    if (customType == 'download') {
+      // the download media list isn't editable
+      node.editable = false;
+      // set the weight of the downloads list
+      node.setAttributeNS(SP, 'Weight', 999);
+    } else {
+      // the rest are, but only if the items themselves are not readonly
+      node.editable = aMediaList.userEditable;
+    }
+
+    // Set properties for styling purposes
+    if (aMediaList.getProperty(SBProperties.isSubscription) == "1") {
+      this._addClassNames(node, ["medialist", "medialisttype-dynamic"]);
+      node.setAttributeNS(LSP, "ListSubscription", "1");
+    } else {
+      this._addClassNames(node, ["medialist medialisttype-" + aMediaList.type]);
+      node.setAttributeNS(LSP, "ListSubscription", "0");
+    }
+    // Add the customType to the properties to encourage people to set it for CSS
+    this._addClassNames(node, [customType]);
+    // Save the type of media list so that we can group by type
+    node.setAttributeNS(LSP, "ListType", aMediaList.type);
+    // Save the guid of the library that owns this media list
+    node.setAttributeNS(LSP, "LibraryGUID", aMediaList.library.guid);
+    // and the guid of this list
+    node.setAttributeNS(LSP, "ListGUID", aMediaList.guid);
+    // Save the parent library custom type for this list.
+    node.setAttributeNS(LSP, "LibraryCustomType", libCustomType);
+    // Save the list customType for use by metrics.
+    node.setAttributeNS(LSP, "ListCustomType", customType);
+
+    // if auto dndAcceptIn/Near hasn't been disabled, assign it now
+    if (node.getAttributeNS(SP,'dndCustomAccept') != 'true') {
+      if (aMediaList.library == this._libraryManager.mainLibrary) {
+        // a playlist in the main library is considered a toplevel node
+        // (unless it's the download playlist)
+        if (customType != 'download') {
+          node.dndDragTypes = 'text/x-sb-playlist';
+          node.dndAcceptNear = 'text/x-sb-playlist';
+        }
+      } else {
+        // playlists in other libraries can only go into their libraries' nodes
+        node.dndDragTypes = 'text/x-sb-playlist-'+aMediaList.library.guid;
+        node.dndAcceptNear = 'text/x-sb-playlist-'+aMediaList.library.guid;
+      }
+    }
   }
 
   // Refresh the information just in case it is supposed to change
@@ -1630,65 +1568,15 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
   if (node.name != aMediaList.name) {
     node.name = aMediaList.name;
   }
-  node.url = null;
-  node.contractid = CONTRACTID;
-  if (customType == 'download') {
-    // the download media list isn't editable
-    node.editable = false;
-    // set the weight of the downloads list
-    node.setAttributeNS(SP, 'Weight', 999);
-  } else {
-    // the rest are, but only if the items themselves are not readonly
-    node.editable = aMediaList.userEditable;
-  }
-  // Set properties for styling purposes
-  if (aMediaList.getProperty(SBProperties.isSubscription) == "1") {
-    this._mergeProperties(node, ["medialist", "medialisttype-dynamic"]);
-    node.setAttributeNS(LSP, "ListSubscription", "1");
-  } else {
-    this._mergeProperties(node, ["medialist medialisttype-" + aMediaList.type]);
-    node.setAttributeNS(LSP, "ListSubscription", "0");
-  }
-  // Add the customType to the properties to encourage people to set it for CSS
-  this._mergeProperties(node, [customType]);
-  // Save the type of media list so that we can group by type
-  node.setAttributeNS(LSP, "ListType", aMediaList.type);
-  // Save the guid of the library that owns this media list
-  node.setAttributeNS(LSP, "LibraryGUID", aMediaList.library.guid);
-  // and the guid of this list
-  node.setAttributeNS(LSP, "ListGUID", aMediaList.guid);
-  // Save the parent library custom type for this list.
-  node.setAttributeNS(LSP, "LibraryCustomType", libCustomType);
-  // Save the list customType for use by metrics.
-  node.setAttributeNS(LSP, "ListCustomType", customType);
 
-  // if auto dndAcceptIn/Near hasn't been disabled, assign it now
-  if (node.getAttributeNS(SP,'dndCustomAccept') != 'true') {
-    if (aMediaList.library == this._libraryManager.mainLibrary) {
-      // a playlist in the main library is considered a toplevel node
-      if (customType == 'download') {
-        // unless its the download playlist
-        node.dndDragTypes = '';
-        node.dndAcceptNear = '';
-      } else {
-        node.dndDragTypes = 'text/x-sb-playlist';
-        node.dndAcceptNear = 'text/x-sb-playlist';
-      }
-    } else {
-      // playlists in other libraries can only go into their libraries' nodes
-      node.dndDragTypes = 'text/x-sb-playlist-'+aMediaList.library.guid;
-      node.dndAcceptNear = 'text/x-sb-playlist-'+aMediaList.library.guid;
-    }
-  }
+  // Get hidden state from list
+  var hidden = (aMediaList.getProperty(SBProperties.hidden) == "1");
+  this._servicePane.setNodeHidden(node, CONTRACTID, hidden);
 
-  if (newnode) {
+  if (!node.parentNode) {
     // Place the node in the tree
     this._insertMediaListNode(node, aMediaList);
   }
-
-  // Get hidden state from list, since we hide all list nodes on startup
-  var hidden = (aMediaList.getProperty(SBProperties.hidden) == "1");
-  this._servicePane.setNodeHidden(node, CONTRACTID, hidden);
 
   return node;
 }
@@ -1699,34 +1587,32 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
  */
 sbLibraryServicePane.prototype._ensurePlaylistFolderExists =
 function sbLibraryServicePane__ensurePlaylistFolderExists() {
-  var fnode = this._servicePane.getNode('SB:Playlists');
+  let fnode = this._servicePane.getNode("SB:Playlists");
   if (!fnode) {
     // make sure it exists
-    var fnode = this._servicePane.addNode('SB:Playlists',
-        this._servicePane.root, true);
+    fnode = this._servicePane.createNode();
+    fnode.id = "SB:Playlists";
+    fnode.name = '&servicesource.playlists';
+    this._addClassNames(fnode, ["folder", this._makeCSSProperty(fnode.name)]);
+    fnode.contractid = CONTRACTID;
+    fnode.dndAcceptIn = 'text/x-sb-playlist';
+    fnode.editable = false;
+    fnode.setAttributeNS(SP, 'Weight', 3);
+    this._servicePane.root.appendChild(fnode);
   }
-  fnode.name = '&servicesource.playlists';
-  this._mergeProperties(fnode, ["folder", this._makeCSSProperty(fnode.name)]);
-  this._servicePane.setNodeHidden(fnode, CONTRACTID, false);
-  fnode.contractid = CONTRACTID;
-  fnode.dndAcceptIn = 'text/x-sb-playlist';
-  fnode.editable = false;
-  fnode.setAttributeNS(SP, 'Weight', 3);
 
   // Make sure the "New Playlist" button/node exists
-  var npnode = this._servicePane.getNode('SB:Playlists_CreateNewPlaylist');
-  if (!npnode)
-    npnode = this._servicePane.addNode('SB:Playlists_CreateNewPlaylist', fnode, false);
-  npnode.name = '&servicesource.playlists.newplaylist';
-  this._servicePane.setNodeHidden(npnode, CONTRACTID, false);
-  npnode.contractid = CONTRACTID;
-  npnode.editable = false;
-  npnode.image = "chrome://songbird/skin/service-pane/icon-new-playlist.png";
-  npnode.setAttributeNS(SP, 'Weight', 1);
-  if (fnode.firstChild.id != "SB:Playlists_CreateNewPlaylist") {
+  let npnode = this._servicePane.getNode("SB:Playlists_CreateNewPlaylist");
+  if (!npnode) {
+    npnode = this._servicePane.createNode();
+    npnode.id = "SB:Playlists_CreateNewPlaylist";
+    npnode.name = '&servicesource.playlists.newplaylist';
+    npnode.contractid = CONTRACTID;
+    npnode.editable = false;
+    npnode.image = "chrome://songbird/skin/service-pane/icon-new-playlist.png";
+    npnode.setAttributeNS(SP, 'eventType', "createnewplaylist");
     fnode.insertBefore(npnode, fnode.firstChild);
   }
-  npnode.setAttributeNS(SP, 'eventType', "createnewplaylist");
   
   return fnode;
 }
@@ -1741,19 +1627,18 @@ function sbLibraryServicePane__ensurePodcastFolderExists() {
   // can no longer be created.
   return null;
 
-  var fnode = this._servicePane.getNode("SB:Podcasts");
+  let fnode = this._servicePane.getNode("SB:Podcasts");
   if (!fnode) {
     // make sure it exists
-    var fnode = this._servicePane.addNode("SB:Podcasts",
-                                          this._servicePane.root,
-                                          true);
+    fnode = this._servicePane.createNode();
+    fnode.id = "SB:Podcasts";
+    fnode.name = "&servicesource.podcasts";
+    this._addClassNames(fnode, ["folder", this._makeCSSProperty(fnode.name)]);
+    fnode.contractid = CONTRACTID;
+    fnode.editable = false;
+    fnode.setAttributeNS(SP, "Weight", 2);
+    this._servicePane.root.appendChild(fnode);
   }
-  fnode.name = "&servicesource.podcasts";
-  this._mergeProperties(fnode, ["folder", this._makeCSSProperty(fnode.name)]);
-  this._servicePane.setNodeHidden(fnode, CONTRACTID, false);
-  fnode.contractid = CONTRACTID;
-  fnode.editable = false;
-  fnode.setAttributeNS(SP, "Weight", 2);
   return fnode;
 }
 
@@ -1763,21 +1648,20 @@ function sbLibraryServicePane__ensurePodcastFolderExists() {
  */
 sbLibraryServicePane.prototype._ensureiTunesFolderExists =
 function sbLibraryServicePane__ensureiTunesFolderExists() {
-  var fnode = this._servicePane.getNode('SB:iTunes');
+  let fnode = this._servicePane.getNode("SB:iTunes");
   if (!fnode) {
     // make sure it exists
-    var fnode = this._servicePane.addNode('SB:iTunes',
-        this._servicePane.root, true);
+    fnode = this._servicePane.createNode();
+    fnode.id = "SB:iTunes";
+    fnode.name = '&servicesource.itunes';
+    this._addClassNames(fnode, ["folder", this._makeCSSProperty(fnode.name)]);
+    fnode.contractid = CONTRACTID;
+    fnode.editable = false;
+    fnode.setAttributeNS(SP, 'Weight', 3);
+    this._servicePane.root.appendChild(fnode);
   }
-  fnode.name = '&servicesource.itunes';
-  this._mergeProperties(fnode, ["folder", this._makeCSSProperty(fnode.name)]);
-  this._servicePane.setNodeHidden(fnode, CONTRACTID, false);
-  fnode.contractid = CONTRACTID;
-  fnode.editable = false;
-  fnode.setAttributeNS(SP, 'Weight', 3);
   return fnode;
 }
-
 
 sbLibraryServicePane.prototype._scanForRemovedItems =
 function sbLibraryServicePane__scanForRemovedItems(aLibrary) {
@@ -1801,66 +1685,7 @@ function sbLibraryServicePane__scanForRemovedItems(aLibrary) {
     // Remove node if item no longer exists
     var mediaItem = this._getItemForURN(libraryItemNode.id);
     if (!mediaItem)
-      this._servicePane.removeNode(libraryItemNode);
-  }
-}
-
-
-/**
- * Logic to determine where a library node should appear
- * in the service pane tree
- */
-sbLibraryServicePane.prototype._insertLibraryNode =
-function sbLibraryServicePane__insertLibraryNode(aNode, aLibrary) {
-  //logcall(arguments);
-
-  // If this is the main library it should go at
-  // the top of the list
-  if (aLibrary == this._libraryManager.mainLibrary) {
-    if (this._servicePane.root.firstChild &&
-        this._servicePane.root.firstChild.id != aNode.id)
-    {
-      this._servicePane.root.insertBefore(aNode,
-              this._servicePane.root.firstChild);
-    }
-  // Otherwise, add above the first non-library item?
-  } else {
-    this._insertAfterLastOfSameType(aNode, this._servicePane.root);
-  }
-}
-
-/**
- * Logic to determine where a media list node should appear
- * in the service pane tree
- */
-sbLibraryServicePane.prototype._insertNodeAfter =
-function sbLibraryServicePane__insertNodeAfter(aParent, aNode, aPrecedingNode) {
-  // don't be bad
-  if (!aParent.isContainer) {
-    LOG("sbLibraryServicePane__insertNodeAfter: cannot insert under non-container node.");
-    return;
-  }
-  aParent.isOpen = true;
-
-  // the node we'll use to insertBefore
-  var next;
-  // if the preceding node is not null, use its next sibling, otherwise
-  // use the parent first child
-  if (aPrecedingNode)
-    next = aPrecedingNode.nextSibling;
-  else
-    next = aParent.firstChild;
-    
-  if (next) {
-    // if the next node is same node as the one we are inserting, 
-    // there is nothing to do
-    if (next.id != aNode.id) {
-      aParent.insertBefore(aNode, next);
-    }
-  } else {
-    // there is no next item, the parent has no item at all, so use
-    // append instead
-    aParent.appendChild(aNode);
+      libraryItemNode.parentNode.removeChild(libraryItemNode);
   }
 }
 
@@ -1881,60 +1706,14 @@ function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList) {
     if (aNode.getAttributeNS(LSP, 'ListCustomType') == 'download') {
       // Fix it to the bottom of the library node
       var libraryNode = this.getNodeForLibraryResource(aMediaList.library);
+
+      // getNodeForLibraryResource will usually return a child of the library
+      // container
+      if (libraryNode.parentNode != this._servicePane.root)
+        libraryNode = libraryNode.parentNode;
+
       libraryNode.appendChild(aNode);
     } else {
-      var self = this;
-      // this describes each type of playlist with the attributes/value pairs
-      // that we can use to recognize it.
-      // Note that the "type" field should be unique. it is not used anywhere
-      // else than in this function, so you may use whatever you wish.
-      var type_smart =        { type: "smart",
-                                conditions: [ { attribute: "ListType",
-                                                value    : "smart" } ]
-                              };
-      var type_simple =       { type: "simple",
-                                conditions: [ { attribute: "ListType",
-                                                value    : "simple" },
-                                              { attribute: "ListSubscription",
-                                                value    : "0" } ]
-                              };
-      var type_subscription = { type: "subscription",
-                                conditions: [ { attribute: "ListType",
-                                                value    : "simple" },
-                                              { attribute: "ListSubscription",
-                                                value    : "1" } ]
-                              };
-      
-      // this is the order in which the playlists appear in the playlist folder
-      var playlistTypes = [ type_smart, 
-                            type_simple, 
-                            type_subscription ];
-      
-      // create a search array to be used in _findLastNodeByAttributes
-      // based on the type provided. If the type is not found, the search
-      // array will contain all the types, so the list will go to the end
-      // of the folder.
-      function makeSearchArray(aPlaylistType) {
-        var searchArray = [];
-        for (var i=0;i<playlistTypes.length;i++) {
-          var typeObject = playlistTypes[i];
-          searchArray.push(typeObject.conditions);
-          if (typeObject.type == aPlaylistType)
-            break;
-        }
-        return searchArray;
-      }
-      
-      // returns the playlist type for the given node
-      function getNodeType(aNode) {
-        for (var i=0;i<playlistTypes.length;i++) {
-          var typeObject = playlistTypes[i];
-          if (self._matchNode(aNode, typeObject.conditions))
-            return typeObject.type;
-        }
-        return null;
-      }
-
       // make sure the playlist folder exists
       var folder;
       // if it has an iTunesGUID property, it's imported from iTunes
@@ -1945,22 +1724,8 @@ function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList) {
       } else {
         folder = this._ensurePlaylistFolderExists();
       }
-      this._servicePane.sortNode(folder);
-      
-      // get the type for this node
-      var nodeType = getNodeType(aNode);
-      
-      // construct the search array
-      var searchArray = makeSearchArray(nodeType);
 
-      // look for the insertion point
-      var insertionPoint = this._findLastNodeByAttributes(folder, 
-                                                          searchArray,
-                                                          aNode);
-      
-      // insert at the right spot (if insertionPoint is null, the node will
-      // be inserted as the new first child)
-      this._insertNodeAfter(folder, aNode, insertionPoint);
+      this._insertAfterLastOfSameType(aNode, folder);
     }
   }
   // If it is a secondary library playlist, it should be
@@ -1970,89 +1735,20 @@ function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList) {
     // Find the parent libary in the tree
     var parentLibraryNode = this.getNodeForLibraryResource(aMediaList.library);
 
-    // If the parent library is a top level node, and a container, 
-    // make the playlist node its child
-    
+    // getNodeForLibraryResource will usually return a child of the library
+    // container
+    if (parentLibraryNode && parentLibraryNode.parentNode != this._servicePane.root)
+      parentLibraryNode = parentLibraryNode.parentNode;
+
+    // If we found a parent library node make the playlist node its child
     if (parentLibraryNode) {
-      if (parentLibraryNode.isContainer && 
-          parentLibraryNode.parentNode.id == "SB:Root") {
-        this._insertAfterLastOfSameType(aNode, parentLibraryNode);
-      } else {
-        this._insertAfterLastOfSameType(aNode, parentLibraryNode.parentNode);
-      }
+      this._insertAfterLastOfSameType(aNode, parentLibraryNode);
     } else {
       LOG("sbLibraryServicePane__insertMediaListNode: could not add media list to parent library");
-      if (parentLibraryNode) {
-        LOG(parentLibraryNode.name);
-      }
       this._servicePane.root.appendChild(aNode);
     }
   }
 }
-
-/**
- * Match a node to a list of attribute/value pairs. All of the values for a 
- * node should match for this function to return true.
- */
-sbLibraryServicePane.prototype._matchNode =
-function sbLibraryServicePane__matchNode(aNode, aAttributeValues) {
-  // it's a match if there are no attribute/value pairs in the list
-  var match = true;
-  
-  // match each of the attribute/value pairs
-  for each (var match in aAttributeValues) {
-    var attribute = match.attribute;
-    var value = match.value;
-    // if this is not a match, skip this condition
-    if (aNode.getAttributeNS(LSP, attribute) != value) {
-      match = false;
-      // don't test any more attribute/value pairs
-      break;
-    }    
-  }
-  
-  return match;
-}
-
-/**
- * Finds the last node that matches any of the search criterions in a list,
- * with an optional excluded node.
- * Each search criterion is a list of attribute/pairs that must all match a node
- * for the condition to be fulfilled.
- */
-sbLibraryServicePane.prototype._findLastNodeByAttributes =
-function sbLibraryServicePane__findLastNodeByAttributes(aParent, 
-                                                        aSearchArray,
-                                                        aExcludedNode) {
-  var children = aParent.childNodes;
-  var lastMatch;
-  while (children.hasMoreElements()) {
-    var child = children.getNext().QueryInterface(Ci.sbIServicePaneNode);
-    
-    if (child.hidden)
-      continue;
-
-    // If this node belongs to the library service pane, and
-    // is not the node we are trying to insert, then check
-    // to see if this is a match
-    if (child.contractid == CONTRACTID && 
-        (!aExcludedNode || 
-          child.id != aExcludedNode.id)) {
-    
-      // check each of the search criteria
-      for each (var criterion in aSearchArray) {
-        if (this._matchNode(child, criterion)) {
-          // remember this node
-          lastMatch = child;
-          // don't test any more criteria
-          break;
-        }
-      }
-    }
-  } // end of while
-  return lastMatch;
-}
-
 
 /**
  * Inserts the given node under the given parent and attempts to keep
@@ -2063,47 +1759,41 @@ sbLibraryServicePane.prototype._insertAfterLastOfSameType =
 function sbLibraryServicePane__insertAfterLastOfSameType(aNode, aParent) {
   //logcall(arguments);
 
-  if (!aParent.isContainer) {
-    LOG("sbLibraryServicePane__insertAfterLastOfSameType: cannot insert under non-container node.");
-    return;
+  function getNodeType(aNode) {
+    let type = aNode.getAttributeNS(LSP, "ListType");
+    if (type == "simple" && aNode.getAttributeNS(LSP, "ListSubscription") == "1")
+      return "subscription";
+    else
+      return type;
   }
-  aParent.isOpen = true;
 
-  // Insert after last of same type before hitting
-  // non-library related items
-  var children = aParent.childNodes;
-  var nodeType = aNode.getAttributeNS(LSP, "ListType");
-  var lastOfSameType;
-  var inserted = false;
-  while (children.hasMoreElements()) {
-    var child = children.getNext().QueryInterface(Ci.sbIServicePaneNode);
-
-    // If this node belongs to the library service pane, and
-    // is not the node we are trying to insert, then check
-    // to see if this is an insertion point candidate
-    if (child.contractid == CONTRACTID && child.id != aNode.id) {
-
-      // Keep track of last node similar to this one, preferring
-      // nodes that are exactly the same type as this one
-      if (nodeType == child.getAttributeNS(LSP, "ListType") ||
-          lastOfSameType == null ||
-          (lastOfSameType != null &&
-             lastOfSameType.getAttributeNS(LSP, "ListType") != nodeType))
-      {
-        lastOfSameType = child;
-      }
+  // Try to insert after last of same type
+  let nodeType = getNodeType(aNode);
+  let insertionPoint = null;
+  let found = false;
+  for (let child = aParent.lastChild; child; child = child.previousSibling) {
+    // Stop at a node that belongs to the library service pane and has the
+    // same list type as the node we are inserting
+    if (child.contractid == CONTRACTID && getNodeType(child) == nodeType) {
+      found = true;
+      break;
     }
-  } // end of while
+
+    insertionPoint = child;
+  }
 
   // Insert the new list after the last of the same type
   // or at the end of the list
-  if (lastOfSameType && lastOfSameType.nextSibling) {
-    if (lastOfSameType.nextSibling.id != aNode.id) {
-      aParent.insertBefore(aNode, lastOfSameType.nextSibling);
-    }
+  if (found) {
+    aParent.insertBefore(aNode, insertionPoint);
   } else {
     aParent.appendChild(aNode);
   }
+
+  // Ensure that all parent containers are open and the node is visible
+  for (let parent = aParent; parent; parent = parent.parentNode)
+    if (!parent.isOpen)
+      parent.isOpen = true;
 }
 
 sbLibraryServicePane.prototype._appendMenuItem =
@@ -2140,16 +1830,14 @@ function sbLibraryServicePane__removeListNodesForLibrary(aStartNode, aLibraryGUI
 
   while (node) {
 
-    if (node.isContainer) {
-      this._removeListNodesForLibrary(node, aLibraryGUID);
-    }
+    this._removeListNodesForLibrary(node, aLibraryGUID);
 
     var nextSibling = node.nextSibling;
 
     if (this._getItemGUIDForURN(node.id)) {
       var nodeLibraryGUID = node.getAttributeNS(LSP, "LibraryGUID");
       if (nodeLibraryGUID == aLibraryGUID) {
-        this._servicePane.removeNode(node);
+        node.parentNode.removeChild(node);
       }
     }
 
@@ -2157,24 +1845,18 @@ function sbLibraryServicePane__removeListNodesForLibrary(aStartNode, aLibraryGUI
   }
 }
 
-sbLibraryServicePane.prototype._mergeProperties =
-function sbLibraryServicePane__mergeProperties(aNode, aList) {
+sbLibraryServicePane.prototype._addClassNames =
+function sbLibraryServicePane__addClassNames(aNode, aList) {
+  let className = aNode.className || "";
+  let existing = {};
+  for each (let name in className.split(" "))
+    existing[name] = true;
 
-  var o = {};
-  var a = aNode.properties?aNode.properties.split(" "):[];
-  a.forEach(function(prop) {
-    o[prop] = 1;
-  });
+  for each (let name in aList)
+    if (!existing.hasOwnProperty(name))
+      className += (className ? " " : "") + name;
 
-  aList.forEach(function(prop) {
-    o[prop] = 1;
-  });
-
-  var retval = [];
-  for (var prop in o) {
-    retval.push(prop);
-  }
-  aNode.properties = retval.join(" ");
+  aNode.className = className;
 }
 
 /**
@@ -2325,6 +2007,11 @@ function sbLibraryServicePane__initLibraryManager() {
   // in sync with the the libraries
   this._libraryManager.addListener(this);
 
+  // Make sure to remove the library manager listener on shutdown
+  var obs = Cc["@mozilla.org/observer-service;1"].
+            getService(Ci.nsIObserverService);
+  obs.addObserver(this, "songbird-library-manager-before-shutdown", false);
+
   this._addAllLibraries();
 }
 
@@ -2338,14 +2025,7 @@ function sbLibraryServicePane_observe(subject, topic, data) {
   var obs = Cc["@mozilla.org/observer-service;1"]
               .getService(Ci.nsIObserverService);
 
-  if (topic == "songbird-library-manager-ready") {
-    obs.removeObserver(this, "songbird-library-manager-ready");
-
-    if (!this._libraryManager) {
-      this._initLibraryManager();
-    }
-  }
-  else if (topic == "songbird-library-manager-before-shutdown") {
+  if (topic == "songbird-library-manager-before-shutdown") {
     obs.removeObserver(this, "songbird-library-manager-before-shutdown");
 
     var libraryManager = Cc['@songbirdnest.com/Songbird/library/Manager;1']

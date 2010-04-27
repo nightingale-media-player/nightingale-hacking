@@ -34,7 +34,6 @@ const Cu = Components.utils;
 
 const CONTRACTID = "@songbirdnest.com/servicepane/device;1";
 
-const NC='http://home.netscape.com/NC-rdf#';
 const SP = "http://songbirdnest.com/rdf/servicepane#";
 const DEVICESP_NS = "http://songbirdnest.com/rdf/device-servicepane#";
 
@@ -81,7 +80,7 @@ function sbDeviceServicePane() {
 //////////////////////////
 sbDeviceServicePane.prototype.QueryInterface =
   XPCOMUtils.generateQI([Ci.sbIServicePaneModule,
-                         Ci.sbIServicePaneListener,
+                         Ci.sbIServicePaneMutationListener,
                          Ci.sbIDeviceServicePaneService]);
 sbDeviceServicePane.prototype.classDescription =
   "Songbird Device Service Pane Service";
@@ -109,7 +108,7 @@ function sbDeviceServicePane_servicePaneInit(sps) {
   this._libraryServicePane = Cc["@songbirdnest.com/servicepane/library;1"]
                                .getService(Ci.sbILibraryServicePaneService);
 
-  sps.addListener(this);
+  sps.root.addMutationListener(this);
 
   // load the device context menu document
   this._deviceContextMenuDoc =
@@ -124,7 +123,7 @@ function sbDeviceServicePane_servicePaneInit(sps) {
 sbDeviceServicePane.prototype.shutdown =
 function sbDeviceServicePane_shutdown() {
   // release object references
-  this._servicePane.removeListener(this);
+  this._servicePane.root.removeMutationListener(this);
   this._servicePane = null;
   this._libraryServicePane = null;
   this._deviceContextMenuDoc = null;
@@ -214,7 +213,8 @@ function sbDeviceServicePane_createNodeForDevice(aDevice, aDeviceIdentifier) {
   var node = this._servicePane.getNode(id);
   if (!node) {
     // Create the node
-    node = this._servicePane.addNode(id, this._servicePane.root, true);
+    node = this._servicePane.createNode();
+    node.id = id;
   }
 
   // Refresh the information just in case it is supposed to change
@@ -222,8 +222,9 @@ function sbDeviceServicePane_createNodeForDevice(aDevice, aDeviceIdentifier) {
   node.setAttributeNS(SP, "Weight", DEVICE_NODE_WEIGHT);
   node.editable = false;
 
-  // Sort node into position.
-  this._servicePane.sortNode(node);
+  // Add the node
+  if (!node.parentNode)
+    this._servicePane.root.appendChild(node);
 
   return node;
 }
@@ -236,7 +237,8 @@ function sbDeviceServicePane_createNodeForDevice2(aDevice) {
   var node = this._servicePane.getNode(id);
   if (!node) {
     // Create the node
-    node = this._servicePane.addNode(id, this._servicePane.root, true);
+    node = this._servicePane.createNode();
+    node.id = id;
   }
 
   // Refresh the information just in case it is supposed to change
@@ -245,7 +247,7 @@ function sbDeviceServicePane_createNodeForDevice2(aDevice) {
   node.setAttributeNS(DEVICESP_NS, "deviceNodeType", "device");
   node.setAttributeNS(SP, "Weight", DEVICE_NODE_WEIGHT);
   node.editable = false;
-  node.properties = "device";
+  node.className = "device";
 
   try {
     var iconUri = aDevice.properties.iconUri;
@@ -261,8 +263,9 @@ function sbDeviceServicePane_createNodeForDevice2(aDevice) {
     /* we do not care if setting the icon fails */
   }
 
-  // Sort node into position.
-  this._servicePane.sortNode(node);
+  // Add the node
+  if (!node.parentNode)
+    this._servicePane.root.appendChild(node);
 
   return node;
 }
@@ -289,7 +292,7 @@ function sbDeviceServicePane_createLibraryNodeForDevice(aDevice, aLibrary) {
   if (deviceNode) {
     while (parentNode.lastChild) {
       libraryNode = parentNode.lastChild;
-      let props = libraryNode.properties.split(/\s/);
+      let props = libraryNode.className.split(/\s/);
       props = props.filter(function(val) val in CAPS_MAP);
       // there should only be one anyway...
       // assert(props.length < 2);
@@ -305,21 +308,11 @@ function sbDeviceServicePane_createLibraryNodeForDevice(aDevice, aLibrary) {
       libraryNode.setAttributeNS(DEVICESP_NS, "device-id", aDevice.id);
       libraryNode.setAttributeNS(DEVICESP_NS, "deviceNodeType", "library");
 
-      var firstChild = deviceNode.firstChild;
-      if (!firstChild) {
-        deviceNode.appendChild(libraryNode);
-      }
-      else {
-        deviceNode.insertBefore(libraryNode, firstChild);
-      }
+      deviceNode.insertBefore(libraryNode, deviceNode.firstChild);
     }
   }
   else {
     Components.utils.reportError("MISSING DEVICE for " + aDevice);
-  }
-  if (parentNode.parentNode) {
-    // remove the dummy container node
-    //parentNode.parentNode.removeChild(parentNode);
   }
   return audioNode;
 }
@@ -341,20 +334,19 @@ function sbDeviceServicePane_setFillDefaultContxtMenu(aNode,
   }
 }
 
-////////////////////////////
-// sbIServicePaneListener //
-////////////////////////////
-sbDeviceServicePane.prototype.nodePropertyChanged =
-function sbDeviceServicePane_nodePropertyChanged(aNodeId, aAttrName) {
+////////////////////////////////////
+// sbIServicePaneMutationListener //
+////////////////////////////////////
+sbDeviceServicePane.prototype.attrModified =
+function sbDeviceServicePane_attrModified(aNode, aAttrName, aNamespace,
+                                          aOldVal, aNewVal) {
   // we only care about poking things as they get unhidden
-  if (aAttrName != SP + "Hidden") {
+  if (aNamespace != null || aAttrName != "hidden" ||
+      aOldVal != "true" || aNewVal == "true") {
     return;
   }
-  var node = this._servicePane.getNode(aNodeId);
-  if (!node) {
-    return;
-  }
-  var resource = this._libraryServicePane.getLibraryResourceForNode(node);
+
+  var resource = this._libraryServicePane.getLibraryResourceForNode(aNode);
   if (!resource) {
     return;
   }
@@ -374,6 +366,15 @@ function sbDeviceServicePane_nodePropertyChanged(aNodeId, aAttrName) {
   }
 };
 
+sbDeviceServicePane.prototype.nodeInserted =
+function sbDeviceServicePane_nodeInserted(aNode, aParent) {
+  this.attrModified(aNode, "hidden", null, "true", "false");
+};
+
+sbDeviceServicePane.prototype.nodeRemoved =
+function sbDeviceServicePane_nodeRemoved(aNode, aParent) {
+  this.attrModified(aNode, "hidden", null, "false", "true");
+};
 
 /////////////////////
 // Private Methods //
