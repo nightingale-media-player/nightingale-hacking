@@ -104,6 +104,26 @@ var SBUtils = {
     // Queue an event to call the function.
     var runnable = { run: aFunction };
     currentThread.dispatch(runnable, Ci.nsIEventTarget.DISPATCH_NORMAL);
+  },
+
+
+  /**
+   * Set the text for the XUL description element specified by aDescriptionElem
+   * to the text specified by aText.
+   *
+   * \param aDescriptionElem    XUL description element for which to set text.
+   * \param aText               Text to set for XUL description element.
+   */
+
+  setDescriptionText: function SBUtils_setDescriptionText(aDescriptionElem,
+                                                          aText) {
+    // Remove all description element children.
+    while (aDescriptionElem.firstChild)
+      aDescriptionElem.removeChild(aDescriptionElem.firstChild);
+
+    // Add a text node with the text to the description element.
+    var textNode = aDescriptionElem.ownerDocument.createTextNode(aText);
+    aDescriptionElem.appendChild(textNode);
   }
 };
 
