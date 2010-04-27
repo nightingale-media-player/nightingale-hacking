@@ -39,3 +39,7 @@ static inline FILE* _tfopen(const char* filename, const char* mode) {
 static inline int _tchdir(const char* dirname) {
   return chdir(dirname);
 }
+
+static inline int _vtprintf(const char *format, va_list ap) {
+  return vprintf(format, ap);
+}

@@ -39,6 +39,7 @@ CPP_SRCS = main.cpp \
            readini.cpp \
            stringconvert.cpp \
            debug.cpp \
+           utils.cpp \
            $(NULL)
 
 # we force include mozilla-config.h/xpcom-config.h; otherwise this is not necessary

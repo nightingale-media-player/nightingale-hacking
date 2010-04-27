@@ -1,4 +1,4 @@
-// vim: set sw=2 :
+/* vim: le=unix sw=2 : */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -36,49 +36,21 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#include <cstdio>
-#include <cstdarg>
-#include <cstdlib>
+#ifndef DISTHELPER_UTILS_H
+#define DISTHELPER_UTILS_H
 
-#include "commands.h"
 #include "stringconvert.h"
 
-#ifdef XP_WIN
-#include <tchar.h>
-#include <windows.h>
-#else
-#include "tchar_compat.h"
-#endif /* XP_WIN */
+/**
+ * Filters a line, replacing $foo$ with their values; unrecognized strings will
+ * be left alone.
+ * Currently defined variables:
+ *   $APPDIR$ - the application directory
+ *
+ * Will also fallback to environment variables, both with and without the
+ * prefix DISTHELPER_; for example, "$foo$" will try "DISTHELPER_foo", and
+ * if not found, will try "foo".
+ */
+tstring FilterSubstitution(tstring aString);
 
-void TestParser();
-void TestDebug();
-void TestVersion();
-void TestEnvironment();
-
-#ifdef XP_WIN
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
-#else
-int main()
-#endif
-{
-  // disable the user-visible (and hanging) error reporting
-  _tputenv(_T("DISTHELPER_SILENT_FAILURE=1"));
-  _tchdir(GetAppResoucesDirectory().c_str());
-  TestParser();
-  TestDebug();
-  TestVersion();
-  TestEnvironment();
-  return 0;
-}
-
-void check(int cond, const char* fmt, ...) {
-  if (cond)
-    return;
-
-  va_list args;
-  va_start(args, fmt);
-  _vtprintf(ConvertUTF8toUTFn(fmt).c_str(), args);
-  va_end(args);
-  fflush(stdout);
-  exit(1);
-}
+#endif /* DISTHELPER_UTILS_H */

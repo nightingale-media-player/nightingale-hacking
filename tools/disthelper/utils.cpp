@@ -1,4 +1,4 @@
-// vim: set sw=2 :
+/* vim: le=unix sw=2 : */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -36,49 +36,61 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#include <cstdio>
-#include <cstdarg>
-#include <cstdlib>
+#include "utils.h"
 
 #include "commands.h"
 #include "stringconvert.h"
 
 #ifdef XP_WIN
-#include <tchar.h>
-#include <windows.h>
+  #include <windows.h>
+  #include <tchar.h>
 #else
-#include "tchar_compat.h"
+  #include <tchar_compat.h>
 #endif /* XP_WIN */
 
-void TestParser();
-void TestDebug();
-void TestVersion();
-void TestEnvironment();
-
-#ifdef XP_WIN
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
-#else
-int main()
-#endif
-{
-  // disable the user-visible (and hanging) error reporting
-  _tputenv(_T("DISTHELPER_SILENT_FAILURE=1"));
-  _tchdir(GetAppResoucesDirectory().c_str());
-  TestParser();
-  TestDebug();
-  TestVersion();
-  TestEnvironment();
-  return 0;
-}
-
-void check(int cond, const char* fmt, ...) {
-  if (cond)
-    return;
-
-  va_list args;
-  va_start(args, fmt);
-  _vtprintf(ConvertUTF8toUTFn(fmt).c_str(), args);
-  va_end(args);
-  fflush(stdout);
-  exit(1);
+tstring FilterSubstitution(tstring aString) {
+  tstring result = aString;
+  tstring::size_type start = 0, end = tstring::npos;
+  TCHAR *envData;
+  while (true) {
+    start = result.find(tstring::value_type('$'), start);
+    if (start == tstring::npos) {
+      break;
+    }
+    end = result.find(tstring::value_type('$'), start + 1);
+    if (end == tstring::npos) {
+      break;
+    }
+    // Try to substitute $APPDIR$
+    tstring variable = result.substr(start + 1, end - start - 1);
+    if (variable == _T("APPDIR")) {
+      tstring appdir = GetAppResoucesDirectory();
+      DebugMessage("AppDir: %s", appdir.c_str());
+      result.replace(start, end-start+1, appdir);
+      start += appdir.length();
+      continue;
+    }
+    // Try to substitute $XXX$ with environment variable %DISTHELPER_XXX%
+    tstring envName(_T("DISTHELPER_"));
+    envName.append(variable);
+    envData = _tgetenv(envName.c_str());
+    if (envData && *envData) {
+      tstring envValue(envData);
+      DebugMessage("Environment %s: %s", envName.c_str(), envValue.c_str());
+      result.replace(start, end-start+1, envValue.c_str());
+      start += envValue.length();
+      continue;
+    }
+    // Try to substitute $XXX$ with environment variable %XXX%
+    envData = _tgetenv(variable.c_str());
+    if (envData && *envData) {
+      tstring envValue(envData);
+      DebugMessage("Environment %s: %s", envName.c_str(), envValue.c_str());
+      result.replace(start, end-start+1, envValue.c_str());
+      start += envValue.length();
+      continue;
+    }
+    start = end + 1;
+  }
+  return result;
 }

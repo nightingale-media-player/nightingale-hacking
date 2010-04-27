@@ -53,11 +53,13 @@ int SetupEnvironment() {
     [appDir stringByAppendingPathComponent:@"updates/0/disthelper.env"];
   if (![[NSFileManager defaultManager] fileExistsAtPath:envFile]) {
     // file doesn't exist, it's safe to skip over it
+    [pool release];
     return DH_ERROR_OK;
   }
   IniFile_t iniData;
   int result = ReadIniFile([envFile UTF8String], iniData);
   if (result) {
+    [pool release];
     return result;
   }
   IniEntry_t::const_iterator it = iniData[""].begin(),

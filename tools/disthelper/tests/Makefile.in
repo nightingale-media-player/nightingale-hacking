@@ -37,6 +37,8 @@ CPP_SRCS = main.cpp \
            parser.cpp \
            debugtest.cpp \
            version.cpp \
+           utils.cpp \
+           environmenttest.cpp \
            $(NULL)
 
 # things from ../$(SB_PLATFORM)
