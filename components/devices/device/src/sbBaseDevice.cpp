@@ -5814,15 +5814,14 @@ sbBaseDevice::ProcessInfoRegistrars()
     rv = data->GetData(entryName);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    char * contractId;
+    nsCString contractId;
     rv = catMgr->GetCategoryEntry(SB_DEVICE_INFO_REGISTRAR_CATEGORY,
                                   entryName.get(),
-                                  &contractId);
+                                  getter_Copies(contractId));
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbIDeviceInfoRegistrar> infoRegistrar =
-      do_CreateInstance(contractId, &rv);
-    NS_Free(contractId);
+      do_CreateInstance(contractId.get(), &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     PRBool interested;
