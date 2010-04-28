@@ -797,7 +797,7 @@ sbMockCDService::RemoveListener(sbICDDeviceListener *listener)
 {
   NS_ENSURE_ARG_POINTER(listener);
   mListeners.RemoveObject(listener);
-  return NS_ERROR_NOT_IMPLEMENTED;
+  return NS_OK;
 }
 
 //------------------------------------------------------------------------------
