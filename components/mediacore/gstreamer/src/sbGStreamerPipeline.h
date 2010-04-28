@@ -83,6 +83,9 @@ protected:
   NS_IMETHOD SetupPipeline();
   NS_IMETHOD DestroyPipeline();
 
+  void SetPipelineOp(GStreamer::pipelineOp_t aPipelineOp);
+  GStreamer::pipelineOp_t GetPipelineOp();
+
   void DispatchMediacoreEvent (unsigned long type,
           nsIVariant *aData = NULL, sbIMediacoreError *aError = NULL);
 
@@ -105,6 +108,9 @@ protected:
 
   // Protect access to the pipeline
   PRMonitor *mMonitor;
+
+  // Pipeline Primary Operation
+  GStreamer::pipelineOp_t mPipelineOp;
 
   nsAutoPtr<sbBaseMediacoreEventTarget> mBaseEventTarget;
 };

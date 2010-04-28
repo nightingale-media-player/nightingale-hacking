@@ -285,6 +285,8 @@ sbGStreamerVideoTranscoder::BuildPipeline()
   nsresult rv = BuildTranscodePipeline ("transcode-pipeline");
   NS_ENSURE_SUCCESS (rv, rv);
 
+  SetPipelineOp(GStreamer::OP_TRANSCODING);
+
   return NS_OK;
 }
 

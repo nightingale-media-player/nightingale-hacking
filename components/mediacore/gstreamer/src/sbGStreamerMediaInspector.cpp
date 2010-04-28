@@ -609,6 +609,8 @@ sbGStreamerMediaInspector::BuildPipeline()
   g_object_unref (srcpad);
   g_object_unref (sinkpad);
 
+  SetPipelineOp(GStreamer::OP_INSPECTING);
+
   return NS_OK;
 }
 

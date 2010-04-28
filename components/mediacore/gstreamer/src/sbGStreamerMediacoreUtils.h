@@ -50,6 +50,28 @@
 #define SB_GST_TAG_GRACENOTE_TAGID         "gracenote-tagid"
 #define SB_GST_TAG_GRACENOTE_EXTENDED_DATA "gracenote-extdata"
 
+/*
+  Simple enum of possible primary pipeline operations. This is used
+  by sbGStreamerPipeline and derived classes as well as 
+  GetMediacoreErrorFromGstError. It helps determine which error message
+  should be constructed based on the primary operation being performed.
+
+  This type is defined in the GStreamer namespace to avoid clashing with
+  other types.
+ */
+namespace GStreamer {
+
+typedef enum {
+  OP_UNKNOWN = 0, /* unknown: default behavior */
+  OP_INSPECTING,  /* inspecting (eg. scanning for metadata) */
+  OP_PLAYING,     /* playing: playing back a file for the user */
+  OP_STREAMING,   /* streaming: acting as server during streaming */
+  OP_TRANSCODING  /* transcoding: transcoding a media file to another format */
+} pipelineOp_t;
+
+} /*namespace GStreamer*/
+
+
 /* Apply all the properties from 'props' to element.
    If any property cannot be set (the type is incompatible, or the element
    does not have such a property), this will return an error.
@@ -88,9 +110,13 @@ GstBusSyncReply SyncToAsyncDispatcher(GstBus* bus, GstMessage* message,
 
    \param aResource  the URI string points to the file that has error.
                      Will be unescaped in the processing.
+   \param aPipelineOp Optional pipeline primary operation to pick the error 
+                      message that is most representative. Pass 
+                      GStreamer::OP_UNKNOWN for the default behavior.
  */
-nsresult GetMediacoreErrorFromGstError(GError *gerror, nsString aResource,
-        sbIMediacoreError **_retval);
+nsresult GetMediacoreErrorFromGstError(GError *gerror, nsString aResource, 
+                                       GStreamer::pipelineOp_t aPipelineOp,
+                                       sbIMediacoreError **_retval);
 
 /**
  * Find an element name for an element that can produce caps compatible with

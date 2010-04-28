@@ -111,12 +111,17 @@ sbDeviceTranscoding::SelectTranscodeProfile(PRUint32 transcodeType,
   rv = mBaseDevice->GetPreference(
                               NS_LITERAL_STRING("transcode_profile.profile_id"),
                               getter_AddRefs(profileIdVariant));
-  if (NS_SUCCEEDED(rv))
-  {
-    hasProfilePref = PR_TRUE;
-    rv = profileIdVariant->GetAsAString(prefProfileId);
-    NS_ENSURE_SUCCESS(rv, rv);
-    TRACE(("%s: found a profile", __FUNCTION__));
+  if (NS_SUCCEEDED(rv)) {
+    PRUint16 dataType = 0;
+    rv = profileIdVariant->GetDataType(&dataType);
+    if (NS_SUCCEEDED(rv) && 
+        dataType != nsIDataType::VTYPE_EMPTY &&
+        dataType != nsIDataType::VTYPE_VOID) {
+      hasProfilePref = PR_TRUE;
+      rv = profileIdVariant->GetAsAString(prefProfileId);
+      NS_ENSURE_SUCCESS(rv, rv);
+      TRACE(("%s: found a profile", __FUNCTION__));
+    }
   }
 
   nsCOMPtr<nsIArray> supportedProfiles;

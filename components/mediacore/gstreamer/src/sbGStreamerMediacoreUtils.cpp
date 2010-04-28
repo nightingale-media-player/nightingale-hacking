@@ -330,31 +330,39 @@ SyncToAsyncDispatcher(GstBus* bus, GstMessage* message, gpointer data)
 
 struct errMap {
   int gstErrorCode;
+  GStreamer::pipelineOp_t gstPipelineOp;
   long sbErrorCode;
   const char *sbErrorMessageName;
 };
 
 static const struct errMap ResourceErrorMap[] = {
-  { GST_RESOURCE_ERROR_NOT_FOUND, sbIMediacoreError::SB_RESOURCE_NOT_FOUND,
-      "mediacore.error.resource_not_found"},
-  { GST_RESOURCE_ERROR_READ, sbIMediacoreError::SB_RESOURCE_READ,
-      "mediacore.error.read_failed"},
-  { GST_RESOURCE_ERROR_WRITE, sbIMediacoreError::SB_RESOURCE_WRITE,
-      "mediacore.error.write_failed"},
-  { GST_RESOURCE_ERROR_OPEN_READ, sbIMediacoreError::SB_RESOURCE_OPEN_READ,
-      "mediacore.error.read_open_failed"},
-  { GST_RESOURCE_ERROR_OPEN_WRITE, sbIMediacoreError::SB_RESOURCE_OPEN_WRITE,
-      "mediacore.error.write_open_failed"},
-  { GST_RESOURCE_ERROR_OPEN_READ_WRITE,
+  { GST_RESOURCE_ERROR_NOT_FOUND, GStreamer::OP_UNKNOWN, 
+      sbIMediacoreError::SB_RESOURCE_NOT_FOUND, 
+        "mediacore.error.resource_not_found"},
+  { GST_RESOURCE_ERROR_READ, GStreamer::OP_UNKNOWN,
+      sbIMediacoreError::SB_RESOURCE_READ,
+        "mediacore.error.read_failed"},
+  { GST_RESOURCE_ERROR_WRITE, GStreamer::OP_UNKNOWN,
+      sbIMediacoreError::SB_RESOURCE_WRITE,
+        "mediacore.error.write_failed"},
+  { GST_RESOURCE_ERROR_OPEN_READ, GStreamer::OP_UNKNOWN,
+      sbIMediacoreError::SB_RESOURCE_OPEN_READ,
+        "mediacore.error.read_open_failed"},
+  { GST_RESOURCE_ERROR_OPEN_WRITE, GStreamer::OP_UNKNOWN,
+      sbIMediacoreError::SB_RESOURCE_OPEN_WRITE,
+        "mediacore.error.write_open_failed"},
+  { GST_RESOURCE_ERROR_OPEN_READ_WRITE, GStreamer::OP_UNKNOWN,
       sbIMediacoreError::SB_RESOURCE_OPEN_READ_WRITE,
-      "mediacore.error.rw_open_failed"},
-  { GST_RESOURCE_ERROR_CLOSE, sbIMediacoreError::SB_RESOURCE_CLOSE,
-      "mediacore.error.close_failed"},
-  { GST_RESOURCE_ERROR_SEEK, sbIMediacoreError::SB_RESOURCE_SEEK,
-      "mediacore.error.seek_failed"},
-  { GST_RESOURCE_ERROR_NO_SPACE_LEFT,
+        "mediacore.error.rw_open_failed"},
+  { GST_RESOURCE_ERROR_CLOSE, GStreamer::OP_UNKNOWN,
+      sbIMediacoreError::SB_RESOURCE_CLOSE,
+        "mediacore.error.close_failed"},
+  { GST_RESOURCE_ERROR_SEEK, GStreamer::OP_UNKNOWN,
+      sbIMediacoreError::SB_RESOURCE_SEEK,
+        "mediacore.error.seek_failed"},
+  { GST_RESOURCE_ERROR_NO_SPACE_LEFT, GStreamer::OP_UNKNOWN,
       sbIMediacoreError::SB_RESOURCE_NO_SPACE_LEFT,
-      "mediacore.error.out_of_space"},
+        "mediacore.error.out_of_space"},
 };
 
 // No error codes for these yet
@@ -367,25 +375,36 @@ static const struct errMap LibraryErrorMap[] = {
 #endif
 
 static const struct errMap StreamErrorMap[] = {
-  { GST_STREAM_ERROR_TYPE_NOT_FOUND,
+  { GST_STREAM_ERROR_TYPE_NOT_FOUND, GStreamer::OP_UNKNOWN,
       sbIMediacoreError::SB_STREAM_TYPE_NOT_FOUND,
-      "mediacore.error.type_not_found"},
-  { GST_STREAM_ERROR_WRONG_TYPE, sbIMediacoreError::SB_STREAM_WRONG_TYPE,
-      "mediacore.error.wrong_type"},
-  { GST_STREAM_ERROR_CODEC_NOT_FOUND,
+        "mediacore.error.type_not_found"},
+  { GST_STREAM_ERROR_WRONG_TYPE, GStreamer::OP_UNKNOWN,
+      sbIMediacoreError::SB_STREAM_WRONG_TYPE,
+        "mediacore.error.wrong_type"},
+  { GST_STREAM_ERROR_CODEC_NOT_FOUND, GStreamer::OP_UNKNOWN,
       sbIMediacoreError::SB_STREAM_CODEC_NOT_FOUND,
-      "mediacore.error.codec_not_found"},
-  { GST_STREAM_ERROR_DECODE, sbIMediacoreError::SB_STREAM_DECODE,
-      "mediacore.error.decode_failed"},
-  { GST_STREAM_ERROR_ENCODE, sbIMediacoreError::SB_STREAM_ENCODE,
-      "mediacore.error.encode_failed"},
-  { GST_STREAM_ERROR_FAILED, sbIMediacoreError::SB_STREAM_FAILURE,
-      "mediacore.error.failure"},
+        "mediacore.error.codec_not_found"},
+  { GST_STREAM_ERROR_DECODE, GStreamer::OP_TRANSCODING,
+      sbIMediacoreError::SB_STREAM_DECODE,
+        "mediacore.error.decode_for_transcode_failed" },
+  { GST_STREAM_ERROR_DECODE, GStreamer::OP_UNKNOWN,
+      sbIMediacoreError::SB_STREAM_DECODE,
+        "mediacore.error.decode_failed"},
+  { GST_STREAM_ERROR_ENCODE, GStreamer::OP_UNKNOWN,
+      sbIMediacoreError::SB_STREAM_ENCODE,
+        "mediacore.error.encode_failed"},
+  { GST_STREAM_ERROR_FAILED, GStreamer::OP_TRANSCODING,
+      sbIMediacoreError::SB_STREAM_FAILURE,
+        "mediacore.error.failure_during_transcode"},
+  { GST_STREAM_ERROR_FAILED, GStreamer::OP_UNKNOWN,
+      sbIMediacoreError::SB_STREAM_FAILURE,
+        "mediacore.error.failure"},
 };
 
 nsresult
 GetMediacoreErrorFromGstError(GError *gerror, nsString aResource,
-        sbIMediacoreError **_retval)
+                              GStreamer::pipelineOp_t aPipelineOp,
+                              sbIMediacoreError **_retval)
 {
   nsString errorMessage;
   nsRefPtr<sbMediacoreError> error;
@@ -419,12 +438,33 @@ GetMediacoreErrorFromGstError(GError *gerror, nsString aResource,
   }
   
   if (map) {
+    int match = -1;
+    int bestMatch = -1;
+
     for (int i = 0; i < mapLength; i++) {
       if (map[i].gstErrorCode == gerror->code) {
-        errorCode = map[i].sbErrorCode;
-        stringName = map[i].sbErrorMessageName;
-        break;
+        // Try and find an exact match.
+        if (aPipelineOp != GStreamer::OP_UNKNOWN &&
+            map[i].gstPipelineOp == aPipelineOp) {
+          bestMatch = i;
+          // bestMatch found, break out right away.
+          break;
+        }
+        else {
+          // We can't break out here because the bestMatch
+          // may be coming later in the map.
+          match = i;
+        }
       }
+    }
+    
+    if (bestMatch == -1 && match != -1) {
+      bestMatch = match;
+    }
+
+    if (bestMatch != -1) {
+      errorCode = map[bestMatch].sbErrorCode;
+      stringName = map[bestMatch].sbErrorMessageName;
     }
   }
 

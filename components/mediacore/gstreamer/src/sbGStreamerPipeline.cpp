@@ -67,7 +67,8 @@ NS_IMPL_THREADSAFE_CI(sbGStreamerPipeline)
 sbGStreamerPipeline::sbGStreamerPipeline() :
   mPipeline(NULL),
   mMonitor(NULL),
-  mBaseEventTarget(new sbBaseMediacoreEventTarget(this))
+  mBaseEventTarget(new sbBaseMediacoreEventTarget(this)),
+  mPipelineOp(GStreamer::OP_UNKNOWN)
 {
   TRACE(("sbGStreamerPipeline[0x%.8x] - Constructed", this));
 }
@@ -248,6 +249,19 @@ sbGStreamerPipeline::StopPipeline()
   return NS_OK;
 }
 
+void sbGStreamerPipeline::SetPipelineOp(GStreamer::pipelineOp_t aPipelineOp)
+{
+  nsAutoMonitor mon(mMonitor);
+  mPipelineOp = aPipelineOp;
+  return;
+}
+
+GStreamer::pipelineOp_t sbGStreamerPipeline::GetPipelineOp()
+{
+  nsAutoMonitor mon(mMonitor);
+  return mPipelineOp;
+}
+
 void sbGStreamerPipeline::HandleMessage (GstMessage *message)
 {
   GstMessageType msg_type;
@@ -285,8 +299,9 @@ void sbGStreamerPipeline::HandleErrorMessage(GstMessage *message)
   LOG(("Error message: %s [%s]", GST_STR_NULL (gerror->message), 
               GST_STR_NULL (debug)));
 
+  GStreamer::pipelineOp_t op = GetPipelineOp();
   rv = GetMediacoreErrorFromGstError(gerror, mResourceDisplayName,
-          getter_AddRefs(error));
+          op, getter_AddRefs(error));
   NS_ENSURE_SUCCESS(rv, /* void */);
 
   DispatchMediacoreEvent(sbIMediacoreEvent::ERROR_EVENT, nsnull, error);

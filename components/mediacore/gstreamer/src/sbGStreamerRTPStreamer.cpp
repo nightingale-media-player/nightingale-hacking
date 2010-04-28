@@ -163,6 +163,8 @@ sbGStreamerRTPStreamer::BuildPipeline()
   gst_object_unref (srcpad);
   gst_object_unref (payloader);
 
+  SetPipelineOp(GStreamer::OP_STREAMING);
+
   return NS_OK;
 }
 
