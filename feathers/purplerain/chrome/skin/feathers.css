@@ -650,6 +650,16 @@ sb-servicepane-node.highlighted {
   border: 1px solid rgb(143,132,181);
 }
 
+/* highlighted in the servicepane for when a node is the target for a drop */
+sb-servicepane-node.droptarget {
+  background-color: rgb(61,57,84);
+  -moz-border-radius: 3px;
+  padding-left: 7px;
+  margin-top: -1px;
+  margin-bottom: -1px;
+  border: 1px solid rgb(143,132,181);
+}
+
 /* the open/closed container toggle arrow for the node and its subnodes */
 sb-servicepane-node image.servicepane-node-container-arrow {
   min-width: 16px;

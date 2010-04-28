@@ -161,7 +161,7 @@
     <content mousethrough="never">
       <xul:vbox class="servicepane-node" flex="1">
 
-        <xul:hbox class="servicepane-node-info">
+        <xul:hbox class="servicepane-node-info" mousethrough="always">
           <xul:image class="servicepane-node-container-arrow" flex="0"/>
           <xul:image class="servicepane-node-image"
                      xbl:inherits="src=image" flex="0" />
@@ -216,6 +216,12 @@
 
           this._textbox = this._getElement("servicepane-node-textbox");
           this._textbox.realParent = this;
+          this.mService =
+            Components.classes['@songbirdnest.com/servicepane/service;1']
+            .getService(Components.interfaces.sbIServicePaneService);
+          this.mDragService = 
+            Components.classes['@mozilla.org/widget/dragservice;1']
+            .getService(Components.interfaces.nsIDragService);
         ]]>
       </constructor>
 
@@ -347,8 +353,8 @@
               if (this._nodeData.hasAttributeNS(NS_SP,
                                                 "mediaListViewConstraints")) {
                 // set up the constraints
-                var builder = Cc["@songbirdnest.com/Songbird/Library/ConstraintBuilder;1"]
-                                .createInstance(Ci.sbILibraryConstraintBuilder);
+                var builder = Components.classes["@songbirdnest.com/Songbird/Library/ConstraintBuilder;1"]
+                                        .createInstance(Components.interfaces.sbILibraryConstraintBuilder);
                 try {
                   builder.parseFromString(
                     this._nodeData.getAttributeNS(NS_SP,
@@ -481,6 +487,19 @@
           return newBadge;
         ]]></body>
       </method>
+      
+      <method name="setAsDropTarget">
+        <parameter name="isdroptarget"/>
+        <body>
+          if (isdroptarget) {
+            if (this.className.search(/\bdroptarget\b/) == -1) {
+              this.className += " droptarget";
+            }
+          } else {
+            this.className = this.className.replace(/\bdroptarget\b/,'');
+          }
+        </body>
+      </method>
 
       <method name="textboxBlur">
         <parameter name="event"/>
@@ -516,6 +535,107 @@
         ]]></body>
       </method>
 
+      <!-- drag-and-drop helpers -->
+      <method name="_onDragGesture">
+        <parameter name="event"/>
+        <body>
+          <![CDATA[
+          var transferable = {};
+          if (this.mService.onDragGesture(this.nodeData, transferable)) {
+            transferable = transferable.value;
+            var transArray = Components.classes["@mozilla.org/supports-array;1"]
+                                       .createInstance(Components.interfaces.nsISupportsArray);
+            transArray.AppendElement(transferable);
+            
+            var region = null;
+            // let's build the drag region
+            try {
+              region = Components.classes["@mozilla.org/gfx/region;1"]
+                        .createInstance(Components.interfaces.nsIScriptableRegion);
+              region.init();
+
+              var bo = this.boxObject;
+
+              region.unionRect(bo.x, bo.y, bo.width, bo.height);
+
+            } catch(ex) {
+              dump("Error while building drag region: " + ex + "\n");
+              region = null;
+            }
+            
+            var dragAction = this.mDragService.DRAGDROP_ACTION_COPY +
+                             this.mDragService.DRAGDROP_ACTION_MOVE;
+            this.mDragService.invokeDragSessionWithImage(this, 
+                                                         transArray,
+                                                         region, dragAction,
+                                                         null, 0, 0,
+                                                         event);
+            
+            event.preventDefault();
+          }
+        ]]>
+        </body>
+      </method>
+
+      <!-- begin nsDragAndDropObserver -->
+      <method name="getSupportedFlavours">
+        <body>
+        <![CDATA[
+          var flavourSet;
+          flavourSet = new FlavourSet();
+          flavourSet.appendFlavour("application/x-sb-transfer-media-item");
+          flavourSet.appendFlavour("application/x-sb-transfer-media-list");
+          flavourSet.appendFlavour("application/x-sb-transfer-media-items");
+          flavourSet.appendFlavour("application/x-sb-transfer-disable-download");
+          return flavourSet;
+        ]]>
+        </body>
+      </method>
+
+      <method name="canDrop">
+        <parameter name="event"/>
+        <parameter name="session"/>
+        <body><![CDATA[
+          return this.mService.canDrop(this.nodeData,
+                                       this.mDragService.getCurrentSession(),
+                                       0, 
+                                       window);
+        ]]></body>
+      </method>
+
+
+      <method name="onDragOver">
+        <parameter name="event"/>
+        <parameter name="flavour"/>
+        <parameter name="session"/>
+        <body>
+        <![CDATA[
+          if (session.sourceNode != event.target &&
+              this.canDrop(event, session))
+            this.setAsDropTarget(true);
+        ]]>
+        </body>
+      </method>
+
+      <method name="onDragExit">
+        <parameter name="event"/>
+        <parameter name="session"/>
+        <body>
+          this.setAsDropTarget(false);
+        </body>
+      </method>
+
+      <method name="onDrop">
+        <parameter name="event"/>
+        <parameter name="session"/>
+        <body><![CDATA[
+          this.mService.onDrop(this.nodeData,
+                               this.mDragService.getCurrentSession(),
+                               0, 
+                               window);
+        ]]></body>
+      </method>
+
     </implementation>
 
     <handlers>
@@ -538,6 +658,32 @@
         this._servicePane.openContextMenu(event, this.nodeId);
       ]]>
       </handler>
+
+      <!-- drag and drop handling -->
+      <handler event="draggesture"><![CDATA[
+        // don't allow drag gestures with the popup menu open.
+        if (this.mPopup && 
+            this.mPopup.state != "closed") {
+          return;
+        }
+        this._onDragGesture(event);
+      ]]></handler>
+
+      <handler event="dragover">
+        nsDragAndDrop.dragOver(event, this);
+        event.stopPropagation();
+      </handler>
+
+      <handler event="dragdrop">
+        nsDragAndDrop.drop(event, this);
+        event.stopPropagation();
+      </handler>
+
+      <handler event="dragexit">
+        nsDragAndDrop.dragExit(event, this);
+        event.stopPropagation();
+      </handler>
+
     </handlers>
 
   </binding>
@@ -1103,6 +1249,21 @@
 
 
     </implementation>
+    
+    <handlers>
+      <handler event="dragover">
+        event.stopPropagation();
+      </handler>
+
+      <handler event="dragdrop">
+        event.stopPropagation();
+      </handler>
+
+      <handler event="dragexit">
+        event.stopPropagation();
+      </handler>
+    </handlers>
+
   </binding>
 
 </bindings>
