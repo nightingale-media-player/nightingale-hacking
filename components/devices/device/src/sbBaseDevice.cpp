@@ -4379,6 +4379,10 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
     return NS_OK;
   }
 
+  if (IsRequestAbortedOrDeviceDisconnected()) {
+    return NS_ERROR_ABORT;
+  }
+
   // Produce the sync change set.
   nsCOMPtr<sbILibraryChangeset> changeset;
   rv = SyncProduceChangeset(aRequest, getter_AddRefs(changeset));
@@ -4524,6 +4528,9 @@ sbBaseDevice::SyncCreateAndSyncToList
   rv = aDstLib->SetSyncMode(sbIDeviceLibrary::SYNC_MANUAL);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Check for abort.
+  NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
+
   // Create a shuffled sync item list that will fit in the available space.
   nsCOMPtr<nsIArray> syncItemList;
   rv = SyncShuffleSyncItemList(aSyncItemList,
@@ -4532,12 +4539,18 @@ sbBaseDevice::SyncCreateAndSyncToList
                                getter_AddRefs(syncItemList));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Check for abort.
+  NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
+
   // Create a new source sync media list.
   nsCOMPtr<sbIMediaList> syncMediaList;
   rv = SyncCreateSyncMediaList(aSrcLib,
                                syncItemList,
                                getter_AddRefs(syncMediaList));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check for abort.
+  NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
 
   // Sync to the sync media list.
   rv = SyncToMediaList(aDstLib, syncMediaList);
