@@ -64,3 +64,9 @@ interface sbIMockCDDeviceController : nsISupports
   void notifyEject(in sbICDDevice aCDDevice);
 };
 
+
+%{C++
+#define SB_MOCK_CDDEVICECONTROLLER_CLASSNAME "Songbird Mock CD Device Service" 
+#define SB_MOCK_CDDEVICECONTROLLER_CID {0x1a0e7b9a, 0x1dd2, 0x11b2, {0x80, 0xa3, 0xdb, 0xd2, 0xc0, 0x47, 0x49, 0x8a}}
+#define SB_MOCK_CDDEVICECONTROLLER_CONTRACTID "@songbirdnest.com/device/cd/mock-cddevice-service;1"
+%}
