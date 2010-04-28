@@ -62,7 +62,7 @@
   NS_IMETHOD GetCreationParameters(nsIPropertyBag2 * *aCreationParameters) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetCreationParameters(aCreationParameters); } \
   NS_IMETHOD GetFactory(sbILibraryFactory * *aFactory) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetFactory(aFactory); } \
   NS_IMETHOD Resolve(nsIURI *aUri, nsIChannel **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->Resolve(aUri, _retval); } \
-  NS_IMETHOD CopyMediaList(const nsAString & aType, sbIMediaList *aSource, sbIMediaList **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->CopyMediaList(aType, aSource, _retval); } \
+  NS_IMETHOD CopyMediaList(const nsAString & aType, sbIMediaList *aSource, PRBool aDontCopyContent, sbIMediaList **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->CopyMediaList(aType, aSource, aDontCopyContent, _retval); } \
   NS_IMETHOD GetMediaItem(const nsAString & aGuid, sbIMediaItem **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaItem(aGuid, _retval); } \
   NS_IMETHOD GetDuplicate(sbIMediaItem *aMediaItem, sbIMediaItem **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDuplicate(aMediaItem, _retval); } \
   NS_IMETHOD GetMediaListTypes(nsIStringEnumerator * *aMediaListTypes) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaListTypes(aMediaListTypes); } \

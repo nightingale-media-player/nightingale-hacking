@@ -3205,7 +3205,10 @@ sbLocalDatabaseSmartMediaList::AddSmartMediaListListener(sbILocalDatabaseSmartMe
   NS_ENSURE_ARG_POINTER(aListener);
 
   nsAutoMonitor monitor(mListenersMonitor);
-  mListeners.AppendObject(aListener);
+
+  // Do not add duplicate listener.
+  if (mListeners.IndexOfObject(aListener) == -1)
+    mListeners.AppendObject(aListener);
   return NS_OK;
 }
 

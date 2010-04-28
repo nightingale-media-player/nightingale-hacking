@@ -383,7 +383,7 @@ function runTest () {
   };
   library2.addListener(listener, false);
 
-  var copiedList = library2.copyMediaList("simple", listToCopy);
+  var copiedList = library2.copyMediaList("simple", listToCopy, false);
 
   assertEqual(listener.adds.length, 3);
 

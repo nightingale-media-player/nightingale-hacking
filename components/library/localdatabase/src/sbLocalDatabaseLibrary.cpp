@@ -2761,6 +2761,7 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::CopyMediaList(const nsAString& aType,
                                       sbIMediaList* aSource,
+                                      PRBool aDontCopyContent,
                                       sbIMediaList** _retval)
 {
   NS_ENSURE_FALSE(aType.IsEmpty(), NS_ERROR_INVALID_ARG);
@@ -2782,20 +2783,22 @@ sbLocalDatabaseLibrary::CopyMediaList(const nsAString& aType,
   rv = CreateMediaList(aType, properties, getter_AddRefs(newList));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXben This will probably fail for types other than "simple"... For now
-  //        we won't automatically lock other types out (by returning early)
-  //        just in case another media list type implements this behavior.
-  rv = newList->AddAll(aSource);
-  if (NS_FAILED(rv)) {
-    nsresult rvOther;
-    // Ick, sucks that that failed... Clean up the new media list.
-    nsCOMPtr<sbIMediaItem> item = do_QueryInterface(newList, &rvOther);
-    NS_ENSURE_SUCCESS(rvOther, rvOther);
+  if (!aDontCopyContent) {
+    // XXXben This will probably fail for types other than "simple"... For now
+    //        we won't automatically lock other types out (by returning early)
+    //        just in case another media list type implements this behavior.
+    rv = newList->AddAll(aSource);
+    if (NS_FAILED(rv)) {
+      nsresult rvOther;
+      // Ick, sucks that that failed... Clean up the new media list.
+      nsCOMPtr<sbIMediaItem> item = do_QueryInterface(newList, &rvOther);
+      NS_ENSURE_SUCCESS(rvOther, rvOther);
 
-    rvOther = Remove(item);
-    NS_ENSURE_SUCCESS(rvOther, rvOther);
+      rvOther = Remove(item);
+      NS_ENSURE_SUCCESS(rvOther, rvOther);
+    }
+    NS_ENSURE_SUCCESS(rv, rv);
   }
-  NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = newList);
   return NS_OK;

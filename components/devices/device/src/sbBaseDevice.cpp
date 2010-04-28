@@ -5270,6 +5270,7 @@ sbBaseDevice::SyncAddMediaList(sbIDeviceLibrary* aDstLibrary,
   nsCOMPtr<sbIMediaList> mediaList;
   rv = proxyDstLibrary->CopyMediaList(NS_LITERAL_STRING("simple"),
                                       aMediaList,
+                                      PR_FALSE,
                                       getter_AddRefs(mediaList));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -5480,6 +5481,14 @@ sbBaseDevice::ShouldSyncMediaList(sbIMediaList* aMediaList,
   rv = aMediaList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN), hidden);
   NS_ENSURE_SUCCESS(rv, rv);
   if (hidden.EqualsLiteral("1"))
+    return NS_OK;
+
+  // Don't sync empty lists.
+  PRBool isEmpty;
+  rv = aMediaList->GetIsEmpty(&isEmpty);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (isEmpty)
     return NS_OK;
 
   // Don't sync media lists that are storage for other media lists (e.g., simple

@@ -302,7 +302,8 @@ NS_IMETHODIMP sbPlaylistAttachListenerEnumerator::OnEnumeratedItem(sbIMediaList*
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (customType.IsEmpty() ||
-      customType.EqualsLiteral("simple")) {
+      customType.EqualsLiteral("simple") ||
+      customType.EqualsLiteral("smart")) {
     nsCOMPtr<sbIMediaList> list(do_QueryInterface(aItem, &rv));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -795,6 +796,9 @@ sbDeviceLibrary::UpdateMainLibraryListeners()
   rv = GetIsSyncedLocally(&isSyncedLocally);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Stop listening to the previous selected playlists
+  mMainLibraryListener->StopListeningToPlaylists();
+
   // Not in manual mode.
   if (syncMode == SYNC_AUTO && isSyncedLocally) {
     PRBool isSyncAll = PR_FALSE;
@@ -831,10 +835,6 @@ sbDeviceLibrary::UpdateMainLibraryListeners()
       rv = playlistList->GetLength(&length);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      // Need to stop listening to all the playlists so we can listen to just
-      // the selected ones
-      mMainLibraryListener->StopListeningToPlaylists();
-
       mMainLibraryListener->SetSyncMode(false, length ? playlistList : nsnull);
 
       for (PRUint32 index = 0; index < length; ++index) {
@@ -853,8 +853,6 @@ sbDeviceLibrary::UpdateMainLibraryListeners()
       NS_ENSURE_SUCCESS(rv, rv);
     }
   } else {
-    mMainLibraryListener->StopListeningToPlaylists();
-
     mMainLibraryListener->SetSyncMode(syncMode == SYNC_MANUAL, nsnull);
 
     // remove the metadata updating listener
@@ -1355,7 +1353,7 @@ sbDeviceLibrary::RemoveFromSyncPlaylistList(PRUint32 aContentType,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Remove from the playlist if it exists
-  PRUint32 guidPos = listGuidsCSV.Find(guid);
+  PRInt32 guidPos = listGuidsCSV.Find(guid);
   if (guidPos >= 0) {
     listGuidsCSV.Cut(guidPos, guid.Length() + 1); // Add 1 for any ","
     listGuidsCSV.Trim(",", PR_TRUE, PR_TRUE); // Remove extra ","s
@@ -1966,9 +1964,6 @@ sbDeviceLibrary::GetSyncPlaylistList(nsIArray ** aPlaylistList)
       if (NS_FAILED(rv) || !curList) {
         continue;
       }
-
-      nsString listName;
-      curList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME), listName);
 
       // First, ensure that the content type is audio.
       PRUint16 listContentType;
