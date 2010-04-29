@@ -1000,6 +1000,26 @@ sb-device-managetabs {
   border-bottom: none;
 }
 
+#device-icon {
+  margin-right: 2px;
+}
+
+#device-name {
+  margin-top: -1px;
+  margin-left: -3px;
+}
+
+#volume-selector {
+  min-width: 164px;
+  margin-top: 2px;
+  margin-bottom: 4px;
+}
+
+.eject-info-buttons {
+  margin: 0px 8px 0px 0px;
+  padding: 0px;
+}
+
 .device-capacity-bar-box {
   margin-left: 1px;
 }

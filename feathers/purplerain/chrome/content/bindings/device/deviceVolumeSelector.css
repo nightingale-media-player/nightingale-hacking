@@ -35,8 +35,14 @@ Imported by bindings.css or directly into feathers.
 *******************************************************************************
 */
 
+.sb-device-volume-selector-label,
+.sb-device-volume-selector-menulist {
+  margin: 0px;
+}
+
 .sb-device-volume-selector-label[highlight],
 .sb-device-volume-selector-menulist[highlight] {
-  border: 1px solid red;
+  border: 2px solid rgb(102,134,70);
+  margin: -1px;
 }
 

@@ -73,6 +73,8 @@ Additional styles imported directly by the device setup dialog.
 }
 
 #device_setup_volume_selector {
+  margin-top: 2px;
+  margin-bottom: 2px;
   width: 164px;
 }
 
