@@ -27,6 +27,7 @@
 // Mozilla includes
 #include <nsArrayUtils.h>
 #include <nsComponentManagerUtils.h>
+#include <nsIFileURL.h>
 #include <nsIInputStream.h>
 #include <nsIIOService.h>
 #include <nsIStringEnumerator.h>
@@ -747,8 +748,41 @@ sbDeviceTranscoding::TranscodeMediaItem(
       monitor.Wait();
   }
 
-  if (listener->IsAborted())
+  // Get the transcoded video file URI.
+  nsAutoString destURI;
+  rv = transcodeJob->GetDestURI(destURI);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = ioService->NewURI(NS_ConvertUTF16toUTF8(destURI),
+                         nsnull,
+                         nsnull,
+                         getter_AddRefs(transcodedDestinationURI));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = do_GetProxyForObject(target,
+                            NS_GET_IID(nsIURI),
+                            transcodedDestinationURI,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(transcodedDestinationURIProxy));
+  NS_ENSURE_SUCCESS(rv, rv);
+  transcodedDestinationURI = transcodedDestinationURIProxy;
+
+  if (aTranscodedDestinationURI)
+    transcodedDestinationURI.forget(aTranscodedDestinationURI);
+
+  // If we abort, delete the destination file.
+  if (listener->IsAborted()) {
+    nsCOMPtr<nsIFileURL> fileURL = 
+      do_QueryInterface(transcodedDestinationURIProxy);
+    if (fileURL) {
+      nsCOMPtr<nsIFile> file;
+      rv = fileURL->GetFile(getter_AddRefs(file));
+      if(NS_SUCCEEDED(rv)) {
+        rv = file->Remove(PR_FALSE);
+        NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), 
+          "Failed to remove temporary file used for transcoding");
+      }
+    }
     return NS_ERROR_ABORT;
+  }
 
   // Check the transcode status.
   PRUint16 status;
@@ -787,26 +821,6 @@ sbDeviceTranscoding::TranscodeMediaItem(
     }
   }
 #endif
-
-  // Get the transcoded video file URI.
-  nsAutoString destURI;
-  rv = transcodeJob->GetDestURI(destURI);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = ioService->NewURI(NS_ConvertUTF16toUTF8(destURI),
-                         nsnull,
-                         nsnull,
-                         getter_AddRefs(transcodedDestinationURI));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = do_GetProxyForObject(target,
-                            NS_GET_IID(nsIURI),
-                            transcodedDestinationURI,
-                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-                            getter_AddRefs(transcodedDestinationURIProxy));
-  NS_ENSURE_SUCCESS(rv, rv);
-  transcodedDestinationURI = transcodedDestinationURIProxy;
-
-  if (aTranscodedDestinationURI)
-    transcodedDestinationURI.forget(aTranscodedDestinationURI);
 
   // Check for transcode errors.
   // There is no need to fire a device event, because any appropriate events

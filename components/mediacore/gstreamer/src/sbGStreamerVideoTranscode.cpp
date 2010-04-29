@@ -338,7 +338,7 @@ sbGStreamerVideoTranscoder::StopPipeline()
 
   // Clean up any remnants of this pipeline so that a new transcoding
   // attempt is possible
-  rv = CleanupPipeline ();
+  rv = CleanupPipeline();
 
   // Inform listeners of new job status
   rv = OnJobProgress();

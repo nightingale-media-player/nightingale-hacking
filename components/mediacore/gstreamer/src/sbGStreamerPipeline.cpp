@@ -37,6 +37,7 @@
 
 #include <sbIMediacoreError.h>
 #include <sbMediacoreError.h>
+#include <sbProxiedComponentManager.h>
 
 /**
  * To log this class, set the following environment variable in a debug build:
@@ -92,10 +93,16 @@ sbGStreamerPipeline::Init()
   nsresult rv;
 
   // We need to make sure the gstreamer service component has been loaded
-  // since it calls gst_init for us
-  nsCOMPtr<sbIGStreamerService> service =
-    do_GetService(SBGSTREAMERSERVICE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  // since it calls gst_init for us.
+  if (!NS_IsMainThread()) {
+    nsCOMPtr<sbIGStreamerService> service = 
+      do_ProxiedGetService(SBGSTREAMERSERVICE_CONTRACTID, &rv);
+  }
+  else {
+    nsCOMPtr<sbIGStreamerService> service =
+      do_GetService(SBGSTREAMERSERVICE_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   mMonitor = nsAutoMonitor::NewMonitor("sbGStreamerPipeline::mMonitor");
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
