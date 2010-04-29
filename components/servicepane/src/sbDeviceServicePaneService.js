@@ -1,4 +1,4 @@
-/* vim: ts=2 sw=2 expandtab */
+/* vim: set ts=2 sw=2 expandtab : */
 /*
  *=BEGIN SONGBIRD GPL
  *
@@ -35,6 +35,7 @@ const Cu = Components.utils;
 const CONTRACTID = "@songbirdnest.com/servicepane/device;1";
 
 const SP = "http://songbirdnest.com/rdf/servicepane#";
+const LSP = 'http://songbirdnest.com/rdf/library-servicepane#';
 const DEVICESP_NS = "http://songbirdnest.com/rdf/device-servicepane#";
 
 const URN_PREFIX_DEVICE = "urn:device:";
@@ -332,6 +333,30 @@ function sbDeviceServicePane_setFillDefaultContxtMenu(aNode,
   } else {
     aNode.setAttributeNS(DEVICESP_NS, "fillDefaultContextMenu", "false");
   }
+}
+
+sbDeviceServicePane.prototype.insertChildByName =
+function sbDeviceServicePane_insertChildByName(aDevice, aChild) {
+  var lastNode = null;
+  var deviceNode = this.getNodeForDevice(aDevice);
+  for (let node = deviceNode.firstChild; node; node = node.nextSibling) {
+    var listType = node.getAttributeNS(LSP, "ListType");
+    // Ignore library node.
+    if (listType == "library") {
+      continue;
+    }
+
+    // Find the node to insert before. Ignore case.
+    var childname = aChild.name ? aChild.name.toLowerCase() : aChild.name;
+    var nodename = node.name ? node.name.toLowerCase() : node.name;
+    if (childname < nodename) {
+      lastNode = node;
+      break;
+    }
+  }
+
+  // Insert before the node found, or insert at the end if lastNode is null.
+  deviceNode.insertBefore(aChild, lastNode);
 }
 
 ////////////////////////////////////
