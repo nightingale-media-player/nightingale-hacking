@@ -75,6 +75,7 @@ function ServicePaneNode(servicePane, comparisonFunction) {
   this._comparisonFunction = comparisonFunction;
   this._attributes = {__proto__: null};
   this._childNodes = [];
+  this._notificationQueue = [];
 
   // Allow accessing internal properties when we get a wrapped node passed
   this.wrappedJSObject = this;
@@ -91,6 +92,8 @@ ServicePaneNode.prototype = {
   _stringBundleURI: null,
   _isInTree: false,
   _listeners: null,
+  _notificationQueue: null,
+  _notificationQueueBusy: false,
 
   QueryInterface: XPCOMUtils.generateQI([Ci.sbIServicePaneNode]),
 
@@ -320,9 +323,30 @@ ServicePaneNode.prototype = {
     if (!aChild)
       throw Ce("Node to be inserted/appended is a required parameter");
 
-    for (let parent = this; parent; parent = parent._parentNode)
-      if (parent == aChild)
-        throw Ce("Cannot insert/append a node to its child");
+    function checkConditions() {
+      // Don't check aBefore if we have a custom comparison function, we won't
+      // use it anyway in that case.
+      if (!this._comparisonFunction && aBefore && aBefore._parentNode != this)
+        throw Ce("Cannot insert before a node that isn't a child");
+  
+      for (let parent = this; parent; parent = parent._parentNode)
+        if (parent == aChild)
+          throw Ce("Cannot insert/append a node to its child");
+    }
+
+    checkConditions.apply(this);
+
+    if (!this._comparisonFunction && aBefore == aChild)
+      return aChild;    // nothing to do
+
+    if (aChild._parentNode) {
+      aChild._parentNode.removeChild(aChild);
+      if (aChild._parentNode)
+        throw Ce("Mutation listener prevented removal of node from its previous location");
+
+      // Check conditions again, mutation listeners might have modified the tree
+      checkConditions.apply(this);
+    }
 
     if (this._comparisonFunction) {
       // Use comparison function to determine node position
@@ -335,15 +359,6 @@ ServicePaneNode.prototype = {
       else
         aBefore = null;
     }
-
-    if (aBefore && aBefore._parentNode != this)
-      throw Ce("Cannot insert before a node that isn't a child");
-
-    if (aBefore == aChild)
-      return aChild;    // nothing to do
-
-    if (aChild._parentNode)
-      aChild._parentNode.removeChild(aChild);
 
     let index = aBefore ? aBefore._nodeIndex : this._childNodes.length;
     for (let i = index; i < this._childNodes.length; i++)
@@ -431,11 +446,47 @@ ServicePaneNode.prototype = {
     if (!isInTree)
       return;
 
-    // Notify our listeners first
-    if (this._listeners != null) {
-      for each (let listener in this._listeners) {
+    // Queue the notification before sending it out, just in case one of the
+    // listeners decides to mess with the DOM structure. Add to the queue
+    // of this node and all of its parent nodes (bubbling).
+    let notification = [aMethod, aArgs];
+    let nodes = [];
+    let node = this;
+    let parent = (typeof aParentNode != "undefined" ? aParentNode : node._parentNode);
+    while (node) {
+      if (node._listeners != null) {
+        nodes.push(node);
+        node._notificationQueue.push(notification);
+      }
+
+      node = parent;
+      if (node)
+        parent = node._parentNode;
+    }
+
+    // Now actually trigger listeners for all nodes
+    for each (let node in nodes)
+      node._processNotificationQueue();
+  },
+
+  _processNotificationQueue: function() {
+    if (this._listeners == null)
+      return;
+
+    // Protect against reentrance
+    if (this._notificationQueueBusy)
+      return;
+    this._notificationQueueBusy = true;
+
+    // Create a local copy of the listeners in case the list is modified while
+    // we are calling listeners.
+    let listeners = this._listeners.slice();
+
+    while (this._notificationQueue.length) {
+      let [method, args] = this._notificationQueue.shift();
+      for each (let listener in listeners) {
         try {
-          listener[aMethod].apply(listener, aArgs);
+          listener[method].apply(listener, args);
         }
         catch (e) {
           Cu.reportError(e);
@@ -443,10 +494,7 @@ ServicePaneNode.prototype = {
       }
     }
 
-    // Bubble up the event via recursive call
-    let parentNode = (typeof aParentNode != "undefined" ? aParentNode : this._parentNode);
-    if (parentNode)
-      parentNode._notifyMutationListeners(aMethod, aArgs);
+    this._notificationQueueBusy = false;
   },
 
   // Attribute shortcuts

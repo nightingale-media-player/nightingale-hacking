@@ -400,8 +400,7 @@ function sbDeviceServicePane_attrModified(aNode, aAttrName, aNamespace,
   if (!resource) {
     return;
   }
-  if (!(resource instanceof Ci.sbIMediaList) ||
-      (resource instanceof Ci.sbILibrary)) {
+  if (!(resource instanceof Ci.sbIMediaList)) {
     // not a media list, we don't care
     return;
   }
@@ -412,7 +411,7 @@ function sbDeviceServicePane_attrModified(aNode, aAttrName, aNamespace,
   }
   var deviceNode = this.getNodeForDevice(device);
   if (deviceNode && aNode.parentNode != deviceNode) {
-    deviceNode.appendChild(aNode);
+    deviceNode.insertBefore(aNode, deviceNode.firstChild);
   }
 };
 
