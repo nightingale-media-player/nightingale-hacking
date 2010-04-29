@@ -37,12 +37,19 @@ Imported by bindings.css or directly into feathers.
 
 .sb-device-volume-selector-label,
 .sb-device-volume-selector-menulist {
-  margin: 0px;
+  margin: 2px 0px;
+  max-height: 19px;
+  height: 19px;
+  min-height: 19px;
+  /* 2px solid transparent outline to trick XUL renderer */
+  outline: 2px solid rgba(102,134,70, 0);
+  -moz-outline-radius: 3px;
 }
 
 .sb-device-volume-selector-label[highlight],
 .sb-device-volume-selector-menulist[highlight] {
-  border: 2px solid rgb(102,134,70);
-  margin: -1px;
+  margin: 2px 0px;
+  outline: 2px solid rgb(102,134,70);
+  -moz-outline-radius: 3px;
 }
 
