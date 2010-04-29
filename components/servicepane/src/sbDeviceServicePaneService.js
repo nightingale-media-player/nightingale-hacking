@@ -44,6 +44,7 @@ const DEVICE_NODE_WEIGHT = -2;
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/DOMUtils.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
+Cu.import("resource://app/jsmodules/DebugUtils.jsm");
 
 /**
  * Given the arguments var of a function, dump the
@@ -74,6 +75,8 @@ function sbDeviceServicePane() {
 
   // use the default stringbundle to translate tree nodes
   this.stringbundle = null;
+
+  this.log = DebugUtils.generateLogFunction("DeviceServicePaneService");
 }
 
 //////////////////////////
@@ -208,6 +211,10 @@ function sbDeviceServicePane_onRename(aNode, aNewName) {
 sbDeviceServicePane.prototype.createNodeForDevice =
 function sbDeviceServicePane_createNodeForDevice(aDevice, aDeviceIdentifier) {
   //logcall(arguments);
+  this.log("createNodeForDevice");
+
+  // Make sure the devices group exists first
+  let devicesNode = this._ensureDevicesGroupExists();
 
   // Get the Node.
   var id = this._deviceURN(aDevice, aDeviceIdentifier);
@@ -224,14 +231,21 @@ function sbDeviceServicePane_createNodeForDevice(aDevice, aDeviceIdentifier) {
   node.editable = false;
 
   // Add the node
-  if (!node.parentNode)
-    this._servicePane.root.appendChild(node);
+  if (!node.parentNode) {
+    this.log("\tNo parentNode, appending to devices group node");
+    devicesNode.appendChild(node);
+  }
 
   return node;
 }
 
 sbDeviceServicePane.prototype.createNodeForDevice2 =
 function sbDeviceServicePane_createNodeForDevice2(aDevice) {
+  this.log("createNodeForDevice2");
+
+  // Make sure the devices group exists first
+  let devicesNode = this._ensureDevicesGroupExists();
+
   // Get the Node.
   var id = this._deviceURN2(aDevice);
   
@@ -265,19 +279,23 @@ function sbDeviceServicePane_createNodeForDevice2(aDevice) {
   }
 
   // Add the node
-  if (!node.parentNode)
-    this._servicePane.root.appendChild(node);
+  if (!node.parentNode) {
+    this.log("\tNo parentNode, appending to devices group node");
+    devicesNode.appendChild(node);
+  }
 
   return node;
 }
 
 sbDeviceServicePane.prototype.createLibraryNodeForDevice =
 function sbDeviceServicePane_createLibraryNodeForDevice(aDevice, aLibrary) {
-
+  this.log("Creating library nodes for device " + aDevice.id);
   var deviceNode = this.getNodeForDevice(aDevice);
 
   // Create the library nodes.
   var parentNode = this._libraryServicePane.createNodeForLibrary(aLibrary);
+
+  this.log("Parent node: " + parentNode.id);
 
   // Move the library nodes to be the first child of the device node.
   var functions = aDevice.capabilities.getSupportedFunctionTypes({});
@@ -298,6 +316,7 @@ function sbDeviceServicePane_createLibraryNodeForDevice(aDevice, aLibrary) {
       // there should only be one anyway...
       // assert(props.length < 2);
       if (!hasCaps(props[0])) {
+        this.log("Removing libraryNode " + libraryNode.id + " from parentNode");
         parentNode.removeChild(libraryNode);
         continue;
       }
@@ -309,12 +328,18 @@ function sbDeviceServicePane_createLibraryNodeForDevice(aDevice, aLibrary) {
       libraryNode.setAttributeNS(DEVICESP_NS, "device-id", aDevice.id);
       libraryNode.setAttributeNS(DEVICESP_NS, "deviceNodeType", "library");
 
+      if (deviceNode.firstchild)
+        this.log("Inserting libraryNode to deviceNode " + deviceNode.id +
+                 " before " + deviceNode.firstChild.id);
+      else
+        this.log("Appending libraryNode to deviceNode " + deviceNode.id);
       deviceNode.insertBefore(libraryNode, deviceNode.firstChild);
     }
   }
   else {
     Components.utils.reportError("MISSING DEVICE for " + aDevice);
   }
+
   return audioNode;
 }
 
@@ -412,6 +437,55 @@ sbDeviceServicePane.prototype._deviceURN =
 function sbDeviceServicePane__deviceURN(aDevice, aDeviceIdentifier) {
   return URN_PREFIX_DEVICE + aDevice.deviceCategory + ":" + aDeviceIdentifier;
 }
+
+/**
+ * Ensure the "Devices" service pane group exists (where all devices live)
+ */
+sbDeviceServicePane.prototype._ensureDevicesGroupExists =
+function sbDeviceServicePane__ensureDevicesGroupExists() {
+  this.log("ensureDevicesGroupExists");
+  let fnode = this._servicePane.getNode("SB:Devices");
+  if (!fnode) {
+    // make sure it exists
+    fnode = this._servicePane.createNode();
+    fnode.id = "SB:Devices";
+    fnode.name = "&servicesource.devices";
+    this._addClassNames(fnode, ["folder", this._makeCSSProperty(fnode.name)]);
+    fnode.contractid = CONTRACTID;
+    // XXXstevel need to set fnode.dndAcceptIn?
+    fnode.editable = false;
+    fnode.setAttributeNS(SP, 'Weight', 2);
+    this._servicePane.root.appendChild(fnode);
+    this.log("\tDevices group created");
+  }
+
+  return fnode;
+}
+
+sbDeviceServicePane.prototype._addClassNames =
+function sbDeviceServicePane__addClassNames(aNode, aList) {
+  let className = aNode.className || "";
+  let existing = {};
+  for each (let name in className.split(" "))
+    existing[name] = true;
+
+  for each (let name in aList)
+    if (!existing.hasOwnProperty(name))
+      className += (className ? " " : "") + name;
+
+  aNode.className = className;
+}
+
+
+sbDeviceServicePane.prototype._makeCSSProperty =
+function sbDeviceServicePane__makeCSSProperty(aString) {
+  if ( aString[0] == "&" ) {
+    aString = aString.substr(1, aString.length);
+    aString = aString.replace(/\./g, "-");
+  }
+  return aString;
+}
+
 
 sbDeviceServicePane.prototype._deviceURN2 =
 function sbDeviceServicePane__deviceURN2(aDevice) {

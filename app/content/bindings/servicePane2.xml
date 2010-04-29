@@ -205,23 +205,27 @@
           // If this element has a node id then load up the data from the node
           // we are always expected to be in the service pane under a group at
           // this point so we call up the DOM of nodes.
-          if (this.hasAttribute("nodeid")) {
-            var nodeID = this.getAttribute("nodeid");
-            if (this.parentNode)
-              this.nodeData = this.parentNode.getNode(nodeID);
-          } else {
-            // If we have no node data, then hide by default.
-            this.setAttribute("hidden", true);
-          }
+          try {
+            if (this.hasAttribute("nodeid")) {
+              var nodeID = this.getAttribute("nodeid");
+              if (this.parentNode)
+                this.nodeData = this.parentNode.getNode(nodeID);
+            } else {
+              // If we have no node data, then hide by default.
+              this.setAttribute("hidden", true);
+            }
 
-          this._textbox = this._getElement("servicepane-node-textbox");
-          this._textbox.realParent = this;
-          this.mService =
-            Components.classes['@songbirdnest.com/servicepane/service;1']
-            .getService(Components.interfaces.sbIServicePaneService);
-          this.mDragService = 
-            Components.classes['@mozilla.org/widget/dragservice;1']
-            .getService(Components.interfaces.nsIDragService);
+            this._textbox = this._getElement("servicepane-node-textbox");
+            this._textbox.realParent = this;
+            this.mService =
+              Components.classes['@songbirdnest.com/servicepane/service;1']
+              .getService(Components.interfaces.sbIServicePaneService);
+            this.mDragService = 
+              Components.classes['@mozilla.org/widget/dragservice;1']
+              .getService(Components.interfaces.nsIDragService);
+          } catch (e) {
+            dump("Exception: " + e + "\n");
+          }
         ]]>
       </constructor>
 
@@ -636,6 +640,13 @@
         ]]></body>
       </method>
 
+      <method name="getNode">
+        <parameter name="nodeID"/>
+        <body><![CDATA[
+          return this.parentNode.getNode(nodeID);
+        ]]></body>
+      </method>
+ 
     </implementation>
 
     <handlers>
@@ -756,7 +767,7 @@
 
         // Setup logging
         Components.utils.import("resource://app/jsmodules/DebugUtils.jsm");
-        this.log = DebugUtils.generateLogFunction("Servicepane");
+        this.log = DebugUtils.generateLogFunction("ServicePane");
 
         this.mService =
           Components.classes['@songbirdnest.com/servicepane/service;1']
@@ -774,16 +785,20 @@
            hierarchy of nodes changes */
         this._mutationListener.element = this;
         this.mService.root.addMutationListener(this._mutationListener);
+
+        /* Add a listener to the servicepane itself */
+        this.mService.addListener(this._mutationListener);
       ]]>
       </constructor>
 
       <destructor>
       <![CDATA[
         this.mService.root.removeMutationListener(this._mutationListener);
+        this.mService.removeListener(this._mutationListener);
       ]]>
       </destructor>
 
-      <!-- sbIServicePaneMutationListener -->
+      <!-- sbIServicePaneMutationListener & sbIServicePaneListener -->
       <field name="_mutationListener">
       <![CDATA[
         ({
@@ -799,17 +814,40 @@
           attrModified: function(node, attrName, namespace, oldVal, newVal) {
             if (oldVal == newVal)
               return;
+
+            // attempt to find the DOM node in the SP, bail otherwise
+            let domNode = this.element.getDOMNode(node.id);
+            if (!domNode)
+              return;
+
             switch (attrName) {
               case "hidden":
-                let spNode = this.element.getElementsByAttribute("nodeid",
-                                                                 node.id)[0];
-                if (!spNode)
-                  return;
                 if (newVal == "false") {
-                  spNode.removeAttribute("hidden");
+                  domNode.removeAttribute("hidden");
                 } else if (newVal == "true") {
-                  spNode.setAttribute("hidden", true);
+                  domNode.setAttribute("hidden", true);
                 }
+                break;
+
+              case "name":
+                domNode.setAttribute("label", newVal);
+                break;
+
+              case "image":
+                domNode.setAttribute("image", newVal);
+                break;
+
+              case "class":
+                domNode.className = newVal;
+                break;
+
+              default:
+                /* Can be useful, but noisy */
+                /*
+                this.element.log("Unhandled node attribute change: " +
+                                 attrName + " from '" + oldVal + "' => '" +
+                                 newVal + "'");
+                                 */
                 break;
             }
           },
@@ -817,29 +855,53 @@
           nodeInserted: function(node, parent) {
             if (!parent || parent == this.element.mService.root) {
               let newGroup = this.element.createGroup(node);
+              this.element.log("New top level group: " + node.id);
               this.element.appendChild(newGroup);
             } else {
+              this.element.log("New node: " + node.id);
               /* find the node representing the parent */
-              let parentNode = this.element.getElementsByAttribute("nodeid",
-                                            parent.id)[0];
+              let parentNode = this.element.getDOMNode(parent.id);
               if (!parentNode) {
+                this.element.log("\tNo parent node found, skipping..");
                 return;
               }
+              this.element.log("Parent node is: " +
+                               parentNode.getAttribute("nodeid"));
               let newnode = this.element.createNode(node, parentNode);
+            }
+
+            // The new node may already have children associated with it, so
+            // let's go look for those & add them to the hierarchy
+            let childNode = node.firstChild;
+            while (childNode) {
+              this.element.log("\tChild node found: " + childNode.id);
+              this.nodeInserted(childNode, node);
+              childNode = childNode.nextSibling;
             }
           },
 
           nodeRemoved: function(node, parent) {
-            // find the DOM node representing this servicepane node
-            let domNode = this.element.getDOMNode(node.id);
+            this.element.log("\tAttempting to remove node : " + node.id +
+                             " from " + parent.id);
 
-            // was this node active?
-            let active = null;
-            if (domNode)
-              active = domNode.className.match(/\bactive\b/);
+            try {
+              // find the DOM node representing this servicepane node
+              let domNode = this.element.getDOMNode(node.id);
+
+              // was this node active?
+              let active = null;
+              if (domNode)
+                active = domNode.className.match(/\bactive\b/);
+              else
+                this.element.log("\tUnable to find a DOM node for " + node.id);
+            } catch (e) {
+              dump("Exception: " + e + "\n");
+            }
 
             // remove the actual node
             if (domNode && domNode.parentNode) {
+              this.element.log("\tDOM nodes map to removing " + domNode.id +
+                               " from " + domNode.parentNode.id);
               domNode.parentNode.removeChild(domNode);
             }
 
@@ -849,6 +911,33 @@
             // servicepane to see if we have a node that matches the page,
             // and if so - visually highlight/select it
           },
+
+          /* sbIServicePaneListener */
+          nodePropertyChanged: function(nodeId, attrName) {
+            try {
+              let node = this.element.getNode(nodeId);
+              let domNode = this.element.getDOMNode(nodeId);
+              let value = node[attrName];
+
+              switch (attrName) {
+                case "image":
+                  //domNode.image = value;
+                  break;
+
+                case "name":
+                  //domNode.label = value;
+                  break;
+
+                default:
+                  //this.element.log("Node property changed: " + nodeId +
+                  //                 ", attribute " + attrName + " = " + value);
+                  break;
+              }
+
+            } catch (e) {
+              dump("Exception in nodePropertyChanged: " + e + "\n");
+            }
+          }
         })
       ]]>
       </field>

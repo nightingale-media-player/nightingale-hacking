@@ -1,27 +1,25 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 /** 
@@ -52,7 +50,7 @@ Imported by bindings.css or directly into feathers.
   height: 16px;
 }
 
-sb-servicepane-node.library image.servicepane-node-image,
+sb-servicepane-node.library > vbox > hbox.servicepane-node-info > image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( library ),
 .locationbar-image[properties~="library"],
 .alltabs-item.menuitem-iconic[properties~="library"],
@@ -60,7 +58,7 @@ sb-servicepane-node.library image.servicepane-node-image,
   list-style-image: url(chrome://songbird/skin/service-pane/icon-library.png) ;
 }
 
-sb-servicepane-node.library.video image.servicepane-node-image,
+sb-servicepane-node.library.video > vbox > hbox.servicepane-node-info > image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( library video ),
 .locationbar-image[properties~="library"][properties~="video"],
 .alltabs-item.menuitem-iconic[properties~="library"][properties~="video"],
@@ -72,7 +70,7 @@ sb-servicepane-node.library.video image.servicepane-node-image,
   list-style-image: url(chrome://songbird/skin/service-pane/icon-birdhouse.png) ;
 }
 
-sb-servicepane-node.library.web image.servicepane-node-image,
+sb-servicepane-node.library.web > vbox > hbox.servicepane-node-info > image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( web library ),
 .locationbar-image[properties~="library"][properties~="web"],
 .alltabs-item.menuitem-iconic[properties~="library"][properties~="web"],
@@ -80,7 +78,7 @@ sb-servicepane-node.library.web image.servicepane-node-image,
   list-style-image: url(chrome://songbird/skin/service-pane/icon-web-media-history.png) ;
 }
 
-sb-servicepane-node.medialist image.servicepane-node-image,
+sb-servicepane-node.medialist > vbox > hbox.servicepane-node-info > image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( medialist ),
 .locationbar-image[properties~="medialist"],
 .alltabs-item.menuitem-iconic[properties~="medialist"],
@@ -88,7 +86,7 @@ sb-servicepane-node.medialist image.servicepane-node-image,
   list-style-image: url(chrome://songbird/skin/service-pane/icon-playlist.png) ;
 }
 
-sb-servicepane-node.medialisttype-smart image.servicepane-node-image,
+sb-servicepane-node.medialisttype-smart > vbox > hbox.servicepane-node-info > image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( medialisttype-smart ),
 .locationbar-image[properties~="medialisttype-smart"],
 .alltabs-item.menuitem-iconic[properties~="medialisttype-smart"],
@@ -96,7 +94,7 @@ sb-servicepane-node.medialisttype-smart image.servicepane-node-image,
   list-style-image: url(chrome://songbird/skin/service-pane/icon-smartplaylist.png);
 }
 
-sb-servicepane-node.medialisttype-dynamic image.servicepane-node-image,
+sb-servicepane-node.medialisttype-dynamic > vbox > hbox.servicepane-node-info > image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( medialisttype-dynamic ),
 .locationbar-image[properties~="medialisttype-dynamic"],
 .alltabs-item.menuitem-iconic[properties~="medialisttype-dynamic"],
@@ -104,7 +102,7 @@ sb-servicepane-node.medialisttype-dynamic image.servicepane-node-image,
   list-style-image: url(chrome://songbird/skin/service-pane/icon-subscription.png) ;
 }
 
-sb-servicepane-node.podcast image.servicepane-node-image,
+sb-servicepane-node.podcast > vbox > hbox.servicepane-node-info > image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( podcast ),
 .locationbar-image[properties~="podcast"],
 .alltabs-item.menuitem-iconic[properties~="podcast"],
@@ -112,7 +110,7 @@ sb-servicepane-node.podcast image.servicepane-node-image,
   list-style-image: url(chrome://songbird/skin/service-pane/icon-podcast.png) ;
 }
 
-sb-servicepane-node.download image.servicepane-node-image,
+sb-servicepane-node.download > vbox > hbox.servicepane-node-info > image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( download ),
 .locationbar-image[properties~="download"],
 .alltabs-item.menuitem-iconic[properties~="download"],
@@ -120,7 +118,7 @@ sb-servicepane-node.download image.servicepane-node-image,
   list-style-image: url(chrome://songbird/skin/service-pane/icon-downloads.png) ;
 }
 
-sb-servicepane-node.download.downloading image.servicepane-node-image,
+sb-servicepane-node.download.downloading > vbox > hbox.servicepane-node-info > image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( download downloading ),
 .locationbar-image[properties~="download"][properties~="downloading"],
 .alltabs-item.menuitem-iconic[properties~="download"][properties~="downloading"],
@@ -128,7 +126,7 @@ sb-servicepane-node.download.downloading image.servicepane-node-image,
   list-style-image: url(chrome://songbird/skin/service-pane/icon-downloads-progress.png) ;
 }
 
-sb-servicepane-node.device image.servicepane-node-image,
+sb-servicepane-node.device > vbox > hbox.servicepane-node-info > image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( device ),
 .locationbar-image[properties~="device"],
 .alltabs-item.menuitem-iconic[properties~="device"],
@@ -136,7 +134,7 @@ sb-servicepane-node.device image.servicepane-node-image,
   list-style-image: url(chrome://songbird/skin/service-pane/icon-device.png) ;
 }
 
-sb-servicepane-node.device.busy image.servicepane-node-image,
+sb-servicepane-node.device.busy > vbox > hbox.servicepane-node-info > image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( device busy ),
 .locationbar-image[properties~="device"][properties~="busy"],
 .alltabs-item.menuitem-iconic[properties~="device"][properties~="busy"],
@@ -144,7 +142,7 @@ sb-servicepane-node.device.busy image.servicepane-node-image,
   list-style-image: url(chrome://songbird/skin/service-pane/icon-busy.png);
 }
 
-sb-servicepane-node.cd-device image.servicepane-node-image,
+sb-servicepane-node.cd-device > vbox > hbox.servicepane-node-info > image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( cd-device ),
 .locationbar-image[properties~="cd-device"],
 .alltabs-item.menuitem-iconic[properties~="cd-device"],
@@ -152,7 +150,7 @@ sb-servicepane-node.cd-device image.servicepane-node-image,
   list-style-image: url(chrome://songbird/skin/service-pane/cd_rest.png) ;
 }
 
-sb-servicepane-node.cd-device.busy image.servicepane-node-image,
+sb-servicepane-node.cd-device.busy > vbox > hbox.servicepane-node-info > image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( cd-device busy ),
 .locationbar-image[properties~="cd-device"][properties~="busy"],
 .alltabs-item.menuitem-iconic[properties~="cd-device"][properties~="busy"],
@@ -160,7 +158,7 @@ sb-servicepane-node.cd-device.busy image.servicepane-node-image,
   list-style-image: url(chrome://songbird/skin/service-pane/cd_ripping.png) ;
 }
 
-sb-servicepane-node.cd-device.successful image.servicepane-node-image,
+sb-servicepane-node.cd-device.successful > vbox > hbox.servicepane-node-info > image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( cd-device successful ),
 .locationbar-image[properties~="cd-device"][properties~="successful"],
 .alltabs-item.menuitem-iconic[properties~="cd-device"][properties~="successful"],
@@ -168,7 +166,7 @@ sb-servicepane-node.cd-device.successful image.servicepane-node-image,
   list-style-image: url(chrome://songbird/skin/service-pane/cd_successful.png) ;
 }
 
-sb-servicepane-node.cd-device.unsuccessful image.servicepane-node-image,
+sb-servicepane-node.cd-device.unsuccessful > vbox > hbox.servicepane-node-info > image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( cd-device unsuccessful ),
 .locationbar-image[properties~="cd-device"][properties~="unsuccessful"],
 .alltabs-item.menuitem-iconic[properties~="cd-device"][properties~="unsuccessful"],
@@ -176,7 +174,7 @@ sb-servicepane-node.cd-device.unsuccessful image.servicepane-node-image,
   list-style-image: url(chrome://songbird/skin/service-pane/cd_unsuccessful.png) ;
 }
 
-sb-servicepane-node.bookmark image.servicepane-node-image,
+sb-servicepane-node.bookmark > vbox > hbox.servicepane-node-info > image.servicepane-node-image,
 .servicepane-tree > treechildren::-moz-tree-image( bookmark ) {
   list-style-image: url(chrome://songbird/skin/service-pane/icon-bookmark.png) ;
 }
