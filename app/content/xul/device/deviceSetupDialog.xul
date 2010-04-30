@@ -154,6 +154,7 @@
 
 
     // Songbird imports.
+    Cu.import("resource://app/jsmodules/SBUtils.jsm");
     Cu.import("resource://app/jsmodules/StringUtils.jsm");
 
 
@@ -415,7 +416,7 @@
         }
 
         // Resize window to content.
-        window.sizeToContent();
+        SBUtils.sizeWindowToContent();
       },
 
 
