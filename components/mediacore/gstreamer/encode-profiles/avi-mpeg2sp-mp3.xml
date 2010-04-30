@@ -6,7 +6,7 @@
                                  to. -->
   <priority quality="0">200</priority> <!-- this sucks at low bitrates -->
   <priority quality="1">3000</priority>
-  <description>ACME High End test profile</description>
+  <description>AVI/MPEG4/MP3 video</description>
   <mimetype>video/x-msvideo</mimetype>
   <extension>avi</extension>
 
@@ -18,8 +18,11 @@
     <type>video/mpeg</type>
     <attribute name="mpegversion" type="int" value="4" />
 
-    <quality-property name="bpp" quality="0" value="0.2"/>
-    <quality-property name="bpp" quality="1" value="1"/>
+    <property name="bitrate" type="int" min="0" max="10000000" default="0"
+              mapping="bitrate"/>
+
+    <quality-property name="bpp" quality="0" value="0.1"/>
+    <quality-property name="bpp" quality="1" value="0.5"/>
   </video>
 
   <audio>

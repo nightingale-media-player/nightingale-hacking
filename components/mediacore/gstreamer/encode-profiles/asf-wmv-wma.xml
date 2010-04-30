@@ -5,7 +5,7 @@
                                  generally acceptable quality -->
   <priority quality="0">150</priority>
   <priority quality="1">2500</priority>
-  <description>WMV/WMA profile</description>
+  <description>WMV/WMA video</description>
   <mimetype>video/x-ms-asf</mimetype>
   <extension>wmv</extension>
 
@@ -17,8 +17,11 @@
     <type>video/x-ms-wmv</type>
     <attribute name="wmvversion" type="int" value="3" />
 
-    <quality-property name="bpp" quality="0" value="0.2"/>
-    <quality-property name="bpp" quality="1" value="1"/>
+    <property name="bitrate" type="int" min="0" max="10000000" default="0"
+              mapping="bitrate"/>
+
+    <quality-property name="bpp" quality="0" value="0.1"/>
+    <quality-property name="bpp" quality="1" value="0.5"/>
   </video>
 
   <audio>
