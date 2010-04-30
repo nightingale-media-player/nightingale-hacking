@@ -154,8 +154,8 @@
 
 
     // Songbird imports.
-    Cu.import("resource://app/jsmodules/SBUtils.jsm");
     Cu.import("resource://app/jsmodules/StringUtils.jsm");
+    Cu.import("resource://app/jsmodules/WindowUtils.jsm");
 
 
     //
@@ -416,7 +416,7 @@
         }
 
         // Resize window to content.
-        SBUtils.sizeWindowToContent();
+        WindowUtils.sizeToContent(window);
       },
 
 
@@ -457,7 +457,7 @@
       _onNotificationBoxEvent: function
         deviceSetupDialog__onNotificationBoxEvent() {
         // Resize window to content.
-        window.sizeToContent();
+        WindowUtils.sizeToContent(window);
       },
 
 

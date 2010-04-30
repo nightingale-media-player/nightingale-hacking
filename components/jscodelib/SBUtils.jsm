@@ -124,28 +124,6 @@ var SBUtils = {
     // Add a text node with the text to the description element.
     var textNode = aDescriptionElem.ownerDocument.createTextNode(aText);
     aDescriptionElem.appendChild(textNode);
-  },
-
-
-  /**
-   * Invoke sizeToContent with workarounds for the following bugs:
-   *
-   *   https://bugzilla.mozilla.org/show_bug.cgi?id=230959
-   *   http://bugzilla.songbirdnest.com/show_bug.cgi?id=20969.
-   *
-   */
-
-  sizeWindowToContent: function SBUtils_sizeWindowToContent() {
-    // Don't resize if not needed.
-    // See https://bugzilla.mozilla.org/show_bug.cgi?id=230959
-    if ((window.innerHeight >= 10) &&
-        (window.innerHeight == document.documentElement.boxObject.height)) {
-      return;
-    }
-
-    // Defer resizing until after the current event completes.
-    // See http://bugzilla.songbirdnest.com/show_bug.cgi?id=20969.
-    SBUtils.deferFunction(function() { window.sizeToContent(); });
   }
 };
 

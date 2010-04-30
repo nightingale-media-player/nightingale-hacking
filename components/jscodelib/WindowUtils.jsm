@@ -48,6 +48,7 @@ EXPORTED_SYMBOLS = ["WindowUtils"];
 
 Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
+Components.utils.import("resource://app/jsmodules/SBUtils.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 
 
@@ -195,6 +196,31 @@ var WindowUtils = {
       this._getArgs(dialogPB, aOutArgs);
 
     return accepted;
+  },
+
+
+  /**
+   * Invoke sizeToContent on the window specified by aWindow with workarounds
+   * for the following bugs:
+   *
+   *   https://bugzilla.mozilla.org/show_bug.cgi?id=230959
+   *   http://bugzilla.songbirdnest.com/show_bug.cgi?id=20969.
+   *
+   * \param aWindow             Window to size to content.
+   */
+
+  sizeToContent: function WindowUtils_sizeToContent(aWindow) {
+    // Don't resize if not needed.
+    // See https://bugzilla.mozilla.org/show_bug.cgi?id=230959
+    if ((aWindow.innerHeight >= 10) &&
+        (aWindow.innerHeight ==
+         aWindow.document.documentElement.boxObject.height)) {
+      return;
+    }
+
+    // Defer resizing until after the current event completes.
+    // See http://bugzilla.songbirdnest.com/show_bug.cgi?id=20969.
+    SBUtils.deferFunction(function() { aWindow.sizeToContent(); });
   },
 
 
