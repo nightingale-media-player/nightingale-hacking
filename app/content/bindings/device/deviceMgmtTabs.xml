@@ -191,7 +191,15 @@
 
     <handlers>
       <handler event="deviceBound"><![CDATA[
-        /* Re-initialize the device sync management services. */
+        /* Re-initialize the device sync management tabs. */
+        this.DeviceMgmtTabs.finalize(this);
+        this.DeviceMgmtTabs.initialize(this);
+      ]]></handler>
+    </handlers>
+
+    <handlers>
+      <handler event="devLibBound"><![CDATA[
+        /* Re-initialize the device sync management tabs. */
         this.DeviceMgmtTabs.finalize(this);
         this.DeviceMgmtTabs.initialize(this);
       ]]></handler>

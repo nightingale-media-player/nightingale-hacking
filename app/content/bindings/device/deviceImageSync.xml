@@ -243,6 +243,10 @@
         <parameter name="aPrefs"/>
         <body><![CDATA[
         {
+          // If there's no device library, just return.
+          if (!this.devLib)
+            return;
+
           let mediaType = Ci.sbIDeviceLibrary.MEDIATYPE_IMAGE;
           aPrefs.mgmtType = this.devLib.getMgmtType(mediaType);
           aPrefs.rootFolder = this.devLib.getSyncRootFolderByType(mediaType);

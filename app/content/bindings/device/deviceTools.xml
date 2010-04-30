@@ -378,6 +378,7 @@
           this._getToolBox("format").collapsed = true;
         }
         else {
+          this._getToolBox("format").removeAttribute("collapsed");
           var self = this;
           this.deviceChangeEvent = function(aEvent) {
             if (aEvent.type == Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED) {

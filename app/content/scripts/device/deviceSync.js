@@ -857,6 +857,10 @@ var DeviceSyncWidget = {
     var                         i;
     var                         j;
 
+    // If there's no device library, just return.
+    if (!this._deviceLibrary)
+      return;
+
     /* If no preference object is specified, */
     /* read into the working preferences.    */
     if (aPrefs)

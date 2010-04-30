@@ -182,6 +182,15 @@ tabbox#device_management_box > tabpanels > tabpanel {
   min-width:420px;
   max-width:480px;
 }
+
+.device-no-storage-vbox {
+  -moz-box-align: center;
+}
+
+.device-no-storage-groupbox {
+  width: 420px;
+}
+
 .device-tab-button-box {
   margin:0 0px;
   padding:0px 6px;
