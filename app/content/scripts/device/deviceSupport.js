@@ -563,6 +563,9 @@ sbDeviceVolumeSupport.initialize();
   // presence of the key matters.
   var devicesWithEvents = {};
 
+  // A set of notifications. The key is the device id.
+  var notificationTable = {};
+
   function deviceManagerListener(event) {
 
     var device = event.origin;
@@ -608,7 +611,8 @@ sbDeviceVolumeSupport.initialize();
     // but the device is now idle
     delete devicesWithEvents[device.id];
     var notificationBox = SBGetApplicationNotificationBox();
-    if (!notificationBox)
+    // Only one notification per device for transcoding error.
+    if (!notificationBox || notificationTable[device.id])
       return;
     var buttons = [
       {
@@ -628,6 +632,7 @@ sbDeviceVolumeSupport.initialize();
              [ "", device, errorItems, "syncing" ],
              null);
           deviceErrorMonitor.clearErrorsForDevice(device);
+          delete notificationTable[device.id];
         },
         popup: null
       }
@@ -638,6 +643,7 @@ sbDeviceVolumeSupport.initialize();
                          "chrome://songbird/skin/device/error.png",
                          notificationBox.PRIORITY_CRITICAL_MEDIUM,
                          buttons);
+    notificationTable[device.id] = notification;
     var onNotificationCommand = function(event) {
       let classes = event.originalTarget.className.split(/\s+/);
       if (classes.indexOf("messageCloseButton") > -1) {
@@ -646,6 +652,7 @@ sbDeviceVolumeSupport.initialize();
           Cc["@songbirdnest.com/device/error-monitor-service;1"]
             .getService(Ci.sbIDeviceErrorMonitor);
         deviceErrorMonitor.clearErrorsForDevice(device);
+        delete notificationTable[device.id];
       }
     };
     notification.addEventListener("command", onNotificationCommand, false);
