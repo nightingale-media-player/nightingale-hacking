@@ -2034,11 +2034,21 @@ nsresult sbBaseDevice::AddLibrary(sbIDeviceLibrary* aDevLib)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  // If the library will be the first library, assume it's internal.  Otherwise,
-  // assume it's removable.
+  PRBool storageRemovable = PR_FALSE;
+  nsAutoString storageRemovableStr;
+  rv = aDevLib->GetProperty(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_STORAGE_REMOVABLE),
+                            storageRemovableStr);
+  if (NS_SUCCEEDED(rv) && !storageRemovableStr.IsEmpty()) {
+    storageRemovable = storageRemovableStr.EqualsLiteral("1");
+  } 
+  else {
+    // If the library will be the first library, assume it's internal.  Otherwise,
+    // assume it's removable.
+    storageRemovable = (libraryCount > 0);
+  }
   nsAutoString libraryName;
   nsTArray<nsString> libraryNameParams;
-  if (libraryCount == 0) {
+  if (!storageRemovable) {
     if (!displayCapacity.IsEmpty()) {
       libraryNameParams.AppendElement(displayCapacity);
       libraryName =

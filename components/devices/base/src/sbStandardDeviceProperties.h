@@ -52,4 +52,8 @@
 #define SB_DEVICE_PROPERTY_USB_VENDOR_ID          "http://songbirdnest.com/device/1.0#usbVendorId"
 #define SB_DEVICE_PROPERTY_USB_PRODUCT_ID         "http://songbirdnest.com/device/1.0#usbProductId"
 
+/* Whether the storage device can be removed; is "1" if it can, "0" otherwise */
+#define SB_DEVICE_PROPERTY_STORAGE_REMOVABLE      "http://songbirdnest.com/device/1.0#storageRemovable"
+
+
 #endif /* __SB_STANDARD_DEVICE_PROPERTIES_H__ */
