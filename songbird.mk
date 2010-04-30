@@ -1,16 +1,16 @@
 #
-# BEGIN SONGBIRD GPL
+#=BEGIN SONGBIRD GPL
 #
 # This file is part of the Songbird web player.
 #
-# Copyright(c) 2005-2008 POTI, Inc.
+# Copyright(c) 2005-2010 POTI, Inc.
 # http://www.songbirdnest.com
 #
 # This file may be licensed under the terms of of the
-# GNU General Public License Version 2 (the GPL).
+# GNU General Public License Version 2 (the ``GPL'').
 #
 # Software distributed under the License is distributed
-# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
+# on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
 # express or implied. See the GPL for the specific language
 # governing rights and limitations.
 #
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# END SONGBIRD GPL
+#=END SONGBIRD GPL
 #
 
 #
@@ -76,32 +76,42 @@ endif
 
 # Global, debug/release build options
 # building installer is off by default
+#
+# Setting these options via the environment is deprecated; use songbird.config
+# instead; see bug 6515
 ifdef SB_ENABLE_INSTALLER
    CONFIGURE_ARGS += --enable-installer
+   ENV_SETTING_WARN = 1
 endif
 
 ifdef SONGBIRD_OFFICIAL
    CONFIGURE_ARGS += --enable-official
+   ENV_SETTING_WARN = 1
 endif
 
 ifdef SONGBIRD_NIGHTLY
    CONFIGURE_ARGS += --enable-nightly
+   ENV_SETTING_WARN = 1
 endif
 
 ifdef SB_UPDATE_CHANNEL
    CONFIGURE_ARGS += --enable-update-channel=$(SB_UPDATE_CHANNEL)
+   ENV_SETTING_WARN = 1
 endif
 
 # debug build options
 ifdef DEBUG
    CONFIGURE_ARGS += --enable-debug
+   ENV_SETTING_WARN = 1
    # debug builds turn off jars by default, unless SB_ENABLE_JARS is set
    ifdef SB_ENABLE_JARS
       CONFIGURE_ARGS += --enable-jars
+      ENV_SETTING_WARN = 1
    endif
    # turn off tests if you really want
    ifndef SB_DISABLE_TESTS
       CONFIGURE_ARGS += --enable-tests
+      ENV_SETTING_WARN = 1
    endif
 endif
 
@@ -110,21 +120,25 @@ ifndef DEBUG
    # release builds have jars by default, unless SB_DISABLE_JARS is set
    ifdef SB_DISABLE_JARS
       CONFIGURE_ARGS += --disable-jars
+      ENV_SETTING_WARN = 1
    endif
    # release builds don't have tests by default
    ifdef SB_ENABLE_TESTS
       CONFIGURE_ARGS += --enable-tests
+      ENV_SETTING_WARN = 1
    endif
 endif
 
 # choose core wrappers to enable
 ifdef SB_NO_MEDIA_CORE
    CONFIGURE_ARGS += --with-media-core=none
+   ENV_SETTING_WARN = 1
 endif #SB_NO_MEDIA_CORE
 
 # breakpad support
 ifdef SB_ENABLE_BREAKPAD
    CONFIGURE_ARGS += --enable-breakpad
+   ENV_SETTING_WARN = 1
 endif
 
 # force installation of wmp core, so it's bundled with the application.
@@ -132,6 +146,7 @@ ifdef SB_FORCE_MEDIA_CORE_WMP
    CONFIGURE_ARGS += --with-media-core=windowsmedia \
                      --with-force-media-core=windowsmedia \
                      $(NULL)
+   ENV_SETTING_WARN = 1
 endif
 
 # force installation of qt core, so it's bundled with the application.
@@ -139,15 +154,21 @@ ifdef SB_FORCE_MEDIA_CORE_QT
    CONFIGURE_ARGS += --with-media-core=qt \
                      --with-force-media-core=qt \
                      $(NULL)
+   ENV_SETTING_WARN = 1
 endif
 
 # compiler environment checks
 ifdef SB_DISABLE_COMPILER_ENVIRONMENT_CHECKS
    CONFIGURE_ARGS += --disable-compiler-environment-checks
+   ENV_SETTING_WARN = 1
+endif
+
+ifneq (,$(ENV_SETTING_WARN))
+   $(warning WARNING: Setting build options via the environment is deprecated; use songbird.config. Support for this will eventually go away. See bug 6515.)
 endif
 
 #
-# Set some needed commands
+# Set some needed commands; let configure figure out the rest
 #
 
 AUTOCONF ?= autoconf

@@ -1,25 +1,25 @@
 #
-# BEGIN SONGBIRD GPL
-# 
+#=BEGIN SONGBIRD GPL
+#
 # This file is part of the Songbird web player.
 #
-# Copyright(c) 2005-2008 POTI, Inc.
+# Copyright(c) 2005-2010 POTI, Inc.
 # http://www.songbirdnest.com
-# 
+#
 # This file may be licensed under the terms of of the
-# GNU General Public License Version 2 (the “GPL”).
-# 
-# Software distributed under the License is distributed 
-# on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
-# express or implied. See the GPL for the specific language 
+# GNU General Public License Version 2 (the ``GPL'').
+#
+# Software distributed under the License is distributed
+# on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+# express or implied. See the GPL for the specific language
 # governing rights and limitations.
 #
-# You should have received a copy of the GPL along with this 
+# You should have received a copy of the GPL along with this
 # program. If not, go to http://www.gnu.org/licenses/gpl.html
-# or write to the Free Software Foundation, Inc., 
+# or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-# 
-# END SONGBIRD GPL
+#
+#=END SONGBIRD GPL
 #
 
 DEPTH = ..
@@ -57,7 +57,14 @@ SONGBIRD_PP_RESOURCES = $(topsrcdir)/installer/common/LICENSE.html.in \
 
 PPDEFINES += -DSB_PLATFORM="$(SB_PLATFORM)"
 
-GARBAGE += $(SB_INSTALLER_FINAL_DIR)/$(SB_INSTALLER_NAME) \
+# On mac, our pkg "target" is packaged in a dmg, so for our purposes here,
+# the final installer packag for the "pkg" target is actually a pkg.dmg file
+INSTALLER_PACKAGES = $(patsubst %.pkg,%.pkg.dmg, \
+                             $(foreach s, \
+                              $(SB_INSTALLER_SUFFIXES), \
+                              $(SB_INSTALLER_NAME).$s))
+
+GARBAGE += $(foreach p, $(INSTALLER_PACKAGES), $(SB_INSTALLER_FINAL_DIR)/$p) \
            $(NULL)
 
 # On Mac, the xulrunner dir is not the same place in the tree; unfortunately,
@@ -105,6 +112,11 @@ endif
 
 # We do the cd here so the path in the .md5 file is standardized with a "./"
 libs::
-	cd $(SB_INSTALLER_FINAL_DIR) && $(MD5SUM) ./$(SB_INSTALLER_NAME) > $(SB_INSTALLER_NAME).md5
+	@$(EXIT_ON_ERROR) \
+   cd $(SB_INSTALLER_FINAL_DIR) && \
+   for f in $(INSTALLER_PACKAGES); do \
+      echo Checksumming installer package $$f; \
+      $(MD5SUM) ./$$f > $$f.md5; \
+   done
 
 .PHONY: link_installer_xpts

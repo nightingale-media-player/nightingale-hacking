@@ -193,7 +193,8 @@ SB_LICENSE_FILE = @SB_LICENSE_FILE@
 # Installer-related stuff
 #
 SB_INSTALLER_FINAL_DIR = $(SONGBIRD_OBJDIR)/_built_installer
-SB_INSTALLER_NAME = $(SB_APPNAME)_$(SB_MILESTONE)-$(SB_BUILD_NUMBER)_$(SB_PLATFORM)-$(SB_ARCH)@INSTALLER_SUFFIX@
+SB_INSTALLER_NAME = $(SB_APPNAME)_$(SB_MILESTONE)-$(SB_BUILD_NUMBER)_$(SB_PLATFORM)-$(SB_ARCH)
+SB_INSTALLER_SUFFIXES = @SB_INSTALLER_SUFFIXES@
 
 #
 # Tools
@@ -216,16 +217,17 @@ INSTALL_FILE = $(INSTALL) -m 0644
 INSTALL_PROG = $(INSTALL) -m 0755
 LD = @LD@
 LN = @LN@
-MIDL = @MIDL@
+MACPKGMAKER = @MACPKGMAKER@
 MD5SUM = @MD5SUM@
+MIDL = @MIDL@
 MKDIR = @MKDIR@ -p
 # Use MKDIR_APP to create a directory that is intended to be shipped; we use
 # intstall -d here because mkdir -p -m N only applies the -m to the _last_
 # directory part, not any of the other directories it creates along the way;
 # lame, Lame, LAME; hats off to Mook for suggesting this.
 MKDIR_APP = $(INSTALL) -d -m 755
-MV = @MV@
 MSMANIFEST_TOOL = @MSMANIFEST_TOOL@
+MV = @MV@
 PERL = @PERL@
 PYTHON = @PYTHON@
 RANLIB = @RANLIB@
