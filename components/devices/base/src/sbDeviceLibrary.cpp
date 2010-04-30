@@ -1953,8 +1953,8 @@ sbDeviceLibrary::GetSyncPlaylistList(nsIArray ** aPlaylistList)
 
     PRBool deviceSupportsVideo;
     rv = capabilities->SupportsContent(
-           sbIDeviceCapabilities::CONTENT_VIDEO,
            sbIDeviceCapabilities::FUNCTION_VIDEO_PLAYBACK,
+           sbIDeviceCapabilities::CONTENT_VIDEO,
            &deviceSupportsVideo);
     NS_ENSURE_SUCCESS(rv, rv);
 
