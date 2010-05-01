@@ -31,6 +31,8 @@ var gTestFileLocation = "testharness/metadatamanager/errorcases/";
 
 // the number of errors we expect
 var gErrorExpected = 0;
+// the number of retries we expect
+const gRetriesExpected = 5;
 
 /**
  * Confirm that Songbird doesn't crash or damage files when
@@ -151,8 +153,9 @@ function runTest() {
       job.removeJobProgressListener(onLib1ReadComplete);
       
       // Verify job progress reporting.
-      assertEqual(files.length, job.total);
-      assertEqual(files.length, job.progress);
+      
+      assertEqual(files.length + gRetriesExpected, job.total);
+      assertEqual(files.length + gRetriesExpected, job.progress);
       assertEqual(job.status, Components.interfaces.sbIJobProgress.STATUS_FAILED);
       
       // Ok great, lets try writing back new metadata for all the files via library 2
@@ -272,9 +275,10 @@ function runTest() {
       
       // Verify job progress reporting.  Do this last since the info above is
       // useful for debugging.
+      
       assertEqual(job.errorCount, gErrorExpected);
-      assertEqual(files.length, job.total);
-      assertEqual(files.length, job.progress);
+      assertEqual(files.length + gRetriesExpected, job.total);
+      assertEqual(files.length + gRetriesExpected, job.progress);
       assertEqual(job.status, Components.interfaces.sbIJobProgress.STATUS_FAILED);
       
     // print errors, since otherwise they will be eaten by the observe call

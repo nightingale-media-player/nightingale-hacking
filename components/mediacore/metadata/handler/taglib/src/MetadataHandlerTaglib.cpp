@@ -188,6 +188,12 @@ NS_IMPL_THREADSAFE_ISUPPORTS3(sbMetadataHandlerTaglib,
  *
  ******************************************************************************/
 
+NS_IMETHODIMP sbMetadataHandlerTaglib::GetContractID(nsACString &aContractID)
+{
+  aContractID.AssignLiteral(SONGBIRD_METADATAHANDLERTAGLIB_CONTRACTID);
+  return NS_OK;
+}
+
 /**
 * \brief Vote to be the handler returned for the given url
 *

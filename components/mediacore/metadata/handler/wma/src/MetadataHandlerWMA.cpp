@@ -198,6 +198,12 @@ sbMetadataHandlerWMA::~sbMetadataHandlerWMA()
 {
 }
 
+NS_IMETHODIMP sbMetadataHandlerWMA::GetContractID(nsACString &aContractID)
+{
+  aContractID.AssignLiteral(SONGBIRD_METADATAHANDLERWMA_CONTRACTID);
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbMetadataHandlerWMA::GetChannel(nsIChannel** _retval)
 {

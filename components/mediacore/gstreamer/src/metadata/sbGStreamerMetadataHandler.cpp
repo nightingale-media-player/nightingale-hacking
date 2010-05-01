@@ -131,6 +131,14 @@ sbGStreamerMetadataHandler::Init()
   return NS_OK;
 }
 
+/* readonly attribute ACString contractID */
+NS_IMETHODIMP 
+sbGStreamerMetadataHandler::GetContractID(nsACString &aContractID)
+{
+  aContractID.AssignLiteral(SB_GSTREAMER_METADATA_HANDLER_CONTRACTID);
+  return NS_OK;
+}
+
 /* attribute sbIMutablePropertyArray props; */
 NS_IMETHODIMP
 sbGStreamerMetadataHandler::GetProps(sbIMutablePropertyArray * *aProps)

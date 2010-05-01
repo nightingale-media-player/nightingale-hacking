@@ -55,6 +55,7 @@
 #include <nsIPrefBranch2.h>
 #include <nsIStringBundle.h>
 
+#include <sbIFileMetadataService.h>
 #include <sbILibrary.h>
 #include <sbILibraryManager.h>
 #include <sbILibraryResource.h>
@@ -392,6 +393,54 @@ nsresult sbMetadataJob::AppendMediaItems(nsIArray *aMediaItemsArray)
   return NS_OK;
 }
 
+nsresult 
+sbMetadataJob::AppendJobItem(sbMetadataJobItem* aJobItem)
+{
+  NS_ENSURE_ARG_POINTER(aJobItem);
+
+  // Avoid allocating both lists, since most jobs
+  // will be entirely main thread or entirely background thread
+  PRBool resizedMainThreadItems = PR_FALSE;
+  PRBool resizedBackgroundThreadItems = PR_FALSE;
+
+  // Find out if the handler can be run off the main thread
+  PRBool requiresMainThread = PR_TRUE;
+  nsCOMPtr<sbIMetadataHandler> handler;
+  nsresult rv = aJobItem->GetHandler(getter_AddRefs(handler));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = handler->GetRequiresMainThread(&requiresMainThread);
+  NS_ASSERTION(NS_SUCCEEDED(rv), \
+    "sbMetadataJob::AppendJobItems GetRequiresMainThread failed");
+
+  // Separate the list of items based on main thread requirements.
+  if (requiresMainThread) {
+    // If we haven't allocated space on the main thread queue yet,
+    // do so now. Better to waste space than append.
+    if (!resizedMainThreadItems) {
+      resizedMainThreadItems = 
+        mMainThreadJobItems.SetCapacity(mTotalItemCount);
+      NS_ENSURE_TRUE(resizedMainThreadItems, NS_ERROR_OUT_OF_MEMORY);          
+    }
+    
+    mMainThreadJobItems.AppendElement(aJobItem);
+  } else {
+    nsAutoLock lock(mBackgroundItemsLock);
+    
+    // If we haven't allocated space on the background thread queue yet,
+    // do so now. Better to waste space than append.
+    if (!resizedBackgroundThreadItems) {
+      resizedBackgroundThreadItems = 
+        mBackgroundThreadJobItems.SetCapacity(mTotalItemCount);
+      NS_ENSURE_TRUE(resizedBackgroundThreadItems, NS_ERROR_OUT_OF_MEMORY);
+    }
+    
+    mBackgroundThreadJobItems.AppendElement(aJobItem);
+  }
+
+  mTotalItemCount++;
+
+  return NS_OK;
+}
 
 nsresult 
 sbMetadataJob::SetUpHandlerForJobItem(sbMetadataJobItem* aJobItem)
@@ -586,9 +635,15 @@ nsresult sbMetadataJob::HandleProcessedItem(sbMetadataJobItem *aJobItem)
   // For read items, filter properties from the handler
   // and set them on the media item
   if (mJobType == TYPE_READ) {
-    rv = CopyPropertiesToMediaItem(aJobItem);
+    PRBool willRetry = PR_FALSE;
+    rv = CopyPropertiesToMediaItem(aJobItem, &willRetry);
     NS_ASSERTION(NS_SUCCEEDED(rv), \
       "sbMetadataJob::HandleProcessedItem CopyPropertiesToMediaItem failed!");
+
+    // Going to retry, return now.
+    if(willRetry) {
+      return NS_OK;
+    }
   } else {
     // For write items, we need to check for failure. Also, we need to
     // update the content-length property if we did write to the file.
@@ -682,10 +737,12 @@ nsresult sbMetadataJob::DeferProcessedItemHandling(sbMetadataJobItem *aJobItem)
 }
 
 
-nsresult sbMetadataJob::CopyPropertiesToMediaItem(sbMetadataJobItem *aJobItem)
+nsresult sbMetadataJob::CopyPropertiesToMediaItem(sbMetadataJobItem *aJobItem,
+                                                  PRBool* aWillRetry)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aJobItem);
+  NS_ENSURE_ARG_POINTER(aWillRetry);
   NS_ASSERTION(NS_IsMainThread(), \
     "sbMetadataJob::CopyPropertiesToMediaItem is main thread only!");
   nsresult rv;
@@ -723,12 +780,17 @@ nsresult sbMetadataJob::CopyPropertiesToMediaItem(sbMetadataJobItem *aJobItem)
     rv = props->GetPropertyValue( trackNameKey, trackName );
     
     if (NS_FAILED(rv)) {
-      rv = HandleFailedItem(aJobItem);
+      rv = HandleFailedItem(aJobItem, PR_TRUE, aWillRetry);
       NS_ENSURE_SUCCESS(rv, rv);
     }
   } else {
-    rv = HandleFailedItem(aJobItem);
+    rv = HandleFailedItem(aJobItem, PR_TRUE, aWillRetry);
     NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Will retry with another handler. Bail out now.
+  if(*aWillRetry == PR_TRUE) {
+    return NS_OK;
   }
 
   // Get the property manager because we love it so much
@@ -892,7 +954,9 @@ nsresult sbMetadataJob::ReadAlbumArtwork(sbMetadataJobItem *aJobItem)
 }
 
 
-nsresult sbMetadataJob::HandleFailedItem(sbMetadataJobItem *aJobItem)
+nsresult sbMetadataJob::HandleFailedItem(sbMetadataJobItem *aJobItem, 
+                                         PRBool aShouldRetry /*= PR_FALSE*/, 
+                                         PRBool *aWillRetry /*= nsnull*/)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aJobItem);
@@ -900,6 +964,81 @@ nsresult sbMetadataJob::HandleFailedItem(sbMetadataJobItem *aJobItem)
     "sbMetadataJob::HandleFailedItem is main thread only!");
   nsresult rv;
   
+  // Default to no retry.
+  if (aShouldRetry && aWillRetry) 
+  {
+    TRACE(("%s[%.8x] - Attempting to retry job item.", __FUNCTION__, this));
+    *aWillRetry = PR_FALSE;
+    // Attempt to get next available Metadata Handler. If a handler
+    // is available resubmit the jobItem with the new handler.
+    nsCOMPtr<sbIMetadataHandler> previousHandler;
+    rv = aJobItem->GetHandler(getter_AddRefs(previousHandler));
+    // If this fails we just wrap up instead of having a hard failure.
+    // This is in a while loop so we can break out. I chose while() so that
+    // i could have my conditional check at the beginning without an extra if().
+    while (NS_SUCCEEDED(rv)) {
+      nsCOMPtr<sbIMetadataManager> metadataManager =
+        do_GetService("@songbirdnest.com/Songbird/MetadataManager;1", &rv);
+      if (NS_FAILED(rv)) {
+        break;
+      }
+
+      nsCString stringURL;
+      rv = aJobItem->GetURL(stringURL);
+      if (NS_FAILED(rv)) {
+        break;
+      }
+
+      NS_ConvertUTF8toUTF16 unicodeURL(stringURL);
+      nsCOMPtr<sbIMetadataHandler> handler;
+      rv = metadataManager->GetNextHandlerForMediaURL(previousHandler,
+                                                      unicodeURL,
+                                                      getter_AddRefs(handler));
+      if(NS_FAILED(rv) || !handler) {
+        break;
+      }
+
+      // None of these methods ever fail.
+      aJobItem->SetProcessingStarted(PR_FALSE);
+      aJobItem->SetProcessed(PR_FALSE);
+      aJobItem->SetHandler(handler);
+
+      // Resubmit.
+      rv = AppendJobItem(aJobItem);
+
+      // Resubmitted. Return.
+      if (NS_SUCCEEDED(rv)) {
+        *aWillRetry = PR_TRUE;
+
+        // Restart FileMetadataService processors to ensure that our resubmitted
+        // job item gets processed. If we do not do this it could sit in the queue
+        // forever waiting for the main thread or background thread processors
+        // to process it.
+        nsCOMPtr<sbIFileMetadataService> fileMetadataService = 
+          do_GetService("@songbirdnest.com/Songbird/FileMetadataService;1", &rv);
+        if (NS_FAILED(rv)) {
+          break;
+        }
+
+        rv = fileMetadataService->RestartProcessors(
+                        sbIFileMetadataService::MAIN_THREAD_PROCESSOR |
+                        sbIFileMetadataService::BACKGROUND_THREAD_PROCESSOR);
+
+        if (NS_FAILED(rv)) {
+          break;
+        }
+
+        rv = previousHandler->Close();
+        NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to clean up handler!");
+
+        TRACE(("%s[%.8x] Retrying job item %s", 
+               __FUNCTION__, this, stringURL.BeginReading()));
+
+        return NS_OK;
+      }
+    }
+  }
+
   // Get the content URI as escaped UTF8
   nsCAutoString escapedURI, unescapedURI;
   rv = aJobItem->GetURL(escapedURI);

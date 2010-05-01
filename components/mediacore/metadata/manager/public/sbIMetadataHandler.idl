@@ -41,7 +41,7 @@
  *
  * \sa sbIMetadataManager
  */
-[scriptable, uuid(4a858410-52e7-11dd-ae16-0800200c9a66)]
+[scriptable, uuid(068500d6-0678-46f5-b69d-49dc02453a40)]
 interface sbIMetadataHandler : nsISupports
 {
   /**
@@ -70,6 +70,11 @@ interface sbIMetadataHandler : nsISupports
   const PRUint32 METADATA_IMAGE_TYPE_BANDLOGO           = 0x13;
   const PRUint32 METADATA_IMAGE_TYPE_PUBLISHERLOGO      = 0x14;
   
+  /**
+   * \brief The Contract ID for the metadata handler.
+   */
+  readonly attribute ACString contractID;
+
   /**
    * \brief An array of metadata properties
    *
