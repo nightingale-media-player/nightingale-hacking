@@ -85,13 +85,24 @@ include $(topsrcdir)/build/rules.mk
 # The := assignment of the _XPTS variables is _very_ important; it ensures that 
 # we'll evaluate the $(wildcard)'s _ONCE_, and thus won't delete the 
 # (new, amalgamated) xpt files we just created, right after we created them.
-XULRUNNER_COMPONENTSDIR = $(SONGBIRD_XULRUNNERDIR)/components
 
 SONGBIRD_XPTS := $(notdir $(wildcard $(SONGBIRD_COMPONENTSDIR)/*.xpt))
 
+# There are two cases here: the first build, and then any subsequent builds,
+# where we already have a linked songbird.xpt, but the sub-xpts may have
+# changed, so we need to delete our songbird.xpt, re-collect all of the .xpts
+# in the tree, and rebuild the songbird.xpt (which we do by calling ourselves
+# with the target, which the if-test will fall to the other branch now...
+
 link_installer_xpts:
+ifeq (songbird.xpt,$(strip $(SONGBIRD_XPTS)))
+	$(RM) $(SONGBIRD_COMPONENTSDIR)/songbird.xpt
+	$(MAKE) -C $(SONGBIRD_OBJDIR) collect_xpts
+	$(MAKE) -C $(CURDIR) link_installer_xpts
+else
 	cd $(SONGBIRD_COMPONENTSDIR) && $(XPTLINK) songbird.xpt $(SONGBIRD_XPTS)
 	cd $(SONGBIRD_COMPONENTSDIR) && $(RM) $(SONGBIRD_XPTS)
+endif
 
 # preedTODO: the easiest way to re-express this dependency is to do it as
 # part of the export step for the installer; it seems to work, but even still,

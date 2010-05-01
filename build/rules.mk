@@ -298,7 +298,7 @@ $(foreach tier,$(TIERS),tier_$(tier)):: $(foreach tier,$(TIERS),$(if $(tier_$(ti
 ## SUBDIRS handling for libs and export targets
 ##
 
-libs:: $(SUBMAKEFILES) $(OUR_SUBDIRS)
+libs collect_xpts:: $(SUBMAKEFILES) $(OUR_SUBDIRS)
 ifeq (1_,$(IS_EXTENSION_MULTI_BUILD)_$(DO_TARGET))
 	$(foreach extcfg,$(EXTENSION_CONFIGS), \
     $(MAKE) IS_EXTENSION=1 SB_EXTENSION_CONFIG=$(extcfg) DO_TARGET=1 libs; ) true
@@ -416,7 +416,7 @@ ifneq ($(strip $(XPIDL_MODULE)),$(strip $(XPIDL_MODULE_TYPELIBS)))
 	$(XPTLINK) $(XPIDL_MODULE) $(XPIDL_MODULE_TYPELIBS)
 endif
 
-libs:: $(XPIDL_TYPELIBS) $(XPIDL_MODULE)
+libs collect_xpts:: $(XPIDL_TYPELIBS) $(XPIDL_MODULE)
 ifneq (,$(XPIDL_MODULE))
 	$(INSTALL_FILE) $(XPIDL_MODULE) $(SONGBIRD_COMPONENTSDIR)
 endif
