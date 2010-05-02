@@ -5,8 +5,8 @@
 # this can be removed when we're not using the buildbots to building the 
 # 1.1-branch anymore.
 SB_APPNAME=Songbird
-SB_BUILD_ID=20100501013010
-BuildNumber=1653
+SB_BUILD_ID=20100502013010
+BuildNumber=1655
 SB_BUILD_NUMBER=$(BuildNumber)
 SB_MILESTONE=1.8.0a
 SB_MILESTONE_WINDOWS=1.7.90.9
@@ -33,5 +33,5 @@ SB_JSONLY_EXTENSION_MAX_VER=1.8.0a
 # and if you want to be 100% sure/correct, so should you..
 #
 # RepoRevisionClient=$Rev$
-RepoRevisionVendor=11258
-RepoRevisionVendorBinaries=11647
+RepoRevisionVendor=11262
+RepoRevisionVendorBinaries=11648
