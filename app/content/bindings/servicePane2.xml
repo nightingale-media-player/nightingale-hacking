@@ -725,7 +725,7 @@
   </binding>
 
   <binding id="servicepane">
-    <content mousethrough="never">
+    <content mousethrough="never" wheelvolume="false">
       <xul:vbox id="sb_servicepane" class="servicepane-outer-box" flex="1">
         <xul:vbox id="sb_servicepane_box"
                   class="servicepane-inner-box"
