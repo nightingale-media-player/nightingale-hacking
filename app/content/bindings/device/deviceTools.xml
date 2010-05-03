@@ -187,26 +187,34 @@
       </constructor>
 
       <destructor><![CDATA[
-        if(this._firmwareHandler)
-          this._firmwareHandler.unbind();
+        this._finalize();
 
-        this._firmwareHandler = null;
-        this._busyCheckTimer = null;
-        this._currentFirmwareVersion = null;
-        this._registerURI = null;
-        this._customerSupportLocation = null;
-
-        if(this.device && this.deviceChangeEvent) {
-          this.device.QueryInterface(Ci.sbIDeviceEventTarget)
-                     .removeEventListener(this.deviceChangeEvent);
-        }
         this.device = null;
 
         if(this._busyCheckTimer) {
           clearInterval(this._busyCheckTimer);
         }
+        this._busyCheckTimer = null;
       ]]>
       </destructor>
+
+      <method name="_finalize">
+        <body><![CDATA[
+          if(this._firmwareHandler)
+            this._firmwareHandler.unbind();
+
+          this._firmwareHandler = null;
+          this._currentFirmwareVersion = null;
+          this._registerURI = null;
+          this._customerSupportLocation = null;
+
+          if(this.device && this.deviceChangeEvent) {
+            this.device.QueryInterface(Ci.sbIDeviceEventTarget)
+                       .removeEventListener(this.deviceChangeEvent);
+          }
+          this.deviceChangeEvent = null;
+        ]]></body>
+      </method>
 
       <method name="registerDevice">
         <body><![CDATA[
@@ -528,10 +536,10 @@
 
     <handlers>
       <handler event="deviceBound"
-               action="try { this._update(); this._propertyLookup(); } catch (e) { dump('exception:' + e + '\n'); }"/>
+               action="try { this._finalize(); this._update(); this._propertyLookup(); } catch (e) { dump('exception:' + e + '\n'); }"/>
 
       <handler event="devLibBound"
-               action="try { this._update(); this._propertyLookup(); } catch (e) { dump('exception:' + e + '\n'); }"/>
+               action="try { this._finalize(); this._update(); this._propertyLookup(); } catch (e) { dump('exception:' + e + '\n'); }"/>
     </handlers>
   </binding>
 
