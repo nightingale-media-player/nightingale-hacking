@@ -32,6 +32,7 @@ interface sbIPropertyArray;
 interface sbIMediaItem;
 interface sbITranscodingConfigurator;
 interface nsIInputStream;
+interface nsIOutputStream;
 
 /**
  * \interface sbITranscodeVideoJob sbITranscodeVideoJob.h
@@ -47,7 +48,7 @@ interface nsIInputStream;
  * \sa sbIJobProgress
  * \sa sbIJobCancelable
  */
-[scriptable, uuid(63d959c2-08b8-47fe-958d-2685e3589471)]
+[scriptable, uuid(51d4676c-98cb-4b35-83dd-62fbbd7ab9a0)]
 interface sbITranscodeVideoJob : nsISupports
 {
   /**
@@ -85,12 +86,24 @@ interface sbITranscodeVideoJob : nsISupports
   attribute AString sourceURI;
 
   /**
-   * \brief The destination URI to transcode to
+   * \brief The destination URI to transcode to. Used only if destStream is
+   *        set to a non-null value.
    *
    * Note that, in general, only file URIs will be supported for destination
-   * URI.
+   * URI. For non-file URIs, an nsIOutputStream should be used instead (see
+   * below). 
    */
   attribute AString destURI;
+
+  /**
+   * \brief A stream to write the output to. Used in preference to destURI
+   *        if this is set.
+   *
+   * Note that the output stream may not be seekable, in which case some formats
+   * may not work correctly. If the stream does implement nsISeekableStream,
+   * any format should be usable.
+   */
+  attribute nsIOutputStream destStream;
 
   /**
    * \brief Vote to be the handler returned for the given url

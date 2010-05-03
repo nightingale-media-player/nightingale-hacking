@@ -224,8 +224,12 @@ private:
   nsCOMPtr<nsIInputStream>                mImageStream;
   nsCOMPtr<sbITranscodingConfigurator>    mConfigurator;
 
+  /* Transcoding input: URI only */
   nsString                                mSourceURI;
+
+  /* Transcoding output: Stream takes precedence if non-NULL */
   nsString                                mDestURI;
+  nsCOMPtr<nsIOutputStream>               mDestStream;
 
   PRUint16                                mStatus;
   nsTArray<nsCOMPtr<sbITranscodeError> >  mErrors;

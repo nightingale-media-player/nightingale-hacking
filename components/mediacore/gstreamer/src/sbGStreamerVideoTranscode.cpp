@@ -203,6 +203,30 @@ sbGStreamerVideoTranscoder::GetDestURI(nsAString& aDestURI)
 }
 
 NS_IMETHODIMP
+sbGStreamerVideoTranscoder::GetDestStream(nsIOutputStream **aStream)
+{
+  TRACE(("%s[%p]", __FUNCTION__, this));
+
+  NS_ENSURE_ARG_POINTER(aStream);
+
+  NS_IF_ADDREF(*aStream = mDestStream);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbGStreamerVideoTranscoder::SetDestStream(nsIOutputStream *aStream)
+{
+  TRACE(("%s[%p]", __FUNCTION__, this));
+
+  // Can only set this while we don't have a pipeline built/running.
+  NS_ENSURE_STATE (!mPipelineBuilt);
+
+  mDestStream = aStream;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbGStreamerVideoTranscoder::GetMetadata(sbIPropertyArray **aMetadata)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
@@ -1660,17 +1684,29 @@ sbGStreamerVideoTranscoder::CreateSink (GstElement **aSink)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
-  nsCString uri = NS_ConvertUTF16toUTF8 (mDestURI);
-  GstElement *sink = gst_element_make_from_uri (GST_URI_SINK,
-          uri.BeginReading(), "sink");
+  GstElement *sink = NULL;
 
- if (!sink) {
-   TranscodingFatalError("songbird.transcode.error.no_sink");
-   return NS_ERROR_FAILURE;
- }
+  if (mDestStream) {
+    sink = gst_element_factory_make ("mozillasink", "sink");
+    if (sink) {
+      // Set the 'stream' property to the raw nsIOutputStream pointer.
+      g_object_set (sink, "stream", mDestStream.get(), NULL);
+    }
+  }
+  else if (!mDestURI.IsEmpty()) {
+    nsCString uri = NS_ConvertUTF16toUTF8 (mDestURI);
+    sink = gst_element_make_from_uri (GST_URI_SINK,
+                                      uri.BeginReading(),
+                                      "sink");
+  }
 
- *aSink = sink;
- return NS_OK;
+  if (!sink) {
+    TranscodingFatalError("songbird.transcode.error.no_sink");
+    return NS_ERROR_FAILURE;
+  }
+
+  *aSink = sink;
+  return NS_OK;
 }
 
 nsresult
@@ -1838,30 +1874,34 @@ sbGStreamerVideoTranscoder::InitializeConfigurator()
   }
 
   // Ensure that the proper file extension is being used for the destintation
-  // output file.
-  nsCOMPtr<nsIURI> fixedDestURI;
-  rv = NS_NewURI(getter_AddRefs(fixedDestURI), NS_ConvertUTF16toUTF8(mDestURI));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIFileURL> fixedDestFileURI = do_QueryInterface(fixedDestURI, &rv);
-  if (NS_SUCCEEDED(rv) && fixedDestFileURI) {
-    nsCString curFileExt;
-    rv = fixedDestFileURI->GetFileExtension(curFileExt);
+  // output file (if it's a file)
+  if (!mDestURI.IsEmpty()) {
+    nsCOMPtr<nsIURI> fixedDestURI;
+    rv = NS_NewURI(getter_AddRefs(fixedDestURI),
+                   NS_ConvertUTF16toUTF8(mDestURI));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCString configFileExt;
-    rv = mConfigurator->GetFileExtension(configFileExt);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (!curFileExt.Equals(configFileExt, CaseInsensitiveCompare)) {
-      rv = fixedDestFileURI->SetFileExtension(configFileExt);
+    nsCOMPtr<nsIFileURL> fixedDestFileURI = do_QueryInterface(
+            fixedDestURI, &rv);
+    if (NS_SUCCEEDED(rv) && fixedDestFileURI) {
+      nsCString curFileExt;
+      rv = fixedDestFileURI->GetFileExtension(curFileExt);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsCString fixedSpec;
-      rv = fixedDestFileURI->GetSpec(fixedSpec);
+      nsCString configFileExt;
+      rv = mConfigurator->GetFileExtension(configFileExt);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      CopyUTF8toUTF16(fixedSpec, mDestURI);
+      if (!curFileExt.Equals(configFileExt, CaseInsensitiveCompare)) {
+        rv = fixedDestFileURI->SetFileExtension(configFileExt);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsCString fixedSpec;
+        rv = fixedDestFileURI->GetSpec(fixedSpec);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        CopyUTF8toUTF16(fixedSpec, mDestURI);
+      }
     }
   }
 
