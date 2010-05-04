@@ -1541,9 +1541,19 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
        iter != end;
        ++iter) {
     if (iter->mAction == sbLDBDSEnumerator::ItemInfo::ACTION_NONE) {
-      // Not present in source, indicate that the item was removed from the source.
+      // Not present in source, indicate that the item was removed from the
+      // source.
+      nsCOMPtr<sbIMediaItem> destItem;
+      rv = aDestinationLibrary->GetItemByGuid(sbGUIDToString(iter->mID),
+                                              getter_AddRefs(destItem));
+      // If we can't find it now, just skip it
+      if (rv == NS_ERROR_NOT_AVAILABLE || !destItem) {
+        continue;
+      }
+      NS_ENSURE_SUCCESS(rv, rv);
+
       nsCOMPtr<sbILibraryChange> libraryChange;
-      rv = CreateItemDeletedLibraryChange(sourceItem, getter_AddRefs(libraryChange));
+      rv = CreateItemDeletedLibraryChange(destItem, getter_AddRefs(libraryChange));
       NS_ENSURE_SUCCESS(rv, rv);
 
       rv = libraryChanges->AppendElement(libraryChange, PR_FALSE);
