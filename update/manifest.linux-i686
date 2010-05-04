@@ -206,7 +206,6 @@
 ./components/sbSmartMediaListsUpdater.js
 ./components/sbSmartPlaylistPropertyRegistrar.js
 ./components/sbSongbirdProtocol.js
-./components/sbStorageFormatter.jsm
 ./components/sbStrings.so
 ./components/sbStrings.xpt
 ./components/sbTemporaryFileService.so
@@ -379,7 +378,6 @@
 ./jsmodules/sbMetadataUtils.jsm
 ./jsmodules/sbProperties.jsm
 ./jsmodules/sbSmartMediaListColumnSpecUpdater.jsm
-./jsmodules/sbStorageFormatter.jsm
 ./jsmodules/sbTimeFormatter.jsm
 ./lib/libFLAC.so
 ./lib/libgstaudio-0.10.so
