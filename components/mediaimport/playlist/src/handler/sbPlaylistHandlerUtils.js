@@ -1,27 +1,25 @@
-/**
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 /**
@@ -32,6 +30,18 @@ Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 
 const PR_RDONLY = -1;
 const PR_FLAGS_DEFAULT = -1;
+
+// the minimum number of characters to feed into the charset detector
+const GUESS_CHARSET_MIN_CHAR_COUNT = 256;
+
+/**
+ * \brief Process the file aFile line by line with the callback function
+ *        aCallback.
+ *
+ * \param aFile     The file to be processed.
+ * \param aCallback The callback function that will be used to process the file.
+ * \param aThis     User defined data for the callback function.
+ */
 
 function SB_ProcessFile(aFile, aCallback, aThis) {
 
@@ -47,6 +57,83 @@ function SB_ProcessFile(aFile, aCallback, aThis) {
   } while(hasmore);
 
   istream.close();
+}
+
+/**
+ * \brief Detect the charset of the file aFile, convert the file encode to the
+ *        detected one, and process the file line by line with the callback
+ *        function aCallback.
+ *
+ * \param aFile     The file to be detected and processed.
+ * \param aCallback The callback function that will be used to process the file.
+ * \param aThis     User defined data for the callback function.
+ */
+
+function SB_DetectCharsetAndProcessFile(aFile, aCallback, aThis) {
+
+  var istream = Cc["@mozilla.org/network/file-input-stream;1"]
+                  .createInstance(Ci.nsIFileInputStream);
+  istream.init(aFile, PR_RDONLY, PR_FLAGS_DEFAULT, 0);
+  istream.QueryInterface(Ci.nsILineInputStream);
+
+  var detector = Cc["@songbirdnest.com/Songbird/CharsetDetector;1"]
+                   .createInstance(Ci.sbICharsetDetector);
+  var line = {}, hasmore, charset;
+  var value = "";
+  var length = 0;
+  try {
+    do {
+      hasmore = istream.readLine(line);
+      value = line.value;
+
+      // Blank can be ignored.
+      if (value == "")
+        continue;
+
+      // Send the file content for detection, until we get the best value.
+      detector.detect(value);
+
+      length += value.length;
+    } while(hasmore &&
+            !detector.isCharsetFound &&
+            length < GUESS_CHARSET_MIN_CHAR_COUNT);
+    charset = detector.finish();
+  }
+  catch (ex) {
+    dump("charset detection error in SB_DetectCharsetAndProcessFile: " +
+         ex + "\n");
+  }
+
+  istream.close();
+
+  var fstream = Cc["@mozilla.org/network/file-input-stream;1"]
+                  .createInstance(Ci.nsIFileInputStream);
+  fstream.init(aFile, PR_RDONLY, PR_FLAGS_DEFAULT, 0);
+  fstream.QueryInterface(Ci.nsILineInputStream);
+  var unicodeConverter = Cc["@mozilla.org/intl/scriptableunicodeconverter"]
+                           .createInstance(Ci.nsIScriptableUnicodeConverter);
+  // Re-read the file with the charset found.
+  do {
+    hasmore = fstream.readLine(line);
+    value = line.value;
+
+    // Blank can be ignored for all playlist handlers.
+    if (value == "")
+      continue;
+
+    try {
+      unicodeConverter.charset = charset ? charset : "ISO-8859-1";
+      value = unicodeConverter.ConvertToUnicode(value);
+    }
+    catch (ex) {
+      dump("Unicode conversion error in SB_DetectCharsetAndProcessFile: " +
+           ex + "\n");
+    }
+
+    aCallback.apply(aThis, [value]);
+  } while(hasmore);
+
+  fstream.close();
 }
 
 function SB_AddItems(aItems, aMediaList, aAddDistinctOnly) {
