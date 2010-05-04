@@ -173,8 +173,7 @@ protected:
   PRLock       *m_ScanQueryQueueLock;
   queryqueue_t m_ScanQueryQueue;
 
-  PRLock *m_ScanQueryProcessorIsRunningLock;
-  PRBool m_ScanQueryProcessorIsRunning;
+  PRInt32 m_ScanQueryProcessorIsRunning;
 
   nsCOMPtr<nsINetUtil> mNetUtil;
   PRBool               m_ThreadShouldShutdown;
