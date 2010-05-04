@@ -350,6 +350,7 @@ sbDeviceLibrary::GetMgmtTypePref(PRUint32 aContentType,
   NS_ENSURE_ARG_RANGE(aContentType,
                       sbIDeviceLibrary::MEDIATYPE_AUDIO,
                       sbIDeviceLibrary::MEDIATYPE_COUNT - 1);
+  NS_ENSURE_STATE(mDevice);
 
   nsresult rv;
 

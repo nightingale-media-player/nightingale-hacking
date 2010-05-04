@@ -173,10 +173,7 @@ public:                                                                        \
                                                                                \
   aType& operator=(aType aValue)                                               \
   {                                                                            \
-    if (aIsValid) {                                                            \
-      aDispose;                                                                \
-      aInvalidate;                                                             \
-    }                                                                          \
+    Clear();                                                                   \
     Set(aValue);                                                               \
     return mValue;                                                             \
   }                                                                            \
@@ -186,6 +183,20 @@ public:                                                                        \
     if (!(aIsValid))                                                           \
       return PR_FALSE;                                                         \
     return PR_TRUE;                                                            \
+  }                                                                            \
+                                                                               \
+  void Clear()                                                                 \
+  {                                                                            \
+    if (aIsValid) {                                                            \
+      aDispose;                                                                \
+      aInvalidate;                                                             \
+    }                                                                          \
+  }                                                                            \
+                                                                               \
+  aType* StartAssignment()                                                     \
+  {                                                                            \
+    Clear();                                                                   \
+    return reinterpret_cast<aType*>(&mValue);                                  \
   }                                                                            \
                                                                                \
 private:                                                                       \
