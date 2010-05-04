@@ -82,7 +82,6 @@ IS_COMPONENT = 1
 
 # TODO: Post 0.5 we need to remove js modules from the line above
 SONGBIRD_JSMODULES = $(srcdir)/sbLibraryUtils.jsm \
-                     $(srcdir)/sbStorageFormatter.jsm \
                      $(srcdir)/sbTimeFormatter.jsm \
                      $(srcdir)/sbColumnSpecParser.jsm \
                      $(srcdir)/sbSmartMediaListColumnSpecUpdater.jsm \
