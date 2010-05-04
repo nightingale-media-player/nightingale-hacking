@@ -46,9 +46,11 @@
 #include <nsThreadUtils.h>
 #include <nsStringGlue.h>
 #include <nsIMutableArray.h>
+#include <nsIThreadPool.h>
 #include <nsNetUtil.h>
 #include <sbILibraryUtils.h>
 #include <sbLockUtils.h>
+
 
 /**
  * To log this module, set the following environment variable:
@@ -622,29 +624,20 @@ NS_IMETHODIMP sbFileScanQuery::
 //  sbFileScan Class
 //*****************************************************************************
 NS_IMPL_ISUPPORTS1(sbFileScan, sbIFileScan)
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbFileScanThread, nsIRunnable)
-//-----------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 sbFileScan::sbFileScan()
-: m_pThreadMonitor(nsAutoMonitor::NewMonitor("sbFileScan.m_pThreadMonitor"))
-, m_pThread(nsnull)
+: m_ScanQueryQueueLock(nsAutoLock::NewLock("sbFileScan.m_ScanQueriesLock"))
+, m_ScanQueryProcessorIsRunningLock(nsAutoLock::NewLock(
+      "sbFileScan.m_ScanQueryProcessorIsRunningLock"))
+, m_ScanQueryProcessorIsRunning(PR_FALSE)
 , m_ThreadShouldShutdown(PR_FALSE)
-, m_ThreadQueueHasItem(PR_FALSE)
 , m_Finalized(PR_FALSE)
-, m_ThreadIsRunning(0)
 {
-  NS_ASSERTION(m_pThreadMonitor, "FileScan.m_pThreadMonitor failed");
+  NS_ASSERTION(m_ScanQueryQueueLock, "sbFileScan.m_ScanQueriesLock failed");
+  NS_ASSERTION(m_ScanQueryProcessorIsRunningLock,
+      "sbFileScan.m_ScanQueryProcessorIsRunningLock failed");
   MOZ_COUNT_CTOR(sbFileScan);
-
-  nsresult rv;
-
-  // Attempt to create the scan thread
-  nsCOMPtr<nsIRunnable> pThreadRunner = new sbFileScanThread(this);
-  NS_ASSERTION(pThreadRunner, "Unable to create sbFileScanThread");
-  if (pThreadRunner) {
-    rv = NS_NewThread(getter_AddRefs(m_pThread),
-                             pThreadRunner);
-    NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to start sbFileScanThread");
-  }
 } //ctor
 
 //-----------------------------------------------------------------------------
@@ -656,45 +649,44 @@ sbFileScan::~sbFileScan()
     rv = Finalize();
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "sbFileScan::Finalize failed");
   }
-  NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to shut down sbFileScanThread");
+  NS_ASSERTION(NS_SUCCEEDED(rv),
+      "Unable to shut down the query processor thread");
 
-  if (m_pThreadMonitor) {
-    nsAutoMonitor::DestroyMonitor(m_pThreadMonitor);
+  if (m_ScanQueryQueueLock) {
+    nsAutoLock::DestroyLock(m_ScanQueryQueueLock);
+  }
+  if (m_ScanQueryProcessorIsRunningLock) {
+    nsAutoLock::DestroyLock(m_ScanQueryProcessorIsRunningLock);
   }
 } //dtor
 
 nsresult
 sbFileScan::Shutdown()
 {
-  nsresult rv = NS_OK;
+  PRBool isRunning = PR_FALSE;
+  {
+    nsAutoLock autoIsRunningLock(m_ScanQueryProcessorIsRunningLock);
+    isRunning = m_ScanQueryProcessorIsRunning;
+  }
 
-  // Shutdown our thread
-  if (m_pThread) {
-    {
-      nsAutoMonitor mon(m_pThreadMonitor);
-      m_ThreadShouldShutdown = PR_TRUE;
+  // Shutdown the query processor thread if it is running.
+  if (isRunning) {
+    m_ThreadShouldShutdown = PR_TRUE;
 
-      rv = mon.Notify();
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
     nsCOMPtr<nsIThread> currentThread = do_GetCurrentThread();
     NS_ENSURE_TRUE(currentThread, NS_ERROR_FAILURE);
 
     // Wait for the thread to get to a safe spot before shutting down. Shutting
     // down the thread will cause problems if it's about to proxy.
-    while (m_ThreadIsRunning) {
+    while (m_ScanQueryProcessorIsRunning) {
       NS_ProcessPendingEvents(currentThread);
-      if (m_ThreadIsRunning) {
-       PR_Sleep(PR_MillisecondsToInterval(100));
+      if (m_ScanQueryProcessorIsRunning) {
+        PR_Sleep(PR_MillisecondsToInterval(100));
       }
     }
-
-    rv = m_pThread->Shutdown();
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Shutdown Failed!");
-    m_pThread = nsnull;
   }
 
-  return rv;
+  return NS_OK;
 }
 
 //-----------------------------------------------------------------------------
@@ -705,11 +697,23 @@ NS_IMETHODIMP sbFileScan::SubmitQuery(sbIFileScanQuery *pQuery)
   pQuery->AddRef();
 
   {
-    nsAutoMonitor mon(m_pThreadMonitor);
-    pQuery->SetIsScanning(PR_TRUE);
-    m_QueryQueue.push_back(pQuery);
-    m_ThreadQueueHasItem = PR_TRUE;
-    mon.Notify();
+    nsAutoLock autoQueryQueueLock(m_ScanQueryQueueLock);
+    // XXXkreeger: This doesn't make sense? Does a caller expect
+    //             this to be true?
+    //pQuery->SetIsScanning(PR_TRUE);
+    m_ScanQueryQueue.push_back(pQuery);
+  }
+
+  // Start the query processor thread if needed.
+  PRBool isRunning = PR_FALSE;
+  {
+    nsAutoLock autoIsRunningLock(m_ScanQueryProcessorIsRunningLock);
+    isRunning = m_ScanQueryProcessorIsRunning;
+  }
+  if (!isRunning) {
+    nsresult rv = StartProcessScanQueriesProcessor();
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+        "ERROR: Could not start the query processor thread!");
   }
 
   return NS_OK;
@@ -732,7 +736,11 @@ NS_IMETHODIMP sbFileScan::Finalize()
 
 //-----------------------------------------------------------------------------
 /* PRInt32 ScanDirectory (in wstring strDirectory, in PRBool bRecurse); */
-NS_IMETHODIMP sbFileScan::ScanDirectory(const nsAString &strDirectory, PRBool bRecurse, sbIFileScanCallback *pCallback, PRInt32 *_retval)
+NS_IMETHODIMP
+sbFileScan::ScanDirectory(const nsAString &strDirectory,
+                          PRBool bRecurse,
+                          sbIFileScanCallback *pCallback,
+                          PRInt32 *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -867,47 +875,93 @@ NS_IMETHODIMP sbFileScan::ScanDirectory(const nsAString &strDirectory, PRBool bR
 } //ScanDirectory
 
 //-----------------------------------------------------------------------------
-/*static*/ void PR_CALLBACK sbFileScan::QueryProcessor(sbFileScan* pFileScan)
+nsresult
+sbFileScan::StartProcessScanQueriesProcessor()
 {
-  PR_AtomicSet(&pFileScan->m_ThreadIsRunning, 1);
-  while(PR_TRUE)
+  // Start the query processor thread if it isn't already running and if the
+  // file scan service isn't shutting down.
+  PRBool isRunning = PR_FALSE;
   {
-    nsCOMPtr<sbIFileScanQuery> pQuery;
-    NS_ASSERTION(pFileScan->m_ThreadIsRunning == 0,
-                 "QueryProcess called when thread has already started");
-    { // Enter Monitor
-      nsAutoMonitor mon(pFileScan->m_pThreadMonitor);
-      while (!pFileScan->m_ThreadQueueHasItem && !pFileScan->m_ThreadShouldShutdown)
-        mon.Wait();
-
-      if (pFileScan->m_ThreadShouldShutdown) {
-        PR_AtomicSet(&pFileScan->m_ThreadIsRunning, 0);
-        return;
-      }
-
-      if(pFileScan->m_QueryQueue.size())
-      {
-        // The query was addref'd when it was put into m_QueryQueue so we do
-        // not need to addref it again when we assign it to pQuery.  This will
-        // be deleted when pQuery goes out of scope.
-        pQuery = dont_AddRef(pFileScan->m_QueryQueue.front());
-        pFileScan->m_QueryQueue.pop_front();
-      }
-
-      if (pFileScan->m_QueryQueue.empty())
-        pFileScan->m_ThreadQueueHasItem = PR_FALSE;
-    } // Exit Monitor
-
-    if(pQuery) {
-      pQuery->SetIsScanning(PR_TRUE);
-      pFileScan->ScanDirectory(pQuery);
-      pQuery->SetIsScanning(PR_FALSE);
-    }
+    nsAutoLock autoIsRunningLock(m_ScanQueryProcessorIsRunningLock);
+    isRunning = m_ScanQueryProcessorIsRunning;
   }
-} //QueryProcessor
+
+  if (!isRunning && !m_ThreadShouldShutdown) {
+    nsresult rv;
+    nsCOMPtr<nsIThreadPool> threadPoolService =
+      do_GetService("@songbirdnest.com/Songbird/ThreadPoolService;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIRunnable> runnable =
+      NS_NEW_RUNNABLE_METHOD(sbFileScan, this, RunProcessScanQueries);
+    NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
+
+    rv = threadPoolService->Dispatch(runnable, NS_DISPATCH_NORMAL);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
 
 //-----------------------------------------------------------------------------
-PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
+void
+sbFileScan::RunProcessScanQueries()
+{
+  {
+    nsAutoLock isRunningLock(m_ScanQueryProcessorIsRunningLock);
+    m_ScanQueryProcessorIsRunning = PR_TRUE;
+  }
+
+  // This method will be run on a background thread and will process any scan
+  // queries as they are pushed into the process queue.
+  while (PR_TRUE) {
+    nsCOMPtr<sbIFileScanQuery> curScanQuery;
+    {
+      nsAutoLock queriesLock(m_ScanQueryQueueLock);
+
+      // Ensure that there is at least one query to run and that the thread
+      // should be running.
+      if (m_ScanQueryQueue.size() == 0 || m_ThreadShouldShutdown) {
+        // Nothing in the query queue to process, break out of the thread.
+        break;
+      }
+
+      // Now get the next scan query.
+      // NOTE: This query was already addref'd when it was pushed into the
+      //       the query queue.
+      curScanQuery = dont_AddRef(m_ScanQueryQueue.front());
+      m_ScanQueryQueue.pop_front();
+    }
+
+    if (!curScanQuery) {
+      // Fail safe.
+      continue;
+    }
+
+    // Process this current scan query now.
+    nsresult rv;
+    rv = curScanQuery->SetIsScanning(PR_TRUE);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+        "WARNING: Could not inform the scan query to isScanning=true!");
+
+    rv = ScanDirectory(curScanQuery);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+        "WARNING: Could not scan the current directory!");
+
+    rv = curScanQuery->SetIsScanning(PR_FALSE);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+        "WARNING: Could not inform the scan query to isScanning=false!");
+  }
+
+  {
+    nsAutoLock isRunningLock(m_ScanQueryProcessorIsRunningLock);
+    m_ScanQueryProcessorIsRunning = PR_FALSE;
+  }
+}
+
+//-----------------------------------------------------------------------------
+nsresult
+sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
 {
   dirstack_t dirStack;
   fileentrystack_t fileEntryStack;
@@ -955,12 +1009,7 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
 
     if(pDirEntries)
     {
-      PRBool keepRunning = PR_FALSE;
-
-      {
-        nsAutoMonitor mon(m_pThreadMonitor);
-        keepRunning = !m_ThreadShouldShutdown;
-      }
+      PRBool keepRunning = !m_ThreadShouldShutdown;
 
       while(keepRunning)
       {
@@ -1074,10 +1123,7 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
 
         // Check thread shutdown flag since it's possible for our thread
         // to be in shutdown without the query being cancelled.
-        {
-          nsAutoMonitor mon(m_pThreadMonitor);
-          keepRunning = !m_ThreadShouldShutdown;
-        }
+        keepRunning = !m_ThreadShouldShutdown;
       }
       NS_IF_RELEASE(pDirEntries);
     }
