@@ -1403,6 +1403,15 @@ sbLocalDatabaseDiffingService::Enumerator(nsIDHashKey* aEntry, void* userArg)
     }
   }
   if (destinationItem) {
+    // Do not update playlist
+    nsString isList;
+    rv = sourceItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                                 isList);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_NEXT);
+
+    if (isList.EqualsLiteral("1"))
+      return PL_DHASH_NEXT;
+
     LogMediaItem("Source Item", sourceItem);
     LogMediaItem("Destination item", destinationItem);
     rv = args->mDiffService->CreateLibraryChangeFromItems(
