@@ -29,7 +29,6 @@
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
-Components.utils.import("resource://app/jsmodules/sbStorageFormatter.jsm");
 
 const Ci = Components.interfaces;
 const Cc = Components.classes;
@@ -84,10 +83,13 @@ BaseDeviceHelper.prototype = {
     // need to ask the user
     var messageKeyPrefix = this._getMessageKeyPrefix(aLibrary);
 
+    storageConverter =
+      Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
+        .createInstance(Ci.sbIPropertyUnitConverter);
     var messageParams = [
       device.name,
-      StorageFormatter.format(aSpaceNeeded),
-      StorageFormatter.format(spaceRemaining)
+      storageConverter.autoFormat(aSpaceNeeded, -1, 1),
+      storageConverter.autoFormat(spaceRemaining, -1, 1)
     ];
     var message = SBFormattedString(messageKeyPrefix + ".message",
                                     messageParams);
@@ -122,11 +124,14 @@ BaseDeviceHelper.prototype = {
   {
     var messageKeyPrefix = this._getMessageKeyPrefix(aLibrary);
 
+    storageConverter =
+      Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
+        .createInstance(Ci.sbIPropertyUnitConverter);
     var message = SBFormattedString
                     (messageKeyPrefix + ".message",
                      [ aDevice.name,
-                       StorageFormatter.format(aSpaceNeeded),
-                       StorageFormatter.format(aSpaceAvailable) ]);
+                       storageConverter.autoFormat(aSpaceNeeded, -1, 1),
+                       storageConverter.autoFormat(aSpaceAvailable, -1, 1) ]);
 
     var buttonFlags = (Ci.nsIPromptService.BUTTON_POS_0 *
                        Ci.nsIPromptService.BUTTON_TITLE_IS_STRING) +

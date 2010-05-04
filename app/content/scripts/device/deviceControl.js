@@ -47,7 +47,6 @@
 Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
-Components.utils.import("resource://app/jsmodules/sbStorageFormatter.jsm");
 Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
 
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
@@ -564,9 +563,12 @@ deviceControlWidget.prototype = {
     // Get the device capacity.
     var capacity = "";
     try {
+      storageConverter =
+        Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
+          .createInstance(Ci.sbIPropertyUnitConverter);
       capacity = this._device.properties.properties.getPropertyAsAString
                    ("http://songbirdnest.com/device/1.0#capacity");
-      capacity = StorageFormatter.format(capacity);
+      capacity = storageConverter.autoFormat(capacity, -1, 1);
     } catch (ex) {};
 
     return SBFormattedString("device.info.model_cap",

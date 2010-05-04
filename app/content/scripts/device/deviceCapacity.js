@@ -53,9 +53,6 @@ if (typeof(Cr) == "undefined")
 if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
 
-// Songbird imports.
-Cu.import("resource://app/jsmodules/sbStorageFormatter.jsm");
-
 
 //------------------------------------------------------------------------------
 //
@@ -322,7 +319,10 @@ var DCW = {
 
       // Update the capacity legend.
       if (value) {
-        child.setAttribute("value", StorageFormatter.format(value));
+        storageConverter =
+          Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
+            .createInstance(Ci.sbIPropertyUnitConverter);
+        child.setAttribute("value", storageConverter.autoFormat(value, -1, 1));
         child.hidden = false;
       }
       else {

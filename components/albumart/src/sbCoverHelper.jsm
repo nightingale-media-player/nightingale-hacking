@@ -1,27 +1,25 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 EXPORTED_SYMBOLS = [ "sbCoverHelper" ];
@@ -34,7 +32,6 @@ const Cu = Components.utils;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
-Cu.import("resource://app/jsmodules/sbStorageFormatter.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
@@ -99,12 +96,15 @@ var sbCoverHelper = {
       var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
                             .getService(Ci.nsIPromptService);
       
+      storageConverter =
+        Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
+          .createInstance(Ci.sbIPropertyUnitConverter);
       var strTitle = SBString("albumart.maxsize.title", null);
       var strMsg = SBBrandedFormattedString
                      ("albumart.maxsize.message",
-                      [ StorageFormatter.format(maxFileSize),
-                        StorageFormatter.format(checkFileSize) ]);
-      
+                      [ storageConverter.autoFormat(maxFileSize, -1, 1),
+                        storageConverter.autoFormat(checkFileSize, -1, 1) ]);
+
       promptService.alert(null, strTitle, strMsg);
       return false;
     }

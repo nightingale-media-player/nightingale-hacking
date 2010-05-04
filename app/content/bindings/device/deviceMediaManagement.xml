@@ -6,7 +6,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -259,8 +259,6 @@
 
         DeviceMediaManagementServices.initialize(this);
 
-        Components.utils.import("resource://app/jsmodules/sbStorageFormatter.jsm", this);
-
         var settingsAttribute = this.getAttribute("hide");
         var settingsList = settingsAttribute.split(",");
 
@@ -399,7 +397,10 @@
             capacity = ((capacity * limitPercentage) / 100);
           }
 
-          capacity = StorageFormatter.format(capacity);
+          storageConverter =
+            Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
+              .createInstance(Ci.sbIPropertyUnitConverter);
+          capacity = storageConverter.autoFormat(capacity, -1, 1);
 
           this._limitSpaceCheckbox.label =
             SBFormattedString("device.settings.limit_disk_space",

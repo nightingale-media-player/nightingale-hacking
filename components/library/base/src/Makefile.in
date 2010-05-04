@@ -73,7 +73,6 @@ DYNAMIC_LIB_STATIC_IMPORTS += components/moz/streams/src/sbMozStreams \
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbDynamicPlaylist.js \
                       $(srcdir)/sbLibraryUtils.jsm \
-                      $(srcdir)/sbStorageFormatter.jsm \
                       $(srcdir)/sbTimeFormatter.jsm \
                       $(srcdir)/sbColumnSpecParser.jsm \
                       $(srcdir)/sbLibrarySearchSuggester.js \
