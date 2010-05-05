@@ -36,9 +36,9 @@ Imported by bindings.css or directly into feathers.
 *******************************************************************************
 */ 
 
-
-
-
+sb-servicepane-group {
+  -moz-box-orient: vertical;
+}
 
 /* Service Pane Icons **/
 .servicepane-tree > treechildren::-moz-tree-image {

@@ -196,6 +196,7 @@
               <xul:label class="servicepane-node-label"
                          crop="end"
                          flex="1"
+                         mousethrough="never"
                          xbl:inherits="value=label"/>
               <xul:spacer flex="1" />
               <xul:hbox class="servicepane-node-badges"
@@ -714,9 +715,11 @@
       <handler event="click">
       <![CDATA[
         if (event.button == 0) {
-          // if we're the active node, then rename
+          // if we're the active node, & the user clicked on the label
+          // then rename
           if (this._servicePane.getActiveNode() == this.nodeData &&
-              this.nodeData.editable)
+              this.nodeData.editable &&
+              event.originalTarget.tagName == "xul:label")
             this._servicePane.startEditingNode(this.nodeData);
           // otherwise load 
           else
@@ -765,24 +768,113 @@
 
   <binding id="servicepane-group">
     <content mousethrough="never">
-      <xul:vbox class="servicepane-group" flex="1">
-        <xul:hbox class="servicepane-group-header">
+      <xul:vbox class="servicepane-group" >
+        <xul:hbox class="servicepane-group-header"
+                  onclick="toggleVisibility(event)">
           <xul:description class="servicepane-group-label"
                      xbl:inherits="xbl:text=label"/>
           <xul:spacer flex="1" />
           <xul:image class="servicepane-group-toggle"/>
         </xul:hbox>
-        <xul:vbox sbid="groupNodes" xbl:inherits="open">
-          <children /> <!-- servicepane-nodes -->
+        <xul:vbox class="servicepane-group-overflow-container">
+          <xul:vbox class="servicepane-group-nodes"
+                    sbid="groupNodes" xbl:inherits="open" flex="1">
+            <children /> <!-- servicepane-nodes -->
+          </xul:vbox>
         </xul:vbox>
       </xul:vbox>
     </content>
 
     <implementation>
+      <constructor><![CDATA[
+        this._groupNodes = this._getElement("groupNodes");
+        this._visible = true;
+      ]]></constructor>
+
+      <property name="visible">
+        <getter><![CDATA[
+          return this._visible;
+        ]]></getter>
+        <setter><![CDATA[
+          this._visible = val;
+          if (this._visible) {
+            this.animateTo(this._groupNodes, 0, 0, this._height, 5, true);
+          } else {
+            this._height = this._groupNodes.boxObject.height;
+            this.animateTo(this._groupNodes, this._height, this._height, 0, 5, false);
+          }
+        ]]></setter>
+      </property>
+      
+      <method name="animateTo">
+        <parameter name="element" />
+        <parameter name="orig" />
+        <parameter name="from" />
+        <parameter name="to" />
+        <parameter name="interval" />
+        <parameter name="dir" />
+        <body><![CDATA[
+          var self = this;
+          try {
+            if (dir) {
+              if (from < to) {
+                let diff = to - from;
+                interval = diff/2;
+                let newdim = from + interval;
+                if (newdim >= to || interval < 5)
+                  newdim = to;
+
+                let marginTop = to - newdim; 
+                element.style.marginTop = "-" + marginTop + "px";
+                setTimeout(function() {
+                    self.animateTo(element, orig, newdim, to, interval, dir);
+                    }, 40);
+              } else {
+                element.style.marginTop = "-" + orig + "px";
+              }
+            } else {
+              if (from > to) {
+                let diff = from - to;
+                interval = diff/2;
+                let newdim = from - interval;
+                if (newdim <= to || interval < 3)
+                  newdim = to;
+
+                let marginTop = orig - newdim;
+                element.style.marginTop = "-" + marginTop + "px";
+                setTimeout(function() {
+                    self.animateTo(element, orig, newdim, to, interval, dir);
+                    }, 40);
+              } else {
+                element.style.marginTop = "-" + orig + "px";
+              }
+            }
+          } catch (e) {
+            dump("Exception: " + e + "\n\n\n");
+          }
+        ]]></body>
+      </method>
+
+      <method name="_getElement">
+        <parameter name="anonID"/>
+        <body><![CDATA[
+          return document.getAnonymousElementByAttribute(this,
+                                                         "sbid",
+                                                         anonID);
+        ]]></body>
+      </method>
+
       <method name="getNode">
         <parameter name="nodeID"/>
         <body><![CDATA[
           return this.parentNode.getNode(nodeID);
+        ]]></body>
+      </method>
+
+      <method name="toggleVisibility">
+        <parameter name="event" />
+        <body><![CDATA[
+          this.visible = !this.visible;
         ]]></body>
       </method>
     </implementation>

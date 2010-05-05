@@ -610,17 +610,25 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 }
 
 /* BEGIN NEW SERVICEPANE */
-sb-servicepane-group {
+sb-servicepane-group > vbox > vbox.servicepane-group-overflow-container {
+  overflow: hidden;
 }
-
+sb-servicepane-group > vbox > vbox > vbox.servicepane-group-nodes {
+  overflow: hidden;
+}
 sb-servicepane-group hbox.servicepane-group-header {
   background-image: url(chrome://songbird/skin/service-pane/group-header-bg.png);
   background-repeat: repeat-x;
-  min-height: 18px;
-  max-height: 18px;
+  background-position: center 0px;
+  min-height: 20px;
+  max-height: 20px;
   -moz-box-align: center;
-  border-top: 1px solid rgb(102,99,111);
-  border-bottom: 1px solid rgb(51,47,61);
+}
+sb-servicepane-group hbox.servicepane-group-header:hover {
+  background-position: center -20px;
+}
+sb-servicepane-group hbox.servicepane-group-header:active {
+  background-position: center -40px;
 }
 
 sb-servicepane-group description.servicepane-group-label {
@@ -1375,6 +1383,10 @@ findbar > .findbar-container > .findbar-find-status {
 ******************************************************************************/
 scrollbarbutton,
 scrollbar > slider > thumb {   
+}
+
+#servicepane scrollbar {
+  border-left: 1px solid rgb(26,26,30);
 }
 
 
