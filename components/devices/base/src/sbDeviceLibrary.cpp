@@ -1726,6 +1726,34 @@ sbDeviceLibrary::RemoveDeviceLibraryListener(sbIDeviceLibraryListener* aListener
 }
 
 /**
+ * Returns the equality operator for the content property
+ */
+static nsresult
+GetEqualOperator(sbIPropertyOperator ** aOperator)
+{
+
+  nsresult rv;
+
+  nsCOMPtr<sbIPropertyManager> manager =
+    do_GetService("@songbirdnest.com/Songbird/Properties/PropertyManager;1",
+                  &rv);
+  nsCOMPtr<sbIPropertyInfo> info;
+  rv = manager->GetPropertyInfo(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                                getter_AddRefs(info));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString opName;
+  rv = info->GetOPERATOR_EQUALS(opName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the operator.
+  rv = info->GetOperator(opName, aOperator);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/**
  * This returns the existing audio smart playlist or creates a new one if
  * not found
  */
@@ -1803,7 +1831,7 @@ GetOrCreateAudioSmartMediaList(sbIMediaList ** aAudioMediaList)
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIPropertyOperator> equal;
-  rv = sbLibraryUtils::GetEqualOperator(getter_AddRefs(equal));
+  rv = GetEqualOperator(getter_AddRefs(equal));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbILocalDatabaseSmartMediaListCondition> condition;

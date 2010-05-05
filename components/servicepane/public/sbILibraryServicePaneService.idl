@@ -38,7 +38,7 @@ interface sbIMediaListView;
  * \interface sbILibraryServicePaneService
  * \brief Provides information about libraries and medialists needed by the service pane
  */
-[scriptable, uuid(8ba73860-4d3d-11df-9879-0800200c9a66)]
+[scriptable, uuid(3a663e90-3c00-11df-9879-0800200c9a66)]
 interface sbILibraryServicePaneService : nsISupports {
 
   /* \brief Suggest a library for creating a new media list
@@ -50,15 +50,6 @@ interface sbILibraryServicePaneService : nsISupports {
    */
   sbILibrary suggestLibraryForNewList (in AString aMediaListType,
                                        in sbIServicePaneNode aNode);
-
-  /* \brief Suggest a unique name for playlist.
-   *
-   * \param aLibrary an sbILibrary.
-   * \param aName the playlist name to append unique id to.
-   * \return a unique playlist name.
-   */
-  AString suggestUniqueNameForPlaylist (in sbILibrary aLibrary,
-                                        in AString aName);
 
   /* \brief Suggest a unique name for creating a new playlist
    *
