@@ -240,7 +240,7 @@ function sbDeviceServicePane_createNodeForDevice(aDevice, aDeviceIdentifier) {
 }
 
 sbDeviceServicePane.prototype.createNodeForDevice2 =
-function sbDeviceServicePane_createNodeForDevice2(aDevice) {
+function sbDeviceServicePane_createNodeForDevice2(aDevice, aEjectable) {
   this.log("createNodeForDevice2");
 
   // Make sure the devices group exists first
@@ -261,6 +261,11 @@ function sbDeviceServicePane_createNodeForDevice2(aDevice) {
   node.setAttributeNS(DEVICESP_NS, "device-id", aDevice.id);
   node.setAttributeNS(DEVICESP_NS, "deviceNodeType", "device");
   node.setAttributeNS(SP, "Weight", DEVICE_NODE_WEIGHT);
+  if (aEjectable) {
+    node.setAttribute("ejectable", "true");
+    let listener = new _deviceNodeEventListener(aDevice);
+    node.addEventListener(listener);
+  }
   node.editable = false;
   node.className = "device";
 
@@ -284,6 +289,7 @@ function sbDeviceServicePane_createNodeForDevice2(aDevice) {
     devicesNode.appendChild(node);
   }
 
+  this._device = aDevice;
   return node;
 }
 
@@ -382,6 +388,26 @@ function sbDeviceServicePane_insertChildByName(aDevice, aChild) {
 
   // Insert before the node found, or insert at the end if lastNode is null.
   deviceNode.insertBefore(aChild, lastNode);
+}
+
+////////////////////////////////////
+// sbIServicePaneMutationListener //
+////////////////////////////////////
+function _deviceNodeEventListener(aDevice) {
+  this._device = aDevice;
+}
+_deviceNodeEventListener.prototype = {
+  onNodeEvent: function sbDeviceServicePane_onNodeEvent(aEventName) {
+    switch (aEventName) {
+      case "eject":
+        try {
+          this._device.eject();
+        } catch (e) {
+          dump("Exception in sbDeviceServicePane event listener: " + e + "\n");
+        }
+        break;
+    }
+  }
 }
 
 ////////////////////////////////////

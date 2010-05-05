@@ -92,6 +92,7 @@ ServicePaneNode.prototype = {
   _stringBundleURI: null,
   _isInTree: false,
   _listeners: null,
+  _eventListeners: null,
   _notificationQueue: null,
   _notificationQueueBusy: false,
 
@@ -416,6 +417,35 @@ ServicePaneNode.prototype = {
     this.insertBefore(aChild, insertBefore);
   },
 
+  addEventListener: function(aListener) {
+    if (this._eventListeners == null)
+      this._eventListeners = [];
+
+    // Don't add listeners twice
+    for each (let listener in this._eventListeners)
+      if (listener == aListener)
+        return;
+
+    this._eventListeners.push(aListener);
+  },
+
+  removeEventListener: function(aListener) {
+    if (this._eventListeners == null)
+      return;
+
+    for (let i = 0; i < this._eventListeners.length; i++)
+      if (this._eventListeners[i] == aListener)
+        this._eventListeners.splice(i--, 1);
+
+    if (this._eventListeners.length == 0)
+      this._eventListeners = null;
+  },
+
+  dispatchEvent: function(aEventName) {
+    for each (let listener in this._eventListeners)
+      listener.onNodeEvent(aEventName);
+  },
+
   addMutationListener: function(aListener) {
     if (this._listeners == null)
       this._listeners = [];
@@ -688,7 +718,17 @@ ServicePaneService.prototype = {
                        "longer need to call it.");
   },
   
+  _clearNodeListeners: function ServicePaneService__clearNodeListeners(aNode) {
+    if (aNode._eventListeners) {
+      delete aNode._eventListeners;
+    }
+    for each (let child in aNode.childNodes) {
+      this._clearNodeListeners(child);
+    }
+  },
   _shutdown: function ServicePaneService__shutdown() {
+    this._clearNodeListeners(this.root);
+
     let observerService = Cc["@mozilla.org/observer-service;1"]
                             .getService(Ci.nsIObserverService);
     observerService.removeObserver(this, "quit-application");

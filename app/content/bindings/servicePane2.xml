@@ -76,6 +76,7 @@
           if (this.hasAttribute("badgeLabel")) {
             this.badgeLabel = this.getAttribute("badgeLabel");
           }
+          this.badgeAction = null;
       ]]>
       </constructor>
 
@@ -103,7 +104,7 @@
         <body><![CDATA[
           let imageNode = this._getElement("servicepane-node-badge-image");
           let textNode = this._getElement("servicepane-node-badge-label");
-          if (imageNode.hasAttribute("src")) {
+          if (this.hasAttribute("badgeImage")) {
             imageNode.removeAttribute("hidden");
             textNode.setAttribute("hidden", true);
           }
@@ -120,12 +121,13 @@
       <property name="badgeImage">
         <getter><![CDATA[
           let imageNode = this._getElement("servicepane-node-badge-image");
-          return imageNode.src;
+          return this.getAttribute("badgeImage");
         ]]></getter>
         <setter><![CDATA[
           let imageNode = this._getElement("servicepane-node-badge-image");
           let textNode = this._getElement("servicepane-node-badge-label");
-          imageNode.src = val;
+          this.setAttribute("badgeImage", val);
+          imageNode.style.listStyleImage = "url('" + val + "')";
           this._update();
           return val;
         ]]></setter>
@@ -141,6 +143,7 @@
         ]]></getter>
         <setter><![CDATA[
           let textNode = this._getElement("servicepane-node-badge-label");
+          this.removeAttribute("badgeImage");
           textNode.value = val;
           this._update();
           return val;
@@ -148,6 +151,26 @@
       </property>
 
     </implementation>
+
+    <handlers>
+      <handler event="click">
+      <![CDATA[
+        if (event.button == 0) {
+          if (this.badgeAction) {
+            try {
+              this.badgeAction();
+            } catch (e) {
+              dump("Badge action exception: " + e + "\n");
+            }
+            event.stopPropagation();
+            event.preventDefault();
+          }
+        }
+      ]]>
+      </handler>
+    </handlers>
+
+
   </binding>
 
    <!--
@@ -169,8 +192,10 @@
           <xul:image class="servicepane-node-image"
                      xbl:inherits="src=image" flex="0" />
           <xul:stack sbid="servcepane-node-stack" flex="1">
-            <xul:hbox>
+            <xul:hbox flex="1">
               <xul:label class="servicepane-node-label"
+                         crop="end"
+                         flex="1"
                          xbl:inherits="value=label"/>
               <xul:spacer flex="1" />
               <xul:hbox class="servicepane-node-badges"
@@ -310,7 +335,7 @@
           else {
             this.setAttribute("image", "");
             this.setAttribute("label", "");
-            this.setAttribute("hidden");
+            this.setAttribute("hidden", "true");
             this.setAttribute("collapsed", false);
           }
           return this._nodeData;
@@ -475,10 +500,15 @@
       <method name="appendBadge">
         <parameter name="badgeLabel"/>
         <parameter name="badgeImage"/>
+        <parameter name="badgeAction"/>
         <body><![CDATA[
           var newBadge = this._createBadge(badgeLabel, badgeImage);
           var badgeContainer = this._getElement("servicepane-node-badges");
           badgeContainer.appendChild(newBadge);
+          if (badgeAction) {
+            newBadge.setAttribute("mousethrough", "never");
+            newBadge.badgeAction = badgeAction;
+          }
           return newBadge;
         ]]></body>
       </method>
@@ -493,7 +523,7 @@
         <body><![CDATA[
           var oldChild = null;
           var badgeContainer = this._getElement("servicepane-node-badges");
-          if (badgeContainer.childNodes.length >= index) {
+          if (badgeContainer.childNodes.length > index) {
             oldChild = badgeContainer.removeChild(badgeContainer.childNodes[index]);
           }
           return oldChild;
@@ -801,7 +831,8 @@
 
         // Setup logging
         Components.utils.import("resource://app/jsmodules/DebugUtils.jsm");
-        this.log = DebugUtils.generateLogFunction("ServicePane");
+        this.log = DebugUtils.generateLogFunction("ServicePane", 4);
+        this.noisyLog = DebugUtils.generateLogFunction("ServicePane", 5);
 
         this.mService =
           Components.classes['@songbirdnest.com/servicepane/service;1']
@@ -901,11 +932,9 @@
 
               default:
                 /* Can be useful, but noisy */
-                /*
-                this.element.log("Unhandled node attribute change: " +
+                this.element.noisyLog("Unhandled node attribute change: " +
                                  attrName + " from '" + oldVal + "' => '" +
                                  newVal + "'");
-                                 */
                 break;
             }
           },
@@ -926,6 +955,15 @@
               this.element.log("Parent node is: " +
                                parentNode.getAttribute("nodeid"));
               let newnode = this.element.createNode(node, parentNode);
+
+              // If it's ejectable let's add the right badge
+              if (node.getAttribute("ejectable") == "true") {
+                newnode.appendBadge(null,
+                        "chrome://songbird/skin/service-pane/eject.png",
+                        function() {
+                          node.dispatchEvent("eject")
+                        });
+              }
             }
 
             // The new node may already have children associated with it, so
@@ -1079,6 +1117,8 @@
           if (parentNode) {
             parentNode.appendChild(newNode);
           }
+
+          return newNode;
         ]]></body>
       </method>
 

@@ -42,12 +42,13 @@ interface nsIDragSession;
 interface nsITransferable;
 interface nsIStringBundle;
 interface sbIServicePaneMutationListener;
+interface sbIServicePaneNodeListener;
 
 /**
  * \interface sbIServicePaneNode
  * \brief The interface to interact with a particular node in the service pane
  */
-[scriptable, uuid(161aee8c-1dd2-11b2-90cb-aaa30be15b1f)]
+[scriptable, uuid(d4c3c2d2-1dd1-11b2-932e-8eafb1847891)]
 interface sbIServicePaneNode : nsISupports
 {
   /* \brief the uri of this node as a string */
@@ -92,6 +93,15 @@ interface sbIServicePaneNode : nsISupports
   attribute AString properties;
 
   /**
+   * \brief Event listeners that will be called whenever the node gets
+   *        notified that the given event has occured with this node as the
+   *        target.
+   */
+  void addEventListener (in sbIServicePaneNodeListener aListener);
+  void removeEventListener (in sbIServicePaneNodeListener aListener);
+  void dispatchEvent (in AString event);
+
+  /**
    * \brief Adds mutation listener that will be called whenever a node or one
    *        of its children get modified.
    *
@@ -105,7 +115,7 @@ interface sbIServicePaneNode : nsISupports
    * \param aListener listener to be removed
    */
   void removeMutationListener (in sbIServicePaneMutationListener aListener);
-  
+
   // here's a subset of the W3C DOM Level 1 Core
   
   boolean hasAttribute(in AString aName);
@@ -140,6 +150,16 @@ interface sbIServicePaneNode : nsISupports
   void removeChild (in sbIServicePaneNode aChild);
   void replaceChild (in sbIServicePaneNode aNewNode,
                      in sbIServicePaneNode aOldNode);
+};
+
+/**
+ * \interface sbIServicePaneNodeListener
+ * \brief The interface to be implemented by node event listeners added via
+ *        sbIServicePaneNode.addEventListener()
+ */
+[scriptable, uuid(01d9f9c4-1dd2-11b2-b859-e9bb94e591a9)]
+interface sbIServicePaneNodeListener : nsISupports {
+  void onNodeEvent (in AString aEventName);
 };
 
 /**

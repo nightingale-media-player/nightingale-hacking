@@ -571,7 +571,7 @@ sbCDRipServicePaneService.prototype = {
     }
     
     // Add a cd rip node in the service pane.
-    var devNode = this._deviceServicePaneSvc.createNodeForDevice2(device);
+    var devNode = this._deviceServicePaneSvc.createNodeForDevice2(device, true);
     devNode.setAttributeNS(CDRIPNS, "DeviceId", devId);
     devNode.setAttributeNS(CDRIPNS, "deviceNodeType", "cd-device");
     devNode.className = "cd-device";

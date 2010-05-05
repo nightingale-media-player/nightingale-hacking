@@ -606,6 +606,7 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 #sb_servicepane_box {
   border: none;
   overflow: auto;
+  overflow-x: hidden;
 }
 
 /* BEGIN NEW SERVICEPANE */
@@ -629,9 +630,25 @@ sb-servicepane-group description.servicepane-group-label {
   margin-left: 4px;
 }
 
+/* SERVICE PANE NODES */
 sb-servicepane-node {
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
 
+sb-servicepane-node > vbox > hbox.servicepane-node-info {
+  min-height: 18px;
+  max-height: 18px;
+}
+
+hbox.servicepane-node-info > stack > hbox > label {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  color: rgb(219,219,219);
+}
+hbox.servicepane-node-info.active > stack > hbox > label {
+  color: white;
+}
 sb-servicepane-node[indent="1"] > vbox > hbox.servicepane-node-info {
   padding-left: 8px;
 }
@@ -648,30 +665,34 @@ sb-servicepane-node[indent="4"] > vbox > hbox.servicepane-node-info {
 sb-servicepane-node[indent="5"] > vbox > hbox.servicepane-node-info {
   padding-left: 56px;
 }
+
 /* loaded in the browser & selected in the servicepane */
 sb-servicepane-node.active > vbox > hbox.servicepane-node-info {
-  background-color: rgb(92,81,132);
-  -moz-border-radius: 3px;
+  background-image: url(chrome://songbird/skin/service-pane/bg-active-node.png);
+  background-position: left top;
+  /*-moz-border-radius: 3px;*/
+  border-left: 1px solid rgba(86,73,130,0.7);
+  border-right: 1px solid rgba(86,73,130,0.7);
 }
 
 /* highlighted in the servicepane for when a node is right-clicked, but not
  * loaded in the browser */
-sb-servicepane-node.highlighted {
+sb-servicepane-node.highlighted > vbox > hbox.servicepane-node-info {
   background-color: rgb(61,57,84);
   -moz-border-radius: 3px;
-  padding-left: 7px;
-  margin-top: -1px;
-  margin-bottom: -1px;
   border: 1px solid rgb(143,132,181);
+}
+/* needed to avoid the above border side-shifting all the elements 1px */
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow,
+sb-servicepane-node.droptarget > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow,
+sb-servicepane-node.highlighted > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow {
+  margin-left: -1px;
 }
 
 /* highlighted in the servicepane for when a node is the target for a drop */
-sb-servicepane-node.droptarget {
+sb-servicepane-node.droptarget > vbox > hbox.servicepane-node-info {
   background-color: rgb(61,57,84);
   -moz-border-radius: 3px;
-  padding-left: 7px;
-  margin-top: -1px;
-  margin-bottom: -1px;
   border: 1px solid rgb(143,132,181);
 }
 
@@ -702,6 +723,57 @@ sb-servicepane-node > vbox > hbox.servicepane-node-info > stack > hbox {
 
 sb-servicepane-node textbox {
   margin: 0px;
+}
+
+/* SERVICE PANE BADGES */
+hbox.servicepane-node-badges {
+  -moz-box-pack: end;
+  margin-right: 1px;
+}
+
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges,
+sb-servicepane-node.highlighted > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges {
+  margin-right: 0px;
+}
+
+/* Badge Text labels */
+sb-servicepane-node-badge > hbox > label {
+  background-color: rgb(96,91,110);
+  color: rgb(31,30,39);
+  padding-left: 5px;
+  padding-right: 5px;
+  -moz-border-radius: 6px;
+  font-weight: bold;
+  font-size: 10px;
+  margin: 0px 4px 0px 0px;
+}
+
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges > sb-servicepane-node-badge > hbox > label {
+  background-color: rgba(255,255,255,0.4);
+  color: rgba(31,30,39,0.8);
+}
+
+/* Badge Images */
+sb-servicepane-node-badge > hbox > image {
+  margin-left: 5px;
+  margin-right: 2px;
+}
+sb-servicepane-node-badge > hbox > image {
+  -moz-image-region: rect(0px,18px,18px,0px);
+}
+sb-servicepane-node-badge > hbox > image:hover {
+  -moz-image-region: rect(18px,18px,36px,0px);
+}
+sb-servicepane-node-badge > hbox > image:active {
+  -moz-image-region: rect(36px,18px,54px,0px);
+}
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges > sb-servicepane-node-badge > hbox > image {
+  -moz-image-region: rect(0px,36px,18px,18px);
+}
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges > sb-servicepane-node-badge > hbox > image:hover {
+  -moz-image-region: rect(18px,36px,36px,18px);
+}sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges > sb-servicepane-node-badge > hbox > image:active {
+  -moz-image-region: rect(36px,36px,54px,18px);
 }
 /* END NEW SERVICEPANE */
 

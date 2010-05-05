@@ -39,7 +39,7 @@ interface sbILibrary;
  * \interface sbIDeviceServicePaneService
  * \brief Provides information about devices needed by the service pane
  */
-[scriptable, uuid(9e0d2d10-4e2e-11df-9879-0800200c9a66)]
+[scriptable, uuid(5d8f36c8-1dd2-11b2-8836-e909bccda487)]
 interface sbIDeviceServicePaneService : nsISupports {
   /**
    * \brief Attempts to create a service pane node for a given device. Will
@@ -57,10 +57,12 @@ interface sbIDeviceServicePaneService : nsISupports {
    *        group similar devices together in the service pane.
    *
    * \param aDevice an sbIDevice.
+   * \param aEjectable whether or not this device can be ejected
    * \return a service pane node that represents the given device
    * \note This method is designed for the new Device API.
    */
-  sbIServicePaneNode createNodeForDevice2 (in sbIDevice aDevice);
+  sbIServicePaneNode createNodeForDevice2 (in sbIDevice aDevice,
+                                           in boolean aEjectable);
 
   /**
    * \brief Attempts to create a service pane node for the device library
