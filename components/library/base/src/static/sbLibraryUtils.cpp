@@ -46,6 +46,7 @@
 #include <sbIMediaList.h>
 #include <sbIMediaItem.h>
 #include <sbIPropertyArray.h>
+#include <sbIPropertyManager.h>
 
 #include <sbArrayUtils.h>
 #include <sbFileUtils.h>
@@ -598,4 +599,31 @@ sbLibraryUtils::GetItemsByProperty(sbIMediaList * aMediaList,
                                               aValue,
                                               creator,
                                               sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+}
+
+/**
+ * Returns the equality operator for the content property
+ */
+nsresult
+sbLibraryUtils::GetEqualOperator(sbIPropertyOperator ** aOperator)
+{
+  nsresult rv;
+
+  nsCOMPtr<sbIPropertyManager> manager =
+    do_GetService("@songbirdnest.com/Songbird/Properties/PropertyManager;1",
+                  &rv);
+  nsCOMPtr<sbIPropertyInfo> info;
+  rv = manager->GetPropertyInfo(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                                getter_AddRefs(info));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString opName;
+  rv = info->GetOPERATOR_EQUALS(opName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the operator.
+  rv = info->GetOperator(opName, aOperator);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }

@@ -752,6 +752,61 @@ function sbLibraryServicePane_suggestLibraryForNewList(aMediaListType, aNode) {
   return null;
 }
 
+/* \brief Get the available id for playlist name postfix to avoid duplicate.
+ *
+ * \param aLibrary an sbILibrary.
+ * \param aName the playlist name.
+ * \return a unique postfix id for playlist name.
+ */
+sbLibraryServicePane.prototype._getAvailableIdForPlaylist =
+function sbLibraryServicePane__getAvailableIdForPlaylist(aLibrary, aName) {
+  var length = aName.length;
+
+  var id = 1;
+  if(aLibrary instanceof Ci.sbILibrary) {
+    // Build the existing IDs array
+    let listIDs = [];
+    let mediaLists = aLibrary.getItemsByProperty(SBProperties.isList, "1");
+    for (let i = 0; i < mediaLists.length; ++i) {
+      let mediaListName = mediaLists.queryElementAt(i, Ci.sbIMediaList).name;
+      if (mediaListName && mediaListName.substr(0, length) == aName) {
+        if (mediaListName.length == length) {
+          listIDs.push(1);
+        }
+        else if (mediaListName.length > length + 1) {
+          listIDs.push(parseInt(mediaListName.substr(length + 1)));
+        }
+      }
+    }
+
+    while (1) {
+      // The id is available.
+      if (listIDs.indexOf(id) == -1)
+        break;
+
+      ++id;
+    }
+  }
+
+  return id;
+}
+
+/* \brief Suggest a unique name for playlist.
+ *
+ * \param aLibrary an sbILibrary.
+ * \param aName the playlist name to append id to.
+ * \return a unique playlist name.
+ */
+sbLibraryServicePane.prototype.suggestUniqueNameForPlaylist =
+function sbLibraryServicePane_suggestNameForRandomSmartPlaylist(aLibrary, aName) {
+  // Give the playlist a default name
+  var name = aName;
+  var id = this._getAvailableIdForPlaylist(aLibrary, name);
+  if (id > 1)
+    name = name + " " + id;
+  return name;
+}
+
 /* \brief Suggest a unique name for creating a new playlist
  *
  * \param aLibrary an sbILibrary.
@@ -762,36 +817,9 @@ function sbLibraryServicePane_suggestNameForNewPlaylist(aLibrary) {
   // Give the playlist a default name
   // TODO: Localization should be done internally
   var name = SBString("playlist", "Playlist");
-  var length = name.length;
-
-  if(aLibrary instanceof Ci.sbILibrary) {
-    // Build the existing IDs array
-    let listIDs = [];
-    let mediaLists = aLibrary.getItemsByProperty(SBProperties.isList, "1");
-    for (let i = 0; i < mediaLists.length; ++i) {
-      let mediaListName = mediaLists.queryElementAt(i, Ci.sbIMediaList).name;
-      if (mediaListName && mediaListName.substr(0, length) == name) {
-        if (mediaListName.length == length) {
-          listIDs.push(1);
-        }
-        else if (mediaListName.length > length + 1) {
-          listIDs.push(parseInt(mediaListName.substr(length + 1)));
-        }
-      }
-    }
-
-    let id = 1;
-    while (1) {
-      // The id is available.
-      if (listIDs.indexOf(id) == -1)
-        break;
-
-      ++id;
-    }
-
-    if (id > 1)
-      name = SBFormattedString("playlist.sequence", [id]);
-  }
+  var id = this._getAvailableIdForPlaylist(aLibrary, name);
+  if (id > 1)
+    name = SBFormattedString("playlist.sequence", [id]);
 
   return name;
 }

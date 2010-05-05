@@ -47,6 +47,7 @@
 class sbIMediaItem;
 class sbILibrary;
 class nsIIOService;
+class sbIPropertyOperator;
 
 class sbLibraryBatchHelper
 {
@@ -206,6 +207,11 @@ public:
                                      nsAString const & aPropertyName,
                                      nsAString const & aValue,
                                      nsCOMArray<sbIMediaItem> & aMediaItems);
+
+  /**
+   * Returns the equality operator for the content property
+   */
+  static PRUint32 GetEqualOperator(sbIPropertyOperator ** aOperator);
 };
 
 /**
