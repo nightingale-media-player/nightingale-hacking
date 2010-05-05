@@ -1187,6 +1187,12 @@ nsresult sbMetadataJob::BeginLibraryBatch()
     "sbMetadataJob::BeginLibraryBatch is main thread only!");
   nsresult rv = NS_OK;
   
+  // Only start a batch for read jobs.  Other jobs may get delayed (e.g., write
+  // job to an item that's being played), resulting in a batch that doesn't end
+  // for a very long time (see bug 20750).
+  if (mJobType != TYPE_READ)
+    return NS_OK;
+
   if (mInLibraryBatch) {
     // Already in a batch
     return NS_OK;
