@@ -769,12 +769,15 @@
   <binding id="servicepane-group">
     <content mousethrough="never">
       <xul:vbox class="servicepane-group" >
-        <xul:hbox class="servicepane-group-header"
-                  onclick="toggleVisibility(event)">
-          <xul:description class="servicepane-group-label"
-                     xbl:inherits="xbl:text=label"/>
-          <xul:spacer flex="1" />
-          <xul:image class="servicepane-group-toggle"/>
+        <xul:hbox class="servicepane-group-header">
+          <xul:hbox class="servicepane-group-header-wrapper"
+                    onclick="toggleVisibility(event)" flex="1">
+            <xul:description class="servicepane-group-label"
+                       xbl:inherits="xbl:text=label"/>
+            <xul:spacer flex="1" />
+          </xul:hbox>
+          <xul:image sbid="servicepane-group-header-image"
+                     onclick="newPlaylist(event)" />
         </xul:hbox>
         <xul:vbox class="servicepane-group-overflow-container">
           <xul:vbox class="servicepane-group-nodes"
@@ -789,7 +792,55 @@
       <constructor><![CDATA[
         this._groupNodes = this._getElement("groupNodes");
         this._visible = true;
+
+        this.image = null;
+        // Special handling for the SB:Playlists group
+        if (this.id == "SB:Playlists") {
+          this.image = this._getElement("servicepane-group-header-image");
+          this.image.className = "sb-servicepane-new-playlist";
+        }
+
+        var self = this;
+        this.keyListener = function(e) {
+          if (!self.image)
+            return;
+
+          if (e.altKey) {
+            self.image.setAttribute("altKey", "true");
+          } else {
+            self.image.removeAttribute("altKey");
+          }
+        }
+
+        window.addEventListener("keydown", this.keyListener, false);
+        window.addEventListener("keyup", this.keyListener, false);
       ]]></constructor>
+
+      <destructor><![CDATA[
+        window.removeEventListener("keydown", this.keyListener, false);
+        window.removeEventListener("keyup", this.keyListener, false);
+      ]]></destructor>
+
+      <method name="newPlaylist">
+        <parameter name="event" />
+        <body><![CDATA[
+          if (event.altKey) {
+            SBNewSmartPlaylist();
+          } else {
+            if (gBrowser &&
+                gBrowser.selectedTab &&
+                gBrowser.selectedTab.mediaListView)
+            {
+              enumerator = gBrowser.selectedTab
+                .mediaListView
+                .selection
+                .selectedMediaItems;
+            }
+
+            SBNewPlaylist(enumerator);
+          }
+        ]]></body>
+      </method>
 
       <property name="visible">
         <getter><![CDATA[
@@ -942,16 +993,12 @@
            hierarchy of nodes changes */
         this._mutationListener.element = this;
         this.mService.root.addMutationListener(this._mutationListener);
-
-        /* Add a listener to the servicepane itself */
-        this.mService.addListener(this._mutationListener);
       ]]>
       </constructor>
 
       <destructor>
       <![CDATA[
         this.mService.root.removeMutationListener(this._mutationListener);
-        this.mService.removeListener(this._mutationListener);
       ]]>
       </destructor>
 
@@ -1117,33 +1164,6 @@
             // servicepane to see if we have a node that matches the page,
             // and if so - visually highlight/select it
           },
-
-          /* sbIServicePaneListener */
-          nodePropertyChanged: function(nodeId, attrName) {
-            try {
-              let node = this.element.getNode(nodeId);
-              let domNode = this.element.getDOMNode(nodeId);
-              let value = node[attrName];
-
-              switch (attrName) {
-                case "image":
-                  //domNode.image = value;
-                  break;
-
-                case "name":
-                  //domNode.label = value;
-                  break;
-
-                default:
-                  //this.element.log("Node property changed: " + nodeId +
-                  //                 ", attribute " + attrName + " = " + value);
-                  break;
-              }
-
-            } catch (e) {
-              dump("Exception in nodePropertyChanged: " + e + "\n");
-            }
-          }
         })
       ]]>
       </field>
@@ -1362,6 +1382,16 @@
       </method>
 
       <!--
+        - \brief Highlight a node as being active
+        -->
+      <method name="highlightNode">
+        <parameter name="aNode"/>
+        <body><![CDATA[
+          this.makeNodeActive(this.getDOMNode(aNode));
+        ]]></body>
+      </method>
+
+      <!--
         - \brief Start editing a nodes name, this may not be enabled if the
         -        node is read only.
         - \return true if editing started, false if not able to edit.
@@ -1382,6 +1412,11 @@
               this.mService.onRename(this._editingNode.nodeData, null);
               this._editingNode = null;
             }
+
+            // XXXstevel might not need this if servicepane can auto-highlight
+            // the right node from tabbrowser
+            // highlight this node
+            //this.makeNodeActive(aNode);
 
             // notify servicepane service that we're about to rename the node
             this.mService.onBeforeRename(aNode);

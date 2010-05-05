@@ -328,9 +328,6 @@ var gSongbirdPlayerWindow = {
     gTabBrowser = document.getElementById("content");
     top.controllers.insertControllerAt(0, gSongbirdWindowController);
     
-    window.addEventListener("createnewplaylist", this.onCreateNewPlaylist,
-                            false);
-
     // Set the player controls location
     var playerControlsLocation = 
       Application.prefs.getValue(PREF_PLAYER_CONTROL_LOCATION, false);
@@ -365,8 +362,6 @@ var gSongbirdPlayerWindow = {
     this._onPlayCallback = null;
 
     window.removeEventListener("keypress", this.onMainWindowKeyPress, false);
-    window.removeEventListener("createnewplaylist", this.onCreateNewPlaylist,
-                               false);
   },
 
   
@@ -433,21 +428,6 @@ var gSongbirdPlayerWindow = {
     event.preventDefault();
     event.stopPropagation();
     return false;
-  },
-
-  onCreateNewPlaylist: function gSongbirdPlayerWindow_createNewPlaylist() {
-    try {
-      var mainLibrary = LibraryUtils.mainLibrary;
-      var librarySPS = Cc["@songbirdnest.com/servicepane/library;1"]
-                         .getService(Ci.sbILibraryServicePaneService);
-      var mediaList = mainLibrary.createMediaList("simple");
-      mediaList.name = librarySPS.suggestNameForNewPlaylist(mainLibrary);
-      var node = librarySPS.getNodeForLibraryResource(mediaList);
-      window.gServicePane.mTreePane.loadNode(node, null);
-      window.gServicePane.startEditingNode(node);
-    } catch (e) {
-      dump("Exception: " + e + "\n");
-    }
   },
 
   nextMediaPage: function gSongbirdPlayerWindow_nextMediaPage() {

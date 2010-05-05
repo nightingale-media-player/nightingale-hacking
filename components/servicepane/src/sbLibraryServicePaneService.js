@@ -141,7 +141,6 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
 
   // the playlists folder and the local library node get the "New Foo..." items
   if (aNode.id == 'SB:Playlists' ||
-      aNode.id == 'SB:Playlists_CreateNewPlaylist' ||
       aNode.getAttributeNS(LSP, 'ListCustomType') == 'local') {
     this.fillNewItemMenu(aNode, aContextMenu, aParentWindow);
   }
@@ -1601,19 +1600,6 @@ function sbLibraryServicePane__ensurePlaylistFolderExists() {
     this._servicePane.root.appendChild(fnode);
   }
 
-  // Make sure the "New Playlist" button/node exists
-  let npnode = this._servicePane.getNode("SB:Playlists_CreateNewPlaylist");
-  if (!npnode) {
-    npnode = this._servicePane.createNode();
-    npnode.id = "SB:Playlists_CreateNewPlaylist";
-    npnode.name = '&servicesource.playlists.newplaylist';
-    npnode.contractid = CONTRACTID;
-    npnode.editable = false;
-    npnode.image = "chrome://songbird/skin/service-pane/icon-new-playlist.png";
-    npnode.setAttributeNS(SP, 'eventType', "createnewplaylist");
-    fnode.insertBefore(npnode, fnode.firstChild);
-  }
-  
   return fnode;
 }
 

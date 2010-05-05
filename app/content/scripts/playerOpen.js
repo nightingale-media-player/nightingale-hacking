@@ -650,6 +650,9 @@ function SBNewPlaylist(aEnumerator)
     // make playlist from selected items
     playlist.addSome(aEnumerator);
   }
+  if (playlist && typeof gBrowser != 'undefined') {
+    gBrowser.loadMediaList(playlist);
+  }
   return playlist;
 }
 

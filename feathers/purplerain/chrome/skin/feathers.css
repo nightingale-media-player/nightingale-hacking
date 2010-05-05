@@ -616,7 +616,7 @@ sb-servicepane-group > vbox > vbox.servicepane-group-overflow-container {
 sb-servicepane-group > vbox > vbox > vbox.servicepane-group-nodes {
   overflow: hidden;
 }
-sb-servicepane-group hbox.servicepane-group-header {
+sb-servicepane-group hbox.servicepane-group-header-wrapper {
   background-image: url(chrome://songbird/skin/service-pane/group-header-bg.png);
   background-repeat: repeat-x;
   background-position: center 0px;
@@ -624,10 +624,10 @@ sb-servicepane-group hbox.servicepane-group-header {
   max-height: 20px;
   -moz-box-align: center;
 }
-sb-servicepane-group hbox.servicepane-group-header:hover {
+sb-servicepane-group hbox.servicepane-group-header-wrapper:hover {
   background-position: center -20px;
 }
-sb-servicepane-group hbox.servicepane-group-header:active {
+sb-servicepane-group hbox.servicepane-group-header-wrapper:active {
   background-position: center -40px;
 }
 
@@ -638,6 +638,29 @@ sb-servicepane-group description.servicepane-group-label {
   margin-left: 4px;
 }
 
+image.sb-servicepane-new-playlist {
+  background-image: url(chrome://songbird/skin/service-pane/new-playlist.png);
+  background-position: left 0px;
+  min-height: 20px;
+  max-height: 20px;
+  min-width: 23px;
+  max-width: 23px;
+}
+image.sb-servicepane-new-playlist:hover {
+  background-position: left -20px;
+}
+image.sb-servicepane-new-playlist:active {
+  background-position: left -40px;
+}
+image.sb-servicepane-new-playlist[altKey="true"] {
+  background-position: right 0px;
+}
+image.sb-servicepane-new-playlist[altKey="true"]:hover {
+  background-position: right -20px;
+}
+image.sb-servicepane-new-playlist[altKey="true"]:active {
+  background-position: right -40px;
+}
 /* SERVICE PANE NODES */
 sb-servicepane-node {
   margin-top: 2px;
