@@ -384,7 +384,7 @@
 
           // Style the node as active (which means first removing any
           // styles from any currently active node
-          this._servicePane.makeNodeActive(this);
+          this._servicePane.makeNodeActive(this.nodeData);
 
           // If this node has a URL, just load it in the browser
           if (this._nodeData.url) {
@@ -562,7 +562,7 @@
               this.className += " droptarget";
             }
           } else {
-            this.className = this.className.replace(/\bdroptarget\b/,'');
+            this.className = this.className.replace(/\bdroptarget\b/g,'');
           }
         </body>
       </method>
@@ -596,6 +596,7 @@
               this._textbox.setAttribute("hidden", true);
               this._servicePane.mService.onRename(this.nodeData,
                                                   this._textbox.value);
+              this.loadNodeURL(event);
               break;
           }
         ]]></body>
@@ -993,11 +994,28 @@
            hierarchy of nodes changes */
         this._mutationListener.element = this;
         this.mService.root.addMutationListener(this._mutationListener);
+
+        /* Add a listener to the tabbrowser so we highlight the proper
+           nodes on location changes */
+        if (this.browser) {
+          let sp = this;
+          this._onBrowserTabChangeListener = function(e) {
+            sp.onBrowserTabChange(e);
+          }
+          this.browser.addEventListener("TabContentChange",
+                                        this._onBrowserTabChangeListener,
+                                        false);
+        }
       ]]>
       </constructor>
 
       <destructor>
       <![CDATA[
+        if (this.browser) {
+          this.browser.removeEventListener("TabContentChange",
+                                           this._onBrowserTabChangeListener,
+                                           false);
+        }
         this.mService.root.removeMutationListener(this._mutationListener);
       ]]>
       </destructor>
@@ -1050,11 +1068,11 @@
                   // update the classes
                   if (oldVal == "true")
                     domNode.className =
-                            domNode.className.replace(/\bopen\b/, '');
+                            domNode.className.replace(/\bopen\b/g, '');
                   else
                     // could be null or false
                     domNode.className =
-                            domNode.className.replace(/\bclosed\b/, '');
+                            domNode.className.replace(/\bclosed\b/g, '');
 
                   // update the childNodes container's visibility
                   let box = domNode._getElement("servicepane-node-children");
@@ -1322,6 +1340,38 @@
         ]]></body>
       </method>
 
+      <!-- to trigger selection highlighting -->
+      <method name="_makeSelectedNodeActive">
+        <body>
+          <![CDATA[
+          try {
+            // Is there a servicepane node for the current tab?
+            let node = this._browser.selectedTab.servicePaneNode;
+
+            // if we didn't find a node, try looking it up by URL
+            if (!node) {
+              let uri = this._browser.selectedTab.linkedBrowser.currentURI.spec;
+              node = this.mService.getNodeForURL(uri);
+            }
+
+            // if we still didn't find a node, try looking it up by medialist
+            if (!node && this._browser.selectedTab.mediaListView) {
+              let librarySPS = Cc['@songbirdnest.com/servicepane/library;1']
+                                 .getService(Ci.sbILibraryServicePaneService);
+              node = librarySPS.getNodeFromMediaListView(
+                                 this._browser.selectedTab.mediaListView);
+            }
+
+            if (node) {
+              this.makeNodeActive(node);
+            }
+          } catch (e) {
+            Components.utils.reportError(e);
+          }
+        ]]>
+        </body>
+      </method>
+
       <!--
         - \brief Deselect any currently selected node(s) and select the
         - passed in node
@@ -1329,6 +1379,9 @@
       <method name="makeNodeActive">
         <parameter name="newNode"/>
         <body><![CDATA[
+          if (!newNode)
+            return;
+
           // Remove the 'active' CSS class from the currently active node
           let activeNode = this.getActiveNode();
 
@@ -1346,12 +1399,12 @@
 
           if (activeNode) {
             let domNode = this.getDOMNode(activeNode.id);
-            domNode.className = domNode.className.replace(/\bactive\b/, '');
+            domNode.className = domNode.className.replace(/\bactive\b/g, '');
           }
 
           // Add the 'active' class to the new node
           newNode.className += " active";
-          this._activeNodeID = newNode.nodeData.id;
+          this._activeNodeID = newNode.id;
           return newNode;
         ]]></body>
       </method>
@@ -1371,7 +1424,7 @@
 
           if (highlightedNode) {
             let domNode = this.getDOMNode(highlightedNode.id);
-            domNode.className = domNode.className.replace(/\bhighlighted\b/,'');
+            domNode.className = domNode.className.replace(/\bhighlighted\b/g,'');
           }
 
           // Add the 'highlighted' class to the new node
@@ -1387,7 +1440,7 @@
       <method name="highlightNode">
         <parameter name="aNode"/>
         <body><![CDATA[
-          this.makeNodeActive(this.getDOMNode(aNode));
+          this.makeNodeActive(aNode);
         ]]></body>
       </method>
 
@@ -1475,6 +1528,16 @@
         ]]></body>
       </method>
 
+      <!-- Called when the content of the current browser tab is changed.
+           This occurs when the user swiches tabs, or loads an new page 
+           in the existing tab.  Note that on page load this method is called
+           both at load start and at load complete. -->
+      <method name="onBrowserTabChange">
+        <body><![CDATA[
+          this._makeSelectedNodeActive();
+        ]]></body>
+      </method>
+
       <!-- Popup menu methods -->
       <method name="onPopupShown">
         <parameter name="event" />
@@ -1503,7 +1566,7 @@
           let highlightedNode = this.getHighlightedNode();
           if (highlightedNode) {
             let domNode = this.getDOMNode(highlightedNode.id);
-            domNode.className = domNode.className.replace(/\bhighlighted\b/,'');
+            domNode.className = domNode.className.replace(/\bhighlighted\b/g,'');
           }
 
           this._highlightedNodeID = null;
@@ -1579,6 +1642,15 @@
         </setter>
       </property>
 
+      <field name="_browser">null</field>
+      <property name="browser">
+        <getter><![CDATA[
+          if (!this._browser) {
+            this._browser = document.getElementById(this.getAttribute('browser'));
+          }
+          return this._browser;
+        ]]></getter>
+      </property>
 
     </implementation>
     

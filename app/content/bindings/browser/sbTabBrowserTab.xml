@@ -1004,11 +1004,16 @@
             // Try going back in the history
             if (this.linkedBrowser.canGoBack) {
               this.linkedBrowser.goBack();
+              this.servicePaneNode = this._findServicePaneNode();
+              this.applyPropertiesFromServicePaneNode();
               return;
             }
 
             // Going back failed.  Just go to the library.
-            gBrowser.loadMediaList(LibraryUtils.mainLibrary, null, this);
+            gBrowser.loadMediaList(LibraryUtils.mainLibrary, null, this,
+                         LibraryUtils.createConstrainedMediaListView(
+                              LibraryUtils.mainLibrary,
+                              [SBProperties.contentType, "audio"]));
           ]]>
         </body>
       </method>
