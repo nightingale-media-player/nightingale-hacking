@@ -141,6 +141,7 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
 
   // the playlists folder and the local library node get the "New Foo..." items
   if (aNode.id == 'SB:Playlists' ||
+      aNode.className.match(/\blibrary\b/) ||
       aNode.getAttributeNS(LSP, 'ListCustomType') == 'local') {
     this.fillNewItemMenu(aNode, aContextMenu, aParentWindow);
   }
