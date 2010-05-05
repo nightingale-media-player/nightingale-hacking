@@ -630,11 +630,26 @@ sb-servicepane-group description.servicepane-group-label {
 }
 
 sb-servicepane-node {
-  padding-left: 8px;
 }
 
+sb-servicepane-node[indent="1"] > vbox > hbox.servicepane-node-info {
+  padding-left: 8px;
+}
+sb-servicepane-node[indent="2"] > vbox > hbox.servicepane-node-info {
+  padding-left: 20px;
+}
+/* if you really have this much nesting, you're crazy */
+sb-servicepane-node[indent="3"] > vbox > hbox.servicepane-node-info {
+  padding-left: 32px;
+}
+sb-servicepane-node[indent="4"] > vbox > hbox.servicepane-node-info {
+  padding-left: 44px;
+}
+sb-servicepane-node[indent="5"] > vbox > hbox.servicepane-node-info {
+  padding-left: 56px;
+}
 /* loaded in the browser & selected in the servicepane */
-sb-servicepane-node.active {
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info {
   background-color: rgb(92,81,132);
   -moz-border-radius: 3px;
 }
@@ -662,8 +677,21 @@ sb-servicepane-node.droptarget {
 
 /* the open/closed container toggle arrow for the node and its subnodes */
 sb-servicepane-node image.servicepane-node-container-arrow {
-  min-width: 16px;
-  min-height: 16px;
+  padding: 4px 8px;
+  min-width: 8px;
+  min-height: 8px;
+  background-image: none;
+  background-repeat: no-repeat;
+}
+
+sb-servicepane-node.container.open > vbox > hbox > image.servicepane-node-container-arrow {
+  background-image: url(chrome://songbird/skin/service-pane/container_arrows.png);
+  background-position: center top;
+}
+
+sb-servicepane-node.container.closed > vbox > hbox > image.servicepane-node-container-arrow {
+  background-image: url(chrome://songbird/skin/service-pane/container_arrows.png);
+  background-position: center bottom;
 }
 
 /* the image for the node itself */

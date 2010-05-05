@@ -162,7 +162,10 @@
       <xul:vbox class="servicepane-node" flex="1">
 
         <xul:hbox class="servicepane-node-info" mousethrough="always">
-          <xul:image class="servicepane-node-container-arrow" flex="0"/>
+          <xul:image class="servicepane-node-container-arrow"
+                     flex="0"
+                     mousethrough="never"
+                     onclick="toggleContainer(event)" />
           <xul:image class="servicepane-node-image"
                      xbl:inherits="src=image" flex="0" />
           <xul:stack sbid="servcepane-node-stack" flex="1">
@@ -171,7 +174,7 @@
                          xbl:inherits="value=label"/>
               <xul:spacer flex="1" />
               <xul:hbox class="servicepane-node-badges"
-                    sbid="servicepane-node-badges" flex="1" />
+                        sbid="servicepane-node-badges" flex="1" />
             </xul:hbox>
 
             <!-- that onblur event is a little confusing.  the event bubbles up
@@ -188,7 +191,9 @@
           </xul:stack>
         </xul:hbox>
 
-        <xul:vbox class="servicepane-node-children">
+        <xul:vbox sbid="servicepane-node-children"
+                  class="servicepane-node-children"
+                  mousethrough="never">
           <children />
         </xul:vbox>
 
@@ -223,6 +228,16 @@
             this.mDragService = 
               Components.classes['@mozilla.org/widget/dragservice;1']
               .getService(Components.interfaces.nsIDragService);
+
+            // Determine how much to indent this node
+            let spacer = this._getElement("servicepane-node-spacer");
+            let indent = -1;
+            let parent = this.nodeData.parentNode;
+            while (parent) {
+              indent++;
+              parent = parent.parentNode;
+            }
+            this.setAttribute("indent", indent);
           } catch (e) {
             dump("Exception: " + e + "\n");
           }
@@ -314,6 +329,22 @@
           return this._browser;
         ]]></getter>
       </property>
+
+      <!--
+        - \brief If this is a container, toggle the open/closed state.
+        -->
+      <method name="toggleContainer">
+        <parameter name="event"/>
+        <body><![CDATA[
+          // First see if we've actually got children, if not - then bail
+          if (!this.firstChild)
+            return;
+
+          this.nodeData.isOpen = !this.nodeData.isOpen;
+          event.stopPropagation();
+          event.preventDefault();
+        ]]></body>
+      </method>
 
       <!--
         - \brief Load the URL associated with this node in the browser if
@@ -660,6 +691,9 @@
           // otherwise load 
           else
             this.loadNodeURL(event);
+
+          event.stopPropagation();
+          event.preventDefault();
         }
       ]]>
       </handler>
@@ -841,6 +875,30 @@
                 domNode.className = newVal;
                 break;
 
+              case "isOpen":
+                if (node.firstChild) {
+                  // update the classes
+                  if (oldVal == "true")
+                    domNode.className =
+                            domNode.className.replace(/\bopen\b/, '');
+                  else
+                    // could be null or false
+                    domNode.className =
+                            domNode.className.replace(/\bclosed\b/, '');
+
+                  // update the childNodes container's visibility
+                  let box = domNode._getElement("servicepane-node-children");
+                  if (newVal == "true") {
+                    domNode.className += " open";
+                    box.removeAttribute("hidden");
+                  } else {
+                    // could be null or false
+                    domNode.className += " closed";
+                    box.setAttribute("hidden", "true");
+                  }
+                }
+                break;
+
               default:
                 /* Can be useful, but noisy */
                 /*
@@ -873,6 +931,25 @@
             // The new node may already have children associated with it, so
             // let's go look for those & add them to the hierarchy
             let childNode = node.firstChild;
+
+            if (childNode && (parent != this.element.mService.root))
+            {
+              // If this has children, and the parent isn't a root node, then
+              // it's a container, make the container arrow visible
+              this.element.log("Got a child (" + childNode.id + ") and a " +
+                               "non-root parent: " + parent.id);
+              node.className += " container open";
+              node.isOpen = true;
+            } else if (parent.parentNode &&
+                       parent.parentNode != this.element.mService.root)
+            {
+              // Or if the parent's parent isn't the root node, then make the
+              // parent node's container arrow visible
+              this.element.log("Parent's parentNode isn't root: " +
+                               parent.parentNode.id);
+              parent.className += " container open";
+              parent.isOpen = true;
+            }
             while (childNode) {
               this.element.log("\tChild node found: " + childNode.id);
               this.nodeInserted(childNode, node);
@@ -894,17 +971,16 @@
                 active = domNode.className.match(/\bactive\b/);
               else
                 this.element.log("\tUnable to find a DOM node for " + node.id);
+
+              // remove the actual node
+              if (domNode && domNode.parentNode) {
+                this.element.log("\tDOM nodes map to removing " + domNode.id +
+                                 " from " + domNode.parentNode.id);
+                domNode.parentNode.removeChild(domNode);
+              }
             } catch (e) {
               dump("Exception: " + e + "\n");
             }
-
-            // remove the actual node
-            if (domNode && domNode.parentNode) {
-              this.element.log("\tDOM nodes map to removing " + domNode.id +
-                               " from " + domNode.parentNode.id);
-              domNode.parentNode.removeChild(domNode);
-            }
-
             // XXXtodo
             // if the node was active, then the browser will have gone back
             // in history and loaded the previously loaded page.  check the
