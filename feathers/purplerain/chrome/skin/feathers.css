@@ -598,7 +598,7 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 }
 
 #servicepane {
-  background-color: rgb(54,52,63);
+  background-color: rgb(51,48,61);
   border-left: 1px solid rgb(43,41,54);
   border-bottom: 1px solid rgb(44,42,55);
 }
@@ -686,20 +686,20 @@ sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > 
   color: white;
 }
 sb-servicepane-node[indent="1"] > vbox > hbox.servicepane-node-info {
-  padding-left: 8px;
+  padding-left: 10px;
 }
 sb-servicepane-node[indent="2"] > vbox > hbox.servicepane-node-info {
-  padding-left: 20px;
+  padding-left: 24px;
 }
 /* if you really have this much nesting, you're crazy */
 sb-servicepane-node[indent="3"] > vbox > hbox.servicepane-node-info {
-  padding-left: 32px;
+  padding-left: 38px;
 }
 sb-servicepane-node[indent="4"] > vbox > hbox.servicepane-node-info {
-  padding-left: 44px;
+  padding-left: 52px;
 }
 sb-servicepane-node[indent="5"] > vbox > hbox.servicepane-node-info {
-  padding-left: 56px;
+  padding-left: 66px;
 }
 
 /* loaded in the browser & selected in the servicepane */
@@ -707,8 +707,8 @@ sb-servicepane-node.active > vbox > hbox.servicepane-node-info {
   background-image: url(chrome://songbird/skin/service-pane/bg-active-node.png);
   background-position: left top;
   /*-moz-border-radius: 3px;*/
-  border-left: 1px solid rgba(86,73,130,0.1);
-  border-right: 1px solid rgba(86,73,130,0.1);
+  border-left: 1px solid rgb(74,65,104);
+  border-right: 1px solid rgb(74,65,104);
 }
 
 /* highlighted in the servicepane for when a node is right-clicked, but not
@@ -734,21 +734,28 @@ sb-servicepane-node.droptarget > vbox > hbox.servicepane-node-info {
 
 /* the open/closed container toggle arrow for the node and its subnodes */
 sb-servicepane-node image.servicepane-node-container-arrow {
-  padding: 4px 8px;
-  min-width: 8px;
-  min-height: 8px;
+  padding: 10px 3px;
+  min-width: 7px;
+  min-height: 7px;
+  margin-right: 1px;
   background-image: none;
   background-repeat: no-repeat;
 }
 
 sb-servicepane-node.container.open > vbox > hbox > image.servicepane-node-container-arrow {
   background-image: url(chrome://songbird/skin/service-pane/container_arrows.png);
-  background-position: center top;
+  background-position: left top;
+}
+sb-servicepane-node.active.container.open > vbox > hbox > image.servicepane-node-container-arrow {
+  background-position: right top;
 }
 
 sb-servicepane-node.container.closed > vbox > hbox > image.servicepane-node-container-arrow {
   background-image: url(chrome://songbird/skin/service-pane/container_arrows.png);
-  background-position: center bottom;
+  background-position: left bottom;
+}
+sb-servicepane-node.active.container.closed > vbox > hbox > image.servicepane-node-container-arrow {
+  background-position: right bottom;
 }
 
 /* the image for the node itself */
@@ -764,7 +771,7 @@ sb-servicepane-node textbox {
 /* SERVICE PANE BADGES */
 hbox.servicepane-node-badges {
   -moz-box-pack: end;
-  margin-right: 1px;
+  margin-right: 0px;
 }
 
 sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges,
