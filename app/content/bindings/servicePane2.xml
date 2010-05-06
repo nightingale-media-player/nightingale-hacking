@@ -750,6 +750,7 @@
 
       <handler event="dragover">
         nsDragAndDrop.dragOver(event, this);
+        this._servicePane.needScroll(event);
         event.stopPropagation();
       </handler>
 
@@ -769,8 +770,8 @@
 
   <binding id="servicepane-group">
     <content mousethrough="never">
-      <xul:vbox class="servicepane-group" >
-        <xul:hbox class="servicepane-group-header">
+      <xul:vbox id="group" class="servicepane-group" >
+        <xul:hbox id="hbox-header" class="servicepane-group-header">
           <xul:hbox class="servicepane-group-header-wrapper"
                     onclick="toggleVisibility(event)" flex="1">
             <xul:description class="servicepane-group-label"
@@ -800,6 +801,8 @@
           this.image = this._getElement("servicepane-group-header-image");
           this.image.className = "sb-servicepane-new-playlist";
         }
+
+        this.servicePane = this.parentNode;
 
         var self = this;
         this.keyListener = function(e) {
@@ -883,6 +886,7 @@
                     }, 40);
               } else {
                 element.style.marginTop = "-" + orig + "px";
+                self.removeAttribute("collapsedChildren");
               }
             } else {
               if (from > to) {
@@ -899,6 +903,7 @@
                     }, 40);
               } else {
                 element.style.marginTop = "-" + orig + "px";
+                self.setAttribute("collapsedChildren", true);
               }
             }
           } catch (e) {
@@ -930,16 +935,90 @@
         ]]></body>
       </method>
     </implementation>
+
+    <handlers>
+      <handler event="dragover"><![CDATA[
+        // If there is an existing expanded group that isn't us, then
+        // collapse it
+        if (this.servicePane._collapsedGroup &&
+            this.servicePane._collapsedGroup != this)
+        {
+          this.servicePane._collapsedGroup._collapseOnDragExit = null;
+          this.servicePane._collapsedGroup.visible = false;
+          this.servicePane._collapsedGroup = null;
+        }
+
+        // If we have an existing timer running for a group that isn't us,
+        // clear it
+        if (this.servicePane._timer &&
+            this.servicePane._timerGroup &&
+            this.servicePane._timerGroup != this)
+        {
+          this.servicePane.log("Existing timer found, clearing");
+          clearTimeout(this.servicePane._timer);
+          this.servicePane._timer = null;
+        }
+
+        if (!this.visible && !this._expandTimerRunning) {
+          this.servicePane.log("Collapsed group found: " + this.id +
+                               ", setting expand timer for 1s");
+          var self = this;
+          // Flag a timer as running
+          this._expandTimerRunning = true;
+          this.servicePane._timerGroup = this;
+          this.servicePane._timer = setTimeout(function() {
+              // Make the group visible
+              self.servicePane.log("Expanding group: " + self.id);
+              self.visible = true;
+              self._collapseOnDragExit = true;
+              self.servicePane._collapsedGroup = self;
+              self._expandTimerRunning = null;
+              self.servicePane._timerGroup = null;
+              self.servicePane._timer = null;
+            }, 750);
+          event.stopPropagation();
+        }
+      ]]></handler>
+
+      <handler event="dragexit"><![CDATA[
+        if (!event.relatedTarget)
+          return;
+        let relation = this.compareDocumentPosition(event.relatedTarget);
+        if (this._expandTimerRunning &&
+            !((relation & this.DOCUMENT_POSITION_CONTAINS) ||
+              (relation & this.DOCUMENT_POSITION_CONTAINED_BY)))
+        {
+          // We've exited the group, so cancel any existing timer
+          this.servicePane.log("Exited group: " + this.id + ", clearing timer");
+          clearTimeout(this.servicePane._timer);
+          this._expandTimerRunning = null;
+          this.servicePane.timer = null;
+          this.servicePane._timerGroup = null;
+        }
+
+        /* Auto-collapse if we auto-expanded */
+        if (this._collapseOnDragExit &&
+            !((relation & this.DOCUMENT_POSITION_CONTAINS) ||
+              (relation & this.DOCUMENT_POSITION_CONTAINED_BY)))
+        {
+          this.visible = false;
+          this._collapseOnDragExit = null;
+          this.servicePane._collapsedGroup = null;
+        }
+      ]]></handler>
+    </handlers>
   </binding>
 
   <binding id="servicepane">
     <content mousethrough="never" wheelvolume="false">
       <xul:vbox id="sb_servicepane" class="servicepane-outer-box" flex="1">
-        <xul:vbox id="sb_servicepane_box"
+        <xul:scrollbox id="sb_servicepane_box"
+                  orient="vertical"
+                  sbid="innerbox"
                   class="servicepane-inner-box"
                   flex="1">
           <children /> <!-- servicepane-group elements -->
-        </xul:vbox>
+        </xul:scrollbox>
         <xul:sb-displaypane-splitter
                 collapse="after"
                 orient="vertical"
@@ -989,7 +1068,9 @@
         this.mPopup = document.getAnonymousElementByAttribute(this,
                                                               'sbid',
                                                               'popup');
-
+        this.mInnerBox = document.getAnonymousElementByAttribute(this,
+                                                                 'sbid',
+                                                                 'innerbox');
         /* Add a listener to the root node so we know to update when the
            hierarchy of nodes changes */
         this._mutationListener.element = this;
@@ -1651,21 +1732,55 @@
           return this._browser;
         ]]></getter>
       </property>
+      
+      <method name="needScroll">
+        <parameter name="event" />
+        <body><![CDATA[
+          let scrollbox =
+              this.mInnerBox.boxObject.QueryInterface(Ci.nsIScrollBoxObject);
+          
+          // If we're near the bottom or top of the servicepane, then scroll as
+          // needed
+          if (event.screenY <= this.boxObject.screenY + 20)
+          {
+            scrollbox.scrollBy(0, -10);
+          } else if (event.screenY >=
+                    (this.boxObject.screenY+this.mInnerBox.boxObject.height-20))
+          {
+            scrollbox.scrollBy(0, 10);
+          }
+          event.stopPropagation();
+        ]]></body>
+      </method>
 
     </implementation>
     
     <handlers>
-      <handler event="dragover">
-        event.stopPropagation();
-      </handler>
+      <handler event="dragover"><![CDATA[
+        this.needScroll(event);
+      ]]></handler>
 
       <handler event="dragdrop">
         event.stopPropagation();
       </handler>
 
-      <handler event="dragexit">
-        event.stopPropagation();
-      </handler>
+      <handler event="dragexit"><![CDATA[
+        // If we've exited the servicepane, then relatedTarget is null so
+        // clear any timers we've got running
+        if (this._timer && !event.relatedTarget) {
+          this.log("Exited servicepane, canceling auto-expand timer");
+          clearTimeout(this._timer);
+          this._timer = null;
+          this._timerGroup._expandTimerRunning = null;
+          this._timerGroup = null;
+        }
+
+        if (this._collapsedGroup && !event.relatedTarget) {
+          this._collapsedGroup._collapseOnDragExit = null;
+          this._collapsedGroup.visible = false;
+          this._collapsedGroup = null;
+        }
+      ]]></handler>
     </handlers>
 
   </binding>

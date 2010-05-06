@@ -645,6 +645,13 @@ function SBScanMedia( aParentWindow, aScanDirectory )
 /** Legacy function **/
 function SBNewPlaylist(aEnumerator)
 {
+  // if the servicepane's Playlists group is hidden, then expose it
+  if (gServicePane) {
+    let playlistsGroup = gServicePane.getDOMNode("SB:Playlists");
+    if (!playlistsGroup.visible)
+      playlistsGroup.visible = true;
+  }
+
   var playlist = makeNewPlaylist("simple");
   if (aEnumerator) {
     // make playlist from selected items
@@ -655,6 +662,13 @@ function SBNewPlaylist(aEnumerator)
 
 function SBNewSmartPlaylist()
 {
+  // if the servicepane's Playlists group is hidden, then expose it
+  if (gServicePane) {
+    let playlistsGroup = gServicePane.getDOMNode("SB:Playlists");
+    if (!playlistsGroup.visible)
+      playlistsGroup.visible = true;
+  }
+
   var obj = { newSmartPlaylist: null,
               newPlaylistFunction: function() { 
                 return makeNewPlaylist("smart") 

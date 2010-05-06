@@ -624,6 +624,8 @@ sb-servicepane-group hbox.servicepane-group-header-wrapper {
   max-height: 20px;
   -moz-box-align: center;
 }
+
+sb-servicepane-group[collapsedChildren="true"] hbox.servicepane-group-header-wrapper:-moz-drag-over,
 sb-servicepane-group hbox.servicepane-group-header-wrapper:hover {
   background-position: center -20px;
 }
