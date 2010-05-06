@@ -616,6 +616,9 @@ sb-servicepane-group > vbox > vbox.servicepane-group-overflow-container {
 sb-servicepane-group > vbox > vbox > vbox.servicepane-group-nodes {
   overflow: hidden;
 }
+vbox.servicepane-group-nodes {
+  padding-bottom: 6px;
+}
 sb-servicepane-group hbox.servicepane-group-header-wrapper {
   background-image: url(chrome://songbird/skin/service-pane/group-header-bg.png);
   background-repeat: repeat-x;
@@ -665,8 +668,8 @@ image.sb-servicepane-new-playlist[altKey="true"]:active {
 }
 /* SERVICE PANE NODES */
 sb-servicepane-node {
-  margin-top: 2px;
-  margin-bottom: 2px;
+  margin-top: 1px;
+  margin-bottom: 1px;
 }
 
 sb-servicepane-node > vbox > hbox.servicepane-node-info {
@@ -679,7 +682,7 @@ hbox.servicepane-node-info > stack > hbox > label {
   margin-bottom: 0px;
   color: rgb(219,219,219);
 }
-hbox.servicepane-node-info.active > stack > hbox > label {
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > label {
   color: white;
 }
 sb-servicepane-node[indent="1"] > vbox > hbox.servicepane-node-info {
@@ -704,8 +707,8 @@ sb-servicepane-node.active > vbox > hbox.servicepane-node-info {
   background-image: url(chrome://songbird/skin/service-pane/bg-active-node.png);
   background-position: left top;
   /*-moz-border-radius: 3px;*/
-  border-left: 1px solid rgba(86,73,130,0.7);
-  border-right: 1px solid rgba(86,73,130,0.7);
+  border-left: 1px solid rgba(86,73,130,0.1);
+  border-right: 1px solid rgba(86,73,130,0.1);
 }
 
 /* highlighted in the servicepane for when a node is right-clicked, but not
@@ -777,8 +780,9 @@ sb-servicepane-node-badge > hbox > label {
   padding-right: 5px;
   -moz-border-radius: 6px;
   font-weight: bold;
-  font-size: 10px;
+  font-size: 11px;
   margin: 0px 4px 0px 0px;
+  font-family: Helvetica Neue, Helvetica, Arial;
 }
 
 sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges > sb-servicepane-node-badge > hbox > label {
