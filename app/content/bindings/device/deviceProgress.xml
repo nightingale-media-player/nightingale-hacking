@@ -91,7 +91,8 @@
 
           <!-- Sync device operation button. -->
           <xul:button sbid="sync_operation_button"
-                      class="device-progress-button"/>
+                      class="device-progress-button"
+                      label="&device.progress.sync;"/>
           <xul:sb-device-sync-command bindelem="prev"
                                       xbl:inherits="dev-lib-guid"/>
         </xul:hbox>
