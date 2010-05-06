@@ -179,7 +179,7 @@
 
       <field name="deviceID"/>
       <field name="device"/>
-      <field name="devLibID"/>
+      <field name="devLibGUID"/>
       <field name="devLib"/>
       <field name="boundElem"/>
 

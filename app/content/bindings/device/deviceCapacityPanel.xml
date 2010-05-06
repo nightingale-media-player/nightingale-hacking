@@ -155,6 +155,12 @@
         this.DCW.finalize(this);
         this.DCW.initialize(this);
         ]]></handler>
+
+      <handler event="devLibBound"><![CDATA[
+        /* Re-initialize the device capacity services. */
+        this.DCW.finalize(this);
+        this.DCW.initialize(this);
+        ]]></handler>
     </handlers>
 
 

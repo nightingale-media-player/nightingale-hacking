@@ -562,14 +562,16 @@ deviceControlWidget.prototype = {
 
     // Get the device capacity.
     var capacity = "";
-    try {
-      storageConverter =
-        Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
-          .createInstance(Ci.sbIPropertyUnitConverter);
-      capacity = this._device.properties.properties.getPropertyAsAString
-                   ("http://songbirdnest.com/device/1.0#capacity");
-      capacity = storageConverter.autoFormat(capacity, -1, 1);
-    } catch (ex) {};
+    if (this._deviceLibrary) {
+      try {
+        storageConverter =
+          Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
+            .createInstance(Ci.sbIPropertyUnitConverter);
+        capacity = this._deviceLibrary.getProperty
+                     ("http://songbirdnest.com/device/1.0#capacity");
+        capacity = storageConverter.autoFormat(capacity, -1, 1);
+      } catch (ex) {};
+    }
 
     return SBFormattedString("device.info.model_cap",
                              [ productName, capacity ]);

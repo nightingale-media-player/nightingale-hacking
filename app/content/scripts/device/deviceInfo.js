@@ -93,11 +93,17 @@ var DIW = {
   // Device info object fields.
   //
   //   _widget                  Device info widget.
+  //   _device                  Device bound to widget.
+  //   _deviceProperties        Device properties.
+  //   _deviceLibrary           Bound device library.
   //   _contextMenuEnabled      If true, the context menu is enabled.
   //   _contextMenuPopup        Context menu popup.
   //
 
   _widget: null,
+  _device: null,
+  _deviceProperties: null,
+  _deviceLibrary: null,
   _contextMenuEnabled: false,
   _contextMenuPopup: null,
 
@@ -116,6 +122,7 @@ var DIW = {
     // Initialize object fields.
     this._device = this._widget.device;
     this._deviceProperties = this._device.properties;
+    this._deviceLibrary = this._widget.devLib;
 
     // Initialize the context menu.
     this._initializeContextMenu();
@@ -160,6 +167,7 @@ var DIW = {
 
     // Clear object fields.
     this._widget = null;
+    this._deviceLibrary = null;
     this._contextMenuPopup = null;
   },
 
@@ -408,14 +416,16 @@ var DIW = {
 
     // Get the device capacity.
     var capacity = "";
-    try {
-      storageConverter =
-        Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
-          .createInstance(Ci.sbIPropertyUnitConverter);
-      capacity = this._device.properties.properties.getPropertyAsAString
-                   ("http://songbirdnest.com/device/1.0#capacity");
-      capacity = storageConverter.autoFormat(capacity, -1, 1);
-    } catch (ex) {};
+    if (this._deviceLibrary) {
+      try {
+        storageConverter =
+          Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
+            .createInstance(Ci.sbIPropertyUnitConverter);
+        capacity = this._deviceLibrary.getProperty
+                     ("http://songbirdnest.com/device/1.0#capacity");
+        capacity = storageConverter.autoFormat(capacity, -1, 1);
+      } catch (ex) {};
+    }
 
     var devProductCapValue = SBFormattedString("device.info.product_cap",
                              [ devProductValue, capacity ]);
@@ -704,14 +714,10 @@ var DIW = {
   //
   // Device info services fields.
   //
-  //   _device                  sbIDevice object.
-  //   _deviceProperties        Cache properties to avoid costly garbage
   //   _lastPropertyValue       Holds the last value retrieved in case we
   //                            can't retrieve the property due to formatting
   //                            or other reasons
   
-  _device: null,
-  _deviceProperties : null,
   _lastPropertyValue : {},
   
   /**
@@ -801,16 +807,18 @@ var DIW = {
    */
 
   _getDeviceModelSize: function DIW__getDeviceModelSize() {
-    try {
-      storageConverter =
-        Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
-          .createInstance(Ci.sbIPropertyUnitConverter);
-      var modelSize = this._getDeviceProperty
-                             ("http://songbirdnest.com/device/1.0#capacity");
-      return storageConverter.autoFormat(modelSize, -1, 1);
-    } catch (err) {
-      return SBString("device.info.unknown");
+    if (this._deviceLibrary) {
+      try {
+        storageConverter =
+          Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
+            .createInstance(Ci.sbIPropertyUnitConverter);
+        var modelSize = this._deviceLibrary.getProperty
+                               ("http://songbirdnest.com/device/1.0#capacity");
+        return storageConverter.autoFormat(modelSize, -1, 1);
+      } catch (err) { }
     }
+
+    return SBString("device.info.unknown");
   },
 
 

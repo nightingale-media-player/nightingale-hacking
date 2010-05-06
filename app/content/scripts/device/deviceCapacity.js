@@ -24,7 +24,7 @@
  *=END SONGBIRD GPL
  */
 
-/** 
+/**
 * \file  deviceCapacity.js
 * \brief Javascript source for the device capacity widget.
 */
@@ -81,16 +81,14 @@ var DCW = {
   //
   //   _cfg                       Configuration.
   //   _widget                    Device capacity widget.
-  //   _device                    sbIDevice object.
-  //   _deviceProperties          Cache properties to avoid costly garbage
+  //   _deviceLibrary           Device library we are working with.
   //   _updateInterval            Timing interval used for updating UI.
   //   _capTable                  Table of capacity values.
   //
 
   _cfg: DCWCfg,
   _widget: null,
-  _device: null,
-  _deviceProperties : null,
+  _deviceLibrary: null,
   _updateInterval: null,
   _capTable: null,
   _panel: null,
@@ -115,8 +113,7 @@ var DCW = {
     this._widget = aWidget;
 
     // Initialize object fields.
-    this._device = this._widget.device;
-    this._deviceProperties = this._device.properties;
+    this._deviceLibrary = this._widget.devLib;
     this._capTable = {};
 
     // Shortcuts to elements
@@ -177,6 +174,7 @@ var DCW = {
 
     // Clear object fields.
     this._widget = null;
+    this._deviceLibrary = null;
   },
 
   /**
@@ -251,7 +249,7 @@ var DCW = {
     if (!needsUpdate)
       return;
 
-    if (!this._device.defaultLibrary)
+    if (!this._deviceLibrary)
       this._capacityBar.setAttribute("disabled", "true");
     else
       this._capacityBar.removeAttribute("disabled");
@@ -339,20 +337,20 @@ var DCW = {
   //----------------------------------------------------------------------------
 
   /**
-   * \brief Get a device property if available
+   * \brief Get a device library property if available
    *
    * \param aPropertyName name of the property to get
    * \param aDefault default to return if property not found
-   * 
+   *
    * \return string value of the property or the default if not found.
-   * 
+   *
    * \sa sbStandardDeviceProperties.h
    */
-  
-  _getDeviceProperty: function DIW__getDeviceProperty(aPropertyName, aDefault) {
+
+  _getDevLibProperty: function DIW__getDevLibProperty(aPropertyName, aDefault) {
     try {
-      if (this._deviceProperties.properties.hasKey(aPropertyName))
-        return this._deviceProperties.properties.getPropertyAsAString(aPropertyName);
+      if (this._deviceLibrary)
+        return this._deviceLibrary.getProperty(aPropertyName);
     } catch (ex) { }
     return aDefault;
   },
@@ -370,16 +368,16 @@ var DCW = {
 
   _getDeviceCapacity: function DCW__getDeviceCapacity() {
     // Get the storage statistics from the device.
-    var freeSpace = parseInt(this.
-        _getDeviceProperty("http://songbirdnest.com/device/1.0#freeSpace", 0));
-    var musicSpace = parseInt(this.
-        _getDeviceProperty("http://songbirdnest.com/device/1.0#musicUsedSpace", 0));
-    var videoSpace = parseInt(this.
-        _getDeviceProperty("http://songbirdnest.com/device/1.0#videoUsedSpace", 0));
-    var imageSpace = parseInt(this.
-        _getDeviceProperty("http://songbirdnest.com/device/1.0#imageUsedSpace", 0));
-    var usedSpace = parseInt(this.
-        _getDeviceProperty("http://songbirdnest.com/device/1.0#totalUsedSpace", 0));
+    var freeSpace = parseInt(this._getDevLibProperty
+      ("http://songbirdnest.com/device/1.0#freeSpace", 0));
+    var musicSpace = parseInt(this._getDevLibProperty
+      ("http://songbirdnest.com/device/1.0#musicUsedSpace", 0));
+    var videoSpace = parseInt(this._getDevLibProperty
+      ("http://songbirdnest.com/device/1.0#videoUsedSpace", 0));
+    var imageSpace = parseInt(this._getDevLibProperty
+      ("http://songbirdnest.com/device/1.0#imageUsedSpace", 0));
+    var usedSpace = parseInt(this._getDevLibProperty
+      ("http://songbirdnest.com/device/1.0#totalUsedSpace", 0));
     var totalSpace = usedSpace + freeSpace;
     var otherSpace = usedSpace - musicSpace - videoSpace - imageSpace;
 
@@ -394,3 +392,4 @@ var DCW = {
     return capTable;
   }
 };
+

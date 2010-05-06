@@ -3155,10 +3155,13 @@ sbBaseDevice::GetMusicFreeSpace(sbILibrary* aLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the music used space.
-  PRInt64 musicUsedSpace;
-  rv = deviceProperties->GetPropertyAsInt64
+  PRInt64      musicUsedSpace;
+  nsAutoString musicUsedSpaceStr;
+  rv = aLibrary->GetProperty
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_USED_SPACE),
-          &musicUsedSpace);
+          musicUsedSpaceStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+  musicUsedSpace = nsString_ToInt64(musicUsedSpaceStr, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Return result.
@@ -3186,10 +3189,12 @@ sbBaseDevice::GetMusicAvailableSpace(sbILibrary* aLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the total capacity.
-  PRInt64 capacity;
-  rv = deviceProperties->GetPropertyAsInt64
-                           (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_CAPACITY),
-                            &capacity);
+  PRInt64      capacity;
+  nsAutoString capacityStr;
+  rv = aLibrary->GetProperty(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_CAPACITY),
+                             capacityStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+  capacity = nsString_ToInt64(capacityStr, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Compute the amount of available music space.
@@ -3690,58 +3695,68 @@ sbBaseDevice::UpdateStatisticsProperties()
 {
   nsresult rv;
 
-  // Get the statistics for the default volume.  Just return if no default
-  // volume.
-  nsRefPtr<sbBaseDeviceVolume> volume;
-  nsRefPtr<sbDeviceStatistics> deviceStatistics;
+  // Get the list of all volumes.
+  nsTArray< nsRefPtr<sbBaseDeviceVolume> > volumeList;
   {
     nsAutoLock autoVolumeLock(mVolumeLock);
-    if (!mDefaultVolume)
-      return NS_OK;
-    volume = mDefaultVolume;
+    volumeList = mVolumeList;
   }
-  rv = volume->GetStatistics(getter_AddRefs(deviceStatistics));
-  NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the device properties.
-  nsCOMPtr<nsIWritablePropertyBag> deviceProperties;
-  rv = GetWritableDeviceProperties(this, getter_AddRefs(deviceProperties));
-  NS_ENSURE_SUCCESS(rv, rv);
+  // Update the statistics properties for all volumes.
+  for (PRUint32 i = 0; i < volumeList.Length(); i++) {
+    // Get the volume.
+    nsRefPtr<sbBaseDeviceVolume> volume = volumeList[i];
 
-  // Update the statistics properties.
-  //XXXeps should use base properties class and use SetPropertyInternal
-  rv = deviceProperties->SetProperty
-         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_ITEM_COUNT),
-          sbNewVariant(deviceStatistics->AudioCount()));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = deviceProperties->SetProperty
-         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_USED_SPACE),
-          sbNewVariant(deviceStatistics->AudioUsed()));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = deviceProperties->SetProperty
-         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_TOTAL_PLAY_TIME),
-          sbNewVariant(deviceStatistics->AudioPlayTime()));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = deviceProperties->SetProperty
-         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_ITEM_COUNT),
-          sbNewVariant(deviceStatistics->VideoCount()));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = deviceProperties->SetProperty
-         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_USED_SPACE),
-          sbNewVariant(deviceStatistics->VideoUsed()));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = deviceProperties->SetProperty
-         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_TOTAL_PLAY_TIME),
-          sbNewVariant(deviceStatistics->VideoPlayTime()));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = deviceProperties->SetProperty
-         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMAGE_ITEM_COUNT),
-          sbNewVariant(deviceStatistics->ImageCount()));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = deviceProperties->SetProperty
-         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMAGE_USED_SPACE),
-          sbNewVariant(deviceStatistics->ImageUsed()));
-  NS_ENSURE_SUCCESS(rv, rv);
+    // Get the volume library and statistics.
+    nsCOMPtr<sbIDeviceLibrary>   deviceLibrary;
+    nsRefPtr<sbDeviceStatistics> deviceStatistics;
+    rv = volume->GetDeviceLibrary(getter_AddRefs(deviceLibrary));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = volume->GetStatistics(getter_AddRefs(deviceStatistics));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Update the volume statistics properties.
+    rv = UpdateLibraryProperty
+           (deviceLibrary,
+            NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_ITEM_COUNT),
+            sbAutoString(deviceStatistics->AudioCount()));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = UpdateLibraryProperty
+           (deviceLibrary,
+            NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_USED_SPACE),
+            sbAutoString(deviceStatistics->AudioUsed()));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = UpdateLibraryProperty
+           (deviceLibrary,
+            NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_TOTAL_PLAY_TIME),
+            sbAutoString(deviceStatistics->AudioPlayTime()));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = UpdateLibraryProperty
+           (deviceLibrary,
+            NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_ITEM_COUNT),
+            sbAutoString(deviceStatistics->VideoCount()));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = UpdateLibraryProperty
+           (deviceLibrary,
+            NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_USED_SPACE),
+            sbAutoString(deviceStatistics->VideoUsed()));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = UpdateLibraryProperty
+           (deviceLibrary,
+            NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_TOTAL_PLAY_TIME),
+            sbAutoString(deviceStatistics->VideoPlayTime()));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = UpdateLibraryProperty
+           (deviceLibrary,
+            NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMAGE_ITEM_COUNT),
+            sbAutoString(deviceStatistics->ImageCount()));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = UpdateLibraryProperty
+           (deviceLibrary,
+            NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMAGE_USED_SPACE),
+            sbAutoString(deviceStatistics->ImageUsed()));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -4934,21 +4949,27 @@ sbBaseDevice::SyncGetSyncAvailableSpace(sbILibrary* aLibrary,
   nsresult rv;
 
   // Get the device properties.
-  // Get the device properties.
   nsCOMPtr<nsIPropertyBag2>     deviceProperties;
   rv = GetPropertyBag(this, getter_AddRefs(deviceProperties));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the free space and the music used space.
-  PRInt64 freeSpace;
-  PRInt64 musicUsedSpace;
-  rv = deviceProperties->GetPropertyAsInt64
-                           (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_FREE_SPACE),
-                            &freeSpace);
+  // Get the free space.
+  PRInt64      freeSpace;
+  nsAutoString freeSpaceStr;
+  rv = aLibrary->GetProperty(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_FREE_SPACE),
+                             freeSpaceStr);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = deviceProperties->GetPropertyAsInt64
+  freeSpace = nsString_ToInt64(freeSpaceStr, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the music used space.
+  PRInt64      musicUsedSpace;
+  nsAutoString musicUsedSpaceStr;
+  rv = aLibrary->GetProperty
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_USED_SPACE),
-          &musicUsedSpace);
+          musicUsedSpaceStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+  musicUsedSpace = nsString_ToInt64(musicUsedSpaceStr, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Add track overhead to the music used space.

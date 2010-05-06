@@ -43,6 +43,7 @@
 #include <sbIDeviceProperties.h>
 #include <sbLibraryUtils.h>
 #include <sbStandardDeviceProperties.h>
+#include <sbStringUtils.h>
 #include <sbVariantUtils.h>
 
 /*
@@ -154,28 +155,30 @@ sbDeviceEnsureSpaceForWrite::BuildItemsToWrite() {
 
 nsresult
 sbDeviceEnsureSpaceForWrite::GetFreeSpace() {
-  // get the device properties
-  nsCOMPtr<sbIDeviceProperties> baseDeviceProperties;
-  nsCOMPtr<nsIPropertyBag2>     deviceProperties;
-  nsresult rv = mDevice->GetProperties(getter_AddRefs(baseDeviceProperties));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = baseDeviceProperties->GetProperties(getter_AddRefs(deviceProperties));
-  NS_ENSURE_SUCCESS(rv, rv);
+  // no free space if no library
+  if (!mOwnerLibrary) {
+    mFreeSpace = 0;
+    return NS_OK;
+  }
+
+  nsresult rv;
 
   // get the free space
-  rv = deviceProperties->GetPropertyAsInt64
-                           (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_FREE_SPACE),
-                            &mFreeSpace);
+  nsAutoString freeSpaceStr;
+  rv = mOwnerLibrary->GetProperty
+                        (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_FREE_SPACE),
+                         freeSpaceStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+  mFreeSpace = nsString_ToInt64(freeSpaceStr, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // apply limit to the total space available for music
-  if (mOwnerLibrary) {
-    PRInt64 freeMusicSpace;
-    rv = mDevice->GetMusicFreeSpace(mOwnerLibrary, &freeMusicSpace);
-    NS_ENSURE_SUCCESS(rv, rv);
-    if (mFreeSpace >= freeMusicSpace)
-      mFreeSpace = freeMusicSpace;
-  }
+  PRInt64 freeMusicSpace;
+  rv = mDevice->GetMusicFreeSpace(mOwnerLibrary, &freeMusicSpace);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (mFreeSpace >= freeMusicSpace)
+    mFreeSpace = freeMusicSpace;
+
   return NS_OK;
 }
 

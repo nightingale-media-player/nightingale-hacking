@@ -66,7 +66,7 @@
       <!--
         - expects to have the following attributes:
         - "device-id"
-        - "library-id"
+        - "dev-lib-guid"
         -->
       <xul:vbox flex="1">
         <xul:groupbox flex="1" sbid="transcoding-groupbox" setting="transcode">
@@ -168,12 +168,12 @@
           return "songbird.device." +
                  this.deviceID +
                  ".preferences.library." +
-                 this.libraryID;
+                 this.devLibGUID;
         </getter>
       </property>
       <property name="_devicePrefRoot" readonly="true">
         <getter>
-          return "library." + this.libraryID;
+          return "library." + this.devLibGUID;
         </getter>
       </property>
       <property name="_formatDirPrefName" readonly="true">
@@ -181,18 +181,8 @@
           return "songbird.device." +
                  this.deviceID +
                  ".preferences.library." +
-                 this.libraryID +
+                 this.devLibGUID +
                  ".media_management.library.format.dir";
-        </getter>
-      </property>
-      <property name="deviceID" readonly="true">
-        <getter>
-          return this.getAttribute("device-id");
-        </getter>
-      </property>
-      <property name="libraryID" readonly="true">
-        <getter>
-          return this.getAttribute("library-id");
         </getter>
       </property>
 
@@ -388,8 +378,9 @@
           // Get the device capacity.
           var capacity = 0;
           try {
-            capacity = this.device.properties.properties.getPropertyAsInt64
-              ("http://songbirdnest.com/device/1.0#capacity");
+            capacity = this.devLib.getProperty
+                         ("http://songbirdnest.com/device/1.0#capacity");
+            capacity = parseInt(capacity);
           } catch (ex) {};
 
           var limitPercentage = parseInt(this._scale.getAttribute("value"));
@@ -490,6 +481,12 @@
 
     <handlers>
       <handler event="deviceBound"><![CDATA[
+        /* Re-initialize the device music management services. */
+        DeviceMediaManagementServices.finalize(this);
+        DeviceMediaManagementServices.initialize(this);
+      ]]></handler>
+
+      <handler event="devLibBound"><![CDATA[
         /* Re-initialize the device music management services. */
         DeviceMediaManagementServices.finalize(this);
         DeviceMediaManagementServices.initialize(this);
