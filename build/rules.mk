@@ -122,13 +122,13 @@ ifdef IS_EXTENSION # {
    include $(OUR_SB_EXTENSION_CONFIG)
 
    # Allow extension-config.mk to override this
-   EXTENSION_STAGE_DIR ?= $(SONGBIRD_OBJDIR)/extensions/$(EXTENSION_NAME)/.xpistage
+   EXTENSION_STAGE_DIR ?= $(SONGBIRD_OBJDIR)/extensions/$(OUR_EXTENSION_NAME)/.xpistage
 
-   # Define a temporary directory that extensions can use to dump things into; this
-   # is mostly useful in the context of extension multi-builds, where EXTENSION_NAME
-   # will keep preprocessed files from collding into each other; see install.rdf
-   # preprocessing for an example...
-   EXTENSION_TMP_DIR ?= $(SONGBIRD_OBJDIR)/extensions/$(EXTENSION_NAME)/tmp
+   # Define a temporary directory that extensions can use to dump things into;
+   # this is mostly useful in the context of extension multi-builds, where 
+   # EXTENSION_NAME will keep preprocessed files from collding into each 
+   # other; see install.rdf preprocessing for an example...
+   EXTENSION_TMP_DIR ?= $(SONGBIRD_OBJDIR)/extensions/$(OUR_EXTENSION_NAME)/tmp
    
    ifdef OUR_EXTENSION_MAKE_IN_ROOTSRCDIR
       export OUR_EXTENSION_VER_DEVDATE := $(shell date +%Y%m%d%H%M)
