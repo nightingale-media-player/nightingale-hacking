@@ -107,19 +107,19 @@ sb-autoscroll {
 }
 
 sb-servicepane {
-  -moz-binding: url("chrome://songbird/content/bindings/servicePane2.xml#servicepane") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/servicePane2.xml#servicepane");
 }
 
 sb-servicepane-group {
-  -moz-binding: url("chrome://songbird/content/bindings/servicePane2.xml#servicepane-group") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/servicePane2.xml#servicepane-group");
 }
 
 sb-servicepane-node {
-  -moz-binding: url("chrome://songbird/content/bindings/servicePane2.xml#servicepane-node") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/servicePane2.xml#servicepane-node");
 }
 
 sb-servicepane-node-badge {
-  -moz-binding: url("chrome://songbird/content/bindings/servicePane2.xml#servicepane-node-badge") !important;
+  -moz-binding: url("chrome://songbird/content/bindings/servicePane2.xml#servicepane-node-badge");
 }
 
 sb-servicepane-toolbar {
