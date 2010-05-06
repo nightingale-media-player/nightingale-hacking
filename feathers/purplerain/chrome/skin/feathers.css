@@ -776,7 +776,7 @@ hbox.servicepane-node-badges {
 
 sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges,
 sb-servicepane-node.highlighted > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges {
-  margin-right: 0px;
+  margin-right: -1px;
 }
 
 /* Badge Text labels */
