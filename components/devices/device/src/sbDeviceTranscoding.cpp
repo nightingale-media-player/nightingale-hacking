@@ -482,6 +482,7 @@ sbDeviceTranscoding::GetAudioFormatFromMediaItem(sbIMediaItem* aMediaItem,
           rate,
           channels,
           bitrate);
+  NS_ENSURE_SUCCESS (rv, rv);
 
   rv = audioFormat->SetAudioType(NS_ConvertASCIItoUTF16(formatInfo.Codec));
   NS_ENSURE_SUCCESS (rv, rv);
