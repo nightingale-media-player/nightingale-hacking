@@ -233,7 +233,7 @@ function sbDeviceFirmwareAutoCheckForUpdate_notify(aDevice) {
   if (!this._timer) {
     // set up the timer
     this._timer = Cc['@mozilla.org/timer;1'].createInstance(Ci.nsITimer);
-    this._timer.init(this, 5000, Ci.nsITimer.TYPE_REPEATING_SLACK);
+    this._timer.init(this, 15000, Ci.nsITimer.TYPE_REPEATING_SLACK);
   }
   if (this._queue.indexOf(aDevice) < 0) {
     this._queue.push(aDevice);
