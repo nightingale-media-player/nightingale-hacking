@@ -5100,20 +5100,6 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
 
   bool const playlistsSupported = sbDeviceUtils::ArePlaylistsSupported(this);
 
-  nsCOMPtr<nsIArray> videoPlaylists;
-  rv = aDstLibrary->GetSyncPlaylistListByType(sbIDeviceLibrary::MEDIATYPE_VIDEO,
-                                              getter_AddRefs(videoPlaylists));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 videoPlaylistCount = 0;
-  rv = videoPlaylists->GetLength(&videoPlaylistCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsString skipContentType;
-  if (videoPlaylistCount == 0) {
-    skipContentType = NS_LITERAL_STRING("video");
-  }
-
   // Get the list of all changes.
   nsCOMPtr<nsIArray> changeList;
   PRUint32           changeCount;
@@ -5154,7 +5140,17 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
           nsCOMPtr<sbIMediaItem> mediaItem;
           rv = change->GetDestinationItem(getter_AddRefs(mediaItem));
           NS_ENSURE_SUCCESS(rv, rv);
-          if (skipContentType != GetNormalizedContentTypeOfItemOrList(mediaItem)) {
+
+          nsString originItemGuid;
+          rv = mediaItem->GetProperty(
+                            NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
+                            originItemGuid);
+          NS_ENSURE_SUCCESS(rv, rv);
+          // Only remove video items copied from other libraries. Don't touch
+          // the existing video items.
+          if (NS_LITERAL_STRING("video") !=
+                GetNormalizedContentTypeOfItemOrList(mediaItem) ||
+              !originItemGuid.IsEmpty()) {
             rv = deleteItemList->AppendElement(mediaItem, PR_FALSE);
             NS_ENSURE_SUCCESS(rv, rv);
           }
