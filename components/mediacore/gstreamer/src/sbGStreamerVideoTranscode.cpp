@@ -1134,6 +1134,7 @@ sbGStreamerVideoTranscoder::BuildVideoBin(GstCaps *aInputVideoCaps,
   GstElement *videobox = NULL;
   GstElement *capsfilter = NULL;
   GstElement *encoder = NULL;
+  nsCOMPtr<nsIPropertyBag> encoderProperties;
 
   PRInt32 outputWidth, outputHeight;
   PRUint32 outputParN, outputParD;
@@ -1187,30 +1188,33 @@ sbGStreamerVideoTranscoder::BuildVideoBin(GstCaps *aInputVideoCaps,
     goto failed;
   }
 
-  if (!encoderName.IsEmpty()) {
-    encoder = gst_element_factory_make (
-            NS_ConvertUTF16toUTF8(encoderName).BeginReading(), NULL);
+  if (encoderName.IsEmpty()) {
+    LOG(("Video enabled but no video encoder specified"));
+    rv = NS_ERROR_FAILURE;
+    goto failed;
+  }
 
-    if (!encoder) {
-      LOG(("No encoder %s available",
-                  NS_ConvertUTF16toUTF8(encoderName).BeginReading()));
-      TranscodingFatalError(
-              "songbird.transcode.error.video_encoder_unavailable");
-      rv = NS_ERROR_FAILURE;
-      goto failed;
-    }
+  encoder = gst_element_factory_make (
+          NS_ConvertUTF16toUTF8(encoderName).BeginReading(), NULL);
 
-    nsCOMPtr<nsIPropertyBag> encoderProperties;
-    rv = mConfigurator->GetVideoEncoderProperties(
-            getter_AddRefs(encoderProperties));
-    if (NS_FAILED (rv)) {
-      goto failed;
-    }
+  if (!encoder) {
+    LOG(("No encoder %s available",
+                NS_ConvertUTF16toUTF8(encoderName).BeginReading()));
+    TranscodingFatalError(
+            "songbird.transcode.error.video_encoder_unavailable");
+    rv = NS_ERROR_FAILURE;
+    goto failed;
+  }
 
-    rv = ApplyPropertyBagToElement(encoder, encoderProperties);
-    if (NS_FAILED (rv)) {
-      goto failed;
-    }
+  rv = mConfigurator->GetVideoEncoderProperties(
+          getter_AddRefs(encoderProperties));
+  if (NS_FAILED (rv)) {
+    goto failed;
+  }
+
+  rv = ApplyPropertyBagToElement(encoder, encoderProperties);
+  if (NS_FAILED (rv)) {
+    goto failed;
   }
 
   /* Configure videoscale to use 4-tap scaling for higher quality */
@@ -1242,11 +1246,9 @@ sbGStreamerVideoTranscoder::BuildVideoBin(GstCaps *aInputVideoCaps,
 
   last = capsfilter;
 
-  if (encoder) {
-    gst_bin_add (bin, encoder);
-    gst_element_link (capsfilter, encoder);
-    last = encoder;
-  }
+  gst_bin_add (bin, encoder);
+  gst_element_link (capsfilter, encoder);
+  last = encoder;
 
   // Finally, add ghost pads to our bin.
   sinkpad = gst_element_get_static_pad (videorate, "sink");
@@ -1281,6 +1283,76 @@ failed:
     g_object_unref (bin);
 
   return rv;
+}
+
+nsresult
+sbGStreamerVideoTranscoder::GetRawAudioCaps(GstCaps **aResultCaps)
+{
+  nsresult rv;
+
+  nsCOMPtr<nsIPropertyBag> encoderProperties;
+  rv = mConfigurator->GetAudioEncoderProperties(
+          getter_AddRefs(encoderProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIVariant> isFloatVar;
+  rv = encoderProperties->GetProperty(NS_LITERAL_STRING ("IsFloat"),
+                                      getter_AddRefs(isFloatVar));
+  NS_ENSURE_SUCCESS(rv, rv);
+  PRBool isFloat;
+  rv = isFloatVar->GetAsBool(&isFloat);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIVariant> isLittleEndianVar;
+  rv = encoderProperties->GetProperty(NS_LITERAL_STRING ("LittleEndian"),
+                                      getter_AddRefs(isLittleEndianVar));
+  NS_ENSURE_SUCCESS(rv, rv);
+  PRBool isLittleEndian;
+  rv = isLittleEndianVar->GetAsBool(&isLittleEndian);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIVariant> sampleDepthVar;
+  rv = encoderProperties->GetProperty(NS_LITERAL_STRING ("Depth"),
+                                      getter_AddRefs(sampleDepthVar));
+  NS_ENSURE_SUCCESS(rv, rv);
+  PRInt32 sampleDepth;
+  rv = sampleDepthVar->GetAsInt32(&sampleDepth);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 outputRate, outputChannels;
+
+  // Ask the configurator for what format we should feed into the encoder
+  nsCOMPtr<sbIMediaFormatAudio> audioFormat;
+  rv = mConfigurator->GetAudioFormat (getter_AddRefs(audioFormat));
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  rv = audioFormat->GetSampleRate (&outputRate);
+  NS_ENSURE_SUCCESS (rv, rv);
+  rv = audioFormat->GetChannels (&outputChannels);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  gint32 endianness = isLittleEndian ? G_LITTLE_ENDIAN : G_BIG_ENDIAN;
+  GstCaps *caps;
+  if (isFloat) {
+    caps = gst_caps_new_simple ("audio/x-raw-float",
+          "endianness", G_TYPE_INT, endianness,
+          "width", G_TYPE_INT, sampleDepth,
+          "rate", G_TYPE_INT, outputRate,
+          "channels", G_TYPE_INT, outputChannels);
+  }
+  else {
+    caps = gst_caps_new_simple ("audio/x-raw-int",
+          "endianness", G_TYPE_INT, endianness,
+          "width", G_TYPE_INT, sampleDepth,
+          "depth", G_TYPE_INT, sampleDepth,
+          "rate", G_TYPE_INT, outputRate,
+          "channels", G_TYPE_INT, outputChannels,
+          "signed", G_TYPE_BOOLEAN, sampleDepth != 8);
+  }
+
+  *aResultCaps = caps;
+
+  return NS_OK;
 }
 
 nsresult
@@ -1340,6 +1412,8 @@ sbGStreamerVideoTranscoder::BuildAudioBin(GstCaps *aInputAudioCaps,
     goto failed;
   }
 
+  // We may have no encoder - that's used if we're outputting raw audio. That's
+  // perfectly ok!
   if (!encoderName.IsEmpty()) {
     encoder = gst_element_factory_make (
             NS_ConvertUTF16toUTF8 (encoderName).BeginReading(), NULL);
@@ -1365,18 +1439,31 @@ sbGStreamerVideoTranscoder::BuildAudioBin(GstCaps *aInputAudioCaps,
     }
   }
 
-  /* Configure capsfilter for our output sample rate and channels */
-  caps = gst_caps_new_empty ();
-  structure = gst_structure_new ("audio/x-raw-int",
-          "rate", G_TYPE_INT, outputRate,
-          "channels", G_TYPE_INT, outputChannels,
-          NULL);
-  gst_caps_append_structure (caps, structure);
-  structure = gst_structure_new ("audio/x-raw-float",
-          "rate", G_TYPE_INT, outputRate,
-          "channels", G_TYPE_INT, outputChannels,
-          NULL);
-  gst_caps_append_structure (caps, structure);
+  /* Configure capsfilter for our output sample rate and channels. Allow
+     either int or float audio; this avoids having to introspect the encoder
+     to find out what it supports.
+
+     As a special case, if there is no audio encoder, that means we want
+     raw PCM output. In this case, we select the format here in the caps.
+   */
+  if (encoder) {
+    caps = gst_caps_new_empty ();
+    structure = gst_structure_new ("audio/x-raw-int",
+            "rate", G_TYPE_INT, outputRate,
+            "channels", G_TYPE_INT, outputChannels,
+            NULL);
+    gst_caps_append_structure (caps, structure);
+    structure = gst_structure_new ("audio/x-raw-float",
+            "rate", G_TYPE_INT, outputRate,
+            "channels", G_TYPE_INT, outputChannels,
+            NULL);
+    gst_caps_append_structure (caps, structure);
+  }
+  else {
+    rv = GetRawAudioCaps(&caps);
+    if (NS_FAILED (rv))
+      goto failed;
+  }
 
   g_object_set (capsfilter, "caps", caps, NULL);
   gst_caps_unref (caps);
@@ -1604,77 +1691,64 @@ sbGStreamerVideoTranscoder::AddMuxer (GstPad **muxerSrcPad,
 
   GstElement *muxer = NULL;
 
-  if (!muxerName.IsEmpty()) {
-    muxer = gst_element_factory_make (
-            NS_ConvertUTF16toUTF8 (muxerName).BeginReading(), NULL);
+  if (muxerName.IsEmpty()) {
+    LOG(("Muxer enabled but no muxer specified"));
+    return NS_ERROR_FAILURE;
+  }
 
-    if (!muxer) {
-      LOG(("No muxer %s available",
-            NS_ConvertUTF16toUTF8 (muxerName).BeginReading()));
-      TranscodingFatalError("songbird.transcode.error.muxer_unavailable");
+  muxer = gst_element_factory_make (
+          NS_ConvertUTF16toUTF8 (muxerName).BeginReading(), NULL);
+
+  if (!muxer) {
+    LOG(("No muxer %s available",
+          NS_ConvertUTF16toUTF8 (muxerName).BeginReading()));
+    TranscodingFatalError("songbird.transcode.error.muxer_unavailable");
+    return NS_ERROR_FAILURE;
+  }
+
+  GstPad *sinkpad;
+
+  // Muxer, hook it up!
+  gst_bin_add (GST_BIN (mPipeline), muxer);
+
+  if (audioPad) {
+    sinkpad = GetCompatiblePad (muxer, audioPad);
+    if (!sinkpad) {
+      TranscodingFatalError("songbird.transcode.error.audio_not_muxable");
       return NS_ERROR_FAILURE;
     }
 
-    GstPad *sinkpad;
-
-    // Muxer, hook it up!
-    gst_bin_add (GST_BIN (mPipeline), muxer);
-
-    if (audioPad) {
-      sinkpad = GetCompatiblePad (muxer, audioPad);
-      if (!sinkpad) {
-        TranscodingFatalError("songbird.transcode.error.audio_not_muxable");
-        return NS_ERROR_FAILURE;
-      }
-
-      GstPadLinkReturn linkret = gst_pad_link (audioPad, sinkpad);
-      if (linkret != GST_PAD_LINK_OK) {
-        g_object_unref (sinkpad);
-        TranscodingFatalError("songbird.transcode.error.audio_not_muxable");
-        return NS_ERROR_FAILURE;
-      }
-
+    GstPadLinkReturn linkret = gst_pad_link (audioPad, sinkpad);
+    if (linkret != GST_PAD_LINK_OK) {
       g_object_unref (sinkpad);
-    }
-
-    if (videoPad) {
-      sinkpad = GetCompatiblePad (muxer, videoPad);
-      if (!sinkpad) {
-        TranscodingFatalError("songbird.transcode.error.video_not_muxable");
-        return NS_ERROR_FAILURE;
-      }
-
-      GstPadLinkReturn linkret = gst_pad_link (videoPad, sinkpad);
-      if (linkret != GST_PAD_LINK_OK) {
-        g_object_unref (sinkpad);
-        TranscodingFatalError("songbird.transcode.error.video_not_muxable");
-        return NS_ERROR_FAILURE;
-      }
-
-      g_object_unref (sinkpad);
-    }
-
-    gst_element_sync_state_with_parent (muxer);
-
-    // Get the output of the muxer as our source pad.
-    *muxerSrcPad = gst_element_get_static_pad (muxer, "src");
-  }
-  else {
-    // No muxer, connect audio or video up directly.
-
-    if (audioPad && videoPad) {
-      // No muxer, but both audio and video: that's unpossible!
-      TranscodingFatalError("songbird.transcode.error.two_streams_no_muxer");
+      TranscodingFatalError("songbird.transcode.error.audio_not_muxable");
       return NS_ERROR_FAILURE;
     }
 
-    if (audioPad) {
-      *muxerSrcPad = GST_PAD (g_object_ref (audioPad));
-    }
-    else {
-      *muxerSrcPad = GST_PAD (g_object_ref (videoPad));
-    }
+    g_object_unref (sinkpad);
   }
+
+  if (videoPad) {
+    sinkpad = GetCompatiblePad (muxer, videoPad);
+    if (!sinkpad) {
+      TranscodingFatalError("songbird.transcode.error.video_not_muxable");
+      return NS_ERROR_FAILURE;
+    }
+
+    GstPadLinkReturn linkret = gst_pad_link (videoPad, sinkpad);
+    if (linkret != GST_PAD_LINK_OK) {
+      g_object_unref (sinkpad);
+      TranscodingFatalError("songbird.transcode.error.video_not_muxable");
+      return NS_ERROR_FAILURE;
+    }
+
+    g_object_unref (sinkpad);
+  }
+
+  gst_element_sync_state_with_parent (muxer);
+
+  // Get the output of the muxer as our source pad.
+  *muxerSrcPad = gst_element_get_static_pad (muxer, "src");
 
   return NS_OK;
 }
@@ -1911,23 +1985,22 @@ sbGStreamerVideoTranscoder::InitializeConfigurator()
   nsString audioEncoder;
   rv = mConfigurator->GetAudioEncoder(audioEncoder);
   NS_ENSURE_SUCCESS(rv, rv);
-  mUseAudio = !audioEncoder.IsEmpty();
+  rv = mConfigurator->GetUseAudioEncoder(&mUseAudio);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsString videoEncoder;
   rv = mConfigurator->GetVideoEncoder(videoEncoder);
   NS_ENSURE_SUCCESS(rv, rv);
-  mUseVideo = !videoEncoder.IsEmpty();
+  rv = mConfigurator->GetUseVideoEncoder(&mUseVideo);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsString muxer;
   rv = mConfigurator->GetMuxer(muxer);
   NS_ENSURE_SUCCESS(rv, rv);
-  mUseMuxer = !muxer.IsEmpty();
+  rv = mConfigurator->GetUseMuxer(&mUseMuxer);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  /* Check that we have at least one codec */
-  if (!mUseAudio && !mUseVideo)
-    return NS_ERROR_UNEXPECTED;
-
-  /* And if we're not using a muxer, ONLY one codec */
+  /* If we're not using a muxer, we must have ONLY one codec */
   if (!mUseMuxer && (mUseAudio && mUseAudio))
     return NS_ERROR_UNEXPECTED;
 

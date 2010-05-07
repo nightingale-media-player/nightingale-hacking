@@ -686,6 +686,15 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
   rv = selectedProfile->GetFileExtension(mFileExtension);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  /* Set whether we're using these - in this configurator, this is based
+     entirely on whether we've selected a specific element */
+  if (!mMuxer.IsEmpty())
+    mUseMuxer = PR_TRUE;
+  if (!mAudioEncoder.IsEmpty())
+    mUseAudioEncoder = PR_TRUE;
+  if (!mVideoEncoder.IsEmpty())
+    mUseVideoEncoder = PR_TRUE;
+
   return NS_OK;
 }
 

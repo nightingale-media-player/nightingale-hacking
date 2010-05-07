@@ -220,6 +220,9 @@ private:
   /* Helper to add an image to a tag list for metadata */
   nsresult AddImageToTagList(GstTagList *aTags, nsIInputStream *aStream);
 
+  /* Create a caps object based on the configurator data for raw audio */
+  nsresult GetRawAudioCaps(GstCaps **aResultCaps);
+
   nsCOMPtr<sbIPropertyArray>              mMetadata;
   nsCOMPtr<nsIInputStream>                mImageStream;
   nsCOMPtr<sbITranscodingConfigurator>    mConfigurator;

@@ -971,6 +971,12 @@ sbGStreamerTranscodeAudioConfigurator::DetermineOutputType()
   CopyASCIItoUTF16(elementNames.muxer, mMuxer);
   CopyASCIItoUTF16(elementNames.audioEncoder, mAudioEncoder);
 
+  if (!mMuxer.IsEmpty())
+    mUseMuxer = PR_TRUE;
+
+  if (!mAudioEncoder.IsEmpty())
+    mUseAudioEncoder = PR_TRUE;
+
   rv = mSelectedProfile->GetFileExtension(mFileExtension);
   NS_ENSURE_SUCCESS (rv, rv);
 
