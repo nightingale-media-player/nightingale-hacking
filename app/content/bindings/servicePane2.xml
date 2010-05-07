@@ -831,6 +831,7 @@
           if (event.altKey) {
             SBNewSmartPlaylist();
           } else {
+            var enumerator;
             if (gBrowser &&
                 gBrowser.selectedTab &&
                 gBrowser.selectedTab.mediaListView)
