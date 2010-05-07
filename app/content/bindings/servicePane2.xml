@@ -1444,7 +1444,8 @@
                                  this._browser.selectedTab.mediaListView);
             }
 
-            if (node) {
+            // Do not switch active node if it's hidden
+            if (node && !node.hidden) {
               this.makeNodeActive(node);
             }
           } catch (e) {
