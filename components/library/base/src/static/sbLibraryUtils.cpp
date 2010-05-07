@@ -208,42 +208,60 @@ nsresult sbLibraryUtils::GetItemInLibrary(/* in */  sbIMediaItem*  aMediaItem,
 }
 
 nsresult
-sbLibraryUtils::FindOriginalsByURL(/* in */ sbIMediaItem *     aMediaItem,
-                                   /* in */  sbIMediaList *    aList,
-                                   /* out */ nsIMutableArray * aCopies)
+sbLibraryUtils::FindItemsWithSameURL(sbIMediaItem * aMediaItem,
+                                     sbIMediaList * aMediaList,
+                                     nsIMutableArray * aCopies)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
-  NS_ENSURE_ARG_POINTER(aList);
+  NS_ENSURE_ARG_POINTER(aMediaList);
 
   nsresult rv;
-  bool foundOne = false;
-  nsString originURL;
+  PRBool foundOne = PR_FALSE;
+  nsString url;
 
-  // Look up the original content URL
   rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
-                               originURL);
+                               url);
   if (rv != NS_ERROR_NOT_AVAILABLE) {
     NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-    rv = FindByContentURL(aList,
-                          originURL,
+  if (url.IsEmpty()) {
+    rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
+                                 url);
+    if (rv != NS_ERROR_NOT_AVAILABLE) {
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  if (!url.IsEmpty()) {
+    rv = FindByContentURL(aMediaList,
+                          url,
                           aCopies);
     if (rv != NS_ERROR_NOT_AVAILABLE) {
       NS_ENSURE_SUCCESS(rv, rv);
-      foundOne = true;
-    }
-
-    // Now look up the content url if different from the origin URL
-    nsString url;
-    rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
-                                 url);
-    if (!url.Equals(originURL)) {
-      rv = FindByContentURL(aList,
-                            url,
-                            aCopies);
-      if (rv != NS_ERROR_NOT_AVAILABLE) {
+      PRUint32 length;
+      if (aCopies) {
+        rv = aCopies->GetLength(&length);
         NS_ENSURE_SUCCESS(rv, rv);
-        foundOne = true;
+        foundOne = length != 0;
+      }
+      else {
+        foundOne = PR_TRUE;
+      }
+    }
+    rv = FindByOriginURL(aMediaList,
+                         url,
+                         aCopies);
+    if (rv != NS_ERROR_NOT_AVAILABLE) {
+      NS_ENSURE_SUCCESS(rv, rv);
+      PRUint32 length;
+      if (aCopies) {
+        rv = aCopies->GetLength(&length);
+        NS_ENSURE_SUCCESS(rv, rv);
+        foundOne |= length != 0;
+      }
+      else {
+        foundOne = PR_TRUE;
       }
     }
   }

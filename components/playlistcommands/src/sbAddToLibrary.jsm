@@ -26,6 +26,8 @@
 
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/DropHelper.jsm");
+Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Components.utils.import("resource://app/jsmodules/SBUtils.jsm");
 
 const Ci = Components.interfaces;
 const Cc = Components.classes;
@@ -265,10 +267,48 @@ addToLibraryHelper.prototype = {
           var oldLength = library.length;
           var selection = context.playlist.mediaListView
                                  .selection.selectedMediaItems;
-          library.addSome(selection);
+          // Create an enumerator that wraps the enumerator we were handed since
+          // the enumerator we get hands back sbIIndexedMediaItem, not just plain
+          // 'ol sbIMediaItems
+    
+          // Create a media item duplicate enumerator filter to count the number of
+          // duplicate items and to remove them from the enumerator if the target is
+          // a library.
+          var dupFilter = new LibraryUtils.EnumeratorDuplicateFilter(library);
+          dupFilter.removeDuplicates = true;
+          
+          // Create a filtered item enumerator.
+          var func = function(aElement) { return dupFilter.filter(aElement); };
+          var filteredItems = new SBFilteredEnumerator(selection, func);
+    
+          // We also want to set the downloadStatusTarget property as we work.
+          var unwrapper = {
+            enumerator: filteredItems,
+    
+            hasMoreElements : function() {
+              return this.enumerator.hasMoreElements();
+            },
+            getNext : function() {
+              var item = this.enumerator.getNext();
+              item.setProperty(SBProperties.downloadStatusTarget,
+                               item.library.guid + "," + item.guid);
+              return item;
+            },
+            QueryInterface : function(iid) {
+              if (iid.equals(Components.interfaces.nsISimpleEnumerator) ||
+                  iid.equals(Components.interfaces.nsISupports))
+                return this;
+              throw Components.results.NS_NOINTERFACE;
+            }
+          }
+          library.addSome(unwrapper);
         }
         var added = library.length - oldLength;
-        DNDUtils.reportAddedTracks(added, 0, 0, library.name);
+        DNDUtils.reportAddedTracks(
+                            dupFilter.mediaItemCount - dupFilter.duplicateCount,
+                            dupFilter.duplicateCount,
+                           0, 
+                            library.name);
         return true;
       }
     } catch (e) {

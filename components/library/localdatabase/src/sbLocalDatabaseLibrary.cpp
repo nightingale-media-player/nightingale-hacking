@@ -2946,11 +2946,39 @@ sbLocalDatabaseLibrary::GetDuplicate(sbIMediaItem*  aMediaItem,
 
   // Search for a duplicate item
   nsresult rv = sbLibraryUtils::GetItemInLibrary(aMediaItem, this, _retval);
-  
-  // Didn't find it or failed, set retval to null.
-  if(NS_FAILED(rv)) {
-    *_retval = nsnull;
+
+  // If we found it, just return.
+  if(NS_SUCCEEDED(rv) && *_retval) {
+    return NS_OK;
   }
+
+  // Search for URL's
+  nsCOMPtr<nsIMutableArray> dupeItems =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = sbLibraryUtils::FindItemsWithSameURL(aMediaItem,
+                                            static_cast<sbILibrary*>(this),
+                                            dupeItems);
+  // If not found return null
+  if (NS_FAILED(rv)) {
+    *_retval = nsnull;
+    return NS_OK;
+  }
+
+  // If dupes found, just return the first one
+  PRUint32 length;
+  rv = dupeItems->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (length == 0) {
+    *_retval = nsnull;
+    return NS_OK;
+  }
+
+  rv = dupeItems->QueryElementAt(0,
+                                 NS_GET_IID(sbIMediaItem),
+                                 reinterpret_cast<void**>(_retval));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

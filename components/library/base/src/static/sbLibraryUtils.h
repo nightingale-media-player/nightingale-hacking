@@ -108,17 +108,19 @@ public:
                                    /* out */ sbIMediaItem **_retval);
 
   /**
-   * This function searches aList for items that have the same content url as
-   * aMediaItem's origin URL
-   * \param aItem The item to find a match for
-   * \param aLibrary The library to look in
+   * This function search for itens in aMediaList with the same URL's.
+   * The origin URL of aMediaItem is used, if it doesn't exist then the
+   * content URL is used. aMediaList is then search by content and then
+   * origin URL
+   * \param aItem The item to find matches for
+   * \param aMediaList The list to search in, can be a library
    * \return The media items found, or empty array. aCopies may be null
    *         in which case the function will return NS_ERROR_NOT_AVAILABLE
    *         if no copies are found
    */
-  static nsresult FindOriginalsByURL(sbIMediaItem *    aMediaItem,
-                                     sbIMediaList *    aList,
-                                     nsIMutableArray * aCopies);
+  static nsresult FindItemsWithSameURL(sbIMediaItem *    aMediaItem,
+                                       sbIMediaList *    aMediaList,
+                                       nsIMutableArray * aCopies);
 
   /**
    * aList is searched for items that have origin ID's that match

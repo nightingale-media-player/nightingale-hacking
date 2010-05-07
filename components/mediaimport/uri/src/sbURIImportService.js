@@ -269,8 +269,10 @@ sbURIImportService.prototype =
             // If we add it from the main library, we need to get the item
             // that might have been created and use that
             let newItem = this._targetList.library.addItem(item);
-            itemAdded = newItem && newItem.equals(item);
-            item = newItem;
+            itemAdded = newItem && !newItem.equals(item);
+            if (newItem) {
+              item = newItem;
+            }
           }
           if (itemAdded) {
             this._scanList.appendElement(item, false);

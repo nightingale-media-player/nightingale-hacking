@@ -546,7 +546,7 @@ addToDeviceHelper.prototype = {
       var added = library.length - oldLength;
       DNDUtils.reportAddedTracks(dupFilter.mediaItemCount - dupFilter.duplicateCount,
                                  dupFilter.duplicateCount,
-                                 dupFilter.unsupportedCount,
+                                 0,
                                  devicename);
     }
   },
