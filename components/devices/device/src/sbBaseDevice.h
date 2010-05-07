@@ -1026,6 +1026,18 @@ protected:
    */
   virtual nsresult UpdateStatisticsProperties();
 
+  /**
+   * Update the names of all device volumes.
+   */
+  nsresult UpdateVolumeNames();
+
+  /**
+   * Update the name of the device volume specified by aVolume.
+   *
+   * \param aVolume               Device volume for which to update name.
+   */
+  virtual nsresult UpdateVolumeName(sbBaseDeviceVolume* aVolume);
+
 
   //----------------------------------------------------------------------------
   //

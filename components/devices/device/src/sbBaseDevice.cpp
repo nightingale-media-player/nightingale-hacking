@@ -2012,65 +2012,11 @@ nsresult sbBaseDevice::AddLibrary(sbIDeviceLibrary* aDevLib)
   rv = GetContent(getter_AddRefs(content));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the current number of libraries.
-  PRUint32           libraryCount;
-  nsCOMPtr<nsIArray> libraries;
-  rv = content->GetLibraries(getter_AddRefs(libraries));
+  // Update the device library volume name.
+  nsRefPtr<sbBaseDeviceVolume> volume;
+  rv = GetVolumeForItem(aDevLib, getter_AddRefs(volume));
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = libraries->GetLength(&libraryCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the capacity for the library's device volume.
-  nsAutoString displayCapacity;
-  nsAutoString capacity;
-  rv = aDevLib->GetProperty(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_CAPACITY),
-                            capacity);
-  if (NS_SUCCEEDED(rv) && !capacity.IsEmpty()) {
-    // Convert the capacity to a display capacity.
-    nsCOMPtr<sbIPropertyUnitConverter> storageConverter =
-      do_CreateInstance(SB_STORAGEPROPERTYUNITCONVERTER_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = storageConverter->AutoFormat(capacity, -1, 1, displayCapacity);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  PRBool storageRemovable = PR_FALSE;
-  nsAutoString storageRemovableStr;
-  rv = aDevLib->GetProperty(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_STORAGE_REMOVABLE),
-                            storageRemovableStr);
-  if (NS_SUCCEEDED(rv) && !storageRemovableStr.IsEmpty()) {
-    storageRemovable = storageRemovableStr.EqualsLiteral("1");
-  } 
-  else {
-    // If the library will be the first library, assume it's internal.  Otherwise,
-    // assume it's removable.
-    storageRemovable = (libraryCount > 0);
-  }
-  nsAutoString libraryName;
-  nsTArray<nsString> libraryNameParams;
-  if (!storageRemovable) {
-    if (!displayCapacity.IsEmpty()) {
-      libraryNameParams.AppendElement(displayCapacity);
-      libraryName =
-        SBLocalizedString("device.volume.internal.name_with_capacity",
-                          libraryNameParams);
-    }
-    else {
-      libraryName = SBLocalizedString("device.volume.internal.name");
-    }
-  }
-  else {
-    if (!displayCapacity.IsEmpty()) {
-      libraryNameParams.AppendElement(displayCapacity);
-      libraryName =
-        SBLocalizedString("device.volume.removable.name_with_capacity",
-                          libraryNameParams);
-    }
-    else {
-      libraryName = SBLocalizedString("device.volume.removable.name");
-    }
-  }
-  rv = aDevLib->SetName(libraryName);
+  rv = UpdateVolumeName(volume);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Add the library to the device content.
@@ -3669,6 +3615,10 @@ sbBaseDevice::UpdateProperties()
   rv = UpdateStatisticsProperties();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Update the volume names.
+  rv = UpdateVolumeNames();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -3755,6 +3705,123 @@ sbBaseDevice::UpdateStatisticsProperties()
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMAGE_USED_SPACE),
             sbAutoString(deviceStatistics->ImageUsed()));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+
+/**
+ * Update the names of all device volumes.
+ */
+
+nsresult
+sbBaseDevice::UpdateVolumeNames()
+{
+  // Get the list of all volumes.
+  nsTArray< nsRefPtr<sbBaseDeviceVolume> > volumeList;
+  {
+    nsAutoLock autoVolumeLock(mVolumeLock);
+    volumeList = mVolumeList;
+  }
+
+  // Update the names for all volumes.
+  for (PRUint32 i = 0; i < volumeList.Length(); i++) {
+    // Update the volume name, continuing on error.
+    UpdateVolumeName(volumeList[i]);
+  }
+
+  return NS_OK;
+}
+
+
+/**
+ * Update the name of the device volume specified by aVolume.
+ *
+ * \param aVolume               Device volume for which to update name.
+ */
+
+nsresult
+sbBaseDevice::UpdateVolumeName(sbBaseDeviceVolume* aVolume)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aVolume);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the volume device library.
+  nsCOMPtr<sbIDeviceLibrary> deviceLibrary;
+  rv = aVolume->GetDeviceLibrary(getter_AddRefs(deviceLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the volume capacity.
+  nsAutoString displayCapacity;
+  nsAutoString capacity;
+  rv = deviceLibrary->GetProperty
+                        (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_CAPACITY),
+                         capacity);
+  if (NS_SUCCEEDED(rv) && !capacity.IsEmpty()) {
+    // Convert the capacity to a display capacity.
+    nsCOMPtr<sbIPropertyUnitConverter> storageConverter =
+      do_CreateInstance(SB_STORAGEPROPERTYUNITCONVERTER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = storageConverter->AutoFormat(capacity, -1, 1, displayCapacity);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Check if the volume is removable.
+  PRBool storageRemovable = PR_FALSE;
+  nsAutoString storageRemovableStr;
+  rv = deviceLibrary->GetProperty
+         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_STORAGE_REMOVABLE),
+          storageRemovableStr);
+  if (NS_SUCCEEDED(rv) && !storageRemovableStr.IsEmpty()) {
+    storageRemovable = storageRemovableStr.EqualsLiteral("1");
+  }
+  else {
+    // Assume first volume is internal and all others are removable.
+    PRUint32 volumeIndex;
+    {
+      nsAutoLock autoVolumeLock(mVolumeLock);
+      volumeIndex = mVolumeList.IndexOf(aVolume);
+    }
+    NS_ASSERTION(volumeIndex != mVolumeList.NoIndex, "Volume not found");
+    storageRemovable = (volumeIndex != 0);
+  }
+
+  // Produce the library name.
+  nsAutoString       libraryName;
+  nsTArray<nsString> libraryNameParams;
+  libraryNameParams.AppendElement(displayCapacity);
+  if (!storageRemovable) {
+    if (!displayCapacity.IsEmpty()) {
+      libraryName =
+        SBLocalizedString("device.volume.internal.name_with_capacity",
+                          libraryNameParams);
+    }
+    else {
+      libraryName = SBLocalizedString("device.volume.internal.name");
+    }
+  }
+  else {
+    if (!displayCapacity.IsEmpty()) {
+      libraryName =
+        SBLocalizedString("device.volume.removable.name_with_capacity",
+                          libraryNameParams);
+    }
+    else {
+      libraryName = SBLocalizedString("device.volume.removable.name");
+    }
+  }
+
+  // Update the library name if necessary.
+  nsAutoString currentLibraryName;
+  rv = deviceLibrary->GetName(currentLibraryName);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!currentLibraryName.Equals(libraryName)) {
+    rv = deviceLibrary->SetName(libraryName);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
