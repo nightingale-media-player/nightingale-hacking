@@ -629,10 +629,10 @@ sb-servicepane-group hbox.servicepane-group-header-wrapper {
 }
 
 sb-servicepane-group[collapsedChildren="true"] hbox.servicepane-group-header-wrapper:-moz-drag-over,
-sb-servicepane-group hbox.servicepane-group-header-wrapper:hover {
+sb-servicepane-group.collapsible hbox.servicepane-group-header-wrapper {
   background-position: center -20px;
 }
-sb-servicepane-group hbox.servicepane-group-header-wrapper:active {
+sb-servicepane-group.collapsible hbox.servicepane-group-header-wrapper:active {
   background-position: center -40px;
 }
 

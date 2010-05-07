@@ -773,7 +773,10 @@
       <xul:vbox id="group" class="servicepane-group" >
         <xul:hbox id="hbox-header" class="servicepane-group-header">
           <xul:hbox class="servicepane-group-header-wrapper"
-                    onclick="toggleVisibility(event)" flex="1">
+                    flex="1"
+                    onclick="toggleVisibility(event)"
+                    onmouseover="checkCollapsible(event)"
+                    onmouseout="uncheckCollapsible(event)">
             <xul:description class="servicepane-group-label"
                        xbl:inherits="xbl:text=label"/>
             <xul:spacer flex="1" />
@@ -929,12 +932,47 @@
         ]]></body>
       </method>
 
+      <method name="getRelationshipToActiveNode">
+        <body><![CDATA[
+          let activeNode = this.servicePane.getActiveNode();
+          let activeDomNode = this.servicePane.getDOMNode(activeNode.id);
+          let relationship = this.compareDocumentPosition(activeDomNode);
+          return relationship;
+        ]]></body>
+      </method>
+
       <method name="toggleVisibility">
         <parameter name="event" />
         <body><![CDATA[
+          // Don't allow collapsing of the group if our currently active node
+          // is in it
+          let relationship = this.getRelationshipToActiveNode();
+          if (relationship & this.DOCUMENT_POSITION_CONTAINED_BY)
+            return;
+
           this.visible = !this.visible;
         ]]></body>
       </method>
+
+      <method name="checkCollapsible">
+        <parameter name="event" />
+        <body><![CDATA[
+          // Don't visually indicate collapsible if we contain the active node
+          let relationship = this.getRelationshipToActiveNode();
+          if (relationship & this.DOCUMENT_POSITION_CONTAINED_BY)
+            return;
+
+          this.className += " collapsible";
+        ]]></body>
+      </method>
+
+      <method name="uncheckCollapsible">
+        <parameter name="event" />
+        <body><![CDATA[
+          this.className = this.className.replace(/\bcollapsible\b/g, '');
+        ]]></body>
+      </method>
+
     </implementation>
 
     <handlers>
@@ -1488,6 +1526,14 @@
           // Add the 'active' class to the new node
           newNode.className += " active";
           this._activeNodeID = newNode.id;
+
+          // Auto expand the parent group of this node
+          let parentNode = newNode.parentNode;
+          while (parentNode.parentNode != this.mService.root)
+            parentNode = parentNode.parentNode;
+          let parentDomNode = this.getDOMNode(parentNode.id);
+          parentDomNode.visible = true;
+
           return newNode;
         ]]></body>
       </method>
