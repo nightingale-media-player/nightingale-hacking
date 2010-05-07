@@ -101,25 +101,41 @@ ifdef IS_EXTENSION_MULTI_BUILD
 endif
 
 ifdef IS_EXTENSION # {
-
-#------------------------------------------------------------------------------
-# Get our extension config, if we're an extension.
-#------------------------------------------------------------------------------
+   #------------------------------------------------------------------------------
+   # Get our extension config, if we're an extension.
+   #------------------------------------------------------------------------------
    SB_EXTENSION_CONFIG ?= extension-config.mk
+   SB_EXTENSION_CONFIG_STRIPPED = $(strip $(SB_EXTENSION_CONFIG))
 
-   ifneq (,$(wildcard $(srcdir)/$(SB_EXTENSION_CONFIG)))
+   ifneq (,$(wildcard $(srcdir)/$(SB_EXTENSION_CONFIG_STRIPPED)))
       OUR_EXTENSION_MAKE_IN_ROOTSRCDIR = 1
-      export OUR_SB_EXTENSION_CONFIG = $(srcdir)/$(SB_EXTENSION_CONFIG)
+      export OUR_SB_EXTENSION_CONFIG = $(srcdir)/$(SB_EXTENSION_CONFIG_STRIPPED)
    endif
 
    ifndef OUR_SB_EXTENSION_CONFIG
-      export OUR_SB_EXTENSION_CONFIG := $(shell $(topsrcdir)/tools/scripts/find-extension-config.py -d $(srcdir) -f $(SB_EXTENSION_CONFIG))
+      export OUR_SB_EXTENSION_CONFIG := $(shell $(topsrcdir)/tools/scripts/find-extension-config.py -d $(srcdir) -f $(SB_EXTENSION_CONFIG_STRIPPED))
       ifeq (,$(OUR_SB_EXTENSION_CONFIG))
          $(error Could not file extension configuration .mk file. Bailing...)
       endif
    endif
 
    include $(OUR_SB_EXTENSION_CONFIG)
+
+   # We include branding.mk here to get the branding defines to add to the
+   # preprocessor call for install.rdf.in, if any
+   include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
+
+   OUR_EXTENSION_NAME = $(strip $(EXTENSION_NAME))
+
+   # set a specific location for the output if it doesn't already exist
+   EXTENSION_DIR ?= $(SONGBIRD_OBJDIR)/xpi-stage/$(OUR_EXTENSION_NAME)
+   EXTENSION_LICENSE ?= $(wildcard $(srcdir)/LICENSE)
+
+   ifdef EXTENSION_NAME
+      ifeq (1_,$(INSTALL_EXTENSION)_$(EXTENSION_UUID)) 
+         $(error INSTALL_EXTENSION requires EXTENSION_UUID to be set.)
+      endif
+   endif
 
    # Allow extension-config.mk to override this
    EXTENSION_STAGE_DIR ?= $(SONGBIRD_OBJDIR)/extensions/$(OUR_EXTENSION_NAME)/.xpistage
@@ -134,10 +150,19 @@ ifdef IS_EXTENSION # {
       export OUR_EXTENSION_VER_DEVDATE := $(shell date +%Y%m%d%H%M)
    endif
 
-#------------------------------------------------------------------------------
-# Redefine these file locations when building extensions
-#------------------------------------------------------------------------------
+   ifdef EXTENSION_VER
+      ifeq (_,$(SONGBIRD_OFFICIAL)_$(SONGBIRD_NIGHTLY))
+         OUR_EXTENSION_VER = $(EXTENSION_VER)+dev-$(OUR_EXTENSION_VER_DEVDATE)
+      else
+         OUR_EXTENSION_VER = $(EXTENSION_VER).$(SB_BUILD_NUMBER)
+      endif
+   endif
+
+   #------------------------------------------------------------------------------
+   # Redefine these file locations when building extensions
+   #------------------------------------------------------------------------------
    OUR_EXTENSION_STAGE_DIR = $(strip $(EXTENSION_STAGE_DIR))
+   OUR_EXTENSION_TMP_DIR = $(strip $(EXTENSION_TMP_DIR))
 
    ifeq (1,$(EXTENSION_NO_BINARY_COMPONENTS))
       OUR_EXTENSION_COMPONENT_PREFIX = $(OUR_EXTENSION_STAGE_DIR)
@@ -1180,25 +1205,7 @@ endif
 #              EXTENSION_DIR - dir where the final XPI should be moved
 #
 
-ifdef EXTENSION_VER
-   ifeq (_,$(SONGBIRD_OFFICIAL)_$(SONGBIRD_NIGHTLY))
-      OUR_EXTENSION_VER = $(EXTENSION_VER)+dev-$(OUR_EXTENSION_VER_DEVDATE)
-   else
-      OUR_EXTENSION_VER = $(EXTENSION_VER).$(SB_BUILD_NUMBER)
-   endif
-endif
-
 ifdef IS_EXTENSION # {
-   # We include branding.mk here to get the branding defines to add to the
-   # preprocessor call for install.rdf.in, if any
-   include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
-
-   OUR_EXTENSION_NAME = $(strip $(EXTENSION_NAME))
-
-   # set a specific location for the output if it doesn't already exist
-   EXTENSION_DIR ?= $(SONGBIRD_OBJDIR)/xpi-stage/$(OUR_EXTENSION_NAME)
-   EXTENSION_LICENSE ?= $(wildcard $(srcdir)/LICENSE)
-
    ifdef OUR_EXTENSION_MAKE_IN_ROOTSRCDIR
       ifndef INSTALL_RDF
          # The notdir is because this is to check if these files exist, but
@@ -1225,7 +1232,7 @@ ifdef IS_EXTENSION # {
          # IS_EXTENSION_MULTI_BUILD, by definition, is defined.
 
          OUR_INSTALL_RDF = $(if $(IS_EXTENSION_MULTI_BUILD), \
-          $(EXTENSION_TMP_DIR)/)$(patsubst %.in,%,$(strip $(INSTALL_RDF)))
+          $(OUR_EXTENSION_TMP_DIR)/)$(patsubst %.in,%,$(strip $(INSTALL_RDF)))
 
          OUR_INSTALL_RDF_IN = $(strip $(srcdir)/$(INSTALL_RDF))
          ALL_TRASH += $(OUR_INSTALL_RDF)
@@ -1254,12 +1261,6 @@ ifdef DEBUG
    INSTALL_EXTENSION ?= 1
 endif
 
-ifdef EXTENSION_NAME
-   ifeq (1_,$(INSTALL_EXTENSION)_$(EXTENSION_UUID)) 
-      $(error INSTALL_EXTENSION requires EXTENSION_UUID to be set.)
-   endif
-endif
-
 $(OUR_INSTALL_RDF): $(OUR_INSTALL_RDF_IN)
 	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
     $(ACDEFINES) $(PPDEFINES) $(SB_BRANDING_DEFINES) \
@@ -1278,7 +1279,7 @@ $(OUR_INSTALL_RDF): $(OUR_INSTALL_RDF_IN)
 
 export:: $(if $(IS_EXTENSION), $(if $(OUR_EXTENSION_MAKE_IN_ROOTSRCDIR), $(OUR_INSTALL_RDF)))
 ifdef IS_EXTENSION
-	$(MKDIR_APP) $(EXTENSION_STAGE_DIR) $(if $(EXTENSION_TMP_DIR), $(EXTENSION_TMP_DIR))
+	$(MKDIR_APP) $(OUR_EXTENSION_STAGE_DIR) $(if $(OUR_EXTENSION_TMP_DIR), $(OUR_EXTENSION_TMP_DIR))
 endif
 
 libs:: $(if $(IS_EXTENSION), $(OUR_SUBDIRS) $(if $(JAR_MANIFEST),$(OUR_JAR_MN)))
@@ -1305,8 +1306,8 @@ endif
 ifdef IS_EXTENSION
    ifdef OUR_EXTENSION_MAKE_IN_ROOTSRCDIR
       ALL_TRASH += $(if $(OUR_INSTALL_RDF_IN), $(OUR_INSTALL_RDF)) \
-                   $(EXTENSION_STAGE_DIR) \
-                   $(EXTENSION_TMP_DIR) \
+                   $(OUR_EXTENSION_STAGE_DIR) \
+                   $(OUR_EXTENSION_TMP_DIR) \
                    $(NULL)
    endif
 endif
