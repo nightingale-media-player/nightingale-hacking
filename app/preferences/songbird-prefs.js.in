@@ -497,3 +497,8 @@ pref("songbird.infoPanel.steps", 4);
 
 // Filtered extensions warning dialog
 pref("songbird.mediaimport.warn_filtered_exts", true);
+
+//
+// Firmware Support Preferences
+//
+pref("songbird.firmware.update.defaultInterval", 604800); // every 7 days
