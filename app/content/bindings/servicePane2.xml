@@ -855,6 +855,8 @@
           return this._visible;
         ]]></getter>
         <setter><![CDATA[
+          if (this._visible == val)
+            return;
           this._visible = val;
           if (this._visible) {
             this.animateTo(this._groupNodes, 0, 0, this._height, 5, true);
