@@ -78,14 +78,13 @@ public :
   //
   // sbIDeviceLibrary overrides.
   //
-
-  NS_SCRIPTABLE NS_IMETHOD GetMgmtType(PRUint32 *aMgmtType);
-  NS_SCRIPTABLE NS_IMETHOD SetMgmtType(PRUint32 aMgmtType);
-  NS_SCRIPTABLE NS_IMETHOD GetSyncPlaylistList(nsIArray **_retval);
-  NS_SCRIPTABLE NS_IMETHOD SetSyncPlaylistListByType(PRUint32 aContentType,
-                                                     nsIArray *aPlaylistList);
-  NS_SCRIPTABLE NS_IMETHOD AddToSyncPlaylistList(sbIMediaList *aPlaylist);
-
+  NS_IMETHOD GetSyncSettings(sbIDeviceLibrarySyncSettings * *aSyncSettings);
+  NS_IMETHOD SetSyncSettings(sbIDeviceLibrarySyncSettings * aSyncSettings);
+  NS_IMETHOD GetTempSyncSettings(sbIDeviceLibrarySyncSettings * *aTempSyncSettings);
+  NS_IMETHOD ResetSyncSettings(void);
+  NS_IMETHOD ApplySyncSettings(void);
+  NS_IMETHOD GetSyncFolderListByType(PRUint32 aContentType, nsIArray **_retval);
+  NS_IMETHOD SetSyncFolderListByType(PRUint32 aContentType, nsIArray *aFolderList);
 
   //
   // Constructors/destructors.

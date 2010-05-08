@@ -99,6 +99,8 @@ CPP_SRCS += sbBaseDeviceEventTarget.cpp \
             sbDeviceEvent.cpp \
             sbDeviceLibrary.cpp \
             sbDeviceLibraryHelpers.cpp \
+            sbDeviceLibraryMediaSyncSettings.cpp \
+            sbDeviceLibrarySyncSettings.cpp \
             $(NULL)
 
 CPP_EXTRA_INCLUDES += $(DEPTH)/components/library/localdatabase/public \

@@ -81,6 +81,8 @@ public:
                     PRBool          aCreateDirectories,
                     nsIFile**       retFile);
 
+  static nsresult GetImagesRootFolder(sbIDeviceLibrary * aDevLib,
+                                      nsIFile ** aFile);
 private:
   // ctor
   sbDeviceImages(sbBaseDevice * aBaseDevice);

@@ -573,6 +573,13 @@ NS_IMETHODIMP sbBaseDeviceLibraryListener::OnBeforeClear(PRBool *_retval)
   return NS_OK;
 }
 
+NS_IMETHODIMP sbBaseDeviceLibraryListener::OnSyncSettings(
+                                   PRUint32 aAction,
+                                   sbIDeviceLibrarySyncSettings * aSyncSettings)
+{
+  NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
+  return NS_OK;
+}
 
 //sbILocalDatabaseMediaListCopyListener
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceBaseLibraryCopyListener,

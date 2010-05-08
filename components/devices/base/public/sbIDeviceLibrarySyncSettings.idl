@@ -1,0 +1,61 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+ 
+#include "nsISupports.idl"
+#include "sbIDeviceLibraryMediaSyncSettings.idl"
+ 
+ /**
+  * This interface serves as a holder of device sync management settings.
+  * Changing values on this object or the objects it owns does not effect
+  * an immediate change in behavior of the system. The user must assign
+  * syncSettings or call applySyncSettings in order for those changes to
+  * be active.
+  */
+[scriptable, uuid(bbda5d1e-b86a-4d3e-a9b2-f250be37f4ec)]
+interface sbIDeviceLibrarySyncSettings : nsISupports
+{
+  const unsigned long SYNC_MODE_MANUAL = 0;
+  const unsigned long SYNC_MODE_AUTO = 1;
+  
+  /**
+   * Syncronization mode, manual or auto
+   */
+  attribute unsigned long syncMode;
+  /**
+    * Returns an object to manage the synchronization settings for a given
+    * media type. This object is a reference to the internal object of
+    * the object held by the sbIDeviceSyncSettings object
+    * \param aMediaType the media type to get settings for
+    * \return the reference to the synchronization settings for the media
+    *         type
+    */
+  sbIDeviceLibraryMediaSyncSettings getMediaSettings(
+                                                   in unsigned long aMediaType);
+  /**
+   * returns a list of the playlists currently selected.
+   */                                                 
+  readonly attribute nsIArray syncPlaylists; 
+};
+
+  

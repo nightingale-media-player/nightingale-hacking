@@ -1353,20 +1353,6 @@ protected:
               PRInt64*                                      aTotalSyncSize);
 
   /**
-   * Return in aSyncList the list of all sync media lists, as configured for the
-   * destination sync library specified by aDstLib.  The sync source library is
-   * specified by aSrcLib.
-   *
-   * \param aSrcLib             Sync source library.
-   * \param aDstLib             Sync destination library.
-   * \param aSyncList           List of all sync media lists.  nsIArray of
-   *                            sbIMediaList.
-   */
-  nsresult SyncGetSyncList(sbILibrary*       aSrcLib,
-                           sbIDeviceLibrary* aDstLib,
-                           nsIArray**        aSyncList);
-
-  /**
    * Return in aAvailableSpace the space available for syncing to the library
    * specified by aLibrary.  The space available includes all free space
    * available plus the space currently taken for items being synced.

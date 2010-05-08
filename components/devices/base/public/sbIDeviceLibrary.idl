@@ -33,7 +33,7 @@ interface sbIMediaList;
 interface sbIPropertyArray;
 interface nsIURI;
 interface nsIFile;
-
+interface sbIDeviceLibrarySyncSettings;
 
 /**
  * \interface sbIDeviceLibraryListener
@@ -42,7 +42,7 @@ interface nsIFile;
  *
  * \sa sbIDeviceLibrary
  */
-[scriptable, uuid(19196376-585e-422b-aeee-d84c4c6170d4)]
+[scriptable, uuid(4a242d99-8eef-4ed4-a661-29434e61e432)]
 interface sbIDeviceLibraryListener : nsISupports
 {
   /**
@@ -216,13 +216,19 @@ interface sbIDeviceLibraryListener : nsISupports
    */
   boolean onBeforeClear();
 
+  const unsigned long SYNC_SETTINGS_APPLIED = 0;
+  const unsigned long SYNC_SETTINGS_CHANGED = 1;
+  const unsigned long SYNC_SETTINGS_RESET   = 2;
+  
+  void onSyncSettings(in unsigned long aAction, 
+                      in sbIDeviceLibrarySyncSettings aSyncSettings);
 };
 
 /**
  * \interface sbIDeviceLibrary
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(ed060df0-25cb-11df-8a39-0800200c9a66)]
+[scriptable, uuid(ec3c810f-5221-4a5c-82e5-dfe709c27ba9)]
 interface sbIDeviceLibrary : sbILibrary
 {
   /**
@@ -240,31 +246,6 @@ interface sbIDeviceLibrary : sbILibrary
    * Syncronization settings
    */
 
-  /** \brief Do not automatically sync files of the corresponding content type.
-    */
-  const unsigned long MGMT_TYPE_NONE                    = 0x00;
-
-  /** \brief Manually manage device (obsolete, use setSyncMode instead, or 
-    * use MGMT_TYPE_SYNC_NONE for no auto syncing of a specific content type). 
-    */
-  const unsigned long MGMT_TYPE_MANUAL                  = 0x01;
-
-  /** \brief Automatically synchronize all of audio or video library to device.
-    */
-  const unsigned long MGMT_TYPE_SYNC_ALL                = 0x02;
-
-  /** \brief Automatically synchronize a list of audio/video playlsits to device.
-    */
-  const unsigned long MGMT_TYPE_SYNC_PLAYLISTS          = 0x04;
-
-  /** \brief This is the maximum logical value we can have for the MGMT_TYPE.
-   * Since we can only have either SYNC(ALL or PLAYLIST) on each type or MANUAL.
-   */
-  const unsigned long MGMT_TYPE_MAX_VALUE               = 0x07;
-
-  // Masks for helping determine the management type
-  const unsigned long MGMT_TYPE_MASK                    = 0x07;
-
   const unsigned long MGMT_PREF_UNINITIALIZED           = 0;
   /**
    * Media type for management type and playlist list.
@@ -280,139 +261,49 @@ interface sbIDeviceLibrary : sbILibrary
 
   const unsigned long MEDIATYPE_COUNT                   = 0x03;
 
-
   /**
    * \brief The flag on whether the device is in manual mode.
    *
    */
 
-  readonly attribute PRBool isMgmtTypeManual;
-
-   /**
-   * \brief Return the current configured management type preference with
-   *        content type aContentType for device library.
-   *
-   * \param aContentType the content type for the preference.
-   *
-   * \return the value of the management type preference
-   *
-   * \sa MGMT_TYPE_* constants
-   */
-
-  unsigned long getMgmtType(in unsigned long aContentType);
-
-  /**
-   * No syncing
-   */
-  const unsigned long SYNC_MANUAL = 0;
-  /**
-   * Sync automatic, either via playlists or all based on SetMgmtType
-   */
-  const unsigned long SYNC_AUTO = 1;
-  
+  readonly attribute boolean isManualSyncMode;
   
   /**
-   * \brief Synchronization mode. manual or automatic.
-   *
-   * \sa SYNC_* constants
+   * Gets/Sets the current sync mode of the device. The object 
+   * returned by the getter is a temporary transient object. Changes
+   * are not made until you call setter.
    */
-  attribute unsigned long syncMode;
+  attribute sbIDeviceLibrarySyncSettings syncSettings;
+
+  /***************************************************************
+   * Following functions are convenience functions for the UI
+   * An alternative option would be to make this mainstream and
+   * have syncSettings return a live object and make it read-only
+   */
 
   /**
-   * \brief Flag for synchronization mode change from manual to automatic
+   * returns a reference to single temporary instance of the
+   * device's synchronization setting. Calling this multiple times
+   * will return a reference to the same object for this 
+   * device/library
    */
-  readonly attribute boolean syncModeChanged;
+  readonly attribute sbIDeviceLibrarySyncSettings tempSyncSettings;
 
   /**
-   * \brief Set the current configured management type preference with content
-   *        type aContentType for device library. This does not turn on or off
-   *        syncing, it only affects the type of sync.
-   *
-   * \param aContentType the content type for the preference.
-   * \param aMgmtType the management type
-   * 
-   * \sa MGMT_TYPE_* constants
+   * resets the temporary settings to the currently active settings.
    */
-
-  void setMgmtType(in unsigned long aContentType,
-                   in unsigned long aMgmtType);
+  void resetSyncSettings();
 
   /**
-   * \brief Return the list of playlists the user wants to sync from the main
-   *        library to the device.
-   *
-   * \return List of sbIMediaLists that represent the playlists to sync.
+   * apply the temporary settings to the currently active settings.
    */
-
-  nsIArray getSyncPlaylistList();
-
+  void applySyncSettings();
+  
   /**
-   * \brief Return the list of playlists with content type aContentType the
-   *        user wants to sync from the main library to the device.
-   *
-   * \param aContentType Content type for the playlist
-   *
-   * \return List of sbIMediaLists that represent the playlists to sync.
+   * Returns true if the temp settings have been modified
    */
-
-  nsIArray getSyncPlaylistListByType(in unsigned long aContentType);
-
-  /**
-   * \brief Set the list of playlists with content type aContentType the user
-   *        wants to sync from the main library to the device.
-   *
-   * \param aContentType Content type for the playlist
-   * \param aPlaylistList List of sbIMediaLists that represent the playlists
-   *                      to sync.
-   */
-
-  void setSyncPlaylistListByType(in unsigned long aContentType,
-                                 in nsIArray aPlaylistList);
-
-  /**
-   * \brief Add a playlist to the list of playlists with content type
-   *        aContentType the user wants to sync from the main library to
-   *        the device
-   *
-   * \param aContentType Content type for the playlist
-   * \param aPlaylist The playlist to add.
-   */
-
-  void addToSyncPlaylistList(in unsigned long aContentType,
-                             in sbIMediaList aPlaylist);
-
-  /**
-   * \brief Remove a playlist from the list of playlists with content type
-   *        aContentType the user wants to sync from the main library to the
-   *        device
-   *
-   * \param aContentType Content type for the playlist
-   * \param aPlaylist The playlist to remove.
-   */
-
-  void removeFromSyncPlaylistList(in unsigned long aContentType,
-                                  in sbIMediaList aPlaylist);
-
-  /**
-   * \brief Return the root folder for sync.
-   *
-   * \param aContentType Content type to be synced
-   *
-   * \return nsIFile that represents the root folder for the sync.
-   */
-
-  nsIFile getSyncRootFolderByType(in unsigned long aContentType);
-
-  /**
-   * \brief Set the root folder for sync.
-   *
-   * \param aContentType Content type to be synced
-   * \param aFolder nsIFile that represents the root folder for the sync.
-   */
-
-  void setSyncRootFolderByType(in unsigned long aContentType,
-                               in nsIFile aFolder);
-
+  readonly attribute boolean tempSyncSettingsChanged;
+   
   /**
    * \brief Return the list of folders with content type aContentType the
    *        user wants to sync from his disk to the device.
@@ -421,7 +312,6 @@ interface sbIDeviceLibrary : sbILibrary
    *
    * \return List of nsIFile that represent the folders to sync.
    */
-
   nsIArray getSyncFolderListByType(in unsigned long aContentType);
 
   /**
@@ -432,7 +322,6 @@ interface sbIDeviceLibrary : sbILibrary
    * \param aFolderList List of nsIFIle that represent the folders
    *                      to sync.
    */
-
   void setSyncFolderListByType(in unsigned long aContentType,
                                in nsIArray aFolderList);
 
@@ -457,4 +346,10 @@ interface sbIDeviceLibrary : sbILibrary
    * \param sbIDeviceLibraryListener aListener listener to remove.
    */
   void removeDeviceLibraryListener(in sbIDeviceLibraryListener aListener);
+  
+  /**
+   * A bit of a hack so we can notify UI bits that our temp sync settings have
+   * changed. This is really a private API and should not generally be used.
+   */
+  [noscript] void fireTempSyncSettingsEvent(in unsigned long aEvent); 
 };

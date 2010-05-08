@@ -48,7 +48,6 @@
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
 #include <sbIDevice.h>
-#include <sbIDeviceLibrary.h>
 #include <sbIDeviceManager.h>
 #include <sbILibraryFactory.h>
 #include <sbILibraryManager.h>

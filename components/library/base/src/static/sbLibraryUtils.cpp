@@ -617,3 +617,102 @@ sbLibraryUtils::GetItemsByProperty(sbIMediaList * aMediaList,
                                               creator,
                                               sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
 }
+
+/**
+ * Enumerator used to build a list of media lists for a content type
+ */
+class sbLUMediaListEnumerator : public sbIMediaListEnumerationListener
+{
+public:
+  sbLUMediaListEnumerator(PRUint32 aContentType)
+   : mContentType(aContentType)
+   {}
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
+
+  nsresult GetMediaLists(nsIArray ** aMediaLists)
+  {
+    return CallQueryInterface(mMediaLists, aMediaLists);
+  }
+private:
+  nsCOMPtr<nsIMutableArray> mMediaLists;
+  PRUint32 mContentType;
+};
+
+NS_IMPL_ISUPPORTS1(sbLUMediaListEnumerator,
+                   sbIMediaListEnumerationListener)
+
+NS_IMETHODIMP sbLUMediaListEnumerator::OnEnumerationBegin(sbIMediaList*,
+                                                                     PRUint16 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  nsresult rv;
+
+  mMediaLists = do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbLUMediaListEnumerator::OnEnumeratedItem(sbIMediaList*,
+                                                                   sbIMediaItem* aItem,
+                                                                   PRUint16 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_TRUE(mMediaLists, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv;
+
+  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aItem);
+  if (list) {
+    bool include = mContentType == sbIMediaList::CONTENTTYPE_MIX;
+    if (!include) {
+      PRUint16 contentType;
+      rv = list->GetListContentType(&contentType);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      include = contentType == mContentType;
+    }
+    if (include) {
+      rv = mMediaLists->AppendElement(list, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+  }
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbLUMediaListEnumerator::OnEnumerationEnd(sbIMediaList*,
+                                                                   nsresult)
+{
+  return NS_OK;
+}
+
+nsresult sbLibraryUtils::GetMediaListByContentType(sbILibrary * aLibrary,
+                                                   PRUint32 aContentType,
+                                                   nsIArray ** aMediaLists)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  NS_ENSURE_ARG_POINTER(aMediaLists);
+
+  nsresult rv;
+
+  nsRefPtr<sbLUMediaListEnumerator> enumerator =
+    new sbLUMediaListEnumerator(aContentType);
+
+  rv = aLibrary->EnumerateItemsByProperty(
+                                        NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                                        NS_LITERAL_STRING("1"),
+                                        enumerator,
+                                        sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = enumerator->GetMediaLists(aMediaLists);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}

@@ -4,7 +4,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -75,8 +75,18 @@ function runTest () {
   
   test_request(device);
   
-  test_library(device);
+  if (!device.connected)
+    device.connect();
+  try {
+    test_library(device);
  
+    test_sync_settings(device);
+  }
+  finally {
+    // stop a circular reference
+    if (device.connected)
+      device.disconnect();
+  }    
 }
 
 function test_prefs(device) {
@@ -185,8 +195,6 @@ function test_request(device) {
 }
 
 function test_library(device) {
-  if (!device.connected)
-    device.connect();
   assertEqual(device,
               device.content
                     .libraries
@@ -196,9 +204,29 @@ function test_library(device) {
               device.content
                     .libraries
                     .queryElementAt(0, Ci.sbIDeviceLibrary));
-  // stop a circular reference
-  if (device.connected)
-    device.disconnect();
+}
+
+function test_sync_settings(device) {
+  log("Testing initial mode");
+  var syncSettings = device.defaultLibrary.syncSettings;
+  assertEqual(syncSettings.syncMode, Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL);
+  
+  log("Changing to SYNC_MODE_AUTO without applying");
+  syncSettings.syncMode = Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO;
+  syncSettings = device.defaultLibrary.syncSettings;
+  assertEqual(syncSettings.syncMode, Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL);
+  
+  log("Changing to SYNC_MODE_AUTO with applying");
+  syncSettings.syncMode = Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO;
+  device.defaultLibrary.syncSettings = syncSettings;
+  syncSettings = device.defaultLibrary.syncSettings;
+  assertEqual(syncSettings.syncMode, Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO);
+  
+  log("Changing to SYNC_MODE_MANUAL with applying");
+  syncSettings.syncMode = Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
+  device.defaultLibrary.syncSettings = syncSettings;
+  assertEqual(device.defaultLibrary.syncSettings.syncMode,
+              Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL);
 }
 
 function test_properties(device) {

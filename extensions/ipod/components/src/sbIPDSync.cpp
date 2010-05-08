@@ -10,17 +10,17 @@
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the GPL).
-// 
+//
 // Software distributed under the License is distributed
 // on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
 // express or implied. See the GPL for the specific language
 // governing rights and limitations.
-// 
+//
 // You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 //=END SONGBIRD GPL
 */
 
@@ -53,6 +53,8 @@
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
 
+#include <sbIDeviceLibraryMediaSyncSettings.h>
+#include <sbIDeviceLibrarySyncSettings.h>
 
 //------------------------------------------------------------------------------
 //
@@ -187,14 +189,23 @@ sbIPDDevice::SyncFromOTGPlaylists()
       rv = ImportPlaylist(mSBMainLib, playlist, getter_AddRefs(mediaList));
       NS_ENSURE_SUCCESS(rv, rv);
 
+      nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
+      rv = mDeviceLibrary->GetSyncSettings(getter_AddRefs(syncSettings));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<sbIDeviceLibraryMediaSyncSettings> mediaSyncSettings;
+      rv = syncSettings->GetMediaSettings(sbIDeviceLibrary::MEDIATYPE_AUDIO,
+                                          getter_AddRefs(mediaSyncSettings));
+      NS_ENSURE_SUCCESS(rv, rv);
+
       // If the device is set to sync to a list of playlists, add the
       // on-the-go playlist to the sync list.
       PRUint32 mgmtType;
-      rv = mDeviceLibrary->GetMgmtType(&mgmtType);
+      rv = mediaSyncSettings->GetMgmtType(&mgmtType);
       if (NS_SUCCEEDED(rv) &&
-          (mgmtType == sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS)) {
+          (mgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_PLAYLISTS)) {
         // Add the on-the-go playlist to the sync list.
-        mDeviceLibrary->AddToSyncPlaylistList(mediaList);
+        mediaSyncSettings->SetPlaylistSelected(mediaList, PR_TRUE);
       }
     }
   }

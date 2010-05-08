@@ -159,6 +159,11 @@ interface sbIDeviceEvent : nsISupports
   // special before device added event.
   const unsigned long EVENT_DEVICE_BEFORE_ADDED        = EVENT_DEVICE_BASE + 41;
 
+  // Sync management change events
+  const unsigned long EVENT_DEVICE_SYNC_TEMP_MODIFIED   = EVENT_DEVICE_BASE + 42;
+  const unsigned long EVENT_DEVICE_SYNC_SETTINGS_CHANGED= EVENT_DEVICE_BASE + 43;
+  const unsigned long EVENT_DEVICE_SYNC_SETTINGS_RESET  = EVENT_DEVICE_BASE + 44;
+   
   /**
    * 
    */

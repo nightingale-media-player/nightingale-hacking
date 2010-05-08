@@ -43,7 +43,10 @@ class nsIFile;
 class nsIMutableArray;
 
 // Songbird forwards
+class sbIDeviceLibraryMediaSyncSettings;
+class sbIDeviceLibrarySyncSettings;
 class sbIMediaFormat;
+
 /**
  * Map entry figuring out the container format and codec given an extension or
  * mime type
@@ -357,6 +360,49 @@ public:
                      PRUint32            aContentType,
                      nsTArray<nsString>& aFileExtensionList);
 
+  /**
+   * Helper function to return the media settings object for a library for a
+   * given type
+   * \param aDevLib the device library to retrieve the setttings
+   * \param aMediaType The media type you're interested in
+   * \param aMediaSettings The returned media sync settings
+   */
+  static nsresult GetMediaSettings(
+                            sbIDeviceLibrary * aDevLib,
+                            PRUint32 aMediaType,
+                            sbIDeviceLibraryMediaSyncSettings ** aMediaSettings);
+
+  /**
+   * Helper function to return the management type for a given device library
+   * and media type
+   * \param aDevLib the device library to retrieve the setttings
+   * \param aMediaType The media type you're interested in
+   * \param aMgmtType The management type returned
+   */
+
+  static nsresult GetMgmtTypeForMedia(sbIDeviceLibrary * aDevLib,
+                                      PRUint32 aMediaType,
+                                      PRUint32 & aMgmtType);
+
+  /**
+   * Returns the device library given a library ID and an optional device ID
+   * \param aDevLibGuid The device library's guid
+   * \param aDevice The device to search for the library
+   * \param aDeviceLibrary The library found, or null if none found
+   */
+  static nsresult GetDeviceLibrary(nsAString const & aDeviceLibGuid,
+                                    sbIDevice * aDevice,
+                                    sbIDeviceLibrary ** aDeviceLibrar);
+
+  /**
+   * Returns the device library given a library ID and an optional device ID
+   * \param aDevLibGuid The device library's guid
+   * \param aDeviceID An optional device ID pass null if you have none
+   * \param aDeviceLibrary The library found, or null if none found
+   */
+  static nsresult GetDeviceLibrary(nsAString const & aDevLibGuid,
+                                   nsID const * aDeviceID,
+                                   sbIDeviceLibrary ** aDeviceLibrary);
 #ifdef PR_LOGGING
   /**
    * Outputs a the device's capabilites to a PR_Log.

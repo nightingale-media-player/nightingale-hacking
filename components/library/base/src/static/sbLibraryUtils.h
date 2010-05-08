@@ -208,6 +208,16 @@ public:
                                      nsAString const & aPropertyName,
                                      nsAString const & aValue,
                                      nsCOMArray<sbIMediaItem> & aMediaItems);
+
+  /**
+   * Returns the media lists matching the content type
+   * \param aLibrary the library to look for playlists
+   * \param aContentType The content type to filter by
+   * \param aMediaLists the returned collection of media lists
+   */
+  static nsresult GetMediaListByContentType(sbILibrary * aLibrary,
+                                            PRUint32 aContentType,
+                                            nsIArray ** aMediaLists);
 };
 
 /**

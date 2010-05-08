@@ -34,8 +34,36 @@
 #include "sbDeviceUtils.h"
 #include <sbFileUtils.h>
 #include <sbIDeviceCapabilities.h>
+#include <sbIDeviceLibrarySyncSettings.h>
 #include <sbStringUtils.h>
 
+nsresult
+sbDeviceImages::GetImagesRootFolder(sbIDeviceLibrary * aDevLib, nsIFile ** aFile)
+{
+  NS_ASSERTION(aDevLib, "aDevLib is null");
+  NS_ASSERTION(aFile, "aFile is null");
+
+  nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
+  nsresult rv = aDevLib->GetSyncSettings(getter_AddRefs(syncSettings));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDeviceLibraryMediaSyncSettings> mediaSyncSettings;
+  rv = syncSettings->GetMediaSettings(sbIDeviceLibrary::MEDIATYPE_IMAGE,
+                                      getter_AddRefs(mediaSyncSettings));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString syncFolder;
+  rv = mediaSyncSettings->GetSyncFolder(syncFolder);
+
+  if (syncFolder.IsEmpty())
+    return NS_ERROR_NOT_AVAILABLE;
+
+  nsCOMPtr<nsILocalFile> baseDir;
+  rv = NS_NewLocalFile(syncFolder, PR_TRUE, getter_AddRefs(baseDir));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return CallQueryInterface(baseDir, aFile);
+}
 
 sbDeviceImages::sbDeviceImages(sbBaseDevice * aBaseDevice) :
   mBaseDevice(aBaseDevice)
@@ -60,12 +88,8 @@ sbDeviceImages::ComputeImageSyncArrays
   nsresult rv;
 
   nsCOMPtr<nsIFile> baseDir;
-  rv = aLibrary->GetSyncRootFolderByType(sbIDeviceLibrary::MEDIATYPE_IMAGE,
-                                         getter_AddRefs(baseDir));
+  rv = GetImagesRootFolder(aLibrary, getter_AddRefs(baseDir));
   NS_ENSURE_SUCCESS(rv, rv);
-
-  if (!baseDir)
-    return NS_ERROR_UNEXPECTED;
 
   nsCOMPtr<nsIArray> subDirs;
   rv = aLibrary->GetSyncFolderListByType(sbIDeviceLibrary::MEDIATYPE_IMAGE,
@@ -282,8 +306,7 @@ sbDeviceImages::CreateTemporaryLocalMediaItem(sbIDeviceImage*   aImage,
 
   // Get the local image base directory.
   nsCOMPtr<nsIFile> baseDir;
-  rv = aLibrary->GetSyncRootFolderByType(sbIDeviceLibrary::MEDIATYPE_IMAGE,
-                                         getter_AddRefs(baseDir));
+  rv = GetImagesRootFolder(aLibrary, getter_AddRefs(baseDir));
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(baseDir, NS_ERROR_UNEXPECTED);
 

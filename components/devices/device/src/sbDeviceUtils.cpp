@@ -51,6 +51,9 @@
 #include "sbIDeviceErrorMonitor.h"
 #include "sbIDeviceHelper.h"
 #include "sbIDeviceLibrary.h"
+#include "sbIDeviceLibraryMediaSyncSettings.h"
+#include "sbIDeviceLibrarySyncSettings.h"
+#include "sbIDeviceRegistrar.h"
 #include "sbIMediaItem.h"
 #include "sbIMediaList.h"
 #include "sbIMediaListListener.h"
@@ -784,17 +787,17 @@ sbDeviceUtilsQueryUserSpaceExceeded::Query(sbIDevice*        aDevice,
 sbExtensionToContentFormatEntry_t const
 MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
   /* audio */
-  { "mp3",  "audio/mpeg",      "audio/mpeg",      "audio/mpeg",     "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "wma",  "audio/x-ms-wma",  "video/x-ms-asf",  "audio/x-ms-wma", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "aac",  "audio/aac",       "video/quicktime", "audio/aac",      "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "m4a",  "audio/aac",       "video/quicktime", "audio/aac",      "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "mp3",  "audio/mpeg",      "audio/mpeg",  "audio/mpeg",     "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "wma",  "audio/x-ms-wma",  "video/x-ms-asf",  "audio/x-ms-wma",   "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "aac",  "audio/aac",       "video/quicktime",  "audio/aac",     "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "m4a",  "audio/aac",       "video/quicktime",  "audio/aac",     "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "aa",   "audio/audible",   "",     "",        "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "aa",   "audio/x-pn-audibleaudio", "", "",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "oga",  "application/ogg", "application/ogg", "audio/x-flac",   "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "ogg",  "application/ogg", "application/ogg", "audio/x-vorbis", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "flac", "audio/x-flac",    "",             "audio/x-flac",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "oga",  "application/ogg", "application/ogg",  "audio/x-flac",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "ogg",  "application/ogg", "application/ogg",  "audio/x-vorbis",  "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "flac", "audio/x-flac",    "", "audio/x-flac",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "wav",  "audio/x-wav",     "audio/x-wav",  "audio/x-pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "wav",  "audio/x-adpcm",   "audio/x-wav",  "audio/x-adpcm",   "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "wav",  "audio/x-adpcm",   "audio/x-wav",  "audio/x-adpcm", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "aiff", "audio/x-aiff",    "audio/x-aiff", "audio/x-pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "aif",  "audio/x-aiff",    "audio/x-aiff", "audio/x-pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "ape",  "audio/x-ape",     "",             "",                "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
@@ -1241,7 +1244,7 @@ sbDeviceUtils::GetSupportedTranscodeProfiles(PRUint32 aType,
                                      &formatTypes);
         NS_ENSURE_SUCCESS (rv, rv);
         sbAutoFreeXPCOMPointerArray<nsISupports> freeFormats(formatTypeCount,
-                                                             formatTypes); 
+                                                             formatTypes);
 
         for (PRUint32 formatIndex = 0;
              formatIndex < formatTypeCount;
@@ -1369,7 +1372,7 @@ sbDeviceUtils::DoesItemNeedTranscoding(
   nsString itemCodec;
   itemCodec.AssignLiteral(aFormatType.Codec);
 
-  LOG(("Determining if item needs transcoding\n\tItem Container: '%s'\n\tItem Codec: '%s'", 
+  LOG(("Determining if item needs transcoding\n\tItem Container: '%s'\n\tItem Codec: '%s'",
        NS_LossyConvertUTF16toASCII(itemContainerFormat).get(),
        NS_LossyConvertUTF16toASCII(itemCodec).get()));
 
@@ -1394,7 +1397,7 @@ sbDeviceUtils::DoesItemNeedTranscoding(
                                    &formatTypes);
       NS_ENSURE_SUCCESS (rv, rv);
       sbAutoFreeXPCOMPointerArray<nsISupports> freeFormats(formatTypeCount,
-                                                           formatTypes); 
+                                                           formatTypes);
 
       for (PRUint32 formatIndex = 0;
            formatIndex < formatTypeCount;
@@ -1696,6 +1699,129 @@ nsresult sbDeviceUtils::AddSupportedFileExtensions
   return NS_OK;
 }
 
+nsresult
+sbDeviceUtils::GetMediaSettings(
+                            sbIDeviceLibrary * aDevLib,
+                            PRUint32 aMediaType,
+                            sbIDeviceLibraryMediaSyncSettings ** aMediaSettings)
+{
+  NS_ASSERTION(aDevLib, "aDevLib is null");
+
+  nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
+  nsresult rv = aDevLib->GetSyncSettings(getter_AddRefs(syncSettings));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDeviceLibraryMediaSyncSettings> mediaSyncSettings;
+  rv = syncSettings->GetMediaSettings(sbIDeviceLibrary::MEDIATYPE_IMAGE,
+                                      aMediaSettings);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbDeviceUtils::GetMgmtTypeForMedia(sbIDeviceLibrary * aDevLib,
+                                   PRUint32 aMediaType,
+                                   PRUint32 & aMgmtType)
+{
+  NS_ASSERTION(aDevLib, "aDevLib is null");
+  nsresult rv;
+
+  nsCOMPtr<sbIDeviceLibraryMediaSyncSettings> mediaSyncSettings;
+  rv = GetMediaSettings(aDevLib,
+                        sbIDeviceLibrary::MEDIATYPE_IMAGE,
+                        getter_AddRefs(mediaSyncSettings));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mediaSyncSettings->GetMgmtType(&aMgmtType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult sbDeviceUtils::GetDeviceLibrary(nsAString const & aDeviceLibGuid,
+                                         sbIDevice * aDevice,
+                                         sbIDeviceLibrary ** aDeviceLibrary)
+{
+  NS_ENSURE_ARG_POINTER(aDeviceLibrary);
+
+  nsresult rv;
+
+  // mediaItem.library is not a sbIDeviceLibrary, test GUID :(
+  nsCOMPtr<sbIDeviceContent> content;
+  rv = aDevice->GetContent(getter_AddRefs(content));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIArray> libraries;
+  rv = content->GetLibraries(getter_AddRefs(libraries));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 libraryCount;
+  rv = libraries->GetLength(&libraryCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 index = 0; index < libraryCount; ++index) {
+    nsCOMPtr<sbIDeviceLibrary> deviceLib =
+      do_QueryElementAt(libraries, index, &rv);
+    if (NS_FAILED(rv))
+      continue;
+
+    nsString deviceLibGuid;
+    rv = deviceLib->GetGuid(deviceLibGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (deviceLibGuid.Equals(deviceLibGuid)) {
+      deviceLib.forget(aDeviceLibrary);
+      return NS_OK;
+    }
+  }
+
+  *aDeviceLibrary = nsnull;
+  return NS_OK;
+}
+
+nsresult sbDeviceUtils::GetDeviceLibrary(nsAString const & aDevLibGuid,
+                                         nsID const * aDeviceID,
+                                         sbIDeviceLibrary ** aDeviceLibrary)
+{
+  NS_ENSURE_ARG_POINTER(aDeviceLibrary);
+
+  nsresult rv;
+
+  nsCOMPtr<sbIDeviceLibrary> deviceLibrary;
+
+  nsCOMPtr<sbIDeviceRegistrar> deviceRegistrar =
+    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+
+  if (aDeviceID) {
+    nsCOMPtr<sbIDevice> device;
+    rv = deviceRegistrar->GetDevice(aDeviceID, getter_AddRefs(device));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = GetDeviceLibrary(aDevLibGuid, device, getter_AddRefs(deviceLibrary));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    nsCOMPtr<nsIArray> devices;
+    rv = deviceRegistrar->GetDevices(getter_AddRefs(devices));
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<sbIDevice> device;
+    PRUint32 length;
+    rv = devices->GetLength(&length);
+    for (PRUint32 index = 0; index < length && !deviceLibrary; ++index) {
+      device = do_QueryElementAt(devices, index, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = GetDeviceLibrary(aDevLibGuid, device, getter_AddRefs(deviceLibrary));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  deviceLibrary.forget(aDeviceLibrary);
+
+  return NS_OK;
+}
+
 //------------------------------------------------------------------------------
 // sbIDeviceCapabilities Logging functions
 // NOTE: This is built only w/ PR_LOGGING turned on.
@@ -1813,7 +1939,7 @@ LogFormatType(PRUint32 aContentType,
                                    &formatTypes);
   NS_ENSURE_SUCCESS(rv, rv);
   sbAutoFreeXPCOMPointerArray<nsISupports> freeFormats(formatTypeCount,
-                                                       formatTypes); 
+                                                       formatTypes);
 
   for (PRUint32 formatIndex = 0;
        formatIndex < formatTypeCount;
@@ -1846,7 +1972,7 @@ LogFormatType(PRUint32 aContentType,
       }
     }
   }
- 
+
   return NS_OK;
 }
 

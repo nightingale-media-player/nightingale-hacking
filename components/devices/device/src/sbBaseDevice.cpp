@@ -67,6 +67,8 @@
 #include <sbIDeviceContent.h>
 #include <sbIDeviceCapabilities.h>
 #include <sbIDeviceInfoRegistrar.h>
+#include <sbIDeviceLibraryMediaSyncSettings.h>
+#include <sbIDeviceLibrarySyncSettings.h>
 #include <sbIDeviceEvent.h>
 #include <sbIDeviceHelper.h>
 #include <sbIDeviceManager.h>
@@ -3101,7 +3103,7 @@ sbBaseDevice::GetMusicFreeSpace(sbILibrary* aLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the music used space.
-  PRInt64      musicUsedSpace;
+  PRInt64 musicUsedSpace;
   nsAutoString musicUsedSpaceStr;
   rv = aLibrary->GetProperty
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_USED_SPACE),
@@ -3135,7 +3137,7 @@ sbBaseDevice::GetMusicAvailableSpace(sbILibrary* aLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the total capacity.
-  PRInt64      capacity;
+  PRInt64 capacity;
   nsAutoString capacityStr;
   rv = aLibrary->GetProperty(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_CAPACITY),
                              capacityStr);
@@ -3662,50 +3664,50 @@ sbBaseDevice::UpdateStatisticsProperties()
     nsRefPtr<sbDeviceStatistics> deviceStatistics;
     rv = volume->GetDeviceLibrary(getter_AddRefs(deviceLibrary));
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = volume->GetStatistics(getter_AddRefs(deviceStatistics));
-    NS_ENSURE_SUCCESS(rv, rv);
+  rv = volume->GetStatistics(getter_AddRefs(deviceStatistics));
+  NS_ENSURE_SUCCESS(rv, rv);
 
     // Update the volume statistics properties.
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_ITEM_COUNT),
             sbAutoString(deviceStatistics->AudioCount()));
-    NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(rv, rv);
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_USED_SPACE),
             sbAutoString(deviceStatistics->AudioUsed()));
-    NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(rv, rv);
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_TOTAL_PLAY_TIME),
             sbAutoString(deviceStatistics->AudioPlayTime()));
-    NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(rv, rv);
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_ITEM_COUNT),
             sbAutoString(deviceStatistics->VideoCount()));
-    NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(rv, rv);
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_USED_SPACE),
             sbAutoString(deviceStatistics->VideoUsed()));
-    NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(rv, rv);
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_TOTAL_PLAY_TIME),
             sbAutoString(deviceStatistics->VideoPlayTime()));
-    NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(rv, rv);
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMAGE_ITEM_COUNT),
             sbAutoString(deviceStatistics->ImageCount()));
-    NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(rv, rv);
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMAGE_USED_SPACE),
             sbAutoString(deviceStatistics->ImageUsed()));
-    NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;
@@ -4563,8 +4565,17 @@ sbBaseDevice::EnsureSpaceForSync(TransferRequest* aRequest,
     NS_ENSURE_SUCCESS(rv, rv);
     if (abort) {
       // Set manual mode for both audio and video preferences.
-      rv = dstLib->SetSyncMode(sbIDeviceLibrary::SYNC_MANUAL);
+      nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
+      rv = dstLib->GetSyncSettings(getter_AddRefs(syncSettings));
       NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = syncSettings->SetSyncMode(
+                                sbIDeviceLibrarySyncSettings::SYNC_MODE_MANUAL);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = dstLib->SetSyncSettings(syncSettings);
+      NS_ENSURE_SUCCESS(rv, rv);
+
       *aAbort = PR_TRUE;
       return NS_OK;
     }
@@ -4602,23 +4613,6 @@ sbBaseDevice::SyncCreateAndSyncToList
 
   // Function variables.
   nsresult rv;
-
-  // Set to sync to an empty list of playlists to prevent syncing while the sync
-  // playlist is created.
-  nsCOMPtr<nsIMutableArray> emptySyncPlaylistList =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  for (PRUint32 i = 0; i < sbIDeviceLibrary::MEDIATYPE_COUNT; ++i) {
-    // Skip image type since we don't support it right now.
-    if (i == sbIDeviceLibrary::MEDIATYPE_IMAGE)
-      continue;
-
-    rv = aDstLib->SetSyncPlaylistListByType(i, emptySyncPlaylistList);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  // Set sync playlist mode for both audio and video preferences.
-  rv = aDstLib->SetSyncMode(sbIDeviceLibrary::SYNC_MANUAL);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   // Check for abort.
   NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
@@ -4798,35 +4792,43 @@ sbBaseDevice::SyncToMediaList(sbIDeviceLibrary* aDstLib,
   // Function variables.
   nsresult rv;
 
-  // Create a sync playlist list array with the sync media list.
-  nsCOMPtr<nsIMutableArray> syncPlaylistList =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = syncPlaylistList->AppendElement(aMediaList, PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   PRUint16 contentType;
   rv = aMediaList->GetListContentType(&contentType);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(contentType > 0, NS_ERROR_FAILURE);
 
+  nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
+  rv = aDstLib->GetSyncSettings(getter_AddRefs(syncSettings));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDeviceLibraryMediaSyncSettings> mediaSyncSettings;
   // Set to sync to the sync media list.
   if (contentType | sbIMediaList::CONTENTTYPE_AUDIO) {
-    rv = aDstLib->SetSyncPlaylistListByType(sbIDeviceLibrary::MEDIATYPE_AUDIO,
-                                            syncPlaylistList);
+    rv = syncSettings->GetMediaSettings(sbIDeviceLibrary::MEDIATYPE_AUDIO,
+                                        getter_AddRefs(mediaSyncSettings));
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = aDstLib->SetMgmtType(sbIDeviceLibrary::MEDIATYPE_AUDIO,
-                              sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS);
+
+    rv = mediaSyncSettings->SetPlaylistSelected(aMediaList, PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mediaSyncSettings->SetMgmtType(
+                        sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_PLAYLISTS);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   if (contentType | sbIMediaList::CONTENTTYPE_VIDEO) {
-    rv = aDstLib->SetSyncPlaylistListByType(sbIDeviceLibrary::MEDIATYPE_VIDEO,
-                                            syncPlaylistList);
+    rv = syncSettings->GetMediaSettings(sbIDeviceLibrary::MEDIATYPE_VIDEO,
+                                        getter_AddRefs(mediaSyncSettings));
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = aDstLib->SetMgmtType(sbIDeviceLibrary::MEDIATYPE_VIDEO,
-                              sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS);
+
+    rv = mediaSyncSettings->SetPlaylistSelected(aMediaList, PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mediaSyncSettings->SetMgmtType(
+                        sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_PLAYLISTS);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+  rv = aDstLib->SetSyncSettings(syncSettings);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -4847,9 +4849,13 @@ sbBaseDevice::SyncGetSyncItemSizes
   // Function variables.
   nsresult rv;
 
+  nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
+  rv = aDstLib->GetSyncSettings(getter_AddRefs(syncSettings));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Get the list of sync media lists.
   nsCOMPtr<nsIArray> syncList;
-  rv = SyncGetSyncList(aSrcLib, aDstLib, getter_AddRefs(syncList));
+  rv = syncSettings->GetSyncPlaylists(getter_AddRefs(syncList));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Fill in the sync item size table and calculate the total sync size.
@@ -4984,27 +4990,6 @@ sbBaseDevice::SyncGetSyncItemSizes
 }
 
 nsresult
-sbBaseDevice::SyncGetSyncList(sbILibrary*       aSrcLib,
-                              sbIDeviceLibrary* aDstLib,
-                              nsIArray**        aSyncList)
-{
-  // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aSrcLib);
-  NS_ENSURE_ARG_POINTER(aDstLib);
-  NS_ENSURE_ARG_POINTER(aSyncList);
-
-  // Get the list of sync media lists.
-  nsCOMPtr<nsIArray> syncList;
-  nsresult rv = aDstLib->GetSyncPlaylistList(getter_AddRefs(syncList));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Return results.
-  syncList.forget(aSyncList);
-
-  return NS_OK;
-}
-
-nsresult
 sbBaseDevice::SyncGetSyncAvailableSpace(sbILibrary* aLibrary,
                                         PRInt64*    aAvailableSpace)
 {
@@ -5021,7 +5006,7 @@ sbBaseDevice::SyncGetSyncAvailableSpace(sbILibrary* aLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the free space.
-  PRInt64      freeSpace;
+  PRInt64 freeSpace;
   nsAutoString freeSpaceStr;
   rv = aLibrary->GetProperty(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_FREE_SPACE),
                              freeSpaceStr);
@@ -5030,7 +5015,7 @@ sbBaseDevice::SyncGetSyncAvailableSpace(sbILibrary* aLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the music used space.
-  PRInt64      musicUsedSpace;
+  PRInt64 musicUsedSpace;
   nsAutoString musicUsedSpaceStr;
   rv = aLibrary->GetProperty
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_USED_SPACE),
@@ -5084,10 +5069,13 @@ sbBaseDevice::SyncProduceChangeset(TransferRequest*      aRequest,
   rv = SyncForceDiffMediaLists(dstLib);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
+  rv = dstLib->GetSyncSettings(getter_AddRefs(syncSettings));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Get the list of sync media lists.
   nsCOMPtr<nsIArray> syncList;
-
-  rv = SyncGetSyncList(srcLib, dstLib, getter_AddRefs(syncList));
+  rv = syncSettings->GetSyncPlaylists(getter_AddRefs(syncList));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the diffing service.
