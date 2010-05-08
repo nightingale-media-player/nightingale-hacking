@@ -38,6 +38,7 @@
 struct PRLock;
 class sbIDevice;
 class sbIDeviceLibrary;
+class sbDeviceLibrarySyncSettings;
 
 class sbDeviceLibraryMediaSyncSettings : public sbIDeviceLibraryMediaSyncSettings
 {
