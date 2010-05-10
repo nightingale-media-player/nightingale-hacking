@@ -347,12 +347,14 @@ var DPW = {
     this._finishButton.addEventListener("click", this._onButtonEvent, false);
     this._finishButton.addEventListener("keypress", this._onButtonEvent, false);
 
-    document.addEventListener("sbDeviceSync-settings", this._onSettingsEvent, false);
-
     // Initialize object fields.
     this._deviceID = this._widget.deviceID;
     this._device = this._widget.device;
     this._deviceLibrary = this._widget.devLib;
+
+    // Listen for changes in the settings
+    if (this._deviceLibrary)
+      this._deviceLibrary.addDeviceLibraryListener(this);
 
     // Set the label accordingly.
     var syncModeLabel = this._getElement("syncmode_label");
@@ -404,6 +406,11 @@ var DPW = {
   finalize: function DPW_finalize() {
     // Finalize the device services.
     this._deviceFinalize();
+
+    // Remove our settings listener
+    if (this._deviceLibrary)
+      this._deviceLibrary.removeDeviceLibraryListener(this);
+
 
     // Clear object fields.
     this._widget = null;
@@ -532,13 +539,13 @@ var DPW = {
       // Per bug 20294, don't bother showing different idle messages for each
       // operation type.
       var key = "device.status.progress_completed";
-      
+
       // Check for errors, notify of errors, cancel takes precedence
       var hasErrors = this._checkForDeviceErrors("");
       if (this._operationCanceled) {
         key = "device.status.progress_aborted";
       }
-      else if (hasErrors) { 
+      else if (hasErrors) {
         key += "_errors";
       }
       else {
@@ -733,7 +740,7 @@ var DPW = {
     var itemType = this._getItemType();
     // Determine if this is a playlist
     var isPlaylist = deviceStatus.mediaItem instanceof Ci.sbIMediaList;
-    
+
     // If we're preparing to sync (indicated by an idle sub)
     // then show the preparing label
     if (operationInfo.preparingOnIdle && (substate == Ci.sbIDevice.STATE_IDLE))
@@ -803,14 +810,13 @@ var DPW = {
    */
 
   onModeChange: function DeviceSyncWidget_onModeChange() {
-    if (this._deviceLibrary.syncMode == Ci.sbIDeviceLibrary.SYNC_MANUAL) {
+    if (this._deviceLibrary.tempSyncSettings.syncMode ==
+         Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL) {
       // Update the UI in case the Apply/Cancel buttons are still there.
       DPW._syncSettingsChanged = false;
       DPW._device.cacheSyncRequests = false;
       DPW._update();
     }
-    else
-      this._dispatchSettingsEvent(this.SYNCSETTINGS_CHANGE);
   },
 
   /**
@@ -828,12 +834,12 @@ var DPW = {
         break;
 
       case "settings-apply":
-        this._dispatchSettingsEvent(this.SYNCSETTINGS_APPLY);
+        this._deviceLibrary.applySyncSettings();
         this._device.syncLibraries();
         break;
 
       case "settings-cancel":
-        this._dispatchSettingsEvent(this.SYNCSETTINGS_CANCEL);
+        this._deviceLibrary.resetSyncSettings();
         break;
 
       default :
@@ -863,38 +869,47 @@ var DPW = {
 
 
   /**
-   * \brief Handles the sbDeviceSync-settings and updates sync settings UI
-   *        accordingly
-   *
-   * \param aEvent              Event to handle.
+   * \sbIDeviceLibraryListener.
    */
 
-  _onSettingsEvent: function DPW__onSettingsEvent(aEvent) {
-    switch (aEvent.detail) {
-      case DPW.SYNCSETTINGS_CHANGE:
+  // We don't do anything with these functions, but they need to be here.
+  onBatchBegin: function DeviceSyncWidget_onBatchBegin(aMediaList) {},
+  onBatchEnd: function DeviceSyncWidget_onBatchEnd(aMediaList) {},
+  onItemAdded: function DeviceSyncWidget_onItemAdded(aMediaList, aMediaItem, aIndex) {},
+  onBeforeItemRemoved: function DeviceSyncWidget_onBeforeItemRemoved(aMediaList, aMediaItem, aIndex) {},
+  onAfterItemRemoved: function DeviceSyncWidget_onAfterItemRemoved(aMediaList, aMediaItem, aIndex) {},
+  onBeforeListCleared: function DeviceSyncWidget_onBeforeListCleared(aMediaList, aExcludeLists) {},
+  onListCleared: function DeviceSyncWidget_onListCleared(aMediaList, aExcludeLists) {},
+  onItemUpdated: function DeviceSyncWidget_onItemUpdated(aMediaList, aMediaItem, aProperties) {},
+  onItemMoved: function DeviceSyncWidget_onItemMoved(aMediaList, aFromIndex, aToIndex) {},
+  onItemCopied: function DeviceSyncWidget_onItemCopied(aSourceItem, aDestItem) {},
+  onBeforeCreateMediaItem: function DeviceSyncWidget_onBeforeCreateMediaItem(aContentUri, aProperties, aAllowDuplicates) {},
+  onBeforeCreateMediaList: function DeviceSyncWidget_onBeforeCreateMediaList(aType, aProperties) {},
+  onBeforeAdd: function DeviceSyncWidget_onBeforeAdd(aMediaItem) {},
+  onBeforeAddAll: function DeviceSyncWidget_onBeforeAddAll(aMediaList) {},
+  onBeforeAddSome: function DeviceSyncWidget_onBeforeAddSome(aMediaItems) {},
+  onBeforeClear: function DeviceSyncWidget_onBeforeClear() {},
+
+  onSyncSettings: function DPW_onSyncSettings(aAction, aSyncSettings) {
+    switch (aAction) {
+      case Ci.sbIDeviceLibraryListener.SYNC_SETTINGS_APPLIED:
+        DPW._syncSettingsChanged = false;
+        DPW._device.cacheSyncRequests = false;
+        // Click apply button will trigger sync, which will do the update later.
+        break;
+
+     case Ci.sbIDeviceLibraryListener.SYNC_SETTINGS_CHANGED:
         DPW._syncSettingsChanged = true;
         DPW._device.cacheSyncRequests = true;
+        DPW._update();
         break;
 
-      case DPW.SYNCSETTINGS_APPLY:
+      case Ci.sbIDeviceLibraryListener.SYNC_SETTINGS_RESET:
         DPW._syncSettingsChanged = false;
         DPW._device.cacheSyncRequests = false;
-        break;
-
-      case DPW.SYNCSETTINGS_CANCEL:
-        DPW._syncSettingsChanged = false;
-        DPW._device.cacheSyncRequests = false;
-
-        // Reset back the syncmode if there is pending sync mode change.
-        if (DPW._deviceLibrary.syncModeChanged) {
-          DPW._deviceLibrary.syncMode = Ci.sbIDeviceLibrary.SYNC_MANUAL;
-        }
+        DPW._update();
         break;
     }
-
-    // Click apply button will trigger sync, which will do the update later.
-    if (aEvent.detail != DPW.SYNCSETTINGS_APPLY)
-      DPW._update();
   },
 
 
@@ -979,19 +994,6 @@ var DPW = {
     this._update();
   },
 
-
-  /**
-   * \brief Notifies listener about a settings apply/cancel action.
-   * 
-   * \param detail              One of the SYNCSETTINGS_* constants
-   */
-
-  _dispatchSettingsEvent: function DPW__dispatchSettingsEvent(detail) {
-    let event = document.createEvent("UIEvents");
-    event.initUIEvent("sbDeviceSync-settings", false, false, window, detail);
-    document.dispatchEvent(event);
-  },
-
   /**
    * \brief Get and return the operation information record for the device
    *        operation specified by aOperation.
@@ -1032,19 +1034,10 @@ var DPW = {
       deviceEventTarget.addEventListener(this);
     }
 
-    if (this._deviceLibrary) {
-      // Update the progress UI to apply/cancel for pending sync mode change
-      var prefs = Cc["@mozilla.org/preferences-service;1"]
-                    .getService(Ci.nsIPrefBranch);
-      var syncModeChangedKey = "songbird.device." + this._widget.deviceID +
-                               ".syncmode.changed";
-
-      if (prefs.prefHasUserValue(syncModeChangedKey) &&
-          prefs.getBoolPref(syncModeChangedKey)) {
-        prefs.clearUserPref(syncModeChangedKey);
-        this._dispatchSettingsEvent(this.SYNCSETTINGS_CHANGE);
-      }
-    }
+    // Check if we already have changed settings, if so update.
+    if (DPW._deviceLibrary.tempSyncSettingsChanged)
+      DPW.onSyncSettings(Ci.sbIDeviceLibraryListener.SYNC_SETTINGS_CHANGED,
+                         DPW._deviceLibrary.tempSyncSettings);
   },
 
   /**
@@ -1143,7 +1136,7 @@ var DPW = {
   _deviceIsSyncing: function DPW__deviceIsSyncing() {
     return this._isSyncing;
   },
-  
+
   /**
    * \brief Returns true if the device has errors for the media type
    * \param aMediaType the media type to check errors for, or if it's an
