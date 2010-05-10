@@ -551,12 +551,12 @@
   this.columnSpecWatcher = {
     playlist: this,
     medialist: mediaListView.mediaList,
-    onItemAdded: function(list, item, index) {},
-    onBeforeItemRemoved: function(list, item, index) {},
-    onAfterItemRemoved: function(list, item, index) {},
-    onItemMoved: function(list, item, index) {},
-    onBeforeListCleared: function(list, excludeLists) {},
-    onListCleared: function(list, excludeLists) {},
+    onItemAdded: function(list, item, index) { return true; },
+    onBeforeItemRemoved: function(list, item, index) { return true; },
+    onAfterItemRemoved: function(list, item, index) { return true; },
+    onItemMoved: function(list, item, index) { return true; },
+    onBeforeListCleared: function(list, excludeLists) { return true; },
+    onListCleared: function(list, excludeLists) { return true; },
     onBatchBegin: function(list) {},
     onBatchEnd: function(list) {},
     onItemUpdated:

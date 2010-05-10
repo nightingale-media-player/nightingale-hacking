@@ -1914,6 +1914,8 @@ function sbLibraryServicePane_onBeforeItemRemoved(aMediaList, aMediaItem, aIndex
 }
 sbLibraryServicePane.prototype.onAfterItemRemoved =
 function sbLibraryServicePane_onAfterItemRemoved(aMediaList, aMediaItem, aIndex) {
+  // Don't need any further notifications
+  return true;
 }
 sbLibraryServicePane.prototype.onItemUpdated =
 function sbLibraryServicePane_onItemUpdated(aMediaList,

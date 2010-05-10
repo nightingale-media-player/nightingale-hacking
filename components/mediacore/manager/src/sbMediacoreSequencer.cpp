@@ -3382,6 +3382,7 @@ sbMediacoreSequencer::OnBeforeItemRemoved(sbIMediaList *aMediaList,
                                           PRUint32 aIndex,
                                           PRBool *_retval)
 {
+  *_retval = PR_TRUE;
   return NS_OK;
 }
 
