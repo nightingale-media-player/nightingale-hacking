@@ -77,10 +77,14 @@
 #include <sbILibrary.h>
 #include <sbILibraryDiffingService.h>
 #include <sbILibraryUtils.h>
-#include <sbIMediaItem.h>
-#include <sbIMediaList.h>
+#include <sbIMediacoreManager.h>
+#include <sbIMediacorePlaybackControl.h>
+#include <sbIMediacoreSequencer.h>
+#include <sbIMediacoreStatus.h>
 #include <sbIMediaFileManager.h>
+#include <sbIMediaItem.h>
 #include <sbIMediaInspector.h>
+#include <sbIMediaList.h>
 #include <sbIMediaManagementService.h>
 #include <sbIOrderableMediaList.h>
 #include <sbIPrompter.h>
@@ -6370,12 +6374,87 @@ sbBaseDevice::GetMusicLimitSpacePercent(const nsAString & aPrefBase,
   return prefValue->GetAsUint32(aOutLimitPercentage);
 }
 
+/* void Eject(); */
+NS_IMETHODIMP sbBaseDevice::Eject()
+{
+  TRACE(("%s", __FUNCTION__));
+
+  nsresult rv;
+
+  // Device has no default library. Just leave.
+  if (!mDefaultLibrary)
+    return NS_OK;
+
+  // If the playback is on for the device item, stop the playback before
+  // ejecting.
+  nsCOMPtr<sbIMediacoreManager> mediacoreManager =
+    do_GetService(SB_MEDIACOREMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediacoreSequencer> sequencer;
+  rv = mediacoreManager->GetSequencer(getter_AddRefs(sequencer));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the currently playing media item.
+  nsCOMPtr<sbIMediaItem> mediaItem;
+  rv = sequencer->GetCurrentItem(getter_AddRefs(mediaItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // No current media item. Just leave.
+  if (!mediaItem)
+    return NS_OK;
+
+  // Get the library that the media item lives in.
+  nsCOMPtr<sbILibrary> library;
+  rv = mediaItem->GetLibrary(getter_AddRefs(library));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Is that library our device library?
+  PRBool equal;
+  rv = mDefaultLibrary->Equals(library, &equal);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (equal) {
+    nsCOMPtr<sbIMediacoreStatus> status;
+    rv = mediacoreManager->GetStatus(getter_AddRefs(status));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 state = 0;
+    rv = status->GetState(&state);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Not playing, nothing to do.
+    if (state == sbIMediacoreStatus::STATUS_STOPPED ||
+        state == sbIMediacoreStatus::STATUS_UNKNOWN) {
+      return NS_OK;
+    }
+
+    // Confirm with user on whether to stop the playback and eject.
+    PRBool eject;
+    PromptForEjectDuringPlayback(&eject);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!eject)
+      return NS_ERROR_ABORT;
+
+    nsCOMPtr<sbIMediacorePlaybackControl> playbackControl;
+    rv = mediacoreManager->GetPlaybackControl(getter_AddRefs(playbackControl));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = playbackControl->Stop();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
 /* void Format(); */
 NS_IMETHODIMP sbBaseDevice::Format()
 {
   TRACE(("%s", __FUNCTION__));
   return NS_ERROR_NOT_IMPLEMENTED;
 }
+
 /* readonly attribute boolean supportsReformat; */
 NS_IMETHODIMP sbBaseDevice::GetSupportsReformat(PRBool *_retval)
 {

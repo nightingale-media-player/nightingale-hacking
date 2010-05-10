@@ -232,6 +232,11 @@ public:
   NS_IMETHOD GetState(PRUint32 *aState);
   NS_IMETHOD GetPreviousState(PRUint32 *aState);
   NS_IMETHOD SyncLibraries(void);
+  /**
+   * return NS_ERROR_ABORT if user aborts the ejection while playback is on
+   * device item.
+   */
+  NS_IMETHOD Eject(void);
   NS_IMETHOD Format(void);
   NS_IMETHOD GetSupportsReformat(PRBool *_retval);
   NS_IMETHOD GetCacheSyncRequests(PRBool *_retval);
