@@ -114,7 +114,7 @@ deviceControlWidget.prototype = {
   _deviceListenerAdded: false,
   _currentState: Ci.sbIDevice.STATE_IDLE,
   _currentReadOnly: false,
-  _currentMgmtType: null,
+  _currentMgmtType: Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL,
 
 
   //----------------------------------------------------------------------------
@@ -222,11 +222,6 @@ deviceControlWidget.prototype = {
     func = function(aEvent) { _this.onAction(aEvent); };
     this._domEventListenerSet.add(this._boundElem, "command", func, false);
 
-    this._currentMgmtType = {};
-    for (var i = 0; i < Ci.sbIDeviceLibrary.MEDIATYPE_COUNT; ++i) {
-      this._currentMgmtType[i] = Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL;
-    }
-
     // Add device event listener.
     if (this._widget.getAttribute("listentodevice") == "true") {
       var deviceEventTarget = this._device.QueryInterface
@@ -236,7 +231,7 @@ deviceControlWidget.prototype = {
     }
 
     // Only attempt to migrate sync settings if we have a device library.
-    if (this._deviceLibrary) {      
+    if (this._deviceLibrary) {
       // Migrate the old preference if available
       var prefs = Cc["@mozilla.org/preferences-service;1"]
                     .getService(Ci.nsIPrefBranch);
@@ -306,7 +301,6 @@ deviceControlWidget.prototype = {
     this._device = null;
     this._deviceLibrary = null;
     this._boundElem = null;
-    this._currentMgmtType = null;
     if (!aReset)
       this._widget = null;
   },
@@ -603,9 +597,9 @@ deviceControlWidget.prototype = {
       return true;
 
     // If we're formatting treat the device as readOnly
-    if (this._device.state == Ci.sbIDevice.STATE_FORMATTING) 
+    if (this._device.state == Ci.sbIDevice.STATE_FORMATTING)
       return true;
-   
+
     // This is just preventative measure in case the library is being
     // destroyed or bad state, we'll just treat as readOnly
     try {
@@ -645,32 +639,13 @@ deviceControlWidget.prototype = {
     var supportsPlaylist = this._supportsPlaylist();
     var msc = (this._device.parameters.getProperty("DeviceType") == "MSCUSB");
 
-    var mgmtType;
-    var sameMgmtType = true;
-    for (var i = 0; i < Ci.sbIDeviceLibrary.MEDIATYPE_COUNT; ++i) {
-      // This is just preventative measure in case the library is being
-      // destroyed, we'll just treat as readOnly
-      try {
-        // Get the management type for the device library.  Default to manual if no
-        // device library.
-        mgmtType = this._deviceLibrary ? this._deviceLibrary.getMgmtType(i) |
-                                         this._deviceLibrary.isMgmtTypeManual
-                                       : Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL;
-      }
-      catch (e) {
-        return;
-      }
-
-      if (this._currentMgmtType[i] != mgmtType) {
-        sameMgmtType = false;
-        this._currentMgmtType[i] = mgmtType;
-        continue;
-      }
-    }
+    var mgmtType = Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
+    if (this._deviceLibrary)
+      mgmtType = this._deviceLibrary.syncSettings.syncMode;
 
     // Do nothing if no device state changed and update is not forced.
     if (!aForce &&
-        sameMgmtType &&
+        (this._currentMgmtType == mgmtType) &&
         (this._currentState == state) &&
         (this._currentReadOnly == readOnly) &&
         (this._currentSupportsReformat == supportsReformat) &&
@@ -680,6 +655,7 @@ deviceControlWidget.prototype = {
     }
 
     // Update the current state.
+    this._currentMgmtType = mgmtType;
     this._currentState = state;
     this._currentReadOnly = readOnly;
     this._currentSupportsReformat = supportsReformat;
@@ -763,7 +739,7 @@ deviceControlWidget.prototype = {
              this._getStateAttribute(attrVal, aAttrName, "busy")) {}
     else if ((this._currentState == Ci.sbIDevice.STATE_IDLE) &&
              this._getStateAttribute(attrVal, aAttrName, "idle")) {}
-    else if (this._deviceLibrary && !(this._deviceLibrary.isMgmtTypeManual) &&
+    else if (this._deviceLibrary && !(this._deviceLibrary.isManualSyncMode) &&
              this._getStateAttribute(attrVal, aAttrName, "mgmt_not_manual")) {}
     else if (this._deviceLibrary && this._canTriggerSync() &&
              this._getStateAttribute(attrVal, aAttrName, "can_trigger_sync")) {}
@@ -925,14 +901,30 @@ deviceControlWidget.prototype = {
 
     return servicePaneNode;
   },
-  
+
   _canTriggerSync: function deviceControlWidget__canTriggerSync() {
-    // user can trigger sync if management is not manual
+    // Can not sync if there is no library.
+    if (!this._deviceLibrary)
+      return false;
+
+    // user can trigger sync if management is not manual.
     if (!(this._deviceLibrary.isMgmtTypeManual))
       return true;
-    // and also if photo sync is enabled
-    return (this._deviceLibrary
-                .getMgmtType(this._deviceLibrary.MEDIATYPE_IMAGE) != 
-            this._deviceLibrary.MGMT_TYPE_NONE);
+
+    // Check photo sync settings since they are separate from the other types
+    let syncSettings = this._deviceLibrary.tempSyncSettings;
+
+    // Can not sync if there are no settings.
+    if (!syncSettings)
+      return false;
+
+    let mediaSettings = syncSettings.getMediaSettings(
+                                          this._deviceLibrary.MEDIATYPE_IMAGE);
+    // Can not sync if there are no settings for IMAGE media type.
+    if (!mediaSettings)
+      return false;
+
+    return (mediaSettings.mgmtType !=
+              Ci.deviceLibraryMediaSyncSettings.SYNC_MGMT_NONE);
   }
 };
