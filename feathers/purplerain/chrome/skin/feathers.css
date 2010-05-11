@@ -598,7 +598,7 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 }
 
 #servicepane {
-  background-color: rgb(51,48,61);
+  background-color: rgb(47,43,58);
   border-left: 1px solid rgb(43,41,54);
   border-bottom: 1px solid rgb(44,42,55);
 }
@@ -617,8 +617,9 @@ sb-servicepane-group > vbox > vbox > vbox.servicepane-group-nodes {
   overflow: hidden;
 }
 vbox.servicepane-group-nodes {
-  padding-bottom: 6px;
+  padding-bottom: 4px;
 }
+
 sb-servicepane-group hbox.servicepane-group-header-wrapper {
   background-image: url(chrome://songbird/skin/service-pane/group-header-bg.png);
   background-repeat: repeat-x;
@@ -626,6 +627,10 @@ sb-servicepane-group hbox.servicepane-group-header-wrapper {
   min-height: 20px;
   max-height: 20px;
   -moz-box-align: center;
+}
+
+#servicepane > sb-servicepane-group:first-child hbox.servicepane-group-header-wrapper {
+  background-image: url(chrome://songbird/skin/service-pane/group-header-first-bg.png);
 }
 
 sb-servicepane-group[collapsedChildren="true"] hbox.servicepane-group-header-wrapper:-moz-drag-over,
@@ -705,8 +710,18 @@ sb-servicepane-node[indent="5"] > vbox > hbox.servicepane-node-info {
 /* loaded in the browser & selected in the servicepane */
 sb-servicepane-node.active > vbox > hbox.servicepane-node-info {
   background-image: url(chrome://songbird/skin/service-pane/bg-active-node.png);
+  background-position: left bottom;
+  border-left: 1px solid rgb(82,75,107);
+  border-right: 1px solid rgb(82,75,107);
+}
+
+/* Set user focus to normal so we can tell when the servicepane is focused
+ * or not */
+#servicepane {
+  -moz-user-focus: normal;
+}
+#servicepane:focus sb-servicepane-node.active > vbox > hbox.servicepane-node-info {
   background-position: left top;
-  /*-moz-border-radius: 3px;*/
   border-left: 1px solid rgb(74,65,104);
   border-right: 1px solid rgb(74,65,104);
 }
