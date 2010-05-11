@@ -3557,7 +3557,7 @@ sbMediacoreSequencer::OnBeforeListCleared(sbIMediaList* aMediaList,
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
 
   // Don't care
-  *aNoMoreForBatch = PR_FALSE;
+  *aNoMoreForBatch = PR_TRUE;
   return NS_OK;
 }
 

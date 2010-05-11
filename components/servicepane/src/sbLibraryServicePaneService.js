@@ -1939,10 +1939,12 @@ sbLibraryServicePane.prototype.onItemMoved =
 function sbLibraryServicePane_onItemMoved(aMediaList,
                                           aFromIndex,
                                           aToIndex) {
+  return true;
 }
 sbLibraryServicePane.prototype.onBeforeListCleared =
 function sbLibraryServicePane_onBeforeListCleared(aMediaList,
                                                   aExcludeLists) {
+  return true;
 }
 sbLibraryServicePane.prototype.onListCleared =
 function sbLibraryServicePane_onListCleared(aMediaList,
