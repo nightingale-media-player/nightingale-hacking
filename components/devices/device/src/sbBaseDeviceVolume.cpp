@@ -129,6 +129,24 @@ sbBaseDeviceVolume::SetIsMounted(PRBool aIsMounted)
 
 
 nsresult
+sbBaseDeviceVolume::GetRemovable(PRInt32* aRemovable)
+{
+  NS_ENSURE_ARG_POINTER(aRemovable);
+  nsAutoLock autoVolumeLock(mVolumeLock);
+  *aRemovable = mRemovable;
+  return NS_OK;
+}
+
+nsresult
+sbBaseDeviceVolume::SetRemovable(PRInt32 aRemovable)
+{
+  nsAutoLock autoVolumeLock(mVolumeLock);
+  mRemovable = aRemovable;
+  return NS_OK;
+}
+
+
+nsresult
 sbBaseDeviceVolume::GetDeviceLibrary(sbIDeviceLibrary** aDeviceLibrary)
 {
   NS_ENSURE_ARG_POINTER(aDeviceLibrary);
@@ -225,7 +243,8 @@ sbBaseDeviceVolume::Initialize(sbBaseDevice* aDevice)
 
 sbBaseDeviceVolume::sbBaseDeviceVolume() :
   mVolumeLock(nsnull),
-  mIsMounted(PR_FALSE)
+  mIsMounted(PR_FALSE),
+  mRemovable(-1)
 {
 }
 

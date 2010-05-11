@@ -3779,12 +3779,11 @@ sbBaseDevice::UpdateVolumeName(sbBaseDeviceVolume* aVolume)
 
   // Check if the volume is removable.
   PRBool storageRemovable = PR_FALSE;
-  nsAutoString storageRemovableStr;
-  rv = deviceLibrary->GetProperty
-         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_STORAGE_REMOVABLE),
-          storageRemovableStr);
-  if (NS_SUCCEEDED(rv) && !storageRemovableStr.IsEmpty()) {
-    storageRemovable = storageRemovableStr.EqualsLiteral("1");
+  PRInt32 removable;
+  rv = aVolume->GetRemovable(&removable);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (removable >= 0) {
+    storageRemovable = (removable != 0);
   }
   else {
     // Assume first volume is internal and all others are removable.

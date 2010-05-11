@@ -110,18 +110,39 @@ public:
   // Base device volume getters/setters.
   //
 
+  /**
+   * Get/set the volume GUID.
+   */
   nsresult GetGUID(nsAString& aGUID);
 
   nsresult SetGUID(const nsAString& aGUID);
 
+  /**
+   * Get/set the volume mounted state.
+   */
   nsresult GetIsMounted(PRBool* aIsMounted);
 
   nsresult SetIsMounted(PRBool aIsMounted);
 
+  /**
+   * Get/set whether the volume is removable.  If this value is 1, the volume is
+   * removable.  If it's 0, the volume is not removable.  If it's -1, it is
+   * unknown wether the volume is removable.
+   */
+  nsresult GetRemovable(PRInt32* aRemovable);
+
+  nsresult SetRemovable(PRInt32 aRemovable);
+
+  /**
+   * Get/set the volume device library.
+   */
   nsresult GetDeviceLibrary(sbIDeviceLibrary** aDeviceLibrary);
 
   nsresult SetDeviceLibrary(sbIDeviceLibrary* aDeviceLibrary);
 
+  /**
+   * Get the volume statistics.
+   */
   nsresult GetStatistics(sbDeviceStatistics** aStatistics);
 
 
@@ -176,6 +197,8 @@ private:
   //   mGUID                    Persistent unique ID specific to the media
   //                            volume.
   //   mIsMounted               If true, volume has been mounted.
+  //   mRemovable               1 if removable, 0 if not removable, -1 if
+  //                            unknown.
   //   mDeviceLibrary           Device library residing on volume.
   //   mStatistics              Volume device statistics.
   //
@@ -183,6 +206,7 @@ private:
   sbBaseDevice*                 mDevice;
   nsString                      mGUID;
   PRBool                        mIsMounted;
+  PRInt32                       mRemovable;
   nsCOMPtr<sbIDeviceLibrary>    mDeviceLibrary;
   nsRefPtr<sbDeviceStatistics>  mStatistics;
 };
