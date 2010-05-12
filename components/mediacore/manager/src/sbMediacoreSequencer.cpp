@@ -53,7 +53,9 @@
 #include <prtime.h>
 
 #include <sbICascadeFilterSet.h>
+#include <sbIFilterableMediaListView.h>
 #include <sbILibrary.h>
+#include <sbILibraryConstraints.h>
 #include <sbIMediacore.h>
 #include <sbIMediacoreEvent.h>
 #include <sbIMediacoreEventTarget.h>
@@ -3662,13 +3664,25 @@ sbMediacoreSequencer::CheckPropertiesInfluenceView(sbIPropertyArray *aProperties
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  nsCOMPtr<sbICascadeFilterSet> cfs;
-  rv = mView->GetCascadeFilterSet(getter_AddRefs(cfs));
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbICascadeFilterSet>  cfs;
+  PRUint16                       filterCount = 0;
+  nsCOMPtr<sbILibraryConstraint> constraint;
+  PRUint32                       constraintGroupCount = 0;
 
-  PRUint16 filterCount = 0;
-  rv = cfs->GetLength(&filterCount);
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIFilterableMediaListView>
+    filterableView = do_QueryInterface(mView);
+  if (filterableView) {
+    rv = filterableView->GetFilterConstraint(getter_AddRefs(constraint));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = constraint->GetGroupCount(&constraintGroupCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = mView->GetCascadeFilterSet(getter_AddRefs(cfs));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = cfs->GetLength(&filterCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   nsCOMPtr<sbISortableMediaListView> sortableView;
   sortableView = do_QueryInterface(mView, &rv);
@@ -3691,15 +3705,35 @@ sbMediacoreSequencer::CheckPropertiesInfluenceView(sbIPropertyArray *aProperties
     rv = property->GetId(id);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Check the cascade filter set
-    for (PRUint16 filterIndex = 0; filterIndex < filterCount; ++filterIndex) {
-      nsString filter;
-      rv = cfs->GetProperty(filterIndex, filter);
-      NS_ENSURE_SUCCESS(rv, rv);
+    // Check the filter constraint
+    if (constraint) {
+      for (PRUint32 groupIndex = 0;
+           groupIndex < constraintGroupCount;
+           ++groupIndex) {
+        nsCOMPtr<sbILibraryConstraintGroup> group;
+        rv = constraint->GetGroup(groupIndex, getter_AddRefs(group));
+        NS_ENSURE_SUCCESS(rv, rv);
 
-      if (id.Equals(filter)) {
-        // The property is present in the cascade filter set
-        return PR_TRUE;
+        PRBool hasProperty;
+        rv = group->HasProperty(id, &hasProperty);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        if (hasProperty)
+          return PR_TRUE;
+      }
+    }
+
+    // Check the cascade filter set
+    if (cfs) {
+      for (PRUint16 filterIndex = 0; filterIndex < filterCount; ++filterIndex) {
+        nsString filter;
+        rv = cfs->GetProperty(filterIndex, filter);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        if (id.Equals(filter)) {
+          // The property is present in the cascade filter set
+          return PR_TRUE;
+        }
       }
     }
 
