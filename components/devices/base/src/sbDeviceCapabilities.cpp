@@ -88,6 +88,14 @@ sbDeviceCapabilities::~sbDeviceCapabilities()
     delete formatType;
   }
   mContentFormatTypes.Clear();
+
+  count = mContentPreferredFormatTypes.Count();
+  for(PRInt32 i = 0; i < count; i++) {
+    FormatTypes *formatType =
+      static_cast<FormatTypes *>(mContentPreferredFormatTypes.ElementAt(i));
+    delete formatType;
+  }
+  mContentPreferredFormatTypes.Clear();
 }
 
 NS_IMETHODIMP
@@ -113,8 +121,18 @@ sbDeviceCapabilities::Init()
     rv = mContentFormatTypes.AppendElement(newFormatTypes) ?
             NS_OK : NS_ERROR_FAILURE;
     NS_ENSURE_SUCCESS(rv, rv);
+
+    FormatTypes *newPreferredFormatTypes = new FormatTypes;
+    if (!newPreferredFormatTypes)
+      NS_ENSURE_SUCCESS(rv, NS_ERROR_OUT_OF_MEMORY);
+    rv = newPreferredFormatTypes->Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mContentPreferredFormatTypes.AppendElement(newPreferredFormatTypes) ?
+            NS_OK : NS_ERROR_FAILURE;
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   mContentFormatTypes.Compact();
+  mContentPreferredFormatTypes.Compact();
 
   isInitialized = PR_TRUE;
   return NS_OK;
@@ -236,6 +254,38 @@ sbDeviceCapabilities::AddFormatType(PRUint32 aContentType,
 
   FormatTypes *formatType =
     static_cast<FormatTypes *>(mContentFormatTypes.SafeElementAt(aContentType));
+  if (!formatType)
+    return NS_ERROR_NULL_POINTER;
+
+  nsTArray<nsCOMPtr<nsISupports> > * formatTypes;
+  PRBool const found = formatType->Get(aMimeType, &formatTypes);
+  if (!found) {
+    formatTypes = new nsTArray<nsCOMPtr<nsISupports> >(1);
+  }
+
+  formatTypes->AppendElement(aFormatType);
+
+  if (!found) {
+    PRBool const added = formatType->Put(aMimeType, formatTypes);
+    NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceCapabilities::AddPreferredFormatType(PRUint32 aContentType,
+                                    nsAString const & aMimeType,
+                                    nsISupports * aFormatType)
+{
+  NS_ENSURE_ARG_POINTER(aFormatType);
+  NS_ENSURE_ARG_RANGE(aContentType,
+                      sbIDeviceCapabilities::CONTENT_UNKNOWN,
+                      sbIDeviceCapabilities::CONTENT_MAX_TYPES - 1);
+
+  FormatTypes *formatType =
+    static_cast<FormatTypes *>(mContentPreferredFormatTypes.SafeElementAt(
+                aContentType));
   if (!formatType)
     return NS_ERROR_NULL_POINTER;
 
@@ -561,6 +611,54 @@ sbDeviceCapabilities::GetFormatTypes(PRUint32 aContentType,
 
   *aArrayCount = count;
   *aSupportedFormats = formatsArray;
+
+  return NS_OK;
+}
+
+/**
+ * Returns the list of preferred constraints for the format
+ */
+NS_IMETHODIMP
+sbDeviceCapabilities::GetPreferredFormatTypes(PRUint32 aContentType,
+                                              nsAString const & aMimeType,
+                                              PRUint32 *aArrayCount,
+                                              nsISupports *** aPreferredFormats)
+{
+  NS_ENSURE_ARG_POINTER(aArrayCount);
+  NS_ENSURE_ARG_POINTER(aPreferredFormats);
+  NS_ENSURE_ARG_RANGE(aContentType,
+                      sbIDeviceCapabilities::CONTENT_UNKNOWN,
+                      sbIDeviceCapabilities::CONTENT_MAX_TYPES - 1);
+
+  FormatTypes *formatType =
+    static_cast<FormatTypes *>(mContentPreferredFormatTypes.SafeElementAt(
+                aContentType));
+  if (!formatType)
+    return NS_ERROR_NULL_POINTER;
+
+  nsTArray<nsCOMPtr<nsISupports> > * formats;
+  PRBool const found = formatType->Get(aMimeType, &formats);
+  if (!found) {
+    // If there were no format types found, forward to GetFormatTypes - this
+    // simply means we weren't given any preferred types, and will transcode to
+    // anything supported
+    return GetFormatTypes(aContentType, aMimeType, aArrayCount,
+                          aPreferredFormats);
+  }
+
+  PRUint32 count = formats->Length();
+
+  nsISupports **formatsArray = static_cast<nsISupports **>(NS_Alloc(
+              sizeof(nsISupports *) * count));
+  NS_ENSURE_TRUE(formatsArray, NS_ERROR_OUT_OF_MEMORY);
+
+  for (PRUint32 i = 0; i < count; i++) {
+    formatsArray[i] = formats->ElementAt(i);
+    NS_ADDREF(formatsArray[i]);
+  }
+
+  *aArrayCount = count;
+  *aPreferredFormats = formatsArray;
 
   return NS_OK;
 }

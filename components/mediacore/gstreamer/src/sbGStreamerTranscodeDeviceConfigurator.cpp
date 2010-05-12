@@ -557,12 +557,16 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
          mimeTypeIndex < mimeTypesCount;
          ++mimeTypeIndex)
     {
+      /* We get the preferred format types here - these are the ones that it's
+         ok to transcode to (rather than the full set of things supported by
+         the device) */
       nsISupports** formatTypes;
       PRUint32 formatTypeCount;
-      rv = caps->GetFormatTypes(sbIDeviceCapabilities::CONTENT_VIDEO,
-                               NS_ConvertASCIItoUTF16(mimeTypes[mimeTypeIndex]),
-                               &formatTypeCount,
-                               &formatTypes);
+      rv = caps->GetPreferredFormatTypes(
+              sbIDeviceCapabilities::CONTENT_VIDEO,
+              NS_ConvertASCIItoUTF16(mimeTypes[mimeTypeIndex]),
+              &formatTypeCount,
+              &formatTypes);
       NS_ENSURE_SUCCESS(rv, rv);
       sbAutoFreeXPCOMPointerArray<nsISupports> freeFormats(formatTypeCount,
                                                            formatTypes); 

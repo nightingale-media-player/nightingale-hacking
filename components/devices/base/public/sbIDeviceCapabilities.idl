@@ -430,7 +430,7 @@ interface sbIVideoFormatType : nsISupports
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(4b1ab380-4b67-11df-9879-0800200c9a66)]
+[scriptable, uuid(7ce2a138-d1b4-4980-9c36-04c0389c6ce2)]
 interface sbIDeviceCapabilities : nsISupports
 {
   /**
@@ -488,6 +488,20 @@ interface sbIDeviceCapabilities : nsISupports
    *                    it could be a sbIAudioFormatType or a sbIImageFormatType
    */
   void AddFormatType(in PRUint32 aContentType,
+                     in AString aMimeType,
+                     in nsISupports aFormatType);
+
+  /**
+   * \brief Add a preferred constraint to a mime type (these are used for
+   *        target formats when transcoding.
+   * \param aContentType the content type this format falls under, see the
+   *                     CONTENT_* constants below.
+   * \param aMimeType the mime type we're adding a constraint for. This must 
+   *                  correspond to a mime type previously added by addMimeTypes
+   * \param aFormatType the object describing the format type. For example it 
+   *                    it could be a sbIAudioFormatType or a sbIImageFormatType
+   */
+  void AddPreferredFormatType(in PRUint32 aContentType,
                      in AString aMimeType,
                      in nsISupports aFormatType);
                            
@@ -572,6 +586,23 @@ interface sbIDeviceCapabilities : nsISupports
                       out unsigned long aArrayCount,
                       [retval, array, size_is(aArrayCount)]
                         out nsISupports aSupportedFormats);
+
+  /**
+   * Returns an array of constraint objects (sbIVideoFormatType,
+   * sbIAudioFormatType, sbIImageFormatType, depending on the content
+   * type requested) for this mime type and type of content.
+   *
+   * These specify the preferred format for this type of data. If transcoding
+   * is required, it will always transcode to parameters matching one of these
+   * constraint objects. If an implementation has no specific knowledge of
+   * preferred values, it should simply return the same information here as from
+   * getFormatTypes.
+   */
+  void getPreferredFormatTypes(in PRUint32 aContentType,
+                               in AString aMimeType,
+                               out unsigned long aArrayCount,
+                               [retval, array, size_is(aArrayCount)]
+                                  out nsISupports aPreferredFormats);
  
   /**
    * Returns an array of nsISupportsPRUint32 values defined in

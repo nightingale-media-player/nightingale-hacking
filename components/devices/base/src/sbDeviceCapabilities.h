@@ -63,6 +63,7 @@ protected:
   ContentTypes mContentTypes;
   SupportedMimeTypes mSupportedMimeTypes;
   nsVoidArray mContentFormatTypes;
+  nsVoidArray mContentPreferredFormatTypes;
   nsTArray<PRUint32> mSupportedEvents;
 };
 

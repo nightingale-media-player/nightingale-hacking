@@ -634,6 +634,14 @@ sbDeviceXMLCapabilities::ProcessAudio(nsIDOMNode * aAudioNode)
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
+    nsString isPreferredString;
+    rv = attributes.GetValue(NS_LITERAL_STRING("preferred"),
+                             isPreferredString);
+    if (rv != NS_ERROR_NOT_AVAILABLE) { // not found error is ok, leave blank
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    PRBool isPreferred = isPreferredString.EqualsLiteral("true");
+
     nsCOMPtr<nsIDOMNodeList> ranges;
     rv = domNode->GetChildNodes(getter_AddRefs(ranges));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -683,10 +691,19 @@ sbDeviceXMLCapabilities::ProcessAudio(nsIDOMNode * aAudioNode)
     rv = AddMimeType(sbIDeviceCapabilities::CONTENT_AUDIO, mimeType);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mDeviceCaps->AddFormatType(sbIDeviceCapabilities::CONTENT_AUDIO,
-                                    mimeType,
-                                    formatType);
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (isPreferred) {
+      rv = mDeviceCaps->AddPreferredFormatType(
+              sbIDeviceCapabilities::CONTENT_AUDIO,
+              mimeType,
+              formatType);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      rv = mDeviceCaps->AddFormatType(sbIDeviceCapabilities::CONTENT_AUDIO,
+                                      mimeType,
+                                      formatType);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
   return NS_OK;
 }
@@ -1044,6 +1061,14 @@ sbDeviceXMLCapabilities::ProcessVideoFormat(nsIDOMNode* aVideoFormatNode)
     return NS_OK;
   }
 
+  nsString isPreferredString;
+  rv = attributes.GetValue(NS_LITERAL_STRING("preferred"),
+                           isPreferredString);
+  if (rv != NS_ERROR_NOT_AVAILABLE) { // not found error is ok, leave blank
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  PRBool isPreferred = isPreferredString.EqualsLiteral("true");
+
   // Retrieve the child nodes for the video node
   nsCOMPtr<nsIDOMNodeList> domNodes;
   rv = aVideoFormatNode->GetChildNodes(getter_AddRefs(domNodes));
@@ -1089,10 +1114,19 @@ sbDeviceXMLCapabilities::ProcessVideoFormat(nsIDOMNode* aVideoFormatNode)
   rv = AddMimeType(sbIDeviceCapabilities::CONTENT_VIDEO, containerType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mDeviceCaps->AddFormatType(sbIDeviceCapabilities::CONTENT_VIDEO,
-                                  containerType,
-                                  videoFormat);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (isPreferred) {
+    rv = mDeviceCaps->AddPreferredFormatType(
+            sbIDeviceCapabilities::CONTENT_VIDEO,
+            containerType,
+            videoFormat);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = mDeviceCaps->AddFormatType(sbIDeviceCapabilities::CONTENT_VIDEO,
+                                    containerType,
+                                    videoFormat);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
