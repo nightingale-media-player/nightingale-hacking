@@ -922,11 +922,26 @@
 
         this.servicePane = this.parentNode;
 
+        let isMac = (getPlatformString() == "Darwin");
         this.keyListener = function(e) {
           if (!self.image)
             return;
 
-          if (e.altKey) {
+          // Don't switch the modes if the currently focused element is
+          // a text field.  We need to catch the document's active element,
+          // as well as look for the case of the browser's active element
+          // (i.e. if the user is editing a track name in sb-playlist
+          const XULNS =
+                "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+          const HTMLNS = "http://www.w3.org/1999/xhtml";
+          let element = document.activeElement;
+          if (element.namespaceURI == XULNS && element.localName == "browser")
+            element = document.activeElement.docShell.document.activeElement;
+          
+          if (element.namespaceURI == HTMLNS && element.localName == "input")
+            return;
+
+          if ((isMac && e.altKey) || (!isMac && e.shiftKey)) {
             self.image.setAttribute("altKey", "true");
           } else {
             self.image.removeAttribute("altKey");
