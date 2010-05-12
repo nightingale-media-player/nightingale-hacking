@@ -88,7 +88,8 @@ public:
     NS_FORWARD_SOME_SBIDATAREMOTE_METHODS(mInnerDataRemote)
 
     NS_SCRIPTABLE NS_IMETHOD Unbind(void);
-    NS_SCRIPTABLE NS_IMETHOD BindObserver(nsIObserver *aObserver, PRBool aSuppressFirst); 
+    NS_SCRIPTABLE NS_IMETHOD BindObserver(nsIObserver *aObserver, PRBool aSuppressFirst);
+    NS_SCRIPTABLE NS_IMETHOD BindRemoteObserver(sbIRemoteObserver *aObserver, PRBool aSuppressFirst); 
     NS_SCRIPTABLE NS_IMETHOD GetStringValue(nsAString & aStringValue); 
     NS_SCRIPTABLE NS_IMETHOD SetStringValue(const nsAString & aStringValue); 
     NS_SCRIPTABLE NS_IMETHOD GetBoolValue(PRBool *aBoolValue); 

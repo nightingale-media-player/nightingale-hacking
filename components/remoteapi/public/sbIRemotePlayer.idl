@@ -1,27 +1,25 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 /**
@@ -32,7 +30,6 @@
 
 #include "nsISupports.idl"
 
-interface nsIObserver;
 interface nsISimpleEnumerator;
 interface nsIURI;
 interface sbIMediaItem;
@@ -40,6 +37,7 @@ interface sbIMediaListView;
 interface sbIRemoteCommands;
 interface sbIRemoteLibrary;
 interface sbIRemoteMediaList;
+interface sbIRemoteObserver;
 interface sbIRemoteWebPlaylist;
 
 /*
@@ -113,7 +111,7 @@ See Also:
  *  our "Remote API" the websites can call to get information about and interact
  *  with Songbird.
  */
-[scriptable, uuid(d2caab8d-35fd-41f8-9716-62ed422c244b)]
+[scriptable, uuid(82669977-32ae-4ebe-9a4a-437df368e605)]
 interface sbIRemotePlayer : nsISupports
 {
 
@@ -446,7 +444,9 @@ interface sbIRemotePlayer : nsISupports
     //Make sure to save this object somewhere so you may unregister it when you are done
     //listening for changes.
     var listener = {
-      observer: function(subject, topic, data) {
+      observe: function(key, value) {
+        // Key is the metadata key
+        // Value is the current value of the metadata for the registered key
       }
     }
 
@@ -467,7 +467,7 @@ interface sbIRemotePlayer : nsISupports
     Visit <http://www.xulplanet.com/references/xpcomref/ifaces/nsIObserver.html> for nsIObserver interface reference.
   */
   void addListener( in AString aKey,
-                    in nsIObserver aObserver );
+                    in sbIRemoteObserver aObserver );
 
   /**
    * \brief Remove an observer from the metadata key
@@ -500,7 +500,7 @@ interface sbIRemotePlayer : nsISupports
     <addListener()>
   */
   void removeListener( in AString aKey,
-                       in nsIObserver aObserver );
+                       in sbIRemoteObserver aObserver );
 
   /**
    * \brief Download the item passed in

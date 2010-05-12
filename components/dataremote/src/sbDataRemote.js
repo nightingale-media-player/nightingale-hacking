@@ -134,6 +134,10 @@ DataRemote.prototype = {
     if (!aSuppressFirst)
       this.observe(null, null, this._key);
   },
+  
+  bindRemoteObserver: function(aRemoteObserver, aSuppressFirst) {
+    this.bindObserver(aRemoteObserver, aSuppressFirst);
+  },
      
   bindProperty: function(aElement, aProperty, aIsBool, aIsNot, aEvalString) {
     if (!this._initialized)
@@ -358,8 +362,16 @@ DataRemote.prototype = {
     // Handle callback states
     if (this._boundObserver) {
       try {
-        // pass useful information to the observer.
-        this._boundObserver.observe( this, this._key, value );
+        // check if we're dealing with a remote api observer instead of a
+        // normal application level data remote observer.
+        if (this._boundObserver instanceof Ci.sbIRemoteObserver) {
+          // pass useful information to the observer.
+          this._boundObserver.observe( this._key, value );
+        }
+        else {
+          // pass useful information to the observer.
+          this._boundObserver.observe( this, this._key, value );
+        }
       }
       catch (err) {
         dump("ERROR! Could not call boundObserver.observe(). Key = " + this._key + "\n" + err + "\n");

@@ -1165,7 +1165,7 @@ sbRemotePlayer::GetMute( PRBool *aMute )
 
 NS_IMETHODIMP
 sbRemotePlayer::AddListener( const nsAString &aKey,
-                             nsIObserver *aObserver )
+                             sbIRemoteObserver *aObserver )
 {
   LOG(("sbRemotePlayer::AddListener()"));
   NS_ENSURE_ARG_POINTER(aObserver);
@@ -1187,7 +1187,7 @@ sbRemotePlayer::AddListener( const nsAString &aKey,
   NS_ENSURE_SUCCESS( rv, rv );
   rv = dr->Init( aKey, SB_PREFS_ROOT );
   NS_ENSURE_SUCCESS( rv, rv );
-  rv = dr->BindObserver( aObserver, PR_FALSE );
+  rv = dr->BindRemoteObserver( aObserver, PR_FALSE );
   NS_ENSURE_SUCCESS( rv, rv );
 
   sbRemoteObserver remObs;
@@ -1201,7 +1201,7 @@ sbRemotePlayer::AddListener( const nsAString &aKey,
 
 NS_IMETHODIMP
 sbRemotePlayer::RemoveListener( const nsAString &aKey,
-                                nsIObserver *aObserver )
+                                sbIRemoteObserver *aObserver )
 {
   NS_ENSURE_ARG_POINTER(aObserver);
   LOG(("sbRemotePlayer::RemoveListener(%s %x)",
