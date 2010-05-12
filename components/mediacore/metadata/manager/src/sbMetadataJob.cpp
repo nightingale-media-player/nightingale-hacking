@@ -758,6 +758,7 @@ nsresult sbMetadataJob::CopyPropertiesToMediaItem(sbMetadataJobItem *aJobItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_NAMED_LITERAL_STRING( trackNameKey, SB_PROPERTY_TRACKNAME );
+  NS_NAMED_LITERAL_STRING( contentTypeKey, SB_PROPERTY_CONTENTTYPE );
   nsAutoString oldName;
   rv = item->GetProperty( trackNameKey, oldName );
   nsAutoString trackName;
@@ -780,8 +781,20 @@ nsresult sbMetadataJob::CopyPropertiesToMediaItem(sbMetadataJobItem *aJobItem,
     rv = props->GetPropertyValue( trackNameKey, trackName );
     
     if (NS_FAILED(rv)) {
-      rv = HandleFailedItem(aJobItem, PR_TRUE, aWillRetry);
-      NS_ENSURE_SUCCESS(rv, rv);
+      // If we didn't get a track name, that's usually a sign that something
+      // went wrong in metadata scan, and we should fall through and try the
+      // next handler in case it works better. However, for video items, it's
+      // very common to not have title metadata - so we don't do this if the
+      // content type is video.
+      nsAutoString contentType;
+      rv = props->GetPropertyValue( contentTypeKey, contentType );
+
+      // So now only go through the retry path if we couldn't get the content
+      // type, or it wasn't video.
+      if (NS_FAILED(rv) || !contentType.EqualsLiteral("video")) {
+        rv = HandleFailedItem(aJobItem, PR_TRUE, aWillRetry);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
   } else {
     rv = HandleFailedItem(aJobItem, PR_TRUE, aWillRetry);

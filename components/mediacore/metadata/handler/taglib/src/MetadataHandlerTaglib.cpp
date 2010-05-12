@@ -238,9 +238,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Vote(
         || (_url.Find(".ogm", PR_TRUE) != -1)
         || (_url.Find(".ogg", PR_TRUE) != -1)
         || (_url.Find(".wma", PR_TRUE) != -1)
-        || (_url.Find(".wmv", PR_TRUE) != -1)
-        || (_url.Find(".wm", PR_TRUE)  != -1)
-        || (_url.Find(".asf", PR_TRUE) != -1))
+        || (_url.Find(".wmv", PR_TRUE) != -1))
     {
         vote = 100;
     }
@@ -2250,6 +2248,11 @@ nsresult sbMetadataHandlerTaglib::ReadMetadata()
             AddMetadataValue(SB_PROPERTY_CONTENTTYPE, NS_LITERAL_STRING("video"));
         } else if (fileExt.Equals(NS_LITERAL_CSTRING("wma"))) {
             isValid = ReadASFFile();
+        } else if (fileExt.Equals(NS_LITERAL_CSTRING("wmv"))) ||
+            isValid = ReadASFFile();
+
+            // Always set WMV files as video.
+            AddMetadataValue(SB_PROPERTY_CONTENTTYPE, NS_LITERAL_STRING("video"));
         } else {
             decodedFileExt = PR_FALSE;
         }
