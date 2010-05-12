@@ -2248,7 +2248,7 @@ nsresult sbMetadataHandlerTaglib::ReadMetadata()
             AddMetadataValue(SB_PROPERTY_CONTENTTYPE, NS_LITERAL_STRING("video"));
         } else if (fileExt.Equals(NS_LITERAL_CSTRING("wma"))) {
             isValid = ReadASFFile();
-        } else if (fileExt.Equals(NS_LITERAL_CSTRING("wmv"))) ||
+        } else if (fileExt.Equals(NS_LITERAL_CSTRING("wmv"))) {
             isValid = ReadASFFile();
 
             // Always set WMV files as video.
