@@ -32,6 +32,7 @@
 #include "nsIObserver.idl"
 
 interface nsIDOMElement;
+interface sbIRemoteObserver;
 
 /**
  * \interface sbIDataRemote
@@ -52,7 +53,7 @@ interface nsIDOMElement;
  *
  * \sa DataRemote
  */
-[scriptable, uuid(93ba71f6-1dd1-11b2-aa51-d90e4f3bc36f)]
+[scriptable, uuid(0f318938-0ea5-46b6-9e02-fda0ff19cbb7)]
 interface sbIDataRemote : nsIObserver
 {
 
@@ -88,6 +89,21 @@ interface sbIDataRemote : nsIObserver
    */
   void bindObserver(in nsIObserver aObserver,
                     [optional] in boolean aSuppressFirst);
+
+  /**
+   * \brief
+   * When the key associated with the sbDataRemote changes the observer will
+   *   get a callback to observe() with the new value for the data, and the 
+   *   key to which the data belongs.
+   *
+   * This method is specifically for registering remote api observers. 
+   *
+   * \param aObserver
+   * \param aSuppressFirst
+   * \throws NS_ERROR_NOT_INITIALIZED if init has not been called
+   */
+  void bindRemoteObserver(in sbIRemoteObserver aObserver,
+                          [optional] in boolean aSuppressFirst);
 
   /**
    * \brief
