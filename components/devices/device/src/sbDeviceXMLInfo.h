@@ -51,10 +51,12 @@
 
 // Mozilla imports.
 #include <nsCOMPtr.h>
+#include <nsIArray.h>
 #include <nsIDOMDocument.h>
 #include <nsIDOMElement.h>
 #include <nsStringAPI.h>
 #include <nsTArray.h>
+
 
 //------------------------------------------------------------------------------
 //
@@ -163,6 +165,16 @@ public :
    * \param aFolders This is an array that the excluded folders will be added
    */
   nsresult GetExcludedFolders(nsAString & aExcludedFolders);
+
+  /**
+   * Return in aStorageDeviceInfoList a list of information for storage devices.
+   * Each element in the list is an nsIPropertyBag of storage device properties.
+   * See sbIDeviceInfoRegistrar.getStorageDeviceInfoList for storage device info
+   * examples.
+   *
+   * \param aStorageDeviceInfoList  Returned storage device info list.
+   */
+  nsresult GetStorageDeviceInfoList(nsIArray** aStorageDeviceInfoList);
 
   /**
    * Construct a Songbird device XML info object to be used for the device
