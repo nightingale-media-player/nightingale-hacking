@@ -867,9 +867,12 @@
         <xul:hbox id="hbox-header" class="servicepane-group-header">
           <xul:hbox class="servicepane-group-header-wrapper"
                     flex="1"
-                    onclick="toggleVisibility(event)"
+                    onclick="toggleVisibility(event)">
+                    <!-- Reverted back to previous behaviour per
+                         bug 21108
                     onmouseover="checkCollapsible(event)"
                     onmouseout="uncheckCollapsible(event)">
+                    -->
             <xul:description class="servicepane-group-label"
                        xbl:inherits="xbl:text=label"/>
             <xul:spacer flex="1" />
@@ -1077,11 +1080,13 @@
       <method name="toggleVisibility">
         <parameter name="event" />
         <body><![CDATA[
+          /* Commented out per bug 21108
           // Don't allow collapsing of the group if our currently active node
           // is in it
           let relationship = this.getRelationshipToActiveNode();
           if (relationship & this.DOCUMENT_POSITION_CONTAINED_BY)
             return;
+            */
 
           this.visible = !this.visible;
         ]]></body>
