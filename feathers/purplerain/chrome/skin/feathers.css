@@ -686,6 +686,8 @@ hbox.servicepane-node-info > stack > hbox > label {
   margin-top: 0px;
   margin-bottom: 0px;
   color: rgb(219,219,219);
+  font: message-box;
+  font-size: 11px;
 }
 sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > label {
   color: white;
@@ -801,10 +803,10 @@ sb-servicepane-node-badge > hbox > label {
   padding-left: 5px;
   padding-right: 5px;
   -moz-border-radius: 6px;
-  font-weight: bold;
-  font-size: 11px;
   margin: 0px 4px 0px 0px;
   font-family: Helvetica Neue, Helvetica, Arial;
+  font-weight: bold;
+  font-size: 11px;
 }
 
 sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges > sb-servicepane-node-badge > hbox > label {
