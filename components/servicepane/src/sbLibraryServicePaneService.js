@@ -489,8 +489,36 @@ function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrienta
   return null;
 }
 
+sbLibraryServicePane.prototype._canDropReorder =
+function sbLibraryServicePane__canDropReorder(aNode, aDragSession, aOrientation) {
+  // see if we can handle the drag and drop based on node properties
+  let types = [];
+  if (aOrientation == 0) {
+    // drop in
+    if (aNode.dndAcceptIn) {
+      types = aNode.dndAcceptIn.split(',');
+    }
+  } else {
+    // drop near
+    if (aNode.dndAcceptNear) {
+      types = aNode.dndAcceptNear.split(',');
+    }
+  }
+  for each (let type in types) {
+    if (aDragSession.isDataFlavorSupported(type)) {
+      return type;
+    }
+  }
+  return null;
+}
+
+
 sbLibraryServicePane.prototype.canDrop =
 function sbLibraryServicePane_canDrop(aNode, aDragSession, aOrientation, aWindow) {
+  // see if we can handle the drag and drop based on node properties
+  if (this._canDropReorder(aNode, aDragSession, aOrientation)) {
+    return true;
+  }
   // don't allow drop on read-only nodes
   if (aNode.getAttributeNS(LSP, "ReadOnly") == "true")
     return false;
@@ -535,6 +563,50 @@ function sbLibraryServicePane_canDrop(aNode, aDragSession, aOrientation, aWindow
 
 sbLibraryServicePane.prototype.onDrop =
 function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation, aWindow) {
+  // see if this is a reorder we can handle based on node properties
+  let type = this._canDropReorder(aNode, aDragSession, aOrientation);
+  if (type) {
+    // we're in business
+
+    // do the dance to get our data out of the dnd system
+    // create an nsITransferable
+    let transferable = Cc["@mozilla.org/widget/transferable;1"]
+                         .createInstance(Ci.nsITransferable);
+    // specify what kind of data we want it to contain
+    transferable.addDataFlavor(type);
+    // ask the drag session to fill the transferable with that data
+    aDragSession.getData(transferable, 0);
+    // get the data from the transferable
+    let data = {};
+    transferable.getTransferData(type, data, {});
+    // it's always a string. always.
+    data = data.value.QueryInterface(Ci.nsISupportsString).data;
+
+    // for drag and drop reordering the data is just the servicepane node id
+    let droppedNode = this._servicePane.getNode(data);
+
+    // fail if we can't get the node or it is the node we are over
+    if (!droppedNode || aNode == droppedNode) {
+      return;
+    }
+
+    if (aOrientation == 0) {
+      // drop into
+      aNode.appendChild(droppedNode);
+    } else if (aOrientation > 0) {
+      // drop after
+      aNode.parentNode.insertBefore(droppedNode, aNode.nextSibling);
+    } else {
+      // drop before
+      aNode.parentNode.insertBefore(droppedNode, aNode);
+    }
+    // work out what library resource is associated with the moved node 
+    var medialist = this.getLibraryResourceForNode(aNode);
+    
+    this._saveListsOrder(medialist.library, aNode.parentNode);
+    return;
+  }
+  
   // don't allow drop on read-only nodes
   if (aNode.getAttributeNS(LSP, "ReadOnly") == "true")
     return;
@@ -598,6 +670,24 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation, aWindow)
                                    -1, 
                                    dropHandlerListener);
   }
+}
+
+sbLibraryServicePane.prototype._saveListsOrder =
+function sbLibraryServicePane__saveListsOrder(library, nodesParent) {
+  var str = "";
+  var children = nodesParent.childNodes;
+  while (children.hasMoreElements()) {
+    var child = children.getNext();
+    var resource = this.getLibraryResourceForNode(child);
+    if (resource instanceof Components.interfaces.sbIMediaList) {
+      if (str != "")
+        str += ",";
+      str += resource.guid;
+    }
+  }
+  var appPrefs = Cc["@mozilla.org/fuel/application;1"]
+                   .getService(Ci.fuelIApplication).prefs;
+  appPrefs.setValue("songbird.library_listorder." + library.guid, str);
 }
 
 sbLibraryServicePane.prototype._nodeIsLibrary =
@@ -1121,10 +1211,31 @@ function sbLibraryServicePane__processListsInLibrary(aLibrary) {
   // Enumerate all lists in this library
   aLibrary.enumerateItemsByProperty(SBProperties.isList, "1",
                                     listener );
-
-  // Make sure we have a node for each list
-  for (var i = 0; i < listener.items.length; i++) {
-    this._ensureMediaListNodeExists(listener.items[i]);
+  
+  // copy array of lists
+  var remaining = listener.items.slice(0);
+  
+  // create nodes in the saved order, ignore guids with no
+  // corresponding medialist and nodes whose guid isnt in the
+  // saved order
+  var appPrefs = Cc["@mozilla.org/fuel/application;1"]
+                   .getService(Ci.fuelIApplication).prefs;
+  var saved = appPrefs.getValue("songbird.library_listorder." + aLibrary.guid, "");
+  var savedArray = saved.split(",");
+  for each (var listguid in savedArray) {
+    for (var i in remaining) {
+      if (remaining[i].guid == listguid) {
+        this._ensureMediaListNodeExists(remaining[i], true);
+        remaining.slice(i, 1);
+        break;
+      }
+    }
+  }
+  
+  // Make sure we have a node for each remaining list. each node will be
+  // inserted after the last node of the same type
+  for (var i = 0; i < remaining.length; i++) {
+    this._ensureMediaListNodeExists(remaining[i], false);
   }
 }
 
@@ -1499,7 +1610,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
  * creating one if none exists.
  */
 sbLibraryServicePane.prototype._ensureMediaListNodeExists =
-function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
+function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList, aAppend) {
   //logcall(arguments);
 
   var id = this._itemURN(aMediaList);
@@ -1575,7 +1686,7 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
 
   if (!node.parentNode) {
     // Place the node in the tree
-    this._insertMediaListNode(node, aMediaList);
+    this._insertMediaListNode(node, aMediaList, aAppend);
   }
 
   return node;
@@ -1681,7 +1792,7 @@ function sbLibraryServicePane__scanForRemovedItems(aLibrary) {
  * in the service pane tree
  */
 sbLibraryServicePane.prototype._insertMediaListNode =
-function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList) {
+function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList, aAppend) {
   //logcall(arguments);
 
   // If it is a main library media list, it belongs in either the
@@ -1712,7 +1823,10 @@ function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList) {
         folder = this._ensurePlaylistFolderExists();
       }
 
-      this._insertAfterLastOfSameType(aNode, folder);
+      if (aAppend)
+        folder.appendChild(aNode);
+      else  
+        this._insertAfterLastOfSameType(aNode, folder);
     }
   }
   // If it is a secondary library playlist, it should be
@@ -1729,7 +1843,10 @@ function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList) {
 
     // If we found a parent library node make the playlist node its child
     if (parentLibraryNode) {
-      this._insertAfterLastOfSameType(aNode, parentLibraryNode);
+      if (aAppend)
+        parentLibraryNode.appendChild(aNode);
+      else
+        this._insertAfterLastOfSameType(aNode, parentLibraryNode);
     } else {
       LOG("sbLibraryServicePane__insertMediaListNode: could not add media list to parent library");
       this._servicePane.root.appendChild(aNode);

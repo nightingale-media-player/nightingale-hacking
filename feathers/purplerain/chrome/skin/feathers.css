@@ -749,6 +749,23 @@ sb-servicepane-node.droptarget > vbox > hbox.servicepane-node-info {
   border: 1px solid rgb(143,132,181);
 }
 
+/* highlighted in the servicepane for when a node is the target for a drop */
+sb-servicepane-node.dndAcceptIn > vbox > hbox.servicepane-node-info {
+  background-color: rgb(61,57,84);
+  -moz-border-radius: 3px;
+  border: 1px solid rgb(143,132,181);
+}
+
+/* overlined in the servicepane for when a node is the target for a drop reorder */
+sb-servicepane-node.dndAcceptBefore > vbox > hbox.servicepane-node-info {
+  border-top: 2px solid rgb(143,132,181);
+}
+
+/* underlined in the servicepane for when a node is the target for a drop reorder */
+sb-servicepane-node.dndAcceptAfter > vbox > hbox.servicepane-node-info {
+  border-bottom: 2px solid rgb(143,132,181);
+}
+
 /* the open/closed container toggle arrow for the node and its subnodes */
 sb-servicepane-node image.servicepane-node-container-arrow {
   padding: 10px 3px;

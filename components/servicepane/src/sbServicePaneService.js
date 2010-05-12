@@ -348,7 +348,6 @@ ServicePaneNode.prototype = {
       // Check conditions again, mutation listeners might have modified the tree
       checkConditions.apply(this);
     }
-
     if (this._comparisonFunction) {
       // Use comparison function to determine node position
       let index = 0;
@@ -371,7 +370,7 @@ ServicePaneNode.prototype = {
     aChild.isInTree = this.isInTree;
 
     // Trigger mutation listeners
-    aChild._notifyMutationListeners("nodeInserted", [aChild, this]);
+    aChild._notifyMutationListeners("nodeInserted", [aChild, this, aBefore]);
 
     return aChild;
   },
@@ -1001,29 +1000,6 @@ ServicePaneService.prototype = {
                        "longer need to call it.");
   },
 
-  _canDropReorder: function ServicePaneService__canDropReorder(
-                                          aNode, aDragSession, aOrientation) {
-    // see if we can handle the drag and drop based on node properties
-    let types = [];
-    if (aOrientation == 0) {
-      // drop in
-      if (aNode.dndAcceptIn) {
-        types = aNode.dndAcceptIn.split(',');
-      }
-    } else {
-      // drop near
-      if (aNode.dndAcceptNear) {
-        types = aNode.dndAcceptNear.split(',');
-      }
-    }
-    for each (let type in types) {
-      if (aDragSession.isDataFlavorSupported(type)) {
-        return type;
-      }
-    }
-    return null;
-  },
-
   canDrop: function ServicePaneService_canDrop(
                                   aNode, aDragSession, aOrientation, aWindow) {
     if (!aNode) {
@@ -1032,11 +1008,6 @@ ServicePaneService.prototype = {
   
     LOG("canDrop(" + aNode.id + ")");
 
-    // see if we can handle the drag and drop based on node properties
-    if (this._canDropReorder(aNode, aDragSession, aOrientation)) {
-      return true;
-    }
-  
     // let the module that owns this node handle this
     if (aNode.contractid && aNode.contractid in this._modulesByContractId) {
       let module = this._modulesByContractId[aNode.contractid];
@@ -1053,46 +1024,6 @@ ServicePaneService.prototype = {
 
     LOG("onDrop(" + aNode.id + ")");
 
-    // see if this is a reorder we can handle based on node properties
-    let type = this._canDropReorder(aNode, aDragSession, aOrientation);
-    if (type) {
-      // we're in business
-  
-      // do the dance to get our data out of the dnd system
-      // create an nsITransferable
-      let transferable = Cc["@mozilla.org/widget/transferable;1"]
-                           .createInstance(Ci.nsITransferable);
-      // specify what kind of data we want it to contain
-      transferable.addDataFlavor(type);
-      // ask the drag session to fill the transferable with that data
-      aDragSession.getData(transferable, 0);
-      // get the data from the transferable
-      let data = {};
-      transferable.getTransferData(type, data, {});
-      // it's always a string. always.
-      data = data.value.QueryInterface(Ci.nsISupportsString).data;
-  
-      // for drag and drop reordering the data is just the servicepane node id
-      let droppedNode = this.getNode(data);
-  
-      // fail if we can't get the node or it is the node we are over
-      if (!droppedNode || aNode == droppedNode) {
-        return;
-      }
-  
-      if (aOrientation == 0) {
-        // drop into
-        aNode.appendChild(droppedNode);
-      } else if (aOrientation > 0) {
-        // drop after
-        aNode.parentNode.insertBefore(droppedNode, aNode.nextSibling);
-      } else {
-        // drop before
-        aNode.parentNode.insertBefore(droppedNode, aNode);
-      }
-      return;
-    }
-  
     // or let the module that owns this node handle it
     if (aNode.contractid && aNode.contractid in this._modulesByContractId) {
       let module = this._modulesByContractId[aNode.contractid];

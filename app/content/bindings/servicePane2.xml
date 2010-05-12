@@ -344,7 +344,21 @@
       </property>
 
       <!--
-        - \brief The browser we are linked to if any.
+        - \brief Get the parent service pane group element
+        -->
+      <property name="_servicePaneGroup">
+        <getter>
+        <![CDATA[
+          let parent = this.parentNode;
+          while (parent && parent.tagName != "sb-servicepane-group")
+            parent = parent.parentNode;
+          return parent;
+        ]]>
+        </getter>
+      </property>
+
+      <!-- 
+         - \brief The browser we are linked to if any.
         -->
       <field name="_browser">null</field>
       <property name="browser">
@@ -630,6 +644,8 @@
               region = null;
             }
             
+            var group = this._servicePaneGroup;
+            group._dndReordering = true; 
             var dragAction = this.mDragService.DRAGDROP_ACTION_COPY +
                              this.mDragService.DRAGDROP_ACTION_MOVE;
             this.mDragService.invokeDragSessionWithImage(this, 
@@ -638,6 +654,7 @@
                                                          null, 0, 0,
                                                          event);
             
+            group._dndReordering = false; 
             event.preventDefault();
           }
         ]]>
@@ -659,15 +676,84 @@
         </body>
       </method>
 
+      <method name="_getDropOrientations">
+        <parameter name="event"/>
+        <body>
+          <![CDATA[
+          var orientations = [0];
+          var tophalf = false;
+          if (this._servicePaneGroup._dndReordering) {
+          var y = event.screenY - this.boxObject.screenY;
+          var third = this.boxObject.height/3;
+          if (y < this.boxObject.height/2)
+              tophalf = true;
+            if (y < third) 
+              orientations = [-1, 0, 1]; // before, inside, after
+            else if (y > third*2) 
+              orientations = [1, 0, -1]; // after, inside, before
+            else
+              orientations = [0, (tophalf ? -1 : 1), (tophalf ? 1 : -1)]; // inside, closest, farthest
+          }
+          return orientations;
+          ]]>
+        </body>
+      </method>
       <method name="canDrop">
         <parameter name="event"/>
         <parameter name="session"/>
-        <body><![CDATA[
-          return this.mService.canDrop(this.nodeData,
-                                       this.mDragService.getCurrentSession(),
-                                       0, 
-                                       window);
+        <body>
+          <![CDATA[
+          var orientations = this._getDropOrientations(event);
+          var can = false;
+          for (var i in orientations) {
+            can = this.mService.canDrop(this.nodeData,
+                                        this.mDragService.getCurrentSession(),
+                                        orientations[i], 
+                                        window);
+            if (can) {
+              this.mDropOrientation = orientations[i];
+              break;
+            }
+          }
+          if (!can) {
+            this.mDropOrientation = 0;
+          } else {
+            this._setDropOrientationClass();
+          }
+          return can;
         ]]></body>
+      </method>
+
+      <method name="_removeDropOrientationClass">
+        <body>
+          <![CDATA[
+          this.className = this.className.replace(/\b(dndAcceptIn|dndAcceptBefore|dndAcceptAfter)\b/g, '');
+          ]]>
+        </body>
+      </method>
+      
+      <method name="_setDropOrientationClass">
+        <body>
+          <![CDATA[
+          var className = this.className;
+          className = className.replace(/\b(dndAcceptIn|dndAcceptBefore|dndAcceptAfter)\b/g, '');
+          if (this._servicePaneGroup._dndReordering) {
+            switch (this.mDropOrientation) {
+              case 0:
+                className += " dndAcceptIn";
+                break;
+              case -1:
+                className += " dndAcceptBefore";
+                break;
+              case 1:
+                className += " dndAcceptAfter";
+                break;
+            }
+          }
+          if (this.className != className)
+            this.className = className;
+          ]]>
+        </body>
       </method>
 
 
@@ -677,9 +763,14 @@
         <parameter name="session"/>
         <body>
         <![CDATA[
-          if (session.sourceNode != event.target &&
-              this.canDrop(event, session))
-            this.setAsDropTarget(true);
+          if (session.sourceNode != event.target) {
+            if (this._servicePaneGroup._dndReordering) {
+              // do nothing
+            } else {
+              if (this.canDrop(event, session))
+                this.setAsDropTarget(true);
+            }
+          } 
         ]]>
         </body>
       </method>
@@ -689,16 +780,18 @@
         <parameter name="session"/>
         <body>
           this.setAsDropTarget(false);
+          this._removeDropOrientationClass();
         </body>
       </method>
 
       <method name="onDrop">
         <parameter name="event"/>
         <parameter name="session"/>
-        <body><![CDATA[
+        <body>
+          <![CDATA[
           this.mService.onDrop(this.nodeData,
                                this.mDragService.getCurrentSession(),
-                               0, 
+                               this.mDropOrientation,
                                window);
         ]]></body>
       </method>
@@ -827,6 +920,8 @@
         window.removeEventListener("keydown", this.keyListener, false);
         window.removeEventListener("keyup", this.keyListener, false);
       ]]></destructor>
+
+      <field name="_dndReordering">false</field>
 
       <method name="newPlaylist">
         <parameter name="event" />
@@ -1218,7 +1313,7 @@
             }
           },
 
-          nodeInserted: function(node, parent) {
+          nodeInserted: function(node, parent, insertBefore) {
             if (!parent || parent == this.element.mService.root) {
               let newGroup = this.element.createGroup(node);
               this.element.log("New top level group: " + node.id);
@@ -1233,7 +1328,7 @@
               }
               this.element.log("Parent node is: " +
                                parentNode.getAttribute("nodeid"));
-              let newnode = this.element.createNode(node, parentNode);
+              let newnode = this.element.createNode(node, parentNode, insertBefore);
 
               // If it's ejectable let's add the right badge
               if (node.getAttribute("ejectable") == "true") {
@@ -1359,7 +1454,9 @@
       <method name="createNode">
         <parameter name="nodeData"/>
         <parameter name="parentNode"/>
-        <body><![CDATA[
+        <parameter name="aInsertBefore"/>
+        <body>
+            <![CDATA[
           var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
           var newNode = document.createElementNS(XULNS,"sb-servicepane-node");
           newNode.setAttribute("nodeid", nodeData.id);
@@ -1367,7 +1464,8 @@
             newNode.setAttribute("browser", this.getAttribute("browser"));
           }
           if (parentNode) {
-            parentNode.appendChild(newNode);
+            var nodeBefore = aInsertBefore ? this.getDOMNode(aInsertBefore.id) : null;
+            parentNode.insertBefore(newNode, nodeBefore);
           }
 
           return newNode;

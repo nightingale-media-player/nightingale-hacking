@@ -857,8 +857,8 @@ function testListeners (SPS, aRoot) {
       calls.push(["attrModified", aNode, aAttrName, aNamespace, aOldValue, aNewValue]);
     },
 
-    nodeInserted: function(aNode, aParent) {
-      calls.push(["nodeInserted", aNode, aParent]);
+    nodeInserted: function(aNode, aParent, aBefore) {
+      calls.push(["nodeInserted", aNode, aParent, aBefore]);
     },
 
     nodeRemoved: function(aNode, aParent) {
@@ -885,13 +885,13 @@ function testListeners (SPS, aRoot) {
   // Adding a child to the tree should trigger listeners on it
   aRoot.appendChild(node1);
   assertEqual(calls.length, 1);
-  assertArraysEqual(calls[0], ["nodeInserted", node1, aRoot]);
+  assertArraysEqual(calls[0], ["nodeInserted", node1, aRoot, null]);
   calls = [];
 
   // Adding a child below the node should also trigger listeners
   node1.appendChild(node2);
   assertEqual(calls.length, 1);
-  assertArraysEqual(calls[0], ["nodeInserted", node2, node1]);
+  assertArraysEqual(calls[0], ["nodeInserted", node2, node1, null]);
   calls = [];
 
   // Removing a child below the node should trigger listeners
@@ -917,7 +917,7 @@ function testListeners (SPS, aRoot) {
   aRoot.insertBefore(node1, node2);
   assertEqual(calls.length, 2);
   assertArraysEqual(calls[0], ["nodeRemoved", node1, aRoot]);
-  assertArraysEqual(calls[1], ["nodeInserted", node1, aRoot]);
+  assertArraysEqual(calls[1], ["nodeInserted", node1, aRoot, node2]);
   aRoot.removeChild(node2);
   calls = [];
 
@@ -925,7 +925,7 @@ function testListeners (SPS, aRoot) {
   aRoot.replaceChild(node2, node1);
   assertEqual(calls.length, 2);
   assertArraysEqual(calls[0], ["nodeRemoved", node1, aRoot]);
-  assertArraysEqual(calls[1], ["nodeInserted", node2, aRoot]);
+  assertArraysEqual(calls[1], ["nodeInserted", node2, aRoot, null]);
   calls = [];
 
   // Test attribute modification in tree
@@ -990,7 +990,7 @@ function testListeners (SPS, aRoot) {
 
     attrModified: function(aNode, aAttrName, aNamespace, aOldValue, aNewValue) {},
 
-    nodeInserted: function(aNode, aParent) {
+    nodeInserted: function(aNode, aParent, aBefore) {
       if (aNode == node2 && aParent == node1)
         aRoot.appendChild(node2);
     },
@@ -1003,9 +1003,9 @@ function testListeners (SPS, aRoot) {
   node1.appendChild(node2);
   assertEqual(calls.length, 4);
   assertArraysEqual(calls[0], ["nodeRemoved", node2, aRoot]);
-  assertArraysEqual(calls[1], ["nodeInserted", node2, node1]);
+  assertArraysEqual(calls[1], ["nodeInserted", node2, node1, null]);
   assertArraysEqual(calls[2], ["nodeRemoved", node2, node1]);
-  assertArraysEqual(calls[3], ["nodeInserted", node2, aRoot]);
+  assertArraysEqual(calls[3], ["nodeInserted", node2, aRoot, null]);
   aRoot.removeMutationListener(modifyingListener);
   aRoot.removeMutationListener(testListener);
   calls = [];
@@ -1015,7 +1015,7 @@ function testListeners (SPS, aRoot) {
 
     attrModified: function(aNode, aAttrName, aNamespace, aOldValue, aNewValue) {},
 
-    nodeInserted: function(aNode, aParent) {},
+    nodeInserted: function(aNode, aParent, aBefore) {},
 
     nodeRemoved: function(aNode, aParent) {
       if (aNode == node2)
@@ -1027,7 +1027,7 @@ function testListeners (SPS, aRoot) {
   aRoot.removeChild(node2);
   assertEqual(calls.length, 2);
   assertArraysEqual(calls[0], ["nodeRemoved", node2, aRoot]);
-  assertArraysEqual(calls[1], ["nodeInserted", node2, aRoot]);
+  assertArraysEqual(calls[1], ["nodeInserted", node2, aRoot, null]);
   aRoot.removeMutationListener(modifyingListener);
   aRoot.removeMutationListener(testListener);
   calls = [];
@@ -1038,7 +1038,7 @@ function testListeners (SPS, aRoot) {
 
     attrModified: function(aNode, aAttrName, aNamespace, aOldValue, aNewValue) {},
 
-    nodeInserted: function(aNode, aParent) {},
+    nodeInserted: function(aNode, aParent, aBefore) {},
 
     nodeRemoved: function(aNode, aParent) {
       aParent.appendChild(aNode);
@@ -1061,7 +1061,7 @@ function testListeners (SPS, aRoot) {
 
     attrModified: function(aNode, aAttrName, aNamespace, aOldValue, aNewValue) {},
 
-    nodeInserted: function(aNode, aParent) {},
+    nodeInserted: function(aNode, aParent, aBefore) {},
 
     nodeRemoved: function(aNode, aParent) {
       aParent.removeChild(node1);

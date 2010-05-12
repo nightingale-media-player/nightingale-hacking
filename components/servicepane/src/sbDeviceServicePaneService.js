@@ -419,7 +419,7 @@ function sbDeviceServicePane_attrModified(aNode, aAttrName, aNamespace,
 };
 
 sbDeviceServicePane.prototype.nodeInserted =
-function sbDeviceServicePane_nodeInserted(aNode, aParent) {
+function sbDeviceServicePane_nodeInserted(aNode, aParent, aInsertBefore) {
   this.attrModified(aNode, "hidden", null, "true", "false");
 };
 
