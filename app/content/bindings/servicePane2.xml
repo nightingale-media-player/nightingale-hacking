@@ -862,7 +862,7 @@
   </binding>
 
   <binding id="servicepane-group">
-    <content mousethrough="never">
+    <content mousethrough="never" persist="collapsedChildren">
       <xul:vbox id="group" class="servicepane-group" >
         <xul:hbox id="hbox-header" class="servicepane-group-header">
           <xul:hbox class="servicepane-group-header-wrapper"
@@ -889,8 +889,30 @@
     <implementation>
       <constructor><![CDATA[
         this._groupNodes = this._getElement("groupNodes");
+
+        var self = this;
+        this.nodeData = this.getNode(this.id);
+
+        // Determine whether we're starting up collapsed or visible
         this._visible = true;
 
+        let initCollapsed = function() {
+          if (self.hasAttribute("collapsedChildren")) {
+            self.nodeData.isOpen = (self.getAttribute("collapsedChildren")
+                                    != "true");
+          }
+        };
+        // fire once in case startup is slow and the window is ready already
+        initCollapsed();
+
+        // The 'collapsedChildren' attribute is persisted, however it
+        // doesn't restore it's persisted state until the window is loaded
+        // add a load listener to catch that case
+        window.addEventListener("load", function(e) {
+            setTimeout(initCollapsed, 0);
+          }, false);
+
+        // The group header image
         this.image = null;
         // Special handling for the SB:Playlists group
         if (this.id == "SB:Playlists") {
@@ -900,7 +922,6 @@
 
         this.servicePane = this.parentNode;
 
-        var self = this;
         this.keyListener = function(e) {
           if (!self.image)
             return;
@@ -987,7 +1008,7 @@
                     }, 40);
               } else {
                 element.style.marginTop = "-" + orig + "px";
-                self.removeAttribute("collapsedChildren");
+                self.setAttribute("collapsedChildren", "false");
               }
             } else {
               if (from > to) {
@@ -1004,7 +1025,7 @@
                     }, 40);
               } else {
                 element.style.marginTop = "-" + orig + "px";
-                self.setAttribute("collapsedChildren", true);
+                self.setAttribute("collapsedChildren", "true");
               }
             }
           } catch (e) {
@@ -1281,6 +1302,15 @@
                 break;
 
               case "isOpen":
+                // group's open states are a little different
+                if (domNode.tagName == "sb-servicepane-group") {
+                  if (newVal == "true")
+                    domNode.visible = true;
+                  else
+                    domNode.visible = false;
+                  return;
+                }
+
                 if (node.firstChild) {
                   // update the classes
                   if (oldVal == "true")
