@@ -508,10 +508,10 @@ nsresult sbLibraryUtils::GetContentURI(nsIURI*  aURI,
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsCOMPtr<nsIURI> uri = aURI;
-  nsresult rv;
 
   // On Windows, convert "file:" URI's to lower-case.
 #ifdef XP_WIN
+  nsresult rv;
   PRBool isFileScheme;
   rv = uri->SchemeIs("file", &isFileScheme);
   NS_ENSURE_SUCCESS(rv, rv);
