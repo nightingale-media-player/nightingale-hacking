@@ -570,15 +570,29 @@
       
       <method name="setAsDropTarget">
         <parameter name="isdroptarget"/>
-        <body>
+        <body><![CDATA[
+          const DEVICESP_NS = "http://songbirdnest.com/rdf/device-servicepane#";
+          var nodeToUpdate;
+          // If we're a library node, and our parent node is a device node,
+          // then apply the styles to the device node
+          if (this.nodeData.className.match(/\blibrary\b/) &&
+              this.nodeData.parentNode.className.match(/\bdevice\b/))
+          {
+            // We're a device library
+            nodeToUpdate = this.nodeData.parentNode;
+          } else {
+            nodeToUpdate = this.nodeData;
+          }
+
           if (isdroptarget) {
-            if (this.className.search(/\bdroptarget\b/) == -1) {
-              this.className += " droptarget";
+            if (nodeToUpdate.className.search(/\bdroptarget\b/) == -1) {
+              nodeToUpdate.className += " droptarget";
             }
           } else {
-            this.className = this.className.replace(/\bdroptarget\b/g,'');
+            nodeToUpdate.className =
+                        nodeToUpdate.className.replace(/\bdroptarget\b/g,'');
           }
-        </body>
+        ]]></body>
       </method>
 
       <method name="textboxBlur">
@@ -1705,8 +1719,8 @@
           }
 
           if (activeNode) {
-            let domNode = this.getDOMNode(activeNode.id);
-            domNode.className = domNode.className.replace(/\bactive\b/g, '');
+            activeNode.className =
+                      activeNode.className.replace(/\bactive\b/g, '');
           }
 
           // Add the 'active' class to the new node

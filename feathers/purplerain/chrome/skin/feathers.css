@@ -771,6 +771,27 @@ sb-servicepane-node.dndAcceptAfter > vbox > hbox.servicepane-node-info {
   border-bottom: 2px solid rgb(143,132,181);
 }
 
+/* when an open container node is a droptarget, then highlight the node and
+ * all its children */
+sb-servicepane-node.container.open.droptarget {
+  margin-top: 0px;
+}
+sb-servicepane-node.container.open.droptarget > vbox {
+  background-color: rgb(61,57,84);
+  -moz-border-radius: 3px;
+  border: 1px solid rgb(143,132,181);
+}
+/* undo the above changes for container node droptargets */
+sb-servicepane-node.container.open.droptarget > vbox > hbox.servicepane-node-info {
+  background-color: transparent;
+  border: none;
+  margin-left: 0px;
+  margin-right: -1px;
+}
+sb-servicepane-node.container.open.droptarget > vbox > vbox {
+  margin-left: -1px;
+}
+
 /* the open/closed container toggle arrow for the node and its subnodes */
 sb-servicepane-node image.servicepane-node-container-arrow {
   padding: 10px 3px;
