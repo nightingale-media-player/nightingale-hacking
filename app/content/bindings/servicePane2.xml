@@ -617,6 +617,10 @@
               this._textbox.value = this.getAttribute("label");
               this._textbox.setAttribute("hidden", true);
               this._servicePane.mService.onRename(this.nodeData, null);
+
+              // ensure the service pane has focus
+              this._servicePane.focus();
+
               break;
             case 13: // enter
               // save changes & exit editing mode
@@ -625,6 +629,10 @@
               this._servicePane.mService.onRename(this.nodeData,
                                                   this._textbox.value);
               this.loadNodeURL(event);
+              
+              // ensure the service pane has focus
+              this._servicePane.focus();
+              
               break;
           }
         ]]></body>
