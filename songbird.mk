@@ -47,6 +47,11 @@ OBJDIR = $(TOPSRCDIR)/$(OBJDIRNAME)
 DISTDIR = $(OBJDIR)/$(DISTDIRNAME)
 CONFIGSTATUS = $(OBJDIR)/config.status
 
+CLOBBER_TRASH = $(CONFIGURE) \
+                $(TOPSRCDIR)/.songbirdconfig.mk \
+                $(TOPSRCDIR)/.songbirdconfig.out \
+                $(NULL)
+
 CONFIGURE_ARGS = $(NULL)
 
 ####################################
@@ -81,37 +86,37 @@ endif
 # instead; see bug 6515
 ifdef SB_ENABLE_INSTALLER
    CONFIGURE_ARGS += --enable-installer
-   ENV_SETTING_WARN = 1
+   ENV_SETTING_WARN += --enable-installer
 endif
 
 ifdef SONGBIRD_OFFICIAL
    CONFIGURE_ARGS += --enable-official
-   ENV_SETTING_WARN = 1
+   ENV_SETTING_WARN += --enable-official
 endif
 
 ifdef SONGBIRD_NIGHTLY
    CONFIGURE_ARGS += --enable-nightly
-   ENV_SETTING_WARN = 1
+   ENV_SETTING_WARN += --enable-nightly
 endif
 
 ifdef SB_UPDATE_CHANNEL
    CONFIGURE_ARGS += --enable-update-channel=$(SB_UPDATE_CHANNEL)
-   ENV_SETTING_WARN = 1
+   ENV_SETTING_WARN += --enable-update-channel=$(SB_UPDATE_CHANNEL)
 endif
 
 # debug build options
 ifdef DEBUG
    CONFIGURE_ARGS += --enable-debug
-   ENV_SETTING_WARN = 1
+   ENV_SETTING_WARN += --enable-debug
    # debug builds turn off jars by default, unless SB_ENABLE_JARS is set
    ifdef SB_ENABLE_JARS
       CONFIGURE_ARGS += --enable-jars
-      ENV_SETTING_WARN = 1
+      ENV_SETTING_WARN += --enable-jars
    endif
    # turn off tests if you really want
    ifndef SB_DISABLE_TESTS
       CONFIGURE_ARGS += --enable-tests
-      ENV_SETTING_WARN = 1
+      ENV_SETTING_WARN += --enable-tests
    endif
 endif
 
@@ -120,25 +125,25 @@ ifndef DEBUG
    # release builds have jars by default, unless SB_DISABLE_JARS is set
    ifdef SB_DISABLE_JARS
       CONFIGURE_ARGS += --disable-jars
-      ENV_SETTING_WARN = 1
+      ENV_SETTING_WARN += --disable-jars
    endif
    # release builds don't have tests by default
    ifdef SB_ENABLE_TESTS
       CONFIGURE_ARGS += --enable-tests
-      ENV_SETTING_WARN = 1
+      ENV_SETTING_WARN += --enable-tests
    endif
 endif
 
 # choose core wrappers to enable
 ifdef SB_NO_MEDIA_CORE
    CONFIGURE_ARGS += --with-media-core=none
-   ENV_SETTING_WARN = 1
+   ENV_SETTING_WARN += --with-media-core=none
 endif #SB_NO_MEDIA_CORE
 
 # breakpad support
 ifdef SB_ENABLE_BREAKPAD
    CONFIGURE_ARGS += --enable-breakpad
-   ENV_SETTING_WARN = 1
+   ENV_SETTING_WARN += --enable-breakpad
 endif
 
 # force installation of wmp core, so it's bundled with the application.
@@ -146,7 +151,9 @@ ifdef SB_FORCE_MEDIA_CORE_WMP
    CONFIGURE_ARGS += --with-media-core=windowsmedia \
                      --with-force-media-core=windowsmedia \
                      $(NULL)
-   ENV_SETTING_WARN = 1
+   ENV_SETTING_WARN += --with-media-core=windowsmedia \
+                       --with-force-media-core=windowsmedia \
+                       $(NULL)
 endif
 
 # force installation of qt core, so it's bundled with the application.
@@ -154,17 +161,19 @@ ifdef SB_FORCE_MEDIA_CORE_QT
    CONFIGURE_ARGS += --with-media-core=qt \
                      --with-force-media-core=qt \
                      $(NULL)
-   ENV_SETTING_WARN = 1
+   ENV_SETTING_WARN += --with-media-core=qt \
+                       --with-force-media-core=qt \
+                       $(NULL)
 endif
 
 # compiler environment checks
 ifdef SB_DISABLE_COMPILER_ENVIRONMENT_CHECKS
    CONFIGURE_ARGS += --disable-compiler-environment-checks
-   ENV_SETTING_WARN = 1
+   ENV_SETTING_WARN += --disable-compiler-environment-checks
 endif
 
 ifneq (,$(ENV_SETTING_WARN))
-   $(warning WARNING: Setting build options via the environment is deprecated; use songbird.config. Support for this will eventually go away. See bug 6515.)
+   $(warning WARNING: Setting build options via the environment is deprecated; add the following options to your songbird.config: $(ENV_SETTING_WARN). Support for this will eventually go away.)
 endif
 
 #
@@ -251,7 +260,7 @@ $(CONFIGSTATUS): $(CONFIGURE) $(SB_DEP_PKG_LIST) $(OBJDIR) $(DISTDIR)
 $(CONFIGURE): $(CONFIGURE_PREREQS)
 	cd $(TOPSRCDIR) && \
     $(AUTOCONF) && \
-    $(RM) -rf $(TOPSRCDIR)/autom4te.cache/ 
+    $(RM) -r $(TOPSRCDIR)/autom4te.cache/ 
 
 songbird_output:
 	@echo $(SONGBIRD_MESSAGE)
@@ -259,7 +268,7 @@ songbird_output:
 run_autoconf:
 	cd $(TOPSRCDIR) && \
     $(AUTOCONF) && \
-    $(RM) -rf $(TOPSRCDIR)/autom4te.cache/ 
+    $(RM) -r $(TOPSRCDIR)/autom4te.cache/ 
 
 $(OBJDIR) $(DISTDIR):
 	$(MKDIR) $(OBJDIR) $(DISTDIR)
@@ -277,8 +286,8 @@ clean:
 	$(MAKE) -C $(OBJDIR) clean
 
 clobber:
-	$(RM) -f $(CONFIGURE)
-	$(RM) -rf $(OBJDIR)
+	$(RM) $(CLOBBER_TRASH)
+	$(RM) -r $(OBJDIR)
 
 depclobber:
 	$(RM) -r $(foreach p,$(SB_DEP_PKGS), $($(p)_DEP_DIR))
