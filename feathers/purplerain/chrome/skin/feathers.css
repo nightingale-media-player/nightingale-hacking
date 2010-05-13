@@ -953,6 +953,8 @@ sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > 
 ******************************************************************************/
 .faceplate-text {
   color:rgb(250,250,250);
+  font: message-box;
+  font-size: 11px;
 }
 #sb-player-title-label-label {
   font-weight:bold;
