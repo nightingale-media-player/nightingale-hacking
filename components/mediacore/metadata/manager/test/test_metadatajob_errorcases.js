@@ -32,7 +32,28 @@ var gTestFileLocation = "testharness/metadatamanager/errorcases/";
 // the number of errors we expect
 var gErrorExpected = 0;
 // the number of retries we expect
-const gRetriesExpected = 5;
+var gRetriesExpected = 0;
+
+/**
+ * Calculate how many retries are expected for a given set of metadata handlers
+ * \param aHandlers an array of handlers expected
+ * \return The number of retries expected
+ */
+function retries(aHandlers) {
+  var contractId = "@songbirdnest.com/Songbird/MetadataHandler/";
+  const MAP = {
+    "taglib":    "Taglib;1",
+    "gstreamer": "GStreamer;1",
+    "wma":       "WMA;1"
+  };
+  var count = 0;
+  for each (var handler in aHandlers) {
+    var available = (contractId + MAP[String(handler).toLowerCase()]) in Cc;
+    if (available)
+      ++count;
+  }
+  return count - 1;
+}
 
 /**
  * Confirm that Songbird doesn't crash or damage files when
@@ -53,7 +74,8 @@ function runTest() {
   assertEqual(file.exists(), false, "file_that_doesn't_exist shouldn't exist!");
   files.push(file);
   gErrorExpected++;
-  
+  gRetriesExpected += retries(["taglib", "gstreamer"]);
+
   // Bogus files
   var fakeFile = newAppRelativeFile("testharness/metadatamanager/errorcases/fake-file.mp3");
   fakeFile = getCopyOfFile(fakeFile, "fake-file-temp.mp3");
@@ -69,10 +91,13 @@ function runTest() {
   // Media files with the wrong extensions
   files.push(newAppRelativeFile("testharness/metadatamanager/errorcases/mp3-disguised-as.flac"));
   gErrorExpected++;
+  gRetriesExpected += retries(["taglib", "gstreamer"]);
   files.push(newAppRelativeFile("testharness/metadatamanager/errorcases/mp3-disguised-as.ogg"));
   gErrorExpected++;
+  gRetriesExpected += retries(["taglib", "gstreamer"]);
   files.push(newAppRelativeFile("testharness/metadatamanager/errorcases/ogg-disguised-as.m4a"));
   gErrorExpected++;
+  gRetriesExpected += retries(["taglib", "gstreamer"]);
 
   // Misc file permissions
   file = newAppRelativeFile("testharness/metadatamanager/errorcases/access-tests.mp3");  
@@ -87,6 +112,7 @@ function runTest() {
   if ((writeonly.permissions & 0777) == 0200) {
     files.push(writeonly);
     gErrorExpected++;
+    gRetriesExpected += retries(["taglib", "gstreamer"]);
   } else {
     log("MetadataJob_ErrorCases: platform does not support write-only. Perms=" + (writeonly.permissions & 0777));
   }
@@ -99,6 +125,7 @@ function runTest() {
   if (!isWindows) {
     // only seen as an error on non-Windows (Windows doesn't support permissions correctly)
     gErrorExpected++
+    gRetriesExpected += retries(["taglib", "gstreamer"]);
   }
   
   // A remote file that doesn't exist
@@ -108,8 +135,9 @@ function runTest() {
   // to port 80.
   files.push(newURI("http://localhost:12345/remote/file/that/doesnt/exist.mp3"));
   gErrorExpected++;
+  gRetriesExpected += retries(["taglib", "gstreamer"]);
 
-    
+
   ///////////////////////////////////////
   // Load the files into two libraries //
   ///////////////////////////////////////
