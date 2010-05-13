@@ -78,8 +78,13 @@ function(aFile, aMediaList, aReplace)
       return;
     }
 
+    // Some devices store M3U resource locations with back slashes. We expect
+    // paths to have forward slashes, so replace all back slashes. 
+    aLine = aLine.replace(/\\/g, "/");
+    
     // Otherwise, this line is a URL.  Add it to the list
     var newUri = SB_ResolveURI(aLine, this._originalURI);
+
     if (newUri) {
       var item = { uri: newUri, properties: {}};
       if (nextFileMetadata.title)

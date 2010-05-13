@@ -1330,7 +1330,28 @@ sbDeviceXMLCapabilities::ProcessPlaylist(nsIDOMNode * aPlaylistNode)
                              mimeType);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    nsString pathSeparator;
+    rv = attributes.GetValue(NS_LITERAL_STRING("pathSeparator"), pathSeparator);
+    // If not found, use a void string  
+    if (rv == NS_ERROR_NOT_AVAILABLE) {
+      pathSeparator.SetIsVoid(PR_TRUE);
+    } else {
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
     rv = AddMimeType(sbIDeviceCapabilities::CONTENT_PLAYLIST, mimeType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIPlaylistFormatType> formatType =
+      do_CreateInstance(SB_IPLAYLISTFORMATTYPE_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = formatType->Initialize(NS_ConvertUTF16toUTF8(pathSeparator));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mDeviceCaps->AddFormatType(sbIDeviceCapabilities::CONTENT_PLAYLIST,
+                                    mimeType,
+                                    formatType);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

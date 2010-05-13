@@ -268,4 +268,22 @@ private:
   nsCOMPtr<sbIDevCapAudioStream> mAudioStream;
 };
 
+/**
+ * Implementation of @see sbIPlaylistFormatType
+ */
+class sbPlaylistFormatType : public sbIPlaylistFormatType, nsIClassInfo
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIPLAYLISTFORMATTYPE
+  NS_DECL_NSICLASSINFO
+
+  sbPlaylistFormatType();
+
+private:
+  virtual ~sbPlaylistFormatType();
+
+  nsCString mPathSeparator;
+};
+
 #endif /* __SBDEVICECAPABILITIES_H__ */

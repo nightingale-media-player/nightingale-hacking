@@ -55,6 +55,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbDevCapVideoStream);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDevCapAudioStream);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbImageSize);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDevCapRange);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbPlaylistFormatType);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDevCapFraction);
 
 static nsModuleComponentInfo sbDeviceBaseComponents[] =
@@ -155,6 +156,13 @@ static nsModuleComponentInfo sbDeviceBaseComponents[] =
     SB_IDEVCAPRANGE_CID,
     SB_IDEVCAPRANGE_CONTRACTID,
     sbDevCapRangeConstructor
+  },
+
+  {
+    SB_IPLAYLISTFORMATTYPE_CLASSNAME,
+    SB_IPLAYLISTFORMATTYPE_CID,
+    SB_IPLAYLISTFORMATTYPE_CONTRACTID,
+    sbPlaylistFormatTypeConstructor
   },
 
   {

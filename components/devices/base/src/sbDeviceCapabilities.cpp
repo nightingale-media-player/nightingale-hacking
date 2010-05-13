@@ -1447,3 +1447,39 @@ sbVideoFormatType::GetAudioStream(sbIDevCapAudioStream * *aAudioStream)
 {
   return sbReturnCOMPtr(mAudioStream, aAudioStream);
 }
+
+/*******************************************************************************
+ * Playlist format type
+ */
+
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbPlaylistFormatType,
+                              sbIPlaylistFormatType,
+                              nsIClassInfo)
+NS_IMPL_CI_INTERFACE_GETTER2(sbPlaylistFormatType,
+                             sbIPlaylistFormatType,
+                             nsIClassInfo)
+
+NS_DECL_CLASSINFO(sbPlaylistFormatType)
+NS_IMPL_THREADSAFE_CI(sbPlaylistFormatType)
+
+sbPlaylistFormatType::sbPlaylistFormatType()
+{
+}
+
+sbPlaylistFormatType::~sbPlaylistFormatType()
+{
+}
+
+NS_IMETHODIMP
+sbPlaylistFormatType::Initialize(const nsACString & aPathSeparator)
+{
+  mPathSeparator = aPathSeparator;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbPlaylistFormatType::GetPathSeparator(nsACString & aPathSeparator)
+{
+  aPathSeparator = mPathSeparator;
+  return NS_OK;
+}

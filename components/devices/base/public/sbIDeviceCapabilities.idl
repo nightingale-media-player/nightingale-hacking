@@ -485,6 +485,35 @@ interface sbIVideoFormatType : nsISupports
 %}
 
 /**
+ * This interface is used to inspect the playlist capabilities of a device
+ * \note Implementations of this interface must be threadsafe.
+ */
+[scriptable, uuid(1042b7ea-eb3f-4b82-b730-b0a3d0b8e2ec)]
+interface sbIPlaylistFormatType : nsISupports
+{
+  /**
+   * Initializes the playlist format object
+   */
+  void initialize(in ACString aPathSeparator);
+
+  /**
+   * Path separator used when writing playlist resource locations
+   */
+  readonly attribute ACString pathSeparator;
+};
+
+%{C++
+#define SB_IPLAYLISTFORMATTYPE_DESCRIPTION         \
+  "Songbird Device Capabilities Playlist Format Type Component"
+#define SB_IPLAYLISTFORMATTYPE_CONTRACTID          \
+  "@songbirdnest.com/Songbird/Device/sbplaylistformattype;1"
+#define SB_IPLAYLISTFORMATTYPE_CLASSNAME           \
+  "Songbird Device Capabilities Playlist Format Type"
+#define SB_IPLAYLISTFORMATTYPE_CID                 \
+  {0xdc2b0702, 0xb8d7, 0x4ef5, {0x83, 0xb6, 0x64, 0x85, 0xe5, 0xef, 0xd5, 0xf1}}
+%}
+
+/**
  * \interface sbIDeviceCapabilities
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \note Implementations of this interface must be threadsafe.
