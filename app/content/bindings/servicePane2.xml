@@ -998,6 +998,13 @@
         ]]></body>
       </method>
 
+      <property name="actuallyVisible">
+        <getter><![CDATA[
+          return (!this._groupNodes.style.marginTop ||
+                  this._groupNodes.style.marginTop == "0px");
+        ]]></getter>
+      </property>
+
       <property name="visible">
         <getter><![CDATA[
           return this._visible;
@@ -1041,6 +1048,10 @@
               } else {
                 element.style.marginTop = "-" + orig + "px";
                 self.setAttribute("collapsedChildren", "false");
+
+                var evt = document.createEvent("UIEvents");
+                evt.initEvent("expand-servicepane-group", true, true);
+                self.dispatchEvent(evt);
               }
             } else {
               if (from > to) {
@@ -1058,6 +1069,10 @@
               } else {
                 element.style.marginTop = "-" + orig + "px";
                 self.setAttribute("collapsedChildren", "true");
+
+                var evt = document.createEvent("UIEvents");
+                evt.initEvent("collapse-servicepane-group", true, true);
+                self.dispatchEvent(evt);
               }
             }
           } catch (e) {
@@ -1795,16 +1810,39 @@
               this._editingNode = null;
             }
 
-            // XXXstevel might not need this if servicepane can auto-highlight
-            // the right node from tabbrowser
-            // highlight this node
-            //this.makeNodeActive(aNode);
-
             // notify servicepane service that we're about to rename the node
             this.mService.onBeforeRename(aNode);
 
-            // start editing this node
+            // get the DOM node for the node we're about to edit
             this._editingNode = this.getDOMNode(aNode.id);
+
+            // ensure this node is visible.  we do this by having the scrollbox
+            // scroll to make the element visible.  but if the group is
+            // collapsed, this won't work, so we need to do it once the
+            // group is visible, and no sooner
+            let scrollbox =
+                this.mInnerBox.boxObject.QueryInterface(Ci.nsIScrollBoxObject);
+            let groupNode = aNode.parentNode;
+            while (groupNode.parentNode != this.mService.root)
+              groupNode = groupNode.parentNode;
+            let groupDomNode = this.getDOMNode(groupNode.id);
+            // if the group is already open, then just make sure our editing
+            // node is visible
+            if (groupDomNode.actuallyVisible)
+              scrollbox.ensureElementIsVisible(this._editingNode);
+            else {
+              let editingNode = this._editingNode;
+              groupDomNode.addEventListener("expand-servicepane-group",
+                function(e) {
+                  // remove listener
+                  groupDomNode.removeEventListener("expand-servicepane-group",
+                                                   arguments.callee,
+                                                   false);
+                  scrollbox.ensureElementIsVisible(editingNode);
+                }, false);
+            }
+
+            // start editing this node
             this._editingNode._textbox.removeAttribute("hidden");
             this._editingNode._textbox.value =
                  this._editingNode.getAttribute("label");
