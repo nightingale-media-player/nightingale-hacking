@@ -1264,6 +1264,11 @@
                                         this._onBrowserTabChangeListener,
                                         false);
         }
+
+        // hacky workaround for bug 21128, comment #2
+        this._hack = document.createElement("vbox");
+        this._hack.id = "superhackylamevbox";
+        this._hack.setAttribute("hidden", "true");
       ]]>
       </constructor>
 
@@ -1367,6 +1372,36 @@
             if (!parent || parent == this.element.mService.root) {
               let newGroup = this.element.createGroup(node);
               this.element.log("New top level group: " + node.id);
+
+              // Need to find the right place in the DOM hierarchy to put it
+              const SP = "http://songbirdnest.com/rdf/servicepane#";
+              let child = this.element.firstChild;
+              let weight = parseInt(node.getAttributeNS(SP, "Weight"));
+              while (child != null) {
+                let otherNode = this.element.getNode(child.id);
+                let otherWeight = parseInt(
+                                       otherNode.getAttributeNS(SP, "Weight"));
+                this.element.log("Comparing " + node.id + " (weight: " +
+                                 weight + ") to " + child.id +
+                                 " (weight: " + otherWeight + ")");
+                if (weight < otherWeight) {
+                  this.element.log("Inserting " + node.id + " (weight: " +
+                                   weight + ") before " + child.id +
+                                   " (weight: " + otherWeight + ")");
+                  this.element.insertBefore(newGroup, child);
+
+                  // hacky workaround for bug 21128, comment #2
+                  // insertBefore will remove the hack vbox if it's already
+                  // in the DOM hierarchy so there will only ever be one
+                  // of these
+                  if (this.element._hack)
+                    this.element.insertBefore(this.element._hack, child);
+
+                  return;
+                }
+                child = child.nextSibling;
+              }
+              this.element.log("Appending " + node.id);
               this.element.appendChild(newGroup);
             } else {
               this.element.log("New node: " + node.id);
@@ -1537,6 +1572,7 @@
 
           var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 
+          /* These should already be in sorted order */
           this.log("********** SERVICEPANE ROOT **********");
           var groupEntry = this.mService.root.firstChild;
           while (groupEntry && groupEntry != this.mService.root.lastChild) {

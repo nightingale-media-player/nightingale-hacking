@@ -189,7 +189,7 @@ ShoutcastRadio.Controller = {
 			radioFolder.className = "folder radio";
 			radioFolder.name = this._strings.getString("radioFolderLabel");
 			radioFolder.setAttributeNS(this.SB_NS, "radioFolder", 1); // for backward-compat
-			radioFolder.setAttributeNS(this.SP_NS, "Weight", 1);
+			radioFolder.setAttributeNS(this.SP_NS, "Weight", 2);
 			SPS.root.appendChild(radioFolder);
 		}
 		radioFolder.editable = false;

@@ -456,7 +456,7 @@ function sbDeviceServicePane__ensureDevicesGroupExists() {
     fnode.contractid = CONTRACTID;
     // XXXstevel need to set fnode.dndAcceptIn?
     fnode.editable = false;
-    fnode.setAttributeNS(SP, 'Weight', 2);
+    fnode.setAttributeNS(SP, 'Weight', -2);
     this._servicePane.root.appendChild(fnode);
     this.log("\tDevices group created");
   }
