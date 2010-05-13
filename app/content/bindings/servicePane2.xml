@@ -1293,11 +1293,6 @@
                                         this._onBrowserTabChangeListener,
                                         false);
         }
-
-        // hacky workaround for bug 21128, comment #2
-        this._hack = document.createElement("vbox");
-        this._hack.id = "superhackylamevbox";
-        this._hack.setAttribute("hidden", "true");
       ]]>
       </constructor>
 
@@ -1407,6 +1402,10 @@
               let child = this.element.firstChild;
               let weight = parseInt(node.getAttributeNS(SP, "Weight"));
               while (child != null) {
+                if (child.nodeType == child.TEXT_NODE) {
+                  child = child.nextSibling;
+                  continue;
+                }
                 let otherNode = this.element.getNode(child.id);
                 let otherWeight = parseInt(
                                        otherNode.getAttributeNS(SP, "Weight"));
@@ -1420,11 +1419,8 @@
                   this.element.insertBefore(newGroup, child);
 
                   // hacky workaround for bug 21128, comment #2
-                  // insertBefore will remove the hack vbox if it's already
-                  // in the DOM hierarchy so there will only ever be one
-                  // of these
-                  if (this.element._hack)
-                    this.element.insertBefore(this.element._hack, child);
+                  let hackNode = document.createTextNode("");
+                  this.element.insertBefore(hackNode, child);
 
                   return;
                 }
@@ -1432,6 +1428,10 @@
               }
               this.element.log("Appending " + node.id);
               this.element.appendChild(newGroup);
+              
+              // hacky workaround for bug 21128, comment #2
+              let hackNode = document.createTextNode("");
+              this.element.appendChild(hackNode);
             } else {
               this.element.log("New node: " + node.id);
               /* find the node representing the parent */
@@ -1618,6 +1618,11 @@
             }
 
             this.appendChild(newgroup);
+            
+            // hacky workaround for bug 21128, comment #2
+            let hackNode = document.createTextNode("");
+            this.appendChild(hackNode);
+
             groupEntry = groupEntry.nextSibling;
           }
         ]]></body>
