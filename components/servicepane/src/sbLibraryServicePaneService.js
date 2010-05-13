@@ -1253,8 +1253,7 @@ function sbLibraryServicePane__libraryAdded(aLibrary) {
                                          [SBProperties.mediaListName, null]]);
   aLibrary.addListener(this,
                        false,
-                       Ci.sbIMediaList.LISTENER_FLAGS_ALL &
-                         ~Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED,
+                       Ci.sbIMediaList.LISTENER_FLAGS_ALL,
                        filter);
 
   this._processListsInLibrary(aLibrary);
@@ -2014,6 +2013,10 @@ function sbLibraryServicePane_onItemAdded(aMediaList, aMediaItem, aIndex) {
 }
 sbLibraryServicePane.prototype.onBeforeItemRemoved =
 function sbLibraryServicePane_onBeforeItemRemoved(aMediaList, aMediaItem, aIndex) {
+  return true;
+}
+sbLibraryServicePane.prototype.onAfterItemRemoved =
+function sbLibraryServicePane_onAfterItemRemoved(aMediaList, aMediaItem, aIndex) {
   //logcall(arguments);
   if (this._batch[aMediaList.guid] && this._batch[aMediaList.guid].isActive()) {
     // We are going to refresh all the nodes once we exit the batch so
@@ -2028,11 +2031,6 @@ function sbLibraryServicePane_onBeforeItemRemoved(aMediaList, aMediaItem, aIndex
     }
     return false;
   }
-}
-sbLibraryServicePane.prototype.onAfterItemRemoved =
-function sbLibraryServicePane_onAfterItemRemoved(aMediaList, aMediaItem, aIndex) {
-  // Don't need any further notifications
-  return true;
 }
 sbLibraryServicePane.prototype.onItemUpdated =
 function sbLibraryServicePane_onItemUpdated(aMediaList,

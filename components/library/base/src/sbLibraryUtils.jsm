@@ -393,6 +393,7 @@ LibraryUtils.RemovalMonitor.prototype = {
 
           var flags = Ci.sbIMediaList.LISTENER_FLAGS_BATCHBEGIN |
                       Ci.sbIMediaList.LISTENER_FLAGS_BATCHEND |
+                      Ci.sbIMediaList.LISTENER_FLAGS_BEFOREITEMREMOVED |
                       Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED |
                       Ci.sbIMediaList.LISTENER_FLAGS_LISTCLEARED;
                       
@@ -428,6 +429,16 @@ LibraryUtils.RemovalMonitor.prototype = {
 
 
   /**
+   * Notifies the listener that the list is about to be removed
+   */
+  _onBeforeMediaListRemoved: function RemovalMonitor_onBeforeMediaListRemoved()
+  {
+    // Notify
+    this._callback.onBeforeMediaListRemoved();
+  },
+
+
+  /**
    * Notifies the listener that the list has been removed, 
    * and then stops monitoring
    */
@@ -448,7 +459,22 @@ LibraryUtils.RemovalMonitor.prototype = {
   onItemAdded: function(aMediaList, aMediaItem, aIndex) { return true; },
   onItemUpdated: function(aMediaList, aMediaItem, aProperties) { return true },
   onItemMoved: function(aMediaList, aFromIndex, aToIndex) { return true },
-  onBeforeItemRemoved: function(aMediaList, aMediaItem, aIndex) { return true; },
+  onBeforeItemRemoved: function (aMediaList, aMediaItem, aIndex) {
+    // Do no more if in a batch
+    if (this._batchHelper.isActive()) {
+      if (aMediaItem.guid == this._targetGUID) {
+        this._removedInBatch = true;
+      }
+      return true;
+    }
+
+    // If our list is about to be removed, notify
+    if (aMediaItem.guid == this._targetGUID) {
+      this._onBeforeMediaListRemoved();
+    }
+
+    return false;
+  },
   onAfterItemRemoved: function RemovalMonitor_onAfterItemRemoved(aMediaList,
                                                                  aMediaItem,
                                                                  aIndex)
