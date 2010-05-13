@@ -43,6 +43,7 @@ ifneq (,$(filter pkg,$(SB_INSTALLER_SUFFIXES)))
                        $(NULL)
 
    PPDEFINES = -DSONGBIRD_OBJDIR=$(SONGBIRD_OBJDIR) \
+               -DSONGBIRD_SRCDIR=$(srcdir) \
                -DMACOSX_APPBUNDLE=$(MACOSX_APPBUNDLE) \
                -DDISTDIRNAME=$(DISTDIRNAME) \
                -DSONGBIRD_APPBUNDLE=$(SONGBIRD_OBJDIR)/$(DISTDIRNAME)/$(MACOSX_APPBUNDLE) \
