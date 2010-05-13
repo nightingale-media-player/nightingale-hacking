@@ -808,6 +808,48 @@ sbDevCapRange::IsValueInRange(PRInt32 aValue, PRBool * aInRange) {
 }
 
 /*******************************************************************************
+ * sbDevCapRange
+ */
+
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbDevCapFraction,
+                              sbIDevCapFraction,
+                              nsIClassInfo)
+NS_IMPL_CI_INTERFACE_GETTER2(sbDevCapFraction,
+                             sbIDevCapFraction,
+                             nsIClassInfo)
+
+NS_DECL_CLASSINFO(sbDevCapFraction)
+NS_IMPL_THREADSAFE_CI(sbDevCapFraction)
+
+sbDevCapFraction::~sbDevCapFraction()
+{
+}
+
+NS_IMETHODIMP
+sbDevCapFraction::GetNumerator(PRUint32 *aNumerator)
+{
+  NS_ENSURE_ARG_POINTER(aNumerator);
+  *aNumerator = mNumerator;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDevCapFraction::GetDenominator(PRUint32 *aDenominator)
+{
+  NS_ENSURE_ARG_POINTER(aDenominator);
+  *aDenominator = mDenominator;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDevCapFraction::Initialize(PRUint32 aNumerator, PRUint32 aDenominator)
+{
+  mNumerator = aNumerator;
+  mDenominator = aDenominator;
+  return NS_OK;
+}
+
+/*******************************************************************************
  * sbFormatTypeConstraint
  */
 
@@ -1105,25 +1147,39 @@ CopyAndParseFromFractions(const nsTArray<sbFraction> & aFractions,
   return NS_OK;
 }
 
-/* void initialize (in ACString aType, in nsIArray aExplicitSizes, in sbIDevCapRange aWidths, in sbIDevCapRange aHeights, in unsigned long aVideoParsCount, [array, size_is (aVideoParsCount)] in string aVideoPars, in unsigned long aFrameRateCount, [array, size_is (aFrameRateCount)] in string aFrameRates, in sbIDevCapRange aBitRates); */
 NS_IMETHODIMP sbDevCapVideoStream::Initialize(const nsACString & aType,
                                               nsIArray *aExplicitSizes,
                                               sbIDevCapRange *aWidths,
                                               sbIDevCapRange *aHeights,
-                                              PRUint32 aVideoPARCount,
-                                              const char **aVideoPARs,
-                                              PRUint32 aFrameRateCount,
-                                              const char **aFrameRates,
+                                              nsIArray *aSupportPARs,
+                                              PRBool aIsSupportedPARsRange,
+                                              nsIArray *aSupportedFrameRates,
+                                              PRBool aIsSupportedFrameratesRange,
                                               sbIDevCapRange *aBitRates)
 {
   mType = aType;
   mExplicitSizes = aExplicitSizes;
   mWidths = aWidths;
   mHeights = aHeights;
-  CopyAndParseToFractions(aVideoPARs, aVideoPARCount, mVideoPARs);
-  CopyAndParseToFractions(aFrameRates, aFrameRateCount, mFrameRates);
+  mIsPARRange = aIsSupportedPARsRange;
+  mVideoPARs = aSupportPARs;
+  mIsFrameRatesRange = aIsSupportedFrameratesRange;
+  mVideoFrameRates = aSupportedFrameRates;
   mBitRates = aBitRates;
 
+  // Ensure valid PAR and frame rate values.
+  nsresult rv;
+  PRUint32 length;
+  if (mIsPARRange) {
+    rv = mVideoPARs->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(length == 2, NS_ERROR_UNEXPECTED);
+  }
+  if (mIsFrameRatesRange) {
+    rv = mVideoFrameRates->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(length == 2, NS_ERROR_UNEXPECTED);
+  }
   return NS_OK;
 }
 
@@ -1155,26 +1211,117 @@ NS_IMETHODIMP sbDevCapVideoStream::GetSupportedHeights(sbIDevCapRange * *aSuppor
   return NS_OK;
 }
 
-/* void getSupportedVideoPARs (out unsigned long aCount, [array, size_is (aCount)] out string aVideoPARs); */
-NS_IMETHODIMP sbDevCapVideoStream::GetSupportedVideoPARs(PRUint32 *aCount, char ***aVideoPARs)
+/* readonly attribute boolean doesSupportPARRange; */
+NS_IMETHODIMP
+sbDevCapVideoStream::GetDoesSupportPARRange(PRBool *aDoesSupportPARRange)
 {
-  *aCount = mVideoPARs.Length();
-
-  nsresult rv = CopyAndParseFromFractions(mVideoPARs, *aCount, *aVideoPARs);
-  NS_ENSURE_SUCCESS(rv, rv);
-
+  NS_ENSURE_ARG_POINTER(aDoesSupportPARRange);
+  *aDoesSupportPARRange = mIsPARRange;
   return NS_OK;
 }
 
-/* void getSupportedFrameRates (out unsigned long aCount, [array, size_is (aCount)] out string aFrameRates); */
-NS_IMETHODIMP sbDevCapVideoStream::GetSupportedFrameRates(PRUint32 *aCount, char ***aFrameRates)
+/* readonly attribute nsIArray supportedPARs; */
+NS_IMETHODIMP
+sbDevCapVideoStream::GetSupportedPARs(nsIArray **aSupportedPARs)
 {
-  *aCount = mFrameRates.Length();
+  NS_ENSURE_ARG_POINTER(aSupportedPARs);
+  NS_IF_ADDREF(*aSupportedPARs = mVideoPARs);
+  return NS_OK;
+}
 
-  nsresult rv = CopyAndParseFromFractions(mFrameRates, *aCount, *aFrameRates);
+/* readonly attribute sbIDevCapFraction minimumSupportedPAR; */
+NS_IMETHODIMP
+sbDevCapVideoStream::GetMinimumSupportedPAR(
+    sbIDevCapFraction **aMinimumSupportedPAR)
+{
+  NS_ENSURE_ARG_POINTER(aMinimumSupportedPAR);
+  NS_ENSURE_TRUE(mIsPARRange, NS_ERROR_NOT_AVAILABLE);
+  
+  // The minimum PAR value will be the first value in the par array (if
+  // supported).
+  nsresult rv;
+  nsCOMPtr<sbIDevCapFraction> minPARFraction =
+    do_QueryElementAt(mVideoPARs, 0, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  minPARFraction.forget(aMinimumSupportedPAR);
   return NS_OK;
+}
+
+/* readonly attribute sbIDevCapFraction maximumSupportedPAR; */
+NS_IMETHODIMP
+sbDevCapVideoStream::GetMaximumSupportedPAR(
+    sbIDevCapFraction **aMaximumSupportedPAR)
+{
+  NS_ENSURE_ARG_POINTER(aMaximumSupportedPAR);
+  NS_ENSURE_TRUE(mIsPARRange, NS_ERROR_NOT_AVAILABLE);
+
+  // The maximum PAR value will be the second value in the par array (if
+  // supported).
+  nsresult rv;
+  nsCOMPtr<sbIDevCapFraction> maxPARFraction =
+    do_QueryElementAt(mVideoPARs, 1, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  maxPARFraction.forget(aMaximumSupportedPAR);
+  return NS_OK;
+}
+
+/* readonly attribute boolean doesSupportFrameRateRange; */
+NS_IMETHODIMP
+sbDevCapVideoStream::GetDoesSupportFrameRateRange(
+    PRBool *aDoesSupportFrameRateRange)
+{
+  NS_ENSURE_ARG_POINTER(aDoesSupportFrameRateRange);
+  *aDoesSupportFrameRateRange = mIsFrameRatesRange;
+  return NS_OK;
+}
+
+/* readonly attribute nsIArray supportedFrameRates; */
+NS_IMETHODIMP
+sbDevCapVideoStream::GetSupportedFrameRates(nsIArray **aSupportedFrameRates)
+{
+  NS_ENSURE_ARG_POINTER(aSupportedFrameRates);
+  NS_IF_ADDREF(*aSupportedFrameRates = mVideoFrameRates);
+  return NS_OK;
+}
+
+/* readonly attribute sbIDevCapFraction minimumSupportedFrameRate; */
+NS_IMETHODIMP
+sbDevCapVideoStream::GetMinimumSupportedFrameRate(
+    sbIDevCapFraction **aMinimumSupportedFrameRate)
+{
+  NS_ENSURE_ARG_POINTER(aMinimumSupportedFrameRate);
+  NS_ENSURE_TRUE(mIsFrameRatesRange, NS_ERROR_NOT_AVAILABLE);
+
+  // The minimum frame rate will be the first value in the frame rates array
+  // (if available).
+  nsresult rv;
+  nsCOMPtr<sbIDevCapFraction> minFrameRateFraction =
+    do_QueryElementAt(mVideoFrameRates, 0, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  minFrameRateFraction.forget(aMinimumSupportedFrameRate);
+  return NS_OK;
+}
+
+/* readonly attribute sbIDevCapFraction maximumSupportedFrameRate; */
+NS_IMETHODIMP
+sbDevCapVideoStream::GetMaximumSupportedFrameRate(
+    sbIDevCapFraction **aMaximumSupportedFrameRate)
+{
+  NS_ENSURE_ARG_POINTER(aMaximumSupportedFrameRate);
+  NS_ENSURE_TRUE(mIsFrameRatesRange, NS_ERROR_NOT_AVAILABLE);
+
+  // The maximum frame rate will be the second value in the frame rates array
+  // (if available).
+  nsresult rv;
+  nsCOMPtr<sbIDevCapFraction> maxFrameRateFraction =
+    do_QueryElementAt(mVideoFrameRates, 1, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  maxFrameRateFraction.forget(aMaximumSupportedFrameRate);
+  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 /* readonly attribute sbIDevCapRange supportedBitRates; */

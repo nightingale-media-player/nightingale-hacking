@@ -52,7 +52,6 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceCapsCompatibility,
 sbDeviceCapsCompatibility::sbDeviceCapsCompatibility()
   : mDeviceCapabilities(nsnull),
     mMediaFormat(nsnull),
-    mContentType(0),
     mMediaVideoStream(nsnull),
     mMediaAudioStream(nsnull),
     mMediaVideoWidth(0),
@@ -65,7 +64,8 @@ sbDeviceCapsCompatibility::sbDeviceCapsCompatibility()
     mMediaVideoFRDenominator(0),
     mMediaAudioBitRate(0),
     mMediaAudioSampleRate(0),
-    mMediaAudioChannels(0)
+    mMediaAudioChannels(0),
+    mContentType(0)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 }
@@ -735,9 +735,8 @@ sbDeviceCapsCompatibility::CompareVideoBitRate(
 }
 
 nsresult
-sbDeviceCapsCompatibility::CompareVideoPAR(
-                                sbIDevCapVideoStream* aVideoStream,
-                                PRBool* aCompatible)
+sbDeviceCapsCompatibility::CompareVideoPAR(sbIDevCapVideoStream *aVideoStream,
+                                           PRBool *aCompatible)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aVideoStream);
@@ -746,33 +745,77 @@ sbDeviceCapsCompatibility::CompareVideoPAR(
   nsresult rv;
   *aCompatible = PR_FALSE;
 
-  // Compare video PAR
-  char **deviceSupportedVideoPARs;
-  PRUint32 deviceVideoPARsCount;
-  rv = aVideoStream->GetSupportedVideoPARs(&deviceVideoPARsCount,
-                                           &deviceSupportedVideoPARs);
+  // Compare video PAR.
+  PRBool isRange = PR_FALSE;
+  rv = aVideoStream->GetDoesSupportPARRange(&isRange);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  sbAutoNSArray<char*> autoVideoPARs(deviceSupportedVideoPARs,
-                                     deviceVideoPARsCount);
+  PRUint32 numerator, denominator;
+  sbFraction videoParFraction(mMediaVideoPARNumerator,
+                              mMediaVideoPARDenominator);
 
-  for (PRUint32 i = 0; i < deviceVideoPARsCount; ++i) {
-    sbFraction fraction;
-    rv = sbFractionFromString(
-             NS_ConvertASCIItoUTF16(deviceSupportedVideoPARs[i]),
-             fraction);
+  if (isRange) {
+    // Decide to use either the min par or the max par value.
+    nsCOMPtr<sbIDevCapFraction> minSupportedPAR;
+    rv = aVideoStream->GetMinimumSupportedPAR(getter_AddRefs(minSupportedPAR));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = minSupportedPAR->GetNumerator(&numerator);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = minSupportedPAR->GetDenominator(&denominator);
+    NS_ENSURE_SUCCESS(rv, rv);
+    sbFraction minPARFraction(numerator, denominator); 
+
+    nsCOMPtr<sbIDevCapFraction> maxSupportedPAR;
+    rv = aVideoStream->GetMaximumSupportedPAR(getter_AddRefs(maxSupportedPAR));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = maxSupportedPAR->GetNumerator(&numerator);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = maxSupportedPAR->GetDenominator(&denominator);
+    NS_ENSURE_SUCCESS(rv, rv);
+    sbFraction maxPARFraction(numerator, denominator);
+
+    if (videoParFraction >= minPARFraction &&
+        videoParFraction <= maxPARFraction) 
+    {
+      *aCompatible = PR_TRUE;
+    }
+    else {
+      LOG(("media video PAR (%d/%d) not in min/max range of supported PARS!"
+            "min=(%d/%d) max=(%d/%d)",
+            mMediaVideoPARNumerator, mMediaVideoPARDenominator,
+            minPARFraction.Numerator(), minPARFraction.Denominator(),
+            maxPARFraction.Numerator(), maxPARFraction.Denominator()));
+    }
+  }
+  else {
+    nsCOMPtr<nsIArray> supportedPARsArray;
+    rv = aVideoStream->GetSupportedPARs(getter_AddRefs(supportedPARsArray));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Match
-    if (fraction == sbFraction(mMediaVideoPARNumerator,
-                               mMediaVideoPARDenominator)) {
-      *aCompatible = PR_TRUE;
-      break;
-    }
+    PRUint32 length;
+    rv = supportedPARsArray->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-    LOG(("media video PAR (%d/%d) not equal to supported PAR item[%d] (%d/%d)",
-         mMediaVideoPARNumerator, mMediaVideoPARDenominator, i,
-         fraction.Numerator(), fraction.Denominator()));
+    for (PRUint32 i = 0; i < length; i++) {
+      nsCOMPtr<sbIDevCapFraction> curPARFraction =
+        do_QueryElementAt(supportedPARsArray, i, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = curPARFraction->GetNumerator(&numerator);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = curPARFraction->GetDenominator(&denominator);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Match
+      if (videoParFraction == sbFraction(numerator, denominator)) {
+        *aCompatible = PR_TRUE;
+        break;
+      }
+
+      LOG(("media video PAR (%d/%d) not equal to supported PAR item[%d] (%d/%d)",
+            mMediaVideoPARNumerator, mMediaVideoPARDenominator, i,
+            numerator, denominator));
+    }
   }
 
 #ifdef PR_LOGGING
@@ -796,33 +839,81 @@ sbDeviceCapsCompatibility::CompareVideoFrameRate(
   nsresult rv;
   *aCompatible = PR_FALSE;
 
-  // Compare frame rate
-  char **deviceSupportedFrameRates;
-  PRUint32 deviceFrameRatesCount;
-  rv = aVideoStream->GetSupportedFrameRates(&deviceFrameRatesCount,
-                                            &deviceSupportedFrameRates);
+  // Compare frame rates.
+  PRBool isRange = PR_FALSE;
+  rv = aVideoStream->GetDoesSupportFrameRateRange(&isRange);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  sbAutoNSArray<char*> autoFrameRates(deviceSupportedFrameRates,
-                                      deviceFrameRatesCount);
-  for (PRUint32 i = 0; i < deviceFrameRatesCount; ++i) {
-    sbFraction fraction;
-    rv = sbFractionFromString(
-             NS_ConvertASCIItoUTF16(deviceSupportedFrameRates[i]),
-             fraction);
+  PRUint32 numerator, denominator;
+  sbFraction videoFrameRateFraction(mMediaVideoFRNumerator,
+                                    mMediaVideoFRDenominator);
+
+  if (isRange) {
+    // Decide to use either the min or the max frame rate value.
+    nsCOMPtr<sbIDevCapFraction> minSupportedFR;
+    rv = aVideoStream->GetMinimumSupportedFrameRate(
+        getter_AddRefs(minSupportedFR));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = minSupportedFR->GetNumerator(&numerator);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = minSupportedFR->GetDenominator(&denominator);
+    NS_ENSURE_SUCCESS(rv, rv);
+    sbFraction minFRFraction(numerator, denominator); 
+
+    nsCOMPtr<sbIDevCapFraction> maxSupportedFR;
+    rv = aVideoStream->GetMaximumSupportedFrameRate(
+        getter_AddRefs(maxSupportedFR));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = maxSupportedFR->GetNumerator(&numerator);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = maxSupportedFR->GetDenominator(&denominator);
+    NS_ENSURE_SUCCESS(rv, rv);
+    sbFraction maxFRFraction(numerator, denominator);
+
+    if (videoFrameRateFraction >= minFRFraction &&
+        videoFrameRateFraction <= maxFRFraction)
+    {
+      *aCompatible = PR_TRUE;
+    }
+    else {
+      LOG(("media video frame rate (%d/%d) not in min/max range of "
+            "supported frame rates! min=(%d/%d) max=(%d/%d)",
+            mMediaVideoPARNumerator, mMediaVideoPARDenominator,
+            minFRFraction.Numerator(), minFRFraction.Denominator(),
+            maxFRFraction.Numerator(), maxFRFraction.Denominator()));
+    }
+  }
+  else {
+    nsCOMPtr<nsIArray> supportedFrameRatesFraction;
+    rv = aVideoStream->GetSupportedFrameRates(
+        getter_AddRefs(supportedFrameRatesFraction));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Match
-    if (fraction == sbFraction(mMediaVideoFRNumerator,
-                               mMediaVideoFRDenominator)) {
-      *aCompatible = PR_TRUE;
-      break;
-    }
+    PRUint32 length;
+    rv = supportedFrameRatesFraction->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-    LOG(("media video frame rate (%d/%d) not equal to supported "
-         "frame rate item[%d] (%d/%d)",
-         mMediaVideoFRNumerator, mMediaVideoFRDenominator, i,
-         fraction.Numerator(), fraction.Denominator()));
+    for (PRUint32 i = 0; i < length; i++) {
+      nsCOMPtr<sbIDevCapFraction> curFrameRateFraction =
+        do_QueryElementAt(supportedFrameRatesFraction, i, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = curFrameRateFraction->GetNumerator(&numerator);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = curFrameRateFraction->GetDenominator(&denominator);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Match
+      if (videoFrameRateFraction == sbFraction(numerator, denominator)) {
+        *aCompatible = PR_TRUE;
+        break;
+      }
+
+      LOG(("media video frame rate (%d/%d) not equal to supported "
+            "frame rate item[%d] (%d/%d)",
+            mMediaVideoPARNumerator, mMediaVideoPARDenominator, i,
+            numerator, denominator));
+    }
   }
 
 #ifdef PR_LOGGING

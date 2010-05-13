@@ -354,22 +354,44 @@ NS_IMETHODIMP sbMockDevice::GetCapabilities(sbIDeviceCapabilities * *aCapabiliti
   rv = videoSizeArray->AppendElement(videoSize, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  const char* K_VIDEO_PAR_STRING = "1/1";
-  const char* K_VIDEO_FRAMERATE_STRING = "30000/1001";
   nsCOMPtr<sbIDevCapRange> videoBitrateRange =
     do_CreateInstance(SB_IDEVCAPRANGE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = videoBitrateRange->Initialize(100, 4 * 1024 * 1024, 100);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create the video par range:
+  nsCOMPtr<sbIDevCapFraction> parFraction =
+    do_CreateInstance("@songbirdnest.com/Songbird/Device/sbfraction;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = parFraction->Initialize(1, 1);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIMutableArray> parFractionArray =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = parFractionArray->AppendElement(parFraction, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create the video frame rate range:
+  nsCOMPtr<sbIDevCapFraction> frameRateFraction =
+    do_CreateInstance("@songbirdnest.com/Songbird/Device/sbfraction;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = frameRateFraction->Initialize(30000, 1001);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIMutableArray> frameRateFractionArray =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = frameRateFractionArray->AppendElement(frameRateFraction, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
   
   rv = videoFormat->Initialize(NS_LITERAL_CSTRING("video/x-theora"),
                                videoSizeArray,
                                nsnull, // explicit sizes only
                                nsnull, // explicit sizes only
-                               1,
-                               &K_VIDEO_PAR_STRING,
-                               1,
-                               &K_VIDEO_FRAMERATE_STRING,
+                               parFractionArray,
+                               PR_FALSE,
+                               frameRateFractionArray,
+                               PR_FALSE,
                                videoBitrateRange);
   
   nsCOMPtr<sbIDevCapAudioStream> audioFormat =

@@ -2067,19 +2067,8 @@ LogVideoFormatType(sbIVideoFormatType *aVideoFormatType,
   rv = videoStream->GetSupportedBitRates(getter_AddRefs(videoBitrates));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUint32 videoParSize = 0;
-  char **videoPar;
-  rv = videoStream->GetSupportedVideoPARs(&videoParSize, &videoPar);
-  NS_ENSURE_SUCCESS(rv, rv);
-  sbAutoNSArray<char *> autoVideoPARs(videoPar, videoParSize);
+  PRUint32 num, den;
 
-  PRUint32 videoFrameRateSize = 0;
-  char **videoFrameRates;
-  rv = videoStream->GetSupportedFrameRates(&videoFrameRateSize,
-                                           &videoFrameRates);
-  NS_ENSURE_SUCCESS(rv, rv);
-  sbAutoNSArray<char *> autoVideoFrameRates(videoFrameRates,
-                                            videoFrameRateSize);
 
   LOG_MODULE(aLogModule, (" * videostream type = %s)", videoStreamType.get()));
 
@@ -2092,13 +2081,105 @@ LogVideoFormatType(sbIVideoFormatType *aVideoFormatType,
   LOG_MODULE(aLogModule, (" * videostream bitrates:"));
   rv = LogRange(videoBitrates, PR_TRUE, aLogModule);
 
-  LOG_MODULE(aLogModule, (" * videostream PARs:"));
-  rv = LogPtrArray(videoParSize, videoPar, aLogModule);
-  NS_ENSURE_SUCCESS(rv, rv);
+  PRBool supportsPARRange = PR_FALSE;
+  rv = videoStream->GetDoesSupportPARRange(&supportsPARRange);
+  if (NS_SUCCEEDED(rv) && supportsPARRange) {
+    // Simply log the min and the max values here.
+    nsCOMPtr<sbIDevCapFraction> minSupportedPAR;
+    rv = videoStream->GetMinimumSupportedPAR(getter_AddRefs(minSupportedPAR));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  LOG_MODULE(aLogModule, (" * videostream frame rates:"));
-  rv = LogPtrArray(videoFrameRateSize, videoFrameRates, aLogModule);
-  NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<sbIDevCapFraction> maxSupportedPAR;
+    rv = videoStream->GetMaximumSupportedPAR(getter_AddRefs(maxSupportedPAR));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = minSupportedPAR->GetNumerator(&num);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = minSupportedPAR->GetDenominator(&den);
+    NS_ENSURE_SUCCESS(rv, rv);
+    LOG_MODULE(aLogModule, (" * videostream min PAR: %i/%i", num, den));
+
+    rv = maxSupportedPAR->GetNumerator(&num);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = maxSupportedPAR->GetDenominator(&den);
+    NS_ENSURE_SUCCESS(rv, rv);
+    LOG_MODULE(aLogModule, (" * videostream max PAR: %i/%i", num, den));
+  }
+  else {
+    // Log out the list of PARs.
+    nsCOMPtr<nsIArray> supportedPARs;
+    rv = videoStream->GetSupportedPARs(getter_AddRefs(supportedPARs));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 length = 0;
+    rv = supportedPARs->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    LOG_MODULE(aLogModule, (" * videostream PAR count: %i", length));
+
+    for (PRUint32 i = 0; i < length; i++) {
+      nsCOMPtr<sbIDevCapFraction> curFraction =
+        do_QueryElementAt(supportedPARs, i, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = curFraction->GetNumerator(&num);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = curFraction->GetDenominator(&den);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      LOG_MODULE(aLogModule, ("   - %i/%i", num, den));
+    }
+  }
+
+  PRBool supportsFrameRange = PR_FALSE;
+  rv = videoStream->GetDoesSupportFrameRateRange(&supportsFrameRange);
+  if (NS_SUCCEEDED(rv) && supportsFrameRange) {
+    nsCOMPtr<sbIDevCapFraction> minFrameRate;
+    rv = videoStream->GetMinimumSupportedFrameRate(
+        getter_AddRefs(minFrameRate));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIDevCapFraction> maxFrameRate;
+    rv = videoStream->GetMaximumSupportedFrameRate(
+        getter_AddRefs(maxFrameRate));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = minFrameRate->GetNumerator(&num);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = minFrameRate->GetDenominator(&den);
+    NS_ENSURE_SUCCESS(rv, rv);
+    LOG_MODULE(aLogModule, (" * videostream min framerate: %i/%i", num, den));
+
+    rv = maxFrameRate->GetNumerator(&num);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = maxFrameRate->GetDenominator(&den);
+    NS_ENSURE_SUCCESS(rv, rv);
+    LOG_MODULE(aLogModule, (" * videostream max framerate: %i/%i", num, den));
+  }
+  else {
+    nsCOMPtr<nsIArray> frameRates;
+    rv = videoStream->GetSupportedFrameRates(getter_AddRefs(frameRates));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 length = 0;
+    rv = frameRates->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    LOG_MODULE(aLogModule, (" * videostream framerate count: %i", length));
+
+    for (PRUint32 i = 0; i < length; i++) {
+      nsCOMPtr<sbIDevCapFraction> curFraction =
+        do_QueryElementAt(frameRates, i, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = curFraction->GetNumerator(&num);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = curFraction->GetDenominator(&den);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      LOG_MODULE(aLogModule, ("   - %i/%i", num, den));
+    }
+  }
 
   nsCOMPtr<sbIDevCapAudioStream> audioStream;
   rv = aVideoFormatType->GetAudioStream(getter_AddRefs(audioStream));

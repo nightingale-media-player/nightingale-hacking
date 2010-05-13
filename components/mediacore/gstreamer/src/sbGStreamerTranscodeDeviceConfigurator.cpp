@@ -50,6 +50,7 @@
 #include <sbITranscodeProfile.h>
 
 ///// Gecko header includes
+#include <nsArrayUtils.h>
 #include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsNetUtil.h>
@@ -212,7 +213,7 @@ static const struct sb_gst_caps_map_entry sb_gst_caps_map[] =
 static nsresult
 GetGstCapsName(const nsACString &aMimeType, nsACString &aGstCapsName)
 {
-  for (int i = 0; i < NS_ARRAY_LENGTH(sb_gst_caps_map); i++) {
+  for (PRUint32 i = 0; i < NS_ARRAY_LENGTH(sb_gst_caps_map); i++) {
     if (aMimeType.EqualsLiteral(sb_gst_caps_map[i].sb_name)) {
       aGstCapsName.AssignLiteral(sb_gst_caps_map[i].gst_name);
       return NS_OK;
@@ -841,34 +842,85 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineIdealOutputSize()
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(outputCaps, NS_ERROR_FAILURE);
 
-  // if we can't match the PAR, adjust to square pixels
+  // If we can't match the PAR, adjust to square pixels
   { /* scope */
-    PRUint32 count;
-    char** parData = nsnull;
-    rv = outputCaps->GetSupportedVideoPARs(&count, &parData);
-    NS_ENSURE_SUCCESS(rv, rv);
-    sbAutoFreeXPCOMArray<char**> supportedPARDestroryer(count, parData);
     PRUint32 num, denom;
     rv = inputFormat->GetVideoPAR(&num, &denom);
     NS_ENSURE_SUCCESS(rv, rv);
     sbFraction inputPAR(num, denom);
-    sbFraction outputPAR;
-    PRUint32 index;
-    for (index = 0; index < count; ++index) {
-      rv = sbFractionFromString(parData[index], outputPAR);
+
+    // Check to see if the PAR values for the device caps is a min/max or a
+    // set range of values.
+    PRBool supportsPARRange;
+    rv = outputCaps->GetDoesSupportPARRange(&supportsPARRange);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (supportsPARRange) {
+      // The PAR value is a min/max value range. Pick the closet match.
+      nsCOMPtr<sbIDevCapFraction> minPARFraction;
+      rv = outputCaps->GetMinimumSupportedPAR(getter_AddRefs(minPARFraction));
       NS_ENSURE_SUCCESS(rv, rv);
-      if (inputPAR.IsEqual(outputPAR)) {
+      rv = minPARFraction->GetNumerator(&num);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = minPARFraction->GetDenominator(&denom);
+      NS_ENSURE_SUCCESS(rv, rv);
+      sbFraction minPAR(num, denom);
+
+      nsCOMPtr<sbIDevCapFraction> maxPARFraction;
+      rv = outputCaps->GetMaximumSupportedPAR(getter_AddRefs(maxPARFraction));
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = maxPARFraction->GetNumerator(&num);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = maxPARFraction->GetDenominator(&denom);
+      NS_ENSURE_SUCCESS(rv, rv);
+      sbFraction maxPAR(num, denom);
+
+      // If the input PAR is between the min and max PAR values use the input
+      // PAR value. If not, use the closest PAR value.
+      if (inputPAR >= minPAR && inputPAR <= maxPAR) {
         mOutputPAR = inputPAR;
-        break;
+      }
+      else if (inputPAR < minPAR) {
+        mOutputPAR = minPAR;
+      }
+      else if (inputPAR > maxPAR) {
+        mOutputPAR = maxPAR;
       }
     }
-    if (index >= count) {
-      // we didn't find a match; just... kinda give up and blow them up into
-      // square-looking pixels by duplicating pixels
-      input.width *= inputPAR.Denominator();
-      input.height *= inputPAR.Numerator();
-      mOutputPAR = sbFraction(1, 1); // XXX Mook: we need to adjust to something
-                                     // we have output PAR for!
+    else {
+      nsCOMPtr<nsIArray> parRanges;
+      rv = outputCaps->GetSupportedPARs(getter_AddRefs(parRanges));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRUint32 count, index = 0;
+      rv = parRanges->GetLength(&count);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      for (PRUint32 i = 0; i < count; i++) {
+        nsCOMPtr<sbIDevCapFraction> curFraction =
+          do_QueryElementAt(parRanges, i, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = curFraction->GetNumerator(&num);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = curFraction->GetDenominator(&denom);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        sbFraction curPARFraction(num, denom);
+        if (inputPAR.IsEqual(curPARFraction)) {
+          mOutputPAR = inputPAR;
+          break;
+        }
+      }
+
+      if (index >= count) {
+        // we didn't find a match; just... kinda give up and blow them up into
+        // square-looking pixels by duplicating pixels
+        input.width *= inputPAR.Denominator();
+        input.height *= inputPAR.Numerator();
+        mOutputPAR = sbFraction(1, 1); // XXX Mook: we need to adjust to something
+        // we have output PAR for!
+      }
     }
   }
 
@@ -1111,23 +1163,73 @@ sbGStreamerTranscodeDeviceConfigurator::FinalizeOutputSize()
     NS_ENSURE_SUCCESS(rv, rv);
     NS_ENSURE_TRUE(videoCaps, NS_ERROR_FAILURE);
 
-    char ** frameRates;
-    PRUint32 frameRateCount;
-    rv = videoCaps->GetSupportedFrameRates(&frameRateCount, &frameRates);
+    PRBool isFrameRatesRange;
+    rv = videoCaps->GetDoesSupportFrameRateRange(&isFrameRatesRange);
     NS_ENSURE_SUCCESS(rv, rv);
-    NS_ENSURE_TRUE(frameRateCount > 0, NS_ERROR_FAILURE);
-    sbAutoFreeXPCOMArray<char**> frameRatesDestroyer(frameRateCount, frameRates);
 
-    for (PRUint32 i = 0; i < frameRateCount; ++i) {
-      sbFraction candidate;
-      rv = sbFractionFromString(frameRates[i], candidate);
+    if (isFrameRatesRange) {
+      nsCOMPtr<sbIDevCapFraction> minFrameRate;
+      rv = videoCaps->GetMinimumSupportedFrameRate(
+          getter_AddRefs(minFrameRate));
       NS_ENSURE_SUCCESS(rv, rv);
-      double lastDifference = fabs(outputFrameRate - inputFrameRate);
-      double difference = fabs(candidate - inputFrameRate);
-      if (difference < lastDifference) {
-        outputFrameRate = candidate;
+      rv = minFrameRate->GetNumerator(&num);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = minFrameRate->GetDenominator(&denom);
+      NS_ENSURE_SUCCESS(rv, rv);
+      sbFraction minFrameRateFraction(num, denom);
+
+      nsCOMPtr<sbIDevCapFraction> maxFrameRate;
+      rv = videoCaps->GetMaximumSupportedFrameRate(
+          getter_AddRefs(maxFrameRate));
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = maxFrameRate->GetNumerator(&num);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = maxFrameRate->GetDenominator(&denom);
+      NS_ENSURE_SUCCESS(rv, rv);
+      sbFraction maxFrameRateFraction(num, denom);
+
+      if (inputFrameRate >= minFrameRateFraction &&
+          inputFrameRate <= maxFrameRateFraction)
+      {
+        outputFrameRate = inputFrameRate;
+      }
+      else if (inputFrameRate < minFrameRateFraction) {
+        outputFrameRate = minFrameRateFraction;
+      }
+      else if (inputFrameRate > maxFrameRateFraction) {
+        outputFrameRate = maxFrameRateFraction;
       }
     }
+    else {
+      nsCOMPtr<nsIArray> frameRatesRange;
+      rv = videoCaps->GetSupportedFrameRates(getter_AddRefs(frameRatesRange));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRUint32 length = 0;
+      rv = frameRatesRange->GetLength(&length);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      for (PRUint32 i = 0; i < length; i++) {
+        nsCOMPtr<sbIDevCapFraction> curFraction =
+          do_QueryElementAt(frameRatesRange, i, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        PRUint32 num, denom;
+        rv = curFraction->GetNumerator(&num);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = curFraction->GetDenominator(&denom);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        sbFraction candidate(num, denom);
+
+        double lastDifference = fabs(outputFrameRate - inputFrameRate);
+        double difference = fabs(candidate - inputFrameRate);
+        if (difference < lastDifference) {
+          outputFrameRate = candidate;
+        }
+      }
+    }
+
     mVideoFrameRate = outputFrameRate;
   }
 
