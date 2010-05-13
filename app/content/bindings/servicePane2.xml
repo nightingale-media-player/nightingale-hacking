@@ -939,7 +939,7 @@
 
         this.servicePane = this.parentNode;
 
-        let isMac = (getPlatformString() == "Darwin");
+        this._isMac = (getPlatformString() == "Darwin");
         this.keyListener = function(e) {
           if (!self.image)
             return;
@@ -958,7 +958,7 @@
           if (element.namespaceURI == HTMLNS && element.localName == "input")
             return;
 
-          if ((isMac && e.altKey) || (!isMac && e.shiftKey)) {
+          if ((self._isMac && e.altKey) || (!self._isMac && e.shiftKey)) {
             self.image.setAttribute("altKey", "true");
           } else {
             self.image.removeAttribute("altKey");
@@ -977,9 +977,10 @@
       <field name="_dndReordering">false</field>
 
       <method name="newPlaylist">
-        <parameter name="event" />
+        <parameter name="e" />
         <body><![CDATA[
-          if (event.altKey) {
+          this.image.removeAttribute("altKey");
+          if ((this._isMac && e.altKey) || (!this._isMac && e.shiftKey)) {
             SBNewSmartPlaylist();
           } else {
             var enumerator;
