@@ -600,9 +600,10 @@
         <body><![CDATA[
           if (this._textbox.getAttribute("hidden"))
             return;
-          this._textbox.value = this.getAttribute("label");
+          this.setAttribute("label", this._textbox.value);
           this._textbox.setAttribute("hidden", true);
-          this._servicePane.mService.onRename(this.nodeData, null);
+          this._servicePane.mService.onRename(this.nodeData,
+                                              this._textbox.value);
           event.stopPropagation();
           event.preventDefault();
         ]]></body>
