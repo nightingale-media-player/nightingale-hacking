@@ -37,7 +37,8 @@
 #include <math.h>
 #include <nsAutoLock.h>
 #include <nsCRT.h>
-#include <nsCycleCollectionParticipant.h>
+
+#include <sbMemoryUtils.h>
 
 /***************************************************************************/
 // Helpers for static convert functions...
@@ -151,7 +152,7 @@ static nsresult AString2Double(const nsAString& aString, double* retval)
   if(!pChars)
     return NS_ERROR_OUT_OF_MEMORY;
   nsresult rv = String2Double(pChars, retval);
-  nsMemory::Free(pChars);
+  NS_Free(pChars);
   return rv;
 }
 
@@ -283,7 +284,7 @@ static void FreeArray(nsDiscriminatedUnion* data)
   ctype_ ** p = (ctype_ **) data->u.array.mArrayValue;              \
   for(PRUint32 i = data->u.array.mArrayCount; i > 0; p++, i--)      \
   if(*p)                                                        \
-  nsMemory::Free((char*)*p);                                \
+  NS_Free((char*)*p);                                \
   break;                                                            \
   }
 
@@ -338,7 +339,7 @@ static void FreeArray(nsDiscriminatedUnion* data)
   }
 
   // Free the array memory.
-  nsMemory::Free((char*)data->u.array.mArrayValue);
+  NS_Free((char*)data->u.array.mArrayValue);
 
 #undef CASE__FREE_ARRAY_PTR
 #undef CASE__FREE_ARRAY_IFACE
@@ -435,7 +436,7 @@ static nsresult CloneArray(PRUint16 inType, const nsIID* inIID,
   // Alloc the u.array.
 
   allocSize = inCount * elementSize;
-  *outValue = nsMemory::Alloc(allocSize);
+  *outValue = NS_Alloc(allocSize);
   if(!*outValue)
     return NS_ERROR_OUT_OF_MEMORY;
 
@@ -485,7 +486,7 @@ static nsresult CloneArray(PRUint16 inType, const nsIID* inIID,
         if(idp)
         {
           if(nsnull == (*(outp++) = (nsID*)
-            nsMemory::Clone((char*)idp, sizeof(nsID))))
+            SB_CloneMemory((char*)idp, sizeof(nsID))))
             goto bad;
         }
         else
@@ -505,7 +506,7 @@ static nsresult CloneArray(PRUint16 inType, const nsIID* inIID,
         if(str)
         {
           if(nsnull == (*(outp++) = (char*)
-            nsMemory::Clone(str, (strlen(str)+1)*sizeof(char))))
+            SB_CloneMemory(str, (strlen(str)+1)*sizeof(char))))
             goto bad;
         }
         else
@@ -525,7 +526,7 @@ static nsresult CloneArray(PRUint16 inType, const nsIID* inIID,
         if(str)
         {
           if(nsnull == (*(outp++) = (PRUnichar*)
-            nsMemory::Clone(str,
+            SB_CloneMemory(str,
             (nsCRT::strlen(str)+1)*sizeof(PRUnichar))))
             goto bad;
         }
@@ -562,8 +563,8 @@ bad:
     char** p = (char**) *outValue;
     for(i = allocatedValueCount; i > 0; p++, i--)
       if(*p)
-        nsMemory::Free(*p);
-    nsMemory::Free((char*)*outValue);
+        NS_Free(*p);
+    NS_Free((char*)*outValue);
     *outValue = nsnull;
   }
   return rv;
@@ -818,7 +819,7 @@ static PRBool String2ID(const nsDiscriminatedUnion& data, nsID* pid)
   if(!pChars)
     return PR_FALSE;
   PRBool result = pid->Parse(pChars);
-  nsMemory::Free(pChars);
+  NS_Free(pChars);
   return result;
 }
 
@@ -899,7 +900,7 @@ static nsresult ToString(const nsDiscriminatedUnion& data,
     if(!ptr)
       return NS_ERROR_OUT_OF_MEMORY;
     outString.Assign(ptr);
-    nsMemory::Free(ptr);
+    NS_Free(ptr);
     return NS_OK;
 
     // Can't use PR_smprintf for floats, since it's locale-dependent
@@ -1314,7 +1315,7 @@ sbVariant::ConvertToInterface(const nsDiscriminatedUnion& data, nsIID * *iid,
     return NS_ERROR_CANNOT_CONVERT_DATA;
   }
 
-  *iid = (nsIID*) nsMemory::Clone(piid, sizeof(nsIID));
+  *iid = (nsIID*) SB_CloneMemory(piid, sizeof(nsIID));
   if(!*iid)
     return NS_ERROR_OUT_OF_MEMORY;
 
@@ -1480,7 +1481,7 @@ sbVariant::SetFromVariant(nsDiscriminatedUnion* data, nsIVariant* aValue)
     if(NS_SUCCEEDED(rv))
     {
       data->u.iface.mInterfaceID = *iid;
-      nsMemory::Free((char*)iid);
+      NS_Free((char*)iid);
     }
     CASE__SET_FROM_VARIANT_VTYPE_EPILOGUE(VTYPE_INTERFACE_IS)
 
@@ -1663,7 +1664,7 @@ sbVariant::SetFromStringWithSize(nsDiscriminatedUnion* data, PRUint32 size, cons
   if(!aValue)
     return NS_ERROR_NULL_POINTER;
   if(!(data->u.str.mStringValue =
-    (char*) nsMemory::Clone(aValue, (size+1)*sizeof(char))))
+    (char*) SB_CloneMemory(aValue, (size+1)*sizeof(char))))
     return NS_ERROR_OUT_OF_MEMORY;
   data->u.str.mStringLength = size;
   DATA_SETTER_EPILOGUE(data, VTYPE_STRING_SIZE_IS);
@@ -1675,7 +1676,7 @@ sbVariant::SetFromWStringWithSize(nsDiscriminatedUnion* data, PRUint32 size, con
   if(!aValue)
     return NS_ERROR_NULL_POINTER;
   if(!(data->u.wstr.mWStringValue =
-    (PRUnichar*) nsMemory::Clone(aValue, (size+1)*sizeof(PRUnichar))))
+    (PRUnichar*) SB_CloneMemory(aValue, (size+1)*sizeof(PRUnichar))))
     return NS_ERROR_OUT_OF_MEMORY;
   data->u.wstr.mWStringLength = size;
   DATA_SETTER_EPILOGUE(data, VTYPE_WSTRING_SIZE_IS);
@@ -1753,11 +1754,11 @@ sbVariant::Cleanup(nsDiscriminatedUnion* data)
     break;
   case nsIDataType::VTYPE_CHAR_STR:
   case nsIDataType::VTYPE_STRING_SIZE_IS:
-    nsMemory::Free((char*)data->u.str.mStringValue);
+    NS_Free((char*)data->u.str.mStringValue);
     break;
   case nsIDataType::VTYPE_WCHAR_STR:
   case nsIDataType::VTYPE_WSTRING_SIZE_IS:
-    nsMemory::Free((char*)data->u.wstr.mWStringValue);
+    NS_Free((char*)data->u.wstr.mWStringValue);
     break;
   case nsIDataType::VTYPE_INTERFACE:
   case nsIDataType::VTYPE_INTERFACE_IS:
@@ -1776,33 +1777,6 @@ sbVariant::Cleanup(nsDiscriminatedUnion* data)
 
   data->mType = nsIDataType::VTYPE_EMPTY;
   return NS_OK;
-}
-
-/* static */ void
-sbVariant::Traverse(const nsDiscriminatedUnion& data,
-                    nsCycleCollectionTraversalCallback &cb)
-{
-  switch(data.mType)
-  {
-  case nsIDataType::VTYPE_INTERFACE:
-  case nsIDataType::VTYPE_INTERFACE_IS:
-    cb.NoteXPCOMChild(data.u.iface.mInterfaceValue);
-    break;
-  case nsIDataType::VTYPE_ARRAY:
-    switch(data.u.array.mArrayType) {
-  case nsIDataType::VTYPE_INTERFACE:
-  case nsIDataType::VTYPE_INTERFACE_IS:
-    {
-      nsISupports** p = (nsISupports**) data.u.array.mArrayValue;
-      for(PRUint32 i = data.u.array.mArrayCount; i > 0; p++, i--)
-        cb.NoteXPCOMChild(*p);
-    }
-  default:
-    break;
-    }
-  default:
-    break;
-  }
 }
 
 /***************************************************************************/

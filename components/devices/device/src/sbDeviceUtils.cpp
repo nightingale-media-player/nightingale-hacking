@@ -678,7 +678,7 @@ nsresult sbDeviceUtils::SetLinkedSyncPartner(sbIDevice* aDevice)
   return NS_OK;
 }
 
-SB_AUTO_CLASS(sbAutoNSMemoryPtr, void*, !!mValue, nsMemory::Free(mValue), mValue = nsnull);
+SB_AUTO_CLASS(sbAutoNSMemoryPtr, void*, !!mValue, NS_Free(mValue), mValue = nsnull);
 
 bool sbDeviceUtils::ArePlaylistsSupported(sbIDevice * aDevice)
 {
@@ -1234,7 +1234,7 @@ sbDeviceUtils::GetSupportedTranscodeProfiles(PRUint32 aType,
                mimeTypes[mimeTypeIndex]));
         nsString mimeType;
         mimeType.AssignLiteral(mimeTypes[mimeTypeIndex]);
-        nsMemory::Free(mimeTypes[mimeTypeIndex]);
+        NS_Free(mimeTypes[mimeTypeIndex]);
 
         nsISupports** formatTypes;
         PRUint32 formatTypeCount;
@@ -1314,7 +1314,7 @@ sbDeviceUtils::GetSupportedTranscodeProfiles(PRUint32 aType,
           }
         }
       }
-      nsMemory::Free(mimeTypes);
+      NS_Free(mimeTypes);
     }
   }
 

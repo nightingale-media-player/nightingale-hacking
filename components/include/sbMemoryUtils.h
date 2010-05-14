@@ -273,5 +273,16 @@ nsresult sbReturnCOMPtr(COMPtr & aPtr, ReturnType ** aReturn)
   return NS_OK;
 }
 
+/**
+ * \brief Clone a block of contiguous memory
+ */
+inline void *
+SB_CloneMemory(const void* ptr, PRSize size) {
+  void* newPtr = NS_Alloc(size);
+  if (newPtr)
+    memcpy(newPtr, ptr, size);
+  return newPtr;
+}
+
 #endif /* __SBMEMORYUTILS_H__ */
 

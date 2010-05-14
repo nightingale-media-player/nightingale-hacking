@@ -409,7 +409,7 @@ sbDeviceCapabilities::GetSupportedFunctionTypes(PRUint32 *aArrayCount,
   NS_ENSURE_TRUE(isConfigured, NS_ERROR_NOT_INITIALIZED);
 
   PRUint32 arrayLen = mFunctionTypes.Length();
-  PRUint32* outArray = (PRUint32*)nsMemory::Alloc(arrayLen * sizeof(PRUint32));
+  PRUint32* outArray = (PRUint32*)NS_Alloc(arrayLen * sizeof(PRUint32));
   NS_ENSURE_TRUE(outArray, NS_ERROR_OUT_OF_MEMORY);
 
   for (PRUint32 arrayCounter = 0; arrayCounter < arrayLen; arrayCounter++) {
@@ -439,7 +439,7 @@ sbDeviceCapabilities::GetSupportedContentTypes(PRUint32 aFunctionType,
   }
 
   PRUint32 arrayLen = contentTypes->Length();
-  PRUint32* outArray = (PRUint32*)nsMemory::Alloc(arrayLen * sizeof(PRUint32));
+  PRUint32* outArray = (PRUint32*)NS_Alloc(arrayLen * sizeof(PRUint32));
   if (!outArray) {
     return NS_ERROR_OUT_OF_MEMORY;
   }
@@ -496,7 +496,7 @@ sbDeviceCapabilities::GetSupportedEvents(PRUint32 *aArrayCount,
   NS_ENSURE_TRUE(isConfigured, NS_ERROR_NOT_INITIALIZED);
 
   PRUint32 arrayLen = mSupportedEvents.Length();
-  PRUint32* outArray = (PRUint32*)nsMemory::Alloc(arrayLen * sizeof(PRUint32));
+  PRUint32* outArray = (PRUint32*)NS_Alloc(arrayLen * sizeof(PRUint32));
   if (!outArray) {
     return NS_ERROR_OUT_OF_MEMORY;
   }

@@ -137,7 +137,7 @@ sbProcess::Run()
     // Allocate a null-terminated char* argument list and set it up for
     // auto-disposal.
     char** argList = reinterpret_cast<char**>
-                       (nsMemory::Alloc((argCount + 1) * sizeof(char*)));
+                       (NS_Alloc((argCount + 1) * sizeof(char*)));
     NS_ENSURE_TRUE(argList, NS_ERROR_OUT_OF_MEMORY);
     sbAutoNSTypePtr<char*> autoArgList(argList);
 
