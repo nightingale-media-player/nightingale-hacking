@@ -2548,6 +2548,18 @@ sbMediacoreSequencer::PlayView(sbIMediaListView *aView,
   rv = Play();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Fire EXPLICIT_TRACK_CHANGE when PlayView() is called.
+  nsCOMPtr<sbIMediacoreEvent> event;
+  rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::EXPLICIT_TRACK_CHANGE,
+                                     nsnull,
+                                     nsnull,
+                                     mCore,
+                                     getter_AddRefs(event));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = DispatchMediacoreEvent(event);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -2708,6 +2720,8 @@ NS_IMETHODIMP
 sbMediacoreSequencer::Next()
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  
+  nsresult rv = NS_ERROR_UNEXPECTED;
 
   nsAutoMonitor mon(mMonitor);
 
@@ -2768,8 +2782,6 @@ sbMediacoreSequencer::Next()
 
   // No next track, not an error.
   if(!hasNext) {
-    nsresult rv = NS_ERROR_UNEXPECTED;
-
     // No next track and playing, stop.
     if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
        mStatus == sbIMediacoreStatus::STATUS_PAUSED ||
@@ -2811,9 +2823,23 @@ sbMediacoreSequencer::Next()
     return NS_OK;
   }
 
+  // Fire EXPLICIT_TRACK_CHANGE when Next() was not triggered by the stream ending.
+  if(!mNextTriggeredByStreamEnd) {
+    nsCOMPtr<sbIMediacoreEvent> event;
+    rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::EXPLICIT_TRACK_CHANGE,
+                                       nsnull,
+                                       nsnull,
+                                       mCore,
+                                       getter_AddRefs(event));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = DispatchMediacoreEvent(event);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   mon.Exit();
 
-  nsresult rv = ProcessNewPosition();
+  rv = ProcessNewPosition();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -2823,6 +2849,8 @@ NS_IMETHODIMP
 sbMediacoreSequencer::Previous()
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
 
   nsAutoMonitor mon(mMonitor);
 
@@ -2868,8 +2896,6 @@ sbMediacoreSequencer::Previous()
 
   // No next track, not an error.
   if(!hasNext) {
-    nsresult rv = NS_ERROR_UNEXPECTED;
-
     // No next track and playing, stop.
     if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
        mStatus == sbIMediacoreStatus::STATUS_PAUSED ||
@@ -2911,9 +2937,23 @@ sbMediacoreSequencer::Previous()
     return NS_OK;
   }
 
+  // Fire EXPLICIT_TRACK_CHANGE when Previous() was not triggered by the stream ending.
+  if(!mNextTriggeredByStreamEnd) {
+    nsCOMPtr<sbIMediacoreEvent> event;
+    rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::EXPLICIT_TRACK_CHANGE,
+                                       nsnull,
+                                       nsnull,
+                                       mCore,
+                                       getter_AddRefs(event));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = DispatchMediacoreEvent(event);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   mon.Exit();
 
-  nsresult rv = ProcessNewPosition();
+  rv = ProcessNewPosition();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

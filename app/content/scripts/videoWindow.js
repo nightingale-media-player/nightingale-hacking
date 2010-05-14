@@ -54,6 +54,7 @@ var videoWindowController = {
   _actualSizeDataRemote: null,
   _lastActualSize: null,
   _windowNeedsResize: false,
+  _windowNeedsFocus: false,
   
   _contextMenu: null,
   _contextMenuListener: null,
@@ -110,6 +111,11 @@ var videoWindowController = {
       
       case Ci.sbIMediacoreEvent.VIDEO_SIZE_CHANGED: {
         this._handleVideoSizeChanged(aEvent);
+      }
+      break;
+      
+      case Ci.sbIMediacoreEvent.EXPLICIT_TRACK_CHANGE: {
+        this._handleExplicitTrackChange(aEvent);
       }
       break;
     }
@@ -472,6 +478,11 @@ var videoWindowController = {
       this._dismissSelf();
       this._shouldDismiss = false;
     }
+    
+    if(this._windowNeedsFocus) {
+      window.focus();
+      this._windowNeedsFocus = false;
+    }
   },
   
   _handleSequenceEnd: function vwc__handleSequenceEnd(aEvent) {
@@ -500,6 +511,10 @@ var videoWindowController = {
     // We also probably always want to save the last one so that if the user 
     // turns on actual size, we can resize to the right thing.
     this._videoBox = videoBox;
+  },
+  
+  _handleExplicitTrackChange: function vwc__handleExplicitTrackChange(aEvent) {
+    this._windowNeedsFocus = true;
   },
 
   //////////////////////////////////////////////////////////////////////////////
