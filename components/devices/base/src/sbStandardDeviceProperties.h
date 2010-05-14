@@ -55,5 +55,8 @@
 /* Whether the storage device can be removed; is "1" if it can, "0" otherwise */
 #define SB_DEVICE_PROPERTY_STORAGE_REMOVABLE      "http://songbirdnest.com/device/1.0#storageRemovable"
 
+/* Whether the volume mount needs user action; is "1" if needed, "0" otherwise */
+#define SB_DEVICE_PROPERTY_MOUNT_NEEDS_USER_ACTION \
+                                                  "http://songbirdnest.com/device/1.0#mountNeedsUserAction"
 
 #endif /* __SB_STANDARD_DEVICE_PROPERTIES_H__ */
