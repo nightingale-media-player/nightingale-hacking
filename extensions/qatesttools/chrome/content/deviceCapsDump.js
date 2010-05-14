@@ -206,9 +206,10 @@ var DialogController =
     var videoStreamWidths = aVideoFormat.videoStream.supportedWidths;
     var videoStreamHeights = aVideoFormat.videoStream.supportedHeights;
     var videoStreamBitrates = aVideoFormat.videoStream.supportedBitRates;
-    var videoStreamPars = aVideoFormat.videoStream.getSupportedVideoPARs({});
-    var videoStreamFrameRates =
-      aVideoFormat.videoStream.getSupportedFrameRates({});
+    var videoStreamPars = aVideoFormat.videoStream.supportedPARs;
+    var videoStreamParsIsRange = aVideoFormat.videoStream.doesSupportPARRange;
+    var videoStreamFrameRates = aVideoFormat.videoStream.supportedFrameRates;
+    var videoStreamFrameratesIsRange = aVideoFormat.videoStream.doesSupportFrameRateRange;
 
     var audioStreamType = aVideoFormat.audioStream.type;
     var audioStreamBitrates = aVideoFormat.audioStream.supportedBitRates;
@@ -225,8 +226,8 @@ var DialogController =
           this._logRange(videoStreamHeights, true) +
       " * videostream bitrates: \n" +
           this._logRange(videoStreamBitrates, true) +
-      " * videostream PARs: \n" + this._logArray(videoStreamPars) + 
-      " * videostream frame rates: \n" + this._logArray(videoStreamFrameRates) + 
+      " * videostream PARs: \n" + this._logFractionRange(videoStreamPars, videoStreamParsIsRange) + 
+      " * videostream frame rates: \n" + this._logFractionRange(videoStreamFrameRates, videoStreamFrameratesIsRange) + 
       " * audiostream type: " + audioStreamType + "\n" +
       " * audiostream bitrates: \n" +
           this._logRange(audioStreamBitrates, true) +
@@ -249,6 +250,32 @@ var DialogController =
       " * image widths: \n" + this._logRange(widths, true) +
       " * image heights: \n" + this._logRange(heights, true) +
       " * image supported sizes: \n" + this._logSizesArray(sizes) + "\n";
+  },
+
+  _fractionToString: function(aFrac)
+  {
+    return "" + aFrac.numerator + "/" + aFrac.denominator;
+  },
+
+  _logFractionRange: function(aRange, aIsRange)
+  {
+    var output = "";
+    
+    if (aRange) {
+      if (aIsRange && aRange.length == 2) {
+        output += "   - min: " + this._fractionToString(aRange.queryElementAt(
+                                 0, Ci.sbIDevCapFraction)) + "\n" +
+                  "   - max: " + this._fractionToString(aRange.queryElementAt(
+                                 1, Ci.sbIDevCapFraction)) + "\n";
+      }
+      else {
+        for (var i = 0; i < aRange.length; i++) {
+          output += "   - " + this._fractionToString(aRange.queryElementAt(
+                              i, Ci.sbIDevCapFraction)) + "\n";
+        }
+      }
+    }
+    return output;
   },
 
   _logRange: function(aRange, aIsMinMax)
