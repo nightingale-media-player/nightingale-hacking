@@ -207,7 +207,7 @@ int CommandExecuteFile(const std::string& aExecutable,
     // prevent console apps from getting a window
     creationFlags |= CREATE_NO_WINDOW;
   #endif /* !DEBUG */
-  BOOL ok = CreateProcess(executable.c_str(),
+  BOOL ok = CreateProcess(NULL,
                           cmdlineBuffer,
                           NULL,  // no special security attributes
                           NULL,  // no special thread attributes
