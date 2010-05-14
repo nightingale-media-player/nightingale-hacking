@@ -1404,6 +1404,7 @@
 
           nodeInserted: function(node, parent, insertBefore) {
             if (!parent || parent == this.element.mService.root) {
+              // It's a new top level servicepane-group
               let newGroup = this.element.createGroup(node);
               this.element.log("New top level group: " + node.id);
 
@@ -1443,6 +1444,7 @@
               let hackNode = document.createTextNode("");
               this.element.appendChild(hackNode);
             } else {
+              // It's a regular node
               this.element.log("New node: " + node.id);
               /* find the node representing the parent */
               let parentNode = this.element.getDOMNode(parent.id);
@@ -1456,11 +1458,24 @@
 
               // If it's ejectable let's add the right badge
               if (node.getAttribute("ejectable") == "true") {
-                newnode.appendBadge(null,
-                        "chrome://songbird/skin/service-pane/eject.png",
-                        function() {
-                          node.dispatchEvent("eject")
-                        });
+                if (newnode.appendBadge) {
+                  newnode.appendBadge(null,
+                          "chrome://songbird/skin/service-pane/eject.png",
+                          function() {
+                            node.dispatchEvent("eject")
+                          });
+                } else {
+                  // Sometimes the node isn't ready yet
+                  newnode.addEventListener("load", function(e) {
+                      newnode.removeEventListener("load", arguments.callee,
+                                                  false);
+                      newnode.appendBadge(null,
+                              "chrome://songbird/skin/service-pane/eject.png",
+                              function() {
+                                node.dispatchEvent("eject")
+                              });
+                    }, false);
+                }
               }
             }
 
@@ -1759,10 +1774,12 @@
 
           // Auto expand the parent group of this node
           let parentNode = newNode.parentNode;
-          while (parentNode.parentNode != this.mService.root)
+          while (parentNode && (parentNode.parentNode != this.mService.root))
             parentNode = parentNode.parentNode;
-          let parentDomNode = this.getDOMNode(parentNode.id);
-          parentDomNode.visible = true;
+          if (parentNode) {
+            let parentDomNode = this.getDOMNode(parentNode.id);
+            parentDomNode.visible = true;
+          }
 
           return newNode;
         ]]></body>

@@ -426,6 +426,21 @@ function sbDeviceServicePane_nodeInserted(aNode, aParent, aInsertBefore) {
 sbDeviceServicePane.prototype.nodeRemoved =
 function sbDeviceServicePane_nodeRemoved(aNode, aParent) {
   this.attrModified(aNode, "hidden", null, "false", "true");
+
+  // Check to see if the devices group should be hidden or not
+  let hidden = true;
+  let devicesNode = this._servicePane.getNode("SB:Devices");
+  for (let node = devicesNode.firstChild; node; node = node.nextSibling) {
+    if (node && !node.hidden) {
+      hidden = false;
+      break;
+    }
+  }
+
+  if (devicesNode.hidden != hidden) {
+    this.log("Hiding devices node since all children are gone or hidden");
+    devicesNode.hidden = hidden;
+  }
 };
 
 /////////////////////
