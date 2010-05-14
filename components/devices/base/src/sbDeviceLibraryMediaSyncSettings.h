@@ -37,7 +37,6 @@
 // Forwards
 struct PRLock;
 class sbIDevice;
-class sbIDeviceLibrary;
 class sbDeviceLibrarySyncSettings;
 
 class sbDeviceLibraryMediaSyncSettings : public sbIDeviceLibraryMediaSyncSettings
@@ -53,8 +52,6 @@ public:
 
 private:
   sbDeviceLibraryMediaSyncSettings(sbDeviceLibrarySyncSettings * aSyncSettings,
-                                   nsID const & aDeviceID,
-                                   nsAString const & aDeviceLibraryGuid,
                                    PRUint32 aMediaType,
                                    PRLock * aLock);
   ~sbDeviceLibraryMediaSyncSettings();
@@ -64,8 +61,6 @@ private:
    */
   static sbDeviceLibraryMediaSyncSettings * New(
                                     sbDeviceLibrarySyncSettings * aSyncSettings,
-                                    nsID const & aDeviceID,
-                                    nsAString const & aDeviceLibraryGuid,
                                     PRUint32 aMediaType,
                                     PRLock * aLock);
   nsresult Assign(sbDeviceLibraryMediaSyncSettings * aSettings);
@@ -78,8 +73,7 @@ private:
     return mChanged;
   }
   void Changed();
-  nsresult GetSyncPlaylistsNoLock(nsIArray ** aSyncPlaylists,
-                                  sbIDeviceLibrary * aDeviceLibrary);
+  nsresult GetSyncPlaylistsNoLock(nsIArray ** aSyncPlaylists);
   /**
    * Management type, SYNC_MGMT_NONE, SYNC_MGMT_ALL, SYNC_MGMT_PLAYLISTS
    */
@@ -88,8 +82,6 @@ private:
   PlaylistSelection mPlaylistsSelection;
   nsString mSyncFolder;
   nsCOMPtr<nsIFile> mSyncFromFolder;
-  nsID mDeviceID;
-  nsString mDeviceLibraryGuid;
   bool mChanged;
   PRLock * mLock;
   // Non-owning reference to our owner. We should never live past

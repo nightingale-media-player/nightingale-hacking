@@ -331,14 +331,8 @@ private:
   nsInterfaceHashtable<nsISupportsHashKey, sbIDeviceLibraryListener> mListeners;
 
   /**
-   * \brief The sync setting has been changed or not.
-   */
-  PRBool mSyncSettingsChanged;
-
-  /**
    * \brief The sync mode has been changed or not.
    */
-  PRBool mSyncModeChanged;
   nsRefPtr<sbDeviceLibrarySyncSettings> mCurrentSyncSettings;
   nsRefPtr<sbDeviceLibrarySyncSettings> mTempSyncSettings;
   PRMonitor* mMonitor;

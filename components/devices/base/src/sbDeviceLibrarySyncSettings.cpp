@@ -99,12 +99,12 @@ nsresult sbDeviceLibrarySyncSettings::Assign(
   for (PRUint32 mediaType = sbIDeviceLibrary::MEDIATYPE_AUDIO;
        mediaType < sbIDeviceLibrary::MEDIATYPE_COUNT;
        ++mediaType) {
-    mediaSettings = mMediaSettings[mediaType];
+    mediaSettings = aSource->mMediaSettings[mediaType];
     if (mediaSettings) {
       rv = mediaSettings->CreateCopy(getter_AddRefs(newMediaSettings));
       NS_ENSURE_SUCCESS(rv, rv);
 
-      aSource->mMediaSettings[mediaType] = newMediaSettings;
+      mMediaSettings[mediaType] = newMediaSettings;
     }
   }
   return NS_OK;
@@ -219,8 +219,6 @@ sbDeviceLibrarySyncSettings::GetMediaSettingsNoLock(
   // If we don't have one, create a default one
   if (!newSettings) {
     newSettings = sbDeviceLibraryMediaSyncSettings::New(this,
-                                                        mDeviceID,
-                                                        mDeviceLibraryGuid,
                                                         aMediaType,
                                                         mLock);
     NS_ENSURE_TRUE(newSettings, NS_ERROR_OUT_OF_MEMORY);
@@ -256,8 +254,10 @@ sbDeviceLibrarySyncSettings::GetSyncPlaylists(nsIArray ** aMediaLists)
       continue;
     }
     nsCOMPtr<nsIArray> playlists;
-    rv = mediaSettings->GetSyncPlaylistsNoLock(getter_AddRefs(playlists),
-                                               nsnull);
+    rv = mediaSettings->GetSyncPlaylistsNoLock(getter_AddRefs(playlists));
+    if (rv == NS_ERROR_NOT_AVAILABLE) {
+      continue;
+    }
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = sbAppendnsIArray(playlists, allPlaylists);
@@ -463,8 +463,6 @@ sbDeviceLibrarySyncSettings::ReadMediaSyncSettings(
 
   nsRefPtr<sbDeviceLibraryMediaSyncSettings> settings =
     sbDeviceLibraryMediaSyncSettings::New(this,
-                                          mDeviceID,
-                                          mDeviceLibraryGuid,
                                           aMediaType,
                                           mLock);
   NS_ENSURE_TRUE(settings, NS_ERROR_OUT_OF_MEMORY);
@@ -480,8 +478,7 @@ sbDeviceLibrarySyncSettings::ReadMediaSyncSettings(
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIArray> mediaLists;
-  rv = settings->GetSyncPlaylistsNoLock(getter_AddRefs(mediaLists),
-                                        aDeviceLibrary);
+  rv = settings->GetSyncPlaylistsNoLock(getter_AddRefs(mediaLists));
   // Some media types won't have playlists
   if (rv != NS_ERROR_NOT_AVAILABLE) {
     NS_ENSURE_SUCCESS(rv, rv);

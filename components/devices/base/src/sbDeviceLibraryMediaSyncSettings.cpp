@@ -65,28 +65,20 @@ PLDHashOperator ResetSelection(nsISupports * aKey,
 sbDeviceLibraryMediaSyncSettings *
 sbDeviceLibraryMediaSyncSettings::New(
                                     sbDeviceLibrarySyncSettings * aSyncSettings,
-                                    nsID const & aDeviceID,
-                                    nsAString const & aDeviceLibraryGuid,
                                     PRUint32 aMediaType,
                                     PRLock * aLock)
 {
   return new sbDeviceLibraryMediaSyncSettings(aSyncSettings,
-                                              aDeviceID,
-                                              aDeviceLibraryGuid,
                                               aMediaType,
                                               aLock);
 }
 
 sbDeviceLibraryMediaSyncSettings::sbDeviceLibraryMediaSyncSettings(
                                     sbDeviceLibrarySyncSettings * aSyncSettings,
-                                    nsID const & aDeviceID,
-                                    nsAString const & aDeviceLibraryGuid,
                                     PRUint32 aMediaType,
                                     PRLock * aLock) :
   mSyncMgmtType(sbIDeviceLibrarySyncSettings::SYNC_MODE_MANUAL),
   mMediaType(aMediaType),
-  mDeviceID(aDeviceID),
-  mDeviceLibraryGuid(aDeviceLibraryGuid),
   mLock(aLock),
   mSyncSettings(aSyncSettings)
 {
@@ -112,8 +104,6 @@ sbDeviceLibraryMediaSyncSettings::Assign(
 
   mSyncMgmtType = aSettings->mSyncMgmtType;
   mMediaType = aSettings->mMediaType;
-  mDeviceID = aSettings->mDeviceID;
-  mDeviceLibraryGuid = aSettings->mDeviceLibraryGuid;
 
   rv = sbCopyHashtable<PlaylistHashtableTraits>(
                                                aSettings->mPlaylistsSelection,
@@ -143,8 +133,6 @@ sbDeviceLibraryMediaSyncSettings::CreateCopy(
   nsresult rv;
   nsRefPtr<sbDeviceLibraryMediaSyncSettings> newSettings =
     sbDeviceLibraryMediaSyncSettings::New(mSyncSettings,
-                                          mDeviceID,
-                                          mDeviceLibraryGuid,
                                           mMediaType,
                                           mLock);
 
@@ -327,8 +315,7 @@ sbDeviceLibraryMediaSyncSettings::SetSyncFromFolder(
 
 nsresult
 sbDeviceLibraryMediaSyncSettings::GetSyncPlaylistsNoLock(
-                                              nsIArray ** aSyncPlaylists,
-                                              sbIDeviceLibrary * aDeviceLibrary)
+                                              nsIArray ** aSyncPlaylists)
 {
   NS_ENSURE_ARG_POINTER(aSyncPlaylists);
 
@@ -346,16 +333,9 @@ sbDeviceLibraryMediaSyncSettings::GetSyncPlaylistsNoLock(
     default:
       return NS_ERROR_NOT_AVAILABLE;
   }
-  nsCOMPtr<sbIDeviceLibrary> library;
-  if (aDeviceLibrary) {
-    library = aDeviceLibrary;
-  }
-  else {
-    rv = sbDeviceUtils::GetDeviceLibrary(mDeviceLibraryGuid,
-                                         &mDeviceID,
-                                         getter_AddRefs(library));
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  nsCOMPtr<sbILibrary> library;
+  rv = GetMainLibrary(getter_AddRefs(library));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbLibraryUtils::GetMediaListByContentType(library,
                                                  contentType,
@@ -371,7 +351,7 @@ sbDeviceLibraryMediaSyncSettings::GetSyncPlaylists(nsIArray ** aSyncPlaylists)
   NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
 
   nsAutoLock lock(mLock);
-  return GetSyncPlaylistsNoLock(aSyncPlaylists, nsnull);
+  return GetSyncPlaylistsNoLock(aSyncPlaylists);
 }
 
 NS_IMETHODIMP

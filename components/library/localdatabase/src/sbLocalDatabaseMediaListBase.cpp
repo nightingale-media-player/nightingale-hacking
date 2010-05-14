@@ -577,6 +577,12 @@ sbLocalDatabaseMediaListBase::GetListContentType(PRUint16* aContentType)
   if (customType.Equals(NS_LITERAL_STRING("download")))
     return NS_OK;
 
+  // "video-togo" list is always video
+  if (customType.Equals(NS_LITERAL_STRING("video-togo"))) {
+    *aContentType = sbIMediaList::CONTENTTYPE_VIDEO;
+    return NS_OK;
+  }
+
   PRUint32 length;
   rv = mFullArray->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);

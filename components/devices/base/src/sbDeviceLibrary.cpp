@@ -178,8 +178,6 @@ static PRLogModuleInfo* gDeviceLibraryLog = nsnull;
 
 sbDeviceLibrary::sbDeviceLibrary(sbIDevice* aDevice)
   : mDevice(aDevice),
-    mSyncSettingsChanged(PR_FALSE),
-    mSyncModeChanged(PR_FALSE),
     mMonitor(nsnull)
 {
 #ifdef PR_LOGGING
@@ -384,7 +382,7 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 syncMode;
-  syncSettings->GetSyncMode(&syncMode);
+  rv = syncSettings->GetSyncMode(&syncMode);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaList> list;
@@ -1507,13 +1505,6 @@ NS_IMETHODIMP sbDeviceLibrary::OnDeviceEvent(sbIDeviceEvent* aEvent)
   PRUint32 type;
   rv = aEvent->GetType(&type);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  // handle changes to the sync parnter preference
-  if (type == sbIDeviceEvent::EVENT_DEVICE_PREFS_CHANGED) {
-    // Save the flag if the sync setting changes to update the main library
-    // listeners later.
-    mSyncSettingsChanged = PR_TRUE;
-  }
 
   return NS_OK;
 }
