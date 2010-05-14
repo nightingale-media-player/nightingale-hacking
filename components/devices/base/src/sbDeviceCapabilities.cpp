@@ -1321,7 +1321,7 @@ sbDevCapVideoStream::GetMaximumSupportedFrameRate(
   NS_ENSURE_SUCCESS(rv, rv);
 
   maxFrameRateFraction.forget(aMaximumSupportedFrameRate);
-  return NS_ERROR_NOT_IMPLEMENTED;
+  return NS_OK;
 }
 
 /* readonly attribute sbIDevCapRange supportedBitRates; */
