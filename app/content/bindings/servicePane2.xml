@@ -232,6 +232,7 @@
           // TODO: Check for a better way to load. (stevo)
           // This is here because we can not call nodeData until the binding has
           // been applied.
+          Components.utils.import("resource://app/jsmodules/DropHelper.jsm");
 
           // If this element has a node id then load up the data from the node
           // we are always expected to be in the service pane under a group at
@@ -690,10 +691,8 @@
         <![CDATA[
           var flavourSet;
           flavourSet = new FlavourSet();
-          flavourSet.appendFlavour("application/x-sb-transfer-media-item");
-          flavourSet.appendFlavour("application/x-sb-transfer-media-list");
-          flavourSet.appendFlavour("application/x-sb-transfer-media-items");
-          flavourSet.appendFlavour("application/x-sb-transfer-disable-download");
+          InternalDropHandler.addFlavours(flavourSet);
+          ExternalDropHandler.addFlavours(flavourSet);
           return flavourSet;
         ]]>
         </body>
@@ -864,11 +863,11 @@
         this._onDragGesture(event);
       ]]></handler>
 
-      <handler event="dragover">
+      <handler event="dragover"><![CDATA[
         nsDragAndDrop.dragOver(event, this);
         this._servicePane.needScroll(event);
         event.stopPropagation();
-      </handler>
+      ]]></handler>
 
       <handler event="dragdrop">
         nsDragAndDrop.drop(event, this);
@@ -2078,9 +2077,9 @@
         this.needScroll(event);
       ]]></handler>
 
-      <handler event="dragdrop">
+      <handler event="dragdrop"><![CDATA[
         event.stopPropagation();
-      </handler>
+      ]]></handler>
 
       <handler event="dragexit"><![CDATA[
         // If we've exited the servicepane, then relatedTarget is null so
