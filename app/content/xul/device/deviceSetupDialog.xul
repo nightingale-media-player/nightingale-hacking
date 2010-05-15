@@ -279,9 +279,11 @@
           // Set the sync preference.
           var deviceLibrary = this._device.content.libraries
                                   .queryElementAt(0, Ci.sbIDeviceLibrary);
-          deviceLibrary.syncMode = syncCheckboxElem.checked ?
-                                     Ci.sbIDeviceLibrary.SYNC_AUTO :
-                                     Ci.sbIDeviceLibrary.SYNC_MANUAL;
+          var syncSettings = deviceLibrary.syncSettings;
+          syncSettings.syncMode = syncCheckboxElem.checked ?
+                         Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO :
+                         Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
+          deviceLibrary.syncSettings = syncSettings;
         }
 
         return true;
