@@ -301,7 +301,7 @@
 ./gst-plugins/libgstjpeg.so
 ./gst-plugins/libgstlevel.so
 ./gst-plugins/libgstmatroska.so
-./gst-plugins/libgstmozillasrc.so
+./gst-plugins/libgstmozilla.so
 ./gst-plugins/libgstmpeg4videoparse.so
 ./gst-plugins/libgstmpegaudioparse.so
 ./gst-plugins/libgstmulaw.so

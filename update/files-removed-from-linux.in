@@ -35,6 +35,7 @@
 ./gst-plugins/libgstgamma.so
 ./gst-plugins/libgstflxdec.so
 ./gst-plugins/libgstdebug.so
+./gst-plugins/libgstmozillasrc.so
 ./extensions/rubberducky-dependencies@songbirdnest.com/install.rdf
 ./extensions/rubberducky-dependencies@songbirdnest.com/chrome/rubberducky-dependencies.jar
 ./extensions/rubberducky-dependencies@songbirdnest.com/chrome/

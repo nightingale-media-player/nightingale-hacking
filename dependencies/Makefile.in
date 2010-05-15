@@ -216,7 +216,7 @@ ifdef MEDIA_CORE_GST #{
                            gstqtmux \
                            gstsdpelem \
                            gstselector \
-                           gstmozillasrc \
+                           gstmozilla \
                            gstmpeg4videoparse \
                            $(NULL)
 
