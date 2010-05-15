@@ -138,6 +138,7 @@ const static char* sPublicRProperties[] =
     "site:repeat",
     "site:shuffle",
     "site:position",
+    "site:duration",
     "site:volume",
     "site:mute",
     "site:name",
@@ -1102,19 +1103,43 @@ sbRemotePlayer::SetPosition( PRInt64 aPosition )
   nsresult rv = ConfirmPlaybackControl();
   NS_ENSURE_SUCCESS( rv, rv );
 
-  if (!mdrPosition) {
-    nsresult rv;
-    mdrPosition = do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1",
-                                     &rv );
-    NS_ENSURE_SUCCESS( rv, rv );
-    rv = mdrPosition->Init( NS_LITERAL_STRING("metadata.position"),
-                            SB_PREFS_ROOT );
-    NS_ENSURE_SUCCESS( rv, rv );
-  }
-  rv = mdrPosition->SetIntValue(aPosition);
-  NS_ENSURE_SUCCESS( rv, rv );
+  nsCOMPtr<sbIMediacoreManager> mediaCoreMgr =
+    do_GetService(SB_MEDIACOREMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediacorePlaybackControl> playbackControl;
+  rv = mediaCoreMgr->GetPlaybackControl(getter_AddRefs(playbackControl));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = playbackControl->SetPosition(aPosition);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return TakePlaybackControl( nsnull );
+}
+
+NS_IMETHODIMP
+sbRemotePlayer::GetDuration( PRUint64 *aDuration )
+{
+  LOG(("sbRemotePlayer::GetDuration()"));
+  NS_ENSURE_ARG_POINTER(aDuration);
+  
+  nsresult rv;
+  nsCOMPtr<sbIMediacoreManager> mediaCoreMgr =
+    do_GetService(SB_MEDIACOREMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediacorePlaybackControl> playbackControl;
+  rv = mediaCoreMgr->GetPlaybackControl(getter_AddRefs(playbackControl));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *aDuration = 0;
+
+  if ( playbackControl ) {
+    rv = playbackControl->GetDuration(aDuration);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP

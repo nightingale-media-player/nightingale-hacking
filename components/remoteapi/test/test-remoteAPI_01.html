@@ -121,9 +121,16 @@
       }
 
       try {
-        document.writeln("Position is: " + songbird.position + "<br/>");
+        document.writeln("Position is: " + songbird.position + " -- ");
+        document.writeln("<a href='javascript:void(0)' onclick='javascript:songbird.position = songbird.position + 5000;'>Seek +5s</a><br/>");
       } catch (e) {
-        document.writeln("DOH!, couldn't read mute: " + e);
+        document.writeln("DOH!, couldn't read position: " + e);
+      }
+
+      try {
+        document.writeln("Duration is: " + songbird.duration + "<br/>");
+      } catch (e) {
+        document.writeln("DOH!, couldn't read duration: " + e);
       }
 
       try {

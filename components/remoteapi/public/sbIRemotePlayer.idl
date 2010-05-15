@@ -111,7 +111,7 @@ See Also:
  *  our "Remote API" the websites can call to get information about and interact
  *  with Songbird.
  */
-[scriptable, uuid(82669977-32ae-4ebe-9a4a-437df368e605)]
+[scriptable, uuid(e4f67e69-7f11-438c-9f54-36f326d3d661)]
 interface sbIRemotePlayer : nsISupports
 {
 
@@ -265,6 +265,20 @@ interface sbIRemotePlayer : nsISupports
     integer
   */
   attribute long long position;
+
+  /**
+   * \brief The duration of the current media, in milliseconds.
+   */
+
+  /*
+  Prop: duration
+
+  The duration of the current media, in milliseconds.
+
+  Type:
+    integer
+  */
+  readonly attribute unsigned long long duration;
 
   /**
    * \brief The volume on a range from 0 to 255
