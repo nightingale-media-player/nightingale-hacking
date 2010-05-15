@@ -259,7 +259,8 @@ interface sbIRemotePlayer : nsISupports
   /*
   Prop: position
 
-  The location of playback within the current media, in milliseconds.
+  The location of playback within the current media, in milliseconds. The position
+  will be 0 when there is no media currently playing.
 
   Type:
     integer
@@ -273,7 +274,8 @@ interface sbIRemotePlayer : nsISupports
   /*
   Prop: duration
 
-  The duration of the current media, in milliseconds.
+  The duration of the current media, in milliseconds. The duration may
+  be 0 if it cannot be determined or there is no media currently playing.
 
   Type:
     integer
