@@ -3545,14 +3545,14 @@ sbBaseDevice::ApplyDeviceSettingsDeviceInfo
   rv = deviceXMLInfo->GetExcludedFolders(excludedFolders);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Get the device properties.
+  nsCOMPtr<nsIWritablePropertyBag> deviceProperties;
+  rv = GetWritableDeviceProperties(this, getter_AddRefs(deviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   if (!excludedFolders.IsEmpty()) {
     LOG(("Excluded Folders: %s",
          NS_LossyConvertUTF16toASCII(excludedFolders).BeginReading()));
-
-    // Get the device properties.
-    nsCOMPtr<nsIWritablePropertyBag> deviceProperties;
-    rv = GetWritableDeviceProperties(this, getter_AddRefs(deviceProperties));
-    NS_ENSURE_SUCCESS(rv, rv);
 
     rv = deviceProperties->SetProperty(
                            NS_LITERAL_STRING(SB_DEVICE_PROPERTY_EXCLUDED_FOLDERS),
@@ -3566,6 +3566,16 @@ sbBaseDevice::ApplyDeviceSettingsDeviceInfo
 
   // Log the device folders.
   LogDeviceFolders();
+
+  // Determine if the device supports format.
+  PRBool supportsFormat;
+  rv = deviceXMLInfo->GetDoesDeviceSupportReformat(&supportsFormat);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deviceProperties->SetProperty(
+      NS_LITERAL_STRING(SB_DEVICE_PROPERTY_SUPPORTS_REFORMAT),
+      sbNewVariant(supportsFormat));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -5990,12 +6000,12 @@ sbBaseDevice::RegisterDeviceInfo()
   LOG(("Excluded Folders: %s",
        NS_LossyConvertUTF16toASCII(excludedFolders).BeginReading()));
 
-  if (!excludedFolders.IsEmpty()) {
-    // Get the device properties.
-    nsCOMPtr<nsIWritablePropertyBag> deviceProperties;
-    rv = GetWritableDeviceProperties(this, getter_AddRefs(deviceProperties));
-    NS_ENSURE_SUCCESS(rv, rv);
+  // Get the device properties.
+  nsCOMPtr<nsIWritablePropertyBag> deviceProperties;
+  rv = GetWritableDeviceProperties(this, getter_AddRefs(deviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
 
+  if (!excludedFolders.IsEmpty()) {
     rv = deviceProperties->SetProperty(
                            NS_LITERAL_STRING(SB_DEVICE_PROPERTY_EXCLUDED_FOLDERS),
                            sbNewVariant(excludedFolders));
@@ -6004,6 +6014,16 @@ sbBaseDevice::RegisterDeviceInfo()
 
   // Log the device folders.
   LogDeviceFolders();
+
+  // Determine if the device supports format.
+  PRBool supportsFormat;
+  rv = mInfoRegistrar->GetDoesDeviceSupportReformat(this, &supportsFormat);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deviceProperties->SetProperty(
+      NS_LITERAL_STRING(SB_DEVICE_PROPERTY_SUPPORTS_REFORMAT),
+      sbNewVariant(supportsFormat));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -6460,6 +6480,17 @@ NS_IMETHODIMP sbBaseDevice::GetSupportsReformat(PRBool *_retval)
   TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;
+
+  nsresult rv;
+  nsCOMPtr<nsIPropertyBag2> deviceProperties;
+  rv = GetPropertyBag(this, getter_AddRefs(deviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deviceProperties->GetPropertyAsBool(
+      NS_LITERAL_STRING(SB_DEVICE_PROPERTY_SUPPORTS_REFORMAT),
+      _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

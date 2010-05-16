@@ -160,6 +160,15 @@ public :
   nsresult GetMountTimeout(PRUint32* aMountTimeout);
 
   /**
+   * Return in aOutSupportsReformat if the device supports reformat. This value
+   * will default to PR_TRUE if the format tag is not specified in the XML
+   * document.
+   *
+   * \param aOutSupportsReformat Returned supported reformat boolean value.
+   */
+  nsresult GetDoesDeviceSupportReformat(PRBool *aOutSupportsReformat);
+
+  /**
    * Returns a list of excluded folders folders in the array passed in. Each
    * array entry may be folder name or a path to a specific folder.
    * \param aFolders This is an array that the excluded folders will be added

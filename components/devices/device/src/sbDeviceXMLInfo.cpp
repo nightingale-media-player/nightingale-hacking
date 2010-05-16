@@ -408,6 +408,60 @@ sbDeviceXMLInfo::GetMountTimeout(PRUint32* aMountTimeout)
 
 //-------------------------------------
 //
+// GetDoesDeviceSupportReformat
+//
+
+nsresult
+sbDeviceXMLInfo::GetDoesDeviceSupportReformat(PRBool *aOutSupportsReformat)
+{
+  NS_ENSURE_ARG_POINTER(aOutSupportsReformat);
+  *aOutSupportsReformat = PR_TRUE;
+
+  // Check if a device info element is available.
+  NS_ENSURE_TRUE(mDeviceInfoElement, NS_ERROR_NOT_AVAILABLE);
+
+  nsresult rv;
+  nsCOMPtr<nsIDOMNodeList> supportsFormatNodeList;
+  rv = mDeviceInfoElement->GetElementsByTagNameNS(
+      NS_LITERAL_STRING(SB_DEVICE_INFO_NS),
+      NS_LITERAL_STRING("supportsreformat"),
+      getter_AddRefs(supportsFormatNodeList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // See if there is at least one node.
+  PRUint32 nodeCount;
+  rv = supportsFormatNodeList->GetLength(&nodeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (nodeCount > 0) {
+    // Only process the first node value.
+    nsCOMPtr<nsIDOMNode> supportsFormatNode;
+    rv = supportsFormatNodeList->Item(0, getter_AddRefs(supportsFormatNode));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIDOMElement> supportsFormatElement =
+      do_QueryInterface(supportsFormatNode, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Read the value
+    nsString supportsFormatValue;
+    rv = supportsFormatElement->GetAttribute(NS_LITERAL_STRING("value"),
+                                             supportsFormatValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (supportsFormatValue.Equals(NS_LITERAL_STRING("false"),
+          (nsAString::ComparatorFunc)CaseInsensitiveCompare)) {
+      *aOutSupportsReformat = PR_FALSE;
+    }
+  }
+
+
+  return NS_OK;
+}
+
+
+//-------------------------------------
+//
 // GetStorageDeviceInfoList
 //
 

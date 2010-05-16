@@ -49,6 +49,7 @@
 #define SB_DEVICE_PROPERTY_IMAGE_ITEM_COUNT       "http://songbirdnest.com/device/1.0#imageItemCount"
 #define SB_DEVICE_PROPERTY_IMAGE_USED_SPACE       "http://songbirdnest.com/device/1.0#imageUsedSpace"
 #define SB_DEVICE_PROPERTY_EXCLUDED_FOLDERS       "http://songbirdnest.com/device/1.0#excludedFolders"
+#define SB_DEVICE_PROPERTY_SUPPORTS_REFORMAT      "http://songbirdnest.com/device/1.0#supportsReformat"
 #define SB_DEVICE_PROPERTY_USB_VENDOR_ID          "http://songbirdnest.com/device/1.0#usbVendorId"
 #define SB_DEVICE_PROPERTY_USB_PRODUCT_ID         "http://songbirdnest.com/device/1.0#usbProductId"
 
