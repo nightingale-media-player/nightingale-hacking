@@ -765,9 +765,9 @@ protected:
   static const PRUint32 DEFAULT_PER_TRACK_OVERHEAD = 10000;
 
   /**
-   * Percent free space to reserve as margin when building a sync playlist.
+   * Percent available space for syncing when building a sync playlist.
    */
-  static const PRUint32 SYNC_PLAYLIST_MARGIN_PCT = 1;
+  static const PRUint32 SYNC_PLAYLIST_AVAILABLE_PCT = 95;
 
   /**
    * Make sure that there is enough free space for the batch. If there is not
@@ -1264,6 +1264,9 @@ protected:
    * \param aSyncItemList       Full list of sync items.
    * \param aSyncItemSizeMap    Size of sync items.
    * \param aAvailableSpace     Space available for sync.
+   * \return NS_OK if successful.
+   *         NS_ERROR_ABORT if user aborts syncing.
+   *         else some other NS_ERROR value.
    */
   nsresult SyncCreateAndSyncToList
              (sbILibrary*                                   aSrcLib,
@@ -1273,29 +1276,22 @@ protected:
               PRInt64                                       aAvailableSpace);
 
   /**
-   * Shuffle the sync item list specified by aSyncItemList with sizes specified
-   * by aSyncItemSizeMap and create a subset of the list that fits in the
-   * available space specified by aAvailableSpace.  Return the subset in
-   * aShuffleSyncItemList.
-   */
-  nsresult SyncShuffleSyncItemList
-    (nsCOMArray<sbIMediaItem>&                     aSyncItemList,
-     nsDataHashtable<nsISupportsHashKey, PRInt64>& aSyncItemSizeMap,
-     PRInt64                                       aAvailableSpace,
-     nsIArray**                                    aShuffleSyncItemList);
-
-  /**
    * Create a source sync media list in the library specified by aSrcLib from
    * the list of sync items specified by aSyncItemList and return the sync media
    * list in aSyncMediaList.
    *
    * \param aSrcLib             Source library of sync.
-   * \param aSyncItemList       List of items to sync.
+   * \param aDstLib             Destination library to which to sync.
+   * \param aAvailableSpace     Space available for sync.
    * \param aSyncMediaList      Created sync media list.
+   * \return NS_OK if successful.
+   *         NS_ERROR_ABORT if user aborts syncing.
+   *         else some other NS_ERROR value.
    */
-  nsresult SyncCreateSyncMediaList(sbILibrary*    aSrcLib,
-                                   nsIArray*      aSyncItemList,
-                                   sbIMediaList** aSyncMediaList);
+  nsresult SyncCreateSyncMediaList(sbILibrary*       aSrcLib,
+                                   sbIDeviceLibrary* aDstLib,
+                                   PRInt64           aAvailableSpace,
+                                   sbIMediaList**    aSyncMediaList);
 
   /**
    * Configure the destination library specified by aDstLib to sync to the media

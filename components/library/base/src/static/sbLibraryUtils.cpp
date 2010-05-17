@@ -46,6 +46,7 @@
 #include <sbIMediaList.h>
 #include <sbIMediaItem.h>
 #include <sbIPropertyArray.h>
+#include <sbIPropertyManager.h>
 
 #include <sbArrayUtils.h>
 #include <sbFileUtils.h>
@@ -713,6 +714,102 @@ nsresult sbLibraryUtils::GetMediaListByContentType(sbILibrary * aLibrary,
 
   rv = enumerator->GetMediaLists(aMediaLists);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/**
+ * Returns the equality operator for the content property
+ */
+nsresult
+sbLibraryUtils::GetEqualOperator(sbIPropertyOperator ** aOperator)
+{
+  nsresult rv;
+
+  nsCOMPtr<sbIPropertyManager> manager =
+    do_GetService("@songbirdnest.com/Songbird/Properties/PropertyManager;1",
+                  &rv);
+  nsCOMPtr<sbIPropertyInfo> info;
+  rv = manager->GetPropertyInfo(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                                getter_AddRefs(info));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString opName;
+  rv = info->GetOPERATOR_EQUALS(opName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the operator.
+  rv = info->GetOperator(opName, aOperator);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/**
+ * Suggest a unique name for playlist.
+ */
+nsresult
+sbLibraryUtils::SuggestUniqueNameForPlaylist(sbILibrary *aLibrary,
+                                             nsAString const & aListName,
+                                             nsAString & aName)
+{
+  nsresult rv;
+
+  aName = aListName;
+  nsCOMPtr<nsIArray> mediaLists;
+  rv = aLibrary->GetItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                                    NS_LITERAL_STRING("1"),
+                                    getter_AddRefs(mediaLists));
+  if (rv != NS_ERROR_NOT_AVAILABLE) {
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  PRUint32 listLength;
+  rv = mediaLists->GetLength(&listLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 nameLength = aListName.Length();
+  nsTArray<PRUint64> listIDs;
+  nsString listName;
+  PRUint64 availableId = 1;
+  for (PRUint32 i = 0; i < listLength; ++i) {
+    nsCOMPtr<sbIMediaList> mediaList = do_QueryElementAt(mediaLists, i, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mediaList->GetName(listName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!listName.IsEmpty()) {
+      nsDependentSubstring subString(listName, 0, nameLength);
+      if (subString.Equals(aListName)) {
+        PRUint32 listNameLength = listName.Length();
+        if (listNameLength == nameLength) {
+          listIDs.AppendElement(1);
+        }
+        else {
+          nsDependentSubstring idString(listName,
+                                        nameLength + 1,
+                                        listNameLength);
+          PRUint64 id = nsString_ToUint64(idString, &rv);
+          if (rv == NS_ERROR_INVALID_ARG)
+            continue;
+          listIDs.AppendElement(id);
+        }
+      }
+    }
+  }
+
+  while (1) {
+    if (!listIDs.Contains(availableId))
+      break;
+
+    ++availableId;
+  }
+
+  if (availableId > 1) {
+    aName.Append(NS_LITERAL_STRING(" "));
+    AppendInt(aName, availableId);
+  }
 
   return NS_OK;
 }

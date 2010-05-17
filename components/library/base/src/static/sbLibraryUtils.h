@@ -47,6 +47,7 @@
 class sbIMediaItem;
 class sbILibrary;
 class nsIIOService;
+class sbIPropertyOperator;
 
 class sbLibraryBatchHelper
 {
@@ -218,6 +219,25 @@ public:
   static nsresult GetMediaListByContentType(sbILibrary * aLibrary,
                                             PRUint32 aContentType,
                                             nsIArray ** aMediaLists);
+
+  /**
+   * Returns the equality operator for the content property
+   *
+   * \return                    The equal operator
+   */
+  static PRUint32 GetEqualOperator(sbIPropertyOperator ** aOperator);
+
+  /**
+   * \brief Suggest a unique name for playlist.
+   *
+   * \param aLibrary  an sbILibrary.
+   * \param aListName the playlist name to append id to.
+   * \return a unique playlist name.
+   */
+  static nsresult SuggestUniqueNameForPlaylist(
+                    /* in  */ sbILibrary *aLibrary,
+                    /* in  */ nsAString const & aListName,
+                    /* out */ nsAString & aName);
 };
 
 /**
