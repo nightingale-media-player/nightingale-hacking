@@ -460,10 +460,16 @@ var DIW = {
 
     // Update the battery status and level.
     var batteryElem = this._getElement("battery_status");
-    if ((batteryElem.getAttribute("status") != batteryStatus) ||
+    if (batteryLevel == -1) {
+      batteryElem.hidden = true;
+    }
+    else {
+      batteryElem.hidden = false;
+      if ((batteryElem.getAttribute("status") != batteryStatus) ||
         (batteryElem.getAttribute("level") != batteryLevel)) {
-      batteryElem.setAttribute("status", batteryStatus);
-      batteryElem.setAttribute("level", batteryLevel);
+        batteryElem.setAttribute("status", batteryStatus);
+        batteryElem.setAttribute("level", batteryLevel);
+      }
     }
   },
 
@@ -1057,7 +1063,8 @@ var DIW = {
                                       (aBatteryLevel,
                                        aOnBatteryPower) {
     aBatteryLevel.value = this._getDeviceProperty
-                        ("http://songbirdnest.com/device/1.0#batteryLevel", 0);
+                        ("http://songbirdnest.com/device/1.0#batteryLevel", 
+                         -1);
     var powerSource = this._getDeviceProperty
                         ("http://songbirdnest.com/device/1.0#powerSource", 0);
     aOnBatteryPower.value = (parseInt(powerSource) ? true : false);
