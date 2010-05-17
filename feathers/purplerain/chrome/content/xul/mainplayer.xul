@@ -111,6 +111,13 @@
                         boolean="true"
                         attribute="hidden" />
             </button>
+            <statusbar id="servicepane-status-bar"
+                       mousethrough="never"
+                       flex="1"
+                       align="center">
+              <label id="servicepane-status-bar-label"
+                     class="sb-status-bar-text" />
+            </statusbar>
           </hbox> <!-- /servicepane-status-bar-box -->
         </vbox> <!-- /servicepane_box -->
 

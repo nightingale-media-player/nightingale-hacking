@@ -155,15 +155,23 @@
       </xbl:property>
       <xbl:property name="contentTitle">
         <xbl:getter><![CDATA[
-          var label = document.getAnonymousElementByAttribute(this._splitter,
-                                                              "anonid",
-                                                              "splitter-label");
+          var label;
+          if (this.id == "displaypane_servicepane_bottom")
+            label = document.getElementById("servicepane-status-bar-label");
+          else
+            label = document.getAnonymousElementByAttribute(this._splitter,
+                                                            "anonid",
+                                                            "splitter-label");
           return (label.value);
         ]]></xbl:getter>
         <xbl:setter><![CDATA[
-          var label = document.getAnonymousElementByAttribute(this._splitter,
-                                                              "anonid",
-                                                              "splitter-label");
+          var label;
+          if (this.id == "displaypane_servicepane_bottom")
+            label = document.getElementById("servicepane-status-bar-label");
+          else
+            label = document.getAnonymousElementByAttribute(this._splitter,
+                                                            "anonid",
+                                                            "splitter-label");
           label.value = val;
         ]]></xbl:setter>
       </xbl:property>

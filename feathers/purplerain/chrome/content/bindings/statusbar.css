@@ -76,6 +76,7 @@ statusbar > * {
   margin-bottom: 1px;
 }
 
+#servicepane-status-bar,
 #status-bar {
   padding-left: 5px;
 }

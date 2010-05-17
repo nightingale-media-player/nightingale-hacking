@@ -600,6 +600,9 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 #servicepane {
   background-color: rgb(47,43,58);
   border-left: 1px solid rgb(43,41,54);
+}
+
+#displaypane_servicepane_bottom {
   border-bottom: 1px solid rgb(44,42,55);
 }
 
