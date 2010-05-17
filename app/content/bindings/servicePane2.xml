@@ -987,6 +987,7 @@
       ]]></destructor>
 
       <field name="_dndReordering">false</field>
+      <field name="_autoCloseOnLeaveKeyboardFocus">false</field>
 
       <method name="newPlaylist">
         <parameter name="e" />
@@ -2093,10 +2094,33 @@
           event.stopPropagation();
         ]]></body>
       </method>
+
+      <method name="ensureNodeIsVisible">
+        <parameter name="node" />
+        <body><![CDATA[
+          let scrollbox =
+              this.mInnerBox.boxObject.QueryInterface(Ci.nsIScrollBoxObject);
+          scrollbox.ensureElementIsVisible(this.getDOMNode(node.id));
+        ]]></body>
+      </method>
       
       <method name="_leaveKeyboardFocus">
         <body><![CDATA[ 
-          this.setKeyboardFocusNode(null);
+          if (this._keyboardFocusNode) {
+            var node = this._keyboardFocusNode;
+            var domnode = this.getDOMNode(node.id);
+            if (domnode) {
+              var group = domnode._servicePaneGroup;
+              if (group && 
+                  group._autoCloseOnLeaveKeyboardFocus) {
+                // if this group was open by navigating to it with the kbd,
+                // make it so leaving it with the keyboard won't close it
+                // anymore now that we've loaded the url
+                group._autoCloseOnLeaveKeyboardFocus = false;
+              }
+            }
+            this.setKeyboardFocusNode(null);
+          }
         ]]></body>
       </method>
 
@@ -2116,6 +2140,7 @@
               domnode.className += " keyboardfocus";
             }
             this._keyboardFocusNode = node;
+            this.ensureNodeIsVisible(node);
           }
         ]]>
         </body>
@@ -2154,8 +2179,10 @@
           var node = this.getKeyboardFocusNode();
           if (node) {
             var domnode = this.getDOMNode(node.id);
-            if (domnode) 
+            if (domnode) {
+              this._leaveKeyboardFocus();
               domnode.loadNodeURL(event)
+            }
           }
         ]]></body>
       </method>
@@ -2196,10 +2223,12 @@
       <method name="_getKeyboardFocusSibling">
         <parameter name="direction"/>
         <body><![CDATA[ 
+          var oldgroup = null;
           var pos = -1;
           var kfnode = this.getKeyboardFocusNode();
           if (kfnode) {
             var kfdomnode = this.getDOMNode(kfnode.id);
+            oldgroup = kfdomnode._servicePaneGroup;
             var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
             var domnodes = this.getElementsByTagNameNS(XULNS,"sb-servicepane-node");
             for (var i in domnodes) {
@@ -2228,12 +2257,19 @@
                 // of the sibling.
                 if (!group.visible) {
                   group.visible = true;
+                  group._autoCloseOnLeaveKeyboardFocus = true;
                   return -1;
                 }
               }
               // discard nodes in collapsed containers
               if (domnode.boxObject.height == 0)
                 continue;
+            }
+            if (oldgroup &&
+                group != oldgroup) {
+              if (oldgroup._autoCloseOnLeaveKeyboardFocus &&
+                  oldgroup.visible)
+                oldgroup.visible = false;
             }
             return node;
           }
