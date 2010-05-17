@@ -542,6 +542,23 @@ deviceControlWidget.prototype = {
   //----------------------------------------------------------------------------
 
   /**
+   * Return the device product name string (e.g., "Apple iPod").
+   *
+   * \return Device model string.
+   */
+
+  _getProductName: function deviceControlWidget__getProductName() {
+    // Get the device product name.
+    var productName = null;
+    try { productName = this._device.productName; } catch(err) {}
+    if (productName == null)
+      productName = SBString("device.info.unknown");
+
+    return productName;
+  },
+
+
+  /**
    * Return the device model/capacity string (e.g., "Apple iPod(4GB)").
    *
    * \return Device model/capacity string.
@@ -770,6 +787,13 @@ deviceControlWidget.prototype = {
     var removeAttr = false;
     if (attrVal == "remove_attribute")
       removeAttr = true;
+
+    // Replace "product_name" in attribute value with the device product name
+    // string.
+    if (attrVal.match(/product_name/)) {
+      var productName = this._getProductName();
+      attrVal = attrVal.replace(/product_name/g, productName);
+    }
 
     // Replace "device_model_cap" in attribute value with the device
     // model/capacity string.

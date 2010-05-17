@@ -505,6 +505,10 @@ sb-device-get-info-command {
   -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-get-info-command");
 }
 
+sb-device-product-name-command {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-product-name-command");
+}
+
 sb-device-model-capacity-command {
   -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-model-capacity-command");
 }
