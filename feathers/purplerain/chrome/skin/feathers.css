@@ -746,6 +746,7 @@ sb-servicepane-node.highlighted > vbox > hbox.servicepane-node-info {
 /* needed to avoid the above border side-shifting all the elements 1px */
 sb-servicepane-node.active > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow,
 sb-servicepane-node.droptarget > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow,
+sb-servicepane-node.keyboardfocus > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow,
 sb-servicepane-node.highlighted > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow {
   margin-left: -1px;
 }
@@ -758,9 +759,16 @@ sb-servicepane-node.droptarget > vbox > hbox.servicepane-node-info {
 }
 
 /* highlighted in the servicepane for when a node is the keyboard focus */
+#servicepane sb-servicepane-node.active.keyboardfocus > vbox > hbox.servicepane-node-info,
+#servicepane:focus sb-servicepane-node.active.keyboardfocus > vbox > hbox.servicepane-node-info,
 sb-servicepane-node.keyboardfocus > vbox > hbox.servicepane-node-info {
   -moz-border-radius: 3px;
   border: 1px solid rgb(193,182,231);
+}
+/* to compensate for the 1px border added above */
+sb-servicepane-node.keyboardfocus > vbox > hbox.servicepane-node-info > stack > textbox {
+  margin-top: -1px;
+  margin-bottom: -1px;
 }
 
 /* highlighted in the servicepane for when a node is the target for a drop */
