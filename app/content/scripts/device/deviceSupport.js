@@ -495,9 +495,9 @@ var sbDeviceVolumeSupport = {
 
     // Load the device node.
     if (deviceNode && gServicePane) {
-      gServicePane.mTreePane.selectAndLoadNode(deviceNode,
-                                               null,
-                                               { manageVolumes: "true" });
+      gServicePane.activateAndLoadNode(deviceNode,
+                                       null,
+                                       { manageVolumes: "true" });
     }
   },
 

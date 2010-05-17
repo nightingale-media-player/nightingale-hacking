@@ -233,6 +233,7 @@
           // This is here because we can not call nodeData until the binding has
           // been applied.
           Components.utils.import("resource://app/jsmodules/DropHelper.jsm");
+          Components.utils.import("resource://app/jsmodules/URLUtils.jsm");
 
           // If this element has a node id then load up the data from the node
           // we are always expected to be in the service pane under a group at
@@ -393,6 +394,7 @@
         -->
       <method name="loadNodeURL">
         <parameter name="event"/>
+        <parameter name="arguments"/>
         <body><![CDATA[
           if (!this.browser)
             return; // Nothing to do if we don't have a browser.
@@ -411,7 +413,10 @@
               // Middle click.
               target = "_blank";
             }
-            this.browser.loadURI(this._nodeData.url, null, null, event, target);
+            var url = this._nodeData.url;
+            if (arguments)
+              url = URLUtils.addQuery(url, arguments);
+            this.browser.loadURI(url, null, null, event, target);
 
           // If no URL, apply special handling
           } else {
@@ -2273,6 +2278,20 @@
             }
             return node;
           }
+        ]]></body>
+      </method>
+      
+      <method name="activateAndLoadNode">
+        <parameter name="node"/>
+        <parameter name="event"/>
+        <parameter name="arguments"/>
+        <body>
+        <![CDATA[
+          if (!node)
+            return;
+          var domnode = this.getDOMNode(node.id);
+          if (domnode)
+            domnode.loadNodeURL(event, arguments);
         ]]></body>
       </method>
 
