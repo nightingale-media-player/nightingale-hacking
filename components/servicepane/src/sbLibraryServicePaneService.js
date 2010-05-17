@@ -138,10 +138,12 @@ function sbLibraryServicePane_shutdown() {}
 
 sbLibraryServicePane.prototype.fillContextMenu =
 function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow) {
+  var libraryMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                     .getService(Ci.sbILibraryManager);
 
   // the playlists folder and the local library node get the "New Foo..." items
   if (aNode.id == 'SB:Playlists' ||
-      aNode.className.match(/\blibrary\b/) ||
+      this._getLibraryGUIDForURN(aNode.id) == libraryMgr.mainLibrary.guid ||
       aNode.getAttributeNS(LSP, 'ListCustomType') == 'local') {
     this.fillNewItemMenu(aNode, aContextMenu, aParentWindow);
   }
@@ -169,8 +171,6 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
                      .getService(Ci.fuelIApplication).prefs;
     if (appPrefs.getValue("songbird.library_exporter.export_tracks", false)) {
       // Add media export hook if this is the main library
-      var libraryMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-                         .getService(Ci.sbILibraryManager);
       if (list == libraryMgr.mainLibrary) {
         var exportService = Cc["@songbirdnest.com/media-export-service;1"]
                               .getService(Ci.sbIMediaExportService);

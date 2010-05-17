@@ -643,7 +643,7 @@ function SBScanMedia( aParentWindow, aScanDirectory )
 }
 
 /** Legacy function **/
-function SBNewPlaylist(aEnumerator)
+function SBNewPlaylist(aEnumerator, aAllowDevicePlaylist)
 {
   // if the servicepane's Playlists group is hidden, then expose it
   if (gServicePane) {
@@ -652,7 +652,7 @@ function SBNewPlaylist(aEnumerator)
       playlistsGroup.visible = true;
   }
 
-  var playlist = makeNewPlaylist("simple");
+  var playlist = makeNewPlaylist("simple", aAllowDevicePlaylist);
   if (aEnumerator) {
     // make playlist from selected items
     playlist.addSome(aEnumerator);
@@ -660,7 +660,7 @@ function SBNewPlaylist(aEnumerator)
   return playlist;
 }
 
-function SBNewSmartPlaylist()
+function SBNewSmartPlaylist(aAllowDevicePlaylist)
 {
   // if the servicepane's Playlists group is hidden, then expose it
   if (gServicePane) {
@@ -671,7 +671,7 @@ function SBNewSmartPlaylist()
 
   var obj = { newSmartPlaylist: null,
               newPlaylistFunction: function() { 
-                return makeNewPlaylist("smart") 
+                return makeNewPlaylist("smart", aAllowDevicePlaylist);
               } 
             };
 
@@ -696,7 +696,7 @@ function SBNewSmartPlaylist()
  * Note: This function should move into the window controller somewhere
  *       once it exists.
  */
-function makeNewPlaylist(mediaListType) {
+function makeNewPlaylist(mediaListType, allowDevicePlaylist) {
   var servicePane = null;
   if (typeof gServicePane != 'undefined') servicePane = gServicePane;
 
@@ -705,17 +705,17 @@ function makeNewPlaylist(mediaListType) {
   if (servicePane) {
     selectedNode = servicePane.getSelectedNode();
   }
-  
-  // ensure the service pane is initialized (safe to do multiple times)
-  var servicePaneService = Components.classes['@songbirdnest.com/servicepane/service;1']
-                              .getService(Components.interfaces.sbIServicePaneService);
-  servicePaneService.init();
 
-  // Ask the library service pane provider to suggest where
-  // a new playlist should be created
   var librarySPS = Components.classes['@songbirdnest.com/servicepane/library;1']
                              .getService(Components.interfaces.sbILibraryServicePaneService);
-  var library = librarySPS.suggestLibraryForNewList(mediaListType, selectedNode);
+  if (allowDevicePlaylist) {
+    // Ask the library service pane provider to suggest where
+    // a new playlist should be created
+    var library = librarySPS.suggestLibraryForNewList(mediaListType,
+                                                      selectedNode);
+  } else {
+    var library = LibraryUtils.mainLibrary;
+  }
 
   // Looks like no libraries support the given mediaListType
   if (!library) {

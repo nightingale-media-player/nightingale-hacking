@@ -1002,7 +1002,7 @@
                 .selectedMediaItems;
             }
 
-            SBNewPlaylist(enumerator);
+            SBNewPlaylist(enumerator, false);
           }
         ]]></body>
       </method>
