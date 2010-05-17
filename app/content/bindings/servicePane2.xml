@@ -619,6 +619,7 @@
               this._textbox.value = this.getAttribute("label");
               this._textbox.setAttribute("hidden", true);
               this._servicePane.mService.onRename(this.nodeData, null);
+              this._servicePane._editingNode = null;
 
               // ensure the service pane has focus
               this._servicePane.focus();
@@ -630,6 +631,7 @@
               this._textbox.setAttribute("hidden", true);
               this._servicePane.mService.onRename(this.nodeData,
                                                   this._textbox.value);
+              this._servicePane._editingNode = null;
               this.loadNodeURL(event);
               
               // ensure the service pane has focus
@@ -831,6 +833,7 @@
       <handler event="click">
       <![CDATA[
         if (event.button == 0) {
+          this._servicePane._leaveKeyboardFocus();
           // if we're the active node, & the user clicked on the label
           // then rename
           if (this._servicePane.getActiveNode() == this.nodeData &&
@@ -849,6 +852,7 @@
 
       <handler event="contextmenu">
       <![CDATA[
+        this._servicePane._leaveKeyboardFocus();
         this._servicePane.openContextMenu(event, this.nodeId);
       ]]>
       </handler>
@@ -1522,6 +1526,11 @@
               else
                 this.element.log("\tUnable to find a DOM node for " + node.id);
 
+              // was this node the focus for keyboard operations ?
+              if (this.element._keyboardFocusNode == node) {
+                this.element._keyboardFocusNode = null;
+              }
+
               // remove the actual node
               if (domNode && domNode.parentNode) {
                 this.element.log("\tDOM nodes map to removing " + domNode.id +
@@ -1549,6 +1558,9 @@
 
       <!-- The node we're currently editing -->
       <field name="_editingNode">null</field>
+
+      <!-- The node with the current keyboard focus -->
+      <field name="_keyboardFocusNode">null</field>
 
       <!--
         TODO: Change the use of these functions so we can remove the
@@ -1676,12 +1688,6 @@
         - \brief Get the active node if any.
         - \return sbIServicePaneNode of the active node, or null if none
         -->
-      <method name="getSelectedNode">
-        <body><![CDATA[
-          return this.getActiveNode();
-        ]]></body>
-      </method>
-
       <method name="getActiveNode">
         <body><![CDATA[
           if (this._activeNodeID) {
@@ -1701,6 +1707,17 @@
           else {
             return null;
           }
+        ]]></body>
+      </method>
+
+      <method name="getKeyboardFocusNode">
+        <parameter name="nodefault"/>
+        <body><![CDATA[
+          if (this._keyboardFocusNode)
+            return this._keyboardFocusNode;
+          if (!nodefault)
+            return this.getActiveNode();
+          return null;
         ]]></body>
       </method>
 
@@ -1808,7 +1825,7 @@
           return newNode;
         ]]></body>
       </method>
-
+      
       <!--
         - \brief Highlight a node as being active
         -->
@@ -1982,29 +1999,36 @@
             DOMUtils.destroyNode(this.mPopup.lastChild);
             this.mPopup.removeChild(this.mPopup.lastChild);
           }
-
+          
           // if we got passed a DOM node, then fill the context menu with
           // the context menu options defined by the service handling the
           // node.  otherwise, fill the popup with the contents of the
           // "new stuff" menu
+          var x, y;
           if (nodeId) {
             let node = this.getNode(nodeId);
-            this.makeNodeHighlighted(this.getDOMNode(nodeId));
+            let domNode = this.getDOMNode(nodeId);
+            this.makeNodeHighlighted(domNode);
             this.mService.fillContextMenu(node, this.mPopup, window);
+            x = (event ? (event.screenX + 5) : domNode.boxObject.screenX);
+            y = (event ? (event.screenY + 5) : (domNode.boxObject.screenY + 
+                                                domNode.boxObject.height));
           } else {
             this.mService.fillNewItemMenu(null, this.mPopup, window);
+            x = (event ? (event.screenX + 5) : this.boxObject.screenX + 5);
+            y = (event ? (event.screenY + 5) : this.boxObject.screenY + 5);
           }
 
           // show the popup menu
           document.popupNode = null;
-          this.mPopup.showPopup(document.documentElement,
-                                event.screenX + 5,
-                                event.screenY + 5,
+          this.mPopup.showPopup(document.documentElement, x, y,
                                 'context', null, null, null);
 
           // XXXstevel: should we select/highlight the node?
-          event.stopPropagation();
-          event.preventDefault();
+          if (event) {
+            event.stopPropagation();
+            event.preventDefault();
+          }
           ]]>
         </body>
       </method>
@@ -2069,6 +2093,152 @@
           event.stopPropagation();
         ]]></body>
       </method>
+      
+      <method name="_leaveKeyboardFocus">
+        <body><![CDATA[ 
+          this.setKeyboardFocusNode(null);
+        ]]></body>
+      </method>
+
+      <method name="setKeyboardFocusNode">
+        <parameter name="node"/>
+        <body>
+        <![CDATA[
+          if (this._keyboardFocusNode) {
+            var domnode = this.getDOMNode(this._keyboardFocusNode.id);
+            domnode.className = 
+              domnode.className.replace(/\bkeyboardfocus\b/g,'');
+            this._keyboardFocusNode = null;
+          }
+          if (node) {
+            var domnode = this.getDOMNode(node.id);
+            if (domnode.className.search(/\bkeyboardfocus\b/) == -1) {
+              domnode.className += " keyboardfocus";
+            }
+            this._keyboardFocusNode = node;
+          }
+        ]]>
+        </body>
+      </method>
+      
+      <method name="_expandKeyboardFocusNode">
+        <body><![CDATA[ 
+          var node = this.getKeyboardFocusNode();
+          if (node && !node.isOpen) {
+            var domnode = this.getDOMNode(node.id);
+            if (domnode) 
+              domnode.toggleContainer();
+          }
+        ]]></body>
+      </method>
+      <method name="_collapseKeyboardFocusNode">
+        <body><![CDATA[ 
+          var node = this.getKeyboardFocusNode();
+          if (node && node.isOpen) {
+            var domnode = this.getDOMNode(node.id);
+            if (domnode) 
+              domnode.toggleContainer();
+          }
+        ]]></body>
+      </method>
+      <method name="_editKeyboardFocusNode">
+        <body><![CDATA[ 
+          var node = this.getKeyboardFocusNode();
+          if (node && node.editable)
+            this.startEditingNode(node);
+        ]]></body>
+      </method>
+      <method name="_openKeyboardFocusNode">
+        <parameter name="event"/>
+        <body><![CDATA[ 
+          var node = this.getKeyboardFocusNode();
+          if (node) {
+            var domnode = this.getDOMNode(node.id);
+            if (domnode) 
+              domnode.loadNodeURL(event)
+          }
+        ]]></body>
+      </method>
+      <method name="_contextMenuKeyboardFocusNode">
+        <parameter name="event"/>
+        <body><![CDATA[ 
+          var node = this.getKeyboardFocusNode();
+          if (node) {
+            this.openContextMenu(null, node.id);
+          }
+        ]]></body>
+      </method>
+      <method name="_keyboardFocusUp">
+        <body><![CDATA[ 
+          var node = this._getKeyboardFocusSibling(-1);
+          if (node) {
+            if (node == -1) {
+              setTimeout(function(o) { o._keyboardFocusUp(); }, 0, this);
+              return;
+            }
+            this.setKeyboardFocusNode(node);
+          }
+        ]]></body>
+      </method>
+      <method name="_keyboardFocusDown">
+        <body><![CDATA[ 
+          var node = this._getKeyboardFocusSibling(1);
+          if (node) {
+            if (node == -1) {
+              setTimeout(function(o) { o._keyboardFocusDown(); }, 0, this);
+              return;
+            }
+            this.setKeyboardFocusNode(node);
+          }
+        ]]></body>
+      </method>
+
+      <method name="_getKeyboardFocusSibling">
+        <parameter name="direction"/>
+        <body><![CDATA[ 
+          var pos = -1;
+          var kfnode = this.getKeyboardFocusNode();
+          if (kfnode) {
+            var kfdomnode = this.getDOMNode(kfnode.id);
+            var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+            var domnodes = this.getElementsByTagNameNS(XULNS,"sb-servicepane-node");
+            for (var i in domnodes) {
+              if (domnodes[i] == kfdomnode) {
+                pos = parseInt(i);
+                break;
+              }
+            }
+          }
+          while (1) {
+            pos += direction;
+            if (pos < 0 || pos >= domnodes.length)
+              break;
+            var domnode = domnodes[pos];
+            // discard non-element domnodes
+            if (domnode.nodeType != Node.ELEMENT_NODE)
+              continue;
+            var node = this.getNode(domnode.getAttribute("nodeid"));
+            if (node) {
+              // discard hidden nodes
+              if (node.hidden)
+                continue;
+              var group = domnode._servicePaneGroup;
+              if (group) {
+                // if the parent group is collapsed, open it and delay selection
+                // of the sibling.
+                if (!group.visible) {
+                  group.visible = true;
+                  return -1;
+                }
+              }
+              // discard nodes in collapsed containers
+              if (domnode.boxObject.height == 0)
+                continue;
+            }
+            return node;
+          }
+        ]]></body>
+      </method>
 
     </implementation>
     
@@ -2097,6 +2267,43 @@
           this._collapsedGroup.visible = false;
           this._collapsedGroup = null;
         }
+      ]]></handler>
+      
+      <handler event="keydown"><![CDATA[
+        if (this._editingNode) 
+          return;
+        const ke = Components.interfaces.nsIDOMKeyEvent;
+        switch (event.keyCode) {
+          case ke.DOM_VK_RIGHT:
+            this._expandKeyboardFocusNode();
+            break;
+          case ke.DOM_VK_LEFT:
+            this._collapseKeyboardFocusNode();
+            break;
+          case ke.DOM_VK_UP:
+            this._keyboardFocusUp();
+            break;
+          case ke.DOM_VK_DOWN:
+            this._keyboardFocusDown();
+            break;
+          case ke.DOM_VK_RETURN:
+            this._openKeyboardFocusNode(event);
+            break;
+          case ke.DOM_VK_F2:
+            this._editKeyboardFocusNode();
+            break;
+          case ke.DOM_VK_ESCAPE:
+            this._leaveKeyboardFocus();
+            break;
+          case ke.DOM_VK_CONTEXT_MENU:
+            this._contextMenuKeyboardFocusNode();
+            break;
+          // node deletion is handled by the command handler
+          default:
+            return;
+        }
+        event.stopPropagation();
+        event.preventDefault();
       ]]></handler>
     </handlers>
 

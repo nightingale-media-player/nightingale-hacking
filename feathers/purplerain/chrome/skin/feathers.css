@@ -754,6 +754,12 @@ sb-servicepane-node.droptarget > vbox > hbox.servicepane-node-info {
   border: 1px solid rgb(143,132,181);
 }
 
+/* highlighted in the servicepane for when a node is the keyboard focus */
+sb-servicepane-node.keyboardfocus > vbox > hbox.servicepane-node-info {
+  -moz-border-radius: 3px;
+  border: 1px solid rgb(193,182,231);
+}
+
 /* highlighted in the servicepane for when a node is the target for a drop */
 sb-servicepane-node.dndAcceptIn > vbox > hbox.servicepane-node-info {
   background-color: rgb(61,57,84);

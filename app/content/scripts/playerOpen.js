@@ -703,7 +703,7 @@ function makeNewPlaylist(mediaListType, allowDevicePlaylist) {
   // Try to find the currently selected service pane node
   var selectedNode;
   if (servicePane) {
-    selectedNode = servicePane.getSelectedNode();
+    selectedNode = servicePane.getActiveNode();
   }
 
   var librarySPS = Components.classes['@songbirdnest.com/servicepane/library;1']
