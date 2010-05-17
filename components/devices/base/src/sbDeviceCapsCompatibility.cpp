@@ -429,8 +429,10 @@ sbDeviceCapsCompatibility::CompareVideoFormat(PRBool* aCompatible)
 
           rv = CompareVideoStream(videoStream, aCompatible);
           NS_ENSURE_SUCCESS(rv, rv);
-          if (!(*aCompatible))
+          if (!(*aCompatible)) {
+            LOG(("%s[%p] Video stream incompatible", __FUNCTION__, this));
             continue;
+          }
 
           if (mMediaAudioStream) {
             // Get device audio stream
@@ -447,11 +449,14 @@ sbDeviceCapsCompatibility::CompareVideoFormat(PRBool* aCompatible)
   
             rv = CompareAudioStream(audioStream, aCompatible);
             NS_ENSURE_SUCCESS(rv, rv);
-            if (!(*aCompatible))
+            if (!(*aCompatible)) {
+              LOG(("%s[%p] Audio stream incompatible", __FUNCTION__, this));
               continue;
+            }
           }
   
           // Getting this far means we got a match and have set aCompatible.
+          LOG(("%s[%p] Stream is compatible", __FUNCTION__, this));
           return NS_OK;
         }
       }

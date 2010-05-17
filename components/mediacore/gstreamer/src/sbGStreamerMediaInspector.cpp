@@ -624,13 +624,11 @@ sbGStreamerMediaInspector::PadAdded(GstPad *srcpad)
   // this will be sufficient.
   // We don't look at the caps in detail until we are in the PAUSED state, at
   // which point we explicitly look at the negotiated caps.
-  GstCaps *caps = gst_pad_get_caps (srcpad);
+  sbGstCaps caps = gst_pad_get_caps (srcpad);
   GstStructure *structure = gst_caps_get_structure (caps, 0);
   const gchar *name = gst_structure_get_name (structure);
   bool isVideo = g_str_has_prefix (name, "video/");
   bool isAudio = g_str_has_prefix (name, "audio/");
-
-  gst_caps_unref (caps);
 
   if (isAudio && !mAudioSrc) {
     GstElement *queue = gst_element_factory_make ("queue", "audio-queue");
@@ -839,12 +837,14 @@ sbGStreamerMediaInspector::ProcessPipelineForInfo()
                                         &rv);
     NS_ENSURE_SUCCESS (rv, rv);
 
-    GstCaps *caps = gst_pad_get_negotiated_caps (mDemuxerSink);
+    sbGstCaps caps = gst_pad_get_negotiated_caps (mDemuxerSink);
     GstStructure *structure = gst_caps_get_structure (caps, 0);
-    rv = containerFormat->SetContainerType (
-            NS_ConvertUTF8toUTF16 (gst_structure_get_name (structure)));
-    gst_caps_unref (caps);
 
+    nsCString mimeType;
+    rv = GetMimeTypeForCaps (caps, mimeType);
+    NS_ENSURE_SUCCESS (rv, rv);
+
+    rv = containerFormat->SetContainerType (NS_ConvertUTF8toUTF16(mimeType));
     NS_ENSURE_SUCCESS (rv, rv);
 
     // format-specific attributes.
@@ -1043,10 +1043,8 @@ sbGStreamerMediaInspector::ProcessVideo(sbIMediaFormatVideo **aVideoFormat)
 
   // mVideoSrc is the decoded video pad from decodebin. We can process this for
   // information about the output video: resolution, framerate, etc.
-  GstCaps *caps = gst_pad_get_negotiated_caps (mVideoSrc);
+  sbGstCaps caps = gst_pad_get_negotiated_caps (mVideoSrc);
   rv = ProcessVideoCaps(format, caps);
-  gst_caps_unref (caps);
-
   NS_ENSURE_SUCCESS (rv, rv);
 
   rv = format->SetBitRate(mVideoBitRate);
@@ -1058,13 +1056,14 @@ sbGStreamerMediaInspector::ProcessVideo(sbIMediaFormatVideo **aVideoFormat)
     // If we don't have a decoder sink pad, then that SHOULD mean that we have
     // raw video from the demuxer. Alternatively, it means we screwed up
     // somehow. 
-    caps = gst_pad_get_negotiated_caps (mVideoDecoderSink);
-    GstStructure *structure = gst_caps_get_structure (caps, 0);
+    sbGstCaps videoCaps = gst_pad_get_negotiated_caps (mVideoDecoderSink);
+    GstStructure *structure = gst_caps_get_structure (videoCaps, 0);
 
-    rv = format->SetVideoType (
-            NS_ConvertUTF8toUTF16 (gst_structure_get_name (structure)));
-    gst_caps_unref (caps);
+    nsCString mimeType;
+    rv = GetMimeTypeForCaps (videoCaps, mimeType);
+    NS_ENSURE_SUCCESS (rv, rv);
 
+    rv = format->SetVideoType (NS_ConvertUTF8toUTF16(mimeType));
     NS_ENSURE_SUCCESS (rv, rv);
 
     // format-specific attributes.
@@ -1173,7 +1172,7 @@ sbGStreamerMediaInspector::ProcessAudio(sbIMediaFormatAudio **aAudioFormat)
 
   // mAudioSrc is the decoded audio pad from decodebin. We can process this for
   // information about the output audio: sample rate, number of channels, etc.
-  GstCaps *caps = gst_pad_get_negotiated_caps (mAudioSrc);
+  sbGstCaps caps = gst_pad_get_negotiated_caps (mAudioSrc);
   GstStructure *structure = gst_caps_get_structure (caps, 0);
 
   gint rate, channels;
@@ -1183,7 +1182,6 @@ sbGStreamerMediaInspector::ProcessAudio(sbIMediaFormatAudio **aAudioFormat)
   if (gst_structure_get_int (structure, "channels", &channels)) {
     format->SetChannels (channels);
   }
-  gst_caps_unref (caps);
 
   rv = format->SetBitRate(mAudioBitRate);
   NS_ENSURE_SUCCESS (rv, rv);
@@ -1194,13 +1192,14 @@ sbGStreamerMediaInspector::ProcessAudio(sbIMediaFormatAudio **aAudioFormat)
     // If we don't have a decoder sink pad, then that SHOULD mean that we have
     // raw audio from the demuxer. Alternatively, it means we screwed up
     // somehow. 
-    caps = gst_pad_get_negotiated_caps (mAudioDecoderSink);
-    structure = gst_caps_get_structure (caps, 0);
+    sbGstCaps audioCaps = gst_pad_get_negotiated_caps (mAudioDecoderSink);
+    structure = gst_caps_get_structure (audioCaps, 0);
 
-    rv = format->SetAudioType (
-            NS_ConvertUTF8toUTF16 (gst_structure_get_name (structure)));
-    gst_caps_unref (caps);
+    nsCString mimeType;
+    rv = GetMimeTypeForCaps (audioCaps, mimeType);
+    NS_ENSURE_SUCCESS (rv, rv);
 
+    rv = format->SetAudioType (NS_ConvertUTF8toUTF16(mimeType));
     NS_ENSURE_SUCCESS (rv, rv);
 
     // format-specific attributes.

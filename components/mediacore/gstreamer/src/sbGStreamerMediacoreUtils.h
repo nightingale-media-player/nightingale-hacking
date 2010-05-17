@@ -41,8 +41,11 @@
 
 #include <sbIPropertyArray.h>
 #include <sbMediacoreError.h>
+#include <sbMemoryUtils.h>
 
 #include <gst/gst.h>
+
+SB_AUTO_CLASS(sbGstCaps, GstCaps*, !!mValue, gst_caps_unref(mValue), mValue = NULL);
 
 /* Custom GStreamer tag names. Must match those used in the various gstreamer
    muxers/taggers we have.
@@ -138,6 +141,21 @@ FindMatchingElementName(GstCaps *srcCaps, const char *typeName);
 /* Register any the custom tags we need to use */
 void
 RegisterCustomTags();
+
+/* Get the mime type string to use for a given GStreamer caps type */
+nsresult
+GetMimeTypeForCaps (GstCaps *aCaps, nsACString &aMimeType);
+
+enum sbGstCapsMapType {
+  SB_GST_CAPS_MAP_NONE,
+  SB_GST_CAPS_MAP_CONTAINER,
+  SB_GST_CAPS_MAP_AUDIO,
+  SB_GST_CAPS_MAP_VIDEO
+};
+
+/* Get a GstCaps object (possibly incomplete) for a given mime type string */
+GstCaps *
+GetCapsForMimeType (const nsACString &aMimeType, enum sbGstCapsMapType);
 
 #endif // _SB_GSTREAMERMEDIACOREUTILS_H_
 

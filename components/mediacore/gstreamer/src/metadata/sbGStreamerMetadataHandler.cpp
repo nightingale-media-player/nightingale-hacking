@@ -28,6 +28,7 @@
 #include "sbGStreamerMetadataHandler.h"
 
 #include "sbGStreamerMediacoreCID.h"
+#include "sbGStreamerMediacoreUtils.h"
 
 #include <sbIGStreamerService.h>
 #include <sbIMediacoreCapabilities.h>
@@ -84,11 +85,6 @@ SB_AUTO_CLASS(sbGstPad,
               GstPad*,
               !!mValue,
               gst_object_unref(mValue),
-              mValue = NULL);
-SB_AUTO_CLASS(sbGstCaps,
-              GstCaps*,
-              !!mValue,
-              gst_caps_unref(mValue),
               mValue = NULL);
 
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbGStreamerMetadataHandler,

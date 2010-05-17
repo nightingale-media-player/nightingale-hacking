@@ -746,3 +746,77 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
   return NS_OK;
 }
 
+struct sb_gst_caps_map_entry {
+  const char *mime_type;
+  const char *gst_name;
+  enum sbGstCapsMapType map_type;
+};
+
+static const struct sb_gst_caps_map_entry sb_gst_caps_map[] =
+{
+  // mpeg audio we always want id3 tags on for the container
+  { "audio/mpeg",   "application/x-id3", SB_GST_CAPS_MAP_CONTAINER },
+
+  { "audio/x-pcm-int",   "audio/x-raw-int", SB_GST_CAPS_MAP_AUDIO },
+  { "audio/x-pcm-float", "audio/x-raw-float", SB_GST_CAPS_MAP_AUDIO },
+  { "audio/x-ms-wma",    "audio/x-wma", SB_GST_CAPS_MAP_AUDIO },
+
+  { "video/x-ms-wmv",    "video/x-wmv", SB_GST_CAPS_MAP_VIDEO },
+
+  // The remaining ones have NONE type; they should ONLY be used for mapping
+  // a GST type to a mime type, not the other way around
+  { "video/mpeg",        "video/x-divx", SB_GST_CAPS_MAP_NONE },
+  { "video/mpeg",        "video/x-xvid", SB_GST_CAPS_MAP_NONE },
+};
+
+/* GStreamer caps name are generally similar to mime-types, but some of them
+ * differ. We use this table to convert the ones that differ that we know about,
+ * and all other names are returned unchanged.
+ */
+static nsCString
+GetGstCapsName(const nsACString &aMimeType, enum sbGstCapsMapType aType)
+{
+  nsCString result(aMimeType);
+
+  for (unsigned int i = 0; i < NS_ARRAY_LENGTH (sb_gst_caps_map); i++) {
+    if (sb_gst_caps_map[i].map_type == aType &&
+        aMimeType.EqualsLiteral(sb_gst_caps_map[i].mime_type)) 
+    {
+      result.AssignLiteral(sb_gst_caps_map[i].gst_name);
+      return result;
+    }
+  }
+
+  return result;
+}
+
+GstCaps *
+GetCapsForMimeType (const nsACString &aMimeType, enum sbGstCapsMapType aType )
+{
+  nsCString name = GetGstCapsName (aMimeType, aType);
+  // set up a caps structure
+  GstCaps *caps = gst_caps_from_string(name.BeginReading());
+  return caps;
+}
+
+
+nsresult
+GetMimeTypeForCaps (GstCaps *aCaps, nsACString &aMimeType)
+{
+  const gchar *capsName = gst_structure_get_name (
+          gst_caps_get_structure (aCaps, 0));
+
+  for (unsigned int i = 0; i < NS_ARRAY_LENGTH (sb_gst_caps_map); i++)
+  {
+    if (!strcmp(capsName, sb_gst_caps_map[i].gst_name)) {
+      aMimeType.AssignLiteral(sb_gst_caps_map[i].mime_type);
+      return NS_OK;
+    }
+  }
+
+  /* Use the same name if we don't have a different mapping */
+  aMimeType.AssignLiteral(capsName);
+  return NS_OK;
+
+}
+

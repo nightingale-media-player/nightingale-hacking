@@ -162,8 +162,6 @@ GetDevCapRangeUpper(sbIDevCapRange *aRange, PRInt32 aTarget, PRInt32 *_retval)
 }
 
 ///// Class declarations
-SB_AUTO_CLASS(sbGstCaps, GstCaps*, !!mValue, gst_caps_unref(mValue), mValue = NULL);
-
 NS_IMPL_ISUPPORTS_INHERITED1(sbGStreamerTranscodeAudioConfigurator,
                              sbTranscodingConfigurator,
                              sbIDeviceTranscodingConfigurator);
@@ -185,64 +183,16 @@ sbGStreamerTranscodeAudioConfigurator::~sbGStreamerTranscodeAudioConfigurator()
   /* nothing */
 }
 
-struct sb_gst_caps_map_entry {
-  const char *sb_name;
-  const char *gst_name;
-};
-
-static const struct sb_gst_caps_map_entry sb_gst_caps_map_container[] =
-{
-  // mpeg audio we always want id3 tags on.
-  { "audio/mpeg",   "application/x-id3" },
-};
-
-static const struct sb_gst_caps_map_entry sb_gst_caps_map_audio[] =
-{
-  { "audio/x-pcm-int",   "audio/x-raw-int" },
-  { "audio/x-pcm-float", "audio/x-raw-float" },
-  { "audio/x-ms-wma",    "audio/x-wma" },
-};
-
-/* GStreamer caps name are generally similar to mime-types, but some of them
- * differ. We use this table to convert the ones that differ that we know about
- */
-static nsresult
-GetGstCapsName(PRBool aContainer,
-               const nsACString &aMimeType,
-               nsACString &aGstCapsName)
-{
-  unsigned int maplength;
-  const sb_gst_caps_map_entry *map;
-  if (aContainer) {
-    map = sb_gst_caps_map_container;
-    maplength = NS_ARRAY_LENGTH (sb_gst_caps_map_container);
-  }
-  else {
-    map = sb_gst_caps_map_audio;
-    maplength = NS_ARRAY_LENGTH (sb_gst_caps_map_audio);
-  }
-
-  for (unsigned int i = 0; i < maplength; i++) {
-    if (aMimeType.EqualsLiteral(map[i].sb_name)) {
-      aGstCapsName.AssignLiteral(map[i].gst_name);
-      return NS_OK;
-    }
-  }
-
-  aGstCapsName = aMimeType;
-  return NS_OK;
-}
-
 /**
  * make a GstCaps structure from a caps name and an array of attributes
  *
- * @param aContainer [in] true if this is for a container format
+ * @param aType [in] type of caps we're converting
  * @param aMimeType [in] the name (e.g. "audio/x-pcm-int")
  * @param aAttributes [in] the attributes
  * @param aResultCaps [out] the generated GstCaps, with an outstanding refcount
  */
 static nsresult
-MakeCapsFromAttributes(PRBool aContainer,
+MakeCapsFromAttributes(enum sbGstCapsMapType aType,
                        const nsACString& aMimeType,
                        nsIArray *aAttributes,
                        GstCaps** aResultCaps)
@@ -257,12 +207,7 @@ MakeCapsFromAttributes(PRBool aContainer,
   rv = aAttributes->Enumerate(getter_AddRefs(attrsEnum));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCString name;
-  rv = GetGstCapsName (aContainer, aMimeType, name);
-  NS_ENSURE_SUCCESS (rv, rv);
-
-  // set up a caps structure
-  sbGstCaps caps = gst_caps_from_string(name.BeginReading());
+  sbGstCaps caps = GetCapsForMimeType (aMimeType, aType);
   NS_ENSURE_TRUE(caps, NS_ERROR_FAILURE);
   GstStructure* capsStruct = gst_caps_get_structure(caps.get(), 0);
 
@@ -357,7 +302,7 @@ sbGStreamerTranscodeAudioConfigurator::EnsureProfileAvailable(sbITranscodeProfil
     NS_ENSURE_SUCCESS(rv, rv);
 
     GstCaps* caps = NULL;
-    rv = MakeCapsFromAttributes(PR_TRUE,
+    rv = MakeCapsFromAttributes(SB_GST_CAPS_MAP_CONTAINER,
                                 NS_LossyConvertUTF16toASCII(capsName),
                                 attrs,
                                 &caps);
@@ -387,7 +332,7 @@ sbGStreamerTranscodeAudioConfigurator::EnsureProfileAvailable(sbITranscodeProfil
     NS_ENSURE_SUCCESS(rv, rv);
 
     GstCaps* caps = NULL;
-    rv = MakeCapsFromAttributes(PR_FALSE,
+    rv = MakeCapsFromAttributes(SB_GST_CAPS_MAP_AUDIO,
                                 NS_LossyConvertUTF16toASCII(capsName),
                                 attrs,
                                 &caps);
