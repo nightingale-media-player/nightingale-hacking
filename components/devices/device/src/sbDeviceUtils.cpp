@@ -1711,7 +1711,6 @@ sbDeviceUtils::GetMediaSettings(
   nsresult rv = aDevLib->GetSyncSettings(getter_AddRefs(syncSettings));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIDeviceLibraryMediaSyncSettings> mediaSyncSettings;
   rv = syncSettings->GetMediaSettings(sbIDeviceLibrary::MEDIATYPE_IMAGE,
                                       aMediaSettings);
   NS_ENSURE_SUCCESS(rv, rv);

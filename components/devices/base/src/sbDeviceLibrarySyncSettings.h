@@ -64,6 +64,7 @@ public:
    * Resets the changed flag, this does not revert the settings themselvves
    */
   void ResetChanged();
+  void ResetChangedNoLock();
   /**
    * Marks the settings object as modified and notifies the device library
    * if set to do so

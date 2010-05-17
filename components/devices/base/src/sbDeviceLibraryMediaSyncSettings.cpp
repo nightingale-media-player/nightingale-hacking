@@ -113,7 +113,7 @@ sbDeviceLibraryMediaSyncSettings::Assign(
   rv = aSettings->mSyncFromFolder->Clone(getter_AddRefs(mSyncFromFolder));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mChanged = PR_FALSE;
+  mChanged = false;
   mLock = aSettings->mLock;
 
   return NS_OK;
@@ -169,8 +169,13 @@ NS_IMETHODIMP
 sbDeviceLibraryMediaSyncSettings::SetMgmtType(PRUint32 aSyncMgmtType)
 {
   NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
-  nsAutoLock lock(mLock);
-  mSyncMgmtType = aSyncMgmtType;
+
+  {
+    nsAutoLock lock(mLock);
+    mSyncMgmtType = aSyncMgmtType;
+  }
+
+  // Release the lock before dispatching sync settings change event
   Changed();
   return NS_OK;
 }
@@ -204,21 +209,25 @@ sbDeviceLibraryMediaSyncSettings::SetSelectedPlaylists(
 
   nsresult rv;
 
-  nsAutoLock lock(mLock);
+  {
+    nsAutoLock lock(mLock);
 
-  mPlaylistsSelection.Enumerate(ResetSelection, nsnull);
+    mPlaylistsSelection.Enumerate(ResetSelection, nsnull);
 
-  nsCOMPtr<nsISupports> medialist;
-  PRUint32 length;
-  rv = aSelectedPlaylists->GetLength(&length);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMediaList> mediaList;
-  for (PRUint32 index = 0; index < length; ++index) {
-    mediaList = do_QueryElementAt(aSelectedPlaylists, index, &rv);
+    nsCOMPtr<nsISupports> medialist;
+    PRUint32 length;
+    rv = aSelectedPlaylists->GetLength(&length);
     NS_ENSURE_SUCCESS(rv, rv);
-    mPlaylistsSelection.Put(mediaList, PR_TRUE);
+
+    nsCOMPtr<sbIMediaList> mediaList;
+    for (PRUint32 index = 0; index < length; ++index) {
+      mediaList = do_QueryElementAt(aSelectedPlaylists, index, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      mPlaylistsSelection.Put(mediaList, PR_TRUE);
+    }
   }
+
+  // Release the lock before dispatching sync settings change event
   Changed();
   return NS_OK;
 }
@@ -228,9 +237,14 @@ sbDeviceLibraryMediaSyncSettings::SetPlaylistSelected(sbIMediaList *aPlaylist,
                                                       PRBool aSelected)
 {
   NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
-  nsAutoLock lock(mLock);
-  nsCOMPtr<nsISupports> supports = aPlaylist;
-  mPlaylistsSelection.Put(supports, PR_TRUE);
+
+  {
+    nsAutoLock lock(mLock);
+    nsCOMPtr<nsISupports> supports = aPlaylist;
+    mPlaylistsSelection.Put(supports, PR_TRUE);
+  }
+
+  // Release the lock before dispatching sync settings change event
   Changed();
   return NS_OK;
 }
@@ -254,9 +268,13 @@ NS_IMETHODIMP
 sbDeviceLibraryMediaSyncSettings::ClearSelectedPlaylists()
 {
   NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
-  nsAutoLock lock(mLock);
 
-  mPlaylistsSelection.Enumerate(ResetSelection, nsnull);
+  {
+    nsAutoLock lock(mLock);
+    mPlaylistsSelection.Enumerate(ResetSelection, nsnull);
+  }
+
+  // Release the lock before dispatching sync settings change event
   Changed();
 
   return NS_OK;
@@ -277,9 +295,13 @@ NS_IMETHODIMP
 sbDeviceLibraryMediaSyncSettings::SetSyncFolder(const nsAString & aSyncFolder)
 {
   NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
-  nsAutoLock lock(mLock);
 
-  mSyncFolder = aSyncFolder;
+  {
+    nsAutoLock lock(mLock);
+    mSyncFolder = aSyncFolder;
+  }
+
+  // Release the lock before dispatching sync settings change event
   Changed();
 
   return NS_OK;
@@ -304,10 +326,14 @@ sbDeviceLibraryMediaSyncSettings::SetSyncFromFolder(
                                               nsIFile * aSyncFromFolder)
 {
   NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
-  nsAutoLock lock(mLock);
 
-  nsresult rv = aSyncFromFolder->Clone(getter_AddRefs(mSyncFromFolder));
-  NS_ENSURE_SUCCESS(rv, rv);
+  {
+    nsAutoLock lock(mLock);
+    nsresult rv = aSyncFromFolder->Clone(getter_AddRefs(mSyncFromFolder));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Release the lock before dispatching sync settings change event
   Changed();
 
   return NS_OK;

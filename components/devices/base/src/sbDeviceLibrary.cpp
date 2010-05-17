@@ -964,10 +964,20 @@ sbDeviceLibrary::SetSyncSettingsNoLock(
       NS_ENSURE_SUCCESS(rv, rv);
 
       mTempSyncSettings->NotifyDeviceLibrary();
+      mTempSyncSettings->ResetChangedNoLock();
     }
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mCurrentSyncSettings->Write(mDevice);
+    // Create a copy of sync settings for Write. We don't want to hold the lock
+    // while writing as it can dispatch device EVENT_DEVICE_PREFS_CHANGED event.
+    nsRefPtr<sbDeviceLibrarySyncSettings> copiedSyncSettings;
+    rv = mCurrentSyncSettings->CreateCopy(getter_AddRefs(copiedSyncSettings));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Release the lock before dispatching sync settings change event
+    lock.unlock();
+
+    rv = copiedSyncSettings->Write(mDevice);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -989,6 +999,7 @@ sbDeviceLibrary::GetTempSyncSettings(
       NS_ENSURE_TRUE(mCurrentSyncSettings, NS_ERROR_OUT_OF_MEMORY);
     }
     mCurrentSyncSettings->CreateCopy(getter_AddRefs(mTempSyncSettings));
+    mTempSyncSettings->NotifyDeviceLibrary();
   }
 
   rv = CallQueryInterface(mTempSyncSettings.get(), aTempSyncSettings);
@@ -1004,18 +1015,22 @@ sbDeviceLibrary::ResetSyncSettings()
   nsAutoMonitor monitor(mMonitor);
 
   // If temp settings were never retrieved, nothing to do.
-  if (mTempSyncSettings) {
+  if (!mTempSyncSettings) {
     return NS_OK;
   }
-  nsAutoLock lockCurrentSyncSettings(mCurrentSyncSettings->GetLock());
-  nsAutoLock lockTempSyncSettings(mTempSyncSettings->GetLock());
 
-  nsresult rv;
+  {
+    nsAutoLock lockCurrentSyncSettings(mCurrentSyncSettings->GetLock());
+    nsAutoLock lockTempSyncSettings(mTempSyncSettings->GetLock());
 
-  rv = mTempSyncSettings->Assign(mCurrentSyncSettings);
-  NS_ENSURE_SUCCESS(rv, rv);
+    nsresult rv;
 
-  mTempSyncSettings->NotifyDeviceLibrary();
+    rv = mTempSyncSettings->Assign(mCurrentSyncSettings);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mTempSyncSettings->NotifyDeviceLibrary();
+    mTempSyncSettings->ResetChangedNoLock();
+  }
 
   SB_NOTIFY_LISTENERS(OnSyncSettings(
                                   sbIDeviceLibraryListener::SYNC_SETTINGS_RESET,
@@ -1038,6 +1053,13 @@ sbDeviceLibrary::ApplySyncSettings()
 
   rv = SetSyncSettingsNoLock(mTempSyncSettings);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  mTempSyncSettings->NotifyDeviceLibrary();
+  mTempSyncSettings->ResetChanged();
+
+  SB_NOTIFY_LISTENERS(OnSyncSettings(
+                                sbIDeviceLibraryListener::SYNC_SETTINGS_APPLIED,
+                                mCurrentSyncSettings));
 
   return NS_OK;
 }
@@ -1089,9 +1111,9 @@ sbDeviceLibrary::GetSyncFolderListByType(PRUint32 aContentType,
   if (mgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL) {
     nsCOMPtr<nsIFile> rootFolder;
     rv = mediaSyncSettings->GetSyncFromFolder(getter_AddRefs(rootFolder));
-    NS_ENSURE_SUCCESS(rv, rv);
 
-    if (rootFolder) {
+    if ((rv != NS_ERROR_NOT_AVAILABLE) && rootFolder) {
+      NS_ENSURE_SUCCESS(rv, rv);
       rv = array->AppendElement(rootFolder, PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);
     }
@@ -1260,29 +1282,22 @@ sbDeviceLibrary::Sync()
   }
 
   // If the user has enabled image sync, trigger it after the audio/video sync
-  PRUint32 mgmtType;
-  rv = sbDeviceUtils::GetMgmtTypeForMedia(this,
-                                          sbIDeviceLibrary::MEDIATYPE_IMAGE,
-                                          mgmtType);
+  // If the user has disabled image sync, trigger it to do the removal.
+  nsCOMPtr<nsIWritablePropertyBag2> requestParams =
+    do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  if (mgmtType != sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE) {
-
-    nsCOMPtr<nsIWritablePropertyBag2> requestParams =
-      do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    // make a low priority request so it's guaranteed to be handled after
-    // higher priority requests, such as audio and video
-    rv = requestParams->SetPropertyAsInt32(
-                            NS_LITERAL_STRING("priority"),
-                            sbBaseDevice::TransferRequest::PRIORITY_LOW);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = requestParams->SetPropertyAsInterface
-                          (NS_LITERAL_STRING("list"),
-                           NS_ISUPPORTS_CAST(sbIMediaList*, this));
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = device->SubmitRequest(sbIDevice::REQUEST_IMAGESYNC, requestParams);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  // make a low priority request so it's guaranteed to be handled after
+  // higher priority requests, such as audio and video
+  rv = requestParams->SetPropertyAsInt32(
+                          NS_LITERAL_STRING("priority"),
+                          sbBaseDevice::TransferRequest::PRIORITY_LOW);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = requestParams->SetPropertyAsInterface
+                        (NS_LITERAL_STRING("list"),
+                         NS_ISUPPORTS_CAST(sbIMediaList*, this));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = device->SubmitRequest(sbIDevice::REQUEST_IMAGESYNC, requestParams);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

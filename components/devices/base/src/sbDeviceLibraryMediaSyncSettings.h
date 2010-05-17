@@ -65,6 +65,9 @@ private:
                                     PRLock * aLock);
   nsresult Assign(sbDeviceLibraryMediaSyncSettings * aSettings);
   nsresult CreateCopy(sbDeviceLibraryMediaSyncSettings ** aSettings);
+  void SetSyncSettings(sbDeviceLibrarySyncSettings * aSettings) {
+    mSyncSettings = aSettings;
+  }
   void ResetChanged() {
     mChanged = false;
   }

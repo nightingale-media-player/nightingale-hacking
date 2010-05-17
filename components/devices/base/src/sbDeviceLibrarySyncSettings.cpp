@@ -154,10 +154,8 @@ bool sbDeviceLibrarySyncSettings::HasChanged() const
   return HasChangedNoLock();
 }
 
-void sbDeviceLibrarySyncSettings::ResetChanged()
+void sbDeviceLibrarySyncSettings::ResetChangedNoLock()
 {
-  nsAutoLock lock(mLock);
-
   mChanged = false;
   nsRefPtr<sbDeviceLibraryMediaSyncSettings> mediaSettings;
   for (PRUint32 mediaType = sbIDeviceLibrary::MEDIATYPE_AUDIO;
@@ -168,6 +166,12 @@ void sbDeviceLibrarySyncSettings::ResetChanged()
       mediaSettings->ResetChanged();
     }
   }
+}
+
+void sbDeviceLibrarySyncSettings::ResetChanged()
+{
+  nsAutoLock lock(mLock);
+  ResetChangedNoLock();
 }
 
 /* attribute unsigned long syncMode; */
@@ -225,6 +229,10 @@ sbDeviceLibrarySyncSettings::GetMediaSettingsNoLock(
 
     mMediaSettings[aMediaType] = newSettings;
   }
+  else {
+    newSettings->SetSyncSettings(this);
+  }
+
   *aMediaSettings =
     static_cast<sbIDeviceLibraryMediaSyncSettings*>(newSettings.get());
   newSettings.forget();
@@ -576,7 +584,7 @@ sbDeviceLibrarySyncSettings::WriteMediaSyncSettings(
 
   nsresult rv;
 
-   nsString prefKey;
+  nsString prefKey;
   rv = GetMgmtTypePrefKey(aMediaType, prefKey);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -585,21 +593,37 @@ sbDeviceLibrarySyncSettings::WriteMediaSyncSettings(
                  aMediaSyncSettings->mSyncMgmtType);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = GetSyncFromFolderPrefKey(aMediaType, prefKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = WritePref(aDevice,
+                 prefKey,
+                 sbNewVariant(aMediaSyncSettings->mSyncFromFolder));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetSyncFolderPrefKey(aMediaType, prefKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = WritePref(aDevice, prefKey, aMediaSyncSettings->mSyncFolder);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Ignore sync playlists writing for image.
+  if (aMediaType == sbIDeviceLibrary::MEDIATYPE_IMAGE)
+    return NS_OK;
+
   rv = GetSyncListsPrefKey(aMediaType, prefKey);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIMutableArray> selected =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
-
-  nsAutoLock lock(mLock);
   aMediaSyncSettings->mPlaylistsSelection.EnumerateRead(ArrayBuilder,
                                                         selected.get());
 
-  nsString mediaListGuids;
   PRUint32 count;
   rv = selected->GetLength(&count);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsString mediaListGuids;
   nsCOMPtr<sbIMediaList> mediaList;
   for (PRUint32 index = 0; index < count; ++index) {
     if (count) {
@@ -615,21 +639,8 @@ sbDeviceLibrarySyncSettings::WriteMediaSyncSettings(
     mediaListGuids.Append(guid);
   }
   rv = WritePref(aDevice, prefKey, mediaListGuids);
-
-
-  rv = GetSyncFromFolderPrefKey(aMediaType, prefKey);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = WritePref(aDevice,
-                 prefKey,
-                 sbNewVariant(aMediaSyncSettings->mSyncFromFolder));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = GetSyncFolderPrefKey(aMediaType, prefKey);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = WritePref(aDevice, prefKey, aMediaSyncSettings->mSyncFolder);
-  NS_ENSURE_SUCCESS(rv, rv);
   return NS_OK;
 }
 
@@ -648,17 +659,17 @@ sbDeviceLibrarySyncSettings::Read(sbIDevice * aDevice,
   for (PRUint32 mediaType = sbIDeviceLibrary::MEDIATYPE_AUDIO;
        mediaType < sbIDeviceLibrary::MEDIATYPE_COUNT;
        ++mediaType) {
-    rv = ReadMediaSyncSettings(aDevice,
-                               aDeviceLibrary,
-                               mediaType,
-                               getter_AddRefs(mediaSettings));
-    NS_ENSURE_SUCCESS(rv, rv);
-
     if (mMediaSettings[mediaType]) {
       rv = mediaSettings->Assign(mMediaSettings[mediaType]);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     else {
+      rv = ReadMediaSyncSettings(aDevice,
+                                 aDeviceLibrary,
+                                 mediaType,
+                                 getter_AddRefs(mediaSettings));
+      NS_ENSURE_SUCCESS(rv, rv);
+
       mMediaSettings[mediaType] = mediaSettings;
     }
   }
