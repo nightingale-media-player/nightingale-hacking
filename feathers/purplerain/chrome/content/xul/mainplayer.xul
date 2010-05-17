@@ -103,7 +103,9 @@
                                SBDataSetBoolValue(
                                   'splitter.servicepane_splitter.was_collapsed',
                                   gServicePane.open);"
-                    style="min-height:16px; min-width:16px;">
+                    style="min-height:16px; min-width:16px;"
+                    hidden="true"
+                    >
               <observes type="dataremote"
                         key="splitter.servicepane_splitter.collapsed"
                         boolean="true"
@@ -234,7 +236,8 @@
                     oncommand="const key = 'splitter.servicepane_splitter.was_collapsed';
                                gServicePane.open = !gServicePane.open;
                                SBDataSetBoolValue(key, gServicePane.open);"
-                    style="min-height:16px; min-width:16px;" >
+                    style="min-height:16px; min-width:16px;"
+                    hidden="true" >
               <observes type="dataremote" key="splitter.servicepane_splitter.collapsed" boolean="true"
                         attribute="hidden" inverted="true"/>
             </button>
