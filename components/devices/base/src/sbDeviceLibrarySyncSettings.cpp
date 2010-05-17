@@ -596,9 +596,12 @@ sbDeviceLibrarySyncSettings::WriteMediaSyncSettings(
   rv = GetSyncFromFolderPrefKey(aMediaType, prefKey);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = WritePref(aDevice,
-                 prefKey,
-                 sbNewVariant(aMediaSyncSettings->mSyncFromFolder));
+  nsString syncFromFolderString;
+  if (aMediaSyncSettings->mSyncFromFolder) {
+    rv = aMediaSyncSettings->mSyncFromFolder->GetPath(syncFromFolderString);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  rv = WritePref(aDevice, prefKey, syncFromFolderString);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = GetSyncFolderPrefKey(aMediaType, prefKey);

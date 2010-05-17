@@ -52,14 +52,19 @@ sbDeviceImages::GetImagesRootFolder(sbIDeviceLibrary * aDevLib, nsIFile ** aFile
                                       getter_AddRefs(mediaSyncSettings));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsString syncFolder;
-  rv = mediaSyncSettings->GetSyncFolder(syncFolder);
+  nsString syncFromFolder;
+  nsCOMPtr<nsIFile> syncFromFile;
+  rv = mediaSyncSettings->GetSyncFromFolder(getter_AddRefs(syncFromFile));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  if (syncFolder.IsEmpty())
+  rv = syncFromFile->GetPath(syncFromFolder);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (syncFromFolder.IsEmpty())
     return NS_ERROR_NOT_AVAILABLE;
 
   nsCOMPtr<nsILocalFile> baseDir;
-  rv = NS_NewLocalFile(syncFolder, PR_TRUE, getter_AddRefs(baseDir));
+  rv = NS_NewLocalFile(syncFromFolder, PR_TRUE, getter_AddRefs(baseDir));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return CallQueryInterface(baseDir, aFile);

@@ -553,7 +553,7 @@
                              disabled_cancel="true"
                              action="cancel"/>
     </content>
-  </binding> <!-- sb-device-sync-command -->
+  </binding> <!-- sb-device-cancel-command -->
 
 
   <!-- *************************************************************************

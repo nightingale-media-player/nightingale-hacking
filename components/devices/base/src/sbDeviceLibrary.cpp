@@ -1111,9 +1111,9 @@ sbDeviceLibrary::GetSyncFolderListByType(PRUint32 aContentType,
   if (mgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL) {
     nsCOMPtr<nsIFile> rootFolder;
     rv = mediaSyncSettings->GetSyncFromFolder(getter_AddRefs(rootFolder));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-    if ((rv != NS_ERROR_NOT_AVAILABLE) && rootFolder) {
-      NS_ENSURE_SUCCESS(rv, rv);
+    if (rootFolder) {
       rv = array->AppendElement(rootFolder, PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);
     }

@@ -28,6 +28,7 @@
 #include <nsArrayUtils.h>
 #include <nsAutoLock.h>
 #include <nsAutoPtr.h>
+#include <nsIProperties.h>
 
 // Songbird includes
 #include <sbDeviceUtils.h>
@@ -313,10 +314,31 @@ sbDeviceLibraryMediaSyncSettings::GetSyncFromFolder(nsIFile ** aSyncFromFolder)
   NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
   nsAutoLock lock(mLock);
 
+  nsresult rv;
+
+  *aSyncFromFolder = nsnull;
+
   if (!mSyncFromFolder) {
-    return NS_ERROR_NOT_AVAILABLE;
+    nsCOMPtr<nsIProperties> directorySvc =
+      do_GetService("@mozilla.org/file/directory_service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool hasProperty;
+    rv = directorySvc->Has("Pics", &hasProperty);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!hasProperty)
+      return NS_OK;
+
+    rv = directorySvc->Get("Pics",
+                           NS_GET_IID(nsIFile),
+                           getter_AddRefs(mSyncFromFolder));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!mSyncFromFolder)
+      return NS_OK;
   }
-  nsresult rv = mSyncFromFolder->Clone(aSyncFromFolder);
+
+  rv = mSyncFromFolder->Clone(aSyncFromFolder);
   NS_ENSURE_SUCCESS(rv, rv);
   return NS_OK;
 }
