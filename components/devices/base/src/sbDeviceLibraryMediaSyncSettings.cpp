@@ -242,7 +242,7 @@ sbDeviceLibraryMediaSyncSettings::SetPlaylistSelected(sbIMediaList *aPlaylist,
   {
     nsAutoLock lock(mLock);
     nsCOMPtr<nsISupports> supports = aPlaylist;
-    mPlaylistsSelection.Put(supports, PR_TRUE);
+    mPlaylistsSelection.Put(supports, aSelected);
   }
 
   // Release the lock before dispatching sync settings change event
