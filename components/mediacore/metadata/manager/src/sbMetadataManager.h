@@ -90,6 +90,10 @@ class sbMetadataManager : public sbIMetadataManager
   class contractlist_t : public std::list< nsCString > {};
   contractlist_t m_ContractList;
   PRLock *m_pContractListLock;
+
+  nsresult GetHandlerInternal(sbIMetadataHandler *aHandler, 
+                              const nsAString &strURL, 
+                              sbIMetadataHandler **_retval);
 };
 
 extern sbMetadataManager *gMetadataManager;

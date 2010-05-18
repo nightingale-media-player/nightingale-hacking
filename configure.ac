@@ -1,16 +1,16 @@
 #
-# BEGIN SONGBIRD GPL
+#=BEGIN SONGBIRD GPL
 #
 # This file is part of the Songbird web player.
 #
-# Copyright(c) 2005-2008 POTI, Inc.
+# Copyright(c) 2005-2010 POTI, Inc.
 # http://www.songbirdnest.com
 #
 # This file may be licensed under the terms of of the
-# GNU General Public License Version 2 (the GPL).
+# GNU General Public License Version 2 (the ``GPL'').
 #
 # Software distributed under the License is distributed
-# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
+# on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
 # express or implied. See the GPL for the specific language
 # governing rights and limitations.
 #
@@ -19,7 +19,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# END SONGBIRD GPL
+#=END SONGBIRD GPL
 #
 
 #
@@ -82,17 +82,6 @@ if test "$enable_jars" == "no"; then
 fi
 AC_SUBST(FORCE_JARS)
 AC_SUBST(PREVENT_JARS)
-
-#
-#  Check for --enable-installer
-#
-
-AC_ARG_ENABLE(installer,
-              [  --enable-installer      create installer (default=no)])
-if test "$enable_installer" == "yes"; then
-  MAKE_INSTALLER=1
-fi
-AC_SUBST(MAKE_INSTALLER)
 
 #
 #  Check for --enable-official
@@ -321,6 +310,58 @@ AC_SUBST(SB_PLATFORM)
 AC_SUBST(SB_ARCH)
 
 #
+#  Check for --enable-installer
+#
+
+AC_ARG_ENABLE(installer,
+              [  --enable-installer=TYPE create installer (default=no, use "nsis", "dmg", "pkg", "tar". "yes" will build default installer type.)],
+              [enableval=`echo $enableval | tr 'A-Z,' 'a-z '`])
+case $enableval in
+  yes)
+    MAKE_INSTALLER=1
+    dnl default installer types
+    case $SB_PLATFORM in
+      windows) SB_INSTALLER_SUFFIXES=exe;;
+      macosx)  SB_INSTALLER_SUFFIXES=dmg;;
+      *)       SB_INSTALLER_SUFFIXES=tar.gz;;
+    esac
+    ;;
+  no)
+    AS_UNSET(MAKE_INSTALLER)
+    ;;
+  *)
+    AS_UNSET(MAKE_INSTALLER)
+    for word in $enableval; do
+      case $word in
+        nsis)
+          AS_IF([test $SB_PLATFORM = "windows"],
+                [SB_INSTALLER_SUFFIXES="$SB_INSTALLER_SUFFIXES $word"],
+                [AC_MSG_ERROR([NSIS installer not supported on $SB_PLATFORM])])
+          MAKE_INSTALLER=1
+          ;;
+        dmg|pkg)
+          AS_IF([test $SB_PLATFORM = "macosx"],
+                [SB_INSTALLER_SUFFIXES="$SB_INSTALLER_SUFFIXES $word"],
+                [AC_MSG_ERROR([$word installer not supported on $SB_PLATFORM])])
+          MAKE_INSTALLER=1
+          ;;
+        tar.gz)
+          AS_IF([test $SB_PLATFORM != "windows" -a $SB_PLATFORM != "macosx"],
+                [SB_INSTALLER_SUFFIXES="$SB_INSTALLER_SUFFIXES $word"],
+                [AC_MSG_ERROR([$word installer not supported on $SB_PLATFORM])])
+          MAKE_INSTALLER=1
+          ;;
+        *)
+          AC_MSG_ERROR([Installer type $word not recognized])
+          ;;
+      esac
+    done
+    ;;
+esac
+AC_SUBST(MAKE_INSTALLER)
+AC_SUBST(SB_INSTALLER_SUFFIXES)
+
+#
 # Handle SDK detection
 #
 #
@@ -467,6 +508,8 @@ if test -z "$INSTALL"; then AC_MSG_ERROR(Install not found); fi
 
 AC_CHECK_PROG(LN, ln, ln)
 if test -z "$LN"; then AC_MSG_ERROR(Ln not found); fi
+
+AC_PATH_PROGS(MACPKGMAKER, packagemaker, false, /Developer/usr/bin)
 
 AC_CHECK_PROGS(MD5SUM, ${MD5SUM} gmd5sum md5sum md5, "")
 

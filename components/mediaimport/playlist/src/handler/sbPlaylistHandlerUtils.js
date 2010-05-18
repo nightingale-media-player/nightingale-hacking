@@ -31,10 +31,45 @@ Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 const PR_RDONLY = -1;
 const PR_FLAGS_DEFAULT = -1;
 
-// the minimum number of chracters to feed into the charset detector
+// the minimum number of characters to feed into the charset detector
 const GUESS_CHARSET_MIN_CHAR_COUNT = 256;
 
+/**
+ * \brief Process the file aFile line by line with the callback function
+ *        aCallback.
+ *
+ * \param aFile     The file to be processed.
+ * \param aCallback The callback function that will be used to process the file.
+ * \param aThis     User defined data for the callback function.
+ */
+
 function SB_ProcessFile(aFile, aCallback, aThis) {
+
+  var istream = Cc["@mozilla.org/network/file-input-stream;1"]
+                  .createInstance(Ci.nsIFileInputStream);
+  istream.init(aFile, PR_RDONLY, PR_FLAGS_DEFAULT, 0);
+  istream.QueryInterface(Ci.nsILineInputStream);
+
+  var line = {}, hasmore;
+  do {
+    hasmore = istream.readLine(line);
+    aCallback.apply(aThis, [line.value]);
+  } while(hasmore);
+
+  istream.close();
+}
+
+/**
+ * \brief Detect the charset of the file aFile, convert the file encode to the
+ *        detected one, and process the file line by line with the callback
+ *        function aCallback.
+ *
+ * \param aFile     The file to be detected and processed.
+ * \param aCallback The callback function that will be used to process the file.
+ * \param aThis     User defined data for the callback function.
+ */
+
+function SB_DetectCharsetAndProcessFile(aFile, aCallback, aThis) {
 
   var istream = Cc["@mozilla.org/network/file-input-stream;1"]
                   .createInstance(Ci.nsIFileInputStream);
@@ -58,14 +93,15 @@ function SB_ProcessFile(aFile, aCallback, aThis) {
       // Send the file content for detection, until we get the best value.
       detector.detect(value);
 
-      length += value.length; 
+      length += value.length;
     } while(hasmore &&
             !detector.isCharsetFound &&
             length < GUESS_CHARSET_MIN_CHAR_COUNT);
     charset = detector.finish();
   }
   catch (ex) {
-    dump("charset detection error in SB_ProcessFile: " + ex + "\n");
+    dump("charset detection error in SB_DetectCharsetAndProcessFile: " +
+         ex + "\n");
   }
 
   istream.close();
@@ -86,11 +122,12 @@ function SB_ProcessFile(aFile, aCallback, aThis) {
       continue;
 
     try {
-      unicodeConverter.charset = charset;
+      unicodeConverter.charset = charset ? charset : "ISO-8859-1";
       value = unicodeConverter.ConvertToUnicode(value);
     }
     catch (ex) {
-      dump("Unicode conversion error in SB_ProcessFile: " + ex + "\n");
+      dump("Unicode conversion error in SB_DetectCharsetAndProcessFile: " +
+           ex + "\n");
     }
 
     aCallback.apply(aThis, [value]);
@@ -247,16 +284,7 @@ function SB_ResolveURI(aStringURL, aBaseURI)
       file.initWithPath(aStringURL);
 
       var uri = ios.newFileURI(file);
-
-      // Only return "file" scheme uri if the file exists.
-      if (uri instanceof Ci.nsIFileURL) {
-        if (uri.file && uri.file.exists()) {
-          return uri;
-        }
-      }
-
-      return null;
-      
+      return uri;
     }
     catch(e) {
       // If the base URI is a local file, try to use it to resolve the local
@@ -284,15 +312,7 @@ function SB_ResolveURI(aStringURL, aBaseURI)
   // Ok, it is not a local file.  Try creating a new URI with the base URI
   try {
     var uri = ios.newURI(aStringURL, null, aBaseURI);
-
-    // Only return "file" scheme uri if the file exists.
-    if (uri instanceof Ci.nsIFileURL) {
-      if (uri.file && uri.file.exists()) {
-        return uri;
-      }
-    }
-
-    return null;
+    return uri;
   }
   catch(e) {
     // fall through

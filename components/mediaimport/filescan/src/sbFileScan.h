@@ -132,7 +132,6 @@ protected:
   PRBool m_bCancel;
 };
 
-class sbFileScanThread;
 
 /**
  * \class sbFileScan
@@ -141,53 +140,44 @@ class sbFileScanThread;
 class sbFileScan : public sbIFileScan
 {
 public:
-
-  friend class sbFileScanThread;
-
   sbFileScan();
   virtual ~sbFileScan();
 
   NS_DECL_ISUPPORTS
   NS_DECL_SBIFILESCAN
 
-  static void PR_CALLBACK QueryProcessor(sbFileScan* pFileScan);
-  PRInt32 ScanDirectory(sbIFileScanQuery *pQuery);
-
 protected:
-  typedef std::deque<sbIFileScanQuery *> queryqueue_t;
+  //
+  // @brief
+  //
+  nsresult StartProcessScanQueriesProcessor();
 
-  //typedef std::deque<nsCOMPtr<nsISimpleEnumerator> > dirstack_t;
-  typedef std::deque<nsISimpleEnumerator * > dirstack_t;
-  typedef std::deque<nsCOMPtr<nsIFile> > fileentrystack_t;
-  typedef std::deque<nsCOMPtr<nsISupports> > entrystack_t;
+  //
+  // @brief Trigger method to process any file scan queries when they become
+  //        active.
+  void RunProcessScanQueries();
+
+  //
+  // @brief
+  //
+  nsresult ScanDirectory(sbIFileScanQuery *pQuery);
+
+  // Typedefs
+  typedef std::deque<sbIFileScanQuery *>      queryqueue_t;
+  typedef std::deque<nsISimpleEnumerator *>   dirstack_t;
+  typedef std::deque<nsCOMPtr<nsIFile> >      fileentrystack_t;
+  typedef std::deque<nsCOMPtr<nsISupports> >  entrystack_t;
 
   nsresult Shutdown();
 
-  PRMonitor* m_pThreadMonitor;
-  nsCOMPtr<nsIThread> m_pThread;
-  PRBool m_ThreadShouldShutdown;
-  queryqueue_t m_QueryQueue;
-  PRBool m_ThreadQueueHasItem;
+  PRLock       *m_ScanQueryQueueLock;
+  queryqueue_t m_ScanQueryQueue;
+
+  PRInt32 m_ScanQueryProcessorIsRunning;
 
   nsCOMPtr<nsINetUtil> mNetUtil;
-  PRBool m_Finalized;
-  PRInt32 m_ThreadIsRunning;
-};
-
-class sbFileScanThread : public nsIRunnable
-{
-public:
-  NS_DECL_ISUPPORTS
-  sbFileScanThread(sbFileScan* pFileScan) {
-    NS_ASSERTION(pFileScan, "Null pointer!");
-    mpFileScan = pFileScan;
-  }
-  NS_IMETHOD Run() {
-    sbFileScan::QueryProcessor(mpFileScan);
-    return NS_OK;
-  }
-protected:
-  sbFileScan* mpFileScan;
+  PRBool               m_ThreadShouldShutdown;
+  PRBool               m_Finalized;
 };
 
 #endif // __FILE_SCAN_H__

@@ -220,12 +220,19 @@ private:
   /* Helper to add an image to a tag list for metadata */
   nsresult AddImageToTagList(GstTagList *aTags, nsIInputStream *aStream);
 
+  /* Create a caps object based on the configurator data for raw audio */
+  nsresult GetRawAudioCaps(GstCaps **aResultCaps);
+
   nsCOMPtr<sbIPropertyArray>              mMetadata;
   nsCOMPtr<nsIInputStream>                mImageStream;
   nsCOMPtr<sbITranscodingConfigurator>    mConfigurator;
 
+  /* Transcoding input: URI only */
   nsString                                mSourceURI;
+
+  /* Transcoding output: Stream takes precedence if non-NULL */
   nsString                                mDestURI;
+  nsCOMPtr<nsIOutputStream>               mDestStream;
 
   PRUint16                                mStatus;
   nsTArray<nsCOMPtr<sbITranscodeError> >  mErrors;
@@ -240,6 +247,11 @@ private:
   GstPad                                 *mVideoSrc;
   GstPad                                 *mAudioQueueSrc;
   GstPad                                 *mVideoQueueSrc;
+
+  // Booleans to track whether we'll use audio/video/muxer
+  PRBool                                  mUseAudio;
+  PRBool                                  mUseVideo;
+  PRBool                                  mUseMuxer;
 
   // Lock to prevent trying to build the pipeline concurrently from multiple
   // threads.

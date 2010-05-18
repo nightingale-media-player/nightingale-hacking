@@ -148,9 +148,9 @@ void sbMetadataManager::DestroySingleton()
   dummy.swap(gMetadataManager);
 }
 
-//-----------------------------------------------------------------------------
-/* sbIMetadataHandler GetHandlerForMediaURL (in wstring strURL); */
-NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, sbIMetadataHandler **_retval)
+nsresult sbMetadataManager::GetHandlerInternal(sbIMetadataHandler *aHandler, 
+                                               const nsAString &strURL, 
+                                               sbIMetadataHandler **_retval)
 {
   // TODO Bad times! Shouldn't do anything involving channels off of the main thread.
   // Need to refactor to use streams instead of channels.
@@ -271,12 +271,48 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, 
   // If there's anything in the list
   if ( handlerlist.rbegin() != handlerlist.rend() )
   {
-    // The end of the list had the highest vote
     handlerlist_t::reverse_iterator i = handlerlist.rbegin();
-    pHandler = (*i).m_Handler;
-    LOG(("%s[%p]: using handler %s",
-         __FUNCTION__, this, (*i).m_ContractID.get()));
+
+    if (!aHandler) 
+    {
+      // The end of the list had the highest vote
+      pHandler = (*i).m_Handler;
+    }
+    else
+    {
+      // If someone passed in a previous handler, attempt to fetch the
+      // next one instead. 
+      nsCString previousContractID, nextContractID;
+      // This never fails.
+      aHandler->GetContractID(previousContractID);
+      
+      bool useNext = false;
+      for(; i != handlerlist.rend(); ++i) 
+      {
+        if (useNext) 
+        {
+          // Here we go, the next handler!
+          pHandler = (*i).m_Handler;
+          break;
+        }
+
+        (*i).m_Handler->GetContractID(nextContractID);
+        if (nextContractID == previousContractID) 
+        {
+          // Found previous handler, use the next one.
+          useNext = true;
+        }
+      }
+    }
   }
+
+#if defined(PR_LOGGING)
+  if (pHandler) {
+    nsCString contractID;
+    pHandler->GetContractID(contractID);
+    LOG(("%s[%p]: using handler %s", __FUNCTION__, this, contractID.BeginReading()));
+  }
+#endif
 
   NS_ENSURE_TRUE(pHandler, NS_ERROR_UNEXPECTED);
 
@@ -286,5 +322,28 @@ NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, 
 
   pHandler.swap(*_retval);
 
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
+/* sbIMetadataHandler GetHandlerForMediaURL (in wstring strURL); */
+NS_IMETHODIMP sbMetadataManager::GetHandlerForMediaURL(const nsAString &strURL, sbIMetadataHandler **_retval)
+{
+  nsresult rv = GetHandlerInternal(nsnull, strURL, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
+/* sbIMetadataHandler GetNextHandlerForMediaURL (in sbIMetdataHandler aHandler, in wstring strURL); */
+NS_IMETHODIMP sbMetadataManager::GetNextHandlerForMediaURL(
+                                   sbIMetadataHandler *aHandler,
+                                   const nsAString &aUrl,
+                                   sbIMetadataHandler **_retval)
+{
+  NS_ENSURE_ARG_POINTER(aHandler);
+  NS_ENSURE_ARG_POINTER(_retval);
+  nsresult rv = GetHandlerInternal(aHandler, aUrl, _retval);
   return NS_OK;
 }

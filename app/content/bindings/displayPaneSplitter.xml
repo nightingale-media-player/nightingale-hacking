@@ -177,6 +177,10 @@
           // state is the current state before the grippy action has occured,
           // therefore if it's collapsed, then it's about to be open - so
           // enable the button
+          var evt = document.createEvent("UIEvents");
+          evt.initEvent("displaypane-state", true, true);
+          this.dispatchEvent(evt);
+
           if (state == "collapsed")
             this.toggleDropdownButton(true);
           else

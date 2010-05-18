@@ -1363,7 +1363,9 @@ void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
         if (NS_SUCCEEDED(rv)) {
           nsAutoString stripped (trackNameProp);
           CompressWhitespace(stripped);
-          rv = GetMediacoreErrorFromGstError(gerror, stripped, getter_AddRefs(error));
+          rv = GetMediacoreErrorFromGstError(gerror, stripped, 
+                                             GStreamer::OP_UNKNOWN, 
+                                             getter_AddRefs(error));
         }
       }
     }
@@ -1390,7 +1392,9 @@ void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
           rv = file->GetPath(path);
 
           if (NS_SUCCEEDED(rv))
-            rv = GetMediacoreErrorFromGstError(gerror, path, getter_AddRefs(error));
+            rv = GetMediacoreErrorFromGstError(gerror, path, 
+                                               GStreamer::OP_UNKNOWN,
+                                               getter_AddRefs(error));
         }
       }
 
@@ -1409,7 +1413,9 @@ void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
         else
           spec = NS_ConvertUTF8toUTF16(mCurrentUri);
 
-        rv = GetMediacoreErrorFromGstError(gerror, spec, getter_AddRefs(error));
+        rv = GetMediacoreErrorFromGstError(gerror, spec, 
+                                           GStreamer::OP_UNKNOWN, 
+                                           getter_AddRefs(error));
       }
     }
 

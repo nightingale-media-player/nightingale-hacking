@@ -1,32 +1,30 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
-/** 
+/**
 * \file  deviceCapacity.js
 * \brief Javascript source for the device capacity widget.
 */
@@ -54,9 +52,6 @@ if (typeof(Cr) == "undefined")
   var Cr = Components.results;
 if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
-
-// Songbird imports.
-Cu.import("resource://app/jsmodules/sbStorageFormatter.jsm");
 
 
 //------------------------------------------------------------------------------
@@ -86,16 +81,14 @@ var DCW = {
   //
   //   _cfg                       Configuration.
   //   _widget                    Device capacity widget.
-  //   _device                    sbIDevice object.
-  //   _deviceProperties          Cache properties to avoid costly garbage
+  //   _deviceLibrary           Device library we are working with.
   //   _updateInterval            Timing interval used for updating UI.
   //   _capTable                  Table of capacity values.
   //
 
   _cfg: DCWCfg,
   _widget: null,
-  _device: null,
-  _deviceProperties : null,
+  _deviceLibrary: null,
   _updateInterval: null,
   _capTable: null,
   _panel: null,
@@ -120,8 +113,7 @@ var DCW = {
     this._widget = aWidget;
 
     // Initialize object fields.
-    this._device = this._widget.device;
-    this._deviceProperties = this._device.properties;
+    this._deviceLibrary = this._widget.devLib;
     this._capTable = {};
 
     // Shortcuts to elements
@@ -182,6 +174,7 @@ var DCW = {
 
     // Clear object fields.
     this._widget = null;
+    this._deviceLibrary = null;
   },
 
   /**
@@ -256,6 +249,11 @@ var DCW = {
     if (!needsUpdate)
       return;
 
+    if (!this._deviceLibrary)
+      this._capacityBar.setAttribute("disabled", "true");
+    else
+      this._capacityBar.removeAttribute("disabled");
+
     // Update the capacity.
     this._capTable = capTable;
     if (!this._capacityBar.hidden)
@@ -319,7 +317,10 @@ var DCW = {
 
       // Update the capacity legend.
       if (value) {
-        child.setAttribute("value", StorageFormatter.format(value));
+        storageConverter =
+          Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
+            .createInstance(Ci.sbIPropertyUnitConverter);
+        child.setAttribute("value", storageConverter.autoFormat(value, -1, 1));
         child.hidden = false;
       }
       else {
@@ -336,20 +337,20 @@ var DCW = {
   //----------------------------------------------------------------------------
 
   /**
-   * \brief Get a device property if available
+   * \brief Get a device library property if available
    *
    * \param aPropertyName name of the property to get
    * \param aDefault default to return if property not found
-   * 
+   *
    * \return string value of the property or the default if not found.
-   * 
+   *
    * \sa sbStandardDeviceProperties.h
    */
-  
-  _getDeviceProperty: function DIW__getDeviceProperty(aPropertyName, aDefault) {
+
+  _getDevLibProperty: function DIW__getDevLibProperty(aPropertyName, aDefault) {
     try {
-      if (this._deviceProperties.properties.hasKey(aPropertyName))
-        return this._deviceProperties.properties.getPropertyAsAString(aPropertyName);
+      if (this._deviceLibrary)
+        return this._deviceLibrary.getProperty(aPropertyName);
     } catch (ex) { }
     return aDefault;
   },
@@ -367,16 +368,16 @@ var DCW = {
 
   _getDeviceCapacity: function DCW__getDeviceCapacity() {
     // Get the storage statistics from the device.
-    var freeSpace = parseInt(this.
-        _getDeviceProperty("http://songbirdnest.com/device/1.0#freeSpace", 0));
-    var musicSpace = parseInt(this.
-        _getDeviceProperty("http://songbirdnest.com/device/1.0#musicUsedSpace", 0));
-    var videoSpace = parseInt(this.
-        _getDeviceProperty("http://songbirdnest.com/device/1.0#videoUsedSpace", 0));
-    var imageSpace = parseInt(this.
-        _getDeviceProperty("http://songbirdnest.com/device/1.0#imageUsedSpace", 0));
-    var usedSpace = parseInt(this.
-        _getDeviceProperty("http://songbirdnest.com/device/1.0#totalUsedSpace", 0));
+    var freeSpace = parseInt(this._getDevLibProperty
+      ("http://songbirdnest.com/device/1.0#freeSpace", 0));
+    var musicSpace = parseInt(this._getDevLibProperty
+      ("http://songbirdnest.com/device/1.0#musicUsedSpace", 0));
+    var videoSpace = parseInt(this._getDevLibProperty
+      ("http://songbirdnest.com/device/1.0#videoUsedSpace", 0));
+    var imageSpace = parseInt(this._getDevLibProperty
+      ("http://songbirdnest.com/device/1.0#imageUsedSpace", 0));
+    var usedSpace = parseInt(this._getDevLibProperty
+      ("http://songbirdnest.com/device/1.0#totalUsedSpace", 0));
     var totalSpace = usedSpace + freeSpace;
     var otherSpace = usedSpace - musicSpace - videoSpace - imageSpace;
 
@@ -391,3 +392,4 @@ var DCW = {
     return capTable;
   }
 };
+

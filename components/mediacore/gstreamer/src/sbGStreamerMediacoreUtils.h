@@ -41,14 +41,39 @@
 
 #include <sbIPropertyArray.h>
 #include <sbMediacoreError.h>
+#include <sbMemoryUtils.h>
 
 #include <gst/gst.h>
+
+SB_AUTO_CLASS(sbGstCaps, GstCaps*, !!mValue, gst_caps_unref(mValue), mValue = NULL);
 
 /* Custom GStreamer tag names. Must match those used in the various gstreamer
    muxers/taggers we have.
  */
 #define SB_GST_TAG_GRACENOTE_TAGID         "gracenote-tagid"
 #define SB_GST_TAG_GRACENOTE_EXTENDED_DATA "gracenote-extdata"
+
+/*
+  Simple enum of possible primary pipeline operations. This is used
+  by sbGStreamerPipeline and derived classes as well as 
+  GetMediacoreErrorFromGstError. It helps determine which error message
+  should be constructed based on the primary operation being performed.
+
+  This type is defined in the GStreamer namespace to avoid clashing with
+  other types.
+ */
+namespace GStreamer {
+
+typedef enum {
+  OP_UNKNOWN = 0, /* unknown: default behavior */
+  OP_INSPECTING,  /* inspecting (eg. scanning for metadata) */
+  OP_PLAYING,     /* playing: playing back a file for the user */
+  OP_STREAMING,   /* streaming: acting as server during streaming */
+  OP_TRANSCODING  /* transcoding: transcoding a media file to another format */
+} pipelineOp_t;
+
+} /*namespace GStreamer*/
+
 
 /* Apply all the properties from 'props' to element.
    If any property cannot be set (the type is incompatible, or the element
@@ -88,9 +113,13 @@ GstBusSyncReply SyncToAsyncDispatcher(GstBus* bus, GstMessage* message,
 
    \param aResource  the URI string points to the file that has error.
                      Will be unescaped in the processing.
+   \param aPipelineOp Optional pipeline primary operation to pick the error 
+                      message that is most representative. Pass 
+                      GStreamer::OP_UNKNOWN for the default behavior.
  */
-nsresult GetMediacoreErrorFromGstError(GError *gerror, nsString aResource,
-        sbIMediacoreError **_retval);
+nsresult GetMediacoreErrorFromGstError(GError *gerror, nsString aResource, 
+                                       GStreamer::pipelineOp_t aPipelineOp,
+                                       sbIMediacoreError **_retval);
 
 /**
  * Find an element name for an element that can produce caps compatible with
@@ -112,6 +141,21 @@ FindMatchingElementName(GstCaps *srcCaps, const char *typeName);
 /* Register any the custom tags we need to use */
 void
 RegisterCustomTags();
+
+/* Get the mime type string to use for a given GStreamer caps type */
+nsresult
+GetMimeTypeForCaps (GstCaps *aCaps, nsACString &aMimeType);
+
+enum sbGstCapsMapType {
+  SB_GST_CAPS_MAP_NONE,
+  SB_GST_CAPS_MAP_CONTAINER,
+  SB_GST_CAPS_MAP_AUDIO,
+  SB_GST_CAPS_MAP_VIDEO
+};
+
+/* Get a GstCaps object (possibly incomplete) for a given mime type string */
+GstCaps *
+GetCapsForMimeType (const nsACString &aMimeType, enum sbGstCapsMapType);
 
 #endif // _SB_GSTREAMERMEDIACOREUTILS_H_
 

@@ -39,6 +39,7 @@
 #include <nsISimpleEnumerator.h>
 #include <nsArrayUtils.h>
 
+#include <sbITranscodingConfigurator.h>
 #include <sbITranscodeVideoJob.h>
 
 /* Global transcode manager (singleton) */
@@ -121,7 +122,7 @@ void sbTranscodeManager::DestroySingleton()
 
 NS_IMETHODIMP
 sbTranscodeManager::GetTranscoderForMediaItem(sbIMediaItem *aMediaItem,
-        sbITranscodeProfile *aProfile, nsISupports **_retval)
+                                              nsISupports **_retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -139,22 +140,6 @@ sbTranscodeManager::GetTranscoderForMediaItem(sbIMediaItem *aMediaItem,
     if (NS_FAILED(rv) || !supports)
     {
       continue;
-    }
-
-    nsCOMPtr<sbITranscodeJob> oldJob = do_QueryInterface(supports, &rv);
-    if(NS_SUCCEEDED(rv) && oldJob)
-    {
-      // old, audio-only style transcoder
-      PRInt32 vote;
-      rv = oldJob->Vote(aMediaItem, aProfile, &vote);
-      if (NS_FAILED (rv))
-        continue;
-
-      /* Negative values are not ever permissible */
-      if (vote >= bestVote) {
-        bestVote = vote;
-        bestHandler = supports;
-      }
     }
 
     nsCOMPtr<sbITranscodeVideoJob> videoJob = do_QueryInterface(supports, &rv);
@@ -184,7 +169,7 @@ sbTranscodeManager::GetTranscoderForMediaItem(sbIMediaItem *aMediaItem,
 }
 
 NS_IMETHODIMP
-sbTranscodeManager::GetTranscodeProfiles(nsIArray **_retval)
+sbTranscodeManager::GetTranscodeProfiles(PRUint32 aType, nsIArray **_retval)
 {
   nsresult rv;
   nsCOMPtr<nsIMutableArray> array =
@@ -195,7 +180,7 @@ sbTranscodeManager::GetTranscodeProfiles(nsIArray **_retval)
        contractid != m_ContractList.end();
        ++contractid )
   {
-    nsCOMPtr<sbITranscodeJob> handler = do_CreateInstance(
+    nsCOMPtr<sbITranscodingConfigurator> handler = do_CreateInstance(
             (*contractid).get(), &rv);
 
     if(NS_SUCCEEDED(rv) && handler)
@@ -214,8 +199,14 @@ sbTranscodeManager::GetTranscodeProfiles(nsIArray **_retval)
             do_QueryElementAt(profiles, i, &rv);
         NS_ENSURE_SUCCESS (rv, rv);
 
-        rv = array->AppendElement(profile, PR_FALSE);
+        PRUint32 profileType;
+        rv = profile->GetType(&profileType);
         NS_ENSURE_SUCCESS (rv, rv);
+
+        if (profileType == aType) {
+          rv = array->AppendElement(profile, PR_FALSE);
+          NS_ENSURE_SUCCESS (rv, rv);
+        }
       }
     }
   }

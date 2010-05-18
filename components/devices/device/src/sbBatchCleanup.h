@@ -78,6 +78,23 @@ public:
     mAtEnd = mCurrent == mEnd;
   }
   /**
+   * Cleans up the aborted item and sets the next item to be processed.
+   */
+  void ItemAborted(sbBaseDevice::Batch::const_iterator aNextIter)
+  {
+    NS_ASSERTION(mCurrent != mEnd,
+                 "ItemAborted called after end of batch encountered");
+#if defined(DEBUG)
+    nsresult rv = mDevice->RemoveLibraryItems(mCurrent, aNextIter);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                     "Unable to cleanup library items");
+#else
+    mDevice->RemoveLibraryItems(mCurrent, aNextIter);
+#endif
+    mCurrent = aNextIter;
+    mAtEnd = mCurrent == mEnd;
+  }
+  /**
    * This resets the iterators when the batch has been modified
    * \param aCurrent the current iterator to be processed
    * \param aEnd the end of the batch

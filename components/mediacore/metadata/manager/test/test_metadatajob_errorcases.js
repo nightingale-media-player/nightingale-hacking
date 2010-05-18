@@ -31,6 +31,29 @@ var gTestFileLocation = "testharness/metadatamanager/errorcases/";
 
 // the number of errors we expect
 var gErrorExpected = 0;
+// the number of retries we expect
+var gRetriesExpected = 0;
+
+/**
+ * Calculate how many retries are expected for a given set of metadata handlers
+ * \param aHandlers an array of handlers expected
+ * \return The number of retries expected
+ */
+function retries(aHandlers) {
+  var contractId = "@songbirdnest.com/Songbird/MetadataHandler/";
+  const MAP = {
+    "taglib":    "Taglib;1",
+    "gstreamer": "GStreamer;1",
+    "wma":       "WMA;1"
+  };
+  var count = 0;
+  for each (var handler in aHandlers) {
+    var available = (contractId + MAP[String(handler).toLowerCase()]) in Cc;
+    if (available)
+      ++count;
+  }
+  return count - 1;
+}
 
 /**
  * Confirm that Songbird doesn't crash or damage files when
@@ -48,10 +71,11 @@ function runTest() {
   // A file that doesnt exist
 
   var file = newAppRelativeFile("testharness/metadatamanager/errorcases/file_that_doesnt_exist.mp3");
-  assertEqual(file.exists(), false);
+  assertEqual(file.exists(), false, "file_that_doesn't_exist shouldn't exist!");
   files.push(file);
   gErrorExpected++;
-  
+  gRetriesExpected += retries(["taglib", "gstreamer"]);
+
   // Bogus files
   var fakeFile = newAppRelativeFile("testharness/metadatamanager/errorcases/fake-file.mp3");
   fakeFile = getCopyOfFile(fakeFile, "fake-file-temp.mp3");
@@ -67,10 +91,13 @@ function runTest() {
   // Media files with the wrong extensions
   files.push(newAppRelativeFile("testharness/metadatamanager/errorcases/mp3-disguised-as.flac"));
   gErrorExpected++;
+  gRetriesExpected += retries(["taglib", "gstreamer"]);
   files.push(newAppRelativeFile("testharness/metadatamanager/errorcases/mp3-disguised-as.ogg"));
   gErrorExpected++;
+  gRetriesExpected += retries(["taglib", "gstreamer"]);
   files.push(newAppRelativeFile("testharness/metadatamanager/errorcases/ogg-disguised-as.m4a"));
   gErrorExpected++;
+  gRetriesExpected += retries(["taglib", "gstreamer"]);
 
   // Misc file permissions
   file = newAppRelativeFile("testharness/metadatamanager/errorcases/access-tests.mp3");  
@@ -85,6 +112,7 @@ function runTest() {
   if ((writeonly.permissions & 0777) == 0200) {
     files.push(writeonly);
     gErrorExpected++;
+    gRetriesExpected += retries(["taglib", "gstreamer"]);
   } else {
     log("MetadataJob_ErrorCases: platform does not support write-only. Perms=" + (writeonly.permissions & 0777));
   }
@@ -97,6 +125,7 @@ function runTest() {
   if (!isWindows) {
     // only seen as an error on non-Windows (Windows doesn't support permissions correctly)
     gErrorExpected++
+    gRetriesExpected += retries(["taglib", "gstreamer"]);
   }
   
   // A remote file that doesn't exist
@@ -106,8 +135,9 @@ function runTest() {
   // to port 80.
   files.push(newURI("http://localhost:12345/remote/file/that/doesnt/exist.mp3"));
   gErrorExpected++;
+  gRetriesExpected += retries(["taglib", "gstreamer"]);
 
-    
+
   ///////////////////////////////////////
   // Load the files into two libraries //
   ///////////////////////////////////////
@@ -124,14 +154,20 @@ function runTest() {
     let item1 = library1.getItemByIndex(index);
     let item2 = library2.getItemByIndex(index);
     // hopefully these should all be in the same order on reimport
-    assertEqual(item1.contentSrc.spec, item2.contentSrc.spec);
+    assertEqual(item1.contentSrc.spec,
+                item2.contentSrc.spec,
+                "expected item " + index + " of libraries to match");
     item2.setProperty(SBProperties.originItemGuid, item1.guid);
     item2.setProperty(SBProperties.originLibraryGuid, item2.library.guid);
     
   }
 
-  assertEqual(items1.length, files.length);
-  assertEqual(items2.length, files.length);
+  assertEqual(items1.length,
+              files.length,
+              "expecting number of added items in library1 to equal total number of files");
+  assertEqual(items2.length,
+              files.length,
+              "expecting number of added items in library2 to equal total number of files");
   
   var job = startMetadataJob(items1, "read");
   
@@ -140,20 +176,27 @@ function runTest() {
   // Write new metadata to the files //
   /////////////////////////////////////
   
-  // Called when the first scan into library1 completes 
-  function onLib1ReadComplete(job) {    
+  // Called when the first scan into library1 completes
+  function onLib1ReadComplete(job) {
     try {
       reportJobProgress(job, "onLib1ReadComplete");
           
-      if (job.status == Components.interfaces.sbIJobProgress.STATUS_RUNNING) {
+      if (job.status == Ci.sbIJobProgress.STATUS_RUNNING) {
         return;
       }
       job.removeJobProgressListener(onLib1ReadComplete);
       
       // Verify job progress reporting.
-      assertEqual(files.length, job.total);
-      assertEqual(files.length, job.progress);
-      assertEqual(job.status, Components.interfaces.sbIJobProgress.STATUS_FAILED);
+      
+      assertEqual(files.length + gRetriesExpected,
+                  job.total,
+                  "expected files plus retries to equal job total");
+      assertEqual(files.length + gRetriesExpected,
+                  job.progress,
+                  "expected files plus retries to equal job progress");
+      assertEqual(job.status,
+                  Ci.sbIJobProgress.STATUS_FAILED,
+                  "expected job to be failed");
       
       // Ok great, lets try writing back new metadata for all the files via library 2
       var propertiesToWrite = [ SBProperties.artistName,
@@ -174,8 +217,7 @@ function runTest() {
 
     // print errors, since otherwise they will be eaten by the observe call
     } catch (e) {
-      log("\nERROR: " + e + "\n");
-      assertEqual(true, false);
+      doFail(e);
     }
   }
   
@@ -189,7 +231,7 @@ function runTest() {
     try {
       reportJobProgress(job, "onWriteComplete");
 
-      if (job.status == Components.interfaces.sbIJobProgress.STATUS_RUNNING) {
+      if (job.status == Ci.sbIJobProgress.STATUS_RUNNING) {
         return;
       }
       job.removeJobProgressListener(onWriteComplete);
@@ -202,17 +244,29 @@ function runTest() {
         let item1 = library1.getItemByIndex(index);
         let item2 = library2.getItemByIndex(index);
         // hopefully these should all be in the same order on reimport
-        assertEqual(item1.contentSrc.spec, item2.contentSrc.spec);
+        assertEqual(item1.contentSrc.spec,
+                    item2.contentSrc.spec,
+                    "expected item " + index + " of libraries to match");
         item2.setProperty(SBProperties.originItemGuid, item1.guid);
         item2.setProperty(SBProperties.originLibraryGuid, item2.library.guid);
       }
-      assertEqual(items2.length, files.length);
+      assertEqual(items2.length,
+                  files.length,
+                  "expected number of items added to library to be all files");
       
       // Verify job progress reporting.
-      assertEqual(job.total - 2, job.errorCount);
-      assertEqual(files.length, job.total);
-      assertEqual(files.length, job.progress);
-      assertEqual(job.status, Components.interfaces.sbIJobProgress.STATUS_FAILED);
+      assertEqual(job.total - 2,
+                  job.errorCount,
+                  "expected all but 2 items to fail");
+      assertEqual(job.total,
+                  files.length,
+                  "expected the total to be the number of files");
+      assertEqual(job.progress,
+                  files.length,
+                  "expected the process to be the number of files");
+      assertEqual(job.status,
+                  Ci.sbIJobProgress.STATUS_FAILED,
+                  "expected the job to have failed");
       
       job = startMetadataJob(items2, "read");
 
@@ -221,8 +275,7 @@ function runTest() {
 
     // print errors, since otherwise they will be eaten by the observe call
     } catch (e) {
-      log("\nERROR: " + e + "\n");
-      assertEqual(true, false);
+      doFail(e);
     }
   }
   
@@ -236,7 +289,7 @@ function runTest() {
     try {
       reportJobProgress(job, "onLib2ReadComplete");
 
-      if (job.status == Components.interfaces.sbIJobProgress.STATUS_RUNNING) {
+      if (job.status == Ci.sbIJobProgress.STATUS_RUNNING) {
         return;
       }
       job.removeJobProgressListener(onLib2ReadComplete);
@@ -244,7 +297,7 @@ function runTest() {
       // Make sure writing didnt break anything by
       // comparing library1 with library2
       var diffingService = Cc["@songbirdnest.com/Songbird/Library/DiffingService;1"]
-                            .getService(Ci.sbILibraryDiffingService);
+                             .getService(Ci.sbILibraryDiffingService);
       var libraryChangeset = diffingService.createChangeset(library2, 
                                                             library1);
       var changes = libraryChangeset.changes;
@@ -266,21 +319,32 @@ function runTest() {
           var prop = propEnum.getNext().QueryInterface(Ci.sbIPropertyChange);
           log("\t\t[" + prop.id + "] " + prop.oldValue + " -> " + prop.newValue + "\n");
         }
-        assertEqual(url == fakeFileURL || url == corruptFileURL, true);
+        assertTrue(url == fakeFileURL || url == corruptFileURL,
+                   "expected url to be either fakeFileURL or curruptFileURL");
       }
-      assertEqual(changes.length, 2);
+      assertEqual(changes.length,
+                  2,
+                  "expected 2 changes");
       
       // Verify job progress reporting.  Do this last since the info above is
       // useful for debugging.
-      assertEqual(job.errorCount, gErrorExpected);
-      assertEqual(files.length, job.total);
-      assertEqual(files.length, job.progress);
-      assertEqual(job.status, Components.interfaces.sbIJobProgress.STATUS_FAILED);
+      
+      assertEqual(job.errorCount,
+                  gErrorExpected,
+                  "error count unexpected");
+      assertEqual(files.length + gRetriesExpected,
+                  job.total,
+                  "expected files plus retries to equal total");
+      assertEqual(files.length + gRetriesExpected,
+                  job.progress,
+                  "expected files plus retries to equal progress");
+      assertEqual(job.status,
+                  Ci.sbIJobProgress.STATUS_FAILED,
+                  "expected job to have failed");
       
     // print errors, since otherwise they will be eaten by the observe call
     } catch (e) {
-      log("\nERROR: " + e + "\n");
-      assertEqual(true, false);
+      doFail(e);
     }
     finish();
   }
@@ -299,7 +363,7 @@ function runTest() {
       }
       job = null;
     } catch (e) {
-      log("ERROR: " + e + "\n");
+      doFail(e);
     }
     testFinished();
   }
@@ -317,7 +381,7 @@ function runTest() {
 function importFilesToLibrary(files, library) {
   var items = [];
   for each (var file in files) {
-    if (!(file instanceof Components.interfaces.nsIURI)) {
+    if (!(file instanceof Ci.nsIURI)) {
       file = newFileURI(file);
     }
     items.push(library.createMediaItem(file, null, true));
@@ -334,13 +398,13 @@ function startMetadataJob(items, type, writeProperties) {
                 .getService(Ci.nsIPrefBranch);
   var oldWritingEnabledPref = prefSvc.getBoolPref("songbird.metadata.enableWriting");
   prefSvc.setBoolPref("songbird.metadata.enableWriting", true);
-  var array = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                        .createInstance(Components.interfaces.nsIMutableArray);
+  var array = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                .createInstance(Ci.nsIMutableArray);
   for each (var item in items) {
     array.appendElement(item, false);
   }                     
-  manager = Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]
-                      .getService(Components.interfaces.sbIFileMetadataService);
+  manager = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+              .getService(Ci.sbIFileMetadataService);
   var job;
   if (type == "write") {
     job = manager.write(array, ArrayConverter.stringEnumerator(writeProperties));

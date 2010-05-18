@@ -41,6 +41,7 @@
 #include <nsDirectoryServiceDefs.h>
 #include <nsAppDirectoryServiceDefs.h>
 #include <nsComponentManagerUtils.h>
+#include <nsThreadUtils.h>
 #include <nsXULAppAPI.h>
 #include <nsISimpleEnumerator.h>
 #include <nsIObserverService.h>
@@ -92,7 +93,9 @@ get_rank_name (gint rank)
   }
 }
 
-NS_IMPL_ISUPPORTS2(sbGStreamerService, sbIGStreamerService, nsIObserver)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbGStreamerService, 
+                              sbIGStreamerService, 
+                              nsIObserver)
 
 sbGStreamerService::sbGStreamerService()
 {
@@ -144,6 +147,8 @@ nsresult SetEnvVar(const nsAString& aName, const nsAString& aValue)
 nsresult
 sbGStreamerService::Init()
 {
+  NS_ASSERTION(NS_IsMainThread(), "Not on main thread");
+
   nsresult rv;
   NS_NAMED_LITERAL_STRING(kGstPluginSystemPath, "GST_PLUGIN_SYSTEM_PATH");
   NS_NAMED_LITERAL_STRING(kGstRegistry, "GST_REGISTRY");

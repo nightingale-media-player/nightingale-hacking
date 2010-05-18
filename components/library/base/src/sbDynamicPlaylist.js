@@ -573,6 +573,7 @@ sbDynamicPlaylistService.prototype.onBeforeListCleared =
 function sbDynamicPlaylistService_onBeforeListCleared(aMediaList,
                                                       aExcludeLists)
 {
+  return true;
 }
 
 sbDynamicPlaylistService.prototype.onListCleared =

@@ -1,36 +1,35 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
-
-#include <nsCOMArray.h>
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #include <sbArrayUtils.h>
 #include <sbICDDevice.h>
+#include <sbICDDeviceService.h>
 #include <sbIMockCDDevice.h>
 #include <sbIMockCDDeviceController.h>
 
+#include <nsArrayEnumerator.h>
+#include <nsCOMArray.h>
 #include <nsServiceManagerUtils.h>
 #include <nsICategoryManager.h>
 #include <nsIGenericFactory.h>
@@ -272,9 +271,9 @@ public:
   sbMockCDDevice() : mReadable(PR_FALSE),
                      mWritable(PR_FALSE),
                      mDiscInserted(PR_FALSE),
+                     mIsDeviceLocked(PR_FALSE),
                      mDiscType(sbICDDevice::AUDIO_DISC_TYPE),
-                     mEjected(PR_FALSE),
-                     mIsDeviceLocked(PR_FALSE) {}
+                     mEjected(PR_FALSE) {}
 
   ~sbMockCDDevice()
   {
@@ -449,11 +448,471 @@ sbMockCDDevice::UnlockDevice()
 }
 
 //==============================================================================
+// Mock CD Device TOC Creation Utility Methods 
+//==============================================================================
+
+static nsresult
+SB_MakeMidnightRock(sbICDTOC **aOutTOC)
+{
+  NS_ENSURE_ARG_POINTER(aOutTOC);
+
+  nsresult rv;
+  nsCOMPtr<sbIMockCDTOC> toc =
+    do_CreateInstance("@songbirdnest.com/Songbird/MockCDTOC;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = toc->Initialize(1, 15, 285675);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(32, 309, 0, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(23260, 231, 1, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(40612, 242, 2, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(58770, 191, 3, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(73145, 310, 4, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(96415, 290, 5, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(118232, 301, 6, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(140867, 259, 7, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(160322, 316, 8, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(184085, 222, 9, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(200777, 236, 10, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(218535, 185, 11, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(232437, 211, 12, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(248320, 184, 13, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(262145, 313, 14, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbICDTOC> qiTOC = do_QueryInterface(toc, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  qiTOC.forget(aOutTOC);
+  return NS_OK;
+}
+
+static nsresult
+SB_MakeBabyOneMoreTime(sbICDTOC **aOutTOC)
+{
+  NS_ENSURE_ARG_POINTER(aOutTOC);
+
+  nsresult rv;
+  nsCOMPtr<sbIMockCDTOC> toc =
+    do_CreateInstance("@songbirdnest.com/Songbird/MockCDTOC;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = toc->Initialize(1, 12, 260335);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = toc->AddTocEntry(0, 211, 0, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(15847, 200, 1, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(30859, 246, 2, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(49320, 202, 3, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(64479, 245, 4, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(82865, 312, 5, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(106307, 234, 6, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(123929, 243, 7, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(142217, 216, 8, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(158447, 223, 9, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(175179, 223, 10, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(203309, 760, 11, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbICDTOC> qiTOC = do_QueryInterface(toc, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  qiTOC.forget(aOutTOC);
+  return NS_OK;
+}
+
+static nsresult
+SB_MakeAllThatYouCantLeaveBehind(sbICDTOC **aOutTOC)
+{
+  NS_ENSURE_ARG_POINTER(aOutTOC);
+
+  nsresult rv;
+  nsCOMPtr<sbIMockCDTOC> toc =
+    do_CreateInstance("@songbirdnest.com/Songbird/MockCDTOC;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = toc->Initialize(1, 11, 225562);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = toc->AddTocEntry(150, 248, 0, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(18843, 272, 1, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(39601, 227, 2, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(56966, 296, 3, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(79487, 267, 4, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(99796, 219, 5, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(116534, 226, 6, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(133832, 288, 7, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(155768, 258, 8, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(175400, 330, 9, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(200468, 331, 10, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbICDTOC> qiTOC = do_QueryInterface(toc, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  qiTOC.forget(aOutTOC);
+  return NS_OK;
+}
+
+static nsresult
+SB_MakeIncredibad(sbICDTOC **aOutTOC)
+{
+  NS_ENSURE_ARG_POINTER(aOutTOC);
+
+  nsresult rv;
+  nsCOMPtr<sbIMockCDTOC> toc =
+    do_CreateInstance("@songbirdnest.com/Songbird/MockCDTOC;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = toc->Initialize(1, 19, 190565);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = toc->AddTocEntry(150, 76, 0, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(5896, 155, 1, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(17528, 151, 2, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(28879, 156, 3, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(40599, 126, 4, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(50106, 139, 5, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(60584, 64, 6, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(65394, 193, 7, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(79870, 34, 8, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(82446, 106, 9, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(90457, 123, 10, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(99748, 193, 11, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(114258, 126, 12, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(123750, 161, 13, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(135829, 65, 14, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(140754, 167, 15, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(153283, 175, 16, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(166425, 149, 17, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = toc->AddTocEntry(177440, 179, 18, sbICDTOCEntry::TRACKMODE_AUDIO);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbICDTOC> qiTOC = do_QueryInterface(toc, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  qiTOC.forget(aOutTOC);
+  return NS_OK;
+}
+
+
+//==============================================================================
+// Mock CD Device Service
+//==============================================================================
+
+class sbMockCDService : public sbICDDeviceService,
+                        public sbIMockCDDeviceController
+{
+public:
+  sbMockCDService();
+  virtual ~sbMockCDService();
+
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBICDDEVICESERVICE
+  NS_DECL_SBIMOCKCDDEVICECONTROLLER
+
+  nsresult Init();
+
+protected:
+  nsCOMArray<sbICDDeviceListener> mListeners;
+  nsCOMArray<sbICDDevice>         mDevices;
+};
+
+
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbMockCDService,
+                              sbICDDeviceService,
+                              sbIMockCDDeviceController)
+
+sbMockCDService::sbMockCDService()
+{
+}
+
+sbMockCDService::~sbMockCDService()
+{
+}
+
+nsresult
+sbMockCDService::Init()
+{
+  NS_ENSURE_TRUE(mDevices.Count() == 0, NS_ERROR_UNEXPECTED);
+
+  // Create two mock cd devices.
+  nsresult rv;
+  nsCOMPtr<sbIMockCDDevice> device1 =
+    do_CreateInstance("@songbirdnest.com/Songbird/MockCDDevice;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = device1->Initialize(
+      NS_LITERAL_STRING("Songbird MockCD Device 8000"),
+      PR_TRUE,   // readable
+      PR_FALSE,  // writable
+      PR_FALSE,  // is disc inserted
+      sbICDDevice::AUDIO_DISC_TYPE,
+      PR_FALSE,  // is disc ejected
+      this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMockCDDevice> device2 =
+    do_CreateInstance("@songbirdnest.com/Songbird/MockCDDevice;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = device2->Initialize(
+      NS_LITERAL_STRING("Songbird MockCD Device 7000"),
+      PR_TRUE,   // readable
+      PR_FALSE,  // writable
+      PR_FALSE,  // is disc inserted
+      sbICDDevice::AUDIO_DISC_TYPE,
+      PR_FALSE,  // is disc ejected
+      this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbICDDevice> cdDevice1 = do_QueryInterface(device1, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbICDDevice> cdDevice2 = do_QueryInterface(device2, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  mDevices.AppendObject(cdDevice1);
+  mDevices.AppendObject(cdDevice2);
+
+  return NS_OK;
+}
+
+//------------------------------------------------------------------------------
+// sbICDDeviceService
+
+NS_IMETHODIMP
+sbMockCDService::GetWeight(PRInt32 *aWeight)
+{
+  NS_ENSURE_ARG_POINTER(aWeight);
+  // return a weight of 0 effectively making the mock CD service selected
+  // only if no other service wants to assume responsibility.
+  *aWeight = 0;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMockCDService::GetNbDevices(PRInt32 *aNbDevices)
+{
+  NS_ENSURE_ARG_POINTER(aNbDevices);
+  *aNbDevices = mDevices.Count();
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMockCDService::GetDevice(PRInt32 deviceIndex, sbICDDevice **_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_TRUE(deviceIndex < mDevices.Count(), NS_ERROR_UNEXPECTED);
+  *_retval = mDevices[deviceIndex];
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMockCDService::GetDeviceFromIdentifier(const nsACString & aDeviceIdentifier,
+                                         sbICDDevice **_retval)
+{
+  *_retval = nsnull;
+  for (PRInt32 i = 0; i < mDevices.Count(); i++) {
+    nsCOMPtr<sbICDDevice> curDevice = mDevices[i];
+
+    nsCString deviceIdentifier;
+    nsresult rv = curDevice->GetIdentifier(deviceIdentifier);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (deviceIdentifier.Equals(aDeviceIdentifier)) {
+      curDevice.forget(_retval);
+      break;
+    }
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMockCDService::GetCDDevices(nsISimpleEnumerator **_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  // Convert to a nsIArray and enumerate.
+  return NS_NewArrayEnumerator(_retval, mDevices); 
+}
+
+NS_IMETHODIMP
+sbMockCDService::RegisterListener(sbICDDeviceListener *listener)
+{
+  NS_ENSURE_ARG_POINTER(listener);
+  mListeners.AppendObject(listener);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMockCDService::RemoveListener(sbICDDeviceListener *listener)
+{
+  NS_ENSURE_ARG_POINTER(listener);
+  mListeners.RemoveObject(listener);
+  return NS_OK;
+}
+
+//------------------------------------------------------------------------------
+// sbIMockCDDeviceController
+
+NS_IMETHODIMP
+sbMockCDService::InsertMedia(sbICDDevice *aCDDevice, PRUint16 aMediaDisc)
+{
+  NS_ENSURE_ARG_POINTER(aCDDevice);
+
+  // Don't insert media twice.
+  nsresult rv;
+  PRBool isDiscInserted = PR_FALSE;
+  rv = aCDDevice->GetIsDiscInserted(&isDiscInserted);
+  if (NS_FAILED(rv) || isDiscInserted) {
+    return NS_OK;
+  }
+
+  // Determine which TOC to insert.
+  nsCOMPtr<sbICDTOC> mediaTOC;
+  switch (aMediaDisc) {
+    case sbIMockCDDeviceController::MOCK_MEDIA_DISC_MIDNIGHT_ROCK:
+      rv = SB_MakeMidnightRock(getter_AddRefs(mediaTOC));
+      NS_ENSURE_SUCCESS(rv, rv);
+      break;
+
+    case sbIMockCDDeviceController::MOCK_MEDIA_DISC_BABY_ONE_MORE_TIME:
+      rv = SB_MakeBabyOneMoreTime(getter_AddRefs(mediaTOC));
+      NS_ENSURE_SUCCESS(rv, rv);
+      break;
+
+    case sbIMockCDDeviceController::MOCK_MEDIA_DISC_U2:
+      rv = SB_MakeAllThatYouCantLeaveBehind(getter_AddRefs(mediaTOC));
+      NS_ENSURE_SUCCESS(rv, rv);
+      break;
+
+    case sbIMockCDDeviceController::MOCK_MEDIA_DISC_INCREDIBAD:
+      rv = SB_MakeIncredibad(getter_AddRefs(mediaTOC));
+      NS_ENSURE_SUCCESS(rv, rv);
+      break;
+  }
+
+  nsCOMPtr<sbIMockCDDevice> mockDevice = do_QueryInterface(aCDDevice, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mockDevice->SetDiscTOC(mediaTOC);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Inform the listeners.
+  for (PRInt32 i = 0; i < mListeners.Count(); i++) {
+    rv = mListeners[i]->OnMediaInserted(aCDDevice);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+        "Could not inform the listener of media insertion!");
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMockCDService::EjectMedia(sbICDDevice *aCDDevice)
+{
+  NS_ENSURE_ARG_POINTER(aCDDevice);
+
+  // Ensure that this is a mock cd device first.
+  nsresult rv;
+  nsCOMPtr<sbIMockCDDevice> mockDevice = do_QueryInterface(aCDDevice, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool isDiscInserted = PR_FALSE;
+  rv = aCDDevice->GetIsDiscInserted(&isDiscInserted);
+  if (NS_FAILED(rv) || !isDiscInserted) {
+    return NS_OK;
+  }
+
+  rv = aCDDevice->Eject();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Inform the listeners
+  for (PRInt32 i = 0; i < mListeners.Count(); i++) {
+    rv = mListeners[i]->OnMediaEjected(aCDDevice);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+        "Could not inform the listener of media eject!");
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMockCDService::NotifyEject(sbICDDevice *aCDDevice)
+{
+  NS_ENSURE_ARG_POINTER(aCDDevice);
+
+  // Ensure that a mock CD device was removed.
+  nsresult rv;
+  nsCOMPtr<sbIMockCDDevice> mockDevice = do_QueryInterface(aCDDevice, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Inform the listeners
+  for (PRInt32 i = 0; i < mListeners.Count(); i++) {
+    rv = mListeners[i]->OnMediaEjected(aCDDevice);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+        "Could not inform the listener of media eject!");
+  }
+
+  return NS_OK;
+}
+
+
+//==============================================================================
 // XPCOM component registration
 //==============================================================================
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMockCDDevice)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMockCDTOC)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMockCDService, Init)
 
 static nsModuleComponentInfo sbMockCDDevice[] =
 {
@@ -468,6 +927,12 @@ static nsModuleComponentInfo sbMockCDDevice[] =
     SB_MOCK_CDTOC_CID,
     SB_MOCK_CDTOC_CONTRACTID,
     sbMockCDTOCConstructor,
+  },
+  {
+    SB_MOCK_CDDEVICECONTROLLER_CLASSNAME,
+    SB_MOCK_CDDEVICECONTROLLER_CID,
+    SB_MOCK_CDDEVICECONTROLLER_CONTRACTID,
+    sbMockCDServiceConstructor
   }
 };
 

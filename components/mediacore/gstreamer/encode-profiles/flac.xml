@@ -8,6 +8,7 @@
                                  some users. -->
   <description>FLAC (Free Lossless Audio Codec)</description>
   <mimetype>audio/x-flac</mimetype>
+  <extension>flac</extension>
 
   <!-- No container used 
   <container>

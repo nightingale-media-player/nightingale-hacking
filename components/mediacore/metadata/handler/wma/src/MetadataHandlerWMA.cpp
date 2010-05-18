@@ -198,6 +198,12 @@ sbMetadataHandlerWMA::~sbMetadataHandlerWMA()
 {
 }
 
+NS_IMETHODIMP sbMetadataHandlerWMA::GetContractID(nsACString &aContractID)
+{
+  aContractID.AssignLiteral(SONGBIRD_METADATAHANDLERWMA_CONTRACTID);
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbMetadataHandlerWMA::GetChannel(nsIChannel** _retval)
 {
@@ -747,7 +753,7 @@ sbMetadataHandlerWMA::ReadHeaderValue(IWMHeaderInfo3 *aHeaderInfo,
   // Alloc the space for the indices
   sbAutoNSTypePtr<WORD> indices = (WORD*)NS_Alloc(sizeof(WORD) * count);
   if (!indices) {
-    NS_ERROR("nsMemory::Alloc failed!");
+    NS_ERROR("NS_Alloc failed!");
     return SBVoidString();
   }
 
@@ -784,9 +790,9 @@ sbMetadataHandlerWMA::ReadHeaderValue(IWMHeaderInfo3 *aHeaderInfo,
 
   // Alloc (documented as "suitably aligned for any kind of variable")
   // in practice, it forwards to malloc()
-  data = (BYTE*)nsMemory::Alloc(size);
+  data = (BYTE*) NS_Alloc(size);
   if (!data) {
-    NS_ERROR("nsMemory::Alloc failed!");
+    NS_ERROR("NS_Alloc failed!");
     return SBVoidString();
   }
 
@@ -1133,7 +1139,7 @@ sbMetadataHandlerWMA::ReadAlbumArtWMFSDK(const nsAString &aFilePath,
   NS_ENSURE_TRUE(count, NS_ERROR_NO_CONTENT);
 
   // Alloc the space for the indices
-  sbAutoNSTypePtr<WORD> indices = (WORD*)nsMemory::Alloc(sizeof(WORD) * count);
+  sbAutoNSTypePtr<WORD> indices = (WORD*) NS_Alloc(sizeof(WORD) * count);
   NS_ENSURE_TRUE(indices, NS_ERROR_OUT_OF_MEMORY);
 
   // Ask for the indices
@@ -1162,7 +1168,7 @@ sbMetadataHandlerWMA::ReadAlbumArtWMFSDK(const nsAString &aFilePath,
   COM_ENSURE_SUCCESS(hr);
 
   // Alloc
-  sbAutoNSTypePtr<BYTE> data = (BYTE*)nsMemory::Alloc(size);
+  sbAutoNSTypePtr<BYTE> data = (BYTE*) NS_Alloc(size);
   NS_ENSURE_TRUE(data, NS_ERROR_OUT_OF_MEMORY);
 
   // Get the data
@@ -1180,7 +1186,7 @@ sbMetadataHandlerWMA::ReadAlbumArtWMFSDK(const nsAString &aFilePath,
   // get the picture data out (remembering to use a copy)
   WM_PICTURE *picData = (WM_PICTURE*)data.get();
   CopyUTF16toUTF8(nsDependentString(picData->pwszMIMEType), aMimeType);
-  *aData = static_cast<PRUint8*>(nsMemory::Clone(picData->pbData, picData->dwDataLen));
+  *aData = static_cast<PRUint8*>(SB_CloneMemory(picData->pbData, picData->dwDataLen));
   NS_ENSURE_TRUE(*aData, NS_ERROR_OUT_OF_MEMORY);
   *aDataLen = picData->dwDataLen;
 

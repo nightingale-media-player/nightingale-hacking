@@ -275,7 +275,7 @@ sbAppStartupService.prototype =
       // If restart is required, mark application for restart and return.  Don't
       // restart here, because doing so will lead to errors in shutting down.
       if (addOnBundleUpdateService.restartRequired) {
-        this.restartRequired = true;
+        this._restartRequired = true;
         return;
       }
     } catch (e) {

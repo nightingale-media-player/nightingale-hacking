@@ -95,14 +95,12 @@
         <xul:groupbox sbid="sb-device-tools-format-box"
                       tool="format" pack="center"
                       orient="vertical" hidden="true">
-          <xul:caption label="&device.tools.format_device.title;" />
-          <xul:description xmlns="http://www.w3.org/1999/xhtml">
-            &device.tools.format_device.description;
-          </xul:description>
+          <xul:caption sbid="sb-device-tools-format-caption" />
+          <xul:description sbid="sb-device-tools-format-description" />
           <xul:hbox>
             <xul:spacer flex="1"/>
             <xul:button sbid="sb-device-tools-format-button"
-                        label="&device.tools.format_device.label;"
+                        label="&device.tools.format_volume.button.label;"
                         oncommand="formatDevice();"/>
           </xul:hbox>
         </xul:groupbox>
@@ -124,7 +122,7 @@
         </xul:groupbox>
 
         <!-- Support -->
-        <xul:groupbox tool="support" pack="center" 
+        <xul:groupbox tool="support" pack="center"
                       orient="vertical" hidden="true">
           <xul:caption label="&device.tools.support.title;"/>
           <xul:description>
@@ -139,7 +137,7 @@
 
 
         <!-- Reset Warnings -->
-        <xul:groupbox tool="resetwarnings" pack="center" 
+        <xul:groupbox tool="resetwarnings" pack="center"
                       orient="vertical" hidden="true">
           <xul:caption label="&device.tools.reset_warnings.title;"/>
           <xul:description>
@@ -166,6 +164,7 @@
     <implementation>
       <constructor><![CDATA[
         Cu.import("resource://app/jsmodules/DOMUtils.jsm");
+        Cu.import("resource://app/jsmodules/SBUtils.jsm");
         Cu.import("resource://app/jsmodules/WindowUtils.jsm");
 
         var toolsAttribute = this.getAttribute("tools");
@@ -188,28 +187,34 @@
       </constructor>
 
       <destructor><![CDATA[
-        if(this._firmwareHandler)
-          this._firmwareHandler.unbind();
+        this._finalize();
 
-        this._firmwareHandler = null;
-        this._busyCheckTimer = null;
-        this._currentFirmwareVersion = null;
-        this._registerURI = null;
-        this._customerSupportLocation = null;
-
-        if(this.device) {
-          if (this.device.supportsReformat) {
-            this.device.QueryInterface(Ci.sbIDeviceEventTarget)
-                       .removeEventListener(this.deviceChangeEvent);
-          }
-          this.device = null;
-        }
+        this.device = null;
 
         if(this._busyCheckTimer) {
           clearInterval(this._busyCheckTimer);
         }
+        this._busyCheckTimer = null;
       ]]>
       </destructor>
+
+      <method name="_finalize">
+        <body><![CDATA[
+          if(this._firmwareHandler)
+            this._firmwareHandler.unbind();
+
+          this._firmwareHandler = null;
+          this._currentFirmwareVersion = null;
+          this._registerURI = null;
+          this._customerSupportLocation = null;
+
+          if(this.device && this.deviceChangeEvent) {
+            this.device.QueryInterface(Ci.sbIDeviceEventTarget)
+                       .removeEventListener(this.deviceChangeEvent);
+          }
+          this.deviceChangeEvent = null;
+        ]]></body>
+      </method>
 
       <method name="registerDevice">
         <body><![CDATA[
@@ -260,7 +265,7 @@
           if (!this._firmwareHandler) {
             var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
                              .getService(Ci.sbIPrompter);
-  
+
             // Get the device name and encode it for XML twice.  It will be
             // decoded once by SBFormattedString and once again by the prompt
             // dialog.
@@ -273,7 +278,7 @@
                                         [deviceName]);
             prompter.renderHTML = true;
             var confirmed = prompter.confirm(window, title, msg);
-  
+
             if (confirmed) {
               var bag = Cc["@mozilla.org/hash-property-bag;1"]
                           .createInstance(Ci.nsIPropertyBag2);
@@ -377,10 +382,11 @@
 
         this._currentFirmwareVersion.value = firmwareVersion;
 
-        if (!this.device.supportsReformat) {
+        if (!this.device.supportsReformat || !this.devLib) {
           this._getToolBox("format").collapsed = true;
         }
         else {
+          this._getToolBox("format").removeAttribute("collapsed");
           var self = this;
           this.deviceChangeEvent = function(aEvent) {
             if (aEvent.type == Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED) {
@@ -389,6 +395,21 @@
               } catch (e) {}
             }
           }
+
+          // Update the format tool caption.
+          var formatCaptionElem = this._getElement
+                                         ("sb-device-tools-format-caption");
+          formatCaptionElem.label = SBFormattedString
+                                      ("device.tools.format.title",
+                                       [ this.devLib.name ]);
+
+          // Update the format tool description.
+          var formatDescriptionElem =
+                this._getElement("sb-device-tools-format-description");
+          var descriptionText =
+                SBFormattedString("device.tools.format.description",
+                                  [ this.devLib.name ]);
+          SBUtils.setDescriptionText(formatDescriptionElem, descriptionText);
 
           // Listen for device events.
           this.device.QueryInterface(Ci.sbIDeviceEventTarget)
@@ -514,8 +535,11 @@
     </implementation>
 
     <handlers>
-      <handler event="deviceBound" 
-               action="try { this._update(); this._propertyLookup(); } catch (e) { dump('exception:' + e + '\n'); }"/>
+      <handler event="deviceBound"
+               action="try { this._finalize(); this._update(); this._propertyLookup(); } catch (e) { dump('exception:' + e + '\n'); }"/>
+
+      <handler event="devLibBound"
+               action="try { this._finalize(); this._update(); this._propertyLookup(); } catch (e) { dump('exception:' + e + '\n'); }"/>
     </handlers>
   </binding>
 

@@ -37,6 +37,7 @@
 
 #include <sbIMediacoreError.h>
 #include <sbMediacoreError.h>
+#include <sbProxiedComponentManager.h>
 
 /**
  * To log this class, set the following environment variable in a debug build:
@@ -67,7 +68,8 @@ NS_IMPL_THREADSAFE_CI(sbGStreamerPipeline)
 sbGStreamerPipeline::sbGStreamerPipeline() :
   mPipeline(NULL),
   mMonitor(NULL),
-  mBaseEventTarget(new sbBaseMediacoreEventTarget(this))
+  mBaseEventTarget(new sbBaseMediacoreEventTarget(this)),
+  mPipelineOp(GStreamer::OP_UNKNOWN)
 {
   TRACE(("sbGStreamerPipeline[0x%.8x] - Constructed", this));
 }
@@ -91,10 +93,16 @@ sbGStreamerPipeline::Init()
   nsresult rv;
 
   // We need to make sure the gstreamer service component has been loaded
-  // since it calls gst_init for us
-  nsCOMPtr<sbIGStreamerService> service =
-    do_GetService(SBGSTREAMERSERVICE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  // since it calls gst_init for us.
+  if (!NS_IsMainThread()) {
+    nsCOMPtr<sbIGStreamerService> service = 
+      do_ProxiedGetService(SBGSTREAMERSERVICE_CONTRACTID, &rv);
+  }
+  else {
+    nsCOMPtr<sbIGStreamerService> service =
+      do_GetService(SBGSTREAMERSERVICE_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   mMonitor = nsAutoMonitor::NewMonitor("sbGStreamerPipeline::mMonitor");
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
@@ -248,6 +256,19 @@ sbGStreamerPipeline::StopPipeline()
   return NS_OK;
 }
 
+void sbGStreamerPipeline::SetPipelineOp(GStreamer::pipelineOp_t aPipelineOp)
+{
+  nsAutoMonitor mon(mMonitor);
+  mPipelineOp = aPipelineOp;
+  return;
+}
+
+GStreamer::pipelineOp_t sbGStreamerPipeline::GetPipelineOp()
+{
+  nsAutoMonitor mon(mMonitor);
+  return mPipelineOp;
+}
+
 void sbGStreamerPipeline::HandleMessage (GstMessage *message)
 {
   GstMessageType msg_type;
@@ -285,8 +306,9 @@ void sbGStreamerPipeline::HandleErrorMessage(GstMessage *message)
   LOG(("Error message: %s [%s]", GST_STR_NULL (gerror->message), 
               GST_STR_NULL (debug)));
 
+  GStreamer::pipelineOp_t op = GetPipelineOp();
   rv = GetMediacoreErrorFromGstError(gerror, mResourceDisplayName,
-          getter_AddRefs(error));
+          op, getter_AddRefs(error));
   NS_ENSURE_SUCCESS(rv, /* void */);
 
   DispatchMediacoreEvent(sbIMediacoreEvent::ERROR_EVENT, nsnull, error);

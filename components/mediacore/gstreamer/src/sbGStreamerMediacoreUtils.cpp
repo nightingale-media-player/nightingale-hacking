@@ -330,31 +330,39 @@ SyncToAsyncDispatcher(GstBus* bus, GstMessage* message, gpointer data)
 
 struct errMap {
   int gstErrorCode;
+  GStreamer::pipelineOp_t gstPipelineOp;
   long sbErrorCode;
   const char *sbErrorMessageName;
 };
 
 static const struct errMap ResourceErrorMap[] = {
-  { GST_RESOURCE_ERROR_NOT_FOUND, sbIMediacoreError::SB_RESOURCE_NOT_FOUND,
-      "mediacore.error.resource_not_found"},
-  { GST_RESOURCE_ERROR_READ, sbIMediacoreError::SB_RESOURCE_READ,
-      "mediacore.error.read_failed"},
-  { GST_RESOURCE_ERROR_WRITE, sbIMediacoreError::SB_RESOURCE_WRITE,
-      "mediacore.error.write_failed"},
-  { GST_RESOURCE_ERROR_OPEN_READ, sbIMediacoreError::SB_RESOURCE_OPEN_READ,
-      "mediacore.error.read_open_failed"},
-  { GST_RESOURCE_ERROR_OPEN_WRITE, sbIMediacoreError::SB_RESOURCE_OPEN_WRITE,
-      "mediacore.error.write_open_failed"},
-  { GST_RESOURCE_ERROR_OPEN_READ_WRITE,
+  { GST_RESOURCE_ERROR_NOT_FOUND, GStreamer::OP_UNKNOWN, 
+      sbIMediacoreError::SB_RESOURCE_NOT_FOUND, 
+        "mediacore.error.resource_not_found"},
+  { GST_RESOURCE_ERROR_READ, GStreamer::OP_UNKNOWN,
+      sbIMediacoreError::SB_RESOURCE_READ,
+        "mediacore.error.read_failed"},
+  { GST_RESOURCE_ERROR_WRITE, GStreamer::OP_UNKNOWN,
+      sbIMediacoreError::SB_RESOURCE_WRITE,
+        "mediacore.error.write_failed"},
+  { GST_RESOURCE_ERROR_OPEN_READ, GStreamer::OP_UNKNOWN,
+      sbIMediacoreError::SB_RESOURCE_OPEN_READ,
+        "mediacore.error.read_open_failed"},
+  { GST_RESOURCE_ERROR_OPEN_WRITE, GStreamer::OP_UNKNOWN,
+      sbIMediacoreError::SB_RESOURCE_OPEN_WRITE,
+        "mediacore.error.write_open_failed"},
+  { GST_RESOURCE_ERROR_OPEN_READ_WRITE, GStreamer::OP_UNKNOWN,
       sbIMediacoreError::SB_RESOURCE_OPEN_READ_WRITE,
-      "mediacore.error.rw_open_failed"},
-  { GST_RESOURCE_ERROR_CLOSE, sbIMediacoreError::SB_RESOURCE_CLOSE,
-      "mediacore.error.close_failed"},
-  { GST_RESOURCE_ERROR_SEEK, sbIMediacoreError::SB_RESOURCE_SEEK,
-      "mediacore.error.seek_failed"},
-  { GST_RESOURCE_ERROR_NO_SPACE_LEFT,
+        "mediacore.error.rw_open_failed"},
+  { GST_RESOURCE_ERROR_CLOSE, GStreamer::OP_UNKNOWN,
+      sbIMediacoreError::SB_RESOURCE_CLOSE,
+        "mediacore.error.close_failed"},
+  { GST_RESOURCE_ERROR_SEEK, GStreamer::OP_UNKNOWN,
+      sbIMediacoreError::SB_RESOURCE_SEEK,
+        "mediacore.error.seek_failed"},
+  { GST_RESOURCE_ERROR_NO_SPACE_LEFT, GStreamer::OP_UNKNOWN,
       sbIMediacoreError::SB_RESOURCE_NO_SPACE_LEFT,
-      "mediacore.error.out_of_space"},
+        "mediacore.error.out_of_space"},
 };
 
 // No error codes for these yet
@@ -367,25 +375,36 @@ static const struct errMap LibraryErrorMap[] = {
 #endif
 
 static const struct errMap StreamErrorMap[] = {
-  { GST_STREAM_ERROR_TYPE_NOT_FOUND,
+  { GST_STREAM_ERROR_TYPE_NOT_FOUND, GStreamer::OP_UNKNOWN,
       sbIMediacoreError::SB_STREAM_TYPE_NOT_FOUND,
-      "mediacore.error.type_not_found"},
-  { GST_STREAM_ERROR_WRONG_TYPE, sbIMediacoreError::SB_STREAM_WRONG_TYPE,
-      "mediacore.error.wrong_type"},
-  { GST_STREAM_ERROR_CODEC_NOT_FOUND,
+        "mediacore.error.type_not_found"},
+  { GST_STREAM_ERROR_WRONG_TYPE, GStreamer::OP_UNKNOWN,
+      sbIMediacoreError::SB_STREAM_WRONG_TYPE,
+        "mediacore.error.wrong_type"},
+  { GST_STREAM_ERROR_CODEC_NOT_FOUND, GStreamer::OP_UNKNOWN,
       sbIMediacoreError::SB_STREAM_CODEC_NOT_FOUND,
-      "mediacore.error.codec_not_found"},
-  { GST_STREAM_ERROR_DECODE, sbIMediacoreError::SB_STREAM_DECODE,
-      "mediacore.error.decode_failed"},
-  { GST_STREAM_ERROR_ENCODE, sbIMediacoreError::SB_STREAM_ENCODE,
-      "mediacore.error.encode_failed"},
-  { GST_STREAM_ERROR_FAILED, sbIMediacoreError::SB_STREAM_FAILURE,
-      "mediacore.error.failure"},
+        "mediacore.error.codec_not_found"},
+  { GST_STREAM_ERROR_DECODE, GStreamer::OP_TRANSCODING,
+      sbIMediacoreError::SB_STREAM_DECODE,
+        "mediacore.error.decode_for_transcode_failed" },
+  { GST_STREAM_ERROR_DECODE, GStreamer::OP_UNKNOWN,
+      sbIMediacoreError::SB_STREAM_DECODE,
+        "mediacore.error.decode_failed"},
+  { GST_STREAM_ERROR_ENCODE, GStreamer::OP_UNKNOWN,
+      sbIMediacoreError::SB_STREAM_ENCODE,
+        "mediacore.error.encode_failed"},
+  { GST_STREAM_ERROR_FAILED, GStreamer::OP_TRANSCODING,
+      sbIMediacoreError::SB_STREAM_FAILURE,
+        "mediacore.error.failure_during_transcode"},
+  { GST_STREAM_ERROR_FAILED, GStreamer::OP_UNKNOWN,
+      sbIMediacoreError::SB_STREAM_FAILURE,
+        "mediacore.error.failure"},
 };
 
 nsresult
 GetMediacoreErrorFromGstError(GError *gerror, nsString aResource,
-        sbIMediacoreError **_retval)
+                              GStreamer::pipelineOp_t aPipelineOp,
+                              sbIMediacoreError **_retval)
 {
   nsString errorMessage;
   nsRefPtr<sbMediacoreError> error;
@@ -419,12 +438,33 @@ GetMediacoreErrorFromGstError(GError *gerror, nsString aResource,
   }
   
   if (map) {
+    int match = -1;
+    int bestMatch = -1;
+
     for (int i = 0; i < mapLength; i++) {
       if (map[i].gstErrorCode == gerror->code) {
-        errorCode = map[i].sbErrorCode;
-        stringName = map[i].sbErrorMessageName;
-        break;
+        // Try and find an exact match.
+        if (aPipelineOp != GStreamer::OP_UNKNOWN &&
+            map[i].gstPipelineOp == aPipelineOp) {
+          bestMatch = i;
+          // bestMatch found, break out right away.
+          break;
+        }
+        else {
+          // We can't break out here because the bestMatch
+          // may be coming later in the map.
+          match = i;
+        }
       }
+    }
+    
+    if (bestMatch == -1 && match != -1) {
+      bestMatch = match;
+    }
+
+    if (bestMatch != -1) {
+      errorCode = map[bestMatch].sbErrorCode;
+      stringName = map[bestMatch].sbErrorMessageName;
     }
   }
 
@@ -620,8 +660,7 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
     NS_ENSURE_SUCCESS (rv, rv);
 
     GValue propertyValue = { 0 };
-    if (paramSpec->value_type == G_TYPE_INT &&
-        variantType == nsIDataType::VTYPE_INT32)
+    if (paramSpec->value_type == G_TYPE_INT)
     {
       PRInt32 val;
       rv = propertyVariant->GetAsInt32 (&val);
@@ -629,8 +668,7 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
       g_value_init (&propertyValue, G_TYPE_INT);
       g_value_set_int (&propertyValue, val);
     }
-    else if (paramSpec->value_type == G_TYPE_UINT &&
-             variantType == nsIDataType::VTYPE_UINT32)
+    else if (paramSpec->value_type == G_TYPE_UINT)
     {
       PRUint32 val;
       rv = propertyVariant->GetAsUint32 (&val);
@@ -638,8 +676,7 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
       g_value_init (&propertyValue, G_TYPE_UINT);
       g_value_set_uint (&propertyValue, val);
     }
-    else if (paramSpec->value_type == G_TYPE_UINT64 &&
-             variantType == nsIDataType::VTYPE_UINT64)
+    else if (paramSpec->value_type == G_TYPE_UINT64)
     {
       PRUint64 val;
       rv = propertyVariant->GetAsUint64 (&val);
@@ -647,8 +684,7 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
       g_value_init (&propertyValue, G_TYPE_UINT64);
       g_value_set_uint64 (&propertyValue, val);
     }
-    else if (paramSpec->value_type == G_TYPE_INT64 &&
-             variantType == nsIDataType::VTYPE_INT64)
+    else if (paramSpec->value_type == G_TYPE_INT64)
     {
       PRInt64 val;
       rv = propertyVariant->GetAsInt64 (&val);
@@ -656,8 +692,7 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
       g_value_init (&propertyValue, G_TYPE_INT64);
       g_value_set_int64 (&propertyValue, val);
     }
-    else if (paramSpec->value_type == G_TYPE_BOOLEAN &&
-             variantType == nsIDataType::VTYPE_BOOL)
+    else if (paramSpec->value_type == G_TYPE_BOOLEAN)
     {
       PRBool val;
       rv = propertyVariant->GetAsBool (&val);
@@ -665,8 +700,7 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
       g_value_init (&propertyValue, G_TYPE_BOOLEAN);
       g_value_set_boolean (&propertyValue, val);
     }
-    else if (paramSpec->value_type == G_TYPE_FLOAT &&
-             variantType == nsIDataType::VTYPE_FLOAT)
+    else if (paramSpec->value_type == G_TYPE_FLOAT)
     {
       float val;
       rv = propertyVariant->GetAsFloat (&val);
@@ -674,8 +708,7 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
       g_value_init (&propertyValue, G_TYPE_FLOAT);
       g_value_set_float (&propertyValue, val);
     }
-    else if (paramSpec->value_type == G_TYPE_DOUBLE &&
-             variantType == nsIDataType::VTYPE_DOUBLE)
+    else if (paramSpec->value_type == G_TYPE_DOUBLE)
     {
       double val;
       rv = propertyVariant->GetAsDouble (&val);
@@ -683,11 +716,7 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
       g_value_init (&propertyValue, G_TYPE_DOUBLE);
       g_value_set_float (&propertyValue, val);
     }
-    else if (paramSpec->value_type == G_TYPE_STRING &&
-             (variantType == nsIDataType::VTYPE_DOMSTRING ||
-              variantType == nsIDataType::VTYPE_UTF8STRING ||
-              variantType == nsIDataType::VTYPE_CSTRING ||
-              variantType == nsIDataType::VTYPE_ASTRING))
+    else if (paramSpec->value_type == G_TYPE_STRING)
     {
       nsCString val;
       rv = propertyVariant->GetAsACString(val);
@@ -695,8 +724,7 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
       g_value_init (&propertyValue, G_TYPE_STRING);
       g_value_set_string (&propertyValue, val.BeginReading());
     }
-    else if (G_TYPE_IS_ENUM (paramSpec->value_type) &&
-             variantType == nsIDataType::VTYPE_UINT32)
+    else if (G_TYPE_IS_ENUM (paramSpec->value_type))
     {
       PRUint32 val;
       rv = propertyVariant->GetAsUint32 (&val);
@@ -705,7 +733,7 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
       g_value_set_enum (&propertyValue, val);
     }
     else {
-      LOG(("Unknown or mismatching property type"));
+      LOG(("Unsupported property type"));
       return NS_ERROR_FAILURE;
     }
 
@@ -716,5 +744,79 @@ ApplyPropertyBagToElement(GstElement *element, nsIPropertyBag *props)
   }
 
   return NS_OK;
+}
+
+struct sb_gst_caps_map_entry {
+  const char *mime_type;
+  const char *gst_name;
+  enum sbGstCapsMapType map_type;
+};
+
+static const struct sb_gst_caps_map_entry sb_gst_caps_map[] =
+{
+  // mpeg audio we always want id3 tags on for the container
+  { "audio/mpeg",   "application/x-id3", SB_GST_CAPS_MAP_CONTAINER },
+
+  { "audio/x-pcm-int",   "audio/x-raw-int", SB_GST_CAPS_MAP_AUDIO },
+  { "audio/x-pcm-float", "audio/x-raw-float", SB_GST_CAPS_MAP_AUDIO },
+  { "audio/x-ms-wma",    "audio/x-wma", SB_GST_CAPS_MAP_AUDIO },
+
+  { "video/x-ms-wmv",    "video/x-wmv", SB_GST_CAPS_MAP_VIDEO },
+
+  // The remaining ones have NONE type; they should ONLY be used for mapping
+  // a GST type to a mime type, not the other way around
+  { "video/mpeg",        "video/x-divx", SB_GST_CAPS_MAP_NONE },
+  { "video/mpeg",        "video/x-xvid", SB_GST_CAPS_MAP_NONE },
+};
+
+/* GStreamer caps name are generally similar to mime-types, but some of them
+ * differ. We use this table to convert the ones that differ that we know about,
+ * and all other names are returned unchanged.
+ */
+static nsCString
+GetGstCapsName(const nsACString &aMimeType, enum sbGstCapsMapType aType)
+{
+  nsCString result(aMimeType);
+
+  for (unsigned int i = 0; i < NS_ARRAY_LENGTH (sb_gst_caps_map); i++) {
+    if (sb_gst_caps_map[i].map_type == aType &&
+        aMimeType.EqualsLiteral(sb_gst_caps_map[i].mime_type)) 
+    {
+      result.AssignLiteral(sb_gst_caps_map[i].gst_name);
+      return result;
+    }
+  }
+
+  return result;
+}
+
+GstCaps *
+GetCapsForMimeType (const nsACString &aMimeType, enum sbGstCapsMapType aType )
+{
+  nsCString name = GetGstCapsName (aMimeType, aType);
+  // set up a caps structure
+  GstCaps *caps = gst_caps_from_string(name.BeginReading());
+  return caps;
+}
+
+
+nsresult
+GetMimeTypeForCaps (GstCaps *aCaps, nsACString &aMimeType)
+{
+  const gchar *capsName = gst_structure_get_name (
+          gst_caps_get_structure (aCaps, 0));
+
+  for (unsigned int i = 0; i < NS_ARRAY_LENGTH (sb_gst_caps_map); i++)
+  {
+    if (!strcmp(capsName, sb_gst_caps_map[i].gst_name)) {
+      aMimeType.AssignLiteral(sb_gst_caps_map[i].mime_type);
+      return NS_OK;
+    }
+  }
+
+  /* Use the same name if we don't have a different mapping */
+  aMimeType.AssignLiteral(capsName);
+  return NS_OK;
+
 }
 

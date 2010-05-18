@@ -8,6 +8,7 @@
   <!-- We use the mime types that we use for device capabilities, even when
        these aren't the most accurate option available -->
   <mimetype>application/ogg</mimetype>
+  <extension>ogg</extension>
 
   <container>
     <type>application/ogg</type>

@@ -136,16 +136,16 @@ BrandingText " "
 !define MUI_COMPONENTSPAGE_NODESC
 !insertmacro MUI_PAGE_COMPONENTS
 
+; Install directory page
+!define MUI_DIRECTORYPAGE_VERIFYONLEAVE
+!define MUI_PAGE_CUSTOMFUNCTION_LEAVE ValidateInstallationDirectory
+!insertmacro MUI_PAGE_DIRECTORY
+
 ; Start Menu Folder Page Configuration
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKLM"
 !define MUI_STARTMENUPAGE_REGISTRY_KEY "${MuiStartmenupageRegKey}"
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "${MuiStartmenupageRegName}"
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuDir
-
-; Install directory page
-!define MUI_DIRECTORYPAGE_VERIFYONLEAVE
-!define MUI_PAGE_CUSTOMFUNCTION_LEAVE ValidateInstallationDirectory
-!insertmacro MUI_PAGE_DIRECTORY
 
 ; Install Files Page
 !insertmacro MUI_PAGE_INSTFILES

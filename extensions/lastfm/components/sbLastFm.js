@@ -473,7 +473,7 @@ function sbLastFm() {
     radioFolder.className = "folder radio";
 	  radioFolder.name = this._strings.GetStringFromName("lastfm.radio.label");
 	  radioFolder.setAttributeNS(SB_NS, "radioFolder", 1); // for backward-compat
-	  radioFolder.setAttributeNS(SP_NS, "Weight", 1);
+	  radioFolder.setAttributeNS(SP_NS, "Weight", 2);
 	  this._servicePaneService.root.appendChild(radioFolder);
   }
   radioFolder.editable = false;

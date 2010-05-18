@@ -55,7 +55,6 @@ var Cu = Components.utils;
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/DOMUtils.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
-Cu.import("resource://app/jsmodules/sbStorageFormatter.jsm");
 
 
 //------------------------------------------------------------------------------
@@ -440,9 +439,13 @@ var sbDeviceVolumeSupport = {
                        ("http://songbirdnest.com/device/1.0#capacity");
 
       // Produce the notification label.
-      var label = SBFormattedString("device.new_volume_notification.label",
-                                    [ StorageFormatter.format(capacity),
-                                      device.name ]);
+      storageConverter =
+        Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
+          .createInstance(Ci.sbIPropertyUnitConverter);
+      var label = SBFormattedString
+                    ("device.new_volume_notification.label",
+                     [ storageConverter.autoFormat(capacity, -1, 1),
+                       device.name ]);
 
       // Produce the list of notification buttons.  Only add a manage volumes
       // button if the service pane is available.
@@ -492,9 +495,9 @@ var sbDeviceVolumeSupport = {
 
     // Load the device node.
     if (deviceNode && gServicePane) {
-      gServicePane.mTreePane.selectAndLoadNode(deviceNode,
-                                               null,
-                                               { manageVolumes: "true" });
+      gServicePane.activateAndLoadNode(deviceNode,
+                                       null,
+                                       { manageVolumes: "true" });
     }
   },
 
@@ -563,6 +566,9 @@ sbDeviceVolumeSupport.initialize();
   // presence of the key matters.
   var devicesWithEvents = {};
 
+  // A set of notifications. The key is the device id.
+  var notificationTable = {};
+
   function deviceManagerListener(event) {
 
     var device = event.origin;
@@ -608,7 +614,8 @@ sbDeviceVolumeSupport.initialize();
     // but the device is now idle
     delete devicesWithEvents[device.id];
     var notificationBox = SBGetApplicationNotificationBox();
-    if (!notificationBox)
+    // Only one notification per device for transcoding error.
+    if (!notificationBox || notificationTable[device.id])
       return;
     var buttons = [
       {
@@ -628,6 +635,7 @@ sbDeviceVolumeSupport.initialize();
              [ "", device, errorItems, "syncing" ],
              null);
           deviceErrorMonitor.clearErrorsForDevice(device);
+          delete notificationTable[device.id];
         },
         popup: null
       }
@@ -638,6 +646,7 @@ sbDeviceVolumeSupport.initialize();
                          "chrome://songbird/skin/device/error.png",
                          notificationBox.PRIORITY_CRITICAL_MEDIUM,
                          buttons);
+    notificationTable[device.id] = notification;
     var onNotificationCommand = function(event) {
       let classes = event.originalTarget.className.split(/\s+/);
       if (classes.indexOf("messageCloseButton") > -1) {
@@ -646,6 +655,7 @@ sbDeviceVolumeSupport.initialize();
           Cc["@songbirdnest.com/device/error-monitor-service;1"]
             .getService(Ci.sbIDeviceErrorMonitor);
         deviceErrorMonitor.clearErrorsForDevice(device);
+        delete notificationTable[device.id];
       }
     };
     notification.addEventListener("command", onNotificationCommand, false);

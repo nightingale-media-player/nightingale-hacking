@@ -118,6 +118,31 @@ interface sbIDevCapRange : nsISupports
 %}
 
 /**
+ * \interface sbIDevCapFraction
+ * \brief Interface for storing a fractional value.
+ */
+[scriptable, uuid(0168409c-1dd2-11b2-a064-b25ec073dc48)]
+interface sbIDevCapFraction : nsISupports
+{
+  readonly attribute unsigned long numerator;
+  readonly attribute unsigned long denominator;
+
+  void initialize(in unsigned long aNumerator,
+                  in unsigned long aDenominator);
+};
+
+%{C++
+#define SB_IDEVCAPFRACTION_DESCRIPTION             \
+  "Songbird Device Capabilities Fraction Component"
+#define SB_IDEVCAPFRACTION_CONTRACTID              \
+  "@songbirdnest.com/Songbird/Device/sbfraction;1"
+#define SB_IDEVCAPFRACTION_CLASSNAME               \
+  "Songbird Device Capabilities Fraction"
+#define SB_IDEVCAPFRACTION_CID                     \
+{0xb8b158a2, 0x1dd1, 0x11b2, {0x9f, 0x1d, 0xb9, 0x56, 0x08, 0x79, 0x0a, 0xb8}}
+%}
+
+/**
  * \interface sbIFormatTypeConstraint
  *
  * This allows additional format-specific constraints to be defined.
@@ -271,10 +296,10 @@ interface sbIDevCapVideoStream : nsISupports
                   in nsIArray aExplicitSizes,
                   in sbIDevCapRange aWidths,
                   in sbIDevCapRange aHeights,
-                  in unsigned long aVideoPARsCount,
-                  [array, size_is(aVideoPARsCount)]in string aVideoPARs,
-                  in unsigned long aFrameRateCount,
-                  [array, size_is(aFrameRateCount)]in string aFrameRates,
+                  in nsIArray aSupportedPARs,
+                  in boolean aSupportedPARsIsRange,
+                  in nsIArray aSupportedFrameRates,
+                  in boolean aSupportedFrameRatesIsRange,
                   in sbIDevCapRange aBitRates);
   
   /**
@@ -306,21 +331,55 @@ interface sbIDevCapVideoStream : nsISupports
   readonly attribute sbIDevCapRange supportedHeights;
 
   /**
-   * Returns the list of video PARs. These are strings which can be parsed
-   * using sbFraction
+   * Returns true if the video stream supports ranges (i.e. min/max values)
+   * for the PAR. If this attribute is true, use the |minimumSupportedPAR| and
+   * the |maximumSupportedPAR| attributes on this interface for the PAR range.
+   *
+   * If this attribute returns false, a set list of PAR values will be
+   * available via the |supportedPARs| attribute.
    */
-  void getSupportedVideoPARs(out unsigned long aCount, 
-                             [retval, array, size_is(aCount)]
-                               out string aVideoPARs); 
-  
+  readonly attribute boolean doesSupportPARRange;
+
   /**
-   * Returns the list of video frame rates. These are string which can be parsed
-   * using sbFraction
+   * Returns an array of the supported PAR values as |sbIDevCapFraction|
+   * instances. When the attribute |doesSupportPARRange| is false, use this
+   * array of PAR values to get the supported PAR values.
    */
-  void getSupportedFrameRates(out unsigned long aCount,
-                              [retval, array, size_is(aCount)]
-                                out string aFrameRates);
-                     
+  readonly attribute nsIArray supportedPARs;
+
+  /**
+   * Returns the minimum and maximum PAR values. If |doesSupportPARRange| is
+   * false, these values will throw NS_ERROR_NOT_AVAILABLE.
+   */
+  readonly attribute sbIDevCapFraction minimumSupportedPAR;
+  readonly attribute sbIDevCapFraction maximumSupportedPAR;
+
+  /**
+   * Returns true if the video stream supports ranges (i.e. min/max values)
+   * for the frame rates. If this attribute is true, use the
+   * |minimumSupportedFrameRate| and the |maximumSupportedFrameRate| attributes
+   * this interface for the frame rate range.
+   *
+   * If this attribute returns false, a set list of frame rate values will be
+   * available via the |supportedFrameRates| attribute.
+   */
+  readonly attribute boolean doesSupportFrameRateRange;
+
+  /**
+   * Returns an array of the supported frame rate values as |sbIDevCapFraction|
+   * instances. When the attribute |doesSupportFrameRateRange| is false, use
+   * this array of frame rate values to get the supported frame rate values.
+   */
+  readonly attribute nsIArray supportedFrameRates;
+
+  /**
+   * Returns the minimum and maximum frame rate values.
+   * If |doesSupportFrameRateRange| is false, these values will throw
+   * NS_ERROR_NOT_AVAILABLE.
+   */
+  readonly attribute sbIDevCapFraction minimumSupportedFrameRate;
+  readonly attribute sbIDevCapFraction maximumSupportedFrameRate;
+
   /**
    * Returns a range of bit rates
    */
@@ -426,11 +485,40 @@ interface sbIVideoFormatType : nsISupports
 %}
 
 /**
+ * This interface is used to inspect the playlist capabilities of a device
+ * \note Implementations of this interface must be threadsafe.
+ */
+[scriptable, uuid(1042b7ea-eb3f-4b82-b730-b0a3d0b8e2ec)]
+interface sbIPlaylistFormatType : nsISupports
+{
+  /**
+   * Initializes the playlist format object
+   */
+  void initialize(in ACString aPathSeparator);
+
+  /**
+   * Path separator used when writing playlist resource locations
+   */
+  readonly attribute ACString pathSeparator;
+};
+
+%{C++
+#define SB_IPLAYLISTFORMATTYPE_DESCRIPTION         \
+  "Songbird Device Capabilities Playlist Format Type Component"
+#define SB_IPLAYLISTFORMATTYPE_CONTRACTID          \
+  "@songbirdnest.com/Songbird/Device/sbplaylistformattype;1"
+#define SB_IPLAYLISTFORMATTYPE_CLASSNAME           \
+  "Songbird Device Capabilities Playlist Format Type"
+#define SB_IPLAYLISTFORMATTYPE_CID                 \
+  {0xdc2b0702, 0xb8d7, 0x4ef5, {0x83, 0xb6, 0x64, 0x85, 0xe5, 0xef, 0xd5, 0xf1}}
+%}
+
+/**
  * \interface sbIDeviceCapabilities
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(4b1ab380-4b67-11df-9879-0800200c9a66)]
+[scriptable, uuid(7ce2a138-d1b4-4980-9c36-04c0389c6ce2)]
 interface sbIDeviceCapabilities : nsISupports
 {
   /**
@@ -488,6 +576,20 @@ interface sbIDeviceCapabilities : nsISupports
    *                    it could be a sbIAudioFormatType or a sbIImageFormatType
    */
   void AddFormatType(in PRUint32 aContentType,
+                     in AString aMimeType,
+                     in nsISupports aFormatType);
+
+  /**
+   * \brief Add a preferred constraint to a mime type (these are used for
+   *        target formats when transcoding.
+   * \param aContentType the content type this format falls under, see the
+   *                     CONTENT_* constants below.
+   * \param aMimeType the mime type we're adding a constraint for. This must 
+   *                  correspond to a mime type previously added by addMimeTypes
+   * \param aFormatType the object describing the format type. For example it 
+   *                    it could be a sbIAudioFormatType or a sbIImageFormatType
+   */
+  void AddPreferredFormatType(in PRUint32 aContentType,
                      in AString aMimeType,
                      in nsISupports aFormatType);
                            
@@ -572,6 +674,23 @@ interface sbIDeviceCapabilities : nsISupports
                       out unsigned long aArrayCount,
                       [retval, array, size_is(aArrayCount)]
                         out nsISupports aSupportedFormats);
+
+  /**
+   * Returns an array of constraint objects (sbIVideoFormatType,
+   * sbIAudioFormatType, sbIImageFormatType, depending on the content
+   * type requested) for this mime type and type of content.
+   *
+   * These specify the preferred format for this type of data. If transcoding
+   * is required, it will always transcode to parameters matching one of these
+   * constraint objects. If an implementation has no specific knowledge of
+   * preferred values, it should simply return the same information here as from
+   * getFormatTypes.
+   */
+  void getPreferredFormatTypes(in PRUint32 aContentType,
+                               in AString aMimeType,
+                               out unsigned long aArrayCount,
+                               [retval, array, size_is(aArrayCount)]
+                                  out nsISupports aPreferredFormats);
  
   /**
    * Returns an array of nsISupportsPRUint32 values defined in

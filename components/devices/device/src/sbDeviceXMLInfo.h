@@ -51,10 +51,12 @@
 
 // Mozilla imports.
 #include <nsCOMPtr.h>
+#include <nsIArray.h>
 #include <nsIDOMDocument.h>
 #include <nsIDOMElement.h>
 #include <nsStringAPI.h>
 #include <nsTArray.h>
+
 
 //------------------------------------------------------------------------------
 //
@@ -158,11 +160,30 @@ public :
   nsresult GetMountTimeout(PRUint32* aMountTimeout);
 
   /**
+   * Return in aOutSupportsReformat if the device supports reformat. This value
+   * will default to PR_TRUE if the format tag is not specified in the XML
+   * document.
+   *
+   * \param aOutSupportsReformat Returned supported reformat boolean value.
+   */
+  nsresult GetDoesDeviceSupportReformat(PRBool *aOutSupportsReformat);
+
+  /**
    * Returns a list of excluded folders folders in the array passed in. Each
    * array entry may be folder name or a path to a specific folder.
    * \param aFolders This is an array that the excluded folders will be added
    */
   nsresult GetExcludedFolders(nsAString & aExcludedFolders);
+
+  /**
+   * Return in aStorageDeviceInfoList a list of information for storage devices.
+   * Each element in the list is an nsIPropertyBag of storage device properties.
+   * See sbIDeviceInfoRegistrar.getStorageDeviceInfoList for storage device info
+   * examples.
+   *
+   * \param aStorageDeviceInfoList  Returned storage device info list.
+   */
+  nsresult GetStorageDeviceInfoList(nsIArray** aStorageDeviceInfoList);
 
   /**
    * Construct a Songbird device XML info object to be used for the device

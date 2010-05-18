@@ -121,7 +121,7 @@
     <method name="onTrackVolume">
       <body>
         <![CDATA[
-          if (this.getAttribute("disabled"))
+          if (this.disabled)
             return;
           // prevent this volume control from being updated while it is being
           // moved (but other volume controls are updated with our motion)
@@ -139,7 +139,7 @@
     <method name="onReleaseVolume">
       <body>
         <![CDATA[
-          if (this.getAttribute("disabled"))
+          if (this.disabled)
             return;
           this.trackingVolume = false;
           this.mm.volumeControl.volume = this.value / this.sliderScale;
@@ -150,7 +150,7 @@
     <method name="onRemoteVolumeChange">
       <body>
         <![CDATA[
-          if (this.getAttribute("disabled"))
+          if (this.disabled)
             return;
           try {
             this.value = parseFloat(this.remote_volume.stringValue) * this.sliderScale;
@@ -164,7 +164,7 @@
     <method name="onRemoteMute">
       <body>
         <![CDATA[
-          if (this.getAttribute("disabled"))
+          if (this.disabled)
             return;
           // the mute state changed
           if (this.remote_mute.boolValue) {
@@ -1744,8 +1744,8 @@
       <xul:hbox id="sb-player-totaltime-label" flex="1" xbl:inherits="class,align,crop,disabled,flex">
         <xul:label sbid="timelabel" xbl:inherits="class,align,crop,disabled,flex" mousethrough="never">
           <xul:observes type="dataremote"
-                    key="metadata.length.str" 
-                    attribute="value"/>  
+                        key="metadata.length.str" 
+                        attribute="value"/>  
         </xul:label>
       </xul:hbox>
     </content>

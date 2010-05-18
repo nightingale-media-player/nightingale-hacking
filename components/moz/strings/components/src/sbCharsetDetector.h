@@ -119,7 +119,7 @@ public:
 
 private:
 
-  nsresult RunCharsetDetector(nsACString& aStringToDetect);
+  nsresult RunCharsetDetector(const nsACString& aStringToDetect);
  
   nsCOMPtr<nsICharsetDetector> mDetector;
   nsCString mDetectedCharset;

@@ -304,9 +304,6 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
   rv = mArray->SetFetchSize(DEFAULT_FETCH_SIZE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mSelection = new sbLocalDatabaseMediaListViewSelection();
-  NS_ENSURE_TRUE(mSelection, NS_ERROR_OUT_OF_MEMORY);
-
   rv = CreateQueries();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -326,9 +323,6 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = SetSortInternal(sort);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsString guid;
   rv = mMediaList->GetGuid(guid);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -337,11 +331,16 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
     do_QueryInterface(mArray, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mSelection = new sbLocalDatabaseMediaListViewSelection();
+  NS_ENSURE_TRUE(mSelection, NS_ERROR_OUT_OF_MEMORY);
   rv = mSelection->Init(mLibrary,
                         guid,
                         syncArray,
                         mMediaListId == 0,
                         selectionState);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = SetSortInternal(sort);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = Invalidate();
@@ -1857,6 +1856,10 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
     rv = mSelection->SelectNone();
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  // Invalidate the view array
+  rv = Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

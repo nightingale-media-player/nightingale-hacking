@@ -1190,6 +1190,7 @@ sbMediaExportService::OnBeforeItemRemoved(sbIMediaList *aMediaList,
                                           PRUint32 aIndex,
                                           PRBool *aRetVal)
 {
+  *aRetVal = PR_TRUE;
   return NS_OK;
 }
 

@@ -33,6 +33,7 @@
 #include <prlog.h>
 
 #include <sbIMediaListListener.h>
+#include <sbITranscodingConfigurator.h>
 
 #include "sbBaseDevice.h"
 #include "sbIDeviceStatus.h"
@@ -42,7 +43,10 @@ class nsIFile;
 class nsIMutableArray;
 
 // Songbird forwards
+class sbIDeviceLibraryMediaSyncSettings;
+class sbIDeviceLibrarySyncSettings;
 class sbIMediaFormat;
+
 /**
  * Map entry figuring out the container format and codec given an extension or
  * mime type
@@ -218,6 +222,17 @@ public:
                      PRUint32 & aSampleRate);
 
   /**
+   * \brief For a media item, get format information describing it (extension,
+   *        mime type, etc.
+   */
+  static nsresult GetFormatTypeForItem(
+                     sbIMediaItem * aItem,
+                     sbExtensionToContentFormatEntry_t & aFormatType,
+                     PRUint32 & aSampleRate,
+                     PRUint32 & aChannels,
+                     PRUint32 & aBitRate);
+
+  /**
    * \brief For a URI, get format information describing it (extension,
    *        mime type, etc.
    */
@@ -272,17 +287,20 @@ public:
                                           sbIDevice * aDevice,
                                           bool & aNeedsTranscoding);
   /**
-   * Returns the list or transcode profiles supported by the system
+   * Returns the list or transcode profiles for a particular transcoding type
+   * supported by the system
    */
-  static nsresult GetTranscodeProfiles(nsIArray ** aProfiles);
+  static nsresult GetTranscodeProfiles(PRUint32 aType, nsIArray ** aProfiles);
 
   /**
    * Returns a list of transcode profiles that the device supports
+   * \param aType the type of transcoding profiles to retrieve.
    * \param aDevice the device to retrieve the profiles for.
    * \param aProfiles the array of profiles that were found
    * \return NS_OK if successful else some NS_ERROR value
    */
-  static nsresult GetSupportedTranscodeProfiles(sbIDevice * aDevice,
+  static nsresult GetSupportedTranscodeProfiles(PRUint32 aType,
+                                                sbIDevice * aDevice,
                                                 nsIArray ** aProfiles);
 
   /** For each transcoding profile property in aPropertyArray, look up a
@@ -306,6 +324,12 @@ public:
                                                   nsCString &aCodec,
                                                   nsCString &aVideoType,
                                                   nsCString &aAudioType);
+
+  /* Get an appropriate transcoding configurator for this type of transcoding */
+  static nsresult GetTranscodingConfigurator(
+                              PRUint32 aTranscodeType,
+                              sbIDeviceTranscodingConfigurator **aConfigurator);
+
 
   /**
    * Returns true if the item is DRM protected
@@ -336,6 +360,49 @@ public:
                      PRUint32            aContentType,
                      nsTArray<nsString>& aFileExtensionList);
 
+  /**
+   * Helper function to return the media settings object for a library for a
+   * given type
+   * \param aDevLib the device library to retrieve the setttings
+   * \param aMediaType The media type you're interested in
+   * \param aMediaSettings The returned media sync settings
+   */
+  static nsresult GetMediaSettings(
+                            sbIDeviceLibrary * aDevLib,
+                            PRUint32 aMediaType,
+                            sbIDeviceLibraryMediaSyncSettings ** aMediaSettings);
+
+  /**
+   * Helper function to return the management type for a given device library
+   * and media type
+   * \param aDevLib the device library to retrieve the setttings
+   * \param aMediaType The media type you're interested in
+   * \param aMgmtType The management type returned
+   */
+
+  static nsresult GetMgmtTypeForMedia(sbIDeviceLibrary * aDevLib,
+                                      PRUint32 aMediaType,
+                                      PRUint32 & aMgmtType);
+
+  /**
+   * Returns the device library given a library ID and an optional device ID
+   * \param aDevLibGuid The device library's guid
+   * \param aDevice The device to search for the library
+   * \param aDeviceLibrary The library found, or null if none found
+   */
+  static nsresult GetDeviceLibrary(nsAString const & aDeviceLibGuid,
+                                    sbIDevice * aDevice,
+                                    sbIDeviceLibrary ** aDeviceLibrar);
+
+  /**
+   * Returns the device library given a library ID and an optional device ID
+   * \param aDevLibGuid The device library's guid
+   * \param aDeviceID An optional device ID pass null if you have none
+   * \param aDeviceLibrary The library found, or null if none found
+   */
+  static nsresult GetDeviceLibrary(nsAString const & aDevLibGuid,
+                                   nsID const * aDeviceID,
+                                   sbIDeviceLibrary ** aDeviceLibrary);
 #ifdef PR_LOGGING
   /**
    * Outputs a the device's capabilites to a PR_Log.

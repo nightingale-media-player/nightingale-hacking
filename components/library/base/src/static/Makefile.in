@@ -32,8 +32,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-DISABLE_DEADLY_WARNINGS = 1
-
 STATIC_LIB = sbLibraryUtils
 
 CPP_SRCS = sbLibraryUtils.cpp \

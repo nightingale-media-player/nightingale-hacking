@@ -44,6 +44,8 @@ XPIDL_SRCS = sbIDevice.idl \
              sbIDeviceFirmwareSupport.idl \
              sbIDeviceFirmwareUpdate.idl \
              sbIDeviceFirmwareUpdater.idl \
+             sbIDeviceLibraryMediaSyncSettings.idl \
+             sbIDeviceLibrarySyncSettings.idl \
              sbIDeviceLibrary.idl \
              sbIDeviceProperties.idl \
              sbIDeviceRegistrar.idl \

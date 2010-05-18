@@ -56,9 +56,9 @@
 
 sbDeviceXMLCapabilities::sbDeviceXMLCapabilities(nsIDOMElement* aRootElement,
                                                  sbIDevice*     aDevice) :
-    mRootElement(aRootElement),
     mDevice(aDevice),
     mDeviceCaps(nsnull),
+    mRootElement(aRootElement),
     mHasCapabilities(PR_FALSE)
 {
   NS_ASSERTION(mRootElement, "no device capabilities element provided");
@@ -521,11 +521,53 @@ BuildRange(nsIDOMNode * aRangeNode, sbIDevCapRange ** aRange)
   return NS_OK;
 }
 
+/**
+ * This method attempts to split a fraction string in the form of
+ * "numerator/denominator" into two out-param unsigned integers.
+ */
 static
 nsresult
-GetStringValues(nsIDOMNode * aDOMNode, char**& aValues, PRUint32 & aCount)
+GetStringFractionValues(const nsAString & aString,
+                        PRUint32 *aOutNumerator,
+                        PRUint32 *aOutDenominator)
+{
+  NS_ENSURE_ARG_POINTER(aOutNumerator);
+  NS_ENSURE_ARG_POINTER(aOutDenominator);
+
+  nsresult rv;
+  nsTArray<nsString> splitResultArray;
+  nsString_Split(aString, NS_LITERAL_STRING("/"), splitResultArray);
+  NS_ENSURE_TRUE(splitResultArray.Length() > 0, NS_ERROR_UNEXPECTED);
+
+  *aOutNumerator = splitResultArray[0].ToInteger(&rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (splitResultArray.Length() == 2) {
+    *aOutDenominator = splitResultArray[1].ToInteger(&rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    *aOutDenominator = 1;
+  }
+
+  return NS_OK;
+}
+
+/**
+ * This method will retrieve a set of values or a min/max value depending on
+ * which value type is specified. If the value is a range (i.e. has a min/max
+ * value) |aOutIsRange| will be true and the first and second element in
+ * |aOutCapRangeArray| will be the min and max values respectively.
+ */
+static
+nsresult
+GetFractionRangeValues(nsIDOMNode * aDOMNode,
+                       nsIArray **aOutCapRangeArray,
+                       PRBool *aOutIsRange)
 {
   NS_ENSURE_ARG_POINTER(aDOMNode);
+  NS_ENSURE_ARG_POINTER(aOutCapRangeArray);
+  NS_ENSURE_ARG_POINTER(aOutIsRange);
 
   nsCOMPtr<nsIDOMNodeList> domNodes;
   nsresult rv = aDOMNode->GetChildNodes(getter_AddRefs(domNodes));
@@ -542,6 +584,11 @@ GetStringValues(nsIDOMNode * aDOMNode, char**& aValues, PRUint32 & aCount)
     return NS_OK;
   }
 
+  nsCOMPtr<nsIMutableArray> fractionArray =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString minValue, maxValue;
   nsTArray<nsString> strings;
   nsCOMPtr<nsIDOMNode> domNode;
   for (PRUint32 nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
@@ -552,26 +599,81 @@ GetStringValues(nsIDOMNode * aDOMNode, char**& aValues, PRUint32 & aCount)
     rv = domNode->GetNodeName(name);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (!name.EqualsLiteral("value")) {
+    nsString value;
+    rv = GetNodeValue(domNode, value);
+    if (NS_FAILED(rv)) {
       continue;
     }
 
-    nsString value;
-    rv = GetNodeValue(domNode, value);
+    if (name.EqualsLiteral("value")) {
+      NS_ENSURE_TRUE(strings.AppendElement(value), NS_ERROR_OUT_OF_MEMORY);
+    }
+    else if (name.EqualsLiteral("min")) {
+      minValue.Assign(value);
+    }
+    else if (name.EqualsLiteral("max")) {
+      maxValue.Assign(value);
+    }
+  }
+
+  // If the values had at least a min or a max value, use the min/max
+  // attributes on the device cap range. If not, fallback to a set list of
+  // values.
+  PRUint32 numerator, denominator;
+  if (!minValue.Equals(EmptyString()) || !maxValue.Equals(EmptyString())) {
+    nsCOMPtr<sbIDevCapFraction> minCapFraction =
+      do_CreateInstance("@songbirdnest.com/Songbird/Device/sbfraction;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    NS_ENSURE_TRUE(strings.AppendElement(value), NS_ERROR_OUT_OF_MEMORY);
+    rv = GetStringFractionValues(minValue, &numerator, &denominator);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = minCapFraction->Initialize(numerator, denominator);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIDevCapFraction> maxCapFraction =
+      do_CreateInstance("@songbirdnest.com/Songbird/Device/sbfraction;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = GetStringFractionValues(maxValue, &numerator, &denominator);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = maxCapFraction->Initialize(numerator, denominator);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Per the out-param comment, the first value in the array will be the
+    // minimum fraction range.
+    rv = fractionArray->AppendElement(minCapFraction, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+    // And the second param will be the max value.
+    rv = fractionArray->AppendElement(maxCapFraction, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+    // Mark these values as a range.
+    *aOutIsRange = PR_TRUE;
+  }
+  else {
+    // Mark the list of values as not a range.
+    *aOutIsRange = PR_FALSE;
+    // Loop through all of the values and convert them to cap fractions.
+    for (PRUint32 i = 0; i < strings.Length(); i++) {
+      rv = GetStringFractionValues(strings[i], &numerator, &denominator);
+      if (NS_FAILED(rv)) {
+        continue;
+      }
+
+      nsCOMPtr<sbIDevCapFraction> curFraction =
+        do_CreateInstance("@songbirdnest.com/Songbird/Device/sbfraction;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = curFraction->Initialize(numerator, denominator);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = fractionArray->AppendElement(curFraction, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
-  aCount = strings.Length();
-  aValues = reinterpret_cast<char**>(nsMemory::Alloc(aCount * sizeof(char *)));
-  for (PRUint32 index = 0; index < aCount; ++index) {
-    nsString const & value = strings[index];
-    aValues[index] = reinterpret_cast<char*>(
-                                nsMemory::Alloc(value.Length() + 1));
-    strcpy(aValues[index], ::NS_LossyConvertUTF16toASCII(value).BeginReading());
-  }
-  return NS_OK;
+  return CallQueryInterface(fractionArray.get(), aOutCapRangeArray);
 }
 
 nsresult
@@ -634,6 +736,14 @@ sbDeviceXMLCapabilities::ProcessAudio(nsIDOMNode * aAudioNode)
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
+    nsString isPreferredString;
+    rv = attributes.GetValue(NS_LITERAL_STRING("preferred"),
+                             isPreferredString);
+    if (rv != NS_ERROR_NOT_AVAILABLE) { // not found error is ok, leave blank
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    PRBool isPreferred = isPreferredString.EqualsLiteral("true");
+
     nsCOMPtr<nsIDOMNodeList> ranges;
     rv = domNode->GetChildNodes(getter_AddRefs(ranges));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -683,10 +793,19 @@ sbDeviceXMLCapabilities::ProcessAudio(nsIDOMNode * aAudioNode)
     rv = AddMimeType(sbIDeviceCapabilities::CONTENT_AUDIO, mimeType);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mDeviceCaps->AddFormatType(sbIDeviceCapabilities::CONTENT_AUDIO,
-                                    mimeType,
-                                    formatType);
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (isPreferred) {
+      rv = mDeviceCaps->AddPreferredFormatType(
+              sbIDeviceCapabilities::CONTENT_AUDIO,
+              mimeType,
+              formatType);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      rv = mDeviceCaps->AddFormatType(sbIDeviceCapabilities::CONTENT_AUDIO,
+                                      mimeType,
+                                      formatType);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
   return NS_OK;
 }
@@ -895,12 +1014,13 @@ sbDeviceXMLCapabilities::ProcessVideoStream(nsIDOMNode* aVideoStreamNode,
   nsCOMPtr<sbIDevCapRange> widths;
   nsCOMPtr<sbIDevCapRange> heights;
   nsCOMPtr<sbIDevCapRange> bitRates;
-  char ** videoPARs = nsnull;
-  PRUint32 videoPARCount = 0;
-  sbAutoStringArray videPARAuto(videoPARCount, videoPARs);
-  char ** frameRates = nsnull;
-  PRUint32 frameRateCount = 0;
-  sbAutoStringArray frameRatesAuto(frameRateCount, frameRates);
+
+  PRBool parValuesAreRange = PR_TRUE;
+  nsCOMPtr<nsIArray> parValueArray;
+
+  PRBool frameRateValuesAreRange = PR_TRUE;
+  nsCOMPtr<nsIArray> frameRateValuesArray;
+
   nsCOMPtr<nsIDOMNode> domNode;
   for (PRUint32 nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
     rv = domNodes->Item(nodeIndex, getter_AddRefs(domNode));
@@ -922,18 +1042,18 @@ sbDeviceXMLCapabilities::ProcessVideoStream(nsIDOMNode* aVideoStreamNode,
       rv = BuildRange(domNode, getter_AddRefs(heights));
       NS_ENSURE_SUCCESS(rv, rv);
     }
-    else if (name.Equals(NS_LITERAL_STRING("videoPARs"))) {
-      if (videoPARs) {
-        nsMemory::Free(videoPARs);
-      }
-      rv = GetStringValues(domNode, videoPARs, videoPARCount);
+    else if (name.Equals(NS_LITERAL_STRING("videoPARs")) ||
+             name.Equals(NS_LITERAL_STRING("videoPAR")))
+    {
+      rv = GetFractionRangeValues(domNode,
+                                  getter_AddRefs(parValueArray),
+                                  &parValuesAreRange);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     else if (name.Equals(NS_LITERAL_STRING("frame-rates"))) {
-      if (frameRates) {
-        nsMemory::Free(frameRates);
-      }
-      rv = GetStringValues(domNode, frameRates, frameRateCount);
+      rv = GetFractionRangeValues(domNode,
+                                  getter_AddRefs(frameRateValuesArray),
+                                  &frameRateValuesAreRange);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     else if (name.Equals(NS_LITERAL_STRING("bit-rates"))) {
@@ -950,10 +1070,10 @@ sbDeviceXMLCapabilities::ProcessVideoStream(nsIDOMNode* aVideoStreamNode,
                                sizes,
                                widths,
                                heights,
-                               videoPARCount,
-                               const_cast<char const **>(videoPARs),
-                               frameRateCount,
-                               const_cast<char const **>(frameRates),
+                               parValueArray,
+                               parValuesAreRange,
+                               frameRateValuesArray,
+                               frameRateValuesAreRange,
                                bitRates);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1044,6 +1164,14 @@ sbDeviceXMLCapabilities::ProcessVideoFormat(nsIDOMNode* aVideoFormatNode)
     return NS_OK;
   }
 
+  nsString isPreferredString;
+  rv = attributes.GetValue(NS_LITERAL_STRING("preferred"),
+                           isPreferredString);
+  if (rv != NS_ERROR_NOT_AVAILABLE) { // not found error is ok, leave blank
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  PRBool isPreferred = isPreferredString.EqualsLiteral("true");
+
   // Retrieve the child nodes for the video node
   nsCOMPtr<nsIDOMNodeList> domNodes;
   rv = aVideoFormatNode->GetChildNodes(getter_AddRefs(domNodes));
@@ -1089,10 +1217,19 @@ sbDeviceXMLCapabilities::ProcessVideoFormat(nsIDOMNode* aVideoFormatNode)
   rv = AddMimeType(sbIDeviceCapabilities::CONTENT_VIDEO, containerType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mDeviceCaps->AddFormatType(sbIDeviceCapabilities::CONTENT_VIDEO,
-                                  containerType,
-                                  videoFormat);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (isPreferred) {
+    rv = mDeviceCaps->AddPreferredFormatType(
+            sbIDeviceCapabilities::CONTENT_VIDEO,
+            containerType,
+            videoFormat);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = mDeviceCaps->AddFormatType(sbIDeviceCapabilities::CONTENT_VIDEO,
+                                    containerType,
+                                    videoFormat);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -1193,7 +1330,28 @@ sbDeviceXMLCapabilities::ProcessPlaylist(nsIDOMNode * aPlaylistNode)
                              mimeType);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    nsString pathSeparator;
+    rv = attributes.GetValue(NS_LITERAL_STRING("pathSeparator"), pathSeparator);
+    // If not found, use a void string  
+    if (rv == NS_ERROR_NOT_AVAILABLE) {
+      pathSeparator.SetIsVoid(PR_TRUE);
+    } else {
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
     rv = AddMimeType(sbIDeviceCapabilities::CONTENT_PLAYLIST, mimeType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIPlaylistFormatType> formatType =
+      do_CreateInstance(SB_IPLAYLISTFORMATTYPE_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = formatType->Initialize(NS_ConvertUTF16toUTF8(pathSeparator));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mDeviceCaps->AddFormatType(sbIDeviceCapabilities::CONTENT_PLAYLIST,
+                                    mimeType,
+                                    formatType);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

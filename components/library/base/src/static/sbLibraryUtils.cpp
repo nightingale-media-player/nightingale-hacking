@@ -46,6 +46,7 @@
 #include <sbIMediaList.h>
 #include <sbIMediaItem.h>
 #include <sbIPropertyArray.h>
+#include <sbIPropertyManager.h>
 
 #include <sbArrayUtils.h>
 #include <sbFileUtils.h>
@@ -175,7 +176,7 @@ nsresult sbLibraryUtils::GetItemInLibrary(/* in */  sbIMediaItem*  aMediaItem,
   nsresult rv;
 
   nsCOMPtr<nsIMutableArray> theCopies =
-    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbLibraryUtils::FindCopiesByID(aMediaItem, aLibrary, theCopies);
@@ -208,46 +209,64 @@ nsresult sbLibraryUtils::GetItemInLibrary(/* in */  sbIMediaItem*  aMediaItem,
 }
 
 nsresult
-sbLibraryUtils::FindOriginalsByURL(/* in */ sbIMediaItem *     aMediaItem,
-                                   /* in */  sbIMediaList *    aList,
-                                   /* out */ nsIMutableArray * aCopies)
+sbLibraryUtils::FindItemsWithSameURL(sbIMediaItem * aMediaItem,
+                                     sbIMediaList * aMediaList,
+                                     nsIMutableArray * aCopies)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
-  NS_ENSURE_ARG_POINTER(aList);
+  NS_ENSURE_ARG_POINTER(aMediaList);
 
   nsresult rv;
-  bool foundOne = false;
-  nsString originURL;
+  PRBool foundOne = PR_FALSE;
+  nsString url;
 
-  // Look up the original content URL
   rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
-                               originURL);
+                               url);
   if (rv != NS_ERROR_NOT_AVAILABLE) {
     NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-    rv = FindByContentURL(aList,
-                          originURL,
+  if (url.IsEmpty()) {
+    rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
+                                 url);
+    if (rv != NS_ERROR_NOT_AVAILABLE) {
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  if (!url.IsEmpty()) {
+    rv = FindByContentURL(aMediaList,
+                          url,
                           aCopies);
     if (rv != NS_ERROR_NOT_AVAILABLE) {
       NS_ENSURE_SUCCESS(rv, rv);
-      foundOne = true;
-    }
-
-    // Now look up the content url if different from the origin URL
-    nsString url;
-    rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
-                                 url);
-    if (!url.Equals(originURL)) {
-      rv = FindByContentURL(aList,
-                            url,
-                            aCopies);
-      if (rv != NS_ERROR_NOT_AVAILABLE) {
+      PRUint32 length;
+      if (aCopies) {
+        rv = aCopies->GetLength(&length);
         NS_ENSURE_SUCCESS(rv, rv);
-        foundOne = true;
+        foundOne = length != 0;
+      }
+      else {
+        foundOne = PR_TRUE;
+      }
+    }
+    rv = FindByOriginURL(aMediaList,
+                         url,
+                         aCopies);
+    if (rv != NS_ERROR_NOT_AVAILABLE) {
+      NS_ENSURE_SUCCESS(rv, rv);
+      PRUint32 length;
+      if (aCopies) {
+        rv = aCopies->GetLength(&length);
+        NS_ENSURE_SUCCESS(rv, rv);
+        foundOne |= length != 0;
+      }
+      else {
+        foundOne = PR_TRUE;
       }
     }
   }
-  return foundOne ? NS_OK : NS_ERROR_NOT_AVAILABLE;
+  return (aCopies || foundOne) ? NS_OK : NS_ERROR_NOT_AVAILABLE;
 }
 
 nsresult sbLibraryUtils::FindCopiesByID(sbIMediaItem * aMediaItem,
@@ -266,13 +285,17 @@ nsresult sbLibraryUtils::FindCopiesByID(sbIMediaItem * aMediaItem,
   rv = FindByOrigin(aList, nsString(), guid, aCopies);
   if (rv != NS_ERROR_NOT_AVAILABLE) {
     NS_ENSURE_SUCCESS(rv, rv);
+    if (!aCopies)
+      return NS_OK;
   }
 
   nsString originLibID;
   rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID),
                                originLibID);
   if (rv == NS_ERROR_NOT_AVAILABLE || originLibID.IsEmpty()) {
-    return NS_ERROR_NOT_AVAILABLE;
+    if (!aCopies)
+      return NS_ERROR_NOT_AVAILABLE;
+    return NS_OK;
   }
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -280,7 +303,9 @@ nsresult sbLibraryUtils::FindCopiesByID(sbIMediaItem * aMediaItem,
   rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
                                originItemID);
   if (rv == NS_ERROR_NOT_AVAILABLE || originItemID.IsEmpty()) {
-    return NS_ERROR_NOT_AVAILABLE;
+    if (!aCopies)
+      return NS_ERROR_NOT_AVAILABLE;
+    return NS_OK;
   }
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -298,7 +323,9 @@ nsresult sbLibraryUtils::FindCopiesByID(sbIMediaItem * aMediaItem,
 
   rv = FindByProperties(aList, properties, aCopies);
   if (rv == NS_ERROR_NOT_AVAILABLE) {
-    return NS_ERROR_NOT_AVAILABLE;
+    if (!aCopies)
+      return NS_ERROR_NOT_AVAILABLE;
+    return NS_OK;
   }
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -325,7 +352,9 @@ nsresult sbLibraryUtils::FindOriginalsByID(sbIMediaItem * aMediaItem,
                                originID);
   if (rv == NS_ERROR_NOT_AVAILABLE || originID.IsEmpty()) {
     NS_ENSURE_SUCCESS(rv, rv);
-    return NS_ERROR_NOT_AVAILABLE;
+    if (!aCopies)
+      return NS_ERROR_NOT_AVAILABLE;
+    return NS_OK;
   }
 
   nsCOMPtr<nsIArray> copies;
@@ -392,13 +421,39 @@ nsresult sbLibraryUtils::GetContentLength(/* in */  sbIMediaItem * aItem,
     rv = file->GetFileSize(_retval);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsString strContentLength;
-    AppendInt(strContentLength, *_retval);
-
     rv = aItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH),
-                            strContentLength);
+                            sbAutoString(*_retval));
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  return NS_OK;
+}
+
+/* static */
+nsresult sbLibraryUtils::SetContentLength(/* in */  sbIMediaItem * aItem,
+                                          /* in */  nsIURI       * aURI)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(aURI);
+
+  nsresult rv;
+
+  nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(aURI, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  // note that this will abort if this is not a local file.  This is the
+  // desired behaviour.
+
+  nsCOMPtr<nsIFile> file;
+  rv = fileURL->GetFile(getter_AddRefs(file));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt64 length;
+  rv = file->GetFileSize(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH),
+                          sbAutoString(length));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -454,10 +509,10 @@ nsresult sbLibraryUtils::GetContentURI(nsIURI*  aURI,
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsCOMPtr<nsIURI> uri = aURI;
-  nsresult rv;
 
   // On Windows, convert "file:" URI's to lower-case.
 #ifdef XP_WIN
+  nsresult rv;
   PRBool isFileScheme;
   rv = uri->SchemeIs("file", &isFileScheme);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -562,4 +617,199 @@ sbLibraryUtils::GetItemsByProperty(sbIMediaList * aMediaList,
                                               aValue,
                                               creator,
                                               sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+}
+
+/**
+ * Enumerator used to build a list of media lists for a content type
+ */
+class sbLUMediaListEnumerator : public sbIMediaListEnumerationListener
+{
+public:
+  sbLUMediaListEnumerator(PRUint32 aContentType)
+   : mContentType(aContentType)
+   {}
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
+
+  nsresult GetMediaLists(nsIArray ** aMediaLists)
+  {
+    return CallQueryInterface(mMediaLists, aMediaLists);
+  }
+private:
+  nsCOMPtr<nsIMutableArray> mMediaLists;
+  PRUint32 mContentType;
+};
+
+NS_IMPL_ISUPPORTS1(sbLUMediaListEnumerator,
+                   sbIMediaListEnumerationListener)
+
+NS_IMETHODIMP sbLUMediaListEnumerator::OnEnumerationBegin(sbIMediaList*,
+                                                                     PRUint16 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  nsresult rv;
+
+  mMediaLists = do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbLUMediaListEnumerator::OnEnumeratedItem(sbIMediaList*,
+                                                                   sbIMediaItem* aItem,
+                                                                   PRUint16 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_TRUE(mMediaLists, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv;
+
+  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aItem);
+  if (list) {
+    bool include = mContentType == sbIMediaList::CONTENTTYPE_MIX;
+    if (!include) {
+      PRUint16 contentType;
+      rv = list->GetListContentType(&contentType);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      include = contentType == mContentType;
+    }
+    if (include) {
+      rv = mMediaLists->AppendElement(list, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+  }
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbLUMediaListEnumerator::OnEnumerationEnd(sbIMediaList*,
+                                                                   nsresult)
+{
+  return NS_OK;
+}
+
+nsresult sbLibraryUtils::GetMediaListByContentType(sbILibrary * aLibrary,
+                                                   PRUint32 aContentType,
+                                                   nsIArray ** aMediaLists)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  NS_ENSURE_ARG_POINTER(aMediaLists);
+
+  nsresult rv;
+
+  nsRefPtr<sbLUMediaListEnumerator> enumerator =
+    new sbLUMediaListEnumerator(aContentType);
+
+  rv = aLibrary->EnumerateItemsByProperty(
+                                        NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                                        NS_LITERAL_STRING("1"),
+                                        enumerator,
+                                        sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = enumerator->GetMediaLists(aMediaLists);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/**
+ * Returns the equality operator for the content property
+ */
+nsresult
+sbLibraryUtils::GetEqualOperator(sbIPropertyOperator ** aOperator)
+{
+  nsresult rv;
+
+  nsCOMPtr<sbIPropertyManager> manager =
+    do_GetService("@songbirdnest.com/Songbird/Properties/PropertyManager;1",
+                  &rv);
+  nsCOMPtr<sbIPropertyInfo> info;
+  rv = manager->GetPropertyInfo(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                                getter_AddRefs(info));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString opName;
+  rv = info->GetOPERATOR_EQUALS(opName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the operator.
+  rv = info->GetOperator(opName, aOperator);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/**
+ * Suggest a unique name for playlist.
+ */
+nsresult
+sbLibraryUtils::SuggestUniqueNameForPlaylist(sbILibrary *aLibrary,
+                                             nsAString const & aListName,
+                                             nsAString & aName)
+{
+  nsresult rv;
+
+  aName = aListName;
+  nsCOMPtr<nsIArray> mediaLists;
+  rv = aLibrary->GetItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                                    NS_LITERAL_STRING("1"),
+                                    getter_AddRefs(mediaLists));
+  if (rv != NS_ERROR_NOT_AVAILABLE) {
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  PRUint32 listLength;
+  rv = mediaLists->GetLength(&listLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 nameLength = aListName.Length();
+  nsTArray<PRUint64> listIDs;
+  nsString listName;
+  PRUint64 availableId = 1;
+  for (PRUint32 i = 0; i < listLength; ++i) {
+    nsCOMPtr<sbIMediaList> mediaList = do_QueryElementAt(mediaLists, i, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mediaList->GetName(listName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!listName.IsEmpty()) {
+      nsDependentSubstring subString(listName, 0, nameLength);
+      if (subString.Equals(aListName)) {
+        PRUint32 listNameLength = listName.Length();
+        if (listNameLength == nameLength) {
+          listIDs.AppendElement(1);
+        }
+        else {
+          nsDependentSubstring idString(listName,
+                                        nameLength + 1,
+                                        listNameLength);
+          PRUint64 id = nsString_ToUint64(idString, &rv);
+          if (rv == NS_ERROR_INVALID_ARG)
+            continue;
+          listIDs.AppendElement(id);
+        }
+      }
+    }
+  }
+
+  while (1) {
+    if (!listIDs.Contains(availableId))
+      break;
+
+    ++availableId;
+  }
+
+  if (availableId > 1) {
+    aName.Append(NS_LITERAL_STRING(" "));
+    AppendInt(aName, availableId);
+  }
+
+  return NS_OK;
 }

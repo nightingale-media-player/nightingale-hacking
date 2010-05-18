@@ -31,12 +31,67 @@ Additional styles imported directly by the device setup dialog.
 *******************************************************************************
 */
 
+#device_setup_dialog {
+  width: 505px;
+}
+
+#device_setup_dialog > sb-sys-outer-frame > .dialog-content-box {
+  overflow: visible;
+}
+
+.dialog-content-box {
+  padding: 0 !important;
+}
+
+#setupContainer {
+  margin: 15px 22px 10px 16px;
+}
+
+#setup_name_header,
+#setup_sync_checkbox,
+#setup_ignore_checkbox {
+  margin-left: 0px;
+}
+
+#nameContainer {
+  margin-bottom: 9px;
+  -moz-box-align: center;
+}
+
+#setup_name_textbox {
+  width: 270px;
+}
+
+#selectorContainer {
+  margin-top: 2px;
+  margin-bottom: 16px;
+  -moz-box-align: start;
+}
+
+#setup_sync_volume_selector_description {
+  margin-left: 0px;
+}
+
+#device_setup_volume_selector {
+  margin-top: 2px;
+  margin-bottom: 2px;
+  width: 164px;
+}
+
 #setup_sync_description {
   font-size: smaller;
 }
 
-#setup_ignore_description {
-  font-size: smaller;
+#ignoreContainer {
+  margin-top: 19px;
+}
+
+#ignoreSeparator {
+  opacity: 0.4;
+}
+
+#setup_ignore_checkbox {
+  margin-top: 7px;
 }
 
 #setup_ignore_checkbox[checked="true"] + #setup_ignore_description {
@@ -44,18 +99,7 @@ Additional styles imported directly by the device setup dialog.
   color: rgb(255, 58, 109);
 }
 
-#device_setup_dialog {
-  width: 500px;
+#setup_ignore_description {
+  font-size: smaller;
 }
 
-#device_setup_dialog[dialogHeight="normal"] {
-  height: 220px;
-}
-
-#device_setup_dialog[dialogHeight="min"] {
-  height: 160px;
-}
-
-#device_setup_dialog[dialogHeight="max"] {
-  height: 280px;
-}

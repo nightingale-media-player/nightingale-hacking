@@ -10,17 +10,17 @@
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the GPL).
-// 
+//
 // Software distributed under the License is distributed
 // on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
 // express or implied. See the GPL for the specific language
 // governing rights and limitations.
-// 
+//
 // You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 //=END SONGBIRD GPL
 */
 
@@ -50,6 +50,7 @@
 // Songbird imports.
 #include <sbAutoRWLock.h>
 #include <sbIDeviceEvent.h>
+#include <sbIDeviceLibraryMediaSyncSettings.h>
 
 // Mozilla imports.
 #include <nsArrayUtils.h>
@@ -171,12 +172,12 @@ sbIPDDevice::GetMgmtType(PRUint32* aMgmtType)
 
   // Read the management type.
   if (mIPodPrefs->music_mgmt_type == 0x00) {
-    *aMgmtType = sbIDeviceLibrary::MGMT_TYPE_MANUAL;
+    *aMgmtType = sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE;
   } else {
     if (mIPodPrefs->music_update_type == 0x01)
-      *aMgmtType = sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL;
+      *aMgmtType = sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL;
     else if (mIPodPrefs->music_update_type == 0x02)
-      *aMgmtType = sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS;
+      *aMgmtType = sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_PLAYLISTS;
     else {
       NS_WARNING("Unexpected management type preference.");
       return NS_ERROR_UNEXPECTED;
@@ -205,16 +206,16 @@ sbIPDDevice::SetMgmtType(PRUint32 aMgmtType)
 
     // Set the management type.
     switch (aMgmtType) {
-      case sbIDeviceLibrary::MGMT_TYPE_MANUAL :
+      case sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE :
         mIPodPrefs->music_mgmt_type = 0x00;
         break;
 
-      case sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL :
+      case sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL :
         mIPodPrefs->music_mgmt_type = 0x01;
         mIPodPrefs->music_update_type = 0x01;
         break;
 
-      case sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS :
+      case sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_PLAYLISTS :
         mIPodPrefs->music_mgmt_type = 0x01;
         mIPodPrefs->music_update_type = 0x02;
         break;

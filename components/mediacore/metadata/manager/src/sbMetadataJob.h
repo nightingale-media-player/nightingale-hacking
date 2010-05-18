@@ -129,6 +129,12 @@ public:
   nsresult AppendMediaItems(nsIArray* aMediaItemsArray);
 
   /**
+   * Append an existing job item to the queue.
+   * \param aJobItem The job item to append to the queue.
+   */
+  nsresult AppendJobItem(sbMetadataJobItem* aJobItem);
+
+  /**
    * Notify listeners of job progress.  
    * To be called periodically by the main thread timer in
    * sbFileMetadataService.
@@ -216,7 +222,8 @@ private:
    * during read jobs.
    * *** MAIN THREAD ONLY ***
    */
-  nsresult CopyPropertiesToMediaItem(sbMetadataJobItem* aJobItem);
+  nsresult CopyPropertiesToMediaItem(sbMetadataJobItem* aJobItem,
+                                     PRBool* aWillRetry);
   
   /**
    * Trigger an album art scan for the given job item.
@@ -229,8 +236,15 @@ private:
    * Add the given job item to mErrorMessages.
    * Must be called on the main thread, since it uses 
    * URIs and the IOService
+   * \param aJobItem The job.
+   * \param aShouldRetry Attempt to read metadata with another handler.
+   * \param aWillRetry Indicates if another attempt will be made. This is
+   *                   always false if aShouldRetry is false. This must
+   *                   never be null if aShouldRetry is true!
    */
-  nsresult HandleFailedItem(sbMetadataJobItem* aJobItem);
+  nsresult HandleFailedItem(sbMetadataJobItem* aJobItem, 
+                            PRBool aShouldRetry = PR_FALSE, 
+                            PRBool *aWillRetry = nsnull);
 
   /**
    * Empty mProcessedBackgroundThreadItems in a library batch.  

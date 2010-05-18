@@ -32,6 +32,7 @@ Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
 const Ci = Components.interfaces;
 const Cc = Components.classes;
 const Cr = Components.results;
+const Cu = Components.utils;
 
 const NS_QUIT_APPLICATION_GRANTED_TOPIC = "quit-application-granted";
 const NS_TIMER_CALLBACK_TOPIC           = "timer-callback";
@@ -39,6 +40,8 @@ const SB_FINAL_UI_STARTUP_TOPIC         = "final-ui-startup";
 const SB_TIMER_MANAGER_PREFIX           = "songbird-device-firmware-update-";
 
 const FIRMWARE_WIZARD_ACTIVE_DATAREMOTE = "firmware.wizard.active";
+
+const FIRMWARE_UPDATE_INTERVAL = "songbird.firmware.update.defaultInterval";
 
 function DEBUG(msg) {
   return;
@@ -67,24 +70,26 @@ function DEBUG(msg) {
       return x.toSource();
     }
   }
-  dump('sbDeviceFirmwareAutocheckForUpdate:: '+DEBUG.caller.name);
+  var fullMsg = 'sbDeviceFirmwareAutocheckForUpdate:: '+DEBUG.caller.name;
   if (typeof(msg) == "undefined") {
     // when nothing is passed in, print the arguments
-    dump('(');
+    fullMsg += '(';
     for (var i=0; i<DEBUG.caller.length; i++) {
-      if (i) dump(', ');
-      dump(repr(DEBUG.caller.arguments[i]));
+      if (i) fullMsg += ', ';
+      fullMsg += repr(DEBUG.caller.arguments[i]);
     }
-    dump(')');
+    fullMsg += ')';
   } else {
-    dump(': ');
+    fullMsg += ': ';
     if (typeof msg != 'object' || msg instanceof Array) {
-      dump(repr(msg));
+      fullMsg += repr(msg);
     } else {
-      dump(msg.toSource());
+      fullMsg += msg.toSource();
     }
   }
-  dump('\n');
+  fullMsg += '\n';
+  
+  Cu.reportError(fullMsg);
 }
 
 
@@ -185,7 +190,7 @@ function sbDeviceFirmwareAutoCheckForUpdate_observe(subject, topic, data) {
       this._queueItem = device;
       // Check for update
       if (device.getPreference("firmware.update.enabled")) {
-        this._deviceFirmwareUpdater.checkForUpdate(device, this);
+        this._deviceFirmwareUpdater.checkForUpdate(device, 0, 0, this);
       }
     }
     else if(this._queueItem && 
@@ -228,7 +233,7 @@ function sbDeviceFirmwareAutoCheckForUpdate_notify(aDevice) {
   if (!this._timer) {
     // set up the timer
     this._timer = Cc['@mozilla.org/timer;1'].createInstance(Ci.nsITimer);
-    this._timer.init(this, 5000, Ci.nsITimer.TYPE_REPEATING_SLACK);
+    this._timer.init(this, 15000, Ci.nsITimer.TYPE_REPEATING_SLACK);
   }
   if (this._queue.indexOf(aDevice) < 0) {
     this._queue.push(aDevice);
@@ -238,7 +243,7 @@ function sbDeviceFirmwareAutoCheckForUpdate_notify(aDevice) {
 /** sbIDeviceEventListener */
 sbDeviceFirmwareAutoCheckForUpdate.prototype.onDeviceEvent =
 function sbDeviceFirmwareAutoCheckForUpdate_onDeviceEvent(aEvent) {
-  //DEBUG();
+  DEBUG();
   var device = null;
 
   switch(aEvent.type) {
@@ -246,6 +251,25 @@ function sbDeviceFirmwareAutoCheckForUpdate_onDeviceEvent(aEvent) {
       device = aEvent.data.QueryInterface(Ci.sbIDevice);
       if (device.getPreference("firmware.update.enabled")) {
         this._registerTimer(device);
+      }
+      
+      // If it's the first time the device is connected, check
+      // for a firmware update right away. We also set the 
+      // auto check for firmware update pref to true.  Since
+      // we only do this the first time the device is connected
+      // the user can choose not to do this and their preference
+      // will be respected.
+      if (device.getPreference("firstTime") && 
+          this._queue.indexOf(device) < 0) {
+        device.setPreference("firmware.update.enabled", true);
+        this._queue.push(device);
+        if (!this._timer) {
+          // set up the timer, when it's the first time, we wait 15 seconds in
+          // the hopes that the device will have finished mounting before
+          // we check for a firmware update.
+          this._timer = Cc['@mozilla.org/timer;1'].createInstance(Ci.nsITimer);
+          this._timer.init(this, 15000, Ci.nsITimer.TYPE_REPEATING_SLACK);
+        }
       }
       
       // XXXAus says:
@@ -348,7 +372,14 @@ function sbDeviceFirmwareAutoCheckForUpdate__registerTimer(aDevice) {
   };
   let interval = aDevice.getPreference("firmware.update.interval");
   if (!interval) {
-    interval = 60 * 60 * 24 * 7; // default to 7 days
+    var prefs = Cc["@mozilla.org/fuel/application;1"]
+                  .getService(Ci.fuelIApplication)
+                  .prefs;
+    // Every 7 days in case there is no pref available.
+    interval = prefs.getValue(FIRMWARE_UPDATE_INTERVAL, 60 * 60 * 24 * 7);
+
+    DEBUG("Using default interval for firmware update check: " + 
+          interval);
   }
   this._timerManager.registerTimer(SB_TIMER_MANAGER_PREFIX + aDevice.id,
                                    callback,

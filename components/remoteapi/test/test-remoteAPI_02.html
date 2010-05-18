@@ -55,10 +55,10 @@
           }
         }
 
-        // observer for DataRemote -- implementes the nsIObserver interface
+        // observer for DataRemote -- implementes the sbIRemoteObserver interface
         obs = {
-          observe: function ( aSubject, aTopic, aData) {
-	    setData(aTopic, aData);
+          observe: function ( aKey, aValue ) {
+	    setData(aKey, aValue);
 	  }
         }
 

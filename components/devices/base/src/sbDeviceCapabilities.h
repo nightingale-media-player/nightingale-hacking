@@ -63,6 +63,7 @@ protected:
   ContentTypes mContentTypes;
   SupportedMimeTypes mSupportedMimeTypes;
   nsVoidArray mContentFormatTypes;
+  nsVoidArray mContentPreferredFormatTypes;
   nsTArray<PRUint32> mSupportedEvents;
 };
 
@@ -109,6 +110,26 @@ private:
   PRInt32 mMax;
   PRInt32 mStep;
   nsTArray<PRInt32> mValues;
+};
+
+/**
+ * Implementation of @see sbDevCapFraction
+ */
+class sbDevCapFraction : public sbIDevCapFraction, nsIClassInfo
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIDEVCAPFRACTION
+  NS_DECL_NSICLASSINFO
+
+  sbDevCapFraction() : mNumerator(0),
+                       mDenominator(0) {}
+
+private:
+  ~sbDevCapFraction();
+
+  PRUint32 mNumerator;
+  PRUint32 mDenominator;
 };
 
 /**
@@ -199,8 +220,10 @@ private:
   nsCOMPtr<nsIArray> mExplicitSizes;
   nsCOMPtr<sbIDevCapRange> mWidths;
   nsCOMPtr<sbIDevCapRange> mHeights;
-  nsTArray<sbFraction> mVideoPARs;
-  nsTArray<sbFraction> mFrameRates;
+  PRBool                   mIsPARRange;
+  nsCOMPtr<nsIArray>       mVideoPARs;
+  PRBool                   mIsFrameRatesRange;
+  nsCOMPtr<nsIArray>       mVideoFrameRates;
   nsCOMPtr<sbIDevCapRange> mBitRates;
 };
 
@@ -243,6 +266,24 @@ private:
   nsCString mContainerType;
   nsCOMPtr<sbIDevCapVideoStream> mVideoStream;
   nsCOMPtr<sbIDevCapAudioStream> mAudioStream;
+};
+
+/**
+ * Implementation of @see sbIPlaylistFormatType
+ */
+class sbPlaylistFormatType : public sbIPlaylistFormatType, nsIClassInfo
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIPLAYLISTFORMATTYPE
+  NS_DECL_NSICLASSINFO
+
+  sbPlaylistFormatType();
+
+private:
+  virtual ~sbPlaylistFormatType();
+
+  nsCString mPathSeparator;
 };
 
 #endif /* __SBDEVICECAPABILITIES_H__ */

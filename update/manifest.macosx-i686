@@ -205,7 +205,6 @@
 ./components/sbSmartMediaListsUpdater.js
 ./components/sbSmartPlaylistPropertyRegistrar.js
 ./components/sbSongbirdProtocol.js
-./components/sbStorageFormatter.jsm
 ./components/sbStrings.dylib
 ./components/sbStrings.xpt
 ./components/sbTemporaryFileService.dylib
@@ -286,7 +285,7 @@
 ./gst-plugins/libgstjpeg.so
 ./gst-plugins/libgstlevel.so
 ./gst-plugins/libgstmatroska.so
-./gst-plugins/libgstmozillasrc.so
+./gst-plugins/libgstmozilla.so
 ./gst-plugins/libgstmpeg4videoparse.so
 ./gst-plugins/libgstmpegaudioparse.so
 ./gst-plugins/libgstmulaw.so
@@ -362,7 +361,6 @@
 ./jsmodules/sbMetadataUtils.jsm
 ./jsmodules/sbProperties.jsm
 ./jsmodules/sbSmartMediaListColumnSpecUpdater.jsm
-./jsmodules/sbStorageFormatter.jsm
 ./jsmodules/sbTimeFormatter.jsm
 ./lib/libFLAC.dylib
 ./lib/libgettextlib.dylib

@@ -65,6 +65,4 @@ DYNAMIC_LIB = sbMockCDDevice
 
 IS_COMPONENT = 1
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbMockCDDeviceService.js
-
 include $(topsrcdir)/build/rules.mk

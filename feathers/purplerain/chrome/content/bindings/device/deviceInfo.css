@@ -36,7 +36,7 @@ Imported by bindings.css or directly into feathers.
 */
 
 .device-name-label {
-  font-size:150%;
+  font-size:14px;
   font-weight:bold;
 }
 .device-tab-header-label {
@@ -89,6 +89,12 @@ Imported by bindings.css or directly into feathers.
   list-style-image:url("chrome://songbird/skin/device/button-info.png");
   -moz-image-region: rect(0px, 16px, 16px, 0px);
 }
+.more-info-button,
+.eject-button {
+  margin:0px;
+  padding:0px;
+  width:24px;
+}
 .eject-button .button-box,
 .more-info-button .button-box {
   padding:2px;
@@ -102,8 +108,8 @@ Imported by bindings.css or directly into feathers.
   border: none !important;
   margin: 0px !important;
   padding: 0px !important;
-  min-height: 36px !important;
-  max-height: 36px !important;
+  min-height: 20px !important;
+  max-height: 20px !important;
   background-color: transparent !important;
 }
 .eject-info-buttons > groupbox > .groupbox-body {
@@ -176,6 +182,15 @@ tabbox#device_management_box > tabpanels > tabpanel {
   min-width:420px;
   max-width:480px;
 }
+
+.device-no-storage-vbox {
+  -moz-box-align: center;
+}
+
+.device-no-storage-groupbox {
+  width: 420px;
+}
+
 .device-tab-button-box {
   margin:0 0px;
   padding:0px 6px;

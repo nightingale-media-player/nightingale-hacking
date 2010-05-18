@@ -39,7 +39,7 @@ interface sbITranscodeProfile;
  *
  * Implementations are to be thread safe.
  */
-[scriptable, uuid(3e3b878a-fec0-4a83-ac43-24c47742b6f9)]
+[scriptable, uuid(60FBC87C-9AB6-4BB0-B061-64BBCAAFE462)]
 interface sbIDeviceInfoRegistrar : nsISupports
 {
   /* Types of registrars */
@@ -106,7 +106,30 @@ interface sbIDeviceInfoRegistrar : nsISupports
    * \return                    A comma separate list of relative folder paths
    */
   AString getExcludedFolders(in sbIDevice aDevice);
-     
+
+  /**
+   * \brief Returns true if the device supports reformat.
+   */
+  boolean getDoesDeviceSupportReformat(in sbIDevice aDevice);
+
+  /**
+   * \brief Return the storage device info list as an nsIArray of nsIPropertyBag
+   *        elements.
+   *
+   * The following properties may be specified for each storage device:
+   *
+   *   lun                      Logical unit number (e.g., for USB MSC).
+   *   scsiVendorID             SCSI vendor ID.
+   *   scsiProductID            SCSI product ID.
+   *   removable                "true" if storage is removable (e.g., SD-Card).
+   *   primary                  "true" if storage device is primary storage.
+   *
+   * \param aDevice             Device for which to get storage info list.
+   *
+   * \return                    An nsIArray of nsIPropertyBag elements.
+   */
+  nsIArray getStorageDeviceInfoList(in sbIDevice aDevice);
+
   /**
    * \brief Determines if the registrar is interested in this device
    * \param aDevice The device to check if the registrar is interested in

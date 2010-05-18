@@ -553,6 +553,7 @@
 <!ENTITY device.tools.format_device.title "Format Device">
 <!ENTITY device.tools.format_device.description 'Formatting your device will erase all media on the device.'>
 <!ENTITY device.tools.format_device.label "Format device">
+<!ENTITY device.tools.format_volume.button.label "Format">
 
 <!ENTITY device.tools.support.title "Support">
 <!ENTITY device.tools.support.description "View the latest support news, user manuals, documentation, frequently asked questions, and product information. Support services are available for customers who have registered their product.">

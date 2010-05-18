@@ -27,6 +27,7 @@
 // Mozilla includes
 #include <nsArrayUtils.h>
 #include <nsComponentManagerUtils.h>
+#include <nsIFileURL.h>
 #include <nsIInputStream.h>
 #include <nsIIOService.h>
 #include <nsIStringEnumerator.h>
@@ -40,6 +41,7 @@
 #include <sbIDeviceEvent.h>
 #include <sbIJobCancelable.h>
 #include <sbIMediacoreEventTarget.h>
+#include <sbIMediaFormatMutable.h>
 #include <sbIMediaInspector.h>
 #include <sbITranscodeAlbumArt.h>
 #include <sbITranscodeError.h>
@@ -80,11 +82,13 @@ sbDeviceTranscoding::sbDeviceTranscoding(sbBaseDevice * aBaseDevice) :
 }
 
 nsresult
-sbDeviceTranscoding::GetSupportedTranscodeProfiles(nsIArray **aSupportedProfiles)
+sbDeviceTranscoding::GetSupportedTranscodeProfiles(PRUint32 aType,
+                                                   nsIArray **aSupportedProfiles)
 {
   nsresult rv;
   if (!mTranscodeProfiles) {
     rv = sbDeviceUtils::GetSupportedTranscodeProfiles(
+                          aType,
                           mBaseDevice,
                           getter_AddRefs(mTranscodeProfiles));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -108,16 +112,22 @@ sbDeviceTranscoding::SelectTranscodeProfile(PRUint32 transcodeType,
   rv = mBaseDevice->GetPreference(
                               NS_LITERAL_STRING("transcode_profile.profile_id"),
                               getter_AddRefs(profileIdVariant));
-  if (NS_SUCCEEDED(rv))
-  {
-    hasProfilePref = PR_TRUE;
-    rv = profileIdVariant->GetAsAString(prefProfileId);
-    NS_ENSURE_SUCCESS(rv, rv);
-    TRACE(("%s: found a profile", __FUNCTION__));
+  if (NS_SUCCEEDED(rv)) {
+    PRUint16 dataType = 0;
+    rv = profileIdVariant->GetDataType(&dataType);
+    if (NS_SUCCEEDED(rv) && 
+        dataType != nsIDataType::VTYPE_EMPTY &&
+        dataType != nsIDataType::VTYPE_VOID) {
+      hasProfilePref = PR_TRUE;
+      rv = profileIdVariant->GetAsAString(prefProfileId);
+      NS_ENSURE_SUCCESS(rv, rv);
+      TRACE(("%s: found a profile", __FUNCTION__));
+    }
   }
 
   nsCOMPtr<nsIArray> supportedProfiles;
-  rv = mBaseDevice->GetSupportedTranscodeProfiles(getter_AddRefs(supportedProfiles));
+  rv = mBaseDevice->GetSupportedTranscodeProfiles(transcodeType,
+                                                  getter_AddRefs(supportedProfiles));
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 bestPriority = 0;
@@ -380,112 +390,34 @@ sbDeviceTranscoding::FindTranscodeProfile(sbIMediaItem * aMediaItem,
   PRUint32 const transcodeType = GetTranscodeType(aMediaItem);
   bool needsTranscoding = false;
 
-  if (transcodeType == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO) {
-    nsCOMPtr<sbIMediaFormat> mediaFormat;
-    rv = GetMediaFormat(aMediaItem, getter_AddRefs(mediaFormat));
-    if (NS_FAILED(rv)) {
-      nsString inputUri;
-      nsresult rv2;
-      rv2 = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
-                                    inputUri);
-      NS_ENSURE_SUCCESS(rv2, rv2);
-      nsTArray<nsString> params;
-      params.AppendElement(inputUri);
-      SBLocalizedString message("transcode.error.generic", params);
-      nsCOMPtr<sbITranscodeError> error;
-      rv2 = SB_NewTranscodeError(message,
-                                 message,
-                                 SBVoidString(),
-                                 inputUri,
-                                 aMediaItem,
-                                 getter_AddRefs(error));
-      NS_ENSURE_SUCCESS(rv2, rv2);
-      rv2 = DispatchTranscodeError(error, mBaseDevice);
-      NS_ENSURE_SUCCESS(rv2, rv2);
-    }
-    if (rv == NS_ERROR_NOT_AVAILABLE) {
-      return rv;
-    }
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = sbDeviceUtils::DoesItemNeedTranscoding(transcodeType,
-                                                mediaFormat,
-                                                mBaseDevice,
-                                                needsTranscoding);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (!needsTranscoding) {
-      *aDeviceCompatibility = TransferRequest::COMPAT_SUPPORTED;
-      return NS_OK;
-    }
-
-    // XXX MOOK this needs to be fixed to be not gstreamer specific
-    nsCOMPtr<nsIURI> inputUri;
-    rv = aMediaItem->GetContentSrc(getter_AddRefs(inputUri));
-    NS_ENSURE_SUCCESS(rv, rv);
-    nsCOMPtr<sbIDeviceTranscodingConfigurator> configurator =
-      do_CreateInstance("@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Device/GStreamer;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = configurator->SetInputUri(inputUri);
-    NS_ENSURE_SUCCESS(rv, rv);
-    nsCOMPtr<sbIDevice> device =
-      do_QueryInterface(NS_ISUPPORTS_CAST(sbIDevice*, mBaseDevice), &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = configurator->SetDevice(device);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = configurator->DetermineOutputType();
-    if (NS_SUCCEEDED(rv)) {
-      *aDeviceCompatibility = TransferRequest::COMPAT_NEEDS_TRANSCODING;
-    }
-    else {
-      // we need transcoding, but we don't have anything available to do it with
-      nsCOMPtr<sbITranscodeError> error;
-      rv = configurator->GetLastError(getter_AddRefs(error));
-      if (NS_SUCCEEDED(rv) && error) {
-        rv = error->SetDestItem(aMediaItem);
-        NS_ENSURE_SUCCESS(rv, rv);
-        rv = DispatchTranscodeError(error, mBaseDevice);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-    }
-    return NS_OK;
-  }
-
-  // TODO: GetFormatTypeForItem is depreciated. Once the media inspector
-  // service is finished this should go away
-  sbExtensionToContentFormatEntry_t formatType;
-  PRUint32 bitRate = 0;
-  PRUint32 sampleRate = 0;
-  rv = sbDeviceUtils::GetFormatTypeForItem(aMediaItem,
-                                           formatType,
-                                           bitRate,
-                                           sampleRate);
+  nsCOMPtr<sbIMediaFormat> mediaFormat;
+  rv = GetMediaFormat(transcodeType, aMediaItem, getter_AddRefs(mediaFormat));
   if (NS_FAILED(rv)) {
-    // we can't figure out what this audio-only file is; dispatch an error
-    // message to the user before aborting.
-    nsresult rv2 = rv;
     nsString inputUri;
-    rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
-                                 inputUri);
-    NS_ENSURE_SUCCESS(rv, rv);
+    nsresult rv2;
+    rv2 = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
+                                  inputUri);
+    NS_ENSURE_SUCCESS(rv2, rv2);
     nsTArray<nsString> params;
     params.AppendElement(inputUri);
     SBLocalizedString message("transcode.error.generic", params);
-    nsString detailMessage;
-    detailMessage.AppendInt(rv2, 16);
     nsCOMPtr<sbITranscodeError> error;
-    rv = SB_NewTranscodeError(message, message, detailMessage,
-                              inputUri, aMediaItem, getter_AddRefs(error));
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = DispatchTranscodeError(error, mBaseDevice);
-    NS_ENSURE_SUCCESS(rv, rv);
+    rv2 = SB_NewTranscodeError(message,
+                               message,
+                               SBVoidString(),
+                               inputUri,
+                               aMediaItem,
+                               getter_AddRefs(error));
+    NS_ENSURE_SUCCESS(rv2, rv2);
+    rv2 = DispatchTranscodeError(error, mBaseDevice);
     NS_ENSURE_SUCCESS(rv2, rv2);
   }
-
-  // Check for expected error, unable to find format type
-  rv = sbDeviceUtils::DoesItemNeedTranscoding(formatType,
-                                              bitRate,
-                                              sampleRate,
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    return rv;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = sbDeviceUtils::DoesItemNeedTranscoding(transcodeType,
+                                              mediaFormat,
                                               mBaseDevice,
                                               needsTranscoding);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -495,50 +427,137 @@ sbDeviceTranscoding::FindTranscodeProfile(sbIMediaItem * aMediaItem,
     return NS_OK;
   }
 
-  rv = SelectTranscodeProfile(transcodeType, aProfile);
+  nsCOMPtr<sbIDeviceTranscodingConfigurator> configurator;
+  rv = sbDeviceUtils::GetTranscodingConfigurator(transcodeType,
+                                                 getter_AddRefs(configurator));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURI> inputUri;
+  rv = aMediaItem->GetContentSrc(getter_AddRefs(inputUri));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = configurator->SetInputUri(inputUri);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIDevice> device =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbIDevice*, mBaseDevice), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = configurator->SetDevice(device);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = configurator->DetermineOutputType();
   if (NS_SUCCEEDED(rv)) {
     *aDeviceCompatibility = TransferRequest::COMPAT_NEEDS_TRANSCODING;
   }
   else {
-    nsString detailMessage;
-    detailMessage.AppendInt(rv, 16);
-    nsString inputUri;
-    rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
-                                 inputUri);
-    NS_ENSURE_SUCCESS(rv, rv);
+    // we need transcoding, but we don't have anything available to do it with
     nsCOMPtr<sbITranscodeError> error;
-    rv = SB_NewTranscodeError(NS_LITERAL_STRING("transcode.error.no_profile.hasitem"),
-                              NS_LITERAL_STRING("transcode.error.no_profile.withoutitem"),
-                              detailMessage,
-                              inputUri,
-                              aMediaItem,
-                              getter_AddRefs(error));
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = DispatchTranscodeError(error, mBaseDevice);
-    NS_ENSURE_SUCCESS(rv, rv);
+    rv = configurator->GetLastError(getter_AddRefs(error));
+    if (NS_SUCCEEDED(rv) && error) {
+      rv = error->SetDestItem(aMediaItem);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = DispatchTranscodeError(error, mBaseDevice);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
+  return NS_OK;
+}
+
+nsresult
+sbDeviceTranscoding::GetAudioFormatFromMediaItem(sbIMediaItem* aMediaItem,
+                                                 sbIMediaFormat** aMediaFormat)
+{
+  nsresult rv;
+  nsCOMPtr<sbIMediaFormatMutable> format;
+  nsCOMPtr<sbIMediaFormatAudioMutable> audioFormat;
+  nsCOMPtr<sbIMediaFormatContainerMutable> containerFormat;
+
+  audioFormat = do_CreateInstance(SB_MEDIAFORMATAUDIO_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  struct sbExtensionToContentFormatEntry_t formatInfo;
+  PRUint32 rate = 0;
+  PRUint32 channels = 0;
+  PRUint32 bitrate = 0;
+  rv = sbDeviceUtils::GetFormatTypeForItem(aMediaItem,
+          formatInfo,
+          rate,
+          channels,
+          bitrate);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  rv = audioFormat->SetAudioType(NS_ConvertASCIItoUTF16(formatInfo.Codec));
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  if (!rate) {
+    // If we didn't get the sample rate, just default to 44100, as that's the
+    // most common. We probably just don't have a sample rate because the
+    // metadata importer couldn't figure it out, and we shouldn't reject a file
+    // just because of this.
+    rate = 44100;
+  }
+  rv = audioFormat->SetSampleRate (rate);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  if (!channels) {
+    // Likewise for channels, default to stereo.
+    channels = 2;
+  }
+  rv = audioFormat->SetChannels (channels);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  // Not setting bitrate is more or less ok - so we don't use a default here.
+  if (bitrate) {
+    rv = audioFormat->SetBitRate (bitrate);
+    NS_ENSURE_SUCCESS (rv, rv);
+  }
+
+  containerFormat = do_CreateInstance(SB_MEDIAFORMATCONTAINER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  containerFormat->SetContainerType(
+          NS_ConvertASCIItoUTF16(formatInfo.ContainerFormat));
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  format = do_CreateInstance(SB_MEDIAFORMAT_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  rv = format->SetContainer (containerFormat);
+  NS_ENSURE_SUCCESS (rv, rv);
+  rv = format->SetAudioStream (audioFormat);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  rv = CallQueryInterface(format.get(), aMediaFormat);
+  NS_ENSURE_SUCCESS (rv, rv);
 
   return NS_OK;
 }
 
 nsresult
-sbDeviceTranscoding::GetMediaFormat(sbIMediaItem* aMediaItem,
+sbDeviceTranscoding::GetMediaFormat(PRUint32 aTranscodeType,
+                                    sbIMediaItem* aMediaItem,
                                     sbIMediaFormat** aMediaFormat)
 {
   nsresult rv;
-  if (!mMediaInspector) {
-    mMediaInspector = do_CreateInstance(SB_MEDIAINSPECTOR_CONTRACTID, &rv);
+
+  if (aTranscodeType == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO)
+  {
+    // TODO: if this fails, we could fall back to using the inspector?
+    rv = GetAudioFormatFromMediaItem(aMediaItem, aMediaFormat);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    return NS_OK;
   }
+  else {
+    if (!mMediaInspector) {
+      mMediaInspector = do_CreateInstance(SB_MEDIAINSPECTOR_CONTRACTID, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    nsCOMPtr<sbIMediaFormat> mediaFormat;
+    rv = mMediaInspector->InspectMedia(aMediaItem, getter_AddRefs(mediaFormat));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIMediaFormat> mediaFormat;
-
-  rv = mMediaInspector->InspectMedia(aMediaItem, getter_AddRefs(mediaFormat));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  mediaFormat.forget(aMediaFormat);
-
-  return NS_OK;
+    mediaFormat.forget(aMediaFormat);
+    return NS_OK;
+  }
 }
 
 nsresult
@@ -554,153 +573,13 @@ sbDeviceTranscoding::GetMediaInspector(sbIMediaInspector** _retval)
 }
 
 nsresult
-sbDeviceTranscoding::TranscodeVideoItem(
-                                     sbITranscodeVideoJob * aVideoJob,
-                                     sbBaseDevice::TransferRequest * aRequest,
-                                     nsIURI * aDestinationURI)
-{
-  NS_ENSURE_ARG_POINTER(aVideoJob);
-  NS_ENSURE_ARG_POINTER(aRequest);
-  NS_ENSURE_ARG_POINTER(aDestinationURI);
-
-  nsresult rv;
-
-  nsCString destinationURISpec;
-  rv = aDestinationURI->GetSpec(destinationURISpec);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = aVideoJob->SetDestURI(NS_ConvertUTF8toUTF16(destinationURISpec));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIURI> sourceURI;
-  rv = aRequest->item->GetContentSrc(getter_AddRefs(sourceURI));
-  NS_ENSURE_SUCCESS(rv, rv);
-  nsCString sourceURISpec;
-  rv = sourceURI->GetSpec(sourceURISpec);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = aVideoJob->SetSourceURI(NS_ConvertUTF8toUTF16(sourceURISpec));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIPropertyArray> metadata;
-  rv = aRequest->item->GetProperties(nsnull, getter_AddRefs(metadata));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = aVideoJob->SetMetadata(metadata);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Setup the configurator
-  // XXX MOOK this needs to be fixed to be not gstreamer specific
-  nsCOMPtr<sbIDeviceTranscodingConfigurator> configurator =
-    do_CreateInstance("@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Device/GStreamer;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = configurator->SetInputUri(sourceURI);
-  NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<sbIDevice> device =
-    do_QueryInterface(NS_ISUPPORTS_CAST(sbIDevice*, mBaseDevice), &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = configurator->SetDevice(device);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbITranscodingConfigurator> qiConfigurator =
-    do_QueryInterface(configurator, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = aVideoJob->SetConfigurator(qiConfigurator);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-nsresult
-sbDeviceTranscoding::TranscodeAudioItem(
-                                        sbITranscodeJob * aAudioJob,
-                                        sbBaseDevice::TransferRequest * aRequest,
-                                        nsIURI * aDestinationURI)
-{
-  NS_ENSURE_ARG_POINTER(aAudioJob);
-  NS_ENSURE_ARG_POINTER(aRequest);
-  NS_ENSURE_ARG_POINTER(aDestinationURI);
-
-  nsresult rv;
-  rv = aAudioJob->SetProfile(aRequest->transcodeProfile);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCString destinationURISpec;
-  rv = aDestinationURI->GetSpec(destinationURISpec);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = aAudioJob->SetDestURI(NS_ConvertUTF8toUTF16(destinationURISpec));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIURI> sourceURI;
-  rv = aRequest->item->GetContentSrc(getter_AddRefs(sourceURI));
-  NS_ENSURE_SUCCESS(rv, rv);
-  nsCString sourceURISpec;
-  rv = sourceURI->GetSpec(sourceURISpec);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = aAudioJob->SetSourceURI(NS_ConvertUTF8toUTF16(sourceURISpec));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIPropertyArray> metadata;
-  rv = aRequest->item->GetProperties(nsnull, getter_AddRefs(metadata));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = aAudioJob->SetMetadata(metadata);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  /* Just ignore failures from transcoding the album art - the device might
-     not support album art, etc, and that's ok.
-   */
-  if (aRequest->albumArt) {
-    nsCOMPtr<nsIInputStream> imageStream;
-    rv = aRequest->albumArt->GetTranscodedArt(getter_AddRefs(imageStream));
-    if (imageStream && NS_SUCCEEDED(rv)) {
-      rv = aAudioJob->SetMetadataImage(imageStream);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
-
-  return NS_OK;
-}
-
-/**
- * Set the extension on aURI to the appropriate file extension for profile
- * aProfile.
- * \param aProfile the profile we're finding an extension for
- * \param aURI     the URI to set the found extension on
- */
-static
-nsresult SetFileExtension(sbITranscodeProfile *aProfile,
-                          nsIURI *aURI)
-{
-  NS_ENSURE_ARG_POINTER(aProfile);
-
-  nsCString extension;
-  nsresult rv = sbDeviceUtils::GetTranscodedFileExtension(aProfile, extension);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIThread> target;
-  rv = NS_GetMainThread(getter_AddRefs(target));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIURL> url;
-  rv = do_GetProxyForObject(target,
-                            NS_GET_IID(nsIURL),
-                            aURI,
-                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-                            getter_AddRefs(url));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = url->SetFileExtension(extension);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-nsresult
 sbDeviceTranscoding::TranscodeMediaItem(
-                                     sbBaseDevice::TransferRequest * aRequest,
+                                     sbIMediaItem *aMediaItem,
                                      sbDeviceStatusHelper * aDeviceStatusHelper,
                                      nsIURI * aDestinationURI,
                                      nsIURI ** aTranscodedDestinationURI)
 {
-  NS_ENSURE_ARG_POINTER(aRequest);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aDeviceStatusHelper);
   NS_ENSURE_ARG_POINTER(aDestinationURI);
 
@@ -712,8 +591,7 @@ sbDeviceTranscoding::TranscodeMediaItem(
   nsCOMPtr<sbITranscodeManager> txMgr;
   rv = GetTranscodeManager(getter_AddRefs(txMgr));
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = txMgr->GetTranscoderForMediaItem(aRequest->item,
-                                        aRequest->transcodeProfile,
+  rv = txMgr->GetTranscoderForMediaItem(aMediaItem,
                                         getter_AddRefs(tcJob));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -740,43 +618,83 @@ sbDeviceTranscoding::TranscodeMediaItem(
   NS_ENSURE_SUCCESS(rv, rv);
   transcodedDestinationURI = transcodedDestinationURIProxy;
 
-  nsCOMPtr<sbITranscodeVideoJob> videoJob = do_QueryInterface(tcJob, &rv);
-  nsCOMPtr<sbITranscodeJob> audioJob;
-  if (NS_SUCCEEDED(rv)) {
-    nsCOMPtr<sbITranscodeVideoJob> proxyVideoJob;
-    rv = do_GetProxyForObject(target,
-                              NS_GET_IID(sbITranscodeVideoJob),
-                              tcJob,
-                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-                              getter_AddRefs(proxyVideoJob));
-    NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbITranscodeVideoJob> transcodeJob = do_QueryInterface(tcJob, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbITranscodeVideoJob> proxyTranscodeJob;
+  rv = do_GetProxyForObject(target,
+                            NS_GET_IID(sbITranscodeVideoJob),
+                            tcJob,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(proxyTranscodeJob));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    videoJob.swap(proxyVideoJob);
+  transcodeJob.swap(proxyTranscodeJob);
 
-    rv = TranscodeVideoItem(videoJob,
-                            aRequest,
-                            transcodedDestinationURI);
+  PRUint32 const transcodeType = GetTranscodeType(aMediaItem);
+
+  nsCString destinationURISpec;
+  rv = aDestinationURI->GetSpec(destinationURISpec);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = transcodeJob->SetDestURI(NS_ConvertUTF8toUTF16(destinationURISpec));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURI> sourceURI;
+  rv = aMediaItem->GetContentSrc(getter_AddRefs(sourceURI));
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCString sourceURISpec;
+  rv = sourceURI->GetSpec(sourceURISpec);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = transcodeJob->SetSourceURI(NS_ConvertUTF8toUTF16(sourceURISpec));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPropertyArray> metadata;
+  rv = aMediaItem->GetProperties(nsnull, getter_AddRefs(metadata));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = transcodeJob->SetMetadata(metadata);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Setup the configurator
+  nsCOMPtr<sbIDeviceTranscodingConfigurator> configurator;
+  rv = sbDeviceUtils::GetTranscodingConfigurator(transcodeType,
+                                                 getter_AddRefs(configurator));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = configurator->SetInputUri(sourceURI);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIDevice> device =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbIDevice*, mBaseDevice), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = configurator->SetDevice(device);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbITranscodingConfigurator> qiConfigurator =
+    do_QueryInterface(configurator, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = transcodeJob->SetConfigurator(qiConfigurator);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /* Set up album art for output to resulting file - transcoding will be
+     performed if required. Ignore failures here - album art isn't essential */
+  nsCOMPtr<sbITranscodeAlbumArt> albumArt = do_CreateInstance(
+                      SONGBIRD_TRANSCODEALBUMART_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIArray> imageFormats;
+  rv = mBaseDevice->GetSupportedAlbumArtFormats(getter_AddRefs(imageFormats));
+  // No album art formats isn't fatal.
+  if (rv != NS_ERROR_NOT_AVAILABLE) {
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  else {
-    // Set the transcoded file extension.  Not finding an extension is ok, we'll
-    // just keep the existing one and hope for the best.
-    rv = SetFileExtension(aRequest->transcodeProfile, transcodedDestinationURI);
-    if (rv != NS_ERROR_NOT_AVAILABLE) {
+
+  rv = albumArt->Init(aMediaItem, imageFormats);
+  if (NS_SUCCEEDED (rv)) {
+    nsCOMPtr<nsIInputStream> imageStream;
+    rv = albumArt->GetTranscodedArt(getter_AddRefs(imageStream));
+    if (imageStream && NS_SUCCEEDED(rv)) {
+      rv = transcodeJob->SetMetadataImage(imageStream);
       NS_ENSURE_SUCCESS(rv, rv);
     }
-
-    rv = do_GetProxyForObject(target,
-                              NS_GET_IID(sbITranscodeJob),
-                              tcJob,
-                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-                              getter_AddRefs(audioJob));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = TranscodeAudioItem(audioJob,
-                            aRequest,
-                            transcodedDestinationURI);
-    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   nsCOMPtr<sbIJobCancelable> cancel = do_QueryInterface(tcJob);
@@ -785,7 +703,7 @@ sbDeviceTranscoding::TranscodeMediaItem(
   nsRefPtr<sbTranscodeProgressListener> listener =
     sbTranscodeProgressListener::New(mBaseDevice,
                                      aDeviceStatusHelper,
-                                     aRequest,
+                                     aMediaItem,
                                      mBaseDevice->mReqWaitMonitor,
                                      sbTranscodeProgressListener::StatusProperty(),
                                      cancel);
@@ -811,19 +729,10 @@ sbDeviceTranscoding::TranscodeMediaItem(
   rv = eventTarget->AddListener(listener);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (videoJob) {
-    // This is async.
-    rv = videoJob->Transcode();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else if (audioJob) {
-    rv = audioJob->Transcode();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
-    NS_WARNING("Transcode job is neither audio or video");
-    return NS_ERROR_FAILURE;
-  }
+  // This is async.
+  rv = transcodeJob->Transcode();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Wait until the transcode job is complete.
   //XXXeps should check for abort.  To do this, the job will have to be
   //       canceled.
@@ -840,8 +749,41 @@ sbDeviceTranscoding::TranscodeMediaItem(
       monitor.Wait();
   }
 
-  if (listener->IsAborted())
+  // Get the transcoded video file URI.
+  nsAutoString destURI;
+  rv = transcodeJob->GetDestURI(destURI);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = ioService->NewURI(NS_ConvertUTF16toUTF8(destURI),
+                         nsnull,
+                         nsnull,
+                         getter_AddRefs(transcodedDestinationURI));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = do_GetProxyForObject(target,
+                            NS_GET_IID(nsIURI),
+                            transcodedDestinationURI,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(transcodedDestinationURIProxy));
+  NS_ENSURE_SUCCESS(rv, rv);
+  transcodedDestinationURI = transcodedDestinationURIProxy;
+
+  if (aTranscodedDestinationURI)
+    transcodedDestinationURI.forget(aTranscodedDestinationURI);
+
+  // If we abort, delete the destination file.
+  if (listener->IsAborted()) {
+    nsCOMPtr<nsIFileURL> fileURL = 
+      do_QueryInterface(transcodedDestinationURIProxy);
+    if (fileURL) {
+      nsCOMPtr<nsIFile> file;
+      rv = fileURL->GetFile(getter_AddRefs(file));
+      if(NS_SUCCEEDED(rv)) {
+        rv = file->Remove(PR_FALSE);
+        NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), 
+          "Failed to remove temporary file used for transcoding");
+      }
+    }
     return NS_ERROR_ABORT;
+  }
 
   // Check the transcode status.
   PRUint16 status;
@@ -880,28 +822,6 @@ sbDeviceTranscoding::TranscodeMediaItem(
     }
   }
 #endif
-
-  // Get the transcoded video file URI.
-  if (videoJob) {
-    nsAutoString destURI;
-    rv = videoJob->GetDestURI(destURI);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = ioService->NewURI(NS_ConvertUTF16toUTF8(destURI),
-                           nsnull,
-                           nsnull,
-                           getter_AddRefs(transcodedDestinationURI));
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = do_GetProxyForObject(target,
-                              NS_GET_IID(nsIURI),
-                              transcodedDestinationURI,
-                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-                              getter_AddRefs(transcodedDestinationURIProxy));
-    NS_ENSURE_SUCCESS(rv, rv);
-    transcodedDestinationURI = transcodedDestinationURIProxy;
-  }
-
-  if (aTranscodedDestinationURI)
-    transcodedDestinationURI.forget(aTranscodedDestinationURI);
 
   // Check for transcode errors.
   // There is no need to fire a device event, because any appropriate events

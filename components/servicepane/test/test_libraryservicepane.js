@@ -80,7 +80,6 @@ function setup() {
   servicePane = Components.classes['@songbirdnest.com/servicepane/service;1']
                           .getService(Components.interfaces.sbIServicePaneService);
   assertNotEqual(servicePane, null);
-  servicePane.init();
 
   libraryServicePane = Components.classes['@songbirdnest.com/servicepane/library;1']
                                  .getService(Components.interfaces.sbILibraryServicePaneService);
@@ -144,9 +143,7 @@ function showTree(root, prefix) {
   var node = root.firstChild;
   while(node) {
     DBG(prefix + node.name + " [" + node.id + "]");
-    if (node.isContainer) {
-      showTree(node, prefix + "  ");
-    }
+    showTree(node, prefix + "  ");
     node = node.nextSibling;
   }
 }
@@ -182,7 +179,7 @@ function testLibrariesAndContents() {
 
     // All libraries should be at the top level
     assertNotEqual(node.parentNode, null);
-    assertEqual(node.parentNode.id, servicePane.root.id);
+    assertEqual(node.parentNode, servicePane.root);
 
     // All libraries should be visible
     assertEqual(node.hidden, false);
@@ -260,12 +257,12 @@ function testLibraryMediaLists(aLibrary) {
 
     // Main library playlists should be at the top level
     if (aLibrary == libraryManager.mainLibrary) {
-      assertEqual(node.parentNode.id, servicePane.root.id);
+      assertEqual(node.parentNode, servicePane.root);
 
     // All others should be nested
     } else {
       var libraryNode = libraryServicePane.getNodeForLibraryResource(aLibrary);
-      assertEqual(node.parentNode.id, libraryNode.id);
+      assertEqual(node.parentNode, libraryNode);
     }
   }
 }
@@ -324,28 +321,34 @@ function testInsertionLogic() {
                             libraryManager.mainLibrary);
   var node = mainLibraryNode.nextSibling;
   while (node && node.contractid == mainLibraryNode.contractid) {
-    if (node.id == node1.id) {
+    if (node == node1) {
       break;
     }
     node = node.nextSibling;
   }
   assertNotEqual(node, null);
-  assertEqual(node.id, node1.id);
+  assertEqual(node, node1);
 
   // The second playlist should appear after the first
-  assertEqual(node1.nextSibling.id, node2.id);
+  assertEqual(node1.nextSibling, node2);
 
   // Now pretend the user moves their playlists in between some
   // of their bookmark folders
-  var bmNode1 = servicePane.addNode("urn:test:1", servicePane.root, true);
-  var bmNode2 = servicePane.addNode("urn:test:2", servicePane.root, true);
+  var bmNode1 = servicePane.createNode();
+  bmNode1.id = "urn:test:1";
+  servicePane.root.appendChild(bmNode1);
+
+  var bmNode2 = servicePane.createNode();
+  bmNode1.id = "urn:test:2";
+  servicePane.root.appendChild(bmNode2);
+
   DBG("About to move all playlists between some bookmarks");
   showTree(servicePane.root, "tree-before-move: ");
   var type = node1.getAttributeNS(LSP, "ListType");
   node = mainLibraryNode;
   // Search for playlists between the library and the first fake bookmark
   DBG("About to iterate");
-  while (node && node.id != bmNode1.id) {
+  while (node && node != bmNode1) {
     // If this is a playlist then move it in between our fake bookmarks
     DBG("checking node " + node.id);
     if (node.getAttributeNS(LSP, "ListType") == type) {
@@ -358,7 +361,7 @@ function testInsertionLogic() {
   }
   DBG("Finished moving playlists");
   showTree(servicePane.root, "tree-after-move: ");
-  assertEqual(bmNode1.id, node.id);
+  assertEqual(bmNode1, node);
 
   // Newly inserted playlists should appear directly below other playlists
   // in the middle of the bookmarks
@@ -370,8 +373,8 @@ function testInsertionLogic() {
 
   var node3 = libraryServicePane.getNodeForLibraryResource(list3);
   assertNotEqual(node3, null);
-  assertEqual(node2.nextSibling.id, node3.id);
-  assertEqual(node3.nextSibling.id, bmNode2.id);
+  assertEqual(node2.nextSibling, node3);
+  assertEqual(node3.nextSibling, bmNode2);
 
   // Now add a new library so that we can test nesting
   var newLibrary = createLibrary("test1");
@@ -388,13 +391,13 @@ function testInsertionLogic() {
   type = newLibraryNode.getAttributeNS(LSP, "ListType");
   node = newLibraryNode.previousSibling;
   while (node && node.getAttributeNS(LSP, "ListType") == type &&
-         node.id != mainLibraryNode.id)
+         node != mainLibraryNode)
   {
     DBG("Scanning backwards from new library to main library: " + node.id);
     node = node.previousSibling;
   }
   assertNotEqual(node, null);
-  assertEqual(node.id, mainLibraryNode.id);
+  assertEqual(node, mainLibraryNode);
 
   // Insert a playlist into the new library
   var list4 = newLibrary.createMediaList("simple");
@@ -407,7 +410,7 @@ function testInsertionLogic() {
   var node4 = libraryServicePane.getNodeForLibraryResource(list4);
   assertNotEqual(node4, null);
   assertEqual(node4.name, list4.name);
-  assertEqual(node4.parentNode.id, newLibraryNode.id);
+  assertEqual(node4.parentNode, newLibraryNode);
 
   // Make sure the things we added will get removed
   listsToRemove = listsToRemove.concat(list1, list2, list3, list4);
@@ -462,14 +465,20 @@ function testLibrarySuggestion() {
 
   // Selection of a bookmark under the new library should
   // return the new library
-  var bmNode1 = servicePane.addNode("urn:select-test:1", newLibraryNode, false);
+  var bmNode1 = servicePane.createNode();
+  bmNode1.id = "urn:select-test:1";
+  newLibraryNode.appendChild(bmNode1);
+
   var suggestedLibrary = libraryServicePane.suggestLibraryForNewList(
               "simple", bmNode1);
   assertEqual(suggestedLibrary, newLibrary);
 
   // Selection of a bookmark at the top level should
   // return the main library
-  var bmNode2 = servicePane.addNode("urn:select-test:2", servicePane.root, false);
+  var bmNode2 = servicePane.createNode();
+  bmNode2.id = "urn:select-test:2";
+  servicePane.root.appendChild(bmNode2);
+
   var suggestedLibrary = libraryServicePane.suggestLibraryForNewList(
               "simple", bmNode2);
   assertEqual(suggestedLibrary, libraryManager.mainLibrary);
@@ -510,18 +519,18 @@ function testRenaming() {
 
   // Fake a rename on the library
   var newName = "RenameTest1";
-  servicePane.onRename(newLibraryNode.id, newName);
+  servicePane.onRename(newLibraryNode, newName);
   // Make sure the name was changed correctly
   assertEqual(newLibraryNode.name, newName);
 
   // Fake a rename on the playlist
   newName = "RenameTest2";
-  servicePane.onRename(node1.id, newName);
+  servicePane.onRename(node1, newName);
   // Make sure the name was changed correctly
   assertEqual(node1.name, newName);
 
   // Make sure that renaming to an empty string is not accepted
-  servicePane.onRename(node1.id, "");
+  servicePane.onRename(node1, "");
   assertEqual(node1.name, newName);
 
   // Make sure the things we added will get removed
@@ -547,9 +556,9 @@ function testAllItemsRemoved() {
     // Library nodes should be hidden
     } else if (id.indexOf("urn:library") == 0) {
       assertEqual(nodesToRemove[i].hidden, true);
-      servicePane.removeNode(nodesToRemove[i]);
+      nodesToRemove[i].parentNode.removeChild(nodesToRemove[i]);
     } else {
-      servicePane.removeNode(nodesToRemove[i]);
+      nodesToRemove[i].parentNode.removeChild(nodesToRemove[i]);
     }
   }
 }

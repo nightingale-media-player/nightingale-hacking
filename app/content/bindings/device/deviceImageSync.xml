@@ -117,14 +117,17 @@
      *
      *********************************************************************** -->
 
-    <implementation implements="sbIDeviceEventListener">
+    <implementation
+      implements="sbIDeviceEventListener, sbIDeviceLibraryListener">
 
-      <field name="_syncPrefs">null</field>
+      <field name="_syncFromFolder">null</field>
+      <field name="_syncFoldersList">null</field>
+      <field name="_imageSettings">false</field>
+      <field name="_mediaType">Ci.sbIDeviceLibrary.MEDIATYPE_IMAGE</field>
+      <field name="_CIDM">Ci.sbIDeviceLibraryMediaSyncSettings</field>
       <field name="_deviceEventTarget">null</field>
       <field name="_displayedFolder">null</field>
-      <field name="_settingsChanged">false</field>
       <field name="_imageTab">false</field>
-      <field name="_ignoreDevicePrefChanges">false</field>
       <!-- _ignoreFolderChanges defaults to true to ignore the select event
            during widget construction -->
       <field name="_ignoreFolderChanges">true</field>
@@ -143,13 +146,10 @@
         Cu.import("resource://app/jsmodules/PlatformUtils.jsm", this);
         Cu.import("resource://app/jsmodules/StringUtils.jsm", this);
 
-        this._syncPrefs = {};
-
         if (this.device)
           this._initDevice();
-
-        // Initialize UI
-        this._updateUI();
+        else
+          this._updateUI();
       }
       ]]></constructor>
 
@@ -204,16 +204,36 @@
             self._onSettingsEvent(aEvent);
           }, false);
 
+          // Listen for changes in the settings
+          if (this.devLib) {
+            this.devLib.addDeviceLibraryListener(this);
+            this._imageSettings =
+              this.devLib.tempSyncSettings.getMediaSettings(this._mediaType);
+          }
+
           // Read preferences and update UI
-          this._syncPrefsRead(this._syncPrefs);
+          this._syncPrefsRead();
           this._updateUI();
         ]]></body>
       </method>
 
       <method name="_finalizeDevice">
         <body><![CDATA[
-          if (this._deviceEventTarget)
+          if (this._deviceEventTarget) {
             this._deviceEventTarget.removeEventListener(this);
+            this._deviceEventTarget = null;
+          }
+
+          try {
+            // Remove our settings listener
+            if (this.devLib) {
+              this.devLib.removeDeviceLibraryListener(this);
+            }
+          } catch(e) {
+            dump("Error removing device library listener\n");
+          }
+
+          this._imageSettings = null;
         ]]></body>
       </method>
 
@@ -235,66 +255,44 @@
       </method>
 
       <!--
-       * \brief Re-reads sync preferences.
-       *
-       * \param aPrefs  object to be populated with the preferences
+       * \brief Re-reads syncFromFolder and sync folder list.
        -->
       <method name="_syncPrefsRead">
-        <parameter name="aPrefs"/>
         <body><![CDATA[
         {
-          let mediaType = Ci.sbIDeviceLibrary.MEDIATYPE_IMAGE;
-          aPrefs.mgmtType = this.devLib.getMgmtType(mediaType);
-          aPrefs.rootFolder = this.devLib.getSyncRootFolderByType(mediaType);
+          // If there's no device library, just return.
+          if (!this.devLib)
+            return;
 
-          // Ignore folders that no longer exist
-          if (aPrefs.rootFolder && !aPrefs.rootFolder.exists())
-            aPrefs.rootFolder = null;
+          this._syncFromFolder = this._imageSettings.syncFromFolder;
 
-          // Default root folder is "My Pictures"
-          if (!aPrefs.rootFolder) {
-            let directoryService = Cc["@mozilla.org/file/directory_service;1"]
-                                     .getService(Ci.nsIProperties);
-            if (directoryService.has("Pics"))
-              aPrefs.rootFolder = directoryService.get("Pics", Ci.nsIFile);
-          }
-
-          aPrefs.syncFoldersList = {};
-          let storedFoldersList = this.devLib
-                                      .getSyncFolderListByType(mediaType);
+          // Get the sync folder list.
+          this._syncFoldersList = {};
+          let storedFoldersList =
+                this.devLib.getSyncFolderListByType(this._mediaType);
           for (let i = 0; i < storedFoldersList.length; i++) {
             let folder = storedFoldersList.queryElementAt(i, Ci.nsIFile);
-            aPrefs.syncFoldersList[folder.path] = true;
+            this._syncFoldersList[folder.path] = true;
           }
         }
         ]]></body>
       </method>
 
       <!--
-       * \brief Saves sync preferences.
-       *
-       * \param aPrefs  object the preferences should be taken from
+       * \brief Saves sync folder list.
        -->
-      <method name="_syncPrefsWrite">
-        <parameter name="aPrefs"/>
+      <method name="_syncFolderListWrite">
         <body><![CDATA[
         {
-          let mediaType = Ci.sbIDeviceLibrary.MEDIATYPE_IMAGE;
-          this.devLib.setMgmtType(mediaType, aPrefs.mgmtType);
-
-          if (aPrefs.rootFolder) {
-            this.devLib.setSyncRootFolderByType(mediaType, aPrefs.rootFolder);
-          }
-
           let jsArray = [];
-          for (let path in aPrefs.syncFoldersList) {
+          for (let path in this._syncFoldersList) {
             let file = Cc["@mozilla.org/file/local;1"]
                          .createInstance(Ci.nsILocalFile);
             file.initWithPath(path);
             jsArray.push(file);
           }
           let array = this.ArrayConverter.nsIArray(jsArray);
-          this.devLib.setSyncFolderListByType(mediaType, array);
+          this.devLib.setSyncFolderListByType(this._mediaType, array);
         }
         ]]></body>
       </method>
@@ -310,22 +308,29 @@
           if (!this._imageTab)
             return;
 
-          // Hide widget if no device library present
+          // Hide widget if no device library is present
           if (!this.devLib) {
             this.setAttribute("hidden", "true")
             return;
           }
           this.removeAttribute("hidden");
 
+          if (!this._imageSettings) {
+            this.devLib.addDeviceLibraryListener(this);
+            this._imageSettings =
+              this.devLib.tempSyncSettings.getMediaSettings(this._mediaType);
+          }
+
           // Update main checkbox state
-          let syncEnabled = (this._syncPrefs.mgmtType !=
-                             Ci.sbIDeviceLibrary.MGMT_TYPE_NONE);
+          let syncEnabled =
+                (this._imageSettings.mgmtType != this._CIDM.SYNC_MGMT_NONE);
           this._getElement("sync_images_from_checkbox").checked = syncEnabled;
 
           if (!syncEnabled)
           {
             this.setAttribute("disabled", "true");
-            this._getElement("content_selector").setAttribute("disabled", "true");
+            this._getElement("content_selector").setAttribute("disabled",
+                                                              "true");
           }
           else
           {
@@ -335,12 +340,13 @@
 
           // Enable/disable radio buttons
           let syncAllRadio = this._getElement("sync_images_all_radio");
-          let syncSelectedRadio = this._getElement("sync_images_selected_radio");
+          let syncSelectedRadio =
+                this._getElement("sync_images_selected_radio");
           syncAllRadio.disabled = syncSelectedRadio.disabled = !syncEnabled;
 
           // Update radio group state
-          let syncSelected = (this._syncPrefs.mgmtType ==
-                              Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_PLAYLISTS);
+          let syncSelected =
+            (this._imageSettings.mgmtType == this._CIDM.SYNC_MGMT_PLAYLISTS);
           let selectedRadio = (syncSelected ? syncSelectedRadio : syncAllRadio);
           let radioGroup = this._getElement("sync_images_type_group");
           radioGroup.selectedItem = selectedRadio;
@@ -356,27 +362,33 @@
             this._ignoreFolderChanges = false;
           }
 
+          rootFolderElement.disabled = !syncEnabled;
+
           // Enable/disable list of subfolders
           this._getElement("sync_images_folders_tree").disabled = !syncSelected;
 
           // Update root folder displayed and list of subfolders if necessary
           let subfoldersElement =
                 this._getElement("sync_images_folder_children");
-          if (this._syncPrefs.rootFolder) {
-            var displayLabelText = this._syncPrefs.rootFolder.leafName;
+
+          this._syncFromFolder = this._imageSettings.syncFromFolder;
+
+          if (this._syncFromFolder) {
+            var displayLabelText = this._syncFromFolder.leafName;
             if(this.PlatformUtils.platformString == "Windows_NT") {
               displayLabelText =
                 Cc["@songbirdnest.com/Songbird/KnownFolderManager;1"]
                   .createInstance(Ci.sbIKnownFolderManager)
-                  .getDisplayNameFromPath(this._syncPrefs.rootFolder.path);
+                  .getDisplayNameFromPath(this._syncFromFolder.path);
             }
             rootFolderElement.setAttribute("label",
                                            displayLabelText);
-            rootFolderElement.setAttribute("value",
-                                           this._syncPrefs.rootFolder.path);
+            rootFolderElement.setAttribute(
+                                "value",
+                                this._syncFromFolder.path);
 
             if (!this._displayedFolder ||
-                !this._syncPrefs.rootFolder.equals(this._displayedFolder)) {
+                !this._syncFromFolder.equals(this._displayedFolder)) {
               // Reset label for "all items" radio
               syncAllRadio.setAttribute("label",
                                   syncAllRadio.getAttribute("_label_default"));
@@ -386,7 +398,7 @@
                 subfoldersElement.removeChild(subfoldersElement.firstChild);
 
               // Add subfolders of the new root folder to the list
-              let subfolders = this._syncPrefs.rootFolder.directoryEntries;
+              let subfolders = this._syncFromFolder.directoryEntries;
               for (let folder in this.ArrayConverter.JSEnum(subfolders)) {
                 if (!(folder instanceof Ci.nsIFile) || !folder.isDirectory())
                   continue;
@@ -436,14 +448,14 @@
             this.stopDirScan();
           }
 
-          this._displayedFolder = this._syncPrefs.rootFolder;
+          this._displayedFolder = this._syncFromFolder;
 
           // Update subfolder selection
           for (let item = subfoldersElement.firstChild;
                item;
                item = item.nextSibling) {
             let isChecked = (syncSelected ?
-                             item._folder.path in this._syncPrefs.syncFoldersList :
+                             item._folder.path in this._syncFoldersList :
                              true);
             item._checkCell.setAttribute("value", isChecked);
           }
@@ -460,21 +472,13 @@
           if (this._ignoreFolderChanges)
             return;
 
-          let oldPrefs = this._copyPrefs();
+          let oldRootFolder = this._syncFromFolder;
           let list = this._getElement("sync_images_from_list");
           if (list.value) {
             let rootFolder = Cc["@mozilla.org/file/local;1"]
                                .createInstance(Ci.nsILocalFile);
             rootFolder.initWithPath(list.value);
-            this._syncPrefs.rootFolder = rootFolder;
-
-            if (oldPrefs.rootFolder &&
-                !oldPrefs.rootFolder.equals(this._syncPrefs.rootFolder)) {
-              // Clear subfolders list if root folder changed
-              this._syncPrefs.syncFoldersList = {};
-            }
-
-            this._updateUI();
+            this._imageSettings.syncFromFolder = rootFolder;
           }
           else {
             // User clicked "Choose folder", open file picker
@@ -482,25 +486,20 @@
                                .createInstance(Ci.nsIFilePicker);
             filePicker.init(window, list.getAttribute("label"),
                             Ci.nsIFilePicker.modeGetFolder);
-            if (this._syncPrefs.rootFolder instanceof Ci.nsILocalFile)
-              filePicker.displayDirectory = this._syncPrefs.rootFolder;
+            if (this._syncFromFolder instanceof Ci.nsILocalFile)
+              filePicker.displayDirectory = this._syncFromFolder;
             if (filePicker.show() == Ci.nsIFilePicker.returnOK) {
-              this._syncPrefs.rootFolder = filePicker.file;
-
-              if (oldPrefs.rootFolder &&
-                  !oldPrefs.rootFolder.equals(this._syncPrefs.rootFolder)) {
-                // Clear subfolders list if root folder changed
-                this._syncPrefs.syncFoldersList = {};
-              }
-
-              this._updateUI();
-            }
-            else {
-              this._syncPrefs.rootFolder = oldPrefs.rootFolder;
-              this._updateUI();
+              this._imageSettings.syncFromFolder = filePicker.file;
             }
           }
-          this._checkPrefChange(oldPrefs);
+
+          if (oldRootFolder &&
+              !oldRootFolder.equals(this._imageSettings.syncFromFolder)) {
+            // Clear subfolders list if root folder changed
+            this._syncFoldersList = {};
+          }
+
+          this._updateUI();
         }
         ]]></body>
       </method>
@@ -563,12 +562,10 @@
           }
 
           if (shouldUpdatePrefs) {
-              let oldPrefs = this._copyPrefs();
-              this._syncPrefs.mgmtType = (aEnable ?
-                                          Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL :
-                                          Ci.sbIDeviceLibrary.MGMT_TYPE_NONE);
-              this._updateUI();
-              this._checkPrefChange(oldPrefs);
+            this._imageSettings.mgmtType =
+                                  (aEnable ? this._CIDM.SYNC_MGMT_ALL :
+                                             this._CIDM.SYNC_MGMT_NONE);
+            this._updateUI();
           }
         }
         ]]></body>
@@ -582,12 +579,10 @@
         <parameter name="aEnable"/>
         <body><![CDATA[
         {
-          let oldPrefs = this._copyPrefs();
-          this._syncPrefs.mgmtType = (aEnable ?
-                                      Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL :
-                                      Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_PLAYLISTS);
+          this._imageSettings.mgmtType =
+                                (aEnable ? this._CIDM.SYNC_MGMT_ALL :
+                                           this._CIDM.SYNC_MGMT_PLAYLISTS);
           this._updateUI();
-          this._checkPrefChange(oldPrefs);
         }
         ]]></body>
       </method>
@@ -598,16 +593,26 @@
       <method name="_updateSyncFolders">
         <body><![CDATA[
         {
-          let oldPrefs = this._copyPrefs();
-          let subfoldersElement = this._getElement("sync_images_folder_children");
-          this._syncPrefs.syncFoldersList = {};
+          let subfoldersElement =
+                this._getElement("sync_images_folder_children");
+          this._syncFoldersList = {};
           for (let item = subfoldersElement.firstChild;
                item;
                item = item.nextSibling) {
             if (item._checkCell.getAttribute("value") == "true")
-              this._syncPrefs.syncFoldersList[item._folder.path] = true;
+              this._syncFoldersList[item._folder.path] = true;
           }
-          this._checkPrefChange(oldPrefs);
+
+          // A hack so that SYNC_SETTINGS_CHANGED can be dispatched.
+          if (this._getElement("sync_images_from_checkbox").checked) {
+            if (this._getElement("sync_images_type_group").selectedItem ==
+                this._getElement("sync_images_all_radio")) {
+              this._imageSettings.mgmtType = this._CIDM.SYNC_MGMT_ALL;
+            }
+            else {
+              this._imageSettings.mgmtType = this._CIDM.SYNC_MGMT_PLAYLISTS;
+            }
+          }
         }
         ]]></body>
       </method>
@@ -636,7 +641,8 @@
             this._fileScanQuery.addFileExtension(fileExtensions.getNext());
           }
 
-          this._fileScanQuery.setDirectory(this._syncPrefs.rootFolder.path);
+          this._fileScanQuery.setDirectory(
+                                this._syncFromFolder.path);
           this._fileScanQuery.setRecurse(true);
           this._fileScanner.submitQuery(this._fileScanQuery);
 
@@ -662,7 +668,7 @@
               }
             }
           }
-          
+
           this._fileScanTimer = window.setInterval(pollCallback, 1000);
         }
         ]]></body>
@@ -703,7 +709,7 @@
 
           // Count number of files for the subdirectories
           let subdirCounts = {};
-          let rootFolder = this._syncPrefs.rootFolder;
+          let rootFolder = this._syncFromFolder;
           for (let i = 0; i < totalCount; i++) {
             let path = aScanQuery.getFilePath(i);
             let uri = ioService.newURI(path, null, null);
@@ -750,110 +756,6 @@
       </method>
 
       <!--
-       * \brief Notifies listener about a pref change actions.
-       *
-       * \param detail              One of the SYNCSETTINGS_* constants
-       -->
-      <method name="_dispatchSettingsEvent">
-        <parameter name="detail"/>
-        <body><![CDATA[
-        {
-          let event = document.createEvent("UIEvents");
-          event.initUIEvent("sbDeviceSync-settings", false, false, window, detail);
-          document.dispatchEvent(event);
-        }
-        ]]></body>
-      </method>
-
-      <!--
-       * \brief Checks whether the current user action changed preferences and
-       * notifies other UI widgets if necessary.
-       *
-       * \param aOldPrefs preferences before the change for comparison
-       -->
-      <method name="_checkPrefChange">
-        <parameter name="aOldPrefs"/>
-        <body><![CDATA[
-        {
-          // If settings changed already - nothing to do, return
-          if (this._settingsChanged)
-            return;
-
-          this._settingsChanged = this._comparePrefs(this._syncPrefs, aOldPrefs);
-
-          // Notify listeners if we are in editing mode now
-          if (this._settingsChanged)
-            this._dispatchSettingsEvent(this.SYNCSETTINGS_CHANGE);
-        }
-        ]]></body>
-      </method>
-
-      <!--
-       * \brief Creates a deep copy of the current preferences.
-       *
-       * \return a deep copy of the _syncPrefs property value
-       -->
-      <method name="_copyPrefs">
-        <body><![CDATA[
-        {
-          function copyObject(from, to) {
-            for (let field in from) {
-              if (from[field] instanceof Object &&
-                  !(from[field] instanceof Ci.nsISupports)) {
-                to[field] = {};
-                copyObject(from[field], to[field]);
-              }
-              else
-                to[field] = from[field];
-            }
-          }
-
-          let result = {};
-          copyObject(this._syncPrefs, result);
-          return result;
-        }
-        ]]></body>
-      </method>
-
-      <!--
-       * \brief Checks whether the two prefs copies are different.
-       *
-       * \param aPrefs1 preferences to compare
-       * \param aPrefs2 preferences to compare
-       * \return true if the preferences are different
-       -->
-      <method name="_comparePrefs">
-        <parameter name="aPrefs1"/>
-        <parameter name="aPrefs2"/>
-        <body><![CDATA[
-        {
-          // Compare selected management type
-          if (aPrefs1.mgmtType != aPrefs2.mgmtType)
-            return true;
-
-          // Compare root folders
-          let root1IsNull = (aPrefs1.rootFolder == null);
-          let root2IsNull = (aPrefs2.rootFolder == null);
-          if (root1IsNull != root2IsNull)
-            return true;
-
-          if (!root1IsNull && !aPrefs1.rootFolder.equals(aPrefs2.rootFolder))
-            return true;
-
-          // Compare selected subfolders
-          for (let folderPath in aPrefs1.syncFoldersList)
-            if (!(folderPath in aPrefs2.syncFoldersList))
-              return true;
-          for (let folderPath in aPrefs2.syncFoldersList)
-            if (!(folderPath in aPrefs1.syncFoldersList))
-              return true;
-
-          return false;
-        }
-        ]]></body>
-      </method>
-
-      <!--
        * \brief Handles sbDeviceSync-settings events and cancels/applies edit in
        *        progress as required.
        *
@@ -870,28 +772,117 @@
                 this._updateUI();
               }
               break;
-            case this.SYNCSETTINGS_CANCEL:
+          }
+        }
+        ]]></body>
+      </method>
+
+      <!--
+       * sbIDeviceLibraryListener
+       *
+       * We don't do anything with these functions, but they need to be here.
+       -->
+      <method name="onBatchBegin">
+        <parameter name="aMediaList"/>
+        <body>{}</body>
+      </method>
+      <method name="onBatchEnd">
+        <parameter name="aMediaList"/>
+        <body>{}</body>
+      </method>
+      <method name="onItemAdded">
+        <parameter name="aMediaList"/>
+        <parameter name="aMediaItem"/>
+        <parameter name="aIndex"/>
+        <body>{}</body>
+      </method>
+      <method name="onBeforeItemRemoved">
+        <parameter name="aMediaList"/>
+        <parameter name="aMediaItem"/>
+        <parameter name="aIndex"/>
+        <body>{}</body>
+      </method>
+      <method name="onAfterItemRemoved">
+        <parameter name="aMediaList"/>
+        <parameter name="aMediaItem"/>
+        <parameter name="aIndex"/>
+        <body>{}</body>
+      </method>
+      <method name="onBeforeListCleared">
+        <parameter name="aMediaList"/>
+        <parameter name="aExcludeLists"/>
+        <body>{}</body>
+      </method>
+      <method name="onListCleared">
+        <parameter name="aMediaList"/>
+        <parameter name="aExcludeLists"/>
+        <body>{}</body>
+      </method>
+      <method name="onItemUpdated">
+        <parameter name="aMediaList"/>
+        <parameter name="aMediaItem"/>
+        <parameter name="aProperties"/>
+        <body>{}</body>
+      </method>
+      <method name="onItemMoved">
+        <parameter name="aMediaList"/>
+        <parameter name="aFromIndex"/>
+        <parameter name="aToIndex"/>
+        <body>{}</body>
+      </method>
+      <method name="onItemCopied">
+        <parameter name="aSourceItem"/>
+        <parameter name="aDestItem"/>
+        <body>{}</body>
+      </method>
+      <method name="onBeforeCreateMediaItem">
+        <parameter name="aContentUri"/>
+        <parameter name="aProperties"/>
+        <parameter name="aAllDuplicates"/>
+        <body>{}</body>
+      </method>
+      <method name="onBeforeCreateMediaList">
+        <parameter name="aType"/>
+        <parameter name="aProperties"/>
+        <body>{}</body>
+      </method>
+      <method name="onBeforeAdd">
+        <body>{}</body>
+      </method>
+      <method name="onBeforeAddAll">
+        <parameter name="aMediaList"/>
+        <body>{}</body>
+      </method>
+      <method name="onBeforeAddSome">
+        <parameter name="aMediaItems"/>
+        <body>{}</body>
+      </method>
+      <method name="onBeforeClear">
+        <body>{}</body>
+      </method>
+
+      <method name="onSyncSettings">
+        <parameter name="aAction"/>
+        <parameter name="aSyncSettings"/>
+        <body><![CDATA[
+        {
+          switch (aAction) {
+            // Reset and apply could change the image settings. Re-read
+            // to get the updated settings.
+            case Ci.sbIDeviceLibraryListener.SYNC_SETTINGS_RESET:
+              this._imageSettings =
+                this.devLib.tempSyncSettings.getMediaSettings(this._mediaType);
               // Reset displayed preferences
-              this._settingsChanged = false;
-              this._syncPrefsRead(this._syncPrefs);
+              this._syncPrefsRead();
               this._updateUI();
               break;
-            case this.SYNCSETTINGS_APPLY:
-              // Save preferences
-              this._settingsChanged = false;
-              this._dispatchSettingsEvent(this.SYNCSETTINGS_SAVING);
-              try {
-                this._syncPrefsWrite(this._syncPrefs);
-              }
-              finally {
-                this._dispatchSettingsEvent(this.SYNCSETTINGS_SAVED);
-              }
+            case Ci.sbIDeviceLibraryListener.SYNC_SETTINGS_CHANGED:
+              this._updateUI();
               break;
-            case this.SYNCSETTINGS_SAVING:
-              this._ignoreDevicePrefChanges = true;
-              break;
-            case this.SYNCSETTINGS_SAVED:
-              this._ignoreDevicePrefChanges = false;
+            case Ci.sbIDeviceLibraryListener.SYNC_SETTINGS_APPLIED:
+              this._imageSettings =
+                this.devLib.tempSyncSettings.getMediaSettings(this._mediaType);
+              this._syncFolderListWrite();
               break;
           }
         }
@@ -909,17 +900,7 @@
         {
           switch(aEvent.type) {
             case Ci.sbIDeviceEvent.EVENT_DEVICE_PREFS_CHANGED:
-              if (this._ignoreDevicePrefChanges)
-                return;
-      
-              // If any sync preferences changed, cancel the edit in progress and
-              // reload prefs.
-              if (this._settingsChanged)
-                this._dispatchSettingsEvent(this.SYNCSETTINGS_CANCEL);
-              else {
-                this._syncPrefsRead(this._syncPrefs);
-                this._updateUI();
-              }
+              this._updateUI();
               break;
           }
         }

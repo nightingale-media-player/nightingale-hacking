@@ -1,29 +1,27 @@
 /* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #ifndef __SBDEVICELIBRARY_H__
 #define __SBDEVICELIBRARY_H__
@@ -42,9 +40,11 @@
 #include <sbIPropertyArray.h>
 
 #include <nsIPrefBranch.h>
-#include <prlock.h>
 
 #include "sbDeviceLibraryHelpers.h"
+
+class sbDeviceLibrarySyncSettings;
+struct PRMonitor;
 
 // These are the methods from sbLibrary that we're going to
 // override in sbDeviceLibrary.
@@ -62,7 +62,7 @@
   NS_IMETHOD GetCreationParameters(nsIPropertyBag2 * *aCreationParameters) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetCreationParameters(aCreationParameters); } \
   NS_IMETHOD GetFactory(sbILibraryFactory * *aFactory) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetFactory(aFactory); } \
   NS_IMETHOD Resolve(nsIURI *aUri, nsIChannel **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->Resolve(aUri, _retval); } \
-  NS_IMETHOD CopyMediaList(const nsAString & aType, sbIMediaList *aSource, sbIMediaList **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->CopyMediaList(aType, aSource, _retval); } \
+  NS_IMETHOD CopyMediaList(const nsAString & aType, sbIMediaList *aSource, PRBool aDontCopyContent, sbIMediaList **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->CopyMediaList(aType, aSource, aDontCopyContent, _retval); } \
   NS_IMETHOD GetMediaItem(const nsAString & aGuid, sbIMediaItem **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaItem(aGuid, _retval); } \
   NS_IMETHOD GetDuplicate(sbIMediaItem *aMediaItem, sbIMediaItem **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDuplicate(aMediaItem, _retval); } \
   NS_IMETHOD GetMediaListTypes(nsIStringEnumerator * *aMediaListTypes) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaListTypes(aMediaListTypes); } \
@@ -164,43 +164,7 @@ public:
                     (const nsAString& aDeviceIdentifier,
                      nsIFile**        aDBFile);
 
-protected:
-
-  /**
-   * \brief Set the management type device preference to the value specified by
-   *        aMgmtTypes.  Do not initiate any library actions.
-   *
-   * \param aContentType - content type for the preference key.
-   * \param aMgmtTypes - Device management type preference.
-   */
-  nsresult SetMgmtTypePref(PRUint32 aContentType, PRUint32 aMgmtTypes);
-
-  /**
-   * \brief Gets the management type device preference to the value specified by
-   *        aMgmtTypes.  Do not initiate any library actions.
-   *
-   * \param aContentType - content type for the preference key.
-   * \param aMgmtTypes - Device management type preference.
-   * \param aDefault - A defaule management type, which itself is defaulted
-   *                   to manual
-   */
-  nsresult GetMgmtTypePref(PRUint32 aContentType,
-                           PRUint32 & aMgmtTypes,
-                           PRUint32 aDefault = MGMT_TYPE_MANUAL);
-
-  /**
-   * \brief Set the list of sync playlists device preference to the value
-   *        specified by aPlaylistList.  Do not initiate any library actions.
-   *
-   * \param aContentType - content type for the preference key.
-   * \param aPlaylistList - List of sync playlists preference.
-   */
-
-  nsresult SetSyncPlaylistListPref(PRUint32 aContentType,
-                                   nsIArray *aPlaylistList);
-
 private:
-
   /**
    * \brief This callback adds the enumerated listeners to an nsCOMArray.
    *
@@ -215,15 +179,6 @@ private:
     AddListenersToCOMArrayCallback(nsISupportsHashKey::KeyType aKey,
                                    sbIDeviceLibraryListener* aEntry,
                                    void* aUserData);
-
-  /**
-   * \brief Remove the playlist with the GUID specified by aGUID from the list
-   *        of sync playlists.
-   *
-   * \param aContentType - Content type for the preference key.
-   * \param aGUID - GUID of playlist to remove.
-   */
-  nsresult RemoveFromSyncPlaylistList(PRUint32 aContentType, nsAString& aGUID);
 
   /**
    * \brief Return in aPrefKey the device preference key for the management type
@@ -303,13 +258,14 @@ private:
    * \brief Update the listeners for the main library to account for changes to
    *        the sync settings.
    */
-  nsresult UpdateMainLibraryListeners();
+  nsresult UpdateMainLibraryListeners(
+                                  sbIDeviceLibrarySyncSettings * aSyncSettings);
 
   /**
    * \brief Update the library is read-only property based upon the device
    *        management type preference.
    */
-  nsresult UpdateIsReadOnly();
+  nsresult UpdateIsReadOnly(sbIDeviceLibrarySyncSettings * aSyncSettings);
 
   /**
    * \brief Return true in aIsSyncedLocally if the device is configured to sync
@@ -339,6 +295,15 @@ private:
   nsresult GetIsMgmtTypeSyncList(PRBool* aIsMgmtTypeSyncList);
 
   /**
+   * \brief Sets the sync management settings but does not lock our lock.
+   *
+   * \param aSyncSettings the settings to be set
+   */
+  nsresult SetSyncSettingsNoLock(sbIDeviceLibrarySyncSettings * aSyncSettings);
+
+  sbDeviceLibrarySyncSettings *  CreateSyncSettings();
+
+  /**
    * \brief library for this device, location is specified by the
    *        aDeviceDatabaseURI param for CreateDeviceLibrary or the default
    *        location under the users profile.
@@ -366,16 +331,21 @@ private:
   nsInterfaceHashtable<nsISupportsHashKey, sbIDeviceLibraryListener> mListeners;
 
   /**
-   * \brief The sync setting has been changed or not.
-   */
-  PRBool mSyncSettingsChanged;
-
-  /**
    * \brief The sync mode has been changed or not.
    */
-  PRBool mSyncModeChanged;
-
-  PRLock* mLock;
+  nsRefPtr<sbDeviceLibrarySyncSettings> mCurrentSyncSettings;
+  nsRefPtr<sbDeviceLibrarySyncSettings> mTempSyncSettings;
+  PRMonitor* mMonitor;
 };
+
+#define PREF_SYNC_PREFIX    "library."
+#define PREF_SYNC_BRANCH    ".sync."
+#define PREF_SYNC_MODE      "syncMode"
+#define PREF_SYNC_MGMTTYPE  "mgmtType"
+#define PREF_SYNC_LISTS     "playlists"
+#define PREF_SYNC_ROOT      "root"
+#define PREF_SYNC_FOLDER    "syncFolder"
+
+extern char const * const gMediaType[];
 
 #endif /* __SBDEVICELIBRARY_H__ */

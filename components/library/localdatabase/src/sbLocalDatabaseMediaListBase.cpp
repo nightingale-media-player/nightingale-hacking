@@ -59,6 +59,7 @@
 #include <sbTArrayStringEnumerator.h>
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
+#include <sbDebugUtils.h>
 
 #include "sbLocalDatabaseCascadeFilterSet.h"
 #include "sbLocalDatabaseCID.h"
@@ -179,7 +180,8 @@ sbLocalDatabaseMediaListBase::AddFilterToGUIDArrayCallback(nsStringHashKey::KeyT
     static_cast<sbILocalDatabaseGUIDArray*>(aUserData);
 
   // Set the filter.
-  nsresult rv = guidArray->AddFilter(aKey, valueEnum, PR_FALSE);
+  nsresult SB_UNUSED_IN_RELEASE(rv) =
+   guidArray->AddFilter(aKey, valueEnum, PR_FALSE);
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "AddFilter failed!");
 
   return PL_DHASH_NEXT;
@@ -574,6 +576,12 @@ sbLocalDatabaseMediaListBase::GetListContentType(PRUint16* aContentType)
   NS_ENSURE_SUCCESS(rv, rv);
   if (customType.Equals(NS_LITERAL_STRING("download")))
     return NS_OK;
+
+  // "video-togo" list is always video
+  if (customType.Equals(NS_LITERAL_STRING("video-togo"))) {
+    *aContentType = sbIMediaList::CONTENTTYPE_VIDEO;
+    return NS_OK;
+  }
 
   PRUint32 length;
   rv = mFullArray->GetLength(&length);
@@ -1254,7 +1262,7 @@ sbGUIDArrayValueEnumerator::sbGUIDArrayValueEnumerator(sbILocalDatabaseGUIDArray
 {
   NS_ASSERTION(aArray, "Null value passed to ctor");
 
-  nsresult rv = mArray->GetLength(&mLength);
+  nsresult SB_UNUSED_IN_RELEASE(rv) = mArray->GetLength(&mLength);
   NS_ASSERTION(NS_SUCCEEDED(rv), "Could not get length");
 }
 

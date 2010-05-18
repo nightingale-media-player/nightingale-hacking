@@ -41,7 +41,7 @@
       <xul:hbox id="sb-remote-label" sbid="overlay_box" xbl:inherits="class,align,crop,disabled,flex">
         <xul:label sbid="label" xbl:inherits="class,value,align,crop,disabled,flex">
           <xul:observes type="dataremote"
-                    attribute="value"/>  
+                        attribute="value"/>  
         </xul:label> 
       </xul:hbox>
     </content>
@@ -62,6 +62,9 @@
           // ADD EXTRA CSS CLASS FOR ANONYMOUS OBJECTS
           this.setAttribute("class", this.getAttribute("class") + " " + nodeName);
           this.data = this.getAttribute("data");
+          
+          this._textBefore = this.getAttribute("textbefore");
+          this._textAfter = this.getAttribute("textafter");
         ]]>
       </constructor>
 
@@ -72,7 +75,7 @@
       </destructor>
 
       <field name="label">this</field>
-
+      
       <property name="data">
         <getter>
           <![CDATA[
@@ -86,6 +89,10 @@
             // Tell the observer to watch us.
             var observes = document.getAnonymousElementByAttribute(this, "type", "dataremote");
             observes.key = val;
+            
+            // Set our own 'onchange' handler.
+            var applyText = "return \"" + this._textBefore + "\" + value + \"" + this._textAfter + "\";";
+            observes.setAttribute("onchange", applyText);
           ]]>
         </setter>
       </property>

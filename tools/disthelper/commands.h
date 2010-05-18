@@ -114,14 +114,6 @@ int CommandExecuteFile(const std::string& aExecutable,
                        const std::string& aArgs);
 
 /**
- * Filters a line, replacing $foo$ with their values; unrecognized strings will
- * be left alone.
- * Currently defined variables:
- *   $APPDIR$ - the application directory
- */
-tstring FilterSubstitution(tstring aString);
-
-/**
  * Get the path to the application directory (where disthelper.exe lives).
  * Must end with a path separator (\ on Windows, / on Unix)
  */

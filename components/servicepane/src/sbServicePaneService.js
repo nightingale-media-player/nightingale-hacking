@@ -75,6 +75,7 @@ function ServicePaneNode(servicePane, comparisonFunction) {
   this._comparisonFunction = comparisonFunction;
   this._attributes = {__proto__: null};
   this._childNodes = [];
+  this._notificationQueue = [];
 
   // Allow accessing internal properties when we get a wrapped node passed
   this.wrappedJSObject = this;
@@ -91,6 +92,9 @@ ServicePaneNode.prototype = {
   _stringBundleURI: null,
   _isInTree: false,
   _listeners: null,
+  _eventListeners: null,
+  _notificationQueue: null,
+  _notificationQueueBusy: false,
 
   QueryInterface: XPCOMUtils.generateQI([Ci.sbIServicePaneNode]),
 
@@ -320,10 +324,30 @@ ServicePaneNode.prototype = {
     if (!aChild)
       throw Ce("Node to be inserted/appended is a required parameter");
 
-    for (let parent = this; parent; parent = parent._parentNode)
-      if (parent == aChild)
-        throw Ce("Cannot insert/append a node to its child");
+    function checkConditions() {
+      // Don't check aBefore if we have a custom comparison function, we won't
+      // use it anyway in that case.
+      if (!this._comparisonFunction && aBefore && aBefore._parentNode != this)
+        throw Ce("Cannot insert before a node that isn't a child");
+  
+      for (let parent = this; parent; parent = parent._parentNode)
+        if (parent == aChild)
+          throw Ce("Cannot insert/append a node to its child");
+    }
 
+    checkConditions.apply(this);
+
+    if (!this._comparisonFunction && aBefore == aChild)
+      return aChild;    // nothing to do
+
+    if (aChild._parentNode) {
+      aChild._parentNode.removeChild(aChild);
+      if (aChild._parentNode)
+        throw Ce("Mutation listener prevented removal of node from its previous location");
+
+      // Check conditions again, mutation listeners might have modified the tree
+      checkConditions.apply(this);
+    }
     if (this._comparisonFunction) {
       // Use comparison function to determine node position
       let index = 0;
@@ -336,15 +360,6 @@ ServicePaneNode.prototype = {
         aBefore = null;
     }
 
-    if (aBefore && aBefore._parentNode != this)
-      throw Ce("Cannot insert before a node that isn't a child");
-
-    if (aBefore == aChild)
-      return aChild;    // nothing to do
-
-    if (aChild._parentNode)
-      aChild._parentNode.removeChild(aChild);
-
     let index = aBefore ? aBefore._nodeIndex : this._childNodes.length;
     for (let i = index; i < this._childNodes.length; i++)
       this._childNodes[i]._nodeIndex++;
@@ -355,7 +370,7 @@ ServicePaneNode.prototype = {
     aChild.isInTree = this.isInTree;
 
     // Trigger mutation listeners
-    aChild._notifyMutationListeners("nodeInserted", [aChild, this]);
+    aChild._notifyMutationListeners("nodeInserted", [aChild, this, aBefore]);
 
     return aChild;
   },
@@ -401,6 +416,35 @@ ServicePaneNode.prototype = {
     this.insertBefore(aChild, insertBefore);
   },
 
+  addEventListener: function(aListener) {
+    if (this._eventListeners == null)
+      this._eventListeners = [];
+
+    // Don't add listeners twice
+    for each (let listener in this._eventListeners)
+      if (listener == aListener)
+        return;
+
+    this._eventListeners.push(aListener);
+  },
+
+  removeEventListener: function(aListener) {
+    if (this._eventListeners == null)
+      return;
+
+    for (let i = 0; i < this._eventListeners.length; i++)
+      if (this._eventListeners[i] == aListener)
+        this._eventListeners.splice(i--, 1);
+
+    if (this._eventListeners.length == 0)
+      this._eventListeners = null;
+  },
+
+  dispatchEvent: function(aEventName) {
+    for each (let listener in this._eventListeners)
+      listener.onNodeEvent(aEventName);
+  },
+
   addMutationListener: function(aListener) {
     if (this._listeners == null)
       this._listeners = [];
@@ -431,11 +475,47 @@ ServicePaneNode.prototype = {
     if (!isInTree)
       return;
 
-    // Notify our listeners first
-    if (this._listeners != null) {
-      for each (let listener in this._listeners) {
+    // Queue the notification before sending it out, just in case one of the
+    // listeners decides to mess with the DOM structure. Add to the queue
+    // of this node and all of its parent nodes (bubbling).
+    let notification = [aMethod, aArgs];
+    let nodes = [];
+    let node = this;
+    let parent = (typeof aParentNode != "undefined" ? aParentNode : node._parentNode);
+    while (node) {
+      if (node._listeners != null) {
+        nodes.push(node);
+        node._notificationQueue.push(notification);
+      }
+
+      node = parent;
+      if (node)
+        parent = node._parentNode;
+    }
+
+    // Now actually trigger listeners for all nodes
+    for each (let node in nodes)
+      node._processNotificationQueue();
+  },
+
+  _processNotificationQueue: function() {
+    if (this._listeners == null)
+      return;
+
+    // Protect against reentrance
+    if (this._notificationQueueBusy)
+      return;
+    this._notificationQueueBusy = true;
+
+    // Create a local copy of the listeners in case the list is modified while
+    // we are calling listeners.
+    let listeners = this._listeners.slice();
+
+    while (this._notificationQueue.length) {
+      let [method, args] = this._notificationQueue.shift();
+      for each (let listener in listeners) {
         try {
-          listener[aMethod].apply(listener, aArgs);
+          listener[method].apply(listener, args);
         }
         catch (e) {
           Cu.reportError(e);
@@ -443,10 +523,7 @@ ServicePaneNode.prototype = {
       }
     }
 
-    // Bubble up the event via recursive call
-    let parentNode = (typeof aParentNode != "undefined" ? aParentNode : this._parentNode);
-    if (parentNode)
-      parentNode._notifyMutationListeners(aMethod, aArgs);
+    this._notificationQueueBusy = false;
   },
 
   // Attribute shortcuts
@@ -640,7 +717,17 @@ ServicePaneService.prototype = {
                        "longer need to call it.");
   },
   
+  _clearNodeListeners: function ServicePaneService__clearNodeListeners(aNode) {
+    if (aNode._eventListeners) {
+      delete aNode._eventListeners;
+    }
+    for each (let child in aNode.childNodes) {
+      this._clearNodeListeners(child);
+    }
+  },
   _shutdown: function ServicePaneService__shutdown() {
+    this._clearNodeListeners(this.root);
+
     let observerService = Cc["@mozilla.org/observer-service;1"]
                             .getService(Ci.nsIObserverService);
     observerService.removeObserver(this, "quit-application");
@@ -913,29 +1000,6 @@ ServicePaneService.prototype = {
                        "longer need to call it.");
   },
 
-  _canDropReorder: function ServicePaneService__canDropReorder(
-                                          aNode, aDragSession, aOrientation) {
-    // see if we can handle the drag and drop based on node properties
-    let types = [];
-    if (aOrientation == 0) {
-      // drop in
-      if (aNode.dndAcceptIn) {
-        types = aNode.dndAcceptIn.split(',');
-      }
-    } else {
-      // drop near
-      if (aNode.dndAcceptNear) {
-        types = aNode.dndAcceptNear.split(',');
-      }
-    }
-    for each (let type in types) {
-      if (aDragSession.isDataFlavorSupported(type)) {
-        return type;
-      }
-    }
-    return null;
-  },
-
   canDrop: function ServicePaneService_canDrop(
                                   aNode, aDragSession, aOrientation, aWindow) {
     if (!aNode) {
@@ -944,11 +1008,6 @@ ServicePaneService.prototype = {
   
     LOG("canDrop(" + aNode.id + ")");
 
-    // see if we can handle the drag and drop based on node properties
-    if (this._canDropReorder(aNode, aDragSession, aOrientation)) {
-      return true;
-    }
-  
     // let the module that owns this node handle this
     if (aNode.contractid && aNode.contractid in this._modulesByContractId) {
       let module = this._modulesByContractId[aNode.contractid];
@@ -965,46 +1024,6 @@ ServicePaneService.prototype = {
 
     LOG("onDrop(" + aNode.id + ")");
 
-    // see if this is a reorder we can handle based on node properties
-    let type = this._canDropReorder(aNode, aDragSession, aOrientation);
-    if (type) {
-      // we're in business
-  
-      // do the dance to get our data out of the dnd system
-      // create an nsITransferable
-      let transferable = Cc["@mozilla.org/widget/transferable;1"]
-                           .createInstance(Ci.nsITransferable);
-      // specify what kind of data we want it to contain
-      transferable.addDataFlavor(type);
-      // ask the drag session to fill the transferable with that data
-      aDragSession.getData(transferable, 0);
-      // get the data from the transferable
-      let data = {};
-      transferable.getTransferData(type, data, {});
-      // it's always a string. always.
-      data = data.value.QueryInterface(Ci.nsISupportsString).data;
-  
-      // for drag and drop reordering the data is just the servicepane node id
-      let droppedNode = this.getNode(data);
-  
-      // fail if we can't get the node or it is the node we are over
-      if (!droppedNode || aNode == droppedNode) {
-        return;
-      }
-  
-      if (aOrientation == 0) {
-        // drop into
-        aNode.appendChild(droppedNode);
-      } else if (aOrientation > 0) {
-        // drop after
-        aNode.parentNode.insertBefore(droppedNode, aNode.nextSibling);
-      } else {
-        // drop before
-        aNode.parentNode.insertBefore(droppedNode, aNode);
-      }
-      return;
-    }
-  
     // or let the module that owns this node handle it
     if (aNode.contractid && aNode.contractid in this._modulesByContractId) {
       let module = this._modulesByContractId[aNode.contractid];

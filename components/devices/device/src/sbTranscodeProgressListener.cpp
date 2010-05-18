@@ -51,13 +51,13 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbTranscodeProgressListener,
 sbTranscodeProgressListener *
 sbTranscodeProgressListener::New(sbBaseDevice * aDeviceBase,
                                  sbDeviceStatusHelper * aDeviceStatusHelper,
-                                 sbBaseDevice::TransferRequest * aRequest,
+                                 sbIMediaItem *aItem,
                                  PRMonitor * aCompleteNotifyMonitor,
                                  StatusProperty const & aStatusProperty,
                                  sbIJobCancelable * aCancel) {
   return new sbTranscodeProgressListener(aDeviceBase,
                                          aDeviceStatusHelper,
-                                         aRequest,
+                                         aItem,
                                          aCompleteNotifyMonitor,
                                          aStatusProperty,
                                          aCancel);
@@ -66,13 +66,13 @@ sbTranscodeProgressListener::New(sbBaseDevice * aDeviceBase,
 sbTranscodeProgressListener::sbTranscodeProgressListener(
   sbBaseDevice * aDeviceBase,
   sbDeviceStatusHelper * aDeviceStatusHelper,
-  sbBaseDevice::TransferRequest * aRequest,
+  sbIMediaItem *aItem,
   PRMonitor * aCompleteNotifyMonitor,
   StatusProperty const & aStatusProperty,
   sbIJobCancelable * aCancel) :
     mBaseDevice(aDeviceBase),
     mStatus(aDeviceStatusHelper),
-    mRequest(aRequest),
+    mItem(aItem),
     mCompleteNotifyMonitor(aCompleteNotifyMonitor),
     mIsComplete(0),
     mTotal(0),
@@ -84,8 +84,8 @@ sbTranscodeProgressListener::sbTranscodeProgressListener(
                "sbTranscodeProgressListener mBaseDevice can't be null");
   NS_ASSERTION(mStatus,
                "sbTranscodeProgressListener mStatus can't be null");
-  NS_ASSERTION(mRequest,
-               "sbTranscodeProgressListener mRequest can't be null");
+  NS_ASSERTION(mItem,
+               "sbTranscodeProgressListener mItem can't be null");
   NS_ASSERTION(mCompleteNotifyMonitor,
                "sbTranscodeProgressListener mCompleteNotifyMonitor "
                "can't be null");
@@ -222,6 +222,7 @@ sbTranscodeProgressListener::SetStatusProperty(
 NS_IMETHODIMP
 sbTranscodeProgressListener::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 {
+  NS_ENSURE_STATE(mItem);
   NS_ENSURE_ARG_POINTER(aEvent);
 
   nsresult rv;
@@ -251,10 +252,8 @@ sbTranscodeProgressListener::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
                                      NS_ISUPPORTS_CAST(sbIMediacoreError*, error));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<sbIMediaItem> item = mRequest->item;
-    NS_ASSERTION(item, "No item in request");
     nsString srcUri;
-    rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL), srcUri);
+    rv = mItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL), srcUri);
     if (NS_SUCCEEDED(rv)) {
       nsCOMPtr<sbITranscodeError> transcodeError;
       rv = SB_NewTranscodeError(message, message, SBVoidString(),
@@ -262,7 +261,7 @@ sbTranscodeProgressListener::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
                                 nsnull,
                                 getter_AddRefs(transcodeError));
       NS_ENSURE_SUCCESS(rv, rv);
-      rv = transcodeError->SetDestItem(item);
+      rv = transcodeError->SetDestItem(mItem);
       NS_ENSURE_SUCCESS(rv, rv);
       rv = bag->SetPropertyAsInterface(NS_LITERAL_STRING("transcode-error"),
                                        NS_ISUPPORTS_CAST(sbITranscodeError*, transcodeError));

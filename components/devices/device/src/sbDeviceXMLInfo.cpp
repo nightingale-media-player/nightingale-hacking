@@ -56,11 +56,14 @@
 // Mozilla imports.
 #include <nsIDOMNamedNodeMap.h>
 #include <nsIDOMNodeList.h>
+#include <nsIMutableArray.h>
 #include <nsIPropertyBag2.h>
 #include <nsIScriptSecurityManager.h>
+#include <nsIWritablePropertyBag.h>
 #include <nsIXMLHttpRequest.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
+#include <nsThreadUtils.h>
 
 
 //------------------------------------------------------------------------------
@@ -345,6 +348,7 @@ sbDeviceXMLInfo::GetExcludedFolders(nsAString & aExcludedFolders)
   return NS_OK;
 }
 
+
 //-------------------------------------
 //
 // GetMountTimeout
@@ -397,6 +401,156 @@ sbDeviceXMLInfo::GetMountTimeout(PRUint32* aMountTimeout)
   mountTimeout = mountTimeoutString.ToInteger(&rv);
   NS_ENSURE_SUCCESS(rv, rv);
   *aMountTimeout = mountTimeout;
+
+  return NS_OK;
+}
+
+
+//-------------------------------------
+//
+// GetDoesDeviceSupportReformat
+//
+
+nsresult
+sbDeviceXMLInfo::GetDoesDeviceSupportReformat(PRBool *aOutSupportsReformat)
+{
+  NS_ENSURE_ARG_POINTER(aOutSupportsReformat);
+  *aOutSupportsReformat = PR_TRUE;
+
+  // Check if a device info element is available.
+  NS_ENSURE_TRUE(mDeviceInfoElement, NS_ERROR_NOT_AVAILABLE);
+
+  nsresult rv;
+  nsCOMPtr<nsIDOMNodeList> supportsFormatNodeList;
+  rv = mDeviceInfoElement->GetElementsByTagNameNS(
+      NS_LITERAL_STRING(SB_DEVICE_INFO_NS),
+      NS_LITERAL_STRING("supportsreformat"),
+      getter_AddRefs(supportsFormatNodeList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // See if there is at least one node.
+  PRUint32 nodeCount;
+  rv = supportsFormatNodeList->GetLength(&nodeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (nodeCount > 0) {
+    // Only process the first node value.
+    nsCOMPtr<nsIDOMNode> supportsFormatNode;
+    rv = supportsFormatNodeList->Item(0, getter_AddRefs(supportsFormatNode));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIDOMElement> supportsFormatElement =
+      do_QueryInterface(supportsFormatNode, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Read the value
+    nsString supportsFormatValue;
+    rv = supportsFormatElement->GetAttribute(NS_LITERAL_STRING("value"),
+                                             supportsFormatValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (supportsFormatValue.Equals(NS_LITERAL_STRING("false"),
+          (nsAString::ComparatorFunc)CaseInsensitiveCompare)) {
+      *aOutSupportsReformat = PR_FALSE;
+    }
+  }
+
+
+  return NS_OK;
+}
+
+
+//-------------------------------------
+//
+// GetStorageDeviceInfoList
+//
+
+nsresult
+sbDeviceXMLInfo::GetStorageDeviceInfoList(nsIArray** aStorageDeviceInfoList)
+{
+  // Validate arguments and ensure this is called on the main thread.
+  NS_ENSURE_ARG_POINTER(aStorageDeviceInfoList);
+  NS_ASSERTION(NS_IsMainThread(), "not on main thread");
+
+  // Function variables.
+  nsresult rv;
+
+  // Check if a device info element is available.  There doesn't have to be, so,
+  // if not, just return an error without any warnings.
+  if (!mDeviceInfoElement)
+    return NS_ERROR_NOT_AVAILABLE;
+
+  // Get the list of storage nodes.
+  nsCOMPtr<nsIDOMNodeList> storageNodeList;
+  rv = mDeviceInfoElement->GetElementsByTagNameNS
+                             (NS_LITERAL_STRING(SB_DEVICE_INFO_NS),
+                              NS_LITERAL_STRING("storage"),
+                              getter_AddRefs(storageNodeList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check if any storage nodes are available.
+  PRUint32 nodeCount;
+  rv = storageNodeList->GetLength(&nodeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create the storage device info list.
+  nsCOMPtr<nsIMutableArray> storageDeviceInfoList =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the storage device info.
+  for (PRUint32 nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
+    // Get the storage device node.
+    nsCOMPtr<nsIDOMNode> storageDeviceNode;
+    rv = storageNodeList->Item(nodeIndex, getter_AddRefs(storageDeviceNode));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the storage device attributes.
+    nsCOMPtr<nsIDOMNamedNodeMap> attributes;
+    PRUint32                     attributeCount;
+    rv = storageDeviceNode->GetAttributes(getter_AddRefs(attributes));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = attributes->GetLength(&attributeCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Create the storage device info property bag.
+    nsCOMPtr<nsIWritablePropertyBag> storageDeviceInfo =
+      do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the storage device info.
+    for (PRUint32 attributeIndex = 0;
+         attributeIndex < attributeCount;
+         ++attributeIndex) {
+      // Get the next attribute.
+      nsCOMPtr<nsIDOMNode> attribute;
+      rv = attributes->Item(attributeIndex, getter_AddRefs(attribute));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Get the attribute name.
+      nsAutoString attributeName;
+      rv = attribute->GetNodeName(attributeName);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Get the attribute value.
+      nsAutoString attributeValue;
+      rv = attribute->GetNodeValue(attributeValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Set the storage device info.
+      storageDeviceInfo->SetProperty(attributeName,
+                                     sbNewVariant(attributeValue));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    // Add the storage device info.
+    rv = storageDeviceInfoList->AppendElement(storageDeviceInfo, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Return results.
+  rv = CallQueryInterface(storageDeviceInfoList, aStorageDeviceInfoList);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

@@ -502,7 +502,8 @@ window.cdripController =
     var transcodeManager =
         Cc["@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1"]
           .getService(Ci.sbITranscodeManager);
-    var profiles = transcodeManager.getTranscodeProfiles();
+    var profiles = transcodeManager.getTranscodeProfiles(
+            Ci.sbITranscodeProfile.TRANSCODE_TYPE_AUDIO);
 
     for (var i = 0; i < profiles.length; i++) {
       var profile = profiles.queryElementAt(i, Ci.sbITranscodeProfile);

@@ -703,7 +703,7 @@ IPD_SPS.prototype = {
     this._devInfoList[deviceID].device = aDevice;
 
     // Add a device node in the service pane.
-    var devNode = this._devServicePaneSvc.createNodeForDevice2(aDevice);
+    var devNode = this._devServicePaneSvc.createNodeForDevice2(aDevice, true);
     devNode.setAttributeNS(IPODSP_NS, "device-id", deviceID);
     devNode.contractid = this._cfg.contractID;
     devNode.name = aDevice.properties.friendlyName;

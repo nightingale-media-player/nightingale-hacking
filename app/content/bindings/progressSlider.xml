@@ -35,7 +35,7 @@
     <content>
     <xul:box sbid="sb-progress-slider" xbl:inherits="orient,class" flex="1">
       <xul:button collapsed="true" type="checkbox" sbid="sb-progress-slider-min"
-                  class="sb-progress-slider" xbl:inherits="class"
+                  class="sb-progress-slider" xbl:inherits="disabled,class"
                   oncommand="if (!document.getBindingParent(this).getAttribute('disabled')) return document.getBindingParent(this).snapToValue(0);"/>
       <xul:stack xbl:inherits="class" flex="1">
         <xul:progressmeter sbid="sb-progress-slider-progress"
@@ -52,7 +52,7 @@
         </xul:slider>
       </xul:stack>
       <xul:button collapsed="true" type="checkbox" sbid="sb-progress-slider-max"
-                  class="sb-progress-slider" xbl:inherits="class"
+                  class="sb-progress-slider" xbl:inherits="disabled,class"
                   oncommand="return document.getBindingParent(this).snapToMax();"/>
       <children/>
     </xul:box>
@@ -82,6 +82,21 @@
     <field name="_TRACKING_NONE" readonly="true">0</field>
     <field name="_TRACKING_SLIDER" readonly="true">1</field>
     <field name="_TRACKING_THUMB" readonly="true">2</field>
+
+    <property name="disabled">
+      <getter>
+        return !!this.getAttribute("disabled");
+      </getter>
+      <setter>
+        if (val) {
+          this.setAttribute("disabled", true);
+        }
+        else {
+          this.removeAttribute("disabled");
+        }
+        return val;
+      </setter>
+    </property>
 
     <property name="value">
       <getter>
@@ -196,6 +211,9 @@
       <parameter name="event"/>
       <body>
         <![CDATA[
+          if (this.disabled) {
+            return;
+          }
           if (event.button == this._TRACKING_NONE ) 
           {
             if (this.mouseonthumb(event.screenX, event.screenY)) 
@@ -237,6 +255,9 @@
     <method name="slidermousemove">
       <parameter name="event"/>
       <body>
+          if (this.disabled) {
+            return;
+          }
           if (this._tracking == this._TRACKING_THUMB) {
             this.progress_value = this.value;
           } else if (this._tracking == this._TRACKING_NONE) {

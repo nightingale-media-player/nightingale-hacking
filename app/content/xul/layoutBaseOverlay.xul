@@ -517,7 +517,7 @@
   <statusbar id="status-bar">
 
     <statusbarpanel id="statusbar-display" flex="1" 
-      insertbefore="sb-status-bar-numplaylistitems-label">
+      insertafter="sb-status-bar-numplaylistitems-label">
       <sb-status-label id="sb-status-bar-status-label" 
           class="sb-status-bar-status-label sb-status-bar-text" 
           value=" " flex="1" crop="end" pack="center"/>

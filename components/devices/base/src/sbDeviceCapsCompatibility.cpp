@@ -52,7 +52,6 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceCapsCompatibility,
 sbDeviceCapsCompatibility::sbDeviceCapsCompatibility()
   : mDeviceCapabilities(nsnull),
     mMediaFormat(nsnull),
-    mContentType(0),
     mMediaVideoStream(nsnull),
     mMediaAudioStream(nsnull),
     mMediaVideoWidth(0),
@@ -65,7 +64,8 @@ sbDeviceCapsCompatibility::sbDeviceCapsCompatibility()
     mMediaVideoFRDenominator(0),
     mMediaAudioBitRate(0),
     mMediaAudioSampleRate(0),
-    mMediaAudioChannels(0)
+    mMediaAudioChannels(0),
+    mContentType(0)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 }
@@ -147,7 +147,152 @@ sbDeviceCapsCompatibility::Compare(PRBool* aCompatible)
 nsresult
 sbDeviceCapsCompatibility::CompareAudioFormat(PRBool* aCompatible)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  TRACE(("%s[%p]", __FUNCTION__, this));
+  NS_ENSURE_ARG_POINTER(aCompatible);
+  NS_ENSURE_TRUE(mDeviceCapabilities, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMediaFormat, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv;
+  *aCompatible = PR_FALSE;
+
+  // Retrieve all the properties of the format we're comparing to
+  // Get container type
+  nsCOMPtr<sbIMediaFormatContainer> mediaContainer;
+  rv = mMediaFormat->GetContainer(getter_AddRefs(mediaContainer));
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(mediaContainer, NS_OK);
+
+  rv = mediaContainer->GetContainerType(mMediaContainerType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!mMediaAudioStream) {
+    // Since we're only comparing audio, if we don't have audio, reject.
+    return NS_OK;
+  }
+
+  // Retrive all the audio properties if available
+  // Get Audio type
+  rv = mMediaAudioStream->GetAudioType(mMediaAudioType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get Audio bit rate
+  rv = mMediaAudioStream->GetBitRate(&mMediaAudioBitRate);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get Audio sample rate
+  rv = mMediaAudioStream->GetSampleRate(&mMediaAudioSampleRate);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get Audio channels
+  rv = mMediaAudioStream->GetChannels(&mMediaAudioChannels);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // TODO: Get additional audio properties
+
+  // Get supported mime types
+  PRUint32 mimeTypesLength;
+  char **mimeTypes;
+  rv = mDeviceCapabilities->GetSupportedMimeTypes(mContentType,
+                                                  &mimeTypesLength,
+                                                  &mimeTypes);
+
+  if (NS_SUCCEEDED(rv) && mimeTypesLength > 0) {
+    sbAutoNSArray<char*> autoMimeTypes(mimeTypes, mimeTypesLength);
+    for (PRUint32 mimeTypeIndex = 0;
+         mimeTypeIndex < mimeTypesLength;
+         ++mimeTypeIndex)
+    {
+      NS_ConvertASCIItoUTF16 mimeType(mimeTypes[mimeTypeIndex]);
+    
+      nsISupports** formatTypes;
+      PRUint32 formatTypeCount;
+      rv = mDeviceCapabilities->GetFormatTypes(mContentType,
+                                               mimeType,
+                                               &formatTypeCount,
+                                               &formatTypes);
+      NS_ENSURE_SUCCESS(rv, rv);
+      sbAutoFreeXPCOMPointerArray<nsISupports> freeFormats(formatTypeCount,
+                                                           formatTypes);
+
+      for (PRUint32 formatIndex = 0;
+           formatIndex < formatTypeCount;
+           formatIndex++)
+      {
+        nsCOMPtr<sbIAudioFormatType> audioFormat =
+            do_QueryInterface(formatTypes[formatIndex], &rv);
+        if (NS_SUCCEEDED(rv) && audioFormat) {
+          // Compare container type
+          nsCString deviceContainerType;
+          rv = audioFormat->GetContainerFormat(deviceContainerType);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          // Container type not equal
+          if (!StringEqualsToCString(mMediaContainerType, deviceContainerType)) {
+            LOG(("Not match! media container type: %s, device container type: %s",
+                 NS_ConvertUTF16toUTF8(mMediaContainerType).BeginReading(),
+                 deviceContainerType.BeginReading()));
+            continue;
+          }
+
+          // Compare audio type
+          nsCString deviceAudioCodec;
+          rv = audioFormat->GetAudioCodec(deviceAudioCodec);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          // Audio codec not equal. Not compatible.
+          if (!StringEqualsToCString(mMediaAudioType, deviceAudioCodec)) {
+            LOG(("Not match! media audio type: %s, device audio type: %s",
+                 NS_ConvertUTF16toUTF8(mMediaAudioType).BeginReading(),
+                 deviceAudioCodec.BeginReading()));
+            continue;
+          }
+
+          // Audio bit rate could be unknown in the media file.
+          if (mMediaAudioBitRate) {
+            nsCOMPtr<sbIDevCapRange> deviceSupportedBitRates;
+            rv = audioFormat->GetSupportedBitrates(
+                          getter_AddRefs(deviceSupportedBitRates));
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            rv = deviceSupportedBitRates->IsValueInRange(mMediaAudioBitRate,
+                                                         aCompatible);
+            NS_ENSURE_SUCCESS(rv, rv);
+            if (!(*aCompatible))
+              continue;
+          }
+
+          // Compare audio sample rates
+          nsCOMPtr<sbIDevCapRange> deviceSupportedSampleRates;
+          rv = audioFormat->GetSupportedSampleRates(
+                         getter_AddRefs(deviceSupportedSampleRates));
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          rv = deviceSupportedSampleRates->IsValueInRange(mMediaAudioSampleRate,
+                                                          aCompatible);
+          NS_ENSURE_SUCCESS(rv, rv);
+          if (!(*aCompatible))
+            continue;
+
+          // Compare audio channels
+          nsCOMPtr<sbIDevCapRange> deviceSupportedChannels;
+          rv = audioFormat->GetSupportedChannels(
+                         getter_AddRefs(deviceSupportedChannels));
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          rv = deviceSupportedChannels->IsValueInRange(mMediaAudioChannels,
+                                                       aCompatible);
+          NS_ENSURE_SUCCESS(rv, rv);
+          if (!(*aCompatible))
+             continue;
+
+          // Getting this far means we got a match and have set aCompatible.
+          return NS_OK;
+        }
+      }
+    }
+  }
+
+  return NS_OK;
 }
 
 nsresult
@@ -265,7 +410,7 @@ sbDeviceCapsCompatibility::CompareVideoFormat(PRBool* aCompatible)
           // Container type not equal
           if (!StringEqualsToCString(mMediaContainerType, deviceContainerType)) {
             LOG(("Not match! media container type: %s, device container type: %s",
-                 mMediaContainerType.BeginReading(),
+                 NS_ConvertUTF16toUTF8(mMediaContainerType).BeginReading(),
                  deviceContainerType.BeginReading()));
             continue;
           }
@@ -284,8 +429,10 @@ sbDeviceCapsCompatibility::CompareVideoFormat(PRBool* aCompatible)
 
           rv = CompareVideoStream(videoStream, aCompatible);
           NS_ENSURE_SUCCESS(rv, rv);
-          if (!(*aCompatible))
+          if (!(*aCompatible)) {
+            LOG(("%s[%p] Video stream incompatible", __FUNCTION__, this));
             continue;
+          }
 
           if (mMediaAudioStream) {
             // Get device audio stream
@@ -302,11 +449,14 @@ sbDeviceCapsCompatibility::CompareVideoFormat(PRBool* aCompatible)
   
             rv = CompareAudioStream(audioStream, aCompatible);
             NS_ENSURE_SUCCESS(rv, rv);
-            if (!(*aCompatible))
+            if (!(*aCompatible)) {
+              LOG(("%s[%p] Audio stream incompatible", __FUNCTION__, this));
               continue;
+            }
           }
   
           // Getting this far means we got a match and have set aCompatible.
+          LOG(("%s[%p] Stream is compatible", __FUNCTION__, this));
           return NS_OK;
         }
       }
@@ -337,7 +487,7 @@ sbDeviceCapsCompatibility::CompareVideoStream(
   // Video type not equal. Not compatible.
   if (!StringEqualsToCString(mMediaVideoType, deviceVideoType)) {
     LOG(("Not match! media video type: %s, device video type: %s",
-         mMediaVideoType.BeginReading(),
+         NS_ConvertUTF16toUTF8(mMediaVideoType).BeginReading(),
          deviceVideoType.BeginReading()));
     return NS_OK;
   }
@@ -392,7 +542,7 @@ sbDeviceCapsCompatibility::CompareAudioStream(
   // Audio type not equal. Not compatible.
   if (!StringEqualsToCString(mMediaAudioType, deviceAudioType)) {
     LOG(("Not match! media audio type: %s, device audio type: %s",
-         mMediaAudioType.BeginReading(),
+         NS_ConvertUTF16toUTF8(mMediaAudioType).BeginReading(),
          deviceAudioType.BeginReading()));
     return NS_OK;
   }
@@ -590,9 +740,8 @@ sbDeviceCapsCompatibility::CompareVideoBitRate(
 }
 
 nsresult
-sbDeviceCapsCompatibility::CompareVideoPAR(
-                                sbIDevCapVideoStream* aVideoStream,
-                                PRBool* aCompatible)
+sbDeviceCapsCompatibility::CompareVideoPAR(sbIDevCapVideoStream *aVideoStream,
+                                           PRBool *aCompatible)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aVideoStream);
@@ -601,33 +750,77 @@ sbDeviceCapsCompatibility::CompareVideoPAR(
   nsresult rv;
   *aCompatible = PR_FALSE;
 
-  // Compare video PAR
-  char **deviceSupportedVideoPARs;
-  PRUint32 deviceVideoPARsCount;
-  rv = aVideoStream->GetSupportedVideoPARs(&deviceVideoPARsCount,
-                                           &deviceSupportedVideoPARs);
+  // Compare video PAR.
+  PRBool isRange = PR_FALSE;
+  rv = aVideoStream->GetDoesSupportPARRange(&isRange);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  sbAutoNSArray<char*> autoVideoPARs(deviceSupportedVideoPARs,
-                                     deviceVideoPARsCount);
+  PRUint32 numerator, denominator;
+  sbFraction videoParFraction(mMediaVideoPARNumerator,
+                              mMediaVideoPARDenominator);
 
-  for (PRUint32 i = 0; i < deviceVideoPARsCount; ++i) {
-    sbFraction fraction;
-    rv = sbFractionFromString(
-             NS_ConvertASCIItoUTF16(deviceSupportedVideoPARs[i]),
-             fraction);
+  if (isRange) {
+    // Decide to use either the min par or the max par value.
+    nsCOMPtr<sbIDevCapFraction> minSupportedPAR;
+    rv = aVideoStream->GetMinimumSupportedPAR(getter_AddRefs(minSupportedPAR));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = minSupportedPAR->GetNumerator(&numerator);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = minSupportedPAR->GetDenominator(&denominator);
+    NS_ENSURE_SUCCESS(rv, rv);
+    sbFraction minPARFraction(numerator, denominator); 
+
+    nsCOMPtr<sbIDevCapFraction> maxSupportedPAR;
+    rv = aVideoStream->GetMaximumSupportedPAR(getter_AddRefs(maxSupportedPAR));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = maxSupportedPAR->GetNumerator(&numerator);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = maxSupportedPAR->GetDenominator(&denominator);
+    NS_ENSURE_SUCCESS(rv, rv);
+    sbFraction maxPARFraction(numerator, denominator);
+
+    if (videoParFraction >= minPARFraction &&
+        videoParFraction <= maxPARFraction) 
+    {
+      *aCompatible = PR_TRUE;
+    }
+    else {
+      LOG(("media video PAR (%d/%d) not in min/max range of supported PARS!"
+            "min=(%d/%d) max=(%d/%d)",
+            mMediaVideoPARNumerator, mMediaVideoPARDenominator,
+            minPARFraction.Numerator(), minPARFraction.Denominator(),
+            maxPARFraction.Numerator(), maxPARFraction.Denominator()));
+    }
+  }
+  else {
+    nsCOMPtr<nsIArray> supportedPARsArray;
+    rv = aVideoStream->GetSupportedPARs(getter_AddRefs(supportedPARsArray));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Match
-    if (fraction == sbFraction(mMediaVideoPARNumerator,
-                               mMediaVideoPARDenominator)) {
-      *aCompatible = PR_TRUE;
-      break;
-    }
+    PRUint32 length;
+    rv = supportedPARsArray->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-    LOG(("media video PAR (%d/%d) not equal to supported PAR item[%d] (%d/%d)",
-         mMediaVideoPARNumerator, mMediaVideoPARDenominator, i,
-         fraction.Numerator(), fraction.Denominator()));
+    for (PRUint32 i = 0; i < length; i++) {
+      nsCOMPtr<sbIDevCapFraction> curPARFraction =
+        do_QueryElementAt(supportedPARsArray, i, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = curPARFraction->GetNumerator(&numerator);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = curPARFraction->GetDenominator(&denominator);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Match
+      if (videoParFraction == sbFraction(numerator, denominator)) {
+        *aCompatible = PR_TRUE;
+        break;
+      }
+
+      LOG(("media video PAR (%d/%d) not equal to supported PAR item[%d] (%d/%d)",
+            mMediaVideoPARNumerator, mMediaVideoPARDenominator, i,
+            numerator, denominator));
+    }
   }
 
 #ifdef PR_LOGGING
@@ -651,33 +844,81 @@ sbDeviceCapsCompatibility::CompareVideoFrameRate(
   nsresult rv;
   *aCompatible = PR_FALSE;
 
-  // Compare frame rate
-  char **deviceSupportedFrameRates;
-  PRUint32 deviceFrameRatesCount;
-  rv = aVideoStream->GetSupportedFrameRates(&deviceFrameRatesCount,
-                                            &deviceSupportedFrameRates);
+  // Compare frame rates.
+  PRBool isRange = PR_FALSE;
+  rv = aVideoStream->GetDoesSupportFrameRateRange(&isRange);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  sbAutoNSArray<char*> autoFrameRates(deviceSupportedFrameRates,
-                                      deviceFrameRatesCount);
-  for (PRUint32 i = 0; i < deviceFrameRatesCount; ++i) {
-    sbFraction fraction;
-    rv = sbFractionFromString(
-             NS_ConvertASCIItoUTF16(deviceSupportedFrameRates[i]),
-             fraction);
+  PRUint32 numerator, denominator;
+  sbFraction videoFrameRateFraction(mMediaVideoFRNumerator,
+                                    mMediaVideoFRDenominator);
+
+  if (isRange) {
+    // Decide to use either the min or the max frame rate value.
+    nsCOMPtr<sbIDevCapFraction> minSupportedFR;
+    rv = aVideoStream->GetMinimumSupportedFrameRate(
+        getter_AddRefs(minSupportedFR));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = minSupportedFR->GetNumerator(&numerator);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = minSupportedFR->GetDenominator(&denominator);
+    NS_ENSURE_SUCCESS(rv, rv);
+    sbFraction minFRFraction(numerator, denominator); 
+
+    nsCOMPtr<sbIDevCapFraction> maxSupportedFR;
+    rv = aVideoStream->GetMaximumSupportedFrameRate(
+        getter_AddRefs(maxSupportedFR));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = maxSupportedFR->GetNumerator(&numerator);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = maxSupportedFR->GetDenominator(&denominator);
+    NS_ENSURE_SUCCESS(rv, rv);
+    sbFraction maxFRFraction(numerator, denominator);
+
+    if (videoFrameRateFraction >= minFRFraction &&
+        videoFrameRateFraction <= maxFRFraction)
+    {
+      *aCompatible = PR_TRUE;
+    }
+    else {
+      LOG(("media video frame rate (%d/%d) not in min/max range of "
+            "supported frame rates! min=(%d/%d) max=(%d/%d)",
+            mMediaVideoPARNumerator, mMediaVideoPARDenominator,
+            minFRFraction.Numerator(), minFRFraction.Denominator(),
+            maxFRFraction.Numerator(), maxFRFraction.Denominator()));
+    }
+  }
+  else {
+    nsCOMPtr<nsIArray> supportedFrameRatesFraction;
+    rv = aVideoStream->GetSupportedFrameRates(
+        getter_AddRefs(supportedFrameRatesFraction));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Match
-    if (fraction == sbFraction(mMediaVideoFRNumerator,
-                               mMediaVideoFRDenominator)) {
-      *aCompatible = PR_TRUE;
-      break;
-    }
+    PRUint32 length;
+    rv = supportedFrameRatesFraction->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-    LOG(("media video frame rate (%d/%d) not equal to supported "
-         "frame rate item[%d] (%d/%d)",
-         mMediaVideoFRNumerator, mMediaVideoFRDenominator, i,
-         fraction.Numerator(), fraction.Denominator()));
+    for (PRUint32 i = 0; i < length; i++) {
+      nsCOMPtr<sbIDevCapFraction> curFrameRateFraction =
+        do_QueryElementAt(supportedFrameRatesFraction, i, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = curFrameRateFraction->GetNumerator(&numerator);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = curFrameRateFraction->GetDenominator(&denominator);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Match
+      if (videoFrameRateFraction == sbFraction(numerator, denominator)) {
+        *aCompatible = PR_TRUE;
+        break;
+      }
+
+      LOG(("media video frame rate (%d/%d) not equal to supported "
+            "frame rate item[%d] (%d/%d)",
+            mMediaVideoPARNumerator, mMediaVideoPARDenominator, i,
+            numerator, denominator));
+    }
   }
 
 #ifdef PR_LOGGING

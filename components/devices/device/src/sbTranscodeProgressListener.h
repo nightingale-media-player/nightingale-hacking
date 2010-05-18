@@ -84,7 +84,7 @@ public:
   static sbTranscodeProgressListener *
   New(sbBaseDevice * aDeviceBase,
       sbDeviceStatusHelper * aDeviceStatusHelper,
-      sbBaseDevice::TransferRequest * aRequest,
+      sbIMediaItem *aItem,
       PRMonitor * aCompleteNotifyMonitor = nsnull,
       StatusProperty const & aStatusProperty = StatusProperty(),
       sbIJobCancelable * aCancel = nsnull);
@@ -95,7 +95,7 @@ private:
   inline
   sbTranscodeProgressListener(sbBaseDevice * aDeviceBase,
                               sbDeviceStatusHelper * aDeviceStatusHelper,
-                              sbBaseDevice::TransferRequest * aRequest,
+                              sbIMediaItem *aItem,
                               PRMonitor * aCompleteNotifyMonitor,
                               StatusProperty const & aStatusProperty,
                               sbIJobCancelable * aCancel);
@@ -124,7 +124,8 @@ private:
 
   // Non-owning reference, reference to mBaseDevice will keep this alive
   sbDeviceStatusHelper * mStatus;
-  nsRefPtr<sbBaseDevice::TransferRequest> mRequest;
+
+  nsCOMPtr<sbIMediaItem> mItem;
   PRMonitor *mCompleteNotifyMonitor;
   PRInt32 mIsComplete;
   PRUint32 mTotal;

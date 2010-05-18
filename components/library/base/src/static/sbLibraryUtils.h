@@ -47,6 +47,7 @@
 class sbIMediaItem;
 class sbILibrary;
 class nsIIOService;
+class sbIPropertyOperator;
 
 class sbLibraryBatchHelper
 {
@@ -108,15 +109,19 @@ public:
                                    /* out */ sbIMediaItem **_retval);
 
   /**
-   * This function searches aList for items that have the same content url as
-   * aMediaItem's origin URL
-   * \param aItem The item to find a match for
-   * \param aLibrary The library to look in
-   * \return The media items found, or null
+   * This function search for itens in aMediaList with the same URL's.
+   * The origin URL of aMediaItem is used, if it doesn't exist then the
+   * content URL is used. aMediaList is then search by content and then
+   * origin URL
+   * \param aItem The item to find matches for
+   * \param aMediaList The list to search in, can be a library
+   * \return The media items found, or empty array. aCopies may be null
+   *         in which case the function will return NS_ERROR_NOT_AVAILABLE
+   *         if no copies are found
    */
-  static nsresult FindOriginalsByURL(sbIMediaItem *    aMediaItem,
-                                     sbIMediaList *    aList,
-                                     nsIMutableArray * aCopies);
+  static nsresult FindItemsWithSameURL(sbIMediaItem *    aMediaItem,
+                                       sbIMediaList *    aMediaList,
+                                       nsIMutableArray * aCopies);
 
   /**
    * aList is searched for items that have origin ID's that match
@@ -136,7 +141,9 @@ public:
    * Searches aList for items that have ID's that match aMediaItem's origin ID
    * \param aItem The item to find a match for
    * \param aLibrary The library to look in
-   * \return The media items found, or null
+   * \return The media items found, or empty array. aCopies may be null
+   *         in which case the function will return NS_ERROR_NOT_AVAILABLE
+   *         if no copies are found
    */
   static nsresult FindOriginalsByID(sbIMediaItem * aMediaItem,
                                     sbIMediaList * aList,
@@ -153,10 +160,19 @@ public:
    * Attempt to get the content length of the media item
    *
    * \param aItem    The item to look up
-   * \retur          The content length of the item (or throw an exception)
+   * \return         The content length of the item (or throw an exception)
    */
   static nsresult GetContentLength(/* in */  sbIMediaItem * aItem,
                                    /* out */ PRInt64      * _retval);
+
+  /**
+   * Set the content length of the media item
+   *
+   * \param aItem    The item to set the content length to
+   * \param aURI     The URI to retrive the content length from
+   */
+  static nsresult SetContentLength(/* in */  sbIMediaItem * aItem,
+                                   /* in */  nsIURI       * aURI);
 
   /**
    * \brief Return a library content URI for the URI specified by aURI.
@@ -193,6 +209,35 @@ public:
                                      nsAString const & aPropertyName,
                                      nsAString const & aValue,
                                      nsCOMArray<sbIMediaItem> & aMediaItems);
+
+  /**
+   * Returns the media lists matching the content type
+   * \param aLibrary the library to look for playlists
+   * \param aContentType The content type to filter by
+   * \param aMediaLists the returned collection of media lists
+   */
+  static nsresult GetMediaListByContentType(sbILibrary * aLibrary,
+                                            PRUint32 aContentType,
+                                            nsIArray ** aMediaLists);
+
+  /**
+   * Returns the equality operator for the content property
+   *
+   * \return                    The equal operator
+   */
+  static PRUint32 GetEqualOperator(sbIPropertyOperator ** aOperator);
+
+  /**
+   * \brief Suggest a unique name for playlist.
+   *
+   * \param aLibrary  an sbILibrary.
+   * \param aListName the playlist name to append id to.
+   * \return a unique playlist name.
+   */
+  static nsresult SuggestUniqueNameForPlaylist(
+                    /* in  */ sbILibrary *aLibrary,
+                    /* in  */ nsAString const & aListName,
+                    /* out */ nsAString & aName);
 };
 
 /**

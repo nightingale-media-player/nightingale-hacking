@@ -253,21 +253,33 @@
             },
             
             onItemAdded: function(aMediaList, aMediaItem, aIndex) {
+              // Don't need any further notifications
+              return true;
             },
             
             onBeforeItemRemoved: function(aMediaList, aMediaItem, aIndex) {
+              // Don't need any further notifications
+              return true;
             },
             
             onAfterItemRemoved: function(aMediaList, aMediaItem, aIndex) {
+              // Don't need any further notifications
+              return true;
             },
             
             onItemMoved: function(aMediaList, aFromIndex, aToIndex) {
+              // Don't need any further notifications
+              return true;
             },
 
             onBeforeListCleared: function(aMediaList, aExcludeLists) {
+              // Don't need any further notifications
+              return true;
             },
             
             onListCleared: function(aMediaList, aExcludeLists) {
+              // Don't need any further notifications
+              return true;
             },
             
             onBatchBegin: function(aMediaList) {

@@ -158,7 +158,7 @@ moz_run_program()
 	if [ "$DEBUG_CORE_FILES" ]
 	then
 		crc_old=
-		if [ -f core ]
+		if [ -f core -a -r core ]
 		then
 			crc_old=`$crc_prog core | awk '{print $1;}' `
 		fi
@@ -170,7 +170,7 @@ moz_run_program()
 	exitcode=$?
 	if [ "$DEBUG_CORE_FILES" ]
 	then
-		if [ -f core ]
+		if [ -f core -a -r core ]
 		then
 			crc_new=`$crc_prog core | awk '{print $1;}' `
 		fi

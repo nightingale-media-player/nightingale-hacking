@@ -57,18 +57,20 @@ function runTest() {
 
   var platform = getPlatform();
 
-  assertContains(list, ["staticelements", "ogg", "vorbis"]);
+  assertContains(list, ["staticelements", "ogg", "vorbis", "mozilla"]);
 
-  if (platform == "Windows NT") {
-    assertContains(list, ["directsound", "directdraw"]);
-  }
-
-  if (platform == "Darwin") {
-    assertContains(list, ["osxaudio", "osxvideo"]);
-  }
-
-  if (platform == "Linux") {
-    assertContains(list, ["alsa", "ximagesink", "xvimagesink"]);
+  switch (platform) {
+    case "Windows_NT":
+      assertContains(list, ["directsound", "dshowsinkwrapper"]);
+      break;
+    case "Darwin":
+      assertContains(list, ["osxaudio", "osxvideo"]);
+      break;
+    case "Linux":
+      assertContains(list, ["alsa", "ximagesink", "xvimagesink"]);
+      break;
+    default:
+      log("Unknown platform " + platform);
   }
 }
 

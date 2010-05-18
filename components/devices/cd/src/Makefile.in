@@ -102,6 +102,8 @@ CPP_SRCS += sbBaseDeviceEventTarget.cpp \
             sbDeviceEvent.cpp \
             sbDeviceLibrary.cpp \
             sbDeviceLibraryHelpers.cpp \
+            sbDeviceLibraryMediaSyncSettings.cpp \
+            sbDeviceLibrarySyncSettings.cpp \
             $(NULL)
 
 

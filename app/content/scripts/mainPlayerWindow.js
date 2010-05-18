@@ -153,7 +153,7 @@ var gSongbirdWindowController =
     } else if (aCommand == "cmd_volume_mute") {
       mm.volumeControl.mute = !mm.volumeControl.mute;
     } else if (aCommand == "cmd_delete") {
-      SBDeleteMediaList(this._getVisiblePlaylist());
+      SBDeleteMediaList(this._getTargetPlaylist());
     } else if (aCommand == "cmd_mediapage_next") {
       gSongbirdPlayerWindow.nextMediaPage();
     }
@@ -179,7 +179,7 @@ var gSongbirdWindowController =
         return true;
       case "cmd_getartwork":
       case "cmd_delete":
-        return (this._getVisiblePlaylist() != null);
+        return (this._getTargetPlaylist() != null);
       case "cmd_volume_down":
       case "cmd_volume_up":
       case "cmd_volume_mute":
@@ -252,7 +252,7 @@ var gSongbirdWindowController =
                         status.state == status.STATUS_PAUSED );
         return playing && document.commandDispatcher.focusedWindow == window;
       case "cmd_delete": {
-        var node = gServicePane.getSelectedNode();
+        var node = gServicePane.getKeyboardFocusNode();
         if(node && node.editable == false) {
           return false;
         }
@@ -269,24 +269,36 @@ var gSongbirdWindowController =
     return false;
   },
   
-  _getVisiblePlaylist: function() 
+  _getTargetPlaylist: function() 
   {
-    var browser;
-    if (typeof SBGetBrowser == 'function') 
-      browser = SBGetBrowser();
-    if (browser) {
-      if (browser.currentMediaPage) {
-        var view = browser.currentMediaPage.mediaListView;
-        if (view) {
-          var list = view.mediaList;
-          var outerListGuid = 
-            list.getProperty(SBProperties.outerGUID);
-          if (outerListGuid) {
-            return list.library.getMediaItem(outerListGuid);
+    var list;
+    var knode = gServicePane.getKeyboardFocusNode(true);
+    if (knode) {
+      var libraryServicePane =
+        Components.classes['@songbirdnest.com/servicepane/library;1']
+        .getService(Components.interfaces.sbILibraryServicePaneService);
+      list = libraryServicePane.getLibraryResourceForNode(knode);
+      
+    } else {
+      var browser;
+      if (typeof SBGetBrowser == 'function') 
+        browser = SBGetBrowser();
+      if (browser) {
+        if (browser.currentMediaPage) {
+          var view = browser.currentMediaPage.mediaListView;
+          if (view) {
+            list = view.mediaList;
           }
-          return list;
         }
       }
+    }
+    if (list) {
+      var outerListGuid = 
+        list.getProperty(SBProperties.outerGUID);
+      if (outerListGuid) {
+        return list.library.getMediaItem(outerListGuid);
+      }
+      return list;
     }
     return null;
   }
@@ -328,9 +340,6 @@ var gSongbirdPlayerWindow = {
     gTabBrowser = document.getElementById("content");
     top.controllers.insertControllerAt(0, gSongbirdWindowController);
     
-    window.addEventListener("createnewplaylist", this.onCreateNewPlaylist,
-                            false);
-
     // Set the player controls location
     var playerControlsLocation = 
       Application.prefs.getValue(PREF_PLAYER_CONTROL_LOCATION, false);
@@ -365,8 +374,6 @@ var gSongbirdPlayerWindow = {
     this._onPlayCallback = null;
 
     window.removeEventListener("keypress", this.onMainWindowKeyPress, false);
-    window.removeEventListener("createnewplaylist", this.onCreateNewPlaylist,
-                               false);
   },
 
   
@@ -433,21 +440,6 @@ var gSongbirdPlayerWindow = {
     event.preventDefault();
     event.stopPropagation();
     return false;
-  },
-
-  onCreateNewPlaylist: function gSongbirdPlayerWindow_createNewPlaylist() {
-    try {
-      var mainLibrary = LibraryUtils.mainLibrary;
-      var librarySPS = Cc["@songbirdnest.com/servicepane/library;1"]
-                         .getService(Ci.sbILibraryServicePaneService);
-      var mediaList = mainLibrary.createMediaList("simple");
-      mediaList.name = librarySPS.suggestNameForNewPlaylist(mainLibrary);
-      var node = librarySPS.getNodeForLibraryResource(mediaList);
-      window.gServicePane.mTreePane.loadNode(node, null);
-      window.gServicePane.startEditingNode(node);
-    } catch (e) {
-      dump("Exception: " + e + "\n");
-    }
   },
 
   nextMediaPage: function gSongbirdPlayerWindow_nextMediaPage() {

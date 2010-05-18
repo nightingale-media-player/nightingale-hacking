@@ -224,6 +224,55 @@ sbDefaultBaseDeviceInfoRegistrar::GetExcludedFolders(sbIDevice * aDevice,
 }
 
 NS_IMETHODIMP
+sbDefaultBaseDeviceInfoRegistrar::GetDoesDeviceSupportReformat(
+    sbIDevice *aDevice,
+    PRBool *aOutSupportsReformat)
+{
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(aOutSupportsReformat);
+
+  // Get the device XML info and check if it's available.
+  sbDeviceXMLInfo* deviceXMLInfo;
+  nsresult rv = GetDeviceXMLInfo(aDevice, &deviceXMLInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!deviceXMLInfo)
+    return NS_OK;
+
+  rv = deviceXMLInfo->GetDoesDeviceSupportReformat(aOutSupportsReformat);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDefaultBaseDeviceInfoRegistrar::GetStorageDeviceInfoList
+                                    (sbIDevice* aDevice,
+                                     nsIArray** retval)
+{
+  TRACE(("%s", __FUNCTION__));
+
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(retval);
+
+  nsresult rv;
+
+  // Get the device XML info and check if it's available.
+  sbDeviceXMLInfo* deviceXMLInfo;
+  rv = GetDeviceXMLInfo(aDevice, &deviceXMLInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!deviceXMLInfo)
+    return NS_ERROR_NOT_AVAILABLE;
+
+  // Get the storage device info.
+  rv = deviceXMLInfo->GetStorageDeviceInfoList(retval);
+  if (rv == NS_ERROR_NOT_AVAILABLE)
+    return NS_ERROR_NOT_AVAILABLE;
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbDefaultBaseDeviceInfoRegistrar::InterestedInDevice(sbIDevice *aDevice,
                                                      PRBool *retval)
 {

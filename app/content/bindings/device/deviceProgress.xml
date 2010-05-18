@@ -70,8 +70,7 @@
             <xul:label sbid="syncmode_label"/>
 
             <xul:sb-device-management-toggle sbid="syncmode-toggle"
-                                             xbl:inherits="dev-lib-guid"
-                                             oncommand="DPW.onModeChange();"/>
+                                             xbl:inherits="dev-lib-guid"/>
 
             <xul:toolbarseparator class="device-progress-manage-separator"/>
           </xul:hbox>
@@ -91,7 +90,8 @@
 
           <!-- Sync device operation button. -->
           <xul:button sbid="sync_operation_button"
-                      class="device-progress-button"/>
+                      class="device-progress-button"
+                      label="&device.progress.sync;"/>
           <xul:sb-device-sync-command bindelem="prev"
                                       xbl:inherits="dev-lib-guid"/>
         </xul:hbox>

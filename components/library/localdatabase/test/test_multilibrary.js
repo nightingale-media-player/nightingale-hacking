@@ -98,19 +98,19 @@ function runTest () {
   assertEqual(list2.length, 10);
   assertEqual(two.length, 12);
 
-  var list3 = one.copyMediaList("simple", list2);
+  var list3 = one.copyMediaList("simple", list2, false);
   assertTrue(list3);
   assertEqual(list2.length, list3.length);
   assertEqual(list3.library, one);
   assertEqual(one.length, 11); // 10 items + 1 list
 
-  var list4 = two.copyMediaList("simple", list2);
+  var list4 = two.copyMediaList("simple", list2, false);
   assertTrue(list4);
   assertEqual(list2.length, list4.length);
   assertEqual(list4.library, two);
   assertEqual(two.length, 13);
 
-  var list5 = two.copyMediaList("simple", list3);
+  var list5 = two.copyMediaList("simple", list3, false);
   assertTrue(list5);
   assertEqual(list3.length, list5.length);
   assertEqual(list5.library, two);

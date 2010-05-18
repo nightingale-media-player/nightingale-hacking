@@ -177,6 +177,10 @@ ShoutcastRadio.Controller = {
 		var SPS = Cc['@songbirdnest.com/servicepane/service;1'].
 				getService(Ci.sbIServicePaneService);
 		
+    // Check whether the node already exists
+    if (SPS.getNode("SB:RadioStations:SHOUTcast"))
+      return;
+		
 		// Walk nodes to see if a "Radio" folder already exists
 		var radioFolder = SPS.getNode("SB:RadioStations");
 		if (!radioFolder) {
@@ -185,7 +189,7 @@ ShoutcastRadio.Controller = {
 			radioFolder.className = "folder radio";
 			radioFolder.name = this._strings.getString("radioFolderLabel");
 			radioFolder.setAttributeNS(this.SB_NS, "radioFolder", 1); // for backward-compat
-			radioFolder.setAttributeNS(this.SP_NS, "Weight", 1);
+			radioFolder.setAttributeNS(this.SP_NS, "Weight", 2);
 			SPS.root.appendChild(radioFolder);
 		}
 		radioFolder.editable = false;

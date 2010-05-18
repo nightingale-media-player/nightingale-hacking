@@ -264,6 +264,7 @@ sbWindowChromeService::WndProc(HWND hWnd,
     // no chrome at all).
     return 0;
   }
+  case WM_ACTIVATE:
   case WM_NCACTIVATE:
   {
     if (IsCompositionEnabled((sbWindowChromeService*)uIdSubclass)) {
@@ -274,12 +275,10 @@ sbWindowChromeService::WndProc(HWND hWnd,
     }
     // No DWM, don't do anything to avoid extra paints of the non-client area
     // which cases bad flickering.
-    return TRUE;
-  }
-  case WM_ACTIVATE:
-  {
-    // Nothing needs to be done here; but suppress some painting.
-    return 0;
+    //
+    // Sadly we can't merge the two messages as they expect different return
+    // values. WM_ACTIVATE expects 0 and WM_NCACTIVATE expects true.
+    return (uMsg == WM_ACTIVATE) ? 0 : TRUE;
   }
   case WM_NCPAINT:
   {

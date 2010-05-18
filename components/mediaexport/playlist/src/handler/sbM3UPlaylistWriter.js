@@ -46,7 +46,7 @@ sbM3UPlaylistWriter.prototype = {
   QueryInterface:    XPCOMUtils.generateQI([Ci.sbIPlaylistWriter]),
   _xpcom_categories: [{category: "playlist-writer", entry: "m3u"}],
 
-  write: function(aFile, aMediaList, aContentType) {
+  write: function(aFile, aMediaList, aContentType, aPlaylistFormatType) {
     var foStream = Cc["@mozilla.org/network/file-output-stream;1"]
                      .createInstance(Ci.nsIFileOutputStream);
 
@@ -72,6 +72,13 @@ sbM3UPlaylistWriter.prototype = {
           // Show the directory containing the file and select the file
           f.QueryInterface(Ci.nsILocalFile);
           var data = f.getRelativeDescriptor(aFile.parent) + "\n";
+
+          // Some devices are picky about path separators. If the playlist
+          // format type specifies a path separator, ensure we are using
+          // that separator.
+          if (aPlaylistFormatType && aPlaylistFormatType.pathSeparator) {
+            data = data.replace(/\//g, aPlaylistFormatType.pathSeparator);  
+          }
           converter.writeString(data);
         }
         catch (e) {

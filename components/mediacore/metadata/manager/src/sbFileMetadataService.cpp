@@ -224,6 +224,58 @@ sbFileMetadataService::Write(nsIArray* aMediaItemsArray,
                          _retval);
 }
 
+NS_IMETHODIMP
+sbFileMetadataService::RestartProcessors(PRUint16 aProcessorsToRestart)
+{
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
+  
+  nsresult rv = ProxiedRestartProcessors(aProcessorsToRestart);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbFileMetadataService::ProxiedRestartProcessors(PRUint16 aProcessorsToRestart)
+{
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
+  nsresult rv = NS_OK;
+
+  if (!NS_IsMainThread()) {
+    LOG(("%s[%.8x] proxying main thread RestartProcessors()", __FUNCTION__, this));
+    nsCOMPtr<nsIThread> target;
+    rv = NS_GetMainThread(getter_AddRefs(target));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIFileMetadataService> proxy;
+    rv = do_GetProxyForObject(target,
+                              NS_GET_IID(sbIFileMetadataService),
+                              static_cast<sbIFileMetadataService*>(this),
+                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                              getter_AddRefs(proxy));
+    NS_ENSURE_SUCCESS(rv, rv);
+    // Can't call ProxiedRestartProcessors via proxy, since it is not
+    // an interface method.
+    rv = proxy->RestartProcessors(aProcessorsToRestart);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    NS_ENSURE_STATE(mMainThreadProcessor);
+    NS_ENSURE_STATE(mBackgroundThreadProcessor);
+
+    if (aProcessorsToRestart & sbIFileMetadataService::MAIN_THREAD_PROCESSOR) {
+      rv = mMainThreadProcessor->Start();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    if (aProcessorsToRestart & sbIFileMetadataService::BACKGROUND_THREAD_PROCESSOR) {
+      mBackgroundThreadProcessor->Start();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  return NS_OK;
+}
 
 nsresult 
 sbFileMetadataService::ProxiedStartJob(nsIArray* aMediaItemsArray,

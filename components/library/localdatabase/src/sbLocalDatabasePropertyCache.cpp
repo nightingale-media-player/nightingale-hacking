@@ -66,6 +66,7 @@
 #include "sbLocalDatabaseSQL.h"
 #include <sbIDatabaseQuery.h>
 #include <sbThreadPoolService.h>
+#include <sbDebugUtils.h>
 
 /*
  * To log this module, set the following environment variable:
@@ -1422,7 +1423,7 @@ sbLocalDatabasePropertyCache::DispatchFlush()
 void
 sbLocalDatabasePropertyCache::RunFlushThread()
 {
-  nsresult rv = Write();
+  nsresult SB_UNUSED_IN_RELEASE(rv) = Write();
   NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to flush property cache; will retry");
 }
 

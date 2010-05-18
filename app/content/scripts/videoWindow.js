@@ -54,6 +54,7 @@ var videoWindowController = {
   _actualSizeDataRemote: null,
   _lastActualSize: null,
   _windowNeedsResize: false,
+  _windowNeedsFocus: false,
   
   _contextMenu: null,
   _contextMenuListener: null,
@@ -110,6 +111,11 @@ var videoWindowController = {
       
       case Ci.sbIMediacoreEvent.VIDEO_SIZE_CHANGED: {
         this._handleVideoSizeChanged(aEvent);
+      }
+      break;
+      
+      case Ci.sbIMediacoreEvent.EXPLICIT_TRACK_CHANGE: {
+        this._handleExplicitTrackChange(aEvent);
       }
       break;
     }
@@ -457,13 +463,9 @@ var videoWindowController = {
   _handleBeforeTrackChange: function vwc__handleBeforeTrackChange(aEvent) {
     var mediaItem = aEvent.data.QueryInterface(Ci.sbIMediaItem);
     
-    dump("_handleBeforeTrackChange: " + mediaItem + "\n");
-    dump("_handleBeforeTrackChange: " + mediaItem.contentType + "\n");
-    
     // If the next item is not video, we will dismiss 
     // the window on track change.
     if(mediaItem.contentType != "video") {
-      //this._shouldDismiss = true;
       this._dismissSelf();
     }
     
@@ -476,6 +478,11 @@ var videoWindowController = {
       this._dismissSelf();
       this._shouldDismiss = false;
     }
+    
+    if(this._windowNeedsFocus) {
+      window.focus();
+      this._windowNeedsFocus = false;
+    }
   },
   
   _handleSequenceEnd: function vwc__handleSequenceEnd(aEvent) {
@@ -483,8 +490,11 @@ var videoWindowController = {
   },
   
   _handleVideoSizeChanged: function vwc__handleVideoSizeChanged(aEvent) {
-    var videoBox = aEvent.data.QueryInterface(Ci.sbIVideoBox);
+    if(!(aEvent.data instanceof Ci.sbIVideoBox))
+      return;
 
+    var videoBox = aEvent.data;
+    
     // If actual size is enabled and we are not in fullscreen we can
     // go ahead and 'actual size' the video.    
     if(this._actualSizeDataRemote.boolValue == true && !window.fullScreen) {
@@ -501,6 +511,10 @@ var videoWindowController = {
     // We also probably always want to save the last one so that if the user 
     // turns on actual size, we can resize to the right thing.
     this._videoBox = videoBox;
+  },
+  
+  _handleExplicitTrackChange: function vwc__handleExplicitTrackChange(aEvent) {
+    this._windowNeedsFocus = true;
   },
 
   //////////////////////////////////////////////////////////////////////////////

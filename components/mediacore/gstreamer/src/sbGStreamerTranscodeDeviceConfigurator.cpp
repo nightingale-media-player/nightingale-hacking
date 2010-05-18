@@ -50,6 +50,7 @@
 #include <sbITranscodeProfile.h>
 
 ///// Gecko header includes
+#include <nsArrayUtils.h>
 #include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsNetUtil.h>
@@ -166,8 +167,6 @@ GetDevCapRangeUpper(sbIDevCapRange *aRange, PRInt32 aTarget, PRInt32 *_retval)
 }
 
 ///// Class declarations
-SB_AUTO_CLASS(sbGstCaps, GstCaps*, !!mValue, gst_caps_unref(mValue), mValue = NULL);
-
 NS_IMPL_ISUPPORTS_INHERITED2(sbGStreamerTranscodeDeviceConfigurator,
                              sbTranscodingConfigurator,
                              sbIDeviceTranscodingConfigurator,
@@ -192,37 +191,6 @@ sbGStreamerTranscodeDeviceConfigurator::~sbGStreamerTranscodeDeviceConfigurator(
   /* nothing */
 }
 
-struct sb_gst_caps_map_entry {
-  const char *sb_name;
-  const char *gst_name;
-};
-
-static const struct sb_gst_caps_map_entry sb_gst_caps_map[] =
-{
-  { "audio/x-pcm-int",   "audio/x-raw-int" },
-  { "audio/x-pcm-float", "audio/x-raw-float" },
-  { "audio/x-ms-wma",    "audio/x-wma" },
-
-  { "video/x-ms-wmv",    "video/x-wmv" }
-};
-
-/* GStreamer caps name are generally similar to mime-types, but some of them
- * differ. We use this table to convert the ones that differ that we know about
- */
-static nsresult
-GetGstCapsName(const nsACString &aMimeType, nsACString &aGstCapsName)
-{
-  for (int i = 0; i < NS_ARRAY_LENGTH(sb_gst_caps_map); i++) {
-    if (aMimeType.EqualsLiteral(sb_gst_caps_map[i].sb_name)) {
-      aGstCapsName.AssignLiteral(sb_gst_caps_map[i].gst_name);
-      return NS_OK;
-    }
-  }
-
-  aGstCapsName = aMimeType;
-  return NS_OK;
-}
-
 /**
  * make a GstCaps structure from a caps name and an array of attributes
  *
@@ -231,7 +199,8 @@ GetGstCapsName(const nsACString &aMimeType, nsACString &aGstCapsName)
  * @param aResultCaps [out] the generated GstCaps, with an outstanding refcount
  */
 nsresult
-MakeCapsFromAttributes(const nsACString& aMimeType,
+MakeCapsFromAttributes(enum sbGstCapsMapType aType,
+                       const nsACString& aMimeType,
                        nsIArray *aAttributes,
                        GstCaps** aResultCaps)
 {
@@ -245,13 +214,8 @@ MakeCapsFromAttributes(const nsACString& aMimeType,
   rv = aAttributes->Enumerate(getter_AddRefs(attrsEnum));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCString name;
-  rv = GetGstCapsName (aMimeType, name);
-  NS_ENSURE_SUCCESS (rv, rv);
-
   // set up a caps structure
-  sbGstCaps caps = gst_caps_from_string(name.BeginReading());
-  NS_ENSURE_TRUE(caps, NS_ERROR_FAILURE);
+  sbGstCaps caps = GetCapsForMimeType (aMimeType, aType);
   GstStructure* capsStruct = gst_caps_get_structure(caps.get(), 0);
 
   PRBool hasMore;
@@ -344,7 +308,8 @@ sbGStreamerTranscodeDeviceConfigurator::EnsureProfileAvailable(sbITranscodeEncod
     NS_ENSURE_SUCCESS(rv, rv);
 
     GstCaps* caps = NULL;
-    rv = MakeCapsFromAttributes(NS_LossyConvertUTF16toASCII(capsName),
+    rv = MakeCapsFromAttributes(SB_GST_CAPS_MAP_CONTAINER,
+                                NS_LossyConvertUTF16toASCII(capsName),
                                 attrs,
                                 &caps);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -373,7 +338,8 @@ sbGStreamerTranscodeDeviceConfigurator::EnsureProfileAvailable(sbITranscodeEncod
     NS_ENSURE_SUCCESS(rv, rv);
 
     GstCaps* caps = NULL;
-    rv = MakeCapsFromAttributes(NS_LossyConvertUTF16toASCII(capsName),
+    rv = MakeCapsFromAttributes(SB_GST_CAPS_MAP_AUDIO,
+                                NS_LossyConvertUTF16toASCII(capsName),
                                 attrs,
                                 &caps);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -397,7 +363,8 @@ sbGStreamerTranscodeDeviceConfigurator::EnsureProfileAvailable(sbITranscodeEncod
     NS_ENSURE_SUCCESS(rv, rv);
 
     GstCaps* caps = NULL;
-    rv = MakeCapsFromAttributes(NS_LossyConvertUTF16toASCII(capsName),
+    rv = MakeCapsFromAttributes(SB_GST_CAPS_MAP_VIDEO,
+                                NS_LossyConvertUTF16toASCII(capsName),
                                 attrs,
                                 &caps);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -557,12 +524,16 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
          mimeTypeIndex < mimeTypesCount;
          ++mimeTypeIndex)
     {
+      /* We get the preferred format types here - these are the ones that it's
+         ok to transcode to (rather than the full set of things supported by
+         the device) */
       nsISupports** formatTypes;
       PRUint32 formatTypeCount;
-      rv = caps->GetFormatTypes(sbIDeviceCapabilities::CONTENT_VIDEO,
-                               NS_ConvertASCIItoUTF16(mimeTypes[mimeTypeIndex]),
-                               &formatTypeCount,
-                               &formatTypes);
+      rv = caps->GetPreferredFormatTypes(
+              sbIDeviceCapabilities::CONTENT_VIDEO,
+              NS_ConvertASCIItoUTF16(mimeTypes[mimeTypeIndex]),
+              &formatTypeCount,
+              &formatTypes);
       NS_ENSURE_SUCCESS(rv, rv);
       sbAutoFreeXPCOMPointerArray<nsISupports> freeFormats(formatTypeCount,
                                                            formatTypes); 
@@ -685,6 +656,15 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
   CopyASCIItoUTF16(elementNames.videoEncoder, mVideoEncoder);
   rv = selectedProfile->GetFileExtension(mFileExtension);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  /* Set whether we're using these - in this configurator, this is based
+     entirely on whether we've selected a specific element */
+  if (!mMuxer.IsEmpty())
+    mUseMuxer = PR_TRUE;
+  if (!mAudioEncoder.IsEmpty())
+    mUseAudioEncoder = PR_TRUE;
+  if (!mVideoEncoder.IsEmpty())
+    mUseVideoEncoder = PR_TRUE;
 
   return NS_OK;
 }
@@ -828,34 +808,85 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineIdealOutputSize()
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(outputCaps, NS_ERROR_FAILURE);
 
-  // if we can't match the PAR, adjust to square pixels
+  // If we can't match the PAR, adjust to square pixels
   { /* scope */
-    PRUint32 count;
-    char** parData = nsnull;
-    rv = outputCaps->GetSupportedVideoPARs(&count, &parData);
-    NS_ENSURE_SUCCESS(rv, rv);
-    sbAutoFreeXPCOMArray<char**> supportedPARDestroryer(count, parData);
     PRUint32 num, denom;
     rv = inputFormat->GetVideoPAR(&num, &denom);
     NS_ENSURE_SUCCESS(rv, rv);
     sbFraction inputPAR(num, denom);
-    sbFraction outputPAR;
-    PRUint32 index;
-    for (index = 0; index < count; ++index) {
-      rv = sbFractionFromString(parData[index], outputPAR);
+
+    // Check to see if the PAR values for the device caps is a min/max or a
+    // set range of values.
+    PRBool supportsPARRange;
+    rv = outputCaps->GetDoesSupportPARRange(&supportsPARRange);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (supportsPARRange) {
+      // The PAR value is a min/max value range. Pick the closet match.
+      nsCOMPtr<sbIDevCapFraction> minPARFraction;
+      rv = outputCaps->GetMinimumSupportedPAR(getter_AddRefs(minPARFraction));
       NS_ENSURE_SUCCESS(rv, rv);
-      if (inputPAR.IsEqual(outputPAR)) {
+      rv = minPARFraction->GetNumerator(&num);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = minPARFraction->GetDenominator(&denom);
+      NS_ENSURE_SUCCESS(rv, rv);
+      sbFraction minPAR(num, denom);
+
+      nsCOMPtr<sbIDevCapFraction> maxPARFraction;
+      rv = outputCaps->GetMaximumSupportedPAR(getter_AddRefs(maxPARFraction));
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = maxPARFraction->GetNumerator(&num);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = maxPARFraction->GetDenominator(&denom);
+      NS_ENSURE_SUCCESS(rv, rv);
+      sbFraction maxPAR(num, denom);
+
+      // If the input PAR is between the min and max PAR values use the input
+      // PAR value. If not, use the closest PAR value.
+      if (inputPAR >= minPAR && inputPAR <= maxPAR) {
         mOutputPAR = inputPAR;
-        break;
+      }
+      else if (inputPAR < minPAR) {
+        mOutputPAR = minPAR;
+      }
+      else if (inputPAR > maxPAR) {
+        mOutputPAR = maxPAR;
       }
     }
-    if (index >= count) {
-      // we didn't find a match; just... kinda give up and blow them up into
-      // square-looking pixels by duplicating pixels
-      input.width *= inputPAR.Denominator();
-      input.height *= inputPAR.Numerator();
-      mOutputPAR = sbFraction(1, 1); // XXX Mook: we need to adjust to something
-                                     // we have output PAR for!
+    else {
+      nsCOMPtr<nsIArray> parRanges;
+      rv = outputCaps->GetSupportedPARs(getter_AddRefs(parRanges));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRUint32 count, index = 0;
+      rv = parRanges->GetLength(&count);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      for (PRUint32 i = 0; i < count; i++) {
+        nsCOMPtr<sbIDevCapFraction> curFraction =
+          do_QueryElementAt(parRanges, i, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = curFraction->GetNumerator(&num);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = curFraction->GetDenominator(&denom);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        sbFraction curPARFraction(num, denom);
+        if (inputPAR.IsEqual(curPARFraction)) {
+          mOutputPAR = inputPAR;
+          break;
+        }
+      }
+
+      if (index >= count) {
+        // we didn't find a match; just... kinda give up and blow them up into
+        // square-looking pixels by duplicating pixels
+        input.width *= inputPAR.Denominator();
+        input.height *= inputPAR.Numerator();
+        mOutputPAR = sbFraction(1, 1); // XXX Mook: we need to adjust to something
+        // we have output PAR for!
+      }
     }
   }
 
@@ -1098,23 +1129,73 @@ sbGStreamerTranscodeDeviceConfigurator::FinalizeOutputSize()
     NS_ENSURE_SUCCESS(rv, rv);
     NS_ENSURE_TRUE(videoCaps, NS_ERROR_FAILURE);
 
-    char ** frameRates;
-    PRUint32 frameRateCount;
-    rv = videoCaps->GetSupportedFrameRates(&frameRateCount, &frameRates);
+    PRBool isFrameRatesRange;
+    rv = videoCaps->GetDoesSupportFrameRateRange(&isFrameRatesRange);
     NS_ENSURE_SUCCESS(rv, rv);
-    NS_ENSURE_TRUE(frameRateCount > 0, NS_ERROR_FAILURE);
-    sbAutoFreeXPCOMArray<char**> frameRatesDestroyer(frameRateCount, frameRates);
 
-    for (PRUint32 i = 0; i < frameRateCount; ++i) {
-      sbFraction candidate;
-      rv = sbFractionFromString(frameRates[i], candidate);
+    if (isFrameRatesRange) {
+      nsCOMPtr<sbIDevCapFraction> minFrameRate;
+      rv = videoCaps->GetMinimumSupportedFrameRate(
+          getter_AddRefs(minFrameRate));
       NS_ENSURE_SUCCESS(rv, rv);
-      double lastDifference = fabs(outputFrameRate - inputFrameRate);
-      double difference = fabs(candidate - inputFrameRate);
-      if (difference < lastDifference) {
-        outputFrameRate = candidate;
+      rv = minFrameRate->GetNumerator(&num);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = minFrameRate->GetDenominator(&denom);
+      NS_ENSURE_SUCCESS(rv, rv);
+      sbFraction minFrameRateFraction(num, denom);
+
+      nsCOMPtr<sbIDevCapFraction> maxFrameRate;
+      rv = videoCaps->GetMaximumSupportedFrameRate(
+          getter_AddRefs(maxFrameRate));
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = maxFrameRate->GetNumerator(&num);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = maxFrameRate->GetDenominator(&denom);
+      NS_ENSURE_SUCCESS(rv, rv);
+      sbFraction maxFrameRateFraction(num, denom);
+
+      if (inputFrameRate >= minFrameRateFraction &&
+          inputFrameRate <= maxFrameRateFraction)
+      {
+        outputFrameRate = inputFrameRate;
+      }
+      else if (inputFrameRate < minFrameRateFraction) {
+        outputFrameRate = minFrameRateFraction;
+      }
+      else if (inputFrameRate > maxFrameRateFraction) {
+        outputFrameRate = maxFrameRateFraction;
       }
     }
+    else {
+      nsCOMPtr<nsIArray> frameRatesRange;
+      rv = videoCaps->GetSupportedFrameRates(getter_AddRefs(frameRatesRange));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRUint32 length = 0;
+      rv = frameRatesRange->GetLength(&length);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      for (PRUint32 i = 0; i < length; i++) {
+        nsCOMPtr<sbIDevCapFraction> curFraction =
+          do_QueryElementAt(frameRatesRange, i, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        PRUint32 num, denom;
+        rv = curFraction->GetNumerator(&num);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = curFraction->GetDenominator(&denom);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        sbFraction candidate(num, denom);
+
+        double lastDifference = fabs(outputFrameRate - inputFrameRate);
+        double difference = fabs(candidate - inputFrameRate);
+        if (difference < lastDifference) {
+          outputFrameRate = candidate;
+        }
+      }
+    }
+
     mVideoFrameRate = outputFrameRate;
   }
 
@@ -1438,11 +1519,11 @@ sbGStreamerTranscodeDeviceConfigurator::CopyPropertiesIntoBag(nsIArray * aSrcPro
   return NS_OK;
 }
 
-/***** sbPIGstTranscodingConfigurator implementation *****/
 NS_IMETHODIMP
 sbGStreamerTranscodeDeviceConfigurator::GetAvailableProfiles(nsIArray * *aAvailableProfiles)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
+
   if (mAvailableProfiles) {
     NS_IF_ADDREF (*aAvailableProfiles = mAvailableProfiles);
     return NS_OK;
@@ -1572,7 +1653,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineOutputType()
   TRACE(("%s[%p]", __FUNCTION__, this));
   // check our inputs
   NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_FALSE(mConfigurateState >= CONFIGURATE_OUPUT_SET,
+  NS_ENSURE_FALSE(mConfigurateState >= CONFIGURATE_OUTPUT_SET,
                   NS_ERROR_ALREADY_INITIALIZED);
 
   nsresult rv;
@@ -1585,7 +1666,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineOutputType()
   rv = SelectProfile();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mConfigurateState = CONFIGURATE_OUPUT_SET;
+  mConfigurateState = CONFIGURATE_OUTPUT_SET;
 
   return NS_OK;
 }
@@ -1602,7 +1683,7 @@ sbGStreamerTranscodeDeviceConfigurator::Configurate()
 
   nsresult rv;
 
-  if (mConfigurateState < CONFIGURATE_OUPUT_SET) {
+  if (mConfigurateState < CONFIGURATE_OUTPUT_SET) {
     // no output set yet, do that now
     rv = DetermineOutputType();
     NS_ENSURE_SUCCESS(rv, rv);

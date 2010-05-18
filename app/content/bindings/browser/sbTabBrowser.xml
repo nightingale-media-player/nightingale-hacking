@@ -190,7 +190,7 @@
         this._servicePaneListener = {
           attrModified: function(aNode, aAttrName, aNamespace, aOldVal, aNewVal) {
             if (aNamespace != null ||
-                (aAttrName != 'className' &&
+                (aAttrName != 'class' &&
                  aAttrName != 'name' &&
                  aAttrName != 'image')) {
               // we only care about class name and image changing

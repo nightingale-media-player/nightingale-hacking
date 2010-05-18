@@ -232,6 +232,11 @@ public:
   NS_IMETHOD GetState(PRUint32 *aState);
   NS_IMETHOD GetPreviousState(PRUint32 *aState);
   NS_IMETHOD SyncLibraries(void);
+  /**
+   * return NS_ERROR_ABORT if user aborts the ejection while playback is on
+   * device item.
+   */
+  NS_IMETHOD Eject(void);
   NS_IMETHOD Format(void);
   NS_IMETHOD GetSupportsReformat(PRBool *_retval);
   NS_IMETHOD GetCacheSyncRequests(PRBool *_retval);
@@ -760,9 +765,9 @@ protected:
   static const PRUint32 DEFAULT_PER_TRACK_OVERHEAD = 10000;
 
   /**
-   * Percent free space to reserve as margin when building a sync playlist.
+   * Percent available space for syncing when building a sync playlist.
    */
-  static const PRUint32 SYNC_PLAYLIST_MARGIN_PCT = 1;
+  static const PRUint32 SYNC_PLAYLIST_AVAILABLE_PCT = 95;
 
   /**
    * Make sure that there is enough free space for the batch. If there is not
@@ -1026,6 +1031,18 @@ protected:
    */
   virtual nsresult UpdateStatisticsProperties();
 
+  /**
+   * Update the names of all device volumes.
+   */
+  nsresult UpdateVolumeNames();
+
+  /**
+   * Update the name of the device volume specified by aVolume.
+   *
+   * \param aVolume               Device volume for which to update name.
+   */
+  virtual nsresult UpdateVolumeName(sbBaseDeviceVolume* aVolume);
+
 
   //----------------------------------------------------------------------------
   //
@@ -1247,6 +1264,9 @@ protected:
    * \param aSyncItemList       Full list of sync items.
    * \param aSyncItemSizeMap    Size of sync items.
    * \param aAvailableSpace     Space available for sync.
+   * \return NS_OK if successful.
+   *         NS_ERROR_ABORT if user aborts syncing.
+   *         else some other NS_ERROR value.
    */
   nsresult SyncCreateAndSyncToList
              (sbILibrary*                                   aSrcLib,
@@ -1256,29 +1276,22 @@ protected:
               PRInt64                                       aAvailableSpace);
 
   /**
-   * Shuffle the sync item list specified by aSyncItemList with sizes specified
-   * by aSyncItemSizeMap and create a subset of the list that fits in the
-   * available space specified by aAvailableSpace.  Return the subset in
-   * aShuffleSyncItemList.
-   */
-  nsresult SyncShuffleSyncItemList
-    (nsCOMArray<sbIMediaItem>&                     aSyncItemList,
-     nsDataHashtable<nsISupportsHashKey, PRInt64>& aSyncItemSizeMap,
-     PRInt64                                       aAvailableSpace,
-     nsIArray**                                    aShuffleSyncItemList);
-
-  /**
    * Create a source sync media list in the library specified by aSrcLib from
    * the list of sync items specified by aSyncItemList and return the sync media
    * list in aSyncMediaList.
    *
    * \param aSrcLib             Source library of sync.
-   * \param aSyncItemList       List of items to sync.
+   * \param aDstLib             Destination library to which to sync.
+   * \param aAvailableSpace     Space available for sync.
    * \param aSyncMediaList      Created sync media list.
+   * \return NS_OK if successful.
+   *         NS_ERROR_ABORT if user aborts syncing.
+   *         else some other NS_ERROR value.
    */
-  nsresult SyncCreateSyncMediaList(sbILibrary*    aSrcLib,
-                                   nsIArray*      aSyncItemList,
-                                   sbIMediaList** aSyncMediaList);
+  nsresult SyncCreateSyncMediaList(sbILibrary*       aSrcLib,
+                                   sbIDeviceLibrary* aDstLib,
+                                   PRInt64           aAvailableSpace,
+                                   sbIMediaList**    aSyncMediaList);
 
   /**
    * Configure the destination library specified by aDstLib to sync to the media
@@ -1339,20 +1352,6 @@ protected:
               nsCOMArray<sbIMediaItem>&                     aSyncItemList,
               nsDataHashtable<nsISupportsHashKey, PRInt64>& aSyncItemSizeMap,
               PRInt64*                                      aTotalSyncSize);
-
-  /**
-   * Return in aSyncList the list of all sync media lists, as configured for the
-   * destination sync library specified by aDstLib.  The sync source library is
-   * specified by aSrcLib.
-   *
-   * \param aSrcLib             Sync source library.
-   * \param aDstLib             Sync destination library.
-   * \param aSyncList           List of all sync media lists.  nsIArray of
-   *                            sbIMediaList.
-   */
-  nsresult SyncGetSyncList(sbILibrary*       aSrcLib,
-                           sbIDeviceLibrary* aDstLib,
-                           nsIArray**        aSyncList);
 
   /**
    * Return in aAvailableSpace the space available for syncing to the library
@@ -1506,11 +1505,12 @@ protected:
 
   /**
     * Returns a list of transcode profiles that the device supports
-    * \param aDevice the device to retrieve the profiles for.
-    * \param aProfiles the list of profiles that were found
+    * \param aType the type of transcode profiles to retrieve.
+    * \param aSupportedProfiles the list of profiles that were found
     * \return NS_OK if successful else some NS_ERROR value
     */
-   virtual nsresult GetSupportedTranscodeProfiles(nsIArray **aSupportedProfiles);
+   virtual nsresult GetSupportedTranscodeProfiles(PRUint32 aType,
+                                                  nsIArray **aSupportedProfiles);
    /**
    * Dispatch a transcode error event for the media item specified by aMediaItem
    * with the error message specified by aErrorMessage.
@@ -1752,11 +1752,17 @@ private:
 //
 // Auto-disposal class wrappers.
 //
+//   sbAutoResetEnsureSpaceChecked
+//                              Wrapper to automatically reset the space
+//                              checked flag.
 //   sbAutoDeviceCompleteCurrentRequest
 //                              Wrapper to automatically complete the current
 //                              request.
 //
 
+SB_AUTO_NULL_CLASS(sbAutoResetEnsureSpaceChecked,
+                   sbBaseDevice*,
+                   mValue->SetEnsureSpaceChecked(false));
 SB_AUTO_NULL_CLASS(sbAutoDeviceCompleteCurrentRequest,
                    sbBaseDevice*,
                    mValue->CompleteCurrentRequest());

@@ -91,10 +91,10 @@ sbCharsetDetector::Detect(const nsACString& aStringToDetect)
   if (mIsCharsetFound)
     return NS_OK;
 
-  nsCString stringToDetect(aStringToDetect);
-
-  // see if it's valid utf8; if yes, assume it _is_ indeed utf8
-  nsDependentCString raw(stringToDetect.BeginReading());
+  // see if it's valid utf8; if yes, assume it _is_ indeed utf8 for now.
+  // Do not set mIsCharsetFound as there could be more incoming data so that
+  // we can get a better answer.
+  nsDependentCString raw(aStringToDetect.BeginReading());
   if (IsLikelyUTF8(raw) && IsUTF8(raw)) {
     // this is utf8
     mDetectedCharset.AssignLiteral("UTF-8");
@@ -102,7 +102,7 @@ sbCharsetDetector::Detect(const nsACString& aStringToDetect)
   }
 
   // the metadata is in some 8-bit encoding; try to guess
-  nsresult rv = RunCharsetDetector(stringToDetect);
+  nsresult rv = RunCharsetDetector(aStringToDetect);
   if (NS_SUCCEEDED(rv) && !mLastCharset.IsEmpty()) {
     mDetectedCharset.Assign(mLastCharset);
     if (eSureAnswer == mLastConfidence || eBestAnswer == mLastConfidence)
@@ -116,11 +116,11 @@ sbCharsetDetector::Detect(const nsACString& aStringToDetect)
   // for Windows only, assume CP_ACP
 
   // make the call fail if it's not valid CP_ACP
-  const char *str = stringToDetect.BeginReading();
+  const char *str = aStringToDetect.BeginReading();
   int size = MultiByteToWideChar(CP_ACP,
                                  MB_ERR_INVALID_CHARS,
                                  str,
-                                 stringToDetect.Length(),
+                                 aStringToDetect.Length(),
                                  nsnull,
                                  0);
   if (size) {
@@ -138,6 +138,7 @@ sbCharsetDetector::Detect(const nsACString& aStringToDetect)
 NS_IMETHODIMP
 sbCharsetDetector::Finish(nsACString& _retval)
 {
+  // The charset detection is not done yet. Get the best answer so far.
   if (!mIsDone) {
     nsresult rv = mDetector->Done();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -145,9 +146,11 @@ sbCharsetDetector::Finish(nsACString& _retval)
       mDetectedCharset = mLastCharset;
   }
 
-  _retval = mDetectedCharset;
   mLastConfidence = eNoAnswerYet;
   mIsCharsetFound = PR_FALSE;
+  mIsDone = PR_FALSE;
+
+  _retval = mDetectedCharset;
 
   return NS_OK;
 }
@@ -178,7 +181,8 @@ sbCharsetDetector::Notify(const char *aCharset, nsDetectionConfident aConf)
 
 sbCharsetDetector::sbCharsetDetector()
 : mLastConfidence(eNoAnswerYet),
-  mIsCharsetFound(PR_FALSE)
+  mIsCharsetFound(PR_FALSE),
+  mIsDone(PR_FALSE)
 {
   mDetector = do_CreateInstance(
     NS_CHARSET_DETECTOR_CONTRACTID_BASE "universal_charset_detector");
@@ -206,7 +210,7 @@ sbCharsetDetector::~sbCharsetDetector()
 //
 //------------------------------------------------------------------------------
 
-nsresult sbCharsetDetector::RunCharsetDetector(nsACString& aStringToDetect)
+nsresult sbCharsetDetector::RunCharsetDetector(const nsACString& aStringToDetect)
 {
   NS_ENSURE_TRUE(mDetector, NS_ERROR_NOT_INITIALIZED);
   nsresult rv = NS_OK;

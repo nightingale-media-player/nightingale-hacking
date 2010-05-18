@@ -88,6 +88,14 @@ sbDeviceCapabilities::~sbDeviceCapabilities()
     delete formatType;
   }
   mContentFormatTypes.Clear();
+
+  count = mContentPreferredFormatTypes.Count();
+  for(PRInt32 i = 0; i < count; i++) {
+    FormatTypes *formatType =
+      static_cast<FormatTypes *>(mContentPreferredFormatTypes.ElementAt(i));
+    delete formatType;
+  }
+  mContentPreferredFormatTypes.Clear();
 }
 
 NS_IMETHODIMP
@@ -113,8 +121,18 @@ sbDeviceCapabilities::Init()
     rv = mContentFormatTypes.AppendElement(newFormatTypes) ?
             NS_OK : NS_ERROR_FAILURE;
     NS_ENSURE_SUCCESS(rv, rv);
+
+    FormatTypes *newPreferredFormatTypes = new FormatTypes;
+    if (!newPreferredFormatTypes)
+      NS_ENSURE_SUCCESS(rv, NS_ERROR_OUT_OF_MEMORY);
+    rv = newPreferredFormatTypes->Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mContentPreferredFormatTypes.AppendElement(newPreferredFormatTypes) ?
+            NS_OK : NS_ERROR_FAILURE;
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   mContentFormatTypes.Compact();
+  mContentPreferredFormatTypes.Compact();
 
   isInitialized = PR_TRUE;
   return NS_OK;
@@ -256,6 +274,38 @@ sbDeviceCapabilities::AddFormatType(PRUint32 aContentType,
 }
 
 NS_IMETHODIMP
+sbDeviceCapabilities::AddPreferredFormatType(PRUint32 aContentType,
+                                    nsAString const & aMimeType,
+                                    nsISupports * aFormatType)
+{
+  NS_ENSURE_ARG_POINTER(aFormatType);
+  NS_ENSURE_ARG_RANGE(aContentType,
+                      sbIDeviceCapabilities::CONTENT_UNKNOWN,
+                      sbIDeviceCapabilities::CONTENT_MAX_TYPES - 1);
+
+  FormatTypes *formatType =
+    static_cast<FormatTypes *>(mContentPreferredFormatTypes.SafeElementAt(
+                aContentType));
+  if (!formatType)
+    return NS_ERROR_NULL_POINTER;
+
+  nsTArray<nsCOMPtr<nsISupports> > * formatTypes;
+  PRBool const found = formatType->Get(aMimeType, &formatTypes);
+  if (!found) {
+    formatTypes = new nsTArray<nsCOMPtr<nsISupports> >(1);
+  }
+
+  formatTypes->AppendElement(aFormatType);
+
+  if (!found) {
+    PRBool const added = formatType->Put(aMimeType, formatTypes);
+    NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbDeviceCapabilities::AddCapabilities(sbIDeviceCapabilities *aCapabilities)
 {
   NS_ENSURE_ARG_POINTER(aCapabilities);
@@ -359,7 +409,7 @@ sbDeviceCapabilities::GetSupportedFunctionTypes(PRUint32 *aArrayCount,
   NS_ENSURE_TRUE(isConfigured, NS_ERROR_NOT_INITIALIZED);
 
   PRUint32 arrayLen = mFunctionTypes.Length();
-  PRUint32* outArray = (PRUint32*)nsMemory::Alloc(arrayLen * sizeof(PRUint32));
+  PRUint32* outArray = (PRUint32*)NS_Alloc(arrayLen * sizeof(PRUint32));
   NS_ENSURE_TRUE(outArray, NS_ERROR_OUT_OF_MEMORY);
 
   for (PRUint32 arrayCounter = 0; arrayCounter < arrayLen; arrayCounter++) {
@@ -389,7 +439,7 @@ sbDeviceCapabilities::GetSupportedContentTypes(PRUint32 aFunctionType,
   }
 
   PRUint32 arrayLen = contentTypes->Length();
-  PRUint32* outArray = (PRUint32*)nsMemory::Alloc(arrayLen * sizeof(PRUint32));
+  PRUint32* outArray = (PRUint32*)NS_Alloc(arrayLen * sizeof(PRUint32));
   if (!outArray) {
     return NS_ERROR_OUT_OF_MEMORY;
   }
@@ -446,7 +496,7 @@ sbDeviceCapabilities::GetSupportedEvents(PRUint32 *aArrayCount,
   NS_ENSURE_TRUE(isConfigured, NS_ERROR_NOT_INITIALIZED);
 
   PRUint32 arrayLen = mSupportedEvents.Length();
-  PRUint32* outArray = (PRUint32*)nsMemory::Alloc(arrayLen * sizeof(PRUint32));
+  PRUint32* outArray = (PRUint32*)NS_Alloc(arrayLen * sizeof(PRUint32));
   if (!outArray) {
     return NS_ERROR_OUT_OF_MEMORY;
   }
@@ -561,6 +611,54 @@ sbDeviceCapabilities::GetFormatTypes(PRUint32 aContentType,
 
   *aArrayCount = count;
   *aSupportedFormats = formatsArray;
+
+  return NS_OK;
+}
+
+/**
+ * Returns the list of preferred constraints for the format
+ */
+NS_IMETHODIMP
+sbDeviceCapabilities::GetPreferredFormatTypes(PRUint32 aContentType,
+                                              nsAString const & aMimeType,
+                                              PRUint32 *aArrayCount,
+                                              nsISupports *** aPreferredFormats)
+{
+  NS_ENSURE_ARG_POINTER(aArrayCount);
+  NS_ENSURE_ARG_POINTER(aPreferredFormats);
+  NS_ENSURE_ARG_RANGE(aContentType,
+                      sbIDeviceCapabilities::CONTENT_UNKNOWN,
+                      sbIDeviceCapabilities::CONTENT_MAX_TYPES - 1);
+
+  FormatTypes *formatType =
+    static_cast<FormatTypes *>(mContentPreferredFormatTypes.SafeElementAt(
+                aContentType));
+  if (!formatType)
+    return NS_ERROR_NULL_POINTER;
+
+  nsTArray<nsCOMPtr<nsISupports> > * formats;
+  PRBool const found = formatType->Get(aMimeType, &formats);
+  if (!found) {
+    // If there were no format types found, forward to GetFormatTypes - this
+    // simply means we weren't given any preferred types, and will transcode to
+    // anything supported
+    return GetFormatTypes(aContentType, aMimeType, aArrayCount,
+                          aPreferredFormats);
+  }
+
+  PRUint32 count = formats->Length();
+
+  nsISupports **formatsArray = static_cast<nsISupports **>(NS_Alloc(
+              sizeof(nsISupports *) * count));
+  NS_ENSURE_TRUE(formatsArray, NS_ERROR_OUT_OF_MEMORY);
+
+  for (PRUint32 i = 0; i < count; i++) {
+    formatsArray[i] = formats->ElementAt(i);
+    NS_ADDREF(formatsArray[i]);
+  }
+
+  *aArrayCount = count;
+  *aPreferredFormats = formatsArray;
 
   return NS_OK;
 }
@@ -706,6 +804,48 @@ sbDevCapRange::IsValueInRange(PRInt32 aValue, PRBool * aInRange) {
     *aInRange = aValue <= mMax && aValue >= mMin &&
                (mStep == 0 || ((aValue - mMin) % mStep == 0));
   }
+  return NS_OK;
+}
+
+/*******************************************************************************
+ * sbDevCapRange
+ */
+
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbDevCapFraction,
+                              sbIDevCapFraction,
+                              nsIClassInfo)
+NS_IMPL_CI_INTERFACE_GETTER2(sbDevCapFraction,
+                             sbIDevCapFraction,
+                             nsIClassInfo)
+
+NS_DECL_CLASSINFO(sbDevCapFraction)
+NS_IMPL_THREADSAFE_CI(sbDevCapFraction)
+
+sbDevCapFraction::~sbDevCapFraction()
+{
+}
+
+NS_IMETHODIMP
+sbDevCapFraction::GetNumerator(PRUint32 *aNumerator)
+{
+  NS_ENSURE_ARG_POINTER(aNumerator);
+  *aNumerator = mNumerator;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDevCapFraction::GetDenominator(PRUint32 *aDenominator)
+{
+  NS_ENSURE_ARG_POINTER(aDenominator);
+  *aDenominator = mDenominator;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDevCapFraction::Initialize(PRUint32 aNumerator, PRUint32 aDenominator)
+{
+  mNumerator = aNumerator;
+  mDenominator = aDenominator;
   return NS_OK;
 }
 
@@ -1007,25 +1147,39 @@ CopyAndParseFromFractions(const nsTArray<sbFraction> & aFractions,
   return NS_OK;
 }
 
-/* void initialize (in ACString aType, in nsIArray aExplicitSizes, in sbIDevCapRange aWidths, in sbIDevCapRange aHeights, in unsigned long aVideoParsCount, [array, size_is (aVideoParsCount)] in string aVideoPars, in unsigned long aFrameRateCount, [array, size_is (aFrameRateCount)] in string aFrameRates, in sbIDevCapRange aBitRates); */
 NS_IMETHODIMP sbDevCapVideoStream::Initialize(const nsACString & aType,
                                               nsIArray *aExplicitSizes,
                                               sbIDevCapRange *aWidths,
                                               sbIDevCapRange *aHeights,
-                                              PRUint32 aVideoPARCount,
-                                              const char **aVideoPARs,
-                                              PRUint32 aFrameRateCount,
-                                              const char **aFrameRates,
+                                              nsIArray *aSupportPARs,
+                                              PRBool aIsSupportedPARsRange,
+                                              nsIArray *aSupportedFrameRates,
+                                              PRBool aIsSupportedFrameratesRange,
                                               sbIDevCapRange *aBitRates)
 {
   mType = aType;
   mExplicitSizes = aExplicitSizes;
   mWidths = aWidths;
   mHeights = aHeights;
-  CopyAndParseToFractions(aVideoPARs, aVideoPARCount, mVideoPARs);
-  CopyAndParseToFractions(aFrameRates, aFrameRateCount, mFrameRates);
+  mIsPARRange = aIsSupportedPARsRange;
+  mVideoPARs = aSupportPARs;
+  mIsFrameRatesRange = aIsSupportedFrameratesRange;
+  mVideoFrameRates = aSupportedFrameRates;
   mBitRates = aBitRates;
 
+  // Ensure valid PAR and frame rate values.
+  nsresult rv;
+  PRUint32 length;
+  if (mIsPARRange) {
+    rv = mVideoPARs->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(length == 2, NS_ERROR_UNEXPECTED);
+  }
+  if (mIsFrameRatesRange) {
+    rv = mVideoFrameRates->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(length == 2, NS_ERROR_UNEXPECTED);
+  }
   return NS_OK;
 }
 
@@ -1057,25 +1211,116 @@ NS_IMETHODIMP sbDevCapVideoStream::GetSupportedHeights(sbIDevCapRange * *aSuppor
   return NS_OK;
 }
 
-/* void getSupportedVideoPARs (out unsigned long aCount, [array, size_is (aCount)] out string aVideoPARs); */
-NS_IMETHODIMP sbDevCapVideoStream::GetSupportedVideoPARs(PRUint32 *aCount, char ***aVideoPARs)
+/* readonly attribute boolean doesSupportPARRange; */
+NS_IMETHODIMP
+sbDevCapVideoStream::GetDoesSupportPARRange(PRBool *aDoesSupportPARRange)
 {
-  *aCount = mVideoPARs.Length();
-
-  nsresult rv = CopyAndParseFromFractions(mVideoPARs, *aCount, *aVideoPARs);
-  NS_ENSURE_SUCCESS(rv, rv);
-
+  NS_ENSURE_ARG_POINTER(aDoesSupportPARRange);
+  *aDoesSupportPARRange = mIsPARRange;
   return NS_OK;
 }
 
-/* void getSupportedFrameRates (out unsigned long aCount, [array, size_is (aCount)] out string aFrameRates); */
-NS_IMETHODIMP sbDevCapVideoStream::GetSupportedFrameRates(PRUint32 *aCount, char ***aFrameRates)
+/* readonly attribute nsIArray supportedPARs; */
+NS_IMETHODIMP
+sbDevCapVideoStream::GetSupportedPARs(nsIArray **aSupportedPARs)
 {
-  *aCount = mFrameRates.Length();
+  NS_ENSURE_ARG_POINTER(aSupportedPARs);
+  NS_IF_ADDREF(*aSupportedPARs = mVideoPARs);
+  return NS_OK;
+}
 
-  nsresult rv = CopyAndParseFromFractions(mFrameRates, *aCount, *aFrameRates);
+/* readonly attribute sbIDevCapFraction minimumSupportedPAR; */
+NS_IMETHODIMP
+sbDevCapVideoStream::GetMinimumSupportedPAR(
+    sbIDevCapFraction **aMinimumSupportedPAR)
+{
+  NS_ENSURE_ARG_POINTER(aMinimumSupportedPAR);
+  NS_ENSURE_TRUE(mIsPARRange, NS_ERROR_NOT_AVAILABLE);
+  
+  // The minimum PAR value will be the first value in the par array (if
+  // supported).
+  nsresult rv;
+  nsCOMPtr<sbIDevCapFraction> minPARFraction =
+    do_QueryElementAt(mVideoPARs, 0, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  minPARFraction.forget(aMinimumSupportedPAR);
+  return NS_OK;
+}
+
+/* readonly attribute sbIDevCapFraction maximumSupportedPAR; */
+NS_IMETHODIMP
+sbDevCapVideoStream::GetMaximumSupportedPAR(
+    sbIDevCapFraction **aMaximumSupportedPAR)
+{
+  NS_ENSURE_ARG_POINTER(aMaximumSupportedPAR);
+  NS_ENSURE_TRUE(mIsPARRange, NS_ERROR_NOT_AVAILABLE);
+
+  // The maximum PAR value will be the second value in the par array (if
+  // supported).
+  nsresult rv;
+  nsCOMPtr<sbIDevCapFraction> maxPARFraction =
+    do_QueryElementAt(mVideoPARs, 1, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  maxPARFraction.forget(aMaximumSupportedPAR);
+  return NS_OK;
+}
+
+/* readonly attribute boolean doesSupportFrameRateRange; */
+NS_IMETHODIMP
+sbDevCapVideoStream::GetDoesSupportFrameRateRange(
+    PRBool *aDoesSupportFrameRateRange)
+{
+  NS_ENSURE_ARG_POINTER(aDoesSupportFrameRateRange);
+  *aDoesSupportFrameRateRange = mIsFrameRatesRange;
+  return NS_OK;
+}
+
+/* readonly attribute nsIArray supportedFrameRates; */
+NS_IMETHODIMP
+sbDevCapVideoStream::GetSupportedFrameRates(nsIArray **aSupportedFrameRates)
+{
+  NS_ENSURE_ARG_POINTER(aSupportedFrameRates);
+  NS_IF_ADDREF(*aSupportedFrameRates = mVideoFrameRates);
+  return NS_OK;
+}
+
+/* readonly attribute sbIDevCapFraction minimumSupportedFrameRate; */
+NS_IMETHODIMP
+sbDevCapVideoStream::GetMinimumSupportedFrameRate(
+    sbIDevCapFraction **aMinimumSupportedFrameRate)
+{
+  NS_ENSURE_ARG_POINTER(aMinimumSupportedFrameRate);
+  NS_ENSURE_TRUE(mIsFrameRatesRange, NS_ERROR_NOT_AVAILABLE);
+
+  // The minimum frame rate will be the first value in the frame rates array
+  // (if available).
+  nsresult rv;
+  nsCOMPtr<sbIDevCapFraction> minFrameRateFraction =
+    do_QueryElementAt(mVideoFrameRates, 0, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  minFrameRateFraction.forget(aMinimumSupportedFrameRate);
+  return NS_OK;
+}
+
+/* readonly attribute sbIDevCapFraction maximumSupportedFrameRate; */
+NS_IMETHODIMP
+sbDevCapVideoStream::GetMaximumSupportedFrameRate(
+    sbIDevCapFraction **aMaximumSupportedFrameRate)
+{
+  NS_ENSURE_ARG_POINTER(aMaximumSupportedFrameRate);
+  NS_ENSURE_TRUE(mIsFrameRatesRange, NS_ERROR_NOT_AVAILABLE);
+
+  // The maximum frame rate will be the second value in the frame rates array
+  // (if available).
+  nsresult rv;
+  nsCOMPtr<sbIDevCapFraction> maxFrameRateFraction =
+    do_QueryElementAt(mVideoFrameRates, 1, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  maxFrameRateFraction.forget(aMaximumSupportedFrameRate);
   return NS_OK;
 }
 
@@ -1201,4 +1446,40 @@ NS_IMETHODIMP
 sbVideoFormatType::GetAudioStream(sbIDevCapAudioStream * *aAudioStream)
 {
   return sbReturnCOMPtr(mAudioStream, aAudioStream);
+}
+
+/*******************************************************************************
+ * Playlist format type
+ */
+
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbPlaylistFormatType,
+                              sbIPlaylistFormatType,
+                              nsIClassInfo)
+NS_IMPL_CI_INTERFACE_GETTER2(sbPlaylistFormatType,
+                             sbIPlaylistFormatType,
+                             nsIClassInfo)
+
+NS_DECL_CLASSINFO(sbPlaylistFormatType)
+NS_IMPL_THREADSAFE_CI(sbPlaylistFormatType)
+
+sbPlaylistFormatType::sbPlaylistFormatType()
+{
+}
+
+sbPlaylistFormatType::~sbPlaylistFormatType()
+{
+}
+
+NS_IMETHODIMP
+sbPlaylistFormatType::Initialize(const nsACString & aPathSeparator)
+{
+  mPathSeparator = aPathSeparator;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbPlaylistFormatType::GetPathSeparator(nsACString & aPathSeparator)
+{
+  aPathSeparator = mPathSeparator;
+  return NS_OK;
 }

@@ -26,6 +26,7 @@
 
 #include "sbSecurityMixin.h"
 #include <sbClassInfoUtils.h>
+#include <sbMemoryUtils.h>
 #include <sbTArrayStringEnumerator.h>
 
 #include <nsIConsoleService.h>
@@ -114,8 +115,8 @@ sbSecurityMixin::~sbSecurityMixin()
 {
   if (mInterfacesCount) {
     for (PRUint32 index = 0; index < mInterfacesCount; ++index)
-      nsMemory::Free( mInterfaces[index] );
-    nsMemory::Free(mInterfaces);
+      NS_Free( mInterfaces[index] );
+    NS_Free(mInterfaces);
   }
 }
 
@@ -710,18 +711,18 @@ sbSecurityMixin::CopyIIDArray(PRUint32 aCount, const nsIID **aSourceArray, nsIID
 
   *aDestArray = 0;
 
-  nsIID **iids = static_cast<nsIID**>( nsMemory::Alloc( aCount * sizeof(nsIID*) ) );
+  nsIID **iids = static_cast<nsIID**>( NS_Alloc( aCount * sizeof(nsIID*) ) );
   if (!iids) {
     return NS_ERROR_OUT_OF_MEMORY;
   }
 
   for (PRUint32 index = 0; index < aCount; ++index) {
-    iids[index] = static_cast<nsIID*>( nsMemory::Clone( aSourceArray[index], sizeof(nsIID) ) );
+    iids[index] = static_cast<nsIID*>( SB_CloneMemory( aSourceArray[index], sizeof(nsIID) ) );
 
     if (!iids[index]) {
       for (PRUint32 alloc_index = 0; alloc_index < index; ++alloc_index)
-        nsMemory::Free( iids[alloc_index] );
-      nsMemory::Free(iids);
+        NS_Free( iids[alloc_index] );
+      NS_Free(iids);
       return NS_ERROR_OUT_OF_MEMORY;
     }
   }

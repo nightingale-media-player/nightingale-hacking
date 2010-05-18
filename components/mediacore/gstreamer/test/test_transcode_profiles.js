@@ -28,7 +28,7 @@ function runTest() {
   Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 
   var conf = Cc["@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Device/GStreamer;1"]
-               .createInstance(Ci.sbPIGstTranscodingConfigurator);
+               .createInstance(Ci.sbITranscodingConfigurator);
   var profiles = ArrayConverter.JSArray(conf.availableProfiles);
   var testProfile = null;
   for each (var profile in profiles) {

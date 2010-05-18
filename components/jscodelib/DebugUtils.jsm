@@ -50,18 +50,24 @@ var DebugUtils = {
   /**
    * \brief Generates a log function for a module.
    *
-   * Call with your module name. This will only return a logging function if
-   * your module is listed in the NSPR_LOG_MODULES environment variable with
-   * a log level of at least 3. Otherwise it will return a no-op function.
-   * Note that log output will still go to stderr, not to NSPR_LOG_FILE as one
-   * might expect.
+   * This will only return a logging function if your module is listed in the
+   * NSPR_LOG_MODULES environment variable with a log level of at least @level.
+   * Otherwise it will return a no-op function.  Note that log output will
+   * still go to stderr, not to NSPR_LOG_FILE as one might expect.
+   *
+   * \param module The NSPR log module to use
+   * \param level The minimum logging level, defaults to 3
    */
-  generateLogFunction: function DebugUtils_generateLogFunction(module) {
+  generateLogFunction: function DebugUtils_generateLogFunction(module, level) {
     let doLog = false;
+    let minLevel = 3;
+    if (arguments.length > 1) {
+      minLevel = parseInt(arguments[1]);
+    }
     for each (let entry in this.logModules.split(/,/)) {
       if (/(.*):(\d+)$/.test(entry) &&
           (RegExp.$1 == module || RegExp.$1 == "all") &&
-          parseInt(RegExp.$2) >= 3) {
+          parseInt(RegExp.$2) >= minLevel) {
         doLog = true;
       }
     }

@@ -1276,7 +1276,7 @@ sbLocalDatabaseCascadeFilterSet::OnBeforeItemRemoved(sbIMediaList* aMediaList,
 
   // Don't care
 
-  *aNoMoreForBatch = PR_FALSE;
+  *aNoMoreForBatch = PR_TRUE;
   return NS_OK;
 }
 
@@ -1361,7 +1361,7 @@ sbLocalDatabaseCascadeFilterSet::OnItemMoved(sbIMediaList* aMediaList,
 
   // Don't care
 
-  *aNoMoreForBatch = PR_FALSE;
+  *aNoMoreForBatch = PR_TRUE;
   return NS_OK;
 }
 

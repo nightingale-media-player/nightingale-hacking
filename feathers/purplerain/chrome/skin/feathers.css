@@ -598,28 +598,55 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 }
 
 #servicepane {
-  background-color: rgb(54,52,63);
+  background-color: rgb(47,43,58);
   border-left: 1px solid rgb(43,41,54);
+}
+
+#displaypane_servicepane_bottom {
   border-bottom: 1px solid rgb(44,42,55);
 }
 
 #sb_servicepane_box {
   border: none;
   overflow: auto;
+  overflow-x: hidden;
 }
 
 /* BEGIN NEW SERVICEPANE */
-sb-servicepane-group {
+sb-servicepane-group > vbox > vbox.servicepane-group-overflow-container {
+  overflow: hidden;
+}
+sb-servicepane-group > vbox > vbox > vbox.servicepane-group-nodes {
+  overflow: hidden;
+}
+vbox.servicepane-group-nodes {
+  padding-bottom: 4px;
 }
 
-sb-servicepane-group hbox.servicepane-group-header {
+sb-servicepane-group hbox.servicepane-group-header-wrapper {
   background-image: url(chrome://songbird/skin/service-pane/group-header-bg.png);
   background-repeat: repeat-x;
-  min-height: 18px;
-  max-height: 18px;
+  background-position: center 0px;
+  min-height: 20px;
+  max-height: 20px;
   -moz-box-align: center;
-  border-top: 1px solid rgb(102,99,111);
-  border-bottom: 1px solid rgb(51,47,61);
+}
+
+#servicepane > sb-servicepane-group:first-child hbox.servicepane-group-header-wrapper {
+  background-image: url(chrome://songbird/skin/service-pane/group-header-first-bg.png);
+}
+
+sb-servicepane-group[collapsedChildren="true"] hbox.servicepane-group-header-wrapper:-moz-drag-over,
+/* Commented out per bug 21108
+ * sb-servicepane-group.collapsible hbox.servicepane-group-header-wrapper {
+ */
+sb-servicepane-group hbox.servicepane-group-header-wrapper:hover {
+  background-position: center -20px;
+}
+/* Commented out per bug 21108
+ * sb-servicepane-group.collapsible hbox.servicepane-group-header-wrapper:active { */
+sb-servicepane-group hbox.servicepane-group-header-wrapper:active {
+  background-position: center -40px;
 }
 
 sb-servicepane-group description.servicepane-group-label {
@@ -629,38 +656,246 @@ sb-servicepane-group description.servicepane-group-label {
   margin-left: 4px;
 }
 
+image.sb-servicepane-new-playlist {
+  background-image: url(chrome://songbird/skin/service-pane/new-playlist.png);
+  background-position: left 0px;
+  min-height: 20px;
+  max-height: 20px;
+  min-width: 23px;
+  max-width: 23px;
+}
+image.sb-servicepane-new-playlist:hover {
+  background-position: left -20px;
+}
+image.sb-servicepane-new-playlist:active {
+  background-position: left -40px;
+}
+image.sb-servicepane-new-playlist[altKey="true"] {
+  background-position: right 0px;
+}
+image.sb-servicepane-new-playlist[altKey="true"]:hover {
+  background-position: right -20px;
+}
+image.sb-servicepane-new-playlist[altKey="true"]:active {
+  background-position: right -40px;
+}
+/* SERVICE PANE NODES */
 sb-servicepane-node {
-  padding-left: 8px;
+  margin-top: 1px;
+  margin-bottom: 1px;
+}
+
+sb-servicepane-node > vbox > hbox.servicepane-node-info {
+  min-height: 18px;
+  max-height: 18px;
+}
+
+hbox.servicepane-node-info > stack > hbox > label {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  color: rgb(219,219,219);
+  font: message-box;
+  font-size: 11px;
+}
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > label {
+  color: white;
+}
+sb-servicepane-node[indent="1"] > vbox > hbox.servicepane-node-info {
+  padding-left: 10px;
+}
+sb-servicepane-node[indent="2"] > vbox > hbox.servicepane-node-info {
+  padding-left: 24px;
+}
+/* if you really have this much nesting, you're crazy */
+sb-servicepane-node[indent="3"] > vbox > hbox.servicepane-node-info {
+  padding-left: 38px;
+}
+sb-servicepane-node[indent="4"] > vbox > hbox.servicepane-node-info {
+  padding-left: 52px;
+}
+sb-servicepane-node[indent="5"] > vbox > hbox.servicepane-node-info {
+  padding-left: 66px;
 }
 
 /* loaded in the browser & selected in the servicepane */
-sb-servicepane-node.active {
-  background-color: rgb(92,81,132);
-  -moz-border-radius: 3px;
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info {
+  background-image: url(chrome://songbird/skin/service-pane/bg-active-node.png);
+  background-position: left bottom;
+  border-left: 1px solid rgb(82,75,107);
+  border-right: 1px solid rgb(82,75,107);
+}
+
+/* Set user focus to normal so we can tell when the servicepane is focused
+ * or not */
+#servicepane {
+  -moz-user-focus: normal;
+}
+#servicepane:focus sb-servicepane-node.active > vbox > hbox.servicepane-node-info {
+  background-position: left top;
+  border-left: 1px solid rgb(74,65,104);
+  border-right: 1px solid rgb(74,65,104);
 }
 
 /* highlighted in the servicepane for when a node is right-clicked, but not
  * loaded in the browser */
-sb-servicepane-node.highlighted {
+sb-servicepane-node.highlighted > vbox > hbox.servicepane-node-info {
   background-color: rgb(61,57,84);
   -moz-border-radius: 3px;
-  padding-left: 7px;
+  border: 1px solid rgb(143,132,181);
+}
+/* needed to avoid the above border side-shifting all the elements 1px */
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow,
+sb-servicepane-node.droptarget > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow,
+sb-servicepane-node.keyboardfocus > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow,
+sb-servicepane-node.highlighted > vbox > hbox.servicepane-node-info > image.servicepane-node-container-arrow {
+  margin-left: -1px;
+}
+
+/* highlighted in the servicepane for when a node is the target for a drop */
+sb-servicepane-node.droptarget > vbox > hbox.servicepane-node-info {
+  background-color: rgb(61,57,84);
+  -moz-border-radius: 3px;
+  border: 1px solid rgb(143,132,181);
+}
+
+/* highlighted in the servicepane for when a node is the keyboard focus */
+#servicepane sb-servicepane-node.active.keyboardfocus > vbox > hbox.servicepane-node-info,
+#servicepane:focus sb-servicepane-node.active.keyboardfocus > vbox > hbox.servicepane-node-info,
+sb-servicepane-node.keyboardfocus > vbox > hbox.servicepane-node-info {
+  -moz-border-radius: 3px;
+  border: 1px solid rgb(193,182,231);
+}
+/* to compensate for the 1px border added above */
+sb-servicepane-node.keyboardfocus > vbox > hbox.servicepane-node-info > stack > textbox {
   margin-top: -1px;
   margin-bottom: -1px;
+}
+
+/* highlighted in the servicepane for when a node is the target for a drop */
+sb-servicepane-node.dndAcceptIn > vbox > hbox.servicepane-node-info {
+  background-color: rgb(61,57,84);
+  -moz-border-radius: 3px;
   border: 1px solid rgb(143,132,181);
+}
+
+/* overlined in the servicepane for when a node is the target for a drop reorder */
+sb-servicepane-node.dndAcceptBefore > vbox > hbox.servicepane-node-info {
+  border-top: 2px solid rgb(143,132,181);
+}
+
+/* underlined in the servicepane for when a node is the target for a drop reorder */
+sb-servicepane-node.dndAcceptAfter > vbox > hbox.servicepane-node-info {
+  border-bottom: 2px solid rgb(143,132,181);
+}
+
+/* when an open container node is a droptarget, then highlight the node and
+ * all its children */
+sb-servicepane-node.container.open.droptarget {
+  margin-top: 0px;
+}
+sb-servicepane-node.container.open.droptarget > vbox {
+  background-color: rgb(61,57,84);
+  -moz-border-radius: 3px;
+  border: 1px solid rgb(143,132,181);
+}
+/* undo the above changes for container node droptargets */
+sb-servicepane-node.container.open.droptarget > vbox > hbox.servicepane-node-info {
+  background-color: transparent;
+  border: none;
+  margin-left: 0px;
+  margin-right: -1px;
+}
+sb-servicepane-node.container.open.droptarget > vbox > vbox {
+  margin-left: -1px;
 }
 
 /* the open/closed container toggle arrow for the node and its subnodes */
 sb-servicepane-node image.servicepane-node-container-arrow {
-  min-width: 16px;
-  min-height: 16px;
+  padding: 10px 3px;
+  min-width: 7px;
+  min-height: 7px;
+  margin-right: 1px;
+  background-image: none;
+  background-repeat: no-repeat;
+}
+
+sb-servicepane-node.container.open > vbox > hbox > image.servicepane-node-container-arrow {
+  background-image: url(chrome://songbird/skin/service-pane/container_arrows.png);
+  background-position: left top;
+}
+sb-servicepane-node.active.container.open > vbox > hbox > image.servicepane-node-container-arrow {
+  background-position: right top;
+}
+
+sb-servicepane-node.container.closed > vbox > hbox > image.servicepane-node-container-arrow {
+  background-image: url(chrome://songbird/skin/service-pane/container_arrows.png);
+  background-position: left bottom;
+}
+sb-servicepane-node.active.container.closed > vbox > hbox > image.servicepane-node-container-arrow {
+  background-position: right bottom;
 }
 
 /* the image for the node itself */
-sb-servicepane-node > vbox > hbox.servicepane-node-info {
+sb-servicepane-node > vbox > hbox.servicepane-node-info,
+sb-servicepane-node > vbox > hbox.servicepane-node-info > stack > hbox {
   -moz-box-align: center;
 }
 
+sb-servicepane-node textbox {
+  margin: 0px;
+}
+
+/* SERVICE PANE BADGES */
+hbox.servicepane-node-badges {
+  -moz-box-pack: end;
+  margin-right: 0px;
+}
+
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges,
+sb-servicepane-node.highlighted > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges {
+  margin-right: -1px;
+}
+
+/* Badge Text labels */
+sb-servicepane-node-badge > hbox > label {
+  background-color: rgb(96,91,110);
+  color: rgb(31,30,39);
+  padding-left: 5px;
+  padding-right: 5px;
+  -moz-border-radius: 6px;
+  margin: 0px 4px 0px 0px;
+  font-family: Helvetica Neue, Helvetica, Arial;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges > sb-servicepane-node-badge > hbox > label {
+  background-color: rgba(255,255,255,0.4);
+  color: rgba(31,30,39,0.8);
+}
+
+/* Badge Images */
+sb-servicepane-node-badge > hbox > image {
+  margin-left: 5px;
+  margin-right: 2px;
+}
+sb-servicepane-node-badge > hbox > image {
+  -moz-image-region: rect(0px,18px,18px,0px);
+}
+sb-servicepane-node-badge > hbox > image:hover {
+  -moz-image-region: rect(18px,18px,36px,0px);
+}
+sb-servicepane-node-badge > hbox > image:active {
+  -moz-image-region: rect(36px,18px,54px,0px);
+}
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges > sb-servicepane-node-badge > hbox > image {
+  -moz-image-region: rect(0px,36px,18px,18px);
+}
+sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges > sb-servicepane-node-badge > hbox > image:hover {
+  -moz-image-region: rect(18px,36px,36px,18px);
+}sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > hbox.servicepane-node-badges > sb-servicepane-node-badge > hbox > image:active {
+  -moz-image-region: rect(36px,36px,54px,18px);
+}
 /* END NEW SERVICEPANE */
 
 /* shift the servicepane tree contents down 4px, but don't shift the scrollbar
@@ -735,6 +970,8 @@ sb-servicepane-node > vbox > hbox.servicepane-node-info {
 ******************************************************************************/
 .faceplate-text {
   color:rgb(250,250,250);
+  font: message-box;
+  font-size: 11px;
 }
 #sb-player-title-label-label {
   font-weight:bold;
@@ -984,6 +1221,26 @@ sb-device-managetabs {
 }
 #device_management_tabs > tab[selected] {
   border-bottom: none;
+}
+
+#device-icon {
+  margin-right: 2px;
+}
+
+#device-name {
+  margin-top: -1px;
+  margin-left: -3px;
+}
+
+#volume-selector {
+  min-width: 164px;
+  margin-top: 2px;
+  margin-bottom: 4px;
+}
+
+.eject-info-buttons {
+  margin: 0px 6px 0px 0px;
+  padding: 0px;
 }
 
 .device-capacity-bar-box {
@@ -1241,6 +1498,10 @@ findbar > .findbar-container > .findbar-find-status {
 ******************************************************************************/
 scrollbarbutton,
 scrollbar > slider > thumb {   
+}
+
+#servicepane scrollbar {
+  border-left: 1px solid rgb(26,26,30);
 }
 
 

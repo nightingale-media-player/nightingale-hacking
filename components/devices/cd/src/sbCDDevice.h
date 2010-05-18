@@ -441,7 +441,8 @@ private:
 
   /* Override base class to get all profiles, not just those we can write to
    * the CD (i.e. none) */
-  nsresult GetSupportedTranscodeProfiles(nsIArray **aSupportedProfiles);
+  nsresult GetSupportedTranscodeProfiles(PRUint32 aType,
+                                         nsIArray **aSupportedProfiles);
 
   /* Override base class to avoid popping up read-only dialog box */
   nsresult CheckAccess(sbIDeviceLibrary* aDevLib);

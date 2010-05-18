@@ -182,6 +182,11 @@ public:
 protected:
   
   /**
+   * \brief Proxied version of RestartProcessors present on the
+   *        sbIFileMetadataService interface.
+   */
+  nsresult ProxiedRestartProcessors(PRUint16 aProcessorsToRestart);
+  /**
    * Calls StartJob on the main thread, proxying if necessary.
    *
    * \param aMediaItemsArray Array of sbIMediaItems

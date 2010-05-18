@@ -36,10 +36,12 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#include "commands.h"
+#include "debug.h"
 #include "error.h"
 #include "stringconvert.h"
-#include "debug.h"
-#include "commands.h"
+#include "utils.h"
+
 #include <windows.h>
 #include <shellapi.h>
 #include <shlobj.h>
@@ -199,12 +201,18 @@ int CommandExecuteFile(const std::string& aExecutable,
   LPTSTR cmdlineBuffer = new TCHAR[cmdline.length() + 1];
   cmdlineBuffer[cmdline.length()] = _T('\0');
   _tcsncpy(cmdlineBuffer, cmdline.c_str(), cmdline.length());
-  BOOL ok = CreateProcess(executable.c_str(),
+
+  DWORD creationFlags = 0;
+  #if !defined(DEBUG)
+    // prevent console apps from getting a window
+    creationFlags |= CREATE_NO_WINDOW;
+  #endif /* !DEBUG */
+  BOOL ok = CreateProcess(NULL,
                           cmdlineBuffer,
                           NULL,  // no special security attributes
                           NULL,  // no special thread attributes
                           FALSE, // don't inherit filehandles
-                          0,     // No special process creation flags
+                          creationFlags,
                           NULL,  // inherit my environment
                           NULL,  // use my current directory
                           &si,
@@ -218,51 +226,6 @@ int CommandExecuteFile(const std::string& aExecutable,
   }
 
   return (ok ? DH_ERROR_OK : DH_ERROR_UNKNOWN);
-}
-
-tstring FilterSubstitution(tstring aString) {
-  tstring result = aString;
-  tstring::size_type start = 0, end = tstring::npos;
-  TCHAR *envData;
-  while (true) {
-    start = result.find(tstring::value_type('$'), start);
-    if (start == tstring::npos) {
-      break;
-    }
-    end = result.find(tstring::value_type('$'), start + 1);
-    if (end == tstring::npos) {
-      break;
-    }
-    // Try to substitute $APPDIR$
-    tstring variable = result.substr(start + 1, end - start - 1);
-    if (variable == _T("APPDIR")) {
-      tstring appdir = GetAppResoucesDirectory();
-      DebugMessage("AppDir: %s", appdir.c_str());
-      result.replace(start, end-start+1, appdir);
-      start += appdir.length();
-      continue;
-    }
-    // Try to substitute $XXX$ with environment variable %DISTHELPER_XXX%
-    tstring envName(_T("DISTHELPER_"));
-    envName.append(variable);
-    envData = _tgetenv(envName.c_str());
-    if (envData && *envData) {
-      DebugMessage("Environment %s: %s", envName.c_str(), envData);
-      result.replace(start, end-start+1, envData);
-      start += _tcslen(envData);
-      continue;
-    }
-    // Try to substitute $XXX$ with environment variable %XXX%
-    envData = _tgetenv(variable.c_str());
-    if (envData && *envData) {
-      DebugMessage("Environment %s: %s", variable.c_str(), envData);
-      result.replace(start, end-start+1, envData);
-      start += _tcslen(envData);
-      continue;
-    }
-    start = end + 1;
-  }
-  return result;
 }
 
 std::vector<std::string> ParseCommandLine(const std::string& aCommandLine) {

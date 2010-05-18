@@ -77,13 +77,12 @@ public:
   /**
    * Compares if this fraction is less than the "other"
    *
-   * NOTE: This is not exact as it uses floating point
    * \param aOther The secondary fraction to compare
    * \return true if this fraction is less than aOther
    */
   bool IsLessThan(sbFraction const & aOther) const
   {
-    return static_cast<double>(*this) < static_cast<double>(aOther);
+    return *this < aOther;
   }
 
   /**
@@ -92,6 +91,42 @@ public:
   operator double() const
   {
     return static_cast<double>(mNumerator) / static_cast<double>(mDenominator);
+  }
+
+  /**
+   * Greater than operator.
+   */
+  PRBool operator > (const sbFraction & aFraction)
+  {
+    return (PRInt64)mNumerator * aFraction.mDenominator >
+           (PRInt64)aFraction.mNumerator * mDenominator;
+  }
+
+  /**
+   * Less than operator.
+   */
+  PRBool operator < (const sbFraction & aFraction)
+  {
+    return (PRInt64)mNumerator * aFraction.mDenominator <
+           (PRInt64)aFraction.mNumerator * mDenominator;
+  }
+
+  /**
+   * Greater than or equal operator.
+   */
+  PRBool operator >= (const sbFraction & aFraction)
+  {
+    return (PRInt64)mNumerator * aFraction.mDenominator >=
+           (PRInt64)aFraction.mNumerator * mDenominator;
+  }
+
+  /**
+   * Less than or equal operator.
+   */
+  PRBool operator <= (const sbFraction & aFraction)
+  {
+    return (PRInt64)mNumerator * aFraction.mDenominator <=
+           (PRInt64)aFraction.mNumerator * mDenominator;
   }
 
   /**

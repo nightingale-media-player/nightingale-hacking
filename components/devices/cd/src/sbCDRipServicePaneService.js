@@ -204,9 +204,6 @@ sbCDRipServicePaneService.prototype = {
     this._deviceManagerSvc = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
                                .getService(Ci.sbIDeviceManager2);
  
-    // Remove all stale nodes.
-    this._removeDeviceNodes(this._servicePaneSvc.root);
- 
     // Add a listener for CDDevice Events
     var deviceEventListener = {
       cdDeviceServicePaneSvc: this,
@@ -266,11 +263,7 @@ sbCDRipServicePaneService.prototype = {
       this._autoPlayActionHandler = null;
     }
 
-    // Purge all device nodes before shutdown.
-    this._removeDeviceNodes(this._servicePaneSvc.root);
-    
     // Remove all references to nodes
-    this._removeAllDevices();
     this._deviceInfoList = [];
 
     this._deviceManagerSvc = null;
@@ -347,9 +340,7 @@ sbCDRipServicePaneService.prototype = {
         // (hopefully the last one enumerated is also the last one added)
         var deviceNode = null;
         for each (let deviceInfo in this._deviceInfoList) {
-          if (!deviceInfo.svcPaneNode.hidden) {
-            deviceNode = deviceInfo.svcPaneNode;
-          }
+          deviceNode = deviceInfo.svcPaneNode;
         }
 
         if (deviceNode) {
@@ -421,7 +412,7 @@ sbCDRipServicePaneService.prototype = {
       }
 
       // Get the device properties and clear the busy property.
-      devProperties = devNode.properties.split(" ");
+      devProperties = devNode.className.split(" ");
       devProperties = devProperties.filter(function(aProperty) {
                                              return aProperty != "busy";
                                            });
@@ -449,7 +440,7 @@ sbCDRipServicePaneService.prototype = {
       devNode.setAttributeNS(CDRIPNS, "LastState", device.state);
 
       // Write back the device node properties.
-      devNode.properties = devProperties.join(" ");
+      devNode.className = devProperties.join(" ");
     }
   },
  
@@ -580,38 +571,16 @@ sbCDRipServicePaneService.prototype = {
     }
     
     // Add a cd rip node in the service pane.
-    var devNode = this._deviceServicePaneSvc.createNodeForDevice2(device);
+    var devNode = this._deviceServicePaneSvc.createNodeForDevice2(device, true);
     devNode.setAttributeNS(CDRIPNS, "DeviceId", devId);
     devNode.setAttributeNS(CDRIPNS, "deviceNodeType", "cd-device");
-    devNode.properties = "cd-device";
+    devNode.className = "cd-device";
     devNode.contractid = this._cfg.contractID;
     devNode.url = this._cfg.devMgrURL + "?device-id=" + devId;
     devNode.editable = false;
     devNode.name = device.properties.friendlyName;
-    devNode.hidden = false;
 
-    this._deviceInfoList[devId] = {};
-    this._deviceInfoList[devId].svcPaneNode = devNode;
-  },
-  
-  /**
-   * \brief Remove a CD Device from the service pane, and all nodes under it.
-   * \param aNode - Service pane node of CD Device to remove.
-   */
-  _removeDeviceNodes: function sbCDRipServicePaneService_removeCDDeviceNodes(
-                                                                        aNode) {
-    // Remove child device nodes.
-    if (aNode.isContainer) {
-      var childEnum = aNode.childNodes;
-      while (childEnum.hasMoreElements()) {
-        var child = childEnum.getNext().QueryInterface(Ci.sbIServicePaneNode);
-        this._removeDeviceNodes(child);
-      }
-    }
-
-    // Remove cd device node.
-    if (aNode.contractid == this._cfg.contractID)
-      aNode.hidden = true;
+    this._deviceInfoList[devId] = {svcPaneNode: devNode};
   },
   
   /**
@@ -628,23 +597,10 @@ sbCDRipServicePaneService.prototype = {
     }
 
     // Remove the device node.
-    devInfo.svcPaneNode.hidden = true;
+    devInfo.svcPaneNode.parentNode.removeChild(devInfo.svcPaneNode);
 
     // Remove device info list entry.
     delete this._deviceInfoList[devId];
-  },
-  
-  /**
-   * \brief Remove all known CD Devices from the service pane.
-   */
-  _removeAllDevices: function sbCDRipServicePaneService_removeAllDevices() {
-    for (var devId in this._deviceInfoList) {
-      // Remove the device node.
-      this._deviceInfoList[devId].svcPaneNode.hidden = true;
-
-      // Remove device info list entry.
-      delete this._deviceInfoList[devId];
-    }
   }
 };
 

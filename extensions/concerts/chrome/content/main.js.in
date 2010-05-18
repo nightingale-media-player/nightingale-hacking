@@ -165,6 +165,10 @@ Concerts = {
 
     var SPS = Cc["@songbirdnest.com/servicepane/service;1"]
                 .getService(Ci.sbIServicePaneService);
+
+    // Check whether the node already exists
+    if (SPS.getNode("urn:concerts"))
+      return;
 		
     var servicesNode = SPS.getNode("SB:Services");
     if (servicesNode) {
@@ -185,9 +189,9 @@ Concerts = {
     var concertsNode = SPS.createNode();
     concertsNode.id = "urn:concerts";
     concertsNode.url = "chrome://concerts/content/browse.xul";
-    concertsNode.name = this._strings.getString("servicePaneName");
-    concertsNode.tooltip =
-      this._strings.getString("servicePaneInitialTooltip");
+    concertsNode.name = "&servicePane.Name";
+    concertsNode.tooltip = "&servicePane.Tooltip";
+    concertsNode.stringbundle = "chrome://concerts/locale/overlay.properties";
     concertsNode.editable = false;
     concertsNode.className = "concerts";
     concertsNode.setAttributeNS(SP_NS, "addonID", "@EXTENSION_UUID@");
@@ -215,28 +219,15 @@ Concerts = {
 			return;
 		this.lastConcertCount = concertCount;
 
-		var name;
-		var tooltip;
-		if (typeof(this.servicePaneStr) == "undefined") {
-			this.servicePaneStr = Cc["@mozilla.org/intl/stringbundle;1"]
-				.getService(Ci.nsIStringBundleService)
-				.createBundle("chrome://concerts/locale/overlay.properties");
-		}
-
 		var SPS = Cc["@songbirdnest.com/servicepane/service;1"]
 			          .getService(Ci.sbIServicePaneService);
 		var concertsNode = SPS.getNode("urn:concerts");
 		if (concertsNode != null) {
-			if (concertCount > 0) {
-				concertsNode.name = 
-					this.servicePaneStr.GetStringFromName("servicePaneName")
-					+ " (" + concertCount + ")";
-			} else {
-				concertsNode.name = 
-					this.servicePaneStr.GetStringFromName("servicePaneName")
-			}
-			concertsNode.tooltip = concertCount +
-				this.servicePaneStr.GetStringFromName("servicePaneTooltip")
+      // Get the DOM node matching the servicePaneNode;
+      let domNode = window.gServicePane.getDOMNode(concertsNode.id);
+      // Remove any existing badge that may exist
+      domNode.removeBadge(0);
+      domNode.appendBadge(concertCount, null);
 		}
 	},
 	

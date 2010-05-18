@@ -55,7 +55,7 @@ function(aFile, aMediaList, aReplace)
   var re = new RegExp("^(File|Title|Length)(\\d+)=(.+)$");
 
   var self = this;
-  SB_ProcessFile(aFile, function(aLine) {
+  SB_DetectCharsetAndProcessFile(aFile, function(aLine) {
 
     var a = aLine.match(re);
     if (a) {

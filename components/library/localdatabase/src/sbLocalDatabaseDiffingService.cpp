@@ -1403,6 +1403,15 @@ sbLocalDatabaseDiffingService::Enumerator(nsIDHashKey* aEntry, void* userArg)
     }
   }
   if (destinationItem) {
+    // Do not update playlist
+    nsString isList;
+    rv = sourceItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                                 isList);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_NEXT);
+
+    if (isList.EqualsLiteral("1"))
+      return PL_DHASH_NEXT;
+
     LogMediaItem("Source Item", sourceItem);
     LogMediaItem("Destination item", destinationItem);
     rv = args->mDiffService->CreateLibraryChangeFromItems(
@@ -1541,9 +1550,19 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
        iter != end;
        ++iter) {
     if (iter->mAction == sbLDBDSEnumerator::ItemInfo::ACTION_NONE) {
-      // Not present in source, indicate that the item was removed from the source.
+      // Not present in source, indicate that the item was removed from the
+      // source.
+      nsCOMPtr<sbIMediaItem> destItem;
+      rv = aDestinationLibrary->GetItemByGuid(sbGUIDToString(iter->mID),
+                                              getter_AddRefs(destItem));
+      // If we can't find it now, just skip it
+      if (rv == NS_ERROR_NOT_AVAILABLE || !destItem) {
+        continue;
+      }
+      NS_ENSURE_SUCCESS(rv, rv);
+
       nsCOMPtr<sbILibraryChange> libraryChange;
-      rv = CreateItemDeletedLibraryChange(sourceItem, getter_AddRefs(libraryChange));
+      rv = CreateItemDeletedLibraryChange(destItem, getter_AddRefs(libraryChange));
       NS_ENSURE_SUCCESS(rv, rv);
 
       rv = libraryChanges->AppendElement(libraryChange, PR_FALSE);

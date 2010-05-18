@@ -1106,10 +1106,8 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  nsCOMPtr<sbITranscodeJob> tcJob;
-  rv = mTranscodeManager->GetTranscoderForMediaItem(destination,
-                                                    mTranscodeProfile,
-                                                    getter_AddRefs(tcJob));
+  nsCOMPtr<sbITranscodeJob> tcJob = do_CreateInstance(
+          "@songbirdnest.com/Songbird/Mediacore/Transcode/GStreamer;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIThread> target;
@@ -1202,7 +1200,7 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   nsRefPtr<sbTranscodeProgressListener> listener =
     sbTranscodeProgressListener::New(this,
                                      &mStatus,
-                                     aRequest,
+                                     aRequest->item,
                                      mReqWaitMonitor,
                                      statusProperty,
                                      cancel);

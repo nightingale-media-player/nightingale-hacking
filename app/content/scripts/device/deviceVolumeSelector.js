@@ -373,7 +373,7 @@ var deviceVolumeMenuItemsSvc = {
     // Get the list of device volume libraries.  Don't add any UI elements if
     // not enough volumes are present.
     var libraries = this._device.content.libraries;
-    libraryCount = libraries.length;
+    var libraryCount = libraries.length;
     if (libraryCount < minVolumeCount)
       return;
 

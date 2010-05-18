@@ -175,7 +175,7 @@ sbDownloadDeviceServicePaneModule.prototype._updateState =
 function sbDownloadDeviceServicePaneModule_onStateChanged()
 {
   if (this._node) {
-    var a = this._node.properties.split(" ");
+    var a = this._node.className.split(" ");
 
     // Remove the "progress" property from the array, if any
     a = a.filter(function(property) {
@@ -186,7 +186,7 @@ function sbDownloadDeviceServicePaneModule_onStateChanged()
       a.push("downloading");
     }
 
-    this._node.properties = a.join(" ");
+    this._node.className = a.join(" ");
   }
 }
 

@@ -39,14 +39,18 @@ else
    INSTALLER_STAGE_DIR = Songbird_build-$(SB_BUILD_NUMBER)
 endif
 
+# Linux only supports one installer suffix, so the plural "suffixes" is
+# misleading
+FULL_INSTALLER_NAME = $(SB_INSTALLER_NAME).$(SB_INSTALLER_SUFFIXES)
+
 include $(topsrcdir)/build/rules.mk
 
 libs::
 	$(RM) -r $(INSTALLER_STAGE_DIR)
 	$(MKDIR_APP) $(INSTALLER_STAGE_DIR)
-	$(RM) $(SB_INSTALLER_NAME)
+	$(RM) $(FULL_INSTALLER_NAME)
 	$(CP) -RLp $(SONGBIRD_DISTDIR)/* $(INSTALLER_STAGE_DIR)
-	$(TAR) --owner=0 --group=0 --numeric-owner -c $(INSTALLER_STAGE_DIR) | $(GZIP) -c9 > $(SB_INSTALLER_NAME)
-	$(MV) $(SB_INSTALLER_NAME) $(SB_INSTALLER_FINAL_DIR)
+	$(TAR) --owner=0 --group=0 --numeric-owner -c $(INSTALLER_STAGE_DIR) | $(GZIP) -c9 > $(FULL_INSTALLER_NAME)
+	$(MV) $(FULL_INSTALLER_NAME) $(SB_INSTALLER_FINAL_DIR)
 	# This is a copy of dist; remove it, since it takes up so much space.
 	$(RM) -r $(INSTALLER_STAGE_DIR)

@@ -63,9 +63,6 @@
   type="songbird"
   title="&device.dialog.setup.title;"
   buttons="accept"
-  minwidth="500"
-  minheight="180"
-  resizers="all"
   ondialogaccept="if (deviceSetupDialog.onAccept()) onExit();"
   onload="deviceSetupDialog.onLoad();"
   onunload="deviceSetupDialog.onUnload();">
@@ -79,44 +76,51 @@
   <!-- Use Songbird window region. -->
   <windowregion/>
 
-  <notificationbox id="device_setup_notification_box" flex="1">
-    <vbox id="setupContainer" flex="1">
-      <vbox id="syncContainer">
-        <hbox id="nameContainer">
-          <label id="setup_name_header"/>
-          <textbox id="setup_name_textbox"/>
-        </hbox>
+  <!-- Place notification box in its own box so that the dialog window can
+       properly resize.  Not sure why this is needed.  Other variations of
+       the notification box placement don't seem to work well with resizing. -->
+  <vbox>
+    <notificationbox id="device_setup_notification_box" flex="1"/>
+  </vbox>
 
-        <vbox id="selectorContainer" hidden="true">
-          <description id="setup_sync_volume_selector_description">
-            &device.dialog.setup.sync.volume.selector.description;
-          </description>
+  <!-- Main setup container box. -->
+  <vbox id="setupContainer">
 
-          <!-- Device volume selector. -->
-          <sb-device-volume-selector id="device_setup_volume_selector"
-                                     flex="1"
-                                     class="indent"/>
-        </vbox>
+    <vbox id="syncContainer">
+      <hbox id="nameContainer">
+        <label id="setup_name_header"/>
+        <textbox id="setup_name_textbox"/>
+      </hbox>
 
-        <checkbox id="setup_sync_checkbox" checked="false"
-                  label="&device.dialog.setup.sync.checkbox.label;"
-                  oncommand="deviceSetupDialog.toggleSync();"/>
-        <description id="setup_sync_description" class="indent">
-          &device.dialog.setup.sync.checkbox.description;
+      <vbox id="selectorContainer" hidden="true">
+        <description id="setup_sync_volume_selector_description">
+          &device.dialog.setup.sync.volume.selector.description;
         </description>
+
+        <!-- Device volume selector. -->
+        <sb-device-volume-selector id="device_setup_volume_selector"
+                                   class="indent"/>
       </vbox>
-      <spacer flex="1"/>
-      <vbox id="ignoreContainer" hidden="true">
-      <separator/>
+
+      <checkbox id="setup_sync_checkbox" checked="false"
+                label="&device.dialog.setup.sync.checkbox.label;"
+                oncommand="deviceSetupDialog.toggleSync();"/>
+      <description id="setup_sync_description" class="indent">
+        &device.dialog.setup.sync.checkbox.description;
+      </description>
+    </vbox>
+
+    <vbox id="ignoreContainer" hidden="true">
+      <separator id="ignoreSeparator"/>
       <checkbox id="setup_ignore_checkbox" checked="false"
                 label="&device.dialog.setup.ignore.checkbox.label;"
                 oncommand="deviceSetupDialog.toggleIgnore(event);"/>
       <description id="setup_ignore_description" class="indent">
         &device.dialog.setup.ignore.checkbox.description;
       </description>
-      </vbox>
     </vbox>
-  </notificationbox>
+
+  </vbox> <!-- setupContainer -->
 
 
   <!-- *************************************************************************
@@ -151,6 +155,7 @@
 
     // Songbird imports.
     Cu.import("resource://app/jsmodules/StringUtils.jsm");
+    Cu.import("resource://app/jsmodules/WindowUtils.jsm");
 
 
     //
@@ -161,10 +166,13 @@
       //
       // Object fields.
       //
-      //   _device              sbIDevice object.
+      //   _device                  sbIDevice object.
+      //   _notificationBoxInterval Interval used to monitor the notification
+      //                            box.
       //
 
       _device: null,
+      _notificationBoxInterval: null,
 
 
       //------------------------------------------------------------------------
@@ -219,6 +227,9 @@
        */
 
       onUnload: function deviceSetupDialog_onUnload() {
+        // Stop listening to notification box events.
+        this._stopListeningToNotificationBoxEvents();
+
         // Stop listening to device events.
         if (this._device) {
           var deviceEventTarget =
@@ -268,9 +279,11 @@
           // Set the sync preference.
           var deviceLibrary = this._device.content.libraries
                                   .queryElementAt(0, Ci.sbIDeviceLibrary);
-          deviceLibrary.syncMode = syncCheckboxElem.checked ?
-                                     Ci.sbIDeviceLibrary.SYNC_AUTO :
-                                     Ci.sbIDeviceLibrary.SYNC_MANUAL;
+          var syncSettings = deviceLibrary.syncSettings;
+          syncSettings.syncMode = syncCheckboxElem.checked ?
+                         Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO :
+                         Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
+          deviceLibrary.syncSettings = syncSettings;
         }
 
         return true;
@@ -350,6 +363,9 @@
                                       "device_setup_notice"))) {
           notifBox.removeNotification(oldNotif);
         }
+
+        // Stop listening to notification box events.
+        this._stopListeningToNotificationBoxEvents();
       },
 
       /**
@@ -367,6 +383,9 @@
                                     null,
                                     notifBox[level],
                                     []);
+
+        // Start listening to notification box events.
+        this._startListeningToNotificationBoxEvents();
       },
 
 
@@ -375,8 +394,6 @@
        */
 
       _update: function deviceSetupDialog__update() {
-        var isSelectorEnabled = false;
-
         // Only show volume selector if the device has multiple volumes.
         var content = this._device.content;
         var libraries = content.libraries;
@@ -384,7 +401,6 @@
               document.getElementById("selectorContainer");
         if (libraries.length > 1) {
           selectorContainerElem.removeAttribute("hidden");
-          isSelectorEnabled = true;
         }
         else {
           selectorContainerElem.setAttribute("hidden", "true");
@@ -393,22 +409,57 @@
         // Only show the ignore box for MSC device.
         var deviceType = this._device.parameters.getProperty("DeviceType");
         var dialogElem = document.getElementById("device_setup_dialog");
-        dialogElem.setAttribute("dialogHeight", "normal");
         var ignoreContainerElem = document.getElementById("ignoreContainer");
         if ((deviceType != "WPD") && (deviceType != "MTP")) {
           ignoreContainerElem.removeAttribute("hidden");
-
-          if (isSelectorEnabled) {
-            dialogElem.setAttribute("dialogHeight", "max");
-          }
         }
         else {
           ignoreContainerElem.setAttribute("hidden", "true");
-
-          if (!isSelectorEnabled) {
-            dialogElem.setAttribute("dialogHeight", "min");
-          }
         }
+
+        // Resize window to content.
+        WindowUtils.sizeToContent(window);
+      },
+
+
+      /**
+       * Start listening to notification box events.
+       */
+
+      _startListeningToNotificationBoxEvents: function
+        deviceSetupDialog__startListeningToNotificationBoxEbvents() {
+        // Use an interval to monitor the notification box to resize the window
+        // when the notification box is presented.  Unfortunately, there does
+        // not appear to be an event available that fires when the notification
+        // box has been fully presented.  It would be nice to find a better way
+        // to do this.
+        var self = this;
+        var func = function() { self._onNotificationBoxEvent(); };
+        this._notificationBoxInterval = window.setInterval(func, 250);
+      },
+
+
+      /**
+       * Stop listening to notification box events.
+       */
+
+      _stopListeningToNotificationBoxEvents: function
+        deviceSetupDialog__stopListeningToNotificationBoxEbvents() {
+        // Stop listening to notification box events.
+        if (this._notificationBoxInterval)
+          window.clearInterval(this._notificationBoxInterval);
+        this._notificationBoxInterval = null;
+      },
+
+
+      /**
+       * Handle a notification box event.
+       */
+
+      _onNotificationBoxEvent: function
+        deviceSetupDialog__onNotificationBoxEvent() {
+        // Resize window to content.
+        WindowUtils.sizeToContent(window);
       },
 
 

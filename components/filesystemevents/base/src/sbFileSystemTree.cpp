@@ -28,6 +28,7 @@
 #include <nsIProxyObjectManager.h>
 #include <nsIRunnable.h>
 #include <nsIThreadManager.h>
+#include <nsIThreadPool.h>
 #include <nsThreadUtils.h>
 #include <nsAutoLock.h>
 #include <sbProxyUtils.h>
@@ -143,15 +144,15 @@ sbFileSystemTree::InitTree()
   rv = threadMgr->GetCurrentThread(getter_AddRefs(mOwnerContextThread));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIThread> treeThread;
-  rv = threadMgr->NewThread(0, getter_AddRefs(treeThread));
+  nsCOMPtr<nsIThreadPool> threadPoolService =
+    do_GetService("@songbirdnest.com/Songbird/ThreadPoolService;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIRunnable> runnable =
     NS_NEW_RUNNABLE_METHOD(sbFileSystemTree, this, RunBuildThread);
   NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
 
-  rv = treeThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
+  rv = threadPoolService->Dispatch(runnable, NS_DISPATCH_NORMAL);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

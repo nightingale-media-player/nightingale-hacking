@@ -27,6 +27,7 @@
 
 #include <algorithm>
 
+#include <nsAlgorithm.h>
 #include <nsArrayUtils.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
@@ -50,6 +51,9 @@
 #include "sbIDeviceErrorMonitor.h"
 #include "sbIDeviceHelper.h"
 #include "sbIDeviceLibrary.h"
+#include "sbIDeviceLibraryMediaSyncSettings.h"
+#include "sbIDeviceLibrarySyncSettings.h"
+#include "sbIDeviceRegistrar.h"
 #include "sbIMediaItem.h"
 #include "sbIMediaList.h"
 #include "sbIMediaListListener.h"
@@ -674,7 +678,7 @@ nsresult sbDeviceUtils::SetLinkedSyncPartner(sbIDevice* aDevice)
   return NS_OK;
 }
 
-SB_AUTO_CLASS(sbAutoNSMemoryPtr, void*, !!mValue, nsMemory::Free(mValue), mValue = nsnull);
+SB_AUTO_CLASS(sbAutoNSMemoryPtr, void*, !!mValue, NS_Free(mValue), mValue = nsnull);
 
 bool sbDeviceUtils::ArePlaylistsSupported(sbIDevice * aDevice)
 {
@@ -783,17 +787,17 @@ sbDeviceUtilsQueryUserSpaceExceeded::Query(sbIDevice*        aDevice,
 sbExtensionToContentFormatEntry_t const
 MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
   /* audio */
-  { "mp3",  "audio/mpeg",      "audio/mpeg",      "audio/mpeg",     "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "wma",  "audio/x-ms-wma",  "video/x-ms-asf",  "audio/x-ms-wma", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "aac",  "audio/aac",       "video/quicktime", "audio/aac",      "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "m4a",  "audio/aac",       "video/quicktime", "audio/aac",      "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "mp3",  "audio/mpeg",      "audio/mpeg",  "audio/mpeg",     "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "wma",  "audio/x-ms-wma",  "video/x-ms-asf",  "audio/x-ms-wma",   "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "aac",  "audio/aac",       "video/quicktime",  "audio/aac",     "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "m4a",  "audio/aac",       "video/quicktime",  "audio/aac",     "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "aa",   "audio/audible",   "",     "",        "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "aa",   "audio/x-pn-audibleaudio", "", "",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "oga",  "application/ogg", "application/ogg", "audio/x-flac",   "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "ogg",  "application/ogg", "application/ogg", "audio/x-vorbis", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "flac", "audio/x-flac",    "",             "audio/x-flac",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "oga",  "application/ogg", "application/ogg",  "audio/x-flac",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "ogg",  "application/ogg", "application/ogg",  "audio/x-vorbis",  "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "flac", "audio/x-flac",    "", "audio/x-flac",    "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "wav",  "audio/x-wav",     "audio/x-wav",  "audio/x-pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "wav",  "audio/x-adpcm",   "audio/x-wav",  "audio/x-adpcm",   "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "wav",  "audio/x-adpcm",   "audio/x-wav",  "audio/x-adpcm", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "aiff", "audio/x-aiff",    "audio/x-aiff", "audio/x-pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "aif",  "audio/x-aiff",    "audio/x-aiff", "audio/x-pcm-int", "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "ape",  "audio/x-ape",     "",             "",                "", "", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
@@ -830,44 +834,24 @@ MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
 PRUint32 const MAP_FILE_EXTENSION_CONTENT_FORMAT_LENGTH =
   NS_ARRAY_LENGTH(MAP_FILE_EXTENSION_CONTENT_FORMAT);
 
-const PRUint32 K = 1000;
+const PRInt32 K = 1000;
 
 /**
- * Convert the string bit rate to an integer
- * \param aBitRate the string version of the bit rate
- * \return the integer version of the bit rate or 0 if it fails
+ * Convert the string value to an integer
+ * \param aValue the string version of the value
+ * \return the integer version of the value or 0 if it fails
  */
-static PRUint32 ParseBitRate(nsAString const & aBitRate)
-{
-  TRACE(("%s: %s", __FUNCTION__, NS_LossyConvertUTF16toASCII(aBitRate).get()));
+static PRInt32 ParseInteger(nsAString const & aValue) {
+  TRACE(("%s: %s", __FUNCTION__, NS_LossyConvertUTF16toASCII(aValue).get()));
   nsresult rv;
-
-  if (aBitRate.IsEmpty()) {
+  if (aValue.IsEmpty()) {
     return 0;
   }
-  PRUint32 rate = aBitRate.ToInteger(&rv, 10);
+  PRUint32 val = aValue.ToInteger(&rv, 10);
   if (NS_FAILED(rv)) {
-    rate = 0;
+    val = 0;
   }
-  return rate * K;
-}
-
-/**
- * Convert the string sample rate to an integer
- * \param aSampleRate the string version of the sample rate
- * \return the integer version of the sample rate or 0 if it fails
- */
-static PRUint32 ParseSampleRate(nsAString const & aSampleRate) {
-  TRACE(("%s: %s", __FUNCTION__, NS_LossyConvertUTF16toASCII(aSampleRate).get()));
-  nsresult rv;
-  if (aSampleRate.IsEmpty()) {
-    return 0;
-  }
-  PRUint32 rate = aSampleRate.ToInteger(&rv, 10);
-  if (NS_FAILED(rv)) {
-    rate = 0;
-  }
-  return rate;
+  return val;
 }
 
 /**
@@ -877,7 +861,7 @@ static PRUint32 ParseSampleRate(nsAString const & aSampleRate) {
  * \param aBitRate The bit rate for the item
  * \param aSampleRate the sample rate for the item
  */
-nsresult
+/* static */ nsresult
 sbDeviceUtils::GetFormatTypeForItem(
                  sbIMediaItem * aItem,
                  sbExtensionToContentFormatEntry_t & aFormatType,
@@ -906,14 +890,71 @@ sbDeviceUtils::GetFormatTypeForItem(
   nsString bitRate;
   rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_BITRATE), bitRate);
   NS_ENSURE_SUCCESS(rv, rv);
-  aBitRate = ParseBitRate(bitRate);
+  aBitRate = NS_MIN (ParseInteger(bitRate) * K, 0);
 
   // Get the sample rate.
   nsString sampleRate;
   rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_SAMPLERATE),
                           sampleRate);
   NS_ENSURE_SUCCESS(rv, rv);
-  aSampleRate = ParseSampleRate(sampleRate);
+  aSampleRate = NS_MIN (ParseInteger(sampleRate), 0);
+
+  return NS_OK;
+}
+
+/**
+ * Returns the formatting information for an item
+ * \param aItem The item we want the format stuff for
+ * \param aFormatType the formatting map entry for the item
+ * \param aSampleRate the sample rate for the item
+ * \param aChannels the number of channels for the item
+ * \param aBitRate The bit rate for the item
+ */
+/* static */ nsresult
+sbDeviceUtils::GetFormatTypeForItem(
+                 sbIMediaItem * aItem,
+                 sbExtensionToContentFormatEntry_t & aFormatType,
+                 PRUint32 & aSampleRate,
+                 PRUint32 & aChannels,
+                 PRUint32 & aBitRate)
+{
+  TRACE(("%s", __FUNCTION__));
+  NS_ENSURE_ARG_POINTER(aItem);
+
+  nsresult rv;
+
+  // We do it with string manipulation here rather than proper URL objects due
+  // to thread-unsafety of URLs.
+  nsString contentURL;
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
+                          contentURL);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the format type.
+  rv = GetFormatTypeForURL(contentURL, aFormatType);
+  if (rv == NS_ERROR_NOT_AVAILABLE)
+    return rv;
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the bit rate.
+  nsString bitRate;
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_BITRATE), bitRate);
+  NS_ENSURE_SUCCESS(rv, rv);
+  aBitRate = NS_MIN (ParseInteger(bitRate) * K, 0);
+
+  // Get the sample rate.
+  nsString sampleRate;
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_SAMPLERATE),
+                          sampleRate);
+  NS_ENSURE_SUCCESS(rv, rv);
+  aSampleRate = NS_MIN (ParseInteger(sampleRate), 0);
+
+  // Get the channel count.
+  nsString channels;
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CHANNELS),
+                          channels);
+  NS_ENSURE_SUCCESS(rv, rv);
+  aChannels = NS_MIN (ParseInteger(channels), 0);
 
   return NS_OK;
 }
@@ -1120,7 +1161,7 @@ GetContainerFormatAndCodec(nsISupports * aFormatType,
 }
 
 nsresult
-sbDeviceUtils::GetTranscodeProfiles(nsIArray ** aProfiles)
+sbDeviceUtils::GetTranscodeProfiles(PRUint32 aType, nsIArray ** aProfiles)
 {
   nsresult rv;
 
@@ -1128,14 +1169,15 @@ sbDeviceUtils::GetTranscodeProfiles(nsIArray ** aProfiles)
           "@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = tcManager->GetTranscodeProfiles(aProfiles);
+  rv = tcManager->GetTranscodeProfiles(aType, aProfiles);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
 nsresult
-sbDeviceUtils::GetSupportedTranscodeProfiles(sbIDevice * aDevice,
+sbDeviceUtils::GetSupportedTranscodeProfiles(PRUint32 aType,
+                                             sbIDevice * aDevice,
                                              nsIArray **aProfiles)
 {
   TRACE(("%s", __FUNCTION__));
@@ -1149,7 +1191,7 @@ sbDeviceUtils::GetSupportedTranscodeProfiles(sbIDevice * aDevice,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIArray> profiles;
-  rv = GetTranscodeProfiles(getter_AddRefs(profiles));
+  rv = GetTranscodeProfiles(aType, getter_AddRefs(profiles));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIDeviceCapabilities> devCaps;
@@ -1192,7 +1234,7 @@ sbDeviceUtils::GetSupportedTranscodeProfiles(sbIDevice * aDevice,
                mimeTypes[mimeTypeIndex]));
         nsString mimeType;
         mimeType.AssignLiteral(mimeTypes[mimeTypeIndex]);
-        nsMemory::Free(mimeTypes[mimeTypeIndex]);
+        NS_Free(mimeTypes[mimeTypeIndex]);
 
         nsISupports** formatTypes;
         PRUint32 formatTypeCount;
@@ -1202,7 +1244,7 @@ sbDeviceUtils::GetSupportedTranscodeProfiles(sbIDevice * aDevice,
                                      &formatTypes);
         NS_ENSURE_SUCCESS (rv, rv);
         sbAutoFreeXPCOMPointerArray<nsISupports> freeFormats(formatTypeCount,
-                                                             formatTypes); 
+                                                             formatTypes);
 
         for (PRUint32 formatIndex = 0;
              formatIndex < formatTypeCount;
@@ -1272,7 +1314,7 @@ sbDeviceUtils::GetSupportedTranscodeProfiles(sbIDevice * aDevice,
           }
         }
       }
-      nsMemory::Free(mimeTypes);
+      NS_Free(mimeTypes);
     }
   }
 
@@ -1330,7 +1372,7 @@ sbDeviceUtils::DoesItemNeedTranscoding(
   nsString itemCodec;
   itemCodec.AssignLiteral(aFormatType.Codec);
 
-  LOG(("Determining if item needs transcoding\n\tItem Container: '%s'\n\tItem Codec: '%s'", 
+  LOG(("Determining if item needs transcoding\n\tItem Container: '%s'\n\tItem Codec: '%s'",
        NS_LossyConvertUTF16toASCII(itemContainerFormat).get(),
        NS_LossyConvertUTF16toASCII(itemCodec).get()));
 
@@ -1355,7 +1397,7 @@ sbDeviceUtils::DoesItemNeedTranscoding(
                                    &formatTypes);
       NS_ENSURE_SUCCESS (rv, rv);
       sbAutoFreeXPCOMPointerArray<nsISupports> freeFormats(formatTypeCount,
-                                                           formatTypes); 
+                                                           formatTypes);
 
       for (PRUint32 formatIndex = 0;
            formatIndex < formatTypeCount;
@@ -1440,6 +1482,31 @@ sbDeviceUtils::DoesItemNeedTranscoding(PRUint32 aTranscodeType,
   return NS_OK;
 }
 
+// XXX this needs to be fixed to be not gstreamer specific
+nsresult
+sbDeviceUtils::GetTranscodingConfigurator(
+        PRUint32 aTranscodeType,
+        sbIDeviceTranscodingConfigurator **aConfigurator)
+{
+ nsresult rv;
+ nsCOMPtr<sbIDeviceTranscodingConfigurator> configurator;
+ if (aTranscodeType == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO) {
+    configurator = do_CreateInstance(
+            "@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/"
+            "Audio/GStreamer;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    configurator = do_CreateInstance(
+            "@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/"
+            "Device/GStreamer;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  NS_ADDREF (*aConfigurator = configurator);
+
+  return NS_OK;
+}
 
 nsresult
 sbDeviceUtils::ApplyPropertyPreferencesToProfile(sbIDevice* aDevice,
@@ -1632,6 +1699,128 @@ nsresult sbDeviceUtils::AddSupportedFileExtensions
   return NS_OK;
 }
 
+nsresult
+sbDeviceUtils::GetMediaSettings(
+                            sbIDeviceLibrary * aDevLib,
+                            PRUint32 aMediaType,
+                            sbIDeviceLibraryMediaSyncSettings ** aMediaSettings)
+{
+  NS_ASSERTION(aDevLib, "aDevLib is null");
+
+  nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
+  nsresult rv = aDevLib->GetSyncSettings(getter_AddRefs(syncSettings));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = syncSettings->GetMediaSettings(sbIDeviceLibrary::MEDIATYPE_IMAGE,
+                                      aMediaSettings);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbDeviceUtils::GetMgmtTypeForMedia(sbIDeviceLibrary * aDevLib,
+                                   PRUint32 aMediaType,
+                                   PRUint32 & aMgmtType)
+{
+  NS_ASSERTION(aDevLib, "aDevLib is null");
+  nsresult rv;
+
+  nsCOMPtr<sbIDeviceLibraryMediaSyncSettings> mediaSyncSettings;
+  rv = GetMediaSettings(aDevLib,
+                        sbIDeviceLibrary::MEDIATYPE_IMAGE,
+                        getter_AddRefs(mediaSyncSettings));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mediaSyncSettings->GetMgmtType(&aMgmtType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult sbDeviceUtils::GetDeviceLibrary(nsAString const & aDeviceLibGuid,
+                                         sbIDevice * aDevice,
+                                         sbIDeviceLibrary ** aDeviceLibrary)
+{
+  NS_ENSURE_ARG_POINTER(aDeviceLibrary);
+
+  nsresult rv;
+
+  // mediaItem.library is not a sbIDeviceLibrary, test GUID :(
+  nsCOMPtr<sbIDeviceContent> content;
+  rv = aDevice->GetContent(getter_AddRefs(content));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIArray> libraries;
+  rv = content->GetLibraries(getter_AddRefs(libraries));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 libraryCount;
+  rv = libraries->GetLength(&libraryCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 index = 0; index < libraryCount; ++index) {
+    nsCOMPtr<sbIDeviceLibrary> deviceLib =
+      do_QueryElementAt(libraries, index, &rv);
+    if (NS_FAILED(rv))
+      continue;
+
+    nsString deviceLibGuid;
+    rv = deviceLib->GetGuid(deviceLibGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (deviceLibGuid.Equals(deviceLibGuid)) {
+      deviceLib.forget(aDeviceLibrary);
+      return NS_OK;
+    }
+  }
+
+  *aDeviceLibrary = nsnull;
+  return NS_OK;
+}
+
+nsresult sbDeviceUtils::GetDeviceLibrary(nsAString const & aDevLibGuid,
+                                         nsID const * aDeviceID,
+                                         sbIDeviceLibrary ** aDeviceLibrary)
+{
+  NS_ENSURE_ARG_POINTER(aDeviceLibrary);
+
+  nsresult rv;
+
+  nsCOMPtr<sbIDeviceLibrary> deviceLibrary;
+
+  nsCOMPtr<sbIDeviceRegistrar> deviceRegistrar =
+    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+
+  if (aDeviceID) {
+    nsCOMPtr<sbIDevice> device;
+    rv = deviceRegistrar->GetDevice(aDeviceID, getter_AddRefs(device));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = GetDeviceLibrary(aDevLibGuid, device, getter_AddRefs(deviceLibrary));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    nsCOMPtr<nsIArray> devices;
+    rv = deviceRegistrar->GetDevices(getter_AddRefs(devices));
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<sbIDevice> device;
+    PRUint32 length;
+    rv = devices->GetLength(&length);
+    for (PRUint32 index = 0; index < length && !deviceLibrary; ++index) {
+      device = do_QueryElementAt(devices, index, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = GetDeviceLibrary(aDevLibGuid, device, getter_AddRefs(deviceLibrary));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  deviceLibrary.forget(aDeviceLibrary);
+
+  return NS_OK;
+}
+
 //------------------------------------------------------------------------------
 // sbIDeviceCapabilities Logging functions
 // NOTE: This is built only w/ PR_LOGGING turned on.
@@ -1749,7 +1938,7 @@ LogFormatType(PRUint32 aContentType,
                                    &formatTypes);
   NS_ENSURE_SUCCESS(rv, rv);
   sbAutoFreeXPCOMPointerArray<nsISupports> freeFormats(formatTypeCount,
-                                                       formatTypes); 
+                                                       formatTypes);
 
   for (PRUint32 formatIndex = 0;
        formatIndex < formatTypeCount;
@@ -1782,7 +1971,7 @@ LogFormatType(PRUint32 aContentType,
       }
     }
   }
- 
+
   return NS_OK;
 }
 
@@ -1877,19 +2066,8 @@ LogVideoFormatType(sbIVideoFormatType *aVideoFormatType,
   rv = videoStream->GetSupportedBitRates(getter_AddRefs(videoBitrates));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUint32 videoParSize = 0;
-  char **videoPar;
-  rv = videoStream->GetSupportedVideoPARs(&videoParSize, &videoPar);
-  NS_ENSURE_SUCCESS(rv, rv);
-  sbAutoNSArray<char *> autoVideoPARs(videoPar, videoParSize);
+  PRUint32 num, den;
 
-  PRUint32 videoFrameRateSize = 0;
-  char **videoFrameRates;
-  rv = videoStream->GetSupportedFrameRates(&videoFrameRateSize,
-                                           &videoFrameRates);
-  NS_ENSURE_SUCCESS(rv, rv);
-  sbAutoNSArray<char *> autoVideoFrameRates(videoFrameRates,
-                                            videoFrameRateSize);
 
   LOG_MODULE(aLogModule, (" * videostream type = %s)", videoStreamType.get()));
 
@@ -1902,13 +2080,105 @@ LogVideoFormatType(sbIVideoFormatType *aVideoFormatType,
   LOG_MODULE(aLogModule, (" * videostream bitrates:"));
   rv = LogRange(videoBitrates, PR_TRUE, aLogModule);
 
-  LOG_MODULE(aLogModule, (" * videostream PARs:"));
-  rv = LogPtrArray(videoParSize, videoPar, aLogModule);
-  NS_ENSURE_SUCCESS(rv, rv);
+  PRBool supportsPARRange = PR_FALSE;
+  rv = videoStream->GetDoesSupportPARRange(&supportsPARRange);
+  if (NS_SUCCEEDED(rv) && supportsPARRange) {
+    // Simply log the min and the max values here.
+    nsCOMPtr<sbIDevCapFraction> minSupportedPAR;
+    rv = videoStream->GetMinimumSupportedPAR(getter_AddRefs(minSupportedPAR));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  LOG_MODULE(aLogModule, (" * videostream frame rates:"));
-  rv = LogPtrArray(videoFrameRateSize, videoFrameRates, aLogModule);
-  NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<sbIDevCapFraction> maxSupportedPAR;
+    rv = videoStream->GetMaximumSupportedPAR(getter_AddRefs(maxSupportedPAR));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = minSupportedPAR->GetNumerator(&num);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = minSupportedPAR->GetDenominator(&den);
+    NS_ENSURE_SUCCESS(rv, rv);
+    LOG_MODULE(aLogModule, (" * videostream min PAR: %i/%i", num, den));
+
+    rv = maxSupportedPAR->GetNumerator(&num);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = maxSupportedPAR->GetDenominator(&den);
+    NS_ENSURE_SUCCESS(rv, rv);
+    LOG_MODULE(aLogModule, (" * videostream max PAR: %i/%i", num, den));
+  }
+  else {
+    // Log out the list of PARs.
+    nsCOMPtr<nsIArray> supportedPARs;
+    rv = videoStream->GetSupportedPARs(getter_AddRefs(supportedPARs));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 length = 0;
+    rv = supportedPARs->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    LOG_MODULE(aLogModule, (" * videostream PAR count: %i", length));
+
+    for (PRUint32 i = 0; i < length; i++) {
+      nsCOMPtr<sbIDevCapFraction> curFraction =
+        do_QueryElementAt(supportedPARs, i, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = curFraction->GetNumerator(&num);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = curFraction->GetDenominator(&den);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      LOG_MODULE(aLogModule, ("   - %i/%i", num, den));
+    }
+  }
+
+  PRBool supportsFrameRange = PR_FALSE;
+  rv = videoStream->GetDoesSupportFrameRateRange(&supportsFrameRange);
+  if (NS_SUCCEEDED(rv) && supportsFrameRange) {
+    nsCOMPtr<sbIDevCapFraction> minFrameRate;
+    rv = videoStream->GetMinimumSupportedFrameRate(
+        getter_AddRefs(minFrameRate));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIDevCapFraction> maxFrameRate;
+    rv = videoStream->GetMaximumSupportedFrameRate(
+        getter_AddRefs(maxFrameRate));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = minFrameRate->GetNumerator(&num);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = minFrameRate->GetDenominator(&den);
+    NS_ENSURE_SUCCESS(rv, rv);
+    LOG_MODULE(aLogModule, (" * videostream min framerate: %i/%i", num, den));
+
+    rv = maxFrameRate->GetNumerator(&num);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = maxFrameRate->GetDenominator(&den);
+    NS_ENSURE_SUCCESS(rv, rv);
+    LOG_MODULE(aLogModule, (" * videostream max framerate: %i/%i", num, den));
+  }
+  else {
+    nsCOMPtr<nsIArray> frameRates;
+    rv = videoStream->GetSupportedFrameRates(getter_AddRefs(frameRates));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 length = 0;
+    rv = frameRates->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    LOG_MODULE(aLogModule, (" * videostream framerate count: %i", length));
+
+    for (PRUint32 i = 0; i < length; i++) {
+      nsCOMPtr<sbIDevCapFraction> curFraction =
+        do_QueryElementAt(frameRates, i, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = curFraction->GetNumerator(&num);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = curFraction->GetDenominator(&den);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      LOG_MODULE(aLogModule, ("   - %i/%i", num, den));
+    }
+  }
 
   nsCOMPtr<sbIDevCapAudioStream> audioStream;
   rv = aVideoFormatType->GetAudioStream(getter_AddRefs(audioStream));

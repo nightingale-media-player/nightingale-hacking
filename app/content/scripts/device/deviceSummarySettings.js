@@ -207,7 +207,7 @@ var DeviceSummarySettings = {
       if (!(library.guid in seenLibraries)) {
         var widget = document.createElement("sb-device-management");
         widget.setAttribute("device-id", this._deviceID);
-        widget.setAttribute("library-id", library.guid);
+        widget.setAttribute("dev-lib-guid", library.guid);
         widget.setAttribute("hide", settingsToHide);
         container.insertBefore(widget, buttonBox);
 

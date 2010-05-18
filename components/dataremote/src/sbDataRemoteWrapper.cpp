@@ -122,9 +122,20 @@ NS_IMETHODIMP sbDataRemoteWrapper::SetIntValue(PRInt64 aIntValue)
 NS_IMETHODIMP sbDataRemoteWrapper::BindObserver(nsIObserver *aObserver, PRBool aSuppressFirst)
 {
   NS_ENSURE_STATE(mInnerDataRemote);
-  NS_ENSURE_ARG_POINTER(mInnerDataRemote);
+  NS_ENSURE_ARG_POINTER(aObserver);
   mObserver = aObserver;  
   return mInnerDataRemote->BindObserver(this, aSuppressFirst);
+}
+
+/* void bindRemoteObserver (in sbIRemoteObserver, [optional] in boolean aSuppressFirst); */
+NS_IMETHODIMP sbDataRemoteWrapper::BindRemoteObserver(sbIRemoteObserver *aObserver, PRBool aSuppressFirst)
+{
+  NS_ENSURE_STATE(mInnerDataRemote);
+  NS_ENSURE_ARG_POINTER(aObserver);
+  
+  // We don't pretend like we are this observer. It's not required by the
+  // security model.
+  return mInnerDataRemote->BindRemoteObserver(aObserver, aSuppressFirst);
 }
 
 /* void unbind (); */

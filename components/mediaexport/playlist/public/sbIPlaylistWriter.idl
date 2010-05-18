@@ -29,6 +29,7 @@
 #include "nsIAuthPrompt.idl"
 
 interface sbIMediaList;
+interface sbIPlaylistFormatType;
 interface nsIFile;
 /**
  * \interface sbIPlaylistWriterListener
@@ -43,7 +44,7 @@ interface sbIPlaylistWriterListener : nsIProgressEventSink
  * \interface sbIPlaylistWriter
  * \brief Write a playlist file.
  */
-[scriptable, uuid(6113467e-1dd2-11b2-8997-ef68657448f0)]
+[scriptable, uuid(9e64107d-74ef-4e62-9d5c-a639c2a9bbe6)]
 interface sbIPlaylistWriter : nsISupports
 {
   attribute sbIPlaylistWriterListener writerListener;
@@ -56,7 +57,8 @@ interface sbIPlaylistWriter : nsISupports
    */
   void write(in nsIFile aFile,
              in sbIMediaList aMediaList,
-             in AString aContentType);
+             in AString aContentType,
+             [optional] in sbIPlaylistFormatType aPlaylistFormatType);
 
   /**
    * \brief A name for this playlist writer.
@@ -99,7 +101,7 @@ interface sbIPlaylistWriter : nsISupports
  * Playlist writers are registered by adding them to the playlist-writer
  * category at startup and are not enumerated again.
  */
-[scriptable, uuid(CB6A505E-D8CB-4711-A50F-38439561C6D0)]
+[scriptable, uuid(ee2dabc8-0158-49d4-bda9-9ebb2cf20ab8)]
 interface sbIPlaylistWriterManager : nsISupports
 {
   /**
@@ -109,7 +111,8 @@ interface sbIPlaylistWriterManager : nsISupports
    */
   void write(in nsIFile aFile,
              in sbIMediaList aMediaList,
-             in AString aContentType);
+             in AString aContentType,
+             [optional] in sbIPlaylistFormatType aPlaylistFormatType);
 
   /**
    * \brief

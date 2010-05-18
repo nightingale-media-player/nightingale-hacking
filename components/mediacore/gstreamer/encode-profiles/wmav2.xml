@@ -4,6 +4,7 @@
   <priority>1000</priority> <!-- Low priority; WMA isn't great -->
   <description>Windows Media Audio (WMA version 2)</description>
   <mimetype>audio/x-ms-wma</mimetype>
+  <extension>wma</extension>
 
   <container>
     <type>video/x-ms-asf</type>

@@ -79,7 +79,7 @@ NewReleaseAlbum.init = function() {
 	var servicePaneStr = Cc["@mozilla.org/intl/stringbundle;1"]
 		.getService(Ci.nsIStringBundleService)
 		.createBundle("chrome://newreleases/locale/overlay.properties");
-	document.title = servicePaneStr.GetStringFromName("servicePaneName");
+	document.title = servicePaneStr.GetStringFromName("servicePane.Name");
 
 	var self = this;
 

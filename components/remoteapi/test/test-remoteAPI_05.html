@@ -38,8 +38,8 @@
         var np = document.getElementById("now_playing");
 
         obs = {
-          observe: function ( aSubject, aTopic, aData) {
-            np.innerHTML = aData;
+          observe: function ( aKey, aValue ) {
+            np.innerHTML = aValue;
           }
         }
 

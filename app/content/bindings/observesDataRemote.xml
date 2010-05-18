@@ -182,6 +182,7 @@
             if (!onchange) {
               onchange = "return value;";
             }
+            
             this._processValue = new Function("value", onchange);
               
             // Hook up for callbacks when the dataremote changes

@@ -34,7 +34,7 @@
  * \interface sbICharsetDetector
  * \brief A helper class to detect the string charset
  */
-[scriptable, uuid(7c705ff0-47e0-11df-9879-0800200c9a66)]
+[scriptable, uuid(6f70e030-56d7-11df-9879-0800200c9a66)]
 interface sbICharsetDetector : nsISupports
 {
   /**

@@ -48,7 +48,6 @@
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
 #include <sbIDevice.h>
-#include <sbIDeviceLibrary.h>
 #include <sbIDeviceManager.h>
 #include <sbILibraryFactory.h>
 #include <sbILibraryManager.h>
@@ -2761,6 +2760,7 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::CopyMediaList(const nsAString& aType,
                                       sbIMediaList* aSource,
+                                      PRBool aDontCopyContent,
                                       sbIMediaList** _retval)
 {
   NS_ENSURE_FALSE(aType.IsEmpty(), NS_ERROR_INVALID_ARG);
@@ -2782,20 +2782,22 @@ sbLocalDatabaseLibrary::CopyMediaList(const nsAString& aType,
   rv = CreateMediaList(aType, properties, getter_AddRefs(newList));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXben This will probably fail for types other than "simple"... For now
-  //        we won't automatically lock other types out (by returning early)
-  //        just in case another media list type implements this behavior.
-  rv = newList->AddAll(aSource);
-  if (NS_FAILED(rv)) {
-    nsresult rvOther;
-    // Ick, sucks that that failed... Clean up the new media list.
-    nsCOMPtr<sbIMediaItem> item = do_QueryInterface(newList, &rvOther);
-    NS_ENSURE_SUCCESS(rvOther, rvOther);
+  if (!aDontCopyContent) {
+    // XXXben This will probably fail for types other than "simple"... For now
+    //        we won't automatically lock other types out (by returning early)
+    //        just in case another media list type implements this behavior.
+    rv = newList->AddAll(aSource);
+    if (NS_FAILED(rv)) {
+      nsresult rvOther;
+      // Ick, sucks that that failed... Clean up the new media list.
+      nsCOMPtr<sbIMediaItem> item = do_QueryInterface(newList, &rvOther);
+      NS_ENSURE_SUCCESS(rvOther, rvOther);
 
-    rvOther = Remove(item);
-    NS_ENSURE_SUCCESS(rvOther, rvOther);
+      rvOther = Remove(item);
+      NS_ENSURE_SUCCESS(rvOther, rvOther);
+    }
+    NS_ENSURE_SUCCESS(rv, rv);
   }
-  NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = newList);
   return NS_OK;
@@ -2943,11 +2945,39 @@ sbLocalDatabaseLibrary::GetDuplicate(sbIMediaItem*  aMediaItem,
 
   // Search for a duplicate item
   nsresult rv = sbLibraryUtils::GetItemInLibrary(aMediaItem, this, _retval);
-  
-  // Didn't find it or failed, set retval to null.
-  if(NS_FAILED(rv)) {
-    *_retval = nsnull;
+
+  // If we found it, just return.
+  if(NS_SUCCEEDED(rv) && *_retval) {
+    return NS_OK;
   }
+
+  // Search for URL's
+  nsCOMPtr<nsIMutableArray> dupeItems =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = sbLibraryUtils::FindItemsWithSameURL(aMediaItem,
+                                            static_cast<sbILibrary*>(this),
+                                            dupeItems);
+  // If not found return null
+  if (NS_FAILED(rv)) {
+    *_retval = nsnull;
+    return NS_OK;
+  }
+
+  // If dupes found, just return the first one
+  PRUint32 length;
+  rv = dupeItems->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (length == 0) {
+    *_retval = nsnull;
+    return NS_OK;
+  }
+
+  rv = dupeItems->QueryElementAt(0,
+                                 NS_GET_IID(sbIMediaItem),
+                                 reinterpret_cast<void**>(_retval));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

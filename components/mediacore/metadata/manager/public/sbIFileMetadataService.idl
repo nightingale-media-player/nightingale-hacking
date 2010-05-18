@@ -53,7 +53,7 @@ interface sbIJobProgress;
  * 
  * \endcode 
  */
-[scriptable, uuid(dc652317-ead6-4e37-953a-290ee4f3979c)]
+[scriptable, uuid(86a7f162-38d6-4b25-bc7e-2d28e625b28b)]
 interface sbIFileMetadataService : nsISupports
 {
 
@@ -105,4 +105,24 @@ interface sbIFileMetadataService : nsISupports
    */
   sbIJobProgress write(in nsIArray aMediaItemArray,
                        in nsIStringEnumerator aRequiredProperties);
+
+  /**
+   * \brief Main Thread Processor Flag for restartProcessors.
+   */
+  const unsigned short MAIN_THREAD_PROCESSOR        = 1;
+  /**
+   * \brief Background Thread Processor Flag for restartProcessors.
+   */
+  const unsigned short BACKGROUND_THREAD_PROCESSOR  = 2;
+
+  /**
+   * \brief Restart the processors.
+   * \param aProcessorsToRestart Combination of desired flags 
+   *        (MAIN_THREAD_PROCESSOR and/or BACKGROUND_THREAD_PROCESSOR)
+   * \note If the requested processor is already running it will not be
+   *       restarted. Restart of the processors only works if the file
+   *       metadata service is currently running. If it is not running
+   *       this method will throw NS_ERROR_UNEXPECTED.
+   */
+  void restartProcessors(in unsigned short aProcessorsToRestart);
 };

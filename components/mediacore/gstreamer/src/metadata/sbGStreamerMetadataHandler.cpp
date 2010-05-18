@@ -28,6 +28,7 @@
 #include "sbGStreamerMetadataHandler.h"
 
 #include "sbGStreamerMediacoreCID.h"
+#include "sbGStreamerMediacoreUtils.h"
 
 #include <sbIGStreamerService.h>
 #include <sbIMediacoreCapabilities.h>
@@ -85,11 +86,6 @@ SB_AUTO_CLASS(sbGstPad,
               !!mValue,
               gst_object_unref(mValue),
               mValue = NULL);
-SB_AUTO_CLASS(sbGstCaps,
-              GstCaps*,
-              !!mValue,
-              gst_caps_unref(mValue),
-              mValue = NULL);
 
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbGStreamerMetadataHandler,
                               sbIMetadataHandler,
@@ -128,6 +124,14 @@ sbGStreamerMetadataHandler::Init()
     do_GetService(SBGSTREAMERSERVICE_CONTRACTID , &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  return NS_OK;
+}
+
+/* readonly attribute ACString contractID */
+NS_IMETHODIMP 
+sbGStreamerMetadataHandler::GetContractID(nsACString &aContractID)
+{
+  aContractID.AssignLiteral(SB_GSTREAMER_METADATA_HANDLER_CONTRACTID);
   return NS_OK;
 }
 

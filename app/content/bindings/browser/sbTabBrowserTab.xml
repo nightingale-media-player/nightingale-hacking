@@ -702,12 +702,59 @@
       </method>
       
 
+      <!-- Called before the medialist in the browser is removed -->
+      <method name="onBeforeMediaListRemoved">
+        <body><![CDATA[
+          // Determine which media list we should go to post-delete
+          // We need to do this pre-delete in order to properly determine
+          // the servicepane node for this list
+        try {
+          let librarySPS =
+              Components.classes['@songbirdnest.com/servicepane/library;1']
+              .getService(Components.interfaces.sbILibraryServicePaneService);
+
+          let node = this._findServicePaneNode();
+          let otherNode = node.nextSibling;
+          while (otherNode && otherNode.hidden)
+            otherNode = otherNode.nextSibling;
+          if (!otherNode) {
+            // then we hit the end of the list w/o finding any visible node
+            otherNode = node.previousSibling;
+            while (otherNode && otherNode.hidden)
+              otherNode = otherNode.previousSibling;
+          }
+
+          if (otherNode)
+            this._resourceToLoad = librarySPS.getLibraryResourceForNode(otherNode);
+          else
+            this._resourceToLoad = null;
+        } catch (e) {
+          dump("Exception: " + e + "\n");
+        }
+        ]]></body>
+      </method>
+
       <!-- Called if the medialist in the browser
            is removed from the system -->
       <method name="onMediaListRemoved">
         <body><![CDATA[
           this._viewForPage = null;
-          this.backWithDefault();
+
+          // Go back in history, removed per bug 21069
+          // this.backWithDefault();
+
+          // Load the resource determined in the above listener
+          const NS_SP = "http://songbirdnest.com/rdf/servicepane#";
+          if (this._resourceToLoad) {
+            let mediaList = this._resourceToLoad;
+            let view = LibraryUtils.createStandardMediaListView(mediaList);
+            gBrowser.loadMediaList(mediaList, null, this, view);
+          } else {
+            gBrowser.loadMediaList(LibraryUtils.mainLibrary, null, this,
+                         LibraryUtils.createConstrainedMediaListView(
+                              LibraryUtils.mainLibrary,
+                              [SBProperties.contentType, "audio"]));
+          }
         ]]></body>
       </method>
 
@@ -1004,11 +1051,16 @@
             // Try going back in the history
             if (this.linkedBrowser.canGoBack) {
               this.linkedBrowser.goBack();
+              this.servicePaneNode = this._findServicePaneNode();
+              this.applyPropertiesFromServicePaneNode();
               return;
             }
 
             // Going back failed.  Just go to the library.
-            gBrowser.loadMediaList(LibraryUtils.mainLibrary, null, this);
+            gBrowser.loadMediaList(LibraryUtils.mainLibrary, null, this,
+                         LibraryUtils.createConstrainedMediaListView(
+                              LibraryUtils.mainLibrary,
+                              [SBProperties.contentType, "audio"]));
           ]]>
         </body>
       </method>

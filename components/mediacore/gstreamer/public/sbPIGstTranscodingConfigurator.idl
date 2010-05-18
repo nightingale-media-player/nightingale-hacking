@@ -33,11 +33,6 @@ interface nsIArray;
  interface sbPIGstTranscodingConfigurator : nsISupports
 {
   /**
-   * The list of profiles this configurator can use
-   */
-  readonly attribute nsIArray availableProfiles;
-  
-  /**
    * The quality setting, a number in the range [0..1]
    */
   attribute double quality;

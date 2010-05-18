@@ -67,6 +67,8 @@
 #include <sbIDeviceContent.h>
 #include <sbIDeviceCapabilities.h>
 #include <sbIDeviceInfoRegistrar.h>
+#include <sbIDeviceLibraryMediaSyncSettings.h>
+#include <sbIDeviceLibrarySyncSettings.h>
 #include <sbIDeviceEvent.h>
 #include <sbIDeviceHelper.h>
 #include <sbIDeviceManager.h>
@@ -75,13 +77,19 @@
 #include <sbILibrary.h>
 #include <sbILibraryDiffingService.h>
 #include <sbILibraryUtils.h>
-#include <sbIMediaItem.h>
-#include <sbIMediaList.h>
+#include <sbILocalDatabaseSmartMediaList.h>
+#include <sbIMediacoreManager.h>
+#include <sbIMediacorePlaybackControl.h>
+#include <sbIMediacoreSequencer.h>
+#include <sbIMediacoreStatus.h>
 #include <sbIMediaFileManager.h>
+#include <sbIMediaItem.h>
 #include <sbIMediaInspector.h>
+#include <sbIMediaList.h>
 #include <sbIMediaManagementService.h>
 #include <sbIOrderableMediaList.h>
 #include <sbIPrompter.h>
+#include <sbIPropertyManager.h>
 #include <sbIPropertyUnitConverter.h>
 #include <nsISupportsPrimitives.h>
 #include <sbITranscodeManager.h>
@@ -143,8 +151,11 @@ PRLogModuleInfo* gBaseDeviceLog = nsnull;
 #define PREF_ORGANIZE_ENABLED "media_management.library.enabled"
 #define PREF_ORGANIZE_DIR_FORMAT "media_management.library.format.dir"
 #define PREF_ORGANIZE_FILE_FORMAT "media_management.library.format.file"
+#define SB_PROPERTY_UILIMITTYPE "http://songbirdnest.com/data/1.0#uiLimitType"
+#define RANDOM_LISTNAME "device.error.not_enough_freespace.random_playlist_name"
 
 #define BATCH_TIMEOUT 200 /* number of milliseconds to wait for batching */
+#define BYTES_PER_10MB (10 * 1000 * 1000)
 
 // List of supported device content folders.
 static const PRUint32 sbBaseDeviceSupportedFolderContentTypeList[] =
@@ -1438,7 +1449,7 @@ nsresult sbBaseDevice::ClearRequests(bool aSetCancel)
   {
     nsAutoMonitor reqMon(mRequestMonitor);
 
-    if(!mRequests.empty()) {
+    if(!mRequests.empty() || mHaveCurrentRequest) {
       if (aSetCancel) {
         rv = SetState(STATE_CANCEL);
         NS_ENSURE_SUCCESS(rv, rv);
@@ -2012,55 +2023,11 @@ nsresult sbBaseDevice::AddLibrary(sbIDeviceLibrary* aDevLib)
   rv = GetContent(getter_AddRefs(content));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the current number of libraries.
-  PRUint32           libraryCount;
-  nsCOMPtr<nsIArray> libraries;
-  rv = content->GetLibraries(getter_AddRefs(libraries));
+  // Update the device library volume name.
+  nsRefPtr<sbBaseDeviceVolume> volume;
+  rv = GetVolumeForItem(aDevLib, getter_AddRefs(volume));
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = libraries->GetLength(&libraryCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the capacity for the library's device volume.
-  nsAutoString displayCapacity;
-  nsAutoString capacity;
-  rv = aDevLib->GetProperty(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_CAPACITY),
-                            capacity);
-  if (NS_SUCCEEDED(rv) && !capacity.IsEmpty()) {
-    // Convert the capacity to a display capacity.
-    nsCOMPtr<sbIPropertyUnitConverter> storageConverter =
-      do_CreateInstance(SB_STORAGEPROPERTYUNITCONVERTER_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = storageConverter->AutoFormat(capacity, -1, 1, displayCapacity);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  // If the library will be the first library, assume it's internal.  Otherwise,
-  // assume it's removable.
-  nsAutoString libraryName;
-  nsTArray<nsString> libraryNameParams;
-  if (libraryCount == 0) {
-    if (!displayCapacity.IsEmpty()) {
-      libraryNameParams.AppendElement(displayCapacity);
-      libraryName =
-        SBLocalizedString("device.volume.internal.name_with_capacity",
-                          libraryNameParams);
-    }
-    else {
-      libraryName = SBLocalizedString("device.volume.internal.name");
-    }
-  }
-  else {
-    if (!displayCapacity.IsEmpty()) {
-      libraryNameParams.AppendElement(displayCapacity);
-      libraryName =
-        SBLocalizedString("device.volume.removable.name_with_capacity",
-                          libraryNameParams);
-    }
-    else {
-      libraryName = SBLocalizedString("device.volume.removable.name");
-    }
-  }
-  rv = aDevLib->SetName(libraryName);
+  rv = UpdateVolumeName(volume);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Add the library to the device content.
@@ -3146,9 +3113,12 @@ sbBaseDevice::GetMusicFreeSpace(sbILibrary* aLibrary,
 
   // Get the music used space.
   PRInt64 musicUsedSpace;
-  rv = deviceProperties->GetPropertyAsInt64
+  nsAutoString musicUsedSpaceStr;
+  rv = aLibrary->GetProperty
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_USED_SPACE),
-          &musicUsedSpace);
+          musicUsedSpaceStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+  musicUsedSpace = nsString_ToInt64(musicUsedSpaceStr, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Return result.
@@ -3177,9 +3147,11 @@ sbBaseDevice::GetMusicAvailableSpace(sbILibrary* aLibrary,
 
   // Get the total capacity.
   PRInt64 capacity;
-  rv = deviceProperties->GetPropertyAsInt64
-                           (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_CAPACITY),
-                            &capacity);
+  nsAutoString capacityStr;
+  rv = aLibrary->GetProperty(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_CAPACITY),
+                             capacityStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+  capacity = nsString_ToInt64(capacityStr, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Compute the amount of available music space.
@@ -3578,14 +3550,14 @@ sbBaseDevice::ApplyDeviceSettingsDeviceInfo
   rv = deviceXMLInfo->GetExcludedFolders(excludedFolders);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Get the device properties.
+  nsCOMPtr<nsIWritablePropertyBag> deviceProperties;
+  rv = GetWritableDeviceProperties(this, getter_AddRefs(deviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   if (!excludedFolders.IsEmpty()) {
     LOG(("Excluded Folders: %s",
          NS_LossyConvertUTF16toASCII(excludedFolders).BeginReading()));
-
-    // Get the device properties.
-    nsCOMPtr<nsIWritablePropertyBag> deviceProperties;
-    rv = GetWritableDeviceProperties(this, getter_AddRefs(deviceProperties));
-    NS_ENSURE_SUCCESS(rv, rv);
 
     rv = deviceProperties->SetProperty(
                            NS_LITERAL_STRING(SB_DEVICE_PROPERTY_EXCLUDED_FOLDERS),
@@ -3599,6 +3571,16 @@ sbBaseDevice::ApplyDeviceSettingsDeviceInfo
 
   // Log the device folders.
   LogDeviceFolders();
+
+  // Determine if the device supports format.
+  PRBool supportsFormat;
+  rv = deviceXMLInfo->GetDoesDeviceSupportReformat(&supportsFormat);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deviceProperties->SetProperty(
+      NS_LITERAL_STRING(SB_DEVICE_PROPERTY_SUPPORTS_REFORMAT),
+      sbNewVariant(supportsFormat));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -3654,6 +3636,10 @@ sbBaseDevice::UpdateProperties()
   rv = UpdateStatisticsProperties();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Update the volume names.
+  rv = UpdateVolumeNames();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -3680,58 +3666,184 @@ sbBaseDevice::UpdateStatisticsProperties()
 {
   nsresult rv;
 
-  // Get the statistics for the default volume.  Just return if no default
-  // volume.
-  nsRefPtr<sbBaseDeviceVolume> volume;
-  nsRefPtr<sbDeviceStatistics> deviceStatistics;
+  // Get the list of all volumes.
+  nsTArray< nsRefPtr<sbBaseDeviceVolume> > volumeList;
   {
     nsAutoLock autoVolumeLock(mVolumeLock);
-    if (!mDefaultVolume)
-      return NS_OK;
-    volume = mDefaultVolume;
+    volumeList = mVolumeList;
   }
+
+  // Update the statistics properties for all volumes.
+  for (PRUint32 i = 0; i < volumeList.Length(); i++) {
+    // Get the volume.
+    nsRefPtr<sbBaseDeviceVolume> volume = volumeList[i];
+
+    // Get the volume library and statistics.
+    nsCOMPtr<sbIDeviceLibrary>   deviceLibrary;
+    nsRefPtr<sbDeviceStatistics> deviceStatistics;
+    rv = volume->GetDeviceLibrary(getter_AddRefs(deviceLibrary));
+    NS_ENSURE_SUCCESS(rv, rv);
   rv = volume->GetStatistics(getter_AddRefs(deviceStatistics));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the device properties.
-  nsCOMPtr<nsIWritablePropertyBag> deviceProperties;
-  rv = GetWritableDeviceProperties(this, getter_AddRefs(deviceProperties));
+    // Update the volume statistics properties.
+    rv = UpdateLibraryProperty
+           (deviceLibrary,
+            NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_ITEM_COUNT),
+            sbAutoString(deviceStatistics->AudioCount()));
+  NS_ENSURE_SUCCESS(rv, rv);
+    rv = UpdateLibraryProperty
+           (deviceLibrary,
+            NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_USED_SPACE),
+            sbAutoString(deviceStatistics->AudioUsed()));
+  NS_ENSURE_SUCCESS(rv, rv);
+    rv = UpdateLibraryProperty
+           (deviceLibrary,
+            NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_TOTAL_PLAY_TIME),
+            sbAutoString(deviceStatistics->AudioPlayTime()));
+  NS_ENSURE_SUCCESS(rv, rv);
+    rv = UpdateLibraryProperty
+           (deviceLibrary,
+            NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_ITEM_COUNT),
+            sbAutoString(deviceStatistics->VideoCount()));
+  NS_ENSURE_SUCCESS(rv, rv);
+    rv = UpdateLibraryProperty
+           (deviceLibrary,
+            NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_USED_SPACE),
+            sbAutoString(deviceStatistics->VideoUsed()));
+  NS_ENSURE_SUCCESS(rv, rv);
+    rv = UpdateLibraryProperty
+           (deviceLibrary,
+            NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_TOTAL_PLAY_TIME),
+            sbAutoString(deviceStatistics->VideoPlayTime()));
+  NS_ENSURE_SUCCESS(rv, rv);
+    rv = UpdateLibraryProperty
+           (deviceLibrary,
+            NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMAGE_ITEM_COUNT),
+            sbAutoString(deviceStatistics->ImageCount()));
+  NS_ENSURE_SUCCESS(rv, rv);
+    rv = UpdateLibraryProperty
+           (deviceLibrary,
+            NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMAGE_USED_SPACE),
+            sbAutoString(deviceStatistics->ImageUsed()));
+  NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+
+/**
+ * Update the names of all device volumes.
+ */
+
+nsresult
+sbBaseDevice::UpdateVolumeNames()
+{
+  // Get the list of all volumes.
+  nsTArray< nsRefPtr<sbBaseDeviceVolume> > volumeList;
+  {
+    nsAutoLock autoVolumeLock(mVolumeLock);
+    volumeList = mVolumeList;
+  }
+
+  // Update the names for all volumes.
+  for (PRUint32 i = 0; i < volumeList.Length(); i++) {
+    // Update the volume name, continuing on error.
+    UpdateVolumeName(volumeList[i]);
+  }
+
+  return NS_OK;
+}
+
+
+/**
+ * Update the name of the device volume specified by aVolume.
+ *
+ * \param aVolume               Device volume for which to update name.
+ */
+
+nsresult
+sbBaseDevice::UpdateVolumeName(sbBaseDeviceVolume* aVolume)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aVolume);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the volume device library.
+  nsCOMPtr<sbIDeviceLibrary> deviceLibrary;
+  rv = aVolume->GetDeviceLibrary(getter_AddRefs(deviceLibrary));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Update the statistics properties.
-  //XXXeps should use base properties class and use SetPropertyInternal
-  rv = deviceProperties->SetProperty
-         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_ITEM_COUNT),
-          sbNewVariant(deviceStatistics->AudioCount()));
+  // Get the volume capacity.
+  nsAutoString displayCapacity;
+  nsAutoString capacity;
+  rv = deviceLibrary->GetProperty
+                        (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_CAPACITY),
+                         capacity);
+  if (NS_SUCCEEDED(rv) && !capacity.IsEmpty()) {
+    // Convert the capacity to a display capacity.
+    nsCOMPtr<sbIPropertyUnitConverter> storageConverter =
+      do_CreateInstance(SB_STORAGEPROPERTYUNITCONVERTER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = storageConverter->AutoFormat(capacity, -1, 1, displayCapacity);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Check if the volume is removable.
+  PRBool storageRemovable = PR_FALSE;
+  PRInt32 removable;
+  rv = aVolume->GetRemovable(&removable);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = deviceProperties->SetProperty
-         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_USED_SPACE),
-          sbNewVariant(deviceStatistics->AudioUsed()));
+  if (removable >= 0) {
+    storageRemovable = (removable != 0);
+  }
+  else {
+    // Assume first volume is internal and all others are removable.
+    PRUint32 volumeIndex;
+    {
+      nsAutoLock autoVolumeLock(mVolumeLock);
+      volumeIndex = mVolumeList.IndexOf(aVolume);
+    }
+    NS_ASSERTION(volumeIndex != mVolumeList.NoIndex, "Volume not found");
+    storageRemovable = (volumeIndex != 0);
+  }
+
+  // Produce the library name.
+  nsAutoString       libraryName;
+  nsTArray<nsString> libraryNameParams;
+  libraryNameParams.AppendElement(displayCapacity);
+  if (!storageRemovable) {
+    if (!displayCapacity.IsEmpty()) {
+      libraryName =
+        SBLocalizedString("device.volume.internal.name_with_capacity",
+                          libraryNameParams);
+    }
+    else {
+      libraryName = SBLocalizedString("device.volume.internal.name");
+    }
+  }
+  else {
+    if (!displayCapacity.IsEmpty()) {
+      libraryName =
+        SBLocalizedString("device.volume.removable.name_with_capacity",
+                          libraryNameParams);
+    }
+    else {
+      libraryName = SBLocalizedString("device.volume.removable.name");
+    }
+  }
+
+  // Update the library name if necessary.
+  nsAutoString currentLibraryName;
+  rv = deviceLibrary->GetName(currentLibraryName);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = deviceProperties->SetProperty
-         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_TOTAL_PLAY_TIME),
-          sbNewVariant(deviceStatistics->AudioPlayTime()));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = deviceProperties->SetProperty
-         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_ITEM_COUNT),
-          sbNewVariant(deviceStatistics->VideoCount()));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = deviceProperties->SetProperty
-         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_USED_SPACE),
-          sbNewVariant(deviceStatistics->VideoUsed()));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = deviceProperties->SetProperty
-         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_TOTAL_PLAY_TIME),
-          sbNewVariant(deviceStatistics->VideoPlayTime()));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = deviceProperties->SetProperty
-         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMAGE_ITEM_COUNT),
-          sbNewVariant(deviceStatistics->ImageCount()));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = deviceProperties->SetProperty
-         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMAGE_USED_SPACE),
-          sbNewVariant(deviceStatistics->ImageUsed()));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (!currentLibraryName.Equals(libraryName)) {
+    rv = deviceLibrary->SetName(libraryName);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -4379,6 +4491,10 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
     return NS_OK;
   }
 
+  if (IsRequestAbortedOrDeviceDisconnected()) {
+    return NS_ERROR_ABORT;
+  }
+
   // Produce the sync change set.
   nsCOMPtr<sbILibraryChangeset> changeset;
   rv = SyncProduceChangeset(aRequest, getter_AddRefs(changeset));
@@ -4465,10 +4581,21 @@ sbBaseDevice::EnsureSpaceForSync(TransferRequest* aRequest,
                                                availableSpace,
                                                &abort);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
+    rv = dstLib->GetSyncSettings(getter_AddRefs(syncSettings));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Set sync mode for both audio and video preferences.
+    rv = syncSettings->SetSyncMode(
+           abort ? sbIDeviceLibrarySyncSettings::SYNC_MODE_MANUAL
+                 : sbIDeviceLibrarySyncSettings::SYNC_MODE_AUTO);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = dstLib->SetSyncSettings(syncSettings);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     if (abort) {
-      // Set manual mode for both audio and video preferences.
-      rv = dstLib->SetSyncMode(sbIDeviceLibrary::SYNC_MANUAL);
-      NS_ENSURE_SUCCESS(rv, rv);
       *aAbort = PR_TRUE;
       return NS_OK;
     }
@@ -4483,6 +4610,10 @@ sbBaseDevice::EnsureSpaceForSync(TransferRequest* aRequest,
                                  syncItemList,
                                  syncItemSizeMap,
                                  availableSpace);
+    if (rv == NS_ERROR_ABORT) {
+      *aAbort = PR_TRUE;
+      return NS_OK;
+    }
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -4507,37 +4638,24 @@ sbBaseDevice::SyncCreateAndSyncToList
   // Function variables.
   nsresult rv;
 
-  // Set to sync to an empty list of playlists to prevent syncing while the sync
-  // playlist is created.
-  nsCOMPtr<nsIMutableArray> emptySyncPlaylistList =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  for (PRUint32 i = 0; i < sbIDeviceLibrary::MEDIATYPE_COUNT; ++i) {
-    // Skip image type since we don't support it right now.
-    if (i == sbIDeviceLibrary::MEDIATYPE_IMAGE)
-      continue;
+  // Check for abort.
+  NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
 
-    rv = aDstLib->SetSyncPlaylistListByType(i, emptySyncPlaylistList);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  // Set sync playlist mode for both audio and video preferences.
-  rv = aDstLib->SetSyncMode(sbIDeviceLibrary::SYNC_MANUAL);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Create a shuffled sync item list that will fit in the available space.
-  nsCOMPtr<nsIArray> syncItemList;
-  rv = SyncShuffleSyncItemList(aSyncItemList,
-                               aSyncItemSizeMap,
-                               aAvailableSpace,
-                               getter_AddRefs(syncItemList));
-  NS_ENSURE_SUCCESS(rv, rv);
+  // Check for abort.
+  NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
 
   // Create a new source sync media list.
   nsCOMPtr<sbIMediaList> syncMediaList;
   rv = SyncCreateSyncMediaList(aSrcLib,
-                               syncItemList,
+                               aDstLib,
+                               aAvailableSpace,
                                getter_AddRefs(syncMediaList));
+  if (rv == NS_ERROR_ABORT)
+    return rv;
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check for abort.
+  NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
 
   // Sync to the sync media list.
   rv = SyncToMediaList(aDstLib, syncMediaList);
@@ -4547,88 +4665,36 @@ sbBaseDevice::SyncCreateAndSyncToList
 }
 
 nsresult
-sbBaseDevice::SyncShuffleSyncItemList
-  (nsCOMArray<sbIMediaItem>&                     aSyncItemList,
-   nsDataHashtable<nsISupportsHashKey, PRInt64>& aSyncItemSizeMap,
-   PRInt64                                       aAvailableSpace,
-   nsIArray**                                    aShuffleSyncItemList)
-{
-  // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aShuffleSyncItemList);
-
-  // Function variables.
-  PRBool   success;
-  nsresult rv;
-
-  // Get the sync item list info.
-  PRInt32 itemCount = aSyncItemList.Count();
-
-  // Seed the random number generator for shuffling.
-  srand((unsigned int) (PR_Now() & 0xFFFFFFFF));
-
-  // Copy the sync item list to a vector and shuffle it.
-  std::vector<sbIMediaItem*> randomItemList;
-  for (PRInt32 i = 0; i < itemCount; i++) {
-    randomItemList.push_back(aSyncItemList[i]);
-  }
-  std::random_shuffle(randomItemList.begin(), randomItemList.end());
-
-  // Create a shuffled sync item list that will fill the available space.
-  nsCOMPtr<nsIMutableArray> shuffleSyncItemList =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Add sync items from the shuffled list to fill the available space,
-  // reserving some margin for error.
-  PRInt64 remainingSpace = aAvailableSpace;
-  remainingSpace -= (aAvailableSpace * SYNC_PLAYLIST_MARGIN_PCT) / 100;
-  for (PRInt32 i = 0; i < itemCount; i++) {
-    // Get the next item and its info.
-    nsCOMPtr<sbIMediaItem> syncItem = randomItemList[i];
-    PRInt64                itemSize;
-    success = aSyncItemSizeMap.Get(syncItem, &itemSize);
-    NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
-
-    // Add item if it fits in remaining space.
-    if (remainingSpace >= itemSize) {
-      rv = shuffleSyncItemList->AppendElement(syncItem, PR_FALSE);
-      NS_ENSURE_SUCCESS(rv, rv);
-      remainingSpace -= itemSize;
-    }
-  }
-
-  // Return results.
-  NS_ADDREF(*aShuffleSyncItemList = shuffleSyncItemList);
-
-  return NS_OK;
-}
-
-nsresult
-sbBaseDevice::SyncCreateSyncMediaList(sbILibrary*    aSrcLib,
-                                      nsIArray*      aSyncItemList,
-                                      sbIMediaList** aSyncMediaList)
+sbBaseDevice::SyncCreateSyncMediaList(sbILibrary*       aSrcLib,
+                                      sbIDeviceLibrary* aDstLib,
+                                      PRInt64           aAvailableSpace,
+                                      sbIMediaList**    aSyncMediaList)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aSrcLib);
-  NS_ENSURE_ARG_POINTER(aSyncItemList);
   NS_ENSURE_ARG_POINTER(aSyncMediaList);
 
   // Function variables.
   nsresult rv;
 
-  // Produce the sync media list name.
-  SBLocalizedString listName("device.error.not_enough_freespace.random_playlist_name");
-
   nsCOMPtr<sbIMutablePropertyArray> propertyArray =
       do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDeviceLibrary> devLib;
+  rv = GetDefaultLibrary(getter_AddRefs(devLib));
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsString guid;
+  rv = devLib->GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = propertyArray->AppendProperty(
-                        NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
-                        listName);
+                        NS_LITERAL_STRING(SB_PROPERTY_DEVICE_LIBRARY_GUID),
+                        guid);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = propertyArray->AppendProperty(
                         NS_LITERAL_STRING(SB_PROPERTY_LISTTYPE),
-                        NS_LITERAL_STRING("1"));
+                        NS_LITERAL_STRING("2"));
   NS_ENSURE_SUCCESS(rv, rv);
   rv = propertyArray->AppendProperty(
                         NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
@@ -4646,38 +4712,161 @@ sbBaseDevice::SyncCreateSyncMediaList(sbILibrary*    aSrcLib,
   rv = randomMediaList->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  NS_WARN_IF_FALSE(length < 2, "Multiple random sync'ing playlists");
   nsCOMPtr<sbIMediaList> syncMediaList;
   if (length > 0) {
-   rv = randomMediaList->QueryElementAt(0,
+    rv = randomMediaList->QueryElementAt(0,
                                          NS_GET_IID(sbIMediaList),
                                          getter_AddRefs(syncMediaList));
     NS_ENSURE_SUCCESS(rv, rv);
-    // Clear the old items in the list
-    rv = syncMediaList->Clear();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
-    // Create a new source sync media list.
-    rv = aSrcLib->CreateMediaList(NS_LITERAL_STRING("simple"),
-                                  nsnull,
-                                  getter_AddRefs(syncMediaList));
-    NS_ENSURE_SUCCESS(rv, rv);
 
-    // Set the sync media list name.
-    rv = syncMediaList->SetName(listName);
+    // Calculate the smart list total item size. Return the list if the size
+    // can fit on the device. Create a new one if not.
+    PRInt64 totalSyncSize = 0;
+    PRUint32 itemCount;
+    rv = syncMediaList->GetLength(&itemCount);
     NS_ENSURE_SUCCESS(rv, rv);
+    for (PRUint32 i = 0; i < itemCount; ++i) {
+      // Get the sync item.
+      nsCOMPtr<sbIMediaItem> mediaItem;
+      rv = syncMediaList->GetItemByIndex(i, getter_AddRefs(mediaItem));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Media List inside of media list?
+      nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mediaItem, &rv);
+      if (NS_SUCCEEDED(rv))
+        continue;
+
+      // Get the item size adding in the per track overhead.  Assume a length
+      // of 0 on error.
+      PRInt64 contentLength;
+      rv = sbLibraryUtils::GetContentLength(mediaItem, &contentLength);
+      if (NS_FAILED(rv))
+        contentLength = 0;
+      contentLength += mPerTrackOverhead;
+
+      totalSyncSize += contentLength;
+    }
+
+    if (totalSyncSize <= aAvailableSpace) {
+      // smart playlist found.
+      syncMediaList.forget(aSyncMediaList);
+      return NS_OK;
+    }
+    else {
+      // If not enough space is available to hold the existing smart list
+      // content, ask the user what action to take. If the user does not abort
+      // the operation, create another smart list and sync to it that will fit
+      // in the available space.  Otherwise, set the management type to manual
+      // and return.
+      PRBool abort;
+      rv = sbDeviceUtils::QueryUserSpaceExceeded(this,
+                                                 aDstLib,
+                                                 totalSyncSize,
+                                                 aAvailableSpace,
+                                                 &abort);
+      NS_ENSURE_SUCCESS(rv, rv);
+      if (abort)
+        return NS_ERROR_ABORT;
+
+      // Reset the library guid property to ignore for next over-capacity sync.
+      // And create another smart list.
+      rv = syncMediaList->SetProperty(
+                            NS_LITERAL_STRING(SB_PROPERTY_DEVICE_LIBRARY_GUID),
+                            NS_LITERAL_STRING(""));
+    }
   }
 
-  // Add the sync item list to the sync media list.
-  nsCOMPtr<nsISimpleEnumerator> syncItemListEnum;
-  rv = aSyncItemList->Enumerate(getter_AddRefs(syncItemListEnum));
+  // Create a new source sync smart media list.
+  nsCOMPtr<nsIThread> target;
+  rv = NS_GetMainThread(getter_AddRefs(target));
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = syncMediaList->AddSome(syncItemListEnum);
+
+  nsCOMPtr<sbILibrary> proxiedLibrary;
+  rv = do_GetProxyForObject(target,
+                            aSrcLib,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(proxiedLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = proxiedLibrary->CreateMediaList(NS_LITERAL_STRING("smart"),
+                                       propertyArray,
+                                       getter_AddRefs(syncMediaList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // get the device name
+  nsString deviceName;
+  rv = GetName(deviceName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Produce the sync media list name.
+  nsString listName;
+  nsTArray<nsString> listNameParams;
+  listNameParams.AppendElement(deviceName);
+  rv = SBGetLocalizedFormattedString(listName,
+                                     NS_LITERAL_STRING(RANDOM_LISTNAME),
+                                     listNameParams,
+                                     NS_LITERAL_STRING("Autofill"),
+                                     nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString uniqueName;
+  rv = sbLibraryUtils::SuggestUniqueNameForPlaylist(aSrcLib,
+                                                    listName,
+                                                    uniqueName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = syncMediaList->SetName(uniqueName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILocalDatabaseSmartMediaList> randomList =
+    do_QueryInterface(syncMediaList, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set the smart list condition to be "media type is audio" with limited
+  // storage capacity and select by random.
+  nsCOMPtr<sbIPropertyOperator> equal;
+  rv = sbLibraryUtils::GetEqualOperator(getter_AddRefs(equal));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILocalDatabaseSmartMediaListCondition> condition;
+  rv = randomList->AppendCondition(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                                   equal,
+                                   NS_LITERAL_STRING("audio"),
+                                   nsString(),
+                                   nsString(),
+                                   getter_AddRefs(condition));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = randomList->SetMatchType(sbILocalDatabaseSmartMediaList::MATCH_TYPE_ALL);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = randomList->SetLimitType(
+                     sbILocalDatabaseSmartMediaList::LIMIT_TYPE_BYTES);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint64 syncSpace = aAvailableSpace * SYNC_PLAYLIST_AVAILABLE_PCT / 100;
+
+  nsString uiLimitType;
+  uiLimitType.AssignLiteral("GB");
+  syncSpace = syncSpace / BYTES_PER_10MB * BYTES_PER_10MB;
+
+  rv = randomList->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_UILIMITTYPE),
+                               uiLimitType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = randomList->SetLimit(syncSpace);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = randomList->SetRandomSelection(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Rebuild after the conditions are set.
+  rv = randomList->Rebuild();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Return results.
-  *aSyncMediaList = nsnull;
-  syncMediaList.swap(*aSyncMediaList);
+  syncMediaList.forget(aSyncMediaList);
 
   return NS_OK;
 }
@@ -4693,35 +4882,57 @@ sbBaseDevice::SyncToMediaList(sbIDeviceLibrary* aDstLib,
   // Function variables.
   nsresult rv;
 
-  // Create a sync playlist list array with the sync media list.
-  nsCOMPtr<nsIMutableArray> syncPlaylistList =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = syncPlaylistList->AppendElement(aMediaList, PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   PRUint16 contentType;
   rv = aMediaList->GetListContentType(&contentType);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_SUCCESS(contentType > 0, NS_ERROR_FAILURE);
 
+  nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
+  rv = aDstLib->GetSyncSettings(getter_AddRefs(syncSettings));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDeviceLibraryMediaSyncSettings> audioMediaSyncSettings;
+  rv = syncSettings->GetMediaSettings(sbIDeviceLibrary::MEDIATYPE_AUDIO,
+                                      getter_AddRefs(audioMediaSyncSettings));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDeviceLibraryMediaSyncSettings> videoMediaSyncSettings;
+  rv = syncSettings->GetMediaSettings(sbIDeviceLibrary::MEDIATYPE_VIDEO,
+                                      getter_AddRefs(videoMediaSyncSettings));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIMutableArray> syncList =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = syncList->AppendElement(aMediaList, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
   // Set to sync to the sync media list.
   if (contentType | sbIMediaList::CONTENTTYPE_AUDIO) {
-    rv = aDstLib->SetSyncPlaylistListByType(sbIDeviceLibrary::MEDIATYPE_AUDIO,
-                                            syncPlaylistList);
+    rv = audioMediaSyncSettings->SetSelectedPlaylists(syncList);
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = aDstLib->SetMgmtType(sbIDeviceLibrary::MEDIATYPE_AUDIO,
-                              sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS);
+    rv = videoMediaSyncSettings->ClearSelectedPlaylists();
     NS_ENSURE_SUCCESS(rv, rv);
   }
   if (contentType | sbIMediaList::CONTENTTYPE_VIDEO) {
-    rv = aDstLib->SetSyncPlaylistListByType(sbIDeviceLibrary::MEDIATYPE_VIDEO,
-                                            syncPlaylistList);
+    rv = videoMediaSyncSettings->SetSelectedPlaylists(syncList);
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = aDstLib->SetMgmtType(sbIDeviceLibrary::MEDIATYPE_VIDEO,
-                              sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS);
+    rv = audioMediaSyncSettings->ClearSelectedPlaylists();
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  rv = audioMediaSyncSettings->SetMgmtType(
+         sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_PLAYLISTS);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = videoMediaSyncSettings->SetMgmtType(
+         contentType == sbIMediaList::CONTENTTYPE_AUDIO
+           ? sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE
+           : sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_PLAYLISTS);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aDstLib->SetSyncSettings(syncSettings);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -4742,9 +4953,13 @@ sbBaseDevice::SyncGetSyncItemSizes
   // Function variables.
   nsresult rv;
 
+  nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
+  rv = aDstLib->GetSyncSettings(getter_AddRefs(syncSettings));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Get the list of sync media lists.
   nsCOMPtr<nsIArray> syncList;
-  rv = SyncGetSyncList(aSrcLib, aDstLib, getter_AddRefs(syncList));
+  rv = syncSettings->GetSyncPlaylists(getter_AddRefs(syncList));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Fill in the sync item size table and calculate the total sync size.
@@ -4753,6 +4968,9 @@ sbBaseDevice::SyncGetSyncItemSizes
   rv = syncList->GetLength(&syncListLength);
   NS_ENSURE_SUCCESS(rv, rv);
   for (PRUint32 i = 0; i < syncListLength; i++) {
+    // Check for abort.
+    NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
+
     // Get the next sync media item.
     nsCOMPtr<sbIMediaItem> syncMI = do_QueryElementAt(syncList, i, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -4806,6 +5024,9 @@ sbBaseDevice::SyncGetSyncItemSizes
   rv = aSyncML->GetLength(&itemCount);
   NS_ENSURE_SUCCESS(rv, rv);
   for (PRUint32 i = 0; i < itemCount; i++) {
+    // Check for abort.
+    NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
+
     // Get the sync item.
     nsCOMPtr<sbIMediaItem> mediaItem;
     rv = aSyncML->GetItemByIndex(i, getter_AddRefs(mediaItem));
@@ -4873,27 +5094,6 @@ sbBaseDevice::SyncGetSyncItemSizes
 }
 
 nsresult
-sbBaseDevice::SyncGetSyncList(sbILibrary*       aSrcLib,
-                              sbIDeviceLibrary* aDstLib,
-                              nsIArray**        aSyncList)
-{
-  // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aSrcLib);
-  NS_ENSURE_ARG_POINTER(aDstLib);
-  NS_ENSURE_ARG_POINTER(aSyncList);
-
-  // Get the list of sync media lists.
-  nsCOMPtr<nsIArray> syncList;
-  nsresult rv = aDstLib->GetSyncPlaylistList(getter_AddRefs(syncList));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Return results.
-  syncList.forget(aSyncList);
-
-  return NS_OK;
-}
-
-nsresult
 sbBaseDevice::SyncGetSyncAvailableSpace(sbILibrary* aLibrary,
                                         PRInt64*    aAvailableSpace)
 {
@@ -4905,21 +5105,27 @@ sbBaseDevice::SyncGetSyncAvailableSpace(sbILibrary* aLibrary,
   nsresult rv;
 
   // Get the device properties.
-  // Get the device properties.
   nsCOMPtr<nsIPropertyBag2>     deviceProperties;
   rv = GetPropertyBag(this, getter_AddRefs(deviceProperties));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the free space and the music used space.
+  // Get the free space.
   PRInt64 freeSpace;
-  PRInt64 musicUsedSpace;
-  rv = deviceProperties->GetPropertyAsInt64
-                           (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_FREE_SPACE),
-                            &freeSpace);
+  nsAutoString freeSpaceStr;
+  rv = aLibrary->GetProperty(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_FREE_SPACE),
+                             freeSpaceStr);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = deviceProperties->GetPropertyAsInt64
+  freeSpace = nsString_ToInt64(freeSpaceStr, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the music used space.
+  PRInt64 musicUsedSpace;
+  nsAutoString musicUsedSpaceStr;
+  rv = aLibrary->GetProperty
          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_USED_SPACE),
-          &musicUsedSpace);
+          musicUsedSpaceStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+  musicUsedSpace = nsString_ToInt64(musicUsedSpaceStr, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Add track overhead to the music used space.
@@ -4967,10 +5173,13 @@ sbBaseDevice::SyncProduceChangeset(TransferRequest*      aRequest,
   rv = SyncForceDiffMediaLists(dstLib);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
+  rv = dstLib->GetSyncSettings(getter_AddRefs(syncSettings));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Get the list of sync media lists.
   nsCOMPtr<nsIArray> syncList;
-
-  rv = SyncGetSyncList(srcLib, dstLib, getter_AddRefs(syncList));
+  rv = syncSettings->GetSyncPlaylists(getter_AddRefs(syncList));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the diffing service.
@@ -5050,20 +5259,6 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
 
   bool const playlistsSupported = sbDeviceUtils::ArePlaylistsSupported(this);
 
-  nsCOMPtr<nsIArray> videoPlaylists;
-  rv = aDstLibrary->GetSyncPlaylistListByType(sbIDeviceLibrary::MEDIATYPE_VIDEO,
-                                              getter_AddRefs(videoPlaylists));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 videoPlaylistCount = 0;
-  rv = videoPlaylists->GetLength(&videoPlaylistCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsString skipContentType;
-  if (videoPlaylistCount == 0) {
-    skipContentType = NS_LITERAL_STRING("video");
-  }
-
   // Get the list of all changes.
   nsCOMPtr<nsIArray> changeList;
   PRUint32           changeCount;
@@ -5104,7 +5299,17 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
           nsCOMPtr<sbIMediaItem> mediaItem;
           rv = change->GetDestinationItem(getter_AddRefs(mediaItem));
           NS_ENSURE_SUCCESS(rv, rv);
-          if (skipContentType != GetNormalizedContentTypeOfItemOrList(mediaItem)) {
+
+          nsString originItemGuid;
+          rv = mediaItem->GetProperty(
+                            NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
+                            originItemGuid);
+          NS_ENSURE_SUCCESS(rv, rv);
+          // Only remove video items copied from other libraries. Don't touch
+          // the existing video items.
+          if (NS_LITERAL_STRING("video") !=
+                GetNormalizedContentTypeOfItemOrList(mediaItem) ||
+              !originItemGuid.IsEmpty()) {
             rv = deleteItemList->AppendElement(mediaItem, PR_FALSE);
             NS_ENSURE_SUCCESS(rv, rv);
           }
@@ -5264,6 +5469,7 @@ sbBaseDevice::SyncAddMediaList(sbIDeviceLibrary* aDstLibrary,
   nsCOMPtr<sbIMediaList> mediaList;
   rv = proxyDstLibrary->CopyMediaList(NS_LITERAL_STRING("simple"),
                                       aMediaList,
+                                      PR_FALSE,
                                       getter_AddRefs(mediaList));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -5474,6 +5680,14 @@ sbBaseDevice::ShouldSyncMediaList(sbIMediaList* aMediaList,
   rv = aMediaList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN), hidden);
   NS_ENSURE_SUCCESS(rv, rv);
   if (hidden.EqualsLiteral("1"))
+    return NS_OK;
+
+  // Don't sync empty lists.
+  PRBool isEmpty;
+  rv = aMediaList->GetIsEmpty(&isEmpty);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (isEmpty)
     return NS_OK;
 
   // Don't sync media lists that are storage for other media lists (e.g., simple
@@ -5808,15 +6022,14 @@ sbBaseDevice::ProcessInfoRegistrars()
     rv = data->GetData(entryName);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    char * contractId;
+    nsCString contractId;
     rv = catMgr->GetCategoryEntry(SB_DEVICE_INFO_REGISTRAR_CATEGORY,
                                   entryName.get(),
-                                  &contractId);
+                                  getter_Copies(contractId));
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<sbIDeviceInfoRegistrar> infoRegistrar =
-      do_CreateInstance(contractId, &rv);
-    NS_Free(contractId);
+      do_CreateInstance(contractId.get(), &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     PRBool interested;
@@ -5878,12 +6091,12 @@ sbBaseDevice::RegisterDeviceInfo()
   LOG(("Excluded Folders: %s",
        NS_LossyConvertUTF16toASCII(excludedFolders).BeginReading()));
 
-  if (!excludedFolders.IsEmpty()) {
-    // Get the device properties.
-    nsCOMPtr<nsIWritablePropertyBag> deviceProperties;
-    rv = GetWritableDeviceProperties(this, getter_AddRefs(deviceProperties));
-    NS_ENSURE_SUCCESS(rv, rv);
+  // Get the device properties.
+  nsCOMPtr<nsIWritablePropertyBag> deviceProperties;
+  rv = GetWritableDeviceProperties(this, getter_AddRefs(deviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
 
+  if (!excludedFolders.IsEmpty()) {
     rv = deviceProperties->SetProperty(
                            NS_LITERAL_STRING(SB_DEVICE_PROPERTY_EXCLUDED_FOLDERS),
                            sbNewVariant(excludedFolders));
@@ -5892,6 +6105,16 @@ sbBaseDevice::RegisterDeviceInfo()
 
   // Log the device folders.
   LogDeviceFolders();
+
+  // Determine if the device supports format.
+  PRBool supportsFormat;
+  rv = mInfoRegistrar->GetDoesDeviceSupportReformat(this, &supportsFormat);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deviceProperties->SetProperty(
+      NS_LITERAL_STRING(SB_DEVICE_PROPERTY_SUPPORTS_REFORMAT),
+      sbNewVariant(supportsFormat));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -6002,118 +6225,57 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem*                  aMediaItem,
     GetDeviceTranscoding()->GetTranscodeType(aMediaItem);
   bool needsTranscoding = false;
 
-  // TODO: In the future, mediaFormat should always be used, but for now
-  // we'll fall back to the format mappings for non-video types.
-  if (transcodeType == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO) {
-    // Try to check if we can transcode first, since it's cheaper than trying
-    // to inspect the actual file (and both ways we get which files we can get
-    // on the device).
-    // XXX MOOK this needs to be fixed to be not gstreamer specific
-    nsCOMPtr<nsIURI> inputUri;
-    rv = aMediaItem->GetContentSrc(getter_AddRefs(inputUri));
-    NS_ENSURE_SUCCESS(rv, rv);
-    nsCOMPtr<sbIDeviceTranscodingConfigurator> configurator =
-      do_CreateInstance("@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Device/GStreamer;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = configurator->SetInputUri(inputUri);
-    NS_ENSURE_SUCCESS(rv, rv);
-    nsCOMPtr<sbIDevice> device =
-      do_QueryInterface(NS_ISUPPORTS_CAST(sbIDevice*, this), &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = configurator->SetDevice(device);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = configurator->DetermineOutputType();
-    if (NS_SUCCEEDED(rv)) {
-      *_retval = PR_TRUE;
-      return NS_OK;
-    }
-
-    // Can't transcode, check the media format as a fallback.
-    if (aCallback) {
-      // asynchronous
-      nsCOMPtr<sbIMediaInspector> inspector;
-      rv = GetDeviceTranscoding()->GetMediaInspector(getter_AddRefs(inspector));
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = aCallback->InitJobProgress(inspector, transcodeType);
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = inspector->InspectMediaAsync(aMediaItem);
-      NS_ENSURE_SUCCESS(rv, rv);
-      return NS_ERROR_IN_PROGRESS;
-    }
-    // synchronous
-    nsCOMPtr<sbIMediaFormat> mediaFormat;
-    rv = GetDeviceTranscoding()->GetMediaFormat(aMediaItem,
-                                                getter_AddRefs(mediaFormat));
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = sbDeviceUtils::DoesItemNeedTranscoding(transcodeType,
-                                                mediaFormat,
-                                                this,
-                                                needsTranscoding);
-
-    *_retval = (NS_SUCCEEDED(rv) && !needsTranscoding);
-    return NS_OK;
-  }
-
-  sbExtensionToContentFormatEntry_t formatType;
-
-  PRUint32 bitRate = 0;
-  PRUint32 sampleRate = 0;
-  rv = sbDeviceUtils::GetFormatTypeForItem(aMediaItem,
-                                           formatType,
-                                           bitRate,
-                                           sampleRate);
-
-  // Check for expected error, unable to find format type
-  if (rv == NS_ERROR_NOT_AVAILABLE) {
-    if (aReportErrors) {
-      rv = DispatchTranscodeErrorEvent(
-                              aMediaItem,
-                              SBLocalizedString("transcode.file.notsupported"));
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    // If we can't even figure out what the format type is
-    // we don't support it.
-    *_retval = PR_FALSE;
-    return NS_OK;
-  }
+  // Try to check if we can transcode first, since it's cheaper than trying
+  // to inspect the actual file (and both ways we get which files we can get
+  // on the device).
+  // XXX MOOK this needs to be fixed to be not gstreamer specific
+  nsCOMPtr<nsIURI> inputUri;
+  rv = aMediaItem->GetContentSrc(getter_AddRefs(inputUri));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sbDeviceUtils::DoesItemNeedTranscoding(formatType,
-                                              bitRate,
-                                              sampleRate,
-                                              this,
-                                              needsTranscoding);
+  nsCOMPtr<sbIDeviceTranscodingConfigurator> configurator;
+  rv = sbDeviceUtils::GetTranscodingConfigurator(transcodeType,
+                                               getter_AddRefs(configurator));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Exit if no transcoding is needed
-  if (!needsTranscoding) {
+  rv = configurator->SetInputUri(inputUri);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIDevice> device =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbIDevice*, this), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = configurator->SetDevice(device);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = configurator->DetermineOutputType();
+  if (NS_SUCCEEDED(rv)) {
     *_retval = PR_TRUE;
     return NS_OK;
   }
-  // So we do need to transcode (the device doesn't natively support
-  // the file) but is there a transcoding profile available that will
-  // work?
-  nsCOMPtr<sbITranscodeProfile> profile;
-  rv = GetDeviceTranscoding()->SelectTranscodeProfile(transcodeType,
-                                                      getter_AddRefs(profile));
 
-  // No profile available means we don't support this file.
-  if (rv == NS_ERROR_NOT_AVAILABLE) {
-    if (aReportErrors) {
-      rv = DispatchTranscodeErrorEvent
-             (aMediaItem, SBLocalizedString("transcode.file.notsupported"));
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    *_retval = PR_FALSE;
-    return NS_OK;
+  // Can't transcode, check the media format as a fallback.
+  if (aCallback) {
+    // asynchronous
+    nsCOMPtr<sbIMediaInspector> inspector;
+    rv = GetDeviceTranscoding()->GetMediaInspector(getter_AddRefs(inspector));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = aCallback->InitJobProgress(inspector, transcodeType);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = inspector->InspectMediaAsync(aMediaItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+    return NS_ERROR_IN_PROGRESS;
   }
+  // synchronous
+  nsCOMPtr<sbIMediaFormat> mediaFormat;
+  rv = GetDeviceTranscoding()->GetMediaFormat(transcodeType,
+                                              aMediaItem,
+                                              getter_AddRefs(mediaFormat));
   NS_ENSURE_SUCCESS(rv, rv);
+  rv = sbDeviceUtils::DoesItemNeedTranscoding(transcodeType,
+                                              mediaFormat,
+                                              this,
+                                              needsTranscoding);
 
-  // We should definitely have a real profile now, since we didn't
-  // get the NOT AVAILABLE error, so... we're done!
-  *_retval = PR_TRUE;
+  *_retval = (NS_SUCCEEDED(rv) && !needsTranscoding);
   return NS_OK;
 }
 
@@ -6170,10 +6332,12 @@ sbBaseDevice::SetDefaultLibrary(sbIDeviceLibrary* aDefaultLibrary)
 }
 
 nsresult
-sbBaseDevice::GetSupportedTranscodeProfiles(nsIArray **aSupportedProfiles)
+sbBaseDevice::GetSupportedTranscodeProfiles(PRUint32 aType,
+                                            nsIArray **aSupportedProfiles)
 {
   return GetDeviceTranscoding()->GetSupportedTranscodeProfiles(
-                                                            aSupportedProfiles);
+          aType,
+          aSupportedProfiles);
 }
 
 nsresult
@@ -6320,18 +6484,104 @@ sbBaseDevice::GetMusicLimitSpacePercent(const nsAString & aPrefBase,
   return prefValue->GetAsUint32(aOutLimitPercentage);
 }
 
+/* void Eject(); */
+NS_IMETHODIMP sbBaseDevice::Eject()
+{
+  TRACE(("%s", __FUNCTION__));
+
+  nsresult rv;
+
+  // Device has no default library. Just leave.
+  if (!mDefaultLibrary)
+    return NS_OK;
+
+  // If the playback is on for the device item, stop the playback before
+  // ejecting.
+  nsCOMPtr<sbIMediacoreManager> mediacoreManager =
+    do_GetService(SB_MEDIACOREMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediacoreSequencer> sequencer;
+  rv = mediacoreManager->GetSequencer(getter_AddRefs(sequencer));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the currently playing media item.
+  nsCOMPtr<sbIMediaItem> mediaItem;
+  rv = sequencer->GetCurrentItem(getter_AddRefs(mediaItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // No current media item. Just leave.
+  if (!mediaItem)
+    return NS_OK;
+
+  // Get the library that the media item lives in.
+  nsCOMPtr<sbILibrary> library;
+  rv = mediaItem->GetLibrary(getter_AddRefs(library));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Is that library our device library?
+  PRBool equal;
+  rv = mDefaultLibrary->Equals(library, &equal);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (equal) {
+    nsCOMPtr<sbIMediacoreStatus> status;
+    rv = mediacoreManager->GetStatus(getter_AddRefs(status));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 state = 0;
+    rv = status->GetState(&state);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Not playing, nothing to do.
+    if (state == sbIMediacoreStatus::STATUS_STOPPED ||
+        state == sbIMediacoreStatus::STATUS_UNKNOWN) {
+      return NS_OK;
+    }
+
+    // Confirm with user on whether to stop the playback and eject.
+    PRBool eject;
+    PromptForEjectDuringPlayback(&eject);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!eject)
+      return NS_ERROR_ABORT;
+
+    nsCOMPtr<sbIMediacorePlaybackControl> playbackControl;
+    rv = mediacoreManager->GetPlaybackControl(getter_AddRefs(playbackControl));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = playbackControl->Stop();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
 /* void Format(); */
 NS_IMETHODIMP sbBaseDevice::Format()
 {
   TRACE(("%s", __FUNCTION__));
   return NS_ERROR_NOT_IMPLEMENTED;
 }
+
 /* readonly attribute boolean supportsReformat; */
 NS_IMETHODIMP sbBaseDevice::GetSupportsReformat(PRBool *_retval)
 {
   TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;
+
+  nsresult rv;
+  nsCOMPtr<nsIPropertyBag2> deviceProperties;
+  rv = GetPropertyBag(this, getter_AddRefs(deviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deviceProperties->GetPropertyAsBool(
+      NS_LITERAL_STRING(SB_DEVICE_PROPERTY_SUPPORTS_REFORMAT),
+      _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

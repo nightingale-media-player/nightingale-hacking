@@ -31,6 +31,7 @@
 
 #include "nsISupports.idl"
 
+interface nsIArray;
 interface nsIPropertyBag;
 interface nsIURI;
 interface sbIDevice;
@@ -45,9 +46,14 @@ interface sbITranscodeError;
  * should be implemented by any Configurator system and implement the
  * configurate function.
  */
-[scriptable, uuid(7aa32e7c-1dd2-11b2-a630-ad3a8587a133)]
+[scriptable, uuid(a09e88f5-e9f8-4341-951d-7f5efda3a6d7)]
 interface sbITranscodingConfigurator : nsISupports
 {
+  /**
+   * The list of profiles this configurator can use
+   */
+  readonly attribute nsIArray availableProfiles;
+
   /**
    * The URI to use for the transcoding input.  Mostly informational.
    */
@@ -82,13 +88,21 @@ interface sbITranscodingConfigurator : nsISupports
   /**
    * \brief The muxer to use. The name is specific to the transcoder (for
    * example, this may be a gstreamer element name for a gstreamer-based
-   * transcoder). If this is a void string, no muxer is needed (e.g. a bare
-   * FLAC audio file)
+   * transcoder).
    *
    * \throws NS_ERROR_NOT_INITIALIZED on read if determineOutputType() has not 
    * been called.
    */
   readonly attribute AString muxer;
+
+  /**
+   * \brief Whether a muxer is in use. e.g. for a bare FLAC audio file it won't
+   *        be.
+   *
+   * \throws NS_ERROR_NOT_INITIALIZED on read if determineOutputType() has not 
+   * been called.
+   */
+  readonly attribute boolean useMuxer;
 
   /**
    * \brief The file extension to use for transcoded files.
@@ -103,7 +117,7 @@ interface sbITranscodingConfigurator : nsISupports
   /**
    * \brief The video encoder to use.  The name is specific to the transcoder
    * (for example, this may be a gstreamer element name for a gstreamer-based
-   * transcoder).  This may be a void string if there is no video.
+   * transcoder).
    *
    * \throws NS_ERROR_NOT_INITIALIZED on read if determineOutputType() has not 
    * been called.
@@ -111,15 +125,33 @@ interface sbITranscodingConfigurator : nsISupports
   readonly attribute AString videoEncoder;
 
   /**
+   * \brief Whether a video encoder is in use. If this is true, the videoEncoder
+   *        attribute must be non-empty.
+   *
+   * \throws NS_ERROR_NOT_INITIALIZED on read if determineOutputType() has not 
+   * been called.
+   */
+  readonly attribute boolean useVideoEncoder;
+
+  /**
    * \brief The audio encoder to use.  The name is specific to the transcoder
    * (for example, this may be a gstreamer element name for a gstreamer-based
-   * transcoder).  This may be a void string if there is no audio.
+   * transcoder).  This may be a void string if raw audio is desired.
    *
    * \throws NS_ERROR_NOT_INITIALIZED on read if determineOutputType() has not 
    * been called.
    */
   readonly attribute AString audioEncoder;
   
+  /**
+   * \brief Whether a audio encoder is in use. If this is true, the audioEncoder
+   *        attribute may be empty; indicating that raw audio is desired.
+   *
+   * \throws NS_ERROR_NOT_INITIALIZED on read if determineOutputType() has not 
+   * been called.
+   */
+  readonly attribute boolean useAudioEncoder;
+
   /**
    * \brief Determine the transcode settings to use based on the input given. 
    * Both the device and the input format must be set before calling this 

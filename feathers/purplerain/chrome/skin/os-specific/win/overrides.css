@@ -80,6 +80,6 @@ treechildren::-moz-tree-cell-text {
   margin-top: -1px !important;
 }
 
-.servicepane-tree .tree-input {
-  margin-top: 3px !important;
+hbox.servicepane-node-info > stack > hbox > label.servicepane-node-label {
+  margin-bottom: 1px;
 }

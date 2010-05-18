@@ -44,7 +44,7 @@
 *
 * \sa sbIMetadataHandler
 */
-[scriptable, uuid(3EBC067F-E52D-4041-A5E4-5C217D4A5FBE)]
+[scriptable, uuid(efc95036-85ab-48ad-a72b-aba654760669)]
 interface sbIMetadataManager : nsISupports
 {
   /**
@@ -60,4 +60,14 @@ interface sbIMetadataManager : nsISupports
   * \return The handler to use, or NULL.
   */
   sbIMetadataHandler getHandlerForMediaURL(in AString aUrl);
+
+  /**
+   * \brief Request the next metadata handler that can handle the item.
+   * \param aHandler The previous handler that was used to attempt to read/write
+   *                 metadata.
+   * \param aUrl The url from which to read/write metadata
+   * \return The handler to use, or NULL.
+   */
+  sbIMetadataHandler getNextHandlerForMediaURL(in sbIMetadataHandler aHandler, 
+                                               in AString aUrl);
 };

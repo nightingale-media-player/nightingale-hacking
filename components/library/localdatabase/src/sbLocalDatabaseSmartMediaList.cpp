@@ -2965,7 +2965,7 @@ sbLocalDatabaseSmartMediaList::OnItemAdded(sbIMediaList* aMediaList,
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
 
   // Don't care
-  *aNoMoreForBatch = PR_FALSE;
+  *aNoMoreForBatch = PR_TRUE;
   return NS_OK;
 }
 
@@ -3023,7 +3023,7 @@ sbLocalDatabaseSmartMediaList::OnAfterItemRemoved(sbIMediaList* aMediaList,
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
 
   // Don't care
-  *aNoMoreForBatch = PR_FALSE;
+  *aNoMoreForBatch = PR_TRUE;
   return NS_OK;
 }
 
@@ -3039,7 +3039,7 @@ sbLocalDatabaseSmartMediaList::OnItemUpdated(sbIMediaList* aMediaList,
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
 
   // Don't care
-  *aNoMoreForBatch = PR_FALSE;
+  *aNoMoreForBatch = PR_TRUE;
   return NS_OK;
 }
 
@@ -3053,7 +3053,7 @@ sbLocalDatabaseSmartMediaList::OnItemMoved(sbIMediaList* aMediaList,
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
 
   // Don't care
-  *aNoMoreForBatch = PR_FALSE;
+  *aNoMoreForBatch = PR_TRUE;
   return NS_OK;
 }
 
@@ -3066,7 +3066,7 @@ sbLocalDatabaseSmartMediaList::OnBeforeListCleared(sbIMediaList* aMediaList,
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
 
   // Don't care
-  *aNoMoreForBatch = PR_FALSE;
+  *aNoMoreForBatch = PR_TRUE;
   return NS_OK;
 }
 
@@ -3079,7 +3079,7 @@ sbLocalDatabaseSmartMediaList::OnListCleared(sbIMediaList* aMediaList,
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
 
   // Don't care
-  *aNoMoreForBatch = PR_FALSE;
+  *aNoMoreForBatch = PR_TRUE;
   return NS_OK;
 }
 
@@ -3205,7 +3205,10 @@ sbLocalDatabaseSmartMediaList::AddSmartMediaListListener(sbILocalDatabaseSmartMe
   NS_ENSURE_ARG_POINTER(aListener);
 
   nsAutoMonitor monitor(mListenersMonitor);
-  mListeners.AppendObject(aListener);
+
+  // Do not add duplicate listener.
+  if (mListeners.IndexOfObject(aListener) == -1)
+    mListeners.AppendObject(aListener);
   return NS_OK;
 }
 

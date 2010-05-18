@@ -99,6 +99,8 @@
    *
    *   Psuedo-entities
    *   ===============
+   *   product_name             Set to the device product name string (e.g.,
+   *                            "Apple iPod").
    *   device_model_cap         Set to the device model/capacity string (e.g.,
    *                            "Apple iPod(3.8GB)").
    *   remove_attribute         Remove the attribute.
@@ -179,7 +181,7 @@
 
       <field name="deviceID"/>
       <field name="device"/>
-      <field name="devLibID"/>
+      <field name="devLibGUID"/>
       <field name="devLib"/>
       <field name="boundElem"/>
 
@@ -410,6 +412,29 @@
   <!-- *************************************************************************
    *****************************************************************************
    *
+   * Device product name command widget.
+   *
+   *   This widget implements a product name display command widget.  It sets
+   * the label to the device product name (e.g., "Apple iPod") and is always
+   * disabled.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-product-name-command">
+    <content>
+      <xul:sb-device-control
+         xbl:inherits="bindelem,device-id,dev-lib-guid,service_pane_node_id"
+         bindforward="parent"
+         disabled="true"
+         label_default="product_name"/>
+    </content>
+  </binding>
+
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
    * Device model/capacity command widget.
    *
    *   This widget implements a model/capacity display command widget.  It sets
@@ -528,7 +553,7 @@
                              disabled_cancel="true"
                              action="cancel"/>
     </content>
-  </binding> <!-- sb-device-sync-command -->
+  </binding> <!-- sb-device-cancel-command -->
 
 
   <!-- *************************************************************************

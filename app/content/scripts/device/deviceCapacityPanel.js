@@ -71,15 +71,13 @@ var DCW = {
   //
   //   _cfg                       Configuration.
   //   _widget                    Device capacity widget.
-  //   _device                    sbIDevice object.
-  //   _deviceProperties          Cache properties to avoid costly garbage
+  //   _deviceLibrary           Device library we are working with.
   //   _panel                     The XUL panel itself
   //   _label                     The label within the panel
   //
 
   _widget: null,
-  _device: null,
-  _deviceProperties : null,
+  _devLib: null,
   _panel: null,
   _label: null,
 
@@ -96,8 +94,7 @@ var DCW = {
     this._widget = aWidget;
 
     // Initialize object fields.
-    this._device = this._widget.device;
-    this._deviceProperties = this._device.properties;
+    this._deviceLibrary = this._widget.devLib;
 
     this._panel = this._getElement("capacity-panel");
     this._label = this._getElement("panel-label");
@@ -111,6 +108,7 @@ var DCW = {
   finalize: function DCW_finalize() {
     // Clear object fields.
     this._widget = null;
+    this._deviceLibrary = null;
   },
 
   /**
@@ -166,8 +164,8 @@ var DCW = {
                            type + "TotalPlayTime";
     var itemCountProperty = "http://songbirdnest.com/device/1.0#" +
                            type + "ItemCount";
-    var playTime = parseInt(this._getDeviceProperty(playTimeProperty, -1));
-    var itemCount = parseInt(this._getDeviceProperty(itemCountProperty, -1));
+    var playTime = parseInt(this._getDevLibProperty(playTimeProperty, -1));
+    var itemCount = parseInt(this._getDevLibProperty(itemCountProperty, -1));
     if (playTime < 0 || itemCount < 0) {
       this._label.value = SBString("device.capacity.panel." + type + ".error");
     } else {
@@ -189,22 +187,21 @@ var DCW = {
   //----------------------------------------------------------------------------
 
   /**
-   * \brief Get a device property if available
+   * \brief Get a device library property if available
    *
    * \param aPropertyName name of the property to get
    * \param aDefault default to return if property not found
-   * 
+   *
    * \return string value of the property or the default if not found.
-   * 
+   *
    * \sa sbStandardDeviceProperties.h
    */
-  
-  _getDeviceProperty: function DIW__getDeviceProperty(aPropertyName, aDefault) {
-    try {
-      return this._deviceProperties.properties.getPropertyAsAString(aPropertyName);
-    } catch (err) {
-      return aDefault;
-    }
-  }
 
+  _getDevLibProperty: function DCW__getDevLibProperty(aPropertyName, aDefault) {
+    try {
+      if (this._deviceLibrary)
+        return this._deviceLibrary.getProperty(aPropertyName);
+    } catch (ex) { }
+    return aDefault;
+  },
 };

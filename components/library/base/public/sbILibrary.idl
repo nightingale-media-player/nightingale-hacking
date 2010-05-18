@@ -78,7 +78,7 @@ interface sbIBatchCreateMediaItemsListener : nsISupports
 *
 * \sa sbIMediaItem, sbIMediaList
 */
-[scriptable, uuid(99cf6e50-1dd1-11b2-8a31-97c1942f84e4)]
+[scriptable, uuid(b493dee0-4d01-11df-9879-0800200c9a66)]
 interface sbILibrary : sbIMediaList
 {
   /**
@@ -152,11 +152,13 @@ interface sbILibrary : sbIMediaList
    *
    * \param aType - The type of media list to create.
    * \param aSource - A media list whose items and properties are to be copied.
+   * \param aDontCopyContent - Do not copy the list content if true.
    *
    * \return A new media list.
    */
   sbIMediaList copyMediaList(in AString aType,
-                             in sbIMediaList aSource);
+                             in sbIMediaList aSource,
+                             in boolean aDontCopyContent);
 
   /**
    * \brief Get a media item

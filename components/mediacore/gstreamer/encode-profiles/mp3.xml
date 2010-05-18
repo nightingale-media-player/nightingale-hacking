@@ -5,6 +5,7 @@
                                  supported, so it's a good default -->
   <description>MP3</description>
   <mimetype>audio/mpeg</mimetype>
+  <extension>mp3</extension>
 
   <container>
     <type>audio/mpeg</type>

@@ -41,6 +41,7 @@
 #include <cstdlib>
 
 #include "commands.h"
+#include "stringconvert.h"
 
 #ifdef XP_WIN
 #include <tchar.h>
@@ -52,6 +53,7 @@
 void TestParser();
 void TestDebug();
 void TestVersion();
+void TestEnvironment();
 
 #ifdef XP_WIN
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
@@ -65,6 +67,7 @@ int main()
   TestParser();
   TestDebug();
   TestVersion();
+  TestEnvironment();
   return 0;
 }
 
@@ -74,7 +77,7 @@ void check(int cond, const char* fmt, ...) {
 
   va_list args;
   va_start(args, fmt);
-  vprintf(fmt, args);
+  _vtprintf(ConvertUTF8toUTFn(fmt).c_str(), args);
   va_end(args);
   fflush(stdout);
   exit(1);

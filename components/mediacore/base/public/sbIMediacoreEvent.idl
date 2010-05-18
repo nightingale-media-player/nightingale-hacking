@@ -36,7 +36,7 @@ interface sbIMediacoreEventTarget;
  * \interface sbIMediacoreEvent
  * \brief Definition of the sbIMediacoreEvent interface.
  */
-[scriptable, uuid(d08a046e-1dd1-11b2-a5b5-f18e37b22e47)]
+[scriptable, uuid(6d5f11f3-51aa-41c2-bcd9-85355c364df5)]
 interface sbIMediacoreEvent : nsISupports
 {
   const unsigned long UNINTIALIZED    = 0x00000000;
@@ -115,6 +115,19 @@ interface sbIMediacoreEvent : nsISupports
    * \note data is null for this event.
    */
   const unsigned long SEQUENCE_END        = 0x00001507;
+
+  /**
+   * \brief Explicit call to next or previous.
+   *
+   * Triggered by user or code that is actively attempting to change to the 
+   * next track. This event is _not_ fired when the sequencer goes to the next
+   * track because the previous track has finished playing in its entirety.
+   *
+   * \note data is null.
+   * \note BEFORE_TRACK_CHANGE and TRACK_CHANGE are still fired. You may use
+   *       those events to get the next item that will be playing.
+   */
+  const unsigned long EXPLICIT_TRACK_CHANGE = 0x00001508;
 
   // End Sequencer Events
 

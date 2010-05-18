@@ -65,8 +65,8 @@
 
         // observer for DataRemote
         obs = {
-          observe: function ( aSubject, aTopic, aData) {
-	    changeColor(aData);
+          observe: function ( aKey, aValue ) {
+	    changeColor(aValue);
 	  }
         }
         songbird.addListener("metadata.position", obs);

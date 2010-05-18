@@ -529,7 +529,7 @@ var InternalDropHandler = {
       }
 
       // create a copy of the list
-      var newlist = aTargetList.copyMediaList('simple', list);
+      var newlist = aTargetList.copyMediaList('simple', list, false);
       
       if (aListener) {
         aListener.onCopyMediaList(aTargetList, newlist);

@@ -96,7 +96,7 @@ sbPlaylistWriterManager.prototype = {
     return 1;
   },
 
-  write: function(aFile, aMediaList, aContentType)
+  write: function(aFile, aMediaList, aContentType, aPlaylistFormatType)
   {
     var theExtension = this._getFileExtension(aFile);
     if (!this._writers) {
@@ -112,7 +112,7 @@ sbPlaylistWriterManager.prototype = {
       if(theMIMETypes.some(function (a) { return a == aContentType } ) ||
         (!aContentType && theExtensions.some(
             function(a) { return a == theExtension }))) {
-        aWriter.write(aFile, aMediaList, aContentType);
+        aWriter.write(aFile, aMediaList, aContentType, aPlaylistFormatType);
         return;
       }
     }

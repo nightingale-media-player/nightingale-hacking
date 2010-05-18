@@ -42,6 +42,8 @@ CPP_SRCS = sbBaseDeviceEventTarget.cpp \
            sbDeviceEventBeforeAddedData.cpp \
            sbDeviceLibrary.cpp \
            sbDeviceLibraryHelpers.cpp \
+           sbDeviceLibraryMediaSyncSettings.cpp \
+           sbDeviceLibrarySyncSettings.cpp \
            sbDeviceProperties.cpp \
            sbDeviceCapabilities.cpp \
            sbDeviceStatus.cpp \

@@ -407,6 +407,22 @@ var AlbumArt = {
   },
   
   /**
+   * \brief dpStateListener - Called when the display pane changes state
+   */
+  dpStateListener: function AlbumArt_onDisplayPaneStateListener(e) {
+    if (!AlbumArt._displayPane)
+      return;
+
+    // the state is the state *before* it's changed
+    if (e.target.getAttribute("state") == "open") {
+      // it's collapsing, reset the contentTitle
+      AlbumArt._displayPane.contentTitle = "";
+    } else {
+      AlbumArt.setPaneTitle();
+    }
+  },
+
+  /**
    * \brief onServicepaneResize - Called when the servicepane is resized
    */
   onServicepaneResize: function AlbumArt_onServicepaneResize(e) {
@@ -468,12 +484,11 @@ var AlbumArt = {
     if (dpInstantiator) {
       AlbumArt._displayPane = dpInstantiator.displayPane;
     }
-    // Set the special attribute that we use for removing the always-visible
-    // grippy
     var splitter = AlbumArt._displayPane._splitter;
-    splitter.setAttribute("hovergrippy", "true");
     // Also remove the ability for this slider to be manually resized
     splitter.setAttribute("disabled", "true");
+    splitter.addEventListener("displaypane-state", AlbumArt.dpStateListener,
+                              false);
 
     // Get the mediacoreManager.
     AlbumArt._mediacoreManager =
@@ -547,6 +562,8 @@ var AlbumArt = {
   onUnload: function AlbumArt_onUnload() {
     // Remove our unload event listener so we do not leak
     window.removeEventListener("unload", AlbumArt.onUnload, false);
+    AlbumArt._displayPane._splitter.removeEventListener("displaypane-state",
+                                 AlbumArt.dpStateListener, false);
 
     // Remove servicepane resize listener
     AlbumArt._servicePaneSplitter.removeEventListener("dragging",

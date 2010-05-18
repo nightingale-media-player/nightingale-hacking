@@ -184,6 +184,10 @@ NewReleases = {
     var SPS = Cc["@songbirdnest.com/servicepane/service;1"]
                 .getService(Ci.sbIServicePaneService);
 		
+    // Check whether the node already exists
+    if (SPS.getNode("urn:newreleases"))
+      return;
+		
     var servicesNode = SPS.getNode("SB:Services");
     if (servicesNode) {
       servicesNode.hidden = false;
@@ -203,10 +207,10 @@ NewReleases = {
     var newReleasesNode = SPS.createNode();
     newReleasesNode.id = "urn:newreleases";
     newReleasesNode.url = "chrome://newreleases/content/browse.xul";
-    newReleasesNode.name = this._strings.getString("servicePaneName");
+    newReleasesNode.name = "&servicePane.Name";
+    newReleasesNode.tooltip = "&servicePane.Tooltip";
+    newReleasesNode.stringbundle = "chrome://newreleases/locale/overlay.properties";
     newReleasesNode.image = 'chrome://newreleases/skin/node-icon.png';
-    newReleasesNode.tooltip =
-      this._strings.getString("servicePaneInitialTooltip");
     newReleasesNode.editable = false;
     newReleasesNode.className = "newReleases";
     newReleasesNode.setAttributeNS(SP_NS, "addonID", "@EXTENSION_UUID@");
@@ -251,29 +255,15 @@ NewReleases = {
 			return;
 		this.lastReleasesCount = newReleasesCount;
 
-		var name;
-		var tooltip;
-		if (typeof(this.servicePaneStr) == "undefined") {
-			this.servicePaneStr = Cc["@mozilla.org/intl/stringbundle;1"]
-				.getService(Ci.nsIStringBundleService)
-				.createBundle("chrome://newreleases/locale/overlay.properties");
-
-		}
-
 		var SPS = Cc["@songbirdnest.com/servicepane/service;1"]
 								.getService(Ci.sbIServicePaneService);
 		var newReleasesNode = SPS.getNode("urn:newreleases");
 		if (newReleasesNode != null) {
-			if (newReleasesCount > 0) {
-				newReleasesNode.name = 
-					this.servicePaneStr.GetStringFromName("servicePaneName")
-					+ " (" + newReleasesCount + ")";
-			} else {
-				newReleasesNode.name = 
-					this.servicePaneStr.GetStringFromName("servicePaneName")
-			}
-			newReleasesNode.tooltip = newReleasesCount +
-				this.servicePaneStr.GetStringFromName("servicePaneTooltip")
+      // Get the DOM node matching the servicePaneNode;
+      let domNode = window.gServicePane.getDOMNode(newReleasesNode.id);
+      // Remove any existing badge that may exist
+      domNode.removeBadge(0);
+      domNode.appendBadge(newReleasesCount, null);
 		}
 	},
 	

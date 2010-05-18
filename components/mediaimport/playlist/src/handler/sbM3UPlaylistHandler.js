@@ -57,7 +57,7 @@ function(aFile, aMediaList, aReplace)
   var re = new RegExp("^" + TOKEN_EXTINF + "([^,]*),?(.*)?$");
 
   var self = this;
-  SB_ProcessFile(aFile, function(aLine) {
+  SB_DetectCharsetAndProcessFile(aFile, function(aLine) {
     // Skip the TOKEN_EXTM3U header and blank lines
     if (aLine == TOKEN_EXTM3U || aLine == "")
       return;
@@ -78,8 +78,13 @@ function(aFile, aMediaList, aReplace)
       return;
     }
 
+    // Some devices store M3U resource locations with back slashes. We expect
+    // paths to have forward slashes, so replace all back slashes. 
+    aLine = aLine.replace(/\\/g, "/");
+    
     // Otherwise, this line is a URL.  Add it to the list
     var newUri = SB_ResolveURI(aLine, this._originalURI);
+
     if (newUri) {
       var item = { uri: newUri, properties: {}};
       if (nextFileMetadata.title)

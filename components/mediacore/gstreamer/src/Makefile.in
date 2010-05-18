@@ -25,6 +25,7 @@ CPP_SRCS = sbGStreamerService.cpp \
            sbGStreamerRTPStreamer.cpp \
            sbGStreamerTranscode.cpp \
            sbGStreamerVideoTranscode.cpp \
+           sbGStreamerTranscodeAudioConfigurator.cpp \
            sbGStreamerTranscodeDeviceConfigurator.cpp \
            $(NULL)
 

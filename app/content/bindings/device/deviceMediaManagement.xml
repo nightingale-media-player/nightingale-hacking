@@ -6,7 +6,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -66,7 +66,7 @@
       <!--
         - expects to have the following attributes:
         - "device-id"
-        - "library-id"
+        - "dev-lib-guid"
         -->
       <xul:vbox flex="1">
         <xul:groupbox flex="1" sbid="transcoding-groupbox" setting="transcode">
@@ -168,12 +168,12 @@
           return "songbird.device." +
                  this.deviceID +
                  ".preferences.library." +
-                 this.libraryID;
+                 this.devLibGUID;
         </getter>
       </property>
       <property name="_devicePrefRoot" readonly="true">
         <getter>
-          return "library." + this.libraryID;
+          return "library." + this.devLibGUID;
         </getter>
       </property>
       <property name="_formatDirPrefName" readonly="true">
@@ -181,18 +181,8 @@
           return "songbird.device." +
                  this.deviceID +
                  ".preferences.library." +
-                 this.libraryID +
+                 this.devLibGUID +
                  ".media_management.library.format.dir";
-        </getter>
-      </property>
-      <property name="deviceID" readonly="true">
-        <getter>
-          return this.getAttribute("device-id");
-        </getter>
-      </property>
-      <property name="libraryID" readonly="true">
-        <getter>
-          return this.getAttribute("library-id");
         </getter>
       </property>
 
@@ -258,8 +248,6 @@
         this.importExternalServices();
 
         DeviceMediaManagementServices.initialize(this);
-
-        Components.utils.import("resource://app/jsmodules/sbStorageFormatter.jsm", this);
 
         var settingsAttribute = this.getAttribute("hide");
         var settingsList = settingsAttribute.split(",");
@@ -390,8 +378,9 @@
           // Get the device capacity.
           var capacity = 0;
           try {
-            capacity = this.device.properties.properties.getPropertyAsInt64
-              ("http://songbirdnest.com/device/1.0#capacity");
+            capacity = this.devLib.getProperty
+                         ("http://songbirdnest.com/device/1.0#capacity");
+            capacity = parseInt(capacity);
           } catch (ex) {};
 
           var limitPercentage = parseInt(this._scale.getAttribute("value"));
@@ -399,7 +388,10 @@
             capacity = ((capacity * limitPercentage) / 100);
           }
 
-          capacity = StorageFormatter.format(capacity);
+          storageConverter =
+            Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
+              .createInstance(Ci.sbIPropertyUnitConverter);
+          capacity = storageConverter.autoFormat(capacity, -1, 1);
 
           this._limitSpaceCheckbox.label =
             SBFormattedString("device.settings.limit_disk_space",
@@ -489,6 +481,12 @@
 
     <handlers>
       <handler event="deviceBound"><![CDATA[
+        /* Re-initialize the device music management services. */
+        DeviceMediaManagementServices.finalize(this);
+        DeviceMediaManagementServices.initialize(this);
+      ]]></handler>
+
+      <handler event="devLibBound"><![CDATA[
         /* Re-initialize the device music management services. */
         DeviceMediaManagementServices.finalize(this);
         DeviceMediaManagementServices.initialize(this);

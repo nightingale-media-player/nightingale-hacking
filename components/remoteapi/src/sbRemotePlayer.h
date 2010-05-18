@@ -38,6 +38,7 @@
 #include <sbIMediacoreEventListener.h>
 #include <sbIMediacoreManager.h>
 #include <sbIRemoteLibrary.h>
+#include <sbIRemoteObserver.h>
 #include <sbIRemotePlayer.h>
 #include <sbISecurityAggregator.h>
 
@@ -68,7 +69,7 @@
 }
 
 struct sbRemoteObserver {
-  nsCOMPtr<nsIObserver> observer;
+  nsCOMPtr<sbIRemoteObserver> observer;
   nsCOMPtr<sbIDataRemote> remote;
 };
 

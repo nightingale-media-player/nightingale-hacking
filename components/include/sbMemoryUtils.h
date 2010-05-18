@@ -173,10 +173,7 @@ public:                                                                        \
                                                                                \
   aType& operator=(aType aValue)                                               \
   {                                                                            \
-    if (aIsValid) {                                                            \
-      aDispose;                                                                \
-      aInvalidate;                                                             \
-    }                                                                          \
+    Clear();                                                                   \
     Set(aValue);                                                               \
     return mValue;                                                             \
   }                                                                            \
@@ -186,6 +183,20 @@ public:                                                                        \
     if (!(aIsValid))                                                           \
       return PR_FALSE;                                                         \
     return PR_TRUE;                                                            \
+  }                                                                            \
+                                                                               \
+  void Clear()                                                                 \
+  {                                                                            \
+    if (aIsValid) {                                                            \
+      aDispose;                                                                \
+      aInvalidate;                                                             \
+    }                                                                          \
+  }                                                                            \
+                                                                               \
+  aType* StartAssignment()                                                     \
+  {                                                                            \
+    Clear();                                                                   \
+    return reinterpret_cast<aType*>(&mValue);                                  \
   }                                                                            \
                                                                                \
 private:                                                                       \
@@ -260,6 +271,17 @@ nsresult sbReturnCOMPtr(COMPtr & aPtr, ReturnType ** aReturn)
   NS_IF_ADDREF(*aReturn);
 
   return NS_OK;
+}
+
+/**
+ * \brief Clone a block of contiguous memory
+ */
+inline void *
+SB_CloneMemory(const void* ptr, PRSize size) {
+  void* newPtr = NS_Alloc(size);
+  if (newPtr)
+    memcpy(newPtr, ptr, size);
+  return newPtr;
 }
 
 #endif /* __SBMEMORYUTILS_H__ */

@@ -58,6 +58,7 @@
 #include <prlog.h>
 #include <sbLibraryManager.h>
 #include <sbMemoryUtils.h>
+#include <sbDebugUtils.h>
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseLibraryFactory.h"
 
@@ -801,7 +802,7 @@ sbLocalDatabaseLibraryLoader::OnRegisterStartupLibraries(sbILibraryManager* aLib
   
   sbLoaderInfo info(aLibraryManager, libraryFactory);
 
-  PRUint32 enumeratedLibraries = 
+  PRUint32 SB_UNUSED_IN_RELEASE(enumeratedLibraries) = 
     mLibraryInfoTable.EnumerateRead(LoadLibrariesCallback, &info);
   NS_ASSERTION(enumeratedLibraries >= MINIMUM_LIBRARY_COUNT, "Too few libraries enumerated!");
 

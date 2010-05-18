@@ -202,26 +202,32 @@ function sbAutoDownloader_onItemAdded(aMediaList, aMediaItem, aIndex) {
 sbAutoDownloader.prototype.onBeforeItemRemoved =
 function sbAutoDownloader_onBeforeItemRemoved(aMediaList, aMediaItem, aIndex) {
   DEBUG();
+  return true;
 }
 sbAutoDownloader.prototype.onAfterItemRemoved =
 function sbAutoDownloader_onAfterItemRemoved(aMediaList, aMediaItem, aIndex) {
   DEBUG();
+  return true;
 }
 sbAutoDownloader.prototype.onItemUpdated =
 function sbAutoDownloader_onItemUpdated(aMediaList, aMediaItem, aProperties) {
   DEBUG();
+  return true;
 }
 sbAutoDownloader.prototype.onItemMoved =
 function sbAutoDownloader_onItemMoved(aMediaList, aFromIndex, aToIndex) {
   DEBUG();
+  return true;
 }
 sbAutoDownloader.prototype.onBeforeListCleared =
 function sbAutoDownloader_onBeforeListCleared(aMediaList, aExcludeLists) {
   DEBUG();
+  return true;
 }
 sbAutoDownloader.prototype.onListCleared =
 function sbAutoDownloader_onListCleared(aMediaList, aExcludeLists) {
   DEBUG();
+  return true;
 }
 sbAutoDownloader.prototype.onBatchBegin =
 function sbAutoDownloader_onBatchBegin(aMediaList) {

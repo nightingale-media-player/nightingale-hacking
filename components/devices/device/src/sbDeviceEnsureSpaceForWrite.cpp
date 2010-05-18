@@ -43,6 +43,7 @@
 #include <sbIDeviceProperties.h>
 #include <sbLibraryUtils.h>
 #include <sbStandardDeviceProperties.h>
+#include <sbStringUtils.h>
 #include <sbVariantUtils.h>
 
 /*
@@ -96,7 +97,7 @@ sbDeviceEnsureSpaceForWrite::~sbDeviceEnsureSpaceForWrite() {
 nsresult
 sbDeviceEnsureSpaceForWrite::BuildItemsToWrite() {
   nsresult rv;
-  
+
   PRInt32 order = 0;
   Batch::iterator const batchEnd = mBatch.end();
   for (Batch::iterator iter = mBatch.begin(); iter != batchEnd; ++iter) {
@@ -137,7 +138,7 @@ sbDeviceEnsureSpaceForWrite::BuildItemsToWrite() {
     }
 
     PRInt64 contentLength;
-    
+
     rv = sbLibraryUtils::GetContentLength(request->item,
                                           &contentLength);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -154,28 +155,30 @@ sbDeviceEnsureSpaceForWrite::BuildItemsToWrite() {
 
 nsresult
 sbDeviceEnsureSpaceForWrite::GetFreeSpace() {
-  // get the device properties
-  nsCOMPtr<sbIDeviceProperties> baseDeviceProperties;
-  nsCOMPtr<nsIPropertyBag2>     deviceProperties;
-  nsresult rv = mDevice->GetProperties(getter_AddRefs(baseDeviceProperties));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = baseDeviceProperties->GetProperties(getter_AddRefs(deviceProperties));
-  NS_ENSURE_SUCCESS(rv, rv);
+  // no free space if no library
+  if (!mOwnerLibrary) {
+    mFreeSpace = 0;
+    return NS_OK;
+  }
+
+  nsresult rv;
 
   // get the free space
-  rv = deviceProperties->GetPropertyAsInt64
-                           (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_FREE_SPACE),
-                            &mFreeSpace);
+  nsAutoString freeSpaceStr;
+  rv = mOwnerLibrary->GetProperty
+                        (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_FREE_SPACE),
+                         freeSpaceStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+  mFreeSpace = nsString_ToInt64(freeSpaceStr, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // apply limit to the total space available for music
-  if (mOwnerLibrary) {
-    PRInt64 freeMusicSpace;
-    rv = mDevice->GetMusicFreeSpace(mOwnerLibrary, &freeMusicSpace);
-    NS_ENSURE_SUCCESS(rv, rv);
-    if (mFreeSpace >= freeMusicSpace)
-      mFreeSpace = freeMusicSpace;
-  }
+  PRInt64 freeMusicSpace;
+  rv = mDevice->GetMusicFreeSpace(mOwnerLibrary, &freeMusicSpace);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (mFreeSpace >= freeMusicSpace)
+    mFreeSpace = freeMusicSpace;
+
   return NS_OK;
 }
 
@@ -191,7 +194,7 @@ sbDeviceEnsureSpaceForWrite::GetFreeSpace() {
 nsresult
 sbDeviceEnsureSpaceForWrite::GetWriteMode(WriteMode & aWriteMode) {
   PRBool isManual;
-  nsresult rv = mOwnerLibrary->GetIsMgmtTypeManual(&isManual);
+  nsresult rv = mOwnerLibrary->GetIsManualSyncMode(&isManual);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // if not enough free space is available, ask user what to do
@@ -213,13 +216,13 @@ sbDeviceEnsureSpaceForWrite::GetWriteMode(WriteMode & aWriteMode) {
       if (!isManual) {
         aWriteMode = SHUFFLE;
       }
-      else { 
+      else {
         aWriteMode = MANUAL;
       }
       mDevice->SetEnsureSpaceChecked(true);
     }
   }
-  else { 
+  else {
     aWriteMode = NOP;
   }
   return NS_OK;
@@ -231,8 +234,8 @@ public:
   typedef sbDeviceEnsureSpaceForWrite::ItemsToWrite ItemsToWrite;
   typedef sbDeviceEnsureSpaceForWrite::BatchLink BatchLink;
   typedef sbDeviceEnsureSpaceForWrite::Batch Batch;
-  
-  CompareItemOrderInBatch(ItemsToWrite * aItemsToWrite) : 
+
+  CompareItemOrderInBatch(ItemsToWrite * aItemsToWrite) :
     mItemsToWrite(aItemsToWrite) {}
   bool operator()(sbIMediaItem * aLeft, sbIMediaItem * aRight) const {
     ItemsToWrite::iterator iter = mItemsToWrite->find(aLeft);
@@ -262,7 +265,7 @@ sbDeviceEnsureSpaceForWrite::RemoveItemsFromLibrary(RemoveItems::iterator iter,
                                                     RemoveItems::iterator end) {
 
   nsresult rv;
-  
+
   for (;iter != end; ++iter) {
 
     // tell the user about it
@@ -273,7 +276,7 @@ sbDeviceEnsureSpaceForWrite::RemoveItemsFromLibrary(RemoveItems::iterator iter,
 
     rv = iter->mList->Remove(iter->mItem);
   }
-  
+
   return NS_OK;
 }
 
@@ -281,13 +284,13 @@ sbDeviceEnsureSpaceForWrite::RemoveItemsFromLibrary(RemoveItems::iterator iter,
  * Copies the sbIMediaItem pointers into a list so we can order it later
  */
 void sbDeviceEnsureSpaceForWrite::CreateItemList(ItemList & aItems) {
-  
+
   ItemsToWrite::iterator const end = mItemsToWrite.end();
-  for (ItemsToWrite::iterator itemsIter = mItemsToWrite.begin(); 
+  for (ItemsToWrite::iterator itemsIter = mItemsToWrite.begin();
        itemsIter != end;
        ++itemsIter) {
     aItems.push_back(itemsIter->first);
-  }  
+  }
 }
 
 nsresult
@@ -295,10 +298,10 @@ sbDeviceEnsureSpaceForWrite::RemoveExtraItems() {
   WriteMode writeMode;
   nsresult rv = GetWriteMode(writeMode);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   ItemList items;
   switch (writeMode) {
-    case SHUFFLE: { 
+    case SHUFFLE: {
       CreateItemList(items);
       // shuffle the list
       std::random_shuffle(items.begin(), items.end());
@@ -325,29 +328,29 @@ sbDeviceEnsureSpaceForWrite::RemoveExtraItems() {
 
   // and a set of items we can't fit
   RemoveItems itemsToRemove;
-  
+
   // fit as much of the list as possible
   ItemList::iterator const end = items.end();
   PRInt64 bytesRemaining = mFreeSpace;
   for (ItemList::iterator iter = items.begin(); iter != end; ++iter) {
     ItemsToWrite::iterator const itemIter = mItemsToWrite.find(*iter);
-    NS_ASSERTION(itemIter != mItemsToWrite.end(), 
+    NS_ASSERTION(itemIter != mItemsToWrite.end(),
                  "items and itemsToWrite out of sync");
     BatchLink & batchLink = mItemsToWrite[*iter];
     PRInt64 const length = batchLink.mLength;
-  
+
     if (bytesRemaining > length) {
       // this will fit
       bytesRemaining -= length;
     } else {
       // won't fit
-      BatchLink::BatchIters::iterator const batchEnd = 
+      BatchLink::BatchIters::iterator const batchEnd =
         batchLink.mBatchIters.end();
       for (BatchLink::BatchIters::iterator batchIter =
              batchLink.mBatchIters.begin();
            batchIter != batchEnd;
            ++batchIter) {
-        
+
         TransferRequest * const request = **batchIter;
         itemsToRemove.push_back(RemoveItemInfo(request->item, request->list));
         mBatch.erase(*batchIter);
@@ -357,7 +360,7 @@ sbDeviceEnsureSpaceForWrite::RemoveExtraItems() {
   rv = RemoveItemsFromLibrary(itemsToRemove.begin(), itemsToRemove.end());
   SBUpdateBatchCounts(mBatch);
   SBUpdateBatchIndex(mBatch);
-  
+
   return NS_OK;
 }
 
@@ -365,16 +368,16 @@ nsresult
 sbDeviceEnsureSpaceForWrite::EnsureSpace() {
   nsresult rv = BuildItemsToWrite();
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   if (mItemsToWrite.empty()) {
     return NS_OK;
   }
-  
+
   rv = GetFreeSpace();
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = RemoveExtraItems();
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   return NS_OK;
 }

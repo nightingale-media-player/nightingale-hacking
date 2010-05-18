@@ -1,29 +1,27 @@
 /* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #include "sbMediacoreSequencer.h"
 
@@ -53,7 +51,9 @@
 #include <prtime.h>
 
 #include <sbICascadeFilterSet.h>
+#include <sbIFilterableMediaListView.h>
 #include <sbILibrary.h>
+#include <sbILibraryConstraints.h>
 #include <sbIMediacore.h>
 #include <sbIMediacoreEvent.h>
 #include <sbIMediacoreEventTarget.h>
@@ -2546,6 +2546,18 @@ sbMediacoreSequencer::PlayView(sbIMediaListView *aView,
   rv = Play();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Fire EXPLICIT_TRACK_CHANGE when PlayView() is called.
+  nsCOMPtr<sbIMediacoreEvent> event;
+  rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::EXPLICIT_TRACK_CHANGE,
+                                     nsnull,
+                                     nsnull,
+                                     mCore,
+                                     getter_AddRefs(event));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = DispatchMediacoreEvent(event);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -2706,6 +2718,8 @@ NS_IMETHODIMP
 sbMediacoreSequencer::Next()
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  
+  nsresult rv = NS_ERROR_UNEXPECTED;
 
   nsAutoMonitor mon(mMonitor);
 
@@ -2766,8 +2780,6 @@ sbMediacoreSequencer::Next()
 
   // No next track, not an error.
   if(!hasNext) {
-    nsresult rv = NS_ERROR_UNEXPECTED;
-
     // No next track and playing, stop.
     if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
        mStatus == sbIMediacoreStatus::STATUS_PAUSED ||
@@ -2809,9 +2821,23 @@ sbMediacoreSequencer::Next()
     return NS_OK;
   }
 
+  // Fire EXPLICIT_TRACK_CHANGE when Next() was not triggered by the stream ending.
+  if(!mNextTriggeredByStreamEnd) {
+    nsCOMPtr<sbIMediacoreEvent> event;
+    rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::EXPLICIT_TRACK_CHANGE,
+                                       nsnull,
+                                       nsnull,
+                                       mCore,
+                                       getter_AddRefs(event));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = DispatchMediacoreEvent(event);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   mon.Exit();
 
-  nsresult rv = ProcessNewPosition();
+  rv = ProcessNewPosition();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -2821,6 +2847,8 @@ NS_IMETHODIMP
 sbMediacoreSequencer::Previous()
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
 
   nsAutoMonitor mon(mMonitor);
 
@@ -2866,8 +2894,6 @@ sbMediacoreSequencer::Previous()
 
   // No next track, not an error.
   if(!hasNext) {
-    nsresult rv = NS_ERROR_UNEXPECTED;
-
     // No next track and playing, stop.
     if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
        mStatus == sbIMediacoreStatus::STATUS_PAUSED ||
@@ -2909,9 +2935,23 @@ sbMediacoreSequencer::Previous()
     return NS_OK;
   }
 
+  // Fire EXPLICIT_TRACK_CHANGE when Previous() was not triggered by the stream ending.
+  if(!mNextTriggeredByStreamEnd) {
+    nsCOMPtr<sbIMediacoreEvent> event;
+    rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::EXPLICIT_TRACK_CHANGE,
+                                       nsnull,
+                                       nsnull,
+                                       mCore,
+                                       getter_AddRefs(event));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = DispatchMediacoreEvent(event);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   mon.Exit();
 
-  nsresult rv = ProcessNewPosition();
+  rv = ProcessNewPosition();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -3382,6 +3422,7 @@ sbMediacoreSequencer::OnBeforeItemRemoved(sbIMediaList *aMediaList,
                                           PRUint32 aIndex,
                                           PRBool *_retval)
 {
+  *_retval = PR_TRUE;
   return NS_OK;
 }
 
@@ -3556,7 +3597,7 @@ sbMediacoreSequencer::OnBeforeListCleared(sbIMediaList* aMediaList,
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
 
   // Don't care
-  *aNoMoreForBatch = PR_FALSE;
+  *aNoMoreForBatch = PR_TRUE;
   return NS_OK;
 }
 
@@ -3661,13 +3702,27 @@ sbMediacoreSequencer::CheckPropertiesInfluenceView(sbIPropertyArray *aProperties
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  nsCOMPtr<sbICascadeFilterSet> cfs;
-  rv = mView->GetCascadeFilterSet(getter_AddRefs(cfs));
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbICascadeFilterSet>  cfs;
+  PRUint16                       filterCount = 0;
+  nsCOMPtr<sbILibraryConstraint> constraint;
+  PRUint32                       constraintGroupCount = 0;
 
-  PRUint16 filterCount = 0;
-  rv = cfs->GetLength(&filterCount);
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIFilterableMediaListView>
+    filterableView = do_QueryInterface(mView);
+  if (filterableView) {
+    rv = filterableView->GetFilterConstraint(getter_AddRefs(constraint));
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (constraint) {
+      rv = constraint->GetGroupCount(&constraintGroupCount);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+  else {
+    rv = mView->GetCascadeFilterSet(getter_AddRefs(cfs));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = cfs->GetLength(&filterCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   nsCOMPtr<sbISortableMediaListView> sortableView;
   sortableView = do_QueryInterface(mView, &rv);
@@ -3690,15 +3745,35 @@ sbMediacoreSequencer::CheckPropertiesInfluenceView(sbIPropertyArray *aProperties
     rv = property->GetId(id);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Check the cascade filter set
-    for (PRUint16 filterIndex = 0; filterIndex < filterCount; ++filterIndex) {
-      nsString filter;
-      rv = cfs->GetProperty(filterIndex, filter);
-      NS_ENSURE_SUCCESS(rv, rv);
+    // Check the filter constraint
+    if (constraint) {
+      for (PRUint32 groupIndex = 0;
+           groupIndex < constraintGroupCount;
+           ++groupIndex) {
+        nsCOMPtr<sbILibraryConstraintGroup> group;
+        rv = constraint->GetGroup(groupIndex, getter_AddRefs(group));
+        NS_ENSURE_SUCCESS(rv, rv);
 
-      if (id.Equals(filter)) {
-        // The property is present in the cascade filter set
-        return PR_TRUE;
+        PRBool hasProperty;
+        rv = group->HasProperty(id, &hasProperty);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        if (hasProperty)
+          return PR_TRUE;
+      }
+    }
+
+    // Check the cascade filter set
+    if (cfs) {
+      for (PRUint16 filterIndex = 0; filterIndex < filterCount; ++filterIndex) {
+        nsString filter;
+        rv = cfs->GetProperty(filterIndex, filter);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        if (id.Equals(filter)) {
+          // The property is present in the cascade filter set
+          return PR_TRUE;
+        }
       }
     }
 
