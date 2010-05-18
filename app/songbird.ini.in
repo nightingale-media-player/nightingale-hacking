@@ -2,5 +2,6 @@
 [steps:update]
 0001=exec $APPDIR$cdriphelper.exe upgrade
 0002=exec $APPDIR$sbAutoPlayUtil.exe -Upgrade
+
 [steps:update:mac]
-0001=exec say Songbird Update dist helper testing
+; any mac-specific steps go here; we don't have them at the moment.
