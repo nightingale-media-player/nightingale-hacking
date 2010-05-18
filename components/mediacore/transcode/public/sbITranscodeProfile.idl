@@ -108,7 +108,7 @@ interface sbITranscodeProfile : nsISupports
   /* \brief The container format to put the transcoded media in (if any).
 
      Examples:
-       "appliction/ogg", "audio/mpeg", "video/quicktime", "video/x-ms-asf",
+       "appliction/ogg", "audio/mpeg", "video/mp4", "video/x-ms-asf",
        "audio/x-wav"
 
      May be an empty string to indicate that no container is desired.
@@ -171,7 +171,7 @@ interface sbITranscodeEncoderProfile : sbITranscodeProfile {
    * \brief The container format to put the transcoded media in (if any).
    *
    * Examples:
-   *   "application/ogg", "audio/mpeg", "video/quicktime"
+   *   "application/ogg", "audio/mpeg", "video/mp4"
    *
    * May be an empty string to indicate that no container is desired.
    *

@@ -755,7 +755,10 @@ struct sb_gst_caps_map_entry {
 static const struct sb_gst_caps_map_entry sb_gst_caps_map[] =
 {
   // mpeg audio we always want id3 tags on for the container
-  { "audio/mpeg",   "application/x-id3", SB_GST_CAPS_MAP_CONTAINER },
+  { "audio/mpeg",        "application/x-id3", SB_GST_CAPS_MAP_CONTAINER },
+  // Quicktime video variants
+  { "video/3gpp",        "video/quicktime", SB_GST_CAPS_MAP_CONTAINER },
+  { "video/mp4",         "video/quicktime", SB_GST_CAPS_MAP_CONTAINER },
 
   { "audio/x-pcm-int",   "audio/x-raw-int", SB_GST_CAPS_MAP_AUDIO },
   { "audio/x-pcm-float", "audio/x-raw-float", SB_GST_CAPS_MAP_AUDIO },
@@ -764,9 +767,17 @@ static const struct sb_gst_caps_map_entry sb_gst_caps_map[] =
   { "video/x-ms-wmv",    "video/x-wmv", SB_GST_CAPS_MAP_VIDEO },
 
   // The remaining ones have NONE type; they should ONLY be used for mapping
-  // a GST type to a mime type, not the other way around
+  // a GST type to a mime type, not the other way around. It's ok for duplicate
+  // mime types (the first column) here, since they're not used for mapping
+  // mime types to caps.
+
+  // MPEG4 video variants; treat them all as video/mpeg
   { "video/mpeg",        "video/x-divx", SB_GST_CAPS_MAP_NONE },
   { "video/mpeg",        "video/x-xvid", SB_GST_CAPS_MAP_NONE },
+
+  // Quicktime file format variants, map them to the appropriate type
+  { "video/mp4",         "audio/x-m4a", SB_GST_CAPS_MAP_NONE },
+  { "video/3gpp",        "application/x-3gp", SB_GST_CAPS_MAP_NONE },
 };
 
 /* GStreamer caps name are generally similar to mime-types, but some of them
@@ -794,7 +805,8 @@ GstCaps *
 GetCapsForMimeType (const nsACString &aMimeType, enum sbGstCapsMapType aType )
 {
   nsCString name = GetGstCapsName (aMimeType, aType);
-  // set up a caps structure
+  // set up a caps structure. Note that this ONLY provides the name part of the
+  // structure, it does NOT add attributes to the caps that may be required.
   GstCaps *caps = gst_caps_from_string(name.BeginReading());
   return caps;
 }
@@ -803,8 +815,26 @@ GetCapsForMimeType (const nsACString &aMimeType, enum sbGstCapsMapType aType )
 nsresult
 GetMimeTypeForCaps (GstCaps *aCaps, nsACString &aMimeType)
 {
-  const gchar *capsName = gst_structure_get_name (
-          gst_caps_get_structure (aCaps, 0));
+  GstStructure *structure = gst_caps_get_structure (aCaps, 0);
+  const gchar *capsName = gst_structure_get_name (structure);
+
+  // Need to special-case this one.
+  if (!strcmp(capsName, "video/quicktime")) {
+    const gchar *variant = gst_structure_get_string (structure, "variant");
+    if (variant) {
+      if (!strcmp(variant, "3gpp"))
+        aMimeType.AssignLiteral("video/3gpp");
+      else if (!strcmp(variant, "iso"))
+        aMimeType.AssignLiteral("video/mp4");
+      else // variant is 'apple' or something we don't recognise; use quicktime.
+        aMimeType.AssignLiteral("video/quicktime");
+    }
+    else {
+      // No variant; use quicktime
+      aMimeType.AssignLiteral("video/quicktime");
+    }
+    return NS_OK;
+  }
 
   for (unsigned int i = 0; i < NS_ARRAY_LENGTH (sb_gst_caps_map); i++)
   {
