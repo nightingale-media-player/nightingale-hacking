@@ -30,10 +30,6 @@ include $(DEPTH)/build/autodefs.mk
 
 IS_EXTENSION = 1
 
-ifeq (,$(filter windows macosx linux,$(SB_PLATFORM)))
-   $(error The iPod extension can only be built on windows, linux or macosx)
-endif
-
 SUBDIRS = components/ComponentLoader \
           components/public \
           components/src \
