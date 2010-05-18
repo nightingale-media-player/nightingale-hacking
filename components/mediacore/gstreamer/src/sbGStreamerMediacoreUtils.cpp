@@ -399,6 +399,9 @@ static const struct errMap StreamErrorMap[] = {
   { GST_STREAM_ERROR_FAILED, GStreamer::OP_UNKNOWN,
       sbIMediacoreError::SB_STREAM_FAILURE,
         "mediacore.error.failure"},
+  { GST_STREAM_ERROR_DECRYPT, GStreamer::OP_UNKNOWN,
+      sbIMediacoreError::SB_STREAM_FAILURE,
+        "mediacore.error.decrypt"},
 };
 
 nsresult
