@@ -322,7 +322,8 @@ sbGStreamerTranscodeDeviceConfigurator::EnsureProfileAvailable(sbITranscodeEncod
     }
     gst_caps_unref(caps);
     if (!muxerCodecName) {
-      TRACE(("no muxer available for %s",
+      TRACE(("%s: no muxer available for %s",
+             __FUNCTION__,
              NS_LossyConvertUTF16toASCII(capsName).get()));
       return NS_ERROR_UNEXPECTED;
     }
@@ -347,7 +348,8 @@ sbGStreamerTranscodeDeviceConfigurator::EnsureProfileAvailable(sbITranscodeEncod
     const char* audioEncoder = FindMatchingElementName(caps, "Encoder");
     gst_caps_unref(caps);
     if (!audioEncoder) {
-      TRACE(("no audio encoder available for %s",
+      TRACE(("%s: no audio encoder available for %s",
+             __FUNCTION__,
              NS_LossyConvertUTF16toASCII(capsName).get()));
       return NS_ERROR_UNEXPECTED;
     }
@@ -372,7 +374,8 @@ sbGStreamerTranscodeDeviceConfigurator::EnsureProfileAvailable(sbITranscodeEncod
     const char* videoEncoder = FindMatchingElementName(caps, "Encoder");
     gst_caps_unref(caps);
     if (!videoEncoder) {
-      TRACE(("no video encoder available for %s",
+      TRACE(("%s: no video encoder available for %s",
+             __FUNCTION__,
              NS_LossyConvertUTF16toASCII(capsName).get()));
       return NS_ERROR_UNEXPECTED;
     }
@@ -424,6 +427,7 @@ sbGStreamerTranscodeDeviceConfigurator::SelectQuality()
   }
   rv = SetQuality(quality);
   NS_ENSURE_SUCCESS(rv, rv);
+  TRACE(("%s: set quality to %f", __FUNCTION__, quality));
   return NS_OK;
 }
 
@@ -626,6 +630,7 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
   mSelectedProfile = selectedProfile;
   if (!mSelectedProfile) {
     // no suitable encoder profile found
+    TRACE(("%s: no suitable encoder profile found", __FUNCTION__));
     // report an error
     nsString deviceName;
     rv = mDevice->GetName(deviceName);
@@ -656,6 +661,13 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
   CopyASCIItoUTF16(elementNames.videoEncoder, mVideoEncoder);
   rv = selectedProfile->GetFileExtension(mFileExtension);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  TRACE(("%s: profile selected, using muxer [%s] audio [%s] video [%s] extension [%s]",
+         __FUNCTION__,
+         elementNames.muxer.get(),
+         elementNames.audioEncoder.get(),
+         elementNames.videoEncoder.get(),
+         mFileExtension.get()));
 
   /* Set whether we're using these - in this configurator, this is based
      entirely on whether we've selected a specific element */
@@ -1007,7 +1019,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineIdealOutputSize()
     nsCOMPtr<nsISupports> supports;
     rv = sizeEnum->GetNext(getter_AddRefs(supports));
     NS_ENSURE_SUCCESS(rv, rv);
-    nsCOMPtr<sbIImageSize> size = do_QueryInterface(supports);
+    nsCOMPtr<sbIImageSize> size = do_QueryInterface(supports, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     PRInt32 width, height;
     rv = size->GetWidth(&width);
@@ -1040,7 +1052,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineIdealOutputSize()
   // number of pixels)
   rv = explicitSizes->Enumerate(getter_AddRefs(sizeEnum));
   NS_ENSURE_SUCCESS(rv, rv);
-  Dimensions result, best(0, 0), maxSize;
+  Dimensions result, best(0, 0), selected(0, 0), maxSize;
   while (NS_SUCCEEDED(rv = sizeEnum->HasMoreElements(&hasMore)) && hasMore) {
     nsCOMPtr<nsISupports> supports;
     rv = sizeEnum->GetNext(getter_AddRefs(supports));
@@ -1054,6 +1066,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineIdealOutputSize()
     result = GetMaximumFit(input, maxSize);
     if (result.width > best.width) {
       best = result;
+      selected = maxSize;
     }
   }
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1062,7 +1075,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineIdealOutputSize()
     return NS_ERROR_FAILURE;
   }
 
-  mPreferredDimensions = best;
+  mPreferredDimensions = selected;
   return NS_OK;
 }
 
