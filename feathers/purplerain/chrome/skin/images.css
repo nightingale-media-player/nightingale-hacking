@@ -320,11 +320,6 @@ notification[type="critical"],
   */
 
 
-#servicepane {
-  background-image:url('chrome://songbird/skin/service-pane/bg-service-pane.png');
-  background-repeat:repeat-x;
-  background-position:center top;
-}
 .servicepane-tree > treechildren::-moz-tree-row( selected ),
 .servicepane-tree > treechildren::-moz-tree-row( selected focus ) {
   background-image: url('chrome://songbird/skin/service-pane/bg-selected-node.png');
