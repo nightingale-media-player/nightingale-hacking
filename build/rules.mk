@@ -137,6 +137,13 @@ ifdef IS_EXTENSION # {
       endif
    endif
 
+   # Check for supported platforms...
+   ifdef EXTENSION_SUPPORTED_PLATFORMS
+      ifeq (,$(filter $(EXTENSION_SUPPORTED_PLATFORMS),$(SB_PLATFORM)))
+         $(error The $(OUR_EXTENSION_NAME) extension can only be built on the following platforms: $(EXTENSION_SUPPORTED_PLATFORMS))
+      endif
+   endif
+
    # Allow extension-config.mk to override this
    EXTENSION_STAGE_DIR ?= $(SONGBIRD_OBJDIR)/extensions/$(OUR_EXTENSION_NAME)/.xpistage
 
