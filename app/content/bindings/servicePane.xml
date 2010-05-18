@@ -577,7 +577,6 @@
       <method name="setAsDropTarget">
         <parameter name="isdroptarget"/>
         <body><![CDATA[
-          const DEVICESP_NS = "http://songbirdnest.com/rdf/device-servicepane#";
           var nodeToUpdate;
           // If we're a library node, and our parent node is a device node,
           // then apply the styles to the device node
@@ -808,9 +807,10 @@
         <parameter name="event"/>
         <parameter name="session"/>
         <body>
+        <![CDATA[
           this.setAsDropTarget(false);
           this._removeDropOrientationClass();
-        </body>
+        ]]></body>
       </method>
 
       <method name="onDrop">
@@ -822,6 +822,7 @@
                                this.mDragService.getCurrentSession(),
                                this.mDropOrientation,
                                window);
+          this.setAsDropTarget(false);
         ]]></body>
       </method>
 
@@ -1285,7 +1286,6 @@
         this.mService =
           Components.classes['@songbirdnest.com/servicepane/service;1']
           .getService(Components.interfaces.sbIServicePaneService);
-        this.mService.init();
 
         this.loadServicePane();
 
@@ -1551,7 +1551,7 @@
             // in history and loaded the previously loaded page.  check the
             // servicepane to see if we have a node that matches the page,
             // and if so - visually highlight/select it
-          },
+          }
         })
       ]]>
       </field>
@@ -2313,8 +2313,10 @@
           this.log("Exited servicepane, canceling auto-expand timer");
           clearTimeout(this._timer);
           this._timer = null;
-          this._timerGroup._expandTimerRunning = null;
-          this._timerGroup = null;
+          if (this._timerGroup) {
+            this._timerGroup._expandTimerRunning = null;
+            this._timerGroup = null;
+          }
         }
 
         if (this._collapsedGroup && !event.relatedTarget) {
