@@ -108,19 +108,8 @@
             this.updateButtons(aManual);
 
             if (aManual) {
-              this.devLib.syncMode = Ci.sbIDeviceLibrary.SYNC_MANUAL;
-              // Set editable to true for device playlists in manual mode.
-              var DSP = Cc['@songbirdnest.com/servicepane/device;1']
-                          .getService(Ci.sbIDeviceServicePaneService);
-              var base = 'http://songbirdnest.com/rdf/library-servicepane#';
-              var deviceNode = DSP.getNodeForDevice(this.device);
-              for (let node = deviceNode.firstChild; node;
-                   node = node.nextSibling) {
-                var listType = node.getAttributeNS(base, "ListType");
-                // Only update the playlist nodes.
-                if (listType != "library")
-                  node.editable = true;
-              }
+              this.devLib.tempSyncSettings.syncMode =
+                Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
             }
             else {
               var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
@@ -145,7 +134,8 @@
 
               if (buttonPressed == 0) {
                 // Toggle to auto
-                this.devLib.syncMode = Ci.sbIDeviceLibrary.SYNC_AUTO;
+                this.devLib.tempSyncSettings.syncMode =
+                  Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO;
               }
             }
             this.update();
@@ -194,7 +184,8 @@
 
             // Get the device management state
             if (this.devLib) {
-              var isManual = this.devLib.isMgmtTypeManual;
+              var isManual = (this.devLib.tempSyncSettings.syncMode ==
+                              Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL);
               this.updateButtons(isManual);
             }
           } else {

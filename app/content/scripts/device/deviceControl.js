@@ -658,7 +658,7 @@ deviceControlWidget.prototype = {
 
     var mgmtType = Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
     if (this._deviceLibrary)
-      mgmtType = this._deviceLibrary.syncSettings.syncMode;
+      mgmtType = this._deviceLibrary.tempSyncSettings.syncMode;
 
     // Do nothing if no device state changed and update is not forced.
     if (!aForce &&
