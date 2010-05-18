@@ -932,7 +932,7 @@ deviceControlWidget.prototype = {
       return false;
 
     // user can trigger sync if management is not manual.
-    if (!(this._deviceLibrary.isMgmtTypeManual))
+    if (!(this._deviceLibrary.isManualSyncMode))
       return true;
 
     // Check photo sync settings since they are separate from the other types
@@ -949,6 +949,6 @@ deviceControlWidget.prototype = {
       return false;
 
     return (mediaSettings.mgmtType !=
-              Ci.deviceLibraryMediaSyncSettings.SYNC_MGMT_NONE);
+              Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE);
   }
 };
