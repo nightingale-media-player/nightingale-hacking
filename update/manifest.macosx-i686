@@ -428,3 +428,4 @@
 ./songbirditunesagent.app/Contents/PkgInfo
 ./songbirditunesagent.app/Contents/Resources/songbird.icns
 ./updater.ini
+./updater.plist
