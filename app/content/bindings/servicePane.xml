@@ -943,10 +943,10 @@
         // The 'collapsedChildren' attribute is persisted, however it
         // doesn't restore it's persisted state until the window is loaded
         // add a load listener to catch that case
-        window.addEventListener("load", function(e) {
+        window.addEventListener("DOMContentLoaded", function(e) {
             setTimeout(initCollapsed, 0);
           }, false);
-
+        
         // The group header image
         this.image = null;
         // Special handling for the SB:Playlists group
@@ -1619,6 +1619,25 @@
           if (this.hasAttribute("browser")) {
             newNode.setAttribute("browser", this.getAttribute("browser"));
           }
+
+          // If the servicepane-group holding this node is collapsed, then
+          // add a load listener to make sure we adjust the margins for the
+          // group once we're added
+          newNode.addEventListener("load", function(e) {
+              newNode.removeEventListener("load", arguments.callee, false);
+              
+              // find the parent servicepane-group
+              let parentGroup = newNode._servicePaneGroup;
+
+              // no need to do anything if it's already visible
+              if (parentGroup.visible)
+                return;
+
+              // adjust the margin to include our newly added group
+              let height = parentGroup._groupNodes.boxObject.height;
+              parentGroup._groupNodes.style.marginTop = "-" + height + "px";
+            }, false);
+           
           if (parentNode) {
             var nodeBefore = aInsertBefore ? this.getDOMNode(aInsertBefore.id) : null;
             parentNode.insertBefore(newNode, nodeBefore);
