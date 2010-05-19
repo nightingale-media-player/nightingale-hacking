@@ -315,8 +315,8 @@ AC_SUBST(SB_ARCH)
 
 AC_ARG_ENABLE(installer,
               [  --enable-installer=TYPE create installer (default=no, use "nsis", "dmg", "pkg", "tar". "yes" will build default installer type.)],
-              [enableval=`echo $enableval | tr 'A-Z,' 'a-z '`])
-case $enableval in
+              [enable_installer=`echo $enableval | tr 'A-Z,' 'a-z '`])
+case $enable_installer in
   yes)
     MAKE_INSTALLER=1
     dnl default installer types
@@ -331,7 +331,7 @@ case $enableval in
     ;;
   *)
     AS_UNSET(MAKE_INSTALLER)
-    for word in $enableval; do
+    for word in $enable_installer; do
       case $word in
         nsis)
           AS_IF([test $SB_PLATFORM = "windows"],
