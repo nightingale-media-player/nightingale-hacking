@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -75,6 +75,7 @@ sbLastFMAlbumArtFetcher.prototype = {
   // Variables
   _shutdown: false,
   _albumArtSourceList: null,
+  _isFetching: false,
 
 
   _findImageForItem: function(aMediaItem, aCallback) {
@@ -93,6 +94,9 @@ sbLastFMAlbumArtFetcher.prototype = {
     
     var self = this;
     var apiResponse = function response(success, xml) {
+      // Indicate that fetcher is no longer fetching.
+      self._isFetching = false;
+
       // Abort if we are shutting down
       if (self._shutdown) {
         return;
@@ -125,6 +129,9 @@ sbLastFMAlbumArtFetcher.prototype = {
     
       aCallback(foundCover);
     };
+
+    // Indicate that fetcher is fetching.
+    this._isFetching = true;
 
     this._lastFMWebApi.apiCall("album.getInfo",  // method
                                arguments,        // Property bag of strings
@@ -172,6 +179,10 @@ sbLastFMAlbumArtFetcher.prototype = {
   },
   set albumArtSourceList(aNewVal) {
     this._albumArtSourceList = aNewVal;
+  },
+
+  get isFetching() {
+    return this._isFetching;
   },
   
   fetchAlbumArtForAlbum: function (aMediaItems, aListener) {
@@ -258,6 +269,10 @@ sbLastFMAlbumArtFetcher.prototype = {
   },
 
   shutdown: function () {
+    // Don't shutdown if still fetching.
+    if (this._isFetching)
+      return;
+
     this._shutdown = true;
   },
 

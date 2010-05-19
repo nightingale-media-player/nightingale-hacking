@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -182,7 +182,7 @@ public:
                                        Arg1Type   aArg1Value)
   {
     nsresult rv;
-    
+
     // Create a Songbird runnable method.
     nsRefPtr<SelfType> runnable;
     rv = New(getter_AddRefs(runnable),
@@ -192,13 +192,13 @@ public:
              aArg1Value);
     NS_ENSURE_SUCCESS(rv, aFailureReturnValue);
 
-    // Dispatch the runnable method on the main thread. 
-    rv = NS_DispatchToMainThread(runnable, NS_DISPATCH_SYNC); 
-    NS_ENSURE_SUCCESS(rv, rv); 
- 
-    return NS_OK;
+    // Dispatch the runnable method on the main thread.
+    rv = NS_DispatchToMainThread(runnable, NS_DISPATCH_SYNC);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return runnable->GetReturnValue();
   }
-  
+
   /**
    * Invoke the method specified by aMethod of the object specified by aObject
    * on the supplied thread.  Invoke the method with the argument specified by
@@ -269,10 +269,10 @@ public:
              aArg1Value);
     NS_ENSURE_SUCCESS(rv, aFailureReturnValue);
 
-    // Dispatch the runnable method on the main thread. 
-    rv = NS_DispatchToMainThread(runnable, NS_DISPATCH_NORMAL); 
-    NS_ENSURE_SUCCESS(rv, rv); 
- 
+    // Dispatch the runnable method on the main thread.
+    rv = NS_DispatchToMainThread(runnable, NS_DISPATCH_NORMAL);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     return NS_OK;
   }
 
@@ -290,11 +290,11 @@ public:
    * \param aThread             Thread to run on.
    */
 
-  static ReturnType InvokeOnThreadAsync(ClassType* aObject,
-                                        MethodType aMethod,
-                                        ReturnType aFailureReturnValue,
-                                        Arg1Type   aArg1Value,
-                                        nsIEventTarget* aThread)
+  static nsresult InvokeOnThreadAsync(ClassType* aObject,
+                                      MethodType aMethod,
+                                      ReturnType aFailureReturnValue,
+                                      Arg1Type   aArg1Value,
+                                      nsIEventTarget* aThread)
   {
     nsresult rv;
 
@@ -311,7 +311,7 @@ public:
     rv = aThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
     NS_ENSURE_SUCCESS(rv, aFailureReturnValue);
 
-    return runnable->GetReturnValue();
+    return NS_OK;
   }
 
   /**
@@ -547,11 +547,11 @@ public:
              aArg2Value);
     NS_ENSURE_SUCCESS(rv, aFailureReturnValue);
 
-    // Dispatch the runnable method on the main thread. 
-    rv = NS_DispatchToMainThread(runnable, NS_DISPATCH_SYNC); 
-    NS_ENSURE_SUCCESS(rv, rv); 
- 
-    return NS_OK;
+    // Dispatch the runnable method on the main thread.
+    rv = NS_DispatchToMainThread(runnable, NS_DISPATCH_SYNC);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return runnable->GetReturnValue();
   }
 
   /**
@@ -629,10 +629,10 @@ public:
              aArg2Value);
     NS_ENSURE_SUCCESS(rv, aFailureReturnValue);
 
-    // Dispatch the runnable method on the main thread. 
-    rv = NS_DispatchToMainThread(runnable, NS_DISPATCH_NORMAL); 
-    NS_ENSURE_SUCCESS(rv, rv); 
- 
+    // Dispatch the runnable method on the main thread.
+    rv = NS_DispatchToMainThread(runnable, NS_DISPATCH_NORMAL);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     return NS_OK;
   }
 
@@ -651,12 +651,12 @@ public:
    * \param aThread             Thread to run on.
    */
 
-  static ReturnType InvokeOnThreadAsync(ClassType* aObject,
-                                        MethodType aMethod,
-                                        ReturnType aFailureReturnValue,
-                                        Arg1Type   aArg1Value,
-                                        Arg2Type   aArg2Value,
-                                        nsIEventTarget* aThread)
+  static nsresult InvokeOnThreadAsync(ClassType* aObject,
+                                      MethodType aMethod,
+                                      ReturnType aFailureReturnValue,
+                                      Arg1Type   aArg1Value,
+                                      Arg2Type   aArg2Value,
+                                      nsIEventTarget* aThread)
   {
     nsresult rv;
 
@@ -674,7 +674,7 @@ public:
     rv = aThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
     NS_ENSURE_SUCCESS(rv, aFailureReturnValue);
 
-    return runnable->GetReturnValue();
+    return NS_OK;
   }
 
   //----------------------------------------------------------------------------
@@ -840,10 +840,10 @@ RT sbInvokeOnThread1(T & aObject,
  */
 template <class T, class MT, class RT, class A1>
 inline
-RT sbInvokeOnMainThread1Async(T & aObject,
-                              MT aMethod,
-                              RT aFailureReturnValue,
-                              A1 aArg1)
+nsresult sbInvokeOnMainThread1Async(T & aObject,
+                                    MT aMethod,
+                                    RT aFailureReturnValue,
+                                    A1 aArg1)
 {
   return sbRunnableMethod1<T, RT, A1>::InvokeOnMainThreadAsync(
                                                             &aObject,
@@ -868,11 +868,11 @@ RT sbInvokeOnMainThread1Async(T & aObject,
  */
 template <class T, class MT, class RT, class A1, class TH>
 inline
-RT sbInvokeOnThread1Async(T & aObject,
-                          MT aMethod,
-                          RT aFailureReturnValue,
-                          A1 aArg1,
-                          TH aThread)
+nsresult sbInvokeOnThread1Async(T & aObject,
+                                MT aMethod,
+                                RT aFailureReturnValue,
+                                A1 aArg1,
+                                TH aThread)
 {
   return sbRunnableMethod1<T, RT, A1>::InvokeOnThreadAsync(&aObject,
                                                            aMethod,
@@ -976,11 +976,11 @@ RT sbInvokeOnThread2(T & aObject,
  */
 template <class T, class MT, class RT, class A1, class A2>
 inline
-RT sbInvokeOnMainThread2Async(T & aObject,
-                              MT aMethod,
-                              RT aFailureReturnValue,
-                              A1 aArg1,
-                              A2 aArg2)
+nsresult sbInvokeOnMainThread2Async(T & aObject,
+                                    MT aMethod,
+                                    RT aFailureReturnValue,
+                                    A1 aArg1,
+                                    A2 aArg2)
 {
   return sbRunnableMethod2<T, RT, A1, A2>::InvokeOnMainThreadAsync(
                                                             &aObject,
@@ -1008,12 +1008,12 @@ RT sbInvokeOnMainThread2Async(T & aObject,
  */
 template <class T, class MT, class RT, class A1, class A2, class TH>
 inline
-RT sbInvokeOnThread2Async(T & aObject,
-                          MT aMethod,
-                          RT aFailureReturnValue,
-                          A1 aArg1,
-                          A2 aArg2,
-                          TH aThread)
+nsresult sbInvokeOnThread2Async(T & aObject,
+                                MT aMethod,
+                                RT aFailureReturnValue,
+                                A1 aArg1,
+                                A2 aArg2,
+                                TH aThread)
 {
   return sbRunnableMethod2<T, RT, A1, A2>::InvokeOnThreadAsync(
                                                             &aObject,

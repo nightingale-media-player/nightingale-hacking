@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -147,6 +147,7 @@ private:
   // mAlbumArtSourceList        List of album art sources.
   // mType                      sbIAlbumArtFetcherSet.TYPE_[LOCAL|REMOTE|ALL]
   // mShutdown                  Flag to indicate if we should shutdown.
+  // mIsFetching                True if currently fetching.
   //
 
   nsCOMPtr<sbIAlbumArtService>  mAlbumArtService;
@@ -155,6 +156,7 @@ private:
   nsCOMPtr<nsIArray>            mAlbumArtSourceList;
   PRUint32                      mType;
   PRBool                        mShutdown;
+  PRBool                        mIsFetching;
 
   //
   // mListener                  Listener for the fetching.
