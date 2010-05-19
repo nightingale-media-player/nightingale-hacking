@@ -77,6 +77,7 @@
 ./components/sbMetadataLookupFreeDB.js
 ./components/sbIPDDevice.xpt
 ./components/sbTemporaryFileService.js
+./components/sbBookmarksService.js
 ./chrome/rubberducky.manifest
 ./chrome/rubberducky.jar
 ./xulrunner/extensions/inspector@mozilla.org/chrome.manifest

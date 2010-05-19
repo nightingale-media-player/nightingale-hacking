@@ -301,6 +301,7 @@
 ./Contents/Resources/components/sbMetadataLookupFreeDB.js
 ./Contents/Resources/components/sbIPDDevice.xpt
 ./Contents/Resources/components/sbTemporaryFileService.js
+./Contents/Resources/components/sbBookmarksService.js
 ./Contents/Resources/chrome/rubberducky.manifest
 ./Contents/Resources/chrome/rubberducky.jar
 ./Contents/MacOS/libtag_c.dylib

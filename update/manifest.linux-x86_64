@@ -40,7 +40,6 @@
 ./components/sbApplicationController.js
 ./components/sbAutoDownloader.js
 ./components/sbBaseDeviceHelper.js
-./components/sbBookmarksService.js
 ./components/sbBrowserAPI.so
 ./components/sbBrowserAPI.xpt
 ./components/sbBundle.js
@@ -351,6 +350,7 @@
 ./jsmodules/AddOnUtils.jsm
 ./jsmodules/ArrayConverter.jsm
 ./jsmodules/DOMUtils.jsm
+./jsmodules/DebugUtils.jsm
 ./jsmodules/DeviceHelper.jsm
 ./jsmodules/Distribution.jsm
 ./jsmodules/DropHelper.jsm
