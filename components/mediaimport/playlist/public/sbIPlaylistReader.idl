@@ -37,6 +37,7 @@
 interface nsIObserver;
 interface nsIFile;
 interface sbIMediaList;
+interface sbIPlaylistFormatType;
 
 /**
  * \interface sbIPlaylistReaderListener
@@ -105,7 +106,7 @@ interface sbIPlaylistReaderListener : nsIWebProgressListener
  *
  * \sa sbIPlaylistReaderManager, sbIPlaylistReaderListener, sbIMediaList
  */
-[scriptable, uuid(8be3a732-f081-47e8-ac21-4d97d769260f)]
+[scriptable, uuid(be2cd0d9-eed3-47f4-8a6e-c1e5b2bf508a)]
 interface sbIPlaylistReader : nsISupports
 {
   /**
@@ -122,7 +123,8 @@ interface sbIPlaylistReader : nsISupports
    */
   void read(in nsIFile aFile,
             in sbIMediaList aMediaList,
-            in PRBool aReplace);
+            in PRBool aReplace,
+            [optional] in sbIPlaylistFormatType aPlaylistFormatType);
 
   /**
    * \brief
@@ -169,7 +171,7 @@ interface sbIPlaylistReader : nsISupports
  *
  * \sa sbIPlaylistReader, sbIPlaylistReaderListener
  */
-[scriptable, uuid(127d0f73-295b-4270-9c64-941c20d444e5)]
+[scriptable, uuid(dee1ccec-b3d1-47cf-bbf0-c20222f84398)]
 interface sbIPlaylistReaderManager : nsISupports
 {
   /**
@@ -198,7 +200,8 @@ interface sbIPlaylistReaderManager : nsISupports
   void read(in nsIFile aFile,
             in sbIMediaList aMediaList,
             in AString aContentType,
-            in PRBool aAddDistinctOnly);
+            in PRBool aAddDistinctOnly,
+            [optional] in sbIPlaylistFormatType aPlaylistFormatType);
 
   /**
    * \brief
