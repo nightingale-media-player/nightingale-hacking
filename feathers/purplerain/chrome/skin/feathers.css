@@ -1665,6 +1665,9 @@ deck#sb-albumart-deck > stack > vbox > description {
   background-color: transparent;
 }
 
+sb-displaypane#displaypane_servicepane_bottom {
+  max-height: 300px !important;
+}
 /******************************************************************************
 * DOM INSPECTOR
 ******************************************************************************/
