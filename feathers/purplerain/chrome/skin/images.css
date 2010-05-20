@@ -573,6 +573,9 @@ treechildren::-moz-tree-twisty(open) {
   -moz-image-region: rect(0px 24px 20px 0px);
   opacity: 1.0 !important;
 }
+#nav-bar toolbarbutton[type="menu-button"] {
+  background-image: url('chrome://songbird/skin/nav-bar/bg-nav-bar-menubutton.png');
+}
 #nav-bar toolbarbutton:hover {
   background-position: center -20px;
   -moz-image-region: rect(20px 24px 40px 0px);
