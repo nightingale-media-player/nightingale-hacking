@@ -1062,6 +1062,42 @@ var DPW = {
   _deviceFinalize: function DPW__deviceFinalize() {
     // Clear object fields.
     if (this._device) {
+      var currentState = this._device.currentStatus.currentState;
+
+      // If there is pending sync mode change, make sure to reset when
+      // the summary page is reloaded.
+      if ((this._deviceLibrary.tempSyncSettingsChanged ||
+           this._syncSettingsChanged) &&
+          !(currentState == Ci.sbIDevice.STATE_DISCONNECTED)) {
+        var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
+                         .createInstance(Ci.sbIPrompter);
+
+        var buttonFlags = Ci.nsIPromptService.BUTTON_POS_1 *
+                          Ci.nsIPromptService.BUTTON_TITLE_IS_STRING +
+                          Ci.nsIPromptService.BUTTON_POS_0 *
+                          Ci.nsIPromptService.BUTTON_TITLE_IS_STRING;
+
+        var buttonPressed = prompter.confirmEx(
+          null,
+          SBString("device.dialog.sync_confirmation.leave.title"),
+          SBFormattedString("device.dialog.sync_confirmation.leave.msg",
+                            [this._device.name]),
+          buttonFlags,
+          SBString("device.dialog.sync_confirmation.leave.no_button"),
+          SBString("device.dialog.sync_confirmation.leave.sync_button"),
+          null,
+          null,
+          {});
+
+        if (buttonPressed == 1) {
+          this._deviceLibrary.applySyncSettings();
+          this._device.syncLibraries();
+        }
+        else if (this._deviceLibrary.tempSyncSettingsChanged) {
+          this._deviceLibrary.resetSyncSettings();
+        }
+      }
+
       // Make sure we turn off the cacheSyncRequests if leaving.
       this._device.cacheSyncRequests = false;
 
@@ -1100,8 +1136,6 @@ var DPW = {
    onDeviceEvent : function DPW_onDeviceEvent(aEvent) {
     switch (aEvent.type) {
       case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED:
-        var state = this._device.state;
-        var substate = this._device.currentStatus.currentSubState;
         this._handleStateChanged(aEvent);
         break;
 
