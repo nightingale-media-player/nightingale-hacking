@@ -96,10 +96,12 @@ Imported by bindings.css or directly into feathers.
 }
 .device-syncmode-manual-button[checked="true"] > .button-box > label,
 .device-syncmode-auto-button[checked="true"] > .button-box > label,
+.device-progress-button[sbid="sync_operation_button"]:hover > .button-box > label,
 .device-syncmode-manual-button:hover > .button-box > label,
 .device-syncmode-auto-button:hover > .button-box > label {
   color: rgb(255,255,255);
 }
+.device-progress-button[sbid="sync_operation_button"],
 .device-syncmode-manual-button,
 .device-syncmode-auto-button {
   height: 19px;
@@ -114,10 +116,12 @@ Imported by bindings.css or directly into feathers.
 .device-syncmode-auto-button {
   border-left: none !important;
 }
+.device-progress-button[sbid="sync_operation_button"]:hover,
 .device-syncmode-manual-button:hover,
 .device-syncmode-auto-button:hover {
   background-position:0px -38px;
 }
+.device-progress-button[sbid="sync_operation_button"]:active,
 .device-syncmode-manual-button:active,
 .device-syncmode-auto-button:active {
   background-position:0px -57px;
@@ -129,18 +133,23 @@ Imported by bindings.css or directly into feathers.
   -moz-user-focus: ignore;
   background-position:0px 0px;
 }
+.device-progress-button[sbid="sync_operation_button"]:focus,
 .device-syncmode-manual-button:focus,
 .device-syncmode-auto-button:focus {
   outline: none !important;
 }
 
 /* disabled state to override above rules */
+.device-progress-button[sbid="sync_operation_button"][disabled="true"],
+.device-progress-button[sbid="sync_operation_button"][disabled="true"]:hover,
 .device-syncmode-manual-button[disabled="true"],
 .device-syncmode-manual-button[disabled="true"]:hover,
 .device-syncmode-auto-button[disabled="true"],
 .device-syncmode-auto-button[disabled="true"]:hover {
   background-position:0px -19px;
 }
+.device-progress-button[sbid="sync_operation_button"][disabled="true"] > .button-box > label,
+.device-progress-button[sbid="sync_operation_button"][disabled="true"]:hover > .button-box > label,
 .device-syncmode-manual-button[disabled="true"] > .button-box > label,
 .device-syncmode-manual-button[disabled="true"]:hover > .button-box > label,
 .device-syncmode-auto-button[disabled="true"]:hover > .button-box > label,

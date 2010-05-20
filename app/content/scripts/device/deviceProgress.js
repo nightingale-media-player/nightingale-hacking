@@ -509,9 +509,20 @@ var DPW = {
     // Update the sync mode toggle buttons
     var syncModeToggle = this._getElement("syncmode-toggle");
     if (syncModeToggle) {
-      // Disable sync button if the device doesn't contain any storage
-      if (!this._device.defaultLibrary)
+      let syncModeLabel = this._getElement("syncmode_label");
+      let separator = this._getElement("device_progress_separator");
+      if (!this._device.defaultLibrary) {
+        // Disable sync button if the device doesn't contain any storage
         this._syncButton.setAttribute("disabled", "true");
+
+        // Dim the label and separator
+        syncModeLabel.setAttribute("disabled", "true");
+        separator.setAttribute("disabled", "true");
+      }
+      else {
+        syncModeLabel.removeAttribute("disabled");
+        separator.removeAttribute("disabled");
+      }
 
       syncModeToggle.deviceInitialize();
     }
@@ -1038,9 +1049,10 @@ var DPW = {
     }
 
     // Check if we already have changed settings, if so update.
-    if (DPW._deviceLibrary.tempSyncSettingsChanged)
-      DPW.onSyncSettings(Ci.sbIDeviceLibraryListener.SYNC_SETTINGS_CHANGED,
-                         DPW._deviceLibrary.tempSyncSettings);
+    if (this._deviceLibrary && this._deviceLibrary.tempSyncSettingsChanged) {
+      this.onSyncSettings(Ci.sbIDeviceLibraryListener.SYNC_SETTINGS_CHANGED,
+                          this._deviceLibrary.tempSyncSettings);
+    }
   },
 
   /**

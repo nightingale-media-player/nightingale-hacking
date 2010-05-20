@@ -64,7 +64,7 @@ Imported by bindings.css or directly into feathers.
 }
 
 .device-capacity-bar-stack[disabled="true"] {
-  opacity: .5;
+  opacity: .3;
 }
 
 .device-capacity-bar-box {
