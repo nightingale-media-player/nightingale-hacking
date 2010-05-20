@@ -148,10 +148,10 @@ ifdef MEDIA_CORE_GST_SYSTEM
    CPP_EXTRA_FLAGS += $(GSTREAMER_CFLAGS) \
                       $(NULL)
 
-   DYNAMIC_LIB_EXTRA_FLAGS = $(GSTREAMER_LIBS) \
-                             $(GTK_LIBS) \
-                             -lX11 \
-                             $(NULL)
+   DYNAMIC_LIB_RAW_IMPORTS += $(GSTREAMER_LIBS) \
+                              $(GTK_LIBS) \
+                              -lX11 \
+                              $(NULL)
 else
    DYNAMIC_LIB_EXTRA_IMPORTS += gstreamer-$(GST_VERSION)$(GST_LIB_SUFFIX) \
                                 $(NULL)
@@ -178,7 +178,7 @@ else
        $(NULL)
    else
        # everything else
-       DYNAMIC_LIB_EXTRA_FLAGS += $(GTK_LIBS) \
+       DYNAMIC_LIB_RAW_IMPORTS += $(GTK_LIBS) \
                                   -lX11 \
                                   $(NULL)
    endif

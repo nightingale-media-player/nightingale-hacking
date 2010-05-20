@@ -66,8 +66,8 @@ CPP_RAW_INCLUDES = $(GLIB_CFLAGS) \
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
-DYNAMIC_LIB_EXTRA_FLAGS = $(GLIB_LIBS) \
-                          $(NULL)
+DYNAMIC_LIB_RAW_IMPORTS += $(GLIB_LIBS) \
+                           $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS += components/moz/strings/src/sbMozStringUtils \
                               components/moz/streams/src/sbMozStreams \

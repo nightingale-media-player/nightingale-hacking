@@ -85,7 +85,7 @@ ifeq (linux,$(SB_PLATFORM))
    CPP_EXTRA_FLAGS += $(GTK_CFLAGS) \
                       $(NULL)
 
-   DYNAMIC_LIB_EXTRA_FLAGS = $(GTK_LIBS) \
+   DYNAMIC_LIB_RAW_IMPORTS = $(GTK_LIBS) \
                              $(NULL)
 endif
 

@@ -49,7 +49,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/integration/public \
                      $(MOZSDK_IDL_DIR) \
                      $(NULL)
 
-DYNAMIC_LIB_EXTRA_FLAGS = $(DBUS_LIBS) \
+DYNAMIC_LIB_RAW_IMPORTS = $(DBUS_LIBS) \
                           $(GTK_LIBS) \
                           $(NULL)
 

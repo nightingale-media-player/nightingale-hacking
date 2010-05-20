@@ -188,7 +188,7 @@ ifeq (linux,$(SB_PLATFORM))
                       $(HAL_CFLAGS) \
                       $(NULL)
 
-   DYNAMIC_LIB_EXTRA_FLAGS += $(DBUS_LIBS) \
+   DYNAMIC_LIB_RAW_IMPORTS += $(DBUS_LIBS) \
                               $(HAL_LIBS) \
                               $(NULL)
 endif

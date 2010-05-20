@@ -83,9 +83,9 @@ ifeq (macosx,$(SB_PLATFORM))
 endif
 
 ifeq (linux,$(SB_PLATFORM))
-   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s 
-   DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-version-script,$(srcdir)/hide-sqlite.ver \
-                              $(PTHREAD_LIBS) \
+   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
+   DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-version-script,$(srcdir)/hide-sqlite.ver
+   DYNAMIC_LIB_RAW_IMPORTS += $(PTHREAD_LIBS) \
                               $(GLIB_LIBS) \
                               $(NULL)
 
@@ -95,8 +95,8 @@ endif
 
 ifeq (solaris,$(SB_PLATFORM))
    DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
-   DYNAMIC_LIB_EXTRA_FLAGS += -M $(srcdir)/hide-sqlite.ver \
-                              $(PTHREAD_LIBS) \
+   DYNAMIC_LIB_EXTRA_FLAGS += -M $(srcdir)/hide-sqlite.ver
+   DYNAMIC_LIB_RAW_IMPORTS += $(PTHREAD_LIBS) \
                               $(GLIB_LIBS) \
                               -lm \
                               $(NULL)

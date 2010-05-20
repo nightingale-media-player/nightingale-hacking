@@ -99,7 +99,7 @@ endif
 ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
    CPP_EXTRA_FLAGS += $(GLIB_CFLAGS)
 
-   DYNAMIC_LIB_EXTRA_FLAGS += $(GLIB_LIBS) \
+   DYNAMIC_LIB_RAW_IMPORTS += $(GLIB_LIBS) \
                               -lm \
                               $(NULL)
 endif
