@@ -580,7 +580,9 @@
           var nodeToUpdate;
           // If we're a library node, and our parent node is a device node,
           // then apply the styles to the device node
-          if (this.nodeData.className.match(/\blibrary\b/) &&
+          if (this.nodeData.className &&
+              this.nodeData.className.match(/\blibrary\b/) &&
+              this.nodeData.parentNode.className &&
               this.nodeData.parentNode.className.match(/\bdevice\b/))
           {
             // We're a device library
@@ -588,14 +590,16 @@
           } else {
             nodeToUpdate = this.nodeData;
           }
+          
+          var domNode = this._servicePane.getDOMNode(nodeToUpdate.id);
 
           if (isdroptarget) {
-            if (nodeToUpdate.className.search(/\bdroptarget\b/) == -1) {
-              nodeToUpdate.className += " droptarget";
+            if (domNode.className.search(/\bdroptarget\b/) == -1) {
+              domNode.className += " droptarget";
             }
           } else {
-            nodeToUpdate.className =
-                        nodeToUpdate.className.replace(/\bdroptarget\b/g,'');
+            domNode.className =
+                        domNode.className.replace(/\bdroptarget\b/g,'');
           }
         ]]></body>
       </method>
