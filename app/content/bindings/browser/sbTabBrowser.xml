@@ -43,6 +43,10 @@
           <![CDATA[
         window.gBrowser = this;
 
+        this._platform = Cc["@mozilla.org/system-info;1"]
+                           .getService(Ci.nsIPropertyBag2)
+                           .getProperty("name");
+
         Cu.import("resource://app/jsmodules/sbProperties.jsm");
         Cu.import("resource://app/jsmodules/kPlaylistCommands.jsm");
         Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
@@ -1167,8 +1171,12 @@
             }
             tabBrowser.setTabTitle(tab);
 
-            if (tab == tabBrowser.mCurrentTab)
+            // Don't update titlebar on Mac (bug 21219)
+            if (tabBrowser._platform != "Darwin" &&
+                tab == tabBrowser.mCurrentTab)
+            {
               tabBrowser.updateTitlebar();
+            }
           ]]>
         </body>
       </method>
