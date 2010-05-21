@@ -39,6 +39,20 @@ include $(DEPTH)/build/autodefs.mk
 
 IS_EXTENSION=1
 
+CPP_SRCS = sbSongkickDBService.cpp \
+           sbSongkickDBServiceComponent.cpp \
+           $(NULL)
+
+CPP_EXTRA_INCLUDES = \
+ $(DEPTH)/extensions/concerts/components/public \
+ $(DEPTH)/components/dbengine/public \
+ $(MOZSDK_IDL_DIR) \
+ $(MOZSDK_INCLUDE_DIR)/necko \
+ $(NULL)
+
+IS_COMPONENT = 1
+DYNAMIC_LIB = sbConcertsComponent
+
 SONGBIRD_PP_RESOURCES = $(srcdir)/Songkick.js.in
 SONGBIRD_PP_DIR = $(SONGBIRD_COMPONENTSDIR)
 PPDEFINES = -DSONGKICK_APIKEY="$(SONGKICK_APIKEY)"

@@ -117,8 +117,8 @@ ConcertTicketing.init = function() {
 			.getValue("extensions.concerts.showgcal", false);
 
 	// Set the last saved concert count
-	this.lastConcertCount = this.skSvc.getConcertCount(
-			this.filterLibraryArtists);
+	this.skSvc.getConcertCount(
+			this.filterLibraryArtists, this);
 
 	gMetrics.metricsInc("concerts", "servicepane.clicked", "");
 	// Register our UI display callback with the Songkick object
@@ -151,6 +151,56 @@ ConcertTicketing.init = function() {
 			this.browseConcerts(this);
 		}
 	}
+}
+
+ConcertTicketing.onConcertCountEnd = function(aConcertCount) {
+  this.lastConcertCount = aConcertCount;
+
+	// Attempt to update the count element if it exists.
+	var numConcertsNode = this._browseDoc.getElementById("num-concerts");
+	if (numConcertsNode) {
+			var bundle = new SBStringBundle(
+		    	"chrome://concerts/locale/overlay.properties");
+			var numConcertsStr = bundle.formatCountString("concertsShown",
+							                                      aConcertCount,
+																										[ aConcertCount ],
+																										"foo");
+	  numConcertsNode.innerHTML = numConcertsStr;
+	}
+}
+
+ConcertTicketing.createFooter = function(aConcertCount) {
+		if (this._browseDoc.getElementById("ft") != null) {
+				this._browseDoc.removeChild(this._browseDoc.getElementById("ft"));
+		}
+		if (aConcertCount > 0) {
+				var ft = this.createBlock("ft");
+				ft.id = "ft";
+				var poweredBy = this.createBlock("poweredBy");
+				var url = this.skSvc.providerURL();
+				var city = Application.prefs.getValue("extensions.concerts.city", 0);
+				if (city != 0)
+						url += "?" + SongkickPartnerCode + "&user_location=" + city;
+				poweredBy.innerHTML = this._strings.getString("poweredBy") + 
+						" <a target='_blank' href='" + url + "'>Songkick</a>. "
+						+ this._strings.getString("tosPrefix") + 
+						" <a target='_blank' href='http://www.songkick.com/info/terms/?" +
+						SongkickPartnerCode + "'>" +
+						this._strings.getString("tosLink") + "</a>.";
+				ft.appendChild(poweredBy);
+
+				var lastUpdated = this.createBlock("lastUpdated");
+				var ts = parseInt(1000*
+								Application.prefs.getValue("extensions.concerts.lastupdated", 0));
+				if (ts > 0) {
+						var dateString =
+								new Date(ts).toLocaleFormat("%a, %b %e, %Y at %H:%M.");
+						lastUpdated.innerHTML = this._strings.getString("lastUpdated") +
+								" <span class='date'>" + dateString + "</span>";
+						ft.appendChild(lastUpdated);
+				}
+				this._bodyNode.appendChild(ft);
+		}
 }
 
 ConcertTicketing.waitForRefreshToFinish = function(self) {
@@ -252,10 +302,9 @@ ConcertTicketing.showNoConcerts = function() {
 		button.label = this._strings.getString("seeAllConcerts") + " " +
 			this.skSvc.getCityString(this.pCity);
 	} else {
-		var count = this.skSvc.getConcertCount(false);
 		var label;
 		var button;
-		if (count == 0 || easterEgg == "54") {
+		if (easterEgg == "54") {
 			// no concerts found, period
 			deck.setAttribute("selectedIndex", 0);
 			label = document.getElementById("noresults-city");
@@ -440,14 +489,9 @@ ConcertTicketing.browseConcerts = function(ticketingObj) {
   // Add the subheader block
   var subHeaderDiv = this.createBlock("sub-header");
   var numConcertsShownDiv = this.createBlock("num-concerts", true);
+	numConcertsShownDiv.id = "num-concerts";
   subHeaderDiv.appendChild(numConcertsShownDiv); 
-	var concertsShown = this.skSvc.getConcertCount(this.filterLibraryArtists);
-  var bundle = new SBStringBundle("chrome://concerts/locale/overlay.properties");
-  var numConcertsStr = bundle.formatCountString("concertsShown",
-                                                concertsShown,
-                                                [ concertsShown ],
-                                                "foo");
-  numConcertsShownDiv.appendChild(doc.createTextNode(numConcertsStr));
+	this.skSvc.getConcertCount(this.filterLibraryArtists, this);
   songbirdMainWindow.Concerts.updateConcertCount();
 
   
@@ -575,35 +619,6 @@ ConcertTicketing.browseConcerts = function(ticketingObj) {
 	else
 		this.browseDates();
 
-	if (concertsShown > 0) {
-		var ft = this.createBlock("ft");
-		ft.id = "ft";
-		var poweredBy = this.createBlock("poweredBy");
-		var url = this.skSvc.providerURL();
-		var city = Application.prefs.getValue("extensions.concerts.city", 0);
-		if (city != 0)
-			url += "?" + SongkickPartnerCode + "&user_location=" + city;
-		poweredBy.innerHTML = this._strings.getString("poweredBy") + 
-			" <a target='_blank' href='" + url + "'>Songkick</a>. "
-			+ this._strings.getString("tosPrefix") + 
-			" <a target='_blank' href='http://www.songkick.com/info/terms/?" +
-      SongkickPartnerCode + "'>" +
-			this._strings.getString("tosLink") + "</a>.";
-		ft.appendChild(poweredBy);
-
-		var lastUpdated = this.createBlock("lastUpdated");
-		var ts = parseInt(1000*
-			Application.prefs.getValue("extensions.concerts.lastupdated", 0));
-		if (ts > 0) {
-			var dateString =
-				new Date(ts).toLocaleFormat("%a, %b %e, %Y at %H:%M.");
-			lastUpdated.innerHTML = this._strings.getString("lastUpdated") +
-				" <span class='date'>" + dateString + "</span>";
-			ft.appendChild(lastUpdated);
-		}
-		this._bodyNode.appendChild(ft);
-	}
-
 	// Debug
 	/*
 	var html = this._bodyNode.innerHTML;
@@ -618,19 +633,20 @@ ConcertTicketing.browseConcerts = function(ticketingObj) {
 }
 
 ConcertTicketing.browseDates = function() {
+  this._isWaitingOnBrowseDates = true;
+	this.skSvc.concertEnumerator(
+	  "date", this.filterLibraryArtists, this);
+}
+
+ConcertTicketing.onBrowseDatesReady = function(concerts) {
 	var lastDate = "";
 	var dateBlock = null;
 	var concertTable = null;
 	var venueConcertBlock = null;
-	var concerts = new this.skSvc.concertEnumerator("date",
-			this.filterLibraryArtists);
 	var concertsShown = 0;
 
-	var contentsNode = this._browseDoc.createElement("div");
-  contentsNode.id = "concerts-contents";
+	var contentsNode = this._browseDoc.getElementById("concerts-contents");
 
-	this._bodyNode.appendChild(contentsNode);
-	
 	var today = new Date();
 	var todayMon = today.getMonth();
 	var todayDate = today.getDate();
@@ -640,7 +656,7 @@ ConcertTicketing.browseDates = function() {
 	while (concerts.hasMoreElements()) {
 		if (this.abortDrawing)
 			return;
-		var concert = concerts.getNext().wrappedJSObject;
+		var concert = concerts.getNext().QueryInterface(Ci.sbISongkickConcertInfo);
 
 		var thisDateObj = new Date(concert.ts * 1000);
 		var thisMon = thisDateObj.getMonth();
@@ -714,18 +730,17 @@ ConcertTicketing.browseDates = function() {
 			ConcertTicketing.showNoConcerts();
 	}
 
+	this.createFooter(concertsShown);
 	return concertsShown;
 }
 
-
-ConcertTicketing.browseVenues = function() {
+// XXX KREEGER + STEVEL == THIS IS DEAD CODE ///////////////////////////////////
+ConcertTicketing.browseVenues = function(concerts) {
 	var lastLetter = "";
 	var lastVenue = "";
 	var concertBlock = null;
 	var venueConcertBlock = null;
 	var thisMainVenueAnchor = null;
-	var concerts = new this.skSvc.concertEnumerator("venue",
-			this.filterLibraryArtists);
 
 	var concertsShown = 0;
 	while (concerts.hasMoreElements()) {
@@ -792,22 +807,23 @@ ConcertTicketing.browseVenues = function() {
 
 	return concertsShown;
 }
+////////////////////////////////////////////////////////////////////////////////
 
 ConcertTicketing.browseArtists = function() {
+	this._isWatingOnBrowseArtists = true;
+	this.skSvc.artistConcertEnumerator(
+			this.filterLibraryArtists, this);
+}
+
+ConcertTicketing.onBrowseArtistsReady = function(concerts) {
 	var lastLetter = "";
 	var lastArtist = "";
 	var concertBlock = null;
 	var artistConcertBlock = null;
 	var thisMainArtistAnchor = null;
-	var concerts = this.skSvc.artistConcertEnumerator(
-			this.filterLibraryArtists);
-
 	var concertsShown = 0;
 	
-	var contentsNode = this._browseDoc.createElement("div");
-  contentsNode.id = "concerts-contents";
-
-	this._bodyNode.appendChild(contentsNode);
+  var contentsNode = this._browseDoc.getElementById("concerts-contents");
 	
 	var today = new Date();
 	var todayMon = today.getMonth();
@@ -818,7 +834,7 @@ ConcertTicketing.browseArtists = function() {
 	while (concerts.hasMoreElements()) {
 		if (this.abortDrawing)
 			return;
-		var concert = concerts.getNext().wrappedJSObject;
+		var concert = concerts.getNext().QueryInterface(Ci.sbISongkickConcertInfo);
 
 		var thisDateObj = new Date(concert.ts * 1000);
 		var thisMon = thisDateObj.getMonth();
@@ -928,7 +944,40 @@ ConcertTicketing.browseArtists = function() {
 			ConcertTicketing.showNoConcerts();
 	}
 
+	this.createFooter(concertsShown);
 	return concertsShown;
+}
+
+ConcertTicketing.onEnumerationStart = function() {
+  // Add the loading dialog in.
+  var contentsNode = this._browseDoc.createElement("div");
+	contentsNode.id = "concerts-contents";
+	this._bodyNode.appendChild(contentsNode);
+
+	var strBundle = Cc["@mozilla.org/intl/stringbundle;1"]
+			.getService(Ci.nsIStringBundleService)
+			.createBundle("chrome://concerts/locale/songkick.properties");
+
+	var loadingNode = this._browseDoc.createElement("div");
+	loadingNode.id = "concerts-loading";
+	loadingNode.innerHTML = strBundle.GetStringFromName("preparing");
+	contentsNode.appendChild(loadingNode);
+}
+
+ConcertTicketing.onEnumerationEnd = function(aConcertsEnum) {
+  // Remove the loading block.
+	var loadingNode = this._browseDoc.getElementById("concerts-loading");
+	var contentsNode = this._browseDoc.getElementById("concerts-contents");
+	contentsNode.removeChild(loadingNode);
+
+	if (this._isWatingOnBrowseArtists) {
+		this._isWatingOnBrowseArtists = false;
+	  this.onBrowseArtistsReady(aConcertsEnum);
+	}
+	if (this._isWaitingOnBrowseDates) {
+	  this._isWaitingOnBrowseDates = false;
+	  this.onBrowseDatesReady(aConcertsEnum);
+	}
 }
 
 // Takes a letter, and returns an index block for it
@@ -1075,12 +1124,13 @@ ConcertTicketing.createRowArtistView = function(concert, mainAnchor) {
 	var otherArtistsCol = this._browseDoc.createElement("td");
 	otherArtistsCol.className = "artists";
 	var first = true;
-	var artists = concert.artists;
+	var artists = concert.artistsConcertInfo;
   var artistname = decodeURIComponent(unescape(concert.artistname));
-	for (let i in artists) {
-		if (decodeURIComponent(unescape(artists[i].name)) == artistname) {
+	for (var i = 0; i < artists.length; i++) {
+		var curArtist = artists.queryElementAt(i, Ci.sbISongkickArtistConcertInfo);
+		if (decodeURIComponent(unescape(curArtist.artistname)) == artistname) {
 			mainAnchor.setAttribute("href",
-					this.appendCityParam(artists[i].url));
+					this.appendCityParam(curArtist.artisturl));
 			continue;
 		}
 		if (!first) {
@@ -1089,9 +1139,9 @@ ConcertTicketing.createRowArtistView = function(concert, mainAnchor) {
 			first = false;
 		}
 		var anchor = this._browseDoc.createElement("a");
-		this.makeLink(anchor, this.appendCityParam(artists[i].url),
+		this.makeLink(anchor, this.appendCityParam(curArtist.artisturl),
 				"artist.other");
-		var anchorLabel = this._browseDoc.createTextNode(artists[i].name);
+		var anchorLabel = this._browseDoc.createTextNode(curArtist.artistname);
 		anchor.appendChild(anchorLabel);
 		otherArtistsCol.appendChild(anchor);
 	}
@@ -1246,24 +1296,30 @@ ConcertTicketing.createColumnArtists = function(concert) {
 	 * then we'll classify it as a concert/festival name and list it as
 	 * "Festival Name with Artist1, Artist2" 
 	 */
-	var artists = concert.artists;
+	var artists = concert.artistsConcertInfo;
 	var artistsCol = this._browseDoc.createElement("td");
 	artistsCol.className = "artists";
 	var concertTitle = concert.title;
 	var first = true;
 	var headlinerFound = false;
 	var headlinerNode;
-	for (let i in artists) {
+	for (var i = 0; i < artists.length; i++) {
 		// Comma separate the list of artists
 		var commaNode = null;
 		if (!first) {
 			commaNode = this._browseDoc.createTextNode(", ");
 		}
+
+		var curArtistConcertInfo =
+		  artists.queryElementAt(i, Ci.sbISongkickArtistConcertInfo);
 		// Linkify the artist name
 		var anchor = this._browseDoc.createElement("a");
-		this.makeLink(anchor, this.appendCityParam(artists[i].url),
+		this.makeLink(
+		    anchor,
+		    this.appendCityParam(curArtistConcertInfo.artisturl),
 				"artist.other");
-    var artistName = decodeURIComponent(unescape(artists[i].name));
+    var artistName =
+	  	decodeURIComponent(unescape(curArtistConcertInfo.artistname));
 		var anchorLabel = this._browseDoc.createTextNode(artistName);
 		anchor.appendChild(anchorLabel);
 

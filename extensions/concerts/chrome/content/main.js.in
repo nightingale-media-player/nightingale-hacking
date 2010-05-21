@@ -204,20 +204,28 @@ Concerts = {
 
 	updateConcertCount : function(num) {
 		var concertCount;
-
 		var skSvc = Cc["@songbirdnest.com/Songbird/Concerts/Songkick;1"]
 			.getService(Ci.sbISongkick);
+		
 		var filter = Application.prefs.getValue(
 				"extensions.concerts.filterLibraryArtists", true);
 		if (typeof(num) == "undefined") {
-			concertCount = skSvc.getConcertCount(filter);
-		} else
+			concertCount = skSvc.getConcertCount(filter, this);
+		} else {
+			// A explicit value was passed in, update the node now.
 			concertCount = num;
+			this.onConcertCountEnd(concertCount);
+		}
+	},
 
+  /***********************************************************************
+	 * Callback for when the concert count updates
+	 **********************************************************************/
+  onConcertCountEnd : function(aConcertCount) {
 		// Only update if the count has changed
-		if (this.lastConcertCount == concertCount)
+		if (this.lastConcertCount == aConcertCount)
 			return;
-		this.lastConcertCount = concertCount;
+		this.lastConcertCount = aConcertCount;
 
 		var SPS = Cc["@songbirdnest.com/servicepane/service;1"]
 			          .getService(Ci.sbIServicePaneService);
@@ -227,10 +235,9 @@ Concerts = {
       let domNode = window.gServicePane.getDOMNode(concertsNode.id);
       // Remove any existing badge that may exist
       domNode.removeBadge(0);
-      domNode.appendBadge(concertCount, null);
+      domNode.appendBadge(aConcertCount, null);
 		}
-	},
-	
+  },
 
 	/***********************************************************************
 	 * Routines for handling displaying the "On Tour" status icon in the
