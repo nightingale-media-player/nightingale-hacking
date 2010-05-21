@@ -354,6 +354,7 @@
 ./components/sbMetadataModule.xpt
 ./components/sbMetrics.xpt
 ./components/sbMockCDDevice.xpt
+./components/sbMockCDDeviceService.js
 ./components/sbNetworkProxyImport.xpt
 ./components/sbPlaybackHistoryService.xpt
 ./components/sbPlaylistCommands.xpt

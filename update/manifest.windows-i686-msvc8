@@ -172,7 +172,6 @@
 ./components/sbMigrate14to17pre0.smartplaylist.js
 ./components/sbMockCDDevice.dll
 ./components/sbMockCDDevice.xpt
-./components/sbMockCDDeviceService.js
 ./components/sbMockFirmwareHandlerURLService.js
 ./components/sbMoveRenameHelper.js
 ./components/sbMozVariant.dll

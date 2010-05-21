@@ -407,6 +407,7 @@
 ./Contents/Resources/components/sbMetadataModule.xpt
 ./Contents/Resources/components/sbMetrics.xpt
 ./Contents/Resources/components/sbMockCDDevice.xpt
+./Contents/Resources/components/sbMockCDDeviceService.js
 ./Contents/Resources/components/sbNetworkProxyImport.xpt
 ./Contents/Resources/components/sbPlaybackHistoryService.xpt
 ./Contents/Resources/components/sbPlaylistCommands.xpt
