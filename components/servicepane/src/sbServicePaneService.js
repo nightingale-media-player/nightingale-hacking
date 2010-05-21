@@ -35,7 +35,7 @@ const Cr = Components.results;
 const Ce = Components.Exception;
 const Cu = Components.utils;
 
-Components.utils.import("resource://app/jsmodules/XPCOMUtils.jsm");
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 Components.utils.import("resource://app/jsmodules/DebugUtils.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");

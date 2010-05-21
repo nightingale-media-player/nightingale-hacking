@@ -28,7 +28,7 @@
  * \brief Basic service pane unit tests
  */
 
-Components.utils.import("resource://app/jsmodules/XPCOMUtils.jsm");
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 function DBG(s) { log('DBG:test_servicepane: '+s); }
 

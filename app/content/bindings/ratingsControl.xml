@@ -229,7 +229,7 @@
       <constructor>
         <![CDATA[
           Components.utils.import("resource://app/jsmodules/sbProperties.jsm", this);
-          Components.utils.import("resource://app/jsmodules/XPCOMUtils.jsm", this);
+          Components.utils.import("resource://gre/modules/XPCOMUtils.jsm", this);
           Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm", this);
           Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm", this);
           Components.utils.import("resource://app/jsmodules/sbMetadataUtils.jsm", this);

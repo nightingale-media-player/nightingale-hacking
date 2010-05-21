@@ -46,7 +46,6 @@ SONGBIRD_JSMODULES = $(srcdir)/AddOnUtils.jsm \
                      $(srcdir)/StringUtils.jsm \
                      $(srcdir)/URLUtils.jsm \
                      $(srcdir)/WindowUtils.jsm \
-                     $(srcdir)/XPCOMUtils.jsm \
                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk

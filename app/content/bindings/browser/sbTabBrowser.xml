@@ -51,7 +51,7 @@
         Cu.import("resource://app/jsmodules/kPlaylistCommands.jsm");
         Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
         Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
-        Cu.import("resource://app/jsmodules/XPCOMUtils.jsm");
+        Cu.import("resource://gre/modules/XPCOMUtils.jsm");
         Cu.import("resource://app/jsmodules/URLUtils.jsm");
 
         // we moved the strip container to the tabs binding

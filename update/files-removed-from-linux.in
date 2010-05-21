@@ -165,6 +165,7 @@
 ./components/sbWidgets.xpt
 ./components/sbWindowWatcher.xpt
 ./components/sbiTunesImporter.xpt
+./jsmodules/XPCOMUtils.jsm
 ./xulrunner/components/accessibility.xpt
 ./xulrunner/components/alerts.xpt
 ./xulrunner/components/appshell.xpt

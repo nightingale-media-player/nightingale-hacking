@@ -367,7 +367,6 @@
 ./jsmodules/StringUtils.jsm
 ./jsmodules/URLUtils.jsm
 ./jsmodules/WindowUtils.jsm
-./jsmodules/XPCOMUtils.jsm
 ./jsmodules/kPlaylistCommands.jsm
 ./jsmodules/sbAddToDevice.jsm
 ./jsmodules/sbAddToLibrary.jsm

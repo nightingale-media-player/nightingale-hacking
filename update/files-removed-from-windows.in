@@ -378,6 +378,7 @@
 ./components/sbWindowWatcher.xpt
 ./components/sbWindowsSystem.xpt
 ./components/sbiTunesImporter.xpt
+./jsmodules/XPCOMUtils.jsm
 ./xulrunner/components/accessibility-msaa.xpt
 ./xulrunner/components/accessibility.xpt
 ./xulrunner/components/alerts.xpt
