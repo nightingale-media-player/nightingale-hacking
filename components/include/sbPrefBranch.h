@@ -29,9 +29,11 @@
 
 #include <nsCOMPtr.h>
 #include <nsThreadUtils.h>
+#include <nsComponentManagerUtils.h>
 #include <sbProxyUtils.h>
 #include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
+#include <nsIVariant.h>
 
 /**
  * Helper class for preferences to make the syntax a bit easier on the eyes
@@ -160,6 +162,77 @@ public:
     NS_ASSERTION(mPrefBranch, "mPrefBranch is null in sbPrefBranch");
 
     return mPrefBranch->SetCharPref(aKey, aValue.get());
+  }
+
+  /* Get a preference as an nsIVariant */
+  nsresult GetPreference(const nsAString & aPrefName, nsIVariant **_retval)
+  {
+    NS_ASSERTION(PR_GetCurrentThread() == mCreatingThread,
+                 "sbPrefBranch used on multiple threads");
+    NS_ENSURE_STATE(mPrefBranch);
+    NS_ENSURE_ARG_POINTER(_retval);
+    NS_ENSURE_FALSE(aPrefName.IsEmpty(), NS_ERROR_INVALID_ARG);
+    nsresult rv;
+
+    NS_LossyConvertUTF16toASCII prefNameASCII(aPrefName);
+
+    // get tht type of the pref
+    PRInt32 prefType;
+    rv = mPrefBranch->GetPrefType(prefNameASCII.get(), &prefType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // create a writable variant
+    nsCOMPtr<nsIWritableVariant> writableVariant =
+      do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // get the value of our pref
+    switch (prefType) {
+      case nsIPrefBranch::PREF_INVALID: {
+        rv = writableVariant->SetAsEmpty();
+        NS_ENSURE_SUCCESS(rv, rv);
+        break;
+      }
+      case nsIPrefBranch::PREF_STRING: {
+        char* _value = NULL;
+        rv = mPrefBranch->GetCharPref(prefNameASCII.get(), &_value);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsCString value;
+        value.Adopt(_value);
+
+        // set the value of the variant to the value of the pref
+        rv = writableVariant->SetAsACString(value);
+        NS_ENSURE_SUCCESS(rv, rv);
+        break;
+      }
+      case nsIPrefBranch::PREF_INT: {
+        PRInt32 value;
+        rv = mPrefBranch->GetIntPref(prefNameASCII.get(), &value);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = writableVariant->SetAsInt32(value);
+        NS_ENSURE_SUCCESS(rv, rv);
+        break;
+      }
+      case nsIPrefBranch::PREF_BOOL: {
+        PRBool value;
+        rv = mPrefBranch->GetBoolPref(prefNameASCII.get(), &value);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = writableVariant->SetAsBool(value);
+        NS_ENSURE_SUCCESS(rv, rv);
+        break;
+      }
+      default: {
+        NS_NOTREACHED("Impossible pref type");
+        // And for release builds, do something sane.
+        rv = writableVariant->SetAsEmpty();
+        NS_ENSURE_SUCCESS(rv, rv);
+        break;
+      }
+    }
+    return CallQueryInterface(writableVariant, _retval);
   }
 
 private:

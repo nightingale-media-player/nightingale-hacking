@@ -312,13 +312,29 @@ var DeviceMediaManagementServices = {
       function DeviceMediaManagementServices_musicManagementPrefsRead(aPrefs)
   {
     var profileId = this._device.getPreference("transcode_profile.profile_id");
+    var profileIdGlobal = false;
+
+    if (!profileId) {
+      // Get the global default profile if there's one of those.
+      profileId = Application.prefs.getValue(
+              "songbird.device.transcode_profile.profile_id", null);
+      if (profileId)
+        profileIdGlobal = true;
+    }
 
     if (profileId) {
       this._mediaManagementPrefs.transcodeModeManual = true;
       this._mediaManagementPrefs.selectedProfile =
           this.profileFromProfileId(profileId);
-      this._mediaManagementPrefs.selectedBitrate = 
-          this._device.getPreference("transcode_profile.audio_properties.bitrate");
+      if (profileIdGlobal) {
+        this._mediaManagementPrefs.selectedBitrate = Application.prefs.getValue(
+                  "songbird.device.transcode_profile.audio_properties.bitrate",
+                  null);
+      }
+      else {
+        this._mediaManagementPrefs.selectedBitrate = 
+            this._device.getPreference("transcode_profile.audio_properties.bitrate");
+      }
     }
     else {
       this._mediaManagementPrefs.transcodeModeManual = false;
