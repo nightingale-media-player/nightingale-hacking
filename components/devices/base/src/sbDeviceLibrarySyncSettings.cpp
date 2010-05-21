@@ -30,6 +30,7 @@
 #include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsILocalFile.h>
+#include <nsThreadUtils.h>
 
 // Songbird local includes
 #include "sbDeviceLibrary.h"
@@ -37,11 +38,18 @@
 
 // Songibrd includes
 
+#include <sbArrayUtils.h>
 #include <sbDeviceUtils.h>
 #include <sbIDevice.h>
-#include <sbArrayUtils.h>
+#include <sbIPropertyArray.h>
+#include <sbIPropertyManager.h>
+#include <sbPropertiesCID.h>
+#include <sbProxiedComponentManager.h>
+#include <sbStandardProperties.h>
 #include <sbStringUtils.h>
 #include <sbVariantUtils.h>
+
+#define SB_AUDIO_SMART_PLAYLIST "<sbaudio>"
 
 extern PLDHashOperator ArrayBuilder(nsISupports * aKey,
                                     PRBool aData,
@@ -240,6 +248,104 @@ sbDeviceLibrarySyncSettings::GetMediaSettingsNoLock(
   return NS_OK;
 }
 
+/**
+ * This returns the existing audio smart playlist or creates a new one if
+ * not found
+ */
+static nsresult
+GetOrCreateAudioSmartMediaList(sbIMediaList ** aAudioMediaList)
+{
+  NS_ENSURE_ARG_POINTER(aAudioMediaList);
+
+  nsresult rv;
+
+  nsCOMPtr<sbILibraryManager> libManager =
+    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create a smart playlist with just audio files
+  nsCOMPtr<sbILibrary> mainLibrary;
+  rv = libManager->GetMainLibrary(getter_AddRefs(mainLibrary));
+
+  nsCOMPtr<sbIMutablePropertyArray> properties =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                                  NS_LITERAL_STRING("1"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
+                                  NS_LITERAL_STRING(SB_AUDIO_SMART_PLAYLIST));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 count = 0;
+  nsCOMPtr<nsIArray> smartMediaLists;
+  rv = mainLibrary->GetItemsByProperties(properties,
+                                         getter_AddRefs(smartMediaLists));
+  if (rv != NS_ERROR_NOT_AVAILABLE) {
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = smartMediaLists->GetLength(&count);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  NS_WARN_IF_FALSE(count < 2, "Multiple audio sync'ing playlists");
+  if (count > 0) {
+    nsCOMPtr<sbIMediaList> list = do_QueryElementAt(smartMediaLists,
+                                                    0,
+                                                    &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbILocalDatabaseSmartMediaList> audioList =
+      do_QueryInterface(list, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = audioList->Rebuild();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return CallQueryInterface(list, aAudioMediaList);
+  }
+  nsCOMPtr<nsIThread> target;
+  rv = NS_GetMainThread(getter_AddRefs(target));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILibrary> proxiedLibrary;
+  rv = do_GetProxyForObject(target,
+                            mainLibrary.get(),
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(proxiedLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaList> mediaList;
+  rv = proxiedLibrary->CreateMediaList(NS_LITERAL_STRING("smart"),
+                                       properties,
+                                       getter_AddRefs(mediaList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILocalDatabaseSmartMediaList> audioList =
+    do_QueryInterface(mediaList, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPropertyOperator> equal;
+  rv = sbLibraryUtils::GetEqualOperator(getter_AddRefs(equal));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILocalDatabaseSmartMediaListCondition> condition;
+  rv = audioList->AppendCondition(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                                  equal,
+                                  NS_LITERAL_STRING("audio"),
+                                  nsString(),
+                                  nsString(),
+                                  getter_AddRefs(condition));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = audioList->Rebuild();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mediaList.forget(aAudioMediaList);
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbDeviceLibrarySyncSettings::GetSyncPlaylists(nsIArray ** aMediaLists)
 {
@@ -261,15 +367,38 @@ sbDeviceLibrarySyncSettings::GetSyncPlaylists(nsIArray ** aMediaLists)
     if (!mediaSettings) {
       continue;
     }
-    nsCOMPtr<nsIArray> playlists;
-    rv = mediaSettings->GetSyncPlaylistsNoLock(getter_AddRefs(playlists));
-    if (rv == NS_ERROR_NOT_AVAILABLE) {
-      continue;
-    }
+
+    PRUint32 mgmtType;
+    rv = mediaSettings->GetMgmtTypeNoLock(&mgmtType);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = sbAppendnsIArray(playlists, allPlaylists);
-    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<nsIArray> playlists;
+    if (mgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL) {
+      if (mediaType == sbIDeviceLibrary::MEDIATYPE_AUDIO) {
+        // If the "sync all" option is turned on for audio, add every audio
+        // medialist and every normal mixed playlist.
+        nsCOMPtr<sbIMediaList> mediaList;
+        rv = GetOrCreateAudioSmartMediaList(getter_AddRefs(mediaList));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = allPlaylists->AppendElement(mediaList, PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      rv = mediaSettings->GetSyncPlaylistsNoLock(getter_AddRefs(playlists));
+      if (rv == NS_ERROR_NOT_AVAILABLE) {
+        continue;
+      }
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else if (mgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_PLAYLISTS) {
+      rv = mediaSettings->GetSelectedPlaylistsNoLock(getter_AddRefs(playlists));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    if (playlists) {
+      rv = sbAppendnsIArray(playlists, allPlaylists);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   rv = CallQueryInterface(allPlaylists, aMediaLists);

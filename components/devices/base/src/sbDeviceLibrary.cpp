@@ -912,16 +912,12 @@ sbDeviceLibrary::GetSyncListsPrefKey(PRUint32 aContentType,
 NS_IMETHODIMP
 sbDeviceLibrary::SetSyncSettings(sbIDeviceLibrarySyncSettings * aSyncSettings)
 {
+  NS_ENSURE_ARG_POINTER(aSyncSettings);
+
   // Lock for both assignment and the reading the aSyncSettings object
   nsAutoMonitor monitor(mMonitor);
 
   nsresult rv = SetSyncSettingsNoLock(aSyncSettings);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = UpdateIsReadOnly(mCurrentSyncSettings);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = UpdateMainLibraryListeners(mCurrentSyncSettings);
   NS_ENSURE_SUCCESS(rv, rv);
 
   SB_NOTIFY_LISTENERS(OnSyncSettings(
@@ -1280,6 +1276,14 @@ sbDeviceLibrary::Sync()
     rv = device->SubmitRequest(sbIDevice::REQUEST_SYNC, requestParams);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  // update the library is read-only property
+  rv = UpdateIsReadOnly(mCurrentSyncSettings);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // update the main library listeners
+  rv = UpdateMainLibraryListeners(mCurrentSyncSettings);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // If the user has enabled image sync, trigger it after the audio/video sync
   // If the user has disabled image sync, trigger it to do the removal.

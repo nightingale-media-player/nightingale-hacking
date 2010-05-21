@@ -76,7 +76,9 @@ private:
     return mChanged;
   }
   void Changed();
+  nsresult GetMgmtTypeNoLock(PRUint32 * aSyncMgmtType);
   nsresult GetSyncPlaylistsNoLock(nsIArray ** aSyncPlaylists);
+  nsresult GetSelectedPlaylistsNoLock(nsIArray ** aSelectedPlaylists);
   /**
    * Management type, SYNC_MGMT_NONE, SYNC_MGMT_ALL, SYNC_MGMT_PLAYLISTS
    */
