@@ -1157,6 +1157,10 @@ NS_IMETHODIMP sbDevCapVideoStream::Initialize(const nsACString & aType,
                                               PRBool aIsSupportedFrameratesRange,
                                               sbIDevCapRange *aBitRates)
 {
+  NS_ENSURE_ARG_POINTER(aExplicitSizes);
+  NS_ENSURE_ARG_POINTER(aSupportedFrameRates);
+  NS_ENSURE_ARG_POINTER(aBitRates);
+
   mType = aType;
   mExplicitSizes = aExplicitSizes;
   mWidths = aWidths;
@@ -1171,14 +1175,39 @@ NS_IMETHODIMP sbDevCapVideoStream::Initialize(const nsACString & aType,
   nsresult rv;
   PRUint32 length;
   if (mIsPARRange) {
+    NS_ENSURE_ARG_POINTER(mVideoPARs);
     rv = mVideoPARs->GetLength(&length);
     NS_ENSURE_SUCCESS(rv, rv);
     NS_ENSURE_TRUE(length == 2, NS_ERROR_UNEXPECTED);
+  }
+  else {
+    if (!aSupportPARs) {
+      // no PARs given, default to 1/1
+      nsCOMPtr<sbIDevCapFraction> parFraction =
+          do_CreateInstance("@songbirdnest.com/Songbird/Device/sbfraction;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<nsIMutableArray> parArray =
+          do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = parFraction->Initialize(1, 1);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = parArray->AppendElement(parFraction, PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+      mVideoPARs = do_QueryInterface(parArray, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
   if (mIsFrameRatesRange) {
     rv = mVideoFrameRates->GetLength(&length);
     NS_ENSURE_SUCCESS(rv, rv);
     NS_ENSURE_TRUE(length == 2, NS_ERROR_UNEXPECTED);
+  }
+  else {
+    rv = mVideoFrameRates->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(length > 0, NS_ERROR_UNEXPECTED);
   }
   return NS_OK;
 }

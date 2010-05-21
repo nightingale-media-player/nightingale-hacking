@@ -869,6 +869,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineIdealOutputSize()
       nsCOMPtr<nsIArray> parRanges;
       rv = outputCaps->GetSupportedPARs(getter_AddRefs(parRanges));
       NS_ENSURE_SUCCESS(rv, rv);
+      NS_ENSURE_TRUE(parRanges, NS_ERROR_UNEXPECTED);
 
       PRUint32 count, index = 0;
       rv = parRanges->GetLength(&count);
