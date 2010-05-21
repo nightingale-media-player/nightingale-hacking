@@ -749,6 +749,15 @@ sbDevCapRange::GetValue(PRUint32 aIndex, PRInt32 * aValue)
 NS_IMETHODIMP
 sbDevCapRange::AddValue(PRInt32 aValue)
 {
+  if (mValues.IsEmpty()) {
+    mMin = mMax = aValue;
+  }
+  else {
+    if (mMin > aValue)
+      mMin = aValue;
+    if (mMax < aValue)
+      mMax = aValue;
+  }
   NS_ENSURE_TRUE(mValues.AppendElement(aValue), NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;

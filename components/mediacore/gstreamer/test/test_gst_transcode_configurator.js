@@ -164,16 +164,41 @@ const K_DEFAULT_OUTPUT = {
     width: 320,
     height: 240,
     PAR: F(1, 1),
-    frameRate: F(30000, 1001)
+    frameRate: F(30000, 1001),
+    properties: {}
   },
   audioFormat: {
     sampleRate: 44100,
-    channels: 2
+    channels: 2,
+    properties: {}
   }
 };
 
+function checkBitrate(aCaps, aBitrate, aMin, aMax)
+{
+  assertTrue(aBitrate >= aCaps.video.bitRates.min / 1000);
+  assertTrue(aBitrate <= aCaps.video.bitRates.max / 1000);
+  assertTrue(aBitrate >= aMin, "Bitrate too low");
+  assertTrue(aBitrate <= aMax, "Bitrate too high");
+  return true;
+}
+
 const K_TEST_CASES = [
-  { description: "default"
+  { description: "default",
+    output: {
+      videoFormat: {
+        properties: {
+          bitrate: function(bitrate) {
+            return checkBitrate(this.caps, bitrate, 600, 700);
+          }
+        }
+      },
+      audioFormat: {
+        properties: {
+          "max-bitrate": 128000
+        }
+      }
+    }
   },
   { description: "scale down with empty areas",
     input: {
@@ -185,7 +210,12 @@ const K_TEST_CASES = [
     output: {
       videoFormat: {
         width: 320,
-        height: 192 // 320 / 16:9 = 180, rounded up to nearest multiple of 16
+        height: 192, // 320 / 16:9 = 180, rounded up to nearest multiple of 16
+        properties: {
+          bitrate: function(bitrate) {
+            return checkBitrate(this.caps, bitrate, 500, 600);
+          }
+        }
       }
     }
   },
@@ -198,6 +228,7 @@ const K_TEST_CASES = [
     },
     caps: {
       video: {
+        // We still use explicitSizes here (forcing 320x240)
         widths: null,
         heights: null
       }
@@ -280,6 +311,65 @@ const K_TEST_CASES = [
     output: {
       videoFormat: {
         frameRate: F(30000, 1001)
+      }
+    }
+  },
+  { description: "no change",
+    input: {
+      videoStream: {
+        videoWidth: 800,
+        videoHeight: 600,
+        PAR: F(1, 1),
+        frameRate: F(24000, 1001)
+      }
+    },
+    caps: {
+      video: {
+        widths: {min: 640, step: 1, max: 1024},
+        heights: {min: 480, step: 1, max: 768},
+        PARs: [F(1, 1), F(2, 1), F(3, 2)],
+        frameRates: {min: F(0, 1), max: F(30000, 1001)},
+        bitRates: {min: 1, step: 1, max: 2000000}
+      }
+    },
+    output: {
+      videoFormat: {
+        width: 800,
+        height: 600,
+        PAR: F(1, 1),
+        frameRate: F(24000, 1001),
+        properties: {
+          bitrate: function(bitrate) {
+            // Max bitrate is 2000000; ensure we capped it to this for this
+            // high-res test.
+            return checkBitrate(this.caps, bitrate, 2000, 2000);
+          }
+        }
+      }
+    }
+  },
+  { description: "favour size over quality",
+    input: {
+      videoStream: {
+        videoWidth: 1920,
+        videoHeight: 816,
+        PAR: F(1, 1),
+        frameRate: F(24000, 1001)
+      }
+    },
+    caps: {
+      video: {
+        widths: {min: 1, max: 720, step: 1},
+        heights: {min: 1, max: 576, step: 1},
+        bitRates: {min: 0, max: 1536000, step: 1},
+        frameRates: {min: F(0, 1), max: F(30000, 1001)}
+      }
+    },
+    output: {
+      videoFormat: {
+        width: 720,
+        height: 306,
+        frameRate: F(24000, 1001)
       }
     }
   }
@@ -392,7 +482,7 @@ function runTest() {
       getPreference: function device_getPreference(aPrefName) {
         switch (aPrefName) {
           case "transcode.quality.video":
-            return testcase.hasOwnProperty("quality") ? testcase.quality : 1.0;
+            return testcase.hasOwnProperty("quality") ? testcase.quality : 0.5;
         }
         throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
       }
@@ -437,11 +527,19 @@ function runTest() {
       configurator.videoFormat.getVideoFrameRate(FPSnum, FPSdenom);
 
       // dump out the configurated video format for easier debugging
+      let props = [];
+      let propEnum = configurator.videoEncoderProperties.enumerator;
+      for each (let prop in ArrayConverter.JSEnum(propEnum)) {
+        if (prop instanceof Ci.nsIProperty) {
+          props.push(prop.name + ": " + prop.value);
+        }
+      }
       log("Configurated video format: " +
           configurator.videoFormat.videoWidth +
           "x" + configurator.videoFormat.videoHeight +
           " PAR " + PARnum.value + ":" + PARdenom.value +
-          " FPS " + FPSnum.value + ":" + FPSdenom.value);
+          " FPS " + FPSnum.value + ":" + FPSdenom.value +
+          " props: {" + props.join(", ") + "}");
 
       // check the video format
       assertEqual(testcase.output.videoFormat.width,
@@ -462,6 +560,20 @@ function runTest() {
       assertEqual(testcase.output.videoFormat.frameRate.denominator,
                   FPSdenom.value,
                   "video format frame rate denominator unexpected");
+
+      assertTrue(configurator.videoEncoderProperties instanceof Ci.nsIPropertyBag2);
+      for (let prop in testcase.output.videoFormat.properties) {
+        if (testcase.output.videoFormat.properties[prop] instanceof Function) {
+          let f = testcase.output.videoFormat.properties[prop];
+          let val = configurator.videoEncoderProperties.get(prop);
+          assertTrue(f.call(testcase, val));
+        }
+        else {
+          assertEqual(testcase.output.videoFormat.properties[prop],
+                      configurator.videoEncoderProperties.get(prop),
+                      "video property " + prop + " mismatch");
+        }
+      }
     }
     else {
       assertFalse(configurator.useVideoEncoder,
@@ -477,9 +589,17 @@ function runTest() {
                  "expected configurator to use an audio encoder");
 
       // dump out the configurated audio format for easier debugging
+      let props = [];
+      let propEnum = configurator.audioEncoderProperties.enumerator;
+      for each (let prop in ArrayConverter.JSEnum(propEnum)) {
+        if (prop instanceof Ci.nsIProperty) {
+          props.push(prop.name + ": " + prop.value);
+        }
+      }
       log("Configurated audio format: " +
           configurator.audioFormat.sampleRate + "Hz " +
-          configurator.audioFormat.channels + "ch");
+          configurator.audioFormat.channels + "ch" +
+          " props: {" + props.join(", ") + "}");
 
       // check the audio format
       assertEqual(testcase.output.audioFormat.sampleRate,
@@ -488,6 +608,13 @@ function runTest() {
       assertEqual(testcase.output.audioFormat.channels,
                   configurator.audioFormat.channels,
                   "audio format channels unexpected");
+
+      assertTrue(configurator.audioEncoderProperties instanceof Ci.nsIPropertyBag2);
+      for (let prop in testcase.output.audioFormat.properties) {
+        assertEqual(testcase.output.audioFormat.properties[prop],
+                    configurator.audioEncoderProperties.get(prop),
+                    "video property " + prop + " mismatch");
+      }
     }
     else {
       assertFalse(configurator.useAudioEncoder,
