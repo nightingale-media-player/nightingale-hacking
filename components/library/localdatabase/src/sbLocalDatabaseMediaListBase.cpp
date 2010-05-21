@@ -1289,4 +1289,3 @@ sbGUIDArrayValueEnumerator::GetNext(nsAString& _retval)
 
   return NS_OK;
 }
-

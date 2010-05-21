@@ -48,47 +48,59 @@
     </content>
 
     <implementation>
-      <constructor>
-	<![CDATA[
-          var box = document.getAnonymousElementByAttribute(this, "anonid", "tracklist").parentNode;
-	  box.setAttribute("label", SBString("cdinfo.details.closed"));
-          var header = document.getAnonymousElementByAttribute(this, "anonid", "tracklist-header");
-	  header.childNodes[0].setAttribute("label", SBString("property.ordinal"));
-	  header.childNodes[1].setAttribute("label", SBString("property.track_name"));
-        ]]>
-      </constructor>
+      <constructor><![CDATA[
+        var boxParent = document.getAnonymousElementByAttribute(this,
+                                                                "anonid",
+                                                                "tracklist");
+        var box = boxParent.parentNode;
+        box.setAttribute("label", SBString("cdinfo.details.closed"));
+        var header = document.getAnonymousElementByAttribute(this,
+                                                             "anonid",
+                                                             "tracklist-header");
+        header.childNodes[0].setAttribute("label",
+                                          SBString("property.ordinal"));
+        header.childNodes[1].setAttribute("label",
+                                          SBString("property.track_name"));
+      ]]></constructor>
 
       <method name="setTrackTitles">
         <parameter name="titles"/>
-        <body>
-          <![CDATA[
+        <body><![CDATA[
             var XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
-            function newelem(tagname) { return document.createElementNS(XUL_NS, tagname); }
-	    var list = document.getAnonymousElementByAttribute(this, "anonid", "tracklist");
+            function newelem(tagname) {
+              return document.createElementNS(XUL_NS, tagname);
+            }
+            var list = document.getAnonymousElementByAttribute(this,
+                                                               "anonid",
+                                                               "tracklist");
             var tracks = 0;
 
             function doappend(title)
             {
               var row = newelem("listitem");
-              row.appendChild(newelem("listcell")).setAttribute("label", ++tracks);
-              row.appendChild(newelem("listcell")).setAttribute("label", title);
+              row.appendChild(newelem("listcell")).setAttribute("label",
+                                                                ++tracks);
+              row.appendChild(newelem("listcell")).setAttribute("label",
+                                                                title);
               list.appendChild(row);
             }
 
             titles.forEach(doappend);
             list.setAttribute("rows", Math.min(5, titles.length));
-          ]]>
-        </body>
+        ]]></body>
       </method>
     </implementation>
 
     <handlers>
-      <handler event="collapse">
-        <![CDATA[
-          var box = document.getAnonymousElementByAttribute(this, "anonid", "tracklist").parentNode;
-	  box.setAttribute("label", SBString("cdinfo.details."+ (box.open ? "open" : "closed")));
-        ]]>
-      </handler>
+      <handler event="collapse"><![CDATA[
+        var boxParent = document.getAnonymousElementByAttribute(this,
+                                                                "anonid",
+                                                                "tracklist");
+        var box = boxParent.parentNode;
+        box.setAttribute("label",
+                          SBString("cdinfo.details." +
+                                   (box.open ? "open" : "closed")));
+      ]]></handler>
     </handlers>
   </binding>
 </bindings>
