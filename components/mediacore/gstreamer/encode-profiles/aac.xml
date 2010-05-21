@@ -9,10 +9,13 @@
 
   <container>
     <type>video/mp4</type>
+    <attribute name="variant" type="string" value="iso" />
   </container>
 
   <audio>
     <type>audio/aac</type>
+    <attribute name="mpegversion" type="int" value="4" />
+
     <property name="bitrate" type="int" min="32000" max="256000" default="128000" />
   </audio>
 </profile>

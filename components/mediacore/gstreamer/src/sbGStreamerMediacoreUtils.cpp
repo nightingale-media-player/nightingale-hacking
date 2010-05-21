@@ -766,6 +766,8 @@ static const struct sb_gst_caps_map_entry sb_gst_caps_map[] =
   { "audio/x-pcm-int",   "audio/x-raw-int", SB_GST_CAPS_MAP_AUDIO },
   { "audio/x-pcm-float", "audio/x-raw-float", SB_GST_CAPS_MAP_AUDIO },
   { "audio/x-ms-wma",    "audio/x-wma", SB_GST_CAPS_MAP_AUDIO },
+  { "audio/mpeg",        "audio/mpeg", SB_GST_CAPS_MAP_AUDIO },
+  { "audio/aac",         "audio/mpeg", SB_GST_CAPS_MAP_AUDIO },
 
   { "video/x-ms-wmv",    "video/x-wmv", SB_GST_CAPS_MAP_VIDEO },
 
@@ -821,7 +823,7 @@ GetMimeTypeForCaps (GstCaps *aCaps, nsACString &aMimeType)
   GstStructure *structure = gst_caps_get_structure (aCaps, 0);
   const gchar *capsName = gst_structure_get_name (structure);
 
-  // Need to special-case this one.
+  // Need to special-case some of these
   if (!strcmp(capsName, "video/quicktime")) {
     const gchar *variant = gst_structure_get_string (structure, "variant");
     if (variant) {
@@ -835,6 +837,17 @@ GetMimeTypeForCaps (GstCaps *aCaps, nsACString &aMimeType)
     else {
       // No variant; use quicktime
       aMimeType.AssignLiteral("video/quicktime");
+    }
+    return NS_OK;
+  }
+  else if (!strcmp(capsName, "audio/mpeg")) {
+    gint mpegversion;
+    if (gst_structure_get_int (structure, "mpegversion", &mpegversion) &&
+        mpegversion == 4) {
+      aMimeType.AssignLiteral("audio/aac");
+    }
+    else {
+      aMimeType.AssignLiteral("audio/mpeg");
     }
     return NS_OK;
   }

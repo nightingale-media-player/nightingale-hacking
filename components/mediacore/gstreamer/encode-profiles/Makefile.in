@@ -38,6 +38,7 @@ GST_ENCODING_PROFILES = $(srcdir)/flac.xml \
                         $(srcdir)/ogg-theora-vorbis.xml \
                         $(srcdir)/asf-wmv-wma.xml \
                         $(srcdir)/aac.xml \
+                        $(srcdir)/aac-3gp.xml \
                         $(NULL)
 
 GST_ENCODE_PROFILES_DISTDIR = $(SONGBIRD_DISTDIR)/gstreamer/encode-profiles
