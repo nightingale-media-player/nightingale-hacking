@@ -849,7 +849,7 @@ ConcertTicketing.onBrowseArtistsReady = function(concerts) {
 			continue;
 		}
 
-    var artistname = decodeURIComponent(unescape(concert.artistname));
+    var artistname = unescape(decodeURIComponent(concert.artistname));
 		var thisLetter = artistname[0].toUpperCase();
 		if (thisLetter < 'A' || thisLetter > 'Z')
 			thisLetter = '#';
@@ -1125,10 +1125,11 @@ ConcertTicketing.createRowArtistView = function(concert, mainAnchor) {
 	otherArtistsCol.className = "artists";
 	var first = true;
 	var artists = concert.artistsConcertInfo;
-  var artistname = decodeURIComponent(unescape(concert.artistname));
+  var artistname = unescape(decodeURIComponent(concert.artistname));
 	for (var i = 0; i < artists.length; i++) {
 		var curArtist = artists.queryElementAt(i, Ci.sbISongkickArtistConcertInfo);
-		if (decodeURIComponent(unescape(curArtist.artistname)) == artistname) {
+    let curArtistName = unescape(decodeURIComponent(curArtist.artistname));
+		if (curArtistName == artistname) {
 			mainAnchor.setAttribute("href",
 					this.appendCityParam(curArtist.artisturl));
 			continue;
@@ -1141,7 +1142,7 @@ ConcertTicketing.createRowArtistView = function(concert, mainAnchor) {
 		var anchor = this._browseDoc.createElement("a");
 		this.makeLink(anchor, this.appendCityParam(curArtist.artisturl),
 				"artist.other");
-		var anchorLabel = this._browseDoc.createTextNode(curArtist.artistname);
+		var anchorLabel = this._browseDoc.createTextNode(curArtistName);
 		anchor.appendChild(anchorLabel);
 		otherArtistsCol.appendChild(anchor);
 	}
@@ -1319,7 +1320,7 @@ ConcertTicketing.createColumnArtists = function(concert) {
 		    this.appendCityParam(curArtistConcertInfo.artisturl),
 				"artist.other");
     var artistName =
-	  	decodeURIComponent(unescape(curArtistConcertInfo.artistname));
+      unescape(decodeURIComponent(curArtistConcertInfo.artistname));
 		var anchorLabel = this._browseDoc.createTextNode(artistName);
 		anchor.appendChild(anchorLabel);
 
@@ -1377,7 +1378,7 @@ ConcertTicketing.createColumnVenue = function(concert) {
 
   if (concert.venue != "<generic />") {
     var venueName = concert.venue;
-    venueName = decodeURIComponent(unescape(venueName));
+    venueName = unescape(decodeURIComponent(concert.venue));
     var anchor = this._browseDoc.createElement("a");
     this.makeLink(anchor, this.appendPartnerParam(concert.venueURL), "venue");
     var venueColLabel = this._browseDoc.createTextNode(venueName);

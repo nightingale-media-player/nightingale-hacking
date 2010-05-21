@@ -81,6 +81,45 @@ sbSongkickResultEnumerator::~sbSongkickResultEnumerator()
 {
 }
 
+nsString c2h( char dec )
+{
+    char dig1 = (dec&0xF0)>>4;
+    char dig2 = (dec&0x0F);
+    if ( 0<= dig1 && dig1<= 9) dig1+=48;    //0,48inascii
+    if (10<= dig1 && dig1<=15) dig1+=97-10; //a,97inascii
+    if ( 0<= dig2 && dig2<= 9) dig2+=48;
+    if (10<= dig2 && dig2<=15) dig2+=97-10;
+
+    nsString r;
+    r.Append(dig1);
+    r.Append(dig2);
+    return r;
+}
+
+//based on javascript encodeURIComponent()
+nsString encodeURIComponent(const nsString &c)
+{
+    nsString escaped;
+    int max = c.Length();
+    for(int i=0; i<max; i++)
+    {
+        if ( (48 <= c[i] && c[i] <= 57) ||//0-9
+             (65 <= c[i] && c[i] <= 90) ||//abc...xyz
+             (97 <= c[i] && c[i] <= 122) || //ABC...XYZ
+             (c[i]=='~' || c[i]=='!' || c[i]=='*' || c[i]=='(' || c[i]==')' || c[i]=='\'')
+        )
+        {
+            escaped.Append(c[i]);
+        }
+        else
+        {
+            escaped.AppendLiteral("%");
+            escaped.Append( c2h(c[i]) );//converts char 255 to string "ff"
+        }
+    }
+    return escaped;
+}
+
 nsresult
 sbSongkickResultEnumerator::Init(sbIDatabaseResult *aResult,
                                  sbIDatabaseQuery *aQuery)
@@ -107,6 +146,7 @@ sbSongkickResultEnumerator::Init(sbIDatabaseResult *aResult,
     
     nsString artistName;
     aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("name"), artistName);
+    artistName = encodeURIComponent(artistName);
 
     nsString artistURL;
     aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("artistURL"), artistURL);
@@ -114,16 +154,16 @@ sbSongkickResultEnumerator::Init(sbIDatabaseResult *aResult,
     nsString ts;
     aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("timestamp"), ts);
 
-    // XXX KREEGER DECODE THIS YO
     nsString venue;
     aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("venue"), venue);
+    venue = encodeURIComponent(venue);
 
     nsString city;
     aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("city"), city);
 
-    // XXX KREEGER DECODE THIS YO
     nsString title;
     aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("title"), title);
+    title = encodeURIComponent(title);
 
     nsString url;
     aResult->GetRowCellByColumn(i, NS_LITERAL_STRING("concertURL"), url);
@@ -175,6 +215,7 @@ sbSongkickResultEnumerator::Init(sbIDatabaseResult *aResult,
       nsString artistName;
       playingAtResult->GetRowCellByColumn(
           i, NS_LITERAL_STRING("name"), artistName);
+      artistName = encodeURIComponent(artistName);
 
       nsString artistURL;
       playingAtResult->GetRowCellByColumn(
