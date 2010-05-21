@@ -143,6 +143,10 @@ var DeviceSyncWidget = {
     // Remove library listener.
     LibraryUtils.mainLibrary.removeListener(this);
 
+    // Remove the device libary listener for setting changes.
+    if (this._deviceLibrary)
+      this._deviceLibrary.removeDeviceLibraryListener(this);
+
     // Stop listening for device events.
     if (this._device) {
       var deviceEventTarget =
@@ -393,6 +397,12 @@ var DeviceSyncWidget = {
 
   onSyncSettings: function DeviceSyncWidget_onSyncSettings(aAction,
                                                            aSyncSettings) {
+    // Re-read the sync settings and media sync settings.
+    this._deviceSyncSettings = this._deviceLibrary.tempSyncSettings;
+    var mediaType = this._getMediaType(this._mediaType);
+    this._mediaSyncSettings = this._deviceSyncSettings
+                                  .getMediaSettings(mediaType);
+
     this.update();
   },
 
