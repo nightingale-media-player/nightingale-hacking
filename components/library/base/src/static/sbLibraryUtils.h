@@ -193,6 +193,16 @@ public:
                                 /* in  */ nsIIOService * aIOService = nsnull);
 
   /**
+   * \brief Return a media list content type.
+   *
+   * \param aMediaList          Media list for while to get the content type.
+   *
+   * \return                    Media list content type.
+   */
+  static nsresult GetMediaListContentType(/* in  */ sbIMediaList *aMediaList,
+                                          /* out */ PRUint16 *aListContentType);
+
+  /**
    * \brief Return a library content URI for the file specified by aFile.
    *        Special processing is required to convert an nsIFile to a library
    *        content URI (see bug 6227).  getFileContentURI must be used instead

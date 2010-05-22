@@ -56,8 +56,9 @@ public:
   NS_DECL_SBIMEDIALISTLISTENER
   NS_DECL_SBILOCALDATABASESMARTMEDIALISTLISTENER
 
-  sbPlaylistSyncListener(sbILibrary* aTargetLibrary,
-                         bool aSyncPlaylists);
+  sbPlaylistSyncListener(sbILibrary * aTargetLibrary,
+                         bool aSyncPlaylists,
+                         sbIDevice * aDevice);
 
   /**
    * Add the media list to our list of lists
@@ -106,7 +107,8 @@ protected:
    * The device owns us and device library owns the device so we're good.
    * non owning pointer
    */
-  sbILibrary * mTargetLibrary;
+  sbILibrary* mTargetLibrary;
+  sbIDevice* mDevice;
   bool mSyncPlaylists;
 
   /**
@@ -140,7 +142,8 @@ public:
   sbLibraryUpdateListener(sbILibrary * aTargetLibrary,
                           bool aManualMode,
                           nsIArray * aPlaylistsList,
-                          bool aIgnorePlaylists);
+                          bool aIgnorePlaylists,
+                          sbIDevice * aDevice);
 
   /**
    * This function adds listener to the playlist aMainMediaList
@@ -182,6 +185,7 @@ protected:
 
   nsRefPtr<sbPlaylistSyncListener> mPlaylistListener;
 
+  sbIDevice* mDevice;
   bool mManualMode;
   bool mSyncPlaylists;
   bool mIgnorePlaylists;

@@ -5690,6 +5690,15 @@ sbBaseDevice::ShouldSyncMediaList(sbIMediaList* aMediaList,
   if (isEmpty)
     return NS_OK;
 
+  // Don't sync list that device doesn't support.
+  PRUint16 listContentType;
+  rv = sbLibraryUtils::GetMediaListContentType(aMediaList, &listContentType);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!sbDeviceUtils::IsMediaListContentTypeSupported(this,
+                                                      listContentType)) {
+    return NS_OK;
+  }
+
   // Don't sync media lists that are storage for other media lists (e.g., simple
   // media lists for smart media lists).
   nsAutoString outerGUID;

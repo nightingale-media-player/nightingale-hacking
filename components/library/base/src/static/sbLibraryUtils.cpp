@@ -43,6 +43,7 @@
 #include <nsThreadUtils.h>
 
 #include <sbILibrary.h>
+#include <sbILocalDatabaseSmartMediaList.h>
 #include <sbIMediaList.h>
 #include <sbIMediaItem.h>
 #include <sbIPropertyArray.h>
@@ -537,6 +538,29 @@ nsresult sbLibraryUtils::GetContentURI(nsIURI*  aURI,
 
   // Return results.
   NS_ADDREF(*_retval = uri);
+
+  return NS_OK;
+}
+
+/* static */
+nsresult sbLibraryUtils::GetMediaListContentType(sbIMediaList *aMediaList,
+                                                 PRUint16 *aListContentType)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aListContentType);
+
+  nsresult rv;
+
+  *aListContentType = sbIMediaList::CONTENTTYPE_NONE;
+
+  nsCOMPtr<sbILocalDatabaseSmartMediaList> smartList =
+    do_QueryInterface(aMediaList, &rv);
+  if (NS_FAILED(rv))
+    rv = aMediaList->GetListContentType(aListContentType);
+  else
+    rv = smartList->GetListContentType(aListContentType);
+
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

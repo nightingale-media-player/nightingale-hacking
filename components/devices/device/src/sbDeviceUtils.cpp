@@ -1627,28 +1627,135 @@ sbDeviceUtils::IsItemDRMProtected(sbIMediaItem * aMediaItem)
   return NS_SUCCEEDED(rv) && isDRMProtected.EqualsLiteral("1");
 }
 
-PRUint32
-sbDeviceUtils::GetDeviceCapsMediaType(sbIMediaItem * aMediaItem)
+/* static */ nsresult
+sbDeviceUtils::GetDeviceCapsTypeFromMediaItem(sbIMediaItem *aMediaItem,
+                                              PRUint32 *aContentType,
+                                              PRUint32 *aFunctionType)
 {
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aContentType);
+  NS_ENSURE_ARG_POINTER(aFunctionType);
+
   nsresult rv;
 
-  nsString contentType;
-  rv = aMediaItem->GetContentType(contentType);
-  NS_ENSURE_SUCCESS(rv, sbIDeviceCapabilities::CONTENT_UNKNOWN);
+  *aContentType = sbIDeviceCapabilities::CONTENT_UNKNOWN;
+  *aFunctionType = sbIDeviceCapabilities::FUNCTION_UNKNOWN;
 
-  if (contentType.Equals(NS_LITERAL_STRING("audio"))) {
-    return sbIDeviceCapabilities::CONTENT_AUDIO;
+  nsString itemContentType;
+  rv = aMediaItem->GetContentType(itemContentType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 contentType, functionType;
+  if (itemContentType.Equals(NS_LITERAL_STRING("audio"))) {
+    contentType = sbIDeviceCapabilities::CONTENT_AUDIO;
+    functionType = sbIDeviceCapabilities::FUNCTION_AUDIO_PLAYBACK;
   }
-  else if (contentType.Equals(NS_LITERAL_STRING("video"))) {
-    return sbIDeviceCapabilities::CONTENT_VIDEO;
+  else if (itemContentType.Equals(NS_LITERAL_STRING("video"))) {
+    contentType = sbIDeviceCapabilities::CONTENT_VIDEO;
+    functionType = sbIDeviceCapabilities::FUNCTION_VIDEO_PLAYBACK;
   }
-  else if (contentType.Equals(NS_LITERAL_STRING("image"))) {
-    return sbIDeviceCapabilities::CONTENT_IMAGE;
+  else if (itemContentType.Equals(NS_LITERAL_STRING("image"))) {
+    contentType = sbIDeviceCapabilities::CONTENT_IMAGE;
+    functionType = sbIDeviceCapabilities::FUNCTION_IMAGE_DISPLAY;
   }
-  NS_WARNING("sbDeviceUtils::GetTranscodeType: "
-             "returning unknown transcoding type");
-  return sbIDeviceCapabilities::CONTENT_UNKNOWN;
+  else {
+    NS_WARNING("sbDeviceUtils::GetDeviceCapsTypeFromMediaItem: "
+               "returning unknown device capabilities type");
+    contentType = sbIDeviceCapabilities::CONTENT_UNKNOWN;
+    functionType = sbIDeviceCapabilities::FUNCTION_UNKNOWN;
+  }
+
+  *aContentType = contentType;
+  *aFunctionType = functionType;
+  return NS_OK;
 };
+
+/* static */ nsresult
+sbDeviceUtils::GetDeviceCapsTypeFromListContentType(PRUint16 aListContentType,
+                                                    PRUint32 *aContentType,
+                                                    PRUint32 *aFunctionType)
+{
+  NS_ENSURE_ARG_POINTER(aContentType);
+  NS_ENSURE_ARG_POINTER(aFunctionType);
+
+  PRUint32 contentType, functionType;
+  // Map mix type list to audio.
+  if (aListContentType & sbIMediaList::CONTENTTYPE_AUDIO) {
+    contentType = sbIDeviceCapabilities::CONTENT_AUDIO;
+    functionType = sbIDeviceCapabilities::FUNCTION_AUDIO_PLAYBACK;
+  }
+  else if (aListContentType == sbIMediaList::CONTENTTYPE_VIDEO) {
+    contentType = sbIDeviceCapabilities::CONTENT_VIDEO;
+    functionType = sbIDeviceCapabilities::FUNCTION_VIDEO_PLAYBACK;
+  }
+  else {
+    NS_WARNING("sbDeviceUtils::GetDeviceCapsTypeFromListContentType: "
+               "returning unknown device capabilities type");
+    contentType = sbIDeviceCapabilities::CONTENT_UNKNOWN;
+    functionType = sbIDeviceCapabilities::FUNCTION_UNKNOWN;
+  }
+
+  *aContentType = contentType;
+  *aFunctionType = functionType;
+
+  return NS_OK;
+};
+
+/* static */ PRBool
+sbDeviceUtils::IsMediaItemSupported(sbIDevice *aDevice,
+                                    sbIMediaItem *aMediaItem)
+{
+  NS_ENSURE_TRUE(aDevice, PR_FALSE);
+  NS_ENSURE_TRUE(aMediaItem, PR_FALSE);
+
+  nsresult rv;
+
+  PRUint32 contentType, functionType;
+  rv = GetDeviceCapsTypeFromMediaItem(aMediaItem,
+                                      &contentType,
+                                      &functionType);
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+  nsCOMPtr<sbIDeviceCapabilities> capabilities;
+  rv = aDevice->GetCapabilities(getter_AddRefs(capabilities));
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+  PRBool isSupported;
+  rv = capabilities->SupportsContent(functionType,
+                                     contentType,
+                                     &isSupported);
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+  return isSupported;
+}
+
+/* static */ PRBool
+sbDeviceUtils::IsMediaListContentTypeSupported(sbIDevice *aDevice,
+                                               PRUint16 aListContentType)
+{
+  NS_ENSURE_TRUE(aDevice, PR_FALSE);
+
+  nsresult rv;
+
+  PRUint32 contentType, functionType;
+  rv = GetDeviceCapsTypeFromListContentType(aListContentType,
+                                            &contentType,
+                                            &functionType);
+  NS_ENSURE_TRUE(NS_SUCCEEDED(rv), PR_FALSE);
+
+  nsCOMPtr<sbIDeviceCapabilities> capabilities;
+  rv = aDevice->GetCapabilities(getter_AddRefs(capabilities));
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+  PRBool isSupported;
+  rv = capabilities->SupportsContent(functionType,
+                                     contentType,
+                                     &isSupported);
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+  return isSupported;
+}
 
 /*static*/
 nsresult sbDeviceUtils::AddSupportedFileExtensions

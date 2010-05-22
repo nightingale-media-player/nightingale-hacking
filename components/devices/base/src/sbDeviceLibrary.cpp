@@ -432,7 +432,8 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
     new sbLibraryUpdateListener(mDeviceLibrary,
                                 isManual != PR_FALSE,
                                 playlistListCount ? syncPlaylistList : nsnull,
-                                ignorePlaylists);
+                                ignorePlaylists,
+                                mDevice);
   NS_ENSURE_TRUE(mMainLibraryListener, NS_ERROR_OUT_OF_MEMORY);
 
   mMainLibraryListenerFilter = do_CreateInstance
@@ -533,33 +534,6 @@ sbDeviceLibrary::GetDefaultDeviceLibraryDatabaseFile
   NS_ENSURE_SUCCESS(rv, rv);
 
   libraryFile.forget(aDBFile);
-
-  return NS_OK;
-}
-
-nsresult
-sbDeviceLibrary::GetIsSyncedLocally(PRBool* aIsSyncedLocally)
-{
-  NS_ASSERTION(aIsSyncedLocally, "aIsSyncedLocally is null");
-
-  PRBool   isSyncedLocally = PR_FALSE;
-  nsresult rv;
-
-  nsAutoString localSyncPartnerID;
-  rv = GetMainLibraryId(localSyncPartnerID);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIVariant> deviceSyncPartnerIDVariant;
-  nsAutoString         deviceSyncPartnerID;
-  rv = mDevice->GetPreference(NS_LITERAL_STRING("SyncPartner"),
-                              getter_AddRefs(deviceSyncPartnerIDVariant));
-  if (NS_SUCCEEDED(rv)) {
-    rv = deviceSyncPartnerIDVariant->GetAsAString(deviceSyncPartnerID);
-    if (NS_SUCCEEDED(rv))
-      isSyncedLocally = deviceSyncPartnerID.Equals(localSyncPartnerID);
-  }
-
-  *aIsSyncedLocally = isSyncedLocally;
 
   return NS_OK;
 }
@@ -678,16 +652,11 @@ sbDeviceLibrary::UpdateMainLibraryListeners(
   rv = aSyncSettings->GetSyncMode(&syncMode);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool isSyncedLocally = PR_FALSE;
-  rv = GetIsSyncedLocally(&isSyncedLocally);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Stop listening to the previous selected playlists
   mMainLibraryListener->StopListeningToPlaylists();
 
   // Not in manual mode.
-  if (syncMode == sbIDeviceLibrarySyncSettings::SYNC_MODE_AUTO &&
-      isSyncedLocally) {
+  if (syncMode == sbIDeviceLibrarySyncSettings::SYNC_MODE_AUTO) {
     PRBool isSyncAll = PR_FALSE;
     rv = GetIsMgmtTypeSyncAll(&isSyncAll);
     NS_ENSURE_SUCCESS(rv, rv);

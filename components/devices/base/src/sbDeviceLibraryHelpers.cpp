@@ -36,6 +36,7 @@
 
 #include "sbDeviceLibrary.h"
 
+#include <sbDeviceUtils.h>
 #include <sbLibraryUtils.h>
 #include <sbMediaListBatchCallback.h>
 #include <sbStandardProperties.h>
@@ -50,10 +51,13 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbLibraryUpdateListener, sbIMediaListListener)
 sbLibraryUpdateListener::sbLibraryUpdateListener(sbILibrary * aTargetLibrary,
                                                  bool aManualMode,
                                                  nsIArray * aPlaylistsList,
-                                                 bool aIgnorePlaylists)
+                                                 bool aIgnorePlaylists,
+                                                 sbIDevice * aDevice)
   : mTargetLibrary(aTargetLibrary),
+    mDevice(aDevice),
     mPlaylistListener(new sbPlaylistSyncListener(aTargetLibrary,
-                                                 aPlaylistsList != nsnull)),
+                                                 aPlaylistsList != nsnull,
+                                                 aDevice)),
     mSyncPlaylists(!aPlaylistsList),
     mIgnorePlaylists(aIgnorePlaylists)
 {
@@ -130,6 +134,36 @@ sbLibraryUpdateListener::StopListeningToPlaylist(sbIMediaList * aMainMediaList)
   return NS_OK;
 }
 
+static nsresult ShouldMediaListSync(sbIDevice *aDevice,
+                                    sbIMediaList *aMediaList,
+                                    PRBool *aShouldSync)
+{
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aShouldSync);
+
+  nsresult rv;
+
+  *aShouldSync = PR_FALSE;
+
+  PRUint16 listContentType;
+  rv = sbLibraryUtils::GetMediaListContentType(aMediaList, &listContentType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Only sync the playlist to the device if device supports the list content
+  // type and list is not empty.
+  PRBool isEmpty;
+  rv = aMediaList->GetIsEmpty(&isEmpty);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!isEmpty && sbDeviceUtils::IsMediaListContentTypeSupported(
+                                   aDevice,
+                                   listContentType)) {
+    *aShouldSync = PR_TRUE;
+  }
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbLibraryUpdateListener::OnItemAdded(sbIMediaList *aMediaList,
                                      sbIMediaItem *aMediaItem,
@@ -139,6 +173,7 @@ sbLibraryUpdateListener::OnItemAdded(sbIMediaList *aMediaList,
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_TRUE(mTargetLibrary, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(mPlaylistListener, NS_ERROR_OUT_OF_MEMORY);
 
 #if DEBUG
@@ -157,18 +192,21 @@ sbLibraryUpdateListener::OnItemAdded(sbIMediaList *aMediaList,
     nsresult rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
                                           hidden);
     if (!hidden.EqualsLiteral("1")) {
-      // Only add the item if it is not a list.
+      // Add the item if it is not a list.
       if (!list) {
-        rv = mTargetLibrary->Add(aMediaItem);
-        NS_ENSURE_SUCCESS(rv, rv);
+        // Only add media item to the target library if it is supported.
+        if (sbDeviceUtils::IsMediaItemSupported(mDevice, aMediaItem)) {
+          rv = mTargetLibrary->Add(aMediaItem);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
       }
       else {
         // It's possible to create a new media list and add items to it before
         // OnItemAdded is called, like from a non-main thread.
-        PRBool isEmpty;
-        rv = list->GetIsEmpty(&isEmpty);
+        PRBool shouldSync;
+        rv = ShouldMediaListSync(mDevice, list, &shouldSync);
         NS_ENSURE_SUCCESS(rv, rv);
-        if (!isEmpty) {
+        if (shouldSync) {
           rv = mTargetLibrary->Add(list);
           NS_ENSURE_SUCCESS(rv, rv);
         }
@@ -297,8 +335,8 @@ sbLibraryUpdateListener::OnItemUpdated(sbIMediaList *aMediaList,
 
   nsresult rv;
 
-  // If this is a list and we're ignoring lists or the list is not a simple,
-  // or the list is empty, then just leave.
+  // If this is a list and we're ignoring lists or the list is not simple,
+  // or the list should otherwise not be synced, then just leave.
   nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem);
   if (list) {
     // Check if playlists are being ignored
@@ -315,11 +353,11 @@ sbLibraryUpdateListener::OnItemUpdated(sbIMediaList *aMediaList,
       return NS_OK;
     }
 
-    PRBool isEmpty;
-    rv = list->GetIsEmpty(&isEmpty);
+    PRBool shouldSync;
+    rv = ShouldMediaListSync(mDevice, list, &shouldSync);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (isEmpty)
+    if (!shouldSync)
       return NS_OK;
   }
 
@@ -423,10 +461,12 @@ sbLibraryUpdateListener::OnBatchEnd(sbIMediaList *aMediaList)
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbPlaylistSyncListener,
                               sbIMediaListListener)
 
-sbPlaylistSyncListener::sbPlaylistSyncListener(sbILibrary* aTargetLibrary,
-                                               bool aSyncPlaylists)
+sbPlaylistSyncListener::sbPlaylistSyncListener(sbILibrary * aTargetLibrary,
+                                               bool aSyncPlaylists,
+                                               sbIDevice * aDevice)
 : mTargetLibrary(aTargetLibrary),
-  mSyncPlaylists(aSyncPlaylists)
+  mSyncPlaylists(aSyncPlaylists),
+  mDevice(aDevice)
 {
   NS_ASSERTION(aTargetLibrary,
                "sbPlaylistSyncListener cannot be given a null aTargetLibrary");
@@ -463,6 +503,8 @@ void sbPlaylistSyncListener::StopListeningToPlaylists() {
 }
 
 nsresult sbPlaylistSyncListener::SetSyncPlaylists(nsIArray * aMediaLists) {
+  NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
+
   nsresult rv;
 
   mMediaLists.Clear();
@@ -487,7 +529,6 @@ nsresult sbPlaylistSyncListener::SetSyncPlaylists(nsIArray * aMediaLists) {
   return NS_OK;
 }
 
-
 NS_IMETHODIMP
 sbPlaylistSyncListener::OnItemAdded(sbIMediaList *aMediaList,
                                     sbIMediaItem *aMediaItem,
@@ -497,6 +538,7 @@ sbPlaylistSyncListener::OnItemAdded(sbIMediaList *aMediaList,
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_TRUE(mTargetLibrary, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv;
 
@@ -510,6 +552,10 @@ sbPlaylistSyncListener::OnItemAdded(sbIMediaList *aMediaList,
   if (list) {
     // a list being added to a list? we don't care, I think?
   } else {
+    // If the device does not support the media item, just leave.
+    if (!sbDeviceUtils::IsMediaItemSupported(mDevice, aMediaItem))
+      return NS_OK;
+
     nsString hidden;
     rv = aMediaList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
                                  hidden);
@@ -654,6 +700,12 @@ sbPlaylistSyncListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
+
+  // If the removed item is not supported by the device, just ignore.
+  if (!sbDeviceUtils::IsMediaItemSupported(mDevice, aMediaItem)) {
+    return NS_OK;
+  }
 
   // Not in a batch. Rebuild playlist directly.
   if (!mBatchHelperTable.Get(aMediaList, nsnull)) {
@@ -840,6 +892,7 @@ sbPlaylistSyncListener::OnListCleared(sbIMediaList *aMediaList,
                                       PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_TRUE(mTargetLibrary, NS_ERROR_NOT_INITIALIZED);
 
   // Get the media list that is on the device
   nsresult rv;
@@ -1032,12 +1085,12 @@ sbPlaylistSyncListener::RebuildPlaylistAfterItemRemoved(
     }
   }
 
-  // Remove the media list if it is empty.
-  PRBool isEmpty;
-  rv = deviceMediaList->GetIsEmpty(&isEmpty);
+  // Remove the media list if it should not be synced.
+  PRBool shouldSync;
+  rv = ShouldMediaListSync(mDevice, aMediaList, &shouldSync);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (isEmpty) {
+  if (!shouldSync) {
     rv = mTargetLibrary->Remove(targetListAsItem);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -1142,12 +1195,12 @@ sbPlaylistSyncListener::RemoveItemNotInBatch(sbIMediaList *aMediaList,
   rv = deviceMediaList->RemoveByIndex(aIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Remove the media list if it is empty.
-  PRBool isEmpty;
-  rv = deviceMediaList->GetIsEmpty(&isEmpty);
+  // Remove the media list if it should not be synced.
+  PRBool shouldSync;
+  rv = ShouldMediaListSync(mDevice, aMediaList, &shouldSync);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (isEmpty) {
+  if (!shouldSync) {
     rv = mTargetLibrary->Remove(targetListAsItem);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -1241,6 +1294,7 @@ sbPlaylistSyncListener::OnRebuild(
                           sbILocalDatabaseSmartMediaList *aSmartMediaList)
 {
   NS_ENSURE_ARG_POINTER(aSmartMediaList);
+  NS_ENSURE_TRUE(mTargetLibrary, NS_ERROR_NOT_INITIALIZED);
   nsresult rv;
 
   nsCOMPtr<sbIMediaItem> mediaItem = do_QueryInterface(aSmartMediaList, &rv);
@@ -1251,16 +1305,20 @@ sbPlaylistSyncListener::OnRebuild(
                             getter_AddRefs(targetListAsItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool isEmpty;
-  rv = aSmartMediaList->GetIsEmpty(&isEmpty);
+  PRBool shouldSync;
+  rv = ShouldMediaListSync(mDevice, aSmartMediaList, &shouldSync);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Add the item to device library if the list is not empty.
-  if (!isEmpty && !targetListAsItem) {
+  // Add the item to device library if the list should be synced.
+  if (shouldSync && !targetListAsItem) {
     rv = mTargetLibrary->Add(mediaItem);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  // List should have been removed in OnListCleared if it is empty.
+  // Remove the item from device library if the list should not be synced.
+  else if (!shouldSync && targetListAsItem) {
+    rv = mTargetLibrary->Remove(targetListAsItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }

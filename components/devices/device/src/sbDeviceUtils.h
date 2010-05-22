@@ -341,10 +341,46 @@ public:
   IsItemDRMProtected(sbIMediaItem * aMediaItem);
 
   /**
-   * Returns the device capabilities type for an item
+   * Gets the device capabilities type for the list content type.
+   * \param aListContentType Map the device capabilities from list content type
+   * \param aContentType Returns the device capabilities content type
+   * \param aFunctionType Returns the device capabilities function type
    */
-  static PRUint32
-  GetDeviceCapsMediaType(sbIMediaItem * aMediaItem);
+  static nsresult
+  GetDeviceCapsTypeFromListContentType(PRUint16 aListContentType,
+                                       PRUint32 *aContentType,
+                                       PRUint32 *aFunctionType);
+
+  /**
+   * Gets the device capabilities type for an item
+   * \param aMediaItem Map the device capabilities from the item content type
+   * \param aContentType Returns the device capabilities content type
+   * \param aFunctionType Returns the device capabilities function type
+   */
+  static nsresult
+  GetDeviceCapsTypeFromMediaItem(sbIMediaItem *aMediaItem,
+                                 PRUint32 *aContentType,
+                                 PRUint32 *aFunctionType);
+
+  /**
+   * Returns true if the device supports the media item.
+   * \param aDevice The device to look up capabilities with.
+   * \param aMediaItem The media item to check for.
+   * \return True if the media item is supported on the device.
+   */
+  static PRBool
+  IsMediaItemSupported(sbIDevice *aDevice,
+                       sbIMediaItem *aMediaItem);
+
+  /**
+   * Returns true if the device supports the content type of the media list.
+   * \param aDevice The device to look up capabilities with.
+   * \param aListContentType The list content type to check for.
+   * \return True if the content type is supported on the device.
+   */
+  static PRBool
+  IsMediaListContentTypeSupported(sbIDevice *aDevice,
+                                  PRUint16 aListContentType);
 
   /**
    * Add to the file extension list specified by aFileExtensionList the list of

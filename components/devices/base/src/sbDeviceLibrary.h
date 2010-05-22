@@ -268,15 +268,6 @@ private:
   nsresult UpdateIsReadOnly(sbIDeviceLibrarySyncSettings * aSyncSettings);
 
   /**
-   * \brief Return true in aIsSyncedLocally if the device is configured to sync
-   *        to the local library.
-   *
-   * \param aIsSyncedLocally Set to true if the device is configured to sync to
-   *                         the local library.
-   */
-  nsresult GetIsSyncedLocally(PRBool* aIsSyncedLocally);
-
-  /**
    * \brief Return true if the device is configured to auto sync and syncing
    *        all.
    *
