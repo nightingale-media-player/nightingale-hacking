@@ -370,8 +370,8 @@
 ./gst-plugins/gstvorbis.dll
 ./gst-plugins/gstwavenc.dll
 ./gst-plugins/gstwavparse.dll
-./gstreamer/encode-profiles/aac.xml
 ./gstreamer/encode-profiles/aac-3gp.xml
+./gstreamer/encode-profiles/aac.xml
 ./gstreamer/encode-profiles/asf-wmv-wma.xml
 ./gstreamer/encode-profiles/avi-mpeg2sp-mp3.xml
 ./gstreamer/encode-profiles/flac.xml
