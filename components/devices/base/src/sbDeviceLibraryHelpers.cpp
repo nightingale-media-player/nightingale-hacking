@@ -54,10 +54,10 @@ sbLibraryUpdateListener::sbLibraryUpdateListener(sbILibrary * aTargetLibrary,
                                                  bool aIgnorePlaylists,
                                                  sbIDevice * aDevice)
   : mTargetLibrary(aTargetLibrary),
-    mDevice(aDevice),
     mPlaylistListener(new sbPlaylistSyncListener(aTargetLibrary,
                                                  aPlaylistsList != nsnull,
                                                  aDevice)),
+    mDevice(aDevice),
     mSyncPlaylists(!aPlaylistsList),
     mIgnorePlaylists(aIgnorePlaylists)
 {
@@ -465,8 +465,8 @@ sbPlaylistSyncListener::sbPlaylistSyncListener(sbILibrary * aTargetLibrary,
                                                bool aSyncPlaylists,
                                                sbIDevice * aDevice)
 : mTargetLibrary(aTargetLibrary),
-  mSyncPlaylists(aSyncPlaylists),
-  mDevice(aDevice)
+  mDevice(aDevice),
+  mSyncPlaylists(aSyncPlaylists)
 {
   NS_ASSERTION(aTargetLibrary,
                "sbPlaylistSyncListener cannot be given a null aTargetLibrary");
