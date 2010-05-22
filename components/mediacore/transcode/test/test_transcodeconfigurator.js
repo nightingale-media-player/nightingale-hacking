@@ -67,7 +67,7 @@ function testHasConfigurated(configurator, aState) {
       "audioEncoder": "vorbisenc",
       "audioFormat": {sampleRate: 44100,
                       channels: 1},
-      "audioEncoderProperties": {"max-bitrate": 250000}
+      "audioEncoderProperties": {"max-bitrate": 128000}
     },
   ];
 
