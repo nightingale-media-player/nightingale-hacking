@@ -61,7 +61,9 @@ function testHasConfigurated(configurator, aState) {
       "videoEncoder" : "theoraenc",
       "videoFormat": {videoWidth: 1280,
                       videoHeight: 720},
-      "videoEncoderProperties": {bitrate: 2762}, // from running the actual transcode
+      // Mock device supports a bitrate of up to 4 * 1024 * 1024; this is high
+      // enough resolution to get limited by that, so use that.
+      "videoEncoderProperties": {bitrate: 4194},
       "audioEncoder": "vorbisenc",
       "audioFormat": {sampleRate: 44100,
                       channels: 1},
