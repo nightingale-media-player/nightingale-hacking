@@ -10,6 +10,7 @@ if (typeof(Cu) == "undefined")
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 if (typeof(songbirdMainWindow) == "undefined")
 	var songbirdMainWindow = Cc["@mozilla.org/appshell/window-mediator;1"]
@@ -43,7 +44,9 @@ var letterIndices = ['Z','Y','X','W','V','U','T','S','R','Q','P','O','N','M',
                      'L','K','J','I','H','G','F','E','D','C','B','A','#'];
 
 if (typeof ConcertTicketing == 'undefined') {
-	var ConcertTicketing = {};
+	var ConcertTicketing = {
+    QueryInterface : XPCOMUtils.generateQI([Ci.sbISongkickConcertCountCallback])
+  };
 }
 
 ConcertTicketing.unload = function() {
