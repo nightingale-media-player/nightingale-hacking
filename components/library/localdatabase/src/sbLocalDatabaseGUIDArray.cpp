@@ -81,6 +81,7 @@ sbLocalDatabaseGUIDArray::sbLocalDatabaseGUIDArray() :
   mIsDistinct(PR_FALSE),
   mDistinctWithSortableValues(PR_FALSE),
   mValid(PR_FALSE),
+  mQueriesValid(PR_FALSE),
   mNullsFirst(PR_FALSE),
   mPrimarySortsCount(0)
 {
@@ -110,6 +111,7 @@ sbLocalDatabaseGUIDArray::SetDatabaseGUID(const nsAString& aDatabaseGUID)
 {
   mDatabaseGUID = aDatabaseGUID;
 
+  QueryInvalidate();
   return Invalidate();
 }
 
@@ -135,6 +137,7 @@ sbLocalDatabaseGUIDArray::SetDatabaseLocation(nsIURI* aDatabaseLocation)
 {
   mDatabaseLocation = aDatabaseLocation;
 
+  QueryInvalidate();
   return Invalidate();
 }
 
@@ -150,6 +153,7 @@ sbLocalDatabaseGUIDArray::SetBaseTable(const nsAString& aBaseTable)
 {
   mBaseTable = aBaseTable;
 
+  QueryInvalidate();
   return Invalidate();
 }
 
@@ -165,6 +169,7 @@ sbLocalDatabaseGUIDArray::SetBaseConstraintColumn(const nsAString& aBaseConstrai
 {
   mBaseConstraintColumn = aBaseConstraintColumn;
 
+  QueryInvalidate();
   return Invalidate();
 }
 
@@ -181,6 +186,7 @@ sbLocalDatabaseGUIDArray::SetBaseConstraintValue(PRUint32 aBaseConstraintValue)
 {
   mBaseConstraintValue = aBaseConstraintValue;
 
+  QueryInvalidate();
   return Invalidate();
 }
 
@@ -211,6 +217,7 @@ NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::SetIsDistinct(PRBool aIsDistinct)
 {
   mIsDistinct = aIsDistinct;
+  QueryInvalidate();
   return Invalidate();
 }
 
@@ -234,6 +241,7 @@ NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::SetDistinctWithSortableValues(PRBool aDistinctWithSortableValues)
 {
   mDistinctWithSortableValues = aDistinctWithSortableValues;
+  QueryInvalidate();
   return Invalidate();
 }
 
@@ -462,6 +470,7 @@ sbLocalDatabaseGUIDArray::AddSort(const nsAString& aProperty,
     }
   }
 
+  QueryInvalidate();
   return Invalidate();
 }
 
@@ -472,6 +481,7 @@ sbLocalDatabaseGUIDArray::ClearSorts()
 
   mPrimarySortsCount = 0;
 
+  QueryInvalidate();
   return Invalidate();
 }
 
@@ -532,6 +542,7 @@ sbLocalDatabaseGUIDArray::AddFilter(const nsAString& aProperty,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  QueryInvalidate();
   return Invalidate();
 }
 
@@ -540,6 +551,7 @@ sbLocalDatabaseGUIDArray::ClearFilters()
 {
   mFilters.Clear();
 
+  QueryInvalidate();
   return Invalidate();
 }
 
@@ -657,7 +669,6 @@ sbLocalDatabaseGUIDArray::Invalidate()
   if (mValid == PR_FALSE) {
     return NS_OK;
   }
-
   nsresult rv;
 
   nsCOMPtr<sbILocalDatabaseGUIDArrayListener> listener;
@@ -1118,6 +1129,7 @@ sbLocalDatabaseGUIDArray::Initialize()
   rv = UpdateQueries();
   NS_ENSURE_SUCCESS(rv, rv);
 
+
   rv = UpdateLength();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1265,7 +1277,10 @@ sbLocalDatabaseGUIDArray::RunLengthQuery(const nsAString& aSql,
 nsresult
 sbLocalDatabaseGUIDArray::UpdateQueries()
 {
-
+  // No need to update the queries, they're still valid
+  if (mQueriesValid) {
+    return NS_OK;
+  }
   /*
    * Generate a SQL statement that applies the current filter, search, and
    * primary sort for the supplied base table and constraints.
@@ -1329,8 +1344,8 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
     rv = ldq->GetPrefixSearchQuery(mPrimarySortKeyPositionQuery);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-
- return NS_OK;
+  mQueriesValid = PR_TRUE;
+  return NS_OK;
 }
 
 nsresult
