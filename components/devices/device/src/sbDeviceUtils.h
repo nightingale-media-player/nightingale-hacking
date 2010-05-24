@@ -449,6 +449,56 @@ public:
 #endif
 };
 
+/**
+ * Class to help temporary turn off listening
+ */
+class sbDeviceListenerIgnore
+{
+public:
+  enum ListenerType
+  {
+    MEDIA_LIST = 1,
+    LIBRARY = 2,
+    ALL = 3
+  };
+  /**
+   * Turns off listeners for all items
+   */
+  sbDeviceListenerIgnore(sbBaseDevice * aDevice,
+                         PRUint32 aListenerType = ALL) :
+    mDevice(aDevice),
+    mIgnoring(PR_FALSE),
+    mListenerType(aListenerType),
+    mMediaItem(nsnull) {
+
+    SetIgnore(PR_TRUE);
+  }
+  /**
+   * Turns off listeners for a specific item
+   */
+  sbDeviceListenerIgnore(sbBaseDevice * aDevice,
+                         sbIMediaItem * aItem);
+
+  /**
+   * Turns the listeners back on if they are turned off
+   */
+  ~sbDeviceListenerIgnore();
+
+  /**
+   * Turns the listeners on or off if they are not already
+   */
+  void SetIgnore(PRBool aIgnore);
+private:
+  sbBaseDevice * mDevice; // Non-owning pointer
+  PRBool mIgnoring;
+  PRUint32 mListenerType;
+  sbIMediaItem * mMediaItem; // nsCOMPtr required definition of sbIMediaItem
+
+  // Prevent copying and assignment
+  sbDeviceListenerIgnore(sbDeviceListenerIgnore const &);
+  sbDeviceListenerIgnore & operator =(sbDeviceListenerIgnore const &);
+};
+
 extern sbExtensionToContentFormatEntry_t const
   MAP_FILE_EXTENSION_CONTENT_FORMAT[];
 extern PRUint32 const MAP_FILE_EXTENSION_CONTENT_FORMAT_LENGTH;

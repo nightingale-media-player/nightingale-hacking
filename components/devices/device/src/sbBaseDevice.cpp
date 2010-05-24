@@ -3683,50 +3683,50 @@ sbBaseDevice::UpdateStatisticsProperties()
     nsRefPtr<sbDeviceStatistics> deviceStatistics;
     rv = volume->GetDeviceLibrary(getter_AddRefs(deviceLibrary));
     NS_ENSURE_SUCCESS(rv, rv);
-  rv = volume->GetStatistics(getter_AddRefs(deviceStatistics));
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = volume->GetStatistics(getter_AddRefs(deviceStatistics));
+    NS_ENSURE_SUCCESS(rv, rv);
 
     // Update the volume statistics properties.
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_ITEM_COUNT),
             sbAutoString(deviceStatistics->AudioCount()));
-  NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, rv);
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_USED_SPACE),
             sbAutoString(deviceStatistics->AudioUsed()));
-  NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, rv);
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_TOTAL_PLAY_TIME),
             sbAutoString(deviceStatistics->AudioPlayTime()));
-  NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, rv);
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_ITEM_COUNT),
             sbAutoString(deviceStatistics->VideoCount()));
-  NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, rv);
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_USED_SPACE),
             sbAutoString(deviceStatistics->VideoUsed()));
-  NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, rv);
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_TOTAL_PLAY_TIME),
             sbAutoString(deviceStatistics->VideoPlayTime()));
-  NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, rv);
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMAGE_ITEM_COUNT),
             sbAutoString(deviceStatistics->ImageCount()));
-  NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, rv);
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMAGE_USED_SPACE),
             sbAutoString(deviceStatistics->ImageUsed()));
-  NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;
@@ -3780,16 +3780,18 @@ sbBaseDevice::UpdateVolumeName(sbBaseDeviceVolume* aVolume)
   // Get the volume capacity.
   nsAutoString displayCapacity;
   nsAutoString capacity;
-  rv = deviceLibrary->GetProperty
-                        (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_CAPACITY),
-                         capacity);
-  if (NS_SUCCEEDED(rv) && !capacity.IsEmpty()) {
-    // Convert the capacity to a display capacity.
-    nsCOMPtr<sbIPropertyUnitConverter> storageConverter =
-      do_CreateInstance(SB_STORAGEPROPERTYUNITCONVERTER_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = storageConverter->AutoFormat(capacity, -1, 1, displayCapacity);
-    NS_ENSURE_SUCCESS(rv, rv);
+  if (deviceLibrary) {
+    rv = deviceLibrary->GetProperty
+                          (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_CAPACITY),
+                           capacity);
+    if (NS_SUCCEEDED(rv) && !capacity.IsEmpty()) {
+      // Convert the capacity to a display capacity.
+      nsCOMPtr<sbIPropertyUnitConverter> storageConverter =
+        do_CreateInstance(SB_STORAGEPROPERTYUNITCONVERTER_CONTRACTID, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = storageConverter->AutoFormat(capacity, -1, 1, displayCapacity);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   // Check if the volume is removable.
@@ -3837,14 +3839,15 @@ sbBaseDevice::UpdateVolumeName(sbBaseDeviceVolume* aVolume)
   }
 
   // Update the library name if necessary.
-  nsAutoString currentLibraryName;
-  rv = deviceLibrary->GetName(currentLibraryName);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (!currentLibraryName.Equals(libraryName)) {
-    rv = deviceLibrary->SetName(libraryName);
+  if (deviceLibrary) {
+    nsAutoString currentLibraryName;
+    rv = deviceLibrary->GetName(currentLibraryName);
     NS_ENSURE_SUCCESS(rv, rv);
+    if (!currentLibraryName.Equals(libraryName)) {
+      rv = deviceLibrary->SetName(libraryName);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
-
   return NS_OK;
 }
 

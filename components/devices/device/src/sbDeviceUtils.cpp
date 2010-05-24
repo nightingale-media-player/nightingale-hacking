@@ -1929,6 +1929,47 @@ nsresult sbDeviceUtils::GetDeviceLibrary(nsAString const & aDevLibGuid,
   return NS_OK;
 }
 
+sbDeviceListenerIgnore::sbDeviceListenerIgnore(sbBaseDevice * aDevice,
+                       sbIMediaItem * aItem) :
+                         mDevice(aDevice),
+                         mIgnoring(PR_FALSE),
+                         mListenerType(LIBRARY),
+                         mMediaItem(aItem) {
+  NS_ASSERTION(aItem, "aItem is null");
+  NS_ADDREF(mMediaItem);
+  mDevice->IgnoreMediaItem(aItem);
+}
+
+sbDeviceListenerIgnore::~sbDeviceListenerIgnore() {
+  if (mMediaItem) {
+    mDevice->UnignoreMediaItem(mMediaItem);
+    NS_RELEASE(mMediaItem);
+  }
+  else {
+    SetIgnore(PR_FALSE);
+  }
+}
+
+/**
+ * Turns the listners back on if they are turned off
+ */
+void sbDeviceListenerIgnore::SetIgnore(PRBool aIgnore) {
+  // If we're changing the ignore state
+  if (mIgnoring != aIgnore) {
+
+    // If the library listener was specified
+    if ((mListenerType & LIBRARY) != 0) {
+      mDevice->SetIgnoreLibraryListener(aIgnore);
+    }
+
+    // If the media list listener was specified
+    if ((mListenerType & MEDIA_LIST) != 0) {
+        mDevice->SetIgnoreMediaListListeners(aIgnore);
+    }
+    mIgnoring = aIgnore;
+  }
+}
+
 //------------------------------------------------------------------------------
 // sbIDeviceCapabilities Logging functions
 // NOTE: This is built only w/ PR_LOGGING turned on.
