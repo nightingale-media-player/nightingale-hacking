@@ -282,14 +282,6 @@ sbDefaultBaseDeviceInfoRegistrar::InterestedInDevice(sbIDevice *aDevice,
 }
 
 nsresult
-sbDefaultBaseDeviceInfoRegistrar::GetDeviceXMLInfoSpec
-                                    (nsACString& aDeviceXMLInfoSpec)
-{
-  aDeviceXMLInfoSpec.Truncate();
-  return NS_OK;
-}
-
-nsresult
 sbDefaultBaseDeviceInfoRegistrar::GetDeviceXMLInfo
                                     (sbIDevice*        aDevice,
                                      sbDeviceXMLInfo** aDeviceXMLInfo)
@@ -326,8 +318,8 @@ sbDefaultBaseDeviceInfoRegistrar::GetDeviceXMLInfo
   // If no device XML info was present, read from the default device XML info
   // document.
   if (!mDeviceXMLInfoPresent) {
-    deviceXMLInfoSpec = NS_LITERAL_CSTRING
-      ("chrome://songbird/content/devices/sbDefaultDeviceInfo.xml");
+    rv = GetDefaultDeviceXMLInfoSpec(deviceXMLInfoSpec);
+    NS_ENSURE_SUCCESS(rv, rv);
     rv = GetDeviceXMLInfo(deviceXMLInfoSpec, aDevice);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -358,6 +350,23 @@ sbDefaultBaseDeviceInfoRegistrar::GetDeviceXMLInfo
   rv = mDeviceXMLInfo->GetDeviceInfoPresent(&mDeviceXMLInfoPresent);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  return NS_OK;
+}
+
+nsresult
+sbDefaultBaseDeviceInfoRegistrar::GetDeviceXMLInfoSpec
+                                    (nsACString& aDeviceXMLInfoSpec)
+{
+  aDeviceXMLInfoSpec.Truncate();
+  return NS_OK;
+}
+
+nsresult
+sbDefaultBaseDeviceInfoRegistrar::GetDefaultDeviceXMLInfoSpec
+                                    (nsACString& aDeviceXMLInfoSpec)
+{
+  aDeviceXMLInfoSpec.Assign
+    ("chrome://songbird/content/devices/sbDefaultDeviceInfo.xml");
   return NS_OK;
 }
 
