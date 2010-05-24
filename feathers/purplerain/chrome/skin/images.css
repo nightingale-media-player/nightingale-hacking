@@ -269,7 +269,7 @@ notification[type="critical"],
   list-style-image:  url("chrome://songbird/skin/service-pane/button-service-pane-toggle.png");
   background-image: none;
   background-color: transparent;
-  min-width: auto;
+  min-width: 0px;
   padding-right: 0px !important;
   padding-left: 0px !important;
 }
