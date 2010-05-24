@@ -39,6 +39,7 @@ CPP_SRCS = main.cpp \
            version.cpp \
            utils.cpp \
            environmenttest.cpp \
+           exectest.cpp \
            $(NULL)
 
 # things from ../$(SB_PLATFORM)
