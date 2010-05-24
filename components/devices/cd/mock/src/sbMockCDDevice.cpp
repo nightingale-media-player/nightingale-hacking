@@ -278,7 +278,6 @@ public:
   ~sbMockCDDevice()
   {
     NS_ASSERTION(!mIsDeviceLocked, "ERROR: Device is still locked!!!!!!!!");
-    mController = nsnull;
   }
 
 protected:
@@ -292,8 +291,7 @@ protected:
                    mWritable(aWritable),
                    mDiscInserted(aDiscInserted),
                    mDiscType(aDiscType),
-                   mEjected(PR_FALSE),
-                   mController(nsnull) {}
+                   mEjected(PR_FALSE) {}
 private:
   nsString mName;
   PRBool mReadable;
@@ -303,7 +301,6 @@ private:
   PRUint32 mDiscType;
   PRBool mEjected;
   nsCOMPtr<sbICDTOC> mTOC;
-  nsCOMPtr<sbIMockCDDeviceController> mController;
 };
 
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbMockCDDevice, sbICDDevice, sbIMockCDDevice)
@@ -367,8 +364,11 @@ sbMockCDDevice::Eject()
   mEjected = PR_TRUE;
   mDiscInserted = PR_FALSE;
 
-  if (mController) {
-    nsresult rv = mController->NotifyEject(this);
+  nsresult rv;
+  nsCOMPtr<sbIMockCDDeviceController> controller =
+    do_GetService(SB_MOCK_CDDEVICECONTROLLER_CONTRACTID, &rv);
+  if (NS_SUCCEEDED(rv) && controller) {
+    nsresult rv = controller->NotifyEject(this);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -384,8 +384,7 @@ sbMockCDDevice::Initialize(nsAString const & aName,
                            PRBool aWritable,
                            PRBool aDiscInserted,
                            PRUint32 aDiscType,
-                           PRBool aEjected,
-                           sbIMockCDDeviceController *aController)
+                           PRBool aEjected)
 {
   mName = aName;
   mReadable = aReadable;
@@ -393,7 +392,6 @@ sbMockCDDevice::Initialize(nsAString const & aName,
   mDiscInserted = aDiscInserted;
   mDiscType = aDiscType;
   mEjected = aEjected;
-  mController = aController;
 
   return NS_OK;
 }
@@ -697,8 +695,7 @@ sbMockCDService::Init()
       PR_FALSE,  // writable
       PR_FALSE,  // is disc inserted
       sbICDDevice::AUDIO_DISC_TYPE,
-      PR_FALSE,  // is disc ejected
-      this);
+      PR_FALSE); // is disc ejected
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMockCDDevice> device2 =
@@ -711,8 +708,7 @@ sbMockCDService::Init()
       PR_FALSE,  // writable
       PR_FALSE,  // is disc inserted
       sbICDDevice::AUDIO_DISC_TYPE,
-      PR_FALSE,  // is disc ejected
-      this);
+      PR_FALSE); // is disc ejected
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbICDDevice> cdDevice1 = do_QueryInterface(device1, &rv);
@@ -751,7 +747,7 @@ sbMockCDService::GetDevice(PRInt32 deviceIndex, sbICDDevice **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_TRUE(deviceIndex < mDevices.Count(), NS_ERROR_UNEXPECTED);
-  *_retval = mDevices[deviceIndex];
+  NS_IF_ADDREF(*_retval = mDevices[deviceIndex]);
   return NS_OK;
 }
 
