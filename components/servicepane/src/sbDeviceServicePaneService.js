@@ -430,6 +430,10 @@ function sbDeviceServicePane_nodeRemoved(aNode, aParent) {
   // Check to see if the devices group should be hidden or not
   let hidden = true;
   let devicesNode = this._servicePane.getNode("SB:Devices");
+  if (!devicesNode) {
+    // there's no devices to look at, we don't care
+    return;
+  }
   for (let node = devicesNode.firstChild; node; node = node.nextSibling) {
     if (node && !node.hidden) {
       hidden = false;
