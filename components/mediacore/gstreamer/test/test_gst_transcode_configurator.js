@@ -477,7 +477,7 @@ function runTest() {
     caps.configureDone();
 
     // Test the configurator by setting a device on it
-    configurator.device = {
+    configurator.device = #1= {
       capabilities: caps,
       getPreference: function device_getPreference(aPrefName) {
         switch (aPrefName) {
@@ -485,7 +485,8 @@ function runTest() {
             return testcase.hasOwnProperty("quality") ? testcase.quality : 0.5;
         }
         throw Components.results.NS_ERROR_NOT_IMPLEMENTED;
-      }
+      },
+      wrappedJSObject: #1#
     };
     configurator.determineOutputType();
 
@@ -495,6 +496,16 @@ function runTest() {
 
     // configurate
     configurator.configurate();
+    
+    // remove things from the device, to get rid of the closure that will end up
+    // leaking this whole test.  However, we can't just ask the configurator to
+    // null out the device, because that's not supported.
+    for (let prop in configurator.device.wrappedJSObject) {
+      if (prop != "wrappedJSObject") {
+        delete configurator.device.wrappedJSObject[prop];
+      }
+    }
+    delete configurator.device.wrappedJSObject.wrappedJSObject;
 
     // check the muxer
     if (testcase.output.muxer != null) {
