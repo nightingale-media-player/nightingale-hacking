@@ -87,9 +87,23 @@ sbCharsetDetector::GetIsCharsetFound(PRBool *aIsCharsetFound)
 NS_IMETHODIMP
 sbCharsetDetector::Detect(const nsACString& aStringToDetect)
 {
+  nsresult rv;
+
   // Already have the answer for the charset.
   if (mIsCharsetFound)
     return NS_OK;
+
+  if (!mDetector) {
+    mDetector = do_CreateInstance(
+      NS_CHARSET_DETECTOR_CONTRACTID_BASE "universal_charset_detector");
+
+    nsCOMPtr<nsICharsetDetectionObserver> observer =
+      do_QueryInterface(NS_ISUPPORTS_CAST(nsICharsetDetectionObserver*, this));
+    NS_ENSURE_TRUE(observer, NS_ERROR_NO_INTERFACE);
+
+    rv = mDetector->Init(observer);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // see if it's valid utf8; if yes, assume it _is_ indeed utf8 for now.
   // Do not set mIsCharsetFound as there could be more incoming data so that
@@ -102,7 +116,7 @@ sbCharsetDetector::Detect(const nsACString& aStringToDetect)
   }
 
   // the metadata is in some 8-bit encoding; try to guess
-  nsresult rv = RunCharsetDetector(aStringToDetect);
+  rv = RunCharsetDetector(aStringToDetect);
   if (NS_SUCCEEDED(rv) && !mLastCharset.IsEmpty()) {
     mDetectedCharset.Assign(mLastCharset);
     if (eSureAnswer == mLastConfidence || eBestAnswer == mLastConfidence)
@@ -140,8 +154,10 @@ sbCharsetDetector::Finish(nsACString& _retval)
 {
   // The charset detection is not done yet. Get the best answer so far.
   if (!mIsDone) {
-    nsresult rv = mDetector->Done();
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (mDetector) {
+      nsresult rv = mDetector->Done();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
     if (!mLastCharset.IsEmpty())
       mDetectedCharset = mLastCharset;
   }
@@ -149,6 +165,10 @@ sbCharsetDetector::Finish(nsACString& _retval)
   mLastConfidence = eNoAnswerYet;
   mIsCharsetFound = PR_FALSE;
   mIsDone = PR_FALSE;
+  // sadly, the detector has no way to unregister a listener; in order to break
+  // the reference cycle between this and mDetector, we need to let it go and
+  // just make a new one the next time we need it.
+  mDetector = nsnull;
 
   _retval = mDetectedCharset;
 
@@ -184,15 +204,6 @@ sbCharsetDetector::sbCharsetDetector()
   mIsCharsetFound(PR_FALSE),
   mIsDone(PR_FALSE)
 {
-  mDetector = do_CreateInstance(
-    NS_CHARSET_DETECTOR_CONTRACTID_BASE "universal_charset_detector");
-
-  nsCOMPtr<nsICharsetDetectionObserver> observer =
-    do_QueryInterface(NS_ISUPPORTS_CAST(nsICharsetDetectionObserver*, this));
-  NS_ASSERTION(observer, "Um! We're supposed to be implementing this...");
-
-  nsresult rv = mDetector->Init(observer);
-  NS_ENSURE_SUCCESS(rv, /* void */);
 }
 
 
