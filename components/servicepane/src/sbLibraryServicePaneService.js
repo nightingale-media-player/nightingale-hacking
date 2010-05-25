@@ -94,6 +94,9 @@ function sbLibraryServicePane() {
 
   this._batch = {}; // we'll keep the batch counters in here
   this._refreshPending = false;
+  
+  // for cleaning up
+  this._libraries = [];
 }
 
 //////////////////////////
@@ -1255,6 +1258,7 @@ function sbLibraryServicePane__libraryAdded(aLibrary) {
                        false,
                        Ci.sbIMediaList.LISTENER_FLAGS_ALL,
                        filter);
+  this._libraries.push(aLibrary);
 
   this._processListsInLibrary(aLibrary);
 
@@ -1287,6 +1291,7 @@ function sbLibraryServicePane__libraryRemoved(aLibrary) {
   }
 
   aLibrary.removeListener(this);
+  this._libraries.splice(this._libraries.indexOf(aLibrary), 1);
 }
 
 sbLibraryServicePane.prototype._refreshLibraryNodes =
@@ -2137,6 +2142,9 @@ function sbLibraryServicePane_observe(subject, topic, data) {
     var libraryManager = Cc['@songbirdnest.com/Songbird/library/Manager;1']
                            .getService(Ci.sbILibraryManager);
     libraryManager.removeListener(this);
+    for each (let lib in this._libraries) {
+      lib.removeListener(this);
+    }
   }
 }
 
