@@ -245,6 +245,30 @@ sbDefaultBaseDeviceInfoRegistrar::GetDoesDeviceSupportReformat(
 }
 
 NS_IMETHODIMP
+sbDefaultBaseDeviceInfoRegistrar::GetOnlyMountMediaFolders
+                                    (sbIDevice *aDevice,
+                                     PRBool    *aOnlyMountMediaFolders)
+{
+  TRACE(("%s", __FUNCTION__));
+
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(aOnlyMountMediaFolders);
+
+  // Get the device XML info and check if it's available.
+  sbDeviceXMLInfo* deviceXMLInfo;
+  nsresult rv = GetDeviceXMLInfo(aDevice, &deviceXMLInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!deviceXMLInfo)
+    return NS_OK;
+
+  // Get the only mount media folders value.
+  rv = deviceXMLInfo->GetOnlyMountMediaFolders(aOnlyMountMediaFolders);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbDefaultBaseDeviceInfoRegistrar::GetStorageDeviceInfoList
                                     (sbIDevice* aDevice,
                                      nsIArray** retval)

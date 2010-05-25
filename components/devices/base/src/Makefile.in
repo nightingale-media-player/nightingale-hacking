@@ -83,7 +83,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
 DYNAMIC_LIB = sbDeviceBase
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
-							unicharutil_external_s \
+                            unicharutil_external_s \
                             $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
