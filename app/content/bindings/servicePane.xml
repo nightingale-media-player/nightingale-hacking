@@ -1002,6 +1002,9 @@
       <method name="newPlaylist">
         <parameter name="e" />
         <body><![CDATA[
+          if (event.button != 0)
+            return;
+
           this.image.removeAttribute("altKey");
           if ((this._isMac && e.altKey) || (!this._isMac && e.shiftKey)) {
             SBNewSmartPlaylist();
