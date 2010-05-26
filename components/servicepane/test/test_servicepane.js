@@ -793,6 +793,7 @@ function testModuleInteraction(SPS, aRoot) {
   assertEqual(testModule._fillContextMenuParams[0], aRoot);
   assertEqual(testModule._fillContextMenuParams[1].wrappedJSObject, fakeElement);
   assertEqual(testModule._fillContextMenuParams[2].wrappedJSObject, fakeWindow);
+  testModule._fillContextMenuParams = null;
 
   // fillNewItemMenu should get node by ID and pass other parameters to modules
   // unchanged
@@ -803,6 +804,7 @@ function testModuleInteraction(SPS, aRoot) {
   assertEqual(testModule._fillNewItemMenuParams[0], aRoot);
   assertEqual(testModule._fillNewItemMenuParams[1].wrappedJSObject, fakeElement);
   assertEqual(testModule._fillNewItemMenuParams[2].wrappedJSObject, fakeWindow);
+  testModule._fillNewItemMenuParams = null;
 
   // onSelectionChanged should get node by ID and pass other parameters to modules
   // unchanged
@@ -813,6 +815,7 @@ function testModuleInteraction(SPS, aRoot) {
   assertEqual(testModule._onSelectionChangedParams[0], aRoot);
   assertEqual(testModule._onSelectionChangedParams[1].wrappedJSObject, fakeElement);
   assertEqual(testModule._onSelectionChangedParams[2].wrappedJSObject, fakeWindow);
+  testModule._onSelectionChangedParams = null;
 
   // onBeforeRename should trigger node's owner
   aRoot.contractid = testModule.contractId;
@@ -820,6 +823,7 @@ function testModuleInteraction(SPS, aRoot) {
   SPS.onBeforeRename(aRoot);
   assertNotEqual(testModule._onBeforeRenameParams, null);
   assertArraysEqual(testModule._onBeforeRenameParams, [aRoot]);
+  testModule._onBeforeRenameParams = null;
   aRoot.contractid = null;
 
   // onRename should trigger node's owner
@@ -828,6 +832,7 @@ function testModuleInteraction(SPS, aRoot) {
   SPS.onRename(aRoot, "Dummy title");
   assertNotEqual(testModule._onRenameParams, null);
   assertArraysEqual(testModule._onRenameParams, [aRoot, "Dummy title"]);
+  testModule._onRenameParams = null;
   aRoot.contractid = null;
 
   // After module's removal it should no longer be triggered
@@ -836,20 +841,24 @@ function testModuleInteraction(SPS, aRoot) {
   testModule._fillContextMenuParams = null;
   SPS.fillContextMenu(aRoot, fakeElement, fakeWindow);
   assertEqual(testModule._fillContextMenuParams, null);
+  testModule._fillContextMenuParams = null;
   
   testModule._fillNewItemMenuParams = null;
   SPS.fillNewItemMenu(aRoot, fakeElement, fakeWindow);
   assertEqual(testModule._fillNewItemMenuParams, null);
+  testModule._fillNewItemMenuParams = null;
 
   testModule._onSelectionChangedParams = null;
   SPS.onSelectionChanged(aRoot, fakeElement, fakeWindow);
   assertEqual(testModule._onSelectionChangedParams, null);
+  testModule._onSelectionChangedParams = null;
 
   aRoot.contractid = testModule.contractId;
   testModule._onRenameParams = null;
   SPS.onRename(aRoot, "Dummy title");
   assertEqual(testModule._onRenameParams, null);
   aRoot.contractid = null;
+  testModule._onRenameParams = null;
 
   // Clean up
   aRoot.id = null;
@@ -1137,36 +1146,47 @@ function testListeners (SPS, aRoot) {
 }
 
 
-function runTest (SPS) {
-  let SPS = Cc["@songbirdnest.com/servicepane/service;1"].getService(Ci.sbIServicePaneService);
+function runTest() {
+  let SPS = Cc["@songbirdnest.com/servicepane/service;1"]
+              .getService(Ci.sbIServicePaneService);
   
   // okay, did we get it?
-  assertNotEqual(SPS, null);
+  assertNotEqual(SPS, null, "Failed to get service pane service");
 
   // Do we have a valid root?
-  assertTrue(SPS.root instanceof Ci.sbIServicePaneNode);
+  assertTrue(SPS.root instanceof Ci.sbIServicePaneNode,
+             "Service pane service root is not a service pane node");
 
   // Can we create new nodes?
   let testRoot = SPS.createNode();
-  assertTrue(testRoot instanceof Ci.sbIServicePaneNode);
+  assertTrue(testRoot instanceof Ci.sbIServicePaneNode,
+             "created node is not a service pane node");
 
   // Test attribute functions while not in tree
-  assertEqual(testRoot.parentNode, null);
+  assertEqual(testRoot.parentNode,
+              null,
+              "service pane node should not have a parent");
   testAttributes(testRoot);
 
   // Now test them while in tree
   SPS.root.appendChild(testRoot);
-  assertEqual(testRoot.parentNode, SPS.root);
+  assertEqual(testRoot.parentNode,
+              SPS.root,
+              "service pane node's parent should be the service pane service root");
   testAttributes(testRoot);
 
   // Test manipulation of a subtree that isn't part of the tree
   SPS.root.removeChild(testRoot);
-  assertEqual(testRoot.parentNode, null);
+  assertEqual(testRoot.parentNode,
+              null,
+              "service pane node should have no parent after being removed");
   testTreeManipulation(SPS, testRoot);
 
   // Now test it while the subtree is attached to the tree
   SPS.root.appendChild(testRoot);
-  assertEqual(testRoot.parentNode, SPS.root);
+  assertEqual(testRoot.parentNode,
+              SPS.root,
+              "service pane node's parent should be the service pane service root");
   testTreeManipulation(SPS, testRoot);
 
   // Test deprecated SPS.addNode/removeNode methods
