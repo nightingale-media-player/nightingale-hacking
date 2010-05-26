@@ -38,7 +38,8 @@ var testModule = {
   contractId: "@songbirdnest.com/servicepane/test-module;1",
 
   _registered: false,
-  QueryInterface: XPCOMUtils.generateQI([Ci.sbIServicePaneModule]),
+  QueryInterface: XPCOMUtils.generateQI([Ci.sbIServicePaneModule,
+                                         Ci.nsIFactory]),
 
   _processEvents: function() {
     let mainThread = Cc["@mozilla.org/thread-manager;1"]
@@ -52,14 +53,8 @@ var testModule = {
     if (!this._registered) {
       // Need to register component first
       let registrar = Components.manager.QueryInterface(Ci.nsIComponentRegistrar);
-      let factory = {
-        QueryInterface: XPCOMUtils.generateQI([Ci.nsIFactory]),
-        createInstance: function(outer, iid) {
-          return testModule.QueryInterface(iid);
-        }
-      };
       registrar.registerFactory(this.classId, this.classDescription,
-                                this.contractId, factory);
+                                this.contractId, this);
       this._registered = true;
     }
 
@@ -83,8 +78,18 @@ var testModule = {
     catMgr.deleteCategoryEntry("service-pane", "service," + this.contractId,
                                false);
 
+    if (this._registered) {
+      let registrar = Components.manager.QueryInterface(Ci.nsIComponentRegistrar);
+      registrar.unregisterFactory(this.classId, this);
+      this._registered = false;
+    }
+
     // Notifications are sent asynchronously, wait for them
     this._processEvents();
+  },
+  
+  createInstance: function(outer, iid) {
+    return this.QueryInterface(iid);
   },
 
   _servicePaneInitParams: null,
