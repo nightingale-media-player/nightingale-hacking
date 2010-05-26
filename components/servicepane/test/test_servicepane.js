@@ -760,10 +760,21 @@ function testModuleInteraction(SPS, aRoot) {
   aRoot.id = "test-root";
   aRoot.editable = "true";
 
-  let fakeElement = {
+  function FakeElement(aTagName) {
+    this.tagName = aTagName;
+  }
+  FakeElement.prototype = {
     QueryInterface: XPCOMUtils.generateQI([Ci.nsIDOMXULElement]),
+    setAttribute: function FakeElement_setAttribute(aAttr, aVal) void(0),
+    appendChild: function FakeElement_appendChild(aChild) void(0),
+    get ownerDocument() ({
+      createElement: function fakeDocument_createElement(aTagName) {
+        return new FakeElement(aTagName);
+      }
+    }),
     get wrappedJSObject() this
   };
+  let fakeElement = new FakeElement();
   let fakeWindow = {
     QueryInterface: XPCOMUtils.generateQI([Ci.nsIDOMWindow]),
     get wrappedJSObject() this
