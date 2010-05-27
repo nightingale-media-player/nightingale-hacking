@@ -389,6 +389,7 @@
 ./jsmodules/DropHelper.jsm
 ./jsmodules/FolderUtils.jsm
 ./jsmodules/GeneratorThread.jsm
+./jsmodules/LocalStore.jsm
 ./jsmodules/ObserverUtils.jsm
 ./jsmodules/PlatformUtils.jsm
 ./jsmodules/RDFHelper.jsm
