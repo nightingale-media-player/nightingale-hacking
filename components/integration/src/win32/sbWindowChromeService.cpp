@@ -271,7 +271,29 @@ sbWindowChromeService::WndProc(HWND hWnd,
       // When DWM composition is enabled, call the default handler so that
       // it draws the window shadow.  In this case the window is also double
       // buffered (by the DWM), so we don't have to worry about flickering.
-      return DefSubclassProc(hWnd, uMsg, wParam, lParam);
+      
+      // We skip doing this if we're maximized (or look like we are, since that
+      // is how Mozilla implemented full screen) to avoid problems with the
+      // video window showing the (win9x) non-client area.  We don't need to
+      // have shadows in that case anyway.
+      RECT rectMon = {0}, rectWindow;
+      BOOL success = ::GetWindowRect(hWnd, &rectWindow);
+      if (!success) {
+        ::SetRect(&rectWindow, -1, -1, -1, -1);
+      }
+      HMONITOR hMon = ::MonitorFromWindow(hWnd, MONITOR_DEFAULTTONULL);
+      if (hMon) {
+        MONITORINFO monInfo = {0};
+        monInfo.cbSize = sizeof(monInfo);
+        success = ::GetMonitorInfo(hMon, &monInfo);
+        if (success) {
+          ::CopyRect(&rectMon, &monInfo.rcWork);
+        }
+        ::CloseHandle(hMon);
+      }
+      if (!::EqualRect(&rectMon, &rectWindow)) {
+        return DefSubclassProc(hWnd, uMsg, wParam, lParam);
+      }
     }
     // No DWM, don't do anything to avoid extra paints of the non-client area
     // which cases bad flickering.
