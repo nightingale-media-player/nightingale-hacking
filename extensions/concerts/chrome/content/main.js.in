@@ -270,15 +270,14 @@ Concerts = {
 
 		this._onTourIcon = document.createElement('image');
 		this._onTourIcon.setAttribute("id", "faceplate-artist-on-tour-icon");
-		this._onTourIcon.setAttribute("flex", "0");
 		this._onTourIcon.setAttribute("src",
-				"chrome://concerts/skin/faceplate-icon-ticket.png");
+				"chrome://concerts/skin/icon-ticket.png");
 		this._onTourIcon.setAttribute("onmousedown",
 				"Concerts.loadArtist(event)");
 		this._onTourIcon.setAttribute("mousethrough", "never");
 		debugLog("setupArtistDataRemote", "Added click handler for faceplate");
 		this._onTourIcon.style.visibility = "collapse";
-		artistBox.insertBefore(this._onTourIcon, artistBox.firstChild);
+		artistBox.appendChild(this._onTourIcon);
 
 		// Add the dataremote listener itself
 		var createDataRemote = new Components.Constructor(

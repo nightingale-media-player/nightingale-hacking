@@ -500,20 +500,15 @@ sb-sys-titlebar {
 #sb-sys-titlebar-primary-content {
   -moz-box-align:center !important;
 }
-#faceplate-tool-bar  {
-}
 #faceplate-tool-bar > * {
-  margin:0px 2px 2px 2px;
+  margin:2px 0px 2px 4px;
 }
 #faceplate-tool-bar > sb-nowplaying-rating {
-  margin:0px 0px 0px 1px !important;
+  margin:0px 0px 0px 4px !important;
 }
 #faceplate-tool-bar > sb-nowplaying-rating > sb-rating {
-  min-height: 18px;
 }
-#faceplate_seekbar_box {
-  margin-top: 1px;
-}
+
 
 
 #control_pane_box {
@@ -529,23 +524,23 @@ sb-sys-titlebar {
   margin:0 1px;
 }
 #shuffle_repeat_box > .sb-player-button {
-  margin:0px 1px 0px 0px;
+  margin:0px 1px 0px 2px;
 }
 #volume_box {
   padding:0 6px 0px 1px;
   -moz-box-pack: center;
   -moz-box-align: center;
-  min-height:60px;
+  min-height:52px;
 }
 #control_pane {
-  padding:0 11px 0px 4px;
+  padding:0 5px;
 }
 
 #control_pane_box > .hook > .left,
 #control_pane_box > .hook > .right,
 #control_pane_box > .hook > .middle {
   min-width:16px;
-  min-height:60px;
+  min-height:52px;
 }
 
 
@@ -594,7 +589,7 @@ treechildren::-moz-tree-twisty(open) {
 
 #faceplate_box {
   padding:2px 8px;
-  min-height:60px;
+  min-height:52px;
 }
 #faceplate > .hook > .left,
 #faceplate > .hook > .middle,
@@ -687,8 +682,8 @@ notification,
 #content_player_wrapper[playercontrols='top'] #control_pane_box > .hook > .left,
 #content_player_wrapper[playercontrols='top'] #control_pane_box > .hook > .right,
 #content_player_wrapper[playercontrols='top'] #control_pane_box > .hook > .middle {
-  min-height: 61px;
-  max-height: 61px;
+  min-height: 53px;
+  max-height: 53px;
 }
 #content_player_wrapper[playercontrols='top'] #servicepane-status-bar-box,
 #content_player_wrapper[playercontrols='top'] #status-bar-box {

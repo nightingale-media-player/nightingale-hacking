@@ -44,7 +44,7 @@ window#mainplayer {
   min-width:640px;
   min-height:480px;
   width:1000px;
-  height:728px;
+  height:720px;
 }
 
 /* hide the overflow here so that as the window shrinks below a certain size

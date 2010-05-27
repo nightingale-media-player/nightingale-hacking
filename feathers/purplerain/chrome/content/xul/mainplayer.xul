@@ -279,11 +279,6 @@
               <sb-player-volume-slider id="volume_slider" flex="1" orient="horizontal" maxpos="100" minbutton="true" maxbutton="true"/>
             </hbox>
             
-            <hbox id="shuffle_repeat_box" pack="center" align="center">
-              <sb-player-shuffle-button class="sb-player-button" />
-              <sb-player-repeat-button class="sb-player-button" />
-            </hbox>
-
             <hbox id="faceplate_box" flex="1" pack="center" align="center">
               <stack id="faceplate" flex="1">
     
@@ -378,6 +373,10 @@
               </stack>
             </hbox>
             
+            <hbox id="shuffle_repeat_box" pack="center" align="center">
+              <sb-player-shuffle-button class="sb-player-button" />
+              <sb-player-repeat-button class="sb-player-button" />
+            </hbox>
           </hbox>
         </stack> <!-- /control_pane_box -->
       </vbox> <!-- /player_wrapper -->

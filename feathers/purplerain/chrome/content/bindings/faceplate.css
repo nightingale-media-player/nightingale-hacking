@@ -60,11 +60,10 @@ Imported by bindings.css or directly into feathers.
 
 #track_info {
   min-height:20px;
-  padding:2px 8px 1px 8px;
+  padding:3px 8px 1px 8px;
 }
 .faceplate-seekinfo-box {
   min-height:16px;
-  margin-top: 5px;
   padding:0px 8px 4px 8px;
 }
 sb-player-timeelapsed-label,
