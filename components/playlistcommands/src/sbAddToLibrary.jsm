@@ -32,6 +32,9 @@ Components.utils.import("resource://app/jsmodules/SBUtils.jsm");
 const Ci = Components.interfaces;
 const Cc = Components.classes;
 
+const SB_MEDIALISTDUPLICATEFILTER_CONTRACTID =
+  "@songbirdnest.com/Songbird/Library/medialistduplicatefilter;1";
+
 const ADDTOLIBRARY_MENU_TYPE      = "menuitem";
 const ADDTOLIBRARY_MENU_ID        = "library_cmd_addtolibrary";
 const ADDTOLIBRARY_MENU_NAME      = "&command.addtolibrary";
@@ -274,16 +277,16 @@ addToLibraryHelper.prototype = {
           // Create a media item duplicate enumerator filter to count the number of
           // duplicate items and to remove them from the enumerator if the target is
           // a library.
-          var dupFilter = new LibraryUtils.EnumeratorDuplicateFilter(library);
-          dupFilter.removeDuplicates = true;
-          
-          // Create a filtered item enumerator.
-          var func = function(aElement) { return dupFilter.filter(aElement); };
-          var filteredItems = new SBFilteredEnumerator(selection, func);
-    
+          let dupFilter = 
+            Cc[SB_MEDIALISTDUPLICATEFILTER_CONTRACTID]
+              .createInstance(Ci.sbIMediaListDuplicateFilter);
+          dupFilter.initialize(selection, 
+                               library, 
+                               true);
+              
           // We also want to set the downloadStatusTarget property as we work.
           var unwrapper = {
-            enumerator: filteredItems,
+            enumerator: dupFilter.QueryInterface(Ci.nsISimpleEnumerator),
     
             hasMoreElements : function() {
               return this.enumerator.hasMoreElements();
