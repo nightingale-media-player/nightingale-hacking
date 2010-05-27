@@ -3216,6 +3216,19 @@ sbBaseDevice::AddVolume(sbBaseDeviceVolume* aVolume)
                    NS_ERROR_OUT_OF_MEMORY);
   }
 
+  // If the device is currently marked as "hidden" and a new volume was added,
+  // reset the hidden property.
+  nsCOMPtr<sbIDeviceProperties> deviceProperties;
+  rv = GetProperties(getter_AddRefs(deviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool isHidden = PR_FALSE;
+  rv = deviceProperties->GetHidden(&isHidden);
+  if (NS_SUCCEEDED(rv) && isHidden) {
+    rv = deviceProperties->SetHidden(PR_FALSE);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not mark device as not hidden!");
+  }
+
   return NS_OK;
 }
 
@@ -3227,6 +3240,7 @@ sbBaseDevice::RemoveVolume(sbBaseDeviceVolume* aVolume)
 
   // Function variables.
   nsresult rv;
+  PRBool isVolumeListEmpty = PR_FALSE;
 
   // If the device volume has a device library, get the library GUID.
   nsAutoString               libraryGUID;
@@ -3248,6 +3262,18 @@ sbBaseDevice::RemoveVolume(sbBaseDeviceVolume* aVolume)
       mVolumeLibraryGUIDTable.Remove(libraryGUID);
     if (mPrimaryVolume == aVolume)
       mPrimaryVolume = nsnull;
+
+    isVolumeListEmpty = mVolumeList.IsEmpty();
+  }
+
+  // If the last volume has been ejected, mark this device as hidden
+  if (isVolumeListEmpty) {
+    nsCOMPtr<sbIDeviceProperties> deviceProperties;
+    rv = GetProperties(getter_AddRefs(deviceProperties));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = deviceProperties->SetHidden(PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;

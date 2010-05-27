@@ -348,3 +348,32 @@ sbDeviceProperties::GetProperties(nsIPropertyBag2 * *aProperties)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbDeviceProperties::SetHidden(PRBool aHidden)
+{
+  NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoLock lock(mLock);
+  nsresult rv =
+    mProperties2->SetPropertyAsBool(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_HIDDEN),
+                                    aHidden);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceProperties::GetHidden(PRBool *aHidden)
+{
+  NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aHidden);
+
+  nsAutoLock lock(mLock);
+  nsresult rv = mProperties2->GetPropertyAsBool(
+      NS_LITERAL_STRING(SB_DEVICE_PROPERTY_HIDDEN),
+      aHidden);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+

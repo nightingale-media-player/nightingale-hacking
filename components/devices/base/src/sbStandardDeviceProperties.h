@@ -52,6 +52,7 @@
 #define SB_DEVICE_PROPERTY_SUPPORTS_REFORMAT      "http://songbirdnest.com/device/1.0#supportsReformat"
 #define SB_DEVICE_PROPERTY_USB_VENDOR_ID          "http://songbirdnest.com/device/1.0#usbVendorId"
 #define SB_DEVICE_PROPERTY_USB_PRODUCT_ID         "http://songbirdnest.com/device/1.0#usbProductId"
+#define SB_DEVICE_PROPERTY_HIDDEN                 "http://songbirdnest.com/device/1.0#hidden"
 
 /* Whether the volume mount needs user action; is "1" if needed, "0" otherwise */
 #define SB_DEVICE_PROPERTY_MOUNT_NEEDS_USER_ACTION \
