@@ -104,37 +104,37 @@ Imported by bindings.css or directly into feathers.
   /*play*/
   .sb-player-play-button-play > button,
   .sb-player-playpause-button-play > button {
-    -moz-image-region: rect(0px 40px 40px 0px);
+    -moz-image-region: rect(0px 42px 42px 0px);
   }
   .sb-player-play-button-play:hover > button,
   .sb-player-playpause-button-play:hover > button {
-    -moz-image-region: rect(40px 40px 80px 0px);
+    -moz-image-region: rect(42px 42px 84px 0px);
   }
   .sb-player-play-button-play:active > button,
   .sb-player-playpause-button-play:active > button {
-    -moz-image-region: rect(80px 40px 120px 0px);
+    -moz-image-region: rect(84px 42px 126px 0px);
   }
   .sb-player-play-button-play[disabled="true"] > button,
   .sb-player-playpause-button-play[disabled="true"] > button {
-    -moz-image-region: rect(120px 40px 160px 0px);
+    -moz-image-region: rect(126px 42px 168px 0px);
     opacity: 1.0 !important;
   }
   /*pause*/
   .sb-player-pause-button-pause > button,
   .sb-player-playpause-button-pause > button {  
-    -moz-image-region: rect(0px 80px 40px 40px);
+    -moz-image-region: rect(0px 84px 42px 42px);
   }
   .sb-player-pause-button-pause:hover > button,
   .sb-player-playpause-button-pause:hover > button { 
-    -moz-image-region: rect(40px 80px 80px 40px);
+    -moz-image-region: rect(42px 84px 84px 42px);
   }
   .sb-player-pause-button-pause:active > button,
   .sb-player-playpause-button-pause:active > button{
-    -moz-image-region: rect(80px 80px 120px 40px);
+    -moz-image-region: rect(84px 84px 126px 42px);
   }
   .sb-player-pause-button-pause[disabled="true"] > button,
   .sb-player-playpause-button-pause[disabled="true"] > button { 
-    -moz-image-region: rect(120px 80px 160px 40px);
+    -moz-image-region: rect(126px 84px 168px 42px);
     opacity: 1.0 !important;
   }
 
@@ -143,16 +143,16 @@ Imported by bindings.css or directly into feathers.
 
 .sb-player-stop-button-stop > button {
   list-style-image: url(chrome://songbird/skin/media-control-pane/button-stop.png); 
-  -moz-image-region: rect(0px 40px 40px 0px);
+  -moz-image-region: rect(0px 42px 42px 0px);
 }
 .sb-player-stop-button-stop:hover > button { 
-  -moz-image-region: rect(40px 40px 80px 0px);
+  -moz-image-region: rect(42px 42px 84px 0px);
 }
 .sb-player-stop-button-stop:active > button {
-  -moz-image-region: rect(80px 40px 120px 0px);
+  -moz-image-region: rect(84px 42px 126px 0px);
 }
 .sb-player-stop-button-stop[disabled="true"] > button { 
-  -moz-image-region: rect(120px 40px 160px 0px);
+  -moz-image-region: rect(126px 42px 168px 0px);
 }
 
 
@@ -164,19 +164,19 @@ sb-player-forward-button {
 }
 sb-player-back-button,
 sb-player-forward-button {
-  -moz-image-region: rect(0px 40px 40px 0px);
+  -moz-image-region: rect(0px 42px 42px 0px);
 }
 sb-player-back-button:hover,
 sb-player-forward-button:hover { 
-  -moz-image-region: rect(40px 40px 80px 0px);
+  -moz-image-region: rect(42px 42px 84px 0px);
 }
 sb-player-back-button:active,
 sb-player-forward-button:active { 
-  -moz-image-region: rect(80px 40px 120px 0px);
+  -moz-image-region: rect(84px 42px 126px 0px);
 }
 sb-player-back-button[disabled="true"],
 sb-player-forward-button[disabled="true"] { 
-  -moz-image-region: rect(120px 40px 160px 0px);
+  -moz-image-region: rect(126px 42px 168px 0px);
   opacity:1.0 !important;
 }
 
