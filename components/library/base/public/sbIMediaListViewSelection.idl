@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 /**
  * \file sbIMediaListViewSelection.idl
@@ -60,7 +58,7 @@ interface sbIMediaListViewSelectionListener : nsISupports
  *        to be calling nsITreeView.selection instead - otherwise things can
  *        get subtly out of sync.
  */
-[scriptable, uuid(ea5d0e88-6b5b-4c22-a753-7274ab774d8a)]
+[scriptable, uuid(134d05d0-68ad-11df-a08a-0800200c9a66)]
 interface sbIMediaListViewSelection : nsISupports
 {
   /**
@@ -79,11 +77,18 @@ interface sbIMediaListViewSelection : nsISupports
   readonly attribute sbIMediaItem currentMediaItem;
 
   /**
-   * \brief Indicates whether or not if the item at the specified index
+   * \brief Indicates whether or not the item at the specified index
    *        is part of the selection
    * \param aIndex Index of the item in the view
    */
   boolean isIndexSelected(in long aIndex);
+
+  /**
+   * \brief Indicates whether or not any item with the specified content
+   *        type is selected.
+   * \param aContentType Content type of the item
+   */
+  boolean isContentTypeSelected(in AString aContentType);
 
   /**
    * \brief Get an enumerator of all the selected media items.  The elements
