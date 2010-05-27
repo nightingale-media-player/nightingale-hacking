@@ -927,6 +927,8 @@
 
     <implementation>
       <constructor><![CDATA[
+        Components.utils.import("resource://app/jsmodules/LocalStore.jsm", this);
+
         this._groupNodes = this._getElement("groupNodes");
 
         var self = this;
@@ -935,21 +937,13 @@
         // Determine whether we're starting up collapsed or visible
         this._visible = true;
 
-        let initCollapsed = function() {
-          if (self.hasAttribute("collapsedChildren")) {
-            self.nodeData.isOpen = (self.getAttribute("collapsedChildren")
-                                    != "true");
-          }
-        };
-        // fire once in case startup is slow and the window is ready already
-        initCollapsed();
-
-        // The 'collapsedChildren' attribute is persisted, however it
-        // doesn't restore it's persisted state until the window is loaded
-        // add a load listener to catch that case
-        window.addEventListener("DOMContentLoaded", function(e) {
-            setTimeout(initCollapsed, 0);
-          }, false);
+        let collapsed = this.LocalStore.getPersistedAttribute(
+                                    document.location.href,
+                                    this.id,
+                                    "collapsedChildren");
+        if (collapsed) {
+          self.nodeData.isOpen = (collapsed == "false");
+        }
         
         // The group header image
         this.image = null;
