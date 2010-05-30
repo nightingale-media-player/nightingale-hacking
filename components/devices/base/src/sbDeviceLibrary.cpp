@@ -432,7 +432,8 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
     new sbLibraryUpdateListener(mDeviceLibrary,
                                 isManual != PR_FALSE,
                                 playlistListCount ? syncPlaylistList : nsnull,
-                                ignorePlaylists);
+                                ignorePlaylists,
+                                mDevice);
   NS_ENSURE_TRUE(mMainLibraryListener, NS_ERROR_OUT_OF_MEMORY);
 
   mMainLibraryListenerFilter = do_CreateInstance
@@ -533,33 +534,6 @@ sbDeviceLibrary::GetDefaultDeviceLibraryDatabaseFile
   NS_ENSURE_SUCCESS(rv, rv);
 
   libraryFile.forget(aDBFile);
-
-  return NS_OK;
-}
-
-nsresult
-sbDeviceLibrary::GetIsSyncedLocally(PRBool* aIsSyncedLocally)
-{
-  NS_ASSERTION(aIsSyncedLocally, "aIsSyncedLocally is null");
-
-  PRBool   isSyncedLocally = PR_FALSE;
-  nsresult rv;
-
-  nsAutoString localSyncPartnerID;
-  rv = GetMainLibraryId(localSyncPartnerID);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIVariant> deviceSyncPartnerIDVariant;
-  nsAutoString         deviceSyncPartnerID;
-  rv = mDevice->GetPreference(NS_LITERAL_STRING("SyncPartner"),
-                              getter_AddRefs(deviceSyncPartnerIDVariant));
-  if (NS_SUCCEEDED(rv)) {
-    rv = deviceSyncPartnerIDVariant->GetAsAString(deviceSyncPartnerID);
-    if (NS_SUCCEEDED(rv))
-      isSyncedLocally = deviceSyncPartnerID.Equals(localSyncPartnerID);
-  }
-
-  *aIsSyncedLocally = isSyncedLocally;
 
   return NS_OK;
 }
@@ -678,16 +652,11 @@ sbDeviceLibrary::UpdateMainLibraryListeners(
   rv = aSyncSettings->GetSyncMode(&syncMode);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool isSyncedLocally = PR_FALSE;
-  rv = GetIsSyncedLocally(&isSyncedLocally);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Stop listening to the previous selected playlists
   mMainLibraryListener->StopListeningToPlaylists();
 
   // Not in manual mode.
-  if (syncMode == sbIDeviceLibrarySyncSettings::SYNC_MODE_AUTO &&
-      isSyncedLocally) {
+  if (syncMode == sbIDeviceLibrarySyncSettings::SYNC_MODE_AUTO) {
     PRBool isSyncAll = PR_FALSE;
     rv = GetIsMgmtTypeSyncAll(&isSyncAll);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -912,16 +881,12 @@ sbDeviceLibrary::GetSyncListsPrefKey(PRUint32 aContentType,
 NS_IMETHODIMP
 sbDeviceLibrary::SetSyncSettings(sbIDeviceLibrarySyncSettings * aSyncSettings)
 {
+  NS_ENSURE_ARG_POINTER(aSyncSettings);
+
   // Lock for both assignment and the reading the aSyncSettings object
   nsAutoMonitor monitor(mMonitor);
 
   nsresult rv = SetSyncSettingsNoLock(aSyncSettings);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = UpdateIsReadOnly(mCurrentSyncSettings);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = UpdateMainLibraryListeners(mCurrentSyncSettings);
   NS_ENSURE_SUCCESS(rv, rv);
 
   SB_NOTIFY_LISTENERS(OnSyncSettings(
@@ -1280,6 +1245,14 @@ sbDeviceLibrary::Sync()
     rv = device->SubmitRequest(sbIDevice::REQUEST_SYNC, requestParams);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  // update the library is read-only property
+  rv = UpdateIsReadOnly(mCurrentSyncSettings);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // update the main library listeners
+  rv = UpdateMainLibraryListeners(mCurrentSyncSettings);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // If the user has enabled image sync, trigger it after the audio/video sync
   // If the user has disabled image sync, trigger it to do the removal.

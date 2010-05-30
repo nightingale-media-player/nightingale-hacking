@@ -41,6 +41,9 @@
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 #include <nsIDOMWindow.h>
+#include <nsIPromptService.h>
+
+#include <sbStringBundle.h>
 
 #include "sbIDeviceController.h"
 #include "sbDeviceEvent.h"
@@ -52,6 +55,7 @@
 
 /* observer topics */
 #define NS_PROFILE_STARTUP_OBSERVER_ID          "profile-after-change"
+#define NS_QUIT_APPLICATION_REQUESTED_OBSERVER_ID "quit-application-requested"
 #define NS_QUIT_APPLICATION_GRANTED_OBSERVER_ID "quit-application-granted"
 #define NS_PROFILE_SHUTDOWN_OBSERVER_ID         "profile-before-change"
 #define SB_MAINWIN_PRESENTED_OBSERVER_ID        "songbird-main-window-presented"
@@ -77,7 +81,8 @@ NS_DECL_CLASSINFO(sbDeviceManager)
 NS_IMPL_THREADSAFE_CI(sbDeviceManager)
 
 sbDeviceManager::sbDeviceManager()
- : mMonitor(nsnull)
+ : mMonitor(nsnull),
+   mHasAllowedShutdown(PR_FALSE)
 {
 }
 
@@ -476,6 +481,9 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
     rv = obsSvc->AddObserver(observer, NS_QUIT_APPLICATION_GRANTED_OBSERVER_ID, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    rv = obsSvc->AddObserver(observer, NS_QUIT_APPLICATION_REQUESTED_OBSERVER_ID, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     rv = obsSvc->AddObserver(observer, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -491,10 +499,26 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
     // enumeration hangs.
     rv = BeginMarshallMonitoring();
     NS_ENSURE_SUCCESS(rv, rv);
+  } else if (!strcmp(NS_QUIT_APPLICATION_REQUESTED_OBSERVER_ID, aTopic)) {
+    // Usually (but not always!) we'll get a quit-application-requested
+    // notification - if we do, use it to show a dialog to the user to let them
+    // cancel if device operations are in progress.
+    PRBool shouldQuit = PR_FALSE;
+    rv = this->QuitApplicationRequested(&shouldQuit);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!shouldQuit) {
+      nsCOMPtr<nsISupportsPRBool> stopShutdown =
+          do_QueryInterface(aSubject, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = stopShutdown->SetData(PR_TRUE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   } else if (!strcmp(NS_QUIT_APPLICATION_GRANTED_OBSERVER_ID, aTopic)) {
-    // Called when the request to shutdown has been granted
-    // We can't watch the -requested notification since it may not always be
-    // fired :(. Due to Bug 9459 this will be called twice.
+    // Called when the request to shutdown has been granted.
+    // We show a dialog warning the user that this will abort device operations
+    // here (but they can't cancel the quit at this point).
+    // Due to Bug 9459 this will be called twice.
     rv = this->QuitApplicationGranted();
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -704,7 +728,7 @@ nsresult sbDeviceManager::BeginMarshallMonitoring()
   return NS_OK;
 }
 
-nsresult sbDeviceManager::QuitApplicationGranted()
+nsresult sbDeviceManager::QuitApplicationRequested(PRBool *aShouldQuit)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   nsAutoMonitor mon(mMonitor);
@@ -719,21 +743,83 @@ nsresult sbDeviceManager::QuitApplicationGranted()
 
   if (!canDisconnect) {
     // one of our devices doesn't want to be disconnected
-    nsCOMPtr<sbIPrompter> prompter =
+    nsCOMPtr<nsIPromptService> prompter =
       do_CreateInstance("@songbirdnest.com/Songbird/Prompter;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // This will hold up a dialog, we do not continue
-    // until the dialog is closed, which will be closed automatically when
-    // the devices are no longer busy, or the user closes it.
-    nsCOMPtr<nsIDOMWindow> dialogWindow;
-    prompter->OpenDialog
+    sbStringBundle bundle;
+    nsString title = bundle.Get("device.dialog.quitwhileactive.title");
+    nsString message = bundle.Get("device.dialog.quitwhileactive.message");
+    nsString label0 = bundle.Get("device.dialog.quitwhileactive.quit");
+    nsString label1 = bundle.Get("device.dialog.quitwhileactive.noquit");
+    PRUint32 buttonFlags = nsIPromptService::BUTTON_POS_0 *
+                           nsIPromptService::BUTTON_TITLE_IS_STRING +
+                           nsIPromptService::BUTTON_POS_1 *
+                           nsIPromptService::BUTTON_TITLE_IS_STRING;
+    PRInt32 buttonPressed;
+
+    rv = prompter->ConfirmEx
       (nsnull,
-       NS_LITERAL_STRING("chrome://songbird/content/xul/waitForCompletion.xul"),
-       NS_LITERAL_STRING("waitForCompletion"),
-       NS_LITERAL_STRING(""),
+       title.get(),
+       message.get(),
+       buttonFlags,
+       label0.get(),
+       label1.get(),
        nsnull,
-       getter_AddRefs(dialogWindow));
+       nsnull,
+       nsnull,
+       &buttonPressed);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Quit button is button zero.
+    *aShouldQuit = buttonPressed == 0;
+  }
+  else {
+    *aShouldQuit = PR_TRUE;
+  }
+
+  mHasAllowedShutdown = *aShouldQuit;
+
+  return NS_OK;
+}
+
+
+nsresult sbDeviceManager::QuitApplicationGranted()
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv;
+
+  if (!mHasAllowedShutdown) {
+    // Shutdown has been granted. Let's check with the devices and if
+    // they are busy then display a dialog that will let the user wait until
+    // it's done (but not abort the quit).
+    // Only do this if we _didn't_ show the cancelable dialog (see
+    // QuitApplicationRequested) - which would happen if the
+    // quit-application-requested notification wasn't sent for some reason.
+    PRBool canDisconnect;
+    rv = GetCanDisconnect(&canDisconnect);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!canDisconnect) {
+      // one of our devices doesn't want to be disconnected
+      nsCOMPtr<sbIPrompter> prompter =
+        do_CreateInstance("@songbirdnest.com/Songbird/Prompter;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // This will hold up a dialog, we do not continue
+      // until the dialog is closed, which will be closed automatically when
+      // the devices are no longer busy, or the user closes it.
+      nsCOMPtr<nsIDOMWindow> dialogWindow;
+      prompter->OpenDialog
+        (nsnull,
+         NS_LITERAL_STRING("chrome://songbird/content/xul/waitForCompletion.xul"),
+         NS_LITERAL_STRING("waitForCompletion"),
+         NS_LITERAL_STRING(""),
+         nsnull,
+         getter_AddRefs(dialogWindow));
+    }
   }
 
   // Ok now we can shutdown
@@ -869,5 +955,7 @@ nsresult sbDeviceManager::RemoveAllDevices()
     rv = marshall->RemoveDevice(device);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  return NS_OK;
 }
 

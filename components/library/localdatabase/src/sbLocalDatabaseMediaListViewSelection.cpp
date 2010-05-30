@@ -1,33 +1,33 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #include "sbLocalDatabaseMediaListViewSelection.h"
 #include "sbLocalDatabaseMediaItem.h"
 
+#include <sbStandardProperties.h>
 #include <sbStringUtils.h>
+
 #include <nsComponentManagerUtils.h>
 #include <nsIObjectInputStream.h>
 #include <nsIObjectOutputStream.h>
@@ -242,6 +242,115 @@ sbLocalDatabaseMediaListViewSelection::IsIndexSelected(PRInt32 aIndex,
 
   *_retval = mSelection.Get(uid, nsnull);
 
+  return NS_OK;
+}
+
+static nsresult IsContentTypeEqual(nsAString &aGuid,
+                                   sbILibrary* aLibrary,
+                                   const nsAString &aContentType,
+                                   PRBool* aIsSame)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  NS_ENSURE_ARG_POINTER(aIsSame);
+  nsresult rv;
+
+  nsCOMPtr<sbIMediaItem> item;
+  rv = aLibrary->GetItemByGuid(aGuid, getter_AddRefs(item));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString contentType;
+  rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                         contentType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *aIsSame = aContentType.Equals(contentType);
+  return NS_OK;
+}
+
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListViewSelection::IsContentTypeSelected(
+                                         const nsAString &aContentType,
+                                         PRBool* _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  nsresult rv;
+
+  // If everything is selected, check our array
+  if (mSelectionIsAll) {
+    for (PRUint32 i = 0; i < mLength; i++) {
+      nsAutoString guid;
+      rv = mArray->GetGuidByIndex(i, guid);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRBool isSame;
+      rv = IsContentTypeEqual(guid, mLibrary, aContentType, &isSame);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (isSame) {
+        *_retval = PR_TRUE;
+        return NS_OK;
+      }
+    }
+  }
+  else {
+    PRUint32 selectionCount = mSelection.Count();
+
+    PRUint32 found = 0;
+    for (PRUint32 i = 0; i < mLength && found < selectionCount; i++) {
+      PRBool isIndexCached;
+      rv = mArray->IsIndexCached(i, &isIndexCached);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (isIndexCached) {
+        nsString uid;
+        rv = GetUniqueIdForIndex(i, uid);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsString guid;
+        if (mSelection.Get(uid, &guid)) {
+          PRBool isSame;
+          rv = IsContentTypeEqual(guid, mLibrary, aContentType, &isSame);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          if (isSame) {
+            *_retval = PR_TRUE;
+            return NS_OK;
+          }
+
+          found++;
+        }
+      }
+    }
+
+    // If we searched everything and no match, return
+    if (found == selectionCount) {
+      *_retval = PR_FALSE;
+      return NS_OK;
+    }
+
+    // If we didn't find everything in the first pass of cached indexes,
+    // do it again ignoring the cache (will cause database queries)
+    for (PRUint32 i = 0; i < mLength; i++) {
+      nsString uid;
+      rv = GetUniqueIdForIndex(i, uid);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsString guid;
+      if (mSelection.Get(uid, &guid)) {
+        PRBool isSame;
+        rv = IsContentTypeEqual(guid, mLibrary, aContentType, &isSame);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        if (isSame) {
+          *_retval = PR_TRUE;
+          return NS_OK;
+        }
+      }
+    }
+  }
+
+  *_retval = PR_FALSE;
   return NS_OK;
 }
 

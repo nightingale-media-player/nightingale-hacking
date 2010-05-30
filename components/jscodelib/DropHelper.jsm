@@ -66,7 +66,8 @@ Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Cu.import("resource://app/jsmodules/SBUtils.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 
-
+const SB_MEDIALISTDUPLICATEFILTER_CONTRACTID =
+  "@songbirdnest.com/Songbird/Library/medialistduplicatefilter;1";
 /*
 
   DNDUtils
@@ -662,34 +663,36 @@ var InternalDropHandler = {
     // Create a media item duplicate enumerator filter to count the number of
     // duplicate items and to remove them from the enumerator if the target is
     // a library.
-    var dupFilter = new LibraryUtils.EnumeratorDuplicateFilter
-                                       (aTargetList.library);
-    if (aTargetList instanceof Ci.sbILibrary) {
-      dupFilter.removeDuplicates = true;
-    }
-
+    
     // If the library is a device library, get the device object.
-    var libraryDevice = null;
+    let target = null;
+    let device = false;
     try {
       var deviceLibrary =
             aTargetList.library.QueryInterface(Ci.sbIDeviceLibrary);
-      libraryDevice = deviceLibrary.device;
-    } catch (ex) {
-      libraryDevice = null;
+      device = deviceLibrary.device;
     }
+    catch (e) {
+      // Nothing to do here, target will be null
+    }
+    
+    let removeDuplicates = aTargetList instanceof Ci.sbILibrary;
 
-    // Create a filtered item enumerator that filters duplicates
-    var func = function(aElement) {
-      return dupFilter.filter(aElement);
-    };
-    var filteredItems = new SBFilteredEnumerator(items, func);
+    let dupFilter = 
+      Cc[SB_MEDIALISTDUPLICATEFILTER_CONTRACTID]
+        .createInstance(Ci.sbIMediaListDuplicateFilter);
+    
+    dupFilter.initialize(items, 
+                         aTargetList.library, 
+                         removeDuplicates);
+
     var totalUnsupported = 0;
 
     // Create an enumerator that wraps the enumerator we were handed.
     // We use this to set downloadStatusTarget and to notify the onFirstMediaItem
     // listener, as well as counting the number of unsupported items
     var unwrapper = {
-      enumerator: filteredItems,
+      enumerator: dupFilter.QueryInterface(Ci.nsISimpleEnumerator),
       first: true,
       itemsPending: 0,
       _hasMoreElements: true,
@@ -711,9 +714,9 @@ var InternalDropHandler = {
         item.setProperty(SBProperties.downloadStatusTarget,
                          item.library.guid + "," + item.guid);
 
-        if (libraryDevice) {
+        if (device) {
           this.itemsPending++;
-          libraryDevice.supportsMediaItem(item, this);
+          device.supportsMediaItem(item, this);
         }
 
         return item;
@@ -740,11 +743,12 @@ var InternalDropHandler = {
     }
 
     function onEnumerateComplete() {
-      var totalImported = dupFilter.mediaItemCount - dupFilter.duplicateCount;
-      var totalDups = dupFilter.duplicateCount;
-      var totalInserted = dupFilter.mediaItemCount;
-      if (dupFilter.removeDuplicates)
+      var totalImported = dupFilter.totalItems - dupFilter.duplicateItems;
+      var totalDups = dupFilter.duplicateItems;
+      var totalInserted = dupFilter.totalItems;
+      if (removeDuplicates) {
         totalInserted = totalImported;
+      }
       totalImported -= totalUnsupported;
       totalInserted -= totalUnsupported;
   

@@ -90,6 +90,16 @@ protected:
    */
   virtual nsresult GetDeviceXMLInfoSpec(nsACString& aDeviceXMLInfoSpec);
 
+  /**
+   * Return in aDeviceXMLInfoSpec the URI spec for the default device XML info
+   * document.  If no matching device info is found in the main device XML info
+   * document, the device info in the default document is used.  Typically, the
+   * default device XML info document matches all devices.
+   *
+   * \param aDeviceXMLInfoSpec  Default device XML info document URI spec.
+   */
+  virtual nsresult GetDefaultDeviceXMLInfoSpec(nsACString& aDeviceXMLInfoSpec);
+
   virtual ~sbDefaultBaseDeviceInfoRegistrar();
 };
 

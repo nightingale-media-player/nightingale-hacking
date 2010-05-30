@@ -32,6 +32,12 @@
 // tests to test that things that should be acessible, and try/catch blocks
 // around the things that should not.
 function runTest(tester) {
+
+  const RAPI_VERSION_MAJOR = 1;
+  const RAPI_VERSION_MINOR = 0;
+  
+  const RAPI_VERSION_STRING = RAPI_VERSION_MAJOR + "." + RAPI_VERSION_MINOR;
+  
   try {
 
     // access to libraries
@@ -46,6 +52,46 @@ function runTest(tester) {
 
     // this causes a command refresh which doesn't work without UI
     //var cmnds = songbird.commands;
+
+    // api version tests
+    var apiVersionMajor = songbird.apiVersionMajor;
+    
+    if(apiVersionMajor != RAPI_VERSION_MAJOR) {
+      tester.fail("Major API version doesn't match! Expecting " + 
+                  RAPI_VERSION_MAJOR + " but got " + apiVersionMajor);
+    }
+    
+    var apiVersionMinor = songbird.apiVersionMinor;
+    
+    if(apiVersionMinor != RAPI_VERSION_MINOR) {
+      tester.fail("Minor API version doesn't match! Expecting " +
+                  RAPI_VERSION_MINOR + " but got " + apiVersionMinor);
+    }
+    
+    var supported = songbird.supportsVersion(RAPI_VERSION_STRING);
+    if(!supported) {
+      tester.fail("supportsVersion failed, should support version " + 
+                  RAPI_VERSION_STRING + " but claims it doesn't!");
+    }
+
+    var badVersion = RAPI_VERSION_MAJOR + 1;
+    badVersion += "." + RAPI_VERSION_MINOR;
+    
+    supported = songbird.supportsVersion(badVersion);
+    if(supported) {
+      tester.fail("supportsVersion says we support version " + 
+                  badVersion + " but actual maximum version supported is " + 
+                  RAPI_VERSION_STRING);
+    }
+    
+    badVersion = RAPI_VERSION_MAJOR + "." + (RAPI_VERSION_MINOR + 1);
+    supported = songbird.supportsVersion(badVersion);
+    
+    if(supported) {
+      tester.fail("supportsVersion says we support version " + 
+                  badVersion + " but actual maximum version supported is " + 
+                  RAPI_VERSION_STRING);
+    }
 
     // readable properties
     var junk = songbird.name;

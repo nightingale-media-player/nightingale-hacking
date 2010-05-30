@@ -334,6 +334,7 @@
 ./Contents/Resources/components/sbMetadataLookupFreeDB.js
 ./Contents/Resources/components/sbIPDDevice.xpt
 ./Contents/Resources/components/sbTemporaryFileService.js
+./Contents/Resources/components/sbBookmarksService.js
 ./Contents/Resources/chrome/rubberducky.manifest
 ./Contents/Resources/chrome/rubberducky.jar
 ./Contents/MacOS/libtag_c.dylib
@@ -439,6 +440,7 @@
 ./Contents/Resources/components/sbMetadataModule.xpt
 ./Contents/Resources/components/sbMetrics.xpt
 ./Contents/Resources/components/sbMockCDDevice.xpt
+./Contents/Resources/components/sbMockCDDeviceService.js
 ./Contents/Resources/components/sbNetworkProxyImport.xpt
 ./Contents/Resources/components/sbPlaybackHistoryService.xpt
 ./Contents/Resources/components/sbPlaylistCommands.xpt
@@ -462,6 +464,7 @@
 ./Contents/Resources/components/sbWidgets.xpt
 ./Contents/Resources/components/sbWindowWatcher.xpt
 ./Contents/Resources/components/sbiTunesImporter.xpt
+./Contents/Resources/jsmodules/XPCOMUtils.jsm
 ./Contents/Frameworks/XUL.framework/components/accessibility.xpt
 ./Contents/Frameworks/XUL.framework/components/alerts.xpt
 ./Contents/Frameworks/XUL.framework/components/appshell.xpt

@@ -149,12 +149,13 @@ protected:
   nsresult SetAudioProperties();
 
   /**
-   * Determine the desired output size (ignoring bitrate constraints)
+   * Determine the desired output size and framerate
    *
    * @precondition the profile has been selected via SelectProfile()
-   * @postcondition mPreferredDimensions is the desired output size
+   * @postcondition mOutputDimensions is the desired output size
+   * @postcondition mOutputFramerate is the desired output framerate
    */
-  nsresult DetermineIdealOutputSize();
+  nsresult DetermineOutputDimensions();
 
   /**
    * Given an input image dimensions (which provides the aspect ratio) and
@@ -166,15 +167,15 @@ protected:
                                   const Dimensions& aMaximum);
 
   /**
-   * Scale the video to something useful for the selected video bit rate
-   * @precondition mPreferredDimensions has been set
+   * Select the bitrate to encode the video at
+   *
+   * @precondition mOutputDimensions has been set
    * @precondition mSelectedProfile has been selected
    * @precondition mSelectedFormat has been selected
    * @postcondition mVideoBitrate will be set (if it hasn't already been, or
    *                if the existing setting is too high for the device)
-   * @postcondition mOutputDimensions will be the desired output dimensions
    */
-  nsresult FinalizeOutputSize();
+  nsresult DetermineOutputVideoBitrate();
 
   /**
    * Actually set the various video related properties
@@ -234,11 +235,6 @@ protected:
   nsCOMPtr<sbIVideoFormatType> mSelectedFormat;
 
   /**
-   * The preferred output dimensions, ignoring bitrate constraints
-   */
-  Dimensions mPreferredDimensions;
-  
-  /**
    * The video bit rate we want to use
    */
   PRInt32 mVideoBitrate;
@@ -249,7 +245,7 @@ protected:
   sbFraction mVideoFrameRate;
 
   /**
-   * The selected output dimensions, taking into account the bitrate constraints
+   * The selected output dimensions
    */
   Dimensions mOutputDimensions;
   

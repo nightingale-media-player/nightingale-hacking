@@ -245,7 +245,7 @@ CPlaylistReaderManager.prototype =
     return 1;
   },
 
-  read: function(aFile, aMediaList, aContentType, aAddDistinctOnly)
+  read: function(aFile, aMediaList, aContentType, aAddDistinctOnly, aPlaylistFormatType)
   {
     if (!this.originalURI) {
       var ioService = Cc["@mozilla.org/network/io-service;1"]
@@ -268,7 +268,7 @@ CPlaylistReaderManager.prototype =
           aReader.originalURI = this.originalURI;
           this.originalURI = null;
 
-          aReader.read(aFile, aMediaList, aAddDistinctOnly);
+          aReader.read(aFile, aMediaList, aAddDistinctOnly, aPlaylistFormatType);
           return;
         }
       }
@@ -283,7 +283,7 @@ CPlaylistReaderManager.prototype =
           aReader.originalURI = this.originalURI;
           this.originalURI = null;
 
-          aReader.read(aFile, aMediaList, aAddDistinctOnly);
+          aReader.read(aFile, aMediaList, aAddDistinctOnly, aPlaylistFormatType);
           return;
         }
       }

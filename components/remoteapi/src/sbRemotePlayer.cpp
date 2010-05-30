@@ -60,6 +60,7 @@
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
 #include <sbIPropertyBuilder.h>
+#include <sbStringUtils.h>
 
 #include <nsAutoPtr.h>
 #include <nsDOMJSUtils.h>
@@ -133,7 +134,9 @@ const static char* sPublicWProperties[] =
   { "playback_control:position" };
 
 const static char* sPublicRProperties[] =
-  { "site:playing",
+  { "site:apiVersionMajor",
+    "site:apiVersionMinor",
+    "site:playing",
     "site:paused",
     "site:repeat",
     "site:shuffle",
@@ -173,6 +176,7 @@ const static char* sPublicMethods[] =
     "library_read:libraries",
     "playback_read:removeListener",
     "playback_read:addListener",
+    "site:supportsVersion",
     "site:createTextProperty",
     "site:createDateTimeProperty",
     "site:createURIProperty",
@@ -230,6 +234,9 @@ const static char* sPublicCategoryConversions[][2] =
 #define SB_LIB_NAME_WEB       "web"
 
 #define SB_DATAREMOTE_FACEPLATE_STATUS NS_LITERAL_STRING("faceplate.status.override.text")
+
+#define RAPI_VERSION_MAJOR 1
+#define RAPI_VERSION_MINOR 0
 
 // callback for destructor to clear out the observer hashtable
 PR_STATIC_CALLBACK(PLDHashOperator)
@@ -581,6 +588,68 @@ sbRemotePlayer::GetRemotePlayer(sbIRemotePlayer * *aRemotePlayer)
 //                        sbIRemotePlayer
 //
 // ---------------------------------------------------------------------------
+
+NS_IMETHODIMP
+sbRemotePlayer::SupportsVersion( const nsAString &aAPIVersion, 
+                                 PRBool *aSupportsVersion )
+{
+  NS_ENSURE_ARG_POINTER(aSupportsVersion);
+  NS_ENSURE_TRUE(!aAPIVersion.IsEmpty(), NS_ERROR_INVALID_ARG);
+
+  *aSupportsVersion = PR_FALSE;
+
+  nsTArray<nsString> substrings;
+  nsString_Split(aAPIVersion, NS_LITERAL_STRING("."), substrings);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  PRInt32 majorVersion = substrings[0].ToInteger(&rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // No use keeping on comparing if the major version passed in is greater
+  // the the current major version.
+  if(majorVersion > static_cast<PRInt32>(RAPI_VERSION_MAJOR)) {
+    return NS_OK;
+  }
+
+  // Make sure we have a minor version. We only use array index 0 and 1, all
+  // other strings we get from the split are ignored as our RAPI versioning
+  // is always in MAJOR.MINOR format.
+  if(substrings.Length() > 1) {
+    PRInt32 minorVersion = substrings[1].ToInteger(&rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if(minorVersion <= static_cast<PRInt32>(RAPI_VERSION_MINOR)) {
+      *aSupportsVersion = PR_TRUE;
+    }
+  }
+  else {
+    // User only passed in a major version and it matched the major version
+    // we currently have. 
+    *aSupportsVersion = PR_TRUE;
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemotePlayer::GetApiVersionMajor( PRUint32 *aApiVersionMajor )
+{
+  NS_ENSURE_ARG_POINTER(aApiVersionMajor);
+
+  *aApiVersionMajor = RAPI_VERSION_MAJOR;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRemotePlayer::GetApiVersionMinor( PRUint32 *aApiVersionMinor )
+{
+  NS_ENSURE_ARG_POINTER(aApiVersionMinor);
+
+  *aApiVersionMinor = RAPI_VERSION_MINOR;
+
+  return NS_OK;
+}
 
 NS_IMETHODIMP
 sbRemotePlayer::GetName( nsAString &aName )

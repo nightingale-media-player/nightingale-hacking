@@ -220,9 +220,14 @@ int CommandExecuteFile(const std::string& aExecutable,
   delete[] cmdlineBuffer;
 
   if (ok) {
+    DWORD result;
     WaitForSingleObject(pi.hProcess, INFINITE);
+    ok = GetExitCodeProcess(pi.hProcess, &result);
     CloseHandle(pi.hProcess);
     CloseHandle(pi.hThread);
+    if (ok) {
+      ok = (result == 0);
+    }
   }
 
   return (ok ? DH_ERROR_OK : DH_ERROR_UNKNOWN);

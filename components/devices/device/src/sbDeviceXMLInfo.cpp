@@ -64,6 +64,7 @@
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
+#include <nsUnicharUtils.h>
 
 
 //------------------------------------------------------------------------------
@@ -450,11 +451,72 @@ sbDeviceXMLInfo::GetDoesDeviceSupportReformat(PRBool *aOutSupportsReformat)
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (supportsFormatValue.Equals(NS_LITERAL_STRING("false"),
-          (nsAString::ComparatorFunc)CaseInsensitiveCompare)) {
+                                   CaseInsensitiveCompare)) {
       *aOutSupportsReformat = PR_FALSE;
     }
   }
 
+
+  return NS_OK;
+}
+
+
+//-------------------------------------
+//
+// GetOnlyMountMediaFolders
+//
+
+nsresult
+sbDeviceXMLInfo::GetOnlyMountMediaFolders(PRBool* aOnlyMountMediaFolders)
+{
+  // Validate arguments and ensure this is called on the main thread.
+  NS_ENSURE_ARG_POINTER(aOnlyMountMediaFolders);
+  NS_ASSERTION(NS_IsMainThread(), "not on main thread");
+
+  // Function variables.
+  nsresult rv;
+
+  // Default to a false result.
+  *aOnlyMountMediaFolders = PR_FALSE;
+
+  // Check if a device info element is available.
+  if (!mDeviceInfoElement)
+    return NS_OK;
+
+  // Get the list of "onlymountmediafolders" nodes.
+  nsCOMPtr<nsIDOMNodeList> onlyMountMediaFoldersNodeList;
+  rv = mDeviceInfoElement->GetElementsByTagNameNS
+                             (NS_LITERAL_STRING(SB_DEVICE_INFO_NS),
+                              NS_LITERAL_STRING("onlymountmediafolders"),
+                              getter_AddRefs(onlyMountMediaFoldersNodeList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check if any "onlymountmediafolders" nodes are available.
+  PRUint32 nodeCount;
+  rv = onlyMountMediaFoldersNodeList->GetLength(&nodeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!nodeCount)
+    return NS_OK;
+
+  // Get the first "onlymountmediafolders" element.
+  nsCOMPtr<nsIDOMElement> onlyMountMediaFoldersElement;
+  nsCOMPtr<nsIDOMNode>    onlyMountMediaFoldersNode;
+  rv = onlyMountMediaFoldersNodeList->Item
+         (0, getter_AddRefs(onlyMountMediaFoldersNode));
+  NS_ENSURE_SUCCESS(rv, rv);
+  onlyMountMediaFoldersElement = do_QueryInterface(onlyMountMediaFoldersNode,
+                                                   &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Read the "onlymountmediafolders" value.
+  nsAutoString valueString;
+  rv = onlyMountMediaFoldersElement->GetAttribute(NS_LITERAL_STRING("value"),
+                                                  valueString);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Return results.
+  *aOnlyMountMediaFolders = valueString.Equals(NS_LITERAL_STRING("true"),
+                                               CaseInsensitiveCompare);
 
   return NS_OK;
 }

@@ -37,6 +37,7 @@ SONGBIRD_JSMODULES = $(srcdir)/AddOnUtils.jsm \
                      $(srcdir)/DOMUtils.jsm \
                      $(srcdir)/FolderUtils.jsm \
                      $(srcdir)/GeneratorThread.jsm \
+                     $(srcdir)/LocalStore.jsm \
                      $(srcdir)/ObserverUtils.jsm \
                      $(srcdir)/PlatformUtils.jsm \
                      $(srcdir)/RDFHelper.jsm \
@@ -46,7 +47,6 @@ SONGBIRD_JSMODULES = $(srcdir)/AddOnUtils.jsm \
                      $(srcdir)/StringUtils.jsm \
                      $(srcdir)/URLUtils.jsm \
                      $(srcdir)/WindowUtils.jsm \
-                     $(srcdir)/XPCOMUtils.jsm \
                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk

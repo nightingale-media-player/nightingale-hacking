@@ -156,6 +156,14 @@ sbDeviceLibraryMediaSyncSettings::CreateCopy(
   return NS_OK;
 }
 
+nsresult
+sbDeviceLibraryMediaSyncSettings::GetMgmtTypeNoLock(PRUint32 *aSyncMgmtType)
+{
+  NS_ENSURE_ARG_POINTER(aSyncMgmtType);
+  *aSyncMgmtType = mSyncMgmtType;
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbDeviceLibraryMediaSyncSettings::GetMgmtType(PRUint32 *aSyncMgmtType)
 {
@@ -181,6 +189,24 @@ sbDeviceLibraryMediaSyncSettings::SetMgmtType(PRUint32 aSyncMgmtType)
   return NS_OK;
 }
 
+nsresult
+sbDeviceLibraryMediaSyncSettings::GetSelectedPlaylistsNoLock(
+                                                 nsIArray ** aSelectedPlaylists)
+{
+  NS_ENSURE_ARG_POINTER(aSelectedPlaylists);
+  nsresult rv;
+
+  nsCOMPtr<nsIMutableArray> selected =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+
+  mPlaylistsSelection.EnumerateRead(ArrayBuilder, selected.get());
+
+  rv = CallQueryInterface(selected, aSelectedPlaylists);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbDeviceLibraryMediaSyncSettings::GetSelectedPlaylists(
                                                  nsIArray ** aSelectedPlaylists)
@@ -189,13 +215,9 @@ sbDeviceLibraryMediaSyncSettings::GetSelectedPlaylists(
   NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
   nsresult rv;
 
-  nsCOMPtr<nsIMutableArray> selected =
-    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
-
   nsAutoLock lock(mLock);
-  mPlaylistsSelection.EnumerateRead(ArrayBuilder, selected.get());
 
-  rv = CallQueryInterface(selected, aSelectedPlaylists);
+  rv = GetSelectedPlaylistsNoLock(aSelectedPlaylists);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -242,7 +264,7 @@ sbDeviceLibraryMediaSyncSettings::SetPlaylistSelected(sbIMediaList *aPlaylist,
   {
     nsAutoLock lock(mLock);
     nsCOMPtr<nsISupports> supports = aPlaylist;
-    mPlaylistsSelection.Put(supports, PR_TRUE);
+    mPlaylistsSelection.Put(supports, aSelected);
   }
 
   // Release the lock before dispatching sync settings change event

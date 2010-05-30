@@ -39,7 +39,7 @@ interface sbITranscodeProfile;
  *
  * Implementations are to be thread safe.
  */
-[scriptable, uuid(60FBC87C-9AB6-4BB0-B061-64BBCAAFE462)]
+[scriptable, uuid(2b18300c-1dd2-11b2-9349-8307e80c899c)]
 interface sbIDeviceInfoRegistrar : nsISupports
 {
   /* Types of registrars */
@@ -111,6 +111,15 @@ interface sbIDeviceInfoRegistrar : nsISupports
    * \brief Returns true if the device supports reformat.
    */
   boolean getDoesDeviceSupportReformat(in sbIDevice aDevice);
+
+  /**
+   * \brief Return true if only the media folders should be mounted rather than
+   *        the entire storage volume.
+   *
+   * \return                    True if only the media folders should be
+   *                            mounted.
+   */
+  boolean getOnlyMountMediaFolders(in sbIDevice aDevice);
 
   /**
    * \brief Return the storage device info list as an nsIArray of nsIPropertyBag

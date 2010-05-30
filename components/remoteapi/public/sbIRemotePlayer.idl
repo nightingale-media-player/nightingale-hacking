@@ -111,13 +111,64 @@ See Also:
  *  our "Remote API" the websites can call to get information about and interact
  *  with Songbird.
  */
-[scriptable, uuid(e4f67e69-7f11-438c-9f54-36f326d3d661)]
+[scriptable, uuid(91a57ebd-65e4-4320-84a1-fa0f6f74af15)]
 interface sbIRemotePlayer : nsISupports
 {
 
   /*
+  Group: Methods
+  */
+
+  /**
+   * \brief Convenience method to see if the requested API version
+   *        is supported.
+   */ 
+
+  /*
+  Func: supportsVersion
+
+  Convenience method to see if the requested API version
+  is supported.
+
+  Prototype: 
+    boolean supportsVersion(String apiVersion)
+
+  Parameters:
+    apiVersion - A string representing the API version requested (eg. '1.2').
+  */
+  boolean supportsVersion(in AString aAPIVersion);
+
+  /*
   Group: Properties
   */
+
+  /**
+   * \brief The major API version.
+   */
+
+  /*
+  Prop: apiVersionMajor
+
+  The major API version (eg. 1).
+
+  Type:
+    integer
+  */
+  readonly attribute unsigned long apiVersionMajor;
+
+  /**
+   * \brief The minor API version.
+   */
+
+  /*
+  Prop: apiVersionMinor
+
+  The minor API version.
+
+  Type:
+    integer
+  */
+  readonly attribute unsigned long apiVersionMinor;
 
   /**
    * \brief The name of the player

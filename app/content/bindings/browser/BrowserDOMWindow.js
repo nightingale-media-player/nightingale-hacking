@@ -33,7 +33,7 @@
 
 const EXPORTED_SYMBOLS = ["BrowserDOMWindow"];
 
-Components.utils.import("resource://app/jsmodules/XPCOMUtils.jsm");
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 function BrowserDOMWindow(aTabBrowser) {
   this._tabBrowser = aTabBrowser;

@@ -35,10 +35,8 @@
 
 const EXPORTED_SYMBOLS = ["SBSessionStore"];
 
-if ("undefined" == typeof(XPCOMUtils))
-  Components.utils.import("resource://app/jsmodules/XPCOMUtils.jsm");
-if ("undefined" == typeof(LibraryUtils))
-  Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;

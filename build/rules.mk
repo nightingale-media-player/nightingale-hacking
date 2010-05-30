@@ -757,6 +757,8 @@ export:: $(OUR_WIN32_RC_OBJS)
 #
 # DYNAMIC_LIB_FLAGS          - an override to the default linker flags
 # DYNAMIC_LIB_EXTRA_FLAGS    - a list of additional flags to pass to the linker
+# DYNAMIC_LIB_RAW_IMPORTS    - a list of addtional import library flags to pass
+#                              to the linker without being modified
 #
 # DISABLE_IMPLICIT_LIBNAME   - disables the automatic generation of the 
 #                              library name; DYNAMIC_LIB is used directly
@@ -842,7 +844,9 @@ OUR_LD_STATIC_IMPORT_LIST = $(foreach import, \
 OUR_LD_IMPORTS = $(OUR_LD_STATIC_IMPORT_LIST) \
                   $(addsuffix $(LDFLAGS_IMPORT_SUFFIX),\
                   $(addprefix $(LDFLAGS_IMPORT_PREFIX),\
-                  $(OUR_LD_IMPORT_LIST)))
+                  $(OUR_LD_IMPORT_LIST))) \
+                  $(DYNAMIC_LIB_RAW_IMPORTS) \
+                  $(NULL)
 
 OUR_LINKER_OUTPUT = $(LDFLAGS_OUT_PREFIX)$@$(LDFLAGS_OUT_SUFFIX)
 

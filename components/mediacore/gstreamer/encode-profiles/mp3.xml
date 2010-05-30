@@ -13,6 +13,8 @@
 
   <audio>
     <type>audio/mpeg</type>
+    <attribute name="mpegversion" type="int" value="1" />
+
     <property name="bitrate" type="int" min="32000" max="320000" default="192000"/>
   </audio>
 </profile>

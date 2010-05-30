@@ -2201,8 +2201,10 @@ sbGStreamerVideoTranscoder::BuildRemainderOfPipeline ()
       srcpad = (GstPad *)gst_object_ref (newAudioSrc);
     else if (newVideoSrc)
       srcpad = (GstPad *)gst_object_ref (newVideoSrc);
-    else
+    else {
       NS_NOTREACHED ("No audio or video, not allowed");
+      return NS_ERROR_FAILURE;
+    }
   }
 
   rv = AddSink (srcpad);

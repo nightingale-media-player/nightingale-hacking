@@ -324,6 +324,7 @@
 ./components/sbMetadataLookupFreeDB.js
 ./components/sbIPDDevice.xpt
 ./components/sbTemporaryFileService.js
+./components/sbBookmarksService.js
 ./chrome/rubberducky.manifest
 ./chrome/rubberducky.jar
 ./xulrunner/extensions/inspector@mozilla.org/chrome.manifest
@@ -389,6 +390,7 @@
 ./components/sbMetadataModule.xpt
 ./components/sbMetrics.xpt
 ./components/sbMockCDDevice.xpt
+./components/sbMockCDDeviceService.js
 ./components/sbNetworkProxyImport.xpt
 ./components/sbPlaybackHistoryService.xpt
 ./components/sbPlaylistCommands.xpt
@@ -413,6 +415,7 @@
 ./components/sbWindowWatcher.xpt
 ./components/sbWindowsSystem.xpt
 ./components/sbiTunesImporter.xpt
+./jsmodules/XPCOMUtils.jsm
 ./xulrunner/components/accessibility-msaa.xpt
 ./xulrunner/components/accessibility.xpt
 ./xulrunner/components/alerts.xpt

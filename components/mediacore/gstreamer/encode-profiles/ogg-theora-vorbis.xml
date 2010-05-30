@@ -19,8 +19,8 @@
 
     <property name="bitrate" type="int" min="0" max="16777" default="0"
               mapping="bitrate" scale="1/1000"/>
-    <quality-property name="bpp" quality="0" value="0.1"/>
-    <quality-property name="bpp" quality="1" value="1"/>
+    <quality-property name="bpp" quality="0" value="0.03"/>
+    <quality-property name="bpp" quality="1" value="0.3"/>
   </video>
 
   <audio>

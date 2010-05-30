@@ -56,13 +56,13 @@ function runTest() {
                          "0.75": 224000,
                          "1":    320000,
                          "2":    320000};
-  const K_BPP_MAP = {"-1":   0.1,
-                     "0":    0.1,
-                     "0.25": 0.325,
-                     "0.5":  0.55,
-                     "0.75": 0.775,
-                     "1":    1.0,
-                     "2":    1.0};
+  const K_BPP_MAP = {"-1":   0.03,
+                     "0":    0.03,
+                     "0.25": 0.0975,
+                     "0.5":  0.1650,
+                     "0.75": 0.2325,
+                     "1":    0.3,
+                     "2":    0.3};
 
   for (var i in K_PRIORITY_MAP) {
     assertEqual(K_PRIORITY_MAP[i], profile.getEncoderProfilePriority(i));

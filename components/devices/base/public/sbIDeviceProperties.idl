@@ -35,7 +35,7 @@ interface nsIVariant;
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(a637356d-a89d-4a2a-b0cd-858d24aa347a)]
+[scriptable, uuid(C4FD2917-1FB5-48AA-B7E6-44056ABEB536)]
 interface sbIDeviceProperties : nsISupports
 {
  /**
@@ -132,4 +132,9 @@ interface sbIDeviceProperties : nsISupports
    * Should only contain objects that implement nsIProperty!
    */
   readonly attribute nsIPropertyBag2 properties;
+
+  /**
+   * Returns true if the device is supposed to be hidden to the user.
+   */
+  attribute boolean hidden;
 };

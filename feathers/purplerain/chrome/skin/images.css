@@ -269,7 +269,7 @@ notification[type="critical"],
   list-style-image:  url("chrome://songbird/skin/service-pane/button-service-pane-toggle.png");
   background-image: none;
   background-color: transparent;
-  min-width: auto;
+  min-width: 0px;
   padding-right: 0px !important;
   padding-left: 0px !important;
 }
@@ -320,11 +320,6 @@ notification[type="critical"],
   */
 
 
-#servicepane {
-  background-image:url('chrome://songbird/skin/service-pane/bg-service-pane.png');
-  background-repeat:repeat-x;
-  background-position:center top;
-}
 .servicepane-tree > treechildren::-moz-tree-row( selected ),
 .servicepane-tree > treechildren::-moz-tree-row( selected focus ) {
   background-image: url('chrome://songbird/skin/service-pane/bg-selected-node.png');
@@ -577,6 +572,9 @@ treechildren::-moz-tree-twisty(open) {
   -moz-background-clip:border;
   -moz-image-region: rect(0px 24px 20px 0px);
   opacity: 1.0 !important;
+}
+#nav-bar toolbarbutton[type="menu-button"] {
+  background-image: url('chrome://songbird/skin/nav-bar/bg-nav-bar-menubutton.png');
 }
 #nav-bar toolbarbutton:hover {
   background-position: center -20px;

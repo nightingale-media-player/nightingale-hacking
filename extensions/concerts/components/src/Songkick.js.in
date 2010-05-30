@@ -980,13 +980,14 @@ Songkick.prototype = {
    * filterLibraryArtists is true, then it will only return the number
    * of concerts that have artists in the user's main library.
    *********************************************************************/
-  getConcertCount : function(filterLibraryArtists) {
+  getConcertCount : function(filterLibraryArtists, aCallback) {
     var firstrun = this.prefs.getBoolPref("firstrun");
-    if (firstrun)
-      return (0);
+    if (firstrun) {
+      // Don't bother looking up, just poke the callback now w/ 0.
+      aCallback.onConcertCountEnd(0);
+    }
 
     var groupBy = this.prefs.getCharPref("groupby");
-    this._db.resetQuery();
 
     // Get today's date... sort of strange, but we want 00:00:00, e.g.
     // stroke of midnight this morning, hence the double new Date()
@@ -997,39 +998,26 @@ Songkick.prototype = {
     today = new Date(todayYear, todayMon, todayDate);
     today = parseInt(today.getTime() / 1000);
 
-    try {
-      if (groupBy == "artist") {
-        var query = "SELECT COUNT(distinct concertid) FROM playing_at" +
-          " JOIN concerts ON playing_at.concertid = concerts.id" +
-          " WHERE concerts.timestamp >= " + today;
-        if (filterLibraryArtists)
-          query += " AND playing_at.libraryArtist = 1";
-        this._db.addQuery(query);
-      } else {
-        var ceilingMon = todayMon+5;
-        var ceilingYear = todayYear;
-        if (ceilingMon > 11) {
-          ceilingMon -= 11;
-          ceilingYear++;
-        }
-        var ceiling = new Date(ceilingYear, ceilingMon, 1);
-        ceiling = parseInt(ceiling.getTime() / 1000);
-        var query = "SELECT COUNT(distinct id) FROM playing_at" +
-          " JOIN concerts ON playing_at.concertid = concerts.id" +
-          " WHERE concerts.timestamp >= " + today +
-          " AND concerts.timestamp < " + ceiling;
-        if (filterLibraryArtists)
-          query += " AND playing_at.anyLibraryArtist = 1";
-        this._db.addQuery(query);
-      }
+    var ceiling;
+    var dbService = Cc["@songbirdnest.com/songkick/dbservice;1"]
+                      .getService(Ci.sbPISongkickDBService); 
 
-      var ret = this._db.execute();
-    } catch (e) {
-      return (0);
+    if (groupBy != "artist") {
+      var ceilingMon = todayMon+5;
+      var ceilingYear = todayYear;
+      if (ceilingMon > 11) {
+        ceilingMon -= 11;
+        ceilingYear++;
+      }
+      ceiling = new Date(ceilingYear, ceilingMon, 1);
+      ceiling = parseInt(ceiling.getTime() / 1000);
     }
-    var result = this._db.getResultObject();
-    var count = result.getRowCell(0, 0);
-    return (count);
+
+    dbService.startConcertCountLookup(filterLibraryArtists,
+                                      (groupBy == "artist"),
+                                      "" + today,
+                                      "" + ceiling,
+                                      aCallback);
   },
 
   /*********************************************************************
@@ -1285,11 +1273,18 @@ Songkick.prototype = {
   /*********************************************************************
    * Return enumerators for iterating through artists and concerts
    *********************************************************************/
-  artistConcertEnumerator : function(filter) {
-    return new skArtistConcertEnumerator(filter);
+  artistConcertEnumerator : function(filter, aCallback) {
+    // Pass this off to the to the db service.
+    var dbService = Cc["@songbirdnest.com/songkick/dbservice;1"]
+                      .getService(Ci.sbPISongkickDBService);
+    dbService.startAristConcertLookup(filter, aCallback);
+    //return new skArtistConcertEnumerator(filter);
   },
-  concertEnumerator : function(sort, filter) {
-    return new skConcertEnumerator(sort, filter);
+  concertEnumerator : function(sort, filter, aCallback) {
+    // Pass this off to the to the db service.
+    var dbService = Cc["@songbirdnest.com/songkick/dbservice;1"]
+                      .getService(Ci.sbPISongkickDBService);
+    dbService.startConcertLookup(sort, filter, aCallback);
   }
 }
 

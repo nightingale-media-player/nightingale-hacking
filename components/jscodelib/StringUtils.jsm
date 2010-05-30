@@ -45,7 +45,8 @@ EXPORTED_SYMBOLS = [ "SBString",
                      "SBStringBrandShortName",
                      "SBStringGetDefaultBundle",
                      "SBStringGetBrandBundle",
-                     "SBStringBundle" ];
+                     "SBStringBundle",
+                     "StringSet" ];
 
 
 //------------------------------------------------------------------------------
@@ -562,6 +563,104 @@ SBStringBundle.prototype = {
 
     // Apply all string substitutions and return result.
     return aString.replace(/&([^&;]*);/g, replaceFunc);
+  }
+};
+
+
+//------------------------------------------------------------------------------
+//
+// Songbird string set utility object.
+//
+//   A string set is a string containing a set of strings, separated by a
+// delimiter (e.g., " ").  A string set does not contain duplicates.  A string
+// set could be used, for example, with the class attribute of a DOM element.
+//
+//------------------------------------------------------------------------------
+
+var StringSet = {
+  /**
+   * Add the string specified by aString to the string set specified by
+   * aStringSet using the delimiter specified by aDelimiter.  If aDelimiter is
+   * not specified, use " ".  Return resulting string set.
+   *
+   * \param aStringSet          String set to which to add string.
+   * \param aString             String to add to string set.
+   * \param aDelimiter          String set delimiter.  Defaults to " ".
+   *
+   * \return                    New string set.
+   */
+
+  add: function StringSet_add(aStringSet, aString, aDelimiter) {
+    // Get the delimiter.
+    var delimiter = aDelimiter;
+    if (!delimiter)
+      delimiter = " ";
+
+    // Split the string set into an array and add string if it's not already
+    // present.
+    var stringSet = aStringSet.split(delimiter);
+    if (stringSet.indexOf(aString) < 0)
+      stringSet.push(aString);
+
+    // Return new string set.
+    return stringSet.join(delimiter);
+  },
+
+
+  /**
+   * Remove the string specified by aString from the string set specified by
+   * aStringSet using the delimiter specified by aDelimiter.  If aDelimiter is
+   * not specified, use " ".  Return resulting string set.
+   *
+   * \param aStringSet          String set from which to remove string.
+   * \param aString             String to remove from string set.
+   * \param aDelimiter          String set delimiter.  Defaults to " ".
+   *
+   * \return                    New string set.
+   */
+
+  remove: function StringSet_remove(aStringSet, aString, aDelimiter) {
+    // Get the delimiter.
+    var delimiter = aDelimiter;
+    if (!delimiter)
+      delimiter = " ";
+
+    // Split the string set into an array and remove all instances of the
+    // string.
+    var stringSet = aStringSet.split(delimiter);
+    var stringCount = stringSet.length;
+    for (var i = stringCount - 1; i >= 0; i--) {
+      if (stringSet[i] == aString)
+        stringSet.splice(i, 1);
+    }
+
+    // Return new string set.
+    return stringSet.join(delimiter);
+  },
+
+
+  /**
+   * Return true if the string specified by aString is contained in the string
+   * set specified by aStringSet using the delimiter specified by aDelimiter.
+   * If aDelimiter is not specified, use " ".
+   *
+   * \param aStringSet          String set to check.
+   * \param aString             String for which to check.
+   * \param aDelimiter          String set delimiter.  Defaults to " ".
+   *
+   * \return                    True if string set contains string.
+   */
+
+  contains: function StringSet_contains(aStringSet, aString, aDelimiter) {
+    // Get the delimiter.
+    var delimiter = aDelimiter;
+    if (!delimiter)
+      delimiter = " ";
+
+    // Split the string set into an array and return whether the string set
+    // contains the string.
+    var stringSet = aString.split(delimiter);
+    return (stringSet.indexOf(aString) >= 0);
   }
 };
 

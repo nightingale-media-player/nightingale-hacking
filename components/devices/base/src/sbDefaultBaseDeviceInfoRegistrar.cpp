@@ -245,6 +245,30 @@ sbDefaultBaseDeviceInfoRegistrar::GetDoesDeviceSupportReformat(
 }
 
 NS_IMETHODIMP
+sbDefaultBaseDeviceInfoRegistrar::GetOnlyMountMediaFolders
+                                    (sbIDevice *aDevice,
+                                     PRBool    *aOnlyMountMediaFolders)
+{
+  TRACE(("%s", __FUNCTION__));
+
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(aOnlyMountMediaFolders);
+
+  // Get the device XML info and check if it's available.
+  sbDeviceXMLInfo* deviceXMLInfo;
+  nsresult rv = GetDeviceXMLInfo(aDevice, &deviceXMLInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!deviceXMLInfo)
+    return NS_OK;
+
+  // Get the only mount media folders value.
+  rv = deviceXMLInfo->GetOnlyMountMediaFolders(aOnlyMountMediaFolders);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbDefaultBaseDeviceInfoRegistrar::GetStorageDeviceInfoList
                                     (sbIDevice* aDevice,
                                      nsIArray** retval)
@@ -278,14 +302,6 @@ sbDefaultBaseDeviceInfoRegistrar::InterestedInDevice(sbIDevice *aDevice,
 {
   NS_ENSURE_ARG_POINTER(retval);
   *retval = PR_FALSE;
-  return NS_OK;
-}
-
-nsresult
-sbDefaultBaseDeviceInfoRegistrar::GetDeviceXMLInfoSpec
-                                    (nsACString& aDeviceXMLInfoSpec)
-{
-  aDeviceXMLInfoSpec.Truncate();
   return NS_OK;
 }
 
@@ -326,8 +342,8 @@ sbDefaultBaseDeviceInfoRegistrar::GetDeviceXMLInfo
   // If no device XML info was present, read from the default device XML info
   // document.
   if (!mDeviceXMLInfoPresent) {
-    deviceXMLInfoSpec = NS_LITERAL_CSTRING
-      ("chrome://songbird/content/devices/sbDefaultDeviceInfo.xml");
+    rv = GetDefaultDeviceXMLInfoSpec(deviceXMLInfoSpec);
+    NS_ENSURE_SUCCESS(rv, rv);
     rv = GetDeviceXMLInfo(deviceXMLInfoSpec, aDevice);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -358,6 +374,23 @@ sbDefaultBaseDeviceInfoRegistrar::GetDeviceXMLInfo
   rv = mDeviceXMLInfo->GetDeviceInfoPresent(&mDeviceXMLInfoPresent);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  return NS_OK;
+}
+
+nsresult
+sbDefaultBaseDeviceInfoRegistrar::GetDeviceXMLInfoSpec
+                                    (nsACString& aDeviceXMLInfoSpec)
+{
+  aDeviceXMLInfoSpec.Truncate();
+  return NS_OK;
+}
+
+nsresult
+sbDefaultBaseDeviceInfoRegistrar::GetDefaultDeviceXMLInfoSpec
+                                    (nsACString& aDeviceXMLInfoSpec)
+{
+  aDeviceXMLInfoSpec.Assign
+    ("chrome://songbird/content/devices/sbDefaultDeviceInfo.xml");
   return NS_OK;
 }
 

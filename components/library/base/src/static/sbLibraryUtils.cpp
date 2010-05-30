@@ -43,6 +43,7 @@
 #include <nsThreadUtils.h>
 
 #include <sbILibrary.h>
+#include <sbILocalDatabaseSmartMediaList.h>
 #include <sbIMediaList.h>
 #include <sbIMediaItem.h>
 #include <sbIPropertyArray.h>
@@ -542,6 +543,29 @@ nsresult sbLibraryUtils::GetContentURI(nsIURI*  aURI,
 }
 
 /* static */
+nsresult sbLibraryUtils::GetMediaListContentType(sbIMediaList *aMediaList,
+                                                 PRUint16 *aListContentType)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aListContentType);
+
+  nsresult rv;
+
+  *aListContentType = sbIMediaList::CONTENTTYPE_NONE;
+
+  nsCOMPtr<sbILocalDatabaseSmartMediaList> smartList =
+    do_QueryInterface(aMediaList, &rv);
+  if (NS_FAILED(rv))
+    rv = aMediaList->GetListContentType(aListContentType);
+  else
+    rv = smartList->GetListContentType(aListContentType);
+
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/* static */
 nsresult sbLibraryUtils::GetFileContentURI(nsIFile* aFile,
                                            nsIURI** _retval)
 {
@@ -644,7 +668,7 @@ NS_IMPL_ISUPPORTS1(sbLUMediaListEnumerator,
                    sbIMediaListEnumerationListener)
 
 NS_IMETHODIMP sbLUMediaListEnumerator::OnEnumerationBegin(sbIMediaList*,
-                                                                     PRUint16 *_retval)
+                                                          PRUint16 *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   nsresult rv;
@@ -657,8 +681,8 @@ NS_IMETHODIMP sbLUMediaListEnumerator::OnEnumerationBegin(sbIMediaList*,
 }
 
 NS_IMETHODIMP sbLUMediaListEnumerator::OnEnumeratedItem(sbIMediaList*,
-                                                                   sbIMediaItem* aItem,
-                                                                   PRUint16 *_retval)
+                                                        sbIMediaItem* aItem,
+                                                        PRUint16 *_retval)
 {
   NS_ENSURE_ARG_POINTER(aItem);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -674,7 +698,7 @@ NS_IMETHODIMP sbLUMediaListEnumerator::OnEnumeratedItem(sbIMediaList*,
       rv = list->GetListContentType(&contentType);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      include = contentType == mContentType;
+      include = (contentType & mContentType) != 0;
     }
     if (include) {
       rv = mMediaLists->AppendElement(list, PR_FALSE);
@@ -688,7 +712,7 @@ NS_IMETHODIMP sbLUMediaListEnumerator::OnEnumeratedItem(sbIMediaList*,
 }
 
 NS_IMETHODIMP sbLUMediaListEnumerator::OnEnumerationEnd(sbIMediaList*,
-                                                                   nsresult)
+                                                        nsresult)
 {
   return NS_OK;
 }
@@ -701,15 +725,25 @@ nsresult sbLibraryUtils::GetMediaListByContentType(sbILibrary * aLibrary,
   NS_ENSURE_ARG_POINTER(aMediaLists);
 
   nsresult rv;
+  nsString propIsList(NS_LITERAL_STRING(SB_PROPERTY_ISLIST));
+  nsString propIsHidden(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN));
+  nsString propTrue(NS_LITERAL_STRING("1"));
+  nsString propFalse(NS_LITERAL_STRING("0"));
+  PRUint16 enumType = sbIMediaList::ENUMERATIONTYPE_SNAPSHOT;
 
   nsRefPtr<sbLUMediaListEnumerator> enumerator =
     new sbLUMediaListEnumerator(aContentType);
 
-  rv = aLibrary->EnumerateItemsByProperty(
-                                        NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
-                                        NS_LITERAL_STRING("1"),
-                                        enumerator,
-                                        sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+  nsCOMPtr<sbIMutablePropertyArray> properties =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = properties->AppendProperty(propIsList, propTrue);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = properties->AppendProperty(propIsHidden, propFalse);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aLibrary->EnumerateItemsByProperties(properties, enumerator, enumType);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = enumerator->GetMediaLists(aMediaLists);

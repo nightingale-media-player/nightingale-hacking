@@ -288,6 +288,14 @@ td.venue{
 	width:15em;
 }
 
+/* LOADING */
+#concerts-loading {
+	font-size:2.4em;
+	line-height:1.5;
+  color: rgb(80,47,126);
+  text-align: center;
+}
+
 /* FOOTER */
 #ft{
 	font-size:1.1em;

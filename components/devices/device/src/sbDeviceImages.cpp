@@ -56,6 +56,8 @@ sbDeviceImages::GetImagesRootFolder(sbIDeviceLibrary * aDevLib, nsIFile ** aFile
   nsCOMPtr<nsIFile> syncFromFile;
   rv = mediaSyncSettings->GetSyncFromFolder(getter_AddRefs(syncFromFile));
   NS_ENSURE_SUCCESS(rv, rv);
+  if (!syncFromFile)
+    return NS_ERROR_NOT_AVAILABLE;
 
   rv = syncFromFile->GetPath(syncFromFolder);
   NS_ENSURE_SUCCESS(rv, rv);

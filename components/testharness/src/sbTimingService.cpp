@@ -441,7 +441,7 @@ nsresult sbTimingService::FormatResultsToString(nsACString &aOutput)
 
     output.Append(out);
     output.AppendLiteral(" ");
-    output.AppendInt((startTime % PR_USEC_PER_SEC) / PR_USEC_PER_MSEC );
+    output.AppendInt(static_cast<PRInt32>((startTime % PR_USEC_PER_SEC) / PR_USEC_PER_MSEC ));
     output.AppendLiteral("ms\t");
 
     PR_ExplodeTime(stopTime, PR_LocalTimeParameters, &explodedTime);
@@ -455,7 +455,7 @@ nsresult sbTimingService::FormatResultsToString(nsACString &aOutput)
 
     output.Append(out);
     output.AppendLiteral(" ");
-    output.AppendInt((stopTime % PR_USEC_PER_SEC) / PR_USEC_PER_MSEC );
+    output.AppendInt(static_cast<PRInt32>((stopTime % PR_USEC_PER_SEC) / PR_USEC_PER_MSEC ));
     output.AppendLiteral("ms\t");
 
     AppendInt(output, totalTime / PR_USEC_PER_MSEC);

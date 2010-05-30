@@ -181,10 +181,16 @@ protected:
    */
   nsCOMPtr<sbIAudioFormatType> mSelectedFormat;
 
-  /** True if we selected our profile based on something set in the preferences;
-   *  in such a case we should also look for property values from preferences.
+  /** True if we selected our profile based on something set in the device
+   *  preferences; in such a case we should also look for property values from
+   *  preferences.
    */
   PRBool mProfileFromPrefs;
+
+  /** As above, but for whether we chose the profile from a global preference
+   *  (not per-device).
+   */
+  PRBool mProfileFromGlobalPrefs;
 };
 
 #endif // _SB_GSTREAMER_TRANSCODE_AUDIO_CONFIGURATOR_H_

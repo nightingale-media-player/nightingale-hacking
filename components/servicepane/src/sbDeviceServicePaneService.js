@@ -372,50 +372,49 @@ _deviceNodeEventListener.prototype = {
 sbDeviceServicePane.prototype.attrModified =
 function sbDeviceServicePane_attrModified(aNode, aAttrName, aNamespace,
                                           aOldVal, aNewVal) {
-  // we only care about poking things as they get unhidden
-  if (aNamespace != null || aAttrName != "hidden" ||
-      aOldVal != "true" || aNewVal == "true") {
-    return;
+  if (aAttrName == "hidden" && aOldVal == "true" && aNewVal == "false") {
+    var resource = this._libraryServicePane.getLibraryResourceForNode(aNode);
+    if (!resource) {
+      return;
+    }
+    if (!(resource instanceof Ci.sbIMediaList)) {
+      // not a media list, we don't care
+      return;
+    }
+    var device = this._deviceMgr.getDeviceForItem(resource);
+    if (!device) {
+      // not a device playlist
+      return;
+    }
+
+    // Only move nodes that the device supports
+    var functions = device.capabilities.getSupportedFunctionTypes({});
+    const CAPS_MAP = {
+        "audio": Ci.sbIDeviceCapabilities.FUNCTION_AUDIO_PLAYBACK,
+        "video": Ci.sbIDeviceCapabilities.FUNCTION_VIDEO_PLAYBACK
+      };
+
+    let props = aNode.className.split(/\s/);
+    props = props.filter(function(val) val in CAPS_MAP);
+    // there should only be one anyway...
+    // assert(props.length < 2);
+    if (functions.indexOf(CAPS_MAP[props[0]]) < 0) {
+      this.log("Not moving library node " + aNode.id + " to device node, capability not supported");
+      return;
+    }
+
+    // Set up the device library node info.
+    aNode.setAttributeNS(DEVICESP_NS, "device-id", device.id);
+    aNode.setAttributeNS(DEVICESP_NS, "deviceNodeType", "library");
+
+    var deviceNode = this.getNodeForDevice(device);
+    if (deviceNode && aNode.parentNode != deviceNode) {
+      deviceNode.insertBefore(aNode, deviceNode.firstChild);
+    }
   }
 
-  var resource = this._libraryServicePane.getLibraryResourceForNode(aNode);
-  if (!resource) {
-    return;
-  }
-  if (!(resource instanceof Ci.sbIMediaList)) {
-    // not a media list, we don't care
-    return;
-  }
-  var device = this._deviceMgr.getDeviceForItem(resource);
-  if (!device) {
-    // not a device playlist
-    return;
-  }
-
-  // Only move nodes that the device supports
-  var functions = device.capabilities.getSupportedFunctionTypes({});
-  const CAPS_MAP = {
-      "audio": Ci.sbIDeviceCapabilities.FUNCTION_AUDIO_PLAYBACK,
-      "video": Ci.sbIDeviceCapabilities.FUNCTION_VIDEO_PLAYBACK
-    };
-
-  let props = aNode.className.split(/\s/);
-  props = props.filter(function(val) val in CAPS_MAP);
-  // there should only be one anyway...
-  // assert(props.length < 2);
-  if (functions.indexOf(CAPS_MAP[props[0]]) < 0) {
-    this.log("Not moving library node " + aNode.id + " to device node, capability not supported");
-    return;
-  }
-
-  // Set up the device library node info.
-  aNode.setAttributeNS(DEVICESP_NS, "device-id", device.id);
-  aNode.setAttributeNS(DEVICESP_NS, "deviceNodeType", "library");
-
-  var deviceNode = this.getNodeForDevice(device);
-  if (deviceNode && aNode.parentNode != deviceNode) {
-    deviceNode.insertBefore(aNode, deviceNode.firstChild);
-  }
+  // Ensure that the parent device's node reflects any changes.
+  this._updateParentDeviceNode();
 };
 
 sbDeviceServicePane.prototype.nodeInserted =
@@ -426,26 +425,42 @@ function sbDeviceServicePane_nodeInserted(aNode, aParent, aInsertBefore) {
 sbDeviceServicePane.prototype.nodeRemoved =
 function sbDeviceServicePane_nodeRemoved(aNode, aParent) {
   this.attrModified(aNode, "hidden", null, "false", "true");
-
-  // Check to see if the devices group should be hidden or not
-  let hidden = true;
-  let devicesNode = this._servicePane.getNode("SB:Devices");
-  for (let node = devicesNode.firstChild; node; node = node.nextSibling) {
-    if (node && !node.hidden) {
-      hidden = false;
-      break;
-    }
-  }
-
-  if (devicesNode.hidden != hidden) {
-    this.log("Hiding devices node since all children are gone or hidden");
-    devicesNode.hidden = hidden;
-  }
+  //this._updateParentDeviceNode();
 };
 
 /////////////////////
 // Private Methods //
 /////////////////////
+
+/**
+ *
+ */
+sbDeviceServicePane.prototype._updateParentDeviceNode =
+function sbDeviceServicePane__updateParentDeviceNode() {
+  try {
+    // Check to see if the devices group should be hidden or not
+    let hidden = true;
+    let devicesNode = this._servicePane.getNode("SB:Devices");
+    if (!devicesNode) {
+      // there's no devices to look at, we don't care
+      return;
+    }
+    for (let node = devicesNode.firstChild; node; node = node.nextSibling) {
+      if (node && !node.hidden) {
+        hidden = false;
+        break;
+      }
+    }
+
+    if (devicesNode.hidden != hidden) {
+      this.log("Hiding devices node since all children are gone or hidden");
+      devicesNode.hidden = hidden;
+    }
+  }
+  catch (e) {
+    this.log("Execption updating device node: " + e);
+  }
+};
 
 /**
  * Get a service pane identifier for the given device

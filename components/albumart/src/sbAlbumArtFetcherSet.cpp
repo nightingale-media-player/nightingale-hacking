@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -119,7 +119,7 @@ sbAlbumArtFetcherSet::SetFetcherType(PRUint32 aType)
 {
   TRACE(("%s[%.8x] = %d", __FUNCTION__, this, aType));
   nsresult rv;
-  
+
   // If this has changed we need to reload the fetcher list
   if (aType != mType) {
     mType = aType;
@@ -178,6 +178,9 @@ sbAlbumArtFetcherSet::FetchAlbumArtForAlbum(nsIArray*            aMediaItems,
   // This will change to false if any fetch fails
   mFoundAllArtwork = PR_TRUE;
 
+  // Indicate that fetcher is fetching.
+  mIsFetching = PR_TRUE;
+
   return TryNextFetcher();
 }
 
@@ -197,7 +200,7 @@ sbAlbumArtFetcherSet::FetchAlbumArtForTrack(sbIMediaItem*        aMediaItem,
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aListener);
   nsresult rv;
-  
+
   // Save the listener and list of items, this makes it easier later on
   mListener = aListener;
   nsCOMPtr<nsIMutableArray> itemArray =
@@ -215,7 +218,10 @@ sbAlbumArtFetcherSet::FetchAlbumArtForTrack(sbIMediaItem*        aMediaItem,
   mShutdown = PR_FALSE;
   // This will change to false if any fetch fails
   mFoundAllArtwork = PR_TRUE;
-  
+
+  // Indicate that fetcher is fetching.
+  mIsFetching = PR_TRUE;
+
   return TryNextFetcher();
 }
 
@@ -230,9 +236,10 @@ sbAlbumArtFetcherSet::Shutdown()
     "sbAlbumArtFetcherSet::Shutdown is main thread only!");
   if (mFetcher) {
     // Shutdown the current fetcher
-    mFetcher->Shutdown(); 
+    mFetcher->Shutdown();
     mFetcher = nsnull;
   }
+  mIsFetching = PR_FALSE;
   mShutdown = PR_TRUE;
   mListener = nsnull;
   mMediaItems = nsnull;
@@ -361,6 +368,19 @@ sbAlbumArtFetcherSet::SetAlbumArtSourceList(nsIArray* aAlbumArtSourceList)
   return NS_OK;
 }
 
+/**
+ * \brief Flag to indicate if this fetcher is currently fetching.
+ */
+
+NS_IMETHODIMP
+sbAlbumArtFetcherSet::GetIsFetching(PRBool* aIsFetching)
+{
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
+  NS_ENSURE_ARG_POINTER(aIsFetching);
+  *aIsFetching = mIsFetching;
+  return NS_OK;
+}
+
 
 //------------------------------------------------------------------------------
 //
@@ -381,7 +401,8 @@ sbAlbumArtFetcherSet::sbAlbumArtFetcherSet() :
   mFetcher(nsnull),
   mMediaItems(nsnull),
   mTimeoutTimerValue(ALBUMART_SCANNER_TIMEOUT),
-  mFoundAllArtwork(PR_FALSE)
+  mFoundAllArtwork(PR_FALSE),
+  mIsFetching(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gAlbumArtFetcherSetLog) {
@@ -447,7 +468,7 @@ sbAlbumArtFetcherSet::Initialize()
   // Get the console service for warning messages
   mConsoleService = do_GetService("@mozilla.org/consoleservice;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   return NS_OK;
 }
 
@@ -554,6 +575,7 @@ sbAlbumArtFetcherSet::OnSearchComplete(nsIArray* aMediaItems)
   if (mFoundAllArtwork) {
     // All done so indicate complete
     TRACE(("Found all artwork, finishing"));
+    mIsFetching = PR_FALSE;
 
     if (mListener) {
       // We don't check the result since we want to always shutdown the fetcher
@@ -612,7 +634,7 @@ sbAlbumArtFetcherSet::TryNextFetcher()
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
   nsresult rv;
-  
+
   // Get how many fetchers are available
   PRUint32 fetcherListCount;
   rv = mFetcherList->GetLength(&fetcherListCount);
@@ -641,15 +663,28 @@ sbAlbumArtFetcherSet::NextFetcher()
     "sbAlbumArtFetcherSet::NextFetcher is main thread only!");
   nsresult rv;
   PRUint32 currentFetcherIndex = mFetcherIndex;
-  // Increment now so that we don't end up in an endless loop if anything fails
-  mFetcherIndex++;
-  
+
   // Shutdown the existing fetcher
   if (mFetcher) {
     mFetcher->Shutdown();
+
+    // If the fetcher is still fetching, we have to wait until it calls
+    // OnSearchComplete and shutdown then.  This can happen if Shutdown isn't
+    // able to immediately stop the fetching (e.g., fetching on a thread).
+    PRBool isFetching;
+    rv = mFetcher->GetIsFetching(&isFetching);
+    NS_WARN_IF_FALSE
+      (NS_SUCCEEDED(rv),
+       "Could not determine whether fetcher is still fetching.\n");
+    if (NS_SUCCEEDED(rv) && isFetching)
+      return NS_OK;
+
     mFetcher = nsnull;
   }
-  
+
+  // Increment now so that we don't end up in an endless loop if anything fails
+  mFetcherIndex++;
+
   // Check if we have been shutdown
   if (mShutdown) {
     return NS_OK;
@@ -659,7 +694,7 @@ sbAlbumArtFetcherSet::NextFetcher()
   PRUint32 fetcherListCount;
   rv = mFetcherList->GetLength(&fetcherListCount);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Get how many items we are scanning
   PRUint32 itemListLength;
   rv = mMediaItems->GetLength(&itemListLength);
@@ -667,6 +702,7 @@ sbAlbumArtFetcherSet::NextFetcher()
 
   if (currentFetcherIndex >= fetcherListCount) {
     TRACE(("%s[%.8x] - No more fetchers", __FUNCTION__, this));
+    mIsFetching = PR_FALSE;
     if (mListener) {
       mListener->OnSearchComplete(mMediaItems);
       mListener = nsnull;
@@ -711,11 +747,11 @@ sbAlbumArtFetcherSet::NextFetcher()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Try fetching album art using the fetcher.
-  
+
   // If there is only one media item in the list then use the single fetch,
   // otherwise use the album fetch.
   if (itemListLength == 1) {
-    // Grab the first item 
+    // Grab the first item
     nsCOMPtr<sbIMediaItem> firstMediaItem;
     rv = mMediaItems->QueryElementAt(0,
                                      NS_GET_IID(sbIMediaItem),
@@ -733,7 +769,7 @@ sbAlbumArtFetcherSet::NextFetcher()
     mTimeoutTimer->Cancel();
     return rv;
   }
-  
+
   return NS_OK;
 }
 

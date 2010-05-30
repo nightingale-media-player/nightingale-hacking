@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2008, Pioneers of the Inevitable, Inc.
+Copyright (c) 2008-2010, Pioneers of the Inevitable, Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@ const Cr = Components.results;
 const Cu = Components.utils;
 
 var Application = Cc["@mozilla.org/fuel/application;1"]
-	.getService(Ci.fuelIApplication);
+                    .getService(Ci.fuelIApplication);
 
 // our namespace
 const NS = 'http://www.songbirdnest.com/lastfm#'
@@ -94,6 +94,8 @@ Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Cu.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
 // import array utils
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
+// import observer utils
+Cu.import("resource://app/jsmodules/ObserverUtils.jsm");
 
 // object to manage login state
 var Logins = {
@@ -234,7 +236,7 @@ function logStringToFile(path, text, comment) {
                   .createInstance(Ci.nsIFileOutputStream);
 
   // use 0x02 | 0x10 to open file for appending.
-  foStream.init(file, 0x02 | 0x08 | 0x20, 0666, 0); 
+  foStream.init(file, 0x02 | 0x08 | 0x20, 0666, 0);
   // write, create, truncate
   // In a c file operation, we have no need to set file mode with or operation,
   // directly using "r" or "w" usually.
@@ -305,6 +307,13 @@ function sbLastFm() {
   // object so we can avoid the IDL / XPConnect complexity.
   this.wrappedJSObject = this;
 
+  // observe before library manager shutdown events to trigger shutdown
+  this._observerSet = new ObserverSet();
+  this._observerSet.add(this,
+                        "songbird-library-manager-before-shutdown",
+                        false,
+                        true);
+
   // keep track of our listeners
   this.listeners = new Listeners();
 
@@ -335,35 +344,35 @@ function sbLastFm() {
   this._login_phase = null;
 
   this.__defineGetter__('login_phase', function() {
-	return this._login_phase;
+    return this._login_phase;
   });
   this.__defineSetter__('login_phase', function(val) {
-	this._login_phase = val;
-	var phase = "not actively logging in";
-	switch (val) {
-		case AUTH_PHASE_HANDSHAKE:
-			phase = "handshake";
-			break;
-		case AUTH_PHASE_TOKEN_REQUEST:
-			phase = "authorisation token request";
-			break;
-		case AUTH_PHASE_WEB_LOGIN_GEO:
-			phase = "last.fm geo-detection for weblogin";
-			break;
-		case AUTH_PHASE_WEB_LOGIN:
-			phase = "last.fm website login";
-			break;
-		case AUTH_PHASE_APP_APPROVE:
-			phase = "application authorisation";
-			break;
-		case AUTH_PHASE_SESSION_REQUEST:
-			phase = "session request";
-			break;
-		case AUTH_PHASE_USER_INFO:
-			phase = "user info/profile download";
-			break;
-	}
-	dump("LOGIN PHASE: " + phase + "\n");
+    this._login_phase = val;
+    var phase = "not actively logging in";
+    switch (val) {
+      case AUTH_PHASE_HANDSHAKE:
+        phase = "handshake";
+        break;
+      case AUTH_PHASE_TOKEN_REQUEST:
+        phase = "authorisation token request";
+        break;
+      case AUTH_PHASE_WEB_LOGIN_GEO:
+        phase = "last.fm geo-detection for weblogin";
+        break;
+      case AUTH_PHASE_WEB_LOGIN:
+        phase = "last.fm website login";
+        break;
+      case AUTH_PHASE_APP_APPROVE:
+        phase = "application authorisation";
+        break;
+      case AUTH_PHASE_SESSION_REQUEST:
+        phase = "session request";
+        break;
+      case AUTH_PHASE_USER_INFO:
+        phase = "user info/profile download";
+        break;
+    }
+    dump("LOGIN PHASE: " + phase + "\n");
   });
 
   // the should-we-scrobble pref
@@ -457,24 +466,25 @@ function sbLastFm() {
   this.radio_mediaList.clear();
 
   // save a pointer to our string bundle
-  this._strings = Cc["@mozilla.org/intl/stringbundle;1"]
-	.getService(Ci.nsIStringBundleService)
-	.createBundle("chrome://sb-lastfm/locale/overlay.properties");
+  this._strings =
+    Cc["@mozilla.org/intl/stringbundle;1"]
+      .getService(Ci.nsIStringBundleService)
+      .createBundle("chrome://sb-lastfm/locale/overlay.properties");
 
   // create a service pane node for the radio tuner ui
   this._servicePaneService = Cc['@songbirdnest.com/servicepane/service;1']
     .getService(Ci.sbIServicePaneService);
- 
+
   // find a radio folder if it already exists
   var radioFolder = this._servicePaneService.getNode("SB:RadioStations");
   if (!radioFolder) {
-	  radioFolder = this._servicePaneService.createNode();
+    radioFolder = this._servicePaneService.createNode();
     radioFolder.id = "SB:RadioStations";
     radioFolder.className = "folder radio";
-	  radioFolder.name = this._strings.GetStringFromName("lastfm.radio.label");
-	  radioFolder.setAttributeNS(SB_NS, "radioFolder", 1); // for backward-compat
-	  radioFolder.setAttributeNS(SP_NS, "Weight", 2);
-	  this._servicePaneService.root.appendChild(radioFolder);
+    radioFolder.name = this._strings.GetStringFromName("lastfm.radio.label");
+    radioFolder.setAttributeNS(SB_NS, "radioFolder", 1); // for backward-compat
+    radioFolder.setAttributeNS(SP_NS, "Weight", 2);
+    this._servicePaneService.root.appendChild(radioFolder);
   }
   radioFolder.editable = false;
 
@@ -494,14 +504,14 @@ function sbLastFm() {
     .getService(Ci.sbIMetrics);
 
   this._jsonSvc = Cc["@mozilla.org/dom/json;1"]
-	.createInstance(Ci.nsIJSON);
+                    .createInstance(Ci.nsIJSON);
 
   // report errors using the console service
   this._console = Cc["@mozilla.org/consoleservice;1"]
     .getService(Ci.nsIConsoleService);
 
   var observerService = Cc["@mozilla.org/observer-service;1"]
-	.getService(Ci.nsIObserverService);
+                          .getService(Ci.nsIObserverService);
   observerService.addObserver(this, "http-on-modify-request", false);
 
   // reset some data remotes
@@ -517,7 +527,7 @@ sbLastFm.prototype.classID =
 sbLastFm.prototype.QueryInterface =
     XPCOMUtils.generateQI([Ci.sbIPlaybackHistoryListener, Ci.nsIObserver,
         Ci.sbILastFmWebServices, Ci.sbIMediacoreEventListener,
-		Ci.sbILastFmRadio, Ci.sbILastFm]);
+        Ci.sbILastFmRadio, Ci.sbILastFm]);
 
 // Error reporting
 sbLastFm.prototype.log = function sbLastFm_log(message) {
@@ -583,137 +593,139 @@ function sbLastFm_shouldAutoLogin() {
 
 sbLastFm.prototype.postHandshake =
 function sbLastFm_postHandshake() {
-	var self = this;
+  var self = this;
 
-    // download profile info
-    this.updateProfile(function success() {
-		try {
-			self.loggedIn = true;
-			self.error = null;
-      self.updateServicePaneNodes();
-			self.listeners.each(function(l) { l.onLoginSucceeded(); });
-
-			self.login_phase = null;
-			// we should try to scrobble
-			self.scrobble();
-		} catch (e) {
-			dump("Exception thrown: " + e + "\n");
-		}
-    }, function failure() {
-      self.loggedIn = false;
+  // download profile info
+  this.updateProfile(function success() {
+    try {
+      self.loggedIn = true;
       self.error = null;
       self.updateServicePaneNodes();
-      self.listeners.each(function(l) { l.onLoginFailed(); });
+      self.listeners.each(function(l) { l.onLoginSucceeded(); });
+
       self.login_phase = null;
-    });
-	
-	// get loved tracks information
-	this.getLovedTracks();
+      // we should try to scrobble
+      self.scrobble();
+    } catch (e) {
+      dump("Exception thrown: " + e + "\n");
+    }
+  }, function failure() {
+    self.loggedIn = false;
+    self.error = null;
+    self.updateServicePaneNodes();
+    self.listeners.each(function(l) { l.onLoginFailed(); });
+    self.login_phase = null;
+  });
+
+  // get loved tracks information
+  this.getLovedTracks();
 }
 
 sbLastFm.prototype.login = function sbLastFm_login(clearSession) {
-	var self = this;
-	
-	this.listeners.each(function(l) { l.onLoginBegins(); });
+  var self = this;
 
-	if (clearSession) {
-		dump("clearing session\n");
-		Application.prefs.setValue("extensions.lastfm.session_key", "")
-	}
+  this.listeners.each(function(l) { l.onLoginBegins(); });
 
-	// grab the previously saved session key
-	self.sk = Application.prefs.getValue("extensions.lastfm.session_key", "")
-	if (self.sk == "") {
-		// no previously saved session
-		self.authorise(function authorisationSuccess() {
-			self.postHandshake();
-		}, function authorisationFailure() {
-		});
-		return;
-	} else {
-		self.handshake(function hsSuccess() {
-			self.postHandshake();
-		}, function hsFailure() {
-			self.login_phase = null;
-			dump("handshake with existing sk FAILURE\n");
-			dump("resetting saved key and retrying\n");
-			Application.prefs.setValue("extensions.lastfm.session_key", "");
-			self.sk = null;
-			self.login();
-		});
-	}
+  if (clearSession) {
+    dump("clearing session\n");
+    Application.prefs.setValue("extensions.lastfm.session_key", "")
+  }
+
+  // grab the previously saved session key
+  self.sk = Application.prefs.getValue("extensions.lastfm.session_key", "")
+  if (self.sk == "") {
+    // no previously saved session
+    self.authorise(function authorisationSuccess() {
+                     self.postHandshake();
+                   }, function authorisationFailure() {
+                   });
+    return;
+  } else {
+    self.handshake(function hsSuccess() {
+                     self.postHandshake();
+                   }, function hsFailure() {
+                     self.login_phase = null;
+                     dump("handshake with existing sk FAILURE\n");
+                     dump("resetting saved key and retrying\n");
+                     Application.prefs.setValue("extensions.lastfm.session_key",
+                                                "");
+                     self.sk = null;
+                     self.login();
+                   });
+  }
 }
 
 // authenticate against the web services authentication process
 sbLastFm.prototype.authorise =
 function sbLastFm_authorise(onSuccess, onFailure) {
-	var self = this;
-	this.apiAuth(function apiSuccess() {
-		dump("Last.fm Web Services Authentication process COMPLETE\n");
+  var self = this;
+  this.apiAuth(function apiSuccess() {
+                 dump("Last.fm Web Services Authentication process COMPLETE\n");
 
-		self.listeners.each(function(l) { l.onLoginBegins(); });
-		self.handshake(function hsSuccess() {
-			dump("handshake SUCCESS\n");
+                 self.listeners.each(function(l) { l.onLoginBegins(); });
+                 self.handshake(function hsSuccess() {
+                                  dump("handshake SUCCESS\n");
 
-			if (typeof(onSuccess) == "function")
-				onSuccess();
-		}, function hsFailure() {
-			dump("handshake FAILURE\n");
-			if (typeof(onFailure) == "function")
-				onFailure();
-		});
-	}, function apiFailure() {
-		dump("Last.fm Web Services Authentication process FAILED\n");
-	});
+                                  if (typeof(onSuccess) == "function")
+                                    onSuccess();
+                                }, function hsFailure() {
+                                     dump("handshake FAILURE\n");
+                                     if (typeof(onFailure) == "function")
+                                       onFailure();
+                                });
+               }, function apiFailure() {
+                    dump("Last.fm Web Services " +
+                         "Authentication process FAILED\n");
+               });
 }
 
 sbLastFm.prototype.cancelLogin =
 function sbLastFm_cancelLogin() {
-	var phase;
-	if (!this.login_phase) {
-		dump("No active login to cancel\n");
-		return;
-	}
-	switch (this.login_phase) {
-		case AUTH_PHASE_HANDSHAKE:
-			phase = "handshake";
-			if (this._handshake_xhr)
-				this._handshake_xhr.abort();
-			break;
-		case AUTH_PHASE_TOKEN_REQUEST:
-			phase = "authorisation token request";
-			if (this._token_xhr)
-				this._token_xhr.abort();
-			break;
-		case AUTH_PHASE_WEB_LOGIN_GEO:
-			phase = "last.fm geo-specific website login";
-			if (this._weblogin_xhr)
-				this._weblogin_xhr.abort();
-			break;
-		case AUTH_PHASE_WEB_LOGIN:
-			phase = "last.fm website login";
-			if (this._weblogin_xhr)
-				this._weblogin_xhr.abort();
-			break;
-		case AUTH_PHASE_APP_APPROVE:
-			phase = "application authorisation";
-			if (this._appauth_xhr)
-				this._appauth_xhr.abort();
-			break;
-		case AUTH_PHASE_SESSION_REQUEST:
-			phase = "session request";
-			if (this._session_xhr)
-				this._session_xhr.abort();
-			break;
-		case AUTH_PHASE_USER_INFO:
-			phase = "user info/profile download";
-			if (this._info_xhr)
-				this._info_xhr.abort();
-			break;
-	}
-	dump("CANCEL: " + phase + "\n");
-	this.listeners.each(function(l) { l.onLoginCancelled(); });
-	this.logout();
+  var phase;
+  if (!this.login_phase) {
+    dump("No active login to cancel\n");
+    return;
+  }
+  switch (this.login_phase) {
+    case AUTH_PHASE_HANDSHAKE:
+      phase = "handshake";
+      if (this._handshake_xhr)
+        this._handshake_xhr.abort();
+      break;
+    case AUTH_PHASE_TOKEN_REQUEST:
+      phase = "authorisation token request";
+      if (this._token_xhr)
+        this._token_xhr.abort();
+      break;
+    case AUTH_PHASE_WEB_LOGIN_GEO:
+      phase = "last.fm geo-specific website login";
+      if (this._weblogin_xhr)
+        this._weblogin_xhr.abort();
+      break;
+    case AUTH_PHASE_WEB_LOGIN:
+      phase = "last.fm website login";
+      if (this._weblogin_xhr)
+        this._weblogin_xhr.abort();
+      break;
+    case AUTH_PHASE_APP_APPROVE:
+      phase = "application authorisation";
+      if (this._appauth_xhr)
+        this._appauth_xhr.abort();
+      break;
+    case AUTH_PHASE_SESSION_REQUEST:
+      phase = "session request";
+      if (this._session_xhr)
+        this._session_xhr.abort();
+      break;
+    case AUTH_PHASE_USER_INFO:
+      phase = "user info/profile download";
+      if (this._info_xhr)
+        this._info_xhr.abort();
+      break;
+  }
+  dump("CANCEL: " + phase + "\n");
+  this.listeners.each(function(l) { l.onLoginCancelled(); });
+  this.logout();
 }
 
 // logout is pretty simple
@@ -744,8 +756,8 @@ function sbLastFm_handshake(success, failure) {
     md5(API_SECRET + timestamp) + '&api_key=' + API_KEY + '&sk=' + this.sk;
 
   function failureOccurred(aAuthFailure, responseText) {
-	dump("handshake FAILED with code: " + aAuthFailure + "\n");
-	dump("Response text: " + responseText + "\n\n");
+    dump("handshake FAILED with code: " + aAuthFailure + "\n");
+    dump("Response text: " + responseText + "\n\n");
     failure(aAuthFailure);
   }
 
@@ -782,15 +794,15 @@ function sbLastFm_handshake(success, failure) {
     self.session = response_lines[1];
     self.nowplaying_url = response_lines[2];
     self.submission_url = response_lines[3];
-			
-	// increment metrics
-	self._metrics.metricsInc('lastfm', 'login', null);
 
-	// save the credentials
-	Logins.set(self.username, self.password);
+    // increment metrics
+    self._metrics.metricsInc('lastfm', 'login', null);
+
+    // save the credentials
+    Logins.set(self.username, self.password);
 
     // we've sucessfully handshook
-	success();
+    success();
 
   };
   this._handshake_xhr.onerror = function(event) {
@@ -805,41 +817,41 @@ function sbLastFm_handshake(success, failure) {
 // update profile data
 sbLastFm.prototype.updateProfile =
 function sbLastFm_updateProfile(onSuccess, onFailure) {
-	var self = this;
-	this.login_phase = AUTH_PHASE_USER_INFO;
-	this._info_xhr = this.apiCall("user.getInfo", {},
-		function response(success, xml, xmlText) {
-			if (!success) {
-				dump("user.getInfo FAILED\n");
-				if (typeof(onFailure) == "function")
-					onFailure();
-				return;
-			}
-			
-			function text(tag) {
-				var tags = xml.getElementsByTagName(tag);
-				if (tags.length) {
-					return tags[0].textContent;
-				} else {
-					return '';
-				}
-			}
+  var self = this;
+  this.login_phase = AUTH_PHASE_USER_INFO;
+  this._info_xhr = this.apiCall("user.getInfo", {},
+    function response(success, xml, xmlText) {
+      if (!success) {
+        dump("user.getInfo FAILED\n");
+        if (typeof(onFailure) == "function")
+          onFailure();
+        return;
+      }
 
-			self._subscriber = (text('subscriber') == 1)
-		    if (Application.prefs.getValue(
-					"extensions.lastfm.subscriber_override", false))
-				self._subscriber = true;
-			self.realname = text('realname');
-			self.playcount = parseInt(text('playcount'));
-			self.avatar = text('image');
-			self.profileurl = text('url');
-			self.listeners.each(function(l) { l.onProfileUpdated(); });
+      function text(tag) {
+        var tags = xml.getElementsByTagName(tag);
+        if (tags.length) {
+          return tags[0].textContent;
+        } else {
+          return '';
+        }
+      }
+
+      self._subscriber = (text('subscriber') == 1)
+      if (Application.prefs.getValue("extensions.lastfm.subscriber_override",
+                                     false))
+        self._subscriber = true;
+      self.realname = text('realname');
+      self.playcount = parseInt(text('playcount'));
+      self.avatar = text('image');
+      self.profileurl = text('url');
+      self.listeners.each(function(l) { l.onProfileUpdated(); });
 
       self.updateServicePaneNodes();
 
-			if (typeof(onSuccess) == "function")
-				onSuccess();
-	});
+      if (typeof(onSuccess) == "function")
+        onSuccess();
+    });
 }
 
 
@@ -873,7 +885,7 @@ function sbLastFm_submit(submissions, success) {
   }
 
   if (submissions.length == 0)
-	  return;
+    return;
 
   // build the submission
   var url = this.submission_url;
@@ -904,12 +916,12 @@ function sbLastFm_getXML(url, success, failure) {
   xhr.overrideMimeType('text/xml');
   xhr.onload = function(event) {
     if (xhr.responseXML) {
-	  if (xhr.responseText == "No recs :(") {
-		  dump("Failed to get XSPF");
-		  failure(xhr);
-	  } else {
-		  success(xhr.responseXML);
-	  }
+      if (xhr.responseText == "No recs :(") {
+        dump("Failed to get XSPF");
+        failure(xhr);
+      } else {
+        success(xhr.responseXML);
+      }
     } else {
       failure(xhr);
     }
@@ -956,39 +968,39 @@ function sbLastFm_getPairs(url, success, failure) {
 // get the list of tracks the user has loved
 sbLastFm.prototype.getLovedTracks =
 function sbLastFm_getLovedTracks() {
-	var self = this;
+  var self = this;
   var lovedLimit = Application.prefs.getValue("extensions.lastfm.loved_limit",
                                               100);
-	this.apiCall('user.getLovedTracks', {
-		user: self.username,
-    limit: lovedLimit
-	}, function response(success, xml, xmlText) {
-		xmlText = xmlText.replace(
-					/<\?xml version="1.0" encoding="[uU][tT][fF]-8"\?>/, "");
-		var x = new XML(xmlText);
+  this.apiCall('user.getLovedTracks',
+               { user: self.username,
+                 limit: lovedLimit },
+               function response(success, xml, xmlText) {
+                xmlText = xmlText.replace(
+                  /<\?xml version="1.0" encoding="[uU][tT][fF]-8"\?>/, "");
+                var x = new XML(xmlText);
 
-		self.lovedTracks = new Object();
-    var i = 0;
-		for each (var track in x..track) {
-			var trackName = track.name.toString().toLowerCase();
-			var artistName = track.artist.name.toString().toLowerCase();
-			self.lovedTracks[trackName + "@@" + artistName] = true;
-		}
-	});
+                self.lovedTracks = new Object();
+                var i = 0;
+                for each (var track in x..track) {
+                  var trackName = track.name.toString().toLowerCase();
+                  var artistName = track.artist.name.toString().toLowerCase();
+                  self.lovedTracks[trackName + "@@" + artistName] = true;
+                }
+               });
 }
 
 // log in to the last.fm website so that if we get directed over to web links
 // from radio links we'll already have a logged in state
 sbLastFm.prototype.webLogin =
 function sbLastFm_webLogin(success, failure) {
-	var self = this;
-	var postdata = new Object;
-	postdata["username"] = this.username;
-	postdata["password"] = this.password;
+  var self = this;
+  var postdata = new Object;
+  postdata["username"] = this.username;
+  postdata["password"] = this.password;
 
   // Need to determine which Last.fm geo site they get redirected to
   // Hit up www.last.fm/login and let's see where we get redirected to
-	this.login_phase = AUTH_PHASE_WEB_LOGIN_GEO;
+  this.login_phase = AUTH_PHASE_WEB_LOGIN_GEO;
   this._weblogin_xhr = POST("http://last.fm/login", null,
       function(xhr) {
         var loginURL = decodeURI(xhr.channel.URI.spec);
@@ -1033,119 +1045,122 @@ function sbLastFm_webLogin(success, failure) {
 // tune the current radio session into a particular lastfm:// uri
 sbLastFm.prototype.tuneStation =
 function sbLastFm_tuneStation(station, onSuccess, onFailure) {
-	var self = this;
-	dump("radio.Tune, tuning to: " + station + "\n");
-	this.apiCall('radio.Tune', { station: station },
-		function response(success, xml, xmlText) {
-			if (!success) {
-				dump("Failed to tune station: " + station + "\n");
-				if (typeof(onFailure) == "function")
-					onFailure();
-				return;
-			}
+  var self = this;
+  dump("radio.Tune, tuning to: " + station + "\n");
+  this.apiCall('radio.Tune', { station: station },
+    function response(success, xml, xmlText) {
+      if (!success) {
+        dump("Failed to tune station: " + station + "\n");
+        if (typeof(onFailure) == "function")
+          onFailure();
+        return;
+      }
 
-			function text(key) {
-				tags = xml.getElementsByTagName(key);
-				if (tags.length) {
-					return tags[0].textContent;
-				} else {
-					return '';
-				}
-			}
-			self.station_radio_url = station;
-			self.station_webpage_url = text('url');
-			self.station_name = text('name');
-			if (typeof(onSuccess) == "function")
-				onSuccess();
-      });
+      function text(key) {
+        tags = xml.getElementsByTagName(key);
+        if (tags.length) {
+          return tags[0].textContent;
+        } else {
+          return '';
+        }
+      }
+      self.station_radio_url = station;
+      self.station_webpage_url = text('url');
+      self.station_name = text('name');
+      if (typeof(onSuccess) == "function")
+        onSuccess();
+    });
 }
 
 // get more tracks from Last.fm's servers into the radio playlist
 sbLastFm.prototype.requestMoreRadio =
 function sbLastFm_requestMoreRadio(onSuccess, onFailure) {
-	var self = this; 
+  var self = this;
   /*
-  this.getXML(this.radio_base_url + '/xspf.php?' + 
+  this.getXML(this.radio_base_url + '/xspf.php?' +
     urlencode({sk: this.radio_session, discovery: 0, desktop: '1.3.1.1'}),
   */
-	this.apiCall('radio.getPlaylist', { discovery: true, rtp: true },
-		function response(success, xspf, xmlText) {
-		if (!success) {
-			dump("radio.getPlaylist FAILED\n");
-			if (typeof(onFailure) == "function")
-				onFailure();
-			return;
-		}
+  this.apiCall('radio.getPlaylist', { discovery: true, rtp: true },
+    function response(success, xspf, xmlText) {
+      if (!success) {
+        dump("radio.getPlaylist FAILED\n");
+        if (typeof(onFailure) == "function")
+          onFailure();
+        return;
+      }
 
-		if (xspf.getElementsByTagName('error').length > 0) {
-			dump("Failed to tune.  User might not be a subscriber?\n");
-			dump(xmlText + "\n\n");
-			if (typeof(onFailure) == "function")
-				onFailure();
-			return;
-		}
+      if (xspf.getElementsByTagName('error').length > 0) {
+        dump("Failed to tune.  User might not be a subscriber?\n");
+        dump(xmlText + "\n\n");
+        if (typeof(onFailure) == "function")
+          onFailure();
+        return;
+      }
 
-		dump("**** SUCCESSFULLY loaded new XSPF data\n");
-		var tracks = xspf.getElementsByTagName('track');
-		function tagValue(trackNumber, tagName) {
-			try {
-				return tracks[i].getElementsByTagName(tagName)[0].textContent;
-			} 
-			catch(e) { return ''; }
-		}
+      dump("**** SUCCESSFULLY loaded new XSPF data\n");
+      var tracks = xspf.getElementsByTagName('track');
+      function tagValue(trackNumber, tagName) {
+        try {
+          return tracks[i].getElementsByTagName(tagName)[0].textContent;
+        }
+        catch(e) { return ''; }
+      }
 
-		for (var i=0; i<tracks.length; i++) {
-			// create a media item from the XSPF
-			var location = tagValue(i, 'location');
-			dump("URL: " + tagValue(i, 'title') + " -- " + location + "\n");
-			var mediaItem = self.radio_mediaList.library.createMediaItem(
-					newURI(location));
-			// set up standard track metadata
-			mediaItem.setProperty(SBProperties.trackName, tagValue(i, 'title'));
-			mediaItem.setProperty(SBProperties.artistName, tagValue(i, 'creator'));
-			mediaItem.setProperty(SBProperties.albumName, tagValue(i, 'album'));
-			mediaItem.setProperty(SBProperties.primaryImageURL, 
-					tagValue(i, 'image'));
-			mediaItem.setProperty(SBProperties.duration, 
-					parseInt(tagValue(i, 'duration'))*1000);
-			// set up some lastfm-specific metadata
-			mediaItem.setProperty(PROPERTY_TRACKID, tagValue(i, 'identifier'));
-			var extensions = tracks[i].getElementsByTagName("extension")[0];
-			mediaItem.setProperty(PROPERTY_ARTISTPAGE,
-				extensions.getElementsByTagName("artistpage")[0].textContent);
-			mediaItem.setProperty(PROPERTY_TRACKAUTH,
-				extensions.getElementsByTagName("trackauth")[0].textContent);
+      for (var i=0; i<tracks.length; i++) {
+        // create a media item from the XSPF
+        var location = tagValue(i, 'location');
+        dump("URL: " + tagValue(i, 'title') + " -- " + location + "\n");
+        var mediaItem =
+          self.radio_mediaList.library.createMediaItem(newURI(location));
+        // set up standard track metadata
+        mediaItem.setProperty(SBProperties.trackName, tagValue(i, 'title'));
+        mediaItem.setProperty(SBProperties.artistName, tagValue(i, 'creator'));
+        mediaItem.setProperty(SBProperties.albumName, tagValue(i, 'album'));
+        mediaItem.setProperty(SBProperties.primaryImageURL,
+                              tagValue(i, 'image'));
+        mediaItem.setProperty(SBProperties.duration,
+                              parseInt(tagValue(i, 'duration'))*1000);
+        // set up some lastfm-specific metadata
+        mediaItem.setProperty(PROPERTY_TRACKID, tagValue(i, 'identifier'));
+        var extensions = tracks[i].getElementsByTagName("extension")[0];
+        mediaItem.setProperty
+          (PROPERTY_ARTISTPAGE,
+           extensions.getElementsByTagName("artistpage")[0].textContent);
+        mediaItem.setProperty
+          (PROPERTY_TRACKAUTH,
+           extensions.getElementsByTagName("trackauth")[0].textContent);
 
-			self.radio_mediaList.add(mediaItem);
-		}
+        self.radio_mediaList.add(mediaItem);
+      }
 
-		if (typeof(onSuccess) == "function")
-			onSuccess();
+      if (typeof(onSuccess) == "function")
+        onSuccess();
     });
 }
 
 sbLastFm.prototype.saveRecentStation =
 function sbLastFm_saveRecentStation(name, stationUrl, url, sImageUrl,
-		mImageUrl, lImageUrl)
+                                    mImageUrl, lImageUrl)
 {
-	var thisStation = { name: name, stationUrl: stationUrl, url: url,
-		sImageUrl: sImageUrl, mImageUrl: mImageUrl, lImageUrl: lImageUrl };
-	var prevIdx = -1;
+  var thisStation = { name: name, stationUrl: stationUrl, url: url,
+                      sImageUrl: sImageUrl, mImageUrl: mImageUrl,
+                      lImageUrl: lImageUrl };
+  var prevIdx = -1;
 
-	var recentStations = this._jsonSvc.decode(Application.prefs.getValue(
-				"extensions.lastfm.recent.stations", "[]"));
-	for (var i=0; i<recentStations.length; i++) {
-		if (recentStations[i].stationUrl == stationUrl) {
-			prevIdx = i;
-			break;
-		}
-	}
-	if (prevIdx > -1) {
-		recentStations.splice(prevIdx, 1);
-	}
-	LastfmTuner.recentStations.push(thisStation);
-	Application.prefs.setValue("extensions.lastfm.recent.artists",
-		this._jsonSvc.encode(recentStations));
+  var recentStations = this._jsonSvc.decode(
+    Application.prefs.getValue("extensions.lastfm.recent.stations", "[]"));
+  for (var i=0; i<recentStations.length; i++) {
+    if (recentStations[i].stationUrl == stationUrl) {
+      prevIdx = i;
+      break;
+    }
+  }
+  if (prevIdx > -1) {
+    recentStations.splice(prevIdx, 1);
+  }
+  LastfmTuner.recentStations.push(thisStation);
+  Application.prefs.setValue("extensions.lastfm.recent.artists",
+                             this._jsonSvc.encode(recentStations));
 }
 
 // begin last.fm radio playback of a particular station
@@ -1163,17 +1178,17 @@ function sbLastFm_radioPlay(station) {
     dump("not a subscriber\n");
     return false;
   }
-  
+
   // See if we're already playing a station.  If not, save the shuffle/repeat
   // settings since we reset them later on in the success handler
   if (SBDataGetStringValue("lastfm.radio.station") == "" &&
-		  !SBDataGetBoolValue("lastfm.radio.requesting"))
+      !SBDataGetBoolValue("lastfm.radio.requesting"))
   {
     dump("saving previous shuffle/repeat modes\n");
-	  this.prevShuffleMode = this._mediacoreManager.sequencer.mode;
-	  this.prevRepeatMode = this._mediacoreManager.sequencer.repeatMode;
+    this.prevShuffleMode = this._mediacoreManager.sequencer.mode;
+    this.prevRepeatMode = this._mediacoreManager.sequencer.repeatMode;
   }
- 
+
   // clear the playlist
   this.radio_mediaList.clear();
 
@@ -1213,40 +1228,40 @@ function sbLastFm_radioPlay(station) {
         // get the first bunch of tracks
         self.requestMoreRadio(
           function requestMoreRadio_success() {
-		    // we have to make sure we're going sequentially. the radio
-			// protocol says we can't play out of order from the XSPF
-			self._mediacoreManager.sequencer.mode =
-			  Ci.sbIMediacoreSequencer.MODE_FORWARD;
-			self._mediacoreManager.sequencer.repeatMode =
-			  Ci.sbIMediacoreSequencer.MODE_REPEAT_NONE;
+            // we have to make sure we're going sequentially. the radio
+            // protocol says we can't play out of order from the XSPF
+            self._mediacoreManager.sequencer.mode =
+              Ci.sbIMediacoreSequencer.MODE_FORWARD;
+            self._mediacoreManager.sequencer.repeatMode =
+              Ci.sbIMediacoreSequencer.MODE_REPEAT_NONE;
 
             // time to start playing the radio medialist
             self._mediacoreManager.sequencer.playView(
-				self.radio_mediaList.createView(), 0);
+              self.radio_mediaList.createView(), 0);
           },
           function requestMoreRadio_failure() {
-		    dump("*** in requestMoreRadio_failure()\n");
-			// increment the failure count
-			self.radio_failure_count++;
-			// if we haven't hit the failure retry limit, then keep retrying
-			if (self.radio_failure_count < 5)
-				radioStation_success();
-			else {
-				dump("Repeated failure trying to tune to Last.fm station: " +
-					self.station_radio_url);
-			    SBDataSetStringValue("lastfm.radio.station", "");
-			    SBDataSetStringValue("metadata.artist", "");
-			    SBDataSetStringValue("metadata.album", "");
-			    SBDataSetStringValue("metadata.title", "");
-			    SBDataSetBoolValue("faceplate.seenplaying", false);
-			    SBDataSetBoolValue("faceplate.buffering", false);
-			    SBDataSetBoolValue("lastfm.radio.requesting", false);
-			}
+            dump("*** in requestMoreRadio_failure()\n");
+            // increment the failure count
+            self.radio_failure_count++;
+            // if we haven't hit the failure retry limit, then keep retrying
+            if (self.radio_failure_count < 5)
+              radioStation_success();
+            else {
+              dump("Repeated failure trying to tune to Last.fm station: " +
+                   self.station_radio_url);
+              SBDataSetStringValue("lastfm.radio.station", "");
+              SBDataSetStringValue("metadata.artist", "");
+              SBDataSetStringValue("metadata.album", "");
+              SBDataSetStringValue("metadata.title", "");
+              SBDataSetBoolValue("faceplate.seenplaying", false);
+              SBDataSetBoolValue("faceplate.buffering", false);
+              SBDataSetBoolValue("lastfm.radio.requesting", false);
+            }
           });
-        
+
       },
       function radioStation_failure() {
-		  dump("FAIL FAIL FAIL to authenticate.\n");
+        dump("FAIL FAIL FAIL to authenticate.\n");
       });
   return true;
 }
@@ -1283,7 +1298,7 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
   // clear any web cookies we may have already
   dump("web cookies cleared\n");
   var cookieMgr = Cc["@mozilla.org/cookiemanager;1"]
-		.getService(Ci.nsICookieManager);
+                    .getService(Ci.nsICookieManager);
   cookieMgr.remove(".last.fm", "Session", "/", false);
   cookieMgr.remove(".last.fm", "s_cc", "/", false);
   cookieMgr.remove(".last.fm", "s_sq", "/", false);
@@ -1299,8 +1314,8 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
 
   // get a lastfm desktop session
   var self = this;
-	this.webLogin(function success() {
-		dump("webLogin SUCCESS\n");
+  this.webLogin(function success() {
+    dump("webLogin SUCCESS\n");
 
     self.login_phase = AUTH_PHASE_TOKEN_REQUEST;
     self._token_xhr = self.apiCall('auth.getToken', { },
@@ -1366,7 +1381,7 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
             });
         }, function failure(xhr) {
           dump("api grantAccess: FAILED TO AUTHENTICATE: " +
-					xhr.responseText + "\n\n");
+               xhr.responseText + "\n\n");
         });
     }, function failure() {   // auth.getToken failure
       dump("webLogin FAILED\n");
@@ -1505,7 +1520,9 @@ function sbLastFm_scrobble(aEntries) {
       }
       scrobble_list.push(
           new PlayedTrack(entry_list[i].item,
-					  Math.round(entry_list[i].timestamp/1000000), rating, source));
+                          Math.round(entry_list[i].timestamp/1000000),
+                          rating,
+                          source));
     }
     // submit to the last.fm audioscrobbler api
     var self = this;
@@ -1537,64 +1554,64 @@ function sbLastFm_scrobble(aEntries) {
 
 sbLastFm.prototype.addTags =
 function sbLastFm_addTags(aMediaItem, tagString, success, failure) {
-	var self = this;
-	this.apiCall('track.addTags', {
-		track: aMediaItem.getProperty(SBProperties.trackName),
-		artist: aMediaItem.getProperty(SBProperties.artistName),
-		tags: tagString,
-	}, function() {
-	  	dump("Successfully added tags: " + tagString + "\n");
-		self.listeners.each(function(l) {
-			if (typeof(l.onItemTagsAdded) == "function") {
-				var tags = tagString.split(",");
-				for (var i in tags)
-					tags[i] = tags[i].replace(/^\s*/, "").replace(/\s*$/, "");
-				l.onItemTagsAdded(aMediaItem, tags);
-			}
-		});
-		if (typeof(success) == "function")
-			success();
-	}, function() {
-	    dump("Failed to add tags: " + tagString + "\n");
-		if (typeof(failure) == "function")
-			failure();
-	});
+  var self = this;
+  this.apiCall('track.addTags', {
+    track: aMediaItem.getProperty(SBProperties.trackName),
+    artist: aMediaItem.getProperty(SBProperties.artistName),
+    tags: tagString,
+  }, function() {
+      dump("Successfully added tags: " + tagString + "\n");
+    self.listeners.each(function(l) {
+      if (typeof(l.onItemTagsAdded) == "function") {
+        var tags = tagString.split(",");
+        for (var i in tags)
+          tags[i] = tags[i].replace(/^\s*/, "").replace(/\s*$/, "");
+        l.onItemTagsAdded(aMediaItem, tags);
+      }
+    });
+    if (typeof(success) == "function")
+      success();
+  }, function() {
+    dump("Failed to add tags: " + tagString + "\n");
+    if (typeof(failure) == "function")
+      failure();
+  });
 }
 
 sbLastFm.prototype.removeTag =
 function sbLastFm_removeTag(aMediaItem, aTagName) {
-	var self = this;
-	this.apiCall('track.removeTag', {
-		track: aMediaItem.getProperty(SBProperties.trackName),
-		artist: aMediaItem.getProperty(SBProperties.artistName),
-		tag: aTagName,
-	}, function() {
-	  	dump("Successfully removed tag: " + aTagName + "\n");
-		self.listeners.each(function(l) {
-			if (typeof(l.onItemTagRemoved) == "function")
-				l.onItemTagRemoved(aMediaItem, aTagName);
-		});
-		delete this.userTags[aTagName];
-	}, function() {
-	    dump("Failed to remove tag: " + aTagName + "\n");
-	});
+  var self = this;
+  this.apiCall('track.removeTag', {
+    track: aMediaItem.getProperty(SBProperties.trackName),
+    artist: aMediaItem.getProperty(SBProperties.artistName),
+    tag: aTagName,
+  }, function() {
+    dump("Successfully removed tag: " + aTagName + "\n");
+    self.listeners.each(function(l) {
+    if (typeof(l.onItemTagRemoved) == "function")
+      l.onItemTagRemoved(aMediaItem, aTagName);
+    });
+    delete this.userTags[aTagName];
+  }, function() {
+    dump("Failed to remove tag: " + aTagName + "\n");
+  });
 }
 
 // Note: this web services call will eventually be deprecated and rely
 // strictly on the scrobble (see http://www.last.fm/api/submissions)
 sbLastFm.prototype.trackBan =
 function sbLastFm_trackBan(aMediaItem) {
-	if (aMediaItem.getProperty(SBProperties.artistName) != null && 
-		aMediaItem.getProperty(SBProperties.trackName) != null)
-	{
-		// Only trigger web services call, scrobble requires
-		// additional minimum requirements and is handled in
-		// scrobble()
-		this.apiCall('track.ban', {
-				track: aMediaItem.getProperty(SBProperties.trackName),
-				artist: aMediaItem.getProperty(SBProperties.artistName)
-		}, function response(success, xml) { });
-	}
+  if (aMediaItem.getProperty(SBProperties.artistName) != null &&
+      aMediaItem.getProperty(SBProperties.trackName) != null)
+  {
+    // Only trigger web services call, scrobble requires
+    // additional minimum requirements and is handled in
+    // scrobble()
+    this.apiCall('track.ban', {
+        track: aMediaItem.getProperty(SBProperties.trackName),
+        artist: aMediaItem.getProperty(SBProperties.artistName)
+    }, function response(success, xml) { });
+  }
 }
 
 // love and ban
@@ -1604,22 +1621,22 @@ function sbLastFm_loveBan(aMediaItem, aLove) {
   this.love = aLove;
   var existing = false;
   if (aMediaItem) {
-	  var trackName = aMediaItem.getProperty(SBProperties.trackName).toLowerCase();
-	  var artistName = aMediaItem.getProperty(SBProperties.artistName).toLowerCase();
+    var trackName = aMediaItem.getProperty(SBProperties.trackName).toLowerCase();
+    var artistName = aMediaItem.getProperty(SBProperties.artistName).toLowerCase();
 
-	  if (this.lovedTracks[trackName + "@@" + artistName])
-		  existing = true;
-	  if (aLove) {
-		  dump("loving this track\n");
-		  this.lovedTracks[trackName + "@@" + artistName] = true;
-	  } else {
-		  dump("deleting this track\n");
-		  delete this.lovedTracks[trackName + "@@" + artistName];
-		  this.trackBan(aMediaItem);
-	  }
+    if (this.lovedTracks[trackName + "@@" + artistName])
+      existing = true;
+    if (aLove) {
+      dump("loving this track\n");
+      this.lovedTracks[trackName + "@@" + artistName] = true;
+    } else {
+      dump("deleting this track\n");
+      delete this.lovedTracks[trackName + "@@" + artistName];
+      this.trackBan(aMediaItem);
+    }
   }
   this.listeners.each(function(l) {
-	l.onLoveBan(aMediaItem, aLove, existing);
+    l.onLoveBan(aMediaItem, aLove, existing);
   });
 }
 
@@ -1682,10 +1699,13 @@ function sbLastFm_observe(subject, topic, data) {
       }
     }
   }
+  else if (topic == "songbird-library-manager-before-shutdown") {
+    this.shutdown()
+  }
 }
 
 // sbIMediacoreEventListener
-sbLastFm.prototype.onMediacoreEvent = 
+sbLastFm.prototype.onMediacoreEvent =
 function sbLastFm_onMediacoreEvent(aEvent) {
   switch(aEvent.type) {
     case Ci.sbIMediacoreEvent.STREAM_END:
@@ -1705,7 +1725,7 @@ function sbLastFm_onMediacoreEvent(aEvent) {
         this._mediacoreManager.sequencer.repeatMode = this.prevRepeatMode;
       }
       this.radio_playing = (aEvent.data.mediaList == this.radio_mediaList);
-	    break;
+      break;
     case Ci.sbIMediacoreEvent.BEFORE_TRACK_CHANGE:
       if (this.radio_playing) {
         SBDataSetStringValue('lastfm.radio.station', this.station_name);
@@ -1718,12 +1738,14 @@ function sbLastFm_onMediacoreEvent(aEvent) {
       if (this.radio_playing && !this._mediacoreManager.sequencer.nextItem) {
         dump("OUT OF RADIO TRACKS... requesting more\n");
         SBDataSetBoolValue('lastfm.radio.requesting', true);
-		SBDataSetStringValue("faceplate.status.text", "Requesting next set of tracks from Last.fm...");
+        SBDataSetStringValue("faceplate.status.text",
+                             "Requesting next set of tracks from Last.fm...");
         this.requestMoreRadio(function(){
-			SBDataSetBoolValue('lastfm.radio.requesting', false);
-			SBDataSetStringValue("faceplate.status.text", "Next tracks loaded successfully!");
-			}, function(){});
-      } else 
+          SBDataSetBoolValue('lastfm.radio.requesting', false);
+          SBDataSetStringValue("faceplate.status.text",
+                               "Next tracks loaded successfully!");
+        }, function(){});
+      } else
         SBDataSetBoolValue('lastfm.radio.requesting', false);
       if (this.radio_playing) {
         // let's remove all the tracks *before* this one from the medialist
@@ -1754,9 +1776,9 @@ function sbLastFm_onTrackChange(aItem) {
   // be run before onEntriesAdded. Otherwise love/ban won't work.
 
   if (aItem.getProperty(SBProperties.artistName) == null ||
-	  aItem.getProperty(SBProperties.trackName) == null)
+      aItem.getProperty(SBProperties.trackName) == null)
   {
-	  return;
+    return;
   }
 
   // reset the love/ban state
@@ -1764,7 +1786,7 @@ function sbLastFm_onTrackChange(aItem) {
   var trackName = aItem.getProperty(SBProperties.trackName).toLowerCase();
   var artistName = aItem.getProperty(SBProperties.artistName).toLowerCase();
   if (this.lovedTracks && this.lovedTracks[trackName + "@@" + artistName]) {
-	  this.loveBan(aItem, true);
+    this.loveBan(aItem, true);
   }
 
   // send now playing info if appropriate
@@ -1779,34 +1801,46 @@ function sbLastFm_onTrackChange(aItem) {
 
   // update the metaverse's tags for this track
   this.apiCall('track.getInfo', {
-	track: aItem.getProperty(SBProperties.trackName),
-	artist: aItem.getProperty(SBProperties.artistName)
+    track: aItem.getProperty(SBProperties.trackName),
+    artist: aItem.getProperty(SBProperties.artistName)
   }, function response(success, xml) {
     // update the tagPanel with the tags for this track
     var tagElements = xml.getElementsByTagName('tag');
-	for (var i=0; i<tagElements.length; i++) {
-		var tag = tagElements[i].childNodes[1].textContent;
-		self.globalTags[tag] = false;
-	}
+    for (var i=0; i<tagElements.length; i++) {
+      var tag = tagElements[i].childNodes[1].textContent;
+      self.globalTags[tag] = false;
+    }
   });
-  
+
   // update the personal tags for this track
   this.apiCall('track.getTags', {
-	track: aItem.getProperty(SBProperties.trackName),
-	artist: aItem.getProperty(SBProperties.artistName)
+    track: aItem.getProperty(SBProperties.trackName),
+    artist: aItem.getProperty(SBProperties.artistName)
   }, function response(success, xml) {
     // update the tagPanel with the tags for this track
     var tagElements = xml.getElementsByTagName('tag');
-	for (var i=0; i<tagElements.length; i++) {
-		var tag = tagElements[i].childNodes[1].textContent;
-		self.userTags[tag] = true;
-	}
+    for (var i=0; i<tagElements.length; i++) {
+      var tag = tagElements[i].childNodes[1].textContent;
+      self.userTags[tag] = true;
+    }
   });
 }
 
 sbLastFm.prototype.onStop = function sbLastFm_onStop() {
   // reset the love/ban state
   this.loveBan(null, false);
+}
+
+sbLastFm.prototype.shutdown = function sbLastFm_shutdown() {
+  // remove all observers
+  this._observerSet.removeAll();
+  this._observerSet = null;
+
+  // stop listening to the playlist playback service
+  this._mediacoreManager.removeListener(this);
+
+  // remove ourselves as a playlist history listener
+  this._playbackHistory.removeListener(this);
 }
 
 function NSGetModule(compMgr, fileSpec) {

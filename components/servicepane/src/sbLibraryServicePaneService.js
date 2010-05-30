@@ -94,6 +94,9 @@ function sbLibraryServicePane() {
 
   this._batch = {}; // we'll keep the batch counters in here
   this._refreshPending = false;
+  
+  // for cleaning up
+  this._libraries = [];
 }
 
 //////////////////////////
@@ -1255,6 +1258,7 @@ function sbLibraryServicePane__libraryAdded(aLibrary) {
                        false,
                        Ci.sbIMediaList.LISTENER_FLAGS_ALL,
                        filter);
+  this._libraries.push(aLibrary);
 
   this._processListsInLibrary(aLibrary);
 
@@ -1283,10 +1287,11 @@ function sbLibraryServicePane__libraryRemoved(aLibrary) {
     // Hide the library item node
     libraryItemNode =
       libraryItemNodeEnum.getNext().QueryInterface(Ci.sbIServicePaneNode);
-    this._servicePane.setNodeHidden(libraryItemNode, CONTRACTID, true);
+    libraryItemNode.hidden = true;
   }
 
   aLibrary.removeListener(this);
+  this._libraries.splice(this._libraries.indexOf(aLibrary), 1);
 }
 
 sbLibraryServicePane.prototype._refreshLibraryNodes =
@@ -1509,7 +1514,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
       node.name = name;
     }
     var hidden = (aLibrary.getProperty(SBProperties.hidden) == "1");
-    self._servicePane.setNodeHidden(node, CONTRACTID, hidden);
+    node.hidden = hidden;
 
     if (aParentNode && node.parentNode != aParentNode) {
       // Insert the node as first child
@@ -1527,7 +1532,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
 
     // Set the weight of the web library
     node.setAttributeNS(SP, 'Weight', 5);
-    self._servicePane.setNodeHidden(node, CONTRACTID, true);
+    node.hidden = true;
 
     if (!node.parentNode)
       this._servicePane.root.appendChild(node);
@@ -1558,7 +1563,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
 
     if (aLibrary != this._libraryManager.mainLibrary) {
       // always create them as hidden
-      self._servicePane.setNodeHidden(parentNode, CONTRACTID, true);
+      parentNode.hidden = true;
     }
   }
 
@@ -1580,7 +1585,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
     // if the iTunes folder exists, then make it visible
     var fnode = this._servicePane.getNode('SB:iTunes');
     if (fnode)
-      this._servicePane.setNodeHidden(fnode, CONTRACTID, false);
+      fnode.hidden = false;
   }
   else {
     for each (let type in ["video", "audio"]) {
@@ -1681,7 +1686,7 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList, aAppend) {
 
   // Get hidden state from list
   var hidden = (aMediaList.getProperty(SBProperties.hidden) == "1");
-  this._servicePane.setNodeHidden(node, CONTRACTID, hidden);
+  node.hidden = hidden;
 
   if (!node.parentNode) {
     // Place the node in the tree
@@ -2137,6 +2142,9 @@ function sbLibraryServicePane_observe(subject, topic, data) {
     var libraryManager = Cc['@songbirdnest.com/Songbird/library/Manager;1']
                            .getService(Ci.sbILibraryManager);
     libraryManager.removeListener(this);
+    for each (let lib in this._libraries) {
+      lib.removeListener(this);
+    }
   }
 }
 

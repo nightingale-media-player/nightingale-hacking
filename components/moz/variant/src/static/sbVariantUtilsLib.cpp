@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -162,12 +162,16 @@ sbVariantsEqual(nsIVariant* aVariant1,
                 PRBool*     aEqual)
 {
   // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aVariant1);
-  NS_ENSURE_ARG_POINTER(aVariant2);
   NS_ENSURE_ARG_POINTER(aEqual);
 
   // Function variables.
   nsresult rv;
+
+  // If either variant is null, they're only equal if they're both null.
+  if (!aVariant1 || !aVariant2) {
+    *aEqual = (!aVariant1 && !aVariant2);
+    return NS_OK;
+  }
 
   // Get the variant data types.
   PRUint16 dataType1;

@@ -290,7 +290,12 @@ interface sbIAudioFormatType : nsISupports
 interface sbIDevCapVideoStream : nsISupports
 {
   /**
-   * initializes the video stream capabilities
+   * Initializes the video stream capabilities
+   *
+   * If supported PARs is a range, the array should have exactly two elements,
+   * the first of which is the minimum and the second is the maximum.
+   * Similarly, if the supported frame rates is a range, that array should have
+   * exactly two elements in the same order as well.
    */
   void initialize(in ACString aType,
                   in nsIArray aExplicitSizes,

@@ -73,4 +73,16 @@
   { 0xaf, 0x0f, 0x41, 0x61, 0xd3, 0x69, 0x38, 0xdf }       \
 }
 
+#define SONGBIRD_MEDIALISTDUPLICATEFILTER_CONTRACTID                    \
+  "@songbirdnest.com/Songbird/Library/medialistduplicatefilter;1"
+#define SONGBIRD_MEDIALISTDUPLICATEFILTER_CLASSNAME                     \
+  "Songbird Media List Duplicate Filter"
+#define SONGBIRD_MEDIALISTDUPLICATEFILTER_CID                           \
+{ /*8696C152-7CB9-45dd-876D-CF38E87715F2 */                             \
+  0x8696c152,                                                           \
+  0x7cb9,                                                               \
+  0x45dd,                                                               \
+  { 0x87, 0x6d, 0xcf, 0x38, 0xe8, 0x77, 0x15, 0xf2 }                    \
+}
+
 

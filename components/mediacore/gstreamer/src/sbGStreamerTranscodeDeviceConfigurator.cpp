@@ -322,7 +322,8 @@ sbGStreamerTranscodeDeviceConfigurator::EnsureProfileAvailable(sbITranscodeEncod
     }
     gst_caps_unref(caps);
     if (!muxerCodecName) {
-      TRACE(("no muxer available for %s",
+      TRACE(("%s: no muxer available for %s",
+             __FUNCTION__,
              NS_LossyConvertUTF16toASCII(capsName).get()));
       return NS_ERROR_UNEXPECTED;
     }
@@ -347,7 +348,8 @@ sbGStreamerTranscodeDeviceConfigurator::EnsureProfileAvailable(sbITranscodeEncod
     const char* audioEncoder = FindMatchingElementName(caps, "Encoder");
     gst_caps_unref(caps);
     if (!audioEncoder) {
-      TRACE(("no audio encoder available for %s",
+      TRACE(("%s: no audio encoder available for %s",
+             __FUNCTION__,
              NS_LossyConvertUTF16toASCII(capsName).get()));
       return NS_ERROR_UNEXPECTED;
     }
@@ -372,7 +374,8 @@ sbGStreamerTranscodeDeviceConfigurator::EnsureProfileAvailable(sbITranscodeEncod
     const char* videoEncoder = FindMatchingElementName(caps, "Encoder");
     gst_caps_unref(caps);
     if (!videoEncoder) {
-      TRACE(("no video encoder available for %s",
+      TRACE(("%s: no video encoder available for %s",
+             __FUNCTION__,
              NS_LossyConvertUTF16toASCII(capsName).get()));
       return NS_ERROR_UNEXPECTED;
     }
@@ -395,13 +398,13 @@ sbGStreamerTranscodeDeviceConfigurator::SelectQuality()
   }
   if (!mDevice) {
     // we don't have a device to read things from :(
-    // default to 1
-    rv = SetQuality(1.0);
+    // default to 0.5
+    rv = SetQuality(0.5);
     NS_ENSURE_SUCCESS(rv, rv);
     return NS_OK;
   }
 
-  double quality = 1.0;
+  double quality = 0.5;
   nsCOMPtr<nsIVariant> qualityVar;
   rv = mDevice->GetPreference(NS_LITERAL_STRING("transcode.quality.video"),
                               getter_AddRefs(qualityVar));
@@ -424,6 +427,7 @@ sbGStreamerTranscodeDeviceConfigurator::SelectQuality()
   }
   rv = SetQuality(quality);
   NS_ENSURE_SUCCESS(rv, rv);
+  TRACE(("%s: set quality to %f", __FUNCTION__, quality));
   return NS_OK;
 }
 
@@ -626,6 +630,7 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
   mSelectedProfile = selectedProfile;
   if (!mSelectedProfile) {
     // no suitable encoder profile found
+    TRACE(("%s: no suitable encoder profile found", __FUNCTION__));
     // report an error
     nsString deviceName;
     rv = mDevice->GetName(deviceName);
@@ -656,6 +661,13 @@ sbGStreamerTranscodeDeviceConfigurator::SelectProfile()
   CopyASCIItoUTF16(elementNames.videoEncoder, mVideoEncoder);
   rv = selectedProfile->GetFileExtension(mFileExtension);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  TRACE(("%s: profile selected, using muxer [%s] audio [%s] video [%s] extension [%s]",
+         __FUNCTION__,
+         elementNames.muxer.get(),
+         elementNames.audioEncoder.get(),
+         elementNames.videoEncoder.get(),
+         mFileExtension.get()));
 
   /* Set whether we're using these - in this configurator, this is based
      entirely on whether we've selected a specific element */
@@ -768,13 +780,13 @@ sbGStreamerTranscodeDeviceConfigurator::SetAudioProperties()
 }
 
 /**
- * Determine the desired output size (ignoring bitrate constraints)
+ * Determine the output size
  *
  * @precondition the profile has been selected via SelectProfile()
- * @postcondition mPreferredDimensions is the desired output size
+ * @postcondition mOutputDimensions is the desired output size
  */
 nsresult
-sbGStreamerTranscodeDeviceConfigurator::DetermineIdealOutputSize()
+sbGStreamerTranscodeDeviceConfigurator::DetermineOutputDimensions()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
   NS_PRECONDITION(mSelectedProfile,
@@ -785,6 +797,93 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineIdealOutputSize()
                   "DetermineIdealOutputSize called without input format");
 
   nsresult rv;
+
+  // Get the desired output frame rate
+  sbFraction outputFrameRate(PR_UINT32_MAX, 1);
+  // get the desired frame rate
+  { /* scope */
+    nsCOMPtr<sbIMediaFormatVideo> inputFormat;
+    rv = mInputFormat->GetVideoStream(getter_AddRefs(inputFormat));
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(inputFormat, NS_ERROR_FAILURE);
+    PRUint32 num, denom;
+    rv = inputFormat->GetVideoFrameRate(&num, &denom);
+    NS_ENSURE_SUCCESS(rv, rv);
+    sbFraction inputFrameRate(num, denom);
+    nsCOMPtr<sbIDevCapVideoStream> videoCaps;
+    rv = mSelectedFormat->GetVideoStream(getter_AddRefs(videoCaps));
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(videoCaps, NS_ERROR_FAILURE);
+
+    PRBool isFrameRatesRange;
+    rv = videoCaps->GetDoesSupportFrameRateRange(&isFrameRatesRange);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (isFrameRatesRange) {
+      nsCOMPtr<sbIDevCapFraction> minFrameRate;
+      rv = videoCaps->GetMinimumSupportedFrameRate(
+          getter_AddRefs(minFrameRate));
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = minFrameRate->GetNumerator(&num);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = minFrameRate->GetDenominator(&denom);
+      NS_ENSURE_SUCCESS(rv, rv);
+      sbFraction minFrameRateFraction(num, denom);
+
+      nsCOMPtr<sbIDevCapFraction> maxFrameRate;
+      rv = videoCaps->GetMaximumSupportedFrameRate(
+          getter_AddRefs(maxFrameRate));
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = maxFrameRate->GetNumerator(&num);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = maxFrameRate->GetDenominator(&denom);
+      NS_ENSURE_SUCCESS(rv, rv);
+      sbFraction maxFrameRateFraction(num, denom);
+
+      if (inputFrameRate >= minFrameRateFraction &&
+          inputFrameRate <= maxFrameRateFraction)
+      {
+        outputFrameRate = inputFrameRate;
+      }
+      else if (inputFrameRate < minFrameRateFraction) {
+        outputFrameRate = minFrameRateFraction;
+      }
+      else if (inputFrameRate > maxFrameRateFraction) {
+        outputFrameRate = maxFrameRateFraction;
+      }
+    }
+    else {
+      nsCOMPtr<nsIArray> frameRatesRange;
+      rv = videoCaps->GetSupportedFrameRates(getter_AddRefs(frameRatesRange));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRUint32 length = 0;
+      rv = frameRatesRange->GetLength(&length);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      for (PRUint32 i = 0; i < length; i++) {
+        nsCOMPtr<sbIDevCapFraction> curFraction =
+          do_QueryElementAt(frameRatesRange, i, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        PRUint32 num, denom;
+        rv = curFraction->GetNumerator(&num);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = curFraction->GetDenominator(&denom);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        sbFraction candidate(num, denom);
+
+        double lastDifference = fabs(outputFrameRate - inputFrameRate);
+        double difference = fabs(candidate - inputFrameRate);
+        if (difference < lastDifference) {
+          outputFrameRate = candidate;
+        }
+      }
+    }
+
+    mVideoFrameRate = outputFrameRate;
+  }
 
   /*
    * find the smallest output format that has at least many pixels (horizontally
@@ -857,6 +956,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineIdealOutputSize()
       nsCOMPtr<nsIArray> parRanges;
       rv = outputCaps->GetSupportedPARs(getter_AddRefs(parRanges));
       NS_ENSURE_SUCCESS(rv, rv);
+      NS_ENSURE_TRUE(parRanges, NS_ERROR_UNEXPECTED);
 
       PRUint32 count, index = 0;
       rv = parRanges->GetLength(&count);
@@ -988,7 +1088,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineIdealOutputSize()
 
       // we have something set via the ranges.  no need to worry about the aspect
       // ratio, because the transcoder will deal with adding padding for us
-      mPreferredDimensions = output;
+      mOutputDimensions = output;
       return NS_OK;
     }
   } /* end scope */
@@ -1007,7 +1107,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineIdealOutputSize()
     nsCOMPtr<nsISupports> supports;
     rv = sizeEnum->GetNext(getter_AddRefs(supports));
     NS_ENSURE_SUCCESS(rv, rv);
-    nsCOMPtr<sbIImageSize> size = do_QueryInterface(supports);
+    nsCOMPtr<sbIImageSize> size = do_QueryInterface(supports, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     PRInt32 width, height;
     rv = size->GetWidth(&width);
@@ -1028,7 +1128,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineIdealOutputSize()
   NS_ENSURE_SUCCESS(rv, rv);
   if (output.width != PR_INT32_MAX || output.height != PR_INT32_MAX) {
     // found a size
-    mPreferredDimensions = output;
+    mOutputDimensions = output;
     return NS_OK;
   }
 
@@ -1040,7 +1140,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineIdealOutputSize()
   // number of pixels)
   rv = explicitSizes->Enumerate(getter_AddRefs(sizeEnum));
   NS_ENSURE_SUCCESS(rv, rv);
-  Dimensions result, best(0, 0), maxSize;
+  Dimensions result, best(0, 0), selected(0, 0), maxSize;
   while (NS_SUCCEEDED(rv = sizeEnum->HasMoreElements(&hasMore)) && hasMore) {
     nsCOMPtr<nsISupports> supports;
     rv = sizeEnum->GetNext(getter_AddRefs(supports));
@@ -1054,6 +1154,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineIdealOutputSize()
     result = GetMaximumFit(input, maxSize);
     if (result.width > best.width) {
       best = result;
+      selected = maxSize;
     }
   }
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1062,7 +1163,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineIdealOutputSize()
     return NS_ERROR_FAILURE;
   }
 
-  mPreferredDimensions = best;
+  mOutputDimensions = selected;
   return NS_OK;
 }
 
@@ -1090,138 +1191,37 @@ sbGStreamerTranscodeDeviceConfigurator::GetMaximumFit(
 
 /**
  * Scale the video to something useful for the selected video bit rate
- * @precondition mPreferredDimensions has been set
+ * @precondition mOutputDimensions has been set
  * @precondition mSelectedProfile has been selected
  * @precondition mSelectedFormat has been selected
- * @postcondition mVideoBitrate will be set (if it hasn't already been, or
- *                if the existing setting is too high for the device)
- * @postcondition mOutputDimensions will be the desired output dimensions
+ * @postcondition mVideoBitrate will be set
  */
 nsresult
-sbGStreamerTranscodeDeviceConfigurator::FinalizeOutputSize()
+sbGStreamerTranscodeDeviceConfigurator::DetermineOutputVideoBitrate()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
-  NS_PRECONDITION(mPreferredDimensions.width > 0 &&
-                    mPreferredDimensions.height > 0,
-                  "FinalizeOutputSize needs preferred dimensions");
+  NS_PRECONDITION(mOutputDimensions.width > 0 &&
+                    mOutputDimensions.height > 0,
+                  "FinalizeOutputSize needs dimensions");
   NS_PRECONDITION(mSelectedProfile,
                   "FinalizeOutputSize called with no profile selected");
   NS_PRECONDITION(mSelectedFormat,
                   "FinalizeOutputSize called with no output format");
   nsresult rv;
 
-  // set the video quality setting
-  mVideoQuality = mQuality;
-
-  sbFraction outputFrameRate(PR_UINT32_MAX, 1);
-  // get the desired frame rate
-  { /* scope */
-    nsCOMPtr<sbIMediaFormatVideo> inputFormat;
-    rv = mInputFormat->GetVideoStream(getter_AddRefs(inputFormat));
-    NS_ENSURE_SUCCESS(rv, rv);
-    NS_ENSURE_TRUE(inputFormat, NS_ERROR_FAILURE);
-    PRUint32 num, denom;
-    rv = inputFormat->GetVideoFrameRate(&num, &denom);
-    NS_ENSURE_SUCCESS(rv, rv);
-    sbFraction inputFrameRate(num, denom);
-    nsCOMPtr<sbIDevCapVideoStream> videoCaps;
-    rv = mSelectedFormat->GetVideoStream(getter_AddRefs(videoCaps));
-    NS_ENSURE_SUCCESS(rv, rv);
-    NS_ENSURE_TRUE(videoCaps, NS_ERROR_FAILURE);
-
-    PRBool isFrameRatesRange;
-    rv = videoCaps->GetDoesSupportFrameRateRange(&isFrameRatesRange);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (isFrameRatesRange) {
-      nsCOMPtr<sbIDevCapFraction> minFrameRate;
-      rv = videoCaps->GetMinimumSupportedFrameRate(
-          getter_AddRefs(minFrameRate));
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = minFrameRate->GetNumerator(&num);
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = minFrameRate->GetDenominator(&denom);
-      NS_ENSURE_SUCCESS(rv, rv);
-      sbFraction minFrameRateFraction(num, denom);
-
-      nsCOMPtr<sbIDevCapFraction> maxFrameRate;
-      rv = videoCaps->GetMaximumSupportedFrameRate(
-          getter_AddRefs(maxFrameRate));
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = maxFrameRate->GetNumerator(&num);
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = maxFrameRate->GetDenominator(&denom);
-      NS_ENSURE_SUCCESS(rv, rv);
-      sbFraction maxFrameRateFraction(num, denom);
-
-      if (inputFrameRate >= minFrameRateFraction &&
-          inputFrameRate <= maxFrameRateFraction)
-      {
-        outputFrameRate = inputFrameRate;
-      }
-      else if (inputFrameRate < minFrameRateFraction) {
-        outputFrameRate = minFrameRateFraction;
-      }
-      else if (inputFrameRate > maxFrameRateFraction) {
-        outputFrameRate = maxFrameRateFraction;
-      }
-    }
-    else {
-      nsCOMPtr<nsIArray> frameRatesRange;
-      rv = videoCaps->GetSupportedFrameRates(getter_AddRefs(frameRatesRange));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      PRUint32 length = 0;
-      rv = frameRatesRange->GetLength(&length);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      for (PRUint32 i = 0; i < length; i++) {
-        nsCOMPtr<sbIDevCapFraction> curFraction =
-          do_QueryElementAt(frameRatesRange, i, &rv);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        PRUint32 num, denom;
-        rv = curFraction->GetNumerator(&num);
-        NS_ENSURE_SUCCESS(rv, rv);
-        rv = curFraction->GetDenominator(&denom);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        sbFraction candidate(num, denom);
-
-        double lastDifference = fabs(outputFrameRate - inputFrameRate);
-        double difference = fabs(candidate - inputFrameRate);
-        if (difference < lastDifference) {
-          outputFrameRate = candidate;
-        }
-      }
-    }
-
-    mVideoFrameRate = outputFrameRate;
-  }
-
-  // get the desired bpp
-  double videoBPP;
-  PRBool bitrateForced = PR_FALSE;
-restartQualityConfiguration:
-  rv = mSelectedProfile->GetVideoBitsPerPixel(mVideoQuality, &videoBPP);
+  // Calculate the maximum bitrate that makes sense - this is our "max bits per
+  // pixel" value from the profile, multiplied by the number of pixels per
+  // second.
+  const double pixelsPerSecond = mVideoFrameRate *
+                                 mOutputDimensions.width *
+                                 mOutputDimensions.height;
+  double q1BPP;
+  rv = mSelectedProfile->GetVideoBitsPerPixel(1, &q1BPP);
   NS_ENSURE_SUCCESS(rv, rv);
+  double maxBitrate = q1BPP * pixelsPerSecond;
+  TRACE(("%s: max bitrate %f for bpp %f", __FUNCTION__, maxBitrate, q1BPP));
 
-  // the bit rate desired
-  if (mVideoBitrate == PR_INT32_MIN) {
-    mVideoBitrate = videoBPP *
-                    mPreferredDimensions.width *
-                    mPreferredDimensions.height *
-                    mVideoFrameRate;
-  }
-  else {
-    // we already have some sort of bitrate set
-    bitrateForced = PR_TRUE;
-    videoBPP = mVideoBitrate /
-               mPreferredDimensions.width /
-               mPreferredDimensions.height /
-               mVideoFrameRate;
-  }
-  // cap the video bit rate to what the device supports
+  // Now find a bitrate that is actually permitted for this device.
   nsCOMPtr<sbIDevCapVideoStream> videoCaps;
   rv = mSelectedFormat->GetVideoStream(getter_AddRefs(videoCaps));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1230,107 +1230,12 @@ restartQualityConfiguration:
   nsCOMPtr<sbIDevCapRange> videoBitrateRange;
   rv = videoCaps->GetSupportedBitRates(getter_AddRefs(videoBitrateRange));
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = GetDevCapRangeUpper(videoBitrateRange, mVideoBitrate, &mVideoBitrate);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (rv != NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA) {
-    // there were no problems getting the desired size
-    mOutputDimensions = mPreferredDimensions;
-    return NS_OK;
-  }
-
-  // if we reach this point, we need to scale the video down.
-  // mVideoBitrate is the largest bitrate the device supports
-
-  // first, get the input sizes
-  nsCOMPtr<sbIMediaFormatVideo> inputFormat;
-  rv = mInputFormat->GetVideoStream(getter_AddRefs(inputFormat));
-  NS_ENSURE_SUCCESS(rv, rv);
-  NS_ENSURE_TRUE(inputFormat, NS_ERROR_FAILURE);
-  Dimensions input;
-  rv = inputFormat->GetVideoWidth(&input.width);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = inputFormat->GetVideoHeight(&input.height);
+  rv = GetDevCapRangeUpper(videoBitrateRange,
+                           static_cast<PRInt32>(maxBitrate),
+                           &mVideoBitrate);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIDevCapRange> widths, heights;
-  rv = videoCaps->GetSupportedWidths(getter_AddRefs(widths));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = videoCaps->GetSupportedHeights(getter_AddRefs(heights));
-  NS_ENSURE_SUCCESS(rv, rv);
-  if ((!widths) || (!heights)) {
-    // this device does not support arbitrary sizes; use the given ones instead
-    PRUint64 usefulPixels = 0;
-    mOutputDimensions = Dimensions(0, 0);
-    nsCOMPtr<nsIArray> sizes;
-    rv = videoCaps->GetSupportedExplicitSizes(getter_AddRefs(sizes));
-    NS_ENSURE_SUCCESS(rv, rv);
-    nsCOMPtr<nsISimpleEnumerator> sizesEnum;
-    rv = sizes->Enumerate(getter_AddRefs(sizesEnum));
-    NS_ENSURE_SUCCESS(rv, rv);
-    PRBool hasMore, foundOutput = PR_FALSE;
-    while (NS_SUCCEEDED(sizesEnum->HasMoreElements(&hasMore)) && hasMore) {
-      nsCOMPtr<nsISupports> supports;
-      rv = sizesEnum->GetNext(getter_AddRefs(supports));
-      NS_ENSURE_SUCCESS(rv, rv);
-      nsCOMPtr<sbIImageSize> imageSize = do_QueryInterface(supports, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-      Dimensions size;
-      rv = imageSize->GetWidth(&size.width);
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = imageSize->GetHeight(&size.height);
-      NS_ENSURE_SUCCESS(rv, rv);
-      if (size.width * size.height * mVideoFrameRate * videoBPP > mVideoBitrate) {
-        // this is too big
-        continue;
-      }
-      Dimensions usefulSize = GetMaximumFit(input, size);
-      if (usefulSize.width * usefulSize.height < usefulPixels) {
-        // we had a better fit before
-        continue;
-      }
-      foundOutput = PR_TRUE;
-      mOutputDimensions = size;
-      usefulPixels = usefulSize.width * usefulSize.height;
-    }
-    if (!foundOutput && !bitrateForced && mVideoQuality > 0) {
-      // no available format found, try again with lower quality
-      mVideoQuality = PR_MIN(0, mVideoQuality - 0.1);
-      mVideoBitrate = PR_INT32_MIN;
-      goto restartQualityConfiguration;
-    }
-    if (!foundOutput) {
-      return NS_ERROR_FAILURE;
-    }
-    rv = GetDevCapRangeUpper(videoBitrateRange,
-                             usefulPixels * mVideoFrameRate * videoBPP,
-                             &mVideoBitrate);
-    NS_ENSURE_SUCCESS(rv, rv);
-    return NS_OK;
-  }
-
-  // this device supports arbitrary sizes
-  double pixels = double(mVideoBitrate) / videoBPP / mVideoFrameRate; // number of pixels
-  double width = sqrt(pixels / mPreferredDimensions.height * mPreferredDimensions.width);
-  double height = pixels / width;
-  rv = GetDevCapRangeUpper(widths, width, &mOutputDimensions.width);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = GetDevCapRangeUpper(heights, height, &mOutputDimensions.height);
-  NS_ENSURE_SUCCESS(rv, rv);
-  // so, output dimensions are the sizes we want; and the video bitrate is the
-  // maximum we can support.
-
-  // check if we can lower the quality if the image is too small
-  if (!bitrateForced && mVideoQuality > 0.2) {
-    double outputPixels = mOutputDimensions.width * mOutputDimensions.height;
-    double maximumPixels = mPreferredDimensions.width *
-                           mPreferredDimensions.height;
-    if (outputPixels / maximumPixels < mVideoQuality) {
-      // the ratio of pixels is way too small!
-      mVideoQuality -= 0.1;
-      mVideoBitrate = PR_INT32_MIN;
-      goto restartQualityConfiguration;
-    }
-  }
+  TRACE(("%s: selected bitrate %d", __FUNCTION__, mVideoBitrate));
 
   return NS_OK;
 }
@@ -1640,7 +1545,7 @@ sbGStreamerTranscodeDeviceConfigurator::SetDevice(sbIDevice * aDevice)
                   NS_ERROR_ALREADY_INITIALIZED);
   mDevice = aDevice;
   // clear the desired sizes
-  mPreferredDimensions = Dimensions();
+  mOutputDimensions = Dimensions();
   return NS_OK;
 }
 
@@ -1692,16 +1597,16 @@ sbGStreamerTranscodeDeviceConfigurator::Configurate()
   // Get the audio parameters
   rv = SetAudioProperties();
   NS_ENSURE_SUCCESS(rv, rv);
-  // Calculate ideal video size
-  rv = DetermineIdealOutputSize();
+  // Calculate video size
+  rv = DetermineOutputDimensions();
   NS_ENSURE_SUCCESS(rv, rv);
   if (NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA == rv) {
     // No video
     mVideoEncoder.SetIsVoid(PR_TRUE);
   }
   else {
-    // Calculate video bitrate and scale video as necessary
-    rv = FinalizeOutputSize();
+    // Calculate video bitrate
+    rv = DetermineOutputVideoBitrate();
     NS_ENSURE_SUCCESS(rv, rv);
     // Set video parameters
     rv = SetVideoProperties();

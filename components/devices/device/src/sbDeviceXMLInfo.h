@@ -169,6 +169,16 @@ public :
   nsresult GetDoesDeviceSupportReformat(PRBool *aOutSupportsReformat);
 
   /**
+   * Return true in aOnlyMountMediaFolders if only the media folders should be
+   * mounted rather than the entire storage volume.
+   *
+   * \param aOnlyMountMediaFolders
+   *                            True if only the media folders should be
+   *                            mounted.
+   */
+  nsresult GetOnlyMountMediaFolders(PRBool* aOnlyMountMediaFolders);
+
+  /**
    * Returns a list of excluded folders folders in the array passed in. Each
    * array entry may be folder name or a path to a specific folder.
    * \param aFolders This is an array that the excluded folders will be added

@@ -173,6 +173,9 @@ private:
 
   nsresult GetMTListener(sbILocalDatabaseGUIDArrayListener ** aListener);
 
+  void QueryInvalidate() {
+    mQueriesValid = PR_FALSE;
+  }
 
   // Cached property manager
   nsCOMPtr<sbIPropertyManager> mPropMan;
@@ -265,6 +268,9 @@ private:
 
   // Is the cache valid
   PRPackedBool mValid;
+
+  // Are the queries valid
+  PRPackedBool mQueriesValid;
 
   // Is there a search filter with at least one active search term
   PRPackedBool mHasActiveSearch;

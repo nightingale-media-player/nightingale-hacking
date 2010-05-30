@@ -60,8 +60,11 @@
         <xul:vbox sbid="content_selector">
 
           <xul:groupbox>
-            <xul:caption sbid="content_management_header_label"
-                         label="&device.sync.header.label;" />
+            <xul:caption sbid="content_management_header_label">
+              <xul:checkbox sbid="content_management_checkbox"
+                            label="&device.sync.header.label;"
+                            oncommand="_onUIPrefChange();"/>
+            </xul:caption>
 
             <!-- Management preferences. -->
             <xul:vbox class="content-controls"

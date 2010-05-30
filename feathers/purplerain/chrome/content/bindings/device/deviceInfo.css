@@ -185,9 +185,16 @@ tabbox#device_management_box > tabpanels > tabpanel {
 
 .device-no-storage-vbox {
   -moz-box-align: center;
+  background-color: transparent;
+  background-image: url(chrome://songbird/skin/base-elements/bg-tabpanel.png);
+  background-position: left top;
+  background-repeat: repeat-x;
+  border: 1px solid rgb(63,61,74) !important;
+  margin: 30px 10px 10px 10px !important;
 }
 
 .device-no-storage-groupbox {
+  margin-top: 30px !important;
   width: 420px;
 }
 

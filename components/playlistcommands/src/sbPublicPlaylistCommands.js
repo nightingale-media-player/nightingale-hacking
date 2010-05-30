@@ -1626,13 +1626,16 @@ function plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost) {
 // If we have any audio selected, show this command.
 function plCmd_IsAnyAudioSelected(aContext, aSubMenuId, aCommandId, aHost) {
   var selection = unwrap(aContext.playlist).mediaListView.selection;
-  var items = selection.selectedMediaItems;
-  while (items.hasMoreElements()) {
-    let item = items.getNext().QueryInterface(Ci.sbIMediaItem)
-    if (item.getProperty(SBProperties.contentType) == "audio") {
-      return true;
-    }
+
+  // if the current media item is audio, just return.
+  var item = selection.currentMediaItem;
+  if (item && item.getProperty(SBProperties.contentType) == "audio") {
+    return true;
   }
+
+  if (selection.isContentTypeSelected("audio"))
+    return true;
+
   return false;
 }
 

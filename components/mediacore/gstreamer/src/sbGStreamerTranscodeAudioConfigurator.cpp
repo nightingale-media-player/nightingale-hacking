@@ -58,6 +58,7 @@
 #include <sbTranscodeUtils.h>
 #include <sbVariantUtils.h>
 #include <sbFraction.h>
+#include <sbPrefBranch.h>
 
 ///// GStreamer header includes
 #if _MSC_VER
@@ -166,7 +167,9 @@ NS_IMPL_ISUPPORTS_INHERITED1(sbGStreamerTranscodeAudioConfigurator,
                              sbTranscodingConfigurator,
                              sbIDeviceTranscodingConfigurator);
 
-sbGStreamerTranscodeAudioConfigurator::sbGStreamerTranscodeAudioConfigurator()
+sbGStreamerTranscodeAudioConfigurator::sbGStreamerTranscodeAudioConfigurator() :
+    mProfileFromPrefs(PR_FALSE),
+    mProfileFromGlobalPrefs(PR_FALSE)
 {
   #if PR_LOGGING
     if (!gGstTranscodeConfiguratorLog) {
@@ -463,24 +466,50 @@ sbGStreamerTranscodeAudioConfigurator::SelectProfile()
                   "attempted to select profile with no device");
 
   nsCOMPtr<sbIAudioFormatType> prefFormat;
+  nsCOMPtr<sbIAudioFormatType> globalPrefFormat;
   nsCOMPtr<sbIAudioFormatType> bestFormat;
   nsCOMPtr<sbITranscodeProfile> prefProfile;
+  nsCOMPtr<sbITranscodeProfile> globalPrefProfile;
   nsCOMPtr<sbITranscodeProfile> bestProfile;
   PRBool hasProfilePref = PR_FALSE;
+  PRBool hasGlobalProfilePref = PR_FALSE;
   PRUint32 bestPriority = 0;
   nsresult rv;
 
-  // See if we have a preference for the transcoding profile.
-  nsCOMPtr<nsIVariant> profileIdVariant;
+  // See if we have a preference for the transcoding profile. Check for a device
+  // specific preference, or if not present, look for a global one.
   nsString prefProfileId;
+  nsString globalPrefProfileId;
+
+  nsCOMPtr<nsIVariant> profileIdVariant;
   rv = mDevice->GetPreference(NS_LITERAL_STRING("transcode_profile.profile_id"),
                               getter_AddRefs(profileIdVariant));
   if (NS_SUCCEEDED(rv))
   {
-    hasProfilePref = PR_TRUE;
     rv = profileIdVariant->GetAsAString(prefProfileId);
     NS_ENSURE_SUCCESS(rv, rv);
-    TRACE(("%s: found a profile", __FUNCTION__));
+
+    if (!prefProfileId.IsEmpty()) {
+      TRACE(("%s: found a profile", __FUNCTION__));
+      hasProfilePref = PR_TRUE;
+    }
+  }
+
+  if (!hasProfilePref) {
+    sbPrefBranch prefs("songbird.device.transcode_profile.", &rv);
+    NS_ENSURE_SUCCESS (rv, rv);
+
+    rv = prefs.GetPreference(NS_LITERAL_STRING("profile_id"),
+                             getter_AddRefs(profileIdVariant));
+    if (NS_SUCCEEDED(rv)) {
+      rv = profileIdVariant->GetAsAString(globalPrefProfileId);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (!globalPrefProfileId.IsEmpty()) {
+        TRACE(("%s: found a global pref for profile", __FUNCTION__));
+        hasGlobalProfilePref = PR_TRUE;
+      }
+    }
   }
 
   // get available profiles (these are the ones that we actually have
@@ -505,11 +534,11 @@ sbGStreamerTranscodeAudioConfigurator::SelectProfile()
       do_QueryInterface(profileSupports, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (hasProfilePref) {
-      nsString profileId;
-      rv = profile->GetId(profileId);
-      NS_ENSURE_SUCCESS(rv, rv);
+    nsString profileId;
+    rv = profile->GetId(profileId);
+    NS_ENSURE_SUCCESS(rv, rv);
 
+    if (hasProfilePref) {
       if (profileId.Equals(prefProfileId)) {
         nsCOMPtr<sbIAudioFormatType> deviceFormat;
         rv = CheckProfileSupportedByDevice (profile,
@@ -517,6 +546,18 @@ sbGStreamerTranscodeAudioConfigurator::SelectProfile()
         if (NS_SUCCEEDED (rv)) {
           prefProfile = profile;
           prefFormat = deviceFormat;
+        }
+      }
+    }
+
+    if (hasGlobalProfilePref) {
+      if (profileId.Equals(globalPrefProfileId)) {
+        nsCOMPtr<sbIAudioFormatType> deviceFormat;
+        rv = CheckProfileSupportedByDevice (profile,
+                                            getter_AddRefs(deviceFormat));
+        if (NS_SUCCEEDED (rv)) {
+          globalPrefProfile = profile;
+          globalPrefFormat = deviceFormat;
         }
       }
     }
@@ -540,11 +581,19 @@ sbGStreamerTranscodeAudioConfigurator::SelectProfile()
   }
 
   if (prefProfile) {
+    LOG(("Using device pref profile"));
     mProfileFromPrefs = PR_TRUE;
     mSelectedProfile = prefProfile;
     mSelectedFormat = prefFormat;
   }
+  else if (globalPrefProfile) {
+    LOG(("Using global pref profile"));
+    mProfileFromGlobalPrefs = PR_TRUE;
+    mSelectedProfile = globalPrefProfile;
+    mSelectedFormat = globalPrefFormat;
+  }
   else if (bestProfile) {
+    LOG(("Using best available profile"));
     mSelectedProfile = bestProfile;
     mSelectedFormat = bestFormat;
   }
@@ -685,6 +734,13 @@ sbGStreamerTranscodeAudioConfigurator::SetAudioProperties()
             NS_LITERAL_STRING("transcode_profile.audio_properties"));
     NS_ENSURE_SUCCESS(rv, rv);
   }
+  else if (mProfileFromGlobalPrefs) {
+    rv = ApplyPreferencesToPropertyArray(
+            nsnull,
+            propsSrc,
+            NS_LITERAL_STRING("songbird.device.transcode_profile.audio_properties"));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = CopyPropertiesIntoBag(propsSrc, writableBag, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -718,13 +774,23 @@ sbGStreamerTranscodeAudioConfigurator::ApplyPreferencesToPropertyArray(
     rv = property->GetPropertyName(propName);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsString prefName = aPrefNameBase;
-    prefName.AppendLiteral(".");
-    prefName.Append(propName);
-
     nsCOMPtr<nsIVariant> prefVariant;
-    rv = aDevice->GetPreference(prefName, getter_AddRefs(prefVariant));
-    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (aDevice) {
+      nsString prefName = aPrefNameBase;
+      prefName.AppendLiteral(".");
+      prefName.Append(propName);
+
+      rv = aDevice->GetPreference(prefName, getter_AddRefs(prefVariant));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      sbPrefBranch prefs(NS_ConvertUTF16toUTF8(aPrefNameBase).get(), &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = prefs.GetPreference(propName, getter_AddRefs(prefVariant));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
 
     // Only use the property if we have a real value (not a void/empty variant)
     PRUint16 dataType;

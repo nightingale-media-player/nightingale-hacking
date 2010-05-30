@@ -260,6 +260,34 @@ sbIPDProperties::GetIconUri(nsIURI** aIconUri)
 }
 
 
+NS_IMETHODIMP
+sbIPDProperties::SetHidden(PRBool aHidden)
+{
+  nsresult rv =
+    mProperties2->SetPropertyAsBool(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_HIDDEN),
+                                    aHidden);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDevice->CreateAndDispatchEvent(
+      sbIDeviceEvent::EVENT_DEVICE_INFO_CHANGED, nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+}
+
+
+NS_IMETHODIMP
+sbIPDProperties::GetHidden(PRBool *aHidden)
+{
+  NS_ENSURE_ARG_POINTER(aHidden);
+
+  nsresult rv = mProperties2->GetPropertyAsBool(
+      NS_LITERAL_STRING(SB_DEVICE_PROPERTY_HIDDEN),
+      aHidden);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+
 /**
  * All of the properties available for a device.
  * Should only contain objects that implement nsIProperty!
@@ -411,6 +439,9 @@ sbIPDProperties::Initialize()
                        (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_SERIAL_NUMBER),
                         property);
   NS_ENSURE_SUCCESS(rv, rv);
+  rv = mProperties2->SetPropertyAsBool
+                       (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_HIDDEN),
+                        PR_FALSE);
 
   // Set the device access compatibility.
   rv = mProperties2->SetPropertyAsAString

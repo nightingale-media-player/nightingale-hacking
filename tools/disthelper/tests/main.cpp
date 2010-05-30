@@ -54,6 +54,7 @@ void TestParser();
 void TestDebug();
 void TestVersion();
 void TestEnvironment();
+void TestExec();
 
 #ifdef XP_WIN
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
@@ -68,6 +69,7 @@ int main()
   TestDebug();
   TestVersion();
   TestEnvironment();
+  TestExec();
   return 0;
 }
 

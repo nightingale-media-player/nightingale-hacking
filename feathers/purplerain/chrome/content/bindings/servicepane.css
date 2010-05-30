@@ -178,3 +178,8 @@ sb-servicepane-node.bookmark > vbox > hbox.servicepane-node-info > image.service
 .servicepane-tree > treechildren::-moz-tree-image( bookmark ) {
   list-style-image: url(chrome://songbird/skin/service-pane/icon-bookmark.png) ;
 }
+
+sb-servicepane-node.non-default-library-node {
+  display: none;
+}
+

@@ -397,10 +397,11 @@
                  var pagebutton = document.createElementNS(XULNS,
                                                            "toolbarbutton");
                  var thisId = mpId++;
-                 pagebutton.id = "mediapages-button-" + thisId;
+                 let idSuffix = page.contentUrl.replace(/[^a-z0-9]/gi, "_");
+                 pagebutton.id = "mediapages-button-" + idSuffix;
                  pagebutton.className = "toolbarbutton-1 " +
                             "chromeclass-toolbar-additional mp-other";
-                 pagebutton.anonid="mediapages-button-" + thisId;
+                 pagebutton.anonid="mediapages-button-" + idSuffix;
                  pagebutton.mpId = thisId;
                  pagebutton.addEventListener("command", function() {
                      switchMediaView(this.mpId);

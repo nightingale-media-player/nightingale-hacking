@@ -77,15 +77,13 @@ interface sbIMockCDDevice : nsISupports
    * \param aDiscInserted Whether the device has a disc inserted
    * \param aDiscType The type of disc audio or data
    * \param aEjected Whether the disc has been ejected
-   * \param aController The owning mock controller. Used for callbacks.
    */
   void initialize(in AString aName,
                   in boolean aReadable,
                   in boolean aWritable,
                   in boolean aDiscInserted,
                   in unsigned long aDiscType,
-                  in boolean aEjected,
-                  in sbIMockCDDeviceController aController);
+                  in boolean aEjected);
   /**
    * denotes whether the disc has been ejected
    */

@@ -25,7 +25,7 @@
 #errors_desc_box
 {
   display: block;
-  overflow-y: scroll;
+  overflow-y: auto;
   min-height: 8em;
   max-height: 20em;
 }

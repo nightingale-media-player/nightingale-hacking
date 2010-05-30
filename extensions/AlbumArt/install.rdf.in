@@ -46,7 +46,7 @@
             <songbird:contentTitle>Artwork</songbird:contentTitle>
             <songbird:contentIcon>chrome://albumart/skin/icon-albumart.png</songbird:contentIcon>
             <songbird:defaultWidth>178</songbird:defaultWidth>
-            <songbird:defaultHeight>197</songbird:defaultHeight>
+            <songbird:defaultHeight>178</songbird:defaultHeight>
             <songbird:suggestedContentGroups>servicepane</songbird:suggestedContentGroups>
             <songbird:showOnInstall>true</songbird:showOnInstall>
         </Description>

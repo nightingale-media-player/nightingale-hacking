@@ -577,11 +577,12 @@
       <method name="setAsDropTarget">
         <parameter name="isdroptarget"/>
         <body><![CDATA[
-          const DEVICESP_NS = "http://songbirdnest.com/rdf/device-servicepane#";
           var nodeToUpdate;
           // If we're a library node, and our parent node is a device node,
           // then apply the styles to the device node
-          if (this.nodeData.className.match(/\blibrary\b/) &&
+          if (this.nodeData.className &&
+              this.nodeData.className.match(/\blibrary\b/) &&
+              this.nodeData.parentNode.className &&
               this.nodeData.parentNode.className.match(/\bdevice\b/))
           {
             // We're a device library
@@ -589,14 +590,16 @@
           } else {
             nodeToUpdate = this.nodeData;
           }
+          
+          var domNode = this._servicePane.getDOMNode(nodeToUpdate.id);
 
           if (isdroptarget) {
-            if (nodeToUpdate.className.search(/\bdroptarget\b/) == -1) {
-              nodeToUpdate.className += " droptarget";
+            if (domNode.className.search(/\bdroptarget\b/) == -1) {
+              domNode.className += " droptarget";
             }
           } else {
-            nodeToUpdate.className =
-                        nodeToUpdate.className.replace(/\bdroptarget\b/g,'');
+            domNode.className =
+                        domNode.className.replace(/\bdroptarget\b/g,'');
           }
         ]]></body>
       </method>
@@ -808,9 +811,10 @@
         <parameter name="event"/>
         <parameter name="session"/>
         <body>
+        <![CDATA[
           this.setAsDropTarget(false);
           this._removeDropOrientationClass();
-        </body>
+        ]]></body>
       </method>
 
       <method name="onDrop">
@@ -822,6 +826,7 @@
                                this.mDragService.getCurrentSession(),
                                this.mDropOrientation,
                                window);
+          this.setAsDropTarget(false);
         ]]></body>
       </method>
 
@@ -922,6 +927,8 @@
 
     <implementation>
       <constructor><![CDATA[
+        Components.utils.import("resource://app/jsmodules/LocalStore.jsm", this);
+
         this._groupNodes = this._getElement("groupNodes");
 
         var self = this;
@@ -930,22 +937,14 @@
         // Determine whether we're starting up collapsed or visible
         this._visible = true;
 
-        let initCollapsed = function() {
-          if (self.hasAttribute("collapsedChildren")) {
-            self.nodeData.isOpen = (self.getAttribute("collapsedChildren")
-                                    != "true");
-          }
-        };
-        // fire once in case startup is slow and the window is ready already
-        initCollapsed();
-
-        // The 'collapsedChildren' attribute is persisted, however it
-        // doesn't restore it's persisted state until the window is loaded
-        // add a load listener to catch that case
-        window.addEventListener("load", function(e) {
-            setTimeout(initCollapsed, 0);
-          }, false);
-
+        let collapsed = this.LocalStore.getPersistedAttribute(
+                                    document.location.href,
+                                    this.id,
+                                    "collapsedChildren");
+        if (collapsed) {
+          self.nodeData.isOpen = (collapsed == "false");
+        }
+        
         // The group header image
         this.image = null;
         // Special handling for the SB:Playlists group
@@ -997,6 +996,9 @@
       <method name="newPlaylist">
         <parameter name="e" />
         <body><![CDATA[
+          if (e.button != 0)
+            return;
+
           this.image.removeAttribute("altKey");
           if ((this._isMac && e.altKey) || (!this._isMac && e.shiftKey)) {
             SBNewSmartPlaylist();
@@ -1285,7 +1287,6 @@
         this.mService =
           Components.classes['@songbirdnest.com/servicepane/service;1']
           .getService(Components.interfaces.sbIServicePaneService);
-        this.mService.init();
 
         this.loadServicePane();
 
@@ -1551,7 +1552,7 @@
             // in history and loaded the previously loaded page.  check the
             // servicepane to see if we have a node that matches the page,
             // and if so - visually highlight/select it
-          },
+          }
         })
       ]]>
       </field>
@@ -1619,6 +1620,25 @@
           if (this.hasAttribute("browser")) {
             newNode.setAttribute("browser", this.getAttribute("browser"));
           }
+
+          // If the servicepane-group holding this node is collapsed, then
+          // add a load listener to make sure we adjust the margins for the
+          // group once we're added
+          newNode.addEventListener("load", function(e) {
+              newNode.removeEventListener("load", arguments.callee, false);
+              
+              // find the parent servicepane-group
+              let parentGroup = newNode._servicePaneGroup;
+
+              // no need to do anything if it's already visible
+              if (parentGroup.visible)
+                return;
+
+              // adjust the margin to include our newly added group
+              let height = parentGroup._groupNodes.boxObject.height;
+              parentGroup._groupNodes.style.marginTop = "-" + height + "px";
+            }, false);
+           
           if (parentNode) {
             var nodeBefore = aInsertBefore ? this.getDOMNode(aInsertBefore.id) : null;
             parentNode.insertBefore(newNode, nodeBefore);
@@ -2313,8 +2333,10 @@
           this.log("Exited servicepane, canceling auto-expand timer");
           clearTimeout(this._timer);
           this._timer = null;
-          this._timerGroup._expandTimerRunning = null;
-          this._timerGroup = null;
+          if (this._timerGroup) {
+            this._timerGroup._expandTimerRunning = null;
+            this._timerGroup = null;
+          }
         }
 
         if (this._collapsedGroup && !event.relatedTarget) {

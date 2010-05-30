@@ -35,7 +35,7 @@ const Cr = Components.results;
 const Ce = Components.Exception;
 const Cu = Components.utils;
 
-Components.utils.import("resource://app/jsmodules/XPCOMUtils.jsm");
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 Components.utils.import("resource://app/jsmodules/DebugUtils.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
@@ -542,8 +542,6 @@ ServicePaneNode.prototype = {
   set tooltip(aValue) this.setAttribute("tooltip", aValue),
   get hidden() this.getAttribute("hidden") == "true",
   set hidden(aValue) {
-    if (!aValue)
-      this.removeAttributeNS(SP, "HideList");
     return this.setAttribute("hidden", aValue ? "true" : "false");
   },
   get editable() this.getAttribute("editable") == "true",
@@ -957,37 +955,6 @@ ServicePaneService.prototype = {
       throw Ce("Cannot remove a node that doesn't have a parent.");
 
     aNode.parentNode.removeChild(aNode);
-  },
-
-  setNodeHidden: function ServicePaneService_setNodeHidden(
-                                                  aNode, aContractID, aHide) {
-    // Get the list of components that have hidden the node.
-    let hideList = aNode.getAttributeNS(SP, "HideList");
-    if (hideList) {
-      hideList = hideList.split(" ");
-    }
-    else {
-      hideList = [];
-    }
-  
-    // If hiding, add the component to the list of components hiding the node.
-    // Otherwise, remove the component from the list.
-    let hideIndex = hideList.indexOf(aContractID);
-    if (aHide) {
-      if (hideIndex < 0)
-        hideList.push(aContractID);
-    }
-    else {
-      while (hideIndex >= 0) {
-        hideList.splice(hideIndex, 1);
-        hideIndex = hideList.indexOf(aContractID);
-      }
-    }
-  
-    // Update the list of components hiding the node.  Set the node as hidden if
-    // any component is hiding it.
-    aNode.setAttributeNS(SP, "HideList", hideList.join(" "));
-    aNode.hidden = (hideList.length > 0);
   },
 
   sortNode: function ServicePaneService_sortNode() {

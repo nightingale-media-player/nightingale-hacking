@@ -1,10 +1,12 @@
 #include "nsISupports.idl"
 
 interface sbISongkickDisplayCallback;
+interface sbISongkickEnumeratorCallback;
+interface sbISongkickConcertCountCallback;
 interface nsIArray;
 interface nsISimpleEnumerator;
 
-[scriptable, uuid(2432a624-1dd2-11b2-8b60-d57e600d8715)]
+[scriptable, uuid(225CFD2A-19E6-4C58-9D3A-F64BDA16D0B0)]
 interface sbISongkick : nsISupports
 {
 	attribute boolean concertRefreshRunning;
@@ -42,18 +44,80 @@ interface sbISongkick : nsISupports
 	AUTF8String getLocationString(in long countryID, in long stateID,
 					in long cityID);
 
-	long getConcertCount(in boolean filterLibraryArtists);
+	long getConcertCount(in boolean filterLibraryArtists,
+                             in sbISongkickConcertCountCallback aCallback);
 	boolean getTourStatus(in string artistName);
 	string providerURL();
 
 	nsISimpleEnumerator concertEnumerator(in string sort,
-					in boolean filterLibraryArtists);
+					in boolean filterLibraryArtists,
+                                        in sbISongkickEnumeratorCallback aCallback);
 	nsISimpleEnumerator artistConcertEnumerator(
-					in boolean filterLibraryArtists);
-}; 
+					in boolean filterLibraryArtists,
+					in sbISongkickEnumeratorCallback aCallback);
+};
+
+[scriptable, uuid(0EDDBF3C-518F-4805-B180-E451B222B23D)]
+interface sbISongkickEnumeratorCallback : nsISupports
+{
+  void onEnumerationStart();
+  void onEnumerationEnd(in nsISimpleEnumerator aResultsEnum);
+};
+
+[scriptable, uuid(AF805F5C-BD1B-4AFB-B342-E22B0424125A)]
+interface sbISongkickConcertCountCallback : nsISupports
+{
+  void onConcertCountEnd(in long aConcertCount);
+};
 
 [scriptable, function, uuid(c1b63620-4d41-11dd-ae16-0800200c9a66)]
 interface sbISongkickDisplayCallback : nsISupports
 {
 	void uiCallback();
 };
+
+[scriptable, uuid(181E17DC-9BDB-43A7-BB9D-0AD12D9DE8F1)]
+interface sbISongkickConcertInfo : nsISupports
+{
+  readonly attribute AString artistname;
+  readonly attribute AString artisturl;
+  readonly attribute AString id;
+  readonly attribute AString ts;
+  readonly attribute AString venue;
+  readonly attribute AString city;
+  readonly attribute AString title;
+  readonly attribute AString url;
+  readonly attribute AString venueURL;
+  readonly attribute AString tickets;
+  readonly attribute nsIArray artistsConcertInfo;
+  readonly attribute AString libartist;
+};
+
+[scriptable, uuid(C98E8B50-2995-4EDC-9D2D-9AD27735253C)]
+interface sbISongkickArtistConcertInfo : nsISupports
+{
+  readonly attribute AString artistname;
+  readonly attribute AString artisturl;
+};
+
+
+/*******************************************************************************
+ * Semi-private service
+ ******************************************************************************/
+[scriptable, uuid(EAEB5147-2D4E-4979-A105-51923D2464AD)]
+interface sbPISongkickDBService : nsISupports
+{
+  void startAristConcertLookup(in boolean aFilter,
+                               in sbISongkickEnumeratorCallback aCallback);
+
+  void startConcertLookup(in AString aSort,
+                          in boolean aFilter,
+                          in sbISongkickEnumeratorCallback aCallback);
+
+  void startConcertCountLookup(in boolean aFilter,
+                               in boolean aGroupByArtist,
+                               in AString aDateProperty,
+                               in AString aCeilingProperty,
+                               in sbISongkickConcertCountCallback aCallback);
+};
+

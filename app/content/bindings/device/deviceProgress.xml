@@ -72,7 +72,8 @@
             <xul:sb-device-management-toggle sbid="syncmode-toggle"
                                              xbl:inherits="dev-lib-guid"/>
 
-            <xul:toolbarseparator class="device-progress-manage-separator"/>
+            <xul:toolbarseparator sbid="device_progress_separator"
+                                  class="device-progress-manage-separator"/>
           </xul:hbox>
 
           <!-- Apply/cancel buttons to appear when the user modified settings -->

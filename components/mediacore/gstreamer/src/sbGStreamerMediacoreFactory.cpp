@@ -220,7 +220,7 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
     }
 
     const char *extraAudioExtensions[] = {"m4r", "m4p", "mp4", "oga", "wma",
-        "ogg", "aac"};
+        "ogg", "aac", "3gp"};
 
     { // for scope
 

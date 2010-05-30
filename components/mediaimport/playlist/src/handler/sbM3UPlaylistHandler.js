@@ -47,7 +47,7 @@ function(value)
 });
 
 sbM3UPlaylistHandler.prototype.read =
-function(aFile, aMediaList, aReplace)
+function(aFile, aMediaList, aReplace, aPlaylistFormatType)
 {
   var nextFileMetadata = {};
   var toAdd = [];
@@ -78,10 +78,11 @@ function(aFile, aMediaList, aReplace)
       return;
     }
 
-    // Some devices store M3U resource locations with back slashes. We expect
-    // paths to have forward slashes, so replace all back slashes. 
-    aLine = aLine.replace(/\\/g, "/");
-    
+    if (aPlaylistFormatType && aPlaylistFormatType.pathSeparator) {
+      // Convert the playlist format path separator to a forward slash.
+      aLine = aLine.replace(aPlaylistFormatType.pathSeparator, "/", "g");
+    }
+       
     // Otherwise, this line is a URL.  Add it to the list
     var newUri = SB_ResolveURI(aLine, this._originalURI);
 
