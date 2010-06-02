@@ -500,15 +500,20 @@ sb-sys-titlebar {
 #sb-sys-titlebar-primary-content {
   -moz-box-align:center !important;
 }
+#faceplate-tool-bar  {
+}
 #faceplate-tool-bar > * {
-  margin:2px 0px 2px 4px;
+  margin:0px 2px 2px 2px;
 }
 #faceplate-tool-bar > sb-nowplaying-rating {
-  margin:0px 0px 0px 4px !important;
+  margin:0px 0px 0px 1px !important;
 }
 #faceplate-tool-bar > sb-nowplaying-rating > sb-rating {
+  min-height: 18px;
 }
-
+#faceplate_seekbar_box {
+  margin-top: 1px;
+}
 
 
 #control_pane_box {
@@ -521,26 +526,30 @@ sb-sys-titlebar {
   padding:0 9px 0 5px;
 }
 #control_buttons_box > .sb-player-button {
-  margin:0 1px;
+  margin:0px;
+}
+#shuffle_repeat_box {
+  margin-left: 3px;
 }
 #shuffle_repeat_box > .sb-player-button {
-  margin:0px 1px 0px 2px;
+  margin:0px 0px 0px 1px;
 }
 #volume_box {
+  margin-left: 1px;
   padding:0 6px 0px 1px;
   -moz-box-pack: center;
   -moz-box-align: center;
-  min-height:52px;
+  min-height:60px;
 }
 #control_pane {
-  padding:0 5px;
+  padding:0 11px 0px 3px;
 }
 
 #control_pane_box > .hook > .left,
 #control_pane_box > .hook > .right,
 #control_pane_box > .hook > .middle {
   min-width:16px;
-  min-height:52px;
+  min-height:60px;
 }
 
 
@@ -588,8 +597,8 @@ treechildren::-moz-tree-twisty(open) {
 
 
 #faceplate_box {
-  padding:2px 8px;
-  min-height:52px;
+  padding:2px 8px 2px 7px;
+  min-height:60px;
 }
 #faceplate > .hook > .left,
 #faceplate > .hook > .middle,
@@ -682,8 +691,8 @@ notification,
 #content_player_wrapper[playercontrols='top'] #control_pane_box > .hook > .left,
 #content_player_wrapper[playercontrols='top'] #control_pane_box > .hook > .right,
 #content_player_wrapper[playercontrols='top'] #control_pane_box > .hook > .middle {
-  min-height: 53px;
-  max-height: 53px;
+  min-height: 61px;
+  max-height: 61px;
 }
 #content_player_wrapper[playercontrols='top'] #servicepane-status-bar-box,
 #content_player_wrapper[playercontrols='top'] #status-bar-box {
