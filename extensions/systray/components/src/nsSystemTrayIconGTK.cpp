@@ -44,9 +44,7 @@
 #include "nsIInterfaceRequestorUtils.h"
 #include "imgILoader.h"
 #include "imgIRequest.h"
-#include "nsIImage.h"
 #include "nsNetError.h" // for NS_BINDING_ABORTED
-#include "gfxIImageFrame.h"
 #include "nsIImageToPixbuf.h"
 // needed for event dispatching
 #include "nsIDOMNode.h"
@@ -221,20 +219,28 @@ NS_IMETHODIMP nsSystemTrayIconGTK::OnStartContainer(imgIRequest *aRequest, imgIC
   return NS_OK;
 }
 
-/* void onStartFrame (in imgIRequest aRequest, in gfxIImageFrame aFrame); */
-NS_IMETHODIMP nsSystemTrayIconGTK::OnStartFrame(imgIRequest *aRequest, gfxIImageFrame *aFrame)
+/* void onStartFrame (in imgIRequest aRequest, in unsigned long aFrame); */
+NS_IMETHODIMP
+nsSystemTrayService::OnStartFrame(imgIRequest *aRequest,
+                                  PRUint32 aFrame)
 {
   return NS_OK;
 }
 
-/* [noscript] void onDataAvailable (in imgIRequest aRequest, in gfxIImageFrame aFrame, [const] in nsIntRect aRect); */
-NS_IMETHODIMP nsSystemTrayIconGTK::OnDataAvailable(imgIRequest *aRequest, gfxIImageFrame *aFrame, const nsIntRect * aRect)
+/* [noscript] void onDataAvailable (in imgIRequest aRequest,
+  in boolean aCurrentFrame, [const] in nsIntRect aRect); */
+NS_IMETHODIMP
+nsSystemTrayService::OnDataAvailable(imgIRequest *aRequest,
+                                     PRBool aCurrentFrame,
+                                     const nsIntRect * aRect)
 {
   return NS_OK;
 }
 
-/* void onStopFrame (in imgIRequest aRequest, in gfxIImageFrame aFrame); */
-NS_IMETHODIMP nsSystemTrayIconGTK::OnStopFrame(imgIRequest *aRequest, gfxIImageFrame *aFrame)
+/* void onStopFrame (in imgIRequest aRequest, in unsigned long aFrame); */
+NS_IMETHODIMP
+nsSystemTrayService::OnStopFrame(imgIRequest *aRequest,
+                                 PRUint32 aFrame)
 {
   // the frame is done; put it in the tray
   nsresult rv;
@@ -244,14 +250,15 @@ NS_IMETHODIMP nsSystemTrayIconGTK::OnStopFrame(imgIRequest *aRequest, gfxIImageF
     return NS_ERROR_UNEXPECTED;
   }
 
-  nsCOMPtr<nsIImage> img(do_GetInterface(aFrame, &rv));
+  nsCOMPtr<imgIContainer> image;
+  rv = aRequest->GetImage(getter_AddRefs(image));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<nsIImageToPixbuf> imgToPixbuf =
     do_GetService("@mozilla.org/widget/image-to-gdk-pixbuf;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  GdkPixbuf* pixbuf = imgToPixbuf->ConvertImageToPixbuf(img);
+  GdkPixbuf* pixbuf = imgToPixbuf->ConvertImageToPixbuf(image);
   if (!pixbuf) {
     return NS_ERROR_FAILURE;
   }
@@ -279,8 +286,11 @@ NS_IMETHODIMP nsSystemTrayIconGTK::OnStopRequest(imgIRequest *aRequest, PRBool a
 }
 
 ///// imgIContainerObserver
-/* [noscript] void frameChanged (in imgIContainer aContainer, in gfxIImageFrame aFrame, in nsIntRect aDirtyRect); */
-NS_IMETHODIMP nsSystemTrayIconGTK::FrameChanged(imgIContainer *aContainer, gfxIImageFrame *aFrame, nsIntRect * aDirtyRect)
+/* [noscript] void frameChanged (in imgIContainer aContainer,
+  in nsIntRect aDirtyRect); */
+NS_IMETHODIMP
+nsSystemTrayService::FrameChanged(imgIContainer *aContainer,
+                                  nsIntRect * aDirtyRect)
 {
   return NS_OK;
 }

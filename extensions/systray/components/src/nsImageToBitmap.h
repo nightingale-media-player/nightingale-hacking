@@ -47,17 +47,17 @@ class nsImageToBitmap : public nsIImageToBitmap {
         nsImageToBitmap();
         ~nsImageToBitmap();
 
-        NS_IMETHOD ConvertImageToBitmap(nsIImage* aImage,
+        NS_IMETHOD ConvertImageToBitmap(gfxImageSurface* aImage,
                                         HBITMAP& outBitmap);
-        NS_IMETHOD ConvertImageToIcon(nsIImage* aImage,
+        NS_IMETHOD ConvertImageToIcon(gfxImageSurface* aImage,
                                       HICON& outIcon);
-        NS_IMETHOD ConvertImageToCursor(nsIImage* aImage,
+        NS_IMETHOD ConvertImageToCursor(gfxImageSurface* aImage,
                                         PRUint32 aHotspotX,
                                         PRUint32 aHotspotY,
                                         HCURSOR& outCursor);
 
      protected:
-        nsresult ImageToIcon(nsIImage* aImage,
+        nsresult ImageToIcon(gfxImageSurface* aImage,
           PRBool aIcon, PRUint32 aHotspotX, PRUint32 aHotspotY,
           HICON& _retval);
 };

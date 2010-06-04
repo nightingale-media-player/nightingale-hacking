@@ -96,7 +96,7 @@ nsresult sbDeviceXMLInfo::Read(const char* aDeviceXMLInfoSpec)
   nsCOMPtr<nsIPrincipal> principal;
   rv = ssm->GetSystemPrincipal(getter_AddRefs(principal));
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = xmlHttpRequest->Init(principal, nsnull, nsnull);
+  rv = xmlHttpRequest->Init(principal, nsnull, nsnull, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Read the device info file.

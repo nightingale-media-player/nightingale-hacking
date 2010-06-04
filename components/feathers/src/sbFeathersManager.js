@@ -1161,7 +1161,7 @@ FeathersManager.prototype = {
     
     // on windows and mac, centerscreen gets overriden by persisted position.
     // not so for linux.
-    var runtimeInfo = Components.classes["@mozilla.org/xre/app-info;1"]
+    var runtimeInfo = Components.classes["@mozilla.org/xre/runtime;1"]
                                 .getService(Components.interfaces.nsIXULRuntime);
     switch (runtimeInfo.OS) {
       case "WINNT":

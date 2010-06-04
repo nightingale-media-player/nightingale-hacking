@@ -543,7 +543,7 @@ sbLocalDatabaseTreeView::TokenizeProperties(const nsAString& aProperties,
 
     // Make an atom
     nsCOMPtr<nsIAtom> atom;
-    rv = atomService->GetAtom(token.get(), getter_AddRefs(atom));
+    rv = atomService->GetAtom(token, getter_AddRefs(atom));
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Don't encourage people to step on each other's toes.
@@ -1874,6 +1874,7 @@ sbLocalDatabaseTreeView::IsSorted(PRBool* _retval)
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::CanDrop(PRInt32 row,
                                  PRInt32 orientation,
+                                 nsIDOMDataTransfer* dataTransfer,
                                  PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
@@ -1888,6 +1889,7 @@ sbLocalDatabaseTreeView::CanDrop(PRInt32 row,
     if (observer) {
       nsresult rv = observer->CanDrop(TreeToArray(row),
                                       orientation,
+                                      dataTransfer,
                                       _retval);
       NS_ENSURE_SUCCESS(rv, rv);
     }
@@ -1900,7 +1902,9 @@ sbLocalDatabaseTreeView::CanDrop(PRInt32 row,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseTreeView::Drop(PRInt32 row, PRInt32 orientation)
+sbLocalDatabaseTreeView::Drop(PRInt32 row,
+                              PRInt32 orientation,
+                              nsIDOMDataTransfer* dataTransfer)
 {
   TRACE(("sbLocalDatabaseTreeView[0x%.8x] - Drop(%d, %d)", this,
          row, orientation));
@@ -1910,7 +1914,7 @@ sbLocalDatabaseTreeView::Drop(PRInt32 row, PRInt32 orientation)
     nsCOMPtr<sbIMediaListViewTreeViewObserver> observer =
       do_QueryReferent(mObserver);
     if (observer) {
-      nsresult rv = observer->Drop(TreeToArray(row), orientation);
+      nsresult rv = observer->Drop(TreeToArray(row), orientation, dataTransfer);
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }

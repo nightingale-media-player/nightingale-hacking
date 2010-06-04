@@ -87,7 +87,7 @@
       
       <field name="_useWindowCloak" readonly="true">
         <!-- use window cloak on windows, but not elsewhere -->
-        Components.classes["@mozilla.org/xre/app-info;1"]
+        Components.classes["@mozilla.org/xre/runtime;1"]
                   .getService(Components.interfaces.nsIXULRuntime)
                   .OS == "WINNT";
       </field>

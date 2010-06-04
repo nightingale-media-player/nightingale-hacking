@@ -45,7 +45,7 @@ function runTest () {
                 "!@%23$%25%5e&(),_+%20test%e4%b8%ad%0a%e6%96%87.mp3"]
   };
   
-  var platform = Components.classes["@mozilla.org/xre/app-info;1"]
+  var platform = Components.classes["@mozilla.org/xre/runtime;1"]
                            .getService(Components.interfaces.nsIXULRuntime)
                            .OS;
   if (!(platform in filenames)) {

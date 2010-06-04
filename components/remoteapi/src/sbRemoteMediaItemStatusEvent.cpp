@@ -182,20 +182,17 @@ NS_IMETHODIMP sbRemoteMediaItemStatusEvent::GetStatus(PRInt32 *aStatus)
 
 /*** nsIPrivateDOMEvent ***/
 // this macro forwards a method to the inner event (up to one arg)
-#define FORWARD_NSIPRIVATEDOMEVENT(_method, _type, _arg) \
-  NS_IMETHODIMP sbRemoteMediaItemStatusEvent::_method( _type _arg )            \
+#define FORWARD_NSIPRIVATEDOMEVENT(_method, _type, _arg, _rettype, _default) \
+  NS_IMETHODIMP_(_rettype) sbRemoteMediaItemStatusEvent::_method( _type _arg ) \
   {                                                                            \
     nsresult rv;                                                               \
     nsCOMPtr<nsIPrivateDOMEvent> inner( do_QueryInterface(mEvent, &rv) );      \
-    NS_ENSURE_SUCCESS(rv, rv);                                                 \
+    NS_ENSURE_SUCCESS(rv, _default);                                           \
     return inner->_method( _arg );                                             \
   }
 
-FORWARD_NSIPRIVATEDOMEVENT(DuplicatePrivateData, , )
-FORWARD_NSIPRIVATEDOMEVENT(SetTarget, nsIDOMEventTarget*, aTarget)
-FORWARD_NSIPRIVATEDOMEVENT(SetCurrentTarget, nsIDOMEventTarget*, aTarget)
-FORWARD_NSIPRIVATEDOMEVENT(SetOriginalTarget, nsIDOMEventTarget*, aTarget)
-FORWARD_NSIPRIVATEDOMEVENT(IsDispatchStopped, PRBool*, aIsDispatchPrevented)
-FORWARD_NSIPRIVATEDOMEVENT(GetInternalNSEvent, nsEvent**, aNSEvent)
-FORWARD_NSIPRIVATEDOMEVENT(HasOriginalTarget, PRBool*, aResult)
-FORWARD_NSIPRIVATEDOMEVENT(SetTrusted, PRBool, aTrusted)
+FORWARD_NSIPRIVATEDOMEVENT(DuplicatePrivateData, , , nsresult, rv)
+FORWARD_NSIPRIVATEDOMEVENT(SetTarget, nsIDOMEventTarget*, aTarget, nsresult, rv)
+FORWARD_NSIPRIVATEDOMEVENT(IsDispatchStopped, , , PRBool, PR_FALSE)
+FORWARD_NSIPRIVATEDOMEVENT(GetInternalNSEvent, , , nsEvent*, nsnull)
+FORWARD_NSIPRIVATEDOMEVENT(SetTrusted, PRBool, aTrusted, nsresult, rv)

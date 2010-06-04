@@ -40,7 +40,7 @@
 
 #include "nsStringGlue.h"
 #include "nsSystemTrayServiceWin.h"
-#include "gfxIImageFrame.h"
+#include "gfxImageSurface.h"
 #include "imgIContainer.h"
 #include "imgIDecoder.h"
 #include "nsAutoPtr.h"
@@ -64,13 +64,9 @@
 #include "nsIDOMMouseEvent.h"
 #include "nsIDOMNodeList.h"
 #include "nsIDOMWindow.h"
-#include "nsIDOMXULElement.h"
-#include "nsIFrame.h"
-#include "nsIImage.h"
 #include "nsIInterfaceRequestor.h"
 #include "nsIInterfaceRequestorUtils.h"
 #include "nsIIOService.h"
-#include "nsIMenuParent.h"
 #include "nsIPresShell.h"
 #include "nsIWidget.h"
 #include "nsIWindowUtil.h"
@@ -323,18 +319,18 @@ nsSystemTrayService::GetIconForURI(nsIURI* iconURI, HICON& result)
   rv = decoder->Close();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<gfxIImageFrame> imageFrame;
-  rv = mImage->GetFrameAt(0, getter_AddRefs(imageFrame));
+  nsRefPtr<gfxImageSurface> imageFrame;
+  rv = mImage->CopyCurrentFrame(getter_AddRefs(imageFrame));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIImage> img(do_GetInterface(imageFrame, &rv));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (!imageFrame)
+    return NS_ERROR_NOT_AVAILABLE;
 
   nsCOMPtr<nsIImageToBitmap> imageToBitmap(
     do_GetService("@mozilla.org/widget/image-to-win32-hbitmap;1", &rv));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  return imageToBitmap->ConvertImageToIcon(img.get(), result);
+  return imageToBitmap->ConvertImageToIcon(imageFrame, result);
 }
 
 nsresult
@@ -748,28 +744,28 @@ nsSystemTrayService::OnStartContainer(imgIRequest *aRequest,
   return NS_OK;
 }
 
-/* void onStartFrame (in imgIRequest aRequest, in gfxIImageFrame aFrame); */
+/* void onStartFrame (in imgIRequest aRequest, in unsigned long aFrame); */
 NS_IMETHODIMP
 nsSystemTrayService::OnStartFrame(imgIRequest *aRequest,
-                                  gfxIImageFrame *aFrame)
+                                  PRUint32 aFrame)
 {
   return NS_OK;
 }
 
 /* [noscript] void onDataAvailable (in imgIRequest aRequest,
-  in gfxIImageFrame aFrame, [const] in nsIntRect aRect); */
+  in boolean aCurrentFrame, [const] in nsIntRect aRect); */
 NS_IMETHODIMP
 nsSystemTrayService::OnDataAvailable(imgIRequest *aRequest,
-                                     gfxIImageFrame *aFrame,
+                                     PRBool aCurrentFrame,
                                      const nsIntRect * aRect)
 {
   return NS_OK;
 }
 
-/* void onStopFrame (in imgIRequest aRequest, in gfxIImageFrame aFrame); */
+/* void onStopFrame (in imgIRequest aRequest, in unsigned long aFrame); */
 NS_IMETHODIMP
 nsSystemTrayService::OnStopFrame(imgIRequest *aRequest,
-                                 gfxIImageFrame *aFrame)
+                                 PRUint32 aFrame)
 {
   return NS_OK;
 }
@@ -801,10 +797,9 @@ nsSystemTrayService::OnStopRequest(imgIRequest* aRequest,
 }
 
 /* [noscript] void frameChanged (in imgIContainer aContainer,
-  in gfxIImageFrame aFrame, in nsIntRect aDirtyRect); */
+  in nsIntRect aDirtyRect); */
 NS_IMETHODIMP
 nsSystemTrayService::FrameChanged(imgIContainer *aContainer,
-                                  gfxIImageFrame *aFrame,
                                   nsIntRect * aDirtyRect)
 {
   return NS_OK;

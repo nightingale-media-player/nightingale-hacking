@@ -26,12 +26,10 @@
 
 #include "sbClipboardHelper.h"
 
-#include <gfxIImageFrame.h>
 #include <imgIContainer.h>
 #include <imgITools.h>
 #include <nsIBinaryInputStream.h>
 #include <nsIClipboard.h>
-#include <nsIImage.h>
 #include <nsIInputStream.h>
 #include <nsIInterfaceRequestor.h>
 #include <nsIInterfaceRequestorUtils.h>
@@ -224,17 +222,8 @@ sbClipboardHelper::PasteImageToClipboard(const nsACString &aMimeType,
   stream->ShareData(reinterpret_cast<const char*>(aData), aDataLen);
 
   // decode image
-  nsCOMPtr<imgIContainer> container;
-  rv = imgtool->DecodeImageData(stream, aMimeType, getter_AddRefs(container));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Grab first frame of the image
-  nsCOMPtr<gfxIImageFrame> imgFrame;
-  rv = container->GetCurrentFrame(getter_AddRefs(imgFrame));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Change to nsIImage so we can pass to the clipboard
-  nsCOMPtr<nsIImage> image(do_GetInterface(imgFrame, &rv));
+  nsCOMPtr<imgIContainer> image;
+  rv = imgtool->DecodeImageData(stream, aMimeType, getter_AddRefs(image));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Now create a Transferable so we can copy to the clipboard

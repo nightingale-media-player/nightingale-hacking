@@ -109,22 +109,22 @@ HelperLoader::OnStartContainer(imgIRequest *aRequest, imgIContainer
 
 /* Implement imgIDecoderObserver::onStartFrame() */
 NS_IMETHODIMP
-HelperLoader::OnStartFrame(imgIRequest *aRequest, gfxIImageFrame *aFrame)
+HelperLoader::OnStartFrame(imgIRequest *aRequest, PRUint32 aFrame)
 {
   return NS_OK;
 }
 
 /* Implement imgIDecoderObserver::onDataAvailable() */
 NS_IMETHODIMP
-HelperLoader::OnDataAvailable(imgIRequest *aRequest, gfxIImageFrame
-*aFrame, const nsIntRect * aRect)
+HelperLoader::OnDataAvailable(imgIRequest *aRequest, PRBool aCurrentFrame,
+                              const nsIntRect * aRect)
 {
   return NS_OK;
 }
 
 /* Implement imgIDecoderObserver::onStopFrame() */
 NS_IMETHODIMP
-HelperLoader::OnStopFrame(imgIRequest *aRequest, gfxIImageFrame *aFrame)
+HelperLoader::OnStopFrame(imgIRequest *aRequest, PRUint32 aFrame)
 {
   return NS_OK;
 }
@@ -155,7 +155,7 @@ HelperLoader::OnStopRequest(imgIRequest *aRequest, PRBool aIsLastPart)
 /* implement imgIContainerObserver::frameChanged() */
 NS_IMETHODIMP
 HelperLoader::FrameChanged(imgIContainer *aContainer,
-                           gfxIImageFrame *aFrame, nsIntRect * aDirtyRect)
+                           nsIntRect * aDirtyRect)
 {
   return NS_OK;
 }

@@ -62,7 +62,7 @@ const Cr = Components.results
 
 var PlatformUtils = {
   get platformString() {
-    var platform = Cc["@mozilla.org/xre/app-info;1"].
+    var platform = Cc["@mozilla.org/xre/runtime;1"].
                        getService(Ci.nsIXULRuntime).
                        OS;
     switch(platform) {

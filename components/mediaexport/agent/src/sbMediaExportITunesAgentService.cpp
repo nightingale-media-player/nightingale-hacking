@@ -228,11 +228,9 @@ sbMediaExportITunesAgentService::RunAgent(PRBool aShouldUnregister)
   }
   
   const char *argStr = args.get();
-  PRUint32 pid;
   rv = agentProcess->Run(aShouldUnregister,  // only block for '--unregister' 
                          &argStr, 
-                         (aShouldUnregister ? 1 : 0), 
-                         &pid);
+                         (aShouldUnregister ? 1 : 0));
   NS_ENSURE_SUCCESS(rv, rv);
 
 #else
@@ -324,10 +322,9 @@ sbMediaExportITunesAgentService::KillActiveAgents()
 
   nsCString args("--kill");
   const char *argsStr = args.get();
-  PRUint32 pid;
   
   // Run the agent with blocking turned on
-  rv = killProcess->Run(PR_TRUE, &argsStr, 1, &pid);
+  rv = killProcess->Run(PR_TRUE, &argsStr, 1);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

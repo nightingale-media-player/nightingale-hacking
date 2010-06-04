@@ -45,7 +45,7 @@
 { 0x337d3ffb, 0xf15f, 0x4df5, \
   { 0x83, 0xe5, 0x4c, 0x7c, 0x3d, 0x59, 0x53, 0x92 } }
 
-class nsIImage;
+class gfxImageSurface;
 
 struct HBITMAP__;
 struct HICON__;
@@ -55,22 +55,22 @@ typedef struct HICON__ *HICON;
 typedef HICON HCURSOR;
 
 /**
- * An interface that allows converting an nsIImage to a Windows bitmap.
+ * An interface that allows converting a gfxImageSurface to a Windows bitmap.
  */
 class nsIImageToBitmap : public nsISupports {
     public:
         NS_DECLARE_STATIC_IID_ACCESSOR(NSIIMAGETOBITMAP_IID)
 
         // convert an image to a DDB
-        NS_IMETHOD ConvertImageToBitmap(nsIImage* aImage,
+        NS_IMETHOD ConvertImageToBitmap(gfxImageSurface* aImage,
                                         HBITMAP& outBitmap) = 0;
         
         // convert an image to a HICON
-        NS_IMETHOD ConvertImageToIcon(nsIImage* aImage,
+        NS_IMETHOD ConvertImageToIcon(gfxImageSurface* aImage,
                                       HICON& outIcon) = 0;
         
         // convert an image to a HCURSOR
-        NS_IMETHOD ConvertImageToCursor(nsIImage* aImage,
+        NS_IMETHOD ConvertImageToCursor(gfxImageSurface* aImage,
                                         PRUint32 aHotspotX,
                                         PRUint32 aHotspotY,
                                         HCURSOR& outCursor) = 0;

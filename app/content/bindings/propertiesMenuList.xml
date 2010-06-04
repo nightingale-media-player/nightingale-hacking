@@ -193,7 +193,7 @@
           if (this.hasAttribute("defaultSeparator")) {
             return this.getAttribute("defaultSeparator");
           }
-          const OS = Components.classes["@mozilla.org/xre/app-info;1"]
+          const OS = Components.classes["@mozilla.org/xre/runtime;1"]
                                .getService(Components.interfaces.nsIXULRuntime)
                                .OS;
           switch (OS) {

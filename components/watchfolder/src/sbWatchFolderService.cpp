@@ -51,7 +51,6 @@
 #include <nsTArray.h>
 #include <sbIMediacoreTypeSniffer.h>
 #include <nsThreadUtils.h>
-#include <nsXULAppAPI.h>
 #include <nsXPCOMCIDInternal.h>
 #include <nsIXULRuntime.h>
 #include <prlog.h>
@@ -109,7 +108,7 @@ sbWatchFolderService::Init()
   // if watching is supported check for safe-mode
   if (isWatcherSupported) {
     nsCOMPtr<nsIXULRuntime> appInfo =
-      do_GetService(XULAPPINFO_SERVICE_CONTRACTID, &rv);
+      do_GetService(XULRUNTIME_SERVICE_CONTRACTID, &rv);
     // If we can't get or QI the runtime assume we're not in safe-mode
     if (NS_SUCCEEDED(rv)) {
       PRBool isInSafeMode = PR_FALSE;

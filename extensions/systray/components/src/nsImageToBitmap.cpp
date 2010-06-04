@@ -37,7 +37,7 @@
 
 #include "nsStringGlue.h"
 #include "nsImageToBitmap.h"
-#include "nsIImage.h"
+#include "gfxImageSurface.h"
 
 #include <windows.h>
 
@@ -51,7 +51,7 @@ nsImageToBitmap::~nsImageToBitmap()
 {
 }
 
-NS_IMETHODIMP nsImageToBitmap::ConvertImageToBitmap(nsIImage* aImage,
+NS_IMETHODIMP nsImageToBitmap::ConvertImageToBitmap(gfxImageSurface* aImage,
   HBITMAP& outBitmap)
 {
   NS_ENSURE_ARG(aImage);
@@ -60,14 +60,12 @@ NS_IMETHODIMP nsImageToBitmap::ConvertImageToBitmap(nsIImage* aImage,
   BITMAPV4HEADER infoHeader;
   ::ZeroMemory(&infoHeader, sizeof(infoHeader));
   infoHeader.bV4Size = sizeof(infoHeader);
-  infoHeader.bV4Width = aImage->GetWidth();
-  infoHeader.bV4Height = aImage->GetHeight();
-  if (aImage->GetIsRowOrderTopToBottom())
-    infoHeader.bV4Height *= -1; // negative = top-to-bottom
+  infoHeader.bV4Width = aImage->Width();
+  infoHeader.bV4Height = -aImage->Height(); // top-to-bottom
   infoHeader.bV4Planes = 1;
   infoHeader.bV4BitCount = 32; // RGBA
   infoHeader.bV4V4Compression = BI_BITFIELDS;
-  infoHeader.bV4SizeImage = aImage->GetHeight() * aImage->GetLineStride();
+  infoHeader.bV4SizeImage = aImage->Height() * aImage->Stride();
   infoHeader.bV4XPelsPerMeter = 0;
   infoHeader.bV4YPelsPerMeter = 0;
   infoHeader.bV4ClrUsed = 0;
@@ -87,12 +85,7 @@ NS_IMETHODIMP nsImageToBitmap::ConvertImageToBitmap(nsIImage* aImage,
   oldbits = (HBITMAP)::SelectObject(dc, tBitmap);
   if (!oldbits) goto loser;
   
-  nsresult rv;
-
-  rv = aImage->LockImagePixels(PR_FALSE);
-  if (NS_FAILED(rv)) goto loser;
-  
-  PRUint8 *bits = aImage->GetBits();
+  PRUint8 *bits = aImage->Data();
   
   bitmap = ::CreateDIBitmap(dc,
                             reinterpret_cast<CONST BITMAPINFOHEADER*>(&infoHeader),
@@ -106,8 +99,6 @@ NS_IMETHODIMP nsImageToBitmap::ConvertImageToBitmap(nsIImage* aImage,
     outBitmap = bitmap;
   }
   
-  aImage->UnlockImagePixels(PR_FALSE);
-  
 loser:
   // cleanup
   if (oldbits)
@@ -119,19 +110,19 @@ loser:
   return outBitmap ? NS_OK : NS_ERROR_FAILURE;
 }
 
-NS_IMETHODIMP nsImageToBitmap::ConvertImageToIcon(nsIImage* aImage,
+NS_IMETHODIMP nsImageToBitmap::ConvertImageToIcon(gfxImageSurface* aImage,
   HICON& outIcon)
 {
   return ImageToIcon(aImage, PR_TRUE, 0, 0, outIcon);
 }
 
-NS_IMETHODIMP nsImageToBitmap::ConvertImageToCursor(nsIImage* aImage,
+NS_IMETHODIMP nsImageToBitmap::ConvertImageToCursor(gfxImageSurface* aImage,
   PRUint32 aHotspotX, PRUint32 aHotspotY, HCURSOR& outCursor)
 {
   return ImageToIcon(aImage, PR_FALSE, aHotspotX, aHotspotY, outCursor);
 }
 
-nsresult nsImageToBitmap::ImageToIcon(nsIImage* aImage,
+nsresult nsImageToBitmap::ImageToIcon(gfxImageSurface* aImage,
   PRBool aIcon, PRUint32 aHotspotX, PRUint32 aHotspotY,
   HICON& _retval)
 {

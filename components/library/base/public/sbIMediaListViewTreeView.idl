@@ -34,21 +34,26 @@
 interface nsISimpleEnumerator;
 interface nsITreeColumn;
 interface sbIMediaItem;
+interface nsIDOMDataTransfer;
 
 /**
  * \interface sbIMediaListViewTreeViewObserver
  * \brief Observer to implement the nsITreeView methods that a
  *        sbIMediaListViewTreeView does not.
  */
-[scriptable, uuid(d34060ad-5aff-46b1-8029-b446e57b59df)]
+[scriptable, uuid(a3919d1c-1dd1-11b2-a776-a4e0a382f10f)]
 interface sbIMediaListViewTreeViewObserver : nsISupports
 {
   const long DROP_BEFORE = -1;
   const long DROP_ON = 0;
   const long DROP_AFTER = 1;
 
-  boolean canDrop(in long index, in long orientation);
-  void drop(in long row, in long orientation);
+  boolean canDrop(in long index,
+                  in long orientation,
+                  in nsIDOMDataTransfer dataTransfer);
+  void drop(in long row,
+            in long orientation,
+            in nsIDOMDataTransfer dataTransfer);
   void cycleHeader(in nsITreeColumn col);
   
   /**
