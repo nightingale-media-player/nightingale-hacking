@@ -426,6 +426,8 @@ sbBaseDevice::sbBaseDevice() :
   mMusicLimitPercent(100),
   mDeviceTranscoding(nsnull),
   mDeviceImages(nsnull),
+  mCanTranscodeAudio(CAN_TRANSCODE_UNKNOWN),
+  mCanTranscodeVideo(CAN_TRANSCODE_UNKNOWN),
   mConnected(PR_FALSE),
   mReqWaitMonitor(nsnull),
   mReqStopProcessing(0),
@@ -515,6 +517,22 @@ sbBaseDevice::~sbBaseDevice()
   if (mDeviceImages) {
     delete mDeviceImages;
   }
+}
+
+NS_IMETHODIMP sbBaseDevice::Connect()
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbBaseDevice::Disconnect()
+{
+  // Cancel any pending deferred setup device timer.
+  if (mDeferredSetupDeviceTimer) {
+    mDeferredSetupDeviceTimer->Cancel();
+    mDeferredSetupDeviceTimer = nsnull;
+  }
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP sbBaseDevice::SyncLibraries()
@@ -4515,7 +4533,7 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
   rv = EnsureSpaceForSync(aRequest, &abort);
   NS_ENSURE_SUCCESS(rv, rv);
   if (abort) {
-    rv = SetState(STATE_CANCEL);
+    rv = ClearRequests(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
     return NS_OK;
   }
@@ -4611,20 +4629,19 @@ sbBaseDevice::EnsureSpaceForSync(TransferRequest* aRequest,
                                                &abort);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
-    rv = dstLib->GetSyncSettings(getter_AddRefs(syncSettings));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Set sync mode for both audio and video preferences.
-    rv = syncSettings->SetSyncMode(
-           abort ? sbIDeviceLibrarySyncSettings::SYNC_MODE_MANUAL
-                 : sbIDeviceLibrarySyncSettings::SYNC_MODE_AUTO);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = dstLib->SetSyncSettings(syncSettings);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     if (abort) {
+      nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
+      rv = dstLib->GetSyncSettings(getter_AddRefs(syncSettings));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Set sync mode to manual upon abort.
+      rv = syncSettings->SetSyncMode(
+             sbIDeviceLibrarySyncSettings::SYNC_MODE_MANUAL);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = dstLib->SetSyncSettings(syncSettings);
+      NS_ENSURE_SUCCESS(rv, rv);
+
       *aAbort = PR_TRUE;
       return NS_OK;
     }
@@ -4666,9 +4683,6 @@ sbBaseDevice::SyncCreateAndSyncToList
 
   // Function variables.
   nsresult rv;
-
-  // Check for abort.
-  NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
 
   // Check for abort.
   NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
@@ -4920,6 +4934,10 @@ sbBaseDevice::SyncToMediaList(sbIDeviceLibrary* aDstLib,
   rv = aDstLib->GetSyncSettings(getter_AddRefs(syncSettings));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = syncSettings->SetSyncMode(
+         sbIDeviceLibrarySyncSettings::SYNC_MODE_AUTO);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<sbIDeviceLibraryMediaSyncSettings> audioMediaSyncSettings;
   rv = syncSettings->GetMediaSettings(sbIDeviceLibrary::MEDIATYPE_AUDIO,
                                       getter_AddRefs(audioMediaSyncSettings));
@@ -4937,13 +4955,13 @@ sbBaseDevice::SyncToMediaList(sbIDeviceLibrary* aDstLib,
   rv = syncList->AppendElement(aMediaList, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
   // Set to sync to the sync media list.
-  if (contentType | sbIMediaList::CONTENTTYPE_AUDIO) {
+  if (contentType & sbIMediaList::CONTENTTYPE_AUDIO) {
     rv = audioMediaSyncSettings->SetSelectedPlaylists(syncList);
     NS_ENSURE_SUCCESS(rv, rv);
     rv = videoMediaSyncSettings->ClearSelectedPlaylists();
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  if (contentType | sbIMediaList::CONTENTTYPE_VIDEO) {
+  if (contentType & sbIMediaList::CONTENTTYPE_VIDEO) {
     rv = videoMediaSyncSettings->SetSelectedPlaylists(syncList);
     NS_ENSURE_SUCCESS(rv, rv);
     rv = audioMediaSyncSettings->ClearSelectedPlaylists();
@@ -6006,6 +6024,49 @@ nsresult sbBaseDevice::SetupDevice()
   TRACE(("%s", __FUNCTION__));
   nsresult rv;
 
+  // Cancel any pending deferred setup device timer.
+  if (mDeferredSetupDeviceTimer) {
+    rv = mDeferredSetupDeviceTimer->Cancel();
+    NS_ENSURE_SUCCESS(rv, rv);
+    mDeferredSetupDeviceTimer = nsnull;
+  }
+
+  // Defer device setup for a small time delay to allow device connection and
+  // mounting to complete.  Since device setup presents a modal dialog,
+  // presenting the dialog immediately may stop mounting of other device
+  // volumes, preventing them from showing up in the device setup dialog.  In
+  // addition, the dialog can prevent device connection from completing,
+  // causing problems if the device is disconnected while the device setup
+  // dialog is presented.
+  mDeferredSetupDeviceTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mDeferredSetupDeviceTimer->InitWithFuncCallback(DeferredSetupDevice,
+                                                       this,
+                                                       DEFER_DEVICE_SETUP_DELAY,
+                                                       nsITimer::TYPE_ONE_SHOT);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/* static */ void
+sbBaseDevice::DeferredSetupDevice(nsITimer* aTimer,
+                                  void*     aClosure)
+{
+  TRACE(("%s", __FUNCTION__));
+  sbBaseDevice* baseDevice = reinterpret_cast<sbBaseDevice*>(aClosure);
+  baseDevice->DeferredSetupDevice();
+}
+
+nsresult
+sbBaseDevice::DeferredSetupDevice()
+{
+  TRACE(("%s", __FUNCTION__));
+  nsresult rv;
+
+  // Clear the deferred setup device timer.
+  mDeferredSetupDeviceTimer = nsnull;
+
   // Present the setup device dialog.
   nsCOMPtr<sbIPrompter>
     prompter = do_CreateInstance(SONGBIRD_PROMPTER_CONTRACTID, &rv);
@@ -6196,13 +6257,18 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem*                  aMediaItem,
   rv = helper->Init(aMediaItem, this, aCallback);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIRunnable> runnable =
-    NS_NEW_RUNNABLE_METHOD(sbDeviceSupportsItemHelper,
-                           helper.get(),
-                           RunSupportsMediaItem);
-  NS_ENSURE_TRUE(runnable, NS_ERROR_OUT_OF_MEMORY);
-  rv = NS_DispatchToMainThread(runnable);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (!NS_IsMainThread()) {
+    nsCOMPtr<nsIRunnable> runnable =
+      NS_NEW_RUNNABLE_METHOD(sbDeviceSupportsItemHelper,
+                             helper.get(),
+                             RunSupportsMediaItem);
+    NS_ENSURE_TRUE(runnable, NS_ERROR_OUT_OF_MEMORY);
+    rv = NS_DispatchToMainThread(runnable);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    helper->RunSupportsMediaItem();
+  }
   return NS_OK;
 }
 
@@ -6263,6 +6329,17 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem*                  aMediaItem,
     GetDeviceTranscoding()->GetTranscodeType(aMediaItem);
   bool needsTranscoding = false;
 
+  if (transcodeType == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO &&
+      mCanTranscodeAudio != CAN_TRANSCODE_UNKNOWN) {
+    *_retval = (mCanTranscodeAudio == CAN_TRANSCODE_YES) ? PR_TRUE : PR_FALSE;
+    return NS_OK;
+  }
+  else if(transcodeType == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO &&
+          mCanTranscodeVideo != CAN_TRANSCODE_UNKNOWN) {
+    *_retval = (mCanTranscodeVideo == CAN_TRANSCODE_YES) ? PR_TRUE : PR_FALSE;
+    return NS_OK;
+  }
+
   // Try to check if we can transcode first, since it's cheaper than trying
   // to inspect the actual file (and both ways we get which files we can get
   // on the device).
@@ -6287,6 +6364,14 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem*                  aMediaItem,
   rv = configurator->DetermineOutputType();
   if (NS_SUCCEEDED(rv)) {
     *_retval = PR_TRUE;
+
+    if (transcodeType == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO) {
+      mCanTranscodeAudio = CAN_TRANSCODE_YES;
+    }
+    else if(transcodeType == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO) {
+      mCanTranscodeVideo = CAN_TRANSCODE_YES;
+    }
+
     return NS_OK;
   }
 
@@ -6314,6 +6399,14 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem*                  aMediaItem,
                                               needsTranscoding);
 
   *_retval = (NS_SUCCEEDED(rv) && !needsTranscoding);
+
+  if (transcodeType == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO) {
+    mCanTranscodeAudio = (*_retval == PR_TRUE) ? CAN_TRANSCODE_YES : CAN_TRANSCODE_NO;
+  }
+  else if(transcodeType == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO) {
+    mCanTranscodeVideo = (*_retval == PR_TRUE) ? CAN_TRANSCODE_YES : CAN_TRANSCODE_NO;
+  }
+
   return NS_OK;
 }
 

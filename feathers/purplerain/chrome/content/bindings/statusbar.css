@@ -64,7 +64,7 @@ sb-status-progressmeter {
   -moz-box-align: center;
   font: message-box;
   font-size: 11px;
-  color: rgba(255,255,255,0.75);
+  color: rgb(202,202,205);
 }
 
 /*

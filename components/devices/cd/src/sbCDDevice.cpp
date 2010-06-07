@@ -423,6 +423,10 @@ NS_IMETHODIMP sbCDDevice::Connect()
   // Set up to auto-disconnect in case of error.
   SB_CD_DEVICE_AUTO_INVOKE(AutoDisconnect, Disconnect()) autoDisconnect(this);
 
+  // Invoke the super-class.
+  rv = sbBaseDevice::Connect();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Connect the request services.
   rv = ReqConnect();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -587,6 +591,9 @@ sbCDDevice::Disconnect()
   // Disconnect the device services.
   rv = ReqDisconnect();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Invoke the super-class.
+  sbBaseDevice::Disconnect();
 
   // Send device removed notification.
   rv = CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_REMOVED,

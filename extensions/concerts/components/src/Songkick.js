@@ -1,9 +1,8 @@
-#filter substitution
-
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/ObserverUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -13,14 +12,13 @@ const DESCRIPTION = "Songkick Concerts Provider XPCOM Component";
 const CID         = "{33268520-4d39-11dd-ae16-0800200c9a66}";
 const CONTRACTID  = "@songbirdnest.com/Songbird/Concerts/Songkick;1";
 
-// Songbird's Songkick API key - unique to Songbird, don't use anywhere else
-const SongkickAPIKey = "@SONGKICK_APIKEY@";
-
 // Testing flags
 const SHORT_TIMER = true;
 
 const onTourIconSrc = "chrome://concerts/skin/icon-ticket.png";
 const noTourIconSrc = "";
+
+const CONCERTS_CONFIG_PROPS = "chrome://concerts/content/config.properties";
 
 var concertExtensionPrefs = Cc["@mozilla.org/preferences-service;1"]
                               .getService(Ci.nsIPrefService).getBranch("extensions.concerts.");
@@ -537,7 +535,9 @@ Songkick.prototype = {
     // Set our URL to load
     //var city = this.prefs.getIntPref("city");
     var url = "http://api-static.songkick.com/api/V2/concertdata.xml.gz" +
-              "?cityid=" + city + "&key=" + SongkickAPIKey;
+              "?cityid=" + city + "&key=" +
+              (new SBStringBundle(CONCERTS_CONFIG_PROPS))
+               .get('SongkickAPIKey');
     debugLog("refreshConcerts", "URL:" + url);
     debugLog("refreshConcerts", "Starting concert data refresh");
 
@@ -1146,8 +1146,10 @@ Songkick.prototype = {
     this.prefs.setIntPref("locations.lastupdated", Date.now()/1000);
     debugLog("refreshLocations", "Updating last updated time");
 
-    var url = "http://api-static.songkick.com/api/V2/locationdata.xml.gz"
-              + "?key=" + SongkickAPIKey;
+    var url = "http://api-static.songkick.com/api/V2/locationdata.xml.gz" +
+              "?key=" +
+              (new SBStringBundle(CONCERTS_CONFIG_PROPS))
+               .get('SongkickAPIKey');
 
     // Instantiate our stream listener
     var myListener = new skStreamListener(false, 1, this);

@@ -116,6 +116,10 @@ public:
     return AddListener(aListener, aOwnsWeak, aFlags, nsnull);
   }
 
+  void SetCachedListContentType(PRUint16 aContentType) {
+    mListContentType = aContentType;
+  }
+
   // These aren't meant to be called directly. Use sbAutoBatchHelper
   // to avoid the risk of leaving a batch in progress
   void BeginUpdateBatch() {
@@ -165,6 +169,9 @@ protected:
   void SetArray(sbILocalDatabaseGUIDArray * aArray);
   // A monitor for changes to the media list.
   PRMonitor* mFullArrayMonitor;
+
+  // Cached list content type
+  PRUint16 mListContentType;
 
   PRBool mLockedEnumerationActive;
   PRBool mPreviousListener;

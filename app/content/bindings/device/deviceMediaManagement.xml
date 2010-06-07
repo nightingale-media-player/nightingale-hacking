@@ -100,7 +100,9 @@
 
           </xul:vbox>
         </xul:groupbox>
-        <xul:groupbox flex="1" setting="diskmgmt">
+        <xul:groupbox flex="1"
+                      setting="diskmgmt"
+                      oncommand="DeviceMediaManagementServices.dispatchSettingsChangeEvent();">
           <xul:caption label="&device.settings.disk.label;"/>
           <xul:vbox>
             <xul:checkbox sbid="space_limit_enable"
@@ -247,8 +249,6 @@
         /* Import external services. */
         this.importExternalServices();
 
-        DeviceMediaManagementServices.initialize(this);
-
         var settingsAttribute = this.getAttribute("hide");
         var settingsList = settingsAttribute.split(",");
 
@@ -258,8 +258,6 @@
             box.hidden = true;
           }
         }
-
-        this.reset();
 
         var self = this;
         this._scale.addEventListener("change",
@@ -313,7 +311,6 @@
                   ("chrome://songbird/content/scripts/device/deviceMediaManagement.js",
                    null);
         }
-
       }
       ]]></body></method>
 
@@ -480,12 +477,6 @@
      *********************************************************************** -->
 
     <handlers>
-      <handler event="deviceBound"><![CDATA[
-        /* Re-initialize the device music management services. */
-        DeviceMediaManagementServices.finalize(this);
-        DeviceMediaManagementServices.initialize(this);
-      ]]></handler>
-
       <handler event="devLibBound"><![CDATA[
         /* Re-initialize the device music management services. */
         DeviceMediaManagementServices.finalize(this);

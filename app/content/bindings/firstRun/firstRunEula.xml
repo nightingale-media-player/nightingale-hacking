@@ -112,6 +112,14 @@
       <field name="_widgetSvc"/>
 
 
+      <field name="eulaBrowser">
+        <![CDATA[
+          document.getAnonymousElementByAttribute(
+              this, 'anonid', 'eula_browser');
+        ]]>
+      </field>
+
+
       <!--
        * constructor
        *

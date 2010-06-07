@@ -219,7 +219,8 @@
 
         <xul:vbox sbid="servicepane-node-children"
                   class="servicepane-node-children"
-                  mousethrough="never">
+                  mousethrough="never"
+                  xbl:inherits="hidden=closed">
           <children />
         </xul:vbox>
 
@@ -609,10 +610,10 @@
         <body><![CDATA[
           if (this._textbox.getAttribute("hidden"))
             return;
-          this.setAttribute("label", this._textbox.value);
           this._textbox.setAttribute("hidden", true);
           this._servicePane.mService.onRename(this.nodeData,
                                               this._textbox.value);
+          this.setAttribute("label", this.nodeData.name);
           event.stopPropagation();
           event.preventDefault();
         ]]></body>
@@ -635,10 +636,10 @@
               break;
             case 13: // enter
               // save changes & exit editing mode
-              this.setAttribute("label", this._textbox.value);
               this._textbox.setAttribute("hidden", true);
               this._servicePane.mService.onRename(this.nodeData,
                                                   this._textbox.value);
+              this.setAttribute("label", this.nodeData.name);
               this._servicePane._editingNode = null;
               this.loadNodeURL(event);
               
@@ -1380,26 +1381,26 @@
                   return;
                 }
 
-                if (node.firstChild) {
-                  // update the classes
-                  if (oldVal == "true")
-                    domNode.className =
-                            domNode.className.replace(/\bopen\b/g, '');
-                  else
-                    // could be null or false
-                    domNode.className =
-                            domNode.className.replace(/\bclosed\b/g, '');
+                // update the classes and attributes
+                if (oldVal == "true") {
+                  domNode.className =
+                          domNode.className.replace(/\bopen\b/g, '');
+                  domNode.removeAttribute("open");
+                }
+                else {
+                  // could be null or false
+                  domNode.className =
+                          domNode.className.replace(/\bclosed\b/g, '');
+                  domNode.removeAttribute("closed");
+                }
 
-                  // update the childNodes container's visibility
-                  let box = domNode._getElement("servicepane-node-children");
-                  if (newVal == "true") {
-                    domNode.className += " open";
-                    box.removeAttribute("hidden");
-                  } else {
-                    // could be null or false
-                    domNode.className += " closed";
-                    box.setAttribute("hidden", "true");
-                  }
+                if (newVal == "true") {
+                  domNode.className += " open";
+                  domNode.setAttribute("open", "true");
+                } else {
+                  // could be null or false
+                  domNode.className += " closed";
+                  domNode.setAttribute("closed", "true");
                 }
                 break;
 

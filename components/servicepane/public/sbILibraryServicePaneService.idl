@@ -29,6 +29,7 @@
 
 #include "nsISupports.idl"
 
+interface nsIArray;
 interface sbIServicePaneNode;
 interface sbILibrary;
 interface sbILibraryResource;
@@ -38,7 +39,7 @@ interface sbIMediaListView;
  * \interface sbILibraryServicePaneService
  * \brief Provides information about libraries and medialists needed by the service pane
  */
-[scriptable, uuid(3a663e90-3c00-11df-9879-0800200c9a66)]
+[scriptable, uuid(9b97a318-1dd1-11b2-8862-d80772a7244a)]
 interface sbILibraryServicePaneService : nsISupports {
 
   /* \brief Suggest a library for creating a new media list
@@ -83,6 +84,17 @@ interface sbILibraryServicePaneService : nsISupports {
    *         returned. However, nodes that are not hidden will be preferred.
    */
   sbIServicePaneNode getNodeForLibraryResource (in sbILibraryResource aResource);
+
+  /**
+   * \brief Return all service pane nodes related to the library resource
+   *        specified by aResource.
+   *
+   * \param aResource an sbIMediaItem, sbIMediaItem, or sbILibrary
+   * \return An nsIArray of service pane nodes representing the given resource.
+   *         Note that in the case that more than one node is related to a given
+   *         library, multiple nodes will be returned.
+   */
+  nsIArray getNodesForLibraryResource(in sbILibraryResource aResource);
 
   /**
    * \brief Attempt to get a service pane node for the given media list view

@@ -226,6 +226,7 @@
                       id="displaypane_right_sidebar_splitter"
                       menuid="displaypane_right_sidebar_menu" />
             <sb-displaypane id="displaypane_right_sidebar"
+                      style="min-width: 102px;"
                       contentgroup="sidebar"
                       orient="vertical"
                       label="&displaypane.name.sidebar;"

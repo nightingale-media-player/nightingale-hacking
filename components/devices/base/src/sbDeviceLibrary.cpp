@@ -295,9 +295,16 @@ NS_IMETHODIMP sbPlaylistAttachListenerEnumerator::OnEnumeratedItem(sbIMediaList*
                           customType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (customType.IsEmpty() ||
-      customType.EqualsLiteral("simple") ||
-      customType.EqualsLiteral("smart")) {
+  // do not listen to hidden list
+  nsString hidden;
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                          hidden);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if ((customType.IsEmpty() ||
+       customType.EqualsLiteral("simple") ||
+       customType.EqualsLiteral("smart")) &&
+      !hidden.EqualsLiteral("1")) {
     nsCOMPtr<sbIMediaList> list(do_QueryInterface(aItem, &rv));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -883,9 +890,6 @@ sbDeviceLibrary::SetSyncSettings(sbIDeviceLibrarySyncSettings * aSyncSettings)
 {
   NS_ENSURE_ARG_POINTER(aSyncSettings);
 
-  // Lock for both assignment and the reading the aSyncSettings object
-  nsAutoMonitor monitor(mMonitor);
-
   nsresult rv = SetSyncSettingsNoLock(aSyncSettings);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -908,6 +912,9 @@ sbDeviceLibrary::SetSyncSettingsNoLock(
   // never be a tearoff of this simple object.
   sbDeviceLibrarySyncSettings * syncSettings =
     static_cast<sbDeviceLibrarySyncSettings*>(aSyncSettings);
+
+  // Lock for both assignment and the reading the aSyncSettings object
+  nsAutoMonitor monitor(mMonitor);
 
   nsAutoLock lock(syncSettings->GetLock());
 
@@ -941,6 +948,7 @@ sbDeviceLibrary::SetSyncSettingsNoLock(
 
     // Release the lock before dispatching sync settings change event
     lock.unlock();
+    monitor.Exit();
 
     rv = copiedSyncSettings->Write(mDevice);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -977,14 +985,14 @@ sbDeviceLibrary::GetTempSyncSettings(
 NS_IMETHODIMP
 sbDeviceLibrary::ResetSyncSettings()
 {
-  nsAutoMonitor monitor(mMonitor);
-
-  // If temp settings were never retrieved, nothing to do.
-  if (!mTempSyncSettings) {
-    return NS_OK;
-  }
-
   {
+    nsAutoMonitor monitor(mMonitor);
+
+    // If temp settings were never retrieved, nothing to do.
+    if (!mTempSyncSettings) {
+      return NS_OK;
+    }
+
     nsAutoLock lockCurrentSyncSettings(mCurrentSyncSettings->GetLock());
     nsAutoLock lockTempSyncSettings(mTempSyncSettings->GetLock());
 
@@ -1008,8 +1016,6 @@ sbDeviceLibrary::ResetSyncSettings()
 NS_IMETHODIMP
 sbDeviceLibrary::ApplySyncSettings()
 {
-  nsAutoMonitor monitor(mMonitor);
-
   // If temp settings were never retrieved, nothing to do.
   if (!mTempSyncSettings) {
     return NS_OK;

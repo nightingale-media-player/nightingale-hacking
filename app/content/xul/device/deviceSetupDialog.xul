@@ -277,13 +277,17 @@
           this._device.properties.friendlyName = setupNameTextboxElem.value;
 
           // Set the sync preference.
-          var deviceLibrary = this._device.content.libraries
-                                  .queryElementAt(0, Ci.sbIDeviceLibrary);
-          var syncSettings = deviceLibrary.syncSettings;
-          syncSettings.syncMode = syncCheckboxElem.checked ?
-                         Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO :
-                         Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
-          deviceLibrary.syncSettings = syncSettings;
+          var deviceLibrary = this._device.defaultLibrary;
+          if (deviceLibrary) {
+            var syncMode = syncCheckboxElem.checked ?
+                             Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO :
+                             Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
+            var syncSettings = deviceLibrary.syncSettings;
+            syncSettings.syncMode = syncMode;
+            deviceLibrary.syncSettings = syncSettings;
+            if (syncMode == Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_AUTO)
+              deviceLibrary.sync();
+          }
         }
 
         return true;
@@ -394,6 +398,11 @@
        */
 
       _update: function deviceSetupDialog__update() {
+        if (this._device.currentStatus.currentState ==
+            Ci.sbIDevice.STATE_DISCONNECTED) {
+          onExit();
+        }
+
         // Only show volume selector if the device has multiple volumes.
         var content = this._device.content;
         var libraries = content.libraries;
@@ -481,6 +490,7 @@
         {
           case Ci.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_ADDED :
           case Ci.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_REMOVED :
+          case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED :
             this._update();
             break;
 

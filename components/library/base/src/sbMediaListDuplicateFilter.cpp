@@ -27,6 +27,7 @@
 #include "sbMediaListDuplicateFilter.h"
 
 // Mozilla includes
+#include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
 #include <nsStringAPI.h>
 
@@ -34,6 +35,7 @@
 #include <nsISimpleEnumerator.h>
 
 // Songbird includes
+#include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
 
 // Songbird interfaces
@@ -52,18 +54,13 @@ static char const * const DUPLICATE_PROPERTIES[] = {
 };
 
 sbMediaListDuplicateFilter::sbMediaListDuplicateFilter() :
+  mSBPropKeysLength(NS_ARRAY_LENGTH(DUPLICATE_PROPERTIES)),
   mSBPropKeys(NS_ARRAY_LENGTH(DUPLICATE_PROPERTIES)),
   mDuplicateItems(0),
   mTotalItems(0),
   mRemoveDuplicates(false)
 {
   mKeys.Init();
-  for (PRUint32 index = 0;
-       index < NS_ARRAY_LENGTH(DUPLICATE_PROPERTIES);
-       ++index) {
-    mSBPropKeys.AppendElement(
-                           NS_ConvertASCIItoUTF16(DUPLICATE_PROPERTIES[index]));
-  }
 }
 
 sbMediaListDuplicateFilter::~sbMediaListDuplicateFilter()
@@ -78,12 +75,31 @@ sbMediaListDuplicateFilter::Initialize(nsISimpleEnumerator * aSource,
   NS_ENSURE_ARG_POINTER(aSource);
   NS_ENSURE_ARG_POINTER(aDest);
 
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  
+  nsCOMPtr<sbIMutablePropertyArray> propArray = 
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Can't use strict array when using it to get properties.
+  rv = propArray->SetStrict(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 index = 0;
+       index < mSBPropKeysLength;
+       ++index) {
+    NS_ConvertASCIItoUTF16 prop(DUPLICATE_PROPERTIES[index]);
+    mSBPropKeys.AppendElement(prop);
+    propArray->AppendProperty(prop, EmptyString());
+  }
+
+  mSBPropertyArray = do_QueryInterface(propArray, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   mRemoveDuplicates = aRemoveDuplicates;
   mSource = aSource;
 
-  nsresult rv = aDest->EnumerateAllItems(
-                                        this,
-                                        sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+  rv = aDest->EnumerateAllItems(this, sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -181,13 +197,20 @@ sbMediaListDuplicateFilter::SaveItemKeys(sbIMediaItem * aItem)
 {
   nsresult rv;
   nsString key;
+  
+  rv = aItem->GetProperties(mSBPropertyArray, getter_AddRefs(mItemProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIProperty> property;
   for (PRUint32 index = 0;
-       index < NS_ARRAY_LENGTH(DUPLICATE_PROPERTIES);
+       index < mSBPropKeysLength;
        ++index) {
-    rv = aItem->GetProperty(mSBPropKeys[index], key);
-    NS_ENSURE_SUCCESS(rv, rv);
-    if (!key.IsEmpty()) {
-      NS_ENSURE_TRUE(mKeys.PutEntry(key), NS_ERROR_OUT_OF_MEMORY);
+    rv = mItemProperties->GetPropertyAt(index, getter_AddRefs(property));
+    if (NS_SUCCEEDED(rv)) {
+      rv = property->GetValue(key);
+      if (NS_SUCCEEDED(rv) && !key.IsEmpty()) {
+        NS_ENSURE_TRUE(mKeys.PutEntry(key), NS_ERROR_OUT_OF_MEMORY);
+      }
     }
   }
   return NS_OK;
@@ -200,14 +223,21 @@ sbMediaListDuplicateFilter::IsDuplicate(sbIMediaItem * aItem,
   aIsDuplicate = false;
   nsresult rv;
   nsString key;
+
+  rv = aItem->GetProperties(mSBPropertyArray, getter_AddRefs(mItemProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIProperty> property;
   for (PRUint32 index = 0;
-       index < NS_ARRAY_LENGTH(DUPLICATE_PROPERTIES);
+       index < mSBPropKeysLength;
        ++index) {
-    rv = aItem->GetProperty(mSBPropKeys[index], key);
-    NS_ENSURE_SUCCESS(rv, rv);
-    if (mKeys.GetEntry(key)) {
-      aIsDuplicate = true;
-      return NS_OK;
+    rv = mItemProperties->GetPropertyAt(index, getter_AddRefs(property));
+    if (NS_SUCCEEDED(rv)) {
+      property->GetValue(key);
+      if (mKeys.GetEntry(key)) {
+        aIsDuplicate = true;
+        return NS_OK;
+      }
     }
   }
   return NS_OK;

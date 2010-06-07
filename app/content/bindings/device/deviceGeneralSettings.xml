@@ -61,7 +61,9 @@
 
     <content>
 
-      <xul:groupbox sbid="device_general_settings_box" flex="1">
+      <xul:groupbox sbid="device_general_settings_box"
+                    flex="1"
+                    oncommand="_widgetSvc.dispatchSettingsChangeEvent();">
 
         <!-- Device general settings caption. -->
         <xul:caption label="&device.settings.general.label;"/>

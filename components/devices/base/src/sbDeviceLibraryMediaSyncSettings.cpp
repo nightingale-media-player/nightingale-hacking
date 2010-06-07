@@ -242,11 +242,11 @@ sbDeviceLibraryMediaSyncSettings::SetSelectedPlaylists(
     rv = aSelectedPlaylists->GetLength(&length);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<sbIMediaList> mediaList;
+    nsCOMPtr<nsISupports> supports;
     for (PRUint32 index = 0; index < length; ++index) {
-      mediaList = do_QueryElementAt(aSelectedPlaylists, index, &rv);
+      supports = do_QueryElementAt(aSelectedPlaylists, index, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
-      mPlaylistsSelection.Put(mediaList, PR_TRUE);
+      mPlaylistsSelection.Put(supports, PR_TRUE);
     }
   }
 
@@ -263,7 +263,7 @@ sbDeviceLibraryMediaSyncSettings::SetPlaylistSelected(sbIMediaList *aPlaylist,
 
   {
     nsAutoLock lock(mLock);
-    nsCOMPtr<nsISupports> supports = aPlaylist;
+    nsCOMPtr<nsISupports> supports = do_QueryInterface(aPlaylist);
     mPlaylistsSelection.Put(supports, aSelected);
   }
 
@@ -279,7 +279,7 @@ sbDeviceLibraryMediaSyncSettings::GetPlaylistSelected(sbIMediaList *aPlaylist,
   NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
   nsAutoLock lock(mLock);
 
-  nsCOMPtr<nsISupports> supports = aPlaylist;
+  nsCOMPtr<nsISupports> supports = do_QueryInterface(aPlaylist);
   PRBool exists = mPlaylistsSelection.Get(supports, aSelected);
   if (!exists) {
     *aSelected = PR_FALSE;

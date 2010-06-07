@@ -118,6 +118,12 @@ NS_IMETHODIMP sbMockDevice::GetId(nsID * *aId)
 NS_IMETHODIMP sbMockDevice::Connect()
 {
   NS_ENSURE_STATE(!mIsConnected);
+  nsresult rv;
+
+  // Invoke the super-class.
+  rv = sbBaseDevice::Connect();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   mIsConnected = PR_TRUE;
   return NS_OK;
 }
@@ -140,6 +146,9 @@ NS_IMETHODIMP sbMockDevice::Disconnect()
   if (volume)
     RemoveVolume(volume);
   
+  // Invoke the super-class.
+  sbBaseDevice::Disconnect();
+
   mIsConnected = PR_FALSE;
   return NS_OK;
 }

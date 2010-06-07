@@ -88,6 +88,11 @@ var videoWindowController = {
     return dataRemoteKey;
   },
   
+  get TRACK_TITLE_DR_KEY() {
+    const dataRemoteKey = "metadata.title";
+    return dataRemoteKey;
+  },
+  
   //////////////////////////////////////////////////////////////////////////////
   // sbIMediacoreEventListener
   //////////////////////////////////////////////////////////////////////////////
@@ -132,8 +137,13 @@ var videoWindowController = {
       this._resizeFromVideoBox(this._videoBox);
     }
     else if(aTopic == this.VIDEO_FULLSCREEN_DR_KEY &&
-            !this._ignoreResize)
+            !this._ignoreResize) {
       this._onFullScreen();
+    }
+    else if(aTopic == this.TRACK_TITLE_DR_KEY) {
+      // Set the window title to the current track name
+      window.title = aData;
+    }
   },
   
   //////////////////////////////////////////////////////////////////////////////
@@ -188,6 +198,11 @@ var videoWindowController = {
     this._videoFullscreenDataRemote.boolValue = false;
     this._videoFullscreenDataRemote.bindObserver(this);
     
+    // Watch the track name, which we'll use to set the window title:
+    this._titleDataRemote = SB_NewDataRemote(this.TRACK_TITLE_DR_KEY, null);
+    this._titleDataRemote.bindObserver(this, false);
+
+
     // We need to ignore the first resize.
     this._ignoreResize = true;
     

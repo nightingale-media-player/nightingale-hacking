@@ -59,9 +59,12 @@ sbDeviceSupportsItemHelper::OnJobProgress(sbIJobProgress *aJobProgress)
   NS_ENSURE_ARG_POINTER(aJobProgress);
   NS_ENSURE_STATE(mCallback);
 
+  PRBool supported = PR_FALSE;
+
   PRUint16 status;
   rv = aJobProgress->GetStatus(&status);
   NS_ENSURE_SUCCESS(rv, rv);
+
   switch (status) {
   case sbIJobProgress::STATUS_SUCCEEDED: {
     nsCOMPtr<sbIMediaFormat> mediaFormat;
@@ -73,21 +76,32 @@ sbDeviceSupportsItemHelper::OnJobProgress(sbIJobProgress *aJobProgress)
                                                 mDevice,
                                                 needsTranscoding);
 
-    PRBool supported = (NS_SUCCEEDED(rv) && !needsTranscoding);
+    supported = (NS_SUCCEEDED(rv) && !needsTranscoding);
     mCallback->OnSupportsMediaItem(mItem, supported); // ignore results
     break;
   }
   case sbIJobProgress::STATUS_FAILED:
     // failed to get the format for the item; assume not supported
-    mCallback->OnSupportsMediaItem(mItem, PR_FALSE); // ignore results
+    mCallback->OnSupportsMediaItem(mItem, supported); // ignore results
     break;
   default:
     // incomplete, keep going
     return NS_OK;
   }
 
-  // cleanup
+  // cache transcoding support by transcode type
+  if (mTranscodeType == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO) {
+    mDevice->mCanTranscodeAudio = 
+      (supported == PR_TRUE) ? 
+        sbBaseDevice::CAN_TRANSCODE_YES : sbBaseDevice::CAN_TRANSCODE_NO;
+  }
+  else if(mTranscodeType == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO) {
+    mDevice->mCanTranscodeVideo = 
+      (supported == PR_TRUE) ? 
+        sbBaseDevice::CAN_TRANSCODE_YES : sbBaseDevice::CAN_TRANSCODE_NO;
+  }
 
+  // cleanup
   rv = aJobProgress->RemoveJobProgressListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
 

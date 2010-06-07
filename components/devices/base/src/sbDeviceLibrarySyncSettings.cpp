@@ -55,6 +55,32 @@ extern PLDHashOperator ArrayBuilder(nsISupports * aKey,
                                     PRBool aData,
                                     void* userArg);
 
+PRUint32 const LEGACY_MGMT_TYPE_MANUAL = 0x1;
+
+/**
+ * Used to convert old legacy management values to the newer values
+ */
+static void
+MigrateLegacyMgmtValues(PRUint32 & aValue)
+{
+  // Legacy values from the old sync settings system
+  PRUint32 const LEGACY_SYNC_ALL = 0x2;
+  PRUint32 const LEGACY_MANUAL_SYNC_ALL = 0x3;
+  PRUint32 const LEGACY_SYNC_PLAYLISTS = 0x4;
+  PRUint32 const LEGACY_MANUAL_SYNC_PLAYLISTS = 0x5;
+
+  switch (aValue) {
+    case LEGACY_SYNC_ALL:
+    case LEGACY_MANUAL_SYNC_ALL:
+      aValue = sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL;
+      break;
+    case LEGACY_SYNC_PLAYLISTS:
+    case LEGACY_MANUAL_SYNC_PLAYLISTS:
+      aValue = sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_PLAYLISTS;
+      break;
+  }
+}
+
 NS_IMPL_ISUPPORTS1(sbDeviceLibrarySyncSettings, sbIDeviceLibrarySyncSettings);
 
 sbDeviceLibrarySyncSettings * sbDeviceLibrarySyncSettings::New(
@@ -438,15 +464,17 @@ sbDeviceLibrarySyncSettings::GetMgmtTypePref(sbIDevice * aDevice,
     aMgmtTypes = sbIDeviceLibrarySyncSettings::SYNC_MODE_MANUAL;
   } else {
     // has a value
-    PRInt32 mgmtType;
-    rv = var->GetAsInt32(&mgmtType);
+    PRUint32 mgmtType;
+    rv = var->GetAsUint32(&mgmtType);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    MigrateLegacyMgmtValues(mgmtType);
+
     // Double check that it is a valid number
-    NS_ENSURE_ARG_RANGE(
-                   mgmtType,
-                   sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE,
-                   sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_TYPE_MAX_VALUE);
+    NS_ENSURE_ARG(
+            mgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE ||
+            mgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL ||
+            mgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_PLAYLISTS);
 
     // Max the manual mode
     aMgmtTypes = mgmtType;
@@ -468,14 +496,31 @@ sbDeviceLibrarySyncSettings::ReadLegacySyncMode(sbIDevice * aDevice,
     if (i == sbIDeviceLibrary::MEDIATYPE_IMAGE)
       continue;
 
-    PRUint32 mgmtType;
-    rv = GetMgmtTypePref(aDevice, i, mgmtType);
+    nsString prefKey;
+    rv = GetMgmtTypePrefKey(i, prefKey);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Manual mode.
-    if (mgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE) {
+    nsCOMPtr<nsIVariant> var;
+    rv = aDevice->GetPreference(prefKey, getter_AddRefs(var));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // check if a value exists
+    PRUint16 dataType;
+    rv = var->GetDataType(&dataType);
+    // If there is no value, set to manual
+    if (dataType == nsIDataType::VTYPE_VOID ||
+        dataType == nsIDataType::VTYPE_EMPTY) {
       syncMode = sbIDeviceLibrarySyncSettings::SYNC_MODE_MANUAL;
       break;
+    }
+    else {
+      PRUint32 value;
+      var->GetAsUint32(&value);
+      // If the manual flag is set, then set to manual and exit
+      if (value & LEGACY_MGMT_TYPE_MANUAL) {
+        syncMode = sbIDeviceLibrarySyncSettings::SYNC_MODE_MANUAL;
+        break;
+      }
     }
   }
   aSyncMode = syncMode;
@@ -569,6 +614,8 @@ sbDeviceLibrarySyncSettings::ReadSyncMode(sbIDevice * aDevice,
   rv = ReadPRUint32(aDevice, prefKey, mode, NOT_FOUND);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  MigrateLegacyMgmtValues(mode);
+
   if (mode == NOT_FOUND)
   {
     rv = ReadLegacySyncMode(aDevice, aSyncMode);
@@ -608,10 +655,14 @@ sbDeviceLibrarySyncSettings::ReadMediaSyncSettings(
   rv = GetMgmtTypePrefKey(aMediaType, prefKey);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = ReadPRUint32(aDevice,
-                    prefKey,
-                    settings->mSyncMgmtType,
-                    sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE);
+  // enable audio syncing by default.
+  rv = ReadPRUint32(
+         aDevice,
+         prefKey,
+         settings->mSyncMgmtType,
+         aMediaType == sbIDeviceLibrary::MEDIATYPE_AUDIO
+           ? (PRUint32)sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL
+           : (PRUint32)sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_NONE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIArray> mediaLists;

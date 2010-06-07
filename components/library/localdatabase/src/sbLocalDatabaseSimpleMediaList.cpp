@@ -465,6 +465,9 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
     }
   }
 
+  // Reset list content type to trigger recalculation.
+  mFriendList->SetCachedListContentType(sbIMediaList::CONTENTTYPE_NONE);
+
   return NS_OK;
 }
 
@@ -593,6 +596,10 @@ sbSimpleMediaListRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMe
                                                    mNotificationIndexes[i]);
     }
   }
+
+  // Reset list content type to trigger recalculation.
+  mFriendList->SetCachedListContentType(sbIMediaList::CONTENTTYPE_NONE);
+
   return NS_OK;
 }
 
@@ -1149,6 +1156,9 @@ sbLocalDatabaseSimpleMediaList::RemoveByIndex(PRUint32 aIndex)
 
   NotifyListenersAfterItemRemoved(mediaList, item, aIndex);
 
+  // Reset list content type to trigger recalculation.
+  SetCachedListContentType(sbIMediaList::CONTENTTYPE_NONE);
+
   return NS_OK;
 }
 
@@ -1217,6 +1227,9 @@ sbLocalDatabaseSimpleMediaList::Clear()
 
   sbLocalDatabaseMediaListListener::NotifyListenersListCleared(mediaList,
                                                                PR_FALSE);
+
+  // Reset list content type to trigger recalculation.
+  SetCachedListContentType(sbIMediaList::CONTENTTYPE_NONE);
 
   return NS_OK;
 }
@@ -1371,6 +1384,9 @@ sbLocalDatabaseSimpleMediaList::Invalidate()
 {
   nsresult rv = GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Reset list content type to trigger recalculation.
+  SetCachedListContentType(sbIMediaList::CONTENTTYPE_NONE);
 
   nsCOMPtr<sbIMediaList> list =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, this), &rv);
@@ -1688,6 +1704,9 @@ sbLocalDatabaseSimpleMediaList::DeleteItemByMediaItemId(PRUint32 aMediaItemId)
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
+
+  // Reset list content type to trigger recalculation.
+  SetCachedListContentType(sbIMediaList::CONTENTTYPE_NONE);
 
   return NS_OK;
 }

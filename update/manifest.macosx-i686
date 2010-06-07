@@ -351,7 +351,6 @@
 ./jsmodules/ArrayConverter.jsm
 ./jsmodules/DOMUtils.jsm
 ./jsmodules/DebugUtils.jsm
-./jsmodules/DeviceHelper.jsm
 ./jsmodules/Distribution.jsm
 ./jsmodules/DropHelper.jsm
 ./jsmodules/FolderUtils.jsm

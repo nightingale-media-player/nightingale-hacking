@@ -170,7 +170,7 @@ sbWindowChromeService::WndProc(HWND hWnd,
       RECT rectMon = {0};
       int xSize = ::GetSystemMetrics(SM_CXSIZEFRAME);
       int ySize = ::GetSystemMetrics(SM_CYSIZEFRAME);
-
+      // Bug 21344 - HMONITOR's are not handles
       HMONITOR hMon = ::MonitorFromRect(rectWindow, MONITOR_DEFAULTTONULL);
       if (hMon) {
         MONITORINFO monInfo = {0};
@@ -182,7 +182,6 @@ sbWindowChromeService::WndProc(HWND hWnd,
         else {
           ::CopyRect(&rectMon, rectWindow);
         }
-        ::CloseHandle(hMon);
       }
       else {
         // no monitor!?
@@ -218,6 +217,7 @@ sbWindowChromeService::WndProc(HWND hWnd,
       APPBARDATA appbarData = {sizeof(APPBARDATA)};
       appbarData.hWnd = hWnd;
       HWND wnd;
+      // Bug 21344 - HMONITOR's are not handles
       HMONITOR selfMon = ::MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST),
                targetMon;
 
@@ -281,15 +281,15 @@ sbWindowChromeService::WndProc(HWND hWnd,
       if (!success) {
         ::SetRect(&rectWindow, -1, -1, -1, -1);
       }
+      // Bug 21344 - HMONITOR's are not handles
       HMONITOR hMon = ::MonitorFromWindow(hWnd, MONITOR_DEFAULTTONULL);
       if (hMon) {
         MONITORINFO monInfo = {0};
         monInfo.cbSize = sizeof(monInfo);
         success = ::GetMonitorInfo(hMon, &monInfo);
         if (success) {
-          ::CopyRect(&rectMon, &monInfo.rcWork);
+          ::CopyRect(&rectMon, &monInfo.rcMonitor);
         }
-        ::CloseHandle(hMon);
       }
       if (!::EqualRect(&rectMon, &rectWindow)) {
         return DefSubclassProc(hWnd, uMsg, wParam, lParam);

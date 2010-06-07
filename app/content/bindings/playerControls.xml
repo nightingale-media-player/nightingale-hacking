@@ -1987,6 +1987,7 @@
     <implementation implements="nsIDOMEventListener,
                                 sbIMediaListViewListener,
                                 sbIMediaListListener,
+                                sbIDeviceEventListener,
                                 nsISupportsWeakReference">
       <constructor>
         this.addListeners();
@@ -2027,6 +2028,11 @@
             if (this.previousMediaListView) {
               this.previousMediaListView.removeListener(this);
               this.previousMediaListView.mediaList.removeListener(this);
+            }
+
+            if (this.deviceEventTarget) {
+              this.deviceEventTarget.removeEventListener(this);
+              this.deviceEventTarget = null;
             }
           ]]>
         </body>
@@ -2089,6 +2095,10 @@
       </method>
 
       <field name="previousMediaListView">null</field>
+      <field name="previousDevice">null</field>
+      <field name="deviceManager">Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                                    .getService(Ci.sbIDeviceManager2)</field>
+      <field name="deviceEventTarget">null</field>
 
       <!-- nsIDOMEventListener -->
       <method name="handleEvent">
@@ -2108,11 +2118,28 @@
               if (mediaListView) {
                 const sbIML = Components.interfaces.sbIMediaList;
                 mediaListView.addListener(this, true);
-                mediaListView.mediaList.addListener(this, true,
-                                                    sbIML.LISTENER_FLAGS_ITEMADDED |
-                                                    sbIML.LISTENER_FLAGS_AFTERITEMREMOVED |
-                                                    sbIML.LISTENER_FLAGS_LISTCLEARED |
-                                                    sbIML.LISTENER_FLAGS_BATCHEND);
+                var mediaList = mediaListView.mediaList;
+                mediaList.addListener(this, true,
+                                      sbIML.LISTENER_FLAGS_ITEMADDED |
+                                      sbIML.LISTENER_FLAGS_AFTERITEMREMOVED |
+                                      sbIML.LISTENER_FLAGS_LISTCLEARED |
+                                      sbIML.LISTENER_FLAGS_BATCHEND);
+
+                var device = this.deviceManager.getDeviceForItem(mediaList);
+                if (this.previousDevice != device) {
+                  if (this.deviceEventTarget) {
+                    this.deviceEventTarget.removeEventListener(this);
+                    this.deviceEventTarget = null;
+                  }
+
+                  if (device) {
+                    this.deviceEventTarget =
+                      device.QueryInterface(Ci.sbIDeviceEventTarget);
+                    this.deviceEventTarget.addEventListener(this);
+
+                  }
+                }
+                this.previousDevice = device;
               }
               this.previousMediaListView = mediaListView;
 
@@ -2150,6 +2177,21 @@
       <method name="onSortChanged">
         <parameter name="changedView"/>
         <body/>
+      </method>
+
+      <!-- sbIDeviceEventListener -->
+      <method name="onDeviceEvent">
+        <parameter name="aEvent"/>
+        <body>
+          <![CDATA[
+            switch (aEvent.type) {
+              case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_END:
+              case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSCODE_END:
+               this.updateDisplayAsync();
+               break;
+            }
+          ]]>
+        </body>
       </method>
 
       <!-- sbIMediaListListener -->

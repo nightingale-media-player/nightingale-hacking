@@ -39,16 +39,15 @@ include $(DEPTH)/build/autodefs.mk
 
 IS_EXTENSION = 1
 
-SONGBIRD_PP_RESOURCES = $(srcdir)/content/browse.js.in \
-                        $(srcdir)/content/main.js.in \
+SONGBIRD_PP_RESOURCES = $(srcdir)/content/main.js.in \
                         $(NULL)
+
 SONGBIRD_PP_DIR = $(EXTENSION_TMP_DIR)
 
 # make-jars wants relative paths in its jar.mn's...
 SONGBIRD_PP_RELATIVE_PATH = $(subst $(topsrcdir),$(DEPTH),$(SONGBIRD_PP_DIR))
 
-PPDEFINES = -DSONGKICK_PARTNERCODE="$(SONGKICK_PARTNERCODE)" \
-            -DSONGBIRD_PP_RELATIVE_PATH="$(SONGBIRD_PP_RELATIVE_PATH)" \
+PPDEFINES = -DSONGBIRD_PP_RELATIVE_PATH="$(SONGBIRD_PP_RELATIVE_PATH)" \
             -DEXTENSION_UUID="$(EXTENSION_UUID)" \
             $(NULL)
 

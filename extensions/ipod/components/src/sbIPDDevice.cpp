@@ -179,6 +179,10 @@ sbIPDDevice::ConnectInternal()
       return NS_OK;
   }
 
+  // Invoke the super-class.
+  rv = sbBaseDevice::Connect();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Get the device properties.
   nsCOMPtr<nsIPropertyBag2> properties = do_QueryInterface(mCreationProperties,
                                                            &rv);
@@ -276,8 +280,11 @@ sbIPDDevice::Disconnect()
   // Disconnect the iPod database.
   DBDisconnect();
 
-  // Disconnect the iPod request services. */
+  // Disconnect the iPod request services.
   ReqDisconnect();
+
+  // Invoke the super-class.
+  sbBaseDevice::Disconnect();
 
   return NS_OK;
 }

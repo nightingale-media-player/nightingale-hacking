@@ -701,13 +701,14 @@ case "$SB_PLATFORM" in
     _CC_SUPPORTED_MAJOR_VERSION=14
 
     changequote(,)
-    _MSVC_VER_FILTER='s|.* \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*|\1|p'
+    _MSVC_VER_FILTER='s|.* \([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*|\1|p'
     changequote([,])
 
     # Determine compiler version
     CC_VERSION=`"${CC}" -v 2>&1 | sed -ne "$_MSVC_VER_FILTER"`
     _CC_MAJOR_VERSION=`echo ${CC_VERSION} | $AWK -F\. '{ print $1 }'`
     _CC_MINOR_VERSION=`echo ${CC_VERSION} | $AWK -F\. '{ print $2 }'`
+    _CC_BUILD_VERSION=`echo ${CC_VERSION} | $AWK -F\. '{ print $4 }'`
     _MSC_VER=${_CC_MAJOR_VERSION}${_CC_MINOR_VERSION}
 
     CXX_VERSION=`"${CXX}" -v 2>&1 | sed -ne "$_MSVC_VER_FILTER"`
@@ -724,6 +725,16 @@ case "$SB_PLATFORM" in
         14)
             _CC_SUITE=8
             SB_ARCH=$SB_ARCH-msvc8
+            # We need at least SP1 (bug 21339)
+            if test "$_CC_BUILD_VERSION" -lt 762 ; then
+                # SP0 is 14.00.50727.42
+                # SP1 is 14.00.50727.762
+                if test -z "$SB_ENABLE_COMPILER_ENVIRONMENT_CHECKS"; then
+                    AC_MSG_WARN([Visual Studio 8 (2005) without Service Pack 1 detected; your build may not complete.])
+                else
+                    AC_MSG_ERROR([Visual Studio 8 (2005) requires Service Pack 1 to build Songbird. Please install KB926601.])
+                fi
+            fi
             ;;
         15)
             _CC_SUITE=9

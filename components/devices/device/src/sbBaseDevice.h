@@ -224,6 +224,8 @@ public:
 
 public:
   /* selected methods from sbIDevice */
+  NS_IMETHOD Connect();
+  NS_IMETHOD Disconnect();
   NS_IMETHOD GetPreference(const nsAString & aPrefName, nsIVariant **_retval);
   NS_IMETHOD SetPreference(const nsAString & aPrefName, nsIVariant *aPrefValue);
   NS_IMETHOD GetIsDirectTranscoding(PRBool *aIsDirect);
@@ -724,6 +726,14 @@ protected:
   sbDeviceTranscoding * mDeviceTranscoding;
   sbDeviceImages *mDeviceImages;
 
+  enum {
+    CAN_TRANSCODE_UNKNOWN = 0,
+    CAN_TRANSCODE_YES = 1,
+    CAN_TRANSCODE_NO = 2
+  };
+  PRUint32 mCanTranscodeAudio;
+  PRUint32 mCanTranscodeVideo;
+
   bool mVideoInserted; // Flag on whether video is inserted
   PRUint32 mSyncType; // syncing type to pass to the UI
   // Iterator points to the first video request
@@ -731,6 +741,7 @@ protected:
 
   bool mEnsureSpaceChecked;
 
+  //
   //   mConnected               True if device is connected.
   //   mConnectLock             Connect lock.
   //   mReqAddedEvent           Request added event object.
@@ -739,6 +750,10 @@ protected:
   //                            various events.
   //   mReqStopProcessing       Non-zero if request processing should stop.
   //   mIsHandlingRequests      True if requests are being handled.
+  //   mDeferredSetupDeviceTimer Timer used to defer presentation of the device
+  //                             setup dialog.
+  //
+
   PRRWLock* mConnectLock;
   PRBool mConnected;
   nsCOMPtr<nsIRunnable> mReqAddedEvent;
@@ -746,6 +761,7 @@ protected:
   PRMonitor* mReqWaitMonitor;
   PRInt32 mReqStopProcessing;
   PRInt32 mIsHandlingRequests;
+  nsCOMPtr<nsITimer> mDeferredSetupDeviceTimer;
 
   // cache data for media management preferences
   struct OrganizeData {
@@ -768,6 +784,12 @@ protected:
    * Percent available space for syncing when building a sync playlist.
    */
   static const PRUint32 SYNC_PLAYLIST_AVAILABLE_PCT = 95;
+
+  /**
+   * Amount of time in milliseconds to delay presentation of the device setup
+   * dialog.
+   */
+  static const PRUint32 DEFER_DEVICE_SETUP_DELAY = 2000;
 
   /**
    * Make sure that there is enough free space for the batch. If there is not
@@ -1486,8 +1508,17 @@ protected:
   /**
    * Present the user with a dialog for the initial device setup.
    */
-
   nsresult SetupDevice();
+
+  /**
+   * Callback functions for deferring the presentation of the initial device
+   * setup dialog.
+   */
+  static void DeferredSetupDevice(nsITimer* aTimer,
+                                  void*     aClosure);
+
+  nsresult DeferredSetupDevice();
+
   /**
    * Calls the device info registrars to register the device info.
    */

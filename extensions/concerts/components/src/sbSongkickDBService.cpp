@@ -81,18 +81,24 @@ sbSongkickResultEnumerator::~sbSongkickResultEnumerator()
 {
 }
 
-nsString c2h( char dec )
+nsString c2h( PRUnichar dec )
 {
-    char dig1 = (dec&0xF0)>>4;
-    char dig2 = (dec&0x0F);
-    if ( 0<= dig1 && dig1<= 9) dig1+=48;    //0,48inascii
-    if (10<= dig1 && dig1<=15) dig1+=97-10; //a,97inascii
-    if ( 0<= dig2 && dig2<= 9) dig2+=48;
-    if (10<= dig2 && dig2<=15) dig2+=97-10;
-
+    unsigned char dig1 = (dec&0xF0)>>4;
+    unsigned char dig2 = (dec&0x0F);
+    
     nsString r;
-    r.Append(dig1);
-    r.Append(dig2);
+    if (dig1 < 10) {
+        r.Append(PRUnichar('0' + dig1));
+    }
+    else {
+        r.Append(PRUnichar('a' + dig1 - 10));
+    }
+    if (dig2 < 10) {
+        r.Append(PRUnichar('0' + dig2));
+    }
+    else {
+        r.Append(PRUnichar('a' + dig2 - 10));
+    }
     return r;
 }
 

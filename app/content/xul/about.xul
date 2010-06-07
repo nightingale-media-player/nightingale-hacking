@@ -87,10 +87,18 @@
 		   .getMostRecentWindow("Songbird:Main");
       if (!mainWin || !mainWin.gBrowser)
         document.documentElement.getButton("extra1").disabled = true;
+
+      // Handle passing off URI links to an external protocol handler for the eula.
+      document.getElementById("about_browser")
+              .addEventListener("click", onContentClick, false);
     }
     function doOK() {
       if ( typeof( window.arguments[0] ) != 'undefined' )
         window.arguments[0].retval = "ok";
+
+      document.getElementById("about_browser")
+              .removeEventListener("click", onContentClick, false);
+
       return true;
     }
     function doCredits() {
@@ -101,6 +109,25 @@
       browser.loadOneTab("about:credits");
       window.close();
       return true;
+    }
+    function onContentClick(aEvent) {
+      try {
+        // If the event's target is a URL, pass that off to the external
+        // protocol handler service since our web browser isn't available
+        // during the eula stage$.
+        var targetURI =
+          Components.classes["@mozilla.org/network/io-service;1"]
+                    .getService(Components.interfaces.nsIIOService)
+                    .newURI(aEvent.target, null, null);
+
+        var extLoader =
+          Components.classes["@mozilla.org/uriloader/external-protocol-service;1"]
+                    .getService(Components.interfaces.nsIExternalProtocolService);
+        extLoader.loadURI(targetURI, null);
+        aEvent.preventDefault();
+      }
+      catch (e) {
+      }
     }
   ]]>
   </script>

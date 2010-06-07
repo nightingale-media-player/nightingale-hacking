@@ -42,6 +42,7 @@ const URN_PREFIX_DEVICE = "urn:device:";
 const DEVICE_NODE_WEIGHT = -2;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/DOMUtils.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/DebugUtils.jsm");
@@ -112,8 +113,6 @@ function sbDeviceServicePane_servicePaneInit(sps) {
   this._libraryServicePane = Cc["@songbirdnest.com/servicepane/library;1"]
                                .getService(Ci.sbILibraryServicePaneService);
 
-  sps.root.addMutationListener(this);
-
   // load the device context menu document
   this._deviceContextMenuDoc =
         DOMUtils.loadDocument
@@ -129,6 +128,9 @@ function sbDeviceServicePane_shutdown() {
   // release object references
   this._servicePane.root.removeMutationListener(this);
   this._servicePane = null;
+  if (this._deviceGroupNode)
+    this._deviceGroupNode.removeMutationListener(this);
+  this._deviceGroupNode = null;
   this._libraryServicePane = null;
   this._deviceContextMenuDoc = null;
   this._deviceMgr = null;
@@ -298,9 +300,9 @@ function sbDeviceServicePane_createLibraryNodeForDevice(aDevice, aLibrary) {
   this.log("Creating library nodes for device " + aDevice.id);
   var deviceNode = this.getNodeForDevice(aDevice);
 
-  // Create the library nodes. Note that our mutation listener will immediately
-  // move these nodes to the device node.
+  // Create the library nodes and move them underneath the device node
   this._libraryServicePane.createNodeForLibrary(aLibrary);
+  this._moveLibraryNodes(aLibrary);
 
   return this._libraryServicePane.getNodeForLibraryResource(aLibrary);
 }
@@ -372,60 +374,20 @@ _deviceNodeEventListener.prototype = {
 sbDeviceServicePane.prototype.attrModified =
 function sbDeviceServicePane_attrModified(aNode, aAttrName, aNamespace,
                                           aOldVal, aNewVal) {
-  if (aAttrName == "hidden" && aOldVal == "true" && aNewVal == "false") {
-    var resource = this._libraryServicePane.getLibraryResourceForNode(aNode);
-    if (!resource) {
-      return;
-    }
-    if (!(resource instanceof Ci.sbIMediaList)) {
-      // not a media list, we don't care
-      return;
-    }
-    var device = this._deviceMgr.getDeviceForItem(resource);
-    if (!device) {
-      // not a device playlist
-      return;
-    }
-
-    // Only move nodes that the device supports
-    var functions = device.capabilities.getSupportedFunctionTypes({});
-    const CAPS_MAP = {
-        "audio": Ci.sbIDeviceCapabilities.FUNCTION_AUDIO_PLAYBACK,
-        "video": Ci.sbIDeviceCapabilities.FUNCTION_VIDEO_PLAYBACK
-      };
-
-    let props = aNode.className.split(/\s/);
-    props = props.filter(function(val) val in CAPS_MAP);
-    // there should only be one anyway...
-    // assert(props.length < 2);
-    if (functions.indexOf(CAPS_MAP[props[0]]) < 0) {
-      this.log("Not moving library node " + aNode.id + " to device node, capability not supported");
-      return;
-    }
-
-    // Set up the device library node info.
-    aNode.setAttributeNS(DEVICESP_NS, "device-id", device.id);
-    aNode.setAttributeNS(DEVICESP_NS, "deviceNodeType", "library");
-
-    var deviceNode = this.getNodeForDevice(device);
-    if (deviceNode && aNode.parentNode != deviceNode) {
-      deviceNode.insertBefore(aNode, deviceNode.firstChild);
-    }
-  }
-
   // Ensure that the parent device's node reflects any changes.
   this._updateParentDeviceNode();
 };
 
 sbDeviceServicePane.prototype.nodeInserted =
 function sbDeviceServicePane_nodeInserted(aNode, aParent, aInsertBefore) {
-  this.attrModified(aNode, "hidden", null, "true", "false");
+  // Ensure that the parent device's node reflects any changes.
+  this._updateParentDeviceNode();
 };
 
 sbDeviceServicePane.prototype.nodeRemoved =
 function sbDeviceServicePane_nodeRemoved(aNode, aParent) {
-  this.attrModified(aNode, "hidden", null, "false", "true");
-  //this._updateParentDeviceNode();
+  // Ensure that the parent device's node reflects any changes.
+  this._updateParentDeviceNode();
 };
 
 /////////////////////
@@ -488,6 +450,8 @@ function sbDeviceServicePane__ensureDevicesGroupExists() {
     fnode.editable = false;
     fnode.setAttributeNS(SP, 'Weight', -2);
     this._servicePane.root.appendChild(fnode);
+    fnode.addMutationListener(this);
+    this._deviceGroupNode = fnode;
     this.log("\tDevices group created");
   }
 
@@ -530,6 +494,107 @@ function sbDeviceServicePane__deviceURN2(aDevice) {
   
   
   return URN_PREFIX_DEVICE + id;
+}
+
+
+/**
+ * Move all library nodes for the library specified by aLibrary to the device
+ * node.
+ *
+ * \param aLibrary              Library for which to move nodes.
+ */
+sbDeviceServicePane.prototype._moveLibraryNodes =
+function sbDeviceServicePane__moveLibraryNodes(aLibrary) {
+  var nodeList = this._libraryServicePane.getNodesForLibraryResource(aLibrary);
+  nodeList = ArrayConverter.JSArray(nodeList);
+  for each (var node in nodeList) {
+    node.QueryInterface(Ci.sbIServicePaneNode);
+    this._moveLibraryResourceNode(node);
+  }
+}
+
+
+/**
+ * Get the index out of the type array based on the node class name.
+ *
+ * \param aNode              Library resource node.
+ */
+sbDeviceServicePane.prototype._getNodeIndexFromClassName =
+function sbDeviceServicePane__getNodeIndexFromClassName(aNode) {
+  const K_TYPES = ["audio", "video", "podcast"];
+  var types = aNode.className.split(/\s/);
+  var index = -1;
+  for (let i = 0; i < types.length; ++i) {
+    if ((index = K_TYPES.indexOf(types[i])) > -1)
+      break;
+  }
+
+  return index;
+}
+
+
+/**
+ * Move the library resource node specified by aNode to the device node.  Do
+ * nothing if node is not a device library resource node.
+ *
+ * \param aNode                 Library resource node to move.
+ */
+sbDeviceServicePane.prototype._moveLibraryResourceNode =
+function sbDeviceServicePane__moveLibraryResourceNode(aNode) {
+  var resource = this._libraryServicePane.getLibraryResourceForNode(aNode);
+  if (!resource) {
+    return;
+  }
+  if (!(resource instanceof Ci.sbIMediaList)) {
+    // not a media list, we don't care
+    return;
+  }
+  var device = this._deviceMgr.getDeviceForItem(resource);
+  if (!device) {
+    // not a device playlist
+    return;
+  }
+
+  // Only move nodes that the device supports
+  var functions = device.capabilities.getSupportedFunctionTypes({});
+  const CAPS_MAP = {
+    "audio": Ci.sbIDeviceCapabilities.FUNCTION_AUDIO_PLAYBACK,
+    "video": Ci.sbIDeviceCapabilities.FUNCTION_VIDEO_PLAYBACK
+  };
+
+  var props = aNode.className.split(/\s/);
+  props = props.filter(function(val) val in CAPS_MAP);
+  // there should only be one anyway...
+  // assert(props.length < 2);
+  if (functions.indexOf(CAPS_MAP[props[0]]) < 0) {
+    this.log("Not moving library node " + aNode.id +
+             " to device node, capability not supported");
+    return;
+  }
+
+  // Set up the device library node info.
+  aNode.setAttributeNS(DEVICESP_NS, "device-id", device.id);
+  aNode.setAttributeNS(DEVICESP_NS, "deviceNodeType", "library");
+
+  var deviceNode = this.getNodeForDevice(device);
+  if (deviceNode && aNode.parentNode != deviceNode) {
+    var index1 = this._getNodeIndexFromClassName(aNode);
+    if (index1 == -1) {
+      dump("_moveLibraryResourceNode: Not in the node array??!!\n");
+      deviceNode.appendChild(aNode);
+      return;
+    }
+
+    var child = deviceNode.firstChild;
+    while (child) {
+      var index2 = this._getNodeIndexFromClassName(child);
+      if (index2 == -1 || index1 < index2)
+        break;
+
+      child = child.nextSibling;
+    }
+    deviceNode.insertBefore(aNode, child);
+  }
 }
 
 ///////////

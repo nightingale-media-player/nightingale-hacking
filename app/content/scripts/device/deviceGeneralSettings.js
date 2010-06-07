@@ -233,13 +233,7 @@ deviceGeneralSettingsSvc.prototype = {
       var deviceAutoFirmwarePref = this._device.getPreference("firmware.update.enabled");
       
       var autoFirmwareCheckEnabled = 
-        (deviceAutoFirmwarePref == null) ? true : deviceAutoFirmwarePref;
-
-      // Also set the device pref if it was not already present.        
-      if(deviceAutoFirmwarePref == null) {
-        this._device.setPreference("firmware.update.enabled",
-                                   autoFirmwareCheckEnabled);        
-      }
+        (deviceAutoFirmwarePref == null) ? false : deviceAutoFirmwarePref;
 
       // Set the UI setting.
       var autoFirmwareCheckCheckbox =
@@ -287,6 +281,16 @@ deviceGeneralSettingsSvc.prototype = {
     }
   },
 
+  /**
+   * \brief Notifies listener about a settings change actions.
+   */
+
+  dispatchSettingsChangeEvent:
+    function deviceGeneralSettingsSvc_dispatchSettingsChangeEvent() {
+    let event = document.createEvent("UIEvents");
+    event.initUIEvent("settings-changed", false, false, window, null);
+    document.dispatchEvent(event);
+  },
 
   /**
    * \brief Return the XUL element with the ID specified by aElementID.  Use the

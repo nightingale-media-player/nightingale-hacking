@@ -89,8 +89,6 @@ var DeviceSyncWidget = {
    */
 
   initialize: function DeviceSyncWidget__initialize(aWidget) {
-    Cu.import("resource://app/jsmodules/DeviceHelper.jsm", this);
-
     // Get the sync widget.
     this._widget = aWidget;
 

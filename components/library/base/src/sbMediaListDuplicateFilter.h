@@ -37,6 +37,7 @@
 // Songbird includes
 #include <sbIMediaListDuplicateFilter.h>
 #include <sbIMediaListListener.h>
+#include <sbIPropertyArray.h>
 
 // forward declarations
 class sbIMediaItem;
@@ -76,8 +77,14 @@ private:
   // Contains a combination origin ID and URL's
   nsTHashtable<nsStringHashKey> mKeys;
 
+  // Prop Keys Length to avoid recalculating the length of the array.
+  PRUint32 mSBPropKeysLength;
   // List of properties to use in duplicate identification
   nsTArray<nsString> mSBPropKeys;
+  // List of properties to use when calling GetProperties
+  nsCOMPtr<sbIPropertyArray> mSBPropertyArray;
+  // List of properties for the current item we're processing
+  nsCOMPtr<sbIPropertyArray> mItemProperties;
 
   // The enumerate for the source
   nsCOMPtr<nsISimpleEnumerator> mSource;

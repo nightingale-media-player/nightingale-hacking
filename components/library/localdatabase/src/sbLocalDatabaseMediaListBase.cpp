@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #include "sbLocalDatabaseMediaListBase.h"
 
@@ -78,7 +76,8 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbLocalDatabaseMediaListBase,
 sbLocalDatabaseMediaListBase::sbLocalDatabaseMediaListBase()
 : mFullArrayMonitor(nsnull),
   mLockedEnumerationActive(PR_FALSE),
-  mPreviousListener(PR_FALSE)
+  mPreviousListener(PR_FALSE),
+  mListContentType(sbIMediaList::CONTENTTYPE_NONE)
 {
 }
 
@@ -566,6 +565,14 @@ sbLocalDatabaseMediaListBase::GetItemByIndex(PRUint32 aIndex,
 NS_IMETHODIMP
 sbLocalDatabaseMediaListBase::GetListContentType(PRUint16* aContentType)
 {
+  NS_ENSURE_ARG_POINTER(aContentType);
+
+  // Cached list content type is available. No need to go further.
+  if (mListContentType > sbIMediaList::CONTENTTYPE_NONE) {
+    *aContentType = mListContentType;
+    return NS_OK;
+  }
+
   // Set the default value.
   *aContentType = sbIMediaList::CONTENTTYPE_NONE;
 
@@ -590,6 +597,7 @@ sbLocalDatabaseMediaListBase::GetListContentType(PRUint16* aContentType)
   // Empty list == audio list.
   if (!length) {
     *aContentType = sbIMediaList::CONTENTTYPE_AUDIO;
+    mListContentType = sbIMediaList::CONTENTTYPE_AUDIO;
     return NS_OK;
   }
 
@@ -612,6 +620,8 @@ sbLocalDatabaseMediaListBase::GetListContentType(PRUint16* aContentType)
   if (videoLength > 0) {
     *aContentType |= sbIMediaList::CONTENTTYPE_VIDEO;
   }
+
+  mListContentType = *aContentType;
 
   return NS_OK;
 }

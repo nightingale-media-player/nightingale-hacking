@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -22,7 +22,7 @@
  *=END SONGBIRD GPL
  */
 
-/** 
+/**
 * \file  deviceMediaManagement.js
 * \brief Javascript source for the device media management widget.
 */
@@ -73,15 +73,18 @@ var DeviceMediaManagementServices = {
    */
 
   initialize: function DeviceMediaManagementServices__initialize(aWidget) {
+    if (!aWidget.device)
+      return;
+
     // Get the media management widget.
     this._widget = aWidget;
-    
+
     // Initialize object fields.
     this._device = this._widget.device;
 
     // Initialize, read, and apply the music preferences.
     this.musicManagementPrefsInitialize();
-    this.resetPreferences();
+    this._widget.reset();
   },
 
   /**
@@ -97,6 +100,9 @@ var DeviceMediaManagementServices = {
   },
 
   savePreferences: function DeviceMediaManagementServices_savePreferences() {
+    if (!this._device)
+      return;
+
     // Extract preferences from UI and write to storage
     this.musicManagementPrefsExtract();
     this.musicManagementPrefsWrite();
@@ -107,6 +113,9 @@ var DeviceMediaManagementServices = {
   },
 
   resetPreferences: function DeviceMediaManagementServices_resetPreferences() {
+    if (!this._device)
+      return;
+
     // Re-read from preferences storage and apply
     this.musicManagementPrefsRead();
     this.musicManagementPrefsApply();
@@ -116,6 +125,19 @@ var DeviceMediaManagementServices = {
     /* Extract preferences from UI and apply */
     this.musicManagementPrefsExtract();
     this.musicManagementPrefsApply();
+
+    this.dispatchSettingsChangeEvent();
+  },
+
+  /**
+   * \brief Notifies listener about a settings change actions.
+   */
+
+  dispatchSettingsChangeEvent:
+    function DeviceMediaManagementServices_dispatchSettingsChangeEvent() {
+    let event = document.createEvent("UIEvents");
+    event.initUIEvent("settings-changed", false, false, window, null);
+    document.dispatchEvent(event);
   },
 
   //----------------------------------------------------------------------------
@@ -145,14 +167,14 @@ var DeviceMediaManagementServices = {
    * \param aRadioID               ID of radio to select.
    *
    */
-  
+
   _selectRadio : function DeviceMediaManagementServices__selectRadio(aRadioID)
   {
       var radioElem;
-  
+
       /* Get the radio element. */
       radioElem = this._getElement(aRadioID);
-  
+ 
       /* Select the radio. */
       radioElem.radioGroup.selectedItem = radioElem;
   },
@@ -162,7 +184,7 @@ var DeviceMediaManagementServices = {
    * device media management preference services.
    *
    ******************************************************************************/
-  
+
   /*
    * _mediaManagementPrefs                  Working media management prefs.
    * _storedMediaManagementPrefs            Stored media management prefs.
@@ -172,11 +194,11 @@ var DeviceMediaManagementServices = {
    * These are the preferences that the user has set and that is represented by
    * the UI but has not neccessarily been written to the preference storage.
    * The set of music preferences in the preference storage is maintained in
-   * _storedMediaManagementPrefs.  This is used to determine whether any 
+   * _storedMediaManagementPrefs.  This is used to determine whether any
    * preferences have been changed and need to be written to the preference
    * storage.
    */
-  
+ 
   _mediaManagementPrefs : null,
   _storedMediaManagementPrefs : null,
 
@@ -280,19 +302,19 @@ var DeviceMediaManagementServices = {
       /* Get the transcoding format menu list */
       var profilesMenuList = this._getElement("encoding-format-list");
       var profiles = this._mediaManagementPrefs.transcodeProfiles;
-  
+
       /* Clear the menu list */
       while (profilesMenuList.firstChild)
           profilesMenuList.removeChild(profilesMenuList.firstChild);
-  
+ 
       /* Fill in the menu list with each available profile. */
       for (var i = 0; i < profiles.length; i++)
       {
         var profile = profiles[i];
         var readableName = profile.description;
         var menuItem = document.createElementNS(XUL_NS, "menuitem");
-        menuItem.value = profile.id;
         menuItem.setAttribute("label", readableName);
+        menuItem.setAttribute("value", profile.id);
  
         /* Add the menu item to the list. */
         profilesMenuList.appendChild(menuItem);
@@ -332,7 +354,7 @@ var DeviceMediaManagementServices = {
                   null);
       }
       else {
-        this._mediaManagementPrefs.selectedBitrate = 
+        this._mediaManagementPrefs.selectedBitrate =
             this._device.getPreference("transcode_profile.audio_properties.bitrate");
       }
     }
@@ -342,14 +364,14 @@ var DeviceMediaManagementServices = {
       this._mediaManagementPrefs.selectedBitrate = null;
     }
 
-      /* Make a copy of the stored music prefs. */
-      this._storedMediaManagementPrefs = {};
-      this._storedMediaManagementPrefs.transcodeModeManual =
-          this._mediaManagementPrefs.transcodeModeManual;
-      this._storedMediaManagementPrefs.selectedProfile =
-          this._mediaManagementPrefs.selectedProfile;
-      this._storedMediaManagementPrefs.selectedBitrate =
-          this._mediaManagementPrefs.selectedBitrate;
+    /* Make a copy of the stored music prefs. */
+    this._storedMediaManagementPrefs = {};
+    this._storedMediaManagementPrefs.transcodeModeManual =
+        this._mediaManagementPrefs.transcodeModeManual;
+    this._storedMediaManagementPrefs.selectedProfile =
+        this._mediaManagementPrefs.selectedProfile;
+    this._storedMediaManagementPrefs.selectedBitrate =
+        this._mediaManagementPrefs.selectedBitrate;
   },
 
 
@@ -404,10 +426,15 @@ var DeviceMediaManagementServices = {
       }
     }
     var menulist = this._getElement("encoding-format-menu");
-    if (this._mediaManagementPrefs.transcodeModeManual)
+    var bitrateEntry = this._getElement("transcoding-bitrate-kbps");
+    if (this._mediaManagementPrefs.transcodeModeManual) {
       menulist.removeAttribute("disabled");
-    else
+      bitrateEntry.removeAttribute("disabled");
+    }
+    else {
       menulist.setAttribute("disabled", "true");
+      bitrateEntry.setAttribute("disabled", "true");
+    }
 
     var activeProfile;
     if (this._mediaManagementPrefs.selectedProfile) {
@@ -418,7 +445,7 @@ var DeviceMediaManagementServices = {
       // ones available.
       var highestPrio = 0;
       var defaultProfile = null;
-      
+
       var profiles = this._mediaManagementPrefs.transcodeProfiles;
       for (var i = 0; i < profiles.length; i++) {
         var profile = profiles[i];
@@ -438,6 +465,7 @@ var DeviceMediaManagementServices = {
 
       if (formatMenuItem.value == activeProfile.id) {
         formatMenuItem.setAttribute("selected", "true");
+        this._getElement("encoding-format-menu").selectedItem = formatMenuItem;
       }
       else {
         formatMenuItem.setAttribute("selected", "false");
@@ -487,7 +515,7 @@ var DeviceMediaManagementServices = {
   {
     this._mediaManagementPrefs.transcodeModeManual =
         this._getElement("transcoding-mode-manual").selected;
-    
+
     if (this._mediaManagementPrefs.transcodeModeManual) {
       var bitrateEntry = this._getElement("transcoding-bitrate-kbps");
       this._mediaManagementPrefs.selectedBitrate = "" +
@@ -501,7 +529,7 @@ var DeviceMediaManagementServices = {
       this._mediaManagementPrefs.selectedProfile = null;
     }
   },
-  
+
   profileFromProfileId:
       function DeviceMediaManagementServices_profileFromProfileId(aId)
   {

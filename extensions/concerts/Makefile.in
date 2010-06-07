@@ -37,18 +37,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-# If you don't have extras, don't build the extra extension; there's nothing
-# particularly secret here, it's just not particularly useful either.
-ifeq (1,$(HAS_EXTRAS))
-   IS_EXTENSION_MULTI_BUILD = 1
-else
-   IS_EXTENSION = 1
-   SB_EXTENSION_CONFIG = extension-config-songbird.mk
-endif
-
-EXTENSION_CONFIGS = extension-config-songbird.mk \
-                    extension-config-philips.mk \
-                    $(NULL)
+IS_EXTENSION = 1
 
 SUBDIRS = chrome \
           components \

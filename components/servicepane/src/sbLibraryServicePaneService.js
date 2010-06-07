@@ -748,6 +748,7 @@ function sbLibraryServicePane_onRename(aNode, aNewName) {
   if (aNode && aNewName) {
     var libraryResource = this.getLibraryResourceForNode(aNode);
     libraryResource.name = aNewName;
+    aNode.name = aNewName;
   }
 }
 
@@ -968,6 +969,34 @@ function sbLibraryServicePane_getNodeForLibraryResource(aResource) {
   // For playlists and libraries that don't have any visible children, return
   // the main node - even if it is hidden
   return this._servicePane.getNode(urn);
+}
+
+/**
+ * \brief Return all service pane nodes related to the library resource
+ *        specified by aResource.
+ *
+ * \param aResource an sbIMediaItem, sbIMediaItem, or sbILibrary
+ * \return An nsIArray of service pane nodes representing the given resource.
+ *         Note that in the case that more than one node is related to a given
+ *         library, multiple nodes will be returned.
+ */
+sbLibraryServicePane.prototype.getNodesForLibraryResource =
+function sbLibraryServicePane_getNodesForLibraryResource(aResource) {
+  let nodeList = [];
+  let urn = this._getURNForLibraryResource(aResource);
+  let node = this._servicePane.getNode(urn);
+  if (node)
+    nodeList.push(node);
+  if (aResource instanceof Ci.sbILibrary) {
+    for each (let type in ["audio", "video", "podcast"]) {
+      let constrainedURN = urn + ":constraint(" + type + ")";
+      node = this._servicePane.getNode(constrainedURN);
+      if (node)
+        nodeList.push(node);
+    }
+  }
+
+  return ArrayConverter.nsIArray(nodeList);
 }
 
 /**
@@ -1516,7 +1545,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
     var hidden = (aLibrary.getProperty(SBProperties.hidden) == "1");
     node.hidden = hidden;
 
-    if (aParentNode && node.parentNode != aParentNode) {
+    if (aParentNode && !node.parentNode) {
       // Insert the node as first child
       aParentNode.insertBefore(node, aParentNode.firstChild);
     }

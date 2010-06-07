@@ -253,13 +253,31 @@ function sbDeviceFirmwareAutoCheckForUpdate_onDeviceEvent(aEvent) {
         this._registerTimer(device);
       }
       
+      //
       // If it's the first time the device is connected, check
       // for a firmware update right away. We also set the 
       // auto check for firmware update pref to true.  Since
       // we only do this the first time the device is connected
       // the user can choose not to do this and their preference
-      // will be respected.
+      // will be respected. This is conditional on there being a
+      // firmware handler that can handle updating firmware for
+      // the device.
+      //
+      // Check to see if the device is in recoveryMode. If it is
+      // we do not enable automatic checks for firmware updates.
+      // 
+      var hasHandler = this._deviceFirmwareUpdater.hasHandler(device, 0, 0);
+      var recoveryMode = false;
+      if (hasHandler) {
+        let handler = this._deviceFirmwareUpdater.getHandler(device, 0, 0);
+        handler.bind(device, null);
+        recoveryMode = handler.recoveryMode;
+        handler.unbind();
+      }
+        
       if (device.getPreference("firstTime") && 
+          hasHandler &&
+          !recoveryMode &&
           this._queue.indexOf(device) < 0) {
         device.setPreference("firmware.update.enabled", true);
         this._queue.push(device);

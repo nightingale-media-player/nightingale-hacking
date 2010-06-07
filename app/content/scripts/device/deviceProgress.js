@@ -315,8 +315,6 @@ var DPW = {
    */
 
   initialize: function DPW__initialize(aWidget) {
-    Cu.import("resource://app/jsmodules/DeviceHelper.jsm", this);
-
     // Get the device widget.
     this._widget = aWidget;
 

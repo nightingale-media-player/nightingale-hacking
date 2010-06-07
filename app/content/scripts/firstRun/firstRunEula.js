@@ -203,6 +203,13 @@ firstRunEULASvc.prototype = {
                                   func,
                                   false);
 
+    // Attach an event listener to the EULA browser.
+    func = function(aEvent) { _this._onContentClick(aEvent); };
+    this._domEventListenerSet.add(this._widget.eulaBrowser,
+                                  "click",
+                                  func,
+                                  false);
+
     // Initialize the perf services.
     this._perfInitialize();
   },
@@ -304,6 +311,28 @@ firstRunEULASvc.prototype = {
     // Load the locale bundle.  The loading shouldn't start until after the
     // first time the first-run EULA page is shown.
     this._localeBundleLoad();
+  },
+
+
+  /**
+   * Handle click events and forward URI loading to an external service.
+   */
+  _onContentClick: function(aEvent) {
+    try {
+      // If the event's target is a URL, pass that off to the external
+      // protocol handler service since our web browser isn't available
+      // during the eula stage$.
+      var targetURI = Cc["@mozilla.org/network/io-service;1"]
+                        .getService(Ci.nsIIOService)
+                        .newURI(aEvent.target, null, null);
+
+      var extLoader = Cc["@mozilla.org/uriloader/external-protocol-service;1"]
+                        .getService(Ci.nsIExternalProtocolService);
+      extLoader.loadURI(targetURI, null);
+      aEvent.preventDefault();
+    }
+    catch (e) {
+    }
   },
 
 

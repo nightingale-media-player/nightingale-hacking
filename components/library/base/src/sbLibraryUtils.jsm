@@ -685,7 +685,7 @@ LibraryUtils.GlobalMediaListListener = function(aListener,
     onItemAdded: function(aMediaList, aMediaItem, aIndex) { 
       if (aMediaItem instanceof Ci.sbIMediaList)
         this.cb.addMediaListListener(aMediaItem);  
-      if (this.onitemadded_skipbatch)
+      if (this.batchcount > 0 && this.onitemadded_skipbatch)
         return Ci.sbIMediaListEnumerationListener.CONTINUE;
       if (this.cb.listener.onItemAdded(aMediaList, aMediaItem, aIndex) !=
           Ci.sbIMediaListEnumerationListener.CONTINUE) {
@@ -720,6 +720,7 @@ LibraryUtils.GlobalMediaListListener = function(aListener,
       return this.cb.listener.onListCleared(aMediaList, aExcludeLists);
     },
     onBatchBegin: function(aMediaList) {
+      ++this.batchcount;
       this.onitemadded_stack.push(this.onitemadded_skipbatch);
       this.onitemadded_skipbatch = false;
       this.onafteritemremoved_stack.push(this.onafteritemremoved_skipbatch);
@@ -727,6 +728,7 @@ LibraryUtils.GlobalMediaListListener = function(aListener,
       return this.cb.listener.onBatchBegin(aMediaList); 
     },
     onBatchEnd: function(aMediaList) {
+      --this.batchcount;
       this.onitemadded_skipbatch = this.onitemadded_stack.pop();
       this.onafteritemremoved_skipbatch = this.onafteritemremoved_stack.pop();
       return this.cb.listener.onBatchEnd(aMediaList); 

@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #include "sbLocalDatabaseSmartMediaList.h"
 #include "sbLocalDatabaseCID.h"
@@ -574,6 +572,61 @@ sbLocalDatabaseSmartMediaList::Init(sbIMediaItem *aItem)
   rv = ReadConfiguration();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSmartMediaList::GetListContentType(PRUint16* aContentType)
+{
+  NS_ENSURE_ARG_POINTER(aContentType);
+  nsresult rv;
+
+  PRUint32 conditionLength = mConditions.Length();
+
+  // No condition available. Smart playlist not ready.
+  if (!conditionLength)
+    return NS_ERROR_NOT_AVAILABLE;
+
+  nsCOMPtr<sbILocalDatabaseSmartMediaListCondition> condition;
+  nsCOMPtr<sbIPropertyOperator> propertyOperator;
+  nsString propertyID, leftValue, operatorStr;
+  for (PRUint32 i = 0; i < conditionLength; ++i) {
+    condition = mConditions[i];
+
+    rv = condition->GetPropertyID(propertyID);
+    NS_ENSURE_SUCCESS(rv, rv);
+    // Deal with smart playlists with condition "mediatype".
+    if (propertyID.EqualsLiteral(SB_PROPERTY_CONTENTTYPE)) {
+      rv = condition->GetOperator(getter_AddRefs(propertyOperator));
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = propertyOperator->GetOperator(operatorStr);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = condition->GetLeftValue(leftValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // XXX Alfred: Update the function whenever any content type other than
+      //     audio or video is added in the future.
+
+      // mediatype is video, or mediatype is not audio
+      if ((operatorStr.EqualsLiteral(SB_OPERATOR_EQUALS) &&
+           leftValue.EqualsLiteral("video")) ||
+          (operatorStr.EqualsLiteral(SB_OPERATOR_NOTEQUALS) &&
+           leftValue.EqualsLiteral("audio"))) {
+        *aContentType = sbIMediaList::CONTENTTYPE_VIDEO;
+        return NS_OK;
+      }
+      // mediatype is audio, or mediatype is not video
+      else if ((operatorStr.EqualsLiteral(SB_OPERATOR_EQUALS) &&
+                leftValue.EqualsLiteral("audio")) ||
+               (operatorStr.EqualsLiteral(SB_OPERATOR_NOTEQUALS) &&
+                leftValue.EqualsLiteral("video"))) {
+        *aContentType = sbIMediaList::CONTENTTYPE_AUDIO;
+        return NS_OK;
+      }
+    }
+  }
+
+  mList->GetListContentType(aContentType);
   return NS_OK;
 }
 

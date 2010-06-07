@@ -41,7 +41,7 @@ function doMenu( command, event ) {
         }
       }
       if(gServicePane.open) {
-        SBNewPlaylist(enumerator, true);
+        SBNewPlaylist(enumerator, false);
       }
     break;
     case "menuitem_file_smart":

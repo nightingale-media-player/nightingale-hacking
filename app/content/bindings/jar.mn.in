@@ -7,3 +7,4 @@ songbird.jar:
 # Include everything in this directory, and preprocess bindings.css
 @include_all_to content/songbird/bindings/
 * content/songbird/bindings/bindings.css (bindings.css)
+* content/songbird/bindings/dialog.xml   (dialog.xml)

@@ -81,8 +81,6 @@ var DeviceMgmtTabs = {
    */
 
   initialize: function DeviceMgmtTabs_initialize(aWidget) {
-    Cu.import("resource://app/jsmodules/DeviceHelper.jsm", this);
-
     // Get the device widget.
     this._widget = aWidget;
 
@@ -132,8 +130,7 @@ var DeviceMgmtTabs = {
 
       case "selectedIndex":
         if (event.newValue == "2") {
-          DeviceMgmtTabs._dispatchSettingsEvent(
-                           DeviceMgmtTabs.SYNCSETTINGS_IMAGETAB);
+          DeviceMgmtTabs._dispatchImageTabEvent();
         }
         break;
     }
@@ -198,15 +195,12 @@ var DeviceMgmtTabs = {
   },
 
   /**
-   * \brief Notifies listener about a pref change actions.
-   *
-   * \param detail              One of the SYNCSETTINGS_* constants
+   * \brief Notifies listener about image tab selected actions.
    */
 
-  _dispatchSettingsEvent:
-    function DeviceMgmtTabs__dispatchSettingsEvent(detail) {
+  _dispatchImageTabEvent: function DeviceMgmtTabs__dispatchImageTabEvent() {
     let event = document.createEvent("UIEvents");
-    event.initUIEvent("sbDeviceSync-settings", false, false, window, detail);
+    event.initUIEvent("image-tab-selected", false, false, window, null);
     document.dispatchEvent(event);
   },
 

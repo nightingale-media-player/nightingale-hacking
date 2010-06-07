@@ -30,6 +30,7 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 DEFAULT_EXTENSIONS = AlbumArt \
+                     concerts \
                      xpcom_helloworld \
                      $(NULL)
 
@@ -54,7 +55,6 @@ endif
 # we need to build it regardless of platform
 NOARCH_EXTENSIONS = 7digital \
                     albumartlastfm \
-                    concerts \
                     lastfm \
                     mashTape \
                     newreleases \

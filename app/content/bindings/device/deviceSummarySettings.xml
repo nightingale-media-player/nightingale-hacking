@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -60,6 +60,11 @@
         <xul:vbox class="device-tab-content"
                   sbid="device_management_settings_content">
 
+          <!-- Device management settings. -->
+          <xul:sb-device-management
+             sbid="device_management_settings"
+             xbl:inherits="device-id,dev-lib-guid,hide=hideSettings"/>
+
           <!-- General device settings. -->
           <xul:sb-device-general-settings sbid="device_general_settings"
                                           xbl:inherits="device-id"/>
@@ -71,9 +76,11 @@
                     class="device-settings-button-box"
                     pack="end">
             <!-- Cancel and save buttons. -->
-            <xul:button label="&window.cancel;"
+            <xul:button sbid="device_settings_button_cancel"
+                        label="&window.cancel;"
                         oncommand="reset();"/>
-            <xul:button label="&window.save;"
+            <xul:button sbid="device_settings_button_save"
+                        label="&window.save;"
                         oncommand="save();"/>
           </xul:hbox>
         </xul:vbox>

@@ -54,7 +54,9 @@ if (typeof(Cu) == "undefined")
 
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
+Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
+Cu.import("resource://app/jsmodules/DOMUtils.jsm");
 
 if (typeof(XUL_NS) == "undefined")
   var XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
@@ -64,15 +66,15 @@ var DeviceSummarySettings = {
   // Device Sync Tabs object fields.
   //
   //   _widget                  Device sync tabs widget.
-  //   _deviceID                Device ID.
-  //  _deviceManagementWidgets  array of widgets for device management.
-  //  _mediaManagementWidgets   array of widgets for media management.
+  //   _saveButton              The save button of the settings box
+  //   _cancelButton            The cancel button of the settings box
+  //   _domEventListenerSet     Set of DOM event listeners.
   //
 
   _widget: null,
-  _deviceID: null,
-  _deviceManagementWidgets: [],
-  _mediaManagementWidgets: [],
+  _saveButton: null,
+  _cancelButton: null,
+  _domEventListenerSet: null,
 
   /**
    * \brief Initialize the device summary settings services for the device
@@ -86,17 +88,33 @@ var DeviceSummarySettings = {
     this._widget = aWidget;
 
     // Initialize object fields.
-    this._deviceID = this._widget.deviceID;
-    this._device = this._widget.device;
+    var device = this._widget.device;
 
-    this.refreshDeviceSettings();
-    
-    // Add device listener
-    if (this._device) {
-      var deviceEventTarget = this._device;
-      deviceEventTarget.QueryInterface(Ci.sbIDeviceEventTarget);
-      deviceEventTarget.addEventListener(this);
+    if ((device && device.defaultLibrary) ||
+        !this._getElement("device_general_settings").hidden) {
+      this._widget.removeAttribute("disabledTab");
     }
+    else {
+      this._widget.setAttribute("disabledTab", "true");
+    }
+
+    this._saveButton = this._getElement("device_settings_button_save");
+    this._cancelButton = this._getElement("device_settings_button_cancel");
+
+    this._saveButton.setAttribute("disabled", "true");
+    this._cancelButton.setAttribute("disabled", "true");
+
+    // Create a DOM event listener set.
+    this._domEventListenerSet = new DOMEventListenerSet();
+
+    // Listen for sync settings management change events.
+    var self = this;
+    var func = function(aEvent) { self._onSettingsChangeEvent(); };
+    this._domEventListenerSet.add(document,
+                                  "settings-changed",
+                                  func,
+                                  false,
+                                  false);
   },
 
   /**
@@ -104,25 +122,15 @@ var DeviceSummarySettings = {
    */
 
   finalize: function DeviceSummarySettings_finalize() {
-    if (this._device) {
-      var deviceEventTarget = this._device;
-      deviceEventTarget.QueryInterface(Ci.sbIDeviceEventTarget);
-      deviceEventTarget.removeEventListener(this);
+    // Remove DOM event listeners.
+    if (this._domEventListenerSet) {
+      this._domEventListenerSet.removeAll();
+      this._domEventListenerSet = null;
     }
 
-    this._device = null;
-    this._deviceID = null;
     this._widget = null;
-  },
-
-  onDeviceEvent: function DeviceSummarySettings_onDeviceEvent(aEvent) {
-    switch (aEvent.type) {
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_INSERTED:
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_REMOVED:
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_END:
-        this.refreshDeviceSettings();
-        break;
-    }
+    this._saveButton = null;
+    this._cancelButton = null;
   },
 
   /**
@@ -137,9 +145,16 @@ var DeviceSummarySettings = {
   // then we should make sure we only save the settings that aren't in the
   // 'hide' list.
   save: function DeviceSummarySettings_save() {
-    for each (let widget in this._deviceManagementWidgets) {
-      widget.save();
-    }
+    this._saveButton.setAttribute("disabled", "true");
+    this._cancelButton.setAttribute("disabled", "true");
+
+    let deviceManagementSettings =
+          this._getElement("device_management_settings");
+    deviceManagementSettings.save();
+
+    let deviceGeneralSettings = this._getElement("device_general_settings");
+    if (!deviceGeneralSettings.hidden)
+      deviceGeneralSettings.save();
   },
 
   /**
@@ -147,84 +162,16 @@ var DeviceSummarySettings = {
    */
 
   reset: function DeviceSummarySettings_reset() {
-    for each (let widget in this._deviceManagementWidgets) {
-      widget.reset();
-    }
-  },
+    this._saveButton.setAttribute("disabled", "true");
+    this._cancelButton.setAttribute("disabled", "true");
 
-  /**
-   * \brief Refresh all the device widgets settings.
-   */
+    let deviceManagementSettings =
+          this._getElement("device_management_settings");
+    deviceManagementSettings.reset();
 
-  refreshDeviceSettings:
-    function DeviceSummarySettings_refreshDeviceSettings() {
-    // Add device general settings widget if it hasn't been already.
-    var deviceGeneralSettings = this._getElement("device_general_settings");
-    if (this._deviceManagementWidgets.indexOf(deviceGeneralSettings) < 0)
-      this._deviceManagementWidgets.push(deviceGeneralSettings);
-
-    // Refresh the media management.
-    this.refreshMediaManagement();
-  },
-
-  /**
-   * \brief Refresh all the media management widgets.
-   */
-
-  refreshMediaManagement:
-    function DeviceSummarySettings_refreshMediaManagement() {
-    var disable = true;
-    // determine what settings to hide so we can pass it onto the
-    // sb-device-management binding
-    var settingsToHide = this._widget.getAttribute("hideSettings");
-
-    var seenLibraries = {};
-    for (let idx = this._mediaManagementWidgets.length - 1; idx >= 0; --idx) {
-      let widget = this._mediaManagementWidgets[idx];
-      if (!widget.hidden)
-        disable = false;
-
-      if (widget.deviceID == this._deviceID) {
-        seenLibraries[widget.libraryID] = true;
-        continue;
-      }
-      let deviceManagementWidgetsIndex =
-            this._deviceManagementWidgets.indexOf(widget);
-      if (deviceManagementWidgetsIndex >= 0)
-        this._deviceManagementWidgets.splice(deviceManagementWidgetsIndex, 1);
-      this._mediaManagementWidgets.splice(idx, 1);
-      ++idx;
-    }
-
-    // Get the device content.
-    var content = this._device.content;
-
-    // add new bindings as needed
-    var container = this._getElement("device_management_settings_content");
-    var buttonBox = this._getElement("device_settings_button_box");
-    if (this._device.defaultLibrary) {
-      var library = this._device.defaultLibrary;
-      if (!(library.guid in seenLibraries)) {
-        var widget = document.createElement("sb-device-management");
-        widget.setAttribute("device-id", this._deviceID);
-        widget.setAttribute("dev-lib-guid", library.guid);
-        widget.setAttribute("hide", settingsToHide);
-        container.insertBefore(widget, buttonBox);
-
-        widget.device = this._device;
-
-        this._deviceManagementWidgets.push(widget);
-        this._mediaManagementWidgets.push(widget);
-        disable = false;
-      }
-    }
-
-    if (disable && this._getElement("device_general_settings").hidden) {
-      this._widget.setAttribute("disabledTab", "true");
-    }
-    else {
-      this._widget.removeAttribute("disabledTab");
-    }
+    let deviceGeneralSettings = this._getElement("device_general_settings");
+    if (!deviceGeneralSettings.hidden)
+      deviceGeneralSettings.reset();
   },
 
   //----------------------------------------------------------------------------
@@ -232,6 +179,15 @@ var DeviceSummarySettings = {
   // Device summary settings XUL services.
   //
   //----------------------------------------------------------------------------
+
+  /**
+   * \brief Handles settings change event
+   */
+  _onSettingsChangeEvent:
+    function DeviceSummarySettings__onSettingsChangeEvent(aEvent) {
+    this._saveButton.removeAttribute("disabled");
+    this._cancelButton.removeAttribute("disabled");
+  },
 
   /**
    * \brief Return the XUL element with the ID specified by aElementID.  Use the

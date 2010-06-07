@@ -1,27 +1,25 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
@@ -206,7 +204,7 @@ var SBPlaylistCommand_AddToDevice =
   getCommandEnabled: function( aSubMenu, aIndex, aHost )
   {
     if (this.m_Context.m_Playlist.tree.currentIndex == -1) return false;
-    
+
     var cmds = this._getMenu(aSubMenu);
     if (aSubMenu == ADDTODEVICE_MENU_ID) {
       var deviceRegistrar =
@@ -348,13 +346,13 @@ addToDeviceHelper.prototype = {
   },
 
   init: function addToDeviceHelper_init(aCommands) {
-    this.m_libraryManager = 
+    this.m_libraryManager =
       Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
       .getService(Components.interfaces.sbILibraryManager);
-    this.m_deviceManager = 
+    this.m_deviceManager =
       Components.classes["@songbirdnest.com/Songbird/DeviceManager;2"]
       .getService(Components.interfaces.sbIDeviceManager2);
-    var eventTarget = 
+    var eventTarget =
       this.m_deviceManager.QueryInterface(
         Components.interfaces.sbIDeviceEventTarget
       );
@@ -364,7 +362,7 @@ addToDeviceHelper.prototype = {
   },
 
   shutdown: function addToDeviceHelper_shutdown() {
-    var eventTarget = 
+    var eventTarget =
       this.m_deviceManager.QueryInterface(
         Components.interfaces.sbIDeviceEventTarget
       );
@@ -374,7 +372,7 @@ addToDeviceHelper.prototype = {
 
   // returns true if we have at least one device in the list,
   // the commands object hides the "add to device" submenu when
-  // no device is present  
+  // no device is present
   hasDevices: function addToDeviceHelper_hasDevices() {
     return (this.m_listofdevices &&
             this.m_listofdevices.m_Types &&
@@ -397,9 +395,9 @@ addToDeviceHelper.prototype = {
     this.m_listofdevices.m_Keycodes = new Array();
     this.m_listofdevices.m_PlaylistCommands = new Array();
     this.m_listofdevices.m_DeviceIds = new Array();
-    
+
     // get all devices
-    var registrar = 
+    var registrar =
       this.m_deviceManager.QueryInterface(
         Components.interfaces.sbIDeviceRegistrar
       );
@@ -411,7 +409,7 @@ addToDeviceHelper.prototype = {
       if (device && device.connected)
         devices.push(device);
     }
-    // order of devices returned by the registrar is undefined, 
+    // order of devices returned by the registrar is undefined,
     // so sort by device name
     function deviceSorter(x, y) {
       var nameX = x.name;
@@ -440,7 +438,7 @@ addToDeviceHelper.prototype = {
       }
 
       var isEnabled = false;
-      if (!devicename) 
+      if (!devicename)
         devicename = "Unnamed Device";
       var library = device.defaultLibrary;
       if (library) {
@@ -450,8 +448,8 @@ addToDeviceHelper.prototype = {
         continue;
       }
       this.m_listofdevices.m_Types.push("action");
-      this.m_listofdevices.m_Ids.push(ADDTODEVICE_COMMAND_ID + 
-                                      libraryguid + ";" + 
+      this.m_listofdevices.m_Ids.push(ADDTODEVICE_COMMAND_ID +
+                                      libraryguid + ";" +
                                       devicename);
       this.m_listofdevices.m_Names.push(devicename);
       this.m_listofdevices.m_Tooltips.push(devicename);
@@ -468,7 +466,7 @@ addToDeviceHelper.prototype = {
 
   handleGetMenu: function addToDeviceHelper_handleGetMenu(aSubMenu) {
     if (this.m_listofdevices == null) {
-      // handleGetMenu called before makeListOfPlaylists, this would 
+      // handleGetMenu called before makeListOfPlaylists, this would
       // cause infinite recursion : the command object would not find
       // the menu either, would return null to getMenu which corresponds
       // to the root menu, and it'd recurse infinitly.
@@ -501,13 +499,13 @@ addToDeviceHelper.prototype = {
 
   // perform the transfer of the selected items to the device library
   addToDevice: function addToDeviceHelper_addToDevice(
-                          devicelibraryguid, 
-                          sourceplaylist, 
+                          devicelibraryguid,
+                          sourceplaylist,
                           devicename) {
     var library = this.m_libraryManager.getLibrary(devicelibraryguid);
     if (library) {
       var oldLength = library.length;
-      var selection = 
+      var selection =
         sourceplaylist.mediaListView.selection.selectedMediaItems;
 
       // Create an enumerator that wraps the enumerator we were handed since
@@ -517,13 +515,13 @@ addToDeviceHelper.prototype = {
       // Create a media item duplicate enumerator filter to count the number of
       // duplicate items and to remove them from the enumerator if the target is
       // a library.
-      let dupFilter = 
+      let dupFilter =
         Cc[SB_MEDIALISTDUPLICATEFILTER_CONTRACTID]
         .createInstance(Ci.sbIMediaListDuplicateFilter);
-      dupFilter.initialize(selection, 
-                           library, 
+      dupFilter.initialize(selection,
+                           library,
                            true);
-      
+ 
       // Create a filtered item enumerator.
 
       // We also want to set the downloadStatusTarget property as we work.
@@ -549,11 +547,11 @@ addToDeviceHelper.prototype = {
 
       library.addSome(unwrapper);
 
-      var added = library.length - oldLength;
-      DNDUtils.reportAddedTracks(dupFilter.mediaItems - dupFilter.duplicateItems,
-                                 dupFilter.duplicateItems,
-                                 0,
-                                 devicename);
+      DNDUtils.reportAddedTracks(
+                 dupFilter.totalItems - dupFilter.duplicateItems,
+                 dupFilter.duplicateItems,
+                 0,
+                 devicename);
     }
   },
 
@@ -561,7 +559,7 @@ addToDeviceHelper.prototype = {
   // methods for refreshing the list when needed, detection is performed via
   // an sbIDeviceEventListener on the device manager
   //-----------------------------------------------------------------------------
-  
+
   _makingList    : false,
 
   refreshCommands: function addToDeviceHelper_refreshCommands() {
@@ -584,7 +582,7 @@ addToDeviceHelper.prototype = {
       throw Components.results.NS_ERROR_NO_INTERFACE;
     return this;
   },
-  
+ 
   // trap event for device library added/removed, and refresh the commands
   // we trap the library add/remove (instead of the plain device add/remove)
   // since we check the library count in makeListOfDevices(), so we need to

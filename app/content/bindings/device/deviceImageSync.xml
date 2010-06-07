@@ -128,6 +128,7 @@
       <field name="_deviceEventTarget">null</field>
       <field name="_displayedFolder">null</field>
       <field name="_imageTab">false</field>
+      <field name="_domEventListenerSet">null</field>
       <!-- _ignoreFolderChanges defaults to true to ignore the select event
            during widget construction -->
       <field name="_ignoreFolderChanges">true</field>
@@ -142,9 +143,9 @@
       <constructor> <![CDATA[
       {
         Cu.import("resource://app/jsmodules/ArrayConverter.jsm", this);
-        Cu.import("resource://app/jsmodules/DeviceHelper.jsm", this);
         Cu.import("resource://app/jsmodules/PlatformUtils.jsm", this);
         Cu.import("resource://app/jsmodules/StringUtils.jsm", this);
+        Cu.import("resource://app/jsmodules/DOMUtils.jsm", this);
 
         if (this.device)
           this._initDevice();
@@ -198,11 +199,17 @@
                 this.device.QueryInterface(Ci.sbIDeviceEventTarget);
           this._deviceEventTarget.addEventListener(this);
 
-          // Listen for sync settings apply/cancel events.
-          let self = this;
-          document.addEventListener("sbDeviceSync-settings", function(aEvent) {
-            self._onSettingsEvent(aEvent);
-          }, false);
+          // Create a DOM event listener set.
+          this._domEventListenerSet = new this.DOMEventListenerSet();
+
+          // Listen for image tab selected event.
+          var self = this;
+          var func = function(aEvent) { self._onImageTabSelectedEvent(); };
+          this._domEventListenerSet.add(document,
+                                        "image-tab-selected",
+                                        func,
+                                        false,
+                                        false);
 
           // Listen for changes in the settings
           if (this.devLib) {
@@ -222,6 +229,12 @@
           if (this._deviceEventTarget) {
             this._deviceEventTarget.removeEventListener(this);
             this._deviceEventTarget = null;
+          }
+
+          // Remove DOM event listeners.
+          if (this._domEventListenerSet) {
+            this._domEventListenerSet.removeAll();
+            this._domEventListenerSet = null;
           }
 
           try {
@@ -756,22 +769,14 @@
       </method>
 
       <!--
-       * \brief Handles sbDeviceSync-settings events and cancels/applies edit in
-       *        progress as required.
-       *
-       * \param aEvent              Event to handle.
+       * \brief Handles image-tab-selected event
        -->
-      <method name="_onSettingsEvent">
-        <parameter name="aEvent"/>
+      <method name="_onImageTabSelectedEvent">
         <body><![CDATA[
         {
-          switch (aEvent.detail) {
-            case this.SYNCSETTINGS_IMAGETAB:
-              if (!this._imageTab) {
-                this._imageTab = true;
-                this._updateUI();
-              }
-              break;
+          if (!this._imageTab) {
+            this._imageTab = true;
+            this._updateUI();
           }
         }
         ]]></body>
