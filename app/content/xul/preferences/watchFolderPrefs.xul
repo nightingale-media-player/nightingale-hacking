@@ -91,6 +91,7 @@
             <label value="&watch_folder.prefs.watch_folder_label;"/>
             <textbox id="watch_folder_path_textbox"
                      preference="watch_folder_path_pref"
+                     observes="watch_folder_disabled_broadcaster"
                      onchange="return watchFolderPrefsPane.onPathChanged(event)"/>
   
             <!-- Browse button. -->

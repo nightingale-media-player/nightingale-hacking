@@ -181,6 +181,8 @@ var watchFolderPrefsPane = {
     // Get the currently selected watch folder directory.
     var watchFolderPathPrefElem =
           document.getElementById("watch_folder_path_pref");
+    var watchFolderPathTextboxElem =
+          document.getElementById("watch_folder_path_textbox");
     var watchFolderDir = Cc["@mozilla.org/file/local;1"]
                            .createInstance(Ci.nsILocalFile);
     try {
@@ -210,7 +212,9 @@ var watchFolderPrefsPane = {
     // Update the watch folder path.
     if ((result == Ci.nsIFilePicker.returnOK) &&
         (filePicker.file.isDirectory())) {
-      watchFolderPathPrefElem.value = filePicker.file.path;
+      // Update the text box - the preference will be set in
+      // _checkForValidPref() if it is valid
+      watchFolderPathTextboxElem.value = filePicker.file.path;
       this.onPathChanged(aEvent);
     }
 
