@@ -33,6 +33,7 @@
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
+#include <nsIClassInfo.h>
 #include <nsISimpleEnumerator.h>
 #include <nsISerializable.h>
 #include <nsITimer.h>
@@ -163,11 +164,13 @@ protected:
   PRBool mSelectionIsAll;
 };
 
-class sbGUIDArrayToIndexedMediaItemEnumerator : public nsISimpleEnumerator
+class sbGUIDArrayToIndexedMediaItemEnumerator : public nsISimpleEnumerator,
+                                                public nsIClassInfo
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSISIMPLEENUMERATOR
+  NS_DECL_NSICLASSINFO
 
   sbGUIDArrayToIndexedMediaItemEnumerator(sbILibrary* aLibrary);
 
@@ -189,11 +192,13 @@ private:
   PRUint32 mNextItemIndex;
 };
 
-class sbIndexedGUIDArrayEnumerator : public nsISimpleEnumerator
+class sbIndexedGUIDArrayEnumerator : public nsISimpleEnumerator,
+                                     public nsIClassInfo
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSISIMPLEENUMERATOR
+  NS_DECL_NSICLASSINFO
 
   sbIndexedGUIDArrayEnumerator(sbILibrary* aLibrary,
                                sbILocalDatabaseGUIDArray* aArray);
@@ -212,11 +217,13 @@ private:
  * Helper class to convert from a nsISimpleEnumerator<sbIIndexedMediaItem>
  * to a nsISimpleEnumerator<sbIMediaItem>
  */
-class sbIndexedToUnindexedMediaItemEnumerator : public nsISimpleEnumerator
+class sbIndexedToUnindexedMediaItemEnumerator : public nsISimpleEnumerator,
+                                                public nsIClassInfo
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSISIMPLEENUMERATOR
+  NS_DECL_NSICLASSINFO
   
   sbIndexedToUnindexedMediaItemEnumerator(nsISimpleEnumerator* aEnumerator);
 

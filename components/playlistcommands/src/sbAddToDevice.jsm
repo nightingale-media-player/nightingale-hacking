@@ -26,9 +26,12 @@ Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/DropHelper.jsm");
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Components.utils.import("resource://app/jsmodules/SBUtils.jsm");
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+
 
 const Ci = Components.interfaces;
 const Cc = Components.classes;
+const Cr = Components.results;
 
 const SB_MEDIALISTDUPLICATEFILTER_CONTRACTID =
   "@songbirdnest.com/Songbird/Library/medialistduplicatefilter;1";
@@ -46,6 +49,21 @@ const ADDTODEVICE_COMMAND_ID = "library_cmd_addtodevice:";
 
 EXPORTED_SYMBOLS = [ "addToDeviceHelper",
                      "SBPlaylistCommand_AddToDevice" ];
+
+/**
+ * \brief Creates a new unwrapper helper object which ensures
+ *        downloadStatusTarget is always set when adding items
+ *        to another library or playlist on a device.
+ * \param aSelection An sbIMediaListViewSelection.selectedMediaItems enumerator
+ * \return A new unwrapper helper object.
+ */
+function createUnwrapper(aSelection) {
+  var unwrapper = Cc["@songbirdnest.com/Songbird/Library/EnumeratorWrapper;1"]
+                    .createInstance(Ci.sbIMediaListEnumeratorWrapper);
+  unwrapper.initialize(aSelection);
+  
+  return unwrapper;
+}
 
 // ----------------------------------------------------------------------------
 // The "Add to device" dynamic command object
@@ -525,33 +543,31 @@ addToDeviceHelper.prototype = {
       // Create a filtered item enumerator.
 
       // We also want to set the downloadStatusTarget property as we work.
-      var unwrapper = {
-        enumerator: dupFilter.QueryInterface(Ci.nsISimpleEnumerator),
+      var unwrapper = createUnwrapper(dupFilter);
 
-        hasMoreElements : function() {
-          return this.enumerator.hasMoreElements();
-        },
-        getNext : function() {
-          var item = this.enumerator.getNext();
-          item.setProperty(SBProperties.downloadStatusTarget,
-                           item.library.guid + "," + item.guid);
-          return item;
-        },
-        QueryInterface : function(iid) {
-          if (iid.equals(Components.interfaces.nsISimpleEnumerator) ||
-              iid.equals(Components.interfaces.nsISupports))
-            return this;
-          throw Components.results.NS_NOINTERFACE;
-        }
+      var asyncListener = {
+       _dupFilter: dupFilter,
+       onProgress: function(aItemsProcessed, aComplete) {
+         if (aComplete) {
+           var added = this._dupFilter.totalItems - this._dupFilter.duplicateItems;
+           DNDUtils.reportAddedTracks(added,
+                                      this._dupFilter.duplicateItems,
+                                      0, /* no unsupported reporting */
+                                      devicename,
+                                      true);
+         }
+         else {
+           DNDUtils.reportAddedTracks(aItemsProcessed,
+                                      0, /* no dupe reporting until complete */
+                                      0, /* no unsupported reporting */
+                                      devicename,
+                                      true);
+         }
+       },
+       QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListAsyncListener])
       }
-
-      library.addSome(unwrapper);
-
-      DNDUtils.reportAddedTracks(
-                 dupFilter.totalItems - dupFilter.duplicateItems,
-                 dupFilter.duplicateItems,
-                 0,
-                 devicename);
+         
+      library.addSomeAsync(unwrapper, asyncListener);
     }
   },
 

@@ -201,6 +201,41 @@ function runTest () {
   a.forEach(function(e) { data.push(e); });
   assertList(list, data);
   assertEqual(list.length, oldlength + 3 + view.length + view.length);
+  
+  var asyncListener = {
+    _itemsProcessed: 0,
+    _complete: false,
+    onProgress: function(aItemsProcessed, aComplete) {
+      if(aComplete) {
+        this._itemsProcessed = aItemsProcessed;
+        this._complete = true;
+        testFinished();
+      }
+    }
+  };
+  
+  simpleEnumerator.reset();
+  view.enumerateAllItems(simpleEnumerator,
+                         Ci.sbIMediaList.ENUMERATIONTYPE_SNAPSHOT);
+  {
+    // This is kind of annoying but necessary because XPC shell only has
+    // one JS context. If we don't do this XPC shell will lock up.
+    var tempArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                      .createInstance(Ci.nsIMutableArray);
+    while(simpleEnumerator.hasMoreElements()) {
+      tempArray.appendElement(simpleEnumerator.getNext(), false);
+    }
+    
+    var tempEnumerator = tempArray.enumerate();
+    log("Testing addSomeAsync");
+    list.addSomeAsync(tempEnumerator, asyncListener);
+    testPending();
+  }
+  
+  log("Processed " + asyncListener._itemsProcessed + " items.");
+  a.forEach(function(e) { data.push(e); });
+  assertList(list, data);
+  assertEqual(list.length, oldlength + 3 + (view.length * 3));
 
   // Test insertBefore.  These tests seem a bit random but they are testing
   // all the code paths in sbLocalDatabaseSimpleMediaList::GetBeforeOrdinal

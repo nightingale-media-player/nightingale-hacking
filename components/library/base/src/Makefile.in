@@ -41,6 +41,7 @@ CPP_SRCS = sbLibraryConstraints.cpp \
            sbLibraryManagerModule.cpp \
            sbMediaItemWatcher.cpp \
            sbMediaListDuplicateFilter.cpp \
+           sbMediaListEnumeratorWrapper.cpp \
            sbMediaListViewMap.cpp \
            sbTemporaryMediaItem.cpp \
            $(NULL)

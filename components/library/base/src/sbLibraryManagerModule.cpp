@@ -32,6 +32,7 @@
 #include "sbLibraryConstraints.h"
 #include "sbLibraryManager.h"
 #include "sbMediaListDuplicateFilter.h"
+#include "sbMediaListEnumeratorWrapper.h"
 #include "sbMediaListViewMap.h"
 #include "sbMediaItemWatcher.h"
 #include "sbTemporaryMediaItem.h"
@@ -44,6 +45,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbLibraryConstraint);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaItemWatcher);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTemporaryMediaItem);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaListDuplicateFilter)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaListEnumeratorWrapper)
 
 static nsModuleComponentInfo components[] =
 {
@@ -77,6 +79,12 @@ static nsModuleComponentInfo components[] =
     SONGBIRD_MEDIALISTDUPLICATEFILTER_CID,
     SONGBIRD_MEDIALISTDUPLICATEFILTER_CONTRACTID,
     sbMediaListDuplicateFilterConstructor
+  },
+  {
+    SONGBIRD_MEDIALISTENUMERATORWRAPPER_CLASSNAME,
+    SONGBIRD_MEDIALISTENUMERATORWRAPPER_CID,
+    SONGBIRD_MEDIALISTENUMERATORWRAPPER_CONTRACTID,
+    sbMediaListEnumeratorWrapperConstructor
   },
   {
     SONGBIRD_MEDIALISTVIEWMAP_CLASSNAME,

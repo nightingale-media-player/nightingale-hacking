@@ -798,6 +798,13 @@ sbRemoteMediaListBase::AddSome(nsISimpleEnumerator* aMediaItems)
 }
 
 NS_IMETHODIMP
+sbRemoteMediaListBase::AddSomeAsync(nsISimpleEnumerator* aMediaItems, 
+                                    sbIMediaListAsyncListener* aListener)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
 sbRemoteMediaListBase::Remove(sbIMediaItem* aMediaItem)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);

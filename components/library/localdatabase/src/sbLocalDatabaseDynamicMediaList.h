@@ -88,6 +88,7 @@
   NS_IMETHOD AddItem(sbIMediaItem *aMediaItem, sbIMediaItem ** aNewMediaItem) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddItem(aMediaItem, aNewMediaItem); } \
   NS_IMETHOD AddAll(sbIMediaList *aMediaList) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddAll(aMediaList); } \
   NS_IMETHOD AddSome(nsISimpleEnumerator *aMediaItems) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddSome(aMediaItems); } \
+  NS_IMETHOD AddSomeAsync(nsISimpleEnumerator *aMediaItems, sbIMediaListAsyncListener *aListener) { return !_to ? NS_ERROR_NULL_POINTER : _to->AddSomeAsync(aMediaItems, aListener); } \
   NS_IMETHOD Remove(sbIMediaItem *aMediaItem) { return !_to ? NS_ERROR_NULL_POINTER : _to->Remove(aMediaItem); } \
   NS_IMETHOD RemoveByIndex(PRUint32 aIndex) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveByIndex(aIndex); } \
   NS_IMETHOD RemoveSome(nsISimpleEnumerator *aMediaItems) { return !_to ? NS_ERROR_NULL_POINTER : _to->RemoveSome(aMediaItems); } \

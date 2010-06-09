@@ -29,8 +29,11 @@
 #include <sbStringUtils.h>
 
 #include <nsComponentManagerUtils.h>
+#include <nsIClassInfoImpl.h>
 #include <nsIObjectInputStream.h>
 #include <nsIObjectOutputStream.h>
+#include <nsIProgrammingLanguage.h>
+#include <nsMemory.h>
 
 // Uncomment this to log the selection list whenever it changes.  This is
 // normally ifdef'd out because it can be really slow
@@ -1007,8 +1010,15 @@ sbLocalDatabaseMediaListViewSelectionState::ToString(nsAString& aStr)
 }
 
 
-NS_IMPL_ISUPPORTS1(sbGUIDArrayToIndexedMediaItemEnumerator,
-                   nsISimpleEnumerator)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbGUIDArrayToIndexedMediaItemEnumerator,
+                              nsISimpleEnumerator,
+                              nsIClassInfo)
+NS_IMPL_CI_INTERFACE_GETTER2(sbGUIDArrayToIndexedMediaItemEnumerator,
+                             nsISimpleEnumerator,
+                             nsIClassInfo)
+
+NS_DECL_CLASSINFO(sbGUIDArrayToIndexedMediaItemEnumerator)
+NS_IMPL_THREADSAFE_CI(sbGUIDArrayToIndexedMediaItemEnumerator)
 
 /**
  * \class sbGuidArrayToMediaItemEnumerator
@@ -1095,7 +1105,15 @@ sbGUIDArrayToIndexedMediaItemEnumerator::GetNext(nsISupports **_retval)
   return NS_OK;
 }
 
-NS_IMPL_ISUPPORTS1(sbIndexedGUIDArrayEnumerator, nsISimpleEnumerator)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbIndexedGUIDArrayEnumerator, 
+                              nsISimpleEnumerator,
+                              nsIClassInfo)
+NS_IMPL_CI_INTERFACE_GETTER2(sbIndexedGUIDArrayEnumerator,
+                             nsISimpleEnumerator,
+                             nsIClassInfo)
+
+NS_DECL_CLASSINFO(sbIndexedGUIDArrayEnumerator)
+NS_IMPL_THREADSAFE_CI(sbIndexedGUIDArrayEnumerator)
 
 sbIndexedGUIDArrayEnumerator::sbIndexedGUIDArrayEnumerator(sbILibrary* aLibrary,
                                                            sbILocalDatabaseGUIDArray* aArray) :
@@ -1170,8 +1188,15 @@ sbIndexedGUIDArrayEnumerator::GetNext(nsISupports **_retval)
   return NS_OK;
 }
 
-NS_IMPL_ISUPPORTS1(sbIndexedToUnindexedMediaItemEnumerator,
-                   nsISimpleEnumerator)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbIndexedToUnindexedMediaItemEnumerator,
+                              nsISimpleEnumerator,
+                              nsIClassInfo)
+NS_IMPL_CI_INTERFACE_GETTER2(sbIndexedToUnindexedMediaItemEnumerator,
+                             nsISimpleEnumerator,
+                             nsIClassInfo)
+
+NS_DECL_CLASSINFO(sbIndexedToUnindexedMediaItemEnumerator)
+NS_IMPL_THREADSAFE_CI(sbIndexedToUnindexedMediaItemEnumerator)
 
 /**
  * \class sbIndexedToUnindexedMediaItemEnumerator

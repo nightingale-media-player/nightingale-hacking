@@ -86,6 +86,7 @@ typedef nsInterfaceHashtableMT<nsStringHashKey, nsIWeakReference>
   NS_IMETHOD AddItem(sbIMediaItem* aMediaItem, sbIMediaItem ** aNewMediaItem);      \
   NS_IMETHOD AddAll(sbIMediaList* aMediaList);                                      \
   NS_IMETHOD AddSome(nsISimpleEnumerator* aMediaItems);                             \
+  NS_IMETHOD AddSomeAsync(nsISimpleEnumerator* aMediaItems, sbIMediaListAsyncListener* aListener);\
   NS_IMETHOD Remove(sbIMediaItem* aMediaItem);                                      \
   NS_IMETHOD RemoveByIndex(PRUint32 aIndex);                                        \
   NS_IMETHOD RemoveSome(nsISimpleEnumerator* aMediaItems);                          \
@@ -243,6 +244,12 @@ public:
    */
   nsresult RemoveSelected(nsISimpleEnumerator* aSelection,
                           sbLocalDatabaseMediaListView* aView);
+
+  /*
+   * Internal methods for async operations on sbIMediaList
+   */
+  nsresult AddSomeAsyncInternal(nsISimpleEnumerator *aMediaItems,
+                                sbIMediaListAsyncListener *aListener);
 
 private:
   nsresult CreateQueries();

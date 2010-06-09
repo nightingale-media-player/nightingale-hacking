@@ -240,8 +240,7 @@ sbLocalDatabaseMediaItem::GetImplementationLanguage(PRUint32* aImplementationLan
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetFlags(PRUint32 *aFlags)
 {
-// not yet  *aFlags = nsIClassInfo::THREADSAFE;
-  *aFlags = 0;
+  *aFlags = nsIClassInfo::THREADSAFE;
   return NS_OK;
 }
 
@@ -1058,9 +1057,9 @@ sbLocalDatabaseMediaItem::OnStopRequest( nsIRequest *aRequest, nsISupports *aCon
   return NS_OK;
 }
 
-NS_IMPL_ISUPPORTS2(sbLocalDatabaseIndexedMediaItem,
-                   nsIClassInfo,
-                   sbIIndexedMediaItem)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbLocalDatabaseIndexedMediaItem,
+                              nsIClassInfo,
+                              sbIIndexedMediaItem)
 
 NS_IMPL_CI_INTERFACE_GETTER2(sbLocalDatabaseIndexedMediaItem,
                              nsIClassInfo,
@@ -1126,7 +1125,7 @@ sbLocalDatabaseIndexedMediaItem::GetImplementationLanguage(PRUint32* aImplementa
 NS_IMETHODIMP
 sbLocalDatabaseIndexedMediaItem::GetFlags(PRUint32 *aFlags)
 {
-  *aFlags = 0;
+  *aFlags = nsIClassInfo::THREADSAFE;
   return NS_OK;
 }
 

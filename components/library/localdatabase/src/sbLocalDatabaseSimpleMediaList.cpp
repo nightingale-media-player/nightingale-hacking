@@ -116,7 +116,41 @@ static PRLogModuleInfo* gLocalDatabaseSimpleMediaListLog = nsnull;
     NS_ENSURE_ARG_MAX(_index2, length - 1); \
   SB_ENSURE_INDEX_END
 
-  // This class is stack-only but needs to act like an XPCOM object.  Add dummy
+/**
+ * Support class used to run async versions of sbIMediaList methods
+ * implemented by the sbLocalDatabaseSimpleMediaList.
+ */
+class sbLocalDatabaseSimpleMediaListAsyncRunner : public nsIRunnable
+{
+public:
+  NS_DECL_ISUPPORTS
+
+  explicit sbLocalDatabaseSimpleMediaListAsyncRunner(
+    sbLocalDatabaseSimpleMediaList* aLocalDatabaseSimpleMediaList,
+    nsISimpleEnumerator* aMediaItems,
+    sbIMediaListAsyncListener* aListener)
+    : mLocalDatabaseSimpleMediaList(aLocalDatabaseSimpleMediaList)
+    , mListener(aListener)
+    , mMediaItems(aMediaItems) {}
+  
+  NS_IMETHOD Run() {
+    nsresult rv = 
+      mLocalDatabaseSimpleMediaList->AddSomeAsyncInternal(mMediaItems, 
+                                                          mListener);
+    NS_ENSURE_SUCCESS(rv, rv);
+    return NS_OK;
+  }
+
+private:
+  nsRefPtr<sbLocalDatabaseSimpleMediaList> mLocalDatabaseSimpleMediaList;
+  nsCOMPtr<sbIMediaListAsyncListener>      mListener;
+  nsCOMPtr<nsISimpleEnumerator>            mMediaItems;
+};
+
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabaseSimpleMediaListAsyncRunner,
+                              nsIRunnable);
+
+// This class is stack-only but needs to act like an XPCOM object.  Add dummy
 // AddRef/Release methods so the ref count is always 1
 NS_IMETHODIMP_(nsrefcnt)
 sbSimpleMediaListInsertingEnumerationListener::AddRef(void)
@@ -888,6 +922,105 @@ sbLocalDatabaseSimpleMediaList::AddSome(nsISimpleEnumerator* aMediaItems)
 
   rv = listener.OnEnumerationEnd(nsnull, NS_OK);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::AddSomeAsync(nsISimpleEnumerator* aMediaItems, 
+                                             sbIMediaListAsyncListener* aListener)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItems);
+  NS_ENSURE_ARG_POINTER(aListener);
+
+  nsCOMPtr<nsIThread> target;
+  nsresult rv = NS_GetMainThread(getter_AddRefs(target));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaListAsyncListener> proxiedListener;
+  rv = do_GetProxyForObject(target,
+                            NS_GET_IID(sbIMediaListAsyncListener),
+                            aListener,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(proxiedListener));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsRefPtr<sbLocalDatabaseSimpleMediaListAsyncRunner> runner = 
+    new sbLocalDatabaseSimpleMediaListAsyncRunner(this, aMediaItems, proxiedListener);
+  NS_ENSURE_TRUE(runner, NS_ERROR_OUT_OF_MEMORY);
+
+  nsCOMPtr<nsIThreadPool> threadPoolService =
+    do_GetService("@songbirdnest.com/Songbird/ThreadPoolService;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = threadPoolService->Dispatch(runner, NS_DISPATCH_NORMAL);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseSimpleMediaList::AddSomeAsyncInternal(nsISimpleEnumerator* aMediaItems,
+                                                     sbIMediaListAsyncListener* aListener)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItems);
+  NS_ENSURE_ARG_POINTER(aListener);
+
+  NS_ASSERTION(!NS_IsMainThread(), 
+    "AddSomeAsyncInternal should never be called on the main thread!");
+
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
+
+  PRUint32 startingIndex;
+  nsresult rv = GetLength(&startingIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString startingOrdinal;
+  rv = GetNextOrdinal(startingOrdinal);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  sbSimpleMediaListInsertingEnumerationListener listener(this,
+                                                         startingIndex,
+                                                         startingOrdinal);
+
+  PRUint16 stepResult;
+  rv = listener.OnEnumerationBegin(nsnull, &stepResult);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  sbAutoBatchHelper batchHelper(*this);
+
+  PRBool hasMore;
+  PRUint32 itemsProcessed = 0;
+
+  while (NS_SUCCEEDED(aMediaItems->HasMoreElements(&hasMore)) && hasMore) {
+    nsCOMPtr<nsISupports> supports;
+    rv = aMediaItems->GetNext(getter_AddRefs(supports));
+    SB_CONTINUE_IF_FAILED(rv);
+
+    nsCOMPtr<sbIMediaItem> item = do_QueryInterface(supports, &rv);
+    SB_CONTINUE_IF_FAILED(rv);
+
+    rv = listener.OnEnumeratedItem(nsnull, item, &stepResult);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnEnumeratedItem failed!");
+
+    ++itemsProcessed;
+
+    // only send notifications every 50 items or 
+    // when it's finished if < 50 items.
+    if (itemsProcessed % 50 == 0) {
+      rv = aListener->OnProgress(itemsProcessed, PR_FALSE);
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to call async listener.");
+    }
+
+    // Yield to other threads.
+    PR_Sleep(0);
+  }
+
+  rv = listener.OnEnumerationEnd(nsnull, NS_OK);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aListener->OnProgress(itemsProcessed, PR_TRUE);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to call async listener.");
 
   return NS_OK;
 }

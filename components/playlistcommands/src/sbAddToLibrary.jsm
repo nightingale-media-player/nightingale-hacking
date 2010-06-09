@@ -310,7 +310,7 @@ addToLibraryHelper.prototype = {
         DNDUtils.reportAddedTracks(
                             dupFilter.mediaItemCount - dupFilter.duplicateCount,
                             dupFilter.duplicateCount,
-                           0, 
+                            0, 
                             library.name);
         return true;
       }

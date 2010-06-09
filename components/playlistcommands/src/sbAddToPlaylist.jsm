@@ -26,6 +26,11 @@
 
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/DropHelper.jsm");
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+
+const Ci = Components.interfaces;
+const Cc = Components.classes;
+const Cr = Components.results;
 
 const ADDTOPLAYLIST_MENU_TYPE      = "submenu";
 const ADDTOPLAYLIST_MENU_ID        = "library_cmd_addtoplaylist";
@@ -47,6 +52,21 @@ const ADDTOPLAYLIST_NEWPLAYLIST_COMMAND_ID = "library_cmd_addtoplaylist_createne
 EXPORTED_SYMBOLS = [ "addToPlaylistHelper",
                      "SBPlaylistCommand_AddToPlaylist",
                      "SBPlaylistCommand_DownloadToPlaylist" ];
+
+/**
+ * \brief Creates a new unwrapper helper object which ensures
+ *        downloadStatusTarget is always set when adding items
+ *        to another library or playlist on a device.
+ * \param aSelection An sbIMediaListViewSelection.selectedMediaItems enumerator
+ * \return A new unwrapper helper object.
+ */
+function createUnwrapper(aSelection) {
+  var unwrapper = Cc["@songbirdnest.com/Songbird/Library/EnumeratorWrapper;1"]
+                    .createInstance(Ci.sbIMediaListEnumeratorWrapper);
+  unwrapper.initialize(aSelection);
+
+  return unwrapper;
+}
 
 // ----------------------------------------------------------------------------
 // The "Add to playlist" dynamic command object
@@ -605,31 +625,19 @@ addToPlaylistHelper.prototype = {
       // Create an enumerator that wraps the enumerator we were handed since
       // the enumerator we get hands back sbIIndexedMediaItem, not just plain
       // 'ol sbIMediaItems
-
-      var unwrapper = {
-        enumerator: selection,
-
-        hasMoreElements : function() {
-          return this.enumerator.hasMoreElements();
+      var unwrapper = createUnwrapper(selection);
+            
+      var asyncListener = {
+        onProgress: function(aItemsProcessed, aComplete) {
+          DNDUtils.reportAddedTracks(aItemsProcessed, 
+                                     0, /* no duplicate reporting */
+                                     0, /* no unsupported reporting */
+                                     medialist.name);
         },
-        getNext : function() {
-          var item = this.enumerator.getNext().mediaItem;
-          item.setProperty(SBProperties.downloadStatusTarget,
-                           item.library.guid + "," + item.guid);
-          return item;
-        },
-        QueryInterface : function(iid) {
-          if (iid.equals(Components.interfaces.nsISimpleEnumerator) ||
-              iid.equals(Components.interfaces.nsISupports))
-            return this;
-          throw Components.results.NS_NOINTERFACE;
-        }
+        QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListAsyncListener])
       }
-
-      medialist.addSome(unwrapper);
-
-      var added = medialist.length - oldLength;
-      DNDUtils.reportAddedTracks(added, 0, 0, medialist.name);
+      
+      medialist.addSomeAsync(unwrapper, asyncListener);
     }
   },
 

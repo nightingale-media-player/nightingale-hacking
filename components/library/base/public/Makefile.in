@@ -50,6 +50,7 @@ XPIDL_SRCS = sbICascadeFilterSet.idl \
              sbIMediaItemWatcher.idl \
              sbIMediaList.idl \
              sbIMediaListDuplicateFilter.idl \
+             sbIMediaListEnumeratorWrapper.idl \
              sbIMediaListFactory.idl \
              sbIMediaListListener.idl \
              sbIMediaListView.idl \

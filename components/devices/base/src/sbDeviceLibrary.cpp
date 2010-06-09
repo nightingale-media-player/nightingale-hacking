@@ -1610,7 +1610,8 @@ sbDeviceLibrary::AddItem(sbIMediaItem *aMediaItem,
                          sbIMediaItem ** aNewMediaItem)
 {
   NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
-  SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeAdd(aMediaItem, &mShouldProcceed));
+  SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeAdd(aMediaItem, 
+                                                 &mShouldProcceed));
 
   if (mPerformAction) {
     return mDeviceLibrary->AddItem(aMediaItem, aNewMediaItem);
@@ -1644,13 +1645,37 @@ sbDeviceLibrary::AddSome(nsISimpleEnumerator *aMediaItems)
 {
   NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
   SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeAddSome(aMediaItems,
-                                                    &mShouldProcceed));
+                                                     &mShouldProcceed));
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
 
   if (mPerformAction) {
-    return mDeviceLibrary->AddSome(aMediaItems);
-  } else {
-    return NS_OK;
+    rv = mDeviceLibrary->AddSome(aMediaItems);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  return NS_OK;
+}
+
+/*
+ * See sbIMediaList
+ */
+NS_IMETHODIMP 
+sbDeviceLibrary::AddSomeAsync(nsISimpleEnumerator *aMediaItems, 
+                              sbIMediaListAsyncListener *aListener)
+{
+  NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
+  SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeAddSome(aMediaItems,
+                                                     &mShouldProcceed));
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  if (mPerformAction) {
+    rv = mDeviceLibrary->AddSomeAsync(aMediaItems, aListener);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
 }
 
 /*

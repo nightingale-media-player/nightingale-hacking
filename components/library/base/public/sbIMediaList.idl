@@ -47,6 +47,26 @@ interface sbIMediaListViewState;
 interface sbIPropertyArray;
 
 /**
+ * \interface sbIMediaListAsyncListener
+ * \brief Interface for use with async methods on sbIMediaList.
+ * \see addSomeAsync
+ */
+[scriptable, function, uuid(7062f4ae-2d8f-4984-9052-047c45ef057e)]
+interface sbIMediaListAsyncListener : nsISupports
+{
+  /**
+   * \brief Callback function that reports progress of
+   *        async operations.
+   * \param aItemsProcessed The number of items processed thus far.
+   * \param aComplete Flag indicating if more items need to be processed
+   *                  or the operation is complete.
+   * \note This callback function will always be called on the main thread.
+   */
+  void onProgress(in unsigned long aItemsProcessed, 
+                  in boolean aComplete);
+};
+
+/**
  * \interface sbIMediaList
  * \brief A brief description of the contents of this interface
  *
@@ -54,7 +74,7 @@ interface sbIPropertyArray;
  *
  * \sa List of "see also" interfaces
  */
-[scriptable, uuid(16BD1ACC-2C8B-4f91-A340-F4F3437C516B)]
+[scriptable, uuid(d98a6d82-02a3-4192-8e14-1e445f6f9ac1)]
 interface sbIMediaList : sbIMediaItem
 {
   /*
@@ -942,6 +962,17 @@ interface sbIMediaList : sbIMediaItem
    * \param aMediaItems An enumerator returning sbIMediaItem objects
    */
   void addSome(in nsISimpleEnumerator aMediaItems);
+
+  /**
+   * \brief Adds media items supplied by the provided enumerator asynchronously
+   * \param aMediaItems An enumerator returning sbIMediaItem objects
+   * \param aListener A listener that will get called with progress information
+   * \note This method is optional and is not always implemented.
+   * \throws NS_ERROR_NOT_IMPLEMENTED if not implemented by the underlying object.
+   * \note aListener will always be called on the main thread.
+   */
+  void addSomeAsync(in nsISimpleEnumerator aMediaItems, 
+                    in sbIMediaListAsyncListener aListener);
 
   /**
    * \brief Remove the first occurrence of the given media item from the list

@@ -85,4 +85,14 @@
   { 0x87, 0x6d, 0xcf, 0x38, 0xe8, 0x77, 0x15, 0xf2 }                    \
 }
 
-
+#define SONGBIRD_MEDIALISTENUMERATORWRAPPER_CONTRACTID                   \
+  "@songbirdnest.com/Songbird/Library/EnumeratorWrapper;1"
+#define SONGBIRD_MEDIALISTENUMERATORWRAPPER_CLASSNAME                    \
+  "Songbird Media List Enumerator Wrapper"
+#define SONGBIRD_MEDIALISTENUMERATORWRAPPER_CID                          \
+{ /*ae7b146d-9edc-47e0-9bc7-29f3bee4d00a */                             \
+  0xae7b146d,                                                           \
+  0x9edc,                                                               \
+  0x47e0,                                                               \
+  { 0x9b, 0xc7, 0x29, 0xf3, 0xbe, 0xe4, 0xd0, 0xa }                     \
+}

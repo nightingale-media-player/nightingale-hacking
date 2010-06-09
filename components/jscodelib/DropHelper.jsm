@@ -77,7 +77,6 @@ const SB_MEDIALISTDUPLICATEFILTER_CONTRACTID =
   
 */
 
-
 var DNDUtils = {
 
   // returns true if the drag session contains supported flavors
@@ -177,13 +176,17 @@ var DNDUtils = {
   // temporarily writes "X tracks added to <name>, Y tracks already present" 
   // in the status bar. if 0 is specified for aDups, the second part of the
   // message is skipped.
-  reportAddedTracks: function(aAdded, aDups, aUnsupported, aDestName) {
+  reportAddedTracks: function(aAdded, aDups, aUnsupported, aDestName, aIsDevice) {
     var msg = "";
     
     var single = SBString("library.singletrack");
     var plural = SBString("library.pluraltracks");
-    
-    if (aDups && aUnsupported) {
+  
+    if (aIsDevice) {
+      msg = SBFormattedString("device.tracksadded", 
+        [aAdded, aDestName]);
+    }  
+    else if (aDups && aUnsupported) {
       msg = SBFormattedString("library.tracksadded.with.dups.and.unsupported",
         [aAdded, aDestName, aDups, aUnsupported]);
     }
@@ -735,11 +738,24 @@ var InternalDropHandler = {
       QueryInterface : XPCOMUtils.generateQI([Ci.nsISimpleEnumerator,
                                               Ci.sbIDeviceSupportsItemCallback])
     }
-
+    
+    var asyncListener = {
+      _dupFilter: dupFilter,
+      onProgress: function(aItemsProcessed, aComplete) {
+        DNDUtils.reportAddedTracks(aItemsProcessed, 
+                                   0, /* no duplicate reporting */
+                                   0, /* no unsupported reporting */
+                                   aTargetList.name, 
+                                   device ? true : false);
+      },
+      QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListAsyncListener])
+    }
+      
     if (aDropPosition != -1 && aTargetList instanceof Ci.sbIOrderableMediaList) {
       aTargetList.insertSomeBefore(unwrapper, aDropPosition);
     } else {
-      aTargetList.addSome(unwrapper);
+      // XXXAus: Change this back to addSomeAsync!!!
+      aTargetList.addSome(unwrapper /*, asyncListener*/);
     }
 
     function onEnumerateComplete() {
