@@ -844,26 +844,26 @@
         <parameter name="aContentUri"/>
         <parameter name="aProperties"/>
         <parameter name="aAllDuplicates"/>
-        <body>{}</body>
+        <body>{ return true; }</body>
       </method>
       <method name="onBeforeCreateMediaList">
         <parameter name="aType"/>
         <parameter name="aProperties"/>
-        <body>{}</body>
+        <body>{ return true; }</body>
       </method>
       <method name="onBeforeAdd">
-        <body>{}</body>
+        <body>{ return true; }</body>
       </method>
       <method name="onBeforeAddAll">
         <parameter name="aMediaList"/>
-        <body>{}</body>
+        <body>{ return true; }</body>
       </method>
       <method name="onBeforeAddSome">
         <parameter name="aMediaItems"/>
-        <body>{}</body>
+        <body>{ return true; }</body>
       </method>
       <method name="onBeforeClear">
-        <body>{}</body>
+        <body>{ return true; }</body>
       </method>
 
       <method name="onSyncSettings">

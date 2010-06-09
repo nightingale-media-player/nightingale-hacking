@@ -404,6 +404,39 @@ var DeviceSyncWidget = {
     this.update();
   },
 
+  // Implementation of sbIDeviceLibraryListener methods that must return true to
+  // prevent SB_NOTIFY_LISTENERS_ASK_PERMISSION in sbDeviceLibrary.cpp from
+  // aborting erroneously.
+
+  onBeforeCreateMediaItem: function DeviceSyncWidget_onBeforeCreateMediaItem(
+                                      aContentUri,
+                                      aProperties,
+                                      aAllowDuplicates) {
+    return true;
+  },
+
+  onBeforeCreateMediaList: function DeviceSyncWidget_onBeforeCreateMediaList(
+                                      aType,
+                                      aProperties) {
+    return true;
+  },
+
+  onBeforeAdd: function DeviceSyncWidget_onBeforeAdd(aMediaItem) {
+    return true;
+  },
+
+  onBeforeAddAll: function DeviceSyncWidget_onBeforeAddAll(aMediaList) {
+    return true;
+  },
+
+  onBeforeAddSome: function DeviceSyncWidget_onBeforeAddSome(aMediaItems) {
+    return true;
+  },
+
+  onBeforeClear: function DeviceSyncWidget_onBeforeClear() {
+    return true;
+  },
+
   //----------------------------------------------------------------------------
   //
   // Device sync sbIDeviceEventListener services.
