@@ -115,6 +115,7 @@
                        showid="name"
                        crop="end"
                        hidden="true"
+                       width="0"
                        flex="1"/>
           </xul:hbox>
 
