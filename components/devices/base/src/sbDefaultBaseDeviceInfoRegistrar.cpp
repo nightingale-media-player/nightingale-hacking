@@ -314,7 +314,7 @@ sbDefaultBaseDeviceInfoRegistrar::InterestedInDevice(sbIDevice *aDevice,
   if (xmlInfoSpec.IsEmpty())
     return NS_OK;
 
-  nsAutoPtr<sbDeviceXMLInfo> xmlInfo = new sbDeviceXMLInfo(aDevice);
+  nsAutoPtr<sbDeviceXMLInfo> xmlInfo(new sbDeviceXMLInfo(aDevice));
   NS_ENSURE_TRUE(xmlInfo, NS_ERROR_OUT_OF_MEMORY);
 
   rv = xmlInfo->Read(xmlInfoSpec.BeginReading());
