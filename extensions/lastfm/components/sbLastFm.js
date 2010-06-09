@@ -1333,16 +1333,56 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
         authtoken = authtoken[0].textContent;
         dump("auth.getToken SUCCESS: " + authtoken + "\n");
 
-        var authurl = "http://" + self.geoBaseDomain + "/api/grantAccess";
-        dump("api grantAccess URL: " + authurl + "\n");
-        var post_params = new Object();
-        post_params["referer"] = "http://www.last.fm/api/auth?api_key=" +
-              API_KEY + "&token=" + authtoken;
-        post_params["api_key"] = API_KEY;
-        post_params["token"] = authtoken;
-        self.login_phase = AUTH_PHASE_APP_APPROVE;
-        self._appauth_xhr = POST(authurl, post_params, function success(xhr) {
-          dump("api grantAccess SUCCESS\n");
+        var window = Cc['@mozilla.org/appshell/window-mediator;1']
+                       .getService(Ci.nsIWindowMediator)
+                       .getMostRecentWindow('Songbird:Main');
+        if (!window) {
+          self.listeners.each(function(listener) {
+            listener.onLoginFailed();
+          });
+          return;
+        }
+        var gBrowser = window.gBrowser;
+
+        function removeAuthListeners() {
+          gBrowser.removeEventListener("DOMContentLoaded",
+                                       self._authListener, false);
+          gBrowser.removeEventListener("unload", removeAuthListeners, false);
+          authTab.removeEventListener("TabClose",
+                                      self._authTabCloseListener, false);
+        }
+
+        // Create a listener for last.fm's authorization grant page.
+        self._authListener = function (e) {
+
+          // Ensure we are on the right tab.
+          if (gBrowser.getBrowserForDocument(e.target) !=
+              gBrowser.getBrowserForTab(authTab)) {
+            return;
+          }
+  
+          // We're listening for the LastFM "Permissions Granted" page. It will
+          // have pathname "/api/grantAccess" on the last.fm domain or a
+          // localized version such as lastfm.fr
+          var loc = e.target.location;
+          if (!/last\.?fm/.test(loc.host)) {
+            // If we get here, it implies that the user navigated away from
+            // LastFM without authorizing.
+            removeAuthListeners();
+            self.listeners.each(function(listener) {
+              listener.onLoginFailed();
+            });
+            return;
+          }
+
+          if (loc.pathname != "/api/grantAccess") {
+            // Ignore LastFM pages that aren't the "Permissions Granted" page.
+            return;
+          } 
+
+          // We should be on the grantAccess page now, so remove the listeners
+          // and try to grab a session key.
+          removeAuthListeners();
 
           self.login_phase = AUTH_PHASE_SESSION_REQUEST;
           self._session_xhr = self.apiCall('auth.getSession', {
@@ -1378,16 +1418,40 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
 
               if (typeof(onSuccess) == "function")
                 onSuccess();
-            });
-        }, function failure(xhr) {
-          dump("api grantAccess: FAILED TO AUTHENTICATE: " +
-               xhr.responseText + "\n\n");
-        });
+          });
+        } 
+
+        // Load the user authorization page.
+        var authURL = "http://" + self.geoBaseDomain + "/api/auth?api_key=" +
+                      API_KEY + "&token=" + authtoken;
+
+        gBrowser.addEventListener("DOMContentLoaded", self._authListener, false);
+        // Make sure we don't leak the listeners if the user takes no action.
+        gBrowser.addEventListener("unload", removeAuthListeners, false); 
+
+        var authTab = gBrowser.loadOneTab(authURL, null, null, null, false);
+      
+        // The user could close the auth page tab without granting permission.
+        self._authTabCloseListener = function(e) {
+          removeAuthListeners();
+          self.listeners.each(function(listener) {
+            listener.onLoginFailed();
+          });
+        }
+        
+        authTab.addEventListener("TabClose", self._authTabCloseListener, false);
+
     }, function failure() {   // auth.getToken failure
       dump("webLogin FAILED\n");
+      self.listeners.each(function(listener) {
+        listener.onLoginFailed();
+      });
     }); // auth.getToken api call
   }, function() {
     dump("weblogin FAILURE\n");
+    self.listeners.each(function(listener) {
+      listener.onLoginFailed();
+    });
   }); // weblogin
 }
 
