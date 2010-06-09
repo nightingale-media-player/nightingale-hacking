@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #include "sbLocalDatabaseGUIDArray.h"
 #include "sbLocalDatabaseQuery.h"
@@ -55,6 +53,7 @@
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
 #include <sbMemoryUtils.h>
+#include <sbThreadUtils.h>
 
 #define DEFAULT_FETCH_SIZE 20
 
@@ -78,12 +77,13 @@ sbLocalDatabaseGUIDArray::sbLocalDatabaseGUIDArray() :
   mBaseConstraintValue(0),
   mFetchSize(DEFAULT_FETCH_SIZE),
   mLength(0),
+  mPrimarySortsCount(0),
   mIsDistinct(PR_FALSE),
   mDistinctWithSortableValues(PR_FALSE),
   mValid(PR_FALSE),
   mQueriesValid(PR_FALSE),
   mNullsFirst(PR_FALSE),
-  mPrimarySortsCount(0)
+  mPrefetchedRows(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseGUIDArrayLog) {
@@ -682,6 +682,7 @@ sbLocalDatabaseGUIDArray::Invalidate()
   mCache.Clear();
   mGuidToFirstIndexMap.Clear();
   mRowidToIndexMap.Clear();
+  mPrefetchedRows = PR_FALSE;
 
   if(mPrimarySortKeyPositionCache.IsInitialized()) {
     mPrimarySortKeyPositionCache.Clear();
@@ -2043,15 +2044,24 @@ sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
 
   /*
    * Cache miss
-   * TODO: WE can be a little smarter here my moving the fetch window around
-   * to read as many missing guids as we can but still satisfy this request.
-   * Also we should probably track movement to make backwards scrolling more
-   * efficient
    */
   rv = FetchRows(aIndex, mFetchSize);
   NS_ENSURE_SUCCESS(rv, rv);
 
-   *_retval = mCache[aIndex];
+  /*
+   * Prefetch all rows.  Do this from an asynchronous event on the main thread
+   * so that any pending UI events can complete.
+   */
+  if (!mPrefetchedRows) {
+    mPrefetchedRows = PR_TRUE;
+    sbInvokeOnMainThread2Async(*this,
+                               &sbLocalDatabaseGUIDArray::FetchRows,
+                               NS_ERROR_FAILURE,
+                               static_cast<PRUint32>(0),
+                               mLength);
+  }
+
+  *_retval = mCache[aIndex];
 
   return NS_OK;
 }
