@@ -254,9 +254,19 @@ var DeviceSyncWidget = {
       var guid = mediaList.guid;
 
       // Duration only applies to video tab so don't waste time on other types
-      var duration = 0;
-      if (this._mediaListType == "video")
+      var duration = -1;
+      if (this._mediaType == "video")
         duration = this._syncPrefsCalcDuration(mediaList);
+
+      if (duration >= 0) {
+        var durationInfo =
+              Cc["@songbirdnest.com/Songbird/Properties/Info/Duration;1"]
+                .createInstance(Ci.sbIDurationPropertyInfo);
+        duration = durationInfo.format(duration);
+      }
+      else {
+        duration = SBString("device.sync.duration.unavailable");
+      }
 
       // Get the readable name of this list (add mix for mix lists)
       var readableName = mediaList.name;
