@@ -1877,7 +1877,7 @@ nsresult sbDeviceUtils::GetDeviceLibrary(nsAString const & aDeviceLibGuid,
     rv = deviceLib->GetGuid(deviceLibGuid);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (deviceLibGuid.Equals(deviceLibGuid)) {
+    if (deviceLibGuid.Equals(aDeviceLibGuid)) {
       deviceLib.forget(aDeviceLibrary);
       return NS_OK;
     }
