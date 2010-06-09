@@ -316,6 +316,157 @@
           ]]>
         </body>
       </method>
+      
+      <!-- Override tabBrowser.updateCurrentBrowser to set focus correctly
+        (http://bugzilla.songbirdnest.com/show_bug.cgi?id=21236) -->
+      <method name="updateCurrentBrowser">
+        <body>
+          <![CDATA[
+            var newBrowser = this.getBrowserAtIndex(this.mTabContainer.selectedIndex);
+            if (this.mCurrentBrowser == newBrowser)
+              return;
+
+            if (this.mCurrentBrowser) {
+              // Only save the focused element if it is in our content window
+              // or in an ancestor window.
+              var focusedWindow = document.commandDispatcher.focusedWindow;
+              var saveFocus = false;
+
+              if (focusedWindow && focusedWindow.top == window.content) {
+                saveFocus = true;
+              } else {
+                var contentWindow = window;
+
+                while (contentWindow) {
+                  if (contentWindow == focusedWindow) {
+                    saveFocus = true;
+                    break;
+                  }
+
+                  if (contentWindow.parent == contentWindow) {
+                    break;
+                  }
+
+                  contentWindow = contentWindow.parent;
+                }
+              }
+
+              if (saveFocus) {
+                // Preserve the currently-focused element or DOM window for
+                // this tab.
+
+                this.mCurrentBrowser.focusedWindow = focusedWindow;
+                this.mCurrentBrowser.focusedElement = document.commandDispatcher.focusedElement;
+              }
+
+              if (this.mCurrentBrowser.focusedElement) {
+                // Clear focus outline before we draw on top of it
+                this.mCurrentBrowser.focusedElement.blur();
+              }
+              this.mCurrentBrowser.setAttribute("type", "content-targetable");
+            }
+
+            var updatePageReport = false;
+            if ((this.mCurrentBrowser.pageReport && !newBrowser.pageReport) ||
+                (!this.mCurrentBrowser.pageReport && newBrowser.pageReport))
+              updatePageReport = true;
+
+            newBrowser.setAttribute("type", "content-primary");
+            this.mCurrentBrowser = newBrowser;
+            this.mCurrentTab = this.selectedTab;
+
+            if (updatePageReport)
+              this.mCurrentBrowser.updatePageReport();
+
+            // Update the URL bar.
+            var loc = this.mCurrentBrowser.currentURI;
+
+            // Update the busy state before notifying progress listeners.
+            var prevIsBusy = this.mIsBusy;
+            this.mIsBusy = this.mCurrentTab.hasAttribute("busy");
+
+            var webProgress = this.mCurrentBrowser.webProgress;
+            var securityUI = this.mCurrentBrowser.securityUI;
+
+            var i, p;
+            for (i = 0; i < this.mProgressListeners.length; i++) {
+              p = this.mProgressListeners[i];
+              if (p) {
+                p.onLocationChange(webProgress, null, loc);
+                if ('onLinkIconAvailable' in p)
+                  p.onLinkIconAvailable(this.mCurrentBrowser);
+                if (securityUI)
+                  p.onSecurityChange(webProgress, null, securityUI.state);
+
+                // make sure that all status indicators are properly updated
+                if ("onUpdateCurrentBrowser" in p) {
+                  var listener = this.mTabListeners[this.mTabContainer.selectedIndex] || null;
+                  if (listener && listener.mStateFlags)
+                    p.onUpdateCurrentBrowser(listener.mStateFlags, listener.mStatus,
+                                             listener.mMessage, listener.mTotalProgress);
+                }
+              }
+            }
+
+            this._fastFind.setDocShell(this.mCurrentBrowser.docShell);
+
+            // Update the window title.
+            this.updateTitlebar();
+
+            // If the new tab is busy, and our previous state was not busy, then
+            // we need to fire a start to all progress listeners.
+            const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
+            if (this.mCurrentTab.hasAttribute("busy") && !prevIsBusy) {
+              webProgress = this.mCurrentBrowser.webProgress;
+              for (i = 0; i < this.mProgressListeners.length; i++) {
+                p = this.mProgressListeners[i];
+                if (p)
+                  p.onStateChange(webProgress, null, nsIWebProgressListener.STATE_START | nsIWebProgressListener.STATE_IS_NETWORK, 0);
+              }
+            }
+
+            // If the new tab is not busy, and our previous state was busy, then
+            // we need to fire a stop to all progress listeners.
+            if (!this.mCurrentTab.hasAttribute("busy") && prevIsBusy) {
+              webProgress = this.mCurrentBrowser.webProgress;
+              for (i = 0; i < this.mProgressListeners.length; i++) {
+                p = this.mProgressListeners[i];
+                if (p)
+                  p.onStateChange(webProgress, null, nsIWebProgressListener.STATE_STOP | nsIWebProgressListener.STATE_IS_NETWORK, 0);
+              }
+            }
+
+            // We've selected the new tab, so go ahead and notify listeners.
+            var event = document.createEvent("Events");
+            event.initEvent("TabSelect", true, false);
+            this.mCurrentTab.dispatchEvent(event);
+
+            if (document.commandDispatcher.focusedElement &&
+                document.commandDispatcher.focusedElement.parentNode ==
+                this.mCurrentTab.parentNode) {
+              // The focus is on a tab in the same tab panel
+              return;  // If focus was on a tab, switching tabs focuses the new tab
+            }
+
+            var whatToFocus = window.content;
+            // The original code in tabBrowser.xml had some code to focus the previously focused 
+            // element or window, which isn't what we want for Songbird.  See bug 21236.
+            
+            var cmdDispatcher = document.commandDispatcher;
+            
+            if (whatToFocus instanceof Window) {
+              cmdDispatcher.focusedWindow = whatToFocus;
+              cmdDispatcher.focusedElement = null;
+            } else {
+              cmdDispatcher.focusedWindow = whatToFocus.ownerDocument.defaultView;
+              cmdDispatcher.focusedElement = whatToFocus;
+            }
+            
+            // Removed setTimeout based on
+            // http://bonsai.mozilla.org/cvsblame.cgi?file=mozilla/browser/base/content/tabbrowser.xml&rev=1.271#847
+          ]]>
+        </body>
+      </method>
 
       <method name="_checkTarget">
         <parameter name="aTarget"/>
