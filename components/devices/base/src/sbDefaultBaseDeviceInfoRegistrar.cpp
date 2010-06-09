@@ -300,8 +300,35 @@ NS_IMETHODIMP
 sbDefaultBaseDeviceInfoRegistrar::InterestedInDevice(sbIDevice *aDevice,
                                                      PRBool *retval)
 {
+  NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(retval);
+
+  nsresult rv;
   *retval = PR_FALSE;
+
+  // Peek in the device XML file to see if the caps are there.  Just return if
+  // no device XML file has been specified.
+  nsCString xmlInfoSpec;
+  rv = GetDeviceXMLInfoSpec(xmlInfoSpec);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (xmlInfoSpec.IsEmpty())
+    return NS_OK;
+
+  nsAutoPtr<sbDeviceXMLInfo> xmlInfo = new sbDeviceXMLInfo(aDevice);
+  NS_ENSURE_TRUE(xmlInfo, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = xmlInfo->Read(xmlInfoSpec.BeginReading());
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check if the device XML info is present.
+  PRBool infoPresent = PR_FALSE;
+  rv = xmlInfo->GetDeviceInfoPresent(&infoPresent);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (infoPresent) {
+    *retval = PR_TRUE;
+  }
+
   return NS_OK;
 }
 
