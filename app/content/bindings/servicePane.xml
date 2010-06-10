@@ -1667,7 +1667,7 @@
           /* These should already be in sorted order */
           this.log("********** SERVICEPANE ROOT **********");
           var groupEntry = this.mService.root.firstChild;
-          while (groupEntry && groupEntry != this.mService.root.lastChild) {
+          while (groupEntry) {
             this.log("|- " + groupEntry.id);
             // Create the group and set the state
             var newgroup = this.createGroup(groupEntry);
