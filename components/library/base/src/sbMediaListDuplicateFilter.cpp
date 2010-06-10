@@ -42,9 +42,10 @@
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
 
-NS_IMPL_ISUPPORTS3(sbMediaListDuplicateFilter, nsISimpleEnumerator,
-                                               sbIMediaListDuplicateFilter,
-                                               sbIMediaListEnumerationListener);
+NS_IMPL_THREADSAFE_ISUPPORTS3(sbMediaListDuplicateFilter, 
+                              nsISimpleEnumerator,
+                              sbIMediaListDuplicateFilter,
+                              sbIMediaListEnumerationListener);
 
 static char const * const DUPLICATE_PROPERTIES[] = {
   SB_PROPERTY_GUID,
@@ -65,6 +66,9 @@ sbMediaListDuplicateFilter::sbMediaListDuplicateFilter() :
 
 sbMediaListDuplicateFilter::~sbMediaListDuplicateFilter()
 {
+  if (mMonitor) {
+    nsAutoMonitor::DestroyMonitor(mMonitor);
+  }
 }
 
 NS_IMETHODIMP
@@ -77,6 +81,9 @@ sbMediaListDuplicateFilter::Initialize(nsISimpleEnumerator * aSource,
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   
+  mMonitor = nsAutoMonitor::NewMonitor("sbMediaListDuplicateFilter::mMonitor");
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
+
   nsCOMPtr<sbIMutablePropertyArray> propArray = 
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -109,6 +116,7 @@ NS_IMETHODIMP
 sbMediaListDuplicateFilter::GetDuplicateItems(PRUint32 * aDuplicateItems)
 {
   NS_ENSURE_ARG_POINTER(aDuplicateItems);
+  nsAutoMonitor mon(mMonitor);
   *aDuplicateItems = mDuplicateItems;
   return NS_OK;
 }
@@ -117,6 +125,7 @@ NS_IMETHODIMP
 sbMediaListDuplicateFilter::GetTotalItems(PRUint32 * aTotalItems)
 {
   NS_ENSURE_ARG_POINTER(aTotalItems);
+  nsAutoMonitor mon(mMonitor);
   *aTotalItems = mTotalItems;
   return NS_OK;
 }
@@ -198,6 +207,8 @@ sbMediaListDuplicateFilter::SaveItemKeys(sbIMediaItem * aItem)
   nsresult rv;
   nsString key;
   
+  nsAutoMonitor mon(mMonitor);
+
   rv = aItem->GetProperties(mSBPropertyArray, getter_AddRefs(mItemProperties));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -224,6 +235,9 @@ sbMediaListDuplicateFilter::IsDuplicate(sbIMediaItem * aItem,
   nsresult rv;
   nsString key;
 
+  // No need to lock here because IsDuplicate is always
+  // called with the monitor already acquired.
+
   rv = aItem->GetProperties(mSBPropertyArray, getter_AddRefs(mItemProperties));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -247,6 +261,8 @@ nsresult
 sbMediaListDuplicateFilter::Advance()
 {
   nsresult rv;
+
+  nsAutoMonitor mon(mMonitor);
 
   PRBool more;
   rv = mSource->HasMoreElements(&more);

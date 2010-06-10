@@ -25,9 +25,30 @@
 #include "nsISupports.idl"
 
 interface nsISimpleEnumerator;
+interface sbIMediaListEnumeratorWrapperListener;
 
-[scriptable, uuid(c7c43a4b-ac2e-4957-80c1-2439e5f50f51)]
+/**
+ * \brief nsISimpleEnumerator wrapper which sets downloadStatusTarget
+ *        on the items being enumerated. 
+ *
+ *  This wrapper supports nsISimpleEnumerators that return sbIIndexedMediaItems
+ *  as well as sbIMediaItems.
+ */
+[scriptable, uuid(d7474013-9d2f-4c72-9298-f8fe87c28ff8)]
 interface sbIMediaListEnumeratorWrapper : nsISupports
 {
-  void initialize(in nsISimpleEnumerator aEnumerator);
+  void initialize(in nsISimpleEnumerator aEnumerator,
+                  [optional] in sbIMediaListEnumeratorWrapperListener aListener);
+};
+
+/**
+ * \brief Listener interface for use with sbIMediaListEnumeratorWrapper.
+ */
+[scriptable, function, uuid(f79af76f-243c-48e7-8de8-f73a80c0f5f4)]
+interface sbIMediaListEnumeratorWrapperListener : nsISupports
+{
+  void onHasMoreElements(in nsISimpleEnumerator aEnumerator, 
+                         in boolean aHasMore);
+  void onGetNext(in nsISimpleEnumerator aEnumerator,
+                 in nsISupports aNextElement);
 };

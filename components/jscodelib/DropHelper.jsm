@@ -183,8 +183,14 @@ var DNDUtils = {
     var plural = SBString("library.pluraltracks");
   
     if (aIsDevice) {
-      msg = SBFormattedString("device.tracksadded", 
-        [aAdded, aDestName]);
+      if (aDups) {
+        msg = SBFormattedString("device.tracksadded.with.dups", 
+          [aAdded, aDestName, aDups]);
+      }
+      else {
+        msg = SBFormattedString("device.tracksadded", 
+          [aAdded, aDestName]);
+      }
     }  
     else if (aDups && aUnsupported) {
       msg = SBFormattedString("library.tracksadded.with.dups.and.unsupported",
@@ -256,27 +262,13 @@ DNDUtils.MediaListViewSelectionTransferContext.prototype = {
     reset: function() {
       // Create an enumerator that unwraps the sbIIndexedMediaItem enumerator
       // which selection provides.
-      var enumerator = this._mediaListView.selection.selectedIndexedMediaItems;
-      this.items = {
-        hasMoreElements : function() {
-          return enumerator.hasMoreElements();
-        },
-        getNext : function() {
-          var item = enumerator.getNext().mediaItem
-                       .QueryInterface(Components.interfaces.sbIMediaItem);
-          
-          item.setProperty(SBProperties.downloadStatusTarget,
-                           item.library.guid + "," + item.guid);
-          return item;
-        },
-        QueryInterface : function(iid) {
-          if (iid.equals(Components.interfaces.nsISimpleEnumerator) ||
-              iid.equals(Components.interfaces.nsISupports))
-            return this;
-          throw Components.results.NS_NOINTERFACE;
-        }
-      };
-
+      var enumerator = Cc["@songbirdnest.com/Songbird/Library/EnumeratorWrapper;1"]
+                         .createInstance(Ci.sbIMediaListEnumeratorWrapper);
+      enumerator.initialize(this._mediaListView
+                                .selection
+                                .selectedIndexedMediaItems);
+      this.items = enumerator;
+      
       // and here's the wrapped form for those cases where you want it
       this.indexedItems = this._mediaListView.selection.selectedIndexedMediaItems;
     },
@@ -694,19 +686,17 @@ var InternalDropHandler = {
     // Create an enumerator that wraps the enumerator we were handed.
     // We use this to set downloadStatusTarget and to notify the onFirstMediaItem
     // listener, as well as counting the number of unsupported items
-    var unwrapper = {
-      enumerator: dupFilter.QueryInterface(Ci.nsISimpleEnumerator),
+    var unwrapperListener = {
       first: true,
       itemsPending: 0,
       _hasMoreElements: true,
 
-      hasMoreElements : function() {
-        this._hasMoreElements = this.enumerator.hasMoreElements();
+      onHasMoreElements : function(aEnumerator, aHasMore) {
+        this._hasMoreElements = aHasMore;
         this._checkEnumerationComplete();
-        return this._hasMoreElements;
       },
-      getNext : function() {
-        var item = this.enumerator.getNext();
+      onGetNext : function(aEnumerator, aItem) {
+        var item = aItem
 
         if (this.first) {
           this.first = false;
@@ -714,15 +704,10 @@ var InternalDropHandler = {
             aListener.onFirstMediaItem(item);
         }
 
-        item.setProperty(SBProperties.downloadStatusTarget,
-                         item.library.guid + "," + item.guid);
-
         if (device) {
           this.itemsPending++;
           device.supportsMediaItem(item, this);
         }
-
-        return item;
       },
       onSupportsMediaItem : function(aMediaItem, aIsSupported) {
         if (!aIsSupported) {
@@ -738,6 +723,11 @@ var InternalDropHandler = {
       QueryInterface : XPCOMUtils.generateQI([Ci.nsISimpleEnumerator,
                                               Ci.sbIDeviceSupportsItemCallback])
     }
+
+    var unwrapper = Cc["@songbirdnest.com/Songbird/Library/EnumeratorWrapper;1"]
+                    .createInstance(Ci.sbIMediaListEnumeratorWrapper);
+    unwrapper.initialize(dupFilter.QueryInterface(Ci.nsISimpleEnumerator),
+                         unwrapperListener);
     
     var asyncListener = {
       _dupFilter: dupFilter,
@@ -755,7 +745,7 @@ var InternalDropHandler = {
       aTargetList.insertSomeBefore(unwrapper, aDropPosition);
     } else {
       // XXXAus: Change this back to addSomeAsync!!!
-      aTargetList.addSome(unwrapper /*, asyncListener*/);
+      aTargetList.addSomeAsync(unwrapper , asyncListener);
     }
 
     function onEnumerateComplete() {

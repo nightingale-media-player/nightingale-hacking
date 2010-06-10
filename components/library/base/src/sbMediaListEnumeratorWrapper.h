@@ -57,6 +57,7 @@ private:
 
   PRMonitor* mMonitor;
   nsCOMPtr<nsISimpleEnumerator> mEnumerator;
+  nsCOMPtr<sbIMediaListEnumeratorWrapperListener> mListener;
 };
 
 #endif

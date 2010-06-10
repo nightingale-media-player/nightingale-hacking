@@ -32,9 +32,10 @@
 #include <nsIProgrammingLanguage.h>
 #include <nsMemory.h>
 #include <nsStringAPI.h>
+#include <nsThreadUtils.h>
 
 // Songbird includes
-#include <sbPropertiesCID.h>
+#include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 
 // Songbird interfaces
@@ -66,7 +67,9 @@ sbMediaListEnumeratorWrapper::~sbMediaListEnumeratorWrapper()
 }
 
 NS_IMETHODIMP
-sbMediaListEnumeratorWrapper::Initialize(nsISimpleEnumerator * aEnumerator)
+sbMediaListEnumeratorWrapper::Initialize(
+                                nsISimpleEnumerator * aEnumerator,
+                                sbIMediaListEnumeratorWrapperListener *aListener)
 {
   NS_ENSURE_ARG_POINTER(aEnumerator);
   
@@ -75,6 +78,19 @@ sbMediaListEnumeratorWrapper::Initialize(nsISimpleEnumerator * aEnumerator)
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   mEnumerator = aEnumerator;
+
+  if(aListener) {
+    nsCOMPtr<nsIThread> target;
+    nsresult rv = NS_GetMainThread(getter_AddRefs(target));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = do_GetProxyForObject(target,
+                              NS_GET_IID(sbIMediaListEnumeratorWrapperListener),
+                              aListener,
+                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                              getter_AddRefs(mListener));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -89,6 +105,15 @@ sbMediaListEnumeratorWrapper::HasMoreElements(PRBool *aMore)
   nsAutoMonitor mon(mMonitor);
   nsresult rv = mEnumerator->HasMoreElements(aMore);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  if(mListener) {
+    nsCOMPtr<nsISimpleEnumerator> grip(mEnumerator);
+    nsCOMPtr<sbIMediaListEnumeratorWrapperListener> listener(mListener);
+    mon.Exit();
+
+    rv = listener->OnHasMoreElements(grip, *aMore);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "onHasMoreElements returned an error");
+  }
 
   return NS_OK;
 }
@@ -105,8 +130,20 @@ sbMediaListEnumeratorWrapper::GetNext(nsISupports ** aItem)
   nsresult rv = mEnumerator->GetNext(getter_AddRefs(supports));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIMediaItem> mediaItem = do_QueryInterface(supports, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIMediaItem> mediaItem;
+  nsCOMPtr<sbIIndexedMediaItem> indexedMediaItem = do_QueryInterface(supports, &rv);
+
+  if(NS_SUCCEEDED(rv)) {
+    rv = indexedMediaItem->GetMediaItem(getter_AddRefs(mediaItem));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else if(rv == NS_ERROR_NO_INTERFACE) {
+    mediaItem = do_QueryInterface(supports, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    return rv;
+  }
 
   nsString itemGuid;
   rv = mediaItem->GetGuid(itemGuid);
@@ -129,7 +166,16 @@ sbMediaListEnumeratorWrapper::GetNext(nsISupports ** aItem)
                            propertyValue);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ADDREF(*aItem = supports);
+  NS_ADDREF(*aItem = mediaItem);
+
+  if(mListener) {
+    nsCOMPtr<nsISimpleEnumerator> grip(mEnumerator);
+    nsCOMPtr<sbIMediaListEnumeratorWrapperListener> listener(mListener);
+    mon.Exit();
+
+    rv = listener->OnGetNext(grip, mediaItem);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "onGetNext returned an error");
+  }
   
   return NS_OK;
 }
