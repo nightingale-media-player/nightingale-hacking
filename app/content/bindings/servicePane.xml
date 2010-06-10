@@ -1758,8 +1758,9 @@
 
             // if we didn't find a node, try looking it up by URL
             if (!node) {
-              let uri = this._browser.selectedTab.linkedBrowser.currentURI.spec;
-              node = this.mService.getNodeForURL(uri);
+              let uri = this._browser.selectedTab.linkedBrowser.currentURI;
+              if (uri)
+                node = this.mService.getNodeForURL(uri.spec);
             }
 
             // if we still didn't find a node, try looking it up by medialist
