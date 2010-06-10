@@ -1672,13 +1672,18 @@
             // Create the group and set the state
             var newgroup = this.createGroup(groupEntry);
 
-            // Create the nodes in this group
-            var nodeEntry = groupEntry.firstChild;
-            while (nodeEntry) {
+            // Helper function to add nodes (called recursively)
+            function addNode(nodeEntry, parent)
+            {
               this.log("\t|- " + nodeEntry.id);
-              this.createNode(nodeEntry, newgroup);
-              nodeEntry = nodeEntry.nextSibling;
+              let newnode = this.createNode(nodeEntry, parent);
+              for (let child = nodeEntry.firstChild; child; child = child.nextSibling)
+                addNode.call(this, child, newnode);
             }
+
+            // Create the nodes in this group
+            for (let child = groupEntry.firstChild; child; child = child.nextSibling)
+              addNode.call(this, child, newgroup);
 
             this.appendChild(newgroup);
             
