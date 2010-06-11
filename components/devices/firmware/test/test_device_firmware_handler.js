@@ -107,7 +107,17 @@ function runTest () {
     op: "", 
     firmwareUpdate: null,
     onDeviceEvent: function(aEvent) {
-      log("event type: " + aEvent.type);
+      
+      function eventTypeToString(aType) {
+        for (let type in Ci.sbIDeviceEvent) {
+          if (Ci.sbIDeviceEvent[type] === aType)
+            return type;
+        }
+        return "0x" + (Array(8).join("0") + (type>>>0).toString(16)).substr(-8);
+      }
+      
+      log("event operation: " + this.op);
+      log("event type: " + eventTypeToString(aEvent.type));
       log("event origin: " + aEvent.origin);
       log("event target: " + aEvent.target);
       
@@ -193,6 +203,6 @@ function runTest () {
     eventTarget.removeEventListener(listener);
   }
 
-  jsHttpServer.stop();
-  return;
+  jsHttpServer.stop(testFinished);
+  testPending();
 }
