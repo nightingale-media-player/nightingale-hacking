@@ -86,5 +86,44 @@
       </constructor>
     </implementation>
   </binding>
+  
+  <!--
+    - Binding to make the deck resize to the selected panel for 
+    - http://bugzilla.songbirdnest.com/show_bug.cgi?id=21401
+    -->
+  <binding id="sb-deck"
+           extends="chrome://global/content/bindings/general.xml#deck">
+    
+    <!-- handle the deck's select event -->
+    <handlers>
+      <handler event="select" action="onSelect()"/>
+    </handlers>
+    
+    <implementation>
+    
+      <!-- hide unselected panes on construction -->
+      <constructor>
+        this.onSelect();
+      </constructor>
+      
+      <!-- hide unselected panes on construction -->
+      <method name="onSelect">
+        <body>
+        <![CDATA[
+          // Show the selected panel, hide others.
+          for (var i = 0; i < this.childNodes.length; i++) {
+            if (this.childNodes[i] == this.selectedPanel) {
+              this.childNodes[i].removeAttribute("collapsed");
+            } else {
+              this.childNodes[i].setAttribute("collapsed", "true");
+            }
+          }
+        ]]>
+        </body>
+      </method>
+      
+    </implementation>
+      
+  </binding>
 
 </bindings>

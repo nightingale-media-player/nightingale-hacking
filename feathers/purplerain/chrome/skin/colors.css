@@ -1035,8 +1035,8 @@ richlistitem[selected="true"] .includeUpdate {
 }
 #viewGroup {
   -moz-box-pack:center;
+  -moz-box-flex:1;
   padding:6px 6px 0px 0px;
-  margin-left: -18px;
 }
 #extensionsView {
   margin:0px;
