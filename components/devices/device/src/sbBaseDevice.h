@@ -254,7 +254,7 @@ public:
    */
   static PRUint32 const BATCH_INDEX_START = 1;
   sbBaseDevice();
-  ~sbBaseDevice();
+  virtual ~sbBaseDevice();
 
   /* add a transfer/action request to the request queue */
   nsresult  PushRequest(const int aType,

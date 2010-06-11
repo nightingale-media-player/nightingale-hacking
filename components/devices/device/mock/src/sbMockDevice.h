@@ -50,5 +50,5 @@ protected:
   nsCOMPtr<sbIDeviceProperties> mProperties;
   
 private:
-  ~sbMockDevice();
+  virtual ~sbMockDevice();
 };
