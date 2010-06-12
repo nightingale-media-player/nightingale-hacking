@@ -1369,6 +1369,7 @@ sbGStreamerVideoTranscoder::BuildAudioBin(GstCaps *aInputAudioCaps,
   GstElement *audioconvert = NULL;
   GstElement *audioresample = NULL;
   GstElement *capsfilter = NULL;
+  GstElement *audioresample2 = NULL;
   GstElement *encoder = NULL;
 
   PRInt32 outputRate, outputChannels;
@@ -1403,8 +1404,10 @@ sbGStreamerVideoTranscoder::BuildAudioBin(GstCaps *aInputAudioCaps,
   audioconvert = gst_element_factory_make ("audioconvert", NULL);
   audioresample = gst_element_factory_make ("audioresample", NULL);
   capsfilter = gst_element_factory_make ("capsfilter", NULL);
+  audioresample2 = gst_element_factory_make ("audioresample", NULL);
 
-  if (!audiorate || !audioconvert || !audioresample || !capsfilter)
+  if (!audiorate || !audioconvert || !audioresample || !capsfilter ||
+      !audioresample2)
   {
     // Failed to create an element that we expected to be present, means
     // the gstreamer installation is messed up.
@@ -1470,15 +1473,15 @@ sbGStreamerVideoTranscoder::BuildAudioBin(GstCaps *aInputAudioCaps,
 
   // Now, add to the bin, and then link everything up.
   gst_bin_add_many (bin, audiorate, audioconvert, audioresample,
-          capsfilter, NULL);
+          capsfilter, audioresample2, NULL);
   gst_element_link_many (audiorate, audioconvert, audioresample,
-          capsfilter, NULL);
+          capsfilter, audioresample2, NULL);
 
-  last = capsfilter;
+  last = audioresample2;
 
   if (encoder) {
     gst_bin_add (bin, encoder);
-    gst_element_link (capsfilter, encoder);
+    gst_element_link (last, encoder);
     last = encoder;
   }
 
@@ -1507,6 +1510,8 @@ failed:
     g_object_unref (audioresample);
   if (capsfilter)
     g_object_unref (capsfilter);
+  if (audioresample2)
+    g_object_unref (audioresample2);
   if (encoder)
     g_object_unref (encoder);
   if (bin)
@@ -2255,15 +2260,22 @@ sbGStreamerVideoTranscoder::BuildTranscodePipeline(const gchar *aPipelineName)
   //                continuous audio stream with no gaps or overlaps.
   // audioconvert:  convert format of the raw audio for further processing.
   //                Includes down- or up-mixing.
-  // audioresample: resample audio to change the sample rate.
+  // ar1:           audioresample used to resample audio to the desired sample
+  //                rate.
   // capsfilter:    specify the format to convert to for the encoder to encode.
+  // ar2:           audioresample to re-resample to a rate supported by the
+  //                encoder. This is basically a hack to handle the fact that
+  //                the configurator doesn't know how to handle the constraints
+  //                of what the encoder is capable of. We don't similarly have
+  //                another audioconvert, or other converters on the video side,
+  //                because in practice we don't run into this problem there.
   //
   // [------------------------------------------------------------------------]
   // [audio-encoder                                                           ]
   // [                                                                        ]
-  // [ [---------]  [------------]  [-------------]  [----------] [-------]   ]
-  // [-[audiorate]--[audioconvert]--[audioresample]--[capsfilter]-[encoder]---]
-  // [ [---------]  [------------]  [-------------]  [----------] [-------]   ]
+  // [ [---------]  [------------]  [---]  [----------] [---]  [-------]      ]
+  // [-[audiorate]--[audioconvert]--[ar1]--[capsfilter]-[ar2]--[encoder]------]
+  // [ [---------]  [------------]  [---]  [----------] [---]  [-------]      ]
   // [                                                                        ]
   // [------------------------------------------------------------------------]
   //
