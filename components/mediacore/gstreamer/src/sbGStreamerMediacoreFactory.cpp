@@ -219,8 +219,11 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
            blacklistExtensions.BeginReading()));
     }
 
-    const char *extraAudioExtensions[] = {"m4r", "m4p", "mp4", "oga", "wma",
-        "ogg", "aac", "3gp"};
+    const char *extraAudioExtensions[] = {"m4r", "m4p", "mp4", "oga",
+                                          "ogg", "aac", "3gp"};
+#ifdef XP_WIN
+    const char *extraWindowsAudioExtensions[] = {"wma" };
+#endif
 
     { // for scope
 
@@ -331,6 +334,14 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
       if(!audioExtensions.Contains(ext))
         audioExtensions.AppendElement(ext);
     }
+
+#if XP_WIN
+    for (unsigned int i = 0; i < NS_ARRAY_LENGTH(extraWindowsAudioExtensions); i++) {
+      nsString ext = NS_ConvertUTF8toUTF16(extraWindowsAudioExtensions[i]);
+      if(!audioExtensions.Contains(ext))
+        audioExtensions.AppendElement(ext);
+    }
+#endif
 
     rv = caps->SetAudioExtensions(audioExtensions);
     NS_ENSURE_SUCCESS(rv, rv);
