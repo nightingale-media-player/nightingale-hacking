@@ -179,7 +179,6 @@ var DeviceSyncWidget = {
     this._widget.removeAttribute("hidden");
 
     /* Get the management type pref UI elements. */
-    var selector = this._getElement("content_selector");
     var syncRadioGroup = this._getElement("content_auto_sync_type_radio_group");
     var syncPlaylistTree = this._getElement("content_auto_sync_playlist_tree");
     var syncEnabledCheckbox = this._getElement("content_management_checkbox");
@@ -188,10 +187,6 @@ var DeviceSyncWidget = {
     // If the device is not in manual mode hide the manual mode message
     var deviceManual = this._deviceSyncSettings.syncMode ==
                             Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
-
-    // If we are busy then diable the widget so the user can not make changes
-    if (this._device.isBusy)
-      this._widget.setAttribute("disabled", true);
 
     if (deviceManual) {
       manualMessage.removeAttribute("collapsed");
@@ -232,6 +227,10 @@ var DeviceSyncWidget = {
           break;
       }
     }
+
+    // If we are busy then diable the widget so the user can not make changes
+    if (this._device.isBusy)
+      this._widget.setAttribute("disabled", true);
 
     // Show the video duration column only for the Video tab.
     var syncPlaylistListVideoHeader =

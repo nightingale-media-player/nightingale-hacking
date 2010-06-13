@@ -334,28 +334,10 @@
               this.devLib.tempSyncSettings.getMediaSettings(this._mediaType);
           }
 
-          // Update main checkbox state
-          let syncEnabled =
-                (this._imageSettings.mgmtType != this._CIDM.SYNC_MGMT_NONE);
-          this._getElement("sync_images_from_checkbox").checked = syncEnabled;
-
-          if (!syncEnabled)
-          {
-            this.setAttribute("disabled", "true");
-            this._getElement("content_selector").setAttribute("disabled",
-                                                              "true");
-          }
-          else
-          {
-            this.removeAttribute("disabled");
-            this._getElement("content_selector").removeAttribute("disabled");
-          }
-
           // Enable/disable radio buttons
           let syncAllRadio = this._getElement("sync_images_all_radio");
           let syncSelectedRadio =
                 this._getElement("sync_images_selected_radio");
-          syncAllRadio.disabled = syncSelectedRadio.disabled = !syncEnabled;
 
           // Update radio group state
           let syncSelected =
@@ -375,10 +357,40 @@
             this._ignoreFolderChanges = false;
           }
 
-          rootFolderElement.disabled = !syncEnabled;
+          // Update main checkbox state
+          let syncEnabled =
+                (this._imageSettings.mgmtType != this._CIDM.SYNC_MGMT_NONE);
 
-          // Enable/disable list of subfolders
-          this._getElement("sync_images_folders_tree").disabled = !syncSelected;
+          let syncImagesCheckBox =
+                this._getElement("sync_images_from_checkbox");
+          syncImagesCheckBox.checked = syncEnabled;
+
+          let syncFolderTree = this._getElement("sync_images_folders_tree");
+          let selector = this._getElement("content_selector");
+          let isBusy = this.device && this.device.isBusy;
+          if (!syncEnabled || isBusy) {
+            this.setAttribute("disabled", true);
+            selector.setAttribute("disabled", true);
+            rootFolderElement.setAttribute("disabled", true);
+            syncAllRadio.setAttribute("disabled", true);
+            syncSelectedRadio.setAttribute("disabled", true);
+            syncFolderTree.setAttribute("disabled", true);
+          }
+          else {
+            this.removeAttribute("disabled");
+            selector.removeAttribute("disabled");
+            rootFolderElement.removeAttribute("disabled");
+            syncAllRadio.removeAttribute("disabled");
+            syncSelectedRadio.removeAttribute("disabled");
+            syncFolderTree.removeAttribute("disabled");
+          }
+
+          if (isBusy) {
+            syncImagesCheckBox.setAttribute("disabled", true);
+          }
+          else {
+            syncImagesCheckBox.removeAttribute("disabled");
+          }
 
           // Update root folder displayed and list of subfolders if necessary
           let subfoldersElement =
@@ -905,6 +917,10 @@
         {
           switch(aEvent.type) {
             case Ci.sbIDeviceEvent.EVENT_DEVICE_PREFS_CHANGED:
+              this._updateUI();
+              break;
+
+            case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED:
               this._updateUI();
               break;
           }

@@ -6,7 +6,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -235,6 +235,10 @@
 
     <menu id="helpMenu" label="&menu.help;" accesskey="&menu.help.accesskey;" onpopupshowing="buildHelpMenu();">
       <menupopup id="menu_HelpPopup">
+        <menuitem id="menuitem_help_homepage"
+                  label="&menu.help.homepage;"
+                  value="songbird.url.homepage"
+                  accesskey="&menu.help.homepage.accesskey;"/>
         <menuitem id="menuitem_help_bugz"
                   label="&menu.help.bugz;"
                   value="songbird.url.bugzilla"

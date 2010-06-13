@@ -85,6 +85,7 @@
 <!ENTITY menu.tools.exportmedia "Export Library Changes">
 
 <!ENTITY menu.help          "Help" >
+<!ENTITY menu.help.homepage "Songbird Website" >
 <!ENTITY menu.help.bugz     "Report a Bug" >
 <!ENTITY menu.help.topics   "Help Topics" >
 <!ENTITY menu.help.keyboard "Keyboard Shortcuts">
@@ -287,6 +288,7 @@
 <!ENTITY menu.tools.reveal.modifiers   "accel,shift" >
 
 <!ENTITY menu.help.accesskey          "H" >
+<!ENTITY menu.help.homepage.accesskey "W" >
 <!ENTITY menu.help.bugz.accesskey     "B" >
 <!ENTITY menu.help.help.accesskey     "H" >
 <!ENTITY menu.help.keyboard.accesskey "K" >

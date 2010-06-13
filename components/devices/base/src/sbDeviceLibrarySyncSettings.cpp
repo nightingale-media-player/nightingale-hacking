@@ -144,10 +144,10 @@ nsresult sbDeviceLibrarySyncSettings::Assign(
   return NS_OK;
 }
 
-void sbDeviceLibrarySyncSettings::Changed()
+void sbDeviceLibrarySyncSettings::Changed(PRBool forceNotify)
 {
   // If we're already have changed nothing to do.
-  if (mChanged) {
+  if (mChanged && !forceNotify) {
     return;
   }
   mChanged = true;
@@ -228,7 +228,7 @@ sbDeviceLibrarySyncSettings::SetSyncMode(PRUint32 aSyncMode)
 
   mSyncMode = aSyncMode;
 
-  Changed();
+  Changed(PR_TRUE);
 
   return NS_OK;
 }

@@ -69,7 +69,7 @@ public:
    * Marks the settings object as modified and notifies the device library
    * if set to do so
    */
-  void Changed();
+  void Changed(PRBool forceNotify = PR_FALSE);
 
   void NotifyDeviceLibrary()
   {

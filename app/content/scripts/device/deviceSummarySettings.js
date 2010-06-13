@@ -66,14 +66,22 @@ var DeviceSummarySettings = {
   // Device Sync Tabs object fields.
   //
   //   _widget                  Device sync tabs widget.
+  //   _device                  sbIDevice object.
+  //   _settingsChanged         Whether the settings have been changed.
   //   _saveButton              The save button of the settings box
   //   _cancelButton            The cancel button of the settings box
+  //   _deviceMgmtSettings      The device management settings box
+  //   _deviceGeneralSettings   The device general settings box
   //   _domEventListenerSet     Set of DOM event listeners.
   //
 
   _widget: null,
+  _device: null,
+  _settingsChanged: false,
   _saveButton: null,
   _cancelButton: null,
+  _deviceMgmtSettings: null,
+  _deviceGeneralSettings: null,
   _domEventListenerSet: null,
 
   /**
@@ -88,9 +96,9 @@ var DeviceSummarySettings = {
     this._widget = aWidget;
 
     // Initialize object fields.
-    var device = this._widget.device;
+    this._device = this._widget.device;
 
-    if ((device && device.defaultLibrary) ||
+    if ((this._device && this._device.defaultLibrary) ||
         !this._getElement("device_general_settings").hidden) {
       this._widget.removeAttribute("disabledTab");
     }
@@ -98,8 +106,15 @@ var DeviceSummarySettings = {
       this._widget.setAttribute("disabledTab", "true");
     }
 
+    // Listen for device events.
+    var deviceEventTarget =
+          this._device.QueryInterface(Ci.sbIDeviceEventTarget);
+    deviceEventTarget.addEventListener(this);
+
     this._saveButton = this._getElement("device_settings_button_save");
     this._cancelButton = this._getElement("device_settings_button_cancel");
+    this._deviceMgmtSettings = this._getElement("device_management_settings");
+    this._deviceGeneralSettings = this._getElement("device_general_settings");
 
     this._saveButton.setAttribute("disabled", "true");
     this._cancelButton.setAttribute("disabled", "true");
@@ -128,9 +143,44 @@ var DeviceSummarySettings = {
       this._domEventListenerSet = null;
     }
 
+    // Stop listening for device events.
+    if (this._device) {
+      var deviceEventTarget =
+            this._device.QueryInterface(Ci.sbIDeviceEventTarget);
+      deviceEventTarget.removeEventListener(this);
+    }
+
     this._widget = null;
+    this._device = null;
+    this._settingsChanged = false;
     this._saveButton = null;
     this._cancelButton = null;
+    this._deviceMgmtSettings = null;
+    this._deviceGeneralSettings = null;
+  },
+
+  /**
+   * \brief Update the busy state of the UI.
+   */
+  updateBusyState: function DeviceSummarySettings_updateBusyState() {
+    let isBusy = this._device && this._device.isBusy;
+    if (isBusy || !this._settingsChanged) {
+      this._saveButton.setAttribute("disabled", "true");
+      this._cancelButton.setAttribute("disabled", "true");
+    }
+    else {
+      this._saveButton.removeAttribute("disabled");
+      this._cancelButton.removeAttribute("disabled");
+    }
+
+    if (isBusy) {
+      this._deviceMgmtSettings.setAttribute("disabled", "true");
+      this._deviceGeneralSettings.setAttribute("disabled", "true");
+    }
+    else {
+      this._deviceMgmtSettings.removeAttribute("disabled");
+      this._deviceGeneralSettings.removeAttribute("disabled");
+    }
   },
 
   /**
@@ -145,16 +195,12 @@ var DeviceSummarySettings = {
   // then we should make sure we only save the settings that aren't in the
   // 'hide' list.
   save: function DeviceSummarySettings_save() {
+    this._settingsChanged = false;
     this._saveButton.setAttribute("disabled", "true");
     this._cancelButton.setAttribute("disabled", "true");
-
-    let deviceManagementSettings =
-          this._getElement("device_management_settings");
-    deviceManagementSettings.save();
-
-    let deviceGeneralSettings = this._getElement("device_general_settings");
-    if (!deviceGeneralSettings.hidden)
-      deviceGeneralSettings.save();
+    this._deviceMgmtSettings.save();
+    if (!this._deviceGeneralSettings.hidden)
+      this._deviceGeneralSettings.save();
   },
 
   /**
@@ -162,16 +208,35 @@ var DeviceSummarySettings = {
    */
 
   reset: function DeviceSummarySettings_reset() {
+    this._settingsChanged = false;
     this._saveButton.setAttribute("disabled", "true");
     this._cancelButton.setAttribute("disabled", "true");
+    this._deviceMgmtSettings.reset();
+    if (!this._deviceGeneralSettings.hidden)
+      this._deviceGeneralSettings.reset();
+  },
 
-    let deviceManagementSettings =
-          this._getElement("device_management_settings");
-    deviceManagementSettings.reset();
+  //----------------------------------------------------------------------------  //
+  // Device sync sbIDeviceEventListener services.
+  //
+  //----------------------------------------------------------------------------
+  /**
+   * \brief Handle the device event specified by aEvent.
+   *
+   * \param aEvent              Device event.
+   */
 
-    let deviceGeneralSettings = this._getElement("device_general_settings");
-    if (!deviceGeneralSettings.hidden)
-      deviceGeneralSettings.reset();
+  onDeviceEvent: function DeviceSummarySettings_onDeviceEvent(aEvent) {
+    // Dispatch processing of the event.
+    switch(aEvent.type)
+    {
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED:
+        this.updateBusyState();
+        break;
+
+      default :
+        break;
+    }
   },
 
   //----------------------------------------------------------------------------
@@ -185,6 +250,7 @@ var DeviceSummarySettings = {
    */
   _onSettingsChangeEvent:
     function DeviceSummarySettings__onSettingsChangeEvent(aEvent) {
+    this._settingsChanged = true;
     this._saveButton.removeAttribute("disabled");
     this._cancelButton.removeAttribute("disabled");
   },

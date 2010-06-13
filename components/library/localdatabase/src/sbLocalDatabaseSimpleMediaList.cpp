@@ -1383,6 +1383,9 @@ sbLocalDatabaseSimpleMediaList::NotifyContentChanged()
   nsresult rv = GetArray()->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Reset list content type to trigger recalculation.
+  SetCachedListContentType(sbIMediaList::CONTENTTYPE_NONE);
+
   nsCOMPtr<sbIMediaList> mediaList =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, this), &rv);
   NS_ENSURE_SUCCESS(rv, rv);

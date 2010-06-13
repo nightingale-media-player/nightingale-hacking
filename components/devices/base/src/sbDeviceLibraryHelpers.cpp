@@ -31,6 +31,8 @@
 #include <nsCOMPtr.h>
 
 #include <sbIDevice.h>
+#include <sbIDeviceLibraryMediaSyncSettings.h>
+#include <sbIDeviceLibrarySyncSettings.h>
 #include <sbIOrderableMediaList.h>
 #include <sbIPropertyArray.h>
 
@@ -134,6 +136,135 @@ sbLibraryUpdateListener::StopListeningToPlaylist(sbIMediaList * aMainMediaList)
   return NS_OK;
 }
 
+static nsresult ShouldAddMediaItem(sbILibrary *aLibrary,
+                                   sbIMediaList *aMediaList,
+                                   sbIMediaItem *aMediaItem,
+                                   sbIDevice *aDevice,
+                                   PRBool *aShouldAdd)
+{
+  NS_ENSURE_ARG_POINTER(aLibrary);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aShouldAdd);
+
+  nsresult rv;
+
+  *aShouldAdd = PR_FALSE;
+
+  // Should not add hidden item to the device.
+  nsString hidden;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                               hidden);
+  if (hidden.EqualsLiteral("1"))
+    return NS_OK;
+
+  nsCOMPtr<sbIDeviceLibrary> deviceLibrary;
+  rv = sbDeviceUtils::GetDeviceLibraryForLibrary(aDevice,
+                                                 aLibrary,
+                                                 getter_AddRefs(deviceLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
+  rv = deviceLibrary->GetSyncSettings(getter_AddRefs(syncSettings));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDeviceLibraryMediaSyncSettings> mediaSyncSettings;
+  nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(aMediaItem, &rv);
+  // Deal with media item.
+  if (NS_FAILED(rv)) {
+    nsString contentType;
+    rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                                 contentType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the corresponding media sync settings based on the content type.
+    if (contentType.EqualsLiteral("audio")) {
+      rv = syncSettings->GetMediaSettings(sbIDeviceLibrary::MEDIATYPE_AUDIO,
+                                          getter_AddRefs(mediaSyncSettings));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+    }
+    else if (contentType.EqualsLiteral("video")) {
+      rv = syncSettings->GetMediaSettings(sbIDeviceLibrary::MEDIATYPE_VIDEO,
+                                          getter_AddRefs(mediaSyncSettings));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+    }
+    else {
+      NS_WARNING("Item not in audio or video type?!");
+      return NS_OK;
+    }
+
+    PRUint32 mgmtType;
+    rv = mediaSyncSettings->GetMgmtType(&mgmtType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Sync all means include everything.
+    if (mgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL) {
+      *aShouldAdd = PR_TRUE;
+      return NS_OK;
+    }
+
+    // The item should be added if the list that contains the item is
+    // selected.
+    if (aMediaList &&
+        mgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_PLAYLISTS) {
+      // The item should be added if the list contains the item is selected.
+      PRBool isSelected;
+      rv = mediaSyncSettings->GetPlaylistSelected(aMediaList, &isSelected);
+      NS_ENSURE_SUCCESS(rv, rv);
+      if (isSelected) {
+        *aShouldAdd = PR_TRUE;
+        return NS_OK;
+      }
+    }
+  }
+  // Deal with media list.
+  else {
+    PRUint16 listContentType;
+    rv = sbLibraryUtils::GetMediaListContentType(mediaList, &listContentType);
+    // Condition not available for smart playlist
+    if (rv == NS_ERROR_NOT_AVAILABLE) {
+      *aShouldAdd = PR_TRUE;
+      return NS_OK;
+    }
+
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for (PRUint32 i = 0; i < sbIDeviceLibrary::MEDIATYPE_COUNT - 1; ++i) {
+      // Map the media type to media list content type. If list type does not
+      // match, skip the check directly.
+      if (!(listContentType & (i + 1)))
+        continue;
+
+      rv = syncSettings->GetMediaSettings(i, getter_AddRefs(mediaSyncSettings));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRUint32 mgmtType;
+      rv = mediaSyncSettings->GetMgmtType(&mgmtType);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Sync all means include everything.
+      if (mgmtType == sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_ALL) {
+        *aShouldAdd = PR_TRUE;
+        return NS_OK;
+      }
+      // The list should be added if it is selected.
+      else if (mgmtType ==
+               sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_PLAYLISTS) {
+        PRBool isSelected;
+        rv = mediaSyncSettings->GetPlaylistSelected(mediaList, &isSelected);
+        NS_ENSURE_SUCCESS(rv, rv);
+        if (isSelected) {
+          *aShouldAdd = PR_TRUE;
+          return NS_OK;
+        }
+      }
+    }
+  }
+
+  return NS_OK;
+}
+
 static nsresult ShouldMediaListSync(sbIDevice *aDevice,
                                     sbIMediaList *aMediaList,
                                     PRBool *aShouldSync)
@@ -148,6 +279,10 @@ static nsresult ShouldMediaListSync(sbIDevice *aDevice,
 
   PRUint16 listContentType;
   rv = sbLibraryUtils::GetMediaListContentType(aMediaList, &listContentType);
+  // Condition not available for smart playlist
+  if (rv == NS_ERROR_NOT_AVAILABLE)
+    return NS_OK;
+
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Only sync the playlist to the device if device supports the list content
@@ -176,6 +311,8 @@ sbLibraryUpdateListener::OnItemAdded(sbIMediaList *aMediaList,
   NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(mPlaylistListener, NS_ERROR_OUT_OF_MEMORY);
 
+  nsresult rv;
+
 #if DEBUG
   nsCOMPtr<sbIMediaItem> debugDeviceItem;
   GetSyncItemInLibrary(aMediaItem,
@@ -187,11 +324,12 @@ sbLibraryUpdateListener::OnItemAdded(sbIMediaList *aMediaList,
 
   nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem);
   if (!list || !mIgnorePlaylists) {
-    // Ignore if item is hidden. We'll pick it up when it's unhidden
-    nsString hidden;
-    nsresult rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
-                                          hidden);
-    if (!hidden.EqualsLiteral("1")) {
+    PRBool shouldAdd;
+    rv = ShouldAddMediaItem(mTargetLibrary, nsnull, aMediaItem,
+                            mDevice, &shouldAdd);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (shouldAdd) {
       // Add the item if it is not a list.
       if (!list) {
         // Only add media item to the target library if it is supported.
@@ -554,6 +692,14 @@ sbPlaylistSyncListener::OnItemAdded(sbIMediaList *aMediaList,
   } else {
     // If the device does not support the media item, just leave.
     if (!sbDeviceUtils::IsMediaItemSupported(mDevice, aMediaItem))
+      return NS_OK;
+
+    PRBool shouldAdd;
+    rv = ShouldAddMediaItem(mTargetLibrary, aMediaList, aMediaItem,
+                            mDevice, &shouldAdd);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!shouldAdd)
       return NS_OK;
 
     nsString hidden;
@@ -1295,6 +1441,7 @@ sbPlaylistSyncListener::OnRebuild(
 {
   NS_ENSURE_ARG_POINTER(aSmartMediaList);
   NS_ENSURE_TRUE(mTargetLibrary, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
   nsresult rv;
 
   nsCOMPtr<sbIMediaItem> mediaItem = do_QueryInterface(aSmartMediaList, &rv);
@@ -1311,8 +1458,15 @@ sbPlaylistSyncListener::OnRebuild(
 
   // Add the item to device library if the list should be synced.
   if (shouldSync && !targetListAsItem) {
-    rv = mTargetLibrary->Add(mediaItem);
+    PRBool shouldAdd;
+    rv = ShouldAddMediaItem(mTargetLibrary, nsnull, mediaItem,
+                            mDevice, &shouldAdd);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    if (shouldAdd) {
+      rv = mTargetLibrary->Add(mediaItem);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
   // Remove the item from device library if the list should not be synced.
   else if (!shouldSync && targetListAsItem) {

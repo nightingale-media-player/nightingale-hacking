@@ -125,6 +125,15 @@ public:
                                           /* out */ sbIDeviceLibrary** _retval);
 
   /**
+   * Given a device and a sbILibrary, find the sbIDeviceLibrary for it
+   * this is necessary because the device library is a wrapper
+   */
+  static nsresult GetDeviceLibraryForLibrary(
+                                  /* in */  sbIDevice* aDevice,
+                                  /* in */  sbILibrary* aLibrary,
+                                  /* out */ sbIDeviceLibrary** _retval);
+
+  /**
    * Search the library specified by aLibrary for an item with a device
    * persisent ID property matching aDevicePersistentId.  Return the found item
    * in aItem.

@@ -35,6 +35,7 @@ pref("songbird.url.addons.feathers", "http://addons.songbirdnest.com/tag/feather
 pref("songbird.url.addons.mediaviews", "http://addons.songbirdnest.com/tag/mediaview");
 pref("browser.startup.homepage", "http://birdhouse.songbirdnest.com/");
 pref("songbird.url.firstrunpage", "http://birdhouse.songbirdnest.com/firstrun");
+pref("songbird.url.homepage", "http://www.getsongbird.com/");
 pref("songbird.url.bugzilla", "http://bugzilla.songbirdnest.com/");
 pref("songbird.url.metrics", "http://metrics.songbirdnest.com/post/");
 pref("songbird.url.subscribe", "http://list-manage.com/subscribe.phtml");

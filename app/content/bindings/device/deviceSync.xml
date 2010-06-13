@@ -63,6 +63,7 @@
             <xul:caption sbid="content_management_header_label">
               <xul:checkbox sbid="content_management_checkbox"
                             label="&device.sync.header.label;"
+                            xbl:inherits="disabled"
                             oncommand="_onUIPrefChange();"/>
             </xul:caption>
 

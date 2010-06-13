@@ -321,6 +321,23 @@ nsresult sbDeviceUtils::GetDeviceLibraryForItem(sbIDevice* aDevice,
   rv = aItem->GetLibrary(getter_AddRefs(ownerLibrary));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = GetDeviceLibraryForLibrary(aDevice, ownerLibrary, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/* static */
+nsresult sbDeviceUtils::GetDeviceLibraryForLibrary(sbIDevice* aDevice,
+                                                   sbILibrary* aLibrary,
+                                                   sbIDeviceLibrary** _retval)
+{
+  NS_ASSERTION(aDevice, "Getting device library with no device");
+  NS_ASSERTION(aLibrary, "Getting device library for nothing");
+  NS_ASSERTION(_retval, "null retval");
+
+  nsresult rv;
+
   // mediaItem.library is not a sbIDeviceLibrary, test GUID :(
   nsCOMPtr<sbIDeviceContent> content;
   rv = aDevice->GetContent(getter_AddRefs(content));
@@ -341,7 +358,7 @@ nsresult sbDeviceUtils::GetDeviceLibraryForItem(sbIDevice* aDevice,
       continue;
 
     PRBool equalsLibrary;
-    rv = ownerLibrary->Equals(deviceLib, &equalsLibrary);
+    rv = aLibrary->Equals(deviceLib, &equalsLibrary);
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (equalsLibrary) {
