@@ -76,7 +76,11 @@
           if (this.hasAttribute("badgeLabel")) {
             this.badgeLabel = this.getAttribute("badgeLabel");
           }
-          this.badgeAction = null;
+
+          // Don't overwrite badgeAction property if it was set already
+          if (!("badgeAction" in this)) {
+            this.badgeAction = null;
+          }
       ]]>
       </constructor>
 
@@ -340,6 +344,20 @@
             // If the node has children mark it as a container
             if (this._nodeData.firstChild)
               this.className += " container";
+
+            // If it's ejectable let's add the right badge
+            if (this._nodeData.getAttribute("ejectable") == "true") {
+              if (!this._ejectBadge) {
+                let self = this;
+                this._ejectBadge = this.appendBadge(null,
+                              "chrome://songbird/skin/service-pane/eject.png",
+                              function() {
+                                self._nodeData.dispatchEvent("eject");
+                              });
+              }
+            } else if (this._ejectBadge) {
+              this._ejectBadge.parentNode.removeChild(this._ejectBadge);
+            }
           }
           else {
             this.removeAttribute("image");
@@ -347,6 +365,9 @@
             this.setAttribute("hidden", "true");
             this.removeAttribute("closed");
             this.className = "";
+            if (this._ejectBadge) {
+              this._ejectBadge.parentNode.removeChild(this._ejectBadge);
+            }
           }
           return this._nodeData;
         ]]></setter>
@@ -1462,28 +1483,6 @@
               this.element.log("Parent node is: " +
                                parentNode.getAttribute("nodeid"));
               let newnode = this.element.createNode(node, parentNode, insertBefore);
-
-              // If it's ejectable let's add the right badge
-              if (node.getAttribute("ejectable") == "true") {
-                if (newnode.appendBadge) {
-                  newnode.appendBadge(null,
-                          "chrome://songbird/skin/service-pane/eject.png",
-                          function() {
-                            node.dispatchEvent("eject")
-                          });
-                } else {
-                  // Sometimes the node isn't ready yet
-                  newnode.addEventListener("load", function(e) {
-                      newnode.removeEventListener("load", arguments.callee,
-                                                  false);
-                      newnode.appendBadge(null,
-                              "chrome://songbird/skin/service-pane/eject.png",
-                              function() {
-                                node.dispatchEvent("eject")
-                              });
-                    }, false);
-                }
-              }
 
               // Update parent node - if it wasn't a container before it is one now
               if (parentNode != this.element)
