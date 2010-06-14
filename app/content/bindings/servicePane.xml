@@ -2159,22 +2159,24 @@
       </method>
       
       <method name="_expandKeyboardFocusNode">
+        <parameter name="event" />
         <body><![CDATA[ 
           var node = this.getKeyboardFocusNode();
           if (node && !node.isOpen) {
             var domnode = this.getDOMNode(node.id);
             if (domnode) 
-              domnode.toggleContainer();
+              domnode.toggleContainer(event);
           }
         ]]></body>
       </method>
       <method name="_collapseKeyboardFocusNode">
-        <body><![CDATA[ 
+        <parameter name="event" />
+        <body><![CDATA[
           var node = this.getKeyboardFocusNode();
           if (node && node.isOpen) {
             var domnode = this.getDOMNode(node.id);
             if (domnode) 
-              domnode.toggleContainer();
+              domnode.toggleContainer(event);
           }
         ]]></body>
       </method>
@@ -2339,10 +2341,10 @@
         const ke = Components.interfaces.nsIDOMKeyEvent;
         switch (event.keyCode) {
           case ke.DOM_VK_RIGHT:
-            this._expandKeyboardFocusNode();
+            this._expandKeyboardFocusNode(event);
             break;
           case ke.DOM_VK_LEFT:
-            this._collapseKeyboardFocusNode();
+            this._collapseKeyboardFocusNode(event);
             break;
           case ke.DOM_VK_UP:
             this._keyboardFocusUp();
