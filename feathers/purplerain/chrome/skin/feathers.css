@@ -790,22 +790,22 @@ sb-servicepane-node.dndAcceptAfter > vbox > hbox.servicepane-node-info {
 
 /* when an open container node is a droptarget, then highlight the node and
  * all its children */
-sb-servicepane-node.container.open.droptarget {
+sb-servicepane-node.container.droptarget:not([closed]) {
   margin-top: 0px;
 }
-sb-servicepane-node.container.open.droptarget > vbox {
+sb-servicepane-node.container.droptarget:not([closed]) > vbox {
   background-color: rgb(61,57,84);
   -moz-border-radius: 3px;
   border: 1px solid rgb(143,132,181);
 }
 /* undo the above changes for container node droptargets */
-sb-servicepane-node.container.open.droptarget > vbox > hbox.servicepane-node-info {
+sb-servicepane-node.container.droptarget:not([closed]) > vbox > hbox.servicepane-node-info {
   background-color: transparent;
   border: none;
   margin-left: 0px;
   margin-right: -1px;
 }
-sb-servicepane-node.container.open.droptarget > vbox > vbox {
+sb-servicepane-node.container.droptarget:not([closed]) > vbox > vbox {
   margin-left: -1px;
 }
 
@@ -819,19 +819,19 @@ sb-servicepane-node image.servicepane-node-container-arrow {
   background-repeat: no-repeat;
 }
 
-sb-servicepane-node.container.open > vbox > hbox > image.servicepane-node-container-arrow {
+sb-servicepane-node.container > vbox > hbox > image.servicepane-node-container-arrow {
   background-image: url(chrome://songbird/skin/service-pane/container_arrows.png);
   background-position: left top;
 }
-sb-servicepane-node.active.container.open > vbox > hbox > image.servicepane-node-container-arrow {
+sb-servicepane-node.active.container > vbox > hbox > image.servicepane-node-container-arrow {
   background-position: right top;
 }
 
-sb-servicepane-node.container.closed > vbox > hbox > image.servicepane-node-container-arrow {
+sb-servicepane-node.container[closed] > vbox > hbox > image.servicepane-node-container-arrow {
   background-image: url(chrome://songbird/skin/service-pane/container_arrows.png);
   background-position: left bottom;
 }
-sb-servicepane-node.active.container.closed > vbox > hbox > image.servicepane-node-container-arrow {
+sb-servicepane-node.active.container[closed] > vbox > hbox > image.servicepane-node-container-arrow {
   background-position: right bottom;
 }
 

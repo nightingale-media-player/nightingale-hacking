@@ -325,7 +325,8 @@
             // Set up the elements
             this.setAttribute("image", this._nodeData.image);
             this.setAttribute("label", this._nodeData.displayName);
-            this.setAttribute("collapsed", !this._nodeData.isOpen);
+            if (!this._nodeData.isOpen)
+              this.setAttribute("closed", "true");
 
             // Hide the node if it should be hidden
             if (this._nodeData.hidden) {
@@ -337,10 +338,10 @@
             this.className += this._nodeData.className;
           }
           else {
-            this.setAttribute("image", "");
-            this.setAttribute("label", "");
+            this.removeAttribute("image");
+            this.removeAttribute("label");
             this.setAttribute("hidden", "true");
-            this.setAttribute("collapsed", false);
+            this.removeAttribute("closed");
           }
           return this._nodeData;
         ]]></setter>
@@ -919,7 +920,7 @@
         </xul:hbox>
         <xul:vbox class="servicepane-group-overflow-container">
           <xul:vbox class="servicepane-group-nodes"
-                    sbid="groupNodes" xbl:inherits="open" flex="1">
+                    sbid="groupNodes" flex="1">
             <children /> <!-- servicepane-nodes -->
           </xul:vbox>
         </xul:vbox>
@@ -1381,25 +1382,11 @@
                   return;
                 }
 
-                // update the classes and attributes
-                if (oldVal == "true") {
-                  domNode.className =
-                          domNode.className.replace(/\bopen\b/g, '');
-                  domNode.removeAttribute("open");
-                }
-                else {
-                  // could be null or false
-                  domNode.className =
-                          domNode.className.replace(/\bclosed\b/g, '');
-                  domNode.removeAttribute("closed");
-                }
-
+                // update the "closed" attribute
                 if (newVal == "true") {
-                  domNode.className += " open";
-                  domNode.setAttribute("open", "true");
+                  domNode.removeAttribute("closed");
                 } else {
                   // could be null or false
-                  domNode.className += " closed";
                   domNode.setAttribute("closed", "true");
                 }
                 break;
@@ -1500,7 +1487,7 @@
               // it's a container, make the container arrow visible
               this.element.log("Got a child (" + childNode.id + ") and a " +
                                "non-root parent: " + parent.id);
-              node.className += " container open";
+              node.className += " container";
               node.isOpen = true;
             } else if (parent.parentNode &&
                        parent.parentNode != this.element.mService.root)
@@ -1509,7 +1496,7 @@
               // parent node's container arrow visible
               this.element.log("Parent's parentNode isn't root: " +
                                parent.parentNode.id);
-              parent.className += " container open";
+              parent.className += " container";
               parent.isOpen = true;
             }
             while (childNode) {
@@ -1597,7 +1584,7 @@
           newGroup.setAttribute("nodeid", nodeData.id);
           newGroup.setAttribute("id", nodeData.id);
           if (!nodeData.isOpen) {
-            newGroup.setAttribute("open", false);
+            newGroup.setAttribute("closed", true);
           }
           if (nodeData.hidden) {
             newGroup.setAttribute("hidden", true);
