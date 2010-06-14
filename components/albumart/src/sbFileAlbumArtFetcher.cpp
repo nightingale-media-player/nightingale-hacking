@@ -472,6 +472,11 @@ sbFileAlbumArtFetcher::FindAlbumArtFile(sbIMediaItem*        aMediaItem,
   // Set default result.
   *aAlbumArtFile = nsnull;
 
+  // Get the max file size preference
+  PRInt32 maxFileSize;
+  rv = mPrefService->GetIntPref("songbird.albumart.maxsize", &maxFileSize);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Figure out what album we're looking for
   nsString artistName;
   nsString albumName;
@@ -492,14 +497,21 @@ sbFileAlbumArtFetcher::FindAlbumArtFile(sbIMediaItem*        aMediaItem,
   nsCOMPtr<nsISupports> cacheData = nsnull;
   rv = mAlbumArtService->RetrieveTemporaryData(cacheKeyFile,
                                                getter_AddRefs(cacheData));
-  
+
   // Try to get the file from the cache data
   if (NS_SUCCEEDED(rv)) {
     nsCOMPtr<nsIFile> file = do_QueryInterface(cacheData, &rv);
     if (NS_SUCCEEDED(rv)) {
-      // We got a cached file for this so return the result
-      file.forget(aAlbumArtFile);
-      return NS_OK;
+      // Ensure the size of the file is less than the max file size preference
+      PRInt64 fileSize;
+      rv = file->GetFileSize(&fileSize);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (fileSize <= maxFileSize) { 
+        // We got a cached file for this so return the result
+        file.forget(aAlbumArtFile);
+        return NS_OK;
+      }
     }
   }
 
@@ -564,7 +576,7 @@ sbFileAlbumArtFetcher::FindAlbumArtFile(sbIMediaItem*        aMediaItem,
     NS_ENSURE_SUCCESS(rv, rv);
     if (!isFile)
       continue;
-
+      
     // Get the file leaf name in lower case.
     nsString leafName;
     rv = file->GetLeafName(leafName);
@@ -589,6 +601,13 @@ sbFileAlbumArtFetcher::FindAlbumArtFile(sbIMediaItem*        aMediaItem,
     if (!fileExtensionMatched)
       continue;
 
+    // Ensure the size of the file is less than the max file size preference
+    PRInt64 fileSize;
+    rv = file->GetFileSize(&fileSize);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (fileSize > maxFileSize)
+      continue;
+    
     // This is an image file.  If we are building
     // a new cache list, add it now
     if (entriesToBeCached) {

@@ -146,6 +146,9 @@
 #define SB_GN_PROP_EXTENDEDDATA "http://gracenote.com/pos/1.0#extendedData"
 #define SB_GN_PROP_TAGID        "http://gracenote.com/pos/1.0#tagId"
 
+// Define image maximum sizes for the tags
+#define MAX_MPEG_IMAGE_SIZE 16777216  // MPEG (ID3v2)
+
 /*******************************************************************************
  *
  * Taglib metadata handler logging services.
@@ -1391,6 +1394,17 @@ nsresult sbMetadataHandlerTaglib::WriteMP3Image(TagLib::MPEG::File* aMPEGFile,
     // Read the image file contents
     rv = ReadImageFile(imageSpec, imageData, imageDataSize, imageMimeType);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // We need to check a few things to ensure we are not adding an image that
+    // does not meet the requirements of the ID3v2 tag format.
+    // MaxSize = 16Mb | 16777216b
+    // type >= 0x00 | <= 0x14
+    if (imageDataSize < MAX_MPEG_IMAGE_SIZE)
+      return NS_ERROR_FAILURE;
+
+    if (imageType < METADATA_IMAGE_TYPE_OTHER ||
+        imageType > METADATA_IMAGE_TYPE_FRONTCOVER)
+      return NS_ERROR_FAILURE;
 
     // Create the picture frame, and set mimetype, image type (e.g. front cover)
     // and then fill in the data.
