@@ -335,13 +335,18 @@
               this.removeAttribute("hidden");
             }
 
-            this.className += this._nodeData.className;
+            this.className = this._nodeData.className;
+
+            // If the node has children mark it as a container
+            if (this._nodeData.firstChild)
+              this.className += " container";
           }
           else {
             this.removeAttribute("image");
             this.removeAttribute("label");
             this.setAttribute("hidden", "true");
             this.removeAttribute("closed");
+            this.className = "";
           }
           return this._nodeData;
         ]]></setter>
@@ -1281,6 +1286,8 @@
       <![CDATA[
         window.gServicePane = this;
 
+        Components.utils.import("resource://app/jsmodules/DOMUtils.jsm", this);
+
         // Setup logging
         Components.utils.import("resource://app/jsmodules/DebugUtils.jsm");
         this.log = DebugUtils.generateLogFunction("ServicePane", 4);
@@ -1370,6 +1377,8 @@
 
               case "class":
                 domNode.className = newVal;
+                if (node.firstChild)
+                  domNode.className += " container";
                 break;
 
               case "isOpen":
@@ -1475,30 +1484,15 @@
                     }, false);
                 }
               }
+
+              // Update parent node - if it wasn't a container before it is one now
+              if (parentNode != this.element)
+                this.element.DOMUtils.setClass(parentNode, "container");
             }
 
             // The new node may already have children associated with it, so
             // let's go look for those & add them to the hierarchy
             let childNode = node.firstChild;
-
-            if (childNode && (parent != this.element.mService.root))
-            {
-              // If this has children, and the parent isn't a root node, then
-              // it's a container, make the container arrow visible
-              this.element.log("Got a child (" + childNode.id + ") and a " +
-                               "non-root parent: " + parent.id);
-              node.className += " container";
-              node.isOpen = true;
-            } else if (parent.parentNode &&
-                       parent.parentNode != this.element.mService.root)
-            {
-              // Or if the parent's parent isn't the root node, then make the
-              // parent node's container arrow visible
-              this.element.log("Parent's parentNode isn't root: " +
-                               parent.parentNode.id);
-              parent.className += " container";
-              parent.isOpen = true;
-            }
             while (childNode) {
               this.element.log("\tChild node found: " + childNode.id);
               this.nodeInserted(childNode, node);
