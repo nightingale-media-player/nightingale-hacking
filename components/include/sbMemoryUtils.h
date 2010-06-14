@@ -178,6 +178,14 @@ public:                                                                        \
     return mValue;                                                             \
   }                                                                            \
                                                                                \
+  aType operator->() const                                                     \
+  {                                                                            \
+    NS_PRECONDITION                                                            \
+      (aIsValid,                                                               \
+       "Cannot dereference an invalid auto class with operator->().");         \
+    return get();                                                              \
+  }                                                                            \
+                                                                               \
   operator bool()                                                              \
   {                                                                            \
     if (!(aIsValid))                                                           \
@@ -238,8 +246,14 @@ private:                                                                       \
 //                                         autoArray(array, arrayLength);
 //
 
-SB_AUTO_CLASS(sbAutoNSMemPtr, void*, !!mValue, NS_Free(mValue), mValue = nsnull);
-template<typename T> SB_AUTO_NULL_CLASS(sbAutoMemPtr, T*, free(mValue));
+SB_AUTO_CLASS(sbAutoNSMemPtr,
+              void*,
+              !!mValue,
+              NS_Free(mValue),
+              mValue = nsnull);
+
+template<typename T>
+SB_AUTO_NULL_CLASS(sbAutoMemPtr, T*, free(mValue));
 
 template<typename T>
 SB_AUTO_CLASS(sbAutoNSTypePtr, T*, !!mValue, NS_Free(mValue), mValue = nsnull);
