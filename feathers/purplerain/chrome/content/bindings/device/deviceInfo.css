@@ -65,8 +65,6 @@ Imported by bindings.css or directly into feathers.
 
 
 .device-image {
-  min-height:64px;
-  min-width:64px;
   list-style-image:url("chrome://songbird/skin/device/icon-generic-device.png");
   background-color:transparent;
   padding:0px !important;
