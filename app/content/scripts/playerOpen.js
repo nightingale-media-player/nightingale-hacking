@@ -670,9 +670,9 @@ function SBNewSmartPlaylist(aAllowDevicePlaylist)
   }
 
   var obj = { newSmartPlaylist: null,
-              newPlaylistFunction: function() { 
+              newPlaylistFunction: function() {
                 return makeNewPlaylist("smart", aAllowDevicePlaylist);
-              } 
+              }
             };
 
   SBOpenModalDialog("chrome://songbird/content/xul/smartPlaylist.xul",
@@ -680,12 +680,6 @@ function SBNewSmartPlaylist(aAllowDevicePlaylist)
                     "chrome,dialog=yes,centerscreen,modal,titlebar=no",
                     obj);
 
-  if (obj.newSmartPlaylist) {
-    if (typeof gBrowser != 'undefined') {
-      gBrowser.loadMediaList(obj.newSmartPlaylist);
-    }
-  }
-  
   return obj.newSmartPlaylist;
 }
 
