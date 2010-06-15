@@ -53,6 +53,7 @@
     <em:id>@EXTENSION_UUID@</em:id>
     <em:type>2</em:type>
     <em:version>@EXTENSION_VER@</em:version>
+    <em:targetPlatform>@EXTENSION_ARCH@</em:targetPlatform>
     <em:name>Concerts</em:name>
 	<em:creator>Stephen Lau (stevel@songbirdnest.com)</em:creator>
 	<em:contributor>Mark James (FAMFAMFAM)</em:contributor>

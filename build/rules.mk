@@ -1217,7 +1217,7 @@ endif
 #
 
 ifdef IS_EXTENSION # {
-   ifdef OUR_EXTENSION_MAKE_IN_ROOTSRCDIR
+   ifdef OUR_EXTENSION_MAKE_IN_ROOTSRCDIR # {
       ifndef INSTALL_RDF
          # The notdir is because this is to check if these files exist, but
          # we have to do in the srcdir; but we really only want the file name
@@ -1263,7 +1263,19 @@ ifdef IS_EXTENSION # {
          endif
          ALL_TRASH += $(EXTENSION_DIR)/$(wildcard $(OUR_EXTENSION_NAME)*.xpi)
       endif
-   endif
+
+      OUR_EXTENSION_TARGET_PLATFORM_SET := $(shell $(GREP) -i "<em:targetPlatform>" $(OUR_INSTALL_RDF))
+
+      ifdef EXTENSION_NO_BINARY_COMPONENTS
+         ifneq (,$(OUR_EXTENSION_TARGET_PLATFORM_SET))
+            $(error EXTENSION_NO_BINARY_COMPONENTS set, but <em:targetPlatform> is also declared.)
+         endif
+      else
+         ifeq (,$(OUR_EXTENSION_TARGET_PLATFORM_SET))
+            $(error No <em:targetPlatform> declared for platform-dependent extension.)
+         endif
+      endif
+   endif # } OUR_EXTENSION_MAKE_IN_ROOTSRCDIR 
 endif # } IS_EXTENSION
 
 # Installation of the extension is automatic for debug builds; this can be
