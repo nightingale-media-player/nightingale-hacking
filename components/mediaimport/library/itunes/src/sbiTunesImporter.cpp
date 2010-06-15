@@ -358,7 +358,6 @@ sbiTunesImporter::GetLibraryDefaultFilePath(nsAString & aLibraryDefaultFilePath)
   NS_ENSURE_SUCCESS(rv, rv);
   
   /* Search for an iTunes library database file. */
-  /*XXXErikS Should localize directory names. */
   switch (GetOSType())
   {
     case MAC_OS : {
@@ -372,19 +371,29 @@ sbiTunesImporter::GetLibraryDefaultFilePath(nsAString & aLibraryDefaultFilePath)
     }
     break;
     case WINDOWS_OS : {
-      rv = directoryService->Get("Pers",
+      rv = directoryService->Get("Music",
                                  NS_GET_IID(nsIFile),
                                  getter_AddRefs(libraryFile));
-      NS_ENSURE_SUCCESS(rv, rv);
-      
-      rv = libraryFile->Append(NS_LITERAL_STRING("My Music"));
-      NS_ENSURE_SUCCESS(rv, rv);
-      
+
+      if (NS_FAILED(rv)) {
+        rv = directoryService->Get("Pers",
+                                   NS_GET_IID(nsIFile),
+                                   getter_AddRefs(libraryFile));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = libraryFile->Append(NS_LITERAL_STRING("My Music"));
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+
       rv = libraryFile->Append(NS_LITERAL_STRING("iTunes"));
       NS_ENSURE_SUCCESS(rv, rv);
     }
     break;
     default : {
+      /* We _could_ use XDGMusic, but since Linux doesn't actually have iTunes
+       * the user must have copied it manually - which means it wouldn't
+       * actually make sense to try to be smart.
+       */
       rv = directoryService->Get("Home",
                                  NS_GET_IID(nsIFile),
                                  getter_AddRefs(libraryFile));
