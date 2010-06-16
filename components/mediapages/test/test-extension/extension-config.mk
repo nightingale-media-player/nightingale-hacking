@@ -30,6 +30,8 @@ EXTENSION_DIR  = $(SONGBIRD_OBJDIR)/components/mediapages/test/test-extension
 
 EXTENSION_STAGE_DIR = $(SONGBIRD_OBJDIR)/components/mediapages/test/test-extension/.xpistage
 
+EXTENSION_NO_BINARY_COMPONENTS = 1
+
 XPI_NAME = $(EXTENSION_NAME).xpi
 
 include $(topsrcdir)/build/rules.mk

@@ -1264,7 +1264,13 @@ ifdef IS_EXTENSION # {
          ALL_TRASH += $(EXTENSION_DIR)/$(wildcard $(OUR_EXTENSION_NAME)*.xpi)
       endif
 
-      OUR_EXTENSION_TARGET_PLATFORM_SET := $(shell $(GREP) -i "<em:targetPlatform>" $(OUR_INSTALL_RDF))
+      # XXX: this check is slightly incorrect: in the pre-processed
+      # install.rdf.in case, the check will be performed on the source
+      # install.rdf _before_ it has been preprocessed, but it's totally
+      # reasonable for someone to add the targetPlatform as part of
+      # pre-processing. Right now, no one does that, so this is a 
+      # limitation
+      OUR_EXTENSION_TARGET_PLATFORM_SET := $(shell $(GREP) -i "<em:targetPlatform>" $(if $(OUR_INSTALL_RDF_IN),$(OUR_INSTALL_RDF_IN),$(OUR_INSTALL_RDF)))
 
       ifdef EXTENSION_NO_BINARY_COMPONENTS
          ifneq (,$(OUR_EXTENSION_TARGET_PLATFORM_SET))

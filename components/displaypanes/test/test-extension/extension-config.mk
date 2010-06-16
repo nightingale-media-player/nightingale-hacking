@@ -27,6 +27,8 @@ EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
 
 EXTENSION_DIR  = $(SONGBIRD_OBJDIR)/components/displaypanes/test/test-extension
 
-EXTENSION_STAGE_DIR = $(SONGBIRD_OBJDIR)/components/displaypanes/test/test-extensions/.xpistage
+EXTENSION_STAGE_DIR = $(SONGBIRD_OBJDIR)/components/displaypanes/test/test-extension/.xpistage
 
+EXTENSION_NO_BINARY_COMPONENTS = 1
+  
 XPI_NAME = $(EXTENSION_NAME).xpi
