@@ -55,12 +55,15 @@ spacer {
   background-position:center top;
 }
 
-#video_window:not([hidechrome="true"]):not([sb-show-sys-titlebar]) sb-sys-titlebar,
-#video_window:not([hidechrome="true"]):not([sb-show-sys-titlebar]) .sb-sys-outer-frame-chrome,
-#video_window:not([hidechrome="true"]):not([sb-show-sys-titlebar]) .sb-sys-outer-frame-resizer,
-#video_window[fullscreen="true"] sb-sys-titlebar,
-#video_window[fullscreen="true"] .sb-sys-outer-frame-chrome,
-#video_window[fullscreen="true"] .sb-sys-outer-frame-resizer {
+#video_window:not([hidechrome]):not([sb-show-sys-titlebar]) sb-sys-titlebar,
+#video_window:not([hidechrome]):not([sb-show-sys-titlebar]) .sb-sys-outer-frame-chrome,
+#video_window:not([hidechrome]):not([sb-show-sys-titlebar]) .sb-sys-outer-frame-resizer,
+#video_window:not([sb-native-hidechrome]):not([sb-show-sys-titlebar]) sb-sys-titlebar,
+#video_window:not([sb-native-hidechrome]):not([sb-show-sys-titlebar]) .sb-sys-outer-frame-chrome,
+#video_window:not([sb-native-hidechrome]):not([sb-show-sys-titlebar]) .sb-sys-outer-frame-resizer,
+#video_window[fullscreen] sb-sys-titlebar,
+#video_window[fullscreen] .sb-sys-outer-frame-chrome,
+#video_window[fullscreen] .sb-sys-outer-frame-resizer {
   display: none;
 }
 

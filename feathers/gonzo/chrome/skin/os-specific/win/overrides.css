@@ -50,7 +50,11 @@ panel {
 wizard[hidechrome]:not([resizers]),
 dialog[hidechrome]:not([resizers]),
 wizard[hidechrome][resizers="none"],
-dialog[hidechrome][resizers="none"] {
+dialog[hidechrome][resizers="none"],
+wizard[sb-native-hidechrome]:not([resizers]),
+dialog[sb-native-hidechrome]:not([resizers]),
+wizard[sb-native-hidechrome][resizers="none"],
+dialog[sb-native-hidechrome][resizers="none"] {
   border:3px solid black;
   border-top:1px solid rgb(131,131,131);
   -moz-border-right-colors:rgb(131,131,131) rgb(161,161,161) rgb(131,131,131);
