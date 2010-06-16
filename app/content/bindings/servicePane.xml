@@ -25,25 +25,6 @@
  */
 -->
 
-<!--
-  -TODO:
-  - Bug 18545
-  -  1. Create 3 bindings (done)
-  -   i.   Service Pane (done)
-  -   ii.  Service Pane Group (done)
-  -   iii. Service Pane Node (done)
-  -  2. Migrate functionality of old service pane to new service pane
-  -  3. Context menus for nodes.
-  -  4. Edit names for nodes.
-  -  5. Ability to highlight nodes.
-  - Bug 18548
-  -  1. Toggle node visibility when clicking on toggle image in header of group.
-  - Bug 18551
-  -  1. Make sure we can change the badge on nodes easily.
-  - Bug 18552
-  -  1. Make sure we can change the image on nodes easily.
-  -->
-
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
 
 <bindings xmlns="http://www.mozilla.org/xbl"
@@ -54,7 +35,8 @@
     - \brief ServicePaneNodeBadge is a single badge attached to a
     - ServicePaneNode.  It contains a text label, image, and an associated
     - action.  If the image is null, then the text label will be used.
-    - When the badge is clicked, the action will be taken if one is defined.
+    - When the badge is clicked, a notification will be sent out on service
+    - pane node with badge ID as event type.
     -->
   <binding id="servicepane-node-badge">
     <content mousethrough="never">
@@ -75,11 +57,6 @@
           }
           if (this.hasAttribute("badgeLabel")) {
             this.badgeLabel = this.getAttribute("badgeLabel");
-          }
-
-          // Don't overwrite badgeAction property if it was set already
-          if (!("badgeAction" in this)) {
-            this.badgeAction = null;
           }
       ]]>
       </constructor>
@@ -159,16 +136,17 @@
     <handlers>
       <handler event="click">
       <![CDATA[
-        if (event.button == 0) {
-          if (this.badgeAction) {
-            try {
-              this.badgeAction();
-            } catch (e) {
-              dump("Badge action exception: " + e + "\n");
-            }
-            event.stopPropagation();
-            event.preventDefault();
+        if (event.button == 0 &&
+            this.nodeData &&
+            this.hasAttribute("badgeID"))
+        {
+          try {
+            this.nodeData.dispatchEvent(this.getAttribute("badgeID"));
+          } catch (e) {
+            Cu.reportError(e);
           }
+          event.stopPropagation();
+          event.preventDefault();
         }
       ]]>
       </handler>
@@ -326,6 +304,8 @@
           // val should be a sbIServicePaneNode object
           this._nodeData = val;
           if (this._nodeData) {
+            Cu.import("resource://app/jsmodules/ServicePaneHelper.jsm", this);
+
             // Set up the elements
             this.setAttribute("image", this._nodeData.image);
             this.setAttribute("label", this._nodeData.displayName);
@@ -346,17 +326,13 @@
               this.className += " container";
 
             // If it's ejectable let's add the right badge
+            let badge = this.ServicePaneHelper.getBadge(this._nodeData,
+                                                        "eject");
             if (this._nodeData.getAttribute("ejectable") == "true") {
-              if (!this._ejectBadge) {
-                let self = this;
-                this._ejectBadge = this.appendBadge(null,
-                              "chrome://songbird/skin/service-pane/eject.png",
-                              function() {
-                                self._nodeData.dispatchEvent("eject");
-                              });
-              }
-            } else if (this._ejectBadge) {
-              this._ejectBadge.parentNode.removeChild(this._ejectBadge);
+              badge.image = "chrome://songbird/skin/service-pane/eject.png";
+              badge.visible = true;
+            } else {
+              badge.remove();
             }
           }
           else {
@@ -365,10 +341,11 @@
             this.setAttribute("hidden", "true");
             this.removeAttribute("closed");
             this.className = "";
-            if (this._ejectBadge) {
-              this._ejectBadge.parentNode.removeChild(this._ejectBadge);
-            }
           }
+
+          // Update the badges we show
+          this._updateBadges();
+
           return this._nodeData;
         ]]></setter>
       </property>
@@ -520,88 +497,34 @@
       </method>
 
       <!--
-        - \brief Creates a badge element.
-        - \param badgeLabel - Value to set the badge to (can be null)
-        - \param badgeImage - Image to set the badge to (can be null)
-        - \return newly created badge element
+        - \brief Updates displayed badges
         -->
-      <method name="_createBadge">
-        <parameter name="badgeLabel"/>
-        <parameter name="badgeImage"/>
+      <method name="_updateBadges">
         <body><![CDATA[
-          var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
-          var newBadge = document.createElementNS(XULNS,
-                                                  "sb-servicepane-node-badge");
-          if (badgeLabel)
-            newBadge.setAttribute("badgeLabel", badgeLabel);
-          if (badgeImage)
-            newBadge.setAttribute("badgeImage", badgeImage);
-          return newBadge;
+          let badgeContainer = this._getElement("servicepane-node-badges");
+
+          // Remove all existing badges first
+          while (badgeContainer.lastChild)
+            badgeContainer.removeChild(badgeContainer.lastChild);
+
+          if (this._nodeData) {
+            // Now add new badges
+            let badges = this.ServicePaneHelper.getAllBadges(this._nodeData);
+            for (let badge in badges) {
+              let badgeNode = document.createElementNS(this.namespaceURI,
+                                                "sb-servicepane-node-badge");
+              badgeNode.nodeData = this._nodeData;
+              badgeNode.setAttribute("badgeID", badge.id);
+              if (badge.label)
+                badgeNode.setAttribute("badgeLabel", badge.label);
+              if (badge.image)
+                badgeNode.setAttribute("badgeImage", badge.image);
+              badgeContainer.appendChild(badgeNode);
+            }
+          }
         ]]></body>
       </method>
 
-      <!--
-        - \brief Appends a badge element to the node.
-        - \param badgeLabel - Value to set the badge to (can be null)
-        - \param badgeImage - Image to set the badge to (can be null)
-        - \return newly appended badge element.
-        -->
-      <method name="appendBadge">
-        <parameter name="badgeLabel"/>
-        <parameter name="badgeImage"/>
-        <parameter name="badgeAction"/>
-        <body><![CDATA[
-          var newBadge = this._createBadge(badgeLabel, badgeImage);
-          var badgeContainer = this._getElement("servicepane-node-badges");
-          badgeContainer.appendChild(newBadge);
-          if (badgeAction) {
-            newBadge.setAttribute("mousethrough", "never");
-            newBadge.badgeAction = badgeAction;
-          }
-          return newBadge;
-        ]]></body>
-      </method>
-
-      <!--
-        - \brief Removes a badge element.
-        - \param index - Index of the badge to remove.
-        - \return copy of removed badge.
-        -->
-      <method name="removeBadge">
-        <parameter name="index"/>
-        <body><![CDATA[
-          var oldChild = null;
-          var badgeContainer = this._getElement("servicepane-node-badges");
-          if (badgeContainer.childNodes.length > index) {
-            oldChild = badgeContainer.removeChild(badgeContainer.childNodes[index]);
-          }
-          return oldChild;
-        ]]></body>
-      </method>
-
-      <!--
-        - \brief Inserts a badge element before an existing one.
-        - \param badgeLabel - Value to set the badge to (can be null)
-        - \param badgeImage - Image to set the badge to (can be null)
-        - \param beforeIndex - Index of badge to insert a new badge before.
-        - \return newly appended badge element.
-        -->
-      <method name="insertBadgeBefore">
-        <parameter name="badgeLabel"/>
-        <parameter name="badgeImage"/>
-        <parameter name="beforeIndex"/>
-        <body><![CDATA[
-          var badgeContainer = this._getElement("servicepane-node-badges");
-          if (beforeIndex > 0 &&
-              beforeIndex < badgeContainer.childNodes.length) {
-            var newBadge = this._createBadge(badgeLabel, badgeImage);
-            badgeContainer.insertBefore(newBadge,
-                                        badgeContainer.childNodes[beforeIndex]);
-          }
-          return newBadge;
-        ]]></body>
-      </method>
-      
       <method name="setAsDropTarget">
         <parameter name="isdroptarget"/>
         <body><![CDATA[
@@ -1421,7 +1344,17 @@
                 }
                 break;
 
+              case "badges":
+                domNode._updateBadges();
+                break;
+
               default:
+                if (/^badge_/.test(attrName)) {
+                  // Change to some badge-related attribute
+                  domNode._updateBadges();
+                  break;
+                }
+
                 /* Can be useful, but noisy */
                 this.element.noisyLog("Unhandled node attribute change: " +
                                  attrName + " from '" + oldVal + "' => '" +

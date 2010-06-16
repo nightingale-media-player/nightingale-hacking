@@ -238,12 +238,11 @@ Concerts = {
     var SPS = Cc["@songbirdnest.com/servicepane/service;1"]
                 .getService(Ci.sbIServicePaneService);
     var concertsNode = SPS.getNode("urn:concerts");
-    if (concertsNode != null) {
-      // Get the DOM node matching the servicePaneNode;
-      let domNode = window.gServicePane.getDOMNode(concertsNode.id);
-      // Remove any existing badge that may exist
-      domNode.removeBadge(0);
-      domNode.appendBadge(aConcertCount, null);
+    if (concertsNode) {
+      Cu.import("resource://app/jsmodules/ServicePaneHelper.jsm");
+      let badge = ServicePaneHelper.getBadge(concertsNode, "concertCount");
+      badge.label = aConcertCount;
+      badge.visible = true;
     }
   },
 

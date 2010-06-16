@@ -34,4 +34,7 @@ SONGBIRD_COMPONENTS = $(srcdir)/sbServicePaneService.js \
                       $(srcdir)/sbLibraryServicePaneService.js \
                       $(NULL)
 
+SONGBIRD_JSMODULES = $(srcdir)/ServicePaneHelper.jsm \
+                     $(NULL)
+
 include $(topsrcdir)/build/rules.mk

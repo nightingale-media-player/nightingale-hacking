@@ -258,12 +258,11 @@ NewReleases = {
 		var SPS = Cc["@songbirdnest.com/servicepane/service;1"]
 								.getService(Ci.sbIServicePaneService);
 		var newReleasesNode = SPS.getNode("urn:newreleases");
-		if (newReleasesNode != null) {
-      // Get the DOM node matching the servicePaneNode;
-      let domNode = window.gServicePane.getDOMNode(newReleasesNode.id);
-      // Remove any existing badge that may exist
-      domNode.removeBadge(0);
-      domNode.appendBadge(newReleasesCount, null);
+		if (newReleasesNode) {
+      Cu.import("resource://app/jsmodules/ServicePaneHelper.jsm");
+      let badge = ServicePaneHelper.getBadge(newReleasesNode, "releaseCount");
+      badge.label = newReleasesCount;
+      badge.visible = true;
 		}
 	},
 	

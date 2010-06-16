@@ -153,42 +153,6 @@ var testModule = {
   stringbundle: null
 };
 
-/**
- * \brief Creates a string representation of the nodes tree. Example output:
- *        [node foo="bar" id="node"][node id="child"/][/node]
- *        Attributes are sorted by name.
- * \param aNode root node for serialization
- */
-function serializeTree(aNode) {
-  let result = "[node";
-
-  let attributes = aNode.attributes;
-  let attrList = [];
-  while (attributes.hasMore()) {
-    let attr = attributes.getNext();
-    attrList.push(" " + attr + '="' + aNode.getAttribute(attr) + '"');
-  }
-  attrList.sort();
-  result += attrList.join("");
-
-  let childNodes = aNode.childNodes;
-  if (childNodes.hasMoreElements()) {
-    // Node has children
-    result += "]";
-    while (childNodes.hasMoreElements()) {
-      let child = childNodes.getNext().QueryInterface(Ci.sbIServicePaneNode);
-      result += serializeTree(child);
-    }
-    result += "[/node]";
-  }
-  else {
-    // No children, close "tag" immediately
-    result += "/]";
-  }
-
-  return result;
-}
-
 function testAttributes(aNode) {
   // Node shouldn't have any attributes yet
   assertEqual(serializeTree(aNode), '[node/]');
