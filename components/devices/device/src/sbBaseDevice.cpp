@@ -3733,6 +3733,13 @@ sbBaseDevice::UpdateStatisticsProperties()
     // Get the volume.
     nsRefPtr<sbBaseDeviceVolume> volume = volumeList[i];
 
+    // Skip volume if it's not mounted.
+    PRBool isMounted;
+    rv = volume->GetIsMounted(&isMounted);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!isMounted)
+      continue;
+
     // Get the volume library and statistics.
     nsCOMPtr<sbIDeviceLibrary>   deviceLibrary;
     nsRefPtr<sbDeviceStatistics> deviceStatistics;
