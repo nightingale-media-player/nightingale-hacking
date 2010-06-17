@@ -75,7 +75,69 @@
 //------------------------------------------------------------------------------
 
 /**
- * This class implements the Songbird device XML info object.
+ *   This class implements the Songbird device XML info object.  This class
+ * reads in and processes a device XML info document or file.  It may optionally
+ * be given a device object.  If it is provided a device object, it searches the
+ * device XML info document for device info elements and device elements
+ * matching the device object.
+ *   Elements within the device XML info document provide information about a
+ * device such as supported media formats, where media files are stored, and
+ * whether a device has removable storage.
+ *   A device XML info document can contain multiple device info elements.  Each
+ * device info element can contain a list of device elements that specify what
+ * devices match the device info element.  Only the information within the
+ * matching device info element will be returned.
+ *   Device information can also be specified within a device element.  If a
+ * device object matches a device element that contains device information, only
+ * that device information will be returned for the device.
+ *   In the example below, the storage volume with LUN 0 of an HTC Incredible
+ * will be marked as removable.  However, the storage volume with LUN 0 of an
+ * HTC Magic will be marked as non-removable and primary.  However, the audio
+ * formats returned will be the same for both devices.
+ *
+ * Example:
+
+  <deviceinfo>
+    <devices>
+      <!-- HTC Incredible. -->
+      <device usbVendorId="0x0bb4" usbProductId="0x0c9e">
+        <storage lun="0" removable="true" />
+        <storage lun="1" primary="true" />
+      </device>
+
+      <!-- HTC Magic. -->
+      <device usbVendorId="0x0bb4" usbProductId="0x0c02" />
+    </devices>
+
+    <storage lun="0" primary="true" />
+    <storage lun="1" removable="true" />
+
+    <devicecaps xmlns="http://songbirdnest.com/devicecaps/1.0">
+      <audio>
+        <format mime="audio/mpeg" container="audio/mpeg" codec="audio/mpeg">
+        ...
+        </format>
+      </audio>
+    </devicecaps>
+  </deviceinfo>
+
+  <deviceinfo>
+    <devices>
+      <!-- Nokia N85 MSC. -->
+      <device usbVendorId="0x0421" usbProductId="0x0091" />
+    </devices>
+
+    <devicecaps xmlns="http://songbirdnest.com/devicecaps/1.0">
+      <audio>
+        <format mime="audio/x-ms-wma"
+                container="video/x-ms-asf"
+                codec="audio/x-ms-wma">
+        ...
+        </format>
+      </audio>
+    </devicecaps>
+  </deviceinfo>
+
  */
 
 class sbDeviceXMLInfo
@@ -220,22 +282,28 @@ private :
   //
   // mDevice                    Device to use with XML info.
   // mDeviceInfoElement         Root device info element.
+  // mDeviceElement             Device element matching device.  May be null if
+  //                            device does not match a specific device element.
   //
 
   sbIDevice*                    mDevice;
   nsCOMPtr<nsIDOMElement>       mDeviceInfoElement;
+  nsCOMPtr<nsIDOMElement>       mDeviceElement;
 
 
   /**
    * Check if the device matches the device info node specified by
    * aDeviceInfoNode.  If it matches, return true in aDeviceMatches; otherwise,
-   * return false.
+   * return false.  If the device matches a <device> node, return the matching
+   * device node in aDeviceNode if aDeviceNode is not null.
    *
-   * \param aCapabilitiesNode   Capabilities DOM node to check.
+   * \param aDeviceInfoNode     Device info node to check.
    * \param aDeviceMatches      Returned true if device matches.
+   * \param aDeviceNode         Optional returned matching device node.
    */
-  nsresult DeviceMatchesDeviceInfoNode(nsIDOMNode* aDeviceInfoNode,
-                                       PRBool*     aDeviceMatches);
+  nsresult DeviceMatchesDeviceInfoNode(nsIDOMNode*  aDeviceInfoNode,
+                                       PRBool*      aDeviceMatches,
+                                       nsIDOMNode** aDeviceNode = nsnull);
 
   /**
    * Check if the device with the properties specified by aDeviceProperties
@@ -250,6 +318,51 @@ private :
                                    nsIPropertyBag2* aDeviceProperties,
                                    PRBool*          aDeviceMatches);
 
+  /**
+   * Return in aNodeList the list of all device info nodes with the name space
+   * and tag name specified by aNameSpace and aTagName.  If any nodes are found
+   * within the matching <device> node, return only those nodes.  Otherwise,
+   * return only nodes that descend from the matching <deviceinfo> container
+   * node but do not descend from any <device> node.
+   *
+   * See class description above.
+   *
+   * \param aNameSpace          Requested device info node name space.
+   * \param aTagName            Requested device info node tag name.
+   * \param aNodeList           Returned node list.
+   */
+  nsresult GetDeviceInfoNodes(const nsAString&                  aNameSpace,
+                              const nsAString&                  aTagName,
+                              nsTArray< nsCOMPtr<nsIDOMNode> >& aNodeList);
+
+  /**
+   * Return in aNodeList the list of all device info nodes with the device info
+   * name space and tag name specified by aTagName.  If any nodes are found
+   * within the matching <device> node, return only those nodes.  Otherwise,
+   * return only nodes that descend from the matching <deviceinfo> container
+   * node but do not descend from any <device> node.
+   *
+   * See class description above.
+   *
+   * \param aTagName            Requested device info node tag name.
+   * \param aNodeList           Returned node list.
+   */
+  nsresult GetDeviceInfoNodes(const nsAString&                  aTagName,
+                              nsTArray< nsCOMPtr<nsIDOMNode> >& aNodeList);
+
+  /**
+   * Return true in aIsDeviceNodeDescendant if the node specified by aNode is a
+   * descendant of a <device> node.
+   *
+   * See class description above.
+   *
+   * \param aNode               Node to check.
+   * \param aIsDeviceNodeDescendant
+   *                            Returned true if node is a descendant of a
+   *                            device node.
+   */
+  nsresult IsDeviceNodeDescendant(nsIDOMNode* aNode,
+                                  PRBool*     aIsDeviceNodeDescendant);
 };
 
 
