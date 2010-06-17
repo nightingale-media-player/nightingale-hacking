@@ -82,6 +82,11 @@ var DeviceMediaManagementServices = {
     // Initialize object fields.
     this._device = this._widget.device;
 
+    // Listen for device events.
+    var deviceEventTarget =
+          this._device.QueryInterface(Ci.sbIDeviceEventTarget);
+    deviceEventTarget.addEventListener(this);
+
     // Initialize, read, and apply the music preferences.
     this.musicManagementPrefsInitialize();
     this._widget.reset();
@@ -93,6 +98,13 @@ var DeviceMediaManagementServices = {
 
   finalize: function DeviceMediaManagementServices_finalize() {
     this.musicManagementPrefsFinalize();
+
+    // Stop listening for device events.
+    if (this._device) {
+      var deviceEventTarget =
+            this._device.QueryInterface(Ci.sbIDeviceEventTarget);
+      deviceEventTarget.removeEventListener(this);
+    }
 
     // Clear object fields.
     this._widget = null;
@@ -121,6 +133,80 @@ var DeviceMediaManagementServices = {
     this.musicManagementPrefsApply();
   },
 
+  _updateNotchDisabledState:
+    function DeviceMediaManagementServices__updateNotchDisabledState() {
+    var notchHbox = this._getElement("notch-hbox");
+    var spaceLimitScale = this._getElement("space_limit");
+    var zeroPercentDescription = this._getElement("notch-0percent-description");
+    var hundrendPercentDescription =
+          this._getElement("notch-100percent-description");
+
+    // Enable/disable the notch boxes.
+    for (var i = 0; i < notchHbox.childNodes.length; i++) {
+      var curChildNode = notchHbox.childNodes.item(i);
+      if (spaceLimitScale.disabled) {
+        curChildNode.setAttribute("disabled", "true");
+      }
+      else {
+        curChildNode.removeAttribute("disabled");
+      }
+    }
+
+    // Enable/disable the percentage labels
+    if (spaceLimitScale.disabled) {
+      zeroPercentDescription.setAttribute("disabled", "true");
+      hundrendPercentDescription.setAttribute("disabled", "true");
+    }
+    else {
+      zeroPercentDescription.removeAttribute("disabled");
+      hundrendPercentDescription.removeAttribute("disabled");
+    }
+  },
+
+  /**
+   * \brief Update the busy state of the UI.
+   */
+  _updateBusyState: function DeviceMediaManagementServices__updateBusyState() {
+    var isBusy = this._device && this._device.isBusy;
+
+    var modeDetailsBox = this._getElement("transcoding-mode-details");
+    for (var i = 0; i < modeDetailsBox.childNodes.length; i++) {
+      var curChildNode = modeDetailsBox.childNodes.item(i);
+      if (this._mediaManagementPrefs.transcodeModeManual && !isBusy) {
+        curChildNode.removeAttribute("disabled");
+      }
+      else {
+        curChildNode.setAttribute("disabled", "true");
+      }
+    }
+
+    var menulist = this._getElement("encoding-format-menu");
+    var bitrateEntry = this._getElement("transcoding-bitrate-kbps");
+    if (this._mediaManagementPrefs.transcodeModeManual && !isBusy) {
+      menulist.removeAttribute("disabled");
+      bitrateEntry.removeAttribute("disabled");
+    }
+    else {
+      menulist.setAttribute("disabled", "true");
+      bitrateEntry.setAttribute("disabled", "true");
+    }
+
+    var spaceLimitToggle = this._getElement("space_limit_enable");
+    var spaceLimitScale = this._getElement("space_limit");
+    if (!isBusy && spaceLimitToggle.checked) {
+      spaceLimitScale.removeAttribute("disabled");
+    }
+    else {
+      spaceLimitScale.setAttribute("disabled", "true");
+    }
+
+    this._updateNotchDisabledState();
+
+    var mgmtDirFormat = this._getElement("mgmt_dir_format");
+    var mgmtToggle = this._getElement("mgmt_enable");
+    mgmtDirFormat.disableAll = !mgmtToggle.checked || isBusy;
+  },
+
   onUIPrefChange: function DeviceMediaManagementServices_onUIPrefChange() {
     /* Extract preferences from UI and apply */
     this.musicManagementPrefsExtract();
@@ -138,6 +224,32 @@ var DeviceMediaManagementServices = {
     let event = document.createEvent("UIEvents");
     event.initUIEvent("settings-changed", false, false, window, null);
     document.dispatchEvent(event);
+  },
+
+  //----------------------------------------------------------------------------
+  //
+  // Device sync sbIDeviceEventListener services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * \brief Handle the device event specified by aEvent.
+   *
+   * \param aEvent              Device event.
+   */
+
+  onDeviceEvent:
+    function DeviceMediaManagementServices_onDeviceEvent(aEvent) {
+    // Dispatch processing of the event.
+    switch(aEvent.type)
+    {
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED:
+        this._updateBusyState();
+        break;
+
+      default :
+        break;
+    }
   },
 
   //----------------------------------------------------------------------------
@@ -407,33 +519,10 @@ var DeviceMediaManagementServices = {
   musicManagementPrefsApply:
       function DeviceMediaManagementServices_musicManagementPrefsApply()
   {
-    var modeRadioGroup = this._getElement("transcoding_mode_radio_group");
-
     if (this._mediaManagementPrefs.transcodeModeManual)
       this._selectRadio("transcoding-mode-manual");
     else {
       this._selectRadio("transcoding-mode-auto");
-    }
-
-    var modeDetailsBox = this._getElement("transcoding-mode-details");
-    for (var i = 0; i < modeDetailsBox.childNodes.length; i++) {
-      var curChildNode = modeDetailsBox.childNodes.item(i);
-      if (this._mediaManagementPrefs.transcodeModeManual) {
-        curChildNode.removeAttribute("disabled");
-      }
-      else {
-        curChildNode.setAttribute("disabled", "true");
-      }
-    }
-    var menulist = this._getElement("encoding-format-menu");
-    var bitrateEntry = this._getElement("transcoding-bitrate-kbps");
-    if (this._mediaManagementPrefs.transcodeModeManual) {
-      menulist.removeAttribute("disabled");
-      bitrateEntry.removeAttribute("disabled");
-    }
-    else {
-      menulist.setAttribute("disabled", "true");
-      bitrateEntry.setAttribute("disabled", "true");
     }
 
     var activeProfile;
@@ -494,6 +583,7 @@ var DeviceMediaManagementServices = {
         }
       }
     }
+
     var bitrateBox = this._getElement("transcoding-bitrate");
     if (foundBitrate) {
       bitrateBox.removeAttribute("hidden");
@@ -501,6 +591,8 @@ var DeviceMediaManagementServices = {
     else {
       bitrateBox.setAttribute("hidden", "true");
     }
+
+    this._updateBusyState();
   },
 
   /*

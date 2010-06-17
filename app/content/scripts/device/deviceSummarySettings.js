@@ -130,6 +130,8 @@ var DeviceSummarySettings = {
                                   func,
                                   false,
                                   false);
+
+    this.updateBusyState();
   },
 
   /**

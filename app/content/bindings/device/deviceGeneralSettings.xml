@@ -66,13 +66,16 @@
                     oncommand="_widgetSvc.dispatchSettingsChangeEvent();">
 
         <!-- Device general settings caption. -->
-        <xul:caption label="&device.settings.general.label;"/>
+        <xul:caption label="&device.settings.general.label;"
+                     xbl:inherits="disabled"/>
 
         <!-- Device general settings. -->
         <xul:checkbox sbid="auto_launch_checkbox"
+                      xbl:inherits="disabled"
                       label="&device.settings.auto_launch.checkbox.label;"/>
         <xul:checkbox
           sbid="auto_firmware_check_checkbox"
+          xbl:inherits="disabled"
           label="&device.settings.auto_firmware_check.checkbox.label;"/>
 
       </xul:groupbox> <!-- device_general_settings_box -->

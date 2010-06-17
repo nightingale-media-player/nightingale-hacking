@@ -70,7 +70,8 @@
         -->
       <xul:vbox flex="1">
         <xul:groupbox flex="1" sbid="transcoding-groupbox" setting="transcode">
-          <xul:caption label="&device.settings.music.transcoding.label;"/>
+          <xul:caption label="&device.settings.music.transcoding.label;"
+                       xbl:inherits="disabled"/>
           <!-- Transcoding preferences. -->
           <xul:vbox class="content-controls"
                     oncommand="DeviceMediaManagementServices.onUIPrefChange();">
@@ -79,8 +80,10 @@
             <xul:radiogroup sbid="transcoding_mode_radio_group" flex="1">
 
               <xul:radio sbid="transcoding-mode-auto"
+                         xbl:inherits="disabled"
                          label="&device.settings.music.transcoding.mode.auto.label;"/>
               <xul:radio sbid="transcoding-mode-manual"
+                         xbl:inherits="disabled"
                          label="&device.settings.music.transcoding.mode.manual.label;"/>
               <xul:vbox sbid="transcoding-mode-details" class="indent">
                 <xul:hbox>
@@ -89,7 +92,7 @@
                     <xul:menupopup sbid="encoding-format-list" class="encoding-format-list"/>
                   </xul:menulist>
                 </xul:hbox>
-                <xul:hbox sbid="transcoding-bitrate">
+                <xul:hbox sbid="transcoding-bitrate" xbl:inherits="disabled">
                   <xul:label value="&device.settings.music.transcoding.bitrate.label;"/>
                   <xul:textbox sbid="transcoding-bitrate-kbps" type="number" 
                                increment="32"/>
@@ -103,9 +106,11 @@
         <xul:groupbox flex="1"
                       setting="diskmgmt"
                       oncommand="DeviceMediaManagementServices.dispatchSettingsChangeEvent();">
-          <xul:caption label="&device.settings.disk.label;"/>
+          <xul:caption label="&device.settings.disk.label;"
+                       xbl:inherits="disabled"/>
           <xul:vbox>
             <xul:checkbox sbid="space_limit_enable"
+                          xbl:inherits="disabled"
                           oncommand="toggleLimitSpaceCheckbox();"/>
 
             <xul:spacer height="5"/>
@@ -117,7 +122,8 @@
                 <xul:hbox flex="1" class="end"/>
               </xul:hbox>
 
-              <xul:scale sbid="space_limit" flex="1" min="0" max="100"/>
+              <xul:scale sbid="space_limit" flex="1" min="0" max="100"
+                         onclick="_onClick();"/>
             </xul:stack>
 
             <xul:hbox class="indent-margins" flex="1">
@@ -141,6 +147,7 @@
           </xul:vbox>
           <xul:vbox>
             <xul:checkbox sbid="mgmt_enable"
+                          xbl:inherits="disabled"
                           oncommand="onMgmtEnableChange();"
                           label="&device.settings.disk.management.label;"/>
             <xul:hbox class="indent">
@@ -284,6 +291,13 @@
       }
       ]]></destructor>
 
+      <method name="_onClick">
+        <body>
+          if (!this._scale.disabled)
+            DeviceMediaManagementServices.dispatchSettingsChangeEvent();
+        </body>
+      </method>
+
       <method name="_getSettingBox">
         <parameter name="aID"/>
         <body>
@@ -352,7 +366,8 @@
                   document.getAnonymousElementByAttribute(self,
                                                           "sbid",
                                                           "mgmt_enable");
-            self._formatter.disableAll = !mgmtEnableCheckbox.checked;
+            self._formatter.disableAll = !mgmtEnableCheckbox.checked ||
+                                         (self.device && self.device.isBusy);
           }, 0, this);
 
           // Set the scale to the device's current value.
@@ -423,7 +438,7 @@
             this.device.getPreference(
                 this._devicePrefRoot + ".use_music_limit_percent");
 
-          this._scale.disabled = !shouldLimit;
+          this._scale.disabled = !shouldLimit || this.device.isBusy;
           this._limitSpaceCheckbox.checked = shouldLimit;
           this._updateNotchDisabledState();
         ]]></body>
