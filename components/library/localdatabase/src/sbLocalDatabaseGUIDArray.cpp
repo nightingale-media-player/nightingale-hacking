@@ -1386,6 +1386,12 @@ sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex,
   nsresult rv;
 
   /*
+   * Nothing to fetch if not valid
+   */
+  if (mValid == PR_FALSE)
+    return NS_OK;
+
+  /*
    * To read the full media library, two queries are used -- one for when the
    * primary sort key has values and one for when the primary sort key has
    * no values (null values).  When sorting, items where the primary sort key
@@ -1418,10 +1424,12 @@ sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex,
   PRUint32 indexB = mLengthX;
   PRUint32 indexC = mLength - 1;
 
-  // Edge cases mean fetch everything
+  // Edge cases mean fetch everything.  Just return if nothing to fetch.
   if (aFetchSize == PR_UINT32_MAX || aFetchSize == 0) {
     aFetchSize = mLength;
   }
+  if (!aFetchSize)
+    return NS_OK;
 
   /*
    * Divide the array up into cells and figure out what cell to fetch
@@ -2047,6 +2055,7 @@ sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
    */
   rv = FetchRows(aIndex, mFetchSize);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(aIndex < mCache.Length(), NS_ERROR_FAILURE);
 
   /*
    * Prefetch all rows.  Do this from an asynchronous event on the main thread
@@ -2058,7 +2067,7 @@ sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
                                &sbLocalDatabaseGUIDArray::FetchRows,
                                NS_ERROR_FAILURE,
                                static_cast<PRUint32>(0),
-                               mLength);
+                               static_cast<PRUint32>(0));
   }
 
   *_retval = mCache[aIndex];
