@@ -105,8 +105,15 @@ var SBSessionStore = {
               isOnlyView: tab.mediaPage.isOnlyView
             };
             if (view instanceof Ci.sbIFilterableMediaListView) {
+              // Clear the cascade filter set so that the filter constraints
+              // only include the original constraints on the view, not those
+              // imposed by the CFS. We do this on a copy of the view to avoid
+              // changing the state of the original.
+              var cloneView = view.clone();
+              cloneView.cascadeFilterSet.clearAll();
+
               data.constraints = [];
-              for (var group in ArrayConverter.JSEnum(view.filterConstraint.groups)) {
+              for (var group in ArrayConverter.JSEnum(cloneView.filterConstraint.groups)) {
                 if (!(group instanceof Ci.sbILibraryConstraintGroup)) {
                   // this shouldn't happen... but let's be nice and not die
                   continue;
