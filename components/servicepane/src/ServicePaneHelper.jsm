@@ -195,8 +195,8 @@ var ServicePaneHelper = {
     if (!badgeID) {
       // Generate badge ID automatically if none given, use NUL character to
       // avoid clashes with user-supplied IDs
-      badgeID = "badge\0" + badgeIndex++;
-    } else if (/\0/.test(badgeID)) {
+      badgeID = "badge\x00" + badgeIndex++;
+    } else if (/\x00/.test(badgeID)) {
       // NUL characters are reserved for generated IDs
       throw "No NUL characters allowed in badge ID";
     }
