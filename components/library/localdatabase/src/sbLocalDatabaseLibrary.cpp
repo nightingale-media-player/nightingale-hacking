@@ -2816,6 +2816,9 @@ sbLocalDatabaseLibrary::CopyMediaList(const nsAString& aType,
   rv = CreateMediaList(aType, properties, getter_AddRefs(newList));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = sbLibraryUtils::LinkCopy(aSource, newList);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   if (!aDontCopyContent) {
     // XXXben This will probably fail for types other than "simple"... For now
     //        we won't automatically lock other types out (by returning early)

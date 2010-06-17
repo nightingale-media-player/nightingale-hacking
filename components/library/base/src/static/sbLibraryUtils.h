@@ -248,6 +248,13 @@ public:
                     /* in  */ sbILibrary *aLibrary,
                     /* in  */ nsAString const & aListName,
                     /* out */ nsAString & aName);
+  /**
+   * \brief Links a copy to its original
+   * \param aOriginal The original to link aCopy to
+   * \param aCopy The copy to be linked
+   */
+
+  static nsresult LinkCopy(sbIMediaItem * aOriginal, sbIMediaItem * aCopy);
 };
 
 /**

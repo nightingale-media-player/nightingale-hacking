@@ -190,7 +190,12 @@ function sbDeviceFirmwareAutoCheckForUpdate_observe(subject, topic, data) {
       this._queueItem = device;
       // Check for update
       if (device.getPreference("firmware.update.enabled")) {
-        this._deviceFirmwareUpdater.checkForUpdate(device, 0, 0, this);
+        try {
+          this._deviceFirmwareUpdater.checkForUpdate(device, 0, 0, this);
+        }
+        catch (e) {
+          Cu.reportError(e);
+        }
       }
     }
     else if(this._queueItem && 

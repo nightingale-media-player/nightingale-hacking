@@ -847,3 +847,44 @@ sbLibraryUtils::SuggestUniqueNameForPlaylist(sbILibrary *aLibrary,
 
   return NS_OK;
 }
+
+nsresult
+sbLibraryUtils::LinkCopy(sbIMediaItem * aOriginal, sbIMediaItem * aCopy)
+{
+  NS_ENSURE_ARG_POINTER(aOriginal);
+  NS_ENSURE_ARG_POINTER(aCopy);
+
+  nsresult rv;
+
+  nsCOMPtr<sbIMutablePropertyArray> props =
+    do_CreateInstance(
+               "@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1",
+               &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString playlistGuid;
+  rv = aOriginal->GetGuid(playlistGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = props->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
+                             playlistGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILibrary> playlistLib;
+  rv = aOriginal->GetLibrary(getter_AddRefs(playlistLib));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString playlistLibGuid;
+  rv = playlistLib->GetGuid(playlistLibGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = props->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID),
+                             playlistLibGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aCopy->SetProperties(props);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
