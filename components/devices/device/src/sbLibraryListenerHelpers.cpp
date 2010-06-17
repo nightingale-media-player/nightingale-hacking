@@ -260,7 +260,7 @@ sbBaseDeviceLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
   nsresult rv;
 
   // Skip hidden media items
-  if (IsItemHidden(aMediaList) || IsItemHidden(aMediaItem)) {
+  if (IsItemHidden(aMediaList)) {
     return NS_OK;
   }
 

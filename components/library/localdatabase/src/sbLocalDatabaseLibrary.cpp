@@ -189,9 +189,9 @@ public:
     : mLocalDatabaseLibrary(aLocalDatabaseLibrary)
     , mListener(aListener)
     , mMediaItems(aMediaItems) {}
-  
+
   NS_IMETHOD Run() {
-    nsresult rv = 
+    nsresult rv =
       mLocalDatabaseLibrary->AddSomeAsyncInternal(mMediaItems, mListener);
     NS_ENSURE_SUCCESS(rv, rv);
     return NS_OK;
@@ -1292,7 +1292,8 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
     // If we're copying from the device, Hide the item till the copy is
     // complete. Code processing the read request will unhide.
     PRBool const isCopyingFromDevice = IsDeviceLibrary(oldLibrary);
-    if (isCopyingFromDevice) {
+    PRBool const isCopyingToDevice = IsDeviceLibrary(this);
+    if (isCopyingFromDevice || isCopyingToDevice) {
       mutableProperties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
                                         NS_LITERAL_STRING("1"));
     }
