@@ -221,7 +221,7 @@ NS_IMETHODIMP nsSystemTrayIconGTK::OnStartContainer(imgIRequest *aRequest, imgIC
 
 /* void onStartFrame (in imgIRequest aRequest, in unsigned long aFrame); */
 NS_IMETHODIMP
-nsSystemTrayService::OnStartFrame(imgIRequest *aRequest,
+nsSystemTrayIconGTK::OnStartFrame(imgIRequest *aRequest,
                                   PRUint32 aFrame)
 {
   return NS_OK;
@@ -230,7 +230,7 @@ nsSystemTrayService::OnStartFrame(imgIRequest *aRequest,
 /* [noscript] void onDataAvailable (in imgIRequest aRequest,
   in boolean aCurrentFrame, [const] in nsIntRect aRect); */
 NS_IMETHODIMP
-nsSystemTrayService::OnDataAvailable(imgIRequest *aRequest,
+nsSystemTrayIconGTK::OnDataAvailable(imgIRequest *aRequest,
                                      PRBool aCurrentFrame,
                                      const nsIntRect * aRect)
 {
@@ -239,7 +239,7 @@ nsSystemTrayService::OnDataAvailable(imgIRequest *aRequest,
 
 /* void onStopFrame (in imgIRequest aRequest, in unsigned long aFrame); */
 NS_IMETHODIMP
-nsSystemTrayService::OnStopFrame(imgIRequest *aRequest,
+nsSystemTrayIconGTK::OnStopFrame(imgIRequest *aRequest,
                                  PRUint32 aFrame)
 {
   // the frame is done; put it in the tray
@@ -289,7 +289,7 @@ NS_IMETHODIMP nsSystemTrayIconGTK::OnStopRequest(imgIRequest *aRequest, PRBool a
 /* [noscript] void frameChanged (in imgIContainer aContainer,
   in nsIntRect aDirtyRect); */
 NS_IMETHODIMP
-nsSystemTrayService::FrameChanged(imgIContainer *aContainer,
+nsSystemTrayIconGTK::FrameChanged(imgIContainer *aContainer,
                                   nsIntRect * aDirtyRect)
 {
   return NS_OK;
