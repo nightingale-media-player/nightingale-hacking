@@ -862,6 +862,14 @@ sbDeviceLibrary::GetSyncListsPrefKey(PRUint32 aContentType,
     listener->call;                                                           \
   }                                                                           \
 
+// SB_NOTIFY_LISTENERS sets a return value according to the return value of the
+// last listener call. This allows a single listener to suppress batch
+// notifications to all other listeners. Use SB_NOTIFY_LISTENERS_RETURN_FALSE
+// to prevent erroneous suppression of notifications.
+#define SB_NOTIFY_LISTENERS_RETURN_FALSE(call)                                \
+  SB_NOTIFY_LISTENERS(call)                                                   \
+  *aNoMoreForBatch = PR_FALSE;                                                \
+
 #define SB_NOTIFY_LISTENERS_ASK_PERMISSION(call)                              \
   PRBool mShouldProcceed = PR_TRUE;                                           \
   PRBool mPerformAction = PR_TRUE;                                            \
@@ -1386,10 +1394,10 @@ sbDeviceLibrary::OnItemAdded(sbIMediaList* aMediaList,
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnItemAdded", this));
 
-  SB_NOTIFY_LISTENERS(OnItemAdded(aMediaList,
-                                  aMediaItem,
-                                  aIndex,
-                                  aNoMoreForBatch));
+  SB_NOTIFY_LISTENERS_RETURN_FALSE(OnItemAdded(aMediaList,
+                                               aMediaItem,
+                                               aIndex,
+                                               aNoMoreForBatch));
 
   return NS_OK;
 }
@@ -1402,10 +1410,10 @@ sbDeviceLibrary::OnBeforeItemRemoved(sbIMediaList* aMediaList,
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnBeforeItemRemoved", this));
 
-  SB_NOTIFY_LISTENERS(OnBeforeItemRemoved(aMediaList,
-                                          aMediaItem,
-                                          aIndex,
-                                          aNoMoreForBatch));
+  SB_NOTIFY_LISTENERS_RETURN_FALSE(OnBeforeItemRemoved(aMediaList,
+                                                       aMediaItem,
+                                                       aIndex,
+                                                       aNoMoreForBatch));
   return NS_OK;
 }
 
@@ -1417,10 +1425,10 @@ sbDeviceLibrary::OnAfterItemRemoved(sbIMediaList* aMediaList,
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnAfterItemRemoved", this));
 
-  SB_NOTIFY_LISTENERS(OnAfterItemRemoved(aMediaList,
-                                         aMediaItem,
-                                         aIndex,
-                                         aNoMoreForBatch));
+  SB_NOTIFY_LISTENERS_RETURN_FALSE(OnAfterItemRemoved(aMediaList,
+                                                      aMediaItem,
+                                                      aIndex,
+                                                      aNoMoreForBatch));
   return NS_OK;
 }
 
@@ -1432,10 +1440,10 @@ sbDeviceLibrary::OnItemUpdated(sbIMediaList *aMediaList,
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnItemUpdated", this));
 
-  SB_NOTIFY_LISTENERS(OnItemUpdated(aMediaList,
-                                    aMediaItem,
-                                    aProperties,
-                                    aNoMoreForBatch));
+  SB_NOTIFY_LISTENERS_RETURN_FALSE(OnItemUpdated(aMediaList,
+                                                 aMediaItem,
+                                                 aProperties,
+                                                 aNoMoreForBatch));
   return NS_OK;
 }
 
@@ -1447,10 +1455,10 @@ sbDeviceLibrary::OnItemMoved(sbIMediaList *aMediaList,
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnItemMoved", this));
 
-  SB_NOTIFY_LISTENERS(OnItemMoved(aMediaList,
-                                  aFromIndex,
-                                  aToIndex,
-                                  aNoMoreForBatch));
+  SB_NOTIFY_LISTENERS_RETURN_FALSE(OnItemMoved(aMediaList,
+                                               aFromIndex,
+                                               aToIndex,
+                                               aNoMoreForBatch));
   return NS_OK;
 }
 
@@ -1461,9 +1469,9 @@ sbDeviceLibrary::OnBeforeListCleared(sbIMediaList *aMediaList,
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnListCleared", this));
 
-  SB_NOTIFY_LISTENERS(OnBeforeListCleared(aMediaList,
-                                          aExcludeLists,
-                                          aNoMoreForBatch));
+  SB_NOTIFY_LISTENERS_RETURN_FALSE(OnBeforeListCleared(aMediaList,
+                                                       aExcludeLists,
+                                                       aNoMoreForBatch));
   return NS_OK;
 }
 
@@ -1474,9 +1482,9 @@ sbDeviceLibrary::OnListCleared(sbIMediaList *aMediaList,
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnListCleared", this));
 
-  SB_NOTIFY_LISTENERS(OnListCleared(aMediaList,
-                                    aExcludeLists,
-                                    aNoMoreForBatch));
+  SB_NOTIFY_LISTENERS_RETURN_FALSE(OnListCleared(aMediaList,
+                                                 aExcludeLists,
+                                                 aNoMoreForBatch));
   return NS_OK;
 }
 
