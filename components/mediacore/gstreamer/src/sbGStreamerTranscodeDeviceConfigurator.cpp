@@ -958,13 +958,13 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineOutputDimensions()
       NS_ENSURE_SUCCESS(rv, rv);
       NS_ENSURE_TRUE(parRanges, NS_ERROR_UNEXPECTED);
 
-      PRUint32 count, index = 0;
+      PRUint32 count, index;
       rv = parRanges->GetLength(&count);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      for (PRUint32 i = 0; i < count; i++) {
+      for (index = 0; index < count; index++) {
         nsCOMPtr<sbIDevCapFraction> curFraction =
-          do_QueryElementAt(parRanges, i, &rv);
+          do_QueryElementAt(parRanges, index, &rv);
         NS_ENSURE_SUCCESS(rv, rv);
 
         rv = curFraction->GetNumerator(&num);
@@ -985,7 +985,7 @@ sbGStreamerTranscodeDeviceConfigurator::DetermineOutputDimensions()
         input.width *= inputPAR.Denominator();
         input.height *= inputPAR.Numerator();
         mOutputPAR = sbFraction(1, 1); // XXX Mook: we need to adjust to something
-        // we have output PAR for!
+                                       // we have output PAR for!
       }
     }
   }
