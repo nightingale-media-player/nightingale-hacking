@@ -397,11 +397,7 @@ sbiTunesAgentMacProcessor::AddTracks(std::string const & aSource,
   sbError error;
   sbiTunesPlaylist *sourceList = NULL;
 
-  std::string mainLibraryName;
-  error = mLibraryMgr->GetMainLibraryPlaylistName(mainLibraryName);
-  SB_ENSURE_SUCCESS(error, error);
-
-  if (mainLibraryName.compare(SONGBIRD_MAIN_LIBRARY_NAME) == 0) {
+  if (aSource.compare(SONGBIRD_MAIN_LIBRARY_NAME) == 0) {
     error = mLibraryMgr->GetMainLibraryPlaylist(&sourceList);
     SB_ENSURE_SUCCESS(error, error);
   }
