@@ -136,8 +136,8 @@
     <menuseparator id="context-sep-copylink"/>
 
     <menuitem id="context-showimage"
-       label="&reloadImageCmd.label;"
-       accesskey="&reloadImageCmd.accesskey;"
+       label="&showImageCmd.label;"
+       accesskey="&showImageCmd.accesskey;"
        oncommand="gContextMenu.showImage();"/>
     <menuseparator id="context-sep-viewbgimage"/>
     <menuitem id="context-viewimage"
