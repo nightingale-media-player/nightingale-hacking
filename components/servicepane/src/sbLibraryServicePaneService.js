@@ -1013,7 +1013,7 @@ function sbLibraryServicePane_getNodeFromMediaListView(aMediaListView) {
   var urn = this._getURNForLibraryResource(aMediaListView.mediaList);
 
   var values = this._getConstraintsValueArrayFromMediaListView(aMediaListView);
-  for (i = 0; i < values.length; ++i) {
+  for (let i = 0; i < values.length; ++i) {
     urn += ":constraint(" + values[i] + ")";
   }
 
@@ -1036,7 +1036,7 @@ function sbLibraryServicePane_getNodeContentTypeFromMediaListView(
 
   const K_TYPES = ["audio", "video", "podcast"];
 
-  for (i = 0; i < values.length; ++i) {
+  for (let i = 0; i < values.length; ++i) {
     if (K_TYPES.indexOf(values[i]) > -1)
       return values[i];
   }
