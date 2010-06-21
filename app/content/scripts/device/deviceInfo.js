@@ -748,11 +748,12 @@ var DIW = {
 
   _getDeviceProperty: function DIW__getDeviceProperty(aPropertyName, aDefault) {
     try {
-      if (this._deviceProperties.properties.hasKey(aPropertyName))
-        var value = this._deviceProperties.properties.getPropertyAsAString(
+      if (this._deviceProperties.properties.hasKey(aPropertyName)) {
+        let value = this._deviceProperties.properties.getPropertyAsAString(
                                                                  aPropertyName);
-      this._lastPropertyValue[aPropertyName] = value;
-      return value;
+        this._lastPropertyValue[aPropertyName] = value;
+        return value;
+      }    
     } catch (err) {
       if (this._lastPropertyValue[aPropertyName]) {
         return this._lastPropertyValue[aPropertyName];
