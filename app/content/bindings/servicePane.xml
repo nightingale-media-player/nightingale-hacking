@@ -239,16 +239,6 @@
             this.mDragService = 
               Components.classes['@mozilla.org/widget/dragservice;1']
               .getService(Components.interfaces.nsIDragService);
-
-            // Determine how much to indent this node
-            let spacer = this._getElement("servicepane-node-spacer");
-            let indent = -1;
-            let parent = this.nodeData.parentNode;
-            while (parent) {
-              indent++;
-              parent = parent.parentNode;
-            }
-            this.setAttribute("indent", indent);
           } catch (e) {
             dump("Exception: " + e + "\n");
           }
@@ -325,6 +315,15 @@
             if (this._nodeData.firstChild)
               this.className += " container";
 
+            // Determine how much to indent this node
+            let indent = -1;
+            let parent = this.nodeData.parentNode;
+            while (parent) {
+              indent++;
+              parent = parent.parentNode;
+            }
+            this.setAttribute("indent", indent);
+
             // If it's ejectable let's add the right badge
             let badge = this.ServicePaneHelper.getBadge(this._nodeData,
                                                         "eject");
@@ -341,6 +340,7 @@
             this.setAttribute("hidden", "true");
             this.removeAttribute("closed");
             this.className = "";
+            this.removeAttribute("indent");
           }
 
           // Update the badges we show
