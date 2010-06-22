@@ -155,7 +155,7 @@ menulist > menupopup > menu > .menu-iconic-left {
 
 /* ::::: checked menuitems :::::  */
 menuitem[checked="true"], 
-menuitem[checked="true"]:hover, 
+menuitem[checked="true"][_moz-menuactive="true"], 
 menulist > menupopup > menuitem[selected="true"],
 .menulist-menupopup > menuitem[selected="true"] {
   background-image: url(chrome://songbird/skin/menu/bg-check.png);

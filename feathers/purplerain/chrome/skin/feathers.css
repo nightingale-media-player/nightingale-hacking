@@ -537,9 +537,9 @@ treechildren::-moz-tree-cell-text( selected, focus ) {
 }
 
 
-menuitem[checked="true"]:hover,
-menulist > menupopup > menuitem[selected="true"]:hover,
-.menulist-menupopup > menuitem[selected="true"]:hover {
+menuitem[checked="true"][_moz-menuactive="true"],
+menulist > menupopup > menuitem[selected="true"],
+.menulist-menupopup > menuitem[selected="true"] {
   background-color: rgb(67,52,111);
 }
 
