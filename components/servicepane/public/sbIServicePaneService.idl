@@ -157,9 +157,9 @@ interface sbIServicePaneNode : nsISupports
  * \brief The interface to be implemented by node event listeners added via
  *        sbIServicePaneNode.addEventListener()
  */
-[scriptable, uuid(01d9f9c4-1dd2-11b2-b859-e9bb94e591a9)]
+[scriptable, function, uuid(fd541806-1dd1-11b2-9a3d-d7ba87856d00)]
 interface sbIServicePaneNodeListener : nsISupports {
-  void onNodeEvent (in AString aEventName);
+  void handleEvent (in AString aEventName);
 };
 
 /**

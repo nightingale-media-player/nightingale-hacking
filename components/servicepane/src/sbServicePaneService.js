@@ -442,7 +442,7 @@ ServicePaneNode.prototype = {
 
   dispatchEvent: function(aEventName) {
     for each (let listener in this._eventListeners)
-      listener.onNodeEvent(aEventName);
+      listener.handleEvent(aEventName);
   },
 
   addMutationListener: function(aListener) {

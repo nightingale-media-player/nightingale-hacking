@@ -355,7 +355,7 @@ function _deviceNodeEventListener(aDevice) {
   this._device = aDevice;
 }
 _deviceNodeEventListener.prototype = {
-  onNodeEvent: function sbDeviceServicePane_onNodeEvent(aEventName) {
+  handleEvent: function sbDeviceServicePane_handleEvent(aEventName) {
     switch (aEventName) {
       case "eject":
         try {
