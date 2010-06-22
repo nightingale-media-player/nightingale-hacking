@@ -1138,7 +1138,7 @@ nsresult sbMetadataHandlerTaglib::SetImageDataInternal(
 
   NS_ENSURE_STATE(mpURL);
 
-  LOG(("SetImageDataInternal()"));
+  LOG(("%s(%s)", __FUNCTION__, NS_ConvertUTF16toUTF8(aURL).get()));
   // TODO: write other files' metadata.
   // First check if we support this file
   result = mpURL->GetFileExtension(fileExt);
@@ -1151,6 +1151,7 @@ nsresult sbMetadataHandlerTaglib::SetImageDataInternal(
   isMP4 = fileExt.EqualsLiteral("mp4") ||
           fileExt.EqualsLiteral("m4a");
   if (!isMP3 && !isOGG && !isMP4) {
+    LOG(("%s: file format not supported", __FUNCTION__));
     return NS_ERROR_NOT_IMPLEMENTED;
   }
 
@@ -1204,10 +1205,12 @@ nsresult sbMetadataHandlerTaglib::SetImageDataInternal(
       if (f.save()) {
         result = NS_OK;
       } else {
+        LOG(("%s: Failed to save", __FUNCTION__));
         result = NS_ERROR_FAILURE;
       } 
     }
   } else {
+    LOG(("%s: scheme not supported", __FUNCTION__));
     result = NS_ERROR_NOT_IMPLEMENTED;
   }
   
@@ -1399,7 +1402,7 @@ nsresult sbMetadataHandlerTaglib::WriteMP3Image(TagLib::MPEG::File* aMPEGFile,
     // does not meet the requirements of the ID3v2 tag format.
     // MaxSize = 16Mb | 16777216b
     // type >= 0x00 | <= 0x14
-    if (imageDataSize < MAX_MPEG_IMAGE_SIZE)
+    if (imageDataSize > MAX_MPEG_IMAGE_SIZE)
       return NS_ERROR_FAILURE;
 
     if (imageType < METADATA_IMAGE_TYPE_OTHER ||
