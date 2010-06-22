@@ -1263,24 +1263,6 @@ ifdef IS_EXTENSION # {
          endif
          ALL_TRASH += $(EXTENSION_DIR)/$(wildcard $(OUR_EXTENSION_NAME)*.xpi)
       endif
-
-      # XXX: this check is slightly incorrect: in the pre-processed
-      # install.rdf.in case, the check will be performed on the source
-      # install.rdf _before_ it has been preprocessed, but it's totally
-      # reasonable for someone to add the targetPlatform as part of
-      # pre-processing. Right now, no one does that, so this is a 
-      # limitation
-      OUR_EXTENSION_TARGET_PLATFORM_SET := $(shell $(GREP) -i "<em:targetPlatform>" $(if $(OUR_INSTALL_RDF_IN),$(OUR_INSTALL_RDF_IN),$(OUR_INSTALL_RDF)))
-
-      ifdef EXTENSION_NO_BINARY_COMPONENTS
-         ifneq (,$(OUR_EXTENSION_TARGET_PLATFORM_SET))
-            $(error EXTENSION_NO_BINARY_COMPONENTS set, but <em:targetPlatform> is also declared.)
-         endif
-      else
-         ifeq (,$(OUR_EXTENSION_TARGET_PLATFORM_SET))
-            $(error No <em:targetPlatform> declared for platform-dependent extension.)
-         endif
-      endif
    endif # } OUR_EXTENSION_MAKE_IN_ROOTSRCDIR 
 endif # } IS_EXTENSION
 
@@ -1307,9 +1289,22 @@ $(OUR_INSTALL_RDF): $(OUR_INSTALL_RDF_IN)
 # in the extension's Makefile
 
 export:: $(if $(IS_EXTENSION), $(if $(OUR_EXTENSION_MAKE_IN_ROOTSRCDIR), $(OUR_INSTALL_RDF)))
-ifdef IS_EXTENSION
+ifdef IS_EXTENSION # {
 	$(MKDIR_APP) $(OUR_EXTENSION_STAGE_DIR) $(if $(OUR_EXTENSION_TMP_DIR), $(OUR_EXTENSION_TMP_DIR))
-endif
+   ifdef OUR_EXTENSION_MAKE_IN_ROOTSRCDIR
+      ifdef EXTENSION_NO_BINARY_COMPONENTS
+	      @if test -n "$$($(GREP) -i "<em:targetPlatform>" "$(OUR_INSTALL_RDF)")"; then \
+            echo "EXTENSION_NO_BINARY_COMPONENTS set, but <em:targetPlatform> is also declared." 1>&2; \
+            exit -1; \
+         fi
+      else
+	      @if test -z "$$($(GREP) -i "<em:targetPlatform>" "$(OUR_INSTALL_RDF)")"; then \
+            echo "No <em:targetPlatform> declared for platform-dependent extension." 1>&2; \
+            exit -1; \
+         fi
+      endif 
+   endif 
+endif # } IS_EXTENSION
 
 libs:: $(if $(IS_EXTENSION), $(OUR_SUBDIRS) $(if $(JAR_MANIFEST),$(OUR_JAR_MN)))
 ifdef IS_EXTENSION
