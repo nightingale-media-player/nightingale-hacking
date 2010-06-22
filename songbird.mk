@@ -77,7 +77,7 @@ CONFIGURE_ARGS = $(SONGBIRDCONFIG_CONFIGURE_OPTIONS) \
 #    - $(MAKECMDGOALS) would contain debug
 #    We don't support this anymore, because it was always broken in the
 #    rebuild case (bug 17128)
-ifneq (,$(filter-out debug release,$(MAKECMDGOALS)))
+ifneq (,$(filter debug release,$(MAKECMDGOALS)))
    $(error make -f songbird.mk [debug|release] is no longer supported; add your desired options to songbird.config)
 endif
 
