@@ -75,105 +75,16 @@ CONFIGURE_ARGS = $(SONGBIRDCONFIG_CONFIGURE_OPTIONS) \
 # MAKECMDGOALS contains the targets passed on the command line:
 #    example:  make -f songbird.mk debug
 #    - $(MAKECMDGOALS) would contain debug
-ifeq (debug,$(MAKECMDGOALS))
-   DEBUG = 1
+#    We don't support this anymore, because it was always broken in the
+#    rebuild case (bug 17128)
+ifneq (,$(filter-out debug release,$(MAKECMDGOALS)))
+   $(error make -f songbird.mk [debug|release] is no longer supported; add your desired options to songbird.config)
 endif
 
-# Global, debug/release build options
-# building installer is off by default
-#
-# Setting these options via the environment is deprecated; use songbird.config
-# instead; see bug 6515
-ifdef SB_ENABLE_INSTALLER
-   CONFIGURE_ARGS += --enable-installer
-   ENV_SETTING_WARN += --enable-installer
-endif
-
-ifdef SONGBIRD_OFFICIAL
-   CONFIGURE_ARGS += --enable-official
-   ENV_SETTING_WARN += --enable-official
-endif
-
-ifdef SONGBIRD_NIGHTLY
-   CONFIGURE_ARGS += --enable-nightly
-   ENV_SETTING_WARN += --enable-nightly
-endif
-
-ifdef SB_UPDATE_CHANNEL
-   CONFIGURE_ARGS += --enable-update-channel=$(SB_UPDATE_CHANNEL)
-   ENV_SETTING_WARN += --enable-update-channel=$(SB_UPDATE_CHANNEL)
-endif
-
-# debug build options
-ifdef DEBUG
-   CONFIGURE_ARGS += --enable-debug
-   ENV_SETTING_WARN += --enable-debug
-   # debug builds turn off jars by default, unless SB_ENABLE_JARS is set
-   ifdef SB_ENABLE_JARS
-      CONFIGURE_ARGS += --enable-jars
-      ENV_SETTING_WARN += --enable-jars
-   endif
-   # turn off tests if you really want
-   ifndef SB_DISABLE_TESTS
-      CONFIGURE_ARGS += --enable-tests
-      ENV_SETTING_WARN += --enable-tests
-   endif
-endif
-
-# release build options
-ifndef DEBUG
-   # release builds have jars by default, unless SB_DISABLE_JARS is set
-   ifdef SB_DISABLE_JARS
-      CONFIGURE_ARGS += --disable-jars
-      ENV_SETTING_WARN += --disable-jars
-   endif
-   # release builds don't have tests by default
-   ifdef SB_ENABLE_TESTS
-      CONFIGURE_ARGS += --enable-tests
-      ENV_SETTING_WARN += --enable-tests
-   endif
-endif
-
-# choose core wrappers to enable
-ifdef SB_NO_MEDIA_CORE
-   CONFIGURE_ARGS += --with-media-core=none
-   ENV_SETTING_WARN += --with-media-core=none
-endif #SB_NO_MEDIA_CORE
-
-# breakpad support
-ifdef SB_ENABLE_BREAKPAD
-   CONFIGURE_ARGS += --enable-breakpad
-   ENV_SETTING_WARN += --enable-breakpad
-endif
-
-# force installation of wmp core, so it's bundled with the application.
-ifdef SB_FORCE_MEDIA_CORE_WMP
-   CONFIGURE_ARGS += --with-media-core=windowsmedia \
-                     --with-force-media-core=windowsmedia \
-                     $(NULL)
-   ENV_SETTING_WARN += --with-media-core=windowsmedia \
-                       --with-force-media-core=windowsmedia \
-                       $(NULL)
-endif
-
-# force installation of qt core, so it's bundled with the application.
-ifdef SB_FORCE_MEDIA_CORE_QT
-   CONFIGURE_ARGS += --with-media-core=qt \
-                     --with-force-media-core=qt \
-                     $(NULL)
-   ENV_SETTING_WARN += --with-media-core=qt \
-                       --with-force-media-core=qt \
-                       $(NULL)
-endif
-
-# compiler environment checks
-ifdef SB_DISABLE_COMPILER_ENVIRONMENT_CHECKS
-   CONFIGURE_ARGS += --disable-compiler-environment-checks
-   ENV_SETTING_WARN += --disable-compiler-environment-checks
-endif
-
-ifneq (,$(ENV_SETTING_WARN))
-   $(warning WARNING: Setting build options via the environment is deprecated; add the following options to your songbird.config: $(ENV_SETTING_WARN). Support for this will eventually go away.)
+# These are all of the old environment variables that used to control
+# various builds options.
+ifneq (,$(SB_ENABLE_INSTALLER)$(SONGBIRD_NIGHTLY)$(SONGBIRD_OFFICIAL)$(SB_UPDATE_CHANNEL)$(SB_ENABLE_JARS)$(SB_DISABLE_JARS)$(SB_DISABLE_TESTS)$(SB_ENABLE_TESTS)$(SB_FORCE_MEDIA_CORE_WMP)$(SB_FORCE_MEDIA_CORE_QT)$(SB_DISABLE_COMPILER_ENVIRONMENT_CHECKS))
+   $(error Setting build options via the environment is no longer supported; create/edit a songbird.config file.)
 endif
 
 #
@@ -250,8 +161,6 @@ ifndef SB_DISABLE_PKG_AUTODEPS
 endif
 
 all: songbird_output build
-
-debug release: all
 
 %_dep_update:
 	$($*_DEP_UPDATE)
