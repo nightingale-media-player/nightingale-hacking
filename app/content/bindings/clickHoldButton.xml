@@ -104,6 +104,20 @@
        </body>
      </method>
 
+     <property name="delayDuration">
+       <!--
+         - The number of milliseconds to wait before popping up the menu; by
+         - default, this is 300 milliseconds, but can be overridden
+         -->
+       <getter>
+         let delay = parseInt(this.getAttribute("delayDuration"), 10);
+         return (isNaN(delay) ? 300 : delay);
+       </getter>
+       <setter>
+         this.setAttribute("delayDuration", val);
+       </setter>
+     </property>
+
    </implementation>
 
 
@@ -167,7 +181,7 @@
        <![CDATA[
        clearInterval(this.popupInterval);
        if (event.button == 0)
-         this.delayPopup(300);
+         this.delayPopup(this.delayDuration);
        ]]>
      </handler>
      <handler event="mouseup">

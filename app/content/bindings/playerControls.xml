@@ -1551,6 +1551,7 @@
                     sbid="play"
                     class="sb-player-playpause-button-play sb-player-button"
                     oncommand="onPlayPause(event.target);"
+                    delayDuration="2000"
                     tooltiptext="&tooltip.control.play;"
                     xbl:inherits="label,position,disabled"
                     onmenushowing="syncMenus();">
@@ -1566,6 +1567,7 @@
 		    sbid="pause"
                     class="sb-player-playpause-button-pause sb-player-button"
                     oncommand="onPlayPause(event.target);"
+                    delayDuration="2000"
                     tooltiptext="&tooltip.control.pause;"
                     xbl:inherits="label,position,disabled"
                     onmenushowing="syncMenus();">
