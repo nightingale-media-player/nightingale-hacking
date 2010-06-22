@@ -32,6 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 DYNAMIC_LIB = sbMediacoreBase
 
 CPP_SRCS = sbBaseMediacore.cpp \
+           sbBaseMediacoreEventTarget.cpp \
            sbBaseMediacoreModule.cpp \
            sbBaseMediacoreMultibandEqualizer.cpp \
            sbBaseMediacoreFactory.cpp \
@@ -41,14 +42,18 @@ CPP_SRCS = sbBaseMediacore.cpp \
            sbMediacoreEqualizerBand.cpp \
            sbMediacoreError.cpp \
            sbMediacoreEvent.cpp \
+           sbMediacoreFactoryWrapper.cpp \
            sbMediacoreVotingChain.cpp \
+           sbMediacoreWrapper.cpp \
            sbMediaInspector.cpp \
            sbVideoBox.cpp \
            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/mediacore/base/public \
                      $(topsrcdir)/components/include \
+                     $(topsrcdir)/components/mediacore/base/src \
                      $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/moz/threads/src \
                      $(topsrcdir)/components/moz/xpcom/src \
                      $(MOZSDK_INCLUDE_DIR)/necko \
                      $(MOZSDK_INCLUDE_DIR)/pref \
@@ -59,6 +64,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
  components/moz/strings/src/sbMozStringUtils \
+ components/moz/threads/src/sbMozThreads \
  $(NULL)
 
 IS_COMPONENT = 1

@@ -38,6 +38,7 @@ XPIDL_SRCS = sbIMediacore.idl \
              sbIMediacoreEventTarget.idl \
              sbIMediacoreFactory.idl \
              sbIMediacoreFactoryRegistrar.idl \
+             sbIMediacoreFactoryWrapper.idl \
              sbIMediacoreManager.idl \
              sbIMediacoreMultibandEqualizer.idl \
              sbIMediacorePlaybackControl.idl \
@@ -52,6 +53,7 @@ XPIDL_SRCS = sbIMediacore.idl \
              sbIMediacoreVoting.idl \
              sbIMediacoreVotingChain.idl \
              sbIMediacoreVotingParticipant.idl \
+             sbIMediacoreWrapper.idl \
              sbIVideoBox.idl \
              sbIMediaInspector.idl \
              sbIMediaFormatMutable.idl \

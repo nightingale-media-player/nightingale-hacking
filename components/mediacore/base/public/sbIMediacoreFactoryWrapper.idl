@@ -1,0 +1,75 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+#include "nsISupports.idl"
+#include "sbIMediacoreFactory.idl"
+
+interface sbIMediacoreCapabilities;
+interface sbIMediacoreFactoryWrapper;
+
+/** 
+ * \interface sbIMediacoreFactoryWrapperListener
+ * \brief Factory Wrapper Listener Interface for use by JavaScript
+ *        implementations of Mediacores.
+ */
+[scriptable, function, uuid(46c08c8c-da2f-476c-9c63-54a1b8e2f9be)]
+interface sbIMediacoreFactoryWrapperListener : nsISupports
+{
+  /**
+   * \brief Create an instance of a Mediacore using aInstanceName as the
+   *        name of the instance.
+   */
+  sbIMediacore onCreate(in AString aInstanceName);
+};
+
+/**
+ * \interface sbIMediacoreFactoryWrapper
+ * \brief Factory Wrapper Interface for use by JavaScript
+ *        implementations of Mediacores.
+ * \note sbIMediacoreFactoryWrapper also implements sbIMediacoreFactory.
+ */
+[scriptable, uuid(f69c91e4-fee3-48f4-a95a-93d61eea091a)]
+interface sbIMediacoreFactoryWrapper : nsISupports
+{
+  /**
+   * \brief Initialize the Mediacore Factory Wrapper
+   */
+  void initialize(in AString aFactoryName, 
+                  in AString aContractID, 
+                  in sbIMediacoreCapabilities aCapabilities,
+                  in sbIMediacoreFactoryWrapperListener aListener);
+};
+
+%{C++
+
+#define SB_MEDIACOREFACTORYWRAPPER_DESCRIPTION    \
+  "Songbird Mediacore Factory Wrapper"
+#define SB_MEDIACOREFACTORYWRAPPER_CONTRACTID     \
+  "@songbirdnest.com/Songbird/Mediacore/FactoryWrapper;1"
+#define SB_MEDIACOREFACTORYWRAPPER_CLASSNAME      \
+  "sbMediacoreFactoryWrapper"
+#define SB_MEDIACOREFACTORYWRAPPER_CID            \
+  { 0xfd7bc5aa, 0xa1b1, 0x4765, { 0xb7, 0x78, 0xca, 0xce, 0xdb, 0x31, 0x8e, 0x2b } }
+
+%};
