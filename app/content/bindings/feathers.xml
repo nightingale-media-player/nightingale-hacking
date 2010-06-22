@@ -305,14 +305,11 @@
             this._feathersManager.getLayoutsForSkin(skin.internalName), 
             Components.interfaces.sbILayoutDescription
           );
-          
-          var videoWindowActive = SBDataGetBoolValue("faceplate.playingvideo");
 
           // Attach a menuitem for each compatible layout
           for (var j = 0; j < layouts.length; j++) {
             var item = this._makeLayoutMenuItem(skin, layouts[j]);
             item.setAttribute("class", "feathers-menu-selected-skin");
-            item.setAttribute("disabled", videoWindowActive);
 
             this._addToMenu(item);
           }

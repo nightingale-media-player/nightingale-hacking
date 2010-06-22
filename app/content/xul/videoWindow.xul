@@ -39,6 +39,7 @@
         windowtype="Songbird:Core"
         minwidth="320"
         minheight="240"
+        sb-no-close-on-layout-switch="true"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <keyset id="video-window-keyset">
     <key id="video-window-fullscreen-key"

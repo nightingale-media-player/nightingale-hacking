@@ -1083,7 +1083,7 @@ FeathersManager.prototype = {
       // close the player window *before* changing the skin
       // otherwise Gecko tries to load an image that will go away right after and crashes
       // (songbird bug 3965)
-      this._closePlayerWindow();
+      this._closePlayerWindow(internalName == this.currentSkinName);
       
       var timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
       var callback = new FeathersManager_switchFeathers_callback(this, layoutURL, internalName);
@@ -1236,8 +1236,12 @@ FeathersManager.prototype = {
 
   /**
    * Close all player windows (except the plugin host)
+   *
+   * @param aLayoutSwitchOnly if true, we will not close windows that wish to
+   *                          not be closed on layout changes
+   * 
    */
-  _closePlayerWindow: function _closePlayerWindow() {
+  _closePlayerWindow: function _closePlayerWindow(aLayoutSwitchOnly) {
     // Check to see if we are in test mode, if so, we don't actually
     // want to open the window as it will break the testing we're 
     // attempting to do.    
@@ -1256,29 +1260,35 @@ FeathersManager.prototype = {
     var playerWindows = windowMediator.getEnumerator(null);
     while (playerWindows.hasMoreElements()) {
       var window = playerWindows.getNext();
-
-      if (window) {
-        
-        // Don't close domi or other debug windows... that's just annoying
-        var isDebugWindow = false;
-        try {    
-          var windowElement = window.document.documentElement;
-          var windowID = windowElement.getAttribute("id");
-          if (windowID == "JSConsoleWindow" || 
-              windowID == "winInspectorMain" || 
-              windowID == "venkman-window") 
-          {
-            isDebugWindow = true;
-          }
-        } catch (e) {}
-        
-        if (!isDebugWindow) {
-          
-          // Ask nicely.  The window should be able to cancel the onunload if
-          // it chooses.
-          window.close();
-        }
+      if (!window) {
+        continue;
       }
+
+      // Don't close DOMi or other debug windows... that's just annoying
+      try {
+        let docElement = window.document.documentElement;
+        // Go by the window ID instead of URL for these, in case we end up with
+        // things that try to override them (e.g. Error2)
+        switch (docElement.getAttribute("id")) {
+          case "JSConsoleWindow":
+          case "winInspectorMain":
+          case "venkman-window":
+            // don't close these
+            continue;
+        }
+        if (aLayoutSwitchOnly) {
+          // this is a layout switch, the skin will be the same;
+          // check for opt-in attribute and skip those
+          if (docElement.hasAttribute("sb-no-close-on-layout-switch")) {
+            // don't close this either
+            continue;
+          }
+        }
+      } catch (e) {
+        /* ignore any errors - assume they're closable */
+      }
+
+      window.close();
     }
   },
 

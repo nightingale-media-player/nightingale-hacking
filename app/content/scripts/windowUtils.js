@@ -1097,20 +1097,10 @@ function goUpdateGlobalMetadataMenuItems()
 /**
  * Global function to cycle the current feather to the next layout.
  */
-var gFeathersManager = null;
 function toggleNextFeatherLayout()
 {
-  if (!gFeathersManager) {
-    gFeathersManager = 
-      Components.classes['@songbirdnest.com/songbird/feathersmanager;1']
-        .getService(Components.interfaces.sbIFeathersManager);
-  }
-
-  // Disallow switching layouts when video window is active
-  // as it will close the video window and stop playback unexpectedly.
-  if (SBDataGetBoolValue("faceplate.playingvideo"))
-    return;
-
-  gFeathersManager.switchToNextLayout();
+  Components.classes['@songbirdnest.com/songbird/feathersmanager;1']
+            .getService(Components.interfaces.sbIFeathersManager)
+            .switchToNextLayout();
 }
 
