@@ -464,8 +464,8 @@
 <!ENTITY device.firmware.wizard.check.release_notes.label "Release Notes">
 <!ENTITY device.firmware.wizard.needs_recovery_mode.description "The device must be connected in repair mode to continue. Please follow the instructions below to set your device to repair mode.">
 <!ENTITY device.firmware.wizard.download.title            "Downloading new firmware...">
-<!ENTITY device.firmware.wizard.repair.time.description   "Restoring the device should take less than 5 minutes.">
-<!ENTITY device.firmware.wizard.repair.warning            'Restoring your device to factory settings <strong class="loss-of-data-text">will erase all media on the device</strong>. Please back up all your files before proceeding.'>
+<!ENTITY device.firmware.wizard.repair.time.description   "This operation should take less than 5 minutes.">
+<!ENTITY device.firmware.wizard.repair.warning            'Unfortunately, any existing content on your device <strong class="loss-of-data-text">will be erased</strong>. You are advised to re-sync with &brandShortName; once this operation is completed.'>
 <!ENTITY device.firmware.wizard.install.title             "Installing firmware...">
 
 <!ENTITY device.firmware.wizard.busy.description  "It appears that your device is busy. Firmware can only be installed when your device is idle.">
