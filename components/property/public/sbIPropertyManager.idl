@@ -190,7 +190,7 @@ interface sbIPropertyInfo : nsISupports
    * NOTE: Setting this attribute after a property has already
    * been registered with the manager may not work as expected.  
    * This is a shortcoming of the architecture and will be fixed
-   * with Bug 12677 – "[sorting] cached sortable values should 
+   * with Bug 12677 - "[sorting] cached sortable values should 
    *                   invalidate when property implementations change"
    * If you need to change the secondary sort for a property that
    * may already be cached in the db, check out 
