@@ -26,6 +26,7 @@
 
 #include <commctrl.h>
 #include <shellapi.h>
+#include <Uxtheme.h>
 
 #include "../NativeWindowFromNode.h"
 
@@ -296,6 +297,8 @@ sbWindowChromeService::WndProc(HWND hWnd,
     }
     // No DWM, don't do anything to avoid extra paints of the non-client area
     // which causes bad flickering.
+    // Let's turn off themes to make sure our borders don't get rounded!
+    ::SetWindowTheme(hWnd, L" ", L" ");
     return TRUE;
   }
   case WM_NCPAINT:

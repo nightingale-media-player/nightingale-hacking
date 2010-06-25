@@ -64,6 +64,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/integration/public \
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4  \
                             ole32 \
                             shell32 \
+                            Uxtheme \
                             $(NULL)
 
 CPP_SRCS = MultiMonitor.cpp \
