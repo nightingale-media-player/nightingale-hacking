@@ -616,7 +616,9 @@ sbDeviceStatistics::UpdateForItem(sbIMediaItem* aMediaItem,
   // Get the item content type.
   PRUint32 contentType;
   rv = mBaseDevice->GetItemContentType(aMediaItem, &contentType);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (NS_FAILED(rv)) {
+    contentType = sbIDeviceCapabilities::CONTENT_UNKNOWN;
+  }
 
   // Get the item count update value.
   PRInt32 itemCountUpdate;

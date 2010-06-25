@@ -822,11 +822,13 @@ MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
 
   /* video */
   { "mp4",  "video/mp4",       "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
+  { "mov",  "video/quicktime", "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
   { "mp4",  "image/jpeg",      "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
   { "mpg",  "video/mpeg",      "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
   { "mpeg", "video/mpeg",      "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
   { "wmv",  "video/x-ms-asf",  "video/x-ms-asf",  "", "video/x-ms-wmv",    "audio/x-ms-wma",    sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
   { "avi",  "video/x-msvideo", "",                "", "mpeg4",          "wma",            sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
+  { "divx", "video/x-msvideo", "",                "", "mpeg4",          "mp3",            sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
   { "3gp",  "video/3gpp",      "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
   { "3g2",  "video/3gpp",      "",                "", "",               "",               sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
   { "ogv",  "application/ogg", "application/ogg", "", "video/x-theora", "audio/x-vorbis", sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO },
