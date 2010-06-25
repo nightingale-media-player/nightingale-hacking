@@ -29,10 +29,19 @@
 #include "sbMediacoreWrapper.h"
 
 #include <nsIClassInfoImpl.h>
+#include <nsIDOMDataContainerEvent.h>
+#include <nsIDOMDocument.h>
 #include <nsIProgrammingLanguage.h>
 
+#include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
 #include <prlog.h>
+
+#include <IWindowCloak.h>
+
+#include <sbProxiedComponentManager.h>
+#include <sbStringUtils.h>
+#include <sbVariantUtils.h>
 
 #include "sbBaseMediacoreEventTarget.h"
 
@@ -52,21 +61,23 @@ static PRLogModuleInfo* gMediacoreWrapper = nsnull;
 NS_IMPL_THREADSAFE_ADDREF(sbMediacoreWrapper)
 NS_IMPL_THREADSAFE_RELEASE(sbMediacoreWrapper)
 
-NS_IMPL_QUERY_INTERFACE7_CI(sbMediacoreWrapper,
+NS_IMPL_QUERY_INTERFACE8_CI(sbMediacoreWrapper,
                             sbIMediacore,
                             sbIMediacorePlaybackControl,
                             sbIMediacoreVolumeControl,
                             sbIMediacoreVotingParticipant,
                             sbIMediacoreEventTarget,
+                            sbIMediacoreWrapper,
                             nsIDOMEventListener,
                             nsIClassInfo)
 
-NS_IMPL_CI_INTERFACE_GETTER6(sbMediacoreWrapper,
+NS_IMPL_CI_INTERFACE_GETTER7(sbMediacoreWrapper,
                              sbIMediacore,
                              sbIMediacorePlaybackControl,
                              sbIMediacoreVolumeControl,
                              sbIMediacoreVotingParticipant,
                              sbIMediacoreEventTarget,
+                             sbIMediacoreWrapper,
                              nsIClassInfo)
 
 NS_DECL_CLASSINFO(sbMediacoreWrapper)
@@ -74,6 +85,7 @@ NS_IMPL_THREADSAFE_CI(sbMediacoreWrapper)
 
 sbMediacoreWrapper::sbMediacoreWrapper()
 : mBaseEventTarget(new sbBaseMediacoreEventTarget(this))
+, mWindowIsReady(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gMediacoreWrapper)
@@ -95,10 +107,10 @@ sbMediacoreWrapper::Init()
   nsresult rv = sbBaseMediacore::InitBaseMediacore();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sbBaseMediacorePlaybackControl::OnInitBaseMediacorePlaybackControl();
+  rv = sbBaseMediacorePlaybackControl::InitBaseMediacorePlaybackControl();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sbBaseMediacoreVolumeControl::OnInitBaseMediacoreVolumeControl();
+  rv = sbBaseMediacoreVolumeControl::InitBaseMediacoreVolumeControl();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -123,6 +135,21 @@ sbMediacoreWrapper::OnGetCapabilities()
 /*virtual*/ nsresult 
 sbMediacoreWrapper::OnShutdown()
 {
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  nsCOMPtr<sbIWindowCloak> windowCloak = 
+    do_ProxiedGetService("@songbirdnest.com/Songbird/WindowCloak;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = windowCloak->Uncloak(mPluginHostWindow);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = RemoveSelfDOMListener();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPrompter->Cancel();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -139,7 +166,15 @@ sbMediacoreWrapper::OnInitBaseMediacorePlaybackControl()
 /*virtual*/ nsresult 
 sbMediacoreWrapper::OnSetUri(nsIURI *aURI)
 {
-  // XXXAus: Send 'seturi' event to mDOMWindow. [sync]
+  NS_ENSURE_ARG_POINTER(aURI);
+
+  nsCString uriSpec;
+  nsresult rv = aURI->GetSpec(uriSpec);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = 
+    SendDOMEvent(NS_LITERAL_STRING("seturi"), uriSpec);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -147,7 +182,11 @@ sbMediacoreWrapper::OnSetUri(nsIURI *aURI)
 /*virtual*/ nsresult
 sbMediacoreWrapper::OnGetDuration(PRUint64 *aDuration) 
 {
-  // XXXAus: Send 'getduration' event to mDOMWindow. [sync]
+  nsresult rv = 
+    SendDOMEvent(NS_LITERAL_STRING("getduration"), EmptyString());
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // XXXAus: Get return value?
 
   return NS_OK;
 }
@@ -155,7 +194,11 @@ sbMediacoreWrapper::OnGetDuration(PRUint64 *aDuration)
 /*virtual*/ nsresult 
 sbMediacoreWrapper::OnGetPosition(PRUint64 *aPosition)
 {
-  // XXXAus: Send 'getposition' event to mDOMWindow. [sync]
+  nsresult rv = 
+    SendDOMEvent(NS_LITERAL_STRING("getposition"), EmptyString());
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // XXXAus: Get return value?
 
   return NS_OK;
 }
@@ -163,7 +206,9 @@ sbMediacoreWrapper::OnGetPosition(PRUint64 *aPosition)
 /*virtual*/ nsresult 
 sbMediacoreWrapper::OnSetPosition(PRUint64 aPosition)
 {
-  // XXXAus: Send 'setposition' event to mDOMWindow. [sync]
+  nsresult rv = 
+    SendDOMEvent(NS_LITERAL_STRING("setposition"), sbAutoString(aPosition));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -171,7 +216,11 @@ sbMediacoreWrapper::OnSetPosition(PRUint64 aPosition)
 /*virtual*/ nsresult 
 sbMediacoreWrapper::OnGetIsPlayingAudio(PRBool *aIsPlayingAudio)
 {
-  // XXXAus: send 'getisplayingaudio' event to mDOMWindow. [sync]
+  nsresult rv = 
+    SendDOMEvent(NS_LITERAL_STRING("getisplayingaudio"), EmptyString());
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // XXXAus: Get return value?
 
   return NS_OK;
 }
@@ -179,7 +228,11 @@ sbMediacoreWrapper::OnGetIsPlayingAudio(PRBool *aIsPlayingAudio)
 /*virtual*/ nsresult 
 sbMediacoreWrapper::OnGetIsPlayingVideo(PRBool *aIsPlayingVideo)
 {
-  // XXXAus: send 'getisplayingvideo' event to mDOMWindow. [sync]
+  nsresult rv = 
+    SendDOMEvent(NS_LITERAL_STRING("getisplayingvideo"), EmptyString());
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // XXXAus: Get return value?
 
   return NS_OK;
 }
@@ -187,7 +240,10 @@ sbMediacoreWrapper::OnGetIsPlayingVideo(PRBool *aIsPlayingVideo)
 /*virtual*/ nsresult 
 sbMediacoreWrapper::OnPlay()
 {
-  // XXXAus: send 'play' event to mDOMWindow. [sync]
+  nsresult rv = 
+    SendDOMEvent(NS_LITERAL_STRING("play"), EmptyString());
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // XXXAus: on success, send STREAM_START mediacore event.
 
   return NS_OK;
@@ -196,7 +252,10 @@ sbMediacoreWrapper::OnPlay()
 /*virtual*/ nsresult 
 sbMediacoreWrapper::OnPause()
 {
-  // XXXAus: send 'pause' event to mDOMWindow. [sync]
+  nsresult rv = 
+    SendDOMEvent(NS_LITERAL_STRING("pause"), EmptyString());
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // XXXAus: on success, send STREAM_PAUSE mediacore event.
 
   return NS_OK;
@@ -205,8 +264,11 @@ sbMediacoreWrapper::OnPause()
 /*virtual*/ nsresult 
 sbMediacoreWrapper::OnStop()
 {
-  // XXXAus: send 'play' event to mDOMWindow. [sync]
-  // XXXAus: on success, send STREAM_START mediacore event.
+  nsresult rv = 
+    SendDOMEvent(NS_LITERAL_STRING("stop"), EmptyString());
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // XXXAus: on success, send STREAM_STOP mediacore event.
 
   return NS_OK;
 }
@@ -230,15 +292,21 @@ sbMediacoreWrapper::OnInitBaseMediacoreVolumeControl()
 /*virtual*/ nsresult 
 sbMediacoreWrapper::OnSetMute(PRBool aMute)
 {
-  // XXXAus: send 'setmute' event to mDOMWindow. [sync]
+  nsresult rv = 
+    SendDOMEvent(NS_LITERAL_STRING("setmute"), sbAutoString(aMute));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
   
 /*virtual*/ nsresult 
-sbMediacoreWrapper::OnSetVolume(double aVolume)
+sbMediacoreWrapper::OnSetVolume(PRFloat64 aVolume)
 {
-  // XXXAus: send 'setvolume' event to mDOMWindow. [sync]
+  nsCString volStr;
+  SB_ConvertFloatVolToJSStringValue(aVolume, volStr);
+  
+  nsresult rv = SendDOMEvent(NS_LITERAL_STRING("setvolume"), volStr);
+  NS_ENSURE_SUCCESS(rv, rv);
   
   return NS_OK;
 }
@@ -253,7 +321,13 @@ sbMediacoreWrapper::VoteWithURI(nsIURI *aURI, PRUint32 *_retval)
   NS_ENSURE_ARG_POINTER(aURI);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  // XXXAus: send 'votewithuri' event to mDOMWindow. [sync]
+  nsCString uriSpec;
+  nsresult rv = aURI->GetSpec(uriSpec);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = SendDOMEvent(NS_LITERAL_STRING("votewithuri"), uriSpec);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   *_retval = 0;
 
   return NS_OK;
@@ -282,8 +356,52 @@ sbMediacoreWrapper::Initialize(const nsAString &aInstanceName,
   rv = SetCapabilities(aCapabilities);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXAus: Open chrome page url, stash DOM window in mDOMWindow
-  // XXXAus: Add self as DOM Event Listener?
+  nsCOMPtr<sbIPrompter> prompter = 
+    do_CreateInstance(SONGBIRD_PROMPTER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  prompter.swap(mPrompter);
+
+  nsCOMPtr<nsIDOMWindow> domWindow;
+  rv = mPrompter->OpenWindow(nsnull, 
+                             NS_ConvertUTF8toUTF16(aChromePageURL), 
+                             aInstanceName,
+                             NS_LITERAL_STRING("chrome,centerscreen,resizable"),
+                             nsnull,
+                             getter_AddRefs(domWindow));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  domWindow.swap(mPluginHostWindow);
+
+  nsCOMPtr<nsIDOMEventTarget> domEventTarget = 
+    do_QueryInterface(mPluginHostWindow, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  domEventTarget.swap(mDOMEventTarget);
+
+  rv = AddSelfDOMListener();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Wait for window to be ready.
+  nsCOMPtr<nsIThread> target;
+  rv = NS_GetMainThread(getter_AddRefs(target));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool processed = PR_FALSE;
+  while(!mWindowIsReady) {
+    rv = target->ProcessNextEvent(PR_FALSE, &processed);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsCOMPtr<nsIDOMDocument> document;
+  rv = mPluginHostWindow->GetDocument(getter_AddRefs(document));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIDOMDocumentEvent> documentEvent = 
+    do_QueryInterface(document, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  documentEvent.swap(mDocumentEvent);
 
   return NS_OK;
 }
@@ -295,6 +413,25 @@ sbMediacoreWrapper::Initialize(const nsAString &aInstanceName,
 NS_IMETHODIMP
 sbMediacoreWrapper::HandleEvent(nsIDOMEvent *aEvent)
 {
+  NS_ENSURE_ARG_POINTER(aEvent);
+
+  nsString eventType;
+  nsresult rv = aEvent->GetType(eventType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(eventType.EqualsLiteral("resize")) {
+    mWindowIsReady = PR_TRUE;
+    
+    // XXXAus: This seems to break things... :(
+
+    //nsCOMPtr<sbIWindowCloak> windowCloak = 
+    //  do_ProxiedGetService("@songbirdnest.com/Songbird/WindowCloak;1", &rv);
+    //NS_ENSURE_SUCCESS(rv, rv);
+
+    //rv = windowCloak->Cloak(mPluginHostWindow);
+    //NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   return NS_OK;
 }
 
@@ -304,12 +441,26 @@ sbMediacoreWrapper::HandleEvent(nsIDOMEvent *aEvent)
 nsresult 
 sbMediacoreWrapper::AddSelfDOMListener()
 {
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mPluginHostWindow, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = target->AddEventListener(NS_LITERAL_STRING("resize"), this, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
 nsresult 
 sbMediacoreWrapper::RemoveSelfDOMListener()
 {
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mPluginHostWindow, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = target->RemoveEventListener(NS_LITERAL_STRING("resize"), this, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -317,5 +468,35 @@ nsresult
 sbMediacoreWrapper::SendDOMEvent(const nsAString &aEventName, 
                                  const nsAString &aEventData)
 {
+  nsCOMPtr<nsIDOMEvent> domEvent;
+  nsresult rv = mDocumentEvent->CreateEvent(NS_LITERAL_STRING("DataContainerEvent"), 
+                                            getter_AddRefs(domEvent));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIDOMDataContainerEvent> dataEvent = 
+    do_QueryInterface(domEvent, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = domEvent->InitEvent(aEventName, PR_TRUE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = dataEvent->SetData(NS_LITERAL_STRING("data"), 
+                          sbNewVariant(aEventData).get());
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool handled = PR_FALSE;
+  rv = mDOMEventTarget->DispatchEvent(dataEvent, &handled);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(handled, NS_ERROR_UNEXPECTED);
+
+  return NS_OK;
+}
+
+nsresult 
+sbMediacoreWrapper::SendDOMEvent(const nsAString &aEventName, 
+                                 const nsACString &aEventData)
+{
+  nsresult rv = SendDOMEvent(aEventName, NS_ConvertUTF8toUTF16(aEventData));
+  NS_ENSURE_SUCCESS(rv, rv);
   return NS_OK;
 }

@@ -54,6 +54,7 @@ tier_componentsbase_dirs = \
    components/intl \
    components/property \
    components/library \
+   components/integration \
    components/mediacore \
    components/albumart \
    components/dbengine \
@@ -79,7 +80,6 @@ tier_componentsall_dirs = \
    components/displaypanes \
    components/draganddrop \
    components/faceplate \
-   components/integration \
    components/jscodelib \
    components/mediapages \
    components/parsererror \

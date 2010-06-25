@@ -88,8 +88,8 @@ sbMediacoreFactoryWrapper::Initialize(const nsAString &aFactoryName,
   NS_ENSURE_ARG_POINTER(aCapabilities);
   NS_ENSURE_ARG_POINTER(aListener);
 
-  sbBaseMediacoreFactory::SetName(aFactoryName);
-  sbBaseMediacoreFactory::SetContractID(aContractID);
+  SetName(aFactoryName);
+  SetContractID(aContractID);
 
   mCapabilities = aCapabilities;
   

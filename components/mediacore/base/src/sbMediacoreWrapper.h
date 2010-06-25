@@ -33,14 +33,19 @@
 #include <sbIMediacoreWrapper.h>
 
 #include <nsIClassInfo.h>
+#include <nsIDOMDocument.h>
+#include <nsIDOMDocumentEvent.h>
 #include <nsIDOMEventListener.h>
+#include <nsIDOMEventTarget.h>
 #include <nsIDOMWindow.h>
+#include <nsIDOMWindowInternal.h>
 
 #include <sbIMediacoreCapabilities.h>
 #include <sbIMediacoreEventTarget.h>
 #include <sbIMediacoreSequencer.h>
 #include <sbIMediacoreStatus.h>
 #include <sbIMediacoreVotingParticipant.h>
+#include <sbIPrompter.h>
 
 #include "sbBaseMediacore.h"
 #include "sbBaseMediacoreEventTarget.h"
@@ -101,13 +106,22 @@ private:
 
   nsresult SendDOMEvent(const nsAString &aEventName, 
                         const nsAString &aEventData);
+
+  nsresult SendDOMEvent(const nsAString &aEventName, 
+                        const nsACString &aEventData);
   
 protected:
   virtual ~sbMediacoreWrapper();
 
   nsAutoPtr<sbBaseMediacoreEventTarget> mBaseEventTarget;
 
-  nsCOMPtr<nsIDOMWindow> mPluginHostWindow;
+  nsCOMPtr<nsIDOMDocumentEvent> mDocumentEvent;
+  nsCOMPtr<nsIDOMEventTarget>   mDOMEventTarget;
+  nsCOMPtr<nsIDOMWindow>        mPluginHostWindow;
+
+  nsCOMPtr<sbIPrompter>         mPrompter;
+
+  PRPackedBool                  mWindowIsReady;
 };
 
 #endif /* __SB_MEDIACOREWRAPPER_H__ */

@@ -33,12 +33,14 @@
 #include <nsICategoryManager.h>
 #include <nsIGenericFactory.h>
 
+#include "sbMediacoreCapabilities.h"
 #include "sbMediacoreEqualizerBand.h"
 #include "sbMediacoreEvent.h"
 #include "sbMediacoreFactoryWrapper.h"
 #include "sbMediacoreWrapper.h"
 #include "sbMediaInspector.h"
 
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMediacoreCapabilities, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediacoreEqualizerBand);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediacoreEvent);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMediacoreFactoryWrapper, Init);
@@ -50,6 +52,12 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaFormat);
 
 static nsModuleComponentInfo sbBaseMediacoreComponents[] =
 {
+  {
+    SB_MEDIACORE_CAPABILITIES_CLASSNAME,
+    SB_MEDIACORE_CAPABILITIES_CID,
+    SB_MEDIACORE_CAPABILITIES_CONTRACTID,
+    sbMediacoreCapabilitiesConstructor
+  },
   {
     SB_MEDIACORE_EQUALIZER_BAND_CLASSNAME,
     SB_MEDIACORE_EQUALIZER_BAND_CID,
