@@ -29,7 +29,6 @@
 #include "sbMediacoreWrapper.h"
 
 #include <nsIClassInfoImpl.h>
-#include <nsIDOMDataContainerEvent.h>
 #include <nsIDOMDocument.h>
 #include <nsIProgrammingLanguage.h>
 
@@ -182,11 +181,19 @@ sbMediacoreWrapper::OnSetUri(nsIURI *aURI)
 /*virtual*/ nsresult
 sbMediacoreWrapper::OnGetDuration(PRUint64 *aDuration) 
 {
-  nsresult rv = 
-    SendDOMEvent(NS_LITERAL_STRING("getduration"), EmptyString());
+  nsCOMPtr<nsIDOMDataContainerEvent> dataEvent;
+
+  nsresult rv = SendDOMEvent(NS_LITERAL_STRING("getduration"), 
+                             EmptyString(), 
+                             getter_AddRefs(dataEvent));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXAus: Get return value?
+  nsCOMPtr<nsIVariant> variant;
+  rv = dataEvent->GetData(NS_LITERAL_STRING("retval"), 
+                          getter_AddRefs(variant));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // XXXAus: Process return value.
 
   return NS_OK;
 }
@@ -194,11 +201,19 @@ sbMediacoreWrapper::OnGetDuration(PRUint64 *aDuration)
 /*virtual*/ nsresult 
 sbMediacoreWrapper::OnGetPosition(PRUint64 *aPosition)
 {
-  nsresult rv = 
-    SendDOMEvent(NS_LITERAL_STRING("getposition"), EmptyString());
+  nsCOMPtr<nsIDOMDataContainerEvent> dataEvent;
+
+  nsresult rv = SendDOMEvent(NS_LITERAL_STRING("getposition"), 
+                             EmptyString(),
+                             getter_AddRefs(dataEvent));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXAus: Get return value?
+  nsCOMPtr<nsIVariant> variant;
+  rv = dataEvent->GetData(NS_LITERAL_STRING("retval"), 
+                          getter_AddRefs(variant));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // XXXAus: Process return value.
 
   return NS_OK;
 }
@@ -216,11 +231,19 @@ sbMediacoreWrapper::OnSetPosition(PRUint64 aPosition)
 /*virtual*/ nsresult 
 sbMediacoreWrapper::OnGetIsPlayingAudio(PRBool *aIsPlayingAudio)
 {
-  nsresult rv = 
-    SendDOMEvent(NS_LITERAL_STRING("getisplayingaudio"), EmptyString());
+  nsCOMPtr<nsIDOMDataContainerEvent> dataEvent;
+
+  nsresult rv = SendDOMEvent(NS_LITERAL_STRING("getisplayingaudio"), 
+                             EmptyString(),
+                             getter_AddRefs(dataEvent));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXAus: Get return value?
+  nsCOMPtr<nsIVariant> variant;
+  rv = dataEvent->GetData(NS_LITERAL_STRING("retval"), 
+                          getter_AddRefs(variant));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // XXXAus: Process return value.
 
   return NS_OK;
 }
@@ -228,11 +251,19 @@ sbMediacoreWrapper::OnGetIsPlayingAudio(PRBool *aIsPlayingAudio)
 /*virtual*/ nsresult 
 sbMediacoreWrapper::OnGetIsPlayingVideo(PRBool *aIsPlayingVideo)
 {
-  nsresult rv = 
-    SendDOMEvent(NS_LITERAL_STRING("getisplayingvideo"), EmptyString());
+  nsCOMPtr<nsIDOMDataContainerEvent> dataEvent;
+
+  nsresult rv = SendDOMEvent(NS_LITERAL_STRING("getisplayingvideo"), 
+                             EmptyString(),
+                             getter_AddRefs(dataEvent));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXAus: Get return value?
+  nsCOMPtr<nsIVariant> variant;
+  rv = dataEvent->GetData(NS_LITERAL_STRING("retval"), 
+                          getter_AddRefs(variant));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // XXXAus: Process return value.
 
   return NS_OK;
 }
@@ -325,9 +356,19 @@ sbMediacoreWrapper::VoteWithURI(nsIURI *aURI, PRUint32 *_retval)
   nsresult rv = aURI->GetSpec(uriSpec);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = SendDOMEvent(NS_LITERAL_STRING("votewithuri"), uriSpec);
+  nsCOMPtr<nsIDOMDataContainerEvent> dataEvent;
+  rv = SendDOMEvent(NS_LITERAL_STRING("votewithuri"), 
+                    uriSpec, 
+                    getter_AddRefs(dataEvent));
   NS_ENSURE_SUCCESS(rv, rv);
   
+  nsCOMPtr<nsIVariant> variant;
+  rv = dataEvent->GetData(NS_LITERAL_STRING("retval"), 
+                          getter_AddRefs(variant));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // XXXAus: Process return value.
+
   *_retval = 0;
 
   return NS_OK;
@@ -466,7 +507,8 @@ sbMediacoreWrapper::RemoveSelfDOMListener()
 
 nsresult 
 sbMediacoreWrapper::SendDOMEvent(const nsAString &aEventName, 
-                                 const nsAString &aEventData)
+                                 const nsAString &aEventData,
+                                 nsIDOMDataContainerEvent **aEvent)
 {
   nsCOMPtr<nsIDOMEvent> domEvent;
   nsresult rv = mDocumentEvent->CreateEvent(NS_LITERAL_STRING("DataContainerEvent"), 
@@ -489,14 +531,21 @@ sbMediacoreWrapper::SendDOMEvent(const nsAString &aEventName,
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(handled, NS_ERROR_UNEXPECTED);
 
+  if(aEvent) {
+    NS_ADDREF(*aEvent = dataEvent);
+  }
+
   return NS_OK;
 }
 
 nsresult 
 sbMediacoreWrapper::SendDOMEvent(const nsAString &aEventName, 
-                                 const nsACString &aEventData)
+                                 const nsACString &aEventData,
+                                 nsIDOMDataContainerEvent **aEvent)
 {
-  nsresult rv = SendDOMEvent(aEventName, NS_ConvertUTF8toUTF16(aEventData));
+  nsresult rv = SendDOMEvent(aEventName, 
+                             NS_ConvertUTF8toUTF16(aEventData),
+                             aEvent);
   NS_ENSURE_SUCCESS(rv, rv);
   return NS_OK;
 }

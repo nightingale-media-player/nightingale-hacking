@@ -33,6 +33,7 @@
 #include <sbIMediacoreWrapper.h>
 
 #include <nsIClassInfo.h>
+#include <nsIDOMDataContainerEvent.h>
 #include <nsIDOMDocument.h>
 #include <nsIDOMDocumentEvent.h>
 #include <nsIDOMEventListener.h>
@@ -105,10 +106,12 @@ private:
   nsresult RemoveSelfDOMListener();
 
   nsresult SendDOMEvent(const nsAString &aEventName, 
-                        const nsAString &aEventData);
+                        const nsAString &aEventData,
+                        nsIDOMDataContainerEvent **aEvent = nsnull);
 
   nsresult SendDOMEvent(const nsAString &aEventName, 
-                        const nsACString &aEventData);
+                        const nsACString &aEventData,
+                        nsIDOMDataContainerEvent **aEvent = nsnull);
   
 protected:
   virtual ~sbMediacoreWrapper();

@@ -69,7 +69,6 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
 DYNAMIC_LIB_STATIC_IMPORTS += \
  components/moz/strings/src/sbMozStringUtils \
  components/moz/threads/src/sbMozThreads \
- components/moz/variant/src/sbMozVariant \
  $(NULL)
 
 IS_COMPONENT = 1
