@@ -482,7 +482,13 @@ sbDeviceTranscoding::GetAudioFormatFromMediaItem(sbIMediaItem* aMediaItem,
           rate,
           channels,
           bitrate);
-  NS_ENSURE_SUCCESS (rv, rv);
+  if (NS_FAILED(rv)) {
+    // Fill out the two fields we use - this will mean that we have a format
+    // object that certainly won't be supported anywhere, so we can then fall
+    // back to transcoding, etc.
+    formatInfo.Codec = "audio/x-unknown";
+    formatInfo.ContainerFormat = "application/x-unknown";
+  }
 
   rv = audioFormat->SetAudioType(NS_ConvertASCIItoUTF16(formatInfo.Codec));
   NS_ENSURE_SUCCESS (rv, rv);
