@@ -70,8 +70,7 @@
         -->
       <xul:vbox flex="1">
         <xul:groupbox flex="1" sbid="transcoding-groupbox" setting="transcode">
-          <xul:caption label="&device.settings.music.transcoding.label;"
-                       xbl:inherits="disabled"/>
+          <xul:caption label="&device.settings.music.transcoding.label;"/>
           <!-- Transcoding preferences. -->
           <xul:vbox class="content-controls"
                     oncommand="DeviceMediaManagementServices.onUIPrefChange();">
@@ -106,8 +105,7 @@
         <xul:groupbox flex="1"
                       setting="diskmgmt"
                       oncommand="DeviceMediaManagementServices.dispatchSettingsChangeEvent();">
-          <xul:caption label="&device.settings.disk.label;"
-                       xbl:inherits="disabled"/>
+          <xul:caption label="&device.settings.disk.label;"/>
           <xul:vbox>
             <xul:checkbox sbid="space_limit_enable"
                           xbl:inherits="disabled"
