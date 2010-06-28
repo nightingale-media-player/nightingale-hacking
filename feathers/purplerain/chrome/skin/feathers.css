@@ -538,8 +538,8 @@ treechildren::-moz-tree-cell-text( selected, focus ) {
 
 
 menuitem[checked="true"][_moz-menuactive="true"],
-menulist > menupopup > menuitem[selected="true"],
-.menulist-menupopup > menuitem[selected="true"] {
+menulist > menupopup > menuitem[selected="true"][_moz-menuactive="true"],
+.menulist-menupopup > menuitem[selected="true"][_moz-menuactive="true"] {
   background-color: rgb(67,52,111);
 }
 
