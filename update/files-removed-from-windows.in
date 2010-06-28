@@ -296,6 +296,7 @@
 ./extensions/basic-layouts@songbirdnest.com/install.rdf
 ./extensions/basic-layouts@songbirdnest.com/chrome.manifest
 ./extensions/basic-layouts@songbirdnest.com/
+./components/sbStorageFormatter.jsm
 ./components/sbProperties.jsm
 ./components/sbPlaylistPlayback.xpt
 ./components/sbPlaylistPlayback.js

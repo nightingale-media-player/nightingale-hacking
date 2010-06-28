@@ -307,6 +307,7 @@
 ./Contents/Resources/extensions/basic-layouts@songbirdnest.com/install.rdf
 ./Contents/Resources/extensions/basic-layouts@songbirdnest.com/chrome.manifest
 ./Contents/Resources/extensions/basic-layouts@songbirdnest.com/
+./Contents/Resources/components/sbStorageFormatter.jsm
 ./Contents/Resources/components/sbProperties.jsm
 ./Contents/Resources/components/sbPlaylistPlayback.xpt
 ./Contents/Resources/components/sbPlaylistPlayback.js
