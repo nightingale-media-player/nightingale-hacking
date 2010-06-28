@@ -841,8 +841,9 @@ sb-servicepane-node > vbox > hbox.servicepane-node-info > stack > hbox {
   -moz-box-align: center;
 }
 
+/* to make sure the child text element align properly */
 sb-servicepane-node textbox {
-  margin: 0px;
+  margin: -1px;
 }
 
 /* SERVICE PANE BADGES */
