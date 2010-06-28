@@ -382,7 +382,13 @@
             rootFolderElement.removeAttribute("disabled");
             syncAllRadio.removeAttribute("disabled");
             syncSelectedRadio.removeAttribute("disabled");
-            syncFolderTree.removeAttribute("disabled");
+            if (syncEnabled && this._imageSettings.mgmtType ==
+                               this._CIDM.SYNC_MGMT_PLAYLISTS) {
+              syncFolderTree.removeAttribute("disabled");
+            }
+            else {
+              syncFolderTree.setAttribute("disabled", true);
+            }
           }
 
           if (isBusy) {
