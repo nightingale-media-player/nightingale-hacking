@@ -954,18 +954,7 @@
           if ((this._isMac && e.altKey) || (!this._isMac && e.shiftKey)) {
             SBNewSmartPlaylist();
           } else {
-            var enumerator;
-            if (gBrowser &&
-                gBrowser.selectedTab &&
-                gBrowser.selectedTab.mediaListView)
-            {
-              enumerator = gBrowser.selectedTab
-                .mediaListView
-                .selection
-                .selectedMediaItems;
-            }
-
-            SBNewPlaylist(enumerator, false);
+            SBNewPlaylist(null, false);
           }
         ]]></body>
       </method>

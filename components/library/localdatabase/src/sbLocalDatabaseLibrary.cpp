@@ -3991,9 +3991,8 @@ sbLocalDatabaseLibrary::AddAll(sbIMediaList* aMediaList)
   sbAutoBatchHelper batchHelper(*this);
 
   sbLibraryInsertingEnumerationListener listener(this);
-  nsresult rv =
-    sbLocalDatabaseMediaListBase::EnumerateAllItems(&listener,
-                                                    sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+  nsresult rv = aMediaList->EnumerateAllItems(&listener,
+                                              sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

@@ -28,12 +28,12 @@
 
     This module contains three different helpers:
 
-    - ExternalDropHander
+    - ExternalDropHandler
 
       Used to handle external drops (ie, standard file drag and drop from the
       operating system).
       
-    - InternalDropHander
+    - InternalDropHandler
 
       Used to handle internal drops (ie, mediaitems, medialists)
       
@@ -493,6 +493,29 @@ var InternalDropHandler = {
       this._dropItemsItems(aDragSession, aTargetList, aDropPosition, aListener);
     }
   },
+
+  /**
+   * Return true if the given device supports playlist
+   */
+  _doesDeviceSupportPlaylist: function(aDevice) {
+    // Check the device capabilities to see if it supports playlists.
+    // Device implementations may respond to CONTENT_PLAYLIST for either
+    // FUNCTION_DEVICE or FUNCTION_AUDIO_PLAYBACK.
+    var capabilities = aDevice.capabilities;
+    var sbIDC = Ci.sbIDeviceCapabilities;
+    try {
+      if (capabilities.supportsContent(sbIDC.FUNCTION_DEVICE,
+                                       sbIDC.CONTENT_PLAYLIST) ||
+          capabilities.supportsContent(sbIDC.FUNCTION_AUDIO_PLAYBACK,
+                                       sbIDC.CONTENT_PLAYLIST)) {
+        return true;
+      }
+    } catch (e) {}
+
+    // couldn't find PLAYLIST support in either the DEVICE
+    // or AUDIO_PLAYBACK category
+    return false;
+  },
   
   /**
    * Performs the actual drop of a media list into another media list
@@ -524,13 +547,33 @@ var InternalDropHandler = {
         return;
       }
 
-      // create a copy of the list
-      var newlist = aTargetList.copyMediaList('simple', list, false);
+      // XXXAlfred: When the listener logic is updated properly in bug 21466,
+      //            we might want to remove the device specific check below.
+      var device;
+      // Get device from non-device library will cause NS_ERROR_NOT_IMPLEMENTED.
+      // Device library could also return NS_ERROR_UNEXPECTED on failure.
+      try {
+        device = aTargetList.device;
+      } catch (e) {
+        device = null;
+      }
+
+      // Check whether the device support playlist and the drag session is only
+      // for playlist.
+      if (device && this._doesDeviceSupportPlaylist(device)) {
+        aTargetList.addAll(list);
+        if (aListener && list.length > 0)
+          aListener.onFirstMediaItem(list.getItemByIndex(0));
+      }
+      else {
+        // create a copy of the list
+        var newlist = aTargetList.copyMediaList('simple', list, false);
       
-      if (aListener) {
-        aListener.onCopyMediaList(aTargetList, newlist);
-        if (newlist.length > 0)
-          aListener.onFirstMediaItem(newlist.getItemByIndex(0));
+        if (aListener) {
+          aListener.onCopyMediaList(aTargetList, newlist);
+          if (newlist.length > 0)
+            aListener.onFirstMediaItem(newlist.getItemByIndex(0));
+        }
       }
 
       // lone> some of these values may not be accurate, this assumes that all 
