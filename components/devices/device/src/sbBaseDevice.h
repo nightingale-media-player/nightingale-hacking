@@ -334,6 +334,15 @@ public:
                                  nsIVariant*      aPrefValue,
                                  PRBool*          aHasChanged);
 
+  /**
+   * Return true in aHasPreference if the device has the preference specified by
+   * aHasPreference.
+   * @param aPrefName The preference to check.
+   * @aHasPreference Returned true if device has preference.
+   */
+  nsresult HasPreference(nsAString& aPrefName,
+                         PRBool*    aHasPreference);
+
   /* A request has been added, process the request
      (or schedule it to be processed) */
   virtual nsresult ProcessRequest() = 0;
@@ -371,6 +380,12 @@ public:
   nsresult InitializeDeviceLibrary(sbDeviceLibrary* aDevLib,
                                    const nsAString& aId,
                                    nsIURI*          aLibraryLocation);
+
+  /**
+   * Initialize the preferences for the device library specified by aDevLib.
+   * @param aDevLib the device library for which to initialize preferences.
+   */
+  nsresult InitializeDeviceLibraryPreferences(sbDeviceLibrary* aDevLib);
 
   /**
    * Finalize a library for the device

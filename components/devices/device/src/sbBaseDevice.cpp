@@ -154,6 +154,10 @@ PRLogModuleInfo* gBaseDeviceLog = nsnull;
 #define SB_PROPERTY_UILIMITTYPE "http://songbirdnest.com/data/1.0#uiLimitType"
 #define RANDOM_LISTNAME "device.error.not_enough_freespace.random_playlist_name"
 
+// default preferences
+#define PREF_ORGANIZE_DIR_FORMAT_DEFAULT \
+  SB_PROPERTY_ARTISTNAME "," FILE_PATH_SEPARATOR "," SB_PROPERTY_ALBUMNAME
+
 #define BATCH_TIMEOUT 200 /* number of milliseconds to wait for batching */
 #define BYTES_PER_10MB (10 * 1000 * 1000)
 
@@ -1813,6 +1817,40 @@ nsresult sbBaseDevice::SetPreferenceInternal(nsIPrefBranch*   aPrefBranch,
   return NS_OK;
 }
 
+nsresult sbBaseDevice::HasPreference(nsAString& aPrefName,
+                                     PRBool*    aHasPreference)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aHasPreference);
+
+  // Function variables.
+  nsresult rv;
+
+  // Try getting the preference.
+  nsCOMPtr<nsIVariant> prefValue;
+  rv = GetPreference(aPrefName, getter_AddRefs(prefValue));
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!prefValue) {
+    *aHasPreference = PR_FALSE;
+    return NS_OK;
+  }
+
+  // Preference does not exist if it's empty or void.
+  PRUint16 dataType;
+  rv = prefValue->GetDataType(&dataType);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if ((dataType == nsIDataType::VTYPE_EMPTY) ||
+      (dataType == nsIDataType::VTYPE_VOID)) {
+    *aHasPreference = PR_FALSE;
+    return NS_OK;
+  }
+
+  // Preference exists.
+  *aHasPreference = PR_TRUE;
+
+  return NS_OK;
+}
+
 /* readonly attribute boolean isDirectTranscoding; */
 NS_IMETHODIMP sbBaseDevice::GetIsDirectTranscoding(PRBool *aIsDirect)
 {
@@ -2000,6 +2038,10 @@ nsresult sbBaseDevice::InitializeDeviceLibrary
   rv = aDevLib->AddDeviceLibraryListener(mLibraryListener);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Initialize the library preferences.
+  rv = InitializeDeviceLibraryPreferences(aDevLib);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // hook up the media list listeners to the existing lists
   nsRefPtr<MediaListListenerAttachingEnumerator> enumerator =
     new MediaListListenerAttachingEnumerator(this);
@@ -2010,6 +2052,45 @@ nsresult sbBaseDevice::InitializeDeviceLibrary
                                          enumerator,
                                          sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::InitializeDeviceLibraryPreferences(sbDeviceLibrary* aDevLib)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aDevLib);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the base library preference name.
+  nsAutoString libraryPreferenceBase;
+  rv = GetLibraryPreferenceBase(aDevLib, libraryPreferenceBase);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check if the library organize enabled preference has been set.
+  PRBool       organizeEnabledSet;
+  nsAutoString organizeEnabledPref = libraryPreferenceBase;
+  organizeEnabledPref.Append(NS_LITERAL_STRING(PREF_ORGANIZE_ENABLED));
+  rv = HasPreference(organizeEnabledPref, &organizeEnabledSet);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set default library organize preferences if they haven't been set yet.
+  if (!organizeEnabledSet) {
+    // Set the default organize directory format.
+    nsAutoString organizeDirFormatPref = libraryPreferenceBase;
+    organizeDirFormatPref.Append(NS_LITERAL_STRING(PREF_ORGANIZE_DIR_FORMAT));
+    rv = SetPreference(organizeDirFormatPref,
+                       sbNewVariant(PREF_ORGANIZE_DIR_FORMAT_DEFAULT));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Enable library organization by default.
+    rv = SetPreference(organizeEnabledPref,
+                       sbNewVariant(PR_TRUE, nsIDataType::VTYPE_BOOL));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
