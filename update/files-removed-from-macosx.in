@@ -323,6 +323,7 @@
 ./Contents/Resources/components/SBTimer.jsm
 ./Contents/Resources/components/SBDataRemoteUtils.jsm
 ./Contents/Resources/components/RDFHelper.jsm
+./Contents/Resources/components/DeviceHelper.jsm
 ./Contents/Resources/components/DropHelper.jsm
 ./Contents/Resources/components/DOMUtils.jsm
 ./Contents/Resources/components/ArrayConverter.jsm

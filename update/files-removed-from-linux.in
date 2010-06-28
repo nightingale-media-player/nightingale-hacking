@@ -107,6 +107,7 @@
 ./components/SBTimer.jsm
 ./components/SBDataRemoteUtils.jsm
 ./components/RDFHelper.jsm
+./components/DeviceHelper.jsm
 ./components/DropHelper.jsm
 ./components/DOMUtils.jsm
 ./components/ArrayConverter.jsm
