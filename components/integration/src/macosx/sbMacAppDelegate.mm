@@ -194,7 +194,7 @@
 
     nsString idValue;
     rv = element->GetAttribute(NS_LITERAL_STRING("id"), idValue);
-    if (idValue.Equals(NS_LITERAL_STRING("video_window"))) 
+    if (idValue.Equals(NS_LITERAL_STRING("video_osd_controls_win"))) 
       continue;
 
     NSWindow *cocoaWindow = NativeWindowFromNode::get(domWindow);
