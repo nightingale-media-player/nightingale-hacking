@@ -54,19 +54,24 @@
 
       <xul:vbox class="device-tab-content">
         <xul:hbox align="center">
-          <xul:checkbox sbid="sync_images_from_checkbox"
-                        label="&device.sync.images.from.label;"
-                        oncommand="document.getBindingParent(this)._enableSync(this.checked);"/>
-          <xul:menulist sbid="sync_images_from_list"
-                        flex="1"
-                        onselect="document.getBindingParent(this)._folderChanged();">
-            <xul:menupopup>
-              <xul:menuitem label="&device.sync.images.browse;" value=""/>
-            </xul:menupopup>
-          </xul:menulist>
+          <xul:stack flex="1">
+            <xul:hbox sbid="content_management_header_background"/>
+            <xul:hbox align="center">
+              <xul:checkbox sbid="content_management_checkbox"
+                            label="&device.sync.images.from.label;"
+                            oncommand="document.getBindingParent(this)._enableSync(this.checked);"/>
+              <xul:menulist sbid="sync_images_from_list"
+                            flex="1"
+                            onselect="document.getBindingParent(this)._folderChanged();">
+                <xul:menupopup>
+                  <xul:menuitem label="&device.sync.images.browse;" value=""/>
+                </xul:menupopup>
+              </xul:menulist>
+            </xul:hbox>
+          </xul:stack>
         </xul:hbox>
 
-        <xul:groupbox sbid="content_selector">
+        <xul:groupbox sbid="content_management_groupbox">
           <xul:radiogroup sbid="sync_images_type_group">
             <xul:radio sbid="sync_images_all_radio"
                        label="&device.sync.images.all.label;"
@@ -362,11 +367,13 @@
                 (this._imageSettings.mgmtType != this._CIDM.SYNC_MGMT_NONE);
 
           let syncImagesCheckBox =
-                this._getElement("sync_images_from_checkbox");
+                this._getElement("content_management_checkbox");
           syncImagesCheckBox.checked = syncEnabled;
 
           let syncFolderTree = this._getElement("sync_images_folders_tree");
-          let selector = this._getElement("content_selector");
+          let selector = this._getElement("content_management_groupbox");
+          let headerBackground =
+              this._getElement("content_management_header_background");
           let isBusy = this.device && this.device.isBusy;
           if (!syncEnabled || isBusy) {
             this.setAttribute("disabled", true);
@@ -375,6 +382,7 @@
             syncAllRadio.setAttribute("disabled", true);
             syncSelectedRadio.setAttribute("disabled", true);
             syncFolderTree.setAttribute("disabled", true);
+            headerBackground.setAttribute("disabled", true);
           }
           else {
             this.removeAttribute("disabled");
@@ -389,6 +397,7 @@
             else {
               syncFolderTree.setAttribute("disabled", true);
             }
+            headerBackground.removeAttribute("disabled");
           }
 
           if (isBusy) {
@@ -553,7 +562,7 @@
             Ci.nsIPromptService.BUTTON_TITLE_IS_STRING;
 
           // Prompt the user if they are about to turn on photo syncing.
-          if (this._getElement("sync_images_from_checkbox").checked) {
+          if (this._getElement("content_management_checkbox").checked) {
             var buttonPressed = prompter.confirmEx(
               null,
               SBString("device.dialog.sync_images_confirmation.title"),
@@ -568,7 +577,7 @@
 
             if (buttonPressed != 0) {
               // The user did not choose to sync, clear the checkbox state.
-              this._getElement("sync_images_from_checkbox").checked = false;
+              this._getElement("content_management_checkbox").checked = false;
               shouldUpdatePrefs = false;
             }
           }
@@ -587,7 +596,7 @@
 
             if (buttonPressed != 0) {
               // The user did not accept unsync, restore the checkbox state.
-              this._getElement("sync_images_from_checkbox").checked = true;
+              this._getElement("content_management_checkbox").checked = true;
               shouldUpdatePrefs = false;
             }
           }
@@ -635,7 +644,7 @@
           }
 
           // A hack so that SYNC_SETTINGS_CHANGED can be dispatched.
-          if (this._getElement("sync_images_from_checkbox").checked) {
+          if (this._getElement("content_management_checkbox").checked) {
             if (this._getElement("sync_images_type_group").selectedItem ==
                 this._getElement("sync_images_all_radio")) {
               this._imageSettings.mgmtType = this._CIDM.SYNC_MGMT_ALL;

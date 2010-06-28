@@ -183,6 +183,9 @@ var DeviceSyncWidget = {
     var syncPlaylistTree = this._getElement("content_auto_sync_playlist_tree");
     var syncEnabledCheckbox = this._getElement("content_management_checkbox");
     var manualMessage = this._getElement("manual-mode-descr");
+    var headerBackground =
+        this._getElement("content_management_header_background");
+    var syncGroupbox = this._getElement("content_management_groupbox");
 
     // If the device is not in manual mode hide the manual mode message
     var deviceManual = this._deviceSyncSettings.syncMode ==
@@ -196,6 +199,10 @@ var DeviceSyncWidget = {
       syncRadioGroup.setAttribute("disabled", true);
       syncRadioGroup.selectedItem = null;
       this._widget.setAttribute("disabled", true);
+
+      // In manual mode, this._widget controls opacity.
+      headerBackground.removeAttribute("disabled");
+      syncGroupbox.removeAttribute("disabled");
     }
     else {
       manualMessage.setAttribute("collapsed", true);
@@ -207,6 +214,8 @@ var DeviceSyncWidget = {
           syncEnabledCheckbox.checked = false;
           syncPlaylistTree.setAttribute("disabled", true);
           syncRadioGroup.setAttribute("disabled", true);
+          headerBackground.setAttribute("disabled", true);
+          syncGroupbox.setAttribute("disabled", true);
           syncRadioGroup.selectedItem = null;
           break;
 
@@ -214,6 +223,8 @@ var DeviceSyncWidget = {
           syncEnabledCheckbox.checked = true;
           syncPlaylistTree.setAttribute("disabled", true);
           syncRadioGroup.removeAttribute("disabled");
+          headerBackground.removeAttribute("disabled");
+          syncGroupbox.removeAttribute("disabled");
           syncRadioGroup.selectedItem =
                           this._getElement("content_auto_sync_all_radio");
           break;
@@ -222,15 +233,20 @@ var DeviceSyncWidget = {
           syncEnabledCheckbox.checked = true;
           syncPlaylistTree.removeAttribute("disabled");
           syncRadioGroup.removeAttribute("disabled");
+          headerBackground.removeAttribute("disabled");
+          syncGroupbox.removeAttribute("disabled");
           syncRadioGroup.selectedItem =
                           this._getElement("content_auto_sync_selected_radio");
           break;
       }
     }
 
-    // If we are busy then diable the widget so the user can not make changes
-    if (this._device.isBusy)
+    // If we are busy then disable the widget so the user can not make changes
+    if (this._device.isBusy) {
       this._widget.setAttribute("disabled", true);
+      headerBackground.removeAttribute("disabled");
+      syncGroupbox.removeAttribute("disabled");
+    }
 
     // Show the video duration column only for the Video tab.
     var syncPlaylistListVideoHeader =

@@ -52,14 +52,27 @@ sb-device-image-sync[disabled="true"] {
 }
 
 sb-device-sync[disabled="true"] [disabled="true"],
+hbox[sbid="content_management_header_background"][disabled="true"] [disabled="true"],
+groupbox[sbid="content_management_groupbox"][disabled="true"] [disabled="true"],
 sb-device-image-sync[disabled="true"] [disabled="true"] {
   opacity: 1;
 }
 
 sb-device-sync[disabled="true"] vbox[sbid="content_selector"],
+hbox[sbid="content_management_header_background"][disabled="true"],
+groupbox[sbid="content_management_groupbox"][disabled="true"],
 sb-device-image-sync[disabled="true"] groupbox[sbid="content_selector"],
 sb-device-image-sync[disabled="true"] label[sbid="sync_images_supported_formats"] {
   opacity: .5;
+}
+
+checkbox[sbid="content_management_checkbox"] {
+  padding: 3px;
+}
+
+checkbox[sbid="content_management_checkbox"] label {
+  font-size: 13px;
+  font-weight: bold;
 }
 
 label[sbid="sync_images_supported_formats"] {

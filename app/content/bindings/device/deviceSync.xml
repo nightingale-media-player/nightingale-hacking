@@ -59,13 +59,16 @@
 
         <xul:vbox sbid="content_selector">
 
-          <xul:groupbox>
-            <xul:caption sbid="content_management_header_label">
+          <xul:hbox align="center">
+            <xul:stack flex="1">
+              <xul:hbox sbid="content_management_header_background"/>
               <xul:checkbox sbid="content_management_checkbox"
                             label="&device.sync.header.label;"
                             xbl:inherits="disabled"
                             oncommand="_onUIPrefChange();"/>
-            </xul:caption>
+            </xul:stack>
+          </xul:hbox>
+          <xul:groupbox sbid="content_management_groupbox">
 
             <!-- Management preferences. -->
             <xul:vbox class="content-controls"
