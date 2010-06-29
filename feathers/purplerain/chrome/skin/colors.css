@@ -282,7 +282,7 @@ toolbarbutton,
 toolbarbutton {
   min-width:0px;
   min-height:0px;
-  padding:2px 4px !important;
+  padding:2px 4px;
 }
 notification > button {
 }

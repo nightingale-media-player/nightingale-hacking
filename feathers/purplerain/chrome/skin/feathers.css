@@ -623,16 +623,19 @@ vbox.servicepane-group-nodes {
   padding-bottom: 4px;
 }
 
-sb-servicepane-group hbox.servicepane-group-header-wrapper {
-  background-image: url(chrome://songbird/skin/service-pane/group-header-bg.png);
+sb-servicepane-group .servicepane-group-header {
   background-repeat: repeat-x;
   background-position: center 0px;
+}
+
+sb-servicepane-group hbox.servicepane-group-header-wrapper {
+  background-image: url(chrome://songbird/skin/service-pane/group-header-bg.png);
   min-height: 20px;
   max-height: 20px;
   -moz-box-align: center;
 }
 
-#servicepane > sb-servicepane-group:first-child hbox.servicepane-group-header-wrapper {
+#servicepane > sb-servicepane-group:first-child .servicepane-group-header{
   background-image: url(chrome://songbird/skin/service-pane/group-header-first-bg.png);
 }
 
@@ -640,12 +643,14 @@ sb-servicepane-group[collapsedChildren="true"] hbox.servicepane-group-header-wra
 /* Commented out per bug 21108
  * sb-servicepane-group.collapsible hbox.servicepane-group-header-wrapper {
  */
-sb-servicepane-group hbox.servicepane-group-header-wrapper:hover {
+sb-servicepane-group .servicepane-group-header-wrapper:hover,
+sb-servicepane-group toolbarbutton:hover {
   background-position: center -20px;
 }
 /* Commented out per bug 21108
  * sb-servicepane-group.collapsible hbox.servicepane-group-header-wrapper:active { */
-sb-servicepane-group hbox.servicepane-group-header-wrapper:active {
+sb-servicepane-group .servicepane-group-header-wrapper:active,
+sb-servicepane-group toolbarbutton:active {
   background-position: center -40px;
 }
 
@@ -656,7 +661,17 @@ sb-servicepane-group description.servicepane-group-label {
   margin-left: 4px;
 }
 
-image.sb-servicepane-new-playlist {
+sb-servicepane-group toolbarbutton,
+sb-servicepane-group toolbarbutton.clickhold-button {
+  background-image: url(chrome://songbird/skin/service-pane/group-header-bg.png);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+}
+
+sb-servicepane-group[nodeid="SB:Playlists"] toolbarbutton {
   background-image: url(chrome://songbird/skin/service-pane/new-playlist.png);
   background-position: left 0px;
   min-height: 20px;
@@ -664,20 +679,11 @@ image.sb-servicepane-new-playlist {
   min-width: 23px;
   max-width: 23px;
 }
-image.sb-servicepane-new-playlist:hover {
+sb-servicepane-group[nodeid="SB:Playlists"] toolbarbutton:hover {
   background-position: left -20px;
 }
-image.sb-servicepane-new-playlist:active {
+sb-servicepane-group[nodeid="SB:Playlists"] toolbarbutton:active {
   background-position: left -40px;
-}
-image.sb-servicepane-new-playlist[altKey="true"] {
-  background-position: right 0px;
-}
-image.sb-servicepane-new-playlist[altKey="true"]:hover {
-  background-position: right -20px;
-}
-image.sb-servicepane-new-playlist[altKey="true"]:active {
-  background-position: right -40px;
 }
 /* SERVICE PANE NODES */
 sb-servicepane-node {

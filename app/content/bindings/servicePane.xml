@@ -850,8 +850,8 @@
 
   <binding id="servicepane-group">
     <content mousethrough="never" persist="collapsedChildren">
-      <xul:vbox id="group" class="servicepane-group" >
-        <xul:hbox id="hbox-header" class="servicepane-group-header">
+      <xul:vbox sbid="group" class="servicepane-group">
+        <xul:hbox sbid="hbox-header" class="servicepane-group-header">
           <xul:hbox class="servicepane-group-header-wrapper"
                     flex="1"
                     onclick="toggleVisibility(event)">
@@ -864,8 +864,14 @@
                        xbl:inherits="xbl:text=label"/>
             <xul:spacer flex="1" />
           </xul:hbox>
-          <xul:image sbid="servicepane-group-header-image"
-                     onclick="newPlaylist(event)" />
+          <xul:toolbarbutton sbid="servicepane-group-header-button"
+                             type="sb-clickhold"
+                             oncommand="_onHeaderButton(event);">
+            <xul:menupopup sbid="servicepane-group-header-menupopup"
+                           popupanchor="bottomleft"
+                           popupalign="topleft"
+                           onpopupshowing="_fillMenu(event);"/>
+          </xul:toolbarbutton>
         </xul:hbox>
         <xul:vbox class="servicepane-group-overflow-container">
           <xul:vbox class="servicepane-group-nodes"
@@ -888,61 +894,20 @@
         // Determine whether we're starting up collapsed or visible
         this._visible = true;
 
-        let collapsed = this.LocalStore.getPersistedAttribute(
-                                    document.location.href,
-                                    this.id,
-                                    "collapsedChildren");
+        let collapsed =
+          this.LocalStore
+              .getPersistedAttribute(document.location.href,
+                                     this.id,
+                                     "collapsedChildren");
         if (collapsed) {
           self.nodeData.isOpen = (collapsed == "false");
         }
-        
-        // The group header image
-        this.image = null;
-        // Special handling for the SB:Playlists group
-        if (this.id == "SB:Playlists") {
-          this.image = this._getElement("servicepane-group-header-image");
-          this.image.className = "sb-servicepane-new-playlist";
-        }
 
-        this.servicePane = this.parentNode;
-
-        this._isMac = (getPlatformString() == "Darwin");
-        this.keyListener = function(e) {
-          if (!self.image)
-            return;
-
-          // Don't switch the modes if the currently focused element is
-          // a text field.  We need to catch the document's active element,
-          // as well as look for the case of the browser's active element
-          // (i.e. if the user is editing a track name in sb-playlist
-          const XULNS =
-                "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
-          const HTMLNS = "http://www.w3.org/1999/xhtml";
-          let element = document.activeElement;
-          if (element.namespaceURI == XULNS && element.localName == "browser")
-            element = document.activeElement.docShell.document.activeElement;
-          
-          if (element.namespaceURI == HTMLNS && element.localName == "input")
-            return;
-
-          if ((self._isMac && e.altKey) || (!self._isMac && e.shiftKey)) {
-            self.image.setAttribute("altKey", "true");
-          } else {
-            self.image.removeAttribute("altKey");
-          }
-        }
-
-        window.addEventListener("keydown", this.keyListener, false);
-        window.addEventListener("keyup", this.keyListener, false);
       ]]></constructor>
-
-      <destructor><![CDATA[
-        window.removeEventListener("keydown", this.keyListener, false);
-        window.removeEventListener("keyup", this.keyListener, false);
-      ]]></destructor>
 
       <field name="_dndReordering">false</field>
       <field name="_autoCloseOnLeaveKeyboardFocus">false</field>
+      <field name="_servicepane">this.parentNode</field>
 
       <method name="newPlaylist">
         <parameter name="e" />
@@ -982,7 +947,7 @@
           }
         ]]></setter>
       </property>
-      
+
       <method name="animateTo">
         <parameter name="element" />
         <parameter name="orig" />
@@ -1060,8 +1025,8 @@
 
       <method name="getRelationshipToActiveNode">
         <body><![CDATA[
-          let activeNode = this.servicePane.getActiveNode();
-          let activeDomNode = this.servicePane.getDOMNode(activeNode.id);
+          let activeNode = this._servicepane.getActiveNode();
+          let activeDomNode = this._servicepane.getDOMNode(activeNode.id);
           let relationship = this.compareDocumentPosition(activeDomNode);
           return relationship;
         ]]></body>
@@ -1101,47 +1066,82 @@
         ]]></body>
       </method>
 
+      <method name="_fillMenu">
+        <parameter name="event" />
+        <body><![CDATA[
+          let node = this.getNode(this.getAttribute("nodeid"));
+          let popup = this._getElement("servicepane-group-header-menupopup");
+          while (popup.firstChild) {
+            popup.removeChild(popup.firstChild);
+          }
+          this._servicepane.mService.fillContextMenu(node, popup, window);
+        ]]></body>
+      </method>
+
+      <method name="_onHeaderButton">
+        <parameter name="event" />
+        <body><![CDATA[
+          // we should only handle when the user clicks on the header button
+          // and exclude clicks on the popup menu.  Note that we need to check
+          // for the target's parent as well, since the clickhold button is
+          // implemented as a nested button.
+          let button = this._getElement("servicepane-group-header-button");
+          if (event.originalTarget != button &&
+              event.originalTarget.parentNode != button)
+          {
+            // this is not the clickhold button; most likely, this is the event
+            // from the menupopup bubbling up. we don't want to do anything
+            // there.
+            return;
+          }
+          // build the menu and assume the first choice
+          let popup = this._getElement("servicepane-group-header-menupopup");
+          this._fillMenu(event);
+          popup.firstChild.doCommand();
+        ]]></body>
+      </method>
+
     </implementation>
 
     <handlers>
       <handler event="dragover"><![CDATA[
         // If there is an existing expanded group that isn't us, then
         // collapse it
-        if (this.servicePane._collapsedGroup &&
-            this.servicePane._collapsedGroup != this)
+        if (this._servicepane._collapsedGroup &&
+            this._servicepane._collapsedGroup != this)
         {
-          this.servicePane._collapsedGroup._collapseOnDragExit = null;
-          this.servicePane._collapsedGroup.visible = false;
-          this.servicePane._collapsedGroup = null;
+          this._servicepane._collapsedGroup._collapseOnDragExit = null;
+          this._servicepane._collapsedGroup.visible = false;
+          this._servicepane._collapsedGroup = null;
         }
 
         // If we have an existing timer running for a group that isn't us,
         // clear it
-        if (this.servicePane._timer &&
-            this.servicePane._timerGroup &&
-            this.servicePane._timerGroup != this)
+        if (this._servicepane._timer &&
+            this._servicepane._timerGroup &&
+            this._servicepane._timerGroup != this)
         {
-          this.servicePane.log("Existing timer found, clearing");
-          clearTimeout(this.servicePane._timer);
-          this.servicePane._timer = null;
+          this._servicepane.log("Existing timer found, clearing");
+          clearTimeout(this._servicepane._timer);
+          this._servicepane._timer = null;
         }
 
         if (!this.visible && !this._expandTimerRunning) {
-          this.servicePane.log("Collapsed group found: " + this.id +
-                               ", setting expand timer for 1s");
+          this._servicepane.log("Collapsed group found: " + this.id +
+                                ", setting expand timer for 1s");
           var self = this;
           // Flag a timer as running
           this._expandTimerRunning = true;
-          this.servicePane._timerGroup = this;
-          this.servicePane._timer = setTimeout(function() {
+          this._servicepane._timerGroup = this;
+          this._servicepane._timer = setTimeout(function() {
               // Make the group visible
-              self.servicePane.log("Expanding group: " + self.id);
+              self._servicepane.log("Expanding group: " + self.id);
               self.visible = true;
               self._collapseOnDragExit = true;
-              self.servicePane._collapsedGroup = self;
+              self._servicepane._collapsedGroup = self;
               self._expandTimerRunning = null;
-              self.servicePane._timerGroup = null;
-              self.servicePane._timer = null;
+              self._servicepane._timerGroup = null;
+              self._servicepane._timer = null;
             }, 750);
           event.stopPropagation();
         }
@@ -1156,11 +1156,11 @@
               (relation & this.DOCUMENT_POSITION_CONTAINED_BY)))
         {
           // We've exited the group, so cancel any existing timer
-          this.servicePane.log("Exited group: " + this.id + ", clearing timer");
-          clearTimeout(this.servicePane._timer);
+          this._servicepane.log("Exited group: " + this.id + ", clearing timer");
+          clearTimeout(this._servicepane._timer);
           this._expandTimerRunning = null;
-          this.servicePane.timer = null;
-          this.servicePane._timerGroup = null;
+          this._servicepane.timer = null;
+          this._servicepane._timerGroup = null;
         }
 
         /* Auto-collapse if we auto-expanded */
@@ -1170,7 +1170,7 @@
         {
           this.visible = false;
           this._collapseOnDragExit = null;
-          this.servicePane._collapsedGroup = null;
+          this._servicepane._collapsedGroup = null;
         }
       ]]></handler>
     </handlers>
