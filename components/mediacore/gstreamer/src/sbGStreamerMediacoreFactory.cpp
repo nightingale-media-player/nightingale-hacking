@@ -219,7 +219,7 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
            blacklistExtensions.BeginReading()));
     }
 
-    const char *extraAudioExtensions[] = {"m4r", "m4p", "mp4", "oga",
+    const char *extraAudioExtensions[] = {"m4r", "m4p", "oga",
                                           "ogg", "aac", "3gp"};
 #ifdef XP_WIN
     const char *extraWindowsAudioExtensions[] = {"wma" };
