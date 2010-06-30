@@ -88,12 +88,26 @@ function runTest () {
         originalURI: null,
         file: "maclin_utf8.m3u",
         result: "maclin_utf8_result.xml"
+      },
+      {
+        enabled: platform == "Darwin",
+        originalURI: null,
+        file: "maclin_unf.m3u",
+        result: "maclin_unf_nfd_result.xml"
+      },
+      {
+        enabled: platform != "Darwin",
+        originalURI: null,
+        file: "maclin_unf.m3u",
+        result: "maclin_unf_nfc_result.xml"
       }
     ];
   }
 
   for (var i = 0; i < tests.length; i++) {
     var t = tests[i];
+    if (("enabled" in t) && !t.enabled)
+      continue;
     log("testing file " + t.file);
     library.clear();
     var handler = Cc["@songbirdnest.com/Songbird/Playlist/Reader/M3U;1"]

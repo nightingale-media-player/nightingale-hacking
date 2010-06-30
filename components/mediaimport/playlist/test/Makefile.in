@@ -53,6 +53,10 @@ SONGBIRD_TESTS = $(srcdir)/head_playlistreader.js \
                  $(srcdir)/files/maclin_relative_local.m3u \
                  $(srcdir)/files/maclin_relative_local.pls \
                  $(srcdir)/files/maclin_relative_local_result.xml \
+                 $(srcdir)/files/maclin_unf.m3u \
+                 $(srcdir)/files/maclin_unf.pls \
+                 $(srcdir)/files/maclin_unf_nfc_result.xml \
+                 $(srcdir)/files/maclin_unf_nfd_result.xml \
                  $(srcdir)/files/maclin_utf8.m3u \
                  $(srcdir)/files/maclin_utf8.pls \
                  $(srcdir)/files/maclin_utf8_result.xml \
