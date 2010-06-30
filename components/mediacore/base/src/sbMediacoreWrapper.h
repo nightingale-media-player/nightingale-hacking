@@ -52,6 +52,7 @@
 #include "sbBaseMediacoreEventTarget.h"
 #include "sbBaseMediacorePlaybackControl.h"
 #include "sbBaseMediacoreVolumeControl.h"
+#include "sbMediacoreEvent.h"
 
 #include <nsAutoLock.h>
 #include <nsCOMPtr.h>
@@ -112,6 +113,13 @@ private:
   nsresult SendDOMEvent(const nsAString &aEventName, 
                         const nsACString &aEventData,
                         nsIDOMDataContainerEvent **aEvent = nsnull);
+
+  nsresult GetRetvalFromEvent(nsIDOMDataContainerEvent *aEvent, 
+                              nsAString &aRetval);
+
+  nsresult DispatchMediacoreEvent(PRUint32 aType, 
+                                  sbIMediacoreError *aError = nsnull,
+                                  nsIVariant *aData = nsnull);
   
 protected:
   virtual ~sbMediacoreWrapper();

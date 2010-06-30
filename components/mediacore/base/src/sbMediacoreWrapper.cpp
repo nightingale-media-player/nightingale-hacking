@@ -31,9 +31,11 @@
 #include <nsIClassInfoImpl.h>
 #include <nsIDOMDocument.h>
 #include <nsIProgrammingLanguage.h>
+#include <nsISupportsPrimitives.h>
 
 #include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
+#include <nsXPCOMCID.h>
 #include <prlog.h>
 
 #include <IWindowCloak.h>
@@ -193,7 +195,18 @@ sbMediacoreWrapper::OnGetDuration(PRUint64 *aDuration)
                           getter_AddRefs(variant));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXAus: Process return value.
+  nsString retvalStr;
+  rv = GetRetvalFromEvent(dataEvent, retvalStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *aDuration = 0;
+
+  if(!retvalStr.IsEmpty()) {
+    PRUint64 duration = nsString_ToUint64(retvalStr, &rv);
+    if(NS_SUCCEEDED(rv)) {
+      *aDuration = duration;
+    }
+  }
 
   return NS_OK;
 }
@@ -213,7 +226,18 @@ sbMediacoreWrapper::OnGetPosition(PRUint64 *aPosition)
                           getter_AddRefs(variant));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXAus: Process return value.
+  nsString retvalStr;
+  rv = GetRetvalFromEvent(dataEvent, retvalStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *aPosition = 0;
+
+  if(!retvalStr.IsEmpty()) {
+    PRUint64 position = nsString_ToUint64(retvalStr, &rv);
+    if(NS_SUCCEEDED(rv)) {
+      *aPosition = position;
+    }
+  }
 
   return NS_OK;
 }
@@ -275,7 +299,8 @@ sbMediacoreWrapper::OnPlay()
     SendDOMEvent(NS_LITERAL_STRING("play"), EmptyString());
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXAus: on success, send STREAM_START mediacore event.
+  rv = DispatchMediacoreEvent(sbIMediacoreEvent::STREAM_START);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -287,7 +312,8 @@ sbMediacoreWrapper::OnPause()
     SendDOMEvent(NS_LITERAL_STRING("pause"), EmptyString());
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXAus: on success, send STREAM_PAUSE mediacore event.
+  rv = DispatchMediacoreEvent(sbIMediacoreEvent::STREAM_PAUSE);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -299,7 +325,8 @@ sbMediacoreWrapper::OnStop()
     SendDOMEvent(NS_LITERAL_STRING("stop"), EmptyString());
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXAus: on success, send STREAM_STOP mediacore event.
+  rv = DispatchMediacoreEvent(sbIMediacoreEvent::STREAM_STOP);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -361,15 +388,19 @@ sbMediacoreWrapper::VoteWithURI(nsIURI *aURI, PRUint32 *_retval)
                     uriSpec, 
                     getter_AddRefs(dataEvent));
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  nsCOMPtr<nsIVariant> variant;
-  rv = dataEvent->GetData(NS_LITERAL_STRING("retval"), 
-                          getter_AddRefs(variant));
+
+  nsString retvalStr;
+  rv = GetRetvalFromEvent(dataEvent, retvalStr);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXAus: Process return value.
-
   *_retval = 0;
+
+  if(!retvalStr.IsEmpty()) {
+    PRUint32 voteResult = static_cast<PRUint32>(retvalStr.ToInteger(&rv, 10));
+    if(NS_SUCCEEDED(rv)) {
+      *_retval = voteResult;
+    }
+  }
 
   return NS_OK;
 }
@@ -403,11 +434,17 @@ sbMediacoreWrapper::Initialize(const nsAString &aInstanceName,
 
   prompter.swap(mPrompter);
 
+  rv = mPrompter->SetParentWindowType(NS_LITERAL_STRING("Songbird:Main"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mPrompter->SetWaitForWindow(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<nsIDOMWindow> domWindow;
   rv = mPrompter->OpenWindow(nsnull, 
                              NS_ConvertUTF8toUTF16(aChromePageURL), 
                              aInstanceName,
-                             NS_LITERAL_STRING("chrome,centerscreen,resizable"),
+                             NS_LITERAL_STRING("chrome,centerscreen"),
                              nsnull,
                              getter_AddRefs(domWindow));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -461,16 +498,20 @@ sbMediacoreWrapper::HandleEvent(nsIDOMEvent *aEvent)
   NS_ENSURE_SUCCESS(rv, rv);
 
   if(eventType.EqualsLiteral("resize")) {
+    nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mPluginHostWindow, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = target->RemoveEventListener(NS_LITERAL_STRING("resize"), this, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     mWindowIsReady = PR_TRUE;
     
-    // XXXAus: This seems to break things... :(
+    nsCOMPtr<sbIWindowCloak> windowCloak = 
+      do_ProxiedGetService("@songbirdnest.com/Songbird/WindowCloak;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-    //nsCOMPtr<sbIWindowCloak> windowCloak = 
-    //  do_ProxiedGetService("@songbirdnest.com/Songbird/WindowCloak;1", &rv);
-    //NS_ENSURE_SUCCESS(rv, rv);
-
-    //rv = windowCloak->Cloak(mPluginHostWindow);
-    //NS_ENSURE_SUCCESS(rv, rv);
+    rv = windowCloak->Cloak(mPluginHostWindow);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;
@@ -499,9 +540,6 @@ sbMediacoreWrapper::RemoveSelfDOMListener()
   nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mPluginHostWindow, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = target->RemoveEventListener(NS_LITERAL_STRING("resize"), this, PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 
@@ -526,6 +564,14 @@ sbMediacoreWrapper::SendDOMEvent(const nsAString &aEventName,
                           sbNewVariant(aEventData).get());
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<nsISupportsString> retval = 
+    do_CreateInstance(NS_SUPPORTS_STRING_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = dataEvent->SetData(NS_LITERAL_STRING("retval"),
+                          sbNewVariant(retval).get());
+  NS_ENSURE_SUCCESS(rv, rv);
+
   PRBool handled = PR_FALSE;
   rv = mDOMEventTarget->DispatchEvent(dataEvent, &handled);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -547,5 +593,47 @@ sbMediacoreWrapper::SendDOMEvent(const nsAString &aEventName,
                              NS_ConvertUTF8toUTF16(aEventData),
                              aEvent);
   NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
+}
+
+nsresult 
+sbMediacoreWrapper::GetRetvalFromEvent(nsIDOMDataContainerEvent *aEvent, 
+                                       nsAString &aRetval)
+{
+  nsCOMPtr<nsIVariant> variant;
+  nsresult rv = aEvent->GetData(NS_LITERAL_STRING("retval"), 
+                                getter_AddRefs(variant));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsISupports> supports;
+  rv = variant->GetAsISupports(getter_AddRefs(supports));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsISupportsString> supportsString = 
+    do_QueryInterface(supports, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = supportsString->GetData(aRetval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult 
+sbMediacoreWrapper::DispatchMediacoreEvent(PRUint32 aType, 
+                                           sbIMediacoreError *aError,
+                                           nsIVariant *aData)
+{
+  nsCOMPtr<sbIMediacoreEvent> event;
+  nsresult rv = sbMediacoreEvent::CreateEvent(aType, 
+                                              aError, 
+                                              aData, 
+                                              this, 
+                                              getter_AddRefs(event));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = DispatchEvent(event, PR_TRUE, nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
