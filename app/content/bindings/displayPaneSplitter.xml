@@ -51,7 +51,7 @@
                       class="sb-displaypane-menubutton"
                       tooltiptext="&tooltip.displaypane.options;"
                       xbl:inherits="menuid"
-                      onclick="if (this.disabled) return; var menu = document.getElementById(this.getAttribute('menuid')); menu.openPopup(this); event.stopPropagation();">
+                      onclick="onButtonClick(event);">
           </xul:button>
         </xul:box>
 
@@ -136,6 +136,26 @@
           return element;
         ]]></getter>
       </property>
+
+      <method name="onButtonClick">
+        <parameter name="event" />
+        <body><![CDATA[
+          var button = event.target;
+          if (button.disabled)
+            return;
+
+          var position = (this.getAttribute("orient") == "vertical") ?
+                           "after_start" : "end_before";
+ 
+          var menu = document.getElementById(this.getAttribute('menuid'));
+          menu.openPopup(this,
+                         position,
+                         -1, -1,
+                         true,
+                         false);
+          event.stopPropagation();
+        ]]></body>
+      </method>
 
       <method name="hoverGrippy">
         <parameter name="event" />
