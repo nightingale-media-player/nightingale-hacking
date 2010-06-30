@@ -1353,62 +1353,45 @@
           },
 
           nodeInserted: function(node, parent, insertBefore) {
+            let domNode;
+            let parentNode;
             if (!parent || parent == this.element.mService.root) {
               // It's a new top level servicepane-group
-              let newGroup = this.element.createGroup(node);
               this.element.log("New top level group: " + node.id);
 
-              // Need to find the right place in the DOM hierarchy to put it
-              const SP = "http://songbirdnest.com/rdf/servicepane#";
-              let child = this.element.firstChild;
-              let weight = parseInt(node.getAttributeNS(SP, "Weight"));
-              while (child != null) {
-                if (child.nodeType == child.TEXT_NODE) {
-                  child = child.nextSibling;
-                  continue;
-                }
-                let otherNode = this.element.getNode(child.id);
-                let otherWeight = parseInt(
-                                       otherNode.getAttributeNS(SP, "Weight"));
-                this.element.log("Comparing " + node.id + " (weight: " +
-                                 weight + ") to " + child.id +
-                                 " (weight: " + otherWeight + ")");
-                if (weight < otherWeight) {
-                  this.element.log("Inserting " + node.id + " (weight: " +
-                                   weight + ") before " + child.id +
-                                   " (weight: " + otherWeight + ")");
-                  this.element.insertBefore(newGroup, child);
-
-                  // hacky workaround for bug 21128, comment #2
-                  let hackNode = document.createTextNode("");
-                  this.element.insertBefore(hackNode, child);
-
-                  return;
-                }
-                child = child.nextSibling;
-              }
-              this.element.log("Appending " + node.id);
-              this.element.appendChild(newGroup);
-              
-              // hacky workaround for bug 21128, comment #2
-              let hackNode = document.createTextNode("");
-              this.element.appendChild(hackNode);
+              domNode = this.element.createGroup(node);
+              parentNode = this.element;
             } else {
               // It's a regular node
               this.element.log("New node: " + node.id);
-              /* find the node representing the parent */
-              let parentNode = this.element.getDOMNode(parent.id);
+              domNode = this.element.createNode(node);
+              parentNode = this.element.getDOMNode(parent.id);
               if (!parentNode) {
                 this.element.log("\tNo parent node found, skipping..");
                 return;
               }
-              this.element.log("Parent node is: " +
-                               parentNode.getAttribute("nodeid"));
-              let newnode = this.element.createNode(node, parentNode, insertBefore);
+            }
 
-              // Update parent node - if it wasn't a container before it is one now
-              if (parentNode != this.element)
-                this.element.DOMUtils.setClass(parentNode, "container");
+            // Find the insertion point
+            let insertBeforeNode = null;
+            if (insertBefore)
+              insertBeforeNode = this.element.getDOMNode(insertBefore.id);
+
+            // Insert new node
+            if (insertBeforeNode && insertBeforeNode.parentNode == parentNode) {
+              parentNode.insertBefore(domNode, insertBeforeNode);
+            } else {
+              parentNode.appendChild(domNode);
+            }
+            
+            // Update parent node - if it wasn't a container before it is one now
+            if (parentNode != this.element)
+              this.element.DOMUtils.setClass(parentNode, "container");
+
+            // Hacky workaround for bug 21128, comment #2
+            if (parentNode == this.element) {
+              let hackNode = document.createTextNode("");
+              this.element.insertBefore(hackNode, domNode.nextSibling);
             }
 
             // The new node may already have children associated with it, so
@@ -1416,7 +1399,7 @@
             let childNode = node.firstChild;
             while (childNode) {
               this.element.log("\tChild node found: " + childNode.id);
-              this.nodeInserted(childNode, node);
+              this.nodeInserted(childNode, node, null);
               childNode = childNode.nextSibling;
             }
           },
@@ -1514,7 +1497,6 @@
       <method name="createNode">
         <parameter name="nodeData"/>
         <parameter name="parentNode"/>
-        <parameter name="aInsertBefore"/>
         <body>
             <![CDATA[
           var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
@@ -1542,10 +1524,8 @@
               parentGroup._groupNodes.style.marginTop = "-" + height + "px";
             }, false);
            
-          if (parentNode) {
-            var nodeBefore = aInsertBefore ? this.getDOMNode(aInsertBefore.id) : null;
-            parentNode.insertBefore(newNode, nodeBefore);
-          }
+          if (parentNode)
+            parentNode.appendChild(newNode);
 
           return newNode;
         ]]></body>
