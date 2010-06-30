@@ -222,13 +222,10 @@
           // we are always expected to be in the service pane under a group at
           // this point so we call up the DOM of nodes.
           try {
-            if (this.hasAttribute("nodeid")) {
-              var nodeID = this.getAttribute("nodeid");
-              if (this.parentNode)
-                this.nodeData = this.parentNode.getNode(nodeID);
+            if (this.hasAttribute("nodeid") && this.parentNode) {
+              this.nodeData = this.getNode(this.getAttribute("nodeid"));
             } else {
-              // If we have no node data, then hide by default.
-              this.setAttribute("hidden", true);
+              this.nodeData = null;
             }
 
             this._textbox = this._getElement("servicepane-node-textbox");
@@ -240,7 +237,7 @@
               Components.classes['@mozilla.org/widget/dragservice;1']
               .getService(Components.interfaces.nsIDragService);
           } catch (e) {
-            dump("Exception: " + e + "\n");
+            Cu.reportError(e);
           }
         ]]>
       </constructor>
@@ -297,15 +294,19 @@
             Cu.import("resource://app/jsmodules/ServicePaneHelper.jsm", this);
 
             // Set up the elements
+            this.setAttribute("id", this._nodeData.id);
             this.setAttribute("image", this._nodeData.image);
             this.setAttribute("label", this._nodeData.displayName);
-            if (!this._nodeData.isOpen)
+            if (!this._nodeData.isOpen) {
               this.setAttribute("closed", "true");
+            } else {
+              this.removeAttribute("closed");
+            }
 
             // Hide the node if it should be hidden
             if (this._nodeData.hidden) {
               this.setAttribute("hidden", true);
-            } else if (this.hasAttribute("hidden")) {
+            } else {
               this.removeAttribute("hidden");
             }
 
@@ -333,8 +334,9 @@
             } else {
               badge.remove();
             }
-          }
-          else {
+          } else {
+            // No node data, clear all attributes and hide the node
+            this.removeAttribute("id");
             this.removeAttribute("image");
             this.removeAttribute("label");
             this.setAttribute("hidden", "true");
@@ -886,28 +888,91 @@
       <constructor><![CDATA[
         Components.utils.import("resource://app/jsmodules/LocalStore.jsm", this);
 
-        this._groupNodes = this._getElement("groupNodes");
-
-        var self = this;
-        this.nodeData = this.getNode(this.id);
-
-        // Determine whether we're starting up collapsed or visible
-        this._visible = true;
-
-        let collapsed =
-          this.LocalStore
-              .getPersistedAttribute(document.location.href,
-                                     this.id,
-                                     "collapsedChildren");
-        if (collapsed) {
-          self.nodeData.isOpen = (collapsed == "false");
+        // If this element has a node id then load up the data from the node
+        // we are always expected to be in the service pane at this point so we
+        // call up the DOM of nodes.
+        try {
+          if (this.hasAttribute("nodeid") && this.parentNode) {
+            this.nodeData = this.getNode(this.getAttribute("nodeid"));
+          } else {
+            this.nodeData = null;
+          }
+        } catch (e) {
+          Cu.reportError(e);
         }
-
       ]]></constructor>
+
+      <!-- 
+         - \brief Value of the .visible property.
+        -->
+      <field name="_visible">null</field>
+
+      <!-- 
+         - \brief Container box of the child nodes.
+        -->
+      <field name="_groupNodes">this._getElement("groupNodes")</field>
 
       <field name="_dndReordering">false</field>
       <field name="_autoCloseOnLeaveKeyboardFocus">false</field>
       <field name="_servicepane">this.parentNode</field>
+      <field name="_nodeData">null</field>
+
+      <property name="servicePane" onget="return this.parentNode;"/>
+
+      <property name="nodeData">
+        <getter><![CDATA[
+          return this._nodeData;
+        ]]></getter>
+        <setter><![CDATA[
+          // val should be a sbIServicePaneNode object
+          let oldVal = this._nodeData;
+          this._nodeData = val;
+
+          if (this._nodeData) {
+            this.setAttribute("id", this._nodeData.id);
+            this.setAttribute("label", this._nodeData.displayName);
+
+            if (oldVal != this._nodeData) {
+              // We got a new node, restore its collapsed state
+              let collapsed = this.LocalStore.getPersistedAttribute(
+                                          document.location.href,
+                                          this._nodeData.id,
+                                          "collapsedChildren");
+              if (collapsed) {
+                this._nodeData.isOpen = (collapsed == "false");
+              }
+            }
+
+            if (oldVal != this._nodeData) {
+              // First time we are attached to this node, set _visible directly
+              // to skip animation
+              this._visible = this._nodeData.isOpen;
+              
+              // We pass the same value as from and to parameters of animateTo,
+              // this makes sure it will initialize everything but not animate.
+              let height = this._groupNodes.boxObject.height;
+              this.animateTo(this._groupNodes, 0, height, height, 5,
+                             this._visible);
+            } else if (this._visible != this._nodeData.isOpen) {
+              this.visible = this._nodeData.isOpen;
+            }
+
+            if (this._nodeData.hidden) {
+              this.setAttribute("hidden", true);
+            } else {
+              this.removeAttribute("hidden");
+            }
+          } else {
+            // No node data, clear all attributes and hide the node
+            this.removeAttribute("label");
+            this.removeAttribute("id");
+            this.setAttribute("hidden", "true");
+            this.removeAttribute("collapsedChildren");
+          }
+
+          return this._nodeData;
+        ]]></setter>
+      </property>
 
       <method name="newPlaylist">
         <parameter name="e" />
@@ -939,11 +1004,11 @@
           if (this._visible == val)
             return;
           this._visible = val;
+          let height = this._groupNodes.boxObject.height;
           if (this._visible) {
-            this.animateTo(this._groupNodes, 0, 0, this._height, 5, true);
+            this.animateTo(this._groupNodes, 0, 0, height, 5, true);
           } else {
-            this._height = this._groupNodes.boxObject.height;
-            this.animateTo(this._groupNodes, this._height, this._height, 0, 5, false);
+            this.animateTo(this._groupNodes, height, height, 0, 5, false);
           }
         ]]></setter>
       </property>
@@ -1043,7 +1108,7 @@
             return;
             */
 
-          this.visible = !this.visible;
+          this.nodeData.isOpen = !this.nodeData.isOpen;
         ]]></body>
       </method>
 
@@ -1282,73 +1347,46 @@
           isOpenAttributeChanged: function(node, oldVal, newVal) {
           },
 
+          _knownAttributes: {
+            __proto__: null,
+            id: true,
+            hidden: true,
+            name: true,
+            image: true,
+            class: true,
+            isOpen: true,
+            ejectable: true,
+            badges: true
+          },
+
           attrModified: function(node, attrName, namespace, oldVal, newVal) {
-            if (oldVal == newVal)
+            if (namespace != null || oldVal == newVal)
               return;
 
-            // attempt to find the DOM node in the SP, bail otherwise
+            // attempt to find the DOM node in the SP, bail if no node is found
+            // or binding didn't apply to it yet
             let domNode = this.element.getDOMNode(node.id);
-            if (!domNode)
+            if (!domNode || !("_getElement" in domNode))
               return;
 
-            switch (attrName) {
-              case "hidden":
-                if (newVal == "false") {
-                  domNode.removeAttribute("hidden");
-                } else if (newVal == "true") {
-                  domNode.setAttribute("hidden", true);
-                }
-                break;
+            // Act on changes of known attributes or badge-related attributes
+            if (attrName in this._knownAttributes || /^badge_/.test(attrName)) {
+              // Delay execution to prevent multiple updates in a row for the
+              // same node
+              if (domNode._updateTimeout)
+                window.clearTimeout(domNode._updateTimeout);
 
-              case "name":
-                domNode.setAttribute("label", newVal);
-                break;
+              domNode._updateTimeout = window.setTimeout(function() {
+                delete domNode._updateTimeout;
 
-              case "image":
-                domNode.setAttribute("image", newVal);
-                break;
-
-              case "class":
-                domNode.className = newVal;
-                if (node.firstChild)
-                  domNode.className += " container";
-                break;
-
-              case "isOpen":
-                // group's open states are a little different
-                if (domNode.tagName == "sb-servicepane-group") {
-                  if (newVal == "true")
-                    domNode.visible = true;
-                  else
-                    domNode.visible = false;
-                  return;
-                }
-
-                // update the "closed" attribute
-                if (newVal == "true") {
-                  domNode.removeAttribute("closed");
-                } else {
-                  // could be null or false
-                  domNode.setAttribute("closed", "true");
-                }
-                break;
-
-              case "badges":
-                domNode._updateBadges();
-                break;
-
-              default:
-                if (/^badge_/.test(attrName)) {
-                  // Change to some badge-related attribute
-                  domNode._updateBadges();
-                  break;
-                }
-
-                /* Can be useful, but noisy */
-                this.element.noisyLog("Unhandled node attribute change: " +
-                                 attrName + " from '" + oldVal + "' => '" +
-                                 newVal + "'");
-                break;
+                // This will reinitialize the DOM node
+                domNode.nodeData = domNode.nodeData;
+              }, 0);
+            } else {
+              /* Can be useful, but noisy */
+              this.element.noisyLog("Unhandled node attribute change: " +
+                               attrName + " from '" + oldVal + "' => '" +
+                               newVal + "'");
             }
           },
 
@@ -1478,15 +1516,7 @@
         <body><![CDATA[
           var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
           var newGroup = document.createElementNS(XULNS, "sb-servicepane-group");
-          newGroup.setAttribute("label", nodeData.displayName);
           newGroup.setAttribute("nodeid", nodeData.id);
-          newGroup.setAttribute("id", nodeData.id);
-          if (!nodeData.isOpen) {
-            newGroup.setAttribute("closed", true);
-          }
-          if (nodeData.hidden) {
-            newGroup.setAttribute("hidden", true);
-          }
           return newGroup;
         ]]></body>
       </method>
