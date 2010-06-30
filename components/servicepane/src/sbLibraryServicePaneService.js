@@ -1909,6 +1909,8 @@ function sbLibraryServicePane__insertAfterLastOfSameType(aNode, aParent) {
   let insertionPoint = null;
   let found = false;
   for (let child = aParent.lastChild; child; child = child.previousSibling) {
+    if (child.hidden)
+      continue;
     // Stop at a node that belongs to the library service pane and has the
     // same list type as the node we are inserting
     if (child.contractid == CONTRACTID && getNodeType(child) == nodeType) {
