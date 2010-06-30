@@ -200,10 +200,6 @@ PRBool sbURIPropertyInfo::IsInvalidEmpty(const nsAString &aValue) {
 
 NS_IMETHODIMP sbURIPropertyInfo::Format(const nsAString & aValue, nsAString & _retval)
 {
-/*ZZZ*/
-_retval.Assign(aValue);
-return NS_OK;
-/*ZZZ*/
   if (aValue.IsVoid()) {
     _retval.Truncate();
     return NS_OK;
