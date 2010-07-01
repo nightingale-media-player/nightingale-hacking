@@ -258,20 +258,27 @@ function SBDoFirstRun() {
     
     var isFirstRun =
           Application.prefs.getValue("songbird.firstrun.is_session", false);
+    var mediaListView =
+        LibraryUtils.createConstrainedMediaListView(
+            LibraryUtils.mainLibrary, [SBProperties.contentType, "audio"]);
     if (isFirstRun) {    
       const placeholderURL = "chrome://songbird/content/mediapages/firstrun.xul";
       var currentURI = gBrowser.mediaTab.linkedBrowser.currentURI.spec;
       if (currentURI == placeholderURL || currentURI == "about:blank") {
         const nsIWebNavigation = Components.interfaces.nsIWebNavigation;
-        var mediaListView =
-            LibraryUtils.createConstrainedMediaListView(
-                LibraryUtils.mainLibrary, [SBProperties.contentType, "audio"]);
         gBrowser.loadMediaListViewWithFlags(mediaListView,
                                             gBrowser.mediaTab,
                                             null,
                                             nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY,
                                             loadMLInBackground);
       }
+    }
+    else {
+      gBrowser.loadMediaListViewWithFlags(mediaListView,
+                                          gBrowser.mediaTab,
+                                          null,
+                                          null,
+                                          false);
     }
   }
 }
@@ -322,7 +329,7 @@ function SBFirstRunImportLibrary()
         Application.prefs.getValue("songbird.firstrun.do_import_library",
                                    false);
   if (!firstRunDoImportLibrary)
-    return;
+    return null;
 
   // Don't do a first-run library import again.  Flush to disk to be sure.
   Application.prefs.setValue("songbird.firstrun.do_import_library", false);
