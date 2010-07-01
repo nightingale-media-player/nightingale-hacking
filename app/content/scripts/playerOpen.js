@@ -38,16 +38,6 @@ Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 
 try
 {
-  function _SBShowMainLibrary()
-  {
-    // Make sure the main library is viewed
-    var browser = SBGetBrowser();
-    if (!browser) {
-      Components.utils.reportError("_SBShowMainLibrary - Cannot view the main library without a browser object");
-    }
-    browser.loadMediaList(LibraryUtils.mainLibrary);
-  }
-    
   function _SBGetCurrentView()
   {
     var browser = SBGetBrowser();
@@ -146,27 +136,36 @@ try
         SBDataSetStringValue("metadata.artist", "");
         SBDataSetStringValue("metadata.album", "");
 
-        // Display the main library
-        _SBShowMainLibrary();
-                
-        // Import the item.
-        var view = _SBGetCurrentView();
-        
         var item = SBImportURLIntoMainLibrary(uri);
+
+        if (!gServicePane)
+          return;
+
+        var librarySPS = Cc['@songbirdnest.com/servicepane/library;1']
+                           .getService(Ci.sbILibraryServicePaneService);
+        var node = librarySPS.getNodeForLibraryResource(
+                     LibraryUtils.mainLibrary,
+                     item.getProperty(SBProperties.contentType));
+
+        gServicePane.activateAndLoadNode(node, null, null);
+
         // Wait for the item to show up in the view before trying to play it
         // and give it time to sort (given 10 tracks per millisecond)
         var interval = setInterval(function() {
           // If the view has been updated then we're good to go
           var index;
+          var view;
           try {
+            view = _SBGetCurrentView();
             index = view.getIndexForItem(item);
           }
+          catch (e if Components.lastResult == Cr.NS_ERROR_NOT_AVAILABLE) {
+            // It's not there so wait for the next interval
+            return;
+          }
           catch (e) {
-            // If we get anything but not available then that's bad and we need to bail
-            if (Components.lastResult == Components.results.NS_ERROR_NOT_AVAILABLE) {
-              // It's not there so wait for the next interval
-              return;
-            }
+            // If we get anything but not available then that's bad and we need
+            // to bail
             // Unexpected error, cancel the interval and rethrow
             clearInterval(interval);
             throw e;
@@ -291,33 +290,49 @@ try
         if (uri.scheme != "file")
           item = SBImportURLIntoWebLibrary(uri);
 
-        // Display the main library
-        _SBShowMainLibrary();
-
-        var view = _SBGetCurrentView();
-        var targetLength = view.length + 1;
-
         // Import the item.
         item = SBImportURLIntoMainLibrary(uri);
+
+        if (!gServicePane)
+          return;
+
+        var librarySPS = Cc['@songbirdnest.com/servicepane/library;1']
+                           .getService(Ci.sbILibraryServicePaneService);
+        var node = librarySPS.getNodeForLibraryResource(
+                     LibraryUtils.mainLibrary,
+                     item.getProperty(SBProperties.contentType));
+
+        gServicePane.activateAndLoadNode(node, null, null);
 
         // Wait for the item to show up in the view before trying to play it
         // and give it time to sort (given 10 tracks per millisecond)
         var interval = setInterval(function() {
           // If the view has been updated then we're good to go
-          if (view.length == targetLength) {
-            clearInterval(interval);
-            
-            // show the view and play
-            var index = view.getIndexForItem(item);
-        
-            // If we have a browser, try to show the view
-            if (window.gBrowser) {
-              gBrowser.showIndexInView(view, index);
-            }
-        
-            // Play the item
-            gMM.sequencer.playView(view, index);
+          var index;
+          var view;
+          try {
+            view = _SBGetCurrentView();
+            index = view.getIndexForItem(item);
           }
+          catch (e if Components.lastResult == Cr.NS_ERROR_NOT_AVAILABLE) {
+            // It's not there so wait for the next interval
+            return;
+          }
+          catch (e) {
+            // If we get anything but not available then that's bad and we need
+            // to bail
+            // Unexpected error, cancel the interval and rethrow
+            clearInterval(interval);
+            throw e;
+          }
+          clearInterval(interval);
+          // If we have a browser, try to show the view
+          if (window.gBrowser) {
+            gBrowser.showIndexInView(view, index);
+          }
+          index = view.getIndexForItem(item);
+          // Play the item
+          gMM.sequencer.playView(view, index);
         }, 500);
       }
       else

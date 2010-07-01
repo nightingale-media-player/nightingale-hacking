@@ -949,7 +949,7 @@ function sbLibraryServicePane_getURNForLibraryResource(aResource) {
  *         returned. However, nodes that are not hidden will be preferred.
  */
 sbLibraryServicePane.prototype.getNodeForLibraryResource =
-function sbLibraryServicePane_getNodeForLibraryResource(aResource) {
+function sbLibraryServicePane_getNodeForLibraryResource(aResource, aType) {
   //logcall(arguments);
 
   var urn = this._getURNForLibraryResource(aResource);
@@ -957,7 +957,8 @@ function sbLibraryServicePane_getNodeForLibraryResource(aResource) {
   if (aResource instanceof Ci.sbILibrary) {
     // For backwards compatibility, prefer the audio/video node for libraries
     // over the container (if any of them is visible)
-    for each (let type in ["audio", "video", "podcast"]) {
+    var types = aType ? [aType] : ["audio", "video", "podcast"];
+    for each (let type in types) {
       let constrainedURN = urn + ":constraint(" + type + ")";
       let node = this._servicePane.getNode(constrainedURN);
       if (node && !node.hidden) {
