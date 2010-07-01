@@ -901,6 +901,14 @@ sbDeviceLibrary::SetSyncSettings(sbIDeviceLibrarySyncSettings * aSyncSettings)
   nsresult rv = SetSyncSettingsNoLock(aSyncSettings);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // update the library is read-only property
+  rv = UpdateIsReadOnly(mCurrentSyncSettings);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // update the main library listeners
+  rv = UpdateMainLibraryListeners(mCurrentSyncSettings);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   SB_NOTIFY_LISTENERS(OnSyncSettings(
                                 sbIDeviceLibraryListener::SYNC_SETTINGS_APPLIED,
                                 mCurrentSyncSettings));
@@ -1035,6 +1043,14 @@ sbDeviceLibrary::ApplySyncSettings()
 
   mTempSyncSettings->NotifyDeviceLibrary();
   mTempSyncSettings->ResetChanged();
+
+  // update the library is read-only property
+  rv = UpdateIsReadOnly(mCurrentSyncSettings);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // update the main library listeners
+  rv = UpdateMainLibraryListeners(mCurrentSyncSettings);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   SB_NOTIFY_LISTENERS(OnSyncSettings(
                                 sbIDeviceLibraryListener::SYNC_SETTINGS_APPLIED,

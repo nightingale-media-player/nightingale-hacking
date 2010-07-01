@@ -4728,12 +4728,13 @@ sbBaseDevice::EnsureSpaceForSync(TransferRequest* aRequest,
                                                &abort);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    // Set sync mode to manual upon abort. Also clear the listeners and reset
+    // the read-only bit.
     if (abort) {
       nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
       rv = dstLib->GetSyncSettings(getter_AddRefs(syncSettings));
       NS_ENSURE_SUCCESS(rv, rv);
 
-      // Set sync mode to manual upon abort.
       rv = syncSettings->SetSyncMode(
              sbIDeviceLibrarySyncSettings::SYNC_MODE_MANUAL);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -4782,6 +4783,31 @@ sbBaseDevice::SyncCreateAndSyncToList
 
   // Function variables.
   nsresult rv;
+
+  // Clear sync playlist to prevent syncing while creating the sync playlist.
+  nsCOMPtr<sbIDeviceLibrarySyncSettings> syncSettings;
+  rv = aDstLib->GetSyncSettings(getter_AddRefs(syncSettings));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDeviceLibraryMediaSyncSettings> mediaSyncSettings;
+  for (PRUint32 i = 0; i < sbIDeviceLibrary::MEDIATYPE_COUNT; ++i) {
+    // Skip image type since we don't support it right now.
+    if (i == sbIDeviceLibrary::MEDIATYPE_IMAGE)
+      continue;
+
+    rv = syncSettings->GetMediaSettings(i, getter_AddRefs(mediaSyncSettings));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mediaSyncSettings->ClearSelectedPlaylists();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mediaSyncSettings->SetMgmtType(
+           sbIDeviceLibraryMediaSyncSettings::SYNC_MGMT_PLAYLISTS);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = aDstLib->SetSyncSettings(syncSettings);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Check for abort.
   NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
