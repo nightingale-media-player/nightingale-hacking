@@ -560,7 +560,7 @@ var InternalDropHandler = {
 
       // Check whether the device support playlist and the drag session is only
       // for playlist.
-      if (device && this._doesDeviceSupportPlaylist(device)) {
+      if (device && !this._doesDeviceSupportPlaylist(device)) {
         aTargetList.addAll(list);
         if (aListener && list.length > 0)
           aListener.onFirstMediaItem(list.getItemByIndex(0));
