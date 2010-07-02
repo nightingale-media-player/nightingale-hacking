@@ -28,20 +28,23 @@
  * \internal
  */
 
-if (typeof(Cc) == "undefined")
-  var Cc = Components.classes;
-if (typeof(Ci) == "undefined")
-  var Ci = Components.interfaces;
-if (typeof(Cr) == "undefined")
-  var Cr = Components.results;
-if (typeof(Cu) == "undefined")
-  var Cu = Components.utils;
+var Cc = Components.classes;
+var Ci = Components.interfaces;
+var Cr = Components.results;
+var Cu = Components.utils;
 
+Cu.import("resource://app/jsmodules/DebugUtils.jsm");
 Cu.import("resource://app/jsmodules/DOMUtils.jsm");
 Cu.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
 Cu.import("resource://app/jsmodules/SBUtils.jsm");
-  
+
 var videoWindowController = {
+  //////////////////////////////////////////////////////////////////////////////
+  // Debugging aids
+  //////////////////////////////////////////////////////////////////////////////
+  TRACE: DebugUtils.generateLogFunction("sbVideoWindow", 5),
+  LOG:   DebugUtils.generateLogFunction("sbVideoWindow", 3),
+
   //////////////////////////////////////////////////////////////////////////////
   // Internal data
   //////////////////////////////////////////////////////////////////////////////
@@ -291,7 +294,7 @@ var videoWindowController = {
                                                                     aPARNum,
                                                                     aPARDen) {
     function log(str) {
-      //dump("_resizeFromWidthAndHeight: " + str + "\n");
+      videoWindowController.TRACE("_resizeFromWidthAndHeight: " + str);
     }
 
     log("Width: " + aWidth);
@@ -306,6 +309,8 @@ var videoWindowController = {
     log("Available Height: " + availHeight);
     log("Window X: " + window.screenX);
     log("Window Y: " + window.screenY);
+    log("Window width: " + window.outerWidth);
+    log("Window height: " + window.outerHeight);
     
     var fullWidth = false;
     var deltaWidth = 0;
@@ -443,7 +448,12 @@ var videoWindowController = {
       }
 
       window.fullScreen = full;
-      document.documentElement.setAttribute("fullscreen", full);
+      if (full) {
+        document.documentElement.setAttribute("fullscreen", full);
+      }
+      else {
+        document.documentElement.removeAttribute("fullscreen");
+      }
       this._osdService.onVideoWindowFullscreenChanged(full);
 
       if (full) {
@@ -691,110 +701,5 @@ var videoWindowController = {
 
     this._playbackStopped = true;
     setTimeout(function() { window.close(); }, 0);
-  },
+  }
 };
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// XXXAus: All of the code below will get blown away. I'm just keeping it
-//         here for now because it's useful reference. It doesn't actually
-//         get used as you can see. :)
-//
-///////////////////////////////////////////////////////////////////////////////
-
-var SBVideoMinMaxCB =
-{
-  // Shrink until the box doesn't match the window, then stop.
-  GetMinWidth: function()
-  {
-    // What we'd like it to be
-    var outerframe = window.gOuterFrame;
-    var retval = 720;
-    // However, if in resizing the window size is different from the document's box object
-    if (window.innerWidth != outerframe.boxObject.width)
-    {
-      // That means we found the document's min width.  Because you can't query it directly.
-      retval = outerframe.boxObject.width - 1;
-    }
-    return retval;
-  },
-
-  GetMinHeight: function()
-  {
-    // What we'd like it to be
-    var outerframe = window.gOuterFrame;
-    var retval = 450;
-    // However, if in resizing the window size is different from the document's box object
-    if (window.innerHeight != outerframe.boxObject.height)
-    {
-      // That means we found the document's min height.  Because you can't query it directly.
-      retval = outerframe.boxObject.height - 1;
-    }
-    return retval;
-  },
-
-  GetMaxWidth: function()
-  {
-    return -1;
-  },
-
-  GetMaxHeight: function()
-  {
-    return -1;
-  },
-
-  OnWindowClose: function()
-  {
-    setTimeout(onHideButtonClick, 0);
-  },
-
-  QueryInterface : function(aIID)
-  {
-    if (!aIID.equals(Components.interfaces.sbIWindowMinMaxCallback) &&
-        !aIID.equals(Components.interfaces.nsISupports))
-    {
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    }
-
-    return this;
-  }
-}
-
-/**
- * \brief Set Video window Min/Max width and height window listener.
- * \internal
- */
-function setVideoMinMaxCallback()
-{
-  try {
-    var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
-    if (windowMinMax) {
-      var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
-      if (service)
-        service.setCallback(document, SBVideoMinMaxCB);
-    }
-  }
-  catch (err) {
-    // No component
-    dump("Error. No WindowMinMax component available." + err + "\n");
-  }
-}
-
-/**
- * \brief Reset the Video window Min/Max width and height window listener to the default listener.
- * \internal
- */
-function resetVideoMinMaxCallback() {
-  try {
-    var windowMinMax = Components.classes["@songbirdnest.com/Songbird/WindowMinMax;1"];
-    if (windowMinMax) {
-      var service = windowMinMax.getService(Components.interfaces.sbIWindowMinMax);
-      if (service)
-        service.resetCallback(document);
-    }
-  }
-  catch (err) {
-    // No component
-    dump("Error. No WindowMinMax component available." + err + "\n");
-  }
-}
