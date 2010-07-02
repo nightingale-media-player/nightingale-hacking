@@ -844,7 +844,9 @@ static struct GSTNameMap SupportedContainers[] = {
   {"application/ogg", "application/ogg"},
   {"audio/mpeg", "application/x-id3"},
   {"video/x-ms-asf", "video/x-ms-asf"},
-  {"audio/x-wav", "audio/x-wav"}
+  {"audio/x-wav", "audio/x-wav"},
+  {"video/mp4", "video/quicktime, variant=iso"},
+  {"video/3gpp", "video/quicktime, variant=(string)3gpp"}
 };
 
 nsresult
@@ -868,7 +870,7 @@ sbGStreamerTranscode::GetContainer(nsAString &container, nsIArray *properties,
         gstElementName = FindMatchingElementName (capsString, "Formatter");
       }
 
-      if (!gstElementName) 
+      if (!gstElementName)
         continue;
 
       gstMuxer.Append(gstElementName);
@@ -885,6 +887,7 @@ static struct GSTNameMap SupportedAudioCodecs[] = {
   {"audio/x-flac", "audio/x-flac"},
   {"audio/x-ms-wma", "audio/x-wma, wmaversion=(int)2"},
   {"audio/mpeg", "audio/mpeg, mpegversion=(int)1, layer=(int)3"},
+  {"audio/aac", "audio/mpeg, mpegversion=(int)4"},
 };
 
 nsresult
