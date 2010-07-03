@@ -101,13 +101,15 @@
 					<hbox flex="1">
 						<label>&prefs.tosBegin;</label>
 						<label class="text-link"
-							href="http://www.shoutcast.com/disclaimer.phtml">&prefs.tosLinkText;</label>
+							href="http://www.shoutcast.com/disclaimer.phtml"
+							value="&prefs.tosLinkText;"/>
 						<label>&prefs.tosEnd;</label>
 					</hbox>
 					<hbox flex="1">
 						<label>&prefs.toolbarBegin;</label>
 						<label class="text-link"
-							href="http://toolbar.aol.com/shoutcastradio/download.html">&prefs.toolbarLinkText;</label>
+							href="http://toolbar.aol.com/shoutcastradio/download.html"
+							value="&prefs.toolbarLinkText;"/>
 						<label>&prefs.toolbarEnd;</label>
 					</hbox>
 				</vbox>

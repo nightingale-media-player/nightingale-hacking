@@ -118,3 +118,9 @@ prefpane#paneManageMedia {
 browser#addonsFrame {
   background-color: transparent;
 }
+
+/* Inline Link */
+
+.inline-link {
+  color: rgb(177,153,255);
+}

@@ -173,3 +173,16 @@ label#manage_media_format_file_suffix_label {
 #manage_media_global_cmd .checkbox-label-box {
   margin-left: 4px;
 }
+
+/* Inline Link */
+
+.inline-link {
+  text-decoration: none;
+}
+.inline-link:hover {
+  text-decoration: underline;
+}
+.inline-link[disabled]:hover {
+  text-decoration: none;
+  cursor: default;
+}
