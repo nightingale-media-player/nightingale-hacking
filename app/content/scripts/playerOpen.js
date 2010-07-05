@@ -660,13 +660,6 @@ function SBScanMedia( aParentWindow, aScanDirectory )
 /** Legacy function **/
 function SBNewPlaylist(aEnumerator, aAllowDevicePlaylist)
 {
-  // if the servicepane's Playlists group is hidden, then expose it
-  if (gServicePane) {
-    let playlistsGroup = gServicePane.getDOMNode("SB:Playlists");
-    if (!playlistsGroup.visible)
-      playlistsGroup.visible = true;
-  }
-
   var playlist = makeNewPlaylist("simple", aAllowDevicePlaylist);
   if (aEnumerator) {
     // make playlist from selected items
@@ -677,13 +670,6 @@ function SBNewPlaylist(aEnumerator, aAllowDevicePlaylist)
 
 function SBNewSmartPlaylist(aAllowDevicePlaylist)
 {
-  // if the servicepane's Playlists group is hidden, then expose it
-  if (gServicePane) {
-    let playlistsGroup = gServicePane.getDOMNode("SB:Playlists");
-    if (!playlistsGroup.visible)
-      playlistsGroup.visible = true;
-  }
-
   var obj = { newSmartPlaylist: null,
               newPlaylistFunction: function() {
                 return makeNewPlaylist("smart", aAllowDevicePlaylist);
@@ -709,15 +695,15 @@ function makeNewPlaylist(mediaListType, allowDevicePlaylist) {
   var servicePane = null;
   if (typeof gServicePane != 'undefined') servicePane = gServicePane;
 
-  // Try to find the currently selected service pane node
-  var selectedNode;
-  if (servicePane) {
-    selectedNode = servicePane.getActiveNode();
-  }
-
-  var librarySPS = Components.classes['@songbirdnest.com/servicepane/library;1']
-                             .getService(Components.interfaces.sbILibraryServicePaneService);
+  var librarySPS = Cc['@songbirdnest.com/servicepane/library;1']
+                     .getService(Ci.sbILibraryServicePaneService);
   if (allowDevicePlaylist) {
+    // Try to find the currently selected service pane node
+    var selectedNode = null;
+    if (servicePane) {
+      selectedNode = servicePane.activeNode;
+    }
+
     // Ask the library service pane provider to suggest where
     // a new playlist should be created
     var library = librarySPS.suggestLibraryForNewList(mediaListType,
@@ -735,23 +721,31 @@ function makeNewPlaylist(mediaListType, allowDevicePlaylist) {
   // library instead of the currently selected library.
   if (!library.userEditable ||
       !library.userEditableContent) {
-    var libraryManager = 
-      Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                .getService(Components.interfaces.sbILibraryManager);
+    var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                           .getService(Ci.sbILibraryManager);
     
     library = libraryManager.mainLibrary;
   }
 
   // Create the playlist
-  var mediaList = library.createMediaList(mediaListType);
-  mediaList.name = librarySPS.suggestNameForNewPlaylist(library);
+  var name = librarySPS.suggestNameForNewPlaylist(library);
+  var properties =
+        Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+          .createInstance(Ci.sbIMutablePropertyArray);
+  properties.appendProperty(SBProperties.mediaListName, name);
+
+  var mediaList = library.createMediaList(mediaListType, properties);
 
   // If we have a servicetree, tell it to make the new playlist node editable
   if (servicePane) {
     // Find the servicepane node for our new medialist
     var node = librarySPS.getNodeForLibraryResource(mediaList);
-
     if (node) {
+      // Make the new node visible
+      for (let parent = node.parentNode; parent; parent = parent.parentNode)
+        if (!parent.isOpen)
+          parent.isOpen = true;
+
       // Ask the service pane to start editing our new node
       // so that the user can give it a name
       servicePane.startEditingNode(node);
@@ -761,8 +755,8 @@ function makeNewPlaylist(mediaListType, allowDevicePlaylist) {
 
   // Otherwise pop up a dialog and ask for playlist name
   } else {
-    var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"  ]
-                                  .getService(Components.interfaces.nsIPromptService);
+    var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"  ]
+                          .getService(Ci.nsIPromptService);
 
     var input = {value: mediaList.name};
     var title = SBString("newPlaylist.title", "Create New Playlist");
@@ -773,9 +767,8 @@ function makeNewPlaylist(mediaListType, allowDevicePlaylist) {
     }
   }
 
-  var metrics =
-    Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
-              .createInstance(Components.interfaces.sbIMetrics);
+  var metrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
+                  .createInstance(Ci.sbIMetrics);
   metrics.metricsInc("medialist", "create", mediaListType);
   
   return mediaList;
