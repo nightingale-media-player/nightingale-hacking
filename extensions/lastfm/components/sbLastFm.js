@@ -1362,7 +1362,7 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
           }
   
           // We're listening for the LastFM "Permissions Granted" page. It will
-          // have pathname "/api/grantAccess" on the last.fm domain or a
+          // have pathname "/api/grantaccess" on the last.fm domain or a
           // localized version such as lastfm.fr
           var loc = e.target.location;
           if (!/last\.?fm/.test(loc.host)) {
@@ -1375,12 +1375,12 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
             return;
           }
 
-          if (loc.pathname != "/api/grantAccess") {
+          if (loc.pathname.search(/grantaccess/i) == -1) {
             // Ignore LastFM pages that aren't the "Permissions Granted" page.
             return;
-          } 
+          }
 
-          // We should be on the grantAccess page now, so remove the listeners
+          // We should be on the grantaccess page now, so remove the listeners
           // and try to grab a session key.
           removeAuthListeners();
 
