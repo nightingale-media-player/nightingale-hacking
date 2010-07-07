@@ -65,14 +65,14 @@
               <xul:checkbox sbid="content_management_checkbox"
                             label="&device.sync.header.label;"
                             xbl:inherits="disabled"
-                            oncommand="_onUIPrefChange();"/>
+                            oncommand="_onUIPrefChange(true);"/>
             </xul:stack>
           </xul:hbox>
           <xul:groupbox sbid="content_management_groupbox">
 
             <!-- Management preferences. -->
             <xul:vbox class="content-controls"
-                      oncommand="_onUIPrefChange();">
+                      oncommand="_onUIPrefChange(true);">
 
               <!-- Content management radio group. -->
               <xul:radiogroup sbid="content_auto_sync_type_radio_group">
@@ -89,8 +89,8 @@
                           editable="true"
                           seltype="single"
                           rows="8"
-                          onkeyup="_onUIPrefChange();"
-                          onclick="_onUIPrefChange();">
+                          onkeyup="_onUIPrefChange(false);"
+                          onclick="_onUIPrefChange(false);">
                   <xul:treecols>
                     <xul:treecol sbid="content_auto_sync_playlist_check"
                                  type="checkbox"
@@ -161,13 +161,13 @@
       <!--
        * \brief Handle changes to the UI.
        *
-       * \param aEvent          UI event.
+       * \param aNeedUpdate    Whether the UI needs to be updated.
        -->
 
       <method name="_onUIPrefChange">
-        <parameter name="aEvent"/>
+        <parameter name="aNeedUpdate"/>
         <body><![CDATA[
-          this.DeviceSyncWidget.onUIPrefChange();
+          this.DeviceSyncWidget.onUIPrefChange(aNeedUpdate);
         ]]></body>
       </method>
 

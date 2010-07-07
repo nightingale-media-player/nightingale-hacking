@@ -339,7 +339,7 @@ var DeviceSyncWidget = {
    * \brief Update the settings for syncing when the user makes changes.
    */
 
-  onUIPrefChange: function DeviceSyncWidget_onUIPrefChange() {
+  onUIPrefChange: function DeviceSyncWidget_onUIPrefChange(aNeedUpdate) {
     // Ignore user interaction if the widget is disabled.
     if (this._widget.hasAttribute("disabled"))
       return;
@@ -397,9 +397,11 @@ var DeviceSyncWidget = {
       }
     }
 
-    // Finally update to ensure it all applied
-    this._ignoreDevicePrefChanges = false;
-    this.update();
+    if (aNeedUpdate) {
+      // Finally update to ensure it all applied
+      this._ignoreDevicePrefChanges = false;
+      this.update();
+    }
   },
 
   //----------------------------------------------------------------------------
