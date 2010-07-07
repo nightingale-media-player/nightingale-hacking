@@ -1280,14 +1280,13 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
 #endif
 
   if (status == sbIJobProgress::STATUS_SUCCEEDED) {
-    // Show the item.
-    {
-      IgnoreMediaItem(aRequest->item);
-      sbCDAutoIgnoreItem autoUnignore(this, aRequest->item);
-      rv = aRequest->item->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
-                                       NS_LITERAL_STRING("0"));
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
+    // Update the destination item content length.
+    sbLibraryUtils::GetContentLength(destination);
+
+    // Show the destination item.
+    rv = destination->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                                  NS_LITERAL_STRING("0"));
+    NS_ENSURE_SUCCESS(rv, rv);
 
     // Clear auto-removal of media file.
     autoRemoveMediaFile.forget();

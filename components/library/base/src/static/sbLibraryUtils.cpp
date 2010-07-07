@@ -383,11 +383,11 @@ nsresult sbLibraryUtils::GetContentLength(/* in */  sbIMediaItem * aItem,
                                           /* out */ PRInt64      * _retval)
 {
   NS_ENSURE_ARG_POINTER(aItem);
-  NS_ENSURE_ARG_POINTER(_retval);
 
-  nsresult rv = aItem->GetContentLength(_retval);
+  PRInt64 contentLength = 0;
+  nsresult rv = aItem->GetContentLength(&contentLength);
 
-  if(NS_FAILED(rv) || !*_retval) {
+  if(NS_FAILED(rv) || !contentLength) {
     // try to get the length from disk
     nsCOMPtr<sbIMediaItem> item(aItem);
 
@@ -419,13 +419,16 @@ nsresult sbLibraryUtils::GetContentLength(/* in */  sbIMediaItem * aItem,
     rv = fileURL->GetFile(getter_AddRefs(file));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = file->GetFileSize(_retval);
+    rv = file->GetFileSize(&contentLength);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = aItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH),
-                            sbAutoString(*_retval));
+                            sbAutoString(contentLength));
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  if (_retval)
+    *_retval = contentLength;
 
   return NS_OK;
 }

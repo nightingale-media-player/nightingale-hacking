@@ -157,13 +157,15 @@ public:
   static nsresult GetOriginItem(/* in */ sbIMediaItem*   aItem,
                                 /* out */ sbIMediaItem** _retval);
   /**
-   * Attempt to get the content length of the media item
+   * Attempt to get the content length of the media item.  If the content length
+   * property is not set, attempt to determine the content legnth from the
+   * content source and update the content length property.
    *
    * \param aItem    The item to look up
    * \return         The content length of the item (or throw an exception)
    */
   static nsresult GetContentLength(/* in */  sbIMediaItem * aItem,
-                                   /* out */ PRInt64      * _retval);
+                                   /* out */ PRInt64      * _retval = nsnull);
 
   /**
    * Set the content length of the media item
