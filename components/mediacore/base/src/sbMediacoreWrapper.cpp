@@ -190,11 +190,6 @@ sbMediacoreWrapper::OnGetDuration(PRUint64 *aDuration)
                              getter_AddRefs(dataEvent));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIVariant> variant;
-  rv = dataEvent->GetData(NS_LITERAL_STRING("retval"), 
-                          getter_AddRefs(variant));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsString retvalStr;
   rv = GetRetvalFromEvent(dataEvent, retvalStr);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -219,11 +214,6 @@ sbMediacoreWrapper::OnGetPosition(PRUint64 *aPosition)
   nsresult rv = SendDOMEvent(NS_LITERAL_STRING("getposition"), 
                              EmptyString(),
                              getter_AddRefs(dataEvent));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIVariant> variant;
-  rv = dataEvent->GetData(NS_LITERAL_STRING("retval"), 
-                          getter_AddRefs(variant));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsString retvalStr;
@@ -262,12 +252,15 @@ sbMediacoreWrapper::OnGetIsPlayingAudio(PRBool *aIsPlayingAudio)
                              getter_AddRefs(dataEvent));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIVariant> variant;
-  rv = dataEvent->GetData(NS_LITERAL_STRING("retval"), 
-                          getter_AddRefs(variant));
+  nsString retvalStr;
+  rv = GetRetvalFromEvent(dataEvent, retvalStr);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXAus: Process return value.
+  *aIsPlayingAudio = PR_FALSE;
+
+  if(retvalStr.EqualsLiteral("true") || retvalStr.EqualsLiteral("1")) {
+    *aIsPlayingAudio = PR_TRUE;
+  }
 
   return NS_OK;
 }
@@ -282,12 +275,15 @@ sbMediacoreWrapper::OnGetIsPlayingVideo(PRBool *aIsPlayingVideo)
                              getter_AddRefs(dataEvent));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIVariant> variant;
-  rv = dataEvent->GetData(NS_LITERAL_STRING("retval"), 
-                          getter_AddRefs(variant));
+  nsString retvalStr;
+  rv = GetRetvalFromEvent(dataEvent, retvalStr);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXAus: Process return value.
+  *aIsPlayingVideo = PR_FALSE;
+
+  if(retvalStr.EqualsLiteral("true") || retvalStr.EqualsLiteral("1")) {
+    *aIsPlayingVideo = PR_TRUE;
+  }
 
   return NS_OK;
 }
@@ -510,7 +506,16 @@ sbMediacoreWrapper::HandleEvent(nsIDOMEvent *aEvent)
       do_ProxiedGetService("@songbirdnest.com/Songbird/WindowCloak;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = windowCloak->Cloak(mPluginHostWindow);
+    // For debugging, you can comment this out to see the window which is
+    // hosting the plugin. 
+    //rv = windowCloak->Cloak(mPluginHostWindow);
+    //NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else if(eventType.EqualsLiteral("mediacore-error")) {
+    // XXXAus: TODO
+  }
+  else if(eventType.EqualsLiteral("mediacore-eos")) {
+    rv = DispatchMediacoreEvent(sbIMediacoreEvent::STREAM_END);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -530,6 +535,16 @@ sbMediacoreWrapper::AddSelfDOMListener()
   rv = target->AddEventListener(NS_LITERAL_STRING("resize"), this, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = target->AddEventListener(NS_LITERAL_STRING("mediacore-error"), 
+                                this, 
+                                PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = target->AddEventListener(NS_LITERAL_STRING("mediacore-eos"),
+                                this,
+                                PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -538,6 +553,16 @@ sbMediacoreWrapper::RemoveSelfDOMListener()
 {
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<nsIDOMEventTarget> target = do_QueryInterface(mPluginHostWindow, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = target->RemoveEventListener(NS_LITERAL_STRING("mediacore-error"), 
+                                   this, 
+                                   PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = target->RemoveEventListener(NS_LITERAL_STRING("mediacore-eos"),
+                                   this,
+                                   PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
