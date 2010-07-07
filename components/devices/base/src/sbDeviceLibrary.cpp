@@ -1284,6 +1284,21 @@ sbDeviceLibrary::Sync()
   rv = UpdateMainLibraryListeners(mCurrentSyncSettings);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<sbIDeviceCapabilities> capabilities;
+  rv = device->GetCapabilities(getter_AddRefs(capabilities));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool isSupported;
+  rv = capabilities->SupportsContent(
+                       sbIDeviceCapabilities::FUNCTION_IMAGE_DISPLAY,
+                       sbIDeviceCapabilities::CONTENT_IMAGE,
+                       &isSupported);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Do not proceed to image sync request submission if image is not supported.
+  if (!isSupported)
+    return NS_OK;
+
   // If the user has enabled image sync, trigger it after the audio/video sync
   // If the user has disabled image sync, trigger it to do the removal.
   nsCOMPtr<nsIWritablePropertyBag2> requestParams =
