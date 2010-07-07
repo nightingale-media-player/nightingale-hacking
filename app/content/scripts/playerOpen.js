@@ -589,18 +589,22 @@ function SBOpenPreferences(paneID, parentWindow)
 
 function SBOpenDownloadManager()
 {
-  var dlmgr = Components.classes['@mozilla.org/download-manager;1'].getService();
-  dlmgr = dlmgr.QueryInterface(Components.interfaces.nsIDownloadManager);
+  var dlmgr = Cc['@mozilla.org/download-manager;1'].getService();
+  dlmgr = dlmgr.QueryInterface(Ci.nsIDownloadManager);
 
-  var windowMediator = Components.classes['@mozilla.org/appshell/window-mediator;1'].getService();
-  windowMediator = windowMediator.QueryInterface(Components.interfaces.nsIWindowMediator);
+  var windowMediator = Cc['@mozilla.org/appshell/window-mediator;1']
+                         .getService();
+  windowMediator = windowMediator.QueryInterface(Ci.nsIWindowMediator);
 
   var dlmgrWindow = windowMediator.getMostRecentWindow("Download:Manager");
   if (dlmgrWindow) {
     dlmgrWindow.focus();
   }
   else {
-    window.open("chrome://mozapps/content/downloads/downloads.xul", "Download:Manager", "chrome,centerscreen,dialog=no,resizable", null);
+    window.openDialog("chrome://mozapps/content/downloads/downloads.xul",
+                      "Download:Manager",
+                      "chrome,centerscreen,dialog=no,resizable",
+                      null);
   }
 }
 
