@@ -108,7 +108,6 @@
 ./components/SBTimer.jsm
 ./components/SBDataRemoteUtils.jsm
 ./components/RDFHelper.jsm
-./components/DeviceHelper.jsm
 ./components/DropHelper.jsm
 ./components/DOMUtils.jsm
 ./components/ArrayConverter.jsm
@@ -209,7 +208,9 @@
 ./components/sbWidgets.xpt
 ./components/sbWindowWatcher.xpt
 ./components/sbiTunesImporter.xpt
+./jsmodules/DeviceHelper.jsm
 ./jsmodules/XPCOMUtils.jsm
+./jsmodules/sbStorageFormatter.jsm
 ./xulrunner/components/accessibility.xpt
 ./xulrunner/components/alerts.xpt
 ./xulrunner/components/appshell.xpt

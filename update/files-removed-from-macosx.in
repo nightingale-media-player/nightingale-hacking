@@ -324,7 +324,6 @@
 ./Contents/Resources/components/SBTimer.jsm
 ./Contents/Resources/components/SBDataRemoteUtils.jsm
 ./Contents/Resources/components/RDFHelper.jsm
-./Contents/Resources/components/DeviceHelper.jsm
 ./Contents/Resources/components/DropHelper.jsm
 ./Contents/Resources/components/DOMUtils.jsm
 ./Contents/Resources/components/ArrayConverter.jsm
@@ -467,7 +466,9 @@
 ./Contents/Resources/components/sbWidgets.xpt
 ./Contents/Resources/components/sbWindowWatcher.xpt
 ./Contents/Resources/components/sbiTunesImporter.xpt
+./Contents/Resources/jsmodules/DeviceHelper.jsm
 ./Contents/Resources/jsmodules/XPCOMUtils.jsm
+./Contents/Resources/jsmodules/sbStorageFormatter.jsm
 ./Contents/Frameworks/XUL.framework/components/accessibility.xpt
 ./Contents/Frameworks/XUL.framework/components/alerts.xpt
 ./Contents/Frameworks/XUL.framework/components/appshell.xpt
