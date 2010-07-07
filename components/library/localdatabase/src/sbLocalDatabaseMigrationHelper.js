@@ -76,10 +76,10 @@ sbLocalDatabaseMigrationHelper.prototype = {
                        Ci.sbILocalDatabaseMigrationHelper,
                        Ci.sbIJobProgress,
                        Ci.sbIJobCancelable ],
-  
-  _latestSchemaVersion: 24,
+
+  _latestSchemaVersion: 25,
   _lowestFromSchemaVersion: Number.MAX_VALUE,
-  
+
   _migrationHandlers:   null,
 
   //
