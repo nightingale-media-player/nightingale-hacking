@@ -1769,18 +1769,6 @@
                   this._self.removeSelectedTracks();
                 }
                 break;
-              case "cmd_find":
-                var windowMediator = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                                               .getService(Components.interfaces.nsIWindowMediator);
-                var songbirdWindow = windowMediator.getMostRecentWindow("Songbird:Main");
-                if (songbirdWindow && songbirdWindow.gSearchHandler) {
-                  var searchBar = songbirdWindow.gSearchHandler.getSearchBar();
-                  if (searchBar) {
-                    searchBar.select();
-                    searchBar.focus();
-                  }
-                }
-                break;
             }
           },
           supportsCommand: function(aCommand) {
@@ -1788,7 +1776,6 @@
               case "cmd_selectAll":
               case "cmd_delete":
               case "cmd_copy":
-              case "cmd_find":
                 return true;
             }
             return false;
@@ -1796,7 +1783,6 @@
           isCommandEnabled: function(aCommand) {
             switch (aCommand) {
               case "cmd_selectAll":
-              case "cmd_find":
                 return true;
               case "cmd_delete":
                 var list = this._self._getOuterList();
@@ -2685,7 +2671,7 @@
       getInternalTransferDataForFlavour(aDragSession,
                                         this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS,
                                         Ci.sbIMediaItemsTransferContext);
- 
+
     var items = context.items;
     // we must remember to reset the context before we exit, so that when we
     // actually need the items in onDrop we can get them again!

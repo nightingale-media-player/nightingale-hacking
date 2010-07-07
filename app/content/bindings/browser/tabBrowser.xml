@@ -2001,7 +2001,7 @@
                */
               if ((aEvent.charCode == "/".charCodeAt(0) ||
                   aEvent.charCode == "'".charCodeAt(0)) &&
-                  this.tabbrowser.shouldDisableFindForSelectedTab())
+                  this.tabbrowser.shouldDisableFindAgainForSelectedTab())
               {
                 if (window.gSearchHandler && 
                     window.gSearchHandler.getSearchBar) {
