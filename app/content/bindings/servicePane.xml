@@ -1729,7 +1729,8 @@
 
           if (highlightedNode) {
             let domNode = this.getDOMNode(highlightedNode);
-            domNode.className = domNode.className.replace(/\bhighlighted\b/g,'');
+            if (domNode)
+              domNode.className = domNode.className.replace(/\bhighlighted\b/g,'');
           }
 
           // Add the 'highlighted' class to the new node
