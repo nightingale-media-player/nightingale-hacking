@@ -157,14 +157,12 @@ BaseDeviceHelper.prototype = {
   _getMessageKeyPrefix:
     function BaseDeviceHelper__getMessageKeyPrefix(aLibrary) {
     var messageKeyPrefix = "device.error.not_enough_freespace.prompt.";
-    if ((aLibrary.mgmtType & Ci.sbIDeviceLibrary.MGMT_TYPE_ALL_MASK) > 0) {
-        messageKeyPrefix += "sync";
-    }
-    else if ((aLibrary.mgmtType & Ci.sbIDeviceLibrary.MGMT_TYPE_PLAYLISTS_MASK) > 0){
-        messageKeyPrefix += "sync_playlists";
+    if (aLibrary.syncSettings.syncMode ==
+        Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL) {
+      messageKeyPrefix += "manual";
     }
     else {
-        messageKeyPrefix += "manual";
+      messageKeyPrefix += "sync";
     }
 
     return messageKeyPrefix;
