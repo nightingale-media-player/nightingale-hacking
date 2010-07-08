@@ -24,6 +24,22 @@
 
 #include "sbWindowChromeService.h"
 
+#include <prlog.h>
+
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbWindowChromeService:5
+ */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gWindowChromeServiceLog = nsnull;
+#define TRACE(args) PR_LOG(gWindowChromeServiceLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gWindowChromeServiceLog, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif
+
+
 #include <commctrl.h>
 #include <shellapi.h>
 #include <Uxtheme.h>
@@ -40,6 +56,14 @@ sbWindowChromeService::sbWindowChromeService()
   : mhDWMAPI(NULL),
     mDwmIsCompositionEnabled(NULL)
 {
+#ifdef PR_LOGGING
+  if (!gWindowChromeServiceLog) {
+    gWindowChromeServiceLog = PR_NewLogModule("sbWindowChromeService");
+  }
+
+  TRACE(("sbWindowChromeService[0x%x] - ctor", this));
+#endif
+
   NS_ASSERTION(!gSubclassId,
                "sbWindowChromeService constructed twice!");
   if (!gSubclassId) {
@@ -141,6 +165,7 @@ sbWindowChromeService::WndProc(HWND hWnd,
     // We're majorly screwed up somehow; do nothing
     return DefSubclassProc(hWnd, uMsg, wParam, lParam);
   }
+  TRACE(("%s: WndProc(%p, %08x)", __FUNCTION__, hWnd, uMsg));
   switch (uMsg) {
   case WM_NCDESTROY:
   {
@@ -295,14 +320,17 @@ sbWindowChromeService::WndProc(HWND hWnd,
         return DefSubclassProc(hWnd, uMsg, wParam, lParam);
       }
     }
+    else {
+      // Let's turn off themes to make sure our borders don't get rounded!
+      ::SetWindowTheme(hWnd, L"", L"");
+    }
     // No DWM, don't do anything to avoid extra paints of the non-client area
     // which causes bad flickering.
-    // Let's turn off themes to make sure our borders don't get rounded!
-    ::SetWindowTheme(hWnd, L" ", L" ");
     return TRUE;
   }
   case WM_NCPAINT:
   {
+    TRACE(("WM_NCPAINT(%p)", hWnd));
     // We need to call the default implementation in order to get window shadow.
     // Since that only works when DWM is enabled anyway, check if it is - if it
     // is not, do not call the default implementation since that causes flicker
