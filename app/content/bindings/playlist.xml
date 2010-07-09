@@ -435,7 +435,7 @@
            double-click and need to start playback instead -->
       <field name="_startEditingTimer">null</field>
 
-      <!-- Sortcuts for various anonymous elements -->
+      <!-- Shortcuts for various anonymous elements -->
       <field name="_context_popup" readonly="true">
         document.getAnonymousElementByAttribute(this, "sbid", "sb-playlist-popup");
       </field>

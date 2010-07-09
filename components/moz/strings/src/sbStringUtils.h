@@ -108,6 +108,20 @@ PRInt64 nsString_ToInt64(const nsAString& str, nsresult* rv = nsnull);
 
 PRUint64 nsString_ToUint64(const nsAString& str, nsresult* rv = nsnull);
 
+/**
+ * Trim whitespace from the beginning and end of a string; then compress
+ * remaining runs of whitespace characters to a single space.
+ *
+ * \param aString               String to compress.
+ * \param aLeading              Whether to compress the leading whitespace.
+ * \param aTrailing             Whether to compress the trailing whitespace.
+ *
+ * @see CompressWhitespace in nsStringAPI.
+ */
+void SB_CompressWhitespace(nsAString& aString,
+                           PRBool aLeading = PR_TRUE,
+                           PRBool aTrailing = PR_TRUE);
+
 nsresult SB_StringEnumeratorEquals(nsIStringEnumerator* aLeft,
                                    nsIStringEnumerator* aRight,
                                    PRBool* _retval);

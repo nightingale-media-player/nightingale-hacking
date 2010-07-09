@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #include "sbStringUtils.h"
 
@@ -112,6 +110,55 @@ nsString_ToUint64(const nsAString& str, nsresult* rv)
     *rv = NS_OK;
   }
   return result;
+}
+
+/**
+ * This is originated from CompressWhitespace in nsStringAPI, with
+ * modification. Make sure to update it when the upstream is changed.
+ */
+void
+SB_CompressWhitespace(nsAString& aString, PRBool aLeading, PRBool aTrailing)
+{
+  PRUnichar *start;
+  PRUint32 len = NS_StringGetMutableData(aString, PR_UINT32_MAX, &start);
+  PRUnichar *end = start + len;
+  PRUnichar *from = start, *to = start;
+
+  while (from < end && NS_IsAsciiWhitespace(*from))
+    from++;
+
+  if (!aLeading)
+    to = from;
+
+  while (from < end) {
+    PRUnichar theChar = *from++;
+    if (NS_IsAsciiWhitespace(theChar)) {
+      // We found a whitespace char, so skip over any more
+      while (from < end && NS_IsAsciiWhitespace(*from))
+        from++;
+
+      // Turn all whitespace into spaces
+      theChar = ' ';
+    }
+
+    if (from == end && theChar == ' ') {
+      to = from;
+    } else {
+      *to++ = theChar;
+    }
+  }
+
+  // Drop any trailing space
+  if (aTrailing) {
+    while (to > start && to[-1] == ' ')
+      to--;
+  }
+
+  // Re-terminate the string
+  *to = '\0';
+
+  // Set the new length
+  aString.SetLength(to - start);
 }
 
 nsresult
