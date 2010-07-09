@@ -39,6 +39,7 @@
 #include <prlog.h>
 
 #include <IWindowCloak.h>
+#include <sbIPropertyArray.h>
 
 #include <sbProxiedComponentManager.h>
 #include <sbStringUtils.h>
@@ -511,11 +512,33 @@ sbMediacoreWrapper::HandleEvent(nsIDOMEvent *aEvent)
     //rv = windowCloak->Cloak(mPluginHostWindow);
     //NS_ENSURE_SUCCESS(rv, rv);
   }
+  else if(eventType.EqualsLiteral("mediacore-buffering-begin")) {
+    rv = DispatchMediacoreEvent(sbIMediacoreEvent::BUFFERING, 
+                                sbNewVariant(0.0).get());
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else if(eventType.EqualsLiteral("mediacore-buffering-end")) {
+    rv = DispatchMediacoreEvent(sbIMediacoreEvent::STREAM_START);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   else if(eventType.EqualsLiteral("mediacore-error")) {
     // XXXAus: TODO
   }
   else if(eventType.EqualsLiteral("mediacore-eos")) {
     rv = DispatchMediacoreEvent(sbIMediacoreEvent::STREAM_END);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else if(eventType.EqualsLiteral("mediacore-metadata")) {
+    nsCOMPtr<nsIDOMDataContainerEvent> dataEvent = 
+      do_QueryInterface(aEvent, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIVariant> variant;
+    rv = dataEvent->GetData(NS_LITERAL_STRING("properties"), 
+                            getter_AddRefs(variant));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = DispatchMediacoreEvent(sbIMediacoreEvent::METADATA_CHANGE, variant);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -545,6 +568,21 @@ sbMediacoreWrapper::AddSelfDOMListener()
                                 PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = target->AddEventListener(NS_LITERAL_STRING("mediacore-metadata"),
+                                this,
+                                PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = target->AddEventListener(NS_LITERAL_STRING("mediacore-buffering-begin"),
+                                this,
+                                PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = target->AddEventListener(NS_LITERAL_STRING("mediacore-buffering-end"),
+                                this,
+                                PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -561,6 +599,21 @@ sbMediacoreWrapper::RemoveSelfDOMListener()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = target->RemoveEventListener(NS_LITERAL_STRING("mediacore-eos"),
+                                   this,
+                                   PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = target->RemoveEventListener(NS_LITERAL_STRING("mediacore-metadata"),
+                                   this,
+                                   PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = target->RemoveEventListener(NS_LITERAL_STRING("mediacore-buffering-begin"),
+                                   this,
+                                   PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = target->RemoveEventListener(NS_LITERAL_STRING("mediacore-buffering-end"),
                                    this,
                                    PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -646,8 +699,8 @@ sbMediacoreWrapper::GetRetvalFromEvent(nsIDOMDataContainerEvent *aEvent,
 
 nsresult 
 sbMediacoreWrapper::DispatchMediacoreEvent(PRUint32 aType, 
-                                           sbIMediacoreError *aError,
-                                           nsIVariant *aData)
+                                           nsIVariant *aData,
+                                           sbIMediacoreError *aError)
 {
   nsCOMPtr<sbIMediacoreEvent> event;
   nsresult rv = sbMediacoreEvent::CreateEvent(aType, 

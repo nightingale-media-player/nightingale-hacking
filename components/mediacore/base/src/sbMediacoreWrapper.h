@@ -118,8 +118,8 @@ private:
                               nsAString &aRetval);
 
   nsresult DispatchMediacoreEvent(PRUint32 aType, 
-                                  sbIMediacoreError *aError = nsnull,
-                                  nsIVariant *aData = nsnull);
+                                  nsIVariant *aData = nsnull,
+                                  sbIMediacoreError *aError = nsnull);
   
 protected:
   virtual ~sbMediacoreWrapper();
