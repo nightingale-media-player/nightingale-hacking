@@ -268,12 +268,6 @@ sbDeviceEnsureSpaceForWrite::RemoveItemsFromLibrary(RemoveItems::iterator iter,
 
   for (;iter != end; ++iter) {
 
-    // tell the user about it
-    rv = mDevice->CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_NOT_ENOUGH_FREESPACE,
-                                         sbNewVariant(iter->mItem),
-                                         PR_TRUE);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     rv = iter->mList->Remove(iter->mItem);
   }
 
