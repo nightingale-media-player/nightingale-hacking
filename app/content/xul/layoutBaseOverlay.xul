@@ -69,8 +69,22 @@
   <menubar id="main-menubar">
     <menu id="file-menu" label="&menu.file;"  accesskey="&menu.file.accesskey;">
       <menupopup id="menu_FilePopup">
-        <menuitem id="menuitem_file_new" key="newplaylist-key" observes="servicePaneOpen" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
-        <menuitem id="menuitem_file_smart" key="newsmartplaylist-key" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;" />
+        <menuitem id="menuitem_file_new"
+                  key="newplaylist-key"
+                  class="menuitem-iconic"
+                  label="&menu.file.new;"
+                  accesskey="&menu.file.new.accesskey;">
+          <observes element="servicePaneOpen"
+                    attribute="disabled"/>
+        </menuitem>
+        <menuitem id="menuitem_file_smart"
+                  key="newsmartplaylist-key"
+                  class="menuitem-iconic"
+                  label="&menu.file.smart;"
+                  accesskey="&menu.file.smart.accesskey;">
+          <observes element="servicePaneOpen"
+                    attribute="disabled"/>
+        </menuitem>
         <!-- disabled per bug 20269
         <menuitem id="menuitem_file_remote" class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;" />
         -->
@@ -325,12 +339,8 @@
       <broadcaster id="servicePaneOpen">
         <observes type="dataremote"
                   key="splitter.servicepane_splitter.collapsed"
-                  attribute="hidden"
-                  onchange="if(gServicePane.open) {
-                              document.getElementById('menuitem_file_new').hidden = false;
-                            } else {
-                              document.getElementById('menuitem_file_new').hidden = true;
-                            }" />
+                  boolean="true"
+                  attribute="disabled"/>
       </broadcaster>
       <!-- Used by the Control menu -->
       <broadcaster id="controlIsPlaying">
