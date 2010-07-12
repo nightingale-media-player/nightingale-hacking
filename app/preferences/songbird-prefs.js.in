@@ -13,6 +13,7 @@ pref("songbird.buildNumber", "@SB_BUILD_NUMBER@");
 
 // Default feather settings:
 // @see sbFeathersManager.js for more information about each pref
+pref("general.skins.selectedSkin", "purplerain");
 pref("songbird.feathers.default_skin_internalname", "purplerain");
 pref("songbird.feathers.default_feather_id", "purplerain@songbirdnest.com");
 pref("songbird.feathers.default_main_layout", "chrome://purplerain/content/xul/mainplayer.xul");

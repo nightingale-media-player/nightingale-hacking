@@ -97,38 +97,7 @@ const WINDOWTYPE_SONGBIRD_CORE        = "Songbird:Core";
 
 Cu.import("resource://app/jsmodules/RDFHelper.jsm");
 Cu.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
-
-/**
- * /class ArrayEnumerator
- * /brief Converts a js array into an nsISimpleEnumerator
- */
-function ArrayEnumerator(array)
-{
-  this.data = array;
-}
-ArrayEnumerator.prototype = {
-
-  index: 0,
-
-  getNext: function() {
-    return this.data[this.index++];
-  },
-
-  hasMoreElements: function() {
-    if (this.index < this.data.length)
-      return true;
-    else
-      return false;
-  },
-
-  QueryInterface: function(iid)
-  {
-    if (!iid.equals(Ci.nsISimpleEnumerator) &&
-        !iid.equals(Ci.nsISupports))
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    return this;
-  }
-}
+Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 
 /**
  * sbISkinDescription
@@ -760,7 +729,7 @@ FeathersManager.prototype = {
    */
   getSkinDescriptions: function getSkinDescriptions() {
     // Copy all the descriptions into an array, and then return an enumerator
-    return new ArrayEnumerator( [this._skins[key] for (key in this._skins)] );
+    return ArrayConverter.enumerator( [this._skins[key] for (key in this._skins)] );
   },
 
   /**
@@ -768,7 +737,7 @@ FeathersManager.prototype = {
    */
   getLayoutDescriptions: function getLayoutDescriptions() {
     // Copy all the descriptions into an array, and then return an enumerator
-    return new ArrayEnumerator( [this._layouts[key] for (key in this._layouts)] );
+    return ArrayConverter.enumerator( [this._layouts[key] for (key in this._layouts)] );
   },
   
   
@@ -1030,7 +999,7 @@ FeathersManager.prototype = {
         }
       }
     }   
-    return new ArrayEnumerator( skins );
+    return ArrayConverter.enumerator( skins );
   },
   
   
@@ -1038,7 +1007,7 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */
   getLayoutsForSkin: function getLayoutsForSkin(internalName) {
-    return new ArrayEnumerator( this._getLayoutsArrayForSkin(internalName) );
+    return ArrayConverter.enumerator( this._getLayoutsArrayForSkin(internalName) );
   },
 
 
@@ -1145,6 +1114,19 @@ FeathersManager.prototype = {
       return;
     }
 
+    var currentLayoutURL = this.currentLayoutURL;
+    var currentSkinName = this.currentSkinName;
+
+    // check if we're in safe mode
+    var app = Cc["@mozilla.org/xre/app-info;1"]
+                .getService(Ci.nsIXULRuntime);
+    if (app.inSafeMode) {
+      // in safe mode, force using default layout/skin
+      // (but do not persist this choice)
+      currentLayoutURL = this._defaultLayoutURL;
+      currentSkinName = this._defaultSkinName;
+    }
+
     // Check to see if we are in test mode, if so, we don't actually
     // want to open the window as it will break the testing we're 
     // attempting to do.    
@@ -1169,7 +1151,7 @@ FeathersManager.prototype = {
         chromeFeatures += ",centerscreen";
     }
     
-    var showChrome = this.isChromeEnabled(this.currentLayoutURL, this.currentSkinName);
+    var showChrome = this.isChromeEnabled(currentLayoutURL, currentSkinName);
     if (showChrome) {
        chromeFeatures += ",titlebar=yes";
     } else {
@@ -1178,20 +1160,20 @@ FeathersManager.prototype = {
     
     // Set the global chrome (window border and title) flag
     this._setChromeEnabled(showChrome);
-    
+
     // Open the new player window
     var windowWatcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
                           .getService(Ci.nsIWindowWatcher);
-                          
+
     var newMainWin = windowWatcher.openWindow(null,
-                                              this.currentLayoutURL, 
-                                              "", 
+                                              currentLayoutURL,
+                                              "",
                                               chromeFeatures,
                                               null);
     newMainWin.focus();
   },
-  
-  
+
+
   /**
    * \sa sbIFeathersManager
    */  
