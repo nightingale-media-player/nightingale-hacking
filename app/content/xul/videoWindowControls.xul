@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
-<!-- 
+<!--
 /*
  *=BEGIN SONGBIRD GPL
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -33,8 +33,8 @@
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
 <window id="video_osd_controls_win"
         windowtype="Songbird:Core"
-        onload="videoControlsController._initialize();" 
-        onunload="videoControlsController._shutdown();" 
+        onload="videoControlsController._initialize();"
+        onunload="videoControlsController._shutdown();"
         onclose="return false;"
         hidechrome="true"
         sb-no-close-on-layout-switch="true"
@@ -75,7 +75,8 @@
 
               <!-- Full screen button box -->
               <vbox id="osd_fullscreen_control_hbox" flex="0" pack="start">
-                <button id="full_screen_button" oncommand="videoControlsController.toggleFullscreen();"/>
+                <button id="full_screen_button"
+                        onmousedown="videoControlsController.toggleFullscreen();"/>
               </vbox>
             </hbox>
 
@@ -127,8 +128,8 @@
             </stack>
 
             <!-- XXXAus: We add a space before and after to avoid
-                         text rendering issues that cut off the last 
-                         digit in the time elapsed display :( 
+                         text rendering issues that cut off the last
+                         digit in the time elapsed display :(
             -->
             <sb-player-timeelapsed-label class="osd-faceplate-text"
                                          textbefore=" "
