@@ -596,9 +596,9 @@ sbCDDevice::Disconnect()
   sbBaseDevice::Disconnect();
 
   // Send device removed notification.
-  rv = CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_REMOVED,
-                              sbNewVariant(static_cast<sbIDevice*>(this)));
-  NS_ENSURE_SUCCESS(rv, rv);
+  CreateAndDispatchDeviceManagerEvent
+    (sbIDeviceEvent::EVENT_DEVICE_REMOVED,
+     sbNewVariant(static_cast<sbIDevice*>(this)));
 
   // Log progress.
   LOG(("Exit sbCDDevice::Disconnect\n"));

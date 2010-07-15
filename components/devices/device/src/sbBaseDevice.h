@@ -518,10 +518,27 @@ public:
    * Create an event for the device and dispatch it
    * @param aType type of event
    * @param aData event data
+   * @param aAsync if true, dispatch asynchronously
+   * @param aTarget event target
    */
   nsresult CreateAndDispatchEvent(PRUint32 aType,
                                   nsIVariant *aData,
-                                  PRBool aAsync = PR_TRUE);
+                                  PRBool aAsync = PR_TRUE,
+                                  sbIDeviceEventTarget* aTarget = nsnull);
+
+  /**
+   * Create and dispatch an event through the device manager of the type
+   * specified by aType with the data specified by aData, originating from the
+   * device.  If aAsync is true, dispatch and return immediately; otherwise,
+   * wait for the event handling to complete.
+   *
+   * \param aType                 Type of event.
+   * \param aData                 Event data.
+   * \param aAsync                If true, dispatch asynchronously.
+   */
+  nsresult CreateAndDispatchDeviceManagerEvent(PRUint32 aType,
+                                               nsIVariant *aData,
+                                               PRBool aAsync = PR_TRUE);
 
   /**
    * Regenerate the Media URL when the media management service is enabled.

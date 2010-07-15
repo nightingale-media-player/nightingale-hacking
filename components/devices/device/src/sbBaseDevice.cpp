@@ -2649,9 +2649,11 @@ sbBaseDevice::CreateTransferRequest(PRUint32 aRequest,
   return NS_OK;
 }
 
-nsresult sbBaseDevice::CreateAndDispatchEvent(PRUint32 aType,
-                                              nsIVariant *aData,
-                                              PRBool aAsync /*= PR_TRUE*/)
+nsresult sbBaseDevice::CreateAndDispatchEvent
+                         (PRUint32 aType,
+                          nsIVariant *aData,
+                          PRBool aAsync /*= PR_TRUE*/,
+                          sbIDeviceEventTarget* aTarget /*= nsnull*/)
 {
   nsresult rv;
 
@@ -2678,7 +2680,25 @@ nsresult sbBaseDevice::CreateAndDispatchEvent(PRUint32 aType,
                             getter_AddRefs(deviceEvent));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  return DispatchEvent(deviceEvent, aAsync, nsnull);
+  PRBool dispatched;
+  if (aTarget)
+    return aTarget->DispatchEvent(deviceEvent, aAsync, &dispatched);
+  return DispatchEvent(deviceEvent, aAsync, &dispatched);
+}
+
+nsresult sbBaseDevice::CreateAndDispatchDeviceManagerEvent
+                         (PRUint32 aType,
+                          nsIVariant *aData,
+                          PRBool aAsync /*= PR_TRUE*/)
+{
+  nsresult rv;
+
+  // Use the device manager as the event target.
+  nsCOMPtr<sbIDeviceEventTarget> eventTarget =
+    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return CreateAndDispatchEvent(aType, aData, aAsync, eventTarget);
 }
 
 nsresult
