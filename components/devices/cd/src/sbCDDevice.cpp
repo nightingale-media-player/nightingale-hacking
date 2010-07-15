@@ -562,6 +562,9 @@ sbCDDevice::Disconnect()
   // This function should only be called on the main thread.
   NS_ASSERTION(NS_IsMainThread(), "not on main thread");
 
+  // Indicate that the device is disconnected.
+  mStatus.ChangeState(STATE_DISCONNECTED);
+
   // Unmount and remove the default volume.
   nsRefPtr<sbBaseDeviceVolume> volume;
   {
