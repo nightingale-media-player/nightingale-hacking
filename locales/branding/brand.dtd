@@ -11,7 +11,7 @@
 <!ENTITY faviconURL            "chrome://songbird-branding/skin/logo_16.png">
 <!ENTITY aboutImageURL         "chrome://songbird-branding/skin/powered-by-mozilla.png">
 
-<!ENTITY copyright             "Certain files in this binary application are Copyright &copy; 2005-2009">
+<!ENTITY copyright             "Certain files in this binary application are Copyright &copy; 2005-2010">
 
 <!ENTITY window.main.title     "Songbird">
 <!ENTITY window.dev.title      "Songbird">
