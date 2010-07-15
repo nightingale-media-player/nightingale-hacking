@@ -128,10 +128,14 @@ var watchFolderPrefsPane = {
             document.getElementById("watch_folder_enable_pref");
       var watchFolderPathPrefElem =
             document.getElementById("watch_folder_path_pref");
+      var watchFolderEnableCheckboxElem =
+            document.getElementById("watch_folder_enable_checkbox");
+      var watchFolderPathTextboxElem =
+            document.getElementById("watch_folder_path_textbox");
 
       // explicitly saving these prefs because they're not inside a prefpane
-      watchFolderEnablePrefElem.valueFromPreferences = watchFolderEnablePrefElem.value;
-      watchFolderPathPrefElem.valueFromPreferences = watchFolderPathPrefElem.value;
+      watchFolderEnablePrefElem.valueFromPreferences = watchFolderEnableCheckboxElem.checked;
+      watchFolderPathPrefElem.valueFromPreferences = watchFolderPathTextboxElem.value;
 
       var watchFolderEnableCheckbox =
             document.getElementById("watch_folder_enable_checkbox");
@@ -145,8 +149,6 @@ var watchFolderPrefsPane = {
         // instantApply may be off
         var watchFolderDir = Cc["@mozilla.org/file/local;1"]
                                .createInstance(Ci.nsILocalFile);
-        var watchFolderPathTextboxElem =
-          document.getElementById("watch_folder_path_textbox");
         var watchFolderPath =
           watchFolderPathPrefElem.getElementValue(watchFolderPathTextboxElem);
         watchFolderDir.initWithPath(watchFolderPath);
