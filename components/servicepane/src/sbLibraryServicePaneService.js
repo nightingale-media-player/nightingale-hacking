@@ -1315,7 +1315,7 @@ function sbLibraryServicePane__libraryRemoved(aLibrary) {
   var libraryItemNodeEnum = libraryItemNodeList.enumerate();
   while (libraryItemNodeEnum.hasMoreElements()) {
     // Hide the library item node
-    libraryItemNode =
+    var libraryItemNode =
       libraryItemNodeEnum.getNext().QueryInterface(Ci.sbIServicePaneNode);
     libraryItemNode.hidden = true;
   }
@@ -1807,7 +1807,7 @@ function sbLibraryServicePane__scanForRemovedItems(aLibrary) {
   var libraryItemNodeEnum = libraryItemNodeList.enumerate();
   while (libraryItemNodeEnum.hasMoreElements()) {
     // Get the library item node
-    libraryItemNode =
+    var libraryItemNode =
       libraryItemNodeEnum.getNext().QueryInterface(Ci.sbIServicePaneNode);
 
     // Skip library nodes
