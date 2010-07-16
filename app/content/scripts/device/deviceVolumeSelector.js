@@ -394,7 +394,7 @@ var deviceVolumeMenuItemsSvc = {
     // Add a menu item for each device volume.
     for (var i = 0; i < libraryCount; i++) {
       // Get the next volume library.
-      library = libraries.queryElementAt(i, Ci.sbIDeviceLibrary);
+      var library = libraries.queryElementAt(i, Ci.sbIDeviceLibrary);
 
       // Create a volume menuitem.
       var menuItem = document.createElementNS(XUL_NS, "menuitem");

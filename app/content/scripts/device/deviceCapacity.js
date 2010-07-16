@@ -317,7 +317,7 @@ var DCW = {
 
       // Update the capacity legend.
       if (value) {
-        storageConverter =
+        let storageConverter =
           Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
             .createInstance(Ci.sbIPropertyUnitConverter);
         child.setAttribute("value", storageConverter.autoFormat(value, -1, 1));
