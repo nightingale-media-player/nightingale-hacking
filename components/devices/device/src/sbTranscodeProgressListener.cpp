@@ -138,8 +138,11 @@ sbTranscodeProgressListener::SetProgress(sbIJobProgress * aJobProgress) {
   rv = aJobProgress->GetProgress(&progress);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  double const percentComplete = static_cast<double>(progress) /
-                                 static_cast<double>(mTotal);
+  double percentComplete = 0.0;
+  if (mTotal > 0) {
+    percentComplete = static_cast<double>(progress) /
+                      static_cast<double>(mTotal);
+  }
   mStatus->ItemProgress(percentComplete);
 
   sbStatusPropertyValue value;
