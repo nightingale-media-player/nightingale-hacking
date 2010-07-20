@@ -409,28 +409,41 @@ var DeviceMediaManagementServices = {
    */
 
   musicManagementPrefsInitUI:
-      function DeviceMediaManagementServices_musicManagementPrefsInitUI()
-  {
-      /* Get the transcoding format menu list */
-      var profilesMenuList = this._getElement("encoding-format-list");
-      var profiles = this._mediaManagementPrefs.transcodeProfiles;
+    function DeviceMediaManagementServices_musicManagementPrefsInitUI() {
+    // Get the available transcoding profiles.
+    var profiles = this._mediaManagementPrefs.transcodeProfiles;
 
-      /* Clear the menu list */
-      while (profilesMenuList.firstChild)
-          profilesMenuList.removeChild(profilesMenuList.firstChild);
- 
-      /* Fill in the menu list with each available profile. */
-      for (var i = 0; i < profiles.length; i++)
-      {
-        var profile = profiles[i];
-        var readableName = profile.description;
-        var menuItem = document.createElementNS(XUL_NS, "menuitem");
-        menuItem.setAttribute("label", readableName);
-        menuItem.setAttribute("value", profile.id);
- 
-        /* Add the menu item to the list. */
-        profilesMenuList.appendChild(menuItem);
-      }
+    // Get the transcoding format menu list.
+    var profilesMenuList = this._getElement("encoding-format-list");
+
+    // Clear the menu list.
+    while (profilesMenuList.firstChild)
+      profilesMenuList.removeChild(profilesMenuList.firstChild);
+
+    // Fill in the menu list with each available profile.
+    for (var i = 0; i < profiles.length; i++) {
+      var profile = profiles[i];
+      var readableName = profile.description;
+      var menuItem = document.createElementNS(XUL_NS, "menuitem");
+      menuItem.setAttribute("label", readableName);
+      menuItem.setAttribute("value", profile.id);
+
+      // Add the menu item to the list.
+      profilesMenuList.appendChild(menuItem);
+    }
+
+    // Show the transcoding preferences UI if any transcoding profiles are
+    // available.  Otherwise, show the no encoders available description.
+    var transcodingSettingsDeckElem =
+          this._getElement("transcoding_settings_deck");
+    if (profiles.length > 0) {
+      transcodingSettingsDeckElem.selectedPanel =
+        this._getElement("transcoding_preferences");
+    }
+    else {
+      transcodingSettingsDeckElem.selectedPanel =
+        this._getElement("no_encoders_available_description");
+    }
   },
 
 

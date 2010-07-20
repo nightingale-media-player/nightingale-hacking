@@ -71,36 +71,42 @@
       <xul:vbox flex="1">
         <xul:groupbox flex="1" sbid="transcoding-groupbox" setting="transcode">
           <xul:caption label="&device.settings.music.transcoding.label;"/>
-          <!-- Transcoding preferences. -->
-          <xul:vbox class="content-controls"
-                    oncommand="DeviceMediaManagementServices.onUIPrefChange();">
+          <xul:deck sbid="transcoding_settings_deck">
+            <xul:description sbid="no_encoders_available_description">
+              &device.settings.music.transcoding.no_encoders.description;
+            </xul:description>
 
-            <!-- Transcoding mode radio group. -->
-            <xul:radiogroup sbid="transcoding_mode_radio_group" flex="1">
+            <xul:vbox sbid="transcoding_preferences"
+                      class="content-controls"
+                      oncommand="DeviceMediaManagementServices.onUIPrefChange();">
 
-              <xul:radio sbid="transcoding-mode-auto"
-                         xbl:inherits="disabled"
-                         label="&device.settings.music.transcoding.mode.auto.label;"/>
-              <xul:radio sbid="transcoding-mode-manual"
-                         xbl:inherits="disabled"
-                         label="&device.settings.music.transcoding.mode.manual.label;"/>
-              <xul:vbox sbid="transcoding-mode-details" class="indent">
-                <xul:hbox>
-                  <xul:label value="&device.settings.music.transcoding.format.label;"/>
-                  <xul:menulist sbid="encoding-format-menu">
-                    <xul:menupopup sbid="encoding-format-list" class="encoding-format-list"/>
-                  </xul:menulist>
-                </xul:hbox>
-                <xul:hbox sbid="transcoding-bitrate" xbl:inherits="disabled">
-                  <xul:label value="&device.settings.music.transcoding.bitrate.label;"/>
-                  <xul:textbox sbid="transcoding-bitrate-kbps" type="number" 
-                               increment="32"/>
-                  <xul:label value="&device.settings.music.transcoding.bitrate.units;"/>
-                </xul:hbox>
-              </xul:vbox>
-            </xul:radiogroup>
+              <!-- Transcoding mode radio group. -->
+              <xul:radiogroup sbid="transcoding_mode_radio_group" flex="1">
 
-          </xul:vbox>
+                <xul:radio sbid="transcoding-mode-auto"
+                           xbl:inherits="disabled"
+                           label="&device.settings.music.transcoding.mode.auto.label;"/>
+                <xul:radio sbid="transcoding-mode-manual"
+                           xbl:inherits="disabled"
+                           label="&device.settings.music.transcoding.mode.manual.label;"/>
+                <xul:vbox sbid="transcoding-mode-details" class="indent">
+                  <xul:hbox>
+                    <xul:label value="&device.settings.music.transcoding.format.label;"/>
+                    <xul:menulist sbid="encoding-format-menu">
+                      <xul:menupopup sbid="encoding-format-list" class="encoding-format-list"/>
+                    </xul:menulist>
+                  </xul:hbox>
+                  <xul:hbox sbid="transcoding-bitrate" xbl:inherits="disabled">
+                    <xul:label value="&device.settings.music.transcoding.bitrate.label;"/>
+                    <xul:textbox sbid="transcoding-bitrate-kbps" type="number"
+                                 increment="32"/>
+                    <xul:label value="&device.settings.music.transcoding.bitrate.units;"/>
+                  </xul:hbox>
+                </xul:vbox>
+              </xul:radiogroup>
+
+            </xul:vbox>
+          </xul:deck>
         </xul:groupbox>
         <xul:groupbox flex="1"
                       setting="diskmgmt"

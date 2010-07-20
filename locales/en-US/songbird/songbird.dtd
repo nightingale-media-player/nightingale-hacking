@@ -520,6 +520,7 @@
 <!ENTITY device.settings.auto_launch.checkbox.label "Open &brandShortName; when this device is detected">
 <!ENTITY device.settings.auto_firmware_check.checkbox.label "Check for new firmware automatically">
 <!ENTITY device.settings.music.transcoding.label "Music Conversion">
+<!ENTITY device.settings.music.transcoding.no_encoders.description "No encoders currently available for this device">
 <!ENTITY device.settings.disk.label "Disk Management">
 <!ENTITY device.settings.disk.management.label "Customize directory structure">
 <!ENTITY device.settings.disk.management.filename "Song files">
