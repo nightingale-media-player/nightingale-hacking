@@ -600,41 +600,14 @@
         <parameter name="event"/>
         <body>
           <![CDATA[
-          var transferable = {};
-          if (this.mService.onDragGesture(this.nodeData, transferable)) {
-            transferable = transferable.value;
-            var transArray = Components.classes["@mozilla.org/supports-array;1"]
-                                       .createInstance(Components.interfaces.nsISupportsArray);
-            transArray.AppendElement(transferable);
-            
-            var region = null;
-            // let's build the drag region
-            try {
-              region = Components.classes["@mozilla.org/gfx/region;1"]
-                        .createInstance(Components.interfaces.nsIScriptableRegion);
-              region.init();
+          if (this.mService.onDragGesture(this.nodeData, event.dataTransfer)) {
+            // Set the drag source to this sb-servicepane-node
+            // so the feedback image looks nice.
+            let dragElement = document.getElementById(this._nodeData.id);
+            event.dataTransfer.addElement(dragElement);
 
-              var bo = this.boxObject;
-
-              region.unionRect(bo.x, bo.y, bo.width, bo.height);
-
-            } catch(ex) {
-              dump("Error while building drag region: " + ex + "\n");
-              region = null;
-            }
-            
             var group = this._servicePaneGroup;
             group._dndReordering = true; 
-            var dragAction = this.mDragService.DRAGDROP_ACTION_COPY +
-                             this.mDragService.DRAGDROP_ACTION_MOVE;
-            this.mDragService.invokeDragSessionWithImage(this, 
-                                                         transArray,
-                                                         region, dragAction,
-                                                         null, 0, 0,
-                                                         event);
-            
-            group._dndReordering = false; 
-            event.preventDefault();
           }
         ]]>
         </body>
@@ -660,9 +633,9 @@
           var orientations = [0];
           var tophalf = false;
           if (this._servicePaneGroup._dndReordering) {
-          var y = event.screenY - this.boxObject.screenY;
-          var third = this.boxObject.height/3;
-          if (y < this.boxObject.height/2)
+            var y = event.screenY - this.boxObject.screenY;
+            var third = this.boxObject.height/3;
+            if (y < this.boxObject.height/2)
               tophalf = true;
             if (y < third) 
               orientations = [-1, 0, 1]; // before, inside, after
@@ -677,7 +650,6 @@
       </method>
       <method name="canDrop">
         <parameter name="event"/>
-        <parameter name="session"/>
         <body>
           <![CDATA[
           var orientations = this._getDropOrientations(event);
@@ -736,17 +708,13 @@
 
       <method name="onDragOver">
         <parameter name="event"/>
-        <parameter name="flavour"/>
-        <parameter name="session"/>
         <body>
         <![CDATA[
-          if (session.sourceNode != event.target) {
-            if (this._servicePaneGroup._dndReordering) {
-              // do nothing
-            } else {
-              if (this.canDrop(event, session))
-                this.setAsDropTarget(true);
-            }
+          if (this.mDragService.getCurrentSession().sourceNode != event.target &&
+              this.canDrop(event) ) {
+            event.preventDefault(); // accept the drop
+            if (!this._servicePaneGroup._dndReordering)
+              this.setAsDropTarget(true);
           } 
         ]]>
         </body>
@@ -816,19 +784,26 @@
       ]]></handler>
 
       <handler event="dragover"><![CDATA[
-        nsDragAndDrop.dragOver(event, this);
+        this.onDragOver(event);
         this._servicePane.needScroll(event);
         event.stopPropagation();
       ]]></handler>
 
       <handler event="dragdrop">
-        nsDragAndDrop.drop(event, this);
+        this.onDrop(event, null);
         event.stopPropagation();
       </handler>
 
       <handler event="dragexit">
-        nsDragAndDrop.dragExit(event, this);
+        this.onDragExit(event, null);
         event.stopPropagation();
+      </handler>
+
+      <handler event="dragend">
+      <![CDATA[
+        this._removeDropOrientationClass();
+        this._servicePaneGroup._dndReordering = false;
+      ]]>
       </handler>
 
     </handlers>

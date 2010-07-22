@@ -39,7 +39,7 @@ interface nsIDOMWindow;
 interface nsISimpleEnumerator;
 interface nsIStringEnumerator;
 interface nsIDragSession;
-interface nsITransferable;
+interface nsIDOMDataTransfer;
 interface nsIStringBundle;
 interface sbIServicePaneMutationListener;
 interface sbIServicePaneNodeListener;
@@ -48,7 +48,7 @@ interface sbIServicePaneNodeListener;
  * \interface sbIServicePaneNode
  * \brief The interface to interact with a particular node in the service pane
  */
-[scriptable, uuid(d4c3c2d2-1dd1-11b2-932e-8eafb1847891)]
+[scriptable, uuid(6b854290-2df1-4c32-a0ce-14dca16f7b42)]
 interface sbIServicePaneNode : nsISupports
 {
   /* \brief the uri of this node as a string */
@@ -325,7 +325,7 @@ interface sbIServicePaneService : nsISupports
               in nsIDOMWindow aWindow);
               
   PRBool onDragGesture(in sbIServicePaneNode aNode,
-                       out nsITransferable aTransferable);
+                       in nsIDOMDataTransfer aDataTransfer);
 
   /* \brief Called before a user starts to rename a node.
    * \param aNode the node about to be renamed
@@ -398,7 +398,7 @@ interface sbIServicePaneModule : nsISupports
               in PRInt32 aOrientation,
               in nsIDOMWindow aWindow);
   PRBool onDragGesture(in sbIServicePaneNode aNode,
-                       in nsITransferable aTransferable);
+                       in nsIDOMDataTransfer aDataTransfer);
 
   /* \brief Called before a user starts to rename a node.
    * \param aNode the node that is about to be renamed

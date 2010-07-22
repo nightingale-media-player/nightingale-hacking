@@ -131,13 +131,6 @@
   // keyNavigate method in tree.xml.
   this.tree._keyNavigate = this._treeKeyNavigate;
 
-  // Load the drag and drop helper, if needed
-  if (typeof(nsDragAndDrop) == "undefined") {
-    var jsLoader = this._Cc["@mozilla.org/moz/jssubscript-loader;1"]
-                           .getService(this._Ci.mozIJSSubScriptLoader);
-    jsLoader.loadSubScript("chrome://global/content/nsDragAndDrop.js", null);
-  }
-
   // Add a capturing listener so we can swallow command events
   // in cases such as column restoreNaturalOrder.
   this._onCommandClosure = function(event) {
@@ -2696,22 +2689,22 @@
         </body>
       </method>
 
-      <field name="nsDragAndDropObserver">
-        <![CDATA[({
-        _self: this,
+      <!-- Called by _onDragOver for the playlist (not the tree observer, 
+           which calls canDrop()) -->
+      <method name="_canDrop">
+        <parameter name="event"/>
+        <body>
+        <![CDATA[
+          let dragService = this._Cc["@mozilla.org/widget/dragservice;1"]
+                                .getService(this._Ci.nsIDragService);
+          let session = dragService.getCurrentSession();
 
-        // the function calling onDragStart was rewritten
-        // but we have left this husk here to satisfy nsDragAndDrop.js
-        onDragStart: function(event, transferData, dragAction) {},
-
-        // whether we can accept the drop or not
-        canDrop: function(event, session) {
           // XXX Alfred: same hack as we did for bug 4760 to do special
           // handling for the download playlist.
-          var list = this._self.mediaList;
+          var list = this.mediaList;
           var customType = list.getProperty(SBProperties.customType);
           if (customType == "download") {
-            return this._self._canDownloadDrop(session);
+            return this._canDownloadDrop(session);
           }
 
           // this is a playlist for a readonly library, can't drop
@@ -2720,21 +2713,9 @@
           }
           return (InternalDropHandler.isSupported(session) ||
                   ExternalDropHandler.isSupported(session));
-        },
-
-        // expose the flavours we support
-        getSupportedFlavours: function() {
-          var flavours = new FlavourSet();
-          InternalDropHandler.addFlavours(flavours);
-          ExternalDropHandler.addFlavours(flavours);
-          return flavours;
-        },
-
-        // this method is only here to keep nsDragAndDrop.js happy
-        onDragOver: function(event, flavor, session) {
-        }
-
-      })]]></field>
+        ]]>
+        </body>
+      </method>
 
       <!-- Items are dragged from the list -->
       <method name="_onDragGesture">
@@ -2759,15 +2740,9 @@
       return; // Nothing selected to drag.
     }
 
-    var transArray = this._prepareTransferArray(view);
-    var dragAction = Ci.nsIDragService.DRAGDROP_ACTION_COPY;
-    var icon       = this._prepareDragIcon();
-
-    var dragService = Cc["@mozilla.org/widget/dragservice;1"]
-                        .getService(Ci.nsIDragService);
-    dragService.invokeDragSessionWithImage(event.target, transArray,
-                                           null, dragAction,
-                                           icon, 0, 0, event);
+    this._prepareTransferArray(view, event.dataTransfer);
+    var icon = this._prepareDragIcon();
+    event.dataTransfer.setDragImage(icon, 0, 0);
 
     // Mouse events will be handled by drag-and-drop, so clear the mouse down
     // state
@@ -2776,30 +2751,26 @@
     this._onMouseDownObject = null;
     this._mouseIsDown = false;
     this._isHandlingClickableContent= false;
-
-    event.stopPropagation();
 ]]>
         </body>
       </method>
 
       <method name="_prepareTransferArray">
         <parameter name="view"/>
+        <parameter name="aDataTransfer"/>
         <body>
 <![CDATA[
     var dnd = this._Cc["@songbirdnest.com/Songbird/DndSourceTracker;1"]
                       .getService(this._Ci.sbIDndSourceTracker);
     dnd.reset();
-
-    var transferData = new TransferData();
-    // Create a context which describes the media items being moved.
     var context = new DNDUtils.MediaListViewSelectionTransferContext(view);
     var handle = dnd.registerSource(context);
-    transferData.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS, handle);
+    aDataTransfer.setData(this._TYPE_X_SB_TRANSFER_MEDIA_ITEMS, handle);
 
     // add a second flavour for a single media item so it can be recognized by
     // drop targets that only accept a single media item
     if (view.selection.count == 1) {
-      transferData.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM, handle);
+      aDataTransfer.setData(this._TYPE_X_SB_TRANSFER_MEDIA_ITEM, handle);
 
       // for single media lists, we'll add another special flavor
       var item = view.selection.currentMediaItem;
@@ -2808,7 +2779,7 @@
 
         context.QueryInterface(this._Ci.sbIMediaItemsTransferContext);
         var handle = dnd.registerSource(context);
-        transferData.addDataForFlavour(this._TYPE_X_SB_TRANSFER_MEDIA_LIST, handle);
+        aDataTransfer.setData(this._TYPE_X_SB_TRANSFER_MEDIA_LIST, handle);
       }
     }
 
@@ -2819,40 +2790,9 @@
       if (!item) continue; // WTF?
       if (item.getProperty(SBProperties.disableDownload) == '1') {
         // one of the items has download disabled, we need to disable the command
-        transferData.addDataForFlavour(this._TYPE_X_SB_TRANSFER_DISABLE_DOWNLOAD, '');
+        aDataTransfer.setData(this._TYPE_X_SB_TRANSFER_DISABLE_DOWNLOAD, '');
       }
     }
-
-
-    var transArray = Cc["@mozilla.org/supports-array;1"]
-                       .createInstance(Ci.nsISupportsArray);
-
-    var trans = Cc["@mozilla.org/widget/transferable;1"]
-                  .createInstance(Ci.nsITransferable);
-    for (var i = 0; i < transferData.dataList.length; ++i)  {
-      var currData = transferData.dataList[i];
-      var currFlavour = currData.flavour.contentType;
-      trans.addDataFlavor(currFlavour);
-      var supports = null; // nsISupports data
-      var length = 0;
-      if (currData.flavour.dataIIDKey == "nsISupportsString") {
-        supports = Components.classes["@mozilla.org/supports-string;1"]
-                             .createInstance(Components.interfaces.nsISupportsString);
-
-        supports.data = currData.supports;
-        length = supports.data.length;
-      }
-      else {
-        // non-string data.
-        supports = currData.supports;
-        length = this._Ci.nsITransferable.kFlavorHasDataProvider;
-      }
-      // length * 2 is because of sizeof(PRUnichar) and pure evil
-      trans.setTransferData(currFlavour, supports, length * 2);
-    }
-    transArray.AppendElement(trans);
-
-    return transArray;
 ]]>
         </body>
       </method>
@@ -2879,7 +2819,12 @@
         <parameter name="event"/>
         <body>
 <![CDATA[
-    nsDragAndDrop.dragOver(event, this.nsDragAndDropObserver);
+    if(this._canDrop(event)) {
+      event.preventDefault();
+    } else {
+      event.dataTransfer.effectAllowed = "none";
+    }
+    event.stopPropagation();
 ]]>
         </body>
       </method>
@@ -3108,7 +3053,6 @@
         <parameter name="aOrientation"/>
         <body>
 <![CDATA[
-
   // Our tree observer callback does not get the drag session as a parameter,
   // that is fine on windows, but on linux, the dragservice does not hold on
   // to the session after the drop completes, so we cannot ask it for the

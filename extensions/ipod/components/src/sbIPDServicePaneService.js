@@ -244,7 +244,7 @@ IPD_SPS.prototype = {
   /* \brief Handle drag gesture
    */
 
-  onDragGesture: function IPD_SPS_onDragGesture(aNode, aTransferable) { },
+  onDragGesture: function IPD_SPS_onDragGesture(aNode, aDataTransfer) { },
 
 
   /* \brief Called before a user starts to rename a node.

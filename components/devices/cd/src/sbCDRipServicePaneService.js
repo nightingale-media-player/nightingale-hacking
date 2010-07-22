@@ -149,7 +149,7 @@ sbCDRipServicePaneService.prototype = {
   },
   
   onDragGesture: function sbCDRipServicePaneService_onDragGesture(aNode, 
-                                                              aTransferable) {
+                                                              aDataTransfer) {
     // Currently no drag and drop allowed
   },
 

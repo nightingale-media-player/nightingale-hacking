@@ -100,7 +100,7 @@ function sbDownloadDeviceServicePaneModule_onDrop(aNode,
 
 sbDownloadDeviceServicePaneModule.prototype.onDragGesture =
 function sbDownloadDeviceServicePaneModule_onDragGesture(aNode,
-                                                         aTransferable)
+                                                         aDataTransfer)
 {
 }
 

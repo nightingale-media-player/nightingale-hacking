@@ -186,7 +186,7 @@ function sbDeviceServicePane_onDrop(aNode, aDragSession, aOrientation, aWindow) 
 }
 
 sbDeviceServicePane.prototype.onDragGesture =
-function sbDeviceServicePane_onDragGesture(aNode, aTransferable) {
+function sbDeviceServicePane_onDragGesture(aNode, aDataTransfer) {
   return false;
 }
 

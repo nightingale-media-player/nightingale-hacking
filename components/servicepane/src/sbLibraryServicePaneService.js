@@ -460,9 +460,9 @@ function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrienta
       }
         
       // if we have not found what the destination library is, refuse the drop
-      if (!toResource) 
+      if (!toResource)
         return null;
-        
+
       // get the library for the resource we found
       toResource = toResource.library;
         
@@ -471,16 +471,16 @@ function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrienta
       // is going to accept it based on further rules (dndAcceptIn, dndAcceptNear)
       // and because there is no actual drop handling to be performed, the nodes
       // will be reordered in the tree and that is it.
-      if (toResource == fromResource) 
+      if (toResource == fromResource)
         return null;
-      
+
       // otherwise, this is a playlist transfer from one library to another,
       // we should accept the drop, but at the condition that we are not
       // dropping above a library, because we want to keep playlists either 
       // below or as children of their library nodes. 
-      if (targetIsLibrary && aOrientation == 1) 
+      if (targetIsLibrary && aOrientation == 1)
         return null;
-      
+
       // the destination seems correct, accept the drop, the handler will
       // first copy the list to the new library, and then move the node
       // to where it belongs  
@@ -699,7 +699,7 @@ function sbLibraryServicePane__nodeIsLibrary(aNode) {
       aNode.getAttributeNS(LSP, "ListGUID");
 }
 sbLibraryServicePane.prototype.onDragGesture =
-function sbLibraryServicePane_onDragGesture(aNode, aTransferable) {
+function sbLibraryServicePane_onDragGesture(aNode, aDataTransfer) {
   if (this._nodeIsLibrary(aNode)) {
     // a library isn't dragable
     return false;
@@ -721,12 +721,7 @@ function sbLibraryServicePane_onDragGesture(aNode, aTransferable) {
   var handle = dnd.registerSource(context);
 
   // attach the source context to the transferable
-  aTransferable.addDataFlavor(TYPE_X_SB_TRANSFER_MEDIA_LIST);
-  var text = Components.classes["@mozilla.org/supports-string;1"].
-     createInstance(Components.interfaces.nsISupportsString);
-  text.data = handle;
-  aTransferable.setTransferData(TYPE_X_SB_TRANSFER_MEDIA_LIST, text,
-                                text.data.length*2);
+  aDataTransfer.setData(TYPE_X_SB_TRANSFER_MEDIA_LIST, handle);
 
   return true;
 }

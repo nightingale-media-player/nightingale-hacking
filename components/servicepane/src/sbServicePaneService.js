@@ -972,7 +972,7 @@ ServicePaneService.prototype = {
     if (!aNode) {
       return false;
     }
-  
+
     LOG("canDrop(" + aNode.id + ")");
 
     // let the module that owns this node handle this
@@ -998,50 +998,38 @@ ServicePaneService.prototype = {
     }
   },
 
-  onDragGesture: function ServicePaneService_onDragGesture(aNode, aTransferable) {
+  onDragGesture: function ServicePaneService_onDragGesture(aNode, aDataTransfer) {
     if (!aNode) {
       return false;
     }
 
     LOG("onDragGesture(" + aNode.id + ")");
-  
+
     if (!aNode.id) {
       Cu.reportError(new Exception("Cannot drag a service pane node without ID"));
       return false;
     }
-  
+
     let success = false;
-  
-    // create a transferable
-    let transferable = Cc["@mozilla.org/widget/transferable;1"]
-                         .createInstance(Ci.nsITransferable);
-  
+
     // get drag types from the node data
     if (aNode.dndDragTypes) {
       let types = aNode.dndDragTypes.split(',');
       for each (let type in types) {
-        let text = Components.classes["@mozilla.org/supports-string;1"].
-           createInstance(Components.interfaces.nsISupportsString);
-        text.data = aNode.id;
-        // double the length - it's unicode - this is stupid
-        transferable.setTransferData(type, text, text.data.length * 2);
+        aDataTransfer.setData(type, aNode.id);
         success = true;
       }
     }
-  
+
     if (aNode.contractid && aNode.contractid in this._modulesByContractId) {
       let module = this._modulesByContractId[aNode.contractid];
-      if (module.onDragGesture(aNode, transferable)) {
+      if (module.onDragGesture(aNode, aDataTransfer)) {
         success = true;
       }
     }
-  
-    if (success) {
-      aTransferable.value = transferable;
-    }
-  
+
     LOG(" success=" + success);
-  
+
     return success;
   }
 };
