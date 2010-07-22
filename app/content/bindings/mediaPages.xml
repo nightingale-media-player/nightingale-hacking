@@ -375,12 +375,10 @@
         var mgr = Cc["@songbirdnest.com/Songbird/MediaPageManager;1"]
                     .getService(Ci.sbIMediaPageManager);
         var pages = mgr.getAvailablePages();
-        var mpId = 0;
         var XULNS =
             "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
-        this._pageIdMapping = [];
-        this._pageUrlMapping = [];
-        this._maxPageId = 0;
+        this._pageIdMapping = {};
+        this._pageUrlMapping = {};
 
         while (pages.hasMoreElements()) {
           var page = pages.getNext().QueryInterface(
@@ -396,22 +394,20 @@
               if (page.contentIcon) {
                  var pagebutton = document.createElementNS(XULNS,
                                                            "toolbarbutton");
-                 var thisId = mpId++;
                  let idSuffix = page.contentUrl.replace(/[^a-z0-9]/gi, "_");
                  pagebutton.id = "mediapages-button-" + idSuffix;
                  pagebutton.className = "toolbarbutton-1 " +
                             "chromeclass-toolbar-additional mp-other";
                  pagebutton.anonid="mediapages-button-" + idSuffix;
-                 pagebutton.mpId = thisId;
+                 pagebutton.mpId = idSuffix;
                  pagebutton.addEventListener("command", function() {
                      switchMediaView(this.mpId);
                  }, false);
                  pagebutton.setAttribute("tooltiptext", page.contentTitle);
                  pagebutton.setAttribute("style", "list-style-image: url("
                                                   + page.contentIcon + ");");
-                 this._maxPageId = thisId;
-                 this._pageIdMapping[thisId] = page;
-                 this._pageUrlMapping[page.contentUrl] = thisId;
+                 this._pageIdMapping[idSuffix] = page;
+                 this._pageUrlMapping[page.contentUrl] = idSuffix;
 
                  var hbox = document.getAnonymousElementByAttribute(this,
                                           "anonid", "mediapages-other");
@@ -443,15 +439,14 @@
                                     "anonid", "mediapages-button-filterview");
 
           var pageButtons = ["listview", "filterview"];
-          if (this._pageIdMapping.length > 0)
-            for (var i=0; i<=this._maxPageId; i++) {
-              pageButtons.push(i);
-            }
+          pageButtons =
+              pageButtons.concat([pageId for (pageId in this._pageIdMapping)]);
 
           if (id == null) {
             mpButton.setAttribute("disabled", true);
-            for each (var buttonId in pageButtons) {
-              var button = document.getAnonymousElementByAttribute(this,
+            for (let i = 0; i < pageButtons.length; ++i) {
+              let buttonId = pageButtons[i];
+              let button = document.getAnonymousElementByAttribute(this,
                                     "anonid", "mediapages-button-" + buttonId);
               if (!button)
                 button = document.getElementById("mediapages-button-"+buttonId);
@@ -465,8 +460,9 @@
           // Remove any disabled attributes
           mpButton.removeAttribute("disabled");
           // Make sure we select the right page
-          for each (var buttonId in pageButtons) {
-            var button = document.getAnonymousElementByAttribute(this,
+          for (let i = 0; i < pageButtons.length; ++i) {
+            let buttonId = pageButtons[i];
+            let button = document.getAnonymousElementByAttribute(this,
                                   "anonid", "mediapages-button-" + buttonId);
             if (!button)
               button = document.getElementById("mediapages-button-" + buttonId);
