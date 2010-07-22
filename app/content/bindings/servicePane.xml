@@ -740,6 +740,14 @@
                                this.mDropOrientation,
                                window);
           this.setAsDropTarget(false);
+
+          /* Auto-collapse if we auto-expanded */
+          if (this._servicePaneGroup._collapseOnDragExit)
+          {
+            this._servicePaneGroup.visible = false;
+            this._servicePaneGroup._collapseOnDragExit = null;
+            this._servicePaneGroup.servicePane._collapsedGroup = null;
+          }
         ]]></body>
       </method>
 
