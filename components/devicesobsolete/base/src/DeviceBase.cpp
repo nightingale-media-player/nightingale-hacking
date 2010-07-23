@@ -77,17 +77,6 @@
 #define DESTINATION_COLUMN_NAME     NS_LITERAL_STRING("destination")
 #define INDEX_COLUMN_NAME           NS_LITERAL_STRING("id")
 
-// Copied from nsCRT.h
-#if defined(XP_WIN) || defined(XP_OS2)
-  #define FILE_PATH_SEPARATOR       "\\"
-  #define FILE_ILLEGAL_CHARACTERS   "/:*?\"<>|"
-#elif defined(XP_UNIX) || defined(XP_BEOS)
-  #define FILE_PATH_SEPARATOR       "/"
-  #define FILE_ILLEGAL_CHARACTERS   ""
-#else
-  #error need_to_define_your_file_path_separator_and_illegal_characters
-#endif
-
 /*
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbDeviceBase:5
