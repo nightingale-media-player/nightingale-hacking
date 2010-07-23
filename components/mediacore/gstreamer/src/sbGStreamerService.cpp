@@ -1,28 +1,27 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
 #include "sbGStreamerService.h"
 #include "sbGStreamerMediacoreUtils.h"
 #include <gst/pbutils/descriptions.h>
@@ -38,17 +37,22 @@
 #include <prlog.h>
 #include <prenv.h>
 #include <nsServiceManagerUtils.h>
-#include <nsDirectoryServiceDefs.h>
+#include <nsDirectoryServiceUtils.h>
 #include <nsAppDirectoryServiceDefs.h>
 #include <nsComponentManagerUtils.h>
 #include <nsThreadUtils.h>
 #include <nsXULAppAPI.h>
 #include <nsISimpleEnumerator.h>
-#include <nsIObserverService.h>
+#include <nsIPrefBranch.h>
+
+#include <sbStringUtils.h>
 
 #if XP_WIN
 #include <windows.h>
 #endif
+
+#define GSTREAMER_COMPREG_LAST_MODIFIED_TIME_PREF \
+          "songbird.mediacore.gstreamer.compreg_last_modified_time"
 
 /**
  * To log this class, set the following environment variable in a debug build:
@@ -93,9 +97,7 @@ get_rank_name (gint rank)
   }
 }
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbGStreamerService, 
-                              sbIGStreamerService, 
-                              nsIObserver)
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbGStreamerService, sbIGStreamerService)
 
 sbGStreamerService::sbGStreamerService()
 {
@@ -368,23 +370,13 @@ sbGStreamerService::Init()
   gst_registry_fork_set_enabled(FALSE);
 #endif
 
+  // Update the gstreamer registry file if needed.
+  UpdateGStreamerRegistryFile();
+
   gst_init(NULL, NULL);
 
   // Register our custom tags.
   RegisterCustomTags();
-
-  // Listen to any extension manager events to ensure that any protocol handlers
-  // that could potentially come from an extension are recognized.
-  // See |Observe()| for more information.
-  nsCOMPtr<nsIObserverService> observerService =
-    do_GetService("@mozilla.org/observer-service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = observerService->AddObserver(this, "em-action-requested", PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = observerService->AddObserver(this,
-                                    "quit-application-requested",
-                                    PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -564,6 +556,68 @@ sbGStreamerService::InspectFactoryPads(GstElement* aElement,
 }
 
 nsresult
+sbGStreamerService::UpdateGStreamerRegistryFile()
+{
+  nsresult rv;
+
+  // Get the Mozilla component registry file.
+  nsCOMPtr<nsIFile> mozRegFile;
+  rv = NS_GetSpecialDirectory(NS_APP_USER_PROFILE_50_DIR,
+                              getter_AddRefs(mozRegFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mozRegFile->Append(NS_LITERAL_STRING("compreg.dat"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check if the component registry file exists.
+  PRBool exists;
+  rv = mozRegFile->Exists(&exists);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the last modified time of the component registry file as a string.
+  nsCAutoString lastModifiedTime;
+  if (exists) {
+    PRInt64 lastModifiedTime64;
+    rv = mozRegFile->GetLastModifiedTime(&lastModifiedTime64);
+    NS_ENSURE_SUCCESS(rv, rv);
+    lastModifiedTime.Assign(NS_ConvertUTF16toUTF8
+                              (sbAutoString(lastModifiedTime64)));
+  }
+
+  // Get the last modified time of the component registry file stored in
+  // preferences.
+  nsCAutoString lastModifiedTimePref;
+  nsCOMPtr<nsIPrefBranch>
+    prefBranch = do_GetService("@mozilla.org/preferences-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  prefBranch->GetCharPref(GSTREAMER_COMPREG_LAST_MODIFIED_TIME_PREF,
+                          getter_Copies(lastModifiedTimePref));
+
+  // If the Mozilla component registry file has been modified since it was last
+  // checked, delete the gstreamer registry file to force it to be regenerated.
+  // This ensures that gstreamer will pick up any new protocol handlers.  See
+  // bug 18216.
+  if (lastModifiedTimePref.IsEmpty() ||
+      !lastModifiedTimePref.Equals(lastModifiedTime)) {
+    nsCOMPtr<nsIFile> gstreamerRegFile;
+    rv = GetGStreamerRegistryFile(getter_AddRefs(gstreamerRegFile));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = gstreamerRegFile->Exists(&exists);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (exists) {
+      rv = gstreamerRegFile->Remove(PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  // Update the Mozilla component registry file last modified time pref.
+  rv = prefBranch->SetCharPref(GSTREAMER_COMPREG_LAST_MODIFIED_TIME_PREF,
+                               lastModifiedTime.get());
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
 sbGStreamerService::GetGStreamerRegistryFile(nsIFile **aOutRegistryFile)
 {
   NS_ENSURE_ARG_POINTER(aOutRegistryFile);
@@ -589,44 +643,3 @@ sbGStreamerService::GetGStreamerRegistryFile(nsIFile **aOutRegistryFile)
   return NS_OK;
 }
 
-// nsIObserver
-NS_IMETHODIMP
-sbGStreamerService::Observe(nsISupports *aSubject,
-                            const char *aTopic,
-                            const PRUnichar *aData)
-{
-  nsresult rv;
-  if (!strcmp(aTopic, "em-action-requested")) {
-    nsCOMPtr<nsIFile> registryPath;
-    rv = GetGStreamerRegistryFile(getter_AddRefs(registryPath));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    PRBool exists = PR_FALSE;
-    rv = registryPath->Exists(&exists);
-    if (NS_SUCCEEDED(rv) && exists) {
-      // To ensure that any new protocol handlers that might have been packaged
-      // in an extension are picked up by gstreamer, delete the registry file
-      // now. When Songbird restarts the gstreamer registry will be re-generated
-      // automatically. This isn't the most ideal solution but it's the best
-      // case scenario without having to do some major refactoring of the
-      // mediacore startup sequence.
-      // See bug 18216 for the juicy details.
-      rv = registryPath->Remove(PR_FALSE);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
-  else if (!strcmp(aTopic, "quit-application-requested")) {
-    // Cleanup listeners
-    nsCOMPtr<nsIObserverService> observerService =
-      do_GetService("@mozilla.org/observer-service;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = observerService->RemoveObserver(this, aTopic);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = observerService->RemoveObserver(this, "em-action-requested");
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  return NS_OK;
-}
