@@ -1,29 +1,27 @@
 <?xml version="1.0"?>
 <!--
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 -->
 
@@ -63,8 +61,8 @@
           enableColumnDrag="false"
           xbl:inherits="class,enableColumnDrag,hidecolumnpicker"
         >
-          <xul:treecols sbid="treeColumns" 
-                        type="sb-contextpicker" 
+          <xul:treecols sbid="treeColumns"
+                        type="sb-contextpicker"
                         xbl:inherits="class,filter-category-value"/>
           <xul:treechildren ondblclick="_onFilterListDblClick(event);" />
         </xul:tree>
@@ -86,7 +84,7 @@
 <![CDATA[
   if (this._isBound) {
     this.cfs.removeListener(this);
-    
+
     // Force the tree to forget about the view.  This is required in the case
     // where we are going to immediately load a new tree using the same view.
     // When this happens nsTreeBodyFrame will get a Destroy() call *after*
@@ -140,7 +138,7 @@
                     var min = {};
                     var max = {};
                     sel.getRangeAt(i, min, max);
-                
+
                     // If the "all" row is selected, do everything
                     if (min.value == 0) {
                       // reset
@@ -151,7 +149,7 @@
                         val += this._self.cfs.getValueAt(this._self.index, k) + "\n";
                       }
 
-                      // end the loop to copy to clipboard; 
+                      // end the loop to copy to clipboard;
                       break;
                     }
 
@@ -223,8 +221,8 @@
 
   // Add the column for the property to the tree
   var treeColumns = document.getAnonymousElementByAttribute(this, "sbid", "treeColumns");
-  
-  while (treeColumns.lastChild) 
+
+  while (treeColumns.lastChild)
     treeColumns.removeChild(treeColumns.lastChild);
 
   var treecol = document.createElementNS(this._XUL_NS, "treecol");
@@ -257,7 +255,7 @@
     }
   }
 
-  
+
   // Remove our selection if we are updated
   this.cfs.addListener(this);
   this._isBound = true;
@@ -272,7 +270,7 @@
             // if nothing changed, do not actually do anything
             if (this._property == property)
               return;
-              
+
             this._property = property;
 
             this.cfs.changeFilter(this.index, property);
@@ -289,7 +287,7 @@
             // Remove old column
             while (treeColumns.lastChild)
               treeColumns.removeChild(treeColumns.lastChild);
-              
+
             // Add new column
             var treecol = document.createElementNS(this._XUL_NS, "treecol");
             treecol.setAttribute("bind", this._property);
@@ -379,7 +377,7 @@
         <parameter name="event"/>
         <body>
           <![CDATA[
-           var mm = 
+           var mm =
              Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
                        .getService(Components.interfaces.sbIMediacoreManager);
 
@@ -396,7 +394,7 @@
           ]]>
         </body>
       </method>
-      
+
       <method name="onChange">
         <body>
 <![CDATA[
@@ -448,19 +446,9 @@
       return;
     }
 
-    var transArray = this._makeTransferArray();
+    var transArray = this._setEventDataTransfer(event.dataTransfer);
     var icon = this._prepareDragIcon();
-    
-    // Begin the drag session!
-    var dragService = this._Cc["@mozilla.org/widget/dragservice;1"]
-                          .getService(this._Ci.nsIDragService);
-
-    var dragAction = this._Ci.nsIDragService.DRAGDROP_ACTION_COPY;
-    dragService.invokeDragSessionWithImage(event.target, transArray,
-                                              null, dragAction,
-                                              icon, 0, 0, event);
-
-    event.stopPropagation();
+    event.dataTransfer.setDragImage(icon, 0, 0);
 ]]>
         </body>
       </method>
@@ -487,28 +475,25 @@
         </body>
       </method>
 
-<!-- makeTransferArray
-     create an array based on the current state of the filter widget
-     which represents what should be dragged right now.
+<!-- _setEventDataTransfer
+     set the event data transfer based on the current state of the filter
+     widget which represents what should be dragged right now.
   -->
-      <method name="_makeTransferArray">
+      <method name="_setEventDataTransfer">
+        <parameter name="aDataTransfer"/>
         <body>
 <![CDATA[
   // Create the Transfer Array
-  var dnd = Components.classes["@songbirdnest.com/Songbird/DndSourceTracker;1"]
-                    .getService(Components.interfaces.sbIDndSourceTracker);
+  var dnd = Cc["@songbirdnest.com/Songbird/DndSourceTracker;1"]
+              .getService(Ci.sbIDndSourceTracker);
   dnd.reset();
 
   var view = this.mediaListView;
-  var context = new DNDUtils.EntireMediaListViewTransferContext(view); // create the data
-  var handle = dnd.registerSource(context);                 // make it a source
-  var dataItem = new TransferData();                   // add it with a flavor
-  dataItem.addDataForFlavour("application/x-sb-transfer-media-items", handle);
-  var transArray = Components.classes["@mozilla.org/supports-array;1"]
-                           .createInstance(Components.interfaces.nsISupportsArray);
-  var trans = nsTransferable.set(dataItem); // put it into a transferable
-  transArray.AppendElement(trans);          // append it to a transferrable array
-  return transArray;
+  // create the data
+  var context = new DNDUtils.EntireMediaListViewTransferContext(view);
+  // make it a source
+  var handle = dnd.registerSource(context);
+  aDataTransfer.setData("application/x-sb-transfer-media-items", handle);
 ]]>
         </body>
       </method>
@@ -517,12 +502,12 @@
         <body>
 <![CDATA[
   // Prepare the badged drag icon for the drag session.
-  
+
   // A few notes for the next poor bastard to stumble into this code.
   // First, the node you return has to be part of a document tree, or it will
-  // crash mozilla. (mozbug: 439565) Second, the node has to be visible, or it 
-  // won't render. That means the browser has to have had time to load images, 
-  // so you need a place to stash the node. I've hidden mine behind the tree 
+  // crash mozilla. (mozbug: 439565) Second, the node has to be visible, or it
+  // won't render. That means the browser has to have had time to load images,
+  // so you need a place to stash the node. I've hidden mine behind the tree
   // widgets, but it's an awful hack. Awful, awful, awful.
   // Oh, and you also can't(?) start a drag session in a callback?
 
@@ -579,7 +564,7 @@
           if (index == -1) {
             index = view.getNextRowIndexForKeyNavigation(incrementalString, 0);
           }
-          
+
           return index;
 
         ]]>
@@ -594,10 +579,10 @@
         // It had to be modified to allow handling of spaces while
         // attempting to navigate within the filterlist. This makes
         // this code incompatible with the original.
-        
+
         if (event.originalTarget != this.tree)
           return;
-        
+
         if (this.tree._editingColumn)
           return;
 
@@ -608,7 +593,7 @@
            this.tree.view.selection.toggleSelect(c);
          }
         }
-         
+
         if (!this.tree.disableKeyNavigation && event.charCode > 0 &&
             !event.altKey && !this.tree._isAccelPressed(event) &&
             !event.metaKey && !event.ctrlKey) {
@@ -709,15 +694,15 @@
 
               if (propertyInfo.userViewable) {
                 var popupChild = document.createElement("menuitem");
-                
+
                 popupChild.setAttribute("type", "checkbox");
                 popupChild.setAttribute("label", propertyInfo.displayName);
                 popupChild.setAttribute("property", propertyInfo.id);
                 popupChild.setAttribute("type", "radio");
-                
+
                 if (propertyInfo.id == filterlist._property)
                     popupChild.setAttribute("checked", "true");
-                    
+
                 aPopup.insertBefore(popupChild, refChild);
               }
             }
