@@ -352,3 +352,17 @@
 ./xulrunner/nsinstall
 ./xulrunner/ssltunnel
 ./xulrunner/run-mozilla.sh
+./components/browsersearch.xpt
+./components/exthelper.xpt
+./components/nsSearchService.js
+./components/nsSearchSuggestions.js
+./libjemalloc.so
+./xulrunner/components/nsDictionary.js
+./xulrunner/components/nsResetPref.js
+./xulrunner/components/nsXmlRpcClient.js
+./xulrunner/icons/mozicon16.xpm
+./xulrunner/icons/mozicon50.xpm
+./xulrunner/libjemalloc.so
+./xulrunner/modules/JSON.jsm
+./xulrunner/res/broken-image.gif
+./xulrunner/res/loading-image.gif

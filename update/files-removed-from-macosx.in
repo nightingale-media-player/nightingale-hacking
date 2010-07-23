@@ -608,3 +608,7 @@
 ./Contents/Frameworks/XUL.framework/run-mozilla.sh
 ./Contents/Frameworks/XUL.framework/nsinstall
 ./Contents/Frameworks/XUL.framework/ssltunnel
+./Contents/Resources/components/browsersearch.xpt
+./Contents/Resources/components/exthelper.xpt 
+./Contents/Resources/components/nsSearchService.js
+./Contents/Resources/components/nsSearchSuggestions.js

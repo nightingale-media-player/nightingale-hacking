@@ -32,12 +32,16 @@ include $(DEPTH)/build/autodefs.mk
 # installer, relative to the dist dir; for the XR executables, Firefox doesn't
 # ship (most of) them either.
 
-SB_INSTALLER_NO_PKG_FILES = xulrunner/regxpcom$(BIN_SUFFIX) \
+SB_INSTALLER_NO_PKG_FILES = xulrunner/js$(BIN_SUFFIX) \
+                            xulrunner/mangle$(BIN_SUFFIX) \
+                            xulrunner/redit$(BIN_SUFFIX) \
+                            xulrunner/regxpcom$(BIN_SUFFIX) \
                             xulrunner/xpcshell$(BIN_SUFFIX) \
                             xulrunner/xpidl$(BIN_SUFFIX) \
                             xulrunner/xpt_dump$(BIN_SUFFIX) \
                             xulrunner/xpt_link$(BIN_SUFFIX) \
                             xulrunner/nsinstall$(BIN_SUFFIX) \
+                            xulrunner/nspr-config \
                             xulrunner/shlibsign$(BIN_SUFFIX) \
                             xulrunner/ssltunnel$(BIN_SUFFIX) \
                             xulrunner/run-mozilla.sh \

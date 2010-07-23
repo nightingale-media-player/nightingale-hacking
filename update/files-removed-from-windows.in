@@ -559,3 +559,14 @@
 ./xulrunner/xpt_link.exe
 ./xulrunner/shlibsign.exe
 ./xulrunner/ssltunnel.exe
+./components/browsersearch.xpt
+./components/exthelper.xpt
+./components/nsSearchService.js
+./components/nsSearchSuggestions.js
+./xulrunner/components/nsDictionary.js
+./xulrunner/components/nsPostUpdateWin.js
+./xulrunner/components/nsResetPref.js
+./xulrunner/components/nsXmlRpcClient.js
+./xulrunner/modules/JSON.jsm
+./xulrunner/res/broken-image.gif
+./xulrunner/res/loading-image.gif
