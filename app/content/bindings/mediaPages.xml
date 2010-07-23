@@ -341,10 +341,6 @@
             };
           }
 
-          if (gBrowser.loading) {
-            return; // Do nothing until loading is complete.  This avoids flickering.
-          }
-
           var mediaPage = gBrowser.currentMediaPage;
           if (!((mediaPage && !mediaPage.isOnlyView) || mediaPageURL)) {
             self.setButtonToggle();
