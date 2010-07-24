@@ -72,7 +72,7 @@ int SetupEnvironment() {
       // security problems
       continue;
     }
-    if (!setenv(it->first.c_str(), it->second.c_str(), true)) {
+    if (setenv(it->first.c_str(), it->second.c_str(), true)) {
       result = DH_ERROR_UNKNOWN;
     }
   }
