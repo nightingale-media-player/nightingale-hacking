@@ -404,7 +404,7 @@
             capacity = ((capacity * limitPercentage) / 100);
           }
 
-          storageConverter =
+          var storageConverter =
             Cc["@songbirdnest.com/Songbird/Properties/UnitConverter/Storage;1"]
               .createInstance(Ci.sbIPropertyUnitConverter);
           capacity = storageConverter.autoFormat(capacity, -1, 1);
