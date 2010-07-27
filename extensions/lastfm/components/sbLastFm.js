@@ -1868,11 +1868,13 @@ function sbLastFm_onTrackChange(aItem) {
     track: aItem.getProperty(SBProperties.trackName),
     artist: aItem.getProperty(SBProperties.artistName)
   }, function response(success, xml) {
-    // update the tagPanel with the tags for this track
-    var tagElements = xml.getElementsByTagName('tag');
-    for (var i=0; i<tagElements.length; i++) {
-      var tag = tagElements[i].childNodes[1].textContent;
-      self.globalTags[tag] = false;
+    if (success) {
+      // update the tagPanel with the tags for this track
+      var tagElements = xml.getElementsByTagName('tag');
+      for (var i=0; i<tagElements.length; i++) {
+        var tag = tagElements[i].childNodes[1].textContent;
+        self.globalTags[tag] = false;
+      }
     }
   });
 
@@ -1881,11 +1883,13 @@ function sbLastFm_onTrackChange(aItem) {
     track: aItem.getProperty(SBProperties.trackName),
     artist: aItem.getProperty(SBProperties.artistName)
   }, function response(success, xml) {
-    // update the tagPanel with the tags for this track
-    var tagElements = xml.getElementsByTagName('tag');
-    for (var i=0; i<tagElements.length; i++) {
-      var tag = tagElements[i].childNodes[1].textContent;
-      self.userTags[tag] = true;
+    if (success) {
+      // update the tagPanel with the tags for this track
+      var tagElements = xml.getElementsByTagName('tag');
+      for (var i=0; i<tagElements.length; i++) {
+        var tag = tagElements[i].childNodes[1].textContent;
+        self.userTags[tag] = true;
+      }
     }
   });
 }
