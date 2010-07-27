@@ -713,7 +713,8 @@ function quitApp( )
 {
   // Why not stop playback, too?
   try {
-    gMM.playbackControl.stop();
+    if (gMM.playbackControl)
+      gMM.playbackControl.stop();
   } catch (e) {
     dump("windowUtils.js:quitApp() Error: could not stop playback.\n");
   }
