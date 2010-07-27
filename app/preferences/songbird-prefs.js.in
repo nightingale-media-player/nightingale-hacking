@@ -200,6 +200,8 @@ pref("xpinstall.dialog.progress.skin", "chrome://browser/content/preferences/pre
 // Search Preferences
 //
 
+pref("songbird.livesearch.enabled",           true);
+
 // pointer to the default engine name
 pref("browser.search.defaultenginename",      "chrome://branding/locale/brand.properties");
 
