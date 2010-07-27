@@ -168,40 +168,53 @@ var numberInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Number;1"]
   catch(err) {
     assertEqual(err.result, Cr.NS_ERROR_INVALID_ARG);
   }
+  
+  /* The replace(",", ".") in the following lines prevents
+   * the test from failing if the machine has set the comma
+   * as decimal separator. So in the following test
+   * numberInfo.format(sample) will return "20,99" on such
+   * a machine. With the replacement it changes to "20.99"
+   * and is valid again. To make this visible this is also
+   * used in all log-calls.
+   */
 
   sample = "20.99";
   assertEqual(numberInfo.validate(sample), true);
 
-  log(numberInfo.format(sample));
-  log(numberInfo.makeSearchable(sample));
+  var formatted_sample = numberInfo.format(sample).replace(",", ".");
+  var searchable_sample = numberInfo.makeSearchable(sample).replace(",", ".");
+  log(formatted_sample);
+  log(searchable_sample);
   
-  assertEqual(numberInfo.format(sample), "20.99");
-  
-  var sortable = numberInfo.makeSearchable(sample);
+  assertEqual(formatted_sample, "20.99");
 
   var eps = 1e-10; // nearly zero, because floating points don't compare well.
 
-  var delta = Math.abs(numberInfo.makeSearchable(sample) - sample);
+  var delta = Math.abs(searchable_sample - sample);
   assertTrue(delta < eps, "make sortable doesn't perturb the value");
 
   sample = "0.99";
   assertEqual(numberInfo.validate(sample), true);
   
-  log(numberInfo.format(sample));
-  log(numberInfo.makeSearchable(sample));
+  formatted_sample = numberInfo.format(sample).replace(",", ".");
+  searchable_sample = numberInfo.makeSearchable(sample).replace(",", ".");
+  log(formatted_sample);
+  log(searchable_sample);
   
-  assertEqual(numberInfo.format(sample), "0.99");
-  var delta = Math.abs(numberInfo.makeSearchable(sample) - sample);
+  assertEqual(formatted_sample, "0.99");
+  var delta = Math.abs(searchable_sample - sample);
   assertTrue(delta < eps, "make sortable doesn't perturb the value");
 
   sample = "12347120349029834.1234341235";
   assertEqual(numberInfo.validate(sample), true);
 
-  log(numberInfo.format(sample));
-  log(numberInfo.makeSearchable(sample));
+  formatted_sample = numberInfo.format(sample).replace(",", ".");
+  searchable_sample = numberInfo.makeSearchable(sample).replace(",", ".");
+  log(formatted_sample);
+  log(searchable_sample);
   
-  assertEqual(parseFloat(numberInfo.format(sample)), 1.23471e+016);
-  var delta = Math.abs(numberInfo.makeSearchable(sample) - sample);
+  assertEqual(parseFloat(formatted_sample), 1.23471e+016);
+  var delta = Math.abs(searchable_sample - sample);
   assertTrue(delta < eps, true, "make sortable doesn't perturb the value");
 }
 
