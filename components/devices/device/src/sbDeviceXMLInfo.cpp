@@ -582,6 +582,48 @@ sbDeviceXMLInfo::GetStorageDeviceInfoList(nsIArray** aStorageDeviceInfoList)
 
 //-------------------------------------
 //
+// GetDeviceIcon
+//
+
+nsresult
+sbDeviceXMLInfo::GetDeviceIcon(nsAString& aDeviceIconURL)
+{
+  nsresult rv;
+
+  // Default to no device icon.
+  aDeviceIconURL.SetIsVoid(PR_TRUE);
+
+  // Check if a device info element is available.
+  if (!mDeviceInfoElement)
+    return NS_OK;
+
+  // Get the list of device icon nodes.
+  nsTArray< nsCOMPtr<nsIDOMNode> > deviceIconNodeList;
+  rv = GetDeviceInfoNodes(NS_LITERAL_STRING("deviceicon"),
+                          deviceIconNodeList);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check if any device icon nodes are available.
+  PRUint32 nodeCount = deviceIconNodeList.Length();
+  if (!nodeCount)
+    return NS_OK;
+
+  // Get the first device icon element.
+  nsCOMPtr<nsIDOMElement> deviceIconElement;
+  deviceIconElement = do_QueryInterface(deviceIconNodeList[0], &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Read the device icon URL value.
+  rv = deviceIconElement->GetAttribute(NS_LITERAL_STRING("url"),
+                                       aDeviceIconURL);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+
+//-------------------------------------
+//
 // sbDeviceXMLInfo
 //
 

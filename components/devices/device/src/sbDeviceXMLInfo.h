@@ -258,6 +258,14 @@ public :
   nsresult GetStorageDeviceInfoList(nsIArray** aStorageDeviceInfoList);
 
   /**
+   * Return in aDeviceIconURL the URL for the device icon file.  The returned
+   * URL is relative to the device mount path.
+   *
+   * \param aDeviceIconURL      Returned device icon file URL.
+   */
+  nsresult GetDeviceIcon(nsAString& aDeviceIconURL);
+
+  /**
    * Construct a Songbird device XML info object to be used for the device
    * specified by aDevice.
    *

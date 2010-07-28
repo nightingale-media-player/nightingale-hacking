@@ -297,6 +297,35 @@ sbDefaultBaseDeviceInfoRegistrar::GetStorageDeviceInfoList
 }
 
 NS_IMETHODIMP
+sbDefaultBaseDeviceInfoRegistrar::GetDeviceIcon(sbIDevice* aDevice,
+                                                nsAString& retval)
+{
+  TRACE(("%s", __FUNCTION__));
+
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aDevice);
+
+  // function variables.
+  nsresult rv;
+
+  // Default to no device icon.
+  retval.Truncate();
+
+  // Get the device XML info.  Just return if none available.
+  sbDeviceXMLInfo* deviceXMLInfo;
+  rv = GetDeviceXMLInfo(aDevice, &deviceXMLInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!deviceXMLInfo)
+    return NS_OK;
+
+  // Get the device icon.
+  rv = deviceXMLInfo->GetDeviceIcon(retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbDefaultBaseDeviceInfoRegistrar::InterestedInDevice(sbIDevice *aDevice,
                                                      PRBool *retval)
 {

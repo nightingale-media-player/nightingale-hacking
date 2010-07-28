@@ -39,7 +39,7 @@ interface sbITranscodeProfile;
  *
  * Implementations are to be thread safe.
  */
-[scriptable, uuid(2b18300c-1dd2-11b2-9349-8307e80c899c)]
+[scriptable, uuid(09ac5860-1dd2-11b2-a697-ee5a60602d0e)]
 interface sbIDeviceInfoRegistrar : nsISupports
 {
   /* Types of registrars */
@@ -138,6 +138,15 @@ interface sbIDeviceInfoRegistrar : nsISupports
    * \return                    An nsIArray of nsIPropertyBag elements.
    */
   nsIArray getStorageDeviceInfoList(in sbIDevice aDevice);
+
+  /**
+   * \brief Return the device icon file URL for the device specified by aDevice.
+   *
+   * \param aDevice             Device for which to get icon file.
+   *
+   * \return                    Device icon file URL.
+   */
+  AString getDeviceIcon(in sbIDevice aDevice);
 
   /**
    * \brief Determines if the registrar is interested in this device
