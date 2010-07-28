@@ -247,6 +247,25 @@ var DOMUtils = {
   },
 
 
+  /**
+   * Rebind the XBL for the element specified by aElem.  This may be required if
+   * a change to the element causes its XBL binding to change (e.g., changing
+   * the element class attribute).
+   *
+   * Prior to xulrunner 1.9.2, XBL rebinding happened automatically.  However,
+   * this is no longer the case with 1.9.2, and the element must be explicitly
+   * rebound.  See "https://bugzilla.mozilla.org/show_bug.cgi?id=533905#c1".
+   *
+   * \param aElem               Element for which to rebind XBL.
+   */
+
+  rebindXBL: function DOMUtils_rebindXBL(aElem) {
+    // Clone the node to force a rebinding.  The clone is not needed.
+    //XXXeps there may be a better way to do this, but this works for now
+    aElem.cloneNode(false);
+  },
+
+
   //----------------------------------------------------------------------------
   //
   // DOM class attribute services.

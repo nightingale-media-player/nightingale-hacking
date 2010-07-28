@@ -15,12 +15,6 @@
           src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
 
   <script type="text/javascript"><![CDATA[
-    if (typeof(Cc) == "undefined")
-      var Cc = Components.classes;
-    if (typeof(Ci) == "undefined")
-      var Ci = Components.interfaces;
-    if (typeof(Cr) == "undefined")
-      var Cr = Components.results;
     if (typeof(Cu) == "undefined")
       var Cu = Components.utils;
 
@@ -46,6 +40,7 @@
       if (queryParams.useHTML) {
         var bodyDescriptionElem = document.getElementById("info.body");
         DOMUtils.setClass(bodyDescriptionElem, "sb-html-description");
+        DOMUtils.rebindXBL(bodyDescriptionElem);
       }
     }, false);
     
