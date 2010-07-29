@@ -8,52 +8,61 @@ Ci = Components.interfaces;
 Cc = Components.classes;
 
 var LocalStore = {
-  dirty: false,
+  _dirty: false,
+  _rdf: null,
+  _localStore: null,
+
+  _initialize: function() {
+    this._rdf = Cc["@mozilla.org/rdf/rdf-service;1"]
+                  .getService(Ci.nsIRDFService);
+    this._localStore = this._rdf.GetDataSource("rdf:local-store");
+  },
 
   // Get an attribute value for an element id in a given file
   getPersistedAttribute: function(file, id, attribute) {
-    var rdf = Cc["@mozilla.org/rdf/rdf-service;1"].getService(Ci.nsIRDFService);
-    var localStore = rdf.GetDataSource("rdf:local-store");
-    var source = rdf.GetResource(file + "#" + id);
-    var property = rdf.GetResource(attribute);
-    var target = localStore.GetTarget(source, property, true);
+    if (!this._localStore)
+      this._initialize();
+
+    var source = this._rdf.GetResource(file + "#" + id);
+    var property = this._rdf.GetResource(attribute);
+    var target = this._localStore.GetTarget(source, property, true);
     if (target instanceof Ci.nsIRDFLiteral)
       return target.Value;
     return null;
   },
-  
+
   // Set an attribute on an element id in a given file
   setPersistedAttribute: function(file, id, attribute, value) {
-    var rdf = Cc["@mozilla.org/rdf/rdf-service;1"].getService(Ci.nsIRDFService);
-    var localStore = rdf.GetDataSource("rdf:local-store");
-    var source = rdf.GetResource(file + "#" +  id);    
-    var property = rdf.GetResource(attribute);
+    if (!this._localStore)
+      this._initialize();
+
+    var source = this._rdf.GetResource(file + "#" +  id);
+    var property = this._rdf.GetResource(attribute);
     try {
-      var oldTarget = localStore.GetTarget(source, property, true);
+      var oldTarget = this._localStore.GetTarget(source, property, true);
       if (oldTarget) {
         if (value)
-          localStore.Change(source, property, oldTarget,
-                                  rdf.GetLiteral(value));
+          this._localStore.Change(source, property, oldTarget,
+                                  this._rdf.GetLiteral(value));
         else
-          localStore.Unassert(source, property, oldTarget);
+          this._localStore.Unassert(source, property, oldTarget);
       }
       else {
-        localStore.Assert(source, property,
-                                rdf.GetLiteral(value), true);
+        this._localStore.Assert(source, property,
+                                this._rdf.GetLiteral(value), true);
       }
-      LocalStore.dirty = true;
+      this._dirty = true;
     }
     catch(ex) {
       Components.utils.reportError(ex);
     }
   },
-          
+
   // Save changes if needed
   flush: function flush() {
-    if (LocalStore.dirty) {
-      var rdf = Cc["@mozilla.org/rdf/rdf-service;1"].getService(Ci.nsIRDFService);
-      var localStore = rdf.GetDataSource("rdf:local-store");
-      localStore.QueryInterface(Ci.nsIRDFRemoteDataSource).Flush();
+    if (this._localStore && this._dirty) {
+      this._localStore.QueryInterface(Ci.nsIRDFRemoteDataSource).Flush();
+      this._dirty = false;
     }
   }
 }
