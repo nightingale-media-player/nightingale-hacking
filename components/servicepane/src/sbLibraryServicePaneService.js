@@ -94,7 +94,7 @@ function sbLibraryServicePane() {
 
   this._batch = {}; // we'll keep the batch counters in here
   this._refreshPending = false;
-  
+
   // for cleaning up
   this._libraries = [];
 }
@@ -185,7 +185,7 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
           function(event) {
             var exportService = Cc["@songbirdnest.com/media-export-service;1"]
                                   .getService(Ci.sbIMediaExportService);
-            exportService.exportSongbirdData(); 
+            exportService.exportSongbirdData();
           },
           false);
 
@@ -279,11 +279,11 @@ function sbLibraryServicePane__destroyShortcuts(aContainer, aWindow) {
 sbLibraryServicePane.prototype._canDownloadDrop =
 function sbLibraryServicePane__canDownloadDrop(aDragSession) {
   // bail out if the drag session does not contain internal items.
-  // We may eventually add a handler to add an external media URL drop on 
+  // We may eventually add a handler to add an external media URL drop on
   // the download playlist.
-  if (!InternalDropHandler.isSupported(aDragSession)) 
+  if (!InternalDropHandler.isSupported(aDragSession))
     return false;
-   
+
   var IOS = Cc["@mozilla.org/network/io-service;1"]
               .getService(Ci.nsIIOService);
 
@@ -308,19 +308,19 @@ function sbLibraryServicePane__canDownloadDrop(aDragSession) {
     var items = context.items;
     // we must remember to reset the context before we exit, so that when we
     // actually need the items in onDrop we can get them again!
-    var count = 0;    
+    var count = 0;
     var downloadable = true;
     while (items.hasMoreElements() && downloadable) {
       downloadable = canDownload(items.getNext());
       ++count;
     }
-    
+
     // we can't download nothing.
     if (count == 0) { downloadable = false; }
-    
+
     // rewind the items list.
     context.reset();
-    
+
     return downloadable;
   } else {
     Components.utils.reportError("_getMediaListForDrop should have returned null");
@@ -334,7 +334,7 @@ function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrienta
   // represent that target, or null if the drop is not allowed
 
   // check if we support this drop at all
-  if (!InternalDropHandler.isSupported(aDragSession)&& 
+  if (!InternalDropHandler.isSupported(aDragSession)&&
       !ExternalDropHandler.isSupported(aDragSession)) {
     return null;
   }
@@ -349,7 +349,7 @@ function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrienta
     dropOnto = false;
   }
 
-  // work out what library resource is associated with the target node 
+  // work out what library resource is associated with the target node
   var targetResource = this.getLibraryResourceForNode(targetNode);
 
   // check that the target list or library accepts drops
@@ -364,13 +364,13 @@ function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrienta
   //  * non-playlist items can be dropped on top of playlists and libraries
   //  * playlist items can be dropped on top of other libraries than their own
   //  * playlists can be dropped next to other playlists, either as part of a
-  //      reordering, or as a playlist transfer to a different library, with a 
+  //      reordering, or as a playlist transfer to a different library, with a
   //      specific position to drop to
 
   if (dropOnto) {
     if (!dropList) {
-      // we are dropping onto a target node, and this is not a playlist, 
-      // so return the target medialist that corresponds to the target node. 
+      // we are dropping onto a target node, and this is not a playlist,
+      // so return the target medialist that corresponds to the target node.
       return targetResource;
     } else {
       // we are dropping a list onto a target node, we can only accept this drop
@@ -380,10 +380,10 @@ function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrienta
       if (!targetIsLibrary) {
         return null;
       }
-        
-      // we can only accept a list drop on a library different than its own 
+
+      // we can only accept a list drop on a library different than its own
       // (because its own library already has all of its tracks, so it makes no
-      // sense to allow it), so extract the medialist that we are dropping, 
+      // sense to allow it), so extract the medialist that we are dropping,
       // and check where it comes from
       var draggedList = DNDUtils.
         getInternalTransferDataForFlavour(aDragSession,
@@ -392,7 +392,7 @@ function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrienta
       if (targetResource == draggedList.list.library) {
         return null;
       }
-        
+
       // we are indeed dropping the playlist onto a different library, accept
       // the drop
       return targetResource;
@@ -402,29 +402,29 @@ function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrienta
 
     // we are dropping in between two items
     if (dropList) {
-      
+
       // we are dropping a playlist.
-      
+
       // if we are trying to insert the playlist between two toplevel nodes,
       // refuse the drop
       if (targetNode.parentNode.id == "SB:Root") {
         return null;
       }
-      
-      // we now know that this is either a reorder inside a single container 
+
+      // we now know that this is either a reorder inside a single container
       // or a playlist transfer from one library to another, involving two
-      // different containers. 
-      
+      // different containers.
+
       // to be able to discriminate between those two cases, we need to know
-      // where the playlist is going, as well as where it comes from. 
-      
+      // where the playlist is going, as well as where it comes from.
+
       // find where the playlist comes from
       var draggedList = DNDUtils.
         getInternalTransferDataForFlavour(aDragSession,
                                           TYPE_X_SB_TRANSFER_MEDIA_LIST,
                                           Ci.sbIMediaListTransferContext);
       var fromResource = draggedList.library;
-      
+
       var toResource = null;
 
       // finding where the playlist is going however is much more complicated,
@@ -432,7 +432,7 @@ function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrienta
       // resource from the parent container for the target list: we could be
       // dropping into a foreign container (eg. a device node), and the actual
       // library node could be a sibling of the target node.
-      
+
       // so we'll first try to get a resource from the parent node, in case we
       // are dropping into a list of playlist that are children of their
       // library
@@ -440,12 +440,12 @@ function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrienta
       if (parentNode) {
         toResource = this.getLibraryResourceForNode(parentNode);
       }
-      
-      // ... and if there was no parent for the target node, or the parent had 
-      // no library resource, we can still look around the drop target for 
-      // libraries and playlists nodes. if we find any of these, we can assume 
+
+      // ... and if there was no parent for the target node, or the parent had
+      // no library resource, we can still look around the drop target for
+      // libraries and playlists nodes. if we find any of these, we can assume
       // that the resource targeted for drop is these item's library
-      
+
       if (!toResource) {
         var siblingNode = targetNode.previousSibling;
         if (siblingNode) {
@@ -458,14 +458,14 @@ function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrienta
           toResource = this.getLibraryResourceForNode(siblingNode);
         }
       }
-        
+
       // if we have not found what the destination library is, refuse the drop
       if (!toResource)
         return null;
 
       // get the library for the resource we found
       toResource = toResource.library;
-        
+
       // if the source and destination library are the same, this is a reorder,
       // we can actually pretend to refuse it, because the servicePaneService
       // is going to accept it based on further rules (dndAcceptIn, dndAcceptNear)
@@ -476,18 +476,18 @@ function sbLibraryServicePane__getMediaListForDrop(aNode, aDragSession, aOrienta
 
       // otherwise, this is a playlist transfer from one library to another,
       // we should accept the drop, but at the condition that we are not
-      // dropping above a library, because we want to keep playlists either 
-      // below or as children of their library nodes. 
+      // dropping above a library, because we want to keep playlists either
+      // below or as children of their library nodes.
       if (targetIsLibrary && aOrientation == 1)
         return null;
 
       // the destination seems correct, accept the drop, the handler will
       // first copy the list to the new library, and then move the node
-      // to where it belongs  
+      // to where it belongs
       return toResource;
     }
   }
-  
+
   // default is refuse the drop
   return null;
 }
@@ -526,7 +526,7 @@ function sbLibraryServicePane_canDrop(aNode, aDragSession, aOrientation, aWindow
   if (aNode.getAttributeNS(LSP, "ReadOnly") == "true")
     return false;
 
-  // if some of the items have disable download set then don't allow a drop 
+  // if some of the items have disable download set then don't allow a drop
   // on the service pane
   if (aDragSession.isDataFlavorSupported(TYPE_X_SB_TRANSFER_DISABLE_DOWNLOAD)) {
     return false;
@@ -534,21 +534,21 @@ function sbLibraryServicePane_canDrop(aNode, aDragSession, aOrientation, aWindow
 
   var list = this._getMediaListForDrop(aNode, aDragSession, aOrientation);
   if (list) {
-    
+
     // check if the list is in a readonly library
     if (!list.library.userEditable ||
         !list.library.userEditableContent) {
       // this is a list for a readonly library, can't drop
       return false;
     }
-    
+
     // check if the list is itself readonly
     if (!list.userEditable ||
         !list.userEditableContent) {
       // this list content is readonly, can't drop
       return false;
     }
-    
+
     // XXX Mook: hack for bug 4760 to do special handling for the download
     // playlist.  This will need to be expanded later to use IDLs on the
     // list so that things like extensions can do this too.
@@ -603,13 +603,13 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation, aWindow)
       // drop before
       aNode.parentNode.insertBefore(droppedNode, aNode);
     }
-    // work out what library resource is associated with the moved node 
+    // work out what library resource is associated with the moved node
     var medialist = this.getLibraryResourceForNode(aNode);
-    
+
     this._saveListsOrder(medialist.library, aNode.parentNode);
     return;
   }
-  
+
   // don't allow drop on read-only nodes
   if (aNode.getAttributeNS(LSP, "ReadOnly") == "true")
     return;
@@ -621,25 +621,25 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation, aWindow)
     // don't know how to drop here
     return;
   }
-  
+
   // perform this test now because the incoming new node makes it unreliable
   // to do in the onCopyMediaList callback
   var isLastSibling = (aNode.nextSibling == null);
-  
+
   var dropHandlerListener = {
     libSPS: this,
     onDropComplete: function(aTargetList,
                              aImportedInLibrary,
                              aDuplicates,
                              aInsertedInMediaList,
-                             aOtherDropsHandled) { 
+                             aOtherDropsHandled) {
       // show the standard report on the status bar
-      return true; 
+      return true;
     },
     onFirstMediaItem: function(aTargetList, aFirstMediaItem) {},
     onCopyMediaList: function(aSourceList, aNewList) {
       // find the node that was created
-      var newnode = 
+      var newnode =
         this.libSPS._servicePane.getNode(this.libSPS._itemURN(aNewList));
       // move the item to the right spot
       switch (aOrientation) {
@@ -658,19 +658,19 @@ function sbLibraryServicePane_onDrop(aNode, aDragSession, aOrientation, aWindow)
 
   if (InternalDropHandler.isSupported(aDragSession)) {
     // handle drop of internal items
-    InternalDropHandler.dropOnList(aWindow, 
-                                   aDragSession, 
-                                   targetList, 
-                                   -1, 
+    InternalDropHandler.dropOnList(aWindow,
+                                   aDragSession,
+                                   targetList,
+                                   -1,
                                    dropHandlerListener);
 
   } else if (ExternalDropHandler.isSupported(aDragSession)) {
-  
+
     // handle drop of external items
-    ExternalDropHandler.dropOnList(aWindow, 
-                                   aDragSession, 
-                                   targetList, 
-                                   -1, 
+    ExternalDropHandler.dropOnList(aWindow,
+                                   aDragSession,
+                                   targetList,
+                                   -1,
                                    dropHandlerListener);
   }
 }
@@ -713,7 +713,7 @@ function sbLibraryServicePane_onDragGesture(aNode, aDataTransfer) {
     list: list,
     QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListTransferContext])
   };
-  
+
   // register the source context
   var dnd = Components.classes['@songbirdnest.com/Songbird/DndSourceTracker;1']
       .getService(Components.interfaces.sbIDndSourceTracker);
@@ -775,9 +775,9 @@ function sbLibraryServicePane_suggestLibraryForNewList(aMediaListType, aNode) {
   }
 
   // if no node was provided, then suggest the main library
-  if (!aNode) 
+  if (!aNode)
     return this._libraryManager.mainLibrary;
-  
+
   function checkNode(aNode, aLibServicePane) {
     // If this node is visible and belongs to the library
     // service pane service...
@@ -804,7 +804,7 @@ function sbLibraryServicePane_suggestLibraryForNewList(aMediaListType, aNode) {
 
     return null;
   }
-  
+
   // first, check if the given node is useable as a library...
   var lib = checkNode(aNode, this);
   if (lib)
@@ -816,7 +816,7 @@ function sbLibraryServicePane_suggestLibraryForNewList(aMediaListType, aNode) {
     if (lib)
       return lib;
   }
-  
+
   // Move up the tree looking for libraries that support the
   // given media list type.
   aNode = aNode.parentNode;
@@ -1239,10 +1239,10 @@ function sbLibraryServicePane__processListsInLibrary(aLibrary) {
   // Enumerate all lists in this library
   aLibrary.enumerateItemsByProperty(SBProperties.isList, "1",
                                     listener );
-  
+
   // copy array of lists
   var remaining = listener.items.slice(0);
-  
+
   // create nodes in the saved order, ignore guids with no
   // corresponding medialist and nodes whose guid isnt in the
   // saved order
@@ -1259,7 +1259,7 @@ function sbLibraryServicePane__processListsInLibrary(aLibrary) {
       }
     }
   }
-  
+
   // Make sure we have a node for each remaining list. each node will be
   // inserted after the last node of the same type
   for (var i = 0; i < remaining.length; i++) {
@@ -1516,7 +1516,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
       node.setAttributeNS(LSP, "ListCustomType", customType);
       // Save the customType for use by metrics.
       node.setAttributeNS(LSP, "LibraryCustomType", customType);
-  
+
       if (aConstraintType) {
         self._addClassNames(node, [aConstraintType]);
         var builder = Cc["@songbirdnest.com/Songbird/Library/ConstraintBuilder;1"]
@@ -1583,7 +1583,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
 
     // class names that should exist on the parent container node
     const K_PARENT_PROPS = ["folder", "library-container"];
-  
+
     self._addClassNames(parentNode, K_PARENT_PROPS);
 
     if (aLibrary != this._libraryManager.mainLibrary) {
@@ -1854,8 +1854,8 @@ function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList, aAppend) {
 
       if (aAppend)
         folder.appendChild(aNode);
-      else  
-        this._insertAfterLastOfSameType(aNode, folder);
+      else
+        this._insertByNodeType(aNode, folder);
     }
   }
   // If it is a secondary library playlist, it should be
@@ -1875,7 +1875,7 @@ function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList, aAppend) {
       if (aAppend)
         parentLibraryNode.appendChild(aNode);
       else
-        this._insertAfterLastOfSameType(aNode, parentLibraryNode);
+        this._insertByNodeType(aNode, parentLibraryNode);
     } else {
       LOG("sbLibraryServicePane__insertMediaListNode: could not add media list to parent library");
       this._servicePane.root.appendChild(aNode);
@@ -1885,11 +1885,13 @@ function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList, aAppend) {
 
 /**
  * Inserts the given node under the given parent and attempts to keep
- * children grouped by type.  The node is inserted at the end of the list
- * or next to the last child of the same type as the given node.
+ * children grouped by type.  The node is inserted at the end of the list,
+ * or next to the last child of the same type as the given node, or before
+ * the first of the type with higher priority if no one with the same type
+ * can be found.
  */
-sbLibraryServicePane.prototype._insertAfterLastOfSameType =
-function sbLibraryServicePane__insertAfterLastOfSameType(aNode, aParent) {
+sbLibraryServicePane.prototype._insertByNodeType =
+function sbLibraryServicePane__insertByNodeType(aNode, aParent) {
   //logcall(arguments);
 
   function getNodeType(aNode) {
@@ -1900,30 +1902,33 @@ function sbLibraryServicePane__insertAfterLastOfSameType(aNode, aParent) {
       return type;
   }
 
-  // Try to insert after last of same type
-  let nodeType = getNodeType(aNode);
-  let insertionPoint = null;
-  let found = false;
+  // Find the best node to insert after. This is ideally the last node with the
+  // same priority as the node we are insertion. If such a node doesn't exist
+  // the last node with a lower priority will do as well.
+  let nodeTypes = { "smart": 1, "simple": 2, "subscription": 3 };
+  let nodePriority = nodeTypes[getNodeType(aNode)];
+  let insertAfter = null;
+  let insertAfterPriority = 0;
   for (let child = aParent.lastChild; child; child = child.previousSibling) {
-    if (child.hidden)
+    if (child.hidden || child.contractid != CONTRACTID)
       continue;
-    // Stop at a node that belongs to the library service pane and has the
-    // same list type as the node we are inserting
-    if (child.contractid == CONTRACTID && getNodeType(child) == nodeType) {
-      found = true;
-      break;
+
+    let childNodePriority = nodeTypes[getNodeType(child)];
+    if (childNodePriority > insertAfterPriority &&
+        childNodePriority <= nodePriority) {
+      insertAfter = child;
+      insertAfterPriority = childNodePriority;
+
+      // Break out of the loop if we already found the perfect insertion point
+      if (insertAfterPriority == nodePriority)
+        break;
     }
-
-    insertionPoint = child;
   }
 
-  // Insert the new list after the last of the same type
-  // or at the end of the list
-  if (found) {
-    aParent.insertBefore(aNode, insertionPoint);
-  } else {
-    aParent.appendChild(aNode);
-  }
+  if (insertAfter)
+    aParent.insertBefore(aNode, insertAfter.nextSibling);
+  else
+    aParent.insertBefore(aNode, aParent.firstChild);
 
   // Ensure that all parent containers are open and the node is visible
   for (let parent = aParent; parent; parent = parent.parentNode)
@@ -1998,7 +2003,7 @@ function sbLibraryServicePane__addClassNames(aNode, aList) {
  * Turn a partial entity (&foo.bar) into a css property string (foo-bar),
  * but leaves other strings as they are.
  */
-sbLibraryServicePane.prototype._makeCSSProperty = 
+sbLibraryServicePane.prototype._makeCSSProperty =
 function sbLibraryServicePane__makeCSSProperty(aString) {
   if ( aString[0] == "&" ) {
     aString = aString.substr(1, aString.length);
