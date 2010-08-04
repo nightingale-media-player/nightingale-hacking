@@ -262,17 +262,17 @@ sbHotkeyService.prototype =
     // Register observer for application shutdown to clean up.
     ObserverService.addObserver(this, SHUTDOWN_TOPIC, false);
 
-    // Send notification that the service is ready.
-    ObserverService.notifyObservers(this,
-                                    "service-ready",
-                                    SB_HOTKEY_SERVICE_CONTRACTID);
+    // Indicate that the service is ready.
+    var serviceManager = Cc["@songbirdnest.com/Songbird/ServiceManager;1"]
+                           .getService(Ci.sbIServiceManager);
+    serviceManager.setServiceReady(SB_HOTKEY_SERVICE_CONTRACTID, true);
   },
 
   _shutdown: function() {
-    // Send notification that the service is about to shut down.
-    ObserverService.notifyObservers(this,
-                                    "before-service-shutdown",
-                                    SB_HOTKEY_SERVICE_CONTRACTID);
+    // Indicate that the service is no longer ready.
+    var serviceManager = Cc["@songbirdnest.com/Songbird/ServiceManager;1"]
+                           .getService(Ci.sbIServiceManager);
+    serviceManager.setServiceReady(SB_HOTKEY_SERVICE_CONTRACTID, false);
 
     if (CommandLine) {
       CommandLine.removeFlagHandler(this._hotkeyHandler, "hotkey");

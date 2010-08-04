@@ -52,6 +52,7 @@
 
 #include <sbIPrompter.h>
 #include <sbILibraryManager.h>
+#include <sbIServiceManager.h>
 
 /* observer topics */
 #define NS_PROFILE_STARTUP_OBSERVER_ID          "profile-after-change"
@@ -649,6 +650,14 @@ nsresult sbDeviceManager::Init()
   //rv = this->UpdateDevices();
   //NS_ENSURE_SUCCESS(rv, rv);
 
+  // Indicate that the device manager services are ready.
+  nsCOMPtr<sbIServiceManager>
+    serviceManager = do_GetService(SB_SERVICE_MANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = serviceManager->SetServiceReady(SONGBIRD_DEVICEMANAGER2_CONTRACTID,
+                                       PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -834,6 +843,14 @@ nsresult sbDeviceManager::PrepareShutdown()
 
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   nsAutoMonitor mon(mMonitor);
+
+  // Indicate that the device manager services are no longer ready.
+  nsCOMPtr<sbIServiceManager>
+    serviceManager = do_GetService(SB_SERVICE_MANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = serviceManager->SetServiceReady(SONGBIRD_DEVICEMANAGER2_CONTRACTID,
+                                       PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // disconnect all the marshalls (i.e. stop watching for new devices)
   nsCOMPtr<nsIArray> marshalls;

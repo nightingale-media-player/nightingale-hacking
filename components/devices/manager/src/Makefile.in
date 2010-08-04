@@ -61,6 +61,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/base/public \
                      $(DEPTH)/components/moz/prompter/public \
                      $(DEPTH)/components/moz/temporaryfileservice/public \
                      $(DEPTH)/components/moz/strings/components/public \
+                     $(DEPTH)/components/moz/xpcom/public \
                      $(DEPTH)/components/property/public \
                      $(topsrcdir)/components/devices/base/src \
                      $(topsrcdir)/components/devices/device/src \

@@ -26,10 +26,12 @@
 
 #include "sbArray.h"
 #include "sbPropertyBag.h"
+#include "sbServiceManager.h"
 #include <nsIGenericFactory.h>
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbArray)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbPropertyBag, Init)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbServiceManager, Initialize)
 
 #define SB_PROPERTYBAG_CLASSNAME "sbPropertyBag"
 #define SB_PROPERTYBAG_CID \
@@ -50,6 +52,12 @@ static const nsModuleComponentInfo components[] =
     SB_PROPERTYBAG_CID,
     SB_PROPERTYBAG_CONTRACTID,
     sbPropertyBagConstructor
+  },
+  {
+    SB_SERVICE_MANAGER_CLASSNAME,
+    SB_SERVICE_MANAGER_CID,
+    SB_SERVICE_MANAGER_CONTRACTID,
+    sbServiceManagerConstructor
   }
 };
 
