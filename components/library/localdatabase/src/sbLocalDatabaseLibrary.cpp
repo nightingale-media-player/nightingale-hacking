@@ -2768,9 +2768,27 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
   rv = GetMediaItem(guid, getter_AddRefs(mediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mediaItem, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
   if (aProperties) {
     rv = SetDefaultItemProperties(mediaItem, aProperties);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // Set the name for media list properly, but do not send notifications,
+    // since we assume mediaItem was only just created, and at this point
+    // nobody cares.
+    nsString name;
+    rv = aProperties->GetPropertyValue(
+      NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME), name);
+    if (NS_SUCCEEDED(rv) && !name.IsEmpty() && mediaList) {
+      nsCOMPtr<sbILocalDatabaseMediaItem> item =
+        do_QueryInterface(mediaItem, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      item->SetSuppressNotifications(PR_TRUE);
+      mediaList->SetName(name);
+      item->SetSuppressNotifications(PR_FALSE);
+    }
   }
 
   // Invalidate our array
@@ -2780,9 +2798,6 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
   if (!mPreventAddedNotification) {
     NotifyListenersItemAdded(SB_IMEDIALIST_CAST(this), mediaItem, length);
   }
-
-  nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mediaItem, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = mediaList);
   return NS_OK;
@@ -4045,7 +4060,7 @@ sbLocalDatabaseLibrary::AddSome(nsISimpleEnumerator* aMediaItems)
  * See sbIMediaList
  */
 NS_IMETHODIMP
-sbLocalDatabaseLibrary::AddSomeAsync(nsISimpleEnumerator* aMediaItems, 
+sbLocalDatabaseLibrary::AddSomeAsync(nsISimpleEnumerator* aMediaItems,
                                      sbIMediaListAsyncListener* aListener)
 {
   NS_ENSURE_ARG_POINTER(aMediaItems);
@@ -4063,7 +4078,7 @@ sbLocalDatabaseLibrary::AddSomeAsync(nsISimpleEnumerator* aMediaItems,
                             getter_AddRefs(proxiedListener));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsRefPtr<sbLocalDatabaseLibraryAsyncRunner> runner = 
+  nsRefPtr<sbLocalDatabaseLibraryAsyncRunner> runner =
     new sbLocalDatabaseLibraryAsyncRunner(this, aMediaItems, proxiedListener);
   NS_ENSURE_TRUE(runner, NS_ERROR_OUT_OF_MEMORY);
 
@@ -4078,7 +4093,7 @@ sbLocalDatabaseLibrary::AddSomeAsync(nsISimpleEnumerator* aMediaItems,
 }
 
 nsresult
-sbLocalDatabaseLibrary::AddSomeAsyncInternal(nsISimpleEnumerator* aMediaItems, 
+sbLocalDatabaseLibrary::AddSomeAsyncInternal(nsISimpleEnumerator* aMediaItems,
                                              sbIMediaListAsyncListener* aListener)
 {
   NS_ENSURE_ARG_POINTER(aMediaItems);
@@ -4117,7 +4132,7 @@ sbLocalDatabaseLibrary::AddSomeAsyncInternal(nsISimpleEnumerator* aMediaItems,
 
     ++itemsProcessed;
 
-    // only send notifications every 50 items or 
+    // only send notifications every 50 items or
     // when it's finished if < 50 items.
     if (itemsProcessed % 50 == 0) {
       rv = aListener->OnProgress(itemsProcessed, PR_FALSE);
