@@ -183,9 +183,9 @@
           }
 
           // The file extension list that device supports.
-          fileExtensions = capabilities.getSupportedFileExtensions(
-                                          this.device,
-                                          sbIDC.CONTENT_IMAGE);
+          let fileExtensions = capabilities.getSupportedFileExtensions(
+                                              this.device,
+                                              sbIDC.CONTENT_IMAGE);
 
           let extensions = "";
           while (fileExtensions.hasMore()) {
