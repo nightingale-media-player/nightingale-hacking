@@ -225,6 +225,7 @@
 ./components/sbWidgets.xpt
 ./components/sbWindowWatcher.so
 ./components/sbWindowWatcher.xpt
+./components/sbXPCOM.xpt
 ./components/sbdataremote.so
 ./components/sbiTunesImporter.xpt
 ./components/sbiTunesMediaImport.so

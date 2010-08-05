@@ -226,6 +226,7 @@
 ./components/sbWidgets.xpt
 ./components/sbWindowWatcher.dylib
 ./components/sbWindowWatcher.xpt
+./components/sbXPCOM.xpt
 ./components/sbdataremote.dylib
 ./components/sbiTunesImporter.xpt
 ./components/sbiTunesMediaImport.dylib

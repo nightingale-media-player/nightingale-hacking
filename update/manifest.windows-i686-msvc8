@@ -232,6 +232,7 @@
 ./components/sbWindowWatcher.xpt
 ./components/sbWindowsAutoPlayService.js
 ./components/sbWindowsSystem.xpt
+./components/sbXPCOM.xpt
 ./components/sbdataremote.dll
 ./components/sbiTunesImporter.xpt
 ./components/sbiTunesMediaImport.dll
