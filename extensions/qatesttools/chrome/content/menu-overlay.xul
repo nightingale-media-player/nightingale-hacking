@@ -45,7 +45,10 @@
               label="Dump Device Capabilities"
               insertafter="devToolsSeparator"
               command="dumpdevicecaps-cmd" />
-
+    <menuitem id="fakepds-menuitem"
+              label="Fake PDS"
+              insertafter="devToolsSeparator"
+              command="fakepds-cmd" />
   </menupopup>
 
 </overlay>

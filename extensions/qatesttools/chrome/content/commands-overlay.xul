@@ -32,6 +32,7 @@
     <command id="mockcdcontroller-showcontroller-cmd"  />
     <command id="mockdevicecontroller-showcontroller-cmd" />
     <command id="dumpdevicecaps-cmd" />
+    <command id="fakepds-cmd"/>
   </commandset>
  
 </overlay>

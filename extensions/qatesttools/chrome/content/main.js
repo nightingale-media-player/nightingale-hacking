@@ -58,6 +58,14 @@ MockCDController.Controller =
       "command",
       function() { self.showDeviceCapsDump(); },
       false);
+      
+    var showFakePDS =
+      document.getElementById("fakepds-cmd");
+      
+    showFakePDS.addEventListener(
+      "command",
+      function() { self.showFakePDS(); },
+      false);
 
     // Only open the controller pane if the pref is currently set.
     if (Application.prefs.getValue("extensions.cdripcontroller.startup_show_controller",
@@ -85,6 +93,13 @@ MockCDController.Controller =
     window.openDialog(
       "chrome://mockcdcontroller/content/deviceCapsDump.xul",
       "device-caps-dump-dialog",
+      "chrome,centerscreen,resizable=yes");
+  },
+  
+  showFakePDS: function() {
+    window.openDialog(
+      "chrome://mockcdcontroller/content/fakePDS.xul",
+      "fakepds-dialog",
       "chrome,centerscreen,resizable=yes");
   },
 };
