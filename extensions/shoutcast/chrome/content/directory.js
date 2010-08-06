@@ -120,9 +120,20 @@ var RadioDirectory = {
                  .getService(Ci.sbILibraryManager);
     this.playlist.bind(this.radioLib.createView());
     
-    // If this is the first time we've loaded the playlist, clear the 
-    // normal columns and use the stream ones
-    if (!Application.prefs.getValue(shoutcastPlaylistInit, false)) {
+    // Enumerate all columns in the playlist
+    var playlistcolumns = this.playlist.tree.columns;
+    var columnbinds = [];
+    for (var i = 0; i < playlistcolumns.length; i++)
+    {
+      // Get the bind url for each column
+      columnbinds.push(
+          playlistcolumns.getColumnAt(i).element.getAttribute("bind"));
+    }
+    // If this is the first time we've loaded the playlist or we have
+    // no Name column, clear the normal columns and use the stream ones
+    if (!Application.prefs.getValue(shoutcastPlaylistInit, false) ||
+        (columnbinds.indexOf(SC_streamName) == -1))
+    {
       Application.prefs.setValue(shoutcastPlaylistInit, true);
       var colSpec = SC_streamName + " 358 " + SC_bitRate + " 71 " +
           SC_comment + " 240 " + SC_listenerCount + " 74 " +
@@ -205,9 +216,14 @@ var RadioDirectory = {
 
     var libGuid = Application.prefs.getValue(shoutcastLibraryGuid, "");
     if (libGuid != "") {
-      // XXX should error check this
-      this.radioLib = libraryManager.getLibrary(libGuid);
-    } else {
+      try {
+        this.radioLib = libraryManager.getLibrary(libGuid);
+      } catch (e){
+        // If we have an invalid GUID, we act like we have no GUID
+        libGuid = "";
+      }
+    }
+    if (libGuid == "") {
       this.radioLib = createLibrary("shoutcast_radio_library", null,
           false);
       // doesn't manifest itself in any user visible way, so i think
@@ -223,17 +239,26 @@ var RadioDirectory = {
 
     libGuid = Application.prefs.getValue(shoutcastTempLibGuid, "");
     if (libGuid != "") {
-      // XXX should error check this
-      this.tempLib = libraryManager.getLibrary(libGuid);
+      try {
+        this.tempLib = libraryManager.getLibrary(libGuid);
+      } catch (e) {
+        libGuid = "";
+        // Ensure null so the following part can't be executed if
+        // we have no library
+        this.tempLib = null;
+      }
 
-      // Get our favourites & stream lists
-      var a = this.tempLib.getItemsByProperty(
-          SBProperties.customType, "radio_favouritesList");
-      this.favesList = a.queryElementAt(0, Ci.sbIMediaList);
-      a = this.tempLib.getItemsByProperty(
-          SBProperties.customType, "radio_tempStreamList");
-      this.streamList = a.queryElementAt(0, Ci.sbIMediaList);
-    } else {
+      if (this.tempLib) {
+        // Get our favourites & stream lists
+        var a = this.tempLib.getItemsByProperty(
+            SBProperties.customType, "radio_favouritesList");
+        this.favesList = a.queryElementAt(0, Ci.sbIMediaList);
+        a = this.tempLib.getItemsByProperty(
+            SBProperties.customType, "radio_tempStreamList");
+        this.streamList = a.queryElementAt(0, Ci.sbIMediaList);
+      }
+    }
+    if (libGuid == "") {
       this.tempLib = createLibrary("shoutcast_temp_library", null,
           false);
       // doesn't manifest itself in any user visible way, so i think
@@ -409,7 +434,7 @@ var RadioDirectory = {
         propertiesArray.appendElement(props, false);
         
         trackArray.appendElement(
-            ioService.newURI(shoutcastTuneURL + id, null, null),
+            ioService.newURI(ShoutcastRadio.getListenURL(id), null, null),
             false);
       }
 

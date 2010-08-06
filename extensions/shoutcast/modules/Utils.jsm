@@ -4,6 +4,8 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cu = Components.utils;
 
+const SP_CONTRACTID = "@songbirdnest.com/servicepane/library;1";
+
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 var Application = Cc["@mozilla.org/fuel/application;1"]
@@ -14,15 +16,16 @@ var Application = Cc["@mozilla.org/fuel/application;1"]
  */
 Utils = {
   LS_NS: "http://songbirdnest.com/rdf/library-servicepane#",
+  SC_NS: "http://songbirdnest.com/rdf/shoutcast-servicepane#",
 
   ensureFavouritesNode: function() {
     let SPS = Cc['@songbirdnest.com/servicepane/service;1']
                 .getService(Ci.sbIServicePaneService);
-
+    
     // Don't do anything if node exists already
-    if (SPS.getNode("radio-shoutcast-favorites"))
+    if (SPS.getNodesByAttributeNS(this.SC_NS, "SHOUTcast", "true").length > 0)
       return;
-
+    
     // Get favorites list
     let libGuid = Application.prefs.getValue("extensions.shoutcast-radio.templib.guid", "");
     if (libGuid == "")
@@ -60,15 +63,18 @@ Utils = {
     // Create a node
     let strings = new SBStringBundle("chrome://shoutcast-radio/locale/overlay.properties");
     let node = SPS.createNode();
-    node.id = "radio-shoutcast-favorites";
+    // The new service pane service needs the list guid in the id
+    node.id = "urn:item:" + favesList.guid;
     node.className = "medialist-favorites medialist medialisttype-" + favesList.type;
     node.name = strings.get("favourites", "Favorite Stations");
+    node.contractid = SP_CONTRACTID;
     node.editable = false;
     node.setAttributeNS(this.LS_NS, "ListType", favesList.type);
     node.setAttributeNS(this.LS_NS, "ListGUID", favesList.guid);
     node.setAttributeNS(this.LS_NS, "LibraryGUID", tempLib.guid);
     node.setAttributeNS(this.LS_NS, "ListCustomType", favesList.getProperty(SBProperties.customType));
     node.setAttributeNS(this.LS_NS, "LibraryCustomType", tempLib.getProperty(SBProperties.customType));
+    node.setAttributeNS(this.SC_NS, "SHOUTcast", "true"); // to be recognizeable
     radioFolder.appendChild(node);
   }
 }

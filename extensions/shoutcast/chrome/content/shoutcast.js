@@ -5,12 +5,15 @@
  * services, please visit: http://www.winamp.com/legal/terms
  */
 
-const shoutcastTuneURL = "http://shoutcast.com/sbin/tunein-station.pls?id=";
+const shoutcastURL = "http://yp.shoutcast.com";
+const shoutcastStationListURL = "/sbin/newxml.phtml?genre=";
+// This *could* change, it will be updated in getStationList.
+var shoutcastTuneURL = "/sbin/tunein-station.pls";
 
 var ShoutcastRadio = {
   // Super whizzy seeeeeecret sauce
   getListenURL : function(id) {
-    return (shoutcastTuneURL + id);
+    return (shoutcastURL + shoutcastTuneURL + "?id=" + id);
   },
 
   // OMG don't look at this, it's top-secret.  The universe may implode
@@ -20,13 +23,19 @@ var ShoutcastRadio = {
     if (genre == "sbITop")
       genre = "BigAll&limit=200";
     req.open("GET",
-      "http://yp.shoutcast.com/sbin/newxml.phtml?genre="+genre, false);
+      shoutcastURL+shoutcastStationListURL+genre, false);
     req.genre = genre;
-    req.send(null);
-    var xml = (new DOMParser()).
-        parseFromString(req.responseText, "text/xml");
-    var stationList = xml.getElementsByTagName("stationlist")[0].
-        getElementsByTagName("station");
+    var stationList = [];
+    try {
+      req.send(null);
+      var xml = (new DOMParser()).
+          parseFromString(req.responseText, "text/xml");
+      stationList = xml.getElementsByTagName("stationlist")[0].
+          getElementsByTagName("station");
+      // Update shoutcastTuneURL with the tunein-base recived with the list
+      shoutcastTuneURL = xml.getElementsByTagName("stationlist")[0].
+          getElementsByTagName("tunein").item(0).getAttribute("base");
+    } catch (e) {} // Drop connection errors, we'll return an empty array
     return (stationList);
   }
 }
