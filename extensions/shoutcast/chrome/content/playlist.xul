@@ -3,15 +3,15 @@
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://shoutcast-radio/skin/favourites.css"
-		type="text/css"?>
+    type="text/css"?>
 
 <!DOCTYPE window SYSTEM "chrome://shoutcast-radio/locale/overlay.dtd">
 
 <window id="favourite_streams_page"
-	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-	<script type="application/x-javascript" src="radioProperties.js" />
-	<script type="application/x-javascript" src="shoutcast.js" />
-	<script type="application/x-javascript" src="favourites.js" />
+  <script type="application/x-javascript" src="radioProperties.js" />
+  <script type="application/x-javascript" src="shoutcast.js" />
+  <script type="application/x-javascript" src="favourites.js" />
 
 </window>

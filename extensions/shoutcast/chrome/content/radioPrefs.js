@@ -26,8 +26,8 @@ const shoutcastCheckBitRate = "extensions.shoutcast-radio.limit-bit-rate";
 const shoutcastCheckListeners = "extensions.shoutcast-radio.limit-listeners";
 
 var radioPrefs = {
-	openPreferences: function() {
-		var windowMediator;
+  openPreferences: function() {
+    var windowMediator;
         var window;
 
         windowMediator = Cc["@mozilla.org/appshell/window-mediator;1"].
@@ -36,29 +36,29 @@ var radioPrefs = {
 
         /* Open the Radio preferences pane. */
         window.SBOpenPreferences("radioPrefsPane");
-	},
+  },
 
-	handleLoad: function() {
-	},
+  handleLoad: function() {
+  },
 
-	updateStates: function() {
-		var cBitRateBox = document.getElementById("checkBitRatePref");
-		var bitRateMenu = document.getElementById("bitRateMenu");
-		var listenersText = document.getElementById("textListenersPref");
-		var cListenersBox = document.getElementById("checkListenersPref");
-		Application.prefs.setValue(shoutcastCheckBitRate, cBitRateBox.checked);
-		Application.prefs.setValue(shoutcastCheckListeners,
-				cListenersBox.checked);
-		if (cBitRateBox.checked)
-			bitRateMenu.disabled = false;
-		else
-			bitRateMenu.disabled = true;
-		if (cListenersBox.checked)
-			listenersText.disabled = false;
-		else
-			listenersText.disabled = true;
+  updateStates: function() {
+    var cBitRateBox = document.getElementById("checkBitRatePref");
+    var bitRateMenu = document.getElementById("bitRateMenu");
+    var listenersText = document.getElementById("textListenersPref");
+    var cListenersBox = document.getElementById("checkListenersPref");
+    Application.prefs.setValue(shoutcastCheckBitRate, cBitRateBox.checked);
+    Application.prefs.setValue(shoutcastCheckListeners,
+        cListenersBox.checked);
+    if (cBitRateBox.checked)
+      bitRateMenu.disabled = false;
+    else
+      bitRateMenu.disabled = true;
+    if (cListenersBox.checked)
+      listenersText.disabled = false;
+    else
+      listenersText.disabled = true;
 
-	}
+  }
 }
 
 

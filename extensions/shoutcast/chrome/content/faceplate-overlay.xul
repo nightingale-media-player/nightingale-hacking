@@ -2,16 +2,16 @@
 <?xml-stylesheet href="chrome://shoutcast-radio/skin/faceplate.css" ?>
 
 <overlay id="shoutcast-radio-faceplate-overlay"
-	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-	<hbox id="control_buttons_box">
-		<sb-player-stop-button id="play_stop_button" hidden="true"
-			class="sb-player-button" insertbefore="play_fwd_button" />
-	</hbox>
+  <hbox id="control_buttons_box">
+    <sb-player-stop-button id="play_stop_button" hidden="true"
+      class="sb-player-button" insertbefore="play_fwd_button" />
+  </hbox>
 
-	<sb-autoscroll id="sb-faceplate-autoscroll-box">
-		<image id="shoutcast-station-icon" position="1"
-			src="chrome://shoutcast-radio/skin/shoutcast_favicon.png" />
-	</sb-autoscroll>
+  <sb-autoscroll id="sb-faceplate-autoscroll-box">
+    <image id="shoutcast-station-icon" position="1"
+      src="chrome://shoutcast-radio/skin/shoutcast_favicon.png" />
+  </sb-autoscroll>
 </overlay>
 

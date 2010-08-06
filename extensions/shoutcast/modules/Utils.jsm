@@ -61,9 +61,9 @@ Utils = {
     let strings = new SBStringBundle("chrome://shoutcast-radio/locale/overlay.properties");
     let node = SPS.createNode();
     node.id = "radio-shoutcast-favorites";
-  	node.className = "medialist-favorites medialist medialisttype-" + favesList.type;
+    node.className = "medialist-favorites medialist medialisttype-" + favesList.type;
     node.name = strings.get("favourites", "Favorite Stations");
-  	node.editable = false;
+    node.editable = false;
     node.setAttributeNS(this.LS_NS, "ListType", favesList.type);
     node.setAttributeNS(this.LS_NS, "ListGUID", favesList.guid);
     node.setAttributeNS(this.LS_NS, "LibraryGUID", tempLib.guid);
