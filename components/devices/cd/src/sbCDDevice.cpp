@@ -699,6 +699,13 @@ sbCDDevice::SetDefaultLibrary(sbIDeviceLibrary* aDefaultLibrary)
   return sbBaseDevice::SetDefaultLibrary(aDefaultLibrary);
 }
 
+/* readonly attribute sbIDeviceLibrary primaryLibrary; */
+NS_IMETHODIMP
+sbCDDevice::GetPrimaryLibrary(sbIDeviceLibrary** aPrimaryLibrary)
+{
+  return sbBaseDevice::GetPrimaryLibrary(aPrimaryLibrary);
+}
+
 /* readonly attribute nsIPropertyBag2 parameters; */
 NS_IMETHODIMP
 sbCDDevice::GetParameters(nsIPropertyBag2 * *aParameters)
@@ -911,6 +918,14 @@ NS_IMETHODIMP
 sbCDDevice::ResetWarningDialogs()
 {
   return sbBaseDevice::ResetWarningDialogs();
+}
+
+/* nsIInputStream openInputStream(in nsIURI aURI); */
+NS_IMETHODIMP
+sbCDDevice::OpenInputStream(nsIURI*          aURI,
+                            nsIInputStream** retval)
+{
+  return sbBaseDevice::OpenInputStream(aURI, retval);
 }
 
 nsresult

@@ -512,6 +512,13 @@ sbMockDevice::SetDefaultLibrary(sbIDeviceLibrary* aDefaultLibrary)
   return sbBaseDevice::SetDefaultLibrary(aDefaultLibrary);
 }
 
+/* readonly attribute sbIDeviceLibrary primaryLibrary; */
+NS_IMETHODIMP
+sbMockDevice::GetPrimaryLibrary(sbIDeviceLibrary** aPrimaryLibrary)
+{
+  return sbBaseDevice::GetPrimaryLibrary(aPrimaryLibrary);
+}
+
 /* readonly attribute nsIPropertyBag2 parameters; */
 NS_IMETHODIMP sbMockDevice::GetParameters(nsIPropertyBag2 * *aParameters)
 {
@@ -782,6 +789,12 @@ NS_IMETHODIMP sbMockDevice::GetWarningDialogEnabled(const nsAString & aWarning, 
 NS_IMETHODIMP sbMockDevice::ResetWarningDialogs()
 {
   return sbBaseDevice::ResetWarningDialogs();
+}
+
+NS_IMETHODIMP sbMockDevice::OpenInputStream(nsIURI*          aURI,
+                                            nsIInputStream** retval)
+{
+  return sbBaseDevice::OpenInputStream(aURI, retval);
 }
 
 NS_IMETHODIMP sbMockDevice::GetCurrentStatus(sbIDeviceStatus * *aCurrentStatus)

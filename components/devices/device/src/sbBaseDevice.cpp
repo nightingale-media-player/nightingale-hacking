@@ -4094,6 +4094,12 @@ NS_IMETHODIMP sbBaseDevice::ResetWarningDialogs()
   return NS_OK;
 }
 
+NS_IMETHODIMP sbBaseDevice::OpenInputStream(nsIURI*          aURI,
+                                            nsIInputStream** retval)
+{
+  return NS_ERROR_NOT_AVAILABLE;
+}
+
 nsresult sbBaseDevice::GetPrefBranch(const char *aPrefBranchName,
                                      nsIPrefBranch** aPrefBranch)
 {
@@ -6605,6 +6611,18 @@ sbBaseDevice::SetDefaultLibrary(sbIDeviceLibrary* aDefaultLibrary)
   UpdateProperties();
 
   return NS_OK;
+}
+
+/* readonly attribute sbIDeviceLibrary primaryLibrary; */
+NS_IMETHODIMP
+sbBaseDevice::GetPrimaryLibrary(sbIDeviceLibrary** aPrimaryLibrary)
+{
+  NS_ENSURE_ARG_POINTER(aPrimaryLibrary);
+  if (!mPrimaryVolume) {
+    *aPrimaryLibrary = nsnull;
+    return NS_OK;
+  }
+  return mPrimaryVolume->GetDeviceLibrary(aPrimaryLibrary);
 }
 
 nsresult

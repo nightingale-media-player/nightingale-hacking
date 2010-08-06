@@ -247,6 +247,7 @@ public:
                                sbIDeviceSupportsItemCallback* aCallback);
   NS_IMETHOD GetDefaultLibrary(sbIDeviceLibrary** aDefaultLibrary);
   NS_IMETHOD SetDefaultLibrary(sbIDeviceLibrary* aDefaultLibrary);
+  NS_IMETHOD GetPrimaryLibrary(sbIDeviceLibrary** aPrimaryLibrary);
 
 public:
   /**
@@ -642,6 +643,8 @@ public:
   NS_SCRIPTABLE NS_IMETHOD SetWarningDialogEnabled(const nsAString & aWarning, PRBool aEnabled);
   NS_SCRIPTABLE NS_IMETHOD GetWarningDialogEnabled(const nsAString & aWarning, PRBool *_retval);
   NS_SCRIPTABLE NS_IMETHOD ResetWarningDialogs(void);
+  NS_SCRIPTABLE NS_IMETHOD OpenInputStream(nsIURI*          aURI,
+                                           nsIInputStream** retval);
 
   /**
    * Returns PR_TRUE if the request has been aborted or the device is

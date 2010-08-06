@@ -38,10 +38,12 @@
 #include <nsIMutableArray.h>
 #include <nsIFile.h>
 #include <nsISimpleEnumerator.h>
+#include <nsIStandardURL.h>
 #include <nsISupportsArray.h>
 #include <nsIURI.h>
 #include <nsIURL.h>
 #include <nsIWindowWatcher.h>
+#include <nsNetCID.h>
 #include <nsThreadUtils.h>
 
 #include "sbBaseDevice.h"
@@ -322,6 +324,74 @@ nsresult sbDeviceUtils::GetDeviceLibraryForItem(sbIDevice* aDevice,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = GetDeviceLibraryForLibrary(aDevice, ownerLibrary, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/* static */
+nsresult sbDeviceUtils::NewDeviceLibraryURI(sbIDeviceLibrary* aDeviceLibrary,
+                                            const nsCString&  aSpec,
+                                            nsIURI**          aURI)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aDeviceLibrary);
+  NS_ENSURE_ARG_POINTER(aURI);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the device.
+  nsCOMPtr<sbIDevice> device;
+  rv = aDeviceLibrary->GetDevice(getter_AddRefs(device));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the device ID.
+  char               deviceIDString[NSID_LENGTH];
+  sbAutoMemPtr<nsID> deviceID;
+  rv = device->GetId(deviceID.StartAssignment());
+  NS_ENSURE_SUCCESS(rv, rv);
+  deviceID->ToProvidedString(deviceIDString);
+
+  // Get the device library GUID.
+  nsAutoString guid;
+  rv = aDeviceLibrary->GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Produce the base URI spec.
+  nsCAutoString baseURISpec;
+  baseURISpec.Assign("x-device:///");
+  baseURISpec.Append(deviceIDString);
+  baseURISpec.Append("/");
+  baseURISpec.Append(NS_ConvertUTF16toUTF8(guid));
+  baseURISpec.Append("/");
+
+  // Produce the base URI.
+  nsCOMPtr<nsIStandardURL>
+    baseStandardURL = do_CreateInstance(NS_STANDARDURL_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = baseStandardURL->Init(nsIStandardURL::URLTYPE_NO_AUTHORITY,
+                             -1,
+                             baseURISpec,
+                             nsnull,
+                             nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIURI> baseURI = do_QueryInterface(baseStandardURL, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Produce the requested URI.
+  nsCOMPtr<nsIStandardURL>
+    standardURL = do_CreateInstance(NS_STANDARDURL_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = standardURL->Init(nsIStandardURL::URLTYPE_NO_AUTHORITY,
+                         -1,
+                         aSpec,
+                         nsnull,
+                         baseURI);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Return results.
+  rv = CallQueryInterface(standardURL, aURI);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

@@ -125,6 +125,20 @@ public:
                                           /* out */ sbIDeviceLibrary** _retval);
 
   /**
+   * Return in aURI a URI produced using the URI spec specified by aSpec
+   * resolved relative to the base URI for the device library specified by
+   * aDeviceLibrary.  The device library base URI has the following form:
+   * "x-device:///<device-guid>/<library-guid>/".
+   *
+   * \param aDeviceLibrary      Device library for the base URI.
+   * \param aSpec               URI spec.
+   * \param aURI                Returned URI.
+   */
+  static nsresult NewDeviceLibraryURI(sbIDeviceLibrary* aDeviceLibrary,
+                                      const nsCString&  aSpec,
+                                      nsIURI**          aURI);
+
+  /**
    * Given a device and a sbILibrary, find the sbIDeviceLibrary for it
    * this is necessary because the device library is a wrapper
    */

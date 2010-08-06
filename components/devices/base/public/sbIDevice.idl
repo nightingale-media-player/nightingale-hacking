@@ -28,7 +28,9 @@
 
 #include "nsISupports.idl"
 
+interface nsIInputStream;
 interface nsIPropertyBag2;
+interface nsIURI;
 interface nsIVariant;
 
 interface sbIDeviceCapabilities;
@@ -56,7 +58,7 @@ interface sbIDeviceSupportsItemCallback : nsISupports
  *
  * The main interface to all device objects
  */
-[scriptable, uuid(ba953610-380f-11df-9879-0800200c9a66)]
+[scriptable, uuid(b404fc82-1dd1-11b2-801c-b548e80bc94d)]
 interface sbIDevice : nsISupports
 {
   /**
@@ -129,6 +131,13 @@ interface sbIDevice : nsISupports
    * specified.
    */
   attribute sbIDeviceLibrary defaultLibrary;
+
+  /**
+   * The library representing the primary device storage volume.  This is the
+   * volume that stores device configuration and information (e.g., device icon,
+   * .SBSettings.xml file).
+   */
+  readonly attribute sbIDeviceLibrary primaryLibrary;
 
   /**
    * The parameters with which the device was created
@@ -309,4 +318,22 @@ interface sbIDevice : nsISupports
   boolean getWarningDialogEnabled(in AString aWarning);
   /* Reset the enabled state of all warning dialogs */
   void resetWarningDialogs();
+
+  /**
+   * \brief Open an input stream for the URI specified by aURI.  The URI may be
+   *        a generic device URI of the form
+   *        "x-device:///<device-guid>/<device-library-guid>/path/to/file".
+   *        Such URI's specify the target device with <device-guid> and the
+   *        storage volume using the volume's device library with the guid
+   *        <device-library-guid>.  Different device types may also accept
+   *        device type specific URI's.
+   *
+   * \param aURI                URI for which to open input stream.
+   *
+   * \returns                   Opened input stream.
+   * \throws NS_ERROR_NOT_AVAILABLE
+   *                            No file exists for URI.
+   */
+  nsIInputStream openInputStream(in nsIURI aURI);
 };
+

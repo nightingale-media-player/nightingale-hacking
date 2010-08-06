@@ -674,6 +674,19 @@ sbIPDDevice::SetDefaultLibrary(sbIDeviceLibrary* aDefaultLibrary)
 
 
 /**
+ * The library representing the primary device storage volume.  This is the
+ * volume that stores device configuration and information (e.g., device icon,
+ * .SBSettings.xml file).
+ */
+
+NS_IMETHODIMP
+sbIPDDevice::GetPrimaryLibrary(sbIDeviceLibrary** aPrimaryLibrary)
+{
+  return sbBaseDevice::GetPrimaryLibrary(aPrimaryLibrary);
+}
+
+
+/**
  * The parameters with which the device was created
  */
 
@@ -769,6 +782,11 @@ NS_IMETHODIMP sbIPDDevice::ResetWarningDialogs()
   return sbBaseDevice::ResetWarningDialogs();
 }
 
+NS_IMETHODIMP sbIPDDevice::OpenInputStream(nsIURI*          aURI,
+                                           nsIInputStream** retval)
+{
+  return sbBaseDevice::OpenInputStream(aURI, retval);
+}
 
 //------------------------------------------------------------------------------
 //
