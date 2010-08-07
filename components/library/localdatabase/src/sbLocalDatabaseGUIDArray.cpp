@@ -45,6 +45,7 @@
 #include <sbIDatabaseResult.h>
 #include <sbILibrary.h>
 #include <sbIPropertyArray.h>
+#include <sbIPropertyInfo.h>
 #include <sbIPropertyManager.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbISQLBuilder.h>

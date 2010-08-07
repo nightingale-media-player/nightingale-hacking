@@ -56,6 +56,7 @@
 #include <sbIPlaylistClickEvent.h>
 #include <sbIPlaylistCommands.h>
 #include <sbITabBrowser.h>
+#include <sbIPropertyInfo.h>
 #include <sbIPropertyManager.h>
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>

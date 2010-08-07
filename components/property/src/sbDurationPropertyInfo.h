@@ -27,7 +27,7 @@
 #ifndef __SBDURATIONPROPERTYINFO_H__
 #define __SBDURATIONPROPERTYINFO_H__
 
-#include <sbIPropertyManager.h>
+#include <sbIPropertyInfo.h>
 #include "sbPropertyInfo.h"
 
 #include <nsCOMPtr.h>

@@ -25,6 +25,7 @@
  */
 
 #include <sbILibrary.h>
+#include <sbIPropertyInfo.h>
 #include <sbIPropertyManager.h>
 
 #include "sbRemoteLibraryResource.h"

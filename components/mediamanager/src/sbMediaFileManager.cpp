@@ -28,6 +28,7 @@
 #include "sbMediaFileManager.h"
 #include <sbILibraryUtils.h>
 #include <sbIMediaItem.h>
+#include <sbIPropertyInfo.h>
 #include <sbLibraryUtils.h>
 #include <sbPropertiesCID.h>
 #include <sbProxiedComponentManager.h>

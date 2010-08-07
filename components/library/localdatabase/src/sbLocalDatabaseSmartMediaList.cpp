@@ -35,6 +35,7 @@
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
 #include <sbIPropertyArray.h>
+#include <sbIPropertyInfo.h>
 #include <sbIPropertyManager.h>
 #include <sbISQLBuilder.h>
 #include <sbLocalDatabaseSchemaInfo.h>

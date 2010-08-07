@@ -57,6 +57,7 @@
 #include <sbIMediaList.h>
 #include <sbIPlaybackHistoryEntry.h>
 #include <sbIPropertyArray.h>
+#include <sbIPropertyInfo.h>
 #include <sbIPropertyManager.h>
 #include <sbISQLBuilder.h>
 

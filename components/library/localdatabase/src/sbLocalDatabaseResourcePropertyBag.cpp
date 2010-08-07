@@ -38,6 +38,7 @@
 #include <nsXPCOMCIDInternal.h>
 #include <prlog.h>
 
+#include <sbIPropertyInfo.h>
 #include <sbIPropertyManager.h>
 #include <sbPropertiesCID.h>
 

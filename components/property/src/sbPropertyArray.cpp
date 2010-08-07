@@ -32,6 +32,7 @@
 #include <nsIProgrammingLanguage.h>
 #include <nsISimpleEnumerator.h>
 #include <sbIPropertyManager.h>
+#include <sbIPropertyInfo.h>
 
 #include <nsArrayEnumerator.h>
 #include <nsCOMPtr.h>

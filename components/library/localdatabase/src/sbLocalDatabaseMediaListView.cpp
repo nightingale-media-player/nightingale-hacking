@@ -50,6 +50,7 @@
 #include <sbILocalDatabaseSimpleMediaList.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
+#include <sbIPropertyInfo.h>
 #include <sbISQLBuilder.h>
 #include <sbIMediaList.h>
 #include <sbLibraryCID.h>

@@ -25,14 +25,19 @@
 // Base class for property unit converters (sbIPropertyUnitConverter)
 
 #include "sbPropertyUnitConverter.h"
-#include <nsServiceManagerUtils.h>
-#include <sbLockUtils.h>
-#include <nsCOMPtr.h>
-#include "nsEnumeratorUtils.h"
-#include "nsArrayEnumerator.h"
-#include <prprf.h>
+
+#include <sbIPropertyInfo.h>
 
 #include <locale.h>
+
+#include <prprf.h>
+
+#include <nsArrayEnumerator.h>
+#include <nsCOMPtr.h>
+#include <nsEnumeratorUtils.h>
+#include <nsServiceManagerUtils.h>
+
+#include <sbLockUtils.h>
 
 static const char *gsFmtFloatOut = "%f";
 static const char *gsFmtFloatIn = "%lf";

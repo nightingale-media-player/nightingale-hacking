@@ -66,6 +66,7 @@
 #include <sbIMediaList.h>
 #include <sbIPrompter.h>
 #include <sbIPropertyArray.h>
+#include <sbIPropertyInfo.h>
 #include <sbISortableMediaListView.h>
 #include <sbIWindowWatcher.h>
 #include <sbIMediacoreErrorHandler.h>

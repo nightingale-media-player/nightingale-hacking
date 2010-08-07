@@ -28,7 +28,7 @@
 #ifndef __SBPROPERTYINFO_H__
 #define __SBPROPERTYINFO_H__
 
-#include <sbIPropertyManager.h>
+#include <sbIPropertyInfo.h>
 #include <sbIPropertyArray.h>
 #include "sbPropertyUnitConverter.h"
 

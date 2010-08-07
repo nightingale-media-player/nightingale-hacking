@@ -52,6 +52,7 @@
 #include <sbDeviceUtils.h>
 #include <sbIDeviceEvent.h>
 #include <sbIPropertyArray.h>
+#include <sbIPropertyInfo.h>
 #include <sbLibraryListenerHelpers.h>
 #include <sbMediaListBatchCallback.h>
 #include <sbStandardProperties.h>

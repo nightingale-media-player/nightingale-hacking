@@ -53,6 +53,7 @@
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
 #include <sbIPropertyArray.h>
+#include <sbIPropertyInfo.h>
 #include <sbIPropertyManager.h>
 #include <sbISQLBuilder.h>
 #include <sbISearchableMediaListView.h>

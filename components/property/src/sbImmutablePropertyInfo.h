@@ -28,7 +28,7 @@
 #define __SBIMMUTABLEPROPERTYINFO_H__
 
 #include <sbIPropertyArray.h>
-#include <sbIPropertyManager.h>
+#include <sbIPropertyInfo.h>
 
 #include <nsIStringBundle.h>
 #include <nsCOMPtr.h>

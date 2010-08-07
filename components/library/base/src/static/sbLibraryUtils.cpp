@@ -47,6 +47,7 @@
 #include <sbIMediaList.h>
 #include <sbIMediaItem.h>
 #include <sbIPropertyArray.h>
+#include <sbIPropertyInfo.h>
 #include <sbIPropertyManager.h>
 
 #include <sbArrayUtils.h>

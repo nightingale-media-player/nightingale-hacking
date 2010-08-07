@@ -61,6 +61,7 @@
 #include <sbStringUtils.h>
 #include <sbMediaListBatchCallback.h>
 #include <sbIPropertyArray.h>
+#include <sbIPropertyInfo.h>
 #include "sbLocalDatabaseSQL.h"
 #include <sbIDatabaseQuery.h>
 #include <sbThreadPoolService.h>

@@ -41,6 +41,7 @@
 #include <sbIMediaListListener.h>
 #include <sbIMediaListView.h>
 #include <sbIPropertyArray.h>
+#include <sbIPropertyInfo.h>
 #include <sbIPropertyManager.h>
 #include <sbISearchableMediaListView.h>
 #include <sbISortableMediaListView.h>
