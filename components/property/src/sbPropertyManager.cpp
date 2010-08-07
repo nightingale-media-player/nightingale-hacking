@@ -25,15 +25,17 @@
 #include "sbPropertyManager.h"
 #include "sbPropertiesCID.h"
 
-#include <nsAutoLock.h>
-#include <nsMemory.h>
-#include <nsICategoryManager.h>
-#include <nsComponentManagerUtils.h>
-#include <nsServiceManagerUtils.h>
 #include <nsICategoryManager.h>
 #include <nsIGenericFactory.h>
-#include <nsAutoPtr.h>
+#include <nsIObserverService.h>
 #include <nsIStringBundle.h>
+
+#include <nsAutoLock.h>
+#include <nsAutoPtr.h>
+#include <nsComponentManagerUtils.h>
+#include <nsMemory.h>
+#include <nsServiceManagerUtils.h>
+
 #include "sbBooleanPropertyInfo.h"
 #include "sbDatetimePropertyInfo.h"
 #include "sbDurationPropertyInfo.h"
@@ -144,6 +146,18 @@ NS_METHOD sbPropertyManager::Init()
 
   rv = RegisterFilterListPickerProperties();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIObserverService> obs =
+    do_GetService("@mozilla.org/observer-service;1");
+  if (obs) {
+    obs->NotifyObservers(nsnull, SB_PROPERTY_MANAGER_READY_CATEGORY, nsnull);
+  }
+
+  nsCOMPtr<nsIObserver> startupNotifier =
+    do_CreateInstance("@mozilla.org/embedcomp/appstartup-notifier;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  startupNotifier->Observe(nsnull, SB_PROPERTY_MANAGER_READY_CATEGORY, nsnull);
 
   return NS_OK;
 }

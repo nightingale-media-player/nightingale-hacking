@@ -98,6 +98,25 @@ interface sbIPropertyManager : nsISupports
 };
 
 /**
+ * Components can be registered with the category manager with this category
+ * to be notified of the property manager being ready.  The name is ignored,
+ * but the value should be the contract id of the component - possibly preceeded
+ * by "service," to be created as a service instead of a new instance.  The
+ * component should implement nsIObserver and will be notified with the
+ * category name as the topic.
+ *
+ * Alternatively, components can be registered with the observer service with
+ * the category name as the topic instead; they will also be notified at the
+ * same time.
+ *
+ * It is recommended that this only be used to register property info entries,
+ * and other work should be done in different notifications.
+ */
+%{C++
+  #define SB_PROPERTY_MANAGER_READY_CATEGORY "songbird-property-manager-ready"
+%}C++
+
+/**
  * \interface sbIPropertyOperator
  * \brief An interface to represent an operator that may act upon a property
  */
