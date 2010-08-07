@@ -37,13 +37,15 @@
 
 #include "sbImageLabelLinkPropertyInfo.h"
 
-NS_IMPL_ISUPPORTS_INHERITED1(sbImageLabelLinkPropertyBuilder, \
+NS_IMPL_ISUPPORTS_INHERITED2(sbImageLabelLinkPropertyBuilder, \
                              sbAbstractPropertyBuilder, \
-                             sbIImageLabelLinkPropertyBuilder)
+                             sbIImageLabelLinkPropertyBuilder, \
+                             sbIClickablePropertyBuilder)
 
 sbImageLabelLinkPropertyBuilder::sbImageLabelLinkPropertyBuilder()
   : mImages(nsnull),
-    mLabels(nsnull)
+    mLabels(nsnull),
+    mClickHandlers(nsnull)
 {
 }
 
@@ -51,6 +53,7 @@ sbImageLabelLinkPropertyBuilder::~sbImageLabelLinkPropertyBuilder()
 {
   delete mImages;
   delete mLabels;
+  delete mClickHandlers;
 }
 
 nsresult
@@ -62,8 +65,11 @@ sbImageLabelLinkPropertyBuilder::Init()
   NS_ENSURE_TRUE(mImages, NS_ERROR_OUT_OF_MEMORY);
   mLabels = new nsClassHashtable<nsCStringHashKey, nsString>();
   NS_ENSURE_TRUE(mLabels, NS_ERROR_OUT_OF_MEMORY);
+  mClickHandlers = new nsTHashtable<nsISupportsHashKey>();
+  NS_ENSURE_TRUE(mClickHandlers, NS_ERROR_OUT_OF_MEMORY);
   mImages->Init();
   mLabels->Init();
+  mClickHandlers->Init();
   rv = sbAbstractPropertyBuilder::Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -77,7 +83,7 @@ sbImageLabelLinkPropertyBuilder::Get(sbIPropertyInfo** _retval)
 {
   nsresult rv;
   nsRefPtr<sbImageLabelLinkPropertyInfo> info =
-    new sbImageLabelLinkPropertyInfo(mImages, mLabels);
+    new sbImageLabelLinkPropertyInfo(mImages, mLabels, mClickHandlers);
   rv = info->Init();
   NS_ENSURE_SUCCESS(rv, rv);
   rv = info->SetPropertyID(mPropertyID);
@@ -177,5 +183,27 @@ sbImageLabelLinkPropertyBuilder::GetLabel(const nsACString & aKey,
   }
   // nothing at all; give an empty string back
   _retval.Truncate();
+  return NS_OK;
+}
+
+/***** sbIClickablePropertyBuilder */
+/* void addClickHandler (in sbIClickablePropertyCallback aCallback); */
+NS_IMETHODIMP
+sbImageLabelLinkPropertyBuilder::AddClickHandler(
+                                       sbIClickablePropertyCallback *aCallback)
+{
+  NS_ENSURE_TRUE(mClickHandlers, NS_ERROR_NOT_INITIALIZED);
+  nsISupportsHashKey* entry = mClickHandlers->PutEntry(aCallback);
+  NS_ENSURE_TRUE(entry, NS_ERROR_OUT_OF_MEMORY);
+  return NS_OK;
+}
+
+/* void removeClickHandler (in sbIClickablePropertyCallback aCallback); */
+NS_IMETHODIMP
+sbImageLabelLinkPropertyBuilder::RemoveClickHandler(
+                                       sbIClickablePropertyCallback *aCallback)
+{
+  NS_ENSURE_TRUE(mClickHandlers, NS_ERROR_NOT_INITIALIZED);
+  mClickHandlers->RemoveEntry(aCallback);
   return NS_OK;
 }

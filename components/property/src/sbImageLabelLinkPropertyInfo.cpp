@@ -32,10 +32,12 @@
 #include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
 #include <nsUnicharUtils.h>
+#include <sbHashtableUtils.h>
 #include <sbStringUtils.h>
 
 sbImageLabelLinkPropertyInfo::sbImageLabelLinkPropertyInfo(ImageMap_t *&aImages,
-                                                           LabelMap_t *&aLabels)
+                                                           LabelMap_t *&aLabels,
+                                                           InterfaceSet_t *&aClickHandlers)
   : sbImageLinkPropertyInfo(nsString(),
                             nsString(),
                             nsString(),
@@ -49,8 +51,17 @@ sbImageLabelLinkPropertyInfo::sbImageLabelLinkPropertyInfo(ImageMap_t *&aImages,
   aImages = nsnull;
   mLabels = aLabels;
   aLabels = nsnull;
+  mClickHandlers = aClickHandlers;
+  aClickHandlers = nsnull;
   mType.AssignLiteral("image");
   mSuppressSelect = PR_TRUE;
+}
+
+sbImageLabelLinkPropertyInfo::~sbImageLabelLinkPropertyInfo()
+{
+  delete mImages;
+  delete mLabels;
+  delete mClickHandlers;
 }
 
 nsresult
@@ -159,6 +170,74 @@ sbImageLabelLinkPropertyInfo::GetCellProperties(const nsAString& aValue,
 
   return NS_OK;
 }
+
+/***** sbIClickablePropertyInfo */
+NS_IMETHODIMP
+sbImageLabelLinkPropertyInfo::HitTest(const nsAString& aCurrentValue,
+                                      const nsAString& aPart,
+                                      PRUint32 aBoxWidth,
+                                      PRUint32 aBoxHeight,
+                                      PRUint32 aMouseX,
+                                      PRUint32 aMouseY,
+                                      PRBool* _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = aPart.EqualsLiteral("image") ||
+             aPart.EqualsLiteral("text");
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbImageLabelLinkPropertyInfo::OnClick(sbIMediaItem *aItem,
+                                      nsISupports *aEvent,
+                                      nsISupports *aContext,
+                                      PRBool *_retval NS_OUTPARAM)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = PR_FALSE;
+
+  nsresult rv;
+  
+  if (!mClickHandlers) {
+    return NS_OK;
+  }
+
+  // copy the handlers to an auxilary array to handle removing them in the call
+  nsCOMPtr<nsIMutableArray> handlers =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1");
+  NS_ENSURE_TRUE(handlers, NS_ERROR_OUT_OF_MEMORY);
+  sbCopyHashtableToArray(*mClickHandlers, handlers);
+
+  nsCOMPtr<nsISimpleEnumerator> enumerator;
+  rv = handlers->Enumerate(getter_AddRefs(enumerator));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  PRBool hasMore, result;
+
+  while (NS_SUCCEEDED(rv = enumerator->HasMoreElements(&hasMore)) && hasMore) {
+    nsCOMPtr<nsISupports> supports;
+    rv = enumerator->GetNext(getter_AddRefs(supports));
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<sbIClickablePropertyCallback> callback =
+      do_QueryInterface(supports);
+    if (!callback) {
+      NS_WARNING("found a onClick callback that is "
+                 "not a sbIClickablePropertyCallback");
+      continue;
+    }
+    rv = callback->OnClick(this,
+                           aItem,
+                           aEvent,
+                           aContext,
+                           &result);
+    if (NS_SUCCEEDED(rv) && result) {
+      *_retval = PR_TRUE;
+    }
+  }
+  return NS_OK;
+}
+
 
 /***** sbIPropertyInfo */
 

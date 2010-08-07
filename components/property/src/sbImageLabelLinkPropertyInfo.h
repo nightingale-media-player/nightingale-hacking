@@ -43,10 +43,13 @@ class sbImageLabelLinkPropertyInfo : public sbImageLinkPropertyInfo
 public:
   typedef nsClassHashtable<nsCStringHashKey, nsCString> ImageMap_t;
   typedef nsClassHashtable<nsCStringHashKey, nsString> LabelMap_t;
+  typedef nsTHashtable<nsISupportsHashKey> InterfaceSet_t;
 
 public:
-  sbImageLabelLinkPropertyInfo(ImageMap_t *&aImages, LabelMap_t *&aLabels);
-  virtual ~sbImageLabelLinkPropertyInfo() {}
+  sbImageLabelLinkPropertyInfo(ImageMap_t *&aImages,
+                               LabelMap_t *&aLabels,
+                               InterfaceSet_t *&aClickHandlers);
+  virtual ~sbImageLabelLinkPropertyInfo();
 
 public:
   nsresult Init();
@@ -65,11 +68,25 @@ public:
   NS_IMETHOD GetImageSrc(const nsAString& aValue, nsAString& _retval);
   NS_IMETHOD GetCellProperties(const nsAString& aValue, nsAString& _retval);
 
+  /* partial implementation of sbIClickablePropertyInfo */
+  NS_IMETHOD HitTest(const nsAString& aCurrentValue,
+                     const nsAString& aPart,
+                     PRUint32 aBoxWidth,
+                     PRUint32 aBoxHeight,
+                     PRUint32 aMouseX,
+                     PRUint32 aMouseY,
+                     PRBool* _retval);
+  NS_IMETHOD OnClick(sbIMediaItem *aItem,
+                     nsISupports *aEvent,
+                     nsISupports *aContext,
+                     PRBool *_retval);
+
   /* partial implementation of sbIPropertyInfo */
   NS_IMETHOD Format(const nsAString& aValue, nsAString& _retval);
 private:
   ImageMap_t *mImages;
   LabelMap_t *mLabels;
+  InterfaceSet_t *mClickHandlers;
 };
 
 #endif /* __SBIMAGELABELLINKPROPERTYINFO_H__ */

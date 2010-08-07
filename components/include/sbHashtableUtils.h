@@ -26,7 +26,9 @@
 #ifndef SBHASHTABLEUTILS_H_
 #define SBHASHTABLEUTILS_H_
 
+#include <nsIMutableArray.h>
 #include <nsDataHashtable.h>
+#include <nsTArray.h>
 
 /**
  * Enumerate function to copy hash elements
@@ -69,5 +71,36 @@ nsresult sbCopyHashtable(typename T::Hashtable const & aSource,
   return NS_OK;
 }
 
+/**
+ * Enumerate function to copy hash elements into a nsIMutableArray
+ */
+template <class E>
+PLDHashOperator THashCOMPtrCopierToIArrayEnumerator(E* aKey,
+                                                    void* userArg)
+{
+  NS_ASSERTION(userArg, "ArrayBuilder passed a null arg");
+  nsIMutableArray* array =
+    reinterpret_cast<nsIMutableArray*>(userArg);
+
+  nsresult rv = array->AppendElement(aKey->GetKey(), PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  return PL_DHASH_NEXT;
+}
+
+/**
+ * Copies one hash table to a nsIMutableArray
+ */
+template <class T>
+nsresult sbCopyHashtableToArray(class nsTHashtable<T> & aSource,
+                                nsIMutableArray* aDest)
+{
+  NS_ENSURE_ARG_POINTER(aDest);
+
+  aSource.EnumerateEntries(&THashCOMPtrCopierToIArrayEnumerator<T>,
+                           aDest);
+
+  return NS_OK;
+}
 
 #endif /* SBHASHTABLEUTILS_H_ */

@@ -33,15 +33,18 @@
 #include <nsClassHashtable.h>
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
+#include <nsTHashtable.h>
 
 #include "sbAbstractPropertyBuilder.h"
 
 class sbImageLabelLinkPropertyBuilder : public sbAbstractPropertyBuilder,
-                                        public sbIImageLabelLinkPropertyBuilder
+                                        public sbIImageLabelLinkPropertyBuilder,
+                                        public sbIClickablePropertyBuilder
 {
   NS_DECL_ISUPPORTS_INHERITED
   NS_FORWARD_SBIPROPERTYBUILDER_NO_GET(sbAbstractPropertyBuilder::)
   NS_DECL_SBIIMAGELABELLINKPROPERTYBUILDER
+  NS_DECL_SBICLICKABLEPROPERTYBUILDER
 
 public:
   sbImageLabelLinkPropertyBuilder();
@@ -55,6 +58,7 @@ public:
 private:
   nsClassHashtable<nsCStringHashKey, nsCString> *mImages;
   nsClassHashtable<nsCStringHashKey, nsString> *mLabels;
+  nsTHashtable<nsISupportsHashKey> *mClickHandlers;
 };
 
 #endif /* __SBIMAGELABELLINKPROPERTYBUILDER_H__ */
