@@ -31,8 +31,9 @@
 #include <sbIPropertyManager.h>
 #include <nsIStringBundle.h>
 
-NS_IMPL_ISUPPORTS_INHERITED1(sbStatusPropertyBuilder,
+NS_IMPL_ISUPPORTS_INHERITED2(sbStatusPropertyBuilder,
                              sbAbstractPropertyBuilder,
+                             sbISimpleButtonPropertyBuilder,
                              sbIStatusPropertyBuilder)
 
 NS_IMETHODIMP

@@ -93,4 +93,3 @@ interface sbIClickablePropertyInfo : nsISupports
                            in unsigned long aMouseX,
                            in unsigned long aMouseY);
 };
-

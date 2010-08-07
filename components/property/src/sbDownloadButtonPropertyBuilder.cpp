@@ -35,8 +35,9 @@
 
 #include "sbStandardProperties.h"
 
-NS_IMPL_ISUPPORTS_INHERITED1(sbDownloadButtonPropertyBuilder,
+NS_IMPL_ISUPPORTS_INHERITED2(sbDownloadButtonPropertyBuilder,
                              sbAbstractPropertyBuilder,
+                             sbISimpleButtonPropertyBuilder,
                              sbIDownloadButtonPropertyBuilder)
 
 nsresult
