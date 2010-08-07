@@ -39,6 +39,7 @@ SONGBIRD_TESTS = $(srcdir)/test_simpleproperty.js \
                  $(srcdir)/test_downloadbutton.js \
                  $(srcdir)/test_simplebutton.js \
                  $(srcdir)/test_image.js \
+                 $(srcdir)/test_imagelabellink.js \
                  $(srcdir)/test_rating.js \
                  $(srcdir)/test_propertymanager_dependencies.js \
                  $(srcdir)/test_statusproperty.js \
