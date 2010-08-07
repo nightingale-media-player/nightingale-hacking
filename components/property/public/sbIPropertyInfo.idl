@@ -437,20 +437,6 @@ interface sbIProgressPropertyInfo : sbITextPropertyInfo
 };
 
 /**
- * \interface sbIButtonPropertyInfo
- * \brief The property information specific to button properties
- * \sa sbIPropertyInfo
- */
-[scriptable, uuid(797f47d2-f71d-409c-993c-4c5bd5ddaf02)]
-interface sbIButtonPropertyInfo : nsISupports
-{
-  /**
-   * \brief The label for the button.
-   */
-  attribute AString label;
-};
-
-/**
  * \interface sbIBooleanPropertyInfo
  * \brief The property information specific to boolean properties
  * \sa sbIPropertyInfo
