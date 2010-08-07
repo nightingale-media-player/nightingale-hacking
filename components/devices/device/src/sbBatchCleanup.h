@@ -28,6 +28,7 @@
 #define sbBatchCleanup_h
 
 #include <sbBaseDevice.h>
+#include <sbIDeviceEvent.h>
 
 /**
  * This class is used to clean up request items left in a batch after a user
@@ -49,7 +50,8 @@ public:
                    mCurrent(aStart),
                    mEnd(aEnd),
                    mDevice(aDevice),
-                   mAtEnd(aStart == aEnd)
+                   mAtEnd(aStart == aEnd),
+                   mResult(NS_OK)
   {
   }
   /**
@@ -57,6 +59,18 @@ public:
    */
   ~sbBatchCleanup() {
     if (!mAtEnd && !mBatch.empty()) {
+      // If the batch cleanup result is an error, dispatch error events.
+      if (NS_FAILED(mResult)) {
+        sbBaseDevice::Batch::const_iterator iter = mCurrent;
+        while (iter != mEnd) {
+          sbBaseDevice::TransferRequest* request = *iter;
+          mDevice->CreateAndDispatchEvent
+                     (sbIDeviceEvent::EVENT_DEVICE_ERROR_UNEXPECTED,
+                      sbNewVariant(request->item),
+                      PR_TRUE);
+          ++iter;
+        }
+      }
 #if DEBUG
       nsresult rv = mDevice->RemoveLibraryItems(mCurrent, mEnd);
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
@@ -106,6 +120,13 @@ public:
     mEnd = aEnd;
     mAtEnd = mCurrent == mEnd;
   }
+  /**
+   * Set the final batch result.
+   */
+  void SetResult(nsresult aResult)
+  {
+    mResult = aResult;
+  }
 private:
   /**
    * Current batch being processed
@@ -128,6 +149,11 @@ private:
    * We use this because during destruction the iterators may not be valid.
    */
   PRBool mAtEnd;
+  /**
+   * Final result for remaining batch requests.  If the batch result is a
+   * failure, a device error event is posted for each remaining request.
+   */
+  nsresult mResult;
 };
 
 #endif

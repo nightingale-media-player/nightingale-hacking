@@ -1,29 +1,27 @@
 /* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #include "sbDeviceEnsureSpaceForWrite.h"
 
@@ -100,56 +98,98 @@ sbDeviceEnsureSpaceForWrite::BuildItemsToWrite() {
 
   PRInt32 order = 0;
   Batch::iterator const batchEnd = mBatch.end();
+  nsTArray<Batch::iterator> requestErrorList;
   for (Batch::iterator iter = mBatch.begin(); iter != batchEnd; ++iter) {
-    sbBaseDevice::TransferRequest * request = *iter;
-    if (request->type != sbBaseDevice::TransferRequest::REQUEST_WRITE) {
-      NS_WARNING("EnsureSpaceForWrite received a non-write request");
-      continue;
-    }
-    nsCOMPtr<sbILibrary> requestLib =
-      do_QueryInterface(request->list, &rv);
-    if (NS_FAILED(rv) || !requestLib) {
-      // this is an add to playlist request, don't worry about size
-      continue;
-    }
+    // Add item to write list.  Collect errors for later processing.
+    rv = AddItemToWrite(iter, order);
+    if (NS_FAILED(rv))
+      requestErrorList.AppendElement(iter);
+  }
 
-    if (!mOwnerLibrary) {
+  // Process any errors.
+  for (PRUint32 i = 0; i < requestErrorList.Length(); ++i) {
+    // Get the next error.
+    Batch::iterator batchIter = requestErrorList[i];
+    sbBaseDevice::TransferRequest* request = *batchIter;
+
+    // Dispatch an error event.
+    mDevice->CreateAndDispatchEvent
+               (sbIDeviceEvent::EVENT_DEVICE_ERROR_UNEXPECTED,
+                sbNewVariant(request->item),
+                PR_TRUE);
+
+    // Remove request library item and remove request from batch.
+    Batch::iterator nextBatchIter = batchIter;
+    ++nextBatchIter;
+    mDevice->RemoveLibraryItems(batchIter, nextBatchIter);
+    mBatch.erase(batchIter);
+  }
+
+  // Update batch if there were any errors.
+  if (!requestErrorList.IsEmpty()) {
+    SBUpdateBatchCounts(mBatch);
+    SBUpdateBatchIndex(mBatch);
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbDeviceEnsureSpaceForWrite::AddItemToWrite(Batch::iterator aIter,
+                                            PRInt32&        aOrder)
+{
+  nsresult rv;
+
+  sbBaseDevice::TransferRequest * request = *aIter;
+  if (request->type != sbBaseDevice::TransferRequest::REQUEST_WRITE) {
+    NS_WARNING("EnsureSpaceForWrite received a non-write request");
+    return NS_OK;
+  }
+  nsCOMPtr<sbILibrary> requestLib =
+    do_QueryInterface(request->list, &rv);
+  if (NS_FAILED(rv) || !requestLib) {
+    // this is an add to playlist request, don't worry about size
+    return NS_OK;
+  }
+
+  if (!mOwnerLibrary) {
+    rv = sbDeviceUtils::GetDeviceLibraryForItem(mDevice,
+                                                request->list,
+                                                getter_AddRefs(mOwnerLibrary));
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_STATE(mOwnerLibrary);
+  } else {
+    #if DEBUG
+      nsCOMPtr<sbIDeviceLibrary> newLibrary;
       rv = sbDeviceUtils::GetDeviceLibraryForItem(mDevice,
                                                   request->list,
-                                                  getter_AddRefs(mOwnerLibrary));
+                                                  getter_AddRefs(newLibrary));
       NS_ENSURE_SUCCESS(rv, rv);
-      NS_ENSURE_STATE(mOwnerLibrary);
-    } else {
-      #if DEBUG
-        nsCOMPtr<sbIDeviceLibrary> newLibrary;
-        rv = sbDeviceUtils::GetDeviceLibraryForItem(mDevice,
-                                                    request->list,
-                                                    getter_AddRefs(newLibrary));
-        NS_ENSURE_SUCCESS(rv, rv);
-        NS_ENSURE_STATE(newLibrary);
-        NS_ENSURE_STATE(SameCOMIdentity(mOwnerLibrary, newLibrary));
-      #endif /* DEBUG */
-    }
-    ItemsToWrite::iterator const itemToWriteIter = mItemsToWrite.find(request->item);
-    if (itemToWriteIter != mItemsToWrite.end()) {
-      itemToWriteIter->second.mBatchIters.push_back(iter);
-      // this item is already in the set, don't worry about it
-      continue;
-    }
-
-    PRInt64 contentLength;
-
-    rv = sbLibraryUtils::GetContentLength(request->item,
-                                          &contentLength);
-    NS_ENSURE_SUCCESS(rv, rv);
-    contentLength += mDevice->mPerTrackOverhead;
-
-    mTotalLength += contentLength;
-    LOG(("r(%p) i(%p) sbBaseDevice::EnsureSpaceForWrite - size %lld\n",
-         (void*)request, (void*)(request->item), contentLength));
-
-    mItemsToWrite[request->item] = BatchLink(++order, contentLength, iter);
+      NS_ENSURE_STATE(newLibrary);
+      NS_ENSURE_STATE(SameCOMIdentity(mOwnerLibrary, newLibrary));
+    #endif /* DEBUG */
   }
+  ItemsToWrite::iterator const
+    itemToWriteIter = mItemsToWrite.find(request->item);
+  if (itemToWriteIter != mItemsToWrite.end()) {
+    itemToWriteIter->second.mBatchIters.push_back(aIter);
+    // this item is already in the set, don't worry about it
+    return NS_OK;
+  }
+
+  PRInt64 contentLength;
+
+  rv = sbLibraryUtils::GetContentLength(request->item,
+                                        &contentLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+  contentLength += mDevice->mPerTrackOverhead;
+
+  mTotalLength += contentLength;
+  LOG(("r(%p) i(%p) sbBaseDevice::EnsureSpaceForWrite - size %lld\n",
+       (void*)request, (void*)(request->item), contentLength));
+
+  mItemsToWrite[request->item] = BatchLink(++aOrder, contentLength, aIter);
+
   return NS_OK;
 }
 
