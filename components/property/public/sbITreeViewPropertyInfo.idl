@@ -37,16 +37,45 @@
 [scriptable, uuid(d3f05e8e-1dd1-11b2-b90d-a163d7ed50b9)]
 interface sbITreeViewPropertyInfo : nsISupports
 {
+  /**
+   * The type of the column; for example, might be "progressmeter" or "checkbox"
+   */
   readonly attribute AString columnType;
 
+  /**
+   * Get the image path for a cell with a given value
+   * @see nsITreeView::getImageSrc
+   */
   AString getImageSrc(in AString aValue);
 
+  /**
+   * Get the progress mode for a cell with a given value
+   * @see nsITreeView::getProgressMode
+   */
   long getProgressMode(in AString aValue);
 
+  /**
+   * Get the value for a cell with a given value
+   * @note This must not invalidate the tree (or change the item).
+   * @see nsITreeView::getCellValue
+   */
   AString getCellValue(in AString aValue);
 
+  /**
+   * Get the row properties for items with the given property value
+   * @param aValue the property value for this property for the item
+   * @return the row properties
+   * @see nsITreeView::getRowProperties
+   */
   AString getRowProperties(in AString aValue);
 
+  /**
+   * Get the cell properties for items with the given property value
+   * @param aValue the property value for the given item
+   * @return the cell properties
+   * @note This must not invalidate the tree (or change the item).
+   * @see nsITreeView::getCellProperties
+   */
   AString getCellProperties(in AString aValue);
 };
 

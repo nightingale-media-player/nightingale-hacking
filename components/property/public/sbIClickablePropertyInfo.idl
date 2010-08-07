@@ -44,10 +44,33 @@
 [scriptable, uuid(159bd7ea-3e2c-4241-9e02-51733e83e8c7)]
 interface sbIClickablePropertyInfo : nsISupports
 {
+  /**
+   * Whether tree row selection should be suppressed for clicks on tree cells
+   * representing this property
+   */
   attribute boolean suppressSelect;
 
+  /**
+   * \brief Whether the tree cell widget representing this property should be
+   *        disabled given a value (for this property)
+   * \param aCurrentValue the property value of an item
+   * \return true if the cell should be disabled
+   */
   boolean isDisabled(in AString aCurrentValue);
 
+  /**
+   * \brief Hit testing for a cell
+   * \param aCurrentValue the property value of the item (row) clicked on
+   * \param aPart the pseudoelement being hit
+   * \param aBoxWidth the total box object width of the cell
+   * \param aBoxHeight the total box object height of the cell
+   * \param aMouseX the X coordinate of the mouse, relative to the left edge of
+   *                the box object
+   * \param aMouseY the Y coordinate of the mouse, relative to the top edge of
+   *                the box object
+   * \return true if the click should be registered
+   * \see nsITreeBoxObject::getCellAt() for pseudoelement part names
+   */
   boolean hitTest(in AString aCurrentValue,
                   in AString aPart,
                   in unsigned long aBoxWidth,
