@@ -43,7 +43,6 @@ Additional styles imported by the Cheesy Video Window
 }
 
 #controls,
-#sb-sys-title-title, /* the text label of the window caption */
 spacer {
   visibility:collapse;
 }

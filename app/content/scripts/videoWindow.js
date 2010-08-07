@@ -144,8 +144,8 @@ var videoWindowController = {
       this._onFullScreen();
     }
     else if(aTopic == this.TRACK_TITLE_DR_KEY) {
-      // Set the window title to the current track name
-      window.title = aData;
+      // Set the document title to the current track name
+      window.document.title = aData;
     }
   },
 
@@ -257,9 +257,11 @@ var videoWindowController = {
     window.removeEventListener("keypress", this._keydownListener, false);
     this._keydownListener = null;
 
+    this._titleDataRemote.unbind();
     this._actualSizeDataRemote.unbind();
     this._videoFullscreenDataRemote.unbind();
 
+    this._titleDataRemote = null;
     this._actualSizeDataRemote = null;
     this._videoFullscreenDataRemote = null;
 

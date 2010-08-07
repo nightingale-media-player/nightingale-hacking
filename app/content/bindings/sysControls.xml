@@ -408,7 +408,7 @@
             <xul:hbox id="sb-sys-titlebar-primary-content" flex="1">
               <xul:sb-sys-osx-buttons id="sb-sys-titlebar-osx-buttons" xbl:inherits="type"/>
               <xul:sb-sys-icon id="sb-sys-titlebar-icon" xbl:inherits="type"/>
-              <xul:sb-sys-title id="sb-sys-titlebar-title" sbid="hide_mac" xbl:inherits="value"/> 
+              <xul:sb-sys-title id="sb-sys-titlebar-title" sbid="hide_mac" xbl:inherits="value=title"/> 
               <children />
             </xul:hbox>
             <xul:sb-sys-buttons id="sb-sys-titlebar-buttons" xbl:inherits="type"/>
@@ -430,19 +430,33 @@
 					}
       
           // Note:  Doesn't disappear in "plucked" mode -- essentially it becomes the Menubar.
+          
+          // Reflect document.title to sb-sys-titlebar's title property:
+          this.title = document.title;
+          var target = this;
+          document.watch("title", function(aObject, aOldValue, aNewValue){
+            return target.title = aNewValue;
+          } );
         ]]>
       </constructor>
+      <destructor>
+        <![CDATA[
+          document.unwatch("title");
+        ]]>
+      </destructor>
       <property name="title">
-        <setter><![CDATA[
-          var sysInfo = Components.classes["@mozilla.org/system-info;1"]
-                        .getService(Components.interfaces.nsIPropertyBag2);
-          if ( sysInfo.getProperty("name") == "Darwin" )
-            document.getAnonymousElementByAttribute(this, 'sbid', 'sb-sys-titlebar-osx-title-title')
-                    .value = val;
-          else
-            document.getAnonymousElementByAttribute(this, 'sbid', 'sb-sys-titlebar-title')
-                    .value = val;
-        ]]></setter>
+        <!-- Reflect the title attribute to a JavaScript property of the same name -->
+        <setter>
+          <![CDATA[
+            this.setAttribute("title", val);
+            return val;
+          ]]>
+        </setter>
+        <getter>
+          <![CDATA[
+            return this.getAttribute("title");
+          ]]>
+        </getter>
       </property>
     </implementation>
   </binding>
