@@ -130,7 +130,9 @@ var DialogController =
   onBrowseFirmwareDLLFile: function() {
     var file = this._openFilePicker("Choose Firmware DLL", 
                                     null, 
-                                    [{title: "DLL Files", ext: "*.dll"}]);
+                                    [{title: "DLL or Zipped DLL", ext: "*.dll;*.zip"},
+                                     {title: "DLL Files", ext: "*.dll"},
+                                     {title: "ZIP Files", ext: "*.zip"}]);
     if(file) {
       var fileField = document.getElementById("fakepds-firmware-dll-file");
       fileField.file = file;

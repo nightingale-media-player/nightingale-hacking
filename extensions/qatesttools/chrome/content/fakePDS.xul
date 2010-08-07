@@ -109,7 +109,7 @@
     <groupbox>
       <caption label="DLL Request Settings"/>
       <checkbox id="fakepds-firmware-dll-enabled" 
-                label="Enable Firmware DLL Request"
+                label="Enable Firmware DLL or DLL ZIP Request"
                 checked="true"
                 oncommand="DialogController.onEnableFirmwareDLLRequest();"/>
       <hbox>
@@ -122,7 +122,7 @@
       </hbox>
       <hbox>
         <label control="fakepds-firmware-dll-file"
-               value="Firmware DLL File" />
+               value="Firmware DLL or DLL ZIP File" />
         <sb-filefield id="fakepds-firmware-dll-file" flex="1"/>
         <button id="fakepds-firmware-dll-file-browse"
                 label="Browse..."
