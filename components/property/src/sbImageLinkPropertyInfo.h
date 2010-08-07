@@ -63,7 +63,7 @@ public:
   nsresult Init();
   virtual ~sbImageLinkPropertyInfo() {}
   
-private:
+protected:
   nsString mUrlPropertyID;
   PRBool mSuppressSelect;
 };

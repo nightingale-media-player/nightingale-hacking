@@ -118,3 +118,34 @@ interface sbIRatingPropertyBuilder : sbIPropertyBuilder
 {
 };
 
+/**
+ * \interface sbIImageLabelLinkPropertyBuilder
+ * \sa sbIPropertyBuilder
+ */
+[scriptable, uuid(1495976a-1dd2-11b2-800f-c53b05574f38)]
+interface sbIImageLabelLinkPropertyBuilder : sbIPropertyBuilder
+{
+  /**
+   * Add an image mapping - items with the key as the property value will use
+   * the image URL given.  If aKey is null, the image URL will be used as the
+   * fallback for items with no mapping.
+   */
+  void addImage(in ACString aKey, in ACString aImageUrl);
+
+  /**
+   * Look up an existing image mapping
+   */
+  ACString getImage(in ACString aKey);
+
+  /**
+   * Add a label mapping - itmes with the key as the property value will use
+   * the label string given.  If aKey is null, the label will be used as the
+   * fallback for items with no mapping.
+   */
+  void addLabel(in ACString aKey, in AString aLabel);
+  
+  /**
+   * Look up an existing label mapping
+   */
+  AString getLabel(in ACString aKey);
+};
