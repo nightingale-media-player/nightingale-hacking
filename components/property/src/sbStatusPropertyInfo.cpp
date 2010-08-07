@@ -134,14 +134,6 @@ sbStatusPropertyInfo::GetCellValue(const nsAString& aValue,
 }
 
 NS_IMETHODIMP
-sbStatusPropertyInfo::GetColumnProperties(const nsAString& aValue,
-                                          nsAString& retval)
-{
-  retval.Truncate();
-  return NS_OK;
-}
-
-NS_IMETHODIMP
 sbStatusPropertyInfo::GetRowProperties(const nsAString& aValue,
                                        nsAString& retval)
 {

@@ -208,14 +208,6 @@ sbBooleanPropertyInfo::GetCellValue(const nsAString& aValue,
 }
 
 NS_IMETHODIMP
-sbBooleanPropertyInfo::GetColumnProperties(const nsAString& aValue,
-                                           nsAString& _retval)
-{
-  _retval.Truncate();
-  return NS_OK;
-}
-
-NS_IMETHODIMP
 sbBooleanPropertyInfo::GetRowProperties(const nsAString& aValue,
                                         nsAString& _retval)
 {

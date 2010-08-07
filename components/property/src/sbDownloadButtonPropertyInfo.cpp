@@ -144,14 +144,6 @@ sbDownloadButtonPropertyInfo::GetCellValue(const nsAString& aValue,
 }
 
 NS_IMETHODIMP
-sbDownloadButtonPropertyInfo::GetColumnProperties(const nsAString& aValue,
-                                                  nsAString& _retval)
-{
-  _retval.Truncate();
-  return NS_OK;
-}
-
-NS_IMETHODIMP
 sbDownloadButtonPropertyInfo::GetRowProperties(const nsAString& aValue,
                                                nsAString& _retval)
 {
