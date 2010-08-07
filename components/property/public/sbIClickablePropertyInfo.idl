@@ -31,6 +31,10 @@
  */
 
 #include "nsISupports.idl"
+#include "sbIPropertyInfo.idl"
+
+interface sbIClickablePropertyCallback;
+interface sbIMediaItem;
 
 /**
  * \interface sbIClickablePropertyInfo
@@ -41,7 +45,7 @@
  *
  * \sa sbIPropertyInfo
  */
-[scriptable, uuid(159bd7ea-3e2c-4241-9e02-51733e83e8c7)]
+[scriptable, uuid(b684129e-1dd1-11b2-bdb0-f02ef2b938e4)]
 interface sbIClickablePropertyInfo : nsISupports
 {
   /**
@@ -79,6 +83,17 @@ interface sbIClickablePropertyInfo : nsISupports
                   in unsigned long aMouseY);
 
   /**
+   * \brief Callback for a click event for special handling
+   * \param aItem the media item being clicked on
+   * \param aEvent the DOM click event
+   * \param aContext a context for the click; most likely a playlist widget
+   * \return True if the event has been handled and should be suppressed
+   */
+  boolean onClick(in sbIMediaItem aItem,
+                  [optional] in nsISupports aEvent,
+                  [optional] in nsISupports aContext);
+
+  /**
    * \brief Convert a mouse click to a value for this property
    * \param aCurrentValue The current value of this property
    * \param aBoxWidth Width of the clickable area
@@ -92,4 +107,24 @@ interface sbIClickablePropertyInfo : nsISupports
                            in unsigned long aBoxHeight,
                            in unsigned long aMouseX,
                            in unsigned long aMouseY);
+};
+
+[scriptable, function, uuid(74f08874-1dd2-11b2-9bf2-c0919899c308)]
+interface sbIClickablePropertyCallback : nsISupports
+{
+  /**
+   * Callback to be triggered when a user clicks on a cell in the playlist
+   * column associated with the property info
+   * \param aPropertyInfo the property info object associated with the column
+   *        being clicked on
+   * \param aItem the media item associated with the row vbeing clicked on
+   * \param aEvent the click (DOM) event
+   * \param aContext a context for the click; most likely a playlist widget
+   * \return True if the event has been handled and default handling should
+   *         be suppressed
+   */
+  boolean onClick(in sbIPropertyInfo aPropertyInfo,
+                  in sbIMediaItem aItem,
+                  [optional] in nsISupports aEvent,
+                  [optional] in nsISupports aContext);
 };

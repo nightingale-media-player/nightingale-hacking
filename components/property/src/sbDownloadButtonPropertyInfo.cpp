@@ -229,6 +229,20 @@ sbDownloadButtonPropertyInfo::HitTest(const nsAString& aCurrentValue,
   return NS_OK;
 }
 
+/* boolean onClick (in sbIMediaItem aItem,
+                    [optional] in nsISupports aEvent,
+                    [optional] in nsISupports aContext); */
+NS_IMETHODIMP
+sbDownloadButtonPropertyInfo::OnClick(sbIMediaItem *aItem,
+                                      nsISupports *aEvent,
+                                      nsISupports *aContext,
+                                      PRBool *_retval NS_OUTPARAM)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = PR_FALSE;
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbDownloadButtonPropertyInfo::GetValueForClick(const nsAString& aCurrentValue,
                                                PRUint32 aBoxWidth,

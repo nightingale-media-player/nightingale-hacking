@@ -30,6 +30,7 @@
 
 #include "nsISupports.idl"
 
+interface sbIClickablePropertyCallback;
 interface sbIPropertyArray;
 interface sbIPropertyInfo;
 interface nsIStringBundle;
@@ -148,4 +149,18 @@ interface sbIImageLabelLinkPropertyBuilder : sbIPropertyBuilder
    * Look up an existing label mapping
    */
   AString getLabel(in ACString aKey);
+};
+
+/**
+ * \interface sbIClickablePropertyBuilder
+ * An interface to allow a property builder to build property info objects
+ * which allow custom actions on click
+ * \sa sbIPropertyBuilder
+ * \sa sbIClickablePropertyCallback
+ */
+[scriptable, uuid(758e51ee-1dd2-11b2-bd29-dc5de14cfdc1)]
+interface sbIClickablePropertyBuilder : sbIPropertyBuilder
+{
+  void addClickHandler(in sbIClickablePropertyCallback aCallback);
+  void removeClickHandler(in sbIClickablePropertyCallback aCallback);
 };

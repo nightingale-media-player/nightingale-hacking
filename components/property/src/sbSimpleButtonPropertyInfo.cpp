@@ -198,6 +198,20 @@ sbSimpleButtonPropertyInfo::GetValueForClick(const nsAString& aCurrentValue,
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+/* boolean onClick (in sbIMediaItem aItem,
+                    [optional] in nsISupports aEvent,
+                    [optional] in nsISupports aContext); */
+NS_IMETHODIMP
+sbSimpleButtonPropertyInfo::OnClick(sbIMediaItem *aItem,
+                                    nsISupports *aEvent,
+                                    nsISupports *aContext,
+                                    PRBool *_retval NS_OUTPARAM)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = PR_FALSE;
+  return NS_OK;
+}
+
 // sbIPropertyInfo
 
 NS_IMETHODIMP

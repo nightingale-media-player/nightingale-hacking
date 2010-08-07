@@ -1950,6 +1950,12 @@
             return;
           }
 
+          var handled = clickable.onClick(item, evt, this);
+          if (handled) {
+            // event handler has dealt with it
+            return;
+          }
+
           // XXXben Remove these special cases. Fire the event and add handlers
           // to catch them elsewhere.
 
@@ -1991,9 +1997,9 @@
               } else {
                 SBBrowserOpenURLInNewWindow(uri);
               }
+              evt.stopPropagation();
+              return;
             }
-            evt.stopPropagation();
-            return;
           }
 
           // Only assign the new value if userEditable
