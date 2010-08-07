@@ -59,7 +59,7 @@ public:
   sbAbstractPropertyBuilder();
   virtual ~sbAbstractPropertyBuilder() {}
 
-  nsresult Init();
+  virtual nsresult Init();
 
   static nsresult GetStringFromName(nsIStringBundle* aBundle,
                                     const nsAString& aName,

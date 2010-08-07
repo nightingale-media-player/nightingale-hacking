@@ -33,9 +33,33 @@
 #include <sbIPropertyManager.h>
 #include <nsIStringBundle.h>
 
+#include "sbStandardProperties.h"
+
 NS_IMPL_ISUPPORTS_INHERITED1(sbDownloadButtonPropertyBuilder,
                              sbAbstractPropertyBuilder,
                              sbIDownloadButtonPropertyBuilder)
+
+nsresult
+sbDownloadButtonPropertyBuilder::Init()
+{
+  nsresult rv;
+  rv = sbAbstractPropertyBuilder::Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = SetPropertyID(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOADBUTTON));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = SetDisplayNameKey(NS_LITERAL_STRING("property.download_button"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = SetLabelKey(NS_LITERAL_STRING("property.download_button"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = SetRetryLabelKey(NS_LITERAL_STRING("property.download_button_retry"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;  
+}
 
 NS_IMETHODIMP
 sbDownloadButtonPropertyBuilder::Get(sbIPropertyInfo** _retval)

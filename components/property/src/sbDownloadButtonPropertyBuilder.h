@@ -44,6 +44,8 @@ public:
   NS_DECL_SBIDOWNLOADBUTTONPROPERTYBUILDER
 
   virtual ~sbDownloadButtonPropertyBuilder() {}
+  
+  virtual nsresult Init();
 
   NS_IMETHOD Get(sbIPropertyInfo **_retval);
 

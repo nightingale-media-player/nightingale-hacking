@@ -924,18 +924,6 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
 
   dbBuilder->SetUserViewable(PR_FALSE);
 
-  rv = dbBuilder->SetPropertyID(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOADBUTTON));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = dbBuilder->SetDisplayNameKey(NS_LITERAL_STRING("property.download_button"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = dbBuilder->SetLabelKey(NS_LITERAL_STRING("property.download_button"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = dbBuilder->SetRetryLabelKey(NS_LITERAL_STRING("property.download_button_retry"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   rv = dbBuilder->SetRemoteReadable(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
