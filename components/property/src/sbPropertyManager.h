@@ -96,6 +96,18 @@ private:
                             PRBool aRemoteReadable,
                             PRBool aRemoteWritable);
 
+  nsresult RegisterTrackTypeText(const nsAString& aPropertyID,
+                                 const nsAString& aDisplayKey,
+                                 nsIStringBundle* aStringBundle,
+                                 PRBool aUserViewable,
+                                 PRBool aUserEditable,
+                                 PRUint32 aNullSort,
+                                 PRBool aHasNullSort,
+                                 PRBool aRemoteReadable,
+                                 PRBool aRemoteWritable,
+                                 PRBool aCompressWhitespace = PR_TRUE,
+                                 sbIPropertyArray* aSecondarySort = nsnull);
+
   nsresult RegisterText(const nsAString& aPropertyID,
                         const nsAString& aDisplayKey,
                         nsIStringBundle* aStringBundle,

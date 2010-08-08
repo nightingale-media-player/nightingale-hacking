@@ -42,6 +42,7 @@
 #include "sbNumberPropertyInfo.h"
 #include "sbStandardProperties.h"
 #include "sbDummyProperties.h"
+#include "sbTrackTypeTextPropertyInfo.h"
 #include "sbTextPropertyInfo.h"
 #include "sbURIPropertyInfo.h"
 #include "sbImagePropertyInfo.h"
@@ -492,6 +493,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_FALSE,
                     sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
                     PR_TRUE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   //Track name
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
@@ -499,6 +501,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     stringBundle, PR_TRUE, PR_TRUE,
                     sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
                     PR_TRUE, PR_TRUE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   //Album name
   nsCOMPtr<sbIMutablePropertyArray> albumSecondarySort =
@@ -509,16 +512,19 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Sorting by album will sort by album->disc no->track no->track name
-  rv = albumSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
-                                        NS_LITERAL_STRING("a"));
+  rv = albumSecondarySort->AppendProperty(
+                             NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
+                             NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = albumSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
-                                        NS_LITERAL_STRING("a"));
+  rv = albumSecondarySort->AppendProperty(
+                             NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                             NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = albumSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
-                                         NS_LITERAL_STRING("a"));
+  rv = albumSecondarySort->AppendProperty(
+                             NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                             NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
@@ -526,6 +532,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     stringBundle, PR_TRUE, PR_TRUE,
                     sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
                     PR_TRUE, PR_TRUE, PR_FALSE, albumSecondarySort);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   //Artist name
   nsCOMPtr<sbIMutablePropertyArray> artistSecondarySort =
@@ -536,20 +543,24 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Sorting by artist will sort by artist->album->disc no->track no->track name
-  rv = artistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
-                                         NS_LITERAL_STRING("a"));
+  rv = artistSecondarySort->AppendProperty(
+                              NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                              NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = artistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
-    NS_LITERAL_STRING("a"));
+  rv = artistSecondarySort->AppendProperty(
+                              NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
+                              NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = artistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
-                                         NS_LITERAL_STRING("a"));
+  rv = artistSecondarySort->AppendProperty(
+                              NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                              NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = artistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
-                                         NS_LITERAL_STRING("a"));
+  rv = artistSecondarySort->AppendProperty(
+                              NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                              NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
@@ -557,6 +568,15 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     stringBundle, PR_TRUE, PR_TRUE,
                     sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
                     PR_TRUE, PR_TRUE, PR_FALSE, artistSecondarySort);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Track type
+  rv = RegisterTrackTypeText(NS_LITERAL_STRING(SB_PROPERTY_TRACKTYPE),
+                             NS_LITERAL_STRING("property.track_type"),
+                             stringBundle, PR_TRUE, PR_TRUE,
+                             sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
+                             PR_TRUE, PR_TRUE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   //Duration (in usecs)
   rv = RegisterDuration(NS_LITERAL_STRING(SB_PROPERTY_DURATION),
@@ -574,24 +594,29 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Sorting by genre will sort by genre->artist->album->disc no->track no->track name
-  rv = genreSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
-                                        NS_LITERAL_STRING("a"));
+  rv = genreSecondarySort->AppendProperty(
+                             NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
+                             NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = genreSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
-                                        NS_LITERAL_STRING("a"));
+  rv = genreSecondarySort->AppendProperty(
+                             NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                             NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = genreSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
-                                        NS_LITERAL_STRING("a"));
+  rv = genreSecondarySort->AppendProperty(
+                             NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
+                             NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = genreSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
-                                        NS_LITERAL_STRING("a"));
+  rv = genreSecondarySort->AppendProperty(
+                             NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                             NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = genreSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
-                                         NS_LITERAL_STRING("a"));
+  rv = genreSecondarySort->AppendProperty(
+                             NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                             NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_GENRE),
@@ -611,24 +636,29 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
 
   //Sorting by year will sort by year->artist->album->disc no->track no->track name
 
-  rv = yearSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
-                                        NS_LITERAL_STRING("a"));
+  rv = yearSecondarySort->AppendProperty(
+                            NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
+                            NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = yearSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
-                                        NS_LITERAL_STRING("a"));
+  rv = yearSecondarySort->AppendProperty(
+                            NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                            NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = yearSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
-                                        NS_LITERAL_STRING("a"));
+  rv = yearSecondarySort->AppendProperty(
+                            NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
+                            NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = yearSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
-                                        NS_LITERAL_STRING("a"));
+  rv = yearSecondarySort->AppendProperty(
+                            NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                            NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = yearSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
-                                         NS_LITERAL_STRING("a"));
+  rv = yearSecondarySort->AppendProperty(
+                            NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                            NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_YEAR),
@@ -988,7 +1018,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   // Status Property
   nsRefPtr<sbStatusPropertyBuilder> statusBuilder =
     new sbStatusPropertyBuilder();
-  NS_ENSURE_TRUE(dbBuilder, NS_ERROR_OUT_OF_MEMORY);
+  NS_ENSURE_TRUE(statusBuilder, NS_ERROR_OUT_OF_MEMORY);
 
   rv = statusBuilder->Init();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1152,20 +1182,24 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Sorting by album/artist will sort by album/artist->album->disc no->track no->track name
-  rv = albumArtistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
-                                        NS_LITERAL_STRING("a"));
+  rv = albumArtistSecondarySort->AppendProperty(
+                                   NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                                   NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = albumArtistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
-                                        NS_LITERAL_STRING("a"));
+  rv = albumArtistSecondarySort->AppendProperty(
+                                   NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
+                                   NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = albumArtistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
-                                        NS_LITERAL_STRING("a"));
+  rv = albumArtistSecondarySort->AppendProperty(
+                                   NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                                   NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = albumArtistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
-                                         NS_LITERAL_STRING("a"));
+  rv = albumArtistSecondarySort->AppendProperty(
+                                   NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                                   NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ALBUMARTISTNAME),
@@ -1361,12 +1395,8 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyID,
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!aDisplayKey.IsEmpty()) {
-    nsCOMPtr<nsIStringBundle> stringBundle;
-    rv = CreateBundle(SB_STRING_BUNDLE_CHROME_URL, getter_AddRefs(stringBundle));
-    NS_ENSURE_SUCCESS(rv, rv);
-
     nsAutoString displayValue;
-    rv = GetStringFromName(stringBundle, aDisplayKey, displayValue);
+    rv = GetStringFromName(aStringBundle, aDisplayKey, displayValue);
     if(NS_SUCCEEDED(rv)) {
       rv = textProperty->SetDisplayName(displayValue);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -1407,6 +1437,76 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyID,
   rv = AddPropertyInfo(propInfo);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  return NS_OK;
+}
+
+nsresult
+sbPropertyManager::RegisterTrackTypeText(const nsAString& aPropertyID,
+                                         const nsAString& aDisplayKey,
+                                         nsIStringBundle* aStringBundle,
+                                         PRBool aUserViewable,
+                                         PRBool aUserEditable,
+                                         PRUint32 aNullSort,
+                                         PRBool aHasNullSort,
+                                         PRBool aRemoteReadable,
+                                         PRBool aRemoteWritable,
+                                         PRBool aCompressWhitespace,
+                                         sbIPropertyArray* aSecondarySort)
+{
+  NS_ASSERTION(aStringBundle, "aStringBundle is null");
+
+  nsRefPtr<sbTrackTypeTextPropertyInfo>
+    typeProperty(new sbTrackTypeTextPropertyInfo());
+  NS_ENSURE_TRUE(typeProperty, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv = typeProperty->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = typeProperty->SetId(aPropertyID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!aDisplayKey.IsEmpty()) {
+    nsAutoString displayValue;
+    rv = GetStringFromName(aStringBundle, aDisplayKey, displayValue);
+    if(NS_SUCCEEDED(rv)) {
+      rv = typeProperty->SetDisplayName(displayValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    rv = typeProperty->SetLocalizationKey(aDisplayKey);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if (aHasNullSort) {
+    rv = typeProperty->SetNullSort(aNullSort);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = typeProperty->SetUserViewable(aUserViewable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = typeProperty->SetUserEditable(aUserEditable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (aSecondarySort) {
+    rv = typeProperty->SetSecondarySort(aSecondarySort);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if (!aCompressWhitespace) {
+    rv = typeProperty->SetNoCompressWhitespace(!aCompressWhitespace);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsCOMPtr<sbIPropertyInfo> propInfo =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbITextPropertyInfo*, typeProperty), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = SetRemoteAccess(propInfo, aRemoteReadable, aRemoteWritable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddPropertyInfo(propInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
