@@ -49,16 +49,24 @@ function runTest() {
     builder.addLabel(key ? key : null, K_DATA[key].label);
   }
 
+  var pi;
+
   function onclick(aPropertyInfo, aItem, aEvent, aContext) {
+    // Validate results.
     assertEqual(aPropertyInfo, pi);
     assertEqual(aItem.wrappedJSObject, item);
     assertEqual(aEvent.wrappedJSObject, event);
     assertEqual(aContext.wrappedJSObject, context);
+
+    // Remove object references.
+    pi = null;
+
+    // Test is done.
     testFinished();
   }
   builder.addClickHandler(onclick);
 
-  var pi = builder.get();
+  pi = builder.get();
   assertTrue(pi instanceof Ci.sbITreeViewPropertyInfo,
              "image label link property info should be a sbITreeViewPropertyInfo!");
   assertTrue(pi instanceof Ci.sbIClickablePropertyInfo,
