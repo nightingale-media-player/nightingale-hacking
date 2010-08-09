@@ -1144,6 +1144,46 @@ sbDeviceUtils::GetFormatTypesForMimeType
 }
 
 /**
+ * Return in aMimeType the audio MIME type for the container specified by
+ * aContainer and codec specified by aCodec.
+ *
+ * \param aContainer            Container type.
+ * \param aCodec                Codec type.
+ * \param aMimeType             Returned MIME type.
+ */
+/* static */ nsresult
+sbDeviceUtils::GetAudioMimeTypeForFormatTypes(const nsAString& aContainer,
+                                              const nsAString& aCodec,
+                                              nsAString&       aMimeType)
+{
+  TRACE(("%s", __FUNCTION__));
+
+  // Search the content format map for a match.
+  for (PRUint32 index = 0;
+       index < NS_ARRAY_LENGTH(MAP_FILE_EXTENSION_CONTENT_FORMAT);
+       ++index) {
+    // Get the next format entry.
+    sbExtensionToContentFormatEntry_t const& entry =
+      MAP_FILE_EXTENSION_CONTENT_FORMAT[index];
+
+    // Skip entry if it's not audio.
+    if (entry.ContentType != sbIDeviceCapabilities::CONTENT_AUDIO)
+      continue;
+
+    // Check for a match, returning if a match is found.
+    if (aContainer.EqualsLiteral(entry.ContainerFormat) &&
+        aCodec.EqualsLiteral(entry.Codec)) {
+      TRACE(("%s: container %s codec %s mime type %s",
+             __FUNCTION__, entry.ContainerFormat, entry.Codec, entry.MimeType));
+      aMimeType.AssignLiteral(entry.MimeType);
+      return NS_OK;
+    }
+  }
+
+  return NS_ERROR_NOT_AVAILABLE;
+}
+
+/**
  * Maps between the device caps and the transcode profile content types
  */
 static PRUint32 TranscodeToCapsContentTypeMap[] = {

@@ -281,6 +281,18 @@ public:
      nsTArray<sbExtensionToContentFormatEntry_t>& aFormatTypeList);
 
   /**
+   * Return in aMimeType the audio MIME type for the container specified by
+   * aContainer and codec specified by aCodec.
+   *
+   * \param aContainer            Container type.
+   * \param aCodec                Codec type.
+   * \param aMimeType             Returned MIME type.
+   */
+  static nsresult GetAudioMimeTypeForFormatTypes(const nsAString& aContainer,
+                                                 const nsAString& aCodec,
+                                                 nsAString&       aMimeType);
+
+  /**
    * \brief Determine if an item needs transcoding
    * \param aFormatType The format type mapping of the item
    * \param aBitRate the bit rate of the item in bps
