@@ -206,6 +206,7 @@
 ./components/sbStrings.xpt
 ./components/sbTemporaryFileService.dylib
 ./components/sbTemporaryFileService.xpt
+./components/sbTestDisplayPaneProvider.js
 ./components/sbTestHarness.dylib
 ./components/sbTestHarness.js
 ./components/sbTestHarness.xpt

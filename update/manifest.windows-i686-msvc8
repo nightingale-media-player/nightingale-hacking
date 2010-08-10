@@ -209,6 +209,7 @@
 ./components/sbStrings.xpt
 ./components/sbTemporaryFileService.dll
 ./components/sbTemporaryFileService.xpt
+./components/sbTestDisplayPaneProvider.js
 ./components/sbTestHarness.dll
 ./components/sbTestHarness.js
 ./components/sbTestHarness.xpt
