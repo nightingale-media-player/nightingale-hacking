@@ -3,7 +3,7 @@
 # 
 # This file is part of the Songbird web player.
 #
-# Copyright(c) 2005-2008 POTI, Inc.
+# Copyright(c) 2005-2010 POTI, Inc.
 # http://www.songbirdnest.com
 # 
 # This file may be licensed under the terms of of the
@@ -30,5 +30,9 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbDisplayPanes.js
+
+ifneq (,$(SB_ENABLE_TESTS))
+  SONGBIRD_COMPONENTS += $(srcdir)/sbTestDisplayPaneProvider.js
+endif
 
 include $(topsrcdir)/build/rules.mk

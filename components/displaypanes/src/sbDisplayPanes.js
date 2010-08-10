@@ -1,30 +1,34 @@
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
-Components.utils.import("resource://app/jsmodules/RDFHelper.jsm");
+const Cc = Components.classes;
+const Ci = Components.interfaces;
+const Cu = Components.utils;
+
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
+Cu.import("resource://app/jsmodules/RDFHelper.jsm");
 
 /**
  * sbIContentPaneInfo
@@ -61,11 +65,7 @@ PaneInfo.prototype = {
     return(errorList);
   },
   
-  QueryInterface: function(iid) {
-    if (!iid.equals(Components.interfaces.sbIDisplayPaneContentInfo)) 
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    return this;
-  }
+  QueryInterface: XPCOMUtils.generateQI([Ci.sbIDisplayPaneContentInfo])
 };
 
 /**
@@ -75,8 +75,8 @@ PaneInfo.prototype = {
  */
 function DisplayPaneMetadataReader() {
   //debug("DisplayPaneMetadataReader: ctor\n");
-  this._manager = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
-                            .getService(Components.interfaces.sbIDisplayPaneManager);
+  this._manager = Cc["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+                    .getService(Ci.sbIDisplayPaneManager);
 }
 DisplayPaneMetadataReader.prototype = {
   _manager: null,
@@ -93,7 +93,7 @@ DisplayPaneMetadataReader.prototype = {
       var panes;
       if (addons[i].displayPanes) {
         // TODO: remove this some time post 0.5 and before 1.0
-        Components.utils.reportError(
+        Cu.reportError(
           "DisplayPanes: Use of the <displayPanes> element in install.rdf " +
           "is deprecated. Remove that element and leave the contents as-is."
         );
@@ -161,8 +161,8 @@ DisplayPaneMetadataReader.prototype = {
    * \param errorList Array of error messages
    */
   _reportErrors: function _reportErrors(contextMessage, errorList) {
-    var consoleService = Components.classes["@mozilla.org/consoleservice;1"].
-         getService(Components.interfaces.nsIConsoleService);
+    var consoleService = Cc["@mozilla.org/consoleservice;1"]
+                           .getService(Ci.nsIConsoleService);
     for (var i = 0; i  < errorList.length; i++) {
       consoleService.logStringMessage("Display Pane Metadata Reader: " 
                                        + contextMessage + errorList[i]);
@@ -180,6 +180,19 @@ DisplayPaneMetadataReader.prototype = {
  * \sa sbIDisplayPaneManager
  */
 function DisplayPaneManager() {
+
+  // Components that implement sbIDisplayPaneContentInfo can indicate they
+  // provide display pane content by adding themselves to the
+  // "display-pane-provider" category.
+  var catMgr = Cc["@mozilla.org/categorymanager;1"]
+                 .getService(Ci.nsICategoryManager);
+  var entries = catMgr.enumerateCategory("display-pane-provider");
+  while (entries.hasMoreElements()) {
+    var entry = entries.getNext().QueryInterface(Ci.nsISupportsCString).data;
+    this._registerContentFromCategoryEntry(entry, catMgr);
+  }
+
+  this._initialized = true;
 }
 
 DisplayPaneManager.prototype = {
@@ -189,8 +202,8 @@ DisplayPaneManager.prototype = {
   constructor:      DisplayPaneManager,
 
   LOG: function(str) {
-    var consoleService = Components.classes['@mozilla.org/consoleservice;1']
-                            .getService(Components.interfaces.nsIConsoleService);
+    var consoleService = Cc['@mozilla.org/consoleservice;1']
+                           .getService(Ci.nsIConsoleService);
     consoleService.logStringMessage(str);
   },
 
@@ -198,14 +211,15 @@ DisplayPaneManager.prototype = {
   _instantiatorsList: [],
   _delayedInstantiations: [],
   _listenersList: [],
+  _initialized: false,
   
   _addonMetadataLoaded: false,
 
   _getString: function(aName, aDefault) {
     if (!this._stringbundle) {
       var src = "chrome://branding/locale/brand.properties";
-      var stringBundleService = Components.classes["@mozilla.org/intl/stringbundle;1"]
-                                  .getService(Components.interfaces.nsIStringBundleService);
+      var stringBundleService = Cc["@mozilla.org/intl/stringbundle;1"]
+                                  .getService(Ci.nsIStringBundleService);
       this._stringbundle = stringBundleService.createBundle(src);
     }
         
@@ -223,9 +237,9 @@ DisplayPaneManager.prototype = {
   _cleanupInstantiatorsList: function DPM_cleanupInstantiatorsList() {
     for (var i = this._instantiatorsList.length - 1; i >= 0; --i) {
       if (!(this._instantiatorsList[i] instanceof
-            Components.interfaces.sbIDisplayPaneInstantiator)) {
-        Components.utils.reportError("Warning: found bad instantiator; "+
-                                     "possibly via removal from DOM");
+            Ci.sbIDisplayPaneInstantiator)) {
+        Cu.reportError("Warning: found bad instantiator; "+
+                       "possibly via removal from DOM");
         this._instantiatorsList.splice(i, 1);
       }
     }
@@ -251,7 +265,7 @@ DisplayPaneManager.prototype = {
    * metadata from all extension install.rdf files.
    */
   ensureAddonMetadataLoaded: function() {
-    if (this._addonMetadataLoaded) {
+    if (!this._initialized || this._addonMetadataLoaded) {
       return;
     }
     this._addonMetadataLoaded = true;
@@ -407,8 +421,8 @@ DisplayPaneManager.prototype = {
     this.ensureAddonMetadataLoaded();
     
     if (this._instantiatorsList.indexOf(aInstantiator) > -1) {
-      Components.utils.reportError("Attempt to re-register instantiator ignored\n" +
-                                   (new Error()).stack);
+      Cu.reportError("Attempt to re-register instantiator ignored\n" +
+                     (new Error()).stack);
       return;
     }
     this._instantiatorsList.push(aInstantiator);
@@ -527,11 +541,25 @@ DisplayPaneManager.prototype = {
     }
   },
 
+  _registerContentFromCategoryEntry: function(aEntry, aCatMgr) {
+    var catMgr = aCatMgr || Cc["@mozilla.org/categorymanager;1"]
+                              .getService(Ci.nsICategoryManager);
+    var contractId = catMgr.getCategoryEntry("display-pane-provider", aEntry);
+    var contentInfo = Cc[contractId]
+                        .createInstance(Ci.sbIDisplayPaneContentInfo);
+    this.registerContent(contentInfo.contentUrl,
+                         contentInfo.contentTitle,
+                         contentInfo.contentIcon,
+                         contentInfo.defaultWidth,
+                         contentInfo.defaultHeight,
+                         contentInfo.suggestedContentGroups);
+  },
+
   /**
    * \see nsISupports.idl
    */
   QueryInterface:
-    XPCOMUtils.generateQI([Components.interfaces.sbIDisplayPaneManager])
+    XPCOMUtils.generateQI([Ci.sbIDisplayPaneManager])
 }; // DisplayPaneManager.prototype
 
 function NSGetModule(compMgr, fileSpec) {
