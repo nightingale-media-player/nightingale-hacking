@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" ?>
 <?xml-stylesheet href="chrome://sb-lastfm/skin/overlay.css" ?>
 <!--
-Copyright (c) 2008, Pioneers of the Inevitable, Inc.
+Copyright (c) 2010, Pioneers of the Inevitable, Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -38,120 +39,65 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   xmlns:xlink="http://www.w3.org/1999/xlink"
   >
 
-  <script type="application/x-javascript" src="chrome://sb-lastfm/content/main.js"/>
+  <script type="application/x-javascript"
+          src="chrome://sb-lastfm/content/main.js"/>
 
   <stringbundleset id="stringbundleset">
-    <stringbundle id="lastfmStrings" src="chrome://sb-lastfm/locale/overlay.properties"/>
+    <stringbundle id="lastfmStrings"
+                  src="chrome://sb-lastfm/locale/overlay.properties"/>
   </stringbundleset>
 
   <menupopup id="menu_ToolsPopup">
     <menuseparator id="lastfmMenuSeparator" insertbefore="devToolsSeparator"/>
-    <menuitem id="lastfmMenuLogout" label="&lastfm.menu.logout;"
+    <menuitem id="lastfmMenuLogout"
+              label="&lastfm.menu.logout;"
               insertbefore="devToolsSeparator"/>
-    <menuitem id="lastfmMenuLogin" label="&lastfm.menu.login;"
+    <menuitem id="lastfmMenuLogin"
+              label="&lastfm.menu.login;"
               insertbefore="devToolsSeparator"/>
-    <menuitem id="lastfmMenuEnableScrobbling" label="&lastfm.menu.enable;"
-              type="checkbox" insertbefore="devToolsSeparator"/>
+    <menuitem id="lastfmMenuEnableScrobbling"
+              label="&lastfm.menu.enable;"
+              type="checkbox"
+              insertbefore="devToolsSeparator"/>
   </menupopup>
 
 
   <popupset id="mainPopupSet">
-    <panel id="lastfmPanel" position="before_end">
-      <deck id="lastfmDeck">
-        <vbox id="lastfmLogin">
-          <groupbox>
-            <caption label="Login" />
-            <grid>
-              <columns>
-                <column/>
-                <column flex="1"/>
-              </columns>
-              <rows>
-                <row align="center">
-                  <label value="Username:"/>
-                  <textbox id="lastfmUsername" maxlength="15"/>
-                </row>
-                <row align="center">
-                  <label value="Password:"/>
-                  <textbox id="lastfmPassword" type="password"/>
-                </row>
-              </rows>
-            </grid>
-            <description id="lastfmLoginError"/>
-          </groupbox>
+    <sb-login-panel id="lastfmLoginPanel"
+                    position="before_end"
+                    loginCaptionLabel="&lastfm.login.caption.label;"
+                    usernameLabel="&lastfm.username.label;"
+                    passwordLabel="&lastfm.password.label;"
+                    autoLoginLabel="&lastfm.auto.login.label;"
+                    loginButtonLabel="&lastfm.login.button;"
+                    loggingLabel="&lastfm.loggingin.label;"
+                    cancelButtonLabel="&lastfm.cancel.button;"
+                    profileCaption="&lastfm.profile.caption;"
+                    profileCheckboxLabel="&lastfm.profile.scrobble;"
+                    logoutButtonLabel="&lastfm.profile.logout;" />
 
-          <spacer flex="1"/>
-
-          <hbox align="center">
-            <description class="text-link"><html:span class="text-link" id="lastfmSignup">&lastfm.signup.label;</html:span></description>
-            <spacer flex="1"/>
-            <button id="lastfmLoginButton" label="&lastfm.login.button;" />
-          </hbox>
+    <panel id="lastfmTagPanel" position="before_end">
+      <stack>
+        <vbox id="background" flex="1" />
+        <vbox id="tag-vbox">
+          <label value="&lastfm.tags.enter_new;" />
+          <textbox id="new-tags" type="search" searchbutton="true"
+                   onkeypress="if (event.keyCode == 13) LastFm.addTags(event)" />
+          <label id="label-user-tags" value="&lastfm.tags.user;" />
+          <vbox id="user-tags" />
+          <label id="label-global-tags" value="&lastfm.tags.global;" />
+          <vbox id="global-tags" />
         </vbox>
-
-        <vbox id="lastfmLoggingIn">
-          <spacer flex="1"/>
-          <groupbox>
-            <label value="&lastfm.loggingin.label;"/>
-            <progressmeter mode="undetermined"/>
-          </groupbox>
-          <spacer flex="1"/>
-          <hbox>
-            <spacer flex="1"/>
-            <button id="lastfmCancelButton" label="&lastfm.cancel.button;" />
-          </hbox>
-        </vbox>
-
-        <vbox id="lastfmProfile">
-          <groupbox orient="horizontal" pack="top" align="top">
-            <caption label="&lastfm.profile.caption;" />
-            <svg:svg id="lastfmImageContainer" class="empty" height="64px" width="64px">
-              <svg:image id="lastfmImage" xlink:href="chrome://sb-lastfm/skin/default-avatar.png" height="64px" width="64px"/>
-            </svg:svg>
-            <vbox>
-              <description class="text-link">
-                <html:span id="lastfmRealname" class="lastfmClickable text-link" style="font-weight:bold; font-size:120%;"/>
-              </description>
-              <description >
-                <html:span id="lastfmTracks" class="lastfmClickable"/>
-              </description>
-            </vbox>
-          </groupbox>
-          <spacer flex="1"/>
-          <hbox>
-            <checkbox id="lastfmScrobble" label="&lastfm.profile.scrobble;"
-                      checked="true" />
-            <spacer flex="1"/>
-            <button id="lastfmLogoutButton" label="&lastfm.profile.logout;" />
-          </hbox>
-        </vbox>
-      </deck>
+      </stack>
     </panel>
-
-	
-	<panel id="lastfmTagPanel" position="before_end">
-		<stack>
-			<vbox id="background" flex="1" />
-			<vbox id="tag-vbox">
-				<label value="&lastfm.tags.enter_new;" />
-				<textbox id="new-tags" type="search" searchbutton="true"
-					onkeypress="if (event.keyCode == 13) LastFm.addTags(event)"
-					/>
-				<label id="label-user-tags" value="&lastfm.tags.user;" />
-				<vbox id="user-tags" />
-				<label id="label-global-tags" value="&lastfm.tags.global;" />
-				<vbox id="global-tags" />
-			</vbox>
-		</stack>
-	</panel>
 
   </popupset>
 
   <statusbar id="status-bar">
     <statusbarpanel id="lastfmStatusIcon"
-      class="statusbarpanel-iconic"
-      src="chrome://sb-lastfm/skin/disabled.png"
-      tooltiptext=""
+                    class="statusbarpanel-iconic"
+                    src="chrome://sb-lastfm/skin/disabled.png"
+                    tooltiptext=""
     />
   </statusbar>
 </overlay>

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2008, Pioneers of the Inevitable, Inc.
+Copyright (c) 2010, Pioneers of the Inevitable, Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,10 +31,12 @@ if (typeof LastFm == 'undefined') {
   var LastFm = {};
 }
 
-if (typeof(gBrowser) == "undefined")
-	var gBrowser = Cc['@mozilla.org/appshell/window-mediator;1']
-        .getService(Ci.nsIWindowMediator).getMostRecentWindow('Songbird:Main')
-        .window.gBrowser;
+if (typeof(gBrowser) == "undefined") {
+  var gBrowser = Cc['@mozilla.org/appshell/window-mediator;1']
+                   .getService(Ci.nsIWindowMediator)
+                   .getMostRecentWindow('Songbird:Main')
+                   .window.gBrowser;
+}
 
 LastFm.Icons = {
   busy: 'chrome://sb-lastfm/skin/busy.png',
@@ -48,6 +50,7 @@ LastFm.Icons = {
 };
 
 LastFm.URL_SIGNUP = 'http://www.last.fm/join/';
+LastFm.URL_PASSWORD = 'http://www.last.fm/settings/lostpassword';
 
 
 // Called when the window finishes loading
@@ -57,7 +60,7 @@ LastFm.onLoad = function() {
 
   // get the XPCOM service as a JS object
   this._service = Components.classes['@songbirdnest.com/lastfm;1']
-    .getService().wrappedJSObject
+                                    .getService().wrappedJSObject;
   // listen to events from our Last.fm service
   this._service.listeners.add(this);
 
@@ -76,45 +79,52 @@ LastFm.onLoad = function() {
   // statusbar icon
   this._statusIcon = document.getElementById('lastfmStatusIcon');
 
+  // the panel binding
+  this._panelBinding = document.getElementById('lastfmLoginPanel');
+
   // the panel
-  this._panel = document.getElementById('lastfmPanel');
+  this._panel = this._getElement(this._panelBinding, 'loginPanel');
   this._tagPanel = document.getElementById('lastfmTagPanel');
 
   // the deck
-  this._deck = document.getElementById('lastfmDeck');
+  this._deck = this._getElement(this._panelBinding, 'loginDeck');
 
   // login page of the deck
-  this._login = document.getElementById('lastfmLogin');
+  this._login = this._getElement(this._panelBinding, 'loginBox');
   // login username field
-  this._username = document.getElementById('lastfmUsername');
+  this._username = this._getElement(this._panelBinding, 'username');
   // login password field
-  this._password = document.getElementById('lastfmPassword');
+  this._password = this._getElement(this._panelBinding, 'password');
+  // login auto sign in checkbox
+  this._loginAutoLogin = this._getElement(this._panelBinding,
+                                          'loginAutoLogin');
   // login button
-  this._loginError = document.getElementById('lastfmLoginError');
-  // login button
-  this._loginButton = document.getElementById('lastfmLoginButton');
+  this._loginError = this._getElement(this._panelBinding, 'loginError');
   // signup link
-  this._signup = document.getElementById('lastfmSignup');
+  this._signup = this._getElement(this._panelBinding, 'signup');
+  this._signup.textContent =
+         this._strings.getString('lastfm.signup.label');
+  // forgot password link
+  this._forgotpass = this._getElement(this._panelBinding, 'forgotpass');
+  this._forgotpass.textContent =
+         this._strings.getString('lastfm.forgotpass.label');
 
   // the logging-in page of the deck
-  this._loggingIn = document.getElementById('lastfmLoggingIn');
-  // login cancel button
-  this._cancelButton = document.getElementById('lastfmCancelButton');
+  this._loggingIn = this._getElement(this._panelBinding, 'loginProgressBox');
 
   // the logged-in / profile page of the deck
-  this._profile = document.getElementById('lastfmProfile');
-  // logout button
-  this._logoutButton = document.getElementById('lastfmLogoutButton');
+  this._profile = this._getElement(this._panelBinding, 'profileBox');
   // profile image
-  this._image = document.getElementById('lastfmImage');
+  this._image = this._getElement(this._panelBinding, 'image');
   // profile real name
-  this._realname = document.getElementById('lastfmRealname');
+  this._realname = this._getElement(this._panelBinding, 'realname');
   // profile tracks
-  this._tracks = document.getElementById('lastfmTracks');
+  this._tracks = this._getElement(this._panelBinding, 'profileDescription');
   // enable-scrobbling checkbox
-  this._scrobble = document.getElementById('lastfmScrobble');
-  // the currently playing element
-  this._currently = document.getElementById('lastfmCurrently');
+  this._scrobble = this._getElement(this._panelBinding, 'profileCheckbox');
+  // profile auto sign in checkbox
+  this._profileAutoLogin = this._getElement(this._panelBinding,
+                                            'profileAutoLogin');
 
   // wire up UI events for the menu items
   this._menuLogin.addEventListener('command',
@@ -141,15 +151,15 @@ LastFm.onLoad = function() {
 
         LastFm.metrics.metricsInc('lastfm', 'icon', 'click');
 
-        if (!LastFm._service.loggedIn) {
-          // if we're not logged in, show the login panel
-          LastFm._deck.selectedPanel = LastFm._login;
-          LastFm.showPanel();
-        } else {
-          // otherwise toggle the scrobble state
+        if (LastFm._service.loggedIn) {
+          // if we're logged in, toggle the scrobble state
           LastFm.toggleShouldScrobble();
+        } else {
+          // otherwise show the panel
+          LastFm.showPanel();
         }
       }, false);
+
   // and the contextmenu event
   this._statusIcon.addEventListener('contextmenu',
       function(event) {
@@ -157,17 +167,13 @@ LastFm.onLoad = function() {
         LastFm.showPanel();
       }, false);
 
-  // wire up UI events for the buttons
-  this._loginButton.addEventListener('command',
-      function(event) { LastFm.onLoginClick(event); }, false);
-  this._cancelButton.addEventListener('command',
-      function(event) { LastFm.onCancelClick(event); }, false);
-  this._logoutButton.addEventListener('command',
-      function(event) { LastFm.onLogoutClick(event); }, false);
-
   // wire up the signup link
   this._signup.addEventListener('click',
       function(event) { LastFm.loadURI(LastFm.URL_SIGNUP, event); }, false);
+
+  // wire up the forgot password link
+  this._forgotpass.addEventListener('click',
+      function(event) { LastFm.loadURI(LastFm.URL_PASSWORD, event); }, false);
 
   // wire up UI events for the profile links
   this._image.addEventListener('click',
@@ -182,51 +188,27 @@ LastFm.onLoad = function() {
                        LastFm._service.username + '/charts/', event);
       }, false);
 
+  // ui events for the auto sign in checkbox
+  this._loginAutoLogin.addEventListener('command',
+      function(event) { LastFm.toggleAutoLogin(); }, false);
+  this._profileAutoLogin.addEventListener('command',
+      function(event) { LastFm.toggleAutoLogin(); }, false);
+
   // ui event for the should-scrobble checkbox
   this._scrobble.addEventListener('command',
       function(event) { LastFm.toggleShouldScrobble(); }, false);
 
-  // the popupshown event on the panel
-  this._panel.addEventListener('popupshown',
-      function(event) {
-        if (LastFm._deck.selectedPanel == LastFm._login) {
-          // if the login panel is showing then focus & select the username
-          // field
-          LastFm._username.focus();
-          LastFm._username.select();
-        }
-      }, false);
+  var self = this;
+  this._panelBinding.addEventListener("login-button-clicked",
+                function(event) { self._handleUIEvents(event); }, false);
+  this._panelBinding.addEventListener("cancel-button-clicked",
+                function(event) { self._handleUIEvents(event); }, false);
+  this._panelBinding.addEventListener("logout-button-clicked",
+                function(event) { self._handleUIEvents(event); }, false);
 
   // copy the username & password out of the service into the UI
   this._username.value = this._service.username;
   this._password.value = this._service.password;
-
-  // react to changes in the login form
-  function loginFormChanged(event) {
-    if (LastFm._username.value.length &&
-        LastFm._password.value.length) {
-      // we have a username & password, make sure 'login' button is enabled
-      LastFm._loginButton.disabled = false;
-    } else {
-      // we're missing username or password, disable the 'login' button
-      LastFm._loginButton.disabled = true;
-    }
-  }
-  this._username.addEventListener('input', loginFormChanged, false);
-  this._password.addEventListener('input', loginFormChanged, false);
-  loginFormChanged();
-  // react to keypresses
-  function loginFormKeypress(event) {
-    // enter or return = login, if we're not disabled
-    if (event.keyCode == KeyEvent.DOM_VK_RETURN ||
-        event.keyCode == KeyEvent.DOM_VK_ENTER) {
-      if (!LastFm._loginButton.disabled) {
-        LastFm.onLoginClick(event);
-      }
-    }
-  }
-  this._username.addEventListener('keypress', loginFormKeypress, false);
-  this._password.addEventListener('keypress', loginFormKeypress, false);
 
   // create elements for the faceplate
   var faceplateParent = document.getElementById('faceplate-tool-bar');
@@ -283,7 +265,7 @@ LastFm.onLoad = function() {
 		  	userTags.removeChild(userTags.firstChild);
 		  while (globalTags.firstChild)
 		  	globalTags.removeChild(globalTags.firstChild);
-		  
+
 		  // grab the tags from the service
 		  for (var tag in LastFm._service.userTags) {
 			var removable = LastFm._service.userTags[tag];
@@ -295,7 +277,7 @@ LastFm.onLoad = function() {
 			var hbox = LastFm.showOneMoreTag(tag, removable);
 			globalTags.appendChild(hbox);
 		  }
-		  
+
 		  if (!userTags.firstChild)
 			  document.getElementById("label-user-tags")
 				  .style.visibility = "collapse";
@@ -319,6 +301,8 @@ LastFm.onLoad = function() {
 
   // clear the login error message
   this.setLoginError(null);
+  // update the ui with the should-auto-login state
+  this.onAutoLoginChanged(this._service.autoLogin);
   // update the ui with the should-scrobble state
   this.onShouldScrobbleChanged(this._service.shouldScrobble);
   // update the ui with the logged-in state
@@ -337,9 +321,13 @@ LastFm.onLoad = function() {
   window.addEventListener("ShowCurrentTrack", LastFm.showCurrentTrack, true);
 }
 
+LastFm._getElement = function(aWidget, aElementID) {
+  return document.getAnonymousElementByAttribute(aWidget, "sbid", aElementID);
+}
+
 LastFm.onMediacoreEvent = function(aEvent) {
   switch(aEvent.type) {
-		case Ci.sbIMediacoreEvent.TRACK_CHANGE:
+    case Ci.sbIMediacoreEvent.TRACK_CHANGE:
       // Hide the faceplate controls for love/ban/tag if it's not audio
       var mediaItem = aEvent.data;
       if (mediaItem.getProperty(SBProperties.contentType) != "audio") {
@@ -380,7 +368,7 @@ LastFm.showOneMoreTag = function(tagName, removable) {
 	var label = document.createElement('label');
 	label.setAttribute('value', tagName);
 	label.setAttribute('class', 'tag-link');
-	if (removable) 
+	if (removable)
 		label.setAttribute('href', '/user/' + LastFm._service.username +
 				'/tags/' + tagName);
 	else
@@ -463,21 +451,30 @@ LastFm.showPanel = function LastFm_showPanel() {
 }
 
 
-// button event handlers
-LastFm.onLoginClick = function(event) {
-  this._service.userLoggedOut = false;
-  this._service.username = this._username.value;
-  this._service.password = this._password.value;
-  // call login, telling the service to ignore any saved sessions
-  this._service.login(true);
+// UI event handlers
+LastFm._handleUIEvents = function(aEvent) {
+  switch (aEvent.type) {
+    case "login-button-clicked":
+      this._service.userLoggedOut = false;
+      this._service.username = this._username.value;
+      this._service.password = this._password.value;
+      // call login, telling the service to ignore any saved sessions
+      this._service.login(true);
+      break;
+    case "cancel-button-clicked":
+      this._service.cancelLogin();
+      break;
+    case "logout-button-clicked":
+      this.onLogoutClick(aEvent);
+      break;
+    default:
+      break;
+  }
 }
-LastFm.onCancelClick = function(event) {
-  this._service.cancelLogin();
-}
+
 LastFm.onLogoutClick = function(event) {
   this._service.userLoggedOut = true;
   this._service.logout();
-  this._deck.selectedPanel = this._login;
   this.setLoginError(null);
   this.updateStatus();
 }
@@ -486,6 +483,10 @@ LastFm.onLogoutClick = function(event) {
 LastFm.loadURI= function(uri, event) {
   gBrowser.loadURI(uri, null, null, event, '_blank');
   this._panel.hidePopup();
+}
+
+LastFm.toggleAutoLogin = function() {
+  this._service.autoLogin = !this._service.autoLogin;
 }
 
 LastFm.toggleShouldScrobble = function() {
@@ -510,7 +511,7 @@ LastFm.onLoggedInStateChanged = function LastFm_onLoggedInStateChanged() {
     // main screen turn on
     this._deck.selectedPanel = this._profile;
 
-    // show the last.fm faceplate if we're logged in 
+    // show the last.fm faceplate if we're logged in
     document.getElementById("lastfmFaceplate").hidden = false;
   } else {
     // logged out
@@ -522,7 +523,7 @@ LastFm.onLoggedInStateChanged = function LastFm_onLoggedInStateChanged() {
         this._menuEnableScrobbling);
       // disable the "enable scrobbling" menu item
       this._menuEnableScrobbling.disabled = true;
-      
+
       // don't show the last.fm faceplate if we're logged out
       document.getElementById("lastfmFaceplate").hidden = true;
     }
@@ -567,9 +568,20 @@ LastFm.onProfileUpdated = function LastFm_onProfileUpdated() {
   } else {
     this._realname.textContent = this._service.username;
   }
-  this._tracks.textContent = 
-      this._strings.getFormattedString('lastfm.profile.numtracks', 
+  this._tracks.textContent =
+      this._strings.getFormattedString('lastfm.profile.numtracks',
           [this._service.playcount]);
+}
+
+// autoLogin changed
+LastFm.onAutoLoginChanged = function LastFm_onAutoLoginChanged(val) {
+  if (val) {
+    this._loginAutoLogin.setAttribute('checked', 'true');
+    this._profileAutoLogin.setAttribute('checked', 'true');
+  } else {
+    this._loginAutoLogin.removeAttribute('checked');
+    this._profileAutoLogin.removeAttribute('checked');
+  }
 }
 
 // shouldScrobble changed
@@ -627,14 +639,8 @@ LastFm.updateStatus = function LastFm_updateStatus() {
 
   if (stateName == 'logged_in') {
     this._faceplate.removeAttribute('hidden');
-    // switch to profile panel
-    this._deck.selectedPanel = this._profile;
   } else {
     this._faceplate.setAttribute('hidden', 'true');
-    if (stateName == 'error' || stateName == 'login_error') {
-      // switch back to the login panel
-      this._deck.selectedPanel = this._login;
-    }
   }
 }
 
@@ -688,7 +694,7 @@ LastFm.prefObserver = {
 			if (lastFmNode != null) {
 				lastFmNode.hidden =
 					!Application.prefs.getValue("extensions.lastfm.show_radio_node", true);
-	
+
 				// Hide the "Radio" node if it's empty
 				var radioNode = lastFmNode.parentNode;
 				var enum = radioNode.childNodes;

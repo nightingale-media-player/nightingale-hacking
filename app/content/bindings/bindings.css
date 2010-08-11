@@ -663,3 +663,8 @@ sb-html-description {
 sb-filefield {
   -moz-binding: url("chrome://songbird/content/bindings/fileField.xml#sb-filefield") !important;
 }
+
+/* Login bindings */
+sb-login-panel {
+  -moz-binding: url("chrome://songbird/content/bindings/loginPanel.xml#sb-login-panel") !important;
+}

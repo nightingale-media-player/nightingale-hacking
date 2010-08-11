@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+<!-- Songbird Login Widgets
+
+     Provide widget bindings for different login phases.
+  -->
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:html="http://www.w3.org/1999/xhtml"
+      xmlns:svg="http://www.w3.org/2000/svg"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding id="sb-login-panel">
+
+    <resources>
+      <stylesheet src="chrome://songbird-bindings/skin/loginPanel.css"/>
+    </resources>
+
+    <content>
+      <xul:panel sbid="loginPanel" xbl:inherits="position">
+        <xul:deck sbid="loginDeck">
+
+          <xul:vbox sbid="loginBox">
+            <!-- login page of the deck -->
+            <xul:groupbox>
+              <xul:caption xbl:inherits="label=loginCaptionLabel" />
+              <xul:grid>
+                <xul:columns>
+                  <xul:column/>
+                  <xul:column flex="1"/>
+                </xul:columns>
+                <xul:rows>
+                  <xul:row align="center">
+                    <xul:label xbl:inherits="value=usernameLabel"/>
+                    <xul:textbox sbid="username" maxlength="15"/>
+                  </xul:row>
+                  <xul:row align="center">
+                    <xul:label xbl:inherits="value=passwordLabel"/>
+                    <xul:textbox sbid="password" type="password"/>
+                  </xul:row>
+                  <xul:row sbid="autoLoginRow">
+                    <xul:spacer flex="1"/>
+                    <xul:hbox>
+                      <xul:checkbox sbid="loginAutoLogin"
+                                    xbl:inherits="label=autoLoginLabel"/>
+                      <xul:spacer flex="1"/>
+                    </xul:hbox>
+                  </xul:row>
+                </xul:rows>
+              </xul:grid>
+              <xul:description sbid="loginError"/>
+            </xul:groupbox>
+
+            <xul:spacer flex="1"/>
+
+            <xul:hbox align="center">
+              <xul:description class="text-link">
+                <html:span class="text-link" sbid="forgotpass"></html:span>
+              </xul:description>
+              <xul:spacer flex="1"/>
+              <xul:button sbid="loginButton"
+                          xbl:inherits="label=loginButtonLabel" />
+            </xul:hbox>
+
+            <xul:separator/>
+
+            <xul:hbox>
+              <xul:description class="text-link">
+                <html:span class="text-link" sbid="signup"></html:span>
+              </xul:description>
+              <xul:spacer flex="1"/>
+            </xul:hbox>
+          </xul:vbox>
+
+          <xul:vbox sbid="loginProgressBox">
+            <!-- logging-in page of the deck -->
+            <xul:spacer flex="1"/>
+            <xul:groupbox>
+              <xul:label xbl:inherits="value=loggingLabel"/>
+              <xul:progressmeter mode="undetermined"/>
+            </xul:groupbox>
+            <xul:spacer flex="1"/>
+            <xul:hbox>
+              <xul:spacer flex="1"/>
+              <xul:button sbid="cancelButton"
+                          xbl:inherits="label=cancelButtonLabel" />
+            </xul:hbox>
+          </xul:vbox>
+
+          <xul:vbox sbid="profileBox">
+            <!-- logged-in / profile page of the deck -->
+            <xul:groupbox orient="horizontal" pack="top" align="top">
+              <xul:caption xbl:inherits="label=profileCaption" />
+              <svg:svg sbid="imageContainer" class="empty"
+                       height="64px" width="64px">
+                <svg:image sbid="image" height="64px" width="64px"/>
+              </svg:svg>
+              <xul:vbox>
+                <xul:description class="text-link">
+                  <html:span sbid="realname"
+                             style="font-weight:bold; font-size:120%;"/>
+                </xul:description>
+                <xul:description class="text-link">
+                  <html:span sbid="profileDescription"/>
+                </xul:description>
+              </xul:vbox>
+            </xul:groupbox>
+            <xul:spacer flex="1"/>
+
+            <xul:hbox>
+              <xul:checkbox sbid="profileCheckbox"
+                            xbl:inherits="label=profileCheckboxLabel"
+                            checked="true" />
+              <xul:spacer flex="1"/>
+              <xul:button sbid="logoutButton"
+                          xbl:inherits="label=logoutButtonLabel" />
+            </xul:hbox>
+
+            <xul:separator/>
+
+            <xul:hbox>
+              <xul:checkbox sbid="profileAutoLogin"
+                            xbl:inherits="label=autoLoginLabel"/>
+              <xul:spacer flex="1"/>
+            </xul:hbox>
+          </xul:vbox>
+        </xul:deck>
+      </xul:panel>
+    </content>
+
+  <implementation>
+
+    <field name="_panel">this._getElement("loginPanel");</field>
+    <field name="_deck">this._getElement("loginDeck");</field>
+    <field name="_login">this._getElement("loginBox");</field>
+    <field name="_loginButton">this._getElement("loginButton");</field>
+    <field name="_username">this._getElement("username");</field>
+    <field name="_password">this._getElement("password");</field>
+    <field name="_cancelButton">this._getElement("cancelButton");</field>
+    <field name="_logoutButton">this._getElement("logoutButton");</field>
+    <field name="_domEventListenerSet">null</field>
+
+    <constructor>
+      <![CDATA[
+      {
+        Cu.import("resource://app/jsmodules/DOMUtils.jsm", this);
+
+        // Initially disable the login button if no username or password value
+        if (!this._username.value || !this._password.value)
+          this._loginButton.disabled = true;
+
+        this._deck.selectedPanel = this.login;
+
+        // Create a DOM event listener set.
+        this._domEventListenerSet = new this.DOMEventListenerSet();
+
+        this._initDOMEventListenerSet();
+      }
+      ]]>
+    </constructor>
+
+    <destructor>
+      <![CDATA[
+      {
+        // Remove DOM event listeners.
+        if (this._domEventListenerSet) {
+          this._domEventListenerSet.removeAll();
+          this._domEventListenerSet = null;
+        }
+      }
+      ]]>
+    </destructor>
+
+    <method name="_initDOMEventListenerSet">
+      <body><![CDATA[
+      {
+        var self = this;
+
+        // Listen to the popupshown event on the panel
+        var func = function(event) {
+          if (self._deck.selectedPanel == self._login) {
+            // if the login panel is showing then focus & select the username
+            // field
+            self._username.focus();
+            self._username.select();
+          }
+        };
+
+        this._domEventListenerSet.add(this._panel,
+                                      'popupshown',
+                                      func,
+                                      false,
+                                      false);
+
+        // Listen to the input and change events
+        func = function(event) { self._loginFormChanged(event); };
+        this._domEventListenerSet.add(this._username,
+                                      'change',
+                                      func,
+                                      false,
+                                      false);
+
+        this._domEventListenerSet.add(this._password,
+                                      'change',
+                                      func,
+                                      false,
+                                      false);
+
+        this._domEventListenerSet.add(this._username,
+                                      'input',
+                                      func,
+                                      false,
+                                      false);
+
+        this._domEventListenerSet.add(this._password,
+                                      'input',
+                                      func,
+                                      false,
+                                      false);
+
+        // Listen to the keypress events
+        func = function(event) { self._loginFormKeypress(event); };
+        this._domEventListenerSet.add(this._username,
+                                      'keypress',
+                                      func,
+                                      false,
+                                      false);
+
+        this._domEventListenerSet.add(this._password,
+                                      'keypress',
+                                      func,
+                                      false,
+                                      false);
+
+        // Dispatch UI events for the button click events
+        func = function(event) { self._onLoginClick(event); };
+        this._domEventListenerSet.add(this._loginButton,
+                                      'command',
+                                      func,
+                                      false,
+                                      false);
+
+        func = function(event) { self._onCancelClick(event); };
+        this._domEventListenerSet.add(this._cancelButton,
+                                      'command',
+                                      func,
+                                      false,
+                                      false);
+
+        func = function(event) { self._onLogoutClick(event); };
+        this._domEventListenerSet.add(this._logoutButton,
+                                      'command',
+                                      func,
+                                      false,
+                                      false);
+      }
+      ]]></body>
+    </method>
+
+    <method name="_onLoginClick">
+      <parameter name="aEvent"/>
+      <body><![CDATA[
+      {
+        let newEvent = document.createEvent("Event");
+        newEvent.initEvent("login-button-clicked", false, true);
+        this.dispatchEvent(newEvent);
+      }
+      ]]></body>
+    </method>
+
+    <method name="_onCancelClick">
+      <parameter name="aEvent"/>
+      <body><![CDATA[
+      {
+        let newEvent = document.createEvent("Event");
+        newEvent.initEvent("cancel-button-clicked", false, true);
+        this.dispatchEvent(newEvent);
+      }
+      ]]></body>
+    </method>
+
+    <method name="_onLogoutClick">
+      <parameter name="aEvent"/>
+      <body><![CDATA[
+      {
+        let newEvent = document.createEvent("Event");
+        newEvent.initEvent("logout-button-clicked", false, true);
+        this.dispatchEvent(newEvent);
+      }
+      ]]></body>
+    </method>
+
+    <!-- React to changes in the login form -->
+    <method name="_loginFormChanged">
+      <parameter name="aEvent"/>
+      <body><![CDATA[
+      {
+        if (this._username.value.length &&
+            this._password.value.length) {
+          // we have a username & password, make sure 'login' button is enabled
+          this._loginButton.disabled = false;
+        } else {
+          // we're missing username or password, disable the 'login' button
+          this._loginButton.disabled = true;
+        }
+      }
+      ]]></body>
+    </method>
+
+    <!-- React to keypress -->
+    <method name="_loginFormKeypress">
+      <parameter name="aEvent"/>
+      <body><![CDATA[
+      {
+        // enter or return = login, if we're not disabled
+        if (aEvent.keyCode == KeyEvent.DOM_VK_RETURN ||
+            aEvent.keyCode == KeyEvent.DOM_VK_ENTER) {
+          if (!this._loginButton.disabled) {
+            this._onLoginClick(aEvent);
+          }
+        }
+      }
+      ]]></body>
+    </method>
+
+    <!--
+      - \brief Gets an element in this binding that has the sbid matching the
+      -   aID parameter.
+      - \param aID Anonymous sbid of the element requested (matches sbid)
+      - \return element if found, or null if not
+      -->
+    <method name="_getElement">
+      <parameter name="aID"/>
+      <body><![CDATA[
+      {
+        return document.getAnonymousElementByAttribute(this,
+                                                       "sbid",
+                                                       aID);
+      }
+      ]]></body>
+    </method>
+  </implementation>
+
+  </binding>
+
+</bindings>

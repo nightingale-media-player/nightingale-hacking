@@ -1,25 +1,30 @@
-#lastfmDeck {
-  padding: 5px;
-}
+/*
+Copyright (c) 2010, Pioneers of the Inevitable, Inc.
+All rights reserved.
 
-#lastfmDeck button {
-  min-height: 2em;
-}
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
-#lastfmLoginError {
-  color: red;
-  visibility:collapse;
-}
+  * Redistributions of source code must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
+  * Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
+  * Neither the name of Pioneers of the Inevitable, Songbird, nor the names
+    of its contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
 
-/* the avatar image */
-#lastfmImageContainer {
-  border: 2px solid rgb(80,80,80);
-  margin-right:4px;
-}
-#lastfmImageContainer:hover {
-  border-color: rgb(177,153,255);
-  cursor:pointer;
-}
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 
 /* the next scrobbling line */
 #lastfmNextTrack, #lastfmNextTime {

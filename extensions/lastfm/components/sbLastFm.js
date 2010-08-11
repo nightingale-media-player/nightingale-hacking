@@ -381,6 +381,14 @@ function sbLastFm() {
   AUTH_URL = prefsService.getCharPref('extensions.lastfm.auth_url');
   API_URL = prefsService.getCharPref('extensions.lastfm.api_url');
 
+  this.__defineGetter__('autoLogin', function() {
+    return prefsService.getBoolPref('extensions.lastfm.autologin');
+  });
+  this.__defineSetter__('autoLogin', function(val) {
+    prefsService.setBoolPref('extensions.lastfm.autologin', val);
+    this.listeners.each(function(l) { l.onAutoLoginChanged(val); });
+  });
+
   this.__defineGetter__('shouldScrobble', function() {
     return prefsService.getBoolPref('extensions.lastfm.scrobble');
   });
@@ -417,8 +425,10 @@ function sbLastFm() {
 
   // whether the user is a subscriber or not
   this._subscriber = false;
-  if (Application.prefs.getValue("extensions.lastfm.subscriber_override",false))
+  if (Application.prefs.getValue("extensions.lastfm.subscriber_override",
+                                 false)) {
     this._subscriber = true;
+  }
   this.__defineGetter__('subscriber', function() { return this._subscriber; });
 
   // the loggedIn state
@@ -432,7 +442,7 @@ function sbLastFm() {
   // get the playback history service
   this._playbackHistory =
       Cc['@songbirdnest.com/Songbird/PlaybackHistoryService;1']
-      .getService(Ci.sbIPlaybackHistoryService);
+        .getService(Ci.sbIPlaybackHistoryService);
   // add ourselves as a playlist history listener
   this._playbackHistory.addListener(this);
 
@@ -588,7 +598,10 @@ function sbLastFm_badSession() {
 // should the user be automatically logged in?
 sbLastFm.prototype.shouldAutoLogin =
 function sbLastFm_shouldAutoLogin() {
-  return this.username && this.password && !this.userLoggedOut;
+  return this.autoLogin &&
+         this.username &&
+         this.password &&
+         this.userLoggedOut;
 }
 
 sbLastFm.prototype.postHandshake =
@@ -1360,7 +1373,7 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
               gBrowser.getBrowserForTab(authTab)) {
             return;
           }
-  
+
           // We're listening for the LastFM "Permissions Granted" page. It will
           // have pathname "/api/grantaccess" on the last.fm domain or a
           // localized version such as lastfm.fr
@@ -1419,7 +1432,7 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
               if (typeof(onSuccess) == "function")
                 onSuccess();
           });
-        } 
+        }
 
         // Load the user authorization page.
         var authURL = "http://" + self.geoBaseDomain + "/api/auth?api_key=" +
@@ -1427,10 +1440,10 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
 
         gBrowser.addEventListener("DOMContentLoaded", self._authListener, false);
         // Make sure we don't leak the listeners if the user takes no action.
-        gBrowser.addEventListener("unload", removeAuthListeners, false); 
+        gBrowser.addEventListener("unload", removeAuthListeners, false);
 
         var authTab = gBrowser.loadOneTab(authURL, null, null, null, false);
-      
+
         // The user could close the auth page tab without granting permission.
         self._authTabCloseListener = function(e) {
           removeAuthListeners();
@@ -1438,7 +1451,7 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
             listener.onLoginFailed();
           });
         }
-        
+
         authTab.addEventListener("TabClose", self._authTabCloseListener, false);
 
     }, function failure() {   // auth.getToken failure
