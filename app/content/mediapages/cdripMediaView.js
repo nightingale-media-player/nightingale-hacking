@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -109,6 +109,10 @@ window.cdripController =
   _device:        null,
   _deviceID:      null,
   _deviceLibrary: null,
+
+  // Closure for device manager events
+  _onDeviceManagerEventClosure: null,
+
   // Transcoding pref branch
   _transcodePrefBranch: null,
 
@@ -148,6 +152,14 @@ window.cdripController =
     
     var eventTarget = this._device.QueryInterface(Ci.sbIDeviceEventTarget);
     eventTarget.addEventListener(this);
+
+    var self = this;
+    this._onDeviceManagerEventClosure =
+      function cdripController__onDeviceManagerEventClosure(aEvent)
+        { self._onDeviceManagerEvent(aEvent); };
+    var deviceManagerSvc = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                             .getService(Ci.sbIDeviceManager2);
+    deviceManagerSvc.addEventListener(this._onDeviceManagerEventClosure);
 
     // Disable player controls & load the playlist
     this._updateRipSettings();
@@ -191,6 +203,12 @@ window.cdripController =
     this._mediaListView.mediaList.removeListener(this._libraryListener);
     this._libraryListener = null;
 
+    if (this._onDeviceManagerEventClosure) {
+      var deviceManagerSvc = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                               .getService(Ci.sbIDeviceManager2);
+      deviceManagerSvc.removeEventListener(this._onDeviceManagerEventClosure);
+    }
+
     this._togglePlayerControls(false);
     if (this._device) {
       var eventTarget = this._device.QueryInterface(Ci.sbIDeviceEventTarget);
@@ -216,15 +234,6 @@ window.cdripController =
       // CD LOOKUP COMPLETE
       case Ci.sbICDDeviceEvent.EVENT_CDLOOKUP_COMPLETED:
         this._toggleLookupNotification(false);
-        break;
-
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED :
-        // Go back to previous page if device removed.
-        var device = aEvent.data.QueryInterface(Ci.sbIDevice);
-        if (device.id.toString() == this._deviceID) {
-          var browser = SBGetBrowser();
-          browser.getTabForDocument(document).backWithDefault();
-        }
         break;
 
       case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED:
@@ -267,6 +276,23 @@ window.cdripController =
       .getService(Ci.nsIWindowMediator)
       .getMostRecentWindow("Songbird:Main")
       .SBOpenPreferences("paneCDRip");
+  },
+
+  _onDeviceManagerEvent:
+    function cdripController__onDeviceManagerEvent(aEvent) {
+    switch (aEvent.type) {
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED :
+        // Go back to previous page if device removed.
+        var device = aEvent.data.QueryInterface(Ci.sbIDevice);
+        if (device.id.toString() == this._deviceID) {
+          var browser = SBGetBrowser();
+          browser.getTabForDocument(document).backWithDefault();
+        }
+        break;
+
+      default:
+        break;
+    }
   },
 
   _toggleLookupNotification: function
