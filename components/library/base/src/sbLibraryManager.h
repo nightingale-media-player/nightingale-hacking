@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -48,8 +48,9 @@
 
 #define SB_PREFBRANCH_LIBRARY    "songbird.library."
 
-#define SB_PREF_MAIN_LIBRARY     SB_PREFBRANCH_LIBRARY "main"
-#define SB_PREF_WEB_LIBRARY      SB_PREFBRANCH_LIBRARY "web"
+#define SB_PREF_MAIN_LIBRARY      SB_PREFBRANCH_LIBRARY "main"
+#define SB_PREF_WEB_LIBRARY       SB_PREFBRANCH_LIBRARY "web"
+#define SB_PREF_PLAYQUEUE_LIBRARY SB_PREFBRANCH_LIBRARY "playqueue"
 
 class nsIComponentManager;
 class nsIFile;

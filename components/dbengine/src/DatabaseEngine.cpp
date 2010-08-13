@@ -1,27 +1,25 @@
- /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 /**
@@ -121,6 +119,7 @@
 #define PREF_MAIN_LIBRARY                     "songbird.library.main"
 #define PREF_WEB_LIBRARY                      "songbird.library.web"
 #define PREF_DOWNLOAD_LIST                    "songbird.library.download"
+#define PREF_PLAYQUEUE_LIBRARY                "songbird.library.playqueue"
 
 // These are also from sbLocalDatabaseLibraryLoader.cpp.
 #define PREF_LOADER_DBGUID                    "databaseGUID"
@@ -129,6 +128,7 @@
 // These are also from sbLocalDatabaseLibraryLoader.cpp.
 #define DBENGINE_GUID_MAIN_LIBRARY            "main@library.songbirdnest.com"
 #define DBENGINE_GUID_WEB_LIBRARY             "web@library.songbirdnest.com"
+#define DBENGINE_GUID_PLAYQUEUE_LIBRARY       "playqueue@library.songbirdnest.com"
 
 // Unless prefs state otherwise, allow 262144000 bytes
 // of page cache.  WOW!
@@ -1963,6 +1963,18 @@ CDatabaseEngine::DeleteMarkedDatabases()
       else if(loaderDbGuid.EqualsLiteral(DBENGINE_GUID_WEB_LIBRARY)) {
         nsCOMPtr<nsIPrefBranch> doomedBranch;
         rv = prefService->GetBranch(PREF_WEB_LIBRARY, getter_AddRefs(doomedBranch));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = doomedBranch->DeleteBranch("");
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = prefService->SavePrefFile(nsnull);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      else if(loaderDbGuid.EqualsLiteral(DBENGINE_GUID_PLAYQUEUE_LIBRARY)) {
+        nsCOMPtr<nsIPrefBranch> doomedBranch;
+        rv = prefService->GetBranch(PREF_PLAYQUEUE_LIBRARY,
+                                    getter_AddRefs(doomedBranch));
         NS_ENSURE_SUCCESS(rv, rv);
 
         rv = doomedBranch->DeleteBranch("");
