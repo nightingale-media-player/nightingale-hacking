@@ -219,7 +219,8 @@ const gSearchHandler = {
 
     // If this engine has not been tagged as internal
     // then dispatch the search normally
-    if ( widget.currentEngine.tags.indexOf(SEARCHENGINE_TAG_INTERNAL) == -1 ) 
+    if ( !widget.currentEngine.tags ||
+         widget.currentEngine.tags.indexOf(SEARCHENGINE_TAG_INTERNAL) == -1 ) 
     { 
       // null parameter below specifies HTML response for search
       var submission = widget.currentEngine.getSubmission(widget.value, null);
