@@ -1059,13 +1059,23 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
     // the tracks as they're created. This avoids the problem where
     // tracks are marked with the wrong bitrate if the user changes
     // his transcoding prefs after inserting a cd.
-    PRUint32 bitrate;
-    GetBitrateFromProfile(&bitrate);
     mTranscodeBitrateStr.Truncate();
-    mTranscodeBitrateStr.AppendInt(bitrate/1000);
+    nsCOMPtr<nsIVariant> bitrateVariant;
+    rv = GetDeviceTranscodingProperty(sbITranscodeProfile::TRANSCODE_TYPE_AUDIO,
+                                      NS_LITERAL_STRING("bitrate"),
+                                      getter_AddRefs(bitrateVariant));
+    if (NS_SUCCEEDED(rv) && bitrateVariant) {
+      PRUint32 bitrate;
+      rv = bitrateVariant->GetAsUint32(&bitrate);
+      if (NS_SUCCEEDED(rv))
+        mTranscodeBitrateStr.AppendInt(bitrate/1000);
+    }
   }
 
-  destination->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_BITRATE), mTranscodeBitrateStr);
+  if (!mTranscodeBitrateStr.IsEmpty()) {
+    destination->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_BITRATE),
+                             mTranscodeBitrateStr);
+  }
 
   nsCOMPtr<nsIURI> sourceContentURI;
   rv = source->GetContentSrc(getter_AddRefs(sourceContentURI));
@@ -1311,45 +1321,3 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   return rv;
 }
 
-nsresult sbCDDevice::GetBitrateFromProfile(PRUint32 *bitrate)
-{
-  nsresult rv;
-
-  nsCOMPtr<nsIArray> properties;
-  rv = mTranscodeProfile->GetAudioProperties(getter_AddRefs(properties));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsISimpleEnumerator> propEnumerator;
-  rv = properties->Enumerate(getter_AddRefs(propEnumerator));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRBool more = PR_FALSE;
-  rv = propEnumerator->HasMoreElements(&more);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  while (more)
-  {
-    nsCOMPtr<sbITranscodeProfileProperty> property;
-    rv = propEnumerator->GetNext(getter_AddRefs(property));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsAutoString profilePropName;
-    rv = property->GetPropertyName(profilePropName);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (profilePropName.Equals(NS_LITERAL_STRING("bitrate")))
-    {
-      nsCOMPtr<nsIVariant> valueVariant;
-      rv = property->GetValue(getter_AddRefs(valueVariant));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = valueVariant->GetAsUint32(bitrate);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    rv = propEnumerator->HasMoreElements(&more);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  return NS_OK;
-}

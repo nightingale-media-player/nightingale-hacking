@@ -6635,6 +6635,67 @@ sbBaseDevice::GetSupportedTranscodeProfiles(PRUint32 aType,
 }
 
 nsresult
+sbBaseDevice::GetDeviceTranscodingProperty(PRUint32         aTranscodeType,
+                                           const nsAString& aPropertyName,
+                                           nsIVariant**     aPropertyValue)
+{
+  TRACE(("%s", __FUNCTION__));
+
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aPropertyValue);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the device transcoding profile.
+  nsCOMPtr<sbITranscodeProfile> transcodeProfile;
+  rv = GetDeviceTranscoding()->SelectTranscodeProfile
+                                 (aTranscodeType,
+                                  getter_AddRefs(transcodeProfile));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get a property enumerator.
+  nsCOMPtr<nsISimpleEnumerator> propEnumerator;
+  nsCOMPtr<nsIArray>            properties;
+  rv = transcodeProfile->GetAudioProperties(getter_AddRefs(properties));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = properties->Enumerate(getter_AddRefs(propEnumerator));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Search for property.
+  PRBool more = PR_FALSE;
+  rv = propEnumerator->HasMoreElements(&more);
+  NS_ENSURE_SUCCESS(rv, rv);
+  while (more) {
+    // Get the next property.
+    nsCOMPtr<sbITranscodeProfileProperty> property;
+    rv = propEnumerator->GetNext(getter_AddRefs(property));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the property name.
+    nsAutoString profilePropName;
+    rv = property->GetPropertyName(profilePropName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Return property value if its name matches.
+    if (profilePropName.Equals(aPropertyName)) {
+      rv = property->GetValue(aPropertyValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+      return NS_OK;
+    }
+
+    // Check for more properties.
+    rv = propEnumerator->HasMoreElements(&more);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Property not found.
+  *aPropertyValue = nsnull;
+
+  return NS_OK;
+}
+
+nsresult
 sbBaseDevice::DispatchTranscodeErrorEvent(sbIMediaItem*    aMediaItem,
                                           const nsAString& aErrorMessage)
 {
@@ -7105,7 +7166,7 @@ sbBaseDevice::LogDeviceFoldersEnum(const unsigned int& aKey,
 
 //------------------------------------------------------------------------------
 //
-// CD device request added event nsISupports services.
+// Device request added event nsISupports services.
 //
 //------------------------------------------------------------------------------
 

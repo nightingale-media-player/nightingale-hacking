@@ -1577,6 +1577,21 @@ protected:
     */
    virtual nsresult GetSupportedTranscodeProfiles(PRUint32 aType,
                                                   nsIArray **aSupportedProfiles);
+
+  /**
+   * Get the value of the transcoding property with the name specified by
+   * aPropertyName and transcoding type specified by aTranscodeType.  Return the
+   * value in aPropertyValue.
+   *
+   * \param aTranscodeType      Type of transcode. E.g.,
+   *                            sbITranscodeProfile::TRANSCODE_TYPE_AUDIO.
+   * \param aPropertyName       Name of property.
+   * \param aPropertyValue      Returned property value.
+   */
+  nsresult GetDeviceTranscodingProperty(PRUint32         aTranscodeType,
+                                        const nsAString& aPropertyName,
+                                        nsIVariant**     aPropertyValue);
+
    /**
    * Dispatch a transcode error event for the media item specified by aMediaItem
    * with the error message specified by aErrorMessage.
