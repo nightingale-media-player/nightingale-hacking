@@ -35,7 +35,10 @@
 //
 //------------------------------------------------------------------------------
 
-EXPORTED_SYMBOLS = [ "DOMUtils", "sbDOMHighlighter", "DOMEventListenerSet" ];
+EXPORTED_SYMBOLS = [ "DOMUtils",
+                     "sbDOMHighlighter",
+                     "DOMEventListenerSet",
+                     "sbColorUtils" ];
 
 
 //------------------------------------------------------------------------------
@@ -884,6 +887,87 @@ DOMEventListenerSet.prototype = {
 
     // Dispatch event to listener.
     return aEventListener.listener(aEvent);
+  }
+};
+
+
+//------------------------------------------------------------------------------
+//
+// Color utility services.
+//
+//   These utilities provide services for handling colors specified in DOM
+// attributes or in CSS.
+//   These utilities make use of color objects with the following fields:
+//
+//     red                      Number from 0.0 to 1.0.
+//     green                    Number from 0.0 to 1.0.
+//     blue                     Number from 0.0 to 1.0.
+//     alpha                    Number from 0.0 to 1.0.
+//
+//------------------------------------------------------------------------------
+
+var sbColorUtils = {
+  /**
+   * Return the color object for the CSS color string specified by aCSSColor.
+   *
+   * \param aCSSColor           CSS color string.
+   *
+   * \return                    Color object.
+   *
+   *XXXeps would be nice to also support #xxxxxx format.
+   */
+
+  getColorFromCSSColor: function sbColorUtils_getCSSColor(aCSSColor) {
+    // Parse out the color components substring from the CSS color string.
+    var rgba = aCSSColor.match(/^rgba?\((.*)\)/)
+    if (!rgba || (rgba.length < 2))
+      return null;
+    rgba = rgba[1];
+
+    // Split the color components substring into an array.
+    rgba = rgba.split(",");
+    if (rgba.length < 3)
+      return null;
+
+    // Parse the color components into a color object.
+    var color = {
+      red:   parseFloat(rgba[0]) / 255.0,
+      green: parseFloat(rgba[1]) / 255.0,
+      blue:  parseFloat(rgba[2]) / 255.0
+    };
+    if (rgba.length > 3)
+      color.alpha = parseFloat(rgba[3])
+    else
+      color.alpha = 1.0;
+
+    return color;
+  },
+
+
+  /**
+   * Return the DOM attribute color string for the color object specified by
+   * aColor.
+   *
+   * \param aColor              Color object.
+   *
+   * \return                    DOM attribute color string.
+   */
+
+  getDOMColorString: function sbColorUtils_getDOMColorString(aColor) {
+    // Convert the colors to integer values from 0 to 255.
+    var red = Math.round(aColor.red * 255.0);
+    var green = Math.round(aColor.green * 255.0);
+    var blue = Math.round(aColor.blue * 255.0);
+
+    // Combine the individual color values into a single 32-bit rgb value.
+    var colorValue = (red << 16) | (green << 8) | blue;
+
+    // Convert the 32-bit rgb value to the form "#xxxxxx", adding leading zeros
+    // to ensure there are 6 digits.
+    var colorString = (0x01000000 + colorValue).toString(16);
+    colorString = "#" + colorString.slice(1);
+
+    return colorString;
   }
 };
 

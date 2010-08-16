@@ -37,6 +37,7 @@
 #include "macosx/sbNativeWindowManager.h"
 #include "macosx/sbMacAppDelegate.h"
 #include "macosx/sbMacWindowMoveService.h"
+#include "macosx/sbMacWindowTitlebarService.h"
 #include "macosx/sbScreenSaverSuppressor.h"
 #endif
 
@@ -85,6 +86,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbWindowMoveService, Init);
 #ifdef XP_MACOSX
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMacAppDelegateManager, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMacWindowMoveService, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMacWindowTitlebarService, Initialize);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbScreenSaverSuppressor, Init);
 #endif
 
@@ -180,6 +182,14 @@ static nsModuleComponentInfo sbIntegration[] =
     SB_WINDOWMOVE_SERVICE_CID,
     SB_WINDOWMOVE_SERVICE_CONTRACTID,
     sbMacWindowMoveServiceConstructor
+  },
+  {
+    SB_MAC_WINDOW_TITLEBAR_SERVICE_CLASSNAME,
+    SB_MAC_WINDOW_TITLEBAR_SERVICE_CID,
+    SB_MAC_WINDOW_TITLEBAR_SERVICE_CONTRACTID,
+    sbMacWindowTitlebarServiceConstructor,
+    sbMacWindowTitlebarService::RegisterSelf,
+    sbMacWindowTitlebarService::UnregisterSelf
   },
   {
     SB_BASE_SCREEN_SAVER_SUPPRESSOR_CLASSNAME,

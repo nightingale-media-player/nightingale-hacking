@@ -296,7 +296,52 @@
           // Hidden when "Plucked" ("accessibility.enabled" == "1")
           if ( this.getAttribute("hidden") != "true" )
             this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );
-          
+
+          // Import DOM utils.
+          Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
+
+          // Get the titlebar text colors from the title element CSS colors.
+          var titleElem = document.getAnonymousElementByAttribute(this,
+                                                                  "sbid",
+                                                                  "title");
+
+          var cssColor;
+          var activeTitlebarTextColor;
+          var inactiveTitlebarTextColor;
+          var colorString;
+
+          // Get the inactive titlebar text color.
+          titleElem.setAttribute("inactive", "true");
+          cssColor = window.getComputedStyle(titleElem, "").color;
+          inactiveTitlebarTextColor =
+            sbColorUtils.getColorFromCSSColor(cssColor);
+
+          // Get the active titlebar text color.
+          titleElem.removeAttribute("inactive");
+          cssColor = window.getComputedStyle(titleElem, "").color;
+          activeTitlebarTextColor = sbColorUtils.getColorFromCSSColor(cssColor);
+
+          // If no inactive titlebar text color is set, use the active titlebar
+          // text color for the inactive titlebar text color.
+          if (!inactiveTitlebarTextColor)
+            inactiveTitlebarTextColor = activeTitlebarTextColor;
+
+          // Set the active titlebar text color.
+          if (activeTitlebarTextColor) {
+            colorString = sbColorUtils.getDOMColorString
+                                         (activeTitlebarTextColor);
+            document.documentElement.setAttribute("activetitlebartextcolor",
+                                                  colorString);
+          }
+
+          // Set the inactive titlebar text color.
+          if (inactiveTitlebarTextColor) {
+            colorString = sbColorUtils.getDOMColorString
+                                         (inactiveTitlebarTextColor);
+            document.documentElement.setAttribute("inactivetitlebartextcolor",
+                                                  colorString);
+          }
+
           // If there's no value attribute,
           var value = "" + this.getAttribute( "value" );
           if ( value.length == 0 )
@@ -419,6 +464,99 @@
     <implementation>
       <constructor>
         <![CDATA[
+          // Import.
+          Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
+          Components.utils.import("resource://app/jsmodules/PlatformUtils.jsm");
+
+          // Set the titlebar platform.
+          this.setAttribute("platform", PlatformUtils.platformString);
+
+          var activeTitlebarImageURL;
+          var inactiveTitlebarImageURL;
+          var activeTitlebarColor;
+          var inactiveTitlebarColor;
+          var cssImageURL;
+          var cssColor;
+          var colorString;
+
+          // Get the inactive titlebar styles.
+          this.setAttribute("inactive", "true");
+
+          // Get the inactive titlebar image.
+          cssImageURL = window.getComputedStyle(this, "")
+                              .getPropertyValue("background-image");
+          if (cssImageURL) {
+            cssImageURL = cssImageURL.match(/url\("(.*)"\)/);
+            if (cssImageURL && cssImageURL.length > 1)
+              inactiveTitlebarImageURL = cssImageURL[1];
+          }
+
+          // Get the inactive titlebar color.
+          cssColor = window.getComputedStyle(this, "")
+                           .getPropertyValue("background-color");
+          inactiveTitlebarColor = sbColorUtils.getColorFromCSSColor(cssColor);
+
+          // Get the active titlebar styles.
+          this.removeAttribute("inactive");
+
+          // Get the active titlebar image.
+          cssImageURL = window.getComputedStyle(this, "")
+                              .getPropertyValue("background-image");
+          if (cssImageURL) {
+            cssImageURL = cssImageURL.match(/url\("(.*)"\)/);
+            if (cssImageURL && cssImageURL.length > 1)
+              activeTitlebarImageURL = cssImageURL[1];
+          }
+
+          // Get the active titlebar color.
+          cssColor = window.getComputedStyle(this, "")
+                           .getPropertyValue("background-color");
+          activeTitlebarColor = sbColorUtils.getColorFromCSSColor(cssColor);
+
+          // If no inactive titlebar image is set, use the active titlebar image
+          // for the inactive titlebar image.
+          if (!inactiveTitlebarImageURL)
+            inactiveTitlebarImageURL = activeTitlebarImageURL;
+
+          // If no active titlebar color is set, use the window background
+          // color for the active titlebar color.
+          if (!activeTitlebarColor) {
+            cssColor = window.getComputedStyle(document.documentElement, "")
+                             .getPropertyValue("background-color");
+            activeTitlebarColor = sbColorUtils.getColorFromCSSColor(cssColor);
+          }
+
+          // If no inactive titlebar color is set, use the active titlebar color
+          // for the inactive titlebar color.
+          if (!inactiveTitlebarColor)
+            inactiveTitlebarColor = activeTitlebarColor;
+
+          // Set the active titlebar image.
+          if (activeTitlebarImageURL) {
+            document.documentElement.setAttribute("activetitlebarimage",
+                                                  activeTitlebarImageURL);
+          }
+
+          // Set the inactive titlebar image.
+          if (activeTitlebarImageURL) {
+            document.documentElement.setAttribute("inactivetitlebarimage",
+                                                  inactiveTitlebarImageURL);
+          }
+
+          // Set the active titlebar color.
+          if (activeTitlebarColor) {
+            colorString = sbColorUtils.getDOMColorString(activeTitlebarColor);
+            document.documentElement.setAttribute("activetitlebarcolor",
+                                                  colorString);
+          }
+
+          // Set the inactive titlebar color.
+          if (inactiveTitlebarColor) {
+            colorString = sbColorUtils.getDOMColorString(inactiveTitlebarColor);
+            document.documentElement.setAttribute("inactivetitlebarcolor",
+                                                  colorString);
+          }
+
           var sysInfo = Components.classes["@mozilla.org/system-info;1"]
                         .getService(Components.interfaces.nsIPropertyBag2);
           if ( sysInfo.getProperty("name") == "Darwin" ) {

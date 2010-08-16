@@ -569,9 +569,24 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 /******************************************************************************
 * TITLE BAR
 ******************************************************************************/
+/*
+ *   For Mac, separate active and inactive background colors and images may be
+ * specified for the titlebar.  In addition, separate active and inactive colors
+ * may be specified for the titlebar text.
+ *   If both a background color and image are specified for the titlebar, the
+ * background color is drawn first, then the background image is drawn over the
+ * background color.  If the background image is translucent, it will be mixed
+ * accordingly with the background color.
+ */
+sb-sys-titlebar[platform="Darwin"] {
+  background-image: url(chrome://purplerain/skin/os-specific/mac/title-bar-backing.png);
+}
+sb-sys-titlebar[platform="Darwin"][inactive] {
+  background-image: url(chrome://purplerain/skin/os-specific/mac/title-bar-backing.png);
+}
 #sb-sys-title-title {
   font-weight:bold;
-  color: rgb(200,200,202);
+  color: rgb(240,240,241);
 }
 /* used for Linux and Windows only - this is the file menu displayed in the title bar*/
 #main-menubar > menu[_moz-menuactive="true"][open="true"] {
