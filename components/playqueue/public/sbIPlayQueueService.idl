@@ -1,0 +1,100 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+/**
+ * \file sbIPlayQueueService.idl
+ * \brief Interface to Play Queue service
+ */
+
+#include "nsISupports.idl"
+
+interface sbIMediaItem;
+interface sbIMediaList;
+
+/**
+ * \interface sbIPlayQueueService
+ * \brief Service for interacting with the Play Queue
+ *
+ * Service to allow queueing items and visibility into the persistent current
+ * index.
+ */
+[scriptable, uuid(774d2ac1-ebf3-4bcc-a35e-2f8a7d0ef0f3)]
+interface sbIPlayQueueService : nsISupports
+{
+  /**
+   * \brief The underlying MediaList for the Play Queue
+   */
+  readonly attribute sbIMediaList mediaList;
+
+  /**
+   * \brief Index of the current track in the Play Queue
+   */
+  attribute long index;
+
+  /**
+   * \brief Adds a media item to the next slot in the Play Queue
+   *
+   * Inserts a media item (could be a list) into the Play Queue so that it is
+   * played next.
+
+   * If the current media item is playing or has been played, the new item will
+   * be inserted after the current item.  Otherwise, the new item will be
+   * inserted before the current item. If the current item is not playing, the
+   * current index will be updated to correspond to the new item.
+   *
+   * A track is considered "played" if it has been played for at least 240
+   * seconds or 1/2 its duration (matching Audioscrobbler).  See 
+   * sbPlaybackHistoryService.cpp#1633.
+   *
+   * \param aMediaItem media item to add
+   * \sa queueLast()
+   */
+  void queueNext(in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Adds a media item to the end of the Play Queue.
+   *
+   * \param aMediaItem media item to add
+   * \sa queueNext()
+   */
+  void queueLast(in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Clear the Play Queue's history
+   *
+   * Remove all media items before index.
+   *
+   * \sa clearAll()
+   */
+  void clearHistory();
+
+  /**
+   * \brief Clear the Play Queue's history
+   *
+   * Remove all media items from the queue.
+   *
+   * \sa clearHistory()
+   */
+  void clearAll();
+};
