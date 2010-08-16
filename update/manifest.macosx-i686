@@ -97,6 +97,7 @@
 ./components/sbGlobalHotkeys.js
 ./components/sbHotkeyActions.js
 ./components/sbIMediacoreErrorHandler.xpt
+./components/sbIPlayQueueService.xpt
 ./components/sbIURIImportService.xpt
 ./components/sbImageParser.dylib
 ./components/sbImageParser.xpt
