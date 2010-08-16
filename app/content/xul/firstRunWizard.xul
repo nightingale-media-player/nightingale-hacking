@@ -65,22 +65,20 @@
   <!-- EULA page. -->
   <wizardpage id="first_run_eula_page"
               pageid="first_run_eula_page"
+              class="first-run-wizard-page"
               next="first_run_welcome_page"
               label="&first_run.title;"
               showextra1="true"
               hideback="true"
               hidecancel="true"
-              onpageshow="firstRunWizard.doPageShow();">
-    <sb-first-run-eula id="first_run_eula"
-                       class="first-run-wizard-page"
-                       firstrunwizardpage="true"
-                       oncommand="firstRunWizard.update();"/>
-  </wizardpage>
+              onpageshow="firstRunWizard.doPageShow();"
+              firstrunwizardpage="true"
+              oncommand="firstRunWizard.update();"/>
 
   <!-- Welcome page. -->
   <wizardpage id="first_run_welcome_page"
               pageid="first_run_welcome_page"
-              next="first_run_itunes_page"
+              next="first_run_app_update_check_page"
               label="&first_run.title;"
               hideback="true"
               onpageshow="firstRunWizard.doPageShow();">
@@ -88,6 +86,57 @@
                           class="first-run-wizard-page"
                           firstrunwizardpage="true"/>
   </wizardpage>
+
+  <!-- Application update checking page. -->
+  <wizardpage id="first_run_app_update_check_page"
+              pageid="first_run_app_update_check_page"
+              class="first-run-wizard-page"
+              next="first_run_app_update_avail_page"
+              next_skip="first_run_itunes_page"
+              hidenext="true"
+              label="XXX first run: application update (checking)"
+              onpageshow="firstRunWizard.doPageShow();"
+              firstrunwizardpage="true"/>
+
+  <!-- Application update found page. -->
+  <wizardpage id="first_run_app_update_avail_page"
+              pageid="first_run_app_update_avail_page"
+              class="first-run-wizard-page"
+              next="first_run_app_update_download_page"
+              next_skip="first_run_itunes_page"
+              label="XXX first run: application update available"
+              onpageshow="firstRunWizard.doPageShow();"
+              showextra1="true"
+              hidecancel="true"
+              firstrunwizardpage="true"/>
+
+  <!-- Application update found (downloading) page. -->
+  <wizardpage id="first_run_app_update_download_page"
+              pageid="first_run_app_update_download_page"
+              class="first-run-wizard-page"
+              next="first_run_app_update_finished_page"
+              next_skip="first_run_itunes_page"
+              label="XXX first run: application update (downloading)"
+              onpageshow="firstRunWizard.doPageShow();"
+              firstrunwizardpage="true"/>
+
+  <!-- Application update download complete page -->
+  <wizardpage id="first_run_app_update_finished_page"
+              pageid="first_run_app_update_finished_page"
+              class="first-run-wizard-page"
+              next="first_run_itunes_page"
+              onpageshow="firstRunWizard.doPageShow();"
+              firstrunwizardpage="true"/>
+
+  <!-- Application update found (failed) page. -->
+  <wizardpage id="first_run_app_update_failed_page"
+              pageid="first_run_app_update_failed_page"
+              class="first-run-wizard-page"
+              next="first_run_itunes_page"
+              prev="first_run_welcome_page"
+              label="XXX first run: application update (failed)"
+              onpageshow="firstRunWizard.doPageShow();"
+              firstrunwizardpage="true"/>
 
   <!-- iTunes import/export page. -->
   <wizardpage id="first_run_itunes_page"
@@ -197,6 +246,8 @@
   <!-- Import the first run wizard services. -->
   <script type="application/x-javascript"
           src="chrome://songbird/content/scripts/firstRunWizard.js"/>
+  <script type="application/x-javascript;version=1.8"
+          src="chrome://songbird/content/scripts/firstRun/firstRunAppUpdate.js"/>
 
 </wizard>
 

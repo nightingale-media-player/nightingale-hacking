@@ -185,8 +185,8 @@ firstRunEULASvc.prototype = {
     this._domEventListenerSet = new DOMEventListenerSet();
 
     // Get the first-run wizard and wizard page elements.
-    this._wizardPageElem = this._widget.parentNode;
-    this._wizardElem = this._wizardPageElem.parentNode;
+    this._wizardPageElem = this._widget;
+    this._wizardElem = this._wizardPageElem.ownerDocument.documentElement;
 
     // Initialize the locale services.
     this._localeInitialize();
@@ -200,6 +200,13 @@ firstRunEULASvc.prototype = {
     func = function(aEvent) { _this._doPageAdvanced(aEvent); };
     this._domEventListenerSet.add(this._wizardPageElem,
                                   "pageadvanced",
+                                  func,
+                                  false);
+
+    // Attach an event listener to the Quit button.
+    func = function(aEvent) { firstRunWizard.doQuit(aEvent); };
+    this._domEventListenerSet.add(this._wizardPageElem,
+                                  "extra1",
                                   func,
                                   false);
 
@@ -267,6 +274,10 @@ firstRunEULASvc.prototype = {
 
     // Dispatch to the locale services.
     this._localeDoPageShow();
+
+    // Set the quit button label.
+    this._wizardElem.getButton("extra1").label =
+      SBString("first_run.quit");
 
     // Update the UI.
     this._update();

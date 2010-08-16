@@ -369,6 +369,25 @@ var firstRunWizard = {
     }
   },
 
+  /**
+   * Open a URL in an external window
+   * @param aURL: the URL to open
+   */
+  
+  openURL: function firstRunWizard_openURL(aURL) {
+    var uri = null;
+    if (aURL instanceof Ci.nsIURI) {
+      uri = aURL;
+    }
+    else {
+      uri = Cc["@mozilla.org/network/io-service;1"]
+              .getService(Ci.nsIIOService)
+              .newURI(aURL, null, null);
+    }
+    Cc["@mozilla.org/uriloader/external-protocol-service;1"]
+      .getService(Ci.nsIExternalProtocolService)
+      .loadURI(uri);
+  },
 
   //----------------------------------------------------------------------------
   //
@@ -391,16 +410,6 @@ var firstRunWizard = {
     // Create a DOM event listener set.
     this._domEventListenerSet = new DOMEventListenerSet();
 
-    // Set the quit button label.
-    var quitButton = this.wizardElem.getButton("extra1");
-    quitButton.label = SBString("first_run.quit");
-
-    // Listen for quit button events.  These don't bubble to attribute based
-    // handlers.
-    var _this = this;
-    var func = function(aEvent) { return _this.doQuit(aEvent); }
-    this._domEventListenerSet.add(this.wizardElem, "extra1", func, false);
-
     // Grap the param block
     var dialogPB = 
       window.arguments[0].QueryInterface(Ci.nsIDialogParamBlock);
@@ -414,6 +423,13 @@ var firstRunWizard = {
 
     // Services are now initialized.
     this._initialized = true;
+
+    var skipToPage = Application.prefs.getValue("songbird.firstrun.goto", null);
+    if (skipToPage) {
+      Application.prefs.get("songbird.firstrun.goto").reset();
+      this.wizardElem.advance(skipToPage);
+      return;
+    }
   },
 
 

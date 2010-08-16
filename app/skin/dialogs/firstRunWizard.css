@@ -243,7 +243,7 @@ sb-first-run-connection {
   -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunConnection.xml#sb-first-run-connection");
 }
 
-sb-first-run-eula {
+#first_run_eula_page {
   -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunEula.xml#sb-first-run-eula");
 }
 
@@ -267,3 +267,21 @@ sb-first-run-welcome {
   -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunWelcome.xml#sb-first-run-welcome");
 }
 
+#first_run_app_update_check_page {
+  -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunAppUpdate.xml#sb-first-run-app-update-check");
+}
+
+#first_run_app_update_avail_page {
+  -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunAppUpdate.xml#sb-first-run-app-update-avail");
+}
+
+#first_run_app_update_download_page {
+  -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunAppUpdate.xml#sb-first-run-app-update-download");
+}
+
+#first_run_app_update_finished_page {
+  -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunAppUpdate.xml#sb-first-run-app-update-finished");
+}
+#first_run_app_update_failed_page {
+  -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunAppUpdate.xml#sb-first-run-app-update-failed");
+}

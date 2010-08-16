@@ -50,7 +50,8 @@
    *****************************************************************************
    ************************************************************************* -->
 
-  <binding id="sb-first-run-eula">
+  <binding id="sb-first-run-eula"
+           extends="chrome://songbird/content/bindings/wizard.xml#sb-wizard-page">
 
     <!-- ***********************************************************************
      *
@@ -92,6 +93,8 @@
 
       </xul:vbox> <!-- container_box -->
 
+      <xul:box anonid="button_attributes"
+               xbl:inherits="hideback,showback,hidecancel,showcancel,hidenext,shownext,hidefinish,showfinish,showextra1,showextra2"/>
     </content>
 
 
@@ -169,6 +172,14 @@
       ]]></body></method>
 
     </implementation>
+
+    <handlers>
+      <handler event="pageshow">
+        // Set the quit button label.
+       document.documentElement.getButton("extra1").label =
+         SBString("first_run.quit");
+      </handler>
+    </handlers>
 
   </binding>
 

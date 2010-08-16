@@ -324,6 +324,26 @@
 
     </implementation>
 
+    <!-- ***********************************************************************
+     *
+     * Handlers.
+     *
+     *********************************************************************** -->
+    
+    <handlers>
+     
+      <!--
+       * Deal with the optional prev= attribute
+       -->
+      <handler event="pagerewound">
+        if (this.hasAttribute("prev")) {
+          document.documentElement.goTo(this.getAttribute("prev"));
+          return false;
+        }
+        return true;
+      </handler>
+    </handlers>
+
   </binding> <!-- sb-wizard-page" -->
 
 

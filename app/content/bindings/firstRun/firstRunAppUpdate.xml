@@ -1,0 +1,810 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % updateDTD SYSTEM "chrome://mozapps/locale/update/updates.dtd">
+%brandDTD;
+%songbirdDTD;
+%updateDTD;
+]>
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding id="sb-first-run-app-update-check"
+           extends="chrome://songbird/content/bindings/wizard.xml#sb-wizard-page">
+    <content>
+      <xul:vbox anonid="container_box"
+                flex="1"
+                class="sb-first-run-update-check-box">
+        <xul:label class="sb-first-run-header">&updateCheck.label;</xul:label>
+        <xul:separator class="thin"/>
+        <xul:progressmeter anonid="checkingProgress" mode="undetermined"/>
+      </xul:vbox>
+
+      <xul:box anonid="button_attributes"
+               xbl:inherits="hideback,showback,hidecancel,showcancel,hidenext,shownext,hidefinish,showfinish,showextra1,showextra2"/>
+    </content>
+    <handlers>
+      <handler event="pageshow">
+        <![CDATA[
+          let state = firstRunAppUpdate.updateCheckState;
+          firstRunAppUpdate.TRACE("showing welcome page, state " + state);
+          switch (state) {
+            case firstRunAppUpdate.K_HAS_UPDATE_STATE_UNKNOWN:
+              /* probably failed; initiate a new check */
+              firstRunAppUpdate.checkForUpdate();
+              break;
+            case firstRunAppUpdate.K_HAS_UPDATE_STATE_CHECKING:
+              /* still checking... */
+              break;
+            case firstRunAppUpdate.K_HAS_UPDATE_STATE_FALSE:
+            case firstRunAppUpdate.K_HAS_UPDATE_STATE_TRUE:
+              // manually fire an update state change check
+              firstRunAppUpdate.onUpdateStateChange();
+              break;
+            default:
+              firstRunAppUpdate.LOG("NOT REACHED: " +
+                                    arguments.callee.name +
+                                    " state: " + state);
+          }
+        ]]>
+      </handler>
+    </handlers>
+  </binding> <!-- sb-first-run-app-update-check -->
+
+  <binding id="sb-first-run-app-update-avail"
+           extends="chrome://songbird/content/bindings/wizard.xml#sb-wizard-page">
+    <content>
+      <xul:deck anonid="container_box"
+                flex="1"
+                class="sb-first-run-update-avail-box">
+        <xul:vbox anonid="update-minor">
+          <xul:label anonid="updatesFoundIntro"/>
+          <xul:separator class="thin"/>
+          <xul:label anonid="updateName" crop="end"/>
+          <xul:separator anonid="updateNameSep" class="thin"/>
+          <xul:label anonid="upgradeEvangelism">&evangelism.desc;</xul:label>
+          <xul:separator anonid="upgradeEvangelismSep"/>
+          <xul:vbox flex="1">
+            <xul:hbox anonid="moreInfoURL">
+              <xul:label class="text-link" anonid="updateMoreInfoURL"
+                         value="&clickHere.label;"
+                         onclick="openUpdateURL(event);"/>
+            </xul:hbox>
+          </xul:vbox>
+        </xul:vbox>
+        <xul:vbox anonid="update-major">
+          <xul:label anonid="updateType"/>
+          <xul:vbox anonid="moreInfoContent" flex="1">
+            <!-- note, the localized properties for this are prefixed by
+                 the id.  examples:  updateMoreInfoContentNotFound
+                 and updateMoreInfoContentDownloading -->
+            <remotecontent id="updateMoreInfoContent" flex="1"/>
+          </xul:vbox>
+        </xul:vbox>
+      </xul:deck>
+
+      <xul:box anonid="button_attributes"
+               xbl:inherits="hideback,showback,hidecancel,showcancel,hidenext,shownext,hidefinish,showfinish,showextra1,showextra2"/>
+    </content>
+    <handlers>
+      <handler event="pageshow">
+        <![CDATA[
+          if (event.target != this) {
+            // probably the <browser> for the full update or something silly
+            return;
+          }
+          document.documentElement.getButton("extra1").label =
+            firstRunAppUpdate.getString("askLaterButton");
+          if (!firstRunAppUpdate.update) {
+            firstRunAppUpdate.LOG("Got to update available wizard page " +
+                                  "but no update available!");
+            document.documentElement.goTo("first_run_app_update_failed_page");
+          }
+          let type = firstRunAppUpdate.update.type;
+          let panel = document.getAnonymousElementByAttribute(this,
+                                                              "anonid",
+                                                              "update-" + type);
+          document.getAnonymousElementByAttribute(this, "anonid", "container_box")
+                  .selectedPanel = panel;
+          this["onUpdate" + type.replace(/^./, function(x)x.toUpperCase())]();
+        ]]>
+      </handler>
+      <handler event="pagerewound">
+        <![CDATA[
+          /* go back to the welcome page, rather than the update checking page,
+           * since the update checking page will just dump us back right here
+           */
+          document.documentElement.goTo("first_run_welcome_page");
+          return false;
+        ]]>
+      </handler>
+      <handler event="extra1">
+        <![CDATA[
+          /* The user chooses to update later */
+          const Cc = Components.classes;
+          const Ci = Components.interfaces;
+
+          var aus = Cc["@mozilla.org/updates/update-service;1"]
+                      .getService(Ci.nsIApplicationUpdateService);
+          aus.pauseDownload();
+          document.documentElement.canAdvance = true;
+          let nextId = this.getAttribute("next_skip");
+          document.documentElement.goTo(nextId);
+        ]]>
+      </handler>
+    </handlers>
+    <implementation>
+      <method name="onUpdateMinor">
+        <body>
+          <![CDATA[
+            let update = firstRunAppUpdate.update;
+            var updateName = update.name;
+            if (update.channel == "nightly") {
+              // XXX Mook: Upstream is doing i18n wrong :(
+              updateName = firstRunAppUpdate.getString("updateName",
+                                                       [SBStringBrandShortName(),
+                                                        update.version]);
+              updateName = updateName + " " + update.buildID + " nightly";
+            }
+            var updateNameElement =
+              document.getAnonymousElementByAttribute(this,
+                                                      "anonid",
+                                                      "updateName");
+            updateNameElement.value = updateName;
+        
+            var introText =
+              firstRunAppUpdate.getString("intro_minor_app",
+                                          [SBStringBrandShortName()]);
+            var introElem =
+              document.getAnonymousElementByAttribute(this,
+                                                      "anonid",
+                                                      "updatesFoundIntro");
+            introElem.setAttribute("severity", update.type);
+            introElem.textContent = introText;
+        
+            var updateMoreInfoURL =
+              document.getAnonymousElementByAttribute(this,
+                                                      "anonid",
+                                                      "updateMoreInfoURL");
+            if (update.detailsURL)
+              updateMoreInfoURL.setAttribute("url", update.detailsURL);
+            else
+              updateMoreInfoURL.hidden = true;
+          ]]>
+        </body>
+      </method>
+
+      <method name="onUpdateMajor">
+        <body>
+          <![CDATA[
+            let update = firstRunAppUpdate.update;
+
+            let remoteContent =
+              document.getAnonymousElementByAttribute(this,
+                                                      "id",
+                                                      "updateMoreInfoContent");
+            let self = this;
+            remoteContent.addEventListener("load",
+                                           function(aEvent)
+                                             self.onBillboardLoad(aEvent,
+                                                                  arguments.callee),
+                                           false);
+            // update_name and update_version need to be set before url
+            // so that when attempting to download the url, we can show
+            // the formatted "Download..." string
+            remoteContent.update_name = SBStringBrandShortName();
+            remoteContent.update_version = update.version;
+            remoteContent.url = update.detailsURL;
+
+            let updateTypeElement =
+              document.getAnonymousElementByAttribute(this,
+                                                      "anonid",
+                                                      "updateType");
+            updateTypeElement.textContent =
+              firstRunAppUpdate.getString("intro_major_app_and_version",
+                                          [SBStringBrandShortName(),
+                                           update.version]);
+
+            let updateTitle = firstRunAppUpdate.getString("updatesfound_" +
+                                                          update.type +
+                                                          ".title");
+            document.documentElement.currentPage.setAttribute("label", updateTitle);
+          ]]>
+        </body>
+      </method>
+
+      <method name="onBillboardLoad">
+        <parameter name="aEvent"/>
+        <parameter name="aHandler"/>
+        <body>
+          <![CDATA[
+            var remoteContent =
+              document.getAnonymousElementByAttribute(this,
+                                                      "id",
+                                                      "updateMoreInfoContent");
+            // Note: may be called multiple times due to multiple onLoad events.
+            var state = remoteContent.getAttribute("state");
+            if (state == "loading" ||
+                !aEvent.originalTarget.isSameNode(remoteContent))
+            {
+              return;
+            }
+
+            remoteContent.removeEventListener("load", aHandler, false);
+            if (state == "error") {
+              // failed to get details, pretend this is a minor update
+              this.onUpdateMinor();
+              return;
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="openUpdateURL">
+        <parameter name="aEvent"/>
+        <body>
+          <![CDATA[
+            if (aEvent.button != 0) {
+              return;
+            }
+            firstRunWizard.openURL(aEvent.target.getAttribute("url"));
+          ]]>
+        </body>
+      </method>
+    </implementation>
+    <resources>
+      <stylesheet src="chrome://mozapps/content/update/updates.css"/>
+    </resources>
+  </binding> <!-- sb-first-run-app-update-avail -->
+
+  <binding id="sb-first-run-app-update-download"
+           extends="chrome://songbird/content/bindings/wizard.xml#sb-wizard-page">
+    <content hideback="true" hidecancel="true" showextra1="true">
+      <xul:vbox flex="1">
+        <xul:hbox anonid="downloadStatusTop">
+          <xul:label anonid="downloadName"
+                     crop="right">&downloading.intro;</xul:label>
+          <xul:spacer flex="1"/>
+          <xul:label anonid="downloadDetailsLink" class="text-link"
+                     value="&details.link;" onclick="openUpdateURL(event);"/>
+        </xul:hbox>
+        <xul:separator class="thin"/>
+        <xul:progressmeter anonid="downloadProgress"
+                           mode="undetermined"
+                           flex="1"/>
+        <xul:separator class="thin"/>
+        <xul:hbox anonid="downloadStatusLine">
+          <xul:label anonid="downloadStatus" flex="1">&connecting.label;</xul:label>
+        </xul:hbox>
+        <xul:separator/>
+        <xul:hbox anonid="verificationFailed" align="start" hidden="true">
+          <xul:image anonid="verificationFailedIcon"/>
+          <xul:label flex="1">&verificationFailedText.label;</xul:label>
+        </xul:hbox>
+      </xul:vbox>
+
+      <xul:box anonid="button_attributes"
+               xbl:inherits="hideback,showback,hidecancel,showcancel,hidenext,shownext,hidefinish,showfinish,showextra1,showextra2"/>
+    </content>
+    <implementation implements="nsIRequestObserver,nsIProgressEventSink">
+      <!-- element getters -->
+      <field name="_downloadName">
+        document.getAnonymousElementByAttribute(this,
+                                                "anonid",
+                                                "downloadName")
+      </field>
+      <field name="_downloadStatus">
+        document.getAnonymousElementByAttribute(this,
+                                                "anonid",
+                                                "downloadStatus")
+      </field>
+      <field name="_downloadProgress">
+        document.getAnonymousElementByAttribute(this,
+                                                "anonid",
+                                                "downloadProgress")
+      </field>
+      <field name="_label_downloadStatus">
+        this._downloadStatus.textContent;
+      </field>
+      <field name="_downloadDetailsLink">
+        document.getAnonymousElementByAttribute(this,
+                                                "anonid",
+                                                "downloadDetailsLink")
+      </field>
+      <field name="_verificationFailed">
+        document.getAnonymousElementByAttribute(this,
+                                                "anonid",
+                                                "verificationFailed")
+      </field>
+
+      <!-- constants -->
+      <field name="STATE_DOWNLOADING"    >"downloading"</field>
+      <field name="STATE_PENDING"        >"pending"</field>
+      <field name="STATE_APPLYING"       >"applying"</field>
+      <field name="STATE_SUCCEEDED"      >"succeeded"</field>
+      <field name="STATE_DOWNLOAD_FAILED">"download-failed"</field>
+      <field name="STATE_FAILED"         >"failed"</field>
+
+      <!-- nsIRequestObserver -->
+      <method name="onStartRequest">
+        <parameter name="aRequest"/>
+        <parameter name="aContext"/>
+        <body>
+          <![CDATA[
+            const Ci = Components.interfaces;
+            if (aRequest instanceof Ci.nsIIncrementalDownload) {
+              firstRunAppUpdate.LOG("gDownloadingPage: " +
+                                    "onStartRequest - spec: " +
+                                    aRequest.URI.spec);
+            }
+            // This !paused test is necessary because onStartRequest may fire after
+            // the download was paused (for those speedy clickers...)
+            if (this._paused)
+              return;
+        
+            if (this._downloadProgress.mode != "undetermined")
+              this._downloadProgress.mode = "undetermined";
+            this._setStatus(this._label_downloadStatus);
+          ]]>
+        </body>
+      </method>
+      <method name="onStopRequest">
+        <parameter name="aRequest"/>
+        <parameter name="aContext"/>
+        <parameter name="aStatusCode"/>
+        <body>
+          <![CDATA[
+            const Ci = Components.interfaces;
+            const Cr = Components.results;
+
+            if (aRequest instanceof Ci.nsIIncrementalDownload) {
+              firstRunAppUpdate.LOG("gDownloadingPage:" +
+                                    "onStopRequest - spec: " +
+                                    aRequest.URI.spec +
+                                    ", status: " +
+                                    aStatusCode.toString(16));
+            }
+
+            if (this._downloadProgress.mode != "normal")
+              this._downloadProgress.mode = "normal";
+        
+            var u = firstRunAppUpdate.update;
+
+            switch (aStatusCode) {
+            case Cr.NS_ERROR_UNEXPECTED:
+              let completeFailed = false;
+              if (u.selectedPatch.state == this.STATE_DOWNLOAD_FAILED) {
+                if (u.isCompleteUpdate) {
+                  completeFailed = true;
+                }
+                else {
+                  // first, assume we have no complete patches available
+                  completeFailed = true;
+                  for (let i = 0; i < u.patchCount; ++i) {
+                    if (u.getPatchAt(i).type == "complete") {
+                      // we do have a complete patch available somewhere, which
+                      // we can use to retry; let's do that instead
+                      completeFailed = false;
+                      break;
+                    }
+                  }
+                }
+              }
+              if (completeFailed) {
+                firstRunAppUpdate.LOG("gDownloadingPage: " +
+                                      "complete update failed");
+                // Verification error of complete patch, informational text is held in
+                // the update object.
+                this.removeDownloadListener();
+                document.documentElement.goTo("first_run_app_update_failed_page");
+                break;
+              }
+              // Verification failed for a partial patch, complete patch is now
+              // downloading so return early and do NOT remove the download listener!
+              firstRunAppUpdate.LOG("gDownloadingPage: " +
+                                    "partial failed, retrying");
+        
+              // Reset the progress meter to "undertermined" mode so that we don't
+              // show old progress for the new download of the "complete" patch.
+              this._downloadProgress.mode = "undetermined";
+              this._verificationFailed.hidden = false;
+              break;
+            case Cr.NS_BINDING_ABORTED:
+              firstRunAppUpdate.LOG("gDownloadingPage: " +
+                                    "onStopRequest - pausing download");
+              // Do not remove UI listener since the user may resume downloading again.
+              break;
+            case Cr.NS_OK:
+              firstRunAppUpdate.LOG("gDownloadingPage: " +
+                                    "onStopRequest - patch verification succeeded");
+              this.removeDownloadListener();
+              document.documentElement.goTo("first_run_app_update_finished_page");
+              break;
+            default:
+              firstRunAppUpdate.LOG("gDownloadingPage: " +
+                                    "onStopRequest - transfer failed");
+              // Some kind of transfer error, die.
+              this.removeDownloadListener();
+              document.documentElement.goTo("first_run_app_update_failed_page");
+              break;
+            }
+       
+          ]]>
+        </body>
+      </method>
+      
+      <!-- nsIProgressEventSink -->
+      <method name="onProgress">
+        <parameter name="aRequest"/>
+        <parameter name="aContext"/>
+        <parameter name="aProgress"/>
+        <parameter name="aMaxProgress"/>
+        <body>
+          <![CDATA[
+            const Ci = Components.interfaces;
+            firstRunAppUpdate.LOG("gDownloadingPage: " +
+                                  "onProgress - progress: " +
+                                  aProgress + "/" +
+                                  aMaxProgress);
+            var update = firstRunAppUpdate.update;
+            var name = firstRunAppUpdate.getString("downloadingPrefix",
+                                                   [update.name]);
+            let status = this._updateDownloadStatus(aProgress, aMaxProgress);
+            let currentProgress = Math.round(100 * (aProgress / aMaxProgress));
+            if (!isFinite(currentProgress)) {
+              currentProgress = 0;
+            }
+
+            var p = update.selectedPatch;
+            p.QueryInterface(Ci.nsIWritablePropertyBag);
+            p.setProperty("progress", currentProgress);
+            p.setProperty("status", status);
+
+            if (aMaxProgress > 0) {
+              if (this._downloadProgress.mode != "normal")
+                this._downloadProgress.mode = "normal";
+              if (this._downloadProgress.value != aProgress)
+                this._downloadProgress.value = aProgress;
+              if (this._downloadProgress.max != aMaxProgress)
+                this._downloadProgress.max = aMaxProgress;
+            }
+            else {
+              if (this._downloadProgress.mode != "undetermined")
+                this._downloadProgress.mode = "undetermined";
+            }
+            this._downloadName.value = name;
+
+            // If the update has completed downloading and the download status
+            // contains the original text return early to avoid an assertion in
+            // debug builds.  Since the page will advance immmediately due to
+            // the update completing the download updating the status is not
+            // important.  nsTextFrame::GetTrimmedOffsets 'Can only call this
+            // on frames that have been reflowed'.
+            if (aProgress == aMaxProgress &&
+                this._downloadStatus.textContent == this._label_downloadStatus)
+              return;
+
+            this._setStatus(status);
+          ]]>
+        </body>
+      </method>
+      <method name="onStatus">
+        <parameter name="aRequest"/>
+        <parameter name="aContext"/>
+        <parameter name="aStatus"/>
+        <parameter name="aStatusArg"/>
+        <body>
+        </body>
+      </method>
+      
+      <!-- helper methods -->
+      <method name="removeDownloadListener">
+        <body>
+          <![CDATA[
+            Components.classes["@mozilla.org/updates/update-service;1"]
+                      .getService(Components.interfaces.nsIApplicationUpdateService)
+                      .removeDownloadListener(this);
+          ]]>
+        </body>
+      </method>
+      <method name="openUpdateURL">
+        <parameter name="aEvent"/>
+        <body>
+          <![CDATA[
+            if (aEvent.button != 0) {
+              return;
+            }
+            firstRunWizard.openURL(aEvent.target.getAttribute("url"));
+          ]]>
+        </body>
+      </method>
+      <method name="_setStatus">
+        <parameter name="aStatus"/>
+        <body>
+          <![CDATA[
+            // Don't bother setting the same text more than once. This can happen
+            // due to the asynchronous behavior of the downloader.
+            if (this._downloadStatus.textContent == aStatus)
+              return;
+            while (this._downloadStatus.hasChildNodes())
+              this._downloadStatus.removeChild(this._downloadStatus.firstChild);
+            this._downloadStatus.appendChild(document.createTextNode(aStatus));
+          ]]>
+        </body>
+      </method>
+      <method name="_setUIState">
+        <!--
+          - Adjust UI to suit a certain state of paused-ness
+          - @param   paused
+          -        Whether or not the download is paused
+          -->
+        <parameter name="paused"/>
+        <body>
+          <![CDATA[
+            const Ci = Components.interfaces;
+            var u = firstRunAppUpdate.update;
+            if (paused) {
+              if (this._downloadProgress.mode != "normal")
+                this._downloadProgress.mode = "normal";
+              this._downloadName.value =
+                firstRunAppUpdate.getString("pausedName", [u.name]);
+              var p = u.selectedPatch.QueryInterface(Ci.nsIPropertyBag);
+              var status = p.getProperty("status");
+              if (status) {
+                let pausedStatus = firstRunAppUpdate.getString("pausedStatus", [status]);
+                this._setStatus(pausedStatus);
+              }
+            }
+            else {
+              if (this._downloadProgress.mode != "undetermined")
+                this._downloadProgress.mode = "undetermined";
+              this._downloadName.value =
+                firstRunAppUpdate.getString("downloadingPrefix", [u.name]);
+              this._setStatus(this._label_downloadStatus);
+            }
+          ]]>
+        </body>
+      </method>
+      <method name="_updateDownloadStatus">
+        <!--
+          - Update download progress status to show time left, speed, and
+          - progress.  Also updates the status needed for pausing the download.
+          -
+          - @param aCurr
+          -        Current number of bytes transferred
+          - @param aMax
+          -        Total file size of the download
+          - @return Current active download status
+          -->
+        <parameter name="aCurr"/>
+        <parameter name="aMax"/>
+        <body>
+          <![CDATA[
+            Components.utils.import("resource://gre/modules/DownloadUtils.jsm");
+            let status;
+        
+            // Get the download time left and progress
+            let rate = aCurr / (Date.now() - this._startTime) * 1000;
+            [status, this._lastSec] =
+              DownloadUtils.getDownloadStatus(aCurr, aMax, rate, this._lastSec);
+        
+            // Get the download progress for pausing
+            this._pausedStatus = DownloadUtils.getTransferTotal(aCurr, aMax);
+        
+            return status;
+          ]]>
+        </body>
+      </method>
+    </implementation>
+    <handlers>
+      <handler event="pageshow">
+        <![CDATA[
+          const Cc = Components.classes;
+          const Ci = Components.interfaces;
+
+          var aus = Cc["@mozilla.org/updates/update-service;1"]
+                      .getService(Ci.nsIApplicationUpdateService);
+          
+          var um = Cc["@mozilla.org/updates/update-manager;1"]
+                     .getService(Ci.nsIUpdateManager);
+          var activeUpdate = um.activeUpdate;
+          if (activeUpdate)
+            firstRunAppUpdate.update = activeUpdate;
+          
+          if (!firstRunAppUpdate.update) {
+            firstRunAppUpdate.LOG("first run app update download page: " +
+                                  "onPageShow - no valid update to download?!");
+            return;
+          }
+
+          this._startTime = Date.now();
+          
+          try {
+            // Say that this was a foreground download, not a background download,
+            // since the user cared enough to look in on this process.
+            firstRunAppUpdate.update.QueryInterface(Ci.nsIWritablePropertyBag);
+            firstRunAppUpdate.update.setProperty("foregroundDownload", "true");
+
+            // Pause any active background download and restart it as a foreground
+            // download.
+            aus.pauseDownload();
+            var state = aus.downloadUpdate(firstRunAppUpdate.update, false);
+            if (state == "failed") {
+              // We've tried as hard as we could to download a valid update -
+              // we fell back from a partial patch to a complete patch and even
+              // then we couldn't validate. Show a validation error with instructions
+              // on how to manually update.
+              firstRunAppUpdate.LOG("download update failed");
+              this.removeDownloadListener();
+              document.documentElement.goTo("errors");
+              return;
+            }
+            else {
+              // Add this UI as a listener for active downloads
+              aus.addDownloadListener(this);
+            }
+          
+            if (activeUpdate)
+              this._setUIState(!aus.isDownloading);
+          }
+          catch(e) {
+            firstRunAppUpdate.LOG("gDownloadingPage: " +
+                                  "onPageShow - error: " + e);
+          }
+          
+          this._downloadDetailsLink
+              .setAttribute("url", firstRunAppUpdate.update.detailsURL);
+          
+          document.documentElement.getButton("extra1").label =
+            firstRunAppUpdate.getString("askLaterButton");
+          document.documentElement.canAdvance = false;
+        ]]>
+      </handler>
+      <handler event="extra1">
+        <![CDATA[
+          /* The user chooses to update later */
+          const Cc = Components.classes;
+          const Ci = Components.interfaces;
+
+          var aus = Cc["@mozilla.org/updates/update-service;1"]
+                      .getService(Ci.nsIApplicationUpdateService);
+          aus.pauseDownload();
+          document.documentElement.canAdvance = true;
+          let nextId = this.getAttribute("next_skip");
+          document.documentElement.goTo(nextId);
+        ]]>
+      </handler>
+    </handlers>
+  </binding> <!-- sb-first-run-app-update-download -->
+
+  <binding id="sb-first-run-app-update-finished"
+           extends="chrome://songbird/content/bindings/wizard.xml#sb-wizard-page">
+    <content label="&finishedPage.title;"
+             hidecancel="true"
+             hideback="true">
+      <xul:label>&finishedPage.text;</xul:label>
+      <xul:box anonid="button_attributes"
+               xbl:inherits="hideback,showback,hidecancel,showcancel,hidenext,shownext,hidefinish,showfinish,showextra1,showextra2"/>
+    </content>
+    <handlers>
+      <handler event="pageshow">
+        <![CDATA[
+          // make sure we restart the app (to apply the update) when we close
+          firstRunWizard.restartApp = true;
+          document.documentElement.canAdvance = true;
+          // change the finish label to tell the user that we'll be restarting
+          document.documentElement.getButton("next").label =
+            firstRunAppUpdate.getString("restartNowButton",
+                                        [SBStringBrandShortName()]);
+          // XXX Mook: TODO: set a flag
+        ]]>
+      </handler>
+      <handler event="pageadvanced">
+        Application.prefs.setValue("songbird.firstrun.goto",
+                                   this.next);
+        firstRunWizard._markFirstRunComplete = false;
+        firstRunWizard.restartApp = true;
+        restartApp();
+        return false;
+      </handler>
+    </handlers>
+  </binding> <!-- sb-first-run-app-update-finished -->
+
+  <binding id="sb-first-run-app-update-failed"
+           extends="chrome://songbird/content/bindings/wizard.xml#sb-wizard-page">
+    <content>
+      <xul:vbox flex="1">
+        <xul:label anonid="errorIntro">&error.label;</xul:label>
+        <xul:separator/>
+        <xul:textbox class="plain" readonly="true" anonid="errorReason"
+                     multiline="true" rows="3"/>
+        <xul:separator/>
+        <xul:label anonid="errorManual">&errorManual.label;</xul:label>
+        <xul:hbox>
+          <xul:label class="text-link" anonid="errorLinkLabel" value=""
+                     onclick="openUpdateURL(event);"/>
+        </xul:hbox>
+      </xul:vbox>
+      <xul:box anonid="button_attributes"
+               xbl:inherits="hideback,showback,hidecancel,showcancel,hidenext,shownext,hidefinish,showfinish,showextra1,showextra2"/>
+    </content>
+    <handlers>
+      <handler event="pageshow">
+        <![CDATA[
+          const Cc = Components.classes;
+          const Ci = Components.interfaces;
+          document.documentElement.canAdvance = true;
+          document.documentElement.canRewind = true;
+
+          var statusText = firstRunAppUpdate.update.statusText;
+          firstRunAppUpdate.LOG("gErrorsPage: " +
+                                "onPageShow - update.statusText: " +
+                                statusText);
+
+          this._errorReason.value = statusText;
+          var formatter = Cc["@mozilla.org/toolkit/URLFormatterService;1"]
+                            .getService(Ci.nsIURLFormatter);
+          var manualURL = formatter.formatURLPref("app.update.url.manual");
+          this._errorLinkLabel.value = manualURL;
+          this._errorLinkLabel.setAttribute("url", manualURL);
+        ]]>
+      </handler>
+    </handlers>
+    <implementation>
+      <method name="openUpdateURL">
+        <parameter name="aEvent"/>
+        <body>
+          <![CDATA[
+            if (aEvent.button != 0) {
+              return;
+            }
+            firstRunWizard.openURL(aEvent.target.getAttribute("url"));
+          ]]>
+        </body>
+      </method>
+      <field name="_errorReason">
+        document.getAnonymousElementByAttribute(this,
+                                                "anonid",
+                                                "errorReason")
+      </field>
+      <field name="_errorLinkLabel">
+        document.getAnonymousElementByAttribute(this,
+                                                "anonid",
+                                                "errorLinkLabel")
+      </field>
+    </implementation>
+  </binding> <!-- sb-first-run-app-update-failed -->
+
+</bindings>
+
