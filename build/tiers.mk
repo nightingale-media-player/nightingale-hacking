@@ -93,6 +93,7 @@ tier_componentsall_dirs = \
    components/mediaexport \
    components/appstartup \
    components/networkproxy \
+   components/playqueue \
    $(NULL)
 
 tier_appbase_dirs = \
