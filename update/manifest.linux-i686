@@ -173,6 +173,7 @@
 ./components/sbOSDControlService.js
 ./components/sbPIMockFirmware.xpt
 ./components/sbParserError.js
+./components/sbPlayQueueContentInfo.js
 ./components/sbPlaybackHistoryService.so
 ./components/sbPlaybackHistoryService.xpt
 ./components/sbPlaylistCommands.so
