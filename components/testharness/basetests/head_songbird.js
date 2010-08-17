@@ -61,24 +61,9 @@ var _tests_pending = 0;
 var _test_name = "sbTestHarness";
 var _consoleService = null;
 
-function _TimerCallback(expr) {
-  this._expr = expr;
-}
-_TimerCallback.prototype = {
-  _expr: "",
-  QueryInterface: function(iid) {
-    if (iid.Equals(Ci.nsITimerCallback) || iid.Equals(Ci.nsISupports))
-      return this;
-    throw Cr.NS_ERROR_NO_INTERFACE;
-  },
-  notify: function(timer) {
-    eval(this._expr);
-  }
-};
-
-function doTimeout(delay, expr) {
+function doTimeout(delay, func) {
   var timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
-  timer.initWithCallback(new _TimerCallback(expr), delay, timer.TYPE_ONE_SHOT);
+  timer.initWithCallback(func, delay, timer.TYPE_ONE_SHOT);
 }
 
 function doMain() {

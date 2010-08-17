@@ -35,6 +35,25 @@ SONGBIRD_TESTS = $(srcdir)/head_gstreamer.js \
                  $(srcdir)/test_plugins.js \
                  $(srcdir)/test_transcode_profiles.js \
                  $(srcdir)/test_gst_transcode_configurator.js \
+                 $(srcdir)/test_audio_processing.js \
                  $(NULL)
 
+GSTREAMER_TEST_FILES = $(srcdir)/files/simple.ogg \
+                      $(srcdir)/files/surround51.ogg \
+                      $(srcdir)/files/video.ogg \
+                      $(srcdir)/files/corrupt-in-middle.ogg
+                      $(NULL)
+
+GSTREAMER_TEST_FILES_DIR = $(SONGBIRD_TEST_COMPONENT_DIR)/files
+
+ifeq (1,$(SB_ENABLE_TESTS))
+   CREATEDIRS = $(GSTREAMER_TEST_FILES_DIR)
+endif
+
 include $(topsrcdir)/build/rules.mk
+
+export::
+ifeq (1,$(SB_ENABLE_TESTS))
+	$(INSTALL_FILE) $(GSTREAMER_TEST_FILES) $(GSTREAMER_TEST_FILES_DIR)
+endif
+
