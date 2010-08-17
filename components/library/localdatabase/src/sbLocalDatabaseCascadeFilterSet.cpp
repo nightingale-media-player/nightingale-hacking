@@ -459,9 +459,6 @@ sbLocalDatabaseCascadeFilterSet::Set(PRUint16 aIndex,
         rv = selection->ClearSelection();
         NS_ENSURE_SUCCESS(rv, rv);
       }
-
-      rv = downstream.treeView->Rebuild();
-      NS_ENSURE_SUCCESS(rv, rv);
     }
 
     rv = ConfigureArray(i);
