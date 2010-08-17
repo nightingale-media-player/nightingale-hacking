@@ -877,6 +877,10 @@ window.cdripController =
       var rippedItems = deviceLibrary.getItemsByProperties(propArray);
       errorCount = rippedItems.length;
     }
+    catch (err if err.result == Cr.NS_ERROR_NOT_AVAILABLE) {
+      // deviceLibrary.getItemsByProperties() will throw NS_ERROR_NOT_AVAILABLE
+      // if there are no failed rips in the list.  Ignore this error.
+    }
     catch (err) {
       Cu.reportError("ERROR GETTING TRANSCODE ERROR COUNT " + err);
     }
