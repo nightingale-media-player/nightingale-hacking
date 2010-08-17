@@ -842,7 +842,7 @@ sbLocalDatabaseGUIDArray::GetFirstIndexByPrefix(const nsAString& aValue,
   }
 
   nsCOMPtr<sbIDatabaseQuery> query;
-  rv = MakeQuery(mPrefixSearchQuery, getter_AddRefs(query));
+  rv = MakeQuery(mPrefixSearchStatement, getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->BindStringParameter(0, aValue);
@@ -1168,13 +1168,13 @@ sbLocalDatabaseGUIDArray::Initialize()
   }
 
   if (mNullsFirst) {
-    mQueryX  = mNullGuidRangeQuery;
-    mQueryY  = mFullGuidRangeQuery;
+    mStatementX  = mNullGuidRangeStatement;
+    mStatementY  = mFullGuidRangeStatement;
     mLengthX = mLength - mNonNullLength;
   }
   else {
-    mQueryX  = mFullGuidRangeQuery;
-    mQueryY  = mNullGuidRangeQuery;
+    mStatementX  = mFullGuidRangeStatement;
+    mStatementY  = mNullGuidRangeStatement;
     mLengthX = mNonNullLength;
   }
 
@@ -1213,7 +1213,7 @@ sbLocalDatabaseGUIDArray::UpdateLength()
   if ((mFetchSize == PR_UINT32_MAX || mFetchSize == 0) &&
       mNonNullCountQuery.IsEmpty() && mNullGuidRangeQuery.IsEmpty())
   {
-    rv = ReadRowRange(mFullGuidRangeQuery,
+    rv = ReadRowRange(mFullGuidRangeStatement,
                       0,
                       PR_UINT32_MAX,
                       0,
@@ -1224,11 +1224,11 @@ sbLocalDatabaseGUIDArray::UpdateLength()
   }
   else {
     // Otherwise, use separate queries to establish the length
-    rv = RunLengthQuery(mFullCountQuery, &mLength);
+    rv = RunLengthQuery(mFullCountStatement, &mLength);
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (!mNonNullCountQuery.IsEmpty()) {
-      rv = RunLengthQuery(mNonNullCountQuery, &mNonNullLength);
+      rv = RunLengthQuery(mNonNullCountStatement, &mNonNullLength);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     else {
@@ -1240,14 +1240,14 @@ sbLocalDatabaseGUIDArray::UpdateLength()
 }
 
 nsresult
-sbLocalDatabaseGUIDArray::RunLengthQuery(const nsAString& aSql,
+sbLocalDatabaseGUIDArray::RunLengthQuery(sbIDatabasePreparedStatement *aStatement,
                                          PRUint32* _retval)
 {
   nsresult rv;
   PRInt32 dbOk;
 
   nsCOMPtr<sbIDatabaseQuery> query;
-  rv = MakeQuery(aSql, getter_AddRefs(query));
+  rv = MakeQuery(aStatement, getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Execute the length query
@@ -1289,6 +1289,22 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
    */
   nsresult rv;
 
+  /* 
+   * We're going to use this query to prepare the sql statements.
+   * This speeds things up _significantly_
+   */
+  nsCOMPtr<sbIDatabaseQuery> query =
+    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->SetDatabaseGUID(mDatabaseGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mDatabaseLocation) {
+    rv = query->SetDatabaseLocation(mDatabaseLocation);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   /*
    * We need four different queries to do the magic here:
    *
@@ -1313,17 +1329,44 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
                                  mDistinctWithSortableValues,
                                  mPropertyCache);
 
+  // Full Count Query
   rv = ldq->GetFullCountQuery(mFullCountQuery);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->PrepareQuery(mFullCountQuery, 
+                           getter_AddRefs(mFullCountStatement));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Full Guid Range Query
   rv = ldq->GetFullGuidRangeQuery(mFullGuidRangeQuery);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->PrepareQuery(mFullGuidRangeQuery, 
+                           getter_AddRefs(mFullGuidRangeStatement));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Non Null Count Query
   rv = ldq->GetNonNullCountQuery(mNonNullCountQuery);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->PrepareQuery(mNonNullCountQuery,
+                           getter_AddRefs(mNonNullCountStatement));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Null Guid Range Query
   rv = ldq->GetNullGuidRangeQuery(mNullGuidRangeQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // This query is used for the prefix search
+  rv = query->PrepareQuery(mNullGuidRangeQuery,
+                           getter_AddRefs(mNullGuidRangeStatement));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Prefix Search Query
   rv = ldq->GetPrefixSearchQuery(mPrefixSearchQuery);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->PrepareQuery(mPrefixSearchQuery,
+                           getter_AddRefs(mPrefixSearchStatement));
   NS_ENSURE_SUCCESS(rv, rv);
 
   /*
@@ -1337,7 +1380,15 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
     rv = ldq->GetResortQuery(mResortQuery);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    rv = query->PrepareQuery(mResortQuery, 
+                             getter_AddRefs(mResortStatement));
+    NS_ENSURE_SUCCESS(rv, rv);
+
     rv = ldq->GetNullResortQuery(mNullResortQuery);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->PrepareQuery(mNullResortQuery,
+                             getter_AddRefs(mNullResortStatement));
     NS_ENSURE_SUCCESS(rv, rv);
 
     /*
@@ -1345,21 +1396,33 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
      */
     rv = ldq->GetPrefixSearchQuery(mPrimarySortKeyPositionQuery);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->PrepareQuery(mPrimarySortKeyPositionQuery,
+                             getter_AddRefs(mPrimarySortKeyPositionStatement));
+    NS_ENSURE_SUCCESS(rv, rv);
   }
+
   mQueriesValid = PR_TRUE;
+
   return NS_OK;
 }
 
 nsresult
-sbLocalDatabaseGUIDArray::MakeQuery(const nsAString& aSql,
+sbLocalDatabaseGUIDArray::MakeQuery(sbIDatabasePreparedStatement *aStatement,
                                     sbIDatabaseQuery** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  LOG(("sbLocalDatabaseGUIDArray[0x%.8x] -  MakeQuery: %s",
-       this, NS_ConvertUTF16toUTF8(aSql).get()));
-
   nsresult rv;
+
+#ifdef PR_LOGGING
+  nsString queryString;
+  rv = aStatement->GetQueryString(queryString);
+  if (NS_SUCCEEDED(rv)) {
+    LOG(("sbLocalDatabaseGUIDArray[0x%.8x] -  MakeQuery: %s",
+         this, NS_ConvertUTF16toUTF8(queryString).get()));
+  }
+#endif
 
   nsCOMPtr<sbIDatabaseQuery> query =
     do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
@@ -1373,7 +1436,7 @@ sbLocalDatabaseGUIDArray::MakeQuery(const nsAString& aSql,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = query->AddQuery(aSql);
+  rv = query->AddPreparedStatement(aStatement);
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = query);
@@ -1448,7 +1511,7 @@ sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex,
    * If DE lies entirely within [A, B - 1], use query X to return the data
    */
   if (indexE < indexB) {
-    rv = ReadRowRange(mQueryX,
+    rv = ReadRowRange(mStatementX,
                       indexD,
                       lengthDE,
                       indexD,
@@ -1460,7 +1523,7 @@ sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex,
      * If DE lies entirely within [B, C], use query Y to return the data
      */
     if (indexD >= indexB) {
-      rv = ReadRowRange(mQueryY,
+      rv = ReadRowRange(mStatementY,
                         indexD - indexB,
                         lengthDE,
                         indexD,
@@ -1472,14 +1535,14 @@ sbLocalDatabaseGUIDArray::FetchRows(PRUint32 aRequestedIndex,
        * If DE lies in both [A, B - 1] and [B, C], use query X to return the
        * data in [A, B - 1] and Y to return data in[B, C]
        */
-      rv = ReadRowRange(mQueryX,
+      rv = ReadRowRange(mStatementX,
                         indexD,
                         indexB - indexD,
                         indexD,
                         mNullsFirst);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = ReadRowRange(mQueryY,
+      rv = ReadRowRange(mStatementY,
                         0,
                         indexE - indexB + 1,
                         indexB,
@@ -1507,7 +1570,7 @@ return NS_OK;
 }
 
 nsresult
-sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
+sbLocalDatabaseGUIDArray::ReadRowRange(sbIDatabasePreparedStatement *aStatement,
                                        PRUint32 aStartIndex,
                                        PRUint32 aCount,
                                        PRUint32 aDestIndexOffset,
@@ -1530,7 +1593,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
    * Set up the query with limit and offset parameters and run it
    */
   nsCOMPtr<sbIDatabaseQuery> query;
-  rv = MakeQuery(aSql, getter_AddRefs(query));
+  rv = MakeQuery(aStatement, getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->BindInt64Parameter(0, aCount);
@@ -1860,11 +1923,11 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
 
   nsCOMPtr<sbIDatabaseQuery> query;
   if(aIsNull) {
-    rv = MakeQuery(mNullResortQuery, getter_AddRefs(query));
+    rv = MakeQuery(mNullResortStatement, getter_AddRefs(query));
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
-    rv = MakeQuery(mResortQuery, getter_AddRefs(query));
+    rv = MakeQuery(mResortStatement, getter_AddRefs(query));
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = query->BindStringParameter(0, aKey);
@@ -1988,7 +2051,8 @@ sbLocalDatabaseGUIDArray::GetPrimarySortKeyPosition(const nsAString& aValue,
     PRInt32 dbOk;
 
     nsCOMPtr<sbIDatabaseQuery> query;
-    rv = MakeQuery(mPrimarySortKeyPositionQuery, getter_AddRefs(query));
+    rv = MakeQuery(mPrimarySortKeyPositionStatement, 
+                   getter_AddRefs(query));
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = query->BindStringParameter(0, aValue);

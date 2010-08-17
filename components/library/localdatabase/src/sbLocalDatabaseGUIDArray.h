@@ -38,6 +38,7 @@
 #include <sbISQLBuilder.h>
 #include <nsISimpleEnumerator.h>
 #include <nsIStringEnumerator.h>
+#include <sbIDatabasePreparedStatement.h>
 #include <sbILocalDatabaseLibrary.h>
 #include <sbIMediaItem.h>
 #include <sbHashKeys.h>
@@ -132,7 +133,7 @@ private:
 
   nsresult UpdateLength();
 
-  nsresult RunLengthQuery(const nsAString& aSql,
+  nsresult RunLengthQuery(sbIDatabasePreparedStatement *aStatement,
                           PRUint32* _retval);
 
   nsresult UpdateQueries();
@@ -140,7 +141,8 @@ private:
   nsresult GetPrimarySortKeyPosition(const nsAString& aValue,
                                      PRUint32 *_retval);
 
-  nsresult MakeQuery(const nsAString& aSql, sbIDatabaseQuery** _retval);
+  nsresult MakeQuery(sbIDatabasePreparedStatement *aStatement, 
+                     sbIDatabaseQuery** _retval);
 
   nsresult FetchRows(PRUint32 aRequestedIndex, PRUint32 aFetchSize);
 
@@ -152,7 +154,7 @@ private:
                     PRBool aIsOnly,
                     PRBool isNull);
 
-  nsresult ReadRowRange(const nsAString& aSql,
+  nsresult ReadRowRange(sbIDatabasePreparedStatement *aStatement,
                         PRUint32 aStartIndex,
                         PRUint32 aCount,
                         PRUint32 aDestIndexOffset,
@@ -219,32 +221,41 @@ private:
 
   // Query used to count full length of the array
   nsString mFullCountQuery;
+  nsCOMPtr<sbIDatabasePreparedStatement> mFullCountStatement;
 
   // Query used to count full length of the array where the primary sort key
   // is null
   nsString mNonNullCountQuery;
+  nsCOMPtr<sbIDatabasePreparedStatement> mNonNullCountStatement;
 
   // Query used to return sorted GUIDs when the primary sort key is non-null
   nsString mFullGuidRangeQuery;
+  nsCOMPtr<sbIDatabasePreparedStatement> mFullGuidRangeStatement;
 
   // Query used to return sorted GUIDs when the primary sort key is null
   nsString mNullGuidRangeQuery;
+  nsCOMPtr<sbIDatabasePreparedStatement> mNullGuidRangeStatement;
 
   // Query used to resort chunks of results
   nsString mResortQuery;
+  nsCOMPtr<sbIDatabasePreparedStatement> mResortStatement;
 
   // Query used to resort a chunk of results with a null primary sort key
   nsString mNullResortQuery;
+  nsCOMPtr<sbIDatabasePreparedStatement> mNullResortStatement;
 
   // Query used to search for the position of a value in the primary sort
   nsString mPrefixSearchQuery;
+  nsCOMPtr<sbIDatabasePreparedStatement> mPrefixSearchStatement;
+
 
   // Query used to find the position of a primary sort key in the library
   nsString mPrimarySortKeyPositionQuery;
+  nsCOMPtr<sbIDatabasePreparedStatement> mPrimarySortKeyPositionStatement;
 
   // Cached versions of some of the above variables used my the fetch
-  nsString mQueryX;
-  nsString mQueryY;
+  nsCOMPtr<sbIDatabasePreparedStatement> mStatementX;
+  nsCOMPtr<sbIDatabasePreparedStatement> mStatementY;
   PRUint32 mLengthX;
 
   // Our listener
