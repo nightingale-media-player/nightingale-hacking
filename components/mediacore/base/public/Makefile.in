@@ -30,6 +30,8 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 XPIDL_SRCS = sbIMediacore.idl \
+             sbIMediacoreAudioProcessor.idl \
+             sbIMediacoreAudioProcessorListener.idl \
              sbIMediacoreBalanceControl.idl \
              sbIMediacoreCapabilities.idl \
              sbIMediacoreError.idl \
