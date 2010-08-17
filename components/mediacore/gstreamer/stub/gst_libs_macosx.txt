@@ -14,7 +14,6 @@
 @lib/libFLAC.dylib
 @lib/libjpeg.dylib
 @lib/libgstreamer-0.10.dylib
-@lib/libgstapp-0.10.dylib
 @lib/libgstbase-0.10.dylib
 @lib/libgstdataprotocol-0.10.dylib
 @lib/libgstcontroller-0.10.dylib
@@ -31,3 +30,4 @@
 @lib/libgstrtsp-0.10.dylib
 @lib/libgstsdp-0.10.dylib
 @lib/libgstvideo-0.10.dylib
+@lib/libgstapp-0.10.dylib

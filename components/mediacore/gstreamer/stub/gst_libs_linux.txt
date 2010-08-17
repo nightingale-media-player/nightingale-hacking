@@ -7,7 +7,6 @@
 @lib/libFLAC.so
 @lib/libjpeg.so
 @lib/libgstreamer-0.10.so
-@lib/libgstapp-0.10.so
 @lib/libgstbase-0.10.so
 @lib/libgstdataprotocol-0.10.so
 @lib/libgstcontroller-0.10.so
@@ -24,3 +23,4 @@
 @lib/libgstrtsp-0.10.so
 @lib/libgstsdp-0.10.so
 @lib/libgstvideo-0.10.so
+@lib/libgstapp-0.10.so
