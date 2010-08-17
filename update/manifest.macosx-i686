@@ -120,7 +120,6 @@
 ./components/sbLocalDatabaseMigrationHelper.js
 ./components/sbM3UPlaylistWriter.js
 ./components/sbMacFileSystemEvents.dylib
-./components/sbMacPurpleRainComponent.dylib
 ./components/sbMediaContentListener.js
 ./components/sbMediaExport.dylib
 ./components/sbMediaExportAgentService.dylib

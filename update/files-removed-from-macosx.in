@@ -315,6 +315,7 @@
 ./Contents/Resources/components/sbMetadataManager.dylib
 ./Contents/Resources/components/sbMetadataImageScanner.js
 ./Contents/Resources/components/sbMetadataAlbumArtFetcher.dylib
+./Contents/Resources/components/sbMacPurpleRainComponent.dylib
 ./Contents/Resources/components/sbITunesImporter.js
 ./Contents/Resources/components/sbGStreamer.xpt
 ./Contents/Resources/components/XPCOMUtils.jsm
