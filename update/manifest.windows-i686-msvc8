@@ -291,6 +291,7 @@
 ./gst-plugins/gstalpha.dll
 ./gst-plugins/gstalphacolor.dll
 ./gst-plugins/gstapetag.dll
+./gst-plugins/gstapp.dll
 ./gst-plugins/gstasf.dll
 ./gst-plugins/gstasfmux.dll
 ./gst-plugins/gstaudioconvert.dll
@@ -406,6 +407,7 @@
 ./lib/gettextlib.dll
 ./lib/gettextpo.dll
 ./lib/gettextsrc.dll
+./lib/gstapp-0.10-0.dll
 ./lib/gstaudio-0.10-0.dll
 ./lib/gstbase-0.10-0.dll
 ./lib/gstcdda-0.10-0.dll

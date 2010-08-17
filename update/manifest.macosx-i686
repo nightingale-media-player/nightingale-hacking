@@ -261,6 +261,7 @@
 ./gst-plugins/libgstalpha.so
 ./gst-plugins/libgstalphacolor.so
 ./gst-plugins/libgstapetag.so
+./gst-plugins/libgstapp.so
 ./gst-plugins/libgstasf.so
 ./gst-plugins/libgstaudioconvert.so
 ./gst-plugins/libgstaudiofx.so
@@ -375,6 +376,7 @@
 ./lib/libglib-2.0.dylib
 ./lib/libgmodule-2.0.dylib
 ./lib/libgobject-2.0.dylib
+./lib/libgstapp-0.10.dylib
 ./lib/libgstaudio-0.10.dylib
 ./lib/libgstbase-0.10.dylib
 ./lib/libgstcdda-0.10.dylib

@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -2300,7 +2300,7 @@ sbGStreamerVideoTranscoder::BuildTranscodePipeline(const gchar *aPipelineName)
   // [-------------------------------------------------------------------------]
 
   mPipeline = gst_pipeline_new (aPipelineName);
-  NS_ENSURE_TRUE (mPipeline, NULL);
+  NS_ENSURE_TRUE (mPipeline, NS_ERROR_FAILURE);
 
   GstElement *uridecodebin = gst_element_factory_make("uridecodebin",
           "transcode-decoder");

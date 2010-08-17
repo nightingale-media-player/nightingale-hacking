@@ -260,6 +260,7 @@
 ./gst-plugins/libgstalphacolor.so
 ./gst-plugins/libgstalsa.so
 ./gst-plugins/libgstapetag.so
+./gst-plugins/libgstapp.so
 ./gst-plugins/libgstasf.so
 ./gst-plugins/libgstasfmux.so
 ./gst-plugins/libgstaudioconvert.so
@@ -369,6 +370,7 @@
 ./jsmodules/sbSmartMediaListColumnSpecUpdater.jsm
 ./jsmodules/sbTimeFormatter.jsm
 ./lib/libFLAC.so
+./lib/libgstapp-0.10.so
 ./lib/libgstaudio-0.10.so
 ./lib/libgstbase-0.10.so
 ./lib/libgstcdda-0.10.so
