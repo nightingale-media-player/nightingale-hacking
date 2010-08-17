@@ -299,7 +299,7 @@ sbGStreamerVideoTranscoder::Vote(sbIMediaItem *aMediaItem, PRInt32 *aVote)
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbGStreamerVideoTranscoder::BuildPipeline()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
@@ -330,7 +330,7 @@ sbGStreamerVideoTranscoder::Transcode()
 }
 
 // Override base class to start the progress reporter
-NS_IMETHODIMP
+nsresult
 sbGStreamerVideoTranscoder::PlayPipeline()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
@@ -347,7 +347,7 @@ sbGStreamerVideoTranscoder::PlayPipeline()
 }
 
 // Override base class to stop the progress reporter
-NS_IMETHODIMP
+nsresult
 sbGStreamerVideoTranscoder::StopPipeline()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));

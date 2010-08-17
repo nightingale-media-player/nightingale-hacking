@@ -71,9 +71,9 @@ public:
 
   sbGStreamerVideoTranscoder();
 
-  NS_IMETHOD BuildPipeline();
-  NS_IMETHOD PlayPipeline();
-  NS_IMETHOD StopPipeline();
+  virtual nsresult BuildPipeline();
+  virtual nsresult PlayPipeline();
+  virtual nsresult StopPipeline();
 
 private:
   virtual ~sbGStreamerVideoTranscoder();

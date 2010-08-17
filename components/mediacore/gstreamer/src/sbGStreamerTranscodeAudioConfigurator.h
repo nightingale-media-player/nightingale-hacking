@@ -29,7 +29,7 @@
 // {b61e78ec-9aa1-4505-b16c-e33819bca705}
 #define SB_GSTREAMER_TRANSCODE_AUDIO_CONFIGURATOR_CID \
     { 0xb61e78ec, 0x9aa1, 0x4505, \
-    { 0xb12, 0x6c, 0xe3, 0x38, 0x19, 0xbc, 0xa7, 0x05 } }
+    { 0xb1, 0x6c, 0xe3, 0x38, 0x19, 0xbc, 0xa7, 0x05 } }
 
 #define SB_GSTREAMER_TRANSCODE_AUDIO_CONFIGURATOR_CONTRACTID \
     "@songbirdnest.com/Songbird/Mediacore/Transcode/Configurator/Audio/GStreamer;1"

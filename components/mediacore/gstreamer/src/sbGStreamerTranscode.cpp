@@ -247,7 +247,7 @@ sbGStreamerTranscode::AddImageToTagList(GstTagList *aTags,
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbGStreamerTranscode::BuildPipeline()
 {
   NS_ENSURE_STATE (mProfile);
@@ -326,7 +326,7 @@ sbGStreamerTranscode::Transcode()
 }
 
 // Override base class to start the progress reporter
-NS_IMETHODIMP
+nsresult
 sbGStreamerTranscode::PlayPipeline()
 {
   nsresult rv;
@@ -341,7 +341,7 @@ sbGStreamerTranscode::PlayPipeline()
 }
 
 // Override base class to stop the progress reporter
-NS_IMETHODIMP
+nsresult
 sbGStreamerTranscode::StopPipeline()
 {
   nsresult rv;
