@@ -69,8 +69,8 @@ public:
   sbGStreamerTranscode();
 
   virtual nsresult BuildPipeline();
-  virtual nsresult PlayPipeline();
-  virtual nsresult StopPipeline();
+  NS_IMETHOD PlayPipeline();
+  NS_IMETHOD StopPipeline();
 
 private:
   virtual ~sbGStreamerTranscode();

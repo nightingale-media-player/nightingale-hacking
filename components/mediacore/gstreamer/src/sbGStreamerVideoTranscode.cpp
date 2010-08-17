@@ -330,7 +330,7 @@ sbGStreamerVideoTranscoder::Transcode()
 }
 
 // Override base class to start the progress reporter
-nsresult
+NS_IMETHODIMP
 sbGStreamerVideoTranscoder::PlayPipeline()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
@@ -347,7 +347,7 @@ sbGStreamerVideoTranscoder::PlayPipeline()
 }
 
 // Override base class to stop the progress reporter
-nsresult
+NS_IMETHODIMP
 sbGStreamerVideoTranscoder::StopPipeline()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));

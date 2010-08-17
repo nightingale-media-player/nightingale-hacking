@@ -61,7 +61,7 @@ private:
 
   nsresult OnJobProgress();
 
-  virtual nsresult StopPipeline();
+  NS_IMETHOD StopPipeline();
   virtual nsresult BuildPipeline();
 
   nsresult StartTimeoutTimer();

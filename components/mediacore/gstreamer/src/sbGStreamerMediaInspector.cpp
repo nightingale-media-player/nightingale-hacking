@@ -496,7 +496,7 @@ sbGStreamerMediaInspector::Notify(nsITimer *aTimer)
 
 
 // Override base class to set the job progress appropriately
-nsresult
+NS_IMETHODIMP
 sbGStreamerMediaInspector::StopPipeline()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));

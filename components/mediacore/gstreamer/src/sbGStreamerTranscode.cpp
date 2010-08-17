@@ -326,7 +326,7 @@ sbGStreamerTranscode::Transcode()
 }
 
 // Override base class to start the progress reporter
-nsresult
+NS_IMETHODIMP
 sbGStreamerTranscode::PlayPipeline()
 {
   nsresult rv;
@@ -341,7 +341,7 @@ sbGStreamerTranscode::PlayPipeline()
 }
 
 // Override base class to stop the progress reporter
-nsresult
+NS_IMETHODIMP
 sbGStreamerTranscode::StopPipeline()
 {
   nsresult rv;
