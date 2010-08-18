@@ -172,10 +172,6 @@
       {
         Cu.import("resource://app/jsmodules/DOMUtils.jsm", this);
 
-        // Initially disable the login button if no username or password value
-        if (!this._username.value || !this._password.value)
-          this._loginButton.disabled = true;
-
         this._deck.selectedPanel = this.login;
 
         // Create a DOM event listener set.

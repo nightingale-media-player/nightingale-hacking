@@ -99,6 +99,8 @@ LastFm.onLoad = function() {
   this._loginAutoLogin = this._getElement(this._panelBinding,
                                           'loginAutoLogin');
   // login button
+  this._loginButton = this._getElement(this._panelBinding, 'loginButton');
+  // login error description 
   this._loginError = this._getElement(this._panelBinding, 'loginError');
   // signup link
   this._signup = this._getElement(this._panelBinding, 'signup');
@@ -209,6 +211,11 @@ LastFm.onLoad = function() {
   // copy the username & password out of the service into the UI
   this._username.value = this._service.username;
   this._password.value = this._service.password;
+
+  // Initially disable the login button if no username or password value
+  if (!this._username.value || !this._password.value) {
+    this._loginButton.disabled = true;
+  }
 
   // create elements for the faceplate
   var faceplateParent = document.getElementById('faceplate-tool-bar');
@@ -463,6 +470,7 @@ LastFm._handleUIEvents = function(aEvent) {
       break;
     case "cancel-button-clicked":
       this._service.cancelLogin();
+      this._service.userLoggedOut = true;
       break;
     case "logout-button-clicked":
       this.onLogoutClick(aEvent);

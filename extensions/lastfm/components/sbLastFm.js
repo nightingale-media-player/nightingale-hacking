@@ -601,7 +601,7 @@ function sbLastFm_shouldAutoLogin() {
   return this.autoLogin &&
          this.username &&
          this.password &&
-         this.userLoggedOut;
+         !this.userLoggedOut;
 }
 
 sbLastFm.prototype.postHandshake =
