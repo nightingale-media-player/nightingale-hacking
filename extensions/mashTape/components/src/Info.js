@@ -47,6 +47,9 @@ var strings = Components.classes["@mozilla.org/intl/stringbundle;1"]
 	.getService(Components.interfaces.nsIStringBundleService)
 	.createBundle("chrome://mashtape/locale/mashtape.properties");
 
+var Application = Cc["@mozilla.org/fuel/application;1"]
+                    .getService(Ci.fuelIApplication);
+
 ArtistInfo.prototype.constructor = ArtistInfo;
 ArtistInfo.prototype = {
 	classDescription: DESCRIPTION,
@@ -346,10 +349,13 @@ ArtistInfo.prototype = {
 						releaseDate = null;
 
 					// Craft an URL to an Amazon link from the ASIN
+					var disableAmazon = Application.prefs.getValue(
+								"extensions.mashTape.info.amazonstore.disabled",
+								false);
 					var asin = release.mbns::asin.toString();
 					var link = null;
 					var tooltip = null;
-					if (asin != "") {
+					if (!disableAmazon && asin != "") {
 						link = "http://www.amazon.com/gp/product/" + asin;
 						tooltip = strings.GetStringFromName(
 								"extensions.mashTape.info.amazon");
