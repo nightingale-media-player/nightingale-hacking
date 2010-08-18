@@ -190,6 +190,26 @@ function runTest () {
 
   // Removing a removed item should do nothing
   library.remove(newItem);
+
+  var databaseGUID = "test_library_clearItems";
+  var library = createLibrary(databaseGUID);
+
+  var list = library.createMediaList("simple");
+  var itemFoo = library.createMediaItem(uri, null, true);
+  var itemBar = library.createMediaItem(uri2, null, true);
+  list.add(itemFoo);
+  list.add(itemBar);
+  assertEqual(list.length, 2);
+  library.clearItems();
+  assertEqual(list.length, 0);
+
+  var itemFoo2 = library.createMediaItem(uri, null, true);
+  var itemBar2 = library.createMediaItem(uri2, null, true);
+  list.add(itemFoo2);
+  list.add(itemBar2);
+  assertEqual(list.length, 2);
+  library.clearItems();
+  assertEqual(list.length, 0);
 }
 
 function createPropertyArray() {

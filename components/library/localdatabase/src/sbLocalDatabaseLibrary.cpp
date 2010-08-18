@@ -2443,6 +2443,16 @@ sbLocalDatabaseLibrary::EntriesToMediaListArray(nsISupportsHashKey* aEntry,
   return PL_DHASH_NEXT;
 }
 
+/* static */ PLDHashOperator PR_CALLBACK
+sbLocalDatabaseLibrary::RemoveIfNotList(nsStringHashKey::KeyType aKey,
+                                        nsAutoPtr<sbMediaItemInfo> &aEntry,
+                                        void *aUserData)
+{
+  if (aEntry->hasListType)
+   return PL_DHASH_NEXT;
+  else
+   return PL_DHASH_REMOVE;
+}
 
 /**
  * See sbILibrary
@@ -3516,7 +3526,13 @@ sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  mMediaItemTable.Clear();
+  if (aExcludeLists) {
+    // Remove only non-lists from mMediaItemTable
+    mMediaItemTable.Enumerate(sbLocalDatabaseLibrary::RemoveIfNotList, nsnull);
+  }
+  else {
+    mMediaItemTable.Clear();
+  }
 
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);

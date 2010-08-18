@@ -313,6 +313,11 @@ private:
     EntriesToMediaListArray(nsISupportsHashKey* aEntry,
                             void* aUserData);
 
+  static PLDHashOperator PR_CALLBACK
+    RemoveIfNotList(nsStringHashKey::KeyType aKey,
+                    nsAutoPtr<sbMediaItemInfo> &aEntry,
+                    void *aUserData);
+
   nsresult RegisterDefaultMediaListFactories();
 
   nsresult DeleteDatabaseItem(const nsAString& aGuid);
