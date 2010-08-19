@@ -362,6 +362,8 @@ function runAudioProcessingTest(library, test)
       // Check if we're done now.
       if (this.seqIdx == test.sequence.length) {
         processor.stop();
+        // Clear processor object to avoid leaks.
+        processor = null;
         testFinished();
       }
     },
