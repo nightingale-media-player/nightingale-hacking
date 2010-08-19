@@ -212,9 +212,16 @@ var firstRunAppUpdate = {
   
   onError: function firstRunAppUpdate_onError(aRequest, aUpdate) {
     this.LOG("update check error");
-    // flip the state back to unknown so we can re-check if we end up going
-    // to the check for updates page again
-    this.mUpdateCheckState = this.K_HAS_UPDATE_STATE_UNKNOWN;
+    let currentPage = document.documentElement.currentPage;
+    if (currentPage.id == "first_run_app_update_check_page") {
+      // if we're on the checking page, we need to bail
+      this.mUpdateCheckState = this.K_HAS_UPDATE_STATE_FALSE;
+    }
+    else {
+      // flip the state back to unknown so we can re-check if we end up going
+      // to the check for updates page again
+      this.mUpdateCheckState = this.K_HAS_UPDATE_STATE_UNKNOWN;
+    }
     // If we're on the checking page, advance
     this.onUpdateStateChange();
   },
