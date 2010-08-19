@@ -5759,11 +5759,13 @@ sbBaseDevice::SyncUpdateProperties(sbILibraryChange* aChange)
     rv = property->GetOldValue(oldPropertyValue);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Don't sync properties set by the device.
-    if (propertyID.EqualsLiteral(SB_PROPERTY_CONTENTURL) ||
-        propertyID.EqualsLiteral(SB_PROPERTY_DEVICE_PERSISTENT_ID) ||
-        propertyID.EqualsLiteral(SB_PROPERTY_LAST_SYNC_PLAYCOUNT) ||
-        propertyID.EqualsLiteral(SB_PROPERTY_LAST_SYNC_SKIPCOUNT)) {
+    // Don't sync properties set by the device or transcoding.
+    if (propertyID.Equals(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL)) ||
+        propertyID.Equals
+                     (NS_LITERAL_STRING(SB_PROPERTY_DEVICE_PERSISTENT_ID)) ||
+        propertyID.Equals(NS_LITERAL_STRING(SB_PROPERTY_LAST_SYNC_PLAYCOUNT)) ||
+        propertyID.Equals(NS_LITERAL_STRING(SB_PROPERTY_LAST_SYNC_SKIPCOUNT)) ||
+        propertyID.Equals(NS_LITERAL_STRING(SB_PROPERTY_BITRATE))) {
       continue;
     }
 
