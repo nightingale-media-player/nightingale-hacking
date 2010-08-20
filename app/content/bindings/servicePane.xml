@@ -304,9 +304,15 @@
 
             this.className = this._nodeData.className;
 
-            // If the node has children mark it as a container
-            if (this._nodeData.firstChild)
-              this.className += " container";
+            // If the node has visible children mark it as a container
+            for (let child = this._nodeData.firstChild;
+                 child;
+                 child = child.nextSibling) {
+              if (!child.hidden) {
+                this.className += " container";
+                break;
+              }
+            }
 
             // Determine how much to indent this node
             let indent = -1;
@@ -1032,7 +1038,7 @@
               }
             }
           } catch (e) {
-            dump("Exception: " + e + "\n\n\n");
+            Cu.reportError(e);
           }
         ]]></body>
       </method>
@@ -1316,6 +1322,21 @@
             badges: true
           },
 
+          _updateContainerFlag: function(node, domNode) {
+            if (!node || !domNode || domNode == this.element)
+              return;
+
+            let hasVisibleChildren = false;
+            for (let child = node.firstChild; child; child = child.nextSibling)
+              if (!child.hidden)
+                hasVisibleChildren = true;
+  
+            if (hasVisibleChildren)
+              this.element.DOMUtils.setClass(domNode, "container");
+            else
+              this.element.DOMUtils.clearClass(domNode, "container");
+          },
+
           attrModified: function(node, attrName, namespace, oldVal, newVal) {
             if (namespace != null || oldVal == newVal)
               return;
@@ -1325,6 +1346,10 @@
             let domNode = this.element.getDOMNode(node);
             if (!domNode || !("_getElement" in domNode))
               return;
+
+            // If hidden attribute changes - update container status of parent
+            if (attrName == "hidden")
+              this._updateContainerFlag(node.parentNode, domNode.parentNode);
 
             // Act on changes of known attributes or badge-related attributes
             if (attrName in this._knownAttributes || /^badge_/.test(attrName)) {
@@ -1358,7 +1383,7 @@
               parentNode = this.element;
             } else {
               // It's a regular node
-              this.element.log("New node: " + node.id);
+              this.element.log("New node: " + node.id + " (child of " + parent.id + ")");
               domNode = this.element.createNode(node);
               parentNode = this.element.getDOMNode(parent);
               if (!parentNode) {
@@ -1379,9 +1404,9 @@
               parentNode.appendChild(domNode);
             }
             
-            // Update parent node - if it wasn't a container before it is one now
-            if (parentNode != this.element)
-              this.element.DOMUtils.setClass(parentNode, "container");
+            // Update container flag on parent node if visible node is added
+            if (!node.hidden)
+              this._updateContainerFlag(parent, parentNode);
 
             // Hacky workaround for bug 21128, comment #2
             if (parentNode == this.element) {
@@ -1421,12 +1446,17 @@
 
               // remove the actual node
               if (domNode && domNode.parentNode) {
+                let parentNode = domNode.parentNode;
                 this.element.log("\tDOM nodes map to removing " + domNode.id +
-                                 " from " + domNode.parentNode.id);
-                domNode.parentNode.removeChild(domNode);
+                                 " from " + parentNode.id);
+                parentNode.removeChild(domNode);
+
+                // Is the parent still a container?
+                if (!node.hidden)
+                  this._updateContainerFlag(parent, parentNode);
               }
             } catch (e) {
-              dump("Exception: " + e + "\n");
+              Cu.reportError(e);
             }
             // XXXtodo
             // if the node was active, then the browser will have gone back
@@ -1794,7 +1824,7 @@
             this._editingNode._textbox.select();
             return true;
           } catch (e) {
-            dump("Exception: " + e + "\n");
+            Cu.reportError(e);
             this._editingNode = null;
             return false;
           }
