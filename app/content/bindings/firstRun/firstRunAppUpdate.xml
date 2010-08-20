@@ -727,6 +727,8 @@
           document.documentElement.getButton("next").label =
             firstRunAppUpdate.getString("restartNowButton",
                                         [SBStringBrandShortName()]);
+          document.documentElement.getButton("next").accessKey =
+            firstRunAppUpdate.getString("restartNowButton.accesskey");
           Application.prefs.setValue("songbird.firstrun.check.app-update.version",
                                      firstRunAppUpdate.update.version);
         ]]>
