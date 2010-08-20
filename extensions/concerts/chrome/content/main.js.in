@@ -1,50 +1,23 @@
 #filter substitution
 
 if (typeof(Cc) == 'undefined')
-  var Cc = Components.classes;
+  this.Cc = Components.classes;
 if (typeof(Ci) == 'undefined')
-  var Ci = Components.interfaces;
+  this.Ci = Components.interfaces;
 if (typeof(Cr) == 'undefined')
-  var Cr = Components.results;
+  this.Cr = Components.results;
+if (typeof(Cu) == 'undefined')
+  this.Cu = Components.utils;
 
-if (typeof(SBProperties) == "undefined") {
-  Cu.import("resource://app/jsmodules/sbProperties.jsm");
-  if (!SBProperties)
-    throw new Error("Import of sbProperties module failed");
-}
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Cu.import("resource://app/jsmodules/sbProperties.jsm");
+Cu.import("resource://app/jsmodules/sbSmartMediaListColumnSpecUpdater.jsm");
 
-if (typeof(XPCOMUtils) == "undefined") {
-  Cu.import("resource://gre/modules/XPCOMUtils.jsm");
-  if (!XPCOMUtils)
-    throw new Error("Import of XPCOMUtils module failed");
-}
-
-if (typeof(LibraryUtils) == "undefined") {
-  Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
-  if (!LibraryUtils)
-    throw new Error("Import of sbLibraryUtils module failed");
-}
-
-if (typeof(SmartMediaListColumnSpecUpdater) == "undefined") {
-  Cu.import("resource://app/jsmodules/sbSmartMediaListColumnSpecUpdater.jsm");
-  if (!SmartMediaListColumnSpecUpdater)
-    throw new Error("Import of sbSmartMediaList module failed");
-}
-
-var gMediaCore;
-
-if (typeof(gBrowser) == "undefined")
-  var gBrowser = Cc["@mozilla.org/appshell/window-mediator;1"]
-      .getService(Ci.nsIWindowMediator)
-      .getMostRecentWindow("Songbird:Main").window.gBrowser;
-
-if (typeof(gSkSvc) == "undefined")
-  var gSkSvc = Cc["@songbirdnest.com/Songbird/Concerts/Songkick;1"]
-    .getService(Ci.sbISongkick);
-
-if (typeof(gMetrics) == "undefined")
-  var gMetrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
+if (typeof(gMetrics) == "undefined") {
+  this.gMetrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
       .createInstance(Ci.sbIMetrics);
+}
 
 function debugLog(funcName, str) {
   var debug = Application.prefs.getValue("extensions.concerts.debug", false);
@@ -53,15 +26,14 @@ function debugLog(funcName, str) {
   }
 }
 
-if (typeof Concerts == 'undefined') {
-  var Concerts = {};
-}
-
-Concerts = {
+var Concerts = {
   // Reference to the On Tour status icon
   _onTourIcon : null,
   lastConcertCount : 0,
   touringPlaylist : null,
+
+  newMediaCore: true,
+  mediaCore: null,
 
   QueryInterface : XPCOMUtils.generateQI([Ci.sbISongkickConcertCountCallback]),
 
@@ -72,11 +44,11 @@ Concerts = {
 
     if (typeof(Ci.sbIMediacoreManager) != "undefined") {
       this.newMediaCore = true;
-      gMediaCore = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+      this.mediaCore = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
         .getService(Ci.sbIMediacoreManager);
     } else {
       this.newMediaCore = false;
-      gMediaCore = Cc['@songbirdnest.com/Songbird/PlaylistPlayback;1']
+      this.mediaCore = Cc['@songbirdnest.com/Songbird/PlaylistPlayback;1']
         .getService(Ci.sbIPlaylistPlayback);
     }
 
@@ -124,28 +96,17 @@ Concerts = {
       this.rebuildOnTourPlaylist();
 
       // Add our mediacore listener to listen for Artists on Tour plays
-      // works for both old & new API since gMediaCore is aliased to gPPS
+      // works for both old & new API since this.mediaCore is aliased to gPPS
       // and both gPPS & the new media core manager have the same
       // addListener interface
-      gMediaCore.addListener(this._mmListener);
+      this.mediaCore.addListener(this._mmListener);
    
       // Add the listener for playlist "On Tour" clicks
-      if (typeof(gBrowser) != "undefined")
+      if ((typeof(gBrowser) != "undefined") && gBrowser) {
         gBrowser.addEventListener("PlaylistCellClick", function(e) {
-          var prop = e.getData("property");
-          var item = e.getData("item");
-          if (prop == gSkSvc.onTourImgProperty) {
-            if (item.getProperty(prop) != "") {
-              var url =
-                item.getProperty(gSkSvc.onTourUrlProperty);
-              var city = Application.prefs
-                  .getValue("extensions.concerts.city", 0);
-              url += "?user_location=" + city;
-              gMetrics.metricsInc("concerts", "library.link", "");
-              gBrowser.loadOneTab(url);
-            }
-          }
+          return Concerts.playlistCellClick(e);
         }, false);
+      }
 
       // Register our uninstall handler
       this.uninstallObserver.register();
@@ -161,7 +122,7 @@ Concerts = {
     skSvc.unregisterSPSUpdater();
     if (Concerts._artistDataRemote)
       Concerts._artistDataRemote.unbind();
-    gMediaCore.removeListener(this._mmListener);
+    this.mediaCore.removeListener(this._mmListener);
   },
   
   /***********************************************************************
@@ -253,7 +214,7 @@ Concerts = {
   // Setup the artist dataremote and the "On Tour" status icon itself
   _setupArtistDataRemote : function() {
     // If we're in the miniplayer, then don't attach
-    if (typeof(gBrowser) == "undefined")
+    if ((typeof(gBrowser) == "undefined") || !gBrowser)
       return;
 
     // Add the "On Tour" status 
@@ -290,17 +251,17 @@ Concerts = {
     var currentItem;
     var playing = false;
     if (this.newMediaCore && (
-      gMediaCore.status.state == Ci.sbIMediacoreStatus.STATUS_PLAYING ||
-      gMediaCore.status.state == Ci.sbIMediacoreStatus.STATUS_BUFFERING ||
-      gMediaCore.status.state == Ci.sbIMediacoreStatus.STATUS_PAUSED))
+      this.mediaCore.status.state == Ci.sbIMediacoreStatus.STATUS_PLAYING ||
+      this.mediaCore.status.state == Ci.sbIMediacoreStatus.STATUS_BUFFERING ||
+      this.mediaCore.status.state == Ci.sbIMediacoreStatus.STATUS_PAUSED))
     {
       playing = true;
-      currentItem = gMediaCore.sequencer.view.getItemByIndex(
-        gMediaCore.sequencer.viewPosition);
-    } else if (!this.newMediaCore && gMediaCore.playing) {
+      currentItem = this.mediaCore.sequencer.view.getItemByIndex(
+        this.mediaCore.sequencer.viewPosition);
+    } else if (!this.newMediaCore && this.mediaCore.playing) {
       playing = true;
-      currentItem = gMediaCore.playingView.mediaList
-          .getItemByGuid(gMediaCore.currentGUID);
+      currentItem = this.mediaCore.playingView.mediaList
+          .getItemByGuid(this.mediaCore.currentGUID);
     }
 
     if (playing && currentItem.getProperty(this.onTourImgProperty) != ""
@@ -333,11 +294,11 @@ Concerts = {
     // Load the artist event page into a new tab
     var item;
     if (Concerts.newMediaCore)
-      item = gMediaCore.sequencer.view.getItemByIndex(
-        gMediaCore.sequencer.viewPosition);
+      item = Concerts.mediaCore.sequencer.view.getItemByIndex(
+        Concerts.mediaCore.sequencer.viewPosition);
     else
-      item = gMediaCore.playingView.mediaList.getItemByGuid(
-        gMediaCore.currentGUID);
+      item = Concerts.mediaCore.playingView.mediaList.getItemByGuid(
+        Concerts.mediaCore.currentGUID);
     var city = Application.prefs.getValue("extensions.concerts.city", 0);
 
     var url = item.getProperty(this.onTourUrlProperty);
@@ -348,7 +309,7 @@ Concerts = {
         .getArtistOnTourUrl(item.getProperty(SBProperties.artistName));
     }
     url += "?user_location=" + city;
-    if (typeof(gBrowser) != "undefined") {
+    if ((typeof(gBrowser) != "undefined") && gBrowser) {
       // If we're in the main player, then open a tab
       gBrowser.loadOneTab(url);
     } else {
@@ -364,8 +325,10 @@ Concerts = {
     var prop = e.getData("property");
     var item = e.getData("item");
     var skSvc = Cc["@songbirdnest.com/Songbird/Concerts/Songkick;1"]
-      .getService(Ci.sbISongkick);
-    if (prop == skSvc.onTourImgProperty) {
+                  .getService(Ci.sbISongkick);
+    if (prop == skSvc.onTourImgProperty &&
+        item.getProperty(prop) != "")
+    {
       var url = item.getProperty(skSvc.onTourUrlProperty);
       var city =
         Application.prefs.getValue("extensions.concerts.city", 0);
