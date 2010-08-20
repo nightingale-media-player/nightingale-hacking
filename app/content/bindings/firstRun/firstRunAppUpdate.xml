@@ -727,12 +727,14 @@
           document.documentElement.getButton("next").label =
             firstRunAppUpdate.getString("restartNowButton",
                                         [SBStringBrandShortName()]);
-          // XXX Mook: TODO: set a flag
+          Application.prefs.setValue("songbird.firstrun.check.app-update.version",
+                                     firstRunAppUpdate.update.version);
         ]]>
       </handler>
       <handler event="pageadvanced">
         Application.prefs.setValue("songbird.firstrun.goto",
                                    this.next);
+
         firstRunWizard._markFirstRunComplete = false;
         firstRunWizard.restartApp = true;
         restartApp();
@@ -740,6 +742,62 @@
       </handler>
     </handlers>
   </binding> <!-- sb-first-run-app-update-finished -->
+
+  <binding id="sb-first-run-app-update-post"
+           extends="chrome://songbird/content/bindings/wizard.xml#sb-wizard-page">
+    <content label="&finishedPage.title;"
+             hidecancel="true"
+             hideback="true">
+
+      <xul:vbox anonid="container_box" class="sb-first-run-update-post-box">
+     
+        <!-- Header. -->
+        <xul:label class="sb-first-run-header"
+                   value="&first_run.welcome.header.label;"/>
+     
+        <!-- First-run welcome image. -->
+        <xul:vbox anonid="image_box" class="sb-first-run-welcome-image-box">
+          <xul:image class="sb-first-run-welcome-image"/>
+        </xul:vbox>
+     
+        <xul:description anonid="post-update-description"/>
+     
+      </xul:vbox> <!-- container_box -->
+      <xul:box anonid="button_attributes"
+               xbl:inherits="hideback,showback,hidecancel,showcancel,hidenext,shownext,hidefinish,showfinish,showextra1,showextra2"/>
+    </content>
+    <handlers>
+      <handler event="pageshow">
+        <![CDATA[
+          const Cc = Components.classes;
+          const Ci = Components.interfaces;
+          const Cu = Components.utils;
+          Cu.import("resource://app/jsmodules/StringUtils.jsm", this);
+
+          let description =
+            document.getAnonymousElementByAttribute(this,
+                                                    "anonid",
+                                                    "post-update-description");
+          let appVersion = Cc["@mozilla.org/xre/app-info;1"]
+                             .getService(Ci.nsIXULAppInfo)
+                             .version;
+          let targetPref =
+            Application.prefs.get("songbird.firstrun.check.app-update.version");
+          let targetVersion = targetPref ? targetPref.value : appVersion;
+          if (targetPref) {
+            targetPref.reset();
+          }
+
+          let stringKey = "first_run.update.success";
+          if (!targetPref || targetVersion != appVersion) {
+            stringKey = "first_run.update.fail";
+          }
+          description.textContent =
+            this.SBFormattedString(stringKey, [targetVersion]);
+        ]]>
+      </handler>
+    </handlers>
+  </binding> <!-- sb-first-run-app-update-post -->
 
   <binding id="sb-first-run-app-update-failed"
            extends="chrome://songbird/content/bindings/wizard.xml#sb-wizard-page">
