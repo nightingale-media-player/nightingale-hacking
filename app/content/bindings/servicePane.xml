@@ -1607,7 +1607,10 @@
           let filter = {
             acceptNode: function(node)
             {
-              if (node.nodeData == nodeData)
+              // Compare to private property so that nodes can be found even if
+              // their binding hasn't been applied yet (e.g., node is hidden).
+              // See "http://bugzilla.songbirdnest.com/show_bug.cgi?id=22059".
+              if (node._nodeData == nodeData)
                 return NodeFilter.FILTER_ACCEPT;
               else
                 return NodeFilter.FILTER_REJECT;
