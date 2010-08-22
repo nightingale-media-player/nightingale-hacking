@@ -1064,7 +1064,7 @@ sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > 
    * Featherers want to */
 }
 
-#searchbar menupopup menuitem {
+.searchbar-engine-button menupopup menuitem {
   margin-left: -8px !important;
 }
 
