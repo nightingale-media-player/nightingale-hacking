@@ -286,7 +286,7 @@ var DeviceMediaManagementServices = {
 
       /* Get the radio element. */
       radioElem = this._getElement(aRadioID);
- 
+
       /* Select the radio. */
       radioElem.radioGroup.selectedItem = radioElem;
   },
@@ -310,7 +310,7 @@ var DeviceMediaManagementServices = {
    * preferences have been changed and need to be written to the preference
    * storage.
    */
- 
+
   _mediaManagementPrefs : null,
   _storedMediaManagementPrefs : null,
 
@@ -459,34 +459,35 @@ var DeviceMediaManagementServices = {
       function DeviceMediaManagementServices_musicManagementPrefsRead(aPrefs)
   {
     var profileId = this._device.getPreference("transcode_profile.profile_id");
-    var profileIdGlobal = false;
 
-    if (!profileId) {
-      // Get the global default profile if there's one of those.
-      profileId = Application.prefs.getValue(
-              "songbird.device.transcode_profile.profile_id", null);
-      if (profileId)
-        profileIdGlobal = true;
-    }
-
+    // Only store the profile id if transcode is in manual mode.
     if (profileId) {
       this._mediaManagementPrefs.transcodeModeManual = true;
       this._mediaManagementPrefs.selectedProfile =
           this.profileFromProfileId(profileId);
-      if (profileIdGlobal) {
-        this._mediaManagementPrefs.selectedBitrate = Application.prefs.getValue(
-                  "songbird.device.transcode_profile.audio_properties.bitrate",
-                  null);
-      }
-      else {
-        this._mediaManagementPrefs.selectedBitrate =
-            this._device.getPreference("transcode_profile.audio_properties.bitrate");
-      }
+      this._mediaManagementPrefs.selectedBitrate =
+          this._device.getPreference(
+              "transcode_profile.audio_properties.bitrate");
     }
+    // Otherwise, get the profile id from global one or pick the one
+    // with highest priority.
     else {
       this._mediaManagementPrefs.transcodeModeManual = false;
-      this._mediaManagementPrefs.selectedProfile = null;
-      this._mediaManagementPrefs.selectedBitrate = null;
+
+      // Get the global default profile if there's one of those.
+      var globalProfileId = Application.prefs.getValue(
+              "songbird.device.transcode_profile.profile_id", null);
+      if (globalProfileId) {
+        this._mediaManagementPrefs.selectedProfile =
+            this.profileFromProfileId(globalProfileId);
+        this._mediaManagementPrefs.selectedBitrate =
+            Application.prefs.getValue(
+                "songbird.device.transcode_profile.audio_properties.bitrate",
+                null);
+      } else {
+        this._mediaManagementPrefs.selectedProfile = null;
+        this._mediaManagementPrefs.selectedBitrate = null;
+      }
     }
 
     /* Make a copy of the stored music prefs. */
