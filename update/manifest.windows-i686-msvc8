@@ -115,6 +115,7 @@
 ./components/sbLibraryImporter.xpt
 ./components/sbLibraryImporterManager.js
 ./components/sbLibraryManager.dll
+./components/sbLibrarySearch.js
 ./components/sbLibrarySearchSuggester.js
 ./components/sbLibraryServicePaneService.js
 ./components/sbLibraryUtils.jsm
@@ -200,6 +201,7 @@
 ./components/sbRemoveHelper.js
 ./components/sbSQLBuilder.dll
 ./components/sbSQLBuilder.xpt
+./components/sbSearchEngine.xpt
 ./components/sbSearchSuggester.js
 ./components/sbServicePane.xpt
 ./components/sbServicePaneService.js
