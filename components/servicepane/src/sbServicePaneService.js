@@ -111,7 +111,7 @@ ServicePaneNode.prototype = {
                        "may be removed in future. Consider using " +
                        "sbIServicePaneNode.className instead.");
     return this.className;
-    
+
   },
   set properties(aValue) {
     deprecationWarning("sbIServicePaneNode.properties is deprecated and " +
@@ -129,7 +129,7 @@ ServicePaneNode.prototype = {
     // Cache the string bundle so that we don't retrieve it more than once
     if (!this._stringBundle) {
       let stringbundleURI = this.stringbundle;
-  
+
       if (!stringbundleURI)  {
         // Try module's stringbundle
         let contractid = this.contractid;
@@ -143,7 +143,7 @@ ServicePaneNode.prototype = {
           }
         }
       }
-  
+
       try {
         this._stringBundle = new SBStringBundle(stringbundleURI);
         this._stringBundleURI = stringbundleURI;
@@ -329,7 +329,7 @@ ServicePaneNode.prototype = {
       // use it anyway in that case.
       if (!this._comparisonFunction && aBefore && aBefore._parentNode != this)
         throw Ce("Cannot insert before a node that isn't a child");
-  
+
       for (let parent = this; parent; parent = parent._parentNode)
         if (parent == aChild)
           throw Ce("Cannot insert/append a node to its child");
@@ -550,6 +550,8 @@ ServicePaneNode.prototype = {
   set isOpen(aValue) this.setAttribute("isOpen", aValue ? "true" : "false"),
   get contractid() this.getAttribute("contractid"),
   set contractid(aValue) this.setAttribute("contractid", aValue),
+  get searchtype() { return this.getAttribute("searchtype") || "internal"; },
+  set searchtype(aValue) this.setAttribute("searchtype", aValue),
   get stringbundle() this.getAttribute("stringbundle"),
   set stringbundle(aValue) this.setAttribute("stringbundle", aValue),
   get dndDragTypes() this.getAttribute("dndDragTypes"),
@@ -714,7 +716,7 @@ ServicePaneService.prototype = {
     deprecationWarning("sbIServicePaneService.init() is deprecated, you no " +
                        "longer need to call it.");
   },
-  
+
   _clearNodeListeners: function ServicePaneService__clearNodeListeners(aNode) {
     if (aNode._eventListeners) {
       delete aNode._eventListeners;
@@ -898,7 +900,7 @@ ServicePaneService.prototype = {
   onBeforeRename: function ServicePaneService_onBeforeRename(aNode) {
     if (!aNode || !aNode.editable)
       return;
-  
+
     // Pass the message on to the node owner
     if (aNode.contractid && aNode.contractid in this._modulesByContractId) {
       let module = this._modulesByContractId[aNode.contractid];
@@ -913,7 +915,7 @@ ServicePaneService.prototype = {
   onRename: function ServicePaneService_onRename(aNode, aNewName) {
     if (!aNode || !aNode.editable)
       return;
-  
+
     // Pass the message on to the node owner
     if (aNode.contractid && aNode.contractid in this._modulesByContractId) {
       let module = this._modulesByContractId[aNode.contractid];

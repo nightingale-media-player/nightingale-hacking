@@ -29,8 +29,9 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbSearchSuggester.js \
-                      $(srcdir)/sbLibrarySearch.js   \
-                      $(NULL)
+XPIDL_SRCS = sbISearchEngine.idl \
+             $(NULL)
+
+XPIDL_MODULE = sbSearchEngine.xpt
 
 include $(topsrcdir)/build/rules.mk

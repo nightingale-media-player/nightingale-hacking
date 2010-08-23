@@ -1,29 +1,27 @@
 <?xml version="1.0"?>
 <!--
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 -->
 
@@ -32,16 +30,16 @@
           xmlns:xbl="http://www.mozilla.org/xbl">
 
 
-  
+
   <!-- Songbird Search Widget
-  
+
        Extends the Firefox searchbar widget to add "search as you type" functionality
        and other Songbird customizations.
-       
+
        Unlike the Firefox searchbar, this widget fires a "search" event instead of
        dispatching search queries itself.  This allows gSearchHandler (in searchHandler.js)
        to provide special processing for the Songbird internal search engine.
-       
+
        See dependencies/vendor/mozilla/browser/components/search/content/search.xml
     -->
   <binding id="sb-searchbar"
@@ -49,35 +47,44 @@
     <implementation>
 
       <constructor>
+        Components.utils.import("resource://app/jsmodules/StringUtils.jsm",
+                                this);
+
         // Add the songbird autocomplete source to the textbox.
-        this._textbox.setAttribute("autocompletesearch", 
+        this._textbox.setAttribute("autocompletesearch",
                   "search-autocomplete songbird-autocomplete");
 
         // Initialize value to the textbox value.
         this.value = this._textbox.value;
+
+        let tooltip = this.SBString("searchbar.tooltip.clear");
+        this._clearButton.setAttribute("tooltiptext", tooltip);
       </constructor>
-      
+
 
       <!-- Map of engine names to booleans.
            Used to determine which engines send searches
            on input idle. -->
       <field name="_liveSearchEngines">new Object();</field>
-      
+
       <!-- Map of engine names to display strings.
            Used by overrideEngineDisplayText() -->
       <field name="_engineDisplayText">new Object();</field>
-      
+
+      <field name="_clearButton">document.getAnonymousElementByAttribute(
+          this, "anonid", "search-go-button");</field>
+
       <!-- When true, causes searches to be sent automatically after
-           a short delay -->      
+           a short delay -->
       <property name="liveSearchMode">
-        <getter><![CDATA[ 
+        <getter><![CDATA[
           return this.isInLiveSearchMode(this.currentEngine);
         ]]></getter>
-      </property>  
-      
-      
-      
-      
+      </property>
+
+
+
+
       <!-- Replace base currentEngine setter so that changing engines immediately
            executes the current query -->
       <property name="currentEngine"
@@ -88,7 +95,7 @@
           return currentEngine || {name:"", uri:null};
         ]]></getter>
         <setter><![CDATA[
-          this.searchService.currentEngine = val; 
+          this.searchService.currentEngine = val;
 
           // Set the live search indicator attribute
           // according to the state of the new engine
@@ -96,12 +103,12 @@
 
           // JMC - Don't return just val in case it's null
           return this.searchService.currentEngine;
-        ]]></setter>        
-      </property>      
-      
-      
-  
-      
+        ]]></setter>
+      </property>
+
+
+
+
       <!-- Override the normal get method in order to manage
            the "empty" and "livesearchmode" attributes for this
            element.
@@ -112,7 +119,7 @@
             return "";
           }
           return this._textbox.value;
-        ]]></getter>      
+        ]]></getter>
         <setter><![CDATA[
           // Make sure to remove the "empty" attribute if someone is setting
           // the search bar value to a non-empty string. Similarly, we need to
@@ -133,18 +140,18 @@
               this.updateDisplay();
             }
           }
-          
+
           this.updateLiveSearchAttribute();
 
           return val;
         ]]></setter>
-      </property>      
-      
+      </property>
 
-      
+
+
 
       <!-- Overrides the text displayed when a given engine is active
-           and nothing has been entered in the textbox.  
+           and nothing has been entered in the textbox.
            Setting aText null causes the default text to be restored
         -->
       <method name="setEngineDisplayText">
@@ -154,7 +161,7 @@
            // Add text to the engine name -> text map
            this._engineDisplayText[aEngine.name] = aText;
         ]]></body>
-      </method>    
+      </method>
 
 
 
@@ -162,36 +169,36 @@
       <!-- Has the given engine been flagged for live search -->
       <method name="isInLiveSearchMode">
         <parameter name="aEngine"/>
-        <body><![CDATA[         
-          if (aEngine.name && aEngine.name in this._liveSearchEngines 
+        <body><![CDATA[
+          if (aEngine.name && aEngine.name in this._liveSearchEngines
               && this._liveSearchEngines[aEngine.name] == true)
           {
             return true;
           }
           return false;
         ]]></body>
-      </method>    
+      </method>
 
 
 
 
 
       <!-- Flag the given engine for live search ("search as you type")
-        -->   
+        -->
       <method name="setLiveSearchMode">
         <parameter name="aEngine"/>
         <parameter name="aEnabled"/>
         <body><![CDATA[
           this._liveSearchEngines[aEngine.name] = aEnabled;
-        
-          // If the given engine is currently active then 
-          // set the livesearch indicator attribute appropriately.          
+
+          // If the given engine is currently active then
+          // set the livesearch indicator attribute appropriately.
           // This can be used to apply a special CSS style.
           if (this.currentEngine == aEngine) {
             this.updateLiveSearchAttribute();
           }
         ]]></body>
-      </method>    
+      </method>
 
 
 
@@ -199,19 +206,19 @@
            This attribute is set true when the current search
            engine is in live search mode and the user has
            entered at least one character in the search box.
-        -->   
+        -->
       <method name="updateLiveSearchAttribute">
         <body><![CDATA[
           var enable = (this.liveSearchMode && this.value != "");
-          this.setAttribute("livesearchmode", (enable) ? "true" : "false");                  
+          this.setAttribute("livesearchmode", (enable) ? "true" : "false");
         ]]></body>
-      </method> 
-          
-      
+      </method>
+
+
 
       <!-- Override the method responsible for executing searches
-           so that we can splice in internal search support 
-        -->   
+           so that we can splice in internal search support
+        -->
       <method name="handleSearchCommand">
         <parameter name="aEvent"/>
         <body>
@@ -244,14 +251,6 @@
             textBox._formHistSvc.addEntry(textBox.getAttribute("autocompletesearchparam"),
                                           textValue);
           }
-                    
-          // Add your eggs here...
-          if ( textValue == "migmigmig" )  { alert( ".gge retsaE" ); } 
-          else if ( textValue == "mattmattmatt" )  { alert( "Eggstereast." ); }
-          else if ( textValue == "joshuajoshua" )  { alert( "basket'o'eggz" ); }
-          else if ( textValue == "lonedfx" )  { alert( "rotteneggs" ); }
-          else if ( textValue == "pvhpvhpvh" )  { alert( "East? Or eggs?" ); }
-
           // Kanye release easter egg
           else if ( textValue == "Taylor Swift" )  {
             const BYPASSKEY = "kanye.easteregg.bypass";
@@ -262,7 +261,7 @@
               var promptValue = promptService.confirmEx(window,
                 "Kanye West says:",
                 "\"Hey Taylor, I'm really happy for you, and I'm gonna let you\n" +
-                "finish, but Beyoncé is one of the best searches of all time!\"", 
+                "finish, but Beyoncé is one of the best searches of all time!\"",
                 Ci.nsIPromptService.STD_YES_NO_BUTTONS,
                 null, null, null,
                 "Don't let Kanye interrupt this search again.",
@@ -276,26 +275,26 @@
               }
             }
           }
-                              
+
           this._sendSearchEvent();
         ]]></body>
       </method>
 
-          
-          
+
+
       <!-- Dispatch a search event -->
       <method name="_sendSearchEvent">
         <body><![CDATA[
           try {
-            metrics_inc("search.widget", this.currentEngine.name, null);        
+            metrics_inc("search.widget", this.currentEngine.name, null);
           } catch(e) { Components.utils.reportError(e); }
           var e = document.createEvent("Events");
           e.initEvent("search", false, true);
           this.dispatchEvent(e);
         ]]></body>
-      </method>      
-      
-      
+      </method>
+
+
       <!-- Overrides the normal updateDisplay to display override text as appropriate -->
       <method name="updateDisplay">
         <body><![CDATA[
@@ -307,26 +306,26 @@
           while (proto && proto.updateDisplay === arguments.callee) {
             proto = proto.__proto__;
           }
-          
+
           if ("function" == typeof(proto.updateDisplay)) {
             proto.updateDisplay.apply(this, arguments);
           }
-          
+
           // Check for an emptyText override
           var name = this.currentEngine.name;
           if (name in this._engineDisplayText && this._engineDisplayText[name]) {
             name = this._engineDisplayText[name];
           }
-          
-          this._textbox.emptyText = 
-            SBFormattedString('search.prefix', 
+
+          this._textbox.emptyText =
+            SBFormattedString('search.prefix',
                               [name]);
         ]]></body>
       </method>
-      
-      
+
+
       <!-- Called when a Songbird search is selected, and a short delay has passed since
-           the last keystroke.  Provides "search as you type" functionality. 
+           the last keystroke.  Provides "search as you type" functionality.
          -->
       <method name="_onSearchEditIdle">
         <body>
@@ -334,15 +333,15 @@
           if (this.liveSearchMode)
           {
             this._sendSearchEvent();
-            
+
             this.updateLiveSearchAttribute();
           }
         ]]>
         </body>
       </method>
 
-      <!-- Open the autocomplete menu if the object's class is 'autocomplete-textbox' 
-           and the content is empty (since we do no want to autoopen the menu if the 
+      <!-- Open the autocomplete menu if the object's class is 'autocomplete-textbox'
+           and the content is empty (since we do no want to autoopen the menu if the
            user clicked to move its carret) -->
       <method name="_autoOpenMenu">
         <body>
@@ -352,17 +351,17 @@
           if (target.getAttribute("class").indexOf("autocomplete-textbox") != -1) {
             // ... If the textbox is empty, then show the autocomplete
             if (this.value == "") {
-              // Defer launching the popup so that we don't end up 
-              // refocusing the textbox and screwing up the 
+              // Defer launching the popup so that we don't end up
+              // refocusing the textbox and screwing up the
               // text displayed on empty=true
               if (this._popupTimeout)
                 clearTimeout(this._popupTimeout);
-              this._popupTimeout = setTimeout(function(o) { 
+              this._popupTimeout = setTimeout(function(o) {
                   if (!o._textbox.popupOpen)
-                    o._textbox.toggleHistoryPopup(); 
+                    o._textbox.toggleHistoryPopup();
                   this._popupTimeout = null;
               }, 10, this);
-            }                  
+            }
           }
           ]]>
         </body>
@@ -372,40 +371,40 @@
     <handlers>
 
       <!-- Capture mousedown on the autocomplete textbox so that we can
-           pop out the autocomplete menu (this needs to only occur if 
+           pop out the autocomplete menu (this needs to only occur if
            the textbox is empty, since we do not want to pop the menu if
            the user is just moving the cursor within the text).
-           
+
            Ideally, the code in the mousedown handler would simply call
            this._autoOpenMenu(), however, further focus events that
            occur after the mousedown event will cancel the popup, so
-           what we need to do instead is set a variable to remember that 
+           what we need to do instead is set a variable to remember that
            we need to open the menu when we get those focus events.
-           
+
            Now, if we were only getting one focus event, all we would
            have to do when we intercept it is to pop the menu, and reset
            that variable, but unfortunately, there is a case that will
            trigger several chained focus events (clicking in the part of
            the search box that has no text), although nothing in the
-           event variable lets us distinguish this case (whether the 
+           event variable lets us distinguish this case (whether the
            click happens on the text or not, the event variable has the
            same target and originalTarget). In this case, the additional
            focus events will again cancel our history menu, which means
-           that we should not reset the variable immediately, we need 
-           the additional focus events to keep causing more attempts to 
+           that we should not reset the variable immediately, we need
+           the additional focus events to keep causing more attempts to
            open the menu (the _autoOpenMenu method is smart enough to
            cancel its previous attempts if necessary).
-           
+
            Still, we need to reset our trigger variable at some point,
            otherwise we will end up opening the menu again whenever
            the control is refocused in the future, which we do not want
-           (we want the menu only if the focus occured due to a click). 
-           We solve this by setting a short timeout to reset the variable, 
+           (we want the menu only if the focus occured due to a click).
+           We solve this by setting a short timeout to reset the variable,
            but not so short as to miss the focus events we want to handle.
-           
+
            In addition, we want to open the menu when the control is
            already focused, and a simple click occurs. In this case, we need
-           to do so immediately, since no futher event is going to give us 
+           to do so immediately, since no futher event is going to give us
            that opportunity (note that clicking on the control when the app
            is deactivated is handled by this case as well, because the focus
            event will occur before the mousedown event).  -->
@@ -416,7 +415,7 @@
             event.originalTarget.parentNode.tagName == "html:input") {
           // if we are already focused, open the auto complete menu immediately
           if (this._textbox.hasAttribute("focused")) {
-            this._autoOpenMenu(); 
+            this._autoOpenMenu();
           } else {
             // otherwise cause any focus event that occurs within the next 250ms
             // to try to open the menu again
@@ -437,13 +436,13 @@
           this._autoOpenMenu();
         }
       ]]></handler>
-      
+
       <handler event="blur" phase="capturing"><![CDATA[
         // forget that we were focused
         if (this.hasAttribute("focused")) {
           this.removeAttribute("focused");
-        }  
-      ]]></handler>      
+        }
+      ]]></handler>
 
 
       <!-- Starts the idle search timer on input when in live search mode  -->
@@ -473,245 +472,35 @@
         {
           timeout = 200;
         }
-        
+
         this._editIdleInterval = setInterval(
           function(o) {
             clearInterval( o._editIdleInterval );
             o._onSearchEditIdle();
           }, timeout, this);
-      ]]></handler>    
-    </handlers>
-  </binding>  
+      ]]></handler>
 
+      <!-- Overrides command handler to send search event upon selection -->
+      <handler event="command"><![CDATA[
+        const target = event.originalTarget;
+        if (target.classList.contains("addengine-item")) {
+          // We only detect OpenSearch files
+          var type = Ci.nsISearchEngine.DATA_XML;
+          this.searchService.addEngine(target.getAttribute("uri"), type,
+                                       target.getAttribute("src"), false);
+        }
+        else if (target.engine) {
+          this.currentEngine = target.engine;
+        }
+        else {
+          return;
+        }
 
+        this.focus();
+        this.select();
 
-
-
-
-  <!--
-    A menupopup that offers to run the given search using the
-    installed search plugins.
-    
-    Attributes:
-      label      - Adds an extra disabled menuitem at the top of the list
-                   to act as a context label.
-      searchterm - The term to search for if the user selects a search engine
-      enginetags - Include only search engines with any of the given tags.
-  -->
-  <binding id="sb-search-menupopup" 
-           extends="chrome://global/content/bindings/popup.xml#popup">
-    <implementation type="application/x-javascript">
-
-
-      <property name="searchService" readonly="true">
-        <getter><![CDATA[
-          if (!this._ss) {
-            const nsIBSS = Components.interfaces.nsIBrowserSearchService;
-            this._ss =
-                 Components.classes["@mozilla.org/browser/search-service;1"]
-                           .getService(nsIBSS);
-          }
-          return this._ss;
-        ]]></getter>
-      </property>
-
-
-      <property name="currentEngine" readonly="true">
-        <getter><![CDATA[
-          // Return a dummy engine if there is no currentEngine
-          return this._currentEngine || {name:"", uri:null};
-        ]]></getter>       
-      </property>      
-      
-      
-      <!-- Get the current search query. -->
-      <property name="value" readonly="true">
-        <getter><![CDATA[
-          return this.getAttribute("searchterm");
-        ]]></getter>      
-      </property>    
-
-
-      <!--
-        Called just before the popup appears.
-      -->
-      <method name="onPopupShowing">
-        <body>
-          <![CDATA[
-            this._cleanMenu();
-            this._buildMenu();
-          ]]>
-        </body>
-      </method>
-
-
-      <!--
-        Called when a child menuitem is selected.  
-      -->
-      <method name="onCommand">
-        <parameter name="item"/>
-        <body>
-          <![CDATA[
-            // If the user clicked on a menuitem, then launch the search
-            if (item.engine) {
-              this._currentEngine = item.engine;
-              this._sendSearchEvent();
-            } else {
-              dump("sb-search-menupopup: oncommand: unknown menu item\n");
-            }
-          ]]>
-        </body>
-      </method>
-
-
-      <!-- Dispatch an event with the alias of the current search engine -->
-      <method name="_sendSearchEvent">
-        <body><![CDATA[              
-          try {
-            metrics_inc("search.menu", this._currentEngine.name, null);
-          } catch (e) { Components.utils.reportError(e); }
-          var e = document.createEvent("Events");
-          e.initEvent("search", false, true);
-          this.dispatchEvent(e);
-        ]]></body>
-      </method>   
-      
-
-      <!-- Get rid of all the children of this menupopup -->
-      <method name="_cleanMenu">
-        <body>
-          <![CDATA[
-            var children = this.childNodes;
-            for (var i = children.length - 1; i >= 0; --i) {
-              this.removeChild(children[i]);
-            }
-          ]]>
-        </body>
-      </method>
-
-
-      <!--
-        Populates this menupopup with menuitems allowing 
-        search engine selection
-      -->
-      <method name="_buildMenu">
-        <body>
-          <![CDATA[
-            var popup = this;
-
-            const kXULNS =
-                "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
-
-            // If a label was given, stick it in a disabled menuitem
-            // at the top of the list, and then add a separator.
-            var label = this.getAttribute("label");
-            if (label && label != "") {
-              var menuitem = document.createElementNS(kXULNS, "menuitem");
-              menuitem.setAttribute("label", label);
-              menuitem.setAttribute("disabled", "true");
-              popup.appendChild(menuitem);
-              popup.appendChild(document.createElementNS(kXULNS, "menuseparator"));
-            }
-
-            // Append visible engines
-            this._engines = this._getEngines();
-            for (var i = 0; i < this._engines.length; i++) {
-              var menuitem = document.createElementNS(kXULNS, "menuitem");
-              var name = this._engines[i].name;
-              menuitem.setAttribute("label", name);
-              menuitem.setAttribute("id", name);
-              menuitem.setAttribute("name", "search-menupopup-engine");
-              menuitem.setAttribute("class", "menuitem-iconic searchbar-engine-menuitem");
-              if (this._engines[i].iconURI)
-                menuitem.setAttribute("src", this._engines[i].iconURI.spec);
-              popup.appendChild(menuitem, popup.firstChild);
-              menuitem.engine = this._engines[i];
-            }          
-          ]]>
-        </body>
-      </method>
-      
-      <!--
-        Gets an array of search engines to use in this menu.
-        If enginetags has been specified then the list will only
-        include engines containing at least one of the given tags. 
-        If not, then all visible untagged search engines will be used.
-      -->
-      <method name="_getEngines">
-        <body>
-          <![CDATA[
-            var engines;
-        
-            // If some tags were specified then only get
-            // engines that have at least one of the tags
-            var tags = this.getAttribute("enginetags");
-            if (tags) 
-            {
-              // Build a regex that matches if a string contains
-              // any of the given tags
-              tags = tags.replace(" ", "|");
-              var tagRegex = new RegExp("^(.* )?(" + tags + ")( .*)?$");
-
-              function hasTag(engine) {
-                return tagRegex.test(engine.tags);
-              };
-              
-              // Get all search engines and then filter
-              // using our regular expression
-              engines = this.searchService
-                            .getEngines({ })
-                            .filter(hasTag);
-            }
-            // Otherwise include all visible untagged search engines
-            else 
-            {             
-              function hasTags(engine) {
-                return engine.tags == "";
-              };
-              
-              engines = this.searchService
-                            .getVisibleEngines({ })
-                            .filter(hasTags);
-            }
- 
-            return engines;
-          ]]>
-        </body>
-      </method>      
-
-
-    </implementation>
-    
-    <handlers>
-      <handler event="command">
-        <![CDATA[
-          this.onCommand(event.target);
-          
-          // We've handled this event, so prevent
-          // others from hearing about it.
-          event.stopPropagation();
-          event.preventDefault();
-        ]]>
-      </handler>
-      <handler event="popupshowing">
-        <![CDATA[
-          if (event.target == this) {
-            this.onPopupShowing();
-          }
-        ]]>
-      </handler>
-      <handler event="popuphidden">
-        <![CDATA[        
-          if (event.target == this) {
-            // Should we do anything here?
-          }
-        ]]>
-      </handler>
+        this._sendSearchEvent();
+      ]]></handler>
     </handlers>
   </binding>
-
-
-  
-  
-
 </bindings>

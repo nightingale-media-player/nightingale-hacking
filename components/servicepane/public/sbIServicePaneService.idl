@@ -1,4 +1,4 @@
-/* vim: ts=2 sw=2 expandtab */
+/* vim: set ts=2 sw=2 expandtab : */
 /*
  *=BEGIN SONGBIRD GPL
  *
@@ -48,15 +48,15 @@ interface sbIServicePaneNodeListener;
  * \interface sbIServicePaneNode
  * \brief The interface to interact with a particular node in the service pane
  */
-[scriptable, uuid(6b854290-2df1-4c32-a0ce-14dca16f7b42)]
+[scriptable, uuid(040928f0-a9b8-11df-94e2-0800200c9a66)]
 interface sbIServicePaneNode : nsISupports
 {
   /* \brief the uri of this node as a string */
   attribute AString id;
-  
+
   /* \deprecated All nodes are potential containers now, don't use this */
   readonly attribute boolean isContainer;
-  
+
   /* \brief class name of the node */
   attribute AString className;
   /* \brief the URL to load when the node is clicked on in the tree */
@@ -77,7 +77,9 @@ interface sbIServicePaneNode : nsISupports
   attribute boolean isOpen;
   /* \brief the contract id of the service that owns the node */
   attribute AString contractid;
-  
+  /* \brief the corresponding search engine type (if available) of the node */
+  attribute AString searchtype;
+
   /* drag and drop reordering helper attributes */
   /* \brief a comma separated list of drag types to offer for reordering */
   attribute AString dndDragTypes;
@@ -85,7 +87,7 @@ interface sbIServicePaneNode : nsISupports
   attribute AString dndAcceptNear;
   /* \brief a comma separated list of drag types to allow dropping into */
   attribute AString dndAcceptIn;
-  
+
   /* \brief the uri of a stringbundle to use to translate the properties of this node */
   attribute AString stringbundle;
 
@@ -108,7 +110,7 @@ interface sbIServicePaneNode : nsISupports
    * \param aListener listener to be added
    */
   void addMutationListener (in sbIServicePaneMutationListener aListener);
-  
+
   /**
    * \brief Removes a previously added mutation listener.
    *
@@ -117,7 +119,7 @@ interface sbIServicePaneNode : nsISupports
   void removeMutationListener (in sbIServicePaneMutationListener aListener);
 
   // here's a subset of the W3C DOM Level 1 Core
-  
+
   boolean hasAttribute(in AString aName);
   AString getAttribute(in AString aName);
   AString setAttribute(in AString aName,
@@ -133,7 +135,7 @@ interface sbIServicePaneNode : nsISupports
                          in AString aValue);
   void removeAttributeNS(in AString aNamespace,
                          in AString aName);
-  
+
   /** \brief enumerator returning names of node attributes */
   readonly attribute nsIStringEnumerator attributes;
   /** \brief enumerator returning node's child nodes */
@@ -143,7 +145,7 @@ interface sbIServicePaneNode : nsISupports
   readonly attribute sbIServicePaneNode nextSibling;
   readonly attribute sbIServicePaneNode previousSibling;
   readonly attribute sbIServicePaneNode parentNode;
-  
+
   sbIServicePaneNode appendChild (in sbIServicePaneNode aChild);
   sbIServicePaneNode insertBefore (in sbIServicePaneNode aNewNode,
                                    in sbIServicePaneNode aAdjacentNode);
@@ -248,7 +250,7 @@ interface sbIServicePaneService : nsISupports
   sbIServicePaneNode addNode(in AString aId,
                              in sbIServicePaneNode aParent,
                              in boolean aContainer);
-  
+
   /* \deprecated The proper way to remove a node is calling
    *             node.parentNode.removeChild(node).
    */
@@ -294,7 +296,7 @@ interface sbIServicePaneService : nsISupports
   void fillContextMenu(in sbIServicePaneNode aNode,
                        in nsIDOMXULElement aContextMenu,
                        in nsIDOMWindow aParentWindow);
-  
+
   /* \brief Fill a menu with menuitems to create new tree nodes
    * \param aNode the node or null for the click and hold menu
    * \param aContextMenu the menu we're trying to fill
@@ -303,7 +305,7 @@ interface sbIServicePaneService : nsISupports
   void fillNewItemMenu(in sbIServicePaneNode aNode,
                        in nsIDOMXULElement aContextMenu,
                        in nsIDOMWindow aParentWindow);
-  
+
   /* \brief Selection changes notification
    * \param aNode node that is now selected
    * \param aContainer The container object that implements the selection
@@ -312,18 +314,18 @@ interface sbIServicePaneService : nsISupports
   void onSelectionChanged(in sbIServicePaneNode aNode,
                           in nsIDOMNode aContainer,
                           in nsIDOMWindow aParentWindow);
-  
+
   /* drag and drop support */
   PRBool canDrop(in sbIServicePaneNode aNode,
                  in nsIDragSession aDragSession,
                  in PRInt32 aOrientation,
                  in nsIDOMWindow aWindow);
-                 
+
   void onDrop(in sbIServicePaneNode aNode,
               in nsIDragSession aDragSession,
               in PRInt32 aOrientation,
               in nsIDOMWindow aWindow);
-              
+
   PRBool onDragGesture(in sbIServicePaneNode aNode,
                        in nsIDOMDataTransfer aDataTransfer);
 
@@ -367,7 +369,7 @@ interface sbIServicePaneModule : nsISupports
    * \param aServicePaneService the service pane service instance
    */
   void servicePaneInit(in sbIServicePaneService aServicePaneService);
-  
+
   /* \brief Fill the context menu for the given node
    * \param aNode the node that was context-clicked on
    * \param aContextMenu the menu we're trying to fill
@@ -376,7 +378,7 @@ interface sbIServicePaneModule : nsISupports
   void fillContextMenu(in sbIServicePaneNode aNode,
                        in nsIDOMXULElement aContextMenu,
                        in nsIDOMWindow aParentWindow);
-  
+
   void fillNewItemMenu(in sbIServicePaneNode aNode,
                        in nsIDOMXULElement aContextMenu,
                        in nsIDOMWindow aParentWindow);
@@ -414,13 +416,13 @@ interface sbIServicePaneModule : nsISupports
    */
   void onRename(in sbIServicePaneNode aNode,
                 in AString aNewName);
-  
+
   /* \brief optional URI of stringbundle to use to localize names of nodes
     associated with this module */
   readonly attribute AString stringbundle;
 
-  /* \brief Called when service pane service is shutting down 
-   */ 
+  /* \brief Called when service pane service is shutting down
+   */
   void shutdown();
 };
 

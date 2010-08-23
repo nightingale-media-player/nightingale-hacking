@@ -90,10 +90,6 @@ searchbar {
   -moz-binding: url("chrome://songbird/content/bindings/sbSearch.xml#sb-searchbar") !important;
 }
 
-menupopup[type="search"] {
-  -moz-binding: url("chrome://songbird/content/bindings/sbSearch.xml#sb-search-menupopup") !important;
-}
-
 sb-windowregionset {
   -moz-binding: url("chrome://songbird/content/bindings/windowRegion.xml#windowregionset") !important;
 }

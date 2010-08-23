@@ -1,27 +1,27 @@
 // vim: set sw=2 :miv
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 /**
  * SBTabProgressListener
@@ -77,7 +77,7 @@ SBTabProgressListener.prototype = {
         var ioService =
           Components.classes["@mozilla.org/network/io-service;1"]
                     .getService(Components.interfaces.nsIIOService);
-        
+
         aLocation = ioService.newURI("about:blank", null, null);
       }
 
@@ -85,7 +85,7 @@ SBTabProgressListener.prototype = {
                          this._tabBrowser.selectedTab.outerPlaylistShowing);
 
       var mediaTab = this._tabBrowser.mediaTab;
-      SBDataSetBoolValue("browser.in_media_page", 
+      SBDataSetBoolValue("browser.in_media_page",
                          mediaTab && this._tabBrowser.selectedTab == mediaTab);
 
       // Let listeners know that the tab location has changed
@@ -112,7 +112,7 @@ SBTabProgressListener.prototype = {
   onStateChange: function SBTabProgressListener_onStateChange(aWebProgress, aRequest, aState, aStatus) {
     const nsIWebProgressListener =
       Ci.nsIWebProgressListener;
-    
+
     // if this state change isn't on the top-level window, ignore it
     if (aWebProgress.DOMWindow != aWebProgress.DOMWindow.parent ||
         !(aState & nsIWebProgressListener.STATE_IS_WINDOW)) {
@@ -128,9 +128,14 @@ SBTabProgressListener.prototype = {
       this._tabBrowser.loading = false;
 
       // Let listeners know that the tab has finished loading
-      // but only if aStatus == 0, an nsresult representing whether the request 
+      // but only if aStatus == 0, an nsresult representing whether the request
       // finished or was cancelled...
-      if (aStatus == 0) {
+      // or aStatus == NS_ERROR_PARSED_DATA_CACHED, an nsresult representing
+      // when the data from a channel has already been parsed and cached
+      const NS_ERROR_PARSED_DATA_CACHED = 0x805D0021;
+      if (Components.isSuccessCode(aStatus) ||
+          aStatus == NS_ERROR_PARSED_DATA_CACHED)
+      {
         this._tabBrowser.notifyTabContentChange();
       }
 
@@ -142,8 +147,8 @@ SBTabProgressListener.prototype = {
       }
     }
   },
-  
-  
+
+
   /* these are not called; refer to the sb-tabbrowser constructor where it's registered */
   onProgressChange: function() { /* do nothing */ },
   onStatusChange: function() { /* do nothing */ },
