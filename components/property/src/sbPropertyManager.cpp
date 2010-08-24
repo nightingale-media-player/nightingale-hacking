@@ -1255,6 +1255,13 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Play queue media list Guid (internal use only)
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_PLAYQUEUE_MEDIALIST_GUID),
+                    EmptyString(),
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
+                    PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   //Denote that the library is a device library (internal use)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_DEVICE_LIBRARY_GUID),
                     EmptyString(),

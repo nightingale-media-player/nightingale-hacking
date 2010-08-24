@@ -180,6 +180,7 @@
 ./components/sbPIMockFirmware.xpt
 ./components/sbParserError.js
 ./components/sbPlayQueueContentInfo.js
+./components/sbPlayQueueService.dll
 ./components/sbPlaybackHistoryService.dll
 ./components/sbPlaybackHistoryService.xpt
 ./components/sbPlaylistCommands.dll

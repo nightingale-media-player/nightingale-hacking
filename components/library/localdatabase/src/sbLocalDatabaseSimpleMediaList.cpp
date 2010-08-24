@@ -1304,6 +1304,8 @@ sbLocalDatabaseSimpleMediaList::RemoveSome(nsISimpleEnumerator* aMediaItems)
 
   sbSimpleMediaListRemovingEnumerationListener listener(this);
 
+  sbAutoBatchHelper batchHelper(*this);
+
   PRUint16 stepResult;
   nsresult rv = listener.OnEnumerationBegin(nsnull, &stepResult);
   NS_ENSURE_SUCCESS(rv, rv);

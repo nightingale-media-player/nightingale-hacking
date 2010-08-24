@@ -176,6 +176,7 @@
 ./components/sbPIMockFirmware.xpt
 ./components/sbParserError.js
 ./components/sbPlayQueueContentInfo.js
+./components/sbPlayQueueService.so
 ./components/sbPlaybackHistoryService.so
 ./components/sbPlaybackHistoryService.xpt
 ./components/sbPlaylistCommands.so

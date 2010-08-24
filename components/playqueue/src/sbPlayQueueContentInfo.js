@@ -38,7 +38,7 @@ Cu.import("resource://app/jsmodules/StringUtils.jsm");
 const SB_PLAYQUEUE_CONTENTURL =
     "chrome://songbird/content/xul/playQueue.xul";
 const SB_PLAYQUEUE_CONTENTICON = "";
-const SB_PLAYQUEUE_DEFAULTWIDTH = 250;
+const SB_PLAYQUEUE_DEFAULTWIDTH = 200;
 const SB_PLAYQUEUE_DEFAULTHEIGHT = 300;
 const SB_PLAYQUEUE_SUGGESTEDCONTENTGROUPS = "sidebar";
 

@@ -39,7 +39,7 @@ interface sbIMediaList;
  * Service to allow queueing items and visibility into the persistent current
  * index.
  */
-[scriptable, uuid(774d2ac1-ebf3-4bcc-a35e-2f8a7d0ef0f3)]
+[scriptable, uuid(f71e95d0-1dd1-11b2-a1f2-e11e308a4d2e)]
 interface sbIPlayQueueService : nsISupports
 {
   /**
@@ -50,7 +50,7 @@ interface sbIPlayQueueService : nsISupports
   /**
    * \brief Index of the current track in the Play Queue
    */
-  attribute long index;
+  attribute unsigned long index;
 
   /**
    * \brief Adds a media item to the next slot in the Play Queue

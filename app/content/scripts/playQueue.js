@@ -46,22 +46,21 @@ var playQueue = {
   onLoad: function playQueue_onLoad() {
     this._LOG("playQueue.onLoad");
 
-/*
- *  xxx slloyd
- *  Getting the play queue service is blocked by Bug 21903. Until the service is
- *  ready, the UI is just a stub that doesn't actually do anything.
-
     var playQueueService = Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
                              .getService(Ci.sbIPlayQueueService);
-    var view = playQueueService.list.createView();
+    var view = playQueueService.mediaList.createView();
     this._playlist = document.getElementById("playqueue-playlist");
 
     var mgr = Cc["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
                 .createInstance(Ci.sbIPlaylistCommandsManager);
-    var commands = mgr.request(kPlaylistCommands.MEDIAITEM_PLAYQUEUE);
+
+  /*
+   * xxx slloyd Use MEDIAITEM_DEFAULT until Bug 22108 gives us playlist commands
+   * for the queue.
+   */
+    var commands = mgr.request(kPlaylistCommands.MEDIAITEM_DEFAULT);
 
     this._playlist.bind(view, commands);
-*/
   },
 
   onUnload: function playQueue_onUnload() {

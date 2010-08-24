@@ -129,6 +129,9 @@
 #define SB_PROPERTY_CREATED_FIRSTRUN_SMARTPLAYLISTS "http://songbirdnest.com/data/1.0#createdFirstRunSmartPlaylists"
 #define SB_PROPERTY_DOWNLOAD_MEDIALIST_GUID   "http://songbirdnest.com/data/1.0#downloadMediaListGUID"
 
+// Play queue library specific properties
+#define SB_PROPERTY_PLAYQUEUE_MEDIALIST_GUID  "http://songbirdnest.com/data/1.0#playQueueMediaListGUID"
+
 // GUID of the device library. Present if the library is the one created for a
 // device library
 #define SB_PROPERTY_DEVICE_LIBRARY_GUID       "http://songbirdnest.com/data/1.0#deviceLibraryGuid"
