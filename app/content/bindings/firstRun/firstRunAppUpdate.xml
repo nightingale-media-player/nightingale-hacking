@@ -710,10 +710,10 @@
 
   <binding id="sb-first-run-app-update-finished"
            extends="chrome://songbird/content/bindings/wizard.xml#sb-wizard-page">
-    <content label="&finishedPage.title;"
+    <content label="&first_run.app_update.finished.title;"
              hidecancel="true"
              hideback="true">
-      <xul:label>&finishedPage.text;</xul:label>
+      <xul:label>&first_run.app_update.finished.text;</xul:label>
       <xul:box anonid="button_attributes"
                xbl:inherits="hideback,showback,hidecancel,showcancel,hidenext,shownext,hidefinish,showfinish,showextra1,showextra2"/>
     </content>

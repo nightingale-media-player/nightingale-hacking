@@ -29,6 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+SUBDIRS = test
+
 #
 # These scripts have problems with absolute paths, so use $(DEPTH) instead
 #

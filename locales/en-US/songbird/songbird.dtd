@@ -622,6 +622,10 @@
 <!ENTITY first_run.add_ons.loading.label     "Retrieving recommended add-ons.">
 <!ENTITY first_run.add_ons.load_failed.label "Unable to retrieve recommended add-ons.">
 
+<!-- First-run application update entities. -->
+<!ENTITY first_run.app_update.finished.title "Update Ready to Install.">
+<!ENTITY first_run.app_update.finished.text "The update will be installed when &brandShortName; is restarted.">
+
 <!-- First-run connection entities. -->
 <!ENTITY first_run.connection.header.label         "&brandShortName; Cannot Connect to the Internet">
 <!ENTITY first_run.connection.description          "Check your Connection Settings or Continue with the Setup assistant.">
