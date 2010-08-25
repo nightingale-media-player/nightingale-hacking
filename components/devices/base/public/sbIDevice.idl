@@ -58,7 +58,7 @@ interface sbIDeviceSupportsItemCallback : nsISupports
  *
  * The main interface to all device objects
  */
-[scriptable, uuid(b404fc82-1dd1-11b2-801c-b548e80bc94d)]
+[scriptable, uuid(526bebfc-1dd2-11b2-a835-e3a8d96d4fa5)]
 interface sbIDevice : nsISupports
 {
   /**
@@ -268,6 +268,9 @@ interface sbIDevice : nsISupports
 
   /* perform image sync */
   const unsigned long REQUEST_IMAGESYNC     = REQUEST_FLAG_WRITE + 10;
+
+  /* write a file to the device */
+  const unsigned long REQUEST_WRITE_FILE    = REQUEST_FLAG_WRITE + 11;
 
   /**
    * 

@@ -132,6 +132,7 @@ public:
       REQUEST_DELETE        = sbIDevice::REQUEST_DELETE,
       REQUEST_SYNC          = sbIDevice::REQUEST_SYNC,
       REQUEST_IMAGESYNC     = sbIDevice::REQUEST_IMAGESYNC,
+      REQUEST_WRITE_FILE    = sbIDevice::REQUEST_WRITE_FILE,
       /* delete all files */
       REQUEST_WIPE          = sbIDevice::REQUEST_WIPE,
       /* move an item in one playlist */
