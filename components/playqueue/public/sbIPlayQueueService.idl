@@ -29,6 +29,7 @@
 
 #include "nsISupports.idl"
 
+interface nsISimpleEnumerator;
 interface sbIMediaItem;
 interface sbIMediaList;
 
@@ -39,7 +40,7 @@ interface sbIMediaList;
  * Service to allow queueing items and visibility into the persistent current
  * index.
  */
-[scriptable, uuid(f71e95d0-1dd1-11b2-a1f2-e11e308a4d2e)]
+[scriptable, uuid(63f4bd5e-5828-4012-850e-f23aae60d144)]
 interface sbIPlayQueueService : nsISupports
 {
   /**
@@ -79,6 +80,26 @@ interface sbIPlayQueueService : nsISupports
    * \sa queueNext()
    */
   void queueLast(in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Adds an enumerator of media items to the next slot in the Play Queue
+   *
+   * Inserts all media items in aMediaItems into the play queue so that the
+   * first enumerated item is played next and the remaining enumerated items are
+   * played before any remaining future tracks that were already in the queue.
+   *
+   * \param aMediaItems enumerator of media items to add
+   * \sa queueSomeLast()
+   */
+  void queueSomeNext(in nsISimpleEnumerator aMediaItems);
+
+  /**
+   * \brief Adds an enumerator of media items to the end of the Play Queue
+   *
+   * \param aMediaItems enumerator of media items to add
+   * \sa queueSomeNext()
+   */
+  void queueSomeLast(in nsISimpleEnumerator aMediaItems);
 
   /**
    * \brief Clear the Play Queue's history

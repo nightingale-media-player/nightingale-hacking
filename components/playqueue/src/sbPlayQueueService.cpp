@@ -322,6 +322,65 @@ sbPlayQueueService::QueueLast(sbIMediaItem* aMediaItem)
 }
 
 NS_IMETHODIMP
+sbPlayQueueService::QueueSomeNext(nsISimpleEnumerator* aMediaItems)
+{
+  TRACE(("%s[%p]", __FUNCTION__, this));
+
+  NS_ASSERTION(NS_IsMainThread(),
+      "QueueSomeNext() must be called from the main thread");
+  NS_ENSURE_ARG_POINTER(aMediaItems);
+  NS_ENSURE_TRUE(mInitialized, NS_ERROR_NOT_INITIALIZED);
+  nsresult rv;
+
+  mIgnoreListListener = PR_TRUE;
+
+  // The index into mMediaList that we will insert aMediaItem before.
+  PRUint32 insertBeforeIndex =
+      (mSequencerOnQueue && mSequencerPlayingOrPaused) ? mIndex + 1 : mIndex;
+
+  PRUint32 length;
+  rv = mMediaList->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (insertBeforeIndex >= length) {
+    rv = mMediaList->AddSome(aMediaItems);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else {
+    nsCOMPtr<sbIOrderableMediaList> orderedList =
+        do_QueryInterface(mMediaList, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = orderedList->InsertSomeBefore(insertBeforeIndex, aMediaItems);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  mIgnoreListListener = PR_FALSE;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbPlayQueueService::QueueSomeLast(nsISimpleEnumerator* aMediaItems)
+{
+  TRACE(("%s[%p]", __FUNCTION__, this));
+
+  NS_ASSERTION(NS_IsMainThread(),
+      "QueueSomeLast() must be called from the main thread");
+  NS_ENSURE_ARG_POINTER(aMediaItems);
+  NS_ENSURE_TRUE(mInitialized, NS_ERROR_NOT_INITIALIZED);
+  nsresult rv;
+
+  mIgnoreListListener = PR_TRUE;
+
+  rv = mMediaList->AddSome(aMediaItems);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mIgnoreListListener = PR_FALSE;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbPlayQueueService::ClearAll()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));

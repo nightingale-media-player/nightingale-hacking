@@ -44,6 +44,8 @@ var kPlaylistCommands = {
   MEDIAITEM_CLEANUPDOWNLOADS     : "{9c68ad34-b35d-4b36-8cc7-5ef14709abe3}",
   MEDIAITEM_CLEARHISTORY         : "{7332def6-0b4b-4c4f-83f6-2f18ebc41259}",
   MEDIAITEM_GETARTWORK           : "{20f183c2-64c4-4e53-974c-eb6b6db1e570}",
+  MEDIAITEM_QUEUENEXT            : "{78386542-1dd2-11b2-8db0-ca4eded7ab5c}",
+  MEDIAITEM_QUEUELAST            : "{ec6e6281-17c6-45bf-8937-1a9eb12332d7}",
 
   MEDIALIST_PLAY                 : "{77c0c7d6-6380-4760-b95c-2a5a7c76047c}",
   MEDIALIST_REMOVE               : "{8be21529-6b2e-4ac7-b96d-c97d78dab81b}",

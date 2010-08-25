@@ -107,6 +107,24 @@ function runTest () {
       this._verifyList();
     },
 
+    testQueueSomeNext: function(num) {
+      var uris = this._generateURIs(num);
+      for (let i = 0; i < uris.length; i++)
+        this._testURIArray.splice(this._testIndex + i, 0, uris[i]);
+      var items = this._generateItems(uris);
+      gPQS.queueSomeNext(ArrayConverter.enumerator(items));
+      this._verifyList();
+    },
+
+    testQueueSomeLast: function(num) {
+      var uris = this._generateURIs(num);
+      for (let i = 0; i < uris.length; i++)
+        this._testURIArray.push(uris[i]);
+      var items = this._generateItems(uris);
+      gPQS.queueSomeLast(ArrayConverter.enumerator(items));
+      this._verifyList();
+    },
+
     testClearHistory: function () {
       if (this._testIndex > 0)
         this._testURIArray.splice(0, this._testIndex);
@@ -337,6 +355,15 @@ function runTest () {
   testFixture.testAdd(5);
   testFixture.testSetIndex(4);
   testFixture.testQueueLast(5);
+
+  // Test queueSomeNext/Last
+  testFixture.reset();
+  testFixture.testQueueSomeNext(3);  // gPQS.index == gPQS.mediaList.length
+  testFixture.testSetIndex(2);
+  testFixture.testQueueSomeNext(1);
+  testFixture.testQueueSomeLast(3);
+  testFixture.testSetIndex(7);
+  testFixture.testQueueSomeLast(1);  // gPQS.index == gPQS.mediaList.length
   
   // sbIOrderableMediaList
   assertTrue(gPQS.mediaList instanceof Ci.sbIOrderableMediaList);

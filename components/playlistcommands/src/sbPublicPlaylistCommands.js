@@ -126,6 +126,9 @@ PublicPlaylistCommands.prototype = {
   m_cmd_LookupCDInfo              : null, // look up cd information
   m_cmd_CheckAll                  : null, // check all
   m_cmd_UncheckAll                : null, // uncheck all
+
+  m_cmd_QueueNext                 : null, // add to next position in play queue
+  m_cmd_QueueLast                 : null, // add to last position in play queue
   
   // Commands that act on playlist themselves
   m_cmd_list_Play                 : null, // play the selected playlist
@@ -672,6 +675,48 @@ PublicPlaylistCommands.prototype = {
                                                       "library_cmd_uncheckall",
                                                       plCmd_NOT(plCmd_IsMediaListReadOnly));
 
+      // -----------------------------------------------------------------------
+      // The Queue Next action
+      // -----------------------------------------------------------------------
+      this.m_cmd_QueueNext = new PlaylistCommandsBuilder();
+      this.m_cmd_QueueNext.appendAction(null,
+                                        "library_cmd_queuenext",
+                                        "&command.queuenext",
+                                        "&command.tooltip.queuenext",
+                                        plCmd_QueueNext_TriggerCallback);
+
+      this.m_cmd_QueueNext.setCommandShortcut(null,
+                                              "library_cmd_queuenext",
+                                              "&command.shortcut.key.queuenext",
+                                              "&command.shortcut.keycode.queuenext",
+                                              "&command.shortcut.modifiers.queuenext",
+                                              true);
+
+      this.m_cmd_QueueNext.setCommandEnabledCallback(null,
+                                                     "library_cmd_queuenext",
+                                                     plCmd_IsAnyTrackSelected);
+
+      // -----------------------------------------------------------------------
+      // The Queue Last action
+      // -----------------------------------------------------------------------
+      this.m_cmd_QueueLast = new PlaylistCommandsBuilder();
+      this.m_cmd_QueueLast.appendAction(null,
+                                        "library_cmd_queuelast",
+                                        "&command.queuelast",
+                                        "&command.tooltip.queuelast",
+                                        plCmd_QueueLast_TriggerCallback);
+
+      this.m_cmd_QueueLast.setCommandShortcut(null,
+                                              "library_cmd_queuelast",
+                                              "&command.shortcut.key.queuelast",
+                                              "&command.shortcut.keycode.queuelast",
+                                              "&command.shortcut.modifiers.queuelast",
+                                              true);
+      this.m_cmd_QueueLast.setCommandEnabledCallback(null,
+                                                     "library_cmd_queuelast",
+                                                     plCmd_IsAnyTrackSelected);
+
+
       // --------------------------------------------------------------------------
 
       // Publish atomic commands
@@ -691,6 +736,8 @@ PublicPlaylistCommands.prototype = {
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_CLEANUPDOWNLOADS, this.m_cmd_CleanUpDownloads);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_CLEARHISTORY, this.m_cmd_ClearHistory);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_GETARTWORK, this.m_cmd_GetArtwork);
+      this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_QUEUENEXT, this.m_cmd_QueueNext);
+      this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_QUEUELAST, this.m_cmd_QueueLast);
 
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_PLAY, this.m_cmd_list_Play);
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_REMOVE, this.m_cmd_list_Remove);
@@ -734,7 +781,17 @@ PublicPlaylistCommands.prototype = {
       this.m_defaultCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_remove",
                                                     this.m_cmd_Remove);
-      
+
+      this.m_defaultCommands.appendSeparator(null, "default_commands_separator_3");
+
+      this.m_defaultCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_queuenext",
+                                                    this.m_cmd_QueueNext);
+
+      this.m_defaultCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_queuenast",
+                                                    this.m_cmd_QueueLast);
+
       this.m_defaultCommands.setVisibleCallback(plCmd_ShowDefaultInToolbarCheck);
 
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_DEFAULT, this.m_defaultCommands);
@@ -844,6 +901,15 @@ PublicPlaylistCommands.prototype = {
       this.m_webPlaylistCommands.appendPlaylistCommands(null,
                                                         "library_cmdobj_showdlplaylist",
                                                         this.m_cmd_ShowDownloadPlaylist);
+      this.m_webPlaylistCommands.appendSeparator(null, "web_commands_separator_2");
+
+      this.m_webPlaylistCommands.appendPlaylistCommands(null,
+                                                        "library_cmdobj_queuenext",
+                                                        this.m_cmd_QueueNext);
+
+      this.m_webPlaylistCommands.appendPlaylistCommands(null,
+                                                        "library_cmdobj_queuelast",
+                                                        this.m_cmd_QueueLast);
 
       this.m_webPlaylistCommands.setVisibleCallback(plCmd_ShowDefaultInToolbarCheck);
 
@@ -1089,6 +1155,8 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_CLEANUPDOWNLOADS, this.m_cmd_CleanUpDownloads);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_CLEARHISTORY, this.m_cmd_ClearHistory);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_GETARTWORK, this.m_cmd_GetArtwork);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_QUEUENEXT, this.m_cmd_QueueNext);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_QUEUELAST, this.m_cmd_QueueLast);
 
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_PLAY, this.m_cmd_list_Play);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_REMOVE, this.m_cmd_list_Remove);
@@ -1179,6 +1247,8 @@ PublicPlaylistCommands.prototype = {
     this.m_cmd_CleanUpDownloads.shutdown();
     this.m_cmd_ClearHistory.shutdown();
     this.m_cmd_GetArtwork.shutdown();
+    this.m_cmd_QueueNext.shutdown();
+    this.m_cmd_QueueLast.shutdown();
     this.m_cmd_list_Play.shutdown();
     this.m_cmd_list_Remove.shutdown();
     this.m_cmd_list_Rename.shutdown();
@@ -1460,6 +1530,42 @@ function plCmd_GetArtwork_TriggerCallback(aContext, aSubMenuId, aCommandId, aHos
   }
 }
 
+// Called when the queueNext action is triggered
+function plCmd_QueueNext_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  var wrapper =
+      plCmd_GetSelectedItemWrapperForPlaylist(unwrap(aContext.playlist));
+  if (wrapper) {
+    let queueService = Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
+                       .getService(Ci.sbIPlayQueueService);
+    queueService.queueSomeNext(wrapper);
+  }
+}
+
+// Called when the queueLast action is triggered
+function plCmd_QueueLast_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  var wrapper =
+      plCmd_GetSelectedItemWrapperForPlaylist(unwrap(aContext.playlist));
+  if (wrapper) {
+    let queueService = Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
+                         .getService(Ci.sbIPlayQueueService);
+    queueService.queueSomeLast(wrapper);
+  }
+}
+
+// Helper function to get a wrapped enumerator of the selected items in a
+// mediaList. Returns null if nothing is selected.
+function plCmd_GetSelectedItemWrapperForPlaylist(aPlaylist) {
+  var wrapper = null;
+  if (aPlaylist.mediaListView.selection.count) {
+    let indexedSelection =
+      aPlaylist.mediaListView.selection.selectedIndexedMediaItems;
+    wrapper = Cc["@songbirdnest.com/Songbird/Library/EnumeratorWrapper;1"]
+                .createInstance(Ci.sbIMediaListEnumeratorWrapper);
+    wrapper.initialize(indexedSelection);
+  }
+
+  return wrapper;
+}
 
 // Called when the lookup cd info action is triggered
 function plCmd_LookupCDInfo_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
