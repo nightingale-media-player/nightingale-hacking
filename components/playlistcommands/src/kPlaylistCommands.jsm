@@ -50,6 +50,8 @@ var kPlaylistCommands = {
   MEDIALIST_PLAY                 : "{77c0c7d6-6380-4760-b95c-2a5a7c76047c}",
   MEDIALIST_REMOVE               : "{8be21529-6b2e-4ac7-b96d-c97d78dab81b}",
   MEDIALIST_RENAME               : "{b77c5259-62fc-4cd7-af79-ece9adb778b6}",
+  MEDIALIST_QUEUENEXT            : "{41a96e57-361c-4675-8ac1-9d808c6a4c74}",
+  MEDIALIST_QUEUELAST            : "{db4f216e-6d95-4251-b7a5-f931664425d5}",
   MEDIALIST_UPDATESMARTMEDIALIST : "{a21c0a87-9f0b-4f43-aafe-92c055a13a2d}",
   MEDIALIST_EDITSMARTMEDIALIST   : "{5bc8bf35-57e9-4130-9f3a-d7a32367d70f}",
 

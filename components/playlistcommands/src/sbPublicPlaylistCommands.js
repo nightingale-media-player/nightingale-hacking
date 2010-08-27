@@ -134,6 +134,10 @@ PublicPlaylistCommands.prototype = {
   m_cmd_list_Play                 : null, // play the selected playlist
   m_cmd_list_Remove               : null, // remove the selected playlist
   m_cmd_list_Rename               : null, // rename the selected playlist
+  m_cmd_list_QueueNext            : null, // add all contents of the selected
+                                          // playlist to next position in queue
+  m_cmd_list_QueueLast            : null, // add all contents of the selected
+                                          // playlist to last position in queue
 
   // ==========================================================================
   // INIT
@@ -595,6 +599,62 @@ PublicPlaylistCommands.prototype = {
                                                        plCmd_CanModifyPlaylist);
 
       // --------------------------------------------------------------------------
+      // The QueueNext Playlist action
+      // --------------------------------------------------------------------------
+
+      this.m_cmd_list_QueueNext = new PlaylistCommandsBuilder();
+
+      this.m_cmd_list_QueueNext.appendAction(null,
+                                             "playlist_cmd_queuenext",
+                                             "&command.playlist.queuenext",
+                                             "&command.tooltip.playlist.queuenext",
+                                             plCmd_QueueListNext_TriggerCallback);
+
+      this.m_cmd_list_QueueNext.setCommandShortcut(null,
+                                                   "playlist_cmd_queuenext",
+                                                   "&command.playlist.shortcut.key.queuenext",
+                                                   "&command.playlist.shortcut.keycode.queuenext",
+                                                   "&command.playlist.shortcut.modifiers.queuenext",
+                                                   true);
+
+      this.m_cmd_list_QueueNext.setCommandVisibleCallback(null,
+                                                          "playlist_cmd_queuenext",
+                                                          plCmd_CanQueuePlaylist);
+
+      // disable the command for empty playlists.
+      this.m_cmd_list_QueueNext.setCommandEnabledCallback(null,
+                                                          "playlist_cmd_queuenext",
+                                                          plCmd_IsNotEmptyPlaylist);
+
+      // --------------------------------------------------------------------------
+      // The QueueLast Playlist action
+      // --------------------------------------------------------------------------
+
+      this.m_cmd_list_QueueLast = new PlaylistCommandsBuilder();
+
+      this.m_cmd_list_QueueLast.appendAction(null,
+                                             "playlist_cmd_queuelast",
+                                             "&command.playlist.queuelast",
+                                             "&command.tooltip.playlist.queuelast",
+                                             plCmd_QueueListLast_TriggerCallback);
+
+      this.m_cmd_list_QueueLast.setCommandShortcut(null,
+                                                   "playlist_cmd_queuelast",
+                                                   "&command.playlist.shortcut.key.queuelast",
+                                                   "&command.playlist.shortcut.keycode.queuelast",
+                                                   "&command.playlist.shortcut.modifiers.queuelast",
+                                                   true);
+
+      this.m_cmd_list_QueueLast.setCommandVisibleCallback(null,
+                                                          "playlist_cmd_queuelast",
+                                                          plCmd_CanQueuePlaylist);
+
+      // disable the command for empty playlists.
+      this.m_cmd_list_QueueLast.setCommandEnabledCallback(null,
+                                                          "playlist_cmd_queuelast",
+                                                          plCmd_IsNotEmptyPlaylist);
+
+      // --------------------------------------------------------------------------
       // The Get Artwork action
       // --------------------------------------------------------------------------
 
@@ -742,6 +802,8 @@ PublicPlaylistCommands.prototype = {
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_PLAY, this.m_cmd_list_Play);
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_REMOVE, this.m_cmd_list_Remove);
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_RENAME, this.m_cmd_list_Rename);
+      this.m_mgr.publish(kPlaylistCommands.MEDIALIST_QUEUENEXT, this.m_cmd_list_QueueNext);
+      this.m_mgr.publish(kPlaylistCommands.MEDIALIST_QUEUELAST, this.m_cmd_list_QueueLast);
 
       // --------------------------------------------------------------------------
       // Construct and publish the main library commands
@@ -1101,6 +1163,14 @@ PublicPlaylistCommands.prototype = {
       this.m_serviceTreeDefaultCommands.setCommandEnabledCallback(null,
                                               "servicetree_cmdobj_rename",
                                               plCmd_CanModifyPlaylist);
+
+      this.m_serviceTreeDefaultCommands.appendPlaylistCommands(null,
+                                              "servicetree_cmdobj_queuenext",
+                                              this.m_cmd_list_QueueNext);
+
+      this.m_serviceTreeDefaultCommands.appendPlaylistCommands(null,
+                                              "servicetree_cmdobj_queuelast",
+                                              this.m_cmd_list_QueueLast);
       
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_DEFAULT, this.m_serviceTreeDefaultCommands);
 
@@ -1161,6 +1231,8 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_PLAY, this.m_cmd_list_Play);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_REMOVE, this.m_cmd_list_Remove);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_RENAME, this.m_cmd_list_Rename);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_QUEUENEXT, this.m_cmd_list_QueueNext);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_QUEUELAST, this.m_cmd_list_QueueLast);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_UPDATESMARTMEDIALIST, this.m_cmd_UpdateSmartPlaylist);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_EDITSMARTMEDIALIST, this.m_cmd_EditSmartPlaylist);
 
@@ -1252,6 +1324,8 @@ PublicPlaylistCommands.prototype = {
     this.m_cmd_list_Play.shutdown();
     this.m_cmd_list_Remove.shutdown();
     this.m_cmd_list_Rename.shutdown();
+    this.m_cmd_list_QueueNext.shutdown();
+    this.m_cmd_list_QueueLast.shutdown();
     this.m_cmd_UpdateSmartPlaylist.shutdown();
     this.m_cmd_EditSmartPlaylist.shutdown();
     this.m_cmd_SmartPlaylistSep.shutdown();
@@ -1703,6 +1777,22 @@ function plCmd_RenameList_TriggerCallback(aContext, aSubMenuId, aCommandId, aHos
   }
 }
 
+// Called when the queueNext action is triggered for a playlist
+function plCmd_QueueListNext_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  var mediaList = unwrap(aContext.medialist);
+  var queueService = Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
+                       .getService(Ci.sbIPlayQueueService);
+  queueService.queueNext(mediaList);
+}
+
+// Called when the queueLast action is triggered for a playlist
+function plCmd_QueueListLast_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  var mediaList = unwrap(aContext.medialist);
+  var queueService = Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
+                       .getService(Ci.sbIPlayQueueService);
+  queueService.queueLast(mediaList);
+}
+
 function plCmd_UpdateSmartPlaylist_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
   var medialist = unwrap(aContext.medialist);
   if (medialist instanceof Ci.sbILocalDatabaseSmartMediaList)
@@ -1851,6 +1941,20 @@ function plCmd_IsNotEmptyPlaylist(aContext, aSubMenuId, aCommandId, ahost) {
 function plCmd_CanModifyPlaylist(aContext, aSubMenuId, aCommandId, aHost) {
   return !(plCmd_isReadOnlyLibrary(aContext, aSubMenuId, aCommandId, aHost) ||
            plCmd_isReadOnlyPlaylist(aContext, aSubMenuId, aCommandId, aHost));
+}
+
+// Returns true if the playlist can be added to the play queue
+function plCmd_CanQueuePlaylist(aContext, aSubMenuId, aCommandId, aHost) {
+
+  // Don't allow device playlists to be added to the play queue. See comments in
+  // Bug 21895.
+  var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                        .getService(Ci.sbIDeviceManager2);
+
+  // device will be null if the list is not in a device library
+  var device = deviceManager.getDeviceForItem(unwrap(aContext.medialist));
+
+  return !device;
 }
 
 // Returns true if the playlist content can be modified (is not read-only)
