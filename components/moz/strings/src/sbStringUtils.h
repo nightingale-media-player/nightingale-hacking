@@ -47,19 +47,21 @@ public:
     AssignLiteral(valueStr);
   }
 
-  sbAutoString(PRUint32 aValue, PRBool aHex = PR_FALSE, PRBool aHexPrefix = PR_TRUE)
+  sbAutoString(PRUint32 aValue,
+               PRBool aHex = PR_FALSE,
+               PRBool aHexPrefix = PR_TRUE)
   {
     char valueStr[64];
 
     if(!aHex) {
-      PR_snprintf(valueStr, sizeof(valueStr), "%lu", aValue);
+      PR_snprintf(valueStr, sizeof(valueStr), "%lu", long(aValue));
     }
     else {
       if(aHexPrefix) {
-        PR_snprintf(valueStr, sizeof(valueStr), "0x%lx", aValue);
+        PR_snprintf(valueStr, sizeof(valueStr), "0x%lx", long(aValue));
       }
       else {
-        PR_snprintf(valueStr, sizeof(valueStr), "%lx", aValue);
+        PR_snprintf(valueStr, sizeof(valueStr), "%lx", long(aValue));
       }
     }
 
@@ -75,6 +77,58 @@ public:
   }
 
   sbAutoString(PRUint64 aValue)
+  {
+    char valueStr[64];
+
+    PR_snprintf(valueStr, sizeof(valueStr), "%llu", aValue);
+    AssignLiteral(valueStr);
+  }
+};
+
+/**
+ * Class used to create strings from other data types.
+ */
+class sbCAutoString : public nsCAutoString
+{
+public:
+  sbCAutoString(int aValue)
+  {
+    char valueStr[64];
+
+    PR_snprintf(valueStr, sizeof(valueStr), "%d", aValue);
+    AssignLiteral(valueStr);
+  }
+
+  sbCAutoString(PRUint32 aValue,
+                PRBool aHex = PR_FALSE,
+                PRBool aHexPrefix = PR_TRUE)
+  {
+    char valueStr[64];
+
+    if(!aHex) {
+      PR_snprintf(valueStr, sizeof(valueStr), "%lu", long(aValue));
+    }
+    else {
+      if(aHexPrefix) {
+        PR_snprintf(valueStr, sizeof(valueStr), "0x%lx", long(aValue));
+      }
+      else {
+        PR_snprintf(valueStr, sizeof(valueStr), "%lx", long(aValue));
+      }
+    }
+
+    AssignLiteral(valueStr);
+  }
+
+  sbCAutoString(PRInt64 aValue)
+  {
+    char valueStr[64];
+
+    PR_snprintf(valueStr, sizeof(valueStr), "%lld", aValue);
+    AssignLiteral(valueStr);
+  }
+
+  sbCAutoString(PRUint64 aValue)
   {
     char valueStr[64];
 
