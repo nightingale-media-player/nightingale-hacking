@@ -36,3 +36,15 @@ See chrome://songbird/content/xul/playQueue.xul
 #playqueue-header-box {
   min-height: 27px;
 }
+
+#playqueue-message-layer-outer-box {
+  padding: 10px;
+  background-color: transparent;
+}
+
+.playqueue-instructions {
+  padding: 10px;
+  text-align: center;
+  -moz-border-radius: 6px;
+}
+

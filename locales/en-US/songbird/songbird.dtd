@@ -852,3 +852,4 @@
 <!ENTITY cdinfo.other.label                "Add your own Artist and Album Info">
 
 <!ENTITY playqueue.label "Play Queue">
+<!ENTITY playqueue.instructions "Drag and drop tracks or playlists here to create an on-the-fly listening queue">

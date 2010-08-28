@@ -42,14 +42,37 @@
         onload="playQueue.onLoad();"
         onunload="playQueue.onUnload();"
 >
+  <!-- Header Section -->
   <hbox id="playqueue-header-box"
         align="center">
     <description value="&playqueue.label;" />
   </hbox>
-  <sb-playlist id="playqueue-playlist"
-               flex="1"
-               hidefilters="true"
-  />
+
+  <!-- Main Content Section -->
+  <stack flex="1">
+
+    <!-- Playlist Binding -->
+    <vbox id="playqueue-playlist-box"
+          flex="1">
+      <sb-playlist id="playqueue-playlist"
+                   flex="1"
+                   hidefilters="true"
+      />
+    </vbox>
+
+    <!-- Message Layer for Empty Play Queue -->
+    <vbox id="playqueue-message-layer-outer-box"
+          pack="center"
+          flex="1"
+          ondragdrop="playQueue.onEmptyQueueDragDrop(event);">
+      <vbox id="playqueue-message-layer-inner-box"
+            class="playqueue-instructions"
+            pack="center">
+        <description>&playqueue.instructions;</description>
+      </vbox>
+    </vbox>
+
+  </stack>
 
   <script type="application/x-javascript"
           src="chrome://songbird/content/scripts/playQueue.js" />

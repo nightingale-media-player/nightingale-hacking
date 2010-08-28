@@ -59,6 +59,7 @@ TABLE OF CONTENTS
 > ABOUT CONFIG (MOZAPP)
 > PREFERENCES (MOZAPP)
 > FIREFOX API
+> PLAY QUEUE
 
 ******************************************************************************
 
@@ -1765,3 +1766,11 @@ domi-panelset label.viewer-title {
   border: 1px solid #504e5b;
 }
 
+/*******************************************************************************
+* PLAY QUEUE
+*******************************************************************************/
+
+.playqueue-instructions {
+  background-color: rgb(36,34,46);
+  line-height: 16px;
+}
