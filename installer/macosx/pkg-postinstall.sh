@@ -14,11 +14,11 @@ umask 002
 
 # We chown the entire .app bundle both before disthelper runs and after,
 # just so we're sure we get any files disthelper itself created.
-chown -R $(ps -p $PPID -o uid | tail -n 1) "${TARGET}"
+chown -R "${USER}" "${TARGET}" 1>&2
 
 cd "${RESDIR}"
 ./disthelper install
 DISTHELPER_RETURN_VAL=$?
 
-chown -R $(ps -p $PPID -o uid | tail -n 1) "${TARGET}"
+chown -R "${USER}" "${TARGET}" 1>&2
 exit $DISTHELPER_RETURN_VAL
