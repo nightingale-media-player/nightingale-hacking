@@ -43,7 +43,7 @@
     <mod>installTo</mod>
   </config>
   <scripts>
-    <scripts-dir mod="true">@SONGBIRD_SRCDIR@/scripts</scripts-dir>
+    <scripts-dir mod="true">@CURDIR@/scripts</scripts-dir>
   </scripts>
   <contents>
     <file-list>01songbird-contents.xml</file-list>

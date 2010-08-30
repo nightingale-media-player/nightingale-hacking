@@ -31,6 +31,8 @@ include $(DEPTH)/build/autodefs.mk
 
 PKG_STAGING_DIR = pkg-staging
 
+SCRIPTS_COPY_DIR = $(CURDIR)/scripts
+
 # These only need to be defined if we're building a partner .pkg dmg
 ifneq (,$(filter pkg,$(SB_INSTALLER_SUFFIXES)))
    SONGBIRD_PP_DIR = installer.pmdoc
@@ -44,6 +46,7 @@ ifneq (,$(filter pkg,$(SB_INSTALLER_SUFFIXES)))
 
    PPDEFINES = -DSONGBIRD_OBJDIR=$(SONGBIRD_OBJDIR) \
                -DSONGBIRD_SRCDIR=$(srcdir) \
+               -DCURDIR=$(CURDIR) \
                -DMACOSX_APPBUNDLE=$(MACOSX_APPBUNDLE) \
                -DDISTDIRNAME=$(DISTDIRNAME) \
                -DSONGBIRD_APPBUNDLE=$(SONGBIRD_OBJDIR)/$(DISTDIRNAME)/$(MACOSX_APPBUNDLE) \
@@ -54,6 +57,7 @@ ifneq (,$(filter pkg,$(SB_INSTALLER_SUFFIXES)))
 
    GARBAGE += $(SONGBIRD_PP_DIR) \
               $(PKG_STAGING_DIR) \
+              $(SCRIPTS_COPY_DIR) \
               $(NULL)
 
    MAKE_MACPKG_MANIFEST = $(topsrcdir)/tools/scripts/make-macpkg-manifest.py
@@ -69,7 +73,12 @@ include $(topsrcdir)/build/rules.mk
 $(SONGBIRD_PP_DIR)/01songbird-contents.xml:
 	$(MAKE_MACPKG_MANIFEST) $(SONGBIRD_OBJDIR)/$(DISTDIRNAME)/$(MACOSX_APPBUNDLE) -o $@
 
-$(PKG_STAGING_DIR)/$(SB_INSTALLER_NAME).pkg: $(SONGBIRD_PP_DIR)/01songbird-contents.xml
+$(SCRIPTS_COPY_DIR): FORCE
+	$(MKDIR) $(SCRIPTS_COPY_DIR)
+	$(CP) $(srcdir)/pkg-postinstall.sh $(SCRIPTS_COPY_DIR)/postinstall
+	$(CP) $(srcdir)/pkg-postinstall.sh $(SCRIPTS_COPY_DIR)/postupgrade
+
+$(PKG_STAGING_DIR)/$(SB_INSTALLER_NAME).pkg: $(SONGBIRD_PP_DIR)/01songbird-contents.xml $(SCRIPTS_COPY_DIR)
 	$(MACPKGMAKER) --doc installer.pmdoc --verbose --id com.songbirdnest.songbird -o $@
 
 # .dmg libs target
