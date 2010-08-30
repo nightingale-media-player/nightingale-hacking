@@ -37,8 +37,9 @@ Cu.import("resource://app/jsmodules/StringUtils.jsm");
 // Constants for display pane content info
 const SB_PLAYQUEUE_CONTENTURL =
     "chrome://songbird/content/xul/playQueue.xul";
-const SB_PLAYQUEUE_CONTENTICON = "";
-const SB_PLAYQUEUE_DEFAULTWIDTH = 200;
+const SB_PLAYQUEUE_CONTENTICON =
+    "chrome://songbird/skin/browser/icon-link-playable.png";
+const SB_PLAYQUEUE_DEFAULTWIDTH = 150;
 const SB_PLAYQUEUE_DEFAULTHEIGHT = 300;
 const SB_PLAYQUEUE_SUGGESTEDCONTENTGROUPS = "sidebar";
 

@@ -45,6 +45,7 @@
   <!-- Header Section -->
   <hbox id="playqueue-header-box"
         align="center">
+    <image class="playqueue-header-image" />
     <description value="&playqueue.label;" />
   </hbox>
 

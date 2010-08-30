@@ -37,6 +37,11 @@ See chrome://songbird/content/xul/playQueue.xul
   min-height: 27px;
 }
 
+.playqueue-header-image {
+  list-style-image: url("chrome://songbird/skin/browser/icon-link-playable.png");
+  padding-left: 4px;
+}
+
 #playqueue-message-layer-outer-box {
   padding: 10px;
   background-color: transparent;
