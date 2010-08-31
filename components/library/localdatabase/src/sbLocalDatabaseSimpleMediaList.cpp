@@ -871,6 +871,8 @@ sbLocalDatabaseSimpleMediaList::InsertAllBefore(PRUint32 aIndex,
   rv = GetBeforeOrdinal(aIndex, startingOrdinal);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  startingOrdinal.AppendLiteral(".0");
+
   sbSimpleMediaListInsertingEnumerationListener listener(this,
                                                          aIndex,
                                                          startingOrdinal);

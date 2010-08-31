@@ -328,6 +328,35 @@ function runTest () {
   a = a.concat(b);
   assertList(list, a);
 
+  // Test insertAllBefore.
+  var insertItems = [];
+  insertItems[0] = library.getMediaItem("3E6DD1C2-AD99-11DB-9321-C22AB7121F49");
+  insertItems[1] = library.getMediaItem("3E6D8050-AD99-11DB-9321-C22AB7121F49");
+  insertItems[2] = library.getMediaItem("3E6D3050-AD99-11DB-9321-C22AB7121F49");
+  var insertList = library.createMediaList("simple");
+  insertList.addSome(new SimpleArrayEnumerator(insertItems));
+  list.insertAllBefore(0, insertList);
+  a.unshift(insertItems[2].guid);
+  a.unshift(insertItems[1].guid);
+  a.unshift(insertItems[0].guid);
+  assertList(list, a);
+
+  // Test insertAllBefore again to ensure ordinals are set properly.
+  list.insertAllBefore(0, insertList);
+  a.unshift(insertItems[2].guid);
+  a.unshift(insertItems[1].guid);
+  a.unshift(insertItems[0].guid);
+  assertList(list, a);
+
+  // Move items added with insertAllBefore to the end of the list. Otherwise,
+  // removal tests will fail because they require the items removed from the
+  // beginning of the list to only exist once on the list.
+  var indexes = [0, 1, 2, 3, 4, 5];
+  list.moveSomeLast(indexes, indexes.length);
+  b = a.splice(0, 6);
+  a = a.concat(b);
+  assertList(list, a);
+
   // Test remove
   item = library.getMediaItem("3E586C1A-AD99-11DB-9321-C22AB7121F49");
   assertEqual(list.contains(item), true);
