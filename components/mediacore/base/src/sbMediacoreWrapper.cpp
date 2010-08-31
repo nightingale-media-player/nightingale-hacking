@@ -38,7 +38,6 @@
 #include <nsXPCOMCID.h>
 #include <prlog.h>
 
-#include <IWindowCloak.h>
 #include <sbIPropertyArray.h>
 
 #include <sbProxiedComponentManager.h>
@@ -138,13 +137,6 @@ sbMediacoreWrapper::OnGetCapabilities()
 sbMediacoreWrapper::OnShutdown()
 {
   nsresult rv = NS_ERROR_UNEXPECTED;
-
-  nsCOMPtr<sbIWindowCloak> windowCloak = 
-    do_ProxiedGetService("@songbirdnest.com/Songbird/WindowCloak;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = windowCloak->Uncloak(mPluginHostWindow);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = RemoveSelfDOMListener();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -502,15 +494,6 @@ sbMediacoreWrapper::HandleEvent(nsIDOMEvent *aEvent)
     NS_ENSURE_SUCCESS(rv, rv);
 
     mWindowIsReady = PR_TRUE;
-    
-    nsCOMPtr<sbIWindowCloak> windowCloak = 
-      do_ProxiedGetService("@songbirdnest.com/Songbird/WindowCloak;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // For debugging, you can comment this out to see the window which is
-    // hosting the plugin. 
-    //rv = windowCloak->Cloak(mPluginHostWindow);
-    //NS_ENSURE_SUCCESS(rv, rv);
   }
   else if(eventType.EqualsLiteral("mediacore-buffering-begin")) {
     rv = DispatchMediacoreEvent(sbIMediacoreEvent::BUFFERING, 
