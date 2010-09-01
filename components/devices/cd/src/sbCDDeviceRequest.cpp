@@ -1248,6 +1248,7 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   }
 
   if (listener->IsAborted()) {
+    autoComplete.SetResult(NS_OK);
     return NS_ERROR_ABORT;
   }
 
