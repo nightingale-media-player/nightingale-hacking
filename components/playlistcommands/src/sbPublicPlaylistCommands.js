@@ -103,6 +103,7 @@ PublicPlaylistCommands.prototype = {
   m_mgr                           : null,
   m_deviceLibraryCommands         : null,
   m_cdDeviceLibraryCommands       : null,
+  m_playQueueLibraryCommands      : null,
   
   // Define various playlist commands, they will be exposed to the playlist commands
   // manager so that they can later be retrieved and concatenated into bigger
@@ -138,6 +139,11 @@ PublicPlaylistCommands.prototype = {
                                           // playlist to next position in queue
   m_cmd_list_QueueLast            : null, // add all contents of the selected
                                           // playlist to last position in queue
+
+  // Play queue library commands
+  m_cmd_playqueue_SaveToPlaylist  : null,
+  m_cmd_playqueue_ClearHistory    : null,
+  m_cmd_playqueue_ClearAll        : null,
 
   // ==========================================================================
   // INIT
@@ -702,7 +708,55 @@ PublicPlaylistCommands.prototype = {
       this.m_cmd_LookupCDInfo.setCommandEnabledCallback(null,
                                                         "library_cmd_lookupcdinfo",
                                                         plCmd_NOT(plCmd_IsMediaListReadOnly));
+    
+      // --------------------------------------------------------------------------
+      // Play Queue bundled commands
+      // --------------------------------------------------------------------------
 
+      this.m_cmd_playqueue_SaveToPlaylist = new PlaylistCommandsBuilder();
+      
+      this.m_cmd_playqueue_SaveToPlaylist.appendAction(null,
+                                                       "playqueue_cmd_savetoplaylist",
+                                                       "&command.queuesavetoplaylist",
+                                                       "&command.tooltip.queuesavetoplaylist",
+                                                       plCmd_QueueSaveToPlaylist_TriggerCallback);
+
+      this.m_cmd_playqueue_SaveToPlaylist.setCommandShortcut(null,
+                                                             "playqueue_cmd_savetoplaylist",
+                                                             "&command.shortcut.key.queuesavetoplaylist",
+                                                             "&command.shortcut.keycode.queuesavetoplaylist",
+                                                             "&command.shortcut.modifiers.queuesavetoplaylist",
+                                                             true);
+
+      this.m_cmd_playqueue_ClearAll = new PlaylistCommandsBuilder();
+      
+      this.m_cmd_playqueue_ClearAll.appendAction(null,
+                                           "playqueue_cmd_clearall",
+                                           "&command.queueclearall",
+                                           "&command.tooltip.queueclearall",
+                                           plCmd_QueueClearAll_TriggerCallback);
+
+      this.m_cmd_playqueue_ClearAll.setCommandShortcut(null,
+                                                       "playqueue_cmd_clearall",
+                                                       "&command.shortcut.key.queueclearall",
+                                                       "&command.shortcut.keycode.queueclearall",
+                                                       "&command.shortcut.modifiers.queueclearall",
+                                                       true);
+
+      this.m_cmd_playqueue_ClearHistory = new PlaylistCommandsBuilder();
+      
+      this.m_cmd_playqueue_ClearHistory.appendAction(null,
+                                           "playqueue_cmd_clearhistory",
+                                           "&command.queueclearhistory",
+                                           "&command.tooltip.queueclearhistory",
+                                           plCmd_QueueClearHistory_TriggerCallback);
+
+      this.m_cmd_playqueue_ClearHistory.setCommandShortcut(null,
+                                                           "playqueue_cmd_clearhistory",
+                                                           "&command.shortcut.key.queueclearhistory",
+                                                           "&command.shortcut.keycode.queueclearhistory",
+                                                           "&command.shortcut.modifiers.queueclearhistory",
+                                                           true);
 
       // ----------------------------------------------------------------------
       // The Check/Uncheck All actions
@@ -1088,6 +1142,27 @@ PublicPlaylistCommands.prototype = {
       
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_CDDEVICE_LIBRARY,
                          this.m_cdDeviceLibraryCommands);
+
+      // --------------------------------------------------------------------------
+      // Construct and publish the play queue device library commands
+      // --------------------------------------------------------------------------
+
+      this.m_playQueueLibraryCommands = new PlaylistCommandsBuilder();
+
+      this.m_playQueueLibraryCommands.appendPlaylistCommands(null,
+                                                    "playqueue_cmdobj_savetoplaylist",
+                                                    this.m_cmd_playqueue_SaveToPlaylist);
+
+      this.m_playQueueLibraryCommands.appendPlaylistCommands(null,
+                                                    "playqueue_cmdobj_clearall",
+                                                    this.m_cmd_playqueue_ClearAll);
+
+      this.m_playQueueLibraryCommands.appendPlaylistCommands(null,
+                                                    "playqueue_cmdobj_clearhistory",
+                                                    this.m_cmd_playqueue_ClearHistory);
+      
+      this.m_mgr.publish(kPlaylistCommands.MEDIALIST_PLAYQUEUE_LIBRARY,
+                         this.m_playQueueLibraryCommands);
       
 
       // --------------------------------------------------------------------------
@@ -1639,6 +1714,28 @@ function plCmd_GetSelectedItemWrapperForPlaylist(aPlaylist) {
   }
 
   return wrapper;
+}
+
+// Called when the save to playlist action is triggered
+function plCmd_QueueSaveToPlaylist_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  var queueService = Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
+                       .getService(Ci.sbIPlayQueueService);
+  var newMediaList = aContext.window.makeNewPlaylist("simple");
+  newMediaList.addAll(queueService.mediaList);
+}
+
+// Called when the clear all action is triggered
+function plCmd_QueueClearAll_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  var queueService = Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
+                       .getService(Ci.sbIPlayQueueService);
+  queueService.clearAll();
+}
+
+// Called when the clear history playlist action is triggered
+function plCmd_QueueClearHistory_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  var queueService = Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
+                       .getService(Ci.sbIPlayQueueService);
+  queueService.clearHistory();
 }
 
 // Called when the lookup cd info action is triggered

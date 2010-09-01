@@ -55,6 +55,10 @@ var kPlaylistCommands = {
   MEDIALIST_UPDATESMARTMEDIALIST : "{a21c0a87-9f0b-4f43-aafe-92c055a13a2d}",
   MEDIALIST_EDITSMARTMEDIALIST   : "{5bc8bf35-57e9-4130-9f3a-d7a32367d70f}",
 
+  PLAYQUEUE_SAVETOPLAYLIST       : "{5fab0587-f3b3-4729-8c95-691991f361cb}",
+  PLAYQUEUE_CLEARALL             : "{51157e1b-0b7e-43e0-890c-6549ad65cc17}",
+  PLAYQUEUE_CLEARHISTORY         : "{a0ae8ae5-b6f0-4620-85e2-fa0658892edd}",
+
   // Bundled commands
   MEDIAITEM_DEFAULT              : "{5a5d24dd-0fed-4be0-b200-ac1ed9095d1f}",
   MEDIAITEM_WEBPLAYLIST          : "{8ebde25c-79e9-4bdb-836d-e0d502b1a452}",
@@ -66,6 +70,7 @@ var kPlaylistCommands = {
   MEDIALIST_DEFAULT              : "{26c21ce7-bcdf-4857-86d4-82c9747c907f}",
   MEDIALIST_DOWNLOADPLAYLIST     : "{3d6125f1-e5cf-4c08-9c83-697ddf5809cb}",
   MEDIALIST_DEVICE_LIBRARY       : "devicelibrary@playlistcommands.songbirdnest.com",
-  MEDIALIST_CDDEVICE_LIBRARY     : "cddevicelibrary@playlistcommands.songbirdnest.com"
+  MEDIALIST_CDDEVICE_LIBRARY     : "cddevicelibrary@playlistcommands.songbirdnest.com",
+  MEDIALIST_PLAYQUEUE_LIBRARY    : "playqueuelibrary@playlistcommands.songbirdnest.com"
 }
 

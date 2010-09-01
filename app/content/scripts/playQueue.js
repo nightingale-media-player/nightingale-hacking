@@ -93,11 +93,7 @@ var playQueue = {
     var mgr = Cc["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
                 .createInstance(Ci.sbIPlaylistCommandsManager);
 
-  /*
-   * xxx slloyd Use MEDIAITEM_DEFAULT until Bug 22108 gives us playlist commands
-   * for the queue.
-   */
-    var commands = mgr.request(kPlaylistCommands.MEDIAITEM_DEFAULT);
+    var commands = mgr.request(kPlaylistCommands.MEDIALIST_PLAYQUEUE_LIBRARY);
 
     this._playlist.bind(view, commands);
   },
