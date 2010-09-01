@@ -3505,9 +3505,6 @@ sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/)
 
     rv = simple->NotifyListenersBeforeListCleared(lists[i], aExcludeLists);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = simple->NotifyListenersListCleared(lists[i], aExcludeLists);
-    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   nsCOMPtr<sbIDatabaseQuery> query;
@@ -3554,7 +3551,8 @@ sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/)
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Notify the list's listeners that the list was cleared
-    NotifyListenersListCleared(lists[i], aExcludeLists);
+    rv = simple->NotifyListenersListCleared(lists[i], aExcludeLists);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   // Notify the library's listeners that the library was cleared
