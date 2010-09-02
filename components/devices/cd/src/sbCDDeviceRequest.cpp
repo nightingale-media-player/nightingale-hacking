@@ -719,7 +719,7 @@ sbCDDevice::ShowMetadataLookupDialog(const char *aLookupDialogURI,
   rv = windowWatcher->OpenWindow(parentWindow,
       aLookupDialogURI,
       nsnull,
-      "centerscreen,chrome,modal,titlebar,resizable,scrollbars=yes",
+      "centerscreen,chrome,modal,titlebar=no,resizable=no,scrollbars=yes",
       args,
       getter_AddRefs(domWindow));
   NS_ENSURE_SUCCESS(rv, rv);

@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
-<!-- 
+<!--
 /*
  *=BEGIN SONGBIRD GPL
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -32,35 +32,27 @@
           xmlns:xbl="http://www.mozilla.org/xbl">
   <binding id="sb-cdtracks">
     <content>
-      <xul:sb-closable-box xbl:inherits="open">
-        <xul:listbox anonid="tracklist" flex="1" seltype="none">
-          <xul:listcols>
-            <xul:listcol/>
-            <xul:listcol flex="1"/>
-          </xul:listcols>
+      <xul:sb-closable-box xbl:inherits="first-sb-cdtracks">
+        <xul:tree anonid="tracktree" seltype="none" flex="1"
+                  hidecolumnpicker="true">
+          <xul:treecols>
+            <xul:treecol anonid="tracktree-numbercolumn"
+                         label="&cdrip.lookup.ordinal;"/>
+            <xul:treecol anonid="tracktree-namecolumn"
+                         label="&cdrip.lookup.track_name;"/>
+          </xul:treecols>
 
-          <xul:listhead anonid="tracklist-header">
-            <xul:listheader/>
-            <xul:listheader/>
-          </xul:listhead>
-        </xul:listbox>
+          <xul:treechildren anonid="tracklist"/>
+        </xul:tree>
       </xul:sb-closable-box>
     </content>
 
     <implementation>
       <constructor><![CDATA[
-        var boxParent = document.getAnonymousElementByAttribute(this,
-                                                                "anonid",
-                                                                "tracklist");
+        var boxParent = document.getAnonymousElementByAttribute
+                          (this, "anonid", "tracktree");
         var box = boxParent.parentNode;
         box.setAttribute("label", SBString("cdinfo.details.closed"));
-        var header = document.getAnonymousElementByAttribute(this,
-                                                             "anonid",
-                                                             "tracklist-header");
-        header.childNodes[0].setAttribute("label",
-                                          SBString("property.ordinal"));
-        header.childNodes[1].setAttribute("label",
-                                          SBString("property.track_name"));
       ]]></constructor>
 
       <method name="setTrackTitles">
@@ -70,23 +62,47 @@
             function newelem(tagname) {
               return document.createElementNS(XUL_NS, tagname);
             }
-            var list = document.getAnonymousElementByAttribute(this,
-                                                               "anonid",
-                                                               "tracklist");
+            var list = document.getAnonymousElementByAttribute
+                        (this, "anonid", "tracklist");
+            var tree = document.getAnonymousElementByAttribute
+                        (this, "anonid", "tracktree");
+            var namecolumn = document.getAnonymousElementByAttribute
+                        (this, "anonid", "tracktree-namecolumn");
             var tracks = 0;
 
             function doappend(title)
             {
-              var row = newelem("listitem");
-              row.appendChild(newelem("listcell")).setAttribute("label",
+              var treeitem = newelem("treeitem");
+              var row = newelem("treerow");
+              row.appendChild(newelem("treecell")).setAttribute("label",
                                                                 ++tracks);
-              row.appendChild(newelem("listcell")).setAttribute("label",
-                                                                title);
-              list.appendChild(row);
+
+              var titleCell = newelem("treecell");
+              titleCell.setAttribute("label", title);
+              row.appendChild(titleCell);
+
+              treeitem.appendChild(row);
+              list.appendChild(treeitem);
+
+              var textWidth = getTextWidth(titleCell, title);
+              if (textWidth > namecolumn.getAttribute("width")) {
+                namecolumn.setAttribute("width", textWidth);
+              }
+            }
+
+            //NOTE: pixelsPerChar could be more intelligently determined here
+            function getTextWidth(aElem, aText)
+            {
+              var pixelsPerChar = 8;
+              return aText.length * pixelsPerChar;
             }
 
             titles.forEach(doappend);
-            list.setAttribute("rows", Math.min(5, titles.length));
+
+            tree.setAttribute("rows", Math.min(5, titles.length));
+            var box = document.getAnonymousElementByAttribute
+                        (this, "first-sb-cdtracks", "true");
+            if (box != null) box.open = "true";
         ]]></body>
       </method>
     </implementation>
@@ -95,7 +111,7 @@
       <handler event="collapse"><![CDATA[
         var boxParent = document.getAnonymousElementByAttribute(this,
                                                                 "anonid",
-                                                                "tracklist");
+                                                                "tracktree");
         var box = boxParent.parentNode;
         box.setAttribute("label",
                           SBString("cdinfo.details." +

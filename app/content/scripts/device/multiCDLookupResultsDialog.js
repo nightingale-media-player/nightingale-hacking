@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -84,7 +84,7 @@ var multiCDDialog = {
           "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
           "sb-cdtracks");
       if (i == 0)
-        tracks.setAttribute("open", "true");
+        tracks.setAttribute("first-sb-cdtracks", "true");
 
       this._infolist.insertBefore(tracks, this._other);
 

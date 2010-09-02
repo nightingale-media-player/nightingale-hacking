@@ -799,6 +799,8 @@
 <!ENTITY cdrip.lookup.info_not_found.album  "Album">
 <!ENTITY cdrip.lookup.info_not_found.title  "CD Information Not Found">
 <!ENTITY cdrip.lookup.info_not_found.descr  "You can add the artist and album name here.  You can edit the remaining information within the CD Rip playlist">
+<!ENTITY cdrip.lookup.ordinal "#">
+<!ENTITY cdrip.lookup.track_name "Title">
 
 <!-- CD Rip Pref Pane entities -->
 <!ENTITY cdrip.prefpane.label                 "CD Rip">
