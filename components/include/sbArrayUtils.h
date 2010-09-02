@@ -60,18 +60,31 @@ nsresult sbCOMArrayTonsIArray(T & aCOMArray, nsIArray ** aOutArray)
  * @param aSrc [in] the array to copy from
  * @param aDest [in|out] the array to append to
  * @param aWeak [in] Whether to store as a weak reference
+ * @param aElementsToCopy [in] Allows partial appending of source. 0 means copy
+ *                        everything
  */
 inline nsresult
-sbAppendnsIArray(nsIArray * aSrc, nsIMutableArray * aDest, PRBool aWeak = PR_FALSE)
+sbAppendnsIArray(nsIArray * aSrc,
+                 nsIMutableArray * aDest,
+                 PRBool aWeak = PR_FALSE,
+                 PRUint32 aElementsToCopy = 0)
 {
   nsresult rv;
+
+  PRUint32 elementsToCopy = aElementsToCopy;
+  if (elementsToCopy == 0) {
+    rv = aSrc->GetLength(&elementsToCopy);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   nsCOMPtr<nsISimpleEnumerator> it;
   rv = aSrc->Enumerate(getter_AddRefs(it));
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool hasMore;
-  while (NS_SUCCEEDED(it->HasMoreElements(&hasMore)) && hasMore) {
+  while (NS_SUCCEEDED(it->HasMoreElements(&hasMore)) &&
+         hasMore &&
+         elementsToCopy--) {
     nsCOMPtr<nsISupports> supports;
     rv = it->GetNext(getter_AddRefs(supports));
     NS_ENSURE_SUCCESS(rv, rv);
