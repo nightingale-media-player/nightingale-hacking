@@ -104,8 +104,7 @@ LastFm.onLoad = function() {
   this._loginError = this._getElement(this._panelBinding, 'loginError');
   // signup link
   this._signup = this._getElement(this._panelBinding, 'signup');
-  this._signup.textContent =
-         this._strings.getString('lastfm.signup.label');
+  this._signup.textContent = this._strings.getString('lastfm.signup.label');
   // forgot password link
   this._forgotpass = this._getElement(this._panelBinding, 'forgotpass');
   this._forgotpass.textContent =
@@ -257,47 +256,50 @@ LastFm.onLoad = function() {
         }, false);
     this._faceplate.appendChild(this._faceplateBan);
 
-	this._faceplateTag = document.createElement('image');
-	this._faceplateTag.setAttribute('id', 'lastfmFaceplateTag');
+    this._faceplateTag = document.createElement('image');
+    this._faceplateTag.setAttribute('id', 'lastfmFaceplateTag');
     this._faceplateTag.setAttribute('mousethrough', 'never');
     this._faceplateTag.setAttribute('tooltiptext',
         this._strings.getString('lastfm.faceplate.tag.tooltip'));
     this._faceplateTag.addEventListener('click', function(event) {
-          LastFm.metrics.metricsInc('lastfm', 'faceplate', 'tag');
-		  LastFm._tagPanel.openPopup(event.target);
-		  var globalTags = document.getElementById("global-tags");
-		  var userTags = document.getElementById("user-tags");
-		  // clear out the tag boxes
-		  while (userTags.firstChild)
-		  	userTags.removeChild(userTags.firstChild);
-		  while (globalTags.firstChild)
-		  	globalTags.removeChild(globalTags.firstChild);
+        LastFm.metrics.metricsInc('lastfm', 'faceplate', 'tag');
+        LastFm._tagPanel.openPopup(event.target);
+        var globalTags = document.getElementById("global-tags");
+        var userTags = document.getElementById("user-tags");
+        // clear out the tag boxes
+        while (userTags.firstChild)
+          userTags.removeChild(userTags.firstChild);
+        while (globalTags.firstChild)
+          globalTags.removeChild(globalTags.firstChild);
 
-		  // grab the tags from the service
-		  for (var tag in LastFm._service.userTags) {
-			var removable = LastFm._service.userTags[tag];
-			var hbox = LastFm.showOneMoreTag(tag, removable);
-			userTags.appendChild(hbox);
-		  }
-		  for (var tag in LastFm._service.globalTags) {
-			var removable = LastFm._service.globalTags[tag];
-			var hbox = LastFm.showOneMoreTag(tag, removable);
-			globalTags.appendChild(hbox);
-		  }
+        // grab the tags from the service
+        for (var tag in LastFm._service.userTags) {
+          var removable = LastFm._service.userTags[tag];
+          var hbox = LastFm.showOneMoreTag(tag, removable);
+            userTags.appendChild(hbox);
+        }
+        for (var tag in LastFm._service.globalTags) {
+          var removable = LastFm._service.globalTags[tag];
+          var hbox = LastFm.showOneMoreTag(tag, removable);
+          globalTags.appendChild(hbox);
+        }
 
-		  if (!userTags.firstChild)
-			  document.getElementById("label-user-tags")
-				  .style.visibility = "collapse";
-		  if (!globalTags.firstChild)
-			  document.getElementById("label-global-tags")
-				  .style.visibility = "collapse";
-        }, false);
+        if (!userTags.firstChild) {
+          document.getElementById("label-user-tags")
+                  .style.visibility = "collapse";
+        }
+        if (!globalTags.firstChild) {
+          document.getElementById("label-global-tags")
+                  .style.visibility = "collapse";
+        }
+    }, false);
     this._faceplate.appendChild(this._faceplateTag);
 
     // Add a preferences observer
     this.prefs = Cc["@mozilla.org/preferences-service;1"]
-		.getService(Ci.nsIPrefService).getBranch("extensions.lastfm.")
-		.QueryInterface(Ci.nsIPrefBranch2);
+                   .getService(Ci.nsIPrefService)
+                   .getBranch("extensions.lastfm.")
+                   .QueryInterface(Ci.nsIPrefBranch2);
     this.prefs.addObserver("", this.prefObserver, false);
   }
 
@@ -316,8 +318,6 @@ LastFm.onLoad = function() {
   this.onLoggedInStateChanged();
   // update the ui with the love/ban state
   this.onLoveBan();
-  // update the ui to match the current status
-  this.updateStatus();
 
   // if we have a username & password then try to log in
   if (this._service.shouldAutoLogin()) {
@@ -347,79 +347,84 @@ LastFm.onMediacoreEvent = function(aEvent) {
 }
 
 LastFm.showOneMoreTag = function(tagName, removable) {
-	var hbox = document.createElement('hbox');
-	hbox.setAttribute("align", "center");
-	var delTag = document.createElement('image');
-	delTag.setAttribute("mousethrough", "never");
-	delTag.setAttribute('id', tagName);
-	hbox.appendChild(delTag);
-	if (removable) {
-		delTag.addEventListener('click', function(event) {
-			var tagName = event.target.id;
-			dump("removing tag: " + tagName + "\n");
-			LastFm._service.removeTag(gMM.sequencer.currentItem, tagName);
-			this.parentNode.parentNode.removeChild(this.parentNode);
-			if (!this.parentNode.parentNode.firstChild)
-				document.getElementById("label-user-tags")
-					  .style.visibility = "collapse";
-		}, false);
-		delTag.setAttribute('class', 'tag-remove');
-	} else {
-		delTag.addEventListener('click', function(event) {
-			var tagName = event.target.id;
-			dump("adding tag: " + tagName + "\n");
-			LastFm.addThisTag(gMM.sequencer.currentItem, tagName);
-		}, false);
-		delTag.setAttribute('class', 'tag-add');
-}
-	var label = document.createElement('label');
-	label.setAttribute('value', tagName);
-	label.setAttribute('class', 'tag-link');
-	if (removable)
-		label.setAttribute('href', '/user/' + LastFm._service.username +
-				'/tags/' + tagName);
-	else
-		label.setAttribute('href', '/tag/' + tagName);
-	label.addEventListener('click', function(event) {
-			dump("loading: " + this.getAttribute('href'));
-			gBrowser.loadOneTab("http://www.last.fm"+this.getAttribute('href'));
-		}, false);
-	hbox.appendChild(label);
-	return hbox;
+  var hbox = document.createElement('hbox');
+  hbox.setAttribute("align", "center");
+  var delTag = document.createElement('image');
+  delTag.setAttribute("mousethrough", "never");
+  delTag.setAttribute('id', tagName);
+  hbox.appendChild(delTag);
+  if (removable) {
+    delTag.addEventListener('click', function(event) {
+      var tagName = event.target.id;
+      dump("removing tag: " + tagName + "\n");
+      LastFm._service.removeTag(gMM.sequencer.currentItem, tagName);
+      this.parentNode.parentNode.removeChild(this.parentNode);
+      if (!this.parentNode.parentNode.firstChild) {
+        document.getElementById("label-user-tags")
+                .style.visibility = "collapse";
+      }
+    }, false);
+    delTag.setAttribute('class', 'tag-remove');
+  } else {
+    delTag.addEventListener('click', function(event) {
+      var tagName = event.target.id;
+      dump("adding tag: " + tagName + "\n");
+      LastFm.addThisTag(gMM.sequencer.currentItem, tagName);
+    }, false);
+    delTag.setAttribute('class', 'tag-add');
+  }
+
+  var label = document.createElement('label');
+  label.setAttribute('value', tagName);
+  label.setAttribute('class', 'tag-link');
+  if (removable) {
+    label.setAttribute('href', '/user/' + LastFm._service.username +
+                       '/tags/' + tagName);
+  } else {
+    label.setAttribute('href', '/tag/' + tagName);
+  }
+
+  label.addEventListener('click', function(event) {
+    dump("loading: " + this.getAttribute('href'));
+    gBrowser.loadOneTab("http://www.last.fm"+this.getAttribute('href'));
+  }, false);
+
+  hbox.appendChild(label);
+  return hbox;
 }
 
 LastFm.addTags = function(event) {
-	// call the API to add the tags
-	var textbox = event.target;
-	var tagString = textbox.value;
-	LastFm.addThisTag(gMM.sequencer.currentItem, tagString, function() {
-		textbox.value = "";
-	}, function() {
-	});
+  // call the API to add the tags
+  var textbox = event.target;
+  var tagString = textbox.value;
+  LastFm.addThisTag(gMM.sequencer.currentItem, tagString, function() {
+    textbox.value = "";
+  }, function() {});
 }
 
 LastFm.addThisTag = function(mediaItem, tagString, success, failure) {
-	// need to handle adding a global tag that already exists as a user tag
-	this._service.addTags(mediaItem, tagString, function() {
-		// add them to the tag panel
-		var tagBox = document.getElementById("user-tags");
-		var tags = tagString.split(",");
-		for (var i in tags) {
-			var tag = tags[i].replace(/^\s*/, "").replace(/\s*$/, "");
-			var hbox = LastFm.showOneMoreTag(tag, true);
-			tagBox.appendChild(hbox);
-			LastFm._service.userTags[tag] = true;
-		}
-		if (tagBox.firstChild)
-		    document.getElementById("label-user-tags")
-				  .style.visibility = "visible";
-		if (typeof(success) == "function")
-			success();
-	}, function() {
-		alert(LastFm._strings.getString('lastfm.tags.add_fail'));
-		if (typeof(failure) == "function")
-			failure();
-	});
+  // need to handle adding a global tag that already exists as a user tag
+  this._service.addTags(mediaItem, tagString, function() {
+    // add them to the tag panel
+    var tagBox = document.getElementById("user-tags");
+    var tags = tagString.split(",");
+    for (var i in tags) {
+      var tag = tags[i].replace(/^\s*/, "").replace(/\s*$/, "");
+      var hbox = LastFm.showOneMoreTag(tag, true);
+      tagBox.appendChild(hbox);
+      LastFm._service.userTags[tag] = true;
+    }
+
+    if (tagBox.firstChild) {
+      document.getElementById("label-user-tags").style.visibility = "visible";
+    }
+    if (typeof(success) == "function")
+      success();
+  }, function() {
+    alert(LastFm._strings.getString('lastfm.tags.add_fail'));
+    if (typeof(failure) == "function")
+      failure();
+  });
 }
 
 LastFm.onUnload = function() {
@@ -488,7 +493,7 @@ LastFm.onLogoutClick = function(event) {
 }
 
 // load an URL from an event in the panel
-LastFm.loadURI= function(uri, event) {
+LastFm.loadURI = function(uri, event) {
   gBrowser.loadURI(uri, null, null, event, '_blank');
   this._panel.hidePopup();
 }
@@ -626,17 +631,21 @@ LastFm.updateStatus = function LastFm_updateStatus() {
   } else {
     if (this._service.loggedIn) {
       if (this._service.shouldScrobble) {
-		if (Application.prefs.getValue("extensions.lastfm.auth_url", "")
-				.indexOf("libre.fm") >= 0)
-		  stateName = 'logged_in_libre'
-		else
-		  stateName = 'logged_in';
+        if (Application.prefs.getValue("extensions.lastfm.auth_url", "")
+                       .indexOf("libre.fm") >= 0)
+        {
+          stateName = 'logged_in_libre'
+        } else {
+          stateName = 'logged_in';
+        }
       } else {
-		if (Application.prefs.getValue("extensions.lastfm.auth_url", "")
-				.indexOf("libre.fm") >= 0)
+        if (Application.prefs.getValue("extensions.lastfm.auth_url", "")
+                       .indexOf("libre.fm") >= 0)
+        {
           stateName = 'disabled_libre';
-		else
+        } else {
           stateName = 'disabled';
+        }
       }
     } else {
       stateName = 'logged_out';
@@ -692,36 +701,37 @@ LastFm.onLoveBan = function LastFm_onLoveBan(aItem, love) {
 LastFm.onAuthorisationSuccess = function LastFm_onAuthorisationSuccess() { }
 
 LastFm.prefObserver = {
-	observe: function(subject, topic, data) {
-                if (subject instanceof Components.interfaces.nsIPrefBranch &&
-			data == "show_radio_node") {
-			var lastFmNode = Cc['@songbirdnest.com/servicepane/service;1']
-				.getService(Ci.sbIServicePaneService).
-				getNodeForURL("chrome://sb-lastfm/content/tuner2.xhtml");
+  observe: function(subject, topic, data) {
+    if (subject instanceof Components.interfaces.nsIPrefBranch &&
+        data == "show_radio_node")
+    {
+      var lastFmNode =
+            Cc['@songbirdnest.com/servicepane/service;1']
+              .getService(Ci.sbIServicePaneService)
+              .getNodeForURL("chrome://sb-lastfm/content/tuner2.xhtml");
 
-			if (lastFmNode != null) {
-				lastFmNode.hidden =
-					!Application.prefs.getValue("extensions.lastfm.show_radio_node", true);
+      if (lastFmNode != null) {
+        lastFmNode.hidden = !Application.prefs.getValue(
+                              "extensions.lastfm.show_radio_node", true);
 
-				// Hide the "Radio" node if it's empty
-				var radioNode = lastFmNode.parentNode;
-				var enum = radioNode.childNodes;
-				var visibleFlag = false;
+        // Hide the "Radio" node if it's empty
+        var radioNode = lastFmNode.parentNode;
+        var enum = radioNode.childNodes;
+        var visibleFlag = false;
 
-				// Iterate through elements and check if one is
-				// visible
-				while (enum.hasMoreElements()) {
-					var node = enum.getNext();
-					if (!node.hidden) {
-						visibleFlag = true;
-						break;
-					}
-				}
+        // Iterate through elements and check if one is visible
+        while (enum.hasMoreElements()) {
+          var node = enum.getNext();
+          if (!node.hidden) {
+            visibleFlag = true;
+            break;
+          }
+        }
 
-				radioNode.hidden = !visibleFlag;
-			}
-                }
-	}
+        radioNode.hidden = !visibleFlag;
+      }
+    }
+  }
 }
 
 window.addEventListener("load", function(e) { LastFm.onLoad(e); }, false);
