@@ -105,6 +105,7 @@ sbStatusPropertyInfo::GetProgressMode(const nsAString& aValue,
     case sbStatusPropertyValue::eNone:
     case sbStatusPropertyValue::eComplete:
     case sbStatusPropertyValue::eFailed:
+    case sbStatusPropertyValue::eAborted:
       *retval = nsITreeView::PROGRESS_NONE;
       break;
     case sbStatusPropertyValue::eRipping:

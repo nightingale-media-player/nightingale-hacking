@@ -432,9 +432,11 @@ sbCDRipServicePaneService.prototype = {
           if (lastState == Ci.sbIDevice.STATE_TRANSCODE) {
             if (this._checkErrors(device)) {
               devProperties.push("unsuccessful");
-            } else {
+            } else if (this._checkSuccess(device)){
               devProperties.push("successful");
             }
+            //if neither _checkErrors nor _checkSuccess is true, then the user
+            //cancelled before any successes or fails.  Go back to idle image.
           }
         }
       }
@@ -505,13 +507,45 @@ sbCDRipServicePaneService.prototype = {
     }
     catch (err if err.result == Cr.NS_ERROR_NOT_AVAILABLE) {
       // deviceLibrary.getItemsByProperties() will throw NS_ERROR_NOT_AVAILABLE
-      // if there are no failed rips in the list.  Ignore this error.
+      // if there are no failed rips in the list, thus no errors.
+      return false;
     }
     catch (err) {
       Cu.reportError("ERROR GETTING TRANSCODE ERROR COUNT " + err);
     }
     
     return (errorCount > 0);
+  },
+  
+  /**
+   * Check if any tracks successfully ripped
+   * \param aDevice - Device to check
+   * \return True if at least one track was ripped, false otherwise
+   */
+  _checkSuccess: function sbCDRipServicePaneService__checkErrors(aDevice) {
+    // Check if any tracks were successfully ripped
+    var deviceLibrary = this._getDeviceLibrary(aDevice);
+    var successCount = 0;
+
+    try {
+      var propArray = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+          .createInstance(Ci.sbIMutablePropertyArray);
+      propArray.appendProperty(SBProperties.cdRipStatus, "2|100");
+      propArray.appendProperty(SBProperties.shouldRip, "1");
+
+      var rippedItems = deviceLibrary.getItemsByProperties(propArray);
+      successCount = rippedItems.length;
+    }
+    catch (err if err.result == Cr.NS_ERROR_NOT_AVAILABLE) {
+      // deviceLibrary.getItemsByProperties() will throw NS_ERROR_NOT_AVAILABLE
+      // if there are no successful rips in the list.
+      return false;
+    }
+    catch (err) {
+      Cu.reportError("ERROR GETTING TRANSCODE SUCCESS COUNT " + err);
+    }
+
+    return (successCount > 0);
   },
   
   /**

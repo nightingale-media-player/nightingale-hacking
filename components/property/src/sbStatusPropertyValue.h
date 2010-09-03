@@ -42,7 +42,8 @@ public:
     eNone        = 0,
     eRipping     = 1,
     eComplete    = 2,
-    eFailed      = 3
+    eFailed      = 3,
+    eAborted     = 4
   };
   /**
    * Default initializer
@@ -79,6 +80,9 @@ public:
           break;
         case 3:
           mMode = eFailed;
+          break;
+        case 4:
+          mMode = eAborted;
           break;
         default:
           mMode = eNone;
@@ -130,6 +134,7 @@ public:
     switch (GetMode()) {
       case eComplete:
       case eFailed:
+      case eAborted:
         value.AppendLiteral("|100");
         break;
       default:

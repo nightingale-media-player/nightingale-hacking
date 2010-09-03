@@ -170,6 +170,16 @@ sbTranscodeProgressListener::OnJobProgress(sbIJobProgress *aJobProgress)
     nsCOMPtr<sbIJobCancelable> cancel = mCancel;
     mCancel = nsnull;
     cancel->Cancel();
+
+    nsresult rv;
+    sbStatusPropertyValue value;
+    value.SetMode(sbStatusPropertyValue::eAborted);
+    rv = SetStatusProperty(value);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = Completed(aJobProgress);
+    NS_ENSURE_SUCCESS(rv, rv);
+    return NS_OK;
   }
 
   PRUint16 status;
