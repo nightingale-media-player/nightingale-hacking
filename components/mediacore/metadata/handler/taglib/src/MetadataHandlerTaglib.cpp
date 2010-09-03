@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -50,6 +50,7 @@
 /* Songbird utility classes */
 #include "sbStringUtils.h"
 #include "sbMemoryUtils.h"
+#include <sbILibraryUtils.h>
 #include <sbProxiedComponentManager.h>
 
 /* Songbird interfaces */
@@ -592,6 +593,16 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       #if XP_UNIX && !XP_MACOSX
         result = pFile->GetNativePath(mMetadataPath);
       #else
+        nsCOMPtr<sbILibraryUtils> libUtils =
+          do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &result);
+        NS_ENSURE_SUCCESS(result, result);
+        nsCOMPtr<nsIFile> canonicalFile;
+        result = libUtils->GetCanonicalPath(pFile,
+                                            getter_AddRefs(canonicalFile));
+        NS_ENSURE_SUCCESS(result, result);
+
+        canonicalFile.forget(getter_AddRefs(pFile));
+
         nsString metadataPathU16;
         result = pFile->GetPath(metadataPathU16);
         if (NS_SUCCEEDED(result)) {

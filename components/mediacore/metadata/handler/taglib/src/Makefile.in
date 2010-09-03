@@ -44,6 +44,7 @@ CPP_EXTRA_INCLUDES = \
  $(DEPTH)/components/mediacore/metadata/manager/public \
  $(DEPTH)/components/mediacore/metadata/handler/taglib/public \
  $(DEPTH)/components/albumart/public \
+ $(DEPTH)/components/library/base/public \
  $(DEPTH)/components/property/public \
  $(DEPTH)/components/moz/proxy/public \
  $(topsrcdir)/components/mediacore/metadata/manager/src \
