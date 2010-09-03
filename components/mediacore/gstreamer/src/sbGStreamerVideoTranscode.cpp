@@ -2006,7 +2006,7 @@ sbGStreamerVideoTranscoder::InitializeConfigurator()
   NS_ENSURE_SUCCESS(rv, rv);
 
   /* If we're not using a muxer, we must have ONLY one codec */
-  if (!mUseMuxer && (mUseAudio && mUseAudio))
+  if (!mUseMuxer && (mUseAudio && mUseVideo))
     return NS_ERROR_UNEXPECTED;
 
   return NS_OK;
