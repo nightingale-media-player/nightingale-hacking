@@ -83,6 +83,13 @@ public:
     PR_snprintf(valueStr, sizeof(valueStr), "%llu", aValue);
     AssignLiteral(valueStr);
   }
+
+  sbAutoString(nsID* aValue)
+  {
+    char idString[NSID_LENGTH];
+    aValue->ToProvidedString(idString);
+    AssignLiteral(idString);
+  }
 };
 
 /**
@@ -134,6 +141,13 @@ public:
 
     PR_snprintf(valueStr, sizeof(valueStr), "%llu", aValue);
     AssignLiteral(valueStr);
+  }
+
+  sbCAutoString(nsID* aValue)
+  {
+    char idString[NSID_LENGTH];
+    aValue->ToProvidedString(idString);
+    AssignLiteral(idString);
   }
 };
 
