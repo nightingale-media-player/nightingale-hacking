@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 /**
  * \file sbIMediaItem.idl
@@ -50,7 +48,7 @@ interface sbILibrary;
 *
 * \sa sbILibrary, sbIMediaList
 */
-[scriptable, uuid(1c1c9f2a-75c0-4741-aac1-3254b08287ae)]
+[scriptable, uuid(7e7f0e61-66c6-4d37-99a0-8d285fcff6a6)]
 interface sbIMediaItem : sbILibraryResource
 {
   /*
@@ -73,6 +71,12 @@ interface sbIMediaItem : sbILibraryResource
    */
   readonly attribute boolean isMutable;
 
+  /**
+   * \brief Is the item locked out? Items that are locked cannot be played
+   * and may not sync to a device, they will appear in the playlist with a 
+   * different style (ie, grayed out).
+   */
+  readonly attribute boolean isLockedOut;
 
 // Convenience Attributes (these should thunk directly to the sbILibraryResource::G/SetProperty calls)
 
@@ -164,7 +168,7 @@ interface sbIMediaItem : sbILibraryResource
    * \brief Test if this media item is available for playback
    * \param aObserver An observer that is notified with the item's availabilty
    */
-  void testIsAvailable(in nsIObserver aObserver);
+  void testIsURIAvailable(in nsIObserver aObserver);
 
   /**
    * \brief Asynchronously get an input stream to the content of the media item

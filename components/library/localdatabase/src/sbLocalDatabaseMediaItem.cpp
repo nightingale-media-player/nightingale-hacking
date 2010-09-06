@@ -714,6 +714,20 @@ sbLocalDatabaseMediaItem::GetIsMutable(PRBool* aIsMutable)
  * See sbIMediaItem
  */
 NS_IMETHODIMP
+sbLocalDatabaseMediaItem::GetIsLockedOut(PRBool* aIsLockedOut)
+{
+  // TODO: Use a property of the item as a contractid to callback a
+  // component to determine the item's lockedout status. If the prop is
+  // empty, return false. If the prop is filled but the contractid is
+  // not found, return true.
+  *aIsLockedOut = PR_FALSE;
+  return NS_OK;
+}
+
+/**
+ * See sbIMediaItem
+ */
+NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetMediaCreated(PRInt64* aMediaCreated)
 {
   NS_ENSURE_ARG_POINTER(aMediaCreated);
@@ -1006,7 +1020,7 @@ sbLocalDatabaseMediaItem::ToString(nsAString& _retval)
  * See sbIMediaItem
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaItem::TestIsAvailable(nsIObserver* aObserver)
+sbLocalDatabaseMediaItem::TestIsURIAvailable(nsIObserver* aObserver)
 {
   // Create a URI Checker interface
   nsresult rv;

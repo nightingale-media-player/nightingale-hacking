@@ -205,6 +205,9 @@ private:
   nsresult GetPlayingProperty(PRUint32 aIndex,
                               nsISupportsArray* properties);
 
+  nsresult GetLockedOutStatus(PRUint32 aIndex,
+                              nsISupportsArray* properties);
+
   nsresult GetIsListReadOnly(PRBool *aOutIsReadOnly);
 
   nsresult GetBag(PRUint32 aIndex,

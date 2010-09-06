@@ -1400,6 +1400,56 @@ sbLocalDatabaseTreeView::GetPlayingProperty(PRUint32 aIndex,
 }
 
 nsresult
+sbLocalDatabaseTreeView::GetLockedOutStatus(PRUint32 aIndex, 
+                                            nsISupportsArray* properties)
+{
+  NS_ASSERTION(properties, "properties is null");
+  
+  // Ideally we could just use the row properties to indicate that a row is
+  // 'unavailable', however if we do that then we can only use the
+  // -moz-tree-row pseudoelement and change the background and border of a row,
+  // and not the text style. In order to select on -moz-tree-cell-text, all of 
+  // the cells must have the 'unavailable' css property. This method adds the
+  // css property to the array if the item at the index has the 'unavailable'
+  // library property.
+
+  nsresult rv;
+
+  //////////////////////////////////////////////////////////////////////////
+  // WARNING: This method is called during Paint. DO NOT MODIFY THE TREE, //
+  // cause events to be fired, or use synchronous proxies, as you risk    //
+  // crashing in recursive painting/frame construction.                   //
+  //////////////////////////////////////////////////////////////////////////
+
+  nsString guid;
+  rv = mArray->GetGuidByIndex(aIndex, guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaList> mediaList;
+  rv = mMediaListView->GetMediaList(getter_AddRefs(mediaList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILibrary> library;
+  rv = mediaList->GetLibrary(getter_AddRefs(library));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<sbIMediaItem> mediaItem;
+  rv = library->GetMediaItem(guid, getter_AddRefs(mediaItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  PRBool lockedout;
+  rv = mediaItem->GetIsLockedOut(&lockedout);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (lockedout) {
+    rv = TokenizeProperties(NS_LITERAL_STRING("lockedout"), properties);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult
 sbLocalDatabaseTreeView::GetIsListReadOnly(PRBool *aOutIsReadOnly)
 {
   NS_ENSURE_ARG_POINTER(aOutIsReadOnly);
@@ -1648,6 +1698,9 @@ sbLocalDatabaseTreeView::GetRowProperties(PRInt32 row,
   rv = GetPlayingProperty(index, properties);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = GetLockedOutStatus(index, properties);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
   rv = GetBag(index, getter_AddRefs(bag));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1729,7 +1782,12 @@ sbLocalDatabaseTreeView::GetCellProperties(PRInt32 row,
     }
   }
 
-  rv = GetPlayingProperty(TreeToArray(row), properties);
+  PRUint32 index = TreeToArray(row);
+
+  rv = GetPlayingProperty(index, properties);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = GetLockedOutStatus(index, properties);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIPropertyInfo> pi;

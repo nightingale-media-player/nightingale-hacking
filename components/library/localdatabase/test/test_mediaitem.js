@@ -98,7 +98,7 @@ function testAvailable( library, url, available, completion ) {
     _completion: completion,
     observe: function( aSubject, aTopic, aData ) {
       if ( aTopic == "available" ) {
-        log( "(sbIMediaItem::TestIsAvailable) COMPLETE " + this._item.contentSrc.spec + ": " + aTopic + " == " + aData );
+        log( "(sbIMediaItem::TestIsURIAvailable) COMPLETE " + this._item.contentSrc.spec + ": " + aTopic + " == " + aData );
         assertEqual( aData, this._available );
         if ( this._completion != null )
           try {
@@ -118,13 +118,13 @@ function testAvailable( library, url, available, completion ) {
   }
 
   // Start the test, tell the testharness to wait for us.
-  item.testIsAvailable( is_available_observer );
+  item.testIsURIAvailable( is_available_observer );
   testPending();
-  log( "(sbIMediaItem::TestIsAvailable) START    " + url );
+  log( "(sbIMediaItem::TestIsURIAvailable) START    " + url );
 }
 
-function testIsAvailable( ioItem ) {
-  var databaseGUID = "test_mediaitem_isavailable";
+function testIsURIAvailable( ioItem ) {
+  var databaseGUID = "test_mediaitem_isuriavailable";
   var testlib = createLibrary(databaseGUID);
   // Async tests of availability for a (supposedly!) known url.
   testAvailable( testlib, ioItem.contentSrc.spec, "true",
@@ -165,7 +165,7 @@ function testAsyncRead(ioItem) {
     onStopRequest: function LLL_onStopReqeust(request, context, status) {
       // Test this and go on to the next tests.
       assertEqual( this._value, TEST_STRING );
-      testIsAvailable( this._item );
+      testIsURIAvailable( this._item );
       testFinished();
     },
     /**
@@ -240,7 +240,7 @@ function runTest () {
     gServer.registerDirectory("/", getFile("."));
 
     // Async test, pauses the test system.
-    // This passes control to testIsAvailable() when it completes.
+    // This passes control to testIsURIAvailable() when it completes.
     testAsyncRead(ioItem);
 
     // Shouldn't take more than 5 seconds to test all files.

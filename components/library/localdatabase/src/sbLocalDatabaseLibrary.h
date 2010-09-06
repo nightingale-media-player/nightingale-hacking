@@ -101,6 +101,7 @@ typedef nsInterfaceHashtableMT<nsStringHashKey, nsIWeakReference>
 #define SB_FORWARD_SBIMEDIAITEM(_to) \
   NS_IMETHOD GetLibrary(sbILibrary * *aLibrary) { return _to GetLibrary(aLibrary); } \
   NS_IMETHOD GetIsMutable(PRBool *aIsMutable) { return _to GetIsMutable(aIsMutable); } \
+  NS_IMETHOD GetIsLockedOut(PRBool *aIsLockedOut) { return _to GetIsLockedOut(aIsLockedOut); } \
   NS_IMETHOD GetMediaCreated(PRInt64 *aMediaCreated) { return _to GetMediaCreated(aMediaCreated); } \
   NS_IMETHOD SetMediaCreated(PRInt64 aMediaCreated) { return _to SetMediaCreated(aMediaCreated); } \
   NS_IMETHOD GetMediaUpdated(PRInt64 *aMediaUpdated) { return _to GetMediaUpdated(aMediaUpdated); } \
@@ -110,7 +111,7 @@ typedef nsInterfaceHashtableMT<nsStringHashKey, nsIWeakReference>
   NS_IMETHOD SetContentLength(PRInt64 aContentLength) { return _to SetContentLength(aContentLength); } \
   NS_IMETHOD GetContentType(nsAString & aContentType) { return _to GetContentType(aContentType); } \
   NS_IMETHOD SetContentType(const nsAString & aContentType) { return _to SetContentType(aContentType); } \
-  NS_IMETHOD TestIsAvailable(nsIObserver *aObserver) { return _to TestIsAvailable(aObserver); } \
+  NS_IMETHOD TestIsURIAvailable(nsIObserver *aObserver) { return _to TestIsURIAvailable(aObserver); } \
   NS_IMETHOD OpenInputStreamAsync(nsIStreamListener *aListener, nsISupports *aContext, nsIChannel **_retval) { return _to OpenInputStreamAsync(aListener, aContext, _retval); } \
   NS_IMETHOD OpenInputStream(nsIInputStream **_retval) { return _to OpenInputStream(_retval); } \
   NS_IMETHOD OpenOutputStream(nsIOutputStream **_retval) { return _to OpenOutputStream(_retval); } \

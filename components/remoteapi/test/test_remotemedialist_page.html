@@ -49,6 +49,7 @@ function runTest(tester) {
 
     // Test sbIMediaItem
     tester.assertEqual(list.isMutable, true);
+    tester.assertEqual(list.isLockedOut, false);
     tester.assertTrue(list.mediaCreated > 0);
     tester.assertTrue(list.mediaUpdated > 0);
 
@@ -77,8 +78,8 @@ function runTest(tester) {
     catch(e) {}
 
     try {
-      list.testIsAvailable(null);
-      tester.fail("did not throw: testIsAvailable");
+      list.testIsURIAvailable(null);
+      tester.fail("did not throw: testIsURIAvailable");
     }
     catch(e) {}
 

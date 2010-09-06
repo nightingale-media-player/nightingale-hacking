@@ -113,6 +113,7 @@ struct PRMonitor;
 
 #define SB_FORWARD_SAFE_SBIMEDIAITEM_MINUS_OVERRIDES(_to) \
   NS_SCRIPTABLE NS_IMETHOD GetIsMutable(PRBool *aIsMutable) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetIsMutable(aIsMutable); } \
+  NS_SCRIPTABLE NS_IMETHOD GetIsLockedOut(PRBool *aIsLockedOut) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetIsLockedOut(aIsLockedOut); } \
   NS_SCRIPTABLE NS_IMETHOD GetMediaCreated(PRInt64 *aMediaCreated) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaCreated(aMediaCreated); } \
   NS_SCRIPTABLE NS_IMETHOD SetMediaCreated(PRInt64 aMediaCreated) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetMediaCreated(aMediaCreated); } \
   NS_SCRIPTABLE NS_IMETHOD GetMediaUpdated(PRInt64 *aMediaUpdated) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaUpdated(aMediaUpdated); } \
@@ -123,7 +124,7 @@ struct PRMonitor;
   NS_SCRIPTABLE NS_IMETHOD SetContentLength(PRInt64 aContentLength) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetContentLength(aContentLength); } \
   NS_SCRIPTABLE NS_IMETHOD GetContentType(nsAString & aContentType) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetContentType(aContentType); } \
   NS_SCRIPTABLE NS_IMETHOD SetContentType(const nsAString & aContentType) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetContentType(aContentType); } \
-  NS_SCRIPTABLE NS_IMETHOD TestIsAvailable(nsIObserver *aObserver) { return !_to ? NS_ERROR_NULL_POINTER : _to->TestIsAvailable(aObserver); } \
+  NS_SCRIPTABLE NS_IMETHOD TestIsURIAvailable(nsIObserver *aObserver) { return !_to ? NS_ERROR_NULL_POINTER : _to->TestIsURIAvailable(aObserver); } \
   NS_SCRIPTABLE NS_IMETHOD OpenInputStreamAsync(nsIStreamListener *aListener, nsISupports *aContext, nsIChannel **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->OpenInputStreamAsync(aListener, aContext, _retval); } \
   NS_SCRIPTABLE NS_IMETHOD OpenInputStream(nsIInputStream **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->OpenInputStream(_retval); } \
   NS_SCRIPTABLE NS_IMETHOD OpenOutputStream(nsIOutputStream **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->OpenOutputStream(_retval); } \

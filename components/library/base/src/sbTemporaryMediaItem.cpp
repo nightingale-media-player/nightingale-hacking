@@ -230,11 +230,11 @@ sbTemporaryMediaItem::GetUserEditable(PRBool* aUserEditable)
 
 //-------------------------------------
 //
-// TestIsAvailable
+// TestIsURIAvailable
 //
 
 NS_IMETHODIMP
-sbTemporaryMediaItem::TestIsAvailable(nsIObserver* aObserver)
+sbTemporaryMediaItem::TestIsURIAvailable(nsIObserver* aObserver)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -317,6 +317,19 @@ sbTemporaryMediaItem::GetIsMutable(PRBool* aIsMutable)
 {
   NS_ENSURE_ARG_POINTER(aIsMutable);
   *aIsMutable = PR_FALSE;
+  return NS_OK;
+}
+
+//-------------------------------------
+//
+// isLockedOut
+//
+
+NS_IMETHODIMP
+sbTemporaryMediaItem::GetIsLockedOut(PRBool* aIsLockedOut)
+{
+  NS_ENSURE_ARG_POINTER(aIsLockedOut);
+  *aIsLockedOut = PR_FALSE;
   return NS_OK;
 }
 
