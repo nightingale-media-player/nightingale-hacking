@@ -198,7 +198,8 @@
 
     <menu id="controls-menu"
           label="&menu.controls;"
-          accesskey="&menu.controls.accesskey;">
+          accesskey="&menu.controls.accesskey;"
+          onpopupshowing="buildControlsMenu();">
       <menupopup id="menu_ControlsPopup">
         <menuitem id="menuitem_control_play"
                   key="control-playpause-key"
