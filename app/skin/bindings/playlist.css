@@ -383,6 +383,11 @@ Playing track indicator
   background-position: 0% -18px;
 }
 
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( lockedout )
+{
+  color: rgb(150,150,150);
+}
+
 /**
 *******************************************************************************
 Right align Track No, Time/Duration, Size, and Sample Rate
