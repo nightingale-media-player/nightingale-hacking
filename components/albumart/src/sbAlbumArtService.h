@@ -1,30 +1,28 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #ifndef __SB_ALBUMARTSERVICE_H__
 #define __SB_ALBUMARTSERVICE_H__
@@ -153,11 +151,13 @@ private:
     PRBool                          enabled;
     PRBool                          local;
 
-    // Defined for the Sort function on nsTArray
+    // Defined for the Sort function on nsTArray. Overload "less then" operator
+    // with "<=" to make sure Sort returns the same result when priorities are
+    // the same.
     PRBool operator<(const FetcherInfo& right) const {
-      return (priority < right.priority);
+      return (priority <= right.priority);
     };
-    
+
     // This has to be defined for Sort as well, but is used for Searching.
     PRBool operator==(const FetcherInfo& right) const {
       return contractID.Equals(right.contractID);
@@ -185,17 +185,17 @@ private:
   PRBool                        mPrefsAvailable;
   nsTArray<FetcherInfo>         mFetcherInfoList;
   nsTArray<nsCString>           mValidExtensionList;
-  nsInterfaceHashtable<nsStringHashKey, nsISupports> 
+  nsInterfaceHashtable<nsStringHashKey, nsISupports>
                                 mTemporaryCache;
   nsCOMPtr<nsITimer>            mCacheFlushTimer;
-  
+
   //
   // Internal services.
   //
 
   //
   // InitializeLibraryWatch
-  // 
+  //
 
   nsresult InitializeLibraryWatch();
 
