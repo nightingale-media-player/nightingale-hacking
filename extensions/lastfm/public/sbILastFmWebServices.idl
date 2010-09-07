@@ -67,6 +67,6 @@ interface sbILastFmWebServices : nsISupports {
 
 [scriptable, uuid(b88cda15-f36e-4984-982e-160f60abca3e)]
 interface sbILastFmRadio : nsISupports {
-  // tune into a lastfm:// ratio station
+  // tune into a lastfm:// radio station
   void radioPlay(in string aStation);
 };

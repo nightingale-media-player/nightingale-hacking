@@ -1,6 +1,0 @@
-facebook.jar:
-% content facebook  %content/
-% skin    facebook  classic/1.0 %skin/
-% overlay chrome://songbird/content/xul/layoutWithBrowserOverlay.xul chrome://facebook/content/browserOverlay.xul
-% overlay chrome://songbird/content/xul/layoutWithoutBrowserOverlay.xul chrome://facebook/content/miniOverlay.xul
-@include_all_to
