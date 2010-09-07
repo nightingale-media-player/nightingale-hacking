@@ -103,6 +103,7 @@ PublicPlaylistCommands.prototype = {
   m_mgr                           : null,
   m_deviceLibraryCommands         : null,
   m_cdDeviceLibraryCommands       : null,
+  m_playQueueCommands             : null,
   m_playQueueLibraryCommands      : null,
   
   // Define various playlist commands, they will be exposed to the playlist commands
@@ -1144,7 +1145,7 @@ PublicPlaylistCommands.prototype = {
                          this.m_cdDeviceLibraryCommands);
 
       // --------------------------------------------------------------------------
-      // Construct and publish the play queue device library commands
+      // Construct and publish the play queue library commands
       // --------------------------------------------------------------------------
 
       this.m_playQueueLibraryCommands = new PlaylistCommandsBuilder();
@@ -1160,10 +1161,62 @@ PublicPlaylistCommands.prototype = {
       this.m_playQueueLibraryCommands.appendPlaylistCommands(null,
                                                     "playqueue_cmdobj_clearhistory",
                                                     this.m_cmd_playqueue_ClearHistory);
+
+      this.m_playQueueLibraryCommands.setVisibleCallback(plCmd_ShowForToolbarCheck);
       
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_PLAYQUEUE_LIBRARY,
                          this.m_playQueueLibraryCommands);
+
+      // get the GUID for the play queue's media list
+      var queueService = Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
+                           .getService(Ci.sbIPlayQueueService);
+      var playQueueListGUID = queueService.mediaList.guid;
+
+      this.m_mgr.registerPlaylistCommandsMediaItem(playQueueListGUID, "", this.m_playQueueLibraryCommands);
+
+      // --------------------------------------------------------------------------
+      // Construct and publish the play queue commands
+      // --------------------------------------------------------------------------
+
+      this.m_playQueueCommands = new PlaylistCommandsBuilder();
+
+      this.m_playQueueCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_play",
+                                                    this.m_cmd_Play);
+
+      this.m_playQueueCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_reveal",
+                                                    this.m_cmd_Reveal);
+
+      this.m_playQueueCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_getartwork",
+                                                    this.m_cmd_GetArtwork);
       
+      this.m_playQueueCommands.appendSeparator(null, "default_commands_separator_1");
+      
+      this.m_playQueueCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_addtoplaylist",
+                                                    SBPlaylistCommand_AddToPlaylist);
+
+      this.m_playQueueCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_addtolibrary",
+                                                    SBPlaylistCommand_AddToLibrary);
+      
+      this.m_playQueueCommands.appendSeparator(null, "default_commands_separator_2");
+
+      this.m_playQueueCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_rescan",
+                                                    this.m_cmd_Rescan);
+
+      this.m_playQueueCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_remove",
+                                                    this.m_cmd_Remove);
+
+      this.m_playQueueCommands.setVisibleCallback(plCmd_HideForToolbarCheck);
+
+      this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_PLAYQUEUE, this.m_playQueueCommands);
+
+      this.m_mgr.registerPlaylistCommandsMediaItem(playQueueListGUID, "", this.m_playQueueCommands);
 
       // --------------------------------------------------------------------------
       // Construct and publish the download toolbar commands
@@ -1323,6 +1376,8 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_SMARTPLAYLIST, this.m_smartPlaylistsCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DEVICE_LIBRARY,this.m_deviceLibraryCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_CDDEVICE_LIBRARY, this.m_cdDeviceLibraryCommands);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_PLAYQUEUE, this.m_playQueueCommands);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_PLAYQUEUE_LIBRARY, this.m_playQueueLibraryCommands);
 
     // Un-register download playlist commands
 
@@ -1414,6 +1469,8 @@ PublicPlaylistCommands.prototype = {
     this.m_serviceTreeDefaultCommands.shutdown();
     this.m_deviceLibraryCommands.shutdown();
     this.m_cdDeviceLibraryCommands.shutdown();
+    this.m_playQueueCommands.shutdown();
+    this.m_playQueueLibraryCommands.shutdown();
 
     g_dataRemoteService = null;
 

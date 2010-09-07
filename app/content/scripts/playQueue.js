@@ -88,14 +88,10 @@ var playQueue = {
                                            Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED |
                                            Ci.sbIMediaList.LISTENER_FLAGS_LISTCLEARED);
 
-    // Bind the playlist to a a view and commands.
+    // Bind the playlist to a a view.
     var view = playQueueService.mediaList.createView();
-    var mgr = Cc["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
-                .createInstance(Ci.sbIPlaylistCommandsManager);
 
-    var commands = mgr.request(kPlaylistCommands.MEDIALIST_PLAYQUEUE_LIBRARY);
-
-    this._playlist.bind(view, commands);
+    this._playlist.bind(view);
   },
 
   /**
