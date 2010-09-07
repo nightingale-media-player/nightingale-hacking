@@ -56,6 +56,13 @@ var sbCDDeviceUtils = {
       var addItems = deviceLibrary.getItemsByProperty(SBProperties.shouldRip,
                                                       "1");
   
+      //reset the rip status of the items to be ripped
+      var ripItemsEnum = addItems.enumerate();
+      while (ripItemsEnum.hasMoreElements()) {
+        var ripItem = ripItemsEnum.getNext();
+        ripItem.setProperty(SBProperties.cdRipStatus, null);
+      }
+
       // Then add them to the main library using addSome(enumerator)
       LibraryUtils.mainLibrary.addSome(addItems.enumerate());
     } catch (err) {

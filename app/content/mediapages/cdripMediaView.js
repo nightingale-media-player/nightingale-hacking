@@ -94,6 +94,7 @@ const LOOKUP_MESSAGE_DELAY_TIMER    = 1000;
 const FINAL_TRANSCODE_STATUS_SUCCESS = 0;
 const FINAL_TRANSCODE_STATUS_PARTIAL = 1;
 const FINAL_TRANSCODE_STATUS_FAILED  = 2;
+const FINAL_TRANSCODE_STATUS_ABORT   = 3;
 
 
 //------------------------------------------------------------------------------
@@ -149,7 +150,7 @@ window.cdripController =
                                .createInstance(Ci.nsITimer);
 
     this._toggleLookupNotification(false);
-    
+
     var eventTarget = this._device.QueryInterface(Ci.sbIDeviceEventTarget);
     eventTarget.addEventListener(this);
 
@@ -193,7 +194,7 @@ window.cdripController =
     this._enableCommand(RIP_COMMAND_EJECT);
     this._enableCommand(RIP_COMMAND_STARTRIP);
     this._enableCommand(RIP_COMMAND_STOPRIP);
-    
+
     // Check if we need to preform a look up on this disc.
     this._checkIfNeedsLookup();
   },
@@ -404,6 +405,11 @@ window.cdripController =
         case FINAL_TRANSCODE_STATUS_PARTIAL:
           statusLabel = "cdrip.mediaview.status.rip_partial";
           statusImageSrc = "chrome://songbird/skin/device/icon-warning.png";
+          break;
+
+        case FINAL_TRANSCODE_STATUS_ABORT:
+          statusLabel.Truncate();
+          statusImageSrc.Truncate();
           break;
 
         default:
@@ -830,7 +836,7 @@ window.cdripController =
     this._mediaListView.filterConstraint =
       LibraryUtils.standardFilterConstraint;
   },
-  
+
   /**
    * Checks the main library of the device to see if it needs a lookup.
    */
@@ -863,8 +869,31 @@ window.cdripController =
       return 0;
     }
 
-    // Check for any tracks that have a failed status ('4')
+    //Check if any tracks were cancelled, ie the rip operation was cancelled
     var deviceLibrary = this._getDeviceLibrary();
+    var abortCount = 0;
+    try {
+      // Get all the did not successfully ripped tracks
+      var propArray =
+        Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+          .createInstance(Ci.sbIMutablePropertyArray);
+      //tracks with 4|100 were aborted
+      propArray.appendProperty(SBProperties.cdRipStatus, "4|100");
+      propArray.appendProperty(SBProperties.shouldRip, "1");
+
+      var abortedItems = deviceLibrary.getItemsByProperties(propArray);
+      abortCount = abortedItems.length;
+    }
+    catch (err if err.result == Cr.NS_ERROR_NOT_AVAILABLE) {
+      // deviceLibrary.getItemsByProperties() will throw NS_ERROR_NOT_AVAILABLE
+      // if there are no cancelled rips in the list.  Ignore this error.
+    }
+    catch (err) {
+      Cu.reportError("ERROR GETTING TRANSCODE ERROR COUNT " + err);
+    }
+    if (abortCount > 0) return FINAL_TRANSCODE_STATUS_ABORT;
+
+    // Check for any tracks that have a failed status ('3|100')
     var errorCount = 0;
     try {
       // Get all the did not successfully ripped tracks
@@ -873,7 +902,7 @@ window.cdripController =
           .createInstance(Ci.sbIMutablePropertyArray);
       propArray.appendProperty(SBProperties.cdRipStatus, "3|100");
       propArray.appendProperty(SBProperties.shouldRip, "1");
-      
+
       var rippedItems = deviceLibrary.getItemsByProperties(propArray);
       errorCount = rippedItems.length;
     }
@@ -902,7 +931,7 @@ window.cdripController =
   _getDeviceLibrary: function cdripController_getDeviceLibrary() {
     if (this._deviceLibrary)
       return this._deviceLibrary;
-    
+
     if (!this._device) {
       return null;
     }
