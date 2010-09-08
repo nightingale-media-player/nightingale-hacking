@@ -102,7 +102,7 @@ try
       var ios = Components.classes["@mozilla.org/network/io-service;1"]
                           .getService(Components.interfaces.nsIIOService);
       var uri = ios.newFileURI(fp.file, null, null);
-      
+
       // Linux specific hack to be able to read badly named files (bug 6227)
       // nsIIOService::newFileURI actually forces to be valid UTF8 - which isn't
       // correct if the file on disk manages to have an incorrect name
@@ -389,7 +389,7 @@ try
       var filetype;
       for (i in exts)
       {
-        filetype = SBFormattedString("open.filetype", 
+        filetype = SBFormattedString("open.filetype",
                                      [exts[i].toUpperCase(), filters[i]]);
         fp.appendFilter(filetype, filters[i]);
       }
@@ -413,7 +413,7 @@ try
       alert(err);
     }
   }
-  
+
   function SBOpenPlaylistURI(aURI, aName) {
     var uri = aURI;
     if(!(aURI instanceof Components.interfaces.nsIURI)) {
@@ -448,12 +448,12 @@ try
       for (var i = 0; i < mediaList.length; i++) {
         array.appendElement(mediaList.getItemByIndex(i), false);
       }
-      
-      var metadataService = 
+
+      var metadataService =
          Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]
                    .getService(Components.interfaces.sbIFileMetadataService);
       var metadataJob = metadataService.read(array);
-      
+
 
       // Give the new media list focus
       if (typeof gBrowser != 'undefined') {
@@ -518,16 +518,16 @@ try
     consoleService.logStringMessage( str );
   }
 
-  // This function should be called when we need to open a URL but gBrowser is 
-  // not available. Eventually this should be replaced by code that opens a new 
-  // Songbird window, when we are able to do that, but for now, open in the 
+  // This function should be called when we need to open a URL but gBrowser is
+  // not available. Eventually this should be replaced by code that opens a new
+  // Songbird window, when we are able to do that, but for now, open in the
   // default external browser.
   // If what you want to do is ALWAYS open in the default external browser,
   // use SBOpenURLInDefaultBrowser directly!
   function SBBrowserOpenURLInNewWindow( the_url ) {
     SBOpenURLInDefaultBrowser(the_url);
   }
-  
+
   // This function opens a URL externally, in the default web browser for the system
   function SBOpenURLInDefaultBrowser( the_url ) {
     var externalLoader = (Components
@@ -547,7 +547,7 @@ function onHelp()
   onMenu(helpitem);
 }
 
-function SBOpenEqualizer() 
+function SBOpenEqualizer()
 {
   // Only open the equalizer UI if the control is enabled.
   var equalizerControl = document.getElementById("menu_equalizer");
@@ -655,7 +655,7 @@ function SBScanMedia( aParentWindow, aScanDirectory )
     }
     if (typeof(SBJobUtils) == "undefined") {
       Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
-    }  
+    }
     var directoryArray = ArrayConverter.nsIArray([scanDirectory]);
     var job = importer.import(directoryArray);
     SBJobUtils.showProgressDialog(job, window, /* no delay */ 0);
@@ -723,14 +723,14 @@ function makeNewPlaylist(mediaListType, allowDevicePlaylist) {
   if (!library) {
     throw("Could not find a library supporting lists of type " + mediaListType);
   }
-  
+
   // Make sure the library is user editable, if it is not, use the main
   // library instead of the currently selected library.
   if (!library.userEditable ||
       !library.userEditableContent) {
     var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
                            .getService(Ci.sbILibraryManager);
-    
+
     library = libraryManager.mainLibrary;
   }
 
@@ -777,7 +777,7 @@ function makeNewPlaylist(mediaListType, allowDevicePlaylist) {
   var metrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
                   .createInstance(Ci.sbIMetrics);
   metrics.metricsInc("medialist", "create", mediaListType);
-  
+
   return mediaList;
 }
 
@@ -793,7 +793,7 @@ function SBDeleteMediaList(aMediaList)
   }
   // if this list is the storage for an outer list, the outer list is the one
   // that should be deleted
-  var outerListGuid = 
+  var outerListGuid =
     mediaList.getProperty(SBProperties.outerGUID);
   if (outerListGuid)
     mediaList = mediaList.library.getMediaItem(outerListGuid);
@@ -801,7 +801,7 @@ function SBDeleteMediaList(aMediaList)
   // them based on their parent library user-editable flag. Also don't delete
   // libraries or the download node.
   var listType = mediaList.getProperty(SBProperties.customType);
-  if (mediaList.userEditable && 
+  if (mediaList.userEditable &&
       listType != "download" &&
       !(mediaList instanceof Ci.sbILibrary)) {
     const BYPASSKEY = "playlist.deletewarning.bypass";
@@ -810,7 +810,7 @@ function SBDeleteMediaList(aMediaList)
       var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
                             .getService(Ci.nsIPromptService);
       var check = { value: false };
-      
+
       var sbs = Cc["@mozilla.org/intl/stringbundle;1"]
                   .getService(Ci.nsIStringBundleService);
       var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
@@ -827,15 +827,15 @@ function SBDeleteMediaList(aMediaList)
       }
 
       var strCheck = SBString(STRINGROOT + "check");
-      
-      var r = promptService.confirmEx(window, 
-                              strTitle, 
-                              strMsg, 
-                              Ci.nsIPromptService.STD_YES_NO_BUTTONS, 
-                              null, 
-                              null, 
-                              null, 
-                              strCheck, 
+
+      var r = promptService.confirmEx(window,
+                              strTitle,
+                              strMsg,
+                              Ci.nsIPromptService.STD_YES_NO_BUTTONS,
+                              null,
+                              null,
+                              null,
+                              strCheck,
                               check);
       if (check.value == true) {
         SBDataSetBoolValue(BYPASSKEY, true);
@@ -874,7 +874,7 @@ function SBTrackEditorOpen( initialTab, parentWindow ) {
   if (!parentWindow)
     parentWindow = window;
   var browser;
-  if (typeof SBGetBrowser == 'function') 
+  if (typeof SBGetBrowser == 'function')
     browser = SBGetBrowser();
   if (browser) {
     if (browser.currentMediaPage) {
@@ -888,22 +888,22 @@ function SBTrackEditorOpen( initialTab, parentWindow ) {
             var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
                                           .getService(Components.interfaces.nsIPromptService);
             var check = { value: false };
-            
+
             var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"]
                                 .getService(Components.interfaces.nsIStringBundleService);
             var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
             var strTitle = songbirdStrings.GetStringFromName(STRINGROOT + "title");
             var strMsg = songbirdStrings.formatStringFromName(STRINGROOT + "message", [numSelected], 1);
             var strCheck = songbirdStrings.GetStringFromName(STRINGROOT + "check");
-            
-            var r = promptService.confirmEx(window, 
-                                    strTitle, 
-                                    strMsg, 
-                                    Ci.nsIPromptService.STD_YES_NO_BUTTONS, 
-                                    null, 
-                                    null, 
-                                    null, 
-                                    strCheck, 
+
+            var r = promptService.confirmEx(window,
+                                    strTitle,
+                                    strMsg,
+                                    Ci.nsIPromptService.STD_YES_NO_BUTTONS,
+                                    null,
+                                    null,
+                                    null,
+                                    strCheck,
                                     check);
             if (check.value == true) {
               SBDataSetBoolValue(BYPASSKEY, true);
@@ -920,7 +920,7 @@ function SBTrackEditorOpen( initialTab, parentWindow ) {
         var isVideo = view.selection.currentMediaItem.getProperty(SBProperties.contentType) == "video";
         SBOpenModalDialog((isVideo ? "chrome://songbird/content/xul/trackEditorVideo.xul"
                                    : "chrome://songbird/content/xul/trackEditor.xul"),
-                          "Songbird:TrackEditor", "chrome,centerscreen", 
+                          "Songbird:TrackEditor", "chrome,centerscreen",
                           initialTab, parentWindow);
       }
     }
@@ -933,14 +933,14 @@ function SBGetArtworkOpen() {
   if (browser && browser.currentMediaPage) {
     view = browser.currentMediaPage.mediaListView;
   }
-  
+
   if (!view)
     return;
 
   var artworkScanner = Cc["@songbirdnest.com/Songbird/album-art/scanner;1"]
                          .createInstance(Ci.sbIAlbumArtScanner);
   artworkScanner.scanListForArtwork(view.mediaList);
-  SBJobUtils.showProgressDialog(artworkScanner, window, 0);  
+  SBJobUtils.showProgressDialog(artworkScanner, window, 0);
 }
 
 function SBRevealFile( initialTab, parentWindow ) {
@@ -948,22 +948,22 @@ function SBRevealFile( initialTab, parentWindow ) {
   var browser;
   var view = _SBGetCurrentView();
   if (!view) { return; }
-  
+
   var numSelected = view.selection.count;
   if (numSelected != 1) { return; }
-  
+
   var item = null;
   var selection = view.selection.selectedIndexedMediaItems;
   item = selection.getNext().QueryInterface(Ci.sbIIndexedMediaItem).mediaItem;
-  
+
   if (!item) {
     Cu.reportError("Failed to get media item to reveal.")
     return;
   }
-  
+
   var uri = item.contentSrc;
   if (!uri || uri.scheme != "file") { return; }
-  
+
   let f = uri.QueryInterface(Ci.nsIFileURL).file;
   try {
     // Show the directory containing the file and select the file
@@ -975,7 +975,7 @@ function SBRevealFile( initialTab, parentWindow ) {
     let parent = f.parent.QueryInterface(Ci.nsILocalFile);
     if (!parent)
       return;
-  
+
     try {
       // "Double click" the parent directory to show where the file should be
       parent.launch();
@@ -1152,13 +1152,13 @@ function buildControlsMenu() {
 function buildViewMenu() {
   var disabled = !SBDataGetBoolValue("faceplate.playingvideo");
   var fullscreen = SBDataGetBoolValue("video.fullscreen");
-  
+
   var fullscreenItem = document.getElementById("menuitem-video-fullscreen");
   if(fullscreenItem) {
     fullscreenItem.setAttribute("checked", !disabled && fullscreen);
     fullscreenItem.setAttribute("disabled", disabled);
   }
-  
+
   var videoToFrontItem = document.getElementById("menuitem-video-to-front");
   if(videoToFrontItem) {
     videoToFrontItem.setAttribute("disabled", disabled);
@@ -1248,7 +1248,7 @@ function SBImportURLIntoMainLibrary(url) {
 
   items.appendElement(mediaItem, false);
 
-  var metadataService = 
+  var metadataService =
      Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]
                .getService(Components.interfaces.sbIFileMetadataService);
   var metadataJob = metadataService.read(items);
@@ -1297,7 +1297,7 @@ function SBImportURLIntoWebLibrary(url) {
 
   items.appendElement(mediaItem, false);
 
-  var metadataService = 
+  var metadataService =
      Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]
                .getService(Components.interfaces.sbIFileMetadataService);
   var metadataJob = metadataService.read(items);
@@ -1334,7 +1334,7 @@ function toggleFullscreenVideo() {
 function bringVideoWindowToFront() {
   var wm = Cc["@mozilla.org/appshell/window-mediator;1"]
              .getService(Ci.nsIWindowMediator);
-             
+
   var coreEnum = wm.getEnumerator("Songbird:Core");
   while(coreEnum.hasMoreElements()) {
     let win = coreEnum.getNext();

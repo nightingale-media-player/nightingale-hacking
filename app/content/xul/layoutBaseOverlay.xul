@@ -26,10 +26,10 @@
  */
 -->
 
-<!-- 
+<!--
 
      This overlay is applied to all layout windows, regardless of whether or not
-     they contain a gBrowser element 
+     they contain a gBrowser element
 
 -->
 
@@ -62,7 +62,7 @@
   <!-- **                      Menubar Overlay Items                      ** -->
   <!-- **                                                                 ** -->
   <!-- ********************************************************************* -->
-  
+
 
   <!-- Note that wherever possible IDs have been set up to match the FireFox menus -->
 
@@ -119,7 +119,7 @@
         -->
 
         <menuseparator id="menu_OpenSeparator"/>
-        
+
         <menuitem id="menuitem_file_url"
                   key="openurl-key"
                   class="menuitem-iconic"
@@ -257,17 +257,17 @@
         <menu id="player-control-location"
               label="&menu.switchplayercontrols;">
           <menupopup id="player-controls">
-            <menuitem id="menuitem-move-player-location-top" 
+            <menuitem id="menuitem-move-player-location-top"
                       name="player-location"
                       type="radio"
                       observes="playercontrols_top"
-                      label="&menu.controllerontop;" 
+                      label="&menu.controllerontop;"
                       oncommand="movePlayerControls(true);" />
-            <menuitem id="menuitem-move-player-location-bottom" 
+            <menuitem id="menuitem-move-player-location-bottom"
                       name="player-location"
                       type="radio"
                       observes="playercontrols_bottom"
-                      label="&menu.controlleronbottom;" 
+                      label="&menu.controlleronbottom;"
                       oncommand="movePlayerControls(false);" />
           </menupopup>
         </menu>
@@ -282,8 +282,8 @@
                   type="checkbox"
                   oncommand="toggleFullscreenVideo();"/>
         <menuitem id="menuitem-video-to-front"
-                  key="video-window-to-front-key" 
-                  label="&menu.videotofront;" 
+                  key="video-window-to-front-key"
+                  label="&menu.videotofront;"
                   oncommand="bringVideoWindowToFront();"/>
       </menupopup>
     </menu>
@@ -350,7 +350,7 @@
 
 
 
-  <!-- group overlay items for popups, command, broadcasters, keys and 
+  <!-- group overlay items for popups, command, broadcasters, keys and
        stringbundles into a single target -->
   <sb-support id="mainSupportSet">
 
@@ -420,7 +420,7 @@
       <command id="cmd_control_next"
                oncommand="goDoCommand(this.id)"/>
     </commandset>
-    
+
     <!-- ********************************************************************* -->
     <!-- **                                                                 ** -->
     <!-- **                   Broadcasters Overlay Items                    ** -->
@@ -447,27 +447,27 @@
       </broadcaster>
       <broadcaster id="controlModeShuffle" >
         <observes type="dataremote"
-                  key="playlist.shuffle" 
-                  attribute="checked" 
+                  key="playlist.shuffle"
+                  attribute="checked"
                   boolean="true" />
       </broadcaster>
       <broadcaster id="controlModeRepeatAlways" >
         <observes type="dataremote"
-                  key="playlist.repeat" 
-                  attribute="checked" 
-                  onchange="return value == '2'" /> 
+                  key="playlist.repeat"
+                  attribute="checked"
+                  onchange="return value == '2'" />
       </broadcaster>
       <broadcaster id="controlModeRepeatOnce" >
         <observes type="dataremote"
-                  key="playlist.repeat" 
-                  attribute="checked" 
-                  onchange="return value == '1'" /> 
+                  key="playlist.repeat"
+                  attribute="checked"
+                  onchange="return value == '1'" />
       </broadcaster>
       <broadcaster id="controlModeRepeatNever" >
         <observes type="dataremote"
-                  key="playlist.repeat" 
-                  attribute="checked" 
-                  onchange="return value == '0'" /> 
+                  key="playlist.repeat"
+                  attribute="checked"
+                  onchange="return value == '0'" />
       </broadcaster>
       <broadcaster id="playercontrols_top" />
       <broadcaster id="playercontrols_bottom" />
@@ -479,7 +479,7 @@
     <!-- **                      Keyset Overlay Items                       ** -->
     <!-- **                                                                 ** -->
     <!-- ********************************************************************* -->
-    
+
     <keyset id="mainKeyset">
       <key id="openfile-key" modifiers="accel" key="&menu.file.open.key;" oncommand="doMenu('menuitem_file_file');"/>
       <key id="openurl-key" modifiers="accel" key="&menu.file.url.key;" oncommand="doMenu('menuitem_file_url');"/>
@@ -497,7 +497,7 @@
       <key id="equalizer-key" modifiers="accel" key="&equalizer.key;" oncommand="SBOpenEqualizer();"/>
       <key id="sanitize-key" modifiers="accel,shift" keycode="&sanitize.keycode;" oncommand="doMenu('menuitem_tools_clearprivatedata');"/>
       <key id="downloadmgr-key" modifiers="accel,shift" key="&downloadmgr.key;" oncommand="doMenu('menu_downloadmgr');"/>
-      
+
       <!-- player controls -->
       <key id="volume-down-key" modifiers="accel" keycode="VK_DOWN" command="cmd_volume_down"/>
       <key id="volume-up-key" modifiers="accel" keycode="VK_UP" command="cmd_volume_up"/>
@@ -520,15 +520,15 @@
     <!-- **                                                                 ** -->
     <!-- ********************************************************************* -->
 
-    <!-- this id matches Firefox's --> 
+    <!-- this id matches Firefox's -->
     <stringbundleset id="stringbundleset">
       <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
       <stringbundle id="bundle_brand" src="chrome://branding/locale/brand.properties"/>
-    </stringbundleset> 
+    </stringbundleset>
 
   <!-- end overlay group -->
   </sb-support>
-  
+
 
   <!-- ********************************************************************* -->
   <!-- **                                                                 ** -->
@@ -537,73 +537,73 @@
   <!-- ********************************************************************* -->
 
   <!-- Load the Mozilla helpers -->
-  <script type="application/x-javascript"   
+  <script type="application/x-javascript"
   src="chrome://global/content/dialogOverlay.js" />
   <script type="application/x-javascript"
   src="chrome://global/content/editMenuOverlay.js"/>
 
   <!-- Dataremotes utility functions -->
-  <script type="application/x-javascript" 
+  <script type="application/x-javascript"
   src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
-  
+
   <!-- Mouse wheel support for volume control -->
-  <script type="application/x-javascript" 
+  <script type="application/x-javascript"
   src="chrome://songbird/content/scripts/mouseWheelVolume.js"/>
 
   <!-- Support for media file/url opening -->
-  <script type="application/x-javascript" 
+  <script type="application/x-javascript"
   src="chrome://songbird/content/scripts/playerOpen.js"/>
 
   <!-- Mozilla helpers -->
-  <script type="application/x-javascript" 
+  <script type="application/x-javascript"
   src="chrome://global/content/globalOverlay.js"/>
 
   <!-- Drag and drop -->
-  <script type="application/x-javascript" 
+  <script type="application/x-javascript"
   src="chrome://global/content/nsDragAndDrop.js"/>
-  <script type="application/x-javascript" 
+  <script type="application/x-javascript"
   src="chrome://global/content/nsTransferable.js"/>
-  <script type="application/x-javascript"   
+  <script type="application/x-javascript"
   src="chrome://songbird/content/scripts/dndDefaultHandler.js" />
 
   <!-- Command line -->
-  <script type="application/x-javascript" 
+  <script type="application/x-javascript"
   src="chrome://songbird/content/scripts/commandLine.js"/>
 
   <!-- Window utilities -->
-  <script type="application/x-javascript"   
+  <script type="application/x-javascript"
   src="chrome://songbird/content/scripts/windowUtils.js" />
 
   <!-- Menubar handler -->
-  <script type="application/x-javascript"   
+  <script type="application/x-javascript"
   src="chrome://songbird/content/scripts/menuBarXBLTEMP.js" />
 
   <!-- Locales switcher -->
-  <script type="application/x-javascript"   
+  <script type="application/x-javascript"
   src="chrome://songbird/content/scripts/switchLocale.js" />
 
   <!-- Generic message box -->
-  <script type="application/x-javascript"   
+  <script type="application/x-javascript"
   src="chrome://songbird/content/scripts/messageBox.js" />
 
   <!-- Generic restart box -->
-  <script type="application/x-javascript"   
+  <script type="application/x-javascript"
   src="chrome://songbird/content/scripts/restartBox.js" />
 
   <!-- Metrics functions -->
-  <script type="application/x-javascript"   
+  <script type="application/x-javascript"
   src="chrome://songbird/content/scripts/metrics.js" />
-  
+
   <!-- Sanitizer Support (moz) -->
-  <script type="application/x-javascript" 
+  <script type="application/x-javascript"
   src="chrome://browser/content/sanitize.js" />
 
   <!-- Sanitizer Support (songbird) -->
-  <script type="application/x-javascript" 
+  <script type="application/x-javascript"
   src="chrome://songbird/content/scripts/sanitize.js" />
 
   <!-- Extension Overlay Support -->
-  <script type="application/x-javascript" 
+  <script type="application/x-javascript"
   src="chrome://songbird/content/scripts/overlayLoader.js" />
 
   <!-- after first-run has run - run the update service with special args -->
@@ -622,15 +622,15 @@
 
   <statusbar id="status-bar">
 
-    <statusbarpanel id="statusbar-display" flex="1" 
+    <statusbarpanel id="statusbar-display" flex="1"
       insertafter="sb-status-bar-numplaylistitems-label">
-      <sb-status-label id="sb-status-bar-status-label" 
-          class="sb-status-bar-status-label sb-status-bar-text" 
+      <sb-status-label id="sb-status-bar-status-label"
+          class="sb-status-bar-status-label sb-status-bar-text"
           value=" " flex="1" crop="end" pack="center"/>
     </statusbarpanel>
 
-    <sb-player-scanning-label insertbefore="statusbar-progresspanel" 
-          id="sb-status-bar-scanning-label" class="sb-status-bar-scanning-label 
+    <sb-player-scanning-label insertbefore="statusbar-progresspanel"
+          id="sb-status-bar-scanning-label" class="sb-status-bar-scanning-label
           sb-status-bar-text" crop="end" pack="center"/>
 
   </statusbar>
@@ -642,7 +642,7 @@
   <!-- **                                                                 ** -->
   <!-- ********************************************************************* -->
 
-  <toolbox id="control_pane_toolbox" 
+  <toolbox id="control_pane_toolbox"
            mode="icons"
            defaultmode="icons"
            iconsize="large">
@@ -659,5 +659,5 @@
     </toolbar>
   </toolbox>
 
- 
+
 </overlay>
