@@ -67,7 +67,10 @@
   <!-- Note that wherever possible IDs have been set up to match the FireFox menus -->
 
   <menubar id="main-menubar">
-    <menu id="file-menu" label="&menu.file;"  accesskey="&menu.file.accesskey;">
+    <menu id="file-menu"
+          label="&menu.file;"
+          accesskey="&menu.file.accesskey;"
+          onpopupshowing="buildFileMenu();">
       <menupopup id="menu_FilePopup">
         <menuitem id="menuitem_file_new"
                   key="newplaylist-key"

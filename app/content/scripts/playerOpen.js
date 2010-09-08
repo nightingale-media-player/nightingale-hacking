@@ -1112,6 +1112,17 @@ function buildHelpMenu()
   checkForUpdates.label = getStringWithUpdateName("updateCmd_" + key);
 }
 
+function buildFileMenu() {
+  var closeTabItem = document.getElementById("menuitem_file_closetab");
+
+  // Disable "Close Tab" menu item if media tab is selected.
+  if (gBrowser.mediaTab == gBrowser.selectedTab) {
+    closeTabItem.setAttribute("disabled", "true");
+  } else {
+    closeTabItem.removeAttribute("disabled");
+  }
+}
+
 function buildControlsMenu() {
   var equalizerControl = document.getElementById("menu_equalizer");
   var mm = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]

@@ -608,6 +608,13 @@
             var menuItems = aPopupMenu.getElementsByAttribute("tbattr", "tabbrowser-multiple");
             for (var i = 0; i < menuItems.length; i++)
               menuItems[i].disabled = disabled;
+
+            // Disable the "Close Tab" context menu item for the media tab.
+            if (this.mContextTab == this.firstChild) {
+              var closeMenu =
+                aPopupMenu.getElementsByAttribute("id", "sb_context_closeTab");
+              closeMenu[0].setAttribute("disabled", "true");
+            }
           ]]>
         </body>
       </method>
