@@ -39,6 +39,11 @@ class nsIStringEnumerator;
 class sbAutoString : public nsAutoString
 {
 public:
+  sbAutoString(const char* aValue)
+  {
+    AssignLiteral(aValue);
+  }
+
   sbAutoString(int aValue)
   {
     char valueStr[64];
@@ -98,6 +103,11 @@ public:
 class sbCAutoString : public nsCAutoString
 {
 public:
+  sbCAutoString(const char* aValue)
+  {
+    AssignLiteral(aValue);
+  }
+
   sbCAutoString(int aValue)
   {
     char valueStr[64];

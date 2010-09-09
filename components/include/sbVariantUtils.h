@@ -1,30 +1,28 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #ifndef __SB_VARIANT_UTILS_H__
 #define __SB_VARIANT_UTILS_H__
@@ -51,7 +49,7 @@
 // Mozilla imports.
 #include <nsComponentManagerUtils.h>
 #include <nsIVariant.h>
-#include <nsStringAPI.h>
+#include <sbStringUtils.h>
 
 
 //------------------------------------------------------------------------------
@@ -280,6 +278,214 @@ public:
 
 private:
   nsCOMPtr<nsIWritableVariant> mVariant;
+};
+
+
+/**
+ * Helper class for variants to return the value of the variant.  This class is
+ * mainly useful for template functions that use variants.
+ */
+
+class sbVariantHelper
+{
+  //----------------------------------------------------------------------------
+  //
+  // Public interface.
+  //
+  //----------------------------------------------------------------------------
+
+public:
+
+  /**
+   * Construct a variant helper for the variant specified by aVariant.  If aRV
+   * is specified, return all error results from all methods in aRV.
+   *
+   * \param aVariant            Variant.
+   * \param aRV                 Optional.  Return value to use for all methods.
+   */
+  sbVariantHelper(nsIVariant* aVariant,
+                  nsresult*   aRV = nsnull) :
+    mVariant(aVariant),
+    mRV(aRV),
+    mInternalRV(NS_OK)
+  {
+    NS_ASSERTION(mVariant, "Null variant");
+    if (!mRV)
+      mRV = &mInternalRV;
+  }
+
+
+  //
+  // Operator methods for returning the variant value.
+  //
+
+  operator PRUint8() const
+  {
+    // Ensure variant is present.
+    if (!mVariant) {
+      NS_WARNING("Null variant");
+      *mRV = NS_ERROR_NULL_POINTER;
+      return 0;
+    }
+
+    // Get the variant value.
+    PRUint8 value;
+    *mRV = mVariant->GetAsUint8(&value);
+    NS_ENSURE_SUCCESS(*mRV, 0);
+
+    return value;
+  }
+
+  // XXXeps nsIVaraint.getAsInt8 returns PRUint8
+
+  operator PRUint16() const
+  {
+    // Ensure variant is present.
+    if (!mVariant) {
+      NS_WARNING("Null variant");
+      *mRV = NS_ERROR_NULL_POINTER;
+      return 0;
+    }
+
+    // Get the variant value.
+    PRUint16 value;
+    *mRV = mVariant->GetAsUint16(&value);
+    NS_ENSURE_SUCCESS(*mRV, 0);
+
+    return value;
+  }
+
+  operator PRInt16() const
+  {
+    // Ensure variant is present.
+    if (!mVariant) {
+      NS_WARNING("Null variant");
+      *mRV = NS_ERROR_NULL_POINTER;
+      return 0;
+    }
+
+    // Get the variant value.
+    PRInt16 value;
+    *mRV = mVariant->GetAsInt16(&value);
+    NS_ENSURE_SUCCESS(*mRV, 0);
+
+    return value;
+  }
+
+  operator PRUint32() const
+  {
+    // Ensure variant is present.
+    if (!mVariant) {
+      NS_WARNING("Null variant");
+      *mRV = NS_ERROR_NULL_POINTER;
+      return 0;
+    }
+
+    // Get the variant value.
+    PRUint32 value;
+    *mRV = mVariant->GetAsUint32(&value);
+    NS_ENSURE_SUCCESS(*mRV, 0);
+
+    return value;
+  }
+
+  operator PRInt32() const
+  {
+    // Ensure variant is present.
+    if (!mVariant) {
+      NS_WARNING("Null variant");
+      *mRV = NS_ERROR_NULL_POINTER;
+      return 0;
+    }
+
+    // Get the variant value.
+    PRInt32 value;
+    *mRV = mVariant->GetAsInt32(&value);
+    NS_ENSURE_SUCCESS(*mRV, 0);
+
+    return value;
+  }
+
+  operator PRUint64() const
+  {
+    // Ensure variant is present.
+    if (!mVariant) {
+      NS_WARNING("Null variant");
+      *mRV = NS_ERROR_NULL_POINTER;
+      return 0;
+    }
+
+    // Get the variant value.
+    PRUint64 value;
+    *mRV = mVariant->GetAsUint64(&value);
+    NS_ENSURE_SUCCESS(*mRV, 0);
+
+    return value;
+  }
+
+  operator PRInt64() const
+  {
+    // Ensure variant is present.
+    if (!mVariant) {
+      NS_WARNING("Null variant");
+      *mRV = NS_ERROR_NULL_POINTER;
+      return 0;
+    }
+
+    // Get the variant value.
+    PRInt64 value;
+    *mRV = mVariant->GetAsInt64(&value);
+    NS_ENSURE_SUCCESS(*mRV, 0);
+
+    return value;
+  }
+
+  operator nsString() const
+  {
+    // Ensure variant is present.
+    if (!mVariant) {
+      NS_WARNING("Null variant");
+      *mRV = NS_ERROR_NULL_POINTER;
+      return SBVoidString();
+    }
+
+    // Get the variant value.
+    nsAutoString value;
+    *mRV = mVariant->GetAsAString(value);
+    NS_ENSURE_SUCCESS(*mRV, SBVoidString());
+
+    return value;
+  }
+
+
+  /**
+   * Return the result of the last method called.
+   *
+   * \return                    Reult of last method called.
+   */
+  nsresult rv()
+  {
+    return *mRV;
+  }
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Private interface.
+  //
+  //----------------------------------------------------------------------------
+
+private:
+
+  //
+  // mVariant                   Base variant.
+  // mRV                        Pointer to return value.
+  // mInternalRV                Internal return value storage.
+  //
+
+  nsCOMPtr<nsIVariant>          mVariant;
+  nsresult*                     mRV;
+  nsresult                      mInternalRV;
 };
 
 
