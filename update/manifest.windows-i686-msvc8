@@ -534,6 +534,7 @@
 ./xulrunner/js.exe
 ./xulrunner/js3250.dll
 ./xulrunner/mangle.exe
+./xulrunner/mangle.pdb
 ./xulrunner/modules/CertUtils.jsm
 ./xulrunner/modules/DownloadLastDir.jsm
 ./xulrunner/modules/DownloadUtils.jsm
@@ -623,6 +624,7 @@
 ./xulrunner/res/viewsource.css
 ./xulrunner/res/wincharset.properties
 ./xulrunner/shlibsign.exe
+./xulrunner/shlibsign.pdb
 ./xulrunner/smime3.dll
 ./xulrunner/softokn3.chk
 ./xulrunner/softokn3.dll
