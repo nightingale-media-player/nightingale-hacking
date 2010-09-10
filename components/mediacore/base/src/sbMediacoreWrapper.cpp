@@ -100,6 +100,10 @@ sbMediacoreWrapper::sbMediacoreWrapper()
 sbMediacoreWrapper::~sbMediacoreWrapper()
 {
   TRACE(("sbMediacoreWrapper[0x%x] - Destroyed", this));
+
+  if(mProxiedObjectsMonitor) {
+    nsAutoMonitor::DestroyMonitor(mProxiedObjectsMonitor);
+  }
 }
 
 nsresult
