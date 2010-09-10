@@ -164,6 +164,7 @@
 ./components/sbMigrate14to15pre.smartplaylist.js
 ./components/sbMigrate14to15pre0.contentType.js
 ./components/sbMigrate14to17pre0.smartplaylist.js
+./components/sbMigrate18to19pre0.discSortTrackSort.js
 ./components/sbMigrate18to19pre0.fileURL.js
 ./components/sbMockCDDevice.dylib
 ./components/sbMockCDDevice.xpt
