@@ -49,6 +49,7 @@ SONGBIRD_COMPONENTS = $(srcdir)/sbMigrate061to070.js \
                       $(srcdir)/sbMigrate14to15pre.smartplaylist.js \
                       $(srcdir)/sbMigrate14to17pre0.smartplaylist.js \
                       $(srcdir)/sbMigrate18to19pre0.fileURL.js \
+                      $(srcdir)/sbMigrate18to19pre0.discSortTrackSort.js \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

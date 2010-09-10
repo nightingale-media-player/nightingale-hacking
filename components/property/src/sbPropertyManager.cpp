@@ -668,17 +668,68 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Track number
+  nsCOMPtr<sbIMutablePropertyArray> trackSecondarySort =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = trackSecondarySort->SetStrict(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Sorting by track number will sort by track no->artist->album->disc no
+  rv = trackSecondarySort->AppendProperty(
+                            NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
+                            NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = trackSecondarySort->AppendProperty(
+                            NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                            NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = trackSecondarySort->AppendProperty(
+                            NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
+                            NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
                       NS_LITERAL_STRING("property.track_no"),
                       stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 9999, PR_TRUE,
-                      PR_TRUE, PR_TRUE, NULL);
+                      PR_TRUE, PR_TRUE, NULL, trackSecondarySort);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Disc Number
+   nsCOMPtr<sbIMutablePropertyArray> discSecondarySort =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = discSecondarySort->SetStrict(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Sorting by disc number will sort by disc no->artist->album->track no->track name
+  rv = discSecondarySort->AppendProperty(
+                           NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
+                           NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = discSecondarySort->AppendProperty(
+                           NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                           NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = discSecondarySort->AppendProperty(
+                           NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                           NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = discSecondarySort->AppendProperty(
+                           NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                           NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
                       NS_LITERAL_STRING("property.disc_no"),
                       stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 999, PR_TRUE,
-                      PR_TRUE, PR_TRUE, NULL);
+                      PR_TRUE, PR_TRUE, NULL, discSecondarySort);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Total Discs
