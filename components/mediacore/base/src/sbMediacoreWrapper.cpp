@@ -42,6 +42,7 @@
 
 #include <sbProxiedComponentManager.h>
 #include <sbStringUtils.h>
+#include <sbThreadUtils.h>
 #include <sbVariantUtils.h>
 
 #include "sbBaseMediacoreEventTarget.h"
@@ -86,6 +87,7 @@ NS_IMPL_THREADSAFE_CI(sbMediacoreWrapper)
 
 sbMediacoreWrapper::sbMediacoreWrapper()
 : mBaseEventTarget(new sbBaseMediacoreEventTarget(this))
+, mProxiedObjectsMonitor(nsnull)
 , mWindowIsReady(PR_FALSE)
 {
 #ifdef PR_LOGGING
@@ -114,6 +116,10 @@ sbMediacoreWrapper::Init()
   rv = sbBaseMediacoreVolumeControl::InitBaseMediacoreVolumeControl();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mProxiedObjectsMonitor = 
+    nsAutoMonitor::NewMonitor("sbMediacoreWrapper::mProxiedObjectsMonitor");
+  NS_ENSURE_TRUE(mProxiedObjectsMonitor, NS_ERROR_OUT_OF_MEMORY);
+  
   return NS_OK;
 }
 
@@ -609,14 +615,74 @@ sbMediacoreWrapper::SendDOMEvent(const nsAString &aEventName,
                                  const nsAString &aEventData,
                                  nsIDOMDataContainerEvent **aEvent)
 {
-  nsCOMPtr<nsIDOMEvent> domEvent;
-  nsresult rv = mDocumentEvent->CreateEvent(NS_LITERAL_STRING("DataContainerEvent"), 
-                                            getter_AddRefs(domEvent));
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  PRBool isMainThread = NS_IsMainThread();
 
-  nsCOMPtr<nsIDOMDataContainerEvent> dataEvent = 
-    do_QueryInterface(domEvent, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIDOMDocumentEvent> documentEvent;
+  if(isMainThread) {
+    documentEvent = mDocumentEvent;
+  }
+  else {
+    // Scope monitor.
+    {
+      nsAutoMonitor mon(mProxiedObjectsMonitor);
+      if(!mProxiedDocumentEvent) {
+        mon.Exit();
+
+        nsCOMPtr<nsIThread> target;
+        rv = NS_GetMainThread(getter_AddRefs(target));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = do_GetProxyForObject(target,
+                                  NS_GET_IID(nsIDOMDocumentEvent),
+                                  mDocumentEvent,
+                                  NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                                  getter_AddRefs(mProxiedDocumentEvent));
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+    documentEvent = mProxiedDocumentEvent;
+  }
+
+  nsCOMPtr<nsIDOMEvent> domEvent;
+  nsCOMPtr<nsIDOMDataContainerEvent> dataEvent;
+
+  if(isMainThread) {
+    rv = documentEvent->CreateEvent(NS_LITERAL_STRING("DataContainerEvent"), 
+                                    getter_AddRefs(domEvent));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    dataEvent = do_QueryInterface(domEvent, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);  
+  }
+  else {
+    nsCOMPtr<nsIThread> target;
+    rv = NS_GetMainThread(getter_AddRefs(target));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIDOMEvent> tempEvent;
+    rv = documentEvent->CreateEvent(NS_LITERAL_STRING("DataContainerEvent"), 
+                                    getter_AddRefs(tempEvent));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = do_GetProxyForObject(target, 
+                              NS_GET_IID(nsIDOMEvent),
+                              tempEvent,
+                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                              getter_AddRefs(domEvent));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIDOMDataContainerEvent> tempDataEvent = 
+      do_QueryInterface(domEvent, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);  
+
+    rv = do_GetProxyForObject(target,
+                              NS_GET_IID(nsIDOMDataContainerEvent),
+                              tempDataEvent,
+                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                              getter_AddRefs(dataEvent));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = domEvent->InitEvent(aEventName, PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -633,8 +699,34 @@ sbMediacoreWrapper::SendDOMEvent(const nsAString &aEventName,
                           sbNewVariant(retval).get());
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<nsIDOMEventTarget> eventTarget;
+  if(isMainThread) {
+    eventTarget = mDOMEventTarget;
+  }
+  else {
+    // Scope monitor.
+    {
+      nsAutoMonitor mon(mProxiedObjectsMonitor);
+      if(!mProxiedDOMEventTarget) {
+        mon.Exit();
+
+        nsCOMPtr<nsIThread> target;
+        rv = NS_GetMainThread(getter_AddRefs(target));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = do_GetProxyForObject(target, 
+                                  NS_GET_IID(nsIDOMEventTarget),
+                                  mDOMEventTarget,
+                                  NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                                  getter_AddRefs(mProxiedDOMEventTarget));
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+    eventTarget = mProxiedDOMEventTarget;
+  }
+
   PRBool handled = PR_FALSE;
-  rv = mDOMEventTarget->DispatchEvent(dataEvent, &handled);
+  rv = eventTarget->DispatchEvent(dataEvent, &handled);
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(handled, NS_ERROR_UNEXPECTED);
 

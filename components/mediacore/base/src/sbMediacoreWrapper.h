@@ -128,6 +128,11 @@ protected:
 
   nsCOMPtr<nsIDOMDocumentEvent> mDocumentEvent;
   nsCOMPtr<nsIDOMEventTarget>   mDOMEventTarget;
+  
+  PRMonitor *                   mProxiedObjectsMonitor;
+  nsCOMPtr<nsIDOMEventTarget>   mProxiedDOMEventTarget;
+  nsCOMPtr<nsIDOMDocumentEvent> mProxiedDocumentEvent;
+
   nsCOMPtr<nsIDOMWindow>        mPluginHostWindow;
 
   nsCOMPtr<sbIPrompter>         mPrompter;
