@@ -59,6 +59,7 @@ var _fail = false;
 var _running_event_loop = false;
 var _tests_pending = 0;
 var _test_name = "sbTestHarness";
+var _test_comp = "testharness";
 var _consoleService = null;
 
 function doTimeout(delay, func) {
@@ -504,6 +505,16 @@ function newAppRelativeFile( path ) {
   }
 
   return file;
+}
+
+/**
+ * Return an nsIFile for the test file specified by aFileName within the unit
+ * test's test harness directory.
+ *
+ * \param aFileName             Name of test file to get.
+ */
+function getTestFile(aFileName) {
+  return newAppRelativeFile("testharness/" + _test_comp + "/" + aFileName);
 }
 
 /**

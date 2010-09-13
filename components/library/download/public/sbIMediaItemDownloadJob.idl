@@ -1,0 +1,67 @@
+/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 :miv */
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+// Songbird imports.
+#include "sbIJobProgress.idl"
+
+// Mozilla imports.
+#include "nsISupports.idl"
+
+// Interface declarations.
+interface nsIFile;
+
+/**
+ *   This interface is implemented by media item download jobs.  These jobs are
+ * created by media item downloaders to download media items and provide
+ * download progress and status.
+ *   These jobs download media items for a target library.  However, they do not
+ * add a media item to the target library.  By default, the target library is
+ * the main library.  The target library may be a device library.  In this case,
+ * the media item download job may download a file format that is compatible
+ * with the device.
+ *
+ * TODO: Add an sbIPropertyArray attribute with properties for the downloaded
+ *       media item.  These may be needed if downloading a compatible format for
+ *       a device.
+ *
+ * \see sbIMediaItemDownloader.
+ */
+
+[scriptable, uuid(d8d1984a-1dd1-11b2-8644-c2aa547091b3)]
+interface sbIMediaItemDownloadJob : sbIJobProgress
+{
+  /**
+   * When the download completes, final downloaded file.  This file may be
+   * temporary and may be deleted when the download job object is destroyed.
+   */
+  readonly attribute nsIFile downloadedFile;
+
+  /**
+   * Start the download.
+   */
+  void start();
+};
+

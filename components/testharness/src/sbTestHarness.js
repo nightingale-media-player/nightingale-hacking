@@ -316,7 +316,8 @@ sbTestHarness.prototype = {
 
         // the scope to load the test into
         var scope = { __proto__ : (function()this)(),
-                      _test_name: "sbTestHarness"};
+                      _test_name: "sbTestHarness",
+                      _test_comp: "testharness"};
         scope.wrappedJSObject = scope;
 
         // top level head file to always load
@@ -339,6 +340,9 @@ sbTestHarness.prototype = {
 
         // _test_name defined in the head_songbird.js file and is used in tail_songbird.js
         scope._test_name = testComp + " - " + testBase;
+
+        // _test_comp defined in head_songbird.js
+        scope._test_comp = testComp;
 
         // load the test script
         if (testFile.exists()) {
