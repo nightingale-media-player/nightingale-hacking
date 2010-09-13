@@ -483,6 +483,9 @@ sbBaseMediaItemDownloadJob::OnProgress()
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
 
+  // Function variables.
+  nsresult rv;
+
   // Get the listeners under the lock.
   nsTArray< nsCOMPtr<sbIJobProgressListener> > listenerList;
   {
@@ -493,7 +496,7 @@ sbBaseMediaItemDownloadJob::OnProgress()
   // Notify the listeners.
   PRInt32 const listenerCount = listenerList.Length();
   for (PRInt32 i = 0; i < listenerCount; ++i) {
-    nsresult rv = listenerList[i]->OnJobProgress(this);
+    rv = listenerList[i]->OnJobProgress(this);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Listener error");
   }
 
@@ -551,7 +554,7 @@ sbBaseMediaItemDownloadJob::OnComplete()
   // Notify the listeners.
   PRInt32 const listenerCount = listenerList.Length();
   for (PRInt32 i = 0; i < listenerCount; ++i) {
-    nsresult rv = listenerList[i]->OnJobProgress(this);
+    rv = listenerList[i]->OnJobProgress(this);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Listener error");
   }
 
