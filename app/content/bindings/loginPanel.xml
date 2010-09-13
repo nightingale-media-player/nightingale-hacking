@@ -59,7 +59,7 @@
                 <xul:rows>
                   <xul:row align="center">
                     <xul:label xbl:inherits="value=usernameLabel"/>
-                    <xul:textbox sbid="username" maxlength="15"/>
+                    <xul:textbox sbid="username"/>
                   </xul:row>
                   <xul:row align="center">
                     <xul:label xbl:inherits="value=passwordLabel"/>
@@ -118,10 +118,12 @@
             <!-- logged-in / profile page of the deck -->
             <xul:groupbox orient="horizontal" pack="top" align="top">
               <xul:caption xbl:inherits="label=profileCaption" />
-              <svg:svg sbid="imageContainer" class="empty"
-                       height="64px" width="64px">
-                <svg:image sbid="image" height="64px" width="64px"/>
-              </svg:svg>
+              <xul:vbox sbid="imageVbox">
+                <svg:svg sbid="imageContainer" class="empty"
+                         height="64px" width="64px">
+                  <svg:image sbid="image" height="64px" width="64px"/>
+                </svg:svg>
+              </xul:vbox>
               <xul:vbox>
                 <xul:description class="text-link">
                   <html:span sbid="realname"
@@ -172,7 +174,7 @@
       {
         Cu.import("resource://app/jsmodules/DOMUtils.jsm", this);
 
-        this._deck.selectedPanel = this.login;
+        this._deck.selectedPanel = this._login;
 
         // Create a DOM event listener set.
         this._domEventListenerSet = new this.DOMEventListenerSet();
