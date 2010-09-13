@@ -91,16 +91,43 @@ SBTabProgressListener.prototype = {
       // Let listeners know that the tab location has changed
       this._tabBrowser.notifyTabContentChange();
 
-      // If we're in the media tab and NOT a media list view, then we're some
-      // sort of arbitrary XUL page, so hide the #nav-bar
+      // If we're in the media tab, NOT a media list view, and the corresponding
+      // service pane node does not set searchtype property (means search bar
+      // should be available), then we're some sort of arbitrary XUL page,
+      // so hide the #nav-bar.
+      var node = null;
+      if (gServicePane) {
+        // Get the current active node.
+        node = gServicePane.activeNode;
+      }
+
       if (this._tabBrowser.selectedTab == mediaTab &&
-          !this._tabBrowser.currentMediaListView)
+          !this._tabBrowser.currentMediaListView &&
+          (!node || node.searchtype.indexOf("internal") > -1))
       {
         document.getElementById("nav-bar").setAttribute("collapsed", "true");
-      }
-      else
-      {
+      } else {
         document.getElementById("nav-bar").removeAttribute("collapsed");
+      }
+
+      if (node) {
+        var className = node.className;
+
+        // Set visibility for back forward buttons
+        var historyButtons = document.getElementById("back-forward-buttons");
+        if (className.indexOf("history") > -1) {
+          historyButtons.setAttribute("isCollapse", "false");
+        } else {
+          historyButtons.removeAttribute("isCollapse");
+        }
+
+        // Set visibility for media page container
+        var mediaContainer = document.getElementById("mediapages-container");
+        if (className.indexOf("mediapage") > -1) {
+          mediaContainer.setAttribute("isCollapse", "false");
+        } else {
+          mediaContainer.removeAttribute("isCollapse");
+        }
       }
     }
     catch ( err )

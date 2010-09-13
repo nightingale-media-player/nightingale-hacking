@@ -22,7 +22,7 @@
  *=END SONGBIRD GPL
  */
 
-/** 
+/**
 *******************************************************************************
 
 MAIN PLAYER WINDOW SIZE & POSITION
@@ -31,14 +31,14 @@ This CSS file specifies the size and position of the Main Window UI.
 This file is typically included by the current feathers CSS.
 
 *******************************************************************************
-*/ 
+*/
 
-/** 
+/**
 *******************************************************************************
 THE LAYOUT for the Main Application Window
 Love the box.
 *******************************************************************************
-*/ 
+*/
 
 window#mainplayer {
   min-width:640px;
@@ -49,7 +49,7 @@ window#mainplayer {
 
 /* hide the overflow here so that as the window shrinks below a certain size
    the scrollbars on the browser window don't disappear.
- */  
+ */
 #control_pane_box {
   min-height: 52px;
   max-height: 52px;
@@ -93,6 +93,11 @@ statusbar {
   visibility: collapse;
 }
 
+#nav-bar[isAtMediaPage="true"] > #back-forward-buttons[isCollapse="false"] {
+  visibility: visible;
+}
+
+#nav-bar[isAtMediaPage="true"] > #mediapages-container:not([isCollapse="false"]),
 #nav-bar:not([isAtMediaPage="true"]) > #mediapages-container,
 #nav-bar:not([isAtMediaPage="true"]) > #nav-bar-spacer,
 #nav-bar:not([isAtMediaPage="true"]) > *[hideAtWebPage] {
