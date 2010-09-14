@@ -127,6 +127,8 @@
 ./components/sbMediaExport.dll
 ./components/sbMediaExportAgentService.dll
 ./components/sbMediaExportService.xpt
+./components/sbMediaItemDownloadService.dll
+./components/sbMediaItemDownloadService.xpt
 ./components/sbMediaManager.dll
 ./components/sbMediaManager.xpt
 ./components/sbMediaPageManager.js

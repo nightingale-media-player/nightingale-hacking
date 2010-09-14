@@ -125,6 +125,8 @@
 ./components/sbMediaContentListener.js
 ./components/sbMediaExport.so
 ./components/sbMediaExportService.xpt
+./components/sbMediaItemDownloadService.so
+./components/sbMediaItemDownloadService.xpt
 ./components/sbMediaManager.so
 ./components/sbMediaManager.xpt
 ./components/sbMediaPageManager.js
