@@ -115,6 +115,8 @@ private:
   nsresult AddDirty(const nsAString &aGuid,
       sbLocalDatabaseResourcePropertyBag * aBag);
 
+  nsresult InvalidateGUIDArrays();
+
   PRUint32 GetPropertyDBIDInternal(const nsAString& aPropertyID);
 
   nsresult InsertPropertyIDInLibrary(const nsAString& aPropertyID,
@@ -210,6 +212,9 @@ private:
   // Cache Flush Interval Timer
   nsCOMPtr<nsITimer> mFlushTimer;
   nsCOMPtr<nsIThreadPool> mThreadPoolService;
+
+  // GUID Array Invalidation Timer
+  nsCOMPtr<nsITimer> mInvalidateTimer;
 
   // Backstage pass to our parent library. Can't use an nsRefPtr because the
   // library owns us and that would create a cycle.

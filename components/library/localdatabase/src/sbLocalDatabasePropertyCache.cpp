@@ -184,6 +184,9 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
                          nsITimer::TYPE_REPEATING_SLACK);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mInvalidateTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   mLibrary = aLibrary;
 
   nsCOMPtr<nsIObserverService> observerService =
@@ -1300,8 +1303,14 @@ sbLocalDatabasePropertyCache::Observe(nsISupports* aSubject,
       mSortInvalidateJob = nsnull;
     }
   } else if (strcmp(aTopic, NS_TIMER_CALLBACK_TOPIC) == 0) {
-    rv = DispatchFlush();
-    NS_ENSURE_SUCCESS(rv, rv);
+    if(SameCOMIdentity(aSubject, mFlushTimer)) {
+      rv = DispatchFlush();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else if(SameCOMIdentity(aSubject, mInvalidateTimer)) {
+      rv = InvalidateGUIDArrays();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   return NS_OK;
@@ -1559,8 +1568,24 @@ sbLocalDatabasePropertyCache::AddDirty(const nsAString &aGuid,
     ++mWritePendingCount;
   }
 
+  // Invalidate uses a timer which enables the invalidation to occur
+  // after 'AddDirty' stops being called. This will avoid constant 
+  // rebuilds of the GUID array when data is changing in bulk.
+  rv = mInvalidateTimer->Cancel();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mInvalidateTimer->Init(this, 1000, nsITimer::TYPE_ONE_SHOT);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult 
+sbLocalDatabasePropertyCache::InvalidateGUIDArrays()
+{
   // Invalidate dependent guid arrays.
   nsCOMArray<sbLocalDatabaseGUIDArray> arrays;
+
   {
     nsAutoMonitor mon(mDependentGUIDArrayMonitor);
     guidarrayptr_set_t::const_iterator cit = mDependentGUIDArraySet.begin();
@@ -1572,10 +1597,18 @@ sbLocalDatabasePropertyCache::AddDirty(const nsAString &aGuid,
 
   PRInt32 const count = arrays.Count();
   for (PRInt32 index = 0; index < count; ++index) {
-    rv = arrays[index]->MayInvalidate(guid, aBag);
+    //
+    // XXXAus: We'll probably want to call 'MayInvalidate' again at some point.
+    // This is difficult to do at this point in time because we'd have to 
+    // store all of the bags and guids when AddDirty gets called. Doing this
+    // would make things ideal as we would wait to check for invalidation and
+    // only invalidate when absolutely necessary. 
+    //
+    nsresult rv = arrays[index]->Invalidate();
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
       "Failed to invalidate GUID array, GUIDs may be stale.");
   }
+
   return NS_OK;
 }
 
