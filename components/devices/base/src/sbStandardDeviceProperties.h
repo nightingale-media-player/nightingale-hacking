@@ -58,4 +58,7 @@
 #define SB_DEVICE_PROPERTY_MOUNT_NEEDS_USER_ACTION \
                                                   "http://songbirdnest.com/device/1.0#mountNeedsUserAction"
 
+/* Windows device instance ID. */
+#define SB_DEVICE_PROPERTY_DEVICE_INSTANCE_ID     "http://songbirdnest.com/device/1.0#deviceInstanceID"
+
 #endif /* __SB_STANDARD_DEVICE_PROPERTIES_H__ */
