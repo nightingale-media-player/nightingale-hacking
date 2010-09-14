@@ -323,7 +323,7 @@ sbBaseMediaItemDownloadJob::GetProgress(PRUint32* aProgress)
   }
 
   // Return results.
-  *aProgress = progress & 0xFFFFFFFF;
+  *aProgress = static_cast<PRUint32>(progress & 0xFFFFFFFF);
 
   return NS_OK;
 }
@@ -353,7 +353,7 @@ sbBaseMediaItemDownloadJob::GetTotal(PRUint32* aTotal)
   }
 
   // Return results.
-  *aTotal = bytesToDownload & 0xFFFFFFFF;
+  *aTotal = static_cast<PRUint32>(bytesToDownload & 0xFFFFFFFF);
 
   return NS_OK;
 }
