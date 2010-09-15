@@ -85,6 +85,8 @@
                 <html:span class="text-link" sbid="forgotpass"></html:span>
               </xul:description>
               <xul:spacer flex="1"/>
+              <xul:button sbid="abortButton"
+                          xbl:inherits="label=cancelButtonLabel" />
               <xul:button sbid="loginButton"
                           xbl:inherits="label=loginButtonLabel" />
             </xul:hbox>
