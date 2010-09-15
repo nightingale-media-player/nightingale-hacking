@@ -197,19 +197,38 @@ function runTest () {
   var list = library.createMediaList("simple");
   var itemFoo = library.createMediaItem(uri, null, true);
   var itemBar = library.createMediaItem(uri2, null, true);
+  
+  var itemFooGUID = itemFoo.guid;
+  
   list.add(itemFoo);
   list.add(itemBar);
   assertEqual(list.length, 2);
   library.clearItems();
   assertEqual(list.length, 0);
+  
+  try {
+    let deadItemFoo = library.getMediaItem(itemFooGUID);
+    throw "ERROR! Dead Item in mMediaItemInfoTable!";
+  }
+  catch(e) {
+    // Everything is fine if we get NS_ERROR_NOT_AVAILABLE.
+    // Other exceptions are bad.
+    if(e.result != Cr.NS_ERROR_NOT_AVAILABLE) {
+      throw e;
+    }
+  }
 
   var itemFoo2 = library.createMediaItem(uri, null, true);
   var itemBar2 = library.createMediaItem(uri2, null, true);
+  
+  itemFoo2.setProperty(SB_NS + "contentType", "video");
+  itemBar2.setProperty(SB_NS + "contentType", "audio");
+  
   list.add(itemFoo2);
   list.add(itemBar2);
   assertEqual(list.length, 2);
-  library.clearItems();
-  assertEqual(list.length, 0);
+  library.clearItemsByType("audio");
+  assertEqual(list.length, 1);
 }
 
 function createPropertyArray() {

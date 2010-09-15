@@ -78,7 +78,7 @@ interface sbIBatchCreateMediaItemsListener : nsISupports
 *
 * \sa sbIMediaItem, sbIMediaList
 */
-[scriptable, uuid(b493dee0-4d01-11df-9879-0800200c9a66)]
+[scriptable, uuid(b8ad0518-8892-4c6f-b4f9-aef0316f62a0)]
 interface sbILibrary : sbIMediaList
 {
   /**
@@ -182,6 +182,11 @@ interface sbILibrary : sbIMediaList
    *       use clear() instead.
    */
   void clearItems();
+
+  /**
+   * \brief Clear items of a certain CONTENT_TYPE (see sbStandardProperties.h).
+   */
+  void clearItemsByType(in AString aContentType);
 
   /**
    * \brief A list of available media list types.

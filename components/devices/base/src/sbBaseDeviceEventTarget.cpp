@@ -198,7 +198,7 @@ NS_IMETHODIMP sbBaseDeviceEventTarget::AddEventListener(sbIDeviceEventListener *
       rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                                 NS_GET_IID(sbIDeviceEventTarget),
                                 this,
-                                NS_PROXY_SYNC,
+                                NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                                 getter_AddRefs(proxiedSelf));
       NS_ENSURE_SUCCESS(rv, rv);
     }
@@ -232,7 +232,7 @@ NS_IMETHODIMP sbBaseDeviceEventTarget::RemoveEventListener(sbIDeviceEventListene
       rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                                 NS_GET_IID(sbIDeviceEventTarget),
                                 this,
-                                NS_PROXY_SYNC,
+                                NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                                 getter_AddRefs(proxiedSelf));
       NS_ENSURE_SUCCESS(rv, rv);
     }

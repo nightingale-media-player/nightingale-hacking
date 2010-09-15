@@ -1632,6 +1632,16 @@ sbDeviceLibrary::ClearItems()
   return mDeviceLibrary->ClearItems();
 }
 
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbDeviceLibrary::ClearItemsByType(const nsAString &aContentType)
+{
+  NS_ASSERTION(mDeviceLibrary, "mDevice library is null, call init first.");
+  return mDeviceLibrary->ClearItemsByType(aContentType);
+}
+
 /*
  * See sbIMediaList
  */

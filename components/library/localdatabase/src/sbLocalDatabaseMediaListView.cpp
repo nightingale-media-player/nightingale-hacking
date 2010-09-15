@@ -757,6 +757,8 @@ sbLocalDatabaseMediaListView::GetSelection(sbIMediaListViewSelection** aSelectio
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::RemoveSelectedMediaItems()
 {
+  nsString viewContentType;
+
   PRUint32 viewLength = 0;
   nsresult rv = GetLength(&viewLength);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -773,33 +775,79 @@ sbLocalDatabaseMediaListView::RemoveSelectedMediaItems()
     // Check to see if the only filters are 'hidden' and 'is_list'.
     // If that is the case, we can pretend like there are no filters.
     if(filterCount) {
-      nsCOMPtr<sbILibraryConstraintBuilder> builder =
+      nsCOMPtr<sbILibraryConstraintBuilder> audioViewBuilder =
         do_CreateInstance(SONGBIRD_LIBRARY_CONSTRAINTBUILDER_CONTRACTID, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = builder->Include(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
-                        NS_LITERAL_STRING("0"),
-                        nsnull);
+      rv = audioViewBuilder->Include(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                                     NS_LITERAL_STRING("0"),
+                                     nsnull);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = builder->Intersect(nsnull);
+      rv = audioViewBuilder->Intersect(nsnull);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = builder->Include(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
-                            NS_LITERAL_STRING("0"),
-                            nsnull);
+      rv = audioViewBuilder->Include(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                                     NS_LITERAL_STRING("0"),
+                                     nsnull);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsCOMPtr<sbILibraryConstraint> constraint;
-      rv = builder->Get(getter_AddRefs(constraint));
+      rv = audioViewBuilder->Intersect(nsnull);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      PRBool isEqual = PR_FALSE;
-      rv = mViewFilter->Equals(constraint, &isEqual);
+      rv = audioViewBuilder->Include(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                                     NS_LITERAL_STRING("audio"),
+                                     nsnull);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      if(isEqual) {
+      nsCOMPtr<sbILibraryConstraintBuilder> videoViewBuilder = 
+        do_CreateInstance(SONGBIRD_LIBRARY_CONSTRAINTBUILDER_CONTRACTID, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = videoViewBuilder->Include(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                                     NS_LITERAL_STRING("0"),
+                                     nsnull);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = videoViewBuilder->Intersect(nsnull);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = videoViewBuilder->Include(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                                     NS_LITERAL_STRING("0"),
+                                     nsnull);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = videoViewBuilder->Intersect(nsnull);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = videoViewBuilder->Include(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                                     NS_LITERAL_STRING("video"),
+                                     nsnull);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<sbILibraryConstraint> audioViewConstraint;
+      rv = audioViewBuilder->Get(getter_AddRefs(audioViewConstraint));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<sbILibraryConstraint> videoViewConstraint;
+      rv = videoViewBuilder->Get(getter_AddRefs(videoViewConstraint));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRBool isEqualToAudioView = PR_FALSE;
+      rv = mViewFilter->Equals(audioViewConstraint, &isEqualToAudioView);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRBool isEqualToVideoView = PR_FALSE;
+      rv = mViewFilter->Equals(videoViewConstraint, &isEqualToVideoView);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if(isEqualToAudioView) {
         filterCount = 0;
+        viewContentType = NS_LITERAL_STRING("audio");
+      }
+      else if(isEqualToVideoView) {
+        filterCount = 0;
+        viewContentType = NS_LITERAL_STRING("video");
       }
     }
   }
@@ -851,7 +899,7 @@ sbLocalDatabaseMediaListView::RemoveSelectedMediaItems()
     // If it's a library, call clear items instead. We do this so
     // that all playlists the user has are preserved.
     if(mMediaListId == 0) {
-      rv = mLibrary->ClearItems();
+      rv = mLibrary->ClearItemsByType(viewContentType);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     else {

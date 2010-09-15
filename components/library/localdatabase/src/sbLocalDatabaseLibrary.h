@@ -166,10 +166,14 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
   };
 
   struct sbMediaItemInfo {
-    sbMediaItemInfo(PRPackedBool aHasListType = PR_FALSE)
+    sbMediaItemInfo(PRPackedBool aHasListType = PR_FALSE,
+                    PRPackedBool aHasAudioType = PR_FALSE,
+                    PRPackedBool aHasVideoType = PR_FALSE)
     : itemID(0),
-      hasItemID(PR_FALSE) {
-      hasListType = aHasListType;
+      hasItemID(PR_FALSE),
+      hasListType(aHasListType),
+      hasAudioType(aHasAudioType),
+      hasVideoType(aHasVideoType) {
     }
 
     PRUint32 itemID;
@@ -177,6 +181,8 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
     nsCOMPtr<nsIWeakReference> weakRef;
     PRPackedBool hasItemID;
     PRPackedBool hasListType;
+    PRPackedBool hasAudioType;
+    PRPackedBool hasVideoType;
   };
 
   struct sbMediaItemPair {
@@ -268,7 +274,8 @@ private:
    * sending notifications.
    */
   nsresult SetDefaultItemProperties(sbIMediaItem* aItem,
-                                    sbIPropertyArray* aProperties);
+                                    sbIPropertyArray* aProperties,
+                                    sbMediaItemInfo* aItemInfo);
 
   nsresult GetTypeForGUID(const nsAString& aGUID,
                           nsAString& _retval);
@@ -366,7 +373,8 @@ private:
                                          sbIBatchCreateMediaItemsListener* aListener,
                                          nsIArray** _retval);
 
-  nsresult ClearInternal(PRBool aExcludeLists = PR_FALSE);
+  nsresult ClearInternal(PRBool aExcludeLists = PR_FALSE, 
+                         const nsAString &aContentType = EmptyString());
 
   /* Migration related methods */
   nsresult NeedsMigration(PRBool *aNeedsMigration,

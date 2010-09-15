@@ -53,7 +53,8 @@ struct PRMonitor;
   NS_IMETHOD CreateMediaItemIfNotExist(nsIURI *aContentUri, sbIPropertyArray *aProperties, sbIMediaItem **aResultItem, PRBool *_retval); \
   NS_IMETHOD CreateMediaList(const nsAString & aType, sbIPropertyArray *aProperties, sbIMediaList **_retval);  \
   NS_IMETHOD GetDevice(sbIDevice * *aDevice); \
-  NS_IMETHOD ClearItems();
+  NS_IMETHOD ClearItems(); \
+  NS_IMETHOD ClearItemsByType(const nsAString &aContentType);
 
 // Use this macro to declare functions that forward the behavior of this
 // interface to another object in a safe way.

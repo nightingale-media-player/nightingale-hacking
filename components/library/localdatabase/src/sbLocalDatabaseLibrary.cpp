@@ -154,6 +154,11 @@ static PRLogModuleInfo* gLibraryLog = nsnull;
 // Makes some of the logging a little easier to read
 #define LOG_SUBMESSAGE_SPACE "                                 - "
 
+// Some constants used by RemoveIfNotList
+const PRUint32 REMOVE_ALL_TYPES = 0;
+const PRUint32 REMOVE_AUDIO_TYPE_ONLY = 1;
+const PRUint32 REMOVE_VIDEO_TYPE_ONLY = 2;
+
 /**
  * Copies the contents of a nsInterfaceHashtableMT to another
  */
@@ -710,7 +715,7 @@ nsresult sbLocalDatabaseLibrary::CreateQueries()
   NS_ENSURE_SUCCESS(rv, rv);
 
   query->PrepareQuery(NS_LITERAL_STRING("\
-    SELECT _mlt.type \
+    SELECT _mlt.type, _mi.content_mime_type \
     FROM media_items as _mi \
     LEFT JOIN media_list_types as _mlt ON _mi.media_list_type_id = _mlt.media_list_type_id \
     WHERE _mi.guid = ?"),
@@ -863,7 +868,8 @@ sbLocalDatabaseLibrary::AddNewItemQuery(sbIDatabaseQuery* aQuery,
 
 nsresult
 sbLocalDatabaseLibrary::SetDefaultItemProperties(sbIMediaItem* aItem,
-                                                 sbIPropertyArray* aProperties)
+                                                 sbIPropertyArray* aProperties,
+                                                 sbMediaItemInfo* aItemInfo)
 {
   NS_ASSERTION(aItem, "aItem is null");
 
@@ -902,7 +908,7 @@ sbLocalDatabaseLibrary::SetDefaultItemProperties(sbIMediaItem* aItem,
     rv = do_GetProxyForObject(target,
                               NS_GET_IID(nsIURI),
                               uri,
-                              NS_PROXY_SYNC,
+                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                               getter_AddRefs(proxiedURI));
     NS_ENSURE_SUCCESS(rv, rv);
     uri = proxiedURI;
@@ -945,6 +951,9 @@ sbLocalDatabaseLibrary::SetDefaultItemProperties(sbIMediaItem* aItem,
   rv = GetFilteredPropertiesForNewItem(properties,
                                        getter_AddRefs(filteredProperties));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  aItemInfo->hasAudioType = contentType.EqualsLiteral("audio");
+  aItemInfo->hasVideoType = contentType.EqualsLiteral("video");
 
   // Set the new properties, but do not send notifications,
   // since we assume aItem was only just created, and at
@@ -1016,6 +1025,10 @@ sbLocalDatabaseLibrary::GetTypeForGUID(const nsAString& aGUID,
   rv = result->GetRowCell(0, 0, type);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsString contentType;
+  rv = result->GetRowCell(0, 1, contentType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   if (!itemInfo) {
     // Make a new itemInfo for this GUID.
     nsAutoPtr<sbMediaItemInfo> newItemInfo(new sbMediaItemInfo());
@@ -1029,6 +1042,8 @@ sbLocalDatabaseLibrary::GetTypeForGUID(const nsAString& aGUID,
 
   itemInfo->listType.Assign(type);
   itemInfo->hasListType = PR_TRUE;
+  itemInfo->hasAudioType = contentType.EqualsLiteral("audio");
+  itemInfo->hasVideoType = contentType.EqualsLiteral("video");
 
   _retval.Assign(type);
   return NS_OK;
@@ -2031,7 +2046,8 @@ sbLocalDatabaseLibrary::GetMediaItemIdForGuid(const nsAString& aGUID,
   nsresult rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = query->AddQuery(NS_LITERAL_STRING("SELECT media_item_id FROM media_items WHERE guid = ?"));
+  rv = query->AddQuery(NS_LITERAL_STRING("SELECT media_item_id, content_mime_type FROM \
+                                          media_items WHERE guid = ?"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->BindStringParameter(0, aGUID);
@@ -2061,10 +2077,17 @@ sbLocalDatabaseLibrary::GetMediaItemIdForGuid(const nsAString& aGUID,
   PRUint32 id = idString.ToInteger(&rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsString contentType;
+  rv = result->GetRowCell(0, 1, contentType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   itemInfo->itemID = id;
   itemInfo->hasItemID = PR_TRUE;
+  itemInfo->hasAudioType = contentType.EqualsLiteral("audio");
+  itemInfo->hasVideoType = contentType.EqualsLiteral("video");
 
   *aMediaItemID = id;
+
   return NS_OK;
 }
 
@@ -2448,10 +2471,18 @@ sbLocalDatabaseLibrary::RemoveIfNotList(nsStringHashKey::KeyType aKey,
                                         nsAutoPtr<sbMediaItemInfo> &aEntry,
                                         void *aUserData)
 {
-  if (aEntry->hasListType)
+  PRUint32 removeType = *static_cast<PRUint32 *>(aUserData);
+
+  if (aEntry->hasListType && !aEntry->listType.IsEmpty())
    return PL_DHASH_NEXT;
-  else
+  else if (removeType == REMOVE_ALL_TYPES)
+    return PL_DHASH_REMOVE;
+  else if (removeType == REMOVE_AUDIO_TYPE_ONLY && aEntry->hasAudioType)
    return PL_DHASH_REMOVE;
+  else if (removeType == REMOVE_VIDEO_TYPE_ONLY && aEntry->hasVideoType)
+    return PL_DHASH_REMOVE;
+  else
+    return PL_DHASH_NEXT;
 }
 
 /**
@@ -2656,15 +2687,15 @@ sbLocalDatabaseLibrary::CreateMediaItemInternal(nsIURI* aUri,
   PRBool success = mMediaItemTable.Put(guid, newItemInfo);
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
-  newItemInfo.forget();
-
   nsCOMPtr<sbIMediaItem> mediaItem;
   rv = GetMediaItem(guid, getter_AddRefs(mediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Set up properties for the new item
-  rv = SetDefaultItemProperties(mediaItem, aProperties);
+  rv = SetDefaultItemProperties(mediaItem, aProperties, newItemInfo);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  newItemInfo.forget();
 
   // Invalidate our array
   rv = GetArray()->Invalidate();
@@ -2772,8 +2803,6 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
   PRBool success = mMediaItemTable.Put(guid, newItemInfo);
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
-  newItemInfo.forget();
-
   nsCOMPtr<sbIMediaItem> mediaItem;
   rv = GetMediaItem(guid, getter_AddRefs(mediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2781,7 +2810,7 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
   nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mediaItem, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   if (aProperties) {
-    rv = SetDefaultItemProperties(mediaItem, aProperties);
+    rv = SetDefaultItemProperties(mediaItem, aProperties, newItemInfo);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Set the name for media list properly, but do not send notifications,
@@ -2800,6 +2829,8 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
       item->SetSuppressNotifications(PR_FALSE);
     }
   }
+
+  newItemInfo.forget();
 
   // Invalidate our array
   rv = GetArray()->Invalidate();
@@ -3051,6 +3082,15 @@ NS_IMETHODIMP
 sbLocalDatabaseLibrary::ClearItems()
 {
   return ClearInternal(PR_TRUE);
+}
+
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::ClearItemsByType(const nsAString &aContentType)
+{
+  return ClearInternal(PR_TRUE, aContentType);
 }
 
 /**
@@ -3476,7 +3516,8 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
 }
 
 nsresult
-sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/)
+sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/,
+                                      const nsAString &aContentType /*= EmptyString()*/)
 {
   SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
   NS_ENSURE_TRUE(mPropertyCache, NS_ERROR_NOT_INITIALIZED);
@@ -3511,6 +3552,10 @@ sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/)
   rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Type of media items to remove from media item table. Only used when 
+  // excluding lists from the delete operation.
+  PRUint32 removeType = REMOVE_ALL_TYPES;
+
   if(!aExcludeLists) {
     // Clear our caches
     mMediaListTable.Clear();
@@ -3519,13 +3564,42 @@ sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/)
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
-    rv = query->AddQuery(NS_LITERAL_STRING("DELETE FROM media_items WHERE is_list = 0"));
-    NS_ENSURE_SUCCESS(rv, rv);
+    if(aContentType.IsEmpty()) {
+      rv = query->AddQuery(NS_LITERAL_STRING("DELETE FROM media_items WHERE is_list = 0"));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      
+      // Only accept 'audio' and 'video' content types for now.
+      if(aContentType.EqualsLiteral("audio")) {
+        removeType = REMOVE_AUDIO_TYPE_ONLY;
+      }
+      else if(aContentType.EqualsLiteral("video")) {
+        removeType = REMOVE_VIDEO_TYPE_ONLY;
+      }
+      else {
+        return NS_ERROR_INVALID_ARG;
+      }
+
+      rv = query->AddQuery(NS_LITERAL_STRING("DELETE FROM media_items WHERE \
+                                             is_list = 0 AND \
+                                             content_mime_type = ?"));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = query->BindStringParameter(0, aContentType);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   if (aExcludeLists) {
-    // Remove only non-lists from mMediaItemTable
-    mMediaItemTable.Enumerate(sbLocalDatabaseLibrary::RemoveIfNotList, nsnull);
+    // Remove only non-lists from mMediaItemTable and specific content type.
+    //
+    // RemoveIfNotList with removal type for media items is only implemented for
+    // sbILibrary::ClearItems and sbILibrary::ClearItemsByType. Calling 
+    // sbLocalDatabaseLibrary::ClearInternal with aExcludeLists set to FALSE 
+    // with a content type will ALWAYS DELETE ALL ITEMS INCLUDING LISTS!
+    //
+    mMediaItemTable.Enumerate(sbLocalDatabaseLibrary::RemoveIfNotList, &removeType);
   }
   else {
     mMediaItemTable.Clear();
@@ -4649,8 +4723,6 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
       PRBool success = mLibrary->mMediaItemTable.Put(mGuids[i], newItemInfo);
       NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
-      newItemInfo.forget();
-
       nsCOMPtr<sbIMediaItem> mediaItem;
       rv = mLibrary->GetMediaItem(mGuids[i], getter_AddRefs(mediaItem));
       NS_ENSURE_SUCCESS(rv, rv);
@@ -4677,8 +4749,10 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
           do_CreateInstance("@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1", &rv);
         NS_ENSURE_SUCCESS(rv, rv);
       }
-      rv = mLibrary->SetDefaultItemProperties(mediaItem, properties);
+      rv = mLibrary->SetDefaultItemProperties(mediaItem, properties, newItemInfo);
       NS_ENSURE_SUCCESS(rv, rv);
+
+      newItemInfo.forget();
 
       rv = array->AppendElement(mediaItem, PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);
