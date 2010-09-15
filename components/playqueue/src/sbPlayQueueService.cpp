@@ -763,6 +763,11 @@ sbPlayQueueService::OnItemAdded(sbIMediaList* aMediaList,
   TRACE(("%s[%p]", __FUNCTION__, this));
   nsresult rv;
 
+  // Editing metadata for items in the queue is disabled.
+  rv = aMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY),
+                               NS_LITERAL_STRING("1"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   if (mIgnoreListListener ||
       (mSequencerOnQueue && mSequencerPlayingOrPaused) ||
       mLibraryListener->ShouldIgnore())
