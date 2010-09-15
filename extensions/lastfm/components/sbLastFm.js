@@ -375,12 +375,12 @@ function sbLastFm() {
     dump("LOGIN PHASE: " + phase + "\n");
   });
 
-  // the should-we-scrobble pref
   var prefsService = Cc['@mozilla.org/preferences-service;1']
-      .getService(Ci.nsIPrefBranch);
+                       .getService(Ci.nsIPrefBranch);
   AUTH_URL = prefsService.getCharPref('extensions.lastfm.auth_url');
   API_URL = prefsService.getCharPref('extensions.lastfm.api_url');
 
+  // the should-we-auto-login pref
   this.__defineGetter__('autoLogin', function() {
     return prefsService.getBoolPref('extensions.lastfm.autologin');
   });
@@ -389,6 +389,7 @@ function sbLastFm() {
     this.listeners.each(function(l) { l.onAutoLoginChanged(val); });
   });
 
+  // the should-we-scrobble pref
   this.__defineGetter__('shouldScrobble', function() {
     return prefsService.getBoolPref('extensions.lastfm.scrobble');
   });

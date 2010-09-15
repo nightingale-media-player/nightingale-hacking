@@ -91,9 +91,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 }
 
 /* TAG PANEL */
-panel#lastfmTagPanel {
-	-moz-border-radius: 5px;
-	opacity: 0.8;
+popup#lastfmTagPanel {
+  -moz-border-radius: 5px;
+  opacity: 0.8;
+  background-color: rgb(43,41,54);
 }
 
 #lastfmTagPanel #background {

@@ -98,6 +98,9 @@ LastFm.onLoad = function() {
   // login auto sign in checkbox
   this._loginAutoLogin = this._getElement(this._panelBinding,
                                           'loginAutoLogin');
+  // abort button
+  this._abortButton = this._getElement(this._panelBinding,
+                                       'abortButton');
   // login button
   this._loginButton = this._getElement(this._panelBinding, 'loginButton');
   // login error description 
@@ -167,6 +170,10 @@ LastFm.onLoad = function() {
         LastFm.metrics.metricsInc('lastfm', 'icon', 'context');
         LastFm.showPanel();
       }, false);
+
+  // wire up the abort login link
+  this._abortButton.addEventListener('click',
+      function(event) { self._panel.hidePopup(); }, false);
 
   // wire up the signup link
   this._signup.addEventListener('click',
