@@ -177,6 +177,19 @@ public:
                      /* out */ sbIMediaItem**   aItem);
 
   /**
+   * Return in aWriteLength the length of the media item specified by aMediaItem
+   * when written to the device library specified by aDeviceLibrary.
+   *
+   * \param aDeviceLibrary      Device library to which media item will be
+   *                            written.
+   * \param aMediaItem          Media item to write to device library.
+   * \param aWriteLength        Returned write length of media item.
+   */
+  static nsresult GetDeviceWriteLength(sbIDeviceLibrary* aDeviceLibrary,
+                                       sbIMediaItem*     aMediaItem,
+                                       PRUint64*         aWriteLength);
+
+  /**
    * Ask the user what action to take in response to an operation space exceeded
    * event for the device specified by aDevice and device library specified by
    * aLibrary.  The amount of space needed for the operation is specified by

@@ -177,18 +177,18 @@ sbDeviceEnsureSpaceForWrite::AddItemToWrite(Batch::iterator aIter,
     return NS_OK;
   }
 
-  PRInt64 contentLength;
-
-  rv = sbLibraryUtils::GetContentLength(request->item,
-                                        &contentLength);
+  PRUint64 writeLength;
+  rv = sbDeviceUtils::GetDeviceWriteLength(mOwnerLibrary,
+                                           request->item,
+                                           &writeLength);
   NS_ENSURE_SUCCESS(rv, rv);
-  contentLength += mDevice->mPerTrackOverhead;
+  writeLength += mDevice->mPerTrackOverhead;
 
-  mTotalLength += contentLength;
+  mTotalLength += writeLength;
   LOG(("r(%p) i(%p) sbBaseDevice::EnsureSpaceForWrite - size %lld\n",
-       (void*)request, (void*)(request->item), contentLength));
+       (void*)request, (void*)(request->item), writeLength));
 
-  mItemsToWrite[request->item] = BatchLink(++aOrder, contentLength, aIter);
+  mItemsToWrite[request->item] = BatchLink(++aOrder, writeLength, aIter);
 
   return NS_OK;
 }

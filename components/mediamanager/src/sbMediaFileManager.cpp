@@ -458,7 +458,13 @@ sbMediaFileManager::GetManagedPath(sbIMediaItem *aItem,
     rv = canonicalOldFile->GetLeafName(filename);
     NS_ENSURE_SUCCESS(rv, rv);
   } else {
-    return NS_ERROR_INVALID_ARG;
+    // Use the item URL file name.
+    nsCAutoString cFileName;
+    nsCOMPtr<nsIURL> itemURL = do_MainThreadQueryInterface(itemUri, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = itemURL->GetFileName(cFileName);
+    NS_ENSURE_SUCCESS(rv, rv);
+    filename = NS_ConvertUTF8toUTF16(cFileName);
   }
   rv = newItemFile->Append(filename);
   NS_ENSURE_SUCCESS(rv, rv);

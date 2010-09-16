@@ -52,6 +52,7 @@
 #include <nsISupportsPrimitives.h>
 
 // Songbird imports.
+#include <sbIJobCancelable.h>
 #include <sbMemoryUtils.h>
 
 

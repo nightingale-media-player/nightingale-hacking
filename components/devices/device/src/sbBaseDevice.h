@@ -202,6 +202,9 @@ public:
        when factory is destroyed. */
     nsCOMPtr<sbITemporaryFileFactory> temporaryFileFactory;
 
+    nsCOMPtr<nsIFile> downloadedFile; /* used if request item content source had
+                                         to be downloaded */
+
     NS_DECL_ISUPPORTS
     /**
      * Returns PR_TRUE if the request is for a playlist and PR_FALSE otherwise
@@ -317,6 +320,14 @@ public:
    */
   nsresult BatchGetRequestType(sbBaseDevice::Batch& aBatch,
                                int*                 aRequestType);
+
+  /**
+   * Download the item for the request specified by aRequest and update the
+   * request downloadedFile field.
+   *
+   * \param aRequest              Request for which to download item.
+   */
+  nsresult DownloadRequestItem(TransferRequest* aRequest);
 
   /**
    * Internally set preference specified by aPrefName to the value specified by
@@ -1382,31 +1393,36 @@ protected:
 
   /**
    * Add to aSyncItemList and aSyncItemSizeMap the set of items and their sizes
-   * from the sync media list specified by aSyncML.  Add the total size of the
-   * items to aTotalSyncSize.
+   * from the sync media list specified by aSyncML for syncing to the library
+   * specified by aDstLib.  Add the total size of the items to aTotalSyncSize.
    *
    * \param aSyncML             Sync media list.
+   * \param aDstLib             Sync destination library.
    * \param aSyncItemList       List of items from which to sync.
    * \param aSyncItemSizeMap    Size of sync items.
    * \param aTotalSyncSize      Total size of all sync items.
    */
   nsresult SyncGetSyncItemSizes
              (sbIMediaList*                                 aSyncML,
+              sbIDeviceLibrary*                             aDstLib,
               nsCOMArray<sbIMediaItem>&                     aSyncItemList,
               nsDataHashtable<nsISupportsHashKey, PRInt64>& aSyncItemSizeMap,
               PRInt64*                                      aTotalSyncSize);
 
   /**
    * Add to aSyncItemList and aSyncItemSizeMap the item and the size specified
-   * by aSyncMI. Add the size of the item to aTotalSyncSize.
+   * by aSyncMI for syncing to the library specified by aDstLib. Add the size of
+   * the item to aTotalSyncSize.
    *
    * \param aSyncMI             Sync media item.
+   * \param aDstLib             Sync destination library.
    * \param aSyncItemList       List of items from which to sync.
    * \param aSyncItemSizeMap    Size of sync items.
    * \param aTotalSyncSize      Total size of all sync items.
    */
    nsresult SyncGetSyncItemSizes
              (sbIMediaItem*                                 aSyncMI,
+              sbIDeviceLibrary*                             aDstLib,
               nsCOMArray<sbIMediaItem>&                     aSyncItemList,
               nsDataHashtable<nsISupportsHashKey, PRInt64>& aSyncItemSizeMap,
               PRInt64*                                      aTotalSyncSize);

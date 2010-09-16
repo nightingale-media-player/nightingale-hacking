@@ -412,7 +412,8 @@ nsresult sbLibraryUtils::GetContentLength(/* in */  sbIMediaItem * aItem,
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(contentURI, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (NS_FAILED(rv))
+      return rv;
     // note that this will abort if this is not a local file.  This is the
     // desired behaviour.
 

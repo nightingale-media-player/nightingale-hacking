@@ -63,6 +63,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                      $(DEPTH)/components/devicesobsolete/download/public \
                      $(DEPTH)/components/job/public \
                      $(DEPTH)/components/library/base/public \
+                     $(DEPTH)/components/library/download/public \
                      $(DEPTH)/components/library/localdatabase/public \
                      $(DEPTH)/components/mediacore/base/public \
                      $(DEPTH)/components/mediacore/transcode/public \
@@ -76,6 +77,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                      $(DEPTH)/components/mediaimport/filescan/public \
                      $(topsrcdir)/components/devices/base/src \
                      $(topsrcdir)/components/include \
+                     $(topsrcdir)/components/job/src \
                      $(topsrcdir)/components/library/base/src/static \
                      $(topsrcdir)/components/library/localdatabase/src/ \
                      $(topsrcdir)/components/mediacore/transcode/src \

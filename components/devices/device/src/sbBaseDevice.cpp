@@ -74,6 +74,7 @@
 #include <sbIDeviceManager.h>
 #include <sbIDeviceProperties.h>
 #include <sbIDownloadDevice.h>
+#include <sbIJobCancelable.h>
 #include <sbILibrary.h>
 #include <sbILibraryDiffingService.h>
 #include <sbILibraryUtils.h>
@@ -83,8 +84,11 @@
 #include <sbIMediacoreSequencer.h>
 #include <sbIMediacoreStatus.h>
 #include <sbIMediaFileManager.h>
-#include <sbIMediaItem.h>
 #include <sbIMediaInspector.h>
+#include <sbIMediaItem.h>
+#include <sbIMediaItemDownloader.h>
+#include <sbIMediaItemDownloadJob.h>
+#include <sbIMediaItemDownloadService.h>
 #include <sbIMediaList.h>
 #include <sbIMediaManagementService.h>
 #include <sbIOrderableMediaList.h>
@@ -98,6 +102,7 @@
 
 #include <sbArray.h>
 #include <sbFileUtils.h>
+#include <sbJobUtils.h>
 #include <sbLocalDatabaseCID.h>
 #include <sbMemoryUtils.h>
 #include <sbPrefBranch.h>
@@ -113,6 +118,7 @@
 
 #include "sbDeviceEnsureSpaceForWrite.h"
 #include "sbDeviceLibrary.h"
+#include "sbDeviceProgressListener.h"
 #include "sbDeviceStatus.h"
 #include "sbDeviceSupportsItemHelper.h"
 #include "sbDeviceTranscoding.h"
@@ -1547,6 +1553,99 @@ nsresult sbBaseDevice::BatchGetRequestType(sbBaseDevice::Batch& aBatch,
   }
   // Use the type of the first batch request as the batch request type.
   *aRequestType = requestType;
+
+  return NS_OK;
+}
+
+// TODO: Update device status
+nsresult
+sbBaseDevice::DownloadRequestItem(TransferRequest* aRequest)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aRequest);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the request volume info.
+  nsRefPtr<sbBaseDeviceVolume> volume;
+  nsCOMPtr<sbIDeviceLibrary>   deviceLibrary;
+  rv = GetVolumeForItem(aRequest->item, getter_AddRefs(volume));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = volume->GetDeviceLibrary(getter_AddRefs(deviceLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the download service.
+  nsCOMPtr<sbIMediaItemDownloadService> downloadService =
+    do_GetService("@songbirdnest.com/Songbird/MediaItemDownloadService;1",
+                  &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get a downloader for the request item.  If none is returned, the request
+  // item either doesn't need to be downloaded or cannot be downloaded.
+  nsCOMPtr<sbIMediaItemDownloader> downloader;
+  rv = downloadService->GetDownloader(aRequest->item,
+                                      deviceLibrary,
+                                      getter_AddRefs(downloader));
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!downloader)
+    return NS_OK;
+
+  // Create a download job.
+  // TODO: Add a writable temporaryFileFactory attribute to
+  //       sbIMediaItemDownloadJob and set it to the request
+  //       temporaryFileFactory.
+  nsCOMPtr<sbIMediaItemDownloadJob> downloadJob;
+  rv = downloader->CreateDownloadJob(aRequest->item,
+                                     deviceLibrary,
+                                     getter_AddRefs(downloadJob));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the download job progress.
+  nsCOMPtr<sbIJobProgress>
+    downloadJobProgress = do_MainThreadQueryInterface(downloadJob, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set up to auto-cancel the job.
+  nsCOMPtr<sbIJobCancelable> cancel = do_QueryInterface(downloadJobProgress);
+  sbAutoJobCancel autoCancel(cancel);
+
+  // Add a device job progress listener.
+  nsRefPtr<sbDeviceProgressListener> listener;
+  rv = sbDeviceProgressListener::New(getter_AddRefs(listener),
+                                     mReqWaitMonitor);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = downloadJobProgress->AddJobProgressListener(listener);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Start the download job.
+  rv = downloadJob->Start();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Wait for the download job to complete.
+  PRBool isComplete = PR_FALSE;
+  while (!isComplete) {
+    // Operate within the request wait monitor.
+    nsAutoMonitor monitor(mReqWaitMonitor);
+
+    // Check for abort.
+    NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
+
+    // Check if the job is complete.
+    isComplete = listener->IsComplete();
+
+    // If not complete, wait for completion.  If requests are cancelled, the
+    // request wait monitor will be notified.
+    if (!isComplete)
+      monitor.Wait();
+  }
+
+  // Forget auto-cancel.
+  autoCancel.forget();
+
+  // Get the downloaded file.
+  rv = downloadJob->GetDownloadedFile(getter_AddRefs(aRequest->downloadedFile));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -4932,15 +5031,17 @@ sbBaseDevice::SyncCreateSyncMediaList(sbILibrary*       aSrcLib,
       if (NS_SUCCEEDED(rv))
         continue;
 
-      // Get the item size adding in the per track overhead.  Assume a length
-      // of 0 on error.
-      PRInt64 contentLength;
-      rv = sbLibraryUtils::GetContentLength(mediaItem, &contentLength);
+      // Get the item write length adding in the per track overhead.  Assume a
+      // length of 0 on error.
+      PRUint64 writeLength;
+      rv = sbDeviceUtils::GetDeviceWriteLength(aDstLib,
+                                               mediaItem,
+                                               &writeLength);
       if (NS_FAILED(rv))
-        contentLength = 0;
-      contentLength += mPerTrackOverhead;
+        writeLength = 0;
+      writeLength += mPerTrackOverhead;
 
-      totalSyncSize += contentLength;
+      totalSyncSize += writeLength;
     }
 
     if (totalSyncSize <= aAvailableSpace) {
@@ -5181,6 +5282,7 @@ sbBaseDevice::SyncGetSyncItemSizes
     if (NS_FAILED(rv)) {
       // Get the size of the sync media item.
       rv = SyncGetSyncItemSizes(syncMI,
+                                aDstLib,
                                 aSyncItemList,
                                 aSyncItemSizeMap,
                                 &totalSyncSize);
@@ -5189,6 +5291,7 @@ sbBaseDevice::SyncGetSyncItemSizes
     else {
       // Get the sizes of the sync media items.
       rv = SyncGetSyncItemSizes(syncML,
+                                aDstLib,
                                 aSyncItemList,
                                 aSyncItemSizeMap,
                                 &totalSyncSize);
@@ -5205,6 +5308,7 @@ sbBaseDevice::SyncGetSyncItemSizes
 nsresult
 sbBaseDevice::SyncGetSyncItemSizes
   (sbIMediaList*                                 aSyncML,
+   sbIDeviceLibrary*                             aDstLib,
    nsCOMArray<sbIMediaItem>&                     aSyncItemList,
    nsDataHashtable<nsISupportsHashKey, PRInt64>& aSyncItemSizeMap,
    PRInt64*                                      aTotalSyncSize)
@@ -5237,6 +5341,7 @@ sbBaseDevice::SyncGetSyncItemSizes
       continue;
 
     rv = SyncGetSyncItemSizes(mediaItem,
+                              aDstLib,
                               aSyncItemList,
                               aSyncItemSizeMap,
                               &totalSyncSize);
@@ -5252,6 +5357,7 @@ sbBaseDevice::SyncGetSyncItemSizes
 nsresult
 sbBaseDevice::SyncGetSyncItemSizes
   (sbIMediaItem*                                 aSyncMI,
+   sbIDeviceLibrary*                             aDstLib,
    nsCOMArray<sbIMediaItem>&                     aSyncItemList,
    nsDataHashtable<nsISupportsHashKey, PRInt64>& aSyncItemSizeMap,
    PRInt64*                                      aTotalSyncSize)
@@ -5271,20 +5377,20 @@ sbBaseDevice::SyncGetSyncItemSizes
   if (aSyncItemSizeMap.Get(aSyncMI, nsnull))
     return NS_OK;
 
-  // Get the item size adding in the per track overhead.  Assume a length of
-  // 0 on error.
-  PRInt64 contentLength;
-  rv = sbLibraryUtils::GetContentLength(aSyncMI, &contentLength);
+  // Get the item write length adding in the per track overhead.  Assume a
+  // length of 0 on error.
+  PRUint64 writeLength;
+  rv = sbDeviceUtils::GetDeviceWriteLength(aDstLib, aSyncMI, &writeLength);
   if (NS_FAILED(rv))
-    contentLength = 0;
-  contentLength += mPerTrackOverhead;
+    writeLength = 0;
+  writeLength += mPerTrackOverhead;
 
   // Add item.
   success = aSyncItemList.AppendObject(aSyncMI);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-  success = aSyncItemSizeMap.Put(aSyncMI, contentLength);
+  success = aSyncItemSizeMap.Put(aSyncMI, writeLength);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-  totalSyncSize += contentLength;
+  totalSyncSize += writeLength;
 
   // Return results.
   *aTotalSyncSize = totalSyncSize;
@@ -6028,34 +6134,34 @@ nsresult sbBaseDevice::GetDeviceWriteDestURI
     }
   }
 
-  // Convert our nsIURI to an nsIFileURL
+  // Convert our nsIURI to an nsIFileURL and nsIFile
+  nsCOMPtr<nsIFile>    writeSrcFile;
   nsCOMPtr<nsIFileURL> writeSrcFileURL = do_QueryInterface(writeSrcURI, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Now get the nsIFile
-  nsCOMPtr<nsIFile> writeSrcFile;
-  rv = writeSrcFileURL->GetFile(getter_AddRefs(writeSrcFile));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Now check to make sure the source file actually exists
-  PRBool fileExists = PR_FALSE;
-  rv = writeSrcFile->Exists(&fileExists);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (!fileExists) {
-    // Create the device error event and dispatch it
-    nsCOMPtr<nsIVariant> var = sbNewVariant(aWriteDstItem).get();
-    CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_FILE_MISSING,
-                           var, PR_TRUE);
-
-    // Remove item from library
-    nsCOMPtr<sbILibrary> destLibrary;
-    rv = aWriteDstItem->GetLibrary(getter_AddRefs(destLibrary));
+  if (NS_SUCCEEDED(rv)) {
+    // Now get the nsIFile
+    rv = writeSrcFileURL->GetFile(getter_AddRefs(writeSrcFile));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = DeleteItem(destLibrary, aWriteDstItem);
+    // Now check to make sure the source file actually exists
+    PRBool fileExists = PR_FALSE;
+    rv = writeSrcFile->Exists(&fileExists);
     NS_ENSURE_SUCCESS(rv, rv);
+    if (!fileExists) {
+      // Create the device error event and dispatch it
+      nsCOMPtr<nsIVariant> var = sbNewVariant(aWriteDstItem).get();
+      CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_FILE_MISSING,
+                             var, PR_TRUE);
 
-    return NS_ERROR_NOT_AVAILABLE;
+      // Remove item from library
+      nsCOMPtr<sbILibrary> destLibrary;
+      rv = aWriteDstItem->GetLibrary(getter_AddRefs(destLibrary));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = DeleteItem(destLibrary, aWriteDstItem);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      return NS_ERROR_NOT_AVAILABLE;
+    }
   }
 
   // Check if the item needs to be organized
@@ -6115,17 +6221,30 @@ nsresult sbBaseDevice::GetDeviceWriteDestURI
     if (rv != NS_ERROR_FILE_ALREADY_EXISTS) {
       NS_ENSURE_SUCCESS(rv, rv);
     }
-
-  } else {
-    // Get the write source file name, unescape it, and replace illegal characters.
-    nsCOMPtr<nsIFile> canonicalFile;
-    nsCOMPtr<sbILibraryUtils> libUtils =
-      do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
-    rv = libUtils->GetCanonicalPath(writeSrcFile, getter_AddRefs(canonicalFile));
-    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    // Get the write source file name, unescape it, and replace illegal
+    // characters.
     nsAutoString writeSrcFileName;
-    rv = canonicalFile->GetLeafName(writeSrcFileName);
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (writeSrcFile) {
+      nsCOMPtr<nsIFile> canonicalFile;
+      nsCOMPtr<sbILibraryUtils> libUtils =
+        do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+      rv = libUtils->GetCanonicalPath(writeSrcFile,
+                                      getter_AddRefs(canonicalFile));
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = canonicalFile->GetLeafName(writeSrcFileName);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      nsCOMPtr<nsIURL>
+        writeSrcURL = do_MainThreadQueryInterface(writeSrcURI, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      nsCAutoString fileName;
+      rv = writeSrcURL->GetFileName(fileName);
+      NS_ENSURE_SUCCESS(rv, rv);
+      writeSrcFileName = NS_ConvertUTF8toUTF16(fileName);
+    }
 
     // replace illegal characters
     nsString_ReplaceChar(writeSrcFileName, kIllegalChars, PRUnichar('_'));

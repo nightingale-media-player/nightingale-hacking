@@ -46,6 +46,8 @@ interface nsIFile;
  * TODO: Add an sbIPropertyArray attribute with properties for the downloaded
  *       media item.  These may be needed if downloading a compatible format for
  *       a device.
+ * TODO: Add a writable temporaryFileFactory attribute to use to create the
+ *       downloaded file.
  *
  * \see sbIMediaItemDownloader.
  */

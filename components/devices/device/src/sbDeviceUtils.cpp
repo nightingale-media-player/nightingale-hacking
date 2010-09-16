@@ -57,6 +57,8 @@
 #include "sbIDeviceLibrarySyncSettings.h"
 #include "sbIDeviceRegistrar.h"
 #include "sbIMediaItem.h"
+#include <sbIMediaItemDownloader.h>
+#include <sbIMediaItemDownloadService.h>
 #include "sbIMediaList.h"
 #include "sbIMediaListListener.h"
 #include <sbITranscodeProfile.h>
@@ -512,6 +514,55 @@ nsresult sbDeviceUtils::GetOriginMediaItemByDevicePersistentId
   // get the original item from the device media item
   rv = sbLibraryUtils::GetOriginItem(deviceMediaItem, aItem);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/* static */
+nsresult sbDeviceUtils::GetDeviceWriteLength(sbIDeviceLibrary* aDeviceLibrary,
+                                             sbIMediaItem*     aMediaItem,
+                                             PRUint64*         aWriteLength)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aWriteLength);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the download service to check if the media item needs to be downloaded.
+  // Even if the media item has a local content source file, a version that's
+  // compatible with the device may still need to be downloaded (e.g., for DRM
+  // purposes or for a compatible format).
+  nsCOMPtr<sbIMediaItemDownloadService> downloadService =
+    do_GetService("@songbirdnest.com/Songbird/MediaItemDownloadService;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get a downloader for the media item and target device library.
+  nsCOMPtr<sbIMediaItemDownloader> downloader;
+  rv = downloadService->GetDownloader(aMediaItem,
+                                      aDeviceLibrary,
+                                      getter_AddRefs(downloader));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If a downloader was returned, the media item needs to be downloaded.  Get
+  // the download size.
+  if (downloader) {
+    rv = downloader->GetDownloadSize(aMediaItem,
+                                     aDeviceLibrary,
+                                     aWriteLength);
+    NS_ENSURE_SUCCESS(rv, rv);
+    return NS_OK;
+  }
+
+  // Try getting the content length directly from the media item.
+  PRInt64 contentLength;
+  rv = sbLibraryUtils::GetContentLength(aMediaItem, &contentLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(contentLength >= 0, NS_ERROR_FAILURE);
+
+  // Return results.
+  *aWriteLength = static_cast<PRUint64>(contentLength);
 
   return NS_OK;
 }
