@@ -83,8 +83,8 @@ sbImageLabelLinkPropertyBuilder::Get(sbIPropertyInfo** _retval)
 {
   nsresult rv;
   nsRefPtr<sbImageLabelLinkPropertyInfo> info =
-    new sbImageLabelLinkPropertyInfo(mImages, mLabels, mClickHandlers);
-  rv = info->Init();
+    new sbImageLabelLinkPropertyInfo();
+  rv = info->Init(mImages, mLabels, mClickHandlers);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = info->SetPropertyID(mPropertyID);
   NS_ENSURE_SUCCESS(rv, rv);

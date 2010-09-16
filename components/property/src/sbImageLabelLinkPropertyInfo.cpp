@@ -35,9 +35,11 @@
 #include <sbHashtableUtils.h>
 #include <sbStringUtils.h>
 
-sbImageLabelLinkPropertyInfo::sbImageLabelLinkPropertyInfo(ImageMap_t *&aImages,
-                                                           LabelMap_t *&aLabels,
-                                                           InterfaceSet_t *&aClickHandlers)
+NS_IMPL_ISUPPORTS_INHERITED1(sbImageLabelLinkPropertyInfo,
+                             sbImageLinkPropertyInfo,
+                             sbIImageLabelLinkPropertyInfo)
+
+sbImageLabelLinkPropertyInfo::sbImageLabelLinkPropertyInfo()
   : sbImageLinkPropertyInfo(nsString(),
                             nsString(),
                             nsString(),
@@ -45,16 +47,12 @@ sbImageLabelLinkPropertyInfo::sbImageLabelLinkPropertyInfo(ImageMap_t *&aImages,
                             PR_FALSE,
                             PR_TRUE,
                             PR_TRUE,
-                            nsString())
+                            nsString()),
+    mImages(nsnull),
+    mLabels(nsnull),
+    mClickHandlers(nsnull)
 {
-  mImages = aImages;
-  aImages = nsnull;
-  mLabels = aLabels;
-  aLabels = nsnull;
-  mClickHandlers = aClickHandlers;
-  aClickHandlers = nsnull;
   mType.AssignLiteral("image");
-  mSuppressSelect = PR_TRUE;
 }
 
 sbImageLabelLinkPropertyInfo::~sbImageLabelLinkPropertyInfo()
@@ -67,9 +65,35 @@ sbImageLabelLinkPropertyInfo::~sbImageLabelLinkPropertyInfo()
 nsresult
 sbImageLabelLinkPropertyInfo::Init()
 {
-  nsresult rv;
+  mImages = new nsClassHashtable<nsCStringHashKey, nsCString>();
+  NS_ENSURE_TRUE(mImages, NS_ERROR_OUT_OF_MEMORY);
+  mLabels = new nsClassHashtable<nsCStringHashKey, nsString>();
+  NS_ENSURE_TRUE(mLabels, NS_ERROR_OUT_OF_MEMORY);
+  mClickHandlers = new nsTHashtable<nsISupportsHashKey>();
+  NS_ENSURE_TRUE(mClickHandlers, NS_ERROR_OUT_OF_MEMORY);
+  mImages->Init();
+  mLabels->Init();
+  mClickHandlers->Init();
 
-  rv = sbImageLinkPropertyInfo::Init();
+  nsresult rv = sbImageLinkPropertyInfo::Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbImageLabelLinkPropertyInfo::Init(ImageMap_t *&aImages,
+                                   LabelMap_t *&aLabels,
+                                   InterfaceSet_t *&aClickHandlers)
+{
+  mImages = aImages;
+  aImages = nsnull;
+  mLabels = aLabels;
+  aLabels = nsnull;
+  mClickHandlers = aClickHandlers;
+  aClickHandlers = nsnull;
+
+  nsresult rv = sbImageLinkPropertyInfo::Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -128,6 +152,73 @@ NS_IMETHODIMP
 sbImageLabelLinkPropertyInfo::SetUrlPropertyID(const nsAString& aUrlPropertyID)
 {
   mUrlPropertyID = aUrlPropertyID;
+  return NS_OK;
+}
+
+/***** sbIImageLinkPropertyInfo */
+
+NS_IMETHODIMP
+sbImageLabelLinkPropertyInfo::GetUrlProperty(nsAString& _retval)
+{
+  _retval = mUrlPropertyID;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbImageLabelLinkPropertyInfo::GetPreventNavigation(const nsAString& aImageValue,
+                                                   const nsAString& aUrlValue,
+                                                   PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  *_retval = aImageValue.IsEmpty() || aUrlValue.IsEmpty();
+
+  return NS_OK;
+}
+
+/***** sbIImageLabelLinkPropertyInfo */
+
+/* void addImage (in ACString aKey, in ACString aImageUrl); */
+NS_IMETHODIMP
+sbImageLabelLinkPropertyInfo::AddImage(const nsACString & aKey,
+                                       const nsACString & aImageUrl)
+{
+  NS_ENSURE_TRUE(mImages, NS_ERROR_NOT_INITIALIZED);
+
+  if (mImages->Get(aKey, nsnull)) {
+    NS_WARNING("found an existing image key for %s", aKey.BeginReading());
+    return NS_OK;
+  }
+
+  PRBool success = mImages->Put(aKey, new nsCString(aImageUrl));
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  return NS_OK;
+}
+
+/* void addLabel (in ACString aKey, in AString aLabel); */
+NS_IMETHODIMP
+sbImageLabelLinkPropertyInfo::AddLabel(const nsACString & aKey,
+                                       const nsAString & aLabel)
+{
+  NS_ENSURE_TRUE(mLabels, NS_ERROR_NOT_INITIALIZED);
+
+  if (mLabels->Get(aKey, nsnull)) {
+    NS_WARNING("found an existing label key for %s", aKey.BeginReading());
+    return NS_OK;
+  }
+
+  nsString value(aLabel);
+
+  if (StringBeginsWith(aLabel, NS_LITERAL_STRING("&")) &&
+      StringEndsWith(aLabel, NS_LITERAL_STRING(";")))
+  {
+    // localize the string
+    value = SBLocalizedString(Substring(aLabel, 1, aLabel.Length() - 2));
+  }
+
+  PRBool success = mLabels->Put(aKey, new nsString(value));
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   return NS_OK;
 }
 

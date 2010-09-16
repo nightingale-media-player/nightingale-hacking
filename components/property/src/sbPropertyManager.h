@@ -96,18 +96,6 @@ private:
                             PRBool aRemoteReadable,
                             PRBool aRemoteWritable);
 
-  nsresult RegisterTrackTypeText(const nsAString& aPropertyID,
-                                 const nsAString& aDisplayKey,
-                                 nsIStringBundle* aStringBundle,
-                                 PRBool aUserViewable,
-                                 PRBool aUserEditable,
-                                 PRUint32 aNullSort,
-                                 PRBool aHasNullSort,
-                                 PRBool aRemoteReadable,
-                                 PRBool aRemoteWritable,
-                                 PRBool aCompressWhitespace = PR_TRUE,
-                                 sbIPropertyArray* aSecondarySort = nsnull);
-
   nsresult RegisterText(const nsAString& aPropertyID,
                         const nsAString& aDisplayKey,
                         nsIStringBundle* aStringBundle,
@@ -152,7 +140,16 @@ private:
                              PRBool aUserEditable,
                              PRBool aRemoteReadable,
                              PRBool aRemoteWritable,
-                             const nsAString &aUriPropertyID);
+                             const nsAString &aUrlPropertyID);
+
+  nsresult RegisterTrackTypeImageLabel(const nsAString& aPropertyID,
+                                       const nsAString& aDisplayKey,
+                                       nsIStringBundle* aStringBundle,
+                                       PRBool aUserViewable,
+                                       PRBool aUserEditable,
+                                       PRBool aRemoteReadable,
+                                       PRBool aRemoteWritable,
+                                       const nsAString &aUrlPropertyID);
 
   nsresult RegisterDummy(sbDummyPropertyInfo *aDummyProperty,
                          const nsAString &aPropertyID,
@@ -164,7 +161,7 @@ private:
                            PRBool aRemoteWritable);
 protected:
   nsInterfaceHashtableMT<nsStringHashKey, sbIPropertyInfo> mPropInfoHashtable;
-  
+
   // Maps property ID to all properties that depend on that ID in some way
   nsInterfaceHashtableMT<nsStringHashKey, sbIPropertyArray> mPropDependencyMap;
 

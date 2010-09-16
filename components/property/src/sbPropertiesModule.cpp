@@ -30,6 +30,7 @@
 #include "sbDownloadButtonPropertyBuilder.h"
 #include "sbImagePropertyBuilder.h"
 #include "sbImageLabelLinkPropertyBuilder.h"
+#include "sbImageLabelLinkPropertyInfo.h"
 #include "sbNumberPropertyInfo.h"
 #include "sbPropertyArray.h"
 #include "sbPropertyFactory.h"
@@ -54,6 +55,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbDurationPropertyInfo);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbNumberPropertyInfo);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTextPropertyInfo);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbURIPropertyInfo);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbImageLabelLinkPropertyInfo);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbBooleanPropertyInfo, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDownloadButtonPropertyBuilder, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbStatusPropertyBuilder, Init);
@@ -143,6 +145,12 @@ static const nsModuleComponentInfo components[] =
     SB_SIMPLEBUTTONPROPERTYBUILDER_CID,
     SB_SIMPLEBUTTONPROPERTYBUILDER_CONTRACTID,
     sbSimpleButtonPropertyBuilderConstructor
+  },
+  {
+    SB_SBIMAGELABELLINKPROPERTYINFO_DESCRIPTION,
+    SB_SBIMAGELABELLINKPROPERTYINFO_CID,
+    SB_SBIMAGELABELLINKPROPERTYINFO_CONTRACTID,
+    sbImageLabelLinkPropertyInfoConstructor
   },
   {
     SB_IMAGEPROPERTYBUILDER_DESCRIPTION,

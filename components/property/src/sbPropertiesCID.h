@@ -145,6 +145,18 @@
 #define SB_BOOLEANPROPERTYINFO_CONTRACTID                  \
   "@songbirdnest.com/Songbird/Properties/Info/Boolean;1"
 
+#define SB_SBIMAGELABELLINKPROPERTYINFO_DESCRIPTION \
+  "Songbird Image Label Link Property Info Implementation"
+#define SB_SBIMAGELABELLINKPROPERTYINFO_CID         \
+  { /* {c69a9300-c0a5-11df-851a-0800200c9a66} */       \
+    0xc69a9300,                                        \
+    0xc0a5,                                            \
+    0x11df,                                            \
+    { 0x85, 0x1a, 0x08, 0x00, 0x20, 0x0c, 0x9a, 0x66 } \
+  }
+#define SB_SBIMAGELABELLINKPROPERTYINFO_CONTRACTID  \
+  "@songbirdnest.com/Songbird/Properties/Info/ImageLabelLink;1"
+
 #define SB_DOWNLOADBUTTONPROPERTYBUILDER_DESCRIPTION   \
   "Songbird Download Button Property Builder"
 #define SB_DOWNLOADBUTTONPROPERTYBUILDER_CID           \

@@ -46,7 +46,7 @@ CPP_SRCS = sbPropertyManager.cpp \
            sbPropertyFactory.cpp \
            sbPropertyInfo.cpp \
            sbTextPropertyInfo.cpp \
-           sbTrackTypeTextPropertyInfo.cpp \
+           sbTrackTypeImageLabelPropertyInfo.cpp \
            sbNumberPropertyInfo.cpp \
            sbURIPropertyInfo.cpp \
            sbDatetimePropertyInfo.cpp \

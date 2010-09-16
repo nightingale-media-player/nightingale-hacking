@@ -22,18 +22,30 @@
  *=END SONGBIRD GPL
  */
 
-#ifndef __SBTRACKTYPETEXTPROPERTYINFO_H__
-#define __SBTRACKTYPETEXTPROPERTYINFO_H__
+#ifndef __SBTRACKTYPEIMAGELABELPROPERTYINFO_H__
+#define __SBTRACKTYPEIMAGELABELPROPERTYINFO_H__
 
-#include "sbTextPropertyInfo.h"
+#include "sbImageLabelLinkPropertyInfo.h"
 
 #include <nsStringGlue.h>
 
-class sbTrackTypeTextPropertyInfo : public sbTextPropertyInfo
+class sbTrackTypeImageLabelPropertyInfo : public sbImageLabelLinkPropertyInfo
 {
 public:
-  sbTrackTypeTextPropertyInfo();
-  virtual ~sbTrackTypeTextPropertyInfo() {};
+  sbTrackTypeImageLabelPropertyInfo();
+  virtual ~sbTrackTypeImageLabelPropertyInfo() {};
+
+  /* partial implementation of sbIClickablePropertyInfo */
+  NS_IMETHOD HitTest(const nsAString& aCurrentValue,
+                     const nsAString& aPart,
+                     PRUint32 aBoxWidth,
+                     PRUint32 aBoxHeight,
+                     PRUint32 aMouseX,
+                     PRUint32 aMouseY,
+                     PRBool* _retval);
+
+  /* partial implementation of sbITreeViewPropertyInfo */
+  NS_IMETHOD GetCellProperties(const nsAString& aValue, nsAString& _retval);
 
   /* partial implementation of sbIPropertyInfo */
   NS_IMETHOD Format(const nsAString & aValue, nsAString & _retval);
@@ -42,4 +54,4 @@ private:
   nsString mTrackType;
 };
 
-#endif /* __SBTRACKTYPETEXTPROPERTYINFO_H__ */
+#endif /* __SBTRACKTYPEIMAGELABELPROPERTYINFO_H__ */

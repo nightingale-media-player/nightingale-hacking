@@ -42,7 +42,7 @@
 #include "sbNumberPropertyInfo.h"
 #include "sbStandardProperties.h"
 #include "sbDummyProperties.h"
-#include "sbTrackTypeTextPropertyInfo.h"
+#include "sbTrackTypeImageLabelPropertyInfo.h"
 #include "sbTextPropertyInfo.h"
 #include "sbURIPropertyInfo.h"
 #include "sbImagePropertyInfo.h"
@@ -571,11 +571,10 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Track type
-  rv = RegisterTrackTypeText(NS_LITERAL_STRING(SB_PROPERTY_TRACKTYPE),
-                             NS_LITERAL_STRING("property.track_type"),
-                             stringBundle, PR_TRUE, PR_TRUE,
-                             sbIPropertyInfo::SORT_NULL_BIG, PR_TRUE,
-                             PR_TRUE, PR_TRUE, PR_FALSE);
+  rv = RegisterTrackTypeImageLabel(NS_LITERAL_STRING(SB_PROPERTY_TRACKTYPE),
+                                   NS_LITERAL_STRING("property.track_type"),
+                                   stringBundle, PR_TRUE, PR_TRUE,
+                                   PR_TRUE, PR_TRUE, nsString());
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Duration (in usecs)
@@ -1499,71 +1498,53 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyID,
 }
 
 nsresult
-sbPropertyManager::RegisterTrackTypeText(const nsAString& aPropertyID,
-                                         const nsAString& aDisplayKey,
-                                         nsIStringBundle* aStringBundle,
-                                         PRBool aUserViewable,
-                                         PRBool aUserEditable,
-                                         PRUint32 aNullSort,
-                                         PRBool aHasNullSort,
-                                         PRBool aRemoteReadable,
-                                         PRBool aRemoteWritable,
-                                         PRBool aCompressWhitespace,
-                                         sbIPropertyArray* aSecondarySort)
+sbPropertyManager::RegisterTrackTypeImageLabel(const nsAString& aPropertyID,
+                                               const nsAString& aDisplayKey,
+                                               nsIStringBundle* aStringBundle,
+                                               PRBool aUserViewable,
+                                               PRBool aUserEditable,
+                                               PRBool aRemoteReadable,
+                                               PRBool aRemoteWritable,
+                                               const nsAString& aUrlPropertyID)
 {
   NS_ASSERTION(aStringBundle, "aStringBundle is null");
+  nsresult rv;
 
-  nsRefPtr<sbTrackTypeTextPropertyInfo>
-    typeProperty(new sbTrackTypeTextPropertyInfo());
-  NS_ENSURE_TRUE(typeProperty, NS_ERROR_OUT_OF_MEMORY);
+  nsRefPtr<sbTrackTypeImageLabelPropertyInfo> trackTypeProperty(
+      new sbTrackTypeImageLabelPropertyInfo());
+  NS_ENSURE_TRUE(trackTypeProperty, NS_ERROR_OUT_OF_MEMORY);
 
-  nsresult rv = typeProperty->Init();
+  rv = trackTypeProperty->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = typeProperty->SetId(aPropertyID);
+  rv = trackTypeProperty->SetPropertyID(aPropertyID);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!aDisplayKey.IsEmpty()) {
     nsAutoString displayValue;
     rv = GetStringFromName(aStringBundle, aDisplayKey, displayValue);
     if(NS_SUCCEEDED(rv)) {
-      rv = typeProperty->SetDisplayName(displayValue);
+      rv = trackTypeProperty->SetDisplayName(displayValue);
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
-    rv = typeProperty->SetLocalizationKey(aDisplayKey);
+    rv = trackTypeProperty->SetLocalizationKey(aDisplayKey);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  if (aHasNullSort) {
-    rv = typeProperty->SetNullSort(aNullSort);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = typeProperty->SetUserViewable(aUserViewable);
+  rv = trackTypeProperty->SetUserViewable(aUserViewable);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = typeProperty->SetUserEditable(aUserEditable);
+  rv = trackTypeProperty->SetUserEditable(aUserEditable);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (aSecondarySort) {
-    rv = typeProperty->SetSecondarySort(aSecondarySort);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  if (!aCompressWhitespace) {
-    rv = typeProperty->SetNoCompressWhitespace(!aCompressWhitespace);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  nsCOMPtr<sbIPropertyInfo> propInfo =
-    do_QueryInterface(NS_ISUPPORTS_CAST(sbITextPropertyInfo*, typeProperty), &rv);
+  rv = trackTypeProperty->SetRemoteReadable(aRemoteReadable);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = SetRemoteAccess(propInfo, aRemoteReadable, aRemoteWritable);
+  rv = trackTypeProperty->SetRemoteWritable(aRemoteWritable);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AddPropertyInfo(propInfo);
+  rv = AddPropertyInfo(trackTypeProperty);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
