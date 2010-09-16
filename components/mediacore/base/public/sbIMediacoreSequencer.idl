@@ -35,7 +35,7 @@ interface sbIMediacoreSequenceGenerator;
 interface sbIMediaItem;
 interface sbIMediaListView;
 
-[scriptable, uuid(5dd7abe3-e872-4f69-8d9d-125806dbd580)]
+[scriptable, uuid(435c35de-0c6d-4f08-b073-370b4b2f5a7c)]
 interface sbIMediacoreSequencer : nsISupports
 {
   const unsigned long MODE_FORWARD    = 0;
@@ -100,10 +100,15 @@ interface sbIMediacoreSequencer : nsISupports
    *                   You may pass sbIMediacoreSequencer::AUTO_PICK_INDEX if
    *                   you wish to have the sequencer pick the most appropriate
    *                   start index for the sequence.
+   * \param aNotFromUserAction False if this call is the result of a user 
+   *                           interface action, true if code is calling
+   *                           playView on its own (optional, defaults to
+   *                           false, which may trigger further user interaction).
    * \see AUTO_PICK_INDEX
    */
   void playView(in sbIMediaListView aView, 
-                [optional] in long long aItemIndex);
+                [optional] in long long aItemIndex,
+                [optional] in boolean aNotFromUserAction);
 
   /**
    * \brief Allow the sequencer to pick the most appropriate start index for a
@@ -134,13 +139,21 @@ interface sbIMediacoreSequencer : nsISupports
 
   /**
    * \brief Go to the next item in the sequence.
+   * \param aNotFromUserAction False if this call is the result of a user 
+   *                           interface action, true if code is calling
+   *                           next on its own (optional, defaults to
+   *                           false, which may trigger further user interaction).
    */
-  void next();
+  void next([optional] in boolean aNotFromUserAction);
 
   /**
    * \brief Go to the previous item in the sequence.
+   * \param aNotFromUserAction False if this call is the result of a user 
+   *                           interface action, true if code is calling
+   *                           previous on its own (optional, defaults to
+   *                           false, which may trigger further user interaction).
    */
-  void previous();
+  void previous([optional] in boolean aNotFromUserAction);
 
   /**
    * \brief Indicate that the current core will handle the next item in the

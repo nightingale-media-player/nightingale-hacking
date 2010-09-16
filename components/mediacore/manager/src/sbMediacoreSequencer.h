@@ -47,6 +47,7 @@
 #include <sbIMediaListListener.h>
 #include <sbIMediaListView.h>
 #include <sbIPropertyManager.h>
+#include <sbIMediaItemController.h>
 
 #include <vector>
 #include <map>
@@ -58,6 +59,7 @@ class sbMediacoreSequencer : public sbIMediacoreSequencer,
                              public sbIMediacoreStatus,
                              public sbIMediaListListener,
                              public sbIMediaListViewListener,
+                             public sbIMediaItemControllerListener,
                              public nsIClassInfo,
                              public nsITimerCallback
 {
@@ -69,6 +71,7 @@ public:
   NS_DECL_SBIMEDIACORESTATUS
   NS_DECL_SBIMEDIALISTLISTENER
   NS_DECL_SBIMEDIALISTVIEWLISTENER
+  NS_DECL_SBIMEDIAITEMCONTROLLERLISTENER
   NS_DECL_NSICLASSINFO
   NS_DECL_NSITIMERCALLBACK
 
@@ -170,6 +173,15 @@ protected:
    */
   nsresult StopPlaybackHelper(nsAutoMonitor& aMonitor);
 
+  /**
+   * Checks for a mediaitemcontroller for the current item, and
+   * return true or false depending on whether the item should
+   * be skipped by the sequencer
+   */
+  nsresult ValidateMediaItemControllerPlayback(PRBool aFromUserAction, 
+                                               PRInt32 aOnHoldStatus,
+                                               PRBool *_proceed);
+
 protected:
   PRMonitor *mMonitor;
 
@@ -256,6 +268,15 @@ protected:
   PRPackedBool mNeedsRecalculate;
   PRPackedBool mWatchingView;
   PRPackedBool mResumePlaybackPosition;
+  PRPackedBool mValidationComplete;
+  PRUint32     mOnHoldStatus;
+  enum {
+    ONHOLD_NOTONHOLD = 0,
+    ONHOLD_PLAYVIEW,
+    ONHOLD_NEXT,
+    ONHOLD_PREVIOUS
+  };
+  nsCOMPtr<sbIMediaItem> mValidatingItem;
 };
 
 class sbScopedBoolToggle

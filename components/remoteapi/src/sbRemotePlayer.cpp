@@ -1411,7 +1411,7 @@ sbRemotePlayer::Play()
   rv = manager->GetSequencer(getter_AddRefs(sequencer));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sequencer->PlayView( mediaListView, index);
+  rv = sequencer->PlayView( mediaListView, index, PR_FALSE);
   NS_ENSURE_SUCCESS( rv, rv );
 
   rv = TakePlaybackControl( nsnull );
@@ -1454,7 +1454,7 @@ sbRemotePlayer::PlayMediaList( sbIRemoteMediaList *aList, PRInt32 aIndex )
   rv = manager->GetSequencer(getter_AddRefs(sequencer));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sequencer->PlayView( mediaListView, aIndex);
+  rv = sequencer->PlayView( mediaListView, aIndex, PR_FALSE);
   NS_ENSURE_SUCCESS( rv, rv );
 
   rv = TakePlaybackControl( nsnull );
@@ -1569,7 +1569,7 @@ sbRemotePlayer::Next()
   rv = manager->GetSequencer(getter_AddRefs(sequencer));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sequencer->Next();
+  rv = sequencer->Next(PR_FALSE);
   NS_ENSURE_SUCCESS( rv, rv );
 
   rv = TakePlaybackControl( nsnull );
@@ -1595,7 +1595,7 @@ sbRemotePlayer::Previous()
   rv = manager->GetSequencer(getter_AddRefs(sequencer));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sequencer->Previous();
+  rv = sequencer->Previous(PR_FALSE);
   NS_ENSURE_SUCCESS( rv, rv );
 
   rv = TakePlaybackControl( nsnull );

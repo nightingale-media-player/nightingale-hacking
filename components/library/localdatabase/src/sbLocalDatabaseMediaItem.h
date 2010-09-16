@@ -88,6 +88,11 @@ protected:
   // item is not yet ready for notification (e.g. during the middle of creation)
   // and when it's already been deleted.
   PRBool mSuppressNotifications;
+  
+  // A reference to the mediaItemController for this item
+  nsCOMPtr<sbIMediaItemController> mItemController;
+  // A boolean to remember if we already tried to fetch the controller
+  PRBool mItemControllerFetched;
 
 private:
   PRLock* mPropertyBagLock;

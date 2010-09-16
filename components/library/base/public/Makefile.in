@@ -46,6 +46,7 @@ XPIDL_SRCS = sbICascadeFilterSet.idl \
              sbILibraryTransferContext.idl \
              sbILibraryUtils.idl \
              sbIMediaItem.idl \
+             sbIMediaItemController.idl \
              sbIMediaItemListener.idl \
              sbIMediaItemWatcher.idl \
              sbIMediaList.idl \

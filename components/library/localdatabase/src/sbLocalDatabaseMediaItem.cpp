@@ -28,6 +28,7 @@
 
 #include <nsIProgrammingLanguage.h>
 #include <sbILibrary.h>
+#include <sbIMediaItemController.h>
 #include <sbILibraryUtils.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbILocalDatabaseResourcePropertyBag.h>
@@ -80,7 +81,9 @@ sbLocalDatabaseMediaItem::sbLocalDatabaseMediaItem()
   mOwnsLibrary(PR_FALSE),
   mLibrary(nsnull),
   mSuppressNotifications(PR_TRUE),
-  mPropertyBagLock(nsnull)
+  mPropertyBagLock(nsnull),
+  mItemControllerFetched(PR_FALSE),
+  mItemController(nsnull)
 {
 }
 
@@ -436,6 +439,10 @@ sbLocalDatabaseMediaItem::SetProperty(const nsAString& aID,
     NS_WARNING("Attempt to set a read-only property!");
     return NS_ERROR_INVALID_ARG;
   }
+  if (aID.EqualsLiteral(SB_PROPERTY_TRACKTYPE)) {
+    mItemController.forget();
+    mItemControllerFetched = PR_FALSE;
+  }
 
   // Create a property array to hold the changed properties and their old
   // values
@@ -484,8 +491,6 @@ sbLocalDatabaseMediaItem::SetProperties(sbIPropertyArray* aProperties)
   rv = aProperties->GetLength(&propertyCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXsk Don't let the GUID property to be set.  We shouldn't need this
-  // if it were a read only property, so remvoe this when bug 3099 is fixed.
   for (PRUint32 i = 0; i < propertyCount; i++) {
     nsCOMPtr<sbIProperty> property;
     rv = aProperties->GetPropertyAt(i, getter_AddRefs(property));
@@ -495,9 +500,15 @@ sbLocalDatabaseMediaItem::SetProperties(sbIPropertyArray* aProperties)
     rv = property->GetId(propertyID);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    // XXXsk Don't let the GUID property to be set.  We shouldn't need this
+    // if it were a read only property, so remvoe this when bug 3099 is fixed.
     if (propertyID.EqualsLiteral(SB_PROPERTY_GUID)) {
       NS_WARNING("Attempt to set a read-only property!");
       return NS_ERROR_INVALID_ARG;
+    }
+    if (propertyID.EqualsLiteral(SB_PROPERTY_TRACKTYPE)) {
+      mItemController.forget();
+      mItemControllerFetched = PR_FALSE;
     }
   }
 
@@ -714,13 +725,33 @@ sbLocalDatabaseMediaItem::GetIsMutable(PRBool* aIsMutable)
  * See sbIMediaItem
  */
 NS_IMETHODIMP
-sbLocalDatabaseMediaItem::GetIsLockedOut(PRBool* aIsLockedOut)
+sbLocalDatabaseMediaItem::GetItemController(sbIMediaItemController **aMediaItemController)
 {
-  // TODO: Use a property of the item as a contractid to callback a
-  // component to determine the item's lockedout status. If the prop is
-  // empty, return false. If the prop is filled but the contractid is
-  // not found, return true.
-  *aIsLockedOut = PR_FALSE;
+  NS_ENSURE_ARG_POINTER(aMediaItemController);
+
+  if (!mItemControllerFetched) {
+    mItemControllerFetched = PR_TRUE;
+    // Use the trackType property of the item as a contractid to find the
+    // controller service.
+    nsString trackType;
+    nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKTYPE), trackType);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!trackType.IsEmpty()) {
+      // If there is a type, construct the contractid for the controller
+      nsCString cTrackType;
+      cTrackType = NS_ConvertUTF16toUTF8(trackType);
+      ToLowerCase(cTrackType);
+      nsCString cContractID;
+      cContractID = 
+        NS_LITERAL_CSTRING(SB_MEDIAITEMCONTROLLER_PARTIALCONTRACTID);
+      cContractID.Append(cTrackType);
+      // fetch the service, ignore the return value because the service
+      // might not be there.
+      mItemController = do_GetService(cContractID.get(), &rv);
+    }
+  }
+
+  NS_IF_ADDREF(*aMediaItemController = mItemController);
   return NS_OK;
 }
 

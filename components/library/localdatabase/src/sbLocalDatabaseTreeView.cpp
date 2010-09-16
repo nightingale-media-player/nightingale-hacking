@@ -53,6 +53,7 @@
 #include <sbIMediaListView.h>
 #include <sbIMediaList.h>
 #include <sbIMediaItem.h>
+#include <sbIMediaItemController.h>
 #include <sbIPropertyArray.h>
 #include <sbIPropertyInfo.h>
 #include <sbIPropertyManager.h>
@@ -1400,8 +1401,8 @@ sbLocalDatabaseTreeView::GetPlayingProperty(PRUint32 aIndex,
 }
 
 nsresult
-sbLocalDatabaseTreeView::GetLockedOutStatus(PRUint32 aIndex, 
-                                            nsISupportsArray* properties)
+sbLocalDatabaseTreeView::GetItemDisabledStatus(PRUint32 aIndex, 
+                                               nsISupportsArray* properties)
 {
   NS_ASSERTION(properties, "properties is null");
   
@@ -1437,12 +1438,19 @@ sbLocalDatabaseTreeView::GetLockedOutStatus(PRUint32 aIndex,
   rv = library->GetMediaItem(guid, getter_AddRefs(mediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
   
-  PRBool lockedout;
-  rv = mediaItem->GetIsLockedOut(&lockedout);
+  nsCOMPtr<sbIMediaItemController> mediaItemController;
+  rv = mediaItem->GetItemController(getter_AddRefs(mediaItemController));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!mediaItemController)
+    return NS_OK;
+    
+  PRBool itemDisabled;
+  rv = mediaItemController->IsItemDisabled(mediaItem, &itemDisabled);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  if (lockedout) {
-    rv = TokenizeProperties(NS_LITERAL_STRING("lockedout"), properties);
+  if (itemDisabled) {
+    rv = TokenizeProperties(NS_LITERAL_STRING("disabled"), properties);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1698,7 +1706,7 @@ sbLocalDatabaseTreeView::GetRowProperties(PRInt32 row,
   rv = GetPlayingProperty(index, properties);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = GetLockedOutStatus(index, properties);
+  rv = GetItemDisabledStatus(index, properties);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
@@ -1787,7 +1795,7 @@ sbLocalDatabaseTreeView::GetCellProperties(PRInt32 row,
   rv = GetPlayingProperty(index, properties);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = GetLockedOutStatus(index, properties);
+  rv = GetItemDisabledStatus(index, properties);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIPropertyInfo> pi;

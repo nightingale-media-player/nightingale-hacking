@@ -322,14 +322,14 @@ sbTemporaryMediaItem::GetIsMutable(PRBool* aIsMutable)
 
 //-------------------------------------
 //
-// isLockedOut
+// isItemDisabled
 //
 
 NS_IMETHODIMP
-sbTemporaryMediaItem::GetIsLockedOut(PRBool* aIsLockedOut)
+sbTemporaryMediaItem::GetItemController(sbIMediaItemController **aMediaItemController)
 {
-  NS_ENSURE_ARG_POINTER(aIsLockedOut);
-  *aIsLockedOut = PR_FALSE;
+  NS_ENSURE_ARG_POINTER(aMediaItemController);
+  *aMediaItemController = nsnull;
   return NS_OK;
 }
 

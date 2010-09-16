@@ -58,7 +58,6 @@ const static char* sPublicRProperties[] =
   // omitting library since we don't want the user to get back
   // to the original library
   "library_read:isMutable",
-  "library_read:isLockedOut",
   "library_read:mediaCreated",
   "library_read:mediaUpdated",
   "library_read:contentLength",

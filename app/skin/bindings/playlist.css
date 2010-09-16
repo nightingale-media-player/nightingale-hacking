@@ -383,7 +383,7 @@ Playing track indicator
   background-position: 0% -18px;
 }
 
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( lockedout )
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( disabled )
 {
   color: rgb(150,150,150);
 }

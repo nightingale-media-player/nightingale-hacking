@@ -302,7 +302,7 @@ In-cell Checkbox
   background-image: url(chrome://songbird/skin/playlist/icon-playing.png);
 }
 
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( lockedout ) {
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( disabled ) {
 {
   color: rgb(150,150,150);
 }

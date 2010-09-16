@@ -63,6 +63,7 @@
 #include <sbIMediacoreVoting.h>
 #include <sbIMediacoreVotingChain.h>
 #include <sbIMediaItem.h>
+#include <sbIMediaItemController.h>
 #include <sbIMediaList.h>
 #include <sbIPrompter.h>
 #include <sbIPropertyArray.h>
@@ -160,11 +161,12 @@ EmitMillisecondsToTimeString(PRUint64 aValue,
 NS_IMPL_THREADSAFE_ADDREF(sbMediacoreSequencer)
 NS_IMPL_THREADSAFE_RELEASE(sbMediacoreSequencer)
 
-NS_IMPL_QUERY_INTERFACE6_CI(sbMediacoreSequencer,
+NS_IMPL_QUERY_INTERFACE7_CI(sbMediacoreSequencer,
                             sbIMediacoreSequencer,
                             sbIMediacoreStatus,
                             sbIMediaListListener,
                             sbIMediaListViewListener,
+                            sbIMediaItemControllerListener,
                             nsIClassInfo,
                             nsITimerCallback)
 
@@ -202,6 +204,8 @@ sbMediacoreSequencer::sbMediacoreSequencer()
 , mNeedsRecalculate(PR_FALSE)
 , mWatchingView(PR_FALSE)
 , mResumePlaybackPosition(PR_TRUE)
+, mOnHoldStatus(ONHOLD_NOTONHOLD)
+, mValidationComplete(PR_FALSE)
 {
 
 #ifdef PR_LOGGING
@@ -1245,7 +1249,7 @@ sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
       // This call to Next() (while mCoreWillHandleNext is set) will just cause
       // the position tracking to update - we won't try to play it again this
       // time.
-      rv = Next();
+      rv = Next(PR_TRUE);
       NS_ENSURE_SUCCESS(rv, rv);
     }      
       
@@ -1261,7 +1265,7 @@ sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
 
     // Pause the sequencer if playback error happens to video.
     if (!contentType.Equals(NS_LITERAL_STRING("video"))) {
-      rv = Next();
+      rv = Next(PR_TRUE);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     else {
@@ -2539,13 +2543,24 @@ sbMediacoreSequencer::SetSequencePosition(PRUint32 aSequencePosition)
 
 NS_IMETHODIMP
 sbMediacoreSequencer::PlayView(sbIMediaListView *aView,
-                               PRInt64 aItemIndex)
+                               PRInt64 aItemIndex,
+                               PRBool aNotFromUserAction)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aView);
 
   nsresult rv = SetViewWithViewPosition(aView, &aItemIndex);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool proceed;
+  rv = ValidateMediaItemControllerPlayback(!aNotFromUserAction, 
+                                           ONHOLD_PLAYVIEW, 
+                                           &proceed);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (!proceed) {
+    return NS_OK;
+  }
 
   rv = Play();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2719,7 +2734,107 @@ sbMediacoreSequencer::Stop() {
 }
 
 NS_IMETHODIMP
-sbMediacoreSequencer::Next()
+sbMediacoreSequencer::OnValidatePlaybackComplete(sbIMediaItem *aItem, 
+                                                 PRInt32 aResult) {
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  nsAutoMonitor mon(mMonitor);
+  
+  mValidationComplete = PR_TRUE;
+
+  if (aItem == mValidatingItem) {
+    switch (aResult) {
+      case sbIMediaItemControllerListener::VALIDATEPLAYBACKCOMPLETE_PROCEED:
+        if (mOnHoldStatus == ONHOLD_PLAYVIEW ||
+            !mNextTriggeredByStreamEnd) {
+
+          if (mOnHoldStatus == ONHOLD_PLAYVIEW) {
+            rv = Play();
+            NS_ENSURE_SUCCESS(rv, rv);
+          } 
+
+          nsCOMPtr<sbIMediacoreEvent> event;
+          rv = sbMediacoreEvent::
+            CreateEvent(sbIMediacoreEvent::EXPLICIT_TRACK_CHANGE,
+                        nsnull,
+                        nsnull,
+                        mCore,
+                        getter_AddRefs(event));
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          rv = DispatchMediacoreEvent(event);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+        
+        mon.Exit();
+
+        if (mOnHoldStatus != ONHOLD_PLAYVIEW) {
+          rv = ProcessNewPosition();
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+        return NS_OK;
+      case sbIMediaItemControllerListener::VALIDATEPLAYBACKCOMPLETE_SKIP:
+        // go to the next track in the view
+        if (mOnHoldStatus == ONHOLD_PLAYVIEW) {
+          mStatus = sbIMediacoreStatus::STATUS_BUFFERING;
+          mErrorCount = 0;
+          mIsWaitingForPlayback = PR_TRUE;
+          mOnHoldStatus = ONHOLD_PLAYVIEW;
+        }
+        if (mOnHoldStatus == ONHOLD_PREVIOUS)
+          return Previous(PR_TRUE);
+        return Next(PR_TRUE);
+    }
+  } 
+  // else, a previous validation is done, but the user has triggered a new 
+  // playback event that cancelled the one that caused vaidation. Either a
+  // new validation is in progress (in which case we'll get its completed
+  // notification later with the correct mediaitem), or validation wasn't
+  // needed anymore (in which case it is safe to ignore the event)
+  return NS_OK;
+}
+
+nsresult 
+sbMediacoreSequencer::ValidateMediaItemControllerPlayback(PRBool aFromUserAction,
+                                                          PRInt32 aOnHoldStatus,
+                                                          PRBool *_proceed)
+{
+  NS_ENSURE_TRUE(NS_IsMainThread(), NS_ERROR_UNEXPECTED);
+  NS_ENSURE_ARG_POINTER(_proceed);
+
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  nsAutoMonitor mon(mMonitor);
+
+  // get the item controller
+  nsCOMPtr<sbIMediaItem> mediaItem;
+  nsresult rv = mView->GetItemByIndex(mSequence[mPosition], getter_AddRefs(mediaItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaItemController> mediaItemController;
+  rv = mediaItem->GetItemController(getter_AddRefs(mediaItemController));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (mediaItemController) {
+    // Call validatePlayback on the controller. Set _proceed to false so that our
+    // caller doesn't do any more work. The validatePlayback call may synchronously
+    // call completion callback and thus this won't always cause playback to pause.
+    mOnHoldStatus = aOnHoldStatus;
+    mValidatingItem = mediaItem;
+    mValidationComplete = PR_FALSE;
+    rv = mediaItemController->ValidatePlayback(mediaItem, aFromUserAction, this);
+    *_proceed = PR_FALSE;
+    return rv;
+  }
+  mOnHoldStatus = ONHOLD_NOTONHOLD;
+  mValidatingItem.forget();
+  *_proceed = PR_TRUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMediacoreSequencer::Next(PRBool aNotFromUserAction)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   
@@ -2791,8 +2906,10 @@ sbMediacoreSequencer::Next()
       // Grip.
       nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
       mon.Exit();
-      rv = playbackControl->Stop();
-      NS_ASSERTION(NS_SUCCEEDED(rv), "Stop failed at end of sequence.");
+      if (playbackControl) {
+        rv = playbackControl->Stop();
+        NS_ASSERTION(NS_SUCCEEDED(rv), "Stop failed at end of sequence.");
+      }
       mon.Enter();
     }
 
@@ -2824,15 +2941,25 @@ sbMediacoreSequencer::Next()
 
     return NS_OK;
   }
+  
+  PRBool proceed;
+  rv = ValidateMediaItemControllerPlayback(!aNotFromUserAction, ONHOLD_NEXT, &proceed);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (!proceed) {
+    return NS_OK;
+  }
 
-  // Fire EXPLICIT_TRACK_CHANGE when Next() was not triggered by the stream ending.
+  // Fire EXPLICIT_TRACK_CHANGE when Next() was not triggered by the stream 
+  // ending.
   if(!mNextTriggeredByStreamEnd) {
     nsCOMPtr<sbIMediacoreEvent> event;
-    rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::EXPLICIT_TRACK_CHANGE,
-                                       nsnull,
-                                       nsnull,
-                                       mCore,
-                                       getter_AddRefs(event));
+    rv = sbMediacoreEvent::
+      CreateEvent(sbIMediacoreEvent::EXPLICIT_TRACK_CHANGE,
+                  nsnull,
+                  nsnull,
+                  mCore,
+                  getter_AddRefs(event));
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = DispatchMediacoreEvent(event);
@@ -2848,7 +2975,7 @@ sbMediacoreSequencer::Next()
 }
 
 NS_IMETHODIMP
-sbMediacoreSequencer::Previous()
+sbMediacoreSequencer::Previous(PRBool aNotFromUserAction)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
@@ -2939,14 +3066,24 @@ sbMediacoreSequencer::Previous()
     return NS_OK;
   }
 
-  // Fire EXPLICIT_TRACK_CHANGE when Previous() was not triggered by the stream ending.
+  PRBool proceed;
+  rv = ValidateMediaItemControllerPlayback(!aNotFromUserAction, ONHOLD_PREVIOUS, &proceed);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (!proceed) {
+    return NS_OK;
+  }
+
+  // Fire EXPLICIT_TRACK_CHANGE when Previous() was not triggered by the stream
+  // ending.
   if(!mNextTriggeredByStreamEnd) {
     nsCOMPtr<sbIMediacoreEvent> event;
-    rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::EXPLICIT_TRACK_CHANGE,
-                                       nsnull,
-                                       nsnull,
-                                       mCore,
-                                       getter_AddRefs(event));
+    rv = sbMediacoreEvent::
+      CreateEvent(sbIMediacoreEvent::EXPLICIT_TRACK_CHANGE,
+                  nsnull,
+                  nsnull,
+                  mCore,
+                  getter_AddRefs(event));
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = DispatchMediacoreEvent(event);
@@ -2964,6 +3101,20 @@ sbMediacoreSequencer::Previous()
 NS_IMETHODIMP
 sbMediacoreSequencer::RequestHandleNextItem(sbIMediacore *aMediacore)
 {
+  // lone> Note that this method does not perform mediaitem trackType 
+  // service validation. This is only used for gapless playback (one 
+  // core to the same core), so the assumption here is that validated
+  // playback on one track for a service gives access to all tracks
+  // from that service. This is good enough for now but may not be anymore
+  // at some point in the future. Fixing this will imply making cores
+  // aware of the ability of the sequencer to set itself 'on hold'. When
+  // this method (RequestHandleNextItem) is called, cores need to be able
+  // to receive a "hold on, i don't know what track is going to be next yet"
+  // answer, and call back into the sequencer later (after some event)
+  // for the actual handling of the gapless next event. This means the
+  // core could potentially run to the end of the stream before the
+  // event has occured (slow login), and that could also have
+  // implications.
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aMediacore);
 
@@ -3136,7 +3287,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 
       if(mCoreWillHandleNext) {
         sbScopedBoolToggle toggle(&mNextTriggeredByStreamEnd);
-        nsresult rv = Next();
+        nsresult rv = Next(PR_TRUE);
         NS_ENSURE_SUCCESS(rv, rv);
       }
 
@@ -3213,7 +3364,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
         mCoreWillHandleNext = PR_FALSE;
 
         sbScopedBoolToggle toggle(&mNextTriggeredByStreamEnd);
-        rv = Next();
+        rv = Next(PR_TRUE);
 
         if(NS_FAILED(rv) ||
            mSequence.empty()) {

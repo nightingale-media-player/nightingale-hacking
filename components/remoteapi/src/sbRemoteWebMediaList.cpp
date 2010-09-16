@@ -49,7 +49,6 @@ const static char* sPublicRProperties[] =
 
   // sbIMediaItem
   "site:isMutable",
-  "site:isLockedOut",
   "site:mediaCreated",
   "site:mediaUpdated",
   "site:contentLength",

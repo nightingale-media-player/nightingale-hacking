@@ -101,7 +101,7 @@ typedef nsInterfaceHashtableMT<nsStringHashKey, nsIWeakReference>
 #define SB_FORWARD_SBIMEDIAITEM(_to) \
   NS_IMETHOD GetLibrary(sbILibrary * *aLibrary) { return _to GetLibrary(aLibrary); } \
   NS_IMETHOD GetIsMutable(PRBool *aIsMutable) { return _to GetIsMutable(aIsMutable); } \
-  NS_IMETHOD GetIsLockedOut(PRBool *aIsLockedOut) { return _to GetIsLockedOut(aIsLockedOut); } \
+  NS_IMETHOD GetItemController(sbIMediaItemController **aMediaItemController) { return _to GetItemController(aMediaItemController); } \
   NS_IMETHOD GetMediaCreated(PRInt64 *aMediaCreated) { return _to GetMediaCreated(aMediaCreated); } \
   NS_IMETHOD SetMediaCreated(PRInt64 aMediaCreated) { return _to SetMediaCreated(aMediaCreated); } \
   NS_IMETHOD GetMediaUpdated(PRInt64 *aMediaUpdated) { return _to GetMediaUpdated(aMediaUpdated); } \

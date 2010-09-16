@@ -37,6 +37,7 @@ interface nsIStreamListener;
 interface nsIInputStream;
 interface nsIOutputStream;
 interface sbILibrary;
+interface sbIMediaItemController;
 
 /**
 * \interface sbIMediaItem
@@ -48,7 +49,7 @@ interface sbILibrary;
 *
 * \sa sbILibrary, sbIMediaList
 */
-[scriptable, uuid(7e7f0e61-66c6-4d37-99a0-8d285fcff6a6)]
+[scriptable, uuid(64aa9b34-00e0-480e-b919-2322496175cb)]
 interface sbIMediaItem : sbILibraryResource
 {
   /*
@@ -72,11 +73,10 @@ interface sbIMediaItem : sbILibraryResource
   readonly attribute boolean isMutable;
 
   /**
-   * \brief Is the item locked out? Items that are locked cannot be played
-   * and may not sync to a device, they will appear in the playlist with a 
-   * different style (ie, grayed out).
+   * \brief An interface to the media item controller (if any) that determines
+   * this item's availability for playback.
    */
-  readonly attribute boolean isLockedOut;
+  readonly attribute sbIMediaItemController itemController;
 
 // Convenience Attributes (these should thunk directly to the sbILibraryResource::G/SetProperty calls)
 

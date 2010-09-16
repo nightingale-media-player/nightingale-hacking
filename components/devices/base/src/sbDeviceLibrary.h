@@ -114,7 +114,7 @@ struct PRMonitor;
 
 #define SB_FORWARD_SAFE_SBIMEDIAITEM_MINUS_OVERRIDES(_to) \
   NS_SCRIPTABLE NS_IMETHOD GetIsMutable(PRBool *aIsMutable) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetIsMutable(aIsMutable); } \
-  NS_SCRIPTABLE NS_IMETHOD GetIsLockedOut(PRBool *aIsLockedOut) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetIsLockedOut(aIsLockedOut); } \
+  NS_SCRIPTABLE NS_IMETHOD GetItemController(sbIMediaItemController **aMediaItemController) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetItemController(aMediaItemController); } \
   NS_SCRIPTABLE NS_IMETHOD GetMediaCreated(PRInt64 *aMediaCreated) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaCreated(aMediaCreated); } \
   NS_SCRIPTABLE NS_IMETHOD SetMediaCreated(PRInt64 aMediaCreated) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetMediaCreated(aMediaCreated); } \
   NS_SCRIPTABLE NS_IMETHOD GetMediaUpdated(PRInt64 *aMediaUpdated) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaUpdated(aMediaUpdated); } \
