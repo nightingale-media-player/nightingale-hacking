@@ -187,7 +187,7 @@ sbImageLabelLinkPropertyInfo::AddImage(const nsACString & aKey,
   NS_ENSURE_TRUE(mImages, NS_ERROR_NOT_INITIALIZED);
 
   if (mImages->Get(aKey, nsnull)) {
-    NS_WARNING("found an existing image key for %s", aKey.BeginReading());
+    NS_WARNING("found an existing image key");
     return NS_OK;
   }
 
@@ -204,7 +204,7 @@ sbImageLabelLinkPropertyInfo::AddLabel(const nsACString & aKey,
   NS_ENSURE_TRUE(mLabels, NS_ERROR_NOT_INITIALIZED);
 
   if (mLabels->Get(aKey, nsnull)) {
-    NS_WARNING("found an existing label key for %s", aKey.BeginReading());
+    NS_WARNING("found an existing label key");
     return NS_OK;
   }
 
