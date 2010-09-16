@@ -406,7 +406,7 @@
     return;
   }
 
-  sequencer->Next();
+  sequencer->Next(PR_FALSE);
 
   NS_OBJC_END_TRY_ABORT_BLOCK;
 }
@@ -428,7 +428,7 @@
     return;
   }
 
-  sequencer->Previous();
+  sequencer->Previous(PR_FALSE);
 
   NS_OBJC_END_TRY_ABORT_BLOCK;
 }
