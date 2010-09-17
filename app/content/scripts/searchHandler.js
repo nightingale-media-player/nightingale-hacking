@@ -423,7 +423,7 @@ const gSearchHandler = {
 
     // If a media page is open in the current tab,
     // then we will need to restore the search filter state
-    if (this._isMediaPageShowing())
+    if (this._isMediaTabOrMediaPageShowing())
     {
       this._switchToInternalSearch();
     }
@@ -529,11 +529,14 @@ const gSearchHandler = {
 
 
   /**
-   * Return true if the active tab is displaying a songbird media page.
+   * Return true if the active tab is the media tab or the active tab is
+   * displaying a songbird media page.
    * Note: The media page may not be initialized.
    */
-  _isMediaPageShowing: function SearchHandler__isMediaPageShowing() {
-    return gBrowser.currentMediaPage != null;
+  _isMediaTabOrMediaPageShowing:
+  function SearchHandler__isMediaTabOrMediaPageShowing() {
+    return (gBrowser.mediaTab == gBrowser.selectedTab ||
+            gBrowser.currentMediaPage != null);
   },
 
 
