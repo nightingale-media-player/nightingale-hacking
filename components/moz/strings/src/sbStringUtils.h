@@ -30,6 +30,7 @@
 #include <nsStringAPI.h>
 #include <nsTArray.h>
 #include <prprf.h>
+#include <sbMemoryUtils.h>
 
 class nsIStringEnumerator;
 
@@ -271,6 +272,16 @@ void nsCString_Split(const nsACString&    aString,
                      const nsACString&    aDelimiter,
                      nsTArray<nsCString>& aSubStringArray);
 
+/**
+ * Parse the ISO 8601 formatted time string specified by aISO8601TimeString and
+ * return the time in aTime.
+ *
+ * \param aISO8601TimeString    ISO 8601 formatted time string to parse.
+ * \param aTime                 Returned time.
+ */
+nsresult SB_ParseISO8601TimeString(const nsAString& aISO8601TimeString,
+                                   PRTime*          aTime);
+
 /*
  * Songbird string bundle URL.
  */
@@ -479,6 +490,15 @@ sbAppendStringEnumerator(StringType&     aStringArray,
 
   return NS_OK;
 }
+
+//
+// Auto-disposal class wrappers.
+//
+//   sbAutoSmprintf             Wrapper to auto-free strings created by
+//                              smprintf.
+//
+
+SB_AUTO_NULL_CLASS(sbAutoSmprintf, char*, PR_smprintf_free(mValue));
 
 #endif /* __SBSTRINGUTILS_H__ */
 

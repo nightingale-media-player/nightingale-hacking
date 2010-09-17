@@ -431,6 +431,61 @@ nsCString_Split(const nsACString&    aString,
   } while (delimiterIndex < stringLength);
 }
 
+nsresult
+SB_ParseISO8601TimeString(const nsAString& aISO8601TimeString,
+                          PRTime*          aTime)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aTime);
+
+  // Function variables.
+  nsTArray<nsCString> components;
+  PRStatus            status;
+
+  // Convert the ISO 8601 string to "MM-DD-YYYY HH:MM:SS.SSSS TZ" format so that
+  // PR_ParseTimeString can parse it.
+  // E.g., Convert "1970-01-31T01:02:03.4567Z" to
+  //               "01-31-1970 01:02:03.4567 GMT".
+  //
+  // TODO: support other ISO 8601 formats.
+
+  // Split the ISO 8601 time string into separate time and date components.
+  nsCAutoString
+    iso8601TimeString = NS_LossyConvertUTF16toASCII(aISO8601TimeString);
+  nsCString_Split(iso8601TimeString, NS_LITERAL_CSTRING("T"), components);
+  NS_ENSURE_TRUE(components.Length() == 2, NS_ERROR_INVALID_ARG);
+  nsCAutoString date = components[0];
+  nsCAutoString time = components[1];
+
+  // Split the date into year, month, and day components.
+  nsCString_Split(date, NS_LITERAL_CSTRING("-"), components);
+  NS_ENSURE_TRUE(components.Length() == 3, NS_ERROR_INVALID_ARG);
+  nsCAutoString year = components[0];
+  nsCAutoString month = components[1];
+  nsCAutoString day = components[2];
+
+  // Check for local or GMT timezone.
+  nsCAutoString timezone;
+  if (time[time.Length() - 1] == 'Z') {
+    timezone.Assign(NS_LITERAL_CSTRING(" GMT"));
+    time.SetLength(time.Length() - 1);
+  }
+
+  // Produce the format for PR_ParseTimeString.
+  sbAutoSmprintf timeString = PR_smprintf("%s-%s-%s %s%s",
+                                          month.get(),
+                                          day.get(),
+                                          year.get(),
+                                          time.get(),
+                                          timezone.get());
+
+  // Parse the time string.
+  status = PR_ParseTimeString(timeString, PR_FALSE, aTime);
+  NS_ENSURE_TRUE(status == PR_SUCCESS, NS_ERROR_FAILURE);
+
+  return NS_OK;
+}
+
 /**
  * Get and return in aString the localized string with the key specified by aKey
  * using the string bundle specified by aStringBundle.  If the string cannot be
