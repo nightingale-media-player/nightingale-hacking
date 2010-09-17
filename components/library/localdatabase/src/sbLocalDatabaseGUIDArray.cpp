@@ -84,7 +84,8 @@ sbLocalDatabaseGUIDArray::sbLocalDatabaseGUIDArray() :
   mValid(PR_FALSE),
   mQueriesValid(PR_FALSE),
   mNullsFirst(PR_FALSE),
-  mPrefetchedRows(PR_FALSE)
+  mPrefetchedRows(PR_FALSE),
+  mSuppress(0)
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseGUIDArrayLog) {
@@ -667,7 +668,7 @@ sbLocalDatabaseGUIDArray::Invalidate()
 {
   TRACE(("sbLocalDatabaseGUIDArray[0x%.8x] - Invalidate", this));
 
-  if (mValid == PR_FALSE) {
+  if (mValid == PR_FALSE || mSuppress > 0) {
     return NS_OK;
   }
   nsresult rv;
@@ -1089,6 +1090,21 @@ sbLocalDatabaseGUIDArray::ContainsGuid(const nsAString& aGuid,
 
   // Either the guid is in the map or it is just not in our array
   *_retval = mGuidToFirstIndexMap.Get(aGuid, &index);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::SuppressInvalidation(PRBool aSuppress)
+{
+  if(aSuppress) {
+    mSuppress++;
+  }
+  else if(--mSuppress <= 0) {
+    mSuppress = 0;
+    nsresult rv = Invalidate();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   return NS_OK;
 }
 

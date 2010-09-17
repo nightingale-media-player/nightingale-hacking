@@ -60,6 +60,7 @@
 
 #include <nsIScriptError.h>
 #include <nsIConsoleService.h>
+#include <nsIConsoleMessage.h>
 
 #include <nsCOMArray.h>
 
@@ -130,13 +131,21 @@
 #define DBENGINE_GUID_WEB_LIBRARY             "web@library.songbirdnest.com"
 #define DBENGINE_GUID_PLAYQUEUE_LIBRARY       "playqueue@library.songbirdnest.com"
 
-// Unless prefs state otherwise, allow 262144000 bytes
+// Unless prefs state otherwise, allow 250 Mbytes
 // of page cache.  WOW!
 #define DEFAULT_PAGE_SIZE             16384
 #define DEFAULT_CACHE_SIZE            16000
 
+// pre-allocated for caching
+#define DEFAULT_PREALLOCCACHE_SIZE    0
+// pre-allocated for scratch memory
+#define DEFAULT_PREALLOCSCRATCH_SIZE  0
+
 #define SQLITE_MAX_RETRIES            666
 #define MAX_BUSY_RETRY_CLOSE_DB       10
+
+// Uncomment or define this to enable perf logging.
+//#define USE_PERF_LOGGING 1
 
 #if defined(_DEBUG) || defined(DEBUG)
   #if defined(XP_WIN)
@@ -156,7 +165,21 @@ static PRLogModuleInfo* sDatabaseEnginePerformanceLog = nsnull;
 #define LOG(args)   /* nothing */
 #endif
 
-#ifdef PR_LOGGING
+#ifdef USE_PERF_LOGGING
+
+class sbDatabaseEnginePerformanceLogger
+{
+public:
+  sbDatabaseEnginePerformanceLogger(const nsAString& aQuery,
+                                    const nsAString& aGuid);
+  ~sbDatabaseEnginePerformanceLogger();
+
+private:
+  nsString mQuery;
+  nsString mGuid;
+  PRTime mStart;
+};
+
 #define BEGIN_PERFORMANCE_LOG(_strQuery, _dbName) \
  sbDatabaseEnginePerformanceLogger _performanceLogger(_strQuery, _dbName)
 #else
@@ -1225,13 +1248,13 @@ nsresult CDatabaseEngine::InitMemoryConstraints()
       NS_FAILED(prefBranch->GetIntPref(PREF_DB_PREALLOCCACHE_SIZE,
                                        &preAllocCache))) {
     NS_WARNING("DBEngine failed to get preAllocCache pref. Using default.");
-    preAllocCache = 0; 
+    preAllocCache = DEFAULT_PREALLOCCACHE_SIZE; 
   }
   if (NS_FAILED(rv) ||
       NS_FAILED(prefBranch->GetIntPref(PREF_DB_PREALLOCSCRATCH_SIZE,
                                        &preAllocScratch))) {
     NS_WARNING("DBEngine failed to get preAllocScratch pref. Using default.");
-    preAllocScratch = 0; 
+    preAllocScratch = DEFAULT_PREALLOCSCRATCH_SIZE; 
   }
   if (NS_FAILED(rv) ||NS_FAILED(prefBranch->GetIntPref(PREF_DB_SOFT_LIMIT,
                                        &softLimit))) {
@@ -2788,7 +2811,8 @@ NS_IMETHODIMP CDatabaseEngine::GetLocaleCollationID(nsAString &aID) {
   return NS_OK;
 }
 
-#ifdef PR_LOGGING
+#ifdef USE_PERF_LOGGING
+
 sbDatabaseEnginePerformanceLogger::sbDatabaseEnginePerformanceLogger(const nsAString& aQuery,
                                                                      const nsAString& aGuid) :
   mQuery(aQuery),
@@ -2801,23 +2825,21 @@ sbDatabaseEnginePerformanceLogger::~sbDatabaseEnginePerformanceLogger()
 {
   PRUint32 total = PR_Now() - mStart;
 
-  PRUint32 length = mQuery.Length();
-  for (PRUint32 i = 0; i < (length / MAX_PRLOG) + 1; i++) {
-    nsAutoString q(Substring(mQuery, MAX_PRLOG * i, MAX_PRLOG));
-    if (i == 0) {
-      PR_LOG(sDatabaseEnginePerformanceLog, PR_LOG_DEBUG,
-             ("sbDatabaseEnginePerformanceLogger %s\t%u\t%s",
-              NS_LossyConvertUTF16toASCII(mGuid).get(),
-              total,
-              NS_LossyConvertUTF16toASCII(q).get()));
-    }
-    else {
-      PR_LOG(sDatabaseEnginePerformanceLog, PR_LOG_DEBUG,
-             ("sbDatabaseEnginePerformanceLogger +%s",
-              NS_LossyConvertUTF16toASCII(q).get()));
-    }
+  nsString consoleMessageStr;
+  consoleMessageStr.AppendLiteral("sbDatabaseEnginePerformanceLogger\n\t");
+  consoleMessageStr.AppendLiteral("DB GUID: ");
+  consoleMessageStr.Append(mGuid);
+  consoleMessageStr.AppendLiteral(" -- Execution Time: ");
+  consoleMessageStr.AppendInt(total / PR_USEC_PER_MSEC);
+  consoleMessageStr.AppendLiteral("ms\nQuery:\n\t");
+  consoleMessageStr.Append(mQuery);
+
+  nsCOMPtr<nsIConsoleService> consoleService = 
+    do_GetService("@mozilla.org/consoleservice;1");
+
+  if(consoleService) {
+    consoleService->LogStringMessage(consoleMessageStr.get());    
   }
 }
 
 #endif
-

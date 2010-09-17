@@ -641,6 +641,14 @@ sbLocalDatabaseAsyncGUIDArray::ContainsGuid(const nsAString& aGuid,
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::SuppressInvalidation(PRBool aSuppress)
+{
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  return mInner->SuppressInvalidation(aSuppress);
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::RemoveByIndex(PRUint32 aIndex)
 {
   nsAutoMonitor monitor(mSyncMonitor);

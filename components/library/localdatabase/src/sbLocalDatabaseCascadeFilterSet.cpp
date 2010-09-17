@@ -75,6 +75,23 @@ static PRLogModuleInfo* sFilterSetLog = nsnull;
 #define LOG(args)   /* nothing */
 #endif /* PR_LOGGING */
 
+
+class sbSuppressArrayInvalidation
+{
+public:
+  explicit 
+  sbSuppressArrayInvalidation(sbILocalDatabaseGUIDArray *aArray)
+  : mArray(aArray) {
+    mArray->SuppressInvalidation(PR_TRUE);
+  }
+
+  virtual ~sbSuppressArrayInvalidation() {
+    mArray->SuppressInvalidation(PR_FALSE);
+  }
+private:
+  nsCOMPtr<sbILocalDatabaseGUIDArray> mArray;
+};
+
 sbLocalDatabaseCascadeFilterSet::sbLocalDatabaseCascadeFilterSet(sbLocalDatabaseMediaListView* aMediaListView) :
   mMediaListView(aMediaListView)
 {
@@ -383,9 +400,6 @@ sbLocalDatabaseCascadeFilterSet::ChangeFilter(PRUint16 aIndex,
       rv = selection->ClearSelection();
       NS_ENSURE_SUCCESS(rv, rv);
     }
-
-    rv = fs.treeView->Rebuild();
-    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   // Tell the view to update its configuration.  It will first apply its
@@ -674,6 +688,8 @@ sbLocalDatabaseCascadeFilterSet::AddConfiguration(sbILocalDatabaseGUIDArray* mAr
   NS_ENSURE_ARG_POINTER(mArray);
   nsresult rv;
 
+  sbSuppressArrayInvalidation suppressInvalidation(mArray);
+
   nsCOMPtr<sbIPropertyManager> propMan =
     do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -931,6 +947,10 @@ sbLocalDatabaseCascadeFilterSet::ConfigureArray(PRUint32 aIndex)
   sbFilterSpec& fs = mFilters[aIndex];
   fs.arrayListener->mIndex = aIndex;
 
+  // Suppress Invalidation to avoid rebuilds until
+  // we're done applying all of the filters.
+  sbSuppressArrayInvalidation suppressArray(fs.array);
+
   // Clear this filter since our upstream filters have changed
   rv = fs.array->ClearFilters();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1059,11 +1079,6 @@ sbLocalDatabaseCascadeFilterSet::InvalidateFilter(sbFilterSpec& aFilter)
 
   nsresult rv = aFilter.array->Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
-
-  if (aFilter.treeView) {
-    rv = aFilter.treeView->Rebuild();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
 
   aFilter.invalidationPending = PR_FALSE;
 

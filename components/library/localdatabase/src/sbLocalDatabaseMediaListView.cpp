@@ -72,6 +72,31 @@
 
 #define DEFAULT_FETCH_SIZE 300
 
+/**
+ * Utility class to suppress invalidation of GUID array
+ * and reset the selection.
+ */
+class sbSuppressArrayInvalidationView
+{
+public:
+  explicit 
+  sbSuppressArrayInvalidationView(sbILocalDatabaseGUIDArray *aArray,
+                                  sbLocalDatabaseMediaListViewSelection *aSelection)
+  : mArray(aArray)
+  , mSelection(aSelection) {
+    mArray->SuppressInvalidation(PR_TRUE);
+  }
+
+  virtual ~sbSuppressArrayInvalidationView() {
+    mArray->SuppressInvalidation(PR_FALSE);
+    mSelection->ConfigurationChanged();
+  }
+private:
+  nsCOMPtr<sbILocalDatabaseGUIDArray>             mArray;
+  nsRefPtr<sbLocalDatabaseMediaListViewSelection> mSelection;
+};
+
+
 NS_IMPL_ISUPPORTS7(sbLocalDatabaseMediaListView,
                    sbIMediaListView,
                    sbIMediaListListener,
@@ -344,7 +369,7 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
   rv = SetSortInternal(sort);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = Invalidate();
+  rv = mSelection->ConfigurationChanged();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Restore cfs and tree state
@@ -1738,6 +1763,8 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
 {
   nsresult rv;
 
+  sbSuppressArrayInvalidationView suppressInvaliation(mArray, mSelection);
+
   rv = mArray->ClearFilters();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1906,10 +1933,6 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  // Invalidate the view array
-  rv = Invalidate();
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 
@@ -2062,27 +2085,13 @@ sbLocalDatabaseMediaListView::Invalidate()
   LOG(("sbLocalDatabaseMediaListView[0x%.8x] - Invalidate", this));
   nsresult rv;
 
-  // Invalidating the GUID array might rebuild the tree as well. To avoid
-  // rebuilding the tree twice, simply prevent the tree from rebuilding.
-  if (mTreeView) {
-    mTreeView->SetShouldPreventRebuild(PR_TRUE);
-  }
-
   // Invalidate the view array.
   rv = mArray->Invalidate();
-  if (mTreeView) {
-    mTreeView->SetShouldPreventRebuild(PR_FALSE);
-  }
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Notify our selection that things have changed
   rv = mSelection->ConfigurationChanged();
   NS_ENSURE_SUCCESS(rv, rv);
-
-  if (mTreeView) {
-    rv = mTreeView->Rebuild();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
 
   return NS_OK;
 }

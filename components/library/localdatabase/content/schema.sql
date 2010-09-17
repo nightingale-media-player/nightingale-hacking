@@ -68,6 +68,7 @@ create table resource_properties (
   primary key (media_item_id, property_id)
 );
 create index idx_resource_properties_property_id_obj_sortable_obj_secondary_sortable_media_item_id on resource_properties (property_id, obj_sortable, obj_secondary_sortable, media_item_id);
+create index idx_resource_properties_property_id_obj_sortable_media_item_id on resource_properties (property_id, obj_sortable, media_item_id);
 
 create table simple_media_lists (
   media_item_id integer not null,
@@ -121,7 +122,7 @@ insert into media_list_types (type, factory_contractid) values ('simple', '@song
 /*  XXXAus: !!!WARNING!!! When changing this value, you _MUST_ update         */
 /*  sbLocalDatabaseMigrationHelper._latestSchemaVersion.                      */
 /**************************************************************************** */
-insert into library_metadata (name, value) values ('version', '26');
+insert into library_metadata (name, value) values ('version', '27');
 
 /**************************************************************************** */
 /*  XXXkreeger: !! WARNING !! When changing this schema, the |ANALYZE| data   */

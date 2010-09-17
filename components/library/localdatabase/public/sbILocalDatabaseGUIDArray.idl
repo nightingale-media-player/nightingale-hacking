@@ -52,7 +52,7 @@ interface sbILocalDatabaseGUIDArrayListener : nsISupports
  * \interface sbILocalDatabaseGUIDArray
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(c29bdb6c-2d8a-4cc2-bc8c-5e77a8eea322)]
+[scriptable, uuid(1140f5d0-f5a1-4f30-b57d-c74abf04b1b5)]
 interface sbILocalDatabaseGUIDArray : nsISupports
 {
   attribute AString databaseGUID;
@@ -158,4 +158,10 @@ interface sbILocalDatabaseGUIDArray : nsISupports
    * May be forced to fetch and cache all items.
    */
   boolean containsGuid(in AString aGuid);
+
+  /**
+   * \brief Counter based invalidation suppression.
+   * \note Don't call this method!
+   */
+  void suppressInvalidation(in boolean aSuppress);
 };

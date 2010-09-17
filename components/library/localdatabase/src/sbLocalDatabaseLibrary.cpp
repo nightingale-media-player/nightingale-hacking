@@ -3716,6 +3716,13 @@ sbLocalDatabaseLibrary::MigrateLibrary(PRUint32 aFromVersion,
   rv = migration->Migrate(aFromVersion, aToVersion, this);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<sbIDatabaseEngine> dbEngine = 
+    do_GetService("@songbirdnest.com/Songbird/DatabaseEngine;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = dbEngine->ReleaseMemory();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

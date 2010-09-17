@@ -289,6 +289,9 @@ private:
 
   // True if rows have been prefetched
   PRPackedBool mPrefetchedRows;
+
+  // Counter for suppression of invalidation.
+  PRUint32 mSuppress;
 };
 
 class sbGUIDArrayEnumerator : public nsISimpleEnumerator
