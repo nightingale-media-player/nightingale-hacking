@@ -48,6 +48,7 @@ CPP_EXTRA_INCLUDES = $(topsrcdir)/components/devicesobsolete/base/src\
                      $(DEPTH)/components/library/localdatabase/public \
                      $(DEPTH)/components/mediacore/metadata/manager/public \
                      $(DEPTH)/components/property/public \
+                     $(topsrcdir)/components/include \
                      $(topsrcdir)/components/moz/strings/src \
                      $(topsrcdir)/components/property/src \
                      $(MOZSDK_INCLUDE_DIR)/dom \
