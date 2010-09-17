@@ -168,6 +168,7 @@
 ./components/sbMigrate14to17pre0.smartplaylist.js
 ./components/sbMigrate18to19pre0.discSortTrackSort.js
 ./components/sbMigrate18to19pre0.fileURL.js
+./components/sbMigrate18to19pre0.index.js
 ./components/sbMockCDDevice.so
 ./components/sbMockCDDevice.xpt
 ./components/sbMockFirmwareHandlerURLService.js
