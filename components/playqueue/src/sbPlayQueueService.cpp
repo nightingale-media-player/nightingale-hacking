@@ -134,6 +134,9 @@ sbPlayQueueService::Init()
                                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  PRBool success = mListeners.Init();
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
   return NS_OK;
 }
 
@@ -226,12 +229,19 @@ sbPlayQueueService::SetIndex(PRUint32 aIndex)
   nsresult rv = mMediaList->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Only notify if the index actually changes
+  PRUint32 oldIndex = mIndex;
+
   // The valid range for our index is from 0 to the length of the list.
   if (aIndex > length) {
     mIndex = length;
   } else {
     mIndex = aIndex;
   }
+
+  // Notify listeners.
+  if (mIndex != oldIndex)
+    mListeners.EnumerateEntries(OnIndexUpdatedCallback, &mIndex);
 
   return NS_OK;
 }
@@ -395,7 +405,7 @@ sbPlayQueueService::ClearAll()
   nsresult rv = mLibrary->ClearItems();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mIndex = 0;
+  SetIndex(0);
 
   mIgnoreListListener = PR_FALSE;
 
@@ -650,7 +660,7 @@ sbPlayQueueService::SetIndexToPlayingTrack()
     rv = view->GetUnfilteredIndex(filteredIndex, &unfilteredIndex);
 
     if (NS_SUCCEEDED(rv)) {
-      mIndex = unfilteredIndex;
+      SetIndex(unfilteredIndex);
     }
   }
 
@@ -748,7 +758,7 @@ sbPlayQueueService::OnBatchEnd(sbIMediaList* aMediaList)
 
     mRemovedItemGUIDs.Clear();
     LOG(("Changing index from %i to %i", mIndex, mBatchRemovalIndex));
-    mIndex = mBatchRemovalIndex;
+    SetIndex(mBatchRemovalIndex);
   }
 
   return NS_OK;
@@ -796,7 +806,7 @@ sbPlayQueueService::OnItemAdded(sbIMediaList* aMediaList,
   // list becomes the 'current' item. It also ensures that an item added to the
   // end of a queue that is all 'history' items becomes the current item.
   if (aIndex <= mIndex  && !(wasAllHistory && aIndex == mIndex)) {
-    mIndex++;
+    SetIndex(mIndex + 1);
   }
 
   LOG(("Added item at index %u, current index is now %i", aIndex, mIndex));
@@ -873,7 +883,7 @@ sbPlayQueueService::OnAfterItemRemoved(sbIMediaList* aMediaList,
     LOG(("Non batch item removed from index %u", aIndex));
     LOG(("aIndex %u, mIndex %u", aIndex, mIndex));
     if (aIndex < mIndex) {
-      mIndex--;
+      SetIndex(mIndex - 1);
     }
 
     PRBool contains;
@@ -933,11 +943,11 @@ sbPlayQueueService::OnItemMoved(sbIMediaList* aMediaList,
   // before it (or vise versa).
 
   if (aFromIndex == mIndex) {
-    mIndex = aToIndex;
+    SetIndex(aToIndex);
   } else if (aFromIndex < mIndex && aToIndex >= mIndex) {
-    mIndex--;
+    SetIndex(mIndex - 1);
   } else if (aFromIndex > mIndex && aToIndex <= mIndex) {
-    mIndex++;
+    SetIndex(mIndex + 1);
   }
 
   LOG(("Item was moved from %u to %u, new index: %i", aFromIndex, aToIndex, mIndex));
@@ -977,7 +987,7 @@ sbPlayQueueService::OnListCleared(sbIMediaList* aMediaList,
   nsresult rv = mLibrary->ClearItems();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mIndex = 0;
+  SetIndex(0);
 
   return NS_OK;
 }
@@ -1000,7 +1010,7 @@ sbPlayQueueService::OnMediacoreEvent(sbIMediacoreEvent* aEvent)
   rv = aEvent->GetType(&eventType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  LOG(("Event type %u", eventType));
+  LOG(("Event type 0x%x", eventType));
 
   // Determine if we are playing or paused.
   nsCOMPtr<sbIMediacoreManager> manager =
@@ -1045,8 +1055,6 @@ sbPlayQueueService::OnMediacoreEvent(sbIMediacoreEvent* aEvent)
       NS_ENSURE_SUCCESS(rv, rv);
       break;
 
-    // EXPLICIT_TRACK_CHANGE and TRACK_CHANGE are handled the same way
-    case sbIMediacoreEvent::EXPLICIT_TRACK_CHANGE:
     case sbIMediacoreEvent::TRACK_CHANGE:
       rv = OnTrackChange(aEvent);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -1200,6 +1208,45 @@ sbPlayQueueService::Observe(nsISupports* aSubject,
   }
 
   return NS_OK;
+}
+
+NS_IMETHODIMP
+sbPlayQueueService::AddListener(sbIPlayQueueServiceListener* aListener)
+{
+  TRACE(("%s[%p]", __FUNCTION__, this));
+  nsISupportsHashKey* success = mListeners.PutEntry(aListener);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbPlayQueueService::RemoveListener(sbIPlayQueueServiceListener* aListener)
+{
+  TRACE(("%s[%p]", __FUNCTION__, this));
+  mListeners.RemoveEntry(aListener);
+
+  return NS_OK;
+}
+
+PLDHashOperator PR_CALLBACK
+sbPlayQueueService::OnIndexUpdatedCallback(nsISupportsHashKey* aKey,
+                                                         void* aUserData)
+{
+  TRACE(("%s[static]", __FUNCTION__));
+  NS_ASSERTION(aKey && aUserData, "Args should not be null!");
+
+  nsresult rv;
+  nsCOMPtr<sbIPlayQueueServiceListener> listener =
+    do_QueryInterface(aKey->GetKey(), &rv);
+
+  if (NS_SUCCEEDED(rv)) {
+    PRUint32* index = static_cast<PRUint32*>(aUserData);
+    rv = listener->OnIndexUpdated(*index);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                     "OnIndexUpdated returned a failure code");
+  }
+  return PL_DHASH_NEXT;
 }
 
 // -----------------------------------------------------------------------------

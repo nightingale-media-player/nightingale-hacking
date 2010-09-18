@@ -34,13 +34,31 @@ interface sbIMediaItem;
 interface sbIMediaList;
 
 /**
+ * \interface sbIPlayQueueServiceListener
+ * \brief Listener for the Play Queue service
+ *
+ * Listener to receive updates when the current index in the queue changes
+ */
+[scriptable, uuid(db047133-8fa0-4a38-98cc-5a6ee081ff8e)]
+interface sbIPlayQueueServiceListener : nsISupports
+{
+  /**
+   * \brief 
+   *
+   * \param aToIndex new index in the queue
+   * \sa sbIPlayQueueService
+   */
+  void onIndexUpdated(in unsigned long aToIndex);
+};
+
+/**
  * \interface sbIPlayQueueService
  * \brief Service for interacting with the Play Queue
  *
  * Service to allow queueing items and visibility into the persistent current
  * index.
  */
-[scriptable, uuid(63f4bd5e-5828-4012-850e-f23aae60d144)]
+[scriptable, uuid(e858c85a-5093-49ba-959e-e604bd85f05c)]
 interface sbIPlayQueueService : nsISupports
 {
   /**
@@ -118,4 +136,21 @@ interface sbIPlayQueueService : nsISupports
    * \sa clearHistory()
    */
   void clearAll();
+
+  /**
+   * \brief Add a listener for the service
+   *
+   * Adds a listener to receive updates when the current index in the queue
+   * changes.
+   *
+   * \sa removeListener()
+   */
+  void addListener(in sbIPlayQueueServiceListener aListener);
+
+  /**
+   * \brief Remove a listener for the service
+   *
+   * \sa addListener()
+   */
+  void removeListener(in sbIPlayQueueServiceListener aListener);
 };

@@ -88,6 +88,15 @@ var playQueue = {
                                            Ci.sbIMediaList.LISTENER_FLAGS_AFTERITEMREMOVED |
                                            Ci.sbIMediaList.LISTENER_FLAGS_LISTCLEARED);
 
+    // Listen to the queue service index updates, for auto-scroll
+    this._playQueueServiceListener = {
+      onIndexUpdated: function(aToIndex) {
+        view.treeView.selection.tree.ensureRowIsVisible(aToIndex);
+      }
+    };
+
+    playQueueService.addListener(this._playQueueServiceListener);
+
     // Bind the playlist to a a view.
     var view = playQueueService.mediaList.createView();
 
@@ -100,11 +109,16 @@ var playQueue = {
   onUnload: function playQueue_onUnload() {
     this._LOG(arguments.callee.name);
 
+    var playQueueService = Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
+                             .getService(Ci.sbIPlayQueueService);
+
     if (this._listListener) {
-      var playQueueService = Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
-                               .getService(Ci.sbIPlayQueueService);
       playQueueService.mediaList.removeListener(this._listListener);
       this._listListener = null;
+    }
+    if (this._playQueueServiceListener) {
+      playQueueService.removeListener(this._playQueueServiceListener);
+      this._playQueueServiceListener = null;
     }
     if (this._playlist) {
       this._playlist.destroy();

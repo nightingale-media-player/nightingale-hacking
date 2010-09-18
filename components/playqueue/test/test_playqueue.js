@@ -35,6 +35,8 @@ function runTest () {
   var testFixture = {
     _testURIArray: [],
     _testIndex: 0,
+    _prevTestIndex: 0,
+    _indexChange: false,
     _nextUri: 0,
 
     // call this between each test
@@ -43,6 +45,10 @@ function runTest () {
       this._testIndex = 0;
       this._nextUri = 0;
       gPQS.clearAll();
+    },
+
+    onIndexUpdated: function (index) {
+      this._indexChange = true;
     },
 
     // sbIMediaList methods
@@ -279,6 +285,11 @@ function runTest () {
     _verifyList: function () {
       assertEqual(gPQS.mediaList.length, this._testURIArray.length);
       assertEqual(gPQS.index, this._testIndex);
+      if (this._testIndex != this._prevTestIndex) {
+        assertTrue(this._indexChange);
+        this._indexChange = false;
+        this._prevTestIndex = this._testIndex;
+      }
       for (var i = 0; i < this._testURIArray.length; i++) {
         assertTrue( this._testURIArray[i].equals(
                       gPQS.mediaList.getItemByIndex(i)["contentSrc"]) );
@@ -306,6 +317,8 @@ function runTest () {
                                         false);
     var backupIndex = gPQS.index;
   }
+
+  gPQS.addListener(testFixture);
 
   gMM = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
           .getService(Ci.sbIMediacoreManager);
@@ -416,6 +429,9 @@ function runTest () {
 
   // clean up
   testFixture.reset();
+
+  gPQS.removeListener(testFixture);
+
   if (backupList)
   {
     gPQS.mediaList.addAll(backupList);

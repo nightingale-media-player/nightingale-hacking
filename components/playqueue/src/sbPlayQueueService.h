@@ -36,6 +36,8 @@
 #include <nsIObserver.h>
 #include <nsIGenericFactory.h>
 #include <nsIWeakReference.h>
+#include <nsTHashtable.h>
+#include <nsHashKeys.h>
 
 #include <sbILibrary.h>
 #include <sbIMediacoreEvent.h>
@@ -89,6 +91,8 @@ private:
 
   /**
    * \brief The index into mMediaList of the 'current' item in the play queue.
+   *        This should only be set through SetIndex() so that listeners are
+   *        updated.
    */
   PRUint32 mIndex;
 
@@ -214,6 +218,16 @@ private:
    */
   nsresult OnTrackIndexChange(sbIMediacoreEvent* aEvent);
 
+  /**
+   * \brief Listeners to be updated when the index changes.
+   */
+  nsTHashtable<nsISupportsHashKey> mListeners;
+
+  // This callback is meant to be used with mListeners.
+  // aUserData should be a sbIPlayQueueServiceListener pointer.
+  static PLDHashOperator PR_CALLBACK
+    OnIndexUpdatedCallback(nsISupportsHashKey* aKey,
+                            void* aUserData);
 };
 
 #define SB_PLAYQUEUESERVICE_CONTRACTID                                         \
