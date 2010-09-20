@@ -783,16 +783,13 @@ sbLocalDatabaseQuery::AddFilters()
     if (isEverythingSearch) {
       // Join the all fts table.  The foreign key of this table is the
       // media item id so we can simply join it to _mi
-      rv = mBuilder->AddJoinWithIndexHint(sbISQLSelectBuilder::JOIN_INNER,
-                                          PROPERTIES_FTS_ALL_TABLE,
-                                          NS_LITERAL_STRING("_fts"),
-                                          ROWID_COLUMN,
-                                          MEDIAITEMS_ALIAS,
-                                          MEDIAITEMID_COLUMN,
-                                          PR_FALSE,
-                                          PR_TRUE);
+      rv = mBuilder->AddJoin(sbISQLSelectBuilder::JOIN_INNER,
+                             PROPERTIES_FTS_ALL_TABLE,
+                             NS_LITERAL_STRING("_fts"),
+                             ROWID_COLUMN,
+                             MEDIAITEMS_ALIAS,
+                             MEDIAITEMID_COLUMN);
       NS_ENSURE_SUCCESS(rv, rv);
-
     }
 
     /* XXXAus: resource_properties_fts is disabled. See bug 9488 and bug 9617.

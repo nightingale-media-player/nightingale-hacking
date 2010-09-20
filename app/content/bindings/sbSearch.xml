@@ -460,7 +460,7 @@
           clearInterval( this._editIdleInterval );
         }
 
-        var timeout = 2000;
+        var timeout = 1000;
         var isBackspace = event.keyCode == KeyEvent.DOM_VK_BACK_SPACE;
         var length = this._textbox.value.length;
 
@@ -470,7 +470,7 @@
              (length >= 2 && !isBackspace) ||  // Everything after three chars is fast
              (length > 3))
         {
-          timeout = 200;
+          timeout = 0;
         }
 
         this._editIdleInterval = setInterval(
