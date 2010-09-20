@@ -404,6 +404,10 @@
           if (!this.browser)
             return; // Nothing to do if we don't have a browser.
 
+          // Node already active, nothing to do.
+          if (this._servicePane.activeNode == this.nodeData)
+            return;
+
           // Style the node as active (which means first removing any
           // styles from any currently active node
           this._servicePane.makeNodeActive(this.nodeData);
@@ -768,11 +772,12 @@
           // then rename
           if (this._servicePane.activeNode == this.nodeData &&
               this.nodeData.editable &&
-              event.originalTarget.tagName == "xul:label")
+              event.originalTarget.tagName == "xul:label") {
             this._servicePane.startEditingNode(this.nodeData);
-          // otherwise load 
-          else
+          } // otherwise load 
+          else {
             this.loadNodeURL(event);
+          }
 
           event.stopPropagation();
           event.preventDefault();
