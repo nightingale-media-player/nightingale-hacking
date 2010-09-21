@@ -125,6 +125,7 @@
 ./components/sbMediaExport.dylib
 ./components/sbMediaExportAgentService.dylib
 ./components/sbMediaExportService.xpt
+./components/sbMediaItemControllerTest.js
 ./components/sbMediaItemDownloadService.dylib
 ./components/sbMediaItemDownloadService.xpt
 ./components/sbMediaManager.dylib
