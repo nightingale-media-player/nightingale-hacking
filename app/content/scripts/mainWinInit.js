@@ -273,13 +273,6 @@ function SBDoFirstRun() {
                                             loadMLInBackground);
       }
     }
-    else {
-      gBrowser.loadMediaListViewWithFlags(mediaListView,
-                                          gBrowser.mediaTab,
-                                          null,
-                                          null,
-                                          false);
-    }
   }
 }
 
