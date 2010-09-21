@@ -75,30 +75,32 @@
                   </xul:row>
                 </xul:rows>
               </xul:grid>
+
               <xul:description sbid="loginError"/>
+
+              <xul:spacer flex="1"/>
+
+              <xul:hbox align="center">
+                <xul:description class="text-link">
+                  <html:span class="text-link" sbid="forgotpass"></html:span>
+                </xul:description>
+                <xul:spacer flex="1"/>
+                <xul:button sbid="abortButton"
+                            xbl:inherits="label=cancelButtonLabel" />
+                <xul:button sbid="loginButton"
+                            xbl:inherits="label=loginButtonLabel" />
+              </xul:hbox>
             </xul:groupbox>
 
-            <xul:spacer flex="1"/>
-
-            <xul:hbox align="center">
-              <xul:description class="text-link">
-                <html:span class="text-link" sbid="forgotpass"></html:span>
-              </xul:description>
-              <xul:spacer flex="1"/>
-              <xul:button sbid="abortButton"
-                          xbl:inherits="label=cancelButtonLabel" />
-              <xul:button sbid="loginButton"
-                          xbl:inherits="label=loginButtonLabel" />
-            </xul:hbox>
-
-            <xul:separator/>
-
-            <xul:hbox>
-              <xul:description class="text-link">
-                <html:span class="text-link" sbid="signup"></html:span>
-              </xul:description>
-              <xul:spacer flex="1"/>
-            </xul:hbox>
+            <xul:groupbox sbid="newAccountGroupbox">
+              <xul:caption xbl:inherits="label=newAccountCaption" />
+              <xul:label xbl:inherits="value=signupLabel"/>
+              <xul:hbox align="center">
+                <xul:spacer flex="1"/>
+                <xul:button sbid="signupButton"
+                            xbl:inherits="label=signupButtonLabel" />
+              </xul:hbox>
+            </xul:groupbox>
           </xul:vbox>
 
           <xul:vbox sbid="loginProgressBox">

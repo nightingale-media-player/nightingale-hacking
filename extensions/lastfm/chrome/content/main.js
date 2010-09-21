@@ -105,9 +105,11 @@ LastFm.onLoad = function() {
   this._loginButton = this._getElement(this._panelBinding, 'loginButton');
   // login error description 
   this._loginError = this._getElement(this._panelBinding, 'loginError');
-  // signup link
-  this._signup = this._getElement(this._panelBinding, 'signup');
-  this._signup.textContent = this._strings.getString('lastfm.signup.label');
+  // new account groupbox
+  this._newAccountGroupbox = this._getElement(this._panelBinding,
+                                              'newAccountGroupbox');
+  // signup button
+  this._signupButton = this._getElement(this._panelBinding, 'signupButton');
   // forgot password link
   this._forgotpass = this._getElement(this._panelBinding, 'forgotpass');
   this._forgotpass.textContent =
@@ -176,7 +178,7 @@ LastFm.onLoad = function() {
       function(event) { self._panel.hidePopup(); }, false);
 
   // wire up the signup link
-  this._signup.addEventListener('click',
+  this._signupButton.addEventListener('click',
       function(event) { LastFm.loadURI(LastFm.URL_SIGNUP, event); }, false);
 
   // wire up the forgot password link
@@ -489,6 +491,12 @@ LastFm._handleUIEvents = function(aEvent) {
       break;
     default:
       break;
+  }
+
+  if (this._service.userLoggedOut) {
+    this._newAccountGroupbox.removeAttribute('loggedOut');
+  } else {
+    this._newAccountGroupbox.setAttribute('loggedOut', 'false');
   }
 }
 

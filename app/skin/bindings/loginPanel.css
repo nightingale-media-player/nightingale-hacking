@@ -35,6 +35,10 @@ description[sbid="loginError"] {
   visibility:collapse;
 }
 
+groupbox[sbid="newAccountGroupbox"][loggedOut="false"] {
+  display: none;
+}
+
 /* the avatar image */
 svg[sbid="imageContainer"] {
   border: 2px solid rgb(80,80,80);
