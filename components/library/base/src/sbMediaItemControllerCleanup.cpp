@@ -73,6 +73,8 @@
 // the observer topic we fire when we're done
 #define K_CLEANUP_COMPLETE_OBSERVER_TOPIC \
         "songbird-media-item-controller-cleanup-complete"
+#define K_CLEANUP_INTERRUPTED_OBSERVER_TOPIC \
+        "songbird-media-item-controller-cleanup-interrupted"
 #define K_QUIT_APP_OBSERVER_TOPIC \
         "quit-application"
 
@@ -252,6 +254,7 @@ sbMediaItemControllerCleanup::Run()
     rv = ProcessLibraries();
   }
 
+  PRBool complete = true;
   { /* scope */
     nsAutoLock lock(mLock);
     mListener = nsnull;
@@ -259,11 +262,13 @@ sbMediaItemControllerCleanup::Run()
                     "should not have exit running!?");
     if (mLibraries.empty()) {
       mState = STATE_IDLE;
+      complete = true;
     }
     else {
       // we can get here if the machine gets out of the idle state before the
       // jobs are all done
       mState = STATE_QUEUED;
+      complete = false;
     }
   }
   NS_ENSURE_SUCCESS(rv, rv);
@@ -276,7 +281,8 @@ sbMediaItemControllerCleanup::Run()
     do_ProxiedGetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = obs->NotifyObservers(NS_ISUPPORTS_CAST(nsIObserver*, this),
-                            K_CLEANUP_COMPLETE_OBSERVER_TOPIC,
+                            complete ? K_CLEANUP_COMPLETE_OBSERVER_TOPIC
+                                     : K_CLEANUP_INTERRUPTED_OBSERVER_TOPIC,
                             nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
   
