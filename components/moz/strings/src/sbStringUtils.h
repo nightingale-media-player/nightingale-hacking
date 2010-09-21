@@ -521,14 +521,14 @@ template <class T>
 T sbEscapeXML(T const & aSrc)
 {
   T result;
-  const T::char_type * src;
-  const T::char_type * srcEnd;
+  typename T::char_type const * src;
+  typename T::char_type const * srcEnd;
   aSrc.BeginReading(&src, &srcEnd);
 
-  T::char_type * destStart;
-  T::char_type * destEnd;
+  typename T::char_type * destStart;
+  typename T::char_type * destEnd;
   result.BeginWriting(&destStart, &destEnd, (aSrc.Length() * 6 + 1));
-  T::char_type * dest = destStart;
+  typename T::char_type * dest = destStart;
 
   while (src != srcEnd) {
     const char c = *src++;
