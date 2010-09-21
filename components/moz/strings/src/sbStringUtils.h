@@ -176,6 +176,19 @@ public:
   }
 };
 
+/**
+ * Class used to pass void strings to functions.
+ *
+ * E.g., SomeFunction(SBVoidCString());
+ */
+class SBVoidCString : public nsCString
+{
+public:
+  SBVoidCString()
+  {
+    SetIsVoid(PR_TRUE);
+  }
+};
 /// @see nsString::FindCharInSet
 PRInt32 nsString_FindCharInSet(const nsAString& aString,
                                const char *aPattern,
@@ -500,5 +513,68 @@ sbAppendStringEnumerator(StringType&     aStringArray,
 
 SB_AUTO_NULL_CLASS(sbAutoSmprintf, char*, PR_smprintf_free(mValue));
 
-#endif /* __SBSTRINGUTILS_H__ */
+/**
+ * This method escapes strings for use in HTML/XML.documents
+ * copied from nsEscape.cpp version of nsEscapeHTML2
+ */
+template <class T>
+T sbEscapeXML(T const & aSrc)
+{
+  T result;
+  const T::char_type * src;
+  const T::char_type * srcEnd;
+  aSrc.BeginReading(&src, &srcEnd);
 
+  T::char_type * destStart;
+  T::char_type * destEnd;
+  result.BeginWriting(&destStart, &destEnd, (aSrc.Length() * 6 + 1));
+  T::char_type * dest = destStart;
+
+  while (src != srcEnd) {
+    const char c = *src++;
+    // Escape the character if needed
+    switch (c) {
+      case '<':
+        *dest++ = '&';
+        *dest++ = 'l';
+        *dest++ = 't';
+        *dest++ = ';';
+      break;
+      case '>':
+        *dest++ = '&';
+        *dest++ = 'g';
+        *dest++ = 't';
+        *dest++ = ';';
+      break;
+      case '&':
+        *dest++ = '&';
+        *dest++ = 'a';
+        *dest++ = 'm';
+        *dest++ = 'p';
+        *dest++ = ';';
+      break;
+      case '"':
+        *dest++ = '&';
+        *dest++ = 'q';
+        *dest++ = 'u';
+        *dest++ = 'o';
+        *dest++ = 't';
+        *dest++ = ';';
+      case '\'':
+        *dest++ = '&';
+        *dest++ = '#';
+        *dest++ = '3';
+        *dest++ = '9';
+        *dest++ = ';';
+      break;
+      default:
+        *dest++ = c;
+      break;
+    }
+  }
+
+  result.SetLength(dest - destStart);
+  return result;
+}
+
+#endif /* __SBSTRINGUTILS_H__ */
