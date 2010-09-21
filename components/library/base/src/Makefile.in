@@ -39,6 +39,7 @@ DYNAMIC_LIB = sbLibraryManager
 CPP_SRCS = sbLibraryConstraints.cpp \
            sbLibraryManager.cpp \
            sbLibraryManagerModule.cpp \
+           sbMediaItemControllerCleanup.cpp \
            sbMediaItemWatcher.cpp \
            sbMediaListDuplicateFilter.cpp \
            sbMediaListEnumeratorWrapper.cpp \
@@ -79,6 +80,11 @@ SONGBIRD_COMPONENTS = $(srcdir)/sbDynamicPlaylist.js \
                       $(srcdir)/sbColumnSpecParser.jsm \
                       $(srcdir)/sbLibrarySearchSuggester.js \
                       $(NULL)
+
+ifeq (1,$(SB_ENABLE_TESTS))
+   SONGBIRD_COMPONENTS += $(srcdir)/sbMediaItemControllerTest.js \
+                          $(NULL)
+endif
 
 IS_COMPONENT = 1
 

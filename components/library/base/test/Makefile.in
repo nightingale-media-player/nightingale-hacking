@@ -38,6 +38,7 @@ SONGBIRD_TESTS = $(srcdir)/head_library-base.js \
                  $(srcdir)/test_mediaitemwatcher.js \
                  $(srcdir)/test_removalmonitor.js \
                  $(srcdir)/test_timeformatter.js \
+                 $(srcdir)/test_media_item_controller_cleanup.js \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk

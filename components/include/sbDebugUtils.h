@@ -43,6 +43,8 @@
 #ifndef SBDEBUGUTILS_H_
 #define SBDEBUGUTILS_H_
 
+#include <prlog.h>
+
 #if defined(__GNUC__)
   #if defined(DEBUG)
     #define SB_UNUSED_IN_RELEASE(decl) decl
@@ -58,6 +60,62 @@
     // Disable warnings about unused local variables
     #pragma warning(disable: 4101)
   #endif
-#endif 
+#endif
+
+#if PR_LOGGING
+  namespace {
+    static PRLogModuleInfo* gPRLogModule = nsnull;
+    
+    #define SB_PRLOG_SETUP(aModuleName)                               \
+      PR_BEGIN_MACRO                                                  \
+        if (!gPRLogModule)                                            \
+          gPRLogModule = PR_NewLogModule(#aModuleName);               \
+      PR_END_MACRO
+  
+    #define TRACE(fmt, ...)                                           \
+      PR_BEGIN_MACRO                                                  \
+        if (PR_LOG_TEST(gPRLogModule, PR_LOG_DEBUG)) {                \
+          PR_LogPrint("%s: " fmt, __FUNCTION__, ##__VA_ARGS__);       \
+        }                                                             \
+      PR_END_MACRO
+  
+    #define LOG(fmt, ...)                                             \
+      PR_BEGIN_MACRO                                                  \
+        if (PR_LOG_TEST(gPRLogModule, PR_LOG_WARN)) {                 \
+          PR_LogPrint("%s: " fmt, __FUNCTION__, ##__VA_ARGS__);       \
+        }                                                             \
+      PR_END_MACRO
+
+    struct _sbTraceFunctionClass {
+      _sbTraceFunctionClass(const char* function) {
+        mFunction = function;
+      }
+      ~_sbTraceFunctionClass() {
+        if (PR_LOG_TEST(gPRLogModule, PR_LOG_DEBUG)) {
+          PR_LogPrint("%s() <--", mFunction);
+        }
+      }
+      const char* mFunction;
+    };
+
+    #if defined(__GNUC__)
+      #define __FUNCTION__ __PRETTY_FUNCTION__
+    #endif
+  
+    #define TRACE_FUNCTION_VAR_NAME2(x) SB_TRACE_FUNCTION_VAR_ ## x
+    #define TRACE_FUNCTION_VAR_NAME(x) TRACE_FUNCTION_VAR_NAME2(x)
+    #define TRACE_FUNCTION(fmt, ...)                                        \
+      if (PR_LOG_TEST(gPRLogModule, PR_LOG_DEBUG)) {                        \
+        PR_LogPrint("%s(" fmt ") -->", __FUNCTION__, ##__VA_ARGS__);        \
+      }                                                                     \
+      _sbTraceFunctionClass TRACE_FUNCTION_VAR_NAME(__LINE__)(__FUNCTION__)
+  };
+    
+#else
+  #define SB_PRLOG_SETUP(x)   PR_BEGIN_MACRO PR_END_MACRO
+  #define TRACE(...)          PR_BEGIN_MACRO PR_END_MACRO
+  #define LOG(...)            PR_BEGIN_MACRO PR_END_MACRO
+  #define TRACE_FUNCTION(...) PR_BEGIN_MACRO PR_END_MACRO
+#endif
 
 #endif /* SBDEBUGUTILS_H_ */

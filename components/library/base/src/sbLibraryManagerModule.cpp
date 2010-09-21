@@ -34,6 +34,7 @@
 #include "sbMediaListDuplicateFilter.h"
 #include "sbMediaListEnumeratorWrapper.h"
 #include "sbMediaListViewMap.h"
+#include "sbMediaItemControllerCleanup.h"
 #include "sbMediaItemWatcher.h"
 #include "sbTemporaryMediaItem.h"
 
@@ -44,8 +45,9 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbLibraryConstraintBuilder);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLibraryConstraint);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaItemWatcher);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTemporaryMediaItem);
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaListDuplicateFilter)
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaListEnumeratorWrapper)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaListDuplicateFilter);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaListEnumeratorWrapper);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaItemControllerCleanup);
 
 static nsModuleComponentInfo components[] =
 {
@@ -104,6 +106,13 @@ static nsModuleComponentInfo components[] =
     SONGBIRD_TEMPORARYMEDIAITEM_CID,
     SONGBIRD_TEMPORARYMEDIAITEM_CONTRACTID,
     sbTemporaryMediaItemConstructor
+  },
+  {
+    SONGBIRD_MEDIAITEMCONTROLLERCLEANUP_CLASSNAME,
+    SONGBIRD_MEDIAITEMCONTROLLERCLEANUP_CID,
+    SONGBIRD_MEDIAITEMCONTROLLERCLEANUP_CONTRACTID,
+    sbMediaItemControllerCleanupConstructor,
+    sbMediaItemControllerCleanup::RegisterSelf
   }
 };
 
