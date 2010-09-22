@@ -51,15 +51,17 @@ const EXTENSION_GUID = '7digital@songbirdnest.com';
 // Node IDs for the service pane
 const NODE_SERVICES = 'SB:Services';
 const NODE_7DIGITAL = 'SB:7Digital';
+const NODE_7DIGITAL_RECOMMENDATIONS = 'SB:7Digital:Recommendations';
 // Where's our stringbundle?
 const STRINGBUNDLE = 'chrome://7digital/locale/7digital.properties';
 // Where's that store?
-const STORE_URL = 'http://www.7digital.com/songbird/';
+const STORE_URL = 'http://ec2-75-101-169-226.compute-1.amazonaws.com/';
+const STORE_RECOMMENDATIONS_URL = STORE_URL + 'recommendations/client';
 // What's the search engine's name?
 const SEARCHENGINE_NAME = '7digital'; // Note - must match ShortName in:
 const SEARCHENGINE_URL = 'chrome://7digital/content/7digital-search.xml';
 // What's the permission for?
-const PERMISSION_SCOPE = 'http://7digital.com/';
+const PERMISSION_SCOPE = 'http://ec2-75-101-169-226.compute-1.amazonaws.com/';
 // What's the service pane's namespace
 const SERVICEPANE_NS = 'http://songbirdnest.com/rdf/servicepane#'
 
@@ -188,6 +190,20 @@ function sb7Digital_install() {
     myNode.stringbundle = STRINGBUNDLE;
     myNode.setAttributeNS(SERVICEPANE_NS, "addonID", "@EXTENSION_UUID@");
     servicesNode.appendChild(myNode);
+
+    // Create the recommendations node
+    var recommendationsNode = this._servicePaneService.createNode();
+    recommendationsNode.id = NODE_7DIGITAL;
+    recommendationsNode.url = STORE_RECOMMENDATIONS_URL;
+    recommendationsNode.image = 'chrome://7digital/skin/servicepane-icon.png';
+    recommendationsNode.className = "7digital";
+    recommendationsNode.name = "&servicepane.7digital_recommended";
+    recommendationsNode.stringbundle = STRINGBUNDLE;
+    recommendationsNode.setAttributeNS(SERVICEPANE_NS, "addonID", "@EXTENSION_UUID@");
+    myNode.appendChild(recommendationsNode);
+
+    recommendationsNode.addEventListener(listener);
+
   } catch (e) {
     Cu.reportError(e);
   }

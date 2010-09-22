@@ -5,7 +5,7 @@
   <Description>7digital Music Store</Description>
   <InputEncoding>UTF-8</InputEncoding>
   <Image width="16" height="16" type="image/x-icon">chrome://7digital/skin/servicepane-icon.png</Image>
-  <Url type="text/html" method="GET" template="http://www.7digital.com/songbird/Search/?search={searchTerms}">
+  <Url type="text/html" method="GET" template="http://ec2-75-101-169-226.compute-1.amazonaws.com/searches/{searchTerms}">
   </Url>
-  <moz:SearchForm>http://songbird.7digital.com/</moz:SearchForm>
+  <moz:SearchForm>http://http://ec2-75-101-169-226.compute-1.amazonaws.com/searches/</moz:SearchForm>
 </OpenSearchDescription>
