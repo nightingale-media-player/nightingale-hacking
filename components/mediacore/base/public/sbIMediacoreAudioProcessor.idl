@@ -119,21 +119,30 @@ interface sbIMediacoreAudioProcessor : nsISupports
    * suspect/resume functions if desired, in order to control
    * the rate at which decoded audio is provided. Otherwise,
    * audio is provided as fast as possible.
+   *
+   * This must only be called from the main thread.
    */
   void start(in sbIMediaItem aItem);
 
   /* Stop processing the media item. This will immediately
    * terminate processing of the audio. It may be called at any time, but must
-   * be called at some point (e.g. after processing completes)
+   * be called at some point (e.g. after processing completes), and may only be
+   * called from the main thread.
    */
   void stop();
 
   /* Temporarily suspend processing of the media item until
-     resume() is called. */
+   * resume() is called. 
+   *
+   * Must only be called from the main thread.
+   */
   void suspend();
 
   /* Resume processing of the media item after suspend() has
-     been called */
+   * been called.
+   *
+   * Must only be called from the main thread.
+   */
   void resume();
 };
 

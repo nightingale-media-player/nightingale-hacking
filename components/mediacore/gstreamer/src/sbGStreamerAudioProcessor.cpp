@@ -204,8 +204,7 @@ sbGStreamerAudioProcessor::Start(sbIMediaItem *aItem)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
-  NS_ASSERTION(NS_IsMainThread(),
-          "Start() must be called from the main thread");
+  NS_ENSURE_TRUE (NS_IsMainThread(), NS_ERROR_FAILURE);
   NS_ENSURE_ARG_POINTER (aItem);
   NS_ENSURE_STATE (mListener);
   NS_ENSURE_FALSE (mPipeline, NS_ERROR_FAILURE);
@@ -224,7 +223,7 @@ sbGStreamerAudioProcessor::Stop()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
-  NS_ASSERTION(NS_IsMainThread(), "Stop() must be called from the main thread");
+  NS_ENSURE_TRUE (NS_IsMainThread(), NS_ERROR_FAILURE);
 
   // It's permissible to call stop() at any time; if we don't have a pipeline
   // then we just don't need to do anything.
@@ -246,8 +245,7 @@ sbGStreamerAudioProcessor::Suspend()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
-  NS_ASSERTION(NS_IsMainThread(),
-          "Suspend() must be called from the main thread");
+  NS_ENSURE_TRUE (NS_IsMainThread(), NS_ERROR_FAILURE);
   NS_ENSURE_STATE (mPipeline);
 
   nsAutoMonitor mon(mMonitor);
@@ -261,8 +259,7 @@ sbGStreamerAudioProcessor::Resume()
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
-  NS_ASSERTION(NS_IsMainThread(),
-          "Resume() must be called from the main thread");
+  NS_ENSURE_TRUE (NS_IsMainThread(), NS_ERROR_FAILURE);
   NS_ENSURE_STATE (mPipeline);
 
   nsAutoMonitor mon(mMonitor);
