@@ -38,6 +38,7 @@ if (typeof(Cu) == "undefined")
 
 Cu.import("resource://app/jsmodules/DebugUtils.jsm");
 Cu.import("resource://app/jsmodules/kPlaylistCommands.jsm");
+Cu.import("resource://app/jsmodules/PlayQueueUtils.jsm");
 
 var playQueue = {
 
@@ -100,6 +101,13 @@ var playQueue = {
     // Bind the playlist to a a view.
     var view = playQueueService.mediaList.createView();
 
+    // Attach our listener to the ShowCurrentTrack event issued by the
+    // faceplate.  We're in a display pane, so we need to get the main window.
+    var sbWindow = Cc["@mozilla.org/appshell/window-mediator;1"]
+        .getService(Ci.nsIWindowMediator)
+        .getMostRecentWindow("Songbird:Main").window;
+    sbWindow.addEventListener("ShowCurrentTrack", this.onShowCurrentTrack, true);
+
     this._playlist.bind(view);
   },
 
@@ -124,6 +132,12 @@ var playQueue = {
       this._playlist.destroy();
       this._playlist = null;
     }
+
+    // Remove the ShowCurrentTrack event listener.
+    var sbWindow = Cc["@mozilla.org/appshell/window-mediator;1"]
+        .getService(Ci.nsIWindowMediator)
+        .getMostRecentWindow("Songbird:Main").window;
+    sbWindow.removeEventListener("ShowCurrentTrack", this.onShowCurrentTrack, true);
   },
 
   /**
@@ -195,6 +209,33 @@ var playQueue = {
     this._playlist._dropOnTree(this._playlist.mediaListView.length,
                                Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER,
                                session);
+  },
+
+  /**
+   * Event handler for for the ShowCurrentTrack event - triggered when the
+   * user clicks the track title in the faceplate.
+   */
+  onShowCurrentTrack:
+      function playQueue_onShowCurrentTrack(aEvent) {
+    var mediacoreManager = Cc['@songbirdnest.com/Songbird/Mediacore/Manager;1']
+                             .getService(Ci.sbIMediacoreManager);
+    var item = mediacoreManager.sequencer.currentItem;
+
+    var playQueueService = Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
+                             .getService(Ci.sbIPlayQueueService);
+
+    // The queue has its own library, so items contained in the media list are
+    // unique to the queue.
+    if (playQueueService.mediaList.contains(item)) {
+      PlayQueueUtils.openPlayQueue();
+
+      var view = mediacoreManager.sequencer.view;
+      var row = mediacoreManager.sequencer.viewPosition;
+      view.selection.selectOnly(row);
+      view.treeView.selection.tree.ensureRowIsVisible(row);
+      aEvent.preventDefault();
+      aEvent.stopPropagation();
+    }
   }
 
 };

@@ -39,6 +39,7 @@ SONGBIRD_JSMODULES = $(srcdir)/AddOnUtils.jsm \
                      $(srcdir)/LocalStore.jsm \
                      $(srcdir)/ObserverUtils.jsm \
                      $(srcdir)/PlatformUtils.jsm \
+                     $(srcdir)/PlayQueueUtils.jsm \
                      $(srcdir)/RDFHelper.jsm \
                      $(srcdir)/SBDataRemoteUtils.jsm \
                      $(srcdir)/SBTimer.jsm \
