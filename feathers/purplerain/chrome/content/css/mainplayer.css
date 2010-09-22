@@ -97,7 +97,6 @@ statusbar {
   visibility: visible;
 }
 
-#nav-bar[isAtMediaPage="true"] > #mediapages-container:not([isCollapse="false"]),
 #nav-bar:not([isAtMediaPage="true"]) > #mediapages-container,
 #nav-bar:not([isAtMediaPage="true"]) > #nav-bar-spacer,
 #nav-bar:not([isAtMediaPage="true"]) > *[hideAtWebPage] {

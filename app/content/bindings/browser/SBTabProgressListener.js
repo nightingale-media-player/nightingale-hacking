@@ -110,6 +110,17 @@ SBTabProgressListener.prototype = {
         document.getElementById("nav-bar").removeAttribute("collapsed");
       }
 
+      // Set visibility for media page container
+      if (this._tabBrowser.selectedTab == mediaTab &&
+          this._tabBrowser.currentMediaListView)
+      {
+        document.getElementById("mediapages-container")
+                .removeAttribute("collapsed");
+      } else {
+        document.getElementById("mediapages-container")
+                .setAttribute("collapsed", "true");
+      }
+
       if (node) {
         var className = node.className;
 
@@ -119,14 +130,6 @@ SBTabProgressListener.prototype = {
           historyButtons.setAttribute("isCollapse", "false");
         } else {
           historyButtons.removeAttribute("isCollapse");
-        }
-
-        // Set visibility for media page container
-        var mediaContainer = document.getElementById("mediapages-container");
-        if (className.indexOf("mediapage") > -1) {
-          mediaContainer.setAttribute("isCollapse", "false");
-        } else {
-          mediaContainer.removeAttribute("isCollapse");
         }
       }
     }
