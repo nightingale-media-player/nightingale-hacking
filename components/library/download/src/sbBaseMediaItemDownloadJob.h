@@ -52,6 +52,7 @@
 #include <sbILibrary.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaItemDownloadJob.h>
+#include <sbIPropertyArray.h>
 
 // Mozilla imports.
 #include <nsCOMPtr.h>
@@ -114,6 +115,7 @@ protected:
   //
   // mLock                      Lock used for thread support.
   // mMediaItem                 Media item to download.
+  // mProperties                Downloaded media item properties array.
   // mTargetLibrary             Library for which the media item will be
   //                            downloaded.
   // mFileDownloader            File downloader object.
@@ -123,6 +125,8 @@ protected:
 
   PRLock*                       mLock;
   nsCOMPtr<sbIMediaItem>        mMediaItem;
+  nsCOMPtr<sbIMutablePropertyArray>
+                                mProperties;
   nsCOMPtr<sbILibrary>          mTargetLibrary;
   nsCOMPtr<sbIFileDownloader>   mFileDownloader;
   nsTArray< nsCOMPtr<sbIJobProgressListener> >

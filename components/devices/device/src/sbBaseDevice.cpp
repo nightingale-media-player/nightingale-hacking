@@ -1647,6 +1647,24 @@ sbBaseDevice::DownloadRequestItem(TransferRequest* aRequest)
   rv = downloadJob->GetDownloadedFile(getter_AddRefs(aRequest->downloadedFile));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Set the downloaded media item properties.
+  nsCOMPtr<sbIPropertyArray> properties;
+  rv = downloadJob->GetProperties(getter_AddRefs(properties));
+  NS_ENSURE_SUCCESS(rv, rv);
+  {
+    sbDeviceListenerIgnore ignore(this, aRequest->item);
+    rv = aRequest->item->SetProperties(properties);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Update the request item origin and content source.
+  nsCOMPtr<nsIURI> downloadedFileURI;
+  rv = sbNewFileURI(aRequest->downloadedFile,
+                    getter_AddRefs(downloadedFileURI));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = UpdateOriginAndContentSrc(aRequest, downloadedFileURI);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -2672,6 +2690,44 @@ sbBaseDevice::GetItemContentType(sbIMediaItem* aMediaItem,
 
   // Return results.
   *aContentType = formatType.ContentType;
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::UpdateOriginAndContentSrc(TransferRequest* aRequest,
+                                        nsIURI*          aURI)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aRequest);
+  NS_ENSURE_ARG_POINTER(aURI);
+
+  // Function variables.
+  nsresult rv;
+
+  // Ignore changes to the request item while it's being updated.
+  sbDeviceListenerIgnore ignore(this, aRequest->item);
+
+  // If the content source has not already been updated, update the content
+  // origin.
+  if (!aRequest->contentSrcSet) {
+    // Copy the current content source URL to the origin URL.
+    nsAutoString originURL;
+    rv = aRequest->item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
+                                     originURL);
+    if (NS_SUCCEEDED(rv)) {
+      rv = aRequest->item->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
+                                       originURL);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  // Update the content source.
+  rv = aRequest->item->SetContentSrc(aURI);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // The content source has now been set.
+  aRequest->contentSrcSet = PR_TRUE;
 
   return NS_OK;
 }

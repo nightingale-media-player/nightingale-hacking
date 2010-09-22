@@ -457,6 +457,23 @@ public:
     return value;
   }
 
+  operator nsCString() const
+  {
+    // Ensure variant is present.
+    if (!mVariant) {
+      NS_WARNING("Null variant");
+      *mRV = NS_ERROR_NULL_POINTER;
+      return SBVoidCString();
+    }
+
+    // Get the variant value.
+    nsCAutoString value;
+    *mRV = mVariant->GetAsACString(value);
+    NS_ENSURE_SUCCESS(*mRV, SBVoidCString());
+
+    return value;
+  }
+
 
   /**
    * Return the result of the last method called.

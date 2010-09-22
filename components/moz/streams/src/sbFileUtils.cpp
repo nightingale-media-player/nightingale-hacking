@@ -1,27 +1,27 @@
+/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 #include "sbFileUtils.h"
@@ -247,7 +247,7 @@ sbNewFileURI(nsIFile* aFile,
       spec.Insert("file://", 0);
 
       // Create the URI.
-      rv = ioService->NewURI(spec, nsnull, nsnull, aURI);
+      rv = SB_NewURI(aURI, spec);
       NS_ENSURE_SUCCESS(rv, rv);
 
       return NS_OK;
@@ -256,8 +256,16 @@ sbNewFileURI(nsIFile* aFile,
 #endif
 
   // Get a URI directly from the file.
-  rv = ioService->NewFileURI(aFile, aURI);
+  nsCOMPtr<nsIURI> uri;
+  rv = ioService->NewFileURI(aFile, getter_AddRefs(uri));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get a main thread URI.
+  nsCOMPtr<nsIURI> mainThreadURI = do_MainThreadQueryInterface(uri, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Return results.
+  mainThreadURI.forget(aURI);
 
   return NS_OK;
 }

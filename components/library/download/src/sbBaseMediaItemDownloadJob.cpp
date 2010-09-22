@@ -47,6 +47,7 @@
 #include "sbBaseMediaItemDownloadJob.h"
 
 // Songbird imports.
+#include <sbPropertiesCID.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStringUtils.h>
 #include <sbTArrayStringEnumerator.h>
@@ -55,6 +56,7 @@
 #include <nsAutoLock.h>
 #include <nsINetUtil.h>
 #include <nsIURI.h>
+#include <nsIURL.h>
 
 
 //------------------------------------------------------------------------------
@@ -160,6 +162,26 @@ sbBaseMediaItemDownloadJob::GetDownloadedFile(nsIFile** aDownloadedFile)
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
+}
+
+
+//-------------------------------------
+//
+// properties
+//
+// \see sbIMediaItemDownloadJob
+//
+
+NS_IMETHODIMP
+sbBaseMediaItemDownloadJob::GetProperties(sbIPropertyArray** aProperties)
+{
+  NS_ENSURE_ARG_POINTER(aProperties);
+  nsCOMPtr<sbIMutablePropertyArray> properties;
+  {
+    nsAutoLock autoLock(mLock);
+    properties = mProperties;
+  }
+  return CallQueryInterface(properties, aProperties);
 }
 
 
@@ -614,6 +636,17 @@ sbBaseMediaItemDownloadJob::Start(nsIURI* aURI)
   rv = fileDownloader->SetListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Set the destination file extension.
+  nsCOMPtr<nsIURL> url = do_MainThreadQueryInterface(aURI, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    nsCAutoString fileExtension;
+    rv = url->GetFileExtension(fileExtension);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = fileDownloader->SetDestinationFileExtension
+                           (NS_ConvertUTF8toUTF16(fileExtension));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   // Set the file downloader under the lock.
   {
     nsAutoLock autoLock(mLock);
@@ -667,9 +700,16 @@ sbBaseMediaItemDownloadJob::Initialize()
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
 
+  // Function variables.
+  nsresult rv;
+
   // Create the lock.
   mLock = nsAutoLock::NewLock("sbBaseMediaItemDownloadJob::mLock");
   NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
+
+  // Create the downloaded media item properties array.
+  mProperties = do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

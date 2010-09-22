@@ -523,6 +523,18 @@ public:
   virtual nsresult GetItemContentType(sbIMediaItem* aMediaItem,
                                       PRUint32*     aContentType);
 
+  /**
+   * Set the content source for the media item in the request specified by
+   * aRequest to the URI specified by aURI.  If the content source has not
+   * already been set for the request, copy the media item content source to the
+   * origin URL property before updating the content source to aURI.
+   *
+   * \param aRequest            Request for which to update media item.
+   * \param aURI                New content source URI.
+   */
+  nsresult UpdateOriginAndContentSrc(TransferRequest* aRequest,
+                                     nsIURI*          aURI);
+
   nsresult CreateTransferRequest(PRUint32 aRequest,
                                  nsIPropertyBag2 *aRequestParameters,
                                  TransferRequest **aTransferRequest);

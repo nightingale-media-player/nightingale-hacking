@@ -70,6 +70,7 @@
 #undef S_OK
 #undef SUCCEEDED
 #undef FAILED
+#undef ERROR
 #include <tchar.h>
 #include <strsafe.h>
 
@@ -297,6 +298,7 @@ public:
 //                              object.
 //   sbAutoCoUninitialize       Wrapper to auto-uninitialize the COM library.
 //   sbAutoCoTaskMem            Wrapper to auto-free COM task memory.
+//   sbAutoBSTR                 Wrapper to auto-free a BSTR.
 //
 
 template<typename T> SB_AUTO_NULL_CLASS(sbAutoPtr, T*, delete mValue);
@@ -316,6 +318,7 @@ SB_AUTO_CLASS(sbAutoCoUninitialize,
 template<typename T> SB_AUTO_NULL_CLASS(sbAutoCoTaskMem,
                                         T*,
                                         CoTaskMemFree(mValue));
+SB_AUTO_NULL_CLASS(sbAutoBSTR, BSTR, SysFreeString(mValue));
 
 
 //------------------------------------------------------------------------------

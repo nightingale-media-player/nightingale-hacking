@@ -32,6 +32,7 @@
 
 // Interface declarations.
 interface nsIFile;
+interface sbIPropertyArray;
 
 /**
  *   This interface is implemented by media item download jobs.  These jobs are
@@ -43,16 +44,13 @@ interface nsIFile;
  * the media item download job may download a file format that is compatible
  * with the device.
  *
- * TODO: Add an sbIPropertyArray attribute with properties for the downloaded
- *       media item.  These may be needed if downloading a compatible format for
- *       a device.
  * TODO: Add a writable temporaryFileFactory attribute to use to create the
  *       downloaded file.
  *
  * \see sbIMediaItemDownloader.
  */
 
-[scriptable, uuid(d8d1984a-1dd1-11b2-8644-c2aa547091b3)]
+[scriptable, uuid(96016e2c-1dd1-11b2-abb9-d6405c1824bc)]
 interface sbIMediaItemDownloadJob : sbIJobProgress
 {
   /**
@@ -60,6 +58,13 @@ interface sbIMediaItemDownloadJob : sbIJobProgress
    * temporary and may be deleted when the download job object is destroyed.
    */
   readonly attribute nsIFile downloadedFile;
+
+  /**
+   * Array of properties for the downloaded media item.  These may be different
+   * from the properties for the source media item (e.g., DRM protection, bit
+   * rate).
+   */
+  readonly attribute sbIPropertyArray properties;
 
   /**
    * Start the download.
