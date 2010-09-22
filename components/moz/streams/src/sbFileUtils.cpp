@@ -39,6 +39,7 @@
 
 #include <sbMemoryUtils.h>
 #include <sbProxiedComponentManager.h>
+#include <sbURIUtils.h>
 
 /**
  * Helper functions to open a stream given a file path

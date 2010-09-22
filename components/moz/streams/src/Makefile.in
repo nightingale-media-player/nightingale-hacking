@@ -38,6 +38,7 @@ CPP_SRCS = sbFileObjectStreams.cpp \
 CPP_EXTRA_INCLUDES = $(MOZSDK_INCLUDE_DIR)/necko \
                      $(topsrcdir)/components/include \
                      $(topsrcdir)/components/moz/threads/src \
+                     $(topsrcdir)/components/moz/uri/src \
                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk
