@@ -172,7 +172,6 @@ public:
    *
    * \return                    Variant value.
    */
-  template <>
   sbPropertyHelper& operator=(nsIVariant* aValue)
   {
     // Validate state.
