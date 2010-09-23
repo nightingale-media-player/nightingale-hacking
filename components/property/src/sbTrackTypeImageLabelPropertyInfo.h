@@ -43,15 +43,6 @@ public:
                      PRUint32 aMouseX,
                      PRUint32 aMouseY,
                      PRBool* _retval);
-
-  /* partial implementation of sbITreeViewPropertyInfo */
-  NS_IMETHOD GetCellProperties(const nsAString& aValue, nsAString& _retval);
-
-  /* partial implementation of sbIPropertyInfo */
-  NS_IMETHOD Format(const nsAString & aValue, nsAString & _retval);
-
-private:
-  nsString mTrackType;
 };
 
 #endif /* __SBTRACKTYPEIMAGELABELPROPERTYINFO_H__ */

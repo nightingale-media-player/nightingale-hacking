@@ -35,7 +35,7 @@
 #define SB_PROPERTY_TRACKNAME                 "http://songbirdnest.com/data/1.0#trackName"
 #define SB_PROPERTY_ALBUMNAME                 "http://songbirdnest.com/data/1.0#albumName"
 #define SB_PROPERTY_ARTISTNAME                "http://songbirdnest.com/data/1.0#artistName"
-// Track type of the media item, for the "Track Type" media view colume.
+// Track source of the media item, for the "Source" media view colume.
 #define SB_PROPERTY_TRACKTYPE                 "http://songbirdnest.com/data/1.0#trackType"
 #define SB_PROPERTY_DURATION                  "http://songbirdnest.com/data/1.0#duration"
 #define SB_PROPERTY_GENRE                     "http://songbirdnest.com/data/1.0#genre"

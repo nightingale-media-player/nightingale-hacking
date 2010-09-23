@@ -26,8 +26,6 @@
 
 #include <sbStringUtils.h>
 
-#define SB_TRACKTYPE_PROPERTY_KEY "property.track_type.local"
-
 sbTrackTypeImageLabelPropertyInfo::sbTrackTypeImageLabelPropertyInfo()
   : sbImageLabelLinkPropertyInfo()
 {
@@ -49,44 +47,4 @@ sbTrackTypeImageLabelPropertyInfo::HitTest(const nsAString& aCurrentValue,
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;
   return NS_OK;
-}
-
-/***** sbIClickablePropertyInfo */
-
-NS_IMETHODIMP
-sbTrackTypeImageLabelPropertyInfo::GetCellProperties(const nsAString& aValue,
-                                                    nsAString& _retval)
-{
-  // If this is a track type column and the value is empty, only display label.
-  if (aValue.IsEmpty()) {
-    _retval.AssignLiteral("label");
-    return NS_OK;
-  }
-
-  _retval.AssignLiteral("image label nolink");
-
-  return NS_OK;
-}
-
-/***** sbIPropertyInfo */
-
-NS_IMETHODIMP sbTrackTypeImageLabelPropertyInfo::Format(const nsAString & aValue,
-                                                       nsAString & _retval)
-{
-  nsresult rv;
-
-  // If this is a track type column and the value is empty, return local type
-  // by default.
-  if (aValue.IsEmpty()) {
-    if (mTrackType.IsEmpty()) {
-      mTrackType = SBLocalizedString(SB_TRACKTYPE_PROPERTY_KEY);
-    }
-    _retval.Assign(mTrackType);
-    return NS_OK;
-  }
-
-  rv = sbImageLabelLinkPropertyInfo::Format(aValue, _retval);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return rv;
 }

@@ -570,9 +570,9 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_TRUE, PR_TRUE, PR_FALSE, artistSecondarySort);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  //Track type
+  //Track source
   rv = RegisterTrackTypeImageLabel(NS_LITERAL_STRING(SB_PROPERTY_TRACKTYPE),
-                                   NS_LITERAL_STRING("property.track_type"),
+                                   NS_LITERAL_STRING("property.track_source"),
                                    stringBundle, PR_TRUE, PR_TRUE,
                                    PR_TRUE, PR_TRUE, nsString());
   NS_ENSURE_SUCCESS(rv, rv);
