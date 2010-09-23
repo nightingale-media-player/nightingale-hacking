@@ -1,0 +1,6 @@
+#filter substitution
+partner-branding.jar:
+% content partner-branding %content/	contentaccessible=yes
+% locale  concerts  en-US  %locale/en-US/
+% skin    concerts  classic/1.0 %skin/
+@include_all_to
