@@ -354,6 +354,7 @@
 ./jsmodules/LocalStore.jsm
 ./jsmodules/ObserverUtils.jsm
 ./jsmodules/PlatformUtils.jsm
+./jsmodules/PlayQueueUtils.jsm
 ./jsmodules/RDFHelper.jsm
 ./jsmodules/SBDataRemoteUtils.jsm
 ./jsmodules/SBJobUtils.jsm
