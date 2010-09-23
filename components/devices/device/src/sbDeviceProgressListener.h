@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -59,6 +59,9 @@
 //
 //------------------------------------------------------------------------------
 
+// Used class declarations.
+class sbDeviceStatusHelper;
+
 /**
  * This class implements a job progress listener that will send notification to
  * a monitor upon job completion.
@@ -89,15 +92,18 @@ public:
   /**
    * Create a new device progress listener and return it in
    * aDeviceProgressListener.  If aCompleteNotifyMonitor is specified, send
-   * notification to it upon job completion.
+   * notification to it upon job completion.  If aDevicesStatusHelper is
+   * specified, use it to update device status.
    *
    * \param aDeviceProgressListener Returned device progress listener.
    * \param aCompleteNotifyMonitor  Monitor to notify upon job completion.
+   * \param aDeviceStatusHelper     Helper for updating device status.
    */
 
   static nsresult
     New(sbDeviceProgressListener** aDeviceProgressListener,
-        PRMonitor*                 aCompleteNotifyMonitor = nsnull);
+        PRMonitor*                 aCompleteNotifyMonitor = nsnull,
+        sbDeviceStatusHelper*      aDeviceStatusHelper = nsnull);
 
 
   /**
@@ -109,12 +115,15 @@ public:
 
   /**
    * Construct a new device progress listener using the job completion
-   * notification monitor specified by aCompleteNotifyMonitor.
+   * notification monitor specified by aCompleteNotifyMonitor and the device
+   * status helper specified by aDeviceStatusHelper.
    *
    * \param aCompleteNotifyMonitor  Monitor to notify upon job completion.
+   * \param aDeviceStatusHelper     Helper for updating device status.
    */
 
-  sbDeviceProgressListener(PRMonitor* aCompleteNotifyMonitor);
+  sbDeviceProgressListener(PRMonitor*            aCompleteNotifyMonitor,
+                           sbDeviceStatusHelper* aDeviceStatusHelper);
 
 
   /**
@@ -134,10 +143,12 @@ private:
 
   //
   // mCompleteNotifyMonitor     Monitor to notify upon job completion.
+  // mDeviceStatusHelper        Helper to update device status.
   // mIsComplete                True if job has completed.
   //
 
   PRMonitor*                    mCompleteNotifyMonitor;
+  sbDeviceStatusHelper*         mDeviceStatusHelper;
   PRInt32                       mIsComplete;
 };
 

@@ -54,7 +54,6 @@
 
 // Mozilla imports.
 #include <nsAutoLock.h>
-#include <nsINetUtil.h>
 #include <nsIURI.h>
 #include <nsIURL.h>
 
@@ -452,29 +451,8 @@ sbBaseMediaItemDownloadJob::GetErrorMessages(nsIStringEnumerator** retval)
 
   // Add error message if an error occurred.
   if (errorCount) {
-    // Get the download source URI.
-    nsCOMPtr<nsIURI> sourceURI;
-    rv = mFileDownloader->GetSourceURI(getter_AddRefs(sourceURI));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Get the source URI spec.
-    nsCAutoString sourceURISpec;
-    rv = sourceURI->GetSpec(sourceURISpec);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Get the unescaped source URI spec.
-    nsCAutoString unescapedSourceURISpec;
-    nsCOMPtr<nsINetUtil>
-      netUtil = do_GetService("@mozilla.org/network/util;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = netUtil->UnescapeString(sourceURISpec,
-                                 nsINetUtil::ESCAPE_ALL,
-                                 unescapedSourceURISpec);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Add the error message.
     errorMessageList.AppendElement
-                       (NS_ConvertUTF8toUTF16(unescapedSourceURISpec));
+                       (SBLocalizedString("media_item_downloader.job.error"));
   }
 
   // Return results.

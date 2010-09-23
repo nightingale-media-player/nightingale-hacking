@@ -64,6 +64,7 @@ public:
   //   OPERATION_TYPE_DELETE    Delete operation.
   //   OPERATION_TYPE_READ      Read operation
   //   OPERATION_TYPE_FORMAT    Format operation.
+  //   OPERATION_TYPE_DOWNLOAD  Download operation.
   //
   enum Operation {
     OPERATION_TYPE_NONE,
@@ -72,7 +73,8 @@ public:
     OPERATION_TYPE_TRANSCODE,
     OPERATION_TYPE_DELETE,
     OPERATION_TYPE_READ,
-    OPERATION_TYPE_FORMAT
+    OPERATION_TYPE_FORMAT,
+    OPERATION_TYPE_DOWNLOAD
   };
 
 

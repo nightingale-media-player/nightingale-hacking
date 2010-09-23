@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2009 POTI, Inc.
+ * Copyright(c) 2005-2010 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -23,7 +23,6 @@
  *
  *=END SONGBIRD GPL
  */
-
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -46,6 +45,9 @@
 
 // Self imports.
 #include "sbDeviceProgressListener.h"
+
+// Local imports.
+#include "sbDeviceStatusHelper.h"
 
 // Mozilla imports.
 #include <nsAutoLock.h>
@@ -80,6 +82,23 @@ sbDeviceProgressListener::OnJobProgress(sbIJobProgress* aJobProgress)
 
   // Function variables.
   nsresult rv;
+
+  // Update the device status.
+  if (mDeviceStatusHelper) {
+    // Get the job progress.
+    PRUint32 progress;
+    PRUint32 total;
+    rv = aJobProgress->GetProgress(&progress);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = aJobProgress->GetTotal(&total);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Update the device status.
+    if (total > 0) {
+      mDeviceStatusHelper->ItemProgress(static_cast<double>(progress) /
+                                        static_cast<double>(total));
+    }
+  }
 
   // Get the job status.
   PRUint16 status;
@@ -116,14 +135,16 @@ sbDeviceProgressListener::OnJobProgress(sbIJobProgress* aJobProgress)
 /* static */ nsresult
 sbDeviceProgressListener::New
                             (sbDeviceProgressListener** aDeviceProgressListener,
-                             PRMonitor*                 aCompleteNotifyMonitor)
+                             PRMonitor*                 aCompleteNotifyMonitor,
+                             sbDeviceStatusHelper*      aDeviceStatusHelper)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aDeviceProgressListener);
 
   // Create the device progress listener object.
   nsRefPtr<sbDeviceProgressListener>
-    listener = new sbDeviceProgressListener(aCompleteNotifyMonitor);
+    listener = new sbDeviceProgressListener(aCompleteNotifyMonitor,
+                                            aDeviceStatusHelper);
   NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
 
   // Return results.
@@ -151,8 +172,10 @@ sbDeviceProgressListener::IsComplete()
 //
 
 sbDeviceProgressListener::sbDeviceProgressListener
-                            (PRMonitor* aCompleteNotifyMonitor) :
+                            (PRMonitor*            aCompleteNotifyMonitor,
+                             sbDeviceStatusHelper* aDeviceStatusHelper) :
   mCompleteNotifyMonitor(aCompleteNotifyMonitor),
+  mDeviceStatusHelper(aDeviceStatusHelper),
   mIsComplete(PR_FALSE)
 {
 }

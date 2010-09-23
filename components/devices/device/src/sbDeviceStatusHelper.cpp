@@ -27,7 +27,7 @@
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
-// MSC device status services.
+// Device status helper services.
 //
 //   These services may only be used within the request lock.
 //
@@ -36,12 +36,12 @@
 
 /**
  * \file  sbDeviceStatusHelper.cpp
- * \brief Songbird MSC Device Status Services Source.
+ * \brief Songbird Device Status Helper Services Source.
  */
 
 //------------------------------------------------------------------------------
 //
-// MSC device status imported services.
+// Device status helper imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -63,7 +63,7 @@ extern PRLogModuleInfo* gBaseDeviceLog;
 
 //------------------------------------------------------------------------------
 //
-// MSC device status defs.
+// Device status helper defs.
 //
 //------------------------------------------------------------------------------
 
@@ -100,7 +100,7 @@ DeviceStateString(PRUint32 aState)
 
 //------------------------------------------------------------------------------
 //
-// MSC device status operation services.
+// Device status helper operation services.
 //
 //------------------------------------------------------------------------------
 
@@ -178,7 +178,7 @@ sbDeviceStatusHelper::OperationStart(sbDeviceStatusHelper::Operation aOperationT
       break;
 
     case OPERATION_TYPE_TRANSCODE :
-      LOG(("sbMSCSTatus::OperationStart transcode\n"));
+      LOG(("sbDeviceStatusHelper::OperationStart transcode\n"));
       UpdateStatus(NS_LITERAL_STRING("transcoding"),
                    NS_LITERAL_STRING("Starting"),
                    aItemNum,
@@ -204,7 +204,7 @@ sbDeviceStatusHelper::OperationStart(sbDeviceStatusHelper::Operation aOperationT
       break;
 
     case OPERATION_TYPE_READ :
-      LOG(("sbDeviceStatusHelper::OperationSTart read\n"));
+      LOG(("sbDeviceStatusHelper::OperationStart read\n"));
       UpdateStatus(NS_LITERAL_STRING("reading"),
                    NS_LITERAL_STRING("Starting"),
                    aItemNum,
@@ -227,6 +227,19 @@ sbDeviceStatusHelper::OperationStart(sbDeviceStatusHelper::Operation aOperationT
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_FORMATTING_START,
                   sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, mDevice)));
+      break;
+
+    case OPERATION_TYPE_DOWNLOAD :
+      LOG(("sbDeviceStatusHelper::OperationStart download\n"));
+      UpdateStatus(NS_LITERAL_STRING("downloading"),
+                   NS_LITERAL_STRING("Starting"),
+                   aItemNum,
+                   aItemCount,
+                   0.0,
+                   aItemType);
+      mDevice->CreateAndDispatchEvent
+                 (sbIDeviceEvent::EVENT_DEVICE_DOWNLOAD_START,
+                  sbNewVariant(mMediaItem));
       break;
 
     default :
@@ -281,7 +294,7 @@ sbDeviceStatusHelper::OperationComplete(nsresult aResult)
       break;
 
     case OPERATION_TYPE_TRANSCODE :
-      LOG(("sbMSCSTatus::OperationStart transcode\n"));
+      LOG(("sbDeviceStatusHelper::OperationStart transcode\n"));
       UpdateStatus(NS_LITERAL_STRING("transcoding"),
                    stateMessage,
                    0,
@@ -325,6 +338,15 @@ sbDeviceStatusHelper::OperationComplete(nsresult aResult)
                   sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, mDevice)));
       break;
 
+    case OPERATION_TYPE_DOWNLOAD :
+      LOG(("sbDeviceStatusHelper::OperationComplete download\n"));
+      UpdateStatus(NS_LITERAL_STRING("downloading"),
+                   stateMessage,
+                   0,
+                   0,
+                   1.0);
+      break;
+
     default :
       break;
   }
@@ -338,7 +360,7 @@ sbDeviceStatusHelper::OperationComplete(nsresult aResult)
 
 //------------------------------------------------------------------------------
 //
-// MSC device status item services.
+// Device status helper item services.
 //
 //------------------------------------------------------------------------------
 
@@ -360,7 +382,7 @@ sbDeviceStatusHelper::ItemStart(PRInt32     aItemNum,
   // Update current item number and item count.
   mItemNum = aItemNum;
   mItemCount = aItemCount;
-  
+
   // Update current item type
   mItemType = aItemType;
 
@@ -405,7 +427,7 @@ sbDeviceStatusHelper::ItemStart(PRInt32     aItemNum,
                   sbNewVariant(mMediaItem));
       break;
     case OPERATION_TYPE_TRANSCODE :
-      LOG(("sbMSCSTatus::ItemStart transcode\n"));
+      LOG(("sbDeviceStatusHelper::ItemStart transcode\n"));
       UpdateStatus(NS_LITERAL_STRING("transcoding"),
                    NS_LITERAL_STRING("Starting"),
                    aItemNum,
@@ -421,6 +443,19 @@ sbDeviceStatusHelper::ItemStart(PRInt32     aItemNum,
       LOG(("sbDeviceStatusHelper::ItemStart read\n"));
       UpdateStatus(NS_LITERAL_STRING("reading"),
                    NS_LITERAL_STRING("InProgress"),
+                   aItemNum,
+                   aItemCount,
+                   0.0,
+                   aItemType);
+      mDevice->CreateAndDispatchEvent
+                 (sbIDeviceEvent::EVENT_DEVICE_TRANSFER_START,
+                  sbNewVariant(mMediaItem));
+      break;
+
+    case OPERATION_TYPE_DOWNLOAD :
+      LOG(("sbDeviceStatusHelper::ItemStart download\n"));
+      UpdateStatus(NS_LITERAL_STRING("downloading"),
+                   NS_LITERAL_STRING("Starting"),
                    aItemNum,
                    aItemCount,
                    0.0,
@@ -519,6 +554,20 @@ sbDeviceStatusHelper::ItemProgress(double aProgress)
                  (sbIDeviceEvent::EVENT_DEVICE_TRANSFER_PROGRESS,
                   sbNewVariant(mMediaItem));
       break;
+
+    case OPERATION_TYPE_DOWNLOAD :
+      LOG(("sbDeviceStatusHelper::ItemProgress download\n"));
+      UpdateStatus(NS_LITERAL_STRING("downloading"),
+                   NS_LITERAL_STRING("InProgress"),
+                   mItemNum,
+                   mItemCount,
+                   aProgress,
+                   mItemType);
+      mDevice->CreateAndDispatchEvent
+                 (sbIDeviceEvent::EVENT_DEVICE_TRANSFER_PROGRESS,
+                  sbNewVariant(mMediaItem));
+      break;
+
     default :
       break;
   }
@@ -548,7 +597,8 @@ sbDeviceStatusHelper::ItemComplete(nsresult aResult)
   {
     case OPERATION_TYPE_TRANSCODE :
     case OPERATION_TYPE_WRITE :
-      LOG(("sbDeviceStatusHelper::ItemComplete write/transcode\n"));
+    case OPERATION_TYPE_DOWNLOAD :
+      LOG(("sbDeviceStatusHelper::ItemComplete write/transcode/download\n"));
       mDevice->CreateAndDispatchEvent
                  (sbIDeviceEvent::EVENT_DEVICE_TRANSFER_END,
                   sbNewVariant(mMediaItem));
@@ -569,12 +619,12 @@ sbDeviceStatusHelper::ItemComplete(nsresult aResult)
 
 //------------------------------------------------------------------------------
 //
-// MSC device status public services.
+// Device status helper public services.
 //
 //------------------------------------------------------------------------------
 
 /**
- * Destroy an MSC device status object.
+ * Destroy a device status helper object.
  */
 
 sbDeviceStatusHelper::~sbDeviceStatusHelper()
@@ -584,7 +634,7 @@ sbDeviceStatusHelper::~sbDeviceStatusHelper()
 
 
 /**
- * Initialize the MSC device status object.
+ * Initialize the device status helper object.
  */
 
 nsresult
@@ -757,12 +807,12 @@ sbDeviceStatusHelper::UpdateStatus(const nsAString& aOperation,
 
 //------------------------------------------------------------------------------
 //
-// MSC device status private services.
+// Device status helper private services.
 //
 //------------------------------------------------------------------------------
 
 /**
- * Construct an MSC device status object.
+ * Construct a device status helper object.
  *
  * \param aDevice               Device for which to construct status.
  */

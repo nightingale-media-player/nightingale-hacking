@@ -2123,6 +2123,7 @@
             switch (aEvent.type) {
               case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSFER_END:
               case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSCODE_END:
+              case Ci.sbIDeviceEvent.EVENT_DEVICE_DOWNLOAD_END:
                this.updateDisplayAsync();
                break;
             }

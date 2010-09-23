@@ -177,6 +177,18 @@ var DPWCfg = {
       operationCanceled: false
     },
 
+    /* Download */
+    {
+      state: Ci.sbIDevice.STATE_DOWNLOADING,
+      localeSuffix: "downloading",
+      progressMeterDetermined: true,
+      canBeCompleted: true,
+      showIdleMessage: true,
+      showProgress: true,
+      updateBusy: true,
+      operationCanceled: false
+    },
+
     /* Cancel. */
     {
       state: Ci.sbIDevice.STATE_CANCEL,
@@ -1150,6 +1162,9 @@ var DPW = {
       case Ci.sbIDeviceEvent.EVENT_DEVICE_FORMATTING_START:
       case Ci.sbIDeviceEvent.EVENT_DEVICE_FORMATTING_PROGRESS:
       case Ci.sbIDeviceEvent.EVENT_DEVICE_FORMATTING_END:
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_DOWNLOAD_START:
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_DOWNLOAD_PROGRESS:
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_DOWNLOAD_END:
         this._update();
         break;
     }

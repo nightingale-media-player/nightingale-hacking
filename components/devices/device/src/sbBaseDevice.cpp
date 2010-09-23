@@ -107,6 +107,7 @@
 #include <sbMemoryUtils.h>
 #include <sbPrefBranch.h>
 #include <sbPropertiesCID.h>
+#include <sbPropertyBagUtils.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStringBundle.h>
 #include <sbStringUtils.h>
@@ -120,6 +121,7 @@
 #include "sbDeviceLibrary.h"
 #include "sbDeviceProgressListener.h"
 #include "sbDeviceStatus.h"
+#include "sbDeviceStatusHelper.h"
 #include "sbDeviceSupportsItemHelper.h"
 #include "sbDeviceTranscoding.h"
 #include "sbDeviceImages.h"
@@ -1559,13 +1561,22 @@ nsresult sbBaseDevice::BatchGetRequestType(sbBaseDevice::Batch& aBatch,
 
 // TODO: Update device status
 nsresult
-sbBaseDevice::DownloadRequestItem(TransferRequest* aRequest)
+sbBaseDevice::DownloadRequestItem(TransferRequest*      aRequest,
+                                  sbDeviceStatusHelper* aDeviceStatusHelper)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aRequest);
+  NS_ENSURE_ARG_POINTER(aDeviceStatusHelper);
 
   // Function variables.
   nsresult rv;
+
+  // Update status and set to auto-complete.
+  aDeviceStatusHelper->ChangeState(STATE_DOWNLOADING);
+  sbDeviceStatusAutoOperationComplete
+    autoComplete(aDeviceStatusHelper,
+                 sbDeviceStatusHelper::OPERATION_TYPE_DOWNLOAD,
+                 aRequest);
 
   // Get the request volume info.
   nsRefPtr<sbBaseDeviceVolume> volume;
@@ -1613,7 +1624,8 @@ sbBaseDevice::DownloadRequestItem(TransferRequest* aRequest)
   // Add a device job progress listener.
   nsRefPtr<sbDeviceProgressListener> listener;
   rv = sbDeviceProgressListener::New(getter_AddRefs(listener),
-                                     mReqWaitMonitor);
+                                     mReqWaitMonitor,
+                                     aDeviceStatusHelper);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = downloadJobProgress->AddJobProgressListener(listener);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1643,6 +1655,38 @@ sbBaseDevice::DownloadRequestItem(TransferRequest* aRequest)
   // Forget auto-cancel.
   autoCancel.forget();
 
+  // Check for download errors.
+  nsCOMPtr<nsIStringEnumerator> errorMessages;
+  rv = downloadJob->GetErrorMessages(getter_AddRefs(errorMessages));
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (errorMessages) {
+    PRBool hasMore;
+    rv = errorMessages->HasMore(&hasMore);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (hasMore) {
+      // Get the error message.
+      nsAutoString errorMessage;
+      rv = errorMessages->GetNext(errorMessage);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Create the error info.
+      sbPropertyBagHelper errorInfo;
+      errorInfo["message"] = errorMessage;
+      NS_ENSURE_SUCCESS(errorInfo.rv(), errorInfo.rv());
+      errorInfo["item"] = aRequest->item;
+      NS_ENSURE_SUCCESS(errorInfo.rv(), errorInfo.rv());
+
+      // Dispatch the error event.
+      CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_DOWNLOAD_ERROR,
+                             sbNewVariant(errorInfo.GetBag()));
+
+      // Set operation result as OK, so a second error event is not dispatched.
+      autoComplete.SetResult(NS_OK);
+
+      return NS_ERROR_FAILURE;
+    }
+  }
+
   // Get the downloaded file.
   rv = downloadJob->GetDownloadedFile(getter_AddRefs(aRequest->downloadedFile));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1664,6 +1708,9 @@ sbBaseDevice::DownloadRequestItem(TransferRequest* aRequest)
   NS_ENSURE_SUCCESS(rv, rv);
   rv = UpdateOriginAndContentSrc(aRequest, downloadedFileURI);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Operation completed without error.
+  autoComplete.SetResult(NS_OK);
 
   return NS_OK;
 }

@@ -65,6 +65,7 @@ class nsIPrefBranch;
 class sbAutoIgnoreWatchFolderPath;
 class sbBaseDeviceLibraryListener;
 class sbDeviceBaseLibraryCopyListener;
+class sbDeviceStatusHelper;
 class sbDeviceSupportsItemHelper;
 class sbDeviceTranscoding;
 class sbDeviceImages;
@@ -323,11 +324,14 @@ public:
 
   /**
    * Download the item for the request specified by aRequest and update the
-   * request downloadedFile field.
+   * request downloadedFile field.  Use the device status helper speicifed by
+   * aDeviceStatusHelper to update the device status.
    *
    * \param aRequest              Request for which to download item.
+   * \param aDeviceStatusHelper   Helper to use to update device status.
    */
-  nsresult DownloadRequestItem(TransferRequest* aRequest);
+  nsresult DownloadRequestItem(TransferRequest*      aRequest,
+                               sbDeviceStatusHelper* aDeviceStatusHelper);
 
   /**
    * Internally set preference specified by aPrefName to the value specified by

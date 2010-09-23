@@ -1,28 +1,28 @@
+/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright© 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #include "nsISupports.idl"
 
@@ -34,11 +34,11 @@ interface sbIDeviceEventTarget;
  * \interface sbIDeviceEvent
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(4405fad4-1dd2-11b2-b903-de5a73c9540f)]
+[scriptable, uuid(e2b7a9e0-1dd1-11b2-a9a7-89a1ae00953e)]
 interface sbIDeviceEvent : nsISupports
 {
   /**
-   * 
+   *
    */
   const unsigned long COMMAND_DEVICE_BASE         = 0x00000000;
   const unsigned long COMMAND_DEVICE_RESET        = COMMAND_DEVICE_BASE + 1;
@@ -48,25 +48,25 @@ interface sbIDeviceEvent : nsISupports
   const unsigned long COMMAND_DEVICE_MEDIA_FORMAT = COMMAND_DEVICE_BASE + 5;
 
   /**
-   * 
+   *
    */
   const unsigned long COMMAND_CONTROLLER_BASE  = 0x00020000;
   const unsigned long COMMAND_CONTROLLER_RESET = COMMAND_CONTROLLER_BASE + 1;
 
   /**
-   * 
+   *
    */
   const unsigned long COMMAND_MARSHALL_BASE  = 0x00040000;
   const unsigned long COMMAND_MARSHALL_RESET = COMMAND_MARSHALL_BASE + 1;
 
   /**
-   * 
+   *
    */
   const unsigned long COMMAND_MANAGER_BASE    = 0x00060000;
   const unsigned long COMMAND_MANAGER_REFRESH = COMMAND_MANAGER_BASE + 1;
 
   /**
-   * 
+   *
    */
   const unsigned long COMMAND_CLIENT_DEFINED = 0x20000000;
 
@@ -74,14 +74,14 @@ interface sbIDeviceEvent : nsISupports
    * Device events
    */
   const unsigned long EVENT_DEVICE_BASE               = 0x40000000;
-  
+
   // the device was connected
   const unsigned long EVENT_DEVICE_ADDED              = EVENT_DEVICE_BASE + 1;
   // the device was disconnected
   const unsigned long EVENT_DEVICE_REMOVED            = EVENT_DEVICE_BASE + 2;
   // the device was reset
   const unsigned long EVENT_DEVICE_RESET              = EVENT_DEVICE_BASE + 3;
-  
+
   // some sort of storage media was inserted into the device
   const unsigned long EVENT_DEVICE_MEDIA_INSERTED     = EVENT_DEVICE_BASE + 4;
   // some sort of storage media was removed from the device
@@ -105,13 +105,13 @@ interface sbIDeviceEvent : nsISupports
   const unsigned long EVENT_DEVICE_MEDIA_WRITE_START  = EVENT_DEVICE_BASE + 16;
   const unsigned long EVENT_DEVICE_MEDIA_WRITE_END    = EVENT_DEVICE_BASE + 17;
   const unsigned long EVENT_DEVICE_MEDIA_WRITE_FAILED = EVENT_DEVICE_BASE + 18;
-  
+
   const unsigned long EVENT_DEVICE_INFO_CHANGED       = EVENT_DEVICE_BASE + 19;
 
   // device transfer errors
   const unsigned long EVENT_DEVICE_MEDIA_READ_UNSUPPORTED_TYPE  = EVENT_DEVICE_BASE + 20;
   const unsigned long EVENT_DEVICE_MEDIA_WRITE_UNSUPPORTED_TYPE = EVENT_DEVICE_BASE + 21;
-  
+
   // device general errors
   const unsigned long EVENT_DEVICE_ACCESS_DENIED        = EVENT_DEVICE_BASE + 22;
   const unsigned long EVENT_DEVICE_NOT_ENOUGH_FREESPACE = EVENT_DEVICE_BASE + 23;
@@ -137,7 +137,7 @@ interface sbIDeviceEvent : nsISupports
   // "message": a message to display to the user
   // "item": associated sbIMediaItem
   const unsigned long EVENT_DEVICE_TRANSCODE_ERROR      = EVENT_DEVICE_BASE + 31;
-  
+
   // device library events
   const unsigned long EVENT_DEVICE_LIBRARY_ADDED       = EVENT_DEVICE_BASE + 32;
   const unsigned long EVENT_DEVICE_LIBRARY_REMOVED     = EVENT_DEVICE_BASE + 33;
@@ -151,7 +151,7 @@ interface sbIDeviceEvent : nsISupports
 
   // file that you were trying to transfer is missing
   const unsigned long EVENT_DEVICE_FILE_MISSING        = EVENT_DEVICE_BASE + 38;
-  
+
   // events for device scans
   const unsigned long EVENT_DEVICE_SCAN_START          = EVENT_DEVICE_BASE + 39;
   const unsigned long EVENT_DEVICE_SCAN_END            = EVENT_DEVICE_BASE + 40;
@@ -163,19 +163,30 @@ interface sbIDeviceEvent : nsISupports
   const unsigned long EVENT_DEVICE_SYNC_TEMP_MODIFIED   = EVENT_DEVICE_BASE + 42;
   const unsigned long EVENT_DEVICE_SYNC_SETTINGS_CHANGED= EVENT_DEVICE_BASE + 43;
   const unsigned long EVENT_DEVICE_SYNC_SETTINGS_RESET  = EVENT_DEVICE_BASE + 44;
-   
+
+  // device downloading events
+  const unsigned long EVENT_DEVICE_DOWNLOAD_START      = EVENT_DEVICE_BASE + 45;
+  const unsigned long EVENT_DEVICE_DOWNLOAD_PROGRESS   = EVENT_DEVICE_BASE + 46;
+  const unsigned long EVENT_DEVICE_DOWNLOAD_END        = EVENT_DEVICE_BASE + 47;
+
+  // device download errors
+  // the .data should be a nsIPropertyBag, with the optional properties:
+  // "message": a message to display to the user
+  // "item": associated sbIMediaItem
+  const unsigned long EVENT_DEVICE_DOWNLOAD_ERROR      = EVENT_DEVICE_BASE + 48;
+
   /**
-   * 
+   *
    */
   const unsigned long EVENT_CONTROLLER_BASE = 0x40020000;
 
   /**
-   * 
+   *
    */
   const unsigned long EVENT_MARSHALL_BASE = 0x40040000;
 
   /**
-   * 
+   *
    */
   const unsigned long EVENT_MANAGER_BASE = 0x40060000;
 
@@ -191,7 +202,7 @@ interface sbIDeviceEvent : nsISupports
   const unsigned long EVENT_FIRMWARE_CFU_START  = EVENT_FIRMWARE_BASE + 1;
   /**
    * \brief Check for update end
-   * \note <code>data</code> is a boolean indicating if there is an update 
+   * \note <code>data</code> is a boolean indicating if there is an update
    *       available for download (true) or not (false).
    */
   const unsigned long EVENT_FIRMWARE_CFU_END    = EVENT_FIRMWARE_BASE + 2;
@@ -262,7 +273,7 @@ interface sbIDeviceEvent : nsISupports
   const unsigned long EVENT_FIRMWARE_CFU_ERROR      = EVENT_FIRMWARE_ERROR_BASE + 2;
   /**
    * \brief Firmware download error.
-   * \note <code>data</code> is null for this event. 
+   * \note <code>data</code> is null for this event.
    * \note The <code>data</code> for this event is likely to change in the future.
    */
   const unsigned long EVENT_FIRMWARE_DOWNLOAD_ERROR = EVENT_FIRMWARE_ERROR_BASE + 3;
@@ -286,7 +297,7 @@ interface sbIDeviceEvent : nsISupports
   const unsigned long EVENT_FIRMWARE_NEEDREC_ERROR = EVENT_FIRMWARE_ERROR_BASE + 6;
 
   /**
-   * 
+   *
    */
   const unsigned long EVENT_CLIENT_DEFINED = 0x60000000;
 
@@ -304,17 +315,17 @@ interface sbIDeviceEvent : nsISupports
    * The event target this event is happening on
    */
   readonly attribute sbIDeviceEventTarget target;
-  
+
   /**
    * Something that invoked this event
    */
   readonly attribute nsISupports origin;
-  
+
   /**
    * The device state at the time of the event
    */
    readonly attribute unsigned long deviceState;
-   
+
   /**
    * The device substate at the time of the event
    */

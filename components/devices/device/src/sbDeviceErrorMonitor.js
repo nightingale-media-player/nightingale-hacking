@@ -457,6 +457,15 @@ deviceErrorMonitor.prototype = {
         this._logError(aDeviceEvent, message);
       break;
 
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_DOWNLOAD_ERROR:
+        // Grab the extended error info from the property bag
+        var message = "";
+        if (aDeviceEvent.data instanceof Ci.nsIPropertyBag2) {
+          message = aDeviceEvent.data.get("message");
+        }
+        this._logError(aDeviceEvent, message);
+      break;
+
     }
   },
 
