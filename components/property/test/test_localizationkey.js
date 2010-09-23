@@ -45,7 +45,7 @@ function runTest () {
     trackName: 'track_name',
     albumName: 'album_name',
     artistName: 'artist_name',
-    trackType: 'track_type',
+    trackType: 'track_source',
     duration: 'duration',
     genre: 'genre',
     year: 'year',
