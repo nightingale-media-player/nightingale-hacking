@@ -362,7 +362,7 @@ public:
    *
    * \return                    Property value.
    */
-  sbPropertyHelper Get(const char* aKey)
+  sbPropertyHelper Get(const char* aKey) const
   {
     return sbPropertyHelper(mPropertyBag, sbAutoString(aKey), mRV);
   }
@@ -375,12 +375,15 @@ public:
    *
    * \return                    Property value.
    */
-  sbPropertyHelper operator[](const char* aKey)
+  sbPropertyHelper operator[](const char* aKey) const
   {
     return Get(aKey);
   }
 
-
+  sbPropertyHelper operator[](const nsACString & aKey) const
+  {
+    return Get(aKey.BeginReading());
+  }
   /**
    * Allow sbPropertyBagHelper to be used as an nsIPropertyBag*,
    * nsIPropertyBag2*, nsIWritablePropertyBag*, or nsIWritablePropertyBag2*.
