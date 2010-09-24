@@ -206,6 +206,13 @@ sbFileDownloader.prototype = {
 
 
   /**
+   * \brief Temporary file factory to use for any temporary files.
+   */
+
+  temporaryFileFactory: null,
+
+
+  /**
    * \brief Start file download from source URI to destination file.  If source
    *        URI is not specified, use source URI spec.  If destination file is
    *        not specified, create a temporary one.
@@ -237,13 +244,21 @@ sbFileDownloader.prototype = {
     //XXXeps if destination file is provided, should create a temporary one and
     //XXXeps move to destination when complete.
     if (!this.destinationFile) {
-      var temporaryFileService =
-            Cc["@songbirdnest.com/Songbird/TemporaryFileService;1"]
-              .getService(Ci.sbITemporaryFileService);
-      this.destinationFile =
-             temporaryFileService.createFile(Ci.nsIFile.NORMAL_FILE_TYPE,
-                                             null,
-                                             this.destinationFileExtension);
+      if (this.temporaryFileFactory) {
+        this.destinationFile =
+          this.temporaryFileFactory.createFile(Ci.nsIFile.NORMAL_FILE_TYPE,
+                                               null,
+                                               this.destinationFileExtension);
+      }
+      else {
+        var temporaryFileService =
+              Cc["@songbirdnest.com/Songbird/TemporaryFileService;1"]
+                .getService(Ci.sbITemporaryFileService);
+        this.destinationFile =
+               temporaryFileService.createFile(Ci.nsIFile.NORMAL_FILE_TYPE,
+                                               null,
+                                               this.destinationFileExtension);
+      }
     }
 
     // Start the file download.

@@ -53,6 +53,7 @@
 #include <sbIMediaItem.h>
 #include <sbIMediaItemDownloadJob.h>
 #include <sbIPropertyArray.h>
+#include <sbITemporaryFileFactory.h>
 
 // Mozilla imports.
 #include <nsCOMPtr.h>
@@ -119,6 +120,8 @@ protected:
   // mTargetLibrary             Library for which the media item will be
   //                            downloaded.
   // mFileDownloader            File downloader object.
+  // mTemporaryFileFactory      Temporary file factory to use for temporary
+  //                            files.
   // mListenerList              List of download job listeners.
   // mStatus                    Download status.
   //
@@ -129,6 +132,8 @@ protected:
                                 mProperties;
   nsCOMPtr<sbILibrary>          mTargetLibrary;
   nsCOMPtr<sbIFileDownloader>   mFileDownloader;
+  nsCOMPtr<sbITemporaryFileFactory>
+                                mTemporaryFileFactory;
   nsTArray< nsCOMPtr<sbIJobProgressListener> >
                                 mListenerList;
   PRUint16                      mStatus;

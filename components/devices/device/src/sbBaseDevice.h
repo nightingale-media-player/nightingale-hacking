@@ -308,7 +308,8 @@ public:
 
   /**
    * clear the request queue
-   * \param aSetCancel Determines whether or not the current request is "canceled"
+   * \param aSetCancel Determines whether or not the current request is
+   *        "canceled"
    */
   nsresult ClearRequests(bool aSetCancel = true);
 
@@ -321,6 +322,21 @@ public:
    */
   nsresult BatchGetRequestType(sbBaseDevice::Batch& aBatch,
                                int*                 aRequestType);
+
+  /**
+   * Return in aTemporaryFileFactory a temporary file factory for the request
+   * specified by aRequest, creating one if necessary.  When the request
+   * completes and is destroyed, and any external references to the temporary
+   * file factory are released, the temporary file factory will be destroyed,
+   * and all of its temporary files will be deleted.
+   *
+   * \param aRequest            Request for which to get temporary file factory.
+   * \param aTemporaryFileFactory
+   *                            Returned temporary file factory for request.
+   */
+  nsresult GetRequestTemporaryFileFactory
+             (TransferRequest*          aRequest,
+              sbITemporaryFileFactory** aTemporaryFileFactory);
 
   /**
    * Download the item for the request specified by aRequest and update the

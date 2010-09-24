@@ -43,6 +43,7 @@ CPP_EXTRA_INCLUDES = $(srcdir) \
                      $(DEPTH)/components/job/public \
                      $(DEPTH)/components/library/base/public \
                      $(DEPTH)/components/moz/filedownloader/public \
+                     $(DEPTH)/components/moz/temporaryfileservice/public \
                      $(DEPTH)/components/moz/xpcom/public \
                      $(DEPTH)/components/property/public \
                      $(topsrcdir)/components/include \

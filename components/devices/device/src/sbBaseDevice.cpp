@@ -1559,7 +1559,34 @@ nsresult sbBaseDevice::BatchGetRequestType(sbBaseDevice::Batch& aBatch,
   return NS_OK;
 }
 
-// TODO: Update device status
+nsresult
+sbBaseDevice::GetRequestTemporaryFileFactory
+                (TransferRequest*          aRequest,
+                 sbITemporaryFileFactory** aTemporaryFileFactory)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aRequest);
+  NS_ENSURE_ARG_POINTER(aTemporaryFileFactory);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the request temporary file factory, creating one if necessary.
+  nsCOMPtr<sbITemporaryFileFactory>
+    temporaryFileFactory = aRequest->temporaryFileFactory;
+  if (!temporaryFileFactory) {
+    temporaryFileFactory = do_CreateInstance(SB_TEMPORARYFILEFACTORY_CONTRACTID,
+                                             &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    aRequest->temporaryFileFactory = temporaryFileFactory;
+  }
+
+  // Return results.
+  temporaryFileFactory.forget(aTemporaryFileFactory);
+
+  return NS_OK;
+}
+
 nsresult
 sbBaseDevice::DownloadRequestItem(TransferRequest*      aRequest,
                                   sbDeviceStatusHelper* aDeviceStatusHelper)
@@ -1610,6 +1637,14 @@ sbBaseDevice::DownloadRequestItem(TransferRequest*      aRequest,
   rv = downloader->CreateDownloadJob(aRequest->item,
                                      deviceLibrary,
                                      getter_AddRefs(downloadJob));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set the download job temporary file factory.
+  nsCOMPtr<sbITemporaryFileFactory> temporaryFileFactory;
+  rv = GetRequestTemporaryFileFactory(aRequest,
+                                      getter_AddRefs(temporaryFileFactory));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = downloadJob->SetTemporaryFileFactory(temporaryFileFactory);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the download job progress.

@@ -33,6 +33,7 @@
 // Interface declarations.
 interface nsIFile;
 interface sbIPropertyArray;
+interface sbITemporaryFileFactory;
 
 /**
  *   This interface is implemented by media item download jobs.  These jobs are
@@ -50,7 +51,7 @@ interface sbIPropertyArray;
  * \see sbIMediaItemDownloader.
  */
 
-[scriptable, uuid(96016e2c-1dd1-11b2-abb9-d6405c1824bc)]
+[scriptable, uuid(89ecb85a-1dd2-11b2-83b6-f9e343d96bb8)]
 interface sbIMediaItemDownloadJob : sbIJobProgress
 {
   /**
@@ -65,6 +66,11 @@ interface sbIMediaItemDownloadJob : sbIJobProgress
    * rate).
    */
   readonly attribute sbIPropertyArray properties;
+
+  /**
+   * Temporary file factory to use for any temporary files.
+   */
+  attribute sbITemporaryFileFactory temporaryFileFactory;
 
   /**
    * Start the download.

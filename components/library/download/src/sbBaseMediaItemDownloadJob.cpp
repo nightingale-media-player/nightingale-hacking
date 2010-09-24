@@ -184,6 +184,33 @@ sbBaseMediaItemDownloadJob::GetProperties(sbIPropertyArray** aProperties)
 }
 
 
+//-------------------------------------
+//
+// temporaryFileFactory
+//
+// \see sbIMediaItemDownloadJob
+//
+
+NS_IMETHODIMP
+sbBaseMediaItemDownloadJob::GetTemporaryFileFactory
+                              (sbITemporaryFileFactory** aTemporaryFileFactory)
+{
+  NS_ENSURE_ARG_POINTER(aTemporaryFileFactory);
+  nsAutoLock autoLock(mLock);
+  NS_IF_ADDREF(*aTemporaryFileFactory = mTemporaryFileFactory);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseMediaItemDownloadJob::SetTemporaryFileFactory
+                              (sbITemporaryFileFactory* aTemporaryFileFactory)
+{
+  nsAutoLock autoLock(mLock);
+  mTemporaryFileFactory = aTemporaryFileFactory;
+  return NS_OK;
+}
+
+
 //------------------------------------------------------------------------------
 //
 // Base media item download job sbIJobProgress implementation.
@@ -622,6 +649,15 @@ sbBaseMediaItemDownloadJob::Start(nsIURI* aURI)
     NS_ENSURE_SUCCESS(rv, rv);
     rv = fileDownloader->SetDestinationFileExtension
                            (NS_ConvertUTF8toUTF16(fileExtension));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Set the file downloader temporary file factory.
+  nsCOMPtr<sbITemporaryFileFactory> temporaryFileFactory;
+  rv = GetTemporaryFileFactory(getter_AddRefs(temporaryFileFactory));
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (temporaryFileFactory) {
+    rv = fileDownloader->SetTemporaryFileFactory(temporaryFileFactory);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
