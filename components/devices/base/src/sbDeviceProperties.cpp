@@ -91,6 +91,19 @@ sbDeviceProperties::InitFriendlyName(const nsAString & aFriendlyName)
 }
 
 NS_IMETHODIMP
+sbDeviceProperties::InitDefaultName(const nsAString & aDefaultName)
+{
+  NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
+  nsresult rv =
+    mProperties2->SetPropertyAsAString(
+                      NS_LITERAL_STRING(SB_DEVICE_PROPERTY_DEFAULT_NAME),
+                      aDefaultName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbDeviceProperties::InitVendorName(const nsAString & aVendorName)
 {
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
@@ -260,6 +273,17 @@ sbDeviceProperties::SetFriendlyName(const nsAString & aFriendlyName)
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceProperties::GetDefaultName(nsAString & aDefaultName)
+{
+  NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoLock lock(mLock);
+  return GetProperty(mProperties2,
+                     NS_LITERAL_STRING(SB_DEVICE_PROPERTY_DEFAULT_NAME),
+                     aDefaultName);
 }
 
 NS_IMETHODIMP

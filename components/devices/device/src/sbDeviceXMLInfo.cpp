@@ -212,6 +212,44 @@ sbDeviceXMLInfo::GetDeviceInfoElement(nsIDOMElement** aDeviceInfoElement)
   return NS_OK;
 }
 
+//-------------------------------------
+//
+// GetDefaultName
+//
+
+nsresult
+sbDeviceXMLInfo::GetDefaultName(nsAString& aDefaultName)
+{
+  nsresult rv;
+
+  aDefaultName.SetIsVoid(PR_TRUE);
+
+  // Do nothing more if no device info element.
+  if (!mDeviceInfoElement)
+    return NS_OK;
+
+  nsTArray< nsCOMPtr<nsIDOMNode> > deviceNameNodeList;
+  rv = GetDeviceInfoNodes(NS_LITERAL_STRING("name"),
+                          deviceNameNodeList);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // See if there is at least one node.
+  PRUint32 nodeCount = deviceNameNodeList.Length();
+
+  if (nodeCount > 0) {
+    // Only process the first node value.
+    nsCOMPtr<nsIDOMElement> deviceNameElement =
+      do_QueryInterface(deviceNameNodeList[0], &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Read the value
+    rv = deviceNameElement->GetAttribute(NS_LITERAL_STRING("value"),
+                                         aDefaultName);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
 
 //-------------------------------------
 //

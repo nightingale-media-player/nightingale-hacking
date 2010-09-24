@@ -6573,6 +6573,25 @@ sbBaseDevice::RegisterDeviceInfo()
   rv = ProcessInfoRegistrars();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Get the device properties.
+  nsCOMPtr<nsIWritablePropertyBag> deviceProperties;
+  rv = GetWritableDeviceProperties(this, getter_AddRefs(deviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Register device default name.
+  nsString defaultName;
+  rv = mInfoRegistrar->GetDefaultName(this, defaultName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  LOG(("Default Name: %s", NS_ConvertUTF16toUTF8(defaultName).get()));
+
+  if (!defaultName.IsEmpty()) {
+    rv = deviceProperties->SetProperty(
+                           NS_LITERAL_STRING(SB_DEVICE_PROPERTY_DEFAULT_NAME),
+                           sbNewVariant(defaultName));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   // Register device folders.
   for (PRUint32 i = 0;
        i < NS_ARRAY_LENGTH(sbBaseDeviceSupportedFolderContentTypeList);
@@ -6600,11 +6619,6 @@ sbBaseDevice::RegisterDeviceInfo()
 
   LOG(("Excluded Folders: %s",
        NS_LossyConvertUTF16toASCII(excludedFolders).BeginReading()));
-
-  // Get the device properties.
-  nsCOMPtr<nsIWritablePropertyBag> deviceProperties;
-  rv = GetWritableDeviceProperties(this, getter_AddRefs(deviceProperties));
-  NS_ENSURE_SUCCESS(rv, rv);
 
   if (!excludedFolders.IsEmpty()) {
     rv = deviceProperties->SetProperty(
@@ -7251,6 +7265,18 @@ sbBaseDevice::GetNameBase(nsAString& aName)
   if (hasKey) {
     rv = properties->GetPropertyAsAString
                         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_NAME), aName);
+    NS_ENSURE_SUCCESS(rv, rv);
+    return NS_OK;
+  }
+
+  // Try using the default name property and exit if successful.
+  rv = properties->HasKey(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_DEFAULT_NAME),
+                          &hasKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (hasKey) {
+    rv = properties->GetPropertyAsAString
+                        (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_DEFAULT_NAME),
+                         aName);
     NS_ENSURE_SUCCESS(rv, rv);
     return NS_OK;
   }

@@ -149,6 +149,31 @@ sbDefaultBaseDeviceInfoRegistrar::
 }
 
 NS_IMETHODIMP
+sbDefaultBaseDeviceInfoRegistrar::GetDefaultName(sbIDevice* aDevice,
+                                                 nsAString& retval)
+{
+  TRACE(("%s", __FUNCTION__));
+
+  nsresult rv;
+
+  // Default to no name.
+  retval.Truncate();
+
+  // Get the device XML info.  Just return if none available.
+  sbDeviceXMLInfo* deviceXMLInfo;
+  rv = GetDeviceXMLInfo(aDevice, &deviceXMLInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!deviceXMLInfo)
+    return NS_OK;
+
+  // Get the device name.
+  rv = deviceXMLInfo->GetDefaultName(retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbDefaultBaseDeviceInfoRegistrar::GetDeviceFolder(sbIDevice* aDevice,
                                                   PRUint32   aContentType,
                                                   nsAString& retval)

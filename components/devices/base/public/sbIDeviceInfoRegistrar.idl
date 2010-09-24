@@ -39,7 +39,7 @@ interface sbITranscodeProfile;
  *
  * Implementations are to be thread safe.
  */
-[scriptable, uuid(09ac5860-1dd2-11b2-a697-ee5a60602d0e)]
+[scriptable, uuid(a35e99b2-1dd1-11b2-9621-d17db83fa38f)]
 interface sbIDeviceInfoRegistrar : nsISupports
 {
   /* Types of registrars */
@@ -74,6 +74,15 @@ interface sbIDeviceInfoRegistrar : nsISupports
    */
   void addCapabilities(in sbIDevice aDevice,
                        in sbIDeviceCapabilities aDeviceCapabilities);
+
+  /**
+   * \brief Return the default name for the device.
+   *
+   * \param aDevice             Device for which to get default name.
+   *
+   * \return                    Device default name.
+   */
+  AString getDefaultName(in sbIDevice aDevice);
 
   /**
    * \brief Return the device folder URL for the device and content type

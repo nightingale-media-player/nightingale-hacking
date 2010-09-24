@@ -198,9 +198,19 @@
         // Set the default device name textbox value.
         var setupNameTextboxElem =
               document.getElementById("setup_name_textbox");
-        var friendlyName = this._device.properties.friendlyName;
-        if (friendlyName) {
-          setupNameTextboxElem.value = friendlyName;
+        var defaultName;
+
+        try {
+          defaultName = this._device.properties.defaultName;
+        } catch (ex) {
+          Cu.reportError(ex);
+        }
+
+        if (!defaultName)
+          defaultName = this._device.name;
+
+        if (defaultName) {
+          setupNameTextboxElem.value = defaultName;
         }
         else {
           try { productName = this._device.productName; } catch (ex) {}

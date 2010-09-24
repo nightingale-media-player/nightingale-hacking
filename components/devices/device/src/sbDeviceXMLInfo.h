@@ -187,6 +187,14 @@ public :
   nsresult GetDeviceInfoElement(nsIDOMElement** aDeviceInfoElement);
 
   /**
+   * Return in aDefaultName the default name for the device. If no name is
+   * present in the device info, return a void string.
+   *
+   * \param aDefaultName       Returned default name value.
+   */
+  nsresult GetDefaultName(nsAString& aDefaultName);
+
+  /**
    * Return in aFolderURL the URL for the device folder of the type specified by
    * aFolderType.  If no folder of the specified type is present in the device
    * info, return a void URL.  The returned URL is relative to the device mount

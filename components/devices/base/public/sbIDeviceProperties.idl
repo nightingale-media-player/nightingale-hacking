@@ -35,13 +35,18 @@ interface nsIVariant;
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(C4FD2917-1FB5-48AA-B7E6-44056ABEB536)]
+[scriptable, uuid(80ff297c-1dd2-11b2-bc33-972b6bfe5167)]
 interface sbIDeviceProperties : nsISupports
 {
  /**
   * \brief Initialize Friendly Name property from a device
   */
   void initFriendlyName(in AString aFriendlyName);
+
+ /**
+  * \brief Initialize Default Name property from a device
+  */
+  void initDefaultName(in AString aDefaultName);
 
  /**
   * \brief Initialize Vendor Name propery for a device
@@ -91,7 +96,13 @@ interface sbIDeviceProperties : nsISupports
    * back to the device.
    */
   attribute AString friendlyName;
-  
+
+  /**
+   * Default name for the device. Not included in the hash code and therefore
+   * optional.
+   */
+  readonly attribute AString defaultName;
+
    /**
    * A string identifying the vendor of a device. Included in the hash code.
    */

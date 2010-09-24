@@ -31,6 +31,7 @@
 #define SB_DEVICE_PROPERTY_ACCESS_COMPATIBILITY_MUTABLE "http://songbirdnest.com/device/1.0#accessCompatibilityMutable"
 #define SB_DEVICE_PROPERTY_BATTERY_LEVEL          "http://songbirdnest.com/device/1.0#batteryLevel"
 #define SB_DEVICE_PROPERTY_CAPACITY               "http://songbirdnest.com/device/1.0#capacity"
+#define SB_DEVICE_PROPERTY_DEFAULT_NAME           "http://songbirdnest.com/device/1.0#defaultName"
 #define SB_DEVICE_PROPERTY_FIRMWARE_VERSION       "http://songbirdnest.com/device/1.0#firmwareVersion"
 #define SB_DEVICE_PROPERTY_FREE_SPACE             "http://songbirdnest.com/device/1.0#freeSpace"
 #define SB_DEVICE_PROPERTY_MANUFACTURER           "http://songbirdnest.com/device/1.0#manufacturer"

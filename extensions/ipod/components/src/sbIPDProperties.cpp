@@ -80,6 +80,16 @@ sbIPDProperties::InitFriendlyName(const nsAString& aFriendlyName)
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+/**
+ * \brief Initialize Default Name property for a device
+ */
+
+NS_IMETHODIMP
+sbIPDProperties::InitDefaultName(const nsAString& aDefaultName)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 
 /**
  * \brief Initialize Vendor Name propery for a device
@@ -188,6 +198,20 @@ NS_IMETHODIMP
 sbIPDProperties::SetFriendlyName(const nsAString& aFriendlyName)
 {
   return SetPropertyAsAString(NS_LITERAL_STRING("FriendlyName"), aFriendlyName);
+}
+
+
+/**
+ * Default name for the device. Not included in the hash code and therefore
+ * optional.
+ */
+
+NS_IMETHODIMP
+sbIPDProperties::GetDefaultName(nsAString& aDefaultName)
+{
+  return GetPropertyAsAString(
+             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_DEFAULT_NAME),
+             aDefaultName);
 }
 
 
