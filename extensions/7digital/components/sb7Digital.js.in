@@ -132,6 +132,12 @@ function sb7Digital_observe(subject, topic, data) {
       this.uninstall();
       this._uninstall = false;
     }
+
+    // Remove event listener
+    var sbWindow = Cc["@mozilla.org/appshell/window-mediator;1"]
+                     .getService(Ci.nsIWindowMediator)
+                     .getMostRecentWindow("Songbird:Main").window;
+    sbWindow.removeEventListener("ShowCurrentTrack", this.onShowCurrentTrack, true);
   } else if (topic == 'em-action-requested') {
     // the extension manager is doing something
     subject.QueryInterface(Components.interfaces.nsIUpdateItem);
@@ -158,6 +164,20 @@ function sb7Digital_observe(subject, topic, data) {
   } else if (topic == 'songbird-main-window-presented') {
     // Run this everytime since it involves servicepane node initialization
     this.install();
+  }
+}
+
+sb7Digital.prototype.onShowCurrentTrack =
+function sb7Digital_onShowCurrentTrack(aEvent) {
+  var mediacoreManager = Cc['@songbirdnest.com/Songbird/Mediacore/Manager;1']
+                           .getService(Ci.sbIMediacoreManager);
+  var item = mediacoreManager.sequencer.currentItem;
+
+  // Don't load the hidden medialist for the 7digital store if this file
+  // is a preview from the 7digital store.
+  if (item.contentSrc.host == "media3.7digital.com") {
+    aEvent.preventDefault();
+    aEvent.stopPropagation();
   }
 }
 
@@ -202,8 +222,12 @@ function sb7Digital_install() {
     recommendationsNode.setAttributeNS(SERVICEPANE_NS, "addonID", "@EXTENSION_UUID@");
     myNode.appendChild(recommendationsNode);
 
-    recommendationsNode.addEventListener(listener);
-
+    // Create a event listener to prevent 7digital URL's from being clickable
+    // in the faceplate. See bug 22337.
+    var sbWindow = Cc["@mozilla.org/appshell/window-mediator;1"]
+                     .getService(Ci.nsIWindowMediator)
+                     .getMostRecentWindow("Songbird:Main").window;
+    sbWindow.addEventListener("ShowCurrentTrack", this.onShowCurrentTrack, true);
   } catch (e) {
     Cu.reportError(e);
   }
