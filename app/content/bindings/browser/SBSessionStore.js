@@ -169,7 +169,7 @@ var SBSessionStore = {
       tabs = tabObject;
     }
     
-    if ( !tabs ) {
+    if ( !tabs || !tabs.length ) {
       if (!Application.prefs.getValue(PREF_FIRSTRUN, false)) {
         LOG("no saved tabs, first run - using defaults");
         // First run, load the dummy page in the first tab, and the welcome
