@@ -39,4 +39,6 @@ EXTENSION_MAX_VER = $(SB_JSONLY_EXTENSION_MAX_VER)
 
 XPI_NAME = $(EXTENSION_NAME)-$(EXTENSION_VER).xpi
 
-include $(topsrcdir)/extensions/$(EXTENSION_NAME)/branding.mk
+# Change our branding to be partner branding; this is relative to topsrcdir
+# and expects to find a branding.mk in that directory
+SONGBIRD_BRANDING_DIR = extensions/$(EXTENSION_NAME)

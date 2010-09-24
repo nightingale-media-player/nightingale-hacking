@@ -30,7 +30,7 @@
 #=END SONGBIRD BSD-LIKE LICENSE
 #
 
-DEPTH = ../..
+DEPTH = ../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
@@ -39,9 +39,38 @@ include $(DEPTH)/build/autodefs.mk
 
 IS_EXTENSION = 1
 
-SUBDIRS = chrome \
-          components \
-          distribution \
-          $(NULL)
+SONGBIRD_PP_RESOURCES = $(srcdir)/distribution.ini.in \
+                        $(srcdir)/updater.ini.in \
+                        $(NULL)
+
+PPDEFINES += $(SB_BRANDING_DEFINES) \
+             $(DISTRIBUTION_DEFINES) \
+             $(NULL)
+
+DISTRIBUTION_DIR = $(OUR_EXTENSION_STAGE_DIR)/distribution
+
+CREATEDIRS = $(DISTRIBUTION_DIR) \
+             $(NULL)
+
+SONGBIRD_BASE_INSTALLER_NAME ?= $(SB_INSTALLER_FINAL_DIR)/$(SB_INSTALLER_NAME).exe
+SONGBIRD_BASE_INSTALLER_BASENAME = $(notdir $(SONGBIRD_BASE_INSTALLER_NAME))
+
+UNPACKED_BASE_INSTALLER_DIR = $(CURDIR)/unpacked-base-installer
+
+GARBAGE += $(UNPACKED_BASE_INSTALLER_DIR)
 
 include $(topsrcdir)/build/rules.mk
+
+ifeq (,$(wildcard $(SONGBIRD_BASE_INSTALLER_NAME)))
+   $(error Couldn't find base songbird installer $(SONGBIRD_BASE_INSTALLER_NAME); either do a full build with --enable-installer or set SONGBIRD_BASE_INSTALLER_NAME)
+endif
+
+$(UNPACKED_BASE_INSTALLER_DIR): $(SONGBIRD_BASE_INSTALLER_NAME)	
+	$(MKDIR) $(UNPACKED_BASE_INSTALLER_DIR)
+	cmd /c "$(call normalizepath,$(SONGBIRD_BASE_INSTALLER_NAME)) /S /UNPACK /D=$(subst /,\,$(call normalizepath,$(UNPACKED_BASE_INSTALLER_DIR)))"
+
+libs:: $(UNPACKED_BASE_INSTALLER_DIR)
+	$(INSTALL_FILE) $(CURDIR)/distribution.ini $(DISTRIBUTION_DIR)
+	$(INSTALL_FILE) $(CURDIR)/updater.ini $(DISTRIBUTION_DIR)
+	$(SED) -e 's/^Profile=.*/Profile=$(DISTRIBUTION_PROFILE_NAME)/' < $(UNPACKED_BASE_INSTALLER_DIR)/application.ini > $(DISTRIBUTION_DIR)/application.ini
+	$(INSTALL_FILE) $(srcdir)/alert.js $(DISTRIBUTION_DIR)

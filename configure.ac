@@ -528,6 +528,8 @@ if test -z "$PYTHON"; then AC_MSG_ERROR(Python not found); fi
 AC_CHECK_PROG(RM, rm, rm)
 if test -z "$RM"; then AC_MSG_ERROR(Rm not found); fi
 
+AC_CHECK_PROGS(SED, ${SED} gsed sed, "")
+
 AC_CHECK_PROGS(SHA1SUM, ${SHA1SUM} gsha1sum sha1sum, "")
 
 AC_CHECK_PROGS(SORT, ${SORT} sort, "")

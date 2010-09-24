@@ -1,9 +1,10 @@
+#filter substitution
 [Global]
 ; maps to %DISTRIBUTION% & %DISTRIBUTION_VERSION% respectively
-id=PartnerId
-version=1.0
-about=Partner About String
-about.en-US=Localised Partner (en-US) About String
+id=@DISTRIBUTION_ID@
+version=@DISTRIBUTION_VERSION@
+about=@DISTRIBUTION_ABOUT@
+about.en-US=@DISTRIBUTION_ABOUT_EN_US@
 
 [Preferences]
 ; unused?
@@ -13,7 +14,7 @@ about.en-US=Localised Partner (en-US) About String
 ;browser.search.distributionID="com.partner"
 
 ; set the user-agent string accordingly
-general.useragent.extra.partner="PartnerId/1.0"
+general.useragent.extra.partner="@DISTRIBUTION_ID@/@DISTRIBUTION_VERSION@"
 
 ; Uncomment these to set the default Feather
 ;general.skins.selectedSkin="partnerSkinName"
@@ -52,49 +53,49 @@ app.metrics.checkedByDefault=false
 
 ; required addons get special casing in application updates
 [Update]
-addon.required.1=partner@songbirdnest.com
+addon.required.1=partner-branding-sample@songbirdnest.com
 
 ; sections that start with steps: are read by disthelper.exe
 [steps:install]
-0001=move $/songbird.exe $/partnername.exe
-0002=copy partnername.ico $/partnername.ico
+0001=move $/songbird.exe $/@DISTRIBUTION_APP_STUB@
+0002=copy @DISTRIBUTION_APP_ICON@ $/@DISTRIBUTION_APP_ICON@
 0003=copy updater.ini $/updater.ini
 0004=copy updater.ini $/xulrunner/updater.ini
-0005=icon $/partnername.exe partnername.ico
-0006=icon $/partnername.exe partnername.ico #32512
-0007=versioninfo $/partnername.exe VersionInfo
-;0008=copy partnername.ico $/chrome/icons/default/default.ico
+0005=icon $/@DISTRIBUTION_APP_STUB@ @DISTRIBUTION_APP_ICON@
+0006=icon $/@DISTRIBUTION_APP_STUB@ @DISTRIBUTION_APP_ICON@ #32512
+0007=versioninfo $/@DISTRIBUTION_APP_STUB@ VersionInfo
+;0008=copy @DISTRIBUTION_APP_ICON@ $/chrome/icons/default/default.ico
 
 [steps:update]
-0001=move $/songbird.exe $/partnername.exe
-0002=icon $/partnername.exe $/partnername.ico
-0003=icon $/partnername.exe partnername.ico #32512
-0004=versioninfo $/partnername.exe VersionInfo
+0001=move $/songbird.exe $/@DISTRIBUTION_APP_STUB@
+0002=icon $/@DISTRIBUTION_APP_STUB@ $/@DISTRIBUTION_APP_ICON@
+0003=icon $/@DISTRIBUTION_APP_STUB@ @DISTRIBUTION_APP_ICON@ #32512
+0004=versioninfo $/@DISTRIBUTION_APP_STUB@ VersionInfo
 0005=copy $/updater.ini $/xulrunner/updater.ini
-;0006=copy $/partnername.ico $/chrome/icons/default/default.ico
+;0006=copy $/@DISTRIBUTION_APP_ICON@ $/chrome/icons/default/default.ico
 007=exec wscript $/extensions/partner@songbirdnest.com/distribution/alert.js foofoo: $DISTHELPER_FOOFOO$
 
 [steps:uninstall]
-0001=delete $/partnername.exe
+0001=delete $/@DISTRIBUTION_APP_STUB@
 0002=delete $/updater.ini
-0003=delete $/partnername.ico
+0003=delete $/@DISTRIBUTION_APP_ICON@
 
 ; this block is read by disthelper.exe if the versioninfo step is included
 [VersionInfo]
-Comments=PartnerName.exe is based on the Mozilla XULRunner stub loader
-CompanyName=PartnerCo, Inc.
-FileDescription=Partner Media Player
-ProductVersion=1.0.0
-LegalTrademarks=Partner Media Player and PartnerName are registered trademarks of Partner, Inc.  Mozilla is a registered trademark of the Mozilla Foundation.  XULRunner is a trademark of the Mozilla Foundation.
-OriginalFilename=PartnerName.exe
-ProductName=PartnerName
+Comments=@DISTRIBUTION_APP_STUB_COMMENTS@
+CompanyName=@SB_BRAND_VENDOR_NAME@
+FileDescription=@SB_BRAND_FULL_NAME@
+ProductVersion=@DISTRIBUTION_VERSION@
+LegalTrademarks=@SB_TRADEMARKS@
+OriginalFilename=@DISTRIBUTION_APP_STUB@
+ProductName=@SB_BRAND_SHORT_NAME@
 
 ;
 ; Mac OS X steps
 ;
 [steps:test:mac]
-0001=icon "" mynewicon.icns ""
-0002=plist CFBundleGetInfoString Partner Songbird 1.8.0a For Mac.
-0003=plist CFBundleName PartnerSongbird
-0004=plist CFBundleShortVersionString 1.8.1.0a
+0001=icon "" @DISTRIBUTION_APP_ICON_MAC@ ""
+0002=plist CFBundleGetInfoString @SB_BRAND_FULL_NAME@ @DISTRIBUTION_VERSION@ for Mac.
+0003=plist CFBundleName @SB_BRAND_SHORT_NAME@
+0004=plist CFBundleShortVersionString @DISTRIBUTION_VERSION@
 0005=plist CFBundleSignature KREE
