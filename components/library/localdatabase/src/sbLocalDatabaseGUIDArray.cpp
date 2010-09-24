@@ -58,6 +58,9 @@
 
 #define DEFAULT_FETCH_SIZE 20
 
+// Fetch all guids asynchronously, disabled by default.
+//#define FORCE_FETCH_ALL_GUIDS_ASYNC
+
 #define COUNT_COLUMN NS_LITERAL_STRING("count(1)")
 #define GUID_COLUMN NS_LITERAL_STRING("guid")
 #define OBJSORTABLE_COLUMN NS_LITERAL_STRING("obj_sortable")
@@ -2131,6 +2134,7 @@ sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
 
   TRACE(("MISS"));
 
+#if defined(FORCE_FETCH_ALL_GUIDS_ASYNC)
   /*
    * Cache miss
    */
@@ -2150,6 +2154,14 @@ sbLocalDatabaseGUIDArray::GetByIndexInternal(PRUint32 aIndex,
                                static_cast<PRUint32>(0),
                                static_cast<PRUint32>(0));
   }
+#else
+  /*
+   * Cache miss, cache all GUIDs.
+   */
+  rv = FetchRows(0, 0);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(aIndex < mCache.Length(), NS_ERROR_FAILURE);
+#endif
 
   *_retval = mCache[aIndex];
 

@@ -70,6 +70,7 @@ sbLibraryMigration.prototype = {
       var query = this.createMigrationQuery(aLibrary);
       query.addQuery("create index idx_resource_properties_property_id_obj_sortable_media_item_id on resource_properties (property_id, obj_sortable, media_item_id)");
       query.addQuery("reindex");
+      query.addQuery("analyze");
       query.addQuery("commit");
 
       this.migrationQuery = query;
