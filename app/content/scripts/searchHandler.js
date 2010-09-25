@@ -464,10 +464,15 @@ const gSearchHandler = {
     }
     var engine = this.getSongbirdSearchEngine(alias);
 
-    var prefs = Cc["@mozilla.org/preferences-service;1"]
-                  .getService(Ci.nsIPrefBranch);
-    var liveSearchEnabled =
+    var liveSearchEnabled = false;
+    // Live search is disabled by default for search engines other than
+    // Songbird library search.
+    if (engine.tags.split(/\s/).indexOf("songbird-internal-search") != -1 ) {
+      var prefs = Cc["@mozilla.org/preferences-service;1"]
+                    .getService(Ci.nsIPrefBranch);
+      liveSearchEnabled =
         Application.prefs.getValue("songbird.livesearch.enabled", true);
+    }
 
     // Set live search mode for the songbird search engine
     searchBar.setLiveSearchMode(engine, liveSearchEnabled);
