@@ -23,7 +23,8 @@
   -->
 <Url type="text/html" method="GET" template="http://0/this_URL_is_not_used"/>
 <!-- Engines tagged with songbird:internal are not sent to the web browser. -->
-<Tags>songbird:internal</Tags>
+<!-- live search is on by default. -->
+<Tags>songbird:internal songbird:livesearch</Tags>
 <!-- This alias allows gSearchHandler to indentify the Songbird engine -->
 <Alias>songbird-internal-search</Alias>
 </SearchPlugin>

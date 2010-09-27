@@ -36,6 +36,9 @@ const LOG = DebugUtils.generateLogFunction("searchHandler", 2);
 // sent to the browser
 const SEARCHENGINE_TAG_INTERNAL = "songbird:internal";
 
+// Enable live search for engines tagged with "songbird:livesearch"
+const SEARCHENGINE_TAG_LIVESEARCH = "songbird:livesearch";
+
 // Alias identifying the Songbird search engine
 const SEARCHENGINE_ALIAS_SONGBIRD = "songbird-internal-search";
 
@@ -224,7 +227,7 @@ const gSearchHandler = {
     var currentEngine = searchBar.currentEngine;
     // If this engine is an internal one, do the search internally.
     if (currentEngine.tags &&
-        currentEngine.tags.indexOf(SEARCHENGINE_TAG_INTERNAL) > -1)
+        currentEngine.tags.split(/\s+/).indexOf(SEARCHENGINE_TAG_INTERNAL) > -1)
     {
       // Empty search text means to disable the search filter. Still necessary
       // to dispatch search.
@@ -232,7 +235,7 @@ const gSearchHandler = {
       // Special case for our internal search. Other people can add their
       // own listeners as well.
       var contractID =
-        "@songbirdnest.com/Songbird/" + searchBar.currentEngine.alias + ";1";
+        "@songbirdnest.com/Songbird/" + currentEngine.alias + ";1";
       if (contractID in Cc) {
         var searchEngine = Cc[contractID].getService(Ci.sbISearchEngine);
         searchEngine.doSearch(window, searchBar.value);
@@ -447,7 +450,7 @@ const gSearchHandler = {
 
     // Save the previous web search engine, used when switch to web search
     if (!currentEngine.tags ||
-        currentEngine.tags.indexOf(SEARCHENGINE_TAG_INTERNAL) == -1)
+        currentEngine.tags.split(/\s+/).indexOf(SEARCHENGINE_TAG_INTERNAL) < 0)
     {
       this._previousSearchEngine = currentEngine;
       this._previousSearch = searchBar.value;
@@ -465,11 +468,9 @@ const gSearchHandler = {
     var engine = this.getSongbirdSearchEngine(alias);
 
     var liveSearchEnabled = false;
-    // Live search is disabled by default for search engines other than
-    // Songbird library search.
-    if (engine.tags.split(/\s/).indexOf("songbird-internal-search") != -1 ) {
-      var prefs = Cc["@mozilla.org/preferences-service;1"]
-                    .getService(Ci.nsIPrefBranch);
+    // Live search is disabled for search engines whose tags do not
+    // contain "livesearch".
+    if (engine.tags.split(/\s+/).indexOf(SEARCHENGINE_TAG_LIVESEARCH) > -1) {
       liveSearchEnabled =
         Application.prefs.getValue("songbird.livesearch.enabled", true);
     }
@@ -511,7 +512,7 @@ const gSearchHandler = {
     // If this engine has no tags or not been tagged as internal,
     // we need to restore the engine active prior to us.
     if (currentEngine.tags &&
-        currentEngine.tags.indexOf(SEARCHENGINE_TAG_INTERNAL) > -1)
+        currentEngine.tags.split(/\s+/).indexOf(SEARCHENGINE_TAG_INTERNAL) > -1)
     {
       // If there is a previous search engine, switch to it...
       // but first remove any query text so as not to cause
