@@ -6,6 +6,7 @@
 !define BrandFullName         "@SB_BRAND_FULL_NAME@"
 
 !define SongbirdInstallerEXE  "@SB_BASE_INSTALLER_BASENAME@"
+!define FileMainEXE           "@SB_BRAND_SHORT_NAME@.exe"
 
 !define BrandFullNameInternal "@SB_BRAND_FULL_NAME_INTERNAL@"
 !define CompanyName           "@SB_BRAND_VENDOR_NAME@"
@@ -14,21 +15,25 @@
 !define AppVersion            @DISTRIBUTION_VERSION@
 !define AppVersionWindows     @DISTRIBUTION_VERSION_WIN@
 
+!define WindowClass           "SongbirdMessageWindow"
+!define InstallerMutexName    "@SB_BRAND_SHORT_NAME@InstallerMutex"
+
 !define SubApplicationWait    2000
 !define QuitApplicationWait   3000
 
 !define InstallerTmpDir           "$INSTDIR\install.tmp"
-!define PreferredInstallerName    "${BrandShortName}-${AppVersion}.exe"
+!define PreferredInstallerName    "@DISTRIBUTION_INSTALLER_NAME@"
 !define PreferredUninstallerName  "${BrandShortName}-uninstaller.exe"
-!define PreferredInstallDir       "$PROGRAMFILES\${BrandFullNameInternal}\${BrandShortName}\"
+!define PreferredInstallDir       "$PROGRAMFILES\${BrandFullNameInternal}\"
+!define SongbirdInstDir           "$INSTDIR\@SB_BRAND_FULL_NAME@"
 !define PreferredIcon             "@DISTRIBUTION_APP_ICON@"
 !define PreferredInstallerIcon    "@DISTRIBUTION_APP_ICON@"
 !define PreferredUninstallerIcon  "@DISTRIBUTION_APP_ICON@"
 
 ; Registry key paths/names shared between the installer/uninstaller
 
-!define RootAppRegistryKeyBase "Software\${BrandFullNameInternal}"
-!define MuiStartmenupageRegKey "${RootAppRegistryKeyBase}\StartMenuTempKey"
+!define RootAppRegistryKey     "Software\${BrandFullNameInternal}"
+!define MuiStartmenupageRegKey "${RootAppRegistryKey}"
 !define MuiStartmenupageRegName "StartMenuFolder"
 !define DesktopShortcutRegName "DesktopShortcutLocation"
 !define QuicklaunchRegName "QuicklaunchShortcutLocation"

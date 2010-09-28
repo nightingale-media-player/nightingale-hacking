@@ -27,7 +27,6 @@
 ; Global Variables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 var StartMenuDir
-;var RootAppRegistryKey
 
 ; Modes/Types
 var UnpackMode
@@ -42,7 +41,7 @@ CRCCheck force
 RequestExecutionLevel user
 
 ; Addional include directories
-; Relative to the objdir, 
+; Relative to the distdir; we want the objdir...
 !addincludedir ..
 ; ... and this is $(srcdir)/installer/windows
 !addincludedir ..\..\..\..\..\installer\windows\partner
@@ -62,7 +61,6 @@ RequestExecutionLevel user
 !include MUI.nsh
 !include TextFunc.nsh
 !include WinMessages.nsh
-!include WinVer.nsh
 !include WordFunc.nsh
 !include x64.nsh
 
@@ -186,12 +184,13 @@ Section "-Application" Section1
    File ${SongbirdInstallerEXE}
    File /r partnerdist
 
-   ExecWait '"${InstallerTmpDir}\${SongbirdInstallerEXE}" /S /DIST /D=$INSTDIR\Partner Player' $1
-   DetailPrint '"${InstallerTmpDir}\${SongbirdInstallerEXE}" /S /DIST /D=$INSTDIR\Partner Player returned $1'
+   ExecWait '"${InstallerTmpDir}\${SongbirdInstallerEXE}" /S /DIST /D=${SongbirdInstDir}' $1
+   DetailPrint '"${InstallerTmpDir}\${SongbirdInstallerEXE}" /S /DIST /D=${SongbirdInstDir} returned $1'
 
    ;Call InstallExtensions
 
    RMDir /r ${InstallerTmpDir}
+   SetOutPath $INSTDIR
 
    WriteUninstaller ${PreferredUninstallerName}
  
@@ -205,11 +204,11 @@ Section "Desktop Icon"
    ${EndIf}
 
    ; Put the desktop icon in All Users\Desktop
-   ;SetShellVarContext all
-   ;CreateShortCut "$DESKTOP\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\${PreferredIcon}" 0
+   SetShellVarContext all
+   CreateShortCut "$DESKTOP\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\${PreferredIcon}" 0
 
    ; Remember that we installed a desktop shortcut.
-   ;WriteRegStr HKLM $RootAppRegistryKey ${DesktopShortcutRegName} "$DESKTOP\${BrandFullNameInternal}.lnk"
+   WriteRegStr HKLM ${RootAppRegistryKey} ${DesktopShortcutRegName} "$DESKTOP\${BrandFullNameInternal}.lnk"
  
 End: 
 SectionEnd
@@ -220,11 +219,11 @@ Section "QuickLaunch Icon"
    ${EndIf}
   
    ; Put the quicklaunch icon in the current users quicklaunch.
-   ;SetShellVarContext current
-   ;CreateShortCut "$QUICKLAUNCH\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\${PreferredIcon}" 0
+   SetShellVarContext current
+   CreateShortCut "$QUICKLAUNCH\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\${PreferredIcon}" 0
 
    ; Remember that we installed a quicklaunch shortcut.
-   ;WriteRegStr HKLM $RootAppRegistryKey ${QuicklaunchRegName} "$QUICKLAUNCH\${BrandFullNameInternal}.lnk"
+   WriteRegStr HKLM ${RootAppRegistryKey} ${QuicklaunchRegName} "$QUICKLAUNCH\${BrandFullNameInternal}.lnk"
 End:
 SectionEnd
 
@@ -233,9 +232,9 @@ SectionEnd
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Function LaunchApp
-;   Call CloseApp
-;   GetFunctionAddress $0 LaunchAppUserPrivilege 
-;   UAC::ExecCodeSegment $0 
+   Call CloseApp
+   GetFunctionAddress $0 LaunchAppUserPrivilege 
+   UAC::ExecCodeSegment $0 
 FunctionEnd 
 
 Function ValidateInstallationDirectory
@@ -277,7 +276,9 @@ FunctionEnd
 Function .onInit
    InitPluginsDir
 
-   ;${UAC.I.Elevate.AdminOnly}
+   ${UAC.I.Elevate.AdminOnly}
+
+   Call CommonInstallerInit
 
    ; check for unpack.
 
