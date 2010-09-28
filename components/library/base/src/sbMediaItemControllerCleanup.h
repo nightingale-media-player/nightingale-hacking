@@ -117,6 +117,7 @@ protected:
       nsCOMPtr<sbIPropertyArray> mPropsToSet;
       bool mStop;
       bool mCompleted;
+      PRUint32 mCount;
   };
   nsRefPtr<sbEnumerationHelper> mListener;
 

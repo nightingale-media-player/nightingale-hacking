@@ -32,7 +32,9 @@
 #include <nsIEventTarget.h>
 #include <nsIFile.h>
 #include <nsIIdleService.h>
+#include <nsILocalFile.h>
 #include <nsIObserverService.h>
+#include <nsIPropertyBag2.h>
 #include <nsISimpleEnumerator.h>
 #include <nsISupportsPrimitives.h>
 #include <nsIURI.h>
@@ -46,6 +48,7 @@
 #include <nsCOMPtr.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringAPI.h>
+#include <nsTextFormatter.h>
 #include <nsThreadUtils.h>
 
 #include <sbDebugUtils.h>
@@ -127,6 +130,7 @@ sbMediaItemControllerCleanup::Observe(nsISupports *aSubject,
     // idle observer: we are now idle
     nsAutoLock lock(mLock);
     if (mState == STATE_QUEUED) {
+      TRACE("preparing to run: STATE->RUNNING");
       mState = STATE_RUNNING;
       rv = mBackgroundEventTarget->Dispatch(static_cast<nsIRunnable*>(this),
                                             NS_DISPATCH_NORMAL);
@@ -137,6 +141,7 @@ sbMediaItemControllerCleanup::Observe(nsISupports *aSubject,
       if (mListener) {
         mListener->Resume();
       }
+      TRACE("Resuming: STATE->RUNNING");
       mState = STATE_RUNNING;
     }
   }
@@ -144,6 +149,7 @@ sbMediaItemControllerCleanup::Observe(nsISupports *aSubject,
     // idle observer: we are busy again
     nsAutoLock lock(mLock);
     if (mState == STATE_RUNNING) {
+      TRACE("Stopping due to activity: STATE->STOPPING");
       mState = STATE_STOPPING;
     }
     if (mListener) {
@@ -261,12 +267,14 @@ sbMediaItemControllerCleanup::Run()
     NS_POSTCONDITION(mState == STATE_RUNNING || mState == STATE_STOPPING,
                     "should not have exit running!?");
     if (mLibraries.empty()) {
+      TRACE("Run complete: STATE->IDLE");
       mState = STATE_IDLE;
       complete = true;
     }
     else {
       // we can get here if the machine gets out of the idle state before the
       // jobs are all done
+      TRACE("Run incomplete: STATE->QUEUED");
       mState = STATE_QUEUED;
       complete = false;
     }
@@ -277,13 +285,30 @@ sbMediaItemControllerCleanup::Run()
   // 1) all libraries have been processed
   // 2) we were interrupted when the idle service reports the user is back
 
+  NS_ASSERTION(mState == STATE_IDLE || mState == STATE_QUEUED,
+               "Unexpected state while stopping process!");
+  nsCString topic;
+  if (complete) {
+    topic.AssignLiteral(K_CLEANUP_COMPLETE_OBSERVER_TOPIC);
+  }
+  else {
+    topic.AssignLiteral(K_CLEANUP_INTERRUPTED_OBSERVER_TOPIC);
+  }
+  nsString notificationData;
+  #if PR_LOGGING
+    notificationData.Adopt(nsTextFormatter::smprintf((PRUnichar*)NS_LL("%llx"),
+                                                     PR_Now()));
+    TRACE("Notifying observers (%s) [%s]",
+          topic.get(),
+          NS_ConvertUTF16toUTF8(notificationData).get());
+  #endif /* PR_LOGGING */
   nsCOMPtr<nsIObserverService> obs =
     do_ProxiedGetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+  
   rv = obs->NotifyObservers(NS_ISUPPORTS_CAST(nsIObserver*, this),
-                            complete ? K_CLEANUP_COMPLETE_OBSERVER_TOPIC
-                                     : K_CLEANUP_INTERRUPTED_OBSERVER_TOPIC,
-                            nsnull);
+                            topic.get(),
+                            notificationData.get());
   NS_ENSURE_SUCCESS(rv, rv);
   
   return NS_OK;
@@ -433,6 +458,7 @@ sbMediaItemControllerCleanup::OnLibraryRegistered(sbILibrary *aLibrary)
       nsAutoLock lock(mLock);
       mLibraries[aLibrary] = types;
       if (mState == STATE_IDLE) {
+        TRACE("Libraries added: STATE->QUEUED");
         mState = STATE_QUEUED;
       }
     }
@@ -553,6 +579,23 @@ sbMediaItemControllerCleanup::ProcessLibraries()
     }
     NS_ASSERTION(!types.empty(),
                  "Attempted to process a library with neither added nor removed types!");
+    #if PR_LOGGING
+    {
+      nsString fileName((const PRUnichar*)NS_LL("<ERROR>"));
+      nsCOMPtr<nsIPropertyBag2> creationParams;
+      rv = lib->GetCreationParameters(getter_AddRefs(creationParams));
+      NS_ENSURE_SUCCESS(rv, rv);
+      NS_NAMED_LITERAL_STRING(fileKey, "databaseFile");
+      nsCOMPtr<nsILocalFile> databaseFile;
+      rv = creationParams->GetPropertyAsInterface(fileKey,
+                                                  NS_GET_IID(nsILocalFile),
+                                                  getter_AddRefs(databaseFile));
+      if (NS_SUCCEEDED(rv)) {
+        rv = databaseFile->GetLeafName(fileName);
+      }
+      TRACE("got new library %p to process", NS_ConvertUTF16toUTF8(fileName).get());
+    }
+    #endif /* PR_LOGGING */
 
     types_t::const_iterator it;
 
@@ -602,6 +645,7 @@ sbMediaItemControllerCleanup::ProcessLibraries()
 
       rv = lib->RunInBatchMode(mListener, nsnull);
       NS_ENSURE_SUCCESS(rv, rv);
+      TRACE("batch complete");
 
       { /* scope */
         nsAutoLock lock(mLock);
@@ -693,7 +737,8 @@ sbMediaItemControllerCleanup::sbEnumerationHelper::sbEnumerationHelper(
     sbIPropertyArray *aPropertiesToFilter,
     sbIPropertyArray *aPropertiesToSet)
   : mStop(false),
-    mCompleted(false)
+    mCompleted(false),
+    mCount(0)
 {
   TRACE_FUNCTION("");
   mList = aMediaList;
@@ -724,7 +769,7 @@ sbMediaItemControllerCleanup::sbEnumerationHelper::OnEnumeratedItem(
     sbIMediaItem *aMediaItem,
     PRUint16 *_retval NS_OUTPARAM)
 {
-  TRACE_FUNCTION("");
+  TRACE_FUNCTION("count: %i", ++mCount);
   NS_PRECONDITION(!NS_IsMainThread(),
                   "sbEnumerationHelper::OnEnumeratedItem"
                   " should be called on the background thread!");
@@ -749,11 +794,25 @@ sbMediaItemControllerCleanup::sbEnumerationHelper::OnEnumerationEnd(
     sbIMediaList *aMediaList,
     nsresult aStatusCode)
 {
-  TRACE_FUNCTION("");
+  TRACE_FUNCTION("total: %i", mCount);
   NS_PRECONDITION(!NS_IsMainThread(),
                   "sbEnumerationHelper::OnEnumerationEnd"
                   " should be called on the background thread!");
   mCompleted = NS_SUCCEEDED(aStatusCode);
+  #if PR_LOGGING
+  { /* scope */
+    nsresult rv;
+    nsString filter, set;
+    rv = mPropsToFilter->ToString(filter);
+    if (NS_FAILED(rv)) filter.AssignLiteral("<error>");
+    rv = mPropsToSet->ToString(filter);
+    if (NS_FAILED(rv)) filter.AssignLiteral("<error>");
+    TRACE("filter: %s set: %s complete? %s",
+          NS_ConvertUTF16toUTF8(filter).get(),
+          NS_ConvertUTF16toUTF8(set).get(),
+          mCompleted ? "yes" : "no");
+  }
+  #endif
   return NS_OK;
 }
 

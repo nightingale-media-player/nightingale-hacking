@@ -46,6 +46,27 @@ function runTest () {
                            null,
                            false);
 
+
+  // wait for things to clear out
+  log("Processing pre-existing libraries...");
+  var obs = Cc["@mozilla.org/observer-service;1"]
+              .getService(Ci.nsIObserverService);
+  obs.addObserver({observe: function(aSubject, aTopic, aData) {
+    obs.removeObserver(this, aTopic);
+    log("Initialized: " + aTopic + " [" + aData + "]");
+    // we need to sleep(0) to make sure we get out of the observer topic
+    // callback loop, so that registering the next observer will not be called
+    // immediately.
+    sleep(0);
+    testFinished();}
+  }, K_COMPLETE_TOPIC, false);
+  var cleanupSvc =
+    Cc["@songbirdnest.com/Songbird/Library/MediaItemControllerCleanup;1"]
+      .getService(Ci.nsIObserver);
+  cleanupSvc.observe(null, "idle", null);
+  testPending();
+  log("Pre-existing libraries processed");
+
   setupForItemHidden();
 }
 
