@@ -49,7 +49,7 @@ RequestExecutionLevel user
 ; and add includes/plugins for nsProcess, UAC, and nsiunz
 !addincludedir ..\..\..\..\..\dependencies\windows-i686-msvc8\nsis-2.45\extra-plugins\nsProcess\include
 !addplugindir ..\..\..\..\..\dependencies\windows-i686-msvc8\nsis-2.45\extra-plugins\nsProcess\Plugin
-!addplugindir ..\..\..\..\..\dependencies\windows-i686-msvc8\nsis-2.45\extra-plugins\nsiunz\Release
+!addplugindir ..\..\..\..\..\dependencies\windows-i686-msvc8\nsis-2.45\extra-plugins\nsisunz\Release
 
 ; ... and UAC
 !addincludedir ..\..\..\..\..\dependencies\windows-i686-msvc8\nsis-2.45\extra-plugins\uac
@@ -161,11 +161,6 @@ BrandingText "${BrandFullName}"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 !insertmacro MUI_LANGUAGE "English" ; First is default
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; UAC Handling 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-${UAC.AutoCodeUnload} "1"
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Installer Options
@@ -184,17 +179,17 @@ Section "-Application" Section1
    File ${SongbirdInstallerEXE}
    File /r partnerdist
 
-   System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("DISTHELPER_DISTINI","$INSTDIR\\${InstallerTmpDir}\\partnerdist\\distribution.ini").r1'
+   System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("DISTHELPER_DISTINI","${InstallerTmpDir}\partnerdist\distribution.ini").r1'
 
    ExecWait '"${InstallerTmpDir}\${SongbirdInstallerEXE}" /S /DIST=${BrandFullNameInternal} /NOOSVERSIONCHECK /D=${SongbirdInstDir}' $1
-   DetailPrint '"${InstallerTmpDir}\${SongbirdInstallerEXE}" /S /DIST=${BrandFullNameInternal} /NOOSVERSIONCHECK /D=${SongbirdInstDir} => $1'
+   DetailPrint 'Songbird installer returned: $1'
 
-   ;Call InstallExtensions
+   Call InstallExtensions
 
    SetOutPath $INSTDIR
-   RMDir /r ${InstallerTmpDir}
-
    WriteUninstaller ${PreferredUninstallerName}
+
+   RMDir /r ${InstallerTmpDir}
  
    ; Refresh desktop icons
    System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
@@ -207,7 +202,7 @@ Section "Desktop Icon"
 
    ; Put the desktop icon in All Users\Desktop
    SetShellVarContext all
-   CreateShortCut "$DESKTOP\${BrandFullNameInternal}.lnk" "$INSTDIR\${SongbirdInstDir}\${FileMainEXE}" "" "$INSTDIR\${SongbirdInstDir}\${PreferredIcon}" 0
+   CreateShortCut "$DESKTOP\${BrandFullNameInternal}.lnk" "${SongbirdInstDir}\${FileMainEXE}" "" "${SongbirdInstDir}\${PreferredIcon}" 0
 
    ; Remember that we installed a desktop shortcut.
    WriteRegStr HKLM ${RootAppRegistryKey} ${DesktopShortcutRegName} "$DESKTOP\${BrandFullNameInternal}.lnk"
@@ -222,7 +217,7 @@ Section "QuickLaunch Icon"
   
    ; Put the quicklaunch icon in the current users quicklaunch.
    SetShellVarContext current
-   CreateShortCut "$QUICKLAUNCH\${BrandFullNameInternal}.lnk" "$INSTDIR\${SongbirdInstDir}\${FileMainEXE}" "" "$INSTDIR\${PreferredIcon}" 0
+   CreateShortCut "$QUICKLAUNCH\${BrandFullNameInternal}.lnk" "${SongbirdInstDir}\${FileMainEXE}" "" "${SongbirdInstDir}\{PreferredIcon}" 0
 
    ; Remember that we installed a quicklaunch shortcut.
    WriteRegStr HKLM ${RootAppRegistryKey} ${QuicklaunchRegName} "$QUICKLAUNCH\${BrandFullNameInternal}.lnk"
@@ -232,6 +227,18 @@ SectionEnd
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Installer Helper Functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+Function InstallExtensions
+   CreateDirectory "${SongbirdInstDir}\extensions\partner-branding-sample@songbirdnest.com"
+   nsisunz::Unzip "${InstallerTmpDir}\partnerdist\partner-branding-sample-1.0.0.xpi" "${SongbirdInstDir}\extensions\partner-branding-sample@songbirdnest.com"
+
+   Pop $0
+   StrCmp $0 "success" unzip_ok
+     MessageBox MB_OK "Unzip error: $0"
+
+unzip_ok:
+
+FunctionEnd
 
 Function LaunchApp
    Call CloseApp
@@ -360,3 +367,43 @@ Function un.onInit
    ${UAC.U.Elevate.AdminOnly} ${PreferredUninstallerName}
    Call un.CommonInstallerInit
 FunctionEnd
+
+Function InstallAppRegistryKeys
+   ; Write the installation path into the registry
+   WriteRegStr HKLM ${RootAppRegistryKey} "InstallDir" "$INSTDIR"
+   WriteRegStr HKLM ${RootAppRegistryKey} "BuildNumber" "${AppBuildNumber}"
+   WriteRegStr HKLM ${RootAppRegistryKey} "BuildVersion" "${AppVersion}"
+
+   ; These need special handling on uninstall since they may be overwritten by
+   ; an install into a different location.
+   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\App Paths\${FileMainEXE}"
+   WriteRegStr HKLM "$0" "Path" "$INSTDIR"
+   WriteRegStr HKLM "$0" "" "${SongbirdInstDir}\${FileMainEXE}"
+FunctionEnd
+
+Function InstallUninstallRegistryKeys
+   StrCpy $R0 "${BrandFullNameInternal}"
+
+   ; Write the uninstall keys for Windows
+   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$R0" "DisplayName" "${BrandFullName} ${AppVersion} (Build ${AppBuildNumber})"
+   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$R0" "InstallLocation" "$INSTDIR"
+   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$R0" "UninstallString" '"$INSTDIR\${PreferredUninstallerName}"'
+   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$R0" "NoModify" 1
+   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$R0" "NoRepair" 1
+FunctionEnd
+
+Function InstallBrandingRegistryKeys 
+   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+   CreateDirectory "$SMPROGRAMS\$StartMenuDir"
+   CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal}.lnk" "${SongbirdInstDir}\${FileMainEXE}" "" "${SongbirdInstDir}\${PreferredIcon}" 0
+   CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal} (Profile Manager).lnk" "${SongbirdInstDir}\${FileMainEXE}" "-p" "${SongbirdInstDir}\${PreferredIcon}" 0 SW_SHOWNORMAL "" "${BrandFullName} w/ Profile Manager"
+   CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal} (Safe-Mode).lnk" "${SongbirdInstDir}\${FileMainEXE}" "-safe-mode" "${SongbirdInstDir}\${PreferredIcon}" 0 SW_SHOWNORMAL "" "${BrandFullName} Safe-Mode"
+   CreateShortCut "$SMPROGRAMS\$StartMenuDir\Uninstall ${BrandFullNameInternal}.lnk" "${SongbirdInstDir}\${PreferredUninstallerName}" "" "${SongbirdInstDir}\${PreferredUninstallerIcon}" 0
+   !insertmacro MUI_STARTMENU_WRITE_END
+FunctionEnd
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UAC Handling 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+${UAC.AutoCodeUnload} "1"
+

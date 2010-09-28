@@ -6,7 +6,9 @@
 !define BrandFullName         "@SB_BRAND_FULL_NAME@"
 
 !define SongbirdInstallerEXE  "@SB_BASE_INSTALLER_BASENAME@"
-!define FileMainEXE           "@SB_BRAND_SHORT_NAME@.exe"
+; XXX: short term hack; fix this in the branding extension.
+;!define FileMainEXE           "@SB_BRAND_SHORT_NAME@.exe"
+!define FileMainEXE           "PartnerName.exe"
 
 !define BrandFullNameInternal "@SB_BRAND_FULL_NAME_INTERNAL@"
 !define CompanyName           "@SB_BRAND_VENDOR_NAME@"
@@ -14,6 +16,7 @@
 
 !define AppVersion            @DISTRIBUTION_VERSION@
 !define AppVersionWindows     @DISTRIBUTION_VERSION_WIN@
+!define AppBuildNumber        1000
 
 !define WindowClass           "SongbirdMessageWindow"
 !define InstallerMutexName    "@SB_BRAND_SHORT_NAME@InstallerMutex"

@@ -103,6 +103,8 @@ checkApp:
             goto exit
          ${EndIf}
       ${EndIf}
+  ${Else}
+    goto out
   ${EndIf}
 
 exit:
@@ -165,5 +167,5 @@ FunctionEnd
 !insertmacro CommonInstallerInit "un."
 
 Function LaunchAppUserPrivilege 
-   Exec '"$INSTDIR\${SongbirdInstDir}\${FileMainEXE}"'    
+   Exec '"${SongbirdInstDir}\${FileMainEXE}"'    
 FunctionEnd
