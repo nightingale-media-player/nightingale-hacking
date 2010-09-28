@@ -109,7 +109,9 @@ public:
   nsresult HandleMetadataEvent(sbIMediacoreEvent *aEvent);
   nsresult SetMetadataDataRemote(const nsAString &aId,
                                  const nsAString &aValue);
-  nsresult SetMetadataDataRemotesFromItem(sbIMediaItem *aItem);
+  nsresult SetMetadataDataRemotesFromItem(
+          sbIMediaItem *aItem,
+          sbIPropertyArray *aPropertiesChanged = nsnull);
   nsresult ResetMetadataDataRemotes();
 
   nsresult UpdateCurrentItemDuration(PRUint64 aDuration);
@@ -154,6 +156,10 @@ protected:
   nsresult StartPlayback();
 
   PRBool   CheckPropertiesInfluenceView(sbIPropertyArray *aProperties);
+
+  PRBool IsPropertyInPropertyArray(sbIPropertyArray *aPropArray,
+                                   const nsAString &aPropName);
+
 
   /**
    * Update the "lastPosition" property on the item, to support resuming

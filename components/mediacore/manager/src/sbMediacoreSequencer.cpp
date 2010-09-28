@@ -1085,45 +1085,104 @@ sbMediacoreSequencer::SetMetadataDataRemote(const nsAString &aId,
   return NS_OK;
 }
 
+PRBool
+sbMediacoreSequencer::IsPropertyInPropertyArray(sbIPropertyArray *aPropArray,
+                                                const nsAString &aPropName)
+{
+  PRUint32 length = 0;
+  nsresult rv = aPropArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+  nsCOMPtr<sbIProperty> property;
+  for(PRUint32 current = 0; current < length; ++current) {
+    rv = aPropArray->GetPropertyAt(current, getter_AddRefs(property));
+    NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+    nsString id;
+    rv = property->GetId(id);
+    NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+    if(id.Equals(aPropName)) {
+      return PR_TRUE;
+    }
+  }
+
+  return PR_FALSE;
+}
+
+/* Set the metadata data remotes from the properties on aItem.
+ * If aPropertiesChanges is non-null, only set the data remotes that rely on
+ * the changed properties.
+ */
 nsresult
-sbMediacoreSequencer::SetMetadataDataRemotesFromItem(sbIMediaItem *aItem)
+sbMediacoreSequencer::SetMetadataDataRemotesFromItem(
+        sbIMediaItem *aItem,
+        sbIPropertyArray *aPropertiesChanged)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aItem);
 
   nsString albumName, artistName, genre, trackName, imageURL;
-  nsresult rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
-                                   albumName);
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsresult rv;
 
-  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
-                          artistName);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if(!aPropertiesChanged || 
+     IsPropertyInPropertyArray(aPropertiesChanged,
+                               NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME)))
+  {
+    rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                            albumName);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_GENRE), genre);
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = mDataRemoteMetadataAlbum->SetStringValue(albumName);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME), trackName);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if(!aPropertiesChanged || 
+     IsPropertyInPropertyArray(aPropertiesChanged,
+                               NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME)))
+  {
+    rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
+                            artistName);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
-                          imageURL);
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = mDataRemoteMetadataArtist->SetStringValue(artistName);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-  rv = mDataRemoteMetadataAlbum->SetStringValue(albumName);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if(!aPropertiesChanged || 
+     IsPropertyInPropertyArray(aPropertiesChanged,
+                               NS_LITERAL_STRING(SB_PROPERTY_GENRE)))
+  {
+    rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_GENRE), genre);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mDataRemoteMetadataArtist->SetStringValue(artistName);
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = mDataRemoteMetadataGenre->SetStringValue(genre);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-  rv = mDataRemoteMetadataGenre->SetStringValue(genre);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if(!aPropertiesChanged || 
+     IsPropertyInPropertyArray(aPropertiesChanged,
+                               NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME)))
+  {
+    rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                            trackName);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mDataRemoteMetadataTitle->SetStringValue(trackName);
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = mDataRemoteMetadataTitle->SetStringValue(trackName);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-  rv = mDataRemoteMetadataImageURL->SetStringValue(imageURL);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if(!aPropertiesChanged || 
+     IsPropertyInPropertyArray(aPropertiesChanged,
+                               NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL)))
+  {
+    rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
+                            imageURL);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mDataRemoteMetadataImageURL->SetStringValue(imageURL);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -3681,7 +3740,7 @@ sbMediacoreSequencer::OnItemUpdated(sbIMediaList *aMediaList,
   NS_ENSURE_SUCCESS(rv, rv);
 
   if(aMediaItem == item) {
-    rv = SetMetadataDataRemotesFromItem(item);
+    rv = SetMetadataDataRemotesFromItem(item, aProperties);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
