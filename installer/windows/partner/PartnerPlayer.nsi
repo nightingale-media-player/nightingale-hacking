@@ -184,13 +184,15 @@ Section "-Application" Section1
    File ${SongbirdInstallerEXE}
    File /r partnerdist
 
-   ExecWait '"${InstallerTmpDir}\${SongbirdInstallerEXE}" /S /DIST /D=${SongbirdInstDir}' $1
-   DetailPrint '"${InstallerTmpDir}\${SongbirdInstallerEXE}" /S /DIST /D=${SongbirdInstDir} returned $1'
+   System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("DISTHELPER_DISTINI","$INSTDIR\\${InstallerTmpDir}\\partnerdist\\distribution.ini").r1'
+
+   ExecWait '"${InstallerTmpDir}\${SongbirdInstallerEXE}" /S /DIST=${BrandFullNameInternal} /NOOSVERSIONCHECK /D=${SongbirdInstDir}' $1
+   DetailPrint '"${InstallerTmpDir}\${SongbirdInstallerEXE}" /S /DIST=${BrandFullNameInternal} /NOOSVERSIONCHECK /D=${SongbirdInstDir} => $1'
 
    ;Call InstallExtensions
 
-   RMDir /r ${InstallerTmpDir}
    SetOutPath $INSTDIR
+   RMDir /r ${InstallerTmpDir}
 
    WriteUninstaller ${PreferredUninstallerName}
  
@@ -205,7 +207,7 @@ Section "Desktop Icon"
 
    ; Put the desktop icon in All Users\Desktop
    SetShellVarContext all
-   CreateShortCut "$DESKTOP\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\${PreferredIcon}" 0
+   CreateShortCut "$DESKTOP\${BrandFullNameInternal}.lnk" "$INSTDIR\${SongbirdInstDir}\${FileMainEXE}" "" "$INSTDIR\${SongbirdInstDir}\${PreferredIcon}" 0
 
    ; Remember that we installed a desktop shortcut.
    WriteRegStr HKLM ${RootAppRegistryKey} ${DesktopShortcutRegName} "$DESKTOP\${BrandFullNameInternal}.lnk"
@@ -220,7 +222,7 @@ Section "QuickLaunch Icon"
   
    ; Put the quicklaunch icon in the current users quicklaunch.
    SetShellVarContext current
-   CreateShortCut "$QUICKLAUNCH\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\${PreferredIcon}" 0
+   CreateShortCut "$QUICKLAUNCH\${BrandFullNameInternal}.lnk" "$INSTDIR\${SongbirdInstDir}\${FileMainEXE}" "" "$INSTDIR\${PreferredIcon}" 0
 
    ; Remember that we installed a quicklaunch shortcut.
    WriteRegStr HKLM ${RootAppRegistryKey} ${QuicklaunchRegName} "$QUICKLAUNCH\${BrandFullNameInternal}.lnk"
@@ -288,3 +290,73 @@ Function .onInit
    ${EndIf}
 FunctionEnd
 
+!insertmacro un.GetParameters
+!insertmacro un.GetOptions
+!insertmacro un.LineRead
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Uninstaller Options
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+UninstallIcon ${PreferredUninstallerIcon}
+
+ShowUninstDetails hide
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Uninstall Section
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Section "Uninstall"
+   Call un.CloseApp
+
+   Call un.RemoveAppRegistryKeys
+
+   ;Call un.CleanVirtualStore
+
+   ; Refresh desktop.
+   System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
+SectionEnd
+
+
+Function un.RemoveBrandingRegistryKeys
+   SetShellVarContext all
+
+   ; Read where start menu shortcuts are installed
+   ReadRegStr $R0 HKLM ${RootAppRegistryKey} ${MuiStartmenupageRegName}
+
+   ; Remove start menu shortcuts and start menu folder.
+   ${If} ${FileExists} "$SMPROGRAMS\$R0\${BrandFullNameInternal}.lnk"
+      RMDir /r "$SMPROGRAMS\$R0\*.*"
+   ${EndIf}
+
+   ; Read location of desktop shortcut and remove if present.
+   ReadRegStr $R0 HKLM ${RootAppRegistryKey} ${DesktopShortcutRegName}
+   ${If} ${FileExists} $R0
+      Delete $R0
+   ${EndIf}
+
+   ; Read location of quicklaunch shortcut and remove if present.
+   ReadRegStr $R0 HKLM ${RootAppRegistryKey} ${QuicklaunchRegName}
+   ${If} ${FileExists} $R0
+      Delete $R0
+   ${EndIf}
+FunctionEnd
+
+Function un.RemoveAppRegistryKeys
+   ; Remove registry keys
+   ;DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}"
+
+
+   ;StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\App Paths\${FileMainEXE}"
+   ;DeleteRegKey HKLM "$0"
+
+   ; Remove the last of the registry keys
+   DeleteRegKey HKLM "${RootAppRegistryKey}"
+FunctionEnd 
+ 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Uninstaller Initialization Functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+Function un.onInit
+   ${UAC.U.Elevate.AdminOnly} ${PreferredUninstallerName}
+   Call un.CommonInstallerInit
+FunctionEnd
