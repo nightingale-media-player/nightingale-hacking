@@ -102,6 +102,18 @@
               </row>
             </rows>
           </grid>
+
+          <hbox id="library-newrelease-box">
+            <vbox pack="start" flex="1">
+              <label id="pref-library" class="prefs-header"
+                     value="&prefs.library;" />
+              <description id="library-text">&prefs.library.text;</description>
+              <checkbox id="checkbox-library-integration"
+                        checked="true"
+                        label="&prefs.library.checklabel;"/>
+            </vbox>
+          </hbox>
+
         </vbox> <!-- /#newReleases-location-box -->
       </vbox>
     </hbox>

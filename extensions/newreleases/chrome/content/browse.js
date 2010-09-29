@@ -191,8 +191,9 @@ NewReleaseAlbum.editLocation = function() {
 	deck.setAttribute("previous-selected-deck", deck.selectedIndex);
 	
 	// Hide the stuff we don't want to display
-	//document.getElementById("pref-library").style.visibility = "hidden";
-	//document.getElementById("library-ontour-box").style.visibility ="collapse";
+	document.getElementById("pref-library").style.visibility = "hidden";
+        document.getElementById("library-newrelease-box")
+                .style.visibility = "collapse";
 
 	// Not strictly required, but in the event the user hit cancel, we
 	// probably want to reset to their preferred location
@@ -245,7 +246,7 @@ NewReleaseAlbum.loadNewReleaseData = function(country) {
 		Application.prefs.setValue("extensions.newreleases.firstrun", false);
 
 		// setup the smart playlist
-		//songbirdMainWindow.NewReleases._setupOnTourPlaylist();
+		songbirdMainWindow.NewReleases._setupNewReleasePlaylist();
 	}
 
 	// Load the new data
@@ -345,7 +346,7 @@ NewReleaseAlbum.playArtist = function(e) {
 	var artistName = this.getAttribute("artistName");
 	
 	gMetrics.metricsInc("newReleases", "browse.view.artist.playartist", "");
-	var list = songbirdMainWindow.NewReleases.touringPlaylist;
+	var list = songbirdMainWindow.NewReleases.releasePlaylist;
 	var view = list.createView();
 	var cfs = view.cascadeFilterSet;
 	

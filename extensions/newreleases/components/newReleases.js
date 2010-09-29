@@ -37,8 +37,8 @@ const monthInMillis = 3600*24*1000*30;
 // Testing flags
 const SHORT_TIMER = true;
 
-const onTourIconSrc = "chrome://newreleases/skin/icon-ticket.png";
-const noTourIconSrc = "";
+const newReleaseIconSrc = "chrome://newreleases/skin/node-icon.png";
+const noReleaseIconSrc = "";
 
 var monthArray = new Array("January",
                            "February",
@@ -53,12 +53,12 @@ var monthArray = new Array("January",
                            "November",
                            "December");
 
-var concertExtensionPrefs = Cc["@mozilla.org/preferences-service;1"]
-                              .getService(Ci.nsIPrefService)
-                              .getBranch("extensions.newreleases.");
+var newReleaseExtensionPrefs = Cc["@mozilla.org/preferences-service;1"]
+                                 .getService(Ci.nsIPrefService)
+                                 .getBranch("extensions.newreleases.");
 
 function debugLog(funcName, str) {
-  var debug = concertExtensionPrefs.getBoolPref("debug");
+  var debug = newReleaseExtensionPrefs.getBoolPref("debug");
   if (debug)
     dump("*** newReleases.js::" + funcName + " // " + str + "\n");
 }
@@ -143,17 +143,16 @@ function NewReleases() {
   this.countryStringBundle = Cc["@mozilla.org/intl/stringbundle;1"]
                                .getService(Ci.nsIStringBundleService)
                                .createBundle("chrome://newreleases/locale/country.properties");
-/*
   // Setup our properties
   var pMgr = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
                .getService(Ci.sbIPropertyManager);
-  if (!pMgr.hasProperty(this.onTourImgProperty)) {
-    debugLog("constructor", "Creating on tour image property:" +
-             this.onTourImgProperty);
+  if (!pMgr.hasProperty(this.newReleaseImgProperty)) {
+    debugLog("constructor", "Creating New Release image property:" +
+             this.newReleaseImgProperty);
     var builder = Cc["@songbirdnest.com/Songbird/Properties/Builder/Image;1"]
                     .createInstance(Ci.sbIImagePropertyBuilder);
-    builder.propertyID = this.onTourImgProperty;
-    builder.displayName = stringBundle.GetStringFromName("onTourProperty");
+    builder.propertyID = this.newReleaseImgProperty;
+    builder.displayName = stringBundle.GetStringFromName("newReleaseProperty");
     builder.userEditable = false;
     builder.userViewable = true;
     var pI = builder.get();
@@ -162,12 +161,12 @@ function NewReleases() {
     debugLog("constructor", "BAD: PROPERTY MANAGER ALREADY HAS " +
              "IMAGE PROPERTY REGISTERED\n");
   }
-  if (!pMgr.hasProperty(this.onTourUrlProperty)) {
-    debugLog("constructor", "Creating on tour URL property:" +
-             this.onTourUrlProperty);
+  if (!pMgr.hasProperty(this.newReleaseUrlProperty)) {
+    debugLog("constructor", "Creating New Release URL property:" +
+             this.newReleaseUrlProperty);
     var pI = Cc["@songbirdnest.com/Songbird/Properties/Info/Text;1"]
                .createInstance(Ci.sbITextPropertyInfo);
-    pI.id = this.onTourUrlProperty;
+    pI.id = this.newReleaseUrlProperty;
     pI.displayName = "Not visible"
     pI.userEditable = false;
     pI.userViewable = false;
@@ -178,10 +177,9 @@ function NewReleases() {
   var registrar =
         Cc["@songbirdnest.com/Songbird/SmartPlaylistPropertyRegistrar;1"]
           .getService(Ci.sbISmartPlaylistPropertyRegistrar);
-  registrar.registerPropertyToContext("default", this.onTourImgProperty,
+  registrar.registerPropertyToContext("default", this.newReleaseImgProperty,
                                       50, "d");
-  debugLog("constructor", "OnTourImgProperty reg'd w/ smartpls registrar");
-*/
+  debugLog("constructor", "newReleaseImgProperty reg'd w/ smartpls registrar");
 
   // Setup our database
   this._db = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
@@ -228,8 +226,9 @@ NewReleases.prototype = {
   self : this,
   releasesTotal : 0,
 
-  onTourImgProperty : "http://songbirdnest.com/data/1.0#artistOnTour",
-  onTourUrlProperty : "http://songbirdnest.com/data/1.0#artistOnTourUrl",
+  newReleaseImgProperty : "http://songbirdnest.com/data/1.0#artistNewRelease",
+  newReleaseUrlProperty :
+    "http://songbirdnest.com/data/1.0#artistNewReleaseUrl",
 
   progressString : "",
   progressPercentage : 0,
@@ -310,27 +309,23 @@ NewReleases.prototype = {
 
   /*********************************************************************
    * Routine fired for when media is added to the main library.  We need
-   * to do this so we can update its on tour status (if we already have
-   * concert data)
+   * to do this so we can update its new release status (if we already have
+   * new release data)
    *********************************************************************/
   onItemUpdated : function(list, item, index) {
-    // The media library column isn't fully implemented yet
-    // in New Releases so go ahead and exit cleanly for now
-    return true;
-
     var firstrun = this.prefs.getBoolPref("firstrun");
     if (firstrun)
       return true;
     var artist = item.getProperty(SBProperties.artistName);
-    var url = this.getArtistUrlIfOnTour(artist);
+    var url = this.getArtistUrlIfHasRelease(artist);
     if (url != null) {
-      debugLog("onItemUpdated", "New on tour item, artist: " + artist);
-      // Set the touring properties for this track
-      item.setProperty(this.onTourImgProperty, onTourIconSrc);
-      item.setProperty(this.onTourUrlProperty, url);
-      debugLog("onItemUpdated", "Touring status set to true");
+      debugLog("onItemUpdated", "New new release item, artist: " + artist);
+      // Set the new release properties for this track
+      item.setProperty(this.newReleaseImgProperty, newReleaseIconSrc);
+      item.setProperty(this.newReleaseUrlProperty, url);
+      debugLog("onItemUpdated", "New release status set to true");
 
-      // Set the concerts this artist is playing at to be flagged
+      // Set the new release this artist is playing at to be flagged
       // as "library artists"
       if (this._batch.isActive()) {
         // We're in batch mode!
@@ -340,15 +335,15 @@ NewReleases.prototype = {
         // Running on a single item:
         this._db.resetQuery();
         this._db.addQuery("UPDATE playing_at " +
-                          "SET libraryArtist=1,anyLibraryArtist=1 " +
-                          "WHERE artistid = " +
-                          "(SELECT ROWID FROM artists " +
-                          "WHERE name='" + artist.replace(/'/g, "''") + "')");
+                          "SET libraryArtist=1 " +
+                          "WHERE artistid = '" +
+                          escape(artist).replace(/'/g, "''") + "'");
         this._db.execute();
         this.spsUpdater();
       }
     }
   },
+
   onItemAdded : function(list, item, index) {
     var firstrun = this.prefs.getBoolPref("firstrun");
     if (firstrun)
@@ -377,10 +372,9 @@ NewReleases.prototype = {
       var artistsAdded = false;
       for (artist in this._batchArtistsAdded) {
         this._db.addQuery("UPDATE playing_at " +
-                          "SET libraryArtist=1,anyLibraryArtist=1 " +
-                          "WHERE artistid = " +
-                          "(SELECT ROWID FROM artists " +
-                          "WHERE name='" + artist.replace(/'/g, "''") + "')");
+                          "SET libraryArtist=1 " +
+                          "WHERE artistid = '" +
+                          escape(artist).replace(/'/g, "''") + "'");
         debugLog("onBatchEnd", "Adding update query for " + artist);
         artistsAdded = true;
       }
@@ -393,7 +387,7 @@ NewReleases.prototype = {
       // For batch removal
       for (artist in this._batchArtistsRemoved) {
         debugLog("onBatchEnd", "Reseting for " + artist);
-        this.resetTourDataForArtist(list, artist);
+        this.resetReleaseDataForArtist(list, artist);
       }
       delete this._batchArtistsRemoved;
 
@@ -401,8 +395,8 @@ NewReleases.prototype = {
     }
   },
 
-  resetTourDataForArtist : function(list, artist) {
-    debugLog("resetTourDataForArtist", "init");
+  resetReleaseDataForArtist : function(list, artist) {
+    debugLog("resetReleaseDataForArtist", "init");
     var otherTracks = true;
     var arr;
     try {
@@ -411,17 +405,17 @@ NewReleases.prototype = {
     }
     if (typeof(arr) == "undefined")
       otherTracks = false;
-    debugLog("resetTourDataForArtist", "Artist: " + artist
+    debugLog("resetReleaseDataForArtist", "Artist: " + artist
       //+ " -- track: " + item.getProperty(SBProperties.trackName)
       //+ " -- tracks left: " + arr.length
-      //+ " -- Touring:" + item.getProperty(this.onTourImgProperty)
+      //+ " -- New Release:" + item.getProperty(this.newReleaseImgProperty)
     );
     if (!otherTracks) {
-      debugLog("resetTourDataForArtist", "Clearing touring data for " + artist);
+      debugLog("resetReleaseDataForArtist", "Clearing release data for " + artist);
       // There were no other tracks, so update the SQLite DB
       // This actually turns out to be really annoying, we have to
-      // first get all the concerts that this artist is playing in
-      // and set playing_at.libraryArtist = 0.  For each concert, we
+      // first get all the releases that this artist is playing in
+      // and set playing_at.libraryArtist = 0.  For each release, we
       // have to determine if this artist was the *only* library
       // artist there.  If so, then we also need to set
       // anyLibraryArtist = 0. this is expensive, but fortunately
@@ -431,29 +425,8 @@ NewReleases.prototype = {
       this._db.resetQuery();
       this._db.addQuery("UPDATE playing_at " +
                         "SET libraryArtist=0 " +
-                        "WHERE artistid = " +
-                        "(SELECT ROWID FROM artists " +
-                        "WHERE name='" + artist.replace(/'/g, "''") + "')");
-      this._db.execute();
-      this.spsUpdater();
-
-      // Yay 3 level query.  The inner-most gets all concerts whose
-      // SUM(libraryArtist) is 0 (which means all concerts who don't
-      // have any libraryartists playing, but for which their
-      // anyLibraryArtist flag is still 1).  We then select the
-      // concertID from that result, and update those concerts so
-      // that anyLibraryArtist=0
-      this._db.resetQuery();
-      this._db.addQuery("UPDATE playing_at " +
-                        "SET anyLibraryArtist=0 " +
-                        "WHERE releaseid in " +
-                        "(SELECT releaseid FROM " +
-                        "(SELECT releaseid, " +
-                        "SUM(libraryArtist) AS stillvalid " +
-                        "FROM playing_at " +
-                        "WHERE anyLibraryArtist=1 " +
-                        "GROUP BY releaseid " +
-                        "HAVING stillvalid=0))");
+                        "WHERE artistid = '" +
+                        escape(artist).replace(/'/g, "''") + "'");
       this._db.execute();
       this.spsUpdater();
     }
@@ -461,13 +434,13 @@ NewReleases.prototype = {
 
   /*********************************************************************
    * Routine fired for when media is removed from the main library.  We need
-   * to do this so we can update its on tour status (if we already have
-   * concert data)
+   * to do this so we can update its new release status (if we already have
+   * new release data)
    *********************************************************************/
   onBeforeItemRemoved : function(list, item, index) {
-    // If this artist wasn't on tour, then we can quit now
-    var itemTouring = item.getProperty(this.onTourImgProperty);
-    if (itemTouring == null || itemTouring == noTourIconSrc)
+    // If this artist doesn't have new release, then we can quit now
+    var itemNewRelease = item.getProperty(this.newReleaseImgProperty);
+    if (itemNewRelease == null || itemNewRelease == noReleaseIconSrc)
       return false;
 
     var artist = item.getProperty(SBProperties.artistName);
@@ -481,7 +454,7 @@ NewReleases.prototype = {
       debugLog("onBeforeItemRemoved", "Track by " + artist + " removed");
       this._batchArtistsRemoved[artist] = 1;
     } else {
-      this.resetTourDataForArtist(list, artist);
+      this.resetReleaseDataForArtist(list, artist);
     }
     return false;
   },
@@ -662,10 +635,13 @@ NewReleases.prototype = {
     dbq.addQuery("create unique index if not exists releaseID on " +
                  "releases (timestamp, title, country)");
     dbq.addQuery("CREATE TABLE IF NOT EXISTS artists (" +
-                 "name TEXT COLLATE NOCASE)");
+                 "name TEXT COLLATE NOCASE, artistURL TEXT)");
     dbq.addQuery("CREATE TABLE IF NOT EXISTS playing_at (" +
-                 "releaseid INTEGER, artistid INTEGER, " +
+                 "releaseid INTEGER, artistid TEXT, " +
                  "libraryArtist INTEGER)");
+
+    dbq.addQuery("create unique index if not exists releaseID on " +
+                 "artists (artistURL)");
 
     dbq.execute();
     dbq.resetQuery();
@@ -712,7 +688,7 @@ NewReleases.prototype = {
         if (async)
           yield true;
 
-        // Iterate over each concert and add them to the database
+        // Iterate over each release and add them to the database
         debugLog("processNewReleases", "Beginning releases loop");
         for (var k = 0; k<releasesLength; k++) {
           var release = x..mbns::release[k];
@@ -801,8 +777,10 @@ NewReleases.prototype = {
               {
                 // Update artists DB
                 artistDbq.resetQuery();
+                var url = "http://www.allmusic.com/cg/amg.dll?P=amg&opt1=1&sql=" +
+                          escape(artist);
                 var query = "INSERT OR IGNORE INTO artists VALUES (" +
-                            "'" + escape(artist) + "')";
+                            "'" + escape(artist) + "', '" + url + "')";
                 artistDbq.addQuery(query);
                 artistDbq.execute();
                 artistList[escape(artist)] = 1;
@@ -856,7 +834,7 @@ NewReleases.prototype = {
               //}
             }
 
-            // Only run the actual DB insert every 20 concerts
+            // Only run the actual DB insert every 20 new releases
             if (!(dbCounter % 20) && dbq.getQueryCount() > 0) {
               debugLog("processNewReleases", "async: inserting into DB now");
               dbq.execute();
@@ -887,29 +865,6 @@ NewReleases.prototype = {
     // we can go ahead and switch the display back to the browse listing
     // while we go ahead and update the library items in the background
     if (!async) {
-/*
-      dbq.resetQuery();
-      debugLog("processNewReleases", "city code:" + cityID);
-      var query = "SELECT state,country from cities where id=" + cityID;
-      dbq.addQuery(query);
-      var ret = dbq.execute();
-      if (ret != 0)
-        throw ("Error!" + ret);
-      var result = dbq.getResultObject();
-      var state;
-      var country;
-      debugLog("processNewReleases", "row count:" + result.getRowCount());
-      if (result.getRowCount() > 0) {
-        state = result.getRowCellByColumn(0, "state");
-        country = result.getRowCellByColumn(0, "country");
-      } else {
-        throw ("Error! Rowcount:" + result.getRowCount());
-      }
-      debugLog("processNewReleases", "country:"+country+"//state:"+state);
-      this.prefs.setIntPref("country", country);
-      this.prefs.setIntPref("state", state);
-      this.prefs.setIntPref("city", cityID);
-*/
       if (this.displayCallback != null)
         this.displayCallback.showListings();
     }
@@ -921,19 +876,18 @@ NewReleases.prototype = {
                                    this.newReleasesRefreshRunning);
 
     // Update the release count in the service pane
-    //this.spsUpdater();
+    this.spsUpdater();
     yield true;
 
-/*
     // Enumerate the user's library for each track that has the
-    // on tour status flag set, and clear it
-    debugLog("processNewReleases", "clearing library on tour properties");
+    // new release status flag set, and clear it
+    debugLog("processNewReleases", "clearing library new release properties");
     try {
-      var itemEnum = mainLib.getItemsByProperty(this.onTourImgProperty,
-                                                onTourIconSrc).enumerate();
+      var itemEnum = mainLib.getItemsByProperty(this.newReleaseImgProperty,
+                                                newReleaseIconSrc).enumerate();
       while (itemEnum.hasMoreElements()) {
         var item = itemEnum.getNext();
-        item.setProperty(this.onTourImgProperty, noTourIconSrc);
+        item.setProperty(this.newReleaseImgProperty, noReleaseIconSrc);
         yield true;
       }
     } catch (e if e.result == Cr.NS_ERROR_NOT_AVAILABLE) {
@@ -941,9 +895,9 @@ NewReleases.prototype = {
     }
 
     // Now for each artist in the artistList array, update the
-    // on tour status flag for all tracks in the library that match
+    // new release status flag for all tracks in the library that match
     // the artist
-    debugLog("processNewReleases", "setting new library on tour properties");
+    debugLog("processNewReleases", "setting new library new release properties");
     for (artist in artistList) {
       var artistName = unescape(artist).toUpperCase();
       try {
@@ -951,19 +905,19 @@ NewReleases.prototype = {
                                  SBProperties.artistName, artistName).enumerate();
         while (itemEnum.hasMoreElements()) {
            var item = itemEnum.getNext();
-*/
           /*
           // Handy to have, but commenting out to avoid unnecessary
           // getProperty() calls
           debugLog("processNewReleases", "Track: " +
                    item.getProperty(SBProperties.trackName) +
-                   " by " + artistName + " is on tour");
+                   " by " + artistName + " has new release");
           */
-/*
-          item.setProperty(this.onTourImgProperty, onTourIconSrc);
+          item.setProperty(this.newReleaseImgProperty, newReleaseIconSrc);
           // Need an artist URL here but not automatically
           // available through MusicBrainz
-          item.setProperty(this.onTourUrlProperty, "");
+          var url = "http://www.allmusic.com/cg/amg.dll?P=amg&opt1=1&sql=" +
+                    escape(artistName);
+          item.setProperty(this.newReleaseUrlProperty, url);
           yield true;
         }
       } catch (e if e.result == Cr.NS_ERROR_NOT_AVAILABLE) {
@@ -971,11 +925,11 @@ NewReleases.prototype = {
       }
     }
 
-    // Go rebuild the artists touring smart playlist
+    // Go rebuild the artists new release smart playlist
     try {
       var itemEnum = LibraryUtils.mainLibrary.getItemsByProperty(
                        SBProperties.customType,
-                       "concerts_artistsTouring").enumerate();
+                       "newreleases_artistsReleases").enumerate();
       while (itemEnum.hasMoreElements()) {
         var list = itemEnum.getNext();
         list.rebuild();
@@ -983,7 +937,6 @@ NewReleases.prototype = {
     } catch (e if e.result == Cr.NS_ERROR_NOT_AVAILABLE) {
       // ignore, just meant there were no items
     }
-*/
 
     throw StopIteration;
   },
@@ -1098,18 +1051,19 @@ NewReleases.prototype = {
   },
 
   /*********************************************************************
-   * For a given artist name, return whether the artist is on tour or not
+   * For a given artist name, return whether the artist has release or not
    *********************************************************************/
-  getTourStatus : memoize(function getTourStatus(artist) {
+  getReleaseStatus : memoize(function getReleaseStatus(artist) {
     var firstrun = this.prefs.getBoolPref("firstrun");
     if (firstrun)
       return false;
     this._db.resetQuery();
-    this._db.addQuery('SELECT count(*) FROM playing_at ' +
-                      'JOIN artists on artistid=artists.ROWID ' +
-                      'JOIN concerts on releaseid=releases.id ' +
-                      "WHERE artists.name = '" + artist.replace(/'/g, "''") + "'" +
-                      'AND concerts.timestamp > ' + parseInt(Date.now()/1000));
+    var query = 'SELECT count(*) FROM playing_at ' +
+                ' JOIN releases on releaseid=releases.ROWID ' +
+                " WHERE playing_at.artistid = '" +
+                escape(artist).replace(/'/g, "''") + "'" +
+                ' AND releases.timestamp > ' + parseInt(Date.now()/1000);
+    this._db.addQuery(query);
     var ret = this._db.execute();
     var result = this._db.getResultObject();
     var count = result.getRowCell(0, 0);
@@ -1117,7 +1071,7 @@ NewReleases.prototype = {
   }),
 
   /*********************************************************************
-   * For a given artist name, return their NewReleases tour URL
+   * For a given artist name, return their New Release URL
    *********************************************************************/
   getArtistUrl : memoize(function getArtistUrl(artist) {
     var firstrun = this.prefs.getBoolPref("firstrun");
@@ -1137,7 +1091,7 @@ NewReleases.prototype = {
     }
   }),
 
-  getArtistOnTourUrl : function(artist) {
+  getArtistReleaseUrl : function(artist) {
     var firstrun = this.prefs.getBoolPref("firstrun");
     if (firstrun)
       return null;
@@ -1156,23 +1110,24 @@ NewReleases.prototype = {
   },
 
   /*********************************************************************
-   * For a given artist name, return the tour URL if they are on tour
+   * For a given artist name, return the release URL if they have release
    *********************************************************************/
-  getArtistUrlIfOnTour : memoize(function getArtistUrlIfOnTour(artist) {
+  getArtistUrlIfHasRelease : memoize(function getArtistUrlIfHasRelease(artist) {
     var firstrun = this.prefs.getBoolPref("firstrun");
     if (firstrun)
       return null;
-    //debugLog("getArtistUrlIfOnTour", "New media item, artist: " + artist);
+    //debugLog("getArtistUrlIfHasRelease", "New media item, artist: " + artist);
     this._db.resetQuery();
     this._db.addQuery("SELECT artistURL FROM artists " +
-                      'JOIN playing_at on playing_at.artistid = artists.ROWID ' +
-                      'JOIN concerts on playing_at.releaseid=releases.id ' +
-                      "WHERE artists.name = '" + artist.replace(/'/g, "'") + "'" +
-                      'AND concerts.timestamp > ' + parseInt(Date.now()/1000));
+                      ' JOIN playing_at on playing_at.artistid = artists.name ' +
+                      ' JOIN releases on playing_at.releaseid=releases.ROWID ' +
+                      " WHERE artists.name = '" +
+                      escape(artist).replace(/'/g, "'") + "'" +
+                      ' AND releases.timestamp > ' + parseInt(Date.now()/1000));
     var ret = this._db.execute();
     var result = this._db.getResultObject();
     if (result.getRowCount() > 0) {
-      debugLog("getArtistUrlIfOnTour", "Artist URL found");
+      debugLog("getArtistUrlIfHasRelease", "Artist URL found");
       var url = result.getRowCellByColumn(0, "artistURL");
       return (url);
     } else {
@@ -1186,7 +1141,7 @@ NewReleases.prototype = {
    * Returns the URL for the provider's homepage
    *********************************************************************/
   providerURL : function() {
-    return ("http://www.songkick.com");
+    return ("http://www.allmusic.com");
   },
 
   /*********************************************************************
@@ -1280,7 +1235,6 @@ NewReleases.prototype = {
     this._db.resetQuery();
     this._db.addQuery("DROP TABLE IF EXISTS countries");
     this._db.addQuery("CREATE TABLE countries (id TEXT, name TEXT)");
-    var allEntriesID = "ALL";
     this._db.addQuery("INSERT OR IGNORE INTO countries VALUES ('" +
                       allEntriesID + "', '" +
                       this.getCountryName(allEntriesID) + "')");

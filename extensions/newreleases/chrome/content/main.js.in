@@ -46,11 +46,6 @@ if (typeof(gBrowser) == "undefined")
       .getService(Ci.nsIWindowMediator)
       .getMostRecentWindow("Songbird:Main").window.gBrowser;
 
-if (typeof(gSkSvc) == "undefined") {
-  var gSkSvc = Cc["@songbirdnest.com/newreleases;1"]
-    .getService(Ci.nsIClassInfo).wrappedJSObject;
-}
-
 if (typeof(gMetrics) == "undefined")
   var gMetrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
       .createInstance(Ci.sbIMetrics);
@@ -67,15 +62,13 @@ if (typeof NewReleases == 'undefined') {
 }
 
 //FIX:
-//- fix On Tour functionality
-//- property stuff - simply disable?
 //- songkick.ico
 
 NewReleases = {
-  // Reference to the On Tour status icon
-  _onTourIcon : null,
+  // Reference to the new release status icon
+  _newReleaseIcon : null,
   lastReleasesCount : 0,
-  touringPlaylist : null,
+  releasePlaylist : null,
 
   onLoad: function() {
     // Initialization code
@@ -96,21 +89,19 @@ NewReleases = {
     this.nrSvc = Cc["@songbirdnest.com/newreleases;1"]
       .getService(Ci.nsIClassInfo).wrappedJSObject;
   
-    // Wait until the On Tour properties are registered
+    // Wait until the New Release properties are registered
     this._blockAndFinishLoad();
   },
 
   _blockAndFinishLoad: function _blockAndFinishLoad() {
-    //if (!Components.classes
-        //["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
-        //.getService(Ci.sbIPropertyManager)
-        //.hasProperty(this.nrSvc.onTourUrlProperty))
-    if (false)
+    if (!Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+           .getService(Ci.sbIPropertyManager)
+           .hasProperty(this.nrSvc.newReleaseUrlProperty))
     {
       debugLog("_blockAndFinishLoad", "Waiting for property init..");
       setTimeout(_blockAndFinishLoad, 100);
     } else {
-      debugLog("_blockAndFinishLoad", "On Tour properties exist!");
+      debugLog("_blockAndFinishLoad", "New Release properties exist!");
       // Add the service pane node
       this._setupServicePaneNode();
 
@@ -119,48 +110,36 @@ NewReleases = {
       this.nrSvc.registerSPSUpdater(this.updateNewReleasesCount);
 
       // Save our property strings
-      this.onTourImgProperty = this.nrSvc.onTourImgProperty;
-      this.onTourUrlProperty = this.nrSvc.onTourUrlProperty;
+      this.newReleaseImgProperty = this.nrSvc.newReleaseImgProperty;
+      this.newReleaseUrlProperty = this.nrSvc.newReleaseUrlProperty;
 
       // Add the artist dataremote listener
-      // This is what handles the OnTour status icon in the faceplate
+      // This is what handles the New Release status icon in the faceplate
       this._setupArtistDataRemote();
 
       // Startup a thread to refresh releases data
       this.nrSvc.startRefreshThread();
 
-      // Add the Artists on Tour playlist
-      this._getOnTourPlaylist();
-      this.rebuildOnTourPlaylist();
+      // Add the Artists new Release playlist
+      this._getNewReleasePlaylist();
+      this.rebuildNewReleasePlaylist();
 
-      // Add our mediacore listener to listen for Artists on Tour plays
+      // Add our mediacore listener to listen for Artists new Release plays
       // works for both old & new API since gMediaCore is aliased to gPPS
       // and both gPPS & the new media core manager have the same
       // addListener interface
       gMediaCore.addListener(this._mmListener);
-   
-      // Add the listener for playlist "On Tour" clicks
+
+      // Add the listener for playlist "New Release" clicks
       if (typeof(gBrowser) != "undefined")
         gBrowser.addEventListener("PlaylistCellClick", function(e) {
-          var prop = e.getData("property");
-          var item = e.getData("item");
-          if (prop == gSkSvc.onTourImgProperty) {
-            if (item.getProperty(prop) != "") {
-              var url =
-                item.getProperty(gSkSvc.onTourUrlProperty);
-              var city = Application.prefs
-                  .getValue("extensions.newreleases.city", 0);
-              url += "?user_location=" + city;
-              gMetrics.metricsInc("newReleases", "library.link", "");
-              gBrowser.loadOneTab(url);
-            }
-          }
+          return NewReleases.playlistCellClick(e);
         }, false);
 
       // Register our uninstall handler
       this.uninstallObserver.register();
-      if (this.touringPlaylist != null)
-        this.uninstallObserver.list = this.touringPlaylist;
+      if (this.releasePlaylist != null)
+        this.uninstallObserver.list = this.releasePlaylist;
     }
   },
   
@@ -268,16 +247,16 @@ NewReleases = {
   
 
   /***********************************************************************
-   * Routines for handling displaying the "On Tour" status icon in the
+   * Routines for handling displaying the "New Release" status icon in the
    * faceplate, and handling the user clicking on it.
    **********************************************************************/
-  // Setup the artist dataremote and the "On Tour" status icon itself
+  // Setup the artist dataremote and the "New Release" status icon itself
   _setupArtistDataRemote : function() {
     // If we're in the miniplayer, then don't attach
     if (typeof(gBrowser) == "undefined")
       return;
 
-    // Add the "On Tour" status 
+    // Add the "New Release" status
     var artistBox;
     // gonzo faceplate rulez
     artistBox = document.getElementById("faceplate-tool-bar");
@@ -288,22 +267,23 @@ NewReleases = {
     if (artistBox == null)
       return;
 
-    this._onTourIcon = document.createElement('image');
-    this._onTourIcon.setAttribute("id", "faceplate-artist-on-tour-icon");
-    this._onTourIcon.setAttribute("src",
-        "chrome://newreleases/skin/icon-ticket.png");
-    this._onTourIcon.setAttribute("onmousedown",
+    this._newReleaseIcon = document.createElement('image');
+    this._newReleaseIcon.setAttribute("id", "faceplate-artist-release-icon");
+    this._newReleaseIcon.setAttribute("src",
+        "chrome://newreleases/skin/node-icon.png");
+    this._newReleaseIcon.setAttribute("onmousedown",
         "NewReleases.loadArtist(event)");
-    this._onTourIcon.setAttribute("mousethrough", "never");
+    this._newReleaseIcon.setAttribute("mousethrough", "never");
     debugLog("setupArtistDataRemote", "Added click handler for faceplate");
-    this._onTourIcon.style.visibility = "collapse";
-    artistBox.appendChild(this._onTourIcon);
+    this._newReleaseIcon.style.visibility = "collapse";
+    artistBox.insertBefore(this._newReleaseIcon, artistBox.firstChild);
 
     // Add the dataremote listener itself
     var createDataRemote = new Components.Constructor(
         "@songbirdnest.com/Songbird/DataRemote;1",
         Ci.sbIDataRemote, "init");
-    NewReleases._artistDataRemote = createDataRemote("metadata.artist", null);
+    NewReleases._artistDataRemote =
+      createDataRemote("metadata.artist", null);
     NewReleases._artistDataRemote.bindObserver(this, true);
 
     // See if we're already playing (to catch the feather/layout switch)
@@ -323,28 +303,28 @@ NewReleases = {
           .getItemByGuid(gMediaCore.currentGUID);
     }
 
-    if (playing && currentItem.getProperty(this.onTourImgProperty) != ""
-        && currentItem.getProperty(this.onTourImgProperty) != null)
+    if (playing && currentItem.getProperty(this.newReleaseImgProperty) != ""
+        && currentItem.getProperty(this.newReleaseImgProperty) != null)
     {
-      this._onTourIcon.style.visibility = "visible";
+      this._newReleaseIcon.style.visibility = "visible";
     }
   },
-  
+
   // Our observer, we only use it for observing metadata.artist changes
   observe : function(aSubject, aTopic, aData) {
     if (aTopic == "metadata.artist" && aData != "") {
       var mainWin = Cc["@mozilla.org/appshell/window-mediator;1"]
-          .getService(Ci.nsIWindowMediator)
-          .getMostRecentWindow("Songbird:Main").window;
-      var onTour = this.nrSvc.getTourStatus(aData);
-      if (onTour)
-        this._onTourIcon.style.visibility = "visible";
+                      .getService(Ci.nsIWindowMediator)
+                      .getMostRecentWindow("Songbird:Main").window;
+      var newRelease = this.nrSvc.getReleaseStatus(aData);
+      if (newRelease)
+        this._newReleaseIcon.style.visibility = "visible";
       else
-        this._onTourIcon.style.visibility = "collapse";
+        this._newReleaseIcon.style.visibility = "collapse";
     }
   },
 
-  // The action that gets invoked when the user clicks on the On Tour icon
+  // The action that gets invoked when the user clicks on the New Release icon
   loadArtist : function(e) {
     // Prevent the highlight-current-item action from firing
     e.stopPropagation();
@@ -358,16 +338,13 @@ NewReleases = {
     else
       item = gMediaCore.playingView.mediaList.getItemByGuid(
         gMediaCore.currentGUID);
-    var city = Application.prefs.getValue("extensions.newreleases.city", 0);
-
-    var url = item.getProperty(this.onTourUrlProperty);
+    var url = item.getProperty(this.newReleaseUrlProperty);
     if (!url) {
-      // if the track lacks an on tour property, then it's possible
+      // if the track lacks a new release property, then it's possible
       // it's from the web playlist.  we can make a best guess
-      url = NewReleases.nrSvc
-        .getArtistOnTourUrl(item.getProperty(SBProperties.artistName));
+      url = NewReleases.nrSvc.getArtistReleaseUrl(
+        item.getProperty(SBProperties.artistName));
     }
-    url += "?user_location=" + city;
     if (typeof(gBrowser) != "undefined") {
       // If we're in the main player, then open a tab
       gBrowser.loadOneTab(url);
@@ -378,18 +355,15 @@ NewReleases = {
   },
 
   /***********************************************************************
-   * Called when the user clicks the On Tour icon in the library/playlist
+   * Called when the user clicks the New Release icon in the library/playlist
    **********************************************************************/
   playlistCellClick : function(e) {
     var prop = e.getData("property");
     var item = e.getData("item");
     var nrSvc = Cc["@songbirdnest.com/newreleases;1"]
-      .getService(Ci.nsIClassInfo).wrappedJSObject;
-    if (prop == nrSvc.onTourImgProperty) {
-      var url = item.getProperty(nrSvc.onTourUrlProperty);
-      var city =
-        Application.prefs.getValue("extensions.newreleases.city", 0);
-      url += "?user_location=" + city;
+                  .getService(Ci.nsIClassInfo).wrappedJSObject;
+    if (prop == nrSvc.newReleaseImgProperty) {
+      var url = item.getProperty(nrSvc.newReleaseUrlProperty);
       gMetrics.metricsInc("newReleases", "library.link", "");
       gBrowser.loadOneTab(url);
     }
@@ -397,72 +371,71 @@ NewReleases = {
   },
 
   /***********************************************************************
-   * Create the smart playlist for tracks by artists touring
+   * Create the smart playlist for tracks by artists new releases
    **********************************************************************/
-  _getOnTourPlaylist : function() {
-    if (this.touringPlaylist != null)
-      return this.touringPlaylist;
+  _getNewReleasePlaylist : function() {
+    if (this.releasePlaylist != null)
+      return this.releasePlaylist;
 
     try {
       var itemEnum = LibraryUtils.mainLibrary.getItemsByProperty(
           SBProperties.customType,
-          "concerts_artistsTouring").enumerate();
+          "newreleases_artistsReleases").enumerate();
       while (itemEnum.hasMoreElements()) {
-        debugLog("_getOnTourPlaylist", "Smart playlist found");
+        debugLog("_getNewReleasePlaylist", "Smart playlist found");
         var list = itemEnum.getNext();
-        this.touringPlaylist = list;
+        this.releasePlaylist = list;
         return list;
       }
     } catch (e if e.result == Cr.NS_ERROR_NOT_AVAILABLE) {
     }
-    
-    debugLog("_getOnTourPlaylist", "No smart playlist found");
+
+    debugLog("_getNewReleasePlaylist", "No smart playlist found");
     return null;
   },
 
-  rebuildOnTourPlaylist : function() {
-    if (this.touringPlaylist != null) {
-      debugLog("rebuildOnTourPlaylist", "Smart playlist rebuilt");
-      this.touringPlaylist.rebuild();
+  rebuildNewReleasePlaylist : function() {
+    if (this.releasePlaylist != null) {
+      debugLog("rebuildNewReleasePlaylist", "Smart playlist rebuilt");
+      this.releasePlaylist.rebuild();
     } else {
-      debugLog("rebuildOnTourPlaylist", "Smart playlist is undefined");
+      debugLog("rebuildNewReleasePlaylist", "Smart playlist is undefined");
     }
   },
 
-  _setupOnTourPlaylist : function() {
+  _setupNewReleasePlaylist : function() {
     // See if we already have a playlist first
-    var pls = this._getOnTourPlaylist();
+    var pls = this._getNewReleasePlaylist();
     if (pls != null)
       return;
 
     // Now create our smart playlist
-    var propMgr =
-      Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
-      .getService(Ci.sbIPropertyManager);
-    var tourPI = propMgr.getPropertyInfo(this.onTourImgProperty);
-    var op = tourPI.getOperator(tourPI.OPERATOR_ISSET);
-    
+    var propMgr = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                    .getService(Ci.sbIPropertyManager);
+    var releasePI = propMgr.getPropertyInfo(this.newReleaseImgProperty);
+    var op = releasePI.getOperator(releasePI.OPERATOR_ISSET);
+
     var list = LibraryUtils.mainLibrary.createMediaList("smart");
     list.matchType = Ci.sbILocalDatabaseSmartMediaList.MATCH_TYPE_ALL;
     list.limitType = Ci.sbILocalDatabaseSmartMediaList.LIMIT_TYPE_NONE;
     list.limit = 0;
     list.name = this._strings.getString("playlistName");
-    list.appendCondition(this.onTourImgProperty, op, null, null, null);
-    list.setProperty(SBProperties.customType, "concerts_artistsTouring");
+    list.appendCondition(this.newReleaseImgProperty, op, null, null, null);
+    list.setProperty(SBProperties.customType, "newreleases_artistsReleases");
     list.setProperty(SBProperties.hidden, "0");
     list.autoUpdate = true;
-    debugLog("_setupOnTourPlaylist", "List properties set");
+    debugLog("_setupNewReleasePlaylist", "List properties set");
     SmartMediaListColumnSpecUpdater.update(list);
-    debugLog("_setupOnTourPlaylist", "List colspec updated");
-    this.touringPlaylist = list;
-    debugLog("_setupOnTourPlaylist", "Smart playlist created");
+    debugLog("_setupNewReleasePlaylist", "List colspec updated");
+    this.releasePlaylist = list;
+    debugLog("_setupNewReleasePlaylist", "Smart playlist created");
 
     this.uninstallObserver.list = list;
   },
 
   /*********************************************************************
    * Setup listener for view changes so we can track the # of times the
-   * Artists on Tour smart playlist is played
+   * Artists new releases smart playlist is played
    *********************************************************************/
   _mmListener: {
     onMediacoreEvent : function(ev) {
@@ -481,26 +454,26 @@ NewReleases = {
     onBeforeViewChange : function() { },
     onViewChange : function(aView) {
       debugLog("viewChangeListener", "on view change triggered");
-      var touringPlaylist = null;
+      var releasePlaylist = null;
       try {
         var itemEnum = LibraryUtils.mainLibrary.getItemsByProperty(
             SBProperties.customType,
-            "concerts_artistsTouring").enumerate();
+            "newreleases_artistsReleases").enumerate();
         while (itemEnum.hasMoreElements()) {
-          touringPlaylist = itemEnum.getNext();
+          releasePlaylist = itemEnum.getNext();
           break;
         }
       } catch (e if e.result == Cr.NS_ERROR_NOT_AVAILABLE) {
       }
 
-      if (touringPlaylist == null)
+      if (releasePlaylist == null)
         return;
 
-      if (aView.mediaList.getProperty(SBProperties.outerGUID)
-        == touringPlaylist.guid)
+      if (aView.mediaList.getProperty(SBProperties.outerGUID) ==
+          releasePlaylist.guid)
       {
         debugLog("viewChangeListener",
-          "Artists on tour playback initiated");
+          "Artists new release playback initiated");
         gMetrics.metricsInc("newReleases", "smartpls.played", "");
       }
     }
@@ -571,7 +544,7 @@ NewReleases.uninstallObserver = {
   cleanupPlaylists : function(libraryManager) {
     this.observerService.removeObserver(this,
         "songbird-library-manager-before-shutdown");
-    // 4) Remove the Artists On Tour smart playlist
+    // 4) Remove the Artists New Release smart playlist
     if (this.list != null)
       this.mainLib.remove(this.list);
   },
@@ -581,7 +554,7 @@ NewReleases.uninstallObserver = {
     // We need to do a few things:
     // 1) Remove service pane node for New Releases
     // 2) Remove New Releases prefs
-    // 3) Remove "On Tour" property from library if it's visible
+    // 3) Remove "New Release" property from library if it's visible
 
     // Keep a count of when it was uninstalled
     gMetrics.metricsInc("newReleases", "uninstall", "");
@@ -626,20 +599,20 @@ NewReleases.uninstallObserver = {
     if (prefs.prefHasUserValue("locations.forcerefresh"))
       prefs.clearUserPref("locations.forcerefresh");
     prefs.deleteBranch("");
-    
-    // 3) Remove "On Tour" property from library colspec
-    var nrSvc = Cc["@songbirdnest.com/newreleases;1"]
-      .getService(Ci.nsIClassInfo).wrappedJSObject;
+
+    // 3) Remove "New Release" property from library colspec
     var mainLib = Cc['@songbirdnest.com/Songbird/library/Manager;1']
-      .getService(Ci.sbILibraryManager).mainLibrary;
+                    .getService(Ci.sbILibraryManager).mainLibrary;
     var colSpec = mainLib.getProperty(SBProperties.columnSpec);
-    var propRe = new RegExp("\\s+"+nrSvc.onTourImgProperty+" \\d+","g");
-    if (colSpec.indexOf(nrSvc.onTourImgProperty)) {
+    var nrSvc = Cc["@songbirdnest.com/newreleases;1"]
+                  .getService(Ci.nsIClassInfo).wrappedJSObject;
+    var propRe = new RegExp("\\s+"+nrSvc.newReleaseImgProperty+" \\d+","g");
+    if (colSpec.indexOf(nrSvc.newReleaseImgProperty)) {
       colSpec = colSpec.replace(propRe, "");
       mainLib.setProperty(SBProperties.columnSpec, colSpec);
     }
     var colSpec = mainLib.getProperty(SBProperties.defaultColumnSpec);
-    if (colSpec.indexOf(nrSvc.onTourImgProperty)) {
+    if (colSpec.indexOf(nrSvc.newReleaseImgProperty)) {
       colSpec = colSpec.replace(propRe, "");
       mainLib.setProperty(SBProperties.defaultColumnSpec, colSpec);
     }

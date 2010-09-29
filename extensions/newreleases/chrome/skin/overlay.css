@@ -55,6 +55,24 @@ description.descr-text {
   padding: 10px;
 }
 
+#library-newrelease-box description {
+  font-size: 21px;
+  margin: 0px;
+  font-family: Helvetica, Arial, Sans;
+  line-height: 25px;
+}
+
+#library-newrelease-box checkbox {
+  margin-top: 20px;
+  margin-left: 0px;
+  padding-left: 0px;
+}
+
+#library-newrelease-box checkbox > hbox > label {
+  font-size: 14px;
+  font-family: Helvetica, Arial, Sans;
+}
+
 #newReleases-firstrun-page menulist > hbox.menulist-label-box,
 #newReleases-firstrun-page button > hbox.button-box {
   padding-top: 0px;
