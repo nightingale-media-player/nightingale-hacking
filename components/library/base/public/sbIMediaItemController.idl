@@ -65,8 +65,8 @@ interface sbIMediaItemControllerListener : nsISupports
 * \brief Interface that defines a mediaitem controller
 *
 * A mediaitem controller allows components to control the disabled
-* status and playback capability of a mediaitem in realtime. 
-* Controller ContractIDs are of the form 
+* status and playback capability of a mediaitem in realtime.
+* Controller ContractIDs are of the form
 * @songbirdnest.com/Songbird/library/mediaitemcontroller;1?type=XXX
 * where XXX is the media item's trackType property.
 *
@@ -131,4 +131,4 @@ interface sbIMediaItemController : nsISupports
 #define SB_MEDIAITEMCONTROLLER_PARTIALCONTRACTID             \
   "@songbirdnest.com/Songbird/library/mediaitemcontroller;1?type="
 %}
- 
+

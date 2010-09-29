@@ -3141,10 +3141,10 @@ sbBaseDevice::RegenerateFromDownloadFolder(sbIMediaItem * aItem,
 
   rv = downloadFolderURL->SetFileName(filename);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<nsIFileURL> mediaFileURL =
     do_QueryInterface(downloadFolderURL, &rv);
-  NS_ENSURE_SUCCESS(rv, rv); 
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbInvalidateFileURLCache(mediaFileURL);
   NS_ENSURE_SUCCESS(rv, rv);
