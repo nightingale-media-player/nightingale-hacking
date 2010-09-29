@@ -649,10 +649,11 @@ sbMediaItemControllerCleanup::ProcessLibraries()
 
       { /* scope */
         nsAutoLock lock(mLock);
-        if (!mListener->Completed()) {
+        if (!mListener->Completed() && mLibraries.find(lib) != mLibraries.end()) {
           // abort the run; since we didn't actually finish this type,
           // do not remove it from the list, nor do we remove the library from
           // the queue of things to process
+          TRACE("run aborted");
           return NS_OK;
         }
       }
@@ -694,6 +695,14 @@ sbMediaItemControllerCleanup::ProcessLibraries()
       mLibraries.erase(lib);
     }
   }
+  
+  #if PR_LOGGING
+  {
+    nsAutoLock lock(mLock);
+    TRACE("completed? %s",
+          mLibraries.empty() ? "yes" : "no");
+  }
+  #endif /* PR_LOGGING */
   
   return NS_OK;
 }
@@ -821,7 +830,7 @@ NS_IMETHODIMP
 sbMediaItemControllerCleanup::sbEnumerationHelper::RunBatched(
     nsISupports *aUserData)
 {
-  TRACE_FUNCTION("");
+  TRACE_FUNCTION("stop? %s", mStop ? "yes" : "no");
   if (!mStop) {
     nsresult rv;
     rv = mList->EnumerateItemsByProperties(mPropsToFilter,
@@ -836,23 +845,27 @@ sbMediaItemControllerCleanup::sbEnumerationHelper::RunBatched(
 void
 sbMediaItemControllerCleanup::sbEnumerationHelper::Stop()
 {
+  TRACE_FUNCTION("");
   mStop = true;
 }
 
 void
 sbMediaItemControllerCleanup::sbEnumerationHelper::Resume()
 {
+  TRACE_FUNCTION("");
   mStop = false;
 }
 
 bool
 sbMediaItemControllerCleanup::sbEnumerationHelper::Completed()
 {
+  TRACE_FUNCTION("");
   return mCompleted;
 }
 
 already_AddRefed<sbIMediaList>
 sbMediaItemControllerCleanup::sbEnumerationHelper::GetMediaList()
 {
+  TRACE_FUNCTION("");
   return nsCOMPtr<sbIMediaList>(mList).forget();
 }
