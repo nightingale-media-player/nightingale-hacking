@@ -58,8 +58,6 @@ SUBDIRS = branding \
           profile \
           $(NULL)
 
-include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
-
 include $(topsrcdir)/build/rules.mk
 
 libs::

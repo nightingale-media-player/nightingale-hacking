@@ -35,8 +35,34 @@ ifndef RULES_MK_INCLUDED
 RULES_MK_INCLUDED=1
 #------------------------------------------------------------------------------
 
+# We want include the extension-config.mk at the top of rules.mk, so it can
+# modify things like branding and other aspects of rules further down; this
+# normally wouldn't be an issue, but include statements are expanded and
+# executed immediately. 
+ifdef IS_EXTENSION
+   SB_EXTENSION_CONFIG ?= extension-config.mk
+   SB_EXTENSION_CONFIG_STRIPPED = $(strip $(SB_EXTENSION_CONFIG))
+
+   ifneq (,$(wildcard $(srcdir)/$(SB_EXTENSION_CONFIG_STRIPPED)))
+      OUR_EXTENSION_MAKE_IN_ROOTSRCDIR = 1
+      export OUR_SB_EXTENSION_CONFIG = $(srcdir)/$(SB_EXTENSION_CONFIG_STRIPPED)
+   endif
+
+   ifndef OUR_SB_EXTENSION_CONFIG
+      export OUR_SB_EXTENSION_CONFIG := $(shell $(topsrcdir)/tools/scripts/find-extension-config.py -d $(srcdir) -f $(SB_EXTENSION_CONFIG_STRIPPED))
+      ifeq (,$(OUR_SB_EXTENSION_CONFIG))
+         $(error Could not file extension configuration .mk file. Bailing...)
+      endif
+   endif
+
+   include $(OUR_SB_EXTENSION_CONFIG)
+endif
+
 # include config.mk to pick up extra variables
 include $(topsrcdir)/build/config.mk
+
+# Include branding.mk to get the branding defines 
+include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
 
 # define the tiers of the application
 include $(topsrcdir)/build/tiers.mk
@@ -101,30 +127,6 @@ ifdef IS_EXTENSION_MULTI_BUILD
 endif
 
 ifdef IS_EXTENSION # {
-   #------------------------------------------------------------------------------
-   # Get our extension config, if we're an extension.
-   #------------------------------------------------------------------------------
-   SB_EXTENSION_CONFIG ?= extension-config.mk
-   SB_EXTENSION_CONFIG_STRIPPED = $(strip $(SB_EXTENSION_CONFIG))
-
-   ifneq (,$(wildcard $(srcdir)/$(SB_EXTENSION_CONFIG_STRIPPED)))
-      OUR_EXTENSION_MAKE_IN_ROOTSRCDIR = 1
-      export OUR_SB_EXTENSION_CONFIG = $(srcdir)/$(SB_EXTENSION_CONFIG_STRIPPED)
-   endif
-
-   ifndef OUR_SB_EXTENSION_CONFIG
-      export OUR_SB_EXTENSION_CONFIG := $(shell $(topsrcdir)/tools/scripts/find-extension-config.py -d $(srcdir) -f $(SB_EXTENSION_CONFIG_STRIPPED))
-      ifeq (,$(OUR_SB_EXTENSION_CONFIG))
-         $(error Could not file extension configuration .mk file. Bailing...)
-      endif
-   endif
-
-   include $(OUR_SB_EXTENSION_CONFIG)
-
-   # We include branding.mk here to get the branding defines to add to the
-   # preprocessor call for install.rdf.in, if any
-   include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
-
    OUR_EXTENSION_NAME = $(strip $(EXTENSION_NAME))
 
    # set a specific location for the output if it doesn't already exist
@@ -165,9 +167,9 @@ ifdef IS_EXTENSION # {
       endif
    endif
 
-   #------------------------------------------------------------------------------
+   #---------------------------------------------------------------------------
    # Redefine these file locations when building extensions
-   #------------------------------------------------------------------------------
+   #---------------------------------------------------------------------------
    OUR_EXTENSION_STAGE_DIR = $(strip $(EXTENSION_STAGE_DIR))
    OUR_EXTENSION_TMP_DIR = $(strip $(EXTENSION_TMP_DIR))
 

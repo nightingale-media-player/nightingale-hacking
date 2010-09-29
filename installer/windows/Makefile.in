@@ -59,7 +59,6 @@ GARBAGE += $(CURDIR)/nsis-install-manifest.txt \
            $(CURDIR)/nsis-uninstall-manifest.txt \
            $(NULL)
 
-include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
 include $(topsrcdir)/build/rules.mk
 
 # We copy the added-files list here because win32 is the only platform right

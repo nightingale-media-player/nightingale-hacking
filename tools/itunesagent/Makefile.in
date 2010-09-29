@@ -85,8 +85,6 @@ ifeq (windows,$(SB_PLATFORM))
 endif
 
 ifeq (macosx,$(SB_PLATFORM)) # {
-   include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
-
    CMM_INCLUDES += $(srcdir) \
                    $(srcdir)/macosx \
                    $(MOZSDK_INCLUDE_DIR) \
