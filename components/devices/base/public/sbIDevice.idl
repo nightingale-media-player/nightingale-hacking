@@ -269,8 +269,9 @@ interface sbIDevice : nsISupports
   /* perform image sync */
   const unsigned long REQUEST_IMAGESYNC     = REQUEST_FLAG_WRITE + 10;
 
-  /* write a file to the device */
+  /* update raw files on the device */
   const unsigned long REQUEST_WRITE_FILE    = REQUEST_FLAG_WRITE + 11;
+  const unsigned long REQUEST_DELETE_FILE   = REQUEST_FLAG_WRITE + 12;
 
   /**
    * 

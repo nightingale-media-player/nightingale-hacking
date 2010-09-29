@@ -2827,7 +2827,7 @@ sbBaseDevice::CreateTransferRequest(PRUint32 aRequest,
                                     TransferRequest **aTransferRequest)
 {
   NS_ENSURE_TRUE( ((aRequest >= REQUEST_MOUNT &&
-                    aRequest <= REQUEST_WRITE_FILE) ||
+                    aRequest <= REQUEST_DELETE_FILE) ||
                    (aRequest & REQUEST_FLAG_USER)),
                   NS_ERROR_ILLEGAL_VALUE);
   NS_ENSURE_ARG_POINTER(aRequestParameters);
