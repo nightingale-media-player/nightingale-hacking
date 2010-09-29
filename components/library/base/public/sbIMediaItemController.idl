@@ -75,7 +75,7 @@ interface sbIMediaItemControllerListener : nsISupports
 *
 * \sa sbIMediaItem,sbIMediaItemControllerListener,sbIMediaCoreSequencer
 */
-[scriptable, uuid(aceca77e-8990-4118-a3ec-94af988ac5c9)]
+[scriptable, uuid(f888f0c0-c805-11df-bd3b-0800200c9a66)]
 interface sbIMediaItemController : nsISupports
 {
   /**
@@ -85,16 +85,16 @@ interface sbIMediaItemController : nsISupports
 
   /*
    * \brief Called when a mediaitem is about to be played by the
-   * mediacore sequencer. By the time this method is called, the
-   * sequencer has been put on hold and is listening for the
-   * controller's onValidatePlaybackComplete event (see 
-   * sbIMediaItemControllerListener) so as to resume when then
-   * validation process has completed.
+   *        mediacore sequencer. By the time this method is called, the
+   *        sequencer has been put on hold and is listening for the
+   *        controller's onValidatePlaybackComplete event (see
+   *        sbIMediaItemControllerListener) so as to resume when the
+   *        validation process has completed.
    *
    * \param aItem           The item about to be played back
    * \param aFromUserAction True if the user specifically requested playback
    *                        for the item, false if the sequencer advanced on
-   *                        its own to this item.
+   *                        its own to next item.
    * \param aListener       An interface to receive completion callbacks
    *
    * Note that the mediacore sequencer monitor is being held when this method
@@ -102,8 +102,26 @@ interface sbIMediaItemController : nsISupports
    * from the same thread.
    */
   void validatePlayback(in sbIMediaItem aItem,
-                        in boolean aFromUserAction, 
+                        in boolean aFromUserAction,
                         in sbIMediaItemControllerListener aListener);
+
+  /*
+   * \brief Called to validate whether the streaming media item is accessible.
+   *        By the time this method is called, the caller should be put on hold
+   *        and is listening for the controller's onValidatePlaybackComplete
+   *        event (see sbIMediaItemControllerListener) so as to resume when the
+   *        validation process has completed.
+   *
+   * \param aItem            The item to be validated.
+   * \param aFromUserAction  True if the user specifically requested validation.
+   *                         for the item, false to skip to the next item.
+   * \param aPromptLoginOnce True if only prompt for login once.
+   * \param aListener        An interface to receive completion callbacks.
+   */
+  void validateStreaming(in sbIMediaItem aItem,
+                         in boolean aFromUserAction,
+                         in boolean aPromptLoginOnce,
+                         in sbIMediaItemControllerListener aListener);
 };
 
 %{C++

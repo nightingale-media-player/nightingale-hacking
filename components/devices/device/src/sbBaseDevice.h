@@ -939,6 +939,17 @@ protected:
                              sbDeviceSupportsItemHelper*    aCallback,
                              PRBool                         aReportErrors,
                              PRBool*                        _retval);
+
+  nsDataHashtableMT<nsStringHashKey, PRBool> mTrackSourceTable;
+
+  /**
+   * Update the destination compatibility for the streaming items in the batch.
+   *
+   * \param aBatch        The batch to be updated.
+   */
+
+  nsresult UpdateStreamingItemSupported(sbBaseDevice::Batch& aBatch);
+
   friend class sbDeviceSupportsItemHelper;
 
   /**

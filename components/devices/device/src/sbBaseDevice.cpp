@@ -86,6 +86,7 @@
 #include <sbIMediaFileManager.h>
 #include <sbIMediaInspector.h>
 #include <sbIMediaItem.h>
+#include <sbIMediaItemController.h>
 #include <sbIMediaItemDownloader.h>
 #include <sbIMediaItemDownloadJob.h>
 #include <sbIMediaItemDownloadService.h>
@@ -122,6 +123,7 @@
 #include "sbDeviceProgressListener.h"
 #include "sbDeviceStatus.h"
 #include "sbDeviceStatusHelper.h"
+#include "sbDeviceStreamingHandler.h"
 #include "sbDeviceSupportsItemHelper.h"
 #include "sbDeviceTranscoding.h"
 #include "sbDeviceImages.h"
@@ -481,6 +483,10 @@ sbBaseDevice::sbBaseDevice() :
   mVolumeLock = nsAutoLock::NewLock("sbBaseDevice::mVolumeLock");
   NS_ASSERTION(mVolumeLock, "Failed to allocate volume lock");
 
+  // Initialize the track source table.
+  success = mTrackSourceTable.Init();
+  NS_ASSERTION(success, "Failed to initialize track source table");
+
   // Initialize the volume tables.
   success = mVolumeGUIDTable.Init();
   NS_ASSERTION(success, "Failed to initialize volume GUID table");
@@ -507,6 +513,7 @@ sbBaseDevice::~sbBaseDevice()
   mVolumeLock = nsnull;
 
   mVolumeList.Clear();
+  mTrackSourceTable.Clear();
   mVolumeGUIDTable.Clear();
   mVolumeLibraryGUIDTable.Clear();
 
@@ -6703,7 +6710,8 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem*                  aMediaItem,
                                 PRBool                         aReportErrors,
                                 PRBool*                        _retval)
 {
-  // we will always need the retval
+  // we will always need the aMediaItem and retval
+  NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(_retval);
   if (NS_IsMainThread()) {
     // it is an error to call this on the main thread with no callback
@@ -6831,6 +6839,73 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem*                  aMediaItem,
   else if(transcodeType == sbITranscodeProfile::TRANSCODE_TYPE_AUDIO_VIDEO) {
     mCanTranscodeVideo = (*_retval == PR_TRUE) ? CAN_TRANSCODE_YES : CAN_TRANSCODE_NO;
   }
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::UpdateStreamingItemSupported(sbBaseDevice::Batch& aBatch)
+{
+  nsresult rv;
+
+  // Iterate over the batch updating item transferable
+  Batch::iterator end = aBatch.end();
+  Batch::iterator iter = aBatch.begin();
+  while (iter != end) {
+    TransferRequest * const request = *iter++;
+    nsCOMPtr<sbIMediaItem> mediaItem = request->item;
+
+    nsString trackType;
+    rv = mediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKTYPE),
+                                trackType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (trackType.IsEmpty())
+      continue;
+
+    PRBool isSupported;
+    if (!mTrackSourceTable.Get(trackType, &isSupported)) {
+      // check transferable only once.
+      nsRefPtr<sbDeviceStreamingHandler> listener;
+      rv = sbDeviceStreamingHandler::New(getter_AddRefs(listener),
+                                         mediaItem,
+                                         mReqWaitMonitor);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = listener->CheckTransferable();
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Wait for the transferable check to complete.
+      PRBool isComplete = PR_FALSE;
+      while (!isComplete) {
+        // Operate within the request wait monitor.
+        nsAutoMonitor monitor(mReqWaitMonitor);
+
+        // Check for abort.
+        NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
+
+        // Check if the transferable check is complete.
+        isComplete = listener->IsComplete();
+
+        // If not complete, wait for completion. If requests are cancelled,
+        // the request wait monitor will be notified.
+        if (!isComplete)
+          monitor.Wait();
+      }
+
+      isSupported = listener->IsStreamingItemSupported();
+      NS_ENSURE_TRUE(mTrackSourceTable.Put(trackType, isSupported),
+                     NS_ERROR_OUT_OF_MEMORY);
+    }
+
+    if (!isSupported) {
+      request->destinationCompatibility =
+        sbBaseDevice::TransferRequest::COMPAT_UNSUPPORTED;
+    }
+  }
+
+  // Clear the table so next batch will be re-checked.
+  mTrackSourceTable.Clear();
 
   return NS_OK;
 }

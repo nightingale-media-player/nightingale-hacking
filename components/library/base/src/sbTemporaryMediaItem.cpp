@@ -322,7 +322,7 @@ sbTemporaryMediaItem::GetIsMutable(PRBool* aIsMutable)
 
 //-------------------------------------
 //
-// isItemDisabled
+// itemController
 //
 
 NS_IMETHODIMP

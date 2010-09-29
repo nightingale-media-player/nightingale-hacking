@@ -40,6 +40,7 @@ CPP_SRCS = sbBaseDevice.cpp \
            sbDeviceStatistics.cpp \
            sbDeviceSupportsItemHelper.cpp \
            sbDeviceProgressListener.cpp \
+           sbDeviceStreamingHandler.cpp \
            sbDeviceStatusHelper.cpp \
            sbDeviceTranscoding.cpp \
            sbDeviceImages.cpp \
