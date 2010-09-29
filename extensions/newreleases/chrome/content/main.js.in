@@ -43,12 +43,12 @@ var gMediaCore;
 
 if (typeof(gBrowser) == "undefined")
   var gBrowser = Cc["@mozilla.org/appshell/window-mediator;1"]
-      .getService(Ci.nsIWindowMediator)
-      .getMostRecentWindow("Songbird:Main").window.gBrowser;
+                   .getService(Ci.nsIWindowMediator)
+                   .getMostRecentWindow("Songbird:Main").window.gBrowser;
 
 if (typeof(gMetrics) == "undefined")
   var gMetrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
-      .createInstance(Ci.sbIMetrics);
+                   .createInstance(Ci.sbIMetrics);
 
 function debugLog(funcName, str) {
   var debug = Application.prefs.getValue("extensions.newreleases.debug", false);
@@ -78,11 +78,11 @@ NewReleases = {
     if (typeof(Ci.sbIMediacoreManager) != "undefined") {
       this.newMediaCore = true;
       gMediaCore = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
-        .getService(Ci.sbIMediacoreManager);
+                     .getService(Ci.sbIMediacoreManager);
     } else {
       this.newMediaCore = false;
       gMediaCore = Cc['@songbirdnest.com/Songbird/PlaylistPlayback;1']
-        .getService(Ci.sbIPlaylistPlayback);
+                     .getService(Ci.sbIPlaylistPlayback);
     }
 
     // Instantiate the New Releases XPCOM service
@@ -142,17 +142,17 @@ NewReleases = {
         this.uninstallObserver.list = this.releasePlaylist;
     }
   },
-  
+
   onUnLoad: function() {
     NewReleases._initialized = false;
     var nrSvc = Cc["@songbirdnest.com/newreleases;1"]
-      .getService(Ci.nsIClassInfo).wrappedJSObject;
+                  .getService(Ci.nsIClassInfo).wrappedJSObject;
     nrSvc.unregisterSPSUpdater();
     if (NewReleases._artistDataRemote)
       NewReleases._artistDataRemote.unbind();
     gMediaCore.removeListener(this._mmListener);
   },
-  
+
   /***********************************************************************
    * Setup the service pane entry point node
    **********************************************************************/
@@ -162,11 +162,11 @@ NewReleases = {
 
     var SPS = Cc["@songbirdnest.com/servicepane/service;1"]
                 .getService(Ci.sbIServicePaneService);
-    
+
     // Check whether the node already exists
     if (SPS.getNode("urn:newreleases"))
       return;
-    
+
     var servicesNode = SPS.getNode("SB:Services");
     if (servicesNode) {
       servicesNode.hidden = false;
@@ -221,7 +221,7 @@ NewReleases = {
   updateNewReleasesCount : function(num) {
     var newReleasesCount;
     var nrSvc = Cc["@songbirdnest.com/newreleases;1"]
-      .getService(Ci.nsIClassInfo).wrappedJSObject;
+                  .getService(Ci.nsIClassInfo).wrappedJSObject;
     var filter = Application.prefs.getValue(
         "extensions.newreleases.filterLibraryArtists", true);
     if (typeof(num) == "undefined") {
@@ -244,7 +244,7 @@ NewReleases = {
       badge.visible = true;
     }
   },
-  
+
 
   /***********************************************************************
    * Routines for handling displaying the "New Release" status icon in the
@@ -484,15 +484,15 @@ NewReleases.uninstallObserver = {
   _uninstall : false,
   _disable : false,
   list : null,
-  
+
   observe : function(subject, topic, data) {
     switch(topic) {
       case "em-action-requested":
         // Extension has been flagged to be uninstalled
         subject.QueryInterface(Ci.nsIUpdateItem);
 
-        var SPS = Cc['@songbirdnest.com/servicepane/service;1'].
-          getService(Ci.sbIServicePaneService);
+        var SPS = Cc['@songbirdnest.com/servicepane/service;1']
+                    .getService(Ci.sbIServicePaneService);
         var newReleasesNode = SPS.getNode("urn:newreleases");
 
         if (subject.id == "newreleases@songbirdnest.com") {
@@ -524,7 +524,7 @@ NewReleases.uninstallObserver = {
 
   register : function() {
     var observerService = Cc["@mozilla.org/observer-service;1"]
-      .getService(Ci.nsIObserverService);
+                            .getService(Ci.nsIObserverService);
     observerService.addObserver(this, "em-action-requested", false);
     observerService.addObserver(this, "quit-application-granted", false);
     observerService.addObserver(this,
@@ -533,7 +533,7 @@ NewReleases.uninstallObserver = {
 
     // Save a pointer to the main library
     this.mainLib = Cc['@songbirdnest.com/Songbird/library/Manager;1']
-      .getService(Ci.sbILibraryManager).mainLibrary;
+                     .getService(Ci.sbILibraryManager).mainLibrary;
   },
 
   unregister : function() {
@@ -548,7 +548,7 @@ NewReleases.uninstallObserver = {
     if (this.list != null)
       this.mainLib.remove(this.list);
   },
-  
+
   uninstallCleanup : function() {
     // Cleanup after ourselves
     // We need to do a few things:
@@ -558,10 +558,10 @@ NewReleases.uninstallObserver = {
 
     // Keep a count of when it was uninstalled
     gMetrics.metricsInc("newReleases", "uninstall", "");
-    
+
     // 1) Remove service pane node
     var SPS = Cc['@songbirdnest.com/servicepane/service;1']
-      .getService(Ci.sbIServicePaneService);
+                .getService(Ci.sbIServicePaneService);
     var newReleasesNode = SPS.getNode("urn:newreleases");
     SPS.removeNode(newReleasesNode);
 
@@ -581,7 +581,8 @@ NewReleases.uninstallObserver = {
 
     // 2) Remove New Releases prefs
     var prefs = Cc["@mozilla.org/preferences-service;1"]
-      .getService(Ci.nsIPrefService).getBranch("extensions.newreleases.");
+                  .getService(Ci.nsIPrefService)
+                  .getBranch("extensions.newreleases.");
     if (prefs.prefHasUserValue("showplaylink"))
       prefs.clearUserPref("showplaylink");
     if (prefs.prefHasUserValue("showgcal"))

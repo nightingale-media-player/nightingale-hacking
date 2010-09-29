@@ -544,7 +544,7 @@ NewReleases.prototype = {
     return true;
   },
 
-  getReleasesForTimePeriod: function(year, month){
+  getReleasesForTimePeriod: function(year, month) {
     var date = year + "-" + month + "-**";
     var releaseList = new Array();
     var offset = 0;
