@@ -298,9 +298,6 @@ sbMediacoreWrapper::OnPlay()
     SendDOMEvent(NS_LITERAL_STRING("play"), EmptyString());
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = DispatchMediacoreEvent(sbIMediacoreEvent::STREAM_START);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 
@@ -311,9 +308,6 @@ sbMediacoreWrapper::OnPause()
     SendDOMEvent(NS_LITERAL_STRING("pause"), EmptyString());
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = DispatchMediacoreEvent(sbIMediacoreEvent::STREAM_PAUSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 
@@ -322,9 +316,6 @@ sbMediacoreWrapper::OnStop()
 {
   nsresult rv = 
     SendDOMEvent(NS_LITERAL_STRING("stop"), EmptyString());
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = DispatchMediacoreEvent(sbIMediacoreEvent::STREAM_STOP);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -521,6 +512,18 @@ sbMediacoreWrapper::HandleEvent(nsIDOMEvent *aEvent)
     rv = DispatchMediacoreEvent(sbIMediacoreEvent::STREAM_END);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+  else if(eventType.EqualsLiteral("mediacore-start")) {
+    rv = DispatchMediacoreEvent(sbIMediacoreEvent::STREAM_START);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else if(eventType.EqualsLiteral("mediacore-pause")) {
+    rv = DispatchMediacoreEvent(sbIMediacoreEvent::STREAM_PAUSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else if(eventType.EqualsLiteral("mediacore-stop")) {
+    rv = DispatchMediacoreEvent(sbIMediacoreEvent::STREAM_STOP);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   else if(eventType.EqualsLiteral("mediacore-metadata")) {
     nsCOMPtr<nsIDOMDataContainerEvent> dataEvent = 
       do_QueryInterface(aEvent, &rv);
@@ -561,6 +564,21 @@ sbMediacoreWrapper::AddSelfDOMListener()
                                 PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = target->AddEventListener(NS_LITERAL_STRING("mediacore-start"),
+                                this,
+                                PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = target->AddEventListener(NS_LITERAL_STRING("mediacore-stop"),
+                                this,
+                                PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = target->AddEventListener(NS_LITERAL_STRING("mediacore-pause"),
+                                this,
+                                PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = target->AddEventListener(NS_LITERAL_STRING("mediacore-metadata"),
                                 this,
                                 PR_FALSE);
@@ -592,6 +610,21 @@ sbMediacoreWrapper::RemoveSelfDOMListener()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = target->RemoveEventListener(NS_LITERAL_STRING("mediacore-eos"),
+                                   this,
+                                   PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = target->RemoveEventListener(NS_LITERAL_STRING("mediacore-start"),
+                                   this,
+                                   PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = target->RemoveEventListener(NS_LITERAL_STRING("mediacore-stop"),
+                                   this,
+                                   PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = target->RemoveEventListener(NS_LITERAL_STRING("mediacore-pause"),
                                    this,
                                    PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
