@@ -37,6 +37,15 @@ VPATH = @srcdir@
   
 include $(DEPTH)/build/autodefs.mk
 
+SONGBIRD_PP_RESOURCES = $(srcdir)/addons.css.in \
+                        $(NULL)
+
+# addons.css needs to end up in the skin directory for make-jar to pick it up
+SONGBIRD_PP_DIR = $(CURDIR)/skin
+
+PPDEFINES = -DEXTENSION_UUID="$(EXTENSION_UUID)" \
+            $(NULL)
+
 IS_EXTENSION = 1
 
 JAR_MANIFEST = jar.mn.in

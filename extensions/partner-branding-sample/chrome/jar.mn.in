@@ -12,4 +12,7 @@ partner-branding.jar:
 % override chrome://branding/locale/brand.properties chrome://partner/locale/brand.properties
 # Style the add-ons manager to hide this addon
 % style chrome://mozapps/content/extensions/extensions.xul chrome://partner/skin/addons.css
+# This file is pre-processed, so @include_all_to won't find it (since that
+# searches the srcdir; we need to point it to the objdir copy of addons.css
+  skin/addons.css   (skin/addons.css)
 @include_all_to
