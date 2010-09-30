@@ -6,9 +6,7 @@
 !define BrandFullName         "@SB_BRAND_FULL_NAME@"
 
 !define SongbirdInstallerEXE  "@SB_BASE_INSTALLER_BASENAME@"
-; XXX: short term hack; fix this in the branding extension.
-;!define FileMainEXE           "@SB_BRAND_SHORT_NAME@.exe"
-!define FileMainEXE           "PartnerName.exe"
+!define FileMainEXE           "@SB_BRAND_SHORT_NAME@.exe"
 
 !define BrandFullNameInternal "@SB_BRAND_FULL_NAME_INTERNAL@"
 !define CompanyName           "@SB_BRAND_VENDOR_NAME@"

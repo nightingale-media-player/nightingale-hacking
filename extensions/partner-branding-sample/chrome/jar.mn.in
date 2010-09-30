@@ -1,6 +1,15 @@
-#filter substitution
 partner-branding.jar:
-% content partner-branding %content/	contentaccessible=yes
-% locale  concerts  en-US  %locale/en-US/
-% skin    concerts  classic/1.0 %skin/
+% content partner %content/
+% skin    partner classic/1.0 %skin/
+% locale  partner en-US  %locale/en-US/
+# Change the first-run experience
+% overlay chrome://songbird/content/xul/firstRunWizard.xul chrome://partner/content/firstrun.xul
+# Override the EULA
+% override chrome://songbird/content/html/eula.html chrome://partner/content/eula.html
+% override chrome://songbird/content/html/about.html chrome://partner/content/eula.html
+# Override the branding
+% override chrome://branding/locale/brand.dtd chrome://partner/locale/brand.dtd
+% override chrome://branding/locale/brand.properties chrome://partner/locale/brand.properties
+# Style the add-ons manager to hide this addon
+% style chrome://mozapps/content/extensions/extensions.xul chrome://partner/skin/addons.css
 @include_all_to

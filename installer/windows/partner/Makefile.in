@@ -92,12 +92,8 @@ $(PARTNER_INSTALLER_DIST_DIR): $(UNPACKED_BASE_INSTALLER_DIR) $(UNPACKED_BRANDIN
 	$(INSTALL_FILE) $(UNPACKED_BRANDING_EXTENSION_DIR)/distribution/updater.ini $(PARTNER_INSTALLER_DIST_DIR)/partnerdist
 	$(INSTALL_FILE) $(srcdir)/partner.ico $(PARTNER_INSTALLER_DIST_DIR)/
 	$(INSTALL_FILE) $(srcdir)/partner.ico $(PARTNER_INSTALLER_DIST_DIR)/partnerdist
-	# XXX temp fix; change this is distribution.ini
-	$(INSTALL_FILE) $(srcdir)/partner.ico $(PARTNER_INSTALLER_DIST_DIR)/partnerdist/partnername.ico
 	$(INSTALL_FILE) $(BRANDING_EXTENSION) $(PARTNER_INSTALLER_DIST_DIR)/partnerdist
 	$(INSTALL_PROG) $(SONGBIRD_BASE_INSTALLER_NAME) $(PARTNER_INSTALLER_DIST_DIR)
-
-GARBAGE += $(CURDIR)/partner.ico
 
 libs:: $(PARTNER_INSTALLER_DIST_DIR)
 	cd $(PARTNER_INSTALLER_DIST_DIR) && $(DEPS_DIR)/nsis-2.45/makensis -NOCD -V3 $(srcdir)/PartnerPlayer.nsi
