@@ -919,7 +919,8 @@ var DPW = {
       case Ci.sbIDeviceLibraryListener.SYNC_SETTINGS_APPLIED:
         DPW._syncSettingsChanged = false;
         DPW._device.cacheSyncRequests = false;
-        // Click apply button will trigger sync, which will do the update later.
+        // Still need manual update here as auto to manual won't trigger sync.
+        DPW._update();
         break;
 
      case Ci.sbIDeviceLibraryListener.SYNC_SETTINGS_CHANGED:
