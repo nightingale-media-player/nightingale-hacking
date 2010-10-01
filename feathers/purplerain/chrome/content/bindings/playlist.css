@@ -302,7 +302,8 @@ In-cell Checkbox
   background-image: url(chrome://songbird/skin/playlist/icon-playing.png);
 }
 
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( disabled )
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( disabled ),
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( playqueue-history, disabled ),
 {
   color: rgb(150,150,150);
 }
@@ -341,3 +342,67 @@ Drag and drop Icon
   padding:2px 4px;
 }
 
+/*
+*******************************************************************************
+Play Queue
+*******************************************************************************
+*/
+
+/*
+ * Rules for play queue treeview styling:
+ *
+ * (1) All tracks after the current item (playqueue-current) have the same
+ *     alternating images as other playlist trees.
+ *
+ * (2) The current item has four possible states:
+ *     a. not selected, not focused
+ *     b. not selected, focus
+ *     c. selected, focus
+ *     d. selected, not focused
+ *
+ *     Currently, (a) and (b) receive the same styling.
+ *
+ * (3) The items before the current item (playqueue-history) have special text
+ *     styling and special alternating background images.
+ *
+ * (4) Normal styling for 'selected' and 'focus' overrides playqueue-history
+ *     styling, but not playqueue-current styling
+ */
+
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( playqueue-history ) {
+  /* xxx slloyd placeholder */
+  color: rgb(170,170,170);
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-row( playqueue-history, odd ) {
+  /* xxx slloyd placeholder */
+  background-image: url('chrome://songbird/skin/playlist/bg-playqueue-history-odd-row.png');
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-row( playqueue-history, even ) {
+  /* xxx slloyd placeholder */
+  background-image: url('chrome://songbird/skin/playlist/bg-playqueue-history-even-row.png');
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-row( playqueue-history, selected ) {
+  background-image: url('chrome://songbird/skin/playlist/bg-selected-row-unfocused.png');
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-row( playqueue-history, selected, focus ) {
+  background-image: url('chrome://songbird/skin/playlist/bg-selected-row.png');
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-row(playqueue-current) {
+  /* xxx slloyd placeholder */
+  background-image: url('chrome://songbird/skin/playlist/bg-playqueue-current-row.png');
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-row(playqueue-current, selected) {
+  /* xxx slloyd placeholder */
+  background-image: url('chrome://songbird/skin/playlist/bg-playqueue-current-row-selected.png');
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-row(playqueue-current, selected, focus) {
+  /* xxx slloyd placeholder */
+  background-image: url('chrome://songbird/skin/playlist/bg-playqueue-current-row-selected-focused.png');
+}

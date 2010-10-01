@@ -40,6 +40,7 @@
 #include <sbIMediacoreEventListener.h>
 #include <sbIMediaListViewTreeView.h>
 #include <sbIMediaListViewSelection.h>
+#include <sbIPlayQueueService.h>
 
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
@@ -79,7 +80,8 @@ class sbLocalDatabaseTreeView : public nsSupportsWeakReference,
                                 public sbIMediaListViewTreeView,
                                 public sbILocalDatabaseTreeView,
                                 public sbIMediacoreEventListener,
-                                public sbIMediaListViewSelectionListener
+                                public sbIMediaListViewSelectionListener,
+                                public sbIPlayQueueServiceListener
 
 {
   friend class sbFilterTreeSelection;
@@ -97,6 +99,7 @@ public:
   NS_DECL_SBILOCALDATABASETREEVIEW
   NS_DECL_SBIMEDIACOREEVENTLISTENER
   NS_DECL_SBIMEDIALISTVIEWSELECTIONLISTENER
+  NS_DECL_SBIPLAYQUEUESERVICELISTENER
 
   sbLocalDatabaseTreeView();
 
@@ -208,6 +211,9 @@ private:
   nsresult GetItemDisabledStatus(PRUint32 aIndex,
                                  nsISupportsArray* properties);
 
+  nsresult GetPlayQueueStatus(PRUint32 aIndex,
+                              nsISupportsArray* properties);
+
   nsresult GetIsListReadOnly(PRBool *aOutIsReadOnly);
 
   nsresult GetBag(PRUint32 aIndex,
@@ -289,6 +295,13 @@ private:
 
   PRInt32 mFirstCachedRow;
   PRInt32 mLastCachedRow;
+
+  // Cached reference to play queue service
+  nsCOMPtr<sbIPlayQueueService> mPlayQueueService;
+
+  // Cached play queue index
+  PRUint32 mPlayQueueIndex;
+
   /**
    * Nested class used to hold guid strings so that we can efficiently pass it
    * off to a function. This is used for the tree views and the number of items

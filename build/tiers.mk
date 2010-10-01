@@ -70,6 +70,7 @@ tier_componentsbase_dirs = \
    components/devicesobsolete \
    components/mediamanager \
    components/feathers \
+   components/playqueue \
    $(NULL)
 
 tier_componentsall_dirs = \
@@ -93,7 +94,6 @@ tier_componentsall_dirs = \
    components/mediaexport \
    components/appstartup \
    components/networkproxy \
-   components/playqueue \
    $(NULL)
 
 tier_appbase_dirs = \

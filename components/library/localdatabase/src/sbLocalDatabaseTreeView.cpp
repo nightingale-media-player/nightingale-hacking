@@ -177,7 +177,7 @@ sbLocalDatabaseTreeView::SelectionListGuidsEnumeratorCallback(PRUint32 aIndex,
   return NS_OK;
 }
 
-NS_IMPL_ISUPPORTS8(sbLocalDatabaseTreeView,
+NS_IMPL_ISUPPORTS9(sbLocalDatabaseTreeView,
                    nsIClassInfo,
                    nsISupportsWeakReference,
                    nsITreeView,
@@ -185,16 +185,18 @@ NS_IMPL_ISUPPORTS8(sbLocalDatabaseTreeView,
                    sbILocalDatabaseTreeView,
                    sbIMediaListViewTreeView,
                    sbIMediacoreEventListener,
-                   sbIMediaListViewSelectionListener)
+                   sbIMediaListViewSelectionListener,
+                   sbIPlayQueueServiceListener)
 
-NS_IMPL_CI_INTERFACE_GETTER7(sbLocalDatabaseTreeView,
+NS_IMPL_CI_INTERFACE_GETTER8(sbLocalDatabaseTreeView,
                              nsIClassInfo,
                              nsITreeView,
                              sbILocalDatabaseGUIDArrayListener,
                              sbILocalDatabaseTreeView,
                              sbIMediaListViewTreeView,
                              sbIMediacoreEventListener,
-                             sbIMediaListViewSelectionListener)
+                             sbIMediaListViewSelectionListener,
+                             sbIPlayQueueServiceListener)
 
 sbLocalDatabaseTreeView::sbLocalDatabaseTreeView() :
  mListType(eLibrary),
@@ -210,7 +212,8 @@ sbLocalDatabaseTreeView::sbLocalDatabaseTreeView() :
  mIsListeningToPlayback(PR_FALSE),
  mShouldPreventRebuild(PR_FALSE),
  mFirstCachedRow(NOT_SET),
- mLastCachedRow(NOT_SET)
+ mLastCachedRow(NOT_SET),
+ mPlayQueueIndex(0)
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseTreeViewLog) {
@@ -222,6 +225,16 @@ sbLocalDatabaseTreeView::sbLocalDatabaseTreeView() :
 sbLocalDatabaseTreeView::~sbLocalDatabaseTreeView()
 {
   nsresult rv;
+
+  if (mPlayQueueService) {
+
+    nsCOMPtr<sbIPlayQueueServiceListener> playQueueServiceListener =
+      do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseTreeView*, this),
+                        &rv);
+    if (NS_SUCCEEDED(rv)) {
+      mPlayQueueService->RemoveListener(playQueueServiceListener);
+    }
+  }
 
   if (mViewSelection) {
     nsCOMPtr<sbIMediaListViewSelectionListener> selectionListener =
@@ -397,6 +410,40 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
 
     rv = weakRef->GetWeakReference(getter_AddRefs(mMediacoreManager));
     NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // If this is a view of the play queue, keep a reference to the queue service.
+  mPlayQueueService =
+      do_GetService("@songbirdnest.com/Songbird/playqueue/service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaList> queueList;
+  rv = mPlayQueueService->GetMediaList(getter_AddRefs(queueList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaList> viewList;
+  rv = mMediaListView->GetMediaList(getter_AddRefs(viewList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool isViewOfQueue;
+  rv = queueList->Equals(viewList, &isViewOfQueue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (isViewOfQueue) {
+    rv = mPlayQueueService->GetIndex(&mPlayQueueIndex);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // add listener
+    nsCOMPtr<sbIPlayQueueServiceListener> playQueueServiceListener =
+      do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseTreeView*, this), &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mPlayQueueService->AddListener(playQueueServiceListener);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else {
+    // If this isn't a view of the queue, set mPlayQueueService to null so we
+    // don't attempt to set play queue status properties
+    mPlayQueueService = nsnull;
   }
 
   return NS_OK;
@@ -1458,6 +1505,31 @@ sbLocalDatabaseTreeView::GetItemDisabledStatus(PRUint32 aIndex,
 }
 
 nsresult
+sbLocalDatabaseTreeView::GetPlayQueueStatus(PRUint32 aIndex,
+                                            nsISupportsArray* properties)
+{
+  NS_ASSERTION(properties, "properties is null");
+
+  nsresult rv;
+
+  //////////////////////////////////////////////////////////////////////////
+  // WARNING: This method is called during Paint. DO NOT MODIFY THE TREE, //
+  // cause events to be fired, or use synchronous proxies, as you risk    //
+  // crashing in recursive painting/frame construction.                   //
+  //////////////////////////////////////////////////////////////////////////
+
+  if (aIndex < mPlayQueueIndex) {
+    rv = TokenizeProperties(NS_LITERAL_STRING("playqueue-history"), properties);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else if (aIndex == mPlayQueueIndex) {
+    rv = TokenizeProperties(NS_LITERAL_STRING("playqueue-current"), properties);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult
 sbLocalDatabaseTreeView::GetIsListReadOnly(PRBool *aOutIsReadOnly)
 {
   NS_ENSURE_ARG_POINTER(aOutIsReadOnly);
@@ -1709,6 +1781,11 @@ sbLocalDatabaseTreeView::GetRowProperties(PRInt32 row,
   rv = GetItemDisabledStatus(index, properties);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  if (mPlayQueueService) {
+    rv = GetPlayQueueStatus(index, properties);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   nsCOMPtr<sbILocalDatabaseResourcePropertyBag> bag;
   rv = GetBag(index, getter_AddRefs(bag));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1797,6 +1874,11 @@ sbLocalDatabaseTreeView::GetCellProperties(PRInt32 row,
 
   rv = GetItemDisabledStatus(index, properties);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mPlayQueueService) {
+    rv = GetPlayQueueStatus(index, properties);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   nsCOMPtr<sbIPropertyInfo> pi;
   nsString value;
@@ -2655,6 +2737,34 @@ sbLocalDatabaseTreeView::OnCurrentIndexChanged()
     }
   }
 
+  return NS_OK;
+}
+
+// sbIPlayQueueServiceListener
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::OnIndexUpdated(PRUint32 aToIndex)
+{
+  nsresult rv;
+
+
+  // xxx slloyd The play queue index is an index into the unfiltered
+  // medialist. Applying style properties using this index only works if there
+  // are no filters applied to the list. We have no plans for UI that allows
+  // users to filter lists, but if an add-on developer filters a view of the
+  // queue the visual styling will be off. See Bug 21878.
+  PRUint32 oldIndex = mPlayQueueIndex;
+  mPlayQueueIndex = aToIndex;
+
+  // Invalidate rows between the old index and the new index.
+  if (mTreeBoxObject) {
+    if (oldIndex < mPlayQueueIndex) {
+      rv = mTreeBoxObject->InvalidateRange(oldIndex, mPlayQueueIndex);
+      NS_ENSURE_SUCCESS(rv, rv);
+    } else {
+      rv = mTreeBoxObject->InvalidateRange(mPlayQueueIndex, oldIndex);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
   return NS_OK;
 }
 
