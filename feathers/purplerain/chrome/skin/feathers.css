@@ -22,7 +22,7 @@
  *=END SONGBIRD GPL
  */
 
-@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"); 
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 @namespace html url("http://www.w3.org/1999/xhtml");
 
 /******************************************************************************
@@ -63,32 +63,32 @@ TABLE OF CONTENTS
 
 ******************************************************************************
 
-This feather focuses on images more than styles defined though CSS. Often 
-times you'll update colors in this file but wont see any change in the final 
-appearance because there is a background-image that is drawn over it. There 
+This feather focuses on images more than styles defined though CSS. Often
+times you'll update colors in this file but wont see any change in the final
+appearance because there is a background-image that is drawn over it. There
 are a few colors defined in this file that might be of interest:
 
-Often used by boxes that contain elements that update what is displayed in the 
-content pane. eg: service pane, find bar, top half of the device summary 
+Often used by boxes that contain elements that update what is displayed in the
+content pane. eg: service pane, find bar, top half of the device summary
 page, command bar.
 > rgb(220,220,220);
 
-The following is used by all/most borders in the content area. eg: borders for 
+The following is used by all/most borders in the content area. eg: borders for
 filer pane splitters, border for treecols and list headers.
 > rgb(161,161,161);
 
-The following is used by all/most borders in the chrome area. eg: splitter for 
+The following is used by all/most borders in the chrome area. eg: splitter for
 service pane, splitters for display panes, borders for windows/dialogs/wizards.
 > rgb(131,131,131)
 
-This file contains most but not all colors used in the feather. The styles in 
+This file contains most but not all colors used in the feather. The styles in
 the following files need to be there for technical reasons.
 > formsImport.css for text selection color
 > os-specific/max/overrides.css for Mac-specific styles
 > os-specific/unix/overrides.css for Linux-specific styles
 > os-specific/win/overrides.css for Windows-specific styles
 
-All the other CSS files in the feather and elsewhere in the app need major 
+All the other CSS files in the feather and elsewhere in the app need major
 clean up. Don't go there if you can help it, for now.
 
 ******************************************************************************
@@ -122,7 +122,7 @@ panel {
 page {
   background-color: rgb(68,68,80);
 }
-menupopup, 
+menupopup,
 popup {
   background-color:rgb(94,91,109);
   border: 1px solid rgb(28,27,38);
@@ -257,7 +257,7 @@ html|*.loss-of-data-text,
 
 /******************************************************************************
 * TEXTBOXES
-* 
+*
 * Styles for textboxes and elements that we want to look like textboxes
 ******************************************************************************/
 textbox,
@@ -294,7 +294,7 @@ textbox[invalid="true"],
 textbox[focused="true"][invalid="true"] {
   background-color:rgb(255,224,200) !important;
   color:rgb(235,125,41);
-} 
+}
 textbox[empty="true"],
 searchbar[empty="true"] > hbox > hbox > .searchbar-textbox {
   color:rgb(131,131,131);
@@ -323,7 +323,7 @@ toolbarbutton:focus,
 checkbox:focus > .checkbox-check,
 radio[focused="true"] > .radio-check,
 menulist:focus {
-  outline:2px solid rgba(144,143,154,0.6); 
+  outline:2px solid rgba(144,143,154,0.6);
   outline-offset:0px;
   -moz-outline-radius:5px;
 }
@@ -1520,7 +1520,7 @@ findbar > .findbar-container > .findbar-find-status {
 * the browser window
 ******************************************************************************/
 scrollbarbutton,
-scrollbar > slider > thumb {   
+scrollbar > slider > thumb {
 }
 
 #servicepane scrollbar {
@@ -1531,7 +1531,7 @@ scrollbar > slider > thumb {
 
 /******************************************************************************
 * WINDOW RESIZERS
-*  
+*
 * Draw a border around windows that are resizable - Linux and Windows only
 * Make sure to update skin/window/bg-resizer-bottom-corner.png to match
 * changes made here
@@ -1646,7 +1646,7 @@ prefpane groupbox {
 
 /******************************************************************************
 * FIREFOX API
-* 
+*
 * Songbird does not use the following rules but add-ons ported from Firefox
 * might.
 ******************************************************************************/
@@ -1662,9 +1662,9 @@ html|*.error-text,
 }
 .text-link:hover {
   text-decoration: underline;
-} 
+}
 .text-link:hover:active {
-} 
+}
 .text-link[visited="true"] {
 }
 .text-link[disabled="true"]:hover {
