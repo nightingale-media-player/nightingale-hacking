@@ -219,10 +219,7 @@ var LibraryUtils = {
     if (aURL instanceof Components.interfaces.nsIURI) {
       url = aURL.spec;
     }
-    if (!(/chrome:\/\//.test(url))) {
-      // not chrome
-      return false;
-    }
+
     const PREF_FIRSTRUN_URL = "songbird.url.firstrunpage";
     var firstRunURL = Cc["@mozilla.org/preferences-service;1"].
                         getService(Ci.nsIPrefBranch).

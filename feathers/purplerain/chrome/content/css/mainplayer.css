@@ -93,7 +93,8 @@ statusbar {
   visibility: collapse;
 }
 
-#nav-bar[isAtMediaPage="true"] > #back-forward-buttons[isCollapse="false"] {
+#nav-bar[isAtMediaPage="true"] > #back-forward-buttons[isCollapse="false"],
+#nav-bar[isAtMediaPage="true"] > #stopreload-container[isCollapse="false"] {
   visibility: visible;
 }
 

@@ -103,7 +103,8 @@ SBTabProgressListener.prototype = {
 
       if (this._tabBrowser.selectedTab == mediaTab &&
           !this._tabBrowser.currentMediaListView &&
-          (!node || node.searchtype.indexOf("internal") > -1))
+          (!node || node.searchtype.indexOf("internal") > -1) &&
+          (!node || node.searchtype.indexOf("external") == -1))
       {
         document.getElementById("nav-bar").setAttribute("collapsed", "true");
       } else {
@@ -130,6 +131,14 @@ SBTabProgressListener.prototype = {
           historyButtons.setAttribute("isCollapse", "false");
         } else {
           historyButtons.removeAttribute("isCollapse");
+        }
+
+        // Set visibility for stop/reload button
+        var stopreloadButton = document.getElementById("stopreload-container");
+        if (className.indexOf("stopreload") > -1) {
+          stopreloadButton.setAttribute("isCollapse", "false");
+        } else {
+          stopreloadButton.removeAttribute("isCollapse");
         }
       }
     }

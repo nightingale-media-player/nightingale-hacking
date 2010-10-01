@@ -205,7 +205,8 @@ function sb7Digital_install() {
     myNode.id = NODE_7DIGITAL;
     myNode.url = STORE_URL;
     myNode.image = 'chrome://7digital/skin/servicepane-icon.png';
-    myNode.className = '7digital';
+    myNode.className = '7digital history stopreload';
+    myNode.searchtype = "external";
     myNode.name = '&servicepane.7digital';
     myNode.stringbundle = STRINGBUNDLE;
     myNode.setAttributeNS(SERVICEPANE_NS, "addonID", "@EXTENSION_UUID@");
@@ -216,7 +217,8 @@ function sb7Digital_install() {
     recommendationsNode.id = NODE_7DIGITAL;
     recommendationsNode.url = STORE_RECOMMENDATIONS_URL;
     recommendationsNode.image = 'chrome://7digital/skin/servicepane-icon.png';
-    recommendationsNode.className = "7digital";
+    recommendationsNode.className = "7digital history stopreload";
+    recommendationsNode.searchtype = "external";
     recommendationsNode.name = "&servicepane.7digital_recommended";
     recommendationsNode.stringbundle = STRINGBUNDLE;
     recommendationsNode.setAttributeNS(SERVICEPANE_NS, "addonID", "@EXTENSION_UUID@");
