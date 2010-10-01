@@ -303,7 +303,7 @@ In-cell Checkbox
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-cell-text( disabled ),
-.sb-playlist-tree > treechildren::-moz-tree-cell-text( playqueue-history, disabled ),
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( playqueue-history, disabled )
 {
   color: rgb(150,150,150);
 }
