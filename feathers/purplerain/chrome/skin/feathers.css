@@ -1708,31 +1708,6 @@ domi-panelset label.viewer-title {
 }
 
 /******************************************************************************
-* ERROR CONSOLE
-******************************************************************************/
-#ConsoleBox {
-  background-color: transparent;
-  border-bottom: none;
-}
-#ConsoleBox hbox.lineNumberRow > label {
-  color: rgb(15,15,15);
-}
-#console-toolbox > toolbar#ToolbarMode > toolbarbutton {
-  background-image: url(chrome://songbird/skin/base-elements/bg-button-tall.png);
-  background-position: center 0px;
-}
-#console-toolbox > toolbar#ToolbarMode > toolbarbutton:hover {
-  background-position: center -45px;
-}
-#console-toolbox > toolbar#ToolbarMode > toolbarbutton:active,
-#console-toolbox > toolbar#ToolbarMode > toolbarbutton[checked="true"] {
-  background-position: center -90px;
-}
-#console-toolbox > toolbar#ToolbarMode > toolbarbutton:disabled {
-  background-position: center -135px;
-}
-
-/******************************************************************************
 * EXTENSIONS ABOUT
 ******************************************************************************/
 #clientBox {
