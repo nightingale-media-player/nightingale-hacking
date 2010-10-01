@@ -46,6 +46,7 @@
 #include <sbVariantUtils.h>
 
 #include "sbBaseMediacoreEventTarget.h"
+#include "sbMediacoreError.h"
 
 /**
  * To log this module, set the following environment variable:
@@ -506,7 +507,37 @@ sbMediacoreWrapper::HandleEvent(nsIDOMEvent *aEvent)
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else if(eventType.EqualsLiteral("mediacore-error")) {
-    // XXXAus: TODO
+    nsCOMPtr<nsIDOMDataContainerEvent> dataEvent = 
+      do_QueryInterface(aEvent, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIVariant> codeVariant;
+    rv = dataEvent->GetData(NS_LITERAL_STRING("code"), 
+                            getter_AddRefs(codeVariant));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 code;
+    rv = codeVariant->GetAsUint32(&code);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIVariant> messageVariant;
+    rv = dataEvent->GetData(NS_LITERAL_STRING("message"), 
+                            getter_AddRefs(messageVariant));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString message;
+    rv = messageVariant->GetAsAString(message);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsRefPtr<sbMediacoreError> error;
+    NS_NEWXPCOM(error, sbMediacoreError);
+    NS_ENSURE_TRUE(error, NS_ERROR_OUT_OF_MEMORY);
+
+    rv = error->Init(code, message);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = DispatchMediacoreEvent(sbIMediacoreEvent::ERROR_EVENT, nsnull, error);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   else if(eventType.EqualsLiteral("mediacore-eos")) {
     rv = DispatchMediacoreEvent(sbIMediacoreEvent::STREAM_END);
