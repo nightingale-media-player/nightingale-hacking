@@ -55,11 +55,12 @@ static char const * const DUPLICATE_PROPERTIES[] = {
 };
 
 sbMediaListDuplicateFilter::sbMediaListDuplicateFilter() :
+  mInitialized(PR_FALSE),
   mSBPropKeysLength(NS_ARRAY_LENGTH(DUPLICATE_PROPERTIES)),
   mSBPropKeys(NS_ARRAY_LENGTH(DUPLICATE_PROPERTIES)),
   mDuplicateItems(0),
   mTotalItems(0),
-  mRemoveDuplicates(false)
+  mRemoveDuplicates(PR_FALSE)
 {
   mKeys.Init();
 }
@@ -105,9 +106,7 @@ sbMediaListDuplicateFilter::Initialize(nsISimpleEnumerator * aSource,
 
   mRemoveDuplicates = aRemoveDuplicates;
   mSource = aSource;
-
-  rv = aDest->EnumerateAllItems(this, sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
-  NS_ENSURE_SUCCESS(rv, rv);
+  mDest = aDest;
 
   return NS_OK;
 }
@@ -264,6 +263,16 @@ sbMediaListDuplicateFilter::Advance()
 
   nsAutoMonitor mon(mMonitor);
 
+  if (!mInitialized) {
+    // Only enumerate if we need to check for duplicates.
+    if (mRemoveDuplicates) {
+      rv = mDest->EnumerateAllItems(this, sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    // Always consider ourselves initialized past this point.
+    mInitialized = PR_TRUE;
+  }
+
   PRBool more;
   rv = mSource->HasMoreElements(&more);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -275,14 +284,14 @@ sbMediaListDuplicateFilter::Advance()
     NS_ENSURE_SUCCESS(rv, rv);
     mCurrentItem = do_QueryInterface(supports);
 
-    bool isDuplicate = false;
     if (mCurrentItem) {
-      rv = IsDuplicate(mCurrentItem, isDuplicate);
-      NS_ENSURE_SUCCESS(rv, rv);
-      if (isDuplicate) {
-        ++mDuplicateItems;
-        // If we're skipping duplicates then continue enumerating
-        if (mRemoveDuplicates) {
+      if (mRemoveDuplicates) {
+        bool isDuplicate = false;
+        rv = IsDuplicate(mCurrentItem, isDuplicate);
+        NS_ENSURE_SUCCESS(rv, rv);
+        if (isDuplicate) {
+          ++mDuplicateItems;
+          // Skipping duplicates then continue enumerating
           mCurrentItem = nsnull;
         }
       }

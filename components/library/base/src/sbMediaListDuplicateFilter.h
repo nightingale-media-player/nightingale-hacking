@@ -78,6 +78,9 @@ private:
   // Monitor for thread-safety
   PRMonitor* mMonitor;
 
+  // Have we run enumerate items yet?
+  PRBool mInitialized;
+
   // Contains a combination origin ID and URL's
   nsTHashtable<nsStringHashKey> mKeys;
 
@@ -92,6 +95,9 @@ private:
 
   // The enumerate for the source
   nsCOMPtr<nsISimpleEnumerator> mSource;
+
+  // The destionation
+  nsCOMPtr<sbIMediaList> mDest;
 
   // Current item in the enumeration
   nsCOMPtr<sbIMediaItem> mCurrentItem;

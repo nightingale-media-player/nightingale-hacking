@@ -715,7 +715,6 @@ var InternalDropHandler = {
     }
     
     let removeDuplicates = aTargetList instanceof Ci.sbILibrary;
-
     let dupFilter = 
       Cc[SB_MEDIALISTDUPLICATEFILTER_CONTRACTID]
         .createInstance(Ci.sbIMediaListDuplicateFilter);
@@ -787,7 +786,6 @@ var InternalDropHandler = {
     if (aDropPosition != -1 && aTargetList instanceof Ci.sbIOrderableMediaList) {
       aTargetList.insertSomeBefore(unwrapper, aDropPosition);
     } else {
-      // XXXAus: Change this back to addSomeAsync!!!
       aTargetList.addSomeAsync(unwrapper , asyncListener);
     }
 
