@@ -175,13 +175,31 @@ ShowInstDetails hide
 Section "-Application" Section1
    SectionIn 1 RO
 
+   ReadRegStr $R0 HKLM ${RootAppRegistryKey} "InstallDir"
+
+   ${If} $R0 != ""
+      MessageBox MB_YESNO|MB_ICONQUESTION "${BrandFullName} is already installed; only one version of ${BrandFullName} may be installed; would you like to uninstall the previous version?" /SD IDNO IDYES RemoveCurrentInstallation
+      Quit
+
+      RemoveCurrentInstallation:
+         Push $R0
+         Call CallUninstaller
+   ${EndIf}
+
    SetOutPath ${InstallerTmpDir}
    File ${SongbirdInstallerEXE}
    File /r partnerdist
 
    System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("DISTHELPER_DISTINI","${InstallerTmpDir}\partnerdist\distribution.ini").r1'
 
-   ExecWait '"${InstallerTmpDir}\${SongbirdInstallerEXE}" /S /DIST=${BrandFullNameInternal} /NOOSVERSIONCHECK /D=${SongbirdInstDir}' $1
+
+   ${If} $UnpackMode == ${TRUE}
+      ExecWait '"${InstallerTmpDir}\${SongbirdInstallerEXE}" /S /UNPACK /DIST=${BrandFullNameInternal} /NOOSVERSIONCHECK /D=${SongbirdInstDir}' $1
+   ${Else}
+      MessageBox MB_OK 'About to call: "${InstallerTmpDir}\${SongbirdInstallerEXE}" /S /DIST=${BrandFullNameInternal} /NOOSVERSIONCHECK /D=${SongbirdInstDir}'
+      ExecWait '"${InstallerTmpDir}\${SongbirdInstallerEXE}" /S /DIST=${BrandFullNameInternal} /NOOSVERSIONCHECK /D=${SongbirdInstDir}' $1
+   ${EndIf}
+
    DetailPrint 'Songbird installer returned: $1'
 
    Call InstallExtensions
@@ -190,6 +208,12 @@ Section "-Application" Section1
    WriteUninstaller ${PreferredUninstallerName}
 
    RMDir /r ${InstallerTmpDir}
+
+   ${If} $UnpackMode == ${FALSE}
+      Call InstallBrandingRegistryKeys
+      Call InstallAppRegistryKeys
+      Call InstallUninstallRegistryKeys
+   ${EndIf}
  
    ; Refresh desktop icons
    System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
@@ -314,6 +338,7 @@ ShowUninstDetails hide
 Section "Uninstall"
    Call un.CloseApp
 
+   Call un.RemoveBrandingRegistryKeys
    Call un.RemoveAppRegistryKeys
 
    ;Call un.CleanVirtualStore
@@ -349,11 +374,11 @@ FunctionEnd
 
 Function un.RemoveAppRegistryKeys
    ; Remove registry keys
-   ;DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}"
+   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}"
 
 
-   ;StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\App Paths\${FileMainEXE}"
-   ;DeleteRegKey HKLM "$0"
+   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\App Paths\${FileMainEXE}"
+   DeleteRegKey HKLM "$0"
 
    ; Remove the last of the registry keys
    DeleteRegKey HKLM "${RootAppRegistryKey}"
@@ -385,7 +410,7 @@ Function InstallUninstallRegistryKeys
    StrCpy $R0 "${BrandFullNameInternal}"
 
    ; Write the uninstall keys for Windows
-   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$R0" "DisplayName" "${BrandFullName} ${AppVersion} (Build ${AppBuildNumber})"
+   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$R0" "DisplayName" "${BrandFullName} ${AppVersion}"
    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$R0" "InstallLocation" "$INSTDIR"
    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$R0" "UninstallString" '"$INSTDIR\${PreferredUninstallerName}"'
    WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$R0" "NoModify" 1
@@ -395,10 +420,10 @@ FunctionEnd
 Function InstallBrandingRegistryKeys 
    !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
    CreateDirectory "$SMPROGRAMS\$StartMenuDir"
-   CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal}.lnk" "${SongbirdInstDir}\${FileMainEXE}" "" "${SongbirdInstDir}\${PreferredIcon}" 0
-   CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal} (Profile Manager).lnk" "${SongbirdInstDir}\${FileMainEXE}" "-p" "${SongbirdInstDir}\${PreferredIcon}" 0 SW_SHOWNORMAL "" "${BrandFullName} w/ Profile Manager"
-   CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal} (Safe-Mode).lnk" "${SongbirdInstDir}\${FileMainEXE}" "-safe-mode" "${SongbirdInstDir}\${PreferredIcon}" 0 SW_SHOWNORMAL "" "${BrandFullName} Safe-Mode"
-   CreateShortCut "$SMPROGRAMS\$StartMenuDir\Uninstall ${BrandFullNameInternal}.lnk" "${SongbirdInstDir}\${PreferredUninstallerName}" "" "${SongbirdInstDir}\${PreferredUninstallerIcon}" 0
+   CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullName}.lnk" "${SongbirdInstDir}\${FileMainEXE}" "" "${SongbirdInstDir}\${PreferredIcon}" 0
+   CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullName} (Profile Manager).lnk" "${SongbirdInstDir}\${FileMainEXE}" "-p" "${SongbirdInstDir}\${PreferredIcon}" 0 SW_SHOWNORMAL "" "${BrandFullName} w/ Profile Manager"
+   CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullName} (Safe-Mode).lnk" "${SongbirdInstDir}\${FileMainEXE}" "-safe-mode" "${SongbirdInstDir}\${PreferredIcon}" 0 SW_SHOWNORMAL "" "${BrandFullName} Safe-Mode"
+   CreateShortCut "$SMPROGRAMS\$StartMenuDir\Uninstall ${BrandFullName}.lnk" "${SongbirdInstDir}\${PreferredUninstallerName}" "" "${SongbirdInstDir}\${PreferredUninstallerIcon}" 0
    !insertmacro MUI_STARTMENU_WRITE_END
 FunctionEnd
 
