@@ -213,6 +213,8 @@ private:
   // Current filter configuration
   nsTArray<FilterSpec> mFilters;
 
+  // Monitor to protect mCache
+  PRMonitor* mCacheMonitor;
   // Ordered array of GUIDs
   nsTArray<nsAutoPtr<ArrayItem> > mCache;
 
