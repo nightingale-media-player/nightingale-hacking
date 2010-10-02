@@ -127,7 +127,7 @@ BrandingText "${BrandFullName}"
 
 ; Start Menu Folder Page Configuration
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKLM"
-!define MUI_STARTMENUPAGE_REGISTRY_KEY "${MuiStartmenupageRegKey}"
+!define MUI_STARTMENUPAGE_REGISTRY_KEY "${RootAppRegistryKey}"
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "${MuiStartmenupageRegName}"
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuDir
 
@@ -175,6 +175,8 @@ ShowInstDetails hide
 Section "-Application" Section1
    SectionIn 1 RO
 
+   SetShellVarContext all
+
    ReadRegStr $R0 HKLM ${RootAppRegistryKey} "InstallDir"
 
    ${If} $R0 != ""
@@ -192,8 +194,8 @@ Section "-Application" Section1
 
    System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("DISTHELPER_DISTINI","${InstallerTmpDir}\partnerdist\distribution.ini").r1'
 
-
    ${If} $UnpackMode == ${TRUE}
+      MessageBox MB_OK 'About to call: "${InstallerTmpDir}\${SongbirdInstallerEXE}" /S /UNPACK /DIST=${BrandFullNameInternal} /NOOSVERSIONCHECK /D=${SongbirdInstDir}'
       ExecWait '"${InstallerTmpDir}\${SongbirdInstallerEXE}" /S /UNPACK /DIST=${BrandFullNameInternal} /NOOSVERSIONCHECK /D=${SongbirdInstDir}' $1
    ${Else}
       MessageBox MB_OK 'About to call: "${InstallerTmpDir}\${SongbirdInstallerEXE}" /S /DIST=${BrandFullNameInternal} /NOOSVERSIONCHECK /D=${SongbirdInstDir}'
@@ -226,10 +228,10 @@ Section "Desktop Icon"
 
    ; Put the desktop icon in All Users\Desktop
    SetShellVarContext all
-   CreateShortCut "$DESKTOP\${BrandFullNameInternal}.lnk" "${SongbirdInstDir}\${FileMainEXE}" "" "${SongbirdInstDir}\${PreferredIcon}" 0
+   CreateShortCut "$DESKTOP\${BrandFullName}.lnk" "${SongbirdInstDir}\${FileMainEXE}" "" "${SongbirdInstDir}\${PreferredIcon}" 0
 
    ; Remember that we installed a desktop shortcut.
-   WriteRegStr HKLM ${RootAppRegistryKey} ${DesktopShortcutRegName} "$DESKTOP\${BrandFullNameInternal}.lnk"
+   WriteRegStr HKLM ${RootAppRegistryKey} ${DesktopShortcutRegName} "$DESKTOP\${BrandFullName}.lnk"
  
 End: 
 SectionEnd
@@ -241,10 +243,10 @@ Section "QuickLaunch Icon"
   
    ; Put the quicklaunch icon in the current users quicklaunch.
    SetShellVarContext current
-   CreateShortCut "$QUICKLAUNCH\${BrandFullNameInternal}.lnk" "${SongbirdInstDir}\${FileMainEXE}" "" "${SongbirdInstDir}\{PreferredIcon}" 0
+   CreateShortCut "$QUICKLAUNCH\${BrandFullName}.lnk" "${SongbirdInstDir}\${FileMainEXE}" "" "${SongbirdInstDir}\{PreferredIcon}" 0
 
    ; Remember that we installed a quicklaunch shortcut.
-   WriteRegStr HKLM ${RootAppRegistryKey} ${QuicklaunchRegName} "$QUICKLAUNCH\${BrandFullNameInternal}.lnk"
+   WriteRegStr HKLM ${RootAppRegistryKey} ${QuicklaunchRegName} "$QUICKLAUNCH\${BrandFullName}.lnk"
 End:
 SectionEnd
 
@@ -262,6 +264,10 @@ Function InstallExtensions
 
 unzip_ok:
 
+FunctionEnd
+
+Function un.UninstallExtensions
+   RMDir /r "${SongbirdInstDir}\extensions\partner-branding-sample@songbirdnest.com"
 FunctionEnd
 
 Function LaunchApp
@@ -336,12 +342,31 @@ ShowUninstDetails hide
 ; Uninstall Section
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Section "Uninstall"
+   SetShellVarContext all
    Call un.CloseApp
+
+   Call un.UninstallExtensions
+
+   System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("SB_INSTALLER_DIST","${BrandFullNameInternal}").r1'
+
+   MessageBox MB_OK 'About to call: "${SongbirdInstDir}\${SongbirdUninstallerEXE}" /S'
+   ExecWait '"${SongbirdInstDir}\${SongbirdUninstallerEXE}" /S' $1
+   MessageBox MB_OK 'Uninstaller returned: $1'
+
+   ${If} ${FileExists} "${SognbirdInstDir}\disthelper.log"
+      Rename "${SongbirdInstDir}\disthelper.log" "$TEMP\disthelper.log"
+      RMDir "${SongbirdInstDir}"
+   ${EndIf}
 
    Call un.RemoveBrandingRegistryKeys
    Call un.RemoveAppRegistryKeys
 
    ;Call un.CleanVirtualStore
+
+   Delete "$INSTDIR\${PreferredUninstallerName}"
+
+   ; As a safety precaution, do not recursively remove INSTDIR
+   RMDir "$INSTDIR"
 
    ; Refresh desktop.
    System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
@@ -352,10 +377,10 @@ Function un.RemoveBrandingRegistryKeys
    SetShellVarContext all
 
    ; Read where start menu shortcuts are installed
-   ReadRegStr $R0 HKLM ${RootAppRegistryKey} ${MuiStartmenupageRegName}
+   ReadRegStr $R0 HKLM "${RootAppRegistryKey}" ${MuiStartmenupageRegName}
 
    ; Remove start menu shortcuts and start menu folder.
-   ${If} ${FileExists} "$SMPROGRAMS\$R0\${BrandFullNameInternal}.lnk"
+   ${If} ${FileExists} "$SMPROGRAMS\$R0\${BrandFullName}.lnk"
       RMDir /r "$SMPROGRAMS\$R0\*.*"
    ${EndIf}
 
@@ -423,7 +448,7 @@ Function InstallBrandingRegistryKeys
    CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullName}.lnk" "${SongbirdInstDir}\${FileMainEXE}" "" "${SongbirdInstDir}\${PreferredIcon}" 0
    CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullName} (Profile Manager).lnk" "${SongbirdInstDir}\${FileMainEXE}" "-p" "${SongbirdInstDir}\${PreferredIcon}" 0 SW_SHOWNORMAL "" "${BrandFullName} w/ Profile Manager"
    CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullName} (Safe-Mode).lnk" "${SongbirdInstDir}\${FileMainEXE}" "-safe-mode" "${SongbirdInstDir}\${PreferredIcon}" 0 SW_SHOWNORMAL "" "${BrandFullName} Safe-Mode"
-   CreateShortCut "$SMPROGRAMS\$StartMenuDir\Uninstall ${BrandFullName}.lnk" "${SongbirdInstDir}\${PreferredUninstallerName}" "" "${SongbirdInstDir}\${PreferredUninstallerIcon}" 0
+   CreateShortCut "$SMPROGRAMS\$StartMenuDir\Uninstall ${BrandFullName}.lnk" "$INSTDIR\${PreferredUninstallerName}" "" "${SongbirdInstDir}\${PreferredUninstallerIcon}" 0
    !insertmacro MUI_STARTMENU_WRITE_END
 FunctionEnd
 

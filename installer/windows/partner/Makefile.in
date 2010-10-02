@@ -39,6 +39,9 @@ SONGBIRD_BASE_INSTALLER_BASENAME = $(notdir $(SONGBIRD_BASE_INSTALLER_NAME))
 UNPACKED_BASE_INSTALLER_DIR = $(CURDIR)/unpacked-base-installer
 GARBAGE += $(UNPACKED_BASE_INSTALLER_DIR)
 
+# Taken from installer/windows/defines.nsi.in
+SONGBIRD_BASE_UNINSTALLER_BASENAME = Songbird-Uninstall.exe
+
 # Partner extension settings; can be overridden
 BRANDING_EXTENSION ?= $(SONGBIRD_OBJDIR)/xpi-stage/partner-branding-sample/partner-branding-sample-1.0.0.xpi
 BRANDING_EXTENSION_BASENAME = $(notdir $(DISTRIBUTION_EXTENSION)
@@ -56,6 +59,7 @@ PPDEFINES += $(SB_BRANDING_DEFINES) \
              $(DISTRIBUTION_DEFINES) \
              -DSB_BASE_INSTALLER_NAME="$(SONGBIRD_BASE_INSTALLER_NAME)" \
              -DSB_BASE_INSTALLER_BASENAME="$(SONGBIRD_BASE_INSTALLER_BASENAME)" \
+             -DSB_BASE_UNINSTALLER_BASENAME="$(SONGBIRD_BASE_UNINSTALLER_BASENAME)" \
              -DPARTNER_INSTALLER_NAME="$(PARTNER_INSTALLER_NAME)" \
              -DCUR_OBJDIR="$(CURDIR)" \
              $(NULL)
