@@ -55,8 +55,9 @@ const NODE_7DIGITAL_RECOMMENDATIONS = 'SB:7Digital:Recommendations';
 // Where's our stringbundle?
 const STRINGBUNDLE = 'chrome://7digital/locale/7digital.properties';
 // Where's that store?
-const STORE_URL = 'http://ec2-75-101-169-226.compute-1.amazonaws.com/';
-const STORE_RECOMMENDATIONS_URL = STORE_URL + 'recommendations/client';
+const STORE_URL = 'http://ec2-75-101-169-226.compute-1.amazonaws.com';
+const STORE_RECOMMENDATIONS_PATH = '/recommendations/client';
+const STORE_CONFIG_PROPS = 'chrome://7digital/content/config.properties';
 // What's the search engine's name?
 const SEARCHENGINE_NAME = '7digital'; // Note - must match ShortName in:
 const SEARCHENGINE_URL = 'chrome://7digital/content/7digital-search.xml';
@@ -181,6 +182,13 @@ function sb7Digital_onShowCurrentTrack(aEvent) {
   }
 }
 
+sb7Digital.prototype.create7DigitalURL =
+function sb7Digital_create7DigitalURL(aPath) {
+  return STORE_URL + aPath + "?oauth_consumer_key=" +
+            (new SBStringBundle(STORE_CONFIG_PROPS))
+            .get("7DigitalAPIKey");
+}
+
 // install 7digital music store integration
 sb7Digital.prototype.install =
 function sb7Digital_install() {
@@ -203,7 +211,7 @@ function sb7Digital_install() {
     // create 7digital node
     var myNode = this._servicePaneService.createNode();
     myNode.id = NODE_7DIGITAL;
-    myNode.url = STORE_URL;
+    myNode.url = this.create7DigitalURL("");
     myNode.image = 'chrome://7digital/skin/servicepane-icon.png';
     myNode.className = '7digital history stopreload';
     myNode.searchtype = "external";
@@ -215,7 +223,7 @@ function sb7Digital_install() {
     // Create the recommendations node
     var recommendationsNode = this._servicePaneService.createNode();
     recommendationsNode.id = NODE_7DIGITAL;
-    recommendationsNode.url = STORE_RECOMMENDATIONS_URL;
+    recommendationsNode.url = this.create7DigitalURL(STORE_RECOMMENDATIONS_PATH);
     recommendationsNode.image = 'chrome://7digital/skin/servicepane-icon.png';
     recommendationsNode.className = "7digital history stopreload";
     recommendationsNode.searchtype = "external";

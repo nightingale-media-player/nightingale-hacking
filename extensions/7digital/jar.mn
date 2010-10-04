@@ -31,6 +31,7 @@
 % locale  7digital  zh-TW  %locale/zh-TW/
 % skin    7digital  classic/1.0 %skin/
   content/7digital-search.xml      (chrome/content/7digital-search.xml)
+  content/config.properties        (chrome/content/config.properties)
   locale/ar/7digital.properties    (chrome/locale/ar/7digital.properties)
   locale/cs/7digital.properties    (chrome/locale/cs/7digital.properties)
   locale/da/7digital.properties    (chrome/locale/da/7digital.properties)
