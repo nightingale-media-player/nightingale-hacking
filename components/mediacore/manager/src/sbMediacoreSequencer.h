@@ -283,6 +283,7 @@ protected:
     ONHOLD_PREVIOUS
   };
   nsCOMPtr<sbIMediaItem> mValidatingItem;
+  PRBool mValidationFromUserAction;
 };
 
 class sbScopedBoolToggle

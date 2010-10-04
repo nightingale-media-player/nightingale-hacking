@@ -206,6 +206,7 @@ sbMediacoreSequencer::sbMediacoreSequencer()
 , mResumePlaybackPosition(PR_TRUE)
 , mOnHoldStatus(ONHOLD_NOTONHOLD)
 , mValidationComplete(PR_FALSE)
+, mValidationFromUserAction(PR_FALSE)
 {
 
 #ifdef PR_LOGGING
@@ -2624,18 +2625,20 @@ sbMediacoreSequencer::PlayView(sbIMediaListView *aView,
   rv = Play();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Fire EXPLICIT_TRACK_CHANGE when PlayView() is called.
-  nsCOMPtr<sbIMediacoreEvent> event;
-  rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::EXPLICIT_TRACK_CHANGE,
-                                     nsnull,
-                                     nsnull,
-                                     mCore,
-                                     getter_AddRefs(event));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (!aNotFromUserAction) {
+    // Fire EXPLICIT_TRACK_CHANGE when PlayView() is called.
+    nsCOMPtr<sbIMediacoreEvent> event;
+    rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::EXPLICIT_TRACK_CHANGE,
+                                       nsnull,
+                                       nsnull,
+                                       mCore,
+                                       getter_AddRefs(event));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = DispatchMediacoreEvent(event);
-  NS_ENSURE_SUCCESS(rv, rv);
-
+    rv = DispatchMediacoreEvent(event);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
   return NS_OK;
 }
 
@@ -2814,17 +2817,19 @@ sbMediacoreSequencer::OnValidatePlaybackComplete(sbIMediaItem *aItem,
             NS_ENSURE_SUCCESS(rv, rv);
           } 
 
-          nsCOMPtr<sbIMediacoreEvent> event;
-          rv = sbMediacoreEvent::
-            CreateEvent(sbIMediacoreEvent::EXPLICIT_TRACK_CHANGE,
-                        nsnull,
-                        nsnull,
-                        mCore,
-                        getter_AddRefs(event));
-          NS_ENSURE_SUCCESS(rv, rv);
+          if (mValidationFromUserAction) {
+            nsCOMPtr<sbIMediacoreEvent> event;
+            rv = sbMediacoreEvent::
+              CreateEvent(sbIMediacoreEvent::EXPLICIT_TRACK_CHANGE,
+                          nsnull,
+                          nsnull,
+                          mCore,
+                          getter_AddRefs(event));
+            NS_ENSURE_SUCCESS(rv, rv);
 
-          rv = DispatchMediacoreEvent(event);
-          NS_ENSURE_SUCCESS(rv, rv);
+            rv = DispatchMediacoreEvent(event);
+            NS_ENSURE_SUCCESS(rv, rv);
+          }
         }
         
         mon.Exit();
@@ -2881,6 +2886,7 @@ sbMediacoreSequencer::ValidateMediaItemControllerPlayback(PRBool aFromUserAction
     // call completion callback and thus this won't always cause playback to pause.
     mOnHoldStatus = aOnHoldStatus;
     mValidatingItem = mediaItem;
+    mValidationFromUserAction = aFromUserAction;
     mValidationComplete = PR_FALSE;
     rv = mediaItemController->ValidatePlayback(mediaItem, aFromUserAction, this);
     *_proceed = PR_FALSE;
@@ -3011,7 +3017,8 @@ sbMediacoreSequencer::Next(PRBool aNotFromUserAction)
 
   // Fire EXPLICIT_TRACK_CHANGE when Next() was not triggered by the stream 
   // ending.
-  if(!mNextTriggeredByStreamEnd) {
+  if(!mNextTriggeredByStreamEnd &&
+     !aNotFromUserAction) {
     nsCOMPtr<sbIMediacoreEvent> event;
     rv = sbMediacoreEvent::
       CreateEvent(sbIMediacoreEvent::EXPLICIT_TRACK_CHANGE,
@@ -3135,7 +3142,8 @@ sbMediacoreSequencer::Previous(PRBool aNotFromUserAction)
 
   // Fire EXPLICIT_TRACK_CHANGE when Previous() was not triggered by the stream
   // ending.
-  if(!mNextTriggeredByStreamEnd) {
+  if(!mNextTriggeredByStreamEnd &&
+     !aNotFromUserAction) {
     nsCOMPtr<sbIMediacoreEvent> event;
     rv = sbMediacoreEvent::
       CreateEvent(sbIMediacoreEvent::EXPLICIT_TRACK_CHANGE,
