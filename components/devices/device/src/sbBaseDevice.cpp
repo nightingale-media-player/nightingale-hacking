@@ -1605,13 +1605,6 @@ sbBaseDevice::DownloadRequestItem(TransferRequest*      aRequest,
   // Function variables.
   nsresult rv;
 
-  // Update status and set to auto-complete.
-  aDeviceStatusHelper->ChangeState(STATE_DOWNLOADING);
-  sbDeviceStatusAutoOperationComplete
-    autoComplete(aDeviceStatusHelper,
-                 sbDeviceStatusHelper::OPERATION_TYPE_DOWNLOAD,
-                 aRequest);
-
   // Get the request volume info.
   nsRefPtr<sbBaseDeviceVolume> volume;
   nsCOMPtr<sbIDeviceLibrary>   deviceLibrary;
@@ -1635,6 +1628,13 @@ sbBaseDevice::DownloadRequestItem(TransferRequest*      aRequest,
   NS_ENSURE_SUCCESS(rv, rv);
   if (!downloader)
     return NS_OK;
+
+  // Update status and set to auto-complete.
+  aDeviceStatusHelper->ChangeState(STATE_DOWNLOADING);
+  sbDeviceStatusAutoOperationComplete
+    autoComplete(aDeviceStatusHelper,
+                 sbDeviceStatusHelper::OPERATION_TYPE_DOWNLOAD,
+                 aRequest);
 
   // Create a download job.
   // TODO: Add a writable temporaryFileFactory attribute to
