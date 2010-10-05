@@ -51,6 +51,7 @@
 #include <nsCOMArray.h>
 #include <nsRefPtrHashtable.h>
 #include <nsServiceManagerUtils.h>
+#include <nsIIdleService.h>
 #include <nsIThread.h>
 #include <nsIThreadPool.h>
 #include <nsThreadUtils.h>
@@ -161,6 +162,8 @@ private:
   nsresult PromptToDeleteDatabases();
   nsresult DeleteMarkedDatabases();
 
+  nsresult RunAnalyze();
+
 private:
   typedef std::map<sqlite3 *, collationBuffers *> collationMap_t;
   collationMap_t m_CollationBuffersMap;
@@ -170,6 +173,12 @@ private:
 
   //[database guid / thread]
   nsRefPtrHashtableMT<nsStringHashKey, QueryProcessorQueue> m_QueuePool;
+  // enum function for queue processor hashtable.
+  template<class T>
+    static NS_HIDDEN_(PLDHashOperator)
+      EnumerateIntoArrayStringKey(const nsAString& aKey,
+                                  T* aData,
+                                  void* aArray);
 
   PRMonitor* m_pThreadMonitor;
   PRMonitor* m_CollationBuffersMapMonitor;
@@ -188,6 +197,9 @@ private:
   nsCOMPtr<nsITimer> m_PromptForDeleteTimer;
 
   nsCOMPtr<nsIThreadPool> m_pThreadPool;
+
+  // Tracks if we've successfully added an idle observer.
+  PRPackedBool m_AddedIdleObserver;
 
   // Pre-allocated memory for sqlite page cache and scratch.
   // Created in InitMemoryConstraints and destroyed in Shutdown.
@@ -219,7 +231,8 @@ public:
   , m_pQueueMonitor(nsnull)
   , m_pHandleLock(nsnull)
   , m_pHandle(nsnull)
-  , m_pEngine(nsnull) {
+  , m_pEngine(nsnull)
+  , m_AnalyzeCount(0) {
     MOZ_COUNT_CTOR(QueryProcessorQueue);
   }
 
@@ -377,6 +390,8 @@ protected:
 
   PRMonitor *   m_pQueueMonitor;
   queryqueue_t  m_Queue;
+
+  PRUint32      m_AnalyzeCount;
 };
 
 // These classes are used for time-critical string copy during the collation

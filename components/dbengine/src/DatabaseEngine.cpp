@@ -147,6 +147,11 @@
 // Uncomment or define this to enable perf logging.
 //#define USE_PERF_LOGGING 1
 
+// Idle Service Timeout we use before checking if we should run ANALYZE.
+#define IDLE_SERVICE_TIMEOUT    (5 * 60)
+// Query Count Threshold for running ANALYZE
+#define ANALYZE_QUERY_THRESHOLD (800)
+
 #if defined(_DEBUG) || defined(DEBUG)
   #if defined(XP_WIN)
     #include <windows.h>
@@ -960,6 +965,7 @@ CDatabaseEngine::CDatabaseEngine()
 , m_MemoryConstraintsSet(PR_FALSE)
 , m_PromptForDelete(PR_FALSE)
 , m_DeleteDatabases(PR_FALSE)
+, m_AddedIdleObserver(PR_FALSE)
 , m_pPageSpace(nsnull)
 , m_pScratchSpace(nsnull)
 #ifdef XP_MACOSX
@@ -1095,6 +1101,14 @@ NS_IMETHODIMP CDatabaseEngine::Init()
   rv = m_pThreadPool->SetIdleThreadTimeout(30000);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<nsIIdleService> idleService = 
+    do_GetService("@mozilla.org/widget/idleservice;1", &rv);
+  
+  if(NS_SUCCEEDED(rv)) {
+    rv = idleService->AddIdleObserver(this, IDLE_SERVICE_TIMEOUT);
+    m_AddedIdleObserver = NS_SUCCEEDED(rv) ? PR_TRUE : PR_FALSE;
+  }
+
   return NS_OK;
 }
 
@@ -1149,6 +1163,16 @@ NS_IMETHODIMP CDatabaseEngine::Shutdown()
   nsresult rv = m_pThreadPool->Shutdown();
   NS_ENSURE_SUCCESS(rv, rv);
   
+  if(m_AddedIdleObserver) {
+    nsCOMPtr<nsIIdleService> idleService = 
+      do_GetService("@mozilla.org/widget/idleservice;1", &rv);
+    if(NS_SUCCEEDED(rv)) {
+      rv = idleService->RemoveIdleObserver(this, IDLE_SERVICE_TIMEOUT);
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), 
+                       "Failed to remove idle service observer.");
+    }
+  }
+
 #ifdef XP_MACOSX
   if (m_Collator)
     ::UCDisposeCollator(&m_Collator);
@@ -1218,6 +1242,10 @@ NS_IMETHODIMP CDatabaseEngine::Observe(nsISupports *aSubject,
     // Delete any bad databases now
     rv = DeleteMarkedDatabases();
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to delete bad databases!");
+  }
+  else if(!strcmp(aTopic, "idle")) {
+    rv = RunAnalyze();
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to run ANALYZE on Databases.");
   }
 
   return NS_OK;
@@ -2015,6 +2043,62 @@ CDatabaseEngine::DeleteMarkedDatabases()
   return NS_OK;
 }
 
+template<class T>
+PLDHashOperator CDatabaseEngine::EnumerateIntoArrayStringKey(
+                                   const nsAString& aKey,
+                                   T* aQueue,
+                                   void* aArray)
+{
+  nsTArray<nsString> *stringArray = 
+    reinterpret_cast< nsTArray<nsString>* >(aArray);
+  
+  // No need to lock the queue here since it's access to m_QueuePool is locked
+  // when we are enumerating it.
+
+  if(aQueue->m_AnalyzeCount > ANALYZE_QUERY_THRESHOLD) {
+    aQueue->m_AnalyzeCount = 0;
+    stringArray->AppendElement(aKey);
+  }
+
+  return PL_DHASH_NEXT;
+}
+
+nsresult 
+CDatabaseEngine::RunAnalyze()
+{
+  nsAutoMonitor mon(m_pThreadMonitor);
+  
+  nsTArray<nsString> dbGUIDs;
+  m_QueuePool.EnumerateRead(EnumerateIntoArrayStringKey, &dbGUIDs);
+
+  mon.Exit();
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  PRUint32 current = 0;
+  PRUint32 length  = dbGUIDs.Length();
+
+  for(; current < length; current++) {
+    nsRefPtr<CDatabaseQuery> query;
+    NS_NEWXPCOM(query, CDatabaseQuery);
+    if(!query)
+      continue;
+    rv = query->SetDatabaseGUID(dbGUIDs[current]);
+    if(NS_FAILED(rv))
+      continue;
+    rv = query->AddQuery(NS_LITERAL_STRING("ANALYZE"));
+    if(NS_FAILED(rv))
+      continue;
+    rv = query->SetAsyncQuery(PR_TRUE);
+    if(NS_FAILED(rv))
+      continue;
+    rv = SubmitQueryPrivate(query);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to submit ANALYZE query.");
+  }
+
+  return NS_OK;
+}
+
 //-----------------------------------------------------------------------------
 /*static*/ void PR_CALLBACK CDatabaseEngine::QueryProcessor(CDatabaseEngine* pEngine,
                                                             QueryProcessorQueue *pQueue)
@@ -2056,6 +2140,7 @@ CDatabaseEngine::DeleteMarkedDatabases()
       }
 
       pQueue->m_Running = PR_TRUE;
+      pQueue->m_AnalyzeCount++;
     } // Exit Monitor
 
     //The query is now in a running state.
