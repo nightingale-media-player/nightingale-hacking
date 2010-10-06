@@ -53,16 +53,20 @@ const PLACEHOLDER_URL = "chrome://songbird/content/mediapages/firstrun.xul";
 const PREF_FIRSTRUN_SESSION = "songbird.firstrun.is_session";
 
 function LOG(str) {
-  var environment = Cc["@mozilla.org/process/environment;1"]
-                      .createInstance(Ci.nsIEnvironment);
-  var level = ("," + environment.get("NSPR_LOG_MODULES") + ",")
-              .match(/,(?:sbSessionStore|all):(\d+),/);
-  if (!level || level[1] < 3) {
-    // don't log
-    return;
-  }
-  var file = (new Error).stack.split("\n").reverse()[1];
-  dump(file + "" + str + "\n");
+  // var environment = Cc["@mozilla.org/process/environment;1"]
+  //                     .createInstance(Ci.nsIEnvironment);
+  // var level = ("," + environment.get("NSPR_LOG_MODULES") + ",")
+  //             .match(/,(?:sbSessionStore|all):(\d+),/);
+  // if (!level || level[1] < 3) {
+  //   // don't log
+  //   return;
+  // }
+  // var file = (new Error).stack.split("\n").reverse()[1];
+  // dump(file + "" + str + "\n");
+  
+  dump("\n\n\n");
+  dump(str);
+  dump("\n\n\n");
   var consoleService = Cc['@mozilla.org/consoleservice;1']
                          .getService(Ci.nsIConsoleService);
   consoleService.logStringMessage(str);
@@ -322,7 +326,7 @@ var SBSessionStore = {
             }
           } else {
             LOG("not first tab, always _blank");
-            location = "_blank";
+//            location = "_blank";
           }
 
           // don't load device pages for a device that isn't mounted

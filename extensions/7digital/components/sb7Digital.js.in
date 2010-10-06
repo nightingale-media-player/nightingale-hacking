@@ -59,9 +59,6 @@ const STORE_URL = 'http://ec2-75-101-169-226.compute-1.amazonaws.com';
 const STORE_LOADING_STUB_PATH = "/client";
 const STORE_RECOMMENDATIONS_PATH = '/recommendations/client';
 const STORE_CONFIG_PROPS = 'chrome://7digital/content/config.properties';
-// What's the search engine's name?
-const SEARCHENGINE_NAME = '7digital'; // Note - must match ShortName in:
-const SEARCHENGINE_URL = 'chrome://7digital/content/7digital-search.xml';
 // What's the permission for?
 const PERMISSION_SCOPE = 'http://ec2-75-101-169-226.compute-1.amazonaws.com/';
 // What's the service pane's namespace
@@ -89,13 +86,9 @@ sb7Digital.prototype = {
 
   // Handy services
   _permissionManager: null,
-  _searchService: null,
   _servicePaneService: null,
   _ioService: null,
 
-  // a repeating timer that we use for setting our search engine to default
-  _firstRunTimer: null,
-  
   // What whitelists do we do?
   _permissions: ['rapi.playback_control', 'rapi.playback_read', 
       'rapi.library_read', 'rapi.library_write'],
@@ -111,8 +104,6 @@ function sb7Digital_initialize() {
   // here's some service we may well use later...
   this._permissionManager = Cc["@mozilla.org/permissionmanager;1"]
     .getService(Ci.nsIPermissionManager);
-  this._searchService = Cc['@mozilla.org/browser/search-service;1']
-    .getService(Ci.nsIBrowserSearchService);
   this._servicePaneService = Cc['@songbirdnest.com/servicepane/service;1']
     .getService(Ci.sbIServicePaneService);
   this._ioService = Cc['@mozilla.org/network/io-service;1']
@@ -152,17 +143,6 @@ function sb7Digital_observe(subject, topic, data) {
     } else if (data == 'item-cancel-action') {
       this._uninstall = false;
     }
-  } else if (topic == 'timer-callback' && subject == this._firstRunTimer) {
-    var searchEngine = this._searchService.getEngineByName(SEARCHENGINE_NAME);
-    if (!searchEngine) {
-      return;
-    }
-    searchEngine.hidden = false;
-    this._searchService.moveEngine(searchEngine, 1);
-    //gSearchHandler._previousSearchEngine = searchEngine;
-
-    this._firstRunTimer.cancel();
-    this._firstRunTimer = null;
   } else if (topic == 'songbird-main-window-presented') {
     // Run this everytime since it involves servicepane node initialization
     this.install();
@@ -214,7 +194,7 @@ function sb7Digital_install() {
     myNode.id = NODE_7DIGITAL;
     myNode.url = this.create7DigitalURL(STORE_LOADING_STUB_PATH);
     myNode.image = 'chrome://7digital/skin/servicepane-icon.png';
-    myNode.className = '7digital history';
+    myNode.className = '7digital history nosearchbox';
     myNode.searchtype = "external";
     myNode.name = '&servicepane.7digital';
     myNode.stringbundle = STRINGBUNDLE;
@@ -226,7 +206,7 @@ function sb7Digital_install() {
     recommendationsNode.id = NODE_7DIGITAL;
     recommendationsNode.url = this.create7DigitalURL(STORE_RECOMMENDATIONS_PATH);
     recommendationsNode.image = 'chrome://7digital/skin/servicepane-icon.png';
-    recommendationsNode.className = "7digital history";
+    recommendationsNode.className = "7digital history nosearchbox";
     recommendationsNode.searchtype = "external";
     recommendationsNode.name = "&servicepane.7digital_recommended";
     recommendationsNode.stringbundle = STRINGBUNDLE;
@@ -239,24 +219,6 @@ function sb7Digital_install() {
                      .getService(Ci.nsIWindowMediator)
                      .getMostRecentWindow("Songbird:Main").window;
     sbWindow.addEventListener("ShowCurrentTrack", this.onShowCurrentTrack, true);
-  } catch (e) {
-    Cu.reportError(e);
-  }
-
-  // install our search plugin
-  try {
-
-    // if we don't already have the search engine...
-    if (!this._searchService.getEngineByName(SEARCHENGINE_NAME)) {
-      // install the engine
-      this._searchService.addEngine(SEARCHENGINE_URL,
-          Ci.nsISearchEngine.DATA_XML, 
-          'chrome://7digital/skin/servicepane-icon.png', false);
-      // start a timer to try to set the engine as the default
-      this._firstRunTimer = Cc['@mozilla.org/timer;1']
-        .createInstance(Ci.nsITimer);
-      this._firstRunTimer.init(this, 250, Ci.nsITimer.TYPE_REPEATING_SLACK);
-    }
   } catch (e) {
     Cu.reportError(e);
   }
@@ -280,18 +242,6 @@ function sb7Digital_install() {
 // uninstall 7digital music store integration
 sb7Digital.prototype.uninstall =
 function sb7Digital_uninstall() {
-  // uninstall our search plugin
-  try {
-
-    // look for the engine...
-    var engine = this._searchService.getEngineByName(SEARCHENGINE_NAME);
-    if (engine) {
-      this._searchService.removeEngine(engine);
-    }
-  } catch (e) {
-    Cu.reportError(e);
-  }
-
   // remove whitelist entries
   try {
     var scope = this._ioService.newURI(PERMISSION_SCOPE, null, null);

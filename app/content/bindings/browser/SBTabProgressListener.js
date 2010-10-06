@@ -132,6 +132,14 @@ SBTabProgressListener.prototype = {
         } else {
           historyButtons.removeAttribute("isCollapse");
         }
+        
+        // Set the visibility for the search box as needed.
+        var searchBox = document.getElementById("searchbar-container");
+        if (className.indexOf("nosearchbox") > -1) {
+          searchBox.setAttribute("isCollapse", "true");
+        } else {
+          searchBox.removeAttribute("isCollapse");
+        }
 
         // Set visibility for stop/reload button
         var stopreloadButton = document.getElementById("stopreload-container");
