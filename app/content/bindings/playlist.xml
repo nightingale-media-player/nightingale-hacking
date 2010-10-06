@@ -556,19 +556,19 @@
       function columnSpecWatcher_onItemUpdated(aMediaList,
                                                aMediaItem,
                                                aProperties) {
-      // ignore notifications that are not about our medialist
-      if (aMediaItem != this.medialist)
-        return false;
       // ignore notifications that we caused
       if (this.playlist.ignoreColumnSpecUpdate)
         return true;
-      // if the udpate is on the columnspec, reload columns
-      for (var i=0; i<aProperties.length; i++) {
-        var property = aProperties.getPropertyAt(i);
-        if (property.id == SBProperties.columnSpec) {
-          this.playlist._setupColumns();
-        }
-      }
+      
+      // ignore notifications that are not about our medialist
+      if (aMediaItem != this.medialist)
+        return false;
+
+      // since we only receive notifications when columnSpec changed
+      // we don't need to check to ensure that that specific property
+      // has changed.
+      this.playlist._setupColumns();
+
       return false;
     },
     QueryInterface: function columnSpecWatcher_QI(aIID) {
@@ -579,12 +579,20 @@
       throw Components.results.NS_ERROR_NO_INTERFACE;
     }
   }
+  // only listen to changes to columnSpec
+  var watchedProperties = 
+    this._Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+        .createInstance(this._Ci.sbIMutablePropertyArray);
+  watchedProperties.strict = false;
+  watchedProperties.appendProperty(SBProperties.columnSpec, '');
+  
   // begin watching changes to column specs
   mediaListView.mediaList
                .library
                .addListener(this.columnSpecWatcher,
                             false,
-                            this._Ci.sbIMediaList.LISTENER_FLAGS_ITEMUPDATED);
+                            this._Ci.sbIMediaList.LISTENER_FLAGS_ITEMUPDATED,
+                            watchedProperties);
 
   // Make sure we save the column spec
   // for the existing view

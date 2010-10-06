@@ -453,45 +453,51 @@ var TrackEditor = {
     // Apply each modified property back onto the selected items,
     // keeping track of which items have been modified
     var needsWriting = new Array(items.length);
-    for each (property in properties) {
-      if (!TrackEditor.state.isPropertyEdited(property)) {
-        continue;
-      }
-      // Add the property to our list so only the changed ones get written
-      writeProperties.push(property);
-
-      for (var i = 0; i < items.length; i++) {
-        var value = TrackEditor.state.getPropertyValue(property);
-        var item = items[i];
-        // don't modify values for non-user-editable items (except rating)
-        if (!LibraryUtils.canEditMetadata(item)
-            && property != SBProperties.rating) {
-          continue;
-        }
-
-        if (value != item.getProperty(property)) {
-          // Completely remove empty properties
-          // HACK for 0.7: primaryImageURL likes to be set to ""
-          //               this says "i am scanned and empty"
-          //               setting it to null says "rescan me"
-          if (value == "" && property != SBProperties.primaryImageURL) {
-            value = null;
-          }
-
-          item.setProperty(property, value);
-          
-          // Flag the item as needing a metadata-write job.
-          // Do not start a write-job if all that has changed is the 
-          // rating, and rating-write isn't enabled.
-          if (property != SBProperties.rating || enableRatingWrite) {
-            needsWriting[i] = true;
-          }
-        }
-      }
-    }
-      
     
-  /* TODO: finish or nix this
+    var batchSetter = {
+      runBatched: function(aUserData) {
+        for each (property in properties) {
+          if (!TrackEditor.state.isPropertyEdited(property)) {
+            continue;
+          }
+          // Add the property to our list so only the changed ones get written
+          writeProperties.push(property);
+
+          for (var i = 0; i < items.length; i++) {
+            var value = TrackEditor.state.getPropertyValue(property);
+            var item = items[i];
+            // don't modify values for non-user-editable items (except rating)
+            if (!LibraryUtils.canEditMetadata(item)
+                && property != SBProperties.rating) {
+              continue;
+            }
+
+            if (value != item.getProperty(property)) {
+              // Completely remove empty properties
+              // HACK for 0.7: primaryImageURL likes to be set to ""
+              //               this says "i am scanned and empty"
+              //               setting it to null says "rescan me"
+              if (value == "" && property != SBProperties.primaryImageURL) {
+                value = null;
+              }
+
+              item.setProperty(property, value);
+              
+              // Flag the item as needing a metadata-write job.
+              // Do not start a write-job if all that has changed is the 
+              // rating, and rating-write isn't enabled.
+              if (property != SBProperties.rating || enableRatingWrite) {
+                needsWriting[i] = true;
+              }
+            }
+          }
+        }
+      }
+    };
+
+    this.mediaListView.mediaList.runInBatchMode(batchSetter, null);
+    
+    /* TODO: finish or nix this
     // isPartOfCompilation gets special treatment because
     // this is our only user-exposed boolean property right now
     // TODO: generalize this to be more like the textboxes above
@@ -515,7 +521,7 @@ var TrackEditor = {
           }
         }
     }
-  */
+    */
     
     // Add all items that need writing into an array 
     var mediaItemArray = [];
