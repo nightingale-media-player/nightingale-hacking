@@ -319,6 +319,9 @@ sbMediacoreWrapper::OnStop()
     SendDOMEvent(NS_LITERAL_STRING("stop"), EmptyString());
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = DispatchMediacoreEvent(sbIMediacoreEvent::STREAM_STOP);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
