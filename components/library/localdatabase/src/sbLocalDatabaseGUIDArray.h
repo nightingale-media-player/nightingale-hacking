@@ -129,6 +129,7 @@ private:
 
   ~sbLocalDatabaseGUIDArray();
 
+  nsresult InitializeBase();
   nsresult Initialize();
 
   nsresult UpdateLength();

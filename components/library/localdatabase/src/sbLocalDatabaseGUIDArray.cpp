@@ -729,7 +729,10 @@ sbLocalDatabaseGUIDArray::Clone(sbILocalDatabaseGUIDArray** _retval)
   NS_NEWXPCOM(newArray, sbLocalDatabaseGUIDArray);
   NS_ENSURE_TRUE(newArray, NS_ERROR_OUT_OF_MEMORY);
 
-  nsresult rv = CloneInto(newArray);
+  nsresult rv = newArray->InitializeBase();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = CloneInto(newArray);
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*_retval = newArray);
@@ -1132,16 +1135,23 @@ sbLocalDatabaseGUIDArray::SuppressInvalidation(PRBool aSuppress)
 }
 
 nsresult
+sbLocalDatabaseGUIDArray::InitializeBase()
+{
+  mCacheMonitor = 
+    nsAutoMonitor::NewMonitor("sbLocalDatabaseGUIDArray::mCacheMonitor");
+  NS_ENSURE_TRUE(mCacheMonitor, NS_ERROR_OUT_OF_MEMORY);
+
+  return NS_OK;
+}
+
+nsresult
 sbLocalDatabaseGUIDArray::Initialize()
 {
   TRACE(("sbLocalDatabaseGUIDArray[0x%.8x] - Initialize", this));
   NS_ASSERTION(mPropertyCache, "No property cache!");
 
-  nsresult rv;
-
-  mCacheMonitor = 
-    nsAutoMonitor::NewMonitor("sbLocalDatabaseGUIDArray::mCacheMonitor");
-  NS_ENSURE_TRUE(mCacheMonitor, NS_ERROR_OUT_OF_MEMORY);
+  nsresult rv = InitializeBase();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Make sure we have a database and a base table
   if (mDatabaseGUID.IsEmpty() || mBaseTable.IsEmpty()) {
