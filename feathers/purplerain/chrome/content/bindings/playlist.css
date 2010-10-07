@@ -360,7 +360,7 @@ Play Queue
  *     c. selected, focus
  *     d. selected, not focused
  *
- *     Currently, (a) and (b) receive the same styling.
+ *     Currently, (a) and (d) receive the same styling (current item unfocused)
  *
  * (3) The items before the current item (playqueue-history) have special text
  *     styling and special alternating background images.
@@ -397,9 +397,9 @@ Play Queue
   background-image: url('chrome://songbird/skin/playlist/bg-playqueue-current-row.png');
 }
 
-.sb-playlist-tree > treechildren::-moz-tree-row(playqueue-current, selected) {
+.sb-playlist-tree > treechildren::-moz-tree-row(playqueue-current, focus) {
   /* xxx slloyd placeholder */
-  background-image: url('chrome://songbird/skin/playlist/bg-playqueue-current-row-selected.png');
+  background-image: url('chrome://songbird/skin/playlist/bg-playqueue-current-row-focused.png');
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-row(playqueue-current, selected, focus) {
