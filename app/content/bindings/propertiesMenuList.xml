@@ -149,7 +149,8 @@
             this._updateControls("textbox", false);
             this._updateControls("label", false);
             // We have to make sure that the add link is in the correct state
-            this._updateAddLink();
+            if (this._addlink)
+              this._updateAddLink();
           }
         ]]></setter>
       </property>
@@ -414,6 +415,7 @@
               separator.setAttribute("class", "plain");
               if (!self.separatorEditable) {
                 separator.setAttribute("readonly", true);
+                separator.setAttribute("tabindex", -1);
               }
               vbox.appendChild(separator);
               return vbox;
@@ -510,8 +512,9 @@
               if (existingChild) {
                 var separator = document.createElement("textbox");
                 separator.setAttribute("value", this.defaultSeparator);
-                if (this.readonly) {
+                if (!self.separatorEditable) {
                     separator.setAttribute("readonly", true);
+                    separator.setAttribute("tabindex", -1);
                 }
                 separator.setAttribute("class", "plain");
                 vbox.appendChild(separator);
