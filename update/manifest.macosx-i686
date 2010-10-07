@@ -247,11 +247,6 @@
 ./defaults/preferences/songbird-zzz-branding.js
 ./defaults/profile/mimeTypes.rdf
 ./disthelper
-./extensions/7digital@songbirdnest.com/chrome.manifest
-./extensions/7digital@songbirdnest.com/chrome/7digital.jar
-./extensions/7digital@songbirdnest.com/components/sb7Digital.js
-./extensions/7digital@songbirdnest.com/defaults/preferences/prefs.js
-./extensions/7digital@songbirdnest.com/install.rdf
 ./extensions/albumart@songbirdnest.com/chrome.manifest
 ./extensions/albumart@songbirdnest.com/chrome/albumart.jar
 ./extensions/albumart@songbirdnest.com/install.rdf
