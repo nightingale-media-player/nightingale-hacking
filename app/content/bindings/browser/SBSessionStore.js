@@ -64,12 +64,12 @@ function LOG(str) {
   // var file = (new Error).stack.split("\n").reverse()[1];
   // dump(file + "" + str + "\n");
   
-  dump("\n\n\n");
-  dump(str);
-  dump("\n\n\n");
-  var consoleService = Cc['@mozilla.org/consoleservice;1']
-                         .getService(Ci.nsIConsoleService);
-  consoleService.logStringMessage(str);
+  // dump("\n\n\n");
+  // dump(str);
+  // dump("\n\n\n");
+  // var consoleService = Cc['@mozilla.org/consoleservice;1']
+  //                        .getService(Ci.nsIConsoleService);
+  // consoleService.logStringMessage(str);
 }
 
 __defineGetter__("_tabState", function() {
