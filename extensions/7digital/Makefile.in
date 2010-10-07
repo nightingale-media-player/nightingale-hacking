@@ -35,7 +35,7 @@ SUBDIRS = components \
           defaults \
           $(NULL)
 
-JAR_MANIFEST = jar.mn
+JAR_MANIFEST = jar.mn.in
 
 INSTALL_EXTENSION = 0
 
