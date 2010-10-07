@@ -1092,7 +1092,7 @@ sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > 
 
 .drop-message {
   color: rgb(212,210,221);
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 /******************************************************************************
