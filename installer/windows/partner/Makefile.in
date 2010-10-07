@@ -64,6 +64,8 @@ PPDEFINES += $(SB_BRANDING_DEFINES) \
              -DCUR_OBJDIR="$(CURDIR)" \
              $(NULL)
 
+CREATEDIRS += $(SB_INSTALLER_FINAL_DIR)
+
 include $(topsrcdir)/build/rules.mk
 
 # We $(warn) instead of error, because there are a number of targets that

@@ -353,7 +353,7 @@ Section "Uninstall"
    ExecWait '"${SongbirdInstDir}\${SongbirdUninstallerEXE}" /S' $1
    MessageBox MB_OK 'Uninstaller returned: $1'
 
-   ${If} ${FileExists} "${SognbirdInstDir}\disthelper.log"
+   ${If} ${FileExists} "${SongbirdInstDir}\disthelper.log"
       Rename "${SongbirdInstDir}\disthelper.log" "$TEMP\disthelper.log"
       RMDir "${SongbirdInstDir}"
    ${EndIf}
