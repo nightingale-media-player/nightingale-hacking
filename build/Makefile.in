@@ -32,16 +32,17 @@ include $(DEPTH)/build/autodefs.mk
 AWK_CMD = $(AWK) $(AWK_EXPR) < $(MOZSDK_INCLUDE_DIR)/mozilla-config.h
 AWK_EXPR = '/\#define MOZILLA_VERSION_U/ { gsub(/"/, "", $$3); print $$3 }'
 
-export:: sbBuildInfo.mk
+BUILD_INFO_MK_FILE = sbBuildInfo.mk
 
-GARBAGE += sbBuildInfo.mk
+export:: $(BUILD_INFO_MK_FILE)
+
+GARBAGE += $(BUILD_INFO_MK_FILE)
 
 export SONGBIRD_OFFICIAL
 
-sbBuildInfo.mk: FORCE
+$(BUILD_INFO_MK_FILE): FORCE
 	$(RM) -f $@
 	$(PYTHON) $(srcdir)/make-buildinfo.py -i $(srcdir)/$@.in -o $@ \
     -k SB_MOZILLA_VERSION=$(shell $(AWK_CMD)) 
-	
 
 include $(topsrcdir)/build/rules.mk
