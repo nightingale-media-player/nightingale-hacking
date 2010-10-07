@@ -78,7 +78,7 @@ interface sbIBatchCreateMediaItemsListener : nsISupports
 *
 * \sa sbIMediaItem, sbIMediaList
 */
-[scriptable, uuid(b8ad0518-8892-4c6f-b4f9-aef0316f62a0)]
+[scriptable, uuid(e74ac7a0-df65-4e44-86cf-789bc521ed0a)]
 interface sbILibrary : sbIMediaList
 {
   /**
@@ -212,8 +212,10 @@ interface sbILibrary : sbIMediaList
    * \brief Called when the library should remove unsupported media list types,
    *        unknown property types, temporary items, or otherwise optimize its
    *        performance or size.
+   * \param aAnalyzeOnly - Optimize will only run analysis of the library 
+   *                       for performance.
    */
-  void optimize();
+  void optimize([optional] in boolean aAnalyzeOnly);
 
   /**
    * \brief Called when the library should save any cached data to disk

@@ -2185,7 +2185,7 @@ sbLocalDatabaseSortInvalidateJob::Observe(nsISupports *aSubject,
       "sbLocalDatabaseSortInvalidateJob failed to flush library!");
 
     // Vacuum, analyze, etc.
-    rv = mLibrary->Optimize();
+    rv = mLibrary->Optimize(PR_FALSE);
     NS_ASSERTION(NS_SUCCEEDED(rv),
       "sbLocalDatabaseSortInvalidateJob failed to optimize library!");
 

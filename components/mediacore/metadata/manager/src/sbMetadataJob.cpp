@@ -1201,12 +1201,6 @@ nsresult sbMetadataJob::BeginLibraryBatch()
     "sbMetadataJob::BeginLibraryBatch is main thread only!");
   nsresult rv = NS_OK;
   
-  // Only start a batch for read jobs.  Other jobs may get delayed (e.g., write
-  // job to an item that's being played), resulting in a batch that doesn't end
-  // for a very long time (see bug 20750).
-  if (mJobType != TYPE_READ)
-    return NS_OK;
-
   if (mInLibraryBatch) {
     // Already in a batch
     return NS_OK;
@@ -1303,6 +1297,17 @@ nsresult sbMetadataJob::OnJobProgress()
     rv = mLibrary->Flush();
     NS_ASSERTION(NS_SUCCEEDED(rv), 
       "sbMetadataJob::OnJobProgress failed to flush library!");
+
+    //
+    // If we've added a significant amount of items, running analyze
+    // will ensure performance remains as good as can be. For example
+    // adding 65,000 tracks will cause guid array queries to get all the
+    // GUIDs to take up to 3000ms and after running analyze this same 
+    // query will run in about 600ms.
+    //
+    rv = mLibrary->Optimize(PR_TRUE);
+    NS_ASSERTION(NS_SUCCEEDED(rv),
+      "sbMetadataJob::onJobProgress failed to optimize library!");
   }
   return NS_OK;
 }
@@ -1318,7 +1323,33 @@ nsresult sbMetadataJob::GetType(JobType* aJobType)
 nsresult sbMetadataJob::SetBlocked(PRBool aBlocked)
 {
   TRACE(("%s[%.8x]", __FUNCTION__, this));
+  
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  // Need to save previous state to check if we need to
+  // begin or end the library batch.
+  PRBool wasBlocked = mBlocked;
+  
   mBlocked = aBlocked;
+
+  // We may begin or end the library batch when changing blocked
+  // states to enable other batched and non-batched operations in 
+  // the library to proceed normally. Only WRITE jobs may block.
+  // For a particular use case why this is necessary see bug 20750.
+
+  // If we were blocked and we are no longer blocked, we should
+  // begin the library batch.
+  if(wasBlocked && !aBlocked) {
+    rv = BeginLibraryBatch();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  // If we were not blocked and we are now blocked, we should
+  // end the library batch.
+  else if(!wasBlocked && aBlocked) {
+    rv = EndLibraryBatch();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   return NS_OK;
 }
 

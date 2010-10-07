@@ -3232,7 +3232,7 @@ sbLocalDatabaseLibrary::RegisterMediaListFactory(sbIMediaListFactory* aFactory)
  * See sbILibrary
  */
 NS_IMETHODIMP
-sbLocalDatabaseLibrary::Optimize()
+sbLocalDatabaseLibrary::Optimize(PRBool aAnalyzeOnly)
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - Optimize()", this));
 
@@ -3240,8 +3240,10 @@ sbLocalDatabaseLibrary::Optimize()
   nsresult rv = MakeStandardQuery(getter_AddRefs(query), PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = query->AddQuery(NS_LITERAL_STRING("VACUUM"));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (!aAnalyzeOnly) {
+    rv = query->AddQuery(NS_LITERAL_STRING("VACUUM"));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = query->AddQuery(NS_LITERAL_STRING("ANALYZE"));
   NS_ENSURE_SUCCESS(rv, rv);
