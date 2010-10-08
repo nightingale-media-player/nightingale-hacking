@@ -796,6 +796,9 @@ DOMEventListenerSet.prototype = {
    * \param aListener           Listener function.
    * \param aUseCapture         True if event capture should be used.
    * \param aOneShot            True if listener is a one-shot listener.
+   * \param aWantsUntrusted     True if event can be triggered by untrusted
+   *                            content. non-standerd and Mozilla only. false
+   *                            by default to avoid security problems.
    *
    * \return                    Event listener ID.
    */
@@ -804,7 +807,8 @@ DOMEventListenerSet.prototype = {
                                         aType,
                                         aListener,
                                         aUseCapture,
-                                        aOneShot) {
+                                        aOneShot,
+                                        aWantsUntrusted) {
     // Create the event listener object.
     var eventListener = {};
     eventListener.id = this._nextEventListenerID++;
@@ -813,6 +817,7 @@ DOMEventListenerSet.prototype = {
     eventListener.listener = aListener;
     eventListener.useCapture = aUseCapture;
     eventListener.oneShot = aOneShot;
+    eventListener.wantsUntrusted = aWantsUntrusted == true ? true : false;
 
     // Use one-shot function if listener is a one-shot listener.
     var listenerFunc = eventListener.listener;
@@ -826,7 +831,8 @@ DOMEventListenerSet.prototype = {
     // Add the event listener.
     eventListener.element.addEventListener(eventListener.type,
                                            eventListener.addedListener,
-                                           eventListener.useCapture);
+                                           eventListener.useCapture,
+                                           eventListener.wantsUntrusted);
     this._eventListenerList[eventListener.id] = eventListener;
 
     return (eventListener.id);
