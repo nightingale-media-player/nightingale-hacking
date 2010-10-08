@@ -563,7 +563,7 @@
     <field name="skip_interval">null</field>
 
     <constructor>
-        this.setAttribute("tooltiptext", "&tooltip.control.fwd;")
+        this.setAttribute("tooltiptext", "&tooltip.control.back;")
       <![CDATA[
         this.mm =
           Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
