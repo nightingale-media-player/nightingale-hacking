@@ -375,12 +375,10 @@ Play Queue
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-row( playqueue-history, odd ) {
-  /* xxx slloyd placeholder */
   background-image: url('chrome://songbird/skin/playlist/bg-playqueue-history-odd-row.png');
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-row( playqueue-history, even ) {
-  /* xxx slloyd placeholder */
   background-image: url('chrome://songbird/skin/playlist/bg-playqueue-history-even-row.png');
 }
 
@@ -393,16 +391,13 @@ Play Queue
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-row(playqueue-current) {
-  /* xxx slloyd placeholder */
   background-image: url('chrome://songbird/skin/playlist/bg-playqueue-current-row.png');
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-row(playqueue-current, focus) {
-  /* xxx slloyd placeholder */
   background-image: url('chrome://songbird/skin/playlist/bg-playqueue-current-row-focused.png');
 }
 
 .sb-playlist-tree > treechildren::-moz-tree-row(playqueue-current, selected, focus) {
-  /* xxx slloyd placeholder */
   background-image: url('chrome://songbird/skin/playlist/bg-playqueue-current-row-selected-focused.png');
 }
