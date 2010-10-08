@@ -297,6 +297,9 @@ public:
 //   sbAutoLocalFree            Wrapper to automatically free a local memory
 //                              object.
 //   sbAutoCoUninitialize       Wrapper to auto-uninitialize the COM library.
+//   sbAutoCOMSection           Wrapper to auto-uninitialize the COM library.
+//                              Usage: sbAutoCOMSection myCOMSection =
+//                                       CoInitializeEx(NULL, 0);
 //   sbAutoCoTaskMem            Wrapper to auto-free COM task memory.
 //   sbAutoBSTR                 Wrapper to auto-free a BSTR.
 //
@@ -315,6 +318,11 @@ SB_AUTO_CLASS(sbAutoCoUninitialize,
               mValue,
               CoUninitialize(),
               mValue = PR_FALSE);
+SB_AUTO_CLASS(sbAutoCOMSection,
+              HRESULT,
+              SUCCEEDED(mValue),
+              CoUninitialize(),
+              mValue = E_FAIL);
 template<typename T> SB_AUTO_NULL_CLASS(sbAutoCoTaskMem,
                                         T*,
                                         CoTaskMemFree(mValue));
