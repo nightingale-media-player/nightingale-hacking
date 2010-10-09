@@ -582,7 +582,7 @@ case "$SB_PLATFORM" in
         if test \( "$_MIDL_MAJOR_VERSION" = "7" -a "$_MIDL_MINOR_VERSION" = "00" -a "$_MIDL_REV_VERSION" = "0499" \); then
             # MIDL version 7.00.0499 defaults /env win64 on x64 platforms.
             # MIDL version 7.00.0500 or later has no problem.
-            MIDL_FLAGS="${MIDL_FLAGS} -env win32"
+            DEFAULT_MIDL_FLAGS="${MIDL_FLAGS} -env win32 -Oicf -robust"
             AC_MSG_RESULT([need -env win32])
         else
             AC_MSG_RESULT([none needed])
@@ -1066,7 +1066,7 @@ AC_SUBST(ARFLAGS_LIB)
 AC_SUBST(CFLAGS_INCLUDE_PREFIX)
 AC_SUBST(CFLAGS_INCLUDE_SUFFIX)
 AC_SUBST(_MSC_VER)
-AC_SUBST(MIDL_FLAGS)
+AC_SUBST(DEFAULT_MIDL_FLAGS)
 AC_SUBST(MSMANIFEST_TOOL)
 AC_SUBST(LDFLAGS_DLL)
 AC_SUBST(LDFLAGS_BIN)

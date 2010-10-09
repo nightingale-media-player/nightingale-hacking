@@ -468,14 +468,22 @@ MIDL_GENERATED_FILES ?= $(notdir $(MIDL_SRCS:.midl=.h) \
                                  $(MIDL_SRCS:.midl=.tlb) \
                                  $(MIDL_SRCS:.midl=_i.c) \
                                  $(MIDL_SRCS:.midl=_p.c) \
+                                 $(MIDL_SRCS:.midl=_s.c) \
+                                 $(MIDL_SRCS:.midl=_c.c) \
                                  $(NULL) )
+
+ifdef MIDL_FLAGS
+   OUR_MIDL_FLAGS = $(MIDL_FLAGS)
+else
+   OUR_MIDL_FLAGS = $(DEFAULT_MIDL_FLAGS) $(EXTRA_MIDL_FLAGS)
+endif
 
 ALL_TRASH += $(MIDL_GENERATED_FILES) \
              $(if $(MIDL_SRCS), dlldata.c) \
              $(NULL)
 
-dlldata.c %.h %.tlb %_i.c %_p.c: %.midl
-	$(MIDL) $(MIDL_FLAGS) -Oicf $^
+dlldata.c %.h %.tlb %_i.c %_p.c %_s.c %_c.c: %.midl
+	$(MIDL) $(OUR_MIDL_FLAGS) $^
 
 export:: $(MIDL_GENERATED_FILES)
 
