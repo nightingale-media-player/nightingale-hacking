@@ -1156,7 +1156,7 @@ treecol[bind="http://songbirdnest.com/data/1.0#originPageImage"] {
   width: 20px;
 }
 treecol[bind="http://songbirdnest.com/data/1.0#ordinal"] {
-  min-width: 42px;
+  min-width: 30px;
   width: 42px;
 }
 treecol[bind="http://songbirdnest.com/data/1.0#downloadButton"] {

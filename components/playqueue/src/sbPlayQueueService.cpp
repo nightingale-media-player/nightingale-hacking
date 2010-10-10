@@ -61,8 +61,8 @@
  * By default, only show the track name
  */
 #define SB_PLAYQUEUE_DEFAULTCOLUMNSPEC                                         \
-  NS_LL("http://songbirdnest.com/data/1.0#ordinal 20 ")                        \
-  NS_LL("http://songbirdnest.com/data/1.0#trackName 180")
+  NS_LL("http://songbirdnest.com/data/1.0#ordinal 30 ")                        \
+  NS_LL("http://songbirdnest.com/data/1.0#trackName 130")
 
 /**
  * To log this module, set the following environment variable:
