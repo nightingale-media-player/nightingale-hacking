@@ -80,7 +80,7 @@ sbPropertyUpdate::operator==(sbPropertyUpdate rhs)
     return false;
   }
 
-  for (int i = 0; i < lhLength; i++) {
+  for (PRUint32 i = 0; i < lhLength; i++) {
     nsCOMPtr<sbIProperty> lhProp;
     rv = mUpdate->GetPropertyAt(i, getter_AddRefs(lhProp));
     NS_ENSURE_SUCCESS(rv, false);
@@ -250,7 +250,7 @@ sbPlayQueueExternalLibraryListener::GenerateUpdates(
 
   // We found an item in our master library - go find duplicates in our external
   // libraries to update.
-  for (int i = 0; i < mExternalLibraries.Count(); i++)
+  for (PRInt32 i = 0; i < mExternalLibraries.Count(); i++)
   {
     if (mExternalLibraries[i] != lib) {
       nsCOMPtr<sbIMediaItem> externalMediaItem;
