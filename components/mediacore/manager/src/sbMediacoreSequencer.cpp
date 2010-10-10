@@ -2873,7 +2873,8 @@ sbMediacoreSequencer::ValidateMediaItemControllerPlayback(PRBool aFromUserAction
 
   // get the item controller
   nsCOMPtr<sbIMediaItem> mediaItem;
-  nsresult rv = mView->GetItemByIndex(mSequence[mPosition], getter_AddRefs(mediaItem));
+  nsresult rv = mView->GetItemByIndex(mSequence[mPosition],
+                                      getter_AddRefs(mediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaItemController> mediaItemController;
@@ -2881,14 +2882,17 @@ sbMediacoreSequencer::ValidateMediaItemControllerPlayback(PRBool aFromUserAction
   NS_ENSURE_SUCCESS(rv, rv);
   
   if (mediaItemController) {
-    // Call validatePlayback on the controller. Set _proceed to false so that our
-    // caller doesn't do any more work. The validatePlayback call may synchronously
-    // call completion callback and thus this won't always cause playback to pause.
+    // Call validatePlayback on the controller. Set _proceed to false so that
+    // our caller doesn't do any more work. The validatePlayback call may
+    // synchronously call completion callback and thus this won't always cause
+    // playback to pause.
     mOnHoldStatus = aOnHoldStatus;
     mValidatingItem = mediaItem;
     mValidationFromUserAction = aFromUserAction;
     mValidationComplete = PR_FALSE;
-    rv = mediaItemController->ValidatePlayback(mediaItem, aFromUserAction, this);
+    rv = mediaItemController->ValidatePlayback(mediaItem,
+                                               aFromUserAction,
+                                               this);
     *_proceed = PR_FALSE;
     return rv;
   }
