@@ -32,18 +32,33 @@ include $(DEPTH)/build/autodefs.mk
 DYNAMIC_LIB = sbPlayQueueService
 
 CPP_SRCS = sbPlayQueueLibraryListener.cpp \
+           sbPlayQueueExternalLibraryListener.cpp \
            sbPlayQueueService.cpp \
            sbPlayQueueServiceComponent.cpp \
            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/playqueue/public \
                      $(DEPTH)/components/library/base/public \
+                     $(DEPTH)/components/library/localdatabase/public \
                      $(DEPTH)/components/mediacore/base/public \
+                     $(DEPTH)/components/property/public/ \
                      $(topsrcdir)/components/include \
                      $(topsrcdir)/components/library/base/src \
                      $(topsrcdir)/components/library/base/src/static \
+                     $(topsrcdir)/components/moz/strings/src \
                      $(topsrcdir)/components/property/src \
-                     $(NULL)
+                     $(NULL)                                                                                                                                                                  
+
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+                            $(NULL)
+
+# sbMozStreams must come after sbLibraryUtils
+DYNAMIC_LIB_STATIC_IMPORTS += \
+ components/library/base/src/static/sbLibraryUtils \
+ components/moz/streams/src/sbMozStreams \
+ components/moz/strings/src/sbMozStringUtils \
+ components/moz/threads/src/sbMozThreads \
+ $(NULL)
 
 IS_COMPONENT = 1
 

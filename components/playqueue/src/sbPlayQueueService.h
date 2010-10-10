@@ -40,6 +40,7 @@
 #include <nsHashKeys.h>
 
 #include <sbILibrary.h>
+#include <sbILocalDatabaseLibraryCopyListener.h>
 #include <sbIMediacoreEvent.h>
 #include <sbIMediacoreEventListener.h>
 #include <sbIMediacoreManager.h>
@@ -48,6 +49,7 @@
 #include <sbLibraryUtils.h>
 
 #include "sbPlayQueueLibraryListener.h"
+#include "sbPlayQueueExternalLibraryListener.h"
 
 class sbIMediaItem;
 class sbIMediaList;
@@ -55,6 +57,7 @@ class sbIMediaList;
 class sbPlayQueueService : public sbIPlayQueueService,
                            public sbIMediaListListener,
                            public sbIMediacoreEventListener,
+                           public sbILocalDatabaseLibraryCopyListener,
                            public nsIObserver
 {
 public:
@@ -62,6 +65,7 @@ public:
   NS_DECL_SBIPLAYQUEUESERVICE
   NS_DECL_SBIMEDIALISTLISTENER
   NS_DECL_SBIMEDIACOREEVENTLISTENER
+  NS_DECL_SBILOCALDATABASELIBRARYCOPYLISTENER
   NS_DECL_NSIOBSERVER
 
   sbPlayQueueService();
@@ -223,11 +227,18 @@ private:
    */
   nsTHashtable<nsISupportsHashKey> mListeners;
 
-  // This callback is meant to be used with mListeners.
-  // aUserData should be a sbIPlayQueueServiceListener pointer.
+  /**
+   * This callback is meant to be used with mListeners.
+   * aUserData should be a sbIPlayQueueServiceListener pointer.
+   */
   static PLDHashOperator PR_CALLBACK
     OnIndexUpdatedCallback(nsISupportsHashKey* aKey,
                             void* aUserData);
+
+  /**
+   * \brief Listener to keep properties in sync with external libraries
+   */
+  nsRefPtr<sbPlayQueueExternalLibraryListener> mExternalListener;
 };
 
 #define SB_PLAYQUEUESERVICE_CONTRACTID                                         \

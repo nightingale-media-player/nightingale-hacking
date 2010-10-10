@@ -40,12 +40,14 @@
 #include <nsThreadUtils.h>
 
 #include <sbILibraryManager.h>
+#include <sbILocalDatabaseLibrary.h>
 #include <sbIMediacoreEventTarget.h>
 #include <sbIMediacoreSequencer.h>
 #include <sbIMediacoreStatus.h>
 #include <sbIMediaListView.h>
 #include <sbIOrderableMediaList.h>
 #include <sbLibraryManager.h>
+#include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
 
 #include <prlog.h>
@@ -80,10 +82,11 @@
 #define LOG(args)   /* nothing */
 #endif /* PR_LOGGING */
 
-NS_IMPL_ISUPPORTS4(sbPlayQueueService,
+NS_IMPL_ISUPPORTS5(sbPlayQueueService,
                    sbIPlayQueueService,
                    sbIMediaListListener,
                    sbIMediacoreEventListener,
+                   sbILocalDatabaseLibraryCopyListener,
                    nsIObserver)
 
 sbPlayQueueService::sbPlayQueueService()
@@ -155,7 +158,18 @@ sbPlayQueueService::Finalize()
     mLibrary->RemoveListener(mLibraryListener);
     mLibraryListener = nsnull;
   }
+
+  nsCOMPtr<sbILocalDatabaseLibrary> localDBLibrary = do_QueryInterface(mLibrary, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    rv = localDBLibrary->RemoveCopyListener(this);
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to remove copy listener");
+  }
   mLibrary = nsnull;
+
+  if (mExternalListener) {
+    mExternalListener->RemoveListeners();
+    mExternalListener = nsnull;
+  }
 
   if (mWeakMediacoreManager) {
     nsCOMPtr<sbIMediacoreEventTarget> target =
@@ -588,6 +602,32 @@ sbPlayQueueService::InitLibrary()
   rv = libraryManager->GetLibrary(guid, getter_AddRefs(mLibrary));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Hook up the external library listener to keep our properties in sync.
+  mExternalListener = new sbPlayQueueExternalLibraryListener();
+  NS_ENSURE_TRUE(mExternalListener, NS_ERROR_OUT_OF_MEMORY);
+  rv = mExternalListener->SetMasterLibrary(mLibrary);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsISimpleEnumerator> libEnum;
+  rv = libraryManager->GetStartupLibraries(getter_AddRefs(libEnum));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool hasMore;
+  while (NS_SUCCEEDED(libEnum->HasMoreElements(&hasMore)) && hasMore) {
+    nsCOMPtr<nsISupports> next;
+    if (NS_SUCCEEDED(libEnum->GetNext(getter_AddRefs(next))) && next) {
+      nsCOMPtr<sbILibrary> library(do_QueryInterface(next, &rv));
+      if (NS_SUCCEEDED(rv) && library && library != mLibrary) {
+        rv = mExternalListener->AddExternalLibrary(library);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+  }
+
+  nsCOMPtr<sbILocalDatabaseLibrary> localDBLibrary = do_QueryInterface(mLibrary, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  localDBLibrary->AddCopyListener(this);
+
   return NS_OK;
 }
 
@@ -774,8 +814,12 @@ sbPlayQueueService::OnItemAdded(sbIMediaList* aMediaList,
   nsresult rv;
 
   // Editing metadata for items in the queue is disabled.
-  rv = aMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY),
-                               NS_LITERAL_STRING("1"));
+  nsCOMPtr<sbIMutablePropertyArray> props =
+                     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  rv = props->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY),
+                             NS_LITERAL_STRING("1"));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mExternalListener->SetPropertiesNoSync(aMediaItem, props);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (mIgnoreListListener ||
@@ -909,17 +953,8 @@ sbPlayQueueService::OnItemUpdated(sbIMediaList* aMediaList,
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
-  if (mIgnoreListListener || mLibraryListener->ShouldIgnore()) {
-    return NS_OK;
-  }
+  // Updates are handled in sbExternalLibraryListener.
 
-  // xxx slloyd TODO we need to push some property changes back to the user's
-  //                 main library
-  //
-  //    play count
-  //    skip count
-  //    last played time
-  //    metadata changes?
   return NS_OK;
 }
 
@@ -1134,6 +1169,32 @@ sbPlayQueueService::OnTrackIndexChange(sbIMediacoreEvent* aEvent)
 
 //------------------------------------------------------------------------------
 //
+// Implementation of sbILocalDatabaseLibraryCopyListener
+//
+//------------------------------------------------------------------------------
+
+nsresult
+sbPlayQueueService::OnItemCopied(sbIMediaItem* aSourceItem,
+                                 sbIMediaItem* aDestinationItem)
+{
+  TRACE(("%s[%p]", __FUNCTION__, this));
+  nsresult rv;
+
+  nsCOMPtr<sbIMutablePropertyArray> props =
+                     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  rv = props->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY),
+                             NS_LITERAL_STRING("0"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ENSURE_STATE(mExternalListener);
+  rv = mExternalListener->SetPropertiesNoSync(aDestinationItem, props);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+//------------------------------------------------------------------------------
+//
 // Implementation of nsIObserver
 //
 //------------------------------------------------------------------------------
@@ -1183,10 +1244,18 @@ sbPlayQueueService::Observe(nsISupports* aSubject,
 
     NS_ENSURE_STATE(mMediaList);
 
-    // Listen to our list
+    // Listen to our list (everything except OnItemUpdated, which is handled by
+    // our external listener).
     rv = mMediaList->AddListener(this,
                                  PR_FALSE,
-                                 sbIMediaList::LISTENER_FLAGS_ALL,
+                                 sbIMediaList::LISTENER_FLAGS_ITEMADDED |
+                                 sbIMediaList::LISTENER_FLAGS_BEFOREITEMREMOVED |
+                                 sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED |
+                                 sbIMediaList::LISTENER_FLAGS_BEFORELISTCLEARED |
+                                 sbIMediaList::LISTENER_FLAGS_LISTCLEARED |
+                                 sbIMediaList::LISTENER_FLAGS_BATCHBEGIN |
+                                 sbIMediaList::LISTENER_FLAGS_BATCHEND |
+                                 sbIMediaList::LISTENER_FLAGS_ITEMMOVED,
                                  nsnull);
     NS_ENSURE_SUCCESS(rv, rv);
 
