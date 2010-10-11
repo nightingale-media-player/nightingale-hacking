@@ -2871,6 +2871,11 @@ sbMediacoreSequencer::ValidateMediaItemControllerPlayback(PRBool aFromUserAction
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   nsAutoMonitor mon(mMonitor);
 
+  // No sequence, no error, but return right away.
+  if(!mSequence.size()) {
+    return NS_OK;
+  }
+
   // get the item controller
   nsCOMPtr<sbIMediaItem> mediaItem;
   nsresult rv = mView->GetItemByIndex(mSequence[mPosition],
