@@ -286,6 +286,13 @@ void nsCString_Split(const nsACString&    aString,
                      nsTArray<nsCString>& aSubStringArray);
 
 /**
+ * Creates an ISO 8610 formatted time string from the aTime passed in
+ * \param aTime The time to create the formatted string
+ * \return The time as an ISO 8601 formatted string
+ */
+nsString SB_FormatISO8601TimeString(PRTime aTime);
+
+/**
  * Parse the ISO 8601 formatted time string specified by aISO8601TimeString and
  * return the time in aTime.
  *

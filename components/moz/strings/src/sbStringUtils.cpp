@@ -235,7 +235,7 @@ void nsString_ReplaceChar(/* inout */ nsAString& aString,
   }
 }
 
-void 
+void
 nsCString_ReplaceChars(nsACString& aOldString,
                        const nsACString& aOldChars,
                        const char aNewChar)
@@ -429,6 +429,15 @@ nsCString_Split(const nsACString&    aString,
     // Advance to the next sub-string.
     currentOffset = delimiterIndex + delimiterLength;
   } while (delimiterIndex < stringLength);
+}
+
+nsString SB_FormatISO8601TimeString(PRTime aTime)
+{
+  PRExplodedTime exploded;
+  PR_ExplodeTime(aTime, PR_GMTParameters, &exploded);
+  char buffer[64];
+  PR_FormatTime(buffer, sizeof(buffer), "%Y-%m-%dT%H:%M:%S.0Z", &exploded);
+  return NS_ConvertASCIItoUTF16(buffer);
 }
 
 nsresult
