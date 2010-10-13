@@ -431,7 +431,9 @@ sbMediacoreWrapper::Initialize(const nsAString &aInstanceName,
   rv = mPrompter->SetParentWindowType(NS_LITERAL_STRING("Songbird:Main"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPrompter->SetWaitForWindow(PR_TRUE);
+  // we don't need to wait for that to show up - it might never show up, if
+  // we're using a non-default layout, for example
+  rv = mPrompter->SetWaitForWindow(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIDOMWindow> domWindow;
