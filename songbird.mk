@@ -168,7 +168,7 @@ all: songbird_output build
 %_dep_checkout:
 	$($*_DEP_CHECKOUT)
 
-$(CONFIGSTATUS): $(CONFIGURE) $(SB_DEP_PKG_LIST) $(OBJDIR) $(DISTDIR)
+run_configure $(CONFIGSTATUS): $(CONFIGURE) $(SB_DEP_PKG_LIST) $(OBJDIR) $(DISTDIR)
 	cd $(OBJDIR) && \
    $(CONFIGURE) $(CONFIGURE_ARGS)
 
@@ -188,14 +188,7 @@ run_autoconf:
 $(OBJDIR) $(DISTDIR):
 	$(MKDIR) $(OBJDIR) $(DISTDIR)
 
-makefiles: $(OBJDIR) $(DISTDIR)
-	@touch configure
-	cd $(OBJDIR) && \
-    $(CONFIGURE) $(CONFIGURE_ARGS)
-
-run_configure: $(CONFIGSTATUS)
-	cd $(OBJDIR) && \
-   $(CONFIGURE) $(CONFIGURE_ARGS)
+makefiles: $(OBJDIR) $(DISTDIR) run_configure
 
 clean:
 	$(MAKE) -C $(OBJDIR) clean
