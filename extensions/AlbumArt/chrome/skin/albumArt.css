@@ -37,6 +37,11 @@
   -moz-box-pack: center;
 }
 
+.albumArtNotSelectedContainer > description,
+.albumArtNotPlayingContainer > description{
+  text-align: center;
+}
+
 .albumArtNowSelectedDragAndDrop,
 .albumArtNowPlayingDragAndDrop {
   -moz-box-flex: 1;

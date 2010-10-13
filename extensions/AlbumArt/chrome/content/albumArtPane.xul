@@ -97,7 +97,9 @@
       <vbox id="sb-albumart-not-selected"
             contextmenu="nowSelectedMenu"
             class="albumArtNotSelectedContainer">
-        <description class="empty-message" value="&albumart.displaypane.not_selected_message;" />
+        <description class="empty-message">
+          &albumart.displaypane.not_selected_message;
+        </description>
       </vbox>
     </stack>
 
@@ -124,7 +126,9 @@
       <vbox id="sb-albumart-not-playing"
             contextmenu="nowSelectedMenu"
             class="albumArtNotPlayingContainer">
-        <description class="empty-message" value="&albumart.displaypane.not_playing_message;" />
+        <description class="empty-message">
+          &albumart.displaypane.not_playing_message;
+        </description>
       </vbox>
     </stack>
   </deck>
