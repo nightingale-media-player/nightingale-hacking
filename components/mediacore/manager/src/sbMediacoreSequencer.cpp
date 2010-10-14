@@ -895,7 +895,7 @@ sbMediacoreSequencer::UpdateRepeatDataRemote(PRUint32 aRepeatMode)
 nsresult
 sbMediacoreSequencer::ResetPlayingVideoDataRemote()
 {
-  
+
   PRBool isPlayingVideo;
   nsresult rv = mDataRemoteFaceplatePlayingVideo->GetBoolValue(&isPlayingVideo);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1126,7 +1126,7 @@ sbMediacoreSequencer::SetMetadataDataRemotesFromItem(
   nsString albumName, artistName, genre, trackName, imageURL;
   nsresult rv;
 
-  if(!aPropertiesChanged || 
+  if(!aPropertiesChanged ||
      IsPropertyInPropertyArray(aPropertiesChanged,
                                NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME)))
   {
@@ -1138,7 +1138,7 @@ sbMediacoreSequencer::SetMetadataDataRemotesFromItem(
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  if(!aPropertiesChanged || 
+  if(!aPropertiesChanged ||
      IsPropertyInPropertyArray(aPropertiesChanged,
                                NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME)))
   {
@@ -1150,7 +1150,7 @@ sbMediacoreSequencer::SetMetadataDataRemotesFromItem(
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  if(!aPropertiesChanged || 
+  if(!aPropertiesChanged ||
      IsPropertyInPropertyArray(aPropertiesChanged,
                                NS_LITERAL_STRING(SB_PROPERTY_GENRE)))
   {
@@ -1161,7 +1161,7 @@ sbMediacoreSequencer::SetMetadataDataRemotesFromItem(
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  if(!aPropertiesChanged || 
+  if(!aPropertiesChanged ||
      IsPropertyInPropertyArray(aPropertiesChanged,
                                NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME)))
   {
@@ -1173,7 +1173,7 @@ sbMediacoreSequencer::SetMetadataDataRemotesFromItem(
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  if(!aPropertiesChanged || 
+  if(!aPropertiesChanged ||
      IsPropertyInPropertyArray(aPropertiesChanged,
                                NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL)))
   {
@@ -1311,8 +1311,8 @@ sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
       // time.
       rv = Next(PR_TRUE);
       NS_ENSURE_SUCCESS(rv, rv);
-    }      
-      
+    }
+
     mCoreWillHandleNext = PR_FALSE;
 
     nsCOMPtr<sbIMediaItem> mediaItem;
@@ -2613,11 +2613,11 @@ sbMediacoreSequencer::PlayView(sbIMediaListView *aView,
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool proceed;
-  rv = ValidateMediaItemControllerPlayback(!aNotFromUserAction, 
-                                           ONHOLD_PLAYVIEW, 
+  rv = ValidateMediaItemControllerPlayback(!aNotFromUserAction,
+                                           ONHOLD_PLAYVIEW,
                                            &proceed);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   if (!proceed) {
     return NS_OK;
   }
@@ -2638,7 +2638,7 @@ sbMediacoreSequencer::PlayView(sbIMediaListView *aView,
     rv = DispatchMediacoreEvent(event);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  
+
   return NS_OK;
 }
 
@@ -2808,14 +2808,14 @@ sbMediacoreSequencer::Stop(PRBool aNotFromUserAction) {
 }
 
 NS_IMETHODIMP
-sbMediacoreSequencer::OnValidatePlaybackComplete(sbIMediaItem *aItem, 
+sbMediacoreSequencer::OnValidatePlaybackComplete(sbIMediaItem *aItem,
                                                  PRInt32 aResult) {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  
+
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   nsAutoMonitor mon(mMonitor);
-  
+
   mValidationComplete = PR_TRUE;
 
   if (aItem == mValidatingItem) {
@@ -2827,7 +2827,7 @@ sbMediacoreSequencer::OnValidatePlaybackComplete(sbIMediaItem *aItem,
           if (mOnHoldStatus == ONHOLD_PLAYVIEW) {
             rv = Play();
             NS_ENSURE_SUCCESS(rv, rv);
-          } 
+          }
 
           if (mValidationFromUserAction) {
             nsCOMPtr<sbIMediacoreEvent> event;
@@ -2843,7 +2843,7 @@ sbMediacoreSequencer::OnValidatePlaybackComplete(sbIMediaItem *aItem,
             NS_ENSURE_SUCCESS(rv, rv);
           }
         }
-        
+
         mon.Exit();
 
         if (mOnHoldStatus != ONHOLD_PLAYVIEW) {
@@ -2863,8 +2863,8 @@ sbMediacoreSequencer::OnValidatePlaybackComplete(sbIMediaItem *aItem,
           return Previous(PR_TRUE);
         return Next(PR_TRUE);
     }
-  } 
-  // else, a previous validation is done, but the user has triggered a new 
+  }
+  // else, a previous validation is done, but the user has triggered a new
   // playback event that cancelled the one that caused vaidation. Either a
   // new validation is in progress (in which case we'll get its completed
   // notification later with the correct mediaitem), or validation wasn't
@@ -2872,7 +2872,7 @@ sbMediacoreSequencer::OnValidatePlaybackComplete(sbIMediaItem *aItem,
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::ValidateMediaItemControllerPlayback(PRBool aFromUserAction,
                                                           PRInt32 aOnHoldStatus,
                                                           PRBool *_proceed)
@@ -2897,7 +2897,7 @@ sbMediacoreSequencer::ValidateMediaItemControllerPlayback(PRBool aFromUserAction
   nsCOMPtr<sbIMediaItemController> mediaItemController;
   rv = mediaItem->GetItemController(getter_AddRefs(mediaItemController));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   if (mediaItemController) {
     // Call validatePlayback on the controller. Set _proceed to false so that
     // our caller doesn't do any more work. The validatePlayback call may
@@ -2923,7 +2923,7 @@ NS_IMETHODIMP
 sbMediacoreSequencer::Next(PRBool aNotFromUserAction)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  
+
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   nsAutoMonitor mon(mMonitor);
@@ -3027,16 +3027,16 @@ sbMediacoreSequencer::Next(PRBool aNotFromUserAction)
 
     return NS_OK;
   }
-  
+
   PRBool proceed;
   rv = ValidateMediaItemControllerPlayback(!aNotFromUserAction, ONHOLD_NEXT, &proceed);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   if (!proceed) {
     return NS_OK;
   }
 
-  // Fire EXPLICIT_TRACK_CHANGE when Next() was not triggered by the stream 
+  // Fire EXPLICIT_TRACK_CHANGE when Next() was not triggered by the stream
   // ending.
   if(!mNextTriggeredByStreamEnd &&
      !aNotFromUserAction) {
@@ -3156,7 +3156,7 @@ sbMediacoreSequencer::Previous(PRBool aNotFromUserAction)
   PRBool proceed;
   rv = ValidateMediaItemControllerPlayback(!aNotFromUserAction, ONHOLD_PREVIOUS, &proceed);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   if (!proceed) {
     return NS_OK;
   }
@@ -3189,8 +3189,8 @@ sbMediacoreSequencer::Previous(PRBool aNotFromUserAction)
 NS_IMETHODIMP
 sbMediacoreSequencer::RequestHandleNextItem(sbIMediacore *aMediacore)
 {
-  // lone> Note that this method does not perform mediaitem trackType 
-  // service validation. This is only used for gapless playback (one 
+  // lone> Note that this method does not perform mediaitem trackType
+  // service validation. This is only used for gapless playback (one
   // core to the same core), so the assumption here is that validated
   // playback on one track for a service gives access to all tracks
   // from that service. This is good enough for now but may not be anymore

@@ -161,7 +161,7 @@ private:
   nsCOMPtr<nsIWeakReference> mWeakMediacoreManager;
 
   /**
-   * \brief Insert aMediaItem into mMediaList directly before aInsertBeforeIndex 
+   * \brief Insert aMediaItem into mMediaList directly before aInsertBeforeIndex
    */
   nsresult QueueNextInternal(sbIMediaItem* aMediaItem,
                              PRUint32      aInsertBeforeIndex);

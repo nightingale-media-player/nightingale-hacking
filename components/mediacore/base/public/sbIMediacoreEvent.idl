@@ -102,7 +102,7 @@ interface sbIMediacoreEvent : nsISupports
    */
   const unsigned long SEQUENCE_CHANGE     = 0x00001505;
   /**
-   * \brief Sequence end. 
+   * \brief Sequence end.
    *
    * This event will be fired by the sequencer when it runs
    * out of items to play from it's sequence. This event will
@@ -117,7 +117,7 @@ interface sbIMediacoreEvent : nsISupports
   /**
    * \brief Explicit call to next or previous.
    *
-   * Triggered by user or code that is actively attempting to change to the 
+   * Triggered by user or code that is actively attempting to change to the
    * next track. This event is _not_ fired when the sequencer goes to the next
    * track because the previous track has finished playing in its entirety.
    *
@@ -140,7 +140,7 @@ interface sbIMediacoreEvent : nsISupports
    * \note data is null.
    */
   const unsigned long STREAM_HAS_VIDEO  = 0x00002001;
-  
+
   /**
    * \brief Buffering.
    * \note data is the buffering progress as a double (from 0 to 1).
@@ -279,5 +279,5 @@ interface sbIMediacoreEvent : nsISupports
   "sbMediacoreEvent"
 #define SB_MEDIACORE_EVENT_CID          \
   {0xedf0959d, 0x21bf, 0x411f, {0x8d, 0x3d, 0x85, 0x9a, 0x76, 0xe7, 0x14, 0x12}}
-  
+
 %};

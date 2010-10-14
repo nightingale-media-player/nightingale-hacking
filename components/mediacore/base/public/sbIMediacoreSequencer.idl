@@ -63,8 +63,8 @@ interface sbIMediacoreSequencer : nsISupports
   readonly attribute unsigned long viewPosition;
 
   /**
-   * \brief The current item in the view. 
-   * \note This is the equivalent of calling sbIMediaListView::getItemByIndex 
+   * \brief The current item in the view.
+   * \note This is the equivalent of calling sbIMediaListView::getItemByIndex
    *       using viewPosition.
    * \note This may be null if there is no currentItem.
    */
@@ -98,13 +98,13 @@ interface sbIMediacoreSequencer : nsISupports
    *                   You may pass sbIMediacoreSequencer::AUTO_PICK_INDEX if
    *                   you wish to have the sequencer pick the most appropriate
    *                   start index for the sequence.
-   * \param aNotFromUserAction False if this call is the result of a user 
+   * \param aNotFromUserAction False if this call is the result of a user
    *                           interface action, true if code is calling
    *                           playView on its own (optional, defaults to
    *                           false, which may trigger further user interaction).
    * \see AUTO_PICK_INDEX
    */
-  void playView(in sbIMediaListView aView, 
+  void playView(in sbIMediaListView aView,
                 [optional] in long long aItemIndex,
                 [optional] in boolean aNotFromUserAction);
 
@@ -129,10 +129,10 @@ interface sbIMediacoreSequencer : nsISupports
    * \brief Play the sequence.
    */
   void play();
-  
+
   /**
    * \brief Stop the sequence.
-   * \param aNotFromUserAction False if this call is the result of a user 
+   * \param aNotFromUserAction False if this call is the result of a user
    *                           interface action, true if code is calling
    *                           stop on its own (optional, defaults to
    *                           false so UI stop is from user
@@ -141,7 +141,7 @@ interface sbIMediacoreSequencer : nsISupports
 
   /**
    * \brief Go to the next item in the sequence.
-   * \param aNotFromUserAction False if this call is the result of a user 
+   * \param aNotFromUserAction False if this call is the result of a user
    *                           interface action, true if code is calling
    *                           next on its own (optional, defaults to
    *                           false, which may trigger further user interaction).
@@ -150,7 +150,7 @@ interface sbIMediacoreSequencer : nsISupports
 
   /**
    * \brief Go to the previous item in the sequence.
-   * \param aNotFromUserAction False if this call is the result of a user 
+   * \param aNotFromUserAction False if this call is the result of a user
    *                           interface action, true if code is calling
    *                           previous on its own (optional, defaults to
    *                           false, which may trigger further user interaction).
@@ -166,7 +166,7 @@ interface sbIMediacoreSequencer : nsISupports
   /**
    * \brief Abort the current item playback attempt.
    * \note This method may only be called from BEFORE_TRACK_CHANGE. If
-   *       you attempt to call it from another context, it will silently 
+   *       you attempt to call it from another context, it will silently
    *       fail.
    */
   void abort();
