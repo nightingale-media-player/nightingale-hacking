@@ -385,7 +385,7 @@ Playing track indicator
 
 .sb-playlist-tree > treechildren::-moz-tree-cell-text( disabled )
 {
-  color: rgb(150,150,150);
+  color: rgb(146,144,153);
 }
 
 /**

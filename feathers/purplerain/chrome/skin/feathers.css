@@ -169,7 +169,7 @@ tooltip label {
   color: rgb(40,40,40);
 }
 treechildren::-moz-tree-cell-text {
-  color: rgb(212,210,221);
+  color: rgb(230,228,240);
 }
 
 listheader,
