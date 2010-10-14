@@ -1877,7 +1877,7 @@ sbMediacoreSequencer::HandleAbort()
 
     mon.Exit();
 
-    nsresult rv = Stop();
+    nsresult rv = Stop(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, PR_FALSE);
 
     return PR_TRUE;
@@ -2750,7 +2750,7 @@ sbMediacoreSequencer::Play()
 }
 
 NS_IMETHODIMP
-sbMediacoreSequencer::Stop() {
+sbMediacoreSequencer::Stop(PRBool aNotFromUserAction) {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsAutoMonitor mon(mMonitor);
@@ -2782,6 +2782,18 @@ sbMediacoreSequencer::Stop() {
   mSeenPlaying = PR_FALSE;
 
   nsCOMPtr<sbIMediacoreEvent> event;
+  if (!aNotFromUserAction) {
+    rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::EXPLICIT_STOP,
+                                       nsnull,
+                                       nsnull,
+                                       mCore,
+                                       getter_AddRefs(event));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = DispatchMediacoreEvent(event);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::SEQUENCE_END,
                                      nsnull,
                                      nsnull,
@@ -3445,7 +3457,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
         if(NS_FAILED(rv) ||
            mSequence.empty()) {
           mon.Exit();
-          Stop();
+          Stop(PR_TRUE);
           mon.Enter();
         }
 

@@ -94,6 +94,7 @@ sbPlayQueueService::sbPlayQueueService()
     mLibrary(nsnull),
     mIndex(0),
     mInitialized(PR_FALSE),
+    mExplicitStop(PR_FALSE),
     mBatchRemovalIndex(0),
     mBatchBeginAllHistory(PR_FALSE),
     mIgnoreListListener(PR_FALSE),
@@ -1082,12 +1083,21 @@ sbPlayQueueService::OnMediacoreEvent(sbIMediacoreEvent* aEvent)
 
   switch (eventType) {
 
-    // Handle STREAM_STOP or STREAM_END by bumping mIndex.
-    case sbIMediacoreEvent::STREAM_STOP:
-    case sbIMediacoreEvent::STREAM_END:
-      // Call SetIndex so mIndex is constrained to the length of the list.
-      rv = SetIndex(mIndex + 1);
-      NS_ENSURE_SUCCESS(rv, rv);
+    case sbIMediacoreEvent::EXPLICIT_STOP:
+      mExplicitStop = PR_TRUE;
+      break;
+
+    // SEQUENCE_END right after EXPLICIT_STOP means user stops the playback.
+    // Handle SEQUENCE_END by bumping mIndex if EXPLICIT_STOP is not fired
+    // earlier.
+    case sbIMediacoreEvent::SEQUENCE_END:
+      if (!mExplicitStop) {
+        // Call SetIndex so mIndex is constrained to the length of the list.
+        rv = SetIndex(mIndex + 1);
+        NS_ENSURE_SUCCESS(rv, rv);
+      } else {
+        mExplicitStop = PR_FALSE;
+      }
       break;
 
     case sbIMediacoreEvent::TRACK_CHANGE:

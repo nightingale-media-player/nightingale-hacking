@@ -107,6 +107,11 @@ private:
   PRBool mInitialized;
 
   /**
+   * \brief True if media core event EXPLICIT_STOP is fired right before.
+   */
+  PRBool mExplicitStop;
+
+  /**
    * \brief A helper index to help track changes to mIndex during batch
    *        additions and removals to/from mMediaList.
    */

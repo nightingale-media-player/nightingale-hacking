@@ -1,27 +1,25 @@
 /*
- //
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 #include "nsISupports.idl"
@@ -36,7 +34,7 @@ interface sbIMediacoreEventTarget;
  * \interface sbIMediacoreEvent
  * \brief Definition of the sbIMediacoreEvent interface.
  */
-[scriptable, uuid(6d5f11f3-51aa-41c2-bcd9-85355c364df5)]
+[scriptable, uuid(c5f679e0-d695-11df-937b-0800200c9a66)]
 interface sbIMediacoreEvent : nsISupports
 {
   const unsigned long UNINTIALIZED    = 0x00000000;
@@ -208,6 +206,17 @@ interface sbIMediacoreEvent : nsISupports
    * \note data is null.
    */
   const unsigned long STREAM_STOP         = 0x00004006;
+  /**
+   * \brief Explicit call to stop the playback.
+   *
+   * Triggered by user or code that is actively attempting to stop the playback.
+   * This event is _not_ fired when the sequencer goes to the end and no next
+   * track for playback.
+   *
+   * \note data is null.
+   * \note STREAM_BEFORE_STOP and STREAM_STOP are still fired.
+   */
+  const unsigned long EXPLICIT_STOP       = 0x00004007;
 
   // Video specific events
 
