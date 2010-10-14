@@ -956,6 +956,7 @@ MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
   /* images */
   { "png",  "image/png",      "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_IMAGE },
   { "jpg",  "image/jpeg",     "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_IMAGE },
+  { "jpeg", "image/jpeg",     "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_IMAGE },
   { "gif",  "image/gif",      "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_IMAGE },
   { "bmp",  "image/bmp",      "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_IMAGE },
   { "ico",  "image/x-icon",   "", "", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_IMAGE },
