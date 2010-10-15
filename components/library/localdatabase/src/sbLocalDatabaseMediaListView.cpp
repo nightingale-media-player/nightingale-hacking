@@ -1467,12 +1467,9 @@ sbLocalDatabaseMediaListView::GetCurrentSort(sbIPropertyArray** aCurrentSort)
 nsresult
 sbLocalDatabaseMediaListView::SetSort(sbIPropertyArray* aSort)
 {
-  nsresult rv;
-  rv = SetSortInternal(aSort);
+  nsresult rv = SetSortInternal(aSort);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Invalidate the view array
-  rv = Invalidate();
   return rv;
 }
 
@@ -1560,8 +1557,8 @@ sbLocalDatabaseMediaListView::OnItemAdded(sbIMediaList* aMediaList,
     return NS_OK;
   }
 
-  // Invalidate the view array
-  nsresult rv = Invalidate();
+  // Invalidate the view array. Adding an item definitely invalidates length.
+  nsresult rv = Invalidate(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   *aNoMoreForBatch = PR_FALSE;
@@ -1600,8 +1597,8 @@ sbLocalDatabaseMediaListView::OnAfterItemRemoved(sbIMediaList* aMediaList,
     return NS_OK;
   }
 
-  // Invalidate the view array
-  nsresult rv = Invalidate();
+  // Invalidate the view array. Removing items invalidates length.
+  nsresult rv = Invalidate(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   *aNoMoreForBatch = PR_FALSE;
@@ -1645,8 +1642,9 @@ sbLocalDatabaseMediaListView::OnItemUpdated(sbIMediaList* aMediaList,
   }
 
   if (shouldInvalidate) {
-    // Invalidate the view array
-    nsresult rv = Invalidate();
+    // Invalidate the view array. Properties changed significantly. 
+    // We need to invalidate length as well in this case.
+    nsresult rv = Invalidate(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
@@ -1681,8 +1679,8 @@ sbLocalDatabaseMediaListView::OnItemMoved(sbIMediaList* aMediaList,
     return NS_OK;
   }
 
-  // Invalidate the view array
-  nsresult rv = Invalidate();
+  // Invalidate the view array. Moving doesn't invalidate length.
+  nsresult rv = Invalidate(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   *aNoMoreForBatch = PR_FALSE;
@@ -1717,8 +1715,8 @@ sbLocalDatabaseMediaListView::OnListCleared(sbIMediaList* aMediaList,
     return NS_OK;
   }
 
-  // Invalidate the view array
-  nsresult rv = Invalidate();
+  // Invalidate the view array. Clearing totally invalidates length.
+  nsresult rv = Invalidate(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   *aNoMoreForBatch = PR_FALSE;
@@ -1743,15 +1741,22 @@ sbLocalDatabaseMediaListView::OnBatchEnd(sbIMediaList* aMediaList)
   mBatchHelper.End();
 
   if (!mBatchHelper.IsActive()) {
-    if (mTreeView) {
-      mTreeView->SetShouldPreventRebuild(PR_FALSE);
-    }
     if (mInvalidatePending) {
-      // Invalidate the view array
-      nsresult rv = Invalidate();
+      // Invalidate the view array. No way to tell accurately in batches
+      // if the length is invalidated or not so we always invalidate.
+      nsresult rv = Invalidate(PR_TRUE);
       NS_ENSURE_SUCCESS(rv, rv);
 
       mInvalidatePending = PR_FALSE;
+    }
+
+    // We have to rebuild the tree manually here because there is
+    // no guarantee that the tree will be invalidated at the correct 
+    // time. If the tree is invalidated after the view invalidates
+    // it will _never_ get its callback telling it to rebuild :(
+    if (mTreeView) {
+      mTreeView->SetShouldPreventRebuild(PR_FALSE);
+      mTreeView->Rebuild();
     }
   }
 
@@ -2080,13 +2085,13 @@ sbLocalDatabaseMediaListView::CreateQueries()
 }
 
 nsresult
-sbLocalDatabaseMediaListView::Invalidate()
+sbLocalDatabaseMediaListView::Invalidate(PRBool aInvalidateLength)
 {
   LOG(("sbLocalDatabaseMediaListView[0x%.8x] - Invalidate", this));
   nsresult rv;
 
   // Invalidate the view array.
-  rv = mArray->Invalidate();
+  rv = mArray->Invalidate(aInvalidateLength);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Notify our selection that things have changed

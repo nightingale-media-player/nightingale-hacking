@@ -1259,10 +1259,13 @@ void sbLocalDatabaseMediaListBase::ClearCachedPartialArray()
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseMediaListBase::OnBeforeInvalidate()
+sbLocalDatabaseMediaListBase::OnBeforeInvalidate(PRBool aInvalidateLength)
 {
+  // We need to invalidate the partial array cached lengths because
+  // EnumerateItemsByProperty(ies) could enumerate the wrong number
+  // of items when enumerating by the same property(ies) twice in a row.
   if (mCachedPartialArray) {
-    mCachedPartialArray->Invalidate();
+    mCachedPartialArray->Invalidate(aInvalidateLength);
   }
   return NS_OK;
 }

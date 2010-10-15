@@ -469,6 +469,12 @@ sbLocalDatabaseQuery::GetNullResortQuery(nsAString& aQuery)
   return NS_OK;
 }
 
+PRBool
+sbLocalDatabaseQuery::GetIsFullLibrary()
+{
+  return mIsFullLibrary;
+}
+
 nsresult
 sbLocalDatabaseQuery::AddCountColumns()
 {

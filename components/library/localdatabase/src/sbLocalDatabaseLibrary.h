@@ -139,7 +139,6 @@ typedef nsInterfaceHashtableMT<nsStringHashKey, nsIWeakReference>
   NS_IMETHOD GetDistinctValuesForProperty(const nsAString & aPropertyID, nsIStringEnumerator **_retval) { return _to GetDistinctValuesForProperty(aPropertyID, _retval); }
 
 class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
-                               public sbIDatabaseSimpleQueryCallback,
                                public sbILibrary,
                                public sbILocalDatabaseLibrary,
                                public nsIObserver,
@@ -218,7 +217,6 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
 
 public:
   NS_DECL_ISUPPORTS_INHERITED
-  NS_DECL_SBIDATABASESIMPLEQUERYCALLBACK
   NS_DECL_SBILIBRARY
   NS_DECL_SBILOCALDATABASELIBRARY
   NS_DECL_NSICLASSINFO

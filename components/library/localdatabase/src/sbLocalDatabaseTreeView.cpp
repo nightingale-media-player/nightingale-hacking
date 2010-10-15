@@ -142,6 +142,22 @@ private:
   nsITreeBoxObject* mTreeBoxObject;
 };
 
+class sbAutoSuppressArrayInvalidation
+{
+public:
+  explicit 
+  sbAutoSuppressArrayInvalidation(sbILocalDatabaseGUIDArray *aArray)
+  : mArray(aArray) {
+    mArray->SuppressInvalidation(PR_TRUE);
+  }
+
+  virtual ~sbAutoSuppressArrayInvalidation() {
+    mArray->SuppressInvalidation(PR_FALSE);
+  }
+private:
+  nsCOMPtr<sbILocalDatabaseGUIDArray> mArray;
+};
+
 /* static */ nsresult PR_CALLBACK
 sbLocalDatabaseTreeView::SelectionListSavingEnumeratorCallback(PRUint32 aIndex,
                                                                const nsAString& aId,
@@ -1133,16 +1149,16 @@ sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
+    // Suppress invalidation of the underlying GUID array.
+    sbAutoSuppressArrayInvalidation suppress(mArray);
+
     rv = mArray->ClearSorts();
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = mArray->AddSort(sortProperty, aDirection);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mArray->Invalidate();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = Rebuild();
+    rv = mArray->Invalidate(PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1294,7 +1310,7 @@ sbLocalDatabaseTreeView::GetSelectedValues(nsIStringEnumerator** aValues)
 
 // sbILocalDatabaseGUIDArrayListener
 NS_IMETHODIMP
-sbLocalDatabaseTreeView::OnBeforeInvalidate()
+sbLocalDatabaseTreeView::OnBeforeInvalidate(PRBool aInvalidateLength)
 {
   // array modified so reset everything
   mGuidWorkArray.Reset();

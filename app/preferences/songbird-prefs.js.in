@@ -456,7 +456,7 @@ pref("songbird.playlist.doubleclickspeed", 500);
 
 pref("songbird.dbengine.pageSize", 16384);
 // Number of pages
-pref("songbird.dbengine.cacheSize", 16000);
+pref("songbird.dbengine.cacheSize", 100);
 // Number of pages to pre-allocate (avoids fragmentation)
 //pref("songbird.dbengine.preAllocCacheSize", 500);  
 // Number of scratch slots to use (should be roughly the 

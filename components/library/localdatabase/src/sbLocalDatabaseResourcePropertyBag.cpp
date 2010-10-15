@@ -299,6 +299,8 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
 
     // Mark the property that changed as dirty
     mDirty.PutEntry(propertyDBID);
+    // Mark the property that changed as dirty for invalidation of guid arrays.
+    mDirtyForInvalidation.insert(propertyDBID);
 
     // Also mark as dirty any properties that use
     // the changed property in their secondary sort values
@@ -314,7 +316,9 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
           NS_ASSERTION(NS_SUCCEEDED(rv),
             "Property cache failed to update dependent properties!");
           if (NS_SUCCEEDED(rv)) {
-            mDirty.PutEntry(mCache->GetPropertyDBIDInternal(propertyID));
+            PRUint32 depPropDBID = mCache->GetPropertyDBIDInternal(propertyID);
+            mDirty.PutEntry(depPropDBID);
+            mDirtyForInvalidation.insert(depPropDBID);
           }
         }
       }
@@ -408,3 +412,15 @@ sbLocalDatabaseResourcePropertyBag::ClearDirty()
   return NS_OK;
 }
 
+nsresult 
+sbLocalDatabaseResourcePropertyBag::GetDirtyForInvalidation(std::set<PRUint32> &aDirty)
+{
+  aDirty.clear();
+
+  if(!mDirtyForInvalidation.empty()) {
+    aDirty = mDirtyForInvalidation;
+    mDirtyForInvalidation.clear();
+  }
+
+  return NS_OK;
+}

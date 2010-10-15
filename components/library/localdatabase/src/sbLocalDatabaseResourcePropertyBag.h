@@ -33,6 +33,8 @@
 #include <nsDataHashtable.h>
 #include <nsStringAPI.h>
 
+#include <set>
+
 class sbLocalDatabasePropertyCache;
 class sbIPropertyManager;
 struct sbPropertyData;
@@ -62,6 +64,10 @@ public:
   nsresult EnumerateDirty(nsTHashtable<nsUint32HashKey>::Enumerator aEnumFunc, void *aClosure, PRUint32 *aDirtyCount);
   nsresult ClearDirty();
 
+  // Getting the dirty properties used for invalidation of GUID arrays will 
+  // also clear them from the property bag.
+  nsresult GetDirtyForInvalidation(std::set<PRUint32> &aDirty);
+
 private:
 
   static PLDHashOperator PR_CALLBACK
@@ -79,6 +85,8 @@ private:
   
   // Dirty Property ID's
   nsTHashtable<nsUint32HashKey> mDirty;
+  // Dirty Property ID's used for invalidating GUID arrays.
+  std::set<PRUint32> mDirtyForInvalidation;
 };
 
 /**

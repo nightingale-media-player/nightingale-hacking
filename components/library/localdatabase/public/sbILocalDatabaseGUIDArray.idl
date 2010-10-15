@@ -40,11 +40,20 @@ interface sbIPropertyArray;
  * \interface sbILocalDatabaseGUIDArrayListener
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(e12181c0-1dd1-11b2-a410-dbc8dda39b6d)]
+[scriptable, uuid(7357f378-4568-4365-997d-ec76ca17f635)]
 interface sbILocalDatabaseGUIDArrayListener : nsISupports
 {
-  void onBeforeInvalidate();
+  /**
+   * \brief Called before underlying GUID array is invalidated.
+   * \param aInvalidateLength - Indicates if the length of the
+   *        GUID array is likely to change. You may use this param
+   *        to pass to another GUID array to help with it's invalidation.
+   */
+  void onBeforeInvalidate(in boolean aInvalidateLength);
 
+  /**
+   * \brief Called right after underlying GUID array is invalidated.
+   */
   void onAfterInvalidate();
 };
 
@@ -52,7 +61,7 @@ interface sbILocalDatabaseGUIDArrayListener : nsISupports
  * \interface sbILocalDatabaseGUIDArray
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(1140f5d0-f5a1-4f30-b57d-c74abf04b1b5)]
+[scriptable, uuid(f106ddb9-7922-4058-adf9-901ea7b52501)]
 interface sbILocalDatabaseGUIDArray : nsISupports
 {
   attribute AString databaseGUID;
@@ -139,7 +148,12 @@ interface sbILocalDatabaseGUIDArray : nsISupports
    */
   unsigned long long getRowidByIndex(in unsigned long aIndex);
 
-  void invalidate();
+  /**
+   * \brief Invalidate the contents of the array.
+   * \param aInvalidateLength - Also invalidates the cached length of the 
+   *                            array.
+   */
+  void invalidate(in boolean aInvalidateLength);
 
   sbILocalDatabaseGUIDArray clone();
 

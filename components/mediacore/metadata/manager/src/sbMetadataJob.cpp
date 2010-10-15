@@ -89,6 +89,9 @@
 // before calling BatchCompleteItems on the main thread
 const PRUint32 NUM_BACKGROUND_ITEMS_BEFORE_FLUSH = 50;
 
+// Number of items that need to be added for us to run ANALYZE automatically.
+const PRUint32 NUM_ITEMS_PROCESSED_THRESHOLD = 1000;
+
 typedef sbStringSet::iterator sbStringSetIter;
 
 #include "prlog.h"
@@ -1304,10 +1307,12 @@ nsresult sbMetadataJob::OnJobProgress()
     // adding 65,000 tracks will cause guid array queries to get all the
     // GUIDs to take up to 3000ms and after running analyze this same 
     // query will run in about 600ms.
-    //
-    rv = mLibrary->Optimize(PR_TRUE);
-    NS_ASSERTION(NS_SUCCEEDED(rv),
-      "sbMetadataJob::onJobProgress failed to optimize library!");
+    //    
+    if (mCompletedItemCount > NUM_ITEMS_PROCESSED_THRESHOLD) {
+      rv = mLibrary->Optimize(PR_TRUE);
+      NS_ASSERTION(NS_SUCCEEDED(rv),
+        "sbMetadataJob::onJobProgress failed to optimize library!");
+    }
   }
   return NS_OK;
 }

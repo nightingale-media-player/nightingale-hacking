@@ -581,11 +581,11 @@ sbLocalDatabaseAsyncGUIDArray::GetRowidByIndex(PRUint32 aIndex,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseAsyncGUIDArray::Invalidate()
+sbLocalDatabaseAsyncGUIDArray::Invalidate(PRBool aInvalidateLength)
 {
   nsAutoMonitor monitor(mSyncMonitor);
 
-  return mInner->Invalidate();
+  return mInner->Invalidate(aInvalidateLength);
 }
 
 NS_IMETHODIMP

@@ -486,8 +486,8 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(dbSuccess == 0, NS_ERROR_FAILURE);
 
-  // Invalidate the cached list
-  rv = mFriendList->GetArray()->Invalidate();
+  // Invalidate the cached list. Inserting definitely changes length.
+  rv = mFriendList->GetArray()->Invalidate(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Notify our listeners if we have any
@@ -618,8 +618,8 @@ sbSimpleMediaListRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMe
     NS_ENSURE_TRUE(dbSuccess == 0, NS_ERROR_FAILURE);
   }
 
-  // Invalidate the cached list
-  rv = mFriendList->GetArray()->Invalidate();
+  // Invalidate the cached list. Removing definitely changes length.
+  rv = mFriendList->GetArray()->Invalidate(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Notify our listeners after removal if we have any
@@ -1078,8 +1078,8 @@ sbLocalDatabaseSimpleMediaList::MoveBefore(PRUint32 aFromIndex,
   rv = UpdateOrdinalByIndex(aFromIndex, ordinal);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Invalidate the cached list
-  rv = GetArray()->Invalidate();
+  // Invalidate the cached list. Moving items does not invalidate length.
+  rv = GetArray()->Invalidate(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaList> list =
@@ -1120,8 +1120,8 @@ sbLocalDatabaseSimpleMediaList::MoveLast(PRUint32 aIndex)
   rv = GetArray()->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Invalidate the cached list
-  rv = GetArray()->Invalidate();
+  // Invalidate the cached list. Moving items does not invalidate length.
+  rv = GetArray()->Invalidate(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaList> list =
@@ -1358,8 +1358,8 @@ sbLocalDatabaseSimpleMediaList::Clear()
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
-  // Invalidate the cached list
-  rv = GetArray()->Invalidate();
+  // Invalidate the cached list. Clearing definitely invalidates length.
+  rv = GetArray()->Invalidate(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   sbLocalDatabaseMediaListListener::NotifyListenersListCleared(mediaList,
@@ -1383,8 +1383,9 @@ sbLocalDatabaseSimpleMediaList::Clear()
 NS_IMETHODIMP
 sbLocalDatabaseSimpleMediaList::NotifyContentChanged()
 {
-  // Invalidate the cached list
-  nsresult rv = GetArray()->Invalidate();
+  // Invalidate the cached list. No way to tell if length changes so we have
+  // to invalidate it as well.
+  nsresult rv = GetArray()->Invalidate(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Reset list content type to trigger recalculation.
@@ -1520,9 +1521,9 @@ sbLocalDatabaseSimpleMediaList::GetIndexByOrdinal(const nsAString& aOrdinal,
 }
 
 NS_IMETHODIMP
-sbLocalDatabaseSimpleMediaList::Invalidate()
+sbLocalDatabaseSimpleMediaList::Invalidate(PRBool aInvalidateLength)
 {
-  nsresult rv = GetArray()->Invalidate();
+  nsresult rv = GetArray()->Invalidate(aInvalidateLength);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Reset list content type to trigger recalculation.
@@ -1771,8 +1772,8 @@ sbLocalDatabaseSimpleMediaList::MoveSomeInternal(PRUint32* aFromIndexArray,
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
-  // Invalidate the cached list
-  rv = GetArray()->Invalidate();
+  // Invalidate the cached list. Moving items does not invalidate length.
+  rv = GetArray()->Invalidate(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaList> list =

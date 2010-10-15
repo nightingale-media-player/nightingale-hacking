@@ -59,6 +59,7 @@ public:
   nsresult GetPrefixSearchQuery(nsAString& aQuery);
   nsresult GetResortQuery(nsAString& aQuery);
   nsresult GetNullResortQuery(nsAString& aQuery);
+  PRBool   GetIsFullLibrary();
 
 private:
   struct sbAddJoinInfo {

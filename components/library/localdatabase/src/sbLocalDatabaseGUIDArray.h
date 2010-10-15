@@ -43,6 +43,9 @@
 #include <sbIMediaItem.h>
 #include <sbHashKeys.h>
 
+#include <set>
+#include <map>
+
 class nsIURI;
 class nsIWeakReference;
 class sbILibrary;
@@ -57,9 +60,7 @@ public:
 
   sbLocalDatabaseGUIDArray();
 
-  nsresult MayInvalidate(const nsAString &aGUID,
-                         sbLocalDatabaseResourcePropertyBag *aBag);
-
+  nsresult MayInvalidate(const std::set<PRUint32> &aDirtyPropIds);
 
   struct FilterSpec {
     nsString property;
@@ -177,6 +178,32 @@ private:
     mQueriesValid = PR_FALSE;
   }
 
+  // GUID Array Length Caching Key and Hashtables.
+  void GenerateCachedLengthKey();
+  PRPackedBool  mNeedNewKey;
+  nsString      mCachedLengthKey;
+
+  static nsresult GetCachedLength(sbLocalDatabaseGUIDArray *aSelf,
+                                  const nsAString &aKey,
+                                  PRUint32 *aLength);
+  static nsresult RemoveCachedLength(sbLocalDatabaseGUIDArray *aSelf,
+                                     const nsAString &aKey);
+  static nsDataHashtableMT<nsStringHashKey, PRUint32> mCachedLengths;
+
+  static nsresult GetCachedNonNullLength(sbLocalDatabaseGUIDArray *aSelf,
+                                         const nsAString &aKey,
+                                         PRUint32 *aLength);
+  static nsresult RemoveCachedNonNullLength(sbLocalDatabaseGUIDArray *aSelf,
+                                            const nsAString &aKey);
+  static nsDataHashtableMT<nsStringHashKey, PRUint32> mCachedNonNullLengths;
+
+  // We need a quick way to reference which hash keys are for which
+  // property ids so we can remove the cached lengths that are likely
+  // to have changed.
+  PRMonitor* mPropIdsToHashKeysMonitor;
+  typedef std::map<PRUint32, std::set<nsString> > propIdsToHashKeys_t;
+  static propIdsToHashKeys_t mPropIdsToHashKeys;
+
   // Cached property manager
   nsCOMPtr<sbIPropertyManager> mPropMan;
 
@@ -291,6 +318,9 @@ private:
 
   // True if rows have been prefetched
   PRPackedBool mPrefetchedRows;
+
+  // True if this GUID array is for a library
+  PRPackedBool mIsFullLibrary;
 
   // Counter for suppression of invalidation.
   PRUint32 mSuppress;

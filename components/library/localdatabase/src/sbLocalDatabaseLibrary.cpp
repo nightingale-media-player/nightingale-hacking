@@ -278,7 +278,9 @@ sbLibraryInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList
   if (mShouldInvalidate) {
     NS_ASSERTION(mFriendLibrary->GetArray(), "Uh, no full array?!");
 
-    rv = mFriendLibrary->GetArray()->Invalidate();
+    // Inserting items will definitely invalidate length values in the
+    // underlying GUID array.
+    rv = mFriendLibrary->GetArray()->Invalidate(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -462,8 +464,9 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(dbSuccess == 0, NS_ERROR_FAILURE);
 
-  // Invalidate our guid array
-  rv = mFriendLibrary->GetArray()->Invalidate();
+  // Invalidate our guid array. Removing items definitely influences
+  // length so we must invalidate that cached information too.
+  rv = mFriendLibrary->GetArray()->Invalidate(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Invalidate all of the simple media lists we notified
@@ -472,7 +475,9 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
       do_QueryInterface(lists[i], &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = simple->Invalidate();
+    // Again, since we removed items, it's highly likely the length has 
+    // changed so we must invalidate the cached value.
+    rv = simple->Invalidate(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -490,19 +495,17 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
   return NS_OK;
 }
 
-NS_IMPL_ISUPPORTS_INHERITED6(sbLocalDatabaseLibrary, sbLocalDatabaseMediaListBase,
+NS_IMPL_ISUPPORTS_INHERITED5(sbLocalDatabaseLibrary, sbLocalDatabaseMediaListBase,
                                                      nsIClassInfo,
                                                      nsIObserver,
-                                                     sbIDatabaseSimpleQueryCallback,
                                                      sbILibrary,
                                                      sbILocalDatabaseLibrary,
                                                      sbILibraryStatistics)
 
-NS_IMPL_CI_INTERFACE_GETTER9(sbLocalDatabaseLibrary,
+NS_IMPL_CI_INTERFACE_GETTER8(sbLocalDatabaseLibrary,
                              nsIClassInfo,
                              nsIObserver,
                              nsISupportsWeakReference,
-                             sbIDatabaseSimpleQueryCallback,
                              sbILibrary,
                              sbILibraryResource,
                              sbIMediaItem,
@@ -2697,8 +2700,8 @@ sbLocalDatabaseLibrary::CreateMediaItemInternal(nsIURI* aUri,
 
   newItemInfo.forget();
 
-  // Invalidate our array
-  rv = GetArray()->Invalidate();
+  // Invalidate our array. Creating items definitely changes length.
+  rv = GetArray()->Invalidate(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Don't do this while we're receiving items through the Insertinglistener.
@@ -2832,8 +2835,9 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
 
   newItemInfo.forget();
 
-  // Invalidate our array
-  rv = GetArray()->Invalidate();
+  // Invalidate our array. Creating lists also creates items so invalidate 
+  // the cached length values.
+  rv = GetArray()->Invalidate(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!mPreventAddedNotification) {
@@ -3248,9 +3252,6 @@ sbLocalDatabaseLibrary::Optimize(PRBool aAnalyzeOnly)
   rv = query->AddQuery(NS_LITERAL_STRING("ANALYZE"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = query->AddSimpleQueryCallback(this);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   PRInt32 dbresult;
   rv = query->Execute(&dbresult);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -3612,8 +3613,9 @@ sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/,
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
-  // Invalidate the cached list
-  rv = GetArray()->Invalidate();
+  // Invalidate the cached list. Clearing the library obviously influences
+  // cached count values.
+  rv = GetArray()->Invalidate(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Invalidate all simple media lists
@@ -3622,8 +3624,8 @@ sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/,
       do_QueryInterface(lists[i], &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Invalidate the list's item array because its content are gone
-    rv = simple->Invalidate();
+    // Invalidate the list's item array because its content are gone.
+    rv = simple->Invalidate(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Notify the list's listeners that the list was cleared
@@ -3838,7 +3840,8 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
     sbAutoSimpleMediaListBatchHelper listsBatchHelper(&lists);
     map.EnumerateRead(NotifyListsBeforeAfterItemRemoved, &mMediaItemTable);
 
-    rv = GetArray()->Invalidate();
+    // Removing items definitely influences cached count values.
+    rv = GetArray()->Invalidate(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Invalidate all of the simple media lists we notified
@@ -3847,7 +3850,8 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
         do_QueryInterface(lists[i], &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = simple->Invalidate();
+      // Cached lengths are likely to be affected since we're removing items.
+      rv = simple->Invalidate(PR_TRUE);
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
@@ -3930,7 +3934,8 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
       mMediaItemTable.Remove(guid);
     }
 
-    rv = simple->Invalidate();
+    // Invalidate length too since we're removing items.
+    rv = simple->Invalidate(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Now actually delete the items
@@ -4064,8 +4069,9 @@ sbLocalDatabaseLibrary::AddItem(sbIMediaItem* aMediaItem,
   rv = AddItemToLocalDatabase(aMediaItem, getter_AddRefs(newMediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Invalidate the cached list
-  rv = GetArray()->Invalidate();
+  // Invalidate the cached list. Adding an item will 
+  // definitely invalidate the length.
+  rv = GetArray()->Invalidate(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // And let everyone know about it.
@@ -4381,22 +4387,6 @@ NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetDefaultSortProperty(nsAString& aProperty)
 {
   aProperty.AssignLiteral(DEFAULT_SORT_PROPERTY);
-  return NS_OK;
-}
-
-/**
- * See sbIDatabaseSimpleQueryCallback
- */
-NS_IMETHODIMP
-sbLocalDatabaseLibrary::OnQueryEnd(sbIDatabaseResult* aDBResultObject,
-                                   const nsAString& aDBGUID,
-                                   const nsAString& aQuery)
-{
-  NS_ASSERTION(aQuery.Find("VACUUM") != -1, "Got the wrong callback!");
-
-  // Keep this around to know when the vacuum call finishes... For UI
-  // notification? Remove this whole mess if we never need it.
-
   return NS_OK;
 }
 
@@ -4771,7 +4761,8 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
                                          mLength + notifiedCount);
       notifiedCount++;
     }
-    rv = mLibrary->GetArray()->Invalidate();
+    // Items added, count must be invalidated too.
+    rv = mLibrary->GetArray()->Invalidate(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
     NS_FREE_XPCOM_ISUPPORTS_POINTER_ARRAY(count, bags);
   }

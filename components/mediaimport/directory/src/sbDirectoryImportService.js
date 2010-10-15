@@ -667,6 +667,12 @@ DirectoryImportJob.prototype = {
       // This isn't useful, and makes a bad first impression,
       // so lets just dump the entire DB cache.
       if (this.totalAddedToLibrary > this.BATCHCREATE_SIZE) {
+        // More performance hackery. We run optimize with the ANALYZE step.
+        // This will ensure that all queries can use the best possible indexes.
+        library.optimize(true);
+
+        // Analyze will load a bunch of stuff into memory so we want to release
+        // after analyze completes.            
         var dbEngine = Cc["@songbirdnest.com/Songbird/DatabaseEngine;1"]
                                      .getService(Ci.sbIDatabaseEngine);
         dbEngine.releaseMemory();

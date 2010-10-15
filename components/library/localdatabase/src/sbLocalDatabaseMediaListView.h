@@ -137,7 +137,7 @@ private:
 
   nsresult CreateQueries();
 
-  nsresult Invalidate();
+  nsresult Invalidate(PRBool aInvalidateLength = PR_FALSE);
 
   nsresult ClonePropertyArray(sbIPropertyArray* aSource,
                               sbIMutablePropertyArray** _retval);

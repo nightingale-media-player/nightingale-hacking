@@ -195,6 +195,9 @@ private:
   // Dirty GUIDs
   nsInterfaceHashtable<nsStringHashKey, sbLocalDatabaseResourcePropertyBag> mDirty;
 
+  // Dirty Property IDs for use with invalidation of GUID arrays
+  std::set<PRUint32> mDirtyForInvalidation;
+
   // flushing on a background thread
   struct FlushQueryData {
     nsCOMPtr<sbIDatabaseQuery> query;

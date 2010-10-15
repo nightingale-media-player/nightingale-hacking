@@ -2098,7 +2098,7 @@
         <parameter name="changedView"/>
         <body>
           <![CDATA[
-            this.updateDisplayAsync();
+            this.updateDisplay();
           ]]>
         </body>
       </method>
@@ -2106,7 +2106,7 @@
         <parameter name="changedView"/>
         <body>
           <![CDATA[
-            this.updateDisplayAsync();
+            this.updateDisplay();
           ]]>
         </body>
       </method>

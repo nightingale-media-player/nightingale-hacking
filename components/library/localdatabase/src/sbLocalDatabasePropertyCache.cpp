@@ -1241,6 +1241,28 @@ sbLocalDatabasePropertyCache::Write()
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
+  if(!NS_IsMainThread()) {
+    nsCOMPtr<nsIThread> mainThread;
+    rv = NS_GetMainThread(getter_AddRefs(mainThread));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIRunnable> runnable =
+      NS_NEW_RUNNABLE_METHOD(sbLocalDatabasePropertyCache, 
+                             this, 
+                             InvalidateGUIDArrays);
+    NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
+
+    rv = mainThread->Dispatch(runnable, NS_DISPATCH_SYNC);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = InvalidateGUIDArrays();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Since we just invalidated the GUID arrays, we can cancel the timer.
+  mInvalidateTimer->Cancel();
+
   return NS_OK;
 }
 
@@ -1552,22 +1574,27 @@ sbLocalDatabasePropertyCache::AddDirty(const nsAString &aGuid,
   NS_ENSURE_ARG_POINTER(aBag);
   nsAutoString guid(aGuid);
 
-  {
-    nsAutoMonitor mon(mMonitor);
+  nsAutoMonitor mon(mMonitor);
 
-    // If another bag for the same guid is already in the dirty list, then we
-    // risk losing information if we don't write out immediately.
-    if (mDirty.Get(guid, nsnull)) {
-      NS_WARNING("Property cache forcing Write() due to duplicate "
-                 "guids in the dirty bag list.  This should be a rare event.");
-      rv = Write();
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    mDirty.Put(guid, aBag);
-    ++mWritePendingCount;
+  // If another bag for the same guid is already in the dirty list, then we
+  // risk losing information if we don't write out immediately.
+  if (mDirty.Get(guid, nsnull)) {
+    NS_WARNING("Property cache forcing Write() due to duplicate "
+               "guids in the dirty bag list.  This should be a rare event.");
+    rv = Write();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  mDirty.Put(guid, aBag);
+  ++mWritePendingCount;
+
+  // Add dirty property ids for invalidation of guid arrays.
+  std::set<PRUint32> dirtyPropIds;
+  rv = aBag->GetDirtyForInvalidation(dirtyPropIds);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mDirtyForInvalidation.insert(dirtyPropIds.begin(), dirtyPropIds.end());
+  
   // Invalidate uses a timer which enables the invalidation to occur
   // after 'AddDirty' stops being called. This will avoid constant 
   // rebuilds of the GUID array when data is changing in bulk.
@@ -1594,17 +1621,21 @@ sbLocalDatabasePropertyCache::InvalidateGUIDArrays()
       NS_ENSURE_TRUE(arrays.AppendObject(*cit), NS_ERROR_OUT_OF_MEMORY);
     }
   }
+  
+  std::set<PRUint32> dirtyPropIds;
+  
+  // Copy the data into a temporary set to avoid invalidating the guid arrays
+  // with the property cache lock held.
+  {
+    nsAutoMonitor mon(mMonitor);
+    dirtyPropIds = mDirtyForInvalidation;
+    mDirtyForInvalidation.clear();
+  }
 
   PRInt32 const count = arrays.Count();
   for (PRInt32 index = 0; index < count; ++index) {
-    //
-    // XXXAus: We'll probably want to call 'MayInvalidate' again at some point.
-    // This is difficult to do at this point in time because we'd have to 
-    // store all of the bags and guids when AddDirty gets called. Doing this
-    // would make things ideal as we would wait to check for invalidation and
-    // only invalidate when absolutely necessary. 
-    //
-    nsresult rv = arrays[index]->Invalidate();
+    nsresult rv = 
+      arrays[index]->MayInvalidate(dirtyPropIds);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
       "Failed to invalidate GUID array, GUIDs may be stale.");
   }

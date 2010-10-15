@@ -1077,7 +1077,10 @@ sbLocalDatabaseCascadeFilterSet::InvalidateFilter(sbFilterSpec& aFilter)
   LOG(("sbLocalDatabaseCascadeFilterSet[0x%.8x] - Invalidating %s",
        this, NS_ConvertUTF16toUTF8(aFilter.property).get()));
 
-  nsresult rv = aFilter.array->Invalidate();
+  // Always invalidate the length when invalidating the filter`s
+  // guid array as there is now way to accurately tell how it's
+  // length may have been affected.
+  nsresult rv = aFilter.array->Invalidate(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   aFilter.invalidationPending = PR_FALSE;

@@ -57,7 +57,7 @@ interface sbILocalDatabaseMediaListCopyListener : nsISupports
  *
  * \sa sbIMediaList
  */
-[scriptable, uuid(5f046c4a-1dd2-11b2-bfe8-a62a32a20705)]
+[scriptable, uuid(8243de6d-1c42-4b7b-8f05-ae291c9e9bf3)]
 interface sbILocalDatabaseSimpleMediaList : nsISupports
 {
   attribute sbILocalDatabaseMediaListCopyListener copyListener;
@@ -70,9 +70,12 @@ interface sbILocalDatabaseSimpleMediaList : nsISupports
   unsigned long getIndexByOrdinal(in AString aOrdinal);
 
   /**
-   * \brief Tell the list that its underlying datasource has changed
+   * \brief Tell the list that its underlying datasource has changed.
+   * \param aInvalidateLength - Also invalidates the cached length of the 
+   *                            array. If you don't know what this means 
+   *                            set it to true :)
    */
-  void invalidate();
+  void invalidate(in boolean aInvalidateLength);
 
   /**
    * \brief Notify this simple media list's listeners that an item has been
