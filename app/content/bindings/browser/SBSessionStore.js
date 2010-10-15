@@ -63,7 +63,7 @@ function LOG(str) {
   // }
   // var file = (new Error).stack.split("\n").reverse()[1];
   // dump(file + "" + str + "\n");
-  
+
   // dump("\n\n\n");
   // dump(str);
   // dump("\n\n\n");
@@ -141,29 +141,29 @@ var SBSessionStore = {
         } else {
           urls.push(tab.linkedBrowser.currentURI.spec);
         }
-      } catch (e) { 
+      } catch (e) {
         Components.utils.reportError(e);
       }
       tab = tab.nextSibling;
     }
-    
+
     _tabState = {
                   selectedTabIndex: aTabBrowser.tabContainer.selectedIndex,
                   urlList: urls
                 };
   },
-  
+
   restoreTabState: function restoreTabState(aTabBrowser)
   {
     var tabObject = _tabState;
     var tabs = [];
     var selectedIndex = 0, selectedTab;
-    
+
     LOG("restoring tab state");
-    
+
     if (Application.prefs.has(PREF_FIRSTRUN_SESSION))
       Application.prefs.get(PREF_FIRSTRUN_SESSION).reset();
-    
+
     if (tabObject && "urlList" in tabObject) {
       // v2 of the tab state object (with selectedTabIndex)
       tabs = tabObject.urlList;
@@ -172,7 +172,7 @@ var SBSessionStore = {
       // v1 of the tab state object (no selected tab index, only urls)
       tabs = tabObject;
     }
-    
+
     if ( !tabs || !tabs.length ) {
       if (!Application.prefs.getValue(PREF_FIRSTRUN, false)) {
         LOG("no saved tabs, first run - using defaults");
@@ -180,7 +180,7 @@ var SBSessionStore = {
         // page in the second.  The dummy page will get replaced in mainWinInit.js
         // when media scan is done / skipped.
         aTabBrowser.loadURI(PLACEHOLDER_URL, null, null, null, '_media');
-        
+
         var loadMLInBackground =
           Application.prefs.getValue("songbird.firstrun.load_ml_in_background",
                                      false);
@@ -204,7 +204,7 @@ var SBSessionStore = {
       }
     } else {
       LOG("saved tabs found: " + uneval(tabs));
-  
+
       // check if this is an invalid chrome url
       var chromeReg = Cc['@mozilla.org/chrome/chrome-registry;1']
                         .getService(Ci.nsIChromeRegistry);
@@ -238,7 +238,7 @@ var SBSessionStore = {
         // ok - things look fine
         return false;
       }
-  
+
       // Otherwise, just restore whatever was there, previously.
       var isFirstTab = true;
       var tab, location;
@@ -264,19 +264,19 @@ var SBSessionStore = {
           // the XUL cache.  This is a work around for the following bugs:
           //
           // Bug 7896   - Media pages do not initialize when loaded from tab restore
-          // BMO 420815 - XUL Cache interferes with onload when loading multiple 
+          // BMO 420815 - XUL Cache interferes with onload when loading multiple
           //              instances of the same XUL file
           if (url.indexOf("&bypassXULCache") == -1) {
             url += "&bypassXULCache="+ Math.random();
           }
-          
+
           if (isFirstTab) {
             // restore the first tab into the media tab, if available
             location = "_media";
           } else {
             location = "_blank";
           }
-          
+
           try {
             var list = LibraryUtils.getMediaListByGUID(tab.libraryGUID,
                                                        tab.listGUID);
@@ -356,10 +356,10 @@ var SBSessionStore = {
           }
         }
 
-        // Load the first url into the current tab and subsequent 
-        // urls into new tabs 
+        // Load the first url into the current tab and subsequent
+        // urls into new tabs
         isFirstTab = false;
-        
+
         if (i == selectedIndex) {
           // note that this might not match the actual tab index, if there are
           // any saved tabs that are now at an invalid chrome URL.  That's fine,
@@ -379,12 +379,12 @@ var SBSessionStore = {
     aTabBrowser.delayedSelectTab(selectedTab);
 
     this.tabStateRestored = true;
-    
+
     // tell the tab browser we switched tabs so it can update state correctly
     var selectEvent = document.createEvent("Events");
     selectEvent.initEvent("select", true, true);
     aTabBrowser.tabStrip.dispatchEvent(selectEvent);
   },
-  
+
   tabStateRestored: false
 };
