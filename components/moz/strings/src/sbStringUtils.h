@@ -567,6 +567,7 @@ T sbEscapeXML(T const & aSrc)
         *dest++ = 'o';
         *dest++ = 't';
         *dest++ = ';';
+      break;
       case '\'':
         *dest++ = '&';
         *dest++ = '#';
