@@ -567,7 +567,7 @@ sbAppStartupService.prototype =
   /**
    * \brief Register the songbird:// protocol handler on Gnome/Linux
    */
-  _registerSongbirdProtocolGConf: function () {
+  _registerProtocolHandlerGConf: function () {
     if (!("@mozilla.org/gnome-gconf-service;1" in Components.classes)) {
       // gnome-gconf-service doesn't exist
       return;
