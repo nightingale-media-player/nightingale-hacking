@@ -1357,7 +1357,7 @@ sbGStreamerTranscodeDeviceConfigurator::CopyPropertiesIntoBag(nsIArray * aSrcPro
         NS_ENSURE_TRUE(value, NS_ERROR_OUT_OF_MEMORY);
       }
       else if (mapping.Equals("video-quality", CaseInsensitiveCompare)) {
-        value = sbNewVariant(mVideoQuality);
+        value = sbNewVariant(mQuality);
         NS_ENSURE_TRUE(value, NS_ERROR_OUT_OF_MEMORY);
       }
       else {
