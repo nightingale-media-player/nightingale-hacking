@@ -801,8 +801,16 @@ sbLocalDatabasePropertyCache::GetProperties(const PRUnichar **aGUIDArray,
     // If the bag has a pending write waiting we need to get it into the
     // database so that what is returned is consistent.
     if (mDirty.Get(guid, nsnull)) {
+      // Write will acquire the lock as necessary. Write will 
+      // also potentially have to call back into the property 
+      // cache on the main thread to invalidate the GUID arrays.
+      mon.Exit();
+
       rv = Write();
       NS_ENSURE_SUCCESS(rv, rv);
+
+      // Relock.
+      mon.Enter();
     }
 
     bag = mCache.Get(guid);
