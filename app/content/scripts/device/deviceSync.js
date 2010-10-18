@@ -397,9 +397,9 @@ var DeviceSyncWidget = {
       }
     }
 
+    this._ignoreDevicePrefChanges = false;
     if (aNeedUpdate) {
       // Finally update to ensure it all applied
-      this._ignoreDevicePrefChanges = false;
       this.update();
     }
   },
