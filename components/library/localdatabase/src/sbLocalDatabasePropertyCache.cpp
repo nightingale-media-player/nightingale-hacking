@@ -903,39 +903,41 @@ sbLocalDatabasePropertyCache::SetProperties(const PRUnichar **aGUIDArray,
 
   sbAutoBatchHelper batchHelper(*mLibrary);
 
-  nsAutoMonitor mon(mMonitor);
+  // Scoped locking. Must always avoid calling Write with monitor acquired.
+  {
+    nsAutoMonitor mon(mMonitor);
+    for(PRUint32 i = 0; i < aGUIDArrayCount; i++) {
+      nsDependentString const guid(aGUIDArray[i]);
+      nsRefPtr<sbLocalDatabaseResourcePropertyBag> bag;
 
-  for(PRUint32 i = 0; i < aGUIDArrayCount; i++) {
-    nsDependentString const guid(aGUIDArray[i]);
-    nsRefPtr<sbLocalDatabaseResourcePropertyBag> bag;
+      bag = mCache.Get(guid);
+      // If it's not cached we need to create a new bag
+      if (!bag) {
+        PRUint32 mediaItemId;
+        rv = aPropertyArray[i]->GetMediaItemId(&mediaItemId);
+        NS_ENSURE_SUCCESS(rv, rv);
 
-    bag = mCache.Get(guid);
-    // If it's not cached we need to create a new bag
-    if (!bag) {
-      PRUint32 mediaItemId;
-      rv = aPropertyArray[i]->GetMediaItemId(&mediaItemId);
+        bag = new sbLocalDatabaseResourcePropertyBag(this, mediaItemId, guid);
+      }
+      nsCOMPtr<nsIStringEnumerator> ids;
+      rv = aPropertyArray[i]->GetIds(getter_AddRefs(ids));
       NS_ENSURE_SUCCESS(rv, rv);
 
-      bag = new sbLocalDatabaseResourcePropertyBag(this, mediaItemId, guid);
+      PRBool hasMore = PR_FALSE;
+      nsString id, value;
+
+      while(NS_SUCCEEDED(ids->HasMore(&hasMore)) && hasMore) {
+        rv = ids->GetNext(id);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = aPropertyArray[i]->GetProperty(id, value);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        bag->SetProperty(id, value);
+      }
+      NS_ENSURE_TRUE(bag, NS_ERROR_UNEXPECTED);
+      mDirty.Put(guid, bag);
     }
-    nsCOMPtr<nsIStringEnumerator> ids;
-    rv = aPropertyArray[i]->GetIds(getter_AddRefs(ids));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    PRBool hasMore = PR_FALSE;
-    nsString id, value;
-
-    while(NS_SUCCEEDED(ids->HasMore(&hasMore)) && hasMore) {
-      rv = ids->GetNext(id);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = aPropertyArray[i]->GetProperty(id, value);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      bag->SetProperty(id, value);
-    }
-    NS_ENSURE_TRUE(bag, NS_ERROR_UNEXPECTED);
-    mDirty.Put(guid, bag);
   }
 
   if(aWriteThroughNow) {
@@ -1589,8 +1591,17 @@ sbLocalDatabasePropertyCache::AddDirty(const nsAString &aGuid,
   if (mDirty.Get(guid, nsnull)) {
     NS_WARNING("Property cache forcing Write() due to duplicate "
                "guids in the dirty bag list.  This should be a rare event.");
+
+    // Never call Write with monitor acquired. Write may have to proxy
+    // invalidation of the GUID arrays to the main thread which requires
+    // acquiring the monitor.
+    mon.Exit();
+
     rv = Write();
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // Relock.
+    mon.Enter();
   }
 
   mDirty.Put(guid, aBag);
