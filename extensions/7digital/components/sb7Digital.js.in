@@ -55,12 +55,12 @@ const NODE_7DIGITAL_RECOMMENDATIONS = 'SB:7Digital:Recommendations';
 // Where's our stringbundle?
 const STRINGBUNDLE = 'chrome://7digital/locale/7digital.properties';
 // Where's that store?
-const STORE_URL = 'http://ec2-75-101-169-226.compute-1.amazonaws.com';
+const STORE_URL = 'http://7digital.songbirdnest.com';
 const STORE_LOADING_STUB_PATH = "/client";
 const STORE_RECOMMENDATIONS_PATH = '/recommendations/client';
 const STORE_CONFIG_PROPS = 'chrome://7digital/content/config.properties';
 // What's the permission for?
-const PERMISSION_SCOPE = 'http://ec2-75-101-169-226.compute-1.amazonaws.com/';
+const PERMISSION_SCOPE = 'http://7digital.songbirdnest.com/';
 // What's the service pane's namespace
 const SERVICEPANE_NS = 'http://songbirdnest.com/rdf/servicepane#'
 
