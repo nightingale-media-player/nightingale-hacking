@@ -160,8 +160,11 @@ static int DoFileCommand(UINT aFunction, const char* aDescription, std::string a
                  dest.c_str(),
                  aRecursive ? "" : "not ");
   #endif
-  if (::SHFileOperation(&ops)) {
-    LogMessage("Failed to %S %s to %s", aDescription, src.c_str(), dest.c_str());
+  int shfoRv = ::SHFileOperation(&ops);
+
+  if (shfoRv) {
+    LogMessage("Failed to %S %s to %s: %08x", aDescription, src.c_str(),
+     dest.c_str(), shfoRv);
     return DH_ERROR_UNKNOWN;
   }
   return DH_ERROR_OK;
