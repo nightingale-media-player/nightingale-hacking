@@ -55,9 +55,9 @@
     <!-- Playlist Binding -->
     <vbox id="playqueue-playlist-box"
           flex="1">
-      <sb-playlist id="playqueue-playlist"
-                   flex="1"
-                   hidefilters="true"
+      <sb-playqueue-playlist id="playqueue-playlist"
+                             flex="1"
+                             hidefilters="true"
       />
     </vbox>
 

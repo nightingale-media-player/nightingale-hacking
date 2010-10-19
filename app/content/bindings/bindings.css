@@ -68,6 +68,10 @@ sb-playlist {
   -moz-binding: url("chrome://songbird/content/bindings/playlist.xml#playlist") !important;
 }
 
+sb-playqueue-playlist {
+  -moz-binding: url("chrome://songbird/content/bindings/playQueuePlaylist.xml#playqueue-playlist") !important;
+}
+
 sb-filterlist {
   -moz-binding: url("chrome://songbird/content/bindings/filterList.xml#filterlist") !important;
 }
