@@ -55,3 +55,27 @@ See chrome://songbird/content/xul/playQueue.xul
   -moz-border-radius: 6px;
 }
 
+toolbarbutton {
+  height: 16px;
+  width: 45px;
+}
+
+toolbarbutton[id="playqueue_cmd_clearall"] {
+  -moz-border-radius-topright: 0px;
+  -moz-border-radius-bottomright: 0px;
+  margin-left: -0.5px;
+}
+
+
+toolbarbutton[type="menu"] {
+  min-width: 11px;
+  max-width: 11px;
+  margin-left: -4px;
+  -moz-border-radius-topleft: 0px;
+  -moz-border-radius-bottomleft: 0px;
+}
+
+toolbarbutton[type="menu"] .toolbarbutton-icon {
+  margin-right: -2px;
+}
+

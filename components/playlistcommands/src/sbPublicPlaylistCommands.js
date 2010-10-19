@@ -1,28 +1,26 @@
 // JScript source code
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 var Cc = Components.classes;
@@ -731,33 +729,44 @@ PublicPlaylistCommands.prototype = {
 
       this.m_cmd_playqueue_ClearAll = new PlaylistCommandsBuilder();
       
-      this.m_cmd_playqueue_ClearAll.appendAction(null,
-                                           "playqueue_cmd_clearall",
-                                           "&command.queueclearall",
-                                           "&command.tooltip.queueclearall",
-                                           plCmd_QueueClearAll_TriggerCallback);
+      this.m_cmd_playqueue_ClearAll.appendAction(
+                             null,
+                             "playqueue_cmd_clearall",
+                             "&command.queueclearall",
+                             "&command.tooltip.queueclearall",
+                             plCmd_QueueClearAll_TriggerCallback);
 
-      this.m_cmd_playqueue_ClearAll.setCommandShortcut(null,
-                                                       "playqueue_cmd_clearall",
-                                                       "&command.shortcut.key.queueclearall",
-                                                       "&command.shortcut.keycode.queueclearall",
-                                                       "&command.shortcut.modifiers.queueclearall",
-                                                       true);
+      this.m_cmd_playqueue_ClearAll.setCommandShortcut(
+                             null,
+                             "playqueue_cmd_clearall",
+                             "&command.shortcut.key.queueclearall",
+                             "&command.shortcut.keycode.queueclearall",
+                             "&command.shortcut.modifiers.queueclearall",
+                             true);
 
       this.m_cmd_playqueue_ClearHistory = new PlaylistCommandsBuilder();
       
-      this.m_cmd_playqueue_ClearHistory.appendAction(null,
-                                           "playqueue_cmd_clearhistory",
-                                           "&command.queueclearhistory",
-                                           "&command.tooltip.queueclearhistory",
-                                           plCmd_QueueClearHistory_TriggerCallback);
+      this.m_cmd_playqueue_ClearHistory.appendSubmenu(
+                             null,
+                             "playqueue_cmd_clearhistory",
+                             null,
+                             "&command.tooltip.queueclearhistory",
+                             true);
 
-      this.m_cmd_playqueue_ClearHistory.setCommandShortcut(null,
-                                                           "playqueue_cmd_clearhistory",
-                                                           "&command.shortcut.key.queueclearhistory",
-                                                           "&command.shortcut.keycode.queueclearhistory",
-                                                           "&command.shortcut.modifiers.queueclearhistory",
-                                                           true);
+      this.m_cmd_playqueue_ClearHistory.appendAction(
+                             "playqueue_cmd_clearhistory",
+                             "playqueue_cmd_clearhistorymenuitem",
+                             "&command.queueclearhistory",
+                             "&command.tooltip.queueclearhistory",
+                             plCmd_QueueClearHistory_TriggerCallback);
+
+      this.m_cmd_playqueue_ClearHistory.setCommandShortcut(
+                             "playqueue_cmd_clearhistory",
+                             "playqueue_cmd_clearhistorymenuitem",
+                             "&command.shortcut.key.queueclearhistory",
+                             "&command.shortcut.keycode.queueclearhistory",
+                             "&command.shortcut.modifiers.queueclearhistory",
+                             true);
 
       // ----------------------------------------------------------------------
       // The Check/Uncheck All actions
