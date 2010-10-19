@@ -36,12 +36,20 @@ interface sbIMediaListView;
 [scriptable, uuid(ddce2b50-d69d-11df-937b-0800200c9a66)]
 interface sbIMediacoreSequencer : nsISupports
 {
+  /**
+   * \brief The mode used to generate the sequence.  Note that it is possible to
+   * disable shuffle mode using the playlist.shuffle.disabled DataRemote.  In
+   * this case, setting the mode to MODE_SHUFFLE will result in NS_ERROR_FAILURE.
+   */
   const unsigned long MODE_FORWARD    = 0;
   const unsigned long MODE_REVERSE    = 1;
   const unsigned long MODE_SHUFFLE    = 1 << 1;
 
   const unsigned long MODE_CUSTOM     = 1 << 16;
 
+  /**
+   * \brief The repeat mode to use.
+   */
   attribute unsigned long mode;
 
   const unsigned long MODE_REPEAT_NONE = 0;

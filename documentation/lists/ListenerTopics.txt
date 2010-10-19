@@ -32,7 +32,11 @@ ListenerTopic: metadata.length.str
   (in minutes:seconds).
 
 ListenerTopic: playlist.shuffle
-  A boolean value indicating whether shuffle mode is enabled.
+  A boolean value indicating whether shuffle mode is on.
+
+ListenerTopic: playlist.shuffle.disabled
+  A boolean value indicating if shuffle mode is disabled. If this is enabled,
+  setting playlist.shuffle will have no effect.
 
 ListenerTopic: playlist.repeat
   An integer value indicating which repeat mode is currently active.  This has a

@@ -773,6 +773,7 @@
                     .getService(Components.interfaces.sbIMediacoreManager);
 
         // Create and bind data remotes
+        this.remote_shuffle_disabled = SBDataBindElementProperty( "playlist.shuffle.disabled", this, "disabled", true );
         this.remote_shuffle = SB_NewDataRemote( "playlist.shuffle", null );
       ]]>
     </constructor>
@@ -782,6 +783,11 @@
         if(this.remote_shuffle) {
           this.remote_shuffle.unbind();
           this.remote_shuffle = null;
+        }
+
+        if(this.remote_shuffle_disabled) {
+          this.remote_shuffle_disabled.unbind();
+          this.remote_shuffle_disabled = null;
         }
 
         if(this.mm) {

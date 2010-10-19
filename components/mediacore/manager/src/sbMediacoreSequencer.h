@@ -253,6 +253,8 @@ protected:
   nsCOMPtr<sbIDataRemote> mDataRemotePlaylistShuffle;
   nsCOMPtr<sbIDataRemote> mDataRemotePlaylistRepeat;
 
+  nsCOMPtr<sbIDataRemote> mDataRemotePlaylistShuffleDisabled;
+
   nsCOMPtr<nsITimer> mSequenceProcessorTimer;
 
   // MediaListListener and ViewListener data.

@@ -109,6 +109,36 @@ var playQueue = {
     sbWindow.addEventListener("ShowCurrentTrack", this.onShowCurrentTrack, true);
 
     this._playlist.bind(view);
+
+    var mediacoreManager = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                             .getService(Ci.sbIMediacoreManager);
+    // Disable the shuffle button when playing from the queue.
+    this._remoteShuffleDisabled =
+        SB_NewDataRemote( "playlist.shuffle.disabled", null );
+
+    this._mediacoreListener = {
+      onMediacoreEvent: function (ev) {
+        var list = mediacoreManager.sequencer.view.mediaList;
+        if (list.equals(playQueueService.mediaList)) {
+          switch (ev.type) {
+            case Ci.sbIMediacoreEvent.BEFORE_VIEW_CHANGE:
+              // we're leaving the view, enable shuffle
+              self._remoteShuffleDisabled.boolValue = false;
+              break;
+            case Ci.sbIMediacoreEvent.VIEW_CHANGE:
+              // we're entering the view, disable shuffle
+              mediacoreManager.sequencer.mode =
+                  Ci.sbIMediacoreSequencer.MODE_FORWARD;
+              self._remoteShuffleDisabled.boolValue = true;
+              break;
+            default:
+              break;
+          }
+        }
+      }
+    };
+
+    mediacoreManager.addListener(this._mediacoreListener);
   },
 
   /**
@@ -137,7 +167,23 @@ var playQueue = {
     var sbWindow = Cc["@mozilla.org/appshell/window-mediator;1"]
         .getService(Ci.nsIWindowMediator)
         .getMostRecentWindow("Songbird:Main").window;
-    sbWindow.removeEventListener("ShowCurrentTrack", this.onShowCurrentTrack, true);
+    if (sbWindow)
+      sbWindow.removeEventListener("ShowCurrentTrack",
+                                   this.onShowCurrentTrack,
+                                   true);
+
+    if (this._mediacoreListener) {
+      var mediacoreManager = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                               .getService(Ci.sbIMediacoreManager);
+
+      mediacoreManager.removeListener(this._mediacoreListener);
+      this._mediacoreListener = null;
+    }
+
+    if(this._remoteShuffleDisabled) {
+      this._remoteShuffleDisabled.unbind();
+      this._remoteShuffleDisabled = null;
+    }
   },
 
   /**

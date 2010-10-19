@@ -201,6 +201,7 @@ const static char* sPublicMetadata[] =
     "metadata.length.str",
     "playlist.shuffle",
     "playlist.repeat",
+    "playlist.shuffle.disabled",
     "faceplate.volume",
     "faceplate.mute",
     "faceplate.playing",

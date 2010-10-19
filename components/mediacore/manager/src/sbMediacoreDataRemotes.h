@@ -81,4 +81,6 @@
 #define SB_MEDIACORE_DATAREMOTE_PLAYLIST_SHUFFLE "playlist.shuffle"
 #define SB_MEDIACORE_DATAREMOTE_PLAYLIST_REPEAT  "playlist.repeat"
 
+#define SB_MEDIACORE_DATAREMOTE_PLAYLIST_SHUFFLE_DISABLED  "playlist.shuffle.disabled"
+
 #endif /*__SB_MEDIACOREDATAREMOTES_H__*/

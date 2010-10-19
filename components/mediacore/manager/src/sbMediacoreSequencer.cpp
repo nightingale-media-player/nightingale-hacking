@@ -608,7 +608,6 @@ sbMediacoreSequencer::BindDataRemotes()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-
   // Playlist Repeat
   mDataRemotePlaylistRepeat =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
@@ -623,11 +622,22 @@ sbMediacoreSequencer::BindDataRemotes()
   rv = mDataRemotePlaylistRepeat->GetStringValue(repeat);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if(shuffle.IsEmpty()) {
+  if(repeat.IsEmpty()) {
     rv = mDataRemotePlaylistRepeat->SetIntValue(
             sbIMediacoreSequencer::MODE_REPEAT_NONE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  // Shuffle disable
+  mDataRemotePlaylistShuffleDisabled =
+    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mDataRemotePlaylistShuffleDisabled->Init(
+    NS_LITERAL_STRING(SB_MEDIACORE_DATAREMOTE_PLAYLIST_SHUFFLE_DISABLED),
+    nullString);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mDataRemotePlaylistShuffleDisabled->SetBoolValue(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -740,6 +750,11 @@ sbMediacoreSequencer::UnbindDataRemotes()
 
   if (mDataRemotePlaylistRepeat) {
     rv = mDataRemotePlaylistRepeat->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if (mDataRemotePlaylistShuffleDisabled) {
+    rv = mDataRemotePlaylistShuffleDisabled->Unbind();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -2374,12 +2389,19 @@ NS_IMETHODIMP
 sbMediacoreSequencer::SetMode(PRUint32 aMode)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  nsresult rv;
 
   PRBool validMode = PR_FALSE;
   switch(aMode) {
+    case sbIMediacoreSequencer::MODE_SHUFFLE:
+      PRBool disableShuffle;
+      rv = mDataRemotePlaylistShuffleDisabled->GetBoolValue(&disableShuffle);
+      NS_ENSURE_SUCCESS(rv, rv);
+      if (disableShuffle) {
+        return NS_ERROR_FAILURE;
+      }
     case sbIMediacoreSequencer::MODE_FORWARD:
     case sbIMediacoreSequencer::MODE_REVERSE:
-    case sbIMediacoreSequencer::MODE_SHUFFLE:
     case sbIMediacoreSequencer::MODE_CUSTOM:
       validMode = PR_TRUE;
     break;
@@ -2392,7 +2414,7 @@ sbMediacoreSequencer::SetMode(PRUint32 aMode)
     mMode = aMode;
 
     PRInt64 viewPosition = mViewPosition;
-    nsresult rv = RecalculateSequence(&viewPosition);
+    rv = RecalculateSequence(&viewPosition);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = UpdateShuffleDataRemote(aMode);

@@ -450,6 +450,10 @@
                   key="playlist.shuffle"
                   attribute="checked"
                   boolean="true" />
+        <observes type="dataremote"
+                  key="playlist.shuffle.disabled"
+                  attribute="disabled"
+                  boolean="true" />
       </broadcaster>
       <broadcaster id="controlModeRepeatAlways" >
         <observes type="dataremote"
