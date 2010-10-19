@@ -446,33 +446,30 @@
 
 
       <!-- Starts the idle search timer on input when in live search mode  -->
-      <handler event="input">
-          <![CDATA[
-
+      <handler event="input"><![CDATA[
         // Update widget value to the search textbox value.
         this.value = this._textbox.value;
 
         if (!this.liveSearchMode) {
           return;
         }
-        if ( this._editIdleInterval )
-        {
+        if ( this._editIdleInterval ) {
           clearInterval( this._editIdleInterval );
+          this._editIdleInterval = null;
         }
 
         var timeout = 1000;
-        var isBackspace = event.keyCode == KeyEvent.DOM_VK_BACK_SPACE;
-        var length = this._textbox.value.length;
-
+        var isBackspace = (event.keyCode == KeyEvent.DOM_VK_BACK_SPACE);
+        var length = this.value.length;
+        
         // If a few chars have been entered, run the search sooner
         // since it probably won't take long.
         if ( (length == 1 && isBackspace)  ||  // Empty search is fast
-             (length >= 2 && !isBackspace) ||  // Everything after three chars is fast
-             (length > 3))
+             (length >= 3 && !isBackspace))    // Everything with 3 or greater is fast
         {
-          timeout = 0;
+          timeout = 100;
         }
-
+        
         this._editIdleInterval = setInterval(
           function(o) {
             clearInterval( o._editIdleInterval );
