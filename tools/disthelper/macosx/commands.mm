@@ -105,6 +105,37 @@ static bool isDirectoryEmpty(std::string aPath) {
   return !hasChild;
 }
 
+#ifndef kCFCoreFoundationVersionNumber10_5
+  @interface fileManErrorHandler : NSObject {
+  }
+  +(fileManErrorHandler*) handler;
+  @end
+
+  @implementation fileManErrorHandler
+  +(fileManErrorHandler*) handler {
+          return [[[fileManErrorHandler alloc] init] autorelease];
+  }
+  -(BOOL)fileManager:(NSFileManager *)manager
+          shouldProceedAfterError:(NSDictionary *)errorInfo
+  {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+    NSString *toPath = [errorInfo objectForKey:@"ToPath"];
+    if (toPath == nil) {
+      toPath = [NSString stringWithString:@"<no ToPath>"];
+    }
+
+    DebugMessage("fileManager error handler: %s -> %s : %s",
+                 [[errorInfo objectForKey:@"Path"] UTF8String],
+                 [toPath UTF8String],
+                 [[errorInfo objectForKey:@"Error"] UTF8String]);
+
+    [pool release];
+    return NO;
+  }
+  @end
+#endif /* !kCFCoreFoundationVersionNumber10_5 */
+
 int CommandCopyFile(std::string aSrc, std::string aDest, bool aRecursive) {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
@@ -116,6 +147,16 @@ int CommandCopyFile(std::string aSrc, std::string aDest, bool aRecursive) {
   NSError *error = nil;
   NSFileManager* fileMan = [NSFileManager defaultManager];
 
+  // the APIs we use don't copy the leaf name for us; we need to do this
+  // manually.
+  if (![fileMan fileExistsAtPath:destPath isDirectory:&isDir]) {
+    isDir = NO;
+  }
+  if (isDir) {
+   destPath =
+     [destPath stringByAppendingPathComponent:[srcPath lastPathComponent]];
+  }
+
   if (![fileMan fileExistsAtPath:srcPath isDirectory:&isDir]) {
     DebugMessage("ERROR: [%s] does not exist, cannot copy",
                  [srcPath UTF8String]);
@@ -123,15 +164,15 @@ int CommandCopyFile(std::string aSrc, std::string aDest, bool aRecursive) {
     return DH_ERROR_READ;
   }
 
-  // the APIs we use don't copy the leaf name for us; we need to do this
-  // manually.
-  destPath =
-    [destPath stringByAppendingPathComponent:[srcPath lastPathComponent]];
-
   if ([srcPath isEqualToString:destPath]) {
-    // no need to copy a file onto itself
+    DebugMessage("Skipping copy of %s unto itself",
+                 [srcPath UTF8String]);
     return DH_ERROR_OK;
   }
+
+  DebugMessage("copying %s to %s...",
+               [srcPath UTF8String],
+               [destPath UTF8String]);
 
   // XXXMook: ugly hack to check if we're using the 10.5 SDK or higher (that is,
   // a SDK that knows about 10.5 methods).
@@ -170,7 +211,7 @@ int CommandCopyFile(std::string aSrc, std::string aDest, bool aRecursive) {
       // copyPath:toPath:handler: will bail if the destination already exists
       success = [fileMan copyPath:srcPath
                            toPath:destPath
-                          handler:nil];
+                          handler:[fileManErrorHandler handler]];
     }
   #endif
 
@@ -204,8 +245,17 @@ int CommandMoveFile(std::string aSrc, std::string aDest, bool aRecursive) {
 
   // the APIs we use don't copy the leaf name for us; we need to do this
   // manually.
-  destPath =
-    [destPath stringByAppendingPathComponent:[srcPath lastPathComponent]];
+  if (![fileMan fileExistsAtPath:destPath isDirectory:&isDir]) {
+    isDir = NO;
+  }
+  if (isDir) {
+   destPath =
+     [destPath stringByAppendingPathComponent:[srcPath lastPathComponent]];
+  }
+
+  DebugMessage("moving %s to %s...",
+               [srcPath UTF8String],
+               [destPath UTF8String]);
 
   // XXXMook: ugly hack to check if we're using the 10.5 SDK or higher (that is,
   // a SDK that knows about 10.5 methods).
@@ -216,7 +266,7 @@ int CommandMoveFile(std::string aSrc, std::string aDest, bool aRecursive) {
   #else
     success = [fileMan movePath:srcPath
                          toPath:destPath
-                        handler:nil];
+                        handler:[fileManErrorHandler handler]];
   #endif
 
   [pool release];
