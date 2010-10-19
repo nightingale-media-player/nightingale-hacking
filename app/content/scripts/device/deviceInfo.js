@@ -979,18 +979,25 @@ var DIW = {
   /**
    * \brief Format a mime type to human readable
    *
-   * \return Human readable information for mime type.
+   * \return Array of human readable information for mime type.
    */
 
-  _getExtForMimeType : function(aMimeType, aContentType) {
+  _getExtsForMimeType : function(aMimeType, aContentType) {
+    var exts = [];
+    var idx = 0;
+
     // Use the device capabilities utils mapping
     var devCapsUtils =
       Cc["@songbirdnest.com/Songbird/Device/DeviceCapabilitiesUtils;1"]
         .getService(Ci.sbIDeviceCapabilitiesUtils);
-    var extension = devCapsUtils.mapContentTypeToFileExtension(aMimeType,
-                                                               aContentType);
-    if (extension)
-      return extension;
+    var extEnum = devCapsUtils.mapContentTypeToFileExtensions(aMimeType,
+                                                              aContentType);
+    while (extEnum.hasMore()) {
+      exts[idx++] = extEnum.getNext();
+    }
+
+    if (exts.length > 0)
+      return exts;
     
     // As a fallback, use nsIMIMEService to look it up
     var mimeService = Cc["@mozilla.org/mime;1"].getService(Ci.nsIMIMEService);
@@ -1002,12 +1009,14 @@ var DIW = {
       } catch (err) {}
 
       if (mimeExtension) {
-        return SBString("device.info.mimetype." + mimeExtension, mimeExtension);
+        exts[idx] = SBString("device.info.mimetype." + mimeExtension, mimeExtension);
+        return exts;
       }
     }
-    
+
     // Fall back to mime type if all else failed.
-    return aMimeType;
+    exts[idx] = aMimeType;
+    return exts;
   },
 
   /**
@@ -1036,10 +1045,13 @@ var DIW = {
                               contentArray[contentCounter], {});
           if (mimeTypeArray.length > 0) {
             for each (var mimetype in mimeTypeArray) {
-              var ext = this._getExtForMimeType(mimetype,
-                                                contentArray[contentCounter]);
-              if(extensions.indexOf(ext) == -1)
-                extensions.push(ext);
+              var exts = this._getExtsForMimeType(mimetype,
+                                                  contentArray[contentCounter]);
+              for (var idx = 0; idx < exts.length; idx++) {
+                let ext = exts[idx];
+                if (extensions.indexOf(ext) == -1)
+                  extensions.push(ext);
+              }
             }
           }
         }

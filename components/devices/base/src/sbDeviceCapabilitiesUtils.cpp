@@ -22,11 +22,12 @@
  *=END SONGBIRD GPL
  */
 
-#include "sbDeviceUtils.h"
+#include "sbDeviceCapabilitiesUtils.h"
 
+#include <sbDeviceUtils.h>
 #include <sbIDeviceCapabilities.h>
+#include <sbTArrayStringEnumerator.h>
 
-#include <sbDeviceCapabilitiesUtils.h>
 
 NS_IMPL_ISUPPORTS1(sbDeviceCapabilitiesUtils,
                    sbIDeviceCapabilitiesUtils)
@@ -39,11 +40,13 @@ sbDeviceCapabilitiesUtils::~sbDeviceCapabilitiesUtils()
 }
 
 NS_IMETHODIMP
-sbDeviceCapabilitiesUtils::MapContentTypeToFileExtension(
+sbDeviceCapabilitiesUtils::MapContentTypeToFileExtensions(
                                              const nsAString &aMimeType,
                                              PRUint32 aContentType,
-                                             nsAString &_retval)
+                                             nsIStringEnumerator **_retval)
 {
+  nsTArray<nsCString> fileExtensions;
+
   for (PRUint32 index = 0;
        index < MAP_FILE_EXTENSION_CONTENT_FORMAT_LENGTH;
        ++index)
@@ -54,9 +57,15 @@ sbDeviceCapabilitiesUtils::MapContentTypeToFileExtension(
     if (aMimeType.EqualsLiteral(entry.MimeType) &&
         aContentType == entry.ContentType)
     {
-      _retval.AssignLiteral(entry.Extension);
+      fileExtensions.AppendElement(entry.Extension);
     }
   }
+
+  nsCOMPtr<nsIStringEnumerator> fileExtensionEnum =
+    new sbTArrayStringEnumerator(&fileExtensions);
+  NS_ENSURE_TRUE(fileExtensionEnum, NS_ERROR_OUT_OF_MEMORY);
+
+  fileExtensionEnum.forget(_retval);
 
   return NS_OK;
 }
