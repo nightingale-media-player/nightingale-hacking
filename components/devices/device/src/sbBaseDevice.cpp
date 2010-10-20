@@ -540,6 +540,10 @@ sbBaseDevice::~sbBaseDevice()
   if (mDeviceImages) {
     delete mDeviceImages;
   }
+
+  if (mLibraryListener) {
+    mLibraryListener->Destroy();
+  }
 }
 
 NS_IMETHODIMP sbBaseDevice::Connect()
@@ -2312,6 +2316,7 @@ void sbBaseDevice::FinalizeDeviceLibrary(sbIDeviceLibrary* aDevLib)
                          &enumerateInfo);
 
   // Finalize the device library.
+  aDevLib->RemoveDeviceLibraryListener(mLibraryListener);
   aDevLib->Finalize();
 }
 

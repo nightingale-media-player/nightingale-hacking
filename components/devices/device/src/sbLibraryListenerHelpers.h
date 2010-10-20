@@ -99,6 +99,8 @@ public:
 
   nsresult Init(sbBaseDevice* aDevice);
 
+  void Destroy();
+
 protected:
   // The device owns the listener, so use a non-owning reference here
   sbBaseDevice* mDevice;

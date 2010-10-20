@@ -147,6 +147,9 @@ sbMediaItemControllerCleanup::Observe(nsISupports *aSubject,
       mState = STATE_RUNNING;
     }
     else {
+      // we no longer need to hold on to the lock for anything; let it go now
+      // because do_ProxiedGetService may cause a nested event loop
+      lock.unlock();
       TRACE("nothing to do, ignoring idle notification");
       nsCOMPtr<nsIObserverService> obs =
         do_ProxiedGetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);

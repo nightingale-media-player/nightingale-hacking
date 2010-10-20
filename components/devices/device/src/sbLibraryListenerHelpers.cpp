@@ -221,6 +221,12 @@ sbBaseDeviceLibraryListener::Init(sbBaseDevice* aDevice)
   return NS_OK;
 }
 
+void
+sbBaseDeviceLibraryListener::Destroy()
+{
+  mDevice = nsnull;
+}
+
 NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnBatchBegin(sbIMediaList *aMediaList)
 {
@@ -231,6 +237,8 @@ sbBaseDeviceLibraryListener::OnBatchBegin(sbIMediaList *aMediaList)
 NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnBatchEnd(sbIMediaList *aMediaList)
 {
+  nsRefPtr<nsISupports> grip(NS_ISUPPORTS_CAST(sbIDevice*, mDevice));
+  NS_ENSURE_STATE(grip);
   return mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_BATCH_END,
                               nsnull, aMediaList);
 }
