@@ -28,34 +28,13 @@
  * \brief Test file
  */
 
-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-
-var batchListener = {
-  QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListListener]),
-  onItemAdded: function() true,
-  onBeforeItemRemoved: function() true,
-  onAfterItemRemoved: function() true,
-  onItemUpdated: function() true,
-  onItemMoved: function() true,
-  onBeforeListCleared: function() true,
-  onListCleared: function() true,
-  onBatchBegin: function(aMediaList) {
-    ++this.depth;
-    log("depth: " + this.depth);
-  },
-  onBatchEnd: function(aMediaList) {
-    --this.depth;
-    log("depth: " + this.depth);
-  },
-  depth: 0
-};
-
 function runTest () {
   var mediaItem1;
   var mediaItem2;
   var mediaItemWatcher;
   var filter;
   var func;
+  var batchListener = new BatchEndListener();
 
   // Import some services.
   Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
@@ -98,6 +77,9 @@ function runTest () {
                       false,
                       Ci.sbIMediaList.LISTENER_FLAGS_BATCHBEGIN |
                         Ci.sbIMediaList.LISTENER_FLAGS_BATCHEND);
+  while (batchListener.depth > 0) {
+    sleep(100);
+  }
 
   // Create a test media item.
   mediaItem1 = library.createMediaItem(newURI("http://test.com/test1"));
@@ -110,24 +92,32 @@ function runTest () {
                        .createInstance(Ci.sbIMediaItemWatcher);
   assertTrue(mediaItemWatcher);
   mediaItemWatcher.watch(mediaItem1, listener);
+  while (batchListener.depth > 0) {
+    sleep(100);
+  }
 
   // Test item updated notification.
-  mediaItem1.setProperty(SBProperties.trackName, "test1");
-  assertEqual(listener.itemRemovedCount, 0);
-  assertEqual(listener.itemUpdatedCount, 1);
-  mediaItem1.setProperty(SBProperties.albumName, "test1");
-  assertEqual(listener.itemRemovedCount, 0);
-  assertEqual(listener.itemUpdatedCount, 2);
-  mediaItem2.setProperty(SBProperties.trackName, "test2");
-  assertEqual(listener.itemRemovedCount, 0);
-  assertEqual(listener.itemUpdatedCount, 2);
+  batchListener.waitForCompletion(function()
+    mediaItem1.setProperty(SBProperties.trackName, "test1"));
+  assertEqual(listener.itemRemovedCount, 0, "incorrect number of removed items");
+  assertEqual(listener.itemUpdatedCount, 1, "incorrect number of updated items");
+  batchListener.waitForCompletion(function()
+    mediaItem1.setProperty(SBProperties.albumName, "test1"));
+  assertEqual(listener.itemRemovedCount, 0, "incorrect number of removed items");
+  assertEqual(listener.itemUpdatedCount, 2, "incorrect number of updated items");
+  batchListener.waitForCompletion(function()
+    mediaItem2.setProperty(SBProperties.trackName, "test2"));
+  assertEqual(listener.itemRemovedCount, 0, "incorrect number of removed items");
+  assertEqual(listener.itemUpdatedCount, 2, "incorrect number of updated items");
 
   // Test item removed notification.
   listener.reset();
-  library.remove(mediaItem1);
-  library.remove(mediaItem2);
-  assertEqual(listener.itemRemovedCount, 1);
-  assertEqual(listener.itemUpdatedCount, 0);
+  batchListener.waitForCompletion(function() {
+    library.remove(mediaItem1);
+    library.remove(mediaItem2);
+  });
+  assertEqual(listener.itemRemovedCount, 1, "incorrect number of removed items");
+  assertEqual(listener.itemUpdatedCount, 0, "incorrect number of updated items");
 
   // Clean up.
   mediaItemWatcher.cancel();
@@ -154,13 +144,15 @@ function runTest () {
   mediaItemWatcher.watch(mediaItem1, listener);
 
   // Test media item watcher cancel.
-  mediaItem1.setProperty(SBProperties.trackName, "test1");
-  assertEqual(listener.itemRemovedCount, 0);
-  assertEqual(listener.itemUpdatedCount, 1);
+  batchListener.waitForCompletion(function()
+    mediaItem1.setProperty(SBProperties.trackName, "test1"));
+  assertEqual(listener.itemRemovedCount, 0, "incorrect number of removed items");
+  assertEqual(listener.itemUpdatedCount, 1, "incorrect number of updated items");
   mediaItemWatcher.cancel();
-  mediaItem1.setProperty(SBProperties.trackName, "test2");
-  assertEqual(listener.itemRemovedCount, 0);
-  assertEqual(listener.itemUpdatedCount, 1);
+  batchListener.waitForCompletion(function()
+    mediaItem1.setProperty(SBProperties.trackName, "test2"));
+  assertEqual(listener.itemRemovedCount, 0, "incorrect number of removed items");
+  assertEqual(listener.itemUpdatedCount, 1, "incorrect number of updated items");
 
   // Clean up.
   mediaItemWatcher.cancel();
@@ -187,12 +179,14 @@ function runTest () {
   mediaItemWatcher.watch(mediaItem1, listener, filter);
 
   // Test item updated notification with filter.
-  mediaItem1.setProperty(SBProperties.trackName, "test");
-  assertEqual(listener.itemRemovedCount, 0);
-  assertEqual(listener.itemUpdatedCount, 1);
-  mediaItem1.setProperty(SBProperties.albumName, "test");
-  assertEqual(listener.itemRemovedCount, 0);
-  assertEqual(listener.itemUpdatedCount, 1);
+  batchListener.waitForCompletion(function()
+    mediaItem1.setProperty(SBProperties.trackName, "test"));
+  assertEqual(listener.itemRemovedCount, 0, "incorrect number of removed items");
+  assertEqual(listener.itemUpdatedCount, 1, "incorrect number of updated items");
+  batchListener.waitForCompletion(function()
+    mediaItem1.setProperty(SBProperties.albumName, "test"));
+  assertEqual(listener.itemRemovedCount, 0, "incorrect number of removed items");
+  assertEqual(listener.itemUpdatedCount, 1, "incorrect number of updated items");
 
   // Clean up.
   mediaItemWatcher.cancel();
@@ -223,12 +217,12 @@ function runTest () {
   func = function() {
     mediaItem1.setProperty(SBProperties.trackName, "test");
     mediaItem2.setProperty(SBProperties.trackName, "test");
-    assertEqual(listener.itemRemovedCount, 0);
-    assertEqual(listener.itemUpdatedCount, 0);
+    assertEqual(listener.itemRemovedCount, 0, "incorrect number of removed items");
+    assertEqual(listener.itemUpdatedCount, 0, "incorrect number of updated items");
   };
   library.runInBatchMode(func);
-  assertEqual(listener.itemRemovedCount, 0);
-  assertEqual(listener.itemUpdatedCount, 1);
+  assertEqual(listener.itemRemovedCount, 0, "incorrect number of removed items");
+  assertEqual(listener.itemUpdatedCount, 1, "incorrect number of updated items");
 
   // Clean up.
   mediaItemWatcher.cancel();
@@ -260,17 +254,20 @@ function runTest () {
   func = function() {
     library.remove(mediaItem1);
     library.remove(mediaItem2);
-    assertEqual(listener.itemRemovedCount, 0);
-    assertEqual(listener.itemUpdatedCount, 0);
+    assertEqual(listener.itemRemovedCount, 0, "incorrect number of removed items");
+    assertEqual(listener.itemUpdatedCount, 0, "incorrect number of updated items");
   };
   library.runInBatchMode(func);
-  assertEqual(listener.itemRemovedCount, 1);
-  assertEqual(listener.itemUpdatedCount, 0);
+  assertEqual(listener.itemRemovedCount, 1, "incorrect number of removed items");
+  assertEqual(listener.itemUpdatedCount, 0, "incorrect number of updated items");
 
   // Clean up.
   mediaItemWatcher.cancel();
   library.remove(mediaItem1);
   library.remove(mediaItem2);
+  while (batchListener.depth > 0) {
+    sleep(100);
+  }
   library.removeListener(batchListener);
 
   // Final clean up.

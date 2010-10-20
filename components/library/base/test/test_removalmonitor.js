@@ -38,6 +38,12 @@ function runTest () {
                                 .getService(Ci.sbILibraryManager);
   libraryManager.registerLibrary(library, false);
   
+  var batchListener = new BatchEndListener();
+  library.addListener(batchListener,
+                      false,
+                      Ci.sbIMediaList.LISTENER_FLAGS_BATCHBEGIN |
+                        Ci.sbIMediaList.LISTENER_FLAGS_BATCHEND);
+  batchListener.waitForEndBatch();
  
   // Monitor removal of media lists 
   var callback = {
@@ -60,8 +66,10 @@ function runTest () {
   // Make sure list removal works
   var list = library.createMediaList("simple");
   callback.expectCallback = true;
-  monitor.setMediaList(list);
-  library.remove(list);
+  batchListener.waitForCompletion(function(){
+    monitor.setMediaList(list);
+    library.remove(list);
+  });
   callback.verify();
   
   // Make sure unsetting the media list works
@@ -69,14 +77,16 @@ function runTest () {
   monitor.setMediaList(list);
   monitor.setMediaList(null);
   callback.expectCallback = false;
-  library.remove(list);
+  batchListener.waitForCompletion(function()
+    library.remove(list));
   callback.verify();
   
   // Make sure removal by library clear works
   list = library.createMediaList("simple");
   callback.expectCallback = true;
   monitor.setMediaList(list);
-  library.clear();
+  batchListener.waitForCompletion(function()
+    library.clear());
   callback.verify();
   
   // Make sure removal in a batch operation works

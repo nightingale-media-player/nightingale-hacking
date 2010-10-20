@@ -38,9 +38,7 @@ SONGBIRD_TESTS = $(srcdir)/head_library-base.js \
                  $(srcdir)/test_mediaitemwatcher.js \
                  $(srcdir)/test_removalmonitor.js \
                  $(srcdir)/test_timeformatter.js \
+                 $(srcdir)/test_media_item_controller_cleanup.js \
                  $(NULL)
-
-# XXX Mook disable for now, bug 22038
-#                 $(srcdir)/test_media_item_controller_cleanup.js \
 
 include $(topsrcdir)/build/rules.mk

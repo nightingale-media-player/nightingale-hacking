@@ -106,7 +106,6 @@ static nsModuleComponentInfo components[] =
     SONGBIRD_TEMPORARYMEDIAITEM_CID,
     SONGBIRD_TEMPORARYMEDIAITEM_CONTRACTID,
     sbTemporaryMediaItemConstructor
-#if 0 /* XXX Mook disable to let tests pass (bug 22038) */
   },
   {
     SONGBIRD_MEDIAITEMCONTROLLERCLEANUP_CLASSNAME,
@@ -114,7 +113,6 @@ static nsModuleComponentInfo components[] =
     SONGBIRD_MEDIAITEMCONTROLLERCLEANUP_CONTRACTID,
     sbMediaItemControllerCleanupConstructor,
     sbMediaItemControllerCleanup::RegisterSelf
-#endif
   }
 };
 

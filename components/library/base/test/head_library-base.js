@@ -28,6 +28,8 @@
  * \brief Some globally useful stuff for the library tests
  */
 
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+
 function readList(dataFile) {
 
   var data = readFile(dataFile);
@@ -51,3 +53,39 @@ function getFile(fileName) {
   file.append(fileName);
   return file;
 }
+
+function BatchEndListener() {
+  this.depth = 0;
+}
+BatchEndListener.prototype = {
+  QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListListener]),
+  onItemAdded: function() true,
+  onBeforeItemRemoved: function() true,
+  onAfterItemRemoved: function() true,
+  onItemUpdated: function() true,
+  onItemMoved: function() true,
+  onBeforeListCleared: function() true,
+  onListCleared: function() true,
+  onBatchBegin: function(aMediaList) {
+    ++this.depth;
+    log("depth: " + this.depth);
+  },
+  onBatchEnd: function(aMediaList) {
+    --this.depth;
+    log("depth: " + this.depth);
+  },
+  waitForCompletion: function(aCallback) {
+    var targetDepth = this.depth;
+    aCallback();
+    log("waiting for depth " + this.depth + " to go to " + targetDepth);
+    while (this.depth > targetDepth) {
+      sleep(100);
+    }
+  },
+  waitForEndBatch: function() {
+    log("waiting for depth " + this.depth + " to go straight to 0");
+    while (this.depth > 0) {
+      sleep(100);
+    }
+  }
+};
