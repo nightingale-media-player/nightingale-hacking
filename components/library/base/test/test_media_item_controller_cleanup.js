@@ -34,6 +34,7 @@ const K_TRACKTYPE_REMOVED = "TEST_MEDIA_ITEM_CONTROLLER_REMOVED";
 const K_TRACKTYPE_ADDED = "TEST_MEDIA_ITEM_CONTROLLER_ADDED";
 const K_TRACKTYPE_SEPARATOR = '\x7F';
 const K_COMPLETE_TOPIC = "songbird-media-item-controller-cleanup-complete";
+const K_IDLE_TOPIC = "songbird-media-item-controller-cleanup-idle";
 const K_TOTAL_ITEMS = 200;
 const K_SEEN_PROP = SBProperties.base + "libraryItemControllerLastSeenTypes";
 const K_HIDDEN_PROP = SBProperties.base + "libraryItemControllerTypeDisappeared";
@@ -51,15 +52,19 @@ function runTest () {
   log("Processing pre-existing libraries...");
   var obs = Cc["@mozilla.org/observer-service;1"]
               .getService(Ci.nsIObserverService);
-  obs.addObserver({observe: function(aSubject, aTopic, aData) {
-    obs.removeObserver(this, aTopic);
+  var observer = {observe: function(aSubject, aTopic, aData) {
+    obs.removeObserver(this, K_COMPLETE_TOPIC);
+    obs.removeObserver(this, K_IDLE_TOPIC);
     log("Initialized: " + aTopic + " [" + aData + "]");
     // we need to sleep(0) to make sure we get out of the observer topic
     // callback loop, so that registering the next observer will not be called
     // immediately.
     sleep(0);
     testFinished();}
-  }, K_COMPLETE_TOPIC, false);
+  };
+  
+  obs.addObserver(observer, K_COMPLETE_TOPIC, false);
+  obs.addObserver(observer, K_IDLE_TOPIC, false);
   var cleanupSvc =
     Cc["@songbirdnest.com/Songbird/Library/MediaItemControllerCleanup;1"]
       .getService(Ci.nsIObserver);

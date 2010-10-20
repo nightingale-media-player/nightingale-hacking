@@ -52,6 +52,8 @@
 #include <sbILibrary.h>
 #include <sbIPropertyArray.h>
 
+#include <sbStandardProperties.h>
+
 #include <sbDebugUtils.h>
 
 
@@ -267,8 +269,23 @@ sbMediaItemWatcher::OnItemUpdated(sbIMediaList*     aMediaList,
   // Function variables.
   nsresult rv;
 
+  #if PR_LOGGING
+  {
+    nsString props, src;
+    rv = aProperties->ToString(props);
+    if (NS_FAILED(rv)) props.AssignLiteral("<ERROR>");
+    rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
+                                 src);
+    if (NS_FAILED(rv)) src.AssignLiteral("<ERROR>");
+    TRACE("item %s updated: %s",
+          NS_ConvertUTF16toUTF8(src).get(),
+          NS_ConvertUTF16toUTF8(props).get());
+  }
+  #endif /* PR_LOGGING */
+
   // Do nothing if in a batch.
   if (mBatchLevel > 0) {
+    TRACE("In a batch, skipping");
     *_retval = PR_TRUE;
     return NS_OK;
   }
@@ -276,6 +293,7 @@ sbMediaItemWatcher::OnItemUpdated(sbIMediaList*     aMediaList,
   // Handle item updated events.
   if (aMediaItem == mWatchedMediaItem) {
     rv = DoItemUpdated();
+    TRACE("called: %08x", rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

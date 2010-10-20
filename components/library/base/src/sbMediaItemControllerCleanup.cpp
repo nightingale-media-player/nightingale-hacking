@@ -78,6 +78,8 @@
         "songbird-media-item-controller-cleanup-complete"
 #define K_CLEANUP_INTERRUPTED_OBSERVER_TOPIC \
         "songbird-media-item-controller-cleanup-interrupted"
+#define K_CLEANUP_IDLE_OBSERVER_TOPIC \
+        "songbird-media-item-controller-cleanup-idle"
 #define K_QUIT_APP_OBSERVER_TOPIC \
         "quit-application"
 
@@ -143,6 +145,25 @@ sbMediaItemControllerCleanup::Observe(nsISupports *aSubject,
       }
       TRACE("Resuming: STATE->RUNNING");
       mState = STATE_RUNNING;
+    }
+    else {
+      TRACE("nothing to do, ignoring idle notification");
+      nsCOMPtr<nsIObserverService> obs =
+        do_ProxiedGetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      nsString notificationData;
+      #if PR_LOGGING
+        notificationData.Adopt(nsTextFormatter::smprintf((PRUnichar*)NS_LL("%llx"),
+                                                         PR_Now()));
+        TRACE("Notifying observers (%s) [%s]",
+              K_CLEANUP_IDLE_OBSERVER_TOPIC,
+              NS_ConvertUTF16toUTF8(notificationData).get());
+      #endif /* PR_LOGGING */
+      rv = obs->NotifyObservers(NS_ISUPPORTS_CAST(nsIObserver*, this),
+                                K_CLEANUP_IDLE_OBSERVER_TOPIC,
+                                notificationData.get());
+      NS_ENSURE_SUCCESS(rv, rv);
     }
   }
   else if (!strcmp(aTopic, "back")) {
@@ -463,7 +484,24 @@ sbMediaItemControllerCleanup::OnLibraryRegistered(sbILibrary *aLibrary)
       }
     }
 
-    TRACE("queued library for processing");
+    #if PR_LOGGING
+    {
+      nsString fileName((const PRUnichar*)NS_LL("<ERROR>"));
+      nsCOMPtr<nsIPropertyBag2> creationParams;
+      rv = aLibrary->GetCreationParameters(getter_AddRefs(creationParams));
+      NS_ENSURE_SUCCESS(rv, rv);
+      NS_NAMED_LITERAL_STRING(fileKey, "databaseFile");
+      nsCOMPtr<nsILocalFile> databaseFile;
+      rv = creationParams->GetPropertyAsInterface(fileKey,
+                                                  NS_GET_IID(nsILocalFile),
+                                                  getter_AddRefs(databaseFile));
+      if (NS_SUCCEEDED(rv)) {
+        rv = databaseFile->GetLeafName(fileName);
+      }
+      TRACE("queued library %s for processing",
+            NS_ConvertUTF16toUTF8(fileName).get());
+    }
+    #endif /* PR_LOGGING */
 
     PRUint32 idleTime;
     rv = idleService->GetIdleTime(&idleTime);

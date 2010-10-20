@@ -43,6 +43,9 @@ function runTest () {
   var callback = {
     expectCallback: false,
     seenCallback: false,
+    onBeforeMediaListRemoved: function() {
+      /* nothing */
+    },
     onMediaListRemoved: function() {
       this.seenCallback = true;
     },
@@ -101,6 +104,8 @@ function runTest () {
   monitor.setMediaList(library);
   callback.expectCallback = true;
   libraryManager.unregisterLibrary(library);
-  callback.verify();  
+  callback.verify();
+  
+  monitor.setMediaList(null);
 }
 

@@ -28,6 +28,28 @@
  * \brief Test file
  */
 
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+
+var batchListener = {
+  QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListListener]),
+  onItemAdded: function() true,
+  onBeforeItemRemoved: function() true,
+  onAfterItemRemoved: function() true,
+  onItemUpdated: function() true,
+  onItemMoved: function() true,
+  onBeforeListCleared: function() true,
+  onListCleared: function() true,
+  onBatchBegin: function(aMediaList) {
+    ++this.depth;
+    log("depth: " + this.depth);
+  },
+  onBatchEnd: function(aMediaList) {
+    --this.depth;
+    log("depth: " + this.depth);
+  },
+  depth: 0
+};
+
 function runTest () {
   var mediaItem1;
   var mediaItem2;
@@ -54,6 +76,7 @@ function runTest () {
       this.itemRemovedCount++;
     },
     onItemUpdated: function(aMediaItem) {
+      log(aMediaItem.contentSrc.spec);
       this.itemUpdatedCount++;
     },
 
@@ -71,6 +94,10 @@ function runTest () {
 
   // Reset the listener.
   listener.reset();
+  library.addListener(batchListener,
+                      false,
+                      Ci.sbIMediaList.LISTENER_FLAGS_BATCHBEGIN |
+                        Ci.sbIMediaList.LISTENER_FLAGS_BATCHEND);
 
   // Create a test media item.
   mediaItem1 = library.createMediaItem(newURI("http://test.com/test1"));
@@ -244,7 +271,7 @@ function runTest () {
   mediaItemWatcher.cancel();
   library.remove(mediaItem1);
   library.remove(mediaItem2);
-
+  library.removeListener(batchListener);
 
   // Final clean up.
   libraryManager.unregisterLibrary(library);
