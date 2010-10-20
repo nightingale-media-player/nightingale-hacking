@@ -108,12 +108,11 @@ var DNDUtils = {
     var r = null;
 
     if (aSession.isDataFlavorSupported(aFlavour)) {
+      var transfer = Cc["@mozilla.org/widget/transferable;1"]
+                       .createInstance(Ci.nsITransferable);
+      transfer.addDataFlavor(aFlavour);
 
       for (var i=0;i<nitems;i++) {
-        var transfer = Cc["@mozilla.org/widget/transferable;1"]
-                           .createInstance(Ci.nsITransferable);
-
-        transfer.addDataFlavor(aFlavour);
         aSession.getData(transfer, i);
         var data = {};
         var length = {};
@@ -149,7 +148,10 @@ var DNDUtils = {
 
   // returns an array with the data for any flavour listed in the given array
   getTransferData: function(aSession, aFlavourArray) {
-    var data = [];
+    // I know this is confusing but because numDropItems is a Number it causes
+    // the Array constructor to pre-allocate N slots which should speed up 
+    // pushing elements into it.
+    var data = new Array(aSession.numDropItems);
     for (var i=0;i<aFlavourArray.length;i++) {
       if (this.getTransferDataForFlavour(aFlavourArray[i], aSession, data)) 
         break;
