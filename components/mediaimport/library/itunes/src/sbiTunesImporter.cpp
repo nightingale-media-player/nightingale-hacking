@@ -218,31 +218,6 @@ nsString ConvertDateTime(nsAString const & aDateTime) {
   return sbAutoString(static_cast<PRUint64>(prTime));
 }
 
-/**
- * Convert the iTunes 'kind' value specified by aITunesMetaValue to a
- * Songbird contentType property value and return the result.
- *
- * \param aKind iTunes media kind value.
- *
- * \return Songbird property value.
- */
-
-nsString ConvertKind(nsAString const & aKind) {
-  nsString result;
-  
-  if (aKind.Find("video") != -1) {
-    result = NS_LITERAL_STRING("video");
-  }
-  else if (aKind.Find("audio") != -1) {
-    result = NS_LITERAL_STRING("audio");
-  }
-  else if (aKind.EqualsLiteral("true")) {
-    result = NS_LITERAL_STRING("podcast");
-  }
- 
-  return result;
-}
-
 struct PropertyMap {
   char const * SBProperty;
   char const * ITProperty;
@@ -261,14 +236,12 @@ PropertyMap gPropertyMap[] = {
   { SB_PROPERTY_BPM,              "BPM", 0 },
   { SB_PROPERTY_COMMENT,          "Comments", 0 },
   { SB_PROPERTY_COMPOSERNAME,     "Composer", 0 },
-  { SB_PROPERTY_CONTENTTYPE,      "Kind", ConvertKind },
   { SB_PROPERTY_DISCNUMBER,       "Disc Number", 0 },
   { SB_PROPERTY_DURATION,         "Total Time", ConvertDuration },
   { SB_PROPERTY_GENRE,            "Genre", 0},
   { SB_PROPERTY_LASTPLAYTIME,     "Play Date UTC", ConvertDateTime },
   { SB_PROPERTY_LASTSKIPTIME,     "Skip Date", ConvertDateTime },
   { SB_PROPERTY_PLAYCOUNT,        "Play Count", 0 },
-  { SB_PROPERTY_CONTENTTYPE,      "Podcast", ConvertKind },
   { SB_PROPERTY_RATING,           "Rating", ConvertRating },
   { SB_PROPERTY_SAMPLERATE,       "Sample Rate", 0 },
   { SB_PROPERTY_SKIPCOUNT,        "Skip Count", 0 },
@@ -1727,7 +1700,40 @@ sbiTunesImporter::iTunesTrack::Initialize(sbIStringMap * aProperties) {
                       value);
     }
   }
+
+  mProperties.Put(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                  GetContentType(aProperties));
+
   return NS_OK;
+}
+
+nsString
+sbiTunesImporter::iTunesTrack::GetContentType(sbIStringMap * aProperties)
+{
+  nsresult rv;
+  nsString result;
+
+  nsString podcastValue;
+  rv = aProperties->Get(NS_LITERAL_STRING("Podcast"), podcastValue);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "sbIStringMap::Get failed");
+
+  if (NS_SUCCEEDED(rv) && podcastValue.EqualsLiteral("true")) {
+    result = NS_LITERAL_STRING("podcast");
+  }
+  else {
+    nsString hasVideo;
+    rv = aProperties->Get(NS_LITERAL_STRING("Has Video"), hasVideo);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "sbIStringMap::Get failed");
+
+    if (NS_SUCCEEDED(rv) && hasVideo.EqualsLiteral("true")) {
+      result = NS_LITERAL_STRING("video");
+    }
+    else {
+      result = NS_LITERAL_STRING("audio");
+    }
+  }
+
+  return result;
 }
 
 static PLDHashOperator

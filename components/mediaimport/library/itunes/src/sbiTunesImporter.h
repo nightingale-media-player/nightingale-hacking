@@ -154,6 +154,7 @@ private:
     iTunesTrack();
     ~iTunesTrack();
     nsresult Initialize(sbIStringMap * aProperties);
+    nsString GetContentType(sbIStringMap *aProperties);
     nsresult GetPropertyArray(sbIPropertyArray ** aPropertyArray);
     nsresult GetTrackURI(sbiTunesImporter::OSType aOSType, 
                          nsIIOService * aIOService,
