@@ -52,7 +52,17 @@
           if ( sysInfo.getProperty("name") != "Darwin" ) {
             window.addEventListener("resize", function(aEvent) {
               const nsIDOMChromeWindow = Components.interfaces.nsIDOMChromeWindow;
-              self.checked = (window.windowState == nsIDOMChromeWindow.STATE_MAXIMIZED);
+              switch (window.windowState) {
+                case nsIDOMChromeWindow.STATE_MINIMIZED:
+                  // don't do anything here, it's not visible anyway
+                  return;
+                case nsIDOMChromeWindow.STATE_MAXIMIZED:
+                  self.checked = true;
+                  break;
+                default:
+                  self.checked = false;
+                  break;
+              }
             }, false);
           }
         ]]>

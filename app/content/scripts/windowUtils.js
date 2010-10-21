@@ -349,22 +349,6 @@ function syncResizers()
 */
 
 /**
- * \brief Restore the window in the current context to unmaximized state.
- * \internal
- */
-function restoreWindow()
-{
-  if ( isMaximized() )
-  {
-    document.defaultView.restore();
-  }
-  
-  // TODO
-  //syncMaxButton();
-  //syncResizers();
-}
-
-/**
  * \brief onExit handler, saves window size and position before closing the window.
  * \internal
  */
