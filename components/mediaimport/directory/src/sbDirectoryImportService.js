@@ -688,7 +688,7 @@ DirectoryImportJob.prototype = {
       this._timingService.stopPerfTimer(this._timingIdentifier);
     }
 
-    // If flagged extensions where found, show the dialog.
+    // If flagged extensions were found, show the dialog.
     if (this._foundFlaggedExtensions &&
         this._foundFlaggedExtensions.length > 0)
     {
