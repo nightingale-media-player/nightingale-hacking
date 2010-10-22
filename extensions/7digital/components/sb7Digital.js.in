@@ -205,7 +205,7 @@ function sb7Digital_install() {
     var recommendationsNode = this._servicePaneService.createNode();
     recommendationsNode.id = NODE_7DIGITAL;
     recommendationsNode.url = this.create7DigitalURL(STORE_RECOMMENDATIONS_PATH);
-    recommendationsNode.image = 'chrome://7digital/skin/servicepane-icon.png';
+    recommendationsNode.image = 'chrome://7digital/skin/7digital-smart-picks-icon.png';
     recommendationsNode.className = "7digital history nosearchbox";
     recommendationsNode.searchtype = "external";
     recommendationsNode.name = "&servicepane.7digital_recommended";
