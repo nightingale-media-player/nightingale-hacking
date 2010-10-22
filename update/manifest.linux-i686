@@ -170,6 +170,7 @@
 ./components/sbMigrate18to19pre0.discSortTrackSort.js
 ./components/sbMigrate18to19pre0.fileURL.js
 ./components/sbMigrate18to19pre0.index.js
+./components/sbMigrate18to19pre0.indexSort.js
 ./components/sbMockCDDevice.so
 ./components/sbMockCDDevice.xpt
 ./components/sbMockFirmwareHandlerURLService.js
