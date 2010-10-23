@@ -41,12 +41,12 @@ interface sbIDeviceParameters;
 interface sbIDeviceStatus;
 interface sbIMediaItem;
 
-/**
+/**s
  * \interface sbIDeviceSupportsMediaItemCallback
  *
  * A callback interface for sbIDevice::supportsMediaItem
  */
-[scriptable, function, uuid(a46d3a7e-1dd1-11b2-a1dd-f531804f18a9)]
+[scriptable, function, uuid(9491356e-9abb-498b-8540-483b83a22ed7)]
 interface sbIDeviceSupportsItemCallback : nsISupports
 {
   void onSupportsMediaItem(in sbIMediaItem aMediaItem, in boolean aIsSupported);
@@ -244,11 +244,13 @@ interface sbIDevice : nsISupports
   const unsigned long REQUEST_FLAG_WRITE = 0x40000000;
 
   /* read requests */
-  const unsigned long REQUEST_MOUNT     = 1;
-  const unsigned long REQUEST_READ      = 2;
-  const unsigned long REQUEST_EJECT     = 3;
-  const unsigned long REQUEST_SUSPEND   = 4;
-
+  const unsigned long REQUEST_MOUNT        = 1;
+  const unsigned long REQUEST_READ         = 2;
+  const unsigned long REQUEST_EJECT        = 3;
+  const unsigned long REQUEST_SUSPEND      = 4;
+  const unsigned long REQUEST_THREAD_START = 5;
+  const unsigned long REQUEST_THREAD_STOP  = 6;
+  
   /* write requests */
   const unsigned long REQUEST_WRITE         = REQUEST_FLAG_WRITE + 1;
   const unsigned long REQUEST_DELETE        = REQUEST_FLAG_WRITE + 2;

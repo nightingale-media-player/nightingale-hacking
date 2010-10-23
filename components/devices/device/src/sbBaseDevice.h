@@ -123,6 +123,8 @@ public:
       REQUEST_READ          = sbIDevice::REQUEST_READ,
       REQUEST_EJECT         = sbIDevice::REQUEST_EJECT,
       REQUEST_SUSPEND       = sbIDevice::REQUEST_SUSPEND,
+      REQUEST_THREAD_START  = sbIDevice::REQUEST_THREAD_START,
+      REQUEST_THREAD_STOP   = sbIDevice::REQUEST_THREAD_STOP,
 
       /* not in sbIDevice, internal use */
       REQUEST_BATCH_BEGIN,

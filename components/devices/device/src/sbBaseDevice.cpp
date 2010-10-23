@@ -988,6 +988,8 @@ bool sbBaseDeviceRequestDupeCheck::DupeCheck(TransferRequest * aQueueRequest,
     case TransferRequest::REQUEST_EJECT:
     case TransferRequest::REQUEST_FORMAT:
     case TransferRequest::REQUEST_MOUNT:
+    case TransferRequest::REQUEST_THREAD_START:
+    case TransferRequest::REQUEST_THREAD_STOP:
     case TransferRequest::REQUEST_READ:
     case TransferRequest::REQUEST_SUSPEND:
     case TransferRequest::REQUEST_SYNC:
@@ -3247,6 +3249,9 @@ sbBaseDevice::InitializeRequestThread()
   rv = NS_NewThread(getter_AddRefs(mReqThread), nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = PushRequest(TransferRequest::REQUEST_THREAD_START, nsnull, nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -3280,9 +3285,14 @@ sbBaseDevice::ReqProcessingStart()
 void
 sbBaseDevice::ShutdownRequestThread()
 {
+  nsresult rv;
+
+  rv = PushRequest(TransferRequest::REQUEST_THREAD_STOP, nsnull, nsnull);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to send thread stop message");
+
   // Get the current thread and wait if we get it, otherwise just shutdown
   nsCOMPtr<nsIThread> thread;
-  nsresult rv = ::NS_GetCurrentThread(getter_AddRefs(thread));
+  rv = ::NS_GetCurrentThread(getter_AddRefs(thread));
   if (NS_SUCCEEDED(rv)) {
     // Wait for the thread to shutdown before shutting it down.
     // See bug 18429 for the proxying issues this caused
