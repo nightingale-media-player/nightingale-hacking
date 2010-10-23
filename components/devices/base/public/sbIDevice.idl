@@ -331,10 +331,6 @@ interface sbIDevice : nsISupports
    *        storage volume using the volume's device library with the guid
    *        <device-library-guid>.  Different device types may also accept
    *        device type specific URI's.
-   *        WARNING: For MTP devices you will need to call GetDeviceMonitor to
-   *        avoid issues with concurrent access to MTP devices. And you will
-   *        need to hold the monitor object until you are done reading the
-   *        stream.
    *
    * \param aURI                URI for which to open input stream.
    *
