@@ -1196,10 +1196,6 @@ PublicPlaylistCommands.prototype = {
       this.m_playQueueCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_reveal",
                                                     this.m_cmd_Reveal);
-
-      this.m_playQueueCommands.appendPlaylistCommands(null,
-                                                    "library_cmdobj_getartwork",
-                                                    this.m_cmd_GetArtwork);
       
       this.m_playQueueCommands.appendSeparator(null, "default_commands_separator_1");
       
