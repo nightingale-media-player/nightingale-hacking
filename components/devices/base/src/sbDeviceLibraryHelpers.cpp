@@ -719,33 +719,42 @@ sbPlaylistSyncListener::OnItemAdded(sbIMediaList *aMediaList,
     nsCOMPtr<sbIMediaList> deviceMediaList;
     // device media list does not exists. Add the list to the target library.
     if (!deviceMediaListAsItem) {
-      // Do not add list content to the library.
-      rv = mTargetLibrary->CopyMediaList(NS_LITERAL_STRING("simple"),
-                                         aMediaList,
-                                         PR_TRUE,
-                                         getter_AddRefs(deviceMediaList));
-      NS_ENSURE_SUCCESS(rv, rv);
+      if (sbDeviceUtils::ArePlaylistsSupported(mDevice)) {
+        // Do not add list content to the library.
+        rv = mTargetLibrary->CopyMediaList(NS_LITERAL_STRING("simple"),
+                                           aMediaList,
+                                           PR_TRUE,
+                                           getter_AddRefs(deviceMediaList));
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
     else {
       deviceMediaList = do_QueryInterface(deviceMediaListAsItem, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
-    // Null case is handled
-    nsCOMPtr<sbIOrderableMediaList> orderedList =
-      do_QueryInterface(deviceMediaList);
+    if (deviceMediaList) {
+      // Null case is handled
+      nsCOMPtr<sbIOrderableMediaList> orderedList =
+        do_QueryInterface(deviceMediaList);
 
-    PRUint32 length;
-    rv = deviceMediaList->GetLength(&length);
-    NS_ENSURE_SUCCESS(rv, rv);
+      PRUint32 length;
+      rv = deviceMediaList->GetLength(&length);
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    // If this is an ordered list and we're not appending
-    if (orderedList && aIndex < length)
-      rv = orderedList->InsertBefore(aIndex, aMediaItem);
-    else {
-      rv = deviceMediaList->Add(aMediaItem);
+      // If this is an ordered list and we're not appending
+      if (orderedList && aIndex < length)
+        rv = orderedList->InsertBefore(aIndex, aMediaItem);
+      else {
+        rv = deviceMediaList->Add(aMediaItem);
+      }
+      NS_ENSURE_SUCCESS(rv, rv);
+    } else {
+      // The device doesn't support playlists, so just add the item to the
+      // device library.
+      rv = mTargetLibrary->Add(aMediaItem);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
-    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   if (_retval) {
