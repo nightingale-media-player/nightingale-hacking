@@ -841,9 +841,9 @@
                 tab = this.loadURI(originPage, null, null, null, null,
                                    aMediaListView);
               } else {
+                aMediaListView.selection.selectOnly(aHighlightIndex);
                 tab = this.loadMediaList(aMediaListView.mediaList, null,
                                          null, aMediaListView);
-                tab._highlightViewIndexOnLoad = aHighlightIndex;
               }
             }
           ]]>
