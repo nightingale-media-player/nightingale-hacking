@@ -1,11 +1,14 @@
+if (typeof(Cu) == "undefined")
+  var Cu = Components.utils;
+
+Cu.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
+
 function LFFPD(m) {
   dump('last.fm faceplate debug: '+m+'\n');
 }
 
 var sbLastFmFaceplate = {
   'stationPref': null,
-  'disableTags': ['sb-player-back-button', 'sb-player-shuffle-button', 
-      'sb-player-repeat-button'],
 };
 
 function sbLastFmFaceplate_stationPref_change() {
@@ -28,8 +31,6 @@ function sbLastFmFaceplate_init() {
   this.requestPref.events.addListener('change', 
       sbLastFmFaceplate_requestPref_change);
 
-  this.listenerBound = false;
-
   this._service = Components.classes['@songbirdnest.com/lastfm;1']
     .getService().wrappedJSObject
   // catch the case of a Feather change
@@ -37,6 +38,16 @@ function sbLastFmFaceplate_init() {
     Application.prefs.setValue('songbird.lastfm.radio.station',
         this._service.station_name);
   }
+
+  this._remotePreviousDisabled =
+      SB_NewDataRemote( "playlist.previous.disabled", null );
+  this._remoteNextDisabled =
+      SB_NewDataRemote( "playlist.next.disabled", null );
+  this._remoteShuffleDisabled =
+      SB_NewDataRemote( "playlist.shuffle.disabled", null );
+  this._remoteRepeatDisabled =
+      SB_NewDataRemote( "playlist.repeat.disabled", null );
+
 }
 
 sbLastFmFaceplate.fini = 
@@ -50,11 +61,21 @@ function sbLastFmFaceplate_fini() {
   Application.prefs.setValue('songbird.lastfm.radio.station', '');
   Application.prefs.setValue('songbird.lastfm.radio.requesting', "0");
 
-  // Remove mediacore listener
-  if (this.listenerBound) {
-    Cc['@songbirdnest.com/Songbird/Mediacore/Manager;1']
-      .getService(Ci.sbIMediacoreManager)
-      .removeListener(sbLastFmFaceplate);
+  if(this._remotePreviousDisabled) {
+    this._remotePreviousDisabled.unbind();
+    this._remotePreviousDisabled = null;
+  }
+  if(this._remoteNextDisabled) {
+    this._remoteNextDisabled.unbind();
+    this._remoteNextDisabled = null;
+  }
+  if(this._remoteShuffleDisabled) {
+    this._remoteShuffleDisabled.unbind();
+    this._remoteShuffleDisabled = null;
+  }
+  if(this._remoteRepeatDisabled) {
+    this._remoteRepeatDisabled.unbind();
+    this._remoteRepeatDisabled = null;
   }
 }
 
@@ -63,41 +84,16 @@ function sbLastFmFaceplate_stationChanged() {
   LFFPD('stationChanged');
   var stationIcon = document.getElementById("lastfm-station-icon");
   if (this.stationPref.value == '') {
-    for (var i in this.disableTags) {
-      var elements = document.getElementsByTagName(this.disableTags[i]);
-      for (var j=0; j<elements.length; j++) {
-        elements[j].removeAttribute('disabled');
-      }
-    }
     // hide the radio icon from the faceplate
     stationIcon.style.visibility = "collapse";
-	
-    // Remove mediacore listener
-    Cc['@songbirdnest.com/Songbird/Mediacore/Manager;1']
-			.getService(Ci.sbIMediacoreManager)
-			.removeListener(sbLastFmFaceplate);
-    sbLastFmFaceplate.listenerBound = false;
   } else {
-    for (var i in this.disableTags) {
-      var elements = document.getElementsByTagName(this.disableTags[i]);
-      for (var j=0; j<elements.length; j++) {
-        elements[j].setAttribute('disabled', 'true');
-      }
-    }
-    // If this has the disabled attribute (e.g. coming from SHOUTcast), then
-    // remove it
-    document.getElementsByTagName("sb-player-forward-button")[0]
-      .removeAttribute('disabled');
+    // disable back, shuffle and repeat controls
+    this._remotePreviousDisabled.boolValue = true;
+    this._remoteShuffleDisabled.boolValue = true;
+    this._remoteRepeatDisabled.boolValue = true;
 
     // show the radio icon from the faceplate
     stationIcon.style.visibility = "visible";
-
-    // Add mediacore listener
-    Cc['@songbirdnest.com/Songbird/Mediacore/Manager;1']
-        .getService(Ci.sbIMediacoreManager)
-        .addListener(sbLastFmFaceplate);
-
-    sbLastFmFaceplate.listenerBound = true;
   }
 }
 
@@ -105,26 +101,13 @@ function sbLastFmFaceplate_stationChanged() {
 sbLastFmFaceplate.requestChanged =
 function sbLastFmFaceplate_requestChanged() {
   LFFPD('requestChanged');
-  var b = document.getElementsByTagName('sb-player-forward-button')[0];
   if (this.requestPref.value == "1") {
 	  // requesting more tracks, disable the next track button
-      b.setAttribute('disabled', 'true');
+    this._remoteNextDisabled.boolValue = true;
   } else {
 	// enable the next track button
-      b.removeAttribute('disabled');
+    this._remoteNextDisabled.boolValue = false;
   }
-}
-
-sbLastFmFaceplate.onMediacoreEvent =
-function sbLastFmFaceplate_onMediacoreEvent(aEvent) {
-	switch(aEvent.type) {
-		case Ci.sbIMediacoreEvent.TRACK_CHANGE:
-			document.getElementsByTagName('sb-player-back-button')[0]
-				.setAttribute("disabled", "true");
-			break;
-		default:
-			break;
-	}
 }
 
 window.addEventListener('load', function () { sbLastFmFaceplate.init() ;}, false);
