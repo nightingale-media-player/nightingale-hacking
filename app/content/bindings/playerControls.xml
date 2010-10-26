@@ -464,11 +464,22 @@
         this.mm =
           Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
                     .getService(Components.interfaces.sbIMediacoreManager);
+
+        this.remote_next_disabled =
+          SBDataBindElementProperty("playlist.next.disabled",
+                                    this,
+                                    "disabled",
+                                    true );
       ]]>
     </constructor>
 
     <destructor>
       <![CDATA[
+        if(this.remote_next_disabled) {
+          this.remote_next_disabled.unbind();
+          this.remote_next_disabled = null;
+        }
+
         this.mm = null;
       ]]>
     </destructor>
@@ -568,11 +579,22 @@
         this.mm =
           Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
                     .getService(Components.interfaces.sbIMediacoreManager);
+
+        this.remote_previous_disabled =
+          SBDataBindElementProperty("playlist.previous.disabled",
+                                    this,
+                                    "disabled",
+                                    true);
       ]]>
     </constructor>
 
     <destructor>
       <![CDATA[
+        if(this.remote_previous_disabled) {
+          this.remote_previous_disabled.unbind();
+          this.remote_previous_disabled = null;
+        }
+
         this.mm = null;
       ]]>
     </destructor>
@@ -660,6 +682,12 @@
                     .getService(Components.interfaces.sbIMediacoreManager);
 
         // Create and bind data remotes
+        this.remote_repeat_disabled = 
+          SBDataBindElementProperty("playlist.repeat.disabled",
+                                    this,
+                                    "disabled",
+                                    true );
+
         this.remote_repeat = SB_NewDataRemote( "playlist.repeat", null );
       ]]>
     </constructor>
@@ -669,6 +697,11 @@
         if (this.remote_repeat) {
           this.remote_repeat.unbind();
           this.remote_repeat = null;
+        }
+
+        if(this.remote_repeat_disabled) {
+          this.remote_repeat_disabled.unbind();
+          this.remote_repeat_disabled = null;
         }
 
         if(this.mm) {
@@ -773,7 +806,12 @@
                     .getService(Components.interfaces.sbIMediacoreManager);
 
         // Create and bind data remotes
-        this.remote_shuffle_disabled = SBDataBindElementProperty( "playlist.shuffle.disabled", this, "disabled", true );
+        this.remote_shuffle_disabled = 
+          SBDataBindElementProperty("playlist.shuffle.disabled",
+                                    this,
+                                    "disabled",
+                                    true );
+
         this.remote_shuffle = SB_NewDataRemote( "playlist.shuffle", null );
       ]]>
     </constructor>

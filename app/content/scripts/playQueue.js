@@ -39,6 +39,7 @@ if (typeof(Cu) == "undefined")
 Cu.import("resource://app/jsmodules/DebugUtils.jsm");
 Cu.import("resource://app/jsmodules/kPlaylistCommands.jsm");
 Cu.import("resource://app/jsmodules/PlayQueueUtils.jsm");
+Cu.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
 
 var playQueue = {
 
@@ -118,22 +119,12 @@ var playQueue = {
 
     this._mediacoreListener = {
       onMediacoreEvent: function (ev) {
-        var list = mediacoreManager.sequencer.view.mediaList;
-        if (list.equals(playQueueService.mediaList)) {
-          switch (ev.type) {
-            case Ci.sbIMediacoreEvent.BEFORE_VIEW_CHANGE:
-              // we're leaving the view, enable shuffle
-              self._remoteShuffleDisabled.boolValue = false;
-              break;
-            case Ci.sbIMediacoreEvent.VIEW_CHANGE:
-              // we're entering the view, disable shuffle
-              mediacoreManager.sequencer.mode =
-                  Ci.sbIMediacoreSequencer.MODE_FORWARD;
-              self._remoteShuffleDisabled.boolValue = true;
-              break;
-            default:
-              break;
-          }
+        if (mediacoreManager.sequencer.view == view &&
+            ev.type == Ci.sbIMediacoreEvent.VIEW_CHANGE) {
+          // we're entering the view, disable shuffle
+          mediacoreManager.sequencer.mode =
+              Ci.sbIMediacoreSequencer.MODE_FORWARD;
+          self._remoteShuffleDisabled.boolValue = true;
         }
       }
     };

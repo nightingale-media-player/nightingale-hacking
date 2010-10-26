@@ -116,6 +116,8 @@ public:
 
   nsresult UpdateCurrentItemDuration(PRUint64 aDuration);
 
+  nsresult ResetPlayerControlDataRemotes();
+
   // Error Event
   nsresult HandleErrorEvent(sbIMediacoreEvent *aEvent);
 
@@ -254,6 +256,9 @@ protected:
   nsCOMPtr<sbIDataRemote> mDataRemotePlaylistRepeat;
 
   nsCOMPtr<sbIDataRemote> mDataRemotePlaylistShuffleDisabled;
+  nsCOMPtr<sbIDataRemote> mDataRemotePlaylistRepeatDisabled;
+  nsCOMPtr<sbIDataRemote> mDataRemotePlaylistPreviousDisabled;
+  nsCOMPtr<sbIDataRemote> mDataRemotePlaylistNextDisabled;
 
   nsCOMPtr<nsITimer> mSequenceProcessorTimer;
 

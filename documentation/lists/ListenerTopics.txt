@@ -42,6 +42,16 @@ ListenerTopic: playlist.repeat
   An integer value indicating which repeat mode is currently active.  This has a
   value of 0 for no repeat, 1 for repeat one, and 2 for repeat all.
 
+ListenerTopic: playlist.repeat.disabled
+  A boolean value indicating if repeat mode is disabled. If this is enabled,
+  setting playlist.repeat will have no effect.
+
+ListenerTopic: playlist.previous.disabled
+  A boolean value indicating if the sequencer can go back in the playlist.
+
+ListenerTopic: playlist.next.disabled
+  A boolean value indicating if the sequencer can advance in the playlist.
+
 ListenerTopic: faceplate.volume
   The current player volume as an integer between 0 and 255 inclusive.
 

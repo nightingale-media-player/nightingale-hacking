@@ -639,6 +639,39 @@ sbMediacoreSequencer::BindDataRemotes()
   rv = mDataRemotePlaylistShuffleDisabled->SetBoolValue(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Repeat disable
+  mDataRemotePlaylistRepeatDisabled =
+    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mDataRemotePlaylistRepeatDisabled->Init(
+    NS_LITERAL_STRING(SB_MEDIACORE_DATAREMOTE_PLAYLIST_REPEAT_DISABLED),
+    nullString);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mDataRemotePlaylistRepeatDisabled->SetBoolValue(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Previous disable
+  mDataRemotePlaylistPreviousDisabled =
+    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mDataRemotePlaylistPreviousDisabled->Init(
+    NS_LITERAL_STRING(SB_MEDIACORE_DATAREMOTE_PLAYLIST_PREVIOUS_DISABLED),
+    nullString);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mDataRemotePlaylistPreviousDisabled->SetBoolValue(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Next disable
+  mDataRemotePlaylistNextDisabled =
+    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mDataRemotePlaylistNextDisabled->Init(
+    NS_LITERAL_STRING(SB_MEDIACORE_DATAREMOTE_PLAYLIST_NEXT_DISABLED),
+    nullString);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mDataRemotePlaylistNextDisabled->SetBoolValue(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -755,6 +788,21 @@ sbMediacoreSequencer::UnbindDataRemotes()
 
   if (mDataRemotePlaylistShuffleDisabled) {
     rv = mDataRemotePlaylistShuffleDisabled->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if (mDataRemotePlaylistRepeatDisabled) {
+    rv = mDataRemotePlaylistRepeatDisabled->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if (mDataRemotePlaylistPreviousDisabled) {
+    rv = mDataRemotePlaylistPreviousDisabled->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if (mDataRemotePlaylistNextDisabled) {
+    rv = mDataRemotePlaylistNextDisabled->Unbind();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1902,6 +1950,26 @@ sbMediacoreSequencer::HandleAbort()
 }
 
 nsresult
+sbMediacoreSequencer::ResetPlayerControlDataRemotes()
+{
+  nsresult rv;
+
+  rv = mDataRemotePlaylistShuffleDisabled->SetBoolValue(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemotePlaylistRepeatDisabled->SetBoolValue(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemotePlaylistPreviousDisabled->SetBoolValue(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemotePlaylistNextDisabled->SetBoolValue(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
 sbMediacoreSequencer::SetViewWithViewPosition(sbIMediaListView *aView,
                                               PRInt64 *aViewPosition /* = nsnull */)
 {
@@ -1941,6 +2009,9 @@ sbMediacoreSequencer::SetViewWithViewPosition(sbIMediaListView *aView,
     NS_ENSURE_SUCCESS(rv, rv);
 
     mView = aView;
+
+    rv = ResetPlayerControlDataRemotes();
+    NS_ENSURE_SUCCESS(rv, rv);
 
     rv = StartWatchingView();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -2440,12 +2511,19 @@ NS_IMETHODIMP
 sbMediacoreSequencer::SetRepeatMode(PRUint32 aRepeatMode)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  nsresult rv;
 
   PRBool validMode = PR_FALSE;
   switch(aRepeatMode) {
-    case sbIMediacoreSequencer::MODE_REPEAT_NONE:
     case sbIMediacoreSequencer::MODE_REPEAT_ONE:
     case sbIMediacoreSequencer::MODE_REPEAT_ALL:
+      PRBool disableRepeat;
+      rv = mDataRemotePlaylistRepeatDisabled->GetBoolValue(&disableRepeat);
+      NS_ENSURE_SUCCESS(rv, rv);
+      if (disableRepeat) {
+        return NS_ERROR_FAILURE;
+      }
+    case sbIMediacoreSequencer::MODE_REPEAT_NONE:
       validMode = PR_TRUE;
     break;
   }
@@ -2454,7 +2532,7 @@ sbMediacoreSequencer::SetRepeatMode(PRUint32 aRepeatMode)
   nsAutoMonitor mon(mMonitor);
   mRepeatMode = aRepeatMode;
 
-  nsresult rv = UpdateRepeatDataRemote(aRepeatMode);
+  rv = UpdateRepeatDataRemote(aRepeatMode);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -2948,6 +3026,13 @@ sbMediacoreSequencer::Next(PRBool aNotFromUserAction)
 
   nsresult rv = NS_ERROR_UNEXPECTED;
 
+  PRBool disableNext;
+  rv = mDataRemotePlaylistNextDisabled->GetBoolValue(&disableNext);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (disableNext) {
+    return NS_ERROR_FAILURE;
+  }
+
   nsAutoMonitor mon(mMonitor);
 
   // No sequence, no error, return early.
@@ -3089,6 +3174,13 @@ sbMediacoreSequencer::Previous(PRBool aNotFromUserAction)
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
+
+  PRBool disablePrevious;
+  rv = mDataRemotePlaylistPreviousDisabled->GetBoolValue(&disablePrevious);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (disablePrevious) {
+    return NS_ERROR_FAILURE;
+  }
 
   nsAutoMonitor mon(mMonitor);
 

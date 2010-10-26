@@ -47,11 +47,14 @@ interface sbIMediacoreSequencer : nsISupports
 
   const unsigned long MODE_CUSTOM     = 1 << 16;
 
-  /**
-   * \brief The repeat mode to use.
-   */
   attribute unsigned long mode;
 
+  /**
+   * \brief The repeat mode to use. Note that it is possible to disable
+   * repeat mode using the playlist.repeat.disabled DataRemote.  In this case,
+   * setting the mode to MODE_REPEAT_ONE or MODE_REPEAT_ALL will result in
+   * NS_ERROR_FAILURE. 
+   */
   const unsigned long MODE_REPEAT_NONE = 0;
   const unsigned long MODE_REPEAT_ONE  = 1;
   const unsigned long MODE_REPEAT_ALL  = 1 << 1;

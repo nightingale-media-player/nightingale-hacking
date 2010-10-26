@@ -212,10 +212,12 @@
         <menuseparator/>
         <menuitem id="menuitem_control_next"
                   key="control-next-key"
+                  observes="controlNextDisabled"
                   label="&menu.control.next;"
                   accesskey="&menu.control.next.accesskey;"/>
         <menuitem id="menuitem_control_prev"
                   key="control-previous-key"
+                  observes="controlPreviousDisabled"
                   label="&menu.control.prev;"
                   accesskey="&menu.control.prev.accesskey;"/>
         <menuseparator/>
@@ -460,18 +462,42 @@
                   key="playlist.repeat"
                   attribute="checked"
                   onchange="return value == '2'" />
+        <observes type="dataremote"
+                  key="playlist.repeat.disabled"
+                  attribute="disabled"
+                  boolean="true"/>
       </broadcaster>
       <broadcaster id="controlModeRepeatOnce" >
         <observes type="dataremote"
                   key="playlist.repeat"
                   attribute="checked"
                   onchange="return value == '1'" />
+        <observes type="dataremote"
+                  key="playlist.repeat.disabled"
+                  attribute="disabled"
+                  boolean="true"/>
       </broadcaster>
       <broadcaster id="controlModeRepeatNever" >
         <observes type="dataremote"
                   key="playlist.repeat"
                   attribute="checked"
                   onchange="return value == '0'" />
+        <observes type="dataremote"
+                  key="playlist.repeat.disabled"
+                  attribute="disabled"
+                  boolean="true"/>
+      </broadcaster>
+      <broadcaster id="controlNextDisabled" >
+        <observes type="dataremote"
+                  key="playlist.next.disabled"
+                  attribute="disabled"
+                  boolean="true"/>
+      </broadcaster>
+      <broadcaster id="controlPreviousDisabled" >
+        <observes type="dataremote"
+                  key="playlist.previous.disabled"
+                  attribute="disabled"
+                  boolean="true"/>
       </broadcaster>
       <broadcaster id="playercontrols_top" />
       <broadcaster id="playercontrols_bottom" />

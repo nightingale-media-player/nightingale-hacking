@@ -11,6 +11,7 @@ if (typeof Cu == 'undefined')
   var Cu = Components.utils;
 
 Cu.import("resource://shoutcast-radio/Utils.jsm", ShoutcastRadio);
+Cu.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
 
 if (typeof(gMM) == "undefined")
   var gMM = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
@@ -28,17 +29,45 @@ const shoutcastTempLibGuid = "extensions.shoutcast-radio.templib.guid";
 var mmListener = {
   time : null,
   playingTrack : null,
+  init: function() {
+    this._remoteShuffleDisabled =
+        SB_NewDataRemote( "playlist.shuffle.disabled", null );
+    this._remoteRepeatDisabled =
+        SB_NewDataRemote( "playlist.repeat.disabled", null );
+    this._remotePreviousDisabled =
+        SB_NewDataRemote( "playlist.previous.disabled", null );
+    this._remoteNextDisabled =
+        SB_NewDataRemote( "playlist.next.disabled", null );
+  },
+  deinit: function() {
+    if(this._remoteShuffleDisabled) {
+      this._remoteShuffleDisabled.unbind();
+      this._remoteShuffleDisabled = null;
+    }
+    if(this._remoteRepeatDisabled) {
+      this._remoteRepeatDisabled.unbind();
+      this._remoteRepeatDisabled = null;
+    }
+    if(this._remotePreviousDisabled) {
+      this._remotePreviousDisabled.unbind();
+      this._remotePreviousDisabled = null;
+    }
+    if(this._remoteNextDisabled) {
+      this._remoteNextDisabled.unbind();
+      this._remoteNextDisabled = null;
+    }
+  },
   onMediacoreEvent : function(ev) {
     var item = ev.data;
     if (gMM.sequencer.view == null)
       return;
-    var list = gMM.sequencer.view.mediaList;
+
     switch (ev.type) {
       case Ci.sbIMediacoreEvent.STREAM_START:
         // first we'll get the currently playing media item
         var currentItem = gMM.sequencer.view.getItemByIndex(
             gMM.sequencer.viewPosition);
-        
+
         // check to see if we have an active timer
         if (mmListener.time) {
           var now = Date.now()/1000;
@@ -57,6 +86,7 @@ var mmListener = {
         // Ensure the playing buttons and SHOUTcast faceplate
         // icon are in the right state
         mmListener.playingTrack = item;
+        mmListener.setDataRemotes();
         mmListener.setPlayerState(true);
 
         // if we're here then we're a shoutcast stream, and we should
@@ -118,9 +148,6 @@ var mmListener = {
     }
   },
 
-  disableTags : ['sb-player-back-button', 'sb-player-shuffle-button', 
-      'sb-player-repeat-button', 'sb-player-forward-button'],
-
   setPlayerState: function(scStream) {
     var stationIcon = document.getElementById("shoutcast-station-icon");
     var stopButton = document.getElementById("play_stop_button");
@@ -128,36 +155,27 @@ var mmListener = {
 
     if (scStream) {
       stationIcon.style.visibility = "visible";
-      for (var i in mmListener.disableTags) {
-        var elements = document.getElementsByTagName(
-                  mmListener.disableTags[i]);
-        for (var j=0; j<elements.length; j++) {
-          elements[j].setAttribute('disabled', 'true');
-        }
-      }
       playButton.setAttribute("hidden", "true");
       stopButton.removeAttribute("hidden");
     } else {
       stationIcon.style.visibility = "collapse";
       stopButton.setAttribute("hidden", "true");
       playButton.removeAttribute("hidden");
-      
-      // if we're not playign something then reset the button state
-      // OR if we're not playing Last.fm
-      if ((gMM.status.state == Ci.sbIMediacoreStatus.STATUS_STOPPED) ||
-        (gMM.status.state == Ci.sbIMediacoreStatus.STATUS_PLAYING &&
-           Application.prefs.getValue('songbird.lastfm.radio.station',
-            '') == ''))
-      {
-        for (var i in mmListener.disableTags) {
-          var elements = document.getElementsByTagName(
-                    mmListener.disableTags[i]);
-          for (var j=0; j<elements.length; j++) {
-            elements[j].removeAttribute('disabled');
-          }
-        }
-      }
     }
+  },
+
+  setDataRemotes: function() {
+    gMM.sequencer.mode =
+        Ci.sbIMediacoreSequencer.MODE_FORWARD;
+    this._remoteShuffleDisabled.boolValue = true;
+
+    gMM.sequencer.repeatMode =
+        Ci.sbIMediacoreSequencer.MODE_REPEAT_NONE;
+    this._remoteRepeatDisabled.boolValue = true;
+
+    this._remotePreviousDisabled.boolValue = true;
+
+    this._remoteNextDisabled.boolValue = true;
   }
 }
 
@@ -209,6 +227,7 @@ ShoutcastRadio.Controller = {
     ShoutcastRadio.Utils.ensureFavouritesNode();
 
     // Attach our listener for media core events
+    mmListener.init();
     gMM.addListener(mmListener);
 
     // Attach our listener to the ShowCurrentTrack event issued by the
@@ -308,7 +327,15 @@ ShoutcastRadio.Controller = {
   onUnLoad: function() {
     this._initialized = false;
     gMM.removeListener(mmListener);
+    mmListener.deinit();
     //ShoutcastRadio.Controller.titleDr.unbind();
+
+    var sbWindow = Cc["@mozilla.org/appshell/window-mediator;1"]
+        .getService(Ci.nsIWindowMediator)
+        .getMostRecentWindow("Songbird:Main").window;
+    if (sbWindow) {
+      sbWindow.removeEventListener("ShowCurrentTrack", curTrackListener, true);
+    }
   }
 }
 
