@@ -731,6 +731,10 @@ var deviceFirmwareWizard = {
         
         progressDeck.selectedPanel = 
           document.getElementById("device_firmware_wizard_check_new_box");
+
+        var browserBox =
+          document.getElementById("device_firmware_wizard_release_notes_box");
+        browserBox.open = true;
           
         // force canRewind since we need to be able to use the back button
         // as the remind me later button.
