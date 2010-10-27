@@ -49,6 +49,7 @@
 // Songbird imports.
 #include <sbIFileDownloader.h>
 #include <sbIJobProgress.h>
+#include <sbIJobCancelable.h>
 #include <sbILibrary.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaItemDownloadJob.h>
@@ -75,6 +76,7 @@ class nsIURI;
  */
 
 class sbBaseMediaItemDownloadJob : public sbIMediaItemDownloadJob,
+                                   public sbIJobCancelable,
                                    public sbIFileDownloaderListener
 {
   //----------------------------------------------------------------------------
@@ -92,6 +94,7 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIAITEMDOWNLOADJOB
   NS_DECL_SBIJOBPROGRESS
+  NS_DECL_SBIJOBCANCELABLE
   NS_DECL_SBIFILEDOWNLOADERLISTENER
 
 
@@ -148,6 +151,12 @@ protected:
    * \param aURI                Source URI from which to download.
    */
   virtual nsresult Start(nsIURI* aURI);
+
+  /**
+   * Stop downloading. Sub-classes that need to do special actions on stop
+   * may override this method and then call the base class version.
+   */
+  virtual nsresult Stop();
 
   /**
    * Return the download source URI in aURI.  This method is intended to be

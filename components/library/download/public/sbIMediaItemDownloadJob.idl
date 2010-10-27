@@ -45,6 +45,8 @@ interface sbITemporaryFileFactory;
  * the media item download job may download a file format that is compatible
  * with the device.
  *
+ *   All implementors of sbIMediaItemDownloadJob must implement sbIJobCancelable.
+ *
  * TODO: Add a writable temporaryFileFactory attribute to use to create the
  *       downloaded file.
  *

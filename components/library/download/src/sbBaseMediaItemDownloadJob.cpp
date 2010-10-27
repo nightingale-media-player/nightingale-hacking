@@ -91,9 +91,10 @@ static PRLogModuleInfo* gBaseMediaItemDownloadJobLog = nsnull;
 //
 //------------------------------------------------------------------------------
 
-NS_IMPL_THREADSAFE_ISUPPORTS3(sbBaseMediaItemDownloadJob,
+NS_IMPL_THREADSAFE_ISUPPORTS4(sbBaseMediaItemDownloadJob,
                               sbIMediaItemDownloadJob,
                               sbIJobProgress,
+                              sbIJobCancelable,
                               sbIFileDownloaderListener)
 
 
@@ -491,6 +492,32 @@ sbBaseMediaItemDownloadJob::GetErrorMessages(nsIStringEnumerator** retval)
   return NS_OK;
 }
 
+//-------------------------------------
+//
+// canCancel
+//
+// \see sbIJobCancelable
+//
+NS_IMETHODIMP
+sbBaseMediaItemDownloadJob::GetCanCancel(PRBool *aCanCancel)
+{
+  // Always cancelable.
+  *aCanCancel = PR_TRUE;
+
+  return NS_OK;
+}
+
+//-------------------------------------
+//
+// cancel
+//
+// \see sbIJobCancelable
+//
+NS_IMETHODIMP
+sbBaseMediaItemDownloadJob::Cancel() 
+{
+  return Stop();
+}
 
 //------------------------------------------------------------------------------
 //
@@ -674,6 +701,18 @@ sbBaseMediaItemDownloadJob::Start(nsIURI* aURI)
   return NS_OK;
 }
 
+//-------------------------------------
+//
+// Stop
+//
+nsresult
+sbBaseMediaItemDownloadJob::Stop()
+{
+  nsresult rv = mFileDownloader->Cancel();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
 
 //-------------------------------------
 //
