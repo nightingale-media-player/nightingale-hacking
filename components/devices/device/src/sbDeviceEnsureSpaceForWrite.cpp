@@ -135,7 +135,7 @@ sbDeviceEnsureSpaceForWrite::BuildItemsToWrite() {
 }
 
 nsresult
-sbDeviceEnsureSpaceForWrite::AddItemToWrite(Batch::iterator aIter,
+sbDeviceEnsureSpaceForWrite::AddItemToWrite(const Batch::iterator & aIter,
                                             PRInt32&        aOrder)
 {
   nsresult rv;

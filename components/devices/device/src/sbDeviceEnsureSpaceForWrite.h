@@ -141,7 +141,7 @@ private:
   /**
    * Adds an item to mItemsToWrite
    */
-  nsresult AddItemToWrite(Batch::iterator aIter,
+  nsresult AddItemToWrite(const Batch::iterator & aIter,
                           PRInt32&        aOrder);
 
   /**
