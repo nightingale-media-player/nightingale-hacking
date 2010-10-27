@@ -1,25 +1,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
@@ -36,8 +36,6 @@
 #include <nsIURL.h>
 #include <nsIRunnable.h>
 #include <nsIIOService.h>
-#include <nsIConsoleService.h>
-#include <nsIScriptError.h>
 #include <nsIPrefBranch2.h>
 #include <nsIObserver.h>
 #include <nsThreadUtils.h>
@@ -68,7 +66,7 @@
 #include <sbMediacoreError.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStringBundle.h>
-
+#include <sbErrorConsole.h>
 #include <sbIMediacorePlaybackControl.h>
 #include <sbIMediacoreManager.h>
 #include <sbIGStreamerService.h>
@@ -147,7 +145,7 @@ NS_IMPL_QUERY_INTERFACE11_CI(sbGStreamerMediacore,
                             sbIMediacoreVideoWindow,
                             sbIGStreamerMediacore,
                             nsIDOMEventListener,
-                            nsIObserver,			
+                            nsIObserver,
                             nsIClassInfo)
 
 NS_IMPL_CI_INTERFACE_GETTER8(sbGStreamerMediacore,
@@ -195,7 +193,7 @@ sbGStreamerMediacore::sbGStreamerMediacore() :
     mHasVideo(PR_FALSE),
     mHasAudio(PR_FALSE)
 {
-  NS_WARN_IF_FALSE(mBaseEventTarget, 
+  NS_WARN_IF_FALSE(mBaseEventTarget,
           "mBaseEventTarget is null, may be out of memory");
 
 }
@@ -220,7 +218,7 @@ sbGStreamerMediacore::~sbGStreamerMediacore()
 }
 
 nsresult
-sbGStreamerMediacore::Init() 
+sbGStreamerMediacore::Init()
 {
   nsresult rv;
 
@@ -285,7 +283,7 @@ sbGStreamerMediacore::ReadPreferences()
   NS_ENSURE_STATE (mPrefs);
   nsresult rv;
 
-  rv = mPrefs->GetBoolPref("songbird.mediacore.gstreamer.disablevideo", 
+  rv = mPrefs->GetBoolPref("songbird.mediacore.gstreamer.disablevideo",
 	                       &mVideoDisabled);
   if (rv == NS_ERROR_UNEXPECTED)
     mVideoDisabled = PR_FALSE;
@@ -299,7 +297,7 @@ sbGStreamerMediacore::ReadPreferences()
   rv = mPrefs->GetPrefType(VIDEO_SINK_PREF, &prefType);
   NS_ENSURE_SUCCESS(rv, rv);
   if (prefType == nsIPrefBranch::PREF_STRING) {
-    rv = mPrefs->GetCharPref(VIDEO_SINK_PREF, 
+    rv = mPrefs->GetCharPref(VIDEO_SINK_PREF,
 	getter_Copies(mVideoSinkDescription));
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -307,16 +305,16 @@ sbGStreamerMediacore::ReadPreferences()
   rv = mPrefs->GetPrefType(AUDIO_SINK_PREF, &prefType);
   NS_ENSURE_SUCCESS(rv, rv);
   if (prefType == nsIPrefBranch::PREF_STRING) {
-    rv = mPrefs->GetCharPref(AUDIO_SINK_PREF, 
+    rv = mPrefs->GetCharPref(AUDIO_SINK_PREF,
 	getter_Copies(mAudioSinkDescription));
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
   /* In milliseconds */
-  const char *AUDIO_SINK_BUFFERTIME_PREF = 
+  const char *AUDIO_SINK_BUFFERTIME_PREF =
       "songbird.mediacore.output.buffertime";
   /* In kilobytes */
-  const char *STREAMING_BUFFERSIZE_PREF = 
+  const char *STREAMING_BUFFERSIZE_PREF =
       "songbird.mediacore.streaming.buffersize";
 
   /* Defaults if the prefs aren't present */
@@ -349,9 +347,9 @@ sbGStreamerMediacore::ReadPreferences()
   mAudioSinkBufferTime = audioSinkBufferTime;
   mStreamingBufferSize = streamingBufferSize;
 
-  const char *NORMALIZATION_ENABLED_PREF = 
+  const char *NORMALIZATION_ENABLED_PREF =
       "songbird.mediacore.normalization.enabled";
-  const char *NORMALIZATION_MODE_PREF = 
+  const char *NORMALIZATION_MODE_PREF =
       "songbird.mediacore.normalization.preferredGain";
   PRBool normalizationEnabled = PR_TRUE;
   rv = mPrefs->GetPrefType(NORMALIZATION_ENABLED_PREF, &prefType);
@@ -365,7 +363,7 @@ sbGStreamerMediacore::ReadPreferences()
     if (!mReplaygainElement) {
       mReplaygainElement = gst_element_factory_make ("rgvolume", NULL);
 
-      // Ref and sink the object to take ownership; we'll keep track of it 
+      // Ref and sink the object to take ownership; we'll keep track of it
       // from here on.
       gst_object_ref (mReplaygainElement);
       gst_object_sink (mReplaygainElement);
@@ -379,7 +377,7 @@ sbGStreamerMediacore::ReadPreferences()
     rv = mPrefs->GetPrefType(NORMALIZATION_MODE_PREF, &prefType);
     NS_ENSURE_SUCCESS(rv, rv);
     if (prefType == nsIPrefBranch::PREF_STRING) {
-      rv = mPrefs->GetCharPref(NORMALIZATION_MODE_PREF, 
+      rv = mPrefs->GetCharPref(NORMALIZATION_MODE_PREF,
               getter_Copies(normalizationMode));
       NS_ENSURE_SUCCESS(rv, rv);
     }
@@ -417,9 +415,9 @@ sbGStreamerMediacore::aboutToFinishHandler(GstElement *playbin, gpointer data)
 
 GstElement *
 sbGStreamerMediacore::CreateSinkFromPrefs(const char *aSinkDescription)
-{ 
+{
   // Only try to create it if we have a non-null, non-zero-length description
-  if (aSinkDescription && *aSinkDescription) 
+  if (aSinkDescription && *aSinkDescription)
   {
     GstElement *sink = gst_parse_bin_from_description (aSinkDescription,
             TRUE, NULL);
@@ -627,7 +625,7 @@ sbGStreamerMediacore::videoCapsSetHelper(GObject* obj, GParamSpec* pspec,
   }
 }
 
-nsresult 
+nsresult
 sbGStreamerMediacore::DestroyPipeline()
 {
   GstElement *pipeline = NULL;
@@ -698,13 +696,13 @@ sbGStreamerMediacore::DestroyPipeline()
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbGStreamerMediacore::SetBufferingProperties(GstElement *aPipeline)
 {
   NS_ENSURE_ARG_POINTER(aPipeline);
 
   if (g_object_class_find_property(
-              G_OBJECT_GET_CLASS (aPipeline), "buffer-size")) 
+              G_OBJECT_GET_CLASS (aPipeline), "buffer-size"))
     g_object_set (aPipeline, "buffer-size", mStreamingBufferSize, NULL);
 
   return NS_OK;
@@ -713,7 +711,7 @@ sbGStreamerMediacore::SetBufferingProperties(GstElement *aPipeline)
 // Set the property on the first applicable element we find. That's the first
 // in sorted-iteration order, at minimal depth.
 bool
-sbGStreamerMediacore::SetPropertyOnChild(GstElement *aElement, 
+sbGStreamerMediacore::SetPropertyOnChild(GstElement *aElement,
         const char *aPropertyName, gint64 aPropertyValue)
 {
   bool done = false;
@@ -762,7 +760,7 @@ sbGStreamerMediacore::SetPropertyOnChild(GstElement *aElement,
   return ret;
 }
 
-nsresult 
+nsresult
 sbGStreamerMediacore::CreatePlaybackPipeline()
 {
   nsresult rv;
@@ -785,7 +783,7 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
     g_object_set(mPipeline, "audio-sink", audiosink, NULL);
 
     // Set audio sink buffer time based on pref
-    SetPropertyOnChild(audiosink, "buffer-time", 
+    SetPropertyOnChild(audiosink, "buffer-time",
             (gint64)mAudioSinkBufferTime);
 
     if (!mVideoDisabled) {
@@ -821,7 +819,7 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
   g_object_unref ((GObject *)bus);
 
   // Handle about-to-finish signal emitted by playbin2
-  g_signal_connect (mPipeline, "about-to-finish", 
+  g_signal_connect (mPipeline, "about-to-finish",
           G_CALLBACK (aboutToFinishHandler), this);
   // Get notified when the current audio/video stream changes.
   // This will let us get information about the specific audio or video stream
@@ -852,7 +850,7 @@ PRBool sbGStreamerMediacore::HandleSynchronousMessage(GstMessage *aMessage)
       if (gst_structure_has_name(aMessage->structure, "prepare-xwindow-id") ||
           gst_structure_has_name(aMessage->structure, "have-ns-view"))
       {
-        if(mPlatformInterface) 
+        if(mPlatformInterface)
         {
           DispatchMediacoreEvent(sbIMediacoreEvent::STREAM_HAS_VIDEO);
           mPlatformInterface->PrepareVideoWindow(aMessage);
@@ -868,7 +866,7 @@ PRBool sbGStreamerMediacore::HandleSynchronousMessage(GstMessage *aMessage)
   return PR_FALSE;
 }
 
-void sbGStreamerMediacore::DispatchMediacoreEvent (unsigned long type, 
+void sbGStreamerMediacore::DispatchMediacoreEvent (unsigned long type,
         nsIVariant *aData, sbIMediacoreError *aError)
 {
   nsresult rv;
@@ -910,7 +908,7 @@ void sbGStreamerMediacore::HandleAboutToFinishSignal()
   NS_ENSURE_TRUE(item, /*void*/);
 
   nsString contentURL;
-  rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL), 
+  rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
           contentURL);
   NS_ENSURE_SUCCESS(rv, /*void*/ );
 
@@ -981,7 +979,7 @@ void sbGStreamerMediacore::HandleTagMessage(GstMessage *message)
     DispatchMediacoreEvent (sbIMediacoreEvent::METADATA_CHANGE, propVariant);
   }
   else // Non-fatal, just log a message
-    LOG(("Failed to convert")); 
+    LOG(("Failed to convert"));
 }
 
 void sbGStreamerMediacore::HandleStateChangedMessage(GstMessage *message)
@@ -990,7 +988,7 @@ void sbGStreamerMediacore::HandleStateChangedMessage(GstMessage *message)
   if (GST_IS_PIPELINE (message->src))
   {
     GstState oldstate, newstate, pendingstate;
-    gst_message_parse_state_changed (message, 
+    gst_message_parse_state_changed (message,
             &oldstate, &newstate, &pendingstate);
 
     // Dispatch START, PAUSE, STOP/END (but only if it's our target state)
@@ -1049,7 +1047,7 @@ void sbGStreamerMediacore::HandleBufferingMessage (GstMessage *message)
   // 'maxpercent' is how much of our maximum buffer size we must fill before
   // we start playing. We want to be able to keep buffering more data (if the
   // server is sending it fast enough) even after we start playing - so we
-  // start with maxpercent at 33, then increase it to 100 if we ever have to 
+  // start with maxpercent at 33, then increase it to 100 if we ever have to
   // rebuffer (i.e. return to buffering AFTER starting playback)
   if (mHasReachedPlaying)
     maxpercent = 100;
@@ -1136,7 +1134,7 @@ void sbGStreamerMediacore::HandleRedirectMessage(GstMessage *message)
     if (isEqual)
       return;
 
-    // Ok, we have a new uri, and we're ready to use it... 
+    // Ok, we have a new uri, and we're ready to use it...
     rv = SetUri(finaluri);
     NS_ENSURE_SUCCESS (rv, /* void */ );
 
@@ -1282,8 +1280,7 @@ void sbGStreamerMediacore::HandleMissingPluginMessage(GstMessage *message)
   g_object_unref (pipeline);
 
   // Log the error message
-  rv = LogMessageToErrorConsole(errorMessage, nsIScriptError::errorFlag);
-  NS_ENSURE_SUCCESS(rv, /* void */);
+  sbErrorConsole::Error("Mediacore:GStreamer", errorMessage);
 }
 
 void sbGStreamerMediacore::HandleEOSMessage(GstMessage *message)
@@ -1299,36 +1296,6 @@ void sbGStreamerMediacore::HandleEOSMessage(GstMessage *message)
   g_object_unref (pipeline);
 }
 
-nsresult sbGStreamerMediacore::LogMessageToErrorConsole(
-        nsString message, PRUint32 flags)
-{
-  nsresult rv;
-
-  nsCOMPtr<nsIConsoleService> consoleService = 
-    do_GetService("@mozilla.org/consoleservice;1", &rv);
-  NS_ENSURE_SUCCESS (rv, rv);
-
-  nsCOMPtr<nsIScriptError> scriptError = 
-      do_CreateInstance(NS_SCRIPTERROR_CONTRACTID);
-  if (!scriptError) {
-    return NS_ERROR_FAILURE;
-  }
-
-  rv = scriptError->Init(message.get(),
-                         EmptyString().get(),
-                         EmptyString().get(),
-                         0, // No line number
-                         0, // No column number
-                         flags,
-                         "Mediacore:GStreamer");
-  NS_ENSURE_SUCCESS(rv,rv);
-
-  rv = consoleService->LogMessage(scriptError);
-  NS_ENSURE_SUCCESS(rv,rv);
-
-  return NS_OK;
-}
-
 void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
 {
   GError *gerror = NULL;
@@ -1341,7 +1308,7 @@ void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
   NS_ASSERTION(NS_IsMainThread(), "not on main thread");
 
   gst_message_parse_error(message, &gerror, &debugMessage);
-  
+
   if (!mMediacoreError) {
 
     // Try and fetch track name from sequencer information.
@@ -1363,8 +1330,8 @@ void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
         if (NS_SUCCEEDED(rv)) {
           nsAutoString stripped (trackNameProp);
           CompressWhitespace(stripped);
-          rv = GetMediacoreErrorFromGstError(gerror, stripped, 
-                                             GStreamer::OP_UNKNOWN, 
+          rv = GetMediacoreErrorFromGstError(gerror, stripped,
+                                             GStreamer::OP_UNKNOWN,
                                              getter_AddRefs(error));
         }
       }
@@ -1375,7 +1342,7 @@ void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
     // track name we'll fall back to using the file path.
     //
     if (NS_FAILED(rv)) {
-      // Create an error for later dispatch. 
+      // Create an error for later dispatch.
       nsCOMPtr<nsIURI> uri;
       rv = GetUri(getter_AddRefs(uri));
       NS_ENSURE_SUCCESS(rv, /* void */);
@@ -1392,7 +1359,7 @@ void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
           rv = file->GetPath(path);
 
           if (NS_SUCCEEDED(rv))
-            rv = GetMediacoreErrorFromGstError(gerror, path, 
+            rv = GetMediacoreErrorFromGstError(gerror, path,
                                                GStreamer::OP_UNKNOWN,
                                                getter_AddRefs(error));
         }
@@ -1413,8 +1380,8 @@ void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
         else
           spec = NS_ConvertUTF8toUTF16(mCurrentUri);
 
-        rv = GetMediacoreErrorFromGstError(gerror, spec, 
-                                           GStreamer::OP_UNKNOWN, 
+        rv = GetMediacoreErrorFromGstError(gerror, spec,
+                                           GStreamer::OP_UNKNOWN,
                                            getter_AddRefs(error));
       }
     }
@@ -1429,7 +1396,7 @@ void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
     mMediacoreError = error;
   }
 
-  // Build an error message to output to the console 
+  // Build an error message to output to the console
   // TODO: This is currently not localised (but we're probably not setting
   // things up right to get translated gstreamer messages anyway).
   nsString errmessage = NS_LITERAL_STRING("GStreamer error: ");
@@ -1452,8 +1419,7 @@ void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
   g_object_unref (pipeline);
 
   // Log the error message
-  rv = LogMessageToErrorConsole(errmessage, nsIScriptError::errorFlag);
-  NS_ENSURE_SUCCESS(rv, /* void */);
+  sbErrorConsole::Error("Mediacore:GStreamer", errmessage);
 }
 
 void sbGStreamerMediacore::HandleWarningMessage(GstMessage *message)
@@ -1476,8 +1442,7 @@ void sbGStreamerMediacore::HandleWarningMessage(GstMessage *message)
   g_error_free (gerror);
   g_free (debugMessage);
 
-  rv = LogMessageToErrorConsole(warning, nsIScriptError::warningFlag);
-  NS_ENSURE_SUCCESS(rv, /* void */);
+  sbErrorConsole::Error("Mediacore:GStreamer", warning);
 }
 
 /* Dispatch messages based on type.
@@ -1566,7 +1531,7 @@ void sbGStreamerMediacore::RequestVideoWindow()
     rv = SetVideoWindow(videoDOMElement);
     NS_ENSURE_SUCCESS(rv, /* void */);
 
-    DispatchMediacoreEvent(sbIMediacoreEvent::VIDEO_SIZE_CHANGED, 
+    DispatchMediacoreEvent(sbIMediacoreEvent::VIDEO_SIZE_CHANGED,
                            sbNewVariant(mVideoSize).get());
   }
 }
@@ -1609,7 +1574,7 @@ sbGStreamerMediacore::OnVideoCapsSet(GstCaps *caps)
     // Ignore all messages while we're aborting playback
     mAbortingPlayback = PR_TRUE;
     nsCOMPtr<nsIRunnable> abort =
-        NS_NEW_RUNNABLE_METHOD(sbGStreamerMediacore, this, 
+        NS_NEW_RUNNABLE_METHOD(sbGStreamerMediacore, this,
                 AbortAndRestartPlayback);
     NS_DispatchToMainThread(abort);
   }
@@ -1621,13 +1586,13 @@ sbGStreamerMediacore::OnVideoCapsSet(GstCaps *caps)
   NS_NEWXPCOM(videoBox, sbVideoBox);
   NS_ENSURE_TRUE(videoBox, /*void*/);
 
-  nsresult rv = videoBox->Init(videoWidth, 
-                               videoHeight, 
-                               pixelAspectRatioN, 
+  nsresult rv = videoBox->Init(videoWidth,
+                               videoHeight,
+                               pixelAspectRatioN,
                                pixelAspectRatioD);
   NS_ENSURE_SUCCESS(rv, /*void*/);
 
-  DispatchMediacoreEvent(sbIMediacoreEvent::VIDEO_SIZE_CHANGED, 
+  DispatchMediacoreEvent(sbIMediacoreEvent::VIDEO_SIZE_CHANGED,
                          sbNewVariant(videoBox).get());
 
   mVideoSize = do_QueryInterface(videoBox, &rv);
@@ -1637,13 +1602,13 @@ sbGStreamerMediacore::OnVideoCapsSet(GstCaps *caps)
 void
 sbGStreamerMediacore::OnAudioCapsSet(GstCaps *caps)
 {
-  if (mPlayingGaplessly && mCurrentAudioCaps && 
+  if (mPlayingGaplessly && mCurrentAudioCaps &&
           !gst_caps_is_equal_fixed (caps, mCurrentAudioCaps))
   {
     // Ignore all messages while we're aborting playback
     mAbortingPlayback = PR_TRUE;
     nsCOMPtr<nsIRunnable> abort =
-        NS_NEW_RUNNABLE_METHOD(sbGStreamerMediacore, this, 
+        NS_NEW_RUNNABLE_METHOD(sbGStreamerMediacore, this,
                 AbortAndRestartPlayback);
     NS_DispatchToMainThread(abort);
   }
@@ -1681,7 +1646,7 @@ void sbGStreamerMediacore::AbortAndRestartPlayback()
 // sbBaseMediacore
 //-----------------------------------------------------------------------------
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbGStreamerMediacore::OnInitBaseMediacore()
 {
   nsresult rv;
@@ -1694,14 +1659,14 @@ sbGStreamerMediacore::OnInitBaseMediacore()
   return NS_OK;
 }
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbGStreamerMediacore::OnGetCapabilities()
 {
   // XXXAus: Implement this when implementing the default sequencer!
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbGStreamerMediacore::OnShutdown()
 {
   nsAutoMonitor lock(mMonitor);
@@ -1722,15 +1687,15 @@ sbGStreamerMediacore::OnShutdown()
 //-----------------------------------------------------------------------------
 // sbBaseMediacoreMultibandEqualizer
 //-----------------------------------------------------------------------------
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbGStreamerMediacore::OnInitBaseMediacoreMultibandEqualizer()
 {
-  mEqualizerElement = 
+  mEqualizerElement =
     gst_element_factory_make (EQUALIZER_FACTORY_NAME, NULL);
   NS_WARN_IF_FALSE(mEqualizerElement, "No support for equalizer.");
 
   if (mEqualizerElement) {
-    // Ref and sink the object to take ownership; we'll keep track of it 
+    // Ref and sink the object to take ownership; we'll keep track of it
     // from here on.
     gst_object_ref (mEqualizerElement);
     gst_object_sink (mEqualizerElement);
@@ -1740,12 +1705,12 @@ sbGStreamerMediacore::OnInitBaseMediacoreMultibandEqualizer()
 
     GValue freqVal = {0};
     g_value_init (&freqVal, G_TYPE_DOUBLE);
-    
+
     for(PRUint32 i = 0; i < EQUALIZER_DEFAULT_BAND_COUNT; ++i) {
       PR_snprintf (band, 16, "band%i::freq", i);
       g_value_set_double (&freqVal, EQUALIZER_BANDS[i]);
-      gst_child_proxy_set_property (GST_OBJECT (mEqualizerElement), 
-                                    band, 
+      gst_child_proxy_set_property (GST_OBJECT (mEqualizerElement),
+                                    band,
                                     &freqVal);
     }
 
@@ -1782,7 +1747,7 @@ sbGStreamerMediacore::OnSetEqEnabled(PRBool aEqEnabled)
   return NS_OK;
 }
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbGStreamerMediacore::OnGetBandCount(PRUint32 *aBandCount)
 {
   NS_ENSURE_ARG_POINTER(aBandCount);
@@ -1800,7 +1765,7 @@ sbGStreamerMediacore::OnGetBandCount(PRUint32 *aBandCount)
   return NS_OK;
 }
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbGStreamerMediacore::OnGetBand(PRUint32 aBandIndex, sbIMediacoreEqualizerBand *aBand)
 {
   NS_ENSURE_ARG_POINTER(aBand);
@@ -1824,11 +1789,11 @@ sbGStreamerMediacore::OnGetBand(PRUint32 aBandIndex, sbIMediacoreEqualizerBand *
   return NS_OK;
 }
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbGStreamerMediacore::OnSetBand(sbIMediacoreEqualizerBand *aBand)
 {
   NS_ENSURE_ARG_POINTER(aBand);
-  
+
   // Not necessarily an error if we don't have an Equalizer Element.
   // The plugin may simply be missing from the user's installation.
   if (!mEqualizerElement) {
@@ -1851,7 +1816,7 @@ sbGStreamerMediacore::OnSetBand(sbIMediacoreEqualizerBand *aBand)
 
   nsAutoMonitor lock(mMonitor);
   g_object_set (G_OBJECT (mEqualizerElement), band, bandGain, NULL);
-  
+
   return NS_OK;
 }
 
@@ -1859,13 +1824,13 @@ sbGStreamerMediacore::OnSetBand(sbIMediacoreEqualizerBand *aBand)
 // sbBaseMediacorePlaybackControl
 //-----------------------------------------------------------------------------
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbGStreamerMediacore::OnInitBaseMediacorePlaybackControl()
 {
   return NS_OK;
 }
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbGStreamerMediacore::OnSetUri(nsIURI *aURI)
 {
   nsCAutoString spec;
@@ -1898,7 +1863,7 @@ sbGStreamerMediacore::OnSetUri(nsIURI *aURI)
   return NS_OK;
 }
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbGStreamerMediacore::OnGetDuration(PRUint64 *aDuration)
 {
   GstQuery *query;
@@ -1958,7 +1923,7 @@ sbGStreamerMediacore::OnGetPosition(PRUint64 *aPosition)
       // GStreamer bugs can cause us to get a position of zero when we in fact
       // don't know the current position. A real position of zero is unlikely
       // and transient, so we just treat this as unknown.
-      // A value of -1 (GST_CLOCK_TIME_NONE) is also 'not available', though 
+      // A value of -1 (GST_CLOCK_TIME_NONE) is also 'not available', though
       // really that should be reported as a a false return from the query.
       rv = NS_ERROR_NOT_AVAILABLE;
     }
@@ -1982,7 +1947,7 @@ sbGStreamerMediacore::OnSetPosition(PRUint64 aPosition)
   return Seek(aPosition, sbIMediacorePlaybackControl::SEEK_FLAG_NORMAL);
 }
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbGStreamerMediacore::OnSeek(PRUint64 aPosition, PRUint32 aFlags)
 {
   GstClockTime position;
@@ -2000,7 +1965,7 @@ sbGStreamerMediacore::OnSeek(PRUint64 aPosition, PRUint32 aFlags)
   //  - a local file
   //  - sufficiently small
   //  - flag passed is to do a normal seek
-  
+
   if (mResourceIsLocal &&
       mResourceSize <= MAX_FILE_SIZE_FOR_ACCURATE_SEEK &&
       aFlags == SEEK_FLAG_NORMAL)
@@ -2011,9 +1976,9 @@ sbGStreamerMediacore::OnSeek(PRUint64 aPosition, PRUint32 aFlags)
     flags = (GstSeekFlags)(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT);
   }
 
-  ret = gst_element_seek_simple (mPipeline, GST_FORMAT_TIME, 
+  ret = gst_element_seek_simple (mPipeline, GST_FORMAT_TIME,
       flags, position);
-  
+
   if (!ret) {
     /* TODO: Is this appropriate for a non-fatal failure to seek? Should we
        fire an event? */
@@ -2060,7 +2025,7 @@ sbGStreamerMediacore::OnGetIsPlayingVideo(PRBool *aIsPlayingVideo)
   return NS_OK;
 }
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbGStreamerMediacore::OnPlay()
 {
   GstStateChangeReturn ret;
@@ -2097,7 +2062,7 @@ sbGStreamerMediacore::OnPlay()
     return NS_OK;
   else if (ret == GST_STATE_CHANGE_NO_PREROLL)
   {
-    /* NO_PREROLL means we have a live pipeline, for which we have to 
+    /* NO_PREROLL means we have a live pipeline, for which we have to
      * handle buffering differently */
     mIsLive = PR_TRUE;
   }
@@ -2125,7 +2090,7 @@ sbGStreamerMediacore::SendInitialBufferingEvent()
   return NS_OK;
 }
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbGStreamerMediacore::OnPause()
 {
   GstStateChangeReturn ret;
@@ -2142,13 +2107,13 @@ sbGStreamerMediacore::OnPause()
   return NS_OK;
 }
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbGStreamerMediacore::OnStop()
 {
   nsAutoMonitor lock(mMonitor);
   mTargetState = GST_STATE_NULL;
   mStopped = PR_TRUE;
-  // If we get stopped without ever starting, that's ok... 
+  // If we get stopped without ever starting, that's ok...
   if (!mPipeline)
     return NS_OK;
 
@@ -2166,7 +2131,7 @@ sbGStreamerMediacore::OnStop()
 // sbBaseMediacoreVolumeControl
 //-----------------------------------------------------------------------------
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbGStreamerMediacore::OnInitBaseMediacoreVolumeControl()
 {
   mVolume = 1.0;
@@ -2175,7 +2140,7 @@ sbGStreamerMediacore::OnInitBaseMediacoreVolumeControl()
   return NS_OK;
 }
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbGStreamerMediacore::OnSetMute(PRBool aMute)
 {
   nsAutoMonitor lock(mMonitor);
@@ -2197,7 +2162,7 @@ sbGStreamerMediacore::OnSetMute(PRBool aMute)
   return NS_OK;
 }
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbGStreamerMediacore::OnSetVolume(double aVolume)
 {
   nsAutoMonitor lock(mMonitor);
@@ -2214,7 +2179,7 @@ sbGStreamerMediacore::OnSetVolume(double aVolume)
 // sbIMediacoreVotingParticipant
 //-----------------------------------------------------------------------------
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbGStreamerMediacore::VoteWithURI(nsIURI *aURI, PRUint32 *_retval)
 {
   NS_ENSURE_ARG_POINTER(aURI);
@@ -2224,13 +2189,13 @@ sbGStreamerMediacore::VoteWithURI(nsIURI *aURI, PRUint32 *_retval)
   //
   //         After that, that's as much as we can do, it's most likely
   //         playable.
-  
+
   *_retval = 2000;
 
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbGStreamerMediacore::VoteWithChannel(nsIChannel *aChannel, PRUint32 *_retval)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
@@ -2281,7 +2246,7 @@ NS_IMETHODIMP
 sbGStreamerMediacore::SetVideoWindow(nsIDOMXULElement *aVideoWindow)
 {
   NS_ENSURE_ARG_POINTER(aVideoWindow);
-  
+
   nsAutoMonitor mon(mMonitor);
 
   // Get the box object representing the actual display area for the video.
@@ -2357,7 +2322,7 @@ sbGStreamerMediacore::GetGstreamerVersion(nsAString& aGStreamerVersion)
   versionString.AppendInt(GST_VERSION_MINOR);
   versionString.AppendLiteral(".");
   versionString.AppendInt(GST_VERSION_MICRO);
-  
+
   aGStreamerVersion.Assign(versionString);
 
   return NS_OK;
@@ -2370,24 +2335,24 @@ sbGStreamerMediacore::DispatchEvent(sbIMediacoreEvent *aEvent,
                                     PRBool aAsync,
                                     PRBool* _retval)
 {
-  return mBaseEventTarget ? 
-         mBaseEventTarget->DispatchEvent(aEvent, aAsync, _retval) : 
+  return mBaseEventTarget ?
+         mBaseEventTarget->DispatchEvent(aEvent, aAsync, _retval) :
          NS_ERROR_NULL_POINTER;
 }
 
 NS_IMETHODIMP
 sbGStreamerMediacore::AddListener(sbIMediacoreEventListener *aListener)
 {
-  return mBaseEventTarget ? 
-         mBaseEventTarget->AddListener(aListener) : 
+  return mBaseEventTarget ?
+         mBaseEventTarget->AddListener(aListener) :
          NS_ERROR_NULL_POINTER;
 }
 
 NS_IMETHODIMP
 sbGStreamerMediacore::RemoveListener(sbIMediacoreEventListener *aListener)
 {
-  return mBaseEventTarget ? 
-         mBaseEventTarget->RemoveListener(aListener) : 
+  return mBaseEventTarget ?
+         mBaseEventTarget->RemoveListener(aListener) :
          NS_ERROR_NULL_POINTER;
 }
 
@@ -2423,7 +2388,7 @@ sbGStreamerMediacore::HandleEvent(nsIDOMEvent* aEvent)
   }
   else if(eventType.EqualsLiteral("resize") &&
           mPlatformInterface) {
-    mPlatformInterface->ResizeToWindow();  
+    mPlatformInterface->ResizeToWindow();
   }
 
   return NS_OK;

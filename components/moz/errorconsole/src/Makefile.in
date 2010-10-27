@@ -3,7 +3,7 @@
 #
 # This file is part of the Songbird web player.
 #
-# Copyright(c) 2005-2010 POTI, Inc.
+# Copyright(c) 2005-2009 POTI, Inc.
 # http://www.songbirdnest.com
 #
 # This file may be licensed under the terms of of the
@@ -22,38 +22,23 @@
 #=END SONGBIRD GPL
 #
 
-DEPTH = ../..
+DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-# 
-# The "process" directory was removed from SUBDIRS because it's currently 
-# unused, but the component may need to be resurrected at some point. 
-# 
+STATIC_LIB = sbErrorConsole
 
-SUBDIRS = strings \
-          distribution \
-          clipboard \
-          dirprovider \
-          filedownloader \
-          fileutils \
-          prompter \
-          proxy \
-          temporaryfileservice \
-          threadpoolservice \
-          threads \
-          urlformatter \
-          variant \
-          windowwatcher \
-          xpcom \
-          errorconsole \
-          streams \
-          shutdownservice \
-          system \
-          image \
-          $(NULL)
+CPP_EXTRA_INCLUDES = $(topsrcdir)/components/moz/threads/src \
+                     $(null)
+
+DYNAMIC_LIB_STATIC_IMPORTS += \
+ components/moz/threads/src/sbMozThreads \
+ $(NULL)
+                     
+CPP_SRCS = sbErrorConsole.cpp \
+           $(NULL)
 
 include $(topsrcdir)/build/rules.mk

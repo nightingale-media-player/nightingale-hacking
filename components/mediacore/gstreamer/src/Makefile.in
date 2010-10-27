@@ -98,6 +98,7 @@ CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
                      $(DEPTH)/components/property/public \
                      $(topsrcdir)/components/property/src \
                      $(DEPTH)/components/job/public \
+                     $(topsrcdir)/components/moz/errorconsole/src \
                      $(MOZSDK_INCLUDE_DIR)/layout \
                      $(MOZSDK_INCLUDE_DIR)/gfx \
                      $(MOZSDK_INCLUDE_DIR)/widget \
@@ -165,6 +166,7 @@ DYNAMIC_LIB_IMPORT_EXTRA_PATHS = $(DEPTH)/components/moz/strings/src \
 DYNAMIC_LIB_STATIC_IMPORTS = \
  components/moz/strings/src/sbMozStringUtils \
  components/moz/threads/src/sbMozThreads \
+ components/moz/errorconsole/src/sbErrorConsole \
  $(CURDIR)/metadata/sbMetadataGstreamer$(DEBUG:%=_d)$(LIB_SUFFIX) \
  $(NULL)
 
