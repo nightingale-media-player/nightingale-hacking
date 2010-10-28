@@ -1148,8 +1148,8 @@ treecol {
 }
 
 treecol[bind="http://songbirdnest.com/data/1.0#rating"] {
-  min-width: 78px;
-  width: 78px;
+  min-width: 90px;
+  width: 90px;
 }
 treecol[bind="http://songbirdnest.com/data/1.0#originPageImage"] {
   min-width: 20px;

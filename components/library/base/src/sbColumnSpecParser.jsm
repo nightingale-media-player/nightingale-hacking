@@ -171,7 +171,7 @@ function ColumnSpecParser(aMediaList, aPlaylist, aMask, aConstraint) {
                                    SBProperties.duration, 45,
                                    SBProperties.genre, 101,
                                    SBProperties.year, 45,
-                                   SBProperties.rating, 78,
+                                   SBProperties.rating, 90,
                                    SBProperties.comment, 291,
                                   ].join(" "),
                                   self.ORIGIN_DEFAULT);
@@ -187,7 +187,7 @@ function ColumnSpecParser(aMediaList, aPlaylist, aMask, aConstraint) {
                                      SBProperties.albumName, 210,
                                      SBProperties.trackType, 78,
                                      SBProperties.genre, 90,
-                                     SBProperties.rating, 78,
+                                     SBProperties.rating, 90,
                                     ].join(" "),
                                     self.ORIGIN_DEFAULT);
         }
@@ -198,7 +198,7 @@ function ColumnSpecParser(aMediaList, aPlaylist, aMask, aConstraint) {
                                    SBProperties.artistName, 137, "a",
                                    SBProperties.albumName, 210,
                                    SBProperties.genre, 90,
-                                   SBProperties.rating, 78,
+                                   SBProperties.rating, 90,
                                   ].join(" "),
                                   self.ORIGIN_DEFAULT);
     }
