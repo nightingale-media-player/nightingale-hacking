@@ -173,6 +173,7 @@ var SBSessionStore = {
       tabs = tabObject;
     }
 
+    var isFirstTab = true;
     if ( !tabs || !tabs.length ) {
       if (!Application.prefs.getValue(PREF_FIRSTRUN, false)) {
         LOG("no saved tabs, first run - using defaults");
@@ -180,6 +181,7 @@ var SBSessionStore = {
         // page in the second.  The dummy page will get replaced in mainWinInit.js
         // when media scan is done / skipped.
         aTabBrowser.loadURI(PLACEHOLDER_URL, null, null, null, '_media');
+        isFirstTab = false;
 
         var loadMLInBackground =
           Application.prefs.getValue("songbird.firstrun.load_ml_in_background",
@@ -193,14 +195,6 @@ var SBSessionStore = {
 
         Application.prefs.setValue(PREF_FIRSTRUN, true);
         Application.prefs.setValue(PREF_FIRSTRUN_SESSION, true);
-      } else {
-        LOG("no saved tabs, not first run - just main library");
-        // tab state pref missing/corrupt.
-        // let's just go to the main library
-        var libMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-                       .getService(Ci.sbILibraryManager);
-        var mainLib = libMgr.mainLibrary;
-        aTabBrowser.loadMediaList(mainLib);
       }
     } else {
       LOG("saved tabs found: " + uneval(tabs));
@@ -240,7 +234,6 @@ var SBSessionStore = {
       }
 
       // Otherwise, just restore whatever was there, previously.
-      var isFirstTab = true;
       var tab, location;
       for (var i = 0; i < tabs.length; i++) {
         tab = tabs[i];
@@ -367,6 +360,17 @@ var SBSessionStore = {
           selectedTab = newTab;
         }
       }
+    }
+
+    // Let's just go to the main library when:
+    // - there was only one tab and that tab is an invalid chrome url
+    //   (isInvalidChromeURL says true)
+    // - or no saved tabs, not first run, and tab state pref is missing/corrupt.
+    if (isFirstTab) {
+      var libMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                     .getService(Ci.sbILibraryManager);
+      var mainLib = libMgr.mainLibrary;
+      aTabBrowser.loadMediaList(mainLib);
     }
 
     // Select the selected tab from the previous session (or the first one if
