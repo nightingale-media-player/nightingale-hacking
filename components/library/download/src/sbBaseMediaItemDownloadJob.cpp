@@ -514,7 +514,7 @@ sbBaseMediaItemDownloadJob::GetCanCancel(PRBool *aCanCancel)
 // \see sbIJobCancelable
 //
 NS_IMETHODIMP
-sbBaseMediaItemDownloadJob::Cancel() 
+sbBaseMediaItemDownloadJob::Cancel()
 {
   return Stop();
 }
@@ -708,8 +708,10 @@ sbBaseMediaItemDownloadJob::Start(nsIURI* aURI)
 nsresult
 sbBaseMediaItemDownloadJob::Stop()
 {
-  nsresult rv = mFileDownloader->Cancel();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mFileDownloader) {
+    nsresult rv = mFileDownloader->Cancel();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
