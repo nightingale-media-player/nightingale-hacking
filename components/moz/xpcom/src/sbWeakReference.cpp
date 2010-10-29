@@ -35,8 +35,8 @@ private:
   friend class sbSupportsWeakReference;
 
   sbWeakReference(sbSupportsWeakReference* referent) 
-    : mReferent(referent)
-    , mReferentLock(nsnull) {
+    : mReferentLock(nsnull)
+    , mReferent(referent) {
     // ...I can only be constructed by an |sbSupportsWeakReference|
     mReferentLock = nsAutoLock::NewLock("sbWeakReference::mReferentLock");
     NS_WARN_IF_FALSE(mReferentLock, "Failed to create lock.");
