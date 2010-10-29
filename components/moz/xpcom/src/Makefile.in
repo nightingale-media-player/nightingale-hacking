@@ -33,6 +33,7 @@ CPP_SRCS = sbCOMArray.cpp \
            sbArray.cpp \
            sbPropertyBag.cpp \
            sbServiceManager.cpp \
+           sbWeakReference.cpp \
            sbXPCOMModule.cpp \
            $(NULL)
 

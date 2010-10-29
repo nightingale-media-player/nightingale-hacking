@@ -33,7 +33,7 @@
 #include <sbIMediaItem.h>
 #include <nsIClassInfo.h>
 #include <nsIRequestObserver.h>
-#include <nsWeakReference.h>
+#include <sbWeakReference.h>
 
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
@@ -44,7 +44,7 @@ class sbILocalDatabasePropertyCache;
 class sbILocalDatabaseResourcePropertyBag;
 class sbLocalDatabaseLibrary;
 
-class sbLocalDatabaseMediaItem : public nsSupportsWeakReference,
+class sbLocalDatabaseMediaItem : public sbSupportsWeakReference,
                                  public nsIClassInfo,
                                  public nsIRequestObserver,
                                  public sbILocalDatabaseMediaItem,

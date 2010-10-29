@@ -85,6 +85,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/albumart/public \
                      $(topsrcdir)/components/library/localdatabase/src \
                      $(topsrcdir)/components/moz/strings/src \
                      $(topsrcdir)/components/moz/threads/src \
+                     $(topsrcdir)/components/moz/xpcom/src \
                      $(topsrcdir)/components/property/src \
                      $(topsrcdir)/components/sqlbuilder/src \
                      $(NULL)

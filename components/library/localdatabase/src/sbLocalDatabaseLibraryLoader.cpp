@@ -574,22 +574,25 @@ sbLocalDatabaseLibraryLoader::PromptToDeleteLibraries()
   if (promptResult == 0) { 
     m_DeleteLibrariesAtShutdown = PR_TRUE;
 
-     // metric: user chose to delete corrupt library
-     nsCOMPtr<sbIMetrics> metrics =
-       do_CreateInstance("@songbirdnest.com/Songbird/Metrics;1", &rv);
-     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get metrics service");
-     
-     nsString metricsCategory = NS_LITERAL_STRING("app");
-     nsString metricsId = NS_LITERAL_STRING("library.error.reset");
-     rv = metrics->MetricsInc(metricsCategory, metricsId, EmptyString());
-     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to post metric");
+    // metric: user chose to delete corrupt library
+    nsCOMPtr<sbIMetrics> metrics =
+     do_CreateInstance("@songbirdnest.com/Songbird/Metrics;1", &rv);
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get metrics service");
 
-     // now attempt to quit/restart.
-     nsCOMPtr<nsIAppStartup> appStartup = 
-       (do_GetService(NS_APPSTARTUP_CONTRACTID, &rv));
-     NS_ENSURE_SUCCESS(rv, rv);
-  
-     appStartup->Quit(nsIAppStartup::eForceQuit | nsIAppStartup::eRestart); 
+    // Metrics may not be available.
+    if (metrics) {
+      nsString metricsCategory = NS_LITERAL_STRING("app");
+      nsString metricsId = NS_LITERAL_STRING("library.error.reset");
+      rv = metrics->MetricsInc(metricsCategory, metricsId, EmptyString());
+      NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to post metric");
+    }
+
+    // now attempt to quit/restart.
+    nsCOMPtr<nsIAppStartup> appStartup = 
+     (do_GetService(NS_APPSTARTUP_CONTRACTID, &rv));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    appStartup->Quit(nsIAppStartup::eForceQuit | nsIAppStartup::eRestart); 
   }
 
   return NS_OK;

@@ -26,7 +26,8 @@ DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@ \
-        @top_srcdir@/components/library/base/src/
+        @top_srcdir@/components/library/base/src/ \
+        @top_srcdir@/components/moz/xpcom/src/
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -86,6 +87,9 @@ CPP_SRCS = sbLocalDatabaseModule.cpp \
 # From components/library/base/src/
 CPP_SRCS += sbLibraryChangeset.cpp
 
+# From components/moz/xpcom/src/
+CPP_SRCS += sbWeakReference.cpp
+
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/dbengine/public \
                      $(DEPTH)/components/devices/base/public \
                      $(DEPTH)/components/devicesobsolete/base/public \
@@ -121,6 +125,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dbengine/public \
                      $(topsrcdir)/components/moz/strings/src \
                      $(topsrcdir)/components/moz/threadpoolservice/src \
                      $(topsrcdir)/components/moz/threads/src \
+                     $(topsrcdir)/components/moz/xpcom/src \
                      $(topsrcdir)/components/property/src \
                      $(topsrcdir)/components/sqlbuilder/src \
                      $(NULL)
