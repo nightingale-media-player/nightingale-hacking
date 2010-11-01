@@ -246,6 +246,10 @@ var playQueue = {
     this._playlist._dropOnTree(this._playlist.mediaListView.length,
                                Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER,
                                session);
+
+    // Stop propagation so the default drag and drop handler doesn't try to
+    // handle a drop that we already handled with _dropOnTree
+    aEvent.stopPropagation();
   },
 
   /**
