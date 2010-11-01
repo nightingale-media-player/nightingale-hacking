@@ -76,7 +76,7 @@
               <!-- Full screen button box -->
               <vbox id="osd_fullscreen_control_hbox" flex="0" pack="start">
                 <button id="full_screen_button"
-                        onmousedown="videoControlsController.toggleFullscreen();"/>
+                        onmouseup="videoControlsController.toggleFullscreen();"/>
               </vbox>
             </hbox>
 

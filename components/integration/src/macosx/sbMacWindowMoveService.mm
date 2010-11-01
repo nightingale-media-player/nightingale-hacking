@@ -156,11 +156,11 @@ static NSString *kSBWindowStoppedMovingNotification = @"SBWindowStoppedMoving";
 @interface SBWinMoveListenerContext : NSObject
 {
   SBISupportsOwner *mListener;       // strong
-  NSWindow         *mWatchedWindow;  // strong
+  NSView           *mWatchedView;    // strong
 }
 
 - (id)initWithListener:(sbIWindowMoveListener *)aListener
-                window:(NSWindow *)aWindow;
+                  view:(NSView *)aView;
 
 - (void)onWindowWillMove;
 - (void)onWindowDidStopMoving:(NSNotification *)aNotification;
@@ -171,11 +171,11 @@ static NSString *kSBWindowStoppedMovingNotification = @"SBWindowStoppedMoving";
 @implementation SBWinMoveListenerContext
 
 - (id)initWithListener:(sbIWindowMoveListener *)aListener
-                window:(NSWindow *)aWindow
+                  view:(NSView *)aView
 {
   if ((self = [super init])) {
     mListener = [[SBISupportsOwner alloc] initWithValue:aListener];
-    mWatchedWindow = [aWindow retain];
+    mWatchedView = [aView retain];
   }
 
   return self;
@@ -184,7 +184,7 @@ static NSString *kSBWindowStoppedMovingNotification = @"SBWindowStoppedMoving";
 - (void)dealloc
 {
   [mListener release];
-  [mWatchedWindow release];
+  [mWatchedView release];
   [super dealloc];
 }
 
@@ -201,7 +201,7 @@ static NSString *kSBWindowStoppedMovingNotification = @"SBWindowStoppedMoving";
   // |mouseUp:| event handler for the window class. This can be avoided by
   // patching XR to post an event when this event happens in the |NSWindow|
   // subclasses in the cocoa widget stuff.
-  MethodSwizzle([mWatchedWindow class],
+  MethodSwizzle([[mWatchedView window] class],
                 @selector(sendEvent:),
                 @selector(swizzledSendEvent:));
 
@@ -277,20 +277,26 @@ static NSString *kSBWindowStoppedMovingNotification = @"SBWindowStoppedMoving";
     [self startListening];
   }
 
+  // The NSWindow goes away when we go fullscreen.  Retain the contentView
+  // instead since that persists.
+  NSView *contentView = [aWindow contentView];
+
   SBWinMoveListenerContext *listenerContext =
     [[SBWinMoveListenerContext alloc] initWithListener:aListener
-                                                window:aWindow];
+                                                  view:contentView];
 
   [mListenerWinDict setObject:listenerContext
-                       forKey:[NSNumber numberWithInt:[aWindow hash]]];
+                       forKey:[NSNumber numberWithInt:[contentView hash]]];
 }
 
 - (void)stopObservingWindow:(NSWindow *)aWindow
                 forListener:(sbIWindowMoveListener *)aListener
 {
+  NSView *contentView = [aWindow contentView];
+
   // If this was the last window in the watch list, stop listening.
-  NSNumber *winHash = [NSNumber numberWithInt:[aWindow hash]];
-  [mListenerWinDict removeObjectForKey:winHash];
+  NSNumber *viewHash = [NSNumber numberWithInt:[contentView hash]];
+  [mListenerWinDict removeObjectForKey:viewHash];
 
   // If this was the last listener in the dictionary, stop listening to window
   // events for the app.
@@ -329,9 +335,11 @@ static NSString *kSBWindowStoppedMovingNotification = @"SBWindowStoppedMoving";
 {
   NSWindow *eventWindow = (NSWindow *)[aNotification object];
 
+  NSView *contentView = [eventWindow contentView];
+
   SBWinMoveListenerContext *listenerContext =
     (SBWinMoveListenerContext *)[mListenerWinDict objectForKey:
-      [NSNumber numberWithInt:[eventWindow hash]]];
+      [NSNumber numberWithInt:[contentView hash]]];
   if (listenerContext) {
     [listenerContext onWindowWillMove];
   }

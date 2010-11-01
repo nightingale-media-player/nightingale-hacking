@@ -325,8 +325,11 @@ sbOSDControlService.prototype =
                                  Ci.nsITimer.TYPE_ONE_SHOT);
 
     // if the osd is already visible, then all we need to do is reset the timer
-    if (this._osdControlsShowing)
+    // and make sure the controls are focused.
+    if (this._osdControlsShowing) {
+      this._osdWindow.focus();
       return;
+    }
     
     // Controls are showing
     this._osdControlsShowing = true;
@@ -349,7 +352,7 @@ sbOSDControlService.prototype =
 
       default:
         Components.utils.reportError(
-            "Invalid transition type passed into hideOSDControls()!");
+            "Invalid transition type passed into showOSDControls()!");
 
         // Just fall back to show instantly.
         transition = this._showInstantly;
