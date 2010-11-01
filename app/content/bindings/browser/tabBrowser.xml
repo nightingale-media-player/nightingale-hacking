@@ -486,6 +486,17 @@
             if (docTitle) {
               newTitle += docElement.getAttribute("titlepreface");
               newTitle += docTitle;
+
+              // Some title could be so long to push the menu off the edge.
+              // Set a length limit and determine the text that will be
+              // displayed.
+              var titleLimit = 50;
+              if (newTitle.length > titleLimit) {
+                newTitle = newTitle.substring(0, titleLimit);
+                // Add "..." to the end
+                newTitle += "\u2026";
+              }
+
               if (navigator.oscpu.indexOf("Mac OS X") != -1)
                 modifier = "";
               if (modifier)
