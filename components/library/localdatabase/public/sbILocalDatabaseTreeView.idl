@@ -56,3 +56,12 @@ interface sbILocalDatabaseTreeView : nsISupports
   readonly attribute boolean selectionIsAll;
   nsIStringEnumerator getSelectedValues();
 };
+
+%{C++
+
+// This notification is used to tell all local database treeviews to invalidate
+// and repaint.
+#define SB_INVALIDATE_ALL_TREEVIEWS_TOPIC "songbird-invalidate-all-treeviews"
+
+%}
+

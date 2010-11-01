@@ -30,6 +30,7 @@
 #include "sbSelectionListUtils.h"
 
 #include <nsIClassInfo.h>
+#include <nsIObserver.h>
 #include <nsITreeView.h>
 #include <nsITreeSelection.h>
 #include <nsIWeakReference.h>
@@ -76,6 +77,7 @@ class sbLocalDatabaseTreeViewState;
 
 class sbLocalDatabaseTreeView : public nsSupportsWeakReference,
                                 public nsIClassInfo,
+                                public nsIObserver,
                                 public sbILocalDatabaseGUIDArrayListener,
                                 public sbIMediaListViewTreeView,
                                 public sbILocalDatabaseTreeView,
@@ -93,6 +95,7 @@ class sbLocalDatabaseTreeView : public nsSupportsWeakReference,
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSICLASSINFO
+  NS_DECL_NSIOBSERVER
   NS_DECL_NSITREEVIEW
   NS_DECL_SBILOCALDATABASEGUIDARRAYLISTENER
   NS_DECL_SBIMEDIALISTVIEWTREEVIEW

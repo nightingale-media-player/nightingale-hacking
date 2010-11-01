@@ -34,6 +34,7 @@
 #include <nsIDOMElement.h>
 #include <nsIObjectOutputStream.h>
 #include <nsIObjectInputStream.h>
+#include <nsIObserverService.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIStringBundle.h>
 #include <nsIStringEnumerator.h>
@@ -193,19 +194,21 @@ sbLocalDatabaseTreeView::SelectionListGuidsEnumeratorCallback(PRUint32 aIndex,
   return NS_OK;
 }
 
-NS_IMPL_ISUPPORTS9(sbLocalDatabaseTreeView,
-                   nsIClassInfo,
-                   nsISupportsWeakReference,
-                   nsITreeView,
-                   sbILocalDatabaseGUIDArrayListener,
-                   sbILocalDatabaseTreeView,
-                   sbIMediaListViewTreeView,
-                   sbIMediacoreEventListener,
-                   sbIMediaListViewSelectionListener,
-                   sbIPlayQueueServiceListener)
+NS_IMPL_THREADSAFE_ISUPPORTS10(sbLocalDatabaseTreeView,
+                               nsIClassInfo,
+                               nsIObserver,
+                               nsISupportsWeakReference,
+                               nsITreeView,
+                               sbILocalDatabaseGUIDArrayListener,
+                               sbILocalDatabaseTreeView,
+                               sbIMediaListViewTreeView,
+                               sbIMediacoreEventListener,
+                               sbIMediaListViewSelectionListener,
+                               sbIPlayQueueServiceListener)
 
-NS_IMPL_CI_INTERFACE_GETTER8(sbLocalDatabaseTreeView,
+NS_IMPL_CI_INTERFACE_GETTER9(sbLocalDatabaseTreeView,
                              nsIClassInfo,
+                             nsIObserver,
                              nsITreeView,
                              sbILocalDatabaseGUIDArrayListener,
                              sbILocalDatabaseTreeView,
@@ -258,6 +261,14 @@ sbLocalDatabaseTreeView::~sbLocalDatabaseTreeView()
                         &rv);
     if (NS_SUCCEEDED(rv))
       mViewSelection->RemoveListener(selectionListener);
+  }
+
+  // Remove observer for treeview invalidations
+  nsCOMPtr<nsIObserverService> observerService =
+    do_GetService("@mozilla.org/observer-service;1", &rv);
+
+  if (NS_SUCCEEDED(rv)) {
+    observerService->RemoveObserver(this, SB_INVALIDATE_ALL_TREEVIEWS_TOPIC);
   }
 
   NS_ASSERTION(!mIsListeningToPlayback, "Still listening when dtor called");
@@ -461,6 +472,16 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
     // don't attempt to set play queue status properties
     mPlayQueueService = nsnull;
   }
+
+  // Add observer for treeview invalidations
+  nsCOMPtr<nsIObserverService> observerService =
+    do_GetService("@mozilla.org/observer-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = observerService->AddObserver(this,
+                                    SB_INVALIDATE_ALL_TREEVIEWS_TOPIC,
+                                    PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -2781,6 +2802,23 @@ sbLocalDatabaseTreeView::OnIndexUpdated(PRUint32 aToIndex)
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
+  return NS_OK;
+}
+
+// nsIObserver
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::Observe(nsISupports* aSubject,
+                                 const char* aTopic,
+                                 const PRUnichar* aData)
+{
+  NS_ENSURE_ARG_POINTER(aTopic);
+  nsresult rv;
+
+  if (mTreeBoxObject && !strcmp(SB_INVALIDATE_ALL_TREEVIEWS_TOPIC, aTopic)) {
+    rv = mTreeBoxObject->Invalidate();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   return NS_OK;
 }
 
