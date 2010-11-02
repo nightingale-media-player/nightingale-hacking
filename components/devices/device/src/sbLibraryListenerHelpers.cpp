@@ -274,7 +274,7 @@ sbBaseDeviceLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
 
   // Hide the item. It is the responsibility of the device to make the item
   // visible when the transfer is successful.
-  // Always listen to all added lists.
+  // Listen to all added lists unless hidden.
   nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem);
   if (list) {
     rv = mDevice->ListenToList(list);
@@ -288,7 +288,7 @@ sbBaseDeviceLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
   //XXXAus: Before adding to queue, make sure it doesn't come from
   //another device. Ask DeviceManager for the device library
   //containing this item.
-  if (list) {
+  if (list && !IsItemHidden(list)) {
     // new playlist
     rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_NEW_PLAYLIST,
                               aMediaItem, aMediaList, aIndex);
