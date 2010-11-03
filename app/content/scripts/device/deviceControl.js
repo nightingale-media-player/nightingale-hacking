@@ -103,7 +103,8 @@ deviceControlWidget.prototype = {
   //   _deviceListenerAdded     True if a device listener has been added.
   //   _currentState            Current device operational state.
   //   _currentReadOnly         Current device read only state.
-  //   _currentMgmtType         Current device management type array.
+  //   _currentSyncMode         Current device synchronization mode.
+  //   _currentImageMgmtType    Current device image sync management type.
   //
 
   _widget: null,
@@ -114,7 +115,8 @@ deviceControlWidget.prototype = {
   _deviceListenerAdded: false,
   _currentState: Ci.sbIDevice.STATE_IDLE,
   _currentReadOnly: false,
-  _currentMgmtType: Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL,
+  _currentSyncMode: Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL,
+  _currentImageMgmtType: Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE,
 
 
   //----------------------------------------------------------------------------
@@ -656,13 +658,20 @@ deviceControlWidget.prototype = {
     var supportsPlaylist = this._supportsPlaylist();
     var msc = (this._device.parameters.getProperty("DeviceType") == "MSCUSB");
 
-    var mgmtType = Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
-    if (this._deviceLibrary)
-      mgmtType = this._deviceLibrary.tempSyncSettings.syncMode;
+    var syncMode = Ci.sbIDeviceLibrarySyncSettings.SYNC_MODE_MANUAL;
+    var imagesMgmtType = Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE;
+    if (this._deviceLibrary) {
+      let tempSettings = this._deviceLibrary.tempSyncSettings;
+      syncMode = tempSettings.syncMode;
+      imagesMgmtType =
+        tempSettings.getMediaSettings(this._deviceLibrary.MEDIATYPE_IMAGE)
+                    .mgmtType;
+    }
 
     // Do nothing if no device state changed and update is not forced.
     if (!aForce &&
-        (this._currentMgmtType == mgmtType) &&
+        (this._currentSyncMode == syncMode) &&
+        (this._currentImageMgmtType == imagesMgmtType) &&
         (this._currentState == state) &&
         (this._currentReadOnly == readOnly) &&
         (this._currentSupportsReformat == supportsReformat) &&
@@ -672,7 +681,8 @@ deviceControlWidget.prototype = {
     }
 
     // Update the current state.
-    this._currentMgmtType = mgmtType;
+    this._currentSyncMode = syncMode;
+    this._currentImageMgmtType = imagesMgmtType;
     this._currentState = state;
     this._currentReadOnly = readOnly;
     this._currentSupportsReformat = supportsReformat;

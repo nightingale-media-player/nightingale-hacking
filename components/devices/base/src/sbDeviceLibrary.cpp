@@ -1295,9 +1295,27 @@ sbDeviceLibrary::Sync()
                        &isSupported);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Do not proceed to image sync request submission if image is not supported.
-  if (!isSupported)
+  nsCOMPtr<nsIVariant> var;
+  rv = mDevice->GetPreference(NS_LITERAL_STRING(PREF_IMAGESYNC_ENABLED),
+                              getter_AddRefs(var));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint16 dataType = 0;
+  rv = var->GetDataType(&dataType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool imageSyncEnabled = PR_FALSE;
+  // The preference is only available after user changes the image sync settings
+  if (dataType == nsIDataType::VTYPE_BOOL) {
+    rv = var->GetAsBool(&imageSyncEnabled);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Do not proceed to image sync request submission if image is not supported
+  // or not enabled at all.
+  if (!isSupported || !imageSyncEnabled) {
     return NS_OK;
+  }
 
   // If the user has enabled image sync, trigger it after the audio/video sync
   // If the user has disabled image sync, trigger it to do the removal.
@@ -1659,7 +1677,7 @@ sbDeviceLibrary::AddItem(sbIMediaItem *aMediaItem,
                          sbIMediaItem ** aNewMediaItem)
 {
   NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
-  SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeAdd(aMediaItem, 
+  SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeAdd(aMediaItem,
                                                  &mShouldProcceed));
 
   if (mPerformAction) {
@@ -1709,8 +1727,8 @@ sbDeviceLibrary::AddSome(nsISimpleEnumerator *aMediaItems)
 /*
  * See sbIMediaList
  */
-NS_IMETHODIMP 
-sbDeviceLibrary::AddSomeAsync(nsISimpleEnumerator *aMediaItems, 
+NS_IMETHODIMP
+sbDeviceLibrary::AddSomeAsync(nsISimpleEnumerator *aMediaItems,
                               sbIMediaListAsyncListener *aListener)
 {
   NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");

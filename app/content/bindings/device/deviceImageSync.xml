@@ -182,6 +182,13 @@
             return;
           }
 
+          // We do not want to mess with photos initially if the sync check box
+          // is not selected.
+          let syncImagesCheckBox =
+            this._getElement("content_management_checkbox");
+          if (!syncImagesCheckBox.checked)
+            this.device.setPreference("imagesync.enabled", false);
+
           // The file extension list that device supports.
           let fileExtensions = capabilities.getSupportedFileExtensions(
                                               this.device,
@@ -580,6 +587,9 @@
               this._getElement("content_management_checkbox").checked = false;
               shouldUpdatePrefs = false;
             }
+
+            // Set preference accordingly to ignore or trigger the image sync
+            this.device.setPreference("imagesync.enabled", buttonPressed == 0);
           }
           else {
             var buttonPressed = prompter.confirmEx(
@@ -594,11 +604,8 @@
               null,
               {});
 
-            if (buttonPressed != 0) {
-              // The user did not accept unsync, restore the checkbox state.
-              this._getElement("content_management_checkbox").checked = true;
-              shouldUpdatePrefs = false;
-            }
+            // Set preference accordingly to ignore or trigger the image sync
+            this.device.setPreference("imagesync.enabled", buttonPressed == 0);
           }
 
           if (shouldUpdatePrefs) {
