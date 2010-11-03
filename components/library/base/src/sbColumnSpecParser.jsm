@@ -175,23 +175,7 @@ function ColumnSpecParser(aMediaList, aPlaylist, aMask, aConstraint) {
                                    SBProperties.comment, 291,
                                   ].join(" "),
                                   self.ORIGIN_DEFAULT);
-      case "audio":
-        // device "Music" node displays the track source column by default.
-        deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
-                          .getService(Ci.sbIDeviceManager2);
-        var device = deviceManager.getDeviceForItem(aMediaList);
-        if (device) {
-          return self._getColumnMap([SBProperties.trackName, 229,
-                                     SBProperties.duration, 45,
-                                     SBProperties.artistName, 137, "a",
-                                     SBProperties.albumName, 210,
-                                     SBProperties.trackType, 78,
-                                     SBProperties.genre, 90,
-                                     SBProperties.rating, 90,
-                                    ].join(" "),
-                                    self.ORIGIN_DEFAULT);
-        }
-        // Not device means no source column, fall back to default.
+      // Show the source column by default except for video
       default:
         return self._getColumnMap([SBProperties.trackName, 229,
                                    SBProperties.duration, 45,
@@ -199,6 +183,7 @@ function ColumnSpecParser(aMediaList, aPlaylist, aMask, aConstraint) {
                                    SBProperties.albumName, 210,
                                    SBProperties.genre, 90,
                                    SBProperties.rating, 90,
+                                   SBProperties.trackType, 78,
                                   ].join(" "),
                                   self.ORIGIN_DEFAULT);
     }
