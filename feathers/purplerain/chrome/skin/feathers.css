@@ -684,7 +684,6 @@ sb-servicepane-group toolbarbutton.clickhold-button {
   padding: 0;
   border: 0;
   -moz-border-radius: 0;
-  border-radius: 0;
 }
 
 sb-servicepane-group[id="SB:Playlists"] toolbarbutton {
