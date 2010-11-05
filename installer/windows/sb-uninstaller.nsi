@@ -63,6 +63,7 @@ Section "Uninstall"
       Call un.RemoveBrandingRegistryKeys
    ${EndIf}
 
+   Call un.RDSConfigRemove
    Call un.RemoveCdrip
    Call un.RemoveAppRegistryKeys
 
@@ -129,6 +130,14 @@ Function un.RemoveCdrip
 
    DeleteRegKey HKLM "$RootAppRegistryKey\${CdripRegKey}"
    DeleteRegKey /ifempty HKLM "${RootAppRegistryKeyBase}\${CdripDriverInstallations}"
+FunctionEnd
+
+Function un.RDSConfigRemove
+   ; We mostly ignore the return value because there's not much we can do!
+   ExecWait '"$INSTDIR\${RDSConfigEXE}" remove' $0
+   ${If} $InstallerMode == "debug"
+      MessageBox MB_OK "$INSTDIR\${RDSConfigEXE} returned $0"
+   ${EndIf}
 FunctionEnd
 
 Function un.RemoveAppRegistryKeys

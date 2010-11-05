@@ -82,6 +82,7 @@ Section "-Application" Section1
       ${EndIf}
 
       Call InstallCdrip
+      Call InstallRDSConfig
    ${EndIf}
 
    IfRebootFlag 0 noReboot
@@ -251,6 +252,23 @@ CdripHelperOut:
    Pop $1
    Pop $0
 FunctionEnd
+
+Function InstallRDSConfig
+   ExecWait '"$INSTDIR\${RDSConfigEXE}" install' $0
+   
+   IfErrors RDSConfigErrors
+
+   ${If} $0 != 0
+      RDSConfigErrors:
+      SetErrors
+      DetailPrint "$INSTDIR\${RDSConfigEXE} install failed: $0"
+
+      ${If} $InstallerMode == "debug"
+         MessageBox MB_OK "$INSTDIR\${RDSConfigEXE} install failed: $0"
+      ${EndIf}
+   ${EndIf}
+FunctionEnd
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Installer Helper Functions

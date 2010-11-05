@@ -29,6 +29,7 @@
 !define CdripHelperEXE        "cdriphelper.exe"
 !define CdripDriverInstallations "CdripDriverInstallations"
 !define CdripServiceRegKey    "SYSTEM\CurrentControlSet\Services\GEARAspiWDM"
+!define RDSConfigEXE          "rdsconfig.exe"
 
 !define DistHelperLog         "disthelper.log"
 

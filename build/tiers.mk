@@ -115,7 +115,7 @@ tier_extensions_dirs = \
    $(NULL)
 
 ifdef HAS_EXTRAS
-   tier_extensions_dirs += extras/extensions
+   tier_extensions_dirs += extras
 endif
 
 tier_branding_dirs = \
