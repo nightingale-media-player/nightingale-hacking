@@ -98,6 +98,7 @@ const WINDOWTYPE_SONGBIRD_CORE        = "Songbird:Core";
 Cu.import("resource://app/jsmodules/RDFHelper.jsm");
 Cu.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
+Cu.import("resource://app/jsmodules/PlatformUtils.jsm");
 
 /**
  * sbISkinDescription
@@ -284,8 +285,8 @@ AddonMetadataReader.prototype = {
           errorList.push("layoutUrl was missing or incorrect.");
           continue;
         }
-  
-        var showChrome = false;
+
+        var showChrome = (PlatformUtils.platformString == "Darwin");
         if (compatibleLayout.showChrome && 
             compatibleLayout.showChrome[0] == "true") {
           showChrome = true;

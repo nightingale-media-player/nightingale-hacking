@@ -29,12 +29,6 @@
         <songbird:internalName>gonzo</songbird:internalName>
         <songbird:compatibleLayout>
           <Description>
-            <songbird:layoutURL>chrome://gonzo/content/xul/mainplayer.xul</songbird:layoutURL>
-#ifdef XP_MACOSX
-            <songbird:showChrome>true</songbird:showChrome>
-#else
-            <songbird:showChrome>false</songbird:showChrome>
-#endif
             <songbird:onTop>false</songbird:onTop>
           </Description>
           <Description>
