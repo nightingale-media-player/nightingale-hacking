@@ -48,7 +48,7 @@ interface sbIServicePaneNodeListener;
  * \interface sbIServicePaneNode
  * \brief The interface to interact with a particular node in the service pane
  */
-[scriptable, uuid(040928f0-a9b8-11df-94e2-0800200c9a66)]
+[scriptable, uuid(7515c2f0-17cf-480e-bf15-8eb1f168783b)]
 interface sbIServicePaneNode : nsISupports
 {
   /* \brief the uri of this node as a string */
@@ -61,6 +61,14 @@ interface sbIServicePaneNode : nsISupports
   attribute AString className;
   /* \brief the URL to load when the node is clicked on in the tree */
   attribute AString url;
+
+  /**
+   * \brief A prefix for URLs associated with this node. This prefix is used to
+   *        test urls when sbIServicePaneService.URL_MATCH_PREFIX is used with
+   *        sbIServicePaneService.getNodeForURL.
+   */
+  attribute AString contentPrefix;
+
   /* \brief the URL of the image to display in the tree */
   attribute AString image;
   /* \brief the unlocalized text for the name of the node */
@@ -225,7 +233,7 @@ interface sbIServicePaneListener : nsISupports {
 *
 * @halfbaked
 */
-[scriptable, uuid(967fbd86-1dd1-11b2-8a02-c4a50bae17e2)]
+[scriptable, uuid(47704d11-ee27-458f-8baf-adc644e629d4)]
 interface sbIServicePaneService : nsISupports
 {
   /**
@@ -262,11 +270,30 @@ interface sbIServicePaneService : nsISupports
    */
   sbIServicePaneNode getNode(in AString aId);
 
+
   /* \brief Get the first node object for the given url
    * \param aURL the url of the desired node
+   * \param aMatchLevel the desired level to test url matches. This may be set
+   *                    to URL_MATCH_EXACT or URL_MATCH_PREFIX. The
+   *                    default value is URL_MATCH_EXACT. See comments below for
+   *                    usage.
    * \return node object, or null if it couldn't be found
    */
-  sbIServicePaneNode getNodeForURL(in AString aURL);
+  sbIServicePaneNode getNodeForURL(in AString aURL,
+                                   [optional] in unsigned long aMatchLevel);
+
+  /**
+   * URL_MATCH_EXACT only matches a service pane node if its url atribute is an
+   *                 exact string match with the string url spec passed into
+   *                 getNodeForURL.
+   *
+   * URL_MATCH_PREFIX is less restrictive than URL_MATCH_EXACT. It matches a
+   *                  service pane node if aUrl begins with the node's
+   *                  contentPrefix attribute OR if the node's url attribute
+   *                  matches aUrl exactly.
+   */
+  const unsigned long URL_MATCH_EXACT = 0;
+  const unsigned long URL_MATCH_PREFIX = 1;
 
   /* \brief Get all nodes with the given attribute value
    * \param aNamespace the attribute namespace

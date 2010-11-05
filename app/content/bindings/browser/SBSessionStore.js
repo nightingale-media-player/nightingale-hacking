@@ -139,7 +139,23 @@ var SBSessionStore = {
           }
         // For all other pages, just keep the URI
         } else {
-          urls.push(tab.linkedBrowser.currentURI.spec);
+          // Check to see if the url has a prefix that matches a service pane
+          // node, and store the node url instead of the actual loaded page.
+          // This allows service pane nodes to direct session restore to a
+          // useful page instead of something we don't want to restore like
+          // an error page.
+          let url = tab.linkedBrowser.currentURI.spec;
+          let sps = Cc["@songbirdnest.com/servicepane/service;1"]
+                      .getService(Ci.sbIServicePaneService);
+          let node =
+              sps.getNodeForURL(url, Ci.sbIServicePaneService.URL_MATCH_PREFIX);
+
+          // Set the node url if we found a node. Otherwise just use url of the
+          // page that loaded.
+          if (node) {
+            url = node.url;
+          }
+          urls.push(url);
         }
       } catch (e) {
         Components.utils.reportError(e);

@@ -235,7 +235,8 @@ var LibraryUtils = {
     var service =
       Components.classes['@songbirdnest.com/servicepane/service;1']
       .getService(Components.interfaces.sbIServicePaneService);
-    var node = service.getNodeForURL(url);
+    var node = service.getNodeForURL(url,
+                                     Ci.sbIServicePaneService.URL_MATCH_PREFIX);
     if (!node) return false;
     return true;
   }

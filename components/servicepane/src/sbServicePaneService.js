@@ -176,7 +176,7 @@ ServicePaneNode.prototype = {
 
     // Update service pane data
     let notificationMethod = (aValue ? "_registerNode" : "_unregisterNode");
-    for each (let attr in ["id", "url"])
+    for each (let attr in ["id", "url", "contentPrefix"])
       if (attr in this._attributes)
         this._servicePane[notificationMethod](attr, this._attributes[attr], this);
 
@@ -195,7 +195,7 @@ ServicePaneNode.prototype = {
   },
 
   setAttribute: function(aName, aValue) {
-    if (this.isInTree && (aName == "id" || aName == "url")) {
+    if (this.isInTree && (aName == "id" || aName == "url" || aName == "contentPrefix")) {
       if (aName in this._attributes)
         this._servicePane._unregisterNode(aName, this._attributes[aName], this);
       if (aValue !== null)
@@ -223,7 +223,7 @@ ServicePaneNode.prototype = {
   },
 
   removeAttribute: function(aName) {
-    if (this.isInTree && (aName == "id" || aName == "url") &&
+    if (this.isInTree && (aName == "id" || aName == "url" || aName == "contentPrefix") &&
                           aName in this._attributes) {
       this._servicePane._unregisterNode(aName, this._attributes[aName], this);
     }
@@ -534,6 +534,8 @@ ServicePaneNode.prototype = {
   set className(aValue) this.setAttribute("class", aValue),
   get url() this.getAttribute("url"),
   set url(aValue) this.setAttribute("url", aValue),
+  get contentPrefix() this.getAttribute("contentPrefix"),
+  set contentPrefix(aValue) this.setAttribute("contentPrefix", aValue),
   get image() this.getAttribute("image"),
   set image(aValue) this.setAttribute("image", aValue),
   get name() this.getAttribute("name"),
@@ -592,6 +594,7 @@ function ServicePaneService () {
 
   this._nodesById = {__proto__: null};
   this._nodesByUrl = {__proto__: null};
+  this._nodesByContentPrefix = {__proto__: null};
   this._root = new ServicePaneNode(this, function(aNode1, aNode2) {
     // Nodes with lower weight go first
     let weight1 = parseInt(aNode1.getAttributeNS(SP, 'Weight')) || 0;
@@ -756,12 +759,19 @@ ServicePaneService.prototype = {
   _registerNode: function ServicePaneService__registerNode(
                                                       aAttr, aValue, aNode) {
     let table;
-    if (aAttr == "id")
-      table = this._nodesById;
-    else if (aAttr == "url")
-      table = this._nodesByUrl;
-    else
-      return;
+    switch (aAttr) {
+      case "id":
+        table = this._nodesById;
+        break;
+      case "url":
+        table = this._nodesByUrl;
+        break;
+      case "contentPrefix":
+        table = this._nodesByContentPrefix;
+        break;
+      default:
+        return;
+    }
 
     if (!(aValue in table))
       table[aValue] = [];
@@ -772,12 +782,19 @@ ServicePaneService.prototype = {
   _unregisterNode: function ServicePaneService__unregisterNode(
                                                       aAttr, aValue, aNode) {
     let table;
-    if (aAttr == "id")
-      table = this._nodesById;
-    else if (aAttr == "url")
-      table = this._nodesByUrl;
-    else
-      return;
+    switch (aAttr) {
+      case "id":
+        table = this._nodesById;
+        break;
+      case "url":
+        table = this._nodesByUrl;
+        break;
+      case "contentPrefix":
+        table = this._nodesByContentPrefix;
+        break;
+      default:
+        return;
+    }
 
     if (aValue in table)
     {
@@ -817,11 +834,38 @@ ServicePaneService.prototype = {
       return null;
   },
 
-  getNodeForURL: function ServicePaneService_getNodeForURL(aUrl) {
-    if (aUrl in this._nodesByUrl && this._nodesByUrl[aUrl].length)
+  getNodeForURL: function ServicePaneService_getNodeForURL(aUrl, aMatchLevel) {
+
+    // Check to see if aUrl (a string url spec) begins with a node's
+    // contentPrefix. Only do this if the caller specifically requests a
+    // prefix match.
+    var prefixMatch = null;
+    if (!(typeof(aMatchLevel) == 'undefined') &&
+        aMatchLevel == Ci.sbIServicePaneService.URL_MATCH_PREFIX)
+    {
+      for (let prefix in this._nodesByContentPrefix) {
+        if (aUrl.indexOf(prefix) == 0 &&
+            this._nodesByContentPrefix[prefix].length)
+        {
+          prefixMatch = this._nodesByContentPrefix[prefix][0];
+        }
+      }
+    }
+
+    // Check for an exact url match. This is done for both URL_MATCH_PREFIX and
+    // URL_MATCH_EXACT intentionally so that calls using URL_MATCH_PREFIX will
+    // still find a node if the url attribute is an exact match (even in the
+    // absence of a contentPrefix attribute)
+    if (aUrl in this._nodesByUrl && this._nodesByUrl[aUrl].length) {
+      // We prefer exact matches to prefix matches
       return this._nodesByUrl[aUrl][0];
-    else
-      return null;
+    }
+    else {
+      // We didn't find an exact match. Return a prefix match if we found one.
+      // prefixMatch will always be null if the caller didn't pass in
+      // aMatchLevel or they passed URL_MATCH_EXACT
+      return prefixMatch;
+    }
   },
 
   getNodesByAttributeNS: function ServicePaneService_getNodesByAttributeNS(
