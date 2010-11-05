@@ -59,9 +59,11 @@ const STORE_URL = 'http://7digital.songbirdnest.com';
 const STORE_LOADING_STUB_PATH = "/client";
 const STORE_RECOMMENDATIONS_PATH = '/recommendations/client';
 const STORE_CONFIG_PROPS = 'chrome://7digital/content/config.properties';
+const STORE_ICON = "chrome://7digital/skin/servicepane-icon.png";
 // What's the search engine's name?
-const SEARCHENGINE_NAME = '7digital'; // Note - must match ShortName in:
-const SEARCHENGINE_URL = 'chrome://7digital/content/7digital-search.xml';
+const SEARCHENGINE_NAME = '7digital';
+const SEARCHENGINE_URL_TEMPLATE =
+    "http://7digital.songbirdnest.com/searches/{searchTerms}";
 // What's the permission for?
 const PERMISSION_SCOPE = 'http://7digital.songbirdnest.com/';
 // What's the service pane's namespace
@@ -213,7 +215,7 @@ function sb7Digital_install() {
     var myNode = this._servicePaneService.createNode();
     myNode.id = NODE_7DIGITAL;
     myNode.url = this.create7DigitalURL(STORE_LOADING_STUB_PATH);
-    myNode.image = 'chrome://7digital/skin/servicepane-icon.png';
+    myNode.image = STORE_ICON;
     myNode.className = '7digital history';
     myNode.searchtype = "external";
     myNode.name = '&servicepane.7digital';
@@ -249,9 +251,28 @@ function sb7Digital_install() {
     // if we don't already have the search engine...
     if (!this._searchService.getEngineByName(SEARCHENGINE_NAME)) {
       // install the engine
-      this._searchService.addEngine(SEARCHENGINE_URL,
-          Ci.nsISearchEngine.DATA_XML, 
-          'chrome://7digital/skin/servicepane-icon.png', false);
+      let stringBundle = Cc["@mozilla.org/intl/stringbundle;1"]
+                           .getService(Ci.nsIStringBundleService)
+                           .createBundle(STRINGBUNDLE);
+      // Make the store search description match the service pane node
+      let storeDescription = SBString('servicepane.7digital',
+                                      null,
+                                      stringBundle);
+      this._searchService
+          .addEngineWithDetails(SEARCHENGINE_NAME,
+                                STORE_ICON, // use service pane icon for search
+                                SEARCHENGINE_NAME,
+                                storeDescription,
+                                "GET",
+                                SEARCHENGINE_URL_TEMPLATE);
+
+      let engine = this._searchService.getEngineByName(SEARCHENGINE_NAME);
+
+      // Add the oauth consumer key to all search submissions from this engine
+      let consumerKey = (new SBStringBundle(STORE_CONFIG_PROPS))
+                        .get("7DigitalAPIKey");
+      engine.addParam("oauth_consumer_key", consumerKey, null);
+
       // start a timer to try to set the engine as the default
       this._firstRunTimer = Cc['@mozilla.org/timer;1']
         .createInstance(Ci.nsITimer);
