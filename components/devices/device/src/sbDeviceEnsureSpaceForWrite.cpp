@@ -98,19 +98,26 @@ sbDeviceEnsureSpaceForWrite::BuildItemsToWrite() {
 
   PRInt32 order = 0;
   Batch::iterator const batchEnd = mBatch.end();
-  nsTArray<Batch::iterator> requestErrorList;
+  typedef std::vector<nsRefPtr<sbBaseDevice::TransferRequest> >
+    RequestErrorList;
+  RequestErrorList requestErrorList;
+  PRUint32 count = mBatch.size();
   for (Batch::iterator iter = mBatch.begin(); iter != batchEnd; ++iter) {
     // Add item to write list.  Collect errors for later processing.
     rv = AddItemToWrite(iter, order);
-    if (NS_FAILED(rv))
-      requestErrorList.AppendElement(iter);
+    if (NS_FAILED(rv)) {
+      requestErrorList.push_back(*iter);
+      *iter = nsnull;
+    }
   }
 
   // Process any errors.
-  for (PRUint32 i = 0; i < requestErrorList.Length(); ++i) {
+  for (RequestErrorList::const_iterator errorListIter =
+         requestErrorList.begin();
+      errorListIter != requestErrorList.end();
+       ++errorListIter) {
     // Get the next error.
-    Batch::iterator batchIter = requestErrorList[i];
-    sbBaseDevice::TransferRequest* request = *batchIter;
+    sbBaseDevice::TransferRequest* request = *errorListIter;
 
     // Dispatch an error event.
     mDevice->CreateAndDispatchEvent
@@ -118,15 +125,17 @@ sbDeviceEnsureSpaceForWrite::BuildItemsToWrite() {
                 sbNewVariant(request->item),
                 PR_TRUE);
 
-    // Remove request library item and remove request from batch.
-    Batch::iterator nextBatchIter = batchIter;
-    ++nextBatchIter;
-    mDevice->RemoveLibraryItems(batchIter, nextBatchIter);
-    mBatch.erase(batchIter);
   }
 
+  // Remove the items that had errors from the device library
+  mDevice->RemoveLibraryItems(requestErrorList.begin(),
+                              requestErrorList.end());
+
+  // Remove all the entries that errors occurred
+  mBatch.remove(nsRefPtr<sbBaseDevice::TransferRequest>(nsnull));
+
   // Update batch if there were any errors.
-  if (!requestErrorList.IsEmpty()) {
+  if (!requestErrorList.empty()) {
     SBUpdateBatchCounts(mBatch);
     SBUpdateBatchIndex(mBatch);
   }
