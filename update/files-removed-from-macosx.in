@@ -381,6 +381,8 @@
 ./Contents/Frameworks/XUL.framework/res/cursors/.#arrowN.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/.svn/all-wcprops
 ./Contents/Frameworks/XUL.framework/res/cursors/.svn/format
+./Contents/Frameworks/XUL.framework/res/broken-image.gif
+./Contents/Frameworks/XUL.framework/res/loading-image.gif
 ./Contents/Frameworks/XUL.framework/extensions/inspector@mozilla.org/chrome.manifest
 ./Contents/Frameworks/XUL.framework/extensions/inspector@mozilla.org/chrome/inspector.jar
 ./Contents/Frameworks/XUL.framework/extensions/inspector@mozilla.org/components/inspector-cmdline.js
@@ -552,6 +554,9 @@
 ./Contents/Frameworks/XUL.framework/components/necko_socket.xpt
 ./Contents/Frameworks/XUL.framework/components/necko_strconv.xpt
 ./Contents/Frameworks/XUL.framework/components/necko_viewsource.xpt
+./Contents/Frameworks/XUL.framework/components/nsDictionary.js
+./Contents/Frameworks/XUL.framework/components/nsResetPref.js
+./Contents/Frameworks/XUL.framework/components/nsXmlRpcClient.js
 ./Contents/Frameworks/XUL.framework/components/oji.xpt
 ./Contents/Frameworks/XUL.framework/components/parentalcontrols.xpt
 ./Contents/Frameworks/XUL.framework/components/pipboot.xpt
@@ -609,7 +614,11 @@
 ./Contents/Frameworks/XUL.framework/run-mozilla.sh
 ./Contents/Frameworks/XUL.framework/nsinstall
 ./Contents/Frameworks/XUL.framework/ssltunnel
+./Contents/Frameworks/XUL.framework/mangle
+./Contents/Frameworks/XUL.framework/libwidget.rsrc
 ./Contents/Resources/components/browsersearch.xpt
 ./Contents/Resources/components/exthelper.xpt 
 ./Contents/Resources/components/nsSearchService.js
 ./Contents/Resources/components/nsSearchSuggestions.js
+./Contents/Frameworks/XUL.framework/modules/JSON.jsm
+./Contents/Frameworks/XUL.framework/plugins/Default Plugin.plugin

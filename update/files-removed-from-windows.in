@@ -11,6 +11,7 @@
 ./xulrunner/msvcr80.dll
 ./xulrunner/msvcp80.dll
 ./xulrunner/Microsoft.VC80.CRT.manifest
+./xulrunner/mangle.exe
 ./testharness/watchfolders/files/moverename/renamedFile.mp3
 ./testharness/watchfolders/files/moverename/individualMovedFile.mp3
 ./testharness/watchfolders/files/moverename/dir3/random.txt
