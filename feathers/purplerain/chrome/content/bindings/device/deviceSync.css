@@ -66,10 +66,6 @@ sb-device-image-sync[disabled="true"] label[sbid="sync_images_supported_formats"
   opacity: .5;
 }
 
-hbox[sbid="content_management_header_background"] {
-  background-color: rgb(74,73,79);
-}
-
 checkbox[sbid="content_management_checkbox"] {
   padding: 3px;
 }
@@ -80,7 +76,6 @@ checkbox[sbid="content_management_checkbox"] label {
 }
 
 label[sbid="sync_images_supported_formats"] {
-  color: rgb(170, 168, 179);
   font-size: 11px;
 }
 

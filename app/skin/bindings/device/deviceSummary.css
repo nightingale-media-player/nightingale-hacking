@@ -22,6 +22,9 @@
  *=END SONGBIRD GPL
  */
 
+/* get the feather's device css rules */
+@import url('chrome://songbird/skin/device.css');
+
 .scrollable {
   overflow: auto;
 }

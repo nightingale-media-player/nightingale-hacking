@@ -113,10 +113,3 @@ stack.sb-eq-band-slider {
   margin : 0px;
   padding : 0px;
 }
-
-.dialog-button-box {
-  background-image:url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
-  background-repeat:repeat-x;
-  background-position:left top;
-  background-color: rgb(39,37,49);
-}

@@ -46,7 +46,6 @@ TABLE OF CONTENTS
 > NAV BAR
 > DISPLAY PANES
 > SPLITTERS
-> DEVICE SUMMARY PAGE
 > FIRST RUN WIZARD
 > TRACK EDITOR
 > MEDIACORE ERROR DIALOG
@@ -483,6 +482,11 @@ statusbar {
 sb-displaypane-button > button {
   border-right: none;
   border-left: none;
+}
+
+.sb-status-bar-text,
+.statusbarpanel-text {
+  color: rgb(202,202,205);
 }
 
 
@@ -1072,9 +1076,13 @@ sb-servicepane-node.active > vbox > hbox.servicepane-node-info > stack > hbox > 
 /******************************************************************************
 * DISPLAY PANES
 ******************************************************************************/
+.empty{
+  background-color: rgb(54,52,63);
+}
+
 .empty-message {
   -moz-border-radius:8px;
-  background-color:rgb(54,52,63);;
+  background-color:rgb(54,52,63);
   color: rgb(212,210,221);
 }
 
@@ -1206,178 +1214,6 @@ sb-displaypane-splitter[orient="horizontal"] > stack > box > #dropdown-button {
 }
 
 
-
-/******************************************************************************
-* DEVICE SUMMARY PAGE
-*
-* The page that is displayed when the device node is clicked on - iPod, MTP
-******************************************************************************/
-window > vbox#main_box {
-  overflow: auto;
-}
-
-sb-device-info-panel {
-  border-bottom: 1px solid rgb(67,65,76);
-}
-
-sb-device-info-panel[collapsed="true"] {
-  border-bottom: 0px;
-}
-
-sb-device-managetabs {
-  margin-left: 10px;
-  margin-right: 10px;
-  margin-bottom: 12px;
-}
-
-/* the top half of the summary page + background for tabs (ipod only) */
-#overall_device_info_box,
-#device_management_tabs {
-  background-color: rgb(43,41,54);
-}
-/* Override the shadow from generic-bar with our own device one */
-#overall_device_info_box > #sb-device-progress > hbox.generic-bar {
-  background-image: url(chrome://songbird/skin/device/bg-device-screen.png);
-  background-color: rgb(54,52,63);
-  border-bottom: 1px solid rgb(62,60,71);
-}
-#device_management_tabs > tab[selected] {
-  border-bottom: none;
-}
-
-#device-icon {
-  margin-right: 2px;
-}
-
-#device-name {
-  margin-top: -1px;
-  margin-left: -3px;
-}
-
-#volume-selector {
-  min-width: 164px;
-  margin-top: 2px;
-  margin-bottom: 4px;
-}
-
-.eject-info-buttons {
-  margin: 0px 6px 0px 0px;
-  padding: 0px;
-}
-
-.device-capacity-bar-box {
-  margin-left: 1px;
-}
-/*
-.device-capacity-bar-box > hbox + hbox:not([flex="0"]) {
-  margin-left: 1px;
-}
-*/
-.device-capacity-bar-box > hbox {
-  max-height: 18px !important;
-  margin-top: 2px;
-  margin-bottom: 2px;
-}
-.device-capacity-music,
-.device-capacity-legend-color-box[type="music"] {
-  background-color: rgb(84,69,130);
-}
-.device-capacity-video,
-.device-capacity-legend-color-box[type="video"] {
-  background-color: rgb(82,113,50);
-}
-.device-capacity-image,
-.device-capacity-legend-color-box[type="image"] {
-  background-color: rgb(140,42,81);
-}
-.device-capacity-other,
-.device-capacity-legend-color-box[type="other"] {
-  background-color: rgb(171,98,23);
-}
-.device-capacity-free,
-.device-capacity-legend-color-box[type="free"] {
-  background-color: rgb(43,41,54);
-}
-/* the device capacity bar has 9 notches (10 sections)
-   note: rgba(0~255, 0~255, 0~255, 0.0~1.0) */
-.device-capacity-bar-notches hbox+hbox {
-  margin: 2px 0px;
-  border-left: 2px solid;
-  -moz-border-left-colors: rgba(0,0,0,0.4) rgba(255,255,255,0.25);
-}
-#device_management_box {
-  margin: 10px 10px 13px 10px;
-}
-
-.device-settings-tab-header-box,
-.device-tab-header-box {
-  background-color: rgb(74,73,79);
-  height: 28px;
-}
-.device-tab-header-box {
-  margin-top: 15px;
-}
-.device-tab-content groupbox {
-  margin: 0px 0px 2px 0px;
-}
-radiogroup#auto_sync_settings_radio_group {
-  background-color: rgb(69,67,78);
-}
-radiogroup#auto_sync_settings_radio_group > listbox {
-  border: 1px solid rgb(87,86,94);
-  background-color: transparent;
-}
-
-/* box that holds all the buttons for sync settings */
-.device-tab-button-box {
-  background-image: url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
-  background-repeat:repeat-x;
-  background-position:left top;
-  background-color: rgb(39,37,49);
-  margin: -2px -1px -1px -1px;
-  border-left: 1px solid rgb(35,33,44);
-  border-right: 1px solid rgb(35,33,44);
-  border-bottom: 1px solid rgb(35,33,44);
-}
-
-.device-settings-button-box {
-  background-image: url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
-  background-repeat:repeat-x;
-  background-position:left top;
-  background-color: rgb(39,37,49);
-  border: 1px solid rgb(35,33,44);
-}
-
-.device-capacity-legend-label-box > label.capacity_header_label,
-label.device-name-label {
-  color: rgb(234,234,234);
-}
-.device-capacity-legend-label-box > label.capacity_value_label {
-  font-size: 9px !important;
-  color: rgb(159,157,166);
-}
-
-.device_management_tabpanels {
-  padding-top: 30px !important;
-}
-
-/* tree that holds the list of playlists to sync */
-sb-device-sync tree,
-sb-device-image-sync tree {
-  background-image: none;
-  background-color: rgb(69,67,78);
-  border: 1px solid rgb(42,42,53);
-}
-sb-device-sync tree treecol[type="checkbox"],
-sb-device-image-sync tree treecol[type="checkbox"] {
-  min-width: 23px !important;
-  padding-left: 0px !important;
-  padding-right: 0px !important;
-  margin-right: -3px !important;
-}
-sb-device-image-sync radiogroup {
-  padding: 0px;
-}
 /******************************************************************************
 * WIZARDS
 ******************************************************************************/
@@ -1526,6 +1362,9 @@ scrollbar > slider > thumb {
   border-left: 1px solid rgb(26,26,30);
 }
 
+scrollcorner { 
+  background-color: rgb(43,41,54);
+}
 
 
 /******************************************************************************
@@ -1747,4 +1586,12 @@ domi-panelset label.viewer-title {
 .playqueue-instructions {
   background-color: rgb(36,34,46);
   line-height: 16px;
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( playqueue-history ) {
+  color: rgb(186,184,194);
+}
+
+.sb-playlist-tree > treechildren::-moz-tree-cell-text( playqueue-history, disabled ) {
+  color: rgb(146,144,153);
 }

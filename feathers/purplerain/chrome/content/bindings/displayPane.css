@@ -165,7 +165,6 @@ sb-displaypane-button.right-sidebar-display-pane-button[state="closed"] > button
 .empty {
   -moz-box-align: center;
   -moz-box-pack: center;
-  background-color: rgb(54,52,63);
 }
 .empty-message {
   padding:10px;
