@@ -1,7 +1,7 @@
 <!ENTITY prefs.location "Locatie">
 <!ENTITY prefs.location.descr "Kijk wie er bij u in de buurt komt. &brandShortName; volgt uw favoriete artiesten en clubs zodat u nooit meer een show hoeft te missen. Kies de dichtstbijzijnde stad om te zien wie daar speelt.">
 <!ENTITY prefs.library "Bibliotheek">
-<!ENTITY prefs.library.text "&brandShortName; kan een kolom aan uw muziekbibliotheek toevoegen waarin u kunt zien wanneer uw artiest naar uw stad komt tijdens zijn of haar tour.">
+<!ENTITY prefs.library.text "&brandShortName; kan een venster weergeven binnen je muziek bibliotheek welke weergeeft wanneer jouw artiesten bij jou in de buurt optreden.">
 <!ENTITY prefs.library.checklabel "Voeg de kolom Op tournee toe aan mijn bibliotheek">
 <!ENTITY prefs.country "Land">
 <!ENTITY prefs.country.us "Verenigde Staten">

@@ -1,13 +1,13 @@
 <!ENTITY prefs.location "Ubicación">
-<!ENTITY prefs.location.descr "Entérate de quién va ir a tu ciudad. &brandShortName; puede seguir a tus artistas y clubs favoritos para que no te pierdas otro espectáculo.">
+<!ENTITY prefs.location.descr "Entérate de qué artistas vienen a tu ciudad. &brandShortName; hace seguimiento de tus artistas preferidos para que no te vuelvas a perder otro concierto. Elige tu ciudad para ver que artistas están de gira próximamente.">
 <!ENTITY prefs.library "Biblioteca">
-<!ENTITY prefs.library.text "&brandShortName; puede añadir una columna a la biblioteca de música que indicará si cualquiera de los artistas están de gira por tu ciudad">
+<!ENTITY prefs.library.text "La aplicación de &brandShortName; puede hacer visible una columna en la que aparezca información sobre cuando los artistas están de gira por tu ciudad.">
 <!ENTITY prefs.library.checklabel "Añadir la columna De gira a la biblioteca">
 <!ENTITY prefs.country "País">
 <!ENTITY prefs.country.us "Estados Unidos">
 <!ENTITY prefs.country.uk "Reino Unido">
 <!ENTITY prefs.state "Estado">
 <!ENTITY prefs.city "Ciudad">
-<!ENTITY prefs.radius "Radio">
-<!ENTITY prefs.findShows "Encontrar espectáculos">
-<!ENTITY concerts.poweredby "Las listas de conciertos son suministradas por">
+<!ENTITY prefs.radius "Zona">
+<!ENTITY prefs.findShows "Buscar conciertos">
+<!ENTITY concerts.poweredby "Información de conciertos proporcionada por">

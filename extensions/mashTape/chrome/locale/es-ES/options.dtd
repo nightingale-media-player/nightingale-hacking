@@ -22,15 +22,15 @@
 <!ENTITY mtprefs.tab.photo "Configuración de la pestaña de fotos">
 <!ENTITY mtprefs.tab.flash "Configuración de la pestaña de vídeos">
 <!ENTITY mtprefs.tab.help "Mostrar esta pestaña en mashTape">
-<!ENTITY mtprefs.single "Este panel permite mostrar contenido de un solo servicio a la vez. Por favor, elige un servicio de la lista.">
-<!ENTITY mtprefs.multiple "Este panel permite mostrar contenido de más de un servicio a la vez. Por favor, elige los servicios que quieras de la lista.">
-<!ENTITY mtprefs.tab.info.autolocalise "Datos en tu idioma">
+<!ENTITY mtprefs.single "Esta ventana muestra contenido de un solo servicio a la vez. Por favor; elige uno de los servicios de la lista.">
+<!ENTITY mtprefs.multiple "Esta ventana muestra contenido de varios servicios a la vez. Por favor; elige los servicios que quieras ver de la lista.">
+<!ENTITY mtprefs.tab.info.autolocalise "Información disponible en tu idioma">
 <!ENTITY mtprefs.tab.info.autolocalise.help "Obtener automáticamente información del artista en tu idioma si está disponible.">
-<!ENTITY mtprefs.tab.photo.speed "Velocidad de desplazamiento de las fotos">
+<!ENTITY mtprefs.tab.photo.speed "Velocidad de scroll de las fotos">
 <!ENTITY mtprefs.tab.photo.faster "Más rápido">
 <!ENTITY mtprefs.tab.photo.slower "Más lento">
 <!ENTITY mtprefs.tab.photo.keywords.caption "Palabras clave de búsqueda">
-<!ENTITY mtprefs.tab.photo.keywords "Palabras clave de búsqueda adicionales:">
-<!ENTITY mtprefs.tab.photo.keywords.help "Puede especificar palabras clave para que sean añadidas a la búsqueda en el proveedor de fotos. Debe separar las palabras clave por espacios, por ejemplo: grupo directo concierto">
+<!ENTITY mtprefs.tab.photo.keywords "Otras palabras clave de búsqueda:">
+<!ENTITY mtprefs.tab.photo.keywords.help "Puedes especificar palabras clave para añadirlas al servicio de búsqueda de fotos/imágenes. Las palabras tendrán que estar separadas por espacios. Por ejemplo: Grupo en directo">
 <!ENTITY mtprefs.tab.video.autoplay "Reproducir vídeos automáticamente">
-<!ENTITY mtprefs.tab.video.autoplay.help "Activar esta opción hará que los resultados de las recopilaciones de vídeos se reproduzcan uno detrás de otro. Es útil para reproducir automáticamente todos los vídeo musicales de la MTV, por ejemplo. Sólo funciona con proveedores de recopilaciones de vídeos.">
+<!ENTITY mtprefs.tab.video.autoplay.help "Activar esta opción hará que los resultados de los vídeos se reproduzcan en cadena. Es cómodo para ver de forma continuada todos los vídeo musicales de MTV; por ejemplo. Sólo funciona con proveedores que hayan creado agrupaciones de videos.">

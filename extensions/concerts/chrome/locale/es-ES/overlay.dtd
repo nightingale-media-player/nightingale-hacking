@@ -1,4 +1,4 @@
-<!ENTITY concerts.loading "Estamos comprobando quién está de gira cerca">
+<!ENTITY concerts.loading "Estamos comprobando próximos conciertos en la zona">
 <!ENTITY concerts.changelocation "Cambiar ubicación">
 <!ENTITY concerts.easteregg.fail "FAIL">
 <!ENTITY concerts.easteregg.fail.2 "No se ha encontrado ningún concierto en">

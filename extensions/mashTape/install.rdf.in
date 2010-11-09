@@ -202,7 +202,7 @@
       <Description>
         <em:locale>es-ES</em:locale>
         <em:name>@EXTENSION_NAME@</em:name>
-        <em:description>Como en las antiguas cintas, mezcla varios orígenes web para mejorar tu biblioteca. Pensado para tu comodidad.</em:description>
+        <em:description>Mashtape recoje y mezcla los datos más relevantes de tus artistas para que tengas toda la información más interesante.</em:description>
         <em:translator>Nukeador</em:translator>
       </Description>
     </em:localized>
@@ -262,7 +262,7 @@
       <Description>
         <em:locale>it-IT</em:locale>
         <em:name>@EXTENSION_NAME@</em:name>
-        <em:description>Come il tuo vecchio collage musicale, miscela e componi varie sorgenti web per migliorare la tua libreria. Progettato per il comfort.</em:description>
+        <em:description>Funziona come le compilation musicali di una volta; fai un mix tra varie sorgenti web e componile per migliorare la tua library.</em:description>
         <em:translator>sembee</em:translator>
       </Description>
     </em:localized>
@@ -270,7 +270,7 @@
       <Description>
         <em:locale>it</em:locale>
         <em:name>@EXTENSION_NAME@</em:name>
-        <em:description>Come il tuo vecchio collage musicale, miscela e componi varie sorgenti web per migliorare la tua libreria. Progettato per il comfort.</em:description>
+        <em:description>Funziona come le compilation musicali di una volta; fai un mix tra varie sorgenti web e componile per migliorare la tua library.</em:description>
         <em:translator>sembee</em:translator>
       </Description>
     </em:localized>
@@ -321,7 +321,7 @@
       <Description>
         <em:locale>nl</em:locale>
         <em:name>@EXTENSION_NAME@</em:name>
-        <em:description>Zoals uw favoriete schoolmixbandje van vroeger; meng en verhaspel diverse webbronnen om het plezier in uw muziekbibliotheek te vergroten. Geribbeld voor meer comfort.</em:description>
+        <em:description>Zoals uw favoriete schoolmixbandje van vroeger meng en mix diverse webbronnen om het plezier in uw muziekbibliotheek te vergroten.</em:description>
         <em:translator>markh</em:translator>
       </Description>
     </em:localized>
