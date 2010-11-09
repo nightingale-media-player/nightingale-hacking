@@ -452,6 +452,7 @@
 ./lib/vorbisenc-2.dll
 ./lib/vorbisfile-3.dll
 ./mozcrt19.dll
+./rdsconfig.exe
 ./sbAutoPlayUtil.exe
 ./sbBrandingStrings.ini
 ./scripts/sbASXPlaylistHandler.js
