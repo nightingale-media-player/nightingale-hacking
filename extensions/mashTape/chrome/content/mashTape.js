@@ -57,28 +57,6 @@ mashTape.firstRun = function() {
   gMetrics.metricsInc("mashtape", "flash", "tab.disabled");
 }
 
-/*
- * Check for previously existing external add-ons that have been folded
- * into mashTape and uninstall them as needed.
- */
-mashTape.addonCleanup = function() {
-  var xpisToRemove = [ "mtv@grommit.com" ];
-  var extMgr = Cc["@mozilla.org/extensions/manager;1"]
-    .getService(Ci.nsIExtensionManager);
-  for each (var emid in xpisToRemove) {
-    var ext = extMgr.getItemForID(emid);
-    if (ext) {
-      var msg = mashTape.strings.formatStringFromName(
-        "extensions.mashTape.msg.remove_addon", [ext.name], 1);
-      if (confirm(msg)) {
-        extMgr.uninstallItem(emid);
-        Cu.import("resource://app/jsmodules/WindowUtils.jsm");
-        WindowUtils.restartApp();
-      }
-    }
-  }
-}
-
 mashTape.log = function(msg) {
   mtUtils.log("mashTape", msg);
 }
