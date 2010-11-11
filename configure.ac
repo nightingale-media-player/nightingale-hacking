@@ -313,18 +313,23 @@ AC_SUBST(SB_ARCH)
 #  Check for --enable-installer
 #
 
+# Always set SB_INSTALLER_SUFFIXES so that the installer can be built
+# manually as expected. These are the defaults.
+
+case $SB_PLATFORM in
+  windows) SB_INSTALLER_SUFFIXES=exe;;
+  macosx)  SB_INSTALLER_SUFFIXES=dmg;;
+  *)       SB_INSTALLER_SUFFIXES=tar.gz;;
+esac
+
+# Now process --enable-installer options.
+
 AC_ARG_ENABLE(installer,
               [  --enable-installer=TYPE create installer (default=no, use "nsis", "dmg", "pkg", "tar". "yes" will build default installer type.)],
               [enable_installer=`echo $enableval | tr 'A-Z,' 'a-z '`])
 case $enable_installer in
   yes)
     MAKE_INSTALLER=1
-    dnl default installer types
-    case $SB_PLATFORM in
-      windows) SB_INSTALLER_SUFFIXES=exe;;
-      macosx)  SB_INSTALLER_SUFFIXES=dmg;;
-      *)       SB_INSTALLER_SUFFIXES=tar.gz;;
-    esac
     ;;
   no)
     AS_UNSET(MAKE_INSTALLER)
@@ -564,6 +569,8 @@ case "$SB_PLATFORM" in
     if test -z "$RC"; then AC_MSG_ERROR(Rc not found); fi
     AC_CHECK_PROG(MIDL, midl, midl)
     if test -z "$MIDL"; then AC_MSG_ERROR(Midl not found); fi
+    AC_CHECK_PROG(REBASE, rebase, rebase)
+    if test -z "$REBASE"; then AC_MSG_ERROR(Rebase not found); fi
 
     # Check midl version
     changequote(,)

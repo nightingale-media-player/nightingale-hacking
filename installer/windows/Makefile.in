@@ -73,7 +73,27 @@ include $(topsrcdir)/build/rules.mk
 # Boo.
 #
 
+#
+# Packaging the installer will also rebase the dlls. The base address used is 
+# meant to leave enough room for the bootstrapping exes to load.
+#
+# We exclude 'extensions' because they are never part of a release mode 
+# installer _but_ we still want developers to be able to generate 
+# installers without errors.
+#
+# 'drivers' is excluded because it contains signed dlls which cannot be rebased
+# (which causes errors, which makes the build fail)
+#
+# 'msvc*' is excluded because it's pointless to rebase the Microsoft CRT and 
+# C++RT when we are not using mozcrt.
+#
+
 libs::
+	cd $(SONGBIRD_DISTDIR) && \
+	  $(FIND) . '(' -name "extensions" -o -name "drivers" ')' -a -prune -o -name "*$(DLL_SUFFIX)" -a -not -name "MSVC*" -a -print | \
+	    sort -o rebase.txt && \
+	  $(REBASE) -v -b 62000000 @rebase.txt && \
+	  $(RM) rebase.txt
 	$(INSTALL_FILE) $(topsrcdir)/update/files-added-to-$(SB_PLATFORM) $(SONGBIRD_DISTDIR)/added-files
 	$(topsrcdir)/tools/win32/unix2dos/unix2dos.exe $(SONGBIRD_DISTDIR)/README.txt
 	$(topsrcdir)/tools/win32/unix2dos/unix2dos.exe $(SONGBIRD_DISTDIR)/TRADEMARK.txt
