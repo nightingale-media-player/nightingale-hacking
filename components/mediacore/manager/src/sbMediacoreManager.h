@@ -36,7 +36,6 @@
 #include <nsIObserver.h>
 
 #include <nsHashKeys.h>
-#include <nsWeakReference.h>
 #include <prmon.h>
 
 // Interfaces
@@ -48,6 +47,8 @@
 
 #include <sbBaseMediacoreMultibandEqualizer.h>
 #include <sbBaseMediacoreVolumeControl.h>
+
+#include <sbWeakReference.h>
 
 // Forward declared classes
 class sbBaseMediacoreEventTarget;
@@ -62,7 +63,7 @@ class sbMediacoreManager : public sbBaseMediacoreMultibandEqualizer,
                            public sbIMediacoreVoting,
                            public nsIClassInfo,
                            public nsIObserver,
-                           public nsSupportsWeakReference
+                           public sbSupportsWeakReference
 {
 public:
   NS_DECL_ISUPPORTS

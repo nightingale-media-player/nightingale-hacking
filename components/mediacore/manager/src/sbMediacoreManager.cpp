@@ -1306,7 +1306,7 @@ sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
     rv = do_GetProxyForObject(target,
                               NS_GET_IID(nsIDOMWindow),
                               grip,
-                              NS_PROXY_SYNC,
+                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                               getter_AddRefs(domWindow));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1314,10 +1314,10 @@ sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIDOMEventTarget> proxiedDomTarget;
-    rv = do_GetProxyForObject(target,
-                              NS_GET_IID(nsIDOMEventTarget),
-                              domTarget,
-                              NS_PROXY_SYNC,
+    rv = do_GetProxyForObject(target, 
+                              NS_GET_IID(nsIDOMEventTarget), 
+                              domTarget, 
+                              NS_PROXY_SYNC | NS_PROXY_ALWAYS, 
                               getter_AddRefs(proxiedDomTarget));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1384,7 +1384,7 @@ sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
     rv = do_GetProxyForObject(target,
                               NS_GET_IID(nsIDOMDocument),
                               grip,
-                              NS_PROXY_SYNC,
+                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                               getter_AddRefs(domDoc));
     NS_ENSURE_SUCCESS(rv, rv);
   }

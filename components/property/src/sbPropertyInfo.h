@@ -36,8 +36,9 @@
 #include <nsIURI.h>
 #include <nsStringGlue.h>
 #include <nsCOMArray.h>
-#include <nsWeakReference.h>
+
 #include "sbPropertyOperator.h"
+#include <sbWeakReference.h>
 
 #define NS_FORWARD_SBIPROPERTYINFO_NOSPECIFICS(_to) \
 NS_IMETHOD GetOPERATOR_EQUALS(nsAString & aOPERATOR_EQUALS) { return _to GetOPERATOR_EQUALS(aOPERATOR_EQUALS); } \
@@ -91,7 +92,8 @@ NS_FORWARD_SBIPROPERTYINFO_MAKESORTABLE(_to)
 #define SB_IPROPERTYINFO_CAST(__unambiguousBase, __expr) \
   static_cast<sbIPropertyInfo*>(static_cast<__unambiguousBase>(__expr))
 
-class sbPropertyInfo : public sbIPropertyInfo, public nsSupportsWeakReference
+class sbPropertyInfo : public sbIPropertyInfo, 
+                       public sbSupportsWeakReference
 {
 public:
   NS_DECL_ISUPPORTS

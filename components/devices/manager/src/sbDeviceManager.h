@@ -36,7 +36,8 @@
 #include <nsIClassInfo.h>
 #include <nsInterfaceHashtable.h>
 #include <nsIObserver.h>
-#include <nsWeakReference.h>
+
+#include <sbWeakReference.h>
 
 #include "sbIDevice.h"
 #include "sbIDeviceController.h"
@@ -48,7 +49,7 @@ class sbDeviceManager : public sbBaseDeviceEventTarget,
                         public sbIDeviceRegistrar,
                         public nsIClassInfo,
                         public nsIObserver,
-                        public nsSupportsWeakReference
+                        public sbSupportsWeakReference
 {
 public:
   NS_DECL_ISUPPORTS

@@ -33,7 +33,6 @@
 #define __SB_MEDIALISTVIEWMAP_H__
 
 #include <nsIObserver.h>
-#include <nsWeakReference.h>
 #include <sbILibrary.h>
 #include <sbIMediaListViewMap.h>
 #include <sbIMediaListView.h>
@@ -44,6 +43,8 @@
 #include <nsInterfaceHashtable.h>
 #include <nsTHashtable.h>
 #include <prlock.h>
+
+#include <sbWeakReference.h>
 
 #define SONGBIRD_MEDIALISTVIEWMAP_DESCRIPTION                \
   "Songbird MediaListViewMap"
@@ -65,7 +66,7 @@ struct nsModuleComponentInfo;
 
 class sbMediaListViewMap : public sbIMediaListViewMap,
                            public nsIObserver,
-                           public nsSupportsWeakReference
+                           public sbSupportsWeakReference
 {
 
 public:

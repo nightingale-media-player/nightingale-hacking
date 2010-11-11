@@ -25,7 +25,9 @@
 DEPTH = ../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
-VPATH = @srcdir@
+VPATH = @srcdir@ \
+        @top_srcdir@/components/moz/xpcom/src \
+        
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -80,9 +82,14 @@ CPP_SRCS = sbPropertyManager.cpp \
            sbStatusPropertyInfo.cpp \
            $(NULL)
 
+# From components/moz/xpcom/src
+CPP_SRCS += sbWeakReference.cpp \
+            $(NULL)
+
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/property/public \
                      $(topsrcdir)/components/moz/strings/src \
                      $(topsrcdir)/components/moz/enumeration/src \
+                     $(topsrcdir)/components/moz/xpcom/src \
                      $(topsrcdir)/components/include \
                      $(DEPTH)/components/intl/public \
                      $(MOZSDK_INCLUDE_DIR)/dom \

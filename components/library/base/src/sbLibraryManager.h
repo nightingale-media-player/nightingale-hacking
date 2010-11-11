@@ -32,7 +32,6 @@
 
 #include <nsIObserver.h>
 #include <nsIThreadManager.h>
-#include <nsWeakReference.h>
 #include <sbILibrary.h>
 #include <sbILibraryManager.h>
 #include <sbILibraryUtils.h>
@@ -45,6 +44,8 @@
 #include <nsInterfaceHashtable.h>
 #include <prlock.h>
 #include <sbILibraryLoader.h>
+
+#include <sbWeakReference.h>
 
 #define SB_PREFBRANCH_LIBRARY    "songbird.library."
 
@@ -64,7 +65,7 @@ struct nsModuleComponentInfo;
 class sbLibraryManager : public sbILibraryManager,
                          public sbILibraryUtils,
                          public nsIObserver,
-                         public nsSupportsWeakReference
+                         public sbSupportsWeakReference
 {
   struct sbLibraryInfo {
     sbLibraryInfo(PRBool aLoadAtStartup = PR_FALSE)

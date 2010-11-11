@@ -46,6 +46,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/playqueue/public \
                      $(topsrcdir)/components/library/base/src \
                      $(topsrcdir)/components/library/base/src/static \
                      $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/moz/xpcom/src \
                      $(topsrcdir)/components/property/src \
                      $(NULL)                                                                                                                                                                  
 

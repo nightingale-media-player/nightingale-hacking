@@ -26,7 +26,9 @@ DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@ \
-        @top_srcdir@/components/mediacore/base/src
+        @top_srcdir@/components/mediacore/base/src \
+        @top_srcdir@/components/moz/xpcom/src \
+        
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -50,6 +52,10 @@ CPP_SRCS += sbMediacoreVotingChain.cpp \
             sbBaseMediacoreVolumeControl.cpp \
             sbMediacoreEqualizerBand.cpp \
             $(NULL)
+            
+# From components/moz/xpcom/src
+CPP_SRCS += sbWeakReference.cpp \
+            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(DEPTH)/components/library/base/public \
@@ -63,6 +69,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(DEPTH)/components/moz/strings/components/public \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/moz/threads/src \
+               $(topsrcdir)/components/moz/xpcom/src \
                $(DEPTH)/components/moz/windowwatcher/public \
                $(topsrcdir)/components/property/src \
                $(MOZSDK_INCLUDE_DIR)/content \

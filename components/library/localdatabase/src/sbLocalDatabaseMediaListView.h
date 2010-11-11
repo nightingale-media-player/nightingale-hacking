@@ -36,7 +36,6 @@
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsTHashtable.h>
-#include <nsWeakReference.h>
 #include <prlock.h>
 #include <sbIFilterableMediaListView.h>
 #include <sbIMediaListListener.h>
@@ -47,6 +46,7 @@
 #include <sbISortableMediaListView.h>
 #include <sbLibraryUtils.h>
 #include <sbPropertiesCID.h>
+#include <sbWeakReference.h>
 
 #include "sbLocalDatabaseMediaListBase.h"
 
@@ -60,7 +60,7 @@ class sbLocalDatabaseTreeView;
 class sbLocalDatabaseCascadeFilterSet;
 class sbLocalDatabaseMediaListViewSelection;
 
-class sbLocalDatabaseMediaListView : public nsSupportsWeakReference,
+class sbLocalDatabaseMediaListView : public sbSupportsWeakReference,
                                      public sbIMediaListView,
                                      public sbIMediaListListener,
                                      public sbIFilterableMediaListView,

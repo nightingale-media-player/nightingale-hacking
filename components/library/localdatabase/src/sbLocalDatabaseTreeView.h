@@ -50,8 +50,9 @@
 #include <nsClassHashtable.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
-#include <nsWeakReference.h>
 #include <nsTObserverArray.h>
+
+#include <sbWeakReference.h>
 
 class nsIObjectInputStream;
 class nsIObjectOutputStream;
@@ -75,7 +76,7 @@ class sbFilterTreeSelection;
 class sbPlaylistTreeSelection;
 class sbLocalDatabaseTreeViewState;
 
-class sbLocalDatabaseTreeView : public nsSupportsWeakReference,
+class sbLocalDatabaseTreeView : public sbSupportsWeakReference,
                                 public nsIClassInfo,
                                 public nsIObserver,
                                 public sbILocalDatabaseGUIDArrayListener,

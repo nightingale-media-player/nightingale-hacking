@@ -36,7 +36,8 @@
 #include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsDataHashtable.h>
-#include <nsWeakReference.h>
+
+#include <sbWeakReference.h>
 
 class sbIDevice;
 class sbBaseDevice;
@@ -87,7 +88,7 @@ private:
 };
 
 class sbBaseDeviceLibraryListener : public sbIDeviceLibraryListener,
-                                    public nsSupportsWeakReference,
+                                    public sbSupportsWeakReference,
                                     public sbBaseIgnore
 {
 public:

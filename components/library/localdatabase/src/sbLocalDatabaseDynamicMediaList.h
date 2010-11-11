@@ -52,12 +52,11 @@
 #include <sbILocalDatabaseMediaItem.h>
 #include <sbIMediaList.h>
 #include <sbIDynamicMediaList.h>
+#include <sbWeakReference.h>
 
 // Mozilla imports.
 #include <nsIClassInfo.h>
 #include <nsStringGlue.h>
-#include <nsWeakReference.h>
-
 
 //------------------------------------------------------------------------------
 //
@@ -118,7 +117,7 @@
  */
 
 class sbLocalDatabaseDynamicMediaList : public nsIClassInfo,
-                                        public nsSupportsWeakReference,
+                                        public sbSupportsWeakReference,
                                         public sbIMediaList,
                                         public sbIDynamicMediaList,
                                         public sbILocalDatabaseMediaItem

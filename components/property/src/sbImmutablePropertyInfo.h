@@ -34,10 +34,13 @@
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 #include <nsCOMArray.h>
-#include <nsWeakReference.h>
+
 #include "sbPropertyUnitConverter.h"
 
-class sbImmutablePropertyInfo : public sbIPropertyInfo, public nsSupportsWeakReference
+#include <sbWeakReference.h>
+
+class sbImmutablePropertyInfo : public sbIPropertyInfo, 
+                                public sbSupportsWeakReference
 {
 public:
 

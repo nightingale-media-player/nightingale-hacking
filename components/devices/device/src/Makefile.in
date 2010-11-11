@@ -27,6 +27,7 @@ topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@ \
       @top_srcdir@/components/watchfolder/utils \
+      @top_srcdir@/components/moz/xpcom/src/
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -52,8 +53,11 @@ CPP_SRCS = sbBaseDevice.cpp \
            $(NULL)
 
 # sources from components/watchfolder/utils
-
 CPP_SRCS += sbWatchFolderUtils.cpp \
+            $(NULL)
+            
+# sources from components/moz/xpcom/src
+CPP_SRCS += sbWeakReference.cpp \
             $(NULL)
            
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \

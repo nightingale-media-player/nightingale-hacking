@@ -26,7 +26,8 @@ DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@ \
-        @top_srcdir@/components/devices/base/src
+        @top_srcdir@/components/devices/base/src \
+        @top_srcdir@/components/moz/xpcom/src \
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -49,6 +50,10 @@ CPP_SRCS += sbBaseDeviceEventTarget.cpp \
             sbDeviceLibraryHelpers.cpp \
             sbDeviceLibraryMediaSyncSettings.cpp \
             sbDeviceLibrarySyncSettings.cpp \
+            $(NULL)
+            
+# included from components/moz/xpcom/src
+CPP_SRCS += sbWeakReference.cpp \
             $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/base/public \

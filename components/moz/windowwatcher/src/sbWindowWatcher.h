@@ -47,9 +47,9 @@
 #include <nsIWindowMediator.h>
 #include <nsIWindowWatcher.h>
 #include <nsTArray.h>
-#include <nsWeakReference.h>
 #include <prmon.h>
 
+#include <sbWeakReference.h>
 
 /**
  * This class implements the Songbird window watcher interface.  This class
@@ -61,7 +61,7 @@ class sbWindowWatcherEventListener;
 
 class sbWindowWatcher : public sbIWindowWatcher,
                         public nsIObserver,
-                        public nsSupportsWeakReference
+                        public sbSupportsWeakReference
 {
   //----------------------------------------------------------------------------
   //

@@ -38,12 +38,12 @@
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsTHashtable.h>
-#include <nsWeakReference.h>
 
 #include <sbICascadeFilterSet.h>
 #include <sbILocalDatabaseAsyncGUIDArray.h>
 #include <sbIMediaListListener.h>
 #include <sbLibraryUtils.h>
+#include <sbWeakReference.h>
 
 class nsIArray;
 class nsIMutableArray;
@@ -63,7 +63,7 @@ class sbLocalDatabaseCascadeFilterSetArrayListener;
 
 class sbLocalDatabaseCascadeFilterSetState;
 
-class sbLocalDatabaseCascadeFilterSet : public nsSupportsWeakReference,
+class sbLocalDatabaseCascadeFilterSet : public sbSupportsWeakReference,
                                         public sbICascadeFilterSet,
                                         public sbIMediaListListener
 {
@@ -160,7 +160,7 @@ private:
 };
 
 class sbLocalDatabaseCascadeFilterSetArrayListener :
-                                  public nsSupportsWeakReference,
+                                  public sbSupportsWeakReference,
                                   public sbILocalDatabaseAsyncGUIDArrayListener
 {
   friend class sbLocalDatabaseCascadeFilterSet;

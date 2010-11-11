@@ -28,7 +28,6 @@
 #include <sbILocalDatabaseSmartMediaList.h>
 #include <sbILocalDatabaseMediaItem.h>
 
-#include <nsWeakReference.h>
 #include <nsTArray.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
@@ -42,6 +41,8 @@
 #include <nsIArray.h>
 #include <sbIMediaListListener.h>
 #include <sbIPropertyArray.h>
+
+#include <sbWeakReference.h>
 
 class sbIDatabaseQuery;
 class sbILocalDatabaseLibrary;
@@ -144,7 +145,7 @@ private:
 class sbLocalDatabaseSmartMediaList : public sbILocalDatabaseMediaItem,
                                       public sbILocalDatabaseSmartMediaList,
                                       public sbIMediaListListener,
-                                      public nsSupportsWeakReference,
+                                      public sbSupportsWeakReference,
                                       public nsIObserver,
                                       public nsIClassInfo
 {
