@@ -200,8 +200,8 @@ sbPlayQueueService::sbPlayQueueService()
     mSequencerPlayingOrPaused(PR_FALSE),
     mOperationInProgress(PR_FALSE),
     mLibraryListener(nsnull),
-    mAsyncListener(nsnull),
-    mWeakMediacoreManager(nsnull)
+    mWeakMediacoreManager(nsnull),
+    mAsyncListener(nsnull)
 {
   #if PR_LOGGING
     if (!gPlayQueueServiceLog) {
