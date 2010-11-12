@@ -4235,9 +4235,9 @@ sbLocalDatabaseLibrary::AddSomeAsyncInternal(nsISimpleEnumerator* aMediaItems,
 
     ++itemsProcessed;
 
-    // only send notifications every 50 items or
-    // when it's finished if < 50 items.
-    if (itemsProcessed % 50 == 0) {
+    // only send notifications every SB_ASYNC_NOTIFICATION_ITEMS items or
+    // when it's finished if < SB_ASYNC_NOTIFICATION_ITEMS items.
+    if (itemsProcessed % SB_ASYNC_NOTIFICATION_ITEMS == 0) {
       rv = aListener->OnProgress(itemsProcessed, PR_FALSE);
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to call async listener.");
     }

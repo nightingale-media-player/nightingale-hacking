@@ -51,8 +51,11 @@
 #include "sbPlayQueueLibraryListener.h"
 #include "sbPlayQueueExternalLibraryListener.h"
 
+class nsIStringBundle;
 class sbIMediaItem;
 class sbIMediaList;
+class sbIDataRemote;
+class sbPlayQueueAsyncListener;
 
 class sbPlayQueueService : public sbIPlayQueueService,
                            public sbIMediaListListener,
@@ -60,6 +63,8 @@ class sbPlayQueueService : public sbIPlayQueueService,
                            public sbILocalDatabaseLibraryCopyListener,
                            public nsIObserver
 {
+  friend class sbPlayQueueAsyncListener;
+
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIPLAYQUEUESERVICE
@@ -78,6 +83,10 @@ public:
                                 const nsModuleComponentInfo* aInfo);
 
   nsresult Init();
+
+  void SetIgnoreListListener(PRBool aIgnore) {
+    mIgnoreListListener = aIgnore;
+  }
 
 private:
 
@@ -134,10 +143,14 @@ private:
    */
   PRBool mSequencerOnQueue;
 
-  /** \brief True of the sequencer is on a view of mMediaList AND the sequencer is
+  /** \brief True if the sequencer is on a view of mMediaList AND the sequencer is
    *         in a playing or paused state.
    */
   PRBool mSequencerPlayingOrPaused;
+
+  /** \brief True if the play queue is having operation in progress.
+   */
+  PRBool mOperationInProgress;
 
   /**
    * \brief Helper for batch operations on mMediaList.
@@ -233,17 +246,82 @@ private:
   nsTHashtable<nsISupportsHashKey> mListeners;
 
   /**
+   * Notify the listeners on the beginning of the queue operation.
+   */
+  nsresult NotifyQueueOperationStarted();
+
+  /**
+   * Notify the listeners on the end of the queue operation.
+   */
+  nsresult NotifyQueueOperationCompleted();
+
+  /**
    * This callback is meant to be used with mListeners.
-   * aUserData should be a sbIPlayQueueServiceListener pointer.
+   * aUserData should be the new index.
    */
   static PLDHashOperator PR_CALLBACK
     OnIndexUpdatedCallback(nsISupportsHashKey* aKey,
-                            void* aUserData);
+                           void* aUserData);
+
+  /**
+   * This callback is meant to be used with mListeners.
+   */
+  static PLDHashOperator PR_CALLBACK
+    OnQueueStartedCallback(nsISupportsHashKey* aKey,
+                           void* aUserData);
+
+  /**
+   * This callback is meant to be used with mListeners.
+   */
+  static PLDHashOperator PR_CALLBACK
+    OnQueueCompletedCallback(nsISupportsHashKey* aKey,
+                             void* aUserData);
 
   /**
    * \brief Listener to keep properties in sync with external libraries
    */
   nsRefPtr<sbPlayQueueExternalLibraryListener> mExternalListener;
+
+  /**
+   * \brief Listener for progress notifications during asynchronous queue
+   *        operations
+   */
+  nsRefPtr<sbPlayQueueAsyncListener> mAsyncListener;
+};
+
+class sbPlayQueueAsyncListener : public sbIMediaListAsyncListener
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIALISTASYNCLISTENER
+
+  sbPlayQueueAsyncListener(sbPlayQueueService *aService);
+  virtual ~sbPlayQueueAsyncListener();
+
+  nsresult Init();
+
+private:
+  void Finalize();
+
+  /**
+   * \brief The play queue service owns it so we're good non owning pointer.
+   */
+  sbPlayQueueService*       mService;
+
+  /**
+   * \brief String bundle to songbird.properties.
+   */
+  nsCOMPtr<nsIStringBundle> mBundle;
+
+  /**
+   * \brief Data remote to the status bar text.
+   */
+  nsCOMPtr<sbIDataRemote>   mDataRemote;
+
+  /**
+   * \brief Localized play queue pane title.
+   */
+  nsString                  mQueueName;
 };
 
 #define SB_PLAYQUEUESERVICE_CONTRACTID                                         \

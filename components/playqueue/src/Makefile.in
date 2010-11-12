@@ -37,7 +37,8 @@ CPP_SRCS = sbPlayQueueLibraryListener.cpp \
            sbPlayQueueServiceComponent.cpp \
            $(NULL)
 
-CPP_EXTRA_INCLUDES = $(DEPTH)/components/playqueue/public \
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
+                     $(DEPTH)/components/playqueue/public \
                      $(DEPTH)/components/library/base/public \
                      $(DEPTH)/components/library/localdatabase/public \
                      $(DEPTH)/components/mediacore/base/public \

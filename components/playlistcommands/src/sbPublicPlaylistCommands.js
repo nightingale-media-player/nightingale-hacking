@@ -28,18 +28,18 @@ var Ci = Components.interfaces;
 var Cr = Components.results;
 var Cu = Components.utils;
 
-Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
-Cu.import("resource://app/jsmodules/sbProperties.jsm");
+Cu.import("resource://app/jsmodules/DropHelper.jsm");
 Cu.import("resource://app/jsmodules/kPlaylistCommands.jsm");
 Cu.import("resource://app/jsmodules/sbAddToPlaylist.jsm");
 Cu.import("resource://app/jsmodules/sbAddToDevice.jsm");
 Cu.import("resource://app/jsmodules/sbAddToLibrary.jsm");
+Cu.import("resource://app/jsmodules/sbCoverHelper.jsm");
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
-Cu.import("resource://app/jsmodules/DropHelper.jsm");
+Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
 Cu.import("resource://app/jsmodules/SBUtils.jsm");
-Cu.import("resource://app/jsmodules/sbCoverHelper.jsm");
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const WEB_PLAYLIST_CONTEXT      = "webplaylist";
 const WEB_PLAYLIST_TABLE        = "webplaylist";
@@ -629,7 +629,7 @@ PublicPlaylistCommands.prototype = {
       // disable the command for empty playlists.
       this.m_cmd_list_QueueNext.setCommandEnabledCallback(null,
                                                           "playlist_cmd_queuenext",
-                                                          plCmd_IsNotEmptyPlaylist);
+                                                          plCmd_ListContextMenuQueueEnabled);
 
       // --------------------------------------------------------------------------
       // The QueueLast Playlist action
@@ -657,7 +657,7 @@ PublicPlaylistCommands.prototype = {
       // disable the command for empty playlists.
       this.m_cmd_list_QueueLast.setCommandEnabledCallback(null,
                                                           "playlist_cmd_queuelast",
-                                                          plCmd_IsNotEmptyPlaylist);
+                                                          plCmd_ListContextMenuQueueEnabled);
 
       // --------------------------------------------------------------------------
       // The Get Artwork action
@@ -818,7 +818,7 @@ PublicPlaylistCommands.prototype = {
 
       this.m_cmd_QueueNext.setCommandEnabledCallback(null,
                                                      "library_cmd_queuenext",
-                                                     plCmd_IsAnyTrackSelected);
+                                                     plCmd_ContextMenuQueueEnabled);
 
       // -----------------------------------------------------------------------
       // The Queue Last action
@@ -838,8 +838,7 @@ PublicPlaylistCommands.prototype = {
                                               true);
       this.m_cmd_QueueLast.setCommandEnabledCallback(null,
                                                      "library_cmd_queuelast",
-                                                     plCmd_IsAnyTrackSelected);
-
+                                                     plCmd_ContextMenuQueueEnabled);
 
       // --------------------------------------------------------------------------
 
@@ -2094,6 +2093,32 @@ function plCmd_IsNotLibraryContext(aContext, aSubMenuId, aCommandId, aHost) {
 // Return true if the playlist is empty
 function plCmd_IsNotEmptyPlaylist(aContext, aSubMenuId, aCommandId, ahost) {
   return !!(unwrap(aContext.medialist).length);
+}
+
+// Return true if the play queue context menu items should be enabled for
+// the selected track(s).
+function plCmd_ContextMenuQueueEnabled(aContext, aSubMenuId, aCommandId, aHost) {
+  if (!plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost)) {
+    return false;
+  }
+
+  var queueService = Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
+                       .getService(Ci.sbIPlayQueueService);
+
+  return !queueService.operationInProgress;
+}
+
+// Return true if the play queue context menu items should be enabled for
+// the selected list.
+function plCmd_ListContextMenuQueueEnabled(aContext, aSubMenuId, aCommandId, aHost) {
+  if (!plCmd_IsNotEmptyPlaylist(aContext, aSubMenuId, aCommandId, aHost)) {
+    return false;
+  }
+
+  var queueService = Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
+                       .getService(Ci.sbIPlayQueueService);
+
+  return !queueService.operationInProgress;
 }
 
 // Returns true if the playlist can be modified (is not read-only)

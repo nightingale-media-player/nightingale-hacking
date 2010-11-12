@@ -34,11 +34,13 @@
 #include <nsIObserverService.h>
 #include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
+#include <nsIStringBundle.h>
 #include <nsIVariant.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 #include <nsThreadUtils.h>
 
+#include <sbIDataRemote.h>
 #include <sbILibraryManager.h>
 #include <sbILocalDatabaseLibrary.h>
 #include <sbIMediacoreEventTarget.h>
@@ -49,6 +51,7 @@
 #include <sbLibraryManager.h>
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
+#include <sbStringUtils.h>
 
 #include <prlog.h>
 
@@ -66,6 +69,14 @@
   NS_LL("http://songbirdnest.com/data/1.0#ordinal 30 ")                        \
   NS_LL("http://songbirdnest.com/data/1.0#trackName 130")
 
+#define SB_DATAREMOTE_FACEPLATE_STATUS \
+  NS_LITERAL_STRING("faceplate.status.override.text")
+
+#define SB_BUNDLE_URL "chrome://songbird/locale/songbird.properties"
+
+#define SB_PLAYQUEUE_PANE_TITLE NS_LITERAL_STRING("playqueue.pane.title")
+#define SB_LIBRARY_TRACKSADDED NS_LITERAL_STRING("library.tracksadded")
+
 /**
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbPlayQueueService:5
@@ -81,6 +92,93 @@
 #define TRACE(args) /* nothing */
 #define LOG(args)   /* nothing */
 #endif /* PR_LOGGING */
+
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbPlayQueueAsyncListener,
+                              sbIMediaListAsyncListener);
+
+sbPlayQueueAsyncListener::sbPlayQueueAsyncListener(sbPlayQueueService *aService)
+: mService(aService)
+{
+}
+
+sbPlayQueueAsyncListener::~sbPlayQueueAsyncListener()
+{
+  Finalize();
+}
+
+nsresult
+sbPlayQueueAsyncListener::Init()
+{
+  nsresult rv;
+
+  mDataRemote =
+    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+ 
+  rv = mDataRemote->Init(SB_DATAREMOTE_FACEPLATE_STATUS, EmptyString());
+  NS_ENSURE_SUCCESS(rv, rv);
+ 
+  nsCOMPtr<nsIStringBundleService> stringBundleService =
+    do_GetService(NS_STRINGBUNDLE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+ 
+  rv = stringBundleService->CreateBundle(SB_BUNDLE_URL,
+                                         getter_AddRefs(mBundle));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mBundle->GetStringFromName(SB_PLAYQUEUE_PANE_TITLE.get(),
+                                  getter_Copies(mQueueName));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+void
+sbPlayQueueAsyncListener::Finalize()
+{
+  nsresult rv;
+
+  if (mDataRemote) {
+    rv = mDataRemote->Unbind();
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to unbind face plate data remote");
+  }
+}
+
+//----------------------------------------------------------------------------
+//
+// Implementation of sbIMediaListAsyncListener
+//
+//-----------------------------------------------------------------------------
+
+NS_IMETHODIMP
+sbPlayQueueAsyncListener::OnProgress(PRUint32 aItemsProcessed, PRBool aComplete)
+{
+  nsresult rv;
+
+  nsString processed = sbAutoString(aItemsProcessed);
+
+  nsString message;
+  const PRUnichar* strings[2] = { processed.get(), mQueueName.get() };
+  rv = mBundle->FormatStringFromName(SB_LIBRARY_TRACKSADDED.get(),
+                                     strings,
+                                     2,
+                                     getter_Copies(message));
+  if (NS_FAILED(rv)) {
+    message = SB_LIBRARY_TRACKSADDED;
+  }
+
+  rv = mDataRemote->SetStringValue(message);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (aComplete) {
+    rv = mService->NotifyQueueOperationCompleted();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mService->SetIgnoreListListener(PR_FALSE);
+  }
+
+  return NS_OK;
+}
 
 NS_IMPL_ISUPPORTS5(sbPlayQueueService,
                    sbIPlayQueueService,
@@ -100,7 +198,9 @@ sbPlayQueueService::sbPlayQueueService()
     mIgnoreListListener(PR_FALSE),
     mSequencerOnQueue(PR_FALSE),
     mSequencerPlayingOrPaused(PR_FALSE),
+    mOperationInProgress(PR_FALSE),
     mLibraryListener(nsnull),
+    mAsyncListener(nsnull),
     mWeakMediacoreManager(nsnull)
 {
   #if PR_LOGGING
@@ -140,6 +240,12 @@ sbPlayQueueService::Init()
 
   PRBool success = mListeners.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  mAsyncListener = new sbPlayQueueAsyncListener(this);
+  NS_ENSURE_TRUE(mAsyncListener, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = mAsyncListener->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -262,12 +368,26 @@ sbPlayQueueService::SetIndex(PRUint32 aIndex)
 }
 
 NS_IMETHODIMP
+sbPlayQueueService::GetOperationInProgress(PRBool *aOperationInProgress)
+{
+  TRACE(("%s[%p]", __FUNCTION__, this));
+
+  NS_ENSURE_ARG_POINTER(aOperationInProgress);
+
+  *aOperationInProgress = mOperationInProgress;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbPlayQueueService::QueueNext(sbIMediaItem* aMediaItem)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
   NS_ASSERTION(NS_IsMainThread(),
-      "QueueNext() must be called from the main thread");
+    "QueueNext() must be called from the main thread");
+  NS_ASSERTION(!mOperationInProgress,
+    "QueueNext() should not be called while an async operation is in progress");
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_TRUE(mInitialized, NS_ERROR_NOT_INITIALIZED);
   nsresult rv;
@@ -322,7 +442,9 @@ sbPlayQueueService::QueueLast(sbIMediaItem* aMediaItem)
   TRACE(("%s[%p]", __FUNCTION__, this));
 
   NS_ASSERTION(NS_IsMainThread(),
-      "QueueLast() must be called from the main thread");
+    "QueueLast() must be called from the main thread");
+  NS_ASSERTION(!mOperationInProgress,
+    "QueueLast() should not be called while an async operation is in progress");
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_TRUE(mInitialized, NS_ERROR_NOT_INITIALIZED);
   nsresult rv;
@@ -347,17 +469,64 @@ sbPlayQueueService::QueueLast(sbIMediaItem* aMediaItem)
 }
 
 NS_IMETHODIMP
+sbPlayQueueService::QueueSomeBefore(PRUint32 aIndex,
+                                    nsISimpleEnumerator* aMediaItems)
+{
+  TRACE(("%s[%p]", __FUNCTION__, this));
+
+  NS_ASSERTION(NS_IsMainThread(),
+    "QueueSomeBefore() must be called from the main thread");
+  NS_ASSERTION(!mOperationInProgress,
+    "QueueSomeBefore() should not be called while an async operation is in progress");
+  NS_ENSURE_ARG_POINTER(aMediaItems);
+  NS_ENSURE_TRUE(mInitialized, NS_ERROR_NOT_INITIALIZED);
+  nsresult rv;
+
+#if DEBUG
+  PRUint32 length;
+  rv = mMediaList->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ENSURE_ARG_RANGE(aIndex, 0, length - 1);
+#endif
+
+  // Still need to increment the mIndex properly in OnItemAdded when
+  // aIndex <= mIndex
+  if (aIndex > mIndex)
+    mIgnoreListListener = PR_TRUE;
+
+  rv = NotifyQueueOperationStarted();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIOrderableMediaList> orderedList =
+      do_QueryInterface(mMediaList, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = orderedList->InsertSomeBeforeAsync(aIndex,
+                                          aMediaItems,
+                                          mAsyncListener);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbPlayQueueService::QueueSomeNext(nsISimpleEnumerator* aMediaItems)
 {
   TRACE(("%s[%p]", __FUNCTION__, this));
 
   NS_ASSERTION(NS_IsMainThread(),
-      "QueueSomeNext() must be called from the main thread");
+    "QueueSomeNext() must be called from the main thread");
+  NS_ASSERTION(!mOperationInProgress,
+    "QueueSomeNext() should not be called while an async operation is in progress");
   NS_ENSURE_ARG_POINTER(aMediaItems);
   NS_ENSURE_TRUE(mInitialized, NS_ERROR_NOT_INITIALIZED);
   nsresult rv;
 
   mIgnoreListListener = PR_TRUE;
+
+  rv = NotifyQueueOperationStarted();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // The index into mMediaList that we will insert aMediaItem before.
   PRUint32 insertBeforeIndex =
@@ -368,18 +537,18 @@ sbPlayQueueService::QueueSomeNext(nsISimpleEnumerator* aMediaItems)
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (insertBeforeIndex >= length) {
-    rv = mMediaList->AddSome(aMediaItems);
+    rv = mMediaList->AddSomeAsync(aMediaItems, mAsyncListener);
     NS_ENSURE_SUCCESS(rv, rv);
   } else {
     nsCOMPtr<sbIOrderableMediaList> orderedList =
         do_QueryInterface(mMediaList, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = orderedList->InsertSomeBefore(insertBeforeIndex, aMediaItems);
+    rv = orderedList->InsertSomeBeforeAsync(insertBeforeIndex,
+                                            aMediaItems,
+                                            mAsyncListener);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-
-  mIgnoreListListener = PR_FALSE;
 
   return NS_OK;
 }
@@ -390,17 +559,20 @@ sbPlayQueueService::QueueSomeLast(nsISimpleEnumerator* aMediaItems)
   TRACE(("%s[%p]", __FUNCTION__, this));
 
   NS_ASSERTION(NS_IsMainThread(),
-      "QueueSomeLast() must be called from the main thread");
+    "QueueSomeLast() must be called from the main thread");
+  NS_ASSERTION(!mOperationInProgress,
+    "QueueSomeLast() should not be called while an async operation is in progress");
   NS_ENSURE_ARG_POINTER(aMediaItems);
   NS_ENSURE_TRUE(mInitialized, NS_ERROR_NOT_INITIALIZED);
   nsresult rv;
 
   mIgnoreListListener = PR_TRUE;
 
-  rv = mMediaList->AddSome(aMediaItems);
+  rv = NotifyQueueOperationStarted();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mIgnoreListListener = PR_FALSE;
+  rv = mMediaList->AddSomeAsync(aMediaItems, mAsyncListener);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -411,7 +583,9 @@ sbPlayQueueService::ClearAll()
   TRACE(("%s[%p]", __FUNCTION__, this));
 
   NS_ASSERTION(NS_IsMainThread(),
-      "Clear() must be called from the main thread");
+    "ClearAll() must be called from the main thread");
+  NS_ASSERTION(!mOperationInProgress,
+    "ClearAll() should not be called while an async operation is in progress");
   NS_ENSURE_TRUE(mInitialized, NS_ERROR_NOT_INITIALIZED);
 
   mIgnoreListListener = PR_TRUE;
@@ -433,7 +607,9 @@ sbPlayQueueService::ClearHistory()
   TRACE(("%s[%p]", __FUNCTION__, this));
 
   NS_ASSERTION(NS_IsMainThread(),
-      "ClearHistory() must be called from the main thread");
+    "ClearHistory() must be called from the main thread");
+  NS_ASSERTION(!mOperationInProgress,
+    "ClearHistory() should not be called while an async operation is in progress");
   nsresult rv;
 
   if (mIndex == 0) {
@@ -868,8 +1044,7 @@ sbPlayQueueService::OnBeforeItemRemoved(sbIMediaList* aMediaList,
   NS_ENSURE_ARG_POINTER(aMediaItem);
   nsresult rv;
 
-  if (mIgnoreListListener ||
-      mLibraryListener->ShouldIgnore())
+  if (mIgnoreListListener || mLibraryListener->ShouldIgnore())
   {
     return NS_OK;
   }
@@ -1324,6 +1499,64 @@ sbPlayQueueService::OnIndexUpdatedCallback(nsISupportsHashKey* aKey,
     rv = listener->OnIndexUpdated(*index);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
                      "OnIndexUpdated returned a failure code");
+  }
+  return PL_DHASH_NEXT;
+}
+
+nsresult
+sbPlayQueueService::NotifyQueueOperationStarted() {
+  TRACE(("%s[%p]", __FUNCTION__, this));
+
+  NS_ASSERTION(NS_IsMainThread(),
+    "NotifyQueueOperationStarted() must be called from the main thread");
+
+  mOperationInProgress = PR_TRUE;
+  return mListeners.EnumerateEntries(OnQueueStartedCallback, nsnull);
+};
+
+nsresult
+sbPlayQueueService::NotifyQueueOperationCompleted() {
+  TRACE(("%s[%p]", __FUNCTION__, this));
+
+  NS_ASSERTION(NS_IsMainThread(),
+    "NotifyQueueOperationCompleted() must be called from the main thread");
+
+  mListeners.EnumerateEntries(OnQueueCompletedCallback, nsnull);
+  mOperationInProgress = PR_FALSE;
+
+  return NS_OK;
+};
+
+PLDHashOperator PR_CALLBACK
+sbPlayQueueService::OnQueueStartedCallback(nsISupportsHashKey* aKey,
+                                           void* aUserData)
+{
+  TRACE(("%s[static]", __FUNCTION__));
+  NS_ASSERTION(aKey, "aKey should not be null!");
+
+  nsresult rv;
+  nsCOMPtr<sbIPlayQueueServiceListener> listener =
+    do_QueryInterface(aKey->GetKey(), &rv);
+
+  if (NS_SUCCEEDED(rv)) {
+    listener->OnQueueOperationStarted();
+  }
+  return PL_DHASH_NEXT;
+}
+
+PLDHashOperator PR_CALLBACK
+sbPlayQueueService::OnQueueCompletedCallback(nsISupportsHashKey* aKey,
+                                             void* aUserData)
+{
+  TRACE(("%s[static]", __FUNCTION__));
+  NS_ASSERTION(aKey, "Args should not be null!");
+
+  nsresult rv;
+  nsCOMPtr<sbIPlayQueueServiceListener> listener =
+    do_QueryInterface(aKey->GetKey(), &rv);
+
+  if (NS_SUCCEEDED(rv)) {
+    listener->OnQueueOperationCompleted();
   }
   return PL_DHASH_NEXT;
 }

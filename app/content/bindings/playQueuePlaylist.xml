@@ -64,6 +64,22 @@
           ]]>
         </body>
       </method>
+
+      <method name="_addItemsAsync">
+        <parameter name="mediaList"/>
+        <parameter name="enumerator"/>
+        <parameter name="doInsert"/>
+        <parameter name="row"/>
+        <body>
+          <![CDATA[
+            if (doInsert) {
+              this._playQueueService.queueSomeBefore(row, enumerator);
+            } else {
+              this._playQueueService.queueSomeLast(enumerator);
+            }
+          ]]>
+        </body>
+      </method>
     </implementation>
 
     <handlers>

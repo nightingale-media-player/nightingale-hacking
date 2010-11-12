@@ -37,6 +37,7 @@
 // Songbird includes
 #include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
+#include <sbLocalDatabaseMediaItem.h>
 
 // Songbird interfaces
 #include <sbILibrary.h>
@@ -161,10 +162,17 @@ sbMediaListEnumeratorWrapper::GetNext(nsISupports ** aItem)
   propertyValue += NS_LITERAL_STRING(",");
   propertyValue += itemGuid;
 
+  // Do not send notification when the item is updated.
+  nsCOMPtr<sbILocalDatabaseMediaItem> item =
+    do_QueryInterface(mediaItem, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  item->SetSuppressNotifications(PR_TRUE);
   rv = 
     mediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_STATUS_TARGET),
                            propertyValue);
   NS_ENSURE_SUCCESS(rv, rv);
+  item->SetSuppressNotifications(PR_FALSE);
 
   NS_ADDREF(*aItem = mediaItem);
 

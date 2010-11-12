@@ -1,29 +1,27 @@
 /* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #include "sbLocalDatabaseSimpleMediaList.h"
 
@@ -120,23 +118,29 @@ static PRLogModuleInfo* gLocalDatabaseSimpleMediaListLog = nsnull;
  * Support class used to run async versions of sbIMediaList methods
  * implemented by the sbLocalDatabaseSimpleMediaList.
  */
-class sbLocalDatabaseSimpleMediaListAsyncRunner : public nsIRunnable
+class sbLocalDatabaseSimpleMediaListAddSomeAsyncRunner : public nsIRunnable
 {
 public:
   NS_DECL_ISUPPORTS
 
-  explicit sbLocalDatabaseSimpleMediaListAsyncRunner(
+  explicit sbLocalDatabaseSimpleMediaListAddSomeAsyncRunner(
     sbLocalDatabaseSimpleMediaList* aLocalDatabaseSimpleMediaList,
     nsISimpleEnumerator* aMediaItems,
-    sbIMediaListAsyncListener* aListener)
+    sbIMediaListAsyncListener* aListener,
+    PRUint32 aStartingIndex,
+    const nsAString& aStartingOrdinal)
     : mLocalDatabaseSimpleMediaList(aLocalDatabaseSimpleMediaList)
     , mListener(aListener)
-    , mMediaItems(aMediaItems) {}
+    , mMediaItems(aMediaItems)
+    , mStartingIndex(aStartingIndex)
+    , mStartingOrdinal(aStartingOrdinal) {}
   
   NS_IMETHOD Run() {
     nsresult rv = 
       mLocalDatabaseSimpleMediaList->AddSomeAsyncInternal(mMediaItems, 
-                                                          mListener);
+                                                          mListener,
+                                                          mStartingIndex,
+                                                          mStartingOrdinal);
     NS_ENSURE_SUCCESS(rv, rv);
     return NS_OK;
   }
@@ -145,9 +149,11 @@ private:
   nsRefPtr<sbLocalDatabaseSimpleMediaList> mLocalDatabaseSimpleMediaList;
   nsCOMPtr<sbIMediaListAsyncListener>      mListener;
   nsCOMPtr<nsISimpleEnumerator>            mMediaItems;
+  PRUint32                                 mStartingIndex;
+  nsString                                 mStartingOrdinal;
 };
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabaseSimpleMediaListAsyncRunner,
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabaseSimpleMediaListAddSomeAsyncRunner,
                               nsIRunnable);
 
 // This class is stack-only but needs to act like an XPCOM object.  Add dummy
@@ -935,8 +941,16 @@ sbLocalDatabaseSimpleMediaList::AddSomeAsync(nsISimpleEnumerator* aMediaItems,
   NS_ENSURE_ARG_POINTER(aMediaItems);
   NS_ENSURE_ARG_POINTER(aListener);
 
+  PRUint32 startingIndex;
+  nsresult rv = GetLength(&startingIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString startingOrdinal;
+  rv = GetNextOrdinal(startingOrdinal);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<nsIThread> target;
-  nsresult rv = NS_GetMainThread(getter_AddRefs(target));
+  rv = NS_GetMainThread(getter_AddRefs(target));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaListAsyncListener> proxiedListener;
@@ -947,8 +961,9 @@ sbLocalDatabaseSimpleMediaList::AddSomeAsync(nsISimpleEnumerator* aMediaItems,
                             getter_AddRefs(proxiedListener));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsRefPtr<sbLocalDatabaseSimpleMediaListAsyncRunner> runner = 
-    new sbLocalDatabaseSimpleMediaListAsyncRunner(this, aMediaItems, proxiedListener);
+  nsRefPtr<sbLocalDatabaseSimpleMediaListAddSomeAsyncRunner> runner = 
+    new sbLocalDatabaseSimpleMediaListAddSomeAsyncRunner(
+      this, aMediaItems, proxiedListener, startingIndex, startingOrdinal);
   NS_ENSURE_TRUE(runner, NS_ERROR_OUT_OF_MEMORY);
 
   nsCOMPtr<nsIThreadPool> threadPoolService =
@@ -963,27 +978,23 @@ sbLocalDatabaseSimpleMediaList::AddSomeAsync(nsISimpleEnumerator* aMediaItems,
 
 nsresult
 sbLocalDatabaseSimpleMediaList::AddSomeAsyncInternal(nsISimpleEnumerator* aMediaItems,
-                                                     sbIMediaListAsyncListener* aListener)
+                                                     sbIMediaListAsyncListener* aListener,
+                                                     PRUint32 aStartingIndex,
+                                                     nsAString& aStartingOrdinal)
 {
   NS_ENSURE_ARG_POINTER(aMediaItems);
   NS_ENSURE_ARG_POINTER(aListener);
+
+  nsresult rv;
 
   NS_ASSERTION(!NS_IsMainThread(), 
     "AddSomeAsyncInternal should never be called on the main thread!");
 
   SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
-  PRUint32 startingIndex;
-  nsresult rv = GetLength(&startingIndex);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsString startingOrdinal;
-  rv = GetNextOrdinal(startingOrdinal);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   sbSimpleMediaListInsertingEnumerationListener listener(this,
-                                                         startingIndex,
-                                                         startingOrdinal);
+                                                         aStartingIndex,
+                                                         aStartingOrdinal);
 
   PRUint16 stepResult;
   rv = listener.OnEnumerationBegin(nsnull, &stepResult);
@@ -1007,9 +1018,9 @@ sbLocalDatabaseSimpleMediaList::AddSomeAsyncInternal(nsISimpleEnumerator* aMedia
 
     ++itemsProcessed;
 
-    // only send notifications every 50 items or 
-    // when it's finished if < 50 items.
-    if (itemsProcessed % 50 == 0) {
+    // only send notifications every SB_ASYNC_NOTIFICATION_ITEMS items or
+    // when it's finished if < SB_ASYNC_NOTIFICATION_ITEMS items.
+    if (itemsProcessed % SB_ASYNC_NOTIFICATION_ITEMS == 0) {
       rv = aListener->OnProgress(itemsProcessed, PR_FALSE);
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to call async listener.");
     }
@@ -1173,6 +1184,51 @@ sbLocalDatabaseSimpleMediaList::InsertSomeBefore(PRUint32 aIndex,
   }
 
   rv = listener.OnEnumerationEnd(nsnull, NS_OK);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::InsertSomeBeforeAsync(
+                                  PRUint32 aIndex,
+                                  nsISimpleEnumerator* aMediaItems,
+                                  sbIMediaListAsyncListener* aListener)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItems);
+  NS_ENSURE_ARG_POINTER(aListener);
+  SB_ENSURE_INDEX1(aIndex);
+
+  nsresult rv;
+
+  nsString startingOrdinal;
+  rv = GetBeforeOrdinal(aIndex, startingOrdinal);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  startingOrdinal.AppendLiteral(".0");
+
+  nsCOMPtr<nsIThread> target;
+  rv = NS_GetMainThread(getter_AddRefs(target));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediaListAsyncListener> proxiedListener;
+  rv = do_GetProxyForObject(target,
+                            NS_GET_IID(sbIMediaListAsyncListener),
+                            aListener,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(proxiedListener));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsRefPtr<sbLocalDatabaseSimpleMediaListAddSomeAsyncRunner> runner = 
+    new sbLocalDatabaseSimpleMediaListAddSomeAsyncRunner(
+      this, aMediaItems, proxiedListener, aIndex, startingOrdinal);
+  NS_ENSURE_TRUE(runner, NS_ERROR_OUT_OF_MEMORY);
+
+  nsCOMPtr<nsIThreadPool> threadPoolService =
+    do_GetService("@songbirdnest.com/Songbird/ThreadPoolService;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = threadPoolService->Dispatch(runner, NS_DISPATCH_NORMAL);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

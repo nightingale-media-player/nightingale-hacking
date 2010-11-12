@@ -51,6 +51,12 @@ function runTest () {
       this._indexChange = true;
     },
 
+    onQueueOperationStarted: function() {},
+
+    onQueueOperationCompleted: function(aCount) {
+      testFinished();
+    },
+
     // sbIMediaList methods
     testAdd: function (num) {
       var uris = this._generateURIs(num);
@@ -113,12 +119,25 @@ function runTest () {
       this._verifyList();
     },
 
+    testQueueSomeBefore: function(num, pos) {
+      var uris = this._generateURIs(num);
+      for (let i = 0; i < uris.length; i++)
+        this._testURIArray.splice(pos + i, 0, uris[i]);
+      if (pos <= this._testIndex)
+        this._testIndex += num;
+      var items = this._generateItems(uris);
+      gPQS.queueSomeBefore(pos, ArrayConverter.enumerator(items));
+      testPending();
+      this._verifyList();
+    },
+
     testQueueSomeNext: function(num) {
       var uris = this._generateURIs(num);
       for (let i = 0; i < uris.length; i++)
         this._testURIArray.splice(this._testIndex + i, 0, uris[i]);
       var items = this._generateItems(uris);
       gPQS.queueSomeNext(ArrayConverter.enumerator(items));
+      testPending();
       this._verifyList();
     },
 
@@ -128,6 +147,7 @@ function runTest () {
         this._testURIArray.push(uris[i]);
       var items = this._generateItems(uris);
       gPQS.queueSomeLast(ArrayConverter.enumerator(items));
+      testPending();
       this._verifyList();
     },
 
@@ -368,6 +388,22 @@ function runTest () {
   testFixture.testAdd(5);
   testFixture.testSetIndex(4);
   testFixture.testQueueLast(5);
+
+  // Test queueSomeBefore
+  testFixture.reset();
+  testFixture.testAdd(5);
+  testFixture.testSetIndex(3);
+  testFixture.testQueueSomeBefore(5, 2);
+
+  testFixture.reset();
+  testFixture.testAdd(5);
+  testFixture.testSetIndex(3);
+  testFixture.testQueueSomeBefore(5, 3);
+
+  testFixture.reset();
+  testFixture.testAdd(5);
+  testFixture.testSetIndex(3);
+  testFixture.testQueueSomeBefore(5, 4);
 
   // Test queueSomeNext/Last
   testFixture.reset();

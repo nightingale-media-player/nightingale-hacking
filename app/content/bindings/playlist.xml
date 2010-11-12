@@ -84,6 +84,7 @@
               id="sb-playlist-popup"
               sbid="sb-playlist-popup"
               class="sb-playlist-popup"
+              onpopupshowing="onPopupShowing( event );"
               onpopupshown="onPopupShown( event );"
               onpopuphidden="onPopupHidden( event );"
             >
@@ -110,6 +111,7 @@
   Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
   Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
   Components.utils.import("resource://app/jsmodules/sbMetadataUtils.jsm");
+  Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
   // Attach event handler closures
   var self = this;
@@ -139,6 +141,24 @@
   this.addEventListener("command",
                         this._onCommandClosure,
                         true);
+
+  this._playQueueService = Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
+                             .getService(Ci.sbIPlayQueueService);
+
+  this._playQueueServiceListener = {
+    onIndexUpdated: function(aToIndex) {},
+
+    onQueueOperationStarted: function() {
+      self._queueOperationStateChanged = true;
+      self.disableDrop = true;
+    },
+
+    onQueueOperationCompleted: function(aCount) {
+      self._queueOperationStateChanged = true;
+      self.disableDrop = false;
+    }
+  };
+  this._playQueueService.addListener(this._playQueueServiceListener);
 
   // Add the controller to respond to the edit menu
   this.tree.controllers.appendController(this._commandController);
@@ -696,6 +716,8 @@
     this.removeEventListener("command",
                             this._onCommandClosure,
                             true);
+
+    this._playQueueService.removeListener(this._playQueueServiceListener);
 
     // Break the cycle between ourselves and the tree view
     if (this.treeView && this.treeView instanceof this._Ci.sbIMediaListViewTreeView) {
@@ -2371,6 +2393,25 @@
       </body>
     </method>
 
+    <method name="onPopupShowing">
+      <parameter name="evt"/>
+      <body>
+        <![CDATA[
+          try
+          {
+            if (this._queueOperationStateChanged) {
+              this.refreshCommands(false);
+              this._queueOperationStateChanged = false;
+            }
+          }
+          catch( err )
+          {
+            alert( "playlist.xml - onPopupShowing - " + err );
+          }
+        ]]>
+      </body>
+    </method>
+
     <method name="onPopupShown">
       <parameter name="evt"/>
       <body>
@@ -2486,6 +2527,34 @@
       </body>
     </method>
 
+    <method name="_addItemsAsync">
+      <parameter name="mediaList"/>
+      <parameter name="enumerator"/>
+      <parameter name="doInsert"/>
+      <parameter name="row"/>
+      <body>
+<![CDATA[
+  var self = this;
+  var asyncListener = {
+    onProgress: function(aItemsProcessed, aComplete) {
+      DNDUtils.reportAddedTracks(aItemsProcessed,
+                                 0, /* no duplicate reporting */
+                                 0, /* no unsupported reporting */
+                                 mediaList.name);
+    },
+    QueryInterface: XPCOMUtils.generateQI([self._Ci.sbIMediaListAsyncListener])
+  }
+
+  if (doInsert) {
+    mediaList.insertSomeBeforeAsync(row, enumerator, asyncListener);
+  }
+  else {
+    mediaList.addSomeAsync(enumerator, asyncListener);
+  }
+]]>
+      </body>
+    </method>
+
     <method name="_addItems">
       <parameter name="source"/>
       <parameter name="enumerator"/>
@@ -2557,19 +2626,7 @@
     }
   }
   else {
-    var self = this;
-    if (doInsert) {
-      ml.insertSomeBefore(row, enumerator);
-    }
-    else {
-      ml.addSome(enumerator);
-    }
-
-    var added = ml.length - oldLength;
-    DNDUtils.reportAddedTracks(added,
-                               count - added,
-                               0,
-                               this.mediaList.name);
+    this._addItemsAsync(ml, enumerator, doInsert, row);
   }
 ]]>
       </body>
@@ -2709,6 +2766,12 @@
         <parameter name="event"/>
         <body>
         <![CDATA[
+          // Special flag we use to disable dropping items to a playlist, this
+          // allows the playlist to still be editable but stop drag and drop.
+          if (this._disableDrop) {
+            return false;
+          }
+
           let dragService = this._Cc["@mozilla.org/widget/dragservice;1"]
                                 .getService(this._Ci.nsIDragService);
           let session = dragService.getCurrentSession();

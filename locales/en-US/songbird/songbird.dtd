@@ -855,3 +855,4 @@
 
 <!ENTITY playqueue.label "Play Queue">
 <!ENTITY playqueue.instructions "Drag and drop tracks or playlists here to create an on-the-fly listening queue">
+<!ENTITY playqueue.inprogress "Adding tracks">

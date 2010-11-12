@@ -44,7 +44,8 @@ See chrome://songbird/content/xul/playQueue.xul
   opacity: 0.75;
 }
 
-#playqueue-message-layer-outer-box {
+#playqueue-message-layer-outer-box,
+#playqueue-in-progress-layer-outer-box {
   padding: 10px;
   background-color: transparent;
 }
@@ -53,6 +54,10 @@ See chrome://songbird/content/xul/playQueue.xul
   padding: 10px;
   text-align: center;
   -moz-border-radius: 6px;
+}
+
+.playqueue-inprogress-image {
+  list-style-image: url('chrome://songbird/skin/playqueue/icon-loading-white.png');
 }
 
 toolbarbutton {

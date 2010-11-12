@@ -53,8 +53,14 @@ var playQueue = {
 
     this._playlist = document.getElementById("playqueue-playlist");
     this._playlistBox = document.getElementById("playqueue-playlist-box");
-    this._messageLayer = document.getElementById("playqueue-message-layer-outer-box");
-    this._innerMessageBox = document.getElementById("playqueue-message-layer-inner-box");
+    this._innerMessageBox =
+      document.getElementById("playqueue-message-layer-inner-box");
+    this._messageLayer =
+      document.getElementById("playqueue-message-layer-outer-box");
+    this._inProgressLayer =
+      document.getElementById("playqueue-in-progress-layer-outer-box");
+    this._innerInProgressBox =
+      document.getElementById("playqueue-in-progress-layer-inner-box");
 
     var playQueueService = Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
                              .getService(Ci.sbIPlayQueueService);
@@ -94,6 +100,18 @@ var playQueue = {
     this._playQueueServiceListener = {
       onIndexUpdated: function(aToIndex) {
         view.treeView.selection.tree.ensureRowIsVisible(aToIndex);
+      },
+
+      onQueueOperationStarted: function() {
+        self._playlistBox.setAttribute("disabled", "true");
+        self._messageLayer.setAttribute("hidden", "true");
+        self._inProgressLayer.removeAttribute("hidden");
+      },
+
+      onQueueOperationCompleted: function() {
+        self._playlistBox.removeAttribute("disabled");
+        self._messageLayer.setAttribute("hidden", "true");
+        self._inProgressLayer.setAttribute("hidden", "true");
       }
     };
 
@@ -163,7 +181,7 @@ var playQueue = {
                                    this.onShowCurrentTrack,
                                    true);
 
-    if (this._mediacoreListener) {
+   if (this._mediacoreListener) {
       var mediacoreManager = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
                                .getService(Ci.sbIMediacoreManager);
 
@@ -186,6 +204,7 @@ var playQueue = {
     this._playlistBox.setAttribute("disabled", "true");
     this._listEmpty = true;
     this._messageLayer.removeAttribute("hidden");
+    this._inProgressLayer.setAttribute("hidden", "true");
   },
 
   /**
@@ -195,6 +214,7 @@ var playQueue = {
     this._LOG(arguments.callee.name);
     this._playlistBox.removeAttribute("disabled");
     this._messageLayer.setAttribute("hidden", "true");
+    this._inProgressLayer.setAttribute("hidden", "true");
     this._listEmpty = false;
   },
 
@@ -249,6 +269,16 @@ var playQueue = {
 
     // Stop propagation so the default drag and drop handler doesn't try to
     // handle a drop that we already handled with _dropOnTree
+    aEvent.stopPropagation();
+  },
+
+  /**
+   * Event handler for dragover on the in progress layer. Drop disabled.
+   */
+  onQueueInProgressDragOver:
+      function playQueue_onQueueInProgressDragOver(aEvent) {
+    this._LOG(arguments.callee.name);
+    aEvent.dataTransfer.effectAllowed = "none";
     aEvent.stopPropagation();
   },
 

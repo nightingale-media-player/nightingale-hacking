@@ -73,6 +73,22 @@
       </vbox>
     </vbox>
 
+    <!-- Message Layer for Play Queue while asynchronous queue
+         operations are in progress -->
+    <vbox id="playqueue-in-progress-layer-outer-box"
+          pack="center"
+          flex="1"
+          ondragover="playQueue.onQueueInProgressDragOver(event);">
+      <vbox id="playqueue-in-progress-layer-inner-box"
+            class="playqueue-instructions"
+            pack="center">
+        <description>&playqueue.inprogress;</description>
+        <hbox pack="center">
+          <image class="playqueue-inprogress-image"/>
+        </hbox>
+      </vbox>
+    </vbox>
+
   </stack>
 
   <script type="application/x-javascript"

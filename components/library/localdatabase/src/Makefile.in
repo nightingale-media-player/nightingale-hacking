@@ -125,6 +125,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dbengine/public \
                      $(topsrcdir)/components/moz/strings/src \
                      $(topsrcdir)/components/moz/threadpoolservice/src \
                      $(topsrcdir)/components/moz/threads/src \
+                     $(topsrcdir)/components/playqueue/src \
                      $(topsrcdir)/components/moz/xpcom/src \
                      $(topsrcdir)/components/property/src \
                      $(topsrcdir)/components/sqlbuilder/src \

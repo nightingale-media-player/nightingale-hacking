@@ -35,13 +35,14 @@
 interface nsISimpleEnumerator;
 interface sbIMediaItem;
 interface sbIMediaList;
+interface sbIMediaListAsyncListener;
 
 /**
 * \interface sbIOrderableMediaList
 * \brief Media lists that implement this interface support custom ordering
 * \sa sbIMediaList
 */
-[scriptable, uuid(d14dd760-3e10-4114-be30-6f4887279214)]
+[scriptable, uuid(77468450-da16-11df-937b-0800200c9a66)]
 interface sbIOrderableMediaList : nsISupports
 {
   /**
@@ -81,6 +82,17 @@ interface sbIOrderableMediaList : nsISupports
    */
   void insertSomeBefore(in unsigned long aIndex,
                         in nsISimpleEnumerator aMediaItems);
+
+  /**
+   * \brief Insert many media items before the specified media item
+   *        asynchronously
+   * \param aIndex Position of item to insert before
+   * \param aMediaItems Simple enumerator of sbIMediaItem objects to insert
+   * \param aListener A listener that will get called with progress information
+   */
+  void insertSomeBeforeAsync(in unsigned long aIndex,
+                             in nsISimpleEnumerator aMediaItems,
+                             in sbIMediaListAsyncListener aListener);
 
   /**
    * \brief Move a list of media items from one position to another in the list

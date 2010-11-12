@@ -2805,6 +2805,18 @@ sbLocalDatabaseTreeView::OnIndexUpdated(PRUint32 aToIndex)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::OnQueueOperationStarted()
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::OnQueueOperationCompleted()
+{
+  return NS_OK;
+}
+
 // nsIObserver
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::Observe(nsISupports* aSubject,

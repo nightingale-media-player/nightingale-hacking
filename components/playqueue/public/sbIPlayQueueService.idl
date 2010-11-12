@@ -39,7 +39,7 @@ interface sbIMediaList;
  *
  * Listener to receive updates when the current index in the queue changes
  */
-[scriptable, uuid(db047133-8fa0-4a38-98cc-5a6ee081ff8e)]
+[scriptable, uuid(abbeaac0-dc53-11df-937b-0800200c9a66)]
 interface sbIPlayQueueServiceListener : nsISupports
 {
   /**
@@ -49,6 +49,20 @@ interface sbIPlayQueueServiceListener : nsISupports
    * \sa sbIPlayQueueService
    */
   void onIndexUpdated(in unsigned long aToIndex);
+
+  /**
+   * \brief fired when queue operation is started.
+   *
+   * \sa sbIPlayQueueService
+   */
+  void onQueueOperationStarted();
+
+  /**
+   * \brief fired when queue operation is completed.
+   *
+   * \sa sbIPlayQueueService
+   */
+  void onQueueOperationCompleted();
 };
 
 /**
@@ -58,11 +72,14 @@ interface sbIPlayQueueServiceListener : nsISupports
  * Service to allow queueing items and visibility into the persistent current
  * index.
  */
-[scriptable, uuid(e858c85a-5093-49ba-959e-e604bd85f05c)]
+[scriptable, uuid(88849800-ddbe-11df-85ca-0800200c9a66)]
 interface sbIPlayQueueService : nsISupports
 {
   /**
    * \brief The underlying MediaList for the Play Queue
+   *
+   * mediaList should not be used to add items to the play queue. Items should
+   * always be added using the queue methods provided by this interface.
    */
   readonly attribute sbIMediaList mediaList;
 
@@ -70,6 +87,11 @@ interface sbIPlayQueueService : nsISupports
    * \brief Index of the current track in the Play Queue
    */
   attribute unsigned long index;
+
+  /**
+   * \brief Whether a queue operation is in progress.
+   */
+  readonly attribute boolean operationInProgress;
 
   /**
    * \brief Adds a media item to the next slot in the Play Queue
@@ -100,22 +122,44 @@ interface sbIPlayQueueService : nsISupports
   void queueLast(in sbIMediaItem aMediaItem);
 
   /**
+   * \brief Adds an enumerator of media items before the slot specified by
+   *        aIndex in the Play Queue asynchronously. Items are not actually in
+   *        the queue until the onQueueOperationCompleted notification is sent,
+   *        and callers should not attempt to add or remove items from the queue
+   *        while the operation is in progress.
+   *
+   * \param aIndex Index of the item before which to add media items.
+   * \param aMediaItems enumerator of media items to add
+   * \sa queueSomeLast() queueSomeNext()
+   */
+  void queueSomeBefore(in unsigned long aIndex,
+                       in nsISimpleEnumerator aMediaItems);
+
+  /**
    * \brief Adds an enumerator of media items to the next slot in the Play Queue
+   *        asynchronously. Items are not actually in the queue until the
+   *        onQueueOperationCompleted notification is sent, and callers should
+   *        not attempt to add or remove items from the queue while the
+   *        operation is in progress.
    *
    * Inserts all media items in aMediaItems into the play queue so that the
    * first enumerated item is played next and the remaining enumerated items are
    * played before any remaining future tracks that were already in the queue.
    *
    * \param aMediaItems enumerator of media items to add
-   * \sa queueSomeLast()
+   * \sa queueSomeBefore() queueSomeLast()
    */
   void queueSomeNext(in nsISimpleEnumerator aMediaItems);
 
   /**
    * \brief Adds an enumerator of media items to the end of the Play Queue
+   *        asynchronously. Items are not actually in the queue until the
+   *        onQueueOperationCompleted notification is sent, and callers should
+   *        not attempt to add or remove items from the queue while the
+   *        operation is in progress.
    *
    * \param aMediaItems enumerator of media items to add
-   * \sa queueSomeNext()
+   * \sa queueSomeBefore() queueSomeNext()
    */
   void queueSomeLast(in nsISimpleEnumerator aMediaItems);
 
