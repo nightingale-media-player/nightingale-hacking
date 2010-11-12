@@ -404,7 +404,17 @@ try
         while(allFiles.hasMoreElements()) {
           aFile = allFiles.getNext().QueryInterface(Components.interfaces.nsIFile);
           aURI = ioService.newFileURI(aFile);
-          SBOpenPlaylistURI(aURI, aFile.leafName);
+
+          // Remove the file extension if exist 
+          var name = aFile.leafName;
+          var p = name.lastIndexOf(".");
+          if (p != -1) {
+            ext = name.slice(p + 1, name.length);
+            if (exts.indexOf(ext) > -1) {
+              name = name.slice(0, p);
+            }
+          }
+          SBOpenPlaylistURI(aURI, name);
         }
       }
     }
