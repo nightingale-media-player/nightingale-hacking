@@ -26,6 +26,8 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+Cu.import("resource://app/jsmodules/DOMUtils.jsm");
+
 // Make a namespace.
 if (typeof LastFm == 'undefined') {
   var LastFm = {};
@@ -132,89 +134,164 @@ LastFm.onLoad = function() {
   this._profileAutoLogin = this._getElement(this._panelBinding,
                                             'profileAutoLogin');
 
-  // wire up UI events for the menu items
-  this._menuLogin.addEventListener('command',
-      function(event) {
-        LastFm.metrics.metricsInc('lastfm', 'menu', 'login');
-        LastFm.showPanel();
-      }, false);
-  this._menuLogout.addEventListener('command',
-      function(event) {
-        LastFm.metrics.metricsInc('lastfm', 'menu', 'logout');
-        LastFm.onLogoutClick(event);
-      }, false);
-  this._menuEnableScrobbling.addEventListener('command',
-      function(event) {
-        LastFm.metrics.metricsInc('lastfm', 'menu', 'scrobble');
-        LastFm.toggleShouldScrobble();
-      }, false);
-
-  // wire up click event for the status icon
-  this._statusIcon.addEventListener('click',
-      function(event) {
-        // only the left button
-        if (event.button != 0) return;
-
-        LastFm.metrics.metricsInc('lastfm', 'icon', 'click');
-
-        if (LastFm._service.loggedIn) {
-          // if we're logged in, toggle the scrobble state
-          LastFm.toggleShouldScrobble();
-        } else {
-          // otherwise show the panel
-          LastFm.showPanel();
-        }
-      }, false);
-
-  // and the contextmenu event
-  this._statusIcon.addEventListener('contextmenu',
-      function(event) {
-        LastFm.metrics.metricsInc('lastfm', 'icon', 'context');
-        LastFm.showPanel();
-      }, false);
-
-  // wire up the abort login link
-  this._abortButton.addEventListener('click',
-      function(event) { self._panel.hidePopup(); }, false);
-
-  // wire up the signup link
-  this._signupButton.addEventListener('click',
-      function(event) { LastFm.loadURI(LastFm.URL_SIGNUP, event); }, false);
-
-  // wire up the forgot password link
-  this._forgotpass.addEventListener('click',
-      function(event) { LastFm.loadURI(LastFm.URL_PASSWORD, event); }, false);
-
-  // wire up UI events for the profile links
-  this._image.addEventListener('click',
-      function(event) { LastFm.loadURI(LastFm._service.profileurl, event); },
-      false);
-  this._realname.addEventListener('click',
-      function(event) { LastFm.loadURI(LastFm._service.profileurl, event); },
-      false);
-  this._tracks.addEventListener('click',
-      function(event) {
-        LastFm.loadURI('http://www.last.fm/user/' +
-                       LastFm._service.username + '/charts/', event);
-      }, false);
-
-  // ui events for the auto sign in checkbox
-  this._loginAutoLogin.addEventListener('command',
-      function(event) { LastFm.toggleAutoLogin(); }, false);
-  this._profileAutoLogin.addEventListener('command',
-      function(event) { LastFm.toggleAutoLogin(); }, false);
-
-  // ui event for the should-scrobble checkbox
-  this._scrobble.addEventListener('command',
-      function(event) { LastFm.toggleShouldScrobble(); }, false);
+  // Create a DOM event listener set.
+  this._domEventListenerSet = new DOMEventListenerSet();
 
   var self = this;
-  this._panelBinding.addEventListener("login-button-clicked",
-                function(event) { self._handleUIEvents(event); }, false);
-  this._panelBinding.addEventListener("cancel-button-clicked",
-                function(event) { self._handleUIEvents(event); }, false);
-  this._panelBinding.addEventListener("logout-button-clicked",
-                function(event) { self._handleUIEvents(event); }, false);
+  // wire up UI events for the menu items
+  var onMenuLogin = function(event) {
+    self.metrics.metricsInc('lastfm', 'menu', 'login');
+    self.showPanel();
+  };
+  this._domEventListenerSet.add(this._menuLogin,
+                                'command',
+                                onMenuLogin,
+                                false,
+                                false);
+
+  var onMenuLogout = function(event) {
+    self.metrics.metricsInc('lastfm', 'menu', 'logout');
+    self.showPanel();
+  };
+  this._domEventListenerSet.add(this._menuLogout,
+                                'command',
+                                onMenuLogout,
+                                false,
+                                false);
+
+  var onMenuEnableScrobbling = function(event) {
+    self.metrics.metricsInc('lastfm', 'menu', 'scrobble');
+    self.toggleShouldScrobble();
+  };
+  this._domEventListenerSet.add(this._menuEnableScrobbling,
+                                'command',
+                                onMenuEnableScrobbling,
+                                false,
+                                false);
+
+  // wire up click event for the status icon
+  var onStatusIconClicked = function(event) {
+    // only the left button
+    if (event.button != 0) return;
+
+    self.metrics.metricsInc('lastfm', 'icon', 'click');
+
+    if (self._service.loggedIn) {
+      // if we're logged in, toggle the scrobble state
+      self.toggleShouldScrobble();
+    } else {
+      // otherwise show the panel
+      self.showPanel();
+    }
+  };
+  this._domEventListenerSet.add(this._statusIcon,
+                                'click',
+                                onStatusIconClicked,
+                                false,
+                                false);
+
+  // and the contextmenu event
+  var onStatusIconContextMenu = function(event) {
+    self.metrics.metricsInc('lastfm', 'icon', 'context');
+    self.showPanel();
+  };
+  this._domEventListenerSet.add(this._statusIcon,
+                                'contextmenu',
+                                onStatusIconContextMenu,
+                                false,
+                                false);
+
+  // wire up the abort login link
+  var onAbortButtonClicked = function(event) { self._panel.hidePopup(); };
+  this._domEventListenerSet.add(this._abortButton,
+                                'click',
+                                onAbortButtonClicked,
+                                false,
+                                false);
+
+
+  // wire up the signup link
+  var onSignupButtonClicked = function(event) {
+    self.loadURI(self.URL_SIGNUP, event);
+  };
+  this._domEventListenerSet.add(this._signupButton,
+                                'click',
+                                onSignupButtonClicked,
+                                false,
+                                false);
+
+  // wire up the forgot password link
+  var onForgotpass = function(event) {
+    self.loadURI(self.URL_PASSWORD, event);
+  };
+  this._domEventListenerSet.add(this._forgotpass,
+                                'click',
+                                onForgotpass,
+                                false,
+                                false);
+
+  // wire up UI events for the profile links
+  var onProfileUrlClicked = function(event) {
+    self.loadURI(self._service.profileurl, event);
+  };
+  this._domEventListenerSet.add(this._image,
+                                'click',
+                                onProfileUrlClicked,
+                                false,
+                                false);
+  this._domEventListenerSet.add(this._realname,
+                                'click',
+                                onProfileUrlClicked,
+                                false,
+                                false);
+
+  var onTracksUrlClicked = function(event) {
+    self.loadURI('http://www.last.fm/user/' +
+                 self._service.username + '/charts/', event);
+  };
+  this._domEventListenerSet.add(this._tracks,
+                                'click',
+                                onTracksUrlClicked,
+                                false,
+                                false);
+
+  // ui events for the auto sign in checkbox
+  var onAutoLoginToggled = function(event) { self.toggleAutoLogin(); };
+  this._domEventListenerSet.add(this._loginAutoLogin,
+                                'command',
+                                onAutoLoginToggled,
+                                false,
+                                false);
+  this._domEventListenerSet.add(this._profileAutoLogin,
+                                'command',
+                                onAutoLoginToggled,
+                                false,
+                                false);
+
+  // ui event for the should-scrobble checkbox
+  var onScrobbleToggled = function(event) { self.toggleShouldScrobble(); };
+  this._domEventListenerSet.add(this._scrobble,
+                                'command',
+                                onScrobbleToggled,
+                                false,
+                                false);
+
+  var onButtonClicked = function(event) { self._handleUIEvents(event); };
+  this._domEventListenerSet.add(this._panelBinding,
+                                'login-button-clicked',
+                                onButtonClicked,
+                                false,
+                                false);
+  this._domEventListenerSet.add(this._panelBinding,
+                                'cancel-button-clicked',
+                                onButtonClicked,
+                                false,
+                                false);
+  this._domEventListenerSet.add(this._panelBinding,
+                                'logout-button-clicked',
+                                onButtonClicked,
+                                false,
+                                false);
 
   // copy the username & password out of the service into the UI
   this._username.value = this._service.username;
@@ -236,33 +313,46 @@ LastFm.onLoad = function() {
     this._faceplateLove.setAttribute('mousethrough', 'never');
     this._faceplateLove.setAttribute('tooltiptext',
         this._strings.getString('lastfm.faceplate.love.tooltip'));
-    this._faceplateLove.addEventListener('click', function(event) {
-          LastFm.metrics.metricsInc('lastfm', 'faceplate', 'love');
-          if (LastFm._service.loveTrack && LastFm._service.love) {
-            /* if we have a loved track, then unlove */
-            LastFm._service.loveBan(null, false);
-          } else {
-            /* otherwise, love */
-            LastFm._service.loveBan(gMM.sequencer.currentItem, true);
-          }
-        }, false);
+
+    var onFaceplateLoveClicked = function(event) {
+      self.metrics.metricsInc('lastfm', 'faceplate', 'love');
+      if (self._service.loveTrack && self._service.love) {
+        /* if we have a loved track, then unlove */
+        self._service.loveBan(null, false);
+      } else {
+        /* otherwise, love */
+        self._service.loveBan(gMM.sequencer.currentItem, true);
+      }
+    };
+    this._domEventListenerSet.add(this._faceplateLove,
+                                  'click',
+                                  onFaceplateLoveClicked,
+                                  false,
+                                  false);
     this._faceplate.appendChild(this._faceplateLove);
+
     this._faceplateBan = document.createElement('image');
     this._faceplateBan.setAttribute('id', 'lastfmFaceplateBan');
     this._faceplateBan.setAttribute('mousethrough', 'never');
     this._faceplateBan.setAttribute('tooltiptext',
         this._strings.getString('lastfm.faceplate.ban.tooltip'));
-    this._faceplateBan.addEventListener('click', function(event) {
-          LastFm.metrics.metricsInc('lastfm', 'faceplate', 'ban');
-          if (LastFm._service.loveTrack && !LastFm._service.love) {
-            /* if we have a banned track, then unban */
-            LastFm._service.loveBan(null, false);
-          } else {
-            /* otherwise, ban */
-            LastFm._service.loveBan(gMM.sequencer.currentItem, false);
-            gMM.sequencer.next();
-          }
-        }, false);
+
+    var onFaceplateBanClicked = function(event) {
+      self.metrics.metricsInc('lastfm', 'faceplate', 'ban');
+      if (self._service.loveTrack && !self._service.love) {
+        /* if we have a banned track, then unban */
+        self._service.loveBan(null, false);
+      } else {
+        /* otherwise, ban */
+        self._service.loveBan(gMM.sequencer.currentItem, false);
+        gMM.sequencer.next();
+      }
+    };
+    this._domEventListenerSet.add(this._faceplateBan,
+                                  'click',
+                                  onFaceplateBanClicked,
+                                  false,
+                                  false);
     this._faceplate.appendChild(this._faceplateBan);
 
     this._faceplateTag = document.createElement('image');
@@ -270,38 +360,44 @@ LastFm.onLoad = function() {
     this._faceplateTag.setAttribute('mousethrough', 'never');
     this._faceplateTag.setAttribute('tooltiptext',
         this._strings.getString('lastfm.faceplate.tag.tooltip'));
-    this._faceplateTag.addEventListener('click', function(event) {
-        LastFm.metrics.metricsInc('lastfm', 'faceplate', 'tag');
-        LastFm._tagPanel.openPopup(event.target);
-        var globalTags = document.getElementById("global-tags");
-        var userTags = document.getElementById("user-tags");
-        // clear out the tag boxes
-        while (userTags.firstChild)
-          userTags.removeChild(userTags.firstChild);
-        while (globalTags.firstChild)
-          globalTags.removeChild(globalTags.firstChild);
 
-        // grab the tags from the service
-        for (var tag in LastFm._service.userTags) {
-          var removable = LastFm._service.userTags[tag];
-          var hbox = LastFm.showOneMoreTag(tag, removable);
-            userTags.appendChild(hbox);
-        }
-        for (var tag in LastFm._service.globalTags) {
-          var removable = LastFm._service.globalTags[tag];
-          var hbox = LastFm.showOneMoreTag(tag, removable);
-          globalTags.appendChild(hbox);
-        }
+    var onFaceplateTagClicked = function(event) {
+      self.metrics.metricsInc('lastfm', 'faceplate', 'tag');
+      self._tagPanel.openPopup(event.target);
+      var globalTags = document.getElementById("global-tags");
+      var userTags = document.getElementById("user-tags");
+      // clear out the tag boxes
+      while (userTags.firstChild)
+        userTags.removeChild(userTags.firstChild);
+      while (globalTags.firstChild)
+        globalTags.removeChild(globalTags.firstChild);
 
-        if (!userTags.firstChild) {
-          document.getElementById("label-user-tags")
-                  .style.visibility = "collapse";
-        }
-        if (!globalTags.firstChild) {
-          document.getElementById("label-global-tags")
-                  .style.visibility = "collapse";
-        }
-    }, false);
+      // grab the tags from the service
+      for (var tag in self._service.userTags) {
+        var removable = self._service.userTags[tag];
+        var hbox = self.showOneMoreTag(tag, removable);
+          userTags.appendChild(hbox);
+      }
+      for (var tag in self._service.globalTags) {
+        var removable = self._service.globalTags[tag];
+        var hbox = self.showOneMoreTag(tag, removable);
+        globalTags.appendChild(hbox);
+      }
+
+      if (!userTags.firstChild) {
+        document.getElementById("label-user-tags")
+                .style.visibility = "collapse";
+      }
+      if (!globalTags.firstChild) {
+        document.getElementById("label-global-tags")
+                .style.visibility = "collapse";
+      }
+    };
+    this._domEventListenerSet.add(this._faceplateTag,
+                                  'click',
+                                  onFaceplateTagClicked,
+                                  false,
+                                  false);
     this._faceplate.appendChild(this._faceplateTag);
 
     // Add a preferences observer
@@ -334,7 +430,11 @@ LastFm.onLoad = function() {
   }
 
   // Attach our listener to the ShowCurrentTrack event issue by the faceplate
-  window.addEventListener("ShowCurrentTrack", LastFm.showCurrentTrack, true);
+  this._domEventListenerSet.add(window,
+                                'ShowCurrentTrack',
+                                this.showCurrentTrack,
+                                true,
+                                false);
 }
 
 LastFm._getElement = function(aWidget, aElementID) {
@@ -362,24 +462,36 @@ LastFm.showOneMoreTag = function(tagName, removable) {
   delTag.setAttribute("mousethrough", "never");
   delTag.setAttribute('id', tagName);
   hbox.appendChild(delTag);
+  var onDelTagClicked = null;
   if (removable) {
-    delTag.addEventListener('click', function(event) {
+    onDelTagClicked = function(event) {
       var tagName = event.target.id;
       dump("removing tag: " + tagName + "\n");
-      LastFm._service.removeTag(gMM.sequencer.currentItem, tagName);
+      self._service.removeTag(gMM.sequencer.currentItem, tagName);
       this.parentNode.parentNode.removeChild(this.parentNode);
       if (!this.parentNode.parentNode.firstChild) {
         document.getElementById("label-user-tags")
                 .style.visibility = "collapse";
       }
-    }, false);
+    };
+
+    this._domEventListenerSet.add(delTag,
+                                  'click',
+                                  onDelTagClicked,
+                                  false,
+                                  false);
     delTag.setAttribute('class', 'tag-remove');
   } else {
-    delTag.addEventListener('click', function(event) {
+    onDelTagClicked = function(event) {
       var tagName = event.target.id;
       dump("adding tag: " + tagName + "\n");
-      LastFm.addThisTag(gMM.sequencer.currentItem, tagName);
-    }, false);
+      self.addThisTag(gMM.sequencer.currentItem, tagName);
+    };
+    this._domEventListenerSet.add(delTag,
+                                  'click',
+                                  onDelTagClicked,
+                                  false,
+                                  false);
     delTag.setAttribute('class', 'tag-add');
   }
 
@@ -393,10 +505,15 @@ LastFm.showOneMoreTag = function(tagName, removable) {
     label.setAttribute('href', '/tag/' + tagName);
   }
 
-  label.addEventListener('click', function(event) {
+  var onLabelClicked = function(event) {
     dump("loading: " + this.getAttribute('href'));
     gBrowser.loadOneTab("http://www.last.fm"+this.getAttribute('href'));
-  }, false);
+  };
+  this._domEventListenerSet.add(label,
+                                'click',
+                                onLabelClicked,
+                                false,
+                                false);
 
   hbox.appendChild(label);
   return hbox;
@@ -439,8 +556,13 @@ LastFm.addThisTag = function(mediaItem, tagString, success, failure) {
 LastFm.onUnload = function() {
   // the window is about to close
   this._service.listeners.remove(this);
-  window.removeEventListener("ShowCurrentTrack", LastFm.showCurrentTrack, true);
   this.prefs.removeObserver("", this.prefObserver, false);
+
+  // Remove DOM event listeners.
+  if (this._domEventListenerSet) {
+    this._domEventListenerSet.removeAll();
+    this._domEventListenerSet = null;
+  }
 
   // Add a listener to toggle visibility of the love/ban faceplate toolbar
   Cc['@songbirdnest.com/Songbird/Mediacore/Manager;1']
