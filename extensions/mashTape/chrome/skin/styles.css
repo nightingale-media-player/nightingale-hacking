@@ -83,6 +83,10 @@
   background-image: url(chrome://mashTape/skin/selector-notch.png);
   background-position: center bottom;
   background-repeat: no-repeat;
+  max-height: 21px;
+}
+#mashTape-nav .radio-label-box {
+  max-height: 21px;
 }
 
 /* The actual content frame area */
