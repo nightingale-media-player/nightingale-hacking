@@ -130,33 +130,6 @@ a:active {
 a:visited {
 }
 
-/* LyricMaster styles */
-body.lyricmaster {
-  color: rgb(194,192,203);
-  background-color: rgb(54,52,63);
-  padding: 10px;
-  font-family: Helvetica, Arial, Sans;
-}
-h1#lyricmaster_title {
-  color: white;
-  font-size: 12px;
-  font-weight: bold;
-}
-h2#lyricmaster_artist {
-  font-size: 12px;
-}
-h3#lyricmaster_album {
-  font-size: 12px;
-}
-p.lyricmaster_lyrics {
-  font-size: 11px;
-}
-body.lyricmaster p.header,
-body.lyricmaster p.separator1,
-body.lyricmaster p.separator2 {
-  display: none;
-}
-
 /* Text selection colour */
 ::-moz-selection {
   background-color: #000;
