@@ -269,8 +269,11 @@ sbFileMetadataService::ProxiedRestartProcessors(PRUint16 aProcessorsToRestart)
     }
 
     if (aProcessorsToRestart & sbIFileMetadataService::BACKGROUND_THREAD_PROCESSOR) {
-      mBackgroundThreadProcessor->Start();
-      NS_ENSURE_SUCCESS(rv, rv);
+      nsCOMPtr<nsIRunnable> event =
+        NS_NEW_RUNNABLE_METHOD(sbBackgroundThreadMetadataProcessor,
+                               mBackgroundThreadProcessor.get(),
+                               Start);
+      NS_DispatchToCurrentThread(event);
     }
   }
 
