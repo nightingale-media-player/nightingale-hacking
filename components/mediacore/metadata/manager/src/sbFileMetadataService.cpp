@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 /**
 * \file sbFileMetadataService.cpp
@@ -80,8 +78,10 @@ extern PRLogModuleInfo* gMetadataLog;
 // GLOBALS ====================================================================
 
 // CLASSES ====================================================================
-NS_IMPL_THREADSAFE_ISUPPORTS2( \
-  sbFileMetadataService, sbIFileMetadataService, nsIObserver)
+NS_IMPL_THREADSAFE_ISUPPORTS3( sbFileMetadataService, \
+                               sbIFileMetadataService, \
+                               sbPIFileMetadataService, \
+                               nsIObserver)
 
 sbFileMetadataService::sbFileMetadataService() : 
   mMainThreadProcessor(nsnull),
@@ -467,6 +467,8 @@ nsresult sbFileMetadataService::GetQueuedJobItem(PRBool aMainThreadOnly,
           PutProcessedJobItem(item);
         } else {        
           // Record that this item is being started
+          TRACE(("sbFileMetadataService[9x%.8x] GetQueuedJobItem starting %s",
+                 this, url.BeginReading()));
           rv = mCrashTracker->LogURLBegin(url);
           if (NS_FAILED(rv)) {
             NS_ERROR("sbFileMetadataService::GetQueuedJobItem couldn't log URL");
@@ -766,5 +768,26 @@ nsresult sbFileMetadataService::UpdateDataRemotes(PRInt64 aJobCount)
   }
 
   return mDataCurrentMetadataJobs->SetIntValue(aJobCount);;
+}
+
+/* void sbPIFileMetadataService::AddBlacklistURL (in ACString aURL); */
+NS_IMETHODIMP
+sbFileMetadataService::AddBlacklistURL(const nsACString & aURL)
+{
+  LOG(("%s[%.8x] Adding blacklist url \"%s\"",
+       __FUNCTION__,
+       this,
+       aURL.BeginReading()));
+  nsresult rv;
+  if (!mCrashTracker) {
+    // probably was running the unit test by itself
+    mCrashTracker = new sbMetadataCrashTracker();
+    NS_ENSURE_TRUE(mCrashTracker, NS_ERROR_OUT_OF_MEMORY);
+    rv = mCrashTracker->Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  rv = mCrashTracker->AddBlacklistURL(aURL);
+  NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
 }
 
