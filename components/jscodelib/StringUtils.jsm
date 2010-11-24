@@ -659,7 +659,7 @@ var StringSet = {
 
     // Split the string set into an array and return whether the string set
     // contains the string.
-    var stringSet = aString.split(delimiter);
+    var stringSet = aStringSet.split(delimiter);
     return (stringSet.indexOf(aString) >= 0);
   }
 };

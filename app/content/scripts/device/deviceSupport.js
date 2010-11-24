@@ -184,6 +184,7 @@ var sbDeviceVolumeSupport = {
         this._removeDevice(aEvent.data.QueryInterface(Ci.sbIDevice));
         break;
 
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_DEFAULT_LIBRARY_CHANGED :
       case Ci.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_ADDED :
       case Ci.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_REMOVED :
         this._monitorDeviceVolumes(aEvent.origin.QueryInterface(Ci.sbIDevice));
@@ -325,6 +326,9 @@ var sbDeviceVolumeSupport = {
 
     // Update device notification.
     this._updateNotification(deviceInfo);
+
+    // Update service pane.
+    this._updateServicePane(deviceInfo);
 
     // Check for new volumes.
     this._checkForNewVolumes(deviceInfo);
@@ -539,6 +543,28 @@ var sbDeviceVolumeSupport = {
         (aDeviceInfo.device.content.libraries.length < 2)) {
       aDeviceInfo.notification.close();
       aDeviceInfo.notification = null;
+    }
+  },
+
+  /**
+   * Update the service pane for the device specified by aDeviceInfo. If the
+   * active node is hidden (e.g. switching volumes hides the previously active
+   * volume's library), the device root node will be activated.
+   *
+   * \param aDeviceInfo         Info for device to update.
+   */
+
+  _updateServicePane:
+    function sbDeviceVolumeSupport__updateServicePane(aDeviceInfo) {
+    var selected = gServicePane.activeNode;
+    var invisible = StringSet.contains(selected.className,
+                                        "non-default-library-node");
+    if (!selected || invisible) {
+      // Get the device service pane node.
+      var dsps = Cc["@songbirdnest.com/servicepane/device;1"]
+                   .getService(Ci.sbIDeviceServicePaneService);
+      var deviceNode = dsps.getNodeForDevice(aDeviceInfo.device);
+      gServicePane.activateAndLoadNode(deviceNode, null, null);
     }
   }
 };
