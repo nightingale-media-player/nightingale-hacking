@@ -842,7 +842,8 @@ var DPW = {
 
       case "settings-apply":
         this._deviceLibrary.applySyncSettings();
-        this._device.syncLibraries();
+
+        var imageSyncEnabled = this._device.getPreference("imagesync.enabled");
 
         // Set editable to true for device playlists in manual mode.
         if (this._deviceLibrary.tempSyncSettings.syncMode ==
@@ -858,7 +859,26 @@ var DPW = {
             if (listType != "library")
               node.editable = true;
           }
+
+          // Sync device libraries in manual mode only when image sync
+          // is enabled.
+          if (imageSyncEnabled)
+            this._device.syncLibraries();
+
+        } else {
+          this._device.syncLibraries();
         }
+
+        // In the case where a user chooses to remove photos and
+        // disable image sync, a one-off sync will be done. Post-sync,
+        // the imagesync.enabled pref is cleared.
+        var imageSettings = this._deviceLibrary
+                                .syncSettings
+                                .getMediaSettings(Ci.sbIDeviceLibrary
+                                                    .MEDIATYPE_IMAGE);
+        if (imageSettings.mgmtType ==
+            Ci.sbIDeviceLibraryMediaSyncSettings.SYNC_MGMT_NONE)
+          this._device.clearUserPref("imagesync.enabled");
 
         break;
 
