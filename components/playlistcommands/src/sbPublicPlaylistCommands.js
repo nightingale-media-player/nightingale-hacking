@@ -103,7 +103,7 @@ PublicPlaylistCommands.prototype = {
   m_cdDeviceLibraryCommands       : null,
   m_playQueueCommands             : null,
   m_playQueueLibraryCommands      : null,
-  
+
   // Define various playlist commands, they will be exposed to the playlist commands
   // manager so that they can later be retrieved and concatenated into bigger
   // playlist commands objects.
@@ -129,7 +129,7 @@ PublicPlaylistCommands.prototype = {
 
   m_cmd_QueueNext                 : null, // add to next position in play queue
   m_cmd_QueueLast                 : null, // add to last position in play queue
-  
+
   // Commands that act on playlist themselves
   m_cmd_list_Play                 : null, // play the selected playlist
   m_cmd_list_Remove               : null, // remove the selected playlist
@@ -188,9 +188,9 @@ PublicPlaylistCommands.prototype = {
 
       const PlaylistCommandsBuilder = new Components.
         Constructor("@songbirdnest.com/Songbird/PlaylistCommandsBuilder;1",
-                    "sbIPlaylistCommandsBuilder");
+                    "sbIPlaylistCommandsBuilder", "init");
 
-      this.m_cmd_Play = new PlaylistCommandsBuilder();
+      this.m_cmd_Play = new PlaylistCommandsBuilder("play-default_download_webplaylist_playqueue-cmd");
 
       // The first item, always created
       this.m_cmd_Play.appendAction(null,
@@ -239,7 +239,7 @@ PublicPlaylistCommands.prototype = {
       // and two shortcut keys.
       // --------------------------------------------------------------------------
 
-      this.m_cmd_Remove = new PlaylistCommandsBuilder();
+      this.m_cmd_Remove = new PlaylistCommandsBuilder("remove-default_download_device_webplaylist_playqueue-cmd");
 
       // The first item, always created
       this.m_cmd_Remove.appendAction(null,
@@ -294,7 +294,7 @@ PublicPlaylistCommands.prototype = {
       // The EDIT button
       // --------------------------------------------------------------------------
 
-      this.m_cmd_Edit = new PlaylistCommandsBuilder();
+      this.m_cmd_Edit = new PlaylistCommandsBuilder("edit-default_device_cddevice-cmd");
 
       this.m_cmd_Edit.appendAction(null,
                                    "library_cmd_edit",
@@ -317,7 +317,7 @@ PublicPlaylistCommands.prototype = {
       // The DOWNLOAD button
       // --------------------------------------------------------------------------
 
-      this.m_cmd_Download = new PlaylistCommandsBuilder();
+      this.m_cmd_Download = new PlaylistCommandsBuilder("download-webplaylist-cmd");
 
       this.m_cmd_Download.appendAction(null,
                                        "library_cmd_download",
@@ -341,7 +341,7 @@ PublicPlaylistCommands.prototype = {
       // --------------------------------------------------------------------------
 
 
-      this.m_cmd_Rescan = new PlaylistCommandsBuilder();
+      this.m_cmd_Rescan = new PlaylistCommandsBuilder("rescan-default_playqueue-cmd");
 
       this.m_cmd_Rescan.appendAction(null,
                                      "library_cmd_rescan",
@@ -369,7 +369,7 @@ PublicPlaylistCommands.prototype = {
       // --------------------------------------------------------------------------
 
 
-      this.m_cmd_Reveal = new PlaylistCommandsBuilder();
+      this.m_cmd_Reveal = new PlaylistCommandsBuilder("reveal-default_device_playqueue-cmd");
 
       this.m_cmd_Reveal.appendAction(null,
                                      "library_cmd_reveal",
@@ -392,7 +392,8 @@ PublicPlaylistCommands.prototype = {
       // The COPY TRACK LOCATION button
       // --------------------------------------------------------------------------
 
-      this.m_cmd_CopyTrackLocation = new PlaylistCommandsBuilder();
+      this.m_cmd_CopyTrackLocation = new PlaylistCommandsBuilder
+                                         ("copylocation-webplaylist-cmd");
 
       this.m_cmd_CopyTrackLocation.appendAction(null,
                                                 "library_cmd_copylocation",
@@ -415,7 +416,8 @@ PublicPlaylistCommands.prototype = {
       // The CLEAR HISTORY button
       // --------------------------------------------------------------------------
 
-      this.m_cmd_ClearHistory = new PlaylistCommandsBuilder();
+      this.m_cmd_ClearHistory = new PlaylistCommandsBuilder
+                                    ("clearhistory-webhistory-cmd");
 
       this.m_cmd_ClearHistory.appendAction
                                         (null,
@@ -441,7 +443,8 @@ PublicPlaylistCommands.prototype = {
       // The SHOW DOWNLOAD PLAYLIST button
       // --------------------------------------------------------------------------
 
-      this.m_cmd_ShowDownloadPlaylist = new PlaylistCommandsBuilder();
+      this.m_cmd_ShowDownloadPlaylist = new PlaylistCommandsBuilder
+                                            ("showdl-webplaylist-cmd");
 
       this.m_cmd_ShowDownloadPlaylist.appendAction(null,
                                                   "library_cmd_showdlplaylist",
@@ -464,7 +467,8 @@ PublicPlaylistCommands.prototype = {
       // The PAUSE/RESUME DOWNLOAD button
       // --------------------------------------------------------------------------
 
-      this.m_cmd_PauseResumeDownload = new PlaylistCommandsBuilder();
+      this.m_cmd_PauseResumeDownload = new PlaylistCommandsBuilder
+                                           ("pauseresume-download-cmd");
 
       this.m_cmd_PauseResumeDownload.appendAction(null,
                                                   "library_cmd_pause",
@@ -508,7 +512,8 @@ PublicPlaylistCommands.prototype = {
       // The CLEAN UP DOWNLOADS button
       // --------------------------------------------------------------------------
 
-      this.m_cmd_CleanUpDownloads = new PlaylistCommandsBuilder();
+      this.m_cmd_CleanUpDownloads = new PlaylistCommandsBuilder
+                                        ("cleanup-download-cmd");
 
       this.m_cmd_CleanUpDownloads.appendAction
                                         (null,
@@ -534,7 +539,7 @@ PublicPlaylistCommands.prototype = {
       // The Play Playlist action
       // -----------------------------------------------------------------------
 
-      this.m_cmd_list_Play = new PlaylistCommandsBuilder();
+      this.m_cmd_list_Play = new PlaylistCommandsBuilder("play-servicetree-cmd");
 
       this.m_cmd_list_Play.appendAction(null,
                                         "playlist_cmd_play",
@@ -558,7 +563,7 @@ PublicPlaylistCommands.prototype = {
       // The Remove Playlist action
       // --------------------------------------------------------------------------
 
-      this.m_cmd_list_Remove = new PlaylistCommandsBuilder();
+      this.m_cmd_list_Remove = new PlaylistCommandsBuilder("remove-servicetree-cmd");
 
       this.m_cmd_list_Remove.appendAction(null,
                                          "playlist_cmd_remove",
@@ -573,7 +578,7 @@ PublicPlaylistCommands.prototype = {
                                                "&command.playlist.shortcut.modifiers.remove",
                                                true);
 
-      // disable the command for readonly playlists. 
+      // disable the command for readonly playlists.
       this.m_cmd_list_Remove.setCommandEnabledCallback
                                                 (null,
                                                  "playlist_cmd_remove",
@@ -583,7 +588,7 @@ PublicPlaylistCommands.prototype = {
       // The Rename Playlist action
       // --------------------------------------------------------------------------
 
-      this.m_cmd_list_Rename = new PlaylistCommandsBuilder();
+      this.m_cmd_list_Rename = new PlaylistCommandsBuilder("rename-servicetree-cmd");
 
       this.m_cmd_list_Rename.appendAction(null,
                                          "playlist_cmd_rename",
@@ -607,7 +612,7 @@ PublicPlaylistCommands.prototype = {
       // The QueueNext Playlist action
       // --------------------------------------------------------------------------
 
-      this.m_cmd_list_QueueNext = new PlaylistCommandsBuilder();
+      this.m_cmd_list_QueueNext = new PlaylistCommandsBuilder("queuenext-servicetree-cmd");
 
       this.m_cmd_list_QueueNext.appendAction(null,
                                              "playlist_cmd_queuenext",
@@ -635,7 +640,7 @@ PublicPlaylistCommands.prototype = {
       // The QueueLast Playlist action
       // --------------------------------------------------------------------------
 
-      this.m_cmd_list_QueueLast = new PlaylistCommandsBuilder();
+      this.m_cmd_list_QueueLast = new PlaylistCommandsBuilder("queuelast-servicetree-cmd");
 
       this.m_cmd_list_QueueLast.appendAction(null,
                                              "playlist_cmd_queuelast",
@@ -663,8 +668,8 @@ PublicPlaylistCommands.prototype = {
       // The Get Artwork action
       // --------------------------------------------------------------------------
 
-      this.m_cmd_GetArtwork = new PlaylistCommandsBuilder();
-      
+      this.m_cmd_GetArtwork = new PlaylistCommandsBuilder("getartwork-default-cmd");
+
       this.m_cmd_GetArtwork.appendAction(null,
                                          "library_cmd_getartwork",
                                          "&command.getartwork",
@@ -685,13 +690,13 @@ PublicPlaylistCommands.prototype = {
       this.m_cmd_GetArtwork.setCommandEnabledCallback(null,
                                                       "library_cmd_getartwork",
                                                       plCmd_IsAnyTrackSelected);
-    
+
       // --------------------------------------------------------------------------
       // The Lookup CD Info action
       // --------------------------------------------------------------------------
 
-      this.m_cmd_LookupCDInfo = new PlaylistCommandsBuilder();
-      
+      this.m_cmd_LookupCDInfo = new PlaylistCommandsBuilder("lookupcd-cddevice-cmd");
+
       this.m_cmd_LookupCDInfo.appendAction(null,
                                            "library_cmd_lookupcdinfo",
                                            "&command.lookupcdinfo",
@@ -707,13 +712,14 @@ PublicPlaylistCommands.prototype = {
       this.m_cmd_LookupCDInfo.setCommandEnabledCallback(null,
                                                         "library_cmd_lookupcdinfo",
                                                         plCmd_NOT(plCmd_IsMediaListReadOnly));
-    
+
       // --------------------------------------------------------------------------
       // Play Queue bundled commands
       // --------------------------------------------------------------------------
 
-      this.m_cmd_playqueue_SaveToPlaylist = new PlaylistCommandsBuilder();
-      
+      this.m_cmd_playqueue_SaveToPlaylist = new PlaylistCommandsBuilder
+                                                ("saveto-playqueue-cmd");
+
       this.m_cmd_playqueue_SaveToPlaylist.appendAction(null,
                                                        "playqueue_cmd_savetoplaylist",
                                                        "&command.queuesavetoplaylist",
@@ -727,8 +733,9 @@ PublicPlaylistCommands.prototype = {
                                                              "&command.shortcut.modifiers.queuesavetoplaylist",
                                                              true);
 
-      this.m_cmd_playqueue_ClearAll = new PlaylistCommandsBuilder();
-      
+      this.m_cmd_playqueue_ClearAll = new PlaylistCommandsBuilder
+                                          ("clearall-playqueue-cmd");
+
       this.m_cmd_playqueue_ClearAll.appendAction(
                              null,
                              "playqueue_cmd_clearall",
@@ -744,8 +751,9 @@ PublicPlaylistCommands.prototype = {
                              "&command.shortcut.modifiers.queueclearall",
                              true);
 
-      this.m_cmd_playqueue_ClearHistory = new PlaylistCommandsBuilder();
-      
+      this.m_cmd_playqueue_ClearHistory = new PlaylistCommandsBuilder
+                                              ("clearhistory-playqueue-cmd");
+
       this.m_cmd_playqueue_ClearHistory.appendSubmenu(
                              null,
                              "playqueue_cmd_clearhistory",
@@ -771,7 +779,7 @@ PublicPlaylistCommands.prototype = {
       // ----------------------------------------------------------------------
       // The Check/Uncheck All actions
       // ----------------------------------------------------------------------
-      this.m_cmd_CheckAll = new PlaylistCommandsBuilder();
+      this.m_cmd_CheckAll = new PlaylistCommandsBuilder("checkall-cddevice-cmd");
       this.m_cmd_CheckAll.appendAction(null,
                                        "library_cmd_checkall",
                                        "&command.checkall",
@@ -785,7 +793,7 @@ PublicPlaylistCommands.prototype = {
                                                     "library_cmd_checkall",
                                                     plCmd_NOT(plCmd_IsMediaListReadOnly));
 
-      this.m_cmd_UncheckAll = new PlaylistCommandsBuilder();
+      this.m_cmd_UncheckAll = new PlaylistCommandsBuilder("uncheckall-cddevice-cmd");
       this.m_cmd_UncheckAll.appendAction(
                                     null,
                                     "library_cmd_uncheckall",
@@ -802,7 +810,7 @@ PublicPlaylistCommands.prototype = {
       // -----------------------------------------------------------------------
       // The Queue Next action
       // -----------------------------------------------------------------------
-      this.m_cmd_QueueNext = new PlaylistCommandsBuilder();
+      this.m_cmd_QueueNext = new PlaylistCommandsBuilder("queuenext-default_webplaylist-cmd");
       this.m_cmd_QueueNext.appendAction(null,
                                         "library_cmd_queuenext",
                                         "&command.queuenext",
@@ -823,7 +831,7 @@ PublicPlaylistCommands.prototype = {
       // -----------------------------------------------------------------------
       // The Queue Last action
       // -----------------------------------------------------------------------
-      this.m_cmd_QueueLast = new PlaylistCommandsBuilder();
+      this.m_cmd_QueueLast = new PlaylistCommandsBuilder("queuelast-default_webplaylist-cmd");
       this.m_cmd_QueueLast.appendAction(null,
                                         "library_cmd_queuelast",
                                         "&command.queuelast",
@@ -872,7 +880,7 @@ PublicPlaylistCommands.prototype = {
       // Construct and publish the main library commands
       // --------------------------------------------------------------------------
 
-      this.m_defaultCommands = new PlaylistCommandsBuilder();
+      this.m_defaultCommands = new PlaylistCommandsBuilder("default_cmds");
 
       this.m_defaultCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_play",
@@ -887,16 +895,16 @@ PublicPlaylistCommands.prototype = {
       this.m_defaultCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_getartwork",
                                                     this.m_cmd_GetArtwork);
-      
+
       this.m_defaultCommands.appendSeparator(null, "default_commands_separator_1");
-      
+
       this.m_defaultCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_addtoplaylist",
                                                     SBPlaylistCommand_AddToPlaylist);
       this.m_defaultCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_addtodevice",
                                                     SBPlaylistCommand_AddToDevice);
-      
+
       this.m_defaultCommands.appendSeparator(null, "default_commands_separator_2");
 
       this.m_defaultCommands.appendPlaylistCommands(null,
@@ -920,13 +928,14 @@ PublicPlaylistCommands.prototype = {
       this.m_defaultCommands.setVisibleCallback(plCmd_ShowDefaultInToolbarCheck);
 
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_DEFAULT, this.m_defaultCommands);
-      
+
 
       // --------------------------------------------------------------------------
       // Construct and publish the smart playlists commands
       // --------------------------------------------------------------------------
 
-      this.m_cmd_UpdateSmartPlaylist = new PlaylistCommandsBuilder();
+      this.m_cmd_UpdateSmartPlaylist = new PlaylistCommandsBuilder
+                                           ("update-smartplaylist-cmd");
 
       this.m_cmd_UpdateSmartPlaylist.appendAction
                                         (null,
@@ -943,11 +952,12 @@ PublicPlaylistCommands.prototype = {
                                    "&command.shortcut.modifiers.smartpl.update",
                                    true);
 
-     this.m_cmd_UpdateSmartPlaylist.setCommandVisibleCallback(null, 
+     this.m_cmd_UpdateSmartPlaylist.setCommandVisibleCallback(null,
                                                               "smartpl_cmd_update",
                                                               plCmd_NOT(plCmd_isLiveUpdateSmartPlaylist));
 
-      this.m_cmd_EditSmartPlaylist = new PlaylistCommandsBuilder();
+      this.m_cmd_EditSmartPlaylist = new PlaylistCommandsBuilder
+                                         ("properties-smartplaylist-cmd");
 
       this.m_cmd_EditSmartPlaylist.appendAction
                                         (null,
@@ -964,26 +974,28 @@ PublicPlaylistCommands.prototype = {
                                    "&command.shortcut.modifiers.smartpl.properties",
                                    true);
 
-      this.m_cmd_EditSmartPlaylist.setCommandVisibleCallback(null, 
+      this.m_cmd_EditSmartPlaylist.setCommandVisibleCallback(null,
                                                              "smartpl_cmd_properties",
                                                              plCmd_CanModifyPlaylist);
 
-      this.m_smartPlaylistsCommands = new PlaylistCommandsBuilder();
-      
+      this.m_smartPlaylistsCommands = new PlaylistCommandsBuilder
+                                          ("smartplaylist_cmds");
+
       this.m_smartPlaylistsCommands.appendPlaylistCommands(null,
                                                            "library_cmdobj_defaults",
                                                            this.m_defaultCommands);
 
-      this.m_cmd_SmartPlaylistSep = new PlaylistCommandsBuilder();
+      this.m_cmd_SmartPlaylistSep = new PlaylistCommandsBuilder
+                                        ("separator-smartplaylist-cmd");
 
       this.m_cmd_SmartPlaylistSep.appendSeparator(null, "smartpl_separator");
-      
+
       this.m_cmd_SmartPlaylistSep.setVisibleCallback(plCmd_NOT(plCmd_ShowForToolbarCheck));
 
       this.m_smartPlaylistsCommands.appendPlaylistCommands(null,
                                                            "smartpl_cmdobj_sep",
                                                            this.m_cmd_SmartPlaylistSep);
-                                                           
+
       this.m_smartPlaylistsCommands.appendPlaylistCommands(null,
                                                            "smartpl_cmdobj_update",
                                                            this.m_cmd_UpdateSmartPlaylist);
@@ -991,7 +1003,7 @@ PublicPlaylistCommands.prototype = {
       this.m_smartPlaylistsCommands.appendPlaylistCommands(null,
                                                            "smartpl_cmdobj_properties",
                                                            this.m_cmd_EditSmartPlaylist);
-      
+
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_UPDATESMARTMEDIALIST, this.m_cmd_UpdateSmartPlaylist);
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_EDITSMARTMEDIALIST, this.m_cmd_EditSmartPlaylist);
 
@@ -1002,7 +1014,8 @@ PublicPlaylistCommands.prototype = {
       // Construct and publish the web playlist commands
       // --------------------------------------------------------------------------
 
-      this.m_webPlaylistCommands = new PlaylistCommandsBuilder();
+      this.m_webPlaylistCommands = new PlaylistCommandsBuilder
+                                       ("webplaylist-cmds");
 
       this.m_webPlaylistCommands.appendPlaylistCommands(null,
                                                         "library_cmdobj_play",
@@ -1013,8 +1026,8 @@ PublicPlaylistCommands.prototype = {
       this.m_webPlaylistCommands.appendPlaylistCommands(null,
                                                         "library_cmdobj_download",
                                                         this.m_cmd_Download);
-                                                        
-                                                        
+
+
       this.m_webPlaylistCommands.appendPlaylistCommands(null,
                                                         "library_cmdobj_addtoplaylist",
                                                         SBPlaylistCommand_DownloadToPlaylist);
@@ -1052,7 +1065,8 @@ PublicPlaylistCommands.prototype = {
       // Construct and publish the web media history toolbar commands
       // --------------------------------------------------------------------------
 
-      this.m_webMediaHistoryToolbarCommands = new PlaylistCommandsBuilder();
+      this.m_webMediaHistoryToolbarCommands = new PlaylistCommandsBuilder
+                                                  ("webhistory-cmds");
 
       this.m_webMediaHistoryToolbarCommands.appendPlaylistCommands
                                               (null,
@@ -1075,7 +1089,8 @@ PublicPlaylistCommands.prototype = {
       // Construct and publish the download playlist commands
       // --------------------------------------------------------------------------
 
-      this.m_downloadCommands = new PlaylistCommandsBuilder();
+      this.m_downloadCommands = new PlaylistCommandsBuilder
+                                    ("download-cmds");
 
       this.m_downloadCommands.appendPlaylistCommands(null,
                                                      "library_cmdobj_play",
@@ -1102,7 +1117,8 @@ PublicPlaylistCommands.prototype = {
       // Construct and publish the device library commands
       // --------------------------------------------------------------------------
 
-      this.m_deviceLibraryCommands = new PlaylistCommandsBuilder();
+      this.m_deviceLibraryCommands = new PlaylistCommandsBuilder
+                                         ("device-cmds");
 
       this.m_deviceLibraryCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_edit",
@@ -1112,11 +1128,11 @@ PublicPlaylistCommands.prototype = {
                                                     this.m_cmd_Reveal);
 
       this.m_deviceLibraryCommands.appendSeparator(null, "default_commands_separator_1");
-      
+
       this.m_deviceLibraryCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_addtolibrary",
                                                     SBPlaylistCommand_AddToLibrary);
-      
+
       this.m_deviceLibraryCommands.appendSeparator(null, "default_commands_separator_2");
 
       this.m_deviceLibraryCommands.appendPlaylistCommands(null,
@@ -1131,7 +1147,8 @@ PublicPlaylistCommands.prototype = {
       // Construct and publish the cd device library commands
       // --------------------------------------------------------------------------
 
-      this.m_cdDeviceLibraryCommands = new PlaylistCommandsBuilder();
+      this.m_cdDeviceLibraryCommands = new PlaylistCommandsBuilder
+                                           ("cddevice-cmds");
 
       this.m_cdDeviceLibraryCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_check",
@@ -1148,7 +1165,7 @@ PublicPlaylistCommands.prototype = {
       this.m_cdDeviceLibraryCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_lookup",
                                                     this.m_cmd_LookupCDInfo);
-      
+
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_CDDEVICE_LIBRARY,
                          this.m_cdDeviceLibraryCommands);
 
@@ -1156,7 +1173,8 @@ PublicPlaylistCommands.prototype = {
       // Construct and publish the play queue library commands
       // --------------------------------------------------------------------------
 
-      this.m_playQueueLibraryCommands = new PlaylistCommandsBuilder();
+      this.m_playQueueLibraryCommands = new PlaylistCommandsBuilder
+                                            ("playqueue-toolbar-cmds");
 
       this.m_playQueueLibraryCommands.appendPlaylistCommands(null,
                                                     "playqueue_cmdobj_savetoplaylist",
@@ -1171,7 +1189,7 @@ PublicPlaylistCommands.prototype = {
                                                     this.m_cmd_playqueue_ClearHistory);
 
       this.m_playQueueLibraryCommands.setVisibleCallback(plCmd_ShowForToolbarCheck);
-      
+
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_PLAYQUEUE_LIBRARY,
                          this.m_playQueueLibraryCommands);
 
@@ -1186,7 +1204,8 @@ PublicPlaylistCommands.prototype = {
       // Construct and publish the play queue commands
       // --------------------------------------------------------------------------
 
-      this.m_playQueueCommands = new PlaylistCommandsBuilder();
+      this.m_playQueueCommands = new PlaylistCommandsBuilder
+                                     ("playqueue-menu-cmds");
 
       this.m_playQueueCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_play",
@@ -1195,9 +1214,9 @@ PublicPlaylistCommands.prototype = {
       this.m_playQueueCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_reveal",
                                                     this.m_cmd_Reveal);
-      
+
       this.m_playQueueCommands.appendSeparator(null, "default_commands_separator_1");
-      
+
       this.m_playQueueCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_addtoplaylist",
                                                     SBPlaylistCommand_AddToPlaylist);
@@ -1205,7 +1224,7 @@ PublicPlaylistCommands.prototype = {
       this.m_playQueueCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_addtolibrary",
                                                     SBPlaylistCommand_AddToLibrary);
-      
+
       this.m_playQueueCommands.appendSeparator(null, "default_commands_separator_2");
 
       this.m_playQueueCommands.appendPlaylistCommands(null,
@@ -1226,7 +1245,8 @@ PublicPlaylistCommands.prototype = {
       // Construct and publish the download toolbar commands
       // --------------------------------------------------------------------------
 
-      this.m_downloadToolbarCommands = new PlaylistCommandsBuilder();
+      this.m_downloadToolbarCommands = new PlaylistCommandsBuilder
+                                           ("download-toolbar-cmds");
 
       this.m_downloadToolbarCommands.appendPlaylistCommands
                                               (null,
@@ -1256,7 +1276,8 @@ PublicPlaylistCommands.prototype = {
       // Construct and publish the download service tree commands
       // --------------------------------------------------------------------------
 
-      this.m_downloadCommandsServicePane = new PlaylistCommandsBuilder();
+      this.m_downloadCommandsServicePane = new PlaylistCommandsBuilder
+                                               ("download-servicepane-cmds");
 
       this.m_downloadCommandsServicePane.
         appendPlaylistCommands(null,
@@ -1274,8 +1295,9 @@ PublicPlaylistCommands.prototype = {
       // Construct and publish the service tree playlist commands
       // --------------------------------------------------------------------------
 
-      this.m_serviceTreeDefaultCommands = new PlaylistCommandsBuilder();
-  
+      this.m_serviceTreeDefaultCommands = new PlaylistCommandsBuilder
+                                              ("servicetree-cmds");
+
       this.m_serviceTreeDefaultCommands.appendPlaylistCommands(null,
                                               "servicetree_cmdobj_play",
                                               this.m_cmd_list_Play);
@@ -1287,7 +1309,7 @@ PublicPlaylistCommands.prototype = {
       this.m_serviceTreeDefaultCommands.setCommandEnabledCallback(null,
                                               "servicetree_cmdobj_remove",
                                               plCmd_CanModifyPlaylist);
-                                              
+
       this.m_serviceTreeDefaultCommands.appendPlaylistCommands(null,
                                               "servicetree_cmdobj_rename",
                                               this.m_cmd_list_Rename);
@@ -1303,7 +1325,7 @@ PublicPlaylistCommands.prototype = {
       this.m_serviceTreeDefaultCommands.appendPlaylistCommands(null,
                                               "servicetree_cmdobj_queuelast",
                                               this.m_cmd_list_QueueLast);
-      
+
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_DEFAULT, this.m_serviceTreeDefaultCommands);
 
       // Register these commands to simple and smart playlists
@@ -1423,10 +1445,10 @@ PublicPlaylistCommands.prototype = {
     // Un-register smart playlist commands
 
     this.m_mgr.
-      unregisterPlaylistCommandsMediaItem("", 
-                                          "smart", 
+      unregisterPlaylistCommandsMediaItem("",
+                                          "smart",
                                           this.m_smartPlaylistsCommands);
-    
+
 
     // Un-register servicetree commands
 
@@ -1575,14 +1597,14 @@ function plCmd_Rescan_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
     if(playlist.mediaListView.selection.count) {
       var mediaItemArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                              .createInstance(Ci.nsIMutableArray);
-            
+
       var selection = playlist.mediaListView.selection.selectedIndexedMediaItems;
       while(selection.hasMoreElements()) {
         let item = selection.getNext()
                             .QueryInterface(Ci.sbIIndexedMediaItem).mediaItem;
         mediaItemArray.appendElement(item, false);
       }
-      
+
       var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
                               .getService(Ci.sbIFileMetadataService);
       var job = metadataService.read(mediaItemArray);
@@ -1602,16 +1624,16 @@ function plCmd_Reveal_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
     var window = unwrap(aContext.window);
 
     if (playlist.mediaListView.selection.count != 1) { return; }
-    
+
     var selection = playlist.mediaListView.selection.selectedIndexedMediaItems;
     var item = selection.getNext().QueryInterface(Ci.sbIIndexedMediaItem).mediaItem;
     if (!item) {
       Cu.reportError("No item selected in reveal playlist command.")
     }
-    
+
     var uri = item.contentSrc;
     if (!uri || uri.scheme != "file") { return; }
-    
+
     let f = uri.QueryInterface(Ci.nsIFileURL).file;
     try {
       // Show the directory containing the file and select the file
@@ -1623,7 +1645,7 @@ function plCmd_Reveal_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
       let parent = f.parent.QueryInterface(Ci.nsILocalFile);
       if (!parent)
         return;
-  
+
       try {
         // "Double click" the parent directory to show where the file should be
         parent.launch();
@@ -1724,7 +1746,7 @@ function plCmd_GetArtwork_TriggerCallback(aContext, aSubMenuId, aCommandId, aHos
       return aElement.getProperty(SBProperties.contentType) == "audio";
     };
     var selectedAudioItems = new SBFilteredEnumerator(
-        playlist.mediaListView.selection.selectedMediaItems, 
+        playlist.mediaListView.selection.selectedMediaItems,
         isAudioItem);
 
     // We need to convert our JS object into an XPCOM object.
@@ -1806,7 +1828,7 @@ function plCmd_LookupCDInfo_TriggerCallback(aContext, aSubMenuId, aCommandId, aH
     var playlist = unwrap(aContext.playlist);
     var medialist = playlist.mediaListView.mediaList;
     var firstItem = medialist.getItemByIndex(0);
-    
+
     if (!firstItem) {
       Cu.reportError("Unable to get CD Device: " + err);
       return;
@@ -1815,7 +1837,7 @@ function plCmd_LookupCDInfo_TriggerCallback(aContext, aSubMenuId, aCommandId, aH
     Cu.reportError("Unable to get CD Device: " + err);
     return;
   }
-  
+
   var devMgr = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
                  .getService(Ci.sbIDeviceManager2);
   var device = devMgr.getDeviceForItem(firstItem);
@@ -2242,7 +2264,7 @@ function plCmd_isLiveUpdateSmartPlaylist(aContext, aSubMenuId, aCommandId, aHost
   if (medialist instanceof Ci.sbILocalDatabaseSmartMediaList)
     return medialist.autoUpdate;
   return false;
-} 
+}
 
 // Returns a function that will return the conjunction of the result of the inputs
 function plCmd_AND( /* comma separated list (not array) of functions */ ) {

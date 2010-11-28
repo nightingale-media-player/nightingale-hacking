@@ -1,31 +1,29 @@
-
-/**
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 
 const SONGBIRD_PLAYLISTCOMMANDSBUILDER_CONTRACTID = "@songbirdnest.com/Songbird/PlaylistCommandsBuilder;1";
 const SONGBIRD_PLAYLISTCOMMANDSBUILDER_CLASSNAME = "Songbird Playlist Commands Builder";
@@ -46,23 +44,24 @@ const SONGBIRD_PLAYLISTCOMMANDSBUILDER_APPEND = 0;
 const SONGBIRD_PLAYLISTCOMMANDSBUILDER_BEFORE = 1;
 const SONGBIRD_PLAYLISTCOMMANDSBUILDER_AFTER  = 2;
 
-// ----------------------------------------------------------------------------  
+// ----------------------------------------------------------------------------
 
 function PlaylistCommandsBuilder() {
   this.m_Context.commands = this;
   this.m_root_commands = new Array();
   this.m_menus = new Array();
-  var menuitem = {  m_Id      : null,
+  var menuitem = {  id        : null,
                     m_Type    : SONGBIRD_PLAYLISTCOMMANDS_TYPE_MENU,
                     m_Menu    : this.m_root_commands};
   this.m_menus.push(menuitem);
+  this.id = null;
 }
 
-// ----------------------------------------------------------------------------  
+// ----------------------------------------------------------------------------
 
 PlaylistCommandsBuilder.prototype.constructor = PlaylistCommandsBuilder;
 
-// ----------------------------------------------------------------------------  
+// ----------------------------------------------------------------------------
 
 PlaylistCommandsBuilder.prototype = {
   classDescription: SONGBIRD_PLAYLISTCOMMANDSBUILDER_CLASSNAME,
@@ -76,14 +75,14 @@ PlaylistCommandsBuilder.prototype = {
     commands        : null,
     implementorContext: null,
     QueryInterface  : function(iid) {
-      if (iid.equals(Components.interfaces.sbIPlaylistCommandsContext) || 
+      if (iid.equals(Components.interfaces.sbIPlaylistCommandsContext) ||
           iid.equals(Components.interfaces.sbIPlaylistCommandsBuilderContext) ||
           iid.equals(Components.interfaces.nsISupports))
         return this;
       throw Components.results.NS_ERROR_NO_INTERFACE;
     }
   },
-  
+
   m_menus             : null,
   m_root_commands     : null,
   m_InitCallback      : null,
@@ -100,15 +99,21 @@ PlaylistCommandsBuilder.prototype = {
 // Submenus
 // ----------------------------------------------------------------------------
 
-  appendSubmenu: function 
-    PlaylistCommandsBuilder_appendSubmenu(aParentSubMenuId, 
-                                          aSubMenuId, 
-                                          aLabel, 
+  init: function PlaylistCommandsBuilder_init(aId)
+  {
+    this.m_menus[0].id = aId;
+    this.id = aId;
+  },
+
+  appendSubmenu: function
+    PlaylistCommandsBuilder_appendSubmenu(aParentSubMenuId,
+                                          aSubMenuId,
+                                          aLabel,
                                           aTooltipText)
   {
     var props = { m_Name    : aLabel,
                   m_Tooltip : aTooltipText };
-    
+
     this._insertCommand(SONGBIRD_PLAYLISTCOMMANDSBUILDER_APPEND,
                         null,
                         aParentSubMenuId,
@@ -117,57 +122,57 @@ PlaylistCommandsBuilder.prototype = {
                         props);
   },
 
-  insertSubmenuBefore: function 
-    PlaylistCommandsBuilder_insertSubmenuBefore(aParentSubMenuId, 
+  insertSubmenuBefore: function
+    PlaylistCommandsBuilder_insertSubmenuBefore(aParentSubMenuId,
                                                 aBeforeId,
-                                                aSubMenuId, 
-                                                aLabel, 
+                                                aSubMenuId,
+                                                aLabel,
                                                 aTooltipText)
   {
     var props = { m_Name    : aLabel,
                   m_Tooltip : aTooltipText };
 
     this._insertCommand(SONGBIRD_PLAYLISTCOMMANDSBUILDER_BEFORE,
-                        aBeforeId, 
+                        aBeforeId,
                         aParentSubMenuId,
                         SONGBIRD_PLAYLISTCOMMANDS_TYPE_MENU,
                         aSubMenuId,
                         props);
   },
 
-  insertSubmenuAfter: function 
-    PlaylistCommandsBuilder_insertSubmenuAfter(aParentSubMenuId, 
+  insertSubmenuAfter: function
+    PlaylistCommandsBuilder_insertSubmenuAfter(aParentSubMenuId,
                                                aAfterId,
-                                               aSubMenuId, 
-                                               aLabel, 
+                                               aSubMenuId,
+                                               aLabel,
                                                aTooltipText)
   {
     var props = { m_Name    : aLabel,
                   m_Tooltip : aTooltipText };
 
     this._insertCommand(SONGBIRD_PLAYLISTCOMMANDSBUILDER_AFTER,
-                        aAfterId, 
+                        aAfterId,
                         aParentSubMenuId,
                         SONGBIRD_PLAYLISTCOMMANDS_TYPE_MENU,
                         aSubMenuId,
                         props);
   },
-  
+
 // ----------------------------------------------------------------------------
 // Actions
 // ----------------------------------------------------------------------------
 
-  appendAction: function 
-    PlaylistCommandsBuilder_appendAction(aParentSubMenuId, 
+  appendAction: function
+    PlaylistCommandsBuilder_appendAction(aParentSubMenuId,
                                          aId,
-                                         aLabel, 
-                                         aTooltipText, 
+                                         aLabel,
+                                         aTooltipText,
                                          aTriggerCallback)
   {
     var props = { m_Name            : aLabel,
                   m_Tooltip         : aTooltipText,
                   m_TriggerCallback : aTriggerCallback }
-                  
+
     this._insertCommand(SONGBIRD_PLAYLISTCOMMANDSBUILDER_APPEND,
                         null,
                         aParentSubMenuId,
@@ -175,13 +180,13 @@ PlaylistCommandsBuilder.prototype = {
                         aId,
                         props);
   },
-  
-  insertActionBefore: 
-    function PlaylistCommandsBuilder_insertActionBefore(aParentSubMenuId, 
+
+  insertActionBefore:
+    function PlaylistCommandsBuilder_insertActionBefore(aParentSubMenuId,
                                                         aBeforeId,
                                                         aId,
-                                                        aLabel, 
-                                                        aTooltipText, 
+                                                        aLabel,
+                                                        aTooltipText,
                                                         aTriggerCallback)
   {
     var props = { m_Name            : aLabel,
@@ -195,13 +200,13 @@ PlaylistCommandsBuilder.prototype = {
                         aId,
                         props);
   },
-  
-  insertActionAfter: function 
-    PlaylistCommandsBuilder_insertActionAfter(aParentSubMenuId, 
+
+  insertActionAfter: function
+    PlaylistCommandsBuilder_insertActionAfter(aParentSubMenuId,
                                               aAfterId,
                                               aId,
-                                              aLabel, 
-                                              aTooltipText, 
+                                              aLabel,
+                                              aTooltipText,
                                               aTriggerCallback)
   {
     var props = { m_Name            : aLabel,
@@ -215,12 +220,12 @@ PlaylistCommandsBuilder.prototype = {
                         aId,
                         props);
   },
-  
+
 // ----------------------------------------------------------------------------
 // Separators
 // ----------------------------------------------------------------------------
-  
-  appendSeparator: function 
+
+  appendSeparator: function
     PlaylistCommandsBuilder_appendSeparator(aParentSubMenuId, aId)
   {
     this._insertCommand(SONGBIRD_PLAYLISTCOMMANDSBUILDER_APPEND,
@@ -229,9 +234,9 @@ PlaylistCommandsBuilder.prototype = {
                         SONGBIRD_PLAYLISTCOMMANDS_TYPE_SEPARATOR,
                         aId);
   },
-  
-  insertSeparatorBefore: function 
-    PlaylistCommandsBuilder_insertSeparatorBefore(aParentSubMenuId, 
+
+  insertSeparatorBefore: function
+    PlaylistCommandsBuilder_insertSeparatorBefore(aParentSubMenuId,
                                                   aBeforeId,
                                                   aId)
   {
@@ -241,9 +246,9 @@ PlaylistCommandsBuilder.prototype = {
                         SONGBIRD_PLAYLISTCOMMANDS_TYPE_SEPARATOR,
                         aId);
   },
-  
-  insertSeparatorAfter: function 
-    PlaylistCommandsBuilder_insertSeparatorAfter(aParentSubMenuId, 
+
+  insertSeparatorAfter: function
+    PlaylistCommandsBuilder_insertSeparatorAfter(aParentSubMenuId,
                                                  aAfterId,
                                                  aId)
   {
@@ -258,11 +263,11 @@ PlaylistCommandsBuilder.prototype = {
 // Flag
 // ----------------------------------------------------------------------------
 
-  appendFlag: function 
-    PlaylistCommandsBuilder_appendFlag(aParentSubMenuId, 
+  appendFlag: function
+    PlaylistCommandsBuilder_appendFlag(aParentSubMenuId,
                                        aId,
-                                       aLabel, 
-                                       aTooltipText, 
+                                       aLabel,
+                                       aTooltipText,
                                        aTriggerCallback,
                                        aValueCallback)
   {
@@ -270,22 +275,22 @@ PlaylistCommandsBuilder.prototype = {
                   m_Tooltip         : aTooltipText,
                   m_TriggerCallback : aTriggerCallback,
                   m_ValueCallback   : aValueCallback    };
-                       
+
     this._insertCommand(SONGBIRD_PLAYLISTCOMMANDSBUILDER_APPEND,
                         null,
                         aParentSubMenuId,
                         SONGBIRD_PLAYLISTCOMMANDS_TYPE_FLAG,
                         aId,
                         props);
-                               
+
   },
-  
-  insertFlagBefore: function 
-    PlaylistCommandsBuilder_insertFlagBefore(aParentSubMenuId, 
+
+  insertFlagBefore: function
+    PlaylistCommandsBuilder_insertFlagBefore(aParentSubMenuId,
                                              aBeforeId,
                                              aId,
-                                             aLabel, 
-                                             aTooltipText, 
+                                             aLabel,
+                                             aTooltipText,
                                              aTriggerCallback,
                                              aValueCallback)
   {
@@ -301,13 +306,13 @@ PlaylistCommandsBuilder.prototype = {
                         aId,
                         props);
   },
-  
-  insertFlagAfter: function 
-    PlaylistCommandsBuilder_insertFlagAfter(aParentSubMenuId, 
+
+  insertFlagAfter: function
+    PlaylistCommandsBuilder_insertFlagAfter(aParentSubMenuId,
                                             aAfterId,
                                             aId,
-                                            aLabel, 
-                                            aTooltipText, 
+                                            aLabel,
+                                            aTooltipText,
                                             aTriggerCallback,
                                             aValueCallback)
   {
@@ -323,16 +328,16 @@ PlaylistCommandsBuilder.prototype = {
                         aId,
                         props);
   },
-  
+
 // ----------------------------------------------------------------------------
 // Value
 // ----------------------------------------------------------------------------
 
-  appendValue: function 
-    PlaylistCommandsBuilder_appendValue(aParentSubMenuId, 
+  appendValue: function
+    PlaylistCommandsBuilder_appendValue(aParentSubMenuId,
                                         aId,
-                                        aLabel, 
-                                        aTooltipText, 
+                                        aLabel,
+                                        aTooltipText,
                                         aTriggerCallback,
                                         aValueCallback)
   {
@@ -348,13 +353,13 @@ PlaylistCommandsBuilder.prototype = {
                         aId,
                         props);
   },
-  
-  insertValueBefore: function 
-    PlaylistCommandsBuilder_insertValueBefore(aParentSubMenuId, 
+
+  insertValueBefore: function
+    PlaylistCommandsBuilder_insertValueBefore(aParentSubMenuId,
                                               aBeforeId,
                                               aId,
-                                              aLabel, 
-                                              aTooltipText, 
+                                              aLabel,
+                                              aTooltipText,
                                               aTriggerCallback,
                                               aValueCallback)
   {
@@ -362,7 +367,7 @@ PlaylistCommandsBuilder.prototype = {
                   m_Tooltip         : aTooltipText,
                   m_TriggerCallback : aTriggerCallback,
                   m_ValueCallback   : aValueCallback    };
-                       
+
     this._insertCommand(SONGBIRD_PLAYLISTCOMMANDSBUILDER_BEFORE,
                         aBeforeId,
                         aParentSubMenuId,
@@ -370,13 +375,13 @@ PlaylistCommandsBuilder.prototype = {
                         aId,
                         props);
   },
-  
-  insertValueAfter: function 
-    PlaylistCommandsBuilder_insertValueAfter(aParentSubMenuId, 
+
+  insertValueAfter: function
+    PlaylistCommandsBuilder_insertValueAfter(aParentSubMenuId,
                                              aAfterId,
                                              aId,
-                                             aLabel, 
-                                             aTooltipText, 
+                                             aLabel,
+                                             aTooltipText,
                                              aTriggerCallback,
                                              aValueCallback)
   {
@@ -392,15 +397,15 @@ PlaylistCommandsBuilder.prototype = {
                         aId,
                         props);
   },
-  
+
 // ----------------------------------------------------------------------------
 // Choice menus
 // ----------------------------------------------------------------------------
 
-  appendChoiceMenu: function 
-    PlaylistCommandsBuilder_appendChoiceMenu(aParentSubMenuId, 
+  appendChoiceMenu: function
+    PlaylistCommandsBuilder_appendChoiceMenu(aParentSubMenuId,
                                              aId,
-                                             aLabel, 
+                                             aLabel,
                                              aTooltipText,
                                              aItemCallback)
   {
@@ -416,11 +421,11 @@ PlaylistCommandsBuilder.prototype = {
                         props);
   },
 
-  insertChoiceMenuBefore: function 
-    PlaylistCommandsBuilder_insertChoiceMenuBefore(aParentSubMenuId, 
+  insertChoiceMenuBefore: function
+    PlaylistCommandsBuilder_insertChoiceMenuBefore(aParentSubMenuId,
                                                    aBeforeId,
-                                                   aId, 
-                                                   aLabel, 
+                                                   aId,
+                                                   aLabel,
                                                    aTooltipText,
                                                    aItemCallback)
   {
@@ -429,18 +434,18 @@ PlaylistCommandsBuilder.prototype = {
                   m_ItemCallback : aItemCallback };
 
     this._insertCommand(SONGBIRD_PLAYLISTCOMMANDSBUILDER_BEFORE,
-                        aBeforeId, 
+                        aBeforeId,
                         aParentSubMenuId,
                         SONGBIRD_PLAYLISTCOMMANDS_TYPE_CHOICE,
                         aId,
                         props);
   },
 
-  insertChoiceMenuAfter: function 
-    PlaylistCommandsBuilder_insertChoiceMenuAfter(aParentSubMenuId, 
+  insertChoiceMenuAfter: function
+    PlaylistCommandsBuilder_insertChoiceMenuAfter(aParentSubMenuId,
                                                   aAfterId,
-                                                  aId, 
-                                                  aLabel, 
+                                                  aId,
+                                                  aLabel,
                                                   aTooltipText,
                                                   aItemCallback)
   {
@@ -449,7 +454,7 @@ PlaylistCommandsBuilder.prototype = {
                   m_ItemCallback : aItemCallback };
 
     this._insertCommand(SONGBIRD_PLAYLISTCOMMANDSBUILDER_AFTER,
-                        aAfterId, 
+                        aAfterId,
                         aParentSubMenuId,
                         SONGBIRD_PLAYLISTCOMMANDS_TYPE_CHOICE,
                         aId,
@@ -460,11 +465,11 @@ PlaylistCommandsBuilder.prototype = {
 // Choice Menu Items
 // ----------------------------------------------------------------------------
 
-  appendChoiceMenuItem: function 
-    PlaylistCommandsBuilder_appendChoiceMenuItem(aParentSubMenuId, 
+  appendChoiceMenuItem: function
+    PlaylistCommandsBuilder_appendChoiceMenuItem(aParentSubMenuId,
                                                  aId,
-                                                 aLabel, 
-                                                 aTooltipText, 
+                                                 aLabel,
+                                                 aTooltipText,
                                                  aTriggerCallback)
   {
     var props = { m_Name            : aLabel,
@@ -478,13 +483,13 @@ PlaylistCommandsBuilder.prototype = {
                         aId,
                         props);
   },
-  
-  insertChoiceMenuItemBefore: function 
-    PlaylistCommandsBuilder_insertChoiceMenuItemBefore(aParentSubMenuId, 
+
+  insertChoiceMenuItemBefore: function
+    PlaylistCommandsBuilder_insertChoiceMenuItemBefore(aParentSubMenuId,
                                                        aBeforeId,
                                                        aId,
-                                                       aLabel, 
-                                                       aTooltipText, 
+                                                       aLabel,
+                                                       aTooltipText,
                                                        aTriggerCallback)
   {
     var props = { m_Name            : aLabel,
@@ -498,13 +503,13 @@ PlaylistCommandsBuilder.prototype = {
                         aId,
                         props);
   },
-  
-  insertChoiceMenuItemAfter: function 
-    PlaylistCommandsBuilder_insertChoiceMenuItemAfter(aParentSubMenuId, 
+
+  insertChoiceMenuItemAfter: function
+    PlaylistCommandsBuilder_insertChoiceMenuItemAfter(aParentSubMenuId,
                                                       aAfterId,
                                                       aId,
-                                                      aLabel, 
-                                                      aTooltipText, 
+                                                      aLabel,
+                                                      aTooltipText,
                                                       aTriggerCallback)
   {
     var props = { m_Name            : aLabel,
@@ -523,10 +528,10 @@ PlaylistCommandsBuilder.prototype = {
 // Custom Items
 // ----------------------------------------------------------------------------
 
-  appendCustomItem: function 
-    PlaylistCommandsBuilder_appendCustomItem(aParentSubMenuId, 
+  appendCustomItem: function
+    PlaylistCommandsBuilder_appendCustomItem(aParentSubMenuId,
                                              aId,
-                                             aInstantiationCallback, 
+                                             aInstantiationCallback,
                                              aRefreshCallback)
   {
     var props = { m_InstantiationCallback : aInstantiationCallback,
@@ -539,12 +544,12 @@ PlaylistCommandsBuilder.prototype = {
                         aId,
                         props);
   },
-  
-  insertCustomItemBefore: function 
-    PlaylistCommandsBuilder_insertCustomItemBefore(aParentSubMenuId, 
+
+  insertCustomItemBefore: function
+    PlaylistCommandsBuilder_insertCustomItemBefore(aParentSubMenuId,
                                                    aBeforeId,
                                                    aId,
-                                                   aInstantiationCallback, 
+                                                   aInstantiationCallback,
                                                    aRefreshCallback)
   {
     var props = { m_InstantiationCallback : aInstantiationCallback,
@@ -557,12 +562,12 @@ PlaylistCommandsBuilder.prototype = {
                         aId,
                         props);
   },
-  
-  insertCustomItemAfter: function 
-    PlaylistCommandsBuilder_insertCustomItemAfter(aParentSubMenuId, 
+
+  insertCustomItemAfter: function
+    PlaylistCommandsBuilder_insertCustomItemAfter(aParentSubMenuId,
                                                   aAfterId,
                                                   aId,
-                                                  aInstantiationCallback, 
+                                                  aInstantiationCallback,
                                                   aRefreshCallback)
   {
     var props = { m_InstantiationCallback : aInstantiationCallback,
@@ -580,8 +585,8 @@ PlaylistCommandsBuilder.prototype = {
 // sbIPlaylistCommands Items
 // ----------------------------------------------------------------------------
 
-  appendPlaylistCommands: function 
-    PlaylistCommandsBuilder_appendPlaylistCommands(aParentSubMenuId, 
+  appendPlaylistCommands: function
+    PlaylistCommandsBuilder_appendPlaylistCommands(aParentSubMenuId,
                                                    aId,
                                                    aPlaylistCommands)
   {
@@ -593,9 +598,9 @@ PlaylistCommandsBuilder.prototype = {
                         null,
                         aPlaylistCommands);
   },
-  
-  insertPlaylistCommandsBefore: function 
-    PlaylistCommandsBuilder_insertPlaylistCommandsBefore(aParentSubMenuId, 
+
+  insertPlaylistCommandsBefore: function
+    PlaylistCommandsBuilder_insertPlaylistCommandsBefore(aParentSubMenuId,
                                                          aBeforeId,
                                                          aId,
                                                          aPlaylistCommands)
@@ -608,9 +613,9 @@ PlaylistCommandsBuilder.prototype = {
                         null,
                         aPlaylistCommands);
   },
-  
-  insertPlaylistCommandsAfter: function 
-    PlaylistCommandsBuilder_insertPlaylistCommandsAfter(aParentSubMenuId, 
+
+  insertPlaylistCommandsAfter: function
+    PlaylistCommandsBuilder_insertPlaylistCommandsAfter(aParentSubMenuId,
                                                         aAfterId,
                                                         aId,
                                                         aPlaylistCommands)
@@ -623,12 +628,12 @@ PlaylistCommandsBuilder.prototype = {
                         null,
                         aPlaylistCommands);
   },
-  
+
 // ----------------------------------------------------------------------------
 
-  setCommandShortcut: function 
-    PlaylistCommandsBuilder_setCommandShortcut(aParentSubMenuId, 
-                                               aCommandId, 
+  setCommandShortcut: function
+    PlaylistCommandsBuilder_setCommandShortcut(aParentSubMenuId,
+                                               aCommandId,
                                                aShortcutKey,
                                                aShortcutKeyCode,
                                                aShortcutModifiers,
@@ -640,58 +645,65 @@ PlaylistCommandsBuilder.prototype = {
                   m_ShortcutIsLocal   : aShortcutIsLocal };
 
     this._setCommandProperties(aParentSubMenuId, aCommandId, props);
-  },                             
+  },
 
-  setCommandEnabledCallback: function 
-    PlaylistCommandsBuilder_setCommandEnabledCallback(aParentSubMenuId, 
-                                                      aCommandId, 
+  setCommandEnabledCallback: function
+    PlaylistCommandsBuilder_setCommandEnabledCallback(aParentSubMenuId,
+                                                      aCommandId,
                                                       aEnabledCallback)
   {
     var props = { m_EnabledCallback : aEnabledCallback };
 
     this._setCommandProperties(aParentSubMenuId, aCommandId, props);
-  },                             
+  },
 
-  setCommandVisibleCallback: function 
-    PlaylistCommandsBuilder_setCommandVisibleCallback(aParentSubMenuId, 
-                                                      aCommandId, 
+  setCommandVisibleCallback: function
+    PlaylistCommandsBuilder_setCommandVisibleCallback(aParentSubMenuId,
+                                                      aCommandId,
                                                       aVisibleCallback)
   {
     var props = { m_VisibleCallback : aVisibleCallback };
 
     this._setCommandProperties(aParentSubMenuId, aCommandId, props);
-  },                             
+  },
 
-  setInitCallback: function 
+  setInitCallback: function
     PlaylistCommandsBuilder_setInitCallback(aInitCallback)
   {
     this.m_InitCallback = aInitCallback;
   },
 
-  setShutdownCallback: function 
+  setShutdownCallback: function
     PlaylistCommandsBuilder_setShutdownCallback(aShutdownCallback)
   {
     this.m_ShutdownCallback = aShutdownCallback;
   },
 
-  setVisibleCallback: function 
+  setVisibleCallback: function
     PlaylistCommandsBuilder_setVisibleCallback(aVisibleCallback)
   {
     this.m_VisibleCallback = aVisibleCallback;
   },
-  
-// ----------------------------------------------------------------------------  
 
-  removeCommand: function 
+// ----------------------------------------------------------------------------
+
+  removeCommand: function
     PlaylistCommandsBuilder_removeCommand(aParentSubMenuId,
                                           aCommandId)
   {
     var menu = this._getMenu(aParentSubMenuId);
     var index = this._getCommandIndex(menu, aCommandId);
-    this._removeCommandTree(menu, index);
+    if (index != -1)
+    {
+      this._removeCommandTree(menu, index);
+    }
+    else {
+      throw new Error("A command object with an id of " + aCommandId +
+                      " could not be found for removal");
+    }
   },
 
-  removeAllCommands: function 
+  removeAllCommands: function
     PlaylistCommandsBuilder_removeAllCommands(aParentSubMenuId)
   {
     var menu = this._getMenu(aParentSubMenuId);
@@ -701,7 +713,8 @@ PlaylistCommandsBuilder.prototype = {
     if (!aParentSubMenuId) {
       // after removing all commands, the only remaining menu is the root menu
       if (this.m_menus.length != 1) {
-        throw new Error("Menu list is not empty after removeAllCommands (item 1 = " + this.m_menus[1].m_Id + ")");
+        throw new Error("Menu list is not empty after removeAllCommands (item 1 = " +
+                        this.m_menus[1].id + ")");
       }
     }
   },
@@ -723,12 +736,12 @@ PlaylistCommandsBuilder.prototype = {
     this.m_Context = null;
   },
 
-// ----------------------------------------------------------------------------  
+// ----------------------------------------------------------------------------
 
-  _insertCommand: function 
+  _insertCommand: function
     PlaylistCommandsBuilder__insertCommand(aInsertHow,
                                            aRefPointId,
-                                           aParentSubMenuId, 
+                                           aParentSubMenuId,
                                            aType,
                                            aId,
                                            aPropArray,
@@ -753,13 +766,13 @@ PlaylistCommandsBuilder.prototype = {
     var menu = this._getMenu(aParentSubMenuId);
     var index = this._getCommandIndex(menu, aId);
     if (index >= 0) {
-      throw new Error("Duplicate command '" + 
-                      aId + 
-                      "' in menu '" + 
+      throw new Error("Duplicate command '" +
+                      aId +
+                      "' in menu '" +
                       (aParentSubMenuId ? aParentSubMenuId : "<rootmenu>"));
     }
-    var refindex = ((aInsertHow != SONGBIRD_PLAYLISTCOMMANDSBUILDER_APPEND) && 
-                    aRefPointId) ? 
+    var refindex = ((aInsertHow != SONGBIRD_PLAYLISTCOMMANDSBUILDER_APPEND) &&
+                    aRefPointId) ?
                     this._getCommandIndex(menu, aRefPointId) : -1;
     var vrefindex = refindex;
     switch (aInsertHow) {
@@ -770,9 +783,9 @@ PlaylistCommandsBuilder.prototype = {
         // fallthru
       case SONGBIRD_PLAYLISTCOMMANDSBUILDER_BEFORE:
         if (refindex < 0) {
-          throw new Error("Reference command '" + 
-                          aRefPointId + 
-                          "' not found in menu '" + 
+          throw new Error("Reference command '" +
+                          aRefPointId +
+                          "' not found in menu '" +
                           (aParentSubMenuId ? aParentSubMenuId : "<rootmenu>"));
         }
         break;
@@ -785,8 +798,8 @@ PlaylistCommandsBuilder.prototype = {
                                aCommandSubObject);
   },
 
-  _insertCommandInArray: function 
-    PlaylistCommandsBuilder__insertCommandInArray(aMenu, 
+  _insertCommandInArray: function
+    PlaylistCommandsBuilder__insertCommandInArray(aMenu,
                                                   aInsertionIndex,
                                                   aType,
                                                   aId,
@@ -795,13 +808,13 @@ PlaylistCommandsBuilder.prototype = {
   {
     var item = { m_ParentMenu            : aMenu,
                  m_Type                  : aType,
-                 m_Id                    : aId };
+                 id                      : aId };
     if (aPropArray) {
       for (var i in aPropArray) {
         item[i] = aPropArray[i];
       }
     }
-    
+
     switch (aType) {
       case SONGBIRD_PLAYLISTCOMMANDS_TYPE_SEPARATOR:
         item.m_Flex = 1;
@@ -817,7 +830,7 @@ PlaylistCommandsBuilder.prototype = {
         break;
       case SONGBIRD_PLAYLISTCOMMANDS_TYPE_MENU:
       case SONGBIRD_PLAYLISTCOMMANDS_TYPE_CHOICE:
-        var menuitem = { m_Id   : aId,
+        var menuitem = { id     : aId,
                          m_Type : aType,
                          m_Menu : new Array() };
         if (aType == SONGBIRD_PLAYLISTCOMMANDS_TYPE_CHOICE) {
@@ -826,30 +839,30 @@ PlaylistCommandsBuilder.prototype = {
         this.m_menus.push(menuitem);
         break;
     }
-    
+
     // insert the item in the menu at the requested position
     if (aInsertionIndex < 0 || aInsertionIndex >= aMenu.length)
       aMenu.push(item);
     else
       aMenu.splice(aInsertionIndex, 0, item);
   },
-  
-  _removeCommandTree: function 
+
+  _removeCommandTree: function
     PlaylistCommandsBuilder__removeCommandTree(aMenu, aIndex) {
     if (aIndex >= aMenu.length || aIndex < 0) {
       throw new Error("Invalid index " + aIndex + " in _removeCommandTree");
     }
 
     var item = aMenu[aIndex];
-    
+
     if (item.m_Type == SONGBIRD_PLAYLISTCOMMANDS_TYPE_MENU ||
         item.m_Type == SONGBIRD_PLAYLISTCOMMANDS_TYPE_CHOICE) {
-      var submenu = this._getMenu(item.m_Id);
+      var submenu = this._getMenu(item.id);
       if (submenu && submenu != this.m_root_commands) {
         while(submenu.length > 0) {
           this._removeCommandTree(submenu, 0);
         }
-        var idx = this._getMenuIndex(item.m_Id);
+        var idx = this._getMenuIndex(item.id);
         if (idx > 0 && idx < this.m_menus.length) { // yes, '>', we do not want the root menu
           // discard the item callback in case this is a choicemenu
           this.m_menus[idx].m_ItemCallback = null;
@@ -860,7 +873,7 @@ PlaylistCommandsBuilder.prototype = {
         }
       }
     }
-    
+
     // Remove the command item
     aMenu[aIndex].m_InstantiationCallback = null;
     aMenu[aIndex].m_RefreshCallback = null;
@@ -876,7 +889,7 @@ PlaylistCommandsBuilder.prototype = {
     // null is the root menu
     if (!aSubMenuId) return this.m_root_commands;
     for (var i=0;i<this.m_menus.length;i++) {
-      if (this.m_menus[i].m_Id == aSubMenuId) {
+      if (this.m_menus[i].id == aSubMenuId) {
         return this.m_menus[i].m_Menu;
       }
     }
@@ -887,31 +900,31 @@ PlaylistCommandsBuilder.prototype = {
   {
     if (!aSubMenuId) return 0;
     for (var i=0;i<this.m_menus.length;i++) {
-      if (this.m_menus[i].m_Id == aSubMenuId) {
+      if (this.m_menus[i].id == aSubMenuId) {
         return i;
       }
     }
     throw new Error("Submenu " + aSubMenuId + " not found");
     return -1;
   },
-  
-  _getCommandIndex: function 
+
+  _getCommandIndex: function
     PlaylistCommandsBuilder__getCommandIndex(aSubMenu, aCommandId)
   {
     if (!aSubMenu) return -1;
     for (var i=0;i<aSubMenu.length;i++) {
-      if (aSubMenu[i].m_Id == aCommandId) {
+      if (aSubMenu[i].id == aCommandId) {
         return i;
       }
     }
     return -1;
   },
-  
-  _getCommandProperty: function 
-    PlaylistCommandsBuilder__getCommandProperty(aSubMenuId, 
-                                                aIndex, 
-                                                aHost, 
-                                                aProperty, 
+
+  _getCommandProperty: function
+    PlaylistCommandsBuilder__getCommandProperty(aSubMenuId,
+                                                aIndex,
+                                                aHost,
+                                                aProperty,
                                                 aDefault)
   {
     try {
@@ -922,21 +935,21 @@ PlaylistCommandsBuilder.prototype = {
       if (prop === undefined) return aDefault;
       if (typeof(prop) == "object" && prop.handleCallback) {
         return prop.handleCallback(this.m_Context,
-                                   aSubMenuId, 
-                                   menu[aIndex].m_Id, 
-                                   aHost, 
+                                   aSubMenuId,
+                                   menu[aIndex].id,
+                                   aHost,
                                    aProperty.substr(2));
       }
       return prop;
     } catch (e) {
-      this.LOG("_getCommandProperty(" + aSubMenuId + ", " + aIndex + " (" + 
-               menu[aIndex].m_Id + "), " + aHost + ", " + aProperty + ", " + 
+      this.LOG("_getCommandProperty(" + aSubMenuId + ", " + aIndex + " (" +
+               menu[aIndex].id + "), " + aHost + ", " + aProperty + ", " +
                aDefault + ") - " + e);
     }
     return aDefault;
   },
-  
-  _getMenuProperty: function 
+
+  _getMenuProperty: function
     PlaylistCommandsBuilder__getMenuProperty(aMenu, aHost, aProperty, aDefault)
   {
     try {
@@ -945,19 +958,19 @@ PlaylistCommandsBuilder.prototype = {
       if (typeof(prop) == "object" && prop.handleCallback) {
         return prop.handleCallback(this.m_Context,
                                   aMenu.m_ParentMenu,
-                                  aMenu.m_Id,
-                                  aHost, 
+                                  aMenu.id,
+                                  aHost,
                                   aProperty.substr(2));
       }
       return prop;
     } catch (e) {
-      this.LOG("_getMenuProperty(" + aMenu.m_Id + ", " + aHost +
+      this.LOG("_getMenuProperty(" + aMenu.id + ", " + aHost +
             ", " + aProperty + ", " + aDefault + ") - " + e);
     }
     return aDefault;
   },
 
-  _setCommandProperties: function 
+  _setCommandProperties: function
     PlaylistCommandsBuilder__setCommandProperties(aSubMenuId, aCommandId, aPropArray)
   {
     var menu = this._getMenu(aSubMenuId);
@@ -972,7 +985,7 @@ PlaylistCommandsBuilder.prototype = {
 
   // not used for now, this may eventually be needed if we want to allow
   // changing the item callback for a choicemenu
-  _setMenuProperties: function 
+  _setMenuProperties: function
     PlaylistCommandsBuilder__setMenuProperties(aMenu, aPropArray)
   {
     for (var i in aPropArray) {
@@ -985,90 +998,107 @@ PlaylistCommandsBuilder.prototype = {
  * sbIPlaylistCommands Implementation
  * ----------------------------------------------------------------------------
  */
- 
+  addCommandObject: function PlaylistCommandsBuilder_addCommandObject
+                             ( aCommandObject )
+  {
+    this.appendPlaylistCommands(null,
+                                aCommandObject.id,
+                                aCommandObject);
+
+    // this.notifyListeners("onCommandAdded", aCommandObject);
+  },
+
+  removeCommandObject: function PlaylistCommandsBuilder_removeCommandObject
+                                ( aCommandObject )
+  {
+    this.removeCommand(null, aCommandObject.id);
+
+    // this.notifyListeners("onCommandRemoved", aCommandObject);
+  },
+
   getVisible: function PlaylistCommandsBuilder_getVisible( aHost )
   {
     if (this.m_VisibleCallback &&
-        typeof(this.m_VisibleCallback) == "object" && 
+        typeof(this.m_VisibleCallback) == "object" &&
         this.m_VisibleCallback.handleCallback) {
       return this.m_VisibleCallback.handleCallback(this.m_Context, aHost, "Visible");
     }
     return true;
   },
 
-  getNumCommands: function 
+  getNumCommands: function
     PlaylistCommandsBuilder_getNumCommands( aSubMenuId, aHost )
   {
     var menu = this._getMenu(aSubMenuId);
     return menu.length;
   },
-  
-  getCommandId: function 
+
+  getCommandId: function
     PlaylistCommandsBuilder_getCommandId( aSubMenuId, aIndex, aHost )
   {
-    return this._getCommandProperty(aSubMenuId, 
-                                    aIndex, 
-                                    aHost, 
-                                    "m_Id", 
+    return this._getCommandProperty(aSubMenuId,
+                                    aIndex,
+                                    aHost,
+                                    "id",
                                     "");
   },
-  
-  getCommandType: function 
+
+  getCommandType: function
     PlaylistCommandsBuilder_getCommandType( aSubMenuId, aIndex, aHost )
   {
-    return this._getCommandProperty(aSubMenuId, 
-                                    aIndex, 
-                                    aHost, 
-                                    "m_Type", 
+    return this._getCommandProperty(aSubMenuId,
+                                    aIndex,
+                                    aHost,
+                                    "m_Type",
                                     "");
   },
 
-  getCommandText: function 
+  getCommandText: function
     PlaylistCommandsBuilder_getCommandText( aSubMenuId, aIndex, aHost )
   {
-    return this._getCommandProperty(aSubMenuId, 
-                                    aIndex, 
-                                    aHost, 
-                                    "m_Name", 
+    return this._getCommandProperty(aSubMenuId,
+                                    aIndex,
+                                    aHost,
+                                    "m_Name",
                                     "");
   },
 
-  getCommandFlex: function 
+  getCommandFlex: function
     PlaylistCommandsBuilder_getCommandFlex( aSubMenuId, aIndex, aHost )
   {
-    return this._getCommandProperty(aSubMenuId, 
-                                    aIndex, 
-                                    aHost, 
-                                    "m_Flex", 
+    return this._getCommandProperty(aSubMenuId,
+                                    aIndex,
+                                    aHost,
+                                    "m_Flex",
                                     false);
   },
 
-  getCommandToolTipText: function 
+  getCommandToolTipText: function
     PlaylistCommandsBuilder_getCommandToolTipText( aSubMenuId, aIndex, aHost )
   {
-    return this._getCommandProperty(aSubMenuId, 
-                                    aIndex, 
-                                    aHost, 
-                                    "m_Tooltip", 
+    return this._getCommandProperty(aSubMenuId,
+                                    aIndex,
+                                    aHost,
+                                    "m_Tooltip",
                                     "");
   },
 
-  getCommandValue: function 
+  getCommandValue: function
     PlaylistCommandsBuilder_getCommandValue( aSubMenuId, aIndex, aHost )
   {
-    return this._getCommandProperty(aSubMenuId, 
-                                    aIndex, 
-                                    aHost, 
-                                    "m_ValueCallback", 
+    return this._getCommandProperty(aSubMenuId,
+                                    aIndex,
+                                    aHost,
+                                    "m_ValueCallback",
                                     "");
   },
 
-  instantiateCustomCommand: function 
-    PlaylistCommandsBuilder_instantiateCustomCommand( aSubMenuId, 
-                                                      aIndex, 
-                                                      aHost, 
-                                                      aId, 
-                                                      aDocument ) 
+  instantiateCustomCommand: function
+    PlaylistCommandsBuilder_instantiateCustomCommand( aSubMenuId,
+                                                      aIndex,
+                                                      aHost,
+                                                      aId,
+                                                      aDocument )
   {
     var menu = this._getMenu(aSubMenuId);
     if (aIndex >= menu.length || aIndex < 0) {
@@ -1077,18 +1107,18 @@ PlaylistCommandsBuilder.prototype = {
     var cb = menu[aIndex].m_InstantiationCallback;
     if (cb) return cb.handleCallback(this.m_Context,
                                      menu[aIndex].m_ParentMenu,
-                                     menu[aIndex].m_Id,
+                                     menu[aIndex].id,
                                      aHost,
                                      aDocument);
     throw new Error("No custom command instantiation callback defined for command " + aId);
   },
 
-  refreshCustomCommand: function 
-    PlaylistCommandsBuilder_refreshCustomCommand( aSubMenuId, 
-                                                  aIndex, 
-                                                  aHost, 
-                                                  aId, 
-                                                  aElement ) 
+  refreshCustomCommand: function
+    PlaylistCommandsBuilder_refreshCustomCommand( aSubMenuId,
+                                                  aIndex,
+                                                  aHost,
+                                                  aId,
+                                                  aElement )
   {
     var menu = this._getMenu(aSubMenuId);
     if (aIndex >= menu.length || aIndex < 0) {
@@ -1097,32 +1127,32 @@ PlaylistCommandsBuilder.prototype = {
     var cb = menu[aIndex].m_RefreshCallback;
     if (cb) cb.handleCallback(this.m_Context,
                               menu[aIndex].m_ParentMenu,
-                              menu[aIndex].m_Id,
+                              menu[aIndex].id,
                               aHost,
                               aElement);
   },
 
-  getCommandVisible: function 
+  getCommandVisible: function
     PlaylistCommandsBuilder_getCommandVisible( aSubMenuId, aIndex, aHost )
   {
-    return this._getCommandProperty(aSubMenuId, 
-                                    aIndex, 
-                                    aHost, 
-                                    "m_VisibleCallback", 
+    return this._getCommandProperty(aSubMenuId,
+                                    aIndex,
+                                    aHost,
+                                    "m_VisibleCallback",
                                     true);
   },
 
-  getCommandFlag: function 
+  getCommandFlag: function
     PlaylistCommandsBuilder_getCommandFlag( aSubMenuId, aIndex, aHost )
   {
-    return this._getCommandProperty(aSubMenuId, 
-                                    aIndex, 
-                                    aHost, 
-                                    "m_ValueCallback", 
+    return this._getCommandProperty(aSubMenuId,
+                                    aIndex,
+                                    aHost,
+                                    "m_ValueCallback",
                                     false);
   },
 
-  getCommandChoiceItem: function 
+  getCommandChoiceItem: function
     PlaylistCommandsBuilder_getCommandChoiceItem( aChoiceMenu, aHost )
   {
     var menuindex = this._getMenuIndex(aChoiceMenu);
@@ -1134,67 +1164,88 @@ PlaylistCommandsBuilder.prototype = {
     return this._getMenuProperty(menu, aHost, "m_ItemCallback", "");
   },
 
-  getCommandEnabled: function 
+  getCommandEnabled: function
     PlaylistCommandsBuilder_getCommandEnabled( aSubMenuId, aIndex, aHost )
   {
-    return this._getCommandProperty(aSubMenuId, 
-                                    aIndex, 
-                                    aHost, 
-                                    "m_EnabledCallback", 
+    return this._getCommandProperty(aSubMenuId,
+                                    aIndex,
+                                    aHost,
+                                    "m_EnabledCallback",
                                     true);
   },
 
-  getCommandShortcutModifiers: function 
+  getCommandShortcutModifiers: function
     PlaylistCommandsBuilder_getCommandShortcutModifiers( aSubMenuId, aIndex, aHost )
   {
-    return this._getCommandProperty(aSubMenuId, 
-                                    aIndex, 
-                                    aHost, 
-                                    "m_ShortcutModifiers", 
+    return this._getCommandProperty(aSubMenuId,
+                                    aIndex,
+                                    aHost,
+                                    "m_ShortcutModifiers",
                                     "");
   },
 
-  getCommandShortcutKey: function 
+  getCommandShortcutKey: function
     PlaylistCommandsBuilder_getCommandShortcutKey( aSubMenuId, aIndex, aHost )
   {
-    return this._getCommandProperty(aSubMenuId, 
-                                    aIndex, 
-                                    aHost, 
-                                    "m_ShortcutKey", 
+    return this._getCommandProperty(aSubMenuId,
+                                    aIndex,
+                                    aHost,
+                                    "m_ShortcutKey",
                                     "");
   },
 
-  getCommandShortcutKeycode: function 
+  getCommandShortcutKeycode: function
     PlaylistCommandsBuilder_getCommandShortcutKeycode( aSubMenuId, aIndex, aHost )
   {
-    return this._getCommandProperty(aSubMenuId, 
-                                    aIndex, 
-                                    aHost, 
-                                    "m_ShortcutKeycode", 
+    return this._getCommandProperty(aSubMenuId,
+                                    aIndex,
+                                    aHost,
+                                    "m_ShortcutKeycode",
                                     "");
   },
 
-  getCommandShortcutLocal: function 
+  getCommandShortcutLocal: function
     PlaylistCommandsBuilder_getCommandShortcutLocal( aSubMenuId, aIndex, aHost )
   {
-    return this._getCommandProperty(aSubMenuId, 
-                                    aIndex, 
-                                    aHost, 
-                                    "m_ShortcutIsLocal", 
+    return this._getCommandProperty(aSubMenuId,
+                                    aIndex,
+                                    aHost,
+                                    "m_ShortcutIsLocal",
                                     false);
   },
 
-  getCommandSubObject: function 
+  getCommandSubObject: function
     PlaylistCommandsBuilder_getCommandSubObject( aSubMenuId, aIndex, aHost )
   {
-    return this._getCommandProperty(aSubMenuId, 
-                                    aIndex, 
-                                    aHost, 
-                                    "m_CommandSubObject", 
+    return this._getCommandProperty(aSubMenuId,
+                                    aIndex,
+                                    aHost,
+                                    "m_CommandSubObject",
                                     null);
   },
 
-  onCommand: function 
+  getOriginalCommandSubObject: function
+    PlaylistCommandsBuilder_getOriginalCommandSubObject( aSubMenuId, aIndex, aHost )
+  {
+    return this._getCommandProperty(aSubMenuId,
+                                    aIndex,
+                                    aHost,
+                                    "m_OriginalCommandSubObject",
+                                    null);
+  },
+
+  getChildrenCommandObjects: function
+    PlaylistCommandsBuilder_getChildrenCommandObjects()
+  {
+    var subCommandArray = new Array();
+    for (var i=0; i < this.getNumCommands(null, null); i++) {
+      var subCommand = this.getOriginalCommandSubObject("", i, "");
+      subCommandArray.push(subCommand);
+    }
+    return ArrayConverter.enumerator(subCommandArray);
+  },
+
+  onCommand: function
     PlaylistCommandsBuilder_onCommand(aSubMenuId, aIndex, aHost, id, value)
   {
     var menu = this._getMenu(aSubMenuId);
@@ -1202,11 +1253,11 @@ PlaylistCommandsBuilder.prototype = {
       throw new Error("Invalid index " + index + " in PlaylistCommandsBuilder::onCommand");
     }
 
-    if (menu[aIndex].m_Id != id) {
-      throw new Error("Id do not match in PlaylistCommandsBuilder::onCommand (" + 
-                      id + 
-                      "/" + 
-                      menu[aIndex].m_Id + 
+    if (menu[aIndex].id != id) {
+      throw new Error("Id do not match in PlaylistCommandsBuilder::onCommand (" +
+                      id +
+                      "/" +
+                      menu[aIndex].id +
                       ")");
     }
     var cb = menu[aIndex].m_TriggerCallback;
@@ -1214,12 +1265,12 @@ PlaylistCommandsBuilder.prototype = {
       throw new Error("No callback defined for command " + id);
     }
     cb.handleCallback(this.m_Context,
-                      aSubMenuId, 
-                      menu[aIndex].m_Id, 
-                      aHost, 
+                      aSubMenuId,
+                      menu[aIndex].id,
+                      aHost,
                       value);
   },
-  
+
   duplicate: function PlaylistCommandsBuilder_duplicate()
   {
     // duplicate this
@@ -1243,11 +1294,11 @@ PlaylistCommandsBuilder.prototype = {
     }
     obj.m_root_commands = obj.m_menus[0].m_Menu;
     obj.m_Context = this.dupObject(this.m_Context);
-        
+
     // return the copy
     return obj;
   },
-  
+
   dupObject: function PlaylistCommandsBuilder_dupObject(obj) {
     var r = {};
     for ( var i in obj )
@@ -1257,7 +1308,7 @@ PlaylistCommandsBuilder.prototype = {
     return r;
   },
 
-  initCommands: function PlaylistCommandsBuilder_initCommands(aHost) { 
+  initCommands: function PlaylistCommandsBuilder_initCommands(aHost) {
     for (var i=0;i<this.m_menus.length;i++) {
       for (var j=0;j<this.m_menus[i].m_Menu.length;j++) {
         if (this.m_menus[i].m_Menu[j].m_CommandSubObject) {
@@ -1266,19 +1317,19 @@ PlaylistCommandsBuilder.prototype = {
       }
     }
     if (this.m_InitCallback &&
-        typeof(this.m_InitCallback) == "object" && 
+        typeof(this.m_InitCallback) == "object" &&
         this.m_InitCallback.handleCallback) {
       this.m_InitCallback.handleCallback(this.m_Context, aHost, null);
     }
   },
 
-  shutdownCommands: function PlaylistCommandsBuilder_shutdownCommands() { 
+  shutdownCommands: function PlaylistCommandsBuilder_shutdownCommands() {
     for (var i=0;i<this.m_menus.length;i++) {
       for (var j=0;j<this.m_menus[i].m_Menu.length;j++) {
         if (this.m_menus[i].m_Menu[j].m_CommandSubObject) {
           try {
             this.m_menus[i].m_Menu[j].m_CommandSubObject.shutdownCommands();
-          } 
+          }
           catch (e)
           {
             Components.utils.reportError(e);
@@ -1287,13 +1338,13 @@ PlaylistCommandsBuilder.prototype = {
       }
     }
     if (this.m_ShutdownCallback &&
-        typeof(this.m_ShutdownCallback) == "object" && 
+        typeof(this.m_ShutdownCallback) == "object" &&
         this.m_ShutdownCallback.handleCallback) {
       this.m_ShutdownCallback.handleCallback(this.m_Context, null, null);
     }
     this.shutdown();
   },
-  
+
   setContext: function PlaylistCommandsBuilder_setContext( context )
   {
     for (var i=0;i<this.m_menus.length;i++) {
@@ -1303,23 +1354,23 @@ PlaylistCommandsBuilder.prototype = {
         }
       }
     }
-    
+
     this.m_Context.playlist = context.playlist;
     this.m_Context.medialist = context.medialist;
     this.m_Context.window = context.window;
     this.m_Context.commands = this;
   },
-  
-    
-// ----------------------------------------------------------------------------  
+
+
+// ----------------------------------------------------------------------------
 
   LOG: function PlaylistCommandsBuilder_LOG(str) {
     var consoleService = Components.classes['@mozilla.org/consoleservice;1']
                             .getService(Components.interfaces.nsIConsoleService);
     consoleService.logStringMessage(str);
   },
-  
-// ----------------------------------------------------------------------------  
+
+// ----------------------------------------------------------------------------
 
   /**
    * See nsISupports.idl

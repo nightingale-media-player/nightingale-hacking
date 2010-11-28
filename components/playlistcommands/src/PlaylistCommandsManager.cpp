@@ -1,41 +1,39 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
-/** 
+/**
 * \file  PlaylistCommands.cpp
 * \brief Songbird PlaylistCommandsManager Component Implementation.
 */
 
+#include "PlaylistCommandsManager.h"
 #include "nscore.h"
 
 #include "nspr.h"
 #include "nsCOMPtr.h"
 #include "rdf.h"
 
-#include "nsIEnumerator.h"
 #include "nsIInterfaceRequestor.h"
 #include "nsIComponentManager.h"
 #include "nsIServiceManager.h"
@@ -52,7 +50,8 @@
 #include "nsCRTGlue.h"
 #include <nsStringGlue.h>
 
-#include "PlaylistCommandsManager.h"
+#include <sbStringUtils.h>
+
 
 #define MODULE_SHORTCIRCUIT 0
 
@@ -64,7 +63,8 @@
 # define VMETHOD_SHORTCIRCUIT
 #endif
 
-static  CPlaylistCommandsManager *gPlaylistCommandsManager = nsnull;
+// forward declaration
+class sbIPlaylistCommandsBuilder;
 
 NS_IMPL_ISUPPORTS1(CPlaylistCommandsManager, sbIPlaylistCommandsManager);
 
@@ -79,176 +79,237 @@ CPlaylistCommandsManager::CPlaylistCommandsManager()
 } //dtor
 
 //-----------------------------------------------------------------------------
-NS_IMETHODIMP
-CPlaylistCommandsManager::RegisterPlaylistCommands(commandmap_t *map,
-                                         const nsAString     &aContextGUID,
-                                         const nsAString     &aPlaylistType,
-                                         sbIPlaylistCommands *aCommandObj)
+nsresult
+CPlaylistCommandsManager::FindOrCreateRootCommand(commandobjmap_t *map,
+                                                  const nsAString &aSearchString,
+                                                  sbIPlaylistCommandsBuilder **_retval)
 {
+  NS_ENSURE_ARG_POINTER(map);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+  nsString searchString(aSearchString);
+  nsCOMPtr<sbIPlaylistCommandsBuilder> rootCommand;
+  commandobjmap_t::iterator iter = map->find(searchString);
+  if (iter != map->end()) {
+    // if we find a root playlistCommands object, return it
+    rootCommand =  iter->second;
+  }
+  else {
+    // if we can't find a root playlistCommands object, make one
+    rootCommand = do_CreateInstance
+                  ("@songbirdnest.com/Songbird/PlaylistCommandsBuilder;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // initialize the new playlistcommand with an id of the search param
+    rv = rootCommand->Init(searchString);
+    NS_ENSURE_SUCCESS(rv, rv);
+    (*map)[searchString] = rootCommand;
+  }
+  NS_ADDREF(*_retval = rootCommand);
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
+NS_IMETHODIMP
+CPlaylistCommandsManager::RegisterPlaylistCommands
+                          (commandobjmap_t *map,
+                           const nsAString     &aContextGUID,
+                           const nsAString     &aPlaylistType,
+                           sbIPlaylistCommands *aCommandObj)
+{
+  NS_ENSURE_ARG_POINTER(map);
   NS_ENSURE_ARG_POINTER(aCommandObj);
 
   METHOD_SHORTCIRCUIT;
 
-  // Yes, I'm copying strings 1 time too many here.  I can live with that.
   nsString key(aContextGUID);
   nsString type(aPlaylistType);
+  nsString id;
 
-  (*map)[type].push_back(aCommandObj);
-  (*map)[key].push_back(aCommandObj);
+  nsresult rv = aCommandObj->GetId(id);
+  if ( !NS_SUCCEEDED(rv) || id.IsEmpty() )
+  {
+    NS_ERROR("PlaylistCommandsManager::Cannot register a playlist command without an id");
+    return NS_ERROR_INVALID_ARG;
+  }
+  nsCOMPtr<sbIPlaylistCommandsBuilder> rootCommand;
+
+  // check if the caller gave a type
+  if (!type.IsEmpty()) {
+    rv = FindOrCreateRootCommand(map, type, getter_AddRefs(rootCommand));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = rootCommand->AddCommandObject(aCommandObj);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // check if the caller gave a guid
+  if (!key.IsEmpty()) {
+    rv = FindOrCreateRootCommand(map, key, getter_AddRefs(rootCommand));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = rootCommand->AddCommandObject(aCommandObj);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
 
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP
-CPlaylistCommandsManager::UnregisterPlaylistCommands(commandmap_t *map,
-                                           const nsAString     &aContextGUID,
-                                           const nsAString     &aPlaylistType,
-                                           sbIPlaylistCommands *aCommandObj)
+CPlaylistCommandsManager::UnregisterPlaylistCommands
+                          (commandobjmap_t *map,
+                           const nsAString     &aContextGUID,
+                           const nsAString     &aPlaylistType,
+                           sbIPlaylistCommands *aCommandObj)
 {
+  NS_ENSURE_ARG_POINTER(map);
   NS_ENSURE_ARG_POINTER(aCommandObj);
+  nsresult rv;
 
   METHOD_SHORTCIRCUIT;
 
   nsString key(aContextGUID);
   nsString type(aPlaylistType);
 
-  PRBool found = PR_FALSE;
+  nsCOMPtr<sbIPlaylistCommands> rootCommand;
 
-  commandmap_t::iterator c = (*map).find(type);
-  if (c != (*map).end()) {
-    commandlist_t *typelist = &((*c).second);
-    if (typelist) {
-      for (commandlist_t::iterator ci = typelist->begin(); ci != typelist->end(); ci++) {
-        if (*ci == aCommandObj) {
-          typelist->erase(ci);
-          found = PR_TRUE;
-          break;
-        }
-      }
+  if (!type.IsEmpty()) {
+    commandobjmap_t::iterator iter = map->find(type);
+    if (iter != map->end()) {
+      rootCommand = iter->second;
+      rv = rootCommand->RemoveCommandObject(aCommandObj);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
   }
 
-  c = (*map).find(key);
-  if (c != (*map).end()) {
-    commandlist_t *keylist = &((*c).second);
-    if (keylist) {
-      for (commandlist_t::iterator ci = keylist->begin(); ci != keylist->end(); ci++) {
-        if (*ci == aCommandObj) {
-          keylist->erase(ci);
-          found = PR_TRUE;
-          break;
-        }
-      }
+  if (!key.IsEmpty()) {
+    commandobjmap_t::iterator iter = map->find(key);
+    if (iter != map->end()) {
+      rootCommand = iter->second;
+      rv = rootCommand->RemoveCommandObject(aCommandObj);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
   }
 
-  return found ? NS_OK : NS_ERROR_FAILURE;
+  return NS_OK;
 }
 
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP
-CPlaylistCommandsManager::GetPlaylistCommands(commandmap_t *map,
-                                    const nsAString      &aContextGUID,
-                                    const nsAString      &aPlaylistType,
-                                    nsISimpleEnumerator  **_retval)
+CPlaylistCommandsManager::GetPlaylistCommands(commandobjmap_t *map,
+                                              const nsAString      &aContextGUID,
+                                              const nsAString      &aPlaylistType,
+                                              sbIPlaylistCommands  **_retval)
 {
+  NS_ENSURE_ARG_POINTER(map);
   NS_ENSURE_ARG_POINTER(_retval);
 
   METHOD_SHORTCIRCUIT;
 
   nsString key(aContextGUID);
   nsString type(aPlaylistType);
-  commandmap_t::iterator c;
 
-  // guid takes precedence over type
-  c = (*map).find(key);
-  if (c != (*map).end()) {
-    commandlist_t *keylist = &((*c).second);
-    if (keylist && keylist->size() > 0) {
-      nsCOMArray<sbIPlaylistCommands> array;
-      for (int i=0;i<keylist->size();i++) {
-        nsCOMPtr<sbIPlaylistCommands> cmds;
-        (*keylist)[i]->Duplicate(getter_AddRefs(cmds));
-        array.AppendObject(cmds);
-      }
-      return NS_NewArrayEnumerator(_retval, array);
-    }
+  nsCOMPtr<sbIPlaylistCommands> rootCommand;
+
+  commandobjmap_t::iterator iterGUID = map->find(key);
+  if (iterGUID != map->end())
+  {
+    // if we find the rootCommand for the guid, return it
+    NS_ADDREF(*_retval = iterGUID->second);
+    return NS_OK;
   }
 
-  c = (*map).find(type);
-  if (c != (*map).end()) {
-    commandlist_t *typelist = &((*c).second);
-    if (typelist && typelist->size() > 0) {
-      nsCOMArray<sbIPlaylistCommands> array;
-      for (int i=0;i<typelist->size();i++) {
-        nsCOMPtr<sbIPlaylistCommands> cmds;
-        (*typelist)[i]->Duplicate(getter_AddRefs(cmds));
-        array.AppendObject(cmds);
-      }
-      return NS_NewArrayEnumerator(_retval, array);
-    }
+  commandobjmap_t::iterator iterType = map->find(type);
+  if (iterType != map->end())
+  {
+    // if we find the rootCommand for the type, return it
+    NS_ADDREF(*_retval = iterType->second);
+    return NS_OK;
   }
 
   *_retval = nsnull;
   return NS_OK;
 }
 
-
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP
-CPlaylistCommandsManager::RegisterPlaylistCommandsMediaList(const nsAString     &aContextGUID,
-                                                            const nsAString     &aPlaylistType,
-                                                            sbIPlaylistCommands *aCommandObj)
+CPlaylistCommandsManager::RegisterPlaylistCommandsMediaList
+                          (const nsAString     &aContextGUID,
+                           const nsAString     &aPlaylistType,
+                           sbIPlaylistCommands *aCommandObj)
 {
-  return RegisterPlaylistCommands(&m_MediaListMap, aContextGUID, aPlaylistType, aCommandObj);
+  return RegisterPlaylistCommands(&m_ServicePaneCommandObjMap,
+                                  aContextGUID,
+                                  aPlaylistType,
+                                  aCommandObj);
 }
 
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP
-CPlaylistCommandsManager::UnregisterPlaylistCommandsMediaList(const nsAString     &aContextGUID,
-                                                              const nsAString     &aPlaylistType,
-                                                              sbIPlaylistCommands *aCommandObj)
+CPlaylistCommandsManager::UnregisterPlaylistCommandsMediaList
+                          (const nsAString     &aContextGUID,
+                           const nsAString     &aPlaylistType,
+                           sbIPlaylistCommands *aCommandObj)
 {
-  return UnregisterPlaylistCommands(&m_MediaListMap, aContextGUID, aPlaylistType, aCommandObj);
+  return UnregisterPlaylistCommands(&m_ServicePaneCommandObjMap,
+                                    aContextGUID,
+                                    aPlaylistType,
+                                    aCommandObj);
 }
 
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP
-CPlaylistCommandsManager::GetPlaylistCommandsMediaList(const nsAString      &aContextGUID,
-                                                       const nsAString      &aPlaylistType,
-                                                       nsISimpleEnumerator  **_retval)
+CPlaylistCommandsManager::GetPlaylistCommandsMediaList
+                          (const nsAString      &aContextGUID,
+                           const nsAString      &aPlaylistType,
+                           sbIPlaylistCommands  **_retval)
 {
-  return GetPlaylistCommands(&m_MediaListMap, aContextGUID, aPlaylistType, _retval);
+  return GetPlaylistCommands(&m_ServicePaneCommandObjMap,
+                             aContextGUID,
+                             aPlaylistType,
+                             _retval);
 }
 
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP
-CPlaylistCommandsManager::RegisterPlaylistCommandsMediaItem(const nsAString     &aContextGUID,
-                                                  const nsAString     &aPlaylistType,
-                                                  sbIPlaylistCommands *aCommandObj)
+CPlaylistCommandsManager::RegisterPlaylistCommandsMediaItem
+                          (const nsAString     &aContextGUID,
+                           const nsAString     &aPlaylistType,
+                           sbIPlaylistCommands *aCommandObj)
 {
-  return RegisterPlaylistCommands(&m_MediaItemMap, aContextGUID, aPlaylistType, aCommandObj);
+  return RegisterPlaylistCommands(&m_PlaylistCommandObjMap,
+                                  aContextGUID,
+                                  aPlaylistType,
+                                  aCommandObj);
 }
 
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP
-CPlaylistCommandsManager::UnregisterPlaylistCommandsMediaItem(const nsAString     &aContextGUID,
-                                                    const nsAString     &aPlaylistType,
-                                                    sbIPlaylistCommands *aCommandObj)
+CPlaylistCommandsManager::UnregisterPlaylistCommandsMediaItem
+                          (const nsAString     &aContextGUID,
+                           const nsAString     &aPlaylistType,
+                           sbIPlaylistCommands *aCommandObj)
 {
-  return UnregisterPlaylistCommands(&m_MediaItemMap, aContextGUID, aPlaylistType, aCommandObj);
+  return UnregisterPlaylistCommands(&m_PlaylistCommandObjMap,
+                                    aContextGUID,
+                                    aPlaylistType,
+                                    aCommandObj);
 }
 
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP
-CPlaylistCommandsManager::GetPlaylistCommandsMediaItem(const nsAString      &aContextGUID,
-                                             const nsAString      &aPlaylistType,
-                                             nsISimpleEnumerator  **_retval)
+CPlaylistCommandsManager::GetPlaylistCommandsMediaItem
+                          (const nsAString      &aContextGUID,
+                           const nsAString      &aPlaylistType,
+                           sbIPlaylistCommands  **_retval)
 {
-  return GetPlaylistCommands(&m_MediaItemMap, aContextGUID, aPlaylistType, _retval);
+  return GetPlaylistCommands(&m_PlaylistCommandObjMap,
+                             aContextGUID,
+                             aPlaylistType,
+                             _retval);
 }
-
 
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP

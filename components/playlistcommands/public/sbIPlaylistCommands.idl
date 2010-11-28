@@ -1,27 +1,25 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 #include "nsISupports.idl"
@@ -33,13 +31,14 @@ interface sbIPlaylistCommandsContext;
 interface sbIMediaItem;
 interface nsISimpleEnumerator;
 
-/** \addtogroup playlistcommands Playlist Commands 
+/** \addtogroup playlistcommands Playlist Commands
  * @{
  */
 
 /**
 * \interface sbIPlaylistCommands sbIPlaylistCommands.h
-* \brief An interface that represents the set of command buttons and context menu items available on a displayed playlist.
+* \brief An interface that represents the set of command buttons and context
+* menu items available on a displayed playlist.
 *
 * This interface is meant to be implemented by user code.
 *
@@ -58,9 +57,30 @@ interface nsISimpleEnumerator;
 *
 * \sa playlist.xml, sbLibraryPage.xul, duplicate
 */
-[scriptable, uuid(412e298d-957d-4f35-8528-ce053cf62807)]
-interface sbIPlaylistCommands : nsISupports 
+[scriptable, uuid(facc472e-1dd1-11b2-8629-a62639ebabcc)]
+interface sbIPlaylistCommands : nsISupports
 {
+  /**
+  * \brief An identifier for the command object, unique for each playlist type or
+  * guid.  Must be set with the init method before a playlist command can be
+  * registered.
+  */
+  readonly attribute AString id;
+
+  /**
+  * \brief Adds a command object as a child of this sbIPlaylistCommands object
+  *
+  * \param aCommandObjectAction The command object to be added as a child
+  */
+  void addCommandObject( in sbIPlaylistCommands aCommandObjectAction );
+
+  /**
+  * \brief Removes a child command object from this sbIPlaylistCommands object
+  *
+  * \param aCommandObject The child command object to be removed
+  */
+  void removeCommandObject( in sbIPlaylistCommands aCommandObject );
+
   /**
   * \brief Return the visible state for the entire command object.
   *
@@ -71,13 +91,13 @@ interface sbIPlaylistCommands : nsISupports
   * \return Whether to instantiate the commands for this host or not
   */
   PRBool getVisible( in AString aHost );
-  
+
   /**
   * \brief Be informed when a set of commands are attached to a playlist element.
   *
   * When a playlist element is about to use an sbIPlaylistCommands instance,
   * after it has been duplicated, the element will pass a context to this method.
-  * The implementor may save the context information (for instance, a reference to 
+  * The implementor may save the context information (for instance, a reference to
   * the playlist on which the commands are to act) for later reference and use.
   *
   * \param node The context object
@@ -101,7 +121,7 @@ interface sbIPlaylistCommands : nsISupports
   /**
   * \brief Return the type of the requested command element index
   *
-  * Each command id has a type, these can be 'action', 'separator', 
+  * Each command id has a type, these can be 'action', 'separator',
   * 'value', and 'submenu'.
   *
   * \param aSubMenu The submenu for which the data is being requested
@@ -164,7 +184,8 @@ interface sbIPlaylistCommands : nsISupports
   * file.
   *
   * \param aSubMenu The submenu for which the data is being requested
-  * \todo The tooltip functionality is disabled because mozilla will crash if you delete an element currently displaying a tooltip.
+  * \todo The tooltip functionality is disabled because mozilla will crash if
+  * you delete an element currently displaying a tooltip.
   * \param aIndex The index of the element for which the data is being requested
   * \param aHost The type of object hosting the command
   * \return The string for the tooltip
@@ -239,7 +260,9 @@ interface sbIPlaylistCommands : nsISupports
   * \param aHost The type of object hosting the command
   * \return The shortcut modifiers for the command
   */
-  AString getCommandShortcutModifiers( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+  AString getCommandShortcutModifiers( in AString aSubMenu,
+                                       in PRInt32 aIndex,
+                                       in AString aHost );
 
   /**
   * \brief Return the shortcut key of the requested command element index
@@ -249,7 +272,9 @@ interface sbIPlaylistCommands : nsISupports
   * \param aHost The type of object hosting the command
   * \return The shortcut key for the command
   */
-  AString getCommandShortcutKey( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+  AString getCommandShortcutKey( in AString aSubMenu,
+                                 in PRInt32 aIndex,
+                                 in AString aHost );
 
   /**
   * \brief Return the shortcut keycode of the requested command element index
@@ -259,7 +284,9 @@ interface sbIPlaylistCommands : nsISupports
   * \param aHost The type of object hosting the command
   * \return The shortcut keycode for the command
   */
-  AString getCommandShortcutKeycode( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+  AString getCommandShortcutKeycode( in AString aSubMenu,
+                                     in PRInt32 aIndex,
+                                     in AString aHost );
 
   /**
   * \brief Return a boolean reflecting the local vs window-wide behavior of the shortcut
@@ -269,7 +296,9 @@ interface sbIPlaylistCommands : nsISupports
   * \param aHost The type of object hosting the command
   * \return Whether the shortcut is local or not
   */
-  PRBool getCommandShortcutLocal( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+  PRBool getCommandShortcutLocal( in AString aSubMenu,
+                                  in PRInt32 aIndex,
+                                  in AString aHost );
 
   /**
   * \brief Return an sbIPlaylistCommands secondary object.
@@ -282,7 +311,29 @@ interface sbIPlaylistCommands : nsISupports
   * \param aHost The type of object hosting the command
   * \return An sbIPlaylistCommands interface to a secondary command object
   */
-  sbIPlaylistCommands getCommandSubObject( in AString aSubMenu, in PRInt32 aIndex, in AString aHost );
+  sbIPlaylistCommands getCommandSubObject( in AString aSubMenu,
+                                           in PRInt32 aIndex,
+                                           in AString aHost );
+
+  /**
+  * \brief Return a child sbIPlaylistCommands (returns the original)
+  *
+  * \param aSubMenu The submenu for which the data is being requested
+  * \param aIndex The index of the element for which the data is being requested
+  * \param aHost The type of object hosting the command
+  * \return An sbIPlaylistCommands interface to a secondary command object
+  */
+  sbIPlaylistCommands getOriginalCommandSubObject( in AString aSubMenu,
+                                                   in PRInt32 aIndex,
+                                                   in AString aHost );
+
+  /**
+  * \brief Returns all sbIPlaylistCommands that are children of this
+  * command object (returns the originals)
+  *
+  * \return A nsISimpleEnumerator of the children playlist commands
+  */
+  nsISimpleEnumerator getChildrenCommandObjects();
 
   /**
   * \brief Instantiate the custom element associated with the requested command
@@ -294,7 +345,11 @@ interface sbIPlaylistCommands : nsISupports
   * \param aDocument Document in which to instantate element
   * \return The custom element that has been instantiated
   */
-  nsIDOMNode instantiateCustomCommand( in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aID, in nsIDOMDocument aDocument );
+  nsIDOMNode instantiateCustomCommand( in AString aSubMenu,
+                                       in PRInt32 aIndex,
+                                       in AString aHost,
+                                       in AString aID,
+                                       in nsIDOMDocument aDocument );
 
   /**
   * \brief Refresh the custom element associated with the requested command
@@ -305,7 +360,11 @@ interface sbIPlaylistCommands : nsISupports
   * \param aID The id of the custom command element whose refresh is being requested
   * \param aCustomCommandElement The element that needs to be refreshed
   */
-  void refreshCustomCommand( in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aID, in nsIDOMNode aCustomCommandElement );
+  void refreshCustomCommand( in AString aSubMenu,
+                             in PRInt32 aIndex,
+                             in AString aHost,
+                             in AString aID,
+                             in nsIDOMNode aCustomCommandElement );
 
   /**
   * \brief Handle the fact that a command was activated
@@ -317,9 +376,14 @@ interface sbIPlaylistCommands : nsISupports
   * \param aIndex The index of the command that was triggered
   * \param aHost The type of object hosting the command
   * \param aId The id of the command that was triggered
-  * \param aValue The optional value associated with the triggering of the command, or an empty string.
+  * \param aValue The optional value associated with the triggering of the
+  * command, or an empty string.
   */
-  void onCommand( in AString aSubMenu, in PRInt32 aIndex, in AString aHost, in AString aId, in AString aValue );
+  void onCommand( in AString aSubMenu,
+                  in PRInt32 aIndex,
+                  in AString aHost,
+                  in AString aId,
+                  in AString aValue );
 
   /**
   * \brief Duplicate the command object
@@ -339,9 +403,9 @@ interface sbIPlaylistCommands : nsISupports
   *
   * It creates a new object instance and copies the methods and data over to it.
   *
-  * In addition, if your object contains more objects whose data should not be shared 
-  * between command instantiation contexts, then these objects should be duplicated 
-  * as well (otherwise, their data will be shared between duplicated instances). 
+  * In addition, if your object contains more objects whose data should not be shared
+  * between command instantiation contexts, then these objects should be duplicated
+  * as well (otherwise, their data will be shared between duplicated instances).
   * In this case, the duplicate method should be implemented something like this:
   *
   * \code
@@ -358,7 +422,7 @@ interface sbIPlaylistCommands : nsISupports
   },
   * \endcode
   *
-  * In case of more complex objects, you may need to create a recursive duplication method. 
+  * In case of more complex objects, you may need to create a recursive duplication method.
   *
   * \return A new copy of this object
   */
@@ -393,7 +457,7 @@ interface sbIPlaylistCommandsContext : nsISupports
   /**
   * \brief The playlist against which the commands are acting.
   */
-  readonly attribute nsIDOMNode playlist;   
+  readonly attribute nsIDOMNode playlist;
 
   /**
   * \brief The medialist against which the commands are acting.
@@ -403,12 +467,12 @@ interface sbIPlaylistCommandsContext : nsISupports
   /**
   * \brief The outer window containing the playlist against which the commands are acting.
   */
-  readonly attribute nsIDOMWindow window;   
+  readonly attribute nsIDOMWindow window;
 
   /**
   * \brief The commands object itself.
   */
-  readonly attribute sbIPlaylistCommands commands;   
+  readonly attribute sbIPlaylistCommands commands;
 };
 
 /**
@@ -416,7 +480,7 @@ interface sbIPlaylistCommandsContext : nsISupports
 * \brief The service used to register, unregister, and list playlist
 *  commands for a particular playlist guid or type
 */
-[scriptable, uuid(33e9c67c-7966-4bd4-bb42-ecf2fa31058d)]
+[scriptable, uuid(ddef8eae-1dd1-11b2-9b2d-f5db2eff20bd)]
 interface sbIPlaylistCommandsManager : nsISupports
 {
  /**
@@ -428,6 +492,7 @@ interface sbIPlaylistCommandsManager : nsISupports
   * playlist.xml).
   *
   * Commands can be registered for a specific playlist, or for any "type" characteristic.
+  * If both are specified, the same command will be registered to both.
   *
   * \param aContextGUID The guid string for the database to register against
   * \param aPlaylistType The arbitrary type string to register against
@@ -436,10 +501,15 @@ interface sbIPlaylistCommandsManager : nsISupports
   * \sa http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L154
   * \sa http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L627
   */
-  void registerPlaylistCommandsMediaItem( in AString aContextGUID, in AString aPlaylistType, in sbIPlaylistCommands aCommandObj );
-  
+  void registerPlaylistCommandsMediaItem( in AString aContextGUID,
+                                          in AString aPlaylistType,
+                                          in sbIPlaylistCommands aCommandObj );
+
   /**
   * \brief Unregister a sbIPlaylistCommands object that was previously registered to registerPlaylistCommandsMediaItem
+  *
+  * Commands can be registered for a specific playlist, or for any "type" characteristic.
+  * If both are specified, the command will be unregistered from both.
   *
   * \param aContextGUID The guid that was used to register the sbIPlaylistCommand
   * \param aPlaylistType The type string that was used to register the sbIPlaylistCommand
@@ -448,24 +518,24 @@ interface sbIPlaylistCommandsManager : nsISupports
   * \sa http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L194
   * \sa http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L736
   */
-  void unregisterPlaylistCommandsMediaItem( in AString aContextGUID, in AString aPlaylistType, in sbIPlaylistCommands aCommandObj );
-  
+  void unregisterPlaylistCommandsMediaItem( in AString aContextGUID,
+                                            in AString aPlaylistType,
+                                            in sbIPlaylistCommands aCommandObj );
+
   /**
-  * \brief Retrieve the list of sbIPlaylistCommands objects registered to a specific playlist
-  *
-  * Given the guid, and type strings, returns a list of duplicate instances of
-  * the corresponding sbIPlaylistCommands objects.
+  * \brief Retrieve the root sbIPlaylistCommands object registered to a specific
+  * medialist guid or type
   *
   * The "guid" has precedence over the "type" string.
   *
-  * This method is only called by the playlist UI object, in playlist.xml
-  *
   * \param aContextGUID The guid string for the playlist
   * \param aPlaylistType The type of the playlist
-  * \return A simple enumerator of newly duplicated command object instances to be used for this playlist
+  * \return The root sbIPlaylistCommands object for the specified medialist
+  * guid or type.  Displayed sbIPlaylistCommands are children of this root command
   * \sa sbIPlaylistCommands, playlist.xml
   */
-  nsISimpleEnumerator getPlaylistCommandsMediaItem( in AString aContextGUID, in AString aPlaylistType );
+  sbIPlaylistCommands getPlaylistCommandsMediaItem( in AString aContextGUID,
+                                                    in AString aPlaylistType );
 
  /**
   * \brief Register sbIPlaylistCommands objects to be shown for specific playlists in
@@ -483,8 +553,10 @@ interface sbIPlaylistCommandsManager : nsISupports
   * \sa sbIPlaylistCommands, unregisterPlaylistCommands, playlist.xml
   * \sa http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L681
   */
-  void registerPlaylistCommandsMediaList( in AString aContextGUID, in AString aPlaylistType, in sbIPlaylistCommands aCommandObj );
-  
+  void registerPlaylistCommandsMediaList( in AString aContextGUID,
+                                          in AString aPlaylistType,
+                                          in sbIPlaylistCommands aCommandObj );
+
   /**
   * \brief Unregister a sbIPlaylistCommands object that was previously registered to registerPlaylistCommandsMediaList
   *
@@ -494,13 +566,12 @@ interface sbIPlaylistCommandsManager : nsISupports
   * \sa sbIPlaylistCommands, registerPlaylistCommands, playlist.xml
   * \sa http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L741
   */
-  void unregisterPlaylistCommandsMediaList( in AString aContextGUID, in AString aPlaylistType, in sbIPlaylistCommands aCommandObj );
-  
+  void unregisterPlaylistCommandsMediaList( in AString aContextGUID,
+                                            in AString aPlaylistType,
+                                            in sbIPlaylistCommands aCommandObj );
+
   /**
-  * \brief Retrieve the list of sbIPlaylistCommands objects to be used for a specific playlist
-  *
-  * Given the guid, and type strings, returns a list of duplicate instances of
-  * the corresponding sbIPlaylistCommands objects.
+  * \brief Retrieve the root sbIPlaylistCommands object for a specific playlist
   *
   * The "guid" has precedence over the "type" string.
   *
@@ -508,10 +579,11 @@ interface sbIPlaylistCommandsManager : nsISupports
   *
   * \param aContextGUID The guid string for the playlist
   * \param aPlaylistType The type of the playlist
-  * \return A simple enumerator of newly duplicated command object instances to be used for this playlist
+  * \return A simple enumerator of the command object instances used for this playlist
   * \sa sbIPlaylistCommands, servicePane.xml
   */
-  nsISimpleEnumerator getPlaylistCommandsMediaList( in AString aContextGUID, in AString aPlaylistType );
+  sbIPlaylistCommands getPlaylistCommandsMediaList( in AString aContextGUID,
+                                                    in AString aPlaylistType );
 
   /**
   * \brief Publish an sbIPlaylistCommands interface for public consumption
@@ -531,7 +603,7 @@ interface sbIPlaylistCommandsManager : nsISupports
   *
   * Note that the original interface must be passed to this function for the
   * call to succeed. Since calling request() returns a copy of the interface
-  * rather than the original interface itself, it means that you cannot withdraw 
+  * rather than the original interface itself, it means that you cannot withdraw
   * someone else's interface unless you have access to it directly.
   *
   * \param aCommandGUID The GUID identifying this command interface
