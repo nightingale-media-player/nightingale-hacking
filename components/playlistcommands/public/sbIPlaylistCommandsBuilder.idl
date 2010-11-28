@@ -21,7 +21,7 @@
  *
  *=END SONGBIRD GPL
  */
- 
+
 #include "nsISupports.idl"
 #include "sbIPlaylistCommands.idl"
 
@@ -48,7 +48,7 @@ interface sbIPlaylistCommandsBuilderPCCallback;
 * This interface is meant to be instantiated by user code, ie:
 * \code
 const PlaylistCommandsBuilder = new Components.
-  Constructor("@songbirdnest.com/Songbird/PlaylistCommandsBuilder;1", 
+  Constructor("@songbirdnest.com/Songbird/PlaylistCommandsBuilder;1",
               "sbIPlaylistCommandsBuilder");
 
 var builder = new PlaylistCommandsBuilder();
@@ -63,7 +63,7 @@ var builder = new PlaylistCommandsBuilder();
 * action, possibly on selected items or playlists.
 *
 * - Submenus are meant to hold more commands in a hierarchical manner, they correspond
-* to dropdown buttons (and subsequently submenus) in toolbars, and submenus in context menus. 
+* to dropdown buttons (and subsequently submenus) in toolbars, and submenus in context menus.
 *
 * - Separators are used to separate commands into visually distinct groups, this translates
 * to flexible spacers in toolbars, and in menu separators in context menus.
@@ -72,7 +72,7 @@ var builder = new PlaylistCommandsBuilder();
 * they correspond to pushed/popped buttons in toolbars and checked menuitems in context menus.
 *
 * - Values are user-changeable string values, they are only applicable to toolbars
-* and appear as edit boxes. 
+* and appear as edit boxes.
 *
 * - Choicemenus act as submenus but are meant to hold choicemenuitems (see below).
 *
@@ -84,8 +84,8 @@ var builder = new PlaylistCommandsBuilder();
 *
 * - Playlistcommands are fully fledged sbIPlaylistCommands interfaces, which may
 * have been requested from the repository of publicly available published commands
-* from the playlistcommandsmanager service, or they may be interfaces that you have 
-* constructed yourself. Inserting sbIPlaylistCommands interface A into 
+* from the playlistcommandsmanager service, or they may be interfaces that you have
+* constructed yourself. Inserting sbIPlaylistCommands interface A into
 * sbIPlaylistCommandsBuilder B does not create a submenu in B, all commands in A
 * are displayed at the root of B (unless A itself has submenus, in which case these
 * also appear as submenus in B). Since sbIPlaylistCommandsBuilder implements
@@ -96,11 +96,11 @@ var builder = new PlaylistCommandsBuilder();
 *
 * Commands registered to the PlaylistCommandsManager using the registerPlaylistCommandsMedia[List|Item]()
 * functions should be unregistered using the corresponding unregisterPlaylistCommandsMedia[List|Item]()
-* function before application shutdown. Commands published using the publish() function 
+* function before application shutdown. Commands published using the publish() function
 * should be withdrawn using the withdraw() function before application shutdown.
 *
-* All instantiated sbIPlaylistCommandsBuilder should have their shutdown() method 
-* called before application shutdown to ensure that no external reference remains 
+* All instantiated sbIPlaylistCommandsBuilder should have their shutdown() method
+* called before application shutdown to ensure that no external reference remains
 * in their internal arrays.
 *
 * Note that text parameters (labels, tooltiptexts) as well as keyboard shortcut
@@ -110,7 +110,7 @@ var builder = new PlaylistCommandsBuilder();
 * \sa sbIPlaylistCommands sbIPlaylistCommandsManager
 */
 [scriptable, uuid(cc8b8082-1dd1-11b2-a707-e1fb775c0d9b)]
-interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands 
+interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
 {
   /**
   * \brief A required initialization method that sets the id of the
@@ -131,11 +131,11 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \sa insertSubmenuBefore, insertSubmenuAfter
   * \sa http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L140
   */
-  void appendSubmenu(in AString aParentSubMenuId, 
-                     in AString aSubMenuId, 
-                     in AString aLabel, 
+  void appendSubmenu(in AString aParentSubMenuId,
+                     in AString aSubMenuId,
+                     in AString aLabel,
                      in AString aTooltipText);
-  
+
   /**
   * \brief Insert a submenu into the set of commands
   *
@@ -146,10 +146,10 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aTooltipText The tooltip text for the submenu to add
   * \sa appendSubmenu, insertSubmenuAfter
   */
-  void insertSubmenuBefore(in AString aParentSubMenuId, 
-                           in AString aBeforeId, 
-                           in AString aSubMenuId, 
-                           in AString aLabel, 
+  void insertSubmenuBefore(in AString aParentSubMenuId,
+                           in AString aBeforeId,
+                           in AString aSubMenuId,
+                           in AString aLabel,
                            in AString aTooltipText);
 
   /**
@@ -162,12 +162,12 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aTooltipText The tooltip text for the submenu to add
   * \sa appendSubmenu, insertSubmenuBefore
   */
-  void insertSubmenuAfter(in AString aParentSubMenuId, 
-                          in AString aAfterId, 
-                          in AString aSubMenuId, 
-                          in AString aLabel, 
+  void insertSubmenuAfter(in AString aParentSubMenuId,
+                          in AString aAfterId,
+                          in AString aSubMenuId,
+                          in AString aLabel,
                           in AString aTooltipText);
-  
+
   // --------------------------------------------------------------------------
 
   /**
@@ -182,12 +182,12 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \sa http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L113
   * \sa http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L153
   */
-  void appendAction(in AString aParentSubMenuId, 
+  void appendAction(in AString aParentSubMenuId,
                     in AString aActionId,
-                    in AString aLabel, 
-                    in AString aTooltipText, 
+                    in AString aLabel,
+                    in AString aTooltipText,
                     in sbIPlaylistCommandsBuilderSimpleCallback aTriggerCallback);
-  
+
   /**
   * \brief Insert an action into the set of commands
   *
@@ -199,11 +199,11 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aTriggerCallback The interface or function to call when this action is triggered
   * \sa appendAction, insertActionAfter, sbIPlaylistCommandsBuilderSimpleCallback
   */
-  void insertActionBefore(in AString aParentSubMenuId, 
+  void insertActionBefore(in AString aParentSubMenuId,
                           in AString aBeforeId,
                           in AString aActionId,
-                          in AString aLabel, 
-                          in AString aTooltipText, 
+                          in AString aLabel,
+                          in AString aTooltipText,
                           in sbIPlaylistCommandsBuilderSimpleCallback aTriggerCallback);
 
   /**
@@ -217,11 +217,11 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aTriggerCallback The interface or function to call when this action is triggered
   * \sa appendAction, insertActionBefore, sbIPlaylistCommandsBuilderSimpleCallback
   */
-  void insertActionAfter(in AString aParentSubMenuId, 
+  void insertActionAfter(in AString aParentSubMenuId,
                          in AString aAfterId,
                          in AString aActionId,
-                         in AString aLabel, 
-                         in AString aTooltipText, 
+                         in AString aLabel,
+                         in AString aTooltipText,
                          in sbIPlaylistCommandsBuilderSimpleCallback aTriggerCallback);
 
   // --------------------------------------------------------------------------
@@ -235,7 +235,7 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \sa http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L136
   * \sa http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L612
   */
-  void appendSeparator(in AString aParentSubMenuId, 
+  void appendSeparator(in AString aParentSubMenuId,
                        in AString aSeparatorId);
 
   /**
@@ -246,10 +246,10 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aSeparatorId The Id of the separator to add
   * \sa appendSeparator, insertSeparatorAfter
   */
-  void insertSeparatorBefore(in AString aParentSubMenuId, 
+  void insertSeparatorBefore(in AString aParentSubMenuId,
                              in AString aBeforeId,
                              in AString aSeparatorId);
-  
+
   /**
   * \brief Insert a separator into the set of commands
   *
@@ -275,10 +275,10 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aValueCallback The interface or function to call to retrieve the flag's value
   * \sa insertFlagBefore, insertFlagAfter, sbIPlaylistCommandsBuilderGetBoolCallback, sbIPlaylistCommandsBuilderSimpleCallback
   */
-  void appendFlag(in AString aParentSubMenuId, 
+  void appendFlag(in AString aParentSubMenuId,
                   in AString aFlagId,
-                  in AString aLabel, 
-                  in AString aTooltipText, 
+                  in AString aLabel,
+                  in AString aTooltipText,
                   in sbIPlaylistCommandsBuilderSimpleCallback aTriggerCallback,
                   in sbIPlaylistCommandsBuilderGetBoolCallback aValueCallback);
 
@@ -294,11 +294,11 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aValueCallback The interface or function to call to retrieve the flag's value
   * \sa appendFlag, insertFlagAfter, sbIPlaylistCommandsBuilderGetBoolCallback, sbIPlaylistCommandsBuilderSimpleCallback
   */
-  void insertFlagBefore(in AString aParentSubMenuId, 
+  void insertFlagBefore(in AString aParentSubMenuId,
                         in AString aBeforeId,
                         in AString aCommandId,
-                        in AString aLabel, 
-                        in AString aTooltipText, 
+                        in AString aLabel,
+                        in AString aTooltipText,
                         in sbIPlaylistCommandsBuilderSimpleCallback aTriggerCallback,
                         in sbIPlaylistCommandsBuilderGetBoolCallback aGetValueCallback);
 
@@ -314,11 +314,11 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aValueCallback The interface or function to call to retrieve the flag's value
   * \sa appendFlag, insertFlagBefore, sbIPlaylistCommandsBuilderGetBoolCallback, sbIPlaylistCommandsBuilderSimpleCallback
   */
-  void insertFlagAfter(in AString aParentSubMenuId, 
+  void insertFlagAfter(in AString aParentSubMenuId,
                        in AString aAfterId,
                        in AString aCommandId,
-                       in AString aLabel, 
-                       in AString aTooltipText, 
+                       in AString aLabel,
+                       in AString aTooltipText,
                        in sbIPlaylistCommandsBuilderSimpleCallback aTriggerCallback,
                        in sbIPlaylistCommandsBuilderGetBoolCallback aGetValueCallback);
 
@@ -335,10 +335,10 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aValueCallback The interface or function to call to retrieve the value
   * \sa insertValueBefore, insertValueAfter, sbIPlaylistCommandsBuilderGetStringCallback, sbIPlaylistCommandsBuilderSetValueCallback
   */
-  void appendValue(in AString aParentSubMenuId, 
+  void appendValue(in AString aParentSubMenuId,
                    in AString aValueId,
-                   in AString aLabel, 
-                   in AString aTooltipText, 
+                   in AString aLabel,
+                   in AString aTooltipText,
                    in sbIPlaylistCommandsBuilderSetValueCallback aSetValueCallback,
                    in sbIPlaylistCommandsBuilderGetStringCallback aGetValueCallback);
 
@@ -354,11 +354,11 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aValueCallback The interface or function to call to retrieve the value
   * \sa appendValue, insertValueAfter, sbIPlaylistCommandsBuilderGetStringCallback, sbIPlaylistCommandsBuilderSetValueCallback
   */
-  void insertValueBefore(in AString aParentSubMenuId, 
+  void insertValueBefore(in AString aParentSubMenuId,
                          in AString aBeforeId,
                          in AString aValueId,
-                         in AString aLabel, 
-                         in AString aTooltipText, 
+                         in AString aLabel,
+                         in AString aTooltipText,
                          in sbIPlaylistCommandsBuilderSetValueCallback aSetValueCallback,
                          in sbIPlaylistCommandsBuilderGetStringCallback aGetValueCallback);
 
@@ -374,11 +374,11 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aValueCallback The interface or function to call to retrieve the value
   * \sa appendValue, insertValueBefore, sbIPlaylistCommandsBuilderGetStringCallback, sbIPlaylistCommandsBuilderSetValueCallback
   */
-  void insertValueAfter(in AString aParentSubMenuId, 
+  void insertValueAfter(in AString aParentSubMenuId,
                         in AString aAfterId,
                         in AString aValueId,
-                        in AString aLabel, 
-                        in AString aTooltipText, 
+                        in AString aLabel,
+                        in AString aTooltipText,
                         in sbIPlaylistCommandsBuilderSetValueCallback aSetValueCallback,
                         in sbIPlaylistCommandsBuilderGetStringCallback aGetValueCallback);
 
@@ -394,9 +394,9 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aItemCallback The interface or function to call to retrieve the id of the currently selected choice item
   * \sa appendChoiceMenu, insertChoiceMenuBefore, insertChoiceMenuAfter
   */
-  void appendChoiceMenu(in AString aParentSubMenuId, 
+  void appendChoiceMenu(in AString aParentSubMenuId,
                         in AString aChoiceMenuId,
-                        in AString aLabel, 
+                        in AString aLabel,
                         in AString aTooltipText,
                         in sbIPlaylistCommandsBuilderGetStringCallback aItemCallback);
 
@@ -411,10 +411,10 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aItemCallback The interface or function to call to retrieve the id of the currently selected choice item
   * \sa appendChoiceMenu, insertChoiceMenuAfter
   */
-  void insertChoiceMenuBefore(in AString aParentSubMenuId, 
+  void insertChoiceMenuBefore(in AString aParentSubMenuId,
                               in AString aBeforeId,
                               in AString aChoiceMenuId,
-                              in AString aLabel, 
+                              in AString aLabel,
                               in AString aTooltipText,
                               in sbIPlaylistCommandsBuilderGetStringCallback aItemCallback);
 
@@ -429,10 +429,10 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aItemCallback The interface or function to call to retrieve the id of the currently selected choice item
   * \sa appendChoiceMenu, insertChoiceMenuBefore
   */
-  void insertChoiceMenuAfter(in AString aParentSubMenuId, 
+  void insertChoiceMenuAfter(in AString aParentSubMenuId,
                              in AString aAfterId,
                              in AString aChoiceMenuId,
-                             in AString aLabel, 
+                             in AString aLabel,
                              in AString aTooltipText,
                              in sbIPlaylistCommandsBuilderGetStringCallback aItemCallback);
 
@@ -448,10 +448,10 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aTriggerCallback The interface or function to call when this choicemenuitem is selected
   * \sa insertChoiceMenuItemBefore, insertChoiceMenuItemAfter, sbIPlaylistCommandsBuilderSimpleCallback
   */
-  void appendChoiceMenuItem(in AString aParentSubMenuId, 
+  void appendChoiceMenuItem(in AString aParentSubMenuId,
                             in AString aChoiceMenuItemId,
-                            in AString aLabel, 
-                            in AString aTooltipText, 
+                            in AString aLabel,
+                            in AString aTooltipText,
                             in sbIPlaylistCommandsBuilderSimpleCallback aTriggerCallback);
 
   /**
@@ -465,11 +465,11 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aTriggerCallback The interface or function to call when this choicemenuitem is selected
   * \sa appendChoiceMenuItem, insertChoiceMenuItemAfter, sbIPlaylistCommandsBuilderSimpleCallback
   */
-  void insertChoiceMenuItemBefore(in AString aParentSubMenuId, 
+  void insertChoiceMenuItemBefore(in AString aParentSubMenuId,
                                   in AString aBeforeId,
                                   in AString aCommandId,
-                                  in AString aLabel, 
-                                  in AString aTooltipText, 
+                                  in AString aLabel,
+                                  in AString aTooltipText,
                                   in sbIPlaylistCommandsBuilderSimpleCallback aTriggerCallback);
 
   /**
@@ -483,11 +483,11 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aTriggerCallback The interface or function to call when this choicemenuitem is selected
   * \sa appendChoiceMenuItem, insertChoiceMenuItemBefore, sbIPlaylistCommandsBuilderSimpleCallback
   */
-  void insertChoiceMenuItemAfter(in AString aParentSubMenuId, 
+  void insertChoiceMenuItemAfter(in AString aParentSubMenuId,
                                  in AString aAfterId,
                                  in AString aCommandId,
-                                 in AString aLabel, 
-                                 in AString aTooltipText, 
+                                 in AString aLabel,
+                                 in AString aTooltipText,
                                  in sbIPlaylistCommandsBuilderSimpleCallback aTriggerCallback);
 
   // --------------------------------------------------------------------------
@@ -501,11 +501,11 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aRefreshCallback The interface or function to call when this customitem should be refreshed
   * \sa insertCustomItemBefore, insertCustomItemAfter, sbIPlaylistCommandsBuilderSimpleCallback, sbIPlaylistCommandsBuilderInstantiationCallback
   */
-  void appendCustomItem(in AString aParentSubMenuId, 
+  void appendCustomItem(in AString aParentSubMenuId,
                         in AString aCustomItemId,
-                        in sbIPlaylistCommandsBuilderInstantiationCallback aInstantiationCallback, 
+                        in sbIPlaylistCommandsBuilderInstantiationCallback aInstantiationCallback,
                         in sbIPlaylistCommandsBuilderRefreshCallback aRefreshCallback);
-                          
+
   /**
   * \brief Insert a customitem into the set of commands
   *
@@ -516,12 +516,12 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aRefreshCallback The interface or function to call when this customitem should be refreshed
   * \sa appendCustomItem, insertCustomItemAfter, sbIPlaylistCommandsBuilderSimpleCallback, sbIPlaylistCommandsBuilderInstantiationCallback
   */
-  void insertCustomItemBefore(in AString aParentSubMenuId, 
+  void insertCustomItemBefore(in AString aParentSubMenuId,
                               in AString aBeforeId,
                               in AString aCustomItemId,
-                              in sbIPlaylistCommandsBuilderInstantiationCallback aInstantiationCallback, 
+                              in sbIPlaylistCommandsBuilderInstantiationCallback aInstantiationCallback,
                               in sbIPlaylistCommandsBuilderRefreshCallback aRefreshCallback);
-                          
+
   /**
   * \brief Insert a customitem into the set of commands
   *
@@ -532,12 +532,12 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aRefreshCallback The interface or function to call when this customitem should be refreshed
   * \sa appendCustomItem, insertCustomItemBefore, sbIPlaylistCommandsBuilderSimpleCallback, sbIPlaylistCommandsBuilderInstantiationCallback
   */
-  void insertCustomItemAfter(in AString aParentSubMenuId, 
+  void insertCustomItemAfter(in AString aParentSubMenuId,
                              in AString aAfterId,
                              in AString aCustomItemId,
-                             in sbIPlaylistCommandsBuilderInstantiationCallback aInstantiationCallback, 
+                             in sbIPlaylistCommandsBuilderInstantiationCallback aInstantiationCallback,
                              in sbIPlaylistCommandsBuilderRefreshCallback aRefreshCallback);
-                          
+
   // --------------------------------------------------------------------------
 
   /**
@@ -550,7 +550,7 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \sa http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L562
   * \sa http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L130
   */
-  void appendPlaylistCommands(in AString aParentSubMenuId, 
+  void appendPlaylistCommands(in AString aParentSubMenuId,
                               in AString aCommandsId,
                               in sbIPlaylistCommands aPlaylistCommands);
 
@@ -563,7 +563,7 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aPlaylistCommands The sbIPlaylistCommands interface to add
   * \sa appendPlaylistCommands, insertPlaylistCommandsAfter
   */
-  void insertPlaylistCommandsBefore(in AString aParentSubMenuId, 
+  void insertPlaylistCommandsBefore(in AString aParentSubMenuId,
                                     in AString aBeforeId,
                                     in AString aCommandsId,
                                     in sbIPlaylistCommands aPlaylistCommands);
@@ -577,7 +577,7 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aPlaylistCommands The sbIPlaylistCommands interface to add
   * \sa appendPlaylistCommands, insertPlaylistCommandsBefore
   */
-  void insertPlaylistCommandsAfter(in AString aParentSubMenuId, 
+  void insertPlaylistCommandsAfter(in AString aParentSubMenuId,
                                    in AString aAfterId,
                                    in AString aCommandsId,
                                    in sbIPlaylistCommands aPlaylistCommands);
@@ -595,8 +595,8 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \param aShortcutIsLocal Whether this keyboard shortcut acts at the level of the command object only, rather than at the level of the entire window
   * \sa http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L159
   */
-  void setCommandShortcut(in AString aParentSubMenuId, 
-                          in AString aCommandId, 
+  void setCommandShortcut(in AString aParentSubMenuId,
+                          in AString aCommandId,
                           in AString aShortcutKey,
                           in AString aShortcutKeyCode,
                           in AString aShortcutModifiers,
@@ -612,8 +612,8 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \sa http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L166
   * \sa http://publicsvn.songbirdnest.com/browser/extensions/commandsexample/chrome/content/scripts/CommandsExample.js#L121
   */
-  void setCommandEnabledCallback(in AString aParentSubMenuId, 
-                                 in AString aCommandId, 
+  void setCommandEnabledCallback(in AString aParentSubMenuId,
+                                 in AString aCommandId,
                                  in sbIPlaylistCommandsBuilderGetBoolCallback aEnabledCallback);
 
   /**
@@ -625,8 +625,8 @@ interface sbIPlaylistCommandsBuilder : sbIPlaylistCommands
   * \sa setCommandEnabledCallback, setVisibleCallback, sbIPlaylistCommandsBuilderGetBoolCallback
   * \sa http://publicsvn.songbirdnest.com/browser/trunk/components/playlistcommands/src/sbPublicPlaylistCommands.js#L184
   */
-  void setCommandVisibleCallback(in AString aParentSubMenuId, 
-                                 in AString aCommandId, 
+  void setCommandVisibleCallback(in AString aParentSubMenuId,
+                                 in AString aCommandId,
                                  in sbIPlaylistCommandsBuilderGetBoolCallback aVisibleCallback);
 
   /**
@@ -699,7 +699,7 @@ interface sbIPlaylistCommandsBuilderContext : sbIPlaylistCommandsContext
 * \interface sbIPlaylistCommandsBuilderSimpleCallback sbIPlaylistCommandsBuilderSimpleCallback.h
 * \brief An interface used to receive generic callbacks from an sbIPlaylistCommandsBuilder object.
 *
-* This interface may be replaced by a javascript function in any of the 
+* This interface may be replaced by a javascript function in any of the
 * sbIPlaylistCommandsBuilder functions that take it as a parameter.
 *
 * \sa sbIPlaylistCommandsBuilder
@@ -725,7 +725,7 @@ interface sbIPlaylistCommandsBuilderSimpleCallback : nsISupports
 * \interface sbIPlaylistCommandsBuilderGetStringCallback sbIPlaylistCommandsBuilderGetStringCallback.h
 * \brief An interface used to receive callbacks from an sbIPlaylistCommandsBuilder object when a string value should be returned.
 *
-* This interface may be replaced by a javascript function in any of the 
+* This interface may be replaced by a javascript function in any of the
 * sbIPlaylistCommandsBuilder functions that take it as a parameter.
 *
 * \sa sbIPlaylistCommandsBuilder
@@ -754,7 +754,7 @@ interface sbIPlaylistCommandsBuilderGetStringCallback : nsISupports
 * \interface sbIPlaylistCommandsBuilderGetBoolCallback sbIPlaylistCommandsBuilderGetBoolCallback.h
 * \brief An interface used to receive callbacks from an sbIPlaylistCommandsBuilder object when a boolean value should be returned.
 *
-* This interface may be replaced by a javascript function in any of the 
+* This interface may be replaced by a javascript function in any of the
 * sbIPlaylistCommandsBuilder functions that take it as a parameter.
 *
 * \sa sbIPlaylistCommandsBuilder
@@ -783,7 +783,7 @@ interface sbIPlaylistCommandsBuilderGetBoolCallback : nsISupports
 * \interface sbIPlaylistCommandsBuilderSetValueCallback sbIPlaylistCommandsBuilderSetValueCallback.h
 * \brief A callback interface used to receive a string value from an sbIPlaylistCommandsBuilder object.
 *
-* This interface may be replaced by a javascript function in any of the 
+* This interface may be replaced by a javascript function in any of the
 * sbIPlaylistCommandsBuilder functions that take it as a parameter.
 *
 * \sa sbIPlaylistCommandsBuilder
@@ -811,7 +811,7 @@ interface sbIPlaylistCommandsBuilderSetValueCallback : nsISupports
 * \interface sbIPlaylistCommandsBuilderInstantiationCallback sbIPlaylistCommandsBuilderInstantiationCallback.h
 * \brief A callback interface used to instantiate a custom command DOM element for sbIPlaylistCommandsBuilder objects.
 *
-* This interface may be replaced by a javascript function in any of the 
+* This interface may be replaced by a javascript function in any of the
 * sbIPlaylistCommandsBuilder functions that take it as a parameter.
 *
 * \sa sbIPlaylistCommandsBuilder, sbIPlaylistCommandsBuilderRefreshCallback
@@ -840,7 +840,7 @@ interface sbIPlaylistCommandsBuilderInstantiationCallback : nsISupports
 * \interface sbIPlaylistCommandsBuilderRefreshCallback sbIPlaylistCommandsBuilderRefreshCallback.h
 * \brief A callback interface used to refresh a custom command DOM element for sbIPlaylistCommandsBuilder objects.
 *
-* This interface may be replaced by a javascript function in any of the 
+* This interface may be replaced by a javascript function in any of the
 * sbIPlaylistCommandsBuilder functions that take it as a parameter.
 *
 * \sa sbIPlaylistCommandsBuilder, sbIPlaylistCommandsBuilderInstantiationCallback
@@ -855,7 +855,7 @@ interface sbIPlaylistCommandsBuilderRefreshCallback : nsISupports
   * \param aSubMenuId The submenu id for this command
   * \param aCommandId The id for this command
   * \param aHost The host type that instantiated this command
-  * \param aElement The custom DOM element 
+  * \param aElement The custom DOM element
   */
   void handleCallback(in sbIPlaylistCommandsBuilderContext aContext,
                                in AString aSubMenuId,
@@ -868,7 +868,7 @@ interface sbIPlaylistCommandsBuilderRefreshCallback : nsISupports
 * \interface sbIPlaylistCommandsBuilderPCCallback sbIPlaylistCommandsBuilderPCCallback.h
 * \brief A callback interface used to receive callbacks from an sbIPlaylistCommandsBuilder object relating to an entire set of playlistcommands.
 *
-* This interface may be replaced by a javascript function in any of the 
+* This interface may be replaced by a javascript function in any of the
 * sbIPlaylistCommandsBuilder functions that take it as a parameter.
 *
 * \sa sbIPlaylistCommandsBuilder
