@@ -35,6 +35,7 @@ DYNAMIC_LIB = sbPlaylistCommands
 
 CPP_SRCS = PlaylistCommandsManager.cpp \
            PlaylistCommandsComponent.cpp \
+           sbPlaylistCommandsHelper.cpp \
            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/playlistcommands/public \

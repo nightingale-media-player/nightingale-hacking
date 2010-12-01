@@ -1,0 +1,285 @@
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2010 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
+#include "nsISupports.idl"
+
+interface nsISimpleEnumerator;
+interface sbIPlaylistCommands;
+interface sbIPlaylistCommandsBuilder;
+interface sbIPlaylistCommandsBuilderSimpleCallback;
+
+/** \addtogroup playlistcommands Playlist Commands
+ * @{
+ */
+
+/**
+* \interface sbIPlaylistCommandsHelper sbIPlaylistCommandsHelper.h
+* \brief A helper service to add and remove playlistCommands
+*/
+[scriptable, uuid(8f94e630-1dd2-11b2-848d-eac62dd0dbd4)]
+interface sbIPlaylistCommandsHelper : nsISupports
+{
+  /**
+   * \brief A flag referring to the context menu that appears from the
+   * service pane node. */
+  const unsigned short TARGET_SERVICEPANE_MENU       = 1 << 0;
+
+  /**
+   * \brief A flag referring to the context menu that appears from mediaitems
+   * displayed in the medialist. */
+  const unsigned short TARGET_MEDIAITEM_CONTEXT_MENU = 1 << 1;
+
+  /**
+   * \brief A flag referring to the toolbar at the bottom of a medialist view */
+  const unsigned short TARGET_TOOLBAR                = 1 << 2;
+
+  /**
+   * \brief A convenience flag referring to all locations that a sbIPlaylistCommands
+   * object can appear. */
+  const unsigned short TARGET_ALL =
+                        TARGET_SERVICEPANE_MENU |
+                        TARGET_MEDIAITEM_CONTEXT_MENU |
+                        TARGET_TOOLBAR;
+
+ /**
+  * \brief A method to create a command object for a specified action.
+  * The command object and action added to that command object will share the
+  * param id.
+  *
+  * \param aCommandId An identifier that will be used to distinguish the
+  *                   new command object
+  * \param aLabel The user-facing label for the command object.  The caller
+  *               is expected to properly localize this string
+  * \param aTooltipText Text that will appear on hover over the command object.
+  *                     As of Songbird 1.10 this does not seem to be implemented.
+  * \param aCallback The callback method that will be called when the command
+  *                  object is triggered
+  * \return The new sbIPlaylistCommands object
+  * \sa sbIPlaylistCommands, sbIPlaylistCommandsBuilder
+  */
+  sbIPlaylistCommands createCommandObjectForAction
+                      (in AString aCommandId,
+                       in AString aLabel,
+                       in AString aTooltipText,
+                       in sbIPlaylistCommandsBuilderSimpleCallback aCallback);
+
+ /**
+  * \brief Add a command object to medialists of the specified type.  Generally
+  * commands added to type are defaults that appear for all medialists of the
+  * specified type unless commands are specified to a medialist by its guid.  In
+  * that case those registered to its guid are displayed and those registered to
+  * its type are not.
+  *
+  * The location of the command object is specified by the param aTargetFlags.
+  * Any combination of the TARGET flags can be | (OR) together
+  * to specify multiple locations for this command object.
+  * The following is an example of using this function to add a command object
+  * (cmdObject) to smart playlists so that it appears in the servicepane menu
+  * and toolbar:
+  * \code
+  var playlistCommandsHelper =
+    Components.classes["@songbirdnest.com/Songbird/PlaylistCommandsHelper;1"]
+    .getService(Ci.sbIPlaylistCommandsHelper);
+
+  var servicePaneAndToolbarFlags = playlistCommandsHelper.TARGET_SERVICEPANE_MENU |
+                                   playlistCommandsHelper.TARGET_TOOLBAR;
+
+  playlistCommandsHelper.addCommandObjectForType(servicePaneAndToolbarFlags,
+                                                 "smart",
+                                                 cmdObject);
+  * \endcode
+  * The location of the sbIPlaylistCommands object is internally
+  * controlled by specifying the Visibility Callback, which the
+  * caller is discouraged from changing without thorough knowledge
+  * of sbIPlaylistCommands and sbIPlaylistCommandsManager.
+  *
+  * The param aCommandObject will override any command object already registered
+  * to the param type if it has the same id.
+  *
+  * \param aTargetFlags Any combination of the TARGET flags
+  *                     specifying where the param aCommandObject should appear
+  * \param aMediaListType The listType string to register the command
+  *                       object against.  Likely one of the accepted
+  *                       listTypes (e.g. "simple")
+  * \param aCommandObj The command object instance to be added
+  * \sa sbIPlaylistCommands, sbIPlaylistCommandsBuilder, sbIPlaylistCommandsManager
+  */
+  void addCommandObjectForType(in unsigned short aTargetFlags,
+                               in AString aMediaListType,
+                               in sbIPlaylistCommands aCommandObject);
+
+ /**
+  * \brief Add a command object to the medialist of the specified guid.
+  * Generally, if a medialist has commands registered to it by guid, those will
+  * be displayed and those registered to the medialist by type are not.
+  *
+  * The location of the command object is specified by the param aTargetFlags.
+  * Any combination of the TARGET flags can be | (OR) together
+  * to specify multiple locations for this command object.
+  * The following is an example of using this function to add a command object
+  * (cmdObject) to the playlist with guid playlistGUID so that it appears in
+  * the servicepane menu and toolbar:
+  * \code
+  var playlistCommandsHelper =
+    Components.classes["@songbirdnest.com/Songbird/PlaylistCommandsHelper;1"]
+    .getService(Ci.sbIPlaylistCommandsHelper);
+
+  var servicePaneAndToolbarFlags = playlistCommandsHelper.TARGET_SERVICEPANE_MENU |
+                                   playlistCommandsHelper.TARGET_TOOLBAR;
+
+  playlistCommandsHelper.addCommandObjectForGUID(servicePaneAndToolbarFlags,
+                                                 playlistGUID,
+                                                 cmdObject);
+  * \endcode
+  * The location of the sbIPlaylistCommands object is internally
+  * controlled by specifying the Visibility Callback, which the
+  * caller is discouraged from changing without thorough knowledge
+  * of sbIPlaylistCommands and sbIPlaylistCommandsManager.
+  *
+  * The param aCommandObject will override any command object already registered
+  * to the param type if it has the same id.
+  *
+  * \param aTargetFlags Any combination of the TARGET flags
+  *                     specifying where the param aCommandObject should appear
+  * \param aMediaListGUID The guid of the medialist for which to add the
+  *                       command object
+  * \param aCommandObj The command object instance to be added
+  * \sa sbIPlaylistCommands, sbIPlaylistCommandsBuilder, sbIPlaylistCommandsManager
+  */
+  void addCommandObjectForGUID(in unsigned short aTargetFlags,
+                               in AString aMediaListGUID,
+                               in sbIPlaylistCommands aCommandObject);
+
+ /**
+  * \brief Remove a command object from medialists of the specified type
+  *
+  * This command object must be registered for the specified type to be removed,
+  * if it was registered to a medialist by guid then it must be removed with
+  * removeCommandObjectForMediaListGUID.
+  *
+  * The location to remove the command object from is specified by the param
+  * aTargetFlags. Any combination of the TARGET flags can be |
+  * (OR) together  to specify multiple locations to remove the param
+  * aCommandObject from.  The command object will only be removed from those
+  * locations specified by aTargetFlags.
+  *
+  * This function does nothing if the command object is not found, or for those
+  * locations specified by aTargetFlags but for which aCommandObject is not
+  * actually present.
+  *
+  * \param aTargetFlags Any combination of the TARGET flags
+  *                     specifying where the param aCommandObject should be
+  *                     removed from
+  * \param aMediaListType The arbitrary type string to from which to remove
+  *                       the command object.  Likely one of the accepted
+  *                       listTypes (e.g. "simple")
+  * \param aCommandObj The command object instance to be removed
+  * \sa sbIPlaylistCommands, sbIPlaylistCommandsBuilder, sbIPlaylistCommandsManager
+  */
+  void removeCommandObjectForType(in unsigned short aTargetFlags,
+                                  in AString aMediaListType,
+                                  in sbIPlaylistCommands aCommandObject);
+
+ /**
+  * \brief Remove a command object from the medialist of the specified guid
+  *
+  * This command object must be registered for the specified guid to be removed,
+  * if it was registered to medialists by type then it must be removed with
+  * removeCommandObjectForMediaListType
+  *
+  * The location to remove the command object from is specified by the param
+  * aTargetFlags. Any combination of the TARGET flags can be |
+  * (OR) together  to specify multiple locations to remove the param
+  * aCommandObject from.  The command object will only be removed from those
+  * locations specified by aTargetFlags.
+  *
+  * This function does nothing if the command object is not found, or for those
+  * locations specified by aTargetFlags but for which aCommandObject is not
+  * actually present.
+  *
+  * \param aTargetFlags Any combination of the TARGET flags
+  *                     specifying where the param aCommandObject should be
+  *                     removed from
+  * \param aMediaListGUID The guid of the medialist from which to remove the
+  *                       command object
+  * \param aCommandObj The command object instance to be removed
+  * \sa sbIPlaylistCommands, sbIPlaylistCommandsBuilder, sbIPlaylistCommandsManager
+  */
+  void removeCommandObjectForGUID(in unsigned short aTargetFlags,
+                                  in AString aMediaListGUID,
+                                  in sbIPlaylistCommands aCommandObject);
+
+ /**
+  * \brief Retrieve a specific command object registered for medialists of
+  * the param type
+  *
+  * The param aTargetFlag should represent one of the locations the desired
+  * command object appears in.  Please note that command objects can be
+  * registered to multiple locations and, if this is the case with the returned
+  * command object, modifications to the returned command object will appear in
+  * the aTargetFlag location as well as in the other locations.  To guard against
+  * unexpected side effects, the caller can check the targetFlag attribute
+  * of the returned sbIPlaylistCommands object if that command object was
+  * added using this API.
+  *
+  * \param aTargetFlag A single TARGET flag specifying one of
+  *                    the locations in which the desired command object appears
+  * \param aMediaListType The arbitrary type string from which to retrieve
+  *                       the command object.  Likely one of the accepted
+  *                       listTypes (e.g. "simple").
+  * \param aCommandId The id of the command object instance to be retrieved
+  * \return The sbIPlaylistCommands object that was desired or null if not found
+  * \sa sbIPlaylistCommands, sbIPlaylistCommandsBuilder, sbIPlaylistCommandsManager
+  */
+  sbIPlaylistCommands getCommandObjectForType
+                      (in unsigned short aTargetFlag,
+                       in AString aMediaListType,
+                       in AString aCommandId);
+
+ /**
+  * \brief Retrieve a specific command object registered for the medialist with
+  * the param guid
+  *
+  * The param aTargetFlag should represent one of the locations the desired
+  * command object appears in.  Please note that command objects can be
+  * registered to multiple locations and, if this is the case with the returned
+  * command object, modifications to the returned command object will appear in
+  * the aTargetFlag location as well as in the other locations.  To guard against
+  * unexpected side effects, the caller can check the targetFlag attribute
+  * of the returned sbIPlaylistCommands object if that command object was
+  * added using this API.
+  *
+  * \param aTargetFlag A single TARGET flag specifying one of
+  *                    the locations in which the desired command object appears
+  * \param aMediaListGUID The guid of the medialist from which to retrieve the
+  *                       command object
+  * \param aCommandId The id of the command object instance to be retrieved
+  * \return The sbIPlaylistCommands object that was desired or null if not found
+  * \sa sbIPlaylistCommands, sbIPlaylistCommandsBuilder, sbIPlaylistCommandsManager
+  */
+  sbIPlaylistCommands getCommandObjectForGUID
+                      (in unsigned short aTargetFlag,
+                       in AString aMediaListGUID,
+                       in AString aCommandId);
+};
