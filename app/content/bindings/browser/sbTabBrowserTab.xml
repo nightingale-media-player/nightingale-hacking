@@ -70,7 +70,7 @@
         // right after all the constructors run...
         var self = this;
         window.setTimeout(function () { self.createOuterPlaylist(); }, 0);
-        this._scraper = null;
+        this._scrapers = [];
           
         this._metrics =
           Components.classes["@songbirdnest.com/Songbird/Metrics;1"]
@@ -434,11 +434,10 @@
       <!-- sbITabBrowserTab -->
       <method name="clearOuterPlaylist">
         <body><![CDATA[
+          // cancel and discard all scapers
+          this._scrapers.forEach(function (aScraper) {aScraper.cancel();});
+          this._scrapers = [];
           // hide the outer playlist
-          if (this._scraper) {
-            this._scraper.cancel();
-            this._scraper = null;
-          }
           this.outerPlaylistShowing = false;
           this.scanProgress = -1;
           if (this.outerPlaylist) {
@@ -606,22 +605,12 @@
             tree.treeBoxObject.ensureRowIsVisible(view.selection.currentIndex);
           }
 
-          // Dispose of any previous scraper.
-          if (this._scraper) {
-            this._scraper.cancel();
-            this._scraper = null;
-          }
-
           // create a new scraper.
-          if (!hasExplicitView) {
-            // only clear the view if it wasn't explicitly specified (because
-            // if it was, we wanted to use it - e.g. currently playing it)
-            view.mediaList.clear();
-          }
-          this._scraper = new WebScraper(view.mediaList);
+          let scraper = new WebScraper(view.mediaList);
+          this._scrapers.push(scraper);
             
           var self = this;
-          this._scraper.job.addJobProgressListener( {
+          scraper.job.addJobProgressListener( {
             QueryInterface: XPCOMUtils.generateQI([Ci.sbIJobProgressListener]),
             onJobProgress:  function(job) {
               if (view.mediaList.length > 0) {
@@ -636,7 +625,7 @@
           });
 
           // scrape the document.
-          this._scraper.start(aDocument);
+          scraper.start(aDocument);
           
         ]]></body>
       </method>

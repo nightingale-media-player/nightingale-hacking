@@ -284,11 +284,16 @@ var WebScraperSteps = {
       properties[SBProperties.enableAutoDownload] = "1";
       properties[SBProperties.downloadButton] = "1|0|0";
   
+      // create a new media item, if necessary, or get an existing one for
+      // this URI
       var mediaItem = mediaList.library.createMediaItem(
                                           uri,
                                           SBProperties.createArray(properties));
-      mediaList.add(mediaItem);
-      pipeline.send(mediaItem);
+      // add it to the media list, ignoring duplicates
+      if (!mediaList.contains(mediaItem)) {
+        mediaList.add(mediaItem);
+        pipeline.send(mediaItem);
+      }
     }
   },
   
