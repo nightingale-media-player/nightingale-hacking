@@ -92,6 +92,7 @@ CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
                      $(DEPTH)/components/mediacore/metadata/manager/public \
                      $(DEPTH)/components/mediacore/transcode/public \
                      $(topsrcdir)/components/mediacore/transcode/src \
+                     $(topsrcdir)/components/moz/streams/src/ \
                      $(DEPTH)/components/moz/strings/components/public \
                      $(topsrcdir)/components/moz/strings/src \
                      $(topsrcdir)/components/moz/threads/src \

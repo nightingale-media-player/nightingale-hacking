@@ -26,6 +26,7 @@
 
 #include <sbIGStreamerService.h>
 
+#include <sbFileUtils.h>
 #include <sbStringUtils.h>
 #include <sbClassInfoUtils.h>
 #include <sbTArrayStringEnumerator.h>
@@ -1974,6 +1975,25 @@ sbGStreamerVideoTranscoder::InitializeConfigurator()
       if (!curFileExt.Equals(configFileExt, CaseInsensitiveCompare)) {
         rv = fixedDestFileURI->SetFileExtension(configFileExt);
         NS_ENSURE_SUCCESS(rv, rv);
+
+        // Check if the destination file already exists
+        nsCOMPtr<nsIFile> destFile;
+        rv = fixedDestFileURI->GetFile(getter_AddRefs(destFile));
+
+        PRBool exists;
+        rv = destFile->Exists(&exists);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        // Create a unique file if destination file already exists.
+        if (exists) {
+          rv = destFile->CreateUnique(nsIFile::NORMAL_FILE_TYPE,
+                                      SB_DEFAULT_FILE_PERMISSIONS);
+          NS_ENSURE_SUCCESS(rv, rv);
+          rv = NS_NewFileURI(getter_AddRefs(fixedDestURI), destFile);
+          NS_ENSURE_SUCCESS(rv, rv);
+          fixedDestFileURI = do_QueryInterface(fixedDestURI, &rv);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
 
         nsCString fixedSpec;
         rv = fixedDestFileURI->GetSpec(fixedSpec);
