@@ -28,7 +28,9 @@ interface nsIDOMDocument;
 interface nsIDOMNode;
 interface nsIDOMWindow;
 interface sbIPlaylistCommandsContext;
+interface sbIPlaylistCommandsListener;
 interface sbIMediaItem;
+interface sbIMediaList;
 interface nsISimpleEnumerator;
 
 /** \addtogroup playlistcommands Playlist Commands
@@ -57,7 +59,7 @@ interface nsISimpleEnumerator;
 *
 * \sa playlist.xml, sbLibraryPage.xul, duplicate
 */
-[scriptable, uuid(facc472e-1dd1-11b2-8629-a62639ebabcc)]
+[scriptable, uuid(1f068d94-1dd2-11b2-825d-8f815e64b75d)]
 interface sbIPlaylistCommands : nsISupports
 {
   /**
@@ -66,6 +68,13 @@ interface sbIPlaylistCommands : nsISupports
   * registered.
   */
   readonly attribute AString id;
+
+  /**
+  * \brief The parent sbIPlaylistCommands of this object.  The parentCommandObject
+  * is set by sbIPlaylistCommands.addCommandObject and is primarily used
+  * to bubble listener notifications up the sbIPlaylistCommands hierarchy.
+  */
+  attribute sbIPlaylistCommands parentCommandObject;
 
   /**
   * \brief Adds a command object as a child of this sbIPlaylistCommands object
@@ -80,6 +89,35 @@ interface sbIPlaylistCommands : nsISupports
   * \param aCommandObject The child command object to be removed
   */
   void removeCommandObject( in sbIPlaylistCommands aCommandObject );
+
+  /**
+  * \brief Adds a listener to this command object to detect child additions or
+  * removals and other changes to the command object
+  *
+  * \param aListener The listener to be added
+  */
+  void addListener( in sbIPlaylistCommandsListener aListener );
+
+  /**
+  * \brief Removes a listener from this command object
+  *
+  * \param aListener The listener to be removed
+  */
+  void removeListener( in sbIPlaylistCommandsListener aListener );
+
+  /**
+  * \brief Notifies the listeners added to this command object.  aTriggerFunction
+  * can be onCommandAdded, onCommandRemoved, or onCommandChanged and the param
+  * aCommandObject is expected to be the added, removed, or changed
+  * sbIPlaylistCommands object
+  *
+  * \param aTriggerFunction The function to trigger in the listeners, one of
+  *                         onCommandAdded, onCommandRemoved, or onCommandChanged.
+  * \param aCommandObject The added, removed, or changed sbIPlaylistCommands
+   *                      object
+  */
+  void notifyListeners( in AString aTriggerFunction,
+                        in sbIPlaylistCommands aCommandObject );
 
   /**
   * \brief Return the visible state for the entire command object.
@@ -476,11 +514,41 @@ interface sbIPlaylistCommandsContext : nsISupports
 };
 
 /**
+* \interface sbIPlaylistCommandsListener sbIPlaylistCommandsListener.h
+* \brief The interface for receiving notices when a Command Object is added to
+*  or removed from another Command Object
+*/
+[scriptable, uuid(5ff1f576-1dd2-11b2-ae11-9f40001e5dbb)]
+interface sbIPlaylistCommandsListener : nsISupports
+{
+ /**
+  * \brief Callback method when a Command Object is added
+  *
+  * \param aCommandObject The Command Object that has been added.
+  */
+  void onCommandAdded(in sbIPlaylistCommands aCommandObject);
+
+ /**
+  * \brief Callback method when a Command Object is removed.
+  *
+  * \param aCommandObject The Command Object that has been removed.
+  */
+  void onCommandRemoved(in sbIPlaylistCommands aCommandObject);
+
+ /**
+  * \brief Callback method when a Command Object is modified.
+  *
+  * \param aCommandObject The Command Object that has been modified.
+  */
+  void onCommandChanged(in sbIPlaylistCommands aCommandObject);
+};
+
+/**
 * \interface sbIPlaylistCommandsManager sbIPlaylistCommandsManager.h
 * \brief The service used to register, unregister, and list playlist
 *  commands for a particular playlist guid or type
 */
-[scriptable, uuid(ddef8eae-1dd1-11b2-9b2d-f5db2eff20bd)]
+[scriptable, uuid(385a86c4-1dd2-11b2-a945-f6f41c562fe9)]
 interface sbIPlaylistCommandsManager : nsISupports
 {
  /**
@@ -584,6 +652,31 @@ interface sbIPlaylistCommandsManager : nsISupports
   */
   sbIPlaylistCommands getPlaylistCommandsMediaList( in AString aContextGUID,
                                                     in AString aPlaylistType );
+
+  /**
+  * \brief Adds the param listener to the root sbIPlaylistCommands for the param
+  * medialist. Every medialist can have two root commands, one for the medialist
+  * guid and one for its type, but these root commands are not instantiated until
+  * a playlist command is specifically added for that guid or type. This method
+  * adds the param listener for both root commands and, if a root command  does
+  * not exist when this method is called, it guarantees that the param listener
+  * will be added immediately when the root command is created and the listener
+  * will receive all notifications sent by the root command.
+  *
+  * \param aMediaList The medialist whose two root commands, for guid and type,
+  * will receive the param listener
+  * \param aListener The listener to be added
+  */
+  void addListenerForMediaList( in sbIMediaList aMediaList,
+                                in sbIPlaylistCommandsListener aListener );
+
+  /**
+  * \brief Removes listeners for the param medialist
+  *
+  * \param aMediaList The medialist for which listeners should be removed
+  */
+  void removeListenerForMediaList( in sbIMediaList aMediaList,
+                                   in sbIPlaylistCommandsListener aListener  );
 
   /**
   * \brief Publish an sbIPlaylistCommands interface for public consumption

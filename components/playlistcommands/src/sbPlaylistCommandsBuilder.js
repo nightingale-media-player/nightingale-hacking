@@ -25,10 +25,12 @@
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 
+const Ci = Components.interfaces;
+
 const SONGBIRD_PLAYLISTCOMMANDSBUILDER_CONTRACTID = "@songbirdnest.com/Songbird/PlaylistCommandsBuilder;1";
 const SONGBIRD_PLAYLISTCOMMANDSBUILDER_CLASSNAME = "Songbird Playlist Commands Builder";
 const SONGBIRD_PLAYLISTCOMMANDSBUILDER_CID = Components.ID("{18c4b63c-d5b4-4aa2-918f-a31304d254ec}");
-const SONGBIRD_PLAYLISTCOMMANDSBUILDER_IID = Components.interfaces.sbIPlaylistCommandsBuilder;
+const SONGBIRD_PLAYLISTCOMMANDSBUILDER_IID = Ci.sbIPlaylistCommandsBuilder;
 
 const SONGBIRD_PLAYLISTCOMMANDS_TYPE_ACTION     = "action";
 const SONGBIRD_PLAYLISTCOMMANDS_TYPE_SEPARATOR  = "separator";
@@ -54,7 +56,9 @@ function PlaylistCommandsBuilder() {
                     m_Type    : SONGBIRD_PLAYLISTCOMMANDS_TYPE_MENU,
                     m_Menu    : this.m_root_commands};
   this.m_menus.push(menuitem);
+  this.m_listeners = new Array();
   this.id = null;
+  this.parentCommandObject = null;
 }
 
 // ----------------------------------------------------------------------------
@@ -74,13 +78,8 @@ PlaylistCommandsBuilder.prototype = {
     window          : null,
     commands        : null,
     implementorContext: null,
-    QueryInterface  : function(iid) {
-      if (iid.equals(Components.interfaces.sbIPlaylistCommandsContext) ||
-          iid.equals(Components.interfaces.sbIPlaylistCommandsBuilderContext) ||
-          iid.equals(Components.interfaces.nsISupports))
-        return this;
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    }
+    QueryInterface  : XPCOMUtils.generateQI([Ci.sbIPlaylistCommandsContext,
+                                             Ci.sbIPlaylistCommandsBuilderContext]),
   },
 
   m_menus             : null,
@@ -88,6 +87,7 @@ PlaylistCommandsBuilder.prototype = {
   m_InitCallback      : null,
   m_ShutdownCallback  : null,
   m_VisibleCallback   : null,
+  m_listeners         : null,
 
 /**
  * ----------------------------------------------------------------------------
@@ -825,6 +825,7 @@ PlaylistCommandsBuilder.prototype = {
         aCommandSubObject = aCommandSubObject.QueryInterface(Components.
                                                              interfaces.
                                                              sbIPlaylistCommands);
+        aCommandSubObject.parentCommandObject = this;
         item.m_CommandSubObject = aCommandSubObject.duplicate();
         item.m_OriginalCommandSubObject = aCommandSubObject;
         break;
@@ -1005,7 +1006,7 @@ PlaylistCommandsBuilder.prototype = {
                                 aCommandObject.id,
                                 aCommandObject);
 
-    // this.notifyListeners("onCommandAdded", aCommandObject);
+    this.notifyListeners("onCommandAdded", aCommandObject);
   },
 
   removeCommandObject: function PlaylistCommandsBuilder_removeCommandObject
@@ -1013,7 +1014,46 @@ PlaylistCommandsBuilder.prototype = {
   {
     this.removeCommand(null, aCommandObject.id);
 
-    // this.notifyListeners("onCommandRemoved", aCommandObject);
+    this.notifyListeners("onCommandRemoved", aCommandObject);
+  },
+
+  addListener: function PlaylistCommandsBuilder_addListener ( aListener )
+  {
+    this.m_listeners.push(aListener);
+  },
+
+  removeListener: function PlaylistCommandsBuilder_removeListener ( aListener )
+  {
+    let index = this.m_listeners.indexOf(aListener);
+    if (index >= 0) {
+      // remove it
+      this.m_listeners.splice(index, 1);
+    }
+  },
+
+  notifyListeners: function PlaylistCommandsBuilder_notifyListeners
+                            ( aTriggerFunction, aCommandObject )
+  {
+    for (var i = 0 ; i < this.m_listeners.length; i++) {
+      var listener = this.m_listeners[i]
+      if (listener instanceof Ci.sbIPlaylistCommandsListener)
+      {
+        try
+        {
+          listener[aTriggerFunction](aCommandObject);
+        }
+        catch (err) {
+          Components.utils.reportError("Could not signal " + aTriggerFunction +
+          " to PlaylistCommandsListener. Failed with error: " + err.description);
+        }
+      }
+    }
+
+    if (this.parentCommandObject)
+    {
+      // bubble the signal to the parent command object
+      this.parentCommandObject.notifyListeners(aTriggerFunction, aCommandObject);
+    }
   },
 
   getVisible: function PlaylistCommandsBuilder_getVisible( aHost )
@@ -1366,7 +1406,7 @@ PlaylistCommandsBuilder.prototype = {
 
   LOG: function PlaylistCommandsBuilder_LOG(str) {
     var consoleService = Components.classes['@mozilla.org/consoleservice;1']
-                            .getService(Components.interfaces.nsIConsoleService);
+                            .getService(Ci.nsIConsoleService);
     consoleService.logStringMessage(str);
   },
 
@@ -1375,13 +1415,8 @@ PlaylistCommandsBuilder.prototype = {
   /**
    * See nsISupports.idl
    */
-  QueryInterface: function(iid) {
-    if (!iid.equals(Components.interfaces.sbIPlaylistCommands) &&
-        !iid.equals(Components.interfaces.sbIPlaylistCommandsBuilder) &&
-        !iid.equals(Components.interfaces.nsISupports))
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    return this;
-  }
+  QueryInterface: XPCOMUtils.generateQI([Ci.sbIPlaylistCommands,
+                                         Ci.sbIPlaylistCommandsBuilder]),
 }; // PlaylistCommandsBuilder.prototype
 
 

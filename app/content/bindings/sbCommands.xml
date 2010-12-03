@@ -47,6 +47,7 @@
               Components.classes["@mozilla.org/intl/stringbundle;1"]
               .getService(Components.interfaces.nsIStringBundleService);
           this.stringbundle = stringBundleService.createBundle( src );
+          this._playlistCommandsListener = null;
           var selfbind = this.getAttribute("bind");
           if (selfbind) {
             var libraryManager =
@@ -80,6 +81,14 @@
           <![CDATA[
           if (!this._destroyed) {
             this.removeCommands();
+
+            // remove the listeners for this medialist's playlist commands
+            var playlistCmdsMgr =
+                Components.classes["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
+                          .getService(Components.interfaces.sbIPlaylistCommandsManager);
+            playlistCmdsMgr.removeListenerForMediaList(this.medialist,
+                                                       this._playlistCommandsListener);
+            this._playlistCommandsListener = null;
             this.emptyCommandsArray();
             this.stringbundle = null;
             this._outerWindow = null;
@@ -159,6 +168,31 @@
 
             this.playlist = playlist;
             this.defaultcommands = commands ? commands.duplicate() : null;
+
+            /* Add a listener to the root commands for this medialist so that
+             * we can rescan the commands should they change.  For example
+             * this causes a rescan when a new command is added for a medialist,
+             * displaying it immediately after its addition */
+            var playlistCmdsMgr =
+                Components.classes["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
+                          .getService(Components.interfaces.sbIPlaylistCommandsManager);
+            var self = this;
+            var listener = {
+              onCommandAdded: function listener_onCommandAdded(aCommandObject) {
+                self.rescanCommands();
+              },
+              onCommandRemoved: function listener_onCommandRemoved(aCommandObject) {
+                self.rescanCommands();
+              },
+              onCommandChanged: function listener_onCommandChanged(aCommandObject) {
+                self.rescanCommands();
+              },
+              QueryInterface: XPCOMUtils.generateQI
+                                        ([Components.interfaces.sbIPlaylistCommandsListener]),
+            };
+
+            playlistCmdsMgr.addListenerForMediaList(this.medialist, listener);
+            this._playlistCommandsListener = listener;
             this.rescanCommands();
           } catch (e) {
               Components.utils.reportError( "sbCommands.xml - bind - " + e );

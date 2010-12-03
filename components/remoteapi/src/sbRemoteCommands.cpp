@@ -252,6 +252,27 @@ sbRemoteCommands::GetOwner( sbIRemotePlayer **aOwner )
 //
 // ---------------------------------------------------------------------------
 
+/* void addListener (in sbIPlaylistCommandsListener listener); */
+NS_IMETHODIMP
+sbRemoteCommands::AddListener(sbIPlaylistCommandsListener *listener)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* void removeListener (in sbIPlaylistCommandsListener listener); */
+NS_IMETHODIMP
+sbRemoteCommands::RemoveListener(sbIPlaylistCommandsListener *listener)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+sbRemoteCommands::NotifyListeners(const nsAString &aTriggerFunction,
+                                 sbIPlaylistCommands *aCommandObject)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 NS_IMETHODIMP
 sbRemoteCommands::AddCommandObject(sbIPlaylistCommands *aCommandObject)
 {
@@ -319,6 +340,19 @@ sbRemoteCommands::GetCommandId( const nsAString &aSubMenu,
 /* readonly attribute AString id */
 NS_IMETHODIMP
 sbRemoteCommands::GetId(nsAString & _retval NS_OUTPARAM)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/* attribute sbIPlaylistCommands parentCommandObject */
+NS_IMETHODIMP
+sbRemoteCommands::GetParentCommandObject(sbIPlaylistCommands **_retval)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+sbRemoteCommands::SetParentCommandObject(sbIPlaylistCommands *aParentCommandObject)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }

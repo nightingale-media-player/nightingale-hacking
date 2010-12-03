@@ -51,7 +51,7 @@
 #include <nsStringGlue.h>
 
 #include <sbStringUtils.h>
-
+#include <sbIMediaList.h>;
 
 #define MODULE_SHORTCIRCUIT 0
 
@@ -62,9 +62,6 @@
 # define METHOD_SHORTCIRCUIT
 # define VMETHOD_SHORTCIRCUIT
 #endif
-
-// forward declaration
-class sbIPlaylistCommandsBuilder;
 
 NS_IMPL_ISUPPORTS1(CPlaylistCommandsManager, sbIPlaylistCommandsManager);
 
@@ -105,6 +102,21 @@ CPlaylistCommandsManager::FindOrCreateRootCommand(commandobjmap_t *map,
     rv = rootCommand->Init(searchString);
     NS_ENSURE_SUCCESS(rv, rv);
     (*map)[searchString] = rootCommand;
+
+    // Check if there are listeners waiting for this root command to be created.
+    // If there are, add the listeners to the newly created command.
+    listenermap_t::iterator it;
+    it = m_ListenerMap.find(searchString);
+    if (it != m_ListenerMap.end())
+    {
+      nsCOMArray<sbIPlaylistCommandsListener> listeners = it->second;
+      PRUint32 length = listeners.Count();
+      for (PRUint32 i=0; i < length; i++)
+      {
+        rv = rootCommand->AddListener(listeners[i]);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
   }
   NS_ADDREF(*_retval = rootCommand);
   return NS_OK;
@@ -312,6 +324,217 @@ CPlaylistCommandsManager::GetPlaylistCommandsMediaItem
 }
 
 //-----------------------------------------------------------------------------
+nsresult
+CPlaylistCommandsManager::FindAllRootCommands(const nsAString &aContextGUID,
+                                              const nsAString &aContextType,
+                                              nsISimpleEnumerator **_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+  nsString guid(aContextGUID);
+  nsString type(aContextType);
+  nsCOMArray<sbIPlaylistCommands> array;
+  nsCOMPtr<sbIPlaylistCommands> rootCommand;
+
+  // check if we got a guid to search for
+  if (!guid.IsEmpty())
+  {
+    // check if a root command exists in the medialist map for the guid
+    rv = GetPlaylistCommandsMediaList(guid,
+                                      SBVoidString(),
+                                      getter_AddRefs(rootCommand));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (rootCommand)
+    {
+      // if we find a root command, add it to the array and we'll return it
+      array.AppendObject(rootCommand);
+    }
+
+    // check if a root command exists in the mediaitem map for the guid
+    rv = GetPlaylistCommandsMediaItem(guid,
+                                      SBVoidString(),
+                                      getter_AddRefs(rootCommand));
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (rootCommand)
+    {
+      // if we find a root command, add it to the array and we'll return it
+      array.AppendObject(rootCommand);
+    }
+  }
+
+  // check if we got a type to search for
+  if (!type.IsEmpty())
+  {
+    // check if a root command exists in the medialist map for the type
+    rv = GetPlaylistCommandsMediaList(SBVoidString(),
+                                      type,
+                                      getter_AddRefs(rootCommand));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (rootCommand)
+    {
+      // if we find a root command, add it to the array and we'll return it
+      array.AppendObject(rootCommand);
+    }
+
+    // check if a root command exists in the mediaitem map for the type
+    rv = GetPlaylistCommandsMediaItem(SBVoidString(),
+                                      type,
+                                      getter_AddRefs(rootCommand));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (rootCommand)
+    {
+      // if we find a root command, add it to the array and we'll return it
+      array.AppendObject(rootCommand);
+    }
+  }
+
+  return NS_NewArrayEnumerator(_retval, array);
+}
+
+//-----------------------------------------------------------------------------
+NS_IMETHODIMP
+CPlaylistCommandsManager::AddListenerForMediaList(sbIMediaList *aMediaList,
+                                                  sbIPlaylistCommandsListener *aListener)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aListener);
+
+  nsresult rv;
+  nsString guid;
+  nsString type;
+
+  rv = aMediaList->GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aMediaList->GetType(type);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /* Add listeners to the listener map for guid and type.  This map ensures that
+   * if a root command does not exist during this function call, the saved
+   * listeners will be added when the root command is created in
+   * FindOrCreateRootCommand. */
+  m_ListenerMap[guid].AppendObject(aListener);
+  m_ListenerMap[type].AppendObject(aListener);
+
+  /* Get all the root commands that are registered for this medialist's
+   * guid and type.  This function searches both the mediaitem and medialist
+   * maps and returns the found root commands in an enumerator */
+  nsCOMPtr<nsISimpleEnumerator> cmdEnum;
+  rv = FindAllRootCommands(guid, type, getter_AddRefs(cmdEnum));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // for each root command that we found, add the listener
+  PRBool hasMore;
+  while (NS_SUCCEEDED(cmdEnum->HasMoreElements(&hasMore)) && hasMore)
+  {
+    nsCOMPtr<sbIPlaylistCommands> rootCommand;
+    if (NS_SUCCEEDED(cmdEnum->GetNext(getter_AddRefs(rootCommand))) && rootCommand)
+    {
+      // add the param listener to the found root commands
+      rv = rootCommand->AddListener(aListener);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
+nsresult
+CPlaylistCommandsManager::RemoveListenerFromRootCommands
+                          (const nsString     &aContextGUID,
+                           const nsString     &aPlaylistType,
+                           sbIPlaylistCommandsListener *aListener)
+{
+  NS_ENSURE_ARG_POINTER(aListener);
+
+  // get all of the root sbIPlaylistCommands that fit the param guid and/or type
+  nsCOMPtr<nsISimpleEnumerator> rootCmdEnum;
+  nsresult rv = FindAllRootCommands(aContextGUID, aPlaylistType, getter_AddRefs(rootCmdEnum));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // for each root command found, remove the param aListener
+  PRBool hasMore;
+  while (NS_SUCCEEDED(rootCmdEnum->HasMoreElements(&hasMore)) && hasMore)
+  {
+    nsCOMPtr<sbIPlaylistCommands> rootCommand;
+    if (NS_SUCCEEDED(rootCmdEnum->GetNext(getter_AddRefs(rootCommand))) && rootCommand)
+    {
+      rv = rootCommand->RemoveListener(aListener);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+  return NS_OK;
+}
+
+nsresult
+CPlaylistCommandsManager::RemoveListenerInListenerMap
+                          (const nsString     &aSearchString,
+                           sbIPlaylistCommandsListener *aListener)
+{
+  NS_ENSURE_ARG_POINTER(aListener);
+
+  listenermap_t::iterator foundListeners;
+  // get the vector of listeners saved for aSearchString
+  foundListeners = m_ListenerMap.find(aSearchString);
+
+  // make sure there are listeners saved for the search string
+  if (foundListeners != m_ListenerMap.end())
+  {
+    // the m_ListenerMap stores an nsCOMArray of listeners that we need to scan
+    // to find the listener that we want to remove
+    nsCOMArray<sbIPlaylistCommandsListener> listeners = foundListeners->second;
+    PRUint32 length = listeners.Count();
+    for (PRUint32 i=0; i < length; i++)
+    {
+      if (listeners[i] == aListener)
+      {
+        listeners.RemoveObjectAt(i);
+        i--;
+        length--;
+      }
+    }
+  }
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+CPlaylistCommandsManager::RemoveListenerForMediaList(sbIMediaList *aMediaList,
+                                                     sbIPlaylistCommandsListener *aListener)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aListener);
+
+  nsresult rv;
+  nsString guid;
+  nsString type;
+
+  rv = aMediaList->GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aMediaList->GetType(type);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /* first remove the listener from the m_ListenerMap.  It was saved for both
+   * the medialist's guid and type, so it needs to be removed for both */
+  rv = RemoveListenerInListenerMap(guid, aListener);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = RemoveListenerInListenerMap(type, aListener);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // remove the listener from any root commands that it was attached to
+  rv = RemoveListenerFromRootCommands(guid, type, aListener);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
 NS_IMETHODIMP
 CPlaylistCommandsManager::Publish(const nsAString     &aCommandsGUID,
                                   sbIPlaylistCommands *aCommandObj)
@@ -348,4 +571,3 @@ CPlaylistCommandsManager::Request(const nsAString      &aCommandsGUID,
   *_retval = dup;
   return NS_OK;
 }
-

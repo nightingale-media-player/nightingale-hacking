@@ -37,9 +37,8 @@
 #include "sbIPlaylistCommands.h"
 #include "sbIPlaylistCommandsBuilder.h"
 #include <nsCOMPtr.h>
+#include <nsCOMArray.h>
 #include <map>
-#include <set>
-#include <vector>
 
 #ifndef NS_DECL_ISUPPORTS
 #error
@@ -68,10 +67,13 @@ private:
   /* the key string will be a medialist's guid or medialist listType
    * (e.g. "simple") depending on which the caller of register wants to
    * register the sbIPlaylistCommandsBuilder for */
-  class commandobjmap_t  : public std::map<nsString, nsCOMPtr<sbIPlaylistCommandsBuilder> > {};
+  typedef std::map<nsString, nsCOMPtr<sbIPlaylistCommandsBuilder> > commandobjmap_t;
   commandobjmap_t m_ServicePaneCommandObjMap;
   commandobjmap_t m_PlaylistCommandObjMap;
   std::map<nsString, nsCOMPtr<sbIPlaylistCommands> > m_publishedCommands;
+
+  typedef std::map<nsString, nsCOMArray<sbIPlaylistCommandsListener> > listenermap_t;
+  listenermap_t m_ListenerMap;
 
  /* Find a root playlist command in the param map registered for the param
   * aSearchString.  If no root playlist command is already registered, one
@@ -163,6 +165,56 @@ private:
                                     const nsAString      &aContextGUID,
                                     const nsAString      &aPlaylistType,
                                     sbIPlaylistCommands  **_retval);
+
+ /* Finds all root playlist commands that correspond to the param aContextGUID
+  * and/or aContextType, representing a medialist guid or listType respectively.
+  * There are two root sbIPlaylistCommands object for each medialist guid and
+  * type.  One is the container for all servicepane menu commands, in the
+  * m_ServicePaneCommandObjMap, while the other is for mediaitem context menu
+  * and toolbar commands, stored in m_PlaylistCommandObjMap.
+  *
+  * If null or an empty string is provided as one of the params, guid or type,
+  * that param is ignored and only those root commands for the provided param
+  * are returned.
+  *
+  *@param aContextGUID The guid of a medialist for which the root command objects
+  *                    should be retrieved.
+  *@param aPlaylistType A medialist listType (e.g. "simple") for which the root
+  *                     command objects should be retrieved.
+  *@return An enumerator containing all root sbIPlaylistCommands objects that
+  *        correspond to the provided aContextGuid and/or aContextType
+  */
+  nsresult FindAllRootCommands(const nsAString &aContextGUID,
+                               const nsAString &aContextType,
+                               nsISimpleEnumerator **_retval);
+
+ /* Finds all root sbIPlaylistCommands objects for the param medialist guid
+  * and/or type and removes the param listener from those root commands.
+  *
+  * If null or an empty string is provided as one of guid or type, that param
+  * is ignored and the listener will only be removed from those root commands
+  * found for the provided param
+  *
+  *@param aContextGUID The guid of a medialist for which the root command objects
+  *                    should have the param aListener removed.
+  *@param aPlaylistType A medialist listType (e.g. "simple") for which the root
+  *                     command objects should have the param aListener removed.
+  *@param aListener The listener to be removed
+  */
+
+  nsresult RemoveListenerFromRootCommands(const nsString     &aContextGUID,
+                                          const nsString     &aPlaylistType,
+                                          sbIPlaylistCommandsListener *aListener);
+
+ /* Removes the param aListener that is mapped to the key aSearchString in
+  * the map of saved listeners
+  *
+  *@param aSearchString The key in m_ListenerMap for which aListener should
+  *                     be removed as a saved listener.
+  *@param aListener The listener to be removed
+  */
+  nsresult  RemoveListenerInListenerMap(const nsString     &aSearchString,
+                                        sbIPlaylistCommandsListener *aListener);
 
 };
 
