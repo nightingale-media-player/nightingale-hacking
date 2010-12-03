@@ -277,14 +277,7 @@ sbiTunesImporter::~sbiTunesImporter()
 nsresult
 sbiTunesImporter::Cancel() {
   nsresult rv;
-  nsString msg;
-  rv = 
-    SBGetLocalizedString(msg,
-                         NS_LITERAL_STRING("import_library.job.status.cancelled"));
-  if (NS_FAILED(rv)) { 
-    // Show at least something
-    msg = NS_LITERAL_STRING("Library import cancelled");
-  }
+  nsString msg = SBLocalizedString("import_library.job.status.cancelled");
   mStatus->SetStatusText(msg);
   mStatus->Done();
   mStatus->Update();
@@ -528,8 +521,7 @@ sbiTunesImporter::Initialize()
   } while(false);
   
   mPlaylistBlacklist = 
-    SBLocalizedString(NS_LITERAL_STRING("import_library.itunes.excluded_playlists"), 
-                      nsString());
+    SBLocalizedString("import_library.itunes.excluded_playlists");
   return NS_OK;
 }
 
@@ -635,7 +627,7 @@ sbiTunesImporter::Import(const nsAString & aLibFilePath,
     rv = mStatus->Reset();
     NS_ENSURE_SUCCESS(rv, rv);
     
-    mStatus->SetStatusText(NS_LITERAL_STRING("No library changes found"));
+    mStatus->SetStatusText(SBLocalizedString("import_library.itunes.no_changes"));
     mStatus->Done();
     mStatus->Update();
     return NS_OK;
@@ -679,8 +671,8 @@ sbiTunesImporter::Import(const nsAString & aLibFilePath,
   
   
   nsAString const & msg = 
-    mImport ? NS_LITERAL_STRING("Importing library") :
-              NS_LITERAL_STRING("Checking for changes in library");
+    mImport ? SBLocalizedString("import_library.itunes.importing") :
+              SBLocalizedString("import_library.itunes.updating");
 
   mStatus->SetStatusText(msg);
 
@@ -1221,14 +1213,14 @@ sbiTunesImporter::OnPlaylistsComplete() {
   mStatus->Reset();
   char const * completionMsg;
   if (mImport) {
-    completionMsg = "Library import complete";
+    completionMsg = "import_library.itunes.complete";
   }
   else {
     if (mFoundChanges) {
-      completionMsg = "Found library changes";
+      completionMsg = "import_library.itunes.updating.has_changes";
     }
     else {
-      completionMsg = "No library changes found";
+      completionMsg = "import_library.itunes.updating.no_changes";
     }
   }
   
@@ -1237,7 +1229,7 @@ sbiTunesImporter::OnPlaylistsComplete() {
     mBatchEnded = PR_TRUE;
   }
   
-  mStatus->SetStatusText(NS_ConvertASCIItoUTF16(completionMsg));
+  mStatus->SetStatusText(SBLocalizedString(completionMsg));
   
   mStatus->Done();
   mStatus->Update();
