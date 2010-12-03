@@ -149,11 +149,9 @@
               pageid="first_run_itunes_page"
               next="first_run_import_media_page"
               label="&first_run.title;"
-              onpageshow="firstRunWizard.doPageShow();">
-    <sb-first-run-itunes id="first_run_itunes"
-                               class="first-run-wizard-page"
-                               firstrunwizardpage="true"/>
-  </wizardpage>
+              onpageshow="firstRunWizard.doPageShow();"
+              class="first-run-wizard-page"
+              firstrunwizardpage="true"/>
 
   <!-- Import media page. -->
   <wizardpage id="first_run_import_media_page"

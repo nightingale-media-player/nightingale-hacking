@@ -73,33 +73,6 @@
 
     </content>
 
-
-    <!-- ***********************************************************************
-     *
-     * Implementation.
-     *
-     *********************************************************************** -->
-
-    <implementation>
-
-      <!--
-       * constructor
-       *
-       *   This method constructs the widget.
-       -->
-
-      <constructor> <![CDATA[
-        var libraryImporter = Cc["@songbirdnest.com/Songbird/ITunesImporter;1"]
-                              .getService(Ci.sbILibraryImporter);
-        // If an iTunes library file isn't present, then update the wizard
-        // so we skip the iTunes wizardpage
-        if (!libraryImporter.libraryDefaultFilePath) {
-          this.parentNode.setAttribute("next", "first_run_import_media_page");
-        }
-      ]]></constructor>
-
-    </implementation>
-
   </binding>
 
 </bindings>

@@ -55,7 +55,8 @@
    *****************************************************************************
    ************************************************************************* -->
 
-  <binding id="sb-first-run-itunes">
+  <binding id="sb-first-run-itunes"
+           extends="chrome://songbird/content/bindings/wizard.xml#sb-wizard-page">
 
     <!-- ***********************************************************************
      *
@@ -78,7 +79,6 @@
           <!-- Import from iTunes checkbox. -->
           <checkbox anonid="itunes_import_checkbox"
                  checked="false"
-                 oncommand="_doCommand(event);"
                  label="&first_run.itunes.checkbox.import.label;"/>
           <description
             anonid="itunes_import_desc" 
@@ -160,28 +160,6 @@
       ]]></body></method>
 
 
-
-      <!--
-       * Handle the command event specified by aEvent.
-       *
-       * \param aEvent          Command event.
-       -->
-
-      <method name="_doCommand">
-        <parameter name="aEvent"/>
-        <body><![CDATA[
-          // If the user opts to import their iTunes library, then skip the
-          // second Import Media wizardpage and go straight to the first-run
-          // add-ons page
-          if (aEvent.target.checked)
-            this.parentNode.setAttribute("next", "first_run_add_ons_page");
-          else
-            this.parentNode.setAttribute("next", "first_run_import_media_page");
-        ]]></body>
-      </method>
-
-
-
       <!--
        * Import external services.
        -->
@@ -202,6 +180,39 @@
       ]]></body></method>
 
     </implementation>
+
+    <handlers>
+      <handler event="pageshow"><![CDATA[
+        var libraryImporter = Cc["@songbirdnest.com/Songbird/ITunesImporter;1"]
+                              .getService(Ci.sbILibraryImporter);
+        // If an iTunes library file isn't present, then update the wizard
+        // so we skip the iTunes wizardpage
+        if (!libraryImporter.libraryDefaultFilePath) {
+          document.documentElement.goTo(this.next);
+        }
+      ]]></handler>
+
+      <handler event="pageadvanced"><![CDATA[
+        // If the user opts to import their iTunes library, then skip the
+        // second Import Media wizardpage and go straight to the first-run
+        // add-ons page
+        var checkbox =
+          document.getAnonymousElementByAttribute(this,
+                                                  "anonid",
+                                                  "itunes_import_checkbox");
+        if (checkbox.checked &&
+            !this.adavancing &&
+            this.next == "first_run_import_media_page")
+        {
+          // guard against unwanted recursion
+          this.advancing = true;
+          var wizard = document.documentElement;
+          wizard.advance(wizard.getPageById(this.next).next);
+          this.advancing = false;
+          return false;
+        }
+      ]]></handler>
+    </handlers>
 
   </binding> <!-- sb-first-run-itunes -->
 

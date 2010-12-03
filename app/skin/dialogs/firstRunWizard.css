@@ -248,7 +248,7 @@ sb-first-run-feedback {
   -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunFeedback.xml#sb-first-run-feedback");
 }
 
-sb-first-run-itunes {
+#first_run_itunes_page {
   -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRuniTunes.xml#sb-first-run-itunes");
 }
 
