@@ -1692,6 +1692,10 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
 
   NS_ENSURE_TRUE(voting, NS_ERROR_UNEXPECTED);
 
+  // Voting calls into mediacores; we don't want to hold the monitor while we
+  // do that.
+  mon.Exit();
+
   nsCOMPtr<sbIMediacoreVotingChain> votingChain;
   rv = voting->VoteWithURI(uri, getter_AddRefs(votingChain));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1709,6 +1713,9 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
   nsCOMPtr<nsIArray> chain;
   rv = votingChain->GetMediacoreChain(getter_AddRefs(chain));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Reacquire the monitor now that we're done with voting.
+  mon.Enter();
 
   mChain = chain;
   mChainIndex = 0;
@@ -2762,6 +2769,10 @@ sbMediacoreSequencer::PlayURL(nsIURI *aURI)
   rv = ResetPlayingVideoDataRemote();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Setup() must be called without the monitor held, as must StartPlayback;
+  // drop it so we do that.
+  mon.Exit();
+
   rv = Setup(aURI);
   if(rv == NS_ERROR_ABORT) {
     NS_WARNING("Someone aborted playback of the next track.");
@@ -2771,8 +2782,6 @@ sbMediacoreSequencer::PlayURL(nsIURI *aURI)
 
   rv = UpdatePlayStateDataRemotes();
   NS_ENSURE_SUCCESS(rv, rv);
-
-  mon.Exit();
 
   rv = StartPlayback();
 

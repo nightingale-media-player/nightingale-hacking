@@ -445,11 +445,10 @@ sbMediacoreManager::VoteWithURIOrChannel(nsIURI *aURI,
   nsresult rv = votingChain->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoMonitor mon(mMonitor);
+  nsCOMPtr<nsIArray> instances;
 
   // First go through the active instances to see if one of them
   // can handle what we wish to play.
-  nsCOMPtr<nsIArray> instances;
   rv = GetInstances(getter_AddRefs(instances));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1781,11 +1780,8 @@ sbMediacoreManager::VoteWithURI(nsIURI *aURI,
                                 sbIMediacoreVotingChain **_retval)
 {
   TRACE(("sbMediacoreManager[0x%x] - VoteWithURI", this));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aURI);
   NS_ENSURE_ARG_POINTER(_retval);
-
-  nsAutoMonitor mon(mMonitor);
 
   nsresult rv = VoteWithURIOrChannel(aURI, nsnull, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1798,11 +1794,8 @@ sbMediacoreManager::VoteWithChannel(nsIChannel *aChannel,
                                     sbIMediacoreVotingChain **_retval)
 {
   TRACE(("sbMediacoreManager[0x%x] - VoteWithChannel", this));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aChannel);
   NS_ENSURE_ARG_POINTER(_retval);
-
-  nsAutoMonitor mon(mMonitor);
 
   nsresult rv = VoteWithURIOrChannel(nsnull, aChannel, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
