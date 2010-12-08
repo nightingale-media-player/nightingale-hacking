@@ -40,6 +40,8 @@
 #include "commands.h"
 #include "readini.h"
 
+extern char **environ;
+
 // mac includes
 #import <Foundation/Foundation.h>
 #import <CoreServices/CoreServices.h>
@@ -51,31 +53,35 @@ int SetupEnvironment() {
     [NSString stringWithUTF8String:GetAppResoucesDirectory().c_str()];
   NSString* envFile =
     [appDir stringByAppendingPathComponent:@"updates/0/disthelper.env"];
-  if (![[NSFileManager defaultManager] fileExistsAtPath:envFile]) {
-    // file doesn't exist, it's safe to skip over it
-    [pool release];
-    return DH_ERROR_OK;
-  }
-  IniFile_t iniData;
-  int result = ReadIniFile([envFile UTF8String], iniData);
-  if (result) {
-    [pool release];
-    return result;
-  }
-  IniEntry_t::const_iterator it = iniData[""].begin(),
-                             end = iniData[""].end();
-  result = DH_ERROR_OK;
-  const char PREFIX[] = "DISTHELPER_";
-  for (; it != end; ++it) {
-    if (strncmp(PREFIX, it->first.c_str(), sizeof(PREFIX) - 1)) {
-      // variable does not start with DISTHELPER_; ignore it to avoid possible
-      // security problems
-      continue;
-    }
-    if (setenv(it->first.c_str(), it->second.c_str(), true)) {
-      result = DH_ERROR_UNKNOWN;
+  int result  = DH_ERROR_OK;
+
+  if ([[NSFileManager defaultManager] fileExistsAtPath:envFile]) {
+    IniFile_t iniData;
+    result = ReadIniFile([envFile UTF8String], iniData);
+    if (!result) {
+      IniEntry_t::const_iterator it = iniData[""].begin(),
+                                 end = iniData[""].end();
+      result = DH_ERROR_OK;
+      const char PREFIX[] = "DISTHELPER_";
+      for (; it != end; ++it) {
+        if (strncmp(PREFIX, it->first.c_str(), sizeof(PREFIX) - 1)) {
+          // variable does not start with DISTHELPER_; ignore it to avoid
+          // hypothetical security problems
+          continue;
+        }
+        if (setenv(it->first.c_str(), it->second.c_str(), true)) {
+          result = DH_ERROR_UNKNOWN;
+        }
+      }
     }
   }
+
+  DebugMessage("===== Dumping environment variables =====");
+  for (char ** environment = environ; *environment; ++environment) {
+    DebugMessage("%s", *environment);
+  }
+  DebugMessage("===== End of environment variables =====");
+
   [pool release];
   return result;
 }

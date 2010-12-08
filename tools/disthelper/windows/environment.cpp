@@ -121,34 +121,46 @@ tstring GetUpdateRoot() {
 int SetupEnvironment() {
   tstring envFile = GetUpdateRoot();
   envFile.append(_T("updates\\0\\disthelper.env"));
+  int result;
   
   if (!::PathFileExists(envFile.c_str())) {
     DebugMessage("environment file %s not found", envFile.c_str());
     // the environment file not existing is not a fatal error
-    return DH_ERROR_OK;
+    result = DH_ERROR_OK;
   }
+  else {
+    DebugMessage("reading saved environment from <%s>", envFile.c_str());
+    IniFile_t iniData;
+    result = ReadIniFile(envFile.c_str(), iniData);
+    if (!result) {
+      IniEntry_t::const_iterator it = iniData[""].begin(),
+                                 end = iniData[""].end();
+      result = DH_ERROR_OK;
+      const char PREFIX[] = "DISTHELPER_";
+      for (; it != end; ++it) {
+        if (strncmp(PREFIX, it->first.c_str(), sizeof(PREFIX) - 1)) {
+          // variable does not start with DISTHELPER_; ignore it to avoid
+          // hypothetical security problems
+          continue;
+        }
+        if (!::SetEnvironmentVariable(ConvertUTF8toUTFn(it->first).c_str(),
+                                      ConvertUTF8toUTFn(it->second).c_str()))
+        {
+          result = DH_ERROR_UNKNOWN;
+        }
+      }
+    }
+  }
+  
+  LPTCH environ = ::GetEnvironmentStrings();
+  DebugMessage("===== Dumping environment variables =====");
+  for (LPTCH environment = environ; *environment; ) {
+    tstring line(environment);
+    DebugMessage("%s", line.c_str());
+    environment += line.length() + 1; // with terminating null
+  }
+  DebugMessage("===== End of environment variables =====");
+  ::FreeEnvironmentStrings(environ);
 
-  DebugMessage("reading saved environment from <%s>", envFile.c_str());
-  IniFile_t iniData;
-  int result = ReadIniFile(envFile.c_str(), iniData);
-  if (result) {
-    return result;
-  }
-  IniEntry_t::const_iterator it = iniData[""].begin(),
-                             end = iniData[""].end();
-  result = DH_ERROR_OK;
-  const char PREFIX[] = "DISTHELPER_";
-  for (; it != end; ++it) {
-    if (strncmp(PREFIX, it->first.c_str(), sizeof(PREFIX) - 1)) {
-      // variable does not start with DISTHELPER_; ignore it to avoid possible
-      // security problems
-      continue;
-    }
-    if (!::SetEnvironmentVariable(ConvertUTF8toUTFn(it->first).c_str(),
-                                  ConvertUTF8toUTFn(it->second).c_str()))
-    {
-      result = DH_ERROR_UNKNOWN;
-    }
-  }
   return result;
 }
