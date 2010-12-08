@@ -208,7 +208,7 @@ int main(int argc, LPTSTR *argv) {
       return DH_ERROR_UNKNOWN;
     }
 
-   std::string oldVersion = destDistIni["global"]["version"],
+    std::string oldVersion = destDistIni["global"]["version"],
                 newVersion = iniFile["global"]["version"];
     LogMessage("Checking distribution.ini versions... old=[%s] new=[%s]",
                ConvertUTF8toUTFn(oldVersion).c_str(),
