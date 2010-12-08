@@ -28,13 +28,13 @@
 
 #include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
-#include "sbProxyUtils.h"
 
 #include <sbIMediacore.h>
 #include <sbIMediacoreError.h>
 #include <sbIMediacoreEventListener.h>
 
 #include <sbMediacoreEvent.h>
+#include <sbProxiedComponentManager.h>
 
 /* ctor / dtor */
 sbBaseMediacoreEventTarget::sbBaseMediacoreEventTarget(sbIMediacoreEventTarget * aTarget)
@@ -72,10 +72,10 @@ sbBaseMediacoreEventTarget::DispatchEvent(sbIMediacoreEvent *aEvent,
     { /* scope the monitor */
       NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
       nsAutoMonitor mon(mMonitor);
-      rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
-                                sbIMediacoreEventTarget::COMTypeInfo<int>::kIID,
+      rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                                NS_GET_IID(sbIMediacoreEventTarget),
                                 mTarget,
-                                NS_PROXY_SYNC,
+                                NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                                 getter_AddRefs(proxiedSelf));
       NS_ENSURE_SUCCESS(rv, rv);
     }
@@ -148,10 +148,10 @@ sbBaseMediacoreEventTarget::AddListener(sbIMediacoreEventListener *aListener)
     { /* scope the monitor */
       NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
       nsAutoMonitor mon(mMonitor);
-      rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
-                                sbIMediacoreEventTarget::COMTypeInfo<int>::kIID,
+      rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                                NS_GET_IID(sbIMediacoreEventTarget),
                                 mTarget,
-                                NS_PROXY_SYNC,
+                                NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                                 getter_AddRefs(proxiedSelf));
       NS_ENSURE_SUCCESS(rv, rv);
     }
@@ -183,10 +183,10 @@ sbBaseMediacoreEventTarget::RemoveListener(sbIMediacoreEventListener *aListener)
     { /* scope the monitor */
       NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
       nsAutoMonitor mon(mMonitor);
-      rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
-                                sbIMediacoreEventTarget::COMTypeInfo<int>::kIID,
+      rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                                NS_GET_IID(sbIMediacoreEventTarget),
                                 mTarget,
-                                NS_PROXY_SYNC,
+                                NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                                 getter_AddRefs(proxiedSelf));
       NS_ENSURE_SUCCESS(rv, rv);
     }

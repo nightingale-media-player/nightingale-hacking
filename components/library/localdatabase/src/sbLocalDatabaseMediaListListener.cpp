@@ -37,7 +37,9 @@
 #include <nsAutoLock.h>
 #include <nsHashKeys.h>
 #include <nsThreadUtils.h>
-#include <sbProxyUtils.h>
+#include <nsServiceManagerUtils.h>
+
+#include <sbProxiedComponentManager.h>
 
 #ifdef DEBUG
 #include <nsIXPConnect.h>
@@ -148,6 +150,12 @@ sbLocalDatabaseMediaListListener::AddListener(sbLocalDatabaseMediaListBase* aLis
     aFlags = sbIMediaList::LISTENER_FLAGS_ALL;
   }
 
+  // Acquiring the proxied proxy object manager will spin the event loop, so
+  // we need to do it before acquiring mListenerArrayLock
+  nsCOMPtr<nsIProxyObjectManager> proxyObjMgr =
+      do_ProxiedGetService(NS_XPCOMPROXY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsAutoLock lock(mListenerArrayLock);
 
   // See if we have already added this listener.
@@ -180,11 +188,11 @@ sbLocalDatabaseMediaListListener::AddListener(sbLocalDatabaseMediaListBase* aLis
   if (aOwnsWeak) {
     nsCOMPtr<nsIWeakReference> weak = do_GetWeakReference(aListener, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = info->Init(weak, mBatchDepth, aFlags, aPropertyFilter);
+    rv = info->Init(proxyObjMgr, weak, mBatchDepth, aFlags, aPropertyFilter);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
-    rv = info->Init(aListener, mBatchDepth, aFlags, aPropertyFilter);
+    rv = info->Init(proxyObjMgr, aListener, mBatchDepth, aFlags, aPropertyFilter);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -631,11 +639,13 @@ sbListenerInfo::~sbListenerInfo()
 }
 
 nsresult
-sbListenerInfo::Init(sbIMediaListListener* aListener,
+sbListenerInfo::Init(nsIProxyObjectManager *aProxyObjMgr,
+                     sbIMediaListListener* aListener,
                      PRUint32 aCurrentBatchDepth,
                      PRUint32 aFlags,
                      sbIPropertyArray* aPropertyFilter)
 {
+  NS_ENSURE_ARG_POINTER(aProxyObjMgr);
   NS_ASSERTION(aListener, "aListener is null");
   NS_ASSERTION(!mProxy, "Init called twice");
   nsresult rv;
@@ -653,11 +663,14 @@ sbListenerInfo::Init(sbIMediaListListener* aListener,
 
   InitPropertyFilter(aPropertyFilter);
 
-  rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
-                            NS_GET_IID(sbIMediaListListener),
-                            aListener,
-                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-                            getter_AddRefs(mProxy));
+  /* This function is called with a lock held, so we must not spin the event
+     loop - so we use this variant of do_GetProxyForObject that does not */
+  rv = do_GetProxyForObjectWithManager(aProxyObjMgr,
+                                       NS_PROXY_TO_CURRENT_THREAD,
+                                       NS_GET_IID(sbIMediaListListener),
+                                       aListener,
+                                       NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                                       getter_AddRefs(mProxy));
   NS_ENSURE_SUCCESS(rv, rv);
 
 #ifdef PR_LOGGING
@@ -669,11 +682,13 @@ sbListenerInfo::Init(sbIMediaListListener* aListener,
 }
 
 nsresult
-sbListenerInfo::Init(nsIWeakReference* aWeakListener,
+sbListenerInfo::Init(nsIProxyObjectManager *aProxyObjMgr,
+                     nsIWeakReference* aWeakListener,
                      PRUint32 aCurrentBatchDepth,
                      PRUint32 aFlags,
                      sbIPropertyArray* aPropertyFilter)
 {
+  NS_ENSURE_ARG_POINTER(aProxyObjMgr);
   NS_ASSERTION(aWeakListener, "aWeakListener is null");
   NS_ASSERTION(!mProxy, "Init called twice");
   nsresult rv;
@@ -696,11 +711,15 @@ sbListenerInfo::Init(nsIWeakReference* aWeakListener,
     new sbWeakMediaListListenerWrapper(mWeak);
   NS_ENSURE_TRUE(wrapped, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
-                            NS_GET_IID(sbIMediaListListener),
-                            wrapped,
-                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-                            getter_AddRefs(mProxy));
+  /* This function is called with a lock held, so we must not spin the event
+     loop - so we use this variant of do_GetProxyForObject that guarantees we
+     don't */
+  rv = do_GetProxyForObjectWithManager(aProxyObjMgr,
+                                       NS_PROXY_TO_CURRENT_THREAD,
+                                       NS_GET_IID(sbIMediaListListener),
+                                       wrapped,
+                                       NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                                       getter_AddRefs(mProxy));
   NS_ENSURE_SUCCESS(rv, rv);
 
 #ifdef PR_LOGGING

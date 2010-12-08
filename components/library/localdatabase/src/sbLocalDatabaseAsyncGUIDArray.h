@@ -40,6 +40,7 @@
 #include <prlock.h>
 #include <prmon.h>
 
+class nsIProxyObjectManager;
 class nsIThread;
 class nsIWeakReference;
 class sbLocalDatabaseAsyncGUIDArrayListenerInfo;
@@ -161,7 +162,8 @@ public:
   sbLocalDatabaseAsyncGUIDArrayListenerInfo();
   ~sbLocalDatabaseAsyncGUIDArrayListenerInfo();
 
-  nsresult Init(nsIWeakReference* aWeakListener);
+  nsresult Init(nsIProxyObjectManager *aProxyObjMgr,
+                nsIWeakReference* aWeakListener);
 
 private:
 

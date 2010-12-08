@@ -24,16 +24,18 @@
 
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
+#include <nsCRT.h>
+#include <nsThreadUtils.h>
+#include <nsAutoLock.h>
+
 #include <nsISimpleEnumerator.h>
 #include <nsIProxyObjectManager.h>
 #include <nsIRunnable.h>
 #include <nsIThreadManager.h>
 #include <nsIThreadPool.h>
-#include <nsThreadUtils.h>
-#include <nsAutoLock.h>
-#include <sbProxyUtils.h>
+
+#include <sbProxiedComponentManager.h>
 #include <sbStringUtils.h>
-#include <nsCRT.h>
 #include "sbFileSystemChange.h"
 
 // Save ourselves some pain by getting the path seperator char.
@@ -1029,12 +1031,15 @@ sbFileSystemTree::NotifyChanges(const nsAString & aChangePath,
                  aChangeType == eRemoved,
                  NS_ERROR_INVALID_ARG);
 
-  if (!NS_IsMainThread()) {
+  nsCOMPtr<nsIThread> currentThread;
+  nsresult rv = NS_GetCurrentThread(getter_AddRefs(currentThread));
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (currentThread != mOwnerContextThread) {
     nsCOMPtr<sbPIFileSystemTree> proxiedThis;
-    nsresult rv = SB_GetProxyForObject(mOwnerContextThread,
+    nsresult rv = do_GetProxyForObject(mOwnerContextThread,
                                        NS_GET_IID(sbPIFileSystemTree),
                                        this,
-                                       nsIProxyObjectManager::INVOKE_SYNC,
+                                       NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                                        getter_AddRefs(proxiedThis));
     NS_ENSURE_SUCCESS(rv, rv);
     rv = proxiedThis->NotifyChanges(aChangePath, aChangeType);

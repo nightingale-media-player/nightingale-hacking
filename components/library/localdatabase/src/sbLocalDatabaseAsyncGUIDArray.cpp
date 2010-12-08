@@ -36,7 +36,7 @@
 #include <prlog.h>
 #include <sbILocalDatabasePropertyCache.h>
 #include <sbLocalDatabaseCID.h>
-#include <sbProxyUtils.h>
+#include <sbProxiedComponentManager.h>
 
 #include "sbLocalDatabaseGUIDArray.h"
 
@@ -191,11 +191,17 @@ sbLocalDatabaseAsyncGUIDArray::AddAsyncListener
          this, aListener));
 
   NS_ENSURE_ARG_POINTER(aListener);
+
+  /* Acquiring this spins the event loop; do it before grabbing mSyncMonitor */
+  nsresult rv;
+  nsCOMPtr<nsIProxyObjectManager> proxyObjMgr =
+      do_ProxiedGetService(NS_XPCOMPROXY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsAutoMonitor monitor(mSyncMonitor);
 
   // See if we have already added this listener.
   PRUint32 length = mAsyncListenerArray.Length();
-  nsresult rv;
   nsCOMPtr<nsISupports> ref = do_QueryInterface(aListener, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -212,7 +218,7 @@ sbLocalDatabaseAsyncGUIDArray::AddAsyncListener
                           info(new sbLocalDatabaseAsyncGUIDArrayListenerInfo());
   NS_ENSURE_TRUE(info, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = info->Init(weak);
+  rv = info->Init(proxyObjMgr, weak);
   NS_ENSURE_SUCCESS(rv, rv);
 
   sbLocalDatabaseAsyncGUIDArrayListenerInfoAutoPtr* added =
@@ -807,7 +813,7 @@ CommandProcessor::Run()
           // so might as well shut down.
           nsCOMPtr<nsIThread> doomed;
           // Try proxying to thread
-          SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD, NS_GET_IID(nsIThread), 
+          do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD, NS_GET_IID(nsIThread), 
                 mFriendArray->mThread, NS_PROXY_ASYNC, getter_AddRefs(doomed));
           if (doomed) {
             TRACE(("sbLocalDatabaseAsyncGUIDArray[0x%x] - Background Thread End Due To Timeout", mFriendArray));
@@ -1042,8 +1048,11 @@ sbLocalDatabaseAsyncGUIDArrayListenerInfo::
 }
 
 nsresult
-sbLocalDatabaseAsyncGUIDArrayListenerInfo::Init(nsIWeakReference* aWeakListener)
+sbLocalDatabaseAsyncGUIDArrayListenerInfo::Init(
+        nsIProxyObjectManager *aProxyObjMgr,
+        nsIWeakReference* aWeakListener)
 {
+  NS_ENSURE_ARG_POINTER(aProxyObjMgr);
   NS_ASSERTION(aWeakListener, "aWeakListener is null");
   nsresult rv;
 
@@ -1053,11 +1062,14 @@ sbLocalDatabaseAsyncGUIDArrayListenerInfo::Init(nsIWeakReference* aWeakListener)
   mWeakListenerWrapper = new sbWeakAsyncListenerWrapper(aWeakListener);
   NS_ENSURE_TRUE(mWeakListenerWrapper, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
-                            NS_GET_IID(sbILocalDatabaseAsyncGUIDArrayListener),
-                            mWeakListenerWrapper,
-                            NS_PROXY_ASYNC | NS_PROXY_ALWAYS,
-                            getter_AddRefs(mProxiedListener));
+  /* Must not spin the event loop here - this is called with a lock held */
+  rv = do_GetProxyForObjectWithManager(aProxyObjMgr,
+                                       NS_PROXY_TO_CURRENT_THREAD,
+                                       NS_GET_IID(
+                                           sbILocalDatabaseAsyncGUIDArrayListener),
+                                       mWeakListenerWrapper,
+                                       NS_PROXY_ASYNC | NS_PROXY_ALWAYS,
+                                       getter_AddRefs(mProxiedListener));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

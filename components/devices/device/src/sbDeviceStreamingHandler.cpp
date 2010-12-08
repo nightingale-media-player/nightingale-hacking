@@ -45,7 +45,7 @@
 
 // Self imports.
 #include "sbDeviceStreamingHandler.h"
-#include "sbProxyUtils.h"
+#include "sbProxiedComponentManager.h"
 
 // Local imports.
 #include <nsIProxyObjectManager.h>
@@ -141,7 +141,7 @@ sbDeviceStreamingHandler::CheckTransferable()
   // ValidatePlayback dispatch DOM event. This should be on the
   // main thread.
   nsCOMPtr<sbIMediaItemController> proxiedMediaItemController;
-  rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+  rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                             NS_GET_IID(sbIMediaItemController),
                             mediaItemController,
                             NS_PROXY_SYNC | NS_PROXY_ALWAYS,

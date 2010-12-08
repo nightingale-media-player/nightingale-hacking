@@ -47,7 +47,6 @@
 #include <sbIMediacoreStatus.h>
 #include <sbIMediaItem.h>
 #include <sbProxiedComponentManager.h>
-#include <sbProxyUtils.h>
 #include <sbStandardProperties.h>
 #include <sbIDataRemote.h>
 

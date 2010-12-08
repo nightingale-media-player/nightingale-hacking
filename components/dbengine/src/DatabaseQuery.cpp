@@ -49,8 +49,9 @@
 #include <nsSupportsArray.h>
 #include <nsIClassInfoImpl.h>
 #include <nsIProgrammingLanguage.h>
+#include <nsIProxyObjectManager.h>
 
-#include <sbProxyUtils.h>
+#include <sbProxiedComponentManager.h>
 #include <sbLockUtils.h>
 
 #ifdef DEBUG_locks
@@ -211,7 +212,7 @@ NS_IMETHODIMP CDatabaseQuery::AddSimpleQueryCallback(sbIDatabaseSimpleQueryCallb
   NS_ENSURE_ARG_POINTER(dbPersistCB);
   nsCOMPtr<sbIDatabaseSimpleQueryCallback> proxiedCallback;
 
-  nsresult rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
+  nsresult rv = do_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
                                      NS_GET_IID(sbIDatabaseSimpleQueryCallback),
                                      dbPersistCB,
                                      NS_PROXY_ASYNC | NS_PROXY_ALWAYS,

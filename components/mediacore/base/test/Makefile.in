@@ -57,12 +57,15 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/mediacore/base/public \
                      $(DEPTH)/components/mediacore/manager/public \
                      $(topsrcdir)/components/include \
                      $(topsrcdir)/components/mediacore/base/src \
+                     $(topsrcdir)/components/moz/threads/src \
                      $(NULL)
                
 DYNAMIC_LIB = sbTestMediacoreBase
                
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
+
+DYNAMIC_LIB_STATIC_IMPORTS += components/moz/threads/src/sbMozThreads
 
 IS_COMPONENT = 1
 

@@ -51,9 +51,9 @@
 #include <nsServiceManagerUtils.h>
 #include <prlog.h>
 #include <rdf.h>
-#include <sbProxyUtils.h>
 #include <sbLibraryUtils.h>
 #include <sbThreadUtils.h>
+#include <sbProxiedComponentManager.h>
 
 /* for sbILibraryUtils::GetCanonicalPath */
 #if XP_WIN
@@ -858,7 +858,7 @@ sbLibraryManager::AddListener(sbILibraryManagerListener* aListener)
   // Make a proxy for the listener that will always send callbacks to the
   // current thread.
   nsCOMPtr<sbILibraryManagerListener> proxy;
-  nsresult rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
+  nsresult rv = do_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
                                      NS_GET_IID(sbILibraryManagerListener),
                                      aListener,
                                      NS_PROXY_SYNC | NS_PROXY_ALWAYS,

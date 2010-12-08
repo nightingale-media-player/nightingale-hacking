@@ -54,9 +54,6 @@
 // Local imports.
 #include "sbStringUtils.h"
 
-// Songbird imports.
-#include <sbProxyUtils.h>
-
 // Mozilla imports.
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>

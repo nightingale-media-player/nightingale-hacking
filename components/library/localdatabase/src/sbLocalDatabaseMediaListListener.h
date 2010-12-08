@@ -38,6 +38,7 @@
 #include <sbIMediaListListener.h>
 #include <sbIPropertyArray.h>
 
+class nsIProxyObjectManager;
 class nsIWeakReference;
 class nsIWeakReference;
 class sbIMediaItem;
@@ -51,11 +52,13 @@ public:
   sbListenerInfo();
   ~sbListenerInfo();
 
-  nsresult Init(sbIMediaListListener* aListener,
+  nsresult Init(nsIProxyObjectManager *aProxyObjMgr,
+                sbIMediaListListener* aListener,
                 PRUint32 aCurrentBatchDepth,
                 PRUint32 aFlags,
                 sbIPropertyArray* aPropertyFilter);
-  nsresult Init(nsIWeakReference* aWeakListener,
+  nsresult Init(nsIProxyObjectManager *aProxyObjMgr,
+                nsIWeakReference* aWeakListener,
                 PRUint32 aCurrentBatchDepth,
                 PRUint32 aFlags,
                 sbIPropertyArray* aPropertyFilter);

@@ -30,10 +30,12 @@
 #include <nsCOMPtr.h>
 #include <nsThreadUtils.h>
 #include <nsComponentManagerUtils.h>
-#include <sbProxyUtils.h>
+
 #include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
 #include <nsIVariant.h>
+
+#include <sbProxiedComponentManager.h>
 
 /**
  * Helper class for preferences to make the syntax a bit easier on the eyes
@@ -71,7 +73,7 @@ public:
     PRBool const isMainThread = NS_IsMainThread();
     if (!isMainThread) {
       nsCOMPtr<nsIPrefService> proxy;
-      rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+      rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                                 NS_GET_IID(nsIPrefService),
                                 prefService,
                                 nsIProxyObjectManager::INVOKE_SYNC,
@@ -92,7 +94,7 @@ public:
     // then we need a proxy to the prefBranch too
     if (!isMainThread && aRoot) {
       nsCOMPtr<nsIPrefBranch> proxy;
-      rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+      rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                                 NS_GET_IID(nsIPrefBranch),
                                 mPrefBranch,
                                 nsIProxyObjectManager::INVOKE_SYNC,

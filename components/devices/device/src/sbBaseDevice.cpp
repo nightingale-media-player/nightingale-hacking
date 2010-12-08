@@ -112,7 +112,7 @@
 #include <sbProxiedComponentManager.h>
 #include <sbStringBundle.h>
 #include <sbStringUtils.h>
-#include <sbThreadUtils.h>
+#include <sbProxiedComponentManager.h>
 #include <sbTranscodeUtils.h>
 #include <sbURIUtils.h>
 #include <sbVariantUtils.h>
@@ -132,7 +132,6 @@
 #include "sbDeviceXMLInfo.h"
 #include "sbLibraryListenerHelpers.h"
 #include "sbLibraryUtils.h"
-#include "sbProxyUtils.h"
 #include "sbProxiedComponentManager.h"
 #include "sbStandardDeviceProperties.h"
 #include "sbStandardProperties.h"
@@ -3448,7 +3447,7 @@ nsresult sbBaseDevice::Init()
   nsCOMPtr<nsITimer> batchEndTimer = do_CreateInstance(NS_TIMER_CONTRACTID,
                                                        &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+  rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                             NS_GET_IID(nsITimer),
                             batchEndTimer,
                             nsIProxyObjectManager::INVOKE_SYNC |
@@ -5921,7 +5920,7 @@ sbBaseDevice::SyncAddMediaList(sbIDeviceLibrary* aDstLibrary,
   // that a device listener is added for the added media list in time to get
   // notifications for the added media list items.
   nsCOMPtr<sbIDeviceLibrary> proxyDstLibrary;
-  rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+  rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                             NS_GET_IID(sbIDeviceLibrary),
                             aDstLibrary,
                             nsIProxyObjectManager::INVOKE_SYNC |

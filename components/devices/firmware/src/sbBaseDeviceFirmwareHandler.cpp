@@ -40,7 +40,6 @@
 #include <sbIDeviceEventTarget.h>
 
 #include <sbProxiedComponentManager.h>
-#include <sbProxyUtils.h>
 
 #include "sbDeviceFirmwareSupport.h"
 #include "sbDeviceFirmwareUpdate.h"
@@ -371,7 +370,7 @@ sbBaseDeviceFirmwareHandler::SendDeviceEvent(sbIDeviceEvent *aEvent,
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsCOMPtr<sbIDeviceEventListener> proxiedListener;
-      rv = SB_GetProxyForObject(mainThread,
+      rv = do_GetProxyForObject(mainThread,
                                 NS_GET_IID(sbIDeviceEventListener),
                                 listener,
                                 NS_PROXY_ALWAYS | NS_PROXY_ASYNC,

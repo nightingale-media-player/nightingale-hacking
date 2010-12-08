@@ -92,7 +92,22 @@ NS_IMETHODIMP sbTestMediacoreStressThreads::Run()
     mThreads.AppendObject(thread);
   }
 
-  // and wait for them
+  // and wait for them to receive their messages... spin event loop until that
+  // happens. We need to wait explicitly as the OnEvent method does not directly
+  // queue all the events needed to complete the test - some get queued later,
+  // so calling thread->Shutdown() at this point will not allow the test to
+  // complete correctly.
+  nsCOMPtr<nsIThread> target;
+  rv = NS_GetMainThread(getter_AddRefs(target));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool processed = PR_FALSE;
+  while(mCounter > 0) {
+    rv = target->ProcessNextEvent(PR_FALSE, &processed);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Now shutdown all the threads
   while (mThreads.Count()) {
     nsCOMPtr<nsIThread> thread = mThreads[0];
     PRBool succeeded = mThreads.RemoveObjectAt(0);

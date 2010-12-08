@@ -69,7 +69,6 @@
 #include <sbProxiedComponentManager.h>
 #include "sbStandardProperties.h"
 #include "sbStringUtils.h"
-#include "sbProxyUtils.h"
 #include <sbVariantUtils.h>
 #include <sbProxiedComponentManager.h>
 #include <sbMemoryUtils.h>

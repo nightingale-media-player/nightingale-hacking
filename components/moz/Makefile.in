@@ -41,7 +41,6 @@ SUBDIRS = strings \
           filedownloader \
           fileutils \
           prompter \
-          proxy \
           temporaryfileservice \
           threadpoolservice \
           threads \

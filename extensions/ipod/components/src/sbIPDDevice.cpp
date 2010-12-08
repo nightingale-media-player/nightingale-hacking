@@ -56,7 +56,6 @@
 #include <sbLibraryListenerHelpers.h>
 #include <sbStandardProperties.h>
 #include <sbStandardDeviceProperties.h>
-#include <sbProxyUtils.h>
 #include <sbStringUtils.h>
 
 // Mozilla imports.

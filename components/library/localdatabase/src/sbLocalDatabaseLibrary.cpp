@@ -94,13 +94,13 @@
 #include "sbLocalDatabaseSmartMediaListFactory.h"
 #include "sbLocalDatabaseGUIDArray.h"
 #include "sbMediaListEnumSingleItemHelper.h"
-#include <sbProxyUtils.h>
 #include <sbStandardProperties.h>
 #include <sbSQLBuilderCID.h>
 #include <sbTArrayStringEnumerator.h>
 #include <sbVariantUtils.h>
 #include <nsIVariant.h>
 #include <nsUnicharUtils.h>
+#include <sbProxiedComponentManager.h>
 
 #define NS_UUID_GENERATOR_CONTRACTID "@mozilla.org/uuid-generator;1"
 
@@ -2148,7 +2148,7 @@ sbLocalDatabaseLibrary::AddCopyListener(sbILocalDatabaseLibraryCopyListener *aCo
 
   nsCOMPtr<sbILocalDatabaseLibraryCopyListener> proxiedListener;
 
-  nsresult rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
+  nsresult rv = do_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
                                      NS_GET_IID(sbILocalDatabaseLibraryCopyListener),
                                      aCopyListener,
                                      NS_PROXY_ASYNC | NS_PROXY_ALWAYS,

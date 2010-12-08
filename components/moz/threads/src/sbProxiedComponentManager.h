@@ -117,11 +117,55 @@ do_ProxiedGetService(const char* aContractID, nsresult* error = 0)
   return sbCreateProxiedComponent(aContractID, PR_TRUE, error);
 }
 
+/* Get a proxy using a proxied nsIProxyObjectManager (acquired with
+   do_ProxiedGetService()).
+   This is useful because though USING a proxy may spin the event loop,
+   acquiring one via this function does not (assuming you've acquired the
+   proxy object manager earlier, where spinning the event loop is acceptable).
+ */
 inline nsresult
-do_GetProxyForObject(nsIEventTarget *target,
+do_GetProxyForObjectWithManager(nsIProxyObjectManager *aProxyObjMgr,
+                                nsIEventTarget *aTarget,
+                                REFNSIID aIID,
+                                nsISupports* aObj,
+                                PRInt32 aProxyType,
+                                void** aProxyObject)
+{
+  nsresult rv;
+  /* The proxied aProxyObjMgr can only actually proxy real target objects, so
+     the special magic values available for 'target' must be resolved here.
+   */
+  nsCOMPtr<nsIThread> thread;
+  nsCOMPtr<nsIEventTarget> target;
+  if (aTarget == NS_PROXY_TO_CURRENT_THREAD) {
+    rv = NS_GetCurrentThread(getter_AddRefs(thread));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    target = thread;
+  }
+  else if (aTarget == NS_PROXY_TO_MAIN_THREAD) {
+    rv = NS_GetMainThread(getter_AddRefs(thread));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    target = thread;
+  }
+  else {
+    target = aTarget;
+  }
+
+  rv = aProxyObjMgr->GetProxyForObject(target,
+                                       aIID,
+                                       aObj,
+                                       aProxyType,
+                                       aProxyObject);
+  return rv;
+}
+
+inline nsresult
+do_GetProxyForObject(nsIEventTarget *aTarget,
                      REFNSIID aIID,
                      nsISupports* aObj,
-                     PRInt32 proxyType,
+                     PRInt32 aProxyType,
                      void** aProxyObject)
 {
   nsresult rv;
@@ -129,12 +173,15 @@ do_GetProxyForObject(nsIEventTarget *target,
     do_ProxiedGetService(NS_XPCOMPROXY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = proxyObjMgr->GetProxyForObject(target,
-                                      aIID,
-                                      aObj,
-                                      proxyType,
-                                      aProxyObject);
-  return rv;
+  rv = do_GetProxyForObjectWithManager(proxyObjMgr,
+                                       aTarget,
+                                       aIID,
+                                       aObj,
+                                       aProxyType,
+                                       aProxyObject);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 template <class T>
