@@ -39,18 +39,33 @@
 #ifndef _DISTHERLPER_DEBUG_H__
 #define _DISTHERLPER_DEBUG_H__
 
+#include <stdarg.h>
+
 extern bool gEnableLogging;
 
+/**
+ * Display a debugging message
+ * This message is not normally shown to the user or logged to file.
+ */
 void DebugMessage(const char* fmt, ...)
 #ifdef __GNUC__
 __attribute__((format(printf, 1, 2)));
 #endif /* __GNUC__ */
 ;
 
+/**
+ * Log a message to the log file.
+ * This message will also be duplicated into a debug message.
+ */
 void LogMessage(const char* fmt, ...)
 #ifdef __GNUC__
 __attribute__((format(printf, 1, 2)))
 #endif /* __GNUC__ */
 ;
+
+/**
+ * Log a message to the log file using va_args.
+ */
+void vLogMessage(const char* fmt, va_list args);
 
 #endif /* _DISTHERLPER_DEBUG_H__ */

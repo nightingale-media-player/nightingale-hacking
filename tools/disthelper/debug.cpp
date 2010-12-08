@@ -54,13 +54,8 @@
 
 bool gEnableLogging = true;
 
-void DebugMessage(const char* fmt, ...) {
-  va_list args;
+void vDebugMessage(const char* fmt, va_list args) {
   TCHAR *buffer;
-
-  // retrieve the variable arguments
-  va_start(args, fmt);
-
   #if _MSC_VER
     tstring format = ConvertUTF8toUTFn(fmt);
     int len = _vscwprintf(format.c_str(), args) // _vscprintf doesn't count
@@ -74,10 +69,15 @@ void DebugMessage(const char* fmt, ...) {
   ::OutputDebugString(buffer);
 
   free(buffer);
+}
+void DebugMessage(const char* fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  vDebugMessage(fmt, args);
   va_end(args);
 }
 
-void LogMessage(const char* fmt, ...) {
+void vLogMessage(const char* fmt, va_list args) {
   tstring appDir(ResolvePathName("$/disthelper.log"));
   FILE* fout = _tfopen(appDir.c_str(), _T("a"));
   if (fout) {
@@ -90,8 +90,6 @@ void LogMessage(const char* fmt, ...) {
     tstring output = ConvertUTF8toUTFn(time_str);
     
     // do printf()-style formatting into a string buffer
-    va_list args;
-    va_start(args, fmt);
     TCHAR* buffer = NULL;
     #if _MSC_VER
       tstring format = ConvertUTF8toUTFn(fmt);
@@ -103,7 +101,6 @@ void LogMessage(const char* fmt, ...) {
       vasprintf(&buffer, fmt, args);
     #endif
   
-    va_end(args);
     output += tstring(buffer);
     free(buffer);
     
@@ -113,4 +110,12 @@ void LogMessage(const char* fmt, ...) {
     fclose(fout);
   }
 }
-
+void LogMessage(const char* fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  vLogMessage(fmt, args);
+  va_end(args);
+  va_start(args, fmt);
+  vDebugMessage(fmt, args);
+  va_end(args);
+}

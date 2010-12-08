@@ -433,26 +433,38 @@ tstring GetLeafName(tstring aSrc) {
 }
 
 void ShowFatalError(const char* fmt, ...) {
+  va_list args;
+
+  // Rename application.ini since if we get to this point the app is borked
+  // and we'd really rather the user attempt to uninstall/reinstall instead of
+  // trying to use a half-updated (and likely crashy) app.
   tstring appIni = ResolvePathName("$/application.ini");
   tstring bakIni = ResolvePathName("$/broken.application.ini");
   unlink(bakIni.c_str());
   rename(appIni.c_str(), bakIni.c_str());
 
+  // log the fact that the fatal error occurred into the log file
+  va_start(args, fmt);
+  vLogMessage(fmt, args);
+  va_end(args);
+
   if (_tgetenv(_T("DISTHELPER_SILENT_FAILURE"))) {
+    // we should be silent (perhaps this is a unit test?), don't show the dialog
     return;
   }
 
-  va_list args;
   TCHAR *buffer;
 
-  // retrieve the variable arguments
-  va_start(args, fmt);
+  // build the message string (prefixing it with a generic fatal message)
   tstring msg("An application update error has occurred; please re-install "
               "the application.  Your media has not been affected.\n\n"
               "Related deatails:\n\n");
   msg.append(fmt);
 
+  // build the output string and show it
+  va_start(args, fmt);
   vasprintf(&buffer, fmt, args);
+  va_end(args);
 
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   NSAlert *alert = [[NSAlert alloc] init];
@@ -461,7 +473,6 @@ void ShowFatalError(const char* fmt, ...) {
   [alert runModal];
   [pool release];
   free(buffer);
-  va_end(args);
 }
 
 int

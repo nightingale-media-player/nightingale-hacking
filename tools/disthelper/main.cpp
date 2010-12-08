@@ -43,6 +43,7 @@
 #include "tchar_compat.h"
 #endif
 #include <stdlib.h>
+#include <time.h>
 #include <vector>
 
 #include "readini.h"
@@ -71,6 +72,25 @@
 
 int main(int argc, LPTSTR *argv) {
   int result = 0;
+
+  { /* scope - log  a datestamp to mark a new disthelper invocation */
+    time_t timer;
+    time(&timer);
+    tm* now = localtime(&timer);
+    char time_str[] = "Mon Jan 01 00:00:00 1970"; // for sizing
+    size_t len = strftime(time_str,
+                          sizeof(time_str),
+                          "%a %b %d %H:%M:%S %Y", now);
+    if (len < 1) {
+      // failed to get a datestamp :|
+      strncpy(time_str, "<Unknown Date>", sizeof(time_str));
+    }
+    tstring separator(30, _T('='));
+    LogMessage("%s disthelper: %s %s",
+               separator.c_str(),
+               ConvertUTF8toUTFn(time_str).c_str(),
+               separator.c_str());
+  }
   
   if (argc != 2 && argc != 3) {
     OutputDebugString(_T("Incorrect number of arguments"));
@@ -98,11 +118,12 @@ int main(int argc, LPTSTR *argv) {
   }
   distIni = GetDistIniDirectory(ininame);
   if (distIni.empty()) {
-    DebugMessage("Failed to find distribution.ini %s", ininame);
+    LogMessage("Failed to find distribution.ini %s", ininame);
     return DH_ERROR_USER;
   }
   distIni = GetDistIniDirectory() + GetLeafName(ininame);
-  
+  LogMessage("Using distribution.ini [%s]", distIni.c_str());
+
   tstring srcAppIniName(GetDistIniDirectory()),
           destAppIniName(ResolvePathName("$/application.ini"));
   srcAppIniName.append(_T("application.ini"));
@@ -114,16 +135,12 @@ int main(int argc, LPTSTR *argv) {
     IniFile_t srcAppIni, destAppIni;
     result = ReadIniFile(srcAppIniName.c_str(), srcAppIni);
     if (result) {
-      LogMessage("Failed to read source application.ini file %s: %i",
-                 srcAppIniName.c_str(), result);
       ShowFatalError("Failed to read source application.ini file %s: %i",
                      srcAppIniName.c_str(), result);
       return result;
     }
     result = ReadIniFile(destAppIniName.c_str(), destAppIni);
     if (result) {
-      LogMessage("Failed to read destination application.ini file %s: %i",
-                 destAppIniName.c_str(), result);
       ShowFatalError("Failed to read destination application.ini file %s: %i",
                      destAppIniName.c_str(), result);
       return result;
@@ -135,9 +152,6 @@ int main(int argc, LPTSTR *argv) {
                ConvertUTF8toUTFn(srcAppVer).c_str(),
                ConvertUTF8toUTFn(destAppVer).c_str());
     if (srcAppVer != destAppVer) {
-      LogMessage("source and destination application.ini are for different builds! (%s / %s)",
-                 ConvertUTF8toUTFn(srcAppVer).c_str(),
-                 ConvertUTF8toUTFn(destAppVer).c_str());
       ShowFatalError("source and destination application.ini are for different builds! (%s / %s)",
                      ConvertUTF8toUTFn(srcAppVer).c_str(),
                      ConvertUTF8toUTFn(destAppVer).c_str());
@@ -189,8 +203,6 @@ int main(int argc, LPTSTR *argv) {
     tstring destDistIniFile = ResolvePathName(destDistPath);
     result = ReadIniFile(destDistIniFile.c_str(), destDistIni);
     if (result != DH_ERROR_OK) {
-      LogMessage("Failed to read existing distribution.ini %s",
-                 destDistIniFile.c_str());
       ShowFatalError("Failed to read existing distribution.ini %s",
                      destDistIniFile.c_str());
       return DH_ERROR_UNKNOWN;
@@ -203,12 +215,6 @@ int main(int argc, LPTSTR *argv) {
                ConvertUTF8toUTFn(newVersion).c_str());
     if (VersionLessThan()(newVersion, oldVersion)) {
       // the new version is older than the old version? abort!
-      LogMessage("Existing distribution.ini %s has version %s, "
-                 "which is newer than replacement %s of version %s",
-                 ResolvePathName(destDistPath).c_str(),
-                 ConvertUTF8toUTFn(oldVersion).c_str(),
-                 distIni.c_str(),
-                 ConvertUTF8toUTFn(newVersion).c_str());
       ShowFatalError("existing distribution.ini %s has version %s, "
                      "which is newer than replacement %s of version %s",
                      ResolvePathName(destDistPath).c_str(),
@@ -261,6 +267,8 @@ int main(int argc, LPTSTR *argv) {
     }
   #endif
   IniEntry_t::const_iterator it, end = iniFile[section].end();
+  LogMessage("Running steps in section [%s]",
+             ConvertUTF8toUTFn(section).c_str());
 
   for (it = iniFile[section].begin(); it != end; ++it) {
     std::string line = it->second;

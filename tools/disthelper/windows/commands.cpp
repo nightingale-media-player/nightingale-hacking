@@ -346,35 +346,38 @@ tstring GetAppResoucesDirectory() {
 tstring gDistIniDirectory;
 tstring GetDistIniDirectory(const TCHAR *aPath) {
   if (aPath) {
-    TCHAR buffer[MAX_PATH];
+    TCHAR buffer[MAX_PATH], path[MAX_PATH];
     _tcsncpy(buffer, GetAppResoucesDirectory().c_str(), NS_ARRAY_LENGTH(buffer));
     buffer[NS_ARRAY_LENGTH(buffer) - 1] = _T('\0');
     // the PathAppend call will correctly copy aPath over if it is already an
     // absolute path; otherwise, it will append aPath to the app directory
-    if (!::PathAppend(buffer, aPath)) {
-      DebugMessage("Failed to resolve dist.ini path %s", aPath);
+    // Sadly, it doesn't understand forward slashes...
+    for (int i = 0; i < MAX_PATH; ++i) {
+      path[i] = (aPath[i] == _T('/') ? _T('\\') : aPath[i]);
+      if (!aPath[i]) break;
+    }
+    if (!::PathAppend(buffer, path)) {
+      LogMessage("Failed to resolve dist.ini path %s", path);
       return tstring(_T(""));
     }
 
     // if the given file doesn't exist, bail (because there are no actions)
     if (!::PathFileExists(buffer)) {
-      DebugMessage("File %s doesn't exist, bailing", buffer);
+      LogMessage("File %s doesn't exist, bailing", buffer);
       return tstring(_T(""));
     }
 
     // now remove the file name
     if (!::PathRemoveFileSpec(buffer)) {
-      DebugMessage("Failed to find directory name for %s", buffer);
+      LogMessage("Failed to find directory name for %s", buffer);
       return tstring(_T(""));
     }
     if (!::PathAddBackslash(buffer)) {
-      DebugMessage("Failed to add trailing backslash to %s", buffer);
+      LogMessage("Failed to add trailing backslash to %s", buffer);
       return tstring(_T(""));
     }
 
-    #if DEBUG
-      DebugMessage("found distribution path %s", buffer);
-    #endif
+    DebugMessage("Found distribution path %s", buffer);
     gDistIniDirectory = buffer;
   }
   return gDistIniDirectory;
@@ -394,37 +397,51 @@ tstring GetLeafName(tstring aSrc) {
 }
 
 void ShowFatalError(const char* fmt, ...) {
+  va_list args;
+
+  // Rename application.ini since if we get to this point the app is borked
+  // and we'd really rather the user attempt to uninstall/reinstall instead of
+  // trying to use a half-updated (and likely crashy) app.
   tstring appIni = ResolvePathName("$/application.ini");
   tstring bakIni = ResolvePathName("$/broken.application.ini");
   _tunlink(bakIni.c_str());
   _trename(appIni.c_str(), bakIni.c_str());
 
+  // log the fact that the fatal error occurred into the log file
+  va_start(args, fmt);
+  vLogMessage(fmt, args);
+  va_end(args);
+
   if (_tgetenv(_T("DISTHELPER_SILENT_FAILURE"))) {
+    // we should be silent (perhaps this is a unit test?), don't show the dialog
     return;
   }
 
-  va_list args;
   int len;
   TCHAR *buffer;
 
-  // retrieve the variable arguments
-  va_start(args, fmt);
+  // build the message string (prefixing it with a generic fatal message)
   tstring msg(_T("An application update error has occurred; please re-install ")
               _T("the application.  Your media has not been affected.\n\n")
               _T("Related deatails:\n\n"));
   msg.append(ConvertUTF8toUTFn(fmt));
-  
+
+  // figure out the memory requirements
+  va_start(args, fmt);
   len = _vsctprintf(msg.c_str(), args) // _vscprintf doesn't count
           + 1;                         // terminating '\0'
+  va_end(args);
   
   buffer = (TCHAR*)malloc(len * sizeof(TCHAR));
 
+  // build the output string and show it
+  va_start(args, fmt);
   _vstprintf_s(buffer, len, msg.c_str(), args);
+  va_end(args);
   ::MessageBox(NULL,
                buffer,
                _T("Update Distribution Helper"),
                MB_OK | MB_ICONERROR);
 
   free(buffer);
-  va_end(args);
 }

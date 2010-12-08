@@ -143,7 +143,11 @@ tstring GetLeafName(tstring aSrc);
 /**
  * Report a generic fatal error to the user, and prevent the application from running
  */
-void ShowFatalError(const char* fmt, ...);
+void ShowFatalError(const char* fmt, ...)
+#ifdef __GNUC__
+__attribute__((format(printf, 1, 2)));
+#endif /* __GNUC__ */
+;
 
 #if defined(XP_MACOSX)
 /**
