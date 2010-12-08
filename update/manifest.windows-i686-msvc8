@@ -202,8 +202,6 @@
 ./components/sbPrompter.xpt
 ./components/sbProperties.dll
 ./components/sbProperties.xpt
-./components/sbProxiedServices.dll
-./components/sbProxiedServices.xpt
 ./components/sbPublicPlaylistCommands.js
 ./components/sbRemoveHelper.js
 ./components/sbSQLBuilder.dll

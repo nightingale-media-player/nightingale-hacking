@@ -198,8 +198,6 @@
 ./components/sbPrompter.xpt
 ./components/sbProperties.dylib
 ./components/sbProperties.xpt
-./components/sbProxiedServices.dylib
-./components/sbProxiedServices.xpt
 ./components/sbPublicPlaylistCommands.js
 ./components/sbRemoveHelper.js
 ./components/sbSQLBuilder.dylib

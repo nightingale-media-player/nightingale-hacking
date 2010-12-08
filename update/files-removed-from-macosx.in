@@ -453,6 +453,7 @@
 ./Contents/Resources/components/sbPlaylistWriter.xpt
 ./Contents/Resources/components/sbPrompter.xpt
 ./Contents/Resources/components/sbProperties.xpt
+./Contents/Resources/components/sbProxiedServices.dylib
 ./Contents/Resources/components/sbProxiedServices.xpt
 ./Contents/Resources/components/sbSQLBuilder.xpt
 ./Contents/Resources/components/sbServicePane.xpt

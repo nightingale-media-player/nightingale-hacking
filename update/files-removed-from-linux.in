@@ -192,6 +192,7 @@
 ./components/sbPlaylistWriter.xpt
 ./components/sbPrompter.xpt
 ./components/sbProperties.xpt
+./components/sbProxiedServices.so
 ./components/sbProxiedServices.xpt
 ./components/sbSQLBuilder.xpt
 ./components/sbServicePane.xpt
