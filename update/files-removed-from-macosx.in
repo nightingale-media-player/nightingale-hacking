@@ -618,13 +618,13 @@
 ./Contents/Frameworks/XUL.framework/mangle
 ./Contents/Frameworks/XUL.framework/libwidget.rsrc
 ./Contents/Resources/components/browsersearch.xpt
-./Contents/Resources/components/exthelper.xpt 
+./Contents/Resources/components/exthelper.xpt
 ./Contents/Resources/components/nsSearchService.js
 ./Contents/Resources/components/nsSearchSuggestions.js
 ./Contents/Frameworks/XUL.framework/modules/JSON.jsm
 ./Contents/Frameworks/XUL.framework/plugins/Default Plugin.plugin/Contents/MacOS/Default Plugin
 ./Contents/Frameworks/XUL.framework/plugins/Default Plugin.plugin/Contents/MacOS/
-./Contents/Frameworks/XUL.framework/plugins/Default Plugin.plugin/Contents/Resources/English.lproj/InfoPlist.strings 
+./Contents/Frameworks/XUL.framework/plugins/Default Plugin.plugin/Contents/Resources/English.lproj/InfoPlist.strings
 ./Contents/Frameworks/XUL.framework/plugins/Default Plugin.plugin/Contents/Resources/English.lproj/
 ./Contents/Frameworks/XUL.framework/plugins/Default Plugin.plugin/Contents/Resources/Default Plugin.rsrc
 ./Contents/Frameworks/XUL.framework/plugins/Default Plugin.plugin/Contents/Resources/
