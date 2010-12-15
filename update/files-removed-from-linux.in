@@ -367,3 +367,9 @@
 ./xulrunner/modules/JSON.jsm
 ./xulrunner/res/broken-image.gif
 ./xulrunner/res/loading-image.gif
+./components/compreg.dat
+./components/xpti.dat
+./components/xptitemp.dat
+./xulrunner/components/compreg.dat
+./xulrunner/components/xpti.dat
+./xulrunner/components/xptitemp.dat

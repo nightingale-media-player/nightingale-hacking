@@ -606,6 +606,9 @@
 ./Contents/Frameworks/XUL.framework/components/xuldoc.xpt
 ./Contents/Frameworks/XUL.framework/components/xultmpl.xpt
 ./Contents/Frameworks/XUL.framework/components/zipwriter.xpt
+./Contents/Frameworks/XUL.framework/components/compreg.dat
+./Contents/Frameworks/XUL.framework/components/xpti.dat
+./Contents/Frameworks/XUL.framework/components/xptitemp.dat
 ./Contents/Frameworks/XUL.framework/regxpcom
 ./Contents/Frameworks/XUL.framework/xpcshell
 ./Contents/Frameworks/XUL.framework/xpidl
@@ -621,6 +624,9 @@
 ./Contents/Resources/components/exthelper.xpt
 ./Contents/Resources/components/nsSearchService.js
 ./Contents/Resources/components/nsSearchSuggestions.js
+./Contents/Resources/components/compreg.dat
+./Contents/Resources/components/xpti.dat
+./Contents/Resources/components/xptitemp.dat
 ./Contents/Frameworks/XUL.framework/modules/JSON.jsm
 ./Contents/Frameworks/XUL.framework/plugins/Default Plugin.plugin/Contents/MacOS/Default Plugin
 ./Contents/Frameworks/XUL.framework/plugins/Default Plugin.plugin/Contents/MacOS/
