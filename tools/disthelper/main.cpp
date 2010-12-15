@@ -258,14 +258,6 @@ int main(int argc, LPTSTR *argv) {
   section.assign(ConvertUTFnToUTF8(argv[1]));
   section.insert(0, "steps:");
   section.append(DH_PLATFORM_STR);
-  #ifdef XP_WIN
-    if (iniFile.find(section) == iniFile.end()) {
-      // no platform-specific steps. fallback to old style on windows only
-      // (since this whole thing used to be Windows-only)
-      section.assign(ConvertUTFnToUTF8(argv[1]));
-      section.insert(0, "steps:");
-    }
-  #endif
   IniEntry_t::const_iterator it, end = iniFile[section].end();
   LogMessage("Running steps in section [%s]",
              ConvertUTF8toUTFn(section).c_str());
