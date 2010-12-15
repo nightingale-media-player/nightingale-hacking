@@ -1,5 +1,5 @@
 #filter substitution
-[steps:update]
+[steps:update:win]
 0001=exec $APPDIR$cdriphelper.exe upgrade
 0002=exec $APPDIR$rdsconfig.exe upgrade
 0003=exec $APPDIR$sbAutoPlayUtil.exe -Upgrade
