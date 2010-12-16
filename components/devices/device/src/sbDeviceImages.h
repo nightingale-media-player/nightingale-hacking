@@ -35,7 +35,6 @@
 #include "sbBaseDevice.h"
 #include "sbIDeviceImage.h"
 
-struct sbBaseDevice::TransferRequest;
 class sbIFileScanQuery;
 
 class sbDeviceImages

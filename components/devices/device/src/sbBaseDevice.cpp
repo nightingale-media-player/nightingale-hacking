@@ -147,6 +147,9 @@
 PRLogModuleInfo* gBaseDeviceLog = nsnull;
 #define LOG(args)   PR_LOG(gBaseDeviceLog, PR_LOG_WARN,  args)
 #define TRACE(args) PR_LOG(gBaseDeviceLog, PR_LOG_DEBUG, args)
+#ifdef __GNUC__
+#define __FUNCTION__ __PRETTY_FUNCTION__
+#endif /* __GNUC__ */
 #else
 #define LOG(args)  do{ } while(0)
 #define TRACE(args) do { } while(0)
@@ -3588,6 +3591,7 @@ sbBaseDevice::SupportsMediaItemDRM(sbIMediaItem* aMediaItem,
 nsresult
 sbBaseDevice::AddVolume(sbBaseDeviceVolume* aVolume)
 {
+  TRACE(("%s[%p]", __FUNCTION__, this));
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aVolume);
 
@@ -4045,6 +4049,7 @@ sbBaseDevice::InitializeProperties()
 nsresult
 sbBaseDevice::UpdateProperties()
 {
+  TRACE(("%s[%p]", __FUNCTION__, this));
   nsresult rv;
 
   // Update the device statistics properties.
@@ -4088,6 +4093,8 @@ sbBaseDevice::UpdateStatisticsProperties()
     volumeList = mVolumeList;
   }
 
+  TRACE(("%s[%p] (%u volumes)", __FUNCTION__, this, volumeList.Length()));
+
   // Update the statistics properties for all volumes.
   for (PRUint32 i = 0; i < volumeList.Length(); i++) {
     // Get the volume.
@@ -4097,8 +4104,18 @@ sbBaseDevice::UpdateStatisticsProperties()
     PRBool isMounted;
     rv = volume->GetIsMounted(&isMounted);
     NS_ENSURE_SUCCESS(rv, rv);
-    if (!isMounted)
+    if (!isMounted) {
+      #if PR_LOGGING
+        nsString volumeGuid;
+        rv = volume->GetGUID(volumeGuid);
+        if (NS_FAILED(rv)) volumeGuid.AssignLiteral("<unknown guid>");
+        TRACE(("%s[%p] - volume %s not mounted",
+               __FUNCTION__,
+               this,
+               NS_ConvertUTF16toUTF8(volumeGuid).get()));
+      #endif /* PR_LOGGING */
       continue;
+    }
 
     // Get the volume library and statistics.
     nsCOMPtr<sbIDeviceLibrary>   deviceLibrary;
@@ -4114,41 +4131,81 @@ sbBaseDevice::UpdateStatisticsProperties()
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_ITEM_COUNT),
             sbAutoString(deviceStatistics->AudioCount()));
     NS_ENSURE_SUCCESS(rv, rv);
+    TRACE(("%s[%p]: %s = %u",
+           __FUNCTION__,
+           this,
+           "AudioCount",
+           deviceStatistics->AudioCount()));
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_USED_SPACE),
             sbAutoString(deviceStatistics->AudioUsed()));
     NS_ENSURE_SUCCESS(rv, rv);
+    TRACE(("%s[%p]: %s = %llu",
+           __FUNCTION__,
+           this,
+           "AudioUsed",
+           deviceStatistics->AudioUsed()));
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_TOTAL_PLAY_TIME),
             sbAutoString(deviceStatistics->AudioPlayTime()));
     NS_ENSURE_SUCCESS(rv, rv);
+    TRACE(("%s[%p]: %s = %llu",
+           __FUNCTION__,
+           this,
+           "AudioPlayTime",
+           deviceStatistics->AudioPlayTime()));
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_ITEM_COUNT),
             sbAutoString(deviceStatistics->VideoCount()));
     NS_ENSURE_SUCCESS(rv, rv);
+    TRACE(("%s[%p]: %s = %u",
+           __FUNCTION__,
+           this,
+           "VideoCount",
+           deviceStatistics->VideoCount()));
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_USED_SPACE),
             sbAutoString(deviceStatistics->VideoUsed()));
     NS_ENSURE_SUCCESS(rv, rv);
+    TRACE(("%s[%p]: %s = %llu",
+           __FUNCTION__,
+           this,
+           "VideoUsed",
+           deviceStatistics->VideoUsed()));
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_TOTAL_PLAY_TIME),
             sbAutoString(deviceStatistics->VideoPlayTime()));
     NS_ENSURE_SUCCESS(rv, rv);
+    TRACE(("%s[%p]: %s = %llu",
+           __FUNCTION__,
+           this,
+           "VideoPlayTime",
+           deviceStatistics->VideoPlayTime()));
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMAGE_ITEM_COUNT),
             sbAutoString(deviceStatistics->ImageCount()));
     NS_ENSURE_SUCCESS(rv, rv);
+    TRACE(("%s[%p]: %s = %u",
+           __FUNCTION__,
+           this,
+           "ImageCount",
+           deviceStatistics->ImageCount()));
     rv = UpdateLibraryProperty
            (deviceLibrary,
             NS_LITERAL_STRING(SB_DEVICE_PROPERTY_IMAGE_USED_SPACE),
             sbAutoString(deviceStatistics->ImageUsed()));
     NS_ENSURE_SUCCESS(rv, rv);
+    TRACE(("%s[%p]: %s = %llu",
+           __FUNCTION__,
+           this,
+           "ImageUsed",
+           deviceStatistics->ImageUsed()));
   }
 
   return NS_OK;
@@ -4841,7 +4898,7 @@ nsresult sbBaseDevice::GetLocalDeviceDir(nsIFile** aLocalDeviceDir)
   NS_ENSURE_SUCCESS(rv, rv);
   if (!exists) {
     rv = localDeviceDir->Create(nsIFile::DIRECTORY_TYPE,
-                                SB_DEFAULT_FILE_PERMISSIONS);
+                                SB_DEFAULT_DIRECTORY_PERMISSIONS);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -4878,7 +4935,18 @@ nsresult sbBaseDevice::GetLocalDeviceDir(nsIFile** aLocalDeviceDir)
   NS_ENSURE_SUCCESS(rv, rv);
   if (!exists) {
     rv = localDeviceDir->Create(nsIFile::DIRECTORY_TYPE,
-                                SB_DEFAULT_FILE_PERMISSIONS);
+                                SB_DEFAULT_DIRECTORY_PERMISSIONS);
+    #if PR_LOGGING
+      if (NS_FAILED(rv)) {
+        nsString path;
+        nsresult rv2 = localDeviceDir->GetPath(path);
+        if (NS_FAILED(rv2)) path.AssignLiteral("<unknown>");
+        TRACE(("%s[%p]: Failed to create device directory %s",
+               __FUNCTION__,
+               this,
+               NS_ConvertUTF16toUTF8(path).BeginReading()));
+      }
+    #endif /* PR_LOGGING */
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
