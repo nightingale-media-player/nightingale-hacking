@@ -905,6 +905,11 @@ sbGStreamerAudioProcessor::SendDataToListener()
 
   nsAutoMonitor mon(mMonitor);
 
+  // It's possible that the pipeline was stopped (on the main thread) before
+  // this queued event was run; in that case we just return.
+  if (!mPipeline)
+    return;
+
   NS_ASSERTION(HasEnoughData(), "Asked to send data, but cannot");
 
   if (mSuspended)
