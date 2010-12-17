@@ -90,7 +90,7 @@ CPlaylistCommandsManager::FindOrCreateRootCommand(commandobjmap_t *map,
   commandobjmap_t::iterator iter = map->find(searchString);
   if (iter != map->end()) {
     // if we find a root playlistCommands object, return it
-    rootCommand =  iter->second;
+    rootCommand = iter->second;
   }
   else {
     // if we can't find a root playlistCommands object, make one
@@ -193,6 +193,19 @@ CPlaylistCommandsManager::UnregisterPlaylistCommands
       rootCommand = iter->second;
       rv = rootCommand->RemoveCommandObject(aCommandObj);
       NS_ENSURE_SUCCESS(rv, rv);
+
+      PRInt32 numCommands;
+      rv = rootCommand->GetNumCommands(SBVoidString(),
+                                       SBVoidString(),
+                                       &numCommands);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (numCommands == 0) {
+        rv = rootCommand->ShutdownCommands();
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        map->erase(iter);
+      }
     }
   }
 
@@ -202,6 +215,19 @@ CPlaylistCommandsManager::UnregisterPlaylistCommands
       rootCommand = iter->second;
       rv = rootCommand->RemoveCommandObject(aCommandObj);
       NS_ENSURE_SUCCESS(rv, rv);
+
+      PRInt32 numCommands;
+      rv = rootCommand->GetNumCommands(SBVoidString(),
+                                       SBVoidString(),
+                                       &numCommands);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (numCommands == 0) {
+        rv = rootCommand->ShutdownCommands();
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        map->erase(iter);
+      }
     }
   }
 
@@ -487,15 +513,23 @@ CPlaylistCommandsManager::RemoveListenerInListenerMap
   {
     // the m_ListenerMap stores an nsCOMArray of listeners that we need to scan
     // to find the listener that we want to remove
-    nsCOMArray<sbIPlaylistCommandsListener> listeners = foundListeners->second;
-    PRUint32 length = listeners.Count();
+    nsCOMArray<sbIPlaylistCommandsListener> *listeners = &foundListeners->second;
+    PRUint32 length = listeners->Count();
     for (PRUint32 i=0; i < length; i++)
     {
-      if (listeners[i] == aListener)
+      if ((*listeners)[i] == aListener)
       {
-        listeners.RemoveObjectAt(i);
+        listeners->RemoveObjectAt(i);
         i--;
         length--;
+
+        // Check if we removed the last element in that array of listeners.
+        // If we did, remove that array from the map.
+        if (length == 0)
+        {
+          m_ListenerMap.erase(foundListeners);
+          return NS_OK;
+        }
       }
     }
   }

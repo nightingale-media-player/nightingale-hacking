@@ -29,6 +29,7 @@ interface nsIDOMNode;
 interface nsIDOMWindow;
 interface sbIPlaylistCommandsContext;
 interface sbIPlaylistCommandsListener;
+interface sbIPlaylistCommandsBuilderPCCallback;
 interface sbIMediaItem;
 interface sbIMediaList;
 interface nsISimpleEnumerator;
@@ -68,6 +69,23 @@ interface sbIPlaylistCommands : nsISupports
   * registered.
   */
   readonly attribute AString id;
+
+  /**
+   * \brief Flags of the form specified in sbIPlaylistCommandsHelper.idl
+   * to indicate the current location of this command object.  These flags are
+   * only set by the functions of sbIPlaylistCommandsHelper currently, so
+   * may not be present in sbIPlaylistCommands created and added through other
+   * means.
+   * If these flags are not present, or equal 0, then the sbIPlaylistCommands
+   * object is not informed of its current location.
+   * As well, because of issues removing objects with the sbIPlaylistCommandsHelper
+   * functions that were not created or added in through that service, these flags
+   * can, in that situation, inaccurately report that an object is somewhere
+   * that it is actually not present (namely one of the mediaitem context menu
+   * or toolbar).  These flags will always, however, accurately report where
+   * this playlist command is _not_.
+   */
+  attribute PRUint16 targetFlags;
 
   /**
   * \brief The parent sbIPlaylistCommands of this object.  The parentCommandObject
@@ -129,6 +147,15 @@ interface sbIPlaylistCommands : nsISupports
   * \return Whether to instantiate the commands for this host or not
   */
   PRBool getVisible( in AString aHost );
+
+  /**
+  * \brief Return the current visibility callback method that determines where
+  * this object will be visible.
+  *
+  * \return The sbIPlaylistCommandsBuilderPCCallback visibility callback
+  * of this object
+  */
+  readonly attribute sbIPlaylistCommandsBuilderPCCallback visibleCallback;
 
   /**
   * \brief Be informed when a set of commands are attached to a playlist element.
@@ -352,18 +379,6 @@ interface sbIPlaylistCommands : nsISupports
   sbIPlaylistCommands getCommandSubObject( in AString aSubMenu,
                                            in PRInt32 aIndex,
                                            in AString aHost );
-
-  /**
-  * \brief Return a child sbIPlaylistCommands (returns the original)
-  *
-  * \param aSubMenu The submenu for which the data is being requested
-  * \param aIndex The index of the element for which the data is being requested
-  * \param aHost The type of object hosting the command
-  * \return An sbIPlaylistCommands interface to a secondary command object
-  */
-  sbIPlaylistCommands getOriginalCommandSubObject( in AString aSubMenu,
-                                                   in PRInt32 aIndex,
-                                                   in AString aHost );
 
   /**
   * \brief Returns all sbIPlaylistCommands that are children of this

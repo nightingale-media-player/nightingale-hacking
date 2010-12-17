@@ -344,6 +344,19 @@ sbRemoteCommands::GetId(nsAString & _retval NS_OUTPARAM)
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+/* attribute PRUint16 targetFlags */
+NS_IMETHODIMP
+sbRemoteCommands::GetTargetFlags(PRUint16 *_retval)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+sbRemoteCommands::SetTargetFlags(PRUint16 targetFlags)
+{
+    return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 /* attribute sbIPlaylistCommands parentCommandObject */
 NS_IMETHODIMP
 sbRemoteCommands::GetParentCommandObject(sbIPlaylistCommands **_retval)
@@ -424,6 +437,14 @@ sbRemoteCommands::GetCommandVisible( const nsAString &aSubMenu,
 }
 
 NS_IMETHODIMP
+sbRemoteCommands::GetVisibleCallback(sbIPlaylistCommandsBuilderPCCallback **_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = nsnull;
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
 sbRemoteCommands::GetCommandFlag( const nsAString &aSubMenu,
                                   PRInt32 aIndex,
                                   const nsAString &aHost,
@@ -480,6 +501,7 @@ sbRemoteCommands::GetCommandShortcutLocal( const nsAString &aSubMenu,
                                            const nsAString &aHost,
                                            PRBool *_retval)
 {
+  NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_TRUE;
   return NS_OK;
 }
@@ -500,22 +522,15 @@ sbRemoteCommands::GetCommandSubObject( const nsAString &aSubMenu,
                                       const nsAString &aHost,
                                       sbIPlaylistCommands **_retval)
 {
+  NS_ENSURE_ARG_POINTER(_retval);
   *_retval = nsnull;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbRemoteCommands::GetOriginalCommandSubObject( const nsAString & aSubMenu,
-                                               PRInt32 aIndex,
-                                               const nsAString & aHost,
-                                               sbIPlaylistCommands **_retval)
-{
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
 sbRemoteCommands::GetChildrenCommandObjects(nsISimpleEnumerator **_retval)
 {
+  NS_ENSURE_ARG_POINTER(_retval);
   *_retval = nsnull;
   return NS_ERROR_NOT_IMPLEMENTED;
 }

@@ -27,11 +27,8 @@
  * \brief Songbird PlaylistCommandsHelper Component Definition.
  */
 
-
 #ifndef __SBPLAYLISTCOMMANDS_HELPER_H__
 #define __SBPLAYLISTCOMMANDS_HELPER_H__
-
-
 
 #include "sbIPlaylistCommands.h"
 #include "sbIPlaylistCommandsHelper.h"
@@ -65,7 +62,50 @@ public:
                                 const nsModuleComponentInfo *aInfo);
 
 private:
-  ~sbPlaylistCommandsHelper();
+  virtual ~sbPlaylistCommandsHelper();
+
+  nsresult sbPlaylistCommandsHelper::AddToServicePane
+                                     (const nsAString     &aMediaListGUID,
+                                      const nsAString     &aMediaListType,
+                                      sbIPlaylistCommands *aCommandObject);
+
+  nsresult sbPlaylistCommandsHelper::AddToMediaItemContextMenu
+                                     (const nsAString     &aMediaListGUID,
+                                      const nsAString     &aMediaListType,
+                                      sbIPlaylistCommands *aCommandObject);
+
+  nsresult sbPlaylistCommandsHelper::AddToToolbar
+                                     (const nsAString     &aMediaListGUID,
+                                      const nsAString     &aMediaListType,
+                                      sbIPlaylistCommands *aCommandObject);
+
+  nsresult sbPlaylistCommandsHelper::AddCommandObject
+                                     (PRUint16            aTargetFlags,
+                                      const nsAString     &aMediaListGUID,
+                                      const nsAString     &aMediaListType,
+                                      sbIPlaylistCommands *aCommandObject);
+
+  nsresult sbPlaylistCommandsHelper::SetRemainingFlags
+                                     (PRUint16            aTargetFlags,
+                                      sbIPlaylistCommands *aCommandObject);
+
+  nsresult sbPlaylistCommandsHelper::RemoveCommandObject
+                                     (PRUint16            aTargetFlags,
+                                      const nsAString     &aMediaListGUID,
+                                      const nsAString     &aMediaListType,
+                                      sbIPlaylistCommands *aCommandObject);
+
+  nsresult sbPlaylistCommandsHelper::GetCommandObject
+                                     (PRUint16             aTargetFlag,
+                                      const nsAString      &aMediaListGUID,
+                                      const nsAString      &aMediaListType,
+                                      const nsAString      &aCommandId,
+                                      sbIPlaylistCommands  **_retval);
+
+  nsresult sbPlaylistCommandsHelper::GetChildCommandWithId
+                                     (sbIPlaylistCommands *parentCommand,
+                                      const nsAString     &aCommandId,
+                                      sbIPlaylistCommands **_retval);
 
 protected:
   /* additional members */

@@ -40,6 +40,7 @@ interface sbIPlaylistCommandsBuilderSimpleCallback;
 [scriptable, uuid(8f94e630-1dd2-11b2-848d-eac62dd0dbd4)]
 interface sbIPlaylistCommandsHelper : nsISupports
 {
+
   /**
    * \brief A flag referring to the context menu that appears from the
    * service pane node. */
@@ -78,11 +79,11 @@ interface sbIPlaylistCommandsHelper : nsISupports
   * \return The new sbIPlaylistCommands object
   * \sa sbIPlaylistCommands, sbIPlaylistCommandsBuilder
   */
-  sbIPlaylistCommands createCommandObjectForAction
-                      (in AString aCommandId,
-                       in AString aLabel,
-                       in AString aTooltipText,
-                       in sbIPlaylistCommandsBuilderSimpleCallback aCallback);
+  sbIPlaylistCommandsBuilder createCommandObjectForAction
+                             (in AString aCommandId,
+                              in AString aLabel,
+                              in AString aTooltipText,
+                              in sbIPlaylistCommandsBuilderSimpleCallback aCallback);
 
  /**
   * \brief Add a command object to medialists of the specified type.  Generally
@@ -239,7 +240,7 @@ interface sbIPlaylistCommandsHelper : nsISupports
   * registered to multiple locations and, if this is the case with the returned
   * command object, modifications to the returned command object will appear in
   * the aTargetFlag location as well as in the other locations.  To guard against
-  * unexpected side effects, the caller can check the targetFlag attribute
+  * unexpected side effects, the caller can check the targetFlags attribute
   * of the returned sbIPlaylistCommands object if that command object was
   * added using this API.
   *
@@ -266,7 +267,7 @@ interface sbIPlaylistCommandsHelper : nsISupports
   * registered to multiple locations and, if this is the case with the returned
   * command object, modifications to the returned command object will appear in
   * the aTargetFlag location as well as in the other locations.  To guard against
-  * unexpected side effects, the caller can check the targetFlag attribute
+  * unexpected side effects, the caller can check the targetFlags attribute
   * of the returned sbIPlaylistCommands object if that command object was
   * added using this API.
   *

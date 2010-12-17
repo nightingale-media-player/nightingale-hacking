@@ -59,6 +59,7 @@ function PlaylistCommandsBuilder() {
   this.m_listeners = new Array();
   this.id = null;
   this.parentCommandObject = null;
+  this.targetFlags = 0;
 }
 
 // ----------------------------------------------------------------------------
@@ -698,8 +699,8 @@ PlaylistCommandsBuilder.prototype = {
       this._removeCommandTree(menu, index);
     }
     else {
-      throw new Error("A command object with an id of " + aCommandId +
-                      " could not be found for removal");
+      Components.utils.reportError("A command object with an id of " + aCommandId +
+                                   " could not be found for removal");
     }
   },
 
@@ -734,6 +735,8 @@ PlaylistCommandsBuilder.prototype = {
     this.m_Context.window = null;
     this.m_Context.commands = this;
     this.m_Context = null;
+    this.m_CommandSubObject = null;
+    this.parentCommandObject = null;
   },
 
 // ----------------------------------------------------------------------------
@@ -826,8 +829,7 @@ PlaylistCommandsBuilder.prototype = {
                                                              interfaces.
                                                              sbIPlaylistCommands);
         aCommandSubObject.parentCommandObject = this;
-        item.m_CommandSubObject = aCommandSubObject.duplicate();
-        item.m_OriginalCommandSubObject = aCommandSubObject;
+        item.m_CommandSubObject = aCommandSubObject;
         break;
       case SONGBIRD_PLAYLISTCOMMANDS_TYPE_MENU:
       case SONGBIRD_PLAYLISTCOMMANDS_TYPE_CHOICE:
@@ -1264,22 +1266,12 @@ PlaylistCommandsBuilder.prototype = {
                                     null);
   },
 
-  getOriginalCommandSubObject: function
-    PlaylistCommandsBuilder_getOriginalCommandSubObject( aSubMenuId, aIndex, aHost )
-  {
-    return this._getCommandProperty(aSubMenuId,
-                                    aIndex,
-                                    aHost,
-                                    "m_OriginalCommandSubObject",
-                                    null);
-  },
-
   getChildrenCommandObjects: function
     PlaylistCommandsBuilder_getChildrenCommandObjects()
   {
     var subCommandArray = new Array();
     for (var i=0; i < this.getNumCommands(null, null); i++) {
-      var subCommand = this.getOriginalCommandSubObject("", i, "");
+      var subCommand = this.getCommandSubObject("", i, "");
       subCommandArray.push(subCommand);
     }
     return ArrayConverter.enumerator(subCommandArray);
@@ -1326,7 +1318,7 @@ PlaylistCommandsBuilder.prototype = {
         var item = this.dupObject(this.m_menus[i].m_Menu[j]);
         // if the item is an sbIPlaylistCommands sub-object, duplicate it as well
         if (item.m_CommandSubObject) {
-          item.m_CommandSubObject = item.m_OriginalCommandSubObject.duplicate();
+          item.m_CommandSubObject = item.m_CommandSubObject.duplicate();
         }
         menuitem.m_Menu.push(item);
       }

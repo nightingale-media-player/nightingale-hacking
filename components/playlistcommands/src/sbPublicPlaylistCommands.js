@@ -1442,6 +1442,22 @@ PublicPlaylistCommands.prototype = {
                                           "",
                                           this.m_webMediaHistoryToolbarCommands);
 
+    // Un-register the playqueue commands
+    var queueService = Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
+                         .getService(Ci.sbIPlayQueueService);
+    var playQueueListGUID = queueService.mediaList.guid;
+
+    this.m_mgr.
+      unregisterPlaylistCommandsMediaItem(playQueueListGUID,
+                                          "",
+                                          this.m_playQueueCommands);
+
+    this.m_mgr.
+      unregisterPlaylistCommandsMediaItem(playQueueListGUID,
+                                          "",
+                                          this.m_playQueueLibraryCommands);
+
+
     // Un-register smart playlist commands
 
     this.m_mgr.
@@ -1495,6 +1511,9 @@ PublicPlaylistCommands.prototype = {
     this.m_serviceTreeDefaultCommands.shutdown();
     this.m_deviceLibraryCommands.shutdown();
     this.m_cdDeviceLibraryCommands.shutdown();
+    this.m_cmd_playqueue_SaveToPlaylist.shutdown();
+    this.m_cmd_playqueue_ClearAll.shutdown();
+    this.m_cmd_playqueue_ClearHistory.shutdown();
     this.m_playQueueCommands.shutdown();
     this.m_playQueueLibraryCommands.shutdown();
 
