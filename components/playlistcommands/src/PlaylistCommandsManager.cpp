@@ -51,7 +51,7 @@
 #include <nsStringGlue.h>
 
 #include <sbStringUtils.h>
-#include <sbIMediaList.h>;
+#include <sbIMediaList.h>
 
 #define MODULE_SHORTCIRCUIT 0
 

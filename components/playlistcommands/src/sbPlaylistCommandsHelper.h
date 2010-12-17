@@ -64,48 +64,40 @@ public:
 private:
   virtual ~sbPlaylistCommandsHelper();
 
-  nsresult sbPlaylistCommandsHelper::AddToServicePane
-                                     (const nsAString     &aMediaListGUID,
-                                      const nsAString     &aMediaListType,
-                                      sbIPlaylistCommands *aCommandObject);
+  nsresult AddToServicePane(const nsAString     &aMediaListGUID,
+                            const nsAString     &aMediaListType,
+                            sbIPlaylistCommands *aCommandObject);
 
-  nsresult sbPlaylistCommandsHelper::AddToMediaItemContextMenu
-                                     (const nsAString     &aMediaListGUID,
-                                      const nsAString     &aMediaListType,
-                                      sbIPlaylistCommands *aCommandObject);
+  nsresult AddToMediaItemContextMenu(const nsAString     &aMediaListGUID,
+                                     const nsAString     &aMediaListType,
+                                     sbIPlaylistCommands *aCommandObject);
 
-  nsresult sbPlaylistCommandsHelper::AddToToolbar
-                                     (const nsAString     &aMediaListGUID,
-                                      const nsAString     &aMediaListType,
-                                      sbIPlaylistCommands *aCommandObject);
+  nsresult AddToToolbar(const nsAString     &aMediaListGUID,
+                        const nsAString     &aMediaListType,
+                        sbIPlaylistCommands *aCommandObject);
 
-  nsresult sbPlaylistCommandsHelper::AddCommandObject
-                                     (PRUint16            aTargetFlags,
-                                      const nsAString     &aMediaListGUID,
-                                      const nsAString     &aMediaListType,
-                                      sbIPlaylistCommands *aCommandObject);
+  nsresult AddCommandObject(PRUint16            aTargetFlags,
+                            const nsAString     &aMediaListGUID,
+                            const nsAString     &aMediaListType,
+                            sbIPlaylistCommands *aCommandObject);
 
-  nsresult sbPlaylistCommandsHelper::SetRemainingFlags
-                                     (PRUint16            aTargetFlags,
-                                      sbIPlaylistCommands *aCommandObject);
+  nsresult SetRemainingFlags(PRUint16            aTargetFlags,
+                             sbIPlaylistCommands *aCommandObject);
 
-  nsresult sbPlaylistCommandsHelper::RemoveCommandObject
-                                     (PRUint16            aTargetFlags,
-                                      const nsAString     &aMediaListGUID,
-                                      const nsAString     &aMediaListType,
-                                      sbIPlaylistCommands *aCommandObject);
+  nsresult RemoveCommandObject(PRUint16            aTargetFlags,
+                               const nsAString     &aMediaListGUID,
+                               const nsAString     &aMediaListType,
+                               sbIPlaylistCommands *aCommandObject);
 
-  nsresult sbPlaylistCommandsHelper::GetCommandObject
-                                     (PRUint16             aTargetFlag,
-                                      const nsAString      &aMediaListGUID,
-                                      const nsAString      &aMediaListType,
-                                      const nsAString      &aCommandId,
-                                      sbIPlaylistCommands  **_retval);
+  nsresult GetCommandObject(PRUint16             aTargetFlag,
+                            const nsAString      &aMediaListGUID,
+                            const nsAString      &aMediaListType,
+                            const nsAString      &aCommandId,
+                            sbIPlaylistCommands  **_retval);
 
-  nsresult sbPlaylistCommandsHelper::GetChildCommandWithId
-                                     (sbIPlaylistCommands *parentCommand,
-                                      const nsAString     &aCommandId,
-                                      sbIPlaylistCommands **_retval);
+  nsresult GetChildCommandWithId(sbIPlaylistCommands *parentCommand,
+                                 const nsAString     &aCommandId,
+                                 sbIPlaylistCommands **_retval);
 
 protected:
   /* additional members */
