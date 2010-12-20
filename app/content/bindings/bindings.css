@@ -525,6 +525,10 @@ sb-device-sync-cancel-command {
   -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-sync-cancel-command");
 }
 
+sb-device-transcode-settings {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceTranscodeSettings.xml#sb-device-transcode-settings");
+};
+
 sb-device-volume-menuitems {
   -moz-binding: url("chrome://songbird/content/bindings/device/deviceVolumeSelector.xml#sb-device-volume-menuitems");
 }

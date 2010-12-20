@@ -89,20 +89,7 @@
                 <xul:radio sbid="transcoding-mode-manual"
                            xbl:inherits="disabled"
                            label="&device.settings.music.transcoding.mode.manual.label;"/>
-                <xul:vbox sbid="transcoding-mode-details" class="indent">
-                  <xul:hbox>
-                    <xul:label value="&device.settings.music.transcoding.format.label;"/>
-                    <xul:menulist sbid="encoding-format-menu">
-                      <xul:menupopup sbid="encoding-format-list" class="encoding-format-list"/>
-                    </xul:menulist>
-                  </xul:hbox>
-                  <xul:hbox sbid="transcoding-bitrate" xbl:inherits="disabled">
-                    <xul:label value="&device.settings.music.transcoding.bitrate.label;"/>
-                    <xul:textbox sbid="transcoding-bitrate-kbps" type="number"
-                                 increment="32"/>
-                    <xul:label value="&device.settings.music.transcoding.bitrate.units;"/>
-                  </xul:hbox>
-                </xul:vbox>
+                <xul:sb-device-transcode-settings sbid="transcode-settings" class="indent"/>
               </xul:radiogroup>
 
             </xul:vbox>
@@ -335,8 +322,8 @@
 
       <method name="save">
         <body> <![CDATA[
-          this.device.setPreference(this._devicePrefRoot + 
-                                      ".media_management.library.format.dir", 
+          this.device.setPreference(this._devicePrefRoot +
+                                      ".media_management.library.format.dir",
                                     this._formatter.value);
           var enabledCheckbox =
             document.getAnonymousElementByAttribute(this, "sbid", "mgmt_enable");

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- 
+<!--
 /*
  *=BEGIN SONGBIRD GPL
  *
@@ -75,30 +75,11 @@
 
       <groupbox>
 
-        <!-- Format -->
-        <vbox>
-          <label value="&cdrip.prefpane.format;" />
-          <hbox>
-            <menulist id="rip-format-menulist"
-                      preference="rip_format_pref">
-              <menupopup flex="1" id="rip-format-list"
-                         oncommand="CDRipPrefsPane.formatChanged(event);">
-              </menupopup>
-            </menulist>
-          </hbox>
-        </vbox>
-
-        <!-- Quality -->
-        <vbox id="transcoding-bitrate-settings">
-          <label value="&cdrip.prefpane.quality;" />
-          <hbox>
-            <textbox id="transcoding-bitrate-kbps"
-                     type="number"
-                     onchange="CDRipPrefsPane.updateBitratePref();"
-                     increment="32"/>
-            <label value="&cdrip.prefpane.quality.units.kbps;"/>
-          </hbox>
-          <label value="&cdrip.prefpane.quality_desc;" />
+        <!-- Transcode options -->
+        <vbox id="cdrip-transcode-prefs"
+              oncommand="CDRipPrefsPane.onUIPrefChanged();">
+          <sb-device-transcode-settings id="cd-transcode-settings"
+                                        showDesc="true" />
         </vbox>
 
         <vbox>
@@ -136,7 +117,6 @@
         </hbox>
       </groupbox>
 
-    
     </notificationbox>
 
   </prefpane>

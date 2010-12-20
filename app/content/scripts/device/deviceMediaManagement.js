@@ -116,7 +116,8 @@ var DeviceMediaManagementServices = {
       return;
 
     // Extract preferences from UI and write to storage
-    this.musicManagementPrefsExtract();
+    this._transcodeModeManual =
+        this._getElement("transcoding-mode-manual").selected;
     this.musicManagementPrefsWrite();
 
     // Now re-read from the newly-stored preference to ensure we don't get out
@@ -138,7 +139,7 @@ var DeviceMediaManagementServices = {
     var notchHbox = this._getElement("notch-hbox");
     var spaceLimitScale = this._getElement("space_limit");
     var zeroPercentDescription = this._getElement("notch-0percent-description");
-    var hundrendPercentDescription =
+    var hundredPercentDescription =
           this._getElement("notch-100percent-description");
 
     // Enable/disable the notch boxes.
@@ -155,11 +156,11 @@ var DeviceMediaManagementServices = {
     // Enable/disable the percentage labels
     if (spaceLimitScale.disabled) {
       zeroPercentDescription.setAttribute("disabled", "true");
-      hundrendPercentDescription.setAttribute("disabled", "true");
+      hundredPercentDescription.setAttribute("disabled", "true");
     }
     else {
       zeroPercentDescription.removeAttribute("disabled");
-      hundrendPercentDescription.removeAttribute("disabled");
+      hundredPercentDescription.removeAttribute("disabled");
     }
   },
 
@@ -169,26 +170,11 @@ var DeviceMediaManagementServices = {
   _updateBusyState: function DeviceMediaManagementServices__updateBusyState() {
     var isBusy = this._device && this._device.isBusy;
 
-    var modeDetailsBox = this._getElement("transcoding-mode-details");
-    for (var i = 0; i < modeDetailsBox.childNodes.length; i++) {
-      var curChildNode = modeDetailsBox.childNodes.item(i);
-      if (this._mediaManagementPrefs.transcodeModeManual && !isBusy) {
-        curChildNode.removeAttribute("disabled");
-      }
-      else {
-        curChildNode.setAttribute("disabled", "true");
-      }
-    }
-
-    var menulist = this._getElement("encoding-format-menu");
-    var bitrateEntry = this._getElement("transcoding-bitrate-kbps");
-    if (this._mediaManagementPrefs.transcodeModeManual && !isBusy) {
-      menulist.removeAttribute("disabled");
-      bitrateEntry.removeAttribute("disabled");
+    if (this._transcodeModeManual && !isBusy) {
+      this._transcodeSettings.disabled = false;
     }
     else {
-      menulist.setAttribute("disabled", "true");
-      bitrateEntry.setAttribute("disabled", "true");
+      this._transcodeSettings.disabled = true;
     }
 
     var spaceLimitToggle = this._getElement("space_limit_enable");
@@ -209,7 +195,8 @@ var DeviceMediaManagementServices = {
 
   onUIPrefChange: function DeviceMediaManagementServices_onUIPrefChange() {
     /* Extract preferences from UI and apply */
-    this.musicManagementPrefsExtract();
+    this._transcodeModeManual =
+        this._getElement("transcoding-mode-manual").selected;
     this.musicManagementPrefsApply();
 
     this.dispatchSettingsChangeEvent();
@@ -298,22 +285,11 @@ var DeviceMediaManagementServices = {
    ******************************************************************************/
 
   /*
-   * _mediaManagementPrefs                  Working media management prefs.
-   * _storedMediaManagementPrefs            Stored media management prefs.
+   * _transcodeSettings                     Transcode settings for the device.
    *
-   * The current working set of music preferences are maintained in
-   * _mediaManagementPrefs.
-   * These are the preferences that the user has set and that is represented by
-   * the UI but has not neccessarily been written to the preference storage.
-   * The set of music preferences in the preference storage is maintained in
-   * _storedMediaManagementPrefs.  This is used to determine whether any
-   * preferences have been changed and need to be written to the preference
-   * storage.
    */
 
-  _mediaManagementPrefs : null,
-  _storedMediaManagementPrefs : null,
-
+  _transcodeSettings : null,
 
   /*
    * musicManagementPrefsInitialize
@@ -335,15 +311,14 @@ var DeviceMediaManagementServices = {
   /*
    * musicManagementPrefsFinalize
    *
-   * \breif This function finalizes the music preference services.
+   * \brief This function finalizes the music preference services.
    */
 
   musicManagementPrefsFinalize:
       function DeviceMediaManagementServices_musicManagementPrefsFinalize()
   {
       /* Clear object fields. */
-      this._mediaManagementPrefs = null;
-      this._storedMediaManagementPrefs = null;
+      this._transcodeSettings = null;
   },
 
 
@@ -359,17 +334,15 @@ var DeviceMediaManagementServices = {
   musicManagementPrefsInitPrefs:
       function DeviceMediaManagementServices_musicManagementPrefsInitPrefs()
   {
-      this._mediaManagementPrefs = {};
-      this._mediaManagementPrefs.transcodeModeManual = false;
-      this._mediaManagementPrefs.selectedProfile = null;
-      this._mediaManagementPrefs.selectedBitrate = null;
+      this._transcodeModeManual = false;
 
-      this._mediaManagementPrefs.transcodeProfiles = [];
+      this._transcodeSettings = this._getElement("transcode-settings");
 
       var transcodeManager =
           Cc["@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1"]
             .getService(Ci.sbITranscodeManager);
 
+      var supportedProfiles = [];
       var profiles = transcodeManager.getTranscodeProfiles(
               Ci.sbITranscodeProfile.TRANSCODE_TYPE_AUDIO);
       var deviceCaps = this._device.capabilities;
@@ -392,11 +365,13 @@ var DeviceMediaManagementServices = {
                 profile.containerFormat == container &&
                 profile.audioCodec == audioCodec)
             {
-              this._mediaManagementPrefs.transcodeProfiles.push(profile);
+              supportedProfiles.push(profile);
             }
           }
         }
       }
+
+    this._transcodeSettings.profiles = supportedProfiles;
   },
 
 
@@ -411,26 +386,7 @@ var DeviceMediaManagementServices = {
   musicManagementPrefsInitUI:
     function DeviceMediaManagementServices_musicManagementPrefsInitUI() {
     // Get the available transcoding profiles.
-    var profiles = this._mediaManagementPrefs.transcodeProfiles;
-
-    // Get the transcoding format menu list.
-    var profilesMenuList = this._getElement("encoding-format-list");
-
-    // Clear the menu list.
-    while (profilesMenuList.firstChild)
-      profilesMenuList.removeChild(profilesMenuList.firstChild);
-
-    // Fill in the menu list with each available profile.
-    for (var i = 0; i < profiles.length; i++) {
-      var profile = profiles[i];
-      var readableName = profile.description;
-      var menuItem = document.createElementNS(XUL_NS, "menuitem");
-      menuItem.setAttribute("label", readableName);
-      menuItem.setAttribute("value", profile.id);
-
-      // Add the menu item to the list.
-      profilesMenuList.appendChild(menuItem);
-    }
+    var profiles = this._transcodeSettings.profiles;
 
     // Show the transcoding preferences UI if any transcoding profiles are
     // available.  Otherwise, show the no encoders available description.
@@ -462,42 +418,31 @@ var DeviceMediaManagementServices = {
 
     // Only store the profile id if transcode is in manual mode.
     if (profileId) {
-      this._mediaManagementPrefs.transcodeModeManual = true;
-      this._mediaManagementPrefs.selectedProfile =
-          this.profileFromProfileId(profileId);
-      this._mediaManagementPrefs.selectedBitrate =
+      this._transcodeModeManual = true;
+      this._transcodeSettings.transcodeBitrate =
           this._device.getPreference(
               "transcode_profile.audio_properties.bitrate");
+      this._transcodeSettings.transcodeProfileId = profileId;
     }
     // Otherwise, get the profile id from global one or pick the one
     // with highest priority.
     else {
-      this._mediaManagementPrefs.transcodeModeManual = false;
+      this._transcodeModeManual = false;
 
       // Get the global default profile if there's one of those.
-      var globalProfileId = Application.prefs.getValue(
+      var gProfileId = Application.prefs.getValue(
               "songbird.device.transcode_profile.profile_id", null);
-      if (globalProfileId) {
-        this._mediaManagementPrefs.selectedProfile =
-            this.profileFromProfileId(globalProfileId);
-        this._mediaManagementPrefs.selectedBitrate =
+      if (gProfileId) {
+        this._transcodeSettings.transcodeBitrate =
             Application.prefs.getValue(
                 "songbird.device.transcode_profile.audio_properties.bitrate",
                 null);
+        this._transcodeSettings.transcodeProfileId = gProfileId;
       } else {
-        this._mediaManagementPrefs.selectedProfile = null;
-        this._mediaManagementPrefs.selectedBitrate = null;
+        this._transcodeSettings.transcodeProfile = null;
+        this._transcodeSettings.transcodeBitrate = null;
       }
     }
-
-    /* Make a copy of the stored music prefs. */
-    this._storedMediaManagementPrefs = {};
-    this._storedMediaManagementPrefs.transcodeModeManual =
-        this._mediaManagementPrefs.transcodeModeManual;
-    this._storedMediaManagementPrefs.selectedProfile =
-        this._mediaManagementPrefs.selectedProfile;
-    this._storedMediaManagementPrefs.selectedBitrate =
-        this._mediaManagementPrefs.selectedBitrate;
   },
 
 
@@ -511,15 +456,15 @@ var DeviceMediaManagementServices = {
   musicManagementPrefsWrite:
       function DeviceMediaManagementServices_musicManagementPrefsWrite()
   {
-    if (this._mediaManagementPrefs.transcodeModeManual) {
-      var profileId = this._mediaManagementPrefs.selectedProfile.id;
-      this._device.setPreference("transcode_profile.profile_id", profileId);
+    if (this._transcodeModeManual) {
+      this._device.setPreference("transcode_profile.profile_id",
+                                 this._transcodeSettings.transcodeProfileId);
       this._device.setPreference("transcode_profile.audio_properties.bitrate",
-              this._mediaManagementPrefs.selectedBitrate);
-    }
-    else {
+                                 this._transcodeSettings.transcodeBitrate);
+    } else {
       this._device.setPreference("transcode_profile.profile_id", "");
-      this._device.setPreference("transcode_profile.audio_properties.bitrate", "");
+      // Resets transcode settings to default
+      this._transcodeSettings.transcodeProfileId = "";
     }
   },
 
@@ -533,118 +478,12 @@ var DeviceMediaManagementServices = {
   musicManagementPrefsApply:
       function DeviceMediaManagementServices_musicManagementPrefsApply()
   {
-    if (this._mediaManagementPrefs.transcodeModeManual)
+    if (this._transcodeModeManual)
       this._selectRadio("transcoding-mode-manual");
     else {
       this._selectRadio("transcoding-mode-auto");
     }
 
-    var activeProfile;
-    if (this._mediaManagementPrefs.selectedProfile) {
-      activeProfile = this._mediaManagementPrefs.selectedProfile;
-    }
-    else {
-      // Figure out what the default profile will be - highest priority of the
-      // ones available.
-      var highestPrio = 0;
-      var defaultProfile = null;
-
-      var profiles = this._mediaManagementPrefs.transcodeProfiles;
-      for (var i = 0; i < profiles.length; i++) {
-        var profile = profiles[i];
-        if (!defaultProfile || profile.priority > highestPrio) {
-          defaultProfile = profile;
-          highestPrio = profile.priority;
-        }
-      }
-      activeProfile = defaultProfile;
-    }
-
-    // Now find the menu item with a value the same as the profile id, and
-    // select it.
-    var formatList = this._getElement("encoding-format-list");
-    for (var i = 0; i < formatList.childNodes.length; i++) {
-      var formatMenuItem = formatList.childNodes.item(i);
-
-      if (formatMenuItem.value == activeProfile.id) {
-        formatMenuItem.setAttribute("selected", "true");
-        this._getElement("encoding-format-menu").selectedItem = formatMenuItem;
-      }
-      else {
-        formatMenuItem.setAttribute("selected", "false");
-      }
-    }
-
-    // Does the active profile have a bitrate property?
-    var foundBitrate = false;
-    if (activeProfile) {
-      var propertiesArray = activeProfile.audioProperties;
-      if (propertiesArray) {
-        for (var i = 0; i < propertiesArray.length; i++) {
-          var property = propertiesArray.queryElementAt(i,
-                  Ci.sbITranscodeProfileProperty);
-          if (property.propertyName == "bitrate") {
-            foundBitrate = true;
-            var bitrateEntry = this._getElement("transcoding-bitrate-kbps");
-            bitrateEntry.min = parseInt(property.valueMin) / 1000;
-            bitrateEntry.max = parseInt(property.valueMax) / 1000;
-            if (this._mediaManagementPrefs.selectedBitrate)
-              bitrateEntry.value = parseInt(
-                      this._mediaManagementPrefs.selectedBitrate) / 1000;
-            else
-              bitrateEntry.value = parseInt(property.value) / 1000;
-          }
-        }
-      }
-    }
-
-    var bitrateBox = this._getElement("transcoding-bitrate");
-    if (foundBitrate) {
-      bitrateBox.removeAttribute("hidden");
-    }
-    else {
-      bitrateBox.setAttribute("hidden", "true");
-    }
-
-    this._updateBusyState();
-  },
-
-  /*
-   * musicManagementPrefsExtract
-   *
-   * \brief This function extracts the preference settings from the preference
-   *        UI and writes them to the working preference set.
-   */
-
-  musicManagementPrefsExtract:
-      function DeviceMediaManagementServices_musicManagementPrefsExtract()
-  {
-    this._mediaManagementPrefs.transcodeModeManual =
-        this._getElement("transcoding-mode-manual").selected;
-
-    if (this._mediaManagementPrefs.transcodeModeManual) {
-      var bitrateEntry = this._getElement("transcoding-bitrate-kbps");
-      this._mediaManagementPrefs.selectedBitrate = "" +
-          parseInt(bitrateEntry.value) * 1000;
-      this._mediaManagementPrefs.selectedProfile =
-          this.profileFromProfileId(
-                  this._getElement("encoding-format-menu").selectedItem.value);
-    }
-    else {
-      this._mediaManagementPrefs.selectedBitrate = null;
-      this._mediaManagementPrefs.selectedProfile = null;
-    }
-  },
-
-  profileFromProfileId:
-      function DeviceMediaManagementServices_profileFromProfileId(aId)
-  {
-    var profiles = this._mediaManagementPrefs.transcodeProfiles;
-    for (var i = 0; i < profiles.length; i++) {
-      var profile = profiles[i];
-      if (profile.id == aId)
-        return profile;
-    }
-    return null;
+    return this._updateBusyState();
   }
-};
+}
