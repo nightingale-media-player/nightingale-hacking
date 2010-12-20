@@ -179,7 +179,7 @@ function sb7Digital_onShowCurrentTrack(aEvent) {
 
   // Don't load the hidden medialist for the 7digital store if this file
   // is a preview from the 7digital store.
-  if (item.contentSrc.host == "media3.7digital.com") {
+  if (item.contentSrc.host.indexOf("7digital.com") != -1) {
     aEvent.preventDefault();
     aEvent.stopPropagation();
   }
