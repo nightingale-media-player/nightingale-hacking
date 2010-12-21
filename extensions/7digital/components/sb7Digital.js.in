@@ -248,8 +248,16 @@ function sb7Digital_install() {
   // install our search plugin
   try {
 
-    // if we don't already have the search engine...
-    if (!this._searchService.getEngineByName(SEARCHENGINE_NAME)) {
+    var engine = this._searchService.getEngineByName(SEARCHENGINE_NAME);
+
+    // If there is an existing 7digital search engine and it points to an older
+    // version of the store, remove it.
+    if (engine && engine.searchForm != STORE_URL) {
+      this._searchService.removeEngine(engine);
+      engine = null;
+    }
+
+    if (!engine) {
       // install the engine
       let stringBundle = Cc["@mozilla.org/intl/stringbundle;1"]
                            .getService(Ci.nsIStringBundleService)
