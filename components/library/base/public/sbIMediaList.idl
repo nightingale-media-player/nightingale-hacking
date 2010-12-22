@@ -1151,7 +1151,11 @@ interface sbIMediaList : sbIMediaItem
   void removeListener(in sbIMediaListListener aListener);
 
   /**
-   * \brief Create a new view for this list
+   * \brief Create a new, raw view for this list.  This is generally _not_ the
+   *        function that you want to use for making views as it will create
+   *        a completely raw view, for example lacking any filterConstraint.
+   *        Please consider using sbLibraryUtils.createStandardMediaListView
+   *        and proceed carefully if you use this method instead.
    * \param aState Optional initial state for the view
    * \return The new view
    */

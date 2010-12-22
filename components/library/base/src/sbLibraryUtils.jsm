@@ -144,6 +144,24 @@ var LibraryUtils = {
     return builder.get();
   },
 
+  /**
+   * \brief Create a new view for the param medialist.  This is most often the
+   *        function you want for making views.  mediaList.createView() can be
+   *        used directly, but then the mediaListView.filterConstraint should be
+   *        carefully considered and likely set manually.
+   *
+   * \param aMediaList - The medialist for which the view should be created
+   * \param aSearchString - OPTIONAL - If present this string contains the
+   *                        values used to constrain the filter. aSearchString
+   *                        will be split, space-delimited, into an array
+   *                        of values passed to the new view's filter.
+   *                        A text search filter will only be constrained by
+   *                        the first item in this array, however.
+   *
+   * \return - A medialist view for aMediaList with any special sorting the
+   *           list may have and the standard filter constraints, which can be
+   *           further refined by aSearchString.
+   */
   createStandardMediaListView: function(aMediaList, aSearchString) {
     var mediaList = aMediaList.QueryInterface(Ci.sbIMediaList);
     var mediaListView = mediaList.createView();
