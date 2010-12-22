@@ -45,6 +45,7 @@ Imported by bindings.css or directly into feathers.
 }
 .device-specs-grid-label {
   font-size:100%;
+  max-width: 200px;
 }
 
 #info_box {
