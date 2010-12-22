@@ -43,7 +43,7 @@ interface sbIMediaList;
 interface sbIPlayQueueServiceListener : nsISupports
 {
   /**
-   * \brief 
+   * \brief
    *
    * \param aToIndex new index in the queue
    * \sa sbIPlayQueueService
@@ -105,7 +105,7 @@ interface sbIPlayQueueService : nsISupports
    * current index will be updated to correspond to the new item.
    *
    * A track is considered "played" if it has been played for at least 240
-   * seconds or 1/2 its duration (matching Audioscrobbler).  See 
+   * seconds or 1/2 its duration (matching Audioscrobbler).  See
    * sbPlaybackHistoryService.cpp#1633.
    *
    * \param aMediaItem media item to add
@@ -166,6 +166,14 @@ interface sbIPlayQueueService : nsISupports
   /**
    * \brief Clear the Play Queue's history
    *
+   * \note  Please be aware that mediaItems exist only in the context of
+   *        a library (of which the play queue has its own, apart from
+   *        the mainLibrary where most mediaitems reside). Thus, when mediaitems
+   *        are removed with this function, they functionally cease to exist and
+   *        it is unsafe to continue using them.  The mediaitems in the
+   *        play queue's library, however, likely have counterparts in the
+   *        mainLibrary that can be retrieved and used after the clear.
+   *
    * Remove all media items before index.
    *
    * \sa clearAll()
@@ -173,7 +181,15 @@ interface sbIPlayQueueService : nsISupports
   void clearHistory();
 
   /**
-   * \brief Clear the Play Queue's history
+   * \brief Clear the Play Queue's contents.
+   *
+   * \note  Please be aware that mediaItems exist only in the context of
+   *        a library (of which the play queue has its own, apart from
+   *        the mainLibrary where most mediaitems reside). Thus, when mediaitems
+   *        are removed with this function, they functionally cease to exist and
+   *        it is unsafe to continue using them.  The mediaitems in the
+   *        play queue's library, however, likely have counterparts in the
+   *        mainLibrary that can be retrieved and used after the clear.
    *
    * Remove all media items from the queue.
    *
