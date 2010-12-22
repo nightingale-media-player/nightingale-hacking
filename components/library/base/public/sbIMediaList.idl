@@ -62,7 +62,7 @@ interface sbIMediaListAsyncListener : nsISupports
    *                  or the operation is complete.
    * \note This callback function will always be called on the main thread.
    */
-  void onProgress(in unsigned long aItemsProcessed, 
+  void onProgress(in unsigned long aItemsProcessed,
                   in boolean aComplete);
 };
 
@@ -311,7 +311,7 @@ interface sbIMediaList : sbIMediaItem
     (end)
   */
   readonly attribute boolean isEmpty;
-  
+
   /**
    * \brief True if the user should be allowed to edit the content of this
    * media list.
@@ -328,19 +328,19 @@ interface sbIMediaList : sbIMediaItem
   Returns:
     true - <MediaList> content can be modified by user.
     false - <MediaList> content should not be modified by user.
-    
+
   userEditableContent lists have content that may be changed by the user. This
   is the default behavior.
-  
+
   This attribute is different from sbILibraryResource.userEditable in that
   non-userEditable resources cannot be renamed or removed, while non-
   userEditableContent lists can.
-  
+
   For instance, a medialist residing on a device that has been physically made
   readonly should not be deleted or renamed, and should not be added media items
   by the user (either via drag and drop, "send to" menus, or any other
   interactive method), its userEditable attribute will be set to false.
-  
+
   On the other hand, a smart playlist is an instance of a list whose content is
   always read-only (its userEditableContent attribute is always false), but that
   may itself be read-write (if its userEditable attribute is true, the default):
@@ -352,9 +352,9 @@ interface sbIMediaList : sbIMediaItem
   still be read-only). On the other hand, a smart playlist whose userEditable
   attribute is false cannot be renamed, removed, added tracks to, nor have its
   rule set modified by the user.
-  
+
   */
-  
+
   readonly attribute boolean userEditableContent;
 
   /*
@@ -532,7 +532,7 @@ interface sbIMediaList : sbIMediaItem
    * Do not use ENUMERATIONTYPE_LOCKING unless you fit a usage scenario described in the
    * ENUMERATIONTYPE_LOCKING constant documentation.
    *
-   * Do not remove items during enumeration, regardless of enumeration type! 
+   * Do not remove items during enumeration, regardless of enumeration type!
    * This will cause functional issues during enumeration because the property
    * cache will no longer contain associated data for items even though the item
    * instance is still valid!
@@ -574,7 +574,7 @@ interface sbIMediaList : sbIMediaItem
    * \brief Enumerate the media items in the list that match a given property
    *        ID and value.
    *
-   * Do not remove items during enumeration, regardless of enumeration type! 
+   * Do not remove items during enumeration, regardless of enumeration type!
    * This will cause functional issues during enumeration because the property
    * cache will no longer contain associated data for items even though the item
    * instance is still valid!
@@ -602,7 +602,7 @@ interface sbIMediaList : sbIMediaItem
     value - The value of the property to match.
     enumListener - The enumeration listener.
     [optional] enumType - The type of enumeration desired. Valid values for enumType
-               are <ENUMERATIONTYPE_SNAPSHOT> and <ENUMERATIONTYPE_LOCKING>. 
+               are <ENUMERATIONTYPE_SNAPSHOT> and <ENUMERATIONTYPE_LOCKING>.
                Defaults to ENUMERATIONTYPE_SNAPSHOT.
 
   Example:
@@ -887,7 +887,7 @@ interface sbIMediaList : sbIMediaItem
     <clear()>
   */
   void add(in sbIMediaItem aMediaItem);
-  
+
   /**
    * \brief addItem a media item to this list
    * \param aMediaItem The media item to add to the list
@@ -971,7 +971,7 @@ interface sbIMediaList : sbIMediaItem
    * \throws NS_ERROR_NOT_IMPLEMENTED if not implemented by the underlying object.
    * \note aListener will always be called on the main thread.
    */
-  void addSomeAsync(in nsISimpleEnumerator aMediaItems, 
+  void addSomeAsync(in nsISimpleEnumerator aMediaItems,
                     in sbIMediaListAsyncListener aListener);
 
   /**
