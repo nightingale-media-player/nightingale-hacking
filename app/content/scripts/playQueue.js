@@ -40,6 +40,7 @@ Cu.import("resource://app/jsmodules/DebugUtils.jsm");
 Cu.import("resource://app/jsmodules/kPlaylistCommands.jsm");
 Cu.import("resource://app/jsmodules/PlayQueueUtils.jsm");
 Cu.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
+Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 
 var playQueue = {
 
@@ -118,7 +119,8 @@ var playQueue = {
     playQueueService.addListener(this._playQueueServiceListener);
 
     // Bind the playlist to a a view.
-    var view = playQueueService.mediaList.createView();
+    var view = LibraryUtils.createStandardMediaListView
+                            (playQueueService.mediaList);
 
     // Attach our listener to the ShowCurrentTrack event issued by the
     // faceplate.  We're in a display pane, so we need to get the main window.
