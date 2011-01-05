@@ -1611,7 +1611,7 @@ static nsresult DispatchDownloadError(sbBaseDevice * aDevice,
 {
   nsresult rv;
 
-  NS_ASSERTION(aDevice, "aDevice null in " __FUNCTION__);
+  NS_ASSERTION(aDevice, "aDevice null in DispatchDownloadError");
 
   // Create the error info.
   sbPropertyBagHelper errorInfo;
