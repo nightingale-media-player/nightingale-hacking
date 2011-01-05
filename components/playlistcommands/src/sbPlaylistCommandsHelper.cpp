@@ -95,6 +95,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbPlaylistCommandsVisibility,
 //-----------------------------------------------------------------------------
 sbPlaylistCommandsHelper::sbPlaylistCommandsHelper()
 {
+  SB_PRLOG_SETUP(sbPlaylistCommandsHelper);
 }
 
 //-----------------------------------------------------------------------------
@@ -114,6 +115,8 @@ sbPlaylistCommandsHelper::CreateCommandObjectForAction
 {
   NS_ENSURE_ARG_POINTER(aCallback);
   NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_TRUE(!aCommandId.IsEmpty(), NS_ERROR_INVALID_ARG);
+  NS_ENSURE_TRUE(!aLabel.IsEmpty(), NS_ERROR_INVALID_ARG);
 
   TRACE_FUNCTION("creating commandobject id:\'%s\', label:\'%s\'",
                  NS_ConvertUTF16toUTF8(aCommandId).get(),
