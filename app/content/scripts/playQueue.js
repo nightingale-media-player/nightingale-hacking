@@ -100,7 +100,7 @@ var playQueue = {
     // Listen to the queue service index updates, for auto-scroll
     this._playQueueServiceListener = {
       onIndexUpdated: function(aToIndex) {
-        view.treeView.selection.tree.ensureRowIsVisible(aToIndex);
+        PlayQueueUtils.view.treeView.selection.tree.ensureRowIsVisible(aToIndex);
       },
 
       onQueueOperationStarted: function() {
@@ -118,10 +118,6 @@ var playQueue = {
 
     playQueueService.addListener(this._playQueueServiceListener);
 
-    // Bind the playlist to a a view.
-    var view = LibraryUtils.createStandardMediaListView
-                            (playQueueService.mediaList);
-
     // Attach our listener to the ShowCurrentTrack event issued by the
     // faceplate.  We're in a display pane, so we need to get the main window.
     var sbWindow = Cc["@mozilla.org/appshell/window-mediator;1"]
@@ -129,7 +125,8 @@ var playQueue = {
         .getMostRecentWindow("Songbird:Main").window;
     sbWindow.addEventListener("ShowCurrentTrack", this.onShowCurrentTrack, true);
 
-    this._playlist.bind(view);
+    // Bind the playlist to a a view.
+    this._playlist.bind(PlayQueueUtils.view);
 
     var mediacoreManager = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
                              .getService(Ci.sbIMediacoreManager);
@@ -139,8 +136,8 @@ var playQueue = {
 
     this._mediacoreListener = {
       onMediacoreEvent: function (ev) {
-        if (mediacoreManager.sequencer.view == view &&
-            ev.type == Ci.sbIMediacoreEvent.VIEW_CHANGE) {
+        if (ev.type == Ci.sbIMediacoreEvent.VIEW_CHANGE &&
+            mediacoreManager.sequencer.view == PlayQueueUtils.view) {
           // we're entering the view, disable shuffle
           mediacoreManager.sequencer.mode =
               Ci.sbIMediacoreSequencer.MODE_FORWARD;

@@ -31,6 +31,10 @@ EXPORTED_SYMBOLS = [ "PlayQueueUtils" ];
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
+const Cu = Components.utils;
+
+Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 var PlayQueueUtils = {
   // Open the play queue display pane
@@ -40,5 +44,29 @@ var PlayQueueUtils = {
     var contentInfo = Cc["@songbirdnest.com/Songbird/playqueue/contentInfo;1"]
                         .createInstance(Ci.sbIDisplayPaneContentInfo);
     paneMgr.showPane(contentInfo.contentUrl);
+  },
+
+  /* Initiates playback from the play queue.
+   * aIndex is optional.  If specified play will begin in the playqueue at
+   * that index.  If aIndex is not specified play will begin at the index
+   * specified by playQueueService.index
+   */
+  play: function PlayQueueUtils_play(aIndex /* optional */) {
+
+    if (typeof(aIndex) == "undefined")
+    {
+      var playQueueService = Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
+                               .getService(Ci.sbIPlayQueueService);
+      aIndex = playQueueService.index;
+    }
+    var sequencer = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                      .getService(Ci.sbIMediacoreManager).sequencer;
+    sequencer.playView(PlayQueueUtils.view, aIndex, true);
   }
 }
+
+XPCOMUtils.defineLazyGetter(PlayQueueUtils, "view", function() {
+  var playQueueService = Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
+                         .getService(Ci.sbIPlayQueueService);
+  return LibraryUtils.createStandardMediaListView(playQueueService.mediaList);
+});
