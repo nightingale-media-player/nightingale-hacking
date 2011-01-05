@@ -203,7 +203,8 @@ public:
                  aOperation == sbDeviceStatusHelper::OPERATION_TYPE_TRANSCODE ||
                  aOperation == sbDeviceStatusHelper::OPERATION_TYPE_DELETE ||
                  aOperation == sbDeviceStatusHelper::OPERATION_TYPE_READ ||
-                 aOperation == sbDeviceStatusHelper::OPERATION_TYPE_FORMAT,
+                 aOperation == sbDeviceStatusHelper::OPERATION_TYPE_FORMAT ||
+                 aOperation == sbDeviceStatusHelper::OPERATION_TYPE_DOWNLOAD,
                  "sbDeviceStatusAutoOperationComplete::isItemOp is not current");
 
     return (aOperation != sbDeviceStatusHelper::OPERATION_TYPE_MOUNT) &&

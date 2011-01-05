@@ -1602,6 +1602,116 @@ sbBaseDevice::GetRequestTemporaryFileFactory
   return NS_OK;
 }
 
+/**
+ * Dispatches a download error to the device
+ */
+static nsresult DispatchDownloadError(sbBaseDevice * aDevice,
+                                      nsAString const & aMessage,
+                                      sbIMediaItem * aItem)
+{
+  nsresult rv;
+
+  NS_ASSERTION(aDevice, "aDevice null in " __FUNCTION__);
+
+  // Create the error info.
+  sbPropertyBagHelper errorInfo;
+  errorInfo["message"] = nsString(aMessage);
+  NS_ENSURE_SUCCESS(errorInfo.rv(), errorInfo.rv());
+  errorInfo["item"] = aItem;
+  NS_ENSURE_SUCCESS(errorInfo.rv(), errorInfo.rv());
+
+  // Dispatch the error event.
+  rv = aDevice->CreateAndDispatchEvent(
+                                    sbIDeviceEvent::EVENT_DEVICE_DOWNLOAD_ERROR,
+                                    sbNewVariant(errorInfo.GetBag()));
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to dispatch download error");
+
+  return NS_OK;
+}
+
+/**
+ * Simple auto class to generate an error if we exit via an error path
+ */
+class sbDownloadAutoComplete : private sbDeviceStatusAutoOperationComplete
+{
+public:
+  sbDownloadAutoComplete(sbDeviceStatusHelper * aStatus,
+                      sbDeviceStatusHelper::Operation aOperation,
+                      sbBaseDevice::TransferRequest * aRequest,
+                      sbBaseDevice * aDevice,
+                      sbIMediaItem * aItem) :
+                        sbDeviceStatusAutoOperationComplete(aStatus,
+                                                            aOperation,
+                                                            aRequest),
+                        mDevice(aDevice),
+                        mDownloadJob(nsnull),
+                        mItem(aItem) {}
+  ~sbDownloadAutoComplete()
+  {
+    nsresult rv;
+
+    if (mDevice && mItem) {
+      nsString errorMessage;
+      nsCOMPtr<nsIStringEnumerator> errorEnumerator;
+      if (mDownloadJob) {
+        PRUint32 errors;
+        rv = mDownloadJob->GetErrorCount(&errors);
+        if (NS_SUCCEEDED(rv) && errors) {
+          rv = mDownloadJob->GetErrorMessages(getter_AddRefs(errorEnumerator));
+          if (NS_SUCCEEDED(rv)) {
+            PRBool more;
+            rv = errorEnumerator->HasMore(&more);
+            if (NS_SUCCEEDED(rv) && more) {
+              nsString message;
+              errorEnumerator->GetNext(message);
+              if (!errorMessage.IsEmpty()) {
+                errorMessage.Append(NS_LITERAL_STRING("\n"));
+              }
+              errorMessage.Append(message);
+            }
+          }
+        }
+      }
+      // Return a generic error message if there is nothing specific
+      if (errorMessage.IsEmpty()) {
+        sbStringBundle bundle;
+        errorMessage = bundle.Get("device.error.download",
+                                  "Download of media failed.");
+      }
+      DispatchDownloadError(mDevice,
+                            errorMessage,
+                            mItem);
+      // If we're dispatch the error then we don't want the parent auto class
+      // to dispatch an error
+      sbDeviceStatusAutoOperationComplete::SetResult(NS_OK);
+    }
+  }
+  void SetDownloadJob(sbIMediaItemDownloadJob * aDownloadJob)
+  {
+    mDownloadJob = aDownloadJob;
+  }
+  void forget()
+  {
+    mDevice = nsnull;
+  }
+  void SetResult(nsresult aResult)
+  {
+    sbDeviceStatusAutoOperationComplete::SetResult(aResult);
+    // If this is a success result we don't need to perform an error dispatch
+    if (NS_SUCCEEDED(aResult)) {
+      mDevice = nsnull;
+    }
+  }
+private:
+  // Non-owning reference, this can't outlive the device
+  sbBaseDevice * mDevice;
+  // We hold a reference, just to be safe, as this is an auto class and the
+  // compiler might destroy the nsCOMPtr that holds this before our class.
+  nsCOMPtr<sbIMediaItemDownloadJob> mDownloadJob;
+  // Non-owning reference, we rely on the request to keep the item alive.
+  sbIMediaItem * mItem;
+};
+
 nsresult
 sbBaseDevice::DownloadRequestItem(TransferRequest*      aRequest,
                                   sbDeviceStatusHelper* aDeviceStatusHelper)
@@ -1612,6 +1722,13 @@ sbBaseDevice::DownloadRequestItem(TransferRequest*      aRequest,
 
   // Function variables.
   nsresult rv;
+
+  sbDownloadAutoComplete autoComplete(
+                                  aDeviceStatusHelper,
+                                  sbDeviceStatusHelper::OPERATION_TYPE_DOWNLOAD,
+                                  aRequest,
+                                  this,
+                                  aRequest->item);
 
   // Get the request volume info.
   nsRefPtr<sbBaseDeviceVolume> volume;
@@ -1634,15 +1751,13 @@ sbBaseDevice::DownloadRequestItem(TransferRequest*      aRequest,
                                       deviceLibrary,
                                       getter_AddRefs(downloader));
   NS_ENSURE_SUCCESS(rv, rv);
-  if (!downloader)
+  if (!downloader) {
+    // Don't error, if item doesn't need to be downloaded
+    autoComplete.forget();
     return NS_OK;
-
+  }
   // Update status and set to auto-complete.
   aDeviceStatusHelper->ChangeState(STATE_DOWNLOADING);
-  sbDeviceStatusAutoOperationComplete
-    autoComplete(aDeviceStatusHelper,
-                 sbDeviceStatusHelper::OPERATION_TYPE_DOWNLOAD,
-                 aRequest);
 
   // Create a download job.
   // TODO: Add a writable temporaryFileFactory attribute to
@@ -1653,6 +1768,8 @@ sbBaseDevice::DownloadRequestItem(TransferRequest*      aRequest,
                                      deviceLibrary,
                                      getter_AddRefs(downloadJob));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  autoComplete.SetDownloadJob(downloadJob);
 
   // Set the download job temporary file factory.
   nsCOMPtr<sbITemporaryFileFactory> temporaryFileFactory;
@@ -1714,25 +1831,10 @@ sbBaseDevice::DownloadRequestItem(TransferRequest*      aRequest,
     rv = errorMessages->HasMore(&hasMore);
     NS_ENSURE_SUCCESS(rv, rv);
     if (hasMore) {
-      // Get the error message.
-      nsAutoString errorMessage;
-      rv = errorMessages->GetNext(errorMessage);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      // Create the error info.
-      sbPropertyBagHelper errorInfo;
-      errorInfo["message"] = errorMessage;
-      NS_ENSURE_SUCCESS(errorInfo.rv(), errorInfo.rv());
-      errorInfo["item"] = aRequest->item;
-      NS_ENSURE_SUCCESS(errorInfo.rv(), errorInfo.rv());
-
-      // Dispatch the error event.
-      CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_DOWNLOAD_ERROR,
-                             sbNewVariant(errorInfo.GetBag()));
-
-      // Set operation result as OK, so a second error event is not dispatched.
-      autoComplete.SetResult(NS_OK);
-
+      // Release the enumerator just ot be safe since the auto class will
+      // be enumerating
+      errorMessages = nsnull;
+      autoComplete.SetResult(NS_ERROR_FAILURE);
       return NS_ERROR_FAILURE;
     }
   }

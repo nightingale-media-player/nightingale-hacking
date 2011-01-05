@@ -97,35 +97,48 @@ sbDeviceEnsureSpaceForWrite::BuildItemsToWrite() {
   nsresult rv;
 
   PRInt32 order = 0;
+  typedef std::vector<sbBaseDevice::TransferRequestPtr> RequestErrors;
+
+  // List of items that errors occurred.
+  RequestErrors requestErrorList;
+  // List of items that we need to report errors for
+  RequestErrors requestErrorReport;
+
   Batch::iterator const batchEnd = mBatch.end();
-  typedef std::vector<nsRefPtr<sbBaseDevice::TransferRequest> >
-    RequestErrorList;
-  RequestErrorList requestErrorList;
-  PRUint32 count = mBatch.size();
   for (Batch::iterator iter = mBatch.begin(); iter != batchEnd; ++iter) {
     // Add item to write list.  Collect errors for later processing.
+    bool errorReported = false;
     rv = AddItemToWrite(iter, order);
     if (NS_FAILED(rv)) {
+      // See if it's an error that would have been already reported
+      switch (rv) {
+        case SB_ERROR_DOWNLOAD_SIZE_UNAVAILABLE:
+        case SB_ERROR_DEVICE_DRM_FAILURE:
+        case SB_ERROR_DEVICE_DRM_CERT_FAIL:
+          errorReported = true;
+          break;
+      }
+      if (!errorReported) {
+        requestErrorReport.push_back(*iter);
+      }
       requestErrorList.push_back(*iter);
       *iter = nsnull;
     }
   }
 
   // Process any errors.
-  for (RequestErrorList::const_iterator errorListIter =
-         requestErrorList.begin();
-      errorListIter != requestErrorList.end();
-       ++errorListIter) {
-    // Get the next error.
-    sbBaseDevice::TransferRequest* request = *errorListIter;
-
-    // Dispatch an error event.
-    mDevice->CreateAndDispatchEvent
-               (sbIDeviceEvent::EVENT_DEVICE_ERROR_UNEXPECTED,
-                sbNewVariant(request->item),
-                PR_TRUE);
-
-  }
+  RequestErrors::const_iterator requestErrorReportEnd =
+    requestErrorReport.end();
+  for (RequestErrors::const_iterator requestErrorReportIter =
+       requestErrorReport.begin();
+       requestErrorReportIter != requestErrorReportEnd;
+       ++requestErrorReportIter) {
+      // Dispatch an error event.
+      mDevice->CreateAndDispatchEvent(
+                                  sbIDeviceEvent::EVENT_DEVICE_ERROR_UNEXPECTED,
+                                  sbNewVariant((*requestErrorReportIter)->item),
+                                  PR_TRUE);
+   }
 
   // Remove the items that had errors from the device library
   mDevice->RemoveLibraryItems(requestErrorList.begin(),

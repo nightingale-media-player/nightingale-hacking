@@ -41,7 +41,23 @@ interface sbIDeviceParameters;
 interface sbIDeviceStatus;
 interface sbIMediaItem;
 
-/**s
+%{C++
+
+#include <nsError.h>
+
+// Device related errors
+#define SB_ERROR_MEDIA_TYPE_NOT_SUPPORTED \
+  NS_ERROR_GENERATE_FAILURE( NS_ERROR_MODULE_GENERAL, 1 )
+#define SB_ERROR_DOWNLOAD_SIZE_UNAVAILABLE \
+  NS_ERROR_GENERATE_FAILURE( NS_ERROR_MODULE_GENERAL, 2 )
+#define SB_ERROR_DEVICE_DRM_FAILURE \
+  NS_ERROR_GENERATE_FAILURE( NS_ERROR_MODULE_GENERAL, 3 )
+#define SB_ERROR_DEVICE_DRM_CERT_FAIL \
+  NS_ERROR_GENERATE_FAILURE( NS_ERROR_MODULE_GENERAL, 4 )
+
+%}
+
+/**
  * \interface sbIDeviceSupportsMediaItemCallback
  *
  * A callback interface for sbIDevice::supportsMediaItem

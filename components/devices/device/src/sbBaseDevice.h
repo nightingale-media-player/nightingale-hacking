@@ -227,8 +227,8 @@ public:
     TransferRequest();
     ~TransferRequest(); /* we're refcounted, no manual deleting! */
   };
-
-  typedef std::list<nsRefPtr<TransferRequest> > Batch;
+  typedef nsRefPtr<TransferRequest> TransferRequestPtr;
+  typedef std::list<TransferRequestPtr> Batch;
 
 public:
   /* selected methods from sbIDevice */
