@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -827,11 +827,33 @@ sbPlaylistCommandsHelper::GetCommandObject(PRUint16             aTargetFlag,
                                                getter_AddRefs(rootCommand));
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  rv = GetChildCommandWithId(rootCommand,
-                             aCommandId,
-                             getter_AddRefs(foundCommand));
-  NS_ENSURE_SUCCESS(rv, rv);
 
+  if (rootCommand)
+  {
+    rv = GetChildCommandWithId(rootCommand,
+                               aCommandId,
+                               getter_AddRefs(foundCommand));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  /* We found a command, but we need to make sure that it's actually where the
+   * caller asked us to look for it, i.e. in a place included in aTargetFlags.
+   *
+   * We'll try to get the targetFlags of our found command to confirm, but
+   * it is possible that the command won't have them.  So check them if we can,
+   * but if it doesn't have the flags just return it.
+   */
+  if (foundCommand)
+  {
+    PRUint16 foundFlags;
+    rv = foundCommand->GetTargetFlags(&foundFlags);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (foundFlags > 0  && (foundFlags & aTargetFlag) == 0)
+    {
+      foundCommand = nsnull;
+    }
+  }
   NS_IF_ADDREF(*_retval = foundCommand);
   return NS_OK;
 }

@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -24,6 +24,7 @@
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
+Components.utils.import("resource://app/jsmodules/DebugUtils.jsm");
 
 const Ci = Components.interfaces;
 
@@ -699,8 +700,8 @@ PlaylistCommandsBuilder.prototype = {
       this._removeCommandTree(menu, index);
     }
     else {
-      Components.utils.reportError("A command object with an id of " + aCommandId +
-                                   " could not be found for removal");
+      this.LOG("A command object with an id of " + aCommandId +
+               " could not be found for removal");
     }
   },
 
@@ -730,13 +731,16 @@ PlaylistCommandsBuilder.prototype = {
     this.m_ShutdownCallback = null;
     this.m_VisibleCallback = null;
     // and forget context
-    this.m_Context.playlist = null;
-    this.m_Context.medialist = null;
-    this.m_Context.window = null;
-    this.m_Context.commands = this;
-    this.m_Context = null;
-    this.m_CommandSubObject = null;
-    this.parentCommandObject = null;
+    if (this.m_Context)
+    {
+      this.m_Context.playlist = null;
+      this.m_Context.medialist = null;
+      this.m_Context.window = null;
+      this.m_Context.commands = this;
+      this.m_Context = null;
+      this.m_CommandSubObject = null;
+      this.parentCommandObject = null;
+    }
   },
 
 // ----------------------------------------------------------------------------
@@ -1396,11 +1400,7 @@ PlaylistCommandsBuilder.prototype = {
 
 // ----------------------------------------------------------------------------
 
-  LOG: function PlaylistCommandsBuilder_LOG(str) {
-    var consoleService = Components.classes['@mozilla.org/consoleservice;1']
-                            .getService(Ci.nsIConsoleService);
-    consoleService.logStringMessage(str);
-  },
+  LOG: DebugUtils.generateLogFunction("sbPlaylistCommandsBuilder"),
 
 // ----------------------------------------------------------------------------
 
