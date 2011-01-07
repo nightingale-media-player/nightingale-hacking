@@ -865,17 +865,20 @@
 
     <implementation>
       <constructor><![CDATA[
-        Components.utils.import("resource://app/jsmodules/LocalStore.jsm", this);
+        Cu.import("resource://app/jsmodules/LocalStore.jsm", this);
 
-        // If this element has a node id then load up the data from the node
-        // we are always expected to be in the service pane at this point so we
-        // call up the DOM of nodes.
-        try {
-          // Run the setter to initialize the node
-          this.nodeData = this.nodeData;
-        } catch (e) {
-          Cu.reportError(e);
-        }
+        // Set the collapsed state for a service pane group.
+        var collapsed = this.LocalStore.getPersistedAttribute(
+                                    document.location.href,
+                                    this._nodeData.id,
+                                    "collapsedChildren");
+        this._nodeData.isOpen = (collapsed == "false");
+
+        // First time we are attached to this node, set node visibility
+        this.visible = this._nodeData.isOpen;
+              
+        // Run the setter to initialize the node
+        this.nodeData = this.nodeData;
       ]]></constructor>
 
       <!-- 
@@ -901,37 +904,15 @@
         ]]></getter>
         <setter><![CDATA[
           // val should be a sbIServicePaneNode object
-          let oldVal = this._nodeData;
           this._nodeData = val;
 
+          // _nodeData is set in the createGroup method of the servicepane
+          // binding. 
           if (this._nodeData) {
             this.setAttribute("id", this._nodeData.id);
             this.setAttribute("label", this._nodeData.displayName);
 
-            if (oldVal != this._nodeData) {
-              // We got a new node, restore its collapsed state
-              let collapsed = this.LocalStore.getPersistedAttribute(
-                                          document.location.href,
-                                          this._nodeData.id,
-                                          "collapsedChildren");
-              if (collapsed) {
-                this._nodeData.isOpen = (collapsed == "false");
-              }
-            }
-
-            if (oldVal != this._nodeData) {
-              // First time we are attached to this node, set _visible directly
-              // to skip animation
-              this._visible = this._nodeData.isOpen;
-              
-              // We pass the same value as from and to parameters of animateTo,
-              // this makes sure it will initialize everything but not animate.
-              let height = this._groupNodes.boxObject.height;
-              this.animateTo(this._groupNodes, 0, height, height, 5,
-                             this._visible);
-            } else if (this._visible != this._nodeData.isOpen) {
-              this.visible = this._nodeData.isOpen;
-            }
+            this.visible = this._nodeData.isOpen;
 
             if (this._nodeData.hidden) {
               this.setAttribute("hidden", true);
