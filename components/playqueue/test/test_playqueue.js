@@ -176,7 +176,6 @@ function runTest () {
     // sequencer methods
     testSetSequencer: function (pos) {
       return this.testSetIndex(pos);
-/*  the following leaks. commenting out until we find a better way
       // initialize the sequencer view
       gMM.sequencer.view = gPQS.mediaList.createView();
       while (gMM.sequencer.viewPosition < pos)
@@ -186,7 +185,6 @@ function runTest () {
       gMM.sequencer.stop();
       this._testIndex = pos;
       this._verifyList();
-*/
     },
 
     // sbIOrderableMediaList methods
