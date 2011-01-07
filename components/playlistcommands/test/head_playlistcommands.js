@@ -3,7 +3,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -133,23 +133,27 @@ function testAppendInsertRemove(aCommand, aMenuID, aTestLength, aNumSubCommands)
    * anything about them, so just log where they are. */
   for (var i = 0; i < aNumSubCommands; i++)
   {
-    gActiveCommandLog.push({CHECK_FLAG: FLAG.EXISTING});
+    var cmdID = aCommand.getCommandId(aMenuID,
+                                      i,
+                                      "test" /* host string */);
+    gActiveCommandLog[i] = {CHECK_FLAG: FLAG.EXISTING,
+                            CHECK_ID: cmdID};
   }
 
   /* Test appending, removing, and inserting actions in a command with
    * already-present subobjects */
   // First, append aTestLength number of actions
-  _log(gTestPrefix + " - appendAction with existing commands", aMenuID);
+  _log("appendAction with existing commands", aMenuID);
   testAppendActions(aCommand, aMenuID, aTestLength, aNumSubCommands);
 
   // Second, remove 1/2 * aTestLength number of actions.
   // 1/2 was chosen arbitrarily
-  _log(gTestPrefix + " - removeAction with existing commands", aMenuID);
+  _log("removeAction with existing commands", aMenuID);
   testRemoveSubobjects(aCommand, aMenuID, 0.5 * aTestLength, aNumSubCommands);
 
   // Then, insert 1/2 * aTestLength number of actions
   // 1/2 was chosen arbitrarily, but needs to match the number removed
-  _log(gTestPrefix + " - insertAction with existing commands", aMenuID);
+  _log("insertAction with existing commands", aMenuID);
   testInsertActions(aCommand, aMenuID, 0.5 * aTestLength, aNumSubCommands);
 
   // ensure that we have aTestLength more commands than we started with
@@ -162,17 +166,17 @@ function testAppendInsertRemove(aCommand, aMenuID, aTestLength, aNumSubCommands)
 
   // Test appending, removing, and inserting actions in an empty command.
   // First, append aTestLength number of actions
-  _log(gTestPrefix + " - appendAction without existing commands", aMenuID);
+  _log("appendAction without existing commands", aMenuID);
   testAppendActions(aCommand, aMenuID, aTestLength, 0);
 
   // Second, remove 1/2 * aTestLength number of actions
   // 1/2 was chosen arbitrarily
-  _log(gTestPrefix + " - removeAction without existing commands", aMenuID);
+  _log("removeAction without existing commands", aMenuID);
   testRemoveSubobjects(aCommand, aMenuID, 0.5 * aTestLength, 0);
 
   // Then, insert 1/2 * aTestLength number of actions
   // 1/2 was chosen arbitrarily but needs to match the number removed
-  _log(gTestPrefix + " - insertAction without existing commands", aMenuID);
+  _log("insertAction without existing commands", aMenuID);
   testInsertActions(aCommand, aMenuID, 0.5 * aTestLength, 0);
 
   // ensure that we have aTestLength commands
@@ -184,11 +188,12 @@ function testAppendInsertRemove(aCommand, aMenuID, aTestLength, aNumSubCommands)
   assertNumCommands(aCommand, aMenuID, 0);
 
   // test appending and inserting all sub object types
-  _log(gTestPrefix + " - append other types of command elements", aMenuID);
+  _log("append other types of command elements", aMenuID);
   testAppendAndInsertAllTypes(aCommand, aMenuID, aTestLength, 0);
 
   // Remove 1/2 * aTestLength number of subobjects
   // 1/2 was chosen arbitrarily
+  _log("remove various types of command elements", aMenuID);
   testRemoveSubobjects(aCommand, aMenuID, 0.5 * aTestLength, 0);
 
   // clear aCommand of subobjects and empty the active command log
@@ -430,7 +435,11 @@ function testAppendAndInsertAllTypes(aCommand,
    * anything about them, so just log what and where they are. */
   for (var i = 0; i < aNumSubCommands; i++)
   {
-    gActiveCommandLog.push({CHECK_FLAG: FLAG.EXISTING});
+    var cmdID = aCommand.getCommandId(aMenuID,
+                                      i,
+                                      "test" /* host string */);
+    gActiveCommandLog[i] = {CHECK_FLAG: FLAG.EXISTING,
+                            CHECK_ID: cmdID};
   }
 
   /* this test expects aNumSubCommands subobjects to be present when this test
@@ -586,6 +595,7 @@ function ExecuteInstructions(aCommand, aInstructions, aMenuID)
     {
       // this is an insert so we'll need to splice into the log
       var insertId = gActiveCommandLog[insertIndex].CHECK_ID;
+
       params.push(insertId);
       if (/Before$/.test(functionName))
       {
@@ -776,6 +786,9 @@ function addChoiceMenuItems(aCommand, aChoiceMenuId, aCheckObject)
  * This tests the command enabled and visible callbacks that determine where/
  * when/if a subobject appears, as well as the command shortcuts (keyboard
  * shortcuts) and action triggers that occur when the user activates and action.
+ *
+ * It is expected that the relevant gActiveCommandLog is empty when this test
+ * is run
  */
 function testCommandCallbacksAndShortcuts(aCommand,
                                           aMenuID,
@@ -784,27 +797,41 @@ function testCommandCallbacksAndShortcuts(aCommand,
 {
   setLog(aMenuID);
 
-  // make sure all present commands are accounted for
-  assertNumCommands(aCommand, aMenuID, aNumSubCommands);
+  // the active command log is expected to be empty when this test begins
+  assertEqual(gActiveCommandLog.length, 0);
 
   // sanity checks
-  assertTrue((aTestLength > 0), "A test length > 0 must be specified");
   assertTrue((aNumSubCommands >= 0), "aNumSubCommands can't be negative");
+  assertTrue((aTestLength > 0), "A test length > 0 must be specified");
+
+  // make sure that we were told the correct number of existing commands
+  assertNumCommands(aCommand, aMenuID, aNumSubCommands);
+
+  /* Put an entry in the log for every existing subobject.  We don't know
+   * anything about them, so just log where they are. */
+  for (var i = 0; i < aNumSubCommands; i++)
+  {
+    var cmdID = aCommand.getCommandId(aMenuID,
+                                      i,
+                                      "test" /* host string */);
+    gActiveCommandLog[i] = {CHECK_FLAG: FLAG.EXISTING,
+                            CHECK_ID: cmdID};
+  }
 
   // first append some logged objects to the commands for use in the test
   testAppendActions(aCommand, aMenuID, aTestLength, aNumSubCommands);
 
-  _log(gTestPrefix + " - setCommandVisibleCallback and setCommandEnabledCallback",
+  _log("setCommandVisibleCallback and setCommandEnabledCallback",
        aMenuID);
   testCommandVisibleAndEnabled(aCommand, aMenuID, aTestLength, aNumSubCommands);
 
-  _log(gTestPrefix + " - setCommandShortcut", aMenuID);
+  _log("setCommandShortcut", aMenuID);
   testCommandShortcut(aCommand, aMenuID, aTestLength, aNumSubCommands);
 
-  _log(gTestPrefix + " - command action triggers", aMenuID);
+  _log("command action triggers", aMenuID);
   testTriggerActions(aCommand, aMenuID, aTestLength, aNumSubCommands);
 
-  _log(gTestPrefix + " - initiation and shutdown callbacks", aMenuID);
+  _log("initiation and shutdown callbacks", aMenuID);
   testInitShutdownCB(aCommand);
 
   aCommand.removeAllCommands(aMenuID);
@@ -962,13 +989,17 @@ function testSubmenus(aCommand, aMenuID, aTestLength, aNumSubCommands)
   assertTrue((aNumSubCommands >= 0),
              "aNumSubCommands can't be negative, got: " + aNumSubCommands);
 
-  _log(gTestPrefix + " - adding submenus", aMenuID);
+  _log("adding submenus", aMenuID);
 
   /* Put an entry in the log for every existing subobject.  We don't know
    * anything about them, so just log where they are. */
   for (var i = 0; i < aNumSubCommands; i++)
   {
-    gActiveCommandLog[i] = {CHECK_FLAG: FLAG.EXISTING};
+    var cmdID = aCommand.getCommandId(aMenuID,
+                                      i,
+                                      "test" /* host string */);
+    gActiveCommandLog[i] = {CHECK_FLAG: FLAG.EXISTING,
+                            CHECK_ID: cmdID};
   }
 
   // marker to keep track of a location for inserting before and after
@@ -1032,8 +1063,8 @@ function testSubmenus(aCommand, aMenuID, aTestLength, aNumSubCommands)
   assertLog(aCommand);
 
   // run testAppendAndInsertAllTypes within the first submenu
-  var submenuId = gActiveCommandLog[0].CHECK_ID;
-  _log(gTestPrefix + " - adding subobjects of all types to submenu", submenuId);
+  var submenuId = gActiveCommandLog[aNumSubCommands].CHECK_ID;
+  _log("adding subobjects of all types to submenu", submenuId);
   testAppendAndInsertAllTypes(aCommand, submenuId, aTestLength, 0);
 
   // clear the command of subobjects and empty the log
@@ -1212,6 +1243,12 @@ function assertLog(aCommandObject)
  */
 function assertType(aCommandObject, aCheckObject, aIndex)
 {
+  // we can't check properties of an existing command, because we don't
+  // know what they should be.
+  if (aCheckObject.CHECK_FLAG == FLAG.EXISTING)
+  {
+    return;
+  }
   var type = aCommandObject.getCommandType(aCheckObject.CHECK_SUBMENUID,
                                           aIndex,
                                           aCheckObject.CHECK_HOST);
@@ -1222,6 +1259,12 @@ function assertType(aCommandObject, aCheckObject, aIndex)
 }
 function assertId(aCommandObject, aCheckObject, aIndex)
 {
+  // we can't check properties of an existing command, because we don't
+  // know what they should be.
+  if (aCheckObject.CHECK_FLAG == FLAG.EXISTING)
+  {
+    return;
+  }
   var id = aCommandObject.getCommandId(aCheckObject.CHECK_SUBMENUID,
                                       aIndex,
                                       aCheckObject.CHECK_HOST);
@@ -1231,6 +1274,12 @@ function assertId(aCommandObject, aCheckObject, aIndex)
 }
 function assertLabel(aCommandObject, aCheckObject, aIndex)
 {
+  // we can't check properties of an existing command, because we don't
+  // know what they should be.
+  if (aCheckObject.CHECK_FLAG == FLAG.EXISTING)
+  {
+    return;
+  }
   var label = aCommandObject.getCommandText(aCheckObject.CHECK_SUBMENUID,
                                            aIndex,
                                            aCheckObject.CHECK_HOST);
@@ -1242,6 +1291,12 @@ function assertLabel(aCommandObject, aCheckObject, aIndex)
 }
 function assertTooltip(aCommandObject, aCheckObject, aIndex)
 {
+  // we can't check properties of an existing command, because we don't
+  // know what they should be.
+  if (aCheckObject.CHECK_FLAG == FLAG.EXISTING)
+  {
+    return;
+  }
   var tooltip = aCommandObject.getCommandToolTipText(aCheckObject.CHECK_SUBMENUID,
                                                     aIndex,
                                                     aCheckObject.CHECK_HOST);
@@ -1479,7 +1534,7 @@ function assertNumCommands(aCmds, aMenuID, aNum)
  * that is currently relevant */
 function _log(aMsg, aMenuID)
 {
-  log(aMsg + (aMenuID ? " (" + aMenuID + ")" : "") + "...");
+  log(gTestPrefix + " - " + aMsg + (aMenuID ? " (" + aMenuID + ")" : "") );
 }
 
 /* The correct log to use depends on the current submenu being investigated.
