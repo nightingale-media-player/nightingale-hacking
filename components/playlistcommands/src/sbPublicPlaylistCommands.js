@@ -4,7 +4,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -110,6 +110,7 @@ PublicPlaylistCommands.prototype = {
 
   // Commands that act on playlist items
   m_cmd_Play                      : null, // play the selected track
+  m_cmd_Pause                     : null, // pause the selected track
   m_cmd_Remove                    : null, // remove the selected track(s)
   m_cmd_Edit                      : null, // edit the selected track(s)
   m_cmd_Download                  : null, // download the selected track(s)
@@ -210,6 +211,10 @@ PublicPlaylistCommands.prototype = {
                                                 "library_cmd_play",
                                                 plCmd_IsAnyTrackSelected);
 
+      this.m_cmd_Play.setCommandVisibleCallback(null,
+                                                "library_cmd_play",
+                                                plCmd_Play_VisibleCallback);
+
       // The second item, only created by the keyboard shortcuts instantiator
       this.m_cmd_Play.appendAction(null,
                                    "library_cmd_play2",
@@ -231,6 +236,18 @@ PublicPlaylistCommands.prototype = {
       this.m_cmd_Play.setCommandVisibleCallback(null,
                                                 "library_cmd_play2",
                                                 plCmd_IsShortcutsInstantiator);
+
+      this.m_cmd_Pause = new PlaylistCommandsBuilder("pause-default_download_webplaylist_playqueue-cmd");
+
+      this.m_cmd_Pause.appendAction(null,
+                                    "library_cmd_pause",
+                                    "&command.pause",
+                                    "&command.tooltip.pause",
+                                    plCmd_Pause_TriggerCallback);
+
+      this.m_cmd_Pause.setCommandVisibleCallback(null,
+                                                 "library_cmd_pause",
+                                                 plCmd_Pause_VisibleCallback);
 
       // --------------------------------------------------------------------------
       // The REMOVE button, like the play button, is made of two commands, one that
@@ -853,6 +870,7 @@ PublicPlaylistCommands.prototype = {
       // Publish atomic commands
 
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_PLAY, this.m_cmd_Play);
+      this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_PAUSE, this.m_cmd_Pause);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_REMOVE, this.m_cmd_Remove);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_EDIT, this.m_cmd_Edit);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_DOWNLOAD, this.m_cmd_Download);
@@ -885,6 +903,10 @@ PublicPlaylistCommands.prototype = {
       this.m_defaultCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_play",
                                                     this.m_cmd_Play);
+
+      this.m_defaultCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_pause",
+                                                    this.m_cmd_Pause);
 
       this.m_defaultCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_edit",
@@ -1021,6 +1043,10 @@ PublicPlaylistCommands.prototype = {
                                                         "library_cmdobj_play",
                                                         this.m_cmd_Play);
       this.m_webPlaylistCommands.appendPlaylistCommands(null,
+                                                        "library_cmdobj_pause",
+                                                        this.m_cmd_Pause);
+
+      this.m_webPlaylistCommands.appendPlaylistCommands(null,
                                                         "library_cmdobj_remove",
                                                         this.m_cmd_Remove);
       this.m_webPlaylistCommands.appendPlaylistCommands(null,
@@ -1095,6 +1121,9 @@ PublicPlaylistCommands.prototype = {
       this.m_downloadCommands.appendPlaylistCommands(null,
                                                      "library_cmdobj_play",
                                                      this.m_cmd_Play);
+      this.m_downloadCommands.appendPlaylistCommands(null,
+                                                     "library_cmdobj_pause",
+                                                     this.m_cmd_Pause);
       this.m_downloadCommands.appendPlaylistCommands(null,
                                                      "library_cmdobj_remove",
                                                      this.m_cmd_Remove);
@@ -1210,6 +1239,10 @@ PublicPlaylistCommands.prototype = {
       this.m_playQueueCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_play",
                                                     this.m_cmd_Play);
+
+      this.m_playQueueCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_pause",
+                                                    this.m_cmd_Pause);
 
       this.m_playQueueCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_reveal",
@@ -1365,6 +1398,7 @@ PublicPlaylistCommands.prototype = {
     // Un-publish atomic commands
 
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_PLAY, this.m_cmd_Play);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_PAUSE, this.m_cmd_Pause);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_REMOVE, this.m_cmd_Remove);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_EDIT, this.m_cmd_Edit);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_DOWNLOAD, this.m_cmd_Download);
@@ -1480,6 +1514,7 @@ PublicPlaylistCommands.prototype = {
     // Shutdown all command objects, this ensures that no external reference
     // remains in their internal arrays
     this.m_cmd_Play.shutdown();
+    this.m_cmd_Pause.shutdown();
     this.m_cmd_Remove.shutdown();
     this.m_cmd_Edit.shutdown();
     this.m_cmd_Download.shutdown();
@@ -1550,11 +1585,85 @@ function unwrap(obj) {
 // --------------------------------------------------------------------------
 // Called when the play action is triggered
 function plCmd_Play_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
-  // if something is selected, trigger the play event on the playlist
-  if (plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost)) {
-    // Repurpose the command to act as a doubleclick
+  var playbackControl = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                          .getService(Ci.sbIMediacoreManager).playbackControl;
+  var view = unwrap(aContext.playlist).mediaListView;
+
+  /* if the current selection is in the sequencer, but not actively playing
+   * have the sequencer resume playback */
+  if (isCurrentSelectionActive(view)) {
+    playbackControl.play();
+  }
+  else if (plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost)) {
+    /* if something is selected but it is not active at the moment,
+     * begin playing it */
     unwrap(aContext.playlist).sendPlayEvent();
   }
+}
+
+// Called to determine if the Play playlist command should be visible
+function plCmd_Play_VisibleCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  var view = unwrap(aContext.playlist).mediaListView
+
+  // we don't show play when more than 1 item is selected
+  if (view.selection.count > 1)
+  {
+    return false;
+  }
+
+  var mediaCoreMgr = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                    .getService(Ci.sbIMediacoreManager);
+
+  /* we show the play command as long as we are not currently playing the
+   * selected track*/
+  return !(mediaCoreMgr.status.state == Ci.sbIMediacoreStatus.STATUS_PLAYING &&
+           isCurrentSelectionActive(view))
+}
+
+/* Returns true if the currently selected track is active in the sequencer.
+ * This does not mean the track is necessarily playing as it could be paused */
+function isCurrentSelectionActive(mediaListView) {
+  var mediaCoreMgr = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                       .getService(Ci.sbIMediacoreManager);
+
+  var sequencer = mediaCoreMgr.sequencer;
+  var currItem = mediaListView.selection.currentMediaItem;
+  var currMediaList = mediaListView.mediaList;
+
+  // if the sequencer's active item is the selected item, return true
+  return (currItem.equals(sequencer.currentItem) &&
+          currMediaList.equals(sequencer.view.mediaList) &&
+          mediaListView.selection.currentIndex == sequencer.viewPosition);
+}
+
+// Called when the pause action is triggered
+function plCmd_Pause_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  var playbackControl = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                       .getService(Ci.sbIMediacoreManager).playbackControl;
+  playbackControl.pause();
+}
+
+// Called to determine if the Pause playlist command should be visible
+function plCmd_Pause_VisibleCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  var selection = unwrap(aContext.playlist).mediaListView.selection;
+
+  // we don't show pause when more than 1 item is selected
+  if (selection.count > 1)
+  {
+    return false;
+  }
+
+  var mediaCoreMgr = Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                       .getService(Ci.sbIMediacoreManager);
+
+  // figure out if the play command is currently visible
+  var isPlayVisible =
+      plCmd_Play_VisibleCallback(aContext, aSubMenuId, aCommandId, aHost);
+
+  /* we only show the pause command if we are currently playing and we are not
+   * currently showing the play command */
+  return (!isPlayVisible &&
+          mediaCoreMgr.status.state == Ci.sbIMediacoreStatus.STATUS_PLAYING);
 }
 
 // Called when the edit action is triggered

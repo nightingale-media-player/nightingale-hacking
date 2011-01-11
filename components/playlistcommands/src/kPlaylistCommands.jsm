@@ -1,25 +1,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2011 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
@@ -29,6 +29,7 @@ EXPORTED_SYMBOLS = [ "kPlaylistCommands" ];
 var kPlaylistCommands = {
   // Atomic commands
   MEDIAITEM_PLAY                 : "{b071e1d7-59c4-4390-b627-cec52ed3f2b1}",
+  MEDIAITEM_PAUSE                : "{e426dd56-1dd1-11b2-87a4-9a1fdf82c08e}",
   MEDIAITEM_REMOVE               : "{42beadfc-2e95-47f5-beaa-606ebdd1c682}",
   MEDIAITEM_EDIT                 : "{07320d73-3582-4dd5-8751-a0140980c210}",
   MEDIAITEM_DOWNLOAD             : "{a131503b-067b-48f3-bd3e-08262a5fb87e}",

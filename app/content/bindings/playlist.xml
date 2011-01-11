@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -141,24 +141,6 @@
   this.addEventListener("command",
                         this._onCommandClosure,
                         true);
-
-  this._playQueueService = Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
-                             .getService(Ci.sbIPlayQueueService);
-
-  this._playQueueServiceListener = {
-    onIndexUpdated: function(aToIndex) {},
-
-    onQueueOperationStarted: function() {
-      self._queueOperationStateChanged = true;
-      self.disableDrop = true;
-    },
-
-    onQueueOperationCompleted: function(aCount) {
-      self._queueOperationStateChanged = true;
-      self.disableDrop = false;
-    }
-  };
-  this._playQueueService.addListener(this._playQueueServiceListener);
 
   // Add the controller to respond to the edit menu
   this.tree.controllers.appendController(this._commandController);
@@ -579,7 +561,7 @@
       // ignore notifications that we caused
       if (this.playlist.ignoreColumnSpecUpdate)
         return true;
-      
+
       // ignore notifications that are not about our medialist
       if (aMediaItem != this.medialist)
         return false;
@@ -600,12 +582,12 @@
     }
   }
   // only listen to changes to columnSpec
-  var watchedProperties = 
+  var watchedProperties =
     this._Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
         .createInstance(this._Ci.sbIMutablePropertyArray);
   watchedProperties.strict = false;
   watchedProperties.appendProperty(SBProperties.columnSpec, '');
-  
+
   // begin watching changes to column specs
   mediaListView.mediaList
                .library
@@ -716,8 +698,6 @@
     this.removeEventListener("command",
                             this._onCommandClosure,
                             true);
-
-    this._playQueueService.removeListener(this._playQueueServiceListener);
 
     // Break the cycle between ourselves and the tree view
     if (this.treeView && this.treeView instanceof this._Ci.sbIMediaListViewTreeView) {
@@ -2399,10 +2379,9 @@
         <![CDATA[
           try
           {
-            if (this._queueOperationStateChanged) {
-              this.refreshCommands(false);
-              this._queueOperationStateChanged = false;
-            }
+            /* refresh the playlist commands before we show the context menu
+             * so we know it will show the proper commands */
+            this._commandmenuitems.refreshCommands(false);
           }
           catch( err )
           {
@@ -2760,7 +2739,7 @@
         </body>
       </method>
 
-      <!-- Called by _onDragOver for the playlist (not the tree observer, 
+      <!-- Called by _onDragOver for the playlist (not the tree observer,
            which calls canDrop()) -->
       <method name="_canDrop">
         <parameter name="event"/>

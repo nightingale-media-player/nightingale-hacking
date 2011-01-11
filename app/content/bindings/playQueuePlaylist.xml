@@ -5,7 +5,7 @@
  *
  * This file is part of the Songbird web player.
  *
- * Copyright(c) 2005-2010 POTI, Inc.
+ * Copyright(c) 2005-2011 POTI, Inc.
  * http://www.songbirdnest.com
  *
  * This file may be licensed under the terms of of the
@@ -44,14 +44,32 @@
 
       <constructor>
         <![CDATA[
-          Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-          XPCOMUtils.defineLazyServiceGetter(
-                              this,
-                              "_playQueueService",
-                              "@songbirdnest.com/Songbird/playqueue/service;1",
-                              "sbIPlayQueueService");
+          this._destroyed = false;
+          var self = this;
+          this._playQueueService = Cc["@songbirdnest.com/Songbird/playqueue/service;1"]
+                                     .getService(Ci.sbIPlayQueueService);
+
+          this._playQueueServiceListener = {
+            onIndexUpdated: function(aToIndex) {},
+
+            onQueueOperationStarted: function() {
+              self.disableDrop = true;
+            },
+
+            onQueueOperationCompleted: function(aCount) {
+              self.disableDrop = false;
+            }
+          };
+          this._playQueueService.addListener(this._playQueueServiceListener);
         ]]>
       </constructor>
+
+      <destructor>
+        if (this._destroyed) return;
+        this._playQueueService.removeListener(this._playQueueServiceListener);
+        this._destroyed = true;
+      </destructor>
+
 
       <!--
         Invalidate the row that contains the play queue's current track. This
