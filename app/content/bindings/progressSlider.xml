@@ -117,16 +117,21 @@
       </getter>
       <setter>
       <![CDATA[
-        // Align the slider with the thumb center. Volume ranges from zero to
+        // We do not want to do this for the vertical progress sliders as it will make
+        // them jump due to using the max range value of 10000. See Bug 21029 Comment #2
+        if (this.progress.getAttribute("orient") == "vertical")
+          return;
+
+        // Align the slider with the thumb center. Value ranges from zero to
         // one, but the slider range is both scaled and slightly compressed due
-        // to the thumb width. 
+        // to the thumb width. This is only needed for horizontal sliders.
         var sliderWidth = this.slider.boxObject.width;
         var thumbWidth = this.thumb.boxObject.width;
         // range in pixels of valid slider positions
         var sliderRange = sliderWidth - thumbWidth;
-        var volume = val / this.maxpos;
+        var sliderValue = val / this.maxpos;
         // slider offset in pixels
-        var sliderOffset = sliderRange * volume + thumbWidth/2;
+        var sliderOffset = sliderRange * sliderValue + thumbWidth/2;
         // scaled slider value
         var sliderProgress = this.maxpos * sliderOffset / sliderWidth;
         this.progress.setAttribute('value', sliderProgress);
