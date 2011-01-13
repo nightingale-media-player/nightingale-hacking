@@ -59,7 +59,7 @@
 #define NS_QUIT_APPLICATION_REQUESTED_OBSERVER_ID "quit-application-requested"
 #define NS_QUIT_APPLICATION_GRANTED_OBSERVER_ID "quit-application-granted"
 #define NS_PROFILE_SHUTDOWN_OBSERVER_ID         "profile-before-change"
-#define SB_MAINWIN_PRESENTED_OBSERVER_ID        "songbird-main-window-presented"
+#define SB_MAIN_LIBRARY_READY_OBSERVER_ID       "songbird-main-library-ready"
 
 NS_IMPL_THREADSAFE_ADDREF(sbDeviceManager)
 NS_IMPL_THREADSAFE_RELEASE(sbDeviceManager)
@@ -475,7 +475,7 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = obsSvc->AddObserver(observer,
-                             SB_MAINWIN_PRESENTED_OBSERVER_ID,
+                             SB_MAIN_LIBRARY_READY_OBSERVER_ID,
                              PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -495,7 +495,7 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
     // Called after the profile has been loaded, so prefs and such are available
     rv = this->Init();
     NS_ENSURE_SUCCESS(rv, rv);
-  } else if (!strcmp(SB_MAINWIN_PRESENTED_OBSERVER_ID, aTopic)) {
+  } else if (!strcmp(SB_MAIN_LIBRARY_READY_OBSERVER_ID, aTopic)) {
     // Called after the main Songbird window is presented in case device
     // enumeration hangs.
     rv = BeginMarshallMonitoring();
@@ -557,7 +557,7 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
     rv = obsSvc->RemoveObserver(observer, NS_PROFILE_STARTUP_OBSERVER_ID);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = obsSvc->RemoveObserver(observer, SB_MAINWIN_PRESENTED_OBSERVER_ID);
+    rv = obsSvc->RemoveObserver(observer, SB_MAIN_LIBRARY_READY_OBSERVER_ID);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = obsSvc->RemoveObserver(observer, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);

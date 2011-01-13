@@ -217,6 +217,10 @@ function SBDoFirstRun() {
   var loadMLInBackground =
           Application.prefs.getValue("songbird.firstrun.load_ml_in_background", false);
 
+  // Prepare to notify observers when the library is ready
+  let obs = Components.classes["@mozilla.org/observer-service;1"]
+                      .getService(Components.interfaces.nsIObserverService);
+  
   // If we are scanning directories or importing a library, 
   // track the progress and show the library on completion.
   // This is done to simplify the display, avoid some bugs,
@@ -237,6 +241,8 @@ function SBDoFirstRun() {
       // Set up the smart playlists after import is complete
       // (improves performance slightly)
       SBFirstRunSmartPlaylists();
+
+      obs.notifyObservers(null, "songbird-main-library-ready", null);
     }
     if (job.status != Ci.sbIJobProgress.STATUS_RUNNING)
       setTimeout(onJobComplete, 100);
@@ -273,6 +279,8 @@ function SBDoFirstRun() {
                                             loadMLInBackground);
       }
     }
+
+    obs.notifyObservers(null, "songbird-main-library-ready", null);
   }
 }
 
