@@ -118,6 +118,17 @@
       ]]>
     </destructor>
 
+    <!-- Override to make mute/unmute behaviour sane -->
+    <method name="snapToMin">
+      <body>
+        <![CDATA[
+          if (this.disabled)
+            return;
+          this.mm.volumeControl.mute = !this.mm.volumeControl.mute;
+        ]]>
+      </body>
+    </method>
+
     <method name="onTrackVolume">
       <body>
         <![CDATA[
@@ -208,6 +219,8 @@
 
 
   <!-- MUTE CONTROL -->
+  <!-- NOTE: This is no longer used anywhere in the application. All the current
+       mute controls are in the volume-slider elements -->
 
 
 
