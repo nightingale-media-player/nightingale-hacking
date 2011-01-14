@@ -25,11 +25,13 @@
 /**
  * \file sbM3UPlaylistWriter.js
  */
-Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
+const Cu = Components.utils;
+
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 
 var PR_WRONLY           = 0x02;
 var PR_CREATE_FILE      = 0x08;
@@ -51,13 +53,10 @@ sbM3UPlaylistWriter.prototype = {
                      .createInstance(Ci.nsIFileOutputStream);
 
     // write, create, truncate
-    foStream.init(aFile, PR_WRONLY| PR_CREATE_FILE | PR_TRUNCATE, DEFAULT_PERMISSIONS, 0);
-
-    // if you are sure there will never ever be any non-ascii text in data you can
-    // also call foStream.writeData directly
-    var converter = Cc["@mozilla.org/intl/converter-output-stream;1"]
-                      .createInstance(Ci.nsIConverterOutputStream);
-    converter.init(foStream, "UTF-8", 0, 0);
+    foStream.init(aFile,
+                  PR_WRONLY| PR_CREATE_FILE | PR_TRUNCATE,
+                  DEFAULT_PERMISSIONS,
+                  0);
 
     var buildM3U = {
       items: [],
@@ -69,7 +68,8 @@ sbM3UPlaylistWriter.prototype = {
         var f = uri.QueryInterface(Ci.nsIFileURL).file;
 
         try {
-          // Show the directory containing the file and select the file
+          // Show the directory containing the file and select the file.
+          // The relative descriptor is returned UTF-8 encoded.
           f.QueryInterface(Ci.nsILocalFile);
           var data = f.getRelativeDescriptor(aFile.parent) + "\n";
 
@@ -79,17 +79,17 @@ sbM3UPlaylistWriter.prototype = {
           if (aPlaylistFormatType && aPlaylistFormatType.pathSeparator) {
             data = data.replace(/\//g, aPlaylistFormatType.pathSeparator);  
           }
-          converter.writeString(data);
+          foStream.write(data, data.length);
         }
         catch (e) {
-          Components.utils.reportError("Error writing M3U: " + e);
+          Cu.reportError("Error writing M3U: " + e);
         }
       },
       onEnumerationEnd: function(aMediaList, aResultCode) {}
     };
 
     aMediaList.enumerateAllItems(buildM3U);
-    converter.close(); // this closes foStream
+    foStream.close();
     buildM3U = null;
   },
 
