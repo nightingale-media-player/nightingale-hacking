@@ -831,7 +831,9 @@ case "$SB_PLATFORM" in
     CFLAGS_PREPROCESS="-P"
     CFLAGS_ASSEMBLER="-FAs"
     # Always disable warning 4624, because the XPCOM elicits this warning.
-    CFLAGS_WARNING_IS_ERROR="-WX -wd4624"
+    # Also disable warning 4800, it isn't useful, and using nsString with
+    # std::map causes it
+    CFLAGS_WARNING_IS_ERROR="-WX -wd4624 -wd4800"
     LDFLAGS="$LDFLAGS $MSVC_LINKER_FLAGS"
     LDFLAGS_DLL="-DLL $MSVC_DLL_LINKER_FLAGS"
     LDFLAGS_BIN=""
